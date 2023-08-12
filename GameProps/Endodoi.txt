@@ -1,0 +1,30 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "nbr_start": 4,
+      "holes": 6
+   },
+   "game_info": {
+      "name": "Endodoi",
+      "about": "Endodoi: a multi-lap mancala,\nsow direction counter-clockwise,\ncross-capture when end in own\nhole with one seed.\nPick own seed on capture.\nGames ends if no moves.\nPlayed with 6 to 10 holes.",
+      "flags": {
+         "stores": true,
+         "sow_direct": 1,
+         "mlaps": true,
+         "oppsidecapt": true,
+         "crosscapt": true,
+         "xcpickown": true
+      },
+      "scorer": {
+         "stores_m": 4,
+         "access_m": 0,
+         "seeds_m": 0,
+         "empties_m": -2,
+         "child_cnt_m": 0,
+         "evens_m": 0,
+         "easy_rand": 20
+      },
+      "min_move": 1,
+      "mm_depth": [ 1, 1, 3, 5 ]
+   }
+}
