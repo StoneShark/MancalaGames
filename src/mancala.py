@@ -135,13 +135,13 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
                       'store': tuple(self.store)}
 
         if self.info.flags.moveunlock:
-            state_dict += {'unlocked': tuple(self.unlocked)}
+            state_dict |= {'unlocked': tuple(self.unlocked)}
 
         if self.info.flags.blocks:
-            state_dict += {'blocked': tuple(self.blocked)}
+            state_dict |= {'blocked': tuple(self.blocked)}
 
         if self.info.flags.child:
-            state_dict += {'child': tuple(self.child)}
+            state_dict |= {'child': tuple(self.child)}
 
         return GameState(**state_dict)
 
