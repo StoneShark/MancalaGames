@@ -1,0 +1,9 @@
+.pylint.d
+.spyproject
+.gitignore
+.coverage
+__pycache__
+dist
+dabbles_old
+.pylint_report
+logs
