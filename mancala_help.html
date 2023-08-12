@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Mancala Games</title>
+<style>
+body {
+	max-width: 600px;
+	margin: 0 auto;
+	float: none;
+	font-family: Arial, sans-serif;
+}
+h1 {
+	text-align: center;
+}
+h1, h2, h3, h4 {
+	color: darkblue;
+}
+table {
+	border-collapse: collapse;
+}
+td {
+	border: 1px solid #000; padding:2px;
+}
+.thead {
+	background-color:lightblue;
+	color:darkblue;
+	text-align: center;
+	font-weight: bold;
+}
+.thead2 {
+	background-color:lightblue;
+	color:darkblue;
+	vertical-align:top;
+}
+.tdtop {
+	font-size:10pt;
+	vertical-align:top;
+}
+.center {
+	text-align: center;
+}
+</style>
+</head>
+<body>
+<h1>Mancala Games</h1>
+<p>Mancala Games is an engine for playing several variants of Mancala.
+Games may be played with two players or one player and
+<a href="#aiplayer">AI player</a>.
+The <a href="#opwindow">Mancala Options UI</a>
+allows selecting the game and AI player options.
+
+<p>This engine supports games with two ranks of 2 to 12 holes per side.
+Game stores to the left and right of holes are optional.
+
+<p>Game play proceeds in the following steps:
+
+<ol>
+<li>Initialize game (or round).
+Game initialization distributes the number of start seeds into each hole.
+Round initialization distributes the seeds each player has into
+their holes, possibly blocking some holes from play for the round.
+<li>Play the game.
+Players alternate turns performing these steps for each turn:
+	<p>Sowing Phase:
+	<ol><li>Current player removes the seeds from one hole
+	on their side of the board.
+	Depending on the game, only some of the players holes are available for
+	play.
+	<li>Those seeds are sown into new holes one at a time:
+	clockwise or counter-clockwise.
+	Sow direction depends on game parameters, and is occationally
+	under user control.
+	<li>Optionally, for multi-lap games,
+	the seeds in the final hole sown are picked up sowing continues.
+	<li>Optionally, for store sowing games,
+	a seed maybe sown into the players store when it is being passed.
+	</ol>
+	<p>Capture Phase:
+	<ol><li value=5>The player moves seeds from
+	prescribed holes to a store, walda, or child.
+	Prescription of holes is parametrically controlled via the
+	<a href="#opwindow">Mancala Options Window</a>.
+	<li>Some games support multiple captures.
+	</ol>
+	<p>Determine if there was a winner or other special
+	conditions (such as a required pass).
+<li>Check for end game conditions: win, loss, tie, or end of round.
+</ol>
+
+<h2 id="opwindow">Mancala Options Window</h2>
+
+<p>The Mancala Options window provides about two dozen mancala game options.
+Each effects how the game is played.
+Some options are incompatible with each other, errors and inconsistencies
+are caught during parameter test.
+Some combinations are simply not yet supported (or may never be supported).
+
+After selecting the desired options the Command Buttons are used
+to test, load, save, and launch the game.
+
+<h3>Command Buttons</h3>
+<p>Command buttons appear across the bottom of the main window.
+<h4>Test</h4>
+<p>The test button checks the consistency of the selected options
+generating both warnings and errors.
+Warnings suggest that there might be odd game play, but you can proceed if you want.
+Errors mean that the game cannot be played with the options that you've selected.
+<h4>Load</h4>
+<p>The load button loads a saved game configuration.
+About a dozen game configurations are provided.
+They are described in <a href="#pregames">Preconfigured Games</a>.
+<p>The parameters are loaded and then checked for issues.
+Some errors will be correctable directly in the UI,
+others (created by editing the JSON file) may require
+going back to your text editor.
+<h4>Save</h4>
+<p>The save button saves the current options to a file.
+User save files will be larger than the provided
+games because all options are written to the file.
+The JSON text files which may be edited directly.
+A few parameters are only available in the JSON file.
+See <a href="#paramtable">Game Parameter Details</a>
+and <a href="#aiscorer">AI Player Parameters</a>.
+<h4>Play</h4>
+<p>The play button launches the Mancala Game window allowing
+a game to be played with the current options.
+If the selected options have not been tested or
+have been changed since the last test, they are tested before the
+game is started.
+<p>During game play all parameter entry is disabled, but left
+visible to allow review of the options.
+
+<h3>Game Options</h3>
+Game options are provided in the following categories, details of each are
+described in the <a href="#paramtable">Game Parameter Table</a>
+and <a href="#aiscorer">AI Player Parameters</a>.
+<ul>
+<li><b>Game Class</b>: the base logic that controls how the game is played.
+Mancala is the default for most games.
+<li><b>Board Props</b>: define the size, configuration and start conditions
+of a game.
+<li><b>Game Dynamics</b>: provide some high level of control over how
+game play is conducted.
+<li><b>Sow Parameters</b>: control how the seeds are sown (moved around)
+in the sow phase of a turn.
+<li><b>Capture Parameters</b>: control where seeds are captured from and
+any special mechanisms for multiple captures.
+<li><b>Scorer Parameters</b>: control how the AI player evaluates the
+board after each simulated move (see <a href="#aiplayer">AI Player</a>).
+<li><b>About</b>: this provides a place to define the text shown in the
+about window of the Mancala game.
+Generally, include a brief description of the intended game play
+and options.
+You'll find this a useful references when you switch playing between
+different games.
+</ul>
+
+<h2 id="manwindow">Mancala Game Window</h2>
+
+<p>The Mancala Game window represents the playing surface: two ranks of
+holes for each player are provided and(if configured) stores are available on
+either side. The right store is for the lower player and the left hole
+is for the upper player.
+<p><b>Moves:</b> Mouse clicks on the main UI game holes inititiates a sow.
+If the sew direction is clockwise (CW), counter-clockwise (CCW) or
+split, a left click determines which hole a move starts from.
+On split sow, the left half of the holes sow to the player's left
+(CW for lower and CCW for upper) and
+the right half of holes sow to the player's right  (CCW for lower and CW for upper).
+For user directed holes, (udir_holes) a left click moves seeds to the
+players left  and a right click sows seeds to the player's right
+(in the CW/CCW manner as for split sow).
+
+<p>All of the rest of the move steps are performed automatically.
+If a player is required to pass, a window will popup to state that.
+
+<h3>Menus</h3>
+
+<h4>Game</h4>
+<p><b>New</b>: Start a new game.
+<p><b>End Game</b>: End the current game.
+Seeds remaining in play are distributed evenly with a final odd
+seed going to the player with the fewer seeds.
+This is useful when the game has reached a stalemate, e.g. two seeds
+circling the game board.
+<p><b>Show Prev</b>: If the game was started from a console window,
+this will show a test description of the previous board layout
+(if there was one).
+<p><b>Show Log</b>: If the game was started from a console window,
+show a log of the game moves.
+
+<h4>AI</h4>
+<p><b>AI Player</b>: Enable or disable the ai player.
+The AI Player plays the top row; you play the bottom row.
+<p>The delay sets an artificial delay between moves (for UI update), but the
+actual AI move may still take some based on the difficulty setting.
+More specifically, the look ahead distance.
+<p><b>No AI Delay</b>: The UI is not updated before the AI plays.
+You will not see the available moves for the AI and will not see
+updates between repeat turns.
+<p><b>Short AI Delay</b>: There is a short delay after your move,
+before the AI plays. This allows a brief glance (about 1 second)
+at the results of your move and which moves are available for the
+AI player You will see updates between repeat turns.
+<p><b>Long AI Delay</b>: Similar to 'Short AI Delay' but the delay
+lengthened to about 3 seconds.
+<p>Difficulty ratings set number of moves the AI player will look ahead
+and other effects listed below:
+<p><b>Easy</b>: Set the AI difficulty to easy. On the easy setting
+the 'Easy Error Random' will be included in minimaxer
+<a href="#aiscorer">scores</a>. Look ahead is typically 1 move.
+<p><b>Normal</b>: Set the AI difficulty to normal.
+Look ahead is typically 1 move.
+<p><b>Hard</b>: Set the AI difficulty to hard.
+The 'Access (d>1) Mult will be included in the scorer.
+Look ahead is typically 3 moves.
+<p><b>Expert</b>: Set the AI difficulty to hard.
+The 'Access (d>1) Mult will be included in the scorer.
+Look ahead is typically 5 moves.
+
+<h4>Help</h4>
+<p><b>Help...</b>: If there is a help file for the game,
+popit up in the system browser.
+<p><b>About...</b>: Popup the about text, this display any text
+that was included in the About pane of the Mancala Options window.
+
+
+<h2 id="paramtable">Game Parameter Details</h2>
+
+<p>The table below shows for each parameter: title; description and values if not
+boolean; the parameter name in the config file; and the location within the config
+file.
+<table>
+<colgroup>
+<col width="15%"><col width="55%"/><col width="15%"/><col width="15%"/>
+</colgroup>
+<tr>
+<td class="thead"><p>Title</td>
+<td class="thead"><p>Description</td>
+<td class="thead"><p>Parameter name</td>
+<td class="thead"><p>Config File Location</td>
+</tr>
+<tr><td class="thead2" colspan="4">Board Props</td></tr>
+<tr>
+<td class="tdtop">Holes per Side</td>
+<td class="tdtop">The number of holes on each players side of the board.
+Generally, these are the holes that a player can initiate a move from.</td>
+<td class="tdtop">holes</td>
+<td class="tdtop">game_constants</td>
+</tr>
+<tr>
+<td class="tdtop">Start Seeds</td>
+<td class="tdtop">The number of seeds in each hole at the start of a game.</td>
+<td class="tdtop">nbr_start</td>
+<td class="tdtop">game_constants</td>
+</tr>
+<tr>
+<td class="tdtop">Stores Present</td>
+<td class="tdtop">If checked the game store are present on the Mancala UI.
+Generally, seeds collected in the capture phase are placed in the game store
+to the right of each player (when facing the game board).</td>
+<td class="tdtop">stores</td>
+<td class="tdtop">game_info / flags</td>
+</tr>
+<tr><td class="thead2" colspan="4">Game Dynamic</td></tr>
+<tr>
+<td class="tdtop">Play in Rounds</td>
+<td class="tdtop">The game is made up of multiple rounds.
+Each round has end criteria similar to a normal game.
+Each new round starts with the seeds being re-allocated to the holes.
+If a player doesn't have enough seeds to fill their holes,
+some holes may be blocked for the duration of the round.
+Blocked holes do not accept sown seeds.</td>
+<td class="tdtop">rounds</td>
+<td class="tdtop">game_info / flags</td>
+</tr>
+<tr>
+<td class="tdtop">Block Unused Holes</td>
+<td class="tdtop">A blocked hole is out of play for the game or round.
+When a game is played in rounds and some holes do not
+have seeds to start the round, the hole is out of play for the round.</td>
+<td class="tdtop">blocks</td>
+<td class="tdtop">game_info / flags</td>
+</tr>
+<tr>
+<td class="tdtop">Enable Child Holes</td>
+<td class="tdtop">Holes can be designated as a child hole during game play,
+i.e. they are owned by one of the players.
+Depending on the game, holes on either side of the board
+can be owned by either player.
+Seeds are sown in child holes. A turn may not start from child holes.
+In general, seeds cannot be captured from child holes.
+<br><br>Other names for child holes include daughters and waldas.</td>
+<td class="tdtop">child</td>
+<td class="tdtop">game_info / flags</td>
+</tr>
+<tr>
+<td class="tdtop">Convert Count</td>
+<td class="tdtop">The number of seeds for convertion to child or
+other game specific use (Deka closes on convert count).</td>
+<td class="tdtop">convert_cnt</td>
+<td class="tdtop">game_info / flags</td>
+</tr>
+<tr><td class="thead2" colspan="4">Sow Parameters</td></tr>
+<tr>
+<td class="tdtop">Minimum Move</td>
+<td class="tdtop">The minimum number of seeds a hole must contain for a move to
+start from that hole. The UI will not activate holes with fewer seeds.</td>
+<td class="tdtop">min_move</td>
+<td class="tdtop">game_info</td>
+</tr>
+<tr>
+<td class="tdtop">Sow Direction</td>
+<td class="tdtop">Sow direction:<br>
+-1: sow clockwise<br>
+1: sow counter-clockwise<br>
+0: split sowing.
+From player perspective: left side of the board is clockwise,
+right side of board is counter-clockwise. The odd middle holes should be set to User Controlled direction.</td>
+<td class="tdtop">sow_direct</td>
+<td class="tdtop">game_info / flags</td>
+</tr>
+<tr>
+<td class="tdtop">Must Share</td>
+<td class="tdtop">If you opponent does not have any available moves,
+you will only be allowed moves that make moves available to them.
+If a player does not have any moves available at the start of their turn,
+the must pass option is performed.</td>
+<td class="tdtop">mustshare</td>
+<td class="tdtop">game_info / flags</td>
+</tr>
+<tr>
+<td class="tdtop">Must Pass</td>
+<td class="tdtop">If you do not have any playable holes, you must pass.
+The UI will do a popup to notify you of this.
+The AI will simply pass the turn back to you.
+If must pass is not check and you do not have moves the game/round will end.</td>
+<td class="tdtop">mustpass</td>
+<td class="tdtop">game_info / flags</td>
+</tr>
+<tr>
+<td class="tdtop">Sow into Start</td>
+<td class="tdtop">When starting to sow leave one seed in the starting hole.</td>
+<td class="tdtop">sow_start</td>
+<td class="tdtop">game_info / flags</td>
+</tr>
+<tr>
+<td class="tdtop">Sow Skip Start</td>
+<td class="tdtop">When sowing do not sow into the hole that the
+seeds were taken from.
+If there are enough seeds to sow completely around the board back
+to the starting hole, skip it.
+The starting hole will be left empty at the end of the turn.</td>
+<td class="tdtop">skip_start</td>
+<td class="tdtop">game_info / flags</td>
+</tr>
+<tr>
+<td class="tdtop">Sow Own Store</td>
+<td class="tdtop">When sowing and you reach the last hole before your store
+(either clockwise or counter-clockwise),
+the next seed will be sown into the store.</td>
+<td class="tdtop">sow_own_store</td>
+<td class="tdtop">game_info / flags</td>
+</tr>
+<tr>
+<td class="tdtop">Multi-Lap Sow</td>
+<td class="tdtop">Multi-lap means that when one sow operation is completed,
+another sow may be initiated by the same player.
+If the last seed of the first sow ends in a hole with at least one seed
+(makeing 2 or more seeds),
+the seeds from that hole are removed and sown in the usual way.
+The process continues, until the final seed of a sow ends in hole by
+itself.
+</td>
+<td class="tdtop">mlaps</td>
+<td class="tdtop">game_info / flags</td>
+</tr>
+<tr>
+<td class="tdtop">Visit Opp for Mlaps</td>
+<td class="tdtop">The visit opposite side for multiple laps limits a
+a second lap sow may be preformed when the first sow does reaches
+or pass through an opponent's side hole.
+</td>
+<td class="tdtop">visit_opp</td>
+<td class="tdtop">game_info / flags</td>
+</tr>
+<tr>
+<td class="tdtop">User Control Dir</td>
+<td class="tdtop">Any checked number will result in hole that player
+can select the direction to sow. Left click will sow to the player's left and
+a right click will sow to the player's right.</td>
+<td class="tdtop">udir_holes</td>
+<td class="tdtop">game_info  </td>
+</tr>
+<tr><td class="thead2" colspan="4">Capture Parameters</td></tr>
+<tr>
+<td class="tdtop">Capture in Sow Direct</td>
+<td class="tdtop">Capturing will proceed in the same direction as the
+sowing. When unchecked captures </td>
+<td class="tdtop">capsamedir</td>
+<td class="tdtop">game_info / flags</td>
+</tr>
+<tr>
+<td class="tdtop">Capture Opp Side Only</td>
+<td class="tdtop">When checked captures may only be made from the
+opponents side of the board. When unchecked captures may be made from
+both sides of the board.</td>
+<td class="tdtop">oppsidecapt</td>
+<td class="tdtop">game_info / flags</td>
+</tr>
+<tr>
+<td class="tdtop">Move Unlocks for Capture</td>
+<td class="tdtop">Captures cannot be made from holes until they are unlocked
+by starting a move from them.</td>
+<td class="tdtop">moveunlock</td>
+<td class="tdtop">game_info / flags</td>
+</tr>
+<tr>
+<td class="tdtop">Capture Evens</td>
+<td class="tdtop">Capture on evens greater than zero.
+The hole's seed count after sowing must be even for capture.</td>
+<td class="tdtop">evens</td>
+<td class="tdtop">game_info / flags</td>
+</tr>
+<tr>
+<td class="tdtop">Capture On</td>
+<td class="tdtop">The capture on checkboxes allow selection of what
+values captures are performed on.
+The hole's seed count after sowing must match one of the check numbers.</td>
+<td class="tdtop">capt_on</td>
+<td class="tdtop">game_info </td>
+</tr>
+<tr>
+<td class="tdtop">Do Multiple Captures</td>
+<td class="tdtop">After the first capture, if the capture conditions continue
+to be true multiple captures may occur.
+Capture in Sow Direct defines the direction of capture.</td>
+<td class="tdtop">multicapt</td>
+<td class="tdtop">game_info / flags</td>
+</tr>
+<tr>
+<td class="tdtop">Do Cross Capture</td>
+<td class="tdtop">If the final seed of a sow ends alone in a hole and
+the opposite side (usually opponents side) contains seeds,
+those seeds are capture.</td>
+<td class="tdtop">crosscapt</td>
+<td class="tdtop">game_info / flags</td>
+</tr>
+<tr>
+<td class="tdtop">Pick Own on Cross Capt</td>
+<td class="tdtop">If a cross capture performed, this option defines that the
+final sown seed should also be picked up leaving two holes empty.</td>
+<td class="tdtop">xcpickown</td>
+<td class="tdtop">game_info / flags</td>
+</tr>
+</table>
+
+<h2 id="aiplayer">AI Player</h2>
+<p>The AI player uses a clever algorithm that's been around since the 1920s
+called minimax.
+<h3>MiniMaxing</h3>
+<p>The goal of minimax is to minimize the maximum possible loss,
+that is search for a move that minimizes your opponents best possible
+move in response to each of your best moves.
+<p>Minimaxing is commonly used for two-player zero-sum games.
+Zero-sum games are those where one player must lose for the other player to win.
+The approach used here requires that the game state be statically
+evaluated after each simulated move, that is a numeric goodness score.
+Statically means the AI only looks at the results of each move sequence,
+complex planning is not done.
+<p>The method evaluates a specified number of moves into the future.
+This searching involves examining each of the AI moves against the players
+moves. The philosophy is that the greater the search depth,
+the better the selected move.
+There is a trade off the greater the search depth, the longer it takes to
+select the next move.
+
+<h3 id="aiparams">AI Player Params</h3>
+<p>The AI Player parameters control how the AI player evaluates the
+game after each simulated move.
+Negative (or low) values are good for the AI moves.
+Positive (or high) values are good for the player.
+<p>The multipliers are applied to a difference of each players statistic.
+For example, the number of seeds the AI player has are
+subtracted from the human players seeds and then the multiplier is
+applied:
+<p class="center">(&#931; (Human seeds) - &#931; (AI seeds)) * seeds_m
+<p>thus the multipler can be used to either maximize or minimize the
+statistic.
+Positive multipliers maximize it and negative multipliers will minimize it.
+<p>The multipliers set the relative importance of each factor in evaluating
+the state of the board; higher absolute values are more important.
+The UI imposes limits the range of values that
+can be selected, but any integer can be set directly in the config file.
+<p>The score for each board is the sum of the statistic difference times its multiplier:
+<p class="center">score = Easy_Error + &#931; ((Player_Stat - AI_Stat) * multiplier)
+<p>The parameters effecting the AI player are shown in the table below.
+<table id="aiscorer">
+<colgroup>
+<col width="15%"><col width="55%"/><col width="15%"/><col width="15%"/>
+</colgroup>
+<tr>
+<td class="thead"><p>Title</td>
+<td class="thead"><p>Description</td>
+<td class="thead"><p>Parameter name</td>
+<td class="thead"><p>Config File Location</td>
+</tr>
+<tr>
+<td class="tdtop">Minimax Depth per Difficulty (not on the UI)</td>
+<td class="tdtop">A list of how many levels deep the minimaxer will
+search.
+A value is provided for each of the four difficulty levels:
+easy, normal, hard, expert.
+<br><br>Example: [1, 1, 3, 5]</td>
+<td class="tdtop">mm_depth</td>
+<td class="tdtop">game_info</td>
+</tr>
+<tr><td class="thead2" colspan="4">Scorer</td></tr>
+<tr>
+<td class="tdtop">Stores Mult</td>
+<td class="tdtop">A multiplier applied to the difference between number of
+seeds in the players store versus the AI's store.</td>
+<td class="tdtop">stores_m</td>
+<td class="tdtop">scorer</td>
+</tr>
+<tr>
+<td class="tdtop">Seeds Mult</td>
+<td class="tdtop">A multiplier applied to the difference between
+the number of seeds that each player has in play.</td>
+<td class="tdtop">seeds_m</td>
+<td class="tdtop">game_info</td>
+</tr>
+<tr>
+<td class="tdtop">Empties Mult</td>
+<td class="tdtop">A multiplier applied to the difference between
+the number of empty holes of each player.</td>
+<td class="tdtop">empties_m</td>
+<td class="tdtop">game_info / scorer</td>
+</tr>
+<tr>
+<td class="tdtop">Evens Mult</td>
+<td class="tdtop">A multiplier applied to the difference in
+the number of holes with an even number of seeds.</td>
+<td class="tdtop">evens_m</td>
+<td class="tdtop">game_info / scorer</td>
+</tr>
+<tr>
+<td class="tdtop">Child Count Mult</td>
+<td class="tdtop">A multiplier applied to the difference in number
+of designated children by each player.</td>
+<td class="tdtop">child_cnt_m</td>
+<td class="tdtop">game_info / scorer</td>
+</tr>
+<td class="tdtop">Access (d > 1) Mult</td>
+<td class="tdtop">When the difficulty is set to hard or expert,
+a multiplier applied to the difference in the number of holes each
+player can access on the opponents side of the board.
+<br><br>This takes time to compute and is therefore not supported
+for multi-lap games.</td>
+<td class="tdtop">access_m</td>
+<td class="tdtop">game_info / scorer</td>
+</tr>
+<tr>
+<td class="tdtop">Easy Error Random</td>
+<td class="tdtop">When the difficulty is set to easy,
+a small random number may be added to or subtracted from score
+simulating a decision error.
+This parameters sets the range of the random number -value to +value.</td>
+<td class="tdtop">easy_rand</td>
+<td class="tdtop">game_info / scorer</td>
+</tr>
+<tr>
+<td class="tdtop">Repeat Turn Add in</td>
+<td class="tdtop">If the game is sow_own_store, this value will
+be used to increase/decrese the score of turns that end in the store.
+The value is signed for the appropriate turn.</td>
+<td class="tdtop">repeat_turn</td>
+<td class="tdtop">game_info / scorer</td>
+</tr>
+</table>
+
+<h2 id="pregames">Preconfigured Games</h2>
+<p>Mancala game names vary widely.
+One name may have different rule sets or one rule set may have different names to different people and regions.
+The name and rule set pairings below are my interpretations and should not be
+taken as any authority.
+
+<h3 id="nocapt">NoCapt</h3>
+<p>NoCapt is simiplified game in which seeds are sown counter-clockwise,
+there is no capture mechanism, but seeds are sown into the stores.
+<p>This is an interesting game to play clockwise,
+because you sow past all your opponents holes to reach your own store.
+
+<h3 id="wari">Wari</h3>
+<br><br><br>
+
+Variants of wari include <a href="#oware">Oware</a>,
+<a href="#songo">Songo</a> and
+<br><br><br>
+<a href="#vailungthlan">Vai Lung Thlan</a>.
+<br><br><br>
+
+<h3 id="oware">Oware</h3>
+<br><br><br>
+<h3 id="Songo">Songo</h3>
+<br><br><br>
+<h3 id="vailungthlan">Vai Lung Thlan</h3>
+<br><br><br>
+
+<h3 id="valah">Valah</h3>
+<br><br><br>
+<h3 id="Kalah">Kalah</h3>
+The Valah and Kalah rules are the same.
+Are they really different games?
+<br><br><br>
+
+<h3 id="cow">Cow</h3>
+<br><br><br>
+A variant of Cow is <a href="#goat">Goat</a>.
+
+<h3 id="goat">Goat</h3>
+<br><br><br>
+
+<h3 id="bechi">Bechi</h3>
+<br><br><br>
+
+<h3 id="qelat">Qelta</h3>
+<br><br><br>
+
+<h3 id="ayoayo">Ayoayo</h3>
+<br><br><br>
+
+Variants include <a href="#ednodoi">Endodoi</a> and
+<a href="baoayoayo">Bao (Ayoayo)</a>.
+<br><br><br>
+
+<h3 id="endodoi">Endodoi and Endodoi_10</h3>
+<br><br><br>
+<h3 id="baoayoayo">Bao (Ayoayo)</h3>
+<br><br><br>
+
+<h3 id="bao">Bao</h3>
+<br><br><br>
+
+
+</body>
+</html>
