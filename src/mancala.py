@@ -32,6 +32,12 @@ from game_interface import WinCond
 from game_interface import PASS_TOKEN
 
 
+LOCK = ['_', ' ']
+CHILD = {True: '\u02c4',
+         False: '\u02c5',
+         None: ' '}
+
+
 @dc.dataclass(frozen=True, kw_only=True)
 class GameState(ai_interface.StateIf):
     """A simplified immuatble game state but enough to save
@@ -48,6 +54,33 @@ class GameState(ai_interface.StateIf):
     @property
     def turn(self):
         return self._turn
+
+    def __str__(self):
+
+        dbl_holes = len(self.board)
+        holes = dbl_holes // 2
+
+        string = ''
+        for side, side_range in enumerate([range(dbl_holes - 1, holes - 1, -1),
+                                           range(holes)]):
+            for loc in side_range:
+
+                if self.blocked and self.blocked[loc]:
+                    string += '  x'
+                else:
+                    string += f' {self.board[loc]:2}'
+                if self.unlocked:
+                    string += LOCK[self.unlocked[loc]]
+                if self.child:
+                    string += CHILD[self.child[loc]]
+
+            string += '  *' if int(not self.turn) == side else '   '
+            loc = (side + 1) % 2
+            string += f'  {self.store[loc]:3}' \
+                      if self.store[loc] else ''
+            if not side:
+                string += '\n'
+        return string
 
 
 class ManDeco:

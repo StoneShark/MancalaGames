@@ -25,6 +25,10 @@ class AiGameIf(abc.ABC):
     This game class should inherit this (i.e. mixedin)."""
 
     @abc.abstractmethod
+    def get_turn(self):
+        """Return current turn."""
+
+    @abc.abstractmethod
     def get_moves(self):
         """Return a list of possible moves for the current player.
         Each will be sent to the apply interface.

@@ -33,6 +33,7 @@ class GameLog:
     def __init__(self):
 
         self.active = True
+        self.live = False
         self.level = INFO
         self.turn_nbr = -1
         self.log_records = col.deque()
@@ -58,6 +59,8 @@ class GameLog:
 
         if lvl >= self.level:
             self.log_records.append(LogRecord(text, lvl))
+            if self.live:
+                print(text)
 
 
     def output(self, file):
@@ -93,6 +96,11 @@ game_log = GameLog()
 def set_active(active):
     """Set the logger state."""
     game_log.active = active
+
+
+def set_live(live):
+    """Have the logger write to stdio when messages are created."""
+    game_log.live = live
 
 
 def set_level(level):
