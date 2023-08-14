@@ -117,10 +117,10 @@ class HoleButton(tk.Button):
         self.pos = position
         self.bidir = bi_data[0]
         self.dirs = bi_data[1]
-
-        self.nbr_seeds = 0
-        self.marker = None
-        self.relief = None
+        self.props = gi.HoleProps(seeds=0,
+                                  unlocked=True,
+                                  blocked=False,
+                                  ch_owner=None)
 
         tk.Button.__init__(self, pframe, borderwidth=2, height=3, width=10,
                            text='',
@@ -132,18 +132,17 @@ class HoleButton(tk.Button):
             self.bind('<Button-3>', self.right_click)
 
 
-    def set_props(self, props, active_color, disable):
+    def set_props(self, props, disable, cactive):
         """set the number of seeds and properties, then refresh the hole
 
-        active_color: boolean - color as though active (even if it's not)
+        cactive: boolean - color as though active (even if it's not)
+        this shows which holes the ai can play from
+
         disable: boolean - should the user be able to select the button
         (always no for AI)"""
 
-        self.nbr_seeds = props.seeds
-        self.marker = props.marker
-        self.relief = props.relief
-
-        self._refresh(active_color, disable)
+        self.props = props
+        self._refresh(disable, cactive)
 
 
     def left_click(self):
@@ -163,24 +162,30 @@ class HoleButton(tk.Button):
         self.game_ui.move((self.pos, self.dirs[1]))
 
 
-    def _refresh(self, active_color, disable):
+    def _refresh(self, disable=False, cactive=False):
         """Set text, props and states."""
 
-        mtext = '  '
-        if self.marker:
-            mtext = self.marker + ' '
+        if self.props.blocked:
+            self['text'] = 'x'
 
-        if self.nbr_seeds:
-            self['text'] = mtext + str(self.nbr_seeds)
         else:
-            self['text'] = mtext + ''
+            otext = ''
+            if self.props.ch_owner is True:
+                otext = '\u02c4'
+            elif self.props.ch_owner is False:
+                otext = '\u02c5'
 
-        if self.relief:
+            if self.props.seeds:
+                self['text'] = otext + str(self.props.seeds)
+            else:
+                self['text'] = otext + ''
+
+        if not self.props.unlocked:
             self['relief'] = 'ridge'
         else:
             self['relief'] = 'raised'
 
-        if active_color:
+        if cactive:
             self['background'] = 'SystemButtonFace'
         else:
             self['background'] = 'grey80'
@@ -437,31 +442,33 @@ class MancalaUI(tk.Frame):
         game_log.save(self.game.params_str())
 
 
-    def _refresh(self, disable=False):
-        """Make UI match mancala game."""
+    def _refresh(self):
+        """Make UI match mancala game.
 
-        turn_row = int(not self.game.get_turn())
+        If the ai is active and it's the ai's turn (True), disable all holes.
+        Additionally, disable holes that:
+            1. are not the current players hole
+            2. are not available for play (e.g. no allowable move)"""
 
-        if disable:
-            actives = [False] * self.game.cts.holes
-        else:
-            actives = self.game.get_allowable_holes()
+        turn = self.game.get_turn()
+        turn_row = int(not turn)
+        actives = self.game.get_allowable_holes()
+        ai_turn = self.ai_player.get() and turn
 
         for row in range(2):
 
             if self.info.flags.stores:
                 self.stores[row].set_store(self.game.get_store(row))
 
+            player = row == turn_row
             for pos in range(self.game.cts.holes):
 
-                active_color = turn_row == row and actives[pos]
-                disable = not active_color
-                if self.ai_player.get() and self.game.get_turn():
-                    disable = True
+                cactive = player and actives[pos]
+                disable = ai_turn or not cactive
 
                 self.disp[row][pos].set_props(
                     self.game.get_hole_props(row, pos),
-                    active_color, disable)
+                    disable, cactive)
 
 
     def _new_game(self, new_round_ok=False):

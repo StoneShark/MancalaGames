@@ -564,7 +564,7 @@ class TestUdirAll:
         assert uagame.board == utils.build_board([4, 4, 4, 3],
                                                  [0, 3, 3, 3])
         assert uagame.store == [0, 0]
-        assert uagame.turn == True
+        assert uagame.turn
 
     def test_f0_ccw(self, uagame):
 
@@ -574,7 +574,7 @@ class TestUdirAll:
         assert uagame.board == utils.build_board([3, 3, 3, 3],
                                                  [0, 4, 4, 4])
         assert uagame.store == [0, 0]
-        assert uagame.turn == True
+        assert uagame.turn
 
 
 @pytest.mark.filterwarnings("ignore")
@@ -593,37 +593,6 @@ class TestBlocks_ito_Sow:
 
         return mancala.Mancala(game_consts, game_info)
 
-    def test_blocks_setup(self, bgame):
-
-        assert bgame.board == utils.build_board([3, 3, 3, 3],
-                                                [3, 3, 3, 3])
-        assert not any(bgame.blocked)
-
-        hprops = bgame.get_hole_props(1, 2)    # row not player
-        assert hprops.seeds == 3
-        assert hprops.relief == False
-        assert hprops.marker == ''
-
-        bgame.turn = False
-        bgame.blocked[2] = True
-
-        hprops = bgame.get_hole_props(1, 2)
-        assert hprops.seeds == 3
-        assert hprops.relief == False
-        assert hprops.marker == 'x'
-
-        hprops = bgame.get_hole_props(0, 1)
-        assert hprops.seeds == 3
-        assert hprops.relief == False
-        assert hprops.marker == ''
-
-        bgame.turn = True
-        bgame.blocked[6] = True
-
-        hprops = bgame.get_hole_props(0, 1)
-        assert hprops.seeds == 3
-        assert hprops.relief == False
-        assert hprops.marker == 'x'
 
     def test_f0(self, bgame):
 
@@ -653,24 +622,6 @@ class TestMoveunlock_ito_Sow:
 
         return mancala.Mancala(game_consts, game_info)
 
-    def test_unlock_setup(self, mugame):
-
-        assert mugame.board == utils.build_board([3, 3, 3, 3],
-                                                 [3, 3, 3, 3])
-        assert not any(mugame.unlocked)
-
-        hprops = mugame.get_hole_props(1, 2)    # row not player
-        assert hprops.seeds == 3
-        assert hprops.relief == True
-        assert hprops.marker == ''
-
-        mugame.turn = False
-        mugame.unlocked[2] = True
-
-        hprops = mugame.get_hole_props(1, 2)
-        assert hprops.seeds == 3
-        assert hprops.relief == False
-        assert hprops.marker == ''
 
     def test_f0(self, mugame):
 

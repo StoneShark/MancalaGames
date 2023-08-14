@@ -447,19 +447,10 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         position : 0 .. 5 from left to right"""
 
         loc = self.cts.pos_to_loc(row, pos)
-
-        mtext = ''
-        if self.blocked[loc]:
-            mtext = 'x'
-        else:
-            if self.child[loc] is True:
-                mtext = game_str.UP
-            if self.child[loc] is False:
-                mtext = game_str.DN
-
-        return gi.HoleProps(self.board[loc],
-                            relief=not self.unlocked[loc],
-                            marker=mtext)
+        return gi.HoleProps(seeds=self.board[loc],
+                            unlocked=self.unlocked[loc],
+                            blocked=self.blocked[loc],
+                            ch_owner=self.child[loc])
 
 
     def get_store(self, row):

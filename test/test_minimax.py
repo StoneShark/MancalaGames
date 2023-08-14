@@ -84,6 +84,9 @@ def define_get_game(depth):
         def is_max_player(self):
             return not self.turn
 
+        def get_turn(self):
+            return self.turn
+
         def score(self, _=None):
             self.scored[self.node] = True
             return self.scores[self.node]

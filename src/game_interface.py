@@ -352,16 +352,15 @@ class GameInfo:
                 'Child count scorer not supported without child flag.')
 
 
-@dc.dataclass
+@dc.dataclass(frozen=True, kw_only=True)
 class HoleProps:
-    """Dynamic properties for each hole.
+    """Dynamic properties for each hole
+    that the mancala class knows about."""
 
-    relief - if true a ridge is used, else normal raised button
-    marker - if seeds == 0 text displayed,
-    otherwise text added to the right of the nbr seeds"""
     seeds: int
-    relief: bool = False
-    marker: str = None
+    unlocked: bool
+    blocked: bool
+    ch_owner: bool  # actually one of False, True or None
 
 
 # %%  game interface abstract base class -- the UI requires these

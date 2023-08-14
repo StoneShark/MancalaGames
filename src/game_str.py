@@ -118,6 +118,7 @@ class HoleStrUnlock(HoleStrIF):
 
         return LOCK[self.game.unlocked[loc]] + super().get_hole_str(loc)
 
+
 class HoleStrChild(HoleStrIF):
     """Create a hole string for games with hole owners:
     children/daughters/waldas"""

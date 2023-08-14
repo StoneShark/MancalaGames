@@ -5,7 +5,6 @@ Created on Sat Mar 25 06:44:29 2023
 @author: Ann
 """
 
-#  TODO no tests for HoleProps, are these someplace else?
 #  TODO no tests for GameInterface, any needed?
 #  TODO most exceptions are not tested
 
