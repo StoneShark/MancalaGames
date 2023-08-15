@@ -239,9 +239,13 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         # TODO maybe bad because ai_params must match ai_player type
         self.player.set_params(self.info.mm_depth[self.difficulty])
 
+
     def new_game(self, new_round_ok=False):
-        """delegate to the new_game decorators"""
-        self.deco.new_game.new_game(new_round_ok)
+        """Delegate to the new_game decorators.
+        Return False if it a new round was started.
+        True if a new game was started."""
+
+        return self.deco.new_game.new_game(new_round_ok)
 
 
     def _get_seeds_for_divvy(self):
@@ -391,7 +395,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         (for Deka)."""
 
         assert sum(self.store) + sum(self.board) == self.cts.total_seeds, \
-            'seed count error'
+            'seed count error before move'
 
         if (move == PASS_TOKEN
                 or (self.info.flags.udirect and move[0] == PASS_TOKEN)):

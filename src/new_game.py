@@ -22,7 +22,10 @@ class NewGameIf(abc.ABC):
 
     @abc.abstractmethod
     def new_game(self, new_round_ok=False):
-        """collect seeds when game ended"""
+        """collect seeds when game ended.
+
+        Return False if it a new round was started.
+        True if a new game was started."""
 
 
 # %% base new game
@@ -42,6 +45,7 @@ class NewGame(NewGameIf):
         self.game.store = [0, 0]
         self.game.turn = random.choice([False, True])
         self.game.starter = self.game.turn
+        return True
 
 
 # %%  decorators
@@ -75,7 +79,7 @@ class NewRound(NewGameIf):
 
         if game_over:
             self.decorator.new_game()
-            return
+            return True
 
         self.game.turn = not self.game.starter
         self.game.starter = self.game.turn
@@ -100,6 +104,7 @@ class NewRound(NewGameIf):
                 else:
                     self.game.board[pos] = 0
                     self.game.blocked[pos] = True
+        return False
 
 
 # %%

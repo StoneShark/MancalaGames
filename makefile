@@ -14,6 +14,7 @@ MODULES += game_log.py
 MODULES += game_str.py
 MODULES += get_direction.py
 MODULES += get_moves.py
+MODULES += hole_button.py
 MODULES += incrementer.py
 MODULES += man_config.py
 MODULES += mancala.py

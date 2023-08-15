@@ -352,7 +352,7 @@ class GameInfo:
                 'Child count scorer not supported without child flag.')
 
 
-@dc.dataclass(frozen=True, kw_only=True)
+@dc.dataclass(kw_only=True)
 class HoleProps:
     """Dynamic properties for each hole
     that the mancala class knows about."""

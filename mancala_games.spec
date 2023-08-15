@@ -2,15 +2,17 @@
 
 block_cipher = None
 
-datafiles =  [('./GameProps/*.txt', '../GameProps')]
+datafiles =  [('./mancala_help.html', '.'),
+              ('./logs/README.txt', '.'),
+              ('./GameProps/*.txt', '../GameProps')]
 
 
 a = Analysis(
     ['src/mancala_games.pyw'],
     pathex=['D:/Activity_Data/Mancala'],
     binaries=[],
-    datas=datafiles,
-    hiddenimports=['tkinter.messagebox'],
+    datas=None,
+    hiddenimports=['tkinter.messagebox', 'tkinter.simpledialog'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
