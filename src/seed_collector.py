@@ -34,6 +34,9 @@ class SeedCollIf(abc.ABC):
 
 # %% base collectors
 
+# XXXX seed collection options:
+#         all, own, opps (for XCaptSowOwn), even split (to intgrate end)
+
 
 class SeedCollector(SeedCollIf):
     """Base seed collector."""
@@ -114,7 +117,7 @@ class SeedCollNoPass(SeedCollIf):
                                               ended=not cont_game)
 
 
-class SeedColMustShare(SeedCollIf):
+class SeedCollMustShare(SeedCollIf):
     """collect seeds on end game"""
 
     def claim_own_seeds(self, repeat_turn, ended=False):
@@ -148,8 +151,39 @@ class SeedColMustShare(SeedCollIf):
         return self.decorator.claim_own_seeds(repeat_turn)
 
 
-# %% build decorator chain
+# %% top level decorators
 
+class SeedCollWinner(SeedCollIf):
+    """If either player has already won based on seed count,
+    passed ended on as True to collect the seeds."""
+
+    def claim_own_seeds(self, repeat_turn, ended=False):
+
+        ended = (self.game.store[True] > self.game.cts.win_count
+                 or self.game.store[False] > self.game.cts.win_count)
+
+        return self.decorator.claim_own_seeds(repeat_turn, ended=ended)
+
+
+class SeedCollRounds(SeedCollIf):
+    """If the game is played in rounds, the game is over
+    if either player does not have the minimus seeds to fill
+    a hole for the start of the game."""
+
+    def claim_own_seeds(self, repeat_turn, ended=False):
+
+        seeds = self.decorator.claim_own_seeds(repeat_turn, ended=ended)
+
+        if (seeds[True] < self.game.cts.nbr_start
+                or seeds[False] < self.game.cts.nbr_start):
+
+            self.game.store[False] = seeds[False]
+            self.game.store[True] = seeds[True]
+
+        return seeds
+
+
+# %% build decorator chain
 
 def deco_seed_collector(game):
     """Return a chain of seed_collector."""
@@ -163,6 +197,11 @@ def deco_seed_collector(game):
         collector = SeedCollNoPass(game, collector)
 
     if game.info.flags.mustshare:
-        collector = SeedColMustShare(game, collector)
+        collector = SeedCollMustShare(game, collector)
+
+    collector = SeedCollWinner(game, collector)
+
+    if game.info.flags.rounds:
+        collector = SeedCollRounds(game, collector)
 
     return collector

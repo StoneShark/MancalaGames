@@ -411,11 +411,13 @@ class MancalaUI(tk.Frame):
 
     def set_game_mode(self, mode):
         """Change the game mode.
+
         If switching to game play (from rndsetup) check that
         all seeds have been placed, and switch.
         Assert will catch any programming error, that caused
         a seed gain or loss.
         If all is ok, reconfig the buttons to GAMEPLAY mode.
+
         If switching to round setup (from gameplay),
         ask the user if they wish to move any seeds.
         If they do reconfig the buttons to RNDSETUP mode."""

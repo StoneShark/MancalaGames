@@ -356,8 +356,8 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
     def do_sow(self, move):
         """Do the sowing steps:
 
-        2. get sow direction
-        3. deal with first hole, getting start loc and seeds to sow
+        2. deal with first hole, getting start loc and seeds to sow
+        3. get sow direction
         4. sow the seeds, return if something bad/interesting happened
 
         RETURN end locations and sow direction"""

@@ -167,6 +167,7 @@ class TestNewEndGames:
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on = [2],
                                 flags=GameFlags(rounds=True,
+                                                blocks=True,
                                                 stores=True))
 
         game = mancala.Mancala(game_consts, game_info)

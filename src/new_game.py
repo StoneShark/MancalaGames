@@ -54,28 +54,18 @@ class NewRound(NewGameIf):
     """Create a new round if allowed."""
 
     def new_game(self, new_round_ok=False):
-        """Create a new round if allowed."""
+        """Create a new round if allowed.
+        Use pre-determine pattern to distribute the seeds for the
+        next round.
+        Return False if it a new round was started.
+        True if a new game was started."""
 
-        seeds = self.game.store[:]
-        for loc in range(self.game.cts.dbl_holes):
-
-            if self.game.child[loc] is True:
-                seeds[True] += self.game.board[loc]
-
-            elif self.game.child[loc] is False:
-                seeds[False] += self.game.board[loc]
-
-            elif loc < self.game.cts.holes:
-                seeds[False] += self.game.board[loc]
-
-            else:
-                seeds[True] += self.game.board[loc]
+        nbr_start = self.game.cts.nbr_start
 
         game_over = True
         if new_round_ok:
-
-            game_over = seeds[True] < self.game.cts.nbr_start or \
-                seeds[False] < self.game.cts.nbr_start
+            game_over = self.game.store[True] < nbr_start or \
+                self.game.store[False] < nbr_start
 
         if game_over:
             self.decorator.new_game()
@@ -92,15 +82,15 @@ class NewRound(NewGameIf):
         for store, brange in enumerate([self.game.cts.false_fill,
                                         self.game.cts.true_fill]):
 
-            quot, rem = divmod(seeds[store], self.game.cts.nbr_start)
+            quot, rem = divmod(self.game.store[store], nbr_start)
             fill = min(quot, self.game.cts.holes)
 
             self.game.store[store] = \
-                rem + (quot - fill) * self.game.cts.nbr_start
+                rem + (quot - fill) * nbr_start
 
             for cnt, pos in enumerate(brange):
                 if cnt < fill:
-                    self.game.board[pos] = self.game.cts.nbr_start
+                    self.game.board[pos] = nbr_start
                 else:
                     self.game.board[pos] = 0
                     self.game.blocked[pos] = True

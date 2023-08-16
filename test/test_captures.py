@@ -38,9 +38,7 @@ class TestNoCapts:
     def game(self):
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
-
-        game_info = gi.GameInfo(name='my name',
-                                nbr_holes=game_consts.holes,
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 flags=GameFlags(stores=True))
 
         game = mancala.Mancala(game_consts, game_info)
@@ -51,16 +49,15 @@ class TestNoCapts:
     def test_no_capt_warn(self):
 
         with pytest.warns(UserWarning):
-            gi.GameInfo(name='my name',
-                        nbr_holes=3,
+            gi.GameInfo(nbr_holes=3,
                         flags=GameFlags(stores=True))
 
     @pytest.mark.filterwarnings("ignore")
     def test_no_capt(self, game):
         game.board = utils.build_board([3, 3, 3, 3],
-                                       [3, 3, 3, 1])
+                                       [0, 4, 4, 2])
         game.store = [1, 1]
-        game.move(0)
+        game.capture_seeds(3, Direct.CCW)
         assert game.board == utils.build_board([3, 3, 3, 3],
                                                [0, 4, 4, 2])
         assert game.store == [1, 1]
@@ -72,10 +69,8 @@ class TestSingleCapts:
     def game(self):
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
-
-        game_info = gi.GameInfo(name='my name',
-                                nbr_holes=game_consts.holes,
-                                capt_on = [4],
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+                                capt_on=[4],
                                 flags=GameFlags(stores=True))
 
         game = mancala.Mancala(game_consts, game_info)
@@ -85,9 +80,9 @@ class TestSingleCapts:
 
     def test_no_capt(self, game):
         game.board = utils.build_board([3, 3, 3, 3],
-                                       [3, 3, 3, 1])
+                                       [0, 4, 4, 2])
         game.store = [1, 1]
-        game.move(0)
+        game.capture_seeds(3, Direct.CCW)
         assert game.board == utils.build_board([3, 3, 3, 3],
                                                [0, 4, 4, 2])
         assert game.store == [1, 1]
@@ -95,9 +90,9 @@ class TestSingleCapts:
 
     def test_capt(self, game):
         game.board = utils.build_board([3, 3, 3, 3],
-                                       [3, 3, 3, 3])
+                                       [0, 4, 4, 4])
         game.store = [0, 0]
-        game.move(0)
+        game.capture_seeds(3, Direct.CCW)
         assert game.board == utils.build_board([3, 3, 3, 3],
                                                [0, 4, 4, 0])
         assert game.store == [4, 0]
@@ -110,9 +105,7 @@ class TestRevDirCapts:
     def ccw_game(self):
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
-
-        game_info = gi.GameInfo(name='my name',
-                                nbr_holes=game_consts.holes,
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on=[2],
                                 flags=GameFlags(sow_direct=Direct.CCW,
                                                 multicapt=True,
@@ -294,10 +287,10 @@ class TestEvenCapts:
 
     def test_cap_bothsides(self, ccw_game):
         """Confirm capture of start."""
-        ccw_game.board = utils.build_board([1, 1, 1, 1],
-                                           [3, 3, 5, 1])
+        ccw_game.board = utils.build_board([2, 2, 2, 2],
+                                           [3, 3, 0, 2])
         ccw_game.store = [4, 4]
-        ccw_game.move(2)
+        ccw_game.capture_seeds(7, Direct.CCW)
         assert ccw_game.board == utils.build_board([0, 0, 0, 0],
                                                    [3, 3, 0, 0])
         assert ccw_game.store == [14, 4]
@@ -511,10 +504,10 @@ class TestMultiCrossCapts:
     def test_capt_mult(self, cw_game):
 
         cw_game.board = utils.build_board([4, 3, 3, 3],
-                                          [0, 0, 0, 1])
+                                          [0, 0, 1, 0])
         cw_game.store = [8, 2]
 
-        cw_game.move(3)
+        cw_game.capture_seeds(2, Direct.CW)
         assert cw_game.board == utils.build_board([0, 0, 0, 3],
                                                   [0, 0, 1, 0])
         assert cw_game.store == [18, 2]
@@ -544,10 +537,10 @@ class TestMultiCrossCapts:
     def test_xcp_capt_mult(self, cw_xcp_game):
 
         cw_xcp_game.board = utils.build_board([4, 3, 3, 3],
-                                              [0, 0, 0, 1])
+                                              [0, 0, 1, 0])
         cw_xcp_game.store = [8, 2]
 
-        cw_xcp_game.move(3)
+        cw_xcp_game.capture_seeds(2, Direct.CW)
         assert cw_xcp_game.board == utils.build_board([4, 3, 0, 0],
                                                       [0, 0, 0, 0])
         assert cw_xcp_game.store == [15, 2]
@@ -585,12 +578,12 @@ class TestBlockCapts:
 
     def test_blocked(self, cw_game):
 
-        cw_game.board = utils.build_board([3, 0, 3, 3],
-                                          [3, 3, 3, 3])
+        cw_game.board = utils.build_board([4, 0, 4, 3],
+                                          [4, 0, 3, 3])
         cw_game.store = [2, 1]
         cw_game.blocked[6] = True
 
-        cw_game.move(1)
+        cw_game.capture_seeds(5, Direct.CW)
         assert cw_game.board == utils.build_board([0, 0, 0, 3],
                                                   [0, 0, 3, 3])
         assert cw_game.store == [14, 1]

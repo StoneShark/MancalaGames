@@ -1,0 +1,35 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "nbr_start": 4,
+      "holes": 6
+   },
+   "game_info": {
+      "name": "Erherhe",
+      "difficulty": 1,
+      "help_file": "",
+      "about": "Erherhe: a single-lap mancala,\nsow direction is counter-clockwise,\nmultiple capture on opponents side \non 1s and 3s.\nPlayed in rounds.",
+      "flags": {
+         "blocks": true,
+         "multicapt": true,
+         "mustshare": true,
+         "oppsidecapt": true,
+         "rounds": true,
+         "skip_start": true,
+         "sow_direct": 1,
+         "stores": true
+      },
+      "scorer": {
+         "stores_m": 4,
+         "access_m": 1,
+         "seeds_m": 0,
+         "empties_m": -1,
+         "child_cnt_m": 0,
+         "evens_m": 0,
+         "easy_rand": 10,
+         "repeat_turn": 0
+      },
+      "capt_on": [1, 3],
+      "mm_depth": [1, 3, 5, 8]
+   }
+}

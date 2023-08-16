@@ -27,7 +27,7 @@ import utils
 
 # %%
 
-class Test_Basic_WConds:
+class TestBasicWConds:
 
     @pytest.fixture
     def ccw_game(self):
@@ -49,8 +49,8 @@ class Test_Basic_WConds:
         ccw_game.store = [3, 4]
         ccw_game.turn = True
 
-        assert ccw_game.win_conditions() == None
-        assert ccw_game.get_turn() == True
+        assert not ccw_game.win_conditions()
+        assert ccw_game.get_turn()
         assert ccw_game.board == utils.build_board([0, 2, 1],
                                                    [0, 2, 0])
         assert ccw_game.store == [3, 4]
@@ -63,10 +63,10 @@ class Test_Basic_WConds:
         ccw_game.turn = True
 
         assert ccw_game.win_conditions() == WinCond.WIN
-        assert ccw_game.get_turn() == True
-        assert ccw_game.board == utils.build_board([1, 0, 0],
-                                                   [0, 0, 1])
-        assert ccw_game.store == [2, 8]
+        assert ccw_game.get_turn()
+        assert ccw_game.board == utils.build_board([0, 0, 0],
+                                                   [0, 0, 0])
+        assert ccw_game.store == [3, 9]
 
     def test_ft_win(self, ccw_game):
         # true win on false turn, playable, no pass
@@ -76,10 +76,10 @@ class Test_Basic_WConds:
         ccw_game.turn = False
 
         assert ccw_game.win_conditions() == WinCond.WIN
-        assert ccw_game.get_turn() == True
-        assert ccw_game.board == utils.build_board([1, 0, 0],
-                                                   [0, 0, 1])
-        assert ccw_game.store == [2, 8]
+        assert ccw_game.get_turn()
+        assert ccw_game.board == utils.build_board([0, 0, 0],
+                                                   [0, 0, 0])
+        assert ccw_game.store == [3, 9]
 
     def test_ff_win(self, ccw_game):
         # false win on false turn, playable, no pass
@@ -89,10 +89,10 @@ class Test_Basic_WConds:
         ccw_game.turn = False
 
         assert ccw_game.win_conditions() == WinCond.WIN
-        assert ccw_game.get_turn() == False
-        assert ccw_game.board == utils.build_board([1, 0, 0],
-                                                   [0, 0, 1])
-        assert ccw_game.store == [8, 2]
+        assert not ccw_game.get_turn()
+        assert ccw_game.board == utils.build_board([0, 0, 0],
+                                                   [0, 0, 0])
+        assert ccw_game.store == [9, 3]
 
     def test_tf_win(self, ccw_game):
         # false win on true turn, playable, no pass
@@ -102,10 +102,10 @@ class Test_Basic_WConds:
         ccw_game.turn = True
 
         assert ccw_game.win_conditions() == WinCond.WIN
-        assert ccw_game.get_turn() == False
-        assert ccw_game.board == utils.build_board([1, 0, 0],
-                                                   [0, 0, 1])
-        assert ccw_game.store == [8, 2]
+        assert not ccw_game.get_turn()
+        assert ccw_game.board == utils.build_board([0, 0, 0],
+                                                   [0, 0, 0])
+        assert ccw_game.store == [9, 3]
 
     def test_f_tie_win(self, ccw_game):
         # tie  on false turn, playable, no pass
@@ -139,11 +139,11 @@ class Test_Basic_WConds:
         ccw_game.turn = True
 
         assert ccw_game.win_conditions() == WinCond.WIN
-        assert ccw_game.get_turn() == True
+        assert ccw_game.get_turn()
         assert ccw_game.board == utils.build_board([0, 0, 0],
                                                    [0, 0, 0])
         assert ccw_game.store == [3, 9]
-        assert ccw_game.test_pass() == False
+        assert not ccw_game.test_pass()
 
     def test_f_nopass_win(self, ccw_game):
         # false's turn ended, true has no moves, no pass
@@ -153,11 +153,11 @@ class Test_Basic_WConds:
         ccw_game.turn = False
 
         assert ccw_game.win_conditions() == WinCond.WIN
-        assert ccw_game.get_turn() == False
+        assert not ccw_game.get_turn()
         assert ccw_game.board == utils.build_board([0, 0, 0],
                                                    [0, 0, 0])
         assert ccw_game.store == [8, 4]
-        assert ccw_game.test_pass() == False
+        assert not ccw_game.test_pass()
 
     def test_t_repeat_win(self, ccw_game):
         ccw_game.board = utils.build_board([5, 0, 0],
@@ -165,8 +165,8 @@ class Test_Basic_WConds:
         ccw_game.store = [3, 4]
         ccw_game.turn = True
 
-        assert ccw_game.win_conditions(repeat_turn=True) == None
-        assert ccw_game.get_turn() == True
+        assert ccw_game.win_conditions(repeat_turn=True) is None
+        assert ccw_game.get_turn()
         assert ccw_game.board == utils.build_board([5, 0, 0],
                                                    [0, 0, 0])
         assert ccw_game.store == [3, 4]
@@ -177,14 +177,14 @@ class Test_Basic_WConds:
         ccw_game.store = [3, 4]
         ccw_game.turn = False
 
-        assert ccw_game.win_conditions(repeat_turn=True) == None
-        assert ccw_game.get_turn() == False
+        assert ccw_game.win_conditions(repeat_turn=True) is None
+        assert not ccw_game.get_turn()
         assert ccw_game.board == utils.build_board([0, 0, 0],
                                                    [0, 0, 5])
         assert ccw_game.store == [3, 4]
 
 
-class Test_Rounds_WConds:
+class TestRoundsWConds:
 
     @pytest.fixture
     def rgame(self):
@@ -197,6 +197,7 @@ class Test_Rounds_WConds:
                                 difficulty=0,
                                 flags=GameFlags(sow_direct=Direct.CCW,
                                                 rounds=True,
+                                                blocks=True,
                                                 evens=True))
 
         return mancala.Mancala(game_consts, game_info)
@@ -208,10 +209,10 @@ class Test_Rounds_WConds:
         rgame.turn = True
 
         assert rgame.win_conditions() == WinCond.ROUND_WIN
-        assert rgame.get_turn() == True
-        assert rgame.board == utils.build_board([1, 0, 0],
-                                                [0, 0, 1])
-        assert rgame.store == [2, 8]
+        assert rgame.get_turn()
+        assert rgame.board == utils.build_board([0, 0, 0],
+                                                [0, 0, 0])
+        assert rgame.store == [3, 9]
 
     def test_ft_win(self, rgame):
         rgame.board = utils.build_board([1, 0, 0],
@@ -220,10 +221,10 @@ class Test_Rounds_WConds:
         rgame.turn = False
 
         assert rgame.win_conditions() == WinCond.ROUND_WIN
-        assert rgame.get_turn() == True
-        assert rgame.board == utils.build_board([1, 0, 0],
-                                                [0, 0, 1])
-        assert rgame.store == [2, 8]
+        assert rgame.get_turn()
+        assert rgame.board == utils.build_board([0, 0, 0],
+                                                [0, 0, 0])
+        assert rgame.store == [3, 9]
 
     def test_ff_win(self, rgame):
         rgame.board = utils.build_board([1, 0, 0],
@@ -232,10 +233,10 @@ class Test_Rounds_WConds:
         rgame.turn = False
 
         assert rgame.win_conditions() == WinCond.ROUND_WIN
-        assert rgame.get_turn() == False
-        assert rgame.board == utils.build_board([1, 0, 0],
-                                                [0, 0, 1])
-        assert rgame.store == [8, 2]
+        assert not rgame.get_turn()
+        assert rgame.board == utils.build_board([0, 0, 0],
+                                                [0, 0, 0])
+        assert rgame.store == [9, 3]
 
     def test_tf_win(self, rgame):
         rgame.board = utils.build_board([1, 0, 0],
@@ -244,10 +245,10 @@ class Test_Rounds_WConds:
         rgame.turn = True
 
         assert rgame.win_conditions() == WinCond.ROUND_WIN
-        assert rgame.get_turn() == False
-        assert rgame.board == utils.build_board([1, 0, 0],
-                                                [0, 0, 1])
-        assert rgame.store == [8, 2]
+        assert not rgame.get_turn()
+        assert rgame.board == utils.build_board([0, 0, 0],
+                                                [0, 0, 0])
+        assert rgame.store == [9, 3]
 
     def test_f_tie_win(self, rgame):
         # tie  on false turn, playable, no pass
@@ -273,7 +274,7 @@ class Test_Rounds_WConds:
         assert rgame.store == [6, 6]
 
 
-class Test_Pass_WConds:
+class TestPassWConds:
 
     @pytest.fixture
     def pass_game(self):
@@ -297,16 +298,16 @@ class Test_Pass_WConds:
         pass_game.store = [3, 4]
         pass_game.turn = True
 
-        assert pass_game.win_conditions() == None
-        assert pass_game.get_turn() == True
+        assert not pass_game.win_conditions()
+        assert pass_game.get_turn()
         assert pass_game.board == utils.build_board([0, 2, 1],
                                                     [0, 2, 0])
         assert pass_game.store == [3, 4]
 
         pass_game.turn = False    # move does this, after win_cond
 
-        assert pass_game.test_pass() == False
-        assert pass_game.get_turn() == False
+        assert not pass_game.test_pass()
+        assert not pass_game.get_turn()
 
     def test_t_pass_win(self, pass_game):
         # true's turn ended, false has no moves
@@ -315,16 +316,16 @@ class Test_Pass_WConds:
         pass_game.store = [3, 4]
         pass_game.turn = True
 
-        assert pass_game.win_conditions() == None
-        assert pass_game.get_turn() == True
+        assert not pass_game.win_conditions()
+        assert pass_game.get_turn()
         assert pass_game.board == utils.build_board([2, 2, 1],
                                                     [0, 0, 0])
         assert pass_game.store == [3, 4]
 
         pass_game.turn = False    # move does this, after win_cond
 
-        assert pass_game.test_pass() == True
-        assert pass_game.get_turn() == True
+        assert pass_game.test_pass()
+        assert pass_game.get_turn()
 
     def test_f_pass_win2(self, pass_game):
         # false's turn ended, true has no moves
@@ -333,14 +334,14 @@ class Test_Pass_WConds:
         pass_game.store = [3, 4]
         pass_game.turn = False
 
-        assert pass_game.win_conditions() == None
-        assert pass_game.get_turn() == False
+        assert not pass_game.win_conditions()
+        assert not pass_game.get_turn()
         assert pass_game.board == utils.build_board([0, 0, 0],
                                                     [2, 2, 1])
         assert pass_game.store == [3, 4]
 
-        assert pass_game.move(mancala.PASS_TOKEN) == None
-        assert pass_game.get_turn() == True
+        assert pass_game.move(mancala.PASS_TOKEN) is None
+        assert pass_game.get_turn()
 
     def test_t_gover_win(self, pass_game):
         pass_game.board = utils.build_board([0, 0, 0],
@@ -349,7 +350,7 @@ class Test_Pass_WConds:
         pass_game.turn = True
 
         assert pass_game.win_conditions() == WinCond.WIN
-        assert pass_game.get_turn() == True
+        assert pass_game.get_turn()
         assert pass_game.board == utils.build_board([0, 0, 0],
                                                     [0, 0, 0])
         assert pass_game.store == [4, 8]
@@ -361,13 +362,13 @@ class Test_Pass_WConds:
         pass_game.turn = False
 
         assert pass_game.win_conditions() == WinCond.WIN
-        assert pass_game.get_turn() == True
+        assert pass_game.get_turn()
         assert pass_game.board == utils.build_board([0, 0, 0],
                                                     [0, 0, 0])
         assert pass_game.store == [4, 8]
 
 
-class Test_MustShare_WConds:
+class TestMustShareWConds:
 
     @pytest.fixture
     def msgame(self):
@@ -390,8 +391,8 @@ class Test_MustShare_WConds:
         msgame.store = [2, 2]
         msgame.turn = False
 
-        assert msgame.win_conditions() == None
-        assert msgame.get_turn() == False
+        assert not msgame.win_conditions()
+        assert not msgame.get_turn()
         assert msgame.board == utils.build_board([2, 3, 0],
                                                  [0, 4, 1])
         assert msgame.store == [2, 2]
@@ -416,8 +417,8 @@ class Test_MustShare_WConds:
         msgame.store = [3, 4]
         msgame.turn = False
 
-        assert msgame.win_conditions() == None
-        assert msgame.get_turn() == False
+        assert not msgame.win_conditions()
+        assert not msgame.get_turn()
         assert msgame.board == utils.build_board([5, 0, 0],
                                                  [0, 0, 0])
         assert msgame.store == [3, 4]
@@ -429,8 +430,8 @@ class Test_MustShare_WConds:
         msgame.store = [3, 4]
         msgame.turn = True
 
-        assert msgame.win_conditions() == None
-        assert msgame.get_turn() == True
+        assert not msgame.win_conditions()
+        assert msgame.get_turn()
         assert msgame.board == utils.build_board([0, 0, 0],
                                                  [0, 0, 5])
         assert msgame.store == [3, 4]
@@ -443,7 +444,7 @@ class Test_MustShare_WConds:
         msgame.turn = False
 
         assert msgame.win_conditions() == WinCond.WIN
-        assert msgame.get_turn() == True
+        assert msgame.get_turn()
         assert msgame.board == utils.build_board([0, 0, 0],
                                                  [0, 0, 0])
         assert msgame.store == [5, 7]
@@ -456,7 +457,7 @@ class Test_MustShare_WConds:
         msgame.turn = True
 
         assert msgame.win_conditions() == WinCond.WIN
-        assert msgame.get_turn() == False
+        assert not msgame.get_turn()
         assert msgame.board == utils.build_board([0, 0, 0],
                                                  [0, 0, 0])
         assert msgame.store == [7, 5]
@@ -469,7 +470,7 @@ class Test_MustShare_WConds:
         msgame.turn = False
 
         assert msgame.win_conditions(repeat_turn=True) == WinCond.WIN
-        assert msgame.get_turn() == True
+        assert msgame.get_turn()
         assert msgame.board == utils.build_board([0, 0, 0],
                                                  [0, 0, 0])
         assert msgame.store == [3, 9]
@@ -482,7 +483,7 @@ class Test_MustShare_WConds:
         msgame.turn = True
 
         assert msgame.win_conditions(repeat_turn=True) == WinCond.WIN
-        assert msgame.get_turn() == False
+        assert not msgame.get_turn()
         assert msgame.board == utils.build_board([0, 0, 0],
                                                  [0, 0, 0])
         assert msgame.store == [8, 4]
@@ -495,7 +496,7 @@ class Test_MustShare_WConds:
         msgame.turn = False
 
         assert msgame.win_conditions(repeat_turn=True) == WinCond.WIN
-        assert msgame.get_turn() == True
+        assert msgame.get_turn()
         assert msgame.board == utils.build_board([0, 0, 0],
                                                  [0, 0, 0])
         assert msgame.store == [5, 7]
@@ -508,7 +509,7 @@ class Test_MustShare_WConds:
         msgame.turn = True
 
         assert msgame.win_conditions(repeat_turn=True) == WinCond.WIN
-        assert msgame.get_turn() == False
+        assert not msgame.get_turn()
         assert msgame.board == utils.build_board([0, 0, 0],
                                                  [0, 0, 0])
         assert msgame.store == [7, 5]

@@ -155,6 +155,10 @@ class GameFlags:
             raise GameInfoError(
                 'SOW_START and SKIP_START do not make sense together.')
 
+        if self.rounds and not self.blocks:
+            raise GameInfoError(
+                'ROUNDS without BLOCKS is not supported.')
+
 
     def _check_capture_params(self):
         """Check consistency of capture parameters."""
