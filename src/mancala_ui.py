@@ -23,7 +23,7 @@ import game_log
 from hole_button import Behavior
 from game_interface import WinCond
 from game_interface import Direct
-
+from game_interface import PASS_TOKEN
 
 # %%   constants
 
@@ -150,6 +150,11 @@ class MancalaUI(tk.Frame):
         else:
             self.master = tk.Tk()
 
+        self.log_ai = tk.BooleanVar(self.master, False)
+        self.live_log = tk.BooleanVar(self.master, False)
+        self.log_level = tk.IntVar(self.master, game_log.MOVES)
+        game_log.set_level(self.log_level.get())
+
         self.master.title(self.info.name)
         self.master.option_add('*tearOff', False)
         self.master.resizable(False, False)
@@ -198,7 +203,9 @@ class MancalaUI(tk.Frame):
             a_store = Store(self, 'right')
             self.stores = [b_store, a_store]
 
-        self._new_game()
+        # do not call new game
+        # either it's already new or it's been set to a desired state
+        self._refresh()
 
 
     def _get_hole_dirs(self, row):
@@ -229,14 +236,8 @@ class MancalaUI(tk.Frame):
         self.master.config(menu=menubar)
 
         gamemenu = tk.Menu(menubar)
-
         gamemenu.add_command(label='New', command=self._new_game)
         gamemenu.add_command(label='End Game', command=self._end_game)
-        gamemenu.add_separator()
-        gamemenu.add_command(label='Show Prev', command=game_log.prev)
-        gamemenu.add_command(label='Show Log', command=game_log.dump)
-        gamemenu.add_command(label='Save Log', command=self._save_file)
-
         menubar.add_cascade(label='Game', menu=gamemenu)
 
         aimenu = tk.Menu(menubar)
@@ -268,6 +269,45 @@ class MancalaUI(tk.Frame):
                                command=self._set_difficulty)
 
         menubar.add_cascade(label='AI', menu=aimenu)
+
+
+        logmenu = tk.Menu(menubar)
+        logmenu.add_command(label='Show Prev', command=game_log.prev)
+        logmenu.add_command(label='Show Log', command=game_log.dump)
+        logmenu.add_command(label='Save Log', command=self._save_file)
+        logmenu.add_separator()
+
+        logmenu.add_radiobutton(
+            label='Moves',
+            value=game_log.MOVES, variable=self.log_level,
+            command=lambda: game_log.set_level(self.log_level.get()))
+        logmenu.add_radiobutton(
+            label='Important',
+            value=game_log.IMPORT, variable=self.log_level,
+            command=lambda: game_log.set_level(self.log_level.get()))
+        logmenu.add_radiobutton(
+            label='Steps',
+            value=game_log.STEPS, variable=self.log_level,
+            command=lambda: game_log.set_level(self.log_level.get()))
+        logmenu.add_radiobutton(
+            label='Information',
+            value=game_log.INFO, variable=self.log_level,
+            command=lambda: game_log.set_level(self.log_level.get()))
+        logmenu.add_radiobutton(
+            label='All',
+            value=game_log.NOTSET, variable=self.log_level,
+            command=lambda: game_log.set_level(self.log_level.get()))
+        logmenu.add_separator()
+        logmenu.add_checkbutton(
+            label='Live Log',
+            onvalue=True, offvalue=False,
+            variable=self.live_log,
+            command=lambda: game_log.set_live(self.live_log.get()))
+        logmenu.add_checkbutton(label='Log AI Analysis',
+                                variable=self.log_ai,
+                                onvalue=True, offvalue=False)
+
+        menubar.add_cascade(label='Log', menu=logmenu)
 
         if self.info.flags.rounds:
             rndmenu = tk.Menu(menubar)
@@ -573,7 +613,7 @@ class MancalaUI(tk.Frame):
                                    parent=self)
 
             self._refresh()
-            self._log_turn(last_turn, 'pass')
+            self._log_turn(self.game.turn, PASS_TOKEN)
             self._schedule_ai()
 
 
@@ -596,4 +636,8 @@ class MancalaUI(tk.Frame):
         """If it's the AI's turn, do a move. AI is top player."""
 
         if self.ai_player.get() and self.game.get_turn():
-            self.move(self.game.get_ai_move())
+            game_log.set_active(self.log_ai.get())
+            move = self.game.get_ai_move()
+            game_log.set_active(True)
+
+            self.move(move)

@@ -167,7 +167,7 @@ class SeedCollWinner(SeedCollIf):
 
 class SeedCollRounds(SeedCollIf):
     """If the game is played in rounds, the game is over
-    if either player does not have the minimus seeds to fill
+    if either player does not have the minimum seeds to fill
     a hole for the start of the game."""
 
     def claim_own_seeds(self, repeat_turn, ended=False):

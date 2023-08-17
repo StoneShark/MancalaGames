@@ -335,7 +335,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         rtext = 'the game'
         gtext = 'Game'
         title = 'Game Over'
-        if win_cond in [WinCond.ROUND_WIN or WinCond.ROUND_TIE]:
+        if win_cond in (WinCond.ROUND_WIN, WinCond.ROUND_TIE):
             rtext = 'the round'
             gtext = 'The round'
             title = 'Round Over'
@@ -403,6 +403,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             return None
 
         loc, direct = self.do_sow(move)
+        game_log.step('sow', self)
 
         if loc is WinCond.END_STORE:
             win_cond = self.win_conditions(repeat_turn=True)
@@ -412,8 +413,11 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             return WinCond.ENDLESS
 
         self.capture_seeds(loc, direct)
+        game_log.step('capture', self)
 
         win_cond = self.win_conditions()
+        game_log.step('win condition', self)
+
         if win_cond:
             return win_cond
 
@@ -423,7 +427,6 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
     def get_ai_move(self):
         """Return the ai move position"""
-
         return self.player.pick_move()
 
 

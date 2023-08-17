@@ -9,13 +9,14 @@ Created on Fri Aug 11 15:01:16 2023
 import collections as col
 import datetime
 import sys
+import textwrap
 
 
-MOVES = 4
-IMPORT = 3
+MOVES = 0
+IMPORT = 1
 STEPS = 2
-INFO = 1
-NOTSET = 0
+INFO = 3
+NOTSET = 4
 
 
 class LogRecord:
@@ -34,7 +35,7 @@ class GameLog:
 
         self.active = True
         self.live = False
-        self.level = INFO
+        self.level = MOVES
         self.turn_nbr = -1
         self.log_records = col.deque()
         self.move_start = col.deque()
@@ -57,7 +58,7 @@ class GameLog:
     def add(self, text, lvl):
         """Add the text to the log."""
 
-        if lvl >= self.level:
+        if lvl <= self.level:
             self.log_records.append(LogRecord(text, lvl))
             if self.live:
                 print(text)
@@ -120,6 +121,14 @@ def turn(game_obj, move_desc=''):
         game_log.mark_turn()
         game_log.add(f'\n{game_log.turn_nbr}: ' + move_desc, MOVES)
         game_log.add(str(game_obj), MOVES)
+
+
+def step(step_name, game_obj):
+    """Add a game step to the log."""
+
+    if game_log.active:
+        game_log.add(f'\n    {step_name}:', STEPS)
+        game_log.add(textwrap.indent(str(game_obj), '    '), STEPS)
 
 
 def add(text, lvl=NOTSET):
