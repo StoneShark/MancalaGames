@@ -16,7 +16,7 @@ sys.path.extend(['src'])
 
 import man_config
 
-class TestCaptSowOwn:
+class TestBechi:
 
     @pytest.fixture
     def game(self):

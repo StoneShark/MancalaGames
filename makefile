@@ -45,7 +45,7 @@ all: unit_tests pylint exe
 #
 #  run all the unit tests and create a coverage report
 
-unit_tests: htmlcov/index.html $(SOURCES) $(TESTS)  $(GAMES)
+unit_tests: htmlcov/index.html $(SOURCES) $(TESTS) $(GAMES)
 
 htmlcov/index.html: $(SOURCES)  $(TESTS) $(GAMES)
 	-coverage run --branch -m pytest
@@ -55,18 +55,25 @@ htmlcov/index.html: $(SOURCES)  $(TESTS) $(GAMES)
 vtest: 
 	pytest -v test
 	
+.PHONY: game_tests
+game_tests:
+	-coverage run --branch -m pytest test/test_bechi.py
+	-coverage run --branch --append -m pytest test/test_deka.py
+	-coverage run --branch --append -m pytest test/test_oware_gs.py
+	-coverage run --branch --append -m pytest test/test_xcaptsowown.py
+	coverage html
 
 	
 #  test individual files
 #	usage:   make <testfile>.test
 #       example: make test_var.test
 #  where <testfile> is a file of tests in the 'test' directory
-#  this rules cleans all previous coverage data and runs the one
+#  this rule cleans all previous coverage data and runs the one
 #  files of tests. This can be used to make certain that the
 #  code is actually tested and not just run as part of another
-#  test.
+#  test suite.
 
-%.test: clean
+%.test:
 	-coverage run --branch -m pytest test\\$(subst .test,.py,$@)
 	coverage html
 

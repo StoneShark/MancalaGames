@@ -13,7 +13,7 @@ sys.path.extend(['src'])
 
 import man_config
 
-class TestCaptSowOwn:
+class TestXCaptSowOwn:
 
     @pytest.fixture
     def game(self):

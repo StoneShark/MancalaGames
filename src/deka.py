@@ -6,10 +6,12 @@ Created on Thu Jul 27 15:20:35 2023
 
 # %% imports
 
+import game_log
 import game_interface as gi
-from game_interface import WinCond
 import mancala
 import sower
+
+from game_interface import WinCond
 
 # %% constant
 
@@ -92,6 +94,7 @@ class DekaLapSower(sower.SowMethodIf):
             else:
                 return loc
 
+        game_log.add('MLAP game ENDLESS', game_log.IMPORT)
         return WinCond.ENDLESS
 
 

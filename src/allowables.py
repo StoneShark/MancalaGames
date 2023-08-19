@@ -12,6 +12,8 @@ Created on Sat Apr  8 09:15:30 2023
 
 import abc
 
+import game_log
+
 from game_interface import GrandSlam
 from game_interface import WinCond
 
@@ -130,6 +132,8 @@ class NoGrandSlam(AllowableIf):
 
             if any(self.game.board[tloc] for tloc in opp_rng):
                 rval[pos] = True
+            else:
+                game_log.add(f'GRANDSLAM: prevented {loc}', game_log.IMPORT)
 
             self.game.state = saved_state
 

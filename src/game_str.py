@@ -24,7 +24,7 @@ CHILD = {True: UP,
 
 # %%  interfaces
 
-class HoleStrIF(abc.ABC):
+class HoleMarkerIF(abc.ABC):
     """Generate a hole string."""
 
     def __init__(self, game, decorator):
@@ -49,31 +49,9 @@ class StringIf(abc.ABC):
         """Generate the game string."""
 
 
-# %% String classes
+# %% String class
 
-class StringBasic(StringIf):
-    """Create a game string."""
-
-    def get_string(self):
-        """Return the basic string."""
-
-        sgame = self.game
-
-        string = ' '.join(
-            [f'{p:3}' for p in
-             sgame.board[sgame.cts.holes:sgame.cts.dbl_holes][::-1]])
-        string += '  *' if sgame.turn else '   '
-        string += f'  {sgame.store[1]:3}' if sgame.store[1] else ''
-        string += '\n'
-        string += ' '.join([f'{p:3}'
-                            for p in sgame.board[0:sgame.cts.holes]])
-        string += '  *' if not sgame.turn else '   '
-        string += f'  {sgame.store[0]:3}' if sgame.store[0] else ''
-
-        return string
-
-
-class StringAnnotates(StringIf):
+class GameString(StringIf):
     """Create a game string, given a hole string object."""
 
     def __init__(self, game, hole_str):
@@ -109,8 +87,17 @@ class StringAnnotates(StringIf):
 
 # %% Hole classes
 
-class HoleStrUnlock(HoleStrIF):
-    """Create a hole string for games with locks,
+
+class HoleMarkerNone(HoleMarkerIF):
+    """Create an empty hole markers."""
+
+    def get_hole_str(self, loc):
+        """Return mark for hole"""
+        return ''
+
+
+class HoleMarkerUnlock(HoleMarkerIF):
+    """Create a hole marker for games with locks,
     relief is used in the UI for locked holes."""
 
     def get_hole_str(self, loc):
@@ -119,7 +106,7 @@ class HoleStrUnlock(HoleStrIF):
         return LOCK[self.game.unlocked[loc]] + super().get_hole_str(loc)
 
 
-class HoleStrChild(HoleStrIF):
+class HoleMarkerChild(HoleMarkerIF):
     """Create a hole string for games with hole owners:
     children/daughters/waldas"""
 
@@ -133,19 +120,15 @@ class HoleStrChild(HoleStrIF):
 # %%
 
 def deco_get_string(game):
-    """Not a decorator chain, just an individual class.
+    """Not a decorator chain, just an individual class
+    with a decorator to add marks to the hole text."""
 
-    Blocked is handled by both string base classes."""
-
-    if not any([game.info.flags.child, game.info.flags.moveunlock]):
-        return StringBasic(game)
-
-    hole_deco = None
+    hole_deco = HoleMarkerNone(None, None)
 
     if game.info.flags.moveunlock:
-        hole_deco = HoleStrUnlock(game, hole_deco)
+        hole_deco = HoleMarkerUnlock(game, hole_deco)
 
     if game.info.flags.child:
-        hole_deco = HoleStrChild(game, hole_deco)
+        hole_deco = HoleMarkerChild(game, hole_deco)
 
-    return StringAnnotates(game, hole_deco)
+    return GameString(game, hole_deco)

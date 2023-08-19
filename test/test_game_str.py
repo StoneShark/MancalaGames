@@ -39,13 +39,13 @@ class TestGameStr:
     def test_basic_str(self, game):
 
         gstr = str(game)
-        assert gstr == '  4   4   4   4   4   4   \n  4   4   4   4   4   4  *'
+        assert gstr == '  4  4  4  4  4  4   \n  4  4  4  4  4  4  *'
 
         game.board = utils.build_board([4, 3, 4, 0, 8, 0],
                                        [4, 4, 2, 0, 4, 1])
         game.store = [5, 2]
         gstr = str(game)
-        assert gstr == '  4   3   4   0   8   0       2\n  4   4   2   0   4   1  *    5'
+        assert gstr == '  4  3  4  0  8  0       2\n  4  4  2  0  4  1  *    5'
 
 
     @pytest.fixture
