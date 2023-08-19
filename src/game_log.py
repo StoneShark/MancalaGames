@@ -11,6 +11,8 @@ import datetime
 import sys
 import textwrap
 
+import man_path
+
 
 MOVES = 0
 IMPORT = 1
@@ -113,6 +115,7 @@ def set_level(level):
 def new():
     """Reset the game log."""
     game_log.reset()
+    game_log.add('\n*** New game', MOVES)
 
 
 def turn(game_obj, move_desc=''):
@@ -153,7 +156,8 @@ def save(param_string):
     added to the filename."""
 
     now = datetime.datetime.now()
-    filename = '../logs/log_' + now.strftime('%Y%m%d_%H%M%S') + '.txt'
+    filename = man_path.get_path(
+        'logs/log_' + now.strftime('%Y%m%d_%H%M%S') + '.txt')
 
     with open(filename, 'w', encoding='utf-8') as file:
         print(param_string, file=file)

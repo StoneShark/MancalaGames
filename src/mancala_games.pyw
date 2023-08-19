@@ -27,6 +27,7 @@ import game_interface as gi
 import game_log
 import mancala_ui
 import man_config
+import man_path
 
 from game_classes import GAME_CLASSES
 from game_constants import MAX_HOLES
@@ -36,7 +37,8 @@ from game_interface import Direct
 from game_interface import GrandSlam
 
 
-# %% support funcs
+
+# %% support func
 
 def inv_dict(adict):
     """Invert the keys and values for a reverse lookup."""
@@ -44,15 +46,6 @@ def inv_dict(adict):
     vals = adict.values()
     assert len(vals) == len(set(vals)), 'values not unique for adict'
     return {value: key for key, value in adict.items()}
-
-
-def gpath(filename):
-    """Create a pathname that can be used from the exe.
-    This is used so that pyinstaller exe knows how to get at the
-    files included in the in the single exe."""
-
-    return os.path.abspath(os.path.join(os.path.dirname(__file__), filename))
-
 
 # %%  Constants
 
@@ -267,7 +260,7 @@ class MancalaGames(tk.Frame):
     def _help():
         """Have the os pop open the help file in a browser."""
 
-        os.startfile(gpath('../mancala_help.html'))
+        os.startfile(man_path.get_path('mancala_help.html'))
 
 
     @staticmethod
@@ -826,9 +819,10 @@ class MancalaGames(tk.Frame):
         Build game_consts and game_info.
         json.JSONDecodeError is dervied from ValueError."""
 
-        filename = tkfile.askopenfilename(parent=self.master,
-                                          title='Load Parameters',
-                                          initialdir=gpath('../GameProps'))
+        filename = tkfile.askopenfilename(
+            parent=self.master,
+            title='Load Parameters',
+            initialdir=man_path.get_path('GameProps'))
         if not filename:
             return
 
@@ -868,13 +862,14 @@ class MancalaGames(tk.Frame):
         if not self.filename:
             self.filename = info_dict['name'] + '.txt'
 
-        filename = tkfile.asksaveasfilename(parent=self.master,
-                                            title='Save Parameters',
-                                            confirmoverwrite=True,
-                                            initialdir=gpath('../GameProps'),
-                                            initialfile=self.filename,
-                                            filetypes=[('text file', '.txt')],
-                                            defaultextension='.txt')
+        filename = tkfile.asksaveasfilename(
+            parent=self.master,
+            title='Save Parameters',
+            confirmoverwrite=True,
+            initialdir=man_path.get_path('GameProps'),
+            initialfile=self.filename,
+            filetypes=[('text file', '.txt')],
+            defaultextension='.txt')
         if not filename:
             return
 

@@ -44,10 +44,8 @@ td {
 <body>
 <h1>Mancala Games</h1>
 <p>Mancala Games is an engine for playing several variants of Mancala.
-Games may be played with two players or one player and
+Games may be played with two players or one player and an
 <a href="#aiplayer">AI player</a>.
-The <a href="#opwindow">Mancala Options UI</a>
-allows selecting the game and AI player options.
 
 <p>This engine supports games with two ranks of 2 to 12 holes per side.
 Game stores to the left and right of holes are optional.
@@ -85,6 +83,24 @@ Players alternate turns performing these steps for each turn:
 	<p>Determine if there was a winner or other special
 	conditions (such as a required pass).
 <li>Check for end game conditions: win, loss, tie, or end of round.
+</ol>
+
+<p>Mancala Games provides three ways to start games:
+
+<ol>
+<li><b>Play</b>: a command line interface to directly start a game given
+a mancala configuration file. Usage to play Wari (for example):
+<pre>
+     play.exe.lnk Wari
+</pre>
+<li><b>Play Mancala</b>: a game that can be started via a double click on
+the game link (play_mancala.exe). A popup is provided which allows selection
+of any game in the GameProps directory. A tool tip is used to show
+the About string of each game.
+<li><b>Mancala Games</b>: Pops up the full parameter selection window.
+Game property files can be defined, loaded, edited and saved.
+Games can be played with the currently define parameters.
+Most game options can selected see <a href="#opwindow">Mancala Options Window</a>.
 </ol>
 
 <h2 id="opwindow">Mancala Options Window</h2>

@@ -17,6 +17,7 @@ MODULES += get_moves.py
 MODULES += hole_button.py
 MODULES += incrementer.py
 MODULES += man_config.py
+MODULES += man_path.py
 MODULES += mancala.py
 MODULES += mancala_games.pyw
 MODULES += mancala_ui.py
@@ -35,7 +36,7 @@ SOURCES = src/*.py src/*.pyw
 GAMES = GameProps/*.txt
 TESTS = test/*.py
 
-DATAFILES = GameProps/*.txt
+DATAFILES = GameProps/*.txt ./mancala_help.html logs/README.txt
 
 all: unit_tests pylint exe
 
@@ -55,6 +56,7 @@ vtest:
 	pytest -v test
 	
 
+	
 #  test individual files
 #	usage:   make <testfile>.test
 #       example: make test_var.test
@@ -100,9 +102,19 @@ clean:
 
 # exe
 #
-# build a stand alone executable
-exe: dist/mancala_games.exe
+# build stand alone executables with a shared runtime 
 
-dist/mancala_games.exe: $(SOURCES) $(DATAFILES) mancala_games.spec
-	pyinstaller mancala_games.spec
+exe: MancalaGames/mancala_games.exe
+
+MancalaGames/mancala_games.exe: $(SOURCES) $(DATAFILES) mancala_games.spec
+	-rmdir /S /Q MancalaGames
+	pyinstaller mancala_games.spec --distpath MancalaGames
+	copy mancala_help.html MancalaGames
+	mkdir MancalaGames\\GameProps
+	copy GameProps\\* MancalaGames\\GameProps
+	mkdir MancalaGames\\logs
+	copy logs\\README.txt MancalaGames\\logs
+	ln -s .\\MancalaGames\\runtime\\play.exe .\\MancalaGames\\play.exe
+	ln -s .\\MancalaGames\\runtime\\play_mancala.exe .\\MancalaGames\\play_mancala.exe
+	ln -s .\\MancalaGames\\runtime\\mancala_games.exe .\\MancalaGames\\mancala_games.exe
 	-rmdir /S /Q build
