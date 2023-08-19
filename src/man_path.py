@@ -9,7 +9,7 @@ import os.path
 SRC = 'src'
 
 def get_path(filename):
-    """Provide compatible between code run directly
+    """Provide compatibility between code run directly
     (in the source dir) and the exe. If running from
     the source dir, remove the src from the path.
     Otherwise the data files are parallel to the exe."""
