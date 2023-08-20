@@ -35,6 +35,7 @@ MODULES += sower.py
 SOURCES = src/*.py src/*.pyw
 GAMES = GameProps/*.txt
 TESTS = test/*.py
+GAME_TESTS = $(wildcard test/test_gm_*.py)
 
 DATAFILES = GameProps/*.txt ./mancala_help.html logs/README.txt
 
@@ -54,13 +55,11 @@ htmlcov/index.html: $(SOURCES)  $(TESTS) $(GAMES)
 .PHONY: vtest
 vtest: 
 	pytest -v test
-	
+
+
 .PHONY: game_tests
 game_tests:
-	-coverage run --branch -m pytest test/test_bechi.py
-	-coverage run --branch --append -m pytest test/test_deka.py
-	-coverage run --branch --append -m pytest test/test_oware_gs.py
-	-coverage run --branch --append -m pytest test/test_xcaptsowown.py
+	-coverage run --branch -m pytest $(GAME_TESTS)
 	coverage html
 
 	

@@ -44,14 +44,14 @@ class QelatCollector(seed_collector.SeedCollIf):
         if any(self.game.store):
             walda_locs = self.game.find_waldas(self)
 
-            if all(walda_locs):
+            if all(loc >= 0 for loc in walda_locs):
                 self.game.board[walda_locs[0]] += self.game.store[0]
                 self.game.board[walda_locs[1]] += self.game.store[1]
 
-            elif walda_locs[0]:
+            elif walda_locs[0] >= 0:
                 self.game.board[walda_locs[0]] += sum(self.game.store)
 
-            elif walda_locs[1]:
+            elif walda_locs[1] >= 0:
                 self.game.board[walda_locs[1]] += sum(self.game.store)
 
             self.game.store = [0, 0]
@@ -117,7 +117,7 @@ class Qelat(mancala.Mancala):
         """Find and return a walda for each side,
         if one exists."""
 
-        walda_locs = [False, False]
+        walda_locs = [-1, -1]
         for side in (False, True):
             for walda in range(self.cts.dbl_holes):
                 if self.child[walda] == side:
@@ -137,7 +137,7 @@ class Qelat(mancala.Mancala):
 
         walda_locs = self.find_waldas()
 
-        if all(walda_locs):
+        if all(loc >= 0 for loc in walda_locs):
             self.board[walda_locs[0]] += quot
             self.board[walda_locs[1]] += quot
 
@@ -153,10 +153,10 @@ class Qelat(mancala.Mancala):
             else:
                 self.board[walda_locs[0]] += rem
 
-        elif walda_locs[0]:
+        elif walda_locs[0] >= 0:
             self.board[walda_locs[0]] += seeds
 
-        elif walda_locs[1]:
+        elif walda_locs[1] >= 0:
             self.board[walda_locs[1]] += seeds
 
         else:

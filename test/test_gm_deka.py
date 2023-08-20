@@ -223,3 +223,36 @@ class TestDeka:
         winmsg = game.win_message(cond)
         assert 'Game Over' in winmsg[0]
         assert 'Top' in winmsg[1]
+
+
+    def test_end_game_tie(self, game):
+
+        cond = game.end_game()
+
+        winmsg = game.win_message(cond)
+        assert 'Game Over' in winmsg[0]
+        assert 'by request' in winmsg[1]
+
+
+    def test_end_game_t_win(self, game):
+
+        game.board = [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1]
+        game.store == [34, 0]
+
+        cond = game.end_game()
+
+        winmsg = game.win_message(cond)
+        assert 'Game Over' in winmsg[0]
+        assert 'Top' in winmsg[1]
+
+
+    def test_end_game_f_win(self, game):
+
+        game.board = [0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
+        game.store == [34, 0]
+
+        cond = game.end_game()
+
+        winmsg = game.win_message(cond)
+        assert 'Game Over' in winmsg[0]
+        assert 'Bottom' in winmsg[1]

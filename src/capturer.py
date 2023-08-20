@@ -187,11 +187,13 @@ class GSKeep(GrandSlamCapt):
         saved_state = self.game.state
 
         if self.is_grandslam(loc, direct):
-            game_log.add('GRANDSLAM: keep', game_log.IMPORT)
+
             turn = self.game.turn
             save_loc = self.keep[turn]
-
             seeds = saved_state.board[save_loc]
+            if seeds:
+                game_log.add('GRANDSLAM: keep', game_log.IMPORT)
+
             self.game.board[save_loc] = seeds
             self.game.store[turn] -= seeds
 

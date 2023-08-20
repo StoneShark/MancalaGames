@@ -705,6 +705,9 @@ class TestOwareGrandSlam:
         assert cond is None
 
         # move 12
+        moves = game.get_moves()
+        assert moves == [5]
+
         cond = game.move(5)
         assert game.turn is True
         assert game.board == [1, 1, 1, 0, 0, 0, 2, 5, 1, 12, 4, 12]
@@ -712,6 +715,9 @@ class TestOwareGrandSlam:
         assert cond is None
 
         # move 13 -   GRANDSLAM: prevented from 10
+        moves = game.get_moves()
+        assert 10 not in moves
+
         cond = game.move(0)
         assert game.turn is False
         assert game.board == [0, 2, 2, 1, 1, 1, 3, 6, 2, 13, 5, 0]
@@ -1111,11 +1117,168 @@ class TestOwareGrandSlam:
         info.__post_init__()
         game = mancala.Mancala(consts, info)
 
-        # TODO get a left log that isn't on the end game
+        game.turn = False
+        assert game.turn is False
+        assert game.board == [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
+        assert game.store == [0, 0]
 
-        # winmsg = game.win_message(cond)
-        # assert 'Game Over' in winmsg[0]
-        # assert 'Top' in winmsg[1]
+        # move 1
+        cond = game.move(0)
+        assert game.turn is True
+        assert game.board == [0, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4]
+        assert game.store == [0, 0]
+        assert cond is None
+
+        # move 2
+        cond = game.move(0)
+        assert game.turn is False
+        assert game.board == [1, 6, 6, 6, 5, 4, 4, 4, 4, 4, 4, 0]
+        assert game.store == [0, 0]
+        assert cond is None
+
+        # move 3
+        cond = game.move(0)
+        assert game.turn is True
+        assert game.board == [0, 7, 6, 6, 5, 4, 4, 4, 4, 4, 4, 0]
+        assert game.store == [0, 0]
+        assert cond is None
+
+        # move 4
+        cond = game.move(1)
+        assert game.turn is False
+        assert game.board == [1, 8, 7, 6, 5, 4, 4, 4, 4, 4, 0, 1]
+        assert game.store == [0, 0]
+        assert cond is None
+
+        # move 5
+        cond = game.move(0)
+        assert game.turn is True
+        assert game.board == [0, 9, 7, 6, 5, 4, 4, 4, 4, 4, 0, 1]
+        assert game.store == [0, 0]
+        assert cond is None
+
+        # move 6
+        cond = game.move(0)
+        assert game.turn is False
+        assert game.board == [0, 9, 7, 6, 5, 4, 4, 4, 4, 4, 0, 0]
+        assert game.store == [0, 1]
+        assert cond is None
+
+        # move 7
+        cond = game.move(1)
+        assert game.turn is True
+        assert game.board == [0, 0, 8, 7, 6, 5, 5, 5, 5, 5, 0, 0]
+        assert game.store == [1, 1]
+        assert cond is None
+
+        # move 8
+        cond = game.move(2)
+        assert game.turn is False
+        assert game.board == [1, 1, 9, 7, 6, 5, 5, 5, 5, 0, 1, 1]
+        assert game.store == [1, 1]
+        assert cond is None
+
+        # move 9
+        cond = game.move(0)
+        assert game.turn is True
+        assert game.board == [0, 2, 9, 7, 6, 5, 5, 5, 5, 0, 1, 1]
+        assert game.store == [1, 1]
+        assert cond is None
+
+        # move 10
+        cond = game.move(0)
+        assert game.turn is False
+        assert game.board == [0, 2, 9, 7, 6, 5, 5, 5, 5, 0, 1, 0]
+        assert game.store == [1, 2]
+        assert cond is None
+
+        # move 11
+        cond = game.move(1)
+        assert game.turn is True
+        assert game.board == [0, 0, 10, 8, 6, 5, 5, 5, 5, 0, 1, 0]
+        assert game.store == [1, 2]
+        assert cond is None
+
+        # move 12
+        cond = game.move(1)
+        assert game.turn is False
+        assert game.board == [0, 0, 10, 8, 6, 5, 5, 5, 5, 0, 0, 1]
+        assert game.store == [1, 2]
+        assert cond is None
+
+        # move 13
+        cond = game.move(2)
+        assert game.turn is True
+        assert game.board == [1, 0, 0, 9, 7, 6, 6, 6, 6, 1, 1, 2]
+        assert game.store == [1, 2]
+        assert cond is None
+
+        # move 14
+        cond = game.move(0)
+        assert game.turn is False
+        assert game.board == [0, 0, 0, 9, 7, 6, 6, 6, 6, 1, 1, 0]
+        assert game.store == [1, 5]
+        assert cond is None
+
+        # move 15
+        cond = game.move(3)
+        assert game.turn is True
+        assert game.board == [1, 0, 0, 0, 8, 7, 7, 7, 7, 2, 2, 1]
+        assert game.store == [1, 5]
+        assert cond is None
+
+        # move 16
+        cond = game.move(0)
+        assert game.turn is False
+        assert game.board == [0, 0, 0, 0, 8, 7, 7, 7, 7, 2, 2, 0]
+        assert game.store == [1, 7]
+        assert cond is None
+
+        # move 17
+        cond = game.move(5)
+        assert game.turn is True
+        assert game.board == [1, 0, 0, 0, 8, 0, 8, 8, 8, 3, 3, 1]
+        assert game.store == [1, 7]
+        assert cond is None
+
+        # move 18
+        cond = game.move(0)
+        assert game.turn is False
+        assert game.board == [0, 0, 0, 0, 8, 0, 8, 8, 8, 3, 3, 0]
+        assert game.store == [1, 9]
+        assert cond is None
+
+        # move 19
+        cond = game.move(4)
+        assert game.turn is True
+        assert game.board == [1, 0, 0, 0, 0, 1, 9, 9, 9, 4, 4, 1]
+        assert game.store == [1, 9]
+        assert cond is None
+
+        # move 20 -  GRANDSLAM: keep
+        cond = game.move(3)
+        assert game.turn is False
+        assert game.board == [0, 0, 0, 0, 0, 2, 9, 9, 0, 5, 5, 2]
+        assert game.store == [1, 15]
+        assert cond is None
+
+        # move 21
+        cond = game.move(5)
+        assert game.turn is True
+        assert game.board == [0, 0, 0, 0, 0, 0, 10, 10, 0, 5, 5, 2]
+        assert game.store == [1, 15]
+        assert cond is None
+
+        # move 22
+        cond = game.move(2)
+        assert game.turn is True
+        assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        assert game.store == [1, 47]
+        assert cond.name == "WIN"
+
+        winmsg = game.win_message(cond)
+        assert 'Game Over' in winmsg[0]
+        assert 'Top' in winmsg[1]
 
 
     def test_leave_right(self, game):
@@ -1127,8 +1290,305 @@ class TestOwareGrandSlam:
         info.__post_init__()
         game = mancala.Mancala(consts, info)
 
-        # TODO get a right log that isn't on the end game
+        game.turn = False
+        assert game.turn is False
+        assert game.board == [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
+        assert game.store == [0, 0]
 
-        # winmsg = game.win_message(cond)
-        # assert 'Game Over' in winmsg[0]
-        # assert 'Top' in winmsg[1]
+        # move 1
+        cond = game.move(0)
+        assert game.turn is True
+        assert game.board == [0, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4]
+        assert game.store == [0, 0]
+        assert cond is None
+
+        # move 2
+        cond = game.move(0)
+        assert game.turn is False
+        assert game.board == [1, 6, 6, 6, 5, 4, 4, 4, 4, 4, 4, 0]
+        assert game.store == [0, 0]
+        assert cond is None
+
+        # move 3
+        cond = game.move(0)
+        assert game.turn is True
+        assert game.board == [0, 7, 6, 6, 5, 4, 4, 4, 4, 4, 4, 0]
+        assert game.store == [0, 0]
+        assert cond is None
+
+        # move 4
+        cond = game.move(1)
+        assert game.turn is False
+        assert game.board == [1, 8, 7, 6, 5, 4, 4, 4, 4, 4, 0, 1]
+        assert game.store == [0, 0]
+        assert cond is None
+
+        # move 5
+        cond = game.move(0)
+        assert game.turn is True
+        assert game.board == [0, 9, 7, 6, 5, 4, 4, 4, 4, 4, 0, 1]
+        assert game.store == [0, 0]
+        assert cond is None
+
+        # move 6
+        cond = game.move(0)
+        assert game.turn is False
+        assert game.board == [0, 9, 7, 6, 5, 4, 4, 4, 4, 4, 0, 0]
+        assert game.store == [0, 1]
+        assert cond is None
+
+        # move 7
+        cond = game.move(1)
+        assert game.turn is True
+        assert game.board == [0, 0, 8, 7, 6, 5, 5, 5, 5, 5, 0, 0]
+        assert game.store == [1, 1]
+        assert cond is None
+
+        # move 8
+        cond = game.move(2)
+        assert game.turn is False
+        assert game.board == [1, 1, 9, 7, 6, 5, 5, 5, 5, 0, 1, 1]
+        assert game.store == [1, 1]
+        assert cond is None
+
+        # move 9
+        cond = game.move(0)
+        assert game.turn is True
+        assert game.board == [0, 2, 9, 7, 6, 5, 5, 5, 5, 0, 1, 1]
+        assert game.store == [1, 1]
+        assert cond is None
+
+        # move 10
+        cond = game.move(0)
+        assert game.turn is False
+        assert game.board == [0, 2, 9, 7, 6, 5, 5, 5, 5, 0, 1, 0]
+        assert game.store == [1, 2]
+        assert cond is None
+
+        # move 11
+        cond = game.move(1)
+        assert game.turn is True
+        assert game.board == [0, 0, 10, 8, 6, 5, 5, 5, 5, 0, 1, 0]
+        assert game.store == [1, 2]
+        assert cond is None
+
+        # move 12
+        cond = game.move(1)
+        assert game.turn is False
+        assert game.board == [0, 0, 10, 8, 6, 5, 5, 5, 5, 0, 0, 1]
+        assert game.store == [1, 2]
+        assert cond is None
+
+        # move 13
+        cond = game.move(2)
+        assert game.turn is True
+        assert game.board == [1, 0, 0, 9, 7, 6, 6, 6, 6, 1, 1, 2]
+        assert game.store == [1, 2]
+        assert cond is None
+
+        # move 14
+        cond = game.move(0)
+        assert game.turn is False
+        assert game.board == [0, 0, 0, 9, 7, 6, 6, 6, 6, 1, 1, 0]
+        assert game.store == [1, 5]
+        assert cond is None
+
+        # move 15
+        cond = game.move(3)
+        assert game.turn is True
+        assert game.board == [1, 0, 0, 0, 8, 7, 7, 7, 7, 2, 2, 1]
+        assert game.store == [1, 5]
+        assert cond is None
+
+        # move 16
+        cond = game.move(0)
+        assert game.turn is False
+        assert game.board == [0, 0, 0, 0, 8, 7, 7, 7, 7, 2, 2, 0]
+        assert game.store == [1, 7]
+        assert cond is None
+
+        # move 17
+        cond = game.move(4)
+        assert game.turn is True
+        assert game.board == [1, 0, 0, 0, 0, 8, 8, 8, 8, 3, 3, 1]
+        assert game.store == [1, 7]
+        assert cond is None
+
+        # move 18
+        cond = game.move(0)
+        assert game.turn is False
+        assert game.board == [0, 0, 0, 0, 0, 8, 8, 8, 8, 3, 3, 0]
+        assert game.store == [1, 9]
+        assert cond is None
+
+        # move 19
+        cond = game.move(5)
+        assert game.turn is True
+        assert game.board == [1, 1, 0, 0, 0, 0, 9, 9, 9, 4, 4, 1]
+        assert game.store == [1, 9]
+        assert cond is None
+
+        # move 20
+        cond = game.move(0)
+        assert game.turn is False
+        assert game.board == [0, 1, 0, 0, 0, 0, 9, 9, 9, 4, 4, 0]
+        assert game.store == [1, 11]
+        assert cond is None
+
+        # move 21
+        cond = game.move(1)
+        assert game.turn is True
+        assert game.board == [0, 0, 1, 0, 0, 0, 9, 9, 9, 4, 4, 0]
+        assert game.store == [1, 11]
+        assert cond is None
+
+        # move 22 -  GRANDSLAM: keep
+        cond = game.move(1)
+        assert game.turn is False
+        assert game.board == [1, 0, 0, 0, 0, 0, 9, 9, 9, 4, 0, 1]
+        assert game.store == [1, 14]
+        assert cond is None
+
+        # move 23
+        cond = game.move(0)
+        assert game.turn is True
+        assert game.board == [0, 1, 0, 0, 0, 0, 9, 9, 9, 4, 0, 1]
+        assert game.store == [1, 14]
+        assert cond is None
+
+        # move 24 -  GRANDSLAM: keep
+        cond = game.move(5)
+        assert game.turn is False
+        assert game.board == [1, 0, 0, 0, 0, 0, 0, 10, 10, 5, 1, 2]
+        assert game.store == [1, 18]
+        assert cond is None
+
+        # move 25
+        cond = game.move(0)
+        assert game.turn is True
+        assert game.board == [0, 1, 0, 0, 0, 0, 0, 10, 10, 5, 1, 2]
+        assert game.store == [1, 18]
+        assert cond is None
+
+        # move 26
+        cond = game.move(3)
+        assert game.turn is False
+        assert game.board == [1, 2, 1, 1, 1, 1, 1, 10, 0, 6, 2, 3]
+        assert game.store == [1, 18]
+        assert cond is None
+
+        # move 27
+        cond = game.move(0)
+        assert game.turn is True
+        assert game.board == [0, 3, 1, 1, 1, 1, 1, 10, 0, 6, 2, 3]
+        assert game.store == [1, 18]
+        assert cond is None
+
+        # move 28
+        cond = game.move(5)
+        assert game.turn is False
+        assert game.board == [0, 3, 1, 1, 1, 1, 0, 11, 0, 6, 2, 3]
+        assert game.store == [1, 18]
+        assert cond is None
+
+        # move 29
+        cond = game.move(1)
+        assert game.turn is True
+        assert game.board == [0, 0, 2, 2, 2, 1, 0, 11, 0, 6, 2, 3]
+        assert game.store == [1, 18]
+        assert cond is None
+
+        # move 30
+        cond = game.move(1)
+        assert game.turn is False
+        assert game.board == [0, 0, 2, 2, 2, 1, 0, 11, 0, 6, 0, 4]
+        assert game.store == [1, 19]
+        assert cond is None
+
+        # move 31
+        cond = game.move(2)
+        assert game.turn is True
+        assert game.board == [0, 0, 0, 3, 3, 1, 0, 11, 0, 6, 0, 4]
+        assert game.store == [1, 19]
+        assert cond is None
+
+        # move 32
+        cond = game.move(4)
+        assert game.turn is False
+        assert game.board == [1, 1, 1, 4, 4, 2, 1, 0, 1, 7, 1, 5]
+        assert game.store == [1, 19]
+        assert cond is None
+
+        # move 33
+        cond = game.move(4)
+        assert game.turn is True
+        assert game.board == [1, 1, 1, 4, 0, 3, 0, 0, 0, 7, 1, 5]
+        assert game.store == [6, 19]
+        assert cond is None
+
+        # move 34
+        cond = game.move(0)
+        assert game.turn is False
+        assert game.board == [2, 2, 2, 5, 0, 3, 0, 0, 0, 7, 1, 0]
+        assert game.store == [6, 20]
+        assert cond is None
+
+        # move 35
+        cond = game.move(0)
+        assert game.turn is True
+        assert game.board == [0, 3, 3, 5, 0, 3, 0, 0, 0, 7, 1, 0]
+        assert game.store == [6, 20]
+        assert cond is None
+
+        # move 36
+        cond = game.move(2)
+        assert game.turn is False
+        assert game.board == [1, 4, 4, 6, 0, 3, 0, 0, 0, 0, 2, 1]
+        assert game.store == [6, 21]
+        assert cond is None
+
+        # move 37
+        cond = game.move(2)
+        assert game.turn is True
+        assert game.board == [1, 4, 0, 7, 1, 4, 0, 0, 0, 0, 2, 1]
+        assert game.store == [7, 21]
+        assert cond is None
+
+        # move 38
+        cond = game.move(0)
+        assert game.turn is False
+        assert game.board == [0, 4, 0, 7, 1, 4, 0, 0, 0, 0, 2, 0]
+        assert game.store == [7, 23]
+        assert cond is None
+
+        # move 39
+        cond = game.move(5)
+        assert game.turn is True
+        assert game.board == [0, 4, 0, 7, 1, 0, 0, 0, 0, 0, 2, 0]
+        assert game.store == [11, 23]
+        assert cond is None
+
+        # move 40
+        cond = game.move(1)
+        assert game.turn is False
+        assert game.board == [0, 4, 0, 7, 1, 0, 0, 0, 0, 0, 0, 1]
+        assert game.store == [11, 24]
+        assert cond is None
+
+        # move 41
+        cond = game.move(3)
+        assert game.turn is True
+        assert game.board == [0, 4, 0, 0, 2, 1, 0, 0, 0, 0, 0, 1]
+        assert game.store == [16, 24]
+        assert cond is None
+
+        # move 42
+        cond = game.move(0)
+        assert game.turn is True
+        assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        assert game.store == [23, 25]
+        assert cond.name == "WIN"
+
+        winmsg = game.win_message(cond)
+        assert 'Game Over' in winmsg[0]
+        assert 'Top' in winmsg[1]
