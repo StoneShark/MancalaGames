@@ -85,6 +85,7 @@ class MustShare(AllowableIf):
 
         for pos, loc in enumerate(my_rng):
             if not self.allow_move(loc):
+                self.game.state = saved_state
                 continue
 
             self.game.do_sow(pos)
@@ -123,10 +124,12 @@ class NoGrandSlam(AllowableIf):
 
         for pos, loc in enumerate(my_rng):
             if not self.allow_move(loc):
+                self.game.state = saved_state
                 continue
 
             tloc, direct = self.game.do_sow(pos)
             if tloc is WinCond.ENDLESS:
+                self.game.state = saved_state
                 continue
             self.game.capture_seeds(tloc, direct)
 

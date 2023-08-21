@@ -63,6 +63,8 @@ class TestConctruction:
         with pytest.raises(TypeError):
             mancala.Mancala(None, min_game_if)
 
+        with pytest.raises(TypeError):
+            mancala.Mancala(gc.GameConsts(3, 5), min_game_if, 5)
 
     @pytest.mark.filterwarnings("ignore")
     def test_min_params(self, min_game_if):
@@ -146,7 +148,6 @@ class TestNewEndGames:
 
     @pytest.fixture
     def game(self):
-        """Game that does little but is CCW."""
 
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
 
@@ -160,7 +161,6 @@ class TestNewEndGames:
 
     @pytest.fixture
     def rgame(self):
-        """Game that does little but is CCW."""
 
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
 

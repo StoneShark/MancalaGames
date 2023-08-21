@@ -194,8 +194,8 @@ class GSKeep(GrandSlamCapt):
             if seeds:
                 game_log.add('GRANDSLAM: keep', game_log.IMPORT)
 
-            self.game.board[save_loc] = seeds
-            self.game.store[turn] -= seeds
+                self.game.board[save_loc] = seeds
+                self.game.store[turn] -= seeds
 
 
 class GSOppGets(GrandSlamCapt):

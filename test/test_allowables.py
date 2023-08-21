@@ -19,6 +19,7 @@ import game_constants as gc
 import game_interface as gi
 from game_interface import GameFlags
 from game_interface import GrandSlam
+from game_interface import Direct
 import mancala
 import utils
 
@@ -85,6 +86,7 @@ class TestAllowables:
           utils.build_board([F, T, F], [T, F, T]),
           utils.build_board([N, T, N], [N, F, T]), True, 2,
                             [T, F, F]),
+
         ])
     def test_allowables(self, game, turn, board, blocked, child,
                         mustshare, min_move, eresult):
@@ -136,7 +138,7 @@ class TestAllowables:
                             [T, F, F]),
         ])
     def test_nograndslam(self, game, turn, board, blocked, child,
-                        mustshare, min_move, eresult):
+                         mustshare, min_move, eresult):
 
         game.turn = turn
         game.board = board
@@ -149,3 +151,28 @@ class TestAllowables:
 
         allow = allowables.deco_allowable(game)
         assert allow.get_allowable_holes() == eresult
+
+
+    @pytest.fixture
+    def mlgame(self):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+                                flags=GameFlags(crosscapt=True,
+                                                sow_direct=Direct.CW,
+                                                grandslam=GrandSlam.NOT_LEGAL,
+                                                mlaps=True))
+
+        game = mancala.Mancala(game_consts, game_info)
+        return game
+
+
+    def test_mlap_allowables(self, mlgame):
+        # this is an ENDLESS condition, note CW not CCW as game above
+
+        mlgame.turn = True
+        mlgame.board = utils.build_board([1, 3, 1],
+                                         [0, 1, 0])
+
+        assert mlgame.deco.allow.get_allowable_holes() == [T, F, T]
