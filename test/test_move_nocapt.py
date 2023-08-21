@@ -40,7 +40,8 @@ class TestCCWSowing:
     def ccw_game(self):
         game_consts = gc.GameConsts(nbr_start=4, holes=6)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                flags=GameFlags(sow_direct=Direct.CCW))
+                                flags=GameFlags(sow_direct=Direct.CCW),
+                                rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
 
@@ -113,7 +114,8 @@ class TestCWSowing:
         game_consts = gc.GameConsts(nbr_start=4, holes=6)
 
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                flags=GameFlags(sow_direct=Direct.CW))
+                                flags=GameFlags(sow_direct=Direct.CW),
+                                rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
 
@@ -187,7 +189,8 @@ class TestCCWSowingStore:
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 flags=GameFlags(stores=True,
                                                 sow_direct=Direct.CCW,
-                                                sow_own_store=True))
+                                                sow_own_store=True),
+                                rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
 
@@ -276,7 +279,8 @@ class TestCWSowingStore:
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 flags=GameFlags(stores=True,
                                                 sow_direct=Direct.CW,
-                                                sow_own_store=True))
+                                                sow_own_store=True),
+                                rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
 
@@ -343,7 +347,8 @@ class TestStartHole:
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 min_move=2,
                                 flags=GameFlags(sow_start=True,
-                                                sow_direct=Direct.CCW))
+                                                sow_direct=Direct.CCW),
+                                rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
 
@@ -356,7 +361,8 @@ class TestStartHole:
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 min_move=2,
                                 flags=GameFlags(sow_start=True,
-                                                sow_direct=Direct.CW))
+                                                sow_direct=Direct.CW),
+                                rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
 
@@ -418,7 +424,8 @@ class TestSkipStart:
 
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 flags=GameFlags(skip_start=True,
-                                                sow_direct=Direct.CCW))
+                                                sow_direct=Direct.CCW),
+                                rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
 
@@ -430,7 +437,8 @@ class TestSkipStart:
 
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 flags=GameFlags(skip_start=True,
-                                                sow_direct=Direct.CW))
+                                                sow_direct=Direct.CW),
+                                rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
 
@@ -484,7 +492,8 @@ class TestSpSowingNoU:
         game_consts = gc.GameConsts(nbr_start=4, holes=4)
 
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                flags=GameFlags(sow_direct=Direct.SPLIT))
+                                flags=GameFlags(sow_direct=Direct.SPLIT),
+                                rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
 
@@ -496,7 +505,8 @@ class TestSpSowingNoU:
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 udir_holes=[1],
                                 flags=GameFlags(sow_direct=Direct.SPLIT,
-                                                udirect=True))
+                                                udirect=True),
+                                rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
 
@@ -543,7 +553,8 @@ class TestUdirAll:
                                 udir_holes=[0, 1, 2, 3],
 
                                 flags=GameFlags(sow_direct=Direct.SPLIT,
-                                                udirect=True))
+                                                udirect=True),
+                                rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
 
@@ -589,7 +600,9 @@ class TestBlocks_ito_Sow:
 
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 flags=GameFlags(blocks=True,
-                                                sow_direct=Direct.CCW))
+                                                rounds=True,
+                                                sow_direct=Direct.CCW),
+                                rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
 
@@ -618,7 +631,8 @@ class TestMoveunlock_ito_Sow:
 
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 flags=GameFlags(moveunlock=True,
-                                                sow_direct=Direct.CCW))
+                                                sow_direct=Direct.CCW),
+                                rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
 
@@ -646,7 +660,8 @@ class TestMLAPS_ito_Sow:
 
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 flags=GameFlags(mlaps=True,
-                                                sow_direct=Direct.CCW))
+                                                sow_direct=Direct.CCW),
+                                rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
 
@@ -668,7 +683,8 @@ class TestMLAPS_ito_Sow:
 
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 flags=GameFlags(mlaps=True,
-                                                sow_direct=Direct.CCW))
+                                                sow_direct=Direct.CCW),
+                                rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
 
@@ -687,7 +703,8 @@ class TestMLAPS_ito_Sow:
 
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 flags=GameFlags(mlaps=True,
-                                                sow_direct=Direct.CCW))
+                                                sow_direct=Direct.CCW),
+                                rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
 
@@ -710,7 +727,8 @@ class TestPASS_ito_Sow:
 
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 flags=GameFlags(mlaps=True,
-                                                sow_direct=Direct.CCW))
+                                                sow_direct=Direct.CCW),
+                                rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
 

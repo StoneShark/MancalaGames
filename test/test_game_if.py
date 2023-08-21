@@ -17,8 +17,10 @@ import pytest
 sys.path.extend(['src'])
 
 import game_interface as gi
-from game_interface import GameFlags
+import mancala
+
 from game_interface import Direct
+from game_interface import GameFlags
 
 
 # %%
@@ -52,29 +54,35 @@ def test_gf_existence():
         gi.GameInfo()
 
     with pytest.raises(gi.GameInfoError):   # name
-        gi.GameInfo(name = '',
-                    nbr_holes = 2)
+        gi.GameInfo(name='',
+                    nbr_holes=2,
+                    rules=mancala.Mancala.rules)
 
     with pytest.raises(gi.GameInfoError):  # nbr_holes
-        gi.GameInfo(nbr_holes = 0,
-                    flags = gi.GameFlags())
+        gi.GameInfo(nbr_holes=0,
+                    flags=gi.GameFlags(),
+                    rules=mancala.Mancala.rules)
 
-    with pytest.raises(gi.GameInfoError):  # flags
-        gi.GameInfo(nbr_holes = 2,
-                    flags = 0)
+    with pytest.raises(AttributeError):  # flags
+        gi.GameInfo(nbr_holes=2,
+                    flags=0,
+                    rules=mancala.Mancala.rules)
 
     with pytest.raises(gi.GameInfoError):  # scorer
-        gi.GameInfo(nbr_holes = 2,
-                    scorer = 1)
+        gi.GameInfo(nbr_holes=2,
+                    scorer=1,
+                    rules=mancala.Mancala.rules)
 
     with pytest.raises(gi.GameInfoError):  # no sew direction, not playable
-        gi.GameInfo(nbr_holes = 2,
-                    flags = GameFlags(sow_direct=None))
+        gi.GameInfo(nbr_holes=2,
+                    flags=GameFlags(sow_direct=None),
+                    rules=mancala.Mancala.rules)
 
-    gi.GameInfo(name = 'Mancala',
-                nbr_holes = 6,
-                capt_on = [2],
-                flags = GameFlags(sow_direct=Direct.CCW))
+    gi.GameInfo(name='Mancala',
+                nbr_holes=6,
+                capt_on=[2],
+                flags=GameFlags(sow_direct=Direct.CCW),
+                rules=mancala.Mancala.rules)
 
     # evaluate if new tests should be added
     assert len(GameFlags.get_fields()) == 22
@@ -83,6 +91,7 @@ def test_gf_existence():
 def test_gf_stores():
 
     with pytest.raises(gi.GameInfoError):
-        gi.GameInfo(nbr_holes = 6,
-                    flags = GameFlags(sow_direct=Direct.CCW,
-                                      sow_own_store=True))
+        gi.GameInfo(nbr_holes=6,
+                    flags=GameFlags(sow_direct=Direct.CCW,
+                                    sow_own_store=True),
+                    rules=mancala.Mancala.rules)

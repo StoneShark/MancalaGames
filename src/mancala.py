@@ -21,6 +21,7 @@ import game_log
 import game_str
 import get_direction
 import get_moves
+import ginfo_rules
 import incrementer
 import minimax
 import new_game
@@ -33,8 +34,8 @@ from game_interface import PASS_TOKEN
 
 
 LOCK = ['_', ' ']
-CHILD = {True: '\u02c4',
-         False: '\u02c5',
+CHILD = {True: '˄',
+         False: '˅',
          None: ' '}
 
 
@@ -119,6 +120,8 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
     store [ bottom/False,  top/True ]
     turn = bottom/False,  top/True"""
     # pylint: disable=too-many-public-methods
+
+    rules = ginfo_rules.build_rules()
 
     def __init__(self, game_consts, game_info, player=None):
 

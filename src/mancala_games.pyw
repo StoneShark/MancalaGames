@@ -25,6 +25,7 @@ import cfg_keys as ckey
 import game_constants as gc
 import game_interface as gi
 import game_log
+import mancala
 import mancala_ui
 import man_config
 import man_path
@@ -664,6 +665,8 @@ class MancalaGames(tk.Frame):
         This function should be wrapped with a try because
         exceptions/warnings might be raised."""
 
+        gclass = list(GAME_CLASSES.values())[self.tkvars.game_class.get()]
+
         self.game_consts = gc.GameConsts(self.tkvars.seeds.get(),
                                          self.tkvars.holes.get())
 
@@ -680,9 +683,9 @@ class MancalaGames(tk.Frame):
                                      capt_on=capt_on,
                                      udir_holes=udir,
                                      mm_depth=self.non_ui_data.mm_depth,
-                                     flags=flags)
+                                     flags=flags,
+                                     rules=gclass.rules)
 
-        gclass = list(GAME_CLASSES.values())[self.tkvars.game_class.get()]
         self.game = gclass(self.game_consts, self.game_info)
 
         self.param_changed = False
@@ -753,7 +756,8 @@ class MancalaGames(tk.Frame):
 
         gi_defaults = gi.GameInfo(
             nbr_holes=game_dict[ckey.GAME_CONSTANTS]['nbr_start'],
-            capt_on=[2])
+            capt_on=[2],
+            rules=mancala.Mancala.rules)
 
         self.tkvars.min_move.set(
             game_dict[ckey.GAME_INFO].get('min_move', gi_defaults.min_move))

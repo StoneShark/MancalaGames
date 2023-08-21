@@ -29,7 +29,8 @@ class TestGameStr:
 
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on=[2],
-                                flags=GameFlags())
+                                flags=GameFlags(),
+                                rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
         game.turn = False
@@ -57,9 +58,11 @@ class TestGameStr:
                                 flags=GameFlags(mustpass=True,
                                                 stores=True,
                                                 blocks=True,
+                                                rounds=True,
                                                 moveunlock=True,
                                                 sow_direct=Direct.CCW,
-                                                evens=True)
+                                                evens=True),
+                                rules=mancala.Mancala.rules
                                 )
 
         game = mancala.Mancala(game_consts, game_info)
@@ -93,7 +96,8 @@ class TestGameStr:
                                                 stores=True,
                                                 child=True,
                                                 sow_direct=Direct.CCW,
-                                                evens=True)
+                                                evens=True),
+                                rules=mancala.Mancala.rules
                                 )
 
         game = mancala.Mancala(game_consts, game_info)

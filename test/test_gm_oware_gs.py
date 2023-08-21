@@ -418,7 +418,7 @@ class TestOwareGrandSlam:
         consts = game.cts
         info = game.info
         object.__setattr__(info.flags, 'grandslam', GrandSlam.LEGAL)
-        info.__post_init__()
+        info.__post_init__(rules=mancala.Mancala.rules)
         game = mancala.Mancala(consts, info)
 
         game.turn = True
@@ -619,7 +619,7 @@ class TestOwareGrandSlam:
         consts = game.cts
         info = game.info
         object.__setattr__(info.flags, 'grandslam', GrandSlam.NOT_LEGAL)
-        info.__post_init__()
+        info.__post_init__(rules=mancala.Mancala.rules)
         game = mancala.Mancala(consts, info)
 
         game.turn = True
@@ -777,7 +777,7 @@ class TestOwareGrandSlam:
         consts = game.cts
         info = game.info
         object.__setattr__(info.flags, 'grandslam', GrandSlam.NO_CAPT)
-        info.__post_init__()
+        info.__post_init__(rules=mancala.Mancala.rules)
         game = mancala.Mancala(consts, info)
 
         game.turn = True
@@ -909,7 +909,7 @@ class TestOwareGrandSlam:
         consts = game.cts
         info = game.info
         object.__setattr__(info.flags, 'grandslam', GrandSlam.OPP_GETS_REMAIN)
-        info.__post_init__()
+        info.__post_init__(rules=mancala.Mancala.rules)
         game = mancala.Mancala(consts, info)
 
         game.turn = False
@@ -1114,7 +1114,7 @@ class TestOwareGrandSlam:
         consts = game.cts
         info = game.info
         object.__setattr__(info.flags, 'grandslam', GrandSlam.LEAVE_LEFT)
-        info.__post_init__()
+        info.__post_init__(rules=mancala.Mancala.rules)
         game = mancala.Mancala(consts, info)
 
         game.turn = False
@@ -1287,7 +1287,7 @@ class TestOwareGrandSlam:
         consts = game.cts
         info = game.info
         object.__setattr__(info.flags, 'grandslam', GrandSlam.LEAVE_RIGHT)
-        info.__post_init__()
+        info.__post_init__(rules=mancala.Mancala.rules)
         game = mancala.Mancala(consts, info)
 
         game.turn = False

@@ -37,7 +37,8 @@ class TestMinimaxIF:
                                 about='about text',
                                 difficulty=0,
                                 capt_on=[2],
-                                flags=GameFlags(sow_direct=Direct.CCW))
+                                flags=GameFlags(sow_direct=Direct.CCW),
+                                rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
         game.turn = False
@@ -56,7 +57,8 @@ class TestMinimaxIF:
                                 capt_on=[2],
                                 min_move=2,
                                 flags=GameFlags(mustpass=True,
-                                                sow_direct=Direct.CCW))
+                                                sow_direct=Direct.CCW),
+                                rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
         game.turn = False
@@ -73,7 +75,8 @@ class TestMinimaxIF:
                                 udir_holes=[1],
                                 flags=GameFlags(mustpass=True,
                                                 udirect=True,
-                                                sow_direct=Direct.SPLIT)
+                                                sow_direct=Direct.SPLIT),
+                                rules=mancala.Mancala.rules
                                 )
 
         game = mancala.Mancala(game_consts, game_info)
@@ -164,7 +167,8 @@ class TestScorer:
                                 difficulty=0,
                                 scorer=gi.Scorer(easy_rand=0),
                                 capt_on=[2],
-                                flags=GameFlags(sow_direct=Direct.CCW))
+                                flags=GameFlags(sow_direct=Direct.CCW),
+                                rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
         game.turn = False

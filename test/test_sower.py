@@ -45,7 +45,8 @@ class TestSower:
 
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on = [2],
-                                flags=GameFlags(convert_cnt=4))
+                                flags=GameFlags(convert_cnt=4),
+                                rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
 
@@ -169,7 +170,6 @@ class TestSower:
 
         start_loc, seeds = game.deco.starter.start_sow(start_pos)
         end = store_sower.sow_seeds(start_loc, direct, seeds)
-        print(game)
 
         assert end == eloc
         assert game.board == eboard
@@ -273,7 +273,8 @@ class TestMlap:
 
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on = [2],
-                                flags=GameFlags(sow_direct=Direct.CW))
+                                flags=GameFlags(sow_direct=Direct.CW),
+                                rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
 
@@ -338,7 +339,8 @@ class TestVMlap:
                                                 mlaps=True,
                                                 visit_opp=True,
                                                 child=True,
-                                                convert_cnt=4))
+                                                convert_cnt=4),
+                                rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
 

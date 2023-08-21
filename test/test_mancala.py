@@ -46,7 +46,8 @@ class TestConctruction:
     @pytest.fixture
     def min_game_if(self):
         return gi.GameInfo(nbr_holes=6,
-                           flags=GameFlags())
+                           flags=GameFlags(),
+                           rules=mancala.Mancala.rules)
 
     @pytest.mark.filterwarnings("ignore")
     def test_bad_params(self, min_game_if):
@@ -81,7 +82,8 @@ class TestBasics:
 
         game_info = gi.GameInfo(nbr_holes = game_consts.holes,
                                 capt_on = [2],
-                                flags=GameFlags())
+                                flags=GameFlags(),
+                                rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
         game.turn = False
@@ -99,7 +101,8 @@ class TestBasics:
                                                 blocks=True,
                                                 moveunlock=True,
                                                 sow_direct=Direct.CCW,
-                                                evens=True)
+                                                evens=True),
+                                rules=mancala.Mancala.rules
                                 )
 
         game = mancala.Mancala(game_consts, game_info)
@@ -153,7 +156,8 @@ class TestNewEndGames:
 
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on = [2],
-                                flags=GameFlags(stores=True))
+                                flags=GameFlags(stores=True),
+                                rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
         game.turn = False
@@ -168,7 +172,8 @@ class TestNewEndGames:
                                 capt_on = [2],
                                 flags=GameFlags(rounds=True,
                                                 blocks=True,
-                                                stores=True))
+                                                stores=True),
+                                rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
         game.turn = False

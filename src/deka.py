@@ -6,8 +6,11 @@ Created on Thu Jul 27 15:20:35 2023
 
 # %% imports
 
+import functools as ft
+
 import game_log
 import game_interface as gi
+import ginfo_rules
 import mancala
 import sower
 
@@ -18,6 +21,47 @@ from game_interface import WinCond
 # Lots more than base game,
 # as we reduce the number of holes, the more laps we do
 MAX_LOOPS = 100
+
+
+# %% deka rules
+
+def build_deka_rules():
+    """Update the rules for deka."""
+
+    def rev_getattr(name, obj):
+        return getattr(obj.flags, name)
+
+    deka_rules = ginfo_rules.build_rules()
+
+    # delete rules
+    del deka_rules['blocks_wo_rounds']
+    del deka_rules['warn_no_capt']
+
+    # add rules
+    deka_rules.add_rule(
+        'need_convert_cnt',
+        rule=lambda ginfo: not ginfo.flags.convert_cnt,
+        msg='Deka requires CONVERT_CNT to control closing holes.',
+        excp=gi.GameInfoError)
+
+    deka_rules.add_rule(
+        'need_blocks',
+        rule=lambda ginfo: not ginfo.flags.blocks,
+        msg='Deka requires BLOCKS for closing holes.',
+        excp=gi.GameInfoError)
+
+    bad_flags = ['capsamedir', 'child', 'crosscapt', 'evens',
+                 'moveunlock', 'multicapt', 'mustshare', 'mustpass',
+                 'oppsidecapt', 'rounds', 'skip_start',
+                 'sow_own_store', 'sow_start', 'stores', 'visit_opp']
+    for flag in bad_flags:
+        deka_rules.add_rule(
+            f'bad_{flag}',
+            rule=ft.partial(rev_getattr, flag),
+            msg=f'Deka cannot be used with {flag.upper()}.',
+            excp=gi.GameInfoError)
+
+    return deka_rules
 
 
 # %%  deka sowers
@@ -103,42 +147,17 @@ class DekaLapSower(sower.SowMethodIf):
 class Deka(mancala.Mancala):
     """Not really deka but maybe like deka."""
 
+    rules = build_deka_rules()
+
     def __init__(self, game_consts, game_info):
         """Check the game configuration.
         Call parent init.
         Add our own deco to the sower chain."""
 
-        self._check_config(game_info)
         super().__init__(game_consts, game_info)
 
         self.deco.sower = DekaLapSower(self, DekaSower(self),
                                        DekaLapper(self))
-
-
-    @staticmethod
-    def _check_config(game_info):
-        """Check the configuration flags."""
-
-        gflags = game_info.flags
-
-        good_flags = ['blocks']
-        for flag in good_flags:
-            if not getattr(gflags, flag):
-                raise gi.GameInfoError(
-                    f'Deka requires {flag.upper()}.')
-
-        bad_flags = ['capsamedir', 'child', 'crosscapt', 'evens',
-                     'moveunlock', 'multicapt', 'mustshare', 'mustpass',
-                     'oppsidecapt', 'rounds', 'skip_start',
-                     'sow_own_store', 'sow_start', 'stores', 'visit_opp']
-        for flag in bad_flags:
-            if getattr(gflags, flag):
-                raise gi.GameInfoError(
-                    f'Deka cannot be used with {flag.upper()}.')
-
-        if not gflags.convert_cnt:
-            raise gi.GameInfoError(
-                'Deka requires CONVERT_CNT to control closing holes.')
 
 
     def end_game(self):

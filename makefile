@@ -12,6 +12,7 @@ MODULES += game_constants.py
 MODULES += game_interface.py
 MODULES += game_log.py
 MODULES += game_str.py
+MODULES += ginfo_rules.py
 MODULES += get_direction.py
 MODULES += get_moves.py
 MODULES += hole_button.py

@@ -44,7 +44,8 @@ class TestIncr:
 
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on=[2],
-                                flags=GameFlags())
+                                flags=GameFlags(),
+                                rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
 
@@ -174,9 +175,11 @@ class TestIncr:
         game_info = gi.GameInfo(name='my name',
                                 nbr_holes=game_consts.holes,
                                 capt_on=[2],
-                                flags=GameFlags(sow_direct = Direct.CW,
-                                                skip_start = True,
-                                                blocks = True))
+                                flags=GameFlags(sow_direct=Direct.CW,
+                                                skip_start=True,
+                                                blocks=True,
+                                                rounds=True),
+                                rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
         game.turn = False

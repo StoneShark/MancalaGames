@@ -12,14 +12,9 @@ Created on Thu Mar  9 08:38:28 2023
 import abc
 import dataclasses as dc
 import enum
-import warnings
+
 
 # %%  constants
-
-DIFF_LEVELS = 4
-MAX_MIN_MOVES = 5
-
-MAX_MINIMAX_DEPTH = 15
 
 PASS_TOKEN = 0xffff
 
@@ -116,66 +111,6 @@ class GameFlags:
     grandslam: int = GrandSlam.LEGAL
 
 
-    def __post_init__(self):
-        """Do consistency check of flags."""
-
-        self._check_sow_params()
-        self._check_capture_params()
-
-
-    def _check_sow_params(self):
-        """Check consistency of the sowing parameters."""
-
-        if not isinstance(self.sow_direct, Direct):
-            raise GameInfoError(
-                'SOW_DIRECT not valid type, expected Direct.')
-
-        if self.sow_own_store and not self.stores:
-            raise GameInfoError('SOW_OWN_STORE set without STORES set.')
-
-        if self.skip_start and self.mlaps:
-            raise GameInfoError('SKIP_START not compatible with MULTI_LAP.')
-
-        if self.visit_opp and not self.mlaps:
-            raise GameInfoError('VISIT_OPP requires MULTI_LAP.')
-
-        if self.sow_direct == Direct.SPLIT and self.mustshare:
-            # supporting this would make allowables and get_moves
-            # more complicated--the deco chain could be expanded,
-            # BUT the UI would be really difficult
-            raise NotImplementedError(
-                'SPLIT and MUSTSHARE are currently incompatible.')
-
-        if (self.sow_direct == Direct.SPLIT
-                and self.grandslam == GrandSlam.NOT_LEGAL):
-            raise NotImplementedError(
-                'SPLIT and GRANDSLAM of Not Legal is not implemented.')
-
-        if self.sow_start and self.skip_start:
-            raise GameInfoError(
-                'SOW_START and SKIP_START do not make sense together.')
-
-        if self.rounds and not self.blocks:
-            raise GameInfoError(
-                'ROUNDS without BLOCKS is not supported.')
-
-
-    def _check_capture_params(self):
-        """Check consistency of capture parameters."""
-
-        if self.capsamedir and not self.multicapt:
-            warnings.warn("CAPSAMEDIR without MULTICAPT has no effect.")
-
-        if self.crosscapt and self.evens:
-            warnings.warn(
-                'CROSSCAPT with EVENS might be confusing '
-                '(conditions are ANDed).')
-
-        if self.xcpickown and not self.crosscapt:
-            raise GameInfoError(
-                "XCPICKOWN without CROSSCAPT doesn't do anything.")
-
-
     @classmethod
     def get_fields(cls):
         """return the field names."""
@@ -197,16 +132,6 @@ class Scorer:
     evens_m: int = 0
     easy_rand: int = 20
     repeat_turn: int = 0
-
-    def __post_init__(self):
-        """check the scorer vals."""
-
-        score_vals = vars(self).values()
-
-        if all(not val for val in score_vals):
-            raise GameInfoError(
-                'At least one scorer value should be non-zero'
-                'to prevent random play.')
 
 
 @dc.dataclass(frozen=True, kw_only=True)
@@ -230,130 +155,17 @@ class GameInfo:
 
     mm_depth: list[int] = (1, 1, 3, 5)
 
-    def __post_init__(self):
-        """Set any derived data and
-        check the consistency and correctness of the game info."""
+    rules: dc.InitVar[dict]
 
-        self._check_existances()
+
+    def __post_init__(self, rules):
+        """Do post init (any derived values) and apply the rules.
+        rule.text raises exceptions and warnings."""
+
         object.__setattr__(self.flags, 'udirect', bool(self.udir_holes))
 
-        cap_flags_set = any([self.flags.evens,
-                             self.flags.crosscapt,
-                             self.flags.sow_own_store,
-                             self.capt_on,
-                             self.flags.convert_cnt])   # for deka
-        if not cap_flags_set:
-            warnings.warn(
-                "No capture mechanism provided.")
-
-        if self.flags.evens and self.capt_on:
-            warnings.warn('CAPT_ON and EVENS conditions are ANDed.')
-
-        if self.flags.crosscapt and self.capt_on:
-            warnings.warn(
-                'CROSSCAPT with CAPT_ON conditions are ANDed.')
-
-        if self.min_move == 1 and self.flags.sow_start:
-            raise GameInfoError(
-                'MIN_MOVE of 1 with SOW_START play is confusing.')
-
-        if self.flags.mlaps and self.capt_on:
-            raise GameInfoError('CAPT_ON with MULTI_LAP never captures.')
-
-        if (self.flags.grandslam == GrandSlam.OPP_GETS_REMAIN
-                and 1 in self.capt_on):
-            warnings.warn(
-                'GRANDSLAM OPP TAKES with captures on 1, '
-                'can result in unfortunate end games.')
-
-        self._check_minimaxer_score()
-        self._check_split_udir()
-
-
-    def _check_existances(self):
-        """Confirm needed data was provided."""
-
-        if not self.nbr_holes or not isinstance(self.nbr_holes, int):
-            raise GameInfoError('Holes must > 0.')
-
-        if not self.name:
-            raise GameInfoError('Mising Name.')
-
-        if not self.flags or not isinstance(self.flags, GameFlags):
-            raise GameInfoError('Missing or bad game flags.')
-
-        if not self.scorer or not isinstance(self.scorer, Scorer):
-            raise GameInfoError('Missing or bad scorer.')
-
-        if not self.mm_depth:
-            raise GameInfoError('Missing minimaxer depths.')
-
-
-    def _check_split_udir(self):
-        """check consistency of split_sow and udirect holes"""
-
-        ucnt = len(self.udir_holes)
-        if ucnt > self.nbr_holes:
-            raise GameInfoError('Too many udir_holes specified.')
-
-        if any(udir < 0 or udir >= self.nbr_holes for udir in self.udir_holes):
-            raise GameInfoError('Udir_holes value out of range '
-                                ' 0..nbr_holes-1.')
-
-        if self.flags.udirect and self.flags.mustshare:
-            # see SPLIT / MUSHSHARE above
-            raise NotImplementedError(
-                'UDIRECT and MUSTSHARE are currently incompatible.')
-
-        if self.flags.udirect and self.flags.grandslam == GrandSlam.NOT_LEGAL:
-            # see SPLIT / MUSHSHARE above
-            raise NotImplementedError(
-                'UDIRECT and GRANDLAM=Not Legal are currently incompatible.')
-
-        quot, rem = divmod(self.nbr_holes, 2)
-        if (self.flags.sow_direct == Direct.SPLIT
-                and rem
-                and quot not in self.udir_holes):
-
-            raise GameInfoError(
-                'SPLIT with odd number of holes, '
-                'but center hole not listed in udir_holes.')
-
-        if (self.flags.udirect and ucnt != self.nbr_holes
-                and self.flags.sow_direct != Direct.SPLIT):
-            dname = self.flags.sow_direct.name
-            warnings.warn(
-                f'Odd choice of {dname} when udir_holes != nbr_holes.')
-
-
-    def _check_minimaxer_score(self):
-        """check difficulty, minimaxer and scorer vals."""
-
-        if self.difficulty not in range(DIFF_LEVELS):
-            raise GameInfoError('Difficulty not 0, 1, 2 or 3.')
-
-        if self.min_move not in range(1, MAX_MIN_MOVES + 1):
-            raise GameInfoError(
-                f'Min_move seems wrong  (1<= convention <={MAX_MIN_MOVES}).')
-
-        if len(self.mm_depth) != DIFF_LEVELS:
-            raise GameInfoError(
-                'Exactly 4 minimaxer depths are expected (easy..expert).')
-
-        if min(self.mm_depth) <= 0:
-            raise GameInfoError('All minimaxer depths must be > 0.')
-
-        if max(self.mm_depth) >= MAX_MINIMAX_DEPTH:
-            warnings.warn(
-                'Max Minimaxer depth is large, AI moves might be slow.')
-
-        if self.scorer.access_m and self.flags.mlaps:
-            raise GameInfoError(
-                'Access scorer not supported for multilap games.')
-
-        if self.scorer.child_cnt_m and not self.flags.child:
-            raise GameInfoError(
-                'Child count scorer not supported without child flag.')
+        for rule in rules.values():
+            rule.test(self)
 
 
 @dc.dataclass(kw_only=True)
@@ -364,7 +176,7 @@ class HoleProps:
     seeds: int
     unlocked: bool
     blocked: bool
-    ch_owner: bool  # actually one of False, True or None
+    ch_owner: bool  # child owner; actually one of False, True or None
 
 
 # %%  game interface abstract base class -- the UI requires these

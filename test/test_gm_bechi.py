@@ -668,7 +668,6 @@ class TestBechi:
         assert cond.name == "ROUND_TIE"
 
         winmsg = game.win_message(cond)
-        print(winmsg)
         assert 'Round Over' in winmsg[0]
         assert 'tie' in winmsg[1]
 

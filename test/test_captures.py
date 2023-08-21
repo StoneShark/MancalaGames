@@ -39,7 +39,8 @@ class TestNoCapts:
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                flags=GameFlags(stores=True))
+                                flags=GameFlags(stores=True),
+                                rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
         game.turn = False
@@ -50,7 +51,8 @@ class TestNoCapts:
 
         with pytest.warns(UserWarning):
             gi.GameInfo(nbr_holes=3,
-                        flags=GameFlags(stores=True))
+                        flags=GameFlags(stores=True),
+                        rules=mancala.Mancala.rules)
 
     @pytest.mark.filterwarnings("ignore")
     def test_no_capt(self, game):
@@ -71,7 +73,8 @@ class TestSingleCapts:
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on=[4],
-                                flags=GameFlags(stores=True))
+                                flags=GameFlags(stores=True),
+                                rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
         game.turn = False
@@ -109,7 +112,8 @@ class TestRevDirCapts:
                                 capt_on=[2],
                                 flags=GameFlags(sow_direct=Direct.CCW,
                                                 multicapt=True,
-                                                stores=True))
+                                                stores=True),
+                                rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
         game.turn = False
@@ -160,7 +164,8 @@ class TestSameDirCapts:
                                 flags=GameFlags(sow_direct=Direct.CCW,
                                                 capsamedir=True,
                                                 multicapt=True,
-                                                stores=True))
+                                                stores=True),
+                                rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
         game.turn = False
@@ -212,7 +217,8 @@ class TestOppSideCapts:
                                                 sow_direct=Direct.CCW,
                                                 oppsidecapt=True,
                                                 multicapt=True,
-                                                stores=True))
+                                                stores=True),
+                                rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
         game.turn = False
@@ -260,7 +266,8 @@ class TestEvenCapts:
                                                 sow_direct=Direct.CCW,
                                                 evens=True,
                                                 multicapt=True,
-                                                stores=True))
+                                                stores=True),
+                                rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
         game.turn = False
@@ -309,7 +316,8 @@ class TestLockCapts:
                                                 evens=True,
                                                 moveunlock=True,
                                                 multicapt=True,
-                                                stores=True))
+                                                stores=True),
+                                rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
         game.turn = False
@@ -354,7 +362,8 @@ class TestCrossCapts:
                                 nbr_holes=game_consts.holes,
                                 flags=GameFlags(sow_direct=Direct.CW,
                                                 crosscapt=True,
-                                                stores=True))
+                                                stores=True),
+                                rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
         game.turn = False
@@ -370,7 +379,8 @@ class TestCrossCapts:
                                 flags=GameFlags(sow_direct=Direct.CW,
                                                 crosscapt=True,
                                                 xcpickown=True,
-                                                stores=True)
+                                                stores=True),
+                                rules=mancala.Mancala.rules
                                 )
 
         game = mancala.Mancala(game_consts, game_info)
@@ -456,7 +466,8 @@ class TestMultiCrossCapts:
                                                 capsamedir=True,
                                                 multicapt=True,
                                                 oppsidecapt=True,
-                                                stores=True))
+                                                stores=True),
+                                rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
         game.turn = False
@@ -473,7 +484,8 @@ class TestMultiCrossCapts:
                                                 crosscapt=True,
                                                 xcpickown=True,
                                                 multicapt=True,
-                                                stores=True)
+                                                stores=True),
+                                rules=mancala.Mancala.rules
                                 )
 
         game = mancala.Mancala(game_consts, game_info)
@@ -558,8 +570,10 @@ class TestBlockCapts:
                                 flags=GameFlags(sow_direct=Direct.CW,
                                                 evens=True,
                                                 blocks=True,
+                                                rounds=True,
                                                 multicapt=True,
-                                                stores=True))
+                                                stores=True),
+                                rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
         game.turn = False
@@ -603,7 +617,8 @@ class TestChildCapts:
                                                 evens=True,
                                                 convert_cnt=4,
                                                 child=True,
-                                                stores=True))
+                                                stores=True),
+                                rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
         game.turn = False
@@ -707,7 +722,8 @@ class TestGrandSlam:
                                 capt_on=[2],
                                 flags=GameFlags(sow_direct=Direct.CW,
                                                 multicapt=True,
-                                                stores=True))
+                                                stores=True),
+                                rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
         game.turn = False
@@ -733,7 +749,6 @@ class TestGrandSlam:
         captor = capturer.deco_capturer(game)
 
         assert not captor.is_grandslam(0, Direct.CW)
-        print(captor.is_grandslam(0, Direct.CW))
 
         captor.do_captures(0, Direct.CW)
         assert game.board == [3, 3, 3, 3, 3, 3]

@@ -9,9 +9,10 @@ Created on Thu Jan  5 03:15:41 2023
 
 # %% imports
 
-import warnings
+import functools as ft
 
 import game_interface as gi
+import ginfo_rules
 import mancala
 import seed_collector
 
@@ -27,6 +28,53 @@ WALDA_POSS = [WALDA_BOTH, True, None, None, True, WALDA_BOTH,
 WALDA_TEST = [[WALDA_BOTH, False],
               [WALDA_BOTH, True]]
 
+# %%
+
+def build_qelat_rules():
+    """Refine the GameInfo rules for Qelat."""
+
+    def rev_getattr(name, obj):
+        return getattr(obj.flags, name)
+
+    qelat_rules = ginfo_rules.build_rules()
+
+    # add rules
+    qelat_rules.add_rule(
+        'need_child',
+        rule=lambda ginfo: not ginfo.flags.child,
+        msg='Qelat requires CHILD.',
+        excp=gi.GameInfoError)
+
+    qelat_rules.add_rule(
+        'need_convert_cnt',
+        rule=lambda ginfo: not ginfo.flags.convert_cnt,
+        msg='Qelat requires CONVERT_CNT.',
+        excp=gi.GameInfoError)
+
+    qelat_rules.add_rule(
+        'capt_conflict',
+        rule=lambda ginfo: ginfo.flags.convert_cnt not in ginfo.capt_on,
+        msg="Qelat makes children on convert_cnt's, even without capture.",
+        warn=True)
+
+    qelat_rules.add_rule(
+        'q_not_design',
+        rule=lambda ginfo: ginfo.flags.evens or ginfo.flags.moveunlock,
+        msg='Qelat not designed to work with EVENS or MOVEUNLOCKS.',
+        warn=True)
+
+    bad_flags = ['blocks', 'capsamedir', 'crosscapt', 'mlaps', 'multicapt',
+                 'oppsidecapt', 'rounds', 'sow_own_store', 'stores',
+                 'visit_opp', 'xcpickown']
+    for flag in bad_flags:
+        qelat_rules.add_rule(
+            f'bad_{flag}',
+            rule=ft.partial(rev_getattr, flag),
+            msg=f'Qelat cannot be used with {flag.upper()}.',
+            excp=gi.GameInfoError)
+
+
+    return qelat_rules
 
 # %%
 
@@ -69,48 +117,17 @@ class Qelat(mancala.Mancala):
     """A single-lap Mancala with two-directional movement
     and created storehouses."""
 
+    rules = build_qelat_rules()
+
     def __init__(self, game_consts, game_info):
         """Check the game configuration.
         Call parent init.
         Add our own deco to the seed_collector chain."""
 
-        self._check_config(game_info)
         super().__init__(game_consts, game_info)
 
         self.deco.collector = QelatCollector(self, self.deco.collector)
 
-
-    @staticmethod
-    def _check_config(game_info):
-        """Check the configuration flags."""
-
-        gflags = game_info.flags
-
-        if not gflags.child:
-            raise gi.GameInfoError('Qelat requires CHILD.')
-
-        if not gflags.convert_cnt:
-            raise gi.GameInfoError(
-                'Qelat requires CONVERT_CNT to define child creation.')
-
-        if gflags.convert_cnt not in game_info.capt_on:
-            warnings.warn(
-                f'Qelat makes children on {gflags.convert_cnt}s, '
-                'even without capture.')
-
-        bad_flags = ['blocks', 'capsamedir', 'crosscapt',
-                     'mlaps', 'multicapt', 'oppsidecapt',
-                     'rounds', 'sow_own_store', 'stores',
-                     'visit_opp', 'xcpickown']
-
-        for flag in bad_flags:
-            if getattr(gflags, flag):
-                raise gi.GameInfoError(
-                    f'Qelat cannot be used with {flag.upper()}.')
-
-        if gflags.evens or gflags.moveunlock:
-            warnings.warn(
-                'Qelat not designed to work with EVENS or MOVEUNLOCKS.')
 
 
     def find_waldas(self):

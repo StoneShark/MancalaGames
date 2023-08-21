@@ -46,7 +46,8 @@ class TestAllowables:
 
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on=[2],
-                                flags=GameFlags())
+                                flags=GameFlags(),
+                                rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
         return game
@@ -162,7 +163,8 @@ class TestAllowables:
                                 flags=GameFlags(crosscapt=True,
                                                 sow_direct=Direct.CW,
                                                 grandslam=GrandSlam.NOT_LEGAL,
-                                                mlaps=True))
+                                                mlaps=True),
+                                rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
         return game

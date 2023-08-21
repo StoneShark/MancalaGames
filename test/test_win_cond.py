@@ -39,7 +39,8 @@ class TestBasicWConds:
                                 about='about text',
                                 difficulty=0,
                                 flags=GameFlags(sow_direct=Direct.CCW,
-                                                evens=True))
+                                                evens=True),
+                                rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
 
@@ -198,7 +199,8 @@ class TestRoundsWConds:
                                 flags=GameFlags(sow_direct=Direct.CCW,
                                                 rounds=True,
                                                 blocks=True,
-                                                evens=True))
+                                                evens=True),
+                                rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
 
@@ -287,7 +289,8 @@ class TestPassWConds:
                                 difficulty=0,
                                 flags=GameFlags(sow_direct=Direct.CCW,
                                                 mustpass=True,
-                                                evens=True))
+                                                evens=True),
+                                rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
 
@@ -381,7 +384,8 @@ class TestMustShareWConds:
                                 difficulty=0,
                                 flags=GameFlags(sow_direct=Direct.CCW,
                                                 mustshare=True,
-                                                evens=True))
+                                                evens=True),
+                                rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
 

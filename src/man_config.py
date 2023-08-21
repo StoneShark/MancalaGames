@@ -68,7 +68,8 @@ def read_game_config(filename):
     else:
         info_dict[ckey.SCORER] = gi.Scorer()
 
-    game_info = gi.GameInfo(**info_dict)
+    gclass = GAME_CLASSES[game_class]
+    game_info = gi.GameInfo(**info_dict, rules=gclass.rules)
 
     return game_class, game_consts, game_info
 
