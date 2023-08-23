@@ -154,7 +154,8 @@ def build_rules():
         excp=NotImplementedError)
         # supporting split_mshare would make allowables and get_moves
         # more complicated--the deco chain could be expanded,
-        # BUT the UI would be really difficult
+        # BUT the UI would be really difficult, need partially
+        # active buttons (left/right)
 
     man_rules.add_rule(
         'spit_gs_not_legal',

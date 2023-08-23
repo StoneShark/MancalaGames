@@ -160,7 +160,7 @@ class GameInfo:
 
     def __post_init__(self, rules):
         """Do post init (any derived values) and apply the rules.
-        rule.text raises exceptions and warnings."""
+        rule.test raises exceptions and warnings."""
 
         object.__setattr__(self.flags, 'udirect', bool(self.udir_holes))
 
@@ -249,6 +249,11 @@ class GameInterface(abc.ABC):
     def win_message(self, win_cond):
         """Return a game appropriate win message based on WinCond.
         Return a window title and message strings."""
+
+    @abc.abstractmethod
+    def params_str(self):
+        """Return a string describing the parameters of the
+        game."""
 
     @abc.abstractmethod
     def get_ai_move(self):

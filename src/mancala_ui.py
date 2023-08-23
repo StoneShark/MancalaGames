@@ -574,7 +574,7 @@ class MancalaUI(tk.Frame):
 
         wtext = ''
         if win_cond in (WinCond.WIN, WinCond.ROUND_WIN):
-            sturn = 'Top' if self.game.turn else 'Bottom'
+            sturn = 'Top' if self.game.get_turn() else 'Bottom'
             wtext = f'\n{win_cond.name} by {sturn}'
         elif win_cond:
             wtext = ' ' + win_cond.name
@@ -613,7 +613,7 @@ class MancalaUI(tk.Frame):
                                    parent=self)
 
             self._refresh()
-            self._log_turn(self.game.turn, PASS_TOKEN)
+            self._log_turn(self.game.get_turn(), PASS_TOKEN)
             self._schedule_ai()
 
 

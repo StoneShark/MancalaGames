@@ -86,69 +86,72 @@ class GameLog:
         elif turns >= 1:
             start = -1
         else:
-            start = 0
+            print('No moves')
+            return
 
         print('\n****** Previous Turn')
         for idx in range(self.move_start[start], len(self.log_records)):
             print(self.log_records[idx].text)
 
 
-game_log = GameLog()
+# the global _game_log
+
+_game_log = GameLog()
 
 
 def set_active(active):
     """Set the logger state."""
-    game_log.active = active
+    _game_log.active = active
 
 
 def set_live(live):
     """Have the logger write to stdio when messages are created."""
-    game_log.live = live
+    _game_log.live = live
 
 
 def set_level(level):
     """Set the logging level."""
     if 0 <= level <= 4:
-        game_log.level = level
+        _game_log.level = level
 
 
 def new():
     """Reset the game log."""
-    game_log.reset()
-    game_log.add('\n*** New game', MOVES)
+    _game_log.reset()
+    _game_log.add('\n*** New game', MOVES)
 
 
 def turn(game_obj, move_desc=''):
     """Log a turn in the game log (if it's active)."""
-    if game_log.active:
-        game_log.mark_turn()
-        game_log.add(f'\n{game_log.turn_nbr}: ' + move_desc, MOVES)
-        game_log.add(str(game_obj), MOVES)
+    if _game_log.active:
+        _game_log.mark_turn()
+        _game_log.add(f'\n{_game_log.turn_nbr}: ' + move_desc, MOVES)
+        _game_log.add(str(game_obj), MOVES)
 
 
 def step(step_name, game_obj):
     """Add a game step to the log."""
 
-    if game_log.active:
-        game_log.add(f'\n    {step_name}:', STEPS)
-        game_log.add(textwrap.indent(str(game_obj), '    '), STEPS)
+    if _game_log.active:
+        _game_log.add(f'\n    {step_name}:', STEPS)
+        _game_log.add(textwrap.indent(str(game_obj), '    '), STEPS)
 
 
 def add(text, lvl=NOTSET):
     """Write a message to the game log (if it's active)."""
 
-    if game_log.active:
-        game_log.add(text, lvl)
+    if _game_log.active:
+        _game_log.add(text, lvl)
 
 
 def prev():
     """Dump the previous turn."""
-    game_log.prev()
+    _game_log.prev()
 
 
 def dump():
     """Print the game log to standard out."""
-    game_log.output(sys.stdout)
+    _game_log.output(sys.stdout)
 
 
 def save(param_string):
@@ -161,4 +164,4 @@ def save(param_string):
 
     with open(filename, 'w', encoding='utf-8') as file:
         print(param_string, file=file)
-        game_log.output(file)
+        _game_log.output(file)

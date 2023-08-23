@@ -14,13 +14,14 @@ import pytest
 sys.path.extend(['src'])
 
 import game_interface as gi
-from game_interface import GameFlags
-from game_interface import Direct
-from game_interface import WinCond
 import game_constants as gc
 import sower
 import mancala
 import utils
+
+from game_interface import GameFlags
+from game_interface import Direct
+from game_interface import WinCond
 
 # %% consts
 
@@ -96,6 +97,72 @@ class TestSower:
         assert end == eloc
         assert game.board == eboard
         assert game.store == [0, 0]
+
+
+    @pytest.fixture
+    def esgame(self):
+
+        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+                                capt_on = [2],
+                                flags=GameFlags(stores=True,
+                                                sow_own_store=True,
+                                                sow_direct=Direct.SPLIT),
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+    @pytest.mark.parametrize(
+        'start_pos, turn, board, eloc, eboard, estore',
+         #  don't pass any stores
+        [(2, False, utils.build_board([2, 1, 1, 2],
+                                      [2, 1, 1, 2]),
+          3,        utils.build_board([2, 1, 1, 2],
+                                      [2, 1, 0, 3]), [0, 0]),
+         # sow past own store
+         (3, False, utils.build_board([2, 1, 1, 2],
+                                      [2, 1, 1, 2]),
+          4,        utils.build_board([2, 1, 1, 3],
+                                      [2, 1, 1, 0]), [1, 0]),
+
+         (0, True,  utils.build_board([2, 1, 1, 2],
+                                      [2, 1, 1, 2]),
+          0,        utils.build_board([0, 1, 1, 2],
+                                      [3, 1, 1, 2]), [0, 1]),
+
+         # sow past opp store
+         (0, False, utils.build_board([2, 1, 1, 2],
+                                      [2, 1, 1, 2]),
+          6,        utils.build_board([3, 2, 1, 2],
+                                      [0, 1, 1, 2]), [0, 0]),
+
+         (3, True,  utils.build_board([2, 1, 1, 2],
+                                      [2, 1, 1, 2]),
+          2,        utils.build_board([2, 1, 1, 0],
+                                      [2, 1, 2, 3]), [0, 0]),
+         # end in own store
+         (2, False,          utils.build_board([2, 2, 2, 2],
+                                               [2, 2, 2, 2]),
+          WinCond.END_STORE, utils.build_board([2, 2, 2, 2],
+                                               [2, 2, 0, 3]), [1, 0]),
+
+         (1, True,           utils.build_board([2, 2, 2, 2],
+                                               [2, 2, 2, 2]),
+          WinCond.END_STORE, utils.build_board([3, 0, 2, 2],
+                                               [2, 2, 2, 2]), [0, 1]),
+          ])
+
+    def test_store_split_sower(self, esgame,
+                               start_pos, turn, board, eloc, eboard, estore):
+
+        esgame.board = board
+        esgame.turn = turn
+        end, _ = esgame.do_sow(start_pos)
+
+        assert end == eloc
+        assert esgame.board == eboard
+        assert esgame.store == estore
 
 
     @pytest.mark.parametrize(
@@ -174,7 +241,6 @@ class TestSower:
         assert end == eloc
         assert game.board == eboard
         assert game.store == estore
-
 
 
     @pytest.mark.parametrize('end_loc, board, eresult',
