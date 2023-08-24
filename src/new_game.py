@@ -10,18 +10,22 @@ Created on Fri Apr  7 12:47:15 2023
 import abc
 import random
 
+import end_move
+from game_interface import WinCond
+
 
 # %%  New Game interace
 
 class NewGameIf(abc.ABC):
     """New Game Interface."""
 
-    def __init__(self, game, decorator=None):
+    def __init__(self, game, decorator=None, collector=None):
         self.game = game
         self.decorator = decorator
+        self.collector = collector
 
     @abc.abstractmethod
-    def new_game(self, new_round_ok=False):
+    def new_game(self, win_cond=None, new_round_ok=False):
         """collect seeds when game ended.
 
         Return False if it a new round was started.
@@ -33,7 +37,7 @@ class NewGameIf(abc.ABC):
 class NewGame(NewGameIf):
     """Default new game reset all variables."""
 
-    def new_game(self, _=False):
+    def new_game(self, _1=None, _2=False):
         """Reset the game to new state and choose random start player."""
 
         self.game.board = [self.game.cts.nbr_start] * self.game.cts.dbl_holes
@@ -53,23 +57,19 @@ class NewGame(NewGameIf):
 class NewRound(NewGameIf):
     """Create a new round if allowed."""
 
-    def new_game(self, new_round_ok=False):
+    def new_game(self, win_cond=None, new_round_ok=False):
         """Create a new round if allowed.
         Use pre-determine pattern to distribute the seeds for the
         next round.
         Return False if it a new round was started.
         True if a new game was started."""
 
-        nbr_start = self.game.cts.nbr_start
-
-        game_over = True
-        if new_round_ok:
-            game_over = self.game.store[True] < nbr_start or \
-                self.game.store[False] < nbr_start
-
-        if game_over:
-            self.decorator.new_game()
+        if not new_round_ok or win_cond in (WinCond.WIN, WinCond.TIE, None):
+            self.decorator.new_game(win_cond, new_round_ok)
             return True
+
+        nbr_start = self.game.cts.nbr_start
+        seeds = self.collector.claim_seeds()
 
         self.game.turn = not self.game.starter
         self.game.starter = self.game.turn
@@ -82,7 +82,7 @@ class NewRound(NewGameIf):
         for store, brange in enumerate([self.game.cts.false_fill,
                                         self.game.cts.true_fill]):
 
-            quot, rem = divmod(self.game.store[store], nbr_start)
+            quot, rem = divmod(seeds[store], nbr_start)
             fill = min(quot, self.game.cts.holes)
 
             self.game.store[store] = \
@@ -105,6 +105,6 @@ def deco_new_game(game):
     new_game = NewGame(game)
 
     if game.info.flags.rounds:
-        new_game = NewRound(game, new_game)
+        new_game = NewRound(game, new_game, end_move.TakeOwnSeeds(game))
 
     return new_game

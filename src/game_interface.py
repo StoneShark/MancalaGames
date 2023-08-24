@@ -220,7 +220,7 @@ class GameInterface(abc.ABC):
         diff:  int 0..3 - 0 easy to 3 expert"""
 
     @abc.abstractmethod
-    def new_game(self, new_round_ok=False):
+    def new_game(self, win_cond=None, new_round_ok=False):
         """Reset the game to new state or
         if new_round_ok is set, check to start a new round."""
 

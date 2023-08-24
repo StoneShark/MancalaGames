@@ -15,6 +15,7 @@ import allowables
 import capt_ok
 import capturer
 import cfg_keys as ckey
+import end_move
 import game_constants as gc
 import game_interface as gi
 import game_log
@@ -25,7 +26,6 @@ import ginfo_rules
 import incrementer
 import minimax
 import new_game
-import seed_collector
 import sow_starter
 import sower
 
@@ -97,7 +97,7 @@ class ManDeco:
         self.starter = sow_starter.deco_sow_starter(game)
         self.get_dir = get_direction.deco_dir_getter(game)
         self.sower = sower.deco_sower(game)
-        self.collector = seed_collector.deco_seed_collector(game)
+        self.ender = end_move.deco_end_move(game)
         self.capt_ok = capt_ok.deco_capt_ok(game)
         self.capturer = capturer.deco_capturer(game)
         self.gstr = game_str.deco_get_string(game)
@@ -243,12 +243,12 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         self.player.set_params(self.info.mm_depth[self.difficulty])
 
 
-    def new_game(self, new_round_ok=False):
+    def new_game(self, win_cond=None, new_round_ok=False):
         """Delegate to the new_game decorators.
         Return False if it a new round was started.
         True if a new game was started."""
 
-        return self.deco.new_game.new_game(new_round_ok)
+        return self.deco.new_game.new_game(win_cond, new_round_ok)
 
 
     def _get_seeds_for_divvy(self):
@@ -293,13 +293,6 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             self.store[True] += rem
 
         win_cond = self.win_conditions()
-
-        if self.info.flags.rounds:
-            if win_cond == gi.WinCond.ROUND_WIN:
-                win_cond = gi.WinCond.WIN
-            elif win_cond == gi.WinCond.ROUND_TIE:
-                win_cond = gi.WinCond.TIE
-
         return win_cond
 
 
@@ -309,24 +302,10 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         Return None if no victory/tie conditions are met.
         If there is a winner, turn must be that player!"""
 
-        seeds = self.deco.collector.claim_own_seeds(repeat_turn)
-
-        game_over = True
-        if self.info.flags.rounds:
-            game_over = seeds[True] < self.cts.nbr_start \
-                or seeds[False] < self.cts.nbr_start
-
-        if seeds[True] > self.cts.win_count:
-            self.turn = True
-            return WinCond.WIN if game_over else WinCond.ROUND_WIN
-
-        if seeds[False] > self.cts.win_count:
-            self.turn = False
-            return WinCond.WIN if game_over else WinCond.ROUND_WIN
-
-        if (seeds[False] == self.cts.win_count
-                and seeds[False] == seeds[True]):
-            return WinCond.TIE if game_over else WinCond.ROUND_TIE
+        cond, winner = self.deco.ender.game_ended(repeat_turn)
+        if cond:
+            self.turn = winner
+            return cond
 
         return None
 
@@ -406,7 +385,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             return None
 
         loc, direct = self.do_sow(move)
-        game_log.step('sow', self)
+        game_log.step('Sow', self)
 
         if loc is WinCond.END_STORE:
             win_cond = self.win_conditions(repeat_turn=True)
@@ -417,10 +396,10 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             return WinCond.ENDLESS
 
         self.capture_seeds(loc, direct)
-        game_log.step('capture', self)
+        game_log.step('Capture', self)
 
         win_cond = self.win_conditions()
-        game_log.step('win condition', self)
+        # win_conditions does log step if it changes anything
 
         if win_cond:
             return win_cond
@@ -479,6 +458,15 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
     def get_allowable_holes(self):
         """Determine what holes are legal moves."""
+
+        # possible optimization,because this is done:
+        #     1. in game_over (seed collector)
+        #     2. in test_pass
+        #     3. to update the UI
+        # if mustshare, this simulates moves for results
+
+        # if self.allow.state == self.state:
+        #     return self.allow.holes
 
         return self.deco.allow.get_allowable_holes()
 

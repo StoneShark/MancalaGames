@@ -641,9 +641,9 @@ class TestXCaptSowOwn:
         # move 32
         cond = game.move(0)
         assert game.turn is False
-        assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        assert game.board == [0, 6, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1]
         assert game.blocked == [False, False, False, False, False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, True, True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None, None, None, None, None]
-        assert game.store == [35, 13]
+        assert game.store == [25, 11]
         assert cond.name == "WIN"

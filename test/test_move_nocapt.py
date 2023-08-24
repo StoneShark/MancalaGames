@@ -615,7 +615,6 @@ class TestBlocks_ito_Sow:
                                         [3, 3, 0, 3])
         bgame.store = [3, 0]
         bgame.move(0)
-
         assert bgame.board == utils.build_board([3, 3, 3, 4],
                                                 [0, 4, 0, 4])
 

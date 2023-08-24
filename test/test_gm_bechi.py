@@ -177,7 +177,7 @@ class TestBechi:
         assert 'Round' in winmsg[0]
         assert 'Top' in winmsg[1]
 
-        game.new_game(new_round_ok=True)
+        game.new_game(win_cond=cond, new_round_ok=True)
         assert game.turn == True
         assert game.board == [4, 4, 0, 4, 4, 4, 4, 4]
         assert game.blocked == [False, False, True, False, False, False, False, False]
@@ -374,7 +374,7 @@ class TestBechi:
         assert 'Round' in winmsg[0]
         assert 'Bottom' in winmsg[1]
 
-        game.new_game(new_round_ok=True)
+        game.new_game(win_cond=cond, new_round_ok=True)
         assert game.turn == False
         assert game.board == [4, 4, 4, 4, 4, 0, 4, 4]
         assert game.blocked == [False, False, False, False, False, True, False, False]
@@ -507,18 +507,18 @@ class TestBechi:
         # move 12
         cond = game.move(3)
         assert game.turn is True
-        assert game.board == [0, 0, 0, 0, 0, 0, 0, 0]
+        assert game.board == [0, 1, 3, 0, 1, 0, 1, 0]
         assert game.blocked == [False, False, False, False, False, True, False, False]
         assert game.unlocked == [True, True, True, True, True, False, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.store == [13, 19]
+        assert game.store == [9, 17]
         assert cond.name == "ROUND_WIN"
 
         winmsg = game.win_message(cond)
         assert 'Round' in winmsg[0]
         assert 'Top' in winmsg[1]
 
-        game.new_game(new_round_ok=True)
+        game.new_game(win_cond=cond, new_round_ok=True)
         assert game.turn == True
         assert game.board == [4, 4, 0, 4, 4, 4, 4, 4]
         assert game.blocked == [False, False, True, False, False, False, False, False]
@@ -671,7 +671,7 @@ class TestBechi:
         assert 'Round Over' in winmsg[0]
         assert 'tie' in winmsg[1]
 
-        game.new_game(new_round_ok=True)
+        game.new_game(win_cond=cond, new_round_ok=True)
         assert game.turn is False
         assert game.board == [4, 4, 4, 4, 4, 4, 4, 4]
         assert game.blocked == [False, False, False, False, False, False, False, False]
@@ -803,18 +803,18 @@ class TestBechi:
         # move 12
         cond = game.move(0)
         assert game.turn is True
-        assert game.board == [0, 0, 0, 0, 0, 0, 0, 0]
+        assert game.board == [2, 0, 1, 1, 1, 5, 2, 2]
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.store == [4, 28]
+        assert game.store == [0, 18]
         assert cond.name == "ROUND_WIN"
 
         winmsg = game.win_message(cond)
         assert 'Round' in winmsg[0]
         assert 'Top' in winmsg[1]
 
-        game.new_game(new_round_ok=True)
+        game.new_game(win_cond=cond, new_round_ok=True)
         assert game.turn == True
         assert game.board == [4, 0, 0, 0, 4, 4, 4, 4]
         assert game.blocked == [False, True, True, True, False, False, False, False]
@@ -876,18 +876,18 @@ class TestBechi:
         # move 5
         cond = game.move(1)
         assert game.turn is True
-        assert game.board == [0, 0, 0, 0, 0, 0, 0, 0]
+        assert game.board == [1, 0, 0, 0, 1, 8, 0, 0]
         assert game.blocked == [False, True, True, True, False, False, False, False]
         assert game.unlocked == [True, False, False, False, True, False, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.store == [1, 31]
+        assert game.store == [0, 22]
         assert cond.name == "WIN"
 
         winmsg = game.win_message(cond)
         assert winmsg[0] == 'Game Over'
         assert 'Top' in winmsg[1]
 
-        game.new_game(new_round_ok=True)
+        game.new_game(win_cond=cond, new_round_ok=True)
         assert game.board == [4, 4, 4, 4, 4, 4, 4, 4]
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [False, False, False, False, False, False, False, False]

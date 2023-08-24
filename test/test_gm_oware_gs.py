@@ -265,8 +265,8 @@ class TestOwareGrandSlam:
         # move 34
         cond = game.move(4)
         assert game.turn is False
-        assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        assert game.store == [34, 14]
+        assert game.board == [0, 2, 2, 2, 0, 2, 0, 1, 2, 1, 1, 0]
+        assert game.store == [26, 9]
         assert cond.name == "WIN"
 
         winmsg = game.win_message(cond)
@@ -403,8 +403,8 @@ class TestOwareGrandSlam:
         # move 18
         cond = game.move(1)
         assert game.turn is True
-        assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        assert game.store == [7, 41]
+        assert game.board == [0, 0, 0, 0, 2, 1, 1, 3, 0, 5, 0, 1]
+        assert game.store == [4, 31]
         assert cond.name == "WIN"
 
         winmsg = game.win_message(cond)
@@ -604,8 +604,8 @@ class TestOwareGrandSlam:
         # move 26 - a win by grand slam
         cond = game.move(3)
         assert game.turn is False
-        assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        assert game.store == [35, 13]
+        assert game.board == [0, 0, 0, 0, 4, 2, 0, 0, 0, 0, 0, 0]
+        assert game.store == [29, 13]
         assert cond.name == "WIN"
 
         winmsg = game.win_message(cond)
@@ -893,8 +893,8 @@ class TestOwareGrandSlam:
         # move 16
         cond = game.move(4)
         assert game.turn is False
-        assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        assert game.store == [27, 21]
+        assert game.board == [0, 0, 0, 1, 0, 1, 0, 0, 0, 2, 0, 0]
+        assert game.store == [25, 19]
         assert cond.name == "WIN"
 
         winmsg = game.win_message(cond)
@@ -1585,8 +1585,8 @@ class TestOwareGrandSlam:
         # move 42
         cond = game.move(0)
         assert game.turn is True
-        assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        assert game.store == [23, 25]
+        assert game.board == [0, 4, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0]
+        assert game.store == [16, 25]
         assert cond.name == "WIN"
 
         winmsg = game.win_message(cond)

@@ -79,7 +79,6 @@ class TestBasics:
     def game(self):
 
         game_consts = gc.GameConsts(nbr_start=4, holes=6)
-
         game_info = gi.GameInfo(nbr_holes = game_consts.holes,
                                 capt_on = [2],
                                 flags=GameFlags(),
@@ -94,7 +93,6 @@ class TestBasics:
     def mrgame(self):
 
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
-
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 flags=GameFlags(mustpass=True,
                                                 stores=True,
@@ -102,8 +100,7 @@ class TestBasics:
                                                 moveunlock=True,
                                                 sow_direct=Direct.CCW,
                                                 evens=True),
-                                rules=mancala.Mancala.rules
-                                )
+                                rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
         game.turn = False
@@ -198,28 +195,22 @@ class TestNewEndGames:
         assert game.unlocked == [True] * 6
         assert game.blocked == [False] * 6
 
-    def test_no_rounds_end(self, game):
+    @pytest.mark.parametrize(
+        'board, store, econd, eturn',
+        [(utils.build_board([1, 0, 0],
+                            [0, 0, 1]), [7, 3], WinCond.WIN, False),
+         (utils.build_board([1, 0, 0],
+                            [0, 0, 1]), [3, 7], WinCond.WIN, True),
+         (utils.build_board([1, 0, 0],
+                            [0, 0, 1]), [5, 5], WinCond.TIE, False),
+         ])
+    def test_no_rounds_end(self, game, board, store, econd, eturn):
 
-        game.board = utils.build_board([1, 0, 0],
-                                       [0, 0, 1])
-        game.store = [7, 3]
+        game.board = board
+        game.store = store
+        assert game.end_game() == econd
+        assert game.turn == eturn
 
-        assert game.end_game() == WinCond.WIN
-        assert game.turn == False
-
-        game.board = utils.build_board([1, 0, 0],
-                                       [0, 0, 1])
-        game.store = [3, 7]
-
-        assert game.end_game() == WinCond.WIN
-        assert game.turn == True
-
-        game.board = utils.build_board([1, 0, 0],
-                                       [0, 0, 1])
-        game.store = [5, 5]
-
-        assert game.end_game() == WinCond.TIE
-        assert game.turn == True
 
     def test_rounds_start_force(self, rgame):
 
@@ -249,7 +240,8 @@ class TestNewEndGames:
         rgame.store = [8, 4]
         starter = rgame.turn
 
-        rgame.new_game(new_round_ok=True)
+        rgame.new_game(win_cond=WinCond.ROUND_WIN,
+                       new_round_ok=True)
         assert rgame.board == utils.build_board([2, 0, 2],
                                                 [2, 2, 2])
         assert rgame.store == [2, 0]
@@ -275,32 +267,20 @@ class TestNewEndGames:
         assert rgame.unlocked == [True] * 6
         assert rgame.blocked == [False] * 6
 
-    def test_rounds_end(self, rgame):
+    @pytest.mark.parametrize(
+        'board, store, econd, eturn',
+        [(utils.build_board([1, 0, 0],
+                            [0, 0, 1]), [7, 3], WinCond.ROUND_WIN, False),
+         (utils.build_board([1, 0, 0],
+                            [0, 0, 1]), [3, 7], WinCond.ROUND_WIN, True),
+         (utils.build_board([1, 0, 0],
+                            [0, 0, 1]), [5, 5], WinCond.ROUND_TIE, False),
+         (utils.build_board([1, 0, 0],
+                            [0, 0, 1]), [0, 10], WinCond.WIN, True)
+         ])
+    def test_rounds_end(self, rgame, board, store, econd, eturn):
 
-        rgame.board = utils.build_board([1, 0, 0],
-                                        [0, 0, 1])
-        rgame.store = [7, 3]
-
-        assert rgame.end_game() == WinCond.WIN
-        assert rgame.turn == False
-
-        rgame.board = utils.build_board([1, 0, 0],
-                                        [0, 0, 1])
-        rgame.store = [3, 7]
-
-        assert rgame.end_game() == WinCond.WIN
-        assert rgame.turn == True
-
-        rgame.board = utils.build_board([1, 0, 0],
-                                        [0, 0, 1])
-        rgame.store = [5, 5]
-
-        assert rgame.end_game() == WinCond.TIE
-        assert rgame.turn == True
-
-        rgame.board = utils.build_board([1, 0, 0],
-                                        [0, 0, 1])
-        rgame.store = [0, 10]
-
-        assert rgame.end_game() == WinCond.WIN
-        assert rgame.turn == True
+        rgame.board = board
+        rgame.store = store
+        assert rgame.end_game() == econd
+        assert rgame.turn == eturn

@@ -11,10 +11,10 @@ Created on Thu Jan  5 03:15:41 2023
 
 import functools as ft
 
+import end_move
 import game_interface as gi
 import ginfo_rules
 import mancala
-import seed_collector
 
 
 # %% constants
@@ -78,16 +78,16 @@ def build_qelat_rules():
 
 # %%
 
-class QelatCollector(seed_collector.SeedCollIf):
+class QelatEndMove(end_move.EndTurnIf):
     """The rest of the deco chain may collect seeds into
     the stores (if the game has ended). If the game has
     ended or is not playable (store > 0): move the seeds
     from the stores into available waldas."""
 
-    def claim_own_seeds(self, repeat_turn, ended=False):
+    def game_ended(self, repeat_turn, ended=False):
         """Claim own seeds."""
 
-        store_f, store_t = self.decorator.claim_own_seeds(repeat_turn, ended)
+        store_f, store_t = self.decorator.game_ended(repeat_turn, ended)
 
         if any(self.game.store):
             walda_locs = self.game.find_waldas(self)
@@ -126,7 +126,7 @@ class Qelat(mancala.Mancala):
 
         super().__init__(game_consts, game_info)
 
-        self.deco.collector = QelatCollector(self, self.deco.collector)
+        self.deco.ender = QelatEndMove(self, self.deco.ender)
 
 
 

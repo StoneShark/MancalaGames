@@ -20,7 +20,7 @@ from game_interface import WinCond
 
 # %%  allowable moves interface
 
-class AllowableIf:
+class AllowableIf(abc.ABC):
     """Allowable interface plus one common routine."""
 
     def __init__(self, game, decorator=None):

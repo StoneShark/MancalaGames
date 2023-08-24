@@ -16,11 +16,12 @@ sys.path.extend(['src'])
 import capturer
 import game_constants as gc
 import game_interface as gi
+import mancala
+import utils
+
 from game_interface import GameFlags
 from game_interface import Direct
 from game_interface import GrandSlam
-import mancala
-import utils
 
 
 # %%
@@ -564,9 +565,7 @@ class TestBlockCapts:
     def cw_game(self):
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
-
-        game_info = gi.GameInfo(name='my name',
-                                nbr_holes=game_consts.holes,
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 flags=GameFlags(sow_direct=Direct.CW,
                                                 evens=True,
                                                 blocks=True,

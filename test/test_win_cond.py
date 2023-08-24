@@ -32,12 +32,7 @@ class TestBasicWConds:
     @pytest.fixture
     def ccw_game(self):
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
-
-        game_info = gi.GameInfo(name='my name',
-                                help_file='None',
-                                nbr_holes=game_consts.holes,
-                                about='about text',
-                                difficulty=0,
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 flags=GameFlags(sow_direct=Direct.CCW,
                                                 evens=True),
                                 rules=mancala.Mancala.rules)
@@ -65,9 +60,9 @@ class TestBasicWConds:
 
         assert ccw_game.win_conditions() == WinCond.WIN
         assert ccw_game.get_turn()
-        assert ccw_game.board == utils.build_board([0, 0, 0],
-                                                   [0, 0, 0])
-        assert ccw_game.store == [3, 9]
+        assert ccw_game.board == utils.build_board([1, 0, 0],
+                                                   [0, 0, 1])
+        assert ccw_game.store == [2, 8]
 
     def test_ft_win(self, ccw_game):
         # true win on false turn, playable, no pass
@@ -78,9 +73,9 @@ class TestBasicWConds:
 
         assert ccw_game.win_conditions() == WinCond.WIN
         assert ccw_game.get_turn()
-        assert ccw_game.board == utils.build_board([0, 0, 0],
-                                                   [0, 0, 0])
-        assert ccw_game.store == [3, 9]
+        assert ccw_game.board == utils.build_board([1, 0, 0],
+                                                   [0, 0, 1])
+        assert ccw_game.store == [2, 8]
 
     def test_ff_win(self, ccw_game):
         # false win on false turn, playable, no pass
@@ -91,9 +86,9 @@ class TestBasicWConds:
 
         assert ccw_game.win_conditions() == WinCond.WIN
         assert not ccw_game.get_turn()
-        assert ccw_game.board == utils.build_board([0, 0, 0],
-                                                   [0, 0, 0])
-        assert ccw_game.store == [9, 3]
+        assert ccw_game.board == utils.build_board([1, 0, 0],
+                                                   [0, 0, 1])
+        assert ccw_game.store == [8, 2]
 
     def test_tf_win(self, ccw_game):
         # false win on true turn, playable, no pass
@@ -104,9 +99,9 @@ class TestBasicWConds:
 
         assert ccw_game.win_conditions() == WinCond.WIN
         assert not ccw_game.get_turn()
-        assert ccw_game.board == utils.build_board([0, 0, 0],
-                                                   [0, 0, 0])
-        assert ccw_game.store == [9, 3]
+        assert ccw_game.board == utils.build_board([1, 0, 0],
+                                                   [0, 0, 1])
+        assert ccw_game.store == [8, 2]
 
     def test_f_tie_win(self, ccw_game):
         # tie  on false turn, playable, no pass
@@ -190,12 +185,8 @@ class TestRoundsWConds:
     @pytest.fixture
     def rgame(self):
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
 
-        game_info = gi.GameInfo(name='my name',
-                                help_file='None',
-                                nbr_holes=game_consts.holes,
-                                about='about text',
-                                difficulty=0,
                                 flags=GameFlags(sow_direct=Direct.CCW,
                                                 rounds=True,
                                                 blocks=True,
@@ -212,9 +203,9 @@ class TestRoundsWConds:
 
         assert rgame.win_conditions() == WinCond.ROUND_WIN
         assert rgame.get_turn()
-        assert rgame.board == utils.build_board([0, 0, 0],
-                                                [0, 0, 0])
-        assert rgame.store == [3, 9]
+        assert rgame.board == utils.build_board([1, 0, 0],
+                                                [0, 0, 1])
+        assert rgame.store == [2, 8]
 
     def test_ft_win(self, rgame):
         rgame.board = utils.build_board([1, 0, 0],
@@ -224,9 +215,9 @@ class TestRoundsWConds:
 
         assert rgame.win_conditions() == WinCond.ROUND_WIN
         assert rgame.get_turn()
-        assert rgame.board == utils.build_board([0, 0, 0],
-                                                [0, 0, 0])
-        assert rgame.store == [3, 9]
+        assert rgame.board == utils.build_board([1, 0, 0],
+                                                [0, 0, 1])
+        assert rgame.store == [2, 8]
 
     def test_ff_win(self, rgame):
         rgame.board = utils.build_board([1, 0, 0],
@@ -236,9 +227,9 @@ class TestRoundsWConds:
 
         assert rgame.win_conditions() == WinCond.ROUND_WIN
         assert not rgame.get_turn()
-        assert rgame.board == utils.build_board([0, 0, 0],
-                                                [0, 0, 0])
-        assert rgame.store == [9, 3]
+        assert rgame.board == utils.build_board([1, 0, 0],
+                                                [0, 0, 1])
+        assert rgame.store == [8, 2]
 
     def test_tf_win(self, rgame):
         rgame.board = utils.build_board([1, 0, 0],
@@ -248,9 +239,9 @@ class TestRoundsWConds:
 
         assert rgame.win_conditions() == WinCond.ROUND_WIN
         assert not rgame.get_turn()
-        assert rgame.board == utils.build_board([0, 0, 0],
-                                                [0, 0, 0])
-        assert rgame.store == [9, 3]
+        assert rgame.board == utils.build_board([1, 0, 0],
+                                                [0, 0, 1])
+        assert rgame.store == [8, 2]
 
     def test_f_tie_win(self, rgame):
         # tie  on false turn, playable, no pass
@@ -281,12 +272,7 @@ class TestPassWConds:
     @pytest.fixture
     def pass_game(self):
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
-
-        game_info = gi.GameInfo(name='my name',
-                                help_file='None',
-                                nbr_holes=game_consts.holes,
-                                about='about text',
-                                difficulty=0,
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 flags=GameFlags(sow_direct=Direct.CCW,
                                                 mustpass=True,
                                                 evens=True),
@@ -376,12 +362,7 @@ class TestMustShareWConds:
     @pytest.fixture
     def msgame(self):
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
-
-        game_info = gi.GameInfo(name='my name',
-                                help_file='None',
-                                nbr_holes=game_consts.holes,
-                                about='about text',
-                                difficulty=0,
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 flags=GameFlags(sow_direct=Direct.CCW,
                                                 mustshare=True,
                                                 evens=True),
@@ -467,7 +448,7 @@ class TestMustShareWConds:
         assert msgame.store == [7, 5]
 
     def test_t_can_winr(self, msgame):
-        # false ended with no moves, but true can share
+        # false ended with no moves, but repeat turn
         msgame.board = utils.build_board([5, 0, 0],
                                          [0, 0, 0])
         msgame.store = [3, 4]
@@ -480,7 +461,7 @@ class TestMustShareWConds:
         assert msgame.store == [3, 9]
 
     def test_f_can_winr(self, msgame):
-        # true ended with no moves, but false can share
+        # true ended with no moves, but repeat turn
         msgame.board = utils.build_board([0, 0, 0],
                                          [0, 0, 5])
         msgame.store = [3, 4]

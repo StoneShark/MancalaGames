@@ -7,6 +7,7 @@ MODULES += capt_ok.py
 MODULES += capturer.py
 MODULES += cfg_keys.py
 MODULES += deka.py
+MODULES += end_move.py
 MODULES += game_classes.py
 MODULES += game_constants.py
 MODULES += game_interface.py
@@ -28,7 +29,6 @@ MODULES += new_game.py
 MODULES += play.py
 MODULES += play_mancala.pyw
 MODULES += qelat.py
-MODULES += seed_collector.py
 MODULES += sow_starter.py
 MODULES += sower.py
 
@@ -50,7 +50,7 @@ all: unit_tests pylint exe
 unit_tests: htmlcov/index.html $(SOURCES) $(TESTS) $(GAMES)
 
 htmlcov/index.html: $(SOURCES)  $(TESTS) $(GAMES)
-	-coverage run --branch -m pytest
+	-coverage run --branch -m pytest --cache-clear 
 	coverage html
 
 .PHONY: vtest

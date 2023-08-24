@@ -19,6 +19,7 @@ IMPORT = 1
 STEPS = 2
 INFO = 3
 NOTSET = 4
+SHOWALL = NOTSET
 
 
 class LogRecord:

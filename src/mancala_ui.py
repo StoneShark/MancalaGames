@@ -102,7 +102,7 @@ class GameTally:
 
 # %% store
 
-class Store():
+class Store:
     """Graphic for the seed storage spots."""
 
     def __init__(self, parent, side):
@@ -435,11 +435,12 @@ class MancalaUI(tk.Frame):
         self._ai_move()
 
 
-    def _new_game(self, new_round_ok=False):
+    def _new_game(self, win_cond=None, new_round_ok=False):
         """Start a new game and refresh the board."""
 
         self._cancel_pending_afters()
-        new_game = self.game.new_game(new_round_ok=new_round_ok)
+        new_game = self.game.new_game(win_cond=win_cond,
+                                      new_round_ok=new_round_ok)
 
         self._refresh()
         self.update()
@@ -542,7 +543,7 @@ class MancalaUI(tk.Frame):
         if win_cond:
             self._win_popup(title=title,
                             message=message + self.tally.get_str())
-            self._new_game(new_round_ok=True)
+            self._new_game(win_cond=win_cond, new_round_ok=True)
 
 
     def _end_game(self):
