@@ -20,6 +20,8 @@ Created on Fri Apr  7 15:57:47 2023
 
 import abc
 
+import game_log
+
 from game_interface import WinCond
 from game_interface import Direct
 
@@ -204,9 +206,11 @@ class SowMlapSeeds(SowMethodIf):
         loc = start
         for _ in range(MAX_LAPS):
 
+            game_log.add(f'    Sowing from {loc}.', game_log.DETAIL)
             loc = self.decorator.sow_seeds(loc, direct, seeds)
 
             if self.lap_cont.do_another_lap(loc, seeds):
+                # TODO should this use the sow_starter?
                 seeds = self.game.board[loc]
                 self.game.board[loc] = 0
 
@@ -238,6 +242,7 @@ class SowVisitedMlap(SowMethodIf):
     def sow_seeds(self, start, direct, seeds):
         """Do the first sow."""
 
+        game_log.add(f'    Sowing from {start}.', game_log.DETAIL)
         loc = self.single_sower.sow_seeds(start, direct, seeds)
         if loc is WinCond.END_STORE:
             return loc
@@ -248,6 +253,7 @@ class SowVisitedMlap(SowMethodIf):
             return loc
 
         if self.lap_cont.do_another_lap(loc, seeds):
+            # TODO should this use the sow_starter?
             seeds = self.game.board[loc]
             self.game.board[loc] = 0
             return self.lap_sower.sow_seeds(loc, direct, seeds)

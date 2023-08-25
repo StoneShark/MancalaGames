@@ -106,7 +106,8 @@ class NoGrandSlam(AllowableIf):
     If the opponent has seeds, we must not capture them all.
 
     MUSTSHARE is don't care because we only process here if
-    opp has seeds.
+    opp has seeds. That is, only one of NoGrandSlam &
+    MustShare will simulate games on any turn.
 
     GRANDSLAM == NOT_LEGAL is not supported for UDIRECT or SPLIT
     sow games, because it would make this more complicated
@@ -143,6 +144,36 @@ class NoGrandSlam(AllowableIf):
         return rval
 
 
+class MemoizeAllowable(AllowableIf):
+    """Allowables are checked in several places--move/end_move,
+    test_pass and get_allowables--for each move.  If the game
+    state hasn't changed return the same value (history of one).
+    Getting game state is not trivial but less work than
+    resimulating moves, only add this to the chain if there
+    are deco's that do simulation."""
+
+    def __init__(self, game, decorator=None):
+
+        super().__init__(game, decorator)
+        self.saved_state = None
+        self.return_val = None
+
+    def get_allowable_holes(self):
+
+        if self.saved_state:
+            cur_state = self.game.state
+
+            if cur_state == self.saved_state:
+                game_log.add('Re-using allowable result.', game_log.DETAIL)
+                return self.return_val
+
+        rval = self.decorator.get_allowable_holes()
+        self.saved_state = self.game.state
+        self.return_val = rval
+
+        return rval
+
+
 # %% build deco chain
 
 def deco_allowable(game):
@@ -155,5 +186,9 @@ def deco_allowable(game):
 
     if game.info.flags.grandslam == GrandSlam.NOT_LEGAL:
         allowable = NoGrandSlam(game, allowable)
+
+    if (game.info.flags.mustshare
+            or game.info.flags.grandslam == GrandSlam.NOT_LEGAL):
+        allowable = MemoizeAllowable(game, allowable)
 
     return allowable

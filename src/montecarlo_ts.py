@@ -154,7 +154,7 @@ class MonteCarloTS(ai_interface.AiPlayerIf):
                 break
 
         else:
-            game_log.add('tree_policy stopping on leaf', game_log.STEPS)
+            game_log.add('tree_policy stopping on leaf', game_log.STEP)
 
         game_log.add('Selected:')
         game_log.add(str(node))

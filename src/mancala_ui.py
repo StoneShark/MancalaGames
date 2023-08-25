@@ -152,7 +152,7 @@ class MancalaUI(tk.Frame):
 
         self.log_ai = tk.BooleanVar(self.master, False)
         self.live_log = tk.BooleanVar(self.master, False)
-        self.log_level = tk.IntVar(self.master, game_log.MOVES)
+        self.log_level = tk.IntVar(self.master, game_log.MOVE)
         game_log.set_level(self.log_level.get())
 
         self.master.title(self.info.name)
@@ -279,7 +279,7 @@ class MancalaUI(tk.Frame):
 
         logmenu.add_radiobutton(
             label='Moves',
-            value=game_log.MOVES, variable=self.log_level,
+            value=game_log.MOVE, variable=self.log_level,
             command=lambda: game_log.set_level(self.log_level.get()))
         logmenu.add_radiobutton(
             label='Important',
@@ -287,7 +287,7 @@ class MancalaUI(tk.Frame):
             command=lambda: game_log.set_level(self.log_level.get()))
         logmenu.add_radiobutton(
             label='Steps',
-            value=game_log.STEPS, variable=self.log_level,
+            value=game_log.STEP, variable=self.log_level,
             command=lambda: game_log.set_level(self.log_level.get()))
         logmenu.add_radiobutton(
             label='Information',
@@ -295,7 +295,7 @@ class MancalaUI(tk.Frame):
             command=lambda: game_log.set_level(self.log_level.get()))
         logmenu.add_radiobutton(
             label='All',
-            value=game_log.NOTSET, variable=self.log_level,
+            value=game_log.DETAIL, variable=self.log_level,
             command=lambda: game_log.set_level(self.log_level.get()))
         logmenu.add_separator()
         logmenu.add_checkbutton(
@@ -439,6 +439,7 @@ class MancalaUI(tk.Frame):
         """Start a new game and refresh the board."""
 
         self._cancel_pending_afters()
+        self.set_game_mode(Behavior.GAMEPLAY)
         new_game = self.game.new_game(win_cond=win_cond,
                                       new_round_ok=new_round_ok)
 
@@ -459,8 +460,9 @@ class MancalaUI(tk.Frame):
         a seed gain or loss.
         If all is ok, reconfig the buttons to GAMEPLAY mode.
 
-        If switching to round setup (from gameplay),
-        ask the user if they wish to move any seeds.
+        If switching to round setup (from gameplay) when
+        there are blocked holes, ask the user if they wish
+        to move any seeds.
         If they do reconfig the buttons to RNDSETUP mode."""
 
         if mode == self.mode:
@@ -478,7 +480,7 @@ class MancalaUI(tk.Frame):
                 self.game.cts.total_seeds, \
                 'Seed count error on switching back to GAMEPLAY mode.'
 
-        if mode == Behavior.RNDSETUP:
+        if mode == Behavior.RNDSETUP and any(self.game.blocked):
             ans = tk.messagebox.askquestion(
                 title='Move seeds',
                 message='A new round is begining so you may change\n'
@@ -543,7 +545,6 @@ class MancalaUI(tk.Frame):
         if win_cond:
             self._win_popup(title=title,
                             message=message + self.tally.get_str())
-            self._new_game(win_cond=win_cond, new_round_ok=True)
 
 
     def _end_game(self):
@@ -555,11 +556,11 @@ class MancalaUI(tk.Frame):
         if not do_it:
             return
         self.update()
+        self.set_game_mode(Behavior.GAMEPLAY)
 
         winner = self.game.end_game()
         self._refresh()
         self._win_message_popup(winner)
-
         self._new_game()
 
 
@@ -600,7 +601,9 @@ class MancalaUI(tk.Frame):
         self._refresh()
 
         if win_cond and win_cond != WinCond.END_STORE:
+            # self._save_file()   # for testing auto save the logs
             self._win_message_popup(win_cond)
+            self._new_game(win_cond=win_cond, new_round_ok=True)
             return
 
         if self.ai_player.get() and self.game.get_turn():

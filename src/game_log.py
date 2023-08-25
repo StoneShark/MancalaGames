@@ -14,12 +14,12 @@ import textwrap
 import man_path
 
 
-MOVES = 0
+MOVE = 0
 IMPORT = 1
-STEPS = 2
+STEP = 2
 INFO = 3
-NOTSET = 4
-SHOWALL = NOTSET
+DETAIL = 4
+SHOWALL = DETAIL
 
 
 class LogRecord:
@@ -38,7 +38,7 @@ class GameLog:
 
         self.active = True
         self.live = False
-        self.level = MOVES
+        self.level = MOVE
         self.turn_nbr = -1
         self.log_records = col.deque()
         self.move_start = col.deque()
@@ -119,26 +119,26 @@ def set_level(level):
 def new():
     """Reset the game log."""
     _game_log.reset()
-    _game_log.add('\n*** New game', MOVES)
+    _game_log.add('\n*** New game', MOVE)
 
 
 def turn(game_obj, move_desc=''):
     """Log a turn in the game log (if it's active)."""
     if _game_log.active:
         _game_log.mark_turn()
-        _game_log.add(f'\n{_game_log.turn_nbr}: ' + move_desc, MOVES)
-        _game_log.add(str(game_obj), MOVES)
+        _game_log.add(f'\n{_game_log.turn_nbr}: ' + move_desc, MOVE)
+        _game_log.add(str(game_obj), MOVE)
 
 
 def step(step_name, game_obj):
     """Add a game step to the log."""
 
     if _game_log.active:
-        _game_log.add(f'\n    {step_name}:', STEPS)
-        _game_log.add(textwrap.indent(str(game_obj), '    '), STEPS)
+        _game_log.add(f'\n    {step_name}:', STEP)
+        _game_log.add(textwrap.indent(str(game_obj), '    '), STEP)
 
 
-def add(text, lvl=NOTSET):
+def add(text, lvl=DETAIL):
     """Write a message to the game log (if it's active)."""
 
     if _game_log.active:

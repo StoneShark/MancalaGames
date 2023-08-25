@@ -420,7 +420,9 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
     def test_pass(self):
         """If no valid moves, swap turn and return True.
-        Can't put this in move or it will break the AiPlayer."""
+        Can't put this in move or it will break the AiPlayer.
+        This method is likely only useable by the Ai
+        because of the side effect of swapping turns."""
 
         if self.info.flags.mustpass:
             if not any(self.get_allowable_holes()):

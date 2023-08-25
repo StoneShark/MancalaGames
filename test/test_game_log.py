@@ -18,7 +18,6 @@ import pytest
 sys.path.extend(['src'])
 
 import game_log
-import man_path
 
 
 class TestGameLog:
@@ -32,7 +31,7 @@ class TestGameLog:
 
         assert glog.active == True
         assert glog.live == False
-        assert glog.level == game_log.MOVES
+        assert glog.level == game_log.MOVE
         assert glog.turn_nbr == -1
         assert not glog.log_records
         assert not glog.move_start
@@ -40,8 +39,8 @@ class TestGameLog:
 
     def test_add(self, mocker, glog):
 
-        glog.add('test line one', game_log.MOVES)
-        glog.add('test line two', game_log.MOVES)
+        glog.add('test line one', game_log.MOVE)
+        glog.add('test line two', game_log.MOVE)
         assert len(glog.log_records) == 2
         assert not glog.move_start
 
@@ -67,8 +66,8 @@ class TestGameLog:
         glog.mark_turn()
         assert len(glog.move_start) == 1
 
-        glog.add('test line one', game_log.MOVES)
-        glog.add('test line two', game_log.MOVES)
+        glog.add('test line one', game_log.MOVE)
+        glog.add('test line two', game_log.MOVE)
 
         assert len(glog.log_records) == 2
         assert len(glog.move_start) == 1
@@ -105,9 +104,9 @@ class TestGameLog:
 
         glog.mark_turn()
 
-        glog.add('turn 1, line 1', game_log.MOVES)
-        glog.add('turn 1, line 2', game_log.MOVES)
-        glog.add('turn 1, line 3', game_log.MOVES)
+        glog.add('turn 1, line 1', game_log.MOVE)
+        glog.add('turn 1, line 2', game_log.MOVE)
+        glog.add('turn 1, line 3', game_log.MOVE)
 
         glog.prev()
 
@@ -127,7 +126,7 @@ class TestGameLog:
         for turn in range(1, 5):
             glog.mark_turn()
             for line in range(1, lines[turn] + 1):
-                glog.add(f'turn {turn} line {line}', game_log.MOVES)
+                glog.add(f'turn {turn} line {line}', game_log.MOVE)
 
         glog.prev()
 
@@ -163,13 +162,13 @@ class TestGameLogModule:
     def test_active_basic(self, capsys):
 
         importlib.reload(game_log)
-        game_log.add('active one', game_log.MOVES)
+        game_log.add('active one', game_log.MOVE)
 
         game_log.set_active(False)
-        game_log.add('not active one', game_log.MOVES)
+        game_log.add('not active one', game_log.MOVE)
 
         game_log.set_active(True)
-        game_log.add('active two', game_log.MOVES)
+        game_log.add('active two', game_log.MOVE)
 
         game_log.dump()
         data = capsys.readouterr().out.split('\n')
@@ -185,7 +184,7 @@ class TestGameLogModule:
     def test_active_ops(self, game):
 
         importlib.reload(game_log)
-        game_log.set_level(game_log.STEPS)
+        game_log.set_level(game_log.STEP)
 
         game_log.turn(game, 'start')
         game_log.step('step one', game)
@@ -200,14 +199,14 @@ class TestGameLogModule:
         game_log.turn(game, 'seconds')
         game_log.step('step two.one', game)
         game_log.step('step two.two', game)
-        game_log.add('inactive one', game_log.MOVES)
+        game_log.add('inactive one', game_log.MOVE)
 
         assert game_log._game_log.turn_nbr == 0
         assert len(game_log._game_log.move_start) == 1
         assert len(game_log._game_log.log_records) == 7
 
         game_log.set_active(True)
-        game_log.add('active two', game_log.MOVES)
+        game_log.add('active two', game_log.MOVE)
 
         assert game_log._game_log.turn_nbr == 0
         assert len(game_log._game_log.move_start) == 1
@@ -217,14 +216,14 @@ class TestGameLogModule:
     def test_live(self, capsys):
 
         importlib.reload(game_log)
-        game_log.add('not live one', game_log.MOVES)
+        game_log.add('not live one', game_log.MOVE)
 
         game_log.set_live(True)
-        game_log.add('live one', game_log.MOVES)
-        game_log.add('live two', game_log.MOVES)
+        game_log.add('live one', game_log.MOVE)
+        game_log.add('live two', game_log.MOVE)
 
         game_log.set_live(False)
-        game_log.add('not live two', game_log.MOVES)
+        game_log.add('not live two', game_log.MOVE)
 
         data = capsys.readouterr().out.split('\n')
 
@@ -240,18 +239,18 @@ class TestGameLogModule:
 
         importlib.reload(game_log)
 
-        game_log.add('one - moves', game_log.MOVES)
+        game_log.add('one - MOVE', game_log.MOVE)
         game_log.add('two - import', game_log.IMPORT)
-        game_log.add('two - steps', game_log.STEPS)
+        game_log.add('two - STEP', game_log.STEP)
 
         assert len(game_log._game_log.log_records) == 1
 
         game_log._game_log.reset()
         game_log.set_level(game_log.IMPORT)
 
-        game_log.add('one - moves', game_log.MOVES)
+        game_log.add('one - MOVE', game_log.MOVE)
         game_log.add('two - import', game_log.IMPORT)
-        game_log.add('two - steps', game_log.STEPS)
+        game_log.add('two - STEP', game_log.STEP)
 
         assert len(game_log._game_log.log_records) == 2
 
@@ -288,7 +287,7 @@ class TestGameLogModule:
         for turn in range(1, 5):
             game_log.turn(game, f'move {turn}')
             for line in range(1, lines[turn] + 1):
-                game_log.add(f'turn {turn} line {line}', game_log.MOVES)
+                game_log.add(f'turn {turn} line {line}', game_log.MOVE)
 
         game_log.prev()
         data = capsys.readouterr().out.split('\n')
@@ -336,7 +335,7 @@ class TestGameLogModule:
 
         importlib.reload(game_log)
 
-        game_log.set_level(game_log.STEPS)
+        game_log.set_level(game_log.STEP)
 
         game_log.turn(game, 'start')
         game_log.add('import 1', game_log.IMPORT)

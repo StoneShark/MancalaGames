@@ -217,20 +217,16 @@ class EndTurnNoPass(EndTurnIf):
             return self.decorator.game_ended(repeat_turn, ended)
 
         if repeat_turn:
-            cont_game = any(self.game.board[loc] >= self.game.info.min_move
-                            for loc in
-                            self.game.cts.get_my_range(self.game.turn)
-                            if self.game.child[loc] is None)
+            ended = not any(self.game.get_allowable_holes())
         else:
-            cont_game = any(self.game.board[loc] >= self.game.info.min_move
-                            for loc in
-                            self.game.cts.get_opp_range(self.game.turn)
-                            if self.game.child[loc] is None)
+            self.game.turn = not self.game.turn
+            ended = not any(self.game.get_allowable_holes())
+            self.game.turn = not self.game.turn
 
-        if not cont_game:
+        if ended:
             game_log.add("Next player can't pass, game ended.", game_log.INFO)
 
-        return self.decorator.game_ended(repeat_turn, not cont_game)
+        return self.decorator.game_ended(repeat_turn, ended)
 
 
 class EndTurnMustShare(EndTurnIf):
@@ -247,26 +243,23 @@ class EndTurnMustShare(EndTurnIf):
         if repeat_turn:
             opp_rng, my_rng = my_rng, opp_rng
 
-        my_sum = sum(self.game.board[loc]
-                     for loc in my_rng
-                     if self.game.child[loc] is None)
-        opp_sum = sum(self.game.board[loc]
-                      for loc in opp_rng
-                      if self.game.child[loc] is None)
+        player_seeds = any(self.game.board[loc]
+                           for loc in my_rng
+                           if self.game.child[loc] is None)
+        opp_seeds = any(self.game.board[loc]
+                        for loc in opp_rng
+                        if self.game.child[loc] is None)
 
-        if not my_sum and opp_sum > 0:
-
+        if not player_seeds and opp_seeds:
             self.game.turn = not self.game.turn
-            poses = self.game.get_allowable_holes()
+            ended = not any(self.game.get_allowable_holes())
             self.game.turn = not self.game.turn
 
-            ended = not any(poses)
             if ended:
                 game_log.add("Next player can't share, game ended.",
                              game_log.INFO)
 
             return self.decorator.game_ended(repeat_turn, ended)
-
         return self.decorator.game_ended(repeat_turn, False)
 
 
