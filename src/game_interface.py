@@ -58,6 +58,15 @@ class GrandSlam(enum.IntEnum):
 
 
 @enum.unique
+class RoundStarter(enum.IntEnum):
+    """Who starts each round."""
+
+    ALTERNATE = 0
+    LOSER = 1
+    WINNER = 2
+
+
+@enum.unique
 class WinCond(enum.Enum):
     """Win conditions."""
 
@@ -81,6 +90,7 @@ class GameFlags:
 
     mustpass: bool = False
     rounds: bool = False
+    round_starter: RoundStarter = RoundStarter.ALTERNATE
     stores: bool = False
 
     # **** sowing flags

@@ -36,6 +36,7 @@ from game_constants import MIN_HOLES
 from game_constants import MAX_SEEDS
 from game_interface import Direct
 from game_interface import GrandSlam
+from game_interface import RoundStarter
 
 
 
@@ -90,12 +91,18 @@ GRANDSLAM = {"Legal": GrandSlam.LEGAL,
              "Legal but leave rightmost": GrandSlam.LEAVE_RIGHT}
 INV_GRANDSLAM = inv_dict(GRANDSLAM)
 
+RSTARTER = {'Alternate': RoundStarter.ALTERNATE,
+            'Round Winner': RoundStarter.WINNER,
+            'Round Loser': RoundStarter.LOSER}
+INV_RSTARTER = inv_dict(RSTARTER)
+
 
 # %%  helper classes
 
 @dc.dataclass(eq=False)
 class GameParams:
-    """The tk vars for game parameters"""
+    """The tk vars for game parameters.
+    These names must match the GameInfo names."""
 
     name: tk.StringVar
     about: tk.StringVar
@@ -108,6 +115,7 @@ class GameParams:
 
     # game dynamic
     rounds: tk.BooleanVar
+    round_starter: tk.StringVar
     blocks: tk.BooleanVar
     child: tk.BooleanVar
     convert_cnt: tk.IntVar
@@ -354,6 +362,11 @@ class MancalaGames(tk.Frame):
         self._add_bool(bfrm, 'Play in Rounds', tkv.rounds, rcnt)
         self._add_bool(bfrm, 'Block Unused Holes', tkv.blocks, rcnt)
 
+        tk.Label(bfrm, text='Round Starter').grid(row=rcnt.nrow(), column=0)
+        opmenu = tk.OptionMenu(bfrm, tkv.round_starter, *RSTARTER)
+        opmenu.config(width=2 + max(len(str(val)) for val in RSTARTER))
+        opmenu.grid(row=rcnt.row(), column=1, columnspan=3)
+
         rcnt = Counter()
         self._add_bool(bfrm, 'Enable Child Holes', tkv.child, rcnt, 2)
         self._add_opts(bfrm, 'Convert Count', tkv.convert_cnt, CONVERT,
@@ -509,6 +522,8 @@ class MancalaGames(tk.Frame):
         self._add_tkvar_bool(tkvars_dict, 'stores', True)
 
         self._add_tkvar_bool(tkvars_dict, 'rounds', False)
+        self._add_tkvar_str(tkvars_dict, ckey.ROUND_STARTER,
+                            INV_RSTARTER[RoundStarter.ALTERNATE])
         self._add_tkvar_bool(tkvars_dict, 'blocks', False)
         self._add_tkvar_bool(tkvars_dict, 'child', False)
         self._add_tkvar_int(tkvars_dict, 'convert_cnt', 0)
@@ -637,6 +652,7 @@ class MancalaGames(tk.Frame):
         field_names = set(gi.GameFlags.get_fields())
 
         for name, var in self.tkvars.get_items():
+
             if name == ckey.CAPT_ON:
                 capt_on = [idx + 1
                            for idx, cvar in enumerate(var) if cvar.get()]
@@ -650,6 +666,9 @@ class MancalaGames(tk.Frame):
 
             elif name == ckey.GRANDSLAM:
                 flag_dict[name] = GRANDSLAM[var.get()]
+
+            elif name == ckey.ROUND_STARTER:
+                flag_dict[name] = RSTARTER[var.get()]
 
             elif name in field_names:
                 flag_dict[name] = var.get()
@@ -766,7 +785,8 @@ class MancalaGames(tk.Frame):
         gi_flags = game_dict[ckey.GAME_INFO]['flags']
         for fname in gi.GameFlags.get_fields():
 
-            if fname not in [ckey.UDIRECT, ckey.SOW_DIRECT, ckey.GRANDSLAM]:
+            if fname not in [ckey.UDIRECT, ckey.SOW_DIRECT,
+                             ckey.GRANDSLAM, ckey.ROUND_STARTER]:
                 var = getattr(man_games.tkvars, fname)
                 if fname in gi_flags:
                     var.set(gi_flags[fname])
@@ -779,6 +799,9 @@ class MancalaGames(tk.Frame):
         self.tkvars.grandslam.set(
             INV_GRANDSLAM[game_dict[ckey.GAME_INFO][ckey.FLAGS].get(
                 ckey.GRANDSLAM, gi_defaults.flags.grandslam)])
+        self.tkvars.round_starter.set(
+            INV_RSTARTER[game_dict[ckey.GAME_INFO][ckey.FLAGS].get(
+                ckey.ROUND_STARTER, gi_defaults.flags.round_starter)])
 
         gi_scorer = game_dict[ckey.GAME_INFO]['scorer']
         self.tkvars.stores_m.set(

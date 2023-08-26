@@ -1,16 +1,16 @@
 {
    "game_class": "Mancala",
    "game_constants": {
-      "nbr_start": 4,
+      "nbr_start": 5,
       "holes": 6
    },
    "game_info": {
       "name": "Vai Lun Thlan",
-      "about": "Vai Lun Thlan: a single-lap mancala,\nsow direction is counter-clockwise,\ncapture on opponents side on 1s.\nMust pass if no moves.",
+      "about": "Vai Lun Thlan: a single-lap mancala,\nsow direction is clockwise,\ncapture on opponents side on 1s.\nMust pass if no moves.",
       "flags": {
          "mustpass": true,
          "stores": true,
-         "sow_direct": 1,
+         "sow_direct": -1,
          "skip_start": true,
          "oppsidecapt": true,
          "multicapt": true
@@ -27,5 +27,6 @@
       "min_move": 1,
       "capt_on": [ 1 ],
       "mm_depth": [ 1, 1, 3, 5 ]
-   }
+   },
+   "rules": "Mohr, Merilyn Simonds; The New Games Treasury, 1993." 
 }

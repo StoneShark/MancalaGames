@@ -6,10 +6,11 @@
    },
    "game_info": {
       "name": "Bechi",
-      "about": "Bechi: a single-lap mancala,\nfirst seed sowed in start hole,\nstart hole determines sow direction,\ncapture evens (after move from hole),\ncapture proceeds in sow direction.\nPlayed in rounds.",
+      "about": "Bechi: a single-lap mancala,\nfirst seed sowed in start hole,\nstart hole determines sow direction,\ncapture evens (after move from hole),\ncapture proceeds in sow direction.\nPlayed in rounds; round starter alternates.",
       "flags": {
          "mustpass": true,
          "rounds": true,
+         "round_starter": 0,
          "stores": true,
          "sow_direct": 0,
          "sow_start": true,

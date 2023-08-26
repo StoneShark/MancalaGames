@@ -461,15 +461,6 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
     def get_allowable_holes(self):
         """Determine what holes are legal moves."""
 
-        # possible optimization,because this is done:
-        #     1. in game_over (seed collector)
-        #     2. in test_pass
-        #     3. to update the UI
-        # if mustshare, this simulates moves for results
-
-        # if self.allow.state == self.state:
-        #     return self.allow.holes
-
         return self.deco.allow.get_allowable_holes()
 
 

@@ -8,13 +8,14 @@
       "name": "Erherhe",
       "difficulty": 1,
       "help_file": "",
-      "about": "Erherhe: a single-lap mancala,\nsow direction is counter-clockwise,\nmultiple capture on opponents side \non 1s and 3s.\nPlayed in rounds.",
+      "about": "Erherhe: a single-lap mancala,\nsow direction is counter-clockwise,\nmultiple capture on opponents side \non 1s and 3s.\nPlayed in rounds; loser starts new round.",
       "flags": {
          "blocks": true,
          "multicapt": true,
          "mustshare": true,
          "oppsidecapt": true,
          "rounds": true,
+         "round_starter": 1,
          "skip_start": true,
          "sow_direct": 1,
          "stores": true

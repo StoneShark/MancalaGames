@@ -210,7 +210,6 @@ class SowMlapSeeds(SowMethodIf):
             loc = self.decorator.sow_seeds(loc, direct, seeds)
 
             if self.lap_cont.do_another_lap(loc, seeds):
-                # TODO should this use the sow_starter?
                 seeds = self.game.board[loc]
                 self.game.board[loc] = 0
 
@@ -253,7 +252,6 @@ class SowVisitedMlap(SowMethodIf):
             return loc
 
         if self.lap_cont.do_another_lap(loc, seeds):
-            # TODO should this use the sow_starter?
             seeds = self.game.board[loc]
             self.game.board[loc] = 0
             return self.lap_sower.sow_seeds(loc, direct, seeds)

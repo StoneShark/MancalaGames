@@ -12,12 +12,10 @@ import pytest
 
 sys.path.extend(['src'])
 
-import deka
 import mancala_games
 import mancala_ui
 import play_mancala
 import play
-import qelat
 
 
 def test_files_not():

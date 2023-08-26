@@ -28,6 +28,7 @@ import warnings
 import game_interface as gi
 from game_interface import Direct
 from game_interface import GrandSlam
+from game_interface import RoundStarter
 
 
 # %% constants
@@ -141,6 +142,12 @@ def build_rules():
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
+        'no_sow_start_mlap',
+        rule=lambda ginfo: ginfo.flags.sow_start and ginfo.flags.mlaps,
+        msg='SOW_START not compatible with MULTI_LAP.',
+        excp=gi.GameInfoError)
+
+    man_rules.add_rule(
         'visit_opp_req_mlap',
         rule=lambda ginfo: ginfo.flags.visit_opp and not ginfo.flags.mlaps,
         msg='VISIT_OPP requires MLAPS.',
@@ -180,6 +187,13 @@ def build_rules():
         'blocks_wo_rounds',
         rule=lambda ginfo: ginfo.flags.blocks and not ginfo.flags.rounds,
         msg='BLOCKS without ROUNDS is not supported by Mancala (base class).',
+        excp=gi.GameInfoError)
+
+    man_rules.add_rule(
+        'rstarter_wo_rounds',
+        rule=lambda ginfo: not ginfo.flags.rounds
+            and ginfo.flags.round_starter != RoundStarter.ALTERNATE,
+        msg='ROUND_STARTER without ROUNDS is not supported.',
         excp=gi.GameInfoError)
 
     man_rules.add_rule(

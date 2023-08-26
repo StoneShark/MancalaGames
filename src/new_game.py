@@ -12,6 +12,7 @@ import random
 
 import end_move
 from game_interface import WinCond
+from game_interface import RoundStarter
 
 
 # %%  New Game interace
@@ -57,6 +58,21 @@ class NewGame(NewGameIf):
 class NewRound(NewGameIf):
     """Create a new round if allowed."""
 
+    def set_starter(self):
+        """Set the starter of the next round based on the game flag."""
+
+        match self.game.info.flags.round_starter:
+            case RoundStarter.ALTERNATE:
+                self.game.turn = not self.game.starter
+                self.game.starter = self.game.turn
+
+            case RoundStarter.LOSER:
+                self.game.turn = not self.game.turn
+
+            case RoundStarter.WINNER:
+                pass
+
+
     def new_game(self, win_cond=None, new_round_ok=False):
         """Create a new round if allowed.
         Use pre-determine pattern to distribute the seeds for the
@@ -71,8 +87,7 @@ class NewRound(NewGameIf):
         nbr_start = self.game.cts.nbr_start
         seeds = self.collector.claim_seeds()
 
-        self.game.turn = not self.game.starter
-        self.game.starter = self.game.turn
+        self.set_starter()
 
         locks = not self.game.info.flags.moveunlock
         self.game.unlocked = [locks] * self.game.cts.dbl_holes

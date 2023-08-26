@@ -439,7 +439,7 @@ class MancalaUI(tk.Frame):
         """Start a new game and refresh the board."""
 
         self._cancel_pending_afters()
-        self.set_game_mode(Behavior.GAMEPLAY)
+        self.set_game_mode(Behavior.GAMEPLAY, force=True)
         new_game = self.game.new_game(win_cond=win_cond,
                                       new_round_ok=new_round_ok)
 
@@ -451,11 +451,12 @@ class MancalaUI(tk.Frame):
         self._start_it()
 
 
-    def set_game_mode(self, mode):
+    def set_game_mode(self, mode, force=False):
         """Change the game mode.
 
         If switching to game play (from rndsetup) check that
-        all seeds have been placed, and switch.
+        all seeds have been placed, and switch. Force omits
+        this check and just changes.
         Assert will catch any programming error, that caused
         a seed gain or loss.
         If all is ok, reconfig the buttons to GAMEPLAY mode.
@@ -468,7 +469,7 @@ class MancalaUI(tk.Frame):
         if mode == self.mode:
             return
 
-        if mode == Behavior.GAMEPLAY:
+        if not force and mode == Behavior.GAMEPLAY:
             if not hb.game_mode_ok():
                 tk.messagebox.showerror(
                     title='Game Mode',
@@ -556,7 +557,7 @@ class MancalaUI(tk.Frame):
         if not do_it:
             return
         self.update()
-        self.set_game_mode(Behavior.GAMEPLAY)
+        self.set_game_mode(Behavior.GAMEPLAY, force=True)
 
         winner = self.game.end_game()
         self._refresh()
