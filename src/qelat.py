@@ -21,10 +21,6 @@ import mancala
 
 WALDA_BOTH = -1
 
-#  index matches the gameboard
-WALDA_POSS = [WALDA_BOTH, True, None, None, True, WALDA_BOTH,
-              WALDA_BOTH, False, None, None, False, WALDA_BOTH]
-
 WALDA_TEST = [[WALDA_BOTH, False],
               [WALDA_BOTH, True]]
 
@@ -73,7 +69,6 @@ def build_qelat_rules():
             msg=f'Qelat cannot be used with {flag.upper()}.',
             excp=gi.GameInfoError)
 
-
     return qelat_rules
 
 # %%
@@ -85,9 +80,9 @@ class QelatEndMove(end_move.EndTurnIf):
     from the stores into available waldas."""
 
     def game_ended(self, repeat_turn, ended=False):
-        """Claim own seeds."""
+        """Qelat end move wrapper."""
 
-        store_f, store_t = self.decorator.game_ended(repeat_turn, ended)
+        end_cond, winner = self.decorator.game_ended(repeat_turn, ended)
 
         if any(self.game.store):
             walda_locs = self.game.find_waldas(self)
@@ -107,7 +102,7 @@ class QelatEndMove(end_move.EndTurnIf):
         assert sum(self.game.store) + sum(self.game.board) == \
             self.game.cts.total_seeds, 'Qelat: seed count error'
 
-        return store_f, store_t
+        return end_cond, winner
 
 
 # %%  game class
@@ -122,12 +117,25 @@ class Qelat(mancala.Mancala):
     def __init__(self, game_consts, game_info):
         """Check the game configuration.
         Call parent init.
-        Add our own deco to the seed_collector chain."""
+        Add our own deco to the seed_collector chain.
+        Compute the walda possibilities based on the board size."""
 
         super().__init__(game_consts, game_info)
-
         self.deco.ender = QelatEndMove(self, self.deco.ender)
 
+        holes = self.cts.holes
+        dbl_holes = self.cts.dbl_holes
+
+        self.walda_poses = [None] * dbl_holes
+        self.walda_poses[0] = WALDA_BOTH
+        self.walda_poses[holes - 1] = WALDA_BOTH
+        self.walda_poses[holes] = WALDA_BOTH
+        self.walda_poses[dbl_holes - 1] = WALDA_BOTH
+        if holes >= 3:
+            self.walda_poses[1] = True
+            self.walda_poses[holes - 2] = True
+            self.walda_poses[holes + 1] = False
+            self.walda_poses[dbl_holes - 2] = False
 
 
     def find_waldas(self):
@@ -189,7 +197,7 @@ class Qelat(mancala.Mancala):
 
         if (self.board[loc] == self.info.flags.convert_cnt
                 and self.child[loc] is None
-                and WALDA_POSS[loc] in WALDA_TEST[self.turn]):
+                and self.walda_poses[loc] in WALDA_TEST[self.turn]):
 
             self.child[loc] = self.turn
 

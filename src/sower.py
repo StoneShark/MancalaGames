@@ -264,10 +264,10 @@ class SowVisitedMlap(SowMethodIf):
 def deco_sower(game):
     """Build the sower chain."""
 
-    sower = SowSeeds(game)
-
     if game.info.flags.sow_own_store:
-        sower = SowSeedsNStore(game, sower)
+        sower = SowSeedsNStore(game)
+    else:
+        sower = SowSeeds(game)
 
     pre_lap_sower = sower
 

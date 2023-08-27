@@ -15,6 +15,7 @@ import mancala
 import sower
 
 from game_interface import WinCond
+from game_interface import GrandSlam
 
 # %% constant
 
@@ -50,16 +51,51 @@ def build_deka_rules():
         msg='Deka requires BLOCKS for closing holes.',
         excp=gi.GameInfoError)
 
-    bad_flags = ['capsamedir', 'child', 'crosscapt', 'evens',
-                 'moveunlock', 'multicapt', 'mustshare', 'mustpass',
-                 'oppsidecapt', 'rounds', 'skip_start',
-                 'sow_own_store', 'sow_start', 'stores', 'visit_opp']
+    deka_rules.add_rule(
+        'gs_legal',
+        rule=lambda ginfo: ginfo.flags.grandslam != GrandSlam.LEGAL,
+        msg='Deka requires that GRANDSLAM be Legal.',
+        excp=gi.GameInfoError)
+
+    capt_flags = ['capsamedir', 'crosscapt', 'evens',
+                  'multicapt', 'oppsidecapt']
+    for flag in capt_flags:
+        deka_rules.add_rule(
+            f'no_capt_{flag}',
+            rule=ft.partial(rev_getattr, flag),
+            msg='Deka closes holes to remove seeds from play, '
+                f'no other capture mechanisms are allowed [{flag.upper()}].',
+        excp=gi.GameInfoError)
+
+    deka_rules.add_rule(
+        'no_capt_on',
+        rule=lambda ginfo: any(ginfo.capt_on),
+        msg='Deka closes holes to remove seeds from play, ' + \
+            'no other capture mechanisms are allowed [CAPT_ON].',
+        excp=gi.GameInfoError)
+
+    bad_flags = ['child', 'moveunlock', 'mustshare', 'mustpass',
+                 'rounds', 'sow_own_store', 'stores']
     for flag in bad_flags:
         deka_rules.add_rule(
             f'bad_{flag}',
             rule=ft.partial(rev_getattr, flag),
             msg=f'Deka cannot be used with {flag.upper()}.',
             excp=gi.GameInfoError)
+
+    ni_flags = ['skip_start', 'sow_start', 'visit_opp']
+    for flag in ni_flags:
+        deka_rules.add_rule(
+            f'bad_{flag}',
+            rule=ft.partial(rev_getattr, flag),
+            msg=f'Deka does not currently support {flag.upper()}.',
+            excp=NotImplementedError)
+
+    deka_rules.add_rule(
+        'assume_mlaps',
+        rule=lambda ginfo: not ginfo.flags.mlaps,
+        msg='Deka currently only supports MLAPS.',
+        excp=NotImplementedError)
 
     return deka_rules
 
@@ -91,6 +127,23 @@ class DekaSower(sower.SowMethodIf):
             self.game.board[loc] += 1
             seeds -= 1
 
+        return loc
+
+
+class DekaSowClosed(sower.SowMethodIf):
+    """For non-multilap sowing, check for closing, remove the
+    final seeds from play and block the hole."""
+
+    def sow_seeds(self, start, direct, seeds):
+        """Sow seeds."""
+
+        loc = self.decorator.sow_seeds(start, direct, seeds)
+        if (self.game.board[loc] == self.game.info.flags.convert_cnt
+                and self.game.cts.opp_side(self.game.turn, loc)):
+
+            self.game.store[0] += self.game.board[loc]
+            self.game.board[loc] = 0
+            self.game.blocked[loc] = True
         return loc
 
 
@@ -157,7 +210,15 @@ class Deka(mancala.Mancala):
         super().__init__(game_consts, game_info)
 
         self.deco.sower = DekaLapSower(self, DekaSower(self),
-                                       DekaLapper(self))
+                                        DekaLapper(self))
+
+        # removing mlap seems to create a game that isn't very good
+        # allowing sow_start and min_mov as 2 was more interesting
+        # if self.info.flags.mlaps:
+        #     self.deco.sower = DekaLapSower(self, DekaSower(self),
+        #                                    DekaLapper(self))
+        # else:
+        #     self.deco.sower = DekaSowClosed(self, DekaSower(self))
 
 
     def end_game(self):
