@@ -189,6 +189,20 @@ class HoleProps:
     ch_owner: bool  # child owner; actually one of False, True or None
 
 
+class MoveTpl(tuple):
+    """A class to print the move tuples nicely.
+    Override new so the contructor can take two arguements."""
+
+    def __new__(cls, pos, direct):
+        return super().__new__(cls, (pos, direct))
+
+    def __str__(self):
+        if self[1]:
+            return f'({self[0]}, {self[1].name})'
+        return f'({self[0]}, None)'
+
+
+
 # %%  game interface abstract base class -- the UI requires these
 
 class GameInterface(abc.ABC):

@@ -243,6 +243,7 @@ def build_rules():
         rule=lambda ginfo: ginfo.min_move == 1 and ginfo.flags.sow_start,
         msg='MIN_MOVE of 1 with SOW_START play is confusing.',
         excp=gi.GameInfoError)
+        # pick-up a seed, sow it back into the same hole -> no change of state
 
     man_rules.add_rule(
         'mlap_capt_on_incomp',

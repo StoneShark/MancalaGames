@@ -12,6 +12,7 @@ import abc
 
 from game_interface import Direct
 from game_interface import PASS_TOKEN
+from game_interface import MoveTpl
 
 
 # %%  mover  interface
@@ -52,9 +53,10 @@ class UdirMoves(MovesIf):
 
             if allowable[pos]:
                 if pos in self.game.info.udir_holes:
-                    moves += [(pos, Direct.CCW), (pos, Direct.CW)]
+                    moves += [MoveTpl(pos, Direct.CCW),
+                              MoveTpl(pos, Direct.CW)]
                 else:
-                    moves += [(pos, None)]
+                    moves += [MoveTpl(pos, None)]
 
         return moves
 
@@ -74,7 +76,7 @@ class UdirPassMoves(MovesIf):
         otherwise pass."""
 
         moves = self.decorator.get_moves()
-        return moves if moves else [(PASS_TOKEN, None)]
+        return moves if moves else [MoveTpl(PASS_TOKEN, None)]
 
 
 class PassMoves(MovesIf):

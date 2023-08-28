@@ -40,6 +40,12 @@ def build_deka_rules():
 
     # add rules
     deka_rules.add_rule(
+        'min_move_one',
+        rule=lambda ginfo: ginfo.min_move != 1,
+        msg='Deka requires a minimum move of 1.',
+        excp=gi.GameInfoError)
+
+    deka_rules.add_rule(
         'need_convert_cnt',
         rule=lambda ginfo: not ginfo.flags.convert_cnt,
         msg='Deka requires CONVERT_CNT to control closing holes.',
@@ -75,27 +81,14 @@ def build_deka_rules():
         excp=gi.GameInfoError)
 
     bad_flags = ['child', 'moveunlock', 'mustshare', 'mustpass',
-                 'rounds', 'sow_own_store', 'stores']
+                 'rounds', 'sow_own_store', 'stores',
+                 'skip_start', 'sow_start', 'visit_opp']
     for flag in bad_flags:
         deka_rules.add_rule(
             f'bad_{flag}',
             rule=ft.partial(rev_getattr, flag),
             msg=f'Deka cannot be used with {flag.upper()}.',
             excp=gi.GameInfoError)
-
-    ni_flags = ['skip_start', 'sow_start', 'visit_opp']
-    for flag in ni_flags:
-        deka_rules.add_rule(
-            f'bad_{flag}',
-            rule=ft.partial(rev_getattr, flag),
-            msg=f'Deka does not currently support {flag.upper()}.',
-            excp=NotImplementedError)
-
-    deka_rules.add_rule(
-        'assume_mlaps',
-        rule=lambda ginfo: not ginfo.flags.mlaps,
-        msg='Deka currently only supports MLAPS.',
-        excp=NotImplementedError)
 
     return deka_rules
 
@@ -209,16 +202,11 @@ class Deka(mancala.Mancala):
 
         super().__init__(game_consts, game_info)
 
-        self.deco.sower = DekaLapSower(self, DekaSower(self),
-                                        DekaLapper(self))
-
-        # removing mlap seems to create a game that isn't very good
-        # allowing sow_start and min_mov as 2 was more interesting
-        # if self.info.flags.mlaps:
-        #     self.deco.sower = DekaLapSower(self, DekaSower(self),
-        #                                    DekaLapper(self))
-        # else:
-        #     self.deco.sower = DekaSowClosed(self, DekaSower(self))
+        if self.info.flags.mlaps:
+            self.deco.sower = DekaLapSower(self, DekaSower(self),
+                                           DekaLapper(self))
+        else:
+            self.deco.sower = DekaSowClosed(self, DekaSower(self))
 
 
     def end_game(self):

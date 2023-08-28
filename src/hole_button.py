@@ -12,6 +12,7 @@ import enum
 
 import tkinter as tk
 
+from game_interface import MoveTpl
 
 # %%  constants and enums
 
@@ -120,9 +121,9 @@ class PlayButtonBehave(BehaviorIf):
         someplace else (e.g. get_direction) so use None."""
         if self.btn.bidir:
             if self.btn.dirs:
-                self.btn.game_ui.move((self.btn.pos, self.btn.dirs[0]))
+                self.btn.game_ui.move(MoveTpl(self.btn.pos, self.btn.dirs[0]))
             else:
-                self.btn.game_ui.move((self.btn.pos, None))
+                self.btn.game_ui.move(MoveTpl(self.btn.pos, None))
         else:
             self.btn.game_ui.move(self.btn.pos)
 
@@ -132,7 +133,7 @@ class PlayButtonBehave(BehaviorIf):
         player right click goes counter-clockwise"""
 
         if self.btn.bidir and self.btn.dirs:
-            self.btn.game_ui.move((self.btn.pos, self.btn.dirs[1]))
+            self.btn.game_ui.move(MoveTpl(self.btn.pos, self.btn.dirs[1]))
 
 
     def _refresh(self, disable=False, cactive=True):
