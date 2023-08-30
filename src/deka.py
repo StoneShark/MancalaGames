@@ -210,36 +210,27 @@ class Deka(mancala.Mancala):
 
 
     def end_game(self):
-        """The user has requested that the game be ended.
-        Give the win to the player with the most blocked holes."""
+        """The user has requested that the game be ended."""
 
-        f_seeds = sum(self.board[loc] for loc in self.cts.false_range)
-        t_seeds = sum(self.board[loc] for loc in self.cts.true_range)
-
-        if f_seeds > t_seeds:
-            self.turn = False
-            return WinCond.WIN
-
-        if t_seeds > f_seeds:
-            self.turn = True
-            return WinCond.WIN
-
-        return WinCond.TIE
+        return self.win_conditions() or WinCond.TIE
 
 
     def win_message(self, win_cond):
         """Return a game appropriate win message based on WinCond.
         Return a window title and message strings."""
 
-        if win_cond in [WinCond.WIN]:
+        if win_cond == WinCond.WIN:
             player = 'Top' if self.turn else 'Bottom'
             msg = f'{player} won by eliminating opponent seeds.'
 
-        elif win_cond in [WinCond.TIE]:
-            msg = 'The game was ended by request.'
+        elif win_cond == WinCond.TIE:
+            msg = 'Both players ended with seeds, consider it a tie.'
 
         elif win_cond == WinCond.ENDLESS:
             msg = 'Game stuck in a loop. No winner.'
+
+        else:
+            msg = f'Unexpected end condition {win_cond}.'
 
         return "Game Over", msg
 

@@ -231,7 +231,7 @@ class TestDeka:
 
         winmsg = game.win_message(cond)
         assert 'Game Over' in winmsg[0]
-        assert 'by request' in winmsg[1]
+        assert 'Both players' in winmsg[1]
 
 
     def test_end_game_t_win(self, game):
