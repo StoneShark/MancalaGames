@@ -39,7 +39,6 @@ from game_interface import GrandSlam
 from game_interface import RoundStarter
 
 
-
 # %% support func
 
 def inv_dict(adict):

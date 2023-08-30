@@ -99,10 +99,8 @@ class GameSelect(tk.Frame):
         if last_button:
             self._leave(last_button)
 
-        xpos, ypos, _, width = button.bbox("insert")
-
-        xpos = xpos + button.winfo_rootx() + 137
-        ypos = ypos + width + button.winfo_rooty() + 17
+        xpos = button.winfo_rootx() + 137
+        ypos = button.winfo_rooty() + 17
 
         self.tipwindow = tk.Toplevel(button)
         self.tipwindow.wm_overrideredirect(1)

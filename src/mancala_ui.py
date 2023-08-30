@@ -16,7 +16,7 @@ import traceback
 
 import tkinter as tk
 
-import hole_button as hb
+import hole_button as hbtn
 import game_interface as gi
 import game_log
 
@@ -28,7 +28,6 @@ from game_interface import PASS_TOKEN
 # %%   constants
 
 AI_DELAY = [0, 1000, 3000]
-NO_STR = 'no'
 
 
 # %%  GameTally
@@ -187,13 +186,13 @@ class MancalaUI(tk.Frame):
                 if self.info.flags.udirect:
 
                     if pos in self.info.udir_holes:
-                        btn = hb.HoleButton(land_frame, self, pos,
-                                            (True, dirs))
+                        btn = hbtn.HoleButton(land_frame, self, row, pos,
+                                              True, dirs)
                     else:
-                        btn = hb.HoleButton(land_frame, self, pos,
-                                            (True, None))
+                        btn = hbtn.HoleButton(land_frame, self, row, pos,
+                                              True, None)
                 else:
-                    btn = hb.HoleButton(land_frame, self, pos)
+                    btn = hbtn.HoleButton(land_frame, self, row, pos)
 
                 self.disp[row][pos] = btn
                 self.disp[row][pos].grid(row=row, column=pos)
@@ -309,13 +308,6 @@ class MancalaUI(tk.Frame):
 
         menubar.add_cascade(label='Log', menu=logmenu)
 
-        if self.info.flags.rounds:
-            rndmenu = tk.Menu(menubar)
-            rndmenu.add_command(
-                label='Start Round',
-                command=lambda: self.set_game_mode(Behavior.GAMEPLAY))
-            menubar.add_cascade(label='Round', menu=rndmenu)
-
         helpmenu = tk.Menu(menubar)
         helpmenu.add_command(label='Help...', command=self._help)
         helpmenu.add_command(label='About...', command=self._about)
@@ -345,9 +337,8 @@ class MancalaUI(tk.Frame):
     def _quiet_dialog(self, title, text):
         """Popup a quiet dialog message."""
 
-        xpos, ypos, _, width = self.bbox("insert")
-        xpos = xpos + self.winfo_rootx() + 100
-        ypos = ypos + width + self.winfo_rooty() + 50
+        xpos = self.winfo_rootx() + 100
+        ypos = self.winfo_rooty() + 50
 
         top = tk.Toplevel(self)
         top.resizable(False, False)
@@ -453,47 +444,28 @@ class MancalaUI(tk.Frame):
 
     def set_game_mode(self, mode, force=False):
         """Change the game mode.
-
-        If switching to game play (from rndsetup) check that
-        all seeds have been placed, and switch. Force omits
-        this check and just changes.
+        ask_mode_change checks if it's ok to and/or
+        asks the user if they want to change.
         Assert will catch any programming error, that caused
-        a seed gain or loss.
-        If all is ok, reconfig the buttons to GAMEPLAY mode.
-
-        If switching to round setup (from gameplay) when
-        there are blocked holes, ask the user if they wish
-        to move any seeds.
-        If they do reconfig the buttons to RNDSETUP mode."""
+        a seed gain or loss."""
 
         if mode == self.mode:
-            return
+            return True
 
-        if not force and mode == Behavior.GAMEPLAY:
-            if not hb.game_mode_ok():
-                tk.messagebox.showerror(
-                    title='Game Mode',
-                    message='Hold is not empty;'
-                    'place seeds before returning to game mode.',
-                    parent=self)
-                return
-            assert sum(self.game.store) + sum(self.game.board) == \
-                self.game.cts.total_seeds, \
-                'Seed count error on switching back to GAMEPLAY mode.'
+        assert not force or force and mode == Behavior.GAMEPLAY, \
+            "Don't force game mode change for anything but normal game play."
 
-        if mode == Behavior.RNDSETUP and any(self.game.blocked):
-            ans = tk.messagebox.askquestion(
-                title='Move seeds',
-                message='A new round is begining so you may change\n'
-                        'the occupied holes on each side of the board.\n'
-                        'A right click picks up seeds.\n'
-                        'A left click drops those seeds.\n'
-                        'Use Round -> Start Round to play.\n'
-                        'Do you wish to move any seeds?',
-                        parent=self)
-            if ans == NO_STR:
+        if force:
+            hbtn.force_mode_change()
+
+        elif not hbtn.ask_mode_change(mode, self):
+            if mode != Behavior.GAMEPLAY:
                 self._start_it()
-                return
+            return False
+
+        assert sum(self.game.store) + sum(self.game.board) == \
+            self.game.cts.total_seeds, \
+            'Seed count error on switching back to GAMEPLAY mode.'
 
         self.mode = mode
         for button_row in self.disp:
@@ -503,6 +475,7 @@ class MancalaUI(tk.Frame):
         self._refresh()
         if mode == Behavior.GAMEPLAY:
             self._start_it()
+        return True
 
 
     def _win_popup(self, title, message):
@@ -510,9 +483,8 @@ class MancalaUI(tk.Frame):
 
         self.bell()
 
-        xpos, ypos, _, width = self.bbox("insert")
-        xpos = xpos + self.winfo_rootx() + 100
-        ypos = ypos + width + self.winfo_rooty() + 50
+        xpos = self.winfo_rootx() + 100
+        ypos = self.winfo_rooty() + 50
 
         top = tk.Toplevel(self)
         top.resizable(False, False)
