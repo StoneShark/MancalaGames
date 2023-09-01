@@ -31,6 +31,10 @@
          "repeat_turn": 0
       },
       "capt_on": [1, 3],
-      "mm_depth": [1, 3, 5, 8]
+      "ai_params": {
+          "mm_depth": [ 1, 3, 5, 8 ],
+          "mcts_nodes": [30, 30, 50, 90],
+          "mcts_bias": [0.4, 0.4, 0.4, 0.4]
+      }
    }
 }

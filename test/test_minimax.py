@@ -62,12 +62,13 @@ def define_get_game(depth):
                   []]
         scored = [False] * len(scores)
 
-        def __init__(self, max_depth):
+        def __init__(self, difficulty):
 
             assert len(Small.scores) == len(Small.childs), 'graph error'
 
             self.player = minimax.MiniMaxer(self)
-            self.player.set_params(max_depth)
+            self.player.set_params(difficulty,
+                                   {"mm_depth" : [1, 1, 2, 3]})
             self.turn = False
             self.node = 0
 

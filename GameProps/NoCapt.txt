@@ -27,7 +27,11 @@
          "repeat_turn": 50
       },
       "min_move": 1,
-      "mm_depth": [ 1, 5, 8, 12 ]
+      "ai_params": {
+         "mm_depth": [1, 5, 8, 12],
+         "mcts_nodes": [30, 30, 50, 90],
+         "mcts_bias": [0.4, 0.4, 0.4, 0.4]
+      }
    },
    "rules": "on the www; can't find it again"
 }

@@ -541,7 +541,9 @@ class MancalaUI(tk.Frame):
         """Set the max search depth for the minimaxer and
         the delay before the AI plays."""
 
-        self.game.set_difficulty(self.difficulty.get())
+        msg = self.game.set_difficulty(self.difficulty.get())
+        if msg:
+            tk.messagebox.showerror('AI Player Config Error', msg)
 
 
     def _log_turn(self, last_turn, pos, win_cond=None):

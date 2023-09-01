@@ -82,6 +82,7 @@ class TestBasics:
         game_info = gi.GameInfo(nbr_holes = game_consts.holes,
                                 capt_on = [2],
                                 flags=GameFlags(),
+                                ai_params={"mm_depth" : [1, 1, 3, 5]},
                                 rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)

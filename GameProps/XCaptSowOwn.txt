@@ -26,7 +26,11 @@
          "easy_rand": 0,
          "repeat_turn": 50
       },
-      "mm_depth": [ 1, 5, 8, 12 ]
+      "ai_params": {
+         "mm_depth": [1, 5, 8, 12],
+         "mcts_nodes": [30, 30, 50, 90],
+         "mcts_bias": [0.4, 0.4, 0.4, 0.4]
+      }
    },
    "rules": "Ramanujan & Selman, Trade-Offs in Sampling-Based Adversarial Planning, AAAI 2011.  Collecting opp seeds if you have no move is partially implemented via grandslam.OPP_GETS_REMAIN."
 }

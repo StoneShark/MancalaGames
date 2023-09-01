@@ -11,6 +11,7 @@ import math
 import random
 
 import ai_interface
+import cfg_keys as ckey
 import game_log
 
 from game_interface import WinCond
@@ -18,6 +19,11 @@ from game_interface import WinCond
 # TODO There must errors in this code (montecarlo_ts), because it plays poorly
 # could be very bad choice of bias (using 0.4)
 
+# %% constantes
+
+NBR_NODES = 50
+MAX_TURNS = 500
+BIAS = 0.4
 
 # %% best
 
@@ -78,12 +84,12 @@ class MonteCarloTS(ai_interface.AiPlayerIf):
     Put the start state in as node 0."""
 
 
-    def __init__(self, game, bias):
+    def __init__(self, game):
 
         super().__init__(game)
 
-        self.bias = bias
-        self.new_nodes = 30
+        self.bias = BIAS
+        self.new_nodes = NBR_NODES
         self.game_nodes = col.deque()
         self.node_dict = {}
         self.move_desc = None
@@ -224,7 +230,7 @@ class MonteCarloTS(ai_interface.AiPlayerIf):
         self.game.state = self.game_nodes[node_id].state
         node_hist = col.deque()
 
-        for _ in range(300):
+        for _ in range(MAX_TURNS):
 
             node_hist.appendleft(hash(self.game.state))
 
@@ -268,9 +274,16 @@ class MonteCarloTS(ai_interface.AiPlayerIf):
         return self.move_desc
 
 
-    def set_params(self, params):
+    def set_params(self, difficulty, params):
         """Set the params from the config file that associate
         with the selected difficulty."""
 
-        # TODO params is still mm_depth
-        self.new_nodes = params * 10
+        if ckey.MCTS_BIAS in params and ckey.MCTS_NODES in params:
+            self.bias = params[ckey.MCTS_BIAS][difficulty]
+            self.new_nodes = params[ckey.MCTS_NODES][difficulty]
+            return None
+
+        self.bias = 0.4
+        self.new_nodes = 40
+        return ('MonteCarloTS requires MCTS_BIAS and MCTS_NODES in AI_PARAMS. '
+                f'Using bias={self.bias} and new_nodes={self.new_nodes}.')

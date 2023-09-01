@@ -198,12 +198,15 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
 
     def set_player(self, player):
-        """Save the new player."""
+        """Save the new player.
+        Call set_difficulty to confirm new player is using the
+        desired difficulty and paramters."""
 
         if not isinstance(player, ai_interface.AiPlayerIf):
             raise TypeError('player not built on ai_interface.AiPlayerIf.')
 
         self.player = player
+        self.set_difficulty(self.difficulty)
 
 
     def params_str(self):
@@ -234,13 +237,15 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
         return self.info
 
+
     def set_difficulty(self, diff):
-        """set game difficulty"""
+        """Set game difficulty"""
 
         game_log.add(f'Changing difficulty {diff}', game_log.INFO)
         self.difficulty = diff
-        # TODO maybe bad because ai_params must match ai_player type
-        self.player.set_params(self.info.mm_depth[self.difficulty])
+        msg = self.player.set_params(diff, self.info.ai_params)
+        game_log.add(f'AI Param Error: {msg}', game_log.IMPORT)
+        return msg
 
 
     def new_game(self, win_cond=None, new_round_ok=False):

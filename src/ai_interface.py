@@ -77,6 +77,12 @@ class AiPlayerIf(abc.ABC):
         """Return a description of the previous move."""
 
     @abc.abstractmethod
-    def set_params(self, params):
+    def set_params(self, difficulty, params):
         """Set the params from the config file that associate
-        with the selected difficulty."""
+        with the selected difficulty and ai_players.
+        difficulty: integer 0, 1, 2, 3
+        params: dict - keys are parameter names,
+        values are arrays of 4 integer values to pick based on
+        difficulty.
+        Return None if no problems, or a message describing the
+        problem if the difficulty cannot be set."""

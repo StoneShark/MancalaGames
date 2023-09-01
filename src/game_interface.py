@@ -163,8 +163,12 @@ class GameInfo:
     # list of bi-directional holes
     udir_holes: list[int] = dc.field(default_factory=list)
 
-    mm_depth: list[int] = (1, 1, 3, 5)
+    # a dictionary of param : list[4]
+    # where param is used by the ai_player to select the parameter
+    # and list is indexed by difficulty to choose the value
+    ai_params: dict = dc.field(default_factory=dict)
 
+    # used only for initialization, is not added to the dataclass
     rules: dc.InitVar[dict]
 
 

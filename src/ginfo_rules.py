@@ -44,6 +44,7 @@ MAX_MINIMAX_DEPTH = 15
 class GameInfoRule:
     """An individual rule to apply to GameInfo."""
 
+    name: str
     rule: col.abc.Callable   # return True if error
     msg: str
     warn: bool = False       # do warning not exception
@@ -56,7 +57,9 @@ class GameInfoRule:
             if self.warn:
                 warnings.warn(self.msg)
             else:
-                raise self.excp(self.msg)
+                msg = self.name + ':  ' + self.msg
+                msg += '\n\n' + repr(self.rule.__code__)
+                raise self.excp(msg)
 
 
 class RuleDict(dict):
@@ -69,7 +72,7 @@ class RuleDict(dict):
         if not warn and not excp:
             print(f'Rule {name} has no effect.')
 
-        self[name] = GameInfoRule(rule, msg, warn, excp)
+        self[name] = GameInfoRule(name, rule, msg, warn, excp)
 
 
 # %% default mancala rules
@@ -108,9 +111,9 @@ def build_rules():
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
-        'invalid_mm_depth',
-        rule=lambda ginfo: not ginfo.mm_depth,
-        msg='Missing minimaxer depths.',
+        'invalid_ai_params',
+        rule=lambda ginfo: not isinstance(ginfo.ai_params, dict),
+        msg='Invalid AI parameter dictionary.',
         excp=gi.GameInfoError)
 
     ###  GameInfo.Flags checks
@@ -317,22 +320,13 @@ def build_rules():
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
-        'four_diffs',
-        rule=lambda ginfo: len(ginfo.mm_depth) != DIFF_LEVELS,
-        msg='Exactly 4 minimaxer depths are expected (easy..expert).',
+        'params_four_diff',
+        rule=lambda ginfo: (ginfo.ai_params and
+                            all(len(values) != DIFF_LEVELS
+                                for values in ginfo.ai_params.values())),
+        msg=f'Exactly {DIFF_LEVELS} param values are expected '
+            'for each ai parameter.',
         excp=gi.GameInfoError)
-
-    man_rules.add_rule(
-        'depth_ge_zero',
-        rule=lambda ginfo: min(ginfo.mm_depth) <= 0,
-        msg='All minimaxer depths must be > 0.',
-        excp=gi.GameInfoError)
-
-    man_rules.add_rule(
-        'depth_le_max',
-        rule=lambda ginfo: max(ginfo.mm_depth) >= MAX_MINIMAX_DEPTH,
-        msg='Max Minimaxer depth is large, AI moves might be slow.',
-        warn=True)
 
     man_rules.add_rule(
         'mlaps_access_prohibit',

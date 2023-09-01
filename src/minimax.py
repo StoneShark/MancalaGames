@@ -12,7 +12,7 @@ import random
 import sys
 
 import ai_interface
-
+import cfg_keys as ckey
 
 MAX_INT = sys.maxsize
 MIN_INT = -sys.maxsize
@@ -97,6 +97,12 @@ class MiniMaxer(ai_interface.AiPlayerIf):
         return self.last_scores
 
 
-    def set_params(self, params):
+    def set_params(self, difficulty, params):
         """Set the parameters based on difficulty."""
-        self.max_depth = params
+        if ckey.MM_DEPTH in params:
+            self.max_depth = params[ckey.MM_DEPTH][difficulty]
+            return None
+
+        self.max_depth = 5
+        return ('MM_DEPTH missing from AI_PARAMS, '
+                    f'using depth of {self.max_depth}.')

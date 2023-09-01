@@ -188,8 +188,7 @@ class NonUiData:
 
     difficulty: int = 1
     help_file: str = ''
-    mm_depth: list[int] = (1, 1, 3, 5)
-
+    ai_params: dict  = dc.field(default_factory=dict)
     other_dict: dict = dc.field(default_factory=dict)
 
 
@@ -700,7 +699,7 @@ class MancalaGames(tk.Frame):
                                      scorer=scorer,
                                      capt_on=capt_on,
                                      udir_holes=udir,
-                                     mm_depth=self.non_ui_data.mm_depth,
+                                     ai_params=self.non_ui_data.ai_params,
                                      flags=flags,
                                      rules=gclass.rules)
 
@@ -830,8 +829,8 @@ class MancalaGames(tk.Frame):
             game_dict[ckey.GAME_INFO].get('difficulty', gi_defaults.difficulty)
         self.non_ui_data.help_file = \
             game_dict[ckey.GAME_INFO].get('help_file', gi_defaults.help_file)
-        self.non_ui_data.mm_depth = \
-            game_dict[ckey.GAME_INFO].get('mm_depth', gi_defaults.mm_depth)
+        self.non_ui_data.ai_params = \
+            game_dict[ckey.GAME_INFO].get('ai_params', gi_defaults.ai_params)
 
         del game_dict[ckey.GAME_CLASS]
         del game_dict[ckey.GAME_CONSTANTS]
