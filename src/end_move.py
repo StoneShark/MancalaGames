@@ -26,7 +26,7 @@ Created on Fri Apr  7 07:43:19 2023
 
 import abc
 
-import game_log
+from game_log import game_log
 from game_interface import WinCond
 
 

@@ -10,7 +10,7 @@ Created on Fri Apr  7 08:52:03 2023
 import abc
 
 from game_interface import GrandSlam
-import game_log
+from game_log import game_log
 from incrementer import NOSKIPSTART
 
 

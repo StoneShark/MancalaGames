@@ -18,7 +18,7 @@ import tkinter as tk
 
 import hole_button as hbtn
 import game_interface as gi
-import game_log
+from game_log import game_log
 
 from hole_button import Behavior
 from game_interface import WinCond
@@ -163,7 +163,7 @@ class MancalaUI(tk.Frame):
         self.master.report_callback_exception = self._exception_callback
 
         self.difficulty = tk.IntVar(self.master, value=self.info.difficulty)
-        self.game.set_difficulty(self.info.difficulty)
+        self._set_difficulty()
 
         self.ai_delay = tk.BooleanVar(self.master, value=2)
         self.ai_player = tk.IntVar(self.master, value=False)
@@ -615,8 +615,10 @@ class MancalaUI(tk.Frame):
         """If it's the AI's turn, do a move. AI is top player."""
 
         if self.ai_player.get() and self.game.get_turn():
+            gl_active = game_log.get_active()
+
             game_log.set_active(self.log_ai.get())
             move = self.game.get_ai_move()
-            game_log.set_active(True)
+            game_log.set_active(gl_active)
 
             self.move(move)

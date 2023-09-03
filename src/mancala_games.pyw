@@ -24,7 +24,7 @@ import tkinter.filedialog as tkfile
 import cfg_keys as ckey
 import game_constants as gc
 import game_interface as gi
-import game_log
+from game_log import game_log
 import mancala
 import mancala_ui
 import man_config

@@ -18,7 +18,7 @@ import cfg_keys as ckey
 import end_move
 import game_constants as gc
 import game_interface as gi
-import game_log
+from game_log import game_log
 import game_str
 import get_direction
 import get_moves

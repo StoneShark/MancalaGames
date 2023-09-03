@@ -12,7 +12,7 @@ Created on Sat Apr  8 09:15:30 2023
 
 import abc
 
-import game_log
+from game_log import game_log
 
 from game_interface import GrandSlam
 from game_interface import WinCond

@@ -14,12 +14,6 @@ import textwrap
 import man_path
 
 
-MOVE = 0
-IMPORT = 1
-STEP = 2
-INFO = 3
-DETAIL = 4
-SHOWALL = DETAIL
 
 
 class LogRecord:
@@ -34,46 +28,74 @@ class LogRecord:
 class GameLog:
     """Game Log."""
 
+    MOVE = 0
+    IMPORT = 1
+    STEP = 2
+    INFO = 3
+    DETAIL = 4
+    SHOWALL = DETAIL
+
     def __init__(self):
 
-        self.active = True
-        self.live = False
-        self.level = MOVE
-        self.turn_nbr = -1
-        self.log_records = col.deque()
-        self.move_start = col.deque()
+        self._active = True
+        self._live = False
+        self._level = GameLog.MOVE
+
+        self._turn_nbr = -1
+        self._log_records = col.deque()
+        self._move_start = col.deque()
 
 
-    def reset(self):
-        """Clear the deques."""
-        self.log_records.clear()
-        self.move_start.clear()
-        self.turn_nbr = -1
+    def get_active(self):
+        """Get active property."""
+        return self._active
+
+    def set_active(self, value):
+        """Set active."""
+        self._active = value
+
+    def get_live(self):
+        """Get live property."""
+        return self._live
+
+    def set_live(self, value):
+        """Set live."""
+        self._live = value
+
+    def get_level(self):
+        """Get level property."""
+        return self._level
+
+    def set_level(self, value):
+        """Set level."""
+        if 0 <= value <= 4:
+            self._level = value
 
 
-    def mark_turn(self):
+    def _mark_turn(self):
         """Add the turn start location to the move_start."""
 
-        self.move_start.append(len(self.log_records))
-        self.turn_nbr += 1
+        self._move_start.append(len(self._log_records))
+        self._turn_nbr += 1
 
 
-    def add(self, text, lvl):
+    def add(self, text, lvl=DETAIL):
         """Add the text to the log."""
 
-        if lvl <= self.level:
-            self.log_records.append(LogRecord(text, lvl))
-            if self.live:
-                print(text)
+        if self._active:
+            if lvl <= self._level:
+                self._log_records.append(LogRecord(text, lvl))
+                if self._live:
+                    print(text)
 
 
-    def output(self, file):
+    def _output(self, file):
         """Output the log to file."""
 
-        print(f'\n***** Game history. Moves = {len(self.move_start) - 1}',
+        print(f'\n***** Game history. Moves = {len(self._move_start) - 1}',
               file=file)
 
-        for lrec in self.log_records:
+        for lrec in self._log_records:
             print(lrec.text, file=file)
 
 
@@ -81,7 +103,7 @@ class GameLog:
         """Dump the log the from the begining of the previous
         turn (or whatever we can do) to the end."""
 
-        turns = len(self.move_start)
+        turns = len(self._move_start)
         if turns >= 2:
             start = -2
         elif turns >= 1:
@@ -91,78 +113,52 @@ class GameLog:
             return
 
         print('\n****** Previous Turn')
-        for idx in range(self.move_start[start], len(self.log_records)):
-            print(self.log_records[idx].text)
+        for idx in range(self._move_start[start], len(self._log_records)):
+            print(self._log_records[idx].text)
 
 
-# the global _game_log
-
-_game_log = GameLog()
-
-
-def set_active(active):
-    """Set the logger state."""
-    _game_log.active = active
+    def new(self):
+        """Reset the game log."""
+        self._log_records.clear()
+        self._move_start.clear()
+        self._turn_nbr = -1
+        self.add('\n*** New game', GameLog.MOVE)
 
 
-def set_live(live):
-    """Have the logger write to stdio when messages are created."""
-    _game_log.live = live
+    def turn(self, game_obj, move_desc=''):
+        """Log a turn in the game log (if it's active)."""
+        if self._active:
+            self._mark_turn()
+            self.add(f'\n{self._turn_nbr}: ' + move_desc, GameLog.MOVE)
+            self.add(str(game_obj), GameLog.MOVE)
 
 
-def set_level(level):
-    """Set the logging level."""
-    if 0 <= level <= 4:
-        _game_log.level = level
+    def step(self, step_name, game_obj):
+        """Add a game step to the log."""
+
+        if self._active:
+            self.add(f'\n    {step_name}:', GameLog.STEP)
+            self.add(textwrap.indent(str(game_obj), '    '), GameLog.STEP)
 
 
-def new():
-    """Reset the game log."""
-    _game_log.reset()
-    _game_log.add('\n*** New game', MOVE)
+    def dump(self):
+        """Print the game log to standard out."""
+        self._output(sys.stdout)
 
 
-def turn(game_obj, move_desc=''):
-    """Log a turn in the game log (if it's active)."""
-    if _game_log.active:
-        _game_log.mark_turn()
-        _game_log.add(f'\n{_game_log.turn_nbr}: ' + move_desc, MOVE)
-        _game_log.add(str(game_obj), MOVE)
+    def save(self, param_string):
+        """Save the log in a standard spot with a date/time stamp
+        added to the filename."""
+
+        now = datetime.datetime.now()
+        filename = man_path.get_path(
+            'logs/log_' + now.strftime('%Y%m%d_%H%M%S') + '.txt')
+
+        with open(filename, 'w', encoding='utf-8') as file:
+            print(param_string, file=file)
+            self._output(file)
 
 
-def step(step_name, game_obj):
-    """Add a game step to the log."""
+# the global game_log
 
-    if _game_log.active:
-        _game_log.add(f'\n    {step_name}:', STEP)
-        _game_log.add(textwrap.indent(str(game_obj), '    '), STEP)
-
-
-def add(text, lvl=DETAIL):
-    """Write a message to the game log (if it's active)."""
-
-    if _game_log.active:
-        _game_log.add(text, lvl)
-
-
-def prev():
-    """Dump the previous turn."""
-    _game_log.prev()
-
-
-def dump():
-    """Print the game log to standard out."""
-    _game_log.output(sys.stdout)
-
-
-def save(param_string):
-    """Save the log in a standard spot with a date/time stamp
-    added to the filename."""
-
-    now = datetime.datetime.now()
-    filename = man_path.get_path(
-        'logs/log_' + now.strftime('%Y%m%d_%H%M%S') + '.txt')
-
-    with open(filename, 'w', encoding='utf-8') as file:
-        print(param_string, file=file)
-        _game_log.output(file)
+game_log = GameLog()

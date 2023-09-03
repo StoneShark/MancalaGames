@@ -8,7 +8,7 @@ Created on Thu Jul 27 15:20:35 2023
 
 import functools as ft
 
-import game_log
+from game_log import game_log
 import game_interface as gi
 import ginfo_rules
 import mancala
