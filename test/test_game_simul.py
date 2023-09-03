@@ -34,7 +34,7 @@ import pytest
 
 sys.path.extend(['src'])
 
-import game_log
+from game_log import game_log
 import man_config
 
 from game_interface import WinCond
@@ -64,7 +64,7 @@ def test_one_game(game, request, play_nbr):
 
     move_hist = col.deque()
     game_log.new()
-    game_log.set_level(game_log.IMPORT)
+    game_log.level = game_log.IMPORT
 
     max_turns = 1000 if game.info.flags.rounds else 500
     for turns in range(max_turns):

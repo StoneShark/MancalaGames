@@ -10,7 +10,6 @@ Created on Sat Aug 19 15:21:06 2023
 @author: Ann"""
 
 import datetime
-import importlib
 import sys
 
 import pytest
@@ -29,24 +28,27 @@ class TestGameLog:
 
     def test_construct(self, glog):
 
+        assert glog._active == True
+        assert glog._live == False
+        assert glog._level == glog.MOVE
         assert glog.active == True
         assert glog.live == False
-        assert glog.level == game_log.MOVE
-        assert glog.turn_nbr == -1
-        assert not glog.log_records
-        assert not glog.move_start
+        assert glog.level == glog.MOVE
+        assert glog._turn_nbr == -1
+        assert not glog._log_records
+        assert not glog._move_start
 
 
     def test_add(self, mocker, glog):
 
-        glog.add('test line one', game_log.MOVE)
-        glog.add('test line two', game_log.MOVE)
-        assert len(glog.log_records) == 2
-        assert not glog.move_start
+        glog.add('test line one', glog.MOVE)
+        glog.add('test line two', glog.MOVE)
+        assert len(glog._log_records) == 2
+        assert not glog._move_start
 
         mopen = mocker.mock_open()
         with mopen('logfile', 'w') as file:
-            glog.output(file)
+            glog._output(file)
 
         mopen.assert_called_once_with('logfile', 'w')
         handle = mopen()
@@ -55,32 +57,32 @@ class TestGameLog:
 
     def test_add_level(self, glog):
 
-        glog.add('test line one', game_log.IMPORT)
-        glog.add('test line two', game_log.IMPORT)
-        assert len(glog.log_records) == 0
-        assert not glog.move_start
+        glog.add('test line one', glog.IMPORT)
+        glog.add('test line two', glog.IMPORT)
+        assert len(glog._log_records) == 0
+        assert not glog._move_start
 
 
     def test_mark_turn(self, glog):
 
-        glog.mark_turn()
-        assert len(glog.move_start) == 1
+        glog._mark_turn()
+        assert len(glog._move_start) == 1
 
-        glog.add('test line one', game_log.MOVE)
-        glog.add('test line two', game_log.MOVE)
+        glog.add('test line one', glog.MOVE)
+        glog.add('test line two', glog.MOVE)
 
-        assert len(glog.log_records) == 2
-        assert len(glog.move_start) == 1
+        assert len(glog._log_records) == 2
+        assert len(glog._move_start) == 1
 
-        glog.mark_turn()
-        assert len(glog.move_start) == 2
+        glog._mark_turn()
+        assert len(glog._move_start) == 2
 
-        assert list(glog.move_start) == [0, 2]
+        assert list(glog._move_start) == [0, 2]
 
-        glog.reset()
-        assert glog.turn_nbr == -1
-        assert not glog.log_records
-        assert not glog.move_start
+        glog.new()                         # adds a record
+        assert glog._turn_nbr == -1
+        assert len(glog._log_records) == 1
+        assert not glog._move_start
 
 
     def test_prev_init(self, glog, capsys):
@@ -93,7 +95,7 @@ class TestGameLog:
 
     def test_prev_no_data(self, glog, capsys):
 
-        glog.mark_turn()
+        glog._mark_turn()
         glog.prev()
 
         data = capsys.readouterr().out
@@ -102,11 +104,11 @@ class TestGameLog:
 
     def test_prev_one_rec(self, glog, capsys):
 
-        glog.mark_turn()
+        glog._mark_turn()
 
-        glog.add('turn 1, line 1', game_log.MOVE)
-        glog.add('turn 1, line 2', game_log.MOVE)
-        glog.add('turn 1, line 3', game_log.MOVE)
+        glog.add('turn 1, line 1', glog.MOVE)
+        glog.add('turn 1, line 2', glog.MOVE)
+        glog.add('turn 1, line 3', glog.MOVE)
 
         glog.prev()
 
@@ -124,9 +126,9 @@ class TestGameLog:
 
         lines = [0, 4, 2, 6, 3]
         for turn in range(1, 5):
-            glog.mark_turn()
+            glog._mark_turn()
             for line in range(1, lines[turn] + 1):
-                glog.add(f'turn {turn} line {line}', game_log.MOVE)
+                glog.add(f'turn {turn} line {line}', glog.MOVE)
 
         glog.prev()
 
@@ -147,7 +149,6 @@ class TestGameLog:
         assert '' == data[11]
 
 
-class TestGameLogModule:
 
     @pytest.fixture
     def game(self):
@@ -159,18 +160,17 @@ class TestGameLogModule:
         return GClass()
 
 
-    def test_active_basic(self, capsys):
+    def test_active_basic(self, glog, capsys):
 
-        importlib.reload(game_log)
-        game_log.add('active one', game_log.MOVE)
+        glog.add('active one', glog.MOVE)
 
-        game_log.set_active(False)
-        game_log.add('not active one', game_log.MOVE)
+        glog.active = False
+        glog.add('not active one', glog.MOVE)
 
-        game_log.set_active(True)
-        game_log.add('active two', game_log.MOVE)
+        glog.active = True
+        glog.add('active two', glog.MOVE)
 
-        game_log.dump()
+        glog.dump()
         data = capsys.readouterr().out.split('\n')
 
         assert len(data) == 5
@@ -181,49 +181,47 @@ class TestGameLogModule:
         assert '' == data[4]
 
 
-    def test_active_ops(self, game):
+    def test_active_ops(self, glog, game):
 
-        importlib.reload(game_log)
-        game_log.set_level(game_log.STEP)
+        glog.level = glog.STEP
 
-        game_log.turn(game, 'start')
-        game_log.step('step one', game)
-        game_log.step('step twp', game)
-        game_log.add('active one', game_log.IMPORT)
+        glog.turn(game, 'start')
+        glog.step('step one', game)
+        glog.step('step twp', game)
+        glog.add('active one', glog.IMPORT)
 
-        assert game_log._game_log.turn_nbr == 0
-        assert len(game_log._game_log.move_start) == 1
-        assert len(game_log._game_log.log_records) == 7
+        assert glog._turn_nbr == 0
+        assert len(glog._move_start) == 1
+        assert len(glog._log_records) == 7
 
-        game_log.set_active(False)
-        game_log.turn(game, 'seconds')
-        game_log.step('step two.one', game)
-        game_log.step('step two.two', game)
-        game_log.add('inactive one', game_log.MOVE)
+        glog.active = False
+        glog.turn(game, 'seconds')
+        glog.step('step two.one', game)
+        glog.step('step two.two', game)
+        glog.add('inactive one', glog.MOVE)
 
-        assert game_log._game_log.turn_nbr == 0
-        assert len(game_log._game_log.move_start) == 1
-        assert len(game_log._game_log.log_records) == 7
+        assert glog._turn_nbr == 0
+        assert len(glog._move_start) == 1
+        assert len(glog._log_records) == 7
 
-        game_log.set_active(True)
-        game_log.add('active two', game_log.MOVE)
+        glog.active = True
+        glog.add('active two', glog.MOVE)
 
-        assert game_log._game_log.turn_nbr == 0
-        assert len(game_log._game_log.move_start) == 1
-        assert len(game_log._game_log.log_records) == 8
+        assert glog._turn_nbr == 0
+        assert len(glog._move_start) == 1
+        assert len(glog._log_records) == 8
 
 
-    def test_live(self, capsys):
+    def test_live(self, glog, capsys):
 
-        importlib.reload(game_log)
-        game_log.add('not live one', game_log.MOVE)
+        glog.add('not live one', glog.MOVE)
 
-        game_log.set_live(True)
-        game_log.add('live one', game_log.MOVE)
-        game_log.add('live two', game_log.MOVE)
+        glog.live = True
+        glog.add('live one', glog.MOVE)
+        glog.add('live two', glog.MOVE)
 
-        game_log.set_live(False)
-        game_log.add('not live two', game_log.MOVE)
+        glog.live = False
+        glog.add('not live two', glog.MOVE)
 
         data = capsys.readouterr().out.split('\n')
 
@@ -232,64 +230,59 @@ class TestGameLogModule:
         assert 'live two' == data[1]
         assert '' == data[2]
 
-        assert len(game_log._game_log.log_records) == 4
+        assert len(glog._log_records) == 4
 
 
-    def test_level(self):
+    def test_level(self, glog):
 
-        importlib.reload(game_log)
+        glog.add('one - MOVE', glog.MOVE)
+        glog.add('two - import', glog.IMPORT)
+        glog.add('two - STEP', glog.STEP)
 
-        game_log.add('one - MOVE', game_log.MOVE)
-        game_log.add('two - import', game_log.IMPORT)
-        game_log.add('two - STEP', game_log.STEP)
+        assert len(glog._log_records) == 1
 
-        assert len(game_log._game_log.log_records) == 1
+        glog.new()                 # adds a record
+        glog.level = glog.IMPORT
 
-        game_log._game_log.reset()
-        game_log.set_level(game_log.IMPORT)
+        glog.add('one - MOVE', glog.MOVE)
+        glog.add('two - import', glog.IMPORT)
+        glog.add('two - STEP', glog.STEP)
 
-        game_log.add('one - MOVE', game_log.MOVE)
-        game_log.add('two - import', game_log.IMPORT)
-        game_log.add('two - STEP', game_log.STEP)
+        assert len(glog._log_records) == 3
 
-        assert len(game_log._game_log.log_records) == 2
-
-        game_log.set_level(-1)
-        assert game_log._game_log.level == game_log.IMPORT
+        glog.level = -1
+        assert glog._level == glog.IMPORT
 
 
-    def test_new(self, game):
-
-        importlib.reload(game_log)
-
-        game_log.set_level(game_log.IMPORT)
-        game_log.turn(game, 'start')            # 2 recs
-        game_log.add('import', game_log.IMPORT)
-        game_log.step('step 1', game)           # not logged
-        game_log.step('step 2', game)           # not logged
-        game_log.turn(game, 'move 1')           # 2 recs
-
-        assert len(game_log._game_log.move_start) == 2
-        assert len(game_log._game_log.log_records) == 5
-        assert game_log._game_log.turn_nbr == 1
-
-        game_log.new()
-        assert game_log._game_log.turn_nbr == -1
-        assert len(game_log._game_log.move_start) == 0
-        assert len(game_log._game_log.log_records) == 1
+    def test_new(self, glog, game):
 
 
-    def test_prev_long(self, game, capsys):
+        glog.level = glog.IMPORT
+        glog.turn(game, 'start')            # 2 recs
+        glog.add('import', glog.IMPORT)
+        glog.step('step 1', game)           # not logged
+        glog.step('step 2', game)           # not logged
+        glog.turn(game, 'move 1')           # 2 recs
 
-        importlib.reload(game_log)
+        assert len(glog._move_start) == 2
+        assert len(glog._log_records) == 5
+        assert glog._turn_nbr == 1
+
+        glog.new()
+        assert glog._turn_nbr == -1
+        assert len(glog._move_start) == 0
+        assert len(glog._log_records) == 1
+
+
+    def test_prev_log(self, glog, game, capsys):
 
         lines = [0, 4, 2, 6, 3]
         for turn in range(1, 5):
-            game_log.turn(game, f'move {turn}')
+            glog.turn(game, f'move {turn}')
             for line in range(1, lines[turn] + 1):
-                game_log.add(f'turn {turn} line {line}', game_log.MOVE)
+                glog.add(f'turn {turn} line {line}', glog.MOVE)
 
-        game_log.prev()
+        glog.prev()
         data = capsys.readouterr().out.split('\n')
 
         assert len(data) == 20
@@ -315,7 +308,7 @@ class TestGameLogModule:
         assert '' == data[19]
 
 
-    def test_save(self, mocker, game):
+    def test_save(self, glog, mocker, game):
 
         """don't know how to test this"""
 
@@ -333,15 +326,13 @@ class TestGameLogModule:
         mock_now.now.return_value = datetime.datetime(2023, 1, 2, 12, 30, 15)
         mocker.patch('man_path.get_path', side_effect=lambda x: x)
 
-        importlib.reload(game_log)
+        glog.level = glog.STEP
 
-        game_log.set_level(game_log.STEP)
+        glog.turn(game, 'start')
+        glog.add('import 1', glog.IMPORT)
+        glog.step('step 1', game)
+        glog.step('step 2', game)
+        glog.turn(game, 'move 1')
+        glog.add('import 2', glog.IMPORT)
 
-        game_log.turn(game, 'start')
-        game_log.add('import 1', game_log.IMPORT)
-        game_log.step('step 1', game)
-        game_log.step('step 2', game)
-        game_log.turn(game, 'move 1')
-        game_log.add('import 2', game_log.IMPORT)
-
-        game_log.save('parameter string')
+        glog.save('parameter string')

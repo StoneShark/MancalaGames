@@ -46,27 +46,33 @@ class GameLog:
         self._move_start = col.deque()
 
 
-    def get_active(self):
+    @property
+    def active(self):
         """Get active property."""
         return self._active
 
-    def set_active(self, value):
+    @active.setter
+    def active(self, value):
         """Set active."""
         self._active = value
 
-    def get_live(self):
+    @property
+    def live(self):
         """Get live property."""
         return self._live
 
-    def set_live(self, value):
+    @live.setter
+    def live(self, value):
         """Set live."""
         self._live = value
 
-    def get_level(self):
+    @property
+    def level(self):
         """Get level property."""
         return self._level
 
-    def set_level(self, value):
+    @level.setter
+    def level(self, value):
         """Set level."""
         if 0 <= value <= 4:
             self._level = value

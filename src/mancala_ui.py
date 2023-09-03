@@ -152,7 +152,7 @@ class MancalaUI(tk.Frame):
         self.log_ai = tk.BooleanVar(self.master, False)
         self.live_log = tk.BooleanVar(self.master, False)
         self.log_level = tk.IntVar(self.master, game_log.MOVE)
-        game_log.set_level(self.log_level.get())
+        game_log.set_level = self.log_level.get()
 
         self.master.title(self.info.name)
         self.master.option_add('*tearOff', False)
@@ -279,29 +279,29 @@ class MancalaUI(tk.Frame):
         logmenu.add_radiobutton(
             label='Moves',
             value=game_log.MOVE, variable=self.log_level,
-            command=lambda: game_log.set_level(self.log_level.get()))
+            command=lambda: setattr(game_log, 'level', self.log_level.get()))
         logmenu.add_radiobutton(
             label='Important',
             value=game_log.IMPORT, variable=self.log_level,
-            command=lambda: game_log.set_level(self.log_level.get()))
+            command=lambda: setattr(game_log, 'level', self.log_level.get()))
         logmenu.add_radiobutton(
             label='Steps',
             value=game_log.STEP, variable=self.log_level,
-            command=lambda: game_log.set_level(self.log_level.get()))
+            command=lambda: setattr(game_log, 'level', self.log_level.get()))
         logmenu.add_radiobutton(
             label='Information',
             value=game_log.INFO, variable=self.log_level,
-            command=lambda: game_log.set_level(self.log_level.get()))
+            command=lambda: setattr(game_log, 'level', self.log_level.get()))
         logmenu.add_radiobutton(
             label='All',
             value=game_log.DETAIL, variable=self.log_level,
-            command=lambda: game_log.set_level(self.log_level.get()))
+            command=lambda: setattr(game_log, 'level', self.log_level.get()))
         logmenu.add_separator()
         logmenu.add_checkbutton(
             label='Live Log',
             onvalue=True, offvalue=False,
             variable=self.live_log,
-            command=lambda: game_log.set_live(self.live_log.get()))
+            command=lambda: setattr(game_log, 'live', self.live_log.get()))
         logmenu.add_checkbutton(label='Log AI Analysis',
                                 variable=self.log_ai,
                                 onvalue=True, offvalue=False)
@@ -615,10 +615,10 @@ class MancalaUI(tk.Frame):
         """If it's the AI's turn, do a move. AI is top player."""
 
         if self.ai_player.get() and self.game.get_turn():
-            gl_active = game_log.get_active()
+            saved_active = game_log.active
 
-            game_log.set_active(self.log_ai.get())
+            game_log.active = self.log_ai.get()
             move = self.game.get_ai_move()
-            game_log.set_active(gl_active)
+            game_log.active = saved_active
 
             self.move(move)
