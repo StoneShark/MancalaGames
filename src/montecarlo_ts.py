@@ -12,18 +12,21 @@ import random
 
 import ai_interface
 import cfg_keys as ckey
-import game_log
+from game_log import game_log
 
 from game_interface import WinCond
 
-# TODO There must errors in this code (montecarlo_ts), because it plays poorly
-# could be very bad choice of bias (using 0.4)
 
-# %% constantes
+# TODO deal with mustpass games (call test_pass)
+# TODO deal with ENDLESS cond (move result) for mlaps games
 
+# %% constants
+
+# these are only used if the config file does not have values
+BIAS = 0.3
 NBR_NODES = 50
+
 MAX_TURNS = 500
-BIAS = 0.4
 
 # %% best
 
@@ -42,27 +45,29 @@ class BestMove:
 class GameNode:
     """A class for keeping the game tree nodes."""
 
-    next_id = 0
+    def __init__(self, state, node_id,
+                 *, leaf=False, winner=None, moves=()):
 
-    def __init__(self, state, moves=(), leaf=False):
-
-        self.node_id = GameNode.next_id
-        GameNode.next_id += 1
         self.state = state
+        self.node_id = node_id
+        self.leaf = leaf
+        self.winner = winner
+
+        self.childs = {move: None for move in moves}
 
         self.reward = 0
         self.visits = 0
-        self.leaf = leaf
 
-        self.childs = {move: None for move in moves}
 
     def __repr__(self):
         return f'GameNode({self.node_id}, {self.leaf}, ' \
             f'{self.reward}, {self.visits}, {self.childs})'
 
+
     def __str__(self):
         string = f'Id: {self.node_id}  Reward: {self.reward}  ' \
             f'Visits: {self.visits}\n'
+        string += f'Leaf: {self.leaf}  Winner: {self.winner}\n'
         string += str(self.state) + '\n'
         string += 'Leaf  ' if self.leaf else ''
         for move, child in self.childs.items():
@@ -70,6 +75,7 @@ class GameNode:
             string += f'{move}: {ctext} '
         string += ' (id,reward)'
         return string
+
 
     def add_child_state(self, move, cstate):
         """Save the child state for move."""
@@ -94,55 +100,74 @@ class MonteCarloTS(ai_interface.AiPlayerIf):
         self.node_dict = {}
         self.move_desc = None
 
-        self.add_node(game.state, moves=self.game.get_moves())
+        self.next_id = 0
 
 
-    def add_node(self, state, moves=(), leaf=False):
-        """Add the game node to both the dict and node list.
+    def add_node(self, state, moves=(), *, leaf=False, winner=None):
+        """Create the game node and add it to both the dict
+        and node list.
+
         This must be used for all node creation to keep
-        game_nodes[id].node_id == id."""
+        self.game_nodes[id].node_id == id."""
 
-        node = GameNode(state, moves, leaf)
-        self.node_dict[node.state] = node
+        node = GameNode(state, self.next_id,
+                        leaf=leaf, winner=winner, moves=moves)
+
         self.game_nodes.append(node)
+        self.next_id += 1
+
+        self.node_dict[node.state] = node
+
         return node
+
+
+    def _new_root(self):
+        """Reset the game tree and create a new root."""
+
+        self.node_dict = {}
+        self.game_nodes = col.deque()
+        self.next_id = 0
+
+        state = self.game.state
+        start_node = self.add_node(state, moves=self.game.get_moves())
+
+        game_log.add('\nCreate move start node:', game_log.DETAIL)
+        game_log.add(str(start_node), game_log.DETAIL)
+
+        return start_node
 
 
     def pick_move(self):
         """Pick the best next move."""
 
-        state = self.game.state
-        if state not in self.node_dict:
-            start_node = self.add_node(state, moves=self.game.get_moves())
-
-            game_log.add('\nCreate init node:', game_log.INFO)
-            game_log.add(str(start_node), game_log.INFO)
-        else:
-            start_node = self.node_dict[state]
+        start_node = self._new_root()
 
         for nbr in range(self.new_nodes):
 
             node_hist = self.tree_policy(start_node)
-            winner, reward = self.default_policy(node_hist[0])
+
+            tree_node = self.game_nodes[node_hist[0]]
+            if not tree_node.leaf:
+                winner, reward = self.default_policy(node_hist[0])
+            else:
+                winner, reward = tree_node.winner, 1
 
             self.backup(node_hist, winner, reward)
-            game_log.add(f'END LOOP {nbr}: {winner} {reward}',
-                         game_log.INFO)
+            game_log.add(f'END LOOP {nbr}: {winner} {reward}', game_log.DETAIL)
 
-        game_log.add('\nStart node:', game_log.INFO)
-        game_log.add(str(start_node), game_log.INFO)
         node = self.best_child(start_node, 0)
+        game_log.add('\nSelected node:', game_log.INFO)
+        game_log.add(str(node), game_log.INFO)
         return node.move
 
 
     def tree_policy(self, node):
-        """Traverse down the path of 'best' nodes,
-        until one of:
+        """Traverse down the path of 'best' nodes, until one of:
             1. we find a leaf node
             2. there's an incomplete node (unexplored child node)
         then build a new node.
 
-        Return the history of move nodes (which is build with the
+        Return the history of move nodes (which is built with the
         newest node at the begining)."""
 
         node_hist = col.deque()
@@ -160,7 +185,7 @@ class MonteCarloTS(ai_interface.AiPlayerIf):
                 break
 
         else:
-            game_log.add('tree_policy stopping on leaf', game_log.STEP)
+            game_log.add('tree_policy stopping on leaf', game_log.DETAIL)
 
         game_log.add('Selected:')
         game_log.add(str(node))
@@ -173,7 +198,7 @@ class MonteCarloTS(ai_interface.AiPlayerIf):
         expand it by creating a new node."""
 
         moves = [move for move, cstate in pnode.childs.items() if not cstate]
-        assert moves, "no moves, should we get here?"
+        assert moves, "No moves in pnode in expand."
         move = random.choice(moves)
 
         saved_state = self.game.state
@@ -187,17 +212,17 @@ class MonteCarloTS(ai_interface.AiPlayerIf):
             game_log.add(f'Link existing node to {move}.')
             node = self.node_dict[new_state]
             pnode.add_child_state(move, node)
+            self.game.state = saved_state
             return node
 
         game_log.add(f'Expand move {move}.')
         if cond and cond.is_ended():
-            node = self.add_node(new_state, leaf=True)
+            node = self.add_node(new_state, leaf=True, winner=self.game.turn)
         else:
             node = self.add_node(new_state, moves=self.game.get_moves())
         pnode.add_child_state(move, node)
 
         self.game.state = saved_state
-
         return node
 
 
@@ -215,31 +240,24 @@ class MonteCarloTS(ai_interface.AiPlayerIf):
                  if cnode and cnode.node_id not in exclude]
 
         self.move_desc = 'MonteCarloTS  ' \
-            + ', '.join(f'm{move.move} {move.score:6.4}' for move in moves) \
+            + ', '.join(f'm{move.move} {move.score:.4}' for move in moves) \
             + ' '
 
         return max(moves, key=lambda b: b.score)
 
 
-    def default_policy(self, node_id):
+    def _one_playout(self, node_id):
         """Simulate a random game from node,
         return the winner (if there was one) and reward."""
         # XXXX could choose eval func (score?) instead of random choice
 
         saved_state = self.game.state
         self.game.state = self.game_nodes[node_id].state
-        node_hist = col.deque()
 
         for _ in range(MAX_TURNS):
 
-            node_hist.appendleft(hash(self.game.state))
-
             moves = self.game.get_moves()
-            if not moves:
-                game_log.add("No moves, but game didn't end:", game_log.IMPORT)
-                game_log.add("Prev move result: {cond}", game_log.IMPORT)
-                game_log.add(str(self.game), game_log.IMPORT)
-                break
+            assert moves, "No moves in _one_playout."
 
             move = random.choice(moves)
             cond = self.game.move(move)
@@ -253,8 +271,17 @@ class MonteCarloTS(ai_interface.AiPlayerIf):
             reward = 1
 
         self.game.state = saved_state
-
         return winner, reward
+
+
+    def default_policy(self, node_id):
+        """Do playouts."""
+
+        # XXXX a small number of playouts 1 to 10 might improve performance
+        # how to deal with winner versus reward computation
+        # compute reward for current player e.g. make negative if not win?
+
+        return self._one_playout(node_id)
 
 
     def backup(self, node_hist, winner, reward):
@@ -266,7 +293,11 @@ class MonteCarloTS(ai_interface.AiPlayerIf):
 
             node.visits += 1
             if winner == node.state.turn:
-                node.reward = node.reward + reward
+                node.reward += reward
+            game_log.add(
+                f'Node id: {node.node_id} with turn={node.state.turn} ' + \
+                f'reward now {node.reward} and visits {node.visits}.',
+                game_log.DETAIL)
 
 
     def get_move_desc(self):
@@ -283,7 +314,7 @@ class MonteCarloTS(ai_interface.AiPlayerIf):
             self.new_nodes = params[ckey.MCTS_NODES][difficulty]
             return None
 
-        self.bias = 0.4
-        self.new_nodes = 40
+        self.bias = BIAS
+        self.new_nodes = NBR_NODES
         return ('MonteCarloTS requires MCTS_BIAS and MCTS_NODES in AI_PARAMS. '
                 f'Using bias={self.bias} and new_nodes={self.new_nodes}.')
