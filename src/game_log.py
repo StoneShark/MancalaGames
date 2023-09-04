@@ -5,7 +5,6 @@ Only gets the string from the game if the logger is active.
 Created on Fri Aug 11 15:01:16 2023
 @author: Ann"""
 
-
 import collections as col
 import datetime
 import sys
@@ -13,7 +12,7 @@ import textwrap
 
 import man_path
 
-
+# XXXX record/keep all records but only print those <= set level
 
 
 class LogRecord:
@@ -26,7 +25,10 @@ class LogRecord:
 
 
 class GameLog:
-    """Game Log."""
+    """A simple game log that can keep track of where turns start,
+    knows about turns and moves, and supports logging steps within
+    moves.  The game object is passed in, it's "str" is printed in
+    the log."""
 
     MOVE = 0
     IMPORT = 1
@@ -78,11 +80,12 @@ class GameLog:
             self._level = value
 
 
-    def _mark_turn(self):
-        """Add the turn start location to the move_start."""
-
-        self._move_start.append(len(self._log_records))
-        self._turn_nbr += 1
+    def new(self):
+        """Reset the game log."""
+        self._log_records.clear()
+        self._move_start.clear()
+        self._turn_nbr = -1
+        self.add('\n*** New game', GameLog.MOVE)
 
 
     def add(self, text, lvl=DETAIL):
@@ -95,14 +98,27 @@ class GameLog:
                     print(text)
 
 
-    def _output(self, file):
-        """Output the log to file."""
+    def _mark_turn(self):
+        """Add the turn start location to the move_start."""
 
-        print(f'\n***** Game history. Moves = {len(self._move_start) - 1}',
-              file=file)
+        self._move_start.append(len(self._log_records))
+        self._turn_nbr += 1
 
-        for lrec in self._log_records:
-            print(lrec.text, file=file)
+
+    def turn(self, game_obj, move_desc=''):
+        """Log a turn in the game log (if it's active)."""
+        if self._active:
+            self._mark_turn()
+            self.add(f'\n{self._turn_nbr}: ' + move_desc, GameLog.MOVE)
+            self.add(str(game_obj), GameLog.MOVE)
+
+
+    def step(self, step_name, game_obj):
+        """Add a game step to the log."""
+
+        if self._active:
+            self.add(f'\n    {step_name}:', GameLog.STEP)
+            self.add(textwrap.indent(str(game_obj), '    '), GameLog.STEP)
 
 
     def prev(self):
@@ -123,28 +139,14 @@ class GameLog:
             print(self._log_records[idx].text)
 
 
-    def new(self):
-        """Reset the game log."""
-        self._log_records.clear()
-        self._move_start.clear()
-        self._turn_nbr = -1
-        self.add('\n*** New game', GameLog.MOVE)
+    def _output(self, file):
+        """Output the log to file."""
 
+        print(f'\n***** Game history. Moves = {len(self._move_start) - 1}',
+              file=file)
 
-    def turn(self, game_obj, move_desc=''):
-        """Log a turn in the game log (if it's active)."""
-        if self._active:
-            self._mark_turn()
-            self.add(f'\n{self._turn_nbr}: ' + move_desc, GameLog.MOVE)
-            self.add(str(game_obj), GameLog.MOVE)
-
-
-    def step(self, step_name, game_obj):
-        """Add a game step to the log."""
-
-        if self._active:
-            self.add(f'\n    {step_name}:', GameLog.STEP)
-            self.add(textwrap.indent(str(game_obj), '    '), GameLog.STEP)
+        for lrec in self._log_records:
+            print(lrec.text, file=file)
 
 
     def dump(self):
