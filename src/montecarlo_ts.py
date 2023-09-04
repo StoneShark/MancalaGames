@@ -12,13 +12,9 @@ import random
 
 import ai_interface
 import cfg_keys as ckey
-from game_log import game_log
 
 from game_interface import WinCond
 
-
-# TODO deal with mustpass games (call test_pass)
-# TODO deal with ENDLESS cond (move result) for mlaps games
 
 # %% constants
 
@@ -131,9 +127,6 @@ class MonteCarloTS(ai_interface.AiPlayerIf):
         state = self.game.state
         start_node = self.add_node(state, moves=self.game.get_moves())
 
-        game_log.add('\nCreate move start node:', game_log.DETAIL)
-        game_log.add(str(start_node), game_log.DETAIL)
-
         return start_node
 
 
@@ -142,7 +135,7 @@ class MonteCarloTS(ai_interface.AiPlayerIf):
 
         start_node = self._new_root()
 
-        for nbr in range(self.new_nodes):
+        for _ in range(self.new_nodes):
 
             node_hist = self.tree_policy(start_node)
 
@@ -153,11 +146,8 @@ class MonteCarloTS(ai_interface.AiPlayerIf):
                 winner, reward = tree_node.winner, 1
 
             self.backup(node_hist, winner, reward)
-            game_log.add(f'END LOOP {nbr}: {winner} {reward}', game_log.DETAIL)
 
         node = self.best_child(start_node, 0)
-        game_log.add('\nSelected node:', game_log.INFO)
-        game_log.add(str(node), game_log.INFO)
         return node.move
 
 
@@ -184,12 +174,6 @@ class MonteCarloTS(ai_interface.AiPlayerIf):
                 node_hist.appendleft(node.node_id)
                 break
 
-        else:
-            game_log.add('tree_policy stopping on leaf', game_log.DETAIL)
-
-        game_log.add('Selected:')
-        game_log.add(str(node))
-
         return node_hist
 
 
@@ -209,13 +193,11 @@ class MonteCarloTS(ai_interface.AiPlayerIf):
         new_state = self.game.state
 
         if new_state in self.node_dict:
-            game_log.add(f'Link existing node to {move}.')
             node = self.node_dict[new_state]
             pnode.add_child_state(move, node)
             self.game.state = saved_state
             return node
 
-        game_log.add(f'Expand move {move}.')
         if cond and cond.is_ended():
             node = self.add_node(new_state, leaf=True, winner=self.game.turn)
         else:
@@ -265,6 +247,9 @@ class MonteCarloTS(ai_interface.AiPlayerIf):
             if cond and cond.is_ended():
                 break
 
+            if self.game.info.flags.mustpass:
+                self.game.test_pass()
+
         winner, reward = None, 0
         if cond in [WinCond.WIN, WinCond.ROUND_WIN]:
             winner = self.game.get_turn()
@@ -294,10 +279,6 @@ class MonteCarloTS(ai_interface.AiPlayerIf):
             node.visits += 1
             if winner == node.state.turn:
                 node.reward += reward
-            game_log.add(
-                f'Node id: {node.node_id} with turn={node.state.turn} ' + \
-                f'reward now {node.reward} and visits {node.visits}.',
-                game_log.DETAIL)
 
 
     def get_move_desc(self):

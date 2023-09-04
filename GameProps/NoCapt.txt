@@ -29,8 +29,8 @@
       "min_move": 1,
       "ai_params": {
          "mm_depth": [1, 5, 8, 12],
-         "mcts_nodes": [30, 30, 50, 90],
-         "mcts_bias": [0.4, 0.4, 0.4, 0.4]
+         "mcts_nodes": [300, 500, 800, 1100],
+         "mcts_bias": [0.3, 0.3, 0.3, 0.3]
       }
    },
    "rules": "on the www; can't find it again"
