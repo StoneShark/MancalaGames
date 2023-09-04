@@ -25,7 +25,6 @@ playing).
 Created on Sun Jul 23 11:29:10 2023
 @author: Ann"""
 
-import collections as col
 import os
 import random
 import sys
@@ -38,7 +37,6 @@ from game_log import game_log
 import man_config
 
 from game_interface import WinCond
-
 
 # pytest.skip(reason="Random play. Hueristic eval.", allow_module_level=True)
 
@@ -53,7 +51,6 @@ if BAD_CFG in FILES:
     FILES.remove(BAD_CFG)
 
 
-
 @pytest.fixture(params=FILES)
 def game(request):
     return man_config.make_game(PATH + request.param)
@@ -62,21 +59,14 @@ def game(request):
 @pytest.mark.parametrize('play_nbr', range(PLAY_NBR))
 def test_one_game(game, request, play_nbr):
 
-    move_hist = col.deque()
-    game_log.new()
-    game_log.level = game_log.IMPORT
+    game_log.active = False
 
     max_turns = 1000 if game.info.flags.rounds else 500
-    for turns in range(max_turns):
+    for _ in range(max_turns):
         moves = game.get_moves()
-        if not moves:
-            print('Moves: ', move_hist)
-            game_log.dump()
-            assert False, "Game didn't end right."
+        assert moves, "Game didn't end right."
 
         move = random.choice(moves)
-        move_hist.append(move)
-        game_log.turn(game, f'Move: {move}')
 
         cond = game.move(move)
         if cond in (WinCond.WIN, WinCond.TIE, WinCond.ENDLESS):
