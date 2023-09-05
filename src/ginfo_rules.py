@@ -65,7 +65,7 @@ class GameInfoRule:
 class RuleDict(dict):
     """A dictionary of game rules."""
 
-    def add_rule(self, name, rule, msg, warn=False, excp=None):
+    def add_rule(self, name, rule, msg, *, warn=False, excp=None):
         """Add a rule to the dictionary."""
         # pylint: disable=too-many-arguments
 

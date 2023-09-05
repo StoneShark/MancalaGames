@@ -12,6 +12,7 @@ import pytest
 
 sys.path.extend(['src'])
 
+import hole_button
 import mancala_games
 import mancala_ui
 import play_mancala

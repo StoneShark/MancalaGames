@@ -5,8 +5,6 @@ Created on Sat Mar 25 06:44:29 2023
 @author: Ann
 """
 
-#  TODO no tests for GameInterface, any needed?
-#  TODO most exceptions are not tested
 
 # %% imports
 
@@ -17,14 +15,16 @@ import pytest
 sys.path.extend(['src'])
 
 import game_interface as gi
+import ginfo_rules
 import mancala
 
 from game_interface import Direct
 from game_interface import GameFlags
+from game_interface import WinCond
+
 
 
 # %%
-
 
 def test_direct_op():
 
@@ -38,6 +38,16 @@ def test_direct_op():
 
     with pytest.raises(gi.GameInfoError):
         Direct.SPLIT.opp_dir()
+
+
+def test_win():
+
+    assert WinCond.WIN in WinCond
+
+    assert WinCond.WIN.is_ended()
+    assert WinCond.TIE.is_ended()
+    assert WinCond.ENDLESS.is_ended()
+    assert not WinCond.END_STORE.is_ended()
 
 
 def test_default_scorer():
@@ -95,3 +105,27 @@ def test_gf_stores():
                     flags=GameFlags(sow_direct=Direct.CCW,
                                     sow_own_store=True),
                     rules=mancala.Mancala.rules)
+
+
+def test_rule_dict(capsys):
+
+    rules = ginfo_rules.RuleDict()
+
+    rules.add_rule(name='rule_name',
+                   msg='something bad',
+                   rule= lambda ginfo : ginfo)
+
+    data = capsys.readouterr().out
+    assert 'rule_name' in data
+    assert 'has no effect' in data
+
+
+def test_move_tuple():
+
+    tup = gi.MoveTpl(3, Direct.CCW)
+    assert isinstance(tup, tuple)
+    assert str(tup) == '(3, CCW)'
+
+    tup = gi.MoveTpl(2, None)
+    assert isinstance(tup, tuple)
+    assert str(tup) == '(2, None)'
