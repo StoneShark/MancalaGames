@@ -17,7 +17,7 @@
       },
       "scorer": {
          "stores_m": 4,
-         "access_m": 0,
+         "access_m": 1,
          "seeds_m": 0,
          "empties_m": 0,
          "child_cnt_m": 0,

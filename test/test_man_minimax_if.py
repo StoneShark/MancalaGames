@@ -15,12 +15,19 @@ sys.path.extend(['src'])
 
 import game_constants as gc
 import game_interface as gi
-from game_interface import GameFlags
-from game_interface import WinCond
-from game_interface import Direct
 import mancala
 import utils
 
+from game_interface import GameFlags
+from game_interface import WinCond
+from game_interface import Direct
+
+
+# %% constants
+
+T = True
+F = False
+N = None
 
 # %%
 
@@ -31,11 +38,7 @@ class TestMinimaxIF:
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
 
-        game_info = gi.GameInfo(name='my name',
-                                help_file='None',
-                                nbr_holes=game_consts.holes,
-                                about='about text',
-                                difficulty=0,
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on=[2],
                                 flags=GameFlags(sow_direct=Direct.CCW),
                                 rules=mancala.Mancala.rules)
@@ -49,11 +52,7 @@ class TestMinimaxIF:
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
 
-        game_info = gi.GameInfo(name='my name',
-                                help_file='None',
-                                nbr_holes=game_consts.holes,
-                                about='about text',
-                                difficulty=0,
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on=[2],
                                 min_move=2,
                                 flags=GameFlags(mustpass=True,
@@ -159,12 +158,7 @@ class TestScorer:
     def game(self):
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
-
-        game_info = gi.GameInfo(name='my name',
-                                help_file='None',
-                                nbr_holes=game_consts.holes,
-                                about='about text',
-                                difficulty=0,
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 scorer=gi.Scorer(easy_rand=0),
                                 capt_on=[2],
                                 flags=GameFlags(sow_direct=Direct.CCW),
@@ -173,6 +167,19 @@ class TestScorer:
         game = mancala.Mancala(game_consts, game_info)
         game.turn = False
         return game
+
+
+    def test_sc_end_store(self, game):
+
+        object.__setattr__(game.info.scorer, 'stores_m', 0)
+        object.__setattr__(game.info.scorer, 'repeat_turn', 10)
+
+        assert game.score(None) == 0
+        game.turn = False
+        assert game.score(WinCond.END_STORE) == 10
+        game.turn = True
+        assert game.score(WinCond.END_STORE) == -10
+
 
     def test_sc_evens(self, game):
 
@@ -186,6 +193,7 @@ class TestScorer:
                                        [0, 5, 4, 1])
         assert game.score(None) == (1 - 2) * 2
 
+
     def test_sc_seeds(self, game):
 
         object.__setattr__(game.info.scorer, 'seeds_m', 3)
@@ -197,6 +205,7 @@ class TestScorer:
         game.board = utils.build_board([2, 4, 0, 1],
                                        [0, 5, 4, 1])
         assert game.score(None) == (10 - 7) * 3
+
 
     def test_sc_empties(self, game):
 
@@ -210,14 +219,135 @@ class TestScorer:
                                        [0, 5, 4, 1])
         assert game.score(None) == (1 - 2) * 2
 
-    def test_sc_stores(self, game):
 
+
+    def test_sc_stores(self, game):
         assert game.info.scorer.stores_m == 4
         assert sum(vars(game.info.scorer).values()) == 4
 
         game.store = [5, 3]
         assert game.score(None) == (5 - 3) * 4
 
-    @pytest.mark.skip(reason='easy_rand and access are not tested')
-    def test_scorer(self):
-        pass
+
+    @pytest.mark.parametrize(
+        'board, store, child, escore',
+        [(utils.build_board([0, 0, 0, 0],
+                            [0, 0, 0, 0]), [5, 3],
+          utils.build_board([N, N, N, N],
+                            [N, N, N, N]), (5 - 3) * 4),
+
+         (utils.build_board([1, 2, 3, 4],
+                            [1, 2, 3, 4]), [5, 3],
+          utils.build_board([N, F, N, N],
+                            [N, N, T, N]), ((5+2) - (3+3)) * 4),
+
+         (utils.build_board([1, 2, 3, 4],
+                            [1, 2, 3, 4]), [5, 3],
+          utils.build_board([N, F, T, N],
+                            [N, N, T, F]), ((5+2+4) - (3+3+3)) * 4),
+         ])
+    def test_sc_stores_child(self, game, board, store, child, escore):
+
+        object.__setattr__(game.info.flags, 'child', True)
+
+        assert game.info.scorer.stores_m == 4
+        assert sum(vars(game.info.scorer).values()) == 4
+
+        game.board = board
+        game.store = store
+        game.child = child
+        assert game.score(None) == escore
+
+
+    @pytest.mark.parametrize(
+        'child, escore',
+        [(utils.build_board([N, N, N, N],
+                            [N, N, N, N]), 0),
+
+         (utils.build_board([N, F, N, N],
+                            [N, N, N, N]), 15),
+
+         (utils.build_board([N, T, N, N],
+                            [N, N, N, N]), -15),
+
+         (utils.build_board([N, T, F, F],
+                            [N, F, N, N]), (3-1) * 15),
+
+         (utils.build_board([N, F, T, T],
+                            [N, T, N, N]), (1-3) * 15),
+
+         ])
+    def test_sc_child_cnt(self, game, child, escore):
+
+        object.__setattr__(game.info.scorer, 'stores_m', 0)
+        object.__setattr__(game.info.flags, 'child', True)
+        object.__setattr__(game.info.scorer, 'child_cnt_m', 15)
+
+        game.child = child
+        assert game.score(None) == escore
+
+
+    def test_sc_easy(self, game):
+
+        object.__setattr__(game.info.scorer, 'stores_m', 0)
+        object.__setattr__(game.info.scorer, 'easy_rand', 26)
+
+        game.set_difficulty(1)
+        assert all(game.score(None) for _ in range(10)) == 0
+
+        game.set_difficulty(0)
+        assert any(game.score(None) for _ in range(10)) != 0
+
+
+    def test_sc_access(self, game):
+
+        object.__setattr__(game.info.scorer, 'stores_m', 0)
+        object.__setattr__(game.info.scorer, 'access_m', 10)
+
+        game.set_difficulty(1)
+        assert all(game.score(None) for _ in range(10)) == 0
+
+        game.set_difficulty(2)
+        game.board = [1, 1, 1, 0, 4, 4, 4, 4]
+        assert game.score(None) == -40
+
+        game.board = [4, 4, 4, 4, 1, 1, 1, 0]
+        assert game.score(None) == 40
+
+        game.board = [1, 1, 1, 0, 1, 1, 4, 3]
+        assert game.score(None) == -10
+
+        object.__setattr__(game.info.flags, 'mlaps', True)
+        assert game.score(None) == 0
+
+
+class TestMove:
+
+    @pytest.fixture
+    def game(self):
+
+        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+                                scorer=gi.Scorer(easy_rand=0),
+                                capt_on=[2],
+                                flags=GameFlags(sow_direct=Direct.CCW),
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = False
+        return game
+
+
+    def test_move_ifs(self, game, mocker):
+
+        pick_move = mocker.spy(game.player, 'pick_move')
+        move_desc = mocker.spy(game.player, 'get_move_desc')
+
+        game.get_ai_move()
+        assert pick_move.call_count == 1
+        assert move_desc.call_count == 0
+        mocker.resetall()
+
+        game.get_ai_move_desc()
+        assert pick_move.call_count == 0
+        assert move_desc.call_count == 1

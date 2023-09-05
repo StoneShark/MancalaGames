@@ -481,12 +481,12 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             store_t = self.store[True]
 
             if self.info.flags.child:
-                store_f += sum(self.board[loc]
-                               for loc in self.cts.false_range
-                               if self.child[loc] is False)
-                store_t += sum(self.board[loc]
-                               for loc in self.cts.true_range
-                               if self.child[loc] is True)
+                for loc in range(self.cts.dbl_holes):
+                    if self.child[loc] is False:
+                        store_f += self.board[loc]
+                    elif self.child[loc] is True:
+                        store_t += self.board[loc]
+
             sval += (store_f - store_t) * self.info.scorer.stores_m
 
         if self.info.flags.child and self.info.scorer.child_cnt_m:

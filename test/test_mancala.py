@@ -22,25 +22,38 @@ coverage html
 
 # %% imports
 
+import re
 import sys
 
 import pytest
 
 sys.path.extend(['src'])
 
+import cfg_keys as ckey
 import game_constants as gc
 import game_interface as gi
+import mancala
+import minimax
+import new_game
+import utils
+
 from game_interface import GameFlags
 from game_interface import Direct
 from game_interface import WinCond
-import mancala
-import new_game
-import utils
+
+
+# %% constants
+
+T = True
+F = False
+N = None
+
 
 
 # %%
 
 
+@pytest.mark.filterwarnings("ignore")
 class TestConctruction:
 
     @pytest.fixture
@@ -49,7 +62,6 @@ class TestConctruction:
                            flags=GameFlags(),
                            rules=mancala.Mancala.rules)
 
-    @pytest.mark.filterwarnings("ignore")
     def test_bad_params(self, min_game_if):
 
         with pytest.raises(TypeError):
@@ -67,10 +79,200 @@ class TestConctruction:
         with pytest.raises(TypeError):
             mancala.Mancala(gc.GameConsts(3, 5), min_game_if, 5)
 
-    @pytest.mark.filterwarnings("ignore")
     def test_min_params(self, min_game_if):
 
         mancala.Mancala(gc.GameConsts(3, 5), min_game_if)
+
+
+class TestSetPlayer:
+
+    @pytest.fixture
+    def game(self):
+        """Game that has access to all of the state data."""
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=2)
+        game_info = gi.GameInfo(nbr_holes = game_consts.holes,
+                                capt_on = [2],
+                                flags=GameFlags(blocks=True,
+                                                rounds=True,
+                                                child=True,
+                                                moveunlock=True),
+                                ai_params={"mm_depth" : [1, 1, 3, 5]},
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        return game
+
+    def test_set_player(self, mocker, game):
+        # can't mock/spy the player because we are changing it
+        setd = mocker.spy(game, 'set_difficulty')
+        game.set_player(minimax.MiniMaxer(game))
+        assert setd.call_count == 1
+
+    def test_bad_set_player(self, game):
+        with pytest.raises(TypeError):
+            game.set_player(5)
+
+
+class TestGameState:
+
+    @pytest.fixture
+    def game(self):
+        """Game that has access to all of the state data."""
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=2)
+        game_info = gi.GameInfo(nbr_holes = game_consts.holes,
+                                capt_on = [2],
+                                flags=GameFlags(blocks=True,
+                                                rounds=True,
+                                                child=True,
+                                                moveunlock=True),
+                                ai_params={"mm_depth" : [1, 1, 3, 5]},
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        return game
+
+
+    @pytest.mark.parametrize(
+        'board, store, turn, unlocked, blocked, child, ere_one, ere_two',
+        [((1, 2, 3, 4), [0, 0], False,
+          None, None, None,
+          ' *4 +3 *$', ' *1 +2 +\\* *$'),
+         ((1, 2, 3, 4), [2, 0], True,
+           None, None, None,
+           ' *4 +3 +\\* *$', ' *1 +2 +2 *$'),
+         ((1, 2, 3, 4), [0, 2], True,
+           None, None, None,
+           ' *4 +3 +\\* +2 *$', ' *1 +2 *$'),
+         ((1, 2, 3, 4), [0, 0], True,
+          [T, F, F, T], None, None,
+          ' *4 +3_ +\\* *$', ' *1 +2_ *$'),
+         ((1, 2, 3, 4), [0, 0], True,
+          None, [T, F, F, T], None,
+          ' *x +3 +\\* *$', ' *x +2 *$'),
+         ((1, 2, 3, 4), [0, 0], True,
+          None, None, [T, F, N, N],
+          ' *4 +3 +\\* *$', ' *1˄ +2˅ *$'),
+         ((1, 2, 3, 4), [0, 0], True,
+          [T, F, F, T], None, [T, F, N, N],
+          ' *4 +3_ +\\* *$', ' *1 ˄ +2_˅ *$'),
+         ])
+    def test_state_const(self, board, store, turn,
+                         unlocked, blocked, child,
+                         ere_one, ere_two):
+
+        state = mancala.GameState(board=board,
+                                  store=store,
+                                  _turn=turn,
+                                  unlocked=unlocked,
+                                  blocked=blocked,
+                                  child=child)
+        assert state.board == board
+        assert state.store == store
+        assert state._turn == turn
+        assert state.turn == turn
+        assert state.unlocked == unlocked
+        assert state.blocked == blocked
+        assert state.child == child
+        gstrs = str(state).split('\n')
+        assert re.match(ere_one, gstrs[0])
+        assert re.match(ere_two, gstrs[1])
+
+
+    @pytest.mark.parametrize(
+        'board, store, turn, unlocked, blocked, child',
+        [((1, 2, 3, 4), (0, 0), False, None, None, None),
+         ((1, 2, 3, 4), (2, 0), True,  None, None, None),
+         ((1, 2, 3, 4), (0, 2), True,  None, None, None),
+         ((1, 2, 3, 4), (0, 0), True,
+          (T, F, F, T), None, None),
+         ((1, 2, 3, 4), (0, 0), True,
+          None, (T, F, F, T), None),
+         ((1, 2, 3, 4), (0, 0), True,
+          None, None, (T, F, N, N)),
+         ((1, 2, 3, 4), (0, 0), True,
+          (T, F, F, T), None, (T, F, N, N)),
+         ])
+    def test_getter(self, game, board, store, turn,
+                    unlocked, blocked, child):
+
+        game.board = board
+        game.store = store
+        game.turn = turn
+
+        if unlocked:
+            game.unlocked = unlocked
+        else:
+            object.__setattr__(game.info.flags,
+                               'moveunlock',
+                               False)
+        if blocked:
+            game.blocked = blocked
+        else:
+            object.__setattr__(game.info.flags,
+                               'blocks',
+                               False)
+        if child:
+            game.child = child
+        else:
+            object.__setattr__(game.info.flags,
+                               'child',
+                               False)
+
+        state = game.state
+        assert state.board == board
+        assert state.store == store
+        assert state._turn == turn
+        assert state.turn == turn
+        assert state.unlocked == unlocked
+        assert state.blocked == blocked
+        assert state.child == child
+
+
+    @pytest.mark.parametrize(
+        'board, store, turn, unlocked, blocked, child',
+        [((1, 2, 3, 4), (0, 0), False, None, None, None),
+         ((1, 2, 3, 4), (2, 0), True,  None, None, None),
+         ((1, 2, 3, 4), (0, 2), True,  None, None, None),
+         ((1, 2, 3, 4), (0, 0), True,
+          (T, F, F, T), None, None),
+         ((1, 2, 3, 4), (0, 0), True,
+          None, (T, F, F, T), None),
+         ((1, 2, 3, 4), (0, 0), True,
+          None, None, (T, F, N, N)),
+         ((1, 2, 3, 4), (0, 0), True,
+          (T, F, F, T), None, (T, F, N, N)),
+         ])
+    def test_setter(self, game, board, store, turn,
+                    unlocked, blocked, child):
+
+        game.state = mancala.GameState(board=board,
+                                       store=store,
+                                       _turn=turn,
+                                       unlocked=unlocked,
+                                       blocked=blocked,
+                                       child=child)
+
+        assert game.board == list(board)
+        assert game.store == list(store)
+        assert game.turn == turn
+
+        if unlocked:
+            assert game.unlocked == list(unlocked)
+        else:
+            assert game.unlocked == [F, F, F, F]
+
+        if blocked:
+            assert game.blocked == list(blocked)
+        else:
+            assert game.blocked == [F, F, F, F]
+
+        if child:
+            assert game.child == list(child)
+        else:
+            assert game.child == [N, N, N, N]
+
 
 
 class TestBasics:
@@ -120,6 +322,13 @@ class TestBasics:
         game.set_difficulty(3)
         assert game.difficulty == 3
         assert game.player.max_depth == 5
+
+        string = game.params_str()
+        assert ckey.GAME_CLASS in string
+        assert ckey.UDIRECT not in string
+        assert 'GameConsts' in string
+        assert 'GameInfo' in string
+
 
     def test_get_store(self, game):
 
