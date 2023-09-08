@@ -186,13 +186,16 @@ class RoundWinner(EndTurnIf):
     chain decide the outcome, then adjust for end of game or
     end of round. The game is over if either player does not
     have the minimum seeds to fill a hole for the start of
-    the game."""
+    the game.
+
+    This is at the top of the deco chain. If ended is True
+    actually end the game (not the round)."""
 
     def game_ended(self, repeat_turn, ended=False):
 
         cond, player = self.decorator.game_ended(repeat_turn, ended)
 
-        if not cond:
+        if not cond or ended:
             return cond, player
 
         seeds = self.claimer.claim_seeds()

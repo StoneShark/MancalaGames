@@ -64,13 +64,14 @@ class NewRound(NewGameIf):
         match self.game.info.flags.round_starter:
             case RoundStarter.ALTERNATE:
                 self.game.turn = not self.game.starter
-                self.game.starter = self.game.turn
 
             case RoundStarter.LOSER:
                 self.game.turn = not self.game.turn
 
-            case RoundStarter.WINNER:
-                pass
+            # case RoundStarter.WINNER:
+            #     pass
+
+        self.game.starter = self.game.turn
 
 
     def new_game(self, win_cond=None, new_round_ok=False):

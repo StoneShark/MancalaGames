@@ -8,7 +8,6 @@ Created on Sun Mar 19 09:58:36 2023
 import dataclasses as dc
 import pprint
 import random
-import warnings
 
 import ai_interface
 import allowables
@@ -271,43 +270,19 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
 
     def end_game(self):
-        """The user has requested that the game be ended.
-        Split the seeds on the board between the two stores.
-        return WinCond  """
+        """The user has requested that the game be ended."""
 
-        if not self.info.flags.stores:
-            warnings.warn(
-                'Hidden stores will be used to determine outcome.')
-
-        seeds = self._get_seeds_for_divvy()
-        quot, rem = divmod(seeds, 2)
-
-        self.store[False] += quot
-        self.store[True] += quot
-        store_f, store_t = self.store[False], self.store[True]
-
-        if self.info.flags.child:
-            store_f += sum(self.board[loc] for loc in self.cts.false_range
-                           if self.child[loc] is False)
-            store_t += sum(self.board[loc] for loc in self.cts.true_range
-                           if self.child[loc] is True)
-
-        if store_t > store_f:
-            self.store[False] += rem
-        else:
-            self.store[True] += rem
-
-        win_cond = self.win_conditions()
-        return win_cond
+        return self.win_conditions(repeat_turn=False, ended=True)
 
 
-    def win_conditions(self, repeat_turn=False):
+    def win_conditions(self, repeat_turn=False, ended=False):
         """Check for end game.
 
         Return None if no victory/tie conditions are met.
         If there is a winner, turn must be that player!"""
 
-        cond, winner = self.deco.ender.game_ended(repeat_turn)
+        cond, winner = self.deco.ender.game_ended(repeat_turn=repeat_turn,
+                                                  ended=ended)
         if cond:
             self.turn = winner
             return cond
@@ -327,6 +302,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             gtext = 'The round'
             title = 'Round Over'
 
+        message = 'Unexpected game end condition.'
         if win_cond in [WinCond.WIN, WinCond.ROUND_WIN]:
             player = 'Top' if self.turn else 'Bottom'
             message = f'{player} won {rtext} by collecting the most seeds!'

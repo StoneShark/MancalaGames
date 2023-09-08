@@ -235,7 +235,7 @@ class Deka(mancala.Mancala):
         return "Game Over", msg
 
 
-    def win_conditions(self, repeat_turn=False):
+    def win_conditions(self, repeat_turn=False, _=False):
         """Check for end game.
 
         Return None if no victory/tie conditions are met.

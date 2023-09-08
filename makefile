@@ -50,7 +50,7 @@ all: unit_tests pylint exe
 unit_tests: htmlcov/index.html $(SOURCES) $(TESTS) $(GAMES)
 
 htmlcov/index.html: $(SOURCES)  $(TESTS) $(GAMES)
-	-coverage run --branch -m pytest --cache-clear --color=no
+	-coverage run -m pytest --cache-clear --color=no
 	coverage html
 
 .PHONY: vtest

@@ -40,6 +40,7 @@ import utils
 from game_interface import GameFlags
 from game_interface import Direct
 from game_interface import WinCond
+from game_interface import RoundStarter
 
 
 # %% constants
@@ -339,19 +340,19 @@ class TestBasics:
 
     def test_sides(self, game):
 
-        assert game.cts.opp_side(game.turn, 0) == False
-        assert game.cts.opp_side(game.turn, 7) == True
+        assert not game.cts.opp_side(game.turn, 0)
+        assert game.cts.opp_side(game.turn, 7)
 
-        assert game.cts.my_side(game.turn, 0) == True
-        assert game.cts.my_side(game.turn, 7) == False
+        assert game.cts.my_side(game.turn, 0)
+        assert not game.cts.my_side(game.turn, 7)
 
         game.turn = True
 
-        assert game.cts.opp_side(game.turn, 0) == True
-        assert game.cts.opp_side(game.turn, 7) == False
+        assert game.cts.opp_side(game.turn, 0)
+        assert not game.cts.opp_side(game.turn, 7)
 
-        assert game.cts.my_side(game.turn, 0) == False
-        assert game.cts.my_side(game.turn, 7) == True
+        assert not game.cts.my_side(game.turn, 0)
+        assert game.cts.my_side(game.turn, 7)
 
 
 class TestNewEndGames:
@@ -386,6 +387,7 @@ class TestNewEndGames:
         game.turn = False
         game.starter = False
         return game
+
 
     def test_no_rounds_start(self, game):
 
@@ -441,25 +443,52 @@ class TestNewEndGames:
         assert rgame.unlocked == [True] * 6
         assert rgame.blocked == [False] * 6
 
-    def test_rounds_start(self, rgame):
+
+    @pytest.mark.parametrize(
+        'start_method, starter, winner, estarter',
+        [(RoundStarter.ALTERNATE, True, False, False),
+         (RoundStarter.ALTERNATE, True, True, False),
+         (RoundStarter.ALTERNATE, False, False, True),
+         (RoundStarter.ALTERNATE, False, True, True),
+         (RoundStarter.LOSER, True, False, True),
+         (RoundStarter.LOSER, False, True, False),
+         (RoundStarter.WINNER, True, False, False),
+         (RoundStarter.WINNER, True, True, True),
+          ])
+    def test_rounds_start(self, rgame,
+                          start_method, starter, winner, estarter):
+
+        object.__setattr__(rgame.info.flags, 'round_starter', start_method)
 
         rgame.unlocked = [False, True, True] * 2
         rgame.blocked = [True, False, True] * 2
         rgame.board = utils.build_board([0, 0, 0],
                                         [0, 0, 0])
-        rgame.store = [8, 4]
-        starter = rgame.turn
+        rgame.starter  = starter
+        if winner:
+            rgame.store = [4, 8]
+        else:
+            rgame.store = [8, 4]
+        rgame.turn = winner
 
-        rgame.new_game(win_cond=WinCond.ROUND_WIN,
-                       new_round_ok=True)
-        assert rgame.board == utils.build_board([2, 0, 2],
-                                                [2, 2, 2])
-        assert rgame.store == [2, 0]
-        assert rgame.turn == (not starter)
+        rgame.new_game(win_cond=WinCond.ROUND_WIN, new_round_ok=True)
+
+        assert rgame.turn == estarter
         assert rgame.starter == rgame.turn
         assert rgame.unlocked == [True] * rgame.cts.dbl_holes
-        assert rgame.blocked == utils.build_board([False, True, False],
-                                                  [False, False, False])
+        if winner:
+            assert rgame.board == utils.build_board([2, 2, 2],
+                                                    [2, 0, 2])
+            assert rgame.store == [0, 2]
+            assert rgame.blocked == utils.build_board([False, False, False],
+                                                      [False, True, False])
+        else:
+            assert rgame.board == utils.build_board([2, 0, 2],
+                                                    [2, 2, 2])
+            assert rgame.store == [2, 0]
+            assert rgame.blocked == utils.build_board([False, True, False],
+                                                      [False, False, False])
+
 
     def test_rounds_start_nat(self, rgame):
 
@@ -477,14 +506,15 @@ class TestNewEndGames:
         assert rgame.unlocked == [True] * 6
         assert rgame.blocked == [False] * 6
 
+
     @pytest.mark.parametrize(
         'board, store, econd, eturn',
         [(utils.build_board([1, 0, 0],
-                            [0, 0, 1]), [7, 3], WinCond.ROUND_WIN, False),
+                            [0, 0, 1]), [7, 3], WinCond.WIN, False),
          (utils.build_board([1, 0, 0],
-                            [0, 0, 1]), [3, 7], WinCond.ROUND_WIN, True),
+                            [0, 0, 1]), [3, 7], WinCond.WIN, True),
          (utils.build_board([1, 0, 0],
-                            [0, 0, 1]), [5, 5], WinCond.ROUND_TIE, False),
+                            [0, 0, 1]), [5, 5], WinCond.TIE, False),
          (utils.build_board([1, 0, 0],
                             [0, 0, 1]), [0, 10], WinCond.WIN, True)
          ])
@@ -494,3 +524,89 @@ class TestNewEndGames:
         rgame.store = store
         assert rgame.end_game() == econd
         assert rgame.turn == eturn
+
+
+
+class TestWinMessage:
+
+    @pytest.fixture
+    def game(self):
+
+        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+                                capt_on = [2],
+                                flags=GameFlags(),
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+
+    @pytest.mark.parametrize('wcond', WinCond)
+    @pytest.mark.parametrize('turn', [False, True])
+    def test_messages(self, game, wcond, turn):
+
+        game.turn = turn
+
+        title, message = game.win_message(wcond)
+
+        if 'ROUND' in wcond.name:
+            assert 'Round Over' == title
+        else:
+            assert 'Game Over' == title
+
+        if 'WIN' in wcond.name:
+            if turn:
+                assert 'Top' in message
+            else:
+                assert 'Bottom' in message
+            assert 'won' in message
+            return
+        else:
+            assert 'Top' not in message
+            assert 'Bottom' not in message
+
+        if 'TIE' in wcond.name:
+            assert 'tie' in message
+            return
+
+        if 'ENDLESS' in wcond.name:
+            assert 'No winner' in message
+            return
+
+        assert 'Unexpected' in message
+
+
+class TestHoleProp:
+
+    @pytest.fixture
+    def game(self):
+
+        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+                                capt_on = [2],
+                                flags=GameFlags(),
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+
+    @pytest.mark.parametrize(
+        'row, pos, eindex',
+        [(0, 0, 5),
+         (0, 2, 3),
+         (1, 0, 0),
+         (1, 2, 2)])
+    def test_hole_prop(self, game, row, pos, eindex):
+        """testing the right pos->loc and array access."""
+
+        game.board = [f'board{i}' for i in range(6)]
+        game.unlocked = [f'lock{i}' for i in range(6)]
+        game.blocked = [f'block{i}' for i in range(6)]
+        game.child = [f'child{i}' for i in range(6)]
+
+        props = game.get_hole_props(row, pos)
+
+        assert props.seeds == 'board' + str(eindex)
+        assert props.unlocked == 'lock' + str(eindex)
+        assert props.blocked == 'block' + str(eindex)
+        assert props.ch_owner == 'child' + str(eindex)
