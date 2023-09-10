@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-"""At the end of each turn determine if the game is over.
+"""There are two  deco chains defined here:
+    1. ender:  at the end of each turn determine if the game is over.
+    2. quitter:  user ended the game, do something fair.
 
 Return win/end-game-condition, winner from ender.game_ended.
 self.game.turn is the player that just finished moving.
@@ -87,9 +89,6 @@ class ClaimOwnSeeds(ClaimSeedsIf):
         return seeds
 
 
-# XXXX seed collection options:
-#         all, own, opps (for XCaptSowOwn), even split (to intgrate end)
-
 class TakeOwnSeeds(ClaimSeedsIf):
     """The game has ended, move the unowned seeds (non-child)
     to the stores.
@@ -115,8 +114,113 @@ class TakeOwnSeeds(ClaimSeedsIf):
         seeds[True] += self.game.store[True]
 
         game_log.step('Collected seeds', self.game)
-
         return seeds
+
+
+class DivvySeedsStores(ClaimSeedsIf):
+    """Split the unclaimed seeds between the two players
+    putting them in their stores.
+    Return the count of seeds owned by each player including
+    those is in children (don't move those to the stores)."""
+
+    def claim_seeds(self):
+
+        seeds = [0, 0]
+        unclaimed = 0
+
+        for loc in range(self.game.cts.dbl_holes):
+            if self.game.child[loc] is None:
+                unclaimed += self.game.board[loc]
+                self.game.board[loc] = 0
+
+            elif self.game.child[loc] is True:
+                seeds[True] += self.game.board[loc]
+
+            elif self.game.child[loc] is False:
+                seeds[False] += self.game.board[loc]
+
+        quot, rem = divmod(unclaimed, 2)
+        self.game.store[False] += quot
+        self.game.store[True] += quot
+
+        if self.game.store[True] > self.game.store[False]:
+            self.game.store[False] += rem
+        else:
+            self.game.store[True] += rem
+
+        seeds[False] += self.game.store[False]
+        seeds[True] += self.game.store[True]
+
+        game_log.step('Divvied seeds', self.game)
+        return seeds
+
+
+class DivvySeedsNoStores(ClaimSeedsIf):
+    """When there are no stores, split the unclaimed seeds
+    between the two players putting them in available
+    children.
+    Return the count of seeds owned by each player.
+    If there are no owned stores, return win_count's
+    to force a tie."""
+
+    def claim_seeds(self):
+
+        board = self.game.board
+        seeds = [0, 0]
+        unclaimed = 0
+        children = [-1, -1]
+
+        for loc in range(self.game.cts.dbl_holes):
+            owner = self.game.child[loc]
+            if owner is None:
+                unclaimed += board[loc]
+                board[loc] = 0
+            else:
+                seeds[owner] += board[loc]
+                children[owner] = loc
+
+        if all(children[i] >= 0 for i in range(2)):
+
+            quot, rem = divmod(unclaimed, 2)
+            seeds[False] += quot
+            seeds[True] += quot
+            board[children[False]] += quot
+            board[children[True]] += quot
+
+            if seeds[True] > seeds[False]:
+                seeds[False] += rem
+                board[children[False]] += rem
+            else:
+                seeds[True] += rem
+                board[children[True]] += rem
+
+
+        elif children[False] >= 0:
+            seeds[False] += unclaimed
+            board[children[False]] += unclaimed
+
+        elif children[True] >= 0:
+            seeds[True] += unclaimed
+            self.game.board[children[True]] += unclaimed
+
+        if any(seeds):
+            game_log.step('Divvied seeds', self.game)
+            return seeds
+
+        game_log.step('Divvy forcing tie', self.game)
+        half = self.game.cts.win_count
+        return [half, half]
+
+
+class DivvyIgnoreSeeds(ClaimSeedsIf):
+    """If there are no stores or children, ignore
+    any seeds still in play.
+    Return win_count to force a tie."""
+
+    def claim_seeds(self):
+        half = self.game.cts.win_count
+        return [half, half]
+
 
 
 # %%  end turn interface
@@ -286,7 +390,7 @@ class EndTurnNotPlayable(EndTurnIf):
         return self.decorator.game_ended(repeat_turn, ended)
 
 
-# %% build decorator chain
+# %% build decorator chains
 
 def deco_end_move(game):
     """Return a chain of move enders."""
@@ -296,13 +400,13 @@ def deco_end_move(game):
     else:
         claimer = ClaimSeeds(game)
 
-    ender = Winner(game, None, TakeOwnSeeds(game))
+    ender = Winner(game, claimer=TakeOwnSeeds(game))
 
     if not game.info.flags.mustpass:
-        ender = EndTurnNoPass(game, ender, None)
+        ender = EndTurnNoPass(game, ender)
     if game.info.flags.mustshare:
-        ender = EndTurnMustShare(game, ender, None)
-    ender = EndTurnNotPlayable(game, ender, None)
+        ender = EndTurnMustShare(game, ender)
+    ender = EndTurnNotPlayable(game, ender)
 
     ender = Winner(game, ender, claimer)
 
@@ -310,3 +414,15 @@ def deco_end_move(game):
         ender = RoundWinner(game, ender, ClaimOwnSeeds(game))
 
     return ender
+
+
+def deco_quitter(game):
+    """Return a chain for the quitter (user ended game)."""
+
+    if game.info.flags.stores:
+        return Winner(game, claimer=DivvySeedsStores(game))
+
+    if game.info.flags.child:
+        return Winner(game, claimer=DivvySeedsNoStores(game))
+
+    return Winner(game, claimer=DivvyIgnoreSeeds(game))

@@ -11,7 +11,9 @@ import pytest
 
 sys.path.extend(['src'])
 
+import game_constants as gc
 import man_config
+import qelat
 
 class TestQelat:
 
@@ -322,6 +324,66 @@ class TestQelat:
         winmsg = game.win_message(cond)
         assert 'Game Over' in winmsg[0]
         assert 'Top' in winmsg[1]
+
+
+    def test_small(self, game):
+
+        consts = gc.GameConsts(3, 3)
+        info = game.info
+        info.__post_init__(rules=qelat.Qelat.rules)
+        game = qelat.Qelat(consts, info)
+
+        assert game.walda_poses == [qelat.WALDA_BOTH, True, qelat.WALDA_BOTH,
+                                    qelat.WALDA_BOTH, False, qelat.WALDA_BOTH]
+
+    def test_smaller(self, game):
+
+        consts = gc.GameConsts(3, 2)
+        info = game.info
+        info.__post_init__(rules=qelat.Qelat.rules)
+        game = qelat.Qelat(consts, info)
+
+        assert all(game.walda_poses[i] == qelat.WALDA_BOTH
+                   for i in range(4))
+
+
+    @pytest.mark.parametrize('turn, board, child, eboard',
+                             [(True,
+                               [0, 0, 0, 0, 10, 12, 2, 1, 1, 0, 4, 18],
+                               [None, None, None, None, True, True,
+                                None, None, None, None, None, False],
+                               [0, 0, 0, 0, 18, 12, 0, 0, 0, 0, 0, 18]),
+                              (True,
+                               [0, 0, 0, 0, 10, 12, 2, 1, 1, 0, 4, 18],
+                               [None, None, None, None, True, True,
+                                None, None, None, None, None, None],
+                               [0, 0, 0, 0, 36, 12, 0, 0, 0, 0, 0, 0]),
+                              (False,
+                               [2, 1, 1, 0, 4, 40, 0, 0, 0, 0, 0, 0],
+                               [None, None, None, None, None, None,
+                                None, None, None, None, None, False],
+                               [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 48]),
+                              (False,
+                               [2, 1, 1, 0, 4, 40, 0, 0, 0, 0, 0, 0],
+                               [None, None, None, None, None, None,
+                                None, None, None, None, None, None],
+                               [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
+                              ])
+    def test_no_pass(self, game, turn, board, child, eboard):
+
+        # get the config vars, change mustpass, build new game
+        consts = game.cts
+        info = game.info
+        object.__setattr__(info.flags, 'mustpass', False)
+        info.__post_init__(rules=qelat.Qelat.rules)
+        game = qelat.Qelat(consts, info)
+
+        game.turn = turn
+        game.board = board
+        game.child = child
+        game.store = [0, 0]
+        assert game.move(3).name == 'WIN'
+        assert game.board == eboard
 
 
     def test_end_game_no_walda(self, game):

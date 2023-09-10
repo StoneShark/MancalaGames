@@ -19,9 +19,10 @@ from game_interface import WinCond
 # %% constants
 
 # these are only used if the config file does not have values
-BIAS = 0.3
-NBR_NODES = 50
+BIAS = 0.25
+NBR_NODES = 200
 
+NBR_POUTS = 1
 MAX_TURNS = 500
 
 # %% best
@@ -92,6 +93,8 @@ class MonteCarloTS(ai_interface.AiPlayerIf):
 
         self.bias = BIAS
         self.new_nodes = NBR_NODES
+        self.nbr_pouts = NBR_POUTS
+
         self.game_nodes = col.deque()
         self.node_dict = {}
         self.move_desc = None
@@ -260,13 +263,26 @@ class MonteCarloTS(ai_interface.AiPlayerIf):
 
 
     def default_policy(self, node_id):
-        """Do playouts."""
+        """Do playouts.
+        Do a small number of play_outs sum the rewards for the
+        winners. Return the average reward for whichever is the
+        largest reward."""
 
-        # XXXX a small number of playouts 1 to 10 might improve performance
-        # how to deal with winner versus reward computation
-        # compute reward for current player e.g. make negative if not win?
+        rewards = [0, 0]
+        for _ in range(self.nbr_pouts):
+            winner, reward = self._one_playout(node_id)
+            if winner:
+                rewards[winner] += reward
 
-        return self._one_playout(node_id)
+        if rewards[0] > rewards[1]:
+            return False, rewards[0] / self.nbr_pouts
+
+        if rewards[0] < rewards[1]:
+            return True, rewards[1] / self.nbr_pouts
+
+        return None, 0
+
+        # return self._one_playout(node_id)
 
 
     def backup(self, node_hist, winner, reward):

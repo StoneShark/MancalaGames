@@ -209,12 +209,6 @@ class Deka(mancala.Mancala):
             self.deco.sower = DekaSowClosed(self, DekaSower(self))
 
 
-    def end_game(self):
-        """The user has requested that the game be ended."""
-
-        return self.win_conditions() or WinCond.TIE
-
-
     def win_message(self, win_cond):
         """Return a game appropriate win message based on WinCond.
         Return a window title and message strings."""

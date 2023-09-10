@@ -97,6 +97,7 @@ class ManDeco:
         self.get_dir = get_direction.deco_dir_getter(game)
         self.sower = sower.deco_sower(game)
         self.ender = end_move.deco_end_move(game)
+        self.quitter = end_move.deco_quitter(game)
         self.capt_ok = capt_ok.deco_capt_ok(game)
         self.capturer = capturer.deco_capturer(game)
         self.gstr = game_str.deco_get_string(game)
@@ -255,24 +256,13 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         return self.deco.new_game.new_game(win_cond, new_round_ok)
 
 
-    def _get_seeds_for_divvy(self):
-        """Collect all of the seeds from non-child holes and
-        zero the holes;
-        return the number seeds collected"""
-
-        seeds = 0
-        for loc in range(self.cts.dbl_holes):
-            if self.child[loc] is None:
-                seeds += self.board[loc]
-                self.board[loc] = 0
-
-        return seeds
-
-
     def end_game(self):
         """The user has requested that the game be ended."""
 
-        return self.win_conditions(repeat_turn=False, ended=True)
+        cond, winner = self.deco.quitter.game_ended(repeat_turn=False,
+                                                    ended=True)
+        self.turn = winner
+        return cond
 
 
     def win_conditions(self, repeat_turn=False, ended=False):

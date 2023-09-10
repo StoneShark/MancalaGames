@@ -75,9 +75,11 @@ def build_qelat_rules():
 
 class QelatEndMove(end_move.EndTurnIf):
     """The rest of the deco chain may collect seeds into
-    the stores (if the game has ended). If the game has
-    ended or is not playable (store > 0): move the seeds
-    from the stores into available waldas."""
+    the stores (if the game has ended). Move any seeds
+    from the stores into available waldas.
+
+    Note that this code is only used if mustpass is changed
+    from the default True to False."""
 
     def game_ended(self, repeat_turn, ended=False):
         """Qelat end move wrapper."""
@@ -85,7 +87,7 @@ class QelatEndMove(end_move.EndTurnIf):
         end_cond, winner = self.decorator.game_ended(repeat_turn, ended)
 
         if any(self.game.store):
-            walda_locs = self.game.find_waldas(self)
+            walda_locs = self.game.find_waldas()
 
             if all(loc >= 0 for loc in walda_locs):
                 self.game.board[walda_locs[0]] += self.game.store[0]
@@ -97,7 +99,8 @@ class QelatEndMove(end_move.EndTurnIf):
             elif walda_locs[1] >= 0:
                 self.game.board[walda_locs[1]] += sum(self.game.store)
 
-            self.game.store = [0, 0]
+            if any(loc >= 0 for loc in walda_locs):
+                self.game.store = [0, 0]
 
         assert sum(self.game.store) + sum(self.game.board) == \
             self.game.cts.total_seeds, 'Qelat: seed count error'
@@ -150,44 +153,6 @@ class Qelat(mancala.Mancala):
                     break
 
         return walda_locs
-
-
-    def end_game(self):
-        """The user has requested that the game be ended.
-        Split the seeds on the board between the sides.
-        return WinCond"""
-
-        seeds = self._get_seeds_for_divvy()
-        quot, rem = divmod(seeds, 2)
-
-        walda_locs = self.find_waldas()
-
-        if all(loc >= 0 for loc in walda_locs):
-            self.board[walda_locs[0]] += quot
-            self.board[walda_locs[1]] += quot
-
-            store_t = sum(self.board[loc]
-                          for loc in range(self.cts.dbl_holes)
-                          if self.child[loc] is True)
-            store_f = sum(self.board[loc]
-                          for loc in range(self.cts.dbl_holes)
-                          if self.child[loc] is False)
-
-            if store_t > store_f:
-                self.board[walda_locs[1]] += rem
-            else:
-                self.board[walda_locs[0]] += rem
-
-        elif walda_locs[0] >= 0:
-            self.board[walda_locs[0]] += seeds
-
-        elif walda_locs[1] >= 0:
-            self.board[walda_locs[1]] += seeds
-
-        else:
-            return gi.WinCond.TIE
-
-        return self.win_conditions()
 
 
     def capture_seeds(self, loc, _):
