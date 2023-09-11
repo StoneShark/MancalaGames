@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-"""
+"""The routines needed to change the goal of the game to
+depriving the opponent of seeds (Deka and Gamacha).
+
 Created on Mon Sep 11 08:22:49 2023
 @author: Ann"""
 
@@ -15,7 +17,7 @@ from game_interface import WinCond
 # %%
 
 class NoSeedGoal(mancala.Mancala):
-
+    """A derived class to change the goal to eliminating opponents seeds."""
 
     def win_message(self, win_cond):
         """Return a game appropriate win message based on WinCond.

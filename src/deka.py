@@ -11,7 +11,7 @@ import functools as ft
 from game_log import game_log
 import game_interface as gi
 import ginfo_rules
-import mancala
+import no_seed_goal
 import sower
 
 from game_interface import WinCond
@@ -190,7 +190,7 @@ class DekaLapSower(sower.SowMethodIf):
 
 # %%
 
-class Deka(mancala.Mancala):
+class Deka(no_seed_goal.NoSeedGoal):
     """Not really deka but maybe like deka."""
 
     rules = build_deka_rules()
@@ -207,43 +207,3 @@ class Deka(mancala.Mancala):
                                            DekaLapper(self))
         else:
             self.deco.sower = DekaSowClosed(self, DekaSower(self))
-
-
-    def win_message(self, win_cond):
-        """Return a game appropriate win message based on WinCond.
-        Return a window title and message strings."""
-
-        if win_cond == WinCond.WIN:
-            player = 'Top' if self.turn else 'Bottom'
-            msg = f'{player} won by eliminating opponent seeds.'
-
-        elif win_cond == WinCond.TIE:
-            msg = 'Both players ended with seeds, consider it a tie.'
-
-        elif win_cond == WinCond.ENDLESS:
-            msg = 'Game stuck in a loop. No winner.'
-
-        else:
-            msg = f'Unexpected end condition {win_cond}.'
-
-        return "Game Over", msg
-
-
-    def win_conditions(self, repeat_turn=False, _=False):
-        """Check for end game.
-
-        Return None if no victory/tie conditions are met.
-        If there is a winner, turn must be that player!"""
-
-        if all(not self.board[loc] for loc in
-               self.cts.get_opp_range(self.turn)):
-
-            return WinCond.WIN
-
-        if all(not self.board[loc] for loc in
-               self.cts.get_my_range(self.turn)):
-
-            self.turn = not self.turn
-            return WinCond.WIN
-
-        return None
