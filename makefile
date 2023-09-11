@@ -8,6 +8,7 @@ MODULES += capturer.py
 MODULES += cfg_keys.py
 MODULES += deka.py
 MODULES += end_move.py
+MODULES += gamacha.py
 MODULES += game_classes.py
 MODULES += game_constants.py
 MODULES += game_interface.py
@@ -82,9 +83,9 @@ game_tests:
 #
 #  run the pylint on all source files together
 
-pylint: $(SOURCES) .pylint_report 
+pylint: $(SOURCES) .pylint_report makefile
 
-.pylint_report: $(SOURCES) .pylintrc
+.pylint_report: $(SOURCES) .pylintrc makefile
 	-del .pylint_report
 	-cd src && pylint --output ..\\.pylint_report --rcfile ..\\.pylintrc $(MODULES)
 	type .pylint_report

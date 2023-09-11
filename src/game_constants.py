@@ -13,7 +13,7 @@ Created on Fri Mar 17 14:59:55 2023
 
 import dataclasses as dc
 
-MAX_HOLES = 12
+MAX_HOLES = 14
 MIN_HOLES = 2
 
 MAX_SEEDS = 8

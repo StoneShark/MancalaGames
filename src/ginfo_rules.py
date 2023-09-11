@@ -58,7 +58,6 @@ class GameInfoRule:
                 warnings.warn(self.msg)
             else:
                 msg = self.name + ':  ' + self.msg
-                msg += '\n\n' + repr(self.rule.__code__)
                 raise self.excp(msg)
 
 

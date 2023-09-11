@@ -33,7 +33,7 @@ def test_nbr_start_range_one():
 
 def test_start_range_two():
     with pytest.raises(gc.GameConstsError):
-        gc.GameConsts(5, 13)
+        gc.GameConsts(5, 15)
 
 def test_odd_holes():
 
