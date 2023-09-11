@@ -185,7 +185,7 @@ class TestGameLog:
 
         glog.level = glog.STEP
 
-        glog.turn(game, 'start')
+        glog.turn('start', game)
         glog.step('step one', game)
         glog.step('step twp', game)
         glog.add('active one', glog.IMPORT)
@@ -195,7 +195,7 @@ class TestGameLog:
         assert len(glog._log_records) == 7
 
         glog.active = False
-        glog.turn(game, 'seconds')
+        glog.turn('seconds', game)
         glog.step('step two.one', game)
         glog.step('step two.two', game)
         glog.add('inactive one', glog.MOVE)
@@ -258,11 +258,11 @@ class TestGameLog:
 
 
         glog.level = glog.IMPORT
-        glog.turn(game, 'start')            # 2 recs
+        glog.turn('start', game)            # 2 recs
         glog.add('import', glog.IMPORT)
         glog.step('step 1', game)           # not logged
         glog.step('step 2', game)           # not logged
-        glog.turn(game, 'move 1')           # 2 recs
+        glog.turn('move 1', game)           # 2 recs
 
         assert len(glog._move_start) == 2
         assert len(glog._log_records) == 5
@@ -278,7 +278,7 @@ class TestGameLog:
 
         lines = [0, 4, 2, 6, 3]
         for turn in range(1, 5):
-            glog.turn(game, f'move {turn}')
+            glog.turn(f'move {turn}', game)
             for line in range(1, lines[turn] + 1):
                 glog.add(f'turn {turn} line {line}', glog.MOVE)
 
@@ -328,11 +328,11 @@ class TestGameLog:
 
         glog.level = glog.STEP
 
-        glog.turn(game, 'start')
+        glog.turn('start', game)
         glog.add('import 1', glog.IMPORT)
         glog.step('step 1', game)
         glog.step('step 2', game)
-        glog.turn(game, 'move 1')
+        glog.turn('move 1', game)
         glog.add('import 2', glog.IMPORT)
 
         glog.save('parameter string')

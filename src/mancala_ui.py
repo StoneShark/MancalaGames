@@ -139,7 +139,7 @@ class MancalaUI(tk.Frame):
         self.mode = Behavior.GAMEPLAY
 
         game_log.new()
-        game_log.turn(game, 'Start Game')
+        game_log.turn('Start Game', game)
 
         self.info = self.game.get_game_info()
         self.tally = GameTally()
@@ -422,7 +422,7 @@ class MancalaUI(tk.Frame):
         """Do the last steps in starting a new game:
         log the start and check for ai's turn."""
         game_log.new()
-        game_log.turn(self.game, 'Start Game')
+        game_log.turn('Start Game', self.game)
         self._ai_move()
 
 
@@ -531,9 +531,18 @@ class MancalaUI(tk.Frame):
         self.update()
         self.set_game_mode(Behavior.GAMEPLAY, force=True)
 
-        winner = self.game.end_game()
+        win_cond = self.game.end_game()
+
+        wtext = 'Game Ended '
+        if win_cond in (WinCond.WIN, WinCond.ROUND_WIN):
+            sturn = 'Top' if self.game.get_turn() else 'Bottom'
+            wtext += f'\n{win_cond.name} by {sturn}'
+        elif win_cond:
+            wtext += ' ' + win_cond.name
+        game_log.turn(wtext, self.game)
+
         self._refresh()
-        self._win_message_popup(winner)
+        self._win_message_popup(win_cond)
         self._new_game()
 
 
@@ -562,7 +571,7 @@ class MancalaUI(tk.Frame):
             sturn = 'Top' if last_turn else 'Bottom'
             move_desc = f'{sturn} player move {pos}{wtext}'
 
-        game_log.turn(self.game, move_desc)
+        game_log.turn(move_desc, self.game)
 
 
     def move(self, move):

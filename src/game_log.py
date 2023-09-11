@@ -105,7 +105,7 @@ class GameLog:
         self._turn_nbr += 1
 
 
-    def turn(self, game_obj, move_desc=''):
+    def turn(self, move_desc, game_obj):
         """Log a turn in the game log (if it's active)."""
         if self._active:
             self._mark_turn()
