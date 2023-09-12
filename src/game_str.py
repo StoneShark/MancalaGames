@@ -103,7 +103,7 @@ class HoleMarkerUnlock(HoleMarkerIF):
     def get_hole_str(self, loc):
         """Return mark for hole"""
 
-        return LOCK[self.game.unlocked[loc]] + super().get_hole_str(loc)
+        return LOCK[self.game.unlocked[loc]] + self.decorator.get_hole_str(loc)
 
 
 class HoleMarkerChild(HoleMarkerIF):
@@ -114,7 +114,7 @@ class HoleMarkerChild(HoleMarkerIF):
     def get_hole_str(self, loc):
         """Return mark for hole"""
 
-        return CHILD[self.game.child[loc]] + super().get_hole_str(loc)
+        return CHILD[self.game.child[loc]] + self.decorator.get_hole_str(loc)
 
 
 # %%

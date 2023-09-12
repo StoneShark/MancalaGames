@@ -8,12 +8,12 @@
       "name": "Vai Lun Thlan",
       "about": "Vai Lun Thlan: a single-lap mancala,\nsow direction is clockwise,\ncapture on opponents side on 1s.\nMust pass if no moves.",
       "flags": {
+         "multicapt": true,
          "mustpass": true,
-         "stores": true,
-         "sow_direct": -1,
-         "skip_start": true,
          "oppsidecapt": true,
-         "multicapt": true
+         "skip_start": true,
+         "sow_direct": -1,
+         "stores": true
       },
       "scorer": {
          "stores_m": 4,
@@ -22,7 +22,8 @@
          "empties_m": 0,
          "child_cnt_m": 0,
          "evens_m": 0,
-         "easy_rand": 20
+         "easy_rand": 20,
+         "repeat_turn": 0
       },
       "min_move": 1,
       "capt_on": [ 1 ],

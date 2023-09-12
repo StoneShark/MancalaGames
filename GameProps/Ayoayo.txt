@@ -23,7 +23,8 @@
          "empties_m": -2,
          "child_cnt_m": 0,
          "evens_m": 0,
-         "easy_rand": 20
+         "easy_rand": 20,
+         "repeat_turn": 0
       },
       "min_move": 1,
       "ai_params": {

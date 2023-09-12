@@ -8,11 +8,11 @@
       "name": "Cow",
       "about": "Cow: a single-lap mancala,\nsow direction depends on start location:\nleft side sow left, right side sow right,\nmouse button selectes direction for center,\ncapture on opponents side on 2s and 4s.",
       "flags": {
+         "multicapt": true,
          "mustpass": true,
-         "stores": true,
-         "sow_direct": 0,
          "oppsidecapt": true,
-         "multicapt": true
+         "sow_direct": 0,
+         "stores": true
       },
       "scorer": {
          "stores_m": 4,
@@ -21,7 +21,8 @@
          "empties_m": 0,
          "child_cnt_m": 0,
          "evens_m": 0,
-         "easy_rand": 20
+         "easy_rand": 20,
+         "repeat_turn": 0
       },
       "min_move": 2,
       "capt_on": [ 2, 4 ],

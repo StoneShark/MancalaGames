@@ -38,14 +38,6 @@ class CaptTrue(CaptOkIf):
         return True
 
 
-class CaptFalse(CaptOkIf):
-    """Found no reason to do the capture, return False."""
-
-    def capture_ok(self, loc):
-        """Return True if capture from loc is ok"""
-        return False
-
-
 # %%  decorators
 
 class CaptOn(CaptOkIf):
@@ -120,10 +112,7 @@ def deco_capt_ok(game):
 
     gflags = game.info.flags
 
-    if game.info.capt_on or gflags.evens or gflags.crosscapt:
-        capt_ok = CaptTrue(game)
-    else:
-        return CaptFalse(game)
+    capt_ok = CaptTrue(game)
 
     if game.info.capt_on:
         capt_ok = CaptOn(game, capt_ok)
