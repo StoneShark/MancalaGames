@@ -26,7 +26,6 @@ class TestGameStr:
     def game(self):
 
         game_consts = gc.GameConsts(nbr_start=4, holes=6)
-
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on=[2],
                                 flags=GameFlags(),
@@ -53,7 +52,6 @@ class TestGameStr:
     def bmgame(self):
 
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
-
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 flags=GameFlags(mustpass=True,
                                                 stores=True,
@@ -90,7 +88,6 @@ class TestGameStr:
     def cgame(self):
 
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
-
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 flags=GameFlags(mustpass=True,
                                                 stores=True,

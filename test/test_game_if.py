@@ -120,6 +120,24 @@ def test_rule_dict(capsys):
     assert 'has no effect' in data
 
 
+def test_dupl_rule(capsys):
+
+    rules = ginfo_rules.RuleDict()
+
+    rules.add_rule(name='dupl_rule',
+                   msg='something bad',
+                   rule= lambda ginfo : ginfo,
+                   warn=True)
+    rules.add_rule(name='dupl_rule',
+                   msg='more of bad stuff',
+                   rule= lambda ginfo : ginfo,
+                   warn=True)
+
+    data = capsys.readouterr().out
+    assert 'dupl_rule' in data
+    assert 'replaced' in data
+
+
 def test_move_tuple():
 
     tup = gi.MoveTpl(3, Direct.CCW)

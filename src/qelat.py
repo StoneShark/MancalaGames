@@ -27,14 +27,15 @@ WALDA_TEST = [[WALDA_BOTH, False],
 # %%
 
 def build_qelat_rules():
-    """Refine the GameInfo rules for Qelat."""
+    """Refine the GameInfo rules for Qelat. Add qelat rules to RuleDict first,
+    so that invalid flags are eliminated; then the consistency checking
+    rules in the base set wont trigger."""
 
     def rev_getattr(name, obj):
         return getattr(obj.flags, name)
 
-    qelat_rules = ginfo_rules.build_rules()
+    qelat_rules = ginfo_rules.RuleDict()
 
-    # add rules
     qelat_rules.add_rule(
         'need_child',
         rule=lambda ginfo: not ginfo.flags.child,
@@ -60,14 +61,16 @@ def build_qelat_rules():
         warn=True)
 
     bad_flags = ['blocks', 'capsamedir', 'crosscapt', 'mlaps', 'multicapt',
-                 'oppsidecapt', 'rounds', 'sow_own_store', 'stores',
-                 'visit_opp', 'xcpickown']
+                 'oppsidecapt', 'rounds', 'round_starter', 'sow_own_store',
+                 'stores', 'visit_opp', 'xcpickown', 'grandslam']
     for flag in bad_flags:
         qelat_rules.add_rule(
             f'bad_{flag}',
             rule=ft.partial(rev_getattr, flag),
             msg=f'Qelat cannot be used with {flag.upper()}.',
             excp=gi.GameInfoError)
+
+    qelat_rules |= ginfo_rules.build_rules()
 
     return qelat_rules
 

@@ -13,6 +13,8 @@ import abc
 import dataclasses as dc
 import enum
 
+import cfg_keys as ckey
+
 
 # %%  constants
 
@@ -177,6 +179,8 @@ class GameInfo:
         rule.test raises exceptions and warnings."""
 
         object.__setattr__(self.flags, 'udirect', bool(self.udir_holes))
+        if ckey.MM_DEPTH not in self.ai_params:
+            self.ai_params[ckey.MM_DEPTH] = [1, 1, 3, 5]
 
         for rule in rules.values():
             rule.test(self)

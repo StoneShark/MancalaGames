@@ -71,6 +71,9 @@ class RuleDict(dict):
         if not warn and not excp:
             print(f'Rule {name} has no effect.')
 
+        if name in self:
+            print(f'Rule {name} being replaced.')
+
         self[name] = GameInfoRule(name, rule, msg, warn, excp)
 
 
@@ -129,6 +132,14 @@ def build_rules():
                             and not ginfo.flags.stores),
         msg='SOW_OWN_STORE set without STORES set.',
         excp=gi.GameInfoError)
+
+    man_rules.add_rule(
+        'child_gs_legal',
+        rule=lambda ginfo: (ginfo.flags.child  and
+                            ginfo.flags.grandslam != GrandSlam.LEGAL),
+        msg='CHILD requires that GRANDSLAM be Legal.',
+        excp=NotImplementedError)
+        # the GS code doesn't handle children, I suppose it could
 
     man_rules.add_rule(
         'split_gs_not',

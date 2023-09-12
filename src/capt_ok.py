@@ -86,7 +86,7 @@ class CaptUnlocked(CaptOkIf):
         return self.decorator.capture_ok(loc)
 
 
-class CaptNeedSeeds(CaptOkIf):
+class CaptNeedNoChildSeeds(CaptOkIf):
     """If there are no seeds or loc is a designated child, can't capture.
     Stack this one on top, so it's called first.
     Either condition should end a sequence of captures.
@@ -126,6 +126,6 @@ def deco_capt_ok(game):
     if gflags.moveunlock:
         capt_ok = CaptUnlocked(game, capt_ok)
 
-    capt_ok = CaptNeedSeeds(game, capt_ok)
+    capt_ok = CaptNeedNoChildSeeds(game, capt_ok)
 
     return capt_ok

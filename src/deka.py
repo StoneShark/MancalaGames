@@ -27,18 +27,16 @@ MAX_LOOPS = 100
 # %% deka rules
 
 def build_deka_rules():
-    """Update the rules for deka."""
+    """Update the rules for deka.  Add deka rules to RuleDict first,
+    so that invalid flags are eliminated; then the consistency checking
+    rules in the base set wont trigger.
+    Delete a few that will still trigger that we don't want to."""
 
     def rev_getattr(name, obj):
         return getattr(obj.flags, name)
 
-    deka_rules = ginfo_rules.build_rules()
+    deka_rules = ginfo_rules.RuleDict()
 
-    # delete rules
-    del deka_rules['blocks_wo_rounds']
-    del deka_rules['warn_no_capt']
-
-    # add rules
     deka_rules.add_rule(
         'min_move_one',
         rule=lambda ginfo: ginfo.min_move != 1,
@@ -64,7 +62,7 @@ def build_deka_rules():
         excp=gi.GameInfoError)
 
     capt_flags = ['capsamedir', 'crosscapt', 'evens',
-                  'multicapt', 'oppsidecapt']
+                  'multicapt', 'oppsidecapt', 'xcpickown']
     for flag in capt_flags:
         deka_rules.add_rule(
             f'no_capt_{flag}',
@@ -81,7 +79,7 @@ def build_deka_rules():
         excp=gi.GameInfoError)
 
     bad_flags = ['child', 'moveunlock', 'mustshare', 'mustpass',
-                 'rounds', 'sow_own_store', 'stores',
+                 'rounds', 'round_starter', 'sow_own_store', 'stores',
                  'skip_start', 'sow_start', 'visit_opp']
     for flag in bad_flags:
         deka_rules.add_rule(
@@ -89,6 +87,12 @@ def build_deka_rules():
             rule=ft.partial(rev_getattr, flag),
             msg=f'Deka cannot be used with {flag.upper()}.',
             excp=gi.GameInfoError)
+
+    deka_rules |= ginfo_rules.build_rules()
+
+    # delete rules
+    del deka_rules['blocks_wo_rounds']
+    del deka_rules['warn_no_capt']
 
     return deka_rules
 

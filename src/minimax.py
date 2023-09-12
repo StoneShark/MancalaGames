@@ -35,7 +35,7 @@ class MiniMaxer(ai_interface.AiPlayerIf):
 
         super().__init__(game)
 
-        self.max_depth = 5
+        self.max_depth = 3
         self.last_scores = None
 
 
@@ -103,6 +103,6 @@ class MiniMaxer(ai_interface.AiPlayerIf):
             self.max_depth = params[ckey.MM_DEPTH][difficulty]
             return None
 
-        self.max_depth = 5
+        self.max_depth = 3
         return ('MM_DEPTH missing from AI_PARAMS, '
                     f'using depth of {self.max_depth}.')

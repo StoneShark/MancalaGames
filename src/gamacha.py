@@ -24,15 +24,15 @@ def compute_dest(holes):
 
 
 def build_gamcha_rules():
-    """Update the rules for gamacha."""
+    """Update the rules for gamacha.  Add gamacha rules to RuleDict first,
+    so that invalid flags are eliminated; then the consistency checking
+    rules in the base set wont trigger.
+    Delete a few that will still trigger that we don't want to."""
 
     def rev_getattr(name, obj):
         return getattr(obj.flags, name)
 
-    rules = ginfo_rules.build_rules()
-
-    del rules['rounds_wo_blocks']
-    del rules['blocks_wo_rounds']
+    rules = ginfo_rules.RuleDict()
 
     rules.add_rule(
         'three_per_side',
@@ -46,15 +46,20 @@ def build_gamcha_rules():
         msg='Gamacha requires that GRANDSLAM be Legal.',
         excp=gi.GameInfoError)
 
-    bad_flags = ['mlaps', 'moveunlock', 'mustshare', 'mustpass',
-                 'rounds', 'blocks', 'sow_own_store', 'stores',
-                 'skip_start', 'sow_start', 'visit_opp']
+    bad_flags = ['blocks', 'child', 'mlaps', 'moveunlock',
+                 'mustpass', 'mustshare', 'round_starter',
+                 'rounds', 'skip_start', 'sow_own_store',
+                 'sow_start', 'stores', 'visit_opp']
     for flag in bad_flags:
         rules.add_rule(
             f'bad_{flag}',
             rule=ft.partial(rev_getattr, flag),
             msg=f'Gamacha cannot be used with {flag.upper()}.',
             excp=gi.GameInfoError)
+
+    rules |= ginfo_rules.build_rules()
+    del rules['rounds_wo_blocks']
+    del rules['blocks_wo_rounds']
 
     return rules
 

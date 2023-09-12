@@ -33,9 +33,7 @@ class HoleMarkerIF(abc.ABC):
 
     @abc.abstractmethod
     def get_hole_str(self, loc):
-        """Generate a hole string.
-        Default implementation so first class in chaing can call it."""
-        return ''
+        """Generate a hole string."""
 
 
 class StringIf(abc.ABC):
