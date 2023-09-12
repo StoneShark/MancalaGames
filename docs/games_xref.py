@@ -72,10 +72,18 @@ with open('props_used.csv', 'w') as file:
                 vstr = str(getattr(consts, param))
 
             elif param in gflags:
-                vstr = str(getattr(info.flags, param))
+                pval = getattr(info.flags, param)
+                if pval is True:
+                    vstr = 'x'
+                elif pval not in (0, False):
+                    vstr = str(getattr(info.flags, param))
 
-            elif param in ('capt_on', 'udir_holes', 'mm_depth'):
+            elif param in ('capt_on', 'udir_holes'):
                 vstr = ' '.join(str(val) for val in getattr(info, param))
+
+            elif param == 'ai_params':
+                pass
+
             else:
                 vstr = str(getattr(info, param))
 
