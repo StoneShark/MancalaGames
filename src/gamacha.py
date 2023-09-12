@@ -15,6 +15,14 @@ import no_seed_goal
 from game_interface import GrandSlam
 
 
+def compute_dest(holes):
+    """Compute the lower hole (destination).
+    Starting at 3:
+        1, 1, 3, 3, 3, 3, 5, 5, 5, 5, 7, 7 ..."""
+    return 1 + 2 * ((holes-1) // 4)
+
+
+
 def build_gamcha_rules():
     """Update the rules for gamacha."""
 
@@ -71,15 +79,14 @@ class SeedOrder(new_game.NewGameIf):
         for loc in range(2, self.game.cts.dbl_holes, 2):
             self.game.board[loc] = self.game.cts.nbr_start
 
-        half_holes, odd = divmod(self.game.cts.holes, 2)
-        dest = half_holes + odd - 1
-        source = self.game.cts.holes + half_holes
+        dest = compute_dest(self.game.cts.holes)
+        source = self.game.cts.dbl_holes - dest - 1
+
         self.game.board[dest] = self.game.board[source]
         self.game.board[source] = 0
 
         if self.game.turn:
-            self.game.board = \
-                self.game.board[12:][::-1] + self.game.board[:12][::-1]
+            self.game.board = self.game.board[::-1]
 
         return True
 
