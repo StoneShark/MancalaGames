@@ -200,9 +200,8 @@ class Deka(no_seed_goal.NoSeedGoal):
     rules = build_deka_rules()
 
     def __init__(self, game_consts, game_info):
-        """Check the game configuration.
-        Call parent init.
-        Add our own deco to the sower chain."""
+        """Call parent init.
+        Replace the sower deco chain with our own."""
 
         super().__init__(game_consts, game_info)
 

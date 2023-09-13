@@ -61,7 +61,8 @@ def test_one_game(game, request, play_nbr):
 
     game_log.active = False
 
-    max_turns = 1000 if game.info.flags.rounds else 500
+    max_turns = 3000 if game.info.flags.rounds else 500
+
     for _ in range(max_turns):
         moves = game.get_moves()
         assert moves, "Game didn't end right."
@@ -72,7 +73,7 @@ def test_one_game(game, request, play_nbr):
         if cond in (WinCond.WIN, WinCond.TIE, WinCond.ENDLESS):
             break
         if cond in (WinCond.ROUND_WIN, WinCond.ROUND_TIE):
-            if game.new_game(new_round_ok=True):
+            if game.new_game(cond, new_round_ok=True):
                 return
 
         if game.info.flags.mustpass:

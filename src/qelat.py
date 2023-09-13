@@ -121,8 +121,7 @@ class Qelat(mancala.Mancala):
     rules = build_qelat_rules()
 
     def __init__(self, game_consts, game_info):
-        """Check the game configuration.
-        Call parent init.
+        """Call parent init.
         Add our own deco to the seed_collector chain.
         Compute the walda possibilities based on the board size."""
 

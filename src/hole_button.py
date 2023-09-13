@@ -227,9 +227,9 @@ class PlayButtonBehavior(BehaviorIf):
         else:
             otext = ''
             if self.btn.props.ch_owner is True:
-                otext = '\u02c4'
+                otext = '\u02c4 '
             elif self.btn.props.ch_owner is False:
-                otext = '\u02c5'
+                otext = '\u02c5 '
 
             if self.btn.props.seeds:
                 self.btn['text'] = otext + str(self.btn.props.seeds)

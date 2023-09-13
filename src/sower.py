@@ -21,7 +21,6 @@ Created on Fri Apr  7 15:57:47 2023
 import abc
 
 from game_log import game_log
-
 from game_interface import WinCond
 from game_interface import Direct
 
@@ -232,10 +231,9 @@ class SowVisitedMlap(SowMethodIf):
 
     def __init__(self, game, single_sower, lap_sower, lap_cont):
 
-        super().__init__(game)
+        super().__init__(game, lap_sower)
         self.lap_cont = lap_cont
         self.single_sower = single_sower
-        self.lap_sower = lap_sower
         self.lap_cont = lap_cont
 
     def sow_seeds(self, start, direct, seeds):
@@ -254,7 +252,7 @@ class SowVisitedMlap(SowMethodIf):
         if self.lap_cont.do_another_lap(loc, seeds):
             seeds = self.game.board[loc]
             self.game.board[loc] = 0
-            return self.lap_sower.sow_seeds(loc, direct, seeds)
+            return self.decorator.sow_seeds(loc, direct, seeds)
 
         return loc
 
@@ -284,3 +282,19 @@ def deco_sower(game):
             sower = SowVisitedMlap(game, pre_lap_sower, sower, lap_cont)
 
     return sower
+
+
+def deco_replace_base_sower(game, base_sower):
+    """Replace the base sower with a new one."""
+
+    if game.info.flags.mlaps:
+
+        if game.info.flags.visit_opp:
+            game.deco.sower.single_sower = base_sower
+            game.deco.sower.decorator.decorator = base_sower
+
+        else:
+            game.deco.sower.decorator = base_sower
+
+    else:
+        game.deco.sower = base_sower

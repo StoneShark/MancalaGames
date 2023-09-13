@@ -8,9 +8,11 @@ Created on Sun Jul 30 09:41:09 2023
 import deka
 import gamacha
 import mancala
+import nam_nam
 import qelat
 
 GAME_CLASSES = {'Mancala': mancala.Mancala,
-                'Qelat': qelat.Qelat,
                 'Deka': deka.Deka,
-                'Gamacha': gamacha.Gamacha}
+                'Gamacha': gamacha.Gamacha,
+                'NamNam': nam_nam.NamNam,
+                'Qelat': qelat.Qelat}

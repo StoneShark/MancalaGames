@@ -26,6 +26,7 @@ MODULES += mancala_games.pyw
 MODULES += mancala_ui.py
 MODULES += montecarlo_ts.py
 MODULES += minimax.py
+MODULES += nam_nam.py
 MODULES += new_game.py
 MODULES += no_seed_goal.py
 MODULES += play.py
