@@ -13,7 +13,7 @@
          "mlaps": true,
          "oppsidecapt": true,
          "crosscapt": true,
-         "xcpickown": true
+         "xcpickown": 1
       },
       "scorer": {
          "stores_m": 4,

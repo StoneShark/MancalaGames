@@ -16,13 +16,10 @@ sys.path.extend(['src'])
 from game_log import game_log
 import man_config
 import minimax
-import montecarlo_ts
+# import montecarlo_ts
 
 from game_interface import WinCond
 
-
-pytest.skip(reason="Random play and painfully slow (MCTS).",
-            allow_module_level=True)
 
 
 PLAY_NBR = 10
@@ -40,7 +37,7 @@ def game(request):
     return man_config.make_game(PATH + request.param)
 
 
-@pytest.fixture(params=[minimax.MiniMaxer, montecarlo_ts.MonteCarloTS])
+@pytest.fixture(params=[minimax.MiniMaxer])
 def player_class(request):
     return request.param
 

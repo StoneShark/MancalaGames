@@ -34,6 +34,7 @@ from game_classes import GAME_CLASSES
 from game_constants import MAX_HOLES
 from game_constants import MIN_HOLES
 from game_constants import MAX_SEEDS
+from game_interface import CrossCaptOwn
 from game_interface import Direct
 from game_interface import GrandSlam
 from game_interface import RoundStarter
@@ -95,6 +96,11 @@ RSTARTER = {'Alternate': RoundStarter.ALTERNATE,
             'Round Loser': RoundStarter.LOSER}
 INV_RSTARTER = inv_dict(RSTARTER)
 
+CROSSCAPTOWN = {'Leave': CrossCaptOwn.LEAVE,
+                'Pick on Capture': CrossCaptOwn.PICK_ON_CAPT,
+                'Alway Pick': CrossCaptOwn.ALWAYS_PICK}
+INV_XCOWN = inv_dict(CROSSCAPTOWN)
+
 
 # %%  helper classes
 
@@ -137,7 +143,7 @@ class GameParams:
     moveunlock: tk.BooleanVar
     evens: tk.BooleanVar
     crosscapt: tk.BooleanVar
-    xcpickown: tk.BooleanVar
+    xcpickown: tk.StringVar
     multicapt: tk.BooleanVar
     capt_on: list
     grandslam: tk.StringVar
@@ -414,6 +420,11 @@ class MancalaGames(tk.Frame):
         self._add_bool(bfrm, 'Move Unlocks for Capture', tkv.moveunlock, rcnt)
         self._add_bool(bfrm, 'Capture Evens', tkv.evens, rcnt)
 
+        tk.Label(bfrm, text='Cross Capt Own').grid(row=rcnt.nrow(), column=0)
+        opmenu = tk.OptionMenu(bfrm, tkv.xcpickown, *CROSSCAPTOWN)
+        opmenu.config(width=2 + max(len(str(val)) for val in CROSSCAPTOWN))
+        opmenu.grid(row=rcnt.row(), column=1, columnspan=3)
+
         tk.Label(bfrm, text='Capture On').grid(row=rcnt.nrow(), column=0)
         coframe = tk.Frame(bfrm)
         coframe.grid(row=rcnt.row(), column=1, columnspan=3)
@@ -421,6 +432,7 @@ class MancalaGames(tk.Frame):
             tk.Checkbutton(coframe, text=str(nbr),
                            variable=tkv.capt_on[nbr - 1]
                            ).pack(side='left')
+
         tk.Label(bfrm, text='Grand Slam Rule').grid(row=rcnt.nrow(), column=0)
         opmenu = tk.OptionMenu(bfrm, tkv.grandslam, *GRANDSLAM)
         opmenu.config(width=2 + max(len(str(val)) for val in GRANDSLAM))
@@ -429,7 +441,6 @@ class MancalaGames(tk.Frame):
         rcnt = Counter()
         self._add_bool(bfrm, 'Do Multiple Captures', tkv.multicapt, rcnt, 2)
         self._add_bool(bfrm, 'Do Cross Capture', tkv.crosscapt, rcnt, 2)
-        self._add_bool(bfrm, 'Pick Own on Cross Capt', tkv.xcpickown, rcnt, 2)
 
 
     def _build_scorer_ui(self, frame):
@@ -547,7 +558,8 @@ class MancalaGames(tk.Frame):
         self._add_tkvar_bool(tkvars_dict, 'evens', False)
         self._add_tkvar_bool(tkvars_dict, 'crosscapt', False)
         self._add_tkvar_bool(tkvars_dict, 'multicapt', False)
-        self._add_tkvar_bool(tkvars_dict, 'xcpickown', False)
+        self._add_tkvar_str(tkvars_dict, 'xcpickown',
+                            INV_XCOWN[CrossCaptOwn.LEAVE])
         tkvars_dict[ckey.CAPT_ON] = \
             [tk.BooleanVar(self.master, dval,
                            name='capt_on_' + str(idx + 1))
@@ -668,6 +680,9 @@ class MancalaGames(tk.Frame):
             elif name == ckey.ROUND_STARTER:
                 flag_dict[name] = RSTARTER[var.get()]
 
+            elif name == ckey.XCPICKOWN:
+                flag_dict[name] = CROSSCAPTOWN[var.get()]
+
             elif name in field_names:
                 flag_dict[name] = var.get()
 
@@ -784,7 +799,8 @@ class MancalaGames(tk.Frame):
         for fname in gi.GameFlags.get_fields():
 
             if fname not in [ckey.UDIRECT, ckey.SOW_DIRECT,
-                             ckey.GRANDSLAM, ckey.ROUND_STARTER]:
+                             ckey.GRANDSLAM, ckey.ROUND_STARTER,
+                             ckey.XCPICKOWN]:
                 var = getattr(man_games.tkvars, fname)
                 if fname in gi_flags:
                     var.set(gi_flags[fname])
@@ -800,6 +816,9 @@ class MancalaGames(tk.Frame):
         self.tkvars.round_starter.set(
             INV_RSTARTER[game_dict[ckey.GAME_INFO][ckey.FLAGS].get(
                 ckey.ROUND_STARTER, gi_defaults.flags.round_starter)])
+        self.tkvars.xcpickown.set(
+            INV_XCOWN[game_dict[ckey.GAME_INFO][ckey.FLAGS].get(
+                ckey.XCPICKOWN, gi_defaults.flags.xcpickown)])
 
         gi_scorer = game_dict[ckey.GAME_INFO]['scorer']
         self.tkvars.stores_m.set(

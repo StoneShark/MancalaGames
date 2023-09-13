@@ -21,7 +21,7 @@
          "sow_direct": 1,
          "stores": true,
          "visit_opp": true,
-         "xcpickown": true
+         "xcpickown": 1
       },
       "scorer": {
          "stores_m": 4,

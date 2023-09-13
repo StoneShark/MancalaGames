@@ -69,6 +69,15 @@ class RoundStarter(enum.IntEnum):
 
 
 @enum.unique
+class CrossCaptOwn(enum.IntEnum):
+    """What to do with own seed on cross capture."""
+
+    LEAVE = 0
+    PICK_ON_CAPT = 1
+    ALWAYS_PICK = 2
+
+
+@enum.unique
 class WinCond(enum.Enum):
     """Win conditions."""
 
@@ -117,7 +126,7 @@ class GameFlags:
     evens: bool = False
 
     crosscapt: bool = False
-    xcpickown: bool = False
+    xcpickown: CrossCaptOwn = CrossCaptOwn.LEAVE
 
     multicapt: bool = False
     grandslam: int = GrandSlam.LEGAL

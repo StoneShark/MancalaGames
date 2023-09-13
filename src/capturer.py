@@ -9,6 +9,7 @@ Created on Fri Apr  7 08:52:03 2023
 
 import abc
 
+from game_interface import CrossCaptOwn
 from game_interface import GrandSlam
 from game_log import game_log
 from incrementer import NOSKIPSTART
@@ -99,6 +100,21 @@ class CaptCrossPickOwnOnCapt(CaptMethodIf):
         if (pre_stores < post_stores
                 and self.game.child[loc] is None
                 and self.game.unlocked[loc]):
+
+            self.game.store[self.game.turn] += 1
+            self.game.board[loc] = 0
+
+
+class CaptCrossPickOwn(CaptMethodIf):
+    """Cross capture, pick own even if no capture, but do not
+    pick from a designated child or a locked hole."""
+
+    def do_captures(self, loc, direct):
+        """Test for and pick own."""
+
+        self.decorator.do_captures(loc, direct)
+
+        if self.game.child[loc] is None and self.game.unlocked[loc]:
 
             self.game.store[self.game.turn] += 1
             self.game.board[loc] = 0
@@ -229,27 +245,25 @@ class MakeChildren(CaptMethodIf):
 
 # %%
 
-def deco_capturer(game):
-    """Build capture chain and return it."""
+def _add_cross_capt_deco(game, gflags, capturer):
+    """Add the cross capture decorators to the capturer deco."""
 
-    gflags = game.info.flags
+    capturer = CaptCross(game, capturer)
 
-    capturer = CaptNone(game)
+    if gflags.xcpickown == CrossCaptOwn.PICK_ON_CAPT:
+        capturer = CaptCrossPickOwnOnCapt(game, capturer)
 
-    if gflags.crosscapt:
-        capturer = CaptCross(game, capturer)
+    elif gflags.xcpickown == CrossCaptOwn.ALWAYS_PICK:
+        capturer = CaptCrossPickOwn(game, capturer)
 
-        if gflags.xcpickown:
-            capturer = CaptCrossPickOwnOnCapt(game, capturer)
+    if gflags.multicapt:
+        capturer = CaptContinueXCapt(game, capturer)
 
-        if gflags.multicapt:
-            capturer = CaptContinueXCapt(game, capturer)
+    return capturer
 
-    elif gflags.multicapt:
-        capturer = CaptMultiple(game, capturer)
 
-    elif gflags.evens or game.info.capt_on:
-        capturer = CaptSingle(game, capturer)
+def _add_grand_slam_deco(game, gflags, capturer):
+    """Add the grand slam decorators to the capturer deco."""
 
     if gflags.grandslam == GrandSlam.NO_CAPT:
         capturer = GSNone(game, capturer)
@@ -259,6 +273,27 @@ def deco_capturer(game):
 
     elif gflags.grandslam == GrandSlam.OPP_GETS_REMAIN:
         capturer = GSOppGets(game, capturer)
+
+    return capturer
+
+
+def deco_capturer(game):
+    """Build capture chain and return it."""
+
+    gflags = game.info.flags
+
+    capturer = CaptNone(game)
+
+    if gflags.crosscapt:
+        capturer = _add_cross_capt_deco(game, gflags, capturer)
+
+    elif gflags.multicapt:
+        capturer = CaptMultiple(game, capturer)
+
+    elif gflags.evens or game.info.capt_on:
+        capturer = CaptSingle(game, capturer)
+
+    capturer = _add_grand_slam_deco(game, gflags, capturer)
 
     if gflags.child:
         capturer = MakeChildren(game, capturer)
