@@ -87,7 +87,8 @@ class WinCond(enum.Enum):
     ROUND_WIN = enum.auto()
     ROUND_TIE = enum.auto()
 
-    ENDLESS = enum.auto()    # return this when multi-lap games get stuck
+    GAME_OVER = enum.auto()     # return this when game ended w/o winner (see NamNam)
+    ENDLESS = enum.auto()       # return this when multi-lap games get stuck
     END_STORE = enum.auto()     # last seed sown was in the store
 
     def is_ended(self):

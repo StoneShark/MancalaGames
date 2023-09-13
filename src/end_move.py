@@ -268,7 +268,13 @@ class Winner(EndTurnIf):
 
     At the bottom of deco chain, the decorator will be None
     and the claimer will count all the seeds, therefore the
-    game will end via the test_seed_cnts."""
+    game will end via the test_seed_cnts (unless ...).
+
+    At the bottom of deco chain in a game which does not
+    end the game via test_seed_cnts, return GAME_OVER.
+    A deco higher in the chain, must translate to an actual
+    game result and winner. In this case we do want to call
+    the claimer to collect the seeds."""
 
     def game_ended(self, repeat_turn, ended=False):
 
@@ -281,6 +287,9 @@ class Winner(EndTurnIf):
         cond, winner = self.test_seed_cnts(self.claimer.claim_seeds())
         if cond:
             return cond, winner
+
+        if ended and not self.decorator:
+            return WinCond.GAME_OVER, None
 
         return self.decorator.game_ended(repeat_turn, False)
 

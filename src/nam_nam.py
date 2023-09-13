@@ -154,6 +154,25 @@ class RoundGameWinner(end_move.EndTurnIf):
         return WinCond.ROUND_TIE, self.game.turn
 
 
+    def test_winner(self):
+        """Winner check is done before and after the rest of the
+        deco chain, don't duplicate the code."""
+
+        tot_holes = self.game.cts.dbl_holes
+        nbr_start = self.game.cts.nbr_start
+        convert_cnt = self.game.info.flags.convert_cnt
+
+        self.game.board = [0] * tot_holes
+        self.game.false_holes = (self.game.store[False] + 1) // nbr_start
+
+        if self.game.false_holes >= convert_cnt:
+            return WinCond.WIN, False
+        if tot_holes - self.game.false_holes >= convert_cnt:
+            return WinCond.WIN, True
+
+        return None, None
+
+
     def game_ended(self, repeat_turn, ended=False):
         """Round the false holes to deal with non-mod-4 seeds."""
 
@@ -164,21 +183,19 @@ class RoundGameWinner(end_move.EndTurnIf):
                 game_log.INFO)
             self.game.store[self.game.turn] += remaining
 
-            tot_holes = self.game.cts.dbl_holes
-            nbr_start = self.game.cts.nbr_start
-            convert_cnt = self.game.info.flags.convert_cnt
-
-            self.game.board = [0] * tot_holes
-            self.game.false_holes = (self.game.store[False] + 1) // nbr_start
-
-            if self.game.false_holes >= convert_cnt:
-                return WinCond.WIN, False
-            if tot_holes - self.game.false_holes >= convert_cnt:
-                return WinCond.WIN, True
+            cond, winner = self.test_winner()
+            if cond:
+                return cond, winner
 
             return self.compare_seed_cnts(self.game.store)
 
-        return self.decorator.game_ended(repeat_turn, ended)
+        cond, winner = self.decorator.game_ended(repeat_turn, ended)
+
+        if cond == WinCond.GAME_OVER:
+            return self.test_winner()
+
+        return cond, winner
+
 
 
 class NewRound(new_game.NewGameIf):
