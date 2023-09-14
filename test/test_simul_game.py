@@ -25,6 +25,7 @@ playing).
 Created on Sun Jul 23 11:29:10 2023
 @author: Ann"""
 
+import atexit
 import os
 import random
 import sys
@@ -105,6 +106,11 @@ def known_game_fails(request):
 @pytest.mark.usefixtures('known_game_fails')
 def test_game_stats(game, request):
 
+    def report_bad(maxed, stuck):
+        if maxed or stuck:
+            print(f'Bad endings for {game.info.name:12}: ' + \
+                f'loop_max= {maxed}  endless= {stuck}')
+
     key_name = game.info.name + '/loop_max'
     maxed = request.config.cache.get(key_name, 0)
 
@@ -114,3 +120,5 @@ def test_game_stats(game, request):
     assert maxed + stuck <= PLAY_NBR * 0.2, \
         f'Bad endings too high for {game.info.name}: ' + \
             f'loop_max= {maxed}  endless= {stuck}'
+
+    atexit.register(report_bad, maxed, stuck)
