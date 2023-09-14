@@ -103,6 +103,8 @@ class GameFlags:
     mustpass: bool = False
     rounds: bool = False
     round_starter: RoundStarter = RoundStarter.ALTERNATE
+    rnd_left_fill: bool = False
+    rnd_umove: bool = False
     stores: bool = False
 
     # **** sowing flags

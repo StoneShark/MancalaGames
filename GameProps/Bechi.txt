@@ -11,6 +11,7 @@
          "mustpass": true,
          "rounds": true,
          "round_starter": 0,
+         "rnd_umove": true,
          "stores": true,
          "sow_direct": 0,
          "sow_start": true,

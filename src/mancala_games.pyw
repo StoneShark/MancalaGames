@@ -194,6 +194,8 @@ class NonUiData:
 
     difficulty: int = 1
     help_file: str = ''
+    rnd_left_fill: bool = False
+    rnd_umove: bool = False
     ai_params: dict  = dc.field(default_factory=dict)
     other_dict: dict = dc.field(default_factory=dict)
 
@@ -661,6 +663,9 @@ class MancalaGames(tk.Frame):
 
         field_names = set(gi.GameFlags.get_fields())
 
+        flag_dict[ckey.RND_LEFT_FILL] = self.non_ui_data.rnd_left_fill
+        flag_dict[ckey.RND_UMOVE] = self.non_ui_data.rnd_umove
+
         for name, var in self.tkvars.get_items():
 
             if name == ckey.CAPT_ON:
@@ -799,7 +804,8 @@ class MancalaGames(tk.Frame):
         for fname in gi.GameFlags.get_fields():
 
             if fname not in [ckey.UDIRECT, ckey.SOW_DIRECT,
-                             ckey.GRANDSLAM, ckey.ROUND_STARTER,
+                             ckey.GRANDSLAM, ckey.RND_LEFT_FILL,
+                             ckey.ROUND_STARTER, ckey.RND_UMOVE,
                              ckey.XCPICKOWN]:
                 var = getattr(man_games.tkvars, fname)
                 if fname in gi_flags:
@@ -845,11 +851,20 @@ class MancalaGames(tk.Frame):
             list(GAME_CLASSES.keys()).index(game_dict[ckey.GAME_CLASS]))
 
         self.non_ui_data.difficulty = \
-            game_dict[ckey.GAME_INFO].get('difficulty', gi_defaults.difficulty)
+            game_dict[ckey.GAME_INFO].get(ckey.DIFFICULTY,
+                                          gi_defaults.difficulty)
         self.non_ui_data.help_file = \
-            game_dict[ckey.GAME_INFO].get('help_file', gi_defaults.help_file)
+            game_dict[ckey.GAME_INFO].get(ckey.HELP_FILE,
+                                          gi_defaults.help_file)
         self.non_ui_data.ai_params = \
-            game_dict[ckey.GAME_INFO].get('ai_params', gi_defaults.ai_params)
+            game_dict[ckey.GAME_INFO].get(ckey.AI_PARAMS,
+                                          gi_defaults.ai_params)
+        self.non_ui_data.rnd_left_fill = \
+            game_dict[ckey.GAME_INFO][ckey.FLAGS].get(
+                ckey.RND_LEFT_FILL, gi_defaults.flags.rnd_left_fill)
+        self.non_ui_data.rnd_umove = \
+            game_dict[ckey.GAME_INFO][ckey.FLAGS].get(
+                ckey.RND_UMOVE, gi_defaults.flags.rnd_umove)
 
         del game_dict[ckey.GAME_CLASS]
         del game_dict[ckey.GAME_CONSTANTS]

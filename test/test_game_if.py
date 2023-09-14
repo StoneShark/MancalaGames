@@ -95,7 +95,7 @@ def test_gf_existence():
                 rules=mancala.Mancala.rules)
 
     # evaluate if new tests should be added
-    assert len(GameFlags.get_fields()) == 23
+    assert len(GameFlags.get_fields()) == 25
 
 
 def test_gf_stores():

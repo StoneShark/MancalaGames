@@ -32,6 +32,17 @@ class NewGameIf(abc.ABC):
         Return False if it a new round was started.
         True if a new game was started."""
 
+    def init_bprops(self):
+        """Initialize the board properties
+        but not the board or stores."""
+
+        dbl_holes = self.game.cts.dbl_holes
+        locks = not self.game.info.flags.moveunlock
+        self.game.unlocked = [locks] * dbl_holes
+        self.game.blocked = [False] * dbl_holes
+        self.game.child = [None] * dbl_holes
+
+
 
 # %% base new game
 
@@ -41,13 +52,10 @@ class NewGame(NewGameIf):
     def new_game(self, _1=None, _2=False):
         """Reset the game to new state and choose random start player."""
 
-        self.game.board = [self.game.cts.nbr_start] * self.game.cts.dbl_holes
-        locks = not self.game.info.flags.moveunlock
-        self.game.unlocked = [locks] * self.game.cts.dbl_holes
-        self.game.blocked = [False] * self.game.cts.dbl_holes
-        self.game.child = [None] * self.game.cts.dbl_holes
-
         self.game.store = [0, 0]
+        self.game.board = [self.game.cts.nbr_start] * self.game.cts.dbl_holes
+        self.init_bprops()
+
         self.game.turn = random.choice([False, True])
         self.game.starter = self.game.turn
         return True
@@ -86,17 +94,18 @@ class NewRound(NewGameIf):
             return True
 
         nbr_start = self.game.cts.nbr_start
+        holes = self.game.cts.holes
         seeds = self.collector.claim_seeds()
 
         self.set_starter()
+        self.init_bprops()
 
-        locks = not self.game.info.flags.moveunlock
-        self.game.unlocked = [locks] * self.game.cts.dbl_holes
-        self.game.blocked = [False] * self.game.cts.dbl_holes
-        self.game.child = [None] * self.game.cts.dbl_holes
+        if self.game.info.flags.rnd_left_fill:
+            orders = [range(holes), range(holes, self.game.cts.dbl_holes)]
+        else:
+            orders = [self.game.cts.false_fill, self.game.cts.true_fill]
 
-        for store, brange in enumerate([self.game.cts.false_fill,
-                                        self.game.cts.true_fill]):
+        for store, brange in enumerate(orders):
 
             quot, rem = divmod(seeds[store], nbr_start)
             fill = min(quot, self.game.cts.holes)

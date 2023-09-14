@@ -150,9 +150,8 @@ class MancalaUI(tk.Frame):
             self.master = tk.Tk()
 
         self.log_ai = tk.BooleanVar(self.master, False)
-        self.live_log = tk.BooleanVar(self.master, False)
-        self.log_level = tk.IntVar(self.master, game_log.MOVE)
-        game_log.set_level = self.log_level.get()
+        self.live_log = tk.BooleanVar(self.master, game_log.live)
+        self.log_level = tk.IntVar(self.master, game_log.level)
 
         self.master.title(self.info.name)
         self.master.option_add('*tearOff', False)
@@ -436,7 +435,7 @@ class MancalaUI(tk.Frame):
 
         self._refresh()
         self.update()
-        if not new_game:
+        if not new_game and self.info.flags.rnd_umove:
             self.set_game_mode(Behavior.RNDSETUP)
             return
         self._start_it()

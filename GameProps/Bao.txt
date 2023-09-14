@@ -18,6 +18,7 @@
          "oppsidecapt": true,
          "rounds": true,
          "round_starter": 2,
+         "rnd_left_fill": true,
          "sow_direct": 1,
          "stores": true,
          "visit_opp": true,

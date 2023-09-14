@@ -38,7 +38,7 @@ import man_config
 
 from game_interface import WinCond
 
-# pytest.skip(reason="Random play. Hueristic eval.", allow_module_level=True)
+# pytest.skip(reason="Random play. Heuristic eval.", allow_module_level=True)
 
 
 PLAY_NBR = 10
