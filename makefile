@@ -43,28 +43,41 @@ GAME_TESTS = $(wildcard test/test_gm_*.py)
 
 DATAFILES = GameProps/*.txt ./mancala_help.html logs/README.txt
 
-all: unit_tests pylint exe
+all: all_tests pylint exe
 
 
-#  unit_tests
+#  tests
 #
-#  run all the unit tests and create a coverage report
+#  don't forget -B option to force make to rebuild a target
 
-unit_tests: htmlcov/index.html $(SOURCES) $(TESTS) $(GAMES)
-
-htmlcov/index.html: $(SOURCES)  $(TESTS) $(GAMES)
-	-coverage run -m pytest --cache-clear --color=no
+unit_tests: $(SOURCES) $(TESTS) $(GAMES)
+	-coverage run -m pytest -m unittest
 	coverage html
+
+
+integ_tests: $(SOURCES) $(TESTS) $(GAMES)
+	-coverage run -m pytest -m integtest
+	coverage html
+
+
+all_tests: $(SOURCES) $(TESTS) $(GAMES)
+	-coverage run -m pytest
+	coverage html
+
 
 .PHONY: vtest
 vtest: 
 	pytest -v test
 
-
 .PHONY: game_tests
 game_tests:
 	-coverage run --branch -m pytest $(GAME_TESTS)
 	coverage html
+	
+.PHONY: strest_tests	
+stress_tests:
+	pytest test\\test_simul_game.py --nbr_runs 500
+	pytest test\\test_simul_players.py --nbr_runs 50
 
 	
 #  test individual files
@@ -103,6 +116,7 @@ clean:
 	-rmdir /S /Q __pycache__
 	-rmdir /S /Q src\\__pycache__
 	-rmdir /S /Q test\\__pycache__
+	-rmdir /S /Q doc\\__pycache__
 	-rmdir /S /Q .pytest_cache
 	-del .pylint_report
 	-rmdir /S /Q htmlcov

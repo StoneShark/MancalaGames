@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sun Mar 26 15:00:05 2023
+@author: Ann"""
 
-@author: Ann
-"""
+
+# TODO change this to use game.capture_seeds instead of move
+
 
 # %% imports
 
 import sys
 
 import pytest
+pytestmark = pytest.mark.unittest
 
 sys.path.extend(['src'])
 
@@ -22,6 +25,7 @@ import utils
 from game_interface import GameFlags
 from game_interface import Direct
 from game_interface import GrandSlam
+from game_interface import CrossCaptOwn
 
 
 # %%
@@ -363,6 +367,7 @@ class TestCrossCapts:
                                 nbr_holes=game_consts.holes,
                                 flags=GameFlags(sow_direct=Direct.CW,
                                                 crosscapt=True,
+                                                oppsidecapt=True,
                                                 stores=True),
                                 rules=mancala.Mancala.rules)
 
@@ -374,13 +379,33 @@ class TestCrossCapts:
     def cw_xcp_game(self):
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
-
         game_info = gi.GameInfo(name='my name',
                                 nbr_holes=game_consts.holes,
-                                flags=GameFlags(sow_direct=Direct.CW,
-                                                crosscapt=True,
-                                                xcpickown=True,
-                                                stores=True),
+                                flags=GameFlags(
+                                    sow_direct=Direct.CW,
+                                    crosscapt=True,
+                                    xcpickown=CrossCaptOwn.PICK_ON_CAPT,
+                                    oppsidecapt=True,
+                                    stores=True),
+                                rules=mancala.Mancala.rules
+                                )
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = False
+        return game
+
+    @pytest.fixture
+    def cw_pick_game(self):
+
+        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_info = gi.GameInfo(name='my name',
+                                nbr_holes=game_consts.holes,
+                                flags=GameFlags(
+                                    sow_direct=Direct.CW,
+                                    crosscapt=True,
+                                    xcpickown=CrossCaptOwn.ALWAYS_PICK,
+                                    oppsidecapt=True,
+                                    stores=True),
                                 rules=mancala.Mancala.rules
                                 )
 
@@ -452,6 +477,40 @@ class TestCrossCapts:
                                                       [0, 4, 4, 0])
         assert cw_xcp_game.store == [6, 1]
 
+    def test_pick_nocapt(self, cw_pick_game):
+
+        cw_pick_game.board = utils.build_board([4, 4, 3, 3],
+                                               [4, 0, 3, 3])
+
+        print(cw_pick_game)
+        cw_pick_game.capture_seeds(6, Direct.CW)
+        print(cw_pick_game)
+        assert cw_pick_game.board == utils.build_board([4, 4, 3, 3],
+                                                       [4, 0, 3, 3])
+        assert cw_pick_game.store == [0, 0]
+
+    def test_pick_nocapt_pick(self, cw_pick_game):
+
+        cw_pick_game.board = utils.build_board([0, 3, 3, 3],
+                                               [1, 4, 4, 0])
+        cw_pick_game.store = [4, 3]
+
+        cw_pick_game.capture_seeds(0, Direct.CW)
+        assert cw_pick_game.board == utils.build_board([0, 3, 3, 3],
+                                                       [0, 4, 4, 0])
+        assert cw_pick_game.store == [5, 3]
+
+    def test_pick_capt(self, cw_pick_game):
+
+        cw_pick_game.board = utils.build_board([4, 3, 3, 3],
+                                               [0, 3, 3, 3])
+        cw_pick_game.store = [1, 1]
+
+        cw_pick_game.move(3)
+        assert cw_pick_game.board == utils.build_board([0, 3, 3, 3],
+                                                       [0, 4, 4, 0])
+        assert cw_pick_game.store == [6, 1]
+
 
 class TestMultiCrossCapts:
 
@@ -481,11 +540,12 @@ class TestMultiCrossCapts:
 
         game_info = gi.GameInfo(name='my name',
                                 nbr_holes=game_consts.holes,
-                                flags=GameFlags(sow_direct=Direct.CW,
-                                                crosscapt=True,
-                                                xcpickown=True,
-                                                multicapt=True,
-                                                stores=True),
+                                flags=GameFlags(
+                                    sow_direct=Direct.CW,
+                                    crosscapt=True,
+                                    xcpickown=CrossCaptOwn.PICK_ON_CAPT,
+                                    multicapt=True,
+                                    stores=True),
                                 rules=mancala.Mancala.rules
                                 )
 

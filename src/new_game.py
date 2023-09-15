@@ -110,8 +110,7 @@ class NewRound(NewGameIf):
             quot, rem = divmod(seeds[store], nbr_start)
             fill = min(quot, self.game.cts.holes)
 
-            self.game.store[store] = \
-                rem + (quot - fill) * nbr_start
+            self.game.store[store] = rem + (quot - fill) * nbr_start
 
             for cnt, pos in enumerate(brange):
                 if cnt < fill:

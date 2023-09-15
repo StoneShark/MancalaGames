@@ -13,6 +13,7 @@ Unit test for incrementer.py
 import sys
 
 import pytest
+pytestmark = pytest.mark.unittest
 
 sys.path.extend(['src'])
 

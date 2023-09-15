@@ -18,13 +18,15 @@ import sys
 
 import pytest
 
+# this file contains integration tests
+# report warnings as test failures
+pytestmark = [pytest.mark.integtest, pytest.mark.filterwarnings("error")]
+
 sys.path.extend(['src'])
 
 import man_config
 
 
-# report warnings as test failures
-pytestmark = pytest.mark.filterwarnings("error")
 
 
 PATH = './GameProps/'
@@ -34,7 +36,6 @@ FILES = os.listdir(PATH)
 BAD_CFG = 'all_params.txt'
 if BAD_CFG in FILES:
     FILES.remove(BAD_CFG)
-
 
 @pytest.mark.parametrize('file', FILES)
 def test_config_files(file):

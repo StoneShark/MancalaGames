@@ -31,6 +31,7 @@ import random
 import sys
 
 import pytest
+pytestmark = pytest.mark.integtest
 
 sys.path.extend(['src'])
 
@@ -56,21 +57,16 @@ if BAD_CFG in FILES:
 def game(request):
     return man_config.make_game(PATH + request.param)
 
-
-@pytest.mark.parametrize('play_nbr', range(PLAY_NBR))
-def test_one_game(game, request, play_nbr):
+@pytest.mark.stresstest
+def test_one_game(game, request):
 
     game_log.active = False
 
-    max_turns = 2000 if game.info.flags.rounds else 500
-
-    for _ in range(max_turns):
+    for _ in range(2000 if game.info.flags.rounds else 500):
         moves = game.get_moves()
         assert moves, "Game didn't end right."
 
-        move = random.choice(moves)
-
-        cond = game.move(move)
+        cond = game.move(random.choice(moves))
         if cond in (WinCond.WIN, WinCond.TIE, WinCond.ENDLESS):
             break
         if cond in (WinCond.ROUND_WIN, WinCond.ROUND_TIE):
@@ -100,11 +96,11 @@ def known_game_fails(request):
     if game.info.name == 'Congklak':
         request.node.add_marker(
             pytest.mark.xfail(
-                reason='Many seeds; heuristic test; generally fails.'))
+                reason='Many seeds; heuristic test; occasionally fails.'))
 
 
 @pytest.mark.usefixtures('known_game_fails')
-def test_game_stats(game, request):
+def test_game_stats(game, request, nbr_runs):
 
     def report_bad(maxed, stuck):
         if maxed or stuck:
@@ -117,8 +113,8 @@ def test_game_stats(game, request):
     key_name = game.info.name + '/endless'
     stuck = request.config.cache.get(key_name, 0)
 
-    assert maxed + stuck <= PLAY_NBR * 0.2, \
+    atexit.register(report_bad, maxed, stuck)
+
+    assert maxed + stuck <= nbr_runs * 0.2, \
         f'Bad endings too high for {game.info.name}: ' + \
             f'loop_max= {maxed}  endless= {stuck}'
-
-    atexit.register(report_bad, maxed, stuck)

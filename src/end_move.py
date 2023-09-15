@@ -79,12 +79,13 @@ class ClaimOwnSeeds(ClaimSeedsIf):
         for side, side_range in enumerate([self.game.cts.false_range,
                                            self.game.cts.true_range]):
             for loc in side_range:
-                if self.game.child[loc] is None:
-                    seeds[side] += self.game.board[loc]
-                elif self.game.child[loc] is True:
+                if self.game.child[loc] is True:
                     seeds[True] += self.game.board[loc]
                 elif self.game.child[loc] is False:
                     seeds[False] += self.game.board[loc]
+                else:   # self.game.child[loc] is None:
+                    seeds[side] += self.game.board[loc]
+
 
         return seeds
 
@@ -101,14 +102,13 @@ class TakeOwnSeeds(ClaimSeedsIf):
         for side, side_range in enumerate([self.game.cts.false_range,
                                            self.game.cts.true_range]):
             for loc in side_range:
-                if self.game.child[loc] is None:
-                    self.game.store[side] += self.game.board[loc]
-                    self.game.board[loc] = 0
-
-                elif self.game.child[loc] is True:
+                if self.game.child[loc] is True:
                     seeds[True] += self.game.board[loc]
                 elif self.game.child[loc] is False:
                     seeds[False] += self.game.board[loc]
+                else:  # self.game.child[loc] is None
+                    self.game.store[side] += self.game.board[loc]
+                    self.game.board[loc] = 0
 
         seeds[False] += self.game.store[False]
         seeds[True] += self.game.store[True]
@@ -129,15 +129,16 @@ class DivvySeedsStores(ClaimSeedsIf):
         unclaimed = 0
 
         for loc in range(self.game.cts.dbl_holes):
-            if self.game.child[loc] is None:
-                unclaimed += self.game.board[loc]
-                self.game.board[loc] = 0
 
-            elif self.game.child[loc] is True:
+            if self.game.child[loc] is True:
                 seeds[True] += self.game.board[loc]
 
             elif self.game.child[loc] is False:
                 seeds[False] += self.game.board[loc]
+
+            else:  # self.game.child[loc] is None
+                unclaimed += self.game.board[loc]
+                self.game.board[loc] = 0
 
         quot, rem = divmod(unclaimed, 2)
         self.game.store[False] += quot
@@ -359,10 +360,10 @@ class EndTurnMustShare(EndTurnIf):
         if repeat_turn:
             opp_rng, my_rng = my_rng, opp_rng
 
-        player_seeds = any(self.game.board[loc]
+        player_seeds = any(self.game.board[loc] >= self.game.info.min_move
                            for loc in my_rng
                            if self.game.child[loc] is None)
-        opp_seeds = any(self.game.board[loc]
+        opp_seeds = any(self.game.board[loc] >= self.game.info.min_move
                         for loc in opp_rng
                         if self.game.child[loc] is None)
 

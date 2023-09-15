@@ -10,13 +10,14 @@ Created on Tue Jul 18 17:31:59 2023
 import sys
 
 import pytest
+pytestmark = pytest.mark.unittest
 
 sys.path.extend(['src'])
 
 import game_interface as gi
 import game_constants as gc
-import sower
 import mancala
+import sower
 import utils
 
 from game_interface import GameFlags
@@ -43,7 +44,6 @@ class TestSower:
     def game(self):
 
         game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
-
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on = [2],
                                 flags=GameFlags(convert_cnt=4),
@@ -87,7 +87,6 @@ class TestSower:
     def test_base_sower(self, game, base_sower,
                         start_pos, direct, turn, board, eloc, eboard):
 
-
         game.board = board
         game.turn = turn
 
@@ -103,7 +102,6 @@ class TestSower:
     def esgame(self):
 
         game_consts = gc.GameConsts(nbr_start=2, holes=4)
-
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on = [2],
                                 flags=GameFlags(stores=True,
@@ -112,6 +110,7 @@ class TestSower:
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
+
 
     @pytest.mark.parametrize(
         'start_pos, turn, board, eloc, eboard, estore',
@@ -336,7 +335,6 @@ class TestMlap:
     def game(self):
 
         game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
-
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on = [2],
                                 flags=GameFlags(sow_direct=Direct.CW),
@@ -397,7 +395,6 @@ class TestVMlap:
     def game(self):
 
         game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
-
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 flags=GameFlags(sow_direct=Direct.CW,
                                                 stores=True,
@@ -454,3 +451,57 @@ class TestVMlap:
         assert end == eloc
         assert game.board == eboard
         assert game.store == estore
+
+
+
+class TestReplaceBaseSower:
+
+    @pytest.fixture
+    def game(self):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+                                capt_on = [2],
+                                flags=GameFlags(sow_direct=Direct.CW),
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+
+    @pytest.mark.parametrize(
+        'sow_own_store, mlaps, child, visit_opp',
+        [(False, False, False, False),  # SowSeeds
+         (True, False, False, False),   # SowSeedsNStore
+         (False, True, False, False),   # SowMlapSeeds and SowSeeds
+         (False, True, False, True),    #    same but different Lapper
+         (False, True, True, False),    # SowMlapSeeds, SowVisitMlap & SowSeeds
+         (False, True, True, True),     #    same but different Lapper
+           ])
+    def test_replace_sower(self, game, sow_own_store, mlaps, child, visit_opp):
+
+        class TestSower(sower.SowMethodIf):
+            def sow_seeds(self, start, direct, seeds):
+                """Do the first sow."""
+                pass
+
+        object.__setattr__(game.info.flags, 'sow_own_store', sow_own_store)
+        object.__setattr__(game.info.flags, 'mlaps', mlaps)
+        object.__setattr__(game.info.flags, 'child', child)
+        object.__setattr__(game.info.flags, 'visit_opp', visit_opp)
+        game.deco.sower = sower.deco_sower(game)
+
+        new_sower = TestSower(game)
+        sower.deco_replace_base_sower(game, new_sower)
+
+        lsower = game.deco.sower
+        while lsower:
+            if isinstance(lsower, sower.SowVisitedMlap):
+                assert lsower.single_sower == new_sower
+
+            elif isinstance(lsower, sower.SowMlapSeeds):
+                assert lsower.decorator == new_sower
+
+            else:
+                assert lsower == new_sower
+
+            lsower = lsower.decorator

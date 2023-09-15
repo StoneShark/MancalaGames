@@ -5,6 +5,9 @@ Created on Sun Aug 20 16:14:39 2023
 
 import os
 
+import pytest
+pytestmark = pytest.mark.unittest
+
 import man_path
 
 def test_get_path():

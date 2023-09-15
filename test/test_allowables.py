@@ -5,23 +5,28 @@ Created on Sat Jul 15 14:25:17 2023
 @author: Ann
 """
 
+# TODO test the memoize allowable
+
 
 # %%
 
 import sys
 
 import pytest
+pytestmark = pytest.mark.unittest
 
 sys.path.extend(['src'])
 
 import allowables
 import game_constants as gc
 import game_interface as gi
+import mancala
+import utils
+
 from game_interface import GameFlags
 from game_interface import GrandSlam
 from game_interface import Direct
-import mancala
-import utils
+
 
 # %%   constants
 
@@ -43,14 +48,12 @@ class TestAllowables:
     def game(self):
 
         game_consts = gc.GameConsts(nbr_start=4, holes=3)
-
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on=[2],
                                 flags=GameFlags(),
                                 rules=mancala.Mancala.rules)
 
-        game = mancala.Mancala(game_consts, game_info)
-        return game
+        return mancala.Mancala(game_consts, game_info)
 
 
     @pytest.mark.parametrize(
@@ -158,7 +161,6 @@ class TestAllowables:
     def mlgame(self):
 
         game_consts = gc.GameConsts(nbr_start=4, holes=3)
-
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 flags=GameFlags(crosscapt=True,
                                                 sow_direct=Direct.CW,
@@ -178,3 +180,46 @@ class TestAllowables:
                                          [0, 1, 0])
 
         assert mlgame.deco.allow.get_allowable_holes() == [T, F, T]
+
+
+class TestMemoize():
+
+    @pytest.fixture
+    def game(self):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+                                capt_on=[2],
+                                flags=GameFlags(mustshare=True),
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+
+    def test_memoize_avail(self, game):
+
+        game.turn = False
+        game.board = utils.build_board([1, 0, 0],
+                                       [2, 2, 0])
+
+        assert game.deco.allow.get_allowable_holes() == [T, T, F]
+
+        # assure the rest of the chain cannot be used
+        game.deco.allow.decorator = None
+        assert game.deco.allow.get_allowable_holes() == [T, T, F]
+
+
+    def test_memoize_not_avail(self, game):
+
+        game.turn = False
+        game.board = utils.build_board([1, 0, 0],
+                                       [2, 2, 0])
+
+        assert game.deco.allow.get_allowable_holes() == [T, T, F]
+        game.turn = True
+
+        # assure the rest of the chain cannot be used
+        game.deco.allow.decorator = None
+
+        with pytest.raises(AttributeError):
+            game.deco.allow.get_allowable_holes()

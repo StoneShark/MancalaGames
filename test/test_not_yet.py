@@ -17,6 +17,7 @@ import mancala_games
 import mancala_ui
 import play_mancala
 import play
+import montecarlo_ts
 
 
 def test_files_not():

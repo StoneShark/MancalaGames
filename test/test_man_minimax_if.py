@@ -10,6 +10,7 @@ Created on Tue Mar 28 20:27:56 2023
 import sys
 
 import pytest
+pytestmark = pytest.mark.integtest
 
 sys.path.extend(['src'])
 

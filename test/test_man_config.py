@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 Created on Fri Jul 21 10:24:10 2023
+@author: Ann"""
 
-@author: Ann
-"""
+# TODO doesn't fully cover man_config
+
 
 import os
 import random
@@ -11,6 +12,7 @@ import sys
 import string
 
 import pytest
+pytestmark = pytest.mark.unittest
 
 sys.path.extend(['src'])
 

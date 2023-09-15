@@ -10,6 +10,7 @@ import random
 import sys
 
 import pytest
+pytestmark = pytest.mark.integtest
 
 sys.path.extend(['src'])
 
@@ -21,8 +22,6 @@ import minimax
 from game_interface import WinCond
 
 
-
-PLAY_NBR = 10
 
 PATH = './GameProps/'
 FILES = os.listdir(PATH)
@@ -42,6 +41,7 @@ def player_class(request):
     return request.param
 
 
+@pytest.mark.stresstest
 def test_one_game(game, player_class):
 
     game_log.active = False

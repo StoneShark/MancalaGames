@@ -8,6 +8,7 @@ Created on Thu Aug 17 06:42:25 2023
 import sys
 
 import pytest
+pytestmark = [pytest.mark.unittest, pytest.mark.integtest]
 
 sys.path.extend(['src'])
 

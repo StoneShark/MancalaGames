@@ -106,15 +106,18 @@ class CaptCrossPickOwnOnCapt(CaptMethodIf):
 
 
 class CaptCrossPickOwn(CaptMethodIf):
-    """Cross capture, pick own even if no capture, but do not
-    pick from a designated child or a locked hole."""
+    """Cross capture, pick own even if no capture on my side
+    of the board, but do not pick from a designated child
+    or a locked hole."""
 
     def do_captures(self, loc, direct):
         """Test for and pick own."""
 
         self.decorator.do_captures(loc, direct)
 
-        if self.game.child[loc] is None and self.game.unlocked[loc]:
+        if (self.game.cts.my_side(self.game.turn, loc)
+                and self.game.child[loc] is None
+                and self.game.unlocked[loc]):
 
             self.game.store[self.game.turn] += 1
             self.game.board[loc] = 0

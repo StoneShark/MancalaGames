@@ -234,7 +234,6 @@ class SowVisitedMlap(SowMethodIf):
         super().__init__(game, lap_sower)
         self.lap_cont = lap_cont
         self.single_sower = single_sower
-        self.lap_cont = lap_cont
 
     def sow_seeds(self, start, direct, seeds):
         """Do the first sow."""
