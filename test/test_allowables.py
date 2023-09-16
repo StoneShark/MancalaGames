@@ -2,11 +2,7 @@
 """Test the allowables.py file.
 
 Created on Sat Jul 15 14:25:17 2023
-@author: Ann
-"""
-
-# TODO test the memoize allowable
-
+@author: Ann"""
 
 # %%
 

@@ -90,3 +90,85 @@ def test_print():
     # -1 : nbr_start and holes are both on the first line of the output
     game_consts = gc.GameConsts(6, 2)
     assert len(str(game_consts).split('\n')) == len(vars(game_consts)) - 1
+
+
+class TestCtsFuncs:
+
+    @pytest.mark.parametrize(
+        'row, pos, eloc',
+        [(0, 0, 9),
+         (0, 1, 8),
+         (0, 4, 5),
+         (1, 0, 0),
+         (1, 3, 3),
+         (1, 4, 4)
+         ])
+    def test_pos_to_loc(self, row, pos, eloc):
+
+        game_consts = gc.GameConsts(6, 5)
+        assert game_consts.pos_to_loc(row, pos) == eloc
+
+
+    @pytest.mark.parametrize(
+        'turn, loc, eres',
+        [(True, 9, False),
+         (False, 8, True),
+         (True, 5, False),
+         (False, 0, False),
+         (True, 3, True),
+         (False, 4, False)
+         ])
+    def test_opp_side(self, turn, loc, eres):
+
+        game_consts = gc.GameConsts(6, 5)
+        assert game_consts.opp_side(turn, loc) == eres
+
+
+    @pytest.mark.parametrize(
+        'turn, loc, eres',
+        [(True, 9, True),
+         (False, 8, False),
+         (True, 5, True),
+         (False, 0, True),
+         (True, 3, False),
+         (False, 4, True)
+         ])
+    def test_my_side(self, turn, loc, eres):
+
+        game_consts = gc.GameConsts(6, 5)
+        assert game_consts.my_side(turn, loc) == eres
+
+
+    @pytest.mark.parametrize(
+        'turn, erng',
+        [(True, [9, 8, 7, 6, 5]),
+         (False, [0, 1, 2, 3, 4]),
+         ])
+    def test_my_range(self, turn, erng):
+
+        game_consts = gc.GameConsts(6, 5)
+        assert list(game_consts.get_my_range(turn)) == erng
+
+
+    @pytest.mark.parametrize(
+        'turn, erng',
+        [(True, [0, 1, 2, 3, 4]),
+         (False, [9, 8, 7, 6, 5]),
+         ])
+    def test_opp_range(self, turn, erng):
+
+        game_consts = gc.GameConsts(6, 5)
+        assert list(game_consts.get_opp_range(turn)) == erng
+
+
+    @pytest.mark.parametrize(
+        'turn, erngs',
+        [(True, ([9, 8, 7, 6, 5], [0, 1, 2, 3, 4])),
+         (False, ([0, 1, 2, 3, 4], [9, 8, 7, 6, 5])),
+         ])
+    def test_ranges(self, turn, erngs):
+
+        game_consts = gc.GameConsts(6, 5)
+        ranges = game_consts.get_ranges(turn)
+        assert list(ranges[0]) == erngs[0]
+        assert list(ranges[1]) == erngs[1]

@@ -11,140 +11,186 @@ Created on Sat Mar 25 06:44:29 2023
 import sys
 
 import pytest
-pytestmark = pytest.mark.unittest
+
+# unit test
+# report warnings as errrors
+pytestmark = [pytest.mark.unittest, pytest.mark.filterwarnings("error")]
+
 
 sys.path.extend(['src'])
 
+import cfg_keys as ckey
 import game_interface as gi
 import ginfo_rules
-import mancala
 
 from game_interface import Direct
 from game_interface import GameFlags
 from game_interface import WinCond
 
 
-
 # %%
 
-def test_direct_op():
+class TestEnumsClasses:
 
-    # these integer values are required
-    assert Direct.CCW == 1
-    assert Direct.CW == -1
-    assert Direct.SPLIT == 0
+    def test_direct_op(self):
 
-    assert Direct.CCW.opp_dir() == Direct.CW
-    assert Direct.CW.opp_dir() == Direct.CCW
+        # these integer values are required
+        assert Direct.CCW == 1
+        assert Direct.CW == -1
+        assert Direct.SPLIT == 0
 
-    with pytest.raises(gi.GameInfoError):
-        Direct.SPLIT.opp_dir()
+        assert Direct.CCW.opp_dir() == Direct.CW
+        assert Direct.CW.opp_dir() == Direct.CCW
 
-
-def test_win():
-
-    assert WinCond.WIN in WinCond
-
-    assert WinCond.WIN.is_ended()
-    assert WinCond.TIE.is_ended()
-    assert WinCond.ENDLESS.is_ended()
-    assert not WinCond.END_STORE.is_ended()
+        with pytest.raises(gi.GameInfoError):
+            Direct.SPLIT.opp_dir()
 
 
-def test_default_scorer():
+    def test_win(self):
 
-    scorer = gi.Scorer()
+        assert WinCond.WIN in WinCond
 
-    score_vals = vars(scorer).values()
-    assert sum(score_vals) > 0
-
-
-def test_gf_existence():
-
-    with pytest.raises(TypeError):
-        gi.GameInfo()
-
-    with pytest.raises(gi.GameInfoError):   # name
-        gi.GameInfo(name='',
-                    nbr_holes=2,
-                    rules=mancala.Mancala.rules)
-
-    with pytest.raises(gi.GameInfoError):  # nbr_holes
-        gi.GameInfo(nbr_holes=0,
-                    flags=gi.GameFlags(),
-                    rules=mancala.Mancala.rules)
-
-    with pytest.raises(AttributeError):  # flags
-        gi.GameInfo(nbr_holes=2,
-                    flags=0,
-                    rules=mancala.Mancala.rules)
-
-    with pytest.raises(gi.GameInfoError):  # scorer
-        gi.GameInfo(nbr_holes=2,
-                    scorer=1,
-                    rules=mancala.Mancala.rules)
-
-    with pytest.raises(gi.GameInfoError):  # no sew direction, not playable
-        gi.GameInfo(nbr_holes=2,
-                    flags=GameFlags(sow_direct=None),
-                    rules=mancala.Mancala.rules)
-
-    gi.GameInfo(name='Mancala',
-                nbr_holes=6,
-                capt_on=[2],
-                flags=GameFlags(sow_direct=Direct.CCW),
-                rules=mancala.Mancala.rules)
-
-    # evaluate if new tests should be added
-    assert len(GameFlags.get_fields()) == 25
+        assert WinCond.WIN.is_ended()
+        assert WinCond.TIE.is_ended()
+        assert WinCond.ENDLESS.is_ended()
+        assert not WinCond.END_STORE.is_ended()
 
 
-def test_gf_stores():
+    def test_move_tuple(self):
 
-    with pytest.raises(gi.GameInfoError):
-        gi.GameInfo(nbr_holes=6,
-                    flags=GameFlags(sow_direct=Direct.CCW,
-                                    sow_own_store=True),
-                    rules=mancala.Mancala.rules)
+        tup = gi.MoveTpl(3, Direct.CCW)
+        assert isinstance(tup, tuple)
+        assert str(tup) == '(3, CCW)'
 
-
-def test_rule_dict(capsys):
-
-    rules = ginfo_rules.RuleDict()
-
-    rules.add_rule(name='rule_name',
-                   msg='something bad',
-                   rule= lambda ginfo : ginfo)
-
-    data = capsys.readouterr().out
-    assert 'rule_name' in data
-    assert 'has no effect' in data
+        tup = gi.MoveTpl(2, None)
+        assert isinstance(tup, tuple)
+        assert str(tup) == '(2, None)'
 
 
-def test_dupl_rule(capsys):
+    def test_default_scorer(self):
 
-    rules = ginfo_rules.RuleDict()
+        scorer = gi.Scorer()
 
-    rules.add_rule(name='dupl_rule',
-                   msg='something bad',
-                   rule= lambda ginfo : ginfo,
-                   warn=True)
-    rules.add_rule(name='dupl_rule',
-                   msg='more of bad stuff',
-                   rule= lambda ginfo : ginfo,
-                   warn=True)
-
-    data = capsys.readouterr().out
-    assert 'dupl_rule' in data
-    assert 'replaced' in data
+        score_vals = vars(scorer).values()
+        assert sum(score_vals) > 0
 
 
-def test_move_tuple():
+class TestConstruction:
 
-    tup = gi.MoveTpl(3, Direct.CCW)
-    assert isinstance(tup, tuple)
-    assert str(tup) == '(3, CCW)'
+    def test_gf_existence(self):
 
-    tup = gi.MoveTpl(2, None)
-    assert isinstance(tup, tuple)
-    assert str(tup) == '(2, None)'
+        rules = ginfo_rules.build_rules()
+
+        with pytest.raises(TypeError):
+            gi.GameInfo()
+
+        with pytest.raises(gi.GameInfoError):   # name
+            gi.GameInfo(name='',
+                        nbr_holes=2,
+                        rules=rules)
+
+        with pytest.raises(gi.GameInfoError):  # nbr_holes
+            gi.GameInfo(nbr_holes=0,
+                        flags=gi.GameFlags(),
+                        rules=rules)
+
+        with pytest.raises(AttributeError):  # flags
+            gi.GameInfo(nbr_holes=2,
+                        flags=0,
+                        rules=rules)
+
+        with pytest.raises(gi.GameInfoError):  # scorer
+            gi.GameInfo(nbr_holes=2,
+                        scorer=1,
+                        rules=rules)
+
+        with pytest.raises(gi.GameInfoError):  # no sew direction, not playable
+            gi.GameInfo(nbr_holes=2,
+                        flags=GameFlags(sow_direct=None),
+                        rules=rules)
+
+        # confirm this is min game config, that doesn't generate errors
+        ginfo = gi.GameInfo(name='Mancala',
+                            nbr_holes=6,
+                            capt_on=[2],
+                            flags=GameFlags(sow_direct=Direct.CCW),
+                            rules=rules)
+
+        assert len(ginfo.ai_params[ckey.MM_DEPTH]) == 4
+        assert ginfo.ai_params[ckey.MM_DEPTH][3] == 5
+
+        ginfo = gi.GameInfo(name='Mancala',
+                            nbr_holes=6,
+                            capt_on=[2],
+                            ai_params={ckey.MM_DEPTH : (3, 4, 5, 6)},
+                            flags=GameFlags(sow_direct=Direct.CCW),
+                            rules=rules)
+
+        assert ginfo.ai_params[ckey.MM_DEPTH][3] == 6
+
+        # evaluate if new tests should be added
+        assert len(GameFlags.get_fields()) == 25
+
+
+
+class TestRuleDict:
+
+    def test_rule_dict(self, capsys):
+
+        rules = ginfo_rules.RuleDict()
+
+        rules.add_rule(name='rule_name',
+                       msg='something bad',
+                       rule= lambda ginfo : ginfo)
+
+        data = capsys.readouterr().out
+        assert 'rule_name' in data
+        assert 'has no effect' in data
+
+    def test_dupl_rule(self, capsys):
+
+        rules = ginfo_rules.RuleDict()
+
+        rules.add_rule(name='dupl_rule',
+                       msg='something bad',
+                       rule= lambda ginfo : ginfo,
+                       warn=True)
+        rules.add_rule(name='dupl_rule',
+                       msg='more of bad stuff',
+                       rule= lambda ginfo : ginfo,
+                       warn=True)
+
+        data = capsys.readouterr().out
+        assert 'dupl_rule' in data
+        assert 'replaced' in data
+
+
+    def test_game_info_rule_test(self):
+
+        # sow_own_needs_store
+        with pytest.raises(gi.GameInfoError):
+            gi.GameInfo(nbr_holes=6,
+                        flags=GameFlags(sow_direct=Direct.CCW,
+                                        sow_own_store=True),
+                        rules=ginfo_rules.build_rules())
+
+        # warn_no_capt
+        with pytest.warns(UserWarning) as record:
+            gi.GameInfo(nbr_holes=6,
+                        flags=GameFlags(),
+                        rules=ginfo_rules.build_rules())
+
+        assert len(record) == 1
+        assert 'No capture mechanism provided' in record[0].message.args[0]
+
+
+class TestCfgKeys:
+
+    def test_cfg_keys(self):
+        """Confirm all of the GameFlag fields are in cfg_keys."""
+
+        fields = gi.GameFlags.get_fields()
+        ckey_dir = [key for key in dir(ckey) if key[0] != '_']
+
+        for field in fields:
+            assert field.upper() in ckey_dir

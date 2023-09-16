@@ -43,8 +43,6 @@ from game_interface import WinCond
 # pytest.skip(reason="Random play. Heuristic eval.", allow_module_level=True)
 
 
-PLAY_NBR = 10
-
 PATH = './GameProps/'
 FILES = os.listdir(PATH)
 

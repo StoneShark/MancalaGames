@@ -5,6 +5,7 @@ the game class, game constants and game info.
 Created on Tue Jul 18 12:16:20 2023
 @author: Ann"""
 
+import dataclasses as dc
 import json
 
 import cfg_keys as ckey
@@ -12,7 +13,6 @@ import game_constants as gc
 import game_interface as gi
 
 from game_classes import GAME_CLASSES
-from game_interface import Direct
 
 
 MAX_LINES = 150
@@ -23,7 +23,11 @@ def read_game(filename):
     """Read a mancala configuration returning the
     game dictionary.  The main UI uses this to load tk widgets,
     then calls test to report any errors making it easier on the
-    human to correct any errors."""
+    human to correct any errors.
+
+    Convert the type of all of the flags to those expected by
+    the dataclass. This validates enum values and provides access
+    to methods on the enums."""
 
     with open(filename, 'r', encoding='utf-8') as file:
         lines = file.readlines()
@@ -40,8 +44,10 @@ def read_game(filename):
     if ckey.FLAGS in info_dict:
         flags_dict = info_dict[ckey.FLAGS]
 
-        if ckey.SOW_DIRECT in flags_dict:
-            flags_dict[ckey.SOW_DIRECT] = Direct(flags_dict[ckey.SOW_DIRECT])
+        for fdesc in dc.fields(gi.GameFlags):
+            if fdesc.name in flags_dict:
+                ftype = type(fdesc.default)
+                flags_dict[fdesc.name] = ftype(flags_dict[fdesc.name])
 
     return game_dict
 

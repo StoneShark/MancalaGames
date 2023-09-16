@@ -15,6 +15,7 @@ pytestmark = pytest.mark.unittest
 sys.path.extend(['src'])
 
 import ai_interface
+import cfg_keys as ckey
 import minimax
 
 
@@ -174,3 +175,25 @@ class TestMinimaxer:
 
         with pytest.raises(AssertionError):
             game.player.pick_move()
+
+
+class TestSetParams:
+
+    @pytest.fixture
+    def player(self):
+        return minimax.MiniMaxer(define_get_game(1))
+
+
+    def test_params(self, player):
+
+        params = {ckey.MM_DEPTH: [1, 2, 3, 4]}
+        assert player.set_params(1, params) == None
+        assert player.max_depth == 2
+
+
+    def test_no_params(self, player):
+
+        params = {'junk param': [1, 2, 3, 4]}
+
+        assert "MM_DEPTH" in player.set_params(1, params)
+        assert player.max_depth == 3
