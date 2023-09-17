@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Test the xcaptsowown game.
-Tests sow stores and cross capture with pick own.
+"""Test the qelat game.
 
 Created on Thu Aug 17 06:42:25 2023
 @author: Ann"""

@@ -13,7 +13,6 @@ pytestmark = pytest.mark.unittest
 
 sys.path.extend(['src'])
 
-import allowables
 import game_constants as gc
 import game_interface as gi
 import mancala
@@ -39,17 +38,6 @@ N = None
 # %%
 
 class TestAllowables:
-
-    @pytest.fixture
-    def game(self):
-
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                capt_on=[2],
-                                flags=GameFlags(),
-                                rules=mancala.Mancala.rules)
-
-        return mancala.Mancala(game_consts, game_info)
 
 
     @pytest.mark.parametrize(
@@ -88,18 +76,23 @@ class TestAllowables:
                             [T, F, F]),
 
         ])
-    def test_allowables(self, game, turn, board, blocked, child,
+    def test_allowables(self, turn, board, blocked, child,
                         mustshare, min_move, eresult):
 
+        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+                                capt_on=[2],
+                                min_move=min_move,
+                                flags=GameFlags(mustshare=mustshare),
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
         game.turn = turn
         game.board = board
         game.blocked = blocked
         game.child = child
-        object.__setattr__(game.info, 'min_move', min_move)
-        object.__setattr__(game.info.flags, 'mustshare', mustshare)
 
-        allow = allowables.deco_allowable(game)
-        assert allow.get_allowable_holes() == eresult
+        assert game.deco.allow.get_allowable_holes() == eresult
 
 
     @pytest.mark.parametrize(
@@ -137,20 +130,25 @@ class TestAllowables:
           utils.build_board([N, T, N], [N, F, T]), True, 2,
                             [T, F, F]),
         ])
-    def test_nograndslam(self, game, turn, board, blocked, child,
+    def test_nograndslam(self, turn, board, blocked, child,
                          mustshare, min_move, eresult):
 
+        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+                                capt_on=[2],
+                                min_move=min_move,
+                                flags=GameFlags(
+                                    mustshare=mustshare,
+                                    grandslam=GrandSlam.NOT_LEGAL),
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
         game.turn = turn
         game.board = board
         game.blocked = blocked
         game.child = child
-        object.__setattr__(game.info, 'min_move', min_move)
-        object.__setattr__(game.info.flags, 'mustshare', mustshare)
-        object.__setattr__(game.info.flags, 'grandslam',
-                           GrandSlam.NOT_LEGAL)
 
-        allow = allowables.deco_allowable(game)
-        assert allow.get_allowable_holes() == eresult
+        assert game.deco.allow.get_allowable_holes() == eresult
 
 
     @pytest.fixture

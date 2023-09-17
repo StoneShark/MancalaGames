@@ -355,13 +355,12 @@ class TestBasics:
         assert game.cts.my_side(game.turn, 7)
 
 
-class TestNewEndGames:
+class TestEndGames:
 
     @pytest.fixture
     def game(self):
 
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
-
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on = [2],
                                 flags=GameFlags(stores=True),
@@ -371,41 +370,22 @@ class TestNewEndGames:
         game.turn = False
         return game
 
+
     @pytest.fixture
     def rgame(self):
 
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
-
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on = [2],
-                                flags=GameFlags(rounds=True,
-                                                blocks=True,
-                                                stores=True),
+                                flags=gi.GameFlags(rounds=True,
+                                                   blocks=True,
+                                                   stores=True),
                                 rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
         game.turn = False
         game.starter = False
         return game
-
-
-    def test_no_rounds_start(self, game):
-
-        assert isinstance(game.deco.new_game, new_game.NewGame)
-
-        game.unlocked = [False, True, True] * 2
-        game.blocked = [True, False, True] * 2
-        game.board = utils.build_board([1, 0, 0],
-                                       [0, 0, 1])
-        game.store = [7, 3]
-
-        game.new_game()
-        assert game.board == [2] * 6
-        assert game.store == [0, 0]
-        assert game.turn in [False, True]
-        assert game.starter == game.turn
-        assert game.unlocked == [True] * 6
-        assert game.blocked == [False] * 6
 
     @pytest.mark.parametrize(
         'board, store, econd, eturn',
@@ -422,90 +402,6 @@ class TestNewEndGames:
         game.store = store
         assert game.end_game() == econd
         assert game.turn == eturn
-
-
-    def test_rounds_start_force(self, rgame):
-
-        assert isinstance(rgame.deco.new_game, new_game.NewRound)
-        assert isinstance(rgame.deco.new_game.decorator, new_game.NewGame)
-
-        rgame.unlocked = [False, True, True] * 2
-        rgame.blocked = [True, False, True] * 2
-        rgame.board = utils.build_board([0, 0, 0],
-                                        [0, 0, 0])
-        rgame.store = [8, 4]
-
-        rgame.new_game()
-        assert rgame.board == [2] * 6
-        assert rgame.store == [0, 0]
-        assert rgame.turn in [False, True]
-        assert rgame.starter == rgame.turn
-        assert rgame.unlocked == [True] * 6
-        assert rgame.blocked == [False] * 6
-
-
-    @pytest.mark.parametrize(
-        'start_method, starter, winner, estarter',
-        [(RoundStarter.ALTERNATE, True, False, False),
-         (RoundStarter.ALTERNATE, True, True, False),
-         (RoundStarter.ALTERNATE, False, False, True),
-         (RoundStarter.ALTERNATE, False, True, True),
-         (RoundStarter.LOSER, True, False, True),
-         (RoundStarter.LOSER, False, True, False),
-         (RoundStarter.WINNER, True, False, False),
-         (RoundStarter.WINNER, True, True, True),
-          ])
-    def test_rounds_start(self, rgame,
-                          start_method, starter, winner, estarter):
-
-        object.__setattr__(rgame.info.flags, 'round_starter', start_method)
-
-        rgame.unlocked = [False, True, True] * 2
-        rgame.blocked = [True, False, True] * 2
-        rgame.board = utils.build_board([0, 0, 0],
-                                        [0, 0, 0])
-        rgame.starter  = starter
-        if winner:
-            rgame.store = [4, 8]
-        else:
-            rgame.store = [8, 4]
-        rgame.turn = winner
-
-        rgame.new_game(win_cond=WinCond.ROUND_WIN, new_round_ok=True)
-
-        assert rgame.turn == estarter
-        assert rgame.starter == rgame.turn
-        assert rgame.unlocked == [True] * rgame.cts.dbl_holes
-        if winner:
-            assert rgame.board == utils.build_board([2, 2, 2],
-                                                    [2, 0, 2])
-            assert rgame.store == [0, 2]
-            assert rgame.blocked == utils.build_board([False, False, False],
-                                                      [False, True, False])
-        else:
-            assert rgame.board == utils.build_board([2, 0, 2],
-                                                    [2, 2, 2])
-            assert rgame.store == [2, 0]
-            assert rgame.blocked == utils.build_board([False, True, False],
-                                                      [False, False, False])
-
-
-    def test_rounds_start_nat(self, rgame):
-
-        rgame.unlocked = [False, True, True] * 2
-        rgame.blocked = [True, False, True] * 2
-        rgame.board = utils.build_board([0, 0, 0],
-                                        [0, 0, 0])
-        rgame.store = [11, 1]
-
-        rgame.new_game(new_round_ok=True)
-        assert rgame.board == [2] * 6
-        assert rgame.store == [0, 0]
-        assert rgame.turn in [False, True]
-        assert rgame.starter == rgame.turn
-        assert rgame.unlocked == [True] * 6
-        assert rgame.blocked == [False] * 6
-
 
     @pytest.mark.parametrize(
         'board, store, econd, eturn',
@@ -524,7 +420,6 @@ class TestNewEndGames:
         rgame.store = store
         assert rgame.end_game() == econd
         assert rgame.turn == eturn
-
 
 
 class TestWinMessage:

@@ -110,6 +110,23 @@ class TestCtsFuncs:
 
 
     @pytest.mark.parametrize(
+        'loc, cnt',
+        [(0, 0),
+         (1, 1),
+         (2, 2),
+         (3, 3),
+         (4, 0),
+         (5, 1),
+         (6, 2),
+         (7, 3),
+         ])
+    def test_loc_to_left_cnt(self, loc, cnt):
+
+        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        assert game_consts.loc_to_left_cnt(loc) == cnt
+
+
+    @pytest.mark.parametrize(
         'turn, loc, eres',
         [(True, 9, False),
          (False, 8, True),

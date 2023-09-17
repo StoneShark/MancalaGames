@@ -38,7 +38,6 @@ class TestMinimaxIF:
     def ccw_game(self):
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
-
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on=[2],
                                 flags=GameFlags(sow_direct=Direct.CCW),
@@ -52,7 +51,6 @@ class TestMinimaxIF:
     def pass_game(self):
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
-
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on=[2],
                                 min_move=2,
@@ -68,7 +66,6 @@ class TestMinimaxIF:
     def upass_game(self):
 
         game_consts = gc.GameConsts(nbr_start=3, holes=3)
-
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on=[2],
                                 min_move=2,

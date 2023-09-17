@@ -113,7 +113,6 @@ class TestCWSowing:
         """Game that does little but is CW."""
 
         game_consts = gc.GameConsts(nbr_start=4, holes=6)
-
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 flags=GameFlags(sow_direct=Direct.CW),
                                 rules=mancala.Mancala.rules)
@@ -186,7 +185,6 @@ class TestCCWSowingStore:
         """Game that does little but is CCW."""
 
         game_consts = gc.GameConsts(nbr_start=4, holes=6)
-
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 flags=GameFlags(stores=True,
                                                 sow_direct=Direct.CCW,
@@ -276,7 +274,6 @@ class TestCWSowingStore:
         """Game that does little but is CW."""
 
         game_consts = gc.GameConsts(nbr_start=4, holes=6)
-
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 flags=GameFlags(stores=True,
                                                 sow_direct=Direct.CW,
@@ -344,7 +341,6 @@ class TestStartHole:
         """Game that does little but is CCW."""
 
         game_consts = gc.GameConsts(nbr_start=4, holes=6)
-
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 min_move=2,
                                 flags=GameFlags(sow_start=True,
@@ -358,7 +354,6 @@ class TestStartHole:
         """Game that does little but is CW."""
 
         game_consts = gc.GameConsts(nbr_start=4, holes=6)
-
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 min_move=2,
                                 flags=GameFlags(sow_start=True,
@@ -502,7 +497,6 @@ class TestSpSowingNoU:
     def sgame_odd(self):
 
         game_consts = gc.GameConsts(nbr_start=4, holes=3)
-
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 udir_holes=[1],
                                 flags=GameFlags(sow_direct=Direct.SPLIT,
@@ -549,7 +543,6 @@ class TestUdirAll:
     def uagame(self):
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
-
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 udir_holes=[0, 1, 2, 3],
 
