@@ -71,10 +71,11 @@ class UdirOtherDir(GetDirIf):
     """Use split sow for any holes that are not in
     udir_holes."""
 
-    def __init__(self, decorator, udir_holes):
+    def __init__(self, decorator, udir_holes, holes):
 
         self.decorator = decorator
         self.udir_holes = udir_holes
+        self.holes = holes
 
     def get_direction(self, move, loc):
         """Move is a (pos, dir) tuple.
@@ -82,8 +83,10 @@ class UdirOtherDir(GetDirIf):
         Other use the next direction getter."""
 
         pos, direct = move
-        if pos in self.udir_holes:
+        left_cnt = (loc - self.holes) if loc >= self.holes else loc
+        if left_cnt in self.udir_holes:
             return direct
+
         return self.decorator.get_direction(pos, loc)
 
 
@@ -105,6 +108,6 @@ def deco_dir_getter(game):
         dir_getter = ConstDir(gflags.sow_direct)
 
     if gflags.udirect:
-        return UdirOtherDir(dir_getter, game.info.udir_holes)
+        return UdirOtherDir(dir_getter, game.info.udir_holes, game.cts.holes)
 
     return dir_getter

@@ -17,7 +17,6 @@ import cfg_keys as ckey
 import end_move
 import game_constants as gc
 import game_interface as gi
-from game_log import game_log
 import game_str
 import get_direction
 import get_moves
@@ -30,6 +29,7 @@ import sower
 
 from game_interface import WinCond
 from game_interface import PASS_TOKEN
+from game_log import game_log
 
 
 LOCK = ['_', ' ']

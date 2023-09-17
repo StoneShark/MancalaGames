@@ -109,6 +109,12 @@ class GameConsts:
         return pos if row else self.dbl_holes - pos - 1
 
 
+    def loc_to_left_cnt(self, loc):
+        """Translate loc to a count from the left side,
+        based on player perspective."""
+        return (loc - self.holes) if loc >= self.holes else loc
+
+
     def opp_side(self, turn, loc):
         """Function to tell if loc is on opponents side of board."""
 

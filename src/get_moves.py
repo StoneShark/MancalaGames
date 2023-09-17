@@ -52,7 +52,9 @@ class UdirMoves(MovesIf):
         for pos in range(self.game.cts.holes):
 
             if allowable[pos]:
-                if pos in self.game.info.udir_holes:
+                loc = self.game.cts.pos_to_loc(not self.game.turn, pos)
+                cnt = self.game.cts.loc_to_left_cnt(loc)
+                if cnt in self.game.info.udir_holes:
                     moves += [MoveTpl(pos, Direct.CCW),
                               MoveTpl(pos, Direct.CW)]
                 else:

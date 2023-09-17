@@ -184,7 +184,10 @@ class MancalaUI(tk.Frame):
             for pos in range(self.game.cts.holes):
                 if self.info.flags.udirect:
 
-                    if pos in self.info.udir_holes:
+                    loc = self.game.cts.pos_to_loc(not self.game.get_turn(),
+                                                   pos)
+                    cnt = self.game.cts.loc_to_left_cnt(loc)
+                    if cnt in self.info.udir_holes:
                         btn = hbtn.HoleButton(land_frame, self, row, pos,
                                               True, dirs)
                     else:
@@ -554,7 +557,7 @@ class MancalaUI(tk.Frame):
             tk.messagebox.showerror('AI Player Config Error', msg)
 
 
-    def _log_turn(self, last_turn, pos, win_cond=None):
+    def _log_turn(self, last_turn, move, win_cond=None):
         """Add to the play log and move history for the last turn."""
 
         wtext = ''
@@ -565,10 +568,10 @@ class MancalaUI(tk.Frame):
             wtext = ' ' + win_cond.name
 
         if self.ai_player.get() and last_turn:
-            move_desc = self.game.get_ai_move_desc() + f'move {pos}{wtext}'
+            move_desc = self.game.get_ai_move_desc() + f'move {move}{wtext}'
         else:
             sturn = 'Top' if last_turn else 'Bottom'
-            move_desc = f'{sturn} player move {pos}{wtext}'
+            move_desc = f'{sturn} player move {move}{wtext}'
 
         game_log.turn(move_desc, self.game)
 
