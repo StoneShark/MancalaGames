@@ -82,7 +82,7 @@ class QelatEndMove(end_move.EndTurnIf):
     from the stores into available waldas.
 
     Note that this code is only used if mustpass is changed
-    from the default True to False."""
+    from the configured True to False."""
 
     def game_ended(self, repeat_turn, ended=False):
         """Qelat end move wrapper."""
@@ -179,3 +179,5 @@ class Qelat(mancala.Mancala):
             if have_walda:
                 self.board[walda] += self.board[loc]
                 self.board[loc] = 0
+
+        assert sum(self.store) == 0
