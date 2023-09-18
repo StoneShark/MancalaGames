@@ -31,6 +31,9 @@ F = False
 N = None
 
 
+TEST_COVERS = ['src\\get_moves.py']
+
+
 class TestGetMove:
 
     @pytest.mark.parametrize(

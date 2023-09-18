@@ -16,6 +16,10 @@ sys.path.extend(['src'])
 
 import game_constants as gc
 
+# %%
+
+TEST_COVERS = ['src\\game_constants.py']
+
 
 # %%  test_game_consts
 

@@ -21,6 +21,10 @@ import utils
 from game_interface import GameFlags
 from game_interface import WinCond
 
+# %%
+
+TEST_COVERS = ['src\\end_move.py']
+
 
 # %% some constants
 

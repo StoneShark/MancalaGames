@@ -20,6 +20,9 @@ sys.path.extend(['src'])
 import game_log
 
 
+TEST_COVERS = ['src\\game_log.py']
+
+
 class TestGameLog:
 
     @pytest.fixture

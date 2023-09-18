@@ -19,6 +19,10 @@ import cfg_keys as ckey
 import minimax
 
 
+# %%
+
+TEST_COVERS = ['src\\minimax.py']
+
 # %%  define_get_game
 
 class EndCond(enum.Enum):

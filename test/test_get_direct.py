@@ -18,6 +18,11 @@ import mancala
 from game_interface import Direct
 
 
+# %%
+
+TEST_COVERS = ['src\\get_direction.py']
+
+
 class TestGetDirection:
 
 

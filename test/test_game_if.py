@@ -28,6 +28,14 @@ from game_interface import GameFlags
 from game_interface import WinCond
 
 
+
+# %%
+
+TEST_COVERS = ['src\\cfg_keys.py',
+               'src\\game_interface.py',
+               'src\\ginfo_rules.py']
+
+
 # %%
 
 class TestEnumsClasses:

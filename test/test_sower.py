@@ -24,6 +24,11 @@ from game_interface import GameFlags
 from game_interface import Direct
 from game_interface import WinCond
 
+# %%
+
+TEST_COVERS = ['src\\sower.py']
+
+
 # %% consts
 
 HOLES = 3

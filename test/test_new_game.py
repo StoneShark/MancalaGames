@@ -17,6 +17,10 @@ import utils
 from game_interface import WinCond
 from game_interface import RoundStarter
 
+# %%
+
+TEST_COVERS = ['src\\new_game.py']
+
 
 class TestNewGame:
 

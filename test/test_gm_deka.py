@@ -18,6 +18,9 @@ import man_config
 from game_interface import WinCond
 
 
+TEST_COVERS = ['src\\deka.py']
+
+
 class TestDeka:
 
     @pytest.fixture

@@ -22,6 +22,10 @@ from game_interface import GameFlags
 from game_interface import GrandSlam
 from game_interface import Direct
 
+# %%
+
+TEST_COVERS = ['src\\allowables.py']
+
 
 # %%   constants
 

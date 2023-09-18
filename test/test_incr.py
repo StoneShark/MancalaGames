@@ -26,6 +26,12 @@ from incrementer import NOSKIPSTART
 import mancala
 import utils
 
+
+# %%
+
+TEST_COVERS = ['src\\incrementer.py']
+
+
 # %% consts
 
 HOLES = 3

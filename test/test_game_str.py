@@ -21,6 +21,10 @@ from game_interface import GameFlags
 from game_interface import Direct
 
 
+
+TEST_COVERS = ['src\\game_str.py']
+
+
 class TestGameStr:
 
     @pytest.fixture

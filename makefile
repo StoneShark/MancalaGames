@@ -89,9 +89,11 @@ stress_tests:
 #  code is actually tested and not just run as part of another
 #  test suite.
 
-%.test:
-	-coverage run --branch -m pytest test\\$(subst .test,.py,$@)
+%.test: 
+	coverage run --branch -m pytest test\\$(subst .test,.py,$@)
 	coverage html
+	coverage json
+	python test\\check_unit_cov.py $(subst .test,,$@)
 
 
 #  pylint
@@ -121,6 +123,7 @@ clean:
 	-del .pylint_report
 	-rmdir /S /Q htmlcov
 	-del .coverage
+	-del coverage.json
 	-del src\\.coverage
 
 

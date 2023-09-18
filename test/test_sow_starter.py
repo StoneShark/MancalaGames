@@ -21,6 +21,12 @@ import utils
 from game_interface import GameFlags
 from game_interface import Direct
 
+
+# %%
+
+TEST_COVERS = ['src\\sow_starter.py']
+
+
 # %% constants
 
 HOLES = 3

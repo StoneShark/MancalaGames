@@ -42,6 +42,10 @@ from game_interface import Direct
 from game_interface import WinCond
 from game_interface import RoundStarter
 
+# %%
+
+TEST_COVERS = ['src\\mancala.py']
+
 
 # %% constants
 

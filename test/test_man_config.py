@@ -21,6 +21,10 @@ import mancala
 from game_interface import Direct
 
 
+# %%
+
+TEST_COVERS = ['src\\man_config.py']
+
 class TestBasicConstruction:
 
     @pytest.fixture

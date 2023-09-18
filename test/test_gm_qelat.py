@@ -15,6 +15,9 @@ import game_constants as gc
 import man_config
 import qelat
 
+TEST_COVERS = ['src\\qelat.py']
+
+
 class TestQelat:
 
     @pytest.fixture
