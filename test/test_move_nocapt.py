@@ -510,13 +510,13 @@ class TestSpSowingNoU:
         sgame_even.turn = False
         for pos, exp_dir in enumerate([Direct.CW, Direct.CW,
                                        Direct.CCW, Direct.CCW]):
-            loc = sgame_even.cts.pos_to_loc(not sgame_even.turn, pos)
+            loc = sgame_even.cts.xlate_pos_loc(not sgame_even.turn, pos)
             assert sgame_even.deco.get_dir.get_direction(pos, loc) == exp_dir
 
         sgame_even.turn = True
         for pos, exp_dir in enumerate([Direct.CCW, Direct.CCW,
                                        Direct.CW, Direct.CW]):
-            loc = sgame_even.cts.pos_to_loc(not sgame_even.turn, pos)
+            loc = sgame_even.cts.xlate_pos_loc(not sgame_even.turn, pos)
             assert sgame_even.deco.get_dir.get_direction(pos, loc) == exp_dir
 
     def test_split_dirs_odd(self, sgame_odd):
@@ -525,13 +525,13 @@ class TestSpSowingNoU:
 
         sgame_odd.turn = False
         for pos, exp_dir in enumerate([Direct.CW, Direct.CCW, Direct.CCW]):
-            loc = sgame_odd.cts.pos_to_loc(not sgame_odd.turn, pos)
+            loc = sgame_odd.cts.xlate_pos_loc(not sgame_odd.turn, pos)
             ans = sgame_odd.deco.get_dir.get_direction((pos, Direct.CCW), loc)
             assert ans == exp_dir
 
         sgame_odd.turn = True
         for pos, exp_dir in enumerate([Direct.CCW, Direct.CW, Direct.CW]):
-            loc = sgame_odd.cts.pos_to_loc(not sgame_odd.turn, pos)
+            loc = sgame_odd.cts.xlate_pos_loc(not sgame_odd.turn, pos)
             ans = sgame_odd.deco.get_dir.get_direction((pos, Direct.CW), loc)
             assert ans == exp_dir
 

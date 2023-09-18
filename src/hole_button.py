@@ -297,7 +297,7 @@ class RndSetupButtonBehavior(BehaviorIf):
             self.btn.bell()
             return
 
-        loc = self.btn.game_ui.game.cts.pos_to_loc(self.btn.row,
+        loc = self.btn.game_ui.game.cts.xlate_pos_loc(self.btn.row,
                                                    self.btn.pos)
 
         self.btn.game_ui.game.board[loc] = Hold.nbr
@@ -320,7 +320,7 @@ class RndSetupButtonBehavior(BehaviorIf):
 
         Hold.set_hold(self.btn.props.seeds, self.btn.row)
 
-        loc = self.btn.game_ui.game.cts.pos_to_loc(self.btn.row,
+        loc = self.btn.game_ui.game.cts.xlate_pos_loc(self.btn.row,
                                                    self.btn.pos)
         self.btn.game_ui.game.board[loc] = 0
         self.btn.game_ui.game.blocked[loc] = True
@@ -386,7 +386,7 @@ class MoveSeedsButtonBehavior(BehaviorIf):
         if not Hold.nbr or Hold.owner != self.btn.row:
             self.btn.bell()
             return
-        loc = self.btn.game_ui.game.cts.pos_to_loc(self.btn.row,
+        loc = self.btn.game_ui.game.cts.xlate_pos_loc(self.btn.row,
                                                    self.btn.pos)
 
         self.btn.game_ui.game.board[loc] += Hold.nbr
@@ -409,7 +409,7 @@ class MoveSeedsButtonBehavior(BehaviorIf):
 
         if seeds:
 
-            loc = self.btn.game_ui.game.cts.pos_to_loc(self.btn.row,
+            loc = self.btn.game_ui.game.cts.xlate_pos_loc(self.btn.row,
                                                        self.btn.pos)
             self.btn.game_ui.game.board[loc] -= seeds
             self.btn.props.seeds = self.btn.game_ui.game.board[loc]

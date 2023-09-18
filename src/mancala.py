@@ -405,7 +405,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         row : 0 for top row, 1 for bottom   (opposite of player)
         position : 0 .. 5 from left to right"""
 
-        loc = self.cts.pos_to_loc(row, pos)
+        loc = self.cts.xlate_pos_loc(row, pos)
         return gi.HoleProps(seeds=self.board[loc],
                             unlocked=self.unlocked[loc],
                             blocked=self.blocked[loc],

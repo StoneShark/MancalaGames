@@ -80,7 +80,7 @@ class SowStartPos(SowStartIf):
         gets pos, but calls chained decorators with loc."""
         # pylint: disable=arguments-renamed
 
-        loc = self.game.cts.pos_to_loc(not self.game.turn, pos)
+        loc = self.game.cts.xlate_pos_loc(not self.game.turn, pos)
         return self.decorator.start_sow(loc)
 
 
@@ -95,7 +95,7 @@ class SowStartUdir(SowStartIf):
         gets move, but calls chained decorators with loc."""
         # pylint: disable=arguments-renamed
 
-        loc = self.game.cts.pos_to_loc(not self.game.turn, move[0])
+        loc = self.game.cts.xlate_pos_loc(not self.game.turn, move[0])
         return self.decorator.start_sow(loc)
 
 

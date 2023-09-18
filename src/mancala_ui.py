@@ -184,7 +184,7 @@ class MancalaUI(tk.Frame):
             for pos in range(self.game.cts.holes):
                 if self.info.flags.udirect:
 
-                    loc = self.game.cts.pos_to_loc(not self.game.get_turn(),
+                    loc = self.game.cts.xlate_pos_loc(not self.game.get_turn(),
                                                    pos)
                     cnt = self.game.cts.loc_to_left_cnt(loc)
                     if cnt in self.info.udir_holes:
@@ -413,7 +413,7 @@ class MancalaUI(tk.Frame):
             for pos in range(self.game.cts.holes):
 
                 if self.game.info.flags.no_sides:
-                    loc = self.game.cts.pos_to_loc(row, pos)
+                    loc = self.game.cts.xlate_pos_loc(row, pos)
                     cactive = disable = actives[loc]
                 else:
                     cactive = player and actives[pos]

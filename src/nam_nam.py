@@ -261,7 +261,7 @@ class NamNam(mancala.Mancala):
         position : 0 .. 5 from left to right.
         Use owner for child owner."""
 
-        loc = self.cts.pos_to_loc(row, pos)
+        loc = self.cts.xlate_pos_loc(row, pos)
         return gi.HoleProps(seeds=self.board[loc],
                             unlocked=self.unlocked[loc],
                             blocked=self.blocked[loc],

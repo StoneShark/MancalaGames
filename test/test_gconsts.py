@@ -107,10 +107,10 @@ class TestCtsFuncs:
          (1, 3, 3),
          (1, 4, 4)
          ])
-    def test_pos_to_loc(self, row, pos, eloc):
+    def test_xlate_pos_loc(self, row, pos, eloc):
 
         game_consts = gc.GameConsts(6, 5)
-        assert game_consts.pos_to_loc(row, pos) == eloc
+        assert game_consts.xlate_pos_loc(row, pos) == eloc
 
 
     @pytest.mark.parametrize(

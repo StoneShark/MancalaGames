@@ -101,7 +101,7 @@ class GameConsts:
                 'holes': self.holes}
 
 
-    def pos_to_loc(self, row, pos):
+    def xlate_pos_loc(self, row, pos):
         """Convert the pos (0.. holes-1) to loc
         (array index loc, 0 .. dbl_holes-1)
         row is not turn"""
