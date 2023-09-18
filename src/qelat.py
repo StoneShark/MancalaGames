@@ -180,4 +180,4 @@ class Qelat(mancala.Mancala):
                 self.board[walda] += self.board[loc]
                 self.board[loc] = 0
 
-        assert sum(self.store) == 0
+        assert not sum(self.store)
