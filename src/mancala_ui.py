@@ -412,7 +412,7 @@ class MancalaUI(tk.Frame):
             player = row == turn_row
             for pos in range(self.game.cts.holes):
 
-                if self.game.info.no_sides:
+                if self.game.info.flags.no_sides:
                     loc = self.game.cts.pos_to_loc(row, pos)
                     cactive = disable = actives[loc]
                 else:

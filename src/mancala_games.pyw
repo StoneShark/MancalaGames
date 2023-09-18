@@ -196,6 +196,7 @@ class NonUiData:
     help_file: str = ''
     rnd_left_fill: bool = False
     rnd_umove: bool = False
+    no_sides: bool = False
     ai_params: dict  = dc.field(default_factory=dict)
     other_dict: dict = dc.field(default_factory=dict)
 
@@ -665,6 +666,7 @@ class MancalaGames(tk.Frame):
 
         flag_dict[ckey.RND_LEFT_FILL] = self.non_ui_data.rnd_left_fill
         flag_dict[ckey.RND_UMOVE] = self.non_ui_data.rnd_umove
+        flag_dict[ckey.NO_SIDES] = self.non_ui_data.no_sides
 
         for name, var in self.tkvars.get_items():
 
@@ -804,7 +806,8 @@ class MancalaGames(tk.Frame):
         for fname in gi.GameFlags.get_fields():
 
             if fname not in [ckey.UDIRECT, ckey.SOW_DIRECT,
-                             ckey.GRANDSLAM, ckey.RND_LEFT_FILL,
+                             ckey.GRANDSLAM, ckey.NO_SIDES,
+                             ckey.RND_LEFT_FILL,
                              ckey.ROUND_STARTER, ckey.RND_UMOVE,
                              ckey.XCPICKOWN]:
                 var = getattr(man_games.tkvars, fname)
@@ -865,6 +868,9 @@ class MancalaGames(tk.Frame):
         self.non_ui_data.rnd_umove = \
             game_dict[ckey.GAME_INFO][ckey.FLAGS].get(
                 ckey.RND_UMOVE, gi_defaults.flags.rnd_umove)
+        self.non_ui_data.no_sides = \
+            game_dict[ckey.GAME_INFO][ckey.FLAGS].get(
+                ckey.NO_SIDES, gi_defaults.flags.no_sides)
 
         del game_dict[ckey.GAME_CLASS]
         del game_dict[ckey.GAME_CONSTANTS]
