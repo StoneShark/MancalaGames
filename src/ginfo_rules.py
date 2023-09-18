@@ -231,6 +231,13 @@ def build_rules():
     ## GameInfo checks
 
     man_rules.add_rule(
+        'bad_no_side',
+        rule=lambda ginfo: ginfo.flags.no_sides,
+        msg='Mancala does not support NO_SIDES.',
+        excp=gi.GameInfoError)
+        # flag is in the base class because it changes how the UI works
+
+    man_rules.add_rule(
         'warn_no_capt',
         rule=lambda ginfo: not any([ginfo.flags.evens,
                                     ginfo.flags.crosscapt,

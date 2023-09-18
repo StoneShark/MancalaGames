@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """Game class the mancala game NamNam.
-No stores are used instead 'walda's are created during
-game play.
+The goal of the game to claim ownership of holes.
 
 Created on Thu Jan  5 03:15:41 2023
 @author: Ann"""

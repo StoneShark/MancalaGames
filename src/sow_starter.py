@@ -70,11 +70,11 @@ class SowMarkUnlock(SowStartIf):
         return self.decorator.start_sow(loc)
 
 
-class SowStartTop(SowStartIf):
-    """Start the sower. Translate pos to loc, always use this decorator."""
+class SowStartPos(SowStartIf):
+    """Start the sower. Translate move to loc."""
 
     def start_sow(self, pos):
-        """Translate pos to loc. Call the chain.
+        """Translate move (is pos) to loc. Call the chain.
 
         Arguement intentionally renamed because this method
         gets pos, but calls chained decorators with loc."""
@@ -82,6 +82,22 @@ class SowStartTop(SowStartIf):
 
         loc = self.game.cts.pos_to_loc(not self.game.turn, pos)
         return self.decorator.start_sow(loc)
+
+
+class SowStartUdir(SowStartIf):
+    """Start the sower. Translate move to loc."""
+
+    def start_sow(self, move):
+        """Translate move to loc. Udir moves are (pos, direct).
+        Call the chain.
+
+        Arguement intentionally renamed because this method
+        gets move, but calls chained decorators with loc."""
+        # pylint: disable=arguments-renamed
+
+        loc = self.game.cts.pos_to_loc(not self.game.turn, move[0])
+        return self.decorator.start_sow(loc)
+
 
 
 # %% build decorator chain
@@ -97,6 +113,9 @@ def deco_sow_starter(game):
     if game.info.flags.moveunlock:
         starter = SowMarkUnlock(game, starter)
 
-    starter = SowStartTop(game, starter)
+    if game.info.flags.udirect:
+        starter = SowStartUdir(game, starter)
+    else:
+        starter = SowStartPos(game, starter)
 
     return starter

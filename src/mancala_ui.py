@@ -399,9 +399,9 @@ class MancalaUI(tk.Frame):
             1. are not the current players hole
             2. are not available for play (e.g. no allowable move)"""
 
+        actives = self.game.get_allowable_holes()
         turn = self.game.get_turn()
         turn_row = int(not turn)
-        actives = self.game.get_allowable_holes()
         ai_turn = self.ai_player.get() and turn
 
         for row in range(2):
@@ -412,8 +412,12 @@ class MancalaUI(tk.Frame):
             player = row == turn_row
             for pos in range(self.game.cts.holes):
 
-                cactive = player and actives[pos]
-                disable = ai_turn or not cactive
+                if self.game.info.no_sides:
+                    loc = self.game.cts.pos_to_loc(row, pos)
+                    cactive = disable = actives[loc]
+                else:
+                    cactive = player and actives[pos]
+                    disable = ai_turn or not cactive
 
                 self.disp[row][pos].set_props(
                     self.game.get_hole_props(row, pos),

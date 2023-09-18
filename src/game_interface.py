@@ -105,6 +105,7 @@ class GameFlags:
     round_starter: RoundStarter = RoundStarter.ALTERNATE
     rnd_left_fill: bool = False
     rnd_umove: bool = False
+    no_sides: bool = False     # changes how the UI works, but not supported
     stores: bool = False
 
     # **** sowing flags
@@ -211,16 +212,24 @@ class HoleProps:
 
 class MoveTpl(tuple):
     """A class to print the move tuples nicely.
-    Override new so the contructor can take two arguements."""
+    Override new so the contructor can take multiple arguements
+    if two args: pos, direct
+    if three args: side, pos, direct
+        used for all no_sides games even if no udirect"""
 
-    def __new__(cls, pos, direct):
-        return super().__new__(cls, (pos, direct))
+    def __new__(cls, *args):
+        return super().__new__(cls, args)
 
     def __str__(self):
+
+        if len(self) == 3:
+            if self[2]:
+                return f'({self[0]}, {self[1]}, {self[2].name})'
+            return f'({self[0]}, {self[1]}, None)'
+
         if self[1]:
             return f'({self[0]}, {self[1].name})'
         return f'({self[0]}, None)'
-
 
 
 # %%  game interface abstract base class -- the UI requires these

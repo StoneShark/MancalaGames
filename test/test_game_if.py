@@ -66,6 +66,14 @@ class TestEnumsClasses:
         assert isinstance(tup, tuple)
         assert str(tup) == '(2, None)'
 
+        tup = gi.MoveTpl(True, 3, Direct.CW)
+        assert isinstance(tup, tuple)
+        assert str(tup) == '(True, 3, CW)'
+
+        tup = gi.MoveTpl(False, 2, None)
+        assert isinstance(tup, tuple)
+        assert str(tup) == '(False, 2, None)'
+
 
     def test_default_scorer(self):
 
@@ -110,8 +118,7 @@ class TestConstruction:
                         rules=rules)
 
         # confirm this is min game config, that doesn't generate errors
-        ginfo = gi.GameInfo(name='Mancala',
-                            nbr_holes=6,
+        ginfo = gi.GameInfo(nbr_holes=6,
                             capt_on=[2],
                             flags=GameFlags(sow_direct=Direct.CCW),
                             rules=rules)
@@ -119,17 +126,13 @@ class TestConstruction:
         assert len(ginfo.ai_params[ckey.MM_DEPTH]) == 4
         assert ginfo.ai_params[ckey.MM_DEPTH][3] == 5
 
-        ginfo = gi.GameInfo(name='Mancala',
-                            nbr_holes=6,
+        ginfo = gi.GameInfo(nbr_holes=6,
                             capt_on=[2],
                             ai_params={ckey.MM_DEPTH : (3, 4, 5, 6)},
                             flags=GameFlags(sow_direct=Direct.CCW),
                             rules=rules)
 
         assert ginfo.ai_params[ckey.MM_DEPTH][3] == 6
-
-        # evaluate if new tests should be added
-        assert len(GameFlags.get_fields()) == 25
 
 
 

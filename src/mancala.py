@@ -315,12 +315,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
         RETURN end locations and sow direction"""
 
-        if self.info.flags.udirect:
-            pos, _ = move
-        else:
-            pos = move
-
-        start, seeds = self.deco.starter.start_sow(pos)
+        start, seeds = self.deco.starter.start_sow(move)
         direct = self.deco.get_dir.get_direction(move, start)
         end_loc = self.deco.sower.sow_seeds(start, direct, seeds)
 
@@ -338,7 +333,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         If pass, then change turn and return None (game continues).
         Otherwise:
 
-        1. parse the move and PASS if specified
+        1. parse the move and PASS if specified, no_sides has no pass
         Call do_sow for steps 2 to 4
         5. capture seeds
         6. if either player won or a tie occured, return that condition
@@ -350,8 +345,9 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         assert sum(self.store) + sum(self.board) == self.cts.total_seeds, \
             'seed count error before move'
 
-        if (move == PASS_TOKEN
-                or (self.info.flags.udirect and move[0] == PASS_TOKEN)):
+        if (not self.info.flags.no_sides
+            and (move == PASS_TOKEN
+                or (self.info.flags.udirect and move[0] == PASS_TOKEN))):
             self.turn = not self.turn
             return None
 

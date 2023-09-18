@@ -13,11 +13,13 @@ pytestmark = pytest.mark.unittest
 sys.path.extend(['src'])
 
 import game_interface as gi
-from game_interface import GameFlags
 import game_constants as gc
 import mancala
 import sow_starter
 import utils
+
+from game_interface import GameFlags
+from game_interface import Direct
 
 # %% constants
 
@@ -89,4 +91,39 @@ class TestSowStarter:
         sower = sow_starter.deco_sow_starter(game)
         assert sower.start_sow(pos) == (eloc, eseeds)
         assert game.board[eloc] == 1
+        assert game.unlocked[eloc]
+
+
+    @pytest.mark.parametrize('sow_start, unlock',
+                              [(False, False),
+                              (False, True),
+                              ])
+    @pytest.mark.parametrize('pos, turn, eloc, eseeds',
+                              [(0, False, 0, 7),
+                              (1, False, 1, 8),
+                              (2, False, 2, 9),
+                              (0, True, 5-0, 4),
+                              (1, True, 5-1, 5),
+                              (2, True, 5-2, 6)]
+                        )
+    def test_udir(self, sow_start, unlock, pos, turn, eloc, eseeds):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+                                capt_on = [2],
+                                udir_holes=[1],
+                                flags=GameFlags(sow_direct=Direct.SPLIT,
+                                                sow_start = sow_start,
+                                                moveunlock = unlock),
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+        game.board = utils.build_board([4, 5, 6],
+                                       [7, 8, 9])
+        game.turn = turn
+
+        sower = sow_starter.deco_sow_starter(game)
+
+        # start_sow doesn't care what the direction is
+        assert sower.start_sow((pos, None)) == (eloc, eseeds)
+        assert game.board[eloc] == 0
         assert game.unlocked[eloc]
