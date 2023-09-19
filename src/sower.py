@@ -152,19 +152,22 @@ class SimpleLapCont(LapContinuerIf):
         return False
 
 
-class OppChildLapCont(LapContinuerIf):
+class ChildLapCont(LapContinuerIf):
     """Multilap sow in the presence/creation of children:
         1. Stop sowing if we end in a store or a child.
         2. Stop sowing if we should make a child.
         3. BUT don't make child in opponents first hole with
            a single seed from our right-most hole.
+
         4. Continue sowing if end in hole with > 1 seeds that
            is not a designated child.
 
     Mohr's book states that a turn ends when 'any' seed is sown
     into a child, but it doesn't describe what to do with the
     remaining seeds; therefore this condition is not
-    implemented here. (rules for Bao)"""
+    implemented here. (rules for Bao). Russ's book confirms this
+    p 44, first paragraph, but he also doesn't describe what to do
+    with the remaining seeds."""
 
     def do_another_lap(self, loc, seeds):
         """Determine if we are done sowing."""
@@ -173,9 +176,12 @@ class OppChildLapCont(LapContinuerIf):
             return False
 
         if (seeds > 1
-                and self.game.cts.opp_side(self.game.turn, loc)
                 and self.game.board[loc] == self.game.info.flags.convert_cnt):
-            return False
+            if ((self.game.info.flags.oppsidecapt
+                    and self.game.cts.opp_side(self.game.turn, loc))
+                    or not self.game.info.flags.oppsidecapt):
+
+                return False
 
         if self.game.board[loc] > 1 and self.game.child[loc] is None:
             return True
@@ -271,7 +277,7 @@ def deco_sower(game):
     if game.info.flags.mlaps:
 
         if game.info.flags.child:
-            lap_cont = OppChildLapCont(game)
+            lap_cont = ChildLapCont(game)
         else:
             lap_cont = SimpleLapCont(game)
 

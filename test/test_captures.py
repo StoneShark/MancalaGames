@@ -167,9 +167,7 @@ class TestSameDirCapts:
     def ccw_game(self):
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
-
-        game_info = gi.GameInfo(name='my name',
-                                nbr_holes=game_consts.holes,
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on=[2],
                                 flags=GameFlags(sow_direct=Direct.CCW,
                                                 capsamedir=True,
@@ -219,9 +217,7 @@ class TestOppSideCapts:
     def ccw_game(self):
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
-
-        game_info = gi.GameInfo(name='my name',
-                                nbr_holes=game_consts.holes,
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on=[2],
                                 flags=GameFlags(mustpass=True,
                                                 sow_direct=Direct.CCW,
@@ -269,9 +265,7 @@ class TestEvenCapts:
     def ccw_game(self):
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
-
-        game_info = gi.GameInfo(name='my name',
-                                nbr_holes=game_consts.holes,
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 flags=GameFlags(mustpass=True,
                                                 sow_direct=Direct.CCW,
                                                 evens=True,
@@ -319,9 +313,7 @@ class TestLockCapts:
     def cw_game(self):
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
-
-        game_info = gi.GameInfo(name='my name',
-                                nbr_holes=game_consts.holes,
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 flags=GameFlags(sow_direct=Direct.CW,
                                                 evens=True,
                                                 moveunlock=True,
@@ -367,9 +359,7 @@ class TestCrossCapts:
     def cw_game(self):
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
-
-        game_info = gi.GameInfo(name='my name',
-                                nbr_holes=game_consts.holes,
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 flags=GameFlags(sow_direct=Direct.CW,
                                                 crosscapt=True,
                                                 oppsidecapt=True,
@@ -384,8 +374,7 @@ class TestCrossCapts:
     def cw_xcp_game(self):
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
-        game_info = gi.GameInfo(name='my name',
-                                nbr_holes=game_consts.holes,
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 flags=GameFlags(
                                     sow_direct=Direct.CW,
                                     crosscapt=True,
@@ -403,8 +392,7 @@ class TestCrossCapts:
     def cw_pick_game(self):
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
-        game_info = gi.GameInfo(name='my name',
-                                nbr_holes=game_consts.holes,
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 flags=GameFlags(
                                     sow_direct=Direct.CW,
                                     crosscapt=True,
@@ -523,9 +511,7 @@ class TestMultiCrossCapts:
     def cw_game(self):
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
-
-        game_info = gi.GameInfo(name='my name',
-                                nbr_holes=game_consts.holes,
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 flags=GameFlags(sow_direct=Direct.CW,
                                                 crosscapt=True,
                                                 capsamedir=True,
@@ -643,6 +629,7 @@ class TestBlockCapts:
         game.turn = False
         return game
 
+
     def test_not_blocked(self, cw_game):
 
         assert not any(cw_game.blocked)
@@ -674,9 +661,24 @@ class TestChildCapts:
     def cw_game(self):
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+                                flags=GameFlags(sow_direct=Direct.CW,
+                                                evens=True,
+                                                convert_cnt=4,
+                                                child=True,
+                                                oppsidecapt=True,
+                                                stores=True),
+                                rules=mancala.Mancala.rules)
 
-        game_info = gi.GameInfo(name='my name',
-                                nbr_holes=game_consts.holes,
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = False
+        return game
+
+    @pytest.fixture
+    def cwnogame(self):
+
+        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 flags=GameFlags(sow_direct=Direct.CW,
                                                 evens=True,
                                                 convert_cnt=4,
@@ -687,6 +689,7 @@ class TestChildCapts:
         game = mancala.Mancala(game_consts, game_info)
         game.turn = False
         return game
+
 
     def test_make_f_child(self, cw_game):
 
@@ -769,9 +772,25 @@ class TestChildCapts:
 
         cw_game.move(3)
         assert cw_game.board == utils.build_board([3, 0, 3, 3],
-                                                  [0, 4, 4, 0])
-        assert cw_game.store == [6, 1]
+                                                  [4, 4, 4, 0])
+        assert cw_game.store == [2, 1]
         assert not any(cw_game.child)
+
+
+    def test_make_my_side(self, cwnogame):
+        """make child because end on own side because opp isn't set"""
+
+        cwnogame.board = utils.build_board([3, 0, 3, 3],
+                                           [3, 3, 3, 3])
+        cwnogame.store = [2, 1]
+
+        print(cwnogame)
+        cwnogame.move(3)
+        print('\n', cwnogame, sep='')
+        assert cwnogame.board == utils.build_board([3, 0, 3, 3],
+                                                   [4, 4, 4, 0])
+        assert cwnogame.store == [2, 1]
+        assert cwnogame.child[0] is False
 
 
 
@@ -781,7 +800,6 @@ class TestGrandSlam:
     def game(self):
 
         game_consts = gc.GameConsts(nbr_start=3, holes=3)
-
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on=[2],
                                 flags=GameFlags(sow_direct=Direct.CW,

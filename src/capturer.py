@@ -237,11 +237,13 @@ class MakeChildren(CaptMethodIf):
 
     def do_captures(self, loc, direct):
 
-        if (self.game.board[loc] == self.game.info.flags.convert_cnt
-                and self.game.cts.opp_side(self.game.turn, loc)):
+        if self.game.board[loc] == self.game.info.flags.convert_cnt:
+            if ((self.game.info.flags.oppsidecapt
+                    and self.game.cts.opp_side(self.game.turn, loc))
+                    or not self.game.info.flags.oppsidecapt):
 
-            self.game.child[loc] = self.game.turn
-            return
+                self.game.child[loc] = self.game.turn
+                return
 
         self.decorator.do_captures(loc, direct)
 

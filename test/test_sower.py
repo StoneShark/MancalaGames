@@ -51,6 +51,20 @@ class TestSower:
         game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on = [2],
+                                flags=GameFlags(convert_cnt=4,
+                                                oppsidecapt=True),
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+
+    @pytest.fixture
+    def nogame(self):
+        """not opp for conversion."""
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+                                capt_on = [2],
                                 flags=GameFlags(convert_cnt=4),
                                 rules=mancala.Mancala.rules)
 
@@ -280,10 +294,10 @@ class TestSower:
                                                  [0, 3, 0]),
                                utils.build_board([N, N, N],
                                                  [N, T, N]), False),
-                              # 2: my side of the board, w/o visited
+                              # 2: my side of the board
                               (1, 2,
                                utils.build_board([1, 4, 4],
-                                                 [0, 3, 0]),
+                                                 [0, 4, 0]),
                                utils.build_board([N, N, N],
                                                  [N, N, N]), True),
                               # 3: no child on opps first hole and one seed
@@ -324,16 +338,83 @@ class TestSower:
                                                  [N, N, N]), True),
 
                               ])
-    def test_child_lap(self, game, end_loc, sown_seeds, board, child, eresult):
+    def test_child_lap_with_opp(self, game, end_loc, sown_seeds,
+                                board, child, eresult):
 
         game.turn = False
         game.board = board
         game.child = child
-        lap_cont = sower.OppChildLapCont(game)
+        lap_cont = sower.ChildLapCont(game)
 
         assert lap_cont.do_another_lap(end_loc, sown_seeds) == eresult
 
 
+    @pytest.mark.parametrize('end_loc, sown_seeds, board, child, eresult',
+                             # 0: not on end store
+                             [(WinCond.END_STORE, 2,
+                               utils.build_board([1, 4, 4],
+                                                 [1, 3, 0]),
+                               utils.build_board([N, N, N],
+                                                 [N, N, N]), False),
+                              # 1: not on end in child
+                              (1, 2,
+                               utils.build_board([1, 4, 4],
+                                                 [0, 3, 0]),
+                               utils.build_board([N, N, N],
+                                                 [N, T, N]), False),
+                              # 2: my side of the board
+                              (1, 2,
+                               utils.build_board([1, 4, 4],
+                                                 [0, 4, 0]),
+                               utils.build_board([N, N, N],
+                                                 [N, N, N]), False),
+                              # 3: no child on opps first hole and one seed
+                              (3, 1,
+                               utils.build_board([1, 4, 4],
+                                                 [0, 3, 0]),
+                               utils.build_board([N, N, N],
+                                                 [N, N, N]), True),
+                              # 4: not first hole with > 1 seed, make child
+                              (3, 3,
+                               utils.build_board([1, 4, 4],
+                                                 [0, 3, 4]),
+                               utils.build_board([N, T, N],
+                                                 [N, N, N]), False),
+                              # 5: not if we should make a child
+                              (4, 3,
+                               utils.build_board([1, 4, 4],
+                                                 [0, 3, 4]),
+                               utils.build_board([N, N, N],
+                                                 [N, N, N]), False),
+                              # 6: not if only one seed
+                              (5, 3,
+                               utils.build_board([1, 4, 4],
+                                                 [0, 3, 4]),
+                               utils.build_board([N, N, N],
+                                                 [N, N, N]), False),
+                              # 7: not if already a child
+                              (5, 3,
+                               utils.build_board([1, 4, 4],
+                                                 [0, 3, 4]),
+                               utils.build_board([N, T, N],
+                                                 [N, N, N]), False),
+                              # 8: seeds > 1 seed, not child, opp side
+                              (4, 3,
+                               utils.build_board([1, 5, 4],
+                                                 [0, 3, 4]),
+                               utils.build_board([N, N, N],
+                                                 [N, N, N]), True),
+
+                              ])
+    def test_child_lap_not_opp(self, nogame, end_loc, sown_seeds,
+                       board, child, eresult):
+
+        nogame.turn = False
+        nogame.board = board
+        nogame.child = child
+        lap_cont = sower.ChildLapCont(nogame)
+
+        assert lap_cont.do_another_lap(end_loc, sown_seeds) == eresult
 class TestMlap:
 
     @pytest.fixture
