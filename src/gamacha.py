@@ -48,7 +48,8 @@ def build_gamcha_rules():
 
     bad_flags = ['blocks', 'child', 'mlaps', 'moveunlock',
                  'mustpass', 'mustshare', 'round_starter',
-                 'rounds', 'skip_start', 'sow_own_store',
+                 'rounds', 'rnd_left_fill', 'rnd_umove',
+                 'no_sides', 'skip_start', 'sow_own_store',
                  'sow_start', 'stores', 'visit_opp']
     for flag in bad_flags:
         rules.add_rule(

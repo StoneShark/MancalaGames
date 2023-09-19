@@ -61,7 +61,8 @@ def build_qelat_rules():
         warn=True)
 
     bad_flags = ['blocks', 'capsamedir', 'crosscapt', 'mlaps', 'multicapt',
-                 'oppsidecapt', 'rounds', 'round_starter', 'sow_own_store',
+                 'oppsidecapt', 'rounds', 'round_starter', 'rnd_left_fill',
+                 'rnd_umove', 'no_sides','sow_own_store',
                  'stores', 'visit_opp', 'xcpickown', 'grandslam']
     for flag in bad_flags:
         qelat_rules.add_rule(

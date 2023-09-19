@@ -79,7 +79,8 @@ def build_deka_rules():
         excp=gi.GameInfoError)
 
     bad_flags = ['child', 'moveunlock', 'mustshare', 'mustpass',
-                 'rounds', 'round_starter', 'sow_own_store', 'stores',
+                 'rounds', 'round_starter', 'rnd_left_fill', 'rnd_umove',
+                 'no_sides', 'sow_own_store', 'stores',
                  'skip_start', 'sow_start', 'visit_opp']
     for flag in bad_flags:
         deka_rules.add_rule(

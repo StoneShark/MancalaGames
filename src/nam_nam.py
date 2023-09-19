@@ -71,7 +71,8 @@ def build_namnam_rules():
         excp=gi.GameInfoError)
 
     bad_flags = ['blocks', 'capsamedir', 'child', 'crosscapt', 'evens',
-                 'grandslam', 'multicapt', 'oppsidecapt', 'sow_own_store',
+                 'grandslam', 'multicapt',
+                 'no_sides','oppsidecapt', 'sow_own_store',
                  'xcpickown']
     for flag in bad_flags:
         rules.add_rule(
