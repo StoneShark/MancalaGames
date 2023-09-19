@@ -238,6 +238,21 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         return self.info
 
 
+    def get_board(self, loc):
+        """Return the seeds at location."""
+        return self.board[loc]
+
+
+    def set_board(self, loc, seeds):
+        """Set the seeds at location."""
+        self.board[loc] = seeds
+
+
+    def set_blocked(self, loc, blocked):
+        """Set the blocked status location."""
+        self.blocked[loc] = blocked
+
+
     def set_difficulty(self, diff):
         """Set game difficulty"""
 

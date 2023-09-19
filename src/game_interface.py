@@ -214,7 +214,7 @@ class MoveTpl(tuple):
     """A class to print the move tuples nicely.
     Override new so the contructor can take multiple arguements
     if two args: pos, direct
-    if three args: side, pos, direct
+    if three args: row, pos, direct
         used for all no_sides games even if no udirect"""
 
     def __new__(cls, *args):
@@ -254,6 +254,21 @@ class GameInterface(abc.ABC):
     def get_turn(self):
         """Return: True if top player's turn,
         False if bottom player's turn"""
+
+    @abc.abstractmethod
+    def get_board(self, loc):
+        """Return the seeds at location.
+        Interface for button behavior."""
+
+    @abc.abstractmethod
+    def set_board(self, loc, seeds):
+        """Set the seeds at location..
+        Interface for button behavior."""
+
+    @abc.abstractmethod
+    def set_blocked(self, loc, blocked):
+        """Set the blocked status location..
+        Interface for button behavior."""
 
     @abc.abstractmethod
     def get_hole_props(self, row, pos):
