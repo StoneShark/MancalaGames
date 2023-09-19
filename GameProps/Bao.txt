@@ -41,5 +41,5 @@
       }
    },
    "rules": "simplified from Mohr, Merilyn Simonds; The New Games Treasury, 1993.",
-   "question": "Mohr and Russ state the move is over when anyone sows into a child. But what do you do with the remaining seeds?"
+   "question": "Both Mohr and Russ state the move is over when anyone sows any seed into a child. But what do you do with the remaining seeds?"
 }
