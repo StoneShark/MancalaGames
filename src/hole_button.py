@@ -11,11 +11,6 @@ import enum
 
 import tkinter as tk
 
-from game_interface import MoveTpl
-
-
-# TODO board and blocked are being referenced directly not via GameInterface
-
 
 # %%  constants
 
@@ -197,25 +192,14 @@ class PlayButtonBehavior(BehaviorIf):
 
 
     def left_click(self):
-        """Tell parent to move.
-        If bidir is true, the move must be a tuple.
-        If the user isn't selecting the direction, it's determined
-        someplace else (e.g. get_direction) so use None."""
-        if self.btn.bidir:
-            if self.btn.dirs:
-                self.btn.game_ui.move(MoveTpl(self.btn.pos, self.btn.dirs[0]))
-            else:
-                self.btn.game_ui.move(MoveTpl(self.btn.pos, None))
-        else:
-            self.btn.game_ui.move(self.btn.pos)
+        """Tell parent to move."""
+        self.btn.game_ui.move(self.btn.left_move)
 
 
     def right_click(self):
-        """If user can choose direction;
-        player right click goes counter-clockwise"""
-
-        if self.btn.bidir and self.btn.dirs:
-            self.btn.game_ui.move(MoveTpl(self.btn.pos, self.btn.dirs[1]))
+        """Move for the right click -- unless the hole is udirect
+        this is the same as a left click"""
+        self.btn.game_ui.move(self.btn.right_move)
 
 
     def _refresh(self, disable=False, cactive=True):
@@ -297,14 +281,14 @@ class RndSetupButtonBehavior(BehaviorIf):
             self.btn.bell()
             return
 
-        loc = self.btn.game_ui.game.cts.xlate_pos_loc(self.btn.row,
-                                                   self.btn.pos)
+        game = self.btn.game_ui.game
+        game.set_board(self.btn.loc, Hold.nbr)
+        game.blocked(self.btn.loc, False)
 
-        self.btn.game_ui.game.board[loc] = Hold.nbr
-        self.btn.game_ui.game.blocked[loc] = False
         self.btn.props.blocked = False
         self.btn.props.seeds = Hold.nbr
         self._refresh()
+
         Hold.empty()
         self.btn.frame.config(cursor='')
 
@@ -320,13 +304,14 @@ class RndSetupButtonBehavior(BehaviorIf):
 
         Hold.set_hold(self.btn.props.seeds, self.btn.row)
 
-        loc = self.btn.game_ui.game.cts.xlate_pos_loc(self.btn.row,
-                                                   self.btn.pos)
-        self.btn.game_ui.game.board[loc] = 0
-        self.btn.game_ui.game.blocked[loc] = True
+        game = self.btn.game_ui.game
+        game.set_board(self.btn.loc, 0)
+        game.set_blocked(self.btn.loc, True)
+
         self.btn.props.blocked = True
         self.btn.props.seeds = 0
         self._refresh()
+
         self.btn.frame.config(cursor='circle')
 
 
@@ -386,12 +371,14 @@ class MoveSeedsButtonBehavior(BehaviorIf):
         if not Hold.nbr or Hold.owner != self.btn.row:
             self.btn.bell()
             return
-        loc = self.btn.game_ui.game.cts.xlate_pos_loc(self.btn.row,
-                                                   self.btn.pos)
 
-        self.btn.game_ui.game.board[loc] += Hold.nbr
-        self.btn.props.seeds = self.btn.game_ui.game.board[loc]
+        game = self.btn.game_ui.game
+        seeds = game.get_board(self.btn.loc) + Hold.nbr
+
+        game.set_board(self.btn.loc, seeds)
+        self.btn.props.seeds = seeds
         self._refresh()
+
         Hold.empty()
         self.btn.frame.config(cursor='')
 
@@ -409,11 +396,13 @@ class MoveSeedsButtonBehavior(BehaviorIf):
 
         if seeds:
 
-            loc = self.btn.game_ui.game.cts.xlate_pos_loc(self.btn.row,
-                                                       self.btn.pos)
-            self.btn.game_ui.game.board[loc] -= seeds
-            self.btn.props.seeds = self.btn.game_ui.game.board[loc]
+            game = self.btn.game_ui.game
+            seeds = game.get_board(self.btn.loc) - seeds
+
+            game.set_board(self.btn.loc, seeds)
+            self.btn.props.seeds = seeds
             self._refresh()
+
             self.btn.frame.config(cursor='circle')
 
 
@@ -465,24 +454,18 @@ def force_mode_change():
 class HoleButton(tk.Button):
     """Implements a single hole on the board."""
 
-    def __init__(self, pframe, game_ui, row, position,
-                 bidir=False, dirs=None):
+    def __init__(self, pframe, game_ui, loc, left_move, right_move):
         """Create button.
-        game_ui: link to parent game UI
-        position 0 .. ? left to right.
-        side: False for bottom, True for top (some behaviors need this)
-        bidir : boolean - a game property, must be the same for
-            all holes in a game
-        dirs: list - if this button supports multiple directions
-            [left_dir, right_dir]"""
+        loc is the index to use for get/set board/blocked.
+        left and right move are the moves for left/right click"""
         # pylint: disable=too-many-arguments
 
         self.frame = pframe
         self.game_ui = game_ui
-        self.pos = position
-        self.row = row
-        self.bidir = bidir
-        self.dirs = dirs
+        self.loc = loc
+        self.row = int(loc < self.game_ui.game.cts.holes)
+        self.left_move = left_move
+        self.right_move = right_move
         self.props = 0
         self.behavior = PlayButtonBehavior(self)
 

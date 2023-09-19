@@ -28,6 +28,7 @@ MODULES += montecarlo_ts.py
 MODULES += minimax.py
 MODULES += nam_nam.py
 MODULES += new_game.py
+MODULES += no_sides.py
 MODULES += no_seed_goal.py
 MODULES += play.py
 MODULES += play_mancala.pyw

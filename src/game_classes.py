@@ -9,10 +9,12 @@ import deka
 import gamacha
 import mancala
 import nam_nam
+import no_sides
 import qelat
 
 GAME_CLASSES = {'Mancala': mancala.Mancala,
                 'Deka': deka.Deka,
                 'Gamacha': gamacha.Gamacha,
                 'NamNam': nam_nam.NamNam,
+                'NoSides': no_sides.NoSides,
                 'Qelat': qelat.Qelat}

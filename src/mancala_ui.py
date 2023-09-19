@@ -29,6 +29,9 @@ from game_interface import PASS_TOKEN
 
 AI_DELAY = [0, 1000, 3000]
 
+SYSTEM_COLOR = 'SystemButtonFace'
+TURN_COLOR = 'lightblue'
+
 
 # %%  GameTally
 
@@ -106,18 +109,23 @@ class Store:
 
     def __init__(self, parent, side):
         """Create the Seed storage graphic."""
-        store_frame = tk.Frame(parent, padx=20, pady=20,
+        self.frame = tk.Frame(parent, padx=20, pady=20,
                                borderwidth=3, relief='ridge')
-        store_frame.pack(side=side)
+        self.frame.pack(side=side)
 
-        self.label = tk.Label(store_frame, width=3, text='',
+        self.label = tk.Label(self.frame, width=3, text='',
                               font='bold')
-        self.label.pack()
+        self.label.pack(expand=True, fill='both')
 
 
     def set_store(self, seeds):
         """Update the number of seeds in the store."""
         self.label['text'] = str(seeds)
+
+    def set_color(self, color):
+        """Set the background color of the store."""
+        self.label['background'] = color
+        self.frame['background'] = color
 
 
 # %%  mancala ui
@@ -182,20 +190,8 @@ class MancalaUI(tk.Frame):
             dirs = self._get_hole_dirs(row)
 
             for pos in range(self.game.cts.holes):
-                if self.info.flags.udirect:
 
-                    loc = self.game.cts.xlate_pos_loc(not self.game.get_turn(),
-                                                   pos)
-                    cnt = self.game.cts.loc_to_left_cnt(loc)
-                    if cnt in self.info.udir_holes:
-                        btn = hbtn.HoleButton(land_frame, self, row, pos,
-                                              True, dirs)
-                    else:
-                        btn = hbtn.HoleButton(land_frame, self, row, pos,
-                                              True, None)
-                else:
-                    btn = hbtn.HoleButton(land_frame, self, row, pos)
-
+                btn = self._build_button(land_frame, row, pos, dirs)
                 self.disp[row][pos] = btn
                 self.disp[row][pos].grid(row=row, column=pos)
 
@@ -220,6 +216,40 @@ class MancalaUI(tk.Frame):
                 dirs = [Direct.CCW, Direct.CW]
 
         return dirs
+
+
+    def _build_button(self, land_frame, row, pos, dirs):
+        """Generate moves to return when the button is selected and
+        build the button.
+
+        Note that if the hole is not udirect, the left and right
+        buttons do the same thing."""
+
+        loc = self.game.cts.xlate_pos_loc(row, pos)
+
+        if self.info.flags.udirect:
+
+            cnt = self.game.cts.loc_to_left_cnt(loc)
+            if cnt in self.info.udir_holes:
+                left_move = gi.MoveTpl(pos, dirs[0])
+                rght_move = gi.MoveTpl(pos, dirs[1])
+            else:
+                left_move = gi.MoveTpl(pos, None)
+                rght_move = left_move
+
+            if self.info.flags.no_sides:
+                left_move = gi.MoveTpl(row, *left_move)
+                rght_move = gi.MoveTpl(row, *rght_move)
+
+        elif self.info.flags.no_sides:
+            left_move = gi.MoveTpl(row, pos, None)
+            rght_move = left_move
+
+        else:
+            left_move = pos
+            rght_move = pos
+
+        return hbtn.HoleButton(land_frame, self, loc, left_move, rght_move)
 
 
     @staticmethod
@@ -399,11 +429,18 @@ class MancalaUI(tk.Frame):
             1. are not the current players hole
             2. are not available for play (e.g. no allowable move)"""
 
-        actives = self.game.get_allowable_holes()
+
         turn = self.game.get_turn()
+        if turn:
+            self.stores[0].set_color(TURN_COLOR)
+            self.stores[1].set_color(SYSTEM_COLOR)
+        else:
+            self.stores[0].set_color(SYSTEM_COLOR)
+            self.stores[1].set_color(TURN_COLOR)
+
+        actives = self.game.get_allowable_holes()
         turn_row = int(not turn)
         ai_turn = self.ai_player.get() and turn
-
         for row in range(2):
 
             if self.info.flags.stores:
@@ -414,7 +451,8 @@ class MancalaUI(tk.Frame):
 
                 if self.game.info.flags.no_sides:
                     loc = self.game.cts.xlate_pos_loc(row, pos)
-                    cactive = disable = actives[loc]
+                    cactive = actives[loc]
+                    disable = not actives[loc]
                 else:
                     cactive = player and actives[pos]
                     disable = ai_turn or not cactive
