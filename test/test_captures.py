@@ -4,7 +4,7 @@ Created on Sun Mar 26 15:00:05 2023
 @author: Ann"""
 
 
-# TODO change this to use game.capture_seeds instead of move
+# TODO change this to use game.deco.capturer.do_captures instead of move
 
 
 # %% imports
@@ -69,7 +69,7 @@ class TestNoCapts:
         game.board = utils.build_board([3, 3, 3, 3],
                                        [0, 4, 4, 2])
         game.store = [1, 1]
-        game.capture_seeds(3, Direct.CCW)
+        assert not game.deco.capturer.do_captures(3, Direct.CCW)
         assert game.board == utils.build_board([3, 3, 3, 3],
                                                [0, 4, 4, 2])
         assert game.store == [1, 1]
@@ -95,7 +95,7 @@ class TestSingleCapts:
         game.board = utils.build_board([3, 3, 3, 3],
                                        [0, 4, 4, 2])
         game.store = [1, 1]
-        game.capture_seeds(3, Direct.CCW)
+        assert not game.deco.capturer.do_captures(3, Direct.CCW)
         assert game.board == utils.build_board([3, 3, 3, 3],
                                                [0, 4, 4, 2])
         assert game.store == [1, 1]
@@ -105,7 +105,7 @@ class TestSingleCapts:
         game.board = utils.build_board([3, 3, 3, 3],
                                        [0, 4, 4, 4])
         game.store = [0, 0]
-        game.capture_seeds(3, Direct.CCW)
+        assert game.deco.capturer.do_captures(3, Direct.CCW)
         assert game.board == utils.build_board([3, 3, 3, 3],
                                                [0, 4, 4, 0])
         assert game.store == [4, 0]
@@ -301,7 +301,7 @@ class TestEvenCapts:
         ccw_game.board = utils.build_board([2, 2, 2, 2],
                                            [3, 3, 0, 2])
         ccw_game.store = [4, 4]
-        ccw_game.capture_seeds(7, Direct.CCW)
+        assert ccw_game.deco.capturer.do_captures(7, Direct.CCW)
         assert ccw_game.board == utils.build_board([0, 0, 0, 0],
                                                    [3, 3, 0, 0])
         assert ccw_game.store == [14, 4]
@@ -475,9 +475,7 @@ class TestCrossCapts:
         cw_pick_game.board = utils.build_board([4, 4, 3, 3],
                                                [4, 0, 3, 3])
 
-        print(cw_pick_game)
-        cw_pick_game.capture_seeds(6, Direct.CW)
-        print(cw_pick_game)
+        assert not cw_pick_game.deco.capturer.do_captures(6, Direct.CW)
         assert cw_pick_game.board == utils.build_board([4, 4, 3, 3],
                                                        [4, 0, 3, 3])
         assert cw_pick_game.store == [0, 0]
@@ -488,7 +486,7 @@ class TestCrossCapts:
                                                [1, 4, 4, 0])
         cw_pick_game.store = [4, 3]
 
-        cw_pick_game.capture_seeds(0, Direct.CW)
+        assert not cw_pick_game.deco.capturer.do_captures(0, Direct.CW)
         assert cw_pick_game.board == utils.build_board([0, 3, 3, 3],
                                                        [0, 4, 4, 0])
         assert cw_pick_game.store == [5, 3]
@@ -571,7 +569,7 @@ class TestMultiCrossCapts:
                                           [0, 0, 1, 0])
         cw_game.store = [8, 2]
 
-        cw_game.capture_seeds(2, Direct.CW)
+        assert cw_game.deco.capturer.do_captures(2, Direct.CW)
         assert cw_game.board == utils.build_board([0, 0, 0, 3],
                                                   [0, 0, 1, 0])
         assert cw_game.store == [18, 2]
@@ -604,7 +602,7 @@ class TestMultiCrossCapts:
                                               [0, 0, 1, 0])
         cw_xcp_game.store = [8, 2]
 
-        cw_xcp_game.capture_seeds(2, Direct.CW)
+        assert cw_xcp_game.deco.capturer.do_captures(2, Direct.CW)
         assert cw_xcp_game.board == utils.build_board([4, 3, 0, 0],
                                                       [0, 0, 0, 0])
         assert cw_xcp_game.store == [15, 2]
@@ -648,7 +646,7 @@ class TestBlockCapts:
         cw_game.store = [2, 1]
         cw_game.blocked[6] = True
 
-        cw_game.capture_seeds(5, Direct.CW)
+        assert cw_game.deco.capturer.do_captures(5, Direct.CW)
         assert cw_game.board == utils.build_board([0, 0, 0, 3],
                                                   [0, 0, 3, 3])
         assert cw_game.store == [14, 1]
@@ -818,8 +816,7 @@ class TestGrandSlam:
         object.__setattr__(game.info.flags, 'grandslam', GrandSlam.NO_CAPT)
         captor = capturer.deco_capturer(game)
 
-        assert not captor.is_grandslam(0, Direct.CW)
-
+        assert captor.is_grandslam(0, Direct.CW) == (False, False)
 
 
     @pytest.mark.parametrize('grandslam', [GrandSlam.NO_CAPT,
@@ -830,34 +827,34 @@ class TestGrandSlam:
         object.__setattr__(game.info.flags, 'grandslam', grandslam)
         captor = capturer.deco_capturer(game)
 
-        assert not captor.is_grandslam(0, Direct.CW)
+        assert captor.is_grandslam(0, Direct.CW) == (False, False)
 
-        captor.do_captures(0, Direct.CW)
+        assert not captor.do_captures(0, Direct.CW)
         assert game.board == [3, 3, 3, 3, 3, 3]
 
 
-    @pytest.mark.parametrize('grandslam, eboard, estore',
-                             [(GrandSlam.NO_CAPT,
+    @pytest.mark.parametrize('grandslam, ecapt, eboard, estore',
+                             [(GrandSlam.NO_CAPT, False,
                                utils.build_board([3, 0, 0],
                                                  [2, 0, 0]),
                                [3, 4]),
 
-                              (GrandSlam.OPP_GETS_REMAIN,
+                              (GrandSlam.OPP_GETS_REMAIN, True,
                                utils.build_board([0, 0, 0],
                                                  [0, 0, 0]),
                                [6, 6]),
 
-                              (GrandSlam.LEAVE_LEFT,
+                              (GrandSlam.LEAVE_LEFT, True,
                                utils.build_board([3, 0, 0],
                                                  [0, 0, 0]),
                                [3, 6]),
 
-                              (GrandSlam.LEAVE_RIGHT,
+                              (GrandSlam.LEAVE_RIGHT, False,
                                utils.build_board([3, 0, 0],
                                                  [2, 0, 0]),
                                [3, 4]),
                                ])
-    def test_gs_one(self, game, grandslam, eboard, estore):
+    def test_gs_one(self, game, grandslam, ecapt, eboard, estore):
 
         game.turn = True
         game.board = utils.build_board([3, 0, 0],
@@ -867,34 +864,34 @@ class TestGrandSlam:
         object.__setattr__(game.info.flags, 'grandslam', grandslam)
         captor = capturer.deco_capturer(game)
 
-        captor.do_captures(0, Direct.CW)
+        assert captor.do_captures(0, Direct.CW) == ecapt
         assert game.board == eboard
         assert game.store == estore
 
 
-    @pytest.mark.parametrize('grandslam, eboard, estore',
-                             [(GrandSlam.NO_CAPT,
+    @pytest.mark.parametrize('grandslam, ecapt, eboard, estore',
+                             [(GrandSlam.NO_CAPT, False,
                                utils.build_board([2, 2, 2],
                                                  [1, 0, 0]),
                                [2, 3]),
 
-                              (GrandSlam.OPP_GETS_REMAIN,
+                              (GrandSlam.OPP_GETS_REMAIN, True,
                                utils.build_board([0, 0, 0],
                                                  [0, 0, 0]),
                                [8, 4]),
 
-                              (GrandSlam.LEAVE_LEFT,
+                              (GrandSlam.LEAVE_LEFT, True,
                                utils.build_board([2, 0, 0],
                                                  [1, 0, 0]),
                                [6, 3]),
 
-                              (GrandSlam.LEAVE_RIGHT,
+                              (GrandSlam.LEAVE_RIGHT, True,
                                utils.build_board([0, 0, 2],
                                                  [1, 0, 0]),
                                [6, 3]),
 
                                ])
-    def test_gs_two(self, game, grandslam, eboard, estore):
+    def test_gs_two(self, game, grandslam, ecapt, eboard, estore):
 
         game.turn = False
         game.board = utils.build_board([2, 2, 2],
@@ -904,6 +901,7 @@ class TestGrandSlam:
         object.__setattr__(game.info.flags, 'grandslam', grandslam)
         captor = capturer.deco_capturer(game)
 
-        captor.do_captures(5, Direct.CCW)   # does not match game, it's fine
+        # direction does not match game, it's fine
+        assert captor.do_captures(5, Direct.CCW) == ecapt
         assert game.board == eboard
         assert game.store == estore

@@ -333,6 +333,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         start, seeds = self.deco.starter.start_sow(move)
         direct = self.deco.get_dir.get_direction(move, start)
         end_loc = self.deco.sower.sow_seeds(start, direct, seeds)
+        game_log.step('Sow', self)
 
         return end_loc, direct
 
@@ -340,7 +341,10 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
     def capture_seeds(self, loc, direct):
         """Hand off the capture to the capturer deco."""
 
-        self.deco.capturer.do_captures(loc, direct)
+        if self.deco.capturer.do_captures(loc, direct):
+            game_log.step('Capture', self)
+        else:
+            game_log.add('No captures done.', game_log.STEP)
 
 
     def move(self, move):
@@ -367,7 +371,6 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             return None
 
         loc, direct = self.do_sow(move)
-        game_log.step('Sow', self)
 
         if loc is WinCond.END_STORE:
             win_cond = self.win_conditions(repeat_turn=True)
@@ -378,11 +381,8 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             return WinCond.ENDLESS
 
         self.capture_seeds(loc, direct)
-        game_log.step('Capture', self)
 
         win_cond = self.win_conditions()
-        # win_conditions does log step if it changes anything
-
         if win_cond:
             return win_cond
 
