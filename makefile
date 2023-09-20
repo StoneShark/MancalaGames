@@ -92,9 +92,30 @@ stress_tests:
 
 %.test: 
 	coverage run --branch -m pytest test\\$(subst .test,.py,$@)
-	coverage html
 	coverage json
 	python test\\check_unit_cov.py $(subst .test,,$@)
+
+
+UNIT_TESTS = test_allowables.test
+UNIT_TESTS += test_captures.test
+UNIT_TESTS += test_end_move.test
+UNIT_TESTS += test_game_if.test
+UNIT_TESTS += test_game_log.test
+UNIT_TESTS += test_game_str.test
+UNIT_TESTS += test_gconsts.test
+UNIT_TESTS += test_get_direct.test
+UNIT_TESTS += test_get_moves.test
+UNIT_TESTS += test_gm_deka.test
+UNIT_TESTS += test_gm_qelat.test
+UNIT_TESTS += test_incr.test
+UNIT_TESTS += test_man_config.test
+UNIT_TESTS += test_mancala.test
+UNIT_TESTS += test_minimax.test
+UNIT_TESTS += test_mpath.test
+UNIT_TESTS += test_sow_starter.test
+UNIT_TESTS += test_sower.test
+
+cov_unit_tests: $(UNIT_TESTS)
 
 
 #  pylint
