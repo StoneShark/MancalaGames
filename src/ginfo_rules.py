@@ -178,13 +178,6 @@ def build_rules():
         # active buttons (left/right)
 
     man_rules.add_rule(
-        'spit_gs_not_legal',
-        rule=lambda ginfo: (ginfo.flags.sow_direct == Direct.SPLIT
-                            and ginfo.flags.grandslam == GrandSlam.NOT_LEGAL),
-        msg='SPLIT and GRANDSLAM of Not Legal is not implemented.',
-        excp=NotImplementedError)
-
-    man_rules.add_rule(
         'sow_start_skip_incomp',
         rule=lambda ginfo: ginfo.flags.sow_start and ginfo.flags.skip_start,
         msg='SOW_START and SKIP_START do not make sense together.',
