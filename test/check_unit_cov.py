@@ -61,7 +61,8 @@ def check_unit_cov():
 
         print(f'  {file:.<25}', end=' ')
         if file in jcov_files:
-            print(jcov_files[file]['summary']['percent_covered'], '%', sep='')
+            pct = jcov_files[file]['summary']['percent_covered']
+            print(f'{pct:.1f}%')
         else:
             print('no reported coverage')
             error = True
@@ -69,6 +70,7 @@ def check_unit_cov():
     if error:
         print('\n', jcov_files.keys())
         print(test_module.TEST_COVERS)
+    print()
 
 if __name__ == '__main__':
     check_unit_cov()
