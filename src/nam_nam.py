@@ -91,7 +91,8 @@ def build_namnam_rules():
 # %%
 
 class HoleMarkerOwner(game_str.HoleMarkerIF):
-    """Create a hole string for games with hole owners."""
+    """Create a hole string for games with hole owners.
+    Override this so the game logs show ownership."""
 
     def get_hole_str(self, loc):
         """Return mark for hole"""
@@ -133,7 +134,8 @@ class SowSeeds(sower.SowMethodIf):
 
 class RoundGameWinner(end_move.EndTurnIf):
     """When there are fewer than nbr_start seeds on the board,
-    give the remaining seeds to the current player.
+    give the remaining seeds to the current player
+    (they just did the last possible capture).
     Determine if there is a game winner by territory (convert_cnt)
     or compare the seeds to determine a round winner.
     Otherwise call the deco chain; we need EndTurnMustShare and/or
@@ -150,7 +152,6 @@ class RoundGameWinner(end_move.EndTurnIf):
         if seeds[False] > seeds[True]:
             return WinCond.ROUND_WIN, False
 
-        # if seeds[False] == seeds[True]:
         return WinCond.ROUND_TIE, self.game.turn
 
 

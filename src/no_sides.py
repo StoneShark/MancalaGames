@@ -148,6 +148,7 @@ class CountOnlySeedsStores(end_move.ClaimSeedsIf):
 
             else:
                 # XXXX is removing unclaimed seeds right for game play?
+                # the game is over so we don't need preserve seed count
                 self.game.board[loc] = 0
 
         game_log.step('Divvied seeds', self.game)
