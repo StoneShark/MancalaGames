@@ -11,6 +11,7 @@ Created on Thu Jan  5 03:15:41 2023
 
 import functools as ft
 
+import capturer
 import end_move
 import game_interface as gi
 import ginfo_rules
@@ -112,6 +113,36 @@ class QelatEndMove(end_move.EndTurnIf):
         return end_cond, winner
 
 
+class CaptureToWalda(capturer.CaptMethodIf):
+    """Test to make a child and on captures put the seeds into a walda."""
+
+    def do_captures(self, loc, direct):
+
+        captures = False
+        if (self.game.board[loc] == self.game.info.flags.convert_cnt
+                and self.game.child[loc] is None
+                and self.game.walda_poses[loc] in WALDA_TEST[self.game.turn]):
+
+            self.game.child[loc] = self.game.turn
+            captures = True
+
+        if self.game.deco.capt_ok.capture_ok(loc):
+
+            have_walda = False
+            for walda in range(self.game.cts.dbl_holes):
+                if self.game.child[walda] == self.game.turn:
+                    have_walda = True
+                    break
+
+            if have_walda:
+                self.game.board[walda] += self.game.board[loc]
+                self.game.board[loc] = 0
+                captures = True
+
+        assert not sum(self.game.store)
+        return captures
+
+
 # %%  game class
 
 
@@ -123,11 +154,13 @@ class Qelat(mancala.Mancala):
 
     def __init__(self, game_consts, game_info):
         """Call parent init.
-        Add our own deco to the seed_collector chain.
+        Add our own deco to the seed_collector chain and replace
+        the capturer chain.
         Compute the walda possibilities based on the board size."""
 
         super().__init__(game_consts, game_info)
         self.deco.ender = QelatEndMove(self, self.deco.ender)
+        self.deco.capturer = CaptureToWalda(self)
 
         holes = self.cts.holes
         dbl_holes = self.cts.dbl_holes
@@ -156,29 +189,3 @@ class Qelat(mancala.Mancala):
                     break
 
         return walda_locs
-
-
-    def capture_seeds(self, loc, _):
-        """Create a Walda, if we can.
-        Don't capture until Walda is created.
-        Then captured seeds are put in a Walda (child)."""
-
-        if (self.board[loc] == self.info.flags.convert_cnt
-                and self.child[loc] is None
-                and self.walda_poses[loc] in WALDA_TEST[self.turn]):
-
-            self.child[loc] = self.turn
-
-        if self.deco.capt_ok.capture_ok(loc):
-
-            have_walda = False
-            for walda in range(self.cts.dbl_holes):
-                if self.child[walda] == self.turn:
-                    have_walda = True
-                    break
-
-            if have_walda:
-                self.board[walda] += self.board[loc]
-                self.board[loc] = 0
-
-        assert not sum(self.store)
