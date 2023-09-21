@@ -264,9 +264,9 @@ class GSOppGets(GrandSlamCapt):
         return captures
 
 
-class MakeChildren(CaptMethodIf):
-    """If the sown seed makes convert_cnt on the opp side of the board,
-    designate a child.
+class MakeChild(CaptMethodIf):
+    """If the hole constains convert_cnt seeds
+    and the side test is good, designate a child.
     If a child is made don't do any other captures."""
 
     def do_captures(self, loc, direct):
@@ -277,7 +277,7 @@ class MakeChildren(CaptMethodIf):
                     or not self.game.info.flags.oppsidecapt):
 
                 self.game.child[loc] = self.game.turn
-                return False
+                return True
             return False
 
         return self.decorator.do_captures(loc, direct)
@@ -339,6 +339,6 @@ def deco_capturer(game):
     capturer = _add_grand_slam_deco(game, gflags, capturer)
 
     if gflags.child:
-        capturer = MakeChildren(game, capturer)
+        capturer = MakeChild(game, capturer)
 
     return capturer
