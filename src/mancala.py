@@ -344,7 +344,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         if self.deco.capturer.do_captures(loc, direct):
             game_log.step('Capture', self)
         else:
-            game_log.add('No captures done.', game_log.STEP)
+            game_log.step('No captures')
 
 
     def move(self, move):
