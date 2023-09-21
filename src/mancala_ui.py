@@ -429,24 +429,18 @@ class MancalaUI(tk.Frame):
             1. are not the current players hole
             2. are not available for play (e.g. no allowable move)"""
 
-
         turn = self.game.get_turn()
-        if turn:
-            self.stores[0].set_color(TURN_COLOR)
-            self.stores[1].set_color(SYSTEM_COLOR)
-        else:
-            self.stores[0].set_color(SYSTEM_COLOR)
-            self.stores[1].set_color(TURN_COLOR)
-
         actives = self.game.get_allowable_holes()
         turn_row = int(not turn)
         ai_turn = self.ai_player.get() and turn
         for row in range(2):
 
+            player = row == turn_row
             if self.info.flags.stores:
                 self.stores[row].set_store(self.game.get_store(row))
+                self.stores[row].set_color(
+                    TURN_COLOR if player else SYSTEM_COLOR)
 
-            player = row == turn_row
             for pos in range(self.game.cts.holes):
 
                 if self.game.info.flags.no_sides:
