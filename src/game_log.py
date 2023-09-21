@@ -113,12 +113,14 @@ class GameLog:
             self.add(str(game_obj), GameLog.MOVE)
 
 
-    def step(self, step_name, game_obj):
+    def step(self, step_name, game_obj=None):
         """Add a game step to the log."""
 
         if self._active:
-            self.add(f'\n    {step_name}:', GameLog.STEP)
-            self.add(textwrap.indent(str(game_obj), '    '), GameLog.STEP)
+            endchar = ':' if game_obj else '.'
+            self.add(f'\n    {step_name}{endchar}', GameLog.STEP)
+            if game_obj:
+                self.add(textwrap.indent(str(game_obj), '    '), GameLog.STEP)
 
 
     def prev(self):
