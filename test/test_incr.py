@@ -10,21 +10,19 @@ Unit test for incrementer.py
 
 # %% imports
 
-import sys
-
 import pytest
 pytestmark = pytest.mark.unittest
 
-sys.path.extend(['src'])
+import utils
 
-import game_interface as gi
+from context import game_interface as gi
+from context import game_constants as gc
+from context import incrementer as incr
+from context import mancala
+
 from game_interface import GameFlags
 from game_interface import Direct
-import game_constants as gc
-import incrementer as incr
 from incrementer import NOSKIPSTART
-import mancala
-import utils
 
 
 # %%

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-"""
+"""Report the unittest coverage for the files are expected to be covered.
+Usage:
 
 check_unit_cov testname
 
@@ -15,8 +16,6 @@ import argparse
 import importlib
 import json
 import sys
-
-sys.path.extend(['src', 'test'])
 
 
 def get_cov_data():

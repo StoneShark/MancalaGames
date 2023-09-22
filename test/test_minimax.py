@@ -7,16 +7,14 @@ Created on Tue Mar 28 09:09:31 2023
 # %% imports
 
 import enum
-import sys
 
 import pytest
 pytestmark = pytest.mark.unittest
 
-sys.path.extend(['src'])
 
-import ai_interface
-import cfg_keys as ckey
-import minimax
+from context import ai_interface
+from context import cfg_keys as ckey
+from context import minimax
 
 
 # %%

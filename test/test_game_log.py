@@ -10,14 +10,11 @@ Created on Sat Aug 19 15:21:06 2023
 @author: Ann"""
 
 import datetime
-import sys
 
 import pytest
 pytestmark = pytest.mark.unittest
 
-sys.path.extend(['src'])
-
-import game_log
+from context import game_log
 
 
 TEST_COVERS = ['src\\game_log.py']

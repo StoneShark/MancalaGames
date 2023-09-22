@@ -28,15 +28,12 @@ Created on Sun Jul 23 11:29:10 2023
 import atexit
 import os
 import random
-import sys
 
 import pytest
 pytestmark = pytest.mark.integtest
 
-sys.path.extend(['src'])
-
-from game_log import game_log
-import man_config
+from context import man_config
+from context import game_log
 
 from game_interface import WinCond
 
@@ -58,7 +55,7 @@ def game(request):
 @pytest.mark.stresstest
 def test_one_game(game, request):
 
-    game_log.active = False
+    game_log.game_log.active = False
 
     for _ in range(2000 if game.info.flags.rounds else 500):
         moves = game.get_moves()

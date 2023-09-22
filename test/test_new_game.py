@@ -3,21 +3,17 @@
 Created on Sun Sep 17 13:38:12 2023
 @author: Ann"""
 
-import sys
-
 import pytest
 
-sys.path.extend(['src'])
-
-import game_constants as gc
-import game_interface as gi
-import mancala
 import utils
+
+from context import game_constants as gc
+from context import game_interface as gi
+from context import mancala
 
 from game_interface import WinCond
 from game_interface import RoundStarter
 
-# %%
 
 TEST_COVERS = ['src\\new_game.py']
 

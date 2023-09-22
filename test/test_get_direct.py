@@ -3,17 +3,12 @@
 Created on Sat Sep 16 09:48:59 2023
 @author: Ann"""
 
-
-import sys
-
 import pytest
 pytestmark = pytest.mark.unittest
 
-sys.path.extend(['src'])
-
-import game_constants as gc
-import game_interface as gi
-import mancala
+from context import game_constants as gc
+from context import game_interface as gi
+from context import mancala
 
 from game_interface import Direct
 

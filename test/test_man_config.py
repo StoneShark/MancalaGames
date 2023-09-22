@@ -6,17 +6,15 @@ Created on Fri Jul 21 10:24:10 2023
 
 import os
 import random
-import sys
 import string
 
 import pytest
 pytestmark = pytest.mark.unittest
 
-sys.path.extend(['src'])
 
-import game_interface as gi
-import man_config
-import mancala
+from context import game_interface as gi
+from context import man_config
+from context import mancala
 
 from game_interface import Direct
 

@@ -7,20 +7,16 @@ Created on Sun Jul 23 11:29:10 2023
 
 import os
 import random
-import sys
 
 import pytest
 pytestmark = pytest.mark.integtest
 
-sys.path.extend(['src'])
-
-from game_log import game_log
-import man_config
-import minimax
+from context import man_config
+from context import minimax
+from context import game_log
 # import montecarlo_ts
 
 from game_interface import WinCond
-
 
 
 PATH = './GameProps/'
@@ -44,7 +40,7 @@ def player_class(request):
 @pytest.mark.stresstest
 def test_one_game(game, player_class):
 
-    game_log.active = False
+    game_log.game_log.active = False
 
     player = player_class(game)
     game.set_player(player)

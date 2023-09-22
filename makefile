@@ -48,20 +48,22 @@ all: all_tests pylint exe
 
 
 #  tests
-#
-#  don't forget -B option to force make to rebuild a target
 
-unit_tests: $(SOURCES) $(TESTS) $(GAMES)
+test/context.py: src
+	python tools/make_context.py
+
+
+unit_tests: $(SOURCES) $(TESTS) $(GAMES) test/context.py
 	-coverage run -m pytest -m unittest
 	coverage html
 
 
-integ_tests: $(SOURCES) $(TESTS) $(GAMES)
+integ_tests: $(SOURCES) $(TESTS) $(GAMES) test/context.py
 	-coverage run -m pytest -m integtest
 	coverage html
 
 
-all_tests: $(SOURCES) $(TESTS) $(GAMES)
+all_tests: $(SOURCES) $(TESTS) $(GAMES) test/context.py
 	-coverage run -m pytest
 	coverage html
 
@@ -71,12 +73,12 @@ vtest:
 	pytest -v test
 
 .PHONY: game_tests
-game_tests:
+game_tests: test/context.py
 	-coverage run --branch -m pytest $(GAME_TESTS)
 	coverage html
 	
 .PHONY: strest_tests	
-stress_tests:
+stress_tests: test/context.py
 	pytest test\\test_simul_game.py --nbr_runs 500
 	pytest test\\test_simul_players.py --nbr_runs 50
 
@@ -86,11 +88,10 @@ stress_tests:
 #       example: make test_var.test
 #  where <testfile> is a file of tests in the 'test' directory
 #  this rule cleans all previous coverage data and runs the one
-#  files of tests. This can be used to make certain that the
-#  code is actually tested and not just run as part of another
-#  test suite.
+#  file from test. It reports the coverage of the files that
+#  are expected to be covered (via TEST_COVERS in the test file).
 
-%.test: 
+%.test: test/context.py
 	coverage run --branch -m pytest test\\$(subst .test,.py,$@)
 	coverage json
 	python test\\check_unit_cov.py $(subst .test,,$@)

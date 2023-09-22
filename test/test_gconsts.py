@@ -7,14 +7,11 @@ Created on Sat Mar 25 05:31:10 2023
 
 # %%  imports
 
-import sys
 
 import pytest
 pytestmark = pytest.mark.unittest
 
-sys.path.extend(['src'])
-
-import game_constants as gc
+from context import game_constants as gc
 
 # %%
 

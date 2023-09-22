@@ -5,15 +5,11 @@ Created on Thu Aug 17 15:23:34 2023
 @author: Ann
 """
 
-import sys
-
 import pytest
 pytestmark = [pytest.mark.unittest, pytest.mark.integtest]
 
-sys.path.extend(['src'])
-
-import deka
-import man_config
+from context import deka
+from context import man_config
 
 from game_interface import WinCond
 

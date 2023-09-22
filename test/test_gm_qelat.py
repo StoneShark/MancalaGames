@@ -4,16 +4,14 @@
 Created on Thu Aug 17 06:42:25 2023
 @author: Ann"""
 
-import sys
 
 import pytest
 pytestmark = [pytest.mark.unittest, pytest.mark.integtest]
 
-sys.path.extend(['src'])
+from context import game_constants as gc
+from context import man_config
+from context import qelat
 
-import game_constants as gc
-import man_config
-import qelat
 
 TEST_COVERS = ['src\\qelat.py']
 

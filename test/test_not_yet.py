@@ -6,18 +6,15 @@ Created on Mon Jul 31 14:07:52 2023
 @author: Ann
 """
 
-import sys
-
 import pytest
 
-sys.path.extend(['src'])
 
-import hole_button
-import mancala_games
-import mancala_ui
-import play_mancala
-import play
-import montecarlo_ts
+from context import hole_button
+from context import mancala_games
+from context import mancala_ui
+from context import play_mancala
+from context import play
+from context import montecarlo_ts
 
 
 def test_files_not():

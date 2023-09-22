@@ -5,14 +5,12 @@ Tests sow stores and cross capture with pick own.
 Created on Thu Aug 17 06:42:25 2023
 @author: Ann"""
 
-import sys
 
 import pytest
 pytestmark = pytest.mark.integtest
 
-sys.path.extend(['src'])
 
-import man_config
+from context import man_config
 
 class TestXCaptSowOwn:
 

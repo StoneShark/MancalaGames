@@ -14,7 +14,6 @@ Created on Sun Jul 23 11:29:10 2023
 """
 
 import os
-import sys
 
 import pytest
 
@@ -22,9 +21,8 @@ import pytest
 # report warnings as test failures
 pytestmark = [pytest.mark.integtest, pytest.mark.filterwarnings("error")]
 
-sys.path.extend(['src'])
 
-import man_config
+from context import man_config
 
 
 

@@ -5,16 +5,13 @@ Created on Thu Aug 17 15:23:34 2023
 @author: Ann
 """
 
-import sys
-
 import pytest
 pytestmark = pytest.mark.integtest
 
-sys.path.extend(['src'])
 
+from context import man_config
+from context import mancala
 
-import man_config
-import mancala
 from game_interface import GrandSlam
 
 

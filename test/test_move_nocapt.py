@@ -15,21 +15,19 @@ Created on Sat Mar 25 07:32:54 2023
 
 # %% imports
 
-import sys
 
 import pytest
 pytestmark = pytest.mark.integtest
 
-sys.path.extend(['src'])
+import utils
 
-import game_interface as gi
+from context import game_interface as gi
+from context import game_constants as gc
+from context import mancala
+
 from game_interface import WinCond
 from game_interface import GameFlags
 from game_interface import Direct
-
-import game_constants as gc
-import mancala
-import utils
 
 
 # %%

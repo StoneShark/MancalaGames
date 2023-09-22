@@ -23,24 +23,20 @@ coverage html
 # %% imports
 
 import re
-import sys
 
 import pytest
 
-sys.path.extend(['src'])
-
-import cfg_keys as ckey
-import game_constants as gc
-import game_interface as gi
-import mancala
-import minimax
-import new_game
 import utils
+
+from context import cfg_keys as ckey
+from context import game_constants as gc
+from context import game_interface as gi
+from context import mancala
+from context import minimax
 
 from game_interface import GameFlags
 from game_interface import Direct
 from game_interface import WinCond
-from game_interface import RoundStarter
 
 # %%
 

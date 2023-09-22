@@ -8,7 +8,6 @@ Created on Sat Mar 25 06:44:29 2023
 
 # %% imports
 
-import sys
 
 import pytest
 
@@ -17,11 +16,9 @@ import pytest
 pytestmark = [pytest.mark.unittest, pytest.mark.filterwarnings("error")]
 
 
-sys.path.extend(['src'])
-
-import cfg_keys as ckey
-import game_interface as gi
-import ginfo_rules
+from context import cfg_keys as ckey
+from context import game_interface as gi
+from context import ginfo_rules
 
 from game_interface import Direct
 from game_interface import GameFlags
