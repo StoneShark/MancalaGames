@@ -12,8 +12,6 @@ import textwrap
 
 import man_path
 
-# XXXX record/keep all records but only print those <= set level
-
 
 class LogRecord:
     """A log record."""
