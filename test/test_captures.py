@@ -27,7 +27,7 @@ from game_interface import CrossCaptOwn
 
 # %%
 
-TEST_COVERS = ['src\\capturer.py', 'src\\capt_ok.py']
+TEST_COVERS = ['src\\capturer.py']
 
 
 # %%
