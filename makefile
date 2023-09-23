@@ -98,6 +98,7 @@ stress_tests: test/context.py
 
 
 UNIT_TESTS = test_allowables.test
+UNIT_TESTS += test_capt_ok.test
 UNIT_TESTS += test_captures.test
 UNIT_TESTS += test_end_move.test
 UNIT_TESTS += test_game_if.test
@@ -154,6 +155,8 @@ clean:
 #
 # build stand alone executables with a shared runtime 
 
+# cannot find a way in windows to make relative sym links or short cuts
+
 exe: MancalaGames/mancala_games.exe
 
 MancalaGames/mancala_games.exe: $(SOURCES) $(DATAFILES) mancala_games.spec
@@ -164,7 +167,9 @@ MancalaGames/mancala_games.exe: $(SOURCES) $(DATAFILES) mancala_games.spec
 	copy GameProps\\* MancalaGames\\GameProps
 	mkdir MancalaGames\\logs
 	copy logs\\README.txt MancalaGames\\logs
-	ln -s .\\MancalaGames\\runtime\\play.exe .\\MancalaGames\\play.exe
-	ln -s .\\MancalaGames\\runtime\\play_mancala.exe .\\MancalaGames\\play_mancala.exe
-	ln -s .\\MancalaGames\\runtime\\mancala_games.exe .\\MancalaGames\\mancala_games.exe
+	ln -s .\\MancalaGames\\runtime\\play .\\MancalaGames\\play.exe
+	ln -s .\\MancalaGames\\runtime\\play_mancala .\\MancalaGames\\play_mancala.exe
+	ln -s .\\MancalaGames\\runtime\\mancala_games .\\MancalaGames\\mancala_games.exe
 	-rmdir /S /Q build
+
+

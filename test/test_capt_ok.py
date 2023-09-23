@@ -161,7 +161,7 @@ class TestSingleClasses:
         assert cok.capture_ok(loc) == eok
 
 
-# %%  test cases
+# %%  test cases and methods
 
 """Build one array of all the test cases along with the
 expected values given a different combination of game flags.
@@ -192,21 +192,31 @@ CASES = [TCase( 0, N, T, 0, F, F, F, F, F, F, F, F, F),
          TCase(25, N, T, 1, T, T, F, F, T, T, F, F, F),
          TCase(26, N, T, 1, T, T, F, T, T, T, T, F, F),
          ]
-NBR_CASES = len(CASES)
 
-def get_fnames(eres_name):
-    """return a list of the test case field names with the result name."""
-    return FIELD_NAMES[:5] + [eres_name]
 
-def get_cases(eres_name):
-    """return a tuple of the test case with the choosen result."""
-    return [case[:5] + tuple([getattr(case, eres_name)]) for case in CASES]
+GPARAMS = {'ex_no_flags': {},
+           'ex_capt_on_1_3_4': {'capt_on': (1, 3, 4)},
+           'ex_evens': {'evens': True},
+           'ex_opp_side': {'oppsidecapt': True},
+           'ex_unlocked': {'moveunlock': True},
+           'ex_evens_opp': {'evens': True,
+                            'oppsidecapt': True},
+           'ex_capt_on_opp': {'capt_on':(1, 3, 4),
+                              'oppsidecapt': True},
+           'ex_all_set': {'evens': True,
+                          'moveunlock': True,
+                          'oppsidecapt': True,
+                          'capt_on': (1, 3, 4)}
+           }
+
+TEST_METHODS = GPARAMS.keys()
+
 
 
 # %%
 
 @pytest.mark.filterwarnings("ignore")
-class TestCaptures:
+class TestCaptOk:
 
     @pytest.fixture
     def make_game(self):
@@ -233,99 +243,22 @@ class TestCaptures:
         return _make_game
 
 
-
-    @pytest.mark.parametrize(get_fnames('ex_no_flags'),
-                              get_cases('ex_no_flags'),
-                              ids=[f'case_{n}' for n in range(NBR_CASES)])
-    def test_no_flags(self, make_game,
-                      seeds, child, unlocked, loc, turn, ex_no_flags):
-        """This is fantasy because the capturer doesn't call capt_ok,
-        if none of the flags are set."""
-
-        game = make_game(turn, seeds, child, unlocked)
-        assert game.deco.capt_ok.capture_ok(loc) == ex_no_flags
+    @pytest.fixture(params=TEST_METHODS)
+    def method(self, request):
+        return request.param
 
 
-
-    @pytest.mark.parametrize(get_fnames('ex_capt_on_1_3_4'),
-                              get_cases('ex_capt_on_1_3_4'),
-                              ids=[f'case_{n}' for n in range(NBR_CASES)])
-    def test_capt_on(self, make_game,
-                     seeds, child, unlocked, loc, turn, ex_capt_on_1_3_4):
-
-        game = make_game(turn, seeds, child, unlocked, capt_on=(1, 3, 4))
-
-        assert game.deco.capt_ok.capture_ok(loc) == ex_capt_on_1_3_4
+    @pytest.fixture(params=CASES)
+    def case(self, request):
+        return request.param
 
 
+    def test_capt_ok(self, method, case, make_game):
 
-    @pytest.mark.parametrize(get_fnames('ex_evens'),
-                              get_cases('ex_evens'),
-                              ids=[f'case_{n}' for n in range(NBR_CASES)])
-    def test_evens(self, make_game,
-                   seeds, child, unlocked, loc, turn,  ex_evens):
+        game = make_game(case.turn, case.seeds, case.child, case.unlocked,
+                         **GPARAMS[method])
+        assert game.deco.capt_ok.capture_ok(case.loc) == getattr(case, method)
 
-        game = make_game(turn, seeds, child, unlocked, evens=True)
-        assert game.deco.capt_ok.capture_ok(loc) == ex_evens
-
-
-
-    @pytest.mark.parametrize(get_fnames('ex_opp_side'),
-                              get_cases('ex_opp_side'),
-                              ids=[f'case_{n}' for n in range(NBR_CASES)])
-    def test_opp_side(self, make_game,
-                      seeds, child, unlocked, loc, turn, ex_opp_side):
-
-        game = make_game(turn, seeds, child, unlocked, oppsidecapt=True)
-        assert game.deco.capt_ok.capture_ok(loc) == ex_opp_side
-
-
-
-    @pytest.mark.parametrize(get_fnames('ex_unlocked'),
-                              get_cases('ex_unlocked'),
-                              ids=[f'case_{n}' for n in range(NBR_CASES)])
-    def test_unlocked(self, make_game,
-                      seeds, child, unlocked, loc, turn, ex_unlocked):
-
-        game = make_game(turn, seeds, child, unlocked, moveunlock=True)
-        assert game.deco.capt_ok.capture_ok(loc) == ex_unlocked
-
-
-
-    @pytest.mark.parametrize(get_fnames('ex_evens_opp'),
-                              get_cases('ex_evens_opp'),
-                              ids=[f'case_{n}' for n in range(NBR_CASES)])
-    def test_even_opp(self, make_game,
-                      seeds, child, unlocked, loc, turn, ex_evens_opp):
-
-        game = make_game(turn, seeds, child, unlocked,
-                         evens=True, oppsidecapt=True)
-        assert game.deco.capt_ok.capture_ok(loc) == ex_evens_opp
-
-
-
-    @pytest.mark.parametrize(get_fnames('ex_capt_on_opp'),
-                              get_cases('ex_capt_on_opp'),
-                              ids=[f'case_{n}' for n in range(NBR_CASES)])
-    def test_capt_on_opp(self, make_game,
-                         seeds, child, unlocked, loc, turn, ex_capt_on_opp):
-
-        game = make_game(turn, seeds, child, unlocked,
-                         capt_on=(1, 3, 4), oppsidecapt=True)
-        assert game.deco.capt_ok.capture_ok(loc) == ex_capt_on_opp
-
-
-
-    @pytest.mark.parametrize(get_fnames('ex_all_set'),
-                              get_cases('ex_all_set'),
-                              ids=[f'case_{n}' for n in range(NBR_CASES)])
-    def test_all_flags(self, make_game,
-                       seeds, child, unlocked, loc, turn, ex_all_set):
-
-        game = make_game(turn, seeds, child, unlocked,
-                         evens=True, moveunlock=True, oppsidecapt=True,
-                         capt_on=(1, 3, 4))
-        assert game.deco.capt_ok.capture_ok(loc) == ex_all_set
 
 
 # %%
