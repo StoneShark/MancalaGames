@@ -32,39 +32,35 @@ F = False
 N = None
 
 
-# %% minimum game class for capt_ok
-
-
-class Info:
-
-    def __init__(self):
-        self.capt_on = ()
-
-class Cts:
-
-   def opp_side(self, turn, loc):
-       if turn:
-           return loc in [0, 1]
-       return loc in [2, 3]
-
-
-class CaptOkTestGame:
-
-    def __init__(self):
-
-        self.turn = False
-        self.info = Info()
-        self.cts = Cts()
-
-        self.board = [2, 2, 2, 2]
-        self.child = [F, F, F, F]
-        self.unlocked = [T, T, T, T]
-
-
-
 # %%
 
 class TestSingleClasses:
+
+
+    @pytest.fixture
+    def game(self):
+        """minimum game class for capt_ok"""
+
+        class Info:
+            def __init__(self):
+                self.capt_on = ()
+
+        class Cts:
+           def opp_side(self, turn, loc):
+               if turn:
+                   return loc in [0, 1]
+               return loc in [2, 3]
+
+        class CaptOkTestGame:
+            def __init__(self):
+                self.turn = False
+                self.info = Info()
+                self.cts = Cts()
+                self.board = [2, 2, 2, 2]
+                self.child = [F, F, F, F]
+                self.unlocked = [T, T, T, T]
+
+        return CaptOkTestGame()
 
 
     @pytest.mark.parametrize('child, seeds, eok',
@@ -75,9 +71,7 @@ class TestSingleClasses:
                                (True, 3, False),
                                (None, 3, True),
                               ])
-    def test_needseeds_nochild(self, child, seeds, eok):
-
-        game = CaptOkTestGame()
+    def test_needseeds_nochild(self, game, child, seeds, eok):
 
         loc = 0
         game.board[loc] = seeds
@@ -92,9 +86,7 @@ class TestSingleClasses:
                               [(False, 3, False),
                                (True, 3, True),
                               ])
-    def test_unlocked(self, unlocked, seeds, eok):
-
-        game = CaptOkTestGame()
+    def test_unlocked(self, game, unlocked, seeds, eok):
 
         loc = 0
         game.board[loc] = seeds
@@ -115,9 +107,8 @@ class TestSingleClasses:
                               (True, 2, False),
                               (True, 3, False),
                               ])
-    def test_oppside(self, turn, loc, eok):
+    def test_oppside(self, game, turn, loc, eok):
 
-        game = CaptOkTestGame()
         game.turn = turn
         cok = capt_ok.CaptOppSide(game, capt_ok.CaptTrue(game))
 
@@ -132,9 +123,8 @@ class TestSingleClasses:
                               (25, False),
                               (26, True)
                               ])
-    def test_evens(self, seeds, eok):
+    def test_evens(self, game, seeds, eok):
 
-        game = CaptOkTestGame()
         loc = 0
         game.board[loc] = seeds
         cok = capt_ok.CaptEvens(game, capt_ok.CaptTrue(game))
@@ -150,9 +140,8 @@ class TestSingleClasses:
                               (5, False),
                               (6, False),
                               ])
-    def test_capt_on(self, seeds, eok):
+    def test_capt_on(self, game, seeds, eok):
 
-        game = CaptOkTestGame()
         loc = 0
         game.board[loc] = seeds
         game.info.capt_on = [1, 3, 4]
