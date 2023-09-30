@@ -15,6 +15,12 @@ from game_log import game_log
 from incrementer import NOSKIPSTART
 
 
+# %% enum
+
+# picked own but did not capture, must be truthy
+PICKED = 2
+
+
 # %% capt method enums and interface
 
 
@@ -98,6 +104,7 @@ class CaptCross(CaptMethodIf):
             self.game.store[self.game.turn] += self.game.board[cross]
             self.game.board[cross] = 0
             return True
+
         return False
 
 
@@ -124,8 +131,8 @@ class CaptCrossPickOwnOnCapt(CaptMethodIf):
 
 
 class CaptCrossPickOwn(CaptMethodIf):
-    """Cross capture, pick own even if no capture on my side
-    of the board, but do not pick from a designated child
+    """Cross capture, pick own even if no capture,
+    but do not pick from a designated child
     or a locked hole."""
 
     def do_captures(self, loc, direct):
@@ -133,12 +140,19 @@ class CaptCrossPickOwn(CaptMethodIf):
 
         captures = self.decorator.do_captures(loc, direct)
 
-        if (self.game.cts.my_side(self.game.turn, loc)
+        side_ok = True
+        if self.game.info.flags.oppsidecapt:
+            side_ok = self.game.cts.my_side(self.game.turn, loc)
+
+        if (side_ok
+                and self.game.board[loc] == 1
                 and self.game.child[loc] is None
                 and self.game.unlocked[loc]):
 
             self.game.store[self.game.turn] += 1
             self.game.board[loc] = 0
+            if not captures:
+                captures = PICKED
             game_log.step('Capturer (picked own w/o)', self)
 
         return captures
@@ -153,11 +167,10 @@ class CaptContinueXCapt(CaptMethodIf):
     def do_captures(self, loc, direct):
 
         captures = self.decorator.do_captures(loc, direct)
+        if captures == PICKED:
+            return True
         if not captures:
             return False
-
-        if not self.game.info.flags.capsamedir:
-            direct = direct.opp_dir()
 
         while True:
 
@@ -181,7 +194,8 @@ class GrandSlamCapt(CaptMethodIf):
     This class is still abstract."""
 
     def is_grandslam(self, loc, direct):
-        """Return True if the capture was a grandslam.
+        """Return True if the capture was a grandslam and
+        True if there were any captures.
 
         It would be better if the presence of seeds could be
         tested before sowing. If the opponent has no seeds
@@ -190,12 +204,13 @@ class GrandSlamCapt(CaptMethodIf):
 
         opp_rng = self.game.cts.get_opp_range(self.game.turn)
         start_seeds = any(self.game.board[tloc] for tloc in opp_rng)
+        captures = self.decorator.do_captures(loc, direct)
 
-        if start_seeds and self.decorator.do_captures(loc, direct):
+        if start_seeds and captures:
             end_seeds = any(self.game.board[tloc] for tloc in opp_rng)
             return not end_seeds, True
 
-        return False, False
+        return False, captures
 
 
 class GSNone(GrandSlamCapt):
@@ -286,7 +301,9 @@ class MakeChild(CaptMethodIf):
 # %% build deco chains
 
 def _add_cross_capt_deco(game, gflags, capturer):
-    """Add the cross capture decorators to the capturer deco."""
+    """Add the cross capture decorators to the capturer deco.
+
+    crosscapt and multicapt is always captsamedir"""
 
     capturer = CaptCross(game, capturer)
 
