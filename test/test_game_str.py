@@ -95,6 +95,7 @@ class TestGameStr:
                                 flags=GameFlags(mustpass=True,
                                                 stores=True,
                                                 child=True,
+                                                convert_cnt=2,
                                                 sow_direct=Direct.CCW,
                                                 evens=True),
                                 rules=mancala.Mancala.rules

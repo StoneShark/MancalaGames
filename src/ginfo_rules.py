@@ -134,6 +134,13 @@ def build_rules():
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
+        'child_convert_cnt',
+        rule=lambda ginfo: (ginfo.flags.child  and
+                            not ginfo.flags.convert_cnt),
+        msg="CHILD without CONVERT_CNT doesn't do anything.",
+        warn=True)
+
+    man_rules.add_rule(
         'child_gs_legal',
         rule=lambda ginfo: (ginfo.flags.child  and
                             ginfo.flags.grandslam != GrandSlam.LEGAL),
@@ -207,6 +214,16 @@ def build_rules():
         rule=lambda ginfo: ginfo.flags.capsamedir and not ginfo.flags.multicapt,
         msg="CAPSAMEDIR without MULTICAPT has no effect.",
         warn=True)
+
+    man_rules.add_rule(
+        'xcapt_multi_same',
+        rule=lambda ginfo: (ginfo.flags.crosscapt and ginfo.flags.multicapt
+                            and not ginfo.flags.capsamedir),
+        msg="CROSSCAPT with MULTICAPT without CAPSAMEDIR"
+            "is the same as just CROSSCAPT.",
+        warn=True)
+        # capturing the opp dir (as usual) wont capture because
+        # the preceeding holes were just sown, that is, not empty
 
     man_rules.add_rule(
         'warn_crosscapt_evens',

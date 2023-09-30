@@ -64,7 +64,7 @@ def build_no_sides_rules():
         rules.add_rule(
             f'bad_{flag}',
             rule=ft.partial(rev_getattr, flag),
-            msg=f'No_Sides cannot be used with {flag.upper()}.',
+            msg=f'NoSides cannot be used with {flag.upper()}.',
             excp=gi.GameInfoError)
 
     rules |= ginfo_rules.build_rules()

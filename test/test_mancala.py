@@ -97,6 +97,7 @@ class TestSetPlayer:
                                 flags=GameFlags(blocks=True,
                                                 rounds=True,
                                                 child=True,
+                                                convert_cnt=2,
                                                 moveunlock=True),
                                 ai_params={"mm_depth" : [1, 1, 3, 5]},
                                 rules=mancala.Mancala.rules)
@@ -127,6 +128,7 @@ class TestGameState:
                                 flags=GameFlags(blocks=True,
                                                 rounds=True,
                                                 child=True,
+                                                convert_cnt=2,
                                                 moveunlock=True),
                                 ai_params={"mm_depth" : [1, 1, 3, 5]},
                                 rules=mancala.Mancala.rules)
