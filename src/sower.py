@@ -146,10 +146,8 @@ class SimpleLapCont(LapContinuerIf):
         if loc is WinCond.END_STORE:
             return False
 
-        if self.game.board[loc] > 1:
-            return True
+        return self.game.board[loc] > 1
 
-        return False
 
 
 class ChildLapCont(LapContinuerIf):
