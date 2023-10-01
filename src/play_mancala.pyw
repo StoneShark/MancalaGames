@@ -73,14 +73,24 @@ class GameSelect(tk.Frame):
 
         self.pack()
 
+        new_col = len(CHOICES) // 2 - 1
+        row = 0
+        col = 0
         for name, about in CHOICES.items():
 
             button = tk.Button(self, borderwidth=2, width=20, text=name,
                                command=ft.partial(self._save_game, name),
                                anchor='center', font='bold')
-            button.pack(side='top', fill=tk.X)
+            button.grid(row=row, column=col)
             button.bind('<Enter>', ft.partial(self._enter, button, about))
             button.bind('<Leave>', ft.partial(self._enter, button))
+
+            if row >= new_col:
+                row = 0
+                col = 1
+            else:
+                row += 1
+
 
 
     def _enter(self, button, text, _=None):
