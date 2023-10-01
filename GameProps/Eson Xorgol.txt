@@ -16,11 +16,7 @@
       },
       "scorer": {
          "stores_m": 4,
-         "access_m": 0,
-         "seeds_m": 0,
-         "empties_m": 0,
          "child_cnt_m": 0,
-         "evens_m": 0,
          "easy_rand": 0,
          "repeat_turn": 0
       },

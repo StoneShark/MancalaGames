@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "NoSides",
-      "about": "\n",
+      "about": "NoSide: both players may move from any hole.\nStores are owned as usual.\nDefault game is capture on 2s.",
       "flags": {
          "no_sides": true,
          "stores": true,
