@@ -62,6 +62,17 @@ class CaptEvens(CaptOkIf):
         return self.decorator.capture_ok(loc)
 
 
+class CaptGreaterThan(CaptOkIf):
+    """Capture on values greater than cthresh."""
+
+    def capture_ok(self, loc):
+        """Return True if capture from loc is ok"""
+
+        if self.game.board[loc] < self.game.info.flags.cthresh:
+            return False
+        return self.decorator.capture_ok(loc)
+
+
 class CaptOppSide(CaptOkIf):
     """Capture from opposite side only."""
 
@@ -119,6 +130,9 @@ def deco_capt_ok(game):
 
     if gflags.evens:
         capt_ok = CaptEvens(game, capt_ok)
+
+    if gflags.cthresh:
+        capt_ok = CaptGreaterThan(game, capt_ok)
 
     if gflags.oppsidecapt:
         capt_ok = CaptOppSide(game, capt_ok)

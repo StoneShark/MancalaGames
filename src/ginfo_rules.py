@@ -252,6 +252,7 @@ def build_rules():
         rule=lambda ginfo: not any([ginfo.flags.evens,
                                     ginfo.flags.crosscapt,
                                     ginfo.flags.sow_own_store,
+                                    ginfo.flags.cthresh,
                                     ginfo.capt_on]),
         msg='No capture mechanism provided.',
         warn=True)

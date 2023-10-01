@@ -350,7 +350,7 @@ def deco_capturer(game):
         if not gflags.capsamedir:
             capturer = CaptOppDirMultiple(game, capturer)
 
-    elif gflags.evens or game.info.capt_on:
+    elif gflags.evens or game.info.capt_on or gflags.cthresh:
         capturer = CaptSingle(game)
 
     capturer = _add_grand_slam_deco(game, gflags, capturer)

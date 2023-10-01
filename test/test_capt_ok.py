@@ -152,40 +152,50 @@ class TestSingleClasses:
 
 # %%  test cases and methods
 
-"""Build one array of all the test cases along with the
-expected values given a different combination of game flags.
 
-The table was created with a spreadsheet 'capt_ok_test_cases.ods'
-"""
+CONVERT_DICT = {'None': None,
+                'TRUE': True,
+                'FALSE': False,
+                '': 0,
+                }
 
-FIELD_NAMES = ['seeds', 'child', 'unlocked', 'loc', 'turn',
-               'ex_no_flags', 'ex_capt_on_1_3_4', 'ex_evens', 'ex_opp_side',
-               'ex_unlocked', 'ex_evens_opp', 'ex_capt_on_opp', 'ex_all_set']
+def convert(val, col, line):
 
-TCase = collections.namedtuple('TCase', FIELD_NAMES)
+    if val in CONVERT_DICT:
+        return CONVERT_DICT[val]
 
-#              test case   <-|-> expected results
-CASES = [TCase( 0, N, T, 0, F, F, F, F, F, F, F, F, F),
-         TCase( 1, T, T, 0, F, F, F, F, F, F, F, F, F),
-         TCase( 1, N, T, 0, F, T, T, F, F, T, F, F, F),
-         TCase( 1, N, F, 0, F, T, T, F, F, F, F, F, F),
-         TCase( 1, N, T, 0, F, T, T, F, F, T, F, F, F),
-         TCase( 2, N, T, 0, F, T, F, T, F, T, F, F, F),
-         TCase( 2, N, T, 2, F, T, F, T, T, T, T, F, F),
-         TCase( 2, N, T, 1, T, T, F, T, T, T, T, F, F),
-         TCase( 2, N, T, 3, T, T, F, T, F, T, F, F, F),
-         TCase( 3, N, T, 1, T, T, T, F, T, T, F, T, F),
-         TCase( 4, N, T, 1, T, T, T, T, T, T, T, T, T),
-         TCase( 5, N, T, 1, T, T, F, F, T, T, F, F, F),
-         TCase( 6, N, T, 1, T, T, F, T, T, T, T, F, F),
-         TCase(25, N, T, 1, T, T, F, F, T, T, F, F, F),
-         TCase(26, N, T, 1, T, T, F, T, T, T, T, F, F),
-         ]
+    if all(d in '0123456789' for d in val):
+        return int(val)
+
+    if not val:
+        return 0
+
+    raise ValueError(f"Unknown value type at line:col {line}/{col}: _{val}_")
+
+
+def read_test_cases():
+
+    global FIELD_NAMES, CASES
+
+    with open('test/capt_ok_test_cases.csv', 'r', encoding='utf-8') as file:
+        lines = file.readlines()
+
+    FIELD_NAMES = lines[0].strip().split(',')
+    Case = collections.namedtuple('Case', FIELD_NAMES)
+
+    CASES = []
+    for lcnt, line in enumerate(lines[3:]):
+        CASES += [Case(*(convert(val, col + 1, lcnt + 4)
+                       for col, val in enumerate(line.strip().split(','))))]
+
+
+read_test_cases()
 
 
 GPARAMS = {'ex_no_flags': {},
            'ex_capt_on_1_3_4': {'capt_on': (1, 3, 4)},
            'ex_evens': {'evens': True},
+           'ex_cthresh': {'cthresh': 4},
            'ex_opp_side': {'oppsidecapt': True},
            'ex_unlocked': {'moveunlock': True},
            'ex_evens_opp': {'evens': True,
@@ -212,14 +222,15 @@ class TestCaptOk:
 
         def _make_game (turn, seeds, child, unlocked,
                         evens=False, oppsidecapt=False,
-                        moveunlock=False, capt_on=()):
+                        moveunlock=False, capt_on=(), cthresh=0):
 
             game_consts = gc.GameConsts(nbr_start=4, holes=2)
             game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                     capt_on=capt_on,
                                     flags=gi.GameFlags(evens=evens,
                                                        oppsidecapt=oppsidecapt,
-                                                       moveunlock=moveunlock),
+                                                       moveunlock=moveunlock,
+                                                       cthresh=cthresh),
                                     rules=mancala.Mancala.rules)
 
             game = mancala.Mancala(game_consts, game_info)

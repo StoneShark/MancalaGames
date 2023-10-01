@@ -236,6 +236,7 @@ class NoSides(mancala.Mancala):
         if not any([ginfo.flags.evens,
                     ginfo.flags.crosscapt,
                     ginfo.flags.sow_own_store,
+                    ginfo.flags.cthresh,
                     ginfo.capt_on]):
 
             captor = CaptTwoOut(self)

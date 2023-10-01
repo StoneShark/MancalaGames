@@ -61,7 +61,7 @@ def build_deka_rules():
         msg='Deka requires that GRANDSLAM be Legal.',
         excp=gi.GameInfoError)
 
-    capt_flags = ['capsamedir', 'crosscapt', 'evens',
+    capt_flags = ['capsamedir', 'crosscapt', 'evens', 'cthresh',
                   'multicapt', 'oppsidecapt', 'xcpickown']
     for flag in capt_flags:
         deka_rules.add_rule(
