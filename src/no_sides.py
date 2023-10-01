@@ -11,6 +11,7 @@ Created on Thu Jan  5 03:15:41 2023
 import functools as ft
 
 import allowables
+import capturer
 import end_move
 import game_interface as gi
 import get_moves
@@ -21,6 +22,7 @@ import sow_starter
 from game_interface import Direct
 from game_interface import MoveTpl
 from game_log import game_log
+from incrementer import NOSKIPSTART
 
 
 # %%  build rules
@@ -57,6 +59,17 @@ def build_no_sides_rules():
             'are incompatible with NoSides.',
         excp=gi.GameInfoError)
 
+    rules.add_rule(
+        'warn_eson_oppside',
+        rule=lambda ginfo: (not ginfo.flags.capsamedir
+                            and not any([ginfo.flags.evens,
+                                         ginfo.flags.crosscapt,
+                                         ginfo.flags.sow_own_store,
+                                         ginfo.capt_on])),
+        msg="Using ESON XORGOL capture mechanism without CAPSAMEDIR "
+            "has very rare captures.",
+        warn=True)
+
     bad_flags = ['grandslam', 'mustpass', 'mustshare', 'oppsidecapt',
                  'rounds', 'round_starter', 'rnd_left_fill', 'rnd_umove',
                  'visit_opp']
@@ -69,6 +82,8 @@ def build_no_sides_rules():
 
     rules |= ginfo_rules.build_rules()
     del rules['bad_no_side']
+    del rules['warn_no_capt']
+    del rules['warn_capsamedir_multicapt']
 
     return rules
 
@@ -130,6 +145,28 @@ class SowStartMove(sow_starter.SowStartIf):
         return self.decorator.start_sow(loc)
 
 
+class CaptTwoOut(capturer.CaptMethodIf):
+    """If the seed ended in a hole which previously had seeds,
+    and the next hole is empty, capture the seeds in the
+    following hole."""
+
+    def do_captures(self, loc, direct):
+
+        loc_p1 = self.game.deco.incr.incr(loc, direct, NOSKIPSTART)
+        loc_p2 = self.game.deco.incr.incr(loc_p1, direct, NOSKIPSTART)
+
+        if (self.game.board[loc] > 1
+                and not self.game.board[loc_p1]                # == 0
+                and self.game.board[loc_p2]                    # > 0
+                and self.game.child[loc_p2] is None
+                and self.game.unlocked[loc_p2]):
+
+            self.game.store[self.game.turn] += self.game.board[loc_p2]
+            self.game.board[loc_p2] = 0
+            return True
+        return False
+
+
 class CountOnlySeedsStores(end_move.ClaimSeedsIf):
     """Ignore unclaimed seeds; count stores and children"""
     #pylint: disable=duplicate-code
@@ -172,6 +209,7 @@ class NoSides(mancala.Mancala):
             moves: replace the chain with our own class
             get_dir:  maybe nothing??
             sow_start: replace the move/loc translator
+            capture: if no other capture mech provided use ours
             winner: replace bottom taker
             ender: replace bottom taker (deco chain is always the same)
             quitter: replace taker
@@ -187,3 +225,15 @@ class NoSides(mancala.Mancala):
         #         win   notPlay   win
         self.deco.ender.decorator.decorator.claimer = CountOnlySeedsStores(self)
         self.deco.quitter.claimer = CountOnlySeedsStores(self)
+
+        ginfo = self.info
+        if not any([ginfo.flags.evens,
+                    ginfo.flags.crosscapt,
+                    ginfo.flags.sow_own_store,
+                    ginfo.capt_on]):
+
+            captor = CaptTwoOut(self)
+            if not ginfo.flags.capsamedir:
+                captor = capturer.CaptOppDirMultiple(self, captor)
+
+            self.deco.capturer = captor
