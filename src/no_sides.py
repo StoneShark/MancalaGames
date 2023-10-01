@@ -58,6 +58,8 @@ def build_no_sides_rules():
         msg='Scorer multipliers empties, evens, access and seeds '
             'are incompatible with NoSides.',
         excp=gi.GameInfoError)
+        # child_cnt_m shouldn't be allowed either (it compares top/bot sides)
+
         # XXXX could override scorer for evens, empties and access
         # to max/min the total count of them. would need to
         # restructure base game scorer to allow individual
