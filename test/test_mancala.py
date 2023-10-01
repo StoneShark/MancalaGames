@@ -25,6 +25,7 @@ coverage html
 import re
 
 import pytest
+pytestmark = pytest.mark.unittest
 
 import utils
 
