@@ -4,6 +4,7 @@ Created on Sun Sep 17 13:38:12 2023
 @author: Ann"""
 
 import pytest
+pytestmark = pytest.mark.unittest
 
 import utils
 
