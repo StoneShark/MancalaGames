@@ -356,7 +356,7 @@ class MancalaGames(tk.Frame):
         self._add_bool(bfrm, 'Stores Present', tkv.stores, rcnt)
 
         rcnt = Counter()
-        self._add_opts(bfrm, 'Start Seeds', tkv.seeds, SIZES, (rcnt, 2))
+        self._add_opts(bfrm, 'Start Seeds', tkv.seeds, SEEDS, (rcnt, 2))
 
 
     def _build_game_dyn_ui(self, frame):

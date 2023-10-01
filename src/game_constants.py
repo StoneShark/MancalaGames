@@ -16,7 +16,7 @@ import dataclasses as dc
 MAX_HOLES = 14
 MIN_HOLES = 2
 
-MAX_SEEDS = 8
+MAX_SEEDS = 12
 
 
 class GameConstsError(Exception):
