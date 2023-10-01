@@ -149,6 +149,7 @@ clean:
 	-del .coverage
 	-del coverage.json
 	-del src\\.coverage
+	-del test\\context.py
 
 
 # exe
