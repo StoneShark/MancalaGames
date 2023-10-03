@@ -23,7 +23,7 @@ from game_log import game_log
 from hole_button import Behavior
 from game_interface import WinCond
 from game_interface import Direct
-from game_interface import PASS_TOKEN
+
 
 # %%   constants
 
