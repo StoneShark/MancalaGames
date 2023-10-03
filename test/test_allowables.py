@@ -93,6 +93,7 @@ class TestAllowables:
         game.board = board
         game.blocked = blocked
         game.child = child
+        game.store = [game.cts.total_seeds - sum(board), 0]
 
         assert game.deco.allow.get_allowable_holes() == eresult
 
@@ -149,6 +150,7 @@ class TestAllowables:
         game.board = board
         game.blocked = blocked
         game.child = child
+        game.store = [game.cts.total_seeds - sum(board), 0]
 
         assert game.deco.allow.get_allowable_holes() == eresult
 

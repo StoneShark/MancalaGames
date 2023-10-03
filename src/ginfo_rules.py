@@ -283,14 +283,6 @@ def build_rules():
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
-        'capt_on_1_gs_odd',
-        rule=lambda ginfo: (ginfo.flags.grandslam == GrandSlam.OPP_GETS_REMAIN
-                            and 1 in ginfo.capt_on),
-        msg='GRANDSLAM OPP TAKES with captures on 1, '
-        'can result in unfortunate end games.',
-        warn=True)
-
-    man_rules.add_rule(
         'too_many_udir',
         rule=lambda ginfo: len(ginfo.udir_holes) > ginfo.nbr_holes,
         msg='Too many udir_holes specified.',

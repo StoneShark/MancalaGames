@@ -199,15 +199,10 @@ class GrandSlamCapt(CaptMethodIf):
 
     def is_grandslam(self, mdata):
         """Return True if the capture was a grandslam and
-        True if there were any captures.
-
-        It would be better if the presence of seeds could be
-        tested before sowing. If the opponent has no seeds
-        with captures on 1s, the game ends and the opponent
-        gets all of my seeds."""
+        True if there were any captures."""
 
         opp_rng = self.game.cts.get_opp_range(self.game.turn)
-        start_seeds = any(self.game.board[tloc] for tloc in opp_rng)
+        start_seeds = any(mdata.board[tloc] for tloc in opp_rng)
 
         captures = self.decorator.do_captures(mdata)
 
@@ -374,10 +369,10 @@ def deco_capturer(game):
 
     capturer = _add_grand_slam_deco(game, gflags, capturer)
 
-    if gflags.nosinglecapt:
-        capturer = NoSingleSeedCapt(game, capturer)
-
     if gflags.child:
         capturer = MakeChild(game, capturer)
+
+    if gflags.nosinglecapt:
+        capturer = NoSingleSeedCapt(game, capturer)
 
     return capturer

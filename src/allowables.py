@@ -93,7 +93,9 @@ class MustShare(AllowableIf):
             # and if the move is a win, shouldn't it be allowed even if
             # it doesn't share seeds?
 
+            game_log.set_simulate()
             self.game.do_sow(pos)
+            game_log.clear_simulate()
 
             if any(self.game.board[tloc] for tloc in opp_rng):
                 rval[pos] = True
@@ -133,11 +135,13 @@ class NoGrandSlam(AllowableIf):
                 self.game.state = saved_state
                 continue
 
+            game_log.set_simulate()
             mdata = self.game.do_sow(pos)
             if mdata.capt_loc is WinCond.ENDLESS:
                 self.game.state = saved_state
                 continue
             self.game.capture_seeds(mdata)
+            game_log.clear_simulate()
 
             if any(self.game.board[tloc] for tloc in opp_rng):
                 rval[pos] = True
