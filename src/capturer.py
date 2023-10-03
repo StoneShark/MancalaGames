@@ -32,7 +32,7 @@ class CaptMethodIf(abc.ABC):
         self.decorator = decorator
 
     @abc.abstractmethod
-    def do_captures(self, loc, direct):
+    def do_captures(self, mdata):
         """Do captures.
         Return True if captures were done, False otherwise."""
 
@@ -42,7 +42,7 @@ class CaptMethodIf(abc.ABC):
 class CaptNone(CaptMethodIf):
     """No captures."""
 
-    def do_captures(self, loc, direct):
+    def do_captures(self, mdata):
         return False
 
 
@@ -53,12 +53,12 @@ class CaptSingle(CaptMethodIf):
     """Capture on selected values (CaptOn or Evens),
     no multi, no cross."""
 
-    def do_captures(self, loc, direct):
+    def do_captures(self, mdata):
 
-        if self.game.deco.capt_ok.capture_ok(loc):
+        if self.game.deco.capt_ok.capture_ok(mdata.capt_loc):
 
-            self.game.store[self.game.turn] += self.game.board[loc]
-            self.game.board[loc] = 0
+            self.game.store[self.game.turn] += self.game.board[mdata.capt_loc]
+            self.game.board[mdata.capt_loc] = 0
             return True
         return False
 
@@ -67,16 +67,18 @@ class CaptMultiple(CaptMethodIf):
     """Multi capture, in specified direction.
     capt_ok_deco encapsulates many of the capture parameters incl side."""
 
-    def do_captures(self, loc, direct):
+    def do_captures(self, mdata):
         """Capture loop"""
         captures = False
+        loc = mdata.capt_loc
+
         while self.game.deco.capt_ok.capture_ok(loc):
 
             self.game.store[self.game.turn] += self.game.board[loc]
             self.game.board[loc] = 0
             captures = True
 
-            loc = self.game.deco.incr.incr(loc, direct, NOSKIPSTART)
+            loc = self.game.deco.incr.incr(loc, mdata.direct, NOSKIPSTART)
 
         return captures
 
@@ -85,20 +87,21 @@ class CaptOppDirMultiple(CaptMethodIf):
     """Multi capture, opposite direction.
     capt_ok_deco encapsulates many of the capture parameters incl side."""
 
-    def do_captures(self, loc, direct):
+    def do_captures(self, mdata):
         """Change direction then use the deco chain."""
-        return self.decorator.do_captures(loc, direct.opp_dir())
+        mdata.direct = mdata.direct.opp_dir()
+        return self.decorator.do_captures(mdata)
 
 
 class CaptCross(CaptMethodIf):
     """Cross capture, no pick own."""
 
-    def do_captures(self, loc, direct):
+    def do_captures(self, mdata):
         """Do cross capture"""
 
-        cross = self.game.cts.dbl_holes - loc - 1
+        cross = self.game.cts.dbl_holes - mdata.capt_loc - 1
 
-        if (self.game.board[loc] == 1
+        if (self.game.board[mdata.capt_loc] == 1
                 and self.game.deco.capt_ok.capture_ok(cross)):
 
             self.game.store[self.game.turn] += self.game.board[cross]
@@ -115,17 +118,17 @@ class CaptCrossPickOwnOnCapt(CaptMethodIf):
     Don't used capt_ok, because oppsidecapt might prevent
     picking."""
 
-    def do_captures(self, loc, direct):
+    def do_captures(self, mdata):
         """Test for and pick own."""
 
-        captures = self.decorator.do_captures(loc, direct)
+        captures = self.decorator.do_captures(mdata)
 
         if (captures
-                and self.game.child[loc] is None
-                and self.game.unlocked[loc]):
+                and self.game.child[mdata.capt_loc] is None
+                and self.game.unlocked[mdata.capt_loc]):
 
             self.game.store[self.game.turn] += 1
-            self.game.board[loc] = 0
+            self.game.board[mdata.capt_loc] = 0
 
         return captures
 
@@ -135,22 +138,22 @@ class CaptCrossPickOwn(CaptMethodIf):
     but do not pick from a designated child
     or a locked hole."""
 
-    def do_captures(self, loc, direct):
+    def do_captures(self, mdata):
         """Test for and pick own."""
 
-        captures = self.decorator.do_captures(loc, direct)
+        captures = self.decorator.do_captures(mdata)
 
         side_ok = True
         if self.game.info.flags.oppsidecapt:
-            side_ok = self.game.cts.my_side(self.game.turn, loc)
+            side_ok = self.game.cts.my_side(self.game.turn, mdata.capt_loc)
 
         if (side_ok
-                and self.game.board[loc] == 1
-                and self.game.child[loc] is None
-                and self.game.unlocked[loc]):
+                and self.game.board[mdata.capt_loc] == 1
+                and self.game.child[mdata.capt_loc] is None
+                and self.game.unlocked[mdata.capt_loc]):
 
             self.game.store[self.game.turn] += 1
-            self.game.board[loc] = 0
+            self.game.board[mdata.capt_loc] = 0
             if not captures:
                 captures = PICKED
             game_log.step('Capturer (picked own w/o)', self)
@@ -164,17 +167,18 @@ class CaptContinueXCapt(CaptMethodIf):
     otherwise run the other decorators to do xpick and optional pick
     if there was a capture, check for continued capture."""
 
-    def do_captures(self, loc, direct):
+    def do_captures(self, mdata):
 
-        captures = self.decorator.do_captures(loc, direct)
+        captures = self.decorator.do_captures(mdata)
         if captures == PICKED:
             return True
         if not captures:
             return False
 
+        loc = mdata.capt_loc
         while True:
 
-            loc = self.game.deco.incr.incr(loc, direct, NOSKIPSTART)
+            loc = self.game.deco.incr.incr(loc, mdata.direct, NOSKIPSTART)
             cross = self.game.cts.dbl_holes - loc - 1
 
             if (not self.game.board[loc]
@@ -193,7 +197,7 @@ class GrandSlamCapt(CaptMethodIf):
     """Grand Slam capturer and tester.
     This class is still abstract."""
 
-    def is_grandslam(self, loc, direct):
+    def is_grandslam(self, mdata):
         """Return True if the capture was a grandslam and
         True if there were any captures.
 
@@ -204,7 +208,8 @@ class GrandSlamCapt(CaptMethodIf):
 
         opp_rng = self.game.cts.get_opp_range(self.game.turn)
         start_seeds = any(self.game.board[tloc] for tloc in opp_rng)
-        captures = self.decorator.do_captures(loc, direct)
+
+        captures = self.decorator.do_captures(mdata)
 
         if start_seeds and captures:
             end_seeds = any(self.game.board[tloc] for tloc in opp_rng)
@@ -216,11 +221,11 @@ class GrandSlamCapt(CaptMethodIf):
 class GSNone(GrandSlamCapt):
     """A grand slam does not capture, reset the game state."""
 
-    def do_captures(self, loc, direct):
+    def do_captures(self, mdata):
 
         saved_state = self.game.state
 
-        is_gs, captures = self.is_grandslam(loc, direct)
+        is_gs, captures = self.is_grandslam(mdata)
         if is_gs:
             game_log.add('GRANDSLAM: no capture', game_log.IMPORT)
             self.game.state = saved_state
@@ -241,11 +246,11 @@ class GSKeep(GrandSlamCapt):
         else:
             self.keep = (game.cts.holes, 0)
 
-    def do_captures(self, loc, direct):
+    def do_captures(self, mdata):
 
         saved_state = self.game.state
 
-        is_gs, captures = self.is_grandslam(loc, direct)
+        is_gs, captures = self.is_grandslam(mdata)
         if is_gs:
 
             turn = self.game.turn
@@ -266,9 +271,9 @@ class GSKeep(GrandSlamCapt):
 class GSOppGets(GrandSlamCapt):
     """On a grand slam your seed are collect by your opponent."""
 
-    def do_captures(self, loc, direct):
+    def do_captures(self, mdata):
 
-        is_gs, captures = self.is_grandslam(loc, direct)
+        is_gs, captures = self.is_grandslam(mdata)
         if is_gs:
             game_log.add('GRANDSLAM: opp gets', game_log.IMPORT)
             opp_turn = not self.game.turn
@@ -279,23 +284,37 @@ class GSOppGets(GrandSlamCapt):
         return captures
 
 
+class NoSingleSeedCapt(CaptMethodIf):
+    """Do not do captures with a single seed sow."""
+
+    def do_captures(self, mdata):
+
+        if mdata.seeds == 1:
+            return False
+
+        return self.decorator.do_captures(mdata)
+
+
 class MakeChild(CaptMethodIf):
     """If the hole constains convert_cnt seeds
     and the side test is good, designate a child.
     If a child is made don't do any other captures."""
 
-    def do_captures(self, loc, direct):
+    def do_captures(self, mdata):
 
-        if self.game.board[loc] == self.game.info.flags.convert_cnt:
+        # spot 2 - for bao a child should not be made from a single
+        # seed from a rightmost hole into the opponents leftmost hole
+
+        if self.game.board[mdata.capt_loc] == self.game.info.flags.convert_cnt:
             if ((self.game.info.flags.oppsidecapt
-                    and self.game.cts.opp_side(self.game.turn, loc))
+                    and self.game.cts.opp_side(self.game.turn, mdata.capt_loc))
                     or not self.game.info.flags.oppsidecapt):
 
-                self.game.child[loc] = self.game.turn
+                self.game.child[mdata.capt_loc] = self.game.turn
                 return True
             return False
 
-        return self.decorator.do_captures(loc, direct)
+        return self.decorator.do_captures(mdata)
 
 
 # %% build deco chains
@@ -354,6 +373,9 @@ def deco_capturer(game):
         capturer = CaptSingle(game)
 
     capturer = _add_grand_slam_deco(game, gflags, capturer)
+
+    if gflags.nosinglecapt:
+        capturer = NoSingleSeedCapt(game, capturer)
 
     if gflags.child:
         capturer = MakeChild(game, capturer)

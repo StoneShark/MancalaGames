@@ -83,6 +83,63 @@ class GameState(ai_interface.StateIf):
         return string
 
 
+class MoveData:
+    """A place to collect premove and move data.
+    This is so the sower and capture can share some data.
+
+                   from       from
+    Field          Starter    Get Direct   Sower        Capturer
+    -----          -------   -----------   -----        --------
+    board                                               note 1
+    move
+    direct                    fill         input        input
+    seeds          fill                    input        note 2
+    sow_loc        fill                                 note 3
+    cont_sow_loc    property fills         in/update
+    capt_loc                               output       input
+
+    note 1: board is used to determine if a grand slam is possible
+    e.g. there must be seeds on oppside before the turn
+
+    note 2: seeds are used only in NoSignleSeedCapt
+
+    note 3: this is the original start location, expected to be
+    used by derived class(es)   (Bao)
+    """
+
+    def __init__(self, game, move):
+
+        self.board = tuple(game.board)   # pre-move state
+        self.move = move
+        self.direct = None   # an intentionally invalid direction
+        self.seeds = 0
+        self._sow_loc = 0
+        self.cont_sow_loc = 0   # use by the sower (updated for lap sows)
+        self.capt_loc = 0
+
+    def __str__(self):
+
+        string = f"MoveData({self.board}, {self.move}):\n"
+        string += f"  direct={self.direct}\n"
+        string += f"  seeds={self.seeds}\n"
+        string += f"  sow_loc={self.sow_loc}\n"
+        string += f"  cont_sow_loc={self.cont_sow_loc}\n"
+        string += f"  capt_loc={self.capt_loc}"
+        return string
+
+    @property
+    def sow_loc(self):
+        """sow_loc property"""
+        return self._sow_loc
+
+    @sow_loc.setter
+    def sow_loc(self, value):
+        """When sow_loc is set, also set the cont_sow_loc
+        for the capturer."""
+        self._sow_loc = value
+        self.cont_sow_loc = value
+
+
 class ManDeco:
     """Collect the decorator chains into one variable,
     build them all together."""
@@ -328,20 +385,22 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         3. get sow direction
         4. sow the seeds, return if something bad/interesting happened
 
-        RETURN end locations and sow direction"""
+        RETURN move data"""
 
-        start, seeds = self.deco.starter.start_sow(move)
-        direct = self.deco.get_dir.get_direction(move, start)
-        end_loc = self.deco.sower.sow_seeds(start, direct, seeds)
-        game_log.step('Sow', self)
+        mdata = MoveData(self, move)
+        mdata.sow_loc, mdata.seeds = self.deco.starter.start_sow(move)
+        mdata.direct = self.deco.get_dir.get_direction(move, mdata.sow_loc)
+        mdata = self.deco.sower.sow_seeds(mdata)
 
-        return end_loc, direct
+        game_log.step(f'Sow {mdata.capt_loc}', self)
+
+        return mdata
 
 
-    def capture_seeds(self, loc, direct):
+    def capture_seeds(self, mdata):
         """Hand off the capture to the capturer deco."""
 
-        if self.deco.capturer.do_captures(loc, direct):
+        if self.deco.capturer.do_captures(mdata):
             game_log.step('Capture', self)
         else:
             game_log.step('No captures')
@@ -370,17 +429,17 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             self.turn = not self.turn
             return None
 
-        loc, direct = self.do_sow(move)
+        mdata = self.do_sow(move)
 
-        if loc is WinCond.END_STORE:
+        if mdata.capt_loc is WinCond.END_STORE:
             win_cond = self.win_conditions(repeat_turn=True)
             return win_cond if win_cond else WinCond.END_STORE
 
-        if loc is WinCond.ENDLESS:
+        if mdata.capt_loc is WinCond.ENDLESS:
             game_log.add('MLAP game ENDLESS', game_log.IMPORT)
             return WinCond.ENDLESS
 
-        self.capture_seeds(loc, direct)
+        self.capture_seeds(mdata)
 
         win_cond = self.win_conditions()
         if win_cond:
@@ -490,10 +549,10 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             for turn in (True, False):
 
                 self.turn = turn
-                end, _ = self.do_sow(pos)
+                mdata = self.do_sow(pos)
 
-                if self.cts.opp_side(self.turn, end):
-                    access[turn] |= set([end])
+                if self.cts.opp_side(self.turn, mdata.capt_loc):
+                    access[turn] |= set([mdata.capt_loc])
 
                 self.state = saved_state
 

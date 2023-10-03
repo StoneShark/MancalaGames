@@ -40,9 +40,10 @@ class SowMethodIf(abc.ABC):
         self.decorator = decorator
 
     @abc.abstractmethod
-    def sow_seeds(self, start, direct, seeds):
-        """Sow seeds
-        RETURN last loc seeded."""
+    def sow_seeds(self, mdata):
+        """Sow seeds from mdata.cont_sow_loc.
+        Update mdata.capt_loc with the last sow location.
+        RETURN mdata."""
 
 
 # %%  base sower
@@ -51,16 +52,19 @@ class SowSeeds(SowMethodIf):
     """Basic sower.  Handles direction, skip_start and blocks
     (via the incr)."""
 
-    def sow_seeds(self, start, direct, seeds):
+    def sow_seeds(self, mdata):
         """Sow seeds."""
 
-        loc = start
-        for _ in range(seeds):
+        loc = mdata.cont_sow_loc
+        for _ in range(mdata.seeds):
 
-            loc = self.game.deco.incr.incr(loc, direct, start)
+            loc = self.game.deco.incr.incr(loc,
+                                           mdata.direct,
+                                           mdata.cont_sow_loc)
             self.game.board[loc] += 1
 
-        return loc
+        mdata.capt_loc = loc
+        return mdata
 
 
 # %%
@@ -95,32 +99,34 @@ class SowSeedsNStore(SowMethodIf):
                           self.game.cts.holes, self.game.cts.dbl_holes - 1)
 
 
-    def sow_seeds(self, start, direct, seeds):
+    def sow_seeds(self, mdata):
         """Sow seeds.
         Copy some deep values into locals a bit of speed."""
 
         turn = self.game.turn
         incr = self.game.deco.incr.incr
-        store = self.game.store
-        board = self.game.board
-        loc = start
+
+        loc = mdata.cont_sow_loc
+        seeds = mdata.seeds
 
         while seeds > 0:
 
-            loc = incr(loc, direct, start)
+            loc = incr(loc, mdata.direct, mdata.cont_sow_loc)
 
             if (loc in self.poses
-                    and loc == self.fill_store[direct + 1][turn]):
+                    and loc == self.fill_store[mdata.direct + 1][turn]):
 
-                store[turn] += 1
+                self.game.store[turn] += 1
                 seeds -= 1
                 if not seeds:
-                    return WinCond.END_STORE
+                    mdata.capt_loc = WinCond.END_STORE
+                    return mdata
 
-            board[loc] += 1
+            self.game.board[loc] += 1
             seeds -= 1
 
-        return loc
+        mdata.capt_loc = loc
+        return mdata
 
 
 # %%  lap continue testers
@@ -132,7 +138,7 @@ class LapContinuerIf(abc.ABC):
     def __init__(self, game):
         self.game = game
 
-    def do_another_lap(self, loc, seeds):
+    def do_another_lap(self, mdata):
         """Return True if we should continue sowing, False otherwise."""
 
 
@@ -140,13 +146,13 @@ class SimpleLapCont(LapContinuerIf):
     """Stop if we end a sow in a store, otherwise if have
     more than one seed return to CONTINUE sowing."""
 
-    def do_another_lap(self, loc, _):
+    def do_another_lap(self, mdata):
         """Determine if we are done sowing."""
 
-        if loc is WinCond.END_STORE:
+        if mdata.capt_loc is WinCond.END_STORE:
             return False
 
-        return self.game.board[loc] > 1
+        return self.game.board[mdata.capt_loc] > 1
 
 
 
@@ -167,13 +173,14 @@ class ChildLapCont(LapContinuerIf):
     p 44, first paragraph, but he also doesn't describe what to do
     with the remaining seeds."""
 
-    def do_another_lap(self, loc, seeds):
+    def do_another_lap(self, mdata):
         """Determine if we are done sowing."""
 
+        loc = mdata.capt_loc
         if loc is WinCond.END_STORE or self.game.child[loc] is not None:
             return False
 
-        if (seeds > 1
+        if (mdata.seeds > 1
                 and self.game.board[loc] == self.game.info.flags.convert_cnt):
             if ((self.game.info.flags.oppsidecapt
                     and self.game.cts.opp_side(self.game.turn, loc))
@@ -181,10 +188,7 @@ class ChildLapCont(LapContinuerIf):
 
                 return False
 
-        if self.game.board[loc] > 1 and self.game.child[loc] is None:
-            return True
-
-        return False
+        return self.game.board[loc] > 1 and self.game.child[loc] is None
 
 
 # %%  mlap sowers
@@ -203,23 +207,26 @@ class SowMlapSeeds(SowMethodIf):
         super().__init__(game, decorator)
         self.lap_cont = lap_cont
 
-    def sow_seeds(self, start, direct, seeds):
+    def sow_seeds(self, mdata):
         """Sow seeds."""
 
-        loc = start
+        loc = mdata.cont_sow_loc
         for _ in range(MAX_LAPS):
 
             game_log.add(f'    Sowing from {loc}.', game_log.DETAIL)
-            loc = self.decorator.sow_seeds(loc, direct, seeds)
+            mdata = self.decorator.sow_seeds(mdata)
 
-            if self.lap_cont.do_another_lap(loc, seeds):
-                seeds = self.game.board[loc]
+            if self.lap_cont.do_another_lap(mdata):
+                loc = mdata.capt_loc
+                mdata.cont_sow_loc = loc
+                mdata.seeds = self.game.board[loc]
                 self.game.board[loc] = 0
 
             else:
-                return loc
+                return mdata
 
-        return WinCond.ENDLESS
+        mdata.capt_loc = WinCond.ENDLESS
+        return mdata
 
 
 class SowVisitedMlap(SowMethodIf):
@@ -239,25 +246,28 @@ class SowVisitedMlap(SowMethodIf):
         self.lap_cont = lap_cont
         self.single_sower = single_sower
 
-    def sow_seeds(self, start, direct, seeds):
+    def sow_seeds(self, mdata):
         """Do the first sow."""
 
-        game_log.add(f'    Sowing from {start}.', game_log.DETAIL)
-        loc = self.single_sower.sow_seeds(start, direct, seeds)
-        if loc is WinCond.END_STORE:
-            return loc
+        game_log.add(f'    Sowing from {mdata.cont_sow_loc}.', game_log.DETAIL)
 
-        visited_opp = (seeds >= self.game.cts.holes or
-                       self.game.cts.opp_side(self.game.turn, loc))
+        mdata = self.single_sower.sow_seeds(mdata)
+        if mdata.capt_loc is WinCond.END_STORE:
+            return mdata
+
+        visited_opp = (mdata.seeds >= self.game.cts.holes or
+                       self.game.cts.opp_side(self.game.turn, mdata.capt_loc))
         if not visited_opp:
-            return loc
+            return mdata
 
-        if self.lap_cont.do_another_lap(loc, seeds):
-            seeds = self.game.board[loc]
+        if self.lap_cont.do_another_lap(mdata):
+            loc = mdata.capt_loc
+            mdata.cont_sow_loc = loc
+            mdata.seeds = self.game.board[loc]
             self.game.board[loc] = 0
-            return self.decorator.sow_seeds(loc, direct, seeds)
+            return self.decorator.sow_seeds(mdata)
 
-        return loc
+        return mdata
 
 
 # %%

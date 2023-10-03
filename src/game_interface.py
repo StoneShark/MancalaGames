@@ -129,6 +129,7 @@ class GameFlags:
     moveunlock: bool = False
     evens: bool = False
     cthresh: int = 0
+    nosinglecapt: bool = False
 
     crosscapt: bool = False
     xcpickown: CrossCaptOwn = CrossCaptOwn.LEAVE

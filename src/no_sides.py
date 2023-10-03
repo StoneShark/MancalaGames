@@ -156,8 +156,10 @@ class CaptTwoOut(capturer.CaptMethodIf):
     and the next hole is empty, capture the seeds in the
     following hole."""
 
-    def do_captures(self, loc, direct):
+    def do_captures(self, mdata):
 
+        loc = mdata.capt_loc
+        direct = mdata.direct
         loc_p1 = self.game.deco.incr.incr(loc, direct, NOSKIPSTART)
         loc_p2 = self.game.deco.incr.incr(loc_p1, direct, NOSKIPSTART)
 

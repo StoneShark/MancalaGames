@@ -88,6 +88,11 @@ class MustShare(AllowableIf):
                 self.game.state = saved_state
                 continue
 
+            # TODO - allowables do_sow isn't enough / what about win move?
+            # should sim a full move because we might capture the shared seeds
+            # and if the move is a win, shouldn't it be allowed even if
+            # it doesn't share seeds?
+
             self.game.do_sow(pos)
 
             if any(self.game.board[tloc] for tloc in opp_rng):
@@ -128,11 +133,11 @@ class NoGrandSlam(AllowableIf):
                 self.game.state = saved_state
                 continue
 
-            tloc, direct = self.game.do_sow(pos)
-            if tloc is WinCond.ENDLESS:
+            mdata = self.game.do_sow(pos)
+            if mdata.capt_loc is WinCond.ENDLESS:
                 self.game.state = saved_state
                 continue
-            self.game.capture_seeds(tloc, direct)
+            self.game.capture_seeds(mdata)
 
             if any(self.game.board[tloc] for tloc in opp_rng):
                 rval[pos] = True

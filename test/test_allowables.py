@@ -174,7 +174,6 @@ class TestAllowables:
         mlgame.turn = True
         mlgame.board = utils.build_board([1, 3, 1],
                                          [0, 1, 0])
-
         assert mlgame.deco.allow.get_allowable_holes() == [T, F, T]
 
 

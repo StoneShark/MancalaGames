@@ -20,6 +20,8 @@ from context import sower
 from game_interface import GameFlags
 from game_interface import Direct
 from game_interface import WinCond
+from game_log import game_log
+from mancala import MoveData
 
 # %%
 
@@ -106,10 +108,12 @@ class TestSower:
         game.board = board
         game.turn = turn
 
-        start_loc, seeds = game.deco.starter.start_sow(start_pos)
-        end = base_sower.sow_seeds(start_loc, direct, seeds)
+        mdata = MoveData(game, start_pos)
+        mdata.sow_loc, mdata.seeds = game.deco.starter.start_sow(start_pos)
+        mdata.direct = direct
+        mdata = base_sower.sow_seeds(mdata)
 
-        assert end == eloc
+        assert mdata.capt_loc == eloc
         assert game.board == eboard
         assert game.store == [0, 0]
 
@@ -173,9 +177,9 @@ class TestSower:
 
         esgame.board = board
         esgame.turn = turn
-        end, _ = esgame.do_sow(start_pos)
+        mdata = esgame.do_sow(start_pos)
 
-        assert end == eloc
+        assert mdata.capt_loc == eloc
         assert esgame.board == eboard
         assert esgame.store == estore
 
@@ -250,10 +254,12 @@ class TestSower:
         game.board = board
         game.turn = turn
 
-        start_loc, seeds = game.deco.starter.start_sow(start_pos)
-        end = store_sower.sow_seeds(start_loc, direct, seeds)
+        mdata = MoveData(game, start_pos)
+        mdata.sow_loc, mdata.seeds = game.deco.starter.start_sow(start_pos)
+        mdata.direct = direct
+        mdata = store_sower.sow_seeds(mdata)
 
-        assert end == eloc
+        assert mdata.capt_loc == eloc
         assert game.board == eboard
         assert game.store == estore
 
@@ -273,9 +279,11 @@ class TestSower:
     def test_simple_lap(self, game, end_loc, board, eresult):
 
         game.board = board
-        lap_cont = sower.SimpleLapCont(game)
+        mdata = MoveData(game, None)
+        mdata.capt_loc = end_loc
 
-        assert lap_cont.do_another_lap(end_loc, None) == eresult
+        lap_cont = sower.SimpleLapCont(game)
+        assert lap_cont.do_another_lap(mdata) == eresult
 
 
     @pytest.mark.parametrize('end_loc, sown_seeds, board, child, eresult',
@@ -341,9 +349,13 @@ class TestSower:
         game.turn = False
         game.board = board
         game.child = child
-        lap_cont = sower.ChildLapCont(game)
 
-        assert lap_cont.do_another_lap(end_loc, sown_seeds) == eresult
+        mdata = MoveData(game, None)
+        mdata.capt_loc = end_loc
+        mdata.seeds = sown_seeds
+
+        lap_cont = sower.ChildLapCont(game)
+        assert lap_cont.do_another_lap(mdata) == eresult
 
 
     @pytest.mark.parametrize('end_loc, sown_seeds, board, child, eresult',
@@ -409,9 +421,15 @@ class TestSower:
         nogame.turn = False
         nogame.board = board
         nogame.child = child
-        lap_cont = sower.ChildLapCont(nogame)
 
-        assert lap_cont.do_another_lap(end_loc, sown_seeds) == eresult
+        mdata = MoveData(nogame, None)
+        mdata.capt_loc = end_loc
+        mdata.seeds = sown_seeds
+
+        lap_cont = sower.ChildLapCont(nogame)
+        assert lap_cont.do_another_lap(mdata) == eresult
+
+
 class TestMlap:
 
     @pytest.fixture
@@ -443,7 +461,7 @@ class TestMlap:
                                [0, 3, 2]),
           0, utils.build_board([1, 2, 3],
                                [1, 4, 0])),
-         # 1: sew two laps
+         # 1: sow two laps
          (0, utils.build_board([1, 2, 3],
                                [2, 0, 4]),
           1, utils.build_board([2, 0, 4],
@@ -462,10 +480,16 @@ class TestMlap:
         game.board = board
         game.turn = False
 
-        start_loc, seeds = game.deco.starter.start_sow(start_pos)
-        end = mlap_sower.sow_seeds(start_loc, Direct.CW, seeds)
+        game_log.active = True
+        game_log.live = True
+        game_log.level = game_log.SHOWALL
 
-        assert end == eloc
+        mdata = MoveData(game, start_pos)
+        mdata.sow_loc, mdata.seeds = game.deco.starter.start_sow(start_pos)
+        mdata.direct = game.info.flags.sow_direct
+        mdata = mlap_sower.sow_seeds(mdata)
+
+        assert mdata.capt_loc == eloc
         assert game.board == eboard
         assert game.store == [0, 0]
 
@@ -522,16 +546,18 @@ class TestVMlap:
                                [1, 4, 0]), [0, 0]),
           ])
 
-    def test_mlap_sower(self, game,
+    def test_vmlap_sower(self, game,
                         start_pos, board, eloc, eboard, estore):
 
         game.board = board
         game.turn = False
 
-        start_loc, seeds = game.deco.starter.start_sow(start_pos)
-        end = game.deco.sower.sow_seeds(start_loc, Direct.CW, seeds)
+        mdata = MoveData(game, start_pos)
+        mdata.sow_loc, mdata.seeds = game.deco.starter.start_sow(start_pos)
+        mdata.direct = Direct.CW
+        mdata =game.deco.sower.sow_seeds(mdata)
 
-        assert end == eloc
+        assert mdata.capt_loc == eloc
         assert game.board == eboard
         assert game.store == estore
 

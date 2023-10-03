@@ -107,13 +107,15 @@ class SowSeeds(sower.SowMethodIf):
 
     Need to use this in the lap sower as base sower."""
 
-    def sow_seeds(self, start, direct, seeds):
+    def sow_seeds(self, mdata):
         """Sow seeds."""
 
-        loc = start
-        for scnt in range(seeds, 0, -1):
+        loc = mdata.cont_sow_loc
+        for scnt in range(mdata.seeds, 0, -1):
 
-            loc = self.game.deco.incr.incr(loc, direct, start)
+            loc = self.game.deco.incr.incr(loc,
+                                           mdata.direct,
+                                           mdata.cont_sow_loc)
             self.game.board[loc] += 1
 
             if (self.game.unlocked[loc] and
@@ -129,7 +131,8 @@ class SowSeeds(sower.SowMethodIf):
                     self.game.store[turn] += self.game.board[loc]
                     self.game.board[loc] = 0
 
-        return loc
+        mdata.capt_loc = loc
+        return mdata
 
 
 class RoundGameWinner(end_move.EndTurnIf):

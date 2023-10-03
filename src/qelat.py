@@ -116,8 +116,9 @@ class QelatEndMove(end_move.EndTurnIf):
 class CaptureToWalda(capturer.CaptMethodIf):
     """Test to make a child and on captures put the seeds into a walda."""
 
-    def do_captures(self, loc, direct):
+    def do_captures(self, mdata):
 
+        loc = mdata.capt_loc
         captures = False
         if (self.game.board[loc] == self.game.info.flags.convert_cnt
                 and self.game.child[loc] is None

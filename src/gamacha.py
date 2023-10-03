@@ -111,9 +111,10 @@ class OppOrEmptyEnd(allowables.AllowableIf):
             if not allow[pos]:
                 continue
 
-            end_loc, _ = self.game.do_sow(pos)
+            mdata = self.game.do_sow(pos)
             self.game.state = saved_state
 
+            end_loc = mdata.capt_loc
             if self.game.board[end_loc] and end_loc in my_rng:
                 allow[pos] = False
 

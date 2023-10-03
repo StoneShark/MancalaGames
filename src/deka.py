@@ -104,13 +104,14 @@ class DekaSower(sower.SowMethodIf):
     """Deka sower, diverts blocked holes on opp side
     to store (out of play)."""
 
-    def sow_seeds(self, start, direct, seeds):
+    def sow_seeds(self, mdata):
         """Sow seeds."""
 
-        loc = start
+        loc = mdata.cont_sow_loc
+        seeds = mdata.seeds
         while seeds:
 
-            loc = (loc + direct) % self.game.cts.dbl_holes
+            loc = (loc + mdata.direct) % self.game.cts.dbl_holes
 
             while self.game.blocked[loc]:
                 if self.game.cts.opp_side(self.game.turn, loc):
@@ -118,31 +119,35 @@ class DekaSower(sower.SowMethodIf):
 
                     seeds -= 1
                     if not seeds:
-                        return loc
+                        mdata.capt_loc = loc
+                        return mdata
 
-                loc = (loc + direct) % self.game.cts.dbl_holes
+                loc = (loc + mdata.direct) % self.game.cts.dbl_holes
 
             self.game.board[loc] += 1
             seeds -= 1
 
-        return loc
+        mdata.capt_loc = loc
+        return mdata
 
 
 class DekaSowClosed(sower.SowMethodIf):
     """For non-multilap sowing, check for closing, remove the
     final seeds from play and block the hole."""
 
-    def sow_seeds(self, start, direct, seeds):
+    def sow_seeds(self, mdata):
         """Sow seeds."""
 
-        loc = self.decorator.sow_seeds(start, direct, seeds)
+        mdata = self.decorator.sow_seeds(mdata)
+        loc = mdata.capt_loc
+
         if (self.game.board[loc] == self.game.info.flags.convert_cnt
                 and self.game.cts.opp_side(self.game.turn, loc)):
 
             self.game.store[0] += self.game.board[loc]
             self.game.board[loc] = 0
             self.game.blocked[loc] = True
-        return loc
+        return mdata
 
 
 class DekaLapper(sower.LapContinuerIf):
@@ -150,13 +155,13 @@ class DekaLapper(sower.LapContinuerIf):
     stop if we ended on a blocked hole (will be opp side,
     i.e. last seed was taken out of play)."""
 
-    def do_another_lap(self, loc, seeds):
+    def do_another_lap(self, mdata):
         """Determine if we are done sowing."""
 
-        if not self.game.blocked[loc] and self.game.board[loc] > 1:
-            return True
-
-        return False
+        loc = mdata.capt_loc
+        print('test loc', loc)
+        print(self.game)
+        return not self.game.blocked[loc] and self.game.board[loc] > 1
 
 
 class DekaLapSower(sower.SowMethodIf):
@@ -168,29 +173,33 @@ class DekaLapSower(sower.SowMethodIf):
         super().__init__(game, decorator)
         self.lap_cont = lap_cont
 
-    def sow_seeds(self, start, direct, seeds):
+    def sow_seeds(self, mdata):
         """Sow seeds."""
 
-        loc = start
+        loc = mdata.cont_sow_loc
         for _ in range(MAX_LOOPS):
 
-            loc = self.decorator.sow_seeds(loc, direct, seeds)
+            print(mdata)
+            mdata = self.decorator.sow_seeds(mdata)
 
-            if self.lap_cont.do_another_lap(loc, seeds):
-                seeds = self.game.board[loc]
+            if self.lap_cont.do_another_lap(mdata):
+                print('lapping')
+                loc = mdata.capt_loc
+                mdata.cont_sow_loc = loc
+                mdata.seeds = self.game.board[loc]
 
                 if (self.game.board[loc] == self.game.info.flags.convert_cnt
                         and self.game.cts.opp_side(self.game.turn, loc)):
-
                     self.game.blocked[loc] = True
-
                 self.game.board[loc] = 0
 
             else:
-                return loc
+                print('no lapping')
+                return mdata
 
         game_log.add('MLAP game ENDLESS', game_log.IMPORT)
-        return WinCond.ENDLESS
+        mdata.capt_loc = WinCond.ENDLESS
+        return mdata
 
 
 # %%

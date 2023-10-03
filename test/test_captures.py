@@ -18,6 +18,7 @@ from context import mancala
 from game_interface import CrossCaptOwn
 from game_interface import Direct
 from game_interface import GrandSlam
+from mancala import MoveData
 
 
 # %%
@@ -140,7 +141,10 @@ def test_no_capturer():
                             flags=gi.GameFlags(),
                             rules=mancala.Mancala.rules)
     game = mancala.Mancala(game_consts, game_info)
-    assert not game.deco.capturer.do_captures(5, Direct.CCW)
+    mdata = MoveData(game, None)
+    mdata.direct = 5
+    mdata.capt_loc = Direct.CCW
+    assert not game.deco.capturer.do_captures(mdata)
 
 
 def make_game(case):
@@ -183,12 +187,16 @@ def case(request):
 def test_capturer(case):
 
     game = make_game(case)
-    print(game)
     assert sum(game.store) + sum(game.board) == game.cts.total_seeds, \
         f"Game setup error: board={sum(game.board)} stores={sum(game.store)}"
 
-    captures = game.deco.capturer.do_captures(case.loc, case.direct)
-    print(game)
+    mdata = MoveData(game, None)
+    mdata.direct = case.direct
+    mdata.capt_loc = case.loc
+    mdata.board = tuple(case.board)   # TODO not quite right
+    # mdata.seeds
+
+    captures = game.deco.capturer.do_captures(mdata)
 
     assert sum(game.store) + sum(game.board) == game.cts.total_seeds
     assert bool(captures) == getattr(case, 'erval')
