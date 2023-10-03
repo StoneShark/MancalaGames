@@ -88,14 +88,15 @@ class MustShare(AllowableIf):
                 self.game.state = saved_state
                 continue
 
-            # TODO - allowables do_sow isn't enough / what about win move?
-            # should sim a full move because we might capture the shared seeds
-            # and if the move is a win, shouldn't it be allowed even if
-            # it doesn't share seeds?
-
             game_log.set_simulate()
-            self.game.do_sow(pos)
+            mdata = self.game.do_sow(pos)
             game_log.clear_simulate()
+
+            if mdata.capt_loc is WinCond.ENDLESS:
+                game_log.add(f'Preventing ENDLESS move {loc}',
+                             game_log.IMPORT)
+                self.game.state = saved_state
+                continue
 
             if any(self.game.board[tloc] for tloc in opp_rng):
                 rval[pos] = True
@@ -118,7 +119,7 @@ class NoGrandSlam(AllowableIf):
 
     GRANDSLAM == NOT_LEGAL is not supported for UDIRECT or SPLIT
     sow games, because it would make this more complicated
-    and the UI doesn't support make holes partially active."""
+    and the UI doesn't support making holes partially active."""
 
     def get_allowable_holes(self):
 
@@ -138,7 +139,10 @@ class NoGrandSlam(AllowableIf):
             game_log.set_simulate()
             mdata = self.game.do_sow(pos)
             if mdata.capt_loc is WinCond.ENDLESS:
+                game_log.add(f'Preventing ENDLESS move {loc}',
+                             game_log.IMPORT)
                 self.game.state = saved_state
+                game_log.clear_simulate()
                 continue
             self.game.capture_seeds(mdata)
             game_log.clear_simulate()

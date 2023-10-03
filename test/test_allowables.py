@@ -39,47 +39,50 @@ N = None
 
 # %%
 
-class TestAllowables:
 
+TEST_DATA = [
+    (True,  utils.build_board([2, 2, 2], [0, 0, 0]),   # 0
+     FALSES, NONES, False, 2, [T, T, T]),
+    (True,  utils.build_board([1, 2, 3], [0, 0, 0]),   # 1
+     FALSES, NONES, False, 2, [F, T, T]),
+    (False, utils.build_board([0, 0, 0], [1, 1, 1]),   # 2
+     FALSES, NONES, False, 1,            [T, T, T]),
+    (False, utils.build_board([0, 0, 0], [1, 2, 3]),   # 3
+      FALSES, NONES, False, 2,           [F, T, T]),
+
+    (True, utils.build_board([2, 2, 0], [1, 0, 0]),    # 4
+     FALSES, NONES, True, 2, [T, T, F]),
+    (False, utils.build_board([1, 0, 0], [2, 2, 0]),   # 5
+     FALSES, NONES, True, 2,             [T, T, F]),
+    (True, utils.build_board([2, 1, 0], [0, 0, 0]),    # 6
+     FALSES, NONES, True, 1, [T, F, F]),
+    (False, utils.build_board([0, 0, 0], [0, 1, 1]),   # 7
+     FALSES, NONES, True, 1,             [F, F, T]),
+
+    (True,                                             # 8
+     utils.build_board([2, 2, 0], [1, 0, 0]),
+     utils.build_board([T, F, T], [T, F, T]), NONES, True, 2,
+                       [F, T, F]),
+    (True,                                             # 9
+     utils.build_board([2, 2, 2], [1, 0, 0]),
+     utils.build_board([T, F, F], [T, F, T]),
+     utils.build_board([N, T, N], [N, F, T]), True, 2,
+                       [F, F, T]),
+    (True,                                             # 10
+     utils.build_board([2, 2, 0], [1, 0, 0]),
+     utils.build_board([F, T, F], [T, F, T]),
+     utils.build_board([N, T, N], [N, F, T]), True, 2,
+                       [T, F, F]),
+    ]
+
+class TestAllowables:
 
     @pytest.mark.parametrize(
         'turn, board, blocked, child, mustshare, min_move, eresult',
-        [(True,  utils.build_board([2, 2, 2], [0, 0, 0]),   # 0
-          FALSES, NONES, False, 2, [T, T, T]),
-         (True,  utils.build_board([1, 2, 3], [0, 0, 0]),   # 1
-          FALSES, NONES, False, 2, [F, T, T]),
-         (False, utils.build_board([0, 0, 0], [1, 1, 1]),   # 2
-          FALSES, NONES, False, 1,            [T, T, T]),
-         (False, utils.build_board([0, 0, 0], [1, 2, 3]),   # 3
-           FALSES, NONES, False, 2,           [F, T, T]),
-
-         (True, utils.build_board([2, 2, 0], [1, 0, 0]),    # 4
-          FALSES, NONES, True, 2, [T, T, F]),
-         (False, utils.build_board([1, 0, 0], [2, 2, 0]),   # 5
-          FALSES, NONES, True, 2,             [T, T, F]),
-         (True, utils.build_board([2, 1, 0], [0, 0, 0]),    # 6
-          FALSES, NONES, True, 1, [T, F, F]),
-         (False, utils.build_board([0, 0, 0], [0, 1, 1]),   # 7
-          FALSES, NONES, True, 1,             [F, F, T]),
-
-         (True,                                             # 8
-          utils.build_board([2, 2, 0], [1, 0, 0]),
-          utils.build_board([T, F, T], [T, F, T]), NONES, True, 2,
-                            [F, T, F]),
-         (True,                                             # 9
-          utils.build_board([2, 2, 2], [1, 0, 0]),
-          utils.build_board([T, F, F], [T, F, T]),
-          utils.build_board([N, T, N], [N, F, T]), True, 2,
-                            [F, F, T]),
-         (True,                                             # 10
-          utils.build_board([2, 2, 0], [1, 0, 0]),
-          utils.build_board([F, T, F], [T, F, T]),
-          utils.build_board([N, T, N], [N, F, T]), True, 2,
-                            [T, F, F]),
-
-        ])
+        TEST_DATA,
+        ids=[f'case_{cnt}' for cnt in range(len(TEST_DATA))])
     def test_allowables(self, turn, board, blocked, child,
-                        mustshare, min_move, eresult):
+                        mustshare, min_move, eresult, request):
 
         game_consts = gc.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
@@ -93,7 +96,10 @@ class TestAllowables:
         game.board = board
         game.blocked = blocked
         game.child = child
-        game.store = [game.cts.total_seeds - sum(board), 0]
+
+        seeds = game.cts.total_seeds - sum(game.board)
+        quot, rem = divmod(seeds, 2)
+        game.store = [quot, quot + rem]
 
         assert game.deco.allow.get_allowable_holes() == eresult
 
@@ -150,7 +156,12 @@ class TestAllowables:
         game.board = board
         game.blocked = blocked
         game.child = child
-        game.store = [game.cts.total_seeds - sum(board), 0]
+
+        seeds = game.cts.total_seeds - sum(game.board)
+        quot, rem = divmod(seeds, 2)
+        game.store = [quot, quot + rem]
+
+        print(game)
 
         assert game.deco.allow.get_allowable_holes() == eresult
 
@@ -160,10 +171,10 @@ class TestAllowables:
 
         game_consts = gc.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                flags=GameFlags(crosscapt=True,
-                                                sow_direct=Direct.CW,
-                                                grandslam=GrandSlam.NOT_LEGAL,
-                                                mlaps=True),
+                                flags=gi.GameFlags(crosscapt=True,
+                                                   sow_direct=Direct.CW,
+                                                   grandslam=GrandSlam.NOT_LEGAL,
+                                                   mlaps=True),
                                 rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
@@ -176,6 +187,11 @@ class TestAllowables:
         mlgame.turn = True
         mlgame.board = utils.build_board([1, 3, 1],
                                          [0, 1, 0])
+
+        seeds = mlgame.cts.total_seeds - sum(mlgame.board)
+        quot, rem = divmod(seeds, 2)
+        mlgame.store = [quot, quot + rem]
+
         assert mlgame.deco.allow.get_allowable_holes() == [T, F, T]
 
 
