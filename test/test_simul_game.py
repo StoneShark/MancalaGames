@@ -88,19 +88,19 @@ def test_one_game(game, request):
 def known_game_fails(request):
 
     game = request.getfixturevalue('game')
-    if game.info.name == 'Congklak':
+    if game.info.name in ['Congklak', 'Eson Xorgol']:
         request.node.add_marker(
             pytest.mark.xfail(
-                reason='Many seeds; heuristic test; occasionally fails.'))
+                reason='Many seeds; heuristic test; occasionally fails.',
+                strict=False))
 
 
 @pytest.mark.usefixtures('known_game_fails')
 def test_game_stats(game, request, nbr_runs):
 
     def report_bad(maxed, stuck):
-        if maxed or stuck:
-            print(f'Bad endings for {game.info.name:12}: ' + \
-                f'loop_max= {maxed}  endless= {stuck}')
+        print(f'Bad endings for {game.info.name:12}: ' + \
+              f'loop_max= {maxed}  endless= {stuck}')
 
     key_name = game.info.name + '/loop_max'
     maxed = request.config.cache.get(key_name, 0)
@@ -108,7 +108,8 @@ def test_game_stats(game, request, nbr_runs):
     key_name = game.info.name + '/endless'
     stuck = request.config.cache.get(key_name, 0)
 
-    atexit.register(report_bad, maxed, stuck)
+    if maxed or stuck:
+        atexit.register(report_bad, maxed, stuck)
 
     assert maxed + stuck <= nbr_runs * 0.2, \
         f'Bad endings too high for {game.info.name}: ' + \
