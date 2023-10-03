@@ -597,23 +597,12 @@ class MancalaUI(tk.Frame):
             tk.messagebox.showerror('AI Player Config Error', msg)
 
 
-    def _log_turn(self, last_turn, move, win_cond=None):
-        """Add to the play log and move history for the last turn."""
-
-        wtext = ''
-        if win_cond in (WinCond.WIN, WinCond.ROUND_WIN):
-            sturn = 'Top' if self.game.get_turn() else 'Bottom'
-            wtext = f'\n{win_cond.name} by {sturn}'
-        elif win_cond:
-            wtext = ' ' + win_cond.name
+    def _log_turn(self, last_turn):
+        """Add the ai description to the game log (Mancala doesn't
+        know if the ai is playing)."""
 
         if self.ai_player.get() and last_turn:
-            move_desc = self.game.get_ai_move_desc() + f'move {move}{wtext}'
-        else:
-            sturn = 'Top' if last_turn else 'Bottom'
-            move_desc = f'{sturn} player move {move}{wtext}'
-
-        game_log.turn(move_desc, self.game)
+            game_log.add(self.game.get_ai_move_desc(), game_log.MOVE)
 
 
     def move(self, move):
@@ -623,7 +612,7 @@ class MancalaUI(tk.Frame):
         last_turn = self.game.get_turn()
         win_cond = self.game.move(move)
 
-        self._log_turn(last_turn, move, win_cond)
+        self._log_turn(last_turn)
         self._refresh()
 
         if win_cond and win_cond != WinCond.END_STORE:
@@ -643,7 +632,6 @@ class MancalaUI(tk.Frame):
                                    parent=self)
 
             self._refresh()
-            self._log_turn(self.game.get_turn(), PASS_TOKEN)
             self._schedule_ai()
 
 

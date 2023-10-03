@@ -406,7 +406,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             game_log.step('No captures')
 
 
-    def move(self, move):
+    def _move(self, move):
         """Do the move.
         If pass, then change turn and return None (game continues).
         Otherwise:
@@ -449,6 +449,30 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         return None
 
 
+    def _log_turn(self, move_turn, move, win_cond):
+        """Add to the play log and move history for the move."""
+
+        wtext = ''
+        if win_cond in (WinCond.WIN, WinCond.ROUND_WIN):
+            sturn = 'Top' if self.game.get_turn() else 'Bottom'
+            wtext = f'\n{win_cond.name} by {sturn}'
+        elif win_cond:
+            wtext = ' ' + win_cond.name
+
+        sturn = 'Top' if move_turn else 'Bottom'
+        move_desc = f'{sturn} move {move}{wtext}'
+
+        game_log.turn(move_desc, self)
+
+
+    def move(self, move):
+
+        cur_turn = self.turn
+        wcond = self._move(move)
+        self._log_turn(cur_turn, move, wcond)
+        return wcond
+
+
     def get_ai_move(self):
         """Return the ai move position"""
         return self.player.pick_move()
@@ -469,6 +493,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             if not any(self.get_allowable_holes()):
 
                 self.turn = not self.turn
+                self._log_turn(not self.turn, 'PASS', None)
                 return True
 
         return False

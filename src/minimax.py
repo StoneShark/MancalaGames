@@ -82,7 +82,7 @@ class MiniMaxer(ai_interface.AiPlayerIf):
         if depth > 0:
             return best_score
 
-        self.last_scores = 'Minimaxer ' + last_scores
+        self.last_scores = 'Minimaxer ' + last_scores[:-2] + '.'
         return random.choice(best_moves)
 
 
