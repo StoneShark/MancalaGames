@@ -33,13 +33,16 @@ class GameLog:
     STEP = 2
     INFO = 3
     DETAIL = 4
-    SHOWALL = DETAIL
+    SIMUL = 5
+    SHOWALL = SIMUL
 
     def __init__(self):
 
         self._active = True
         self._live = False
         self._level = GameLog.MOVE
+
+        self._simulate = False
 
         self._turn_nbr = -1
         self._log_records = col.deque()
@@ -74,7 +77,7 @@ class GameLog:
     @level.setter
     def level(self, value):
         """Set level."""
-        if 0 <= value <= 4:
+        if 0 <= value <= self.SHOWALL:
             self._level = value
 
 
@@ -87,9 +90,13 @@ class GameLog:
 
 
     def add(self, text, lvl=DETAIL):
-        """Add the text to the log."""
+        """Add the text to the log.
+        If simulate is on set the log lvl to SIMUL"""
 
         if self._active:
+            if self._simulate:
+                lvl = self.SIMUL
+
             if lvl <= self._level:
                 self._log_records.append(LogRecord(text, lvl))
                 if self._live:
@@ -165,6 +172,21 @@ class GameLog:
         with open(filename, 'w', encoding='utf-8') as file:
             print(param_string, file=file)
             self._output(file)
+
+
+    def set_simulate(self):
+        """Change the logging level of any logged during
+        simulated ops to SIMUL.
+        Use this when moves are being simulated to test
+        game conditions, e.g. must share, grand slam not
+        legal.
+        Do not use this for AI moves."""
+        self._simulate = True
+
+
+    def clear_simulate(self):
+        """Turn simulate mode off."""
+        self._simulate = False
 
 
 # the global game_log

@@ -32,6 +32,7 @@ class TestGameLog:
         assert glog._active == True
         assert glog._live == False
         assert glog._level == glog.MOVE
+        assert glog._simulate == False
         assert glog.active == True
         assert glog.live == False
         assert glog.level == glog.MOVE
@@ -338,3 +339,41 @@ class TestGameLog:
         glog.add('import 2', glog.IMPORT)
 
         glog.save('parameter string')
+
+
+    def test_simulate(self, glog):
+
+        glog.add('test line one', glog.MOVE)
+        assert len(glog._log_records) == 1
+
+        glog.set_simulate()
+        assert glog._simulate
+
+        # not added, logged as SIMUL but log level is MOVE
+        glog.add('test line two', glog.MOVE)
+        assert len(glog._log_records) == 1
+
+        # now logged
+        glog.level = glog.SIMUL
+        glog.add('test line two', glog.MOVE)
+        assert len(glog._log_records) == 2
+
+
+    def test_clear_simulate(self, glog):
+
+        glog.add('test line one', glog.MOVE)
+        assert len(glog._log_records) == 1
+
+        glog.set_simulate()
+        assert glog._simulate
+
+        # not added, logged as SIMUL but log level is MOVE
+        glog.add('test line two', glog.MOVE)
+        assert len(glog._log_records) == 1
+
+        glog.clear_simulate()
+        assert not glog._simulate
+
+        # now logged with MOVE
+        glog.add('test line two', glog.MOVE)
+        assert len(glog._log_records) == 2

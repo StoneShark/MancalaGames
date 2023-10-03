@@ -39,7 +39,6 @@ from game_interface import Direct
 from game_interface import GrandSlam
 from game_interface import RoundStarter
 
-
 # %% support func
 
 def inv_dict(adict):
@@ -65,7 +64,6 @@ DEF_SEEDS = 2
 DISABLED = 'disabled'
 ACTIVE = 'active'
 NORMAL = 'normal'
-
 
 # options for pull-down menus
 SIZES = list(range(MIN_HOLES, MHOLES_RTOP))
@@ -168,7 +166,6 @@ class GameParams:
         return dict((field.name, getattr(self, field.name))
                     for field in dc.fields(self)).items()
 
-
 class Counter:
     """A little class so that row usage is consistent and easy to code."""
 
@@ -183,7 +180,6 @@ class Counter:
     def row(self):
         """Return the current row without increment."""
         return self.cnt
-
 
 @dc.dataclass
 class NonUiData:
@@ -280,7 +276,6 @@ class MancalaGames(tk.Frame):
 
         os.startfile(man_path.get_path('mancala_help.html'))
 
-
     @staticmethod
     def _add_named_frame(frame, name):
         """Create a named frame and return it"""
@@ -289,7 +284,6 @@ class MancalaGames(tk.Frame):
         bfrm.pack(side='top', expand=True, fill='both')
 
         return bfrm
-
 
     @staticmethod
     def _add_opts(frame, name, var, values, row_col):
@@ -318,7 +312,6 @@ class MancalaGames(tk.Frame):
         tk.Radiobutton(frame, text=name, variable=var, value=val,
                        ).grid(row=0, column=rcnt.nrow())
 
-
     def _create_menus(self):
         """Create the game control menus."""
 
@@ -332,7 +325,6 @@ class MancalaGames(tk.Frame):
         gamemenu.add_command(label='Help ...', command=self._help)
         menubar.add_cascade(label='Game', menu=gamemenu)
 
-
     def _build_gclass_ui(self, frame):
         """Build a frame to select the game class."""
 
@@ -344,7 +336,6 @@ class MancalaGames(tk.Frame):
             self._add_radio(bfrm, game,
                             self.tkvars.game_class, idx,
                             rcnt)
-
 
     def _build_board_ui(self, frame):
         """Build board frame."""
@@ -359,7 +350,6 @@ class MancalaGames(tk.Frame):
 
         rcnt = Counter()
         self._add_opts(bfrm, 'Start Seeds', tkv.seeds, SEEDS, (rcnt, 2))
-
 
     def _build_game_dyn_ui(self, frame):
         """Build the game dynamic frame."""
@@ -380,7 +370,6 @@ class MancalaGames(tk.Frame):
         self._add_bool(bfrm, 'Enable Child Holes', tkv.child, rcnt, 2)
         self._add_opts(bfrm, 'Convert Count', tkv.convert_cnt, CONVERT,
                        (rcnt, 2))
-
 
     def _build_sow_params_ui(self, frame):
         """Bulid sow params frame."""
@@ -411,7 +400,6 @@ class MancalaGames(tk.Frame):
             tk.Checkbutton(self.udir_frame, text=str(nbr),
                            variable=tkv.udir_holes[nbr - 1]
                            ).pack(side='left')
-
 
     def _build_capt_params_ui(self, frame):
         """Build capture params frame"""
@@ -449,7 +437,6 @@ class MancalaGames(tk.Frame):
         self._add_opts(bfrm, 'Capt Greater or Equal to', tkv.cthresh, SEEDS, (rcnt, 2))
         self._add_bool(bfrm, 'No Single Seed Capt', tkv.nosinglecapt, rcnt, 2)
 
-
     def _build_scorer_ui(self, frame):
         """add the scorer params."""
 
@@ -472,7 +459,6 @@ class MancalaGames(tk.Frame):
         self._add_opts(bfrm, 'Repeat Turn Add in', tkv.repeat_turn, REPEATVALS,
                        (rcnt, 2))
 
-
     def _build_about_ui(self, frame):
         """Create a ui window to allow the about string to be edited."""
 
@@ -487,7 +473,6 @@ class MancalaGames(tk.Frame):
 
         scroll.config(command=self.about_text.yview)
         scroll.pack(side='right', fill='y')
-
 
     def _add_commands_ui(self):
         """Add buttons for commands."""
@@ -505,24 +490,20 @@ class MancalaGames(tk.Frame):
         tk.Button(self.but_frame, text='Play', command=self._play
                   ).pack(side='left', expand=True, fill='x')
 
-
     def _add_tkvar_str(self, tkvar_dict, name, default):
         """Add a string to the vars dict"""
 
         tkvar_dict[name] = tk.StringVar(self.master, default, name=name)
-
 
     def _add_tkvar_bool(self, tkvar_dict, name, default):
         """Add a boolean to the vars dict"""
 
         tkvar_dict[name] = tk.BooleanVar(self.master, default, name=name)
 
-
     def _add_tkvar_int(self, tkvar_dict, name, default):
         """Add an int to the vars dict"""
 
         tkvar_dict[name] = tk.IntVar(self.master, default, name=name)
-
 
     def _build_tkvars(self):
         """Create the tk variables for each input field
@@ -597,7 +578,6 @@ class MancalaGames(tk.Frame):
 
         return GameParams(**tkvars_dict)
 
-
     def _tkvalue_changed(self, var, index, mode):
         """Called-back whenever any tkvar is changed."""
 
@@ -610,7 +590,6 @@ class MancalaGames(tk.Frame):
 
         elif var == ckey.HOLES:
             self._resize_udirs()
-
 
     def _resize_udirs(self):
         """Change the number of the checkboxes on the screen.
@@ -630,7 +609,6 @@ class MancalaGames(tk.Frame):
                            variable=self.tkvars.udir_holes[idx - 1]
                            ).pack(side='left')
 
-
     def destroy(self):
         """Remove the traces from the tk variables."""
 
@@ -641,12 +619,10 @@ class MancalaGames(tk.Frame):
             else:
                 var.trace_remove(*var.trace_info()[0])
 
-
     def _prepare_about(self):
         """Return the about text."""
 
         return self.about_text.get('1.0', 'end')
-
 
     def _prepare_scorer(self):
         """Collect the scorer parameters."""
@@ -659,7 +635,6 @@ class MancalaGames(tk.Frame):
                          child_cnt_m=self.tkvars.child_cnt_m.get(),
                          easy_rand=self.tkvars.easy_rand.get(),
                          repeat_turn=self.tkvars.repeat_turn.get())
-
 
     def _prepare_flags(self):
         """Collect the flags; capt on and udir lists"""
@@ -703,7 +678,6 @@ class MancalaGames(tk.Frame):
 
         return flags, capt_on, udir
 
-
     def _prepare_game(self):
         """Build the two game variables: constants and info
         and then build the game.
@@ -735,7 +709,6 @@ class MancalaGames(tk.Frame):
 
         self.param_changed = False
 
-
     def _test(self):
         """Try to build the game params and game,
         trap any exceptions, report to user."""
@@ -757,13 +730,11 @@ class MancalaGames(tk.Frame):
             self.game_info = None
             self.game = None
 
-
     @staticmethod
     def _warning(message, *_):
         """Notify user of warnings during parameter test."""
 
         tk.messagebox.showwarning('Parameter Warning', message)
-
 
     def _fill_capts_and_udirs(self, game_dict):
         """Copy capt on and udir data from game_info into tkvars
@@ -883,7 +854,6 @@ class MancalaGames(tk.Frame):
         del game_dict[ckey.GAME_INFO]
         self.non_ui_data.other_dict = game_dict
 
-
     def _load(self):
         """Load params from file. Check size for reasonableness.
         Translate the json string. Convert non-primitive types.
@@ -907,7 +877,6 @@ class MancalaGames(tk.Frame):
 
         self._fill_tkvars_nonui(game_dict)
         self._test()
-
 
     def _save(self):
         """Save params to file.
@@ -947,7 +916,6 @@ class MancalaGames(tk.Frame):
         with open(filename, 'w', encoding='utf-8') as file:
             json.dump(game_dict, file, indent=3)
 
-
     def _set_frame_active(self, frame, new_state):
         """Activate or deactivate wigets, recursing through frames."""
 
@@ -966,7 +934,6 @@ class MancalaGames(tk.Frame):
             else:
                 child.configure(state=new_state)
 
-
     def _set_active(self, activate):
         """Activate or deactivate main window wingets."""
 
@@ -974,7 +941,6 @@ class MancalaGames(tk.Frame):
 
         self._set_frame_active(self.opt_frame, new_state)
         self._set_frame_active(self.but_frame, new_state)
-
 
     def _play(self):
         """Create and play the game. deactivate param ui and block
@@ -991,7 +957,6 @@ class MancalaGames(tk.Frame):
         self.game_ui.grab_set()
         self.game_ui.wait_window()
         self._set_active(True)
-
 
 # %%  main
 
