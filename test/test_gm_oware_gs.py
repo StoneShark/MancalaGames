@@ -11,11 +11,6 @@ from context import man_config
 from context import mancala
 
 from game_interface import GrandSlam
-from game_log import game_log
-
-game_log.active = True
-game_log.live = True
-game_log.level = game_log.STEP
 
 
 class TestOwareGrandSlam:
