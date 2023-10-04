@@ -174,6 +174,8 @@ class DekaLapSower(sower.SowMethodIf):
     def sow_seeds(self, mdata):
         """Sow seeds."""
 
+        # pylint: disable=duplicate-code
+
         loc = mdata.cont_sow_loc
         for _ in range(MAX_LOOPS):
 
