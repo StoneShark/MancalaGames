@@ -115,6 +115,11 @@ class GameConsts:
         return (loc - self.holes) if loc >= self.holes else loc
 
 
+    def cross_from_loc(self, loc):
+        """Return the hole location across from loc."""
+        return self.dbl_holes - loc - 1
+
+
     def opp_side(self, turn, loc):
         """Function to tell if loc is on opponents side of board."""
 

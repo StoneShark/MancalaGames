@@ -99,7 +99,7 @@ class CaptCross(CaptMethodIf):
     def do_captures(self, mdata):
         """Do cross capture"""
 
-        cross = self.game.cts.dbl_holes - mdata.capt_loc - 1
+        cross = self.game.cts.cross_from_loc(mdata.capt_loc)
 
         if (self.game.board[mdata.capt_loc] == 1
                 and self.game.deco.capt_ok.capture_ok(cross)):
@@ -179,7 +179,7 @@ class CaptContinueXCapt(CaptMethodIf):
         while True:
 
             loc = self.game.deco.incr.incr(loc, mdata.direct, NOSKIPSTART)
-            cross = self.game.cts.dbl_holes - loc - 1
+            cross = self.game.cts.cross_from_loc(loc)
 
             if (not self.game.board[loc]
                     and self.game.deco.capt_ok.capture_ok(cross)):

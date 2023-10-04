@@ -126,6 +126,36 @@ class TestCtsFuncs:
         game_consts = gc.GameConsts(nbr_start=2, holes=4)
         assert game_consts.loc_to_left_cnt(loc) == cnt
 
+    @pytest.mark.parametrize(
+        'loc, cross',
+        [(0, 7),
+         (1, 6),
+         (2, 5),
+         (3, 4),
+         (4, 3),
+         (5, 2),
+         (6, 1),
+         (7, 0),
+         ])
+    def test_even_cross_from_loc(self, loc, cross):
+
+        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        assert game_consts.cross_from_loc(loc) == cross
+
+    @pytest.mark.parametrize(
+        'loc, cross',
+        [(0, 5),
+         (1, 4),
+         (2, 3),
+         (3, 2),
+         (4, 1),
+         (5, 0),
+         ])
+    def test_odd_cross_from_loc(self, loc, cross):
+
+        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        assert game_consts.cross_from_loc(loc) == cross
+
 
     @pytest.mark.parametrize(
         'turn, loc, eres',
