@@ -1,0 +1,34 @@
+{
+   "game_class": "OneChild",
+   "game_constants": {
+      "nbr_start": 9,
+      "holes": 9
+   },
+   "game_info": {
+      "name": "Toguz Xorgol",
+      "about": "Toguz Xorgol:\nsingle-lap, clockwise-sow mancala.\nCapture on evens that are greater \nthan or equal to 4.\nEach side can make one Tuzdek (child)\non 3 on opposite side but not in left\nmost hole. Tuzdeks cannot be opposite\neachother.\n",
+      "flags": {
+         "child": true,
+         "convert_cnt": 3,
+         "cthresh": 4,
+         "evens": true,
+         "oppsidecapt": true,
+         "sow_direct": -1,
+         "sow_start": true,
+         "stores": true
+      },
+      "scorer": {
+         "stores_m": 4,
+         "access_m": 0,
+         "seeds_m": 0,
+         "empties_m": 0,
+         "child_cnt_m": 1,
+         "evens_m": 2,
+         "easy_rand": 0,
+         "repeat_turn": 0
+      },
+      "ai_params": {
+         "mm_depth": [1, 1, 3, 5]
+      }
+   }
+}
