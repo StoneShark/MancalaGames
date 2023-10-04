@@ -159,8 +159,6 @@ class DekaLapper(sower.LapContinuerIf):
         """Determine if we are done sowing."""
 
         loc = mdata.capt_loc
-        print('test loc', loc)
-        print(self.game)
         return not self.game.blocked[loc] and self.game.board[loc] > 1
 
 
@@ -179,11 +177,9 @@ class DekaLapSower(sower.SowMethodIf):
         loc = mdata.cont_sow_loc
         for _ in range(MAX_LOOPS):
 
-            print(mdata)
             mdata = self.decorator.sow_seeds(mdata)
 
             if self.lap_cont.do_another_lap(mdata):
-                print('lapping')
                 loc = mdata.capt_loc
                 mdata.cont_sow_loc = loc
                 mdata.seeds = self.game.board[loc]
@@ -194,7 +190,6 @@ class DekaLapSower(sower.SowMethodIf):
                 self.game.board[loc] = 0
 
             else:
-                print('no lapping')
                 return mdata
 
         game_log.add('MLAP game ENDLESS', game_log.IMPORT)

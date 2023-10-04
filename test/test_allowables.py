@@ -161,8 +161,6 @@ class TestAllowables:
         quot, rem = divmod(seeds, 2)
         game.store = [quot, quot + rem]
 
-        print(game)
-
         assert game.deco.allow.get_allowable_holes() == eresult
 
 

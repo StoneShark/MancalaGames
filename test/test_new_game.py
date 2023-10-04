@@ -50,6 +50,21 @@ class TestNewGame:
         game.starter = False
         return game
 
+    @pytest.fixture
+    def nb_rgame(self):
+
+        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+                                capt_on = [2],
+                                flags=gi.GameFlags(rounds=True,
+                                                   stores=True),
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = False
+        game.starter = False
+        return game
+
 
     def test_no_rounds_start(self, game):
 
@@ -169,6 +184,31 @@ class TestNewGame:
         assert all(rgame.blocked[loc] or
                    rgame.board[loc] == 2 for loc in range(rgame.cts.dbl_holes))
         assert rgame.store == estore
+
+
+    @pytest.mark.parametrize('left_fill', [True, False])
+    @pytest.mark.parametrize(
+        'store, estore',
+        [([4, 8], [0, 2]),
+         ([8, 4], [2, 0]),
+         ([2, 10], [0, 4]),
+         ([10, 2], [4, 0]),
+       ])
+    def test_no_blocks(self, nb_rgame, left_fill, store, estore):
+
+        object.__setattr__(nb_rgame.info.flags, 'rnd_left_fill', left_fill)
+        nb_rgame.blocked = [True, False, True] * 2
+        nb_rgame.board = utils.build_board([0, 0, 0],
+                                           [0, 0, 0])
+        nb_rgame.store = store.copy()
+
+        assert not nb_rgame.new_game(win_cond=WinCond.ROUND_WIN,
+                                     new_round_ok=True)
+
+        assert not any(nb_rgame.blocked)
+        assert all(nb_rgame.board[loc] in [0, 2]
+                   for loc in range(nb_rgame.cts.dbl_holes))
+        assert nb_rgame.store == estore
 
 
     def test_rounds_start_nat(self, rgame):

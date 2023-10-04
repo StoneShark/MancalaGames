@@ -95,6 +95,7 @@ class NewRound(NewGameIf):
 
         nbr_start = self.game.cts.nbr_start
         holes = self.game.cts.holes
+        blocks = self.game.info.flags.blocks
         seeds = self.collector.claim_seeds()
 
         self.set_starter()
@@ -108,7 +109,7 @@ class NewRound(NewGameIf):
         for store, brange in enumerate(orders):
 
             quot, rem = divmod(seeds[store], nbr_start)
-            fill = min(quot, self.game.cts.holes)
+            fill = min(quot, holes)
 
             self.game.store[store] = rem + (quot - fill) * nbr_start
 
@@ -117,7 +118,7 @@ class NewRound(NewGameIf):
                     self.game.board[pos] = nbr_start
                 else:
                     self.game.board[pos] = 0
-                    if self.game.info.flags.blocks:
+                    if blocks:
                         self.game.blocked[pos] = True
         return False
 
