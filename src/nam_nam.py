@@ -82,7 +82,6 @@ def build_namnam_rules():
             excp=gi.GameInfoError)
 
     rules |= ginfo_rules.build_rules()
-    del rules['rounds_wo_blocks']
     del rules['mlap_capt_on_incomp']
 
     return rules

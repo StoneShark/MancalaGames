@@ -117,7 +117,8 @@ class NewRound(NewGameIf):
                     self.game.board[pos] = nbr_start
                 else:
                     self.game.board[pos] = 0
-                    self.game.blocked[pos] = True
+                    if self.game.info.flags.blocks:
+                        self.game.blocked[pos] = True
         return False
 
 

@@ -191,12 +191,6 @@ def build_rules():
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
-        'rounds_wo_blocks',
-        rule=lambda ginfo: ginfo.flags.rounds and not ginfo.flags.blocks,
-        msg='ROUNDS without BLOCKS is not supported.',
-        excp=gi.GameInfoError)
-
-    man_rules.add_rule(
         'blocks_wo_rounds',
         rule=lambda ginfo: ginfo.flags.blocks and not ginfo.flags.rounds,
         msg='BLOCKS without ROUNDS is not supported by Mancala (base class).',

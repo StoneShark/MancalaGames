@@ -59,7 +59,6 @@ def build_gamcha_rules():
             excp=gi.GameInfoError)
 
     rules |= ginfo_rules.build_rules()
-    del rules['rounds_wo_blocks']
     del rules['blocks_wo_rounds']
 
     return rules
