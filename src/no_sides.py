@@ -46,7 +46,7 @@ def build_no_sides_rules():
         'need_no_sides',
         rule=lambda ginfo: not ginfo.flags.no_sides,
         msg="NoSides requires no_sides; it will be set automatically "
-            "(because it's not on the UI).",
+            "(because it's not on the UI)",
         warn=True)
 
     rules.add_rule(
@@ -56,7 +56,7 @@ def build_no_sides_rules():
                                 ginfo.scorer.access_m,
                                 ginfo.scorer.seeds_m]),
         msg='Scorer multipliers empties, evens, access and seeds '
-            'are incompatible with NoSides.',
+            'are incompatible with NoSides',
         excp=gi.GameInfoError)
         # child_cnt_m shouldn't be allowed either (it compares top/bot sides)
 
@@ -73,7 +73,7 @@ def build_no_sides_rules():
                                          ginfo.flags.sow_own_store,
                                          ginfo.capt_on])),
         msg="Using ESON XORGOL capture mechanism without CAPSAMEDIR "
-            "has very rare captures.",
+            "has very rare captures",
         warn=True)
 
     bad_flags = ['grandslam', 'mustpass', 'mustshare', 'oppsidecapt',
@@ -83,7 +83,7 @@ def build_no_sides_rules():
         rules.add_rule(
             f'bad_{flag}',
             rule=ft.partial(rev_getattr, flag),
-            msg=f'NoSides cannot be used with {flag.upper()}.',
+            msg=f'NoSides cannot be used with {flag.upper()}',
             excp=gi.GameInfoError)
 
     rules |= ginfo_rules.build_rules()

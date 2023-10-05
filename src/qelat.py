@@ -40,25 +40,25 @@ def build_qelat_rules():
     qelat_rules.add_rule(
         'need_child',
         rule=lambda ginfo: not ginfo.flags.child,
-        msg='Qelat requires CHILD.',
+        msg='Qelat requires CHILD',
         excp=gi.GameInfoError)
 
     qelat_rules.add_rule(
         'need_convert_cnt',
         rule=lambda ginfo: not ginfo.flags.convert_cnt,
-        msg='Qelat requires CONVERT_CNT.',
+        msg='Qelat requires CONVERT_CNT',
         excp=gi.GameInfoError)
 
     qelat_rules.add_rule(
         'capt_conflict',
         rule=lambda ginfo: ginfo.flags.convert_cnt not in ginfo.capt_on,
-        msg="Qelat makes children on convert_cnt's, even without capture.",
+        msg="Qelat makes children on convert_cnt's, even without capture",
         warn=True)
 
     qelat_rules.add_rule(
         'q_not_design',
         rule=lambda ginfo: ginfo.flags.evens or ginfo.flags.moveunlock,
-        msg='Qelat not designed to work with EVENS or MOVEUNLOCKS.',
+        msg='Qelat not designed to work with EVENS or MOVEUNLOCKS',
         warn=True)
 
     bad_flags = ['blocks', 'capsamedir', 'crosscapt', 'mlaps', 'multicapt',
@@ -69,7 +69,7 @@ def build_qelat_rules():
         qelat_rules.add_rule(
             f'bad_{flag}',
             rule=ft.partial(rev_getattr, flag),
-            msg=f'Qelat cannot be used with {flag.upper()}.',
+            msg=f'Qelat cannot be used with {flag.upper()}',
             excp=gi.GameInfoError)
 
     qelat_rules |= ginfo_rules.build_rules()

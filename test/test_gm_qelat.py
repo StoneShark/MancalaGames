@@ -331,7 +331,9 @@ class TestQelat:
 
         consts = gc.GameConsts(3, 3)
         info = game.info
-        info.__post_init__(rules=qelat.Qelat.rules)
+        object.__setattr__(info, 'udir_holes', [1])
+        info.__post_init__(nbr_holes=3,
+                           rules=qelat.Qelat.rules)
         game = qelat.Qelat(consts, info)
 
         assert game.walda_poses == [qelat.WALDA_BOTH, True, qelat.WALDA_BOTH,
@@ -341,7 +343,8 @@ class TestQelat:
 
         consts = gc.GameConsts(3, 2)
         info = game.info
-        info.__post_init__(rules=qelat.Qelat.rules)
+        info.__post_init__(nbr_holes=2,
+                           rules=qelat.Qelat.rules)
         game = qelat.Qelat(consts, info)
 
         assert all(game.walda_poses[i] == qelat.WALDA_BOTH
@@ -376,7 +379,8 @@ class TestQelat:
         consts = game.cts
         info = game.info
         object.__setattr__(info.flags, 'mustpass', False)
-        info.__post_init__(rules=qelat.Qelat.rules)
+        info.__post_init__(nbr_holes=game.cts.holes,
+                           rules=qelat.Qelat.rules)
         game = qelat.Qelat(consts, info)
 
         game.turn = turn

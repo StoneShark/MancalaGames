@@ -35,39 +35,41 @@ def build_namnam_rules():
     rules.add_rule(
         'need_rounds',
         rule=lambda ginfo: not ginfo.flags.rounds,
-        msg='NamNam requires rounds.',
+        msg='NamNam requires rounds',
         excp=gi.GameInfoError)
 
     rules.add_rule(
         'need_convert_cnt',
-        rule=lambda ginfo: ginfo.flags.convert_cnt <= ginfo.nbr_holes,
+        holes=True,
+        rule=lambda holes, ginfo: ginfo.flags.convert_cnt <= holes,
         msg='NamNam requires convert_cnt to define victory condition'
-            ' (number of owned houses > holes per side).',
+            ' (number of owned houses > holes per side)',
         excp=gi.GameInfoError)
 
     rules.add_rule(
         'convert_cnt_limit',
-        rule=lambda ginfo: ginfo.flags.convert_cnt > ginfo.nbr_holes * 2,
+        holes=True,
+        rule=lambda holes, ginfo: ginfo.flags.convert_cnt > holes * 2,
         msg='The number of houses owned for victory must be less than or '
-            'equal to the total number of holes.',
+            'equal to the total number of holes',
         excp=gi.GameInfoError)
 
     rules.add_rule(
         'need_capt_on',
         rule=lambda ginfo: not any(ginfo.capt_on),
-        msg='NamNam needs at least one capt_on checked.',
+        msg='NamNam needs at least one capt_on checked',
         excp=gi.GameInfoError)
 
     rules.add_rule(
         'need_stores',
         rule=lambda ginfo: not ginfo.flags.stores,
-        msg='NamNam requires stores.',
+        msg='NamNam requires stores',
         excp=gi.GameInfoError)
 
     rules.add_rule(
         'min_move_one',
         rule=lambda ginfo: ginfo.min_move != 1,
-        msg='NamNam requires a minimum move of 1.',
+        msg='NamNam requires a minimum move of 1',
         excp=gi.GameInfoError)
 
     bad_flags = ['blocks', 'capsamedir', 'child', 'crosscapt', 'evens',
@@ -78,7 +80,7 @@ def build_namnam_rules():
         rules.add_rule(
             f'bad_{flag}',
             rule=ft.partial(rev_getattr, flag),
-            msg=f'NamNam cannot be used with {flag.upper()}.',
+            msg=f'NamNam cannot be used with {flag.upper()}',
             excp=gi.GameInfoError)
 
     rules |= ginfo_rules.build_rules()

@@ -279,8 +279,6 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         info_dict[ckey.DIFFICULTY] = f'{self.difficulty} played'
         del info_dict[ckey.FLAGS][ckey.UDIRECT]
         del info_dict[ckey.HELP_FILE]
-        # del info_dict[ckey.NAME]  might not match all params
-        del info_dict[ckey.NBR_HOLES]
 
         pprinter = pprint.PrettyPrinter(indent=4)
         strings += 'GameInfo\n'

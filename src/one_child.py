@@ -29,19 +29,19 @@ def build_rules():
     rules.add_rule(
         'need_sow_start',
         rule=lambda ginfo: not ginfo.flags.sow_start,
-        msg='OneChild requires SOW_START.',
+        msg='OneChild requires SOW_START',
         excp=gi.GameInfoError)
 
     rules.add_rule(
         'need_child',
         rule=lambda ginfo: not ginfo.flags.child,
-        msg='OneChild requires CHILD to support tuzdek creation.',
+        msg='OneChild requires CHILD to support tuzdek creation',
         excp=gi.GameInfoError)
 
     rules.add_rule(
         'need_convert_cnt',
         rule=lambda ginfo: not ginfo.flags.convert_cnt,
-        msg='OneChild requires CONVERT_CNT to define tuzdek creation.',
+        msg='OneChild requires CONVERT_CNT to define tuzdek creation',
         excp=gi.GameInfoError)
 
     bad_flags = ['blocks',
@@ -51,7 +51,7 @@ def build_rules():
         rules.add_rule(
             f'bad_{flag}',
             rule=ft.partial(rev_getattr, flag),
-            msg=f'OneChild cannot be used with {flag.upper()}.',
+            msg=f'OneChild cannot be used with {flag.upper()}',
             excp=gi.GameInfoError)
 
     rules |= ginfo_rules.build_rules()

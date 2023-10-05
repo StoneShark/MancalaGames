@@ -36,14 +36,15 @@ def build_gamcha_rules():
 
     rules.add_rule(
         'three_per_side',
-        rule=lambda ginfo: ginfo.nbr_holes < 3,
-        msg='Gamacha requires at least 3 holes per side.',
+        holes=True,
+        rule=lambda holes, _: holes < 3,
+        msg='Gamacha requires at least 3 holes per side',
         excp=gi.GameInfoError)
 
     rules.add_rule(
         'gs_legal',
         rule=lambda ginfo: ginfo.flags.grandslam != GrandSlam.LEGAL,
-        msg='Gamacha requires that GRANDSLAM be Legal.',
+        msg='Gamacha requires that GRANDSLAM be Legal',
         excp=gi.GameInfoError)
 
     bad_flags = ['blocks', 'child', 'mlaps', 'moveunlock',
@@ -55,7 +56,7 @@ def build_gamcha_rules():
         rules.add_rule(
             f'bad_{flag}',
             rule=ft.partial(rev_getattr, flag),
-            msg=f'Gamacha cannot be used with {flag.upper()}.',
+            msg=f'Gamacha cannot be used with {flag.upper()}',
             excp=gi.GameInfoError)
 
     rules |= ginfo_rules.build_rules()

@@ -235,7 +235,8 @@ class TestDeka:
         consts = game.cts
         info = game.info
         object.__setattr__(info.flags, 'mlaps', False)
-        info.__post_init__(rules=deka.Deka.rules)
+        info.__post_init__(nbr_holes=game.cts.holes,
+                           rules=deka.Deka.rules)
         game = deka.Deka(consts, info)
 
         game.turn = True

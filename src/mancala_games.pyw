@@ -880,16 +880,14 @@ class MancalaGames(tk.Frame):
 
     def _save(self):
         """Save params to file.
-        Remove nbr_holes and udirect from info dict to reduce
-        duplication: nbr_holes is in the game constants and
-        udirect is derived from udir_holes."""
+        Remove udirect from info dict to reduce
+        duplication: udirect is derived from udir_holes."""
 
         self._test()
         if not self.game_consts or not self.game_info:
             return
 
         info_dict = dc.asdict(self.game_info)
-        del info_dict['nbr_holes']
         del info_dict['flags'][ckey.UDIRECT]
 
         game_dict = {ckey.GAME_CLASS:

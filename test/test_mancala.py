@@ -318,7 +318,7 @@ class TestBasics:
 
         info = game.get_game_info()
         assert isinstance(info, gi.GameInfo)
-        assert info.nbr_holes == 6
+        assert info.capt_on == [2]
         assert info.flags.sow_direct == Direct.CCW
 
     def test_set_diff(self, game):

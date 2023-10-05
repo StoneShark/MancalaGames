@@ -40,25 +40,25 @@ def build_deka_rules():
     deka_rules.add_rule(
         'min_move_one',
         rule=lambda ginfo: ginfo.min_move != 1,
-        msg='Deka requires a minimum move of 1.',
+        msg='Deka requires a minimum move of 1',
         excp=gi.GameInfoError)
 
     deka_rules.add_rule(
         'need_convert_cnt',
         rule=lambda ginfo: not ginfo.flags.convert_cnt,
-        msg='Deka requires CONVERT_CNT to control closing holes.',
+        msg='Deka requires CONVERT_CNT to control closing holes',
         excp=gi.GameInfoError)
 
     deka_rules.add_rule(
         'need_blocks',
         rule=lambda ginfo: not ginfo.flags.blocks,
-        msg='Deka requires BLOCKS for closing holes.',
+        msg='Deka requires BLOCKS for closing holes',
         excp=gi.GameInfoError)
 
     deka_rules.add_rule(
         'gs_legal',
         rule=lambda ginfo: ginfo.flags.grandslam != GrandSlam.LEGAL,
-        msg='Deka requires that GRANDSLAM be Legal.',
+        msg='Deka requires that GRANDSLAM be Legal',
         excp=gi.GameInfoError)
 
     capt_flags = ['capsamedir', 'crosscapt', 'evens', 'cthresh',
@@ -68,14 +68,14 @@ def build_deka_rules():
             f'no_capt_{flag}',
             rule=ft.partial(rev_getattr, flag),
             msg='Deka closes holes to remove seeds from play, '
-                f'no other capture mechanisms are allowed [{flag.upper()}].',
+                f'no other capture mechanisms are allowed [{flag.upper()}]',
         excp=gi.GameInfoError)
 
     deka_rules.add_rule(
         'no_capt_on',
         rule=lambda ginfo: any(ginfo.capt_on),
         msg='Deka closes holes to remove seeds from play, ' + \
-            'no other capture mechanisms are allowed [CAPT_ON].',
+            'no other capture mechanisms are allowed [CAPT_ON]',
         excp=gi.GameInfoError)
 
     bad_flags = ['child', 'moveunlock', 'mustshare', 'mustpass',
@@ -86,7 +86,7 @@ def build_deka_rules():
         deka_rules.add_rule(
             f'bad_{flag}',
             rule=ft.partial(rev_getattr, flag),
-            msg=f'Deka cannot be used with {flag.upper()}.',
+            msg=f'Deka cannot be used with {flag.upper()}',
             excp=gi.GameInfoError)
 
     deka_rules |= ginfo_rules.build_rules()

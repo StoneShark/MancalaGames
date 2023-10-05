@@ -166,7 +166,6 @@ class GameInfo:
     """Named tuple providing static game information."""
 
     name: str = 'Mancala'
-    nbr_holes: int               # use only to test other params
     difficulty: int = 1
     help_file: str = ''
     about: str = ''
@@ -185,20 +184,20 @@ class GameInfo:
     # and list is indexed by difficulty to choose the value
     ai_params: dict = dc.field(default_factory=dict)
 
-    # used only for initialization, is not added to the dataclass
+    # used only for initialization, not added to the dataclass
+    nbr_holes: dc.InitVar[int]
     rules: dc.InitVar[dict]
 
 
-    def __post_init__(self, rules):
+    def __post_init__(self, nbr_holes, rules):
         """Do post init (any derived values) and apply the rules.
-        rule.test raises exceptions and warnings."""
+        rules.test raises exceptions and warnings."""
 
         object.__setattr__(self.flags, 'udirect', bool(self.udir_holes))
         if ckey.MM_DEPTH not in self.ai_params:
             self.ai_params[ckey.MM_DEPTH] = [1, 1, 3, 5]
 
-        for rule in rules.values():
-            rule.test(self)
+        rules.test(nbr_holes, self)
 
 
 @dc.dataclass(kw_only=True)
