@@ -18,6 +18,9 @@ from game_classes import GAME_CLASSES
 MAX_LINES = 150
 MAX_CHARS = 2000
 
+NO_CONVERT = [ckey.AI_PARAMS, ckey.SCORER, ckey.HELP_FILE,
+              ckey.ABOUT, ckey.UDIR_HOLES, ckey.NAME, ckey.CAPT_ON]
+
 
 def read_game(filename):
     """Read a mancala configuration returning the
@@ -39,15 +42,11 @@ def read_game(filename):
     game_dict = json.loads(text)
 
     info_dict = game_dict[ckey.GAME_INFO]
-    info_dict[ckey.NBR_HOLES] = game_dict[ckey.GAME_CONSTANTS][ckey.HOLES]
 
-    if ckey.FLAGS in info_dict:
-        flags_dict = info_dict[ckey.FLAGS]
-
-        for fdesc in dc.fields(gi.GameFlags):
-            if fdesc.name in flags_dict:
-                ftype = type(fdesc.default)
-                flags_dict[fdesc.name] = ftype(flags_dict[fdesc.name])
+    for fdesc in dc.fields(gi.GameInfo):
+        if fdesc.name in info_dict and fdesc.name not in NO_CONVERT:
+            ftype = type(fdesc.default)
+            info_dict[fdesc.name] = ftype(info_dict[fdesc.name])
 
     return game_dict
 
@@ -63,19 +62,15 @@ def read_game_config(filename):
     game_consts = gc.GameConsts(**game_dict[ckey.GAME_CONSTANTS])
     info_dict = game_dict[ckey.GAME_INFO]
 
-    if ckey.FLAGS in info_dict:
-        flags_dict = info_dict[ckey.FLAGS]
-        info_dict[ckey.FLAGS] = gi.GameFlags(**flags_dict)
-    else:
-        info_dict[ckey.FLAGS] = gi.GameFlags()
-
     if ckey.SCORER in info_dict:
         info_dict[ckey.SCORER] = gi.Scorer(**info_dict[ckey.SCORER])
     else:
         info_dict[ckey.SCORER] = gi.Scorer()
 
     gclass = GAME_CLASSES[game_class]
-    game_info = gi.GameInfo(**info_dict, rules=gclass.rules)
+    game_info = gi.GameInfo(**info_dict,
+                            nbr_holes=game_consts.holes,
+                            rules=gclass.rules)
 
     return game_class, game_consts, game_info
 

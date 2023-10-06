@@ -99,16 +99,16 @@ class PassMoves(MovesIf):
 def deco_moves(game):
     """Build the get_moves deco."""
 
-    if game.info.flags.udirect:
+    if game.info.udirect:
 
         moves = UdirMoves(game)
-        if game.info.flags.mustpass:
+        if game.info.mustpass:
             moves = UdirPassMoves(game, moves)
 
     else:
 
         moves = Moves(game)
-        if game.info.flags.mustpass:
+        if game.info.mustpass:
             moves = PassMoves(game, moves)
 
     return moves

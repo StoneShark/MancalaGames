@@ -99,10 +99,10 @@ def deco_incrementer(game):
 
     incer = Increment(game)
 
-    if game.info.flags.skip_start:
+    if game.info.skip_start:
         incer = IncPastStart(game, incer)
 
-    if game.info.flags.blocks:
+    if game.info.blocks:
         incer = IncPastBlocks(game, incer)
 
     return incer

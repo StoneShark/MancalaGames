@@ -48,6 +48,7 @@ def inv_dict(adict):
     assert len(vals) == len(set(vals)), 'values not unique for adict'
     return {value: key for key, value in adict.items()}
 
+
 # %%  Constants
 
 # max constants
@@ -158,13 +159,44 @@ class GameParams:
     easy_rand: tk.IntVar
     repeat_turn: tk.IntVar
 
-    def get_items(self):
-        """Return the items in the dataclass.
+
+    def get_dict(self):
+        """Return the dataclass as a dict.
         asdict doesn't work because the values are not serializable.
         The dataclasses doc says to use this create shallow copies."""
 
         return dict((field.name, getattr(self, field.name))
-                    for field in dc.fields(self)).items()
+                    for field in dc.fields(self))
+
+
+    def get_items(self):
+        """Return the items in the dataclass."""
+
+        return self.get_dict().items()
+
+
+    def get_info_items(self):
+        """Return the dictionary with items that are in the
+        GameInfo structure."""
+
+        def del_key_if(key, idict):
+            if key in idict:
+                del idict[key]
+
+        info_dict = self.get_dict()
+        del_key_if('game_class', info_dict)
+        del_key_if('holes', info_dict)
+        del_key_if('seeds', info_dict)
+        del_key_if('stores_m', info_dict)
+        del_key_if('child_cnt_m', info_dict)
+        del_key_if('access_m', info_dict)
+        del_key_if('seeds_m', info_dict)
+        del_key_if('empties_m', info_dict)
+        del_key_if('evens_m', info_dict)
+        del_key_if('easy_rand', info_dict)
+        del_key_if('repeat_turn', info_dict)
+        return info_dict.items()
+
 
 class Counter:
     """A little class so that row usage is consistent and easy to code."""
@@ -180,6 +212,7 @@ class Counter:
     def row(self):
         """Return the current row without increment."""
         return self.cnt
+
 
 @dc.dataclass
 class NonUiData:
@@ -197,6 +230,14 @@ class NonUiData:
     no_sides: bool = False
     ai_params: dict  = dc.field(default_factory=dict)
     other_dict: dict = dc.field(default_factory=dict)
+
+    def get_items(self):
+        """Return the items in the dataclass.
+        asdict doesn't work because the values are not serializable.
+        The dataclasses doc says to use this create shallow copies."""
+
+        return dict((field.name, getattr(self, field.name))
+                    for field in dc.fields(self)).items()
 
 
 # %%  game params UI
@@ -276,6 +317,7 @@ class MancalaGames(tk.Frame):
 
         os.startfile(man_path.get_path('mancala_help.html'))
 
+
     @staticmethod
     def _add_named_frame(frame, name):
         """Create a named frame and return it"""
@@ -284,6 +326,7 @@ class MancalaGames(tk.Frame):
         bfrm.pack(side='top', expand=True, fill='both')
 
         return bfrm
+
 
     @staticmethod
     def _add_opts(frame, name, var, values, row_col):
@@ -312,6 +355,7 @@ class MancalaGames(tk.Frame):
         tk.Radiobutton(frame, text=name, variable=var, value=val,
                        ).grid(row=0, column=rcnt.nrow())
 
+
     def _create_menus(self):
         """Create the game control menus."""
 
@@ -325,6 +369,7 @@ class MancalaGames(tk.Frame):
         gamemenu.add_command(label='Help ...', command=self._help)
         menubar.add_cascade(label='Game', menu=gamemenu)
 
+
     def _build_gclass_ui(self, frame):
         """Build a frame to select the game class."""
 
@@ -336,6 +381,7 @@ class MancalaGames(tk.Frame):
             self._add_radio(bfrm, game,
                             self.tkvars.game_class, idx,
                             rcnt)
+
 
     def _build_board_ui(self, frame):
         """Build board frame."""
@@ -350,6 +396,7 @@ class MancalaGames(tk.Frame):
 
         rcnt = Counter()
         self._add_opts(bfrm, 'Start Seeds', tkv.seeds, SEEDS, (rcnt, 2))
+
 
     def _build_game_dyn_ui(self, frame):
         """Build the game dynamic frame."""
@@ -370,6 +417,7 @@ class MancalaGames(tk.Frame):
         self._add_bool(bfrm, 'Enable Child Holes', tkv.child, rcnt, 2)
         self._add_opts(bfrm, 'Convert Count', tkv.convert_cnt, CONVERT,
                        (rcnt, 2))
+
 
     def _build_sow_params_ui(self, frame):
         """Bulid sow params frame."""
@@ -400,6 +448,7 @@ class MancalaGames(tk.Frame):
             tk.Checkbutton(self.udir_frame, text=str(nbr),
                            variable=tkv.udir_holes[nbr - 1]
                            ).pack(side='left')
+
 
     def _build_capt_params_ui(self, frame):
         """Build capture params frame"""
@@ -437,6 +486,7 @@ class MancalaGames(tk.Frame):
         self._add_opts(bfrm, 'Capt Greater or Equal to', tkv.cthresh, SEEDS, (rcnt, 2))
         self._add_bool(bfrm, 'No Single Seed Capt', tkv.nosinglecapt, rcnt, 2)
 
+
     def _build_scorer_ui(self, frame):
         """add the scorer params."""
 
@@ -459,6 +509,7 @@ class MancalaGames(tk.Frame):
         self._add_opts(bfrm, 'Repeat Turn Add in', tkv.repeat_turn, REPEATVALS,
                        (rcnt, 2))
 
+
     def _build_about_ui(self, frame):
         """Create a ui window to allow the about string to be edited."""
 
@@ -473,6 +524,7 @@ class MancalaGames(tk.Frame):
 
         scroll.config(command=self.about_text.yview)
         scroll.pack(side='right', fill='y')
+
 
     def _add_commands_ui(self):
         """Add buttons for commands."""
@@ -490,20 +542,24 @@ class MancalaGames(tk.Frame):
         tk.Button(self.but_frame, text='Play', command=self._play
                   ).pack(side='left', expand=True, fill='x')
 
+
     def _add_tkvar_str(self, tkvar_dict, name, default):
         """Add a string to the vars dict"""
 
         tkvar_dict[name] = tk.StringVar(self.master, default, name=name)
+
 
     def _add_tkvar_bool(self, tkvar_dict, name, default):
         """Add a boolean to the vars dict"""
 
         tkvar_dict[name] = tk.BooleanVar(self.master, default, name=name)
 
+
     def _add_tkvar_int(self, tkvar_dict, name, default):
         """Add an int to the vars dict"""
 
         tkvar_dict[name] = tk.IntVar(self.master, default, name=name)
+
 
     def _build_tkvars(self):
         """Create the tk variables for each input field
@@ -578,6 +634,7 @@ class MancalaGames(tk.Frame):
 
         return GameParams(**tkvars_dict)
 
+
     def _tkvalue_changed(self, var, index, mode):
         """Called-back whenever any tkvar is changed."""
 
@@ -590,6 +647,7 @@ class MancalaGames(tk.Frame):
 
         elif var == ckey.HOLES:
             self._resize_udirs()
+
 
     def _resize_udirs(self):
         """Change the number of the checkboxes on the screen.
@@ -609,6 +667,7 @@ class MancalaGames(tk.Frame):
                            variable=self.tkvars.udir_holes[idx - 1]
                            ).pack(side='left')
 
+
     def destroy(self):
         """Remove the traces from the tk variables."""
 
@@ -619,10 +678,12 @@ class MancalaGames(tk.Frame):
             else:
                 var.trace_remove(*var.trace_info()[0])
 
+
     def _prepare_about(self):
         """Return the about text."""
 
         return self.about_text.get('1.0', 'end')
+
 
     def _prepare_scorer(self):
         """Collect the scorer parameters."""
@@ -636,47 +697,51 @@ class MancalaGames(tk.Frame):
                          easy_rand=self.tkvars.easy_rand.get(),
                          repeat_turn=self.tkvars.repeat_turn.get())
 
-    def _prepare_flags(self):
-        """Collect the flags; capt on and udir lists"""
 
-        capt_on = []
-        udir = []
-        flag_dict = {}
+    def _prepare_info_dict(self):
+        """Build the value dict of the """
 
-        field_names = set(gi.GameFlags.get_fields())
+        vdict = {}
 
-        flag_dict[ckey.RND_LEFT_FILL] = self.non_ui_data.rnd_left_fill
-        flag_dict[ckey.RND_UMOVE] = self.non_ui_data.rnd_umove
-        flag_dict[ckey.NO_SIDES] = self.non_ui_data.no_sides
+        vdict[ckey.RND_LEFT_FILL] = self.non_ui_data.rnd_left_fill
+        vdict[ckey.RND_UMOVE] = self.non_ui_data.rnd_umove
+        vdict[ckey.NO_SIDES] = self.non_ui_data.no_sides
+        vdict[ckey.HELP_FILE] = self.non_ui_data.help_file
+        vdict[ckey.DIFFICULTY] = self.non_ui_data.difficulty
+        vdict[ckey.AI_PARAMS] = self.non_ui_data.ai_params
 
-        for name, var in self.tkvars.get_items():
+        vdict[ckey.ABOUT] = self._prepare_about()
+        vdict[ckey.SCORER] = self._prepare_scorer()
+
+        for name, var in self.tkvars.get_info_items():
 
             if name == ckey.CAPT_ON:
-                capt_on = [idx + 1
-                           for idx, cvar in enumerate(var) if cvar.get()]
+                vdict[name] = [idx + 1
+                               for idx, cvar in enumerate(var)
+                               if cvar.get()]
 
             elif name == ckey.UDIR_HOLES:
                 holes = self.tkvars.holes.get()
-                udir = [idx for idx in range(holes) if var[idx].get()]
+                vdict[name] = [idx for idx in range(holes)
+                               if var[idx].get()]
 
             elif name == ckey.SOW_DIRECT:
-                flag_dict[name] = SOW_DIR[var.get()]
+                vdict[name] = SOW_DIR[var.get()]
 
             elif name == ckey.GRANDSLAM:
-                flag_dict[name] = GRANDSLAM[var.get()]
+                vdict[name] = GRANDSLAM[var.get()]
 
             elif name == ckey.ROUND_STARTER:
-                flag_dict[name] = RSTARTER[var.get()]
+                vdict[name] = RSTARTER[var.get()]
 
             elif name == ckey.XCPICKOWN:
-                flag_dict[name] = CROSSCAPTOWN[var.get()]
+                vdict[name] = CROSSCAPTOWN[var.get()]
 
-            elif name in field_names:
-                flag_dict[name] = var.get()
+            elif name not in [ckey.ABOUT, ckey.SCORER]:
+                vdict[name] = var.get()
 
-        flags = gi.GameFlags(**flag_dict)
+        return vdict
 
-        return flags, capt_on, udir
 
     def _prepare_game(self):
         """Build the two game variables: constants and info
@@ -688,26 +753,15 @@ class MancalaGames(tk.Frame):
 
         self.game_consts = gc.GameConsts(self.tkvars.seeds.get(),
                                          self.tkvars.holes.get())
-
-        flags, capt_on, udir = self._prepare_flags()
-        scorer = self._prepare_scorer()
-
-        self.game_info = gi.GameInfo(name=self.tkvars.name.get(),
-                                     nbr_holes=self.game_consts.holes,
-                                     help_file=self.non_ui_data.help_file,
-                                     about=self._prepare_about(),
-                                     difficulty=self.non_ui_data.difficulty,
-                                     min_move=self.tkvars.min_move.get(),
-                                     scorer=scorer,
-                                     capt_on=capt_on,
-                                     udir_holes=udir,
-                                     ai_params=self.non_ui_data.ai_params,
-                                     flags=flags,
-                                     rules=gclass.rules)
+        vdict = self._prepare_info_dict()
+        self.game_info = gi.GameInfo(nbr_holes=self.game_consts.holes,
+                                     rules=gclass.rules,
+                                     **vdict)
 
         self.game = gclass(self.game_consts, self.game_info)
 
         self.param_changed = False
+
 
     def _test(self):
         """Try to build the game params and game,
@@ -775,36 +829,36 @@ class MancalaGames(tk.Frame):
             capt_on=[2],
             rules=mancala.Mancala.rules)
 
-        self.tkvars.min_move.set(
-            game_dict[ckey.GAME_INFO].get('min_move', gi_defaults.min_move))
         self._fill_capts_and_udirs(game_dict)
 
-        gi_flags = game_dict[ckey.GAME_INFO]['flags']
-        for fname in gi.GameFlags.get_fields():
+        ginfo = game_dict[ckey.GAME_INFO]
+        for fname in gi.GameInfo.get_fields():
 
             if fname not in [ckey.UDIRECT, ckey.SOW_DIRECT,
                              ckey.GRANDSLAM, ckey.NO_SIDES,
-                             ckey.RND_LEFT_FILL,
-                             ckey.ROUND_STARTER, ckey.RND_UMOVE,
-                             ckey.XCPICKOWN]:
+                             ckey.RND_LEFT_FILL, ckey.ROUND_STARTER,
+                             ckey.RND_UMOVE, ckey.XCPICKOWN,
+                             ckey.SCORER, ckey.DIFFICULTY,
+                             ckey.HELP_FILE, ckey.UDIR_HOLES,
+                             ckey.CAPT_ON, ckey.AI_PARAMS]:
                 var = getattr(man_games.tkvars, fname)
-                if fname in gi_flags:
-                    var.set(gi_flags[fname])
+                if fname in ginfo:
+                    var.set(ginfo[fname])
                 else:
-                    var.set(getattr(gi_defaults.flags, fname))
+                    var.set(getattr(gi_defaults, fname))
 
         self.tkvars.sow_direct.set(
-            INV_SOW_DIR[game_dict[ckey.GAME_INFO][ckey.FLAGS].get(
-                ckey.SOW_DIRECT, gi_defaults.flags.sow_direct)])
+            INV_SOW_DIR[game_dict[ckey.GAME_INFO].get(
+                ckey.SOW_DIRECT, gi_defaults.sow_direct)])
         self.tkvars.grandslam.set(
-            INV_GRANDSLAM[game_dict[ckey.GAME_INFO][ckey.FLAGS].get(
-                ckey.GRANDSLAM, gi_defaults.flags.grandslam)])
+            INV_GRANDSLAM[game_dict[ckey.GAME_INFO].get(
+                ckey.GRANDSLAM, gi_defaults.grandslam)])
         self.tkvars.round_starter.set(
-            INV_RSTARTER[game_dict[ckey.GAME_INFO][ckey.FLAGS].get(
-                ckey.ROUND_STARTER, gi_defaults.flags.round_starter)])
+            INV_RSTARTER[game_dict[ckey.GAME_INFO].get(
+                ckey.ROUND_STARTER, gi_defaults.round_starter)])
         self.tkvars.xcpickown.set(
-            INV_XCOWN[game_dict[ckey.GAME_INFO][ckey.FLAGS].get(
-                ckey.XCPICKOWN, gi_defaults.flags.xcpickown)])
+            INV_XCOWN[game_dict[ckey.GAME_INFO].get(
+                ckey.XCPICKOWN, gi_defaults.xcpickown)])
 
         gi_scorer = game_dict[ckey.GAME_INFO]['scorer']
         self.tkvars.stores_m.set(
@@ -840,14 +894,14 @@ class MancalaGames(tk.Frame):
             game_dict[ckey.GAME_INFO].get(ckey.AI_PARAMS,
                                           gi_defaults.ai_params)
         self.non_ui_data.rnd_left_fill = \
-            game_dict[ckey.GAME_INFO][ckey.FLAGS].get(
-                ckey.RND_LEFT_FILL, gi_defaults.flags.rnd_left_fill)
+            game_dict[ckey.GAME_INFO].get(
+                ckey.RND_LEFT_FILL, gi_defaults.rnd_left_fill)
         self.non_ui_data.rnd_umove = \
-            game_dict[ckey.GAME_INFO][ckey.FLAGS].get(
-                ckey.RND_UMOVE, gi_defaults.flags.rnd_umove)
+            game_dict[ckey.GAME_INFO].get(
+                ckey.RND_UMOVE, gi_defaults.rnd_umove)
         self.non_ui_data.no_sides = \
-            game_dict[ckey.GAME_INFO][ckey.FLAGS].get(
-                ckey.NO_SIDES, gi_defaults.flags.no_sides)
+            game_dict[ckey.GAME_INFO].get(
+                ckey.NO_SIDES, gi_defaults.no_sides)
 
         del game_dict[ckey.GAME_CLASS]
         del game_dict[ckey.GAME_CONSTANTS]
@@ -888,7 +942,7 @@ class MancalaGames(tk.Frame):
             return
 
         info_dict = dc.asdict(self.game_info)
-        del info_dict['flags'][ckey.UDIRECT]
+        del info_dict[ckey.UDIRECT]
 
         game_dict = {ckey.GAME_CLASS:
                      list(GAME_CLASSES.keys())[self.tkvars.game_class.get()],

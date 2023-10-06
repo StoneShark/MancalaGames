@@ -89,10 +89,10 @@ class SowSeedsNStore(SowMethodIf):
                            (0, 0),                         # not used
                            (self.game.cts.holes, 0))       # for CCW
 
-        if game.info.flags.sow_direct == Direct.CW:
+        if game.info.sow_direct == Direct.CW:
             self.poses = (self.game.cts.holes - 1,
                           self.game.cts.dbl_holes - 1)
-        elif game.info.flags.sow_direct == Direct.CCW:
+        elif game.info.sow_direct == Direct.CCW:
             self.poses = (0, self.game.cts.holes)
         else:
             self.poses = (0, self.game.cts.holes - 1,
@@ -181,10 +181,10 @@ class ChildLapCont(LapContinuerIf):
             return False
 
         if (mdata.seeds > 1
-                and self.game.board[loc] == self.game.info.flags.convert_cnt):
-            if ((self.game.info.flags.oppsidecapt
+                and self.game.board[loc] == self.game.info.convert_cnt):
+            if ((self.game.info.oppsidecapt
                     and self.game.cts.opp_side(self.game.turn, loc))
-                    or not self.game.info.flags.oppsidecapt):
+                    or not self.game.info.oppsidecapt):
 
                 return False
 
@@ -275,23 +275,23 @@ class SowVisitedMlap(SowMethodIf):
 def deco_sower(game):
     """Build the sower chain."""
 
-    if game.info.flags.sow_own_store:
+    if game.info.sow_own_store:
         sower = SowSeedsNStore(game)
     else:
         sower = SowSeeds(game)
 
     pre_lap_sower = sower
 
-    if game.info.flags.mlaps:
+    if game.info.mlaps:
 
-        if game.info.flags.child:
+        if game.info.child:
             lap_cont = ChildLapCont(game)
         else:
             lap_cont = SimpleLapCont(game)
 
         sower = SowMlapSeeds(game, sower, lap_cont)
 
-        if game.info.flags.visit_opp:
+        if game.info.visit_opp:
             sower = SowVisitedMlap(game, pre_lap_sower, sower, lap_cont)
 
     return sower
@@ -300,9 +300,9 @@ def deco_sower(game):
 def deco_replace_base_sower(game, base_sower):
     """Replace the base sower with a new one."""
 
-    if game.info.flags.mlaps:
+    if game.info.mlaps:
 
-        if game.info.flags.visit_opp:
+        if game.info.visit_opp:
             game.deco.sower.single_sower = base_sower
             game.deco.sower.decorator.decorator = base_sower
 

@@ -107,13 +107,13 @@ def deco_sow_starter(game):
 
     starter = SowStart(game)
 
-    if game.info.flags.sow_start:
+    if game.info.sow_start:
         starter = SowStartHole(game, starter)
 
-    if game.info.flags.moveunlock:
+    if game.info.moveunlock:
         starter = SowMarkUnlock(game, starter)
 
-    if game.info.flags.udirect:
+    if game.info.udirect:
         starter = SowStartUdir(game, starter)
     else:
         starter = SowStartPos(game, starter)

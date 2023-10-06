@@ -17,7 +17,6 @@ from context import game_constants as gc
 from context import mancala
 from context import sower
 
-from game_interface import GameFlags
 from game_interface import Direct
 from game_interface import WinCond
 from game_log import game_log
@@ -50,8 +49,8 @@ class TestSower:
         game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on = [2],
-                                flags=GameFlags(convert_cnt=4,
-                                                oppsidecapt=True),
+                                convert_cnt=4,
+                                oppsidecapt=True,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
@@ -64,7 +63,7 @@ class TestSower:
         game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on = [2],
-                                flags=GameFlags(convert_cnt=4),
+                                convert_cnt=4,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
@@ -72,10 +71,10 @@ class TestSower:
 
     @pytest.fixture
     def base_sower(self, game):
-        object.__setattr__(game.info.flags, 'sow_own_store', False)
-        object.__setattr__(game.info.flags, 'mlaps', False)
-        object.__setattr__(game.info.flags, 'child', False)
-        object.__setattr__(game.info.flags, 'visit_opp', False)
+        object.__setattr__(game.info, 'sow_own_store', False)
+        object.__setattr__(game.info, 'mlaps', False)
+        object.__setattr__(game.info, 'child', False)
+        object.__setattr__(game.info, 'visit_opp', False)
         return sower.deco_sower(game)
 
 
@@ -124,9 +123,9 @@ class TestSower:
         game_consts = gc.GameConsts(nbr_start=2, holes=4)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on = [2],
-                                flags=GameFlags(stores=True,
-                                                sow_own_store=True,
-                                                sow_direct=Direct.SPLIT),
+                                stores=True,
+                                sow_own_store=True,
+                                sow_direct=Direct.SPLIT,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
@@ -244,11 +243,11 @@ class TestSower:
                          start_pos, direct, turn, board, eloc, eboard, estore):
 
         # can't use fixture because sow_direct is used in the construction
-        object.__setattr__(game.info.flags, 'sow_own_store', True)
-        object.__setattr__(game.info.flags, 'mlaps', False)
-        object.__setattr__(game.info.flags, 'child', False)
-        object.__setattr__(game.info.flags, 'visit_opp', False)
-        object.__setattr__(game.info.flags, 'sow_direct', direct)
+        object.__setattr__(game.info, 'sow_own_store', True)
+        object.__setattr__(game.info, 'mlaps', False)
+        object.__setattr__(game.info, 'child', False)
+        object.__setattr__(game.info, 'visit_opp', False)
+        object.__setattr__(game.info, 'sow_direct', direct)
         store_sower = sower.deco_sower(game)
 
         game.board = board
@@ -438,7 +437,7 @@ class TestMlap:
         game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on = [2],
-                                flags=GameFlags(sow_direct=Direct.CW),
+                                sow_direct=Direct.CW,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
@@ -447,10 +446,10 @@ class TestMlap:
     def mlap_sower(self, game):
         # deco_sower(game, sow_own_store, mlaps, visit_opp, child)
 
-        object.__setattr__(game.info.flags, 'sow_own_store', False)
-        object.__setattr__(game.info.flags, 'mlaps', True)
-        object.__setattr__(game.info.flags, 'child', False)
-        object.__setattr__(game.info.flags, 'visit_opp', False)
+        object.__setattr__(game.info, 'sow_own_store', False)
+        object.__setattr__(game.info, 'mlaps', True)
+        object.__setattr__(game.info, 'child', False)
+        object.__setattr__(game.info, 'visit_opp', False)
         return sower.deco_sower(game)
 
 
@@ -486,7 +485,7 @@ class TestMlap:
 
         mdata = MoveData(game, start_pos)
         mdata.sow_loc, mdata.seeds = game.deco.starter.start_sow(start_pos)
-        mdata.direct = game.info.flags.sow_direct
+        mdata.direct = game.info.sow_direct
         mdata = mlap_sower.sow_seeds(mdata)
 
         assert mdata.capt_loc == eloc
@@ -503,13 +502,13 @@ class TestVMlap:
 
         game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                flags=GameFlags(sow_direct=Direct.CW,
-                                                stores=True,
-                                                sow_own_store=True,
-                                                mlaps=True,
-                                                visit_opp=True,
-                                                child=True,
-                                                convert_cnt=4),
+                                sow_direct=Direct.CW,
+                                stores=True,
+                                sow_own_store=True,
+                                mlaps=True,
+                                visit_opp=True,
+                                child=True,
+                                convert_cnt=4,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
@@ -571,7 +570,7 @@ class TestReplaceBaseSower:
         game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on = [2],
-                                flags=GameFlags(sow_direct=Direct.CW),
+                                sow_direct=Direct.CW,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
@@ -593,10 +592,10 @@ class TestReplaceBaseSower:
                 """Do the first sow."""
                 pass
 
-        object.__setattr__(game.info.flags, 'sow_own_store', sow_own_store)
-        object.__setattr__(game.info.flags, 'mlaps', mlaps)
-        object.__setattr__(game.info.flags, 'child', child)
-        object.__setattr__(game.info.flags, 'visit_opp', visit_opp)
+        object.__setattr__(game.info, 'sow_own_store', sow_own_store)
+        object.__setattr__(game.info, 'mlaps', mlaps)
+        object.__setattr__(game.info, 'child', child)
+        object.__setattr__(game.info, 'visit_opp', visit_opp)
         game.deco.sower = sower.deco_sower(game)
 
         new_sower = TestSower(game)

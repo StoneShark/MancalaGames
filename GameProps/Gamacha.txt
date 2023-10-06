@@ -9,12 +9,11 @@
       "difficulty": 1,
       "help_file": "",
       "about": "Gamacha: counter-clockwise single lap sow.\nMoves must end in an empty hole or \nreach opponents side of the board.\nSeeds are taken out of play via cross-capture.\nThe goal is to deprive the opponent of seeds.",
-      "flags": {
-         "sow_direct": 1,
-         "crosscapt": true,
-         "oppsidecapt": true,
-         "grandslam": 0
-      },
+      "sow_direct": 1,
+      "crosscapt": true,
+      "oppsidecapt": true,
+      "grandslam": 0,
+      
       "scorer": {
          "stores_m": 0,
          "access_m": 0,

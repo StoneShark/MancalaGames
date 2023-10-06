@@ -57,7 +57,7 @@ def test_one_game(game, request):
 
     game_log.game_log.active = False
 
-    for _ in range(2000 if game.info.flags.rounds else 500):
+    for _ in range(2000 if game.info.rounds else 500):
         moves = game.get_moves()
         assert moves, "Game didn't end right."
 
@@ -68,7 +68,7 @@ def test_one_game(game, request):
             if game.new_game(cond, new_round_ok=True):
                 return
 
-        if game.info.flags.mustpass:
+        if game.info.mustpass:
             game.test_pass()
 
     else:

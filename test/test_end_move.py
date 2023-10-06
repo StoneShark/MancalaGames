@@ -15,7 +15,6 @@ from context import game_constants as gc
 from context import game_interface as gi
 from context import mancala
 
-from game_interface import GameFlags
 from game_interface import WinCond
 
 # %%
@@ -38,8 +37,8 @@ class TestEndMove:
     def game(self):
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                flags=GameFlags(evens=True,
-                                                stores=True),
+                                evens=True,
+                                stores=True,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
@@ -48,9 +47,9 @@ class TestEndMove:
     def pagame(self):
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                flags=GameFlags(evens=True,
-                                                mustpass=True,
-                                                stores=True),
+                                evens=True,
+                                mustpass=True,
+                                stores=True,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
@@ -60,10 +59,10 @@ class TestEndMove:
     def rgame(self):
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                flags=GameFlags(rounds=True,
-                                                blocks=True,  # req with rounds
-                                                evens=True,
-                                                stores=True),
+                                rounds=True,
+                                blocks=True,  # req with rounds
+                                evens=True,
+                                stores=True,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
@@ -74,8 +73,8 @@ class TestEndMove:
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 min_move=2,
-                                flags=GameFlags(evens=True,
-                                                stores=True),
+                                evens=True,
+                                stores=True,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
@@ -86,9 +85,9 @@ class TestEndMove:
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 min_move=2,
-                                flags=GameFlags(mustshare=True,
-                                                evens=True,
-                                                stores=True),
+                                mustshare=True,
+                                evens=True,
+                                stores=True,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
@@ -109,9 +108,9 @@ class TestEndMove:
         object.__setattr__(game_consts, 'win_count', game_consts.total_seeds)
 
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                flags=GameFlags(mustshare=True,
-                                                evens=True,
-                                                stores=True),
+                                mustshare=True,
+                                evens=True,
+                                stores=True,
                                 rules=mancala.Mancala.rules)
 
 
@@ -341,9 +340,9 @@ class TestEndChildren:
     def game(self):
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                flags=GameFlags(child=True,
-                                                convert_cnt=2,
-                                                evens=True),
+                                child=True,
+                                convert_cnt=2,
+                                evens=True,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
@@ -352,11 +351,11 @@ class TestEndChildren:
     def rgame(self):
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                flags=GameFlags(rounds=True,
-                                                blocks=True,  # req with rounds
-                                                child=True,
-                                                convert_cnt=2,
-                                                evens=True),
+                                rounds=True,
+                                blocks=True,  # req with rounds
+                                child=True,
+                                convert_cnt=2,
+                                evens=True,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
@@ -424,8 +423,8 @@ class TestQuitter:
     def game(self):
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                flags=GameFlags(evens=True,
-                                                stores=True),
+                                evens=True,
+                                stores=True,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
@@ -434,10 +433,10 @@ class TestQuitter:
     def chgame(self):
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                flags=GameFlags(evens=True,
-                                                child=True,
-                                                convert_cnt=2,
-                                                stores=True),
+                                evens=True,
+                                child=True,
+                                convert_cnt=2,
+                                stores=True,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
@@ -446,7 +445,7 @@ class TestQuitter:
     def nsgame(self):
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                flags=GameFlags(evens=True),
+                                evens=True,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
@@ -455,9 +454,9 @@ class TestQuitter:
     def chnsgame(self):
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                flags=GameFlags(evens=True,
-                                                child=True,
-                                                convert_cnt=2),
+                                evens=True,
+                                child=True,
+                                convert_cnt=2,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
@@ -466,10 +465,10 @@ class TestQuitter:
     def rgame(self):
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                flags=GameFlags(rounds=True,
-                                                blocks=True,  # req with rounds
-                                                evens=True,
-                                                stores=True),
+                                rounds=True,
+                                blocks=True,  # req with rounds
+                                evens=True,
+                                stores=True,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
@@ -489,8 +488,8 @@ class TestQuitter:
         object.__setattr__(game_consts, 'win_count', game_consts.total_seeds)
 
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                flags=GameFlags(evens=True,
-                                                stores=True),
+                                evens=True,
+                                stores=True,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)

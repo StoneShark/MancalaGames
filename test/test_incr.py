@@ -20,7 +20,6 @@ from context import game_constants as gc
 from context import incrementer as incr
 from context import mancala
 
-from game_interface import GameFlags
 from game_interface import Direct
 from incrementer import NOSKIPSTART
 
@@ -49,34 +48,33 @@ class TestIncr:
 
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on=[2],
-                                flags=GameFlags(),
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
 
     @pytest.fixture
     def base_incr(self, game):
-        object.__setattr__(game.info.flags, 'skip_start', False)
-        object.__setattr__(game.info.flags, 'blocks', False)
+        object.__setattr__(game.info, 'skip_start', False)
+        object.__setattr__(game.info, 'blocks', False)
         return incr.deco_incrementer(game)
 
     @pytest.fixture
     def start_incr(self, game):
-        object.__setattr__(game.info.flags, 'skip_start', True)
-        object.__setattr__(game.info.flags, 'blocks', False)
+        object.__setattr__(game.info, 'skip_start', True)
+        object.__setattr__(game.info, 'blocks', False)
         return incr.deco_incrementer(game)
 
     @pytest.fixture
     def block_incr(self, game):
-        object.__setattr__(game.info.flags, 'skip_start', False)
-        object.__setattr__(game.info.flags, 'blocks', True)
+        object.__setattr__(game.info, 'skip_start', False)
+        object.__setattr__(game.info, 'blocks', True)
 
         return incr.deco_incrementer(game)
 
     @pytest.fixture
     def sb_incr(self, game):
-        object.__setattr__(game.info.flags, 'skip_start', True)
-        object.__setattr__(game.info.flags, 'blocks', True)
+        object.__setattr__(game.info, 'skip_start', True)
+        object.__setattr__(game.info, 'blocks', True)
         return incr.deco_incrementer(game)
 
 
@@ -180,10 +178,10 @@ class TestIncr:
         game_info = gi.GameInfo(name='my name',
                                 nbr_holes=game_consts.holes,
                                 capt_on=[2],
-                                flags=GameFlags(sow_direct=Direct.CW,
-                                                skip_start=True,
-                                                blocks=True,
-                                                rounds=True),
+                                sow_direct=Direct.CW,
+                                skip_start=True,
+                                blocks=True,
+                                rounds=True,
                                 rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)

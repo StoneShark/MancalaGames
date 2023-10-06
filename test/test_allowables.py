@@ -16,7 +16,6 @@ from context import game_constants as gc
 from context import game_interface as gi
 from context import mancala
 
-from game_interface import GameFlags
 from game_interface import GrandSlam
 from game_interface import Direct
 
@@ -88,7 +87,7 @@ class TestAllowables:
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on=[2],
                                 min_move=min_move,
-                                flags=GameFlags(mustshare=mustshare),
+                                mustshare=mustshare,
                                 rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
@@ -146,9 +145,8 @@ class TestAllowables:
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on=[2],
                                 min_move=min_move,
-                                flags=GameFlags(
-                                    mustshare=mustshare,
-                                    grandslam=GrandSlam.NOT_LEGAL),
+                                mustshare=mustshare,
+                                grandslam=GrandSlam.NOT_LEGAL,
                                 rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
@@ -169,10 +167,10 @@ class TestAllowables:
 
         game_consts = gc.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                flags=gi.GameFlags(crosscapt=True,
-                                                   sow_direct=Direct.CW,
-                                                   grandslam=GrandSlam.NOT_LEGAL,
-                                                   mlaps=True),
+                                crosscapt=True,
+                                sow_direct=Direct.CW,
+                                grandslam=GrandSlam.NOT_LEGAL,
+                                mlaps=True,
                                 rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
@@ -201,7 +199,7 @@ class TestMemoize():
         game_consts = gc.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on=[2],
-                                flags=GameFlags(mustshare=True),
+                                mustshare=True,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)

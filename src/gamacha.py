@@ -30,7 +30,7 @@ def build_gamcha_rules():
     Delete a few that will still trigger that we don't want to."""
 
     def rev_getattr(name, obj):
-        return getattr(obj.flags, name)
+        return getattr(obj, name)
 
     rules = ginfo_rules.RuleDict()
 
@@ -43,7 +43,7 @@ def build_gamcha_rules():
 
     rules.add_rule(
         'gs_legal',
-        rule=lambda ginfo: ginfo.flags.grandslam != GrandSlam.LEGAL,
+        rule=lambda ginfo: ginfo.grandslam != GrandSlam.LEGAL,
         msg='Gamacha requires that GRANDSLAM be Legal',
         excp=gi.GameInfoError)
 

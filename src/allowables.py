@@ -194,14 +194,14 @@ def deco_allowable(game):
 
     allowable = Allowable(game)
 
-    if game.info.flags.mustshare:
+    if game.info.mustshare:
         allowable = MustShare(game, allowable)
 
-    if game.info.flags.grandslam == GrandSlam.NOT_LEGAL:
+    if game.info.grandslam == GrandSlam.NOT_LEGAL:
         allowable = NoGrandSlam(game, allowable)
 
-    if (game.info.flags.mustshare
-            or game.info.flags.grandslam == GrandSlam.NOT_LEGAL):
+    if (game.info.mustshare
+            or game.info.grandslam == GrandSlam.NOT_LEGAL):
         allowable = MemoizeAllowable(game, allowable)
 
     return allowable

@@ -35,7 +35,6 @@ from context import game_interface as gi
 from context import mancala
 from context import minimax
 
-from game_interface import GameFlags
 from game_interface import Direct
 from game_interface import WinCond
 
@@ -61,7 +60,6 @@ class TestConctruction:
     @pytest.fixture
     def min_game_if(self):
         return gi.GameInfo(nbr_holes=6,
-                           flags=GameFlags(),
                            rules=mancala.Mancala.rules)
 
     def test_bad_params(self, min_game_if):
@@ -95,11 +93,11 @@ class TestSetPlayer:
         game_consts = gc.GameConsts(nbr_start=4, holes=2)
         game_info = gi.GameInfo(nbr_holes = game_consts.holes,
                                 capt_on = [2],
-                                flags=GameFlags(blocks=True,
-                                                rounds=True,
-                                                child=True,
-                                                convert_cnt=2,
-                                                moveunlock=True),
+                                blocks=True,
+                                rounds=True,
+                                child=True,
+                                convert_cnt=2,
+                                moveunlock=True,
                                 ai_params={"mm_depth" : [1, 1, 3, 5]},
                                 rules=mancala.Mancala.rules)
 
@@ -126,11 +124,11 @@ class TestGameState:
         game_consts = gc.GameConsts(nbr_start=4, holes=2)
         game_info = gi.GameInfo(nbr_holes = game_consts.holes,
                                 capt_on = [2],
-                                flags=GameFlags(blocks=True,
-                                                rounds=True,
-                                                child=True,
-                                                convert_cnt=2,
-                                                moveunlock=True),
+                                blocks=True,
+                                rounds=True,
+                                child=True,
+                                convert_cnt=2,
+                                moveunlock=True,
                                 ai_params={"mm_depth" : [1, 1, 3, 5]},
                                 rules=mancala.Mancala.rules)
 
@@ -208,19 +206,19 @@ class TestGameState:
         if unlocked:
             game.unlocked = unlocked
         else:
-            object.__setattr__(game.info.flags,
+            object.__setattr__(game.info,
                                'moveunlock',
                                False)
         if blocked:
             game.blocked = blocked
         else:
-            object.__setattr__(game.info.flags,
+            object.__setattr__(game.info,
                                'blocks',
                                False)
         if child:
             game.child = child
         else:
-            object.__setattr__(game.info.flags,
+            object.__setattr__(game.info,
                                'child',
                                False)
 
@@ -287,7 +285,6 @@ class TestBasics:
         game_consts = gc.GameConsts(nbr_start=4, holes=6)
         game_info = gi.GameInfo(nbr_holes = game_consts.holes,
                                 capt_on = [2],
-                                flags=GameFlags(),
                                 ai_params={"mm_depth" : [1, 1, 3, 5]},
                                 rules=mancala.Mancala.rules)
 
@@ -301,12 +298,12 @@ class TestBasics:
 
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                flags=GameFlags(mustpass=True,
-                                                stores=True,
-                                                blocks=True,
-                                                moveunlock=True,
-                                                sow_direct=Direct.CCW,
-                                                evens=True),
+                                mustpass=True,
+                                stores=True,
+                                blocks=True,
+                                moveunlock=True,
+                                sow_direct=Direct.CCW,
+                                evens=True,
                                 rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
@@ -319,7 +316,7 @@ class TestBasics:
         info = game.get_game_info()
         assert isinstance(info, gi.GameInfo)
         assert info.capt_on == [2]
-        assert info.flags.sow_direct == Direct.CCW
+        assert info.sow_direct == Direct.CCW
 
     def test_set_diff(self, game):
 
@@ -366,7 +363,7 @@ class TestEndGames:
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on = [2],
-                                flags=GameFlags(stores=True),
+                                stores=True,
                                 rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
@@ -380,9 +377,9 @@ class TestEndGames:
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on = [2],
-                                flags=gi.GameFlags(rounds=True,
-                                                   blocks=True,
-                                                   stores=True),
+                                rounds=True,
+                                blocks=True,
+                                stores=True,
                                 rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
@@ -433,7 +430,6 @@ class TestWinMessage:
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on = [2],
-                                flags=GameFlags(),
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
@@ -482,7 +478,6 @@ class TestHoleProp:
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on = [2],
-                                flags=GameFlags(),
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
@@ -522,7 +517,7 @@ class TestAiIf:
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on=[2],
-                                flags=GameFlags(sow_direct=Direct.CCW),
+                                sow_direct=Direct.CCW,
                                 rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
@@ -536,8 +531,8 @@ class TestAiIf:
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on=[2],
                                 min_move=2,
-                                flags=GameFlags(mustpass=True,
-                                                sow_direct=Direct.CCW),
+                                mustpass=True,
+                                sow_direct=Direct.CCW,
                                 rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
@@ -552,9 +547,9 @@ class TestAiIf:
                                 capt_on=[2],
                                 min_move=2,
                                 udir_holes=[1],
-                                flags=GameFlags(mustpass=True,
-                                                udirect=True,
-                                                sow_direct=Direct.SPLIT),
+                                mustpass=True,
+                                udirect=True,
+                                sow_direct=Direct.SPLIT,
                                 rules=mancala.Mancala.rules
                                 )
 
@@ -641,7 +636,7 @@ class TestScorer:
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 scorer=gi.Scorer(easy_rand=0),
                                 capt_on=[2],
-                                flags=GameFlags(sow_direct=Direct.CCW),
+                                sow_direct=Direct.CCW,
                                 rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
@@ -728,7 +723,7 @@ class TestScorer:
          ])
     def test_sc_stores_child(self, game, board, store, child, escore):
 
-        object.__setattr__(game.info.flags, 'child', True)
+        object.__setattr__(game.info, 'child', True)
 
         assert game.info.scorer.stores_m == 4
         assert sum(vars(game.info.scorer).values()) == 4
@@ -760,7 +755,7 @@ class TestScorer:
     def test_sc_child_cnt(self, game, child, escore):
 
         object.__setattr__(game.info.scorer, 'stores_m', 0)
-        object.__setattr__(game.info.flags, 'child', True)
+        object.__setattr__(game.info, 'child', True)
         object.__setattr__(game.info.scorer, 'child_cnt_m', 15)
 
         game.child = child
@@ -797,7 +792,7 @@ class TestScorer:
         game.board = [1, 1, 1, 0, 1, 1, 4, 3]
         assert game.score(None) == -10
 
-        object.__setattr__(game.info.flags, 'mlaps', True)
+        object.__setattr__(game.info, 'mlaps', True)
         assert game.score(None) == 0
 
 
@@ -810,7 +805,7 @@ class TestMove:
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 scorer=gi.Scorer(easy_rand=0),
                                 capt_on=[2],
-                                flags=GameFlags(sow_direct=Direct.CCW),
+                                sow_direct=Direct.CCW,
                                 rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)

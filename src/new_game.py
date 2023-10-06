@@ -37,7 +37,7 @@ class NewGameIf(abc.ABC):
         but not the board or stores."""
 
         dbl_holes = self.game.cts.dbl_holes
-        locks = not self.game.info.flags.moveunlock
+        locks = not self.game.info.moveunlock
         self.game.unlocked = [locks] * dbl_holes
         self.game.blocked = [False] * dbl_holes
         self.game.child = [None] * dbl_holes
@@ -69,7 +69,7 @@ class NewRound(NewGameIf):
     def set_starter(self):
         """Set the starter of the next round based on the game flag."""
 
-        match self.game.info.flags.round_starter:
+        match self.game.info.round_starter:
             case RoundStarter.ALTERNATE:
                 self.game.turn = not self.game.starter
 
@@ -95,13 +95,13 @@ class NewRound(NewGameIf):
 
         nbr_start = self.game.cts.nbr_start
         holes = self.game.cts.holes
-        blocks = self.game.info.flags.blocks
+        blocks = self.game.info.blocks
         seeds = self.collector.claim_seeds()
 
         self.set_starter()
         self.init_bprops()
 
-        if self.game.info.flags.rnd_left_fill:
+        if self.game.info.rnd_left_fill:
             orders = [range(holes), range(holes, self.game.cts.dbl_holes)]
         else:
             orders = [self.game.cts.false_fill, self.game.cts.true_fill]
@@ -130,7 +130,7 @@ def deco_new_game(game):
 
     new_game = NewGame(game)
 
-    if game.info.flags.rounds:
+    if game.info.rounds:
         new_game = NewRound(game, new_game, end_move.TakeOwnSeeds(game))
 
     return new_game

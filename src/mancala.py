@@ -196,7 +196,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         self.player = player or minimax.MiniMaxer(self)
 
         self.board = [self.cts.nbr_start] * self.cts.dbl_holes
-        locks = not self.info.flags.moveunlock
+        locks = not self.info.moveunlock
         self.unlocked = [locks] * self.cts.dbl_holes
         self.blocked = [False] * self.cts.dbl_holes
         self.child = [None] * self.cts.dbl_holes
@@ -227,13 +227,13 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
                       '_turn': self.turn,
                       'store': tuple(self.store)}
 
-        if self.info.flags.moveunlock:
+        if self.info.moveunlock:
             state_dict |= {'unlocked': tuple(self.unlocked)}
 
-        if self.info.flags.blocks:
+        if self.info.blocks:
             state_dict |= {'blocked': tuple(self.blocked)}
 
-        if self.info.flags.child:
+        if self.info.child:
             state_dict |= {'child': tuple(self.child)}
 
         return GameState(**state_dict)
@@ -277,7 +277,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         info_dict = dc.asdict(self.info)
         del info_dict[ckey.ABOUT]
         info_dict[ckey.DIFFICULTY] = f'{self.difficulty} played'
-        del info_dict[ckey.FLAGS][ckey.UDIRECT]
+        del info_dict[ckey.UDIRECT]
         del info_dict[ckey.HELP_FILE]
 
         pprinter = pprint.PrettyPrinter(indent=4)
@@ -421,9 +421,9 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         assert sum(self.store) + sum(self.board) == self.cts.total_seeds, \
             'seed count error before move'
 
-        if (not self.info.flags.no_sides
+        if (not self.info.no_sides
             and (move == PASS_TOKEN
-                or (self.info.flags.udirect and move[0] == PASS_TOKEN))):
+                or (self.info.udirect and move[0] == PASS_TOKEN))):
             self.turn = not self.turn
             return None
 
@@ -487,7 +487,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         This method is likely only useable by the Ai
         because of the side effect of swapping turns."""
 
-        if self.info.flags.mustpass:
+        if self.info.mustpass:
             if not any(self.get_allowable_holes()):
 
                 self.turn = not self.turn
@@ -539,7 +539,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             store_f = self.store[False]
             store_t = self.store[True]
 
-            if self.info.flags.child:
+            if self.info.child:
                 for loc in range(self.cts.dbl_holes):
                     if self.child[loc] is False:
                         store_f += self.board[loc]
@@ -548,7 +548,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
             sval += (store_f - store_t) * self.info.scorer.stores_m
 
-        if self.info.flags.child and self.info.scorer.child_cnt_m:
+        if self.info.child and self.info.scorer.child_cnt_m:
             child_f = self.child.count(False)
             child_t = self.child.count(True)
             sval += (child_f - child_t) * self.info.scorer.child_cnt_m
@@ -562,7 +562,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
         Do not support multilap games!"""
 
-        if self.info.flags.mlaps:
+        if self.info.mlaps:
             return 0
 
         access = [set(), set()]

@@ -59,7 +59,7 @@ def test_one_game(game, player_class):
                     WinCond.ROUND_WIN, WinCond.ROUND_TIE):
             break
 
-        if game.info.flags.mustpass:
+        if game.info.mustpass:
             game.test_pass()
 
     else:

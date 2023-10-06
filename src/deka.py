@@ -28,12 +28,12 @@ MAX_LOOPS = 100
 
 def build_deka_rules():
     """Update the rules for deka.  Add deka rules to RuleDict first,
-    so that invalid flags are eliminated; then the consistency checking
+    so that invalidare eliminated; then the consistency checking
     rules in the base set wont trigger.
     Delete a few that will still trigger that we don't want to."""
 
     def rev_getattr(name, obj):
-        return getattr(obj.flags, name)
+        return getattr(obj, name)
 
     deka_rules = ginfo_rules.RuleDict()
 
@@ -45,19 +45,19 @@ def build_deka_rules():
 
     deka_rules.add_rule(
         'need_convert_cnt',
-        rule=lambda ginfo: not ginfo.flags.convert_cnt,
+        rule=lambda ginfo: not ginfo.convert_cnt,
         msg='Deka requires CONVERT_CNT to control closing holes',
         excp=gi.GameInfoError)
 
     deka_rules.add_rule(
         'need_blocks',
-        rule=lambda ginfo: not ginfo.flags.blocks,
+        rule=lambda ginfo: not ginfo.blocks,
         msg='Deka requires BLOCKS for closing holes',
         excp=gi.GameInfoError)
 
     deka_rules.add_rule(
         'gs_legal',
-        rule=lambda ginfo: ginfo.flags.grandslam != GrandSlam.LEGAL,
+        rule=lambda ginfo: ginfo.grandslam != GrandSlam.LEGAL,
         msg='Deka requires that GRANDSLAM be Legal',
         excp=gi.GameInfoError)
 
@@ -141,7 +141,7 @@ class DekaSowClosed(sower.SowMethodIf):
         mdata = self.decorator.sow_seeds(mdata)
         loc = mdata.capt_loc
 
-        if (self.game.board[loc] == self.game.info.flags.convert_cnt
+        if (self.game.board[loc] == self.game.info.convert_cnt
                 and self.game.cts.opp_side(self.game.turn, loc)):
 
             self.game.store[0] += self.game.board[loc]
@@ -186,7 +186,7 @@ class DekaLapSower(sower.SowMethodIf):
                 mdata.cont_sow_loc = loc
                 mdata.seeds = self.game.board[loc]
 
-                if (self.game.board[loc] == self.game.info.flags.convert_cnt
+                if (self.game.board[loc] == self.game.info.convert_cnt
                         and self.game.cts.opp_side(self.game.turn, loc)):
                     self.game.blocked[loc] = True
                 self.game.board[loc] = 0
@@ -212,7 +212,7 @@ class Deka(no_seed_goal.NoSeedGoal):
 
         super().__init__(game_consts, game_info)
 
-        if self.info.flags.mlaps:
+        if self.info.mlaps:
             self.deco.sower = DekaLapSower(self, DekaSower(self),
                                            DekaLapper(self))
         else:

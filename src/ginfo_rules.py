@@ -108,13 +108,6 @@ def build_rules():
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
-        'invalid_flags',
-        rule=lambda ginfo: (not ginfo.flags or
-                            not isinstance(ginfo.flags, gi.GameFlags)),
-        msg='Missing or bad game flags',
-        excp=gi.GameInfoError)
-
-    man_rules.add_rule(
         'invalid_scorer',
         rule=lambda ginfo: (not ginfo.scorer or
                             not isinstance(ginfo.scorer, gi.Scorer)),
@@ -131,61 +124,61 @@ def build_rules():
 
     man_rules.add_rule(
         'sow_dir_type',
-        rule=lambda ginfo: not isinstance(ginfo.flags.sow_direct, Direct),
+        rule=lambda ginfo: not isinstance(ginfo.sow_direct, Direct),
         msg='SOW_DIRECT not valid type, expected Direct',
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
         'sow_own_needs_stores',
-        rule=lambda ginfo: (ginfo.flags.sow_own_store
-                            and not ginfo.flags.stores),
+        rule=lambda ginfo: (ginfo.sow_own_store
+                            and not ginfo.stores),
         msg='SOW_OWN_STORE set without STORES set',
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
         'child_convert_cnt',
-        rule=lambda ginfo: (ginfo.flags.child  and
-                            not ginfo.flags.convert_cnt),
+        rule=lambda ginfo: (ginfo.child  and
+                            not ginfo.convert_cnt),
         msg="CHILD without CONVERT_CNT doesn't do anything.",
         warn=True)
 
     man_rules.add_rule(
         'child_gs_legal',
-        rule=lambda ginfo: (ginfo.flags.child  and
-                            ginfo.flags.grandslam != GrandSlam.LEGAL),
+        rule=lambda ginfo: (ginfo.child  and
+                            ginfo.grandslam != GrandSlam.LEGAL),
         msg='CHILD requires that GRANDSLAM be Legal',
         excp=NotImplementedError)
         # the GS code doesn't handle children, I suppose it could
 
     man_rules.add_rule(
         'split_gs_not',
-        rule=lambda ginfo: (ginfo.flags.sow_direct == Direct.SPLIT and
-                            ginfo.flags.grandslam == GrandSlam.NOT_LEGAL),
+        rule=lambda ginfo: (ginfo.sow_direct == Direct.SPLIT and
+                            ginfo.grandslam == GrandSlam.NOT_LEGAL),
         msg='SPLIT and GRANDSLAM of Not Legal is not implemented',
         excp=NotImplementedError)
 
     man_rules.add_rule(
         'no_skip_start_mlap',
-        rule=lambda ginfo: ginfo.flags.skip_start and ginfo.flags.mlaps,
+        rule=lambda ginfo: ginfo.skip_start and ginfo.mlaps,
         msg='SKIP_START not compatible with MULTI_LAP',
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
         'no_sow_start_mlap',
-        rule=lambda ginfo: ginfo.flags.sow_start and ginfo.flags.mlaps,
+        rule=lambda ginfo: ginfo.sow_start and ginfo.mlaps,
         msg='SOW_START not compatible with MULTI_LAP',
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
         'visit_opp_req_mlap',
-        rule=lambda ginfo: ginfo.flags.visit_opp and not ginfo.flags.mlaps,
+        rule=lambda ginfo: ginfo.visit_opp and not ginfo.mlaps,
         msg='VISIT_OPP requires MLAPS',
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
         'split_mshare',
-        rule=lambda ginfo: (ginfo.flags.sow_direct == Direct.SPLIT
-                            and ginfo.flags.mustshare),
+        rule=lambda ginfo: (ginfo.sow_direct == Direct.SPLIT
+                            and ginfo.mustshare),
         msg='SPLIT and MUSTSHARE are currently incompatible',
         excp=NotImplementedError)
         # supporting split_mshare would make allowables and get_moves
@@ -195,33 +188,33 @@ def build_rules():
 
     man_rules.add_rule(
         'sow_start_skip_incomp',
-        rule=lambda ginfo: ginfo.flags.sow_start and ginfo.flags.skip_start,
+        rule=lambda ginfo: ginfo.sow_start and ginfo.skip_start,
         msg='SOW_START and SKIP_START do not make sense together',
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
         'blocks_wo_rounds',
-        rule=lambda ginfo: ginfo.flags.blocks and not ginfo.flags.rounds,
+        rule=lambda ginfo: ginfo.blocks and not ginfo.rounds,
         msg='BLOCKS without ROUNDS is not supported by Mancala (base class)',
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
         'rstarter_wo_rounds',
-        rule=lambda ginfo: not ginfo.flags.rounds
-            and ginfo.flags.round_starter != RoundStarter.ALTERNATE,
+        rule=lambda ginfo: not ginfo.rounds
+            and ginfo.round_starter != RoundStarter.ALTERNATE,
         msg='ROUND_STARTER without ROUNDS is not supported',
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
         'warn_capsamedir_multicapt',
-        rule=lambda ginfo: ginfo.flags.capsamedir and not ginfo.flags.multicapt,
+        rule=lambda ginfo: ginfo.capsamedir and not ginfo.multicapt,
         msg="CAPSAMEDIR without MULTICAPT has no effect.",
         warn=True)
 
     man_rules.add_rule(
         'xcapt_multi_same',
-        rule=lambda ginfo: (ginfo.flags.crosscapt and ginfo.flags.multicapt
-                            and not ginfo.flags.capsamedir),
+        rule=lambda ginfo: (ginfo.crosscapt and ginfo.multicapt
+                            and not ginfo.capsamedir),
         msg="CROSSCAPT with MULTICAPT without CAPSAMEDIR"
             "is the same as just CROSSCAPT.",
         warn=True)
@@ -230,14 +223,14 @@ def build_rules():
 
     man_rules.add_rule(
         'warn_crosscapt_evens',
-        rule=lambda ginfo: ginfo.flags.crosscapt and ginfo.flags.evens,
+        rule=lambda ginfo: ginfo.crosscapt and ginfo.evens,
         msg='CROSSCAPT with EVENS might be confusing '
             '(conditions are ANDed)',
         warn=True)
 
     man_rules.add_rule(
         'xpick_requires_cross',
-        rule=lambda ginfo: ginfo.flags.xcpickown and not ginfo.flags.crosscapt,
+        rule=lambda ginfo: ginfo.xcpickown and not ginfo.crosscapt,
         msg="XCPICKOWN without CROSSCAPT doesn't do anything.",
         excp=gi.GameInfoError)
 
@@ -245,43 +238,43 @@ def build_rules():
 
     man_rules.add_rule(
         'bad_no_side',
-        rule=lambda ginfo: ginfo.flags.no_sides,
+        rule=lambda ginfo: ginfo.no_sides,
         msg='Mancala does not support NO_SIDES',
         excp=gi.GameInfoError)
         # flag is in the base class because it changes how the UI works
 
     man_rules.add_rule(
         'warn_no_capt',
-        rule=lambda ginfo: not any([ginfo.flags.evens,
-                                    ginfo.flags.crosscapt,
-                                    ginfo.flags.sow_own_store,
-                                    ginfo.flags.cthresh,
+        rule=lambda ginfo: not any([ginfo.evens,
+                                    ginfo.crosscapt,
+                                    ginfo.sow_own_store,
+                                    ginfo.cthresh,
                                     ginfo.capt_on]),
         msg='No capture mechanism provided',
         warn=True)
 
     man_rules.add_rule(
         'capt_on_evens_incomp',
-        rule=lambda ginfo: ginfo.flags.evens and ginfo.capt_on,
+        rule=lambda ginfo: ginfo.evens and ginfo.capt_on,
         msg='CAPT_ON and EVENS conditions are ANDed',
         warn=True)
 
     man_rules.add_rule(
         'cross_capt_on_anded',
-        rule=lambda ginfo: ginfo.flags.crosscapt and ginfo.capt_on,
+        rule=lambda ginfo: ginfo.crosscapt and ginfo.capt_on,
         msg='CROSSCAPT with CAPT_ON conditions are ANDed',
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
         'needs_moves',
-        rule=lambda ginfo: ginfo.min_move == 1 and ginfo.flags.sow_start,
+        rule=lambda ginfo: ginfo.min_move == 1 and ginfo.sow_start,
         msg='MIN_MOVE of 1 with SOW_START play is confusing',
         excp=gi.GameInfoError)
         # pick-up a seed, sow it back into the same hole -> no change of state
 
     man_rules.add_rule(
         'mlap_capt_on_incomp',
-        rule=lambda ginfo: ginfo.flags.mlaps and ginfo.capt_on,
+        rule=lambda ginfo: ginfo.mlaps and ginfo.capt_on,
         msg='CAPT_ON with MULTI_LAP never captures',
         excp=gi.GameInfoError)
 
@@ -302,15 +295,15 @@ def build_rules():
 
     man_rules.add_rule(
         'udir_and_mshare',
-        rule=lambda ginfo: ginfo.flags.udirect and ginfo.flags.mustshare,
+        rule=lambda ginfo: ginfo.udirect and ginfo.mustshare,
         msg='UDIRECT and MUSTSHARE are currently incompatible',
         excp=NotImplementedError)
         # see SPLIT / MUSHSHARE above
 
     man_rules.add_rule(
         'udir_gs_not',
-        rule=lambda ginfo: (ginfo.flags.udirect and
-                            ginfo.flags.grandslam == GrandSlam.NOT_LEGAL),
+        rule=lambda ginfo: (ginfo.udirect and
+                            ginfo.grandslam == GrandSlam.NOT_LEGAL),
         msg='UDIRECT and GRANDLAM=Not Legal are currently incompatible',
         excp=NotImplementedError)
         # see SPLIT / MUSHSHARE above
@@ -318,7 +311,7 @@ def build_rules():
     man_rules.add_rule(
         'odd_split_udir',
         holes=True,
-        rule=lambda holes, ginfo: (ginfo.flags.sow_direct == Direct.SPLIT
+        rule=lambda holes, ginfo: (ginfo.sow_direct == Direct.SPLIT
                                    and holes % 2
                                    and holes // 2 not in ginfo.udir_holes),
         msg='SPLIT with odd number of holes, '
@@ -328,9 +321,9 @@ def build_rules():
     man_rules.add_rule(
         'sdir_split',
         holes=True,
-        rule=lambda holes, ginfo: (ginfo.flags.udirect
+        rule=lambda holes, ginfo: (ginfo.udirect
                                    and len(ginfo.udir_holes) != holes
-                                   and ginfo.flags.sow_direct != Direct.SPLIT),
+                                   and ginfo.sow_direct != Direct.SPLIT),
         msg= 'Odd choice of sow direction when udir_holes != nbr_holes',
         warn=True)
 
@@ -357,13 +350,13 @@ def build_rules():
 
     man_rules.add_rule(
         'mlaps_access_prohibit',
-        rule=lambda ginfo: ginfo.scorer.access_m and ginfo.flags.mlaps,
+        rule=lambda ginfo: ginfo.scorer.access_m and ginfo.mlaps,
         msg='Access scorer not supported for multilap games',
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
         'child_scorer',
-        rule=lambda ginfo: ginfo.scorer.child_cnt_m and not ginfo.flags.child,
+        rule=lambda ginfo: ginfo.scorer.child_cnt_m and not ginfo.child,
         msg='Child count scorer not supported without child flag',
         excp=gi.GameInfoError)
 

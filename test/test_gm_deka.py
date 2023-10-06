@@ -234,7 +234,7 @@ class TestDeka:
         # get the config vars, change mlaps, build new game
         consts = game.cts
         info = game.info
-        object.__setattr__(info.flags, 'mlaps', False)
+        object.__setattr__(info, 'mlaps', False)
         info.__post_init__(nbr_holes=game.cts.holes,
                            rules=deka.Deka.rules)
         game = deka.Deka(consts, info)

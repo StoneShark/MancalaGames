@@ -7,15 +7,16 @@
    "game_info": {
       "name": "Oware",
       "about": "Oware: a single-lap mancala,\nsow direction is counter-clockwise,\ncapture on opponents side on 1s, 2s and 3s.",
-      "flags": {
-         "grandslam": 2,
-         "multicapt": true,
-         "mustshare": true,
-         "oppsidecapt": true,
-         "skip_start": true,
-         "sow_direct": 1,
-         "stores": true
-      },
+      "grandslam": 2,
+      "multicapt": true,
+      "mustshare": true,
+      "oppsidecapt": true,
+      "skip_start": true,
+      "sow_direct": 1,
+      "stores": true,
+      "min_move": 1,
+      "capt_on": [ 1, 2, 3 ],
+
       "scorer": {
          "stores_m": 4,
          "access_m": 1,
@@ -26,8 +27,6 @@
          "easy_rand": 10,
          "repeat_turn": 10
       },
-      "min_move": 1,
-      "capt_on": [ 1, 2, 3 ],
       "ai_params": {
          "mm_depth": [1, 3, 5, 8],
          "mcts_nodes": [300, 500, 800, 1100],

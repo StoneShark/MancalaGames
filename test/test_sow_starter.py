@@ -15,7 +15,6 @@ from context import game_constants as gc
 from context import mancala
 from context import sow_starter
 
-from game_interface import GameFlags
 from game_interface import Direct
 
 
@@ -51,8 +50,8 @@ class TestSowStarter:
         game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on = [2],
-                                flags=GameFlags(sow_start = sow_start,
-                                                moveunlock = unlock),
+                                sow_start = sow_start,
+                                moveunlock = unlock,
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
         game.board = utils.build_board([4, 5, 6],
@@ -83,8 +82,8 @@ class TestSowStarter:
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 min_move = 2,
                                 capt_on = [2],
-                                flags=GameFlags(sow_start = sow_start,
-                                                moveunlock = unlock),
+                                sow_start = sow_start,
+                                moveunlock = unlock,
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
         game.board = utils.build_board([4, 5, 6],
@@ -115,9 +114,9 @@ class TestSowStarter:
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on = [2],
                                 udir_holes=[1],
-                                flags=GameFlags(sow_direct=Direct.SPLIT,
-                                                sow_start = sow_start,
-                                                moveunlock = unlock),
+                                sow_direct=Direct.SPLIT,
+                                sow_start = sow_start,
+                                moveunlock = unlock,
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
         game.board = utils.build_board([4, 5, 6],

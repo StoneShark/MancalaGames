@@ -36,7 +36,7 @@ class NegaMaxer(ai_interface.AiPlayerIf):
         super().__init__(game)
 
         # this is not in the interface!!
-        assert not self.game.info.flags.sow_own_store, \
+        assert not self.game.infosow_own_store, \
             "Don't use NegaMax if there can be repeat turns."
 
         self.max_depth = 5

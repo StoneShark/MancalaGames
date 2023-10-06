@@ -16,7 +16,6 @@ from context import game_interface as gi
 from context import mancala
 
 from game_interface import Direct
-from game_interface import GameFlags
 from game_interface import WinCond
 
 
@@ -36,9 +35,9 @@ class TestPassWConds:
     def pass_game(self):
         game_consts=gc.GameConsts(nbr_start=2, holes=3)
         game_info=gi.GameInfo(nbr_holes=game_consts.holes,
-                                flags=GameFlags(sow_direct=Direct.CCW,
-                                                mustpass=True,
-                                                evens=True),
+                                sow_direct=Direct.CCW,
+                                mustpass=True,
+                                evens=True,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)

@@ -27,7 +27,7 @@ class TestNewGame:
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on = [2],
-                                flags=gi.GameFlags(stores=True),
+                                stores=True,
                                 rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
@@ -40,9 +40,9 @@ class TestNewGame:
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on = [2],
-                                flags=gi.GameFlags(rounds=True,
-                                                   blocks=True,
-                                                   stores=True),
+                                rounds=True,
+                                blocks=True,
+                                stores=True,
                                 rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
@@ -56,8 +56,8 @@ class TestNewGame:
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on = [2],
-                                flags=gi.GameFlags(rounds=True,
-                                                   stores=True),
+                                rounds=True,
+                                stores=True,
                                 rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
@@ -114,7 +114,7 @@ class TestNewGame:
     def test_rounds_start(self, rgame,
                           start_method, starter, winner, estarter):
 
-        object.__setattr__(rgame.info.flags, 'round_starter', start_method)
+        object.__setattr__(rgame.info, 'round_starter', start_method)
 
         rgame.unlocked = [False, True, True] * 2
         rgame.blocked = [True, False, True] * 2
@@ -169,7 +169,7 @@ class TestNewGame:
           ])
     def test_fill_patterns(self, rgame, store, left_fill, blocks, estore):
 
-        object.__setattr__(rgame.info.flags, 'rnd_left_fill', left_fill)
+        object.__setattr__(rgame.info, 'rnd_left_fill', left_fill)
         rgame.unlocked = [False, True, True] * 2
         rgame.blocked = [True, False, True] * 2
         rgame.board = utils.build_board([0, 0, 0],
@@ -196,7 +196,7 @@ class TestNewGame:
        ])
     def test_no_blocks(self, nb_rgame, left_fill, store, estore):
 
-        object.__setattr__(nb_rgame.info.flags, 'rnd_left_fill', left_fill)
+        object.__setattr__(nb_rgame.info, 'rnd_left_fill', left_fill)
         nb_rgame.blocked = [True, False, True] * 2
         nb_rgame.board = utils.build_board([0, 0, 0],
                                            [0, 0, 0])

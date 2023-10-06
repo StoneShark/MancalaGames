@@ -405,22 +405,22 @@ class EndTurnNotPlayable(EndTurnIf):
 def deco_end_move(game):
     """Return a chain of move enders."""
 
-    if game.info.flags.child:
+    if game.info.child:
         claimer = ChildClaimSeeds(game)
     else:
         claimer = ClaimSeeds(game)
 
     ender = Winner(game, claimer=TakeOwnSeeds(game))
 
-    if not game.info.flags.mustpass:
+    if not game.info.mustpass:
         ender = EndTurnNoPass(game, ender)
-    if game.info.flags.mustshare:
+    if game.info.mustshare:
         ender = EndTurnMustShare(game, ender)
     ender = EndTurnNotPlayable(game, ender)
 
     ender = Winner(game, ender, claimer)
 
-    if game.info.flags.rounds:
+    if game.info.rounds:
         ender = RoundWinner(game, ender, ClaimOwnSeeds(game))
 
     return ender
@@ -429,10 +429,10 @@ def deco_end_move(game):
 def deco_quitter(game):
     """Return a chain for the quitter (user ended game)."""
 
-    if game.info.flags.stores:
+    if game.info.stores:
         return Winner(game, claimer=DivvySeedsStores(game))
 
-    if game.info.flags.child:
+    if game.info.child:
         return Winner(game, claimer=DivvySeedsNoStores(game))
 
     return Winner(game, claimer=DivvyIgnoreSeeds(game))

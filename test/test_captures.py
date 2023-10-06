@@ -137,7 +137,6 @@ read_test_cases()
 def test_no_capturer():
     game_consts = gc.GameConsts(nbr_start=3, holes=4)
     game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                            flags=gi.GameFlags(),
                             rules=mancala.Mancala.rules)
     game = mancala.Mancala(game_consts, game_info)
     mdata = MoveData(game, None)
@@ -156,21 +155,19 @@ class TestCaptTable:
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on=case.capt_on,
-                                flags=gi.GameFlags(
-                                    capsamedir=case.capsamedir,
-                                    child=case.child,
-                                    convert_cnt=case.convert_cnt,
-                                    crosscapt=case.xcapt,
-                                    cthresh=case.cthresh,
-                                    evens=case.evens,
-                                    grandslam=case.gslam,
-                                    moveunlock=case.moveunlock,
-                                    multicapt=case.multicapt,
-                                    nosinglecapt=True,
-                                    oppsidecapt=case.oppside,
-                                    skip_start=case.skip_start,
-                                    xcpickown=case.xcapt_pick_own,
-                                    ),
+                                capsamedir=case.capsamedir,
+                                child=case.child,
+                                convert_cnt=case.convert_cnt,
+                                crosscapt=case.xcapt,
+                                cthresh=case.cthresh,
+                                evens=case.evens,
+                                grandslam=case.gslam,
+                                moveunlock=case.moveunlock,
+                                multicapt=case.multicapt,
+                                nosinglecapt=True,
+                                oppsidecapt=case.oppside,
+                                skip_start=case.skip_start,
+                                xcpickown=case.xcapt_pick_own,
                                 rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
@@ -238,8 +235,8 @@ def test_no_gs(gstype):
     game_consts = gc.GameConsts(nbr_start=3, holes=2)
     game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                             capt_on=[1],
-                            flags=gi.GameFlags(multicapt=True,
-                                               grandslam=gstype),
+                            multicapt=True,
+                            grandslam=gstype,
                             rules=mancala.Mancala.rules)
     game = mancala.Mancala(game_consts, game_info)
     game.store = [3, 4]

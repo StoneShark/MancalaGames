@@ -378,7 +378,7 @@ class TestQelat:
         # get the config vars, change mustpass, build new game
         consts = game.cts
         info = game.info
-        object.__setattr__(info.flags, 'mustpass', False)
+        object.__setattr__(info, 'mustpass', False)
         info.__post_init__(nbr_holes=game.cts.holes,
                            rules=qelat.Qelat.rules)
         game = qelat.Qelat(consts, info)

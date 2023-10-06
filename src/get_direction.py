@@ -97,17 +97,16 @@ def deco_dir_getter(game):
     If all holes are specified as user dir, don't care
     what sow_direction is."""
 
-    gflags = game.info.flags
 
     if len(game.info.udir_holes) == game.cts.holes:
         return UdirAllDir()
 
-    if gflags.sow_direct is Direct.SPLIT:
+    if game.info.sow_direct is Direct.SPLIT:
         dir_getter = SplitDir(game.cts.holes)
     else:
-        dir_getter = ConstDir(gflags.sow_direct)
+        dir_getter = ConstDir(game.info.sow_direct)
 
-    if gflags.udirect:
+    if game.info.udirect:
         return UdirOtherDir(dir_getter, game.info.udir_holes, game.cts.holes)
 
     return dir_getter

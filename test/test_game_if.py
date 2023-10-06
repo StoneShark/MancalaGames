@@ -21,7 +21,6 @@ from context import game_interface as gi
 from context import ginfo_rules
 
 from game_interface import Direct
-from game_interface import GameFlags
 from game_interface import WinCond
 
 
@@ -104,12 +103,6 @@ class TestConstruction:
 
         with pytest.raises(gi.GameInfoError):  # nbr_holes
             gi.GameInfo(nbr_holes=0,
-                        flags=gi.GameFlags(),
-                        rules=rules)
-
-        with pytest.raises(AttributeError):  # flags
-            gi.GameInfo(nbr_holes=2,
-                        flags=0,
                         rules=rules)
 
         with pytest.raises(gi.GameInfoError):  # scorer
@@ -119,13 +112,13 @@ class TestConstruction:
 
         with pytest.raises(gi.GameInfoError):  # no sew direction, not playable
             gi.GameInfo(nbr_holes=2,
-                        flags=GameFlags(sow_direct=None),
+                        sow_direct=None,
                         rules=rules)
 
         # confirm this is min game config, that doesn't generate errors
         ginfo = gi.GameInfo(nbr_holes=6,
                             capt_on=[2],
-                            flags=GameFlags(sow_direct=Direct.CCW),
+                            sow_direct=Direct.CCW,
                             rules=rules)
 
         assert len(ginfo.ai_params[ckey.MM_DEPTH]) == 4
@@ -134,7 +127,7 @@ class TestConstruction:
         ginfo = gi.GameInfo(nbr_holes=6,
                             capt_on=[2],
                             ai_params={ckey.MM_DEPTH : (3, 4, 5, 6)},
-                            flags=GameFlags(sow_direct=Direct.CCW),
+                            sow_direct=Direct.CCW,
                             rules=rules)
 
         assert ginfo.ai_params[ckey.MM_DEPTH][3] == 6
@@ -178,14 +171,13 @@ class TestRuleDict:
         # sow_own_needs_store
         with pytest.raises(gi.GameInfoError):
             gi.GameInfo(nbr_holes=6,
-                        flags=GameFlags(sow_direct=Direct.CCW,
-                                        sow_own_store=True),
+                        sow_direct=Direct.CCW,
+                        sow_own_store=True,
                         rules=ginfo_rules.build_rules())
 
         # warn_no_capt
         with pytest.warns(UserWarning) as record:
             gi.GameInfo(nbr_holes=6,
-                        flags=GameFlags(),
                         rules=ginfo_rules.build_rules())
 
         assert len(record) == 1
@@ -195,9 +187,9 @@ class TestRuleDict:
 class TestCfgKeys:
 
     def test_cfg_keys(self):
-        """Confirm all of the GameFlag fields are in cfg_keys."""
+        """Confirm all of the CameInfo fields are in cfg_keys."""
 
-        fields = gi.GameFlags.get_fields()
+        fields = gi.GameInfo.get_fields()
         ckey_dir = [key for key in dir(ckey) if key[0] != '_']
 
         for field in fields:

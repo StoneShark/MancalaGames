@@ -28,20 +28,20 @@ def build_namnam_rules():
     """Refine the GameInfo rules for NamNam."""
 
     def rev_getattr(name, obj):
-        return getattr(obj.flags, name)
+        return getattr(obj, name)
 
     rules = ginfo_rules.RuleDict()
 
     rules.add_rule(
         'need_rounds',
-        rule=lambda ginfo: not ginfo.flags.rounds,
+        rule=lambda ginfo: not ginfo.rounds,
         msg='NamNam requires rounds',
         excp=gi.GameInfoError)
 
     rules.add_rule(
         'need_convert_cnt',
         holes=True,
-        rule=lambda holes, ginfo: ginfo.flags.convert_cnt <= holes,
+        rule=lambda holes, ginfo: ginfo.convert_cnt <= holes,
         msg='NamNam requires convert_cnt to define victory condition'
             ' (number of owned houses > holes per side)',
         excp=gi.GameInfoError)
@@ -49,7 +49,7 @@ def build_namnam_rules():
     rules.add_rule(
         'convert_cnt_limit',
         holes=True,
-        rule=lambda holes, ginfo: ginfo.flags.convert_cnt > holes * 2,
+        rule=lambda holes, ginfo: ginfo.convert_cnt > holes * 2,
         msg='The number of houses owned for victory must be less than or '
             'equal to the total number of holes',
         excp=gi.GameInfoError)
@@ -62,7 +62,7 @@ def build_namnam_rules():
 
     rules.add_rule(
         'need_stores',
-        rule=lambda ginfo: not ginfo.flags.stores,
+        rule=lambda ginfo: not ginfo.stores,
         msg='NamNam requires stores',
         excp=gi.GameInfoError)
 
@@ -165,7 +165,7 @@ class RoundGameWinner(end_move.EndTurnIf):
 
         tot_holes = self.game.cts.dbl_holes
         nbr_start = self.game.cts.nbr_start
-        convert_cnt = self.game.info.flags.convert_cnt
+        convert_cnt = self.game.info.convert_cnt
 
         self.game.board = [0] * tot_holes
         self.game.false_holes = (self.game.store[False] + 1) // nbr_start

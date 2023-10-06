@@ -227,10 +227,10 @@ class TestCaptOk:
             game_consts = gc.GameConsts(nbr_start=4, holes=2)
             game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                     capt_on=capt_on,
-                                    flags=gi.GameFlags(evens=evens,
-                                                       oppsidecapt=oppsidecapt,
-                                                       moveunlock=moveunlock,
-                                                       cthresh=cthresh),
+                                    evens=evens,
+                                    oppsidecapt=oppsidecapt,
+                                    moveunlock=moveunlock,
+                                    cthresh=cthresh,
                                     rules=mancala.Mancala.rules)
 
             game = mancala.Mancala(game_consts, game_info)

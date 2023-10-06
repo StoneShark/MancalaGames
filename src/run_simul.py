@@ -20,7 +20,7 @@ def test_one_game():
     game = man_config.make_game("../GameProps/NamNam.txt")
     game_log.turn('Start', game)
 
-    max_turns = 1000 if game.info.flags.rounds else 500
+    max_turns = 1000 if game.inforounds else 500
     for _ in range(max_turns):
         moves = game.get_moves()
         assert moves, "Game didn't end right."
@@ -36,7 +36,7 @@ def test_one_game():
                 game_log.save(game.params_str())
                 return
 
-        if game.info.flags.mustpass:
+        if game.infomustpass:
             game.test_pass()
 
     else:

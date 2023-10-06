@@ -33,31 +33,31 @@ def build_qelat_rules():
     rules in the base set wont trigger."""
 
     def rev_getattr(name, obj):
-        return getattr(obj.flags, name)
+        return getattr(obj, name)
 
     qelat_rules = ginfo_rules.RuleDict()
 
     qelat_rules.add_rule(
         'need_child',
-        rule=lambda ginfo: not ginfo.flags.child,
+        rule=lambda ginfo: not ginfo.child,
         msg='Qelat requires CHILD',
         excp=gi.GameInfoError)
 
     qelat_rules.add_rule(
         'need_convert_cnt',
-        rule=lambda ginfo: not ginfo.flags.convert_cnt,
+        rule=lambda ginfo: not ginfo.convert_cnt,
         msg='Qelat requires CONVERT_CNT',
         excp=gi.GameInfoError)
 
     qelat_rules.add_rule(
         'capt_conflict',
-        rule=lambda ginfo: ginfo.flags.convert_cnt not in ginfo.capt_on,
+        rule=lambda ginfo: ginfo.convert_cnt not in ginfo.capt_on,
         msg="Qelat makes children on convert_cnt's, even without capture",
         warn=True)
 
     qelat_rules.add_rule(
         'q_not_design',
-        rule=lambda ginfo: ginfo.flags.evens or ginfo.flags.moveunlock,
+        rule=lambda ginfo: ginfo.evens or ginfo.moveunlock,
         msg='Qelat not designed to work with EVENS or MOVEUNLOCKS',
         warn=True)
 
@@ -120,7 +120,7 @@ class CaptureToWalda(capturer.CaptMethodIf):
 
         loc = mdata.capt_loc
         captures = False
-        if (self.game.board[loc] == self.game.info.flags.convert_cnt
+        if (self.game.board[loc] == self.game.info.convert_cnt
                 and self.game.child[loc] is None
                 and self.game.walda_poses[loc] in WALDA_TEST[self.game.turn]):
 

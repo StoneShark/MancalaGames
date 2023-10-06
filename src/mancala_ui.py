@@ -178,7 +178,7 @@ class MancalaUI(tk.Frame):
         self.pack()
         self._create_menus()
 
-        if self.info.flags.stores:
+        if self.info.stores:
             b_store = Store(self, 'left')
 
         land_frame = tk.Frame(self, padx=3, pady=3)
@@ -196,7 +196,7 @@ class MancalaUI(tk.Frame):
                 self.disp[row][pos].grid(row=row, column=pos)
 
         self.stores = None
-        if self.info.flags.stores:
+        if self.info.stores:
             a_store = Store(self, 'right')
             self.stores = [b_store, a_store]
 
@@ -209,7 +209,7 @@ class MancalaUI(tk.Frame):
         """Return the directions to use when creating the hole buttons."""
 
         dirs = None
-        if self.info.flags.udirect:
+        if self.info.udirect:
             if row:
                 dirs = [Direct.CW, Direct.CCW]
             else:
@@ -227,7 +227,7 @@ class MancalaUI(tk.Frame):
 
         loc = self.game.cts.xlate_pos_loc(row, pos)
 
-        if self.info.flags.udirect:
+        if self.info.udirect:
 
             cnt = self.game.cts.loc_to_left_cnt(loc)
             if cnt in self.info.udir_holes:
@@ -237,11 +237,11 @@ class MancalaUI(tk.Frame):
                 left_move = gi.MoveTpl(pos, None)
                 rght_move = left_move
 
-            if self.info.flags.no_sides:
+            if self.info.no_sides:
                 left_move = gi.MoveTpl(row, *left_move)
                 rght_move = gi.MoveTpl(row, *rght_move)
 
-        elif self.info.flags.no_sides:
+        elif self.info.no_sides:
             left_move = gi.MoveTpl(row, pos, None)
             rght_move = left_move
 
@@ -440,14 +440,14 @@ class MancalaUI(tk.Frame):
         for row in range(2):
 
             player = row == turn_row
-            if self.info.flags.stores:
+            if self.info.stores:
                 self.stores[row].set_store(self.game.get_store(row))
                 self.stores[row].set_color(
                     TURN_COLOR if player else SYSTEM_COLOR)
 
             for pos in range(self.game.cts.holes):
 
-                if self.game.info.flags.no_sides:
+                if self.game.info.no_sides:
                     loc = self.game.cts.xlate_pos_loc(row, pos)
                     cactive = actives[loc]
                     disable = not actives[loc]
@@ -478,7 +478,7 @@ class MancalaUI(tk.Frame):
 
         self._refresh()
         self.update()
-        if not new_game and self.info.flags.rnd_umove:
+        if not new_game and self.info.rnd_umove:
             self.set_game_mode(Behavior.RNDSETUP)
             return
         self._start_it()
@@ -624,7 +624,7 @@ class MancalaUI(tk.Frame):
         if self.ai_player.get() and self.game.get_turn():
             self._schedule_ai()
 
-        elif self.info.flags.mustpass and self.game.test_pass():
+        elif self.info.mustpass and self.game.test_pass():
 
             player = 'Bottom' if self.game.get_turn() else 'Top'
             message = f'{player} player has no moves and must pass.'

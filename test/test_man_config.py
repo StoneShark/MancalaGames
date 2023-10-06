@@ -62,8 +62,6 @@ class TestBasicConstruction:
                           "nbr_start": 4
                        },
                        "game_info": {
-                           "flags": {
-                            }
                        }
                      }
                 """, file=file)
@@ -77,8 +75,8 @@ class TestBasicConstruction:
         assert gclass == 'Mancala'
         assert gconsts.holes == 6
         assert gconsts.nbr_start == 4
-        assert isinstance(ginfo.flags.sow_direct, Direct)
-        assert ginfo.flags.sow_direct == Direct.CCW
+        assert isinstance(ginfo.sow_direct, Direct)
+        assert ginfo.sow_direct == Direct.CCW
 
 
     @pytest.fixture
@@ -94,11 +92,9 @@ class TestBasicConstruction:
                        },
                        "game_info": {
                            "capt_on": [4],
-                           "flags": {
-                               "child": true,
-                               "convert_cnt": 4,
-                               "sow_direct": -1
-                            }
+                           "child": true,
+                           "convert_cnt": 4,
+                           "sow_direct": -1
                        }
                      }
                 """, file=file)
@@ -111,8 +107,8 @@ class TestBasicConstruction:
         assert gclass == 'Qelat'
         assert gconsts.holes == 6
         assert gconsts.nbr_start == 4
-        assert isinstance(ginfo.flags.sow_direct, Direct)
-        assert ginfo.flags.sow_direct == Direct.CW
+        assert isinstance(ginfo.sow_direct, Direct)
+        assert ginfo.sow_direct == Direct.CW
 
 
     @pytest.fixture

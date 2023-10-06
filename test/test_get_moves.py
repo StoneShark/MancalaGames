@@ -69,8 +69,8 @@ class TestGetMove:
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on=[2],
                                 min_move=min_move,
-                                flags=gi.GameFlags(mustshare=mustshare,
-                                                   mustpass=mustpass),
+                                mustshare=mustshare,
+                                mustpass=mustpass,
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
         game.turn = turn
@@ -119,7 +119,7 @@ class TestGetMove:
         game_consts = gc.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on=[2],
-                                flags=gi.GameFlags(mustpass=mustpass),
+                                mustpass=mustpass,
                                 udir_holes=udir,
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)

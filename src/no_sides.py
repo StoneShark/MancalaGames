@@ -32,19 +32,19 @@ def build_no_sides_rules():
     """Refine the GameInfo rules for NoSides."""
 
     def rev_getattr(name, obj):
-        return getattr(obj.flags, name)
+        return getattr(obj, name)
 
     rules = ginfo_rules.RuleDict()
 
     rules.add_rule(
         'need_stores',
-        rule=lambda ginfo: not ginfo.flags.stores,
+        rule=lambda ginfo: not ginfo.stores,
         msg='NoSides requires stores.',
         excp=gi.GameInfoError)
 
     rules.add_rule(
         'need_no_sides',
-        rule=lambda ginfo: not ginfo.flags.no_sides,
+        rule=lambda ginfo: not ginfo.no_sides,
         msg="NoSides requires no_sides; it will be set automatically "
             "(because it's not on the UI)",
         warn=True)
@@ -67,10 +67,10 @@ def build_no_sides_rules():
 
     rules.add_rule(
         'warn_eson_oppside',
-        rule=lambda ginfo: (not ginfo.flags.capsamedir
-                            and not any([ginfo.flags.evens,
-                                         ginfo.flags.crosscapt,
-                                         ginfo.flags.sow_own_store,
+        rule=lambda ginfo: (not ginfo.capsamedir
+                            and not any([ginfo.evens,
+                                         ginfo.crosscapt,
+                                         ginfo.sow_own_store,
                                          ginfo.capt_on])),
         msg="Using ESON XORGOL capture mechanism without CAPSAMEDIR "
             "has very rare captures",
@@ -110,8 +110,8 @@ class Allowable(allowables.AllowableIf):
 
 
 class Moves(get_moves.MovesIf):
-    """Base no turns holes mover.
-    When no_turns is true, moves must be (row, pos, direct)
+    """Base no sides holes mover.
+    When no_sides is true, moves must be (row, pos, direct)
     no matter if udirect is true or not.
     There are no passes in no_sides games,
     because if there isn't a move then the game is over."""
@@ -223,7 +223,7 @@ class NoSides(mancala.Mancala):
             quitter: replace taker
         """
 
-        object.__setattr__(game_info.flags, 'no_sides', True)
+        object.__setattr__(game_info, 'no_sides', True)
         super().__init__(game_consts, game_info)
 
         self.deco.allow = Allowable(self)
@@ -235,14 +235,14 @@ class NoSides(mancala.Mancala):
         self.deco.quitter.claimer = CountOnlySeedsStores(self)
 
         ginfo = self.info
-        if not any([ginfo.flags.evens,
-                    ginfo.flags.crosscapt,
-                    ginfo.flags.sow_own_store,
-                    ginfo.flags.cthresh,
+        if not any([ginfo.evens,
+                    ginfo.crosscapt,
+                    ginfo.sow_own_store,
+                    ginfo.cthresh,
                     ginfo.capt_on]):
 
             captor = CaptTwoOut(self)
-            if not ginfo.flags.capsamedir:
+            if not ginfo.capsamedir:
                 captor = capturer.CaptOppDirMultiple(self, captor)
 
             self.deco.capturer = captor

@@ -7,15 +7,14 @@
    "game_info": {
       "name": "XCaptSowOwn",
       "about": "XCaptSowOwn: A single sow mancala,\nsow own store,\ncross capture and pickown.\n",
-      "flags": {
-         "crosscapt": true,
-         "grandslam": 3,
-         "oppsidecapt": true,
-         "sow_direct": 1,
-         "sow_own_store": true,
-         "stores": true,
-         "xcpickown": 1
-      },
+      "crosscapt": true,
+      "grandslam": 3,
+      "oppsidecapt": true,
+      "sow_direct": 1,
+      "sow_own_store": true,
+      "stores": true,
+      "xcpickown": 1,
+      
       "scorer": {
          "stores_m": 4,
          "access_m": 0,

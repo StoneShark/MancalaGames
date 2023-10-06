@@ -250,7 +250,7 @@ class MonteCarloTS(ai_interface.AiPlayerIf):
             if cond and cond.is_ended():
                 break
 
-            if self.game.info.flags.mustpass:
+            if self.game.infomustpass:
                 self.game.test_pass()
 
         winner, reward = None, 0

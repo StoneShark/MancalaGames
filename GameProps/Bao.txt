@@ -7,23 +7,23 @@
    "game_info": {
       "name": "Bao",
       "about": "Bao: a multi-lap mancala,\nsow direction is counter-clockwise,\nsow to 4 on opposite side creates a child\nwhich collects seed but can't be captured.\nCross-capture on opponents side,\ncontinue capture in sow direction,\npick own seed on capture.\nPlayed in rounds; winner starts new round.",
-      "flags": {
-         "blocks": true,
-         "capsamedir": true,
-         "child": true,
-         "convert_cnt": 4,
-         "crosscapt": true,
-         "mlaps": true,
-         "multicapt": true,
-         "oppsidecapt": true,
-         "rounds": true,
-         "round_starter": 2,
-         "rnd_left_fill": true,
-         "sow_direct": 1,
-         "stores": true,
-         "visit_opp": true,
-         "xcpickown": 1
-      },
+      "blocks": true,
+      "capsamedir": true,
+      "child": true,
+      "convert_cnt": 4,
+      "crosscapt": true,
+      "mlaps": true,
+      "multicapt": true,
+      "oppsidecapt": true,
+      "rounds": true,
+      "round_starter": 2,
+      "rnd_left_fill": true,
+      "sow_direct": 1,
+      "stores": true,
+      "visit_opp": true,
+      "xcpickown": 1,
+      "min_move": 1,
+
       "scorer": {
          "stores_m": 4,
          "access_m": 0,
@@ -33,7 +33,6 @@
          "evens_m": 0,
          "easy_rand": 6
       },
-      "min_move": 1,
       "ai_params": {
          "mm_depth": [1, 1, 3, 5],
          "mcts_nodes": [300, 500, 800, 1100],

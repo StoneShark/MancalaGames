@@ -68,7 +68,7 @@ class CaptGreaterThan(CaptOkIf):
     def capture_ok(self, loc):
         """Return True if capture from loc is ok"""
 
-        if self.game.board[loc] < self.game.info.flags.cthresh:
+        if self.game.board[loc] < self.game.info.cthresh:
             return False
         return self.decorator.capture_ok(loc)
 
@@ -121,23 +121,21 @@ def deco_capt_ok(game):
     If no capture mechanism are specified,
     return a CaptFalse."""
 
-    gflags = game.info.flags
-
     capt_ok = CaptTrue(game)
 
     if game.info.capt_on:
         capt_ok = CaptOn(game, capt_ok)
 
-    if gflags.evens:
+    if game.info.evens:
         capt_ok = CaptEvens(game, capt_ok)
 
-    if gflags.cthresh:
+    if game.info.cthresh:
         capt_ok = CaptGreaterThan(game, capt_ok)
 
-    if gflags.oppsidecapt:
+    if game.info.oppsidecapt:
         capt_ok = CaptOppSide(game, capt_ok)
 
-    if gflags.moveunlock:
+    if game.info.moveunlock:
         capt_ok = CaptUnlocked(game, capt_ok)
 
     capt_ok = CaptNeedSeedsNotChild(game, capt_ok)

@@ -22,25 +22,25 @@ def build_rules():
     """Refine the GameInfo rules for one_child."""
 
     def rev_getattr(name, obj):
-        return getattr(obj.flags, name)
+        return getattr(obj, name)
 
     rules = ginfo_rules.RuleDict()
 
     rules.add_rule(
         'need_sow_start',
-        rule=lambda ginfo: not ginfo.flags.sow_start,
+        rule=lambda ginfo: not ginfo.sow_start,
         msg='OneChild requires SOW_START',
         excp=gi.GameInfoError)
 
     rules.add_rule(
         'need_child',
-        rule=lambda ginfo: not ginfo.flags.child,
+        rule=lambda ginfo: not ginfo.child,
         msg='OneChild requires CHILD to support tuzdek creation',
         excp=gi.GameInfoError)
 
     rules.add_rule(
         'need_convert_cnt',
-        rule=lambda ginfo: not ginfo.flags.convert_cnt,
+        rule=lambda ginfo: not ginfo.convert_cnt,
         msg='OneChild requires CONVERT_CNT to define tuzdek creation',
         excp=gi.GameInfoError)
 
@@ -93,7 +93,7 @@ class MakeTuzdek(capturer.CaptMethodIf):
         return (self.game.cts.opp_side(self.game.turn, loc)
                 and self.game.child[loc] is None
                 and self.game.child[cross] is None
-                and self.game.board[loc] == self.game.info.flags.convert_cnt
+                and self.game.board[loc] == self.game.info.convert_cnt
                 and self.game.cts.loc_to_left_cnt(loc)
                 and not any(self.game.child[tloc] is not None
                             for tloc in opp_range))

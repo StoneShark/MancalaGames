@@ -75,7 +75,7 @@ class TestGetDirection:
         game_consts = gc.GameConsts(nbr_start=4, holes=holes)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on=[2],
-                                flags=gi.GameFlags(sow_direct=direct),
+                                sow_direct=direct,
                                 udir_holes=udir_holes,
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
@@ -113,7 +113,7 @@ class TestGetDirection:
         game_consts = gc.GameConsts(nbr_start=4, holes=holes)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on=[2],
-                                flags=gi.GameFlags(sow_direct=direct),
+                                sow_direct=direct,
                                 udir_holes=udir_holes,
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)

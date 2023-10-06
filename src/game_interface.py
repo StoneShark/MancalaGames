@@ -97,55 +97,6 @@ class WinCond(enum.Enum):
 
 
 @dc.dataclass(frozen=True, kw_only=True)
-class GameFlags:
-    """Flags to control the game"""
-
-    mustpass: bool = False
-    rounds: bool = False
-    round_starter: RoundStarter = RoundStarter.ALTERNATE
-    rnd_left_fill: bool = False
-    rnd_umove: bool = False
-    no_sides: bool = False     # changes how the UI works, but not supported
-    stores: bool = False
-
-    # **** sowing flags
-    sow_direct: Direct = Direct.CCW
-    udirect: bool = False
-
-    sow_start: bool = False
-    mustshare: bool = False
-    skip_start: bool = False
-    sow_own_store: bool = False
-    blocks: bool = False
-    mlaps: bool = False
-    visit_opp: bool = False
-    child: bool = False
-    convert_cnt: int = 0
-
-    # **** capture flags
-    capsamedir: bool = False
-
-    oppsidecapt: bool = False
-    moveunlock: bool = False
-    evens: bool = False
-    cthresh: int = 0
-    nosinglecapt: bool = False
-
-    crosscapt: bool = False
-    xcpickown: CrossCaptOwn = CrossCaptOwn.LEAVE
-
-    multicapt: bool = False
-    grandslam: int = GrandSlam.LEGAL
-
-
-    @classmethod
-    def get_fields(cls):
-        """return the field names."""
-
-        return [field.name for field in dc.fields(cls)]
-
-
-@dc.dataclass(frozen=True, kw_only=True)
 class Scorer:
     """Multipliers for the different scorers, 0 turns it off.
     easy_rand is the +- error introduced on easy difficulty.
@@ -169,9 +120,45 @@ class GameInfo:
     difficulty: int = 1
     help_file: str = ''
     about: str = ''
-    flags: GameFlags = GameFlags()
-    scorer: Scorer = Scorer()
+
+    # **** game dynamics
+    mustpass: bool = False
+    rounds: bool = False
+    round_starter: RoundStarter = RoundStarter.ALTERNATE
+    rnd_left_fill: bool = False
+    rnd_umove: bool = False
+    no_sides: bool = False     # changes how the UI works, but not supported
+    stores: bool = False
+
+    # **** sowing
     min_move: int = 1
+    sow_direct: Direct = Direct.CCW
+    udirect: bool = False
+
+    sow_start: bool = False
+    mustshare: bool = False
+    skip_start: bool = False
+    sow_own_store: bool = False
+    blocks: bool = False
+    mlaps: bool = False
+    visit_opp: bool = False
+    child: bool = False
+    convert_cnt: int = 0
+
+    # **** capture
+    capsamedir: bool = False
+
+    oppsidecapt: bool = False
+    moveunlock: bool = False
+    evens: bool = False
+    cthresh: int = 0
+    nosinglecapt: bool = False
+
+    crosscapt: bool = False
+    xcpickown: CrossCaptOwn = CrossCaptOwn.LEAVE
+
+    multicapt: bool = False
+    grandslam: int = GrandSlam.LEGAL
 
     # list of seed counts to capture on (after sow)
     capt_on: list[int] = dc.field(default_factory=list)
@@ -183,6 +170,7 @@ class GameInfo:
     # where param is used by the ai_player to select the parameter
     # and list is indexed by difficulty to choose the value
     ai_params: dict = dc.field(default_factory=dict)
+    scorer: Scorer = Scorer()
 
     # used only for initialization, not added to the dataclass
     nbr_holes: dc.InitVar[int]
@@ -193,11 +181,17 @@ class GameInfo:
         """Do post init (any derived values) and apply the rules.
         rules.test raises exceptions and warnings."""
 
-        object.__setattr__(self.flags, 'udirect', bool(self.udir_holes))
+        object.__setattr__(self, 'udirect', bool(self.udir_holes))
         if ckey.MM_DEPTH not in self.ai_params:
             self.ai_params[ckey.MM_DEPTH] = [1, 1, 3, 5]
 
         rules.test(nbr_holes, self)
+
+    @classmethod
+    def get_fields(cls):
+        """return the field names."""
+
+        return [field.name for field in dc.fields(cls)]
 
 
 @dc.dataclass(kw_only=True)

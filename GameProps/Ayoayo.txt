@@ -7,15 +7,15 @@
    "game_info": {
       "name": "Ayoayo",
       "about": "Ayoayo: a multi-lap mancala,\nsow direction counter-clockwise,\ncross-capture when end in own\nhole with one seed.",
-      "flags": {
-         "stores": true,
-         "sow_direct": 1,
-         "mustshare": true,
-         "mlaps": true,
-         "oppsidecapt": true,
-         "crosscapt": true,
-         "xcpickown": 1
-      },
+      "stores": true,
+      "sow_direct": 1,
+      "mustshare": true,
+      "mlaps": true,
+      "oppsidecapt": true,
+      "crosscapt": true,
+      "xcpickown": 1,
+      "min_move": 1,
+
       "scorer": {
          "stores_m": 4,
          "access_m": 0,
@@ -26,7 +26,6 @@
          "easy_rand": 20,
          "repeat_turn": 0
       },
-      "min_move": 1,
       "ai_params": {
          "mm_depth": [1, 1, 3, 5],
          "mcts_nodes": [300, 500, 800, 1100],
