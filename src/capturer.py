@@ -193,6 +193,66 @@ class CaptContinueXCapt(CaptMethodIf):
         return captures
 
 
+class CaptureToWalda(CaptMethodIf):
+    """Test to make a walda base on allowable walda locations
+    and on captures put the seeds into a walda.
+    Relies entirely on capt_ok to capture from a single hole.
+
+    Don't use the rest of the decos for capture, because they wont
+    enforce the must have walda's to capture rule."""
+
+    WALDA_BOTH = -1
+
+    WALDA_TEST = [[WALDA_BOTH, False],
+                  [WALDA_BOTH, True]]
+
+    def __init__(self, game, decorator=None):
+
+        super().__init__(game, decorator)
+
+        holes = self.game.cts.holes
+        dbl_holes = self.game.cts.dbl_holes
+
+        self.walda_poses = [None] * dbl_holes
+        self.walda_poses[0] = CaptureToWalda.WALDA_BOTH
+        self.walda_poses[holes - 1] = CaptureToWalda.WALDA_BOTH
+        self.walda_poses[holes] = CaptureToWalda.WALDA_BOTH
+        self.walda_poses[dbl_holes - 1] = CaptureToWalda.WALDA_BOTH
+        if holes >= 3:
+            self.walda_poses[1] = True
+            self.walda_poses[holes - 2] = True
+            self.walda_poses[holes + 1] = False
+            self.walda_poses[dbl_holes - 2] = False
+
+
+    def do_captures(self, mdata):
+
+        loc = mdata.capt_loc
+        if (self.game.board[loc] == self.game.info.convert_cnt
+                and self.game.child[loc] is None
+                and self.walda_poses[loc] in
+                    CaptureToWalda.WALDA_TEST[self.game.turn]):
+
+            self.game.child[loc] = self.game.turn
+            return True
+
+        captures = False
+        have_walda = False
+        for walda in range(self.game.cts.dbl_holes):
+            if self.game.child[walda] == self.game.turn:
+                have_walda = True
+                break
+
+        if have_walda:
+            if self.decorator.do_captures(mdata):
+                self.game.board[walda] += self.game.store[self.game.turn]
+                self.game.store[self.game.turn] = 0
+                captures = True
+
+        assert not sum(self.game.store)
+        return captures
+
+
 class GrandSlamCapt(CaptMethodIf):
     """Grand Slam capturer and tester.
     This class is still abstract."""
@@ -279,17 +339,6 @@ class GSOppGets(GrandSlamCapt):
         return captures
 
 
-class NoSingleSeedCapt(CaptMethodIf):
-    """Do not do captures with a single seed sow."""
-
-    def do_captures(self, mdata):
-
-        if mdata.seeds == 1:
-            return False
-
-        return self.decorator.do_captures(mdata)
-
-
 class MakeChild(CaptMethodIf):
     """If the hole constains convert_cnt seeds
     and the side test is good, designate a child.
@@ -310,6 +359,18 @@ class MakeChild(CaptMethodIf):
             return False
 
         return self.decorator.do_captures(mdata)
+
+
+class NoSingleSeedCapt(CaptMethodIf):
+    """Do not do captures with a single seed sow."""
+
+    def do_captures(self, mdata):
+
+        if mdata.seeds == 1:
+            return False
+
+        return self.decorator.do_captures(mdata)
+
 
 
 # %% build deco chains
@@ -367,7 +428,10 @@ def deco_capturer(game):
 
     capturer = _add_grand_slam_deco(game, game.info, capturer)
 
-    if game.info.child:
+    # only one child handler: waldas or chilren
+    if game.info.waldas:
+        capturer =  CaptureToWalda(game, capturer)
+    elif game.info.child:
         capturer = MakeChild(game, capturer)
 
     if game.info.nosinglecapt:

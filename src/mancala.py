@@ -390,7 +390,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         mdata.direct = self.deco.get_dir.get_direction(move, mdata.sow_loc)
         mdata = self.deco.sower.sow_seeds(mdata)
 
-        game_log.step(f'Sow {mdata.capt_loc}', self)
+        game_log.step(f'Sow from {mdata.capt_loc}', self)
 
         return mdata
 
@@ -398,10 +398,11 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
     def capture_seeds(self, mdata):
         """Hand off the capture to the capturer deco."""
 
+        loc = mdata.capt_loc
         if self.deco.capturer.do_captures(mdata):
-            game_log.step('Capture', self)
+            game_log.step(f'Capture from {loc}', self)
         else:
-            game_log.step('No captures')
+            game_log.step(f'No captures @ {loc}')
 
 
     def _move(self, move):

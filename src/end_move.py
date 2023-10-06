@@ -400,6 +400,56 @@ class EndTurnNotPlayable(EndTurnIf):
         return self.decorator.game_ended(repeat_turn, ended)
 
 
+class WaldaEndMove(EndTurnIf):
+    """The rest of the deco chain may collect seeds into
+    the stores (if the game has ended). Move any seeds
+    from the stores into available waldas.
+
+    Note that this code is only used if mustpass False."""
+
+    @staticmethod
+    def find_waldas(game):
+        """Find and return a walda for each side, if one exists."""
+
+        walda_locs = [-1, -1]
+        for side in (False, True):
+            for walda in range(game.cts.dbl_holes):
+                if game.child[walda] == side:
+                    walda_locs[int(side)] = walda
+                    break
+
+        return walda_locs
+
+    def game_ended(self, repeat_turn, ended=False):
+        """Walda end move wrapper."""
+
+        end_cond, winner = self.decorator.game_ended(repeat_turn, ended)
+
+        if any(self.game.store):
+            walda_locs = self.find_waldas(self.game)
+
+            if all(loc >= 0 for loc in walda_locs):
+                self.game.board[walda_locs[0]] += self.game.store[0]
+                self.game.board[walda_locs[1]] += self.game.store[1]
+
+            elif walda_locs[0] >= 0:
+                self.game.board[walda_locs[0]] += sum(self.game.store)
+
+            elif walda_locs[1] >= 0:
+                self.game.board[walda_locs[1]] += sum(self.game.store)
+
+            else:    # end_cond == WinCond.WIN:
+                loc = self.game.cts.holes if winner else 0
+                self.game.board[loc] += sum(self.game.store)
+
+            self.game.store = [0, 0]
+
+        assert sum(self.game.board) == self.game.cts.total_seeds, \
+            'Walda: seeds missing from board.'
+
+        return end_cond, winner
+
+
 # %% build decorator chains
 
 def deco_end_move(game):
@@ -422,6 +472,9 @@ def deco_end_move(game):
 
     if game.info.rounds:
         ender = RoundWinner(game, ender, ClaimOwnSeeds(game))
+
+    if game.info.waldas:
+        ender = WaldaEndMove(game, ender)
 
     return ender
 

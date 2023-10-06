@@ -159,6 +159,7 @@ class GameInfo:
 
     multicapt: bool = False
     grandslam: int = GrandSlam.LEGAL
+    waldas: bool = False
 
     # list of seed counts to capture on (after sow)
     capt_on: list[int] = dc.field(default_factory=list)

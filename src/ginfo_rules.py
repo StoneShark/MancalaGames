@@ -88,11 +88,51 @@ class RuleDict(dict):
 
 # %% default mancala rules
 
+
+
+def add_walda_rules(rules):
+    """Add rules specific to having waldas."""
+
+    def waldas_and(flag_name):
+        """Return a function that tests waldas and the specified
+        flag, based only on a ginfo parameter."""
+
+        def _waldas_and(ginfo):
+            return ginfo.waldas and getattr(ginfo, flag_name)
+
+        return _waldas_and
+
+    rules.add_rule(
+        'waldas_need_child',
+        rule=lambda ginfo: ginfo.waldas and not ginfo.child,
+        msg='Waldas requires CHILD',
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'waldas_need_convert_cnt',
+        rule=lambda ginfo: ginfo.waldas and not ginfo.convert_cnt,
+        msg='Waldas requires CONVERT_CNT',
+        excp=gi.GameInfoError)
+
+    bad_flags = ['blocks',
+                 'rounds', 'round_starter', 'rnd_left_fill', 'rnd_umove',
+                 'no_sides', 'sow_own_store', 'stores', 'grandslam']
+    for flag in bad_flags:
+        rules.add_rule(
+            f'waldas_bad_{flag}',
+            rule=waldas_and(flag),
+            msg=f'Waldas cannot be used with {flag.upper()}',
+            excp=gi.GameInfoError)
+
+
+
 def build_rules():
     """Build the default Mancala rules.
     These can be deleted or modified by derived classes."""
 
     man_rules = RuleDict()
+
+    add_walda_rules(man_rules)
 
     man_rules.add_rule(
         'invalid_holes',
@@ -119,8 +159,6 @@ def build_rules():
         rule=lambda ginfo: not isinstance(ginfo.ai_params, dict),
         msg='Invalid AI parameter dictionary',
         excp=gi.GameInfoError)
-
-    ###  GameInfo.Flags checks
 
     man_rules.add_rule(
         'sow_dir_type',

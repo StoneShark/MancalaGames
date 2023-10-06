@@ -85,14 +85,13 @@ class TestBasicConstruction:
         filename = os.path.join(tmp_path,'config.txt')
         with open(filename, 'w', encoding='utf-8') as file:
             print("""{
-                       "game_class": "Qelat",
+                       "game_class": "Deka",
                        "game_constants": {
                           "holes": 6,
                           "nbr_start": 4
                        },
                        "game_info": {
-                           "capt_on": [4],
-                           "child": true,
+                           "blocks": true,
                            "convert_cnt": 4,
                            "sow_direct": -1
                        }
@@ -104,7 +103,7 @@ class TestBasicConstruction:
 
         gclass, gconsts, ginfo = man_config.read_game_config(config_file3)
 
-        assert gclass == 'Qelat'
+        assert gclass == 'Deka'
         assert gconsts.holes == 6
         assert gconsts.nbr_start == 4
         assert isinstance(ginfo.sow_direct, Direct)

@@ -6,14 +6,9 @@ Created on Thu Aug 17 06:42:25 2023
 
 
 import pytest
-pytestmark = [pytest.mark.unittest, pytest.mark.integtest]
+pytestmark = [pytest.mark.integtest]
 
-from context import game_constants as gc
 from context import man_config
-from context import qelat
-
-
-TEST_COVERS = ['src\\qelat.py']
 
 
 class TestQelat:
@@ -321,124 +316,6 @@ class TestQelat:
         assert game.child == [None, None, None, None, True, True, None, None, None, None, None, False]
         assert game.store == [0, 0]
         assert cond.name == "WIN"
-
-        winmsg = game.win_message(cond)
-        assert 'Game Over' in winmsg[0]
-        assert 'Top' in winmsg[1]
-
-
-    def test_small(self, game):
-
-        consts = gc.GameConsts(3, 3)
-        info = game.info
-        object.__setattr__(info, 'udir_holes', [1])
-        info.__post_init__(nbr_holes=3,
-                           rules=qelat.Qelat.rules)
-        game = qelat.Qelat(consts, info)
-
-        assert game.walda_poses == [qelat.WALDA_BOTH, True, qelat.WALDA_BOTH,
-                                    qelat.WALDA_BOTH, False, qelat.WALDA_BOTH]
-
-    def test_smaller(self, game):
-
-        consts = gc.GameConsts(3, 2)
-        info = game.info
-        info.__post_init__(nbr_holes=2,
-                           rules=qelat.Qelat.rules)
-        game = qelat.Qelat(consts, info)
-
-        assert all(game.walda_poses[i] == qelat.WALDA_BOTH
-                   for i in range(4))
-
-
-    @pytest.mark.parametrize('turn, board, child, eboard',
-                             [(True,
-                               [0, 0, 0, 0, 10, 12, 2, 1, 1, 0, 4, 18],
-                               [None, None, None, None, True, True,
-                                None, None, None, None, None, False],
-                               [0, 0, 0, 0, 18, 12, 0, 0, 0, 0, 0, 18]),
-                              (True,
-                               [0, 0, 0, 0, 10, 12, 2, 1, 1, 0, 4, 18],
-                               [None, None, None, None, True, True,
-                                None, None, None, None, None, None],
-                               [0, 0, 0, 0, 36, 12, 0, 0, 0, 0, 0, 0]),
-                              (False,
-                               [2, 1, 1, 0, 4, 40, 0, 0, 0, 0, 0, 0],
-                               [None, None, None, None, None, None,
-                                None, None, None, None, None, False],
-                               [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 48]),
-                              (False,
-                               [2, 1, 1, 0, 4, 40, 0, 0, 0, 0, 0, 0],
-                               [None, None, None, None, None, None,
-                                None, None, None, None, None, None],
-                               [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
-                              ])
-    def test_no_pass(self, game, turn, board, child, eboard):
-
-        # get the config vars, change mustpass, build new game
-        consts = game.cts
-        info = game.info
-        object.__setattr__(info, 'mustpass', False)
-        info.__post_init__(nbr_holes=game.cts.holes,
-                           rules=qelat.Qelat.rules)
-        game = qelat.Qelat(consts, info)
-
-        game.turn = turn
-        game.board = board
-        game.child = child
-        game.store = [0, 0]
-        assert game.move(3).name == 'WIN'
-        assert game.board == eboard
-
-
-    def test_end_game_no_walda(self, game):
-
-        cond = game.end_game()
-
-        winmsg = game.win_message(cond)
-        assert 'Game Over' in winmsg[0]
-        assert 'tie' in winmsg[1]
-
-
-    def test_end_game_t_walda(self, game):
-
-        game.turn = False
-        game.board = [8, 0, 2, 1, 8, 6, 4, 0, 8, 8, 2, 1]
-        game.child = [None, None, None, None, None, True, None, None, None, None, None, None]
-        game.store = [0, 0]
-
-        cond = game.end_game()
-        assert game.board == [0, 0, 0, 0, 0, 48, 0, 0, 0, 0, 0, 0]
-
-        winmsg = game.win_message(cond)
-        assert 'Game Over' in winmsg[0]
-        assert 'Top' in winmsg[1]
-
-
-    def test_end_game_f_walda(self, game):
-
-        game.turn = False
-        game.board = [8, 0, 2, 1, 8, 6, 4, 0, 8, 8, 2, 1]
-        game.child = [False, None, None, None, None, None, None, None, None, None, None, None]
-        game.store = [0, 0]
-
-        cond = game.end_game()
-        assert game.board == [48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-
-        winmsg = game.win_message(cond)
-        assert 'Game Over' in winmsg[0]
-        assert 'Bottom' in winmsg[1]
-
-
-    def test_end_game_both_walda(self, game):
-
-        game.turn = False
-        game.board = [8, 0, 2, 1, 8, 6, 4, 0, 8, 8, 2, 1]
-        game.child = [True, None, None, None, None, False, None, None, None, None, None, None]
-        game.store = [0, 0]
-
-        cond = game.end_game()
-        assert game.board == [25, 0, 0, 0, 0, 23, 0, 0, 0, 0, 0, 0]
 
         winmsg = game.win_message(cond)
         assert 'Game Over' in winmsg[0]

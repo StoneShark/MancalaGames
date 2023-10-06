@@ -33,7 +33,6 @@ MODULES += no_seed_goal.py
 MODULES += one_child.py
 MODULES += play.py
 MODULES += play_mancala.pyw
-MODULES += qelat.py
 MODULES += sow_starter.py
 MODULES += sower.py
 
@@ -109,7 +108,6 @@ UNIT_TESTS += test_gconsts.test
 UNIT_TESTS += test_get_direct.test
 UNIT_TESTS += test_get_moves.test
 UNIT_TESTS += test_gm_deka.test
-UNIT_TESTS += test_gm_qelat.test
 UNIT_TESTS += test_incr.test
 UNIT_TESTS += test_man_config.test
 UNIT_TESTS += test_mancala.test

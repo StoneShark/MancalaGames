@@ -228,6 +228,7 @@ class NonUiData:
     rnd_left_fill: bool = False
     rnd_umove: bool = False
     no_sides: bool = False
+    waldas: bool = False
     ai_params: dict  = dc.field(default_factory=dict)
     other_dict: dict = dc.field(default_factory=dict)
 
@@ -706,6 +707,7 @@ class MancalaGames(tk.Frame):
         vdict[ckey.RND_LEFT_FILL] = self.non_ui_data.rnd_left_fill
         vdict[ckey.RND_UMOVE] = self.non_ui_data.rnd_umove
         vdict[ckey.NO_SIDES] = self.non_ui_data.no_sides
+        vdict[ckey.WALDAS] = self.non_ui_data.waldas
         vdict[ckey.HELP_FILE] = self.non_ui_data.help_file
         vdict[ckey.DIFFICULTY] = self.non_ui_data.difficulty
         vdict[ckey.AI_PARAMS] = self.non_ui_data.ai_params
@@ -835,7 +837,7 @@ class MancalaGames(tk.Frame):
         for fname in gi.GameInfo.get_fields():
 
             if fname not in [ckey.UDIRECT, ckey.SOW_DIRECT,
-                             ckey.GRANDSLAM, ckey.NO_SIDES,
+                             ckey.GRANDSLAM, ckey.NO_SIDES, ckey.WALDAS,
                              ckey.RND_LEFT_FILL, ckey.ROUND_STARTER,
                              ckey.RND_UMOVE, ckey.XCPICKOWN,
                              ckey.SCORER, ckey.DIFFICULTY,
@@ -902,6 +904,9 @@ class MancalaGames(tk.Frame):
         self.non_ui_data.no_sides = \
             game_dict[ckey.GAME_INFO].get(
                 ckey.NO_SIDES, gi_defaults.no_sides)
+        self.non_ui_data.waldas = \
+            game_dict[ckey.GAME_INFO].get(
+                ckey.WALDAS, gi_defaults.waldas)
 
         del game_dict[ckey.GAME_CLASS]
         del game_dict[ckey.GAME_CONSTANTS]

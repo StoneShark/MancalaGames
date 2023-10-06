@@ -11,6 +11,7 @@ pytestmark = pytest.mark.unittest
 
 import utils
 
+from context import capturer
 from context import game_constants as gc
 from context import game_interface as gi
 from context import mancala
@@ -254,9 +255,175 @@ def test_no_gs(gstype):
     assert game.store == [5, 4]
 
 
+class TestWaldas:
+
+    @pytest.fixture
+    def game(self):
+        game_consts = gc.GameConsts(nbr_start=3, holes=5)
+        game_info = gi.GameInfo(child=True,
+                                convert_cnt=4,
+                                waldas=True,
+                                capt_on=[4],
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+
+    def test_small(self, game):
+
+        consts = gc.GameConsts(3, 4)
+        info = game.info
+        info.__post_init__(nbr_holes=4,
+                           rules=mancala.Mancala.rules)
+        game = mancala.Mancala(consts, info)
+
+        assert game.deco.capturer.walda_poses == \
+            [capturer.CaptureToWalda.WALDA_BOTH,
+             True,
+             True,
+             capturer.CaptureToWalda.WALDA_BOTH,
+             capturer.CaptureToWalda.WALDA_BOTH,
+             False,
+             False,
+             capturer.CaptureToWalda.WALDA_BOTH]
+
+
+    def test_smaller(self, game):
+
+        consts = gc.GameConsts(3, 3)
+        info = game.info
+        info.__post_init__(nbr_holes=3,
+                           rules=mancala.Mancala.rules)
+        game = mancala.Mancala(consts, info)
+
+        assert game.deco.capturer.walda_poses == \
+            [capturer.CaptureToWalda.WALDA_BOTH,
+             True,
+             capturer.CaptureToWalda.WALDA_BOTH,
+             capturer.CaptureToWalda.WALDA_BOTH,
+             False,
+             capturer.CaptureToWalda.WALDA_BOTH]
+
+
+    def test_smallest(self, game):
+
+        consts = gc.GameConsts(3, 2)
+        info = game.info
+        info.__post_init__(nbr_holes=2,
+                           rules=mancala.Mancala.rules)
+        game = mancala.Mancala(consts, info)
+
+        walda_poses = game.deco.capturer.walda_poses
+        assert all(walda_poses[i] == capturer.CaptureToWalda.WALDA_BOTH
+                   for i in range(4))
+
+    WALDA_CASES = [(0, False, True),
+                   (1, False, False),
+                   (2, False, False),
+                   (3, False, False),
+                   (4, False, True),
+                   (5, False, True),
+                   (6, False, True),
+                   (7, False, False),
+                   (8, False, True),
+                   (9, False, True),
+                   (0, True, True),
+                   (1, True, True),
+                   (2, True, False),
+                   (3, True, True),
+                   (4, True, True),
+                   (5, True, True),
+                   (6, True, False),
+                   (7, True, False),
+                   (8, True, False),
+                   (9, True, True),
+                   ]
+
+    @pytest.mark.parametrize('loc, turn, ewalda', WALDA_CASES)
+    def test_walda_creation(self, game, turn, loc, ewalda):
+
+        game.board = [4] * game.cts.dbl_holes
+        game.turn = turn
+
+        mdata = MoveData(game, None)
+        mdata.direct = Direct.CCW
+        mdata.capt_loc = loc
+        mdata.board = tuple(game.board)
+        mdata.seeds = 2
+
+        assert game.deco.capturer.do_captures(mdata) == ewalda
+
+        assert game.board[loc] == 4
+        assert game.child[loc] == (turn if ewalda else None)
+
+
+    @pytest.mark.parametrize('loc, turn, ewalda', WALDA_CASES)
+    def test_no_waldas(self, game, turn, loc, ewalda):
+        """no waldas, no creations or captures."""
+
+        game.board = [3] * game.cts.dbl_holes
+        game.turn = turn
+
+        mdata = MoveData(game, None)
+        mdata.direct = Direct.CCW
+        mdata.capt_loc = loc
+        mdata.board = tuple(game.board)
+        mdata.seeds = 2
+
+        assert not game.deco.capturer.do_captures(mdata)
+        assert game.board[loc] == 3
+        assert game.child[loc] == None
+
+
+    @pytest.mark.parametrize('turn', (False, True))
+    def test_waldas_capts(self, game, turn):
+        """each has a walda (leftmost hole),
+        capt on 4 from middle hole"""
+
+        game.turn = turn
+        game.board = [4] * game.cts.dbl_holes
+        wloc = turn * game.cts.holes
+        game.child[wloc] = turn
+
+        loc = game.cts.xlate_pos_loc(not turn, 2)
+        mdata = MoveData(game, None)
+        mdata.direct = Direct.CCW
+        mdata.capt_loc = loc
+        mdata.board = tuple(game.board)
+        mdata.seeds = 2
+
+        assert game.deco.capturer.do_captures(mdata)
+        assert game.board[loc] == 0
+        assert game.board[wloc] == 8
+        assert game.child[loc] == None
+
+
+    @pytest.mark.parametrize('turn', (False, True))
+    def test_waldas_no_capts(self, game, turn):
+        """each has a walda (leftmost hole),
+        capt on 4 from middle hole"""
+
+        game.turn = turn
+        game.board = [3] * game.cts.dbl_holes
+        wloc = turn * game.cts.holes
+        game.child[wloc] = turn
+
+        loc = game.cts.xlate_pos_loc(not turn, 2)
+        mdata = MoveData(game, None)
+        mdata.direct = Direct.CCW
+        mdata.capt_loc = loc
+        mdata.board = tuple(game.board)
+        mdata.seeds = 2
+
+        assert not game.deco.capturer.do_captures(mdata)
+        assert game.board[loc] == 3
+        assert game.board[wloc] == 3
+        assert game.child[loc] == None
+
 
 # %%
 
 """
-pytest.main(['test_captures_new.py'])
+pytest.main(['test_captures.py'])
 """

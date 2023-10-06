@@ -15,6 +15,7 @@ from context import game_constants as gc
 from context import game_interface as gi
 from context import mancala
 
+from game_interface import Direct
 from game_interface import WinCond
 
 # %%
@@ -415,6 +416,130 @@ class TestEndChildren:
         assert game.store == estore
         assert game.turn == eturn
         assert not game.test_pass()
+
+
+class TestEndWaldas:
+
+    @pytest.fixture
+    def game(self):
+        game_consts = gc.GameConsts(nbr_start=4, holes=6)
+        game_info = gi.GameInfo(child=True,
+                                convert_cnt=4,
+                                mustpass=True,
+                                sow_direct=Direct.SPLIT,
+                                waldas=True,
+                                capt_on=[4],
+                                skip_start=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+
+    @pytest.mark.parametrize('turn, board, child, eboard',
+                             [(True,
+                               [0, 0, 0, 0, 10, 12, 2, 1, 1, 0, 4, 18],
+                               [None, None, None, None, True, True,
+                                None, None, None, None, None, False],
+                               [0, 0, 0, 0, 18, 12, 0, 0, 0, 0, 0, 18]),
+                              (True,
+                               [0, 0, 0, 0, 10, 12, 2, 1, 1, 0, 4, 18],
+                               [None, None, None, None, True, True,
+                                None, None, None, None, None, None],
+                               [0, 0, 0, 0, 36, 12, 0, 0, 0, 0, 0, 0]),
+                              (False,
+                               [2, 1, 1, 0, 4, 40, 0, 0, 0, 0, 0, 0],
+                               [None, None, None, None, None, None,
+                                None, None, None, None, None, False],
+                               [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 48]),
+                              (False,
+                               [2, 1, 1, 0, 4, 40, 0, 0, 0, 0, 0, 0],
+                               [None, None, None, None, None, None,
+                                None, None, None, None, None, None],
+                               [48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
+                              (True,
+                                [0, 0, 0, 0, 18, 12, 0, 0, 0, 0, 0, 18],
+                                [None, None, None, None, True, True,
+                                 None, None, None, None, None, False],
+                                [0, 0, 0, 0, 18, 12, 0, 0, 0, 0, 0, 18],
+                                ),
+                              ],
+                             ids=[f'case_{c}' for c in range(5)])
+    def test_no_pass(self, game, turn, board, child, eboard):
+
+        # get the config vars, change mustpass, build new game
+        consts = game.cts
+        info = game.info
+        object.__setattr__(info, 'mustpass', False)
+        info.__post_init__(nbr_holes=game.cts.holes,
+                           rules=mancala.Mancala.rules)
+        game = mancala.Mancala(consts, info)
+
+        game.turn = turn
+        game.board = board
+        game.child = child
+        game.store = [0, 0]
+
+        cond = game.move(3)
+        assert cond.name == 'WIN'
+        assert game.board == eboard
+
+
+    def test_end_game_no_walda(self, game):
+
+        cond = game.end_game()
+
+        winmsg = game.win_message(cond)
+        assert 'Game Over' in winmsg[0]
+        assert 'tie' in winmsg[1]
+
+
+    def test_end_game_t_walda(self, game):
+
+        game.turn = False
+        game.board = [8, 0, 2, 1, 8, 6, 4, 0, 8, 8, 2, 1]
+        game.child = [None, None, None, None, None, True,
+                      None, None, None, None, None, None]
+        game.store = [0, 0]
+
+        cond = game.end_game()
+        assert game.board == [0, 0, 0, 0, 0, 48, 0, 0, 0, 0, 0, 0]
+
+        winmsg = game.win_message(cond)
+        assert 'Game Over' in winmsg[0]
+        assert 'Top' in winmsg[1]
+
+
+    def test_end_game_f_walda(self, game):
+
+        game.turn = False
+        game.board = [8, 0, 2, 1, 8, 6, 4, 0, 8, 8, 2, 1]
+        game.child = [False, None, None, None, None, None,
+                      None, None, None, None, None, None]
+        game.store = [0, 0]
+
+        cond = game.end_game()
+        assert game.board == [48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+        winmsg = game.win_message(cond)
+        assert 'Game Over' in winmsg[0]
+        assert 'Bottom' in winmsg[1]
+
+
+    def test_end_game_both_walda(self, game):
+
+        game.turn = False
+        game.board = [8, 0, 2, 1, 8, 6, 4, 0, 8, 8, 2, 1]
+        game.child = [True, None, None, None, None, False,
+                      None, None, None, None, None, None]
+        game.store = [0, 0]
+
+        cond = game.end_game()
+        assert game.board == [25, 0, 0, 0, 0, 23, 0, 0, 0, 0, 0, 0]
+
+        winmsg = game.win_message(cond)
+        assert 'Game Over' in winmsg[0]
+        assert 'Top' in winmsg[1]
 
 
 class TestQuitter:
