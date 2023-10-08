@@ -83,38 +83,44 @@ stress_tests: test/context.py
 
 	
 #  test individual files
-#	usage:   make <testfile>.test
-#       example: make test_var.test
+#	usage:   make <testfile>.cov
+#       example: make test_var.cov
 #  where <testfile> is a file of tests in the 'test' directory
 #  this rule cleans all previous coverage data and runs the one
 #  file from test. It reports the coverage of the files that
 #  are expected to be covered (via TEST_COVERS in the test file).
 
-%.test: test/context.py
-	coverage run --branch -m pytest test\\$(subst .test,.py,$@)
+
+vpath %.cov ./test
+vpath %.py ./test
+
+%.cov: test/context.py 
+	coverage run --branch -m pytest test\\$(subst .cov,.py,$@)
 	coverage json
-	python test\\check_unit_cov.py $(subst .test,,$@)
+	python test\\check_unit_cov.py $(subst .cov,,$@) > test\\$@
+	type test\\$@
 
 
-UNIT_TESTS = test_allowables.test
-UNIT_TESTS += test_capt_ok.test
-UNIT_TESTS += test_captures.test
-UNIT_TESTS += test_end_move.test
-UNIT_TESTS += test_game_if.test
-UNIT_TESTS += test_game_log.test
-UNIT_TESTS += test_game_str.test
-UNIT_TESTS += test_gconsts.test
-UNIT_TESTS += test_get_direct.test
-UNIT_TESTS += test_get_moves.test
-UNIT_TESTS += test_incr.test
-UNIT_TESTS += test_man_config.test
-UNIT_TESTS += test_mancala.test
-UNIT_TESTS += test_minimax.test
-UNIT_TESTS += test_mpath.test
-UNIT_TESTS += test_sow_starter.test
-UNIT_TESTS += test_sower.test
+UNIT_TESTS = test_allowables.cov
+UNIT_TESTS += test_capt_ok.cov
+UNIT_TESTS += test_captures.cov
+UNIT_TESTS += test_end_move.cov
+UNIT_TESTS += test_game_if.cov
+UNIT_TESTS += test_game_log.cov
+UNIT_TESTS += test_game_str.cov
+UNIT_TESTS += test_gconsts.cov
+UNIT_TESTS += test_get_direct.cov
+UNIT_TESTS += test_get_moves.cov
+UNIT_TESTS += test_incr.cov
+UNIT_TESTS += test_man_config.cov
+UNIT_TESTS += test_mancala.cov
+UNIT_TESTS += test_minimax.cov
+UNIT_TESTS += test_mpath.cov
+UNIT_TESTS += test_sow_starter.cov
+UNIT_TESTS += test_sower.cov
 
 cov_unit_tests: $(UNIT_TESTS)
+	cat test\\*.cov
 
 
 #  pylint

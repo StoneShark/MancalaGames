@@ -69,7 +69,6 @@ def check_unit_cov():
     if error:
         print('\n', jcov_files.keys())
         print(test_module.TEST_COVERS)
-    print()
 
 if __name__ == '__main__':
     check_unit_cov()
