@@ -78,6 +78,15 @@ class CrossCaptOwn(enum.IntEnum):
 
 
 @enum.unique
+class Goal(enum.IntEnum):
+    """Goal of the game."""
+
+    MAX_SEEDS = 0
+    DEPRIVE = 1
+    TERRITORY = 2
+
+
+@enum.unique
 class WinCond(enum.Enum):
     """Win conditions."""
 
@@ -122,6 +131,7 @@ class GameInfo:
     about: str = ''
 
     # **** game dynamics
+    goal: Goal = Goal.MAX_SEEDS
     mustpass: bool = False
     rounds: bool = False
     round_starter: RoundStarter = RoundStarter.ALTERNATE
@@ -144,6 +154,7 @@ class GameInfo:
     visit_opp: bool = False
     child: bool = False
     convert_cnt: int = 0
+    sow_blkd_div: bool = False
 
     # **** capture
     capsamedir: bool = False

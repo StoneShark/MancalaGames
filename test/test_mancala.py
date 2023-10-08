@@ -36,6 +36,7 @@ from context import mancala
 from context import minimax
 
 from game_interface import Direct
+from game_interface import Goal
 from game_interface import WinCond
 
 # %%
@@ -425,20 +426,33 @@ class TestEndGames:
 class TestWinMessage:
 
     @pytest.fixture
-    def game(self):
+    def maxgame(self):
 
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+        game_info = gi.GameInfo(goal=Goal.MAX_SEEDS,
+                                nbr_holes=game_consts.holes,
                                 capt_on = [2],
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
 
+    @pytest.fixture
+    def depgame(self):
+        game_consts = gc.GameConsts(nbr_start=3, holes=6)
+        game_info = gi.GameInfo(goal=Goal.DEPRIVE,
+                                capt_on=[4],
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
 
+        return mancala.Mancala(game_consts, game_info)
+
+
+    @pytest.mark.parametrize('game_fixt', ['maxgame', 'depgame'])
     @pytest.mark.parametrize('wcond', WinCond)
     @pytest.mark.parametrize('turn', [False, True])
-    def test_messages(self, game, wcond, turn):
+    def test_side_messages(self, request, game_fixt, wcond, turn):
 
+        game = request.getfixturevalue(game_fixt)
         game.turn = turn
 
         title, message = game.win_message(wcond)
@@ -468,6 +482,31 @@ class TestWinMessage:
             return
 
         assert 'Unexpected' in message
+
+
+    @pytest.mark.parametrize('game_fixt', ['maxgame', 'depgame'])
+    @pytest.mark.parametrize('wcond', WinCond)
+    def test_goal_messages(self, request, game_fixt, wcond):
+
+        game = request.getfixturevalue(game_fixt)
+        game.turn = False
+
+        title, message = game.win_message(wcond)
+
+        print(message)
+
+        if wcond.name in ['WIN', 'ROUND_WIN']:
+            if 'max' in game_fixt:
+                assert 'most seeds' in message
+            elif 'dep' in game_fixt:
+                assert 'eliminating' in message
+            return
+
+        if 'TIE' in wcond.name:
+            if 'max' in game_fixt:
+                assert 'ended in a tie' in message
+            elif 'dep' in game_fixt:
+                assert 'ended with seeds' in message
 
 
 class TestHoleProp:

@@ -29,6 +29,7 @@ Created on Fri Apr  7 07:43:19 2023
 import abc
 
 from game_log import game_log
+from game_interface import Goal
 from game_interface import WinCond
 
 
@@ -450,10 +451,31 @@ class WaldaEndMove(EndTurnIf):
         return end_cond, winner
 
 
+class DepriveSeedsEndGame(EndTurnIf):
+    """Determine if either player has been deprived of seeds.
+    This is not used with stores or children."""
+
+    def game_ended(self, repeat_turn, ended=False):
+        """Check for end game."""
+
+        if all(self.game.board[loc] < self.game.info.min_move
+               for loc in self.game.cts.get_opp_range(self.game.turn)):
+            return WinCond.WIN, self.game.turn
+
+        if all(self.game.board[loc] < self.game.info.min_move
+               for loc in self.game.cts.get_my_range(self.game.turn)):
+            return WinCond.WIN, not self.game.turn
+
+        return None, None
+
+
 # %% build decorator chains
 
 def deco_end_move(game):
     """Return a chain of move enders."""
+
+    if game.info.goal == Goal.DEPRIVE:
+        return DepriveSeedsEndGame(game)
 
     if game.info.child:
         claimer = ChildClaimSeeds(game)

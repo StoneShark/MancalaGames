@@ -36,6 +36,7 @@ from game_constants import MIN_HOLES
 from game_constants import MAX_SEEDS
 from game_interface import CrossCaptOwn
 from game_interface import Direct
+from game_interface import Goal
 from game_interface import GrandSlam
 from game_interface import RoundStarter
 
@@ -229,6 +230,9 @@ class NonUiData:
     rnd_umove: bool = False
     no_sides: bool = False
     waldas: bool = False
+    goal: Goal = Goal.MAX_SEEDS
+    sow_blkd_div: bool = False
+
     ai_params: dict  = dc.field(default_factory=dict)
     other_dict: dict = dc.field(default_factory=dict)
 
@@ -708,6 +712,8 @@ class MancalaGames(tk.Frame):
         vdict[ckey.RND_UMOVE] = self.non_ui_data.rnd_umove
         vdict[ckey.NO_SIDES] = self.non_ui_data.no_sides
         vdict[ckey.WALDAS] = self.non_ui_data.waldas
+        vdict[ckey.SOW_BLKD_DIV] = self.non_ui_data.sow_blkd_div
+        vdict[ckey.GOAL] = self.non_ui_data.goal
         vdict[ckey.HELP_FILE] = self.non_ui_data.help_file
         vdict[ckey.DIFFICULTY] = self.non_ui_data.difficulty
         vdict[ckey.AI_PARAMS] = self.non_ui_data.ai_params
@@ -838,6 +844,7 @@ class MancalaGames(tk.Frame):
 
             if fname not in [ckey.UDIRECT, ckey.SOW_DIRECT,
                              ckey.GRANDSLAM, ckey.NO_SIDES, ckey.WALDAS,
+                             ckey.GOAL, ckey.SOW_BLKD_DIV,
                              ckey.RND_LEFT_FILL, ckey.ROUND_STARTER,
                              ckey.RND_UMOVE, ckey.XCPICKOWN,
                              ckey.SCORER, ckey.DIFFICULTY,
@@ -907,6 +914,12 @@ class MancalaGames(tk.Frame):
         self.non_ui_data.waldas = \
             game_dict[ckey.GAME_INFO].get(
                 ckey.WALDAS, gi_defaults.waldas)
+        self.non_ui_data.sow_blkd_div = \
+            game_dict[ckey.GAME_INFO].get(
+                ckey.SOW_BLKD_DIV, gi_defaults.sow_blkd_div)
+        self.non_ui_data.goal = \
+            game_dict[ckey.GAME_INFO].get(
+                ckey.GOAL, gi_defaults.goal)
 
         del game_dict[ckey.GAME_CLASS]
         del game_dict[ckey.GAME_CONSTANTS]

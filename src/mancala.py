@@ -27,6 +27,7 @@ import new_game
 import sow_starter
 import sower
 
+from game_interface import Goal
 from game_interface import WinCond
 from game_interface import PASS_TOKEN
 from game_log import game_log
@@ -362,13 +363,22 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             gtext = 'The round'
             title = 'Round Over'
 
-        message = 'Unexpected game end condition.'
+        message = f'Unexpected end condition {win_cond}.'
+
         if win_cond in [WinCond.WIN, WinCond.ROUND_WIN]:
             player = 'Top' if self.turn else 'Bottom'
-            message = f'{player} won {rtext} by collecting the most seeds!'
+            if self.info.goal == Goal.MAX_SEEDS:
+                reason = "by collecting the most seeds!"
+            elif self.info.goal == Goal.DEPRIVE:
+                reason = "by eliminating thier opponent's seeds."
+
+            message = f'{player} won {rtext} {reason}'
 
         elif win_cond in [WinCond.TIE, WinCond.ROUND_TIE]:
-            message = f'{gtext} ended in a tie.'
+            if self.info.goal == Goal.MAX_SEEDS:
+                message = f'{gtext} ended in a tie.'
+            elif self.info.goal == Goal.DEPRIVE:
+                message = 'Both players ended with seeds, consider it a tie.'
 
         elif win_cond == WinCond.ENDLESS:
             message = 'Game stuck in a loop. No winner.'

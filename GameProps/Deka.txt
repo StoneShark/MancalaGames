@@ -1,5 +1,5 @@
 {
-   "game_class": "Deka",
+   "game_class": "Mancala",
    "game_constants": {
       "nbr_start": 3,
       "holes": 6
@@ -9,9 +9,11 @@
       "about": "Deka (an immitation):\nA multilap Mancala.\nThe goal is to deprive the opponent of seeds.\nHoles are closed on opponent side on 3s,\nsowing continues with those seeds.\nIn subsequent sowing of closed holes, \nown holes are skipped\nbut seeds for opponent's holes are taken out of play.",
       "blocks": true,
       "convert_cnt": 3,
+      "goal": 1,
       "mlaps": true,
-      "sow_direct": 1,
       "min_move": 1,
+      "sow_direct": 1,
+      "sow_blkd_div": true,
 
       "scorer": {
          "stores_m": 0,

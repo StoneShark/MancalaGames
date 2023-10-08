@@ -24,7 +24,9 @@ import dataclasses as dc
 import warnings
 
 import game_interface as gi
+
 from game_interface import Direct
+from game_interface import Goal
 from game_interface import GrandSlam
 from game_interface import RoundStarter
 
@@ -85,13 +87,110 @@ class RuleDict(dict):
             rule.test(holes, ginfo)
 
 
+# %% the rules
 
-# %% default mancala rules
 
+
+def add_deprive_rules(rules):
+    """Add rules for the game goal of depriving the opponent of
+    seeds."""
+
+    def deprive_and(flag_name):
+        """Return a function that tests that goal is divert
+        and the specified flag, based only on a ginfo parameter."""
+
+        def _deprive_and(ginfo):
+            return ginfo.goal == Goal.DEPRIVE and getattr(ginfo, flag_name)
+
+        return _deprive_and
+
+    rules.add_rule(
+        'deprive_gs_legal',
+        rule=lambda ginfo: (ginfo.sow_blkd_div
+                            and ginfo.grandslam != GrandSlam.LEGAL),
+        msg='Goal of DEPRIVE requires that GRANDSLAM be Legal',
+        excp=gi.GameInfoError)
+
+    bad_flags = ['moveunlock', 'mustshare', 'mustpass',
+                 'rounds', 'round_starter', 'rnd_left_fill', 'rnd_umove',
+                 'no_sides', 'sow_own_store', 'stores',
+                 'skip_start', 'sow_start', 'visit_opp']
+    for flag in bad_flags:
+        rules.add_rule(
+            f'deprive_bad_{flag}',
+            rule=deprive_and(flag),
+            msg=f'Goal of DEPRIVE cannot be used with {flag.upper()}',
+            excp=gi.GameInfoError)
+
+    return rules
+
+
+def add_block_and_divert_rules(rules):
+    """sow_blkd_div is implemented primarily by the sower and the
+    capturer is not used (capt mechanisms not supported). Add rules
+    to ensure the right corresponding flags are used (or not used).
+
+    This concept was originally part of Deka which was a DEPRIVE
+    goal, not requiring that here."""
+
+    def divert_and(flag_name):
+        """Return a function that the divert option and the specified
+        flag, based only on a ginfo parameter."""
+
+        def _divert_and(ginfo):
+            return ginfo.sow_blkd_div and getattr(ginfo, flag_name)
+
+        return _divert_and
+
+    rules.add_rule(
+        'bdiv_need_convert_cnt',
+        rule=lambda ginfo: ginfo.sow_blkd_div and not ginfo.convert_cnt,
+        msg='sow_blkd_div requires CONVERT_CNT for closing holes',
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'bdiv_need_blocks',
+        rule=lambda ginfo: ginfo.sow_blkd_div and not ginfo.blocks,
+        msg='sow_blkd_div requires BLOCKS for closing holes',
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'bdiv_min_move_one',
+        rule=lambda ginfo: ginfo.sow_blkd_div and ginfo.min_move != 1,
+        msg='sow_blkd_div requires a minimum move of 1',
+        excp=gi.GameInfoError)
+
+    capt_flags = ['capsamedir', 'crosscapt', 'evens', 'cthresh',
+                  'multicapt', 'oppsidecapt', 'xcpickown']
+    for flag in capt_flags:
+        rules.add_rule(
+            f'bdiv_no_capt_{flag}',
+            rule=divert_and(flag),
+            msg='sow_blkd_div closes holes to remove seeds from play, '
+                f'no other capture mechanisms are allowed [{flag.upper()}]',
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'bdiv_no_capt_on',
+        rule=lambda ginfo: ginfo.sow_blkd_div and any(ginfo.capt_on),
+        msg='sow_blkd_div closes holes to remove seeds from play, ' + \
+            'no other capture mechanisms are allowed [CAPT_ON]',
+        excp=gi.GameInfoError)
+
+    bad_flags = ['child', 'moveunlock', 'mustshare', 'mustpass',
+                 'rounds', 'round_starter', 'rnd_left_fill', 'rnd_umove',
+                 'no_sides', 'sow_own_store', 'stores',
+                 'skip_start', 'sow_start', 'visit_opp']
+    for flag in bad_flags:
+        rules.add_rule(
+            f'bdiv_bad_{flag}',
+            rule=divert_and(flag),
+            msg=f'sow_blkd_div cannot be used with {flag.upper()}',
+            excp=gi.GameInfoError)
 
 
 def add_walda_rules(rules):
-    """Add rules specific to having waldas."""
+    """Add rules specific to having waldas.  Originally from Qelat."""
 
     def waldas_and(flag_name):
         """Return a function that tests waldas and the specified
@@ -114,9 +213,16 @@ def add_walda_rules(rules):
         msg='Waldas requires CONVERT_CNT',
         excp=gi.GameInfoError)
 
+    rules.add_rule(
+        'waldas_gs_legal',
+        rule=lambda ginfo: (ginfo.waldas
+                            and ginfo.grandslam != GrandSlam.LEGAL),
+        msg='Waldas requires that GRANDSLAM be Legal',
+        excp=gi.GameInfoError)
+
     bad_flags = ['blocks',
                  'rounds', 'round_starter', 'rnd_left_fill', 'rnd_umove',
-                 'no_sides', 'sow_own_store', 'stores', 'grandslam']
+                 'no_sides', 'sow_own_store', 'stores']
     for flag in bad_flags:
         rules.add_rule(
             f'waldas_bad_{flag}',
@@ -132,6 +238,8 @@ def build_rules():
 
     man_rules = RuleDict()
 
+    add_deprive_rules(man_rules)
+    add_block_and_divert_rules(man_rules)
     add_walda_rules(man_rules)
 
     man_rules.add_rule(
@@ -232,8 +340,10 @@ def build_rules():
 
     man_rules.add_rule(
         'blocks_wo_rounds',
-        rule=lambda ginfo: ginfo.blocks and not ginfo.rounds,
-        msg='BLOCKS without ROUNDS is not supported by Mancala (base class)',
+        rule=lambda ginfo: (not ginfo.sow_blkd_div
+                            and ginfo.blocks and not ginfo.rounds),
+        msg='BLOCKS without ROUNDS is not supported '
+            'without sow_blkd_div.',
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
@@ -283,7 +393,8 @@ def build_rules():
 
     man_rules.add_rule(
         'warn_no_capt',
-        rule=lambda ginfo: not any([ginfo.evens,
+        rule=lambda ginfo: not any([ginfo.sow_blkd_div,
+                                    ginfo.evens,
                                     ginfo.crosscapt,
                                     ginfo.sow_own_store,
                                     ginfo.cthresh,

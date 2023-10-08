@@ -5,7 +5,6 @@ for mancala_games, play_mancala and play.
 Created on Sun Jul 30 09:41:09 2023
 @author: Ann"""
 
-import deka
 import gamacha
 import mancala
 import nam_nam
@@ -13,7 +12,6 @@ import no_sides
 import one_child
 
 GAME_CLASSES = {'Mancala': mancala.Mancala,
-                'Deka': deka.Deka,
                 'Gamacha': gamacha.Gamacha,
                 'NamNam': nam_nam.NamNam,
                 'NoSides': no_sides.NoSides,

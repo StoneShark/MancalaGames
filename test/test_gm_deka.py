@@ -6,15 +6,9 @@ Created on Thu Aug 17 15:23:34 2023
 """
 
 import pytest
-pytestmark = [pytest.mark.unittest, pytest.mark.integtest]
+pytestmark = [pytest.mark.integtest]
 
-from context import deka
 from context import man_config
-
-from game_interface import WinCond
-
-
-TEST_COVERS = ['src\\deka.py']
 
 
 class TestDeka:
@@ -227,85 +221,4 @@ class TestDeka:
         winmsg = game.win_message(cond)
         assert 'Game Over' in winmsg[0]
         assert 'Top' in winmsg[1]
-
-
-    def test_no_mlap(self, game):
-
-        # get the config vars, change mlaps, build new game
-        consts = game.cts
-        info = game.info
-        object.__setattr__(info, 'mlaps', False)
-        info.__post_init__(nbr_holes=game.cts.holes,
-                           rules=deka.Deka.rules)
-        game = deka.Deka(consts, info)
-
-        game.turn = True
-        game.board = [0, 0, 2, 0, 0, 2, 1, 1, 12, 9, 6, 3]
-
-        assert game.move(5) is None
-        assert not game.turn
-        assert not any(game.blocked[l] for l in range(game.cts.dbl_holes))
-        assert game.board == [0, 0, 2, 0, 0, 2, 0, 2, 12, 9, 6, 3]
-        assert game.store[0] == 0 and game.store[1] == 0
-
-        assert game.move(5) is None
-        assert game.turn
-        assert game.blocked[7]
-        assert game.board == [0, 0, 2, 0, 0, 0, 1, 0, 12, 9, 6, 3]
-        assert game.store[0] == 3 and game.store[1] == 0
-
-
-    def test_end_game_tie(self, game):
-
-        cond = game.end_game()
-
-        winmsg = game.win_message(cond)
-        assert 'Game Over' in winmsg[0]
-        assert 'Both players' in winmsg[1]
-
-
-    @pytest.mark.parametrize('turn', range(2))
-    def test_wincond_t_win(self, game, turn):
-
-        game.board = [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1]
-        game.store == [34, 0]
-        game.turn = turn
-
-        cond = game.win_conditions()
-
-        winmsg = game.win_message(cond)
-        assert 'Game Over' in winmsg[0]
-        assert 'Top' in winmsg[1]
-
-
-    @pytest.mark.parametrize('turn', range(2))
-    def test_wincond_f_win(self, game, turn):
-
-        game.board = [0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
-        game.store == [34, 0]
-        game.turn = turn
-
-        cond = game.win_conditions()
-
-        winmsg = game.win_message(cond)
-        assert 'Game Over' in winmsg[0]
-        assert 'Bottom' in winmsg[1]
-
-
-    def test_win_message(self, game):
-
-        winmsg = game.win_message(42)
-        assert 'Game Over' in winmsg[0]
-        assert 'Unexpected' in winmsg[1]
-
-        winmsg = game.win_message(WinCond.ENDLESS)
-        assert 'Game Over' in winmsg[0]
-        assert 'stuck' in winmsg[1]
-
-
-    def test_endless(self, game):
-
-        game.turn = False
-        game.board = [0, 1, 0, 1, 2, 0, 1, 0, 4, 3, 2, 1]
-        game.store = [21, 0]
-        assert game.move(4) == WinCond.ENDLESS
+        assert 'eliminating' in winmsg[1]

@@ -16,7 +16,9 @@ from context import game_interface as gi
 from context import mancala
 
 from game_interface import Direct
+from game_interface import Goal
 from game_interface import WinCond
+
 
 # %%
 
@@ -416,6 +418,50 @@ class TestEndChildren:
         assert game.store == estore
         assert game.turn == eturn
         assert not game.test_pass()
+
+
+class TestEndDeprive:
+
+    @pytest.fixture
+    def game(self):
+        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(goal=Goal.DEPRIVE,
+                                capt_on=[4],
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+    @pytest.mark.parametrize('turn, board, econd, ewinner',
+                             [(False, utils.build_board([0, 0, 0],
+                                                        [0, 3, 0]),
+                               WinCond.WIN, False),
+                              (True, utils.build_board([0, 0, 0],
+                                                       [0, 3, 0]),
+                                WinCond.WIN, False),
+
+                              (False, utils.build_board([0, 3, 0],
+                                                        [0, 0, 0]),
+                               WinCond.WIN, True),
+                              (True, utils.build_board([0, 3, 0],
+                                                        [0, 0, 0]),
+                               WinCond.WIN, True),
+                              (True, utils.build_board([0, 3, 0],
+                                                       [0, 3, 0]),
+                                None, None),
+                              (False, utils.build_board([0, 3, 0],
+                                                        [0, 3, 0]),
+                               None, None),
+
+                              ])
+    def test_end_game(self, game, turn, board, econd, ewinner):
+
+        game.board = board
+        game.turn = turn
+
+        cond, winner = game.deco.ender.game_ended(False, False)
+        assert cond == econd
+        assert winner == ewinner
 
 
 class TestEndWaldas:
