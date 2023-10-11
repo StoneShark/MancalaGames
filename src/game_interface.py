@@ -163,7 +163,8 @@ class GameInfo:
     oppsidecapt: bool = False
     moveunlock: bool = False
     evens: bool = False
-    cthresh: int = 0
+    capt_min: int = 0
+    capt_max: int = 0
     nosinglecapt: bool = False
     capttwoout: bool = False
 

@@ -62,13 +62,24 @@ class CaptEvens(CaptOkIf):
         return self.decorator.capture_ok(loc)
 
 
-class CaptGreaterThan(CaptOkIf):
-    """Capture on values greater than cthresh."""
+class CaptMax(CaptOkIf):
+    """Capture on values <= capt_max."""
 
     def capture_ok(self, loc):
         """Return True if capture from loc is ok"""
 
-        if self.game.board[loc] < self.game.info.cthresh:
+        if self.game.board[loc] > self.game.info.capt_max:
+            return False
+        return self.decorator.capture_ok(loc)
+
+
+class CaptMin(CaptOkIf):
+    """Capture on values >= capt_min."""
+
+    def capture_ok(self, loc):
+        """Return True if capture from loc is ok"""
+
+        if self.game.board[loc] < self.game.info.capt_min:
             return False
         return self.decorator.capture_ok(loc)
 
@@ -129,8 +140,11 @@ def deco_capt_ok(game):
     if game.info.evens:
         capt_ok = CaptEvens(game, capt_ok)
 
-    if game.info.cthresh:
-        capt_ok = CaptGreaterThan(game, capt_ok)
+    if game.info.capt_min:
+        capt_ok = CaptMin(game, capt_ok)
+
+    if game.info.capt_max:
+        capt_ok = CaptMax(game, capt_ok)
 
     if game.info.oppsidecapt:
         capt_ok = CaptOppSide(game, capt_ok)

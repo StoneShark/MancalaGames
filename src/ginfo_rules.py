@@ -165,7 +165,7 @@ def add_block_and_divert_rules(rules):
         msg='SOW_BLKD_DIV requires a goal of DEPRIVE',
         excp=gi.GameInfoError)
 
-    capt_flags = ['capsamedir', 'crosscapt', 'evens', 'cthresh',
+    capt_flags = ['capsamedir', 'crosscapt', 'evens', 'capt_min', 'capt_max',
                   'multicapt', 'oppsidecapt', 'xcpickown', 'capt_on',
                   'capttwoout']
     for flag in capt_flags:
@@ -518,7 +518,8 @@ def build_rules():
                                     ginfo.evens,
                                     ginfo.crosscapt,
                                     ginfo.sow_own_store,
-                                    ginfo.cthresh,
+                                    ginfo.capt_max,
+                                    ginfo.capt_min,
                                     ginfo.capt_on]),
         msg='No capture mechanism provided',
         warn=True)

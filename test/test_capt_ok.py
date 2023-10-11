@@ -179,6 +179,7 @@ def read_test_cases():
 
     with open('test/capt_ok_test_cases.csv', 'r', encoding='utf-8') as file:
         lines = file.readlines()
+    lines[0] = lines[0][1:]
 
     FIELD_NAMES = lines[0].strip().split(',')
     Case = collections.namedtuple('Case', FIELD_NAMES)
@@ -195,7 +196,8 @@ read_test_cases()
 GPARAMS = {'ex_no_flags': {},
            'ex_capt_on_1_3_4': {'capt_on': (1, 3, 4)},
            'ex_evens': {'evens': True},
-           'ex_cthresh': {'cthresh': 4},
+           'ex_capt_max': {'capt_max': 3},
+           'ex_capt_min': {'capt_min': 4},
            'ex_opp_side': {'oppsidecapt': True},
            'ex_unlocked': {'moveunlock': True},
            'ex_evens_opp': {'evens': True,
@@ -222,15 +224,17 @@ class TestCaptOk:
 
         def _make_game (turn, seeds, child, unlocked,
                         evens=False, oppsidecapt=False,
-                        moveunlock=False, capt_on=(), cthresh=0):
+                        moveunlock=False, capt_on=(),
+                        capt_max=0, capt_min=0):
 
             game_consts = gc.GameConsts(nbr_start=4, holes=2)
-            game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                    capt_on=capt_on,
+            game_info = gi.GameInfo(capt_on=capt_on,
                                     evens=evens,
                                     oppsidecapt=oppsidecapt,
                                     moveunlock=moveunlock,
-                                    cthresh=cthresh,
+                                    capt_max=capt_max,
+                                    capt_min=capt_min,
+                                    nbr_holes=game_consts.holes,
                                     rules=mancala.Mancala.rules)
 
             game = mancala.Mancala(game_consts, game_info)

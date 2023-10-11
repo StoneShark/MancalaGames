@@ -63,6 +63,7 @@ def read_claimer_cases():
 
     with open('test/eg_claimers_cases.csv', 'r', encoding='utf-8') as file:
         lines = file.readlines()
+    lines[0] = lines[0][1:]
 
     tnames = lines[0].split(',')
     TNAMES = [name for name in tnames[:-1] if name]

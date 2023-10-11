@@ -9,7 +9,7 @@
       "about": "Toguz Xorgol:\nsingle-lap, clockwise-sow mancala.\nCapture on evens that are greater \nthan or equal to 4.\nEach side can make one Tuzdek (child)\non 3 on opposite side but not in left\nmost hole. Tuzdeks cannot be opposite\neachother.\n",
       "child": true,
       "convert_cnt": 3,
-      "cthresh": 4,
+      "capt_min": 4,
       "evens": true,
       "oppsidecapt": true,
       "sow_direct": -1,

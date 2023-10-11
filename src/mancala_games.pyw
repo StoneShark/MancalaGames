@@ -147,7 +147,7 @@ class GameParams:
     multicapt: tk.BooleanVar
     capt_on: list
     grandslam: tk.StringVar
-    cthresh: tk.IntVar
+    capt_min: tk.IntVar
     nosinglecapt: tk.BooleanVar
 
     # scores
@@ -491,7 +491,8 @@ class MancalaGames(tk.Frame):
         rcnt = Counter()
         self._add_bool(bfrm, 'Do Multiple Captures', tkv.multicapt, rcnt, 2)
         self._add_bool(bfrm, 'Do Cross Capture', tkv.crosscapt, rcnt, 2)
-        self._add_opts(bfrm, 'Capt Greater or Equal to', tkv.cthresh, SEEDS, (rcnt, 2))
+        self._add_opts(bfrm, 'Capt Greater or Equal to', tkv.capt_min,
+                       SEEDS, (rcnt, 2))
         self._add_bool(bfrm, 'No Single Seed Capt', tkv.nosinglecapt, rcnt, 2)
 
 
@@ -610,7 +611,7 @@ class MancalaGames(tk.Frame):
         self._add_tkvar_bool(tkvars_dict, 'evens', False)
         self._add_tkvar_bool(tkvars_dict, 'crosscapt', False)
         self._add_tkvar_bool(tkvars_dict, 'multicapt', False)
-        self._add_tkvar_int(tkvars_dict, 'cthresh', 0)
+        self._add_tkvar_int(tkvars_dict, 'capt_min', 0)
         self._add_tkvar_bool(tkvars_dict, 'nosinglecapt', False)
         self._add_tkvar_str(tkvars_dict, 'xcpickown',
                             INV_XCOWN[CrossCaptOwn.LEAVE])

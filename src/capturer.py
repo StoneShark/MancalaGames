@@ -480,7 +480,8 @@ def deco_capturer(game):
     elif game.info.capttwoout:
         capturer = CaptTwoOut(game)
 
-    elif game.info.evens or game.info.capt_on or game.info.cthresh:
+    elif (game.info.evens or game.info.capt_on
+          or game.info.capt_max or game.info.capt_min):
         capturer = CaptSingle(game)
 
     capturer = _add_grand_slam_deco(game, game.info, capturer)

@@ -101,6 +101,7 @@ def read_test_cases():
 
     with open('test/capture_test_data.csv', 'r', encoding='utf-8') as file:
         lines = file.readlines()
+    lines[0] = lines[0][1:]
 
     field_names = lines[2].split(',')
     FIELD_NAMES = [fname for fname in field_names[:-1] if fname]
@@ -160,7 +161,7 @@ class TestCaptTable:
                                 child=case.child,
                                 convert_cnt=case.convert_cnt,
                                 crosscapt=case.xcapt,
-                                cthresh=case.cthresh,
+                                capt_min=case.capt_min,
                                 evens=case.evens,
                                 capttwoout=case.capttwoout,
                                 grandslam=case.gslam,
