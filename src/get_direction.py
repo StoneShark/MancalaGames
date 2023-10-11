@@ -13,9 +13,11 @@ from game_interface import Direct
 # %% interface
 
 class GetDirIf(abc.ABC):
-    """Determine the direction to sow the seeds.
-    Get both the move, either a pos or (pos, move) tuple,
-    and the translated loc."""
+    """Determine the direction to sow the seeds."""
+
+    def __init__(self, game, decorator=None):
+        self.game = game
+        self.decorator = decorator
 
     @abc.abstractmethod
     def get_direction(self, move, loc):
@@ -28,22 +30,24 @@ class ConstDir(GetDirIf):
     """Direction is Diect.CW or Direct.CCW, don't need to
     make any game time decisions."""
 
-    def __init__(self, const):
-        self.const = const
+    def __init__(self, game, decorator=None):
+        super().__init__(game, decorator)
+        self.const = game.info.sow_direct
 
     def get_direction(self, _1, _2):
         return self.const
 
 
 class SplitDir(GetDirIf):
-    """Pure split dir, precompute the diretions for all
-    locations, then lookup and return at game time.
-    Board size must be even or an error would have been
-    generated at game creation; include odd center
-    hole so this can be used by UdirOther."""
+    """Precompute the diretions for all locations,
+    then lookup and return at game time.
+    This shouldn't be called if the board size is odd
+    for the center hole, return None."""
 
-    def __init__(self, holes):
+    def __init__(self, game, decorator=None):
 
+        super().__init__(game, decorator)
+        holes = game.cts.holes
         half_holes, rem = divmod(holes, 2)
         self.direction = [Direct.CW] * half_holes
         self.direction += [None] if rem else []
@@ -57,56 +61,63 @@ class SplitDir(GetDirIf):
         return self.direction[loc]
 
 
-class UdirAllDir(GetDirIf):
-    """All of the holes are user choice.
+class UdirDir(GetDirIf):
+    """The hole is a udir. Move is a tuple (pos, direct).
     The UI/user picked the direction, just return it."""
 
     def get_direction(self, move, _):
-        """Move is a tuple (pos, direct)."""
 
         return move[1]
 
 
+class UdirTripleDir(GetDirIf):
+    """The hole is user choice. Move is a tuple (row, pos, direct).
+    The UI/user picked the direction, just return it."""
+
+    def get_direction(self, move, _):
+
+        return move[2]
+
+
 class UdirOtherDir(GetDirIf):
-    """Use split sow for any holes that are not in
-    udir_holes."""
+    """If the hole is udirect, then use the udir_getter,
+    otherwise use the decorator."""
 
-    def __init__(self, decorator, udir_holes, holes):
+    def __init__(self, game, decorator, udir_getter):
 
-        self.decorator = decorator
-        self.udir_holes = udir_holes
-        self.holes = holes
+        super().__init__(game, decorator)
+        self.udir_getter = udir_getter
 
     def get_direction(self, move, loc):
-        """Move is a (pos, dir) tuple.
-        If the user picked the direction, return it.
-        Other use the next direction getter."""
 
-        pos, direct = move
-        left_cnt = (loc - self.holes) if loc >= self.holes else loc
-        if left_cnt in self.udir_holes:
-            return direct
+        left_cnt = self.game.cts.loc_to_left_cnt(loc)
+        if left_cnt in self.game.info.udir_holes:
+            return self.udir_getter.get_direction(move, loc)
 
-        return self.decorator.get_direction(pos, loc)
+        return self.decorator.get_direction(move, loc)
+
 
 
 # %%  build deco
 
 def deco_dir_getter(game):
-    """Select the direction chooser.
-    If all holes are specified as user dir, don't care
-    what sow_direction is."""
-
-
-    if len(game.info.udir_holes) == game.cts.holes:
-        return UdirAllDir()
-
-    if game.info.sow_direct is Direct.SPLIT:
-        dir_getter = SplitDir(game.cts.holes)
-    else:
-        dir_getter = ConstDir(game.info.sow_direct)
+    """Create the dir_getter chain."""
 
     if game.info.udirect:
-        return UdirOtherDir(dir_getter, game.info.udir_holes, game.cts.holes)
+        if game.info.no_sides:
+            udir_getter = UdirTripleDir(game)
+        else:
+            udir_getter = UdirDir(game)
+
+    if len(game.info.udir_holes) == game.cts.holes:
+        return udir_getter
+
+    if game.info.sow_direct is Direct.SPLIT:
+        dir_getter = SplitDir(game)
+    else:
+        dir_getter = ConstDir(game)
+
+    if game.info.udirect:
+        dir_getter = UdirOtherDir(game, dir_getter, udir_getter)
 
     return dir_getter

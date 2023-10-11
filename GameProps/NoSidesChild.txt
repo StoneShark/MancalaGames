@@ -1,0 +1,28 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "nbr_start": 2,
+      "holes": 7
+   },
+   "game_info": {
+      "name": "No Sides Child",
+      "about": "NoSidesChild: both players may move in\neither direction from any hole.\nChildren created on 4s.\nStores are owned as usual.\nDefault game is capture on 2s.",
+      "no_sides": true,
+      "stores": true,
+      "sow_direct": 1,
+      "skip_start": true,
+      "child": true,
+      "convert_cnt": 4,
+      "capt_on": [2],
+      "udir_holes": [0, 1, 2, 3, 4, 5, 6],
+ 
+      "scorer": {
+         "stores_m": 4,
+         "easy_rand": 0,
+         "repeat_turn": 0
+      },
+      "ai_params": {
+         "mm_depth": [1, 1, 3, 5]
+      }
+   }
+}

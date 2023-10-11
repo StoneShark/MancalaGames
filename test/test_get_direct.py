@@ -73,10 +73,10 @@ class TestGetDirection:
             udir_holes = [1]
 
         game_consts = gc.GameConsts(nbr_start=4, holes=holes)
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                capt_on=[2],
+        game_info = gi.GameInfo(capt_on=[2],
                                 sow_direct=direct,
                                 udir_holes=udir_holes,
+                                nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
 
@@ -111,12 +111,49 @@ class TestGetDirection:
     def test_not_middle(self, holes, start, direct, udir_holes, exp_dir):
 
         game_consts = gc.GameConsts(nbr_start=4, holes=holes)
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                capt_on=[2],
+        game_info = gi.GameInfo(capt_on=[2],
                                 sow_direct=direct,
                                 udir_holes=udir_holes,
+                                nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
 
         move = (game_consts.loc_to_left_cnt(start), None)
+        assert game.deco.get_dir.get_direction(move, start) == exp_dir
+
+
+    @pytest.mark.filterwarnings("ignore")
+    @pytest.mark.parametrize('holes, start, direct, udir_holes, exp_dir',
+                             [
+                              (4, 0, Direct.CW, [3], Direct.CW),  # 0
+                              (4, 3, Direct.CW, [3], None),
+                              (4, 4, Direct.CW, [3], Direct.CW),
+                              (4, 7, Direct.CW, [3], None),
+
+                              (4, 0, Direct.CCW, [3], Direct.CCW),  # 4
+                              (4, 3, Direct.CCW, [3], None),
+                              (4, 4, Direct.CCW, [3], Direct.CCW),
+                              (4, 7, Direct.CCW, [3], None),
+
+                              (4, 0, Direct.SPLIT, [3], Direct.CW), # 8
+                              (4, 3, Direct.SPLIT, [3], None),
+                              (4, 4, Direct.SPLIT, [3], Direct.CW),
+                              (4, 7, Direct.SPLIT, [3], None),
+
+                              (3, 5, Direct.SPLIT, [0, 1, 2], None),  # 12
+                              ],
+                             ids= [f'case_{cnbr}' for cnbr in range(13)])
+    def test_no_sides(self, holes, start, direct, udir_holes, exp_dir):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=holes)
+        game_info = gi.GameInfo(capt_on=[2],
+                                no_sides=True,
+                                stores=True,
+                                sow_direct=direct,
+                                udir_holes=udir_holes,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        move = (start < holes, game_consts.loc_to_left_cnt(start), None)
         assert game.deco.get_dir.get_direction(move, start) == exp_dir

@@ -368,12 +368,6 @@ def build_rules():
         msg='SPLIT and GRANDSLAM of Not Legal is not implemented',
         excp=NotImplementedError)
 
-    # man_rules.add_rule(
-    #     'no_skip_start_mlap',
-    #     rule=lambda ginfo: ginfo.skip_start and ginfo.mlaps,
-    #     msg='SKIP_START not compatible with MULTI_LAP',
-    #     excp=gi.GameInfoError)
-
     man_rules.add_rule(
         'no_sow_start_mlap',
         rule=lambda ginfo: ginfo.sow_start and ginfo.mlaps,
