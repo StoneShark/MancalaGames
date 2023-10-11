@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Ayoayo",
-      "about": "Ayoayo: a multi-lap mancala,\nsow direction counter-clockwise,\ncross-capture when end in own\nhole with one seed.",
+      "about": "Ayoayo: a multi-lap mancala, sow \nskipping the start hole of each lap,\nsow direction counter-clockwise,\ncross-capture when end in own\nhole with one seed.",
       "stores": true,
       "sow_direct": 1,
       "mustshare": true,
@@ -14,7 +14,7 @@
       "oppsidecapt": true,
       "crosscapt": true,
       "xcpickown": 1,
-      "min_move": 1,
+      "skip_start": true,
 
       "scorer": {
          "stores_m": 4,
@@ -33,4 +33,5 @@
       }
    },
    "rules": "Mohr, Merilyn Simonds; The New Games Treasury, 1993"
+   "question": "skip start: skip where the move started OR where each 'lap' starts? first is implemented"
 }
