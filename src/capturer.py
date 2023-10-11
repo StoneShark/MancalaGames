@@ -253,6 +253,37 @@ class CaptureToWalda(CaptMethodIf):
         return captures
 
 
+class MakeTuzdek(CaptMethodIf):
+    """A tuzdek (child) may not be made in leftmost hole on
+    either side.  Each player can only have one tuzdek and player's
+    tuzdek must not be opposite eachother on the board."""
+
+    def tuzdek_test(self, loc):
+        """put the test in a function to keep the linter from
+        complaining that it's too complex"""
+
+        cross = self.game.cts.cross_from_loc(loc)
+        opp_range = self.game.cts.get_opp_range(self.game.turn)
+
+        return (self.game.cts.opp_side(self.game.turn, loc)
+                and self.game.child[loc] is None
+                and self.game.child[cross] is None
+                and self.game.board[loc] == self.game.info.convert_cnt
+                and self.game.cts.loc_to_left_cnt(loc)
+                and not any(self.game.child[tloc] is not None
+                            for tloc in opp_range))
+
+    def do_captures(self, mdata):
+
+        loc = mdata.capt_loc
+
+        if self.tuzdek_test(loc):
+            self.game.child[loc] = self.game.turn
+            return True
+
+        return self.decorator.do_captures(mdata)
+
+
 class CaptTwoOut(CaptMethodIf):
     """If the seed ended in a hole which previously had seeds,
     and the next hole is empty, capture the seeds in the
@@ -454,9 +485,11 @@ def deco_capturer(game):
 
     capturer = _add_grand_slam_deco(game, game.info, capturer)
 
-    # only one child handler: waldas or chilren
+    # only one child handler: waldas/tuzdek/chilren
     if game.info.waldas:
         capturer =  CaptureToWalda(game, capturer)
+    elif game.info.one_child:
+        capturer = MakeTuzdek(game, capturer)
     elif game.info.child:
         capturer = MakeChild(game, capturer)
 

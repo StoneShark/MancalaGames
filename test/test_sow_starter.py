@@ -13,7 +13,6 @@ import utils
 from context import game_interface as gi
 from context import game_constants as gc
 from context import mancala
-from context import sow_starter
 
 from game_interface import Direct
 
@@ -58,7 +57,7 @@ class TestSowStarter:
                                        [7, 8, 9])
         game.turn = turn
 
-        sower = sow_starter.deco_sow_starter(game)
+        sower = game.deco.starter
         assert sower.start_sow(pos) == (eloc, eseeds)
         assert game.board[eloc] == 0
         assert game.unlocked[eloc]
@@ -90,7 +89,7 @@ class TestSowStarter:
                                        [7, 8, 9])
         game.turn = turn
 
-        sower = sow_starter.deco_sow_starter(game)
+        sower = game.deco.starter
         assert sower.start_sow(pos) == (eloc, eseeds)
         assert game.board[eloc] == 1
         assert game.unlocked[eloc]
@@ -123,7 +122,7 @@ class TestSowStarter:
                                        [7, 8, 9])
         game.turn = turn
 
-        sower = sow_starter.deco_sow_starter(game)
+        sower = game.deco.starter
 
         # start_sow doesn't care what the direction is
         assert sower.start_sow((pos, None)) == (eloc, eseeds)
@@ -161,8 +160,40 @@ class TestSowStarter:
                                        [7, 8, 9])
         game.turn = turn
 
-        sower = sow_starter.deco_sow_starter(game)
+        sower = game.deco.starter
 
         assert sower.start_sow((not turn, pos, None)) == (eloc, eseeds)
         assert game.board[eloc] == 0
         assert game.unlocked[eloc]
+
+
+    @pytest.mark.parametrize('pos, turn, eloc, eseeds, esowed',
+                              [(0, False, 0, 6, 1),
+                              (1, False, 1, 1, 0),
+                              (2, False, 2, 8, 1),
+                              (0, True, 5-0, 1, 0),
+                              (1, True, 5-1, 4, 1),
+                              (2, True, 5-2, 5, 1)]
+                        )
+    def test_move_one(self, pos, turn, eloc, eseeds, esowed):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+        game_info = gi.GameInfo(capt_on = [2],
+                                udir_holes=[1],
+                                sow_direct=Direct.SPLIT,
+                                no_sides=True,
+                                stores=True,
+                                sow_start = True,
+                                move_one = True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.board = utils.build_board([1, 5, 6],
+                                       [7, 1, 9])
+        game.turn = turn
+
+        sower = game.deco.starter
+
+        assert sower.start_sow((not turn, pos, None)) == (eloc, eseeds)
+        assert game.board[eloc] == esowed

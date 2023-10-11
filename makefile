@@ -28,7 +28,6 @@ MODULES += minimax.py
 MODULES += nam_nam.py
 MODULES += new_game.py
 MODULES += no_seed_goal.py
-MODULES += one_child.py
 MODULES += play.py
 MODULES += play_mancala.pyw
 MODULES += sow_starter.py

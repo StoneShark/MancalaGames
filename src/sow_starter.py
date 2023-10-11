@@ -31,7 +31,7 @@ class SowStartIf(abc.ABC):
         RETURN loc, seeds."""
 
 
-# %%  base sower
+# %%  base sowers
 
 class SowStart(SowStartIf):
     """start the sower"""
@@ -43,9 +43,6 @@ class SowStart(SowStartIf):
         self.game.board[loc] = 0
 
         return loc, seeds
-
-
-# %% decorators
 
 
 class SowStartHole(SowStartIf):
@@ -60,6 +57,26 @@ class SowStartHole(SowStartIf):
         return loc, seeds
 
 
+class SowStartMoveOne(SowStartIf):
+    """Sow the start hole unless there is only one seed."""
+
+    def start_sow(self, loc):
+        """start sow"""
+
+        seeds = self.game.board[loc]
+        if seeds == 1:
+            self.game.board[loc] = 0
+        else:
+            seeds -= 1
+            self.game.board[loc] = 1
+
+        return loc, seeds
+
+
+
+# %% decorators
+
+
 class SowMarkUnlock(SowStartIf):
     """Start the sower. If locks are used then unlock the hole."""
 
@@ -68,6 +85,7 @@ class SowMarkUnlock(SowStartIf):
 
         self.game.unlocked[loc] = True
         return self.decorator.start_sow(loc)
+
 
 # %%  top level starters
 #     convert move to pos for the rest of the chain
@@ -122,10 +140,13 @@ class SowStartNoSides(SowStartIf):
 def deco_sow_starter(game):
     """Build the sow_starter decorator chain"""
 
-    starter = SowStart(game)
-
     if game.info.sow_start:
-        starter = SowStartHole(game, starter)
+        if game.info.move_one:
+            starter = SowStartMoveOne(game)
+        else:
+            starter = SowStartHole(game)
+    else:
+        starter = SowStart(game)
 
     if game.info.moveunlock:
         starter = SowMarkUnlock(game, starter)

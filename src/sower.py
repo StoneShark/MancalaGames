@@ -60,7 +60,7 @@ class SowSeeds(SowMethodIf):
 
             loc = self.game.deco.incr.incr(loc,
                                            mdata.direct,
-                                           mdata.sow_loc)
+                                           mdata.cont_sow_loc)
             self.game.board[loc] += 1
 
         mdata.capt_loc = loc
@@ -111,7 +111,7 @@ class SowSeedsNStore(SowMethodIf):
 
         while seeds > 0:
 
-            loc = incr(loc, mdata.direct, mdata.sow_loc)
+            loc = incr(loc, mdata.direct, mdata.cont_sow_loc)
 
             if (loc in self.poses
                     and loc == self.fill_store[mdata.direct + 1][turn]):

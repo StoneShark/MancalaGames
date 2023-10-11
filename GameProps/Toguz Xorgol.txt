@@ -1,5 +1,5 @@
 {
-   "game_class": "OneChild",
+   "game_class": "Mancala",
    "game_constants": {
       "nbr_start": 9,
       "holes": 9
@@ -15,6 +15,8 @@
       "sow_direct": -1,
       "sow_start": true,
       "stores": true,
+      "one_child": true,
+      "move_one": true,
 
       "scorer": {
          "stores_m": 4,

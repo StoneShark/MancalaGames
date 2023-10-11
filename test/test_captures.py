@@ -423,8 +423,92 @@ class TestWaldas:
         assert game.child[loc] == None
 
 
+class TestTuzdek:
+
+    @pytest.fixture
+    def game(self):
+        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_info = gi.GameInfo(child=True,
+                                convert_cnt=3,
+                                one_child=True,
+                                capt_on=[3],
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+
+    @pytest.mark.parametrize('loc, turn, eowner',
+                             [(0, False, None),
+                              (3, False, None),
+                              (4, False, None),
+                              (7, False, False),
+                              (0, True, None),
+                              (3, True, True),
+                              (4, True, None),
+                              (7, True, None),
+                              ])
+    def test_tuzdek_creation(self, game, turn, loc, eowner):
+
+        game.turn = turn
+
+        mdata = MoveData(game, None)
+        mdata.direct = Direct.CCW
+        mdata.capt_loc = loc
+        mdata.board = tuple(game.board)
+        mdata.seeds = 2
+
+        assert game.deco.capturer.do_captures(mdata)
+
+        assert game.board[loc] == 0 if eowner is None else 3
+        assert game.child[loc] == eowner
+
+
+    @pytest.mark.parametrize('loc, turn',
+                             [(7, False),
+                              (3, True),
+                              ])
+    def test_only_one(self, game, turn, loc):
+
+        game.turn = turn
+        game.child = utils.build_board([None, None, False, None],
+                                       [None, True, None, None])
+        mdata = MoveData(game, None)
+        mdata.direct = Direct.CCW
+        mdata.capt_loc = loc
+        mdata.board = tuple(game.board)
+        mdata.seeds = 2
+
+        assert game.deco.capturer.do_captures(mdata)
+        print(game)
+
+        assert game.board[loc] == 0
+        assert not game.child[loc]
+
+
+    @pytest.mark.parametrize('loc, turn, child',
+                             [(6, False, 1),
+                              (2, True, 5),
+                              ])
+    def test_not_opp(self, game, turn, loc, child):
+
+        game.turn = turn
+        game.child[child] = True
+
+        mdata = MoveData(game, None)
+        mdata.direct = Direct.CCW
+        mdata.capt_loc = loc
+        mdata.board = tuple(game.board)
+        mdata.seeds = 2
+
+        assert game.deco.capturer.do_captures(mdata)
+        print(game)
+
+        assert game.board[loc] == 0
+
+
 # %%
 
 """
-pytest.main(['test_captures.py'])
+pytest.main(['test_captures.py::TestTuzdek'])
 """

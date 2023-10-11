@@ -8,9 +8,7 @@ Created on Sun Jul 30 09:41:09 2023
 import gamacha
 import mancala
 import nam_nam
-import one_child
 
 GAME_CLASSES = {'Mancala': mancala.Mancala,
                 'Gamacha': gamacha.Gamacha,
-                'NamNam': nam_nam.NamNam,
-                'OneChild': one_child.OneChild}
+                'NamNam': nam_nam.NamNam}

@@ -146,6 +146,7 @@ class GameInfo:
     udirect: bool = False
 
     sow_start: bool = False
+    move_one: bool = False
     mustshare: bool = False
     skip_start: bool = False
     sow_own_store: bool = False
@@ -172,6 +173,7 @@ class GameInfo:
     multicapt: bool = False
     grandslam: int = GrandSlam.LEGAL
     waldas: bool = False
+    one_child: bool = False
 
     # list of seed counts to capture on (after sow)
     capt_on: list[int] = dc.field(default_factory=list)

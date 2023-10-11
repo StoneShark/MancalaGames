@@ -243,11 +243,46 @@ def add_walda_rules(rules):
             excp=gi.GameInfoError)
 
 
+def add_one_child_rules(rules):
+    """Add the tuzdek rules (flag is called one_child because it
+    means more)."""
+
+    def one_child_and(flag_name):
+        """Return a function that tests one_child and the specified
+        flag, based only on a ginfo parameter."""
+
+        def _tuzdek_and(ginfo):
+            return ginfo.one_child and getattr(ginfo, flag_name)
+
+        return _tuzdek_and
+
+    rules.add_rule(
+        'need_child',
+        rule=lambda ginfo: ginfo.one_child and not ginfo.child,
+        msg='ONE_CHILD requires CHILD to support tuzdek creation',
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'need_convert_cnt',
+        rule=lambda ginfo: ginfo.one_child and not ginfo.convert_cnt,
+        msg='ONE_CHILD requires CONVERT_CNT to define tuzdek creation',
+        excp=gi.GameInfoError)
+
+    bad_flags = ['blocks', 'no_sides',
+                 'rounds', 'round_starter', 'rnd_left_fill', 'rnd_umove']
+    for flag in bad_flags:
+        rules.add_rule(
+            f'onechild_bad_{flag}',
+            rule=one_child_and(flag),
+            msg=f'ONE_CHILD cannot be used with {flag.upper()}',
+            excp=gi.GameInfoError)
+
+
 def add_no_sides_rules(rules):
     """Add the no_sides rules."""
 
     def no_sides_and(flag_name):
-        """Return a function that tests waldas and the specified
+        """Return a function that tests no_sides and the specified
         flag, based only on a ginfo parameter."""
 
         def _no_sides_and(ginfo):
@@ -331,6 +366,7 @@ def build_rules():
     add_deprive_rules(man_rules)
     add_block_and_divert_rules(man_rules)
     add_walda_rules(man_rules)
+    add_one_child_rules(man_rules)
     add_no_sides_rules(man_rules)
 
     man_rules.add_rule(
@@ -500,9 +536,17 @@ def build_rules():
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
+        'move_one_start',
+        rule=lambda ginfo: ginfo.move_one and not ginfo.sow_start,
+        msg='MOVE_ONE requires SOW_START',
+        excp=gi.GameInfoError)
+
+    man_rules.add_rule(
         'needs_moves',
-        rule=lambda ginfo: ginfo.min_move == 1 and ginfo.sow_start,
-        msg='MIN_MOVE of 1 with SOW_START play is confusing',
+        rule=lambda ginfo: (ginfo.min_move == 1
+                            and ginfo.sow_start
+                            and not ginfo.move_one),
+        msg='MIN_MOVE of 1 with SOW_START play is confusing (unless MOVE_ONE)',
         excp=gi.GameInfoError)
         # pick-up a seed, sow it back into the same hole -> no change of state
 
