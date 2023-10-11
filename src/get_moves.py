@@ -63,6 +63,31 @@ class UdirMoves(MovesIf):
         return moves
 
 
+class NoSidesMoves(MovesIf):
+    """Base no sides holes mover.
+    When no_sides is true, moves must be (row, pos, direct)
+    no matter if udirect is true or not.
+    There are no passes in no_sides games,
+    because if there isn't a move then the game is over."""
+
+    def get_moves(self):
+        """If move is allowable, collect positions."""
+
+        moves = []
+        for loc, allow in enumerate(self.game.get_allowable_holes()):
+
+            if allow:
+                row = int(loc < self.game.cts.holes)
+                pos = self.game.cts.xlate_pos_loc(row, loc)
+                cnt = self.game.cts.loc_to_left_cnt(loc)
+                if cnt in self.game.info.udir_holes:
+                    moves += [MoveTpl(row, pos, Direct.CCW),
+                              MoveTpl(row, pos, Direct.CW)]
+                else:
+                    moves += [MoveTpl(row, pos, None)]
+
+        return moves
+
 # %% decorators
 
 
@@ -99,14 +124,15 @@ class PassMoves(MovesIf):
 def deco_moves(game):
     """Build the get_moves deco."""
 
-    if game.info.udirect:
-
+    if game.info.udirect and not game.info.no_sides:
         moves = UdirMoves(game)
         if game.info.mustpass:
             moves = UdirPassMoves(game, moves)
 
-    else:
+    elif game.info.no_sides:
+        moves = NoSidesMoves(game)
 
+    else:
         moves = Moves(game)
         if game.info.mustpass:
             moves = PassMoves(game, moves)

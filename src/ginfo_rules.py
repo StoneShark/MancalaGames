@@ -87,8 +87,7 @@ class RuleDict(dict):
             rule.test(holes, ginfo)
 
 
-# %% the rules
-
+# %% grouped rules
 
 
 def add_deprive_rules(rules):
@@ -106,7 +105,7 @@ def add_deprive_rules(rules):
 
     rules.add_rule(
         'deprive_gs_legal',
-        rule=lambda ginfo: (ginfo.sow_blkd_div
+        rule=lambda ginfo: (ginfo.goal == Goal.DEPRIVE
                             and ginfo.grandslam != GrandSlam.LEGAL),
         msg='Goal of DEPRIVE requires that GRANDSLAM be Legal',
         excp=gi.GameInfoError)
@@ -145,23 +144,30 @@ def add_block_and_divert_rules(rules):
     rules.add_rule(
         'bdiv_need_convert_cnt',
         rule=lambda ginfo: ginfo.sow_blkd_div and not ginfo.convert_cnt,
-        msg='sow_blkd_div requires CONVERT_CNT for closing holes',
+        msg='SOW_BLKD_DIV requires CONVERT_CNT for closing holes',
         excp=gi.GameInfoError)
 
     rules.add_rule(
         'bdiv_need_blocks',
         rule=lambda ginfo: ginfo.sow_blkd_div and not ginfo.blocks,
-        msg='sow_blkd_div requires BLOCKS for closing holes',
+        msg='SOW_BLKD_DIV requires BLOCKS for closing holes',
         excp=gi.GameInfoError)
 
     rules.add_rule(
         'bdiv_min_move_one',
         rule=lambda ginfo: ginfo.sow_blkd_div and ginfo.min_move != 1,
-        msg='sow_blkd_div requires a minimum move of 1',
+        msg='SOW_BLKD_DIV requires a minimum move of 1',
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'bdiv_min_req_dep_goal',
+        rule=lambda ginfo: ginfo.sow_blkd_div and ginfo.goal != Goal.DEPRIVE,
+        msg='SOW_BLKD_DIV requires a goal of DEPRIVE',
         excp=gi.GameInfoError)
 
     capt_flags = ['capsamedir', 'crosscapt', 'evens', 'cthresh',
-                  'multicapt', 'oppsidecapt', 'xcpickown']
+                  'multicapt', 'oppsidecapt', 'xcpickown', 'capt_on',
+                  'capttwoout']
     for flag in capt_flags:
         rules.add_rule(
             f'bdiv_no_capt_{flag}',
@@ -214,6 +220,12 @@ def add_walda_rules(rules):
         excp=gi.GameInfoError)
 
     rules.add_rule(
+        'walda_req_max_seeds',
+        rule=lambda ginfo: ginfo.waldas and ginfo.goal != Goal.MAX_SEEDS,
+        msg='WALDAS requires a goal of MAX_SEEDS',
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
         'waldas_gs_legal',
         rule=lambda ginfo: (ginfo.waldas
                             and ginfo.grandslam != GrandSlam.LEGAL),
@@ -231,16 +243,64 @@ def add_walda_rules(rules):
             excp=gi.GameInfoError)
 
 
+def add_no_sides_rules(rules):
+    """Add the no_sides rules."""
+
+    def no_sides_and(flag_name):
+        """Return a function that tests waldas and the specified
+        flag, based only on a ginfo parameter."""
+
+        def _no_sides_and(ginfo):
+            return ginfo.no_sides and getattr(ginfo, flag_name)
+
+        return _no_sides_and
+
+    rules.add_rule(
+        'no_sides_need_stores',
+        rule=lambda ginfo: ginfo.no_sides and not ginfo.stores,
+        msg='NO_SIDES requires STORES.',
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'no_sides_req_max_seeds',
+        rule=lambda ginfo: ginfo.no_sides and ginfo.goal != Goal.MAX_SEEDS,
+        msg='NO_SIDES requires a goal of MAX_SEEDS',
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'no_side_scorers',
+        rule=lambda ginfo: ginfo.no_sides and
+                                any([ginfo.scorer.empties_m,
+                                     ginfo.scorer.evens_m,
+                                     ginfo.scorer.access_m,
+                                     ginfo.scorer.seeds_m,
+                                     ginfo.scorer.child_cnt_m]),
+        msg='Scorer multipliers empties, evens, access, seeds '
+            'and child_cnt are incompatible with NoSides',
+        excp=gi.GameInfoError)
+        # XXXX could override scorer for evens, empties, access
+        # and child_cnt to max/min the total count of them.
+        # would need to restructure base game scorer to allow
+        # individual overrides
+
+    bad_flags = ['grandslam', 'mustpass', 'mustshare', 'oppsidecapt',
+                 'rounds', 'round_starter', 'rnd_left_fill', 'rnd_umove',
+                 'visit_opp']
+    for flag in bad_flags:
+        rules.add_rule(
+            f'no_sides_bad_{flag}',
+            rule=no_sides_and(flag),
+            msg=f'NO_SIDES cannot be used with {flag.upper()}',
+            excp=gi.GameInfoError)
+
+
+# %% the base ruleset
 
 def build_rules():
     """Build the default Mancala rules.
     These can be deleted or modified by derived classes."""
 
     man_rules = RuleDict()
-
-    add_deprive_rules(man_rules)
-    add_block_and_divert_rules(man_rules)
-    add_walda_rules(man_rules)
 
     man_rules.add_rule(
         'invalid_holes',
@@ -267,6 +327,11 @@ def build_rules():
         rule=lambda ginfo: not isinstance(ginfo.ai_params, dict),
         msg='Invalid AI parameter dictionary',
         excp=gi.GameInfoError)
+
+    add_deprive_rules(man_rules)
+    add_block_and_divert_rules(man_rules)
+    add_walda_rules(man_rules)
+    add_no_sides_rules(man_rules)
 
     man_rules.add_rule(
         'sow_dir_type',
@@ -355,8 +420,10 @@ def build_rules():
 
     man_rules.add_rule(
         'warn_capsamedir_multicapt',
-        rule=lambda ginfo: ginfo.capsamedir and not ginfo.multicapt,
-        msg="CAPSAMEDIR without MULTICAPT has no effect.",
+        rule=lambda ginfo: (not ginfo.capttwoout
+                            and ginfo.capsamedir
+                            and not ginfo.multicapt),
+        msg="CAPSAMEDIR without MULTICAPT has no effect (unless CAPTTWOOUT).",
         warn=True)
 
     man_rules.add_rule(
@@ -377,23 +444,47 @@ def build_rules():
         warn=True)
 
     man_rules.add_rule(
-        'xpick_requires_cross',
-        rule=lambda ginfo: ginfo.xcpickown and not ginfo.crosscapt,
-        msg="XCPICKOWN without CROSSCAPT doesn't do anything.",
+        'capt2out_needs_samedir',
+        rule=lambda ginfo: ginfo.capttwoout and not ginfo.capsamedir,
+        msg='CAPTTWOOUT requires CAPSAMEDIR because the preceeding '
+            'holes were just sown (not empty)',
         excp=gi.GameInfoError)
-
-    ## GameInfo checks
 
     man_rules.add_rule(
-        'bad_no_side',
-        rule=lambda ginfo: ginfo.no_sides,
-        msg='Mancala does not support NO_SIDES',
+        'capt2_cross_incomp',
+        rule=lambda ginfo: ginfo.capttwoout and ginfo.crosscapt,
+        msg="CAPTTWOOUT and CROSSCAPT are incompatible",
+        warn=True)
+
+    man_rules.add_rule(
+        'capt2_waldas_incomp',
+        rule=lambda ginfo: ginfo.capttwoout and (ginfo.child or ginfo.waldas),
+        msg="CAPTTWOOUT and WALDAS/CHILD are incompatible",
+        warn=True)
+
+    man_rules.add_rule(
+        'capt2_gs_legal',
+        rule=lambda ginfo: (ginfo.capttwoout
+                            and ginfo.grandslam != GrandSlam.LEGAL),
+        msg="CAPTTWOOUT requires that GRANDSLAM be LEGAL",
+        warn=True)
+
+    man_rules.add_rule(
+        'capt2_multi_incomp',
+        rule=lambda ginfo: ginfo.capttwoout and ginfo.multicapt,
+        msg="CAPTTWOOUT and MULTICAPT are incompatible",
+        warn=True)
+
+    man_rules.add_rule(
+        'xpick_requires_cross',
+        rule=lambda ginfo: ginfo.xcpickown and not ginfo.crosscapt,
+        msg="XCPICKOWN without CROSSCAPT doesn't do anything",
         excp=gi.GameInfoError)
-        # flag is in the base class because it changes how the UI works
 
     man_rules.add_rule(
         'warn_no_capt',
         rule=lambda ginfo: not any([ginfo.sow_blkd_div,
+                                    ginfo.capttwoout,
                                     ginfo.evens,
                                     ginfo.crosscapt,
                                     ginfo.sow_own_store,

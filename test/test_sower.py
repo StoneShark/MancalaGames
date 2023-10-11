@@ -18,6 +18,7 @@ from context import mancala
 from context import sower
 
 from game_interface import Direct
+from game_interface import Goal
 from game_interface import WinCond
 # from game_log import game_log
 from mancala import MoveData
@@ -564,6 +565,7 @@ class TestBlckDivertSower:
 
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(sow_direct=Direct.CW,
+                                goal=Goal.DEPRIVE,
                                 sow_blkd_div=True,
                                 blocks=True,
                                 convert_cnt=3,
@@ -644,6 +646,7 @@ class TestBlckDivertSower:
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(sow_direct=Direct.CW,
                                 sow_blkd_div=True,
+                                goal=Goal.DEPRIVE,
                                 blocks=True,
                                 mlaps=True,
                                 convert_cnt=3,

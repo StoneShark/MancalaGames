@@ -9,3 +9,4 @@ dabbles_old
 coverage.json
 logs
 MancalaGames
+*.cov

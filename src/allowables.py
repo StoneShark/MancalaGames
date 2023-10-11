@@ -157,6 +157,19 @@ class NoGrandSlam(AllowableIf):
         return rval
 
 
+class NoSidesAllowable(AllowableIf):
+    """Base allowable for no_sides games
+    Return is a list of booleans the same size as the board and
+    in the same order.
+    This is 2x as long as a single side of the baord."""
+
+    def get_allowable_holes(self):
+        """Do allow_move for all locations"""
+
+        return [self.allow_move(loc)
+                for loc in range(self.game.cts.dbl_holes)]
+
+
 class MemoizeAllowable(AllowableIf):
     """Allowables are checked in several places--move/end_move,
     test_pass and get_allowables--for each move.  If the game
@@ -191,6 +204,9 @@ class MemoizeAllowable(AllowableIf):
 
 def deco_allowable(game):
     """Build the allowable deco."""
+
+    if game.info.no_sides:
+        return NoSidesAllowable(game)
 
     allowable = Allowable(game)
 

@@ -69,6 +69,8 @@ class SowMarkUnlock(SowStartIf):
         self.game.unlocked[loc] = True
         return self.decorator.start_sow(loc)
 
+# %%  top level starters
+#     convert move to pos for the rest of the chain
 
 class SowStartPos(SowStartIf):
     """Start the sower. Translate move to loc."""
@@ -99,6 +101,21 @@ class SowStartUdir(SowStartIf):
         return self.decorator.start_sow(loc)
 
 
+class SowStartNoSides(SowStartIf):
+    """Start the sower. Translate move to loc."""
+
+    def start_sow(self, move):
+        """Translate move to loc. NoSides moves are (row, pos, direct).
+        Call the chain.
+
+        Arguement intentionally renamed because this method
+        gets move, but calls chained decorators with loc."""
+        # pylint: disable=arguments-renamed
+
+        row, pos, _ = move
+        loc = self.game.cts.xlate_pos_loc(row, pos)
+        return self.decorator.start_sow(loc)
+
 
 # %% build decorator chain
 
@@ -113,8 +130,10 @@ def deco_sow_starter(game):
     if game.info.moveunlock:
         starter = SowMarkUnlock(game, starter)
 
-    if game.info.udirect:
+    if game.info.udirect and not game.info.no_sides:
         starter = SowStartUdir(game, starter)
+    elif game.info.no_sides:
+        starter = SowStartNoSides(game, starter)
     else:
         starter = SowStartPos(game, starter)
 

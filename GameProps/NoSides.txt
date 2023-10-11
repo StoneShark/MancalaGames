@@ -1,5 +1,5 @@
 {
-   "game_class": "NoSides",
+   "game_class": "Mancala",
    "game_constants": {
       "nbr_start": 2,
       "holes": 5
@@ -11,7 +11,6 @@
       "stores": true,
       "sow_direct": 1,
       "skip_start": true,
-      "min_move": 1,
       "capt_on": [2],
  
       "scorer": {

@@ -35,6 +35,13 @@ from game_interface import WinCond
 
 # %% claim seeds
 
+# Naming convensions:
+
+#  Claim_*:    don't move any seeds, but count them
+#  Take_*:     move/remove unclaimed seeds, but don't move child seeds
+#  Divvy_*:    the game is over, do something fair with unclaimed seeds
+
+
 class ClaimSeedsIf(abc.ABC):
     """Interface for seed claimer."""
 
@@ -69,10 +76,8 @@ class ChildClaimSeeds(ClaimSeedsIf):
 
 
 class ClaimOwnSeeds(ClaimSeedsIf):
-    """The game has ended, count number of seeds each player
-    controls--used to determine if the round is over.
-
-    Count all of the owned seeds."""
+    """Claim seeds in stores, any owned childrens, and
+    own side of the board.  Don't move any."""
 
     def claim_seeds(self):
         seeds = self.game.store.copy()
@@ -84,18 +89,15 @@ class ClaimOwnSeeds(ClaimSeedsIf):
                     seeds[True] += self.game.board[loc]
                 elif self.game.child[loc] is False:
                     seeds[False] += self.game.board[loc]
-                else:   # self.game.child[loc] is None:
+                else:
                     seeds[side] += self.game.board[loc]
-
 
         return seeds
 
 
 class TakeOwnSeeds(ClaimSeedsIf):
     """The game has ended, move the unowned seeds (non-child)
-    to the stores.
-
-    Count all of the owned seeds."""
+    to the stores.  Count all of the owned seeds."""
 
     def claim_seeds(self):
         seeds = [0, 0]
@@ -107,7 +109,7 @@ class TakeOwnSeeds(ClaimSeedsIf):
                     seeds[True] += self.game.board[loc]
                 elif self.game.child[loc] is False:
                     seeds[False] += self.game.board[loc]
-                else:  # self.game.child[loc] is None
+                else:
                     self.game.store[side] += self.game.board[loc]
                     self.game.board[loc] = 0
 
@@ -115,6 +117,32 @@ class TakeOwnSeeds(ClaimSeedsIf):
         seeds[True] += self.game.store[True]
 
         game_log.step('Collected seeds', self.game)
+        return seeds
+
+
+class TakeOnlyChildNStores(ClaimSeedsIf):
+    """Ignore unclaimed seeds; count stores and children
+
+    Duplicated code from DivvySeedsStores, can this be consolidated?"""
+
+    def claim_seeds(self):
+
+        seeds = self.game.store.copy()
+
+        for loc in range(self.game.cts.dbl_holes):
+
+            if self.game.child[loc] is True:
+                seeds[True] += self.game.board[loc]
+
+            elif self.game.child[loc] is False:
+                seeds[False] += self.game.board[loc]
+
+            else:
+                # XXXX is removing unclaimed seeds right for game play?
+                # the game is over so we don't need preserve seed count
+                self.game.board[loc] = 0
+
+        game_log.step('Divvied seeds', self.game)
         return seeds
 
 
@@ -137,7 +165,7 @@ class DivvySeedsStores(ClaimSeedsIf):
             elif self.game.child[loc] is False:
                 seeds[False] += self.game.board[loc]
 
-            else:  # self.game.child[loc] is None
+            else:
                 unclaimed += self.game.board[loc]
                 self.game.board[loc] = 0
 
@@ -294,6 +322,32 @@ class Winner(EndTurnIf):
             return WinCond.GAME_OVER, None
 
         return self.decorator.game_ended(repeat_turn, False)
+
+
+class MaxWinner(EndTurnIf):
+    """In some games not all seeds count towards the win,
+    i.e. the game is over but neither player will have
+    win_count seeds. The player with the max seeds wins.
+
+    This should only be used to wrap Winner with a seed
+    taker; the same claimer is used here."""
+
+    def game_ended(self, repeat_turn, ended=False):
+
+        cond, winner = self.decorator.game_ended(repeat_turn, ended)
+
+        if cond != WinCond.GAME_OVER:
+            return cond, winner
+
+        seeds = self.decorator.claimer.claim_seeds()
+
+        if seeds[0] > seeds[1]:
+            return WinCond.WIN, False
+
+        if seeds[0] < seeds[1]:
+            return WinCond.WIN, True
+
+        return WinCond.TIE, None
 
 
 class RoundWinner(EndTurnIf):
@@ -482,7 +536,13 @@ def deco_end_move(game):
     else:
         claimer = ClaimSeeds(game)
 
-    ender = Winner(game, claimer=TakeOwnSeeds(game))
+    if game.info.no_sides:
+        ender = Winner(game, claimer=TakeOnlyChildNStores(game))
+    else:
+        ender = Winner(game, claimer=TakeOwnSeeds(game))
+
+    if game.info.goal == Goal.MAX_SEEDS:
+        ender = MaxWinner(game, ender)
 
     if not game.info.mustpass:
         ender = EndTurnNoPass(game, ender)
@@ -502,7 +562,14 @@ def deco_end_move(game):
 
 
 def deco_quitter(game):
-    """Return a chain for the quitter (user ended game)."""
+    """Return a chain for the quitter (user ended game).
+
+    When no_sides: include MaxWinner because, CountOnlySeedsStores
+    might move seeds off the board."""
+
+    if game.info.no_sides:
+        return MaxWinner(game,
+                         Winner(game, claimer=TakeOnlyChildNStores(game)))
 
     if game.info.stores:
         return Winner(game, claimer=DivvySeedsStores(game))

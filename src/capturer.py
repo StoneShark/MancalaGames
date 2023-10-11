@@ -253,6 +253,29 @@ class CaptureToWalda(CaptMethodIf):
         return captures
 
 
+class CaptTwoOut(CaptMethodIf):
+    """If the seed ended in a hole which previously had seeds,
+    and the next hole is empty, capture the seeds in the
+    following hole."""
+
+    def do_captures(self, mdata):
+
+        loc = mdata.capt_loc
+        direct = mdata.direct
+        loc_p1 = self.game.deco.incr.incr(loc, direct, NOSKIPSTART)
+        loc_p2 = self.game.deco.incr.incr(loc_p1, direct, NOSKIPSTART)
+
+        if (self.game.board[loc] > 1
+                and not self.game.board[loc_p1]
+                and self.game.board[loc_p2]
+                and self.game.deco.capt_ok.capture_ok(loc_p2)):
+
+            self.game.store[self.game.turn] += self.game.board[loc_p2]
+            self.game.board[loc_p2] = 0
+            return True
+        return False
+
+
 class GrandSlamCapt(CaptMethodIf):
     """Grand Slam capturer and tester.
     This class is still abstract."""
@@ -422,6 +445,9 @@ def deco_capturer(game):
 
         if not game.info.capsamedir:
             capturer = CaptOppDirMultiple(game, capturer)
+
+    elif game.info.capttwoout:
+        capturer = CaptTwoOut(game)
 
     elif game.info.evens or game.info.capt_on or game.info.cthresh:
         capturer = CaptSingle(game)

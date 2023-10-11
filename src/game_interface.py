@@ -164,6 +164,7 @@ class GameInfo:
     evens: bool = False
     cthresh: int = 0
     nosinglecapt: bool = False
+    capttwoout: bool = False
 
     crosscapt: bool = False
     xcpickown: CrossCaptOwn = CrossCaptOwn.LEAVE

@@ -232,6 +232,7 @@ class NonUiData:
     waldas: bool = False
     goal: Goal = Goal.MAX_SEEDS
     sow_blkd_div: bool = False
+    capttwoout: bool = False
 
     ai_params: dict  = dc.field(default_factory=dict)
     other_dict: dict = dc.field(default_factory=dict)
@@ -711,6 +712,7 @@ class MancalaGames(tk.Frame):
         vdict[ckey.RND_LEFT_FILL] = self.non_ui_data.rnd_left_fill
         vdict[ckey.RND_UMOVE] = self.non_ui_data.rnd_umove
         vdict[ckey.NO_SIDES] = self.non_ui_data.no_sides
+        vdict[ckey.CAPTTWOOUT] = self.non_ui_data.capttwoout
         vdict[ckey.WALDAS] = self.non_ui_data.waldas
         vdict[ckey.SOW_BLKD_DIV] = self.non_ui_data.sow_blkd_div
         vdict[ckey.GOAL] = self.non_ui_data.goal
@@ -844,7 +846,7 @@ class MancalaGames(tk.Frame):
 
             if fname not in [ckey.UDIRECT, ckey.SOW_DIRECT,
                              ckey.GRANDSLAM, ckey.NO_SIDES, ckey.WALDAS,
-                             ckey.GOAL, ckey.SOW_BLKD_DIV,
+                             ckey.GOAL, ckey.SOW_BLKD_DIV, ckey.CAPTTWOOUT,
                              ckey.RND_LEFT_FILL, ckey.ROUND_STARTER,
                              ckey.RND_UMOVE, ckey.XCPICKOWN,
                              ckey.SCORER, ckey.DIFFICULTY,
@@ -911,6 +913,9 @@ class MancalaGames(tk.Frame):
         self.non_ui_data.no_sides = \
             game_dict[ckey.GAME_INFO].get(
                 ckey.NO_SIDES, gi_defaults.no_sides)
+        self.non_ui_data.capttwoout = \
+            game_dict[ckey.GAME_INFO].get(
+                ckey.CAPTTWOOUT, gi_defaults.capttwoout)
         self.non_ui_data.waldas = \
             game_dict[ckey.GAME_INFO].get(
                 ckey.WALDAS, gi_defaults.waldas)

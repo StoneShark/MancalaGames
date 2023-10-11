@@ -1,5 +1,5 @@
 {
-   "game_class": "NoSides",
+   "game_class": "Mancala",
    "game_constants": {
       "nbr_start": 9,
       "holes": 5
@@ -8,6 +8,7 @@
       "name": "Eson Xorgol",
       "about": "Eson Xorgol:\nSingle-lap, clockwise-sow Mancala\nin which all holes are playable by\nboth players.\nIf sow ends in an occupied hole and \nthe next hole is empty, capture the\nseeds in the following hole.\nCapture in sow direction (CW).",
       "no_sides": true,
+      "capttwoout": true,      
       "stores": true,
       "sow_direct": -1,
       "skip_start": true,

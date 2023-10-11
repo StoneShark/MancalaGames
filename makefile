@@ -27,7 +27,6 @@ MODULES += montecarlo_ts.py
 MODULES += minimax.py
 MODULES += nam_nam.py
 MODULES += new_game.py
-MODULES += no_sides.py
 MODULES += no_seed_goal.py
 MODULES += one_child.py
 MODULES += play.py
@@ -153,6 +152,7 @@ clean:
 	-del coverage.json
 	-del src\\.coverage
 	-del test\\context.py
+	-del test\\*.cov
 
 
 # exe

@@ -191,7 +191,7 @@ class TestAllowables:
         assert mlgame.deco.allow.get_allowable_holes() == [T, F, T]
 
 
-class TestMemoize():
+class TestMemoize:
 
     @pytest.fixture
     def game(self):
@@ -232,3 +232,58 @@ class TestMemoize():
 
         with pytest.raises(AttributeError):
             game.deco.allow.get_allowable_holes()
+
+
+class TestNoSidesAllow:
+
+    @pytest.mark.parametrize('turn', [False, True])
+    @pytest.mark.parametrize(
+        'board, blocked, child, min_move, eresult',
+        [([2, 2, 2, 0, 0, 0],   # 0
+          FALSES, NONES, 2,
+          [T, T, T, F, F, F]),
+
+         ([1, 2, 3, 0, 0, 0],   # 1
+          FALSES, NONES, 2,
+          [F, T, T, F, F, F]),
+
+         ([0, 0, 0, 1, 1, 1],   # 2
+          FALSES, NONES, 1,
+          [F, F, F, T, T, T]),
+
+         ([2, 2, 0, 1, 0, 0],    # 3
+          FALSES, NONES, 2,
+          [T, T, F, F, F, F]),
+
+         ([2, 2, 0, 1, 0, 0],
+          [T, F, T, T, F, T], NONES, 2,
+          [F, T, F, F, F, F]),
+
+         ([2, 2, 2, 1, 0, 0],
+          [T, F, F, T, F, T],
+          [N, T, N, N, F, T], 2,
+          [F, F, T, F, F, F]),
+
+         ([2, 2, 0, 1, 0, 0],
+          [F, T, F, T, F, T],
+          [N, T, N, N, F, T], 2,
+          [T, F, F, F, F, F]),
+        ])
+
+    def test_allowables(self, turn, board, blocked, child, min_move, eresult):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(capt_on=[2],
+                                no_sides=True,
+                                stores=True,
+                                min_move=min_move,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = turn
+        game.board = board
+        game.blocked = blocked
+        game.child = child
+
+        assert game.deco.allow.get_allowable_holes() == eresult

@@ -162,6 +162,7 @@ class TestCaptTable:
                                 crosscapt=case.xcapt,
                                 cthresh=case.cthresh,
                                 evens=case.evens,
+                                capttwoout=case.capttwoout,
                                 grandslam=case.gslam,
                                 moveunlock=case.moveunlock,
                                 multicapt=case.multicapt,

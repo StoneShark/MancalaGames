@@ -117,12 +117,51 @@ class TestGetMove:
         allowables, don't bother with further testing."""
 
         game_consts = gc.GameConsts(nbr_start=4, holes=3)
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                capt_on=[2],
+        game_info = gi.GameInfo(capt_on=[2],
                                 mustpass=mustpass,
                                 udir_holes=udir,
+                                nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
         game.turn = turn
         game.board = board
         assert set(game.deco.moves.get_moves()) == set(eresult)
+
+
+class TestNoSidesMoves:
+
+    @pytest.mark.parametrize('turn', [False, True])
+    @pytest.mark.parametrize(
+        'board, min_move, eresult',
+        [([2, 2, 2, 0, 0, 0], 2,   # 0
+          {(1, 0, None),
+           (1, 1, Direct.CCW), (1, 1, Direct.CW),
+           (1, 2, None)}),
+
+         ([1, 2, 3, 0, 0, 0], 2,   # 1
+          {(1, 1, Direct.CCW), (1, 1, Direct.CW),
+           (1, 2, None)}),
+
+         ([0, 0, 0, 1, 1, 1], 1,   # 2
+          {(0, 0, None),
+           (0, 1, Direct.CCW), (0, 1, Direct.CW),
+           (0, 2, None)}),
+        ])
+
+    def test_get_moves(self, turn, board, min_move, eresult):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(capt_on=[2],
+                                no_sides=True,
+                                stores=True,
+                                min_move=min_move,
+                                udir_holes = [1],
+                                sow_direct=Direct.SPLIT,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = turn
+        game.board = board
+
+        assert set(game.deco.moves.get_moves()) == eresult

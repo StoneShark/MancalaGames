@@ -6,11 +6,14 @@ Created on Fri Sep 15 03:57:49 2023
 
 # %% imports
 
+import collections
+
 import pytest
 pytestmark = pytest.mark.unittest
 
 import utils
 
+from context import end_move
 from context import game_constants as gc
 from context import game_interface as gi
 from context import mancala
@@ -31,8 +34,123 @@ N = None
 T = True
 F = False
 
+
+
+
 # %%
 
+SBOARD = slice(0, 4)
+SCHILD = slice(4, 8)
+STORE = 8
+
+OSTORE = 4
+OSEEDS = 5
+OERROR = 6
+
+
+CONVERT_DICT = {'N': None,
+                'T': True,
+                'F': False,
+                '': None}
+
+def make_ints(vals):
+    return [int(val) for val in vals]
+
+
+def read_claimer_cases():
+
+    global TNAMES, CASES
+
+    with open('test/eg_claimers_cases.csv', 'r', encoding='utf-8') as file:
+        lines = file.readlines()
+
+    tnames = lines[0].split(',')
+    TNAMES = [name for name in tnames[:-1] if name]
+
+    Case = collections.namedtuple('Case',
+                                  ['board', 'child', 'store', 'results'])
+    Result = collections.namedtuple('Result',
+                                    ['board', 'store', 'seeds', 'error'])
+
+    CASES = []
+    for lcnt in range(3, len(lines), 2):
+
+        line_one = lines[lcnt].split(',')
+        line_two = lines[lcnt + 1].split(',')
+
+        case = Case(
+            make_ints(utils.build_board(line_one[SBOARD], line_two[SBOARD])),
+            [CONVERT_DICT[val] for val in
+                 utils.build_board(line_one[SCHILD], line_two[SCHILD])],
+            make_ints([line_two[STORE], line_one[STORE]]),
+            {})
+
+        CASES += [case]
+
+        start = STORE + 1
+        for name in TNAMES:
+
+            case.results[name] = Result(
+                make_ints(utils.build_board(
+                    line_one[(start):(start + 4)],
+                    line_two[(start):(start + 4)])),
+                make_ints([line_two[start + OSTORE],
+                           line_one[start + OSTORE]]),
+                make_ints([line_two[start + OSEEDS],
+                           line_one[start + OSEEDS]]),
+                CONVERT_DICT[line_one[start + OERROR]])
+
+            start += OERROR + 1
+
+read_claimer_cases()
+
+
+# %%
+
+class TestClaimers:
+
+    @pytest.fixture
+    def game(self):
+        """minimum game class for claimers"""
+
+        class ClaimerTestGame:
+            def __init__(self):
+                self.cts = gc.GameConsts(nbr_start=2, holes=4)
+                self.board = [2, 2, 2, 2]
+                self.child = [F, F, F, F]
+                self.store = [0, 0]
+
+        return ClaimerTestGame()
+
+
+    @pytest.mark.parametrize('tname', TNAMES)
+    @pytest.mark.parametrize('case', CASES)
+    def test_claimer(self, game, tname, case):
+
+        game.board = case.board.copy()
+        game.child = case.child.copy()
+        game.store = case.store.copy()
+
+        assert sum(game.board) + sum(game.store) == game.cts.total_seeds, \
+            "Game setup error."
+
+        tclass = getattr(end_move, tname)
+        claimer = tclass(game)
+        seeds = claimer.claim_seeds()
+
+        assert seeds == case.results[tname].seeds
+        assert game.board == case.results[tname].board
+        assert game.store == case.results[tname].store
+        if case.results[tname].error:
+            assert sum(game.board) + sum(game.store) != game.cts.total_seeds
+        else:
+            assert sum(game.board) + sum(game.store) == game.cts.total_seeds
+
+
+
+
+
+# %%
 
 class TestEndMove:
 
@@ -99,14 +217,9 @@ class TestEndMove:
     @pytest.fixture
     def no_win_game(self):
         """win_count is patched so that the Winner class will not
-        declare a winner.  The Winner class should collect seeds
-        and return GAME_OVER. Expectation is that a derived
-        game dynamics class will wrap the deco chain and do the
-        right thing with GAME_OVER--none of the rest of code
-        is designed to handle it.
+        declare a winner; that is no one has winner_cnt seeds.
+        The Winner class should collect seeds and return GAME_OVER. """
 
-        GAME_OVER is only return if something in the deco chain
-        decides that the game is over (e.g. MUSTSHARE, NOPASS)."""
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
         object.__setattr__(game_consts, 'win_count', game_consts.total_seeds)
 
@@ -115,7 +228,6 @@ class TestEndMove:
                                 evens=True,
                                 stores=True,
                                 rules=mancala.Mancala.rules)
-
 
         return mancala.Mancala(game_consts, game_info)
 
@@ -280,39 +392,46 @@ class TestEndMove:
             # 22: true's turn ended, false has no moves, no pass
             ('no_win_game', False, False,
              utils.build_board([5, 0, 0],
-                               [0, 0, 0]), [3, 4], True, WinCond.GAME_OVER,
+                               [0, 0, 0]), [3, 4], True, WinCond.WIN,
              utils.build_board([0, 0, 0],
-                               [0, 0, 0]), [3, 9], None),
+                               [0, 0, 0]), [3, 9], True),
 
-            # 23: false's turn ended without seeds, true can't share
+            # 23: true's turn ended without seeds, false can't share
             ('no_win_game', False, False,
-             utils.build_board([0, 1, 1],
-                               [0, 0, 0]), [5, 5], False, WinCond.GAME_OVER,
              utils.build_board([0, 0, 0],
-                               [0, 0, 0]), [5, 7], None),
+                               [1, 1, 0]), [5, 5], True, WinCond.WIN,
+             utils.build_board([0, 0, 0],
+                               [0, 0, 0]), [7, 5], False),
 
-            # 24: true has a repeat_turn but no moves, false wins
+            # 24: true's turn ended without seeds, false can't share
+            ('no_win_game', False, False,
+             utils.build_board([0, 0, 0],
+                               [1, 1, 0]), [3, 5], True, WinCond.TIE,
+             utils.build_board([0, 0, 0],
+                               [0, 0, 0]), [5, 5], None),
+
+            # 25: true has a repeat_turn but no moves, false wins
             ('game', False, True,
              utils.build_board([0, 0, 0],
                                [0, 0, 5]), [3, 4], True, WinCond.WIN,
              utils.build_board([0, 0, 0],
                                [0, 0, 0]), [8, 4], False),
 
-            # 25: true's turn ended without moves, false can share
+            # 26: true's turn ended without moves, false can share
             ('mmshgame', False, False,
              utils.build_board([1, 1, 0],
                                [0, 1, 3]), [3, 3], True, None,
              utils.build_board([1, 1, 0],
                                [0, 1, 3]), [3, 3], True),
 
-            # 26: true has no moves but has a repeat turn, false can share
+            # 27: true has no moves but has a repeat turn, false can share
             ('mmshgame', False, True,
              utils.build_board([1, 1, 0],
                                [0, 1, 3]), [3, 3], True, WinCond.WIN,
              utils.build_board([0, 0, 0],
                                [0, 0, 0]), [7, 5], False),
 
-            # 27: true's turn ended, false has no moves, pass
+            # 28: true's turn ended, false has no moves, pass
             ('pagame', False, False,
              utils.build_board([5, 0, 0],
                                [0, 0, 0]), [3, 4], True, None,
@@ -334,7 +453,6 @@ class TestEndMove:
         assert game.store == estore
         assert game.turn == eturn
         assert not game.test_pass()
-
 
 
 class TestEndChildren:
@@ -418,7 +536,6 @@ class TestEndChildren:
         assert game.store == estore
         assert game.turn == eturn
         assert not game.test_pass()
-
 
 class TestEndDeprive:
 
@@ -586,6 +703,25 @@ class TestEndWaldas:
         winmsg = game.win_message(cond)
         assert 'Game Over' in winmsg[0]
         assert 'Top' in winmsg[1]
+
+
+class TestNoSides:
+
+    @pytest.fixture
+    def game(self):
+        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(no_sides=True,
+                                stores=True,
+                                capt_on=[3],
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+    def test_no_sides(self, game):
+        """Everything except construction is already tested."""
+
+        pass
 
 
 class TestQuitter:
