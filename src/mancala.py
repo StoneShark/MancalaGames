@@ -27,6 +27,7 @@ import new_game
 import sow_starter
 import sower
 
+from fill_patterns import PCLASSES
 from game_interface import Goal
 from game_interface import WinCond
 from game_interface import PASS_TOKEN
@@ -192,6 +193,12 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         if player and not isinstance(player, ai_interface.AiPlayerIf):
             raise TypeError('player not built on ai_interface.AiPlayerIf.')
 
+        if game_info.start_pattern:
+            game_consts.adjust_total_seeds(
+                PCLASSES[game_info.start_pattern].nbr_seeds(
+                    game_consts.holes,
+                    game_consts.nbr_start))
+
         self.cts = game_consts
         self.info = game_info
         self.player = player or minimax.MiniMaxer(self)
@@ -208,6 +215,9 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         self.starter = self.turn
 
         self.deco = ManDeco(self)
+
+        if game_info.start_pattern:
+            self.deco.new_game.new_game(None, False)
 
 
     def __str__(self):

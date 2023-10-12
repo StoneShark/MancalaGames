@@ -1,5 +1,5 @@
 {
-   "game_class": "Gamacha",
+   "game_class": "Mancala",
    "game_constants": {
       "nbr_start": 4,
       "holes": 12
@@ -13,6 +13,9 @@
       "crosscapt": true,
       "oppsidecapt": true,
       "grandslam": 0,
+      "opp_or_empty": true,
+      "start_pattern": 1,
+      "goal": 1,
       
       "scorer": {
          "stores_m": 0,

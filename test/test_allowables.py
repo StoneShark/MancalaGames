@@ -269,7 +269,6 @@ class TestNoSidesAllow:
           [N, T, N, N, F, T], 2,
           [T, F, F, F, F, F]),
         ])
-
     def test_allowables(self, turn, board, blocked, child, min_move, eresult):
 
         game_consts = gc.GameConsts(nbr_start=4, holes=3)
@@ -285,5 +284,31 @@ class TestNoSidesAllow:
         game.board = board
         game.blocked = blocked
         game.child = child
+
+        assert game.deco.allow.get_allowable_holes() == eresult
+
+
+
+class TestOppEmpty:
+
+    @pytest.mark.parametrize(
+        'board, turn, eresult',
+        [([3, 1, 0, 0, 1, 0], False, [T, T, F]),
+         ([3, 1, 0, 0, 1, 1], True, [T, F, F]),  # true side is reversed
+
+        ])
+
+    def test_allowables(self, board, turn, eresult):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(capt_on=[2],
+                                opp_or_empty=True,
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = turn
+        game.board = board
 
         assert game.deco.allow.get_allowable_holes() == eresult

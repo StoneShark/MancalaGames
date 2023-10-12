@@ -94,6 +94,15 @@ class GameConsts:
         return string
 
 
+    def adjust_total_seeds(self, seeds):
+        """Override the total number of seeds and derived
+        parameters."""
+
+        object.__setattr__(self, 'total_seeds', seeds)
+        half, rem = divmod(seeds, 2)
+        object.__setattr__(self, 'win_count', half + rem)
+
+
     def get_dict(self):
         """Only need these two params to recreate."""
 

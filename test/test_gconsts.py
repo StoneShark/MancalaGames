@@ -61,6 +61,11 @@ def test_odd_holes():
     assert 'holes' in game_dict
     assert game_dict['holes'] == 5
 
+    game_consts.adjust_total_seeds(21)
+    assert game_consts.total_seeds == 21
+    assert game_consts.win_count == 11
+
+
 def test_even_holes():
 
     game_consts = gc.GameConsts(3, 6)
@@ -84,6 +89,10 @@ def test_even_holes():
     assert game_dict['nbr_start'] == 3
     assert 'holes' in game_dict
     assert game_dict['holes'] == 6
+
+    game_consts.adjust_total_seeds(20)
+    assert game_consts.total_seeds == 20
+    assert game_consts.win_count == 10
 
 
 def test_print():

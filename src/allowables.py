@@ -157,6 +157,30 @@ class NoGrandSlam(AllowableIf):
         return rval
 
 
+class OppOrEmptyEnd(AllowableIf):
+    """Can only play from holes that end in an empty hole or
+    on the opponents side of the board."""
+
+    def get_allowable_holes(self):
+
+        allow = self.decorator.get_allowable_holes()
+        saved_state = self.game.state
+        my_rng = self.game.cts.get_my_range(self.game.turn)
+
+        for pos in range(self.game.cts.holes):
+            if not allow[pos]:
+                continue
+
+            mdata = self.game.do_sow(pos)
+            self.game.state = saved_state
+
+            end_loc = mdata.capt_loc
+            if self.game.board[end_loc] and end_loc in my_rng:
+                allow[pos] = False
+
+        return allow
+
+
 class NoSidesAllowable(AllowableIf):
     """Base allowable for no_sides games
     Return is a list of booleans the same size as the board and
@@ -213,10 +237,14 @@ def deco_allowable(game):
     if game.info.mustshare:
         allowable = MustShare(game, allowable)
 
+    if game.info.opp_or_empty:
+        allowable = OppOrEmptyEnd(game, allowable)
+
     if game.info.grandslam == GrandSlam.NOT_LEGAL:
         allowable = NoGrandSlam(game, allowable)
 
     if (game.info.mustshare
+            or game.info.opp_or_empty
             or game.info.grandslam == GrandSlam.NOT_LEGAL):
         allowable = MemoizeAllowable(game, allowable)
 

@@ -235,6 +235,8 @@ class NonUiData:
     capttwoout: bool = False
     one_child: bool = False
     move_one: bool = False
+    opp_or_empty: bool = False
+    start_pattern: bool = False
 
     ai_params: dict  = dc.field(default_factory=dict)
     other_dict: dict = dc.field(default_factory=dict)
@@ -719,6 +721,8 @@ class MancalaGames(tk.Frame):
         vdict[ckey.WALDAS] = self.non_ui_data.waldas
         vdict[ckey.ONE_CHILD] = self.non_ui_data.one_child
         vdict[ckey.MOVE_ONE] = self.non_ui_data.move_one
+        vdict[ckey.OPP_OR_EMPTY] = self.non_ui_data.opp_or_empty
+        vdict[ckey.START_PATTERN] = self.non_ui_data.start_pattern
         vdict[ckey.SOW_BLKD_DIV] = self.non_ui_data.sow_blkd_div
         vdict[ckey.GOAL] = self.non_ui_data.goal
         vdict[ckey.HELP_FILE] = self.non_ui_data.help_file
@@ -852,10 +856,12 @@ class MancalaGames(tk.Frame):
             if fname not in [ckey.UDIRECT, ckey.SOW_DIRECT,
                              ckey.GRANDSLAM, ckey.NO_SIDES, ckey.WALDAS,
                              ckey.MOVE_ONE, ckey.ONE_CHILD,
+                             ckey.OPP_OR_EMPTY, ckey.START_PATTERN,
                              ckey.GOAL, ckey.SOW_BLKD_DIV, ckey.CAPTTWOOUT,
                              ckey.RND_LEFT_FILL, ckey.ROUND_STARTER,
                              ckey.RND_UMOVE, ckey.XCPICKOWN,
                              ckey.SCORER, ckey.DIFFICULTY,
+                             ckey.CAPT_MIN, ckey.CAPT_MAX,
                              ckey.HELP_FILE, ckey.UDIR_HOLES,
                              ckey.CAPT_ON, ckey.AI_PARAMS]:
                 var = getattr(man_games.tkvars, fname)
@@ -931,6 +937,12 @@ class MancalaGames(tk.Frame):
         self.non_ui_data.move_one = \
             game_dict[ckey.GAME_INFO].get(
                 ckey.MOVE_ONE, gi_defaults.move_one)
+        self.non_ui_data.opp_or_empty = \
+            game_dict[ckey.GAME_INFO].get(
+                ckey.OPP_OR_EMPTY, gi_defaults.opp_or_empty)
+        self.non_ui_data.start_pattern = \
+            game_dict[ckey.GAME_INFO].get(
+                ckey.START_PATTERN, gi_defaults.start_pattern)
         self.non_ui_data.sow_blkd_div = \
             game_dict[ckey.GAME_INFO].get(
                 ckey.SOW_BLKD_DIV, gi_defaults.sow_blkd_div)

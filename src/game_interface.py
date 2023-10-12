@@ -87,6 +87,17 @@ class Goal(enum.IntEnum):
 
 
 @enum.unique
+class StartPattern(enum.IntEnum):
+    """Defines the start patterns for the game."""
+
+    ALL_EQUAL = 0
+    GAMACHA = 1
+    SADEQA_ONE = 2
+    SADEQA_TWO = 3
+    TAPATA = 4
+
+
+@enum.unique
 class WinCond(enum.Enum):
     """Win conditions."""
 
@@ -139,15 +150,18 @@ class GameInfo:
     rnd_umove: bool = False
     no_sides: bool = False     # changes how the UI works, but not supported
     stores: bool = False
+    start_pattern: StartPattern = StartPattern.ALL_EQUAL
 
     # **** sowing
     min_move: int = 1
     sow_direct: Direct = Direct.CCW
     udirect: bool = False
 
+    mustshare: bool = False
+    opp_or_empty: bool = False
+
     sow_start: bool = False
     move_one: bool = False
-    mustshare: bool = False
     skip_start: bool = False
     sow_own_store: bool = False
     blocks: bool = False

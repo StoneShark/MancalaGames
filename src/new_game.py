@@ -11,9 +11,10 @@ import abc
 import random
 
 import end_move
+
 from game_interface import WinCond
 from game_interface import RoundStarter
-
+from fill_patterns import PCLASSES
 
 # %%  New Game interace
 
@@ -62,6 +63,24 @@ class NewGame(NewGameIf):
 
 
 # %%  decorators
+
+class NewGamePattern(NewGameIf):
+    """A new game that sets the fill pattern based on the pattern."""
+
+    def __init__(self, game, pattern, decorator=None, collector=None):
+
+        super().__init__(game, decorator, collector)
+        self.pattern = pattern
+
+
+    def new_game(self, win_cond=None, new_round_ok=False):
+        """Reset the game to new state and choose random start player."""
+
+        self.decorator.new_game(win_cond, new_round_ok)
+        self.pattern.fill_seeds(self.game)
+
+        return True
+
 
 class NewRound(NewGameIf):
     """Create a new round if allowed."""
@@ -129,6 +148,11 @@ def deco_new_game(game):
     """Create the new_game chain."""
 
     new_game = NewGame(game)
+
+    if game.info.start_pattern:
+        new_game = NewGamePattern(game,
+                                  PCLASSES[game.info.start_pattern],
+                                  new_game)
 
     if game.info.rounds:
         new_game = NewRound(game, new_game, end_move.TakeOwnSeeds(game))

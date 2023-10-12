@@ -29,6 +29,7 @@ from game_interface import Direct
 from game_interface import Goal
 from game_interface import GrandSlam
 from game_interface import RoundStarter
+from fill_patterns import PCLASSES
 
 
 # %% constants
@@ -45,7 +46,7 @@ class GameInfoRule:
     """An individual rule to apply to GameInfo."""
 
     name: str
-    rule: col.abc.Callable   # return True if errorl
+    rule: col.abc.Callable   # return True if error
     msg: str
     warn: bool = False       # do warning not exception
     excp: object = None      # exception to raise
@@ -88,6 +89,30 @@ class RuleDict(dict):
 
 
 # %% grouped rules
+
+
+def add_pattern_rules(rules):
+    """Add a rule for each pattern to check the number of holes."""
+
+    def test_pattern(index, pattern):
+        """Return a function that tests that the pattern is index
+        and tests the size_ok function."""
+
+        def _pattern(holes, ginfo):
+            return ginfo.start_pattern == index and not pattern.size_ok(holes)
+
+        return _pattern
+
+    for idx, pat in enumerate(PCLASSES):
+        if not pat:
+            continue
+
+        rules.add_rule(
+            f'pattern_{idx}_req_size',
+            holes=True,
+            rule=test_pattern(idx, pat),
+            msg=pat.err_msg,
+            excp=gi.GameInfoError)
 
 
 def add_deprive_rules(rules):
@@ -363,6 +388,7 @@ def build_rules():
         msg='Invalid AI parameter dictionary',
         excp=gi.GameInfoError)
 
+    add_pattern_rules(man_rules)
     add_deprive_rules(man_rules)
     add_block_and_divert_rules(man_rules)
     add_walda_rules(man_rules)
