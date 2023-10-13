@@ -18,11 +18,12 @@ import tkinter as tk
 
 import hole_button as hbtn
 import game_interface as gi
-from game_log import game_log
+import minimax
 
 from hole_button import Behavior
 from game_interface import WinCond
 from game_interface import Direct
+from game_log import game_log
 
 
 # %%   constants
@@ -145,6 +146,7 @@ class MancalaUI(tk.Frame):
 
         self.game = game
         self.mode = Behavior.GAMEPLAY
+        self.player = minimax.MiniMaxer(self.game)
 
         game_log.new()
         game_log.turn('Start Game', game)
@@ -173,7 +175,7 @@ class MancalaUI(tk.Frame):
         self._set_difficulty()
 
         self.ai_delay = tk.BooleanVar(self.master, value=2)
-        self.ai_player = tk.IntVar(self.master, value=False)
+        self.ai_active = tk.IntVar(self.master, value=False)
 
         self.pack()
         self._create_menus()
@@ -273,7 +275,7 @@ class MancalaUI(tk.Frame):
 
         aimenu = tk.Menu(menubar)
 
-        aimenu.add_checkbutton(label='AI Player', variable=self.ai_player,
+        aimenu.add_checkbutton(label='AI Player', variable=self.ai_active,
                                onvalue=True, offvalue=False,
                                command=self._ai_move)
 
@@ -436,7 +438,7 @@ class MancalaUI(tk.Frame):
         turn = self.game.get_turn()
         actives = self.game.get_allowable_holes()
         turn_row = int(not turn)
-        ai_turn = self.ai_player.get() and turn
+        ai_turn = self.ai_active.get() and turn
         for row in range(2):
 
             player = row == turn_row
@@ -592,7 +594,12 @@ class MancalaUI(tk.Frame):
         """Set the max search depth for the minimaxer and
         the delay before the AI plays."""
 
-        msg = self.game.set_difficulty(self.difficulty.get())
+        diff = self.difficulty.get()
+        game_log.add(f'Changing difficulty {diff}', game_log.INFO)
+        self.difficulty = diff
+        msg = self.player.set_params(diff, self.info.ai_params)
+        game_log.add(f'AI Param Error: {msg}', game_log.IMPORT)
+
         if msg:
             tk.messagebox.showerror('AI Player Config Error', msg)
 
@@ -601,8 +608,8 @@ class MancalaUI(tk.Frame):
         """Add the ai description to the game log (Mancala doesn't
         know if the ai is playing)."""
 
-        if self.ai_player.get() and last_turn:
-            game_log.add(self.game.get_ai_move_desc(), game_log.MOVE)
+        if self.ai_active.get() and last_turn:
+            game_log.add(self.player.get_move_desc(), game_log.MOVE)
 
 
     def move(self, move):
@@ -621,7 +628,7 @@ class MancalaUI(tk.Frame):
             self._new_game(win_cond=win_cond, new_round_ok=True)
             return
 
-        if self.ai_player.get() and self.game.get_turn():
+        if self.ai_active.get() and self.game.get_turn():
             self._schedule_ai()
 
         elif self.info.mustpass and self.game.test_pass():
@@ -639,7 +646,7 @@ class MancalaUI(tk.Frame):
         """Do AI move or schedule the AI turn (if the AI is enabled
         and it's the AI's turn)"""
 
-        if self.ai_player.get() and self.game.get_turn():
+        if self.ai_active.get() and self.game.get_turn():
             self._cancel_pending_afters()
             sel_delay = self.ai_delay.get()
 
@@ -653,11 +660,11 @@ class MancalaUI(tk.Frame):
     def _ai_move(self):
         """If it's the AI's turn, do a move. AI is top player."""
 
-        if self.ai_player.get() and self.game.get_turn():
+        if self.ai_active.get() and self.game.get_turn():
             saved_active = game_log.active
 
             game_log.active = self.log_ai.get()
-            move = self.game.get_ai_move()
+            move = self.player.pick_move()
             game_log.active = saved_active
 
             self.move(move)

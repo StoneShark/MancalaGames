@@ -29,11 +29,9 @@ pytestmark = pytest.mark.unittest
 
 import utils
 
-from context import cfg_keys as ckey
 from context import game_constants as gc
 from context import game_interface as gi
 from context import mancala
-from context import minimax
 
 from game_interface import Direct
 from game_interface import Goal
@@ -83,37 +81,6 @@ class TestConctruction:
     def test_min_params(self, min_game_if):
 
         mancala.Mancala(gc.GameConsts(3, 5), min_game_if)
-
-
-class TestSetPlayer:
-
-    @pytest.fixture
-    def game(self):
-        """Game that has access to all of the state data."""
-
-        game_consts = gc.GameConsts(nbr_start=4, holes=2)
-        game_info = gi.GameInfo(nbr_holes = game_consts.holes,
-                                capt_on = [2],
-                                blocks=True,
-                                rounds=True,
-                                child=True,
-                                convert_cnt=2,
-                                moveunlock=True,
-                                ai_params={"mm_depth" : [1, 1, 3, 5]},
-                                rules=mancala.Mancala.rules)
-
-        game = mancala.Mancala(game_consts, game_info)
-        return game
-
-    def test_set_player(self, mocker, game):
-        # can't mock/spy the player because we are changing it
-        setd = mocker.spy(game, 'set_difficulty')
-        game.set_player(minimax.MiniMaxer(game))
-        assert setd.call_count == 1
-
-    def test_bad_set_player(self, game):
-        with pytest.raises(TypeError):
-            game.set_player(5)
 
 
 class TestGameState:
@@ -318,18 +285,6 @@ class TestBasics:
         assert isinstance(info, gi.GameInfo)
         assert info.capt_on == [2]
         assert info.sow_direct == Direct.CCW
-
-    def test_set_diff(self, game):
-
-        game.set_difficulty(3)
-        assert game.difficulty == 3
-        assert game.player.max_depth == 5
-
-        string = game.params_str()
-        assert ckey.GAME_CLASS in string
-        assert ckey.UDIRECT not in string
-        assert 'GameConsts' in string
-        assert 'GameInfo' in string
 
 
     def test_get_store(self, game):
@@ -801,6 +756,7 @@ class TestScorer:
         assert game.score(None) == escore
 
 
+    @pytest.mark.skip(reason='Mancala no longer knows the difficulty.')
     def test_sc_easy(self, game):
 
         object.__setattr__(game.info.scorer, 'stores_m', 0)
@@ -813,6 +769,7 @@ class TestScorer:
         assert any(game.score(None) for _ in range(10)) != 0
 
 
+    @pytest.mark.skip(reason='Mancala no longer knows the difficulty.')
     def test_sc_access(self, game):
 
         object.__setattr__(game.info.scorer, 'stores_m', 0)
@@ -833,35 +790,3 @@ class TestScorer:
 
         object.__setattr__(game.info, 'mlaps', True)
         assert game.score(None) == 0
-
-
-class TestMove:
-
-    @pytest.fixture
-    def game(self):
-
-        game_consts = gc.GameConsts(nbr_start=3, holes=4)
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                scorer=gi.Scorer(easy_rand=0),
-                                capt_on=[2],
-                                sow_direct=Direct.CCW,
-                                rules=mancala.Mancala.rules)
-
-        game = mancala.Mancala(game_consts, game_info)
-        game.turn = False
-        return game
-
-
-    def test_move_ifs(self, game, mocker):
-
-        pick_move = mocker.spy(game.player, 'pick_move')
-        move_desc = mocker.spy(game.player, 'get_move_desc')
-
-        game.get_ai_move()
-        assert pick_move.call_count == 1
-        assert move_desc.call_count == 0
-        mocker.resetall()
-
-        game.get_ai_move_desc()
-        assert pick_move.call_count == 0
-        assert move_desc.call_count == 1

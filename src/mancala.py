@@ -22,7 +22,6 @@ import get_direction
 import get_moves
 import ginfo_rules
 import incrementer
-import minimax
 import new_game
 import sow_starter
 import sower
@@ -183,16 +182,13 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
     rules = ginfo_rules.build_rules()
 
-    def __init__(self, game_consts, game_info, player=None):
+    def __init__(self, game_consts, game_info):
 
         if not isinstance(game_consts, gc.GameConsts):
             raise TypeError(
                 'game_consts not built on game_constants.GameConsts.')
         if not isinstance(game_info, gi.GameInfo):
             raise TypeError('game_info not built on game_info.GameInfo.')
-
-        if player and not isinstance(player, ai_interface.AiPlayerIf):
-            raise TypeError('player not built on ai_interface.AiPlayerIf.')
 
         if game_info.start_pattern:
             game_consts.adjust_total_seeds(
@@ -205,7 +201,6 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
         self.cts = game_consts
         self.info = game_info
-        self.player = player or minimax.MiniMaxer(self)
 
         self.board = [self.cts.nbr_start] * self.cts.dbl_holes
         self.store = [0, 0]
@@ -288,18 +283,6 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             self.owner = [None] * dbl_holes
 
 
-    def set_player(self, player):
-        """Save the new player.
-        Call set_difficulty to confirm new player is using the
-        desired difficulty and paramters."""
-
-        if not isinstance(player, ai_interface.AiPlayerIf):
-            raise TypeError('player not built on ai_interface.AiPlayerIf.')
-
-        self.player = player
-        self.set_difficulty(self.difficulty)
-
-
     def params_str(self):
         """Generate a string describing the game parameters.
         Delete duplicate/derived parameters and things that don't
@@ -340,16 +323,6 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
     def set_blocked(self, loc, blocked):
         """Set the blocked status location."""
         self.blocked[loc] = blocked
-
-
-    def set_difficulty(self, diff):
-        """Set game difficulty"""
-
-        game_log.add(f'Changing difficulty {diff}', game_log.INFO)
-        self.difficulty = diff
-        msg = self.player.set_params(diff, self.info.ai_params)
-        game_log.add(f'AI Param Error: {msg}', game_log.IMPORT)
-        return msg
 
 
     def compute_owners(self):
@@ -526,16 +499,6 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         wcond = self._move(move)
         self._log_turn(cur_turn, move, wcond)
         return wcond
-
-
-    def get_ai_move(self):
-        """Return the ai move position"""
-        return self.player.pick_move()
-
-
-    def get_ai_move_desc(self):
-        """Return the move description from the player."""
-        return self.player.get_move_desc()
 
 
     def test_pass(self):

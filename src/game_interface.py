@@ -310,11 +310,6 @@ class GameInterface(abc.ABC):
         the current player"""
 
     @abc.abstractmethod
-    def set_difficulty(self, diff):
-        """Set the difficulty.
-        diff:  int 0..3 - 0 easy to 3 expert"""
-
-    @abc.abstractmethod
     def new_game(self, win_cond=None, new_round_ok=False):
         """Reset the game to new state or
         if new_round_ok is set, check to start a new round."""
@@ -349,11 +344,3 @@ class GameInterface(abc.ABC):
     def params_str(self):
         """Return a string describing the parameters of the
         game."""
-
-    @abc.abstractmethod
-    def get_ai_move(self):
-        """Return: the move for the AI player"""
-
-    @abc.abstractmethod
-    def get_ai_move_desc(self):
-        """Return: the description of the AI move selection"""

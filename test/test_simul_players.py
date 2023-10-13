@@ -43,12 +43,11 @@ def test_one_game(game, player_class):
     game_log.game_log.active = False
 
     player = player_class(game)
-    game.set_player(player)
 
     for _ in range(500):
 
         if game.turn:
-            move = game.player.pick_move()
+            move = player.pick_move()
         else:
             moves = game.get_moves()
             assert moves, "Game didn't end right."
