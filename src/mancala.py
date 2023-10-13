@@ -52,6 +52,7 @@ class GameState(ai_interface.StateIf):
     unlocked: tuple = None
     blocked: tuple = None
     child: tuple = None
+    owner: tuple = None
 
     @property
     def turn(self):
@@ -199,17 +200,17 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
                     game_consts.holes,
                     game_consts.nbr_start))
 
+        if game_info.goal == Goal.TERRITORY:
+            game_consts.set_win_all_seeds()
+
         self.cts = game_consts
         self.info = game_info
         self.player = player or minimax.MiniMaxer(self)
 
         self.board = [self.cts.nbr_start] * self.cts.dbl_holes
-        locks = not self.info.moveunlock
-        self.unlocked = [locks] * self.cts.dbl_holes
-        self.blocked = [False] * self.cts.dbl_holes
-        self.child = [None] * self.cts.dbl_holes
         self.store = [0, 0]
         self.turn = random.choice([False, True])
+        self.init_bprops()
 
         self.difficulty = 1
         self.starter = self.turn
@@ -247,6 +248,9 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         if self.info.child:
             state_dict |= {'child': tuple(self.child)}
 
+        if self.info.goal == Goal.TERRITORY:
+            state_dict |= {'owner': tuple(self.owner)}
+
         return GameState(**state_dict)
 
 
@@ -263,6 +267,25 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             self.blocked = list(value.blocked)
         if value.unlocked:
             self.unlocked = list(value.unlocked)
+        if value.owner:
+            self.owner = list(value.owner)
+
+
+    def init_bprops(self):
+        """Initialize the board properties but not the board or stores."""
+
+        holes = self.cts.holes
+        dbl_holes = self.cts.dbl_holes
+
+        locks = not self.info.moveunlock
+        self.unlocked = [locks] * dbl_holes
+        self.blocked = [False] * dbl_holes
+        self.child = [None] * dbl_holes
+
+        if self.info.goal == Goal.TERRITORY:
+            self.owner = [False] * holes + [True] * holes
+        else:
+            self.owner = [None] * dbl_holes
 
 
     def set_player(self, player):
@@ -329,6 +352,18 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         return msg
 
 
+    def compute_owners(self):
+        """Compute the number of holes that False should own."""
+
+        nbr_start = self.cts.nbr_start
+        false_holes, rem = divmod(self.store[False], nbr_start)
+        if rem > nbr_start // 2:
+            false_holes += 1
+        game_log.add(f"False holes = {false_holes}", game_log.DETAIL)
+
+        return false_holes
+
+
     def new_game(self, win_cond=None, new_round_ok=False):
         """Delegate to the new_game decorators.
         Return False if it a new round was started.
@@ -365,6 +400,10 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         """Return a game appropriate win message based on WinCond.
         Return a window title and message strings."""
 
+        reason = ("by collecting the most seeds!",
+                  "by eliminating their opponent's seeds.",
+                  "by claiming more holes.")
+
         rtext = 'the game'
         gtext = 'Game'
         title = 'Game Over'
@@ -377,18 +416,15 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
         if win_cond in [WinCond.WIN, WinCond.ROUND_WIN]:
             player = 'Top' if self.turn else 'Bottom'
-            if self.info.goal == Goal.MAX_SEEDS:
-                reason = "by collecting the most seeds!"
-            elif self.info.goal == Goal.DEPRIVE:
-                reason = "by eliminating thier opponent's seeds."
-
-            message = f'{player} won {rtext} {reason}'
+            message = f'{player} won {rtext} {reason[self.info.goal]}'
 
         elif win_cond in [WinCond.TIE, WinCond.ROUND_TIE]:
             if self.info.goal == Goal.MAX_SEEDS:
                 message = f'{gtext} ended in a tie.'
             elif self.info.goal == Goal.DEPRIVE:
                 message = 'Both players ended with seeds, consider it a tie.'
+            elif self.info.goal == Goal.TERRITORY:
+                message = 'Each player controls half the holes (a tie).'
 
         elif win_cond == WinCond.ENDLESS:
             message = 'Game stuck in a loop. No winner.'
@@ -527,7 +563,8 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         return gi.HoleProps(seeds=self.board[loc],
                             unlocked=self.unlocked[loc],
                             blocked=self.blocked[loc],
-                            ch_owner=self.child[loc])
+                            ch_owner=self.child[loc],
+                            owner=self.owner[loc])
 
 
     def get_store(self, row):
@@ -619,17 +656,10 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         return None
 
 
-    # interfaces for the AiGameIf
-
-
     def get_moves(self):
         """Return the list of allowable moves."""
 
         return self.deco.moves.get_moves()
-
-
-    # def move(self, move):
-    #     """Do the move. Defined above."""
 
 
     def is_max_player(self):

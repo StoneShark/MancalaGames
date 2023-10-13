@@ -21,8 +21,9 @@ Created on Fri Apr  7 15:57:47 2023
 import abc
 
 from game_log import game_log
-from game_interface import WinCond
 from game_interface import Direct
+from game_interface import Goal
+from game_interface import WinCond
 
 
 # %% constants
@@ -184,6 +185,44 @@ class SowClosed(SowMethodIf):
             self.game.board[loc] = 0
             self.game.blocked[loc] = True
         return mdata
+
+
+class SowCaptOwned(SowMethodIf):
+    """Any holes sown to allow capture are captured by the hole's
+    owner, except for the last seed. The last hole may be captured
+    from the opponent's hole."""
+
+    def __init__(self, game, owner_func, decorator=None):
+        super().__init__(game, decorator)
+        self.owner = owner_func
+
+    def sow_seeds(self, mdata):
+        """Sow seeds."""
+
+        loc = mdata.cont_sow_loc
+        for scnt in range(mdata.seeds, 0, -1):
+
+            loc = self.game.deco.incr.incr(loc,
+                                           mdata.direct,
+                                           mdata.cont_sow_loc)
+            self.game.board[loc] += 1
+
+            if self.game.deco.capt_ok.capture_ok(loc):
+
+                turn = self.game.turn
+                if scnt > 1:
+                    owner = self.owner(loc)
+                    game_log.step(f'Catpure from {loc} by {owner}')
+                    self.game.store[owner] += self.game.board[loc]
+                    self.game.board[loc] = 0
+                else:
+                    game_log.step(f'Catpure from {loc} by sower')
+                    self.game.store[turn] += self.game.board[loc]
+                    self.game.board[loc] = 0
+
+        mdata.capt_loc = loc
+        return mdata
+
 
 
 # %%  lap continue testers
@@ -405,13 +444,23 @@ def deco_blkd_divert_sower(game):
 
 
 def deco_sower(game):
-    """Build the sower chain."""
+    """Build the sower chain.
+
+    The lambda is needed because the self parameter must be stuffed."""
+    # pylint: disable=unnecessary-lambda
 
     if game.info.sow_blkd_div:
         return deco_blkd_divert_sower(game)
 
-    if game.info.sow_own_store:
+    if game.info.sow_capt_all:
+        if game.info.goal == Goal.TERRITORY:
+            sower = SowCaptOwned(game, lambda loc: game.owner[loc])
+        else:
+            sower = SowCaptOwned(game, lambda loc: game.cts.board_side(loc))
+
+    elif game.info.sow_own_store:
         sower = SowSeedsNStore(game)
+
     else:
         sower = SowSeeds(game)
 
@@ -430,19 +479,3 @@ def deco_sower(game):
             sower = SowVisitedMlap(game, pre_lap_sower, sower, lap_cont)
 
     return sower
-
-
-def deco_replace_base_sower(game, base_sower):
-    """Replace the base sower with a new one."""
-
-    if game.info.mlaps:
-
-        if game.info.visit_opp:
-            game.deco.sower.single_sower = base_sower
-            game.deco.sower.decorator.decorator = base_sower
-
-        else:
-            game.deco.sower.decorator = base_sower
-
-    else:
-        game.deco.sower = base_sower

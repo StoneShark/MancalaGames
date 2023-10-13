@@ -8,6 +8,7 @@ Created on Thu Oct 12 07:34:54 2023
 import collections
 
 import pytest
+pytestmark = pytest.mark.unittest
 
 import utils
 

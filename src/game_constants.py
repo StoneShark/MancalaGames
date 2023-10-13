@@ -103,6 +103,12 @@ class GameConsts:
         object.__setattr__(self, 'win_count', half + rem)
 
 
+    def set_win_all_seeds(self):
+        """Override the win_count to the total number of seeds."""
+
+        object.__setattr__(self, 'win_count', self.total_seeds)
+
+
     def get_dict(self):
         """Only need these two params to recreate."""
 
@@ -127,6 +133,12 @@ class GameConsts:
     def cross_from_loc(self, loc):
         """Return the hole location across from loc."""
         return self.dbl_holes - loc - 1
+
+
+    def board_side(self, loc):
+        """Return whose side of the board loc is on (as in turn
+        not row)."""
+        return loc >= self.holes
 
 
     def opp_side(self, turn, loc):

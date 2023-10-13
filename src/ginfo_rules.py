@@ -90,6 +90,41 @@ class RuleDict(dict):
 
 # %% grouped rules
 
+def add_creation_rules(rules):
+    """Basic rules to make sure that everything that should exist does."""
+
+    rules.add_rule(
+        'invalid_holes',
+        holes=True,
+        rule=lambda holes, ginfo: (not holes or not isinstance(holes, int)),
+        msg='Holes must > 0',
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'missing_name',
+        rule=lambda ginfo: not ginfo.name,
+        msg='Mising Name',
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'invalid_scorer',
+        rule=lambda ginfo: (not ginfo.scorer or
+                            not isinstance(ginfo.scorer, gi.Scorer)),
+        msg='Missing or bad scorer',
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'invalid_ai_params',
+        rule=lambda ginfo: not isinstance(ginfo.ai_params, dict),
+        msg='Invalid AI parameter dictionary',
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'sow_dir_type',
+        rule=lambda ginfo: not isinstance(ginfo.sow_direct, Direct),
+        msg='SOW_DIRECT not valid type, expected Direct',
+        excp=gi.GameInfoError)
+
 
 def add_pattern_rules(rules):
     """Add a rule for each pattern to check the number of holes."""
@@ -113,6 +148,12 @@ def add_pattern_rules(rules):
             rule=test_pattern(idx, pat),
             msg=pat.err_msg,
             excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'pattern_no_rounds',
+        rule=lambda ginfo: ginfo.start_pattern and ginfo.rounds,
+        msg='START_PATTERN and ROUNDS are incompatible',
+        excp=gi.GameInfoError)
 
 
 def add_deprive_rules(rules):
@@ -147,6 +188,39 @@ def add_deprive_rules(rules):
             excp=gi.GameInfoError)
 
     return rules
+
+
+def add_territory_rules(rules):
+    """Add the rules for games with a goal of territory."""
+
+    rules.add_rule(
+        'terr_convert_cnt',
+        holes=True,
+        rule=lambda holes, ginfo: (ginfo.goal == Goal.TERRITORY
+                                   and (ginfo.convert_cnt <= holes
+                                        or ginfo.convert_cnt >= 2 * holes)),
+        msg='Territory Goal requires convert_cnt between holes and 2 * holes',
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'terr_need_stores',
+        rule=lambda ginfo: ginfo.goal == Goal.TERRITORY and not ginfo.stores,
+        msg='Territory goal requires stores',
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'terr_no_sides_incomp',
+        rule=lambda ginfo: ginfo.goal == Goal.TERRITORY and ginfo.no_sides,
+        msg='Territory goal is incompatible with NO_SIDES',
+        excp=gi.GameInfoError)
+        # could initial ownship be changed so that no_sides makes sense
+
+    rules.add_rule(
+        'terr_pattern_incomp',
+        rule=lambda ginfo: (ginfo.goal == Goal.TERRITORY
+                            and ginfo.start_pattern),
+        msg='Territory goal is incompatible with START_PATTERN',
+        excp=gi.GameInfoError)
 
 
 def add_block_and_divert_rules(rules):
@@ -354,6 +428,51 @@ def add_no_sides_rules(rules):
             excp=gi.GameInfoError)
 
 
+def add_ai_rules(rules):
+    """Add the rules for the AI parameters."""
+
+    rules.add_rule(
+        'def_diff',
+        rule=lambda ginfo: ginfo.difficulty not in range(DIFF_LEVELS),
+        msg='Difficulty not 0, 1, 2 or 3',
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'high_min_moves',
+        rule=lambda ginfo: ginfo.min_move not in range(1, MAX_MIN_MOVES + 1),
+        msg=f'Min_move seems wrong  (1<= convention <={MAX_MIN_MOVES})',
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'params_four_diff',
+        rule=lambda ginfo: (ginfo.ai_params and
+                            all(len(values) != DIFF_LEVELS
+                                for values in ginfo.ai_params.values())),
+        msg=f'Exactly {DIFF_LEVELS} param values are expected '
+            'for each ai parameter',
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'mlaps_access_prohibit',
+        rule=lambda ginfo: ginfo.scorer.access_m and ginfo.mlaps,
+        msg='Access scorer not supported for multilap games',
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'child_scorer',
+        rule=lambda ginfo: ginfo.scorer.child_cnt_m and not ginfo.child,
+        msg='Child count scorer not supported without child flag',
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'scorer_vals',
+        rule=lambda ginfo: all(not val
+                               for val in vars(ginfo.scorer).values()),
+        msg='At least one scorer value should be non-zero'
+            'to prevent random play',
+            warn=True)
+
+
 # %% the base ruleset
 
 def build_rules():
@@ -362,44 +481,14 @@ def build_rules():
 
     man_rules = RuleDict()
 
-    man_rules.add_rule(
-        'invalid_holes',
-        holes=True,
-        rule=lambda holes, ginfo: (not holes or not isinstance(holes, int)),
-        msg='Holes must > 0',
-        excp=gi.GameInfoError)
-
-    man_rules.add_rule(
-        'missing_name',
-        rule=lambda ginfo: not ginfo.name,
-        msg='Mising Name',
-        excp=gi.GameInfoError)
-
-    man_rules.add_rule(
-        'invalid_scorer',
-        rule=lambda ginfo: (not ginfo.scorer or
-                            not isinstance(ginfo.scorer, gi.Scorer)),
-        msg='Missing or bad scorer',
-        excp=gi.GameInfoError)
-
-    man_rules.add_rule(
-        'invalid_ai_params',
-        rule=lambda ginfo: not isinstance(ginfo.ai_params, dict),
-        msg='Invalid AI parameter dictionary',
-        excp=gi.GameInfoError)
-
+    add_creation_rules(man_rules)
     add_pattern_rules(man_rules)
     add_deprive_rules(man_rules)
+    add_territory_rules(man_rules)
     add_block_and_divert_rules(man_rules)
     add_walda_rules(man_rules)
     add_one_child_rules(man_rules)
     add_no_sides_rules(man_rules)
-
-    man_rules.add_rule(
-        'sow_dir_type',
-        rule=lambda ginfo: not isinstance(ginfo.sow_direct, Direct),
-        msg='SOW_DIRECT not valid type, expected Direct',
-        excp=gi.GameInfoError)
 
     man_rules.add_rule(
         'sow_own_needs_stores',
@@ -410,8 +499,7 @@ def build_rules():
 
     man_rules.add_rule(
         'child_convert_cnt',
-        rule=lambda ginfo: (ginfo.child  and
-                            not ginfo.convert_cnt),
+        rule=lambda ginfo: ginfo.child  and not ginfo.convert_cnt,
         msg="CHILD without CONVERT_CNT doesn't do anything.",
         warn=True)
 
@@ -475,11 +563,16 @@ def build_rules():
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
-        'warn_capsamedir_multicapt',
-        rule=lambda ginfo: (not ginfo.capttwoout
-                            and ginfo.capsamedir
-                            and not ginfo.multicapt),
-        msg="CAPSAMEDIR without MULTICAPT has no effect (unless CAPTTWOOUT).",
+        'warn_no_capt',
+        rule=lambda ginfo: not any([ginfo.sow_blkd_div,
+                                    ginfo.capttwoout,
+                                    ginfo.evens,
+                                    ginfo.crosscapt,
+                                    ginfo.sow_own_store,
+                                    ginfo.capt_max,
+                                    ginfo.capt_min,
+                                    ginfo.capt_on]),
+        msg='No capture mechanism provided',
         warn=True)
 
     man_rules.add_rule(
@@ -493,11 +586,13 @@ def build_rules():
         # the preceeding holes were just sown, that is, not empty
 
     man_rules.add_rule(
-        'warn_crosscapt_evens',
-        rule=lambda ginfo: ginfo.crosscapt and ginfo.evens,
-        msg='CROSSCAPT with EVENS might be confusing '
-            '(conditions are ANDed)',
+        'warn_capsamedir_multicapt',
+        rule=lambda ginfo: (not ginfo.capttwoout
+                            and ginfo.capsamedir
+                            and not ginfo.multicapt),
+        msg="CAPSAMEDIR without MULTICAPT has no effect (unless CAPTTWOOUT).",
         warn=True)
+
 
     man_rules.add_rule(
         'capt2out_needs_samedir',
@@ -538,31 +633,6 @@ def build_rules():
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
-        'warn_no_capt',
-        rule=lambda ginfo: not any([ginfo.sow_blkd_div,
-                                    ginfo.capttwoout,
-                                    ginfo.evens,
-                                    ginfo.crosscapt,
-                                    ginfo.sow_own_store,
-                                    ginfo.capt_max,
-                                    ginfo.capt_min,
-                                    ginfo.capt_on]),
-        msg='No capture mechanism provided',
-        warn=True)
-
-    man_rules.add_rule(
-        'capt_on_evens_incomp',
-        rule=lambda ginfo: ginfo.evens and ginfo.capt_on,
-        msg='CAPT_ON and EVENS conditions are ANDed',
-        warn=True)
-
-    man_rules.add_rule(
-        'cross_capt_on_anded',
-        rule=lambda ginfo: ginfo.crosscapt and ginfo.capt_on,
-        msg='CROSSCAPT with CAPT_ON conditions are ANDed',
-        excp=gi.GameInfoError)
-
-    man_rules.add_rule(
         'move_one_start',
         rule=lambda ginfo: ginfo.move_one and not ginfo.sow_start,
         msg='MOVE_ONE requires SOW_START',
@@ -579,7 +649,9 @@ def build_rules():
 
     man_rules.add_rule(
         'mlap_capt_on_incomp',
-        rule=lambda ginfo: ginfo.mlaps and ginfo.capt_on,
+        rule=lambda ginfo: (ginfo.mlaps
+                            and ginfo.capt_on
+                            and not ginfo.sow_capt_all),
         msg='CAPT_ON with MULTI_LAP never captures',
         excp=gi.GameInfoError)
 
@@ -632,45 +704,6 @@ def build_rules():
         msg= 'Odd choice of sow direction when udir_holes != nbr_holes',
         warn=True)
 
-    man_rules.add_rule(
-        'def_diff',
-        rule=lambda ginfo: ginfo.difficulty not in range(DIFF_LEVELS),
-        msg='Difficulty not 0, 1, 2 or 3',
-        excp=gi.GameInfoError)
-
-    man_rules.add_rule(
-        'high_min_moves',
-        rule=lambda ginfo: ginfo.min_move not in range(1, MAX_MIN_MOVES + 1),
-        msg=f'Min_move seems wrong  (1<= convention <={MAX_MIN_MOVES})',
-        excp=gi.GameInfoError)
-
-    man_rules.add_rule(
-        'params_four_diff',
-        rule=lambda ginfo: (ginfo.ai_params and
-                            all(len(values) != DIFF_LEVELS
-                                for values in ginfo.ai_params.values())),
-        msg=f'Exactly {DIFF_LEVELS} param values are expected '
-            'for each ai parameter',
-        excp=gi.GameInfoError)
-
-    man_rules.add_rule(
-        'mlaps_access_prohibit',
-        rule=lambda ginfo: ginfo.scorer.access_m and ginfo.mlaps,
-        msg='Access scorer not supported for multilap games',
-        excp=gi.GameInfoError)
-
-    man_rules.add_rule(
-        'child_scorer',
-        rule=lambda ginfo: ginfo.scorer.child_cnt_m and not ginfo.child,
-        msg='Child count scorer not supported without child flag',
-        excp=gi.GameInfoError)
-
-    man_rules.add_rule(
-        'scorer_vals',
-        rule=lambda ginfo: all(not val
-                               for val in vars(ginfo.scorer).values()),
-        msg='At least one scorer value should be non-zero'
-            'to prevent random play',
-        warn=True)
+    add_ai_rules(man_rules)
 
     return man_rules

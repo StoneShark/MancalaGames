@@ -16,6 +16,7 @@ from context import game_interface as gi
 from context import mancala
 
 from game_interface import Direct
+from game_interface import Goal
 
 
 
@@ -116,3 +117,38 @@ class TestGameStr:
         cgame.store = [0, 2]
         gstr = str(cgame)
         assert gstr == '  1˅  3   5˄       2\n  8   6˄  4˅  *'
+
+
+    @pytest.fixture
+    def cterr_game(self):
+        """an odd game convert_cnt has two differnt purposes."""
+
+        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+                                mustpass=True,
+                                stores=True,
+                                child=True,
+                                goal=Goal.TERRITORY,
+                                convert_cnt=4,
+                                sow_direct=Direct.CCW,
+                                evens=True,
+                                rules=mancala.Mancala.rules
+                                )
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = False
+        return game
+
+
+    def test_child_terr_str(self, cterr_game):
+
+        gstr = str(cterr_game)
+        assert gstr == '  2 ↑   2 ↑   2 ↑    \n  2 ↓   2 ↓   2 ↓   *'
+
+        cterr_game.board = utils.build_board([1, 3, 5],
+                                             [8, 6, 4])
+        cterr_game.child = utils.build_board([False, None, True],
+                                             [None,  True, False])
+        cterr_game.store = [0, 2]
+        gstr = str(cterr_game)
+        assert gstr == '  1˅↑   3 ↑   5˄↑        2\n  8 ↓   6˄↓   4˅↓   *'

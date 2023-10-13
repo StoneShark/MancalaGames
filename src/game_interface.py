@@ -148,7 +148,7 @@ class GameInfo:
     round_starter: RoundStarter = RoundStarter.ALTERNATE
     rnd_left_fill: bool = False
     rnd_umove: bool = False
-    no_sides: bool = False     # changes how the UI works, but not supported
+    no_sides: bool = False
     stores: bool = False
     start_pattern: StartPattern = StartPattern.ALL_EQUAL
 
@@ -170,6 +170,7 @@ class GameInfo:
     child: bool = False
     convert_cnt: int = 0
     sow_blkd_div: bool = False
+    sow_capt_all: bool = False
 
     # **** capture
     capsamedir: bool = False
@@ -233,6 +234,7 @@ class HoleProps:
     unlocked: bool
     blocked: bool
     ch_owner: bool  # child owner; actually one of False, True or None
+    owner: bool
 
 
 class MoveTpl(tuple):

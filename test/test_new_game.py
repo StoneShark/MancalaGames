@@ -12,12 +12,16 @@ from context import game_constants as gc
 from context import game_interface as gi
 from context import mancala
 
-from game_interface import WinCond
+from game_interface import Goal
 from game_interface import RoundStarter
+from game_interface import WinCond
 
 
 TEST_COVERS = ['src\\new_game.py']
 
+T = True
+F = False
+N = None
 
 class TestNewGame:
 
@@ -226,3 +230,62 @@ class TestNewGame:
         assert rgame.starter == rgame.turn
         assert rgame.unlocked == [True] * 6
         assert rgame.blocked == [False] * 6
+
+
+def test_patterns():
+    """test_patterns does most of the testing,
+    here create which uses new_game."""
+
+    game_consts = gc.GameConsts(nbr_start=4, holes=4)
+    game_info = gi.GameInfo(start_pattern=2,
+                            capt_on=[2],
+                            nbr_holes=game_consts.holes,
+                            rules=mancala.Mancala.rules)
+
+    game = mancala.Mancala(game_consts, game_info)
+    game.turn = False
+
+    assert game.board == [0, 4] * 4
+
+
+class TestTerritory:
+
+    @pytest.fixture
+    def game(self):
+
+        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_info = gi.GameInfo(capt_on = [2],
+                                stores=True,
+                                convert_cnt=5,
+                                goal=Goal.TERRITORY,
+                                rounds=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = False
+        return game
+
+
+    @pytest.mark.parametrize('fseeds, win, eowners',
+                             [(15, T, [F, F, F, T, T, T]),
+                              (14, T, [F, F, F, T, T, T]),
+                              (13, F, [F, F, F, F, T, T]),
+                              (12, F, [F, F, F, F, T, T]),
+                              (11, F, [F, F, F, F, T, T]),
+                              (10, F, [F, F, F, T, T, T]),
+                              ( 6, F, [F, F, T, T, T, T]),
+                              ( 5, F, [F, F, T, T, T, T]),
+                              ( 4, F, [F, T, T, T, T, T]),
+                              ( 4, T, [F, F, F, T, T, T]),
+                              ( 3, T, [F, F, F, T, T, T]),
+
+                              ])
+    def test_territory(self, game, fseeds, win, eowners):
+
+        game.board = [0] * game.cts.dbl_holes
+        game.store = [fseeds, game.cts.total_seeds - fseeds]
+
+        cond = WinCond.WIN if win else WinCond.ROUND_WIN
+        game.new_game(cond, new_round_ok=True)
+        assert game.owner == eowners

@@ -237,6 +237,7 @@ class NonUiData:
     move_one: bool = False
     opp_or_empty: bool = False
     start_pattern: bool = False
+    sow_capt_all: bool = False
 
     ai_params: dict  = dc.field(default_factory=dict)
     other_dict: dict = dc.field(default_factory=dict)
@@ -723,6 +724,7 @@ class MancalaGames(tk.Frame):
         vdict[ckey.MOVE_ONE] = self.non_ui_data.move_one
         vdict[ckey.OPP_OR_EMPTY] = self.non_ui_data.opp_or_empty
         vdict[ckey.START_PATTERN] = self.non_ui_data.start_pattern
+        vdict[ckey.SOW_CAPT_ALL] = self.non_ui_data.sow_capt_all
         vdict[ckey.SOW_BLKD_DIV] = self.non_ui_data.sow_blkd_div
         vdict[ckey.GOAL] = self.non_ui_data.goal
         vdict[ckey.HELP_FILE] = self.non_ui_data.help_file
@@ -860,7 +862,7 @@ class MancalaGames(tk.Frame):
                              ckey.GOAL, ckey.SOW_BLKD_DIV, ckey.CAPTTWOOUT,
                              ckey.RND_LEFT_FILL, ckey.ROUND_STARTER,
                              ckey.RND_UMOVE, ckey.XCPICKOWN,
-                             ckey.SCORER, ckey.DIFFICULTY,
+                             ckey.SCORER, ckey.DIFFICULTY, ckey.SOW_CAPT_ALL,
                              ckey.CAPT_MIN, ckey.CAPT_MAX,
                              ckey.HELP_FILE, ckey.UDIR_HOLES,
                              ckey.CAPT_ON, ckey.AI_PARAMS]:
@@ -949,6 +951,9 @@ class MancalaGames(tk.Frame):
         self.non_ui_data.goal = \
             game_dict[ckey.GAME_INFO].get(
                 ckey.GOAL, gi_defaults.goal)
+        self.non_ui_data.sow_capt_all = \
+            game_dict[ckey.GAME_INFO].get(
+                ckey.SOW_CAPT_ALL, gi_defaults.sow_capt_all)
 
         del game_dict[ckey.GAME_CLASS]
         del game_dict[ckey.GAME_CONSTANTS]

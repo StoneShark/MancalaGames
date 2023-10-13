@@ -6,7 +6,5 @@ Created on Sun Jul 30 09:41:09 2023
 @author: Ann"""
 
 import mancala
-import nam_nam
 
-GAME_CLASSES = {'Mancala': mancala.Mancala,
-                'NamNam': nam_nam.NamNam}
+GAME_CLASSES = {'Mancala': mancala.Mancala}

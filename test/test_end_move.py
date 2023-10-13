@@ -956,3 +956,90 @@ class TestQuitter:
         assert game.board == eboard
         assert game.store == estore
         assert game.turn == eturn
+
+
+class TestTerritory:
+
+    @pytest.fixture
+    def game(self):
+
+        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_info = gi.GameInfo(capt_on = [2],
+                                stores=True,
+                                convert_cnt=5,
+                                goal=Goal.TERRITORY,
+                                rounds=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = False
+        return game
+
+
+    @pytest.mark.parametrize(
+        'board, store, econd, ewinner',
+        [
+            (utils.build_board([0, 2, 1],
+                               [0, 2, 0]), [6, 7], None, False),
+            (utils.build_board([0, 0, 0],
+                               [0, 2, 0]), [8, 8], WinCond.ROUND_WIN, False),
+            (utils.build_board([0, 0, 0],
+                               [0, 0, 0]), [3, 18-3],  WinCond.WIN, True),
+            (utils.build_board([0, 0, 0],
+                               [0, 0, 0]), [4, 18-4],  WinCond.WIN, True),
+            (utils.build_board([0, 0, 0],
+                               [0, 0, 0]), [5, 18-5],  WinCond.ROUND_WIN, True),
+            (utils.build_board([0, 0, 0],
+                               [0, 0, 0]), [18-3, 3],  WinCond.WIN, False),
+            (utils.build_board([0, 0, 0],
+                               [0, 0, 0]), [18-4, 3],  WinCond.WIN, False),
+            (utils.build_board([0, 0, 0],
+                               [0, 0, 0]), [18-5, 5],  WinCond.ROUND_WIN, False),
+            (utils.build_board([0, 0, 0],
+                               [0, 0, 0]), [9, 9],  WinCond.ROUND_TIE, False),
+            (utils.build_board([0, 0, 0],
+                               [1, 1, 0]), [7, 9], WinCond.ROUND_TIE, False),
+            ])
+    def test_territory(self, game, board, store, econd, ewinner):
+
+        game.board = board
+        game.store = store
+
+        cond, winner = game.deco.ender.game_ended(False, False)
+
+        assert cond == econd
+        assert winner == ewinner
+
+
+    @pytest.mark.parametrize(
+        'board, store, econd, ewinner',
+        [(utils.build_board([0, 0, 0, 0],
+                            [2, 2, 0, 0]), [10, 10], WinCond.ROUND_WIN, False),
+         (utils.build_board([0, 0, 0, 0],
+                            [2, 2, 0, 0]), [2, 18], WinCond.WIN, True),
+         ])
+    def test_terr_must_share(self, board, store, econd, ewinner):
+        """Use the mustshare so the deco chain decides the game is
+        over."""
+
+        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_info = gi.GameInfo(capt_on = [2],
+                                stores=True,
+                                convert_cnt=6,
+                                goal=Goal.TERRITORY,
+                                rounds=True,
+                                mustshare=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        assert game.cts.win_count == 3*4*2
+
+        game.turn = False
+        game.board = board
+        game.store = store
+
+        cond, winner = game.deco.ender.game_ended(False, False)
+        assert cond == econd
+        assert winner == ewinner

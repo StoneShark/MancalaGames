@@ -25,7 +25,6 @@ MODULES += mancala_games.pyw
 MODULES += mancala_ui.py
 MODULES += montecarlo_ts.py
 MODULES += minimax.py
-MODULES += nam_nam.py
 MODULES += new_game.py
 MODULES += play.py
 MODULES += play_mancala.pyw
@@ -88,21 +87,20 @@ stress_tests: test/context.py
 #  are expected to be covered (via TEST_COVERS in the test file).
 
 
-vpath %.cov ./test
+vpath %.cov ./cov
 vpath %.py ./test
 
 %.cov: test/context.py 
 	coverage run --branch -m pytest test\\$(subst .cov,.py,$@)
 	coverage json
-	python test\\check_unit_cov.py $(subst .cov,,$@) > test\\$@
-	type test\\$@
+	python test\\check_unit_cov.py $(subst .cov,,$@) > cov\\$@
+	type cov\\$@
 
 
 UNIT_TESTS = test_allowables.cov
 UNIT_TESTS += test_capt_ok.cov
 UNIT_TESTS += test_captures.cov
 UNIT_TESTS += test_end_move.cov
-UNIT_TESTS += test_patterns.cov
 UNIT_TESTS += test_game_if.cov
 UNIT_TESTS += test_game_log.cov
 UNIT_TESTS += test_game_str.cov
@@ -114,11 +112,13 @@ UNIT_TESTS += test_man_config.cov
 UNIT_TESTS += test_mancala.cov
 UNIT_TESTS += test_minimax.cov
 UNIT_TESTS += test_mpath.cov
+UNIT_TESTS += test_new_game.cov
+UNIT_TESTS += test_patterns.cov
 UNIT_TESTS += test_sow_starter.cov
 UNIT_TESTS += test_sower.cov
 
 cov_unit_tests: $(UNIT_TESTS)
-	cat test\\*.cov
+	grep src cov\\*.cov
 
 
 #  pylint
@@ -151,7 +151,7 @@ clean:
 	-del coverage.json
 	-del src\\.coverage
 	-del test\\context.py
-	-del test\\*.cov
+	-del cov\\*.cov
 
 
 # exe

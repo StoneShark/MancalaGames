@@ -364,7 +364,7 @@ class RoundWinner(EndTurnIf):
 
         cond, player = self.decorator.game_ended(repeat_turn, ended)
 
-        if not cond or ended:
+        if not cond or cond == WinCond.GAME_OVER or ended:
             return cond, player
 
         seeds = self.claimer.claim_seeds()
@@ -523,6 +523,81 @@ class DepriveSeedsEndGame(EndTurnIf):
         return None, None
 
 
+
+class TerritoryRoundGameWinner(EndTurnIf):
+    """When there are fewer than nbr_start seeds on the board,
+    give the remaining seeds to the current player
+    (they just did the last possible capture).
+    Determine if there is a game winner by territory (convert_cnt)
+    or compare the seeds to determine a round winner.
+    Otherwise call the deco chain; we need EndTurnMustShare and/or
+    EndTurnNoPass to decide if the game has ended.
+    Note that win_count is patched so Winner will not end the game."""
+
+    def compare_seed_cnts(self, seeds):
+        """All of the seeds have been collected and the
+        game is not over, determine the round outcome."""
+
+        if seeds[True] > seeds[False]:
+            return WinCond.ROUND_WIN, True
+
+        if seeds[False] > seeds[True]:
+            return WinCond.ROUND_WIN, False
+
+        return WinCond.ROUND_TIE, self.game.turn
+
+
+    def test_winner(self):
+        """Winner check is done before and after the rest of the
+        deco chain, don't duplicate the code."""
+
+        tot_holes = self.game.cts.dbl_holes
+        convert_cnt = self.game.info.convert_cnt
+
+        self.game.board = [0] * tot_holes
+
+        false_holes = self.game.compute_owners()
+
+        if false_holes >= convert_cnt:
+            return WinCond.WIN, False
+        if tot_holes - false_holes >= convert_cnt:
+            return WinCond.WIN, True
+
+        return None, None
+
+
+    def test_end_game(self):
+        """The game is over, determine if there is an outright
+        winner or a round winner."""
+
+        cond, winner = self.test_winner()
+        if cond:
+            return cond, winner
+
+        return self.compare_seed_cnts(self.game.store)
+
+
+    def game_ended(self, repeat_turn, ended=False):
+        """Round the false holes to deal with non-mod-4 seeds."""
+
+        remaining = sum(self.game.board)
+        if remaining <= self.game.cts.nbr_start:
+            game_log.add(
+                f'Too few seeds, remaining going to {self.game.turn}.',
+                game_log.INFO)
+            self.game.store[self.game.turn] += remaining
+
+            return self.test_end_game()
+
+        cond, winner = self.decorator.game_ended(repeat_turn, ended)
+
+        if cond == WinCond.GAME_OVER:
+            return self.test_end_game()
+
+        return cond, winner
+
+
+
 # %% build decorator chains
 
 def deco_end_move(game):
@@ -557,6 +632,9 @@ def deco_end_move(game):
 
     if game.info.waldas:
         ender = WaldaEndMove(game, ender)
+
+    if game.info.goal == Goal.TERRITORY:
+        ender = TerritoryRoundGameWinner(game, ender)
 
     return ender
 

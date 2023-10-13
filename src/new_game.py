@@ -12,6 +12,7 @@ import random
 
 import end_move
 
+from game_interface import Goal
 from game_interface import WinCond
 from game_interface import RoundStarter
 from fill_patterns import PCLASSES
@@ -33,16 +34,6 @@ class NewGameIf(abc.ABC):
         Return False if it a new round was started.
         True if a new game was started."""
 
-    def init_bprops(self):
-        """Initialize the board properties
-        but not the board or stores."""
-
-        dbl_holes = self.game.cts.dbl_holes
-        locks = not self.game.info.moveunlock
-        self.game.unlocked = [locks] * dbl_holes
-        self.game.blocked = [False] * dbl_holes
-        self.game.child = [None] * dbl_holes
-
 
 
 # %% base new game
@@ -55,7 +46,7 @@ class NewGame(NewGameIf):
 
         self.game.store = [0, 0]
         self.game.board = [self.game.cts.nbr_start] * self.game.cts.dbl_holes
-        self.init_bprops()
+        self.game.init_bprops()
 
         self.game.turn = random.choice([False, True])
         self.game.starter = self.game.turn
@@ -95,9 +86,6 @@ class NewRound(NewGameIf):
             case RoundStarter.LOSER:
                 self.game.turn = not self.game.turn
 
-            # case RoundStarter.WINNER:
-            #     pass
-
         self.game.starter = self.game.turn
 
 
@@ -118,7 +106,7 @@ class NewRound(NewGameIf):
         seeds = self.collector.claim_seeds()
 
         self.set_starter()
-        self.init_bprops()
+        self.game.init_bprops()
 
         if self.game.info.rnd_left_fill:
             orders = [range(holes), range(holes, self.game.cts.dbl_holes)]
@@ -142,6 +130,38 @@ class NewRound(NewGameIf):
         return False
 
 
+class TerritoryNewRound(NewGameIf):
+    """Wrap the existing NewGame deco chain.
+    If the chain created a new game, reset the owners.
+    If the chain created a new round, empty the stores,
+    unblock all the holes, put the start seeds into each hole,
+    and set the owners."""
+
+    def new_game(self, win_cond=None, new_round_ok=False):
+        """Adjust the game outcome."""
+
+        nbr_start = self.game.cts.nbr_start
+        false_holes = self.game.compute_owners()
+
+        if self.decorator.new_game(win_cond, new_round_ok):
+            holes = self.game.cts.holes
+            self.game.owner = [False] * holes + [True] * holes
+            return True
+
+        self.game.store = [0, 0]
+        self.game.blocked = [False] * self.game.cts.dbl_holes
+
+        for loc in range(self.game.cts.dbl_holes):
+            if loc < false_holes:
+                self.game.board[loc] = nbr_start
+                self.game.owner[loc] = False
+            else:
+                self.game.board[loc] = nbr_start
+                self.game.owner[loc] = True
+
+        return False
+
+
 # %%
 
 def deco_new_game(game):
@@ -150,11 +170,14 @@ def deco_new_game(game):
     new_game = NewGame(game)
 
     if game.info.start_pattern:
-        new_game = NewGamePattern(game,
-                                  PCLASSES[game.info.start_pattern],
-                                  new_game)
+        return NewGamePattern(game,
+                              PCLASSES[game.info.start_pattern],
+                              new_game)
 
     if game.info.rounds:
         new_game = NewRound(game, new_game, end_move.TakeOwnSeeds(game))
+
+    if game.info.goal == Goal.TERRITORY:
+        new_game = TerritoryNewRound(game, new_game)
 
     return new_game

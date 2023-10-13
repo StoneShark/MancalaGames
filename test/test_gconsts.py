@@ -102,6 +102,15 @@ def test_print():
     assert len(str(game_consts).split('\n')) == len(vars(game_consts)) - 1
 
 
+def test_set_win():
+
+    game_consts = gc.GameConsts(6, 2)
+    assert game_consts.win_count == 6*2
+
+    game_consts.set_win_all_seeds()
+    assert game_consts.win_count == 6*2*2
+
+
 class TestCtsFuncs:
 
     @pytest.mark.parametrize(
@@ -164,6 +173,19 @@ class TestCtsFuncs:
 
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
         assert game_consts.cross_from_loc(loc) == cross
+
+
+    @pytest.mark.parametrize('loc, eres',
+                             [[0, False],
+                              [1, False],
+                              [2, False],
+                              [3, True],
+                              [4, True],
+                              [5, True]])
+    def test_board_side(self, loc, eres):
+
+        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        assert game_consts.board_side(loc) == eres
 
 
     @pytest.mark.parametrize(

@@ -1,5 +1,5 @@
 {
-   "game_class": "NamNam",
+   "game_class": "Mancala",
    "game_constants": {
       "nbr_start": 4,
       "holes": 6
@@ -16,6 +16,8 @@
       "sow_direct": 1,
       "stores": true,
       "capt_on": [4],
+      "goal": 2,
+      "sow_capt_all": true,
       
       "scorer": {
          "stores_m": 4,
