@@ -2,6 +2,7 @@
 
 
 MODULES = ai_interface.py
+MODULES += ai_player.py
 MODULES += allowables.py
 MODULES += capt_ok.py
 MODULES += capturer.py
@@ -23,7 +24,6 @@ MODULES += man_path.py
 MODULES += mancala.py
 MODULES += mancala_games.pyw
 MODULES += mancala_ui.py
-MODULES += montecarlo_ts.py
 MODULES += minimax.py
 MODULES += new_game.py
 MODULES += play.py
@@ -97,7 +97,8 @@ vpath %.py ./test
 	type cov\\$@
 
 
-UNIT_TESTS = test_allowables.cov
+UNIT_TESTS += test_ai_player.cov
+UNIT_TESTS += test_allowables.cov
 UNIT_TESTS += test_capt_ok.cov
 UNIT_TESTS += test_captures.cov
 UNIT_TESTS += test_end_move.cov

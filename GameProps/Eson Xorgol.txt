@@ -12,8 +12,9 @@
       "stores": true,
       "sow_direct": -1,
       "skip_start": true,
-      "capsamedir": true,
-      
+      "capsamedir": true
+   },
+   "player": {
       "scorer": {
          "stores_m": 4,
          "child_cnt_m": 0,

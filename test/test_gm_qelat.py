@@ -14,10 +14,12 @@ from context import man_config
 class TestQelat:
 
     @pytest.fixture
-    def game(self):
+    def game_data(self):
         return man_config.make_game('./GameProps/Qelat.txt')
 
-    def test_win(self, game):
+    def test_win(self, game_data):
+
+        game = game_data[0]
 
         game.turn = True
         assert game.turn is True

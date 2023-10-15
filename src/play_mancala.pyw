@@ -173,9 +173,9 @@ def play_game(gamename):
     """Load the config file, create the game and play it."""
 
     filename = PATH + gamename + TXTPART
-    game = man_config.make_game(filename)
+    game, player_dict = man_config.make_game(filename)
 
-    game_ui = mancala_ui.MancalaUI(game)
+    game_ui = mancala_ui.MancalaUI(game, player_dict)
     game_ui.mainloop()
 
 

@@ -19,8 +19,9 @@
       "moveunlock": true,
       "evens": true,
       "multicapt": true,
-      "min_move": 2,
-
+      "min_move": 2
+   },
+   "player": {
       "scorer": {
          "stores_m": 8,
          "access_m": 0,

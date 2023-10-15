@@ -12,7 +12,6 @@ import random
 import sys
 
 import ai_interface
-import cfg_keys as ckey
 
 MAX_INT = sys.maxsize
 MIN_INT = -sys.maxsize
@@ -28,12 +27,12 @@ class MoveScore:
     score: int
 
 
-class MiniMaxer(ai_interface.AiPlayerIf):
+class MiniMaxer(ai_interface.AiAlgorithmIf):
     """A class to enable minimax to pick_moves."""
 
-    def __init__(self, game):
+    def __init__(self, game, player):
 
-        super().__init__(game)
+        super().__init__(game, player)
 
         self.max_depth = 3
         self.last_scores = None
@@ -47,7 +46,7 @@ class MiniMaxer(ai_interface.AiPlayerIf):
         moves = self.game.get_moves()
         assert moves, 'Minimaxer called when no moves available.'
 
-        max_player = self.game.is_max_player()
+        max_player = self.player.is_max_player()
         comparer = op.gt if max_player else op.lt
 
         best_moves = []
@@ -59,7 +58,7 @@ class MiniMaxer(ai_interface.AiPlayerIf):
             cond = self.game.move(move)
 
             if cond and cond.is_ended() or depth + 1 == self.max_depth:
-                score = self.game.score(cond)
+                score = self.player.score(cond)
             else:
                 score = self.minimax_ab(depth + 1, alpha, beta)
 
@@ -97,12 +96,7 @@ class MiniMaxer(ai_interface.AiPlayerIf):
         return self.last_scores
 
 
-    def set_params(self, difficulty, params):
-        """Set the parameters based on difficulty."""
-        if ckey.MM_DEPTH in params:
-            self.max_depth = params[ckey.MM_DEPTH][difficulty]
-            return None
+    def set_params(self, *args):
+        """Set the max depth."""
 
-        self.max_depth = 3
-        return ('MM_DEPTH missing from AI_PARAMS, '
-                    f'using depth of {self.max_depth}.')
+        self.max_depth = args[0]

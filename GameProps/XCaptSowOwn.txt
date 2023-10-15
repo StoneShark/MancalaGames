@@ -13,8 +13,10 @@
       "sow_direct": 1,
       "sow_own_store": true,
       "stores": true,
-      "xcpickown": 1,
-      
+      "xcpickown": 1
+   },
+   "player": {
+      "algorithm": "minimaxer",
       "scorer": {
          "stores_m": 4,
          "access_m": 0,

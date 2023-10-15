@@ -42,20 +42,28 @@ MAX_MINIMAX_DEPTH = 15
 # %% rule classes
 
 @dc.dataclass(frozen=True)
-class GameInfoRule:
-    """An individual rule to apply to GameInfo."""
+class ParamRule:
+    """An individual rule to apply to GameInfo.
+
+    name: dictionary key for rule
+          an message is printed if the name is reused
+    rule: a function or lambda that takes 1 or 2 params
+          should return True if there is an error
+    warn: if True, genearte a warning, else an exception
+    excp: if generating an exception, generate this exception
+    both_objs: if True, call with obj1 and obj2, otherwise only obj1"""
 
     name: str
-    rule: col.abc.Callable   # return True if error
+    rule: col.abc.Callable
     msg: str
-    warn: bool = False       # do warning not exception
-    excp: object = None      # exception to raise
-    holes: bool = False      # when True call the rule with holes & ginfo
+    warn: bool = False
+    excp: object = None
+    both_objs: bool = False
 
-    def test(self, holes, ginfo):
+    def test(self, obj1, obj2):
         """Test the rule, do the action if it returns true."""
 
-        error = self.rule(holes, ginfo) if self.holes else self.rule(ginfo)
+        error = self.rule(obj1, obj2) if self.both_objs else self.rule(obj1)
         if error:
             if self.warn:
                 warnings.warn(self.msg)
@@ -67,7 +75,7 @@ class GameInfoRule:
 class RuleDict(dict):
     """A dictionary of game rules."""
 
-    def add_rule(self, name, *, rule, msg, holes=False, warn=False, excp=None):
+    def add_rule(self, name, *, rule, msg, both_objs=False, warn=False, excp=None):
         """Add a rule to the dictionary."""
         # pylint: disable=too-many-arguments
 
@@ -77,15 +85,15 @@ class RuleDict(dict):
         if name in self:
             print(f'Rule {name} being replaced.')
 
-        self[name] = GameInfoRule(name, holes=holes, rule=rule, msg=msg,
+        self[name] = ParamRule(name, both_objs=both_objs, rule=rule, msg=msg,
                                   warn=warn, excp=excp)
 
 
-    def test(self, holes, ginfo):
+    def test(self, obj1, obj2):
         """Test each of the rules."""
 
         for rule in self.values():
-            rule.test(holes, ginfo)
+            rule.test(obj1, obj2)
 
 
 # %% grouped rules
@@ -95,8 +103,8 @@ def add_creation_rules(rules):
 
     rules.add_rule(
         'invalid_holes',
-        holes=True,
-        rule=lambda holes, ginfo: (not holes or not isinstance(holes, int)),
+        both_objs=True,
+        rule=lambda ginfo, holes: (not holes or not isinstance(holes, int)),
         msg='Holes must > 0',
         excp=gi.GameInfoError)
 
@@ -107,22 +115,15 @@ def add_creation_rules(rules):
         excp=gi.GameInfoError)
 
     rules.add_rule(
-        'invalid_scorer',
-        rule=lambda ginfo: (not ginfo.scorer or
-                            not isinstance(ginfo.scorer, gi.Scorer)),
-        msg='Missing or bad scorer',
-        excp=gi.GameInfoError)
-
-    rules.add_rule(
-        'invalid_ai_params',
-        rule=lambda ginfo: not isinstance(ginfo.ai_params, dict),
-        msg='Invalid AI parameter dictionary',
-        excp=gi.GameInfoError)
-
-    rules.add_rule(
         'sow_dir_type',
         rule=lambda ginfo: not isinstance(ginfo.sow_direct, Direct),
         msg='SOW_DIRECT not valid type, expected Direct',
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'high_min_moves',
+        rule=lambda ginfo: ginfo.min_move not in range(1, MAX_MIN_MOVES + 1),
+        msg=f'Min_move seems wrong  (1<= convention <= {MAX_MIN_MOVES})',
         excp=gi.GameInfoError)
 
 
@@ -133,7 +134,7 @@ def add_pattern_rules(rules):
         """Return a function that tests that the pattern is index
         and tests the size_ok function."""
 
-        def _pattern(holes, ginfo):
+        def _pattern(ginfo, holes):
             return ginfo.start_pattern == index and not pattern.size_ok(holes)
 
         return _pattern
@@ -144,7 +145,7 @@ def add_pattern_rules(rules):
 
         rules.add_rule(
             f'pattern_{idx}_req_size',
-            holes=True,
+            both_objs=True,
             rule=test_pattern(idx, pat),
             msg=pat.err_msg,
             excp=gi.GameInfoError)
@@ -195,8 +196,8 @@ def add_territory_rules(rules):
 
     rules.add_rule(
         'terr_convert_cnt',
-        holes=True,
-        rule=lambda holes, ginfo: (ginfo.goal == Goal.TERRITORY
+        both_objs=True,
+        rule=lambda ginfo, holes: (ginfo.goal == Goal.TERRITORY
                                    and (ginfo.convert_cnt <= holes
                                         or ginfo.convert_cnt >= 2 * holes)),
         msg='Territory Goal requires convert_cnt between holes and 2 * holes',
@@ -401,21 +402,6 @@ def add_no_sides_rules(rules):
         msg='NO_SIDES requires a goal of MAX_SEEDS',
         excp=gi.GameInfoError)
 
-    rules.add_rule(
-        'no_side_scorers',
-        rule=lambda ginfo: ginfo.no_sides and
-                                any([ginfo.scorer.empties_m,
-                                     ginfo.scorer.evens_m,
-                                     ginfo.scorer.access_m,
-                                     ginfo.scorer.seeds_m,
-                                     ginfo.scorer.child_cnt_m]),
-        msg='Scorer multipliers empties, evens, access, seeds '
-            'and child_cnt are incompatible with NoSides',
-        excp=gi.GameInfoError)
-        # XXXX could override scorer for evens, empties, access
-        # and child_cnt to max/min the total count of them.
-        # would need to restructure base game scorer to allow
-        # individual overrides
 
     bad_flags = ['grandslam', 'mustpass', 'mustshare', 'oppsidecapt',
                  'rounds', 'round_starter', 'rnd_left_fill', 'rnd_umove',
@@ -427,50 +413,6 @@ def add_no_sides_rules(rules):
             msg=f'NO_SIDES cannot be used with {flag.upper()}',
             excp=gi.GameInfoError)
 
-
-def add_ai_rules(rules):
-    """Add the rules for the AI parameters."""
-
-    rules.add_rule(
-        'def_diff',
-        rule=lambda ginfo: ginfo.difficulty not in range(DIFF_LEVELS),
-        msg='Difficulty not 0, 1, 2 or 3',
-        excp=gi.GameInfoError)
-
-    rules.add_rule(
-        'high_min_moves',
-        rule=lambda ginfo: ginfo.min_move not in range(1, MAX_MIN_MOVES + 1),
-        msg=f'Min_move seems wrong  (1<= convention <={MAX_MIN_MOVES})',
-        excp=gi.GameInfoError)
-
-    rules.add_rule(
-        'params_four_diff',
-        rule=lambda ginfo: (ginfo.ai_params and
-                            all(len(values) != DIFF_LEVELS
-                                for values in ginfo.ai_params.values())),
-        msg=f'Exactly {DIFF_LEVELS} param values are expected '
-            'for each ai parameter',
-        excp=gi.GameInfoError)
-
-    rules.add_rule(
-        'mlaps_access_prohibit',
-        rule=lambda ginfo: ginfo.scorer.access_m and ginfo.mlaps,
-        msg='Access scorer not supported for multilap games',
-        excp=gi.GameInfoError)
-
-    rules.add_rule(
-        'child_scorer',
-        rule=lambda ginfo: ginfo.scorer.child_cnt_m and not ginfo.child,
-        msg='Child count scorer not supported without child flag',
-        excp=gi.GameInfoError)
-
-    rules.add_rule(
-        'scorer_vals',
-        rule=lambda ginfo: all(not val
-                               for val in vars(ginfo.scorer).values()),
-        msg='At least one scorer value should be non-zero'
-            'to prevent random play',
-            warn=True)
 
 
 # %% the base ruleset
@@ -657,15 +599,15 @@ def build_rules():
 
     man_rules.add_rule(
         'too_many_udir',
-        holes=True,
-        rule=lambda holes, ginfo: len(ginfo.udir_holes) > holes,
+        both_objs=True,
+        rule=lambda ginfo, holes: len(ginfo.udir_holes) > holes,
         msg='Too many udir_holes specified',
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
         'udir_oo_range',
-        holes=True,
-        rule=lambda holes, ginfo: any(udir < 0 or udir >= holes
+        both_objs=True,
+        rule=lambda ginfo, holes: any(udir < 0 or udir >= holes
                                       for udir in ginfo.udir_holes),
         msg='Udir_holes value out of range 0..nbr_holes-1',
         excp=gi.GameInfoError)
@@ -687,8 +629,8 @@ def build_rules():
 
     man_rules.add_rule(
         'odd_split_udir',
-        holes=True,
-        rule=lambda holes, ginfo: (ginfo.sow_direct == Direct.SPLIT
+        both_objs=True,
+        rule=lambda ginfo, holes: (ginfo.sow_direct == Direct.SPLIT
                                    and holes % 2
                                    and holes // 2 not in ginfo.udir_holes),
         msg='SPLIT with odd number of holes, '
@@ -697,13 +639,11 @@ def build_rules():
 
     man_rules.add_rule(
         'sdir_split',
-        holes=True,
-        rule=lambda holes, ginfo: (ginfo.udirect
+        both_objs=True,
+        rule=lambda ginfo, holes: (ginfo.udirect
                                    and len(ginfo.udir_holes) != holes
                                    and ginfo.sow_direct != Direct.SPLIT),
         msg= 'Odd choice of sow direction when udir_holes != nbr_holes',
         warn=True)
-
-    add_ai_rules(man_rules)
 
     return man_rules

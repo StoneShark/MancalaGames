@@ -18,8 +18,8 @@ from game_classes import GAME_CLASSES
 MAX_LINES = 150
 MAX_CHARS = 2000
 
-NO_CONVERT = [ckey.AI_PARAMS, ckey.SCORER, ckey.HELP_FILE,
-              ckey.ABOUT, ckey.UDIR_HOLES, ckey.NAME, ckey.CAPT_ON]
+NO_CONVERT = [ckey.NAME, ckey.ABOUT, ckey.HELP_FILE,
+              ckey.UDIR_HOLES, ckey.CAPT_ON]
 
 
 def read_game(filename):
@@ -42,7 +42,6 @@ def read_game(filename):
     game_dict = json.loads(text)
 
     info_dict = game_dict[ckey.GAME_INFO]
-
     for fdesc in dc.fields(gi.GameInfo):
         if fdesc.name in info_dict and fdesc.name not in NO_CONVERT:
             ftype = type(fdesc.default)
@@ -53,7 +52,7 @@ def read_game(filename):
 
 def read_game_config(filename):
     """Read a mancala configuration file and return
-    the game class, constants and info."""
+    the game class, constants, info and player_dict."""
 
     game_dict = read_game(filename)
     game_class = game_dict[ckey.GAME_CLASS] \
@@ -62,23 +61,18 @@ def read_game_config(filename):
     game_consts = gc.GameConsts(**game_dict[ckey.GAME_CONSTANTS])
     info_dict = game_dict[ckey.GAME_INFO]
 
-    if ckey.SCORER in info_dict:
-        info_dict[ckey.SCORER] = gi.Scorer(**info_dict[ckey.SCORER])
-    else:
-        info_dict[ckey.SCORER] = gi.Scorer()
-
     gclass = GAME_CLASSES[game_class]
     game_info = gi.GameInfo(**info_dict,
                             nbr_holes=game_consts.holes,
                             rules=gclass.rules)
 
-    return game_class, game_consts, game_info
+    return game_class, game_consts, game_info, game_dict[ckey.PLAYER]
 
 
 def make_game(filename):
     """Return a constructed game from the configuration."""
 
-    class_name, consts, info = read_game_config(filename)
+    class_name, consts, info, player_dict = read_game_config(filename)
 
     gclass = GAME_CLASSES[class_name]
-    return gclass(consts, info)
+    return gclass(consts, info), player_dict

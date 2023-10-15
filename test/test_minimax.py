@@ -13,13 +13,13 @@ pytestmark = pytest.mark.unittest
 
 
 from context import ai_interface
-from context import cfg_keys as ckey
 from context import minimax
 
 
 # %%
 
 TEST_COVERS = ['src\\minimax.py']
+
 
 # %%  define_get_game
 
@@ -38,7 +38,8 @@ def define_get_game(depth):
 
     scored will be True for the nodes for which the scorer was called."""
 
-    class Small(ai_interface.AiGameIf):
+
+    class SmallGame(ai_interface.AiGameIf):
 
         """  small test graph     node:score
         0:0
@@ -68,11 +69,8 @@ def define_get_game(depth):
 
         def __init__(self, difficulty):
 
-            assert len(Small.scores) == len(Small.childs), 'graph error'
+            assert len(SmallGame.scores) == len(SmallGame.childs), 'graph error'
 
-            self.player = minimax.MiniMaxer(self)
-            self.player.set_params(difficulty,
-                                   {"mm_depth" : [1, 1, 2, 3]})
             self.turn = False
             self.node = 0
 
@@ -86,16 +84,6 @@ def define_get_game(depth):
                 return EndCond.ENDED
             return None
 
-        def is_max_player(self):
-            return not self.turn
-
-        def get_turn(self):
-            return self.turn
-
-        def score(self, _=None):
-            self.scored[self.node] = True
-            return self.scores[self.node]
-
         @property
         def state(self):
             return (self.node, self.turn)
@@ -106,7 +94,44 @@ def define_get_game(depth):
             self.turn = value[1]
 
 
-    return Small(depth)
+    class SmallPlayer(ai_interface.AiPlayerIf):
+
+        def __init__(self, game, player_dict):
+
+            super().__init__(game, player_dict)
+            self.algo = minimax.MiniMaxer(game, self)
+            self._diff = 0
+
+        @property
+        def difficulty(self):
+            return self._diff
+
+        @difficulty.setter
+        def difficulty(self, value):
+            self._diff = value
+            self.algo.set_params(value)
+
+        def is_max_player(self):
+            return not self.game.turn
+
+        def score(self, _=None):
+            self.game.scored[self.game.node] = True
+            return self.game.scores[self.game.node]
+
+        def pick_move(self):
+            """Have the player pick the move."""
+            return self.algo.pick_move()
+
+
+        def get_move_desc(self):
+            """Get the description from the player."""
+            return self.algo.get_move_desc()
+
+    game = SmallGame(depth)
+    player = SmallPlayer(game, {})
+    player.difficulty = depth
+
+    return game, player
 
 
 # %%
@@ -115,14 +140,14 @@ class TestMinimaxer:
 
     def test_level1(self):
 
-        game = define_get_game(1)
+        game, player = define_get_game(1)
 
-        move = game.player.pick_move()
+        move = player.pick_move()
         # print(move)
-        # print(game.player.get_move_desc())
+        # print(player.get_move_desc())
         # print(game.scored)
         assert move == 2
-        assert 'm1 4, m2 5' in game.player.get_move_desc()
+        assert 'm1 4, m2 5' in player.get_move_desc()
 
         all_nodes = set(range(len(game.scores)))
         scored = set([1, 2])
@@ -131,14 +156,14 @@ class TestMinimaxer:
 
     def test_level2(self):
 
-        game = define_get_game(2)
+        game, player = define_get_game(2)
 
-        move = game.player.pick_move()
+        move = player.pick_move()
         # print(move)
-        # print(game.player.get_move_desc())
+        # print(player.get_move_desc())
         # print(game.scored)
         assert move == 1
-        assert 'm1 2, m2 1' in game.player.get_move_desc()
+        assert 'm1 2, m2 1' in player.get_move_desc()
 
         # nodes scored for minimax (no pruning)
         # scored = set([3, 4, 5, 6, 7, 8])
@@ -151,14 +176,14 @@ class TestMinimaxer:
 
     def test_level3(self):
 
-        game = define_get_game(3)
+        game, player = define_get_game(3)
 
-        move = game.player.pick_move()
+        move = player.pick_move()
         # print(move)
-        # print(game.player.get_move_desc())
+        # print(player.get_move_desc())
         # print(game.scored)
         assert move == 2
-        assert 'm1 2, m2 3' in game.player.get_move_desc()
+        assert 'm1 2, m2 3' in player.get_move_desc()
 
         # score all terminal nodes for minimax
         # scored = set([3, 5, 6, 8, 9, 10, 11, 12])
@@ -172,30 +197,22 @@ class TestMinimaxer:
 
     def test_assert_error(self):
 
-        game = define_get_game(3)
+        game, player = define_get_game(3)
         game.node = 3  # no children
 
         with pytest.raises(AssertionError):
-            game.player.pick_move()
+            player.pick_move()
+
 
 
 class TestSetParams:
 
     @pytest.fixture
-    def player(self):
-        return minimax.MiniMaxer(define_get_game(1))
+    def algo(self):
+        return minimax.MiniMaxer(*(define_get_game(1)))
 
 
-    def test_params(self, player):
+    def test_params(self, algo):
 
-        params = {ckey.MM_DEPTH: [1, 2, 3, 4]}
-        assert player.set_params(1, params) == None
-        assert player.max_depth == 2
-
-
-    def test_no_params(self, player):
-
-        params = {'junk param': [1, 2, 3, 4]}
-
-        assert "MM_DEPTH" in player.set_params(1, params)
-        assert player.max_depth == 3
+        algo.set_params(5)
+        assert algo.max_depth == 5

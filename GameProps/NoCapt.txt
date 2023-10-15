@@ -6,7 +6,6 @@
    },
    "game_info": {
       "name": "NoCapt",
-      "difficulty": 1,
       "about": "NoCapt: sow direction is counter-clockwise,\nsow into own store, but no other capture.\nExtra turn when last seed in store.",
       "mustpass": true,
       "stores": true,
@@ -14,8 +13,9 @@
       "skip_start": true,
       "sow_own_store": true,
       "oppsidecapt": true,
-      "min_move": 1,
-
+      "min_move": 1
+   },
+   "player": {
       "scorer": {
          "stores_m": 4,
          "access_m": 0,

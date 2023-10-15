@@ -5,13 +5,12 @@ to select the next move.
 Created on Sat Aug  5 10:31:39 2023
 @author: Ann"""
 
-import collections as col
+import collections as coll
 import dataclasses as dc
 import math
 import random
 
 import ai_interface
-import cfg_keys as ckey
 
 from game_interface import WinCond
 
@@ -21,8 +20,8 @@ from game_interface import WinCond
 # these are only used if the config file does not have values
 BIAS = 0.25
 NBR_NODES = 200
-
 NBR_POUTS = 1
+
 MAX_TURNS = 500
 
 # %% best
@@ -82,20 +81,20 @@ class GameNode:
 
 # %%
 
-class MonteCarloTS(ai_interface.AiPlayerIf):
+class MonteCarloTS(ai_interface.AiAlgorithmIf):
     """The mixin for the monte carlo tree search ai player.
     Put the start state in as node 0."""
 
 
-    def __init__(self, game):
+    def __init__(self, game, player):
 
-        super().__init__(game)
+        super().__init__(game, player)
 
         self.bias = BIAS
         self.new_nodes = NBR_NODES
         self.nbr_pouts = NBR_POUTS
 
-        self.game_nodes = col.deque()
+        self.game_nodes = coll.deque()
         self.node_dict = {}
         self.move_desc = None
 
@@ -124,7 +123,7 @@ class MonteCarloTS(ai_interface.AiPlayerIf):
         """Reset the game tree and create a new root."""
 
         self.node_dict = {}
-        self.game_nodes = col.deque()
+        self.game_nodes = coll.deque()
         self.next_id = 0
 
         state = self.game.state
@@ -163,7 +162,7 @@ class MonteCarloTS(ai_interface.AiPlayerIf):
         Return the history of move nodes (which is built with the
         newest node at the begining)."""
 
-        node_hist = col.deque()
+        node_hist = coll.deque()
         node_hist.appendleft(node.node_id)
 
         while not node.leaf:
@@ -250,7 +249,7 @@ class MonteCarloTS(ai_interface.AiPlayerIf):
             if cond and cond.is_ended():
                 break
 
-            if self.game.infomustpass:
+            if self.game.info.mustpass:
                 self.game.test_pass()
 
         winner, reward = None, 0
@@ -302,16 +301,20 @@ class MonteCarloTS(ai_interface.AiPlayerIf):
         return self.move_desc
 
 
-    def set_params(self, difficulty, params):
-        """Set the params from the config file that associate
-        with the selected difficulty."""
-
-        if ckey.MCTS_BIAS in params and ckey.MCTS_NODES in params:
-            self.bias = params[ckey.MCTS_BIAS][difficulty]
-            self.new_nodes = params[ckey.MCTS_NODES][difficulty]
-            return None
+    def set_params(self, *args):
+        """Set the algorithms parameters in this order:
+            bias, new_nodes, nbr_pouts"""
 
         self.bias = BIAS
         self.new_nodes = NBR_NODES
-        return ('MonteCarloTS requires MCTS_BIAS and MCTS_NODES in AI_PARAMS. '
-                f'Using bias={self.bias} and new_nodes={self.new_nodes}.')
+        self.nbr_pouts = NBR_POUTS
+
+        argc = len(args)
+        if argc >= 1 and args[0] > 0:
+            self.bias = args[0]
+
+        if argc >= 2 and args[1] > 0:
+            self.new_nodes = args[1]
+
+        if argc >= 3 and args[2] > 0:
+            self.bias = args[2]

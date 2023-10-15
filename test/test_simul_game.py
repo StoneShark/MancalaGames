@@ -49,12 +49,13 @@ if BAD_CFG in FILES:
 
 
 @pytest.fixture(params=FILES)
-def game(request):
+def game_data(request):
     return man_config.make_game(PATH + request.param)
 
 @pytest.mark.stresstest
-def test_one_game(game, request):
+def test_one_game(game_data, request):
 
+    game, _ = game_data
     game_log.game_log.active = False
 
     for _ in range(2000 if game.info.rounds else 500):
@@ -87,7 +88,7 @@ def test_one_game(game, request):
 @pytest.fixture
 def known_game_fails(request):
 
-    game = request.getfixturevalue('game')
+    game, _ = request.getfixturevalue('game_data')
     if game.info.name in ['Congklak', 'Eson Xorgol']:
         request.node.add_marker(
             pytest.mark.xfail(
@@ -96,12 +97,13 @@ def known_game_fails(request):
 
 
 @pytest.mark.usefixtures('known_game_fails')
-def test_game_stats(game, request, nbr_runs):
+def test_game_stats(game_data, request, nbr_runs):
 
     def report_bad(maxed, stuck):
         print(f'Bad endings for {game.info.name:12}: ' + \
               f'loop_max= {maxed}  endless= {stuck}')
 
+    game, _ = game_data
     key_name = game.info.name + '/loop_max'
     maxed = request.config.cache.get(key_name, 0)
 

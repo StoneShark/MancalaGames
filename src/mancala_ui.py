@@ -16,9 +16,9 @@ import traceback
 
 import tkinter as tk
 
+import ai_player
 import hole_button as hbtn
 import game_interface as gi
-import minimax
 
 from hole_button import Behavior
 from game_interface import WinCond
@@ -134,7 +134,7 @@ class Store:
 class MancalaUI(tk.Frame):
     """A manacala UI."""
 
-    def __init__(self, game, root_ui=None):
+    def __init__(self, game, player_dict, root_ui=None):
         """Create the UI for a mancala game.
 
         game : class built on GameInterface -  provide the mechanics of
@@ -146,7 +146,7 @@ class MancalaUI(tk.Frame):
 
         self.game = game
         self.mode = Behavior.GAMEPLAY
-        self.player = minimax.MiniMaxer(self.game)
+        self.player = ai_player.AiPlayer(self.game, player_dict)
 
         game_log.new()
         game_log.turn('Start Game', game)
@@ -171,7 +171,8 @@ class MancalaUI(tk.Frame):
         super().__init__(self.master)
         self.master.report_callback_exception = self._exception_callback
 
-        self.difficulty = tk.IntVar(self.master, value=self.info.difficulty)
+        self.difficulty = tk.IntVar(self.master,
+                                    value=self.player.difficulty)
         self._set_difficulty()
 
         self.ai_delay = tk.BooleanVar(self.master, value=2)
@@ -591,17 +592,11 @@ class MancalaUI(tk.Frame):
 
 
     def _set_difficulty(self):
-        """Set the max search depth for the minimaxer and
-        the delay before the AI plays."""
+        """Set the max search depth for the minimaxer."""
 
         diff = self.difficulty.get()
+        self.player.difficulty = diff
         game_log.add(f'Changing difficulty {diff}', game_log.INFO)
-        self.difficulty = diff
-        msg = self.player.set_params(diff, self.info.ai_params)
-        game_log.add(f'AI Param Error: {msg}', game_log.IMPORT)
-
-        if msg:
-            tk.messagebox.showerror('AI Player Config Error', msg)
 
 
     def _log_turn(self, last_turn):

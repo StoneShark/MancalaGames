@@ -11,10 +11,10 @@ import random
 import pytest
 pytestmark = pytest.mark.integtest
 
-from context import man_config
-from context import minimax
 from context import game_log
-# import montecarlo_ts
+from context import man_config
+# from context import minimax
+from context import ai_player
 
 from game_interface import WinCond
 
@@ -28,21 +28,22 @@ if BAD_CFG in FILES:
 
 
 @pytest.fixture(params=FILES)
-def game(request):
+def game_data(request):
     return man_config.make_game(PATH + request.param)
 
-
-@pytest.fixture(params=[minimax.MiniMaxer])
-def player_class(request):
-    return request.param
+# TODO fix when alt players integrated again
+# @pytest.fixture(params=[minimax.MiniMaxer])
+# def player_class(request):
+#     return request.param
 
 
 @pytest.mark.stresstest
-def test_one_game(game, player_class):
+def test_one_game(game_data):
 
     game_log.game_log.active = False
 
-    player = player_class(game)
+    game, pdict = game_data
+    player = ai_player.AiPlayer(game, pdict)
 
     for _ in range(500):
 

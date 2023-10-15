@@ -16,11 +16,13 @@ from game_interface import GrandSlam
 class TestOwareGrandSlam:
 
     @pytest.fixture
-    def game(self):
+    def game_data(self):
         return man_config.make_game('./GameProps/Oware.txt')
 
 
-    def test_false_win(self, game):
+    def test_false_win(self, game_data):
+
+        game = game_data[0]
 
         game.turn = True
         assert game.turn is True
@@ -228,7 +230,9 @@ class TestOwareGrandSlam:
         assert 'Bottom' in winmsg[1]
 
 
-    def test_true_win(self, game):
+    def test_true_win(self, game_data):
+
+        game = game_data[0]
 
         game.turn = False
         assert game.turn is False
@@ -338,7 +342,9 @@ class TestOwareGrandSlam:
         assert 'Top' in winmsg[1]
 
 
-    def test_gs_legal(self, game):
+    def test_gs_legal(self, game_data):
+
+        game = game_data[0]
 
         # get the config vars, change grandslam, build new game
         consts = game.cts
@@ -540,7 +546,9 @@ class TestOwareGrandSlam:
         assert 'Bottom' in winmsg[1]
 
 
-    def test_gs_not_legal(self, game):
+    def test_gs_not_legal(self, game_data):
+
+        game = game_data[0]
 
         # get the config vars, change grandslam, build new game
         consts = game.cts
@@ -700,7 +708,9 @@ class TestOwareGrandSlam:
 
 
     @pytest.mark.skip(reason="test not written")
-    def test_no_capt(self, game):
+    def test_no_capt(self, game_data):
+
+        game = game_data[0]
 
         # get the config vars, change grandslam, build new game
         consts = game.cts
@@ -712,7 +722,9 @@ class TestOwareGrandSlam:
 
 
     @pytest.mark.skip(reason="test not written")
-    def test_gs_opp_get(self, game):
+    def test_gs_opp_get(self, game_data):
+
+        game = game_data[0]
 
         # get the config vars, change grandslam, build new game
         consts = game.cts
@@ -722,7 +734,9 @@ class TestOwareGrandSlam:
         game = mancala.Mancala(consts, info)
 
 
-    def test_leave_left(self, game):
+    def test_leave_left(self, game_data):
+
+        game = game_data[0]
 
         # get the config vars, change grandslam, build new game
         consts = game.cts
@@ -896,7 +910,9 @@ class TestOwareGrandSlam:
         assert 'Top' in winmsg[1]
 
 
-    def test_leave_right(self, game):
+    def test_leave_right(self, game_data):
+
+        game = game_data[0]
 
         # get the config vars, change grandslam, build new game
         consts = game.cts

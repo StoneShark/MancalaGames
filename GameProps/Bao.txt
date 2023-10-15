@@ -22,8 +22,9 @@
       "stores": true,
       "visit_opp": true,
       "xcpickown": 1,
-      "min_move": 1,
-
+      "min_move": 1
+   },
+   "player": {
       "scorer": {
          "stores_m": 4,
          "access_m": 0,

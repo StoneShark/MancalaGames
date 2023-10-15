@@ -14,8 +14,9 @@
       "sow_direct": 1,
       "stores": true,
       "min_move": 1,
-      "capt_on": [2, 3],
-
+      "capt_on": [2, 3]
+   },
+   "player": {
       "scorer": {
          "stores_m": 4,
          "access_m": 1,

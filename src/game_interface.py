@@ -13,8 +13,6 @@ import abc
 import dataclasses as dc
 import enum
 
-import cfg_keys as ckey
-
 
 # %%  constants
 
@@ -117,27 +115,10 @@ class WinCond(enum.Enum):
 
 
 @dc.dataclass(frozen=True, kw_only=True)
-class Scorer:
-    """Multipliers for the different scorers, 0 turns it off.
-    easy_rand is the +- error introduced on easy difficulty.
-    access_m if positive, is only used on Hard or Expert."""
-
-    stores_m: int = 4
-    access_m: int = 0
-    seeds_m: int = 0
-    empties_m: int = 0
-    child_cnt_m: int = 0
-    evens_m: int = 0
-    easy_rand: int = 20
-    repeat_turn: int = 0
-
-
-@dc.dataclass(frozen=True, kw_only=True)
 class GameInfo:
     """Named tuple providing static game information."""
 
     name: str = 'Mancala'
-    difficulty: int = 1
     help_file: str = ''
     about: str = ''
 
@@ -197,11 +178,6 @@ class GameInfo:
     # list of bi-directional holes
     udir_holes: list[int] = dc.field(default_factory=list)
 
-    # a dictionary of param : list[4]
-    # where param is used by the ai_player to select the parameter
-    # and list is indexed by difficulty to choose the value
-    ai_params: dict = dc.field(default_factory=dict)
-    scorer: Scorer = Scorer()
 
     # used only for initialization, not added to the dataclass
     nbr_holes: dc.InitVar[int]
@@ -213,10 +189,8 @@ class GameInfo:
         rules.test raises exceptions and warnings."""
 
         object.__setattr__(self, 'udirect', bool(self.udir_holes))
-        if ckey.MM_DEPTH not in self.ai_params:
-            self.ai_params[ckey.MM_DEPTH] = [1, 1, 3, 5]
 
-        rules.test(nbr_holes, self)
+        rules.test(self, nbr_holes)
 
     @classmethod
     def get_fields(cls):

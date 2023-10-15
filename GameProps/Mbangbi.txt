@@ -15,8 +15,9 @@
       "stores": true,
       "min_move": 2,
       "capt_on": [2, 4],
-      "udir_holes": [0, 1, 2, 3, 4],
-
+      "udir_holes": [0, 1, 2, 3, 4]
+   },
+   "player": {
       "scorer": {
          "stores_m": 4,
          "access_m": 0,

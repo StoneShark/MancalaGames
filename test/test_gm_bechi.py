@@ -17,12 +17,13 @@ from context import man_config
 class TestBechi:
 
     @pytest.fixture
-    def game(self):
+    def game_data(self):
         return man_config.make_game('./GameProps/bechi.txt')
 
 
-    def test_round_1(self, game):
+    def test_round_1(self, game_data):
 
+        game, _ = game_data
         game.turn = False
         game.starter = game.turn
         assert game.board == [4, 4, 4, 4, 4, 4, 4, 4]
@@ -184,10 +185,11 @@ class TestBechi:
         assert game.store == [2, 2]
 
 
-    def test_round_2(self, game):
+    def test_round_2(self, game_data):
 
         # start condition is not the same as after new game above
         # because seeds were moved via the UI
+        game = game_data[0]
 
         # blocked hole on bottom
         game.turn = True
@@ -381,8 +383,9 @@ class TestBechi:
         assert game.store == [1, 3]
 
 
-    def test_round_3(self, game):
+    def test_round_3(self, game_data):
 
+        game = game_data[0]
         # blocked hole on top
         game.turn = False
         game.starter = game.turn
@@ -525,8 +528,9 @@ class TestBechi:
         assert game.store == [1, 3]
 
 
-    def test_round_4_tie(self, game):
+    def test_round_4_tie(self, game_data):
 
+        game = game_data[0]
         game.turn = True
         game.starter = game.turn
         game.board = [4, 4, 0, 4, 4, 4, 4, 4]
@@ -678,7 +682,9 @@ class TestBechi:
         assert game.store == [0, 0]
 
 
-    def test_round_5(self, game):
+    def test_round_5(self, game_data):
+
+        game = game_data[0]
 
         game.turn = False
         game.starter = game.turn
@@ -821,7 +827,9 @@ class TestBechi:
         assert game.store == [0, 12]
 
 
-    def test_round_6_game_win(self, game):
+    def test_round_6_game_win(self, game_data):
+
+        game = game_data[0]
 
         game.turn = True
         game.starter = game.turn

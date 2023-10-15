@@ -16,8 +16,9 @@
       "sow_start": true,
       "stores": true,
       "one_child": true,
-      "move_one": true,
-
+      "move_one": true
+   },
+   "player": {
       "scorer": {
          "stores_m": 4,
          "access_m": 0,

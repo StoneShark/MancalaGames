@@ -13,8 +13,9 @@
       "mlaps": true,
       "min_move": 1,
       "sow_direct": 1,
-      "sow_blkd_div": true,
-
+      "sow_blkd_div": true
+   },
+   "player": {
       "scorer": {
          "stores_m": 0,
          "access_m": 0,

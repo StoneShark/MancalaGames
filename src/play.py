@@ -50,8 +50,8 @@ if __name__ == '__main__':
     gamename = get_gamename()
     filename = find_file(gamename)
 
-    game = man_config.make_game(filename)
+    game, pdict = man_config.make_game(filename)
     print(game.info.about)
 
-    game_ui = mancala_ui.MancalaUI(game)
+    game_ui = mancala_ui.MancalaUI(game, pdict)
     game_ui.mainloop()

@@ -79,14 +79,6 @@ class TestEnumsClasses:
         assert str(tup) == '(False, 2, None)'
 
 
-    def test_default_scorer(self):
-
-        scorer = gi.Scorer()
-
-        score_vals = vars(scorer).values()
-        assert sum(score_vals) > 0
-
-
 class TestConstruction:
 
     def test_gf_existence(self):
@@ -105,11 +97,6 @@ class TestConstruction:
             gi.GameInfo(nbr_holes=0,
                         rules=rules)
 
-        with pytest.raises(gi.GameInfoError):  # scorer
-            gi.GameInfo(nbr_holes=2,
-                        scorer=1,
-                        rules=rules)
-
         with pytest.raises(gi.GameInfoError):  # no sew direction, not playable
             gi.GameInfo(nbr_holes=2,
                         sow_direct=None,
@@ -121,17 +108,10 @@ class TestConstruction:
                             sow_direct=Direct.CCW,
                             rules=rules)
 
-        assert len(ginfo.ai_params[ckey.MM_DEPTH]) == 4
-        assert ginfo.ai_params[ckey.MM_DEPTH][3] == 5
-
-        ginfo = gi.GameInfo(nbr_holes=6,
-                            capt_on=[2],
-                            ai_params={ckey.MM_DEPTH : (3, 4, 5, 6)},
+        ginfo = gi.GameInfo(capt_on=[2],
                             sow_direct=Direct.CCW,
+                            nbr_holes=6,
                             rules=rules)
-
-        assert ginfo.ai_params[ckey.MM_DEPTH][3] == 6
-
 
 
 class TestRuleDict:

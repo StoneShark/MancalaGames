@@ -14,8 +14,9 @@
       "child": true,
       "convert_cnt": 4,
       "capt_on": [2],
-      "udir_holes": [0, 1, 2, 3, 4, 5, 6],
- 
+      "udir_holes": [0, 1, 2, 3, 4, 5, 6]
+   },
+   "player": {
       "scorer": {
          "stores_m": 4,
          "easy_rand": 0,

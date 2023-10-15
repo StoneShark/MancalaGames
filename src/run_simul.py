@@ -17,7 +17,7 @@ def test_one_game():
     game_log.active = True
     game_log.level = game_log.SHOWALL
 
-    game = man_config.make_game("../GameProps/NamNam.txt")
+    game, _ = man_config.make_game("../GameProps/NamNam.txt")
     game_log.turn('Start', game)
 
     max_turns = 1000 if game.inforounds else 500

@@ -15,11 +15,12 @@ from context import man_config
 class TestXCaptSowOwn:
 
     @pytest.fixture
-    def game(self):
+    def game_data(self):
         return man_config.make_game('./GameProps/XCaptSowOwn.txt')
 
-    def test_tie(self, game):
+    def test_tie(self, game_data):
 
+        game = game_data[0]
         game.turn = False
         assert game.board == [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
         assert game.blocked == [False, False, False, False, False, False, False, False, False, False, False, False]
@@ -318,7 +319,9 @@ class TestXCaptSowOwn:
         assert cond.name == "TIE"
 
 
-    def test_win(self, game):
+    def test_win(self, game_data):
+
+        game = game_data[0]
 
         game.turn = False
         assert game.board == [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]

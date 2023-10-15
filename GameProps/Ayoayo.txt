@@ -14,8 +14,9 @@
       "oppsidecapt": true,
       "crosscapt": true,
       "xcpickown": 1,
-      "skip_start": true,
-
+      "skip_start": true
+   },
+   "player": {
       "scorer": {
          "stores_m": 4,
          "access_m": 0,

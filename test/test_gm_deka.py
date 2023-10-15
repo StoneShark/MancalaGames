@@ -14,11 +14,13 @@ from context import man_config
 class TestDeka:
 
     @pytest.fixture
-    def game(self):
+    def game_data(self):
         return man_config.make_game('./GameProps/Deka.txt')
 
 
-    def test_true_win(self, game):
+    def test_true_win(self, game_data):
+
+        game = game_data[0]
 
         game.turn = False
         assert game.turn is False

@@ -6,7 +6,6 @@
    },
    "game_info": {
       "name": "NamNam",
-      "difficulty": 1,
       "about": "NamNam: a multi-lap mancala played in rounds.\n\nThe goal is to claim ownership of at least 9\nholes. Each player initially owns the holes on\n their side of the board. Owners of holes are\nupdated at the start of each round based on\nthe number of seeds captured in the previous\nround.\n\nCaptures are on 4s on the final sown seed by\nthe sower (regardless of hole owner). The seeds \nof any hole owned by the sower that is sown to 4\nare captured.",
       "convert_cnt": 9,
       "mlaps": true,
@@ -17,8 +16,9 @@
       "stores": true,
       "capt_on": [4],
       "goal": 2,
-      "sow_capt_all": true,
-      
+      "sow_capt_all": true
+   },
+   "player": {
       "scorer": {
          "stores_m": 4,
          "access_m": 0,
