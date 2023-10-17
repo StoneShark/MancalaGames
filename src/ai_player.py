@@ -35,7 +35,7 @@ class ScoreParams:
     empties_m: int = 0
     child_cnt_m: int = 0
     evens_m: int = 0
-    easy_rand: int = 20
+    easy_rand: int = 0
     repeat_turn: int = 0
 
 

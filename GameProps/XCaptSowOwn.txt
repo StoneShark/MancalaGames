@@ -18,10 +18,10 @@
    "player": {
       "algorithm": "minimaxer",
       "scorer": {
-         "stores_m": 4,
-         "access_m": 0,
-         "seeds_m": 0,
-         "empties_m": 1,
+         "stores_m": 8,
+         "access_m": 4,
+         "seeds_m": -1,
+         "empties_m": -8,
          "child_cnt_m": 0,
          "evens_m": 0,
          "easy_rand": 0,
