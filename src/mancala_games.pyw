@@ -10,6 +10,7 @@ Created on Thu Mar 30 13:43:39 2023
 
 # %% import
 
+import functools as ft
 import json
 import os.path
 import traceback
@@ -54,6 +55,17 @@ DISABLED = 'disabled'
 ACTIVE = 'active'
 NORMAL = 'normal'
 
+# types from the params file
+INT_TYPE = 'int'
+STR_TYPE = 'str'
+BOOL_TYPE = 'bool'
+MSTR_TYPE = 'multi_str'
+LIST_TYPE = 'list[int]'
+
+
+SKIP_TAB = 'skip'
+OPT_TAG = '_'
+GI_TAG = 'game_info _'
 
 # %%
 
@@ -120,6 +132,9 @@ class MancalaGames(tk.Frame):
         self.tktexts = {}
         self.udir_frame = None
         self.param_changed = False
+        self.tabs = {}
+        self.desc = None
+        self.prev_option = None
 
         self.master = tk.Tk()
 
@@ -134,20 +149,8 @@ class MancalaGames(tk.Frame):
         self._create_menus()
         self._add_commands_ui()
         self._read_params_file()
-
-        extra_tabs =  set(self.params.tab) - {'skip'} - set(PARAM_TABS)
-        tabs = PARAM_TABS + tuple(extra_tabs)
-
-        tab_control = ttk.Notebook(self)
-        self.tabs = {}
-        for tab_name in tabs:
-
-            tab = ttk.Frame(tab_control, padding=3)
-            self.tabs[tab_name] = tab
-            tab_control.add(tab, text=tab_name, padding=5)
-        tab_control.pack(expand = 1, fill ="both")
-
-        # TODO add hints pane below the notebook
+        self._add_tabs()
+        self._create_desc_pane()
 
         self._make_tkvars()
         self._make_ui_elements()
@@ -158,7 +161,7 @@ class MancalaGames(tk.Frame):
         """Remove the traces from the tk variables.
         Don't change the name, we're overriding Frame method."""
 
-        for name, var in self.tkvars.items():
+        for var in self.tkvars.values():
             if isinstance(var, list):
                 for cvar in var:
                     cvar.trace_remove(*cvar.trace_info()[0])
@@ -236,18 +239,66 @@ class MancalaGames(tk.Frame):
         return self.params.itertuples(index=False)
 
 
+    def _add_tabs(self):
+        """Determine what tabs are needed and add them."""
+
+        extra_tabs =  set(self.params.tab) - {SKIP_TAB} - set(PARAM_TABS)
+        tabs = PARAM_TABS + tuple(extra_tabs)
+
+        tab_control = ttk.Notebook(self)
+        for tab_name in tabs:
+
+            tab = ttk.Frame(tab_control, padding=3)
+            self.tabs[tab_name] = tab
+            tab_control.add(tab, text=tab_name, padding=5)
+        tab_control.pack(expand = 1, fill ="both")
+
+
+    def _create_desc_pane(self):
+        """Build the label desc pane."""
+
+        dframe = tk.Frame(self)
+        dframe.pack(side='bottom')
+
+        self.desc = tk.Text(dframe, width=60, height=8)
+
+        scroll = tk.Scrollbar(dframe)
+        self.desc.configure(yscrollcommand=scroll.set)
+        self.desc.pack(side='left')
+
+        scroll.config(command=self.desc.yview)
+        scroll.pack(side='right', fill='y')
+        self.desc.pack(expand=True, fill=tk.BOTH)
+
+
+    def _update_desc(self, option, _):
+        """We've enter a new widget, update desc text."""
+
+        if self.prev_option == option:
+            return
+        self.prev_option = option
+
+        ptable = self.params
+        # TODO there must be a better way to get a single cell from a DF
+        desc_text = list(ptable.loc[ptable.option==option].description)[0]
+
+        self.desc.delete('1.0', 'end')
+        self.desc.insert('1.0', desc_text)
+
+
+
     @staticmethod
     def _get_construct_default(vtype, cspec, option):
         """The defaults in the parameter table yield a playable game,
         they are not the actual construction defaults."""
 
-        if cspec == 'game_info _':
+        if cspec == GI_TAG:
             return gi.GameInfo.get_default(option)
 
-        if vtype in ('str', 'multi_str'):
+        if vtype in (STR_TYPE, MSTR_TYPE):
             return ""
 
-        if vtype == 'int':
+        if vtype == INT_TYPE:
             return 0
 
         return False
@@ -265,7 +316,7 @@ class MancalaGames(tk.Frame):
 
         vdict = game_config
         for tag in tags:
-            if tag == '_':
+            if tag == OPT_TAG:
                 if option in vdict:
                     return vdict[option]
                 return None
@@ -291,7 +342,7 @@ class MancalaGames(tk.Frame):
                 vdict[tag] = {}
             vdict = vdict[tag]
 
-        if tags[-1] == '_':
+        if tags[-1] == OPT_TAG:
             vdict[option] = value
         else:
             vdict[tags[-1]] = value
@@ -305,7 +356,7 @@ class MancalaGames(tk.Frame):
 
         elif name == ckey.UDIR_HOLES:
             ptable = self.params
-            boxes = int(ptable.loc[ptable.option=='holes'].ui_default)
+            boxes = int(ptable.loc[ptable.option==ckey.HOLES].ui_default)
 
         else:
             raise ValueError(f"Don't know list length for {name}.")
@@ -313,23 +364,34 @@ class MancalaGames(tk.Frame):
         return boxes
 
 
+    def _add_watchers(self):
+        """Add the watchers to all the tk variables."""
+
+        for var in self.tkvars.values():
+            if isinstance(var, list):
+                for cvar in var:
+                    cvar.trace_add('write', self._tkvalue_changed)
+            else:
+                var.trace_add('write', self._tkvalue_changed)
+
+
     def _make_tkvars(self):
         """Create the tk variables described by the parameters file."""
 
         for tab, option, _, _, vtype, default, *_ in self._param_tuples():
-            if tab == 'skip' or vtype == 'multi_str':
+            if tab == SKIP_TAB or vtype == MSTR_TYPE:
                 continue
 
-            if vtype == 'str':
+            if vtype == STR_TYPE:
                 self.tkvars[option] = tk.StringVar(self.master, default,
                                                    name=option)
-            elif vtype == 'bool':
+            elif vtype == BOOL_TYPE:
                 self.tkvars[option] = tk.BooleanVar(self.master, default,
                                                     name=option)
-            elif vtype == 'int':
+            elif vtype == INT_TYPE:
                 self.tkvars[option] = tk.IntVar(self.master, default,
                                                 name=option)
-            elif vtype == 'list[int]':
+            elif vtype == LIST_TYPE:
                 boxes = MAKE_LVARS[option]
                 self.tkvars[option] = [tk.BooleanVar(self.master, False,
                                                      name=f'{option}_{i}')
@@ -337,17 +399,12 @@ class MancalaGames(tk.Frame):
 
             elif vtype in string_dicts:
                 _, inv_dict = string_dicts[vtype]
-                default = list(inv_dict.values())[eval(default)]
-                self.tkvars[option] = tk.StringVar(self.master, default,
+                value = list(inv_dict.values())[eval(default)]
+                self.tkvars[option] = tk.StringVar(self.master, value,
                                                    name=option)
 
         # don't add the traces until all the variables are made
-        for var in self.tkvars.values():
-            if isinstance(var, list):
-                for cvar in var:
-                    cvar.trace_add('write', self._tkvalue_changed)
-            else:
-                var.trace_add('write', self._tkvalue_changed)
+        self._add_watchers()
 
 
     def _tkvalue_changed(self, var, index, mode):
@@ -388,6 +445,7 @@ class MancalaGames(tk.Frame):
 
     def _make_text_entry(self, frame, option, text, row, col):
         """Make a text box entry with scroll bar."""
+        # pylint: disable=too-many-arguments
 
         tframe = tk.LabelFrame(frame, text=text, labelanchor='nw')
         tframe.grid(row=row, column=col, columnspan=2, rowspan=2)
@@ -402,11 +460,47 @@ class MancalaGames(tk.Frame):
         scroll.config(command=text_box.yview)
         scroll.pack(side='right', fill='y')
 
+        tframe.bind('<Enter>', ft.partial(self._update_desc, option))
+
+
+    def _make_entry(self, frame, option, text, vtype, row, col):
+        """Make a single line string entry."""
+        # pylint: disable=too-many-arguments
+
+        length = 5 if vtype == INT_TYPE else 20
+
+        lbl = tk.Label(frame, text=text)
+        lbl.grid(row=row, column=col)
+
+        ent = tk.Entry(frame,  width=length,
+                 textvariable=self.tkvars[option])
+        ent.grid(row=row, column=col + 1)
+
+        lbl.bind('<Enter>', ft.partial(self._update_desc, option))
+        ent.bind('<Enter>', ft.partial(self._update_desc, option))
+
+
+    def _make_checkbox(self, frame, option, text, row, col):
+        """Make a labeled checkbox."""
+        # pylint: disable=too-many-arguments
+
+        lbl = tk.Label(frame, text=text)
+        lbl.grid(row=row, column=col)
+
+        box = tk.Checkbutton(frame, variable=self.tkvars[option])
+        box.grid(row=row, column=col + 1)
+        box.grid(row=row, column=col + 1)
+
+        lbl.bind('<Enter>', ft.partial(self._update_desc, option))
+        box.bind('<Enter>', ft.partial(self._update_desc, option))
+
 
     def _make_checkbox_list(self, frame, option, text, row, col):
         """Make a list of checkboxes."""
+        # pylint: disable=too-many-arguments
 
-        tk.Label(frame, text=text).grid(row=row, column=col)
+        lbl = tk.Label(frame, text=text)
+        lbl.grid(row=row, column=col)
 
         boxes = self._get_boxes_config(option)
         boxes_fr = tk.Frame(frame)
@@ -419,17 +513,25 @@ class MancalaGames(tk.Frame):
                            variable=self.tkvars[option][nbr - 1]
                            ).pack(side='left')
 
+        lbl.bind('<Enter>', ft.partial(self._update_desc, option))
+        boxes_fr.bind('<Enter>', ft.partial(self._update_desc, option))
 
-    def _make_enum_option_list(self, frame, option, text, vtype, row, col):
+
+    def _make_option_list(self, frame, option, text, vtype, row, col):
         """Make an option list corresponding to the enum type."""
         # pylint: disable=too-many-arguments
 
         values = list(string_dicts[vtype][0].keys())
 
-        tk.Label(frame, text=text).grid(row=row, column=col)
+        lbl = tk.Label(frame, text=text)
+        lbl.grid(row=row, column=col)
+
         opmenu = tk.OptionMenu(frame, self.tkvars[option], *values)
         opmenu.config(width=2 + max(len(str(val)) for val in values))
         opmenu.grid(row=row, column=col + 1)
+
+        lbl.bind('<Enter>', ft.partial(self._update_desc, option))
+        opmenu.bind('<Enter>', ft.partial(self._update_desc, option))
 
 
     def _make_ui_elements(self):
@@ -438,37 +540,25 @@ class MancalaGames(tk.Frame):
         for param in self._param_tuples():
             tab, option, text, _, vtype, _, row, col, *_ = param
 
-            if tab == 'skip':
+            if tab == SKIP_TAB:
                 continue
 
             frame = self.tabs[tab]
 
-            if vtype == 'multi_str':
+            if vtype == MSTR_TYPE:
                 self._make_text_entry(frame, option, text, row, col)
 
-            elif vtype == 'str':
-                tk.Label(frame, text=text).grid(row=row, column=col)
-                tk.Entry(frame,  width=15,
-                         textvariable=self.tkvars[option]
-                         ).grid(row=row, column=col + 1)
+            elif vtype in (STR_TYPE, INT_TYPE):
+                self._make_entry(frame, option, text, vtype, row, col)
 
-            elif vtype == 'int':
-                tk.Label(frame, text=text).grid(row=row, column=col)
-                tk.Entry(frame, width=5,
-                         textvariable=self.tkvars[option]
-                         ).grid(row=row, column=col + 1)
+            elif vtype == BOOL_TYPE:
+                self._make_checkbox(frame, option, text, row, col)
 
-            elif vtype == 'bool':
-                tk.Label(frame, text=text).grid(row=row, column=col)
-                tk.Checkbutton(frame, variable=self.tkvars[option]
-                               ).grid(row=row, column=col + 1)
-
-            elif vtype == 'list[int]':
+            elif vtype == LIST_TYPE:
                 self._make_checkbox_list(frame, option, text, row, col)
 
             elif vtype in string_dicts:
-                self._make_enum_option_list(frame, option, text, vtype,
-                                            row, col)
+                self._make_option_list(frame, option, text, vtype, row, col)
 
 
     def _fill_tk_from_config(self, game_config):
@@ -476,21 +566,21 @@ class MancalaGames(tk.Frame):
         dict."""
 
         for tab, option, _, cspec, vtype, *_  in self._param_tuples():
-            if tab == 'skip':
+            if tab == SKIP_TAB:
                 continue
 
             value = self._get_gc_value(game_config, cspec, option)
             if value is None:
                 value = self._get_construct_default(vtype, cspec, option)
 
-            if vtype == 'multi_str':
+            if vtype == MSTR_TYPE:
                 self.tktexts[option].delete('1.0', 'end')
                 self.tktexts[option].insert('1.0', value)
 
-            elif vtype in ('str', 'bool', 'int'):
+            elif vtype in (STR_TYPE, BOOL_TYPE, INT_TYPE):
                 self.tkvars[option].set(value)
 
-            elif vtype == 'list[int]':
+            elif vtype == LIST_TYPE:
 
                 for var in self.tkvars[option]:
                     var.set(False)
@@ -512,16 +602,16 @@ class MancalaGames(tk.Frame):
         game_config = {}
 
         for tab, option, _, cspec, vtype, *_ in self._param_tuples():
-            if tab == 'skip':
+            if tab == SKIP_TAB:
                 continue
 
-            if vtype == 'multi_str':
+            if vtype == MSTR_TYPE:
                 value = self.tktexts[option].get('1.0', 'end')
 
-            elif vtype in ('str', 'bool', 'int'):
+            elif vtype in (STR_TYPE, BOOL_TYPE, INT_TYPE):
                 value = self.tkvars[option].get()
 
-            elif vtype == 'list[int]':
+            elif vtype == LIST_TYPE:
                 value = [nbr
                          for nbr, var in enumerate(self.tkvars[option])
                          if var.get()]
@@ -653,20 +743,20 @@ class MancalaGames(tk.Frame):
         self.loaded_config = None
 
         for tab, option, _, _, vtype, default, *_ in self._param_tuples():
-            if tab == 'skip':
+            if tab == SKIP_TAB:
                 continue
 
-            if vtype == 'multi_str':
+            if vtype == MSTR_TYPE:
                 self.tktexts[option].delete('1.0', 'end')
                 self.tktexts[option].insert('1.0', default)
 
             elif vtype in string_dicts:
 
                 _, inv_dict = string_dicts[vtype]
-                default = list(inv_dict.values())[eval(default)]
-                self.tkvars[option].set(default)
+                value = list(inv_dict.values())[eval(default)]
+                self.tkvars[option].set(value)
 
-            elif vtype == 'list[int]':
+            elif vtype == LIST_TYPE:
                 for var in self.tkvars[option]:
                     var.set(False)
 

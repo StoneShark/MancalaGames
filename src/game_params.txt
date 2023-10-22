@@ -33,7 +33,7 @@ Sow	sow_direct	Sow Direction	game_info _	Direct	Direct.CCW	0	0	"Direction of sow
 CW: clockwise
 CCW: counter-clockwise
 SPLIT: left holes sow counter-clockwise and right holes sow clockwise, an odd middle hole must be set as udir_hole
-Any hole can be set as udir_hole to override the sow_direct setting."							x	x						
+Any hole can be set as udir_hole to aloow the user to override the sow_direct setting."							x	x						
 Sow	sow_start	Sow Start Hole	game_info _	bool	False	1	0	"When x, the first seed is sown (left) into the start hole."						x		x						
 Sow	move_one	Move One Seed	game_info _	bool	False	5	0	"Only valid when sow_start is set. Changes the sow_start behavior so that if there is only one seed in the hole, it is moved in the sow direction one hole."						x								
 Sow	skip_start	Skip Start on Lap	game_info _	bool	False	2	0	"When sowing a second or subsequent circuit of the board, skip the start hole. This will leave the start hole empty for single lap games."					x			x						
