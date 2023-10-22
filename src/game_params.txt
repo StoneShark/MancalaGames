@@ -1,15 +1,15 @@
-tab	option	text	cspec	type	ui_default	row	col	description	change	new_game	allow	moves	incr	starter	get_dir	sower	capt_ok	capturer	ender	quitter	gstr	pad
+tab	option	text	cspec	vtype	ui_default	row	col	description	change	new_game	allow	moves	incr	starter	get_dir	sower	capt_ok	capturer	ender	quitter	gstr	pad
 skip	nbr_holes			int		0	0	An init only parameter that is used to check the other parameters in the creation of game info.														
 skip	rules			RuleDict		0	0	An init only parameter that used to check the consistency of the flags. Errors and warnings are raised as the rules are processed.														
-Game	class	Game Class	game_class	str	Mancala	0	0															
+Game	class	Game Class	game_class	str	Mancala	0	0	The name of the Game Class. Currently only Mancala.														
 Game	name	Game Name	game_info _	str	Mancala	0	2	"The game name, may have spaces. Used for the config filename and the window title."														
 Game	help_file	Help File	game_info _	str	mancala_help.html	3	0	An html help file describing the game.	Should we keep this? A help file for an individual game? A help file for the Mancala UI?													
 Game	about	About	game_info _	multi_str	Capture on evens. 	4	0	Short string describing the game possibly in multiple lines. Enough to remind the player what the game options are.	"Fix the type for about text, make it a multililne input"													
-Game	holes	Holes per Side	game_constants _	int	3	2	0															
-Game	nbr_start	Start Seeds	game_constants _	int	4	2	2															
+Game	holes	Holes per Side	game_constants _	int	3	2	0	Number of holes on each side of the board. Start Pattern may use this number differently.														
+Game	nbr_start	Start Seeds	game_constants _	int	4	2	2	"Generally, number of seeds in each hole at the start of a game. "														
 Dynamics	mustpass	Must Pass	game_info _	bool	False	1	0	"If a player has no allowable moves on their turn they must pass, until they have allowable moves. The game is over when neither play has an allowable move."				x							x	x		
 Dynamics	rounds	Rounds	game_info _	bool	False	4	0	Is the game played in rounds?		x									x	x		
-Dynamics	round_starter	Round Starter	game_info _	RoundStarter	RoundStarter.ALTERNATE	5	0	"Defines which player starts 2nd and subsequent rounds.
+Dynamics	round_starter	Round Starter	game_info _	RoundStarter	ALTERNATE	5	0	"Defines which player starts 2nd and subsequent rounds.
 ALTERNATE: the round starter alternates
 LOSER: the loser of the previous round starts the current round
 WINNER: the winner of the previous round starts the current round"		x												
@@ -17,11 +17,11 @@ Dynamics	rnd_left_fill	Round Left Fill	game_info _	bool	False	6	0	"When starting
 Dynamics	rnd_umove	Round User Relocate	game_info _	bool	False	7	0	Allow the user to move the holes filled at the start of a round.														
 Dynamics	no_sides	No Sides	game_info _	bool	False	1	2	"Holes are not owned. All holes are candidates for allowables and moves. Moves need specify side, position and directions.  "			x	x		x					x	x		
 Dynamics	stores	Stores	game_info _	bool	True	0	0	Are stores present on the UI. Stores might not be on the UI but used if seeds are taken out of play.		x									x	x		
-Dynamics	goal	Game Goal	game_info _	Goal	Goal.MAX_SEEDS	0	2	"The overall goal of the game. Defines how a player wins.
+Dynamics	goal	Game Goal	game_info _	Goal	MAX_SEEDS	0	2	"The overall goal of the game. Defines how a player wins.
 MAX_SEEDS: player with the maximum number of seeds at the end of the game wins or they collect more than half of the total seeds
 DEPRIVE: eliminate all of your opponents seeds.
 TERRITORY: claim ownership of holes. Each round the ownership of holes is determined by the number of seeds captured in the previous round."		x									x		x	
-Dynamics	start_pattern	Start Pattern	game_info _	StartPattern	StartPattern.ALL_EQUAL	2	2	"Allows specifing non-all-equal start patterns. Four patterns are supported:
+Dynamics	start_pattern	Start Pattern	game_info _	StartPattern	ALL_EQUAL	2	2	"Allows specifing non-all-equal start patterns. Four patterns are supported:
 GAMACHA: starting from the third hold (from start player's left) place nbr_seeds in every other hole, the first move is prescribed move the center hole's seeds to the other side (this is done automatically).
 SADEQA_ONE: everyother hole is filled with nbr_seeds, no seeds end up opposite eachother. If a player has fewer seeds than their opponent, then they start.
 SADEQA_TWO: like SAEQA_ONE except the starter's 2nd from right hole with nbr_seeds is replaced with one seed.
@@ -29,18 +29,19 @@ TAPATA: pattern of 0 S S (where S is nbr_seeds) is used to fill the holes; if a 
 Allow	min_move	Minimum Seeds for Move	game_info _	int	1	0	0	The minimum number of seeds a hole must have for it to be an allowable move start hole.			x								x	x		
 Allow	opp_or_empty	Mlap Must Reach Opp	game_info _	bool	False	2	0	Limit the allowable holes to those that end in an empty hole or reach the opponents side of the board.			x											
 Allow	mustshare	Must Share	game_info _	bool	False	1	0	"If an opponent has no moves at the start of your turn, you must make seeds available to them"	Need to decide as implemented (sow seeds to opp) OR leave opp with seeds.		x								x	x		
-Sow	sow_direct	Sow Direction	game_info _	Direct	Direct.CCW	0	0	"Direction of sow:
+Sow	sow_direct	Sow Direction	game_info _	Direct	CCW	0	0	"Direction of sow:
 CW: clockwise
 CCW: counter-clockwise
 SPLIT: left holes sow counter-clockwise and right holes sow clockwise, an odd middle hole must be set as udir_hole
 Any hole can be set as udir_hole to aloow the user to override the sow_direct setting."							x	x						
-Sow	sow_start	Sow Start Hole	game_info _	bool	False	1	0	"When x, the first seed is sown (left) into the start hole."						x		x						
+Sow	sow_start	Sow Start Hole	game_info _	bool	False	1	0	"When selected, the first seed is sown into  (i.e. left in) the start hole."						x		x						
 Sow	move_one	Move One Seed	game_info _	bool	False	5	0	"Only valid when sow_start is set. Changes the sow_start behavior so that if there is only one seed in the hole, it is moved in the sow direction one hole."						x								
 Sow	skip_start	Skip Start on Lap	game_info _	bool	False	2	0	"When sowing a second or subsequent circuit of the board, skip the start hole. This will leave the start hole empty for single lap games."					x			x						
 Sow	sow_own_store	Sow Own Store	game_info _	bool	False	3	0	Sow seeds into your own store when passing it. Do not sow into your opponents store.								x						
 Sow	blocks	Blocks	game_info _	bool	False	4	0	"Blocks remove holes from play. Seeds are not sown into them. Turns may not start from them. Generally they are emptied before being blocked, but any seeds left in them are not counted in determining game outcome."	Confirm description is how implemented.	x			x			x					x	
 Sow	mlaps	Multilap Sow	game_info _	bool	False	0	2	"Sow is done in multiple laps: when the first sow ends, if there is more than one seed in the final hole sown, pickup those seeds and continue sowing."								x						
-Sow	mlaps_next	Multlap Sow Next	game_info _	bool	False	1	2	Like mlap except the sowing starts with the seeds in the hole next (in sow direction) to the final hole sowed.	"Indian style lap sowing, or should mlaps be an enumeration?"													
+Sow	mlaps_next	Multlap Sow Next	game_info _	bool	False	1	2	"Like mlap except the sowing starts with the seeds in the hole next (in sow direction) to the final hole sowed.
+Not implemented yet."	"Indian style lap sowing, or should mlaps be an enumeration?"													
 Sow	visit_opp	Visit Opp for Mlaps	game_info _	bool	False	2	2	Sow is multiplap only if the first sow reaches the opponents side of the board.								x						
 Sow	waldas	Waldas	game_info _	bool	False	3	2	"Children (now called waldas) are created in the usual way but in limited locations. Many capture methods are supported but there are not any stores to capture into. Captures are instead moved into waldas, thus a player may not capture until they have created a walda.
 Each play may create up to 6 waldas: on either end of each side of the board and the next outer hole on their own side of the board. Note that there are only 8 total places that waldas maybe created."										x	x			
@@ -66,13 +67,13 @@ Capture	evens	Capture Evens	game_info _	bool	True	3	0	"Capture when a hole conta
 Capture	capt_max	Capture Max	game_info _	int	0	4	0	Capture when the contents of the hole are less than or equal to capt_max.									x	x				
 Capture	capt_min	Capture Min	game_info _	int	0	5	0	Capture when the contents of the hole are greater than or equal to capt_min.									x	x				
 Capture	nosinglecapt	No Single Seed Capture	game_info _	bool	False	4	2	"If the selected start hole contains one seed, no capture may be made with it."										x				
-Capture	crosscapt	Cross-Capture	game_info _	bool	False	0	2											x				
-Capture	xcpickown	Own Seed on Xcapture	game_info _	CrossCaptOwn	CrossCaptOwn.LEAVE	1	2	"When crosscapt is set, defines what to do with the single seed initiating the cross capture.
+Capture	crosscapt	Cross-Capture	game_info _	bool	False	0	2	"If the last sown seed is put in an empty hole, any seeds on the opposite side of the board are captured."										x				
+Capture	xcpickown	Own Seed on Xcapture	game_info _	CrossCaptOwn	LEAVE	1	2	"When crosscapt is set, defines what to do with the single seed initiating the cross capture.
 LEAVE: always leave the signle seed
 PICK_ON_CAPTURE: only pick (capture) the seed if there was a capture.
 ALWAYS_PICK: always pick (capture) the seed, even if there was not a capture"										x				
 Capture	multicapt	Multiple Captures	game_info _	bool	False	2	0	"After the initial capture, continue capturing as long as the capture conditions are met."										x				
-Capture	grandslam	Grand Slam	game_info _	GrandSlam	GrandSlam.LEGAL	2	2	"A grandslam is when your opponent has seeds at the start of your turn and you capture them all. This option selects what to do:
+Capture	grandslam	Grand Slam	game_info _	GrandSlam	LEGAL	2	2	"A grandslam is when your opponent has seeds at the start of your turn and you capture them all. This option selects what to do:
 LEGAL: the seeds are captured
 NOT_LEGAL: you may not capture all of your opponents seeds, a move which would do so is not allowed
 NO_CAPT: you may sow the seeds, but the capture is not performed
@@ -81,12 +82,12 @@ LEAVE_LEFT: the capture is performed from all but the leftmost hole from the sow
 LEAVE_RIGHT: the capture is performed from all but the rightmost hole from the sower perspective. This might leave your oppenents without seeds."			x							x				
 Capture	capt_on	Capture On Values	game_info _	list[int]	[]	6	2	Capture when the contents of the hole is in the capt_on list.									x	x				
 Capture	capttwoout	Capture Two Out	game_info _	bool	False	6	0	"Capture when end in a hole with seeds, and the next hole is empty, then capture the seeds in the following hole."										x				
-Player	stores_m	Stores mult	player scorer _	int	4	0	0															
-Player	access_m	Access mult	player scorer _	int	0	1	0															
-Player	seeds_m	Seeds mult	player scorer _	int	0	2	0															
-Player	empties_m	Empties mult	player scorer _	int	0	3	0															
-Player	child_cnt_m	Child Count mult	player scorer _	int	0	4	0															
-Player	evens_m	Evens mult	player scorer _	int	0	5	0															
-Player	easy_rand	Easy Random Addin	player scorer _	int	0	6	0															
-Player	repeat_turn	Repeat Turn mult	player scorer _	int	0	7	0															
+Player	stores_m	Stores mult	player scorer _	int	4	0	0	Stores mult														
+Player	access_m	Access mult	player scorer _	int	0	1	0	Access mult														
+Player	seeds_m	Seeds mult	player scorer _	int	0	2	0	Seeds mult														
+Player	empties_m	Empties mult	player scorer _	int	0	3	0	Empties mult														
+Player	child_cnt_m	Child Count mult	player scorer _	int	0	4	0	Child Count mult														
+Player	evens_m	Evens mult	player scorer _	int	0	5	0	Evens mult														
+Player	easy_rand	Easy Random Addin	player scorer _	int	0	6	0	Easy Random Addin														
+Player	repeat_turn	Repeat Turn mult	player scorer _	int	0	7	0	Repeat Turn mult														
 Player	difficulty	Default Difficulty	player _	int	1	0	2	"The default difficulty. Can be changed at play time, even during game play, in the Mancala UI."														

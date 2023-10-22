@@ -10,9 +10,11 @@ Created on Thu Mar 30 13:43:39 2023
 
 # %% import
 
+import collections
 import functools as ft
 import json
 import os.path
+import textwrap
 import traceback
 import warnings
 import tkinter as tk
@@ -36,7 +38,6 @@ from game_interface import Goal
 from game_interface import GrandSlam
 from game_interface import RoundStarter
 from game_interface import StartPattern
-from game_log import game_log
 
 
 
@@ -45,6 +46,8 @@ from game_log import game_log
 
 MAKE_LVARS = {ckey.CAPT_ON: 5,
               ckey.UDIR_HOLES: MAX_HOLES + 1}
+
+DESC_WIDTH = 60
 
 # these are the expected tabs, put them in this order (add any extras)
 PARAM_TABS = ('Game', 'Dynamics', 'Allow', 'Sow', 'Capture', 'Player')
@@ -69,22 +72,26 @@ GI_TAG = 'game_info _'
 
 # %%
 
+LDicts = collections.namedtuple('LDicts', 'str_dict, int_dict, enum_dict')
 
-def dict_inv_dict(adict):
-    """Invert the keys and values for a reverse lookup."""
+def lookup_dicts(etype, adict):
+    """Return the dict, it's inverse, and enumeration: value dict
+    for the enum (etype)."""
 
     vals = adict.values()
     assert len(vals) == len(set(vals)), 'values not unique for adict'
-    return [adict, {value: key for key, value in adict.items()}]
+    return LDicts(adict,
+                  {value: key for key, value in adict.items()},
+                  {e.name: e for e in etype})
 
 
-string_dicts = {
-    'Direct': dict_inv_dict(
+STRING_DICTS = {
+    'Direct': lookup_dicts(Direct,
         {'Clockwise': Direct.CW,
          'Counter-clockwise': Direct.CCW,
          'Split': Direct.SPLIT}),
 
-    'GrandSlam': dict_inv_dict(
+    'GrandSlam': lookup_dicts(GrandSlam,
         {"Legal": GrandSlam.LEGAL,
          "Not Legal": GrandSlam.NOT_LEGAL,
          "Legal but no capture": GrandSlam.NO_CAPT,
@@ -92,28 +99,30 @@ string_dicts = {
          "Legal but leave leftmost": GrandSlam.LEAVE_LEFT,
          "Legal but leave rightmost": GrandSlam.LEAVE_RIGHT}),
 
-    'RoundStarter': dict_inv_dict(
+    'RoundStarter': lookup_dicts(RoundStarter,
         {'Alternate': RoundStarter.ALTERNATE,
          'Round Winner': RoundStarter.WINNER,
          'Round Loser': RoundStarter.LOSER}),
 
-    'CrossCaptOwn': dict_inv_dict(
+    'CrossCaptOwn': lookup_dicts(CrossCaptOwn,
         {'Leave': CrossCaptOwn.LEAVE,
          'Pick on Capture': CrossCaptOwn.PICK_ON_CAPT,
          'Alway Pick': CrossCaptOwn.ALWAYS_PICK}),
 
-    'StartPattern': dict_inv_dict(
+    'StartPattern': lookup_dicts(StartPattern,
         {'All Equal': StartPattern.ALL_EQUAL,
          'Gamacha': StartPattern.GAMACHA,
          'Alternates': StartPattern.SADEQA_ONE,
          'Alts with 1': StartPattern.SADEQA_TWO,
          'Tapata': StartPattern.TAPATA}),
 
-    'Goal': dict_inv_dict(
+    'Goal': lookup_dicts(Goal,
         {'Max Seeds': Goal.MAX_SEEDS,
          'Deprive Opponent': Goal.DEPRIVE,
          'Territory': Goal.TERRITORY}),
 }
+
+
 
 
 # %%  game params UI
@@ -173,7 +182,6 @@ class MancalaGames(tk.Frame):
     def _exception_callback(*args):
         """Support debugging by printing the play_log and the traceback."""
 
-        game_log.dump()
         traceback.print_exception(args[0], args[1], args[2])
 
 
@@ -234,7 +242,7 @@ class MancalaGames(tk.Frame):
 
 
     def _param_tuples(self):
-        """An iterator that goes through the params as tuples."""
+        """An iterator that goes through the params as named tuples."""
 
         return self.params.itertuples(index=False)
 
@@ -257,10 +265,11 @@ class MancalaGames(tk.Frame):
     def _create_desc_pane(self):
         """Build the label desc pane."""
 
-        dframe = tk.Frame(self)
-        dframe.pack(side='bottom')
+        dframe = tk.LabelFrame(self, text='Param Description',
+                               labelanchor='nw')
+        dframe.pack(side='bottom', expand=True, fill=tk.BOTH)
 
-        self.desc = tk.Text(dframe, width=60, height=8)
+        self.desc = tk.Text(dframe, width=DESC_WIDTH, height=8)
 
         scroll = tk.Scrollbar(dframe)
         self.desc.configure(yscrollcommand=scroll.set)
@@ -278,13 +287,36 @@ class MancalaGames(tk.Frame):
             return
         self.prev_option = option
 
-        ptable = self.params
-        # TODO there must be a better way to get a single cell from a DF
-        desc_text = list(ptable.loc[ptable.option==option].description)[0]
+        opt_table = self.params.loc[self.params.option==option]
+
+        # XXXX there must be a better way to get a single cell from a DF
+        text = list(opt_table.text)[0]
+        desc = list(opt_table.description)[0]
+
+        paragraphs = desc.split('\n')
+        out_text = ''
+        for para in paragraphs:
+            fpara = textwrap.fill(para, DESC_WIDTH) + '\n\n'
+            out_text += fpara
+        desc = ''.join(out_text)
 
         self.desc.delete('1.0', 'end')
-        self.desc.insert('1.0', desc_text)
+        self.desc.insert('1.0', text + ':\n' + desc)
 
+
+    @staticmethod
+    def _get_config_value(game_config, param):
+        """Get the value from the configuration, if it's not there
+        use the constructor default."""
+
+        value = MancalaGames._get_gc_value(game_config,
+                                           param.cspec,
+                                           param.option)
+        if value is None:
+            value = MancalaGames._get_construct_default(param.vtype,
+                                                param.cspec,
+                                                param.option)
+        return value
 
 
     @staticmethod
@@ -378,30 +410,35 @@ class MancalaGames(tk.Frame):
     def _make_tkvars(self):
         """Create the tk variables described by the parameters file."""
 
-        for tab, option, _, _, vtype, default, *_ in self._param_tuples():
-            if tab == SKIP_TAB or vtype == MSTR_TYPE:
+        for param in self._param_tuples():
+            if param.tab == SKIP_TAB or param.vtype == MSTR_TYPE:
                 continue
 
-            if vtype == STR_TYPE:
-                self.tkvars[option] = tk.StringVar(self.master, default,
-                                                   name=option)
-            elif vtype == BOOL_TYPE:
-                self.tkvars[option] = tk.BooleanVar(self.master, default,
-                                                    name=option)
-            elif vtype == INT_TYPE:
-                self.tkvars[option] = tk.IntVar(self.master, default,
-                                                name=option)
-            elif vtype == LIST_TYPE:
-                boxes = MAKE_LVARS[option]
-                self.tkvars[option] = [tk.BooleanVar(self.master, False,
-                                                     name=f'{option}_{i}')
-                                       for i in range(boxes)]
+            if param.vtype == STR_TYPE:
+                self.tkvars[param.option] = tk.StringVar(self.master,
+                                                         param.ui_default,
+                                                         name=param.option)
+            elif param.vtype == BOOL_TYPE:
+                self.tkvars[param.option] = tk.BooleanVar(self.master,
+                                                          param.ui_default,
+                                                          name=param.option)
+            elif param.vtype == INT_TYPE:
+                self.tkvars[param.option] = tk.IntVar(self.master,
+                                                      param.ui_default,
+                                                      name=param.option)
+            elif param.vtype == LIST_TYPE:
+                boxes = MAKE_LVARS[param.option]
+                self.tkvars[param.option] = \
+                    [tk.BooleanVar(self.master, False,
+                                   name=f'{param.option}_{i}')
+                     for i in range(boxes)]
 
-            elif vtype in string_dicts:
-                _, inv_dict = string_dicts[vtype]
-                value = list(inv_dict.values())[eval(default)]
-                self.tkvars[option] = tk.StringVar(self.master, value,
-                                                   name=option)
+            elif param.vtype in STRING_DICTS:
+                _, inv_dict, enum_dict = STRING_DICTS[param.vtype]
+                value = inv_dict[enum_dict[param.ui_default]]
+                self.tkvars[param.option] = tk.StringVar(self.master,
+                                                         value,
+                                                         name=param.option)
 
         # don't add the traces until all the variables are made
         self._add_watchers()
@@ -443,15 +480,14 @@ class MancalaGames(tk.Frame):
                            ).pack(side='left')
 
 
-    def _make_text_entry(self, frame, option, text, row, col):
+    def _make_text_entry(self, frame, param):
         """Make a text box entry with scroll bar."""
-        # pylint: disable=too-many-arguments
 
-        tframe = tk.LabelFrame(frame, text=text, labelanchor='nw')
-        tframe.grid(row=row, column=col, columnspan=2, rowspan=2)
+        tframe = tk.LabelFrame(frame, text=param.text, labelanchor='nw')
+        tframe.grid(row=param.row, column=param.col, columnspan=2, rowspan=2)
 
         text_box = tk.Text(tframe, width=40, height=8)
-        self.tktexts[option] = text_box
+        self.tktexts[param.option] = text_box
 
         scroll = tk.Scrollbar(tframe)
         text_box.configure(yscrollcommand=scroll.set)
@@ -460,139 +496,133 @@ class MancalaGames(tk.Frame):
         scroll.config(command=text_box.yview)
         scroll.pack(side='right', fill='y')
 
-        tframe.bind('<Enter>', ft.partial(self._update_desc, option))
+        tframe.bind('<Enter>', ft.partial(self._update_desc, param.option))
 
 
-    def _make_entry(self, frame, option, text, vtype, row, col):
+    def _make_entry(self, frame, param):
         """Make a single line string entry."""
-        # pylint: disable=too-many-arguments
 
-        length = 5 if vtype == INT_TYPE else 20
+        length = 5 if param.vtype == INT_TYPE else 20
 
-        lbl = tk.Label(frame, text=text)
-        lbl.grid(row=row, column=col)
+        lbl = tk.Label(frame, text=param.text)
+        lbl.grid(row=param.row, column=param.col, sticky=tk.E)
 
         ent = tk.Entry(frame,  width=length,
-                 textvariable=self.tkvars[option])
-        ent.grid(row=row, column=col + 1)
+                 textvariable=self.tkvars[param.option])
+        ent.grid(row=param.row, column=param.col + 1, sticky=tk.W)
 
-        lbl.bind('<Enter>', ft.partial(self._update_desc, option))
-        ent.bind('<Enter>', ft.partial(self._update_desc, option))
+        lbl.bind('<Enter>', ft.partial(self._update_desc, param.option))
+        ent.bind('<Enter>', ft.partial(self._update_desc, param.option))
 
 
-    def _make_checkbox(self, frame, option, text, row, col):
+    def _make_checkbox(self, frame, param):
         """Make a labeled checkbox."""
-        # pylint: disable=too-many-arguments
 
-        lbl = tk.Label(frame, text=text)
-        lbl.grid(row=row, column=col)
+        lbl = tk.Label(frame, text=param.text)
+        lbl.grid(row=param.row, column=param.col, sticky=tk.E)
 
-        box = tk.Checkbutton(frame, variable=self.tkvars[option])
-        box.grid(row=row, column=col + 1)
-        box.grid(row=row, column=col + 1)
+        box = tk.Checkbutton(frame, variable=self.tkvars[param.option])
+        box.grid(row=param.row, column=param.col + 1, sticky=tk.W)
 
-        lbl.bind('<Enter>', ft.partial(self._update_desc, option))
-        box.bind('<Enter>', ft.partial(self._update_desc, option))
+        lbl.bind('<Enter>', ft.partial(self._update_desc, param.option))
+        box.bind('<Enter>', ft.partial(self._update_desc, param.option))
 
 
-    def _make_checkbox_list(self, frame, option, text, row, col):
+    def _make_checkbox_list(self, frame, param):
         """Make a list of checkboxes."""
-        # pylint: disable=too-many-arguments
 
-        lbl = tk.Label(frame, text=text)
-        lbl.grid(row=row, column=col)
+        lbl = tk.Label(frame, text=param.text)
+        lbl.grid(row=param.row, column=param.col, sticky=tk.E)
 
-        boxes = self._get_boxes_config(option)
+        boxes = self._get_boxes_config(param.option)
         boxes_fr = tk.Frame(frame)
-        boxes_fr.grid(row=row, column=1, columnspan=3)
-        if option == ckey.UDIR_HOLES:
+        boxes_fr.grid(row=param.row, column=param.col + 1,
+                      columnspan=3, sticky=tk.W)
+
+        if param.option == ckey.UDIR_HOLES:
             self.udir_frame = boxes_fr
 
         for nbr in range(1, boxes+1):
             tk.Checkbutton(boxes_fr, text=str(nbr),
-                           variable=self.tkvars[option][nbr - 1]
+                           variable=self.tkvars[param.option][nbr - 1]
                            ).pack(side='left')
 
-        lbl.bind('<Enter>', ft.partial(self._update_desc, option))
-        boxes_fr.bind('<Enter>', ft.partial(self._update_desc, option))
+        lbl.bind('<Enter>', ft.partial(self._update_desc, param.option))
+        boxes_fr.bind('<Enter>', ft.partial(self._update_desc, param.option))
 
 
-    def _make_option_list(self, frame, option, text, vtype, row, col):
+    def _make_option_list(self, frame, param):
         """Make an option list corresponding to the enum type."""
-        # pylint: disable=too-many-arguments
 
-        values = list(string_dicts[vtype][0].keys())
+        values = list(STRING_DICTS[param.vtype].str_dict.keys())
 
-        lbl = tk.Label(frame, text=text)
-        lbl.grid(row=row, column=col)
+        lbl = tk.Label(frame, text=param.text)
+        lbl.grid(row=param.row, column=param.col, sticky=tk.E)
 
-        opmenu = tk.OptionMenu(frame, self.tkvars[option], *values)
+        opmenu = tk.OptionMenu(frame, self.tkvars[param.option], *values)
         opmenu.config(width=2 + max(len(str(val)) for val in values))
-        opmenu.grid(row=row, column=col + 1)
+        opmenu.grid(row=param.row, column=param.col + 1, sticky=tk.W)
 
-        lbl.bind('<Enter>', ft.partial(self._update_desc, option))
-        opmenu.bind('<Enter>', ft.partial(self._update_desc, option))
+        lbl.bind('<Enter>', ft.partial(self._update_desc, param.option))
+        opmenu.bind('<Enter>', ft.partial(self._update_desc, param.option))
 
 
     def _make_ui_elements(self):
         """Make the UI elements corresponding to the parameter table."""
 
         for param in self._param_tuples():
-            tab, option, text, _, vtype, _, row, col, *_ = param
 
-            if tab == SKIP_TAB:
+            if param.tab == SKIP_TAB:
                 continue
 
-            frame = self.tabs[tab]
+            frame = self.tabs[param.tab]
 
-            if vtype == MSTR_TYPE:
-                self._make_text_entry(frame, option, text, row, col)
+            if param.vtype == MSTR_TYPE:
+                self._make_text_entry(frame, param)
 
-            elif vtype in (STR_TYPE, INT_TYPE):
-                self._make_entry(frame, option, text, vtype, row, col)
+            elif param.vtype in (STR_TYPE, INT_TYPE):
+                self._make_entry(frame, param)
 
-            elif vtype == BOOL_TYPE:
-                self._make_checkbox(frame, option, text, row, col)
+            elif param.vtype == BOOL_TYPE:
+                self._make_checkbox(frame, param)
 
-            elif vtype == LIST_TYPE:
-                self._make_checkbox_list(frame, option, text, row, col)
+            elif param.vtype == LIST_TYPE:
+                self._make_checkbox_list(frame, param)
 
-            elif vtype in string_dicts:
-                self._make_option_list(frame, option, text, vtype, row, col)
+            elif param.vtype in STRING_DICTS:
+                self._make_option_list(frame, param)
 
 
     def _fill_tk_from_config(self, game_config):
         """Set the tk vars (display vars) from the game_config
         dict."""
 
-        for tab, option, _, cspec, vtype, *_  in self._param_tuples():
-            if tab == SKIP_TAB:
+        for param  in self._param_tuples():
+            if param.tab == SKIP_TAB:
                 continue
 
-            value = self._get_gc_value(game_config, cspec, option)
-            if value is None:
-                value = self._get_construct_default(vtype, cspec, option)
+            value = self._get_config_value(game_config, param)
 
-            if vtype == MSTR_TYPE:
-                self.tktexts[option].delete('1.0', 'end')
-                self.tktexts[option].insert('1.0', value)
+            if param.vtype == MSTR_TYPE:
+                self.tktexts[param.option].delete('1.0', 'end')
+                self.tktexts[param.option].insert('1.0', value)
 
-            elif vtype in (STR_TYPE, BOOL_TYPE, INT_TYPE):
-                self.tkvars[option].set(value)
+            elif param.vtype in (STR_TYPE, BOOL_TYPE, INT_TYPE):
+                self.tkvars[param.option].set(value)
 
-            elif vtype == LIST_TYPE:
+            elif param.vtype == LIST_TYPE:
 
-                for var in self.tkvars[option]:
+                for var in self.tkvars[param.option]:
                     var.set(False)
 
                 if value and isinstance(value, list):
                     for val in value:
-                        self.tkvars[option][val].set(True)
+                        self.tkvars[param.option][val].set(True)
 
-            elif vtype in string_dicts:
+            elif param.vtype in STRING_DICTS:
 
-                _, inv_dict = string_dicts[vtype]
-                self.tkvars[option].set(inv_dict[value])
+                inv_dict = STRING_DICTS[param.vtype].int_dict
+                self.tkvars[param.option].set(inv_dict[value])
 
 
     def _make_config_from_tk(self):
@@ -601,27 +631,28 @@ class MancalaGames(tk.Frame):
 
         game_config = {}
 
-        for tab, option, _, cspec, vtype, *_ in self._param_tuples():
-            if tab == SKIP_TAB:
+        for param in self._param_tuples():
+            if param.tab == SKIP_TAB:
                 continue
 
-            if vtype == MSTR_TYPE:
-                value = self.tktexts[option].get('1.0', 'end')
+            if param.vtype == MSTR_TYPE:
+                value = self.tktexts[param.option].get('1.0', 'end')
 
-            elif vtype in (STR_TYPE, BOOL_TYPE, INT_TYPE):
-                value = self.tkvars[option].get()
+            elif param.vtype in (STR_TYPE, BOOL_TYPE, INT_TYPE):
+                value = self.tkvars[param.option].get()
 
-            elif vtype == LIST_TYPE:
+            elif param.vtype == LIST_TYPE:
                 value = [nbr
-                         for nbr, var in enumerate(self.tkvars[option])
+                         for nbr, var in enumerate(self.tkvars[param.option])
                          if var.get()]
 
-            elif vtype in string_dicts:
-                str_dict, _ = string_dicts[vtype]
-                value = self.tkvars[option].get()
+            elif param.vtype in STRING_DICTS:
+                str_dict = STRING_DICTS[param.vtype].str_dict
+                value = self.tkvars[param.option].get()
                 value = str_dict[value]
 
-            self._set_gc_value(game_config, cspec, option, value)
+            self._set_gc_value(game_config,
+                               param.cspec, param.option, param.value)
 
         return game_config
 
@@ -742,26 +773,27 @@ class MancalaGames(tk.Frame):
 
         self.loaded_config = None
 
-        for tab, option, _, _, vtype, default, *_ in self._param_tuples():
-            if tab == SKIP_TAB:
+        for param in self._param_tuples():
+            if param.tab == SKIP_TAB:
                 continue
 
-            if vtype == MSTR_TYPE:
-                self.tktexts[option].delete('1.0', 'end')
-                self.tktexts[option].insert('1.0', default)
+            if param.vtype == MSTR_TYPE:
+                self.tktexts[param.option].delete('1.0', 'end')
+                self.tktexts[param.option].insert('1.0', param.ui_default)
 
-            elif vtype in string_dicts:
+            elif param.vtype in STRING_DICTS:
 
-                _, inv_dict = string_dicts[vtype]
-                value = list(inv_dict.values())[eval(default)]
-                self.tkvars[option].set(value)
+                _, inv_dict, enum_dict = STRING_DICTS[param.vtype]
+                value = inv_dict[enum_dict[param.ui_default]]
 
-            elif vtype == LIST_TYPE:
-                for var in self.tkvars[option]:
+                self.tkvars[param.option].set(value)
+
+            elif param.vtype == LIST_TYPE:
+                for var in self.tkvars[param.option]:
                     var.set(False)
 
             else:
-                self.tkvars[option].set(default)
+                self.tkvars[param.option].set(param.ui_default)
 
 
 
