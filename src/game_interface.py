@@ -152,6 +152,7 @@ class GameInfo:
     convert_cnt: int = 0
     sow_blkd_div: bool = False
     sow_capt_all: bool = False
+    mlaps_next: bool = False
 
     # **** capture
     capsamedir: bool = False
@@ -197,6 +198,19 @@ class GameInfo:
         """return the field names."""
 
         return [field.name for field in dc.fields(cls)]
+
+
+    @classmethod
+    def get_default(cls, fname):
+        """Lookup the default value for the field."""
+
+        for field in dc.fields(cls):
+            if field.name == fname:
+                if field.default == dc.MISSING:
+                    return field.default_factory()
+
+                return field.default
+        return None
 
 
 @dc.dataclass(kw_only=True)

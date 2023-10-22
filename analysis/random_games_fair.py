@@ -14,6 +14,7 @@ import random
 import pandas as pd
 import tqdm
 
+from context import ai_player
 from context import man_config
 from context import game_log
 
@@ -33,9 +34,13 @@ BAD_CFG = 'all_params.txt'
 if BAD_CFG in FILES:
     FILES.remove(BAD_CFG)
 
+
+RANDOM = False
+GAMES = 200
+
+
 # %%
 
-GAMES = 10_000
 
 class GameResult(enum.Enum):
     """Game results."""
@@ -47,13 +52,25 @@ class GameResult(enum.Enum):
     MAX_TURNS = enum.auto()
 
 
-def test_one_game(game):
+def test_one_game(game, pdict):
 
-    for _ in range(2000 if game.info.rounds else 500):
-        moves = game.get_moves()
-        assert moves, "Game didn't end right."
+    if not RANDOM:
+        tplayer = ai_player.AiPlayer(game, pdict)
+        fplayer = ai_player.AiPlayer(game, pdict)
 
-        cond = game.move(random.choice(moves))
+    for _ in range(5000 if game.info.rounds else 500):
+
+        if RANDOM:
+            moves = game.get_moves()
+            assert moves, "Game didn't end right."
+            move = random.choice(moves)
+        else:
+            if game.turn:
+                move = tplayer.pick_move()
+            else:
+                move = fplayer.pick_move()
+
+        cond = game.move(move)
         if cond in (WinCond.WIN, WinCond.TIE, WinCond.ENDLESS):
             break
         if cond in (WinCond.ROUND_WIN, WinCond.ROUND_TIE):
@@ -90,23 +107,23 @@ def play_one_config(file, data):
 
     for cnt in tqdm.tqdm(range(GAMES)):
 
-        game, _ = man_config.make_game(PATH + file)
+        game, pdict = man_config.make_game(PATH + file)
         if cnt < GAMES // 2:
             starter = game.turn = True
         else:
             starter = game.turn = False
 
-        result, winner = test_one_game(game)
+        result, winner = test_one_game(game, pdict)
         col = result_name(starter, result, winner)
         data.loc[idx, col] += 1
 
 
 def play_them_all():
 
-    columns = list(set(result_name(start, result.value, winner)
-                       for result in GameResult
-                       for start in (False, True)
-                       for winner in (False, True)))
+    columns = sorted(list(set(result_name(start, result.value, winner)
+                              for result in GameResult
+                              for start in (False, True)
+                              for winner in (False, True))))
     index = [index_name(file) for file in FILES]
 
     data = pd.DataFrame(0, index=index, columns=columns)
@@ -115,7 +132,10 @@ def play_them_all():
         print(file)
         play_one_config(file, data)
 
-    data.to_csv('data/random.csv')
+    if RANDOM:
+        data.to_csv('data/random.csv')
+    else:
+        data.to_csv('data/minimaxer.csv')
 
     return data
 
