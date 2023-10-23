@@ -75,7 +75,7 @@ GI_TAG = 'game_info _'
 LDicts = collections.namedtuple('LDicts', 'str_dict, int_dict, enum_dict')
 
 def lookup_dicts(etype, adict):
-    """Return the dict, it's inverse, and enumeration: value dict
+    """Return the dict, it's inverse, and enum name: enum dict
     for the enum (etype)."""
 
     vals = adict.values()
@@ -219,16 +219,16 @@ class MancalaGames(tk.Frame):
 
         self.but_frame = tk.Frame(self.master, padx=3, pady=3,
                                   borderwidth=3)
-        self.but_frame.pack(side='bottom', expand=True, fill='both')
+        self.but_frame.pack(side=tk.BOTTOM, expand=True, fill=tk.BOTH)
 
         tk.Button(self.but_frame, text='Test', command=self._test,
-                  ).pack(side='left', expand=True, fill='x')
+                  ).pack(side=tk.LEFT, expand=True, fill=tk.X)
         tk.Button(self.but_frame, text='Load', command=self._load
-                  ).pack(side='left', expand=True, fill='x')
+                  ).pack(side=tk.LEFT, expand=True, fill=tk.X)
         tk.Button(self.but_frame, text='Save', command=self._save
-                  ).pack(side='left', expand=True, fill='x')
+                  ).pack(side=tk.LEFT, expand=True, fill=tk.X)
         tk.Button(self.but_frame, text='Play', command=self._play
-                  ).pack(side='left', expand=True, fill='x')
+                  ).pack(side=tk.LEFT, expand=True, fill=tk.X)
 
 
     def _read_params_file(self):
@@ -259,7 +259,7 @@ class MancalaGames(tk.Frame):
             tab = ttk.Frame(tab_control, padding=3)
             self.tabs[tab_name] = tab
             tab_control.add(tab, text=tab_name, padding=5)
-        tab_control.pack(expand = 1, fill ="both")
+        tab_control.pack(expand = 1, fill =tk.BOTH)
 
 
     def _create_desc_pane(self):
@@ -267,31 +267,30 @@ class MancalaGames(tk.Frame):
 
         dframe = tk.LabelFrame(self, text='Param Description',
                                labelanchor='nw')
-        dframe.pack(side='bottom', expand=True, fill=tk.BOTH)
+        dframe.pack(side=tk.BOTTOM, expand=True, fill=tk.BOTH)
 
         self.desc = tk.Text(dframe, width=DESC_WIDTH, height=8)
 
         scroll = tk.Scrollbar(dframe)
         self.desc.configure(yscrollcommand=scroll.set)
-        self.desc.pack(side='left')
+        self.desc.pack(side=tk.LEFT)
 
         scroll.config(command=self.desc.yview)
-        scroll.pack(side='right', fill='y')
+        scroll.pack(side=tk.RIGHT, fill=tk.Y)
         self.desc.pack(expand=True, fill=tk.BOTH)
 
 
     def _update_desc(self, option, _):
-        """We've enter a new widget, update desc text."""
+        """We've enter a new widget, update desc text.
+        Don't let the user edit the description."""
 
         if self.prev_option == option:
             return
         self.prev_option = option
 
         opt_table = self.params.loc[self.params.option==option]
-
-        # XXXX there must be a better way to get a single cell from a DF
-        text = list(opt_table.text)[0]
-        desc = list(opt_table.description)[0]
+        text = opt_table.text.iloc[0]
+        desc = opt_table.description.iloc[0]
 
         paragraphs = desc.split('\n')
         out_text = ''
@@ -300,8 +299,10 @@ class MancalaGames(tk.Frame):
             out_text += fpara
         desc = ''.join(out_text)
 
-        self.desc.delete('1.0', 'end')
+        self.desc.config(state=tk.NORMAL)
+        self.desc.delete('1.0', tk.END)
         self.desc.insert('1.0', text + ':\n' + desc)
+        self.desc.config(state=tk.DISABLED)
 
 
     @staticmethod
@@ -314,15 +315,16 @@ class MancalaGames(tk.Frame):
                                            param.option)
         if value is None:
             value = MancalaGames._get_construct_default(param.vtype,
-                                                param.cspec,
-                                                param.option)
+                                                        param.cspec,
+                                                        param.option)
         return value
 
 
     @staticmethod
     def _get_construct_default(vtype, cspec, option):
         """The defaults in the parameter table yield a playable game,
-        they are not the actual construction defaults."""
+        they are not the actual construction defaults.
+        Return the construction default."""
 
         if cspec == GI_TAG:
             return gi.GameInfo.get_default(option)
@@ -388,7 +390,7 @@ class MancalaGames(tk.Frame):
 
         elif name == ckey.UDIR_HOLES:
             ptable = self.params
-            boxes = int(ptable.loc[ptable.option==ckey.HOLES].ui_default)
+            boxes = int(ptable.loc[ptable.option==ckey.HOLES].ui_default.iloc[0])
 
         else:
             raise ValueError(f"Don't know list length for {name}.")
@@ -477,7 +479,7 @@ class MancalaGames(tk.Frame):
         for idx in range(prev_holes + 1, holes + 1):
             tk.Checkbutton(self.udir_frame, text=str(idx),
                            variable=self.tkvars[ckey.UDIR_HOLES][idx - 1]
-                           ).pack(side='left')
+                           ).pack(side=tk.LEFT)
 
 
     def _make_text_entry(self, frame, param):
@@ -491,10 +493,10 @@ class MancalaGames(tk.Frame):
 
         scroll = tk.Scrollbar(tframe)
         text_box.configure(yscrollcommand=scroll.set)
-        text_box.pack(side='left')
+        text_box.pack(side=tk.LEFT)
 
         scroll.config(command=text_box.yview)
-        scroll.pack(side='right', fill='y')
+        scroll.pack(side=tk.RIGHT, fill=tk.Y)
 
         tframe.bind('<Enter>', ft.partial(self._update_desc, param.option))
 
@@ -545,7 +547,7 @@ class MancalaGames(tk.Frame):
         for nbr in range(1, boxes+1):
             tk.Checkbutton(boxes_fr, text=str(nbr),
                            variable=self.tkvars[param.option][nbr - 1]
-                           ).pack(side='left')
+                           ).pack(side=tk.LEFT)
 
         lbl.bind('<Enter>', ft.partial(self._update_desc, param.option))
         boxes_fr.bind('<Enter>', ft.partial(self._update_desc, param.option))
@@ -604,7 +606,7 @@ class MancalaGames(tk.Frame):
             value = self._get_config_value(game_config, param)
 
             if param.vtype == MSTR_TYPE:
-                self.tktexts[param.option].delete('1.0', 'end')
+                self.tktexts[param.option].delete('1.0', tk.END)
                 self.tktexts[param.option].insert('1.0', value)
 
             elif param.vtype in (STR_TYPE, BOOL_TYPE, INT_TYPE):
@@ -617,7 +619,7 @@ class MancalaGames(tk.Frame):
 
                 if value and isinstance(value, list):
                     for val in value:
-                        self.tkvars[param.option][val].set(True)
+                        self.tkvars[param.option][val - 1].set(True)
 
             elif param.vtype in STRING_DICTS:
 
@@ -636,13 +638,13 @@ class MancalaGames(tk.Frame):
                 continue
 
             if param.vtype == MSTR_TYPE:
-                value = self.tktexts[param.option].get('1.0', 'end')
+                value = self.tktexts[param.option].get('1.0', tk.END)
 
             elif param.vtype in (STR_TYPE, BOOL_TYPE, INT_TYPE):
                 value = self.tkvars[param.option].get()
 
             elif param.vtype == LIST_TYPE:
-                value = [nbr
+                value = [nbr + 1
                          for nbr, var in enumerate(self.tkvars[param.option])
                          if var.get()]
 
@@ -652,7 +654,7 @@ class MancalaGames(tk.Frame):
                 value = str_dict[value]
 
             self._set_gc_value(game_config,
-                               param.cspec, param.option, param.value)
+                               param.cspec, param.option, value)
 
         return game_config
 
@@ -778,7 +780,7 @@ class MancalaGames(tk.Frame):
                 continue
 
             if param.vtype == MSTR_TYPE:
-                self.tktexts[param.option].delete('1.0', 'end')
+                self.tktexts[param.option].delete('1.0', tk.END)
                 self.tktexts[param.option].insert('1.0', param.ui_default)
 
             elif param.vtype in STRING_DICTS:
@@ -794,8 +796,6 @@ class MancalaGames(tk.Frame):
 
             else:
                 self.tkvars[param.option].set(param.ui_default)
-
-
 
 
 # %%  main
