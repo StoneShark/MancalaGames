@@ -86,11 +86,11 @@ def test_rules():
     assert not fp.GamachaPattern.size_ok(2)
     assert fp.GamachaPattern.size_ok(3)
 
-    assert fp.SadeqaPatternOne.size_ok(2)
-    assert fp.SadeqaPatternOne.size_ok(2)
+    assert fp.AlternatesPattern.size_ok(2)
+    assert fp.AlternatesPattern.size_ok(2)
 
-    assert not fp.SadeqaPatternTwo.size_ok(2)
-    assert fp.SadeqaPatternTwo.size_ok(3)
+    assert not fp.AltsWithOnePattern.size_ok(2)
+    assert fp.AltsWithOnePattern.size_ok(3)
 
     assert not fp.TapataPattern.size_ok(2)
     assert fp.TapataPattern.size_ok(3)

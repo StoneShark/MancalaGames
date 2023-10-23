@@ -77,8 +77,8 @@ class GamachaPattern(StartPatternIf):
             game.board = StartPatternIf.rev_board(game)
 
 
-class SadeqaPatternOne(StartPatternIf):
-    """Sadeqa pattern: alternating 0 and nbr_start.
+class AlternatesPattern(StartPatternIf):
+    """Alternates pattern: alternating 0 and nbr_start.
     If the sides are not even, starter get fewer seeds."""
 
     @staticmethod
@@ -103,8 +103,8 @@ class SadeqaPatternOne(StartPatternIf):
             game.board = StartPatternIf.rev_board(game)
 
 
-class SadeqaPatternTwo(StartPatternIf):
-    """Sadeqa pattern: alternating 0 and nbr_start, with second
+class AltsWithOnePattern(StartPatternIf):
+    """Alternates with One pattern: alternating 0 and nbr_start, with second
     nbr_start on starter side as 1."""
 
     @staticmethod
@@ -165,6 +165,6 @@ class TapataPattern(StartPatternIf):
 PCLASSES = [None] * len(StartPattern)
 
 PCLASSES[StartPattern.GAMACHA] = GamachaPattern
-PCLASSES[StartPattern.SADEQA_ONE] = SadeqaPatternOne
-PCLASSES[StartPattern.SADEQA_TWO] = SadeqaPatternTwo
+PCLASSES[StartPattern.ALTERNATES] = AlternatesPattern
+PCLASSES[StartPattern.ALTS_WITH_1] = AltsWithOnePattern
 PCLASSES[StartPattern.TAPATA] = TapataPattern

@@ -13,6 +13,8 @@ import abc
 import dataclasses as dc
 import enum
 
+import cfg_keys as ckey
+
 
 # %%  constants
 
@@ -90,8 +92,8 @@ class StartPattern(enum.IntEnum):
 
     ALL_EQUAL = 0
     GAMACHA = 1
-    SADEQA_ONE = 2
-    SADEQA_TWO = 3
+    ALTERNATES = 2
+    ALTS_WITH_1 = 3
     TAPATA = 4
 
 
@@ -105,7 +107,7 @@ class WinCond(enum.Enum):
     ROUND_WIN = enum.auto()
     ROUND_TIE = enum.auto()
 
-    GAME_OVER = enum.auto()     # return this when game ended w/o winner (see NamNam)
+    GAME_OVER = enum.auto()     # return this when game ended w/o winner
     ENDLESS = enum.auto()       # return this when multi-lap games get stuck
     END_STORE = enum.auto()     # last seed sown was in the store
 
@@ -189,7 +191,7 @@ class GameInfo:
         """Do post init (any derived values) and apply the rules.
         rules.test raises exceptions and warnings."""
 
-        object.__setattr__(self, 'udirect', bool(self.udir_holes))
+        object.__setattr__(self, ckey.UDIRECT, bool(self.udir_holes))
 
         rules.test(self, nbr_holes)
 
