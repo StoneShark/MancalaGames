@@ -5,7 +5,6 @@ sets to files is supported.
 
 The file game_info.txt drives much of what happens here.
 
-
 Created on Thu Mar 30 13:43:39 2023
 @author: Ann"""
 
@@ -13,6 +12,7 @@ Created on Thu Mar 30 13:43:39 2023
 # %% import
 
 import collections
+import csv
 import functools as ft
 import json
 import os.path
@@ -22,8 +22,6 @@ import warnings
 import tkinter as tk
 from tkinter import ttk
 import tkinter.filedialog as tkfile
-
-import pandas as pd
 
 import cfg_keys as ckey
 import game_constants as gc
@@ -40,7 +38,6 @@ from game_interface import Goal
 from game_interface import GrandSlam
 from game_interface import RoundStarter
 from game_interface import StartPattern
-
 
 
 # %%  Constants
@@ -149,6 +146,32 @@ def int_validate(value):
     return True
 
 
+def convert_value(value):
+    """convert the ui_defaults to nice python types."""
+
+    convert_dict = {'N': None,
+                    'T': True,
+                    'TRUE': True,
+                    'True': True,
+                    'F': False,
+                    'FALSE': False,
+                    'False': False,
+                    }
+
+    elist_str = '[]'
+
+    if value in convert_dict:
+        return convert_dict[value]
+
+    if value.isdigit():
+        return int(value)
+
+    if value == elist_str:
+        return []
+
+    return value
+
+
 # %%  game params UI
 
 class MancalaGames(tk.Frame):
@@ -159,7 +182,7 @@ class MancalaGames(tk.Frame):
 
         self.master = master
         self.game = None
-        self.params = None
+        self.params = {}
         self.filename = None
         self.loaded_config = None
         self.tkvars = {}
@@ -257,23 +280,42 @@ class MancalaGames(tk.Frame):
     def _read_params_file(self):
         """Read the game parameters file."""
 
-        col_types = {'row': int, 'col': int}
+        with open(man_path.get_path('game_params.txt'), 'r',
+                  encoding='us-ascii') as file:
+            reader = csv.reader(file, delimiter='\t')
+            data = list(reader)
 
-        self.params = pd.read_csv('game_params.txt', sep='\t',
-                                  dtype=col_types)
-        # TODO deal with path exe diff from run directly
+        fields = data[0]
+        option_idx = fields.index('option')
+        ui_default_idx = fields.index('ui_default')
+        bools = [fields.index(f) for f in
+                 ('new_game', 'allow', 'moves', 'incr', 'starter',
+                  'get_dir', 'sower', 'capt_ok', 'capturer', 'ender',
+                  'quitter', 'gstr')]
+        ints = [fields.index(f) for f in ('row', 'col')]
 
+        # pylint: disable=invalid-name
+        Params = collections.namedtuple('Params', fields)
 
-    def _param_tuples(self):
-        """An iterator that goes through the params as named tuples."""
+        for rec in data[1:]:
 
-        return self.params.itertuples(index=False)
+            if rec[0] == SKIP_TAB:
+                continue
+
+            for idx in bools:
+                rec[idx] = bool(rec[idx])
+            for idx in ints:
+                rec[idx] = int(rec[idx])
+            rec[ui_default_idx] = convert_value(rec[ui_default_idx])
+
+            self.params[rec[option_idx]] = Params(*rec)
 
 
     def _add_tabs(self):
         """Determine what tabs are needed and add them."""
 
-        extra_tabs =  set(self.params.tab) - {SKIP_TAB} - set(PARAM_TABS)
+        tab_set = set(r.tab for r in self.params.values())
+        extra_tabs =  tab_set - set(PARAM_TABS)
         tabs = PARAM_TABS + tuple(extra_tabs)
 
         tab_control = ttk.Notebook(self)
@@ -311,9 +353,8 @@ class MancalaGames(tk.Frame):
             return
         self.prev_option = option
 
-        opt_table = self.params.loc[self.params.option == option]
-        text = opt_table.text.iloc[0]
-        desc = opt_table.description.iloc[0]
+        text = self.params[option].text
+        desc = self.params[option].description
 
         paragraphs = desc.split('\n')
         out_text = ''
@@ -324,9 +365,11 @@ class MancalaGames(tk.Frame):
             out_text += fpara
         desc = ''.join(out_text)
 
+        full_text = f'{text} ({option}):\n{desc}'
+
         self.desc.config(state=tk.NORMAL)
         self.desc.delete('1.0', tk.END)
-        self.desc.insert('1.0', text + ':\n' + desc)
+        self.desc.insert('1.0', full_text)
         self.desc.config(state=tk.DISABLED)
 
 
@@ -414,8 +457,7 @@ class MancalaGames(tk.Frame):
             boxes = 5
 
         elif name == ckey.UDIR_HOLES:
-            ptable = self.params
-            boxes = int(ptable.loc[ptable.option==ckey.HOLES].ui_default.iloc[0])
+            boxes = self.params[ckey.HOLES].ui_default
 
         else:
             raise ValueError(f"Don't know list length for {name}.")
@@ -437,8 +479,8 @@ class MancalaGames(tk.Frame):
     def _make_tkvars(self):
         """Create the tk variables described by the parameters file."""
 
-        for param in self._param_tuples():
-            if param.tab == SKIP_TAB or param.vtype == MSTR_TYPE:
+        for param in self.params.values():
+            if param.vtype == MSTR_TYPE:
                 continue
 
             if param.vtype == STR_TYPE:
@@ -624,12 +666,13 @@ class MancalaGames(tk.Frame):
         Make them in order to set 'tab' (selection) order is nice.
         Odd that OptionMenus are not in the tab order."""
 
-        for tabname, tab in self.tabs.items():
+        for tname, tab in self.tabs.items():
 
-            sub_table = self.params[self.params.tab==tabname].copy(deep=True)
-            sub_table.sort_values(['col', 'row'], inplace=True)
+            tab_params = sorted(
+                [p for p in self.params.values() if p.tab == tname],
+                key = lambda p: (p.col, p.row))
 
-            for param in sub_table.itertuples(index=False):
+            for param in tab_params:
                 self._make_ui_param(tab, param)
 
 
@@ -637,9 +680,7 @@ class MancalaGames(tk.Frame):
         """Set the tk vars (display vars) from the game_config
         dict."""
 
-        for param  in self._param_tuples():
-            if param.tab == SKIP_TAB:
-                continue
+        for param  in self.params.values():
 
             value = self._get_config_value(game_config, param)
 
@@ -671,9 +712,7 @@ class MancalaGames(tk.Frame):
 
         game_config = {}
 
-        for param in self._param_tuples():
-            if param.tab == SKIP_TAB:
-                continue
+        for param in self.params.values():
 
             if param.vtype == MSTR_TYPE:
                 value = self.tktexts[param.option].get('1.0', tk.END)
@@ -793,6 +832,34 @@ class MancalaGames(tk.Frame):
             json.dump(game_config, file, indent=3)
 
 
+    def _set_frame_active(self, frame, new_state):
+        """Activate or deactivate wigets, recursing through frames."""
+
+        for child in frame.winfo_children():
+
+            if isinstance(child, (tk.Frame, tk.LabelFrame)):
+                self._set_frame_active(child, new_state)
+
+            elif isinstance(child, tk.Scrollbar):
+                pass
+
+            elif isinstance(child, tk.Text):
+                tstate = new_state if new_state == DISABLED else NORMAL
+                child.configure(state=tstate)
+
+            else:
+                child.configure(state=new_state)
+
+
+    def _set_active(self, activate):
+        """Activate or deactivate main window wingets."""
+
+        new_state = NORMAL if activate else DISABLED
+
+        for tab in self.tabs.values():
+            self._set_frame_active(tab, new_state)
+
+
     def _play(self):
         """Create and play the game. deactivate param ui and block
         while the game is being played. reactivate when the game
@@ -803,12 +870,9 @@ class MancalaGames(tk.Frame):
             return
 
         game_ui = mancala_ui.MancalaUI(self.game, {}, self.master)
-        # TODO deactivate, but not tabs
-        # self._set_active(False)
-
-        # game_ui.grab_set()
+        self._set_active(False)
         game_ui.wait_window()
-        # self._set_active(True)
+        self._set_active(True)
 
 
     def _reset(self):
@@ -819,9 +883,7 @@ class MancalaGames(tk.Frame):
 
         self.loaded_config = None
 
-        for param in self._param_tuples():
-            if param.tab == SKIP_TAB:
-                continue
+        for param in self.params.values():
 
             if param.vtype == MSTR_TYPE:
                 self.tktexts[param.option].delete('1.0', tk.END)

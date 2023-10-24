@@ -146,6 +146,7 @@ clean:
 	-rmdir /S /Q test\\__pycache__
 	-rmdir /S /Q doc\\__pycache__
 	-rmdir /S /Q .pytest_cache
+	-rmdir /S /Q build
 	-del .pylint_report
 	-rmdir /S /Q htmlcov
 	-del .coverage
@@ -171,6 +172,7 @@ MancalaGames/mancala_games.exe: $(SOURCES) $(DATAFILES) mancala_games.spec
 	copy GameProps\\* MancalaGames\\GameProps
 	mkdir MancalaGames\\logs
 	copy logs\\README.txt MancalaGames\\logs
+	copy src\\game_params.txt MancalaGames
 	ln -s .\\MancalaGames\\runtime\\play .\\MancalaGames\\play.exe
 	ln -s .\\MancalaGames\\runtime\\play_mancala .\\MancalaGames\\play_mancala.exe
 	ln -s .\\MancalaGames\\runtime\\mancala_games .\\MancalaGames\\mancala_games.exe

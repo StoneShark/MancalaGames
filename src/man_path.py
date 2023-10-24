@@ -8,18 +8,19 @@ import os.path
 
 SRC = 'src'
 
+
 def get_path(filename):
-    """Provide compatibility between code run directly
-    (in the source dir) and the exe. If running from
-    the source dir, remove the src from the path.
-    Otherwise the data files are parallel to the exe."""
+    """Provide compatibility between different ways the
+    software can be run."""
 
-    file_dirn, _ = os.path.split(__file__)
-    parent_dirn, dirn = os.path.split(file_dirn)
+    places = ['.', '..', 'src']
 
-    if dirn == SRC:
-        pathname = os.path.join(parent_dirn, filename)
+    for dirname in places:
+        pathname = os.path.join(dirname, filename)
+        if os.path.isfile(pathname) or os.path.isdir(pathname):
+            break
+
     else:
-        pathname = os.path.join(os.getcwd(), filename)
+        raise FileNotFoundError(f"Can't file {filename}.")
 
     return os.path.abspath(pathname)
