@@ -5,7 +5,7 @@ to select the next move.
 Created on Sat Aug  5 10:31:39 2023
 @author: Ann"""
 
-import collections as coll
+import collections
 import dataclasses as dc
 import math
 import random
@@ -94,7 +94,7 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
         self.new_nodes = NBR_NODES
         self.nbr_pouts = NBR_POUTS
 
-        self.game_nodes = coll.deque()
+        self.game_nodes = collections.deque()
         self.node_dict = {}
         self.move_desc = None
 
@@ -123,7 +123,7 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
         """Reset the game tree and create a new root."""
 
         self.node_dict = {}
-        self.game_nodes = coll.deque()
+        self.game_nodes = collections.deque()
         self.next_id = 0
 
         state = self.game.state
@@ -162,7 +162,7 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
         Return the history of move nodes (which is built with the
         newest node at the begining)."""
 
-        node_hist = coll.deque()
+        node_hist = collections.deque()
         node_hist.appendleft(node.node_id)
 
         while not node.leaf:

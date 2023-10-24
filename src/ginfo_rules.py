@@ -19,7 +19,7 @@ which uses BLOCKS without ROUNDS can remove that rule.
 Created on Mon Aug 21 06:54:24 2023
 @author: Ann"""
 
-import collections as col
+import collections
 import dataclasses as dc
 import warnings
 
@@ -54,7 +54,7 @@ class ParamRule:
     both_objs: if True, call with obj1 and obj2, otherwise only obj1"""
 
     name: str
-    rule: col.abc.Callable
+    rule: collections.abc.Callable
     msg: str
     warn: bool = False
     excp: object = None

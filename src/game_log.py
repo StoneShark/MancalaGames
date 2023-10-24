@@ -5,7 +5,7 @@ Only gets the string from the game if the logger is active.
 Created on Fri Aug 11 15:01:16 2023
 @author: Ann"""
 
-import collections as col
+import collections
 import datetime
 import sys
 import textwrap
@@ -45,8 +45,8 @@ class GameLog:
         self._simulate = False
 
         self._turn_nbr = -1
-        self._log_records = col.deque()
-        self._move_start = col.deque()
+        self._log_records = collections.deque()
+        self._move_start = collections.deque()
 
 
     @property
