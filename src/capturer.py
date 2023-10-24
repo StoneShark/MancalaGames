@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """Define the capturer decorators.
 
+The deco chain should return if the state of the board
+was modified.
+
 Created on Fri Apr  7 08:52:03 2023
 @author: Ann"""
 
@@ -21,7 +24,7 @@ from incrementer import NOSKIPSTART
 PICKED = 2
 
 
-# %% capt method enums and interface
+# %% capt interface
 
 
 class CaptMethodIf(abc.ABC):
@@ -46,7 +49,8 @@ class CaptNone(CaptMethodIf):
         return False
 
 
-# %% capture decorators
+
+# %%  basic decos
 
 
 class CaptSingle(CaptMethodIf):
@@ -111,6 +115,31 @@ class CaptCross(CaptMethodIf):
         return False
 
 
+class CaptTwoOut(CaptMethodIf):
+    """If the seed ended in a hole which previously had seeds,
+    and the next hole is empty, capture the seeds in the
+    following hole."""
+
+    def do_captures(self, mdata):
+
+        loc = mdata.capt_loc
+        direct = mdata.direct
+        loc_p1 = self.game.deco.incr.incr(loc, direct, NOSKIPSTART)
+        loc_p2 = self.game.deco.incr.incr(loc_p1, direct, NOSKIPSTART)
+
+        if (self.game.board[loc] > 1
+                and not self.game.board[loc_p1]
+                and self.game.board[loc_p2]
+                and self.game.deco.capt_ok.capture_ok(loc_p2)):
+
+            self.game.store[self.game.turn] += self.game.board[loc_p2]
+            self.game.board[loc_p2] = 0
+            return True
+        return False
+
+
+# %% cross capt decos
+
 class CaptCrossPickOwnOnCapt(CaptMethodIf):
     """Cross capture, pick own if capture, but do not
     pick from a designated child or a locked hole.
@@ -164,7 +193,7 @@ class CaptCrossPickOwn(CaptMethodIf):
 class CaptContinueXCapt(CaptMethodIf):
     """Continue xcross capture this is actually the multicapture for
     cross capture.
-    otherwise run the other decorators to do xpick and optional pick
+    Otherwise run the other decorators to do xpick and optional pick
     if there was a capture, check for continued capture."""
 
     def do_captures(self, mdata):
@@ -193,119 +222,7 @@ class CaptContinueXCapt(CaptMethodIf):
         return captures
 
 
-class CaptureToWalda(CaptMethodIf):
-    """Test to make a walda base on allowable walda locations
-    and on captures put the seeds into a walda.
-    Relies entirely on capt_ok to capture from a single hole.
-
-    Don't use the rest of the decos for capture, because they wont
-    enforce the must have walda's to capture rule."""
-
-    WALDA_BOTH = -1
-
-    WALDA_TEST = [[WALDA_BOTH, False],
-                  [WALDA_BOTH, True]]
-
-    def __init__(self, game, decorator=None):
-
-        super().__init__(game, decorator)
-
-        holes = self.game.cts.holes
-        dbl_holes = self.game.cts.dbl_holes
-
-        self.walda_poses = [None] * dbl_holes
-        self.walda_poses[0] = CaptureToWalda.WALDA_BOTH
-        self.walda_poses[holes - 1] = CaptureToWalda.WALDA_BOTH
-        self.walda_poses[holes] = CaptureToWalda.WALDA_BOTH
-        self.walda_poses[dbl_holes - 1] = CaptureToWalda.WALDA_BOTH
-        if holes >= 3:
-            self.walda_poses[1] = True
-            self.walda_poses[holes - 2] = True
-            self.walda_poses[holes + 1] = False
-            self.walda_poses[dbl_holes - 2] = False
-
-
-    def do_captures(self, mdata):
-
-        loc = mdata.capt_loc
-        if (self.game.board[loc] == self.game.info.convert_cnt
-                and self.game.child[loc] is None
-                and self.walda_poses[loc] in
-                    CaptureToWalda.WALDA_TEST[self.game.turn]):
-
-            self.game.child[loc] = self.game.turn
-            return True
-
-        captures = False
-        have_walda = False
-        for walda in range(self.game.cts.dbl_holes):
-            if self.game.child[walda] == self.game.turn:
-                have_walda = True
-                break
-
-        if have_walda:
-            if self.decorator.do_captures(mdata):
-                self.game.board[walda] += self.game.store[self.game.turn]
-                self.game.store[self.game.turn] = 0
-                captures = True
-
-        assert not sum(self.game.store)
-        return captures
-
-
-class MakeTuzdek(CaptMethodIf):
-    """A tuzdek (child) may not be made in leftmost hole on
-    either side.  Each player can only have one tuzdek and player's
-    tuzdek must not be opposite eachother on the board."""
-
-    def tuzdek_test(self, loc):
-        """put the test in a function to keep the linter from
-        complaining that it's too complex"""
-
-        cross = self.game.cts.cross_from_loc(loc)
-        opp_range = self.game.cts.get_opp_range(self.game.turn)
-
-        return (self.game.cts.opp_side(self.game.turn, loc)
-                and self.game.child[loc] is None
-                and self.game.child[cross] is None
-                and self.game.board[loc] == self.game.info.convert_cnt
-                and self.game.cts.loc_to_left_cnt(loc)
-                and not any(self.game.child[tloc] is not None
-                            for tloc in opp_range))
-
-    def do_captures(self, mdata):
-
-        loc = mdata.capt_loc
-
-        if self.tuzdek_test(loc):
-            self.game.child[loc] = self.game.turn
-            return True
-
-        return self.decorator.do_captures(mdata)
-
-
-class CaptTwoOut(CaptMethodIf):
-    """If the seed ended in a hole which previously had seeds,
-    and the next hole is empty, capture the seeds in the
-    following hole."""
-
-    def do_captures(self, mdata):
-
-        loc = mdata.capt_loc
-        direct = mdata.direct
-        loc_p1 = self.game.deco.incr.incr(loc, direct, NOSKIPSTART)
-        loc_p2 = self.game.deco.incr.incr(loc_p1, direct, NOSKIPSTART)
-
-        if (self.game.board[loc] > 1
-                and not self.game.board[loc_p1]
-                and self.game.board[loc_p2]
-                and self.game.deco.capt_ok.capture_ok(loc_p2)):
-
-            self.game.store[self.game.turn] += self.game.board[loc_p2]
-            self.game.board[loc_p2] = 0
-            return True
-        return False
-
+# %%  grand slam decos
 
 class GrandSlamCapt(CaptMethodIf):
     """Grand Slam capturer and tester.
@@ -314,6 +231,8 @@ class GrandSlamCapt(CaptMethodIf):
     def is_grandslam(self, mdata):
         """Return True if the capture was a grandslam and
         True if there were any captures."""
+
+        # XXXX the test for start/end seeds could exclude children
 
         opp_rng = self.game.cts.get_opp_range(self.game.turn)
         start_seeds = any(mdata.board[tloc] for tloc in opp_rng)
@@ -371,14 +290,14 @@ class GSKeep(GrandSlamCapt):
                 self.game.board[save_loc] = seeds
                 self.game.store[turn] -= seeds
 
-                # did we capture anything other the the keep hole?
+                # did we capture anything other than the keep hole?
                 return saved_state != self.game.state
 
         return captures
 
 
 class GSOppGets(GrandSlamCapt):
-    """On a grand slam your seed are collect by your opponent."""
+    """On a grand slam your seeds are collect by your opponent."""
 
     def do_captures(self, mdata):
 
@@ -393,15 +312,14 @@ class GSOppGets(GrandSlamCapt):
         return captures
 
 
+# %%  child decorators
+
 class MakeChild(CaptMethodIf):
     """If the hole constains convert_cnt seeds
     and the side test is good, designate a child.
     If a child is made don't do any other captures."""
 
     def do_captures(self, mdata):
-
-        # spot 2 - for bao a child should not be made from a single
-        # seed from a rightmost hole into the opponents leftmost hole
 
         if self.game.board[mdata.capt_loc] == self.game.info.convert_cnt:
             if ((self.game.info.oppsidecapt
@@ -415,6 +333,102 @@ class MakeChild(CaptMethodIf):
         return self.decorator.do_captures(mdata)
 
 
+class CaptureToWalda(CaptMethodIf):
+    """Test to make a walda base on allowable walda locations
+    and on captures put the seeds into a walda. If a walda is
+    made don't do any other captures.
+
+    If we have a walda, use the rest of the deco chain to see
+    if captures are made, then move any captured seeds to the
+    walda."""
+
+    WALDA_BOTH = -1
+
+    WALDA_TEST = [[WALDA_BOTH, False],
+                  [WALDA_BOTH, True]]
+
+    def __init__(self, game, decorator=None):
+
+        super().__init__(game, decorator)
+
+        holes = self.game.cts.holes
+        dbl_holes = self.game.cts.dbl_holes
+
+        self.walda_poses = [None] * dbl_holes
+        self.walda_poses[0] = CaptureToWalda.WALDA_BOTH
+        self.walda_poses[holes - 1] = CaptureToWalda.WALDA_BOTH
+        self.walda_poses[holes] = CaptureToWalda.WALDA_BOTH
+        self.walda_poses[dbl_holes - 1] = CaptureToWalda.WALDA_BOTH
+        if holes >= 3:
+            self.walda_poses[1] = True
+            self.walda_poses[holes - 2] = True
+            self.walda_poses[holes + 1] = False
+            self.walda_poses[dbl_holes - 2] = False
+
+
+    def do_captures(self, mdata):
+
+        loc = mdata.capt_loc
+        if (self.game.board[loc] == self.game.info.convert_cnt
+                and self.game.child[loc] is None
+                and self.walda_poses[loc] in
+                    CaptureToWalda.WALDA_TEST[self.game.turn]):
+
+            self.game.child[loc] = self.game.turn
+            return True
+
+        captures = False
+        have_walda = False
+        for walda in range(self.game.cts.dbl_holes):
+            if self.game.child[walda] == self.game.turn:
+                have_walda = True
+                break
+
+        if have_walda:
+            if self.decorator.do_captures(mdata):
+                self.game.board[walda] += self.game.store[self.game.turn]
+                self.game.store[self.game.turn] = 0
+                captures = True
+
+        assert not sum(self.game.store)
+        return captures
+
+
+class MakeTuzdek(CaptMethodIf):
+    """A tuzdek (child) may not be made in leftmost hole on
+    either side.  Each player can only have one tuzdek and player's
+    tuzdeks must not be opposite eachother on the board.
+
+    This is the ONE_CHILD implementation."""
+
+    def tuzdek_test(self, loc):
+        """Put the test in a function to keep the linter from
+        complaining that it's too complex"""
+
+        cross = self.game.cts.cross_from_loc(loc)
+        opp_range = self.game.cts.get_opp_range(self.game.turn)
+
+        return (self.game.cts.opp_side(self.game.turn, loc)
+                and self.game.child[loc] is None
+                and self.game.child[cross] is None
+                and self.game.board[loc] == self.game.info.convert_cnt
+                and self.game.cts.loc_to_left_cnt(loc)
+                and not any(self.game.child[tloc] is not None
+                            for tloc in opp_range))
+
+    def do_captures(self, mdata):
+
+        loc = mdata.capt_loc
+
+        if self.tuzdek_test(loc):
+            self.game.child[loc] = self.game.turn
+            return True
+
+        return self.decorator.do_captures(mdata)
+
+
+# %% no single wrapper
+
 class NoSingleSeedCapt(CaptMethodIf):
     """Do not do captures with a single seed sow."""
 
@@ -424,7 +438,6 @@ class NoSingleSeedCapt(CaptMethodIf):
             return False
 
         return self.decorator.do_captures(mdata)
-
 
 
 # %% build deco chains
@@ -486,7 +499,7 @@ def deco_capturer(game):
 
     capturer = _add_grand_slam_deco(game, game.info, capturer)
 
-    # only one child handler: waldas/tuzdek/chilren
+    # only one child handler: waldas/tuzdek/children
     if game.info.waldas:
         capturer =  CaptureToWalda(game, capturer)
     elif game.info.one_child:
