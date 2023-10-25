@@ -29,7 +29,7 @@
       "ai_params": {
          "mm_depth": [1, 5, 8, 12],
          "mcts_nodes": [300, 500, 800, 1100],
-         "mcts_bias": [0.3, 0.3, 0.3, 0.3]
+         "mcts_bias": [350, 350, 350, 350]
       }
    },
    "rules": "on the www; can't find it again"

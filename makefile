@@ -39,7 +39,7 @@ GAME_TESTS = $(wildcard test/test_gm_*.py)
 
 DATAFILES = GameProps/*.txt ./mancala_help.html logs/README.txt
 
-all: all_tests pylint exe
+all: pylint all_tests exe
 
 
 #  tests

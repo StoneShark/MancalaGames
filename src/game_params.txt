@@ -1,11 +1,11 @@
-tab	option	text	cspec	vtype	ui_default	row	col	description	change	new_game	allow	moves	incr	starter	get_dir	sower	capt_ok	capturer	ender	quitter	gstr
+tab	option	text	cspec	vtype	ui_default	row	col	description	change_notes	new_game	allow	moves	incr	starter	get_dir	sower	capt_ok	capturer	ender	quitter	gstr
 Allow	min_move	Minimum Seeds for Move	game_info _	int	1	0	0	The minimum number of seeds a hole must have for it to be an allowable move start hole.			1								1	1	
 Allow	mustshare	Must Share	game_info _	bool	False	1	0	"If an opponent has no moves at the start of your turn, you must make seeds available to them if you can."	Need to decide as implemented (sow seeds to opp) OR leave opp with seeds.		1								1	1	
 Allow	opp_or_empty	Mlap Must Reach Opp	game_info _	bool	False	2	0	Limit the allowable holes to those that end in an empty hole or reach the opponents side of the board.			1										
 Capture	capsamedir	Capture in Sow Direction	game_info _	bool	False	0	0	"Only meaninful, with multicapt. Captures are done in the same direction as the sowing, i.e. following the final hole sown. If not set, captures are done from the holes just sown."										1			
 Capture	capt_max	Capture Max	game_info _	int	0	4	0	Capture when the contents of the hole are less than or equal to capt_max.									1	1			
 Capture	capt_min	Capture Min	game_info _	int	0	5	0	Capture when the contents of the hole are greater than or equal to capt_min.									1	1			
-Capture	capt_on	Capture On Values	game_info _	list[int]	[]	6	2	Capture when the contents of the hole is in the capt_on list.									1	1			
+Capture	capt_on	Capture On Values	game_info _	list[bool]	[]	6	2	Capture when the contents of the hole is in the capt_on list.									1	1			
 Capture	capttwoout	Capture Two Out	game_info _	bool	False	6	0	"Capture when end in a hole with seeds, and the next hole is empty, then capture the seeds in the following hole."										1			
 Capture	crosscapt	Cross-Capture	game_info _	bool	False	0	2	"If the last sown seed is put in an empty hole, any seeds on the opposite side of the board are captured."										1			
 Capture	evens	Capture Evens	game_info _	bool	True	3	0	"Capture when a hole contains an even number of seeds, greater than 0."									1	1			
@@ -45,20 +45,20 @@ TAPATA: pattern of 0 S S (where S is nbr_seeds) is used to fill the holes; if a 
 Dynamics	stores	Stores	game_info _	bool	True	0	0	Are stores present on the UI. Stores might not be on the UI but used if seeds are taken out of play.		1									1	1	
 Game	about	About	game_info _	multi_str	"Sow counter-clockwise.
 Capture on evens. "	4	0	Short string describing the game possibly in multiple lines. Enough to remind the player what the game options are.	"Fix the type for about text, make it a multililne input"												
-Game	class	Game Class	game_class	str	Mancala	0	0	The name of the Game Class. Currently only Mancala.													
+Game	class	Game Class	game_class	GameClasses	Mancala	0	0	The name of the Game Class. Currently only Mancala.	Note: GameClasses only exists in the STRING_DICTS table.												
 Game	help_file	Help File	game_info _	str	mancala_help.html	3	0	An html help file describing the game.	Should we keep this? A help file for an individual game? A help file for the Mancala UI?												
 Game	holes	Holes per Side	game_constants _	int	3	2	0	Number of holes on each side of the board. Start Pattern may use this number differently.		1	1	1	1		1	1	1	1	1	1	
 Game	name	Game Name	game_info _	str	Mancala	0	2	"The game name, may have spaces. Used for the config filename and the window title."						1							
 Game	nbr_start	Start Seeds	game_constants _	int	4	2	2	"The number of seeds in each hole at the start of a game, unless the sow pattern is not ALL_EQUAL. Other sow patterns use this as the number of seeds for some holes in the associated patterns."		1									1	1	
-Player	access_m	Access mult	player scorer _	int	0	1	0	Access mult													
-Player	child_cnt_m	Child Count mult	player scorer _	int	0	4	0	Child Count mult													
-Player	difficulty	Default Difficulty	player _	int	1	0	2	"The default difficulty. Can be changed at play time, even during game play, in the Mancala UI."													
-Player	easy_rand	Easy Random Addin	player scorer _	int	0	6	0	Easy Random Addin													
-Player	empties_m	Empties mult	player scorer _	int	0	3	0	Empties mult													
-Player	evens_m	Evens mult	player scorer _	int	0	5	0	Evens mult													
-Player	repeat_turn	Repeat Turn mult	player scorer _	int	0	7	0	Repeat Turn mult											1	1	
-Player	seeds_m	Seeds mult	player scorer _	int	0	2	0	Seeds mult													
-Player	stores_m	Stores mult	player scorer _	int	4	0	0	The minimax scorer will use this as a multiplier to maximize the bottom players stores versus the top player's. 													
+Player	access_m	Access mult	player scorer _	int	0	1	2	Access mult													
+Player	child_cnt_m	Child Count mult	player scorer _	int	0	4	2	Child Count mult													
+Player	difficulty	Default Difficulty	player _	int	1	1	0	"The default difficulty. Can be changed at play time, even during game play, in the Mancala UI."													
+Player	easy_rand	Easy Random Addin	player scorer _	int	0	6	2	Easy Random Addin													
+Player	empties_m	Empties mult	player scorer _	int	0	3	2	Empties mult													
+Player	evens_m	Evens mult	player scorer _	int	0	5	2	Evens mult													
+Player	repeat_turn	Repeat Turn mult	player scorer _	int	0	7	2	Repeat Turn mult											1	1	
+Player	seeds_m	Seeds mult	player scorer _	int	0	2	2	Seeds mult													
+Player	stores_m	Stores mult	player scorer _	int	4	0	2	The minimax scorer will use this as a multiplier to maximize the bottom players stores versus the top player's. 													
 skip	nbr_holes			int				An init only parameter that is used to check the other parameters in the creation of game info.													
 skip	rules			RuleDict				An init only parameter that used to check the consistency of the game info. Errors and warnings are raised as the rules are processed.								1					
 skip	udirect		game_info _	bool	False			A derived parameter. Do not include in config files.				1		1	1						
@@ -87,8 +87,14 @@ Sow	sow_direct	Sow Direction	game_info _	Direct	CCW	0	0	"Direction of sow:
 Any hole can be set as udir_hole to aloow the user to override the sow_direct setting."							1	1					
 Sow	sow_own_store	Sow Own Store	game_info _	bool	False	3	0	Sow seeds into your own store when passing it. Do not sow into your opponents store.								1					
 Sow	sow_start	Sow Start Hole	game_info _	bool	False	1	0	"When selected, the first seed is sown into  (i.e. left in) the start hole."						1		1					
-Sow	udir_holes	User Chooses Direction	game_info _	list[int]	[]	8	0	"A list of holes that the user can control the sow direction from. Control is via the mouse button: left is clockwise and right is counter-clockwise.
+Sow	udir_holes	User Chooses Direction	game_info _	list[bool]	[]	8	0	"A list of holes that the user can control the sow direction from. Control is via the mouse button: left is clockwise and right is counter-clockwise.
 Note: all holes respond to both mouse buttons, but if the hole is not in udir_holes, the sow direction will be that prescribed by sow_direct with either button."				1			1						
 Sow	visit_opp	Visit Opp for Mlaps	game_info _	bool	False	2	2	Sow is multiplap only if the first sow reaches the opponents side of the board.								1					
 Sow	waldas	Waldas	game_info _	bool	False	3	2	"Children (now called waldas) are created in the usual way but in limited locations. Many capture methods are supported but there are not any stores to capture into. Captures are instead moved into waldas, thus a player may not capture until they have created a walda.
 Each play may create up to 6 waldas: on either end of each side of the board and the next outer hole on their own side of the board. Note that there are only 8 total places that waldas maybe created."										1	1	1	
+Player	algorithm	Algorithm	player _	Algorithm	minimaxer	0	0	The algorithm used for the AI Player.	Note: Algorithm only exists in the STRING_DICTS table.												
+Player	mm_depth	MiniMaxer Depth	player ai_params _	list[int]	"[1, 3, 5, 7]"	3	0	"For each difficulty [0-3], the depth that the minimaxer will search to."													
+Player	mcts_bias	MCTS Bias	player ai_params _	list[int]	"[400, 400, 400, 400]"	5	0	"Bias for the Monte Carlo Tree seach algorithm for each difficulty level (0-3). 
+Value is divided by 1000."													
+Player	mcts_nodes	MCTS Nodes per Move	player ai_params _	list[int]	"[30, 50, 80, 110]"	6	0	Number of leaf nodes to create each time we pick a new move. One value for each difficulty level (0-3).													
+Player	mcts_pouts	MCTS Playouts per Node	player ai_params _	list[int]	"[1, 1, 1, 1]"	7	0	Number of end games played out from each leaf node created. One value for each difficulty level (0-3).													

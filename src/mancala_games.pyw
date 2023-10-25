@@ -8,6 +8,7 @@ The file game_info.txt drives much of what happens here.
 Created on Thu Mar 30 13:43:39 2023
 @author: Ann"""
 
+# pylint: disable=too-many-lines
 
 # %% import
 
@@ -23,6 +24,7 @@ import tkinter as tk
 from tkinter import ttk
 import tkinter.filedialog as tkfile
 
+import ai_player
 import cfg_keys as ckey
 import game_constants as gc
 import game_interface as gi
@@ -30,6 +32,8 @@ import mancala_ui
 import man_config
 import man_path
 
+from ai_player import ALGORITHM_DICT
+from ai_player import AI_PARAM_DEFAULTS
 from game_classes import GAME_CLASSES
 from game_constants import MAX_HOLES
 from game_interface import CrossCaptOwn
@@ -42,16 +46,17 @@ from game_interface import StartPattern
 
 # %%  Constants
 
-
+# how many variables to make for lists
+# if the option for a 'list[int]' isn't here, 4 variables will be made
 MAKE_LVARS = {ckey.CAPT_ON: 5,
               ckey.UDIR_HOLES: MAX_HOLES + 1}
 
 DESC_WIDTH = 60
 DASH_BULLET = '- '
+INT_LIST_CHARS = '0123456789, '
 
 # these are the expected tabs, put them in this order (add any extras)
 PARAM_TABS = ('Game', 'Dynamics', 'Allow', 'Sow', 'Capture', 'Player')
-
 
 # widget states
 DISABLED = 'disabled'
@@ -63,12 +68,14 @@ INT_TYPE = 'int'
 STR_TYPE = 'str'
 BOOL_TYPE = 'bool'
 MSTR_TYPE = 'multi_str'
-LIST_TYPE = 'list[int]'
-
+BLIST_TYPE = 'list[bool]'
+ILIST_TYPE = 'list[int]'
 
 SKIP_TAB = 'skip'
 OPT_TAG = '_'
 GI_TAG = 'game_info _'
+AI_TAG = 'player ai_params _'
+SCR_TAG = 'player scorer _'
 
 
 # %% enum dictionaries
@@ -86,7 +93,17 @@ def lookup_dicts(etype, adict):
                   {e.name: e for e in etype})
 
 
+def lookup_strs(strings):
+    """The string and values are both the strings.
+    Build and return dictionaries."""
+
+    sdict = {s: s for s in strings}
+    return LDicts(sdict, sdict, sdict)
+
+
 STRING_DICTS = {
+    'GameClasses': lookup_strs(GAME_CLASSES.keys()),
+
     'Direct': lookup_dicts(Direct,
         {'Clockwise': Direct.CW,
          'Counter-clockwise': Direct.CCW,
@@ -121,6 +138,8 @@ STRING_DICTS = {
         {'Max Seeds': Goal.MAX_SEEDS,
          'Deprive Opponent': Goal.DEPRIVE,
          'Territory': Goal.TERRITORY}),
+
+    'Algorithm': lookup_strs(ALGORITHM_DICT.keys())
 }
 
 
@@ -149,25 +168,29 @@ def int_validate(value):
 def convert_value(value):
     """convert the ui_defaults to nice python types."""
 
-    convert_dict = {'N': None,
-                    'T': True,
-                    'TRUE': True,
-                    'True': True,
-                    'F': False,
-                    'FALSE': False,
-                    'False': False,
+    convert_dict = {'n': None,
+                    't': True,
+                    'true': True,
+                    'f': False,
+                    'false': False,
                     }
-
     elist_str = '[]'
+    value = value.strip()
 
-    if value in convert_dict:
-        return convert_dict[value]
+    if (key := value.lower()) in convert_dict:
+        return convert_dict[key]
 
-    if value.isdigit():
+    if value.isdigit() or (value[0] == MINUS and value[1:].isdigit()):
         return int(value)
 
     if value == elist_str:
         return []
+
+    if (value[0] == elist_str[0]
+            and value[-1] == elist_str[-1]
+            and all(c in INT_LIST_CHARS for c in value[1:-1])):
+        substrs = value[1:-1].split(',')
+        return [int(val.strip()) for val in substrs]
 
     return value
 
@@ -184,7 +207,8 @@ class MancalaGames(tk.Frame):
         self.game = None
         self.params = {}
         self.filename = None
-        self.loaded_config = None
+        self.loaded_config = None     # keep for persistent comment entries
+        self.game_config = None       # constructed config for playing
         self.tkvars = {}
         self.tktexts = {}
         self.udir_frame = None
@@ -373,18 +397,17 @@ class MancalaGames(tk.Frame):
         self.desc.config(state=tk.DISABLED)
 
 
-    @staticmethod
-    def _get_config_value(game_config, param):
+    def _get_config_value(self, param):
         """Get the value from the configuration, if it's not there
         use the constructor default."""
 
-        value = MancalaGames._get_gc_value(game_config,
-                                           param.cspec,
-                                           param.option)
+        value = self._get_gc_value(self.loaded_config,
+                                   param.cspec,
+                                   param.option)
         if value is None:
-            value = MancalaGames._get_construct_default(param.vtype,
-                                                        param.cspec,
-                                                        param.option)
+            value = self._get_construct_default(param.vtype,
+                                                param.cspec,
+                                                param.option)
         return value
 
 
@@ -394,16 +417,30 @@ class MancalaGames(tk.Frame):
         they are not the actual construction defaults.
         Return the construction default."""
 
+        rval = False
+
         if cspec == GI_TAG:
-            return gi.GameInfo.get_default(option)
+            rval = gi.GameInfo.get_default(option)
 
-        if vtype in (STR_TYPE, MSTR_TYPE):
-            return ""
+        elif cspec == SCR_TAG:
+            rval = ai_player.ScoreParams.get_default(option)
 
-        if vtype == INT_TYPE:
-            return 0
+        elif cspec == AI_TAG:
+            rval = AI_PARAM_DEFAULTS[option]
 
-        return False
+        elif option == ckey.ALGORITHM:
+            rval = list(ALGORITHM_DICT.keys())[0]
+
+        elif option == ckey.DIFFICULTY:
+            rval = 1
+
+        elif vtype in (STR_TYPE, MSTR_TYPE):
+            rval = ""
+
+        elif vtype == INT_TYPE:
+            rval =  0
+
+        return rval
 
 
     @staticmethod
@@ -450,17 +487,20 @@ class MancalaGames(tk.Frame):
             vdict[tags[-1]] = value
 
 
-    def _get_boxes_config(self, name):
-        """Return the number holes for the list for name."""
+    def _get_boxes_config(self, param):
+        """Return the number items for the list for name."""
 
-        if name == ckey.CAPT_ON:
-            boxes = 5
-
-        elif name == ckey.UDIR_HOLES:
+        if param.option == ckey.UDIR_HOLES:
             boxes = self.params[ckey.HOLES].ui_default
 
+        elif param.option in MAKE_LVARS:
+            boxes = MAKE_LVARS[param.option]
+
+        elif param.vtype == ILIST_TYPE:
+            boxes = 4
+
         else:
-            raise ValueError(f"Don't know list length for {name}.")
+            raise ValueError(f"Don't know list length for {param.option}.")
 
         return boxes
 
@@ -477,13 +517,19 @@ class MancalaGames(tk.Frame):
 
 
     def _make_tkvars(self):
-        """Create the tk variables described by the parameters file."""
+        """Create the tk variables described by the parameters file.
+
+        multi strs - do not use tkvars and must be handled differently
+        int vars - must use a string var and must be converted
+        lists - are filled with a simple default here,
+                _reset will give it any actual default
+        blist - use MAKE_LVARS (want to make all of the udir_hole vars now"""
 
         for param in self.params.values():
             if param.vtype == MSTR_TYPE:
                 continue
 
-            if param.vtype == STR_TYPE:
+            if param.vtype in (STR_TYPE, INT_TYPE):
                 self.tkvars[param.option] = tk.StringVar(self.master,
                                                          param.ui_default,
                                                          name=param.option)
@@ -491,15 +537,18 @@ class MancalaGames(tk.Frame):
                 self.tkvars[param.option] = tk.BooleanVar(self.master,
                                                           param.ui_default,
                                                           name=param.option)
-            elif param.vtype == INT_TYPE:
-                self.tkvars[param.option] = tk.StringVar(self.master,
-                                                         param.ui_default,
-                                                         name=param.option)
-            elif param.vtype == LIST_TYPE:
+            elif param.vtype == BLIST_TYPE:
                 boxes = MAKE_LVARS[param.option]
                 self.tkvars[param.option] = \
                     [tk.BooleanVar(self.master, False,
                                    name=f'{param.option}_{i}')
+                     for i in range(boxes)]
+
+            elif param.vtype == ILIST_TYPE:
+                boxes = self._get_boxes_config(param)
+                self.tkvars[param.option] = \
+                    [tk.StringVar(self.master, 0,
+                                  name=f'{param.option}_{i}')
                      for i in range(boxes)]
 
             elif param.vtype in STRING_DICTS:
@@ -609,7 +658,7 @@ class MancalaGames(tk.Frame):
         lbl = tk.Label(frame, text=param.text)
         lbl.grid(row=param.row, column=param.col, sticky=tk.E)
 
-        boxes = self._get_boxes_config(param.option)
+        boxes = self._get_boxes_config(param)
         boxes_fr = tk.Frame(frame)
         boxes_fr.grid(row=param.row, column=param.col + 1,
                       columnspan=3, sticky=tk.W)
@@ -617,13 +666,41 @@ class MancalaGames(tk.Frame):
         if param.option == ckey.UDIR_HOLES:
             self.udir_frame = boxes_fr
 
-        for nbr in range(1, boxes+1):
-            tk.Checkbutton(boxes_fr, text=str(nbr),
-                           variable=self.tkvars[param.option][nbr - 1]
+        add_in = 1 if param.option == ckey.CAPT_ON else 0
+        for nbr in range(boxes):
+            tk.Checkbutton(boxes_fr, text=str(nbr + add_in),
+                           variable=self.tkvars[param.option][nbr]
                            ).pack(side=tk.LEFT)
 
         lbl.bind('<Enter>', ft.partial(self._update_desc, param.option))
         boxes_fr.bind('<Enter>', ft.partial(self._update_desc, param.option))
+
+
+    def _make_entry_list(self, frame, param):
+        """Make a list of entries."""
+
+        lbl = tk.Label(frame, text=param.text)
+        lbl.grid(row=param.row, column=param.col, sticky=tk.E)
+
+        boxes = self._get_boxes_config(param)
+        eframe = tk.Frame(frame)
+        eframe.grid(row=param.row, column=param.col + 1,
+                    columnspan=2, sticky=tk.W)
+
+        if param.option == ckey.UDIR_HOLES:
+            self.udir_frame = eframe
+
+        for nbr in range(boxes):
+            tk.Entry(eframe, width=5,
+                     textvariable=self.tkvars[param.option][nbr],
+                     validate=tk.ALL,
+                     validatecommand=(INT_VALID_CMD, '%P')
+                     ).pack(side=tk.LEFT)
+
+        eframe.grid(row=param.row, column=param.col + 1, sticky=tk.W)
+
+        lbl.bind('<Enter>', ft.partial(self._update_desc, param.option))
+        eframe.bind('<Enter>', ft.partial(self._update_desc, param.option))
 
 
     def _make_option_list(self, frame, param):
@@ -654,8 +731,11 @@ class MancalaGames(tk.Frame):
         elif param.vtype == BOOL_TYPE:
             self._make_checkbox(frame, param)
 
-        elif param.vtype == LIST_TYPE:
+        elif param.vtype == BLIST_TYPE:
             self._make_checkbox_list(frame, param)
+
+        elif param.vtype == ILIST_TYPE:
+            self._make_entry_list(frame, param)
 
         elif param.vtype in STRING_DICTS:
             self._make_option_list(frame, param)
@@ -667,7 +747,6 @@ class MancalaGames(tk.Frame):
         Odd that OptionMenus are not in the tab order."""
 
         for tname, tab in self.tabs.items():
-
             tab_params = sorted(
                 [p for p in self.params.values() if p.tab == tname],
                 key = lambda p: (p.col, p.row))
@@ -676,13 +755,34 @@ class MancalaGames(tk.Frame):
                 self._make_ui_param(tab, param)
 
 
-    def _fill_tk_from_config(self, game_config):
+    def _fill_tk_list(self, param, value):
+        """Set the values of a list of tkvariables."""
+
+        if not isinstance(value, list):
+            print(type(value))
+            raise ValueError(
+                f"Don't know how to fill {param.option} from {value}.")
+
+        if param.vtype == BLIST_TYPE:
+            for var in self.tkvars[param.option]:
+                var.set(False)
+            sub_out = 1 if param.option == ckey.CAPT_ON else 0
+            for val in value:
+                self.tkvars[param.option][val - sub_out].set(True)
+
+        else:
+            for var in self.tkvars[param.option]:
+                var.set('0')
+            for idx, val in enumerate(value):
+                self.tkvars[param.option][idx].set(str(val))
+
+
+    def _fill_tk_from_config(self):
         """Set the tk vars (display vars) from the game_config
         dict."""
 
         for param  in self.params.values():
-
-            value = self._get_config_value(game_config, param)
+            value = self._get_config_value(param)
 
             if param.vtype == MSTR_TYPE:
                 self.tktexts[param.option].delete('1.0', tk.END)
@@ -691,17 +791,13 @@ class MancalaGames(tk.Frame):
             elif param.vtype in (STR_TYPE, BOOL_TYPE, INT_TYPE):
                 self.tkvars[param.option].set(value)
 
-            elif param.vtype == LIST_TYPE:
+            elif param.vtype == BLIST_TYPE:
+                self._fill_tk_list(param, value)
 
-                for var in self.tkvars[param.option]:
-                    var.set(False)
-
-                if value and isinstance(value, list):
-                    for val in value:
-                        self.tkvars[param.option][val - 1].set(True)
+            elif param.vtype == ILIST_TYPE:
+                self._fill_tk_list(param, value)
 
             elif param.vtype in STRING_DICTS:
-
                 inv_dict = STRING_DICTS[param.vtype].int_dict
                 self.tkvars[param.option].set(inv_dict[value])
 
@@ -710,7 +806,7 @@ class MancalaGames(tk.Frame):
         """Get the values from the tkvars and set them into
         the a game_config dict."""
 
-        game_config = {}
+        self.game_config = {}
 
         for param in self.params.values():
 
@@ -723,20 +819,25 @@ class MancalaGames(tk.Frame):
             elif param.vtype == INT_TYPE:
                 value = stoi(self.tkvars[param.option].get())
 
-            elif param.vtype == LIST_TYPE:
-                value = [nbr + 1
+            elif param.vtype == BLIST_TYPE:
+                add_in = 1 if param.option == ckey.CAPT_ON else 0
+                value = [nbr + add_in
                          for nbr, var in enumerate(self.tkvars[param.option])
                          if var.get()]
+
+            elif param.vtype == ILIST_TYPE:
+                value = [int(var.get())
+                         for nbr, var in enumerate(self.tkvars[param.option])]
 
             elif param.vtype in STRING_DICTS:
                 str_dict = STRING_DICTS[param.vtype].str_dict
                 value = self.tkvars[param.option].get()
                 value = str_dict[value]
 
-            self._set_gc_value(game_config,
+            self._set_gc_value(self.game_config,
                                param.cspec, param.option, value)
 
-        return game_config
+        print(self.game_config)
 
 
     def _prepare_game(self):
@@ -745,16 +846,16 @@ class MancalaGames(tk.Frame):
         This function should be wrapped with a try because
         exceptions/warnings might be raised."""
 
-        game_config = self._make_config_from_tk()
-        game_class = game_config[ckey.GAME_CLASS]
+        self._make_config_from_tk()
+        game_class = self.game_config[ckey.GAME_CLASS]
         gclass = GAME_CLASSES[game_class]
 
-        consts = gc.GameConsts(**game_config[ckey.GAME_CONSTANTS])
+        consts = gc.GameConsts(**self.game_config[ckey.GAME_CONSTANTS])
         info = gi.GameInfo(nbr_holes=consts.holes,
                            rules=gclass.rules,
-                           **game_config[ckey.GAME_INFO])
-        self.game = gclass(consts, info)
+                           **self.game_config[ckey.GAME_INFO])
 
+        self.game = gclass(consts, info)
         self.param_changed = False
 
 
@@ -794,13 +895,12 @@ class MancalaGames(tk.Frame):
         self.filename = os.path.basename(filename)
 
         try:
-            config_dict = man_config.read_game(filename)
+            self.loaded_config = man_config.read_game(filename)
         except ValueError as error:
             tk.messagebox.showerror('JSON File Error', error)
             return
 
-        self._fill_tk_from_config(config_dict)
-        self.loaded_config = config_dict
+        self._fill_tk_from_config()
         self._test()
 
 
@@ -808,14 +908,15 @@ class MancalaGames(tk.Frame):
         """Save params to file.
         Preserve any tags/comments that were in a loaded config."""
 
-        game_config = self._make_config_from_tk()
+        self._make_config_from_tk()
         if self.loaded_config:
             for tag in self.loaded_config.keys():
-                if tag not in game_config:
-                    game_config[tag] = self.loaded_config[tag]
+                if tag not in self.game_config:
+                    self.game_config[tag] = self.loaded_config[tag]
 
         if not self.filename:
-            self.filename = game_config[ckey.GAME_INFO][ckey.NAME] + '.txt'
+            self.filename = self.game_config[ckey.GAME_INFO][ckey.NAME] \
+                + '.txt'
 
         filename = tkfile.asksaveasfilename(
             parent=self.master,
@@ -829,7 +930,7 @@ class MancalaGames(tk.Frame):
             return
 
         with open(filename, 'w', encoding='utf-8') as file:
-            json.dump(game_config, file, indent=3)
+            json.dump(self.game_config, file, indent=3)
 
 
     def _set_frame_active(self, frame, new_state):
@@ -869,7 +970,9 @@ class MancalaGames(tk.Frame):
         if not self.game:
             return
 
-        game_ui = mancala_ui.MancalaUI(self.game, {}, self.master)
+        game_ui = mancala_ui.MancalaUI(self.game,
+                                       self.game_config[ckey.PLAYER],
+                                       self.master)
         self._set_active(False)
         game_ui.wait_window()
         self._set_active(True)
@@ -890,15 +993,22 @@ class MancalaGames(tk.Frame):
                 self.tktexts[param.option].insert('1.0', param.ui_default)
 
             elif param.vtype in STRING_DICTS:
-
                 _, inv_dict, enum_dict = STRING_DICTS[param.vtype]
                 value = inv_dict[enum_dict[param.ui_default]]
-
                 self.tkvars[param.option].set(value)
 
-            elif param.vtype == LIST_TYPE:
+            elif param.vtype == BLIST_TYPE:
                 for var in self.tkvars[param.option]:
                     var.set(False)
+
+            elif param.vtype == ILIST_TYPE:
+                default = param.ui_default
+                if (default
+                        and isinstance(default, list)
+                        and len(default) == self._get_boxes_config(param)):
+
+                    for var, val in zip(self.tkvars[param.option], default):
+                        var.set(val)
 
             else:
                 self.tkvars[param.option].set(param.ui_default)

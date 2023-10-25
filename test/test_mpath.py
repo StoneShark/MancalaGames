@@ -11,7 +11,6 @@ pytestmark = pytest.mark.unittest
 from context import man_path
 
 
-
 TEST_COVERS = ['src\\man_path.py']
 
 class TestMPath:
@@ -38,7 +37,6 @@ class TestMPath:
 
     def test_get_path(self, man_dir):
         assert man_path.get_path('testfile.txt')
-
 
 
     def test_error(self, tmp_path):

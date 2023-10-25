@@ -25,8 +25,6 @@ pytestmark = [pytest.mark.integtest, pytest.mark.filterwarnings("error")]
 from context import man_config
 
 
-
-
 PATH = './GameProps/'
 FILES = os.listdir(PATH)
 
