@@ -206,8 +206,6 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         self.store = [0, 0]
         self.turn = random.choice([False, True])
         self.init_bprops()
-
-        self.difficulty = 1
         self.starter = self.turn
 
         self.deco = ManDeco(self)
@@ -293,7 +291,6 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
         info_dict = dc.asdict(self.info)
         del info_dict[ckey.ABOUT]
-        info_dict[ckey.DIFFICULTY] = f'{self.difficulty} played'
         del info_dict[ckey.UDIRECT]
         del info_dict[ckey.HELP_FILE]
 
