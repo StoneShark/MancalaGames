@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Mancala doesn't know whose playing it. Minimax doesn't know
-what game it's playing. This class ties the two together.
+what game it's playing. This module ties the two together.
 
 Created on Fri Oct 13 14:40:46 2023
 @author: Ann"""
@@ -21,6 +21,12 @@ from game_interface import WinCond
 ALGORITHM_DICT = {'minimaxer': minimax.MiniMaxer,
                   'montecarlo_ts': mcts.MonteCarloTS}
 
+AI_PARAM_DEFAULTS = {ckey.MM_DEPTH: [1, 1, 3, 5],
+                     ckey.MCTS_NODES: [30, 50, 80, 110],
+                     ckey.MCTS_BIAS: [400, 400, 400, 400],
+                     ckey.MCTS_POUTS: [1, 1, 1, 1]}
+
+MCTS_BIAS_DIV = 1000
 
 
 @dc.dataclass(kw_only=True)
@@ -37,6 +43,16 @@ class ScoreParams:
     evens_m: int = 0
     easy_rand: int = 0
     repeat_turn: int = 0
+
+    @classmethod
+    def get_default(cls, fname):
+        """Lookup the default value for the field."""
+
+        for field in dc.fields(cls):
+            if field.name == fname:
+                return field.default
+        return 0
+
 
 
 # %%
@@ -66,10 +82,7 @@ class AiPlayer(ai_interface.AiPlayerIf):
 
         if ckey.AI_PARAMS not in player_dict:
             player_dict[ckey.AI_PARAMS] = {}
-        self.ai_params = player_dict[ckey.AI_PARAMS]
-
-        if ckey.MM_DEPTH not in self.ai_params:
-            self.ai_params[ckey.MM_DEPTH] = [1, 1, 3, 5]
+        self.ai_params = AI_PARAM_DEFAULTS | player_dict[ckey.AI_PARAMS]
 
         self.scorers = []
         self.collect_scorers()
@@ -91,9 +104,9 @@ class AiPlayer(ai_interface.AiPlayerIf):
             self.algo.set_params(max_depth)
 
         elif isinstance(self.algo, mcts.MonteCarloTS):
-            mcts_bias = self.ai_params.get(ckey.MCTS_BIAS, 0)
-            mcts_nodes = self.ai_params.get(ckey.MCTS_NODES, 0)
-            mcts_pouts = self.ai_params.get(ckey.MCTS_POUTS, 0)
+            mcts_bias = self.ai_params[ckey.MCTS_BIAS][value] / MCTS_BIAS_DIV
+            mcts_nodes = self.ai_params[ckey.MCTS_NODES][value]
+            mcts_pouts = self.ai_params[ckey.MCTS_POUTS][value]
             self.algo.set_params(mcts_bias, mcts_nodes, mcts_pouts)
 
         else:
