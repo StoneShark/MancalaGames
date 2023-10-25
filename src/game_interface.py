@@ -94,7 +94,8 @@ class StartPattern(enum.IntEnum):
     GAMACHA = 1
     ALTERNATES = 2
     ALTS_WITH_1 = 3
-    TAPATA = 4
+    CLIPPEDTRIPLES = 4
+    TWOEMPTY = 5
 
 
 @enum.unique

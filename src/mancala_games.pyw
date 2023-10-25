@@ -132,7 +132,8 @@ STRING_DICTS = {
          'Gamacha': StartPattern.GAMACHA,
          'Alternates': StartPattern.ALTERNATES,
          'Alts with 1': StartPattern.ALTS_WITH_1,
-         'Tapata': StartPattern.TAPATA}),
+         'Clipped Triples': StartPattern.CLIPPEDTRIPLES,
+	 'Two Empty': StartPattern.TWOEMPTY}),
 
     'Goal': lookup_dicts(Goal,
         {'Max Seeds': Goal.MAX_SEEDS,
@@ -759,7 +760,6 @@ class MancalaGames(tk.Frame):
         """Set the values of a list of tkvariables."""
 
         if not isinstance(value, list):
-            print(type(value))
             raise ValueError(
                 f"Don't know how to fill {param.option} from {value}.")
 
@@ -836,8 +836,6 @@ class MancalaGames(tk.Frame):
 
             self._set_gc_value(self.game_config,
                                param.cspec, param.option, value)
-
-        print(self.game_config)
 
 
     def _prepare_game(self):

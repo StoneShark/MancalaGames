@@ -92,5 +92,9 @@ def test_rules():
     assert not fp.AltsWithOnePattern.size_ok(2)
     assert fp.AltsWithOnePattern.size_ok(3)
 
-    assert not fp.TapataPattern.size_ok(2)
-    assert fp.TapataPattern.size_ok(3)
+    assert not fp.ClippedTriplesPattern.size_ok(2)
+    assert fp.ClippedTriplesPattern.size_ok(3)
+
+    assert not fp.TwoEmptyPattern.size_ok(2)
+    assert not fp.TwoEmptyPattern.size_ok(3)
+    assert fp.TwoEmptyPattern.size_ok(4)

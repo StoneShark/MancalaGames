@@ -8,6 +8,8 @@ import abc
 
 from game_interface import StartPattern
 
+FOUR = 4
+
 
 class StartPatternIf:
     """A group of pattern methods."""
@@ -84,7 +86,7 @@ class AlternatesPattern(StartPatternIf):
     @staticmethod
     def size_ok(holes):
         return True
-    err_msg = 'Sadeqa Pattern One is always good'
+    err_msg = 'Alternates Pattern is always good'
 
 
     @staticmethod
@@ -132,13 +134,13 @@ class AltsWithOnePattern(StartPatternIf):
             game.board = StartPatternIf.rev_board(game)
 
 
-class TapataPattern(StartPatternIf):
-    """Tapata pattern: repeating 0 nbr_start nbr_start"""
+class ClippedTriplesPattern(StartPatternIf):
+    """Clipped triples pattern (tapata): repeating 0 nbr_start nbr_start"""
 
     @staticmethod
     def size_ok(holes):
         return holes >= 3
-    err_msg = 'Tapata Pattern requires at least 3 holes'
+    err_msg = 'Clipped Tripples Pattern requires at least 3 holes'
 
 
     @staticmethod
@@ -160,6 +162,34 @@ class TapataPattern(StartPatternIf):
         game.board[holes:dbl_holes] = game.board[:holes]
 
 
+class TwoEmptyPattern(StartPatternIf):
+    """TwoEmpty:  S S ... S 0 0"""
+
+    @staticmethod
+    def size_ok(holes):
+        return holes >= FOUR
+    err_msg = 'TwoEmpty Pattern requires at least 4 holes'
+
+
+    @staticmethod
+    def nbr_seeds(holes, nbr_start):
+        return (holes - 2) * nbr_start * 2
+
+
+    @staticmethod
+    def fill_seeds(game):
+
+        holes = game.cts.holes
+        dbl_holes = game.cts.dbl_holes
+        seeds = game.cts.nbr_start
+
+        game.board = [0] * dbl_holes
+        for loc in range(holes - 2):
+            game.board[loc] = seeds
+        game.board[holes:dbl_holes] = game.board[:holes]
+
+
+
 # %%
 
 PCLASSES = [None] * len(StartPattern)
@@ -167,4 +197,5 @@ PCLASSES = [None] * len(StartPattern)
 PCLASSES[StartPattern.GAMACHA] = GamachaPattern
 PCLASSES[StartPattern.ALTERNATES] = AlternatesPattern
 PCLASSES[StartPattern.ALTS_WITH_1] = AltsWithOnePattern
-PCLASSES[StartPattern.TAPATA] = TapataPattern
+PCLASSES[StartPattern.CLIPPEDTRIPLES] = ClippedTriplesPattern
+PCLASSES[StartPattern.TWOEMPTY] = TwoEmptyPattern
