@@ -13,7 +13,6 @@ Created on Sat Apr  8 09:15:30 2023
 import abc
 
 from game_log import game_log
-
 from game_interface import GrandSlam
 from game_interface import WinCond
 
@@ -171,11 +170,11 @@ class OppOrEmptyEnd(AllowableIf):
             if not allow[pos]:
                 continue
 
-            mdata = self.game.do_sow(pos)
+            mdata = self.game.do_single_sow(pos)
             self.game.state = saved_state
 
             end_loc = mdata.capt_loc
-            if self.game.board[end_loc] and end_loc in my_rng:
+            if end_loc in my_rng and self.game.board[end_loc]:
                 allow[pos] = False
 
         return allow

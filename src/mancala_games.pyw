@@ -133,7 +133,7 @@ STRING_DICTS = {
          'Alternates': StartPattern.ALTERNATES,
          'Alts with 1': StartPattern.ALTS_WITH_1,
          'Clipped Triples': StartPattern.CLIPPEDTRIPLES,
-	 'Two Empty': StartPattern.TWOEMPTY}),
+         'Two Empty': StartPattern.TWOEMPTY}),
 
     'Goal': lookup_dicts(Goal,
         {'Max Seeds': Goal.MAX_SEEDS,

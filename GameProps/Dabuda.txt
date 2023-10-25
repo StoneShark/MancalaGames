@@ -1,0 +1,34 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "nbr_start": 4,
+      "holes": 10
+   },
+   "game_info": {
+      "name": "Dabuda",
+      "about": "Dabuda: a multi-lap mancala,\ncounter-clockwise sow.\nSow must reach opp side or \nend in empty hole.\nCross-capture when end in own\nhole with one seed.\nPick own seed on capture.\nGames ends if no moves.\nPlayed with 6 to 10 holes.",
+      "crosscapt": true,
+      "mlaps": true,
+      "opp_or_empty": true,
+      "oppsidecapt": true,
+      "sow_direct": 1,
+      "stores": true,
+      "xcpickown": 1
+   },
+   "player": {
+      "scorer": {
+         "access_m": 0,
+         "child_cnt_m": 0,
+         "easy_rand": 20,
+         "empties_m": -2,
+         "evens_m": 0,
+         "repeat_turn": 0,
+         "seeds_m": 0,
+         "stores_m": 4
+      },
+      "ai_params": {
+         "mm_depth": [1, 1, 3, 5]
+      }
+   },
+   "rules": "Russ, Laurence. Mancala Games. 1984. p32."
+}

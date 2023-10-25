@@ -46,6 +46,10 @@ class SowMethodIf(abc.ABC):
         Update mdata.capt_loc with the last sow location.
         RETURN mdata."""
 
+    def get_single_sower(self):
+        """Return the first non-lap sower in the deco chain."""
+        return self
+
 
 # %%  base sower
 
@@ -310,6 +314,11 @@ class MlapSowerIf(SowMethodIf):
         self.lap_cont = lap_cont
 
 
+    def get_single_sower(self):
+        """Return the first non-lap sower in the deco chain."""
+        return self.decorator.get_single_sower()
+
+
 class SowMlapSeeds(MlapSowerIf):
     """Do sow operations until until lap continuer test tells
     us to stop.
@@ -392,6 +401,14 @@ class SowVisitedMlap(SowMethodIf):
         super().__init__(game, lap_sower)
         self.lap_cont = lap_cont
         self.single_sower = single_sower
+
+
+    def get_single_sower(self):
+        """Return the first non-lap sower in the deco chain.
+        This is not a single sower, override the default to call
+        down the deco chain"""
+        return self.decorator.get_single_sower()
+
 
     def sow_seeds(self, mdata):
         """Do the first sow."""

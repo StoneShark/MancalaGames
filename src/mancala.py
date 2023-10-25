@@ -421,6 +421,17 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         return mdata
 
 
+    def do_single_sow(self, move):
+        """For move simulation, just do the a single sow."""
+
+        mdata = MoveData(self, move)
+        mdata.sow_loc, mdata.seeds = self.deco.starter.start_sow(move)
+        mdata.direct = self.deco.get_dir.get_direction(move, mdata.sow_loc)
+        single_sower = self.deco.sower.get_single_sower()
+        mdata = single_sower.sow_seeds(mdata)
+        return mdata
+
+
     def capture_seeds(self, mdata):
         """Hand off the capture to the capturer deco."""
 
