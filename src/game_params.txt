@@ -1,7 +1,7 @@
 tab	option	text	cspec	vtype	ui_default	row	col	description	change_notes	new_game	allow	moves	incr	starter	get_dir	sower	capt_ok	capturer	ender	quitter	gstr
 Allow	min_move	Minimum Seeds for Move	game_info _	int	1	0	0	The minimum number of seeds a hole must have for it to be an allowable move start hole.			1								1	1	
 Allow	mustshare	Must Share	game_info _	bool	False	1	0	"If an opponent has no moves at the start of your turn, you must make seeds available to them if you can."			1								1	1	
-Allow	opp_or_empty	Mlap Must Reach Opp	game_info _	bool	False	2	0	Limit the allowable holes to those that end in an empty hole or reach the opponents side of the board.			1										
+Allow	opp_or_empty	End Empty or Opp Side	game_info _	bool	False	2	0	Limit the allowable holes to those that end in an empty hole or reach the opponents side of the board.			1										
 Capture	capsamedir	Capture in Sow Direction	game_info _	bool	False	0	0	"Only meaninful, with multicapt. Captures are done in the same direction as the sowing, i.e. following the final hole sown. If not set, captures are done from the holes just sown."										1			
 Capture	capt_max	Capture Max	game_info _	int	0	4	0	Capture when the contents of the hole are less than or equal to capt_max.									1	1			
 Capture	capt_min	Capture Min	game_info _	int	0	5	0	Capture when the contents of the hole are greater than or equal to capt_min.									1	1			
@@ -42,7 +42,7 @@ GAMACHA: starting from the third hold (from start player's left) place nbr_seeds
 ALTERNATES: everyother hole is filled with nbr_seeds, no seeds end up opposite eachother. If a player has fewer seeds than their opponent, then they start.
 ALTS_WITH_1: like Alternates except the starter's 2nd from right hole with nbr_seeds is replaced with one seed.
 CLIPPEDTRIPLES: pattern of 0 S S (where S is nbr_seeds) is used to fill the holes; if a full cycle of 3 cannot be placed, the holes are left empty. The True and False sides are the same from the player's perspective, e.g. they will look reversed when viewed from one side of the game board.
-TWOEMPTY: all but the rightmost two holes for each player are filled with S (where S is nbr_seeds)."		1											
+TWOEMPTY: all but the rightmost two holes for each player are filled with is nbr_seeds."		1											
 Dynamics	stores	Stores	game_info _	bool	True	0	0	Are stores present on the UI. Stores might not be on the UI but used if seeds are taken out of play.		1									1	1	
 Game	about	About	game_info _	multi_str	"Sow counter-clockwise.
 Capture on evens. "	4	0	Short string describing the game possibly in multiple lines. Enough to remind the player what the game options are.													
@@ -80,7 +80,8 @@ Sow	one_child	Only One Child	game_info _	bool	False	5	2	"Implement the Tuzdek ru
 - not opposite eachother"										1			
 Sow	skip_start	Skip Start on Lap	game_info _	bool	False	2	0	"When sowing a second or subsequent circuit of the board, skip the start hole. This will leave the start hole empty for single lap games."					1			1					
 Sow	sow_blkd_div	"Skip Own Blocked, Capt Opp"	game_info _	bool	False	6	0	Blocked holes on own side are skipped when sowing and blocked holes on opp side are diverted out of play or captured.								1					
-Sow	sow_capt_all	Capture All while Sowing	game_info _	bool	False	7	0	Capture all holes that are sown that meet the capture criteria. If the game goal TERRITORY the capturer is the hole owner; otherwise the capturer is done by side.								1					
+Sow	sow_capt_all	Capture all while Sowing	game_info _	bool	False	7	0	"Capture all holes that are sown that meet the simple capture criteria: evens, max, min, capture on. Other criteria are enforced: side of the board, unlocked, and not child.   Grand Slam rules are not applied.
+If the game goal TERRITORY the capturer is the hole owner; otherwise the capturer is done by side."								1					
 Sow	sow_direct	Sow Direction	game_info _	Direct	CCW	0	0	"Direction of sow:
 - CW: clockwise
 - CCW: counter-clockwise

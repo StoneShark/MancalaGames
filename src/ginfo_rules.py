@@ -560,7 +560,14 @@ def build_rules():
         rule=lambda ginfo: (ginfo.capttwoout
                             and ginfo.grandslam != GrandSlam.LEGAL),
         msg="CAPTTWOOUT requires that GRANDSLAM be LEGAL",
-        warn=True)
+        excp=gi.GameInfoError)
+
+    man_rules.add_rule(
+        'sca_gs_not',
+        rule=lambda ginfo: (ginfo.sow_capt_all
+                            and ginfo.grandslam != GrandSlam.LEGAL),
+        msg='SOW_CAPT_ALL requires that GRANDLAM be LEGAL',
+        excp=gi.GameInfoError)
 
     man_rules.add_rule(
         'capt2_multi_incomp',

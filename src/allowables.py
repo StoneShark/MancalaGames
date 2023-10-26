@@ -170,7 +170,9 @@ class OppOrEmptyEnd(AllowableIf):
             if not allow[pos] or self.game.board[pos] > self.game.cts.holes:
                 continue
 
+            game_log.set_simulate()
             mdata = self.game.do_single_sow(pos)
+            game_log.clear_simulate()
             self.game.state = saved_state
 
             end_loc = mdata.capt_loc

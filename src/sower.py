@@ -194,7 +194,8 @@ class SowClosed(SowMethodIf):
 class SowCaptOwned(SowMethodIf):
     """Any holes sown to allow capture are captured by the hole's
     owner, except for the last seed. The last hole may be captured
-    from the opponent's hole."""
+    from the opponent's hole (let the capturer do that--keeps the
+    log nice)."""
 
     def __init__(self, game, owner_func, decorator=None):
         super().__init__(game, decorator)
@@ -212,16 +213,10 @@ class SowCaptOwned(SowMethodIf):
             self.game.board[loc] += 1
 
             if self.game.deco.capt_ok.capture_ok(loc):
-
-                turn = self.game.turn
                 if scnt > 1:
                     owner = self.owner(loc)
                     game_log.step(f'Catpure from {loc} by {owner}')
                     self.game.store[owner] += self.game.board[loc]
-                    self.game.board[loc] = 0
-                else:
-                    game_log.step(f'Catpure from {loc} by sower')
-                    self.game.store[turn] += self.game.board[loc]
                     self.game.board[loc] = 0
 
         mdata.capt_loc = loc
@@ -434,7 +429,7 @@ class SowVisitedMlap(SowMethodIf):
         return mdata
 
 
-# %%
+# %% build deco chain
 
 
 def deco_blkd_divert_sower(game):
@@ -464,7 +459,6 @@ def deco_sower(game):
     """Build the sower chain.
 
     The lambda is needed because the self parameter must be stuffed."""
-    # pylint: disable=unnecessary-lambda
 
     if game.info.sow_blkd_div:
         return deco_blkd_divert_sower(game)
@@ -473,7 +467,7 @@ def deco_sower(game):
         if game.info.goal == Goal.TERRITORY:
             sower = SowCaptOwned(game, lambda loc: game.owner[loc])
         else:
-            sower = SowCaptOwned(game, lambda loc: game.cts.board_side(loc))
+            sower = SowCaptOwned(game, game.cts.board_side)
 
     elif game.info.sow_own_store:
         sower = SowSeedsNStore(game)
