@@ -167,7 +167,7 @@ class OppOrEmptyEnd(AllowableIf):
         my_rng = self.game.cts.get_my_range(self.game.turn)
 
         for pos in range(self.game.cts.holes):
-            if not allow[pos]:
+            if not allow[pos] or self.game.board[pos] > self.game.cts.holes:
                 continue
 
             mdata = self.game.do_single_sow(pos)

@@ -326,6 +326,7 @@ class TestOppEmpty:
         [([3, 1, 0, 0, 1, 0], False, [T, T, F]),
          ([3, 1, 0, 0, 1, 1], True, [T, F, F]),
 
+        ([4] * 6,  True, [T, T, T]),
         ])
 
     def test_allowables(self, board, turn, eresult):
