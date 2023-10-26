@@ -90,7 +90,7 @@ stress_tests: test/context.py
 vpath %.cov ./cov
 vpath %.py ./test
 
-%.cov: test/context.py 
+%.cov: test/context.py $(subst .cov,.py,$@)
 	coverage run --branch -m pytest test\\$(subst .cov,.py,$@)
 	coverage json
 	python test\\check_unit_cov.py $(subst .cov,,$@) > cov\\$@

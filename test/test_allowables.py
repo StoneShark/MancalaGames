@@ -17,7 +17,6 @@ from context import game_interface as gi
 from context import mancala
 
 from game_interface import GrandSlam
-from game_interface import Direct
 
 # %%
 
@@ -162,33 +161,64 @@ class TestAllowables:
         assert game.deco.allow.get_allowable_holes() == eresult
 
 
-    @pytest.fixture
-    def mlgame(self):
+
+    def test_mlap_allowables(self):
+        # this includes an ENDLESS condition for grand slam
 
         game_consts = gc.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 crosscapt=True,
-                                sow_direct=Direct.CW,
                                 grandslam=GrandSlam.NOT_LEGAL,
                                 mlaps=True,
                                 rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
-        return game
+        game.turn = True
+        game.board = utils.build_board([1, 3, 1],
+                                       [0, 1, 0])
 
-
-    def test_mlap_allowables(self, mlgame):
-        # this is an ENDLESS condition, note CW not CCW as game above
-
-        mlgame.turn = True
-        mlgame.board = utils.build_board([1, 3, 1],
-                                         [0, 1, 0])
-
-        seeds = mlgame.cts.total_seeds - sum(mlgame.board)
+        seeds = game.cts.total_seeds - sum(game.board)
         quot, rem = divmod(seeds, 2)
-        mlgame.store = [quot, quot + rem]
+        game.store = [quot, quot + rem]
 
-        assert mlgame.deco.allow.get_allowable_holes() == [T, F, T]
+        assert game.deco.allow.get_allowable_holes() == [T, F, T]
+
+
+    def test_mustshare_endless(self):
+        # this is an ENDLESS condition for mustshare
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=4)
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+                                crosscapt=True,
+                                mustshare=True,
+                                mlaps=True,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = True
+        game.board = [0, 0, 0, 0, 1, 11, 7, 8]
+
+        game.store[0] = game.cts.total_seeds - sum(game.board)
+
+        assert game.deco.allow.get_allowable_holes() == [T, T, F, T]
+
+
+    def test_sown_n_capt(self):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(capt_on=[1, 2],
+                                multicapt=True,
+                                mustshare=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        game.turn = True
+        game.board = utils.build_board([2, 0, 20],
+                                       [0, 0, 0])
+        game.store[0] = game.cts.total_seeds - sum(game.board)
+
+        assert game.deco.allow.get_allowable_holes() == [F, F, T]
 
 
 class TestMemoize:
@@ -294,7 +324,7 @@ class TestOppEmpty:
     @pytest.mark.parametrize(
         'board, turn, eresult',
         [([3, 1, 0, 0, 1, 0], False, [T, T, F]),
-         ([3, 1, 0, 0, 1, 1], True, [T, F, F]),  # true side is reversed
+         ([3, 1, 0, 0, 1, 1], True, [T, F, F]),
 
         ])
 

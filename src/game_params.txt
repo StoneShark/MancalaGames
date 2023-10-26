@@ -1,6 +1,6 @@
 tab	option	text	cspec	vtype	ui_default	row	col	description	change_notes	new_game	allow	moves	incr	starter	get_dir	sower	capt_ok	capturer	ender	quitter	gstr
 Allow	min_move	Minimum Seeds for Move	game_info _	int	1	0	0	The minimum number of seeds a hole must have for it to be an allowable move start hole.			1								1	1	
-Allow	mustshare	Must Share	game_info _	bool	False	1	0	"If an opponent has no moves at the start of your turn, you must make seeds available to them if you can."	Need to decide as implemented (sow seeds to opp) OR leave opp with seeds.		1								1	1	
+Allow	mustshare	Must Share	game_info _	bool	False	1	0	"If an opponent has no moves at the start of your turn, you must make seeds available to them if you can."			1								1	1	
 Allow	opp_or_empty	Mlap Must Reach Opp	game_info _	bool	False	2	0	Limit the allowable holes to those that end in an empty hole or reach the opponents side of the board.			1										
 Capture	capsamedir	Capture in Sow Direction	game_info _	bool	False	0	0	"Only meaninful, with multicapt. Captures are done in the same direction as the sowing, i.e. following the final hole sown. If not set, captures are done from the holes just sown."										1			
 Capture	capt_max	Capture Max	game_info _	int	0	4	0	Capture when the contents of the hole are less than or equal to capt_max.									1	1			
@@ -41,10 +41,11 @@ Dynamics	start_pattern	Start Pattern	game_info _	StartPattern	ALL_EQUAL	2	2	"All
 GAMACHA: starting from the third hold (from start player's left) place nbr_seeds in every other hole, the first move is prescribed move the center hole's seeds to the other side (this is done automatically).
 ALTERNATES: everyother hole is filled with nbr_seeds, no seeds end up opposite eachother. If a player has fewer seeds than their opponent, then they start.
 ALTS_WITH_1: like Alternates except the starter's 2nd from right hole with nbr_seeds is replaced with one seed.
-TAPATA: pattern of 0 S S (where S is nbr_seeds) is used to fill the holes; if a full cycle of 3 cannot be placed, the holes are left empty. The True and False sides are the same from the player's perspective, e.g. they will look reversed when viewed from one side of the game board."		1											
+CLIPPEDTRIPLES: pattern of 0 S S (where S is nbr_seeds) is used to fill the holes; if a full cycle of 3 cannot be placed, the holes are left empty. The True and False sides are the same from the player's perspective, e.g. they will look reversed when viewed from one side of the game board.
+TWOEMPTY: all but the rightmost two holes for each player are filled with S (where S is nbr_seeds)."		1											
 Dynamics	stores	Stores	game_info _	bool	True	0	0	Are stores present on the UI. Stores might not be on the UI but used if seeds are taken out of play.		1									1	1	
 Game	about	About	game_info _	multi_str	"Sow counter-clockwise.
-Capture on evens. "	4	0	Short string describing the game possibly in multiple lines. Enough to remind the player what the game options are.	"Fix the type for about text, make it a multililne input"												
+Capture on evens. "	4	0	Short string describing the game possibly in multiple lines. Enough to remind the player what the game options are.													
 Game	class	Game Class	game_class	GameClasses	Mancala	0	0	The name of the Game Class. Currently only Mancala.	Note: GameClasses only exists in the STRING_DICTS table.												
 Game	help_file	Help File	game_info _	str	mancala_help.html	3	0	An html help file describing the game.	Should we keep this? A help file for an individual game? A help file for the Mancala UI?												
 Game	holes	Holes per Side	game_constants _	int	3	2	0	Number of holes on each side of the board. Start Pattern may use this number differently.		1	1	1	1		1	1	1	1	1	1	

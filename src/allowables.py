@@ -88,10 +88,10 @@ class MustShare(AllowableIf):
                 continue
 
             game_log.set_simulate()
-            mdata = self.game.do_sow(pos)
+            cond = self.game.move(pos)
             game_log.clear_simulate()
 
-            if mdata.capt_loc is WinCond.ENDLESS:
+            if cond is WinCond.ENDLESS:
                 game_log.add(f'Preventing ENDLESS move {loc}',
                              game_log.IMPORT)
                 self.game.state = saved_state

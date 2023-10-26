@@ -326,13 +326,6 @@ class TestOwareGrandSlam:
         # move 13
         cond = game.move(5)
         assert game.turn is True
-        assert game.board == [0, 0, 0, 0, 0, 0, 1, 3, 4, 4, 4, 5]
-        assert game.store == [4, 23]
-        assert cond is None
-
-        # move 14
-        cond = game.move(3)
-        assert game.turn is True
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [4, 44]
         assert cond.name == "WIN"
@@ -893,13 +886,6 @@ class TestOwareGrandSlam:
 
         # move 21
         cond = game.move(5)
-        assert game.turn is True
-        assert game.board == [0, 0, 0, 0, 0, 0, 10, 10, 0, 5, 5, 2]
-        assert game.store == [1, 15]
-        assert cond is None
-
-        # move 22
-        cond = game.move(2)
         assert game.turn is True
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [1, 47]

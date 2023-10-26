@@ -77,6 +77,7 @@ class TestGetMove:
         game.board = board
         game.blocked = blocked
         game.child = child
+        game.store[0] = game.cts.total_seeds - sum(board)
         assert game.deco.moves.get_moves() == eresult
 
 

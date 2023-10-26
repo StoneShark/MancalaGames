@@ -407,9 +407,9 @@ class TestEndMove:
             # 24: true's turn ended without seeds, false can't share
             ('no_win_game', False, False,
              utils.build_board([0, 0, 0],
-                               [1, 1, 0]), [3, 5], True, WinCond.TIE,
+                               [1, 1, 0]), [4, 6], True, WinCond.TIE,
              utils.build_board([0, 0, 0],
-                               [0, 0, 0]), [5, 5], None),
+                               [0, 0, 0]), [6, 6], None),
 
             # 25: true has a repeat_turn but no moves, false wins
             ('game', False, True,
