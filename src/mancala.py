@@ -238,7 +238,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         if self.info.blocks:
             state_dict |= {'blocked': tuple(self.blocked)}
 
-        if self.info.child:
+        if self.info.child_cvt:
             state_dict |= {'child': tuple(self.child)}
 
         if self.info.goal == Goal.TERRITORY:

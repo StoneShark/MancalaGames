@@ -30,6 +30,7 @@ import abc
 
 from game_log import game_log
 from game_interface import Goal
+from game_interface import ChildType
 from game_interface import WinCond
 
 
@@ -606,7 +607,7 @@ def deco_end_move(game):
     if game.info.goal == Goal.DEPRIVE:
         return DepriveSeedsEndGame(game)
 
-    if game.info.child:
+    if game.info.child_cvt:
         claimer = ChildClaimSeeds(game)
     else:
         claimer = ClaimSeeds(game)
@@ -630,7 +631,7 @@ def deco_end_move(game):
     if game.info.rounds:
         ender = RoundWinner(game, ender, ClaimOwnSeeds(game))
 
-    if game.info.waldas:
+    if game.info.child_type == ChildType.WALDA:
         ender = WaldaEndMove(game, ender)
 
     if game.info.goal == Goal.TERRITORY:
@@ -652,7 +653,7 @@ def deco_quitter(game):
     if game.info.stores:
         return Winner(game, claimer=DivvySeedsStores(game))
 
-    if game.info.child:
+    if game.info.child_cvt:
         return Winner(game, claimer=DivvySeedsNoStores(game))
 
     return Winner(game, claimer=DivvyIgnoreSeeds(game))

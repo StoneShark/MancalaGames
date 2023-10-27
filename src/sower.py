@@ -287,7 +287,7 @@ class ChildLapCont(LapContinuerIf):
             return False
 
         if (mdata.seeds > 1
-                and self.game.board[loc] == self.game.info.convert_cnt):
+                and self.game.board[loc] == self.game.info.child_cvt):
             if ((self.game.info.oppsidecapt
                     and self.game.cts.opp_side(self.game.turn, loc))
                     or not self.game.info.oppsidecapt):
@@ -479,7 +479,7 @@ def deco_sower(game):
 
     if game.info.mlaps:
 
-        if game.info.child:
+        if game.info.child_cvt:
             lap_cont = ChildLapCont(game)
         else:
             lap_cont = SimpleLapCont(game)

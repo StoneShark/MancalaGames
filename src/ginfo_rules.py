@@ -25,6 +25,7 @@ import warnings
 
 import game_interface as gi
 
+from game_interface import ChildType
 from game_interface import Direct
 from game_interface import Goal
 from game_interface import GrandSlam
@@ -242,7 +243,7 @@ def add_block_and_divert_rules(rules):
         return _divert_and
 
     rules.add_rule(
-        'bdiv_need_convert_cnt',
+        'bdiv_need_convert_cvt',
         rule=lambda ginfo: ginfo.sow_blkd_div and not ginfo.convert_cnt,
         msg='SOW_BLKD_DIV requires CONVERT_CNT for closing holes',
         excp=gi.GameInfoError)
@@ -283,7 +284,7 @@ def add_block_and_divert_rules(rules):
             'no other capture mechanisms are allowed [CAPT_ON]',
         excp=gi.GameInfoError)
 
-    bad_flags = ['child', 'moveunlock', 'mustshare', 'mustpass',
+    bad_flags = ['child_cvt', 'moveunlock', 'mustshare', 'mustpass',
                  'rounds', 'round_starter', 'rnd_left_fill', 'rnd_umove',
                  'no_sides', 'sow_own_store', 'stores',
                  'skip_start', 'sow_start', 'visit_opp']
@@ -295,87 +296,47 @@ def add_block_and_divert_rules(rules):
             excp=gi.GameInfoError)
 
 
-def add_walda_rules(rules):
-    """Add rules specific to having waldas.  Originally from Qelat."""
-
-    def waldas_and(flag_name):
-        """Return a function that tests waldas and the specified
-        flag, based only on a ginfo parameter."""
-
-        def _waldas_and(ginfo):
-            return ginfo.waldas and getattr(ginfo, flag_name)
-
-        return _waldas_and
+def add_child_rules(rules):
+    """Add rules specific to having children."""
 
     rules.add_rule(
-        'waldas_need_child',
-        rule=lambda ginfo: ginfo.waldas and not ginfo.child,
-        msg='Waldas requires CHILD',
+        'child_need_cvt',
+        rule=lambda ginfo: ginfo.child_type and not ginfo.child_cvt,
+        msg='Selected child type requires CHILD_CVT',
         excp=gi.GameInfoError)
 
     rules.add_rule(
-        'waldas_need_convert_cnt',
-        rule=lambda ginfo: ginfo.waldas and not ginfo.convert_cnt,
-        msg='Waldas requires CONVERT_CNT',
+        'child_cvt_need_type',
+        rule=lambda ginfo: not ginfo.child_type and ginfo.child_cvt,
+        msg='CHILD_CVT requires a CHILD_TYPE != NOCHILD',
         excp=gi.GameInfoError)
 
     rules.add_rule(
-        'walda_req_max_seeds',
-        rule=lambda ginfo: ginfo.waldas and ginfo.goal != Goal.MAX_SEEDS,
-        msg='WALDAS requires a goal of MAX_SEEDS',
+        'child_not_deprive',
+        rule=lambda ginfo: ginfo.child_cvt and ginfo.goal == Goal.DEPRIVE,
+        msg='Children cannot be used with a game goal of DEPRIVE',
         excp=gi.GameInfoError)
 
     rules.add_rule(
-        'waldas_gs_legal',
-        rule=lambda ginfo: (ginfo.waldas
+        'child_no_gs',
+        rule=lambda ginfo: (ginfo.child_cvt
                             and ginfo.grandslam != GrandSlam.LEGAL),
-        msg='Waldas requires that GRANDSLAM be Legal',
-        excp=gi.GameInfoError)
-
-    bad_flags = ['blocks',
-                 'rounds', 'round_starter', 'rnd_left_fill', 'rnd_umove',
-                 'no_sides', 'sow_own_store', 'stores']
-    for flag in bad_flags:
-        rules.add_rule(
-            f'waldas_bad_{flag}',
-            rule=waldas_and(flag),
-            msg=f'Waldas cannot be used with {flag.upper()}',
-            excp=gi.GameInfoError)
-
-
-def add_one_child_rules(rules):
-    """Add the tuzdek rules (flag is called one_child because it
-    means more)."""
-
-    def one_child_and(flag_name):
-        """Return a function that tests one_child and the specified
-        flag, based only on a ginfo parameter."""
-
-        def _tuzdek_and(ginfo):
-            return ginfo.one_child and getattr(ginfo, flag_name)
-
-        return _tuzdek_and
-
-    rules.add_rule(
-        'need_child',
-        rule=lambda ginfo: ginfo.one_child and not ginfo.child,
-        msg='ONE_CHILD requires CHILD to support tuzdek creation',
+        msg='Children requires that GRANDSLAM be Legal',
         excp=gi.GameInfoError)
 
     rules.add_rule(
-        'need_convert_cnt',
-        rule=lambda ginfo: ginfo.one_child and not ginfo.convert_cnt,
-        msg='ONE_CHILD requires CONVERT_CNT to define tuzdek creation',
-        excp=gi.GameInfoError)
+        'walda_store',
+        rule=lambda ginfo: (ginfo.child_type == ChildType.WALDA
+                            and ginfo.stores),
+        msg='Walda does use STORES',
+        warn=True)
 
-    bad_flags = ['blocks', 'no_sides',
-                 'rounds', 'round_starter', 'rnd_left_fill', 'rnd_umove']
-    for flag in bad_flags:
-        rules.add_rule(
-            f'onechild_bad_{flag}',
-            rule=one_child_and(flag),
-            msg=f'ONE_CHILD cannot be used with {flag.upper()}',
-            excp=gi.GameInfoError)
+    rules.add_rule(
+        'one_child_store',
+        rule=lambda ginfo: (ginfo.child_type == ChildType.ONE_CHILD
+                            and not ginfo.stores),
+        msg='ONE_CHILD requires STORES',
+        excp=gi.GameInfoError)
 
 
 def add_no_sides_rules(rules):
@@ -428,8 +389,7 @@ def build_rules():
     add_deprive_rules(man_rules)
     add_territory_rules(man_rules)
     add_block_and_divert_rules(man_rules)
-    add_walda_rules(man_rules)
-    add_one_child_rules(man_rules)
+    add_child_rules(man_rules)
     add_no_sides_rules(man_rules)
 
     man_rules.add_rule(
@@ -438,20 +398,6 @@ def build_rules():
                             and not ginfo.stores),
         msg='SOW_OWN_STORE set without STORES set',
         excp=gi.GameInfoError)
-
-    man_rules.add_rule(
-        'child_convert_cnt',
-        rule=lambda ginfo: ginfo.child  and not ginfo.convert_cnt,
-        msg="CHILD without CONVERT_CNT doesn't do anything.",
-        warn=True)
-
-    man_rules.add_rule(
-        'child_gs_legal',
-        rule=lambda ginfo: (ginfo.child  and
-                            ginfo.grandslam != GrandSlam.LEGAL),
-        msg='CHILD requires that GRANDSLAM be Legal',
-        excp=NotImplementedError)
-        # the GS code doesn't handle children, I suppose it could
 
     man_rules.add_rule(
         'split_gs_not',
@@ -550,9 +496,9 @@ def build_rules():
         warn=True)
 
     man_rules.add_rule(
-        'capt2_waldas_incomp',
-        rule=lambda ginfo: ginfo.capttwoout and (ginfo.child or ginfo.waldas),
-        msg="CAPTTWOOUT and WALDAS/CHILD are incompatible",
+        'capt2_child_incomp',
+        rule=lambda ginfo: ginfo.capttwoout and ginfo.child_cvt,
+        msg="CAPTTWOOUT and CHILDREN are incompatible",
         warn=True)
 
     man_rules.add_rule(

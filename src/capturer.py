@@ -12,6 +12,7 @@ Created on Fri Apr  7 08:52:03 2023
 
 import abc
 
+from game_interface import ChildType
 from game_interface import CrossCaptOwn
 from game_interface import GrandSlam
 from game_log import game_log
@@ -315,13 +316,13 @@ class GSOppGets(GrandSlamCapt):
 # %%  child decorators
 
 class MakeChild(CaptMethodIf):
-    """If the hole constains convert_cnt seeds
+    """If the hole constains child_cvt seeds
     and the side test is good, designate a child.
     If a child is made don't do any other captures."""
 
     def do_captures(self, mdata):
 
-        if self.game.board[mdata.capt_loc] == self.game.info.convert_cnt:
+        if self.game.board[mdata.capt_loc] == self.game.info.child_cvt:
             if ((self.game.info.oppsidecapt
                     and self.game.cts.opp_side(self.game.turn, mdata.capt_loc))
                     or not self.game.info.oppsidecapt):
@@ -369,7 +370,7 @@ class CaptureToWalda(CaptMethodIf):
     def do_captures(self, mdata):
 
         loc = mdata.capt_loc
-        if (self.game.board[loc] == self.game.info.convert_cnt
+        if (self.game.board[loc] == self.game.info.child_cvt
                 and self.game.child[loc] is None
                 and self.walda_poses[loc] in
                     CaptureToWalda.WALDA_TEST[self.game.turn]):
@@ -411,7 +412,7 @@ class MakeTuzdek(CaptMethodIf):
         return (self.game.cts.opp_side(self.game.turn, loc)
                 and self.game.child[loc] is None
                 and self.game.child[cross] is None
-                and self.game.board[loc] == self.game.info.convert_cnt
+                and self.game.board[loc] == self.game.info.child_cvt
                 and self.game.cts.loc_to_left_cnt(loc)
                 and not any(self.game.child[tloc] is not None
                             for tloc in opp_range))
@@ -500,11 +501,11 @@ def deco_capturer(game):
     capturer = _add_grand_slam_deco(game, game.info, capturer)
 
     # only one child handler: waldas/tuzdek/children
-    if game.info.waldas:
+    if game.info.child_type == ChildType.WALDA:
         capturer =  CaptureToWalda(game, capturer)
-    elif game.info.one_child:
+    elif game.info.child_type == ChildType.ONE_CHILD:
         capturer = MakeTuzdek(game, capturer)
-    elif game.info.child:
+    elif game.info.child_type == ChildType.NORMAL:
         capturer = MakeChild(game, capturer)
 
     if game.info.nosinglecapt:

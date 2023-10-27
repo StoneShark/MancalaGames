@@ -15,6 +15,7 @@ from context import game_constants as gc
 from context import game_interface as gi
 from context import mancala
 
+from game_interface import ChildType
 from game_interface import Direct
 from game_interface import Goal
 
@@ -54,16 +55,15 @@ class TestGameStr:
     def bmgame(self):
 
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                mustpass=True,
+        game_info = gi.GameInfo(mustpass=True,
                                 stores=True,
                                 blocks=True,
                                 rounds=True,
                                 moveunlock=True,
                                 sow_direct=Direct.CCW,
                                 evens=True,
-                                rules=mancala.Mancala.rules
-                                )
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
         game.turn = False
@@ -93,8 +93,8 @@ class TestGameStr:
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 mustpass=True,
                                 stores=True,
-                                child=True,
-                                convert_cnt=2,
+                                child_type=ChildType.NORMAL,
+                                child_cvt=2,
                                 sow_direct=Direct.CCW,
                                 evens=True,
                                 rules=mancala.Mancala.rules
@@ -127,9 +127,10 @@ class TestGameStr:
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 mustpass=True,
                                 stores=True,
-                                child=True,
+                                child_type=ChildType.NORMAL,
+                                child_cvt=3,
                                 goal=Goal.TERRITORY,
-                                convert_cnt=4,
+                                convert_cnt=5,
                                 sow_direct=Direct.CCW,
                                 evens=True,
                                 rules=mancala.Mancala.rules

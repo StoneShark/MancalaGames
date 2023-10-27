@@ -10,11 +10,10 @@
       "mustpass": true,
       "sow_direct": 0,
       "skip_start": true,
-      "child": true,
-      "convert_cnt": 4,
+      "child_cvt": 4,
+      "child_type": 2,
       "min_move": 1,
-      "capt_on": [4],
-      "waldas": true
+      "capt_on": [4]
    },
    "player": {
       "scorer": {

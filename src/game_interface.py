@@ -87,6 +87,16 @@ class Goal(enum.IntEnum):
 
 
 @enum.unique
+class ChildType(enum.IntEnum):
+    """Type of children."""
+
+    NOCHILD = 0
+    NORMAL = 1
+    WALDA = 2
+    ONE_CHILD = 3
+
+
+@enum.unique
 class StartPattern(enum.IntEnum):
     """Defines the start patterns for the game."""
 
@@ -151,7 +161,8 @@ class GameInfo:
     blocks: bool = False
     mlaps: bool = False
     visit_opp: bool = False
-    child: bool = False
+    child_cvt: int = 0
+    child_type: ChildType = ChildType.NOCHILD
     convert_cnt: int = 0
     sow_blkd_div: bool = False
     sow_capt_all: bool = False
@@ -173,8 +184,6 @@ class GameInfo:
 
     multicapt: bool = False
     grandslam: int = GrandSlam.LEGAL
-    waldas: bool = False
-    one_child: bool = False
 
     # list of seed counts to capture on (after sow)
     capt_on: list[int] = dc.field(default_factory=list)

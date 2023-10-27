@@ -31,8 +31,10 @@ import utils
 
 from context import game_constants as gc
 from context import game_interface as gi
+from context import ginfo_rules
 from context import mancala
 
+from game_interface import ChildType
 from game_interface import Direct
 from game_interface import Goal
 from game_interface import WinCond
@@ -87,17 +89,18 @@ class TestGameState:
 
     @pytest.fixture
     def game(self):
-        """Game that has access to all of the state data."""
+        """Game that has access to all of the state data.
+        Turn off game_info rule checking!"""
 
         game_consts = gc.GameConsts(nbr_start=4, holes=2)
         game_info = gi.GameInfo(capt_on = [2],
                                 blocks=True,
                                 rounds=True,
-                                child=True,
-                                convert_cnt=2,
+                                child_type=ChildType.NORMAL,
+                                child_cvt=2,
                                 moveunlock=True,
                                 nbr_holes = game_consts.holes,
-                                rules=mancala.Mancala.rules)
+                                rules=ginfo_rules.RuleDict())
 
         game = mancala.Mancala(game_consts, game_info)
         return game
@@ -173,21 +176,16 @@ class TestGameState:
         if unlocked:
             game.unlocked = unlocked
         else:
-            object.__setattr__(game.info,
-                               'moveunlock',
-                               False)
+            object.__setattr__(game.info, 'moveunlock', False)
         if blocked:
             game.blocked = blocked
         else:
-            object.__setattr__(game.info,
-                               'blocks',
-                               False)
+            object.__setattr__(game.info, 'blocks', False)
         if child:
             game.child = child
         else:
-            object.__setattr__(game.info,
-                               'child',
-                               False)
+            object.__setattr__(game.info, 'child_cvt', 0)
+            object.__setattr__(game.info, 'child_type', ChildType.NOCHILD)
 
         state = game.state
         assert state.board == board

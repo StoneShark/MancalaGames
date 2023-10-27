@@ -17,6 +17,7 @@ from context import game_constants as gc
 from context import game_interface as gi
 from context import mancala
 
+from game_interface import ChildType
 from game_interface import WinCond
 
 
@@ -158,7 +159,8 @@ class TestScorer:
          ])
     def test_sc_stores_child(self, game, player, board, store, child, escore):
 
-        object.__setattr__(game.info, 'child', True)
+        object.__setattr__(game.info, 'child_type', ChildType.NORMAL)
+        object.__setattr__(game.info, 'child_cvt', 4)
 
         player.sc_params.easy_rand = 0
         player.collect_scorers()
@@ -192,7 +194,8 @@ class TestScorer:
          ])
     def test_sc_child_cnt(self, game, player, child, escore):
 
-        object.__setattr__(game.info, 'child', True)
+        object.__setattr__(game.info, 'child_type', ChildType.NORMAL)
+        object.__setattr__(game.info, 'child_cvt', 4)
 
         player.sc_params.stores_m = 0
         player.sc_params.child_cnt_m = 15

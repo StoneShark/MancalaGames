@@ -11,8 +11,8 @@
       "stores": true,
       "sow_direct": 1,
       "skip_start": true,
-      "child": true,
-      "convert_cnt": 4,
+      "child_cvt": 4,
+      "child_type": 1,
       "capt_on": [2],
       "udir_holes": [0, 1, 2, 3, 4, 5, 6]
    },

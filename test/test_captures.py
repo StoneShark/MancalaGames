@@ -16,6 +16,7 @@ from context import game_constants as gc
 from context import game_interface as gi
 from context import mancala
 
+from game_interface import ChildType
 from game_interface import CrossCaptOwn
 from game_interface import Direct
 from game_interface import GrandSlam
@@ -154,12 +155,13 @@ class TestCaptTable:
     @staticmethod
     def make_game(case):
 
+        child_type = ChildType.NORMAL if case.convert_cnt else ChildType.NOCHILD
+
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                capt_on=case.capt_on,
+        game_info = gi.GameInfo(capt_on=case.capt_on,
                                 capsamedir=case.capsamedir,
-                                child=case.child,
-                                convert_cnt=case.convert_cnt,
+                                child_cvt=case.convert_cnt,
+                                child_type=child_type,
                                 crosscapt=case.xcapt,
                                 capt_min=case.capt_min,
                                 evens=case.evens,
@@ -171,6 +173,7 @@ class TestCaptTable:
                                 oppsidecapt=case.oppside,
                                 skip_start=case.skip_start,
                                 xcpickown=case.xcapt_pick_own,
+                                nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
@@ -262,9 +265,8 @@ class TestWaldas:
     @pytest.fixture
     def game(self):
         game_consts = gc.GameConsts(nbr_start=3, holes=5)
-        game_info = gi.GameInfo(child=True,
-                                convert_cnt=4,
-                                waldas=True,
+        game_info = gi.GameInfo(child_cvt=4,
+                                child_type=ChildType.WALDA,
                                 capt_on=[4],
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
@@ -429,9 +431,9 @@ class TestTuzdek:
     @pytest.fixture
     def game(self):
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
-        game_info = gi.GameInfo(child=True,
-                                convert_cnt=3,
-                                one_child=True,
+        game_info = gi.GameInfo(child_cvt=3,
+                                child_type=ChildType.ONE_CHILD,
+								stores=True,
                                 capt_on=[3],
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)

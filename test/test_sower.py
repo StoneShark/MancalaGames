@@ -17,6 +17,7 @@ from context import game_constants as gc
 from context import mancala
 from context import sower
 
+from game_interface import ChildType
 from game_interface import Direct
 from game_interface import Goal
 from game_interface import WinCond
@@ -48,10 +49,11 @@ class TestSower:
     def game(self):
 
         game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                capt_on = [2],
-                                convert_cnt=4,
+        game_info = gi.GameInfo(capt_on=[2],
+                                child_type=ChildType.NORMAL,
+                                child_cvt=4,
                                 oppsidecapt=True,
+                                nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
@@ -62,9 +64,10 @@ class TestSower:
         """not opp for conversion."""
 
         game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                capt_on = [2],
-                                convert_cnt=4,
+        game_info = gi.GameInfo(capt_on=[2],
+                                child_type=ChildType.NORMAL,
+                                child_cvt=4,
+                                nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
@@ -74,7 +77,8 @@ class TestSower:
     def base_sower(self, game):
         object.__setattr__(game.info, 'sow_own_store', False)
         object.__setattr__(game.info, 'mlaps', False)
-        object.__setattr__(game.info, 'child', False)
+        object.__setattr__(game.info, 'child_type', ChildType.NOCHILD)
+        object.__setattr__(game.info, 'child_cvt', 0)
         object.__setattr__(game.info, 'visit_opp', False)
         return sower.deco_sower(game)
 
@@ -246,7 +250,8 @@ class TestSower:
         # can't use fixture because sow_direct is used in the construction
         object.__setattr__(game.info, 'sow_own_store', True)
         object.__setattr__(game.info, 'mlaps', False)
-        object.__setattr__(game.info, 'child', False)
+        object.__setattr__(game.info, 'child_type', ChildType.NOCHILD)
+        object.__setattr__(game.info, 'child_cvt', 0)
         object.__setattr__(game.info, 'visit_opp', False)
         object.__setattr__(game.info, 'sow_direct', direct)
         store_sower = sower.deco_sower(game)
@@ -504,8 +509,8 @@ class TestVMlap:
                                 sow_own_store=True,
                                 mlaps=True,
                                 visit_opp=True,
-                                child=True,
-                                convert_cnt=4,
+                                child_type=ChildType.NORMAL,
+                                child_cvt=4,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)

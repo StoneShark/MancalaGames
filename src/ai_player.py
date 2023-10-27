@@ -142,12 +142,12 @@ class AiPlayer(ai_interface.AiPlayerIf):
             self.scorers += [self._score_repeat_turn]
 
         if self.sc_params.stores_m:
-            if self.game.info.child:
+            if self.game.info.child_cvt:
                 self.scorers += [self._score_child_stores]
             else:
                 self.scorers += [self._score_stores]
 
-        if self.game.info.child and self.sc_params.child_cnt_m:
+        if self.game.info.child_cvt and self.sc_params.child_cnt_m:
             self.scorers += [self._score_children]
 
         if self.sc_params.evens_m:
@@ -378,7 +378,7 @@ def player_dict_rules():
 
     rules.add_rule(
         'child_scorer',
-        rule=lambda pdict, ginfo: (not ginfo.child
+        rule=lambda pdict, ginfo: (not ginfo.child_cvt
                                    and ckey.SCORER in pdict
                                    and ckey.CHILD_CNT_M in pdict[ckey.SCORER]
                                    and pdict[ckey.SCORER][ckey.CHILD_CNT_M]),

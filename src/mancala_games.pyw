@@ -36,6 +36,7 @@ from ai_player import ALGORITHM_DICT
 from ai_player import AI_PARAM_DEFAULTS
 from game_classes import GAME_CLASSES
 from game_constants import MAX_HOLES
+from game_interface import ChildType
 from game_interface import CrossCaptOwn
 from game_interface import Direct
 from game_interface import Goal
@@ -140,7 +141,13 @@ STRING_DICTS = {
          'Deprive Opponent': Goal.DEPRIVE,
          'Territory': Goal.TERRITORY}),
 
-    'Algorithm': lookup_strs(ALGORITHM_DICT.keys())
+    'Algorithm': lookup_strs(ALGORITHM_DICT.keys()),
+
+    'ChildType': lookup_dicts(ChildType,
+        {'No Children': ChildType.NOCHILD,
+         'Normal': ChildType.NORMAL,
+         'Waldas': ChildType.WALDA,
+         'One Child (tuzdek)': ChildType.ONE_CHILD}),
 }
 
 
@@ -602,9 +609,9 @@ class MancalaGames(tk.Frame):
         """Make a text box entry with scroll bar."""
 
         tframe = tk.LabelFrame(frame, text=param.text, labelanchor='nw')
-        tframe.grid(row=param.row, column=param.col, columnspan=2, rowspan=2)
+        tframe.grid(row=param.row, column=param.col, columnspan=4, rowspan=2)
 
-        text_box = tk.Text(tframe, width=40, height=8)
+        text_box = tk.Text(tframe, width=50, height=8)
         self.tktexts[param.option] = text_box
 
         scroll = tk.Scrollbar(tframe)

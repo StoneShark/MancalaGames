@@ -16,8 +16,10 @@ import utils
 from context import end_move
 from context import game_constants as gc
 from context import game_interface as gi
+from context import ginfo_rules
 from context import mancala
 
+from game_interface import ChildType
 from game_interface import Direct
 from game_interface import Goal
 from game_interface import WinCond
@@ -461,24 +463,25 @@ class TestEndChildren:
     @pytest.fixture
     def game(self):
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                child=True,
-                                convert_cnt=2,
+        game_info = gi.GameInfo(child_cvt=2,
+                                child_type=ChildType.NORMAL,
                                 evens=True,
+                                nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
 
     @pytest.fixture
     def rgame(self):
+        """NOTE: game_info rule checking is turned off."""
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                rounds=True,
+        game_info = gi.GameInfo(rounds=True,
                                 blocks=True,  # req with rounds
-                                child=True,
-                                convert_cnt=2,
+                                child_cvt=2,
+                                child_type=ChildType.NORMAL,
                                 evens=True,
-                                rules=mancala.Mancala.rules)
+                                nbr_holes=game_consts.holes,
+                                rules=ginfo_rules.RuleDict())
 
         return mancala.Mancala(game_consts, game_info)
 
@@ -538,6 +541,7 @@ class TestEndChildren:
         assert game.turn == eturn
         assert not game.test_pass()
 
+
 class TestEndDeprive:
 
     @pytest.fixture
@@ -587,11 +591,10 @@ class TestEndWaldas:
     @pytest.fixture
     def game(self):
         game_consts = gc.GameConsts(nbr_start=4, holes=6)
-        game_info = gi.GameInfo(child=True,
-                                convert_cnt=4,
+        game_info = gi.GameInfo(child_cvt=4,
+                                child_type=ChildType.WALDA,
                                 mustpass=True,
                                 sow_direct=Direct.SPLIT,
-                                waldas=True,
                                 capt_on=[4],
                                 skip_start=True,
                                 nbr_holes=game_consts.holes,
@@ -730,9 +733,9 @@ class TestQuitter:
     @pytest.fixture
     def game(self):
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                evens=True,
+        game_info = gi.GameInfo(evens=True,
                                 stores=True,
+                                nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
@@ -740,11 +743,11 @@ class TestQuitter:
     @pytest.fixture
     def chgame(self):
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                evens=True,
-                                child=True,
-                                convert_cnt=2,
+        game_info = gi.GameInfo(evens=True,
+                                child_type=ChildType.NORMAL,
+                                child_cvt=2,
                                 stores=True,
+                                nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
@@ -763,8 +766,8 @@ class TestQuitter:
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 evens=True,
-                                child=True,
-                                convert_cnt=2,
+                                child_type=ChildType.NORMAL,
+                                child_cvt=2,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
@@ -772,11 +775,11 @@ class TestQuitter:
     @pytest.fixture
     def rgame(self):
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                rounds=True,
+        game_info = gi.GameInfo(rounds=True,
                                 blocks=True,  # req with rounds
                                 evens=True,
                                 stores=True,
+                                nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
@@ -795,9 +798,9 @@ class TestQuitter:
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
         object.__setattr__(game_consts, 'win_count', game_consts.total_seeds)
 
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                evens=True,
+        game_info = gi.GameInfo(evens=True,
                                 stores=True,
+                                nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)

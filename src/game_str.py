@@ -121,7 +121,7 @@ def deco_get_string(game):
     if game.info.moveunlock:
         hole_deco = HoleMarker(game, LOCK, 'unlocked', hole_deco)
 
-    if game.info.child:
+    if game.info.child_cvt:
         hole_deco = HoleMarker(game, CHILD, 'child', hole_deco)
 
     return GameString(game, hole_deco)

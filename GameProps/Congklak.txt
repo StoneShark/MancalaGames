@@ -8,7 +8,6 @@
       "name": "Congklak",
       "about": "Congklak: a multi-lap mancala played in rounds.\nSow direction is clockwise, sow into ones\nown store. Cross-capture with pick own.",
       "blocks": true,
-      "convert_cnt": 0,
       "crosscapt": true,
       "mlaps": true,
       "oppsidecapt": true,
