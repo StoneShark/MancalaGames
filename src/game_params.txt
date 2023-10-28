@@ -92,7 +92,7 @@ If the game goal TERRITORY the capturer is the hole owner; otherwise the capture
 Sow	udir_holes	User Chooses Direction	game_info _	list[bool]	[]	8	0	"A list of holes that the user can control the sow direction from. Control is via the mouse button: left is clockwise and right is counter-clockwise.
 Note: all holes respond to both mouse buttons, but if the hole is not in udir_holes, the sow direction will be that prescribed by sow_direct with either button."				1			1						
 Sow	mlaps	Multilap Sow	game_info _	bool	False	0	2	"Sow is done in multiple laps: when the first sow ends, if there is more than one seed in the final hole sown, pickup those seeds and continue sowing."								1					
-Sow	visit_opp	Visit Opp for Mlaps	game_info _	bool	False	2	2	Sow is multiplap only if the first sow reaches the opponents side of the board.								1					
+Sow	visit_opp	Visit Opp for Mlaps	game_info _	bool	False	1	2	Sow is multiplap only if the first sow reaches the opponents side of the board.								1					
 Sow	child_type	Type of Children	game_info _	ChildType	NOCHILD	3	2	"Games with children allow players to claim holes. These child holes are an extension of the stores and seeds in them count towards a win. Making a child stops any multiple lap sowing, moves cannot start from children, and they cannot be captured.
 NORMAL: no special child rules
 WALDAS: Stores are not supported. Captures are instead moved into waldas, thus a player may not capture until they have created a walda. Child locations are limited.  Each player may create up to 6 waldas: on either end of each side of the board and the next outer hole on their own side of the board. Note that there are only 8 total places that waldas maybe created.
@@ -100,6 +100,5 @@ ONE_CHILD: Use the tuzdek rules for children: only one child allowed on own side
 "													
 Sow	child_cvt	Child Convert Count	game_info _	int	0	4	2	"Defines the number of seeds required to make a child.
 "			1		1			1	1	1	1	1	1
-Sow	convert_cnt	Covert Count	game_info _	int	0	6	2	"A general input integer:
-Goal of Territory: defines the number of holes needed for a win.
-Blocked Divert Sower: defines the number of seeds needed to close/block holes (sow_blkd_div)."								1		1	1	1	
+Sow	convert_cnt	General input	game_info _	int	0	6	2	"Goal of Territory: defines the number of holes needed for a win.
+Goal of Deprive and Blocked Divert Sower: defines the number of seeds needed to close/block holes (sow_blkd_div)."								1		1	1	1	

@@ -5,15 +5,15 @@
       "holes": 12
    },
    "game_info": {
-      "name": "Gamacha",
-      "about": "Gamacha: counter-clockwise multi-lap sow.\nMoves must end in an empty hole or \nreach opponents side of the board.\nSeeds are taken out of play via cross-capture.\nThe goal is to deprive the opponent of seeds.\n\nVariations: Sadeqa, start pattern, allow rules, etc.",
+      "name": "Sadeqa",
+      "about": "Sadeqa: counter-clockwise multi-lap sow.\nMoves must end in an empty hole or \nreach opponents side of the board.\nSeeds are taken out of play via cross-capture.\nThe goal is to deprive the opponent of seeds.\n\nVariations: ALTERNATES or ALTS_WITH_1",
       "crosscapt": true,
       "goal": 1,
       "mlaps": true,
       "allow_rule": 1,
       "oppsidecapt": true,
       "sow_direct": 1,
-      "start_pattern": 1
+      "start_pattern": 3
    },
    "player": {
       "scorer": {
