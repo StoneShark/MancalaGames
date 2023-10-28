@@ -109,6 +109,20 @@ class StartPattern(enum.IntEnum):
 
 
 @enum.unique
+class AllowRule(enum.IntEnum):
+    """Defines special rules for allowable holes."""
+
+    NONE = 0
+    OPP_OR_EMPTY = 1
+    SINGLE_TO_ZERO = 2
+    SINGLE_ONLY_ALL = 3
+    SINGLE_ALL_TO_ZERO = 4
+    TWO_ONLY_ALL = 5
+    TWO_ONLY_ALL_RIGHT = 6
+    FIRST_TURN_ONLY_RIGHT_TWO = 7
+
+
+@enum.unique
 class WinCond(enum.Enum):
     """Win conditions."""
 
@@ -146,13 +160,14 @@ class GameInfo:
     stores: bool = False
     start_pattern: StartPattern = StartPattern.ALL_EQUAL
 
-    # **** sowing
+    # **** allowable moves
     min_move: int = 1
+    allow_rule: AllowRule = AllowRule.NONE
+    mustshare: bool = False
+
+    # **** sowing
     sow_direct: Direct = Direct.CCW
     udirect: bool = False
-
-    mustshare: bool = False
-    opp_or_empty: bool = False
 
     sow_start: bool = False
     move_one: bool = False
@@ -166,7 +181,6 @@ class GameInfo:
     convert_cnt: int = 0
     sow_blkd_div: bool = False
     sow_capt_all: bool = False
-    mlaps_next: bool = False
 
     # **** capture
     capsamedir: bool = False

@@ -25,6 +25,7 @@ import warnings
 
 import game_interface as gi
 
+from game_interface import AllowRule
 from game_interface import ChildType
 from game_interface import Direct
 from game_interface import Goal
@@ -391,6 +392,13 @@ def build_rules():
     add_block_and_divert_rules(man_rules)
     add_child_rules(man_rules)
     add_no_sides_rules(man_rules)
+
+    man_rules.add_rule(
+        'no_udir_1to0',
+        rule=lambda ginfo: (ginfo.udirect
+                            and ginfo.allow_rule == AllowRule.SINGLE_TO_ZERO),
+        msg='Allow rule SINGLE_TO_ZERO cannot be used with UDIR_HOLES.',
+        excp=gi.GameInfoError)
 
     man_rules.add_rule(
         'sow_own_needs_stores',

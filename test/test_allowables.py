@@ -16,6 +16,8 @@ from context import game_constants as gc
 from context import game_interface as gi
 from context import mancala
 
+from game_interface import AllowRule
+from game_interface import Direct
 from game_interface import GrandSlam
 
 # %%
@@ -328,12 +330,201 @@ class TestOppEmpty:
 
         ([4] * 6,  True, [T, T, T]),
         ])
-
     def test_allowables(self, board, turn, eresult):
 
         game_consts = gc.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[2],
-                                opp_or_empty=True,
+                                allow_rule=AllowRule.OPP_OR_EMPTY,
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = turn
+        game.board = board
+
+        assert game.deco.allow.get_allowable_holes() == eresult
+
+
+class TestSingleToEmpty:
+
+    @pytest.mark.parametrize(
+        'direct, board, turn, eresult',
+        [(Direct.CCW, [4] * 8,  True, [T, T, T, T]),
+
+         (Direct.CCW, utils.build_board([0, 1, 0, 2],
+                                        [3, 1, 0, 2]), False, [T, T, F, T]),
+         (Direct.CCW, utils.build_board([0, 1, 2, 2],
+                                        [3, 0, 1, 2]), False, [T, F, F, T]),
+         (Direct.CCW, utils.build_board([1, 2, 0, 2],
+                                        [3, 1, 0, 2]), True, [F, T, F, T]),
+
+         (Direct.CW, utils.build_board([0, 1, 0, 2],
+                                       [3, 1, 0, 2]), False, [T, F, F, T]),
+         (Direct.CW, utils.build_board([0, 1, 2, 2],
+                                       [3, 1, 0, 2]), False, [T, F, F, T]),
+         (Direct.CW, utils.build_board([1, 2, 0, 2],
+                                       [3, 1, 0, 2]), True, [F, T, F, T]),
+         (Direct.CW, utils.build_board([1, 0, 2, 2],
+                                       [3, 1, 0, 2]), True, [T, F, T, T]),
+
+         (Direct.SPLIT, utils.build_board([0, 1, 1, 0],
+                                          [0, 1, 1, 0]), True, [F, T, T, F]),
+         (Direct.SPLIT, utils.build_board([0, 1, 1, 0],
+                                          [0, 1, 1, 0]), False, [F, T, T, F]),
+         (Direct.SPLIT, utils.build_board([1, 2, 0, 1],
+                                          [1, 2, 0, 1]), True, [F, T, F, F]),
+         (Direct.SPLIT, utils.build_board([1, 2, 0, 1],
+                                          [1, 2, 0, 1]), False, [F, T, F, F]),
+        ],
+        ids=[f'case_{cnt}' for cnt in range(12)])
+    def test_allowables(self, direct, board, turn, eresult):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=4)
+        game_info = gi.GameInfo(capt_on=[2],
+                                sow_direct=direct,
+                                allow_rule=AllowRule.SINGLE_TO_ZERO,
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = turn
+        game.board = board
+
+        assert game.deco.allow.get_allowable_holes() == eresult
+
+
+class TestOnlyIfAll:
+
+    @pytest.mark.parametrize(
+        'board, turn, eresult',
+        [([4] * 8,  True, [T, T, T, T]),
+
+         (utils.build_board([0, 1, 0, 2],
+                            [3, 1, 0, 2]), False, [T, F, F, T]),
+         (utils.build_board([1, 2, 0, 2],
+                            [3, 1, 0, 2]), True, [F, T, F, T]),
+
+         (utils.build_board([0, 1, 1, 0],
+                            [0, 1, 1, 0]), True, [F, T, T, F]),
+         (utils.build_board([0, 1, 1, 0],
+                            [0, 1, 1, 0]), False, [F, T, T, F]),
+        ],
+        ids=[f'case_{cnt}' for cnt in range(5)])
+    def test_1_allowables(self, board, turn, eresult):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=4)
+        game_info = gi.GameInfo(capt_on=[2],
+                                allow_rule=AllowRule.SINGLE_ONLY_ALL,
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = turn
+        game.board = board
+
+        assert game.deco.allow.get_allowable_holes() == eresult
+
+
+
+class TestOnlyIfAllToZero:
+
+    @pytest.mark.parametrize(
+        'board, turn, eresult',
+        [([4] * 8,  True, [T, T, T, T]),
+
+         (utils.build_board([0, 1, 0, 2],
+                            [3, 1, 0, 2]), False, [T, F, F, T]),
+         (utils.build_board([1, 2, 0, 2],
+                            [3, 1, 0, 2]), True, [F, T, F, T]),
+
+         (utils.build_board([0, 1, 1, 0],
+                            [0, 1, 1, 0]), True, [F, T, F, F]),
+         (utils.build_board([0, 1, 1, 0],
+                            [0, 1, 1, 0]), False, [F, F, T, F]),
+
+         (utils.build_board([1, 1, 0, 1],
+                            [1, 1, 1, 0]), False, [F, F, T, F]),
+         (utils.build_board([1, 1, 0, 1],
+                            [1, 1, 1, 0]), True, [F, F, F, T]),
+        ],
+        ids=[f'case_{cnt}' for cnt in range(7)])
+    def test_1_allowables(self, board, turn, eresult):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=4)
+        game_info = gi.GameInfo(capt_on=[2],
+                                allow_rule=AllowRule.SINGLE_ALL_TO_ZERO,
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = turn
+        game.board = board
+
+        assert game.deco.allow.get_allowable_holes() == eresult
+
+
+
+    @pytest.mark.parametrize(
+        'board, turn, eresult',
+        [([4] * 8,  True, [T, T, T, T]),
+
+         (utils.build_board([0, 1, 0, 2],
+                            [3, 1, 0, 2]), False, [T, T, F, F]),
+         (utils.build_board([1, 2, 0, 2],
+                            [3, 1, 0, 2]), True, [T, F, F, F]),
+
+         (utils.build_board([0, 2, 2, 0],
+                            [0, 2, 2, 0]), True, [F, T, T, F]),
+         (utils.build_board([0, 2, 2, 0],
+                            [0, 2, 2, 0]), False, [F, T, T, F]),
+        ],
+        ids=[f'case_{cnt}' for cnt in range(5)])
+    def test_2_allowables(self, board, turn, eresult):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=4)
+        game_info = gi.GameInfo(capt_on=[2],
+                                allow_rule=AllowRule.TWO_ONLY_ALL,
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = turn
+        game.board = board
+
+        assert game.deco.allow.get_allowable_holes() == eresult
+
+
+class TestTwosRight:
+
+    @pytest.mark.parametrize(
+        'board, turn, eresult',
+        [([4] * 8,  True, [T, T, T, T]),
+
+         (utils.build_board([0, 1, 0, 2],
+                            [3, 1, 0, 2]), False, [T, T, F, F]),
+         (utils.build_board([1, 2, 0, 2],
+                            [3, 3, 0, 2]), True, [T, F, F, F]),
+
+         (utils.build_board([0, 2, 2, 0],
+                            [0, 2, 2, 0]), True, [F, T, F, F]),
+         (utils.build_board([2, 2, 0, 0],
+                            [0, 2, 2, 0]), True, [T, F, F, F]),
+         (utils.build_board([0, 2, 2, 0],
+                            [0, 2, 2, 0]), False, [F, F, T, F]),
+         (utils.build_board([0, 2, 2, 0],
+                            [2, 0, 0, 0]), False, [T, F, F, F]),
+       ],
+        ids=[f'case_{cnt}' for cnt in range(7)])
+    def test_two_right(self, board, turn, eresult):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=4)
+        game_info = gi.GameInfo(capt_on=[2],
+                                allow_rule=AllowRule.TWO_ONLY_ALL_RIGHT,
                                 stores=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)

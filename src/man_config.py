@@ -8,12 +8,23 @@ Created on Tue Jul 18 12:16:20 2023
 import dataclasses as dc
 import json
 
+import ai_player
 import cfg_keys as ckey
 import game_constants as gc
 import game_interface as gi
 
+from ai_player import ALGORITHM_DICT
+from ai_player import AI_PARAM_DEFAULTS
 from game_classes import GAME_CLASSES
+from param_consts import INT_TYPE
+from param_consts import STR_TYPE
+# from param_consts import BOOL_TYPE
+from param_consts import MSTR_TYPE
+# from param_consts import BLIST_TYPE
+# from param_consts import ILIST_TYPE
 
+
+# %%
 
 MAX_LINES = 150
 MAX_CHARS = 2000
@@ -21,6 +32,13 @@ MAX_CHARS = 2000
 NO_CONVERT = [ckey.NAME, ckey.ABOUT, ckey.HELP_FILE,
               ckey.UDIR_HOLES, ckey.CAPT_ON]
 
+OPT_TAG = '_'
+GI_TAG = 'game_info _'
+AI_TAG = 'player ai_params _'
+SCR_TAG = 'player scorer _'
+
+
+# %% read config files
 
 def read_game(filename):
     """Read a mancala configuration returning the
@@ -76,3 +94,90 @@ def make_game(filename):
 
     gclass = GAME_CLASSES[class_name]
     return gclass(consts, info), player_dict
+
+
+
+# %% access config data and defaults
+
+
+def get_config_value(game_config, config_spec, option, vtype):
+    """Get the value from the configuration, if it's not there
+    use the constructor default."""
+
+    value = get_gc_value(game_config, config_spec, option)
+    if value is None:
+        value = get_construct_default(vtype, config_spec, option)
+    return value
+
+
+def get_construct_default(vtype, cspec, option):
+    """The defaults in the UI parameter table yield a playable game,
+    they are not the actual construction defaults.
+    Return the construction default."""
+
+    rval = False
+
+    if cspec == GI_TAG:
+        rval = gi.GameInfo.get_default(option)
+
+    elif cspec == SCR_TAG:
+        rval = ai_player.ScoreParams.get_default(option)
+
+    elif cspec == AI_TAG:
+        rval = AI_PARAM_DEFAULTS[option]
+
+    elif option == ckey.ALGORITHM:
+        rval = list(ALGORITHM_DICT.keys())[0]
+
+    elif option == ckey.DIFFICULTY:
+        rval = 1
+
+    elif vtype in (STR_TYPE, MSTR_TYPE):
+        rval = ""
+
+    elif vtype == INT_TYPE:
+        rval =  0
+
+    return rval
+
+
+def get_gc_value(game_config, cspec, option):
+    """game_config_spec format is one of
+        word+  or  word* _
+    where option is substituted for _
+
+    Lookup and return the value in a series of nested dictionaries."""
+
+    tags = cspec.split(' ')
+
+    vdict = game_config
+    for tag in tags:
+        if tag == OPT_TAG:
+            if option in vdict:
+                return vdict[option]
+            return None
+
+        if tag in vdict:
+            vdict = vdict[tag]
+        else:
+            return None
+
+    return vdict
+
+
+def set_config_value(game_config, cspec, option, value):
+    """Set the value in a series of nested dictionaries;
+    create empty dictionaries as required."""
+
+    tags = cspec.split(' ')
+
+    vdict = game_config
+    for tag in tags[:-1]:
+        if tag not in vdict:
+            vdict[tag] = {}
+        vdict = vdict[tag]
+
+    if tags[-1] == OPT_TAG:
+        vdict[option] = value
+    else:
+        vdict[tags[-1]] = value

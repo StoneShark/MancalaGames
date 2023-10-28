@@ -8,7 +8,6 @@ The file game_info.txt drives much of what happens here.
 Created on Thu Mar 30 13:43:39 2023
 @author: Ann"""
 
-# pylint: disable=too-many-lines
 
 # %% import
 
@@ -24,7 +23,6 @@ import tkinter as tk
 from tkinter import ttk
 import tkinter.filedialog as tkfile
 
-import ai_player
 import cfg_keys as ckey
 import game_constants as gc
 import game_interface as gi
@@ -32,17 +30,15 @@ import mancala_ui
 import man_config
 import man_path
 
-from ai_player import ALGORITHM_DICT
-from ai_player import AI_PARAM_DEFAULTS
 from game_classes import GAME_CLASSES
 from game_constants import MAX_HOLES
-from game_interface import ChildType
-from game_interface import CrossCaptOwn
-from game_interface import Direct
-from game_interface import Goal
-from game_interface import GrandSlam
-from game_interface import RoundStarter
-from game_interface import StartPattern
+from param_consts import STRING_DICTS
+from param_consts import INT_TYPE
+from param_consts import STR_TYPE
+from param_consts import BOOL_TYPE
+from param_consts import MSTR_TYPE
+from param_consts import BLIST_TYPE
+from param_consts import ILIST_TYPE
 
 
 # %%  Constants
@@ -64,92 +60,7 @@ DISABLED = 'disabled'
 ACTIVE = 'active'
 NORMAL = 'normal'
 
-# types from the params file
-INT_TYPE = 'int'
-STR_TYPE = 'str'
-BOOL_TYPE = 'bool'
-MSTR_TYPE = 'multi_str'
-BLIST_TYPE = 'list[bool]'
-ILIST_TYPE = 'list[int]'
-
 SKIP_TAB = 'skip'
-OPT_TAG = '_'
-GI_TAG = 'game_info _'
-AI_TAG = 'player ai_params _'
-SCR_TAG = 'player scorer _'
-
-
-# %% enum dictionaries
-
-LDicts = collections.namedtuple('LDicts', 'str_dict, int_dict, enum_dict')
-
-def lookup_dicts(etype, adict):
-    """Return the dict, it's inverse, and enum name: enum dict
-    for the enum (etype)."""
-
-    vals = adict.values()
-    assert len(vals) == len(set(vals)), 'values not unique for adict'
-    return LDicts(adict,
-                  {value: key for key, value in adict.items()},
-                  {e.name: e for e in etype})
-
-
-def lookup_strs(strings):
-    """The string and values are both the strings.
-    Build and return dictionaries."""
-
-    sdict = {s: s for s in strings}
-    return LDicts(sdict, sdict, sdict)
-
-
-STRING_DICTS = {
-    'GameClasses': lookup_strs(GAME_CLASSES.keys()),
-
-    'Direct': lookup_dicts(Direct,
-        {'Clockwise': Direct.CW,
-         'Counter-clockwise': Direct.CCW,
-         'Split': Direct.SPLIT}),
-
-    'GrandSlam': lookup_dicts(GrandSlam,
-        {"Legal": GrandSlam.LEGAL,
-         "Not Legal": GrandSlam.NOT_LEGAL,
-         "Legal but no capture": GrandSlam.NO_CAPT,
-         "Legal but opp takes remaining": GrandSlam.OPP_GETS_REMAIN,
-         "Legal but leave leftmost": GrandSlam.LEAVE_LEFT,
-         "Legal but leave rightmost": GrandSlam.LEAVE_RIGHT}),
-
-    'RoundStarter': lookup_dicts(RoundStarter,
-        {'Alternate': RoundStarter.ALTERNATE,
-         'Round Winner': RoundStarter.WINNER,
-         'Round Loser': RoundStarter.LOSER}),
-
-    'CrossCaptOwn': lookup_dicts(CrossCaptOwn,
-        {'Leave': CrossCaptOwn.LEAVE,
-         'Pick on Capture': CrossCaptOwn.PICK_ON_CAPT,
-         'Alway Pick': CrossCaptOwn.ALWAYS_PICK}),
-
-    'StartPattern': lookup_dicts(StartPattern,
-        {'All Equal': StartPattern.ALL_EQUAL,
-         'Gamacha': StartPattern.GAMACHA,
-         'Alternates': StartPattern.ALTERNATES,
-         'Alts with 1': StartPattern.ALTS_WITH_1,
-         'Clipped Triples': StartPattern.CLIPPEDTRIPLES,
-         'Two Empty': StartPattern.TWOEMPTY}),
-
-    'Goal': lookup_dicts(Goal,
-        {'Max Seeds': Goal.MAX_SEEDS,
-         'Deprive Opponent': Goal.DEPRIVE,
-         'Territory': Goal.TERRITORY}),
-
-    'Algorithm': lookup_strs(ALGORITHM_DICT.keys()),
-
-    'ChildType': lookup_dicts(ChildType,
-        {'No Children': ChildType.NOCHILD,
-         'Normal': ChildType.NORMAL,
-         'Waldas': ChildType.WALDA,
-         'One Child (tuzdek)': ChildType.ONE_CHILD}),
-}
-
 
 # %% helper funcs
 
@@ -405,94 +316,6 @@ class MancalaGames(tk.Frame):
         self.desc.config(state=tk.DISABLED)
 
 
-    def _get_config_value(self, param):
-        """Get the value from the configuration, if it's not there
-        use the constructor default."""
-
-        value = self._get_gc_value(self.loaded_config,
-                                   param.cspec,
-                                   param.option)
-        if value is None:
-            value = self._get_construct_default(param.vtype,
-                                                param.cspec,
-                                                param.option)
-        return value
-
-
-    @staticmethod
-    def _get_construct_default(vtype, cspec, option):
-        """The defaults in the parameter table yield a playable game,
-        they are not the actual construction defaults.
-        Return the construction default."""
-
-        rval = False
-
-        if cspec == GI_TAG:
-            rval = gi.GameInfo.get_default(option)
-
-        elif cspec == SCR_TAG:
-            rval = ai_player.ScoreParams.get_default(option)
-
-        elif cspec == AI_TAG:
-            rval = AI_PARAM_DEFAULTS[option]
-
-        elif option == ckey.ALGORITHM:
-            rval = list(ALGORITHM_DICT.keys())[0]
-
-        elif option == ckey.DIFFICULTY:
-            rval = 1
-
-        elif vtype in (STR_TYPE, MSTR_TYPE):
-            rval = ""
-
-        elif vtype == INT_TYPE:
-            rval =  0
-
-        return rval
-
-
-    @staticmethod
-    def _get_gc_value(game_config, cspec, option):
-        """game_config_spec format is one of
-            word+  or  word* _
-        where option is substituted for _
-
-        Lookup and return the value in a series of nested dictionaries."""
-
-        tags = cspec.split(' ')
-
-        vdict = game_config
-        for tag in tags:
-            if tag == OPT_TAG:
-                if option in vdict:
-                    return vdict[option]
-                return None
-
-            if tag in vdict:
-                vdict = vdict[tag]
-            else:
-                return None
-
-        return vdict
-
-
-    @staticmethod
-    def _set_gc_value(game_config, cspec, option, value):
-        """Set the value in a series of nested dictionaries;
-        create empty dictionaries as required."""
-
-        tags = cspec.split(' ')
-
-        vdict = game_config
-        for tag in tags[:-1]:
-            if tag not in vdict:
-                vdict[tag] = {}
-            vdict = vdict[tag]
-
-        if tags[-1] == OPT_TAG:
-            vdict[option] = value
-        else:
-            vdict[tags[-1]] = value
 
 
     def _get_boxes_config(self, param):
@@ -789,7 +612,8 @@ class MancalaGames(tk.Frame):
         dict."""
 
         for param  in self.params.values():
-            value = self._get_config_value(param)
+            value = man_config.get_config_value(
+                self.loaded_config, param.cspec, param.option, param.vtype)
 
             if param.vtype == MSTR_TYPE:
                 self.tktexts[param.option].delete('1.0', tk.END)
@@ -841,8 +665,8 @@ class MancalaGames(tk.Frame):
                 value = self.tkvars[param.option].get()
                 value = str_dict[value]
 
-            self._set_gc_value(self.game_config,
-                               param.cspec, param.option, value)
+            man_config.set_config_value(
+                self.game_config, param.cspec, param.option, value)
 
 
     def _prepare_game(self):

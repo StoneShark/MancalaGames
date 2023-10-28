@@ -13,8 +13,10 @@ Created on Sat Apr  8 09:15:30 2023
 import abc
 
 from game_log import game_log
+from game_interface import AllowRule
 from game_interface import GrandSlam
 from game_interface import WinCond
+from incrementer import NOSKIPSTART
 
 
 # %%  allowable moves interface
@@ -60,6 +62,105 @@ class Allowable(AllowableIf):
 
 
 # %%  decorators
+
+class OppOrEmptyEnd(AllowableIf):
+    """Can only play from holes that end in an empty hole or
+    on the opponents side of the board."""
+
+    def get_allowable_holes(self):
+
+        allow = self.decorator.get_allowable_holes()
+        saved_state = self.game.state
+        my_rng = self.game.cts.get_my_range(self.game.turn)
+
+        for pos in range(self.game.cts.holes):
+            if not allow[pos] or self.game.board[pos] > self.game.cts.holes:
+                continue
+
+            game_log.set_simulate()
+            mdata = self.game.do_single_sow(pos)
+            game_log.clear_simulate()
+            self.game.state = saved_state
+
+            end_loc = mdata.capt_loc
+            if end_loc in my_rng and self.game.board[end_loc]:
+                allow[pos] = False
+
+        return allow
+
+
+class SingleToZero(AllowableIf):
+    """Can only move holes with single seeds to the next hole
+    if it empty."""
+
+    def get_allowable_holes(self):
+        """Return allowable moves."""
+
+        allow = self.decorator.get_allowable_holes()
+
+        for loc in self.game.cts.get_my_range(self.game.turn):
+
+            pos = self.game.cts.xlate_pos_loc(not self.game.turn, loc)
+            direct = self.game.deco.get_dir.get_direction(loc, loc)
+            nloc = self.game.deco.incr.incr(loc, direct, NOSKIPSTART)
+
+            if (allow[pos]
+                    and self.game.board[loc] == 1
+                    and self.game.board[nloc]):
+                allow[pos] = False
+
+        return allow
+
+
+class OnlyIfAllN(AllowableIf):
+    """Can't move from a hole with a N seed unless they
+    are all N seeds (or zero).
+
+    Pass 1: exclude all holes with N, use this if any allowable
+    Pass 2: can move from any allowable hole"""
+
+    def __init__(self, game, const, decorator=None):
+
+        super().__init__(game, decorator)
+        self.const = const
+
+    def get_allowable_holes(self):
+        """Return allowable moves."""
+
+        allow = [self.allow_move(loc) and self.game.board[loc] != self.const
+                for loc in self.game.cts.get_my_range(self.game.turn)]
+        if any(allow):
+            return allow
+
+        return self.decorator.get_allowable_holes()
+
+
+class AllTwoRightmost(AllowableIf):
+    """Can't move from holes containing two, unless all holes
+    have two (or zero), and THEN only the rightmost hole with two seeds."""
+
+    def get_allowable_holes(self):
+        """Return allowable moves."""
+
+        allow = [self.allow_move(loc) and self.game.board[loc] != 2
+                for loc in self.game.cts.get_my_range(self.game.turn)]
+        if any(allow):
+            return allow
+
+        turn= self.game.turn
+        holes = self.game.cts.holes
+        dbl_holes = self.game.cts.dbl_holes
+        rightedge = (dbl_holes if turn else holes) - 1
+        leftedge = (holes if turn else 0) - 1
+        allow = [False] * holes
+
+        for loc in range(rightedge, leftedge, -1):
+            if self.game.board[loc] == 2:
+                pos = self.game.cts.xlate_pos_loc(not self.game.turn, loc)
+                allow[pos] = True
+                break
+
+        return allow
 
 
 class MustShare(AllowableIf):
@@ -156,32 +257,6 @@ class NoGrandSlam(AllowableIf):
         return rval
 
 
-class OppOrEmptyEnd(AllowableIf):
-    """Can only play from holes that end in an empty hole or
-    on the opponents side of the board."""
-
-    def get_allowable_holes(self):
-
-        allow = self.decorator.get_allowable_holes()
-        saved_state = self.game.state
-        my_rng = self.game.cts.get_my_range(self.game.turn)
-
-        for pos in range(self.game.cts.holes):
-            if not allow[pos] or self.game.board[pos] > self.game.cts.holes:
-                continue
-
-            game_log.set_simulate()
-            mdata = self.game.do_single_sow(pos)
-            game_log.clear_simulate()
-            self.game.state = saved_state
-
-            end_loc = mdata.capt_loc
-            if end_loc in my_rng and self.game.board[end_loc]:
-                allow[pos] = False
-
-        return allow
-
-
 class NoSidesAllowable(AllowableIf):
     """Base allowable for no_sides games
     Return is a list of booleans the same size as the board and
@@ -227,6 +302,36 @@ class MemoizeAllowable(AllowableIf):
 
 # %% build deco chain
 
+
+def deco_allow_rule(game, allowable):
+    """Add the allow rule decos."""
+
+    if game.info.allow_rule == AllowRule.OPP_OR_EMPTY:
+        allowable = OppOrEmptyEnd(game, allowable)
+
+    elif game.info.allow_rule == AllowRule.SINGLE_TO_ZERO:
+        allowable = SingleToZero(game, allowable)
+
+    elif game.info.allow_rule == AllowRule.SINGLE_ONLY_ALL:
+        allowable = OnlyIfAllN(game, 1, allowable)
+
+    elif game.info.allow_rule == AllowRule.SINGLE_ALL_TO_ZERO:
+        allowable = OnlyIfAllN(game, 1, allowable)
+        allowable = SingleToZero(game, allowable)
+
+    elif game.info.allow_rule == AllowRule.TWO_ONLY_ALL:
+        allowable = OnlyIfAllN(game, 2, allowable)
+
+    elif game.info.allow_rule == AllowRule.TWO_ONLY_ALL_RIGHT:
+        allowable = AllTwoRightmost(game, allowable)
+
+    elif game.info.allow_rule == AllowRule.FIRST_TURN_ONLY_RIGHT_TWO:
+        # TODO implement FIRST_TURN_ONLY_RIGHT_TWO (need to know turn #?)
+        raise NotImplementedError("FIRST_TURN_ONLY_RIGHT_TWO")
+
+    return allowable
+
+
 def deco_allowable(game):
     """Build the allowable deco."""
 
@@ -234,18 +339,16 @@ def deco_allowable(game):
         return NoSidesAllowable(game)
 
     allowable = Allowable(game)
+    allowable = deco_allow_rule(game, allowable)
 
     if game.info.mustshare:
         allowable = MustShare(game, allowable)
-
-    if game.info.opp_or_empty:
-        allowable = OppOrEmptyEnd(game, allowable)
 
     if game.info.grandslam == GrandSlam.NOT_LEGAL:
         allowable = NoGrandSlam(game, allowable)
 
     if (game.info.mustshare
-            or game.info.opp_or_empty
+            or game.info.allow_rule
             or game.info.grandslam == GrandSlam.NOT_LEGAL):
         allowable = MemoizeAllowable(game, allowable)
 

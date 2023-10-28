@@ -1,7 +1,14 @@
-tab	option	text	cspec	vtype	ui_default	row	col	description	change_notes	new_game	allow	moves	incr	starter	get_dir	sower	capt_ok	capturer	ender	quitter	gstr
+tab	option	text	cspec	vtype	ui_default	row	col	description	notes	new_game	allow	moves	incr	starter	get_dir	sower	capt_ok	capturer	ender	quitter	gstr
 Allow	min_move	Minimum Seeds for Move	game_info _	int	1	0	0	The minimum number of seeds a hole must have for it to be an allowable move start hole.			1								1	1	
 Allow	mustshare	Must Share	game_info _	bool	False	1	0	"If an opponent has no moves at the start of your turn, you must make seeds available to them if you can."			1								1	1	
-Allow	opp_or_empty	End Empty or Opp Side	game_info _	bool	False	2	0	Limit the allowable holes to those that end in an empty hole or reach the opponents side of the board.			1										
+Allow	allow_rule	Special Move Restrictions	game_info _	AllowRule	NONE	3	0	"NONE: no special rule
+OPP_OR_EMPTY:  Limit the allowable holes to those that end in an empty hole or reach the opponents side of the board.
+SINGLE_TO_ZERO: Holes with single seeds may only be played if the next hole is empty.
+SINGLE_ONLY_ALL: Holes with single seeds may only be played if all holes contain single seeds.
+SINGLE_ALL_TO_ZERO: Holes with single seeds may only be played if all holes contain single seeds and then only if the next hole is empty.
+TWO_ONLY_ALL: Holes with two seeds may only be played if all holes contain two seeds.
+TWO_ONLY_ALL_RIGHT: Holes with two seeds may not be played, unless all holes contains two seeds, in which case the rightmost hole must be played.
+FIRST_TURN_ONLY_RIGHT_TWO: The first turn must start from one of the two rightmost holes."			1										
 Capture	capsamedir	Capture in Sow Direction	game_info _	bool	False	0	0	"Only meaninful, with multicapt. Captures are done in the same direction as the sowing, i.e. following the final hole sown. If not set, captures are done from the holes just sown."										1			
 Capture	oppsidecapt	Opp Side Capt Only	game_info _	bool	False	1	0	Captures may only be made from your oppents side of the board.								1	1	1			
 Capture	multicapt	Multiple Captures	game_info _	bool	False	2	0	"After the initial capture, continue capturing as long as the capture conditions are met."										1			
@@ -46,7 +53,7 @@ CLIPPEDTRIPLES: pattern of 0 S S (where S is nbr_seeds) is used to fill the hole
 TWOEMPTY: all but the rightmost two holes for each player are filled with is nbr_seeds."		1											
 Game	class	Game Class	game_class	GameClasses	Mancala	0	0	The name of the Game Class. Currently only Mancala.	Note: GameClasses only exists in the STRING_DICTS table.												
 Game	holes	Holes per Side	game_constants _	int	3	2	0	Number of holes on each side of the board. Start Pattern may use this number differently.		1	1	1	1		1	1	1	1	1	1	
-Game	help_file	Help File	game_info _	str	mancala_help.html	3	0	An html help file describing the game.	Should we keep this? A help file for an individual game? A help file for the Mancala UI?												
+Game	help_file	Help File	game_info _	str	mancala_help.html	3	0	An html help file describing the game.													
 Game	about	About	game_info _	multi_str	"Sow counter-clockwise.
 Capture on evens. "	4	0	Short string describing the game possibly in multiple lines. Enough to remind the player what the game options are.													
 Game	name	Game Name	game_info _	str	Mancala	0	2	"The game name, may have spaces. Used for the config filename and the window title."						1							
@@ -85,8 +92,6 @@ If the game goal TERRITORY the capturer is the hole owner; otherwise the capture
 Sow	udir_holes	User Chooses Direction	game_info _	list[bool]	[]	8	0	"A list of holes that the user can control the sow direction from. Control is via the mouse button: left is clockwise and right is counter-clockwise.
 Note: all holes respond to both mouse buttons, but if the hole is not in udir_holes, the sow direction will be that prescribed by sow_direct with either button."				1			1						
 Sow	mlaps	Multilap Sow	game_info _	bool	False	0	2	"Sow is done in multiple laps: when the first sow ends, if there is more than one seed in the final hole sown, pickup those seeds and continue sowing."								1					
-Sow	mlaps_next	Multlap Sow Next	game_info _	bool	False	1	2	"Like mlap except the sowing starts with the seeds in the hole next (in sow direction) to the final hole sowed.
-Not yet implemented?"	"Indian style lap sowing, or should mlaps be an enumeration?"												
 Sow	visit_opp	Visit Opp for Mlaps	game_info _	bool	False	2	2	Sow is multiplap only if the first sow reaches the opponents side of the board.								1					
 Sow	child_type	Type of Children	game_info _	ChildType	NOCHILD	3	2	"Games with children allow players to claim holes. These child holes are an extension of the stores and seeds in them count towards a win. Making a child stops any multiple lap sowing, moves cannot start from children, and they cannot be captured.
 NORMAL: no special child rules

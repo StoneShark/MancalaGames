@@ -20,7 +20,7 @@
       "min_move": 1,
       "sow_direct": 1,
       "mustshare": false,
-      "opp_or_empty": false,
+      "allow_rule": 0,
       "sow_start": false,
       "move_one": false,
       "skip_start": true,

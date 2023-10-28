@@ -10,7 +10,7 @@
       "crosscapt": true,
       "goal": 1,
       "mlaps": true,
-      "opp_or_empty": true,
+      "allow_rule": 1,
       "oppsidecapt": true,
       "sow_direct": 1,
       "start_pattern": 1
