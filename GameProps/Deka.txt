@@ -10,7 +10,7 @@
       "blocks": true,
       "convert_cnt": 3,
       "goal": 1,
-      "mlaps": true,
+      "mlaps": 1,
       "min_move": 1,
       "sow_direct": 1,
       "sow_blkd_div": true

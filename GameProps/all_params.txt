@@ -26,7 +26,7 @@
       "skip_start": true,
       "sow_own_store": false,
       "blocks": false,
-      "mlaps": false,
+      "mlaps": 0,
       "visit_opp": false,
       "child_cvt": 0,
       "child_type": 0,

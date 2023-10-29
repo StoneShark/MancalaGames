@@ -30,6 +30,7 @@ from game_interface import ChildType
 from game_interface import Direct
 from game_interface import Goal
 from game_interface import GrandSlam
+from game_interface import LapSower
 from game_interface import RoundStarter
 from fill_patterns import PCLASSES
 
@@ -416,13 +417,13 @@ def build_rules():
 
     man_rules.add_rule(
         'no_sow_start_mlap',
-        rule=lambda ginfo: ginfo.sow_start and ginfo.mlaps,
+        rule=lambda ginfo: ginfo.sow_start and ginfo.mlaps != LapSower.OFF,
         msg='SOW_START not compatible with MULTI_LAP',
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
         'visit_opp_req_mlap',
-        rule=lambda ginfo: ginfo.visit_opp and not ginfo.mlaps,
+        rule=lambda ginfo: ginfo.visit_opp and not ginfo.mlaps != LapSower.OFF,
         msg='VISIT_OPP requires MLAPS',
         excp=gi.GameInfoError)
 
@@ -552,7 +553,7 @@ def build_rules():
 
     man_rules.add_rule(
         'mlap_capt_on_incomp',
-        rule=lambda ginfo: (ginfo.mlaps
+        rule=lambda ginfo: (ginfo.mlaps  != LapSower.OFF
                             and ginfo.capt_on
                             and not ginfo.sow_capt_all),
         msg='CAPT_ON with MULTI_LAP never captures',

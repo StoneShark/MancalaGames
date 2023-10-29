@@ -91,7 +91,9 @@ Sow	sow_capt_all	Capture all while Sowing	game_info _	bool	False	7	0	"Capture al
 If the game goal TERRITORY the capturer is the hole owner; otherwise the capturer is done by side."								1					
 Sow	udir_holes	User Chooses Direction	game_info _	list[bool]	[]	8	0	"A list of holes that the user can control the sow direction from. Control is via the mouse button: left is clockwise and right is counter-clockwise.
 Note: all holes respond to both mouse buttons, but if the hole is not in udir_holes, the sow direction will be that prescribed by sow_direct with either button."				1			1						
-Sow	mlaps	Multilap Sow	game_info _	bool	False	0	2	"Sow is done in multiple laps: when the first sow ends, if there is more than one seed in the final hole sown, pickup those seeds and continue sowing."								1					
+Sow	mlaps	Multilap Sow	game_info _	LapSower	OFF	0	2	"OFF: Single lap sowing.
+LAPPER:  If the first sow ends in a hole with more than one seed, pickup all the seeds and continue sowing another lap. Continue until the final seed of a lap reaches an empty hole, unless there is another rule that stops the sowing (e.g. making a child).
+LAPPER_NEXT:  If the first sow ends in a hole preceeding a hole with any seeds, pick up the seeds from that next hole and continue sowing another lap. Continue until the hole after the laps final seed is empty."								1					
 Sow	visit_opp	Visit Opp for Mlaps	game_info _	bool	False	1	2	Sow is multiplap only if the first sow reaches the opponents side of the board.								1					
 Sow	child_type	Type of Children	game_info _	ChildType	NOCHILD	3	2	"Games with children allow players to claim holes. These child holes are an extension of the stores and seeds in them count towards a win. Making a child stops any multiple lap sowing, moves cannot start from children, and they cannot be captured.
 NORMAL: no special child rules

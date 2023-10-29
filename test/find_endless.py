@@ -14,13 +14,14 @@ from context import mancala
 from game_interface import WinCond
 from game_interface import Direct
 from game_interface import Goal
+from game_interface import LapSower
 
 HOLES = 3
 
 def build_game():
 
     # game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
-    # game_info = gi.GameInfo(mlaps=True,
+    # game_info = gi.GameInfo(mlaps=LapSower.LAPPER,
     #                         crosscapt=True,
     #                         mustshare=True,
     #                         nbr_holes=game_consts.holes,

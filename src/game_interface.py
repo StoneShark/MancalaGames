@@ -123,8 +123,18 @@ class AllowRule(enum.IntEnum):
 
 
 @enum.unique
+class LapSower(enum.IntEnum):
+    """Defines if or what kind of lap sowing to do."""
+
+    OFF = 0
+    LAPPER = 1
+    LAPPER_NEXT = 2
+
+
+@enum.unique
 class WinCond(enum.Enum):
-    """Win conditions."""
+    """Win conditions.
+    Not used in the config files."""
 
     WIN = enum.auto()
     TIE = enum.auto()
@@ -174,7 +184,7 @@ class GameInfo:
     skip_start: bool = False
     sow_own_store: bool = False
     blocks: bool = False
-    mlaps: bool = False
+    mlaps: LapSower = LapSower.OFF
     visit_opp: bool = False
     child_cvt: int = 0
     child_type: ChildType = ChildType.NOCHILD

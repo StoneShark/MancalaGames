@@ -19,6 +19,7 @@ from context import mancala
 from game_interface import AllowRule
 from game_interface import Direct
 from game_interface import GrandSlam
+from game_interface import LapSower
 
 # %%
 
@@ -171,7 +172,7 @@ class TestAllowables:
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 crosscapt=True,
                                 grandslam=GrandSlam.NOT_LEGAL,
-                                mlaps=True,
+                                mlaps=LapSower.LAPPER,
                                 rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
@@ -193,7 +194,7 @@ class TestAllowables:
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 crosscapt=True,
                                 mustshare=True,
-                                mlaps=True,
+                                mlaps=LapSower.LAPPER,
                                 rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)

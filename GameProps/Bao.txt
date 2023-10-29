@@ -12,7 +12,7 @@
       "child_cvt": 4,
       "child_type": 1,
       "crosscapt": true,
-      "mlaps": true,
+      "mlaps": 1,
       "multicapt": true,
       "oppsidecapt": true,
       "rounds": true,

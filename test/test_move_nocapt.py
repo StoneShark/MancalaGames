@@ -27,6 +27,7 @@ from context import mancala
 
 from game_interface import WinCond
 from game_interface import Direct
+from game_interface import LapSower
 
 
 # %%
@@ -648,7 +649,7 @@ class TestMLAPS_ito_Sow:
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
 
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                mlaps=True,
+                                mlaps=LapSower.LAPPER,
                                 sow_direct=Direct.CCW,
                                 rules=mancala.Mancala.rules)
 
@@ -671,7 +672,7 @@ class TestMLAPS_ito_Sow:
         game_consts = gc.GameConsts(nbr_start=4, holes=6)
 
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                mlaps=True,
+                                mlaps=LapSower.LAPPER,
                                 sow_direct=Direct.CCW,
                                 rules=mancala.Mancala.rules)
 
@@ -691,7 +692,7 @@ class TestMLAPS_ito_Sow:
         game_consts = gc.GameConsts(nbr_start=4, holes=6)
 
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                mlaps=True,
+                                mlaps=LapSower.LAPPER,
                                 sow_direct=Direct.CCW,
                                 rules=mancala.Mancala.rules)
 
@@ -715,7 +716,7 @@ class TestPASS_ito_Sow:
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
 
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                mlaps=True,
+                                mlaps=LapSower.LAPPER,
                                 sow_direct=Direct.CCW,
                                 rules=mancala.Mancala.rules)
 

@@ -20,6 +20,7 @@ from context import sower
 from game_interface import ChildType
 from game_interface import Direct
 from game_interface import Goal
+from game_interface import LapSower
 from game_interface import WinCond
 # from game_log import game_log
 from mancala import MoveData
@@ -76,7 +77,7 @@ class TestSower:
     @pytest.fixture
     def base_sower(self, game):
         object.__setattr__(game.info, 'sow_own_store', False)
-        object.__setattr__(game.info, 'mlaps', False)
+        object.__setattr__(game.info, 'mlaps', LapSower.OFF)
         object.__setattr__(game.info, 'child_type', ChildType.NOCHILD)
         object.__setattr__(game.info, 'child_cvt', 0)
         object.__setattr__(game.info, 'visit_opp', False)
@@ -249,7 +250,7 @@ class TestSower:
 
         # can't use fixture because sow_direct is used in the construction
         object.__setattr__(game.info, 'sow_own_store', True)
-        object.__setattr__(game.info, 'mlaps', False)
+        object.__setattr__(game.info, 'mlaps', LapSower.OFF)
         object.__setattr__(game.info, 'child_type', ChildType.NOCHILD)
         object.__setattr__(game.info, 'child_cvt', 0)
         object.__setattr__(game.info, 'visit_opp', False)
@@ -453,7 +454,7 @@ class TestMlap:
         # deco_sower(game, sow_own_store, mlaps, visit_opp, child)
 
         object.__setattr__(game.info, 'sow_own_store', False)
-        object.__setattr__(game.info, 'mlaps', True)
+        object.__setattr__(game.info, 'mlaps', LapSower.LAPPER)
         object.__setattr__(game.info, 'child', False)
         object.__setattr__(game.info, 'visit_opp', False)
         return sower.deco_sower(game)
@@ -507,7 +508,7 @@ class TestVMlap:
                                 sow_direct=Direct.CW,
                                 stores=True,
                                 sow_own_store=True,
-                                mlaps=True,
+                                mlaps=LapSower.LAPPER,
                                 visit_opp=True,
                                 child_type=ChildType.NORMAL,
                                 child_cvt=4,
@@ -653,7 +654,7 @@ class TestBlckDivertSower:
                                 sow_blkd_div=True,
                                 goal=Goal.DEPRIVE,
                                 blocks=True,
-                                mlaps=True,
+                                mlaps=LapSower.LAPPER,
                                 convert_cnt=3,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)

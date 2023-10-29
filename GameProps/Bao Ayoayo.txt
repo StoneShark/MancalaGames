@@ -9,7 +9,7 @@
       "about": "Boa Ayoayo: a multi-lap mancala,\nsow direction counter-clockwise,\ncross-capture when end in own\nhole with one seed.\nGame ends if no moves.",
       "stores": true,
       "sow_direct": 1,
-      "mlaps": true,
+      "mlaps": 1,
       "oppsidecapt": true,
       "crosscapt": true,
       "xcpickown": 1,

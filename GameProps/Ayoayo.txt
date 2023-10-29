@@ -10,7 +10,7 @@
       "stores": true,
       "sow_direct": 1,
       "mustshare": true,
-      "mlaps": true,
+      "mlaps": 1,
       "oppsidecapt": true,
       "crosscapt": true,
       "xcpickown": 1,

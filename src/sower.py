@@ -24,6 +24,7 @@ from game_log import game_log
 from game_interface import Direct
 from game_interface import Goal
 from game_interface import WinCond
+from game_interface import LapSower
 
 
 # %% constants
@@ -446,7 +447,7 @@ def deco_blkd_divert_sower(game):
 
     sower = DivertSkipBlckdSower(game)
 
-    if game.info.mlaps:
+    if game.info.mlaps == LapSower.LAPPER:
         sower = DivertBlckdLapSower(game, sower, DivertBlckdLapper(game))
 
     else:
@@ -477,7 +478,7 @@ def deco_sower(game):
 
     pre_lap_sower = sower
 
-    if game.info.mlaps:
+    if game.info.mlaps == LapSower.LAPPER:
 
         if game.info.child_cvt:
             lap_cont = ChildLapCont(game)

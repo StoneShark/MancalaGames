@@ -316,8 +316,6 @@ class MancalaGames(tk.Frame):
         self.desc.config(state=tk.DISABLED)
 
 
-
-
     def _get_boxes_config(self, param):
         """Return the number items for the list for name."""
 
@@ -434,7 +432,7 @@ class MancalaGames(tk.Frame):
         tframe = tk.LabelFrame(frame, text=param.text, labelanchor='nw')
         tframe.grid(row=param.row, column=param.col, columnspan=4, rowspan=2)
 
-        text_box = tk.Text(tframe, width=50, height=8)
+        text_box = tk.Text(tframe, width=50, height=12)
         self.tktexts[param.option] = text_box
 
         scroll = tk.Scrollbar(tframe)

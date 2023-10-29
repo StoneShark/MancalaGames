@@ -6,7 +6,7 @@
       "goal": 1,
       "blocks": true,
       "convert_cnt": 4,
-      "mlaps": true,
+      "mlaps": 1,
       "sow_blkd_div": true,
       "sow_direct": 1
    },

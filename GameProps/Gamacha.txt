@@ -9,7 +9,7 @@
       "about": "Gamacha: counter-clockwise multi-lap sow.\nMoves must end in an empty hole or \nreach opponents side of the board.\nSeeds are taken out of play via cross-capture.\nThe goal is to deprive the opponent of seeds.\n\nVariations: Sadeqa, start pattern, allow rules, etc.",
       "crosscapt": true,
       "goal": 1,
-      "mlaps": true,
+      "mlaps": 1,
       "allow_rule": 1,
       "oppsidecapt": true,
       "sow_direct": 1,
