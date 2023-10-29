@@ -5,17 +5,18 @@ Created on Fri Oct 13 18:30:04 2023
 @author: Ann
 """
 
-
 import pytest
 pytestmark = pytest.mark.unittest
 
 import utils
 
 from context import ai_player
-# from context import cfg_keys as ckey
+from context import cfg_keys as ckey
 from context import game_constants as gc
 from context import game_interface as gi
 from context import mancala
+from context import minimax
+from context import montecarlo_ts
 
 from game_interface import ChildType
 from game_interface import WinCond
@@ -34,13 +35,159 @@ N = None
 
 # TODO test setup & rules
 
-class TestScorer:
+
+class TestConstruction:
+
+    def test_default_scorer(self):
+
+        for var in vars(ai_player.ScoreParams):
+            if var == 'stores_m':
+                assert ai_player.ScoreParams.get_default('stores_m') == 4
+            else:
+                assert ai_player.ScoreParams.get_default(var) == 0
+
 
     @pytest.fixture
     def game(self):
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(capt_on=[2],
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = False
+        return game
+
+
+    def test_algorithm(self, game):
+
+        pdict = {'algorithm': 'minimaxer',
+                 'scorer': {'stores_m': 8}}
+        player = ai_player.AiPlayer(game, pdict)
+        assert isinstance(player.algo, minimax.MiniMaxer)
+        assert player.sc_params.stores_m == 8
+        assert sum(vars(player.sc_params).values()) == 8
+
+        pdict = {'algorithm': 'montecarlo_ts',
+                 'scorer': {'easy_rand': 6}}    #st
+        player = ai_player.AiPlayer(game, pdict)
+        assert isinstance(player.algo, montecarlo_ts.MonteCarloTS)
+        assert player.sc_params.easy_rand == 6
+        assert sum(vars(player.sc_params).values()) == 10
+
+        pdict = {'algorithm': 'montecarlo_ts',
+                 'scorer': {'stores_m': 0,
+                            'easy_rand': 6}}
+        player = ai_player.AiPlayer(game, pdict)
+        assert isinstance(player.algo, montecarlo_ts.MonteCarloTS)
+        assert player.sc_params.easy_rand == 6
+        assert sum(vars(player.sc_params).values()) == 6
+
+        pdict = {'algorithm': 'minimaxer'}
+        player = ai_player.AiPlayer(game, pdict)
+        assert player.sc_params.stores_m == 4
+        assert sum(vars(player.sc_params).values()) == 4
+
+        pdict = {'scorer': {'stores_m': 8}}
+        player = ai_player.AiPlayer(game, pdict)
+        assert isinstance(player.algo, minimax.MiniMaxer)
+        assert player.sc_params.stores_m == 8
+        assert sum(vars(player.sc_params).values()) == 8
+
+        pdict = {'algorithm': 'junky_algo'}
+        with pytest.raises(KeyError):
+            player = ai_player.AiPlayer(game, pdict)
+
+
+    def test_difficulty(self, game):
+
+        aid = ai_player.AI_PARAM_DEFAULTS
+
+        pdict = {'algorithm': 'minimaxer'}
+        player = ai_player.AiPlayer(game, pdict)
+        player.difficulty = 0
+        assert player.algo.max_depth == aid[ckey.MM_DEPTH][0]
+        player.difficulty = 3
+        assert player.algo.max_depth == aid[ckey.MM_DEPTH][3]
+
+        pdict = {'algorithm': 'minimaxer',
+                 'ai_params': {'mm_depth': [10, 11, 12, 13]}}
+        player = ai_player.AiPlayer(game, pdict)
+        player.difficulty = 0
+        assert player.algo.max_depth == 10
+        player.difficulty = 3
+        assert player.algo.max_depth == 13
+
+        pdict = {'algorithm': 'montecarlo_ts'}
+        player = ai_player.AiPlayer(game, pdict)
+        player.difficulty = 0
+        assert player.algo.new_nodes == aid[ckey.MCTS_NODES][0]
+        player.difficulty = 3
+        assert player.algo.new_nodes == aid[ckey.MCTS_NODES][3]
+
+        pdict = {'algorithm': 'montecarlo_ts',
+                 'ai_params': {'mcts_bias': [1, 16, 32, 1000],
+                               'mcts_nodes': [10, 20, 30, 40],
+                               'mcts_pouts': [1, 4, 8, 16]}}
+        player = ai_player.AiPlayer(game, pdict)
+        player.difficulty = 0
+        val = 1 / 1000
+        assert val - 0.001 <= player.algo.bias <= val + 0.001
+        assert player.algo.new_nodes == 10
+        assert player.algo.nbr_pouts == 1
+        player.difficulty = 2
+        val = 32 / 1000
+        assert val - 0.001 <= player.algo.bias <= val + 0.001
+        assert player.algo.new_nodes == 30
+        assert player.algo.nbr_pouts == 8
+
+        player.algo = 5
+        with pytest.raises(ValueError):
+            player.difficulty = 0
+
+
+    def test_interfaces(self, game, mocker):
+
+        pdict = {'algorithm': 'minimaxer'}
+        player = ai_player.AiPlayer(game, pdict)
+
+        m_pick_move = mocker.patch('minimax.MiniMaxer.pick_move')
+        player.pick_move()
+        m_pick_move.assert_called_once()
+
+        m_get_desc = mocker.patch('minimax.MiniMaxer.get_move_desc')
+        player.get_move_desc()
+        m_get_desc.assert_called_once()
+
+
+class TestScorers:
+
+
+    @pytest.fixture
+    def game(self):
+
+        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_info = gi.GameInfo(capt_on=[2],
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = False
+        return game
+
+    @pytest.fixture
+    def player(self, game):
+        return ai_player.AiPlayer(game, {})
+
+
+    @pytest.fixture
+    def nsgame(self):
+
+        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_info = gi.GameInfo(capt_on=[2],
+                                stores=True,
+                                no_sides=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
@@ -49,8 +196,8 @@ class TestScorer:
         return game
 
     @pytest.fixture
-    def player(self, game):
-        return ai_player.AiPlayer(game, {})
+    def nsplayer(self, nsgame):
+        return ai_player.AiPlayer(nsgame, {})
 
 
     def test_score_endgame(self, game, player):
@@ -64,6 +211,7 @@ class TestScorer:
         assert player.score(WinCond.ENDLESS) == 0
 
         game.turn = True
+        assert not player.is_max_player()
         assert player.score(WinCond.WIN) == -1000
         assert player.score(WinCond.TIE) == -5
         assert player.score(WinCond.ENDLESS) == 0
@@ -82,7 +230,7 @@ class TestScorer:
         assert player.score(WinCond.END_STORE) == -10
 
 
-    def test_sc_evens(self, game, player):
+    def test_sc_diff_evens(self, game, player):
 
         player.sc_params.evens_m = 2
         player.sc_params.stores_m = 0
@@ -97,7 +245,25 @@ class TestScorer:
         assert player.score(None) == (1 - 2) * 2
 
 
-    def test_sc_seeds(self, game, player):
+    def test_sc_cnt_evens(self, nsgame, nsplayer):
+
+        nsplayer.sc_params.evens_m = 2
+        nsplayer.sc_params.stores_m = 0
+        nsplayer.sc_params.easy_rand = 0
+        nsplayer.collect_scorers()
+
+        assert nsplayer.sc_params.evens_m == 2
+        assert sum(vars(nsplayer.sc_params).values()) == 2
+
+        nsgame.board = utils.build_board([2, 4, 0, 1],
+                                         [0, 5, 4, 1])
+        assert nsplayer.score(None) == 3 * 2
+
+        nsgame.turn = True
+        assert nsplayer.score(None) == 3 * 2 * -1
+
+
+    def test_sc_diff_seeds(self, game, player):
 
         player.sc_params.seeds_m = 3
         player.sc_params.stores_m = 0
@@ -112,7 +278,25 @@ class TestScorer:
         assert player.score(None) == (10 - 7) * 3
 
 
-    def test_sc_empties(self, game, player):
+    def test_sc_cnt_seeds(self, nsgame, nsplayer):
+
+        nsplayer.sc_params.seeds_m = 3
+        nsplayer.sc_params.stores_m = 0
+        nsplayer.sc_params.easy_rand = 0
+        nsplayer.collect_scorers()
+
+        assert nsplayer.sc_params.seeds_m == 3
+        assert sum(vars(nsplayer.sc_params).values()) == 3
+
+        nsgame.board = utils.build_board([2, 4, 0, 1],
+                                         [0, 5, 4, 1])
+        assert nsplayer.score(None) ==  17 * 3
+
+        nsgame.turn = True
+        assert nsplayer.score(None) ==  17 * 3 * -1
+
+
+    def test_sc_diff_empties(self, game, player):
 
         player.sc_params.empties_m =  2
         player.sc_params.stores_m = 0
@@ -126,6 +310,23 @@ class TestScorer:
                                        [0, 5, 4, 1])
         assert player.score(None) == (1 - 2) * 2
 
+
+    def test_sc_cnt_empties(self, nsgame, nsplayer):
+
+        nsplayer.sc_params.empties_m =  2
+        nsplayer.sc_params.stores_m = 0
+        nsplayer.sc_params.easy_rand = 0
+        nsplayer.collect_scorers()
+
+        assert nsplayer.sc_params.empties_m == 2
+        assert sum(vars(nsplayer.sc_params).values()) == 2
+
+        nsgame.board = utils.build_board([2, 4, 0, 0],
+                                         [0, 5, 4, 1])
+        assert nsplayer.score(None) == 3 * 2
+
+        nsgame.turn = True
+        assert nsplayer.score(None) == 3 * 2 * -1
 
 
     def test_sc_stores(self, game, player):

@@ -54,7 +54,6 @@ class ScoreParams:
         return 0
 
 
-
 # %%
 
 class AiPlayer(ai_interface.AiPlayerIf):
@@ -119,7 +118,7 @@ class AiPlayer(ai_interface.AiPlayerIf):
         if algo_name in ALGORITHM_DICT:
             self.algo = ALGORITHM_DICT[algo_name](self.game, self)
         else:
-            raise ValueError(f'Unknown ai player algorithm: {algo_name}.')
+            raise KeyError(f'Unknown ai player algorithm: {algo_name}.')
 
 
     def pick_move(self):
@@ -150,20 +149,23 @@ class AiPlayer(ai_interface.AiPlayerIf):
         if self.game.info.child_cvt and self.sc_params.child_cnt_m:
             self.scorers += [self._score_children]
 
-        if self.sc_params.evens_m:
-            self.scorers += [self._score_evens]
-
-        if self.sc_params.seeds_m:
-            self.scorers += [self._score_seeds]
-
-        if self.sc_params.empties_m:
-            self.scorers += [self._score_empties]
-
         if self.sc_params.easy_rand:
             self.scorers += [self._score_easy]
 
         if self.sc_params.access_m:
             self.scorers += [self._score_access]
+
+        scorer_trips = [
+            ('evens_m', self._score_cnt_evens, self._score_diff_evens),
+            ('seeds_m', self._score_cnt_seeds, self._score_diff_seeds),
+            ('empties_m', self._score_cnt_empties, self._score_diff_empties)]
+
+        for param, cnt_func, diff_func in scorer_trips:
+            if getattr(self.sc_params, param):
+                if self.game.info.no_sides:
+                    self.scorers += [cnt_func]
+                else:
+                    self.scorers += [diff_func]
 
 
     def is_max_player(self):
@@ -241,7 +243,7 @@ class AiPlayer(ai_interface.AiPlayerIf):
         return (child_f - child_t) * self.sc_params.child_cnt_m
 
 
-    def _score_evens(self, _):
+    def _score_diff_evens(self, _):
         """Score evens on each side of the board.
         If capturing on evens, having evens prevents captures."""
 
@@ -254,7 +256,20 @@ class AiPlayer(ai_interface.AiPlayerIf):
         return (even_f - even_t) * self.sc_params.evens_m
 
 
-    def _score_seeds(self, _):
+    def _score_cnt_evens(self, _):
+        """Score count of evens on the whole board.
+        To make min values best for true, mult by -1.
+        If capturing on evens, having evens prevents captures."""
+
+        even_cnt = sum(1 for loc in range(self.game.cts.dbl_holes)
+                       if self.game.board[loc] > 0
+                             and not self.game.board[loc] % 2)
+        tmult = -1 if self.game.turn else 1
+
+        return even_cnt * self.sc_params.evens_m * tmult
+
+
+    def _score_diff_seeds(self, _):
         """Score the seeds on each side of the board.
         Sometime hoarding seeds is a good strategy."""
 
@@ -263,7 +278,15 @@ class AiPlayer(ai_interface.AiPlayerIf):
         return (sum_f - sum_t) * self.sc_params.seeds_m
 
 
-    def _score_empties(self, _):
+    def _score_cnt_seeds(self, _):
+        """Score count of seeds remaining on the board.
+        To make min values best for true, mult by -1."""
+
+        tmult = -1 if self.game.turn else 1
+        return sum(self.game.board) * self.sc_params.seeds_m * tmult
+
+
+    def _score_diff_empties(self, _):
         """Score the number of empties on each side of the board.
         Without empties, cross captures cannot occur."""
 
@@ -272,6 +295,16 @@ class AiPlayer(ai_interface.AiPlayerIf):
         empty_f = sum(1 for loc in self.game.cts.false_range
                       if not self.game.board[loc])
         return (empty_f - empty_t) * self.sc_params.empties_m
+
+
+    def _score_cnt_empties(self, _):
+        """Score the count of empties on the board.
+        To make min values best for true, mult by -1."""
+
+        empties = sum(1 for loc in range(self.game.cts.dbl_holes)
+                      if not self.game.board[loc])
+        tmult = -1 if self.game.turn else 1
+        return empties * self.sc_params.empties_m * tmult
 
 
     def _score_easy(self, _):
@@ -387,16 +420,6 @@ def player_dict_rules():
         excp=gi.GameInfoError)
 
     rules.add_rule(
-        'no_side_empties',
-        rule=lambda pdict, ginfo: (ginfo.no_sides
-                                   and ckey.SCORER in pdict
-                                   and ckey.EMPTIES_M in pdict[ckey.SCORER]
-                                   and pdict[ckey.SCORER][ckey.EMPTIES_M]),
-        both_objs=True,
-        msg='Scorer EMPTIES_M multiplier is incompatible with NoSides',
-        excp=gi.GameInfoError)
-
-    rules.add_rule(
         'no_side_access',
         rule=lambda pdict, ginfo: (ginfo.no_sides
                                    and ckey.SCORER in pdict
@@ -404,36 +427,6 @@ def player_dict_rules():
                                    and pdict[ckey.SCORER][ckey.ACCESS_M]),
         both_objs=True,
         msg='Scorer ACCESS_M multiplier is incompatible with NoSides',
-        excp=gi.GameInfoError)
-
-    rules.add_rule(
-        'no_side_evens',
-        rule=lambda pdict, ginfo: (ginfo.no_sides
-                                   and ckey.SCORER in pdict
-                                   and ckey.EVENS_M in pdict[ckey.SCORER]
-                                   and pdict[ckey.SCORER][ckey.EVENS_M]),
-        both_objs=True,
-        msg='Scorer EVENS_M multiplier is incompatible with NoSides',
-        excp=gi.GameInfoError)
-
-    rules.add_rule(
-        'no_side_seeds',
-        rule=lambda pdict, ginfo: (ginfo.no_sides
-                                   and ckey.SCORER in pdict
-                                   and ckey.SEEDS_M in pdict[ckey.SCORER]
-                                   and pdict[ckey.SCORER][ckey.SEEDS_M]),
-        both_objs=True,
-        msg='Scorer SEEDS_M multiplier is incompatible with NoSides',
-        excp=gi.GameInfoError)
-
-    rules.add_rule(
-        'no_side_child_cnt',
-        rule=lambda pdict, ginfo: (ginfo.no_sides
-                                   and ckey.SCORER in pdict
-                                   and ckey.CHILD_CNT_M in pdict[ckey.SCORER]
-                                   and pdict[ckey.SCORER][ckey.CHILD_CNT_M]),
-        both_objs=True,
-        msg='Scorer CHILD_CNT_M multiplier is incompatible with NoSides',
         excp=gi.GameInfoError)
 
     return rules
