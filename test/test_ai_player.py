@@ -10,6 +10,7 @@ pytestmark = pytest.mark.unittest
 
 import utils
 
+from context import ai_interface
 from context import ai_player
 from context import cfg_keys as ckey
 from context import game_constants as gc
@@ -22,7 +23,8 @@ from game_interface import ChildType
 from game_interface import WinCond
 
 
-TEST_COVERS = ['src\\ai_player.py']
+TEST_COVERS = ['src\\ai_player.py',
+               'src\\ai_interface.py']
 
 # %% constants
 
@@ -437,3 +439,57 @@ class TestScorers:
 
         game.board = [1, 1, 1, 0, 1, 1, 4, 3]
         assert player.score(None) == -10
+
+
+class TestAiIf:
+
+    def test_contructors(self):
+
+        class Tplr(ai_interface.AiPlayerIf):
+
+                @property
+                def difficulty(self):
+                    return 3
+
+                def is_max_player(self):
+                    return False
+
+                def score(self, end_cond):
+                    return 20
+
+                def pick_move(self):
+                    return 34
+
+                def get_move_desc(self):
+                    return 'desc'
+
+        with pytest.raises(ValueError):
+            Tplr(None, None)
+
+        class Talg(ai_interface.AiAlgorithmIf):
+            """A class to enable minimax to pick_moves."""
+
+            def __init__(self, game, player):
+                super().__init__(game, player)
+
+            def pick_move(self):
+                return False
+
+            def get_move_desc(self):
+                return "Move desc"
+
+            def set_params(self, *args):
+                pass
+
+        with pytest.raises(ValueError):
+            Talg(None, None)
+
+        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_info = gi.GameInfo(capt_on=[2],
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        with pytest.raises(ValueError):
+            Talg(game, None)

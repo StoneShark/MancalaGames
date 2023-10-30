@@ -192,3 +192,134 @@ class TestRejectFile:
         ffixt = request.getfixturevalue(file.__name__)
         with pytest.raises(ValueError):
             man_config.read_game_config(ffixt)
+
+
+
+class TestGc:
+
+    def test_gc_get(self):
+
+        gdict  = {
+                   "game_constants": {
+                      "holes": 9,
+                      "nbr_start": 2
+                   },
+                   "game_info": {
+                       "capt_on": [2]
+                   },
+                   "player": {
+                       "ai_params": {
+                           "mm_depth": [1, 1, 3, 5]
+                       }
+                    }
+                 }
+
+        assert man_config.get_gc_value(gdict, 'game_constants _', 'holes') == 9
+        assert man_config.get_gc_value(gdict, 'game_info _', 'capt_on') == [2]
+
+        assert man_config.get_gc_value(gdict,
+                                       'player ai_params _',
+                                       'mm_depth')[2] == 3
+
+        assert man_config.get_gc_value(gdict, 'junk', '') is None
+        assert man_config.get_gc_value(gdict, 'game_constants junk', '') is None
+        assert man_config.get_gc_value(gdict, 'game_constants _', 'junk') is None
+
+        gi_dict = man_config.get_gc_value(gdict, 'game_info', '')
+        assert isinstance(gi_dict, dict)
+        assert 'capt_on' in gi_dict
+
+
+    def test_gc_set(self):
+
+        gdict  = {
+                    "game_constants": {
+                      "holes": 9,
+                      "nbr_start": 2
+                    },
+                    "game_info": {
+                        "capt_on": [2]
+                    },
+                    "player": {
+                        "ai_params": {
+                            "mm_depth": [1, 1, 3, 5]
+                        }
+                    }
+                  }
+
+        assert man_config.get_gc_value(gdict, 'game_constants _', 'holes') == 9
+        man_config.set_config_value(gdict, 'game_constants _', 'holes', 4)
+        assert man_config.get_gc_value(gdict, 'game_constants _', 'holes') == 4
+
+
+        man_config.set_config_value(gdict,
+                                    'player ai_params _',
+                                    'mm_depth', [5, 7, 9, 11])
+        assert man_config.get_gc_value(gdict,
+                                        'player ai_params _',
+                                        'mm_depth') == [5, 7, 9, 11]
+
+        man_config.set_config_value(gdict, 'junk _', 'param', 5)
+        assert 'junk' in gdict
+        assert 'param' in gdict['junk']
+        assert gdict['junk']['param'] == 5
+
+        man_config.set_config_value(gdict, 'more_junk', 'param', 5)
+        assert 'more_junk' in gdict
+        assert gdict['more_junk'] == 5
+
+
+    def test_const_def(self):
+
+        assert man_config.get_construct_default('int',
+                                                'game_info _',
+                                                'min_move') == 1
+        assert man_config.get_construct_default('int',
+                                                'player scorer _',
+                                                'stores_m') == 4
+        assert man_config.get_construct_default('list[int]',
+                                                'player ai_params _',
+                                                'mm_depth') == [1, 1, 3, 5]
+        assert man_config.get_construct_default('str',
+                                                'player _',
+                                                'algorithm') == 'minimaxer'
+        assert man_config.get_construct_default('str',
+                                                'player  _',
+                                                'difficulty') == 1
+        assert man_config.get_construct_default('str',
+                                                'junk  _',
+                                                'more_junk') == ""
+        assert man_config.get_construct_default('int',
+                                                'junk  _',
+                                                'more_junk') == 0
+
+        assert not man_config.get_construct_default('bool',
+                                                    'junk  _',
+                                                    'more_junk')
+
+
+    def test_config_get(self):
+
+        gdict  = {
+                   "game_constants": {
+                      "holes": 9,
+                      "nbr_start": 2
+                   },
+                   "game_info": {
+                       "capt_on": [2]
+                   },
+                   "player": {
+                       "ai_params": {
+                           "mm_depth": [1, 1, 3, 5]
+                       }
+                    }
+                 }
+
+        assert man_config.get_config_value(gdict,
+                                           'game_constants _',
+                                           'holes',
+                                           'int') == 9
+        assert man_config.get_config_value(gdict,
+                                           'game_info _',
+                                           'min_move',
+                                           'int') == 1

@@ -174,3 +174,13 @@ class TestCfgKeys:
 
         for field in fields:
             assert field.upper() in ckey_dir
+
+
+class TestGetDefaults:
+
+    def test_gi_defaults(self):
+
+        assert not gi.GameInfo.get_default('stores')
+        assert gi.GameInfo.get_default('allow_rule') == gi.AllowRule.NONE
+        assert gi.GameInfo.get_default('capt_on') == []
+        assert gi.GameInfo.get_default('missing') is None
