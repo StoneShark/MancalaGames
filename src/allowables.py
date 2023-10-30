@@ -237,6 +237,7 @@ class NoGrandSlam(AllowableIf):
                 continue
 
             game_log.set_simulate()
+            # TODO GS NOT_LEGAL should be using moves, make same as GS capts
             mdata = self.game.do_sow(pos)
             if mdata.capt_loc is WinCond.ENDLESS:
                 game_log.add(f'Preventing ENDLESS move {loc}',

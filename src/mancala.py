@@ -416,7 +416,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         mdata.direct = self.deco.get_dir.get_direction(move, mdata.sow_loc)
         mdata = self.deco.sower.sow_seeds(mdata)
 
-        game_log.step(f'Sow from {mdata.capt_loc}', self)
+        game_log.step(f'Sow from {mdata.sow_loc}', self)
 
         return mdata
 

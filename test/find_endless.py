@@ -16,7 +16,7 @@ from game_interface import Direct
 from game_interface import Goal
 from game_interface import LapSower
 
-HOLES = 3
+HOLES = 4
 
 def build_game():
 

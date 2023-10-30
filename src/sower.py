@@ -23,8 +23,9 @@ import abc
 from game_log import game_log
 from game_interface import Direct
 from game_interface import Goal
-from game_interface import WinCond
 from game_interface import LapSower
+from game_interface import WinCond
+from incrementer import NOSKIPSTART
 
 
 # %% constants
@@ -48,7 +49,8 @@ class SowMethodIf(abc.ABC):
         RETURN mdata."""
 
     def get_single_sower(self):
-        """Return the first non-lap sower in the deco chain."""
+        """Return the first non-lap sower in the deco chain.
+        Used to deicede if allowable test OPP_OR_EMPTY is met."""
         return self
 
 
@@ -213,12 +215,11 @@ class SowCaptOwned(SowMethodIf):
                                            mdata.cont_sow_loc)
             self.game.board[loc] += 1
 
-            if self.game.deco.capt_ok.capture_ok(loc):
-                if scnt > 1:
-                    owner = self.owner(loc)
-                    game_log.step(f'Catpure from {loc} by {owner}')
-                    self.game.store[owner] += self.game.board[loc]
-                    self.game.board[loc] = 0
+            if scnt > 1 and self.game.deco.capt_ok.capture_ok(loc):
+                owner = self.owner(loc)
+                game_log.step(f'Catpure from {loc} by {owner}')
+                self.game.store[owner] += self.game.board[loc]
+                self.game.board[loc] = 0
 
         mdata.capt_loc = loc
         return mdata
@@ -249,6 +250,29 @@ class SimpleLapCont(LapContinuerIf):
             return False
 
         return self.game.board[mdata.capt_loc] > 1
+
+
+class NextLapCont(LapContinuerIf):
+    """Continue sowing based on seeds being in the next
+    hole. If there are any, continue from there.
+
+    Laurence Russ calls this Indian Style lapping."""
+
+    def do_another_lap(self, mdata):
+        """Determine if we are done sowing."""
+
+        if mdata.capt_loc is WinCond.END_STORE:
+            return False
+
+        loc = self.game.deco.incr.incr(mdata.capt_loc,
+                                       mdata.direct,
+                                       NOSKIPSTART)
+        if self.game.board[loc]:
+            mdata.capt_loc = loc
+            return True
+        return False
+
+# XXXX could a deco chain be used to implement LAPPER_NEXT with CHILD & GS
 
 
 class DivertBlckdLapper(LapContinuerIf):
@@ -376,9 +400,10 @@ class DivertBlckdLapSower(MlapSowerIf):
             else:
                 return mdata
 
-        game_log.add('MLAP game ENDLESS', game_log.IMPORT)
-        mdata.capt_loc = WinCond.ENDLESS
-        return mdata
+        # searches have not found a way to exercise this code
+        game_log.add('MLAP game ENDLESS', game_log.IMPORT)  # pragma: no cover
+        mdata.capt_loc = WinCond.ENDLESS                    # pragma: no cover
+        return mdata                                        # pragma: no cover
 
 
 class SowVisitedMlap(SowMethodIf):
@@ -478,12 +503,14 @@ def deco_sower(game):
 
     pre_lap_sower = sower
 
-    if game.info.mlaps == LapSower.LAPPER:
+    if game.info.mlaps != LapSower.OFF:
 
         if game.info.child_cvt:
             lap_cont = ChildLapCont(game)
-        else:
+        elif game.info.mlaps == LapSower.LAPPER:
             lap_cont = SimpleLapCont(game)
+        else:   # game.info.mlaps == LapSower.LAPPER_NEXT:
+            lap_cont = NextLapCont(game)
 
         sower = SowMlapSeeds(game, sower, lap_cont)
 

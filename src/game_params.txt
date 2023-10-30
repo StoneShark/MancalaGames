@@ -40,6 +40,8 @@ Dynamics	round_starter	Round Starter	game_info _	RoundStarter	ALTERNATE	5	0	"Def
 - WINNER: the winner of the previous round starts the current round"		1											
 Dynamics	rnd_left_fill	Round Left Fill	game_info _	bool	False	6	0	"When starting a new round, fill the holes from the player's left. Otherwise fill from the outsides."		1											
 Dynamics	rnd_umove	Round User Relocate	game_info _	bool	False	7	0	Allow the user to move the holes filled at the start of a round.													
+Dynamics	blocks	Blocks	game_info _	bool	False	8	0	"Blocks remove holes from play. Seeds are not sown into them. Turns may not start from them. 
+When used with ROUNDS, the holes not filled from the player with fewer seeds are blocked and thus out of play for the round."		1			1			1					1
 Dynamics	goal	Game Goal	game_info _	Goal	MAX_SEEDS	0	2	"The overall goal of the game. Defines how a player wins.
 MAX_SEEDS: player with the maximum number of seeds at the end of the game wins or they collect more than half of the total seeds
 DEPRIVE: eliminate all of your opponents seeds.
@@ -51,6 +53,8 @@ ALTERNATES: everyother hole is filled with nbr_seeds, no seeds end up opposite e
 ALTS_WITH_1: like Alternates except the starter's 2nd from right hole with nbr_seeds is replaced with one seed.
 CLIPPEDTRIPLES: pattern of 0 S S (where S is nbr_seeds) is used to fill the holes; if a full cycle of 3 cannot be placed, the holes are left empty. The True and False sides are the same from the player's perspective, e.g. they will look reversed when viewed from one side of the game board.
 TWOEMPTY: all but the rightmost two holes for each player are filled with is nbr_seeds."		1											
+Dynamics	convert_cnt	General input	game_info _	int	0	4	2	"Goal of Territory: defines the number of holes needed for a win.
+Goal of Deprive and Blocked Divert Sower: defines the number of seeds needed to close/block holes (sow_blkd_div)."								1		1	1	1	
 Game	class	Game Class	game_class	GameClasses	Mancala	0	0	The name of the Game Class. Currently only Mancala.	Note: GameClasses only exists in the STRING_DICTS table.												
 Game	holes	Holes per Side	game_constants _	int	3	2	0	Number of holes on each side of the board. Start Pattern may use this number differently.		1	1	1	1		1	1	1	1	1	1	
 Game	help_file	Help File	game_info _	str	mancala_help.html	3	0	An html help file describing the game.													
@@ -84,7 +88,6 @@ Any hole can be set as udir_hole to aloow the user to override the sow_direct se
 Sow	sow_start	Sow Start Hole	game_info _	bool	False	1	0	"When selected, the first seed is sown into  (i.e. left in) the start hole."						1		1					
 Sow	skip_start	Skip Start on Lap	game_info _	bool	False	2	0	"When sowing a second or subsequent circuit of the board, skip the start hole. This will leave the start hole empty for single lap games."					1			1					
 Sow	sow_own_store	Sow Own Store	game_info _	bool	False	3	0	Sow seeds into your own store when passing it. Do not sow into your opponents store.								1					
-Sow	blocks	Blocks	game_info _	bool	False	4	0	Blocks remove holes from play. Seeds are not sown into them. Turns may not start from them. 		1			1			1					1
 Sow	move_one	Move One Seed	game_info _	bool	False	5	0	"Only valid when sow_start is set. Changes the sow_start behavior so that if there is only one seed in the hole, it is moved in the sow direction one hole."						1							
 Sow	sow_blkd_div	"Skip Own Blocked, Capt Opp"	game_info _	bool	False	6	0	Blocked holes on own side are skipped when sowing and blocked holes on opp side are diverted out of play or captured.								1					
 Sow	sow_capt_all	Capture all while Sowing	game_info _	bool	False	7	0	"Capture all holes that are sown that meet the simple capture criteria: evens, min, max and  capture on. Other criteria are enforced: side of the board, unlocked, and not child.   Grand Slam rules are not applied.
@@ -102,5 +105,3 @@ ONE_CHILD: Use the tuzdek rules for children: only one child allowed on own side
 "													
 Sow	child_cvt	Child Convert Count	game_info _	int	0	4	2	"Defines the number of seeds required to make a child.
 "			1		1			1	1	1	1	1	1
-Sow	convert_cnt	General input	game_info _	int	0	6	2	"Goal of Territory: defines the number of holes needed for a win.
-Goal of Deprive and Blocked Divert Sower: defines the number of seeds needed to close/block holes (sow_blkd_div)."								1		1	1	1	

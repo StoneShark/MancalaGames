@@ -27,7 +27,7 @@ from param_consts import MSTR_TYPE
 # %%
 
 MAX_LINES = 150
-MAX_CHARS = 2000
+MAX_CHARS = 3000
 
 NO_CONVERT = [ckey.NAME, ckey.ABOUT, ckey.HELP_FILE,
               ckey.UDIR_HOLES, ckey.CAPT_ON]

@@ -292,6 +292,31 @@ class TestSower:
         assert lap_cont.do_another_lap(mdata) == eresult
 
 
+    @pytest.mark.parametrize('end_loc, board, eresult, cloc',
+                             [(WinCond.END_STORE, utils.build_board([1, 0, 3],
+                                                                    [0, 3, 4]),
+                              False, False),
+                              (0, utils.build_board([1, 0, 3],
+                                                    [1, 3, 4]), True, 1),
+                              (2, utils.build_board([1, 2, 3],
+                                                    [1, 3, 4]), True, 3),
+                              (0, utils.build_board([1, 0, 3],
+                                                    [1, 0, 4]), False, False),
+                              ])
+    def test_next_lap(self, game, end_loc, board, eresult, cloc):
+
+        game.board = board
+        mdata = MoveData(game, None)
+        mdata.direct = Direct.CCW
+        mdata.cont_sow_loc = 3
+        mdata.capt_loc = end_loc
+
+        lap_cont = sower.NextLapCont(game)
+        assert lap_cont.do_another_lap(mdata) == eresult
+        if cloc:
+            assert mdata.capt_loc == cloc
+
+
     @pytest.mark.parametrize('end_loc, sown_seeds, board, child, eresult',
                              # 0: not on end store
                              [(WinCond.END_STORE, 2,
@@ -446,7 +471,6 @@ class TestMlap:
                                 capt_on = [2],
                                 sow_direct=Direct.CW,
                                 rules=mancala.Mancala.rules)
-
         return mancala.Mancala(game_consts, game_info)
 
     @pytest.fixture
@@ -458,7 +482,6 @@ class TestMlap:
         object.__setattr__(game.info, 'child', False)
         object.__setattr__(game.info, 'visit_opp', False)
         return sower.deco_sower(game)
-
 
     @pytest.mark.parametrize(
         'start_pos, board, eloc, eboard',
@@ -479,7 +502,6 @@ class TestMlap:
              utils.build_board([2, 1, 0],
                                [0, 0, 1])),
           ])
-
     def test_mlap_sower(self, game, mlap_sower,
                         start_pos, board, eloc, eboard):
 
@@ -494,6 +516,121 @@ class TestMlap:
         assert mdata.capt_loc == eloc
         assert game.board == eboard
         assert game.store == [0, 0]
+
+
+    @pytest.fixture
+    def nlgame(self):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+        game_info = gi.GameInfo(evens=True,
+                                mlaps=LapSower.LAPPER_NEXT,
+                                sow_direct=Direct.CCW,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        return mancala.Mancala(game_consts, game_info)
+
+
+    @pytest.mark.parametrize(
+        'start_pos, board, eloc, eboard',
+        # 0: no lapping
+        [(4, utils.build_board([1, 2, 3],
+                               [2, 0, 4]),
+          0, utils.build_board([2, 0, 3],
+                               [3, 0, 4])),
+         # 1:  laps
+         (1, utils.build_board([2, 2, 3],
+                               [0, 3, 2]),
+          1, utils.build_board([1, 4, 5],
+                               [0, 2, 0])),
+          ])
+    def test_mlap_nsower(self, nlgame, start_pos, board, eloc, eboard):
+
+        nlgame.board = board
+        nlgame.turn = False
+
+        mdata = MoveData(nlgame, start_pos)
+        mdata.sow_loc, mdata.seeds = nlgame.deco.starter.start_sow(start_pos)
+        mdata.direct = nlgame.info.sow_direct
+        mdata = nlgame.deco.sower.sow_seeds(mdata)
+
+        assert mdata.capt_loc == eloc
+        assert nlgame.board == eboard
+        assert nlgame.store == [0, 0]
+
+
+class TestGetSingle:
+    """Test get single sower."""
+
+    @pytest.mark.parametrize('lapper', (False, True))
+    def test_get_single(self, lapper):
+
+        mlaps = LapSower.LAPPER if lapper else LapSower.OFF
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=4)
+        game_info = gi.GameInfo(evens=True,
+                                stores=True,
+                                mlaps=mlaps,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+        assert isinstance(game.deco.sower.get_single_sower(),
+                          sower.SowSeeds)
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=4)
+        game_info = gi.GameInfo(evens=True,
+                                stores=True,
+                                sow_own_store=True,
+                                mlaps=mlaps,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+        assert isinstance(game.deco.sower.get_single_sower(),
+                          sower.SowSeedsNStore)
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=4)
+        game_info = gi.GameInfo(evens=True,
+                                stores=True,
+                                sow_capt_all=True,
+                                mlaps=mlaps,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+        assert isinstance(game.deco.sower.get_single_sower(),
+                          sower.SowCaptOwned)
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=4)
+        game_info = gi.GameInfo(goal=Goal.DEPRIVE,
+                                blocks=True,
+                                convert_cnt=2,
+                                sow_blkd_div=True,
+                                mlaps=mlaps,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+        if lapper:
+            assert isinstance(game.deco.sower.get_single_sower(),
+                              sower.DivertSkipBlckdSower)
+            # might seem like an error but single sow is used in
+            # opp_or_empty, we don't care if the hole is closed or not
+            # only where the sow ended
+        else:
+            assert isinstance(game.deco.sower.get_single_sower(),
+                              sower.SowClosed)
+
+        if lapper:
+            # test one with visit opp
+            game_consts = gc.GameConsts(nbr_start=4, holes=4)
+            game_info = gi.GameInfo(evens=True,
+                                    stores=True,
+                                    mlaps=mlaps,
+                                    child_type=ChildType.NORMAL,
+                                    child_cvt=3,
+                                    visit_opp=True,
+                                    nbr_holes=game_consts.holes,
+                                    rules=mancala.Mancala.rules)
+            game = mancala.Mancala(game_consts, game_info)
+            assert isinstance(game.deco.sower.get_single_sower(),
+                              sower.SowSeeds)
 
 
 class TestVMlap:
@@ -631,14 +768,11 @@ class TestBlckDivertSower:
         game.store = store
         game.blocked = block
         game.turn = turn
-        print(game)
 
         mdata = MoveData(game, spos)
         mdata.sow_loc, mdata.seeds = game.deco.starter.start_sow(spos)
         mdata.direct = game.info.sow_direct
         mdata = game.deco.sower.sow_seeds(mdata)
-        print('after sow')
-        print(game)
 
         assert mdata.capt_loc == eloc
         assert game.board == eboard
@@ -683,16 +817,90 @@ class TestBlckDivertSower:
         mlgame.store = store
         mlgame.blocked = block
         mlgame.turn = turn
-        print(mlgame)
 
         mdata = MoveData(mlgame, spos)
         mdata.sow_loc, mdata.seeds = mlgame.deco.starter.start_sow(spos)
         mdata.direct = mlgame.info.sow_direct
         mdata = mlgame.deco.sower.sow_seeds(mdata)
-        print('after sow')
-        print(mlgame)
 
         assert mdata.capt_loc == eloc
         assert mlgame.board == eboard
         assert mlgame.store == estore
         assert mlgame.blocked == eblock
+
+
+
+class TestSowCaptOwned:
+
+    @pytest.fixture
+    def game(self):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+        game_info = gi.GameInfo(evens=True,
+                                sow_capt_all=True,
+                                sow_direct=Direct.CCW,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        return mancala.Mancala(game_consts, game_info)
+
+
+    @pytest.mark.parametrize(
+        'start_pos, board, eloc, eboard',
+        [(1, utils.build_board([2, 2, 3],
+                               [0, 3, 2]),
+          4, utils.build_board([2, 3, 0],
+                               [0, 0, 3])),
+          (1, utils.build_board([2, 3, 3],
+                                [0, 3, 2]),
+           4, utils.build_board([2, 4, 0],
+                                [0, 0, 3])),])
+    def test_goal_mseeds(self, game, start_pos, board, eloc, eboard):  # TODO
+
+        game.board = board
+        game.turn = False
+
+        mdata = MoveData(game, start_pos)
+        mdata.sow_loc, mdata.seeds = game.deco.starter.start_sow(start_pos)
+        mdata.direct = game.info.sow_direct
+        mdata = game.deco.sower.sow_seeds(mdata)
+
+        assert mdata.capt_loc == eloc
+        assert game.board == eboard
+        assert game.store == [0, 4]
+
+
+    @pytest.fixture
+    def game2(self):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+        game_info = gi.GameInfo(evens=True,
+                                sow_capt_all=True,
+                                goal=Goal.TERRITORY,
+                                convert_cnt=4,
+                                stores=True,
+                                sow_direct=Direct.CCW,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        return mancala.Mancala(game_consts, game_info)
+
+
+    def test_goal_terr_seeds(self, game2):
+        game2.board = utils.build_board([2, 3, 3],
+                                         [0, 3, 3])
+        game2.turn = False
+
+        mdata = MoveData(game2, 1)
+        mdata.sow_loc, mdata.seeds = game2.deco.starter.start_sow(1)
+        mdata.direct = game2.info.sow_direct
+        mdata = game2.deco.sower.sow_seeds(mdata)
+
+        assert mdata.capt_loc == 4
+        assert game2.board == utils.build_board([2, 4, 0],
+                                                [0, 0, 0])
+        assert game2.store == [4, 4]
+
+
+# %%
+"""
+%debug pytest.main(['-v', 'test_sower.py::TestMlap::test_mlap_nsower'])
+"""

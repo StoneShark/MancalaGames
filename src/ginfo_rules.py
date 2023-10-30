@@ -245,6 +245,13 @@ def add_block_and_divert_rules(rules):
         return _divert_and
 
     rules.add_rule(
+        'next_ml_no_bdiv',
+        rule=lambda ginfo: (ginfo.mlaps == LapSower.LAPPER_NEXT
+                            and ginfo.sow_blkd_div),
+        msg='MLAPS of LAPPER_NEXT is not supported with SOW_BLKD_DIV',
+        excp=NotImplementedError)
+
+    rules.add_rule(
         'bdiv_need_convert_cvt',
         rule=lambda ginfo: ginfo.sow_blkd_div and not ginfo.convert_cnt,
         msg='SOW_BLKD_DIV requires CONVERT_CNT for closing holes',
@@ -302,6 +309,14 @@ def add_child_rules(rules):
     """Add rules specific to having children."""
 
     rules.add_rule(
+        'next_ml_nochild',
+        rule=lambda ginfo: (ginfo.mlaps == LapSower.LAPPER_NEXT
+                            and (ginfo.child_type != ChildType.NOCHILD
+                                 or ginfo.child_cvt)),
+        msg='MLAPS of LAPPER_NEXT is not supported with CHILD',
+        excp=NotImplementedError)
+
+    rules.add_rule(
         'child_need_cvt',
         rule=lambda ginfo: ginfo.child_type and not ginfo.child_cvt,
         msg='Selected child type requires CHILD_CVT',
@@ -324,13 +339,13 @@ def add_child_rules(rules):
         rule=lambda ginfo: (ginfo.child_cvt
                             and ginfo.grandslam != GrandSlam.LEGAL),
         msg='Children requires that GRANDSLAM be Legal',
-        excp=gi.GameInfoError)
+        excp=NotImplementedError)
 
     rules.add_rule(
         'walda_store',
         rule=lambda ginfo: (ginfo.child_type == ChildType.WALDA
                             and ginfo.stores),
-        msg='Walda does use STORES',
+        msg='WALDA does not use STORES',
         warn=True)
 
     rules.add_rule(
@@ -403,16 +418,14 @@ def build_rules():
 
     man_rules.add_rule(
         'sow_own_needs_stores',
-        rule=lambda ginfo: (ginfo.sow_own_store
-                            and not ginfo.stores),
-        msg='SOW_OWN_STORE set without STORES set',
+        rule=lambda ginfo: ginfo.sow_own_store and not ginfo.stores,
+        msg='SOW_OWN_STORE requires STORES',
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
-        'split_gs_not',
-        rule=lambda ginfo: (ginfo.sow_direct == Direct.SPLIT and
-                            ginfo.grandslam == GrandSlam.NOT_LEGAL),
-        msg='SPLIT and GRANDSLAM of Not Legal is not implemented',
+        'sow_own_not_capt_all',
+        rule=lambda ginfo: ginfo.sow_own_store and ginfo.sow_capt_all,
+        msg='SOW_OWN_STORE is not supported with SOW_CAPT_ALL',
         excp=NotImplementedError)
 
     man_rules.add_rule(
@@ -423,19 +436,19 @@ def build_rules():
 
     man_rules.add_rule(
         'visit_opp_req_mlap',
-        rule=lambda ginfo: ginfo.visit_opp and not ginfo.mlaps != LapSower.OFF,
+        rule=lambda ginfo: ginfo.visit_opp and ginfo.mlaps == LapSower.OFF,
         msg='VISIT_OPP requires MLAPS',
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
-        'split_mshare',
+        'split_mustshare',
         rule=lambda ginfo: (ginfo.sow_direct == Direct.SPLIT
                             and ginfo.mustshare),
         msg='SPLIT and MUSTSHARE are currently incompatible',
         excp=NotImplementedError)
         # supporting split_mshare would make allowables and get_moves
         # more complicated--the deco chain could be expanded,
-        # BUT the UI would be really difficult, need partially
+        # BUT the UI would need a design change to support partially
         # active buttons (left/right)
 
     man_rules.add_rule(
@@ -446,17 +459,17 @@ def build_rules():
 
     man_rules.add_rule(
         'blocks_wo_rounds',
-        rule=lambda ginfo: (not ginfo.sow_blkd_div
-                            and ginfo.blocks and not ginfo.rounds),
-        msg='BLOCKS without ROUNDS is not supported '
-            'without sow_blkd_div.',
-        excp=gi.GameInfoError)
+        rule=lambda ginfo: (ginfo.blocks
+                            and not ginfo.sow_blkd_div
+                            and not ginfo.rounds),
+        msg='BLOCKS without ROUNDS or SOW_BLKD_DIV does nothing',
+        warn=True)
 
     man_rules.add_rule(
         'rstarter_wo_rounds',
         rule=lambda ginfo: not ginfo.rounds
             and ginfo.round_starter != RoundStarter.ALTERNATE,
-        msg='ROUND_STARTER without ROUNDS is not supported',
+        msg='ROUND_STARTER requires ROUNDS',
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
@@ -556,7 +569,7 @@ def build_rules():
         rule=lambda ginfo: (ginfo.mlaps  != LapSower.OFF
                             and ginfo.capt_on
                             and not ginfo.sow_capt_all),
-        msg='CAPT_ON with MULTI_LAP never captures',
+        msg='CAPT_ON with MULTI_LAP without SOW_CAPT_ALL never captures',
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
@@ -579,7 +592,7 @@ def build_rules():
         rule=lambda ginfo: ginfo.udirect and ginfo.mustshare,
         msg='UDIRECT and MUSTSHARE are currently incompatible',
         excp=NotImplementedError)
-        # see SPLIT / MUSHSHARE above
+        # see comment for split_mustshare rule above
 
     man_rules.add_rule(
         'udir_gs_not',
@@ -587,7 +600,7 @@ def build_rules():
                             ginfo.grandslam == GrandSlam.NOT_LEGAL),
         msg='UDIRECT and GRANDLAM=Not Legal are currently incompatible',
         excp=NotImplementedError)
-        # see SPLIT / MUSHSHARE above
+        # see comment for split_mustshare rule above
 
     man_rules.add_rule(
         'odd_split_udir',

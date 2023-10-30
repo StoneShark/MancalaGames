@@ -317,4 +317,4 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
             self.new_nodes = args[1]
 
         if argc >= 3 and args[2] > 0:
-            self.bias = args[2]
+            self.nbr_pouts = args[2]
