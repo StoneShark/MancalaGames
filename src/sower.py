@@ -185,7 +185,7 @@ class SowClosed(SowMethodIf):
         mdata = self.decorator.sow_seeds(mdata)
         loc = mdata.capt_loc
 
-        if (self.game.board[loc] == self.game.info.convert_cnt
+        if (self.game.board[loc] == self.game.info.gparam_one
                 and self.game.cts.opp_side(self.game.turn, loc)):
 
             self.game.store[0] += self.game.board[loc]
@@ -392,7 +392,7 @@ class DivertBlckdLapSower(MlapSowerIf):
                 mdata.cont_sow_loc = loc
                 mdata.seeds = self.game.board[loc]
 
-                if (self.game.board[loc] == self.game.info.convert_cnt
+                if (self.game.board[loc] == self.game.info.gparam_one
                         and self.game.cts.opp_side(self.game.turn, loc)):
                     self.game.blocked[loc] = True
                 self.game.board[loc] = 0
@@ -465,7 +465,7 @@ def deco_blkd_divert_sower(game):
     of play (actually store 0).
 
     XXXX  visit_opp is not currently supported because we need to
-    close the hole if we end on convert_cnt seeds (ie. block it).
+    close the hole if we end on gparam_one seeds (ie. block it).
     This needs to occur if lapping or not.
     This doesn't quite fit the model of the code right now but might
     in the future."""

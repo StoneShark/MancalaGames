@@ -256,7 +256,7 @@ class TestTerritory:
         game_consts = gc.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(capt_on = [2],
                                 stores=True,
-                                convert_cnt=5,
+                                gparam_one=5,
                                 goal=Goal.TERRITORY,
                                 rounds=True,
                                 nbr_holes=game_consts.holes,

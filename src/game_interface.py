@@ -188,7 +188,7 @@ class GameInfo:
     visit_opp: bool = False
     child_cvt: int = 0
     child_type: ChildType = ChildType.NOCHILD
-    convert_cnt: int = 0
+    gparam_one: int = 0
     sow_blkd_div: bool = False
     sow_capt_all: bool = False
 

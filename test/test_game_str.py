@@ -121,7 +121,7 @@ class TestGameStr:
 
     @pytest.fixture
     def cterr_game(self):
-        """an odd game convert_cnt has two differnt purposes."""
+        """an odd game gparam_one has two differnt purposes."""
 
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
@@ -130,7 +130,7 @@ class TestGameStr:
                                 child_type=ChildType.NORMAL,
                                 child_cvt=3,
                                 goal=Goal.TERRITORY,
-                                convert_cnt=5,
+                                gparam_one=5,
                                 sow_direct=Direct.CCW,
                                 evens=True,
                                 rules=mancala.Mancala.rules

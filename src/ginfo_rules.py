@@ -198,12 +198,12 @@ def add_territory_rules(rules):
     """Add the rules for games with a goal of territory."""
 
     rules.add_rule(
-        'terr_convert_cnt',
+        'terr_gparam_one',
         both_objs=True,
         rule=lambda ginfo, holes: (ginfo.goal == Goal.TERRITORY
-                                   and (ginfo.convert_cnt <= holes
-                                        or ginfo.convert_cnt >= 2 * holes)),
-        msg='Territory Goal requires convert_cnt between holes and 2 * holes',
+                                   and (ginfo.gparam_one <= holes
+                                        or ginfo.gparam_one >= 2 * holes)),
+        msg='Territory Goal requires gparam_one between holes and 2 * holes',
         excp=gi.GameInfoError)
 
     rules.add_rule(
@@ -252,9 +252,9 @@ def add_block_and_divert_rules(rules):
         excp=NotImplementedError)
 
     rules.add_rule(
-        'bdiv_need_convert_cvt',
-        rule=lambda ginfo: ginfo.sow_blkd_div and not ginfo.convert_cnt,
-        msg='SOW_BLKD_DIV requires CONVERT_CNT for closing holes',
+        'bdiv_need_gparam1',
+        rule=lambda ginfo: ginfo.sow_blkd_div and not ginfo.gparam_one,
+        msg='SOW_BLKD_DIV requires GPARAM_ONE for closing holes',
         excp=gi.GameInfoError)
 
     rules.add_rule(

@@ -155,12 +155,12 @@ class TestCaptTable:
     @staticmethod
     def make_game(case):
 
-        child_type = ChildType.NORMAL if case.convert_cnt else ChildType.NOCHILD
+        child_type = ChildType.NORMAL if case.gparam_one else ChildType.NOCHILD
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(capt_on=case.capt_on,
                                 capsamedir=case.capsamedir,
-                                child_cvt=case.convert_cnt,
+                                child_cvt=case.gparam_one,
                                 child_type=child_type,
                                 crosscapt=case.xcapt,
                                 capt_min=case.capt_min,

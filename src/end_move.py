@@ -529,7 +529,7 @@ class TerritoryRoundGameWinner(EndTurnIf):
     """When there are fewer than nbr_start seeds on the board,
     give the remaining seeds to the current player
     (they just did the last possible capture).
-    Determine if there is a game winner by territory (convert_cnt)
+    Determine if there is a game winner by territory (gparam_one)
     or compare the seeds to determine a round winner.
     Otherwise call the deco chain; we need EndTurnMustShare and/or
     EndTurnNoPass to decide if the game has ended.
@@ -553,15 +553,15 @@ class TerritoryRoundGameWinner(EndTurnIf):
         deco chain, don't duplicate the code."""
 
         tot_holes = self.game.cts.dbl_holes
-        convert_cnt = self.game.info.convert_cnt
+        gparam_one = self.game.info.gparam_one
 
         self.game.board = [0] * tot_holes
 
         false_holes = self.game.compute_owners()
 
-        if false_holes >= convert_cnt:
+        if false_holes >= gparam_one:
             return WinCond.WIN, False
-        if tot_holes - false_holes >= convert_cnt:
+        if tot_holes - false_holes >= gparam_one:
             return WinCond.WIN, True
 
         return None, None

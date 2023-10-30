@@ -8,7 +8,7 @@
       "name": "Deka",
       "about": "Deka (an immitation):\nA multilap Mancala.\nThe goal is to deprive the opponent of seeds.\nHoles are closed on opponent side on 3s,\nsowing continues with those seeds.\nIn subsequent sowing of closed holes, \nown holes are skipped\nbut seeds for opponent's holes are taken out of play.",
       "blocks": true,
-      "convert_cnt": 3,
+      "gparam_one": 3,
       "goal": 1,
       "mlaps": 1,
       "min_move": 1,

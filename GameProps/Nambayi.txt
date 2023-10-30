@@ -5,7 +5,7 @@
       "min_move": 1,
       "goal": 1,
       "blocks": true,
-      "convert_cnt": 4,
+      "gparam_one": 4,
       "mlaps": 1,
       "sow_blkd_div": true,
       "sow_direct": 1
