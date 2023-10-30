@@ -51,9 +51,7 @@ F = False
 N = None
 
 
-
 # %%
-
 
 @pytest.mark.filterwarnings("ignore")
 class TestConctruction:
@@ -83,6 +81,8 @@ class TestConctruction:
     def test_min_params(self, min_game_if):
 
         mancala.Mancala(gc.GameConsts(3, 5), min_game_if)
+
+
 
 
 class TestGameState:
@@ -273,6 +273,20 @@ class TestBasics:
         game = mancala.Mancala(game_consts, game_info)
         game.turn = False
         return game
+
+
+    def test_str(self, game):
+
+        game.params_str()
+        mdata = mancala.MoveData(game, 4)
+        str(mdata)
+
+        assert game.get_board(0) == 4
+        game.set_board(0, 2)
+        assert game.get_board(0) == 2
+
+        game.set_blocked(0, True)
+        assert game.blocked[0]
 
 
     def test_get_info(self, game):

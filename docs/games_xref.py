@@ -12,7 +12,6 @@ import sys
 
 sys.path.extend(['../src'])
 
-from game_interface import GameFlags
 from game_interface import GameInfo
 import man_config
 
@@ -36,18 +35,12 @@ def get_dc_field_names(dc_cls):
     return [field.name for  field in dc.fields(dc_cls)]
 
 gconsts  = ['holes', 'nbr_start']
-gflags = sorted(get_dc_field_names(GameFlags))
-ginfos = get_dc_field_names(GameInfo)
+ginfos = sorted(get_dc_field_names(GameInfo))
 
-for dontcare in ['flags', 'scorer', 'name', 'nbr_holes',
-                 'difficulty', 'help_file', 'about']:
+for dontcare in ['name', 'help_file', 'about']:
     ginfos.remove(dontcare)
 
-gflags.remove('udirect')
-
-del dontcare
-
-params = gconsts + gflags + ginfos
+params = gconsts + ginfos
 
 
 # %%
@@ -55,8 +48,8 @@ params = gconsts + gflags + ginfos
 with open('props_used.csv', 'w') as file:
 
     print(',', end='', file=file)
-    for name in params:
-        print(f'{name},', end='', file=file)
+    for param in params:
+        print(f'{param},', end='', file=file)
     print(file=file)
 
     for game in files:
@@ -65,23 +58,23 @@ with open('props_used.csv', 'w') as file:
 
         for param in params:
 
-            _, consts, info = all_games[game]
+            gclass, consts, info, pdict = all_games[game]
             vstr = ''
 
             if param in gconsts:
                 vstr = str(getattr(consts, param))
 
-            elif param in gflags:
-                pval = getattr(info.flags, param)
-                if pval is True:
-                    vstr = 'x'
-                elif pval not in (0, False):
-                    vstr = str(getattr(info.flags, param))
-
             elif param in ('capt_on', 'udir_holes'):
                 vstr = ' '.join(str(val) for val in getattr(info, param))
 
-            elif param == 'ai_params':
+            elif param in ginfos:
+                pval = getattr(info, param)
+                if pval is True:
+                    vstr = 'x'
+                elif pval not in (0, False):
+                    vstr = str(getattr(info, param))
+
+            elif param == 'player':
                 pass
 
             else:

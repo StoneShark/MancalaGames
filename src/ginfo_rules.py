@@ -277,7 +277,7 @@ def add_block_and_divert_rules(rules):
 
     capt_flags = ['capsamedir', 'crosscapt', 'evens', 'capt_min', 'capt_max',
                   'multicapt', 'oppsidecapt', 'xcpickown', 'capt_on',
-                  'capttwoout']
+                  'capttwoout', 'sow_own_store']
     for flag in capt_flags:
         rules.add_rule(
             f'bdiv_no_capt_{flag}',
@@ -429,12 +429,6 @@ def build_rules():
         excp=NotImplementedError)
 
     man_rules.add_rule(
-        'no_sow_start_mlap',
-        rule=lambda ginfo: ginfo.sow_start and ginfo.mlaps != LapSower.OFF,
-        msg='SOW_START not compatible with MULTI_LAP',
-        excp=gi.GameInfoError)
-
-    man_rules.add_rule(
         'visit_opp_req_mlap',
         rule=lambda ginfo: ginfo.visit_opp and ginfo.mlaps == LapSower.OFF,
         msg='VISIT_OPP requires MLAPS',
@@ -563,14 +557,6 @@ def build_rules():
         msg='MIN_MOVE of 1 with SOW_START play is confusing (unless MOVE_ONE)',
         excp=gi.GameInfoError)
         # pick-up a seed, sow it back into the same hole -> no change of state
-
-    man_rules.add_rule(
-        'mlap_capt_on_incomp',
-        rule=lambda ginfo: (ginfo.mlaps  != LapSower.OFF
-                            and ginfo.capt_on
-                            and not ginfo.sow_capt_all),
-        msg='CAPT_ON with MULTI_LAP without SOW_CAPT_ALL never captures',
-        excp=gi.GameInfoError)
 
     man_rules.add_rule(
         'too_many_udir',

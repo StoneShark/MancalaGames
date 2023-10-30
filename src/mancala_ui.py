@@ -5,8 +5,7 @@ The values of those two variables must not be changed during
 game play.
 
 Created on Thu Mar  2 14:38:17 2023
-@author: Ann
-"""
+@author: Ann"""
 
 
 # %% imports
