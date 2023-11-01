@@ -52,9 +52,9 @@ TEST_DATA = [
       FALSES, NONES, False, 2,           [F, T, T]),
 
     (True, utils.build_board([2, 2, 0], [1, 0, 0]),    # 4
-     FALSES, NONES, True, 2, [T, T, F]),
+     FALSES, NONES, True, 1, [T, T, F]),
     (False, utils.build_board([1, 0, 0], [2, 2, 0]),   # 5
-     FALSES, NONES, True, 2,             [T, T, F]),
+     FALSES, NONES, True, 1,             [T, T, F]),
     (True, utils.build_board([2, 1, 0], [0, 0, 0]),    # 6
      FALSES, NONES, True, 1, [T, F, F]),
     (False, utils.build_board([0, 0, 0], [0, 1, 1]),   # 7
@@ -62,18 +62,21 @@ TEST_DATA = [
 
     (True,                                             # 8
      utils.build_board([2, 2, 0], [1, 0, 0]),
-     utils.build_board([T, F, T], [T, F, T]), NONES, True, 2,
+     utils.build_board([T, F, T], [T, F, T]), NONES, True, 1,
                        [F, T, F]),
     (True,                                             # 9
      utils.build_board([2, 2, 2], [1, 0, 0]),
      utils.build_board([T, F, F], [T, F, T]),
-     utils.build_board([N, T, N], [N, F, T]), True, 2,
+     utils.build_board([N, T, N], [N, F, T]), True, 1,
                        [F, F, T]),
     (True,                                             # 10
      utils.build_board([2, 2, 0], [1, 0, 0]),
      utils.build_board([F, T, F], [T, F, T]),
-     utils.build_board([N, T, N], [N, F, T]), True, 2,
+     utils.build_board([N, T, N], [N, F, T]), True, 1,
                        [T, F, F]),
+
+    (True, utils.build_board([2, 2, 0], [1, 0, 0]),    # 11
+     FALSES, NONES, True, 2, [T, F, F]),
     ]
 
 class TestAllowables:
@@ -86,10 +89,10 @@ class TestAllowables:
                         mustshare, min_move, eresult, request):
 
         game_consts = gc.GameConsts(nbr_start=4, holes=3)
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                capt_on=[2],
+        game_info = gi.GameInfo(capt_on=[2],
                                 min_move=min_move,
                                 mustshare=mustshare,
+                                nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
@@ -101,6 +104,7 @@ class TestAllowables:
         seeds = game.cts.total_seeds - sum(game.board)
         quot, rem = divmod(seeds, 2)
         game.store = [quot, quot + rem]
+        print(game)
 
         assert game.deco.allow.get_allowable_holes() == eresult
 

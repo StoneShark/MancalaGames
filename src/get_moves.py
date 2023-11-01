@@ -63,10 +63,27 @@ class UdirMoves(MovesIf):
         return moves
 
 
-class NoSidesMoves(MovesIf):
-    """Base no sides holes mover.
-    When no_sides is true, moves must be (row, pos, direct)
-    no matter if udirect is true or not.
+class MovesTriples(MovesIf):
+    """Base moves for triples, moves must be (row, pos, direct).
+    Allowables is dbl_holes long."""
+
+    def get_moves(self):
+        """If move is allowable, collect positions."""
+
+        moves = []
+        for loc, allow in enumerate(self.game.get_allowable_holes()):
+
+            if allow:
+                row = int(loc < self.game.cts.holes)
+                pos = self.game.cts.xlate_pos_loc(row, loc)
+                moves += [MoveTpl(row, pos, None)]
+
+        return moves
+
+
+class MovesUdirTriples(MovesIf):
+    """Udir moves for triples, moves must be (row, pos, direct)
+    no matter if hole is udir or not.
     There are no passes in no_sides games,
     because if there isn't a move then the game is over."""
 
@@ -91,32 +108,15 @@ class NoSidesMoves(MovesIf):
 # %% decorators
 
 
-class UdirPassMoves(MovesIf):
-    """Get moves when udirect and mustpass are set."""
-
-    def get_moves(self):
-        """Used when game is both UDIRECT and PASS:
-        If no one can move, return an empty list.
-        Collect possible moves,
-        expand bi-directional holes so that there is one move per direction,
-        if there are any moves, return them.
-        otherwise pass."""
-
-        moves = self.decorator.get_moves()
-        return moves if moves else [MoveTpl(PASS_TOKEN, None)]
-
-
 class PassMoves(MovesIf):
     """Get moves when only mustpass is set."""
 
     def get_moves(self):
-        """Used if PASS required in game:
-        If no one can move, return an empty list.
-        Collect possible moves, if there are any moves, return them.
-        otherwise pass."""
+        """If no moves, return PASS_TOKEN."""
 
         moves = self.decorator.get_moves()
         return moves if moves else [PASS_TOKEN]
+
 
 
 # %% build deco chain
@@ -124,17 +124,19 @@ class PassMoves(MovesIf):
 def deco_moves(game):
     """Build the get_moves deco."""
 
-    if game.info.udirect and not game.info.no_sides:
+    if game.info.mlength == 2:
         moves = UdirMoves(game)
-        if game.info.mustpass:
-            moves = UdirPassMoves(game, moves)
 
-    elif game.info.no_sides:
-        moves = NoSidesMoves(game)
+    elif game.info.mlength == 3:
+        if game.info.udirect:
+            moves = MovesUdirTriples(game)
+        else:
+            moves = MovesTriples(game)
 
     else:
         moves = Moves(game)
-        if game.info.mustpass:
-            moves = PassMoves(game, moves)
+
+    if game.info.mustpass:
+        moves = PassMoves(game, moves)
 
     return moves

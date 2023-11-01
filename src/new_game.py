@@ -175,7 +175,14 @@ def deco_new_game(game):
                               new_game)
 
     if game.info.rounds:
-        new_game = NewRound(game, new_game, end_move.TakeOwnSeeds(game))
+        if game.info.goal == Goal.TERRITORY:
+            new_game = NewRound(
+                game, new_game,
+                end_move.TakeOwnSeeds(game, lambda loc: game.owner[loc]))
+        else:
+            new_game = NewRound(
+                game, new_game,
+                end_move.TakeOwnSeeds(game, game.cts.board_side))
 
     if game.info.goal == Goal.TERRITORY:
         new_game = TerritoryNewRound(game, new_game)

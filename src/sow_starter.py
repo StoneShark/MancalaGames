@@ -104,7 +104,7 @@ class SowStartPos(SowStartIf):
         return self.decorator.start_sow(loc)
 
 
-class SowStartUdir(SowStartIf):
+class SowStartPair(SowStartIf):
     """Start the sower. Translate move to loc."""
 
     def start_sow(self, move):
@@ -119,11 +119,11 @@ class SowStartUdir(SowStartIf):
         return self.decorator.start_sow(loc)
 
 
-class SowStartNoSides(SowStartIf):
+class SowStartTriple(SowStartIf):
     """Start the sower. Translate move to loc."""
 
     def start_sow(self, move):
-        """Translate move to loc. NoSides moves are (row, pos, direct).
+        """Translate move to loc. Triple moves are (row, pos, direct).
         Call the chain.
 
         Arguement intentionally renamed because this method
@@ -151,10 +151,10 @@ def deco_sow_starter(game):
     if game.info.moveunlock:
         starter = SowMarkUnlock(game, starter)
 
-    if game.info.udirect and not game.info.no_sides:
-        starter = SowStartUdir(game, starter)
-    elif game.info.no_sides:
-        starter = SowStartNoSides(game, starter)
+    if game.info.mlength == 2:
+        starter = SowStartPair(game, starter)
+    elif game.info.mlength == 3:
+        starter = SowStartTriple(game, starter)
     else:
         starter = SowStartPos(game, starter)
 

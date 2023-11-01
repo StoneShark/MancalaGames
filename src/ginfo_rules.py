@@ -202,8 +202,8 @@ def add_territory_rules(rules):
         both_objs=True,
         rule=lambda ginfo, holes: (ginfo.goal == Goal.TERRITORY
                                    and (ginfo.gparam_one <= holes
-                                        or ginfo.gparam_one >= 2 * holes)),
-        msg='Territory Goal requires gparam_one between holes and 2 * holes',
+                                        or ginfo.gparam_one > 2 * holes)),
+        msg='Territory Goal requires GPARAM_ONE between holes and 2 * holes',
         excp=gi.GameInfoError)
 
     rules.add_rule(
@@ -217,7 +217,7 @@ def add_territory_rules(rules):
         rule=lambda ginfo: ginfo.goal == Goal.TERRITORY and ginfo.no_sides,
         msg='Territory goal is incompatible with NO_SIDES',
         excp=gi.GameInfoError)
-        # could initial ownship be changed so that no_sides makes sense
+        # XXXX could initial ownship be changed so that no_sides makes sense
 
     rules.add_rule(
         'terr_pattern_incomp',
@@ -225,6 +225,31 @@ def add_territory_rules(rules):
                             and ginfo.start_pattern),
         msg='Territory goal is incompatible with START_PATTERN',
         excp=gi.GameInfoError)
+        # depending on pattern one player might not end up with seeds
+
+    rules.add_rule(
+        'terr_gs_not',
+        rule=lambda ginfo: (ginfo.goal == Goal.TERRITORY and
+                            ginfo.grandslam == GrandSlam.NOT_LEGAL),
+        msg='Territory goal and GRANDLAM=Not Legal are currently incompatible',
+        excp=NotImplementedError)
+        # territory requires move triples, GS allowables doesn't support
+
+    rules.add_rule(
+        'terr_no_opp_empty',
+        rule=lambda ginfo: (ginfo.goal == Goal.TERRITORY and
+                            ginfo.allow_rule == AllowRule.OPP_OR_EMPTY),
+        msg='OPP_OR_EMPTY cannot be used with TERRITORY',
+        excp=gi.GameInfoError)
+        # TERRITORY: what does it mean if the hole is already opp?
+
+    rules.add_rule(
+        'confuse_allow',
+        rule=lambda ginfo: (ginfo.goal == Goal.TERRITORY and
+                            ginfo.allow_rule != AllowRule.NONE),
+        msg='Some ALLOW_RULEs are confusing with TERRITORY',
+        warn=True)
+        # AllowRules are not written for move triples
 
 
 def add_block_and_divert_rules(rules):
@@ -435,17 +460,6 @@ def build_rules():
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
-        'split_mustshare',
-        rule=lambda ginfo: (ginfo.sow_direct == Direct.SPLIT
-                            and ginfo.mustshare),
-        msg='SPLIT and MUSTSHARE are currently incompatible',
-        excp=NotImplementedError)
-        # supporting split_mshare would make allowables and get_moves
-        # more complicated--the deco chain could be expanded,
-        # BUT the UI would need a design change to support partially
-        # active buttons (left/right)
-
-    man_rules.add_rule(
         'sow_start_skip_incomp',
         rule=lambda ginfo: ginfo.sow_start and ginfo.skip_start,
         msg='SOW_START and SKIP_START do not make sense together',
@@ -578,7 +592,9 @@ def build_rules():
         rule=lambda ginfo: ginfo.udirect and ginfo.mustshare,
         msg='UDIRECT and MUSTSHARE are currently incompatible',
         excp=NotImplementedError)
-        # see comment for split_mustshare rule above
+        # supporting udirect and mustshare would require a UI design change
+        # to support partially active buttons (left/right)
+        # and would make allowables and get_moves more complicated
 
     man_rules.add_rule(
         'udir_gs_not',
@@ -586,7 +602,15 @@ def build_rules():
                             ginfo.grandslam == GrandSlam.NOT_LEGAL),
         msg='UDIRECT and GRANDLAM=Not Legal are currently incompatible',
         excp=NotImplementedError)
-        # see comment for split_mustshare rule above
+        # see comment for udir_and_mshare rule above
+
+    man_rules.add_rule(
+        'udir_allowrule',
+        rule=lambda ginfo: (ginfo.udirect and
+                            ginfo.allow_rule != AllowRule.NONE),
+        msg='UDIRECT and ALLOW_RULE are currently incompatible',
+        excp=NotImplementedError)
+        # see comment for udir_and_mshare rule above
 
     man_rules.add_rule(
         'odd_split_udir',
@@ -606,5 +630,24 @@ def build_rules():
                                    and ginfo.sow_direct != Direct.SPLIT),
         msg= 'Odd choice of sow direction when udir_holes != nbr_holes',
         warn=True)
+
+    man_rules.add_rule(
+        'gs_not_legal_no_tuple',
+        rule=lambda ginfo: (ginfo.mlength > 1 and
+                            ginfo.grandslam == GrandSlam.NOT_LEGAL),
+        msg='MLENGTH > 1 and GRANDLAM = Not Legal is not supported',
+        excp=gi.GameInfoError)
+        # GS allowables doesn't support tuples
+        # UDIRECT: partials hole activation not supported
+        # TERRITORY: partial side ownership is not implemented
+
+    man_rules.add_rule(
+        'opp_empty_no_tuples',
+        rule=lambda ginfo: (ginfo.allow_rule == AllowRule.OPP_OR_EMPTY
+                            and ginfo.mlength > 1),
+        msg='MLENGTH > 1 not supported with OPP_OR_EMPTY',
+        excp=gi.GameInfoError)
+        # UDIRECT: partials hole activation not supported
+        # TERRITORY: what does it mean if the hole is already opp?
 
     return man_rules

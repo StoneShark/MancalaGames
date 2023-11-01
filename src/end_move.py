@@ -100,19 +100,24 @@ class TakeOwnSeeds(ClaimSeedsIf):
     """The game has ended, move the unowned seeds (non-child)
     to the stores.  Count all of the owned seeds."""
 
+    def __init__(self, game, owner_func):
+        super().__init__(game)
+        self.owner = owner_func
+
     def claim_seeds(self):
         seeds = [0, 0]
 
-        for side, side_range in enumerate([self.game.cts.false_range,
-                                           self.game.cts.true_range]):
-            for loc in side_range:
-                if self.game.child[loc] is True:
-                    seeds[True] += self.game.board[loc]
-                elif self.game.child[loc] is False:
-                    seeds[False] += self.game.board[loc]
-                else:
-                    self.game.store[side] += self.game.board[loc]
-                    self.game.board[loc] = 0
+        for loc in range(self.game.cts.dbl_holes):
+
+            if self.game.child[loc] is True:
+                seeds[True] += self.game.board[loc]
+
+            elif self.game.child[loc] is False:
+                seeds[False] += self.game.board[loc]
+
+            else:
+                self.game.store[self.owner(loc)] += self.game.board[loc]
+                self.game.board[loc] = 0
 
         seeds[False] += self.game.store[False]
         seeds[True] += self.game.store[True]
@@ -407,21 +412,28 @@ class EndTurnMustShare(EndTurnIf):
     the current player does not have seeds and the opponent
     cannot make any seeds available to the current player."""
 
+    def __init__(self, game, owner_func, decorator=None):
+        super().__init__(game, decorator)
+        self.owner = owner_func
+
     def game_ended(self, repeat_turn, ended=False):
 
         if ended:
             return self.decorator.game_ended(repeat_turn, ended)
 
-        my_rng, opp_rng = self.game.cts.get_ranges(self.game.turn)
-        if repeat_turn:
-            opp_rng, my_rng = my_rng, opp_rng
+        opponent = not self.game.turn if repeat_turn else self.game.turn
 
-        player_seeds = any(self.game.board[loc] >= self.game.info.min_move
-                           for loc in my_rng
-                           if self.game.child[loc] is None)
-        opp_seeds = any(self.game.board[loc] >= self.game.info.min_move
-                        for loc in opp_rng
-                        if self.game.child[loc] is None)
+        player_seeds = opp_seeds = False
+        for loc in range(self.game.cts.dbl_holes):
+
+            if (self.game.board[loc] >= self.game.info.min_move
+                    and self.game.child[loc] is None):
+
+                if self.owner(loc) == opponent:
+                    opp_seeds = True
+                else:
+                    player_seeds = True
+                    break
 
         if not player_seeds and opp_seeds:
             self.game.turn = not self.game.turn
@@ -579,7 +591,7 @@ class TerritoryRoundGameWinner(EndTurnIf):
 
 
     def game_ended(self, repeat_turn, ended=False):
-        """Round the false holes to deal with non-mod-4 seeds."""
+        """Determine if the game ended."""
 
         remaining = sum(self.game.board)
         if remaining <= self.game.cts.nbr_start:
@@ -601,6 +613,26 @@ class TerritoryRoundGameWinner(EndTurnIf):
 
 # %% build decorator chains
 
+
+def deco_add_bottom_winner(game):
+    """Start the deco chain by adding the bottom Winner
+    and MaxWinner (if needed)."""
+
+    if game.info.no_sides:
+        ender = Winner(game, claimer=TakeOnlyChildNStores(game))
+
+    elif game.info.goal == Goal.TERRITORY:
+        ender = Winner(game,
+                       claimer=TakeOwnSeeds(game, lambda loc: game.owner[loc]))
+    else:
+        ender = Winner(game, claimer=TakeOwnSeeds(game, game.cts.board_side))
+
+    if game.info.goal == Goal.MAX_SEEDS:
+        ender = MaxWinner(game, ender)
+
+    return ender
+
+
 def deco_end_move(game):
     """Return a chain of move enders."""
 
@@ -612,20 +644,18 @@ def deco_end_move(game):
     else:
         claimer = ClaimSeeds(game)
 
-    if game.info.no_sides:
-        ender = Winner(game, claimer=TakeOnlyChildNStores(game))
-    else:
-        ender = Winner(game, claimer=TakeOwnSeeds(game))
-
-    if game.info.goal == Goal.MAX_SEEDS:
-        ender = MaxWinner(game, ender)
+    ender = deco_add_bottom_winner(game)
 
     if not game.info.mustpass:
         ender = EndTurnNoPass(game, ender)
-    if game.info.mustshare:
-        ender = EndTurnMustShare(game, ender)
-    ender = EndTurnNotPlayable(game, ender)
 
+    if game.info.mustshare:
+        if game.info.goal == Goal.TERRITORY:
+            ender = EndTurnMustShare(game, lambda loc: game.owner[loc], ender)
+        else:
+            ender = EndTurnMustShare(game, game.cts.board_side, ender)
+
+    ender = EndTurnNotPlayable(game, ender)
     ender = Winner(game, ender, claimer)
 
     if game.info.rounds:

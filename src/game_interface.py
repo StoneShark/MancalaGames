@@ -177,7 +177,6 @@ class GameInfo:
 
     # **** sowing
     sow_direct: Direct = Direct.CCW
-    udirect: bool = False
 
     sow_start: bool = False
     move_one: bool = False
@@ -215,6 +214,9 @@ class GameInfo:
     # list of bi-directional holes
     udir_holes: list[int] = dc.field(default_factory=list)
 
+    #  derived parameters created from others in post init
+    udirect: bool = False
+    mlength: int = 0
 
     # used only for initialization, not added to the dataclass
     nbr_holes: dc.InitVar[int]
@@ -226,6 +228,13 @@ class GameInfo:
         rules.test raises exceptions and warnings."""
 
         object.__setattr__(self, ckey.UDIRECT, bool(self.udir_holes))
+
+        mlength = 1
+        if self.no_sides or self.goal == Goal.TERRITORY:
+            mlength = 3
+        elif self.udirect:
+            mlength = 2
+        object.__setattr__(self, ckey.MLENGTH, mlength)
 
         rules.test(self, nbr_holes)
 

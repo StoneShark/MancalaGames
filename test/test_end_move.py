@@ -37,8 +37,6 @@ T = True
 F = False
 
 
-
-
 # %%
 
 SBOARD = slice(0, 4)
@@ -138,7 +136,10 @@ class TestClaimers:
             "Game setup error."
 
         tclass = getattr(end_move, tname)
-        claimer = tclass(game)
+        if tname =='TakeOwnSeeds':
+            claimer = tclass(game, game.cts.board_side)
+        else:
+            claimer = tclass(game)
         seeds = claimer.claim_seeds()
 
         assert seeds == case.results[tname].seeds
@@ -420,12 +421,12 @@ class TestEndMove:
              utils.build_board([0, 0, 0],
                                [0, 0, 0]), [8, 4], False),
 
-            # 26: true's turn ended without moves, false can share
+            # 26: true's turn ended without moves, false can share and capture
             ('mmshgame', False, False,
              utils.build_board([1, 1, 0],
-                               [0, 1, 3]), [3, 3], True, None,
-             utils.build_board([1, 1, 0],
-                               [0, 1, 3]), [3, 3], True),
+                               [0, 1, 3]), [3, 3], True, WinCond.WIN,
+             utils.build_board([0, 0, 0],
+                               [0, 0, 0]), [7, 5], False),
 
             # 27: true has no moves but has a repeat turn, false can share
             ('mmshgame', False, True,
@@ -1039,7 +1040,7 @@ class TestTerritory:
         game = mancala.Mancala(game_consts, game_info)
         assert game.cts.win_count == 3*4*2
 
-        game.turn = False
+        game.turn = True
         game.board = board
         game.store = store
 

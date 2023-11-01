@@ -291,8 +291,9 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
         info_dict = dc.asdict(self.info)
         del info_dict[ckey.ABOUT]
-        del info_dict[ckey.UDIRECT]
         del info_dict[ckey.HELP_FILE]
+        del info_dict[ckey.UDIRECT]
+        del info_dict[ckey.MLENGTH]
 
         pprinter = pprint.PrettyPrinter(indent=4)
         strings += 'GameInfo\n'
@@ -323,7 +324,8 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
 
     def compute_owners(self):
-        """Compute the number of holes that False should own."""
+        """Compute the number of holes that False should own
+        based on number of seeds (called on new round)."""
 
         nbr_start = self.cts.nbr_start
         false_holes, rem = divmod(self.store[False], nbr_start)
@@ -447,7 +449,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         If pass, then change turn and return None (game continues).
         Otherwise:
 
-        1. parse the move and PASS if specified, no_sides has no pass
+        1. swap turn if move is PASS, do nothing else
         Call do_sow for steps 2 to 4
         5. capture seeds
         6. if either player won or a tie occured, return that condition
@@ -459,9 +461,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         assert sum(self.store) + sum(self.board) == self.cts.total_seeds, \
             'seed count error before move'
 
-        if (not self.info.no_sides
-            and (move == PASS_TOKEN
-                or (self.info.udirect and move[0] == PASS_TOKEN))):
+        if move == PASS_TOKEN:
             self.turn = not self.turn
             return None
 

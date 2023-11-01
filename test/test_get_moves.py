@@ -15,6 +15,8 @@ from context import game_interface as gi
 from context import mancala
 
 from game_interface import Direct
+from game_interface import Goal
+from game_interface import PASS_TOKEN
 
 
 HOLES = 3
@@ -42,7 +44,7 @@ class TestGetMove:
             (True, utils.build_board([3, 1, 0], [0, 0, 0]),    # 2
               FALSES, NONES, True, False, 1, [0]),
             (True, utils.build_board([2, 3, 2], [0, 0, 0]),    # 3
-              FALSES, NONES, True, False, 2, [0, 1]),
+              FALSES, NONES, True, False, 1, [0, 1]),
             (True,  utils.build_board([2, 2, 2], [0, 0, 0]),   # 4
               FALSES, NONES, False, True, 2, [0, 1, 2]),
             (True, utils.build_board([3, 1, 0], [0, 0, 0]),    # 5
@@ -54,12 +56,12 @@ class TestGetMove:
             (True,                                             # 7
              utils.build_board([2, 2, 0], [1, 0, 0]),
              utils.build_board([T, F, T], [T, F, T]), NONES,
-             True, False, 2, [1]),
+             True, False, 1, [1]),
             (True,                                             # 8
              utils.build_board([2, 2, 2], [1, 0, 0]),
              utils.build_board([T, F, F], [T, F, T]),
              utils.build_board([N, T, N], [N, F, T]),
-             True, True, 2, [2]),
+             True, True, 2, [PASS_TOKEN]),
         ],
         ids=[f'case_{cnt}' for cnt in range(9)])
     def test_basic_moves(self, turn, board, blocked, child,
@@ -105,7 +107,7 @@ class TestGetMove:
 
             (False, utils.build_board([2, 0, 2], [0, 0, 0]),   # 5
              [0], True,
-             [(gi.PASS_TOKEN, None)]),
+             [gi.PASS_TOKEN]),
             (True, utils.build_board([2, 0, 2], [1, 0, 0]),    # 6
              [0], True,
              [(2, Direct.CCW), (2, Direct.CW), (0, None)]),
@@ -158,6 +160,42 @@ class TestNoSidesMoves:
                                 min_move=min_move,
                                 udir_holes = [1],
                                 sow_direct=Direct.SPLIT,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = turn
+        game.board = board
+
+        assert set(game.deco.moves.get_moves()) == eresult
+
+
+class TestTerrMoves:
+
+    @pytest.mark.parametrize(
+        'board, min_move, turn, eresult',
+        [([2, 2, 2, 0, 0, 0], 2, False,  # 0
+          {(1, 0, None),
+           (1, 1, None),
+           (1, 2, None)}),
+
+         ([1, 2, 3, 0, 0, 0], 2, False,  # 1
+          {(1, 1, None),
+           (1, 2, None)}),
+
+         ([0, 0, 0, 1, 1, 1], 1, True,  # 2
+          {(0, 0, None),
+           (0, 1, None),
+           (0, 2, None)}),
+        ])
+    def test_get_moves(self, turn, board, min_move, eresult):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(capt_on=[2],
+                                stores=True,
+                                goal=Goal.TERRITORY,
+                                gparam_one=5,
+                                min_move=min_move,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 

@@ -239,11 +239,11 @@ class MancalaUI(tk.Frame):
                 left_move = gi.MoveTpl(pos, None)
                 rght_move = left_move
 
-            if self.info.no_sides:
+            if self.info.mlength == 3:
                 left_move = gi.MoveTpl(row, *left_move)
                 rght_move = gi.MoveTpl(row, *rght_move)
 
-        elif self.info.no_sides:
+        elif self.info.mlength == 3:
             left_move = gi.MoveTpl(row, pos, None)
             rght_move = left_move
 
@@ -449,7 +449,7 @@ class MancalaUI(tk.Frame):
 
             for pos in range(self.game.cts.holes):
 
-                if self.game.info.no_sides:
+                if self.game.info.mlength == 3:
                     loc = self.game.cts.xlate_pos_loc(row, pos)
                     cactive = actives[loc]
                     disable = not actives[loc]

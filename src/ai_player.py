@@ -162,7 +162,7 @@ class AiPlayer(ai_interface.AiPlayerIf):
 
         for param, cnt_func, diff_func in scorer_trips:
             if getattr(self.sc_params, param):
-                if self.game.info.no_sides:
+                if self.game.info.mlength == 3:
                     self.scorers += [cnt_func]
                 else:
                     self.scorers += [diff_func]

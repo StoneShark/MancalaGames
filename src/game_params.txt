@@ -79,7 +79,8 @@ Player	easy_rand	Easy Random Addin	player scorer _	int	0	6	2	Easy Random Addin
 Player	repeat_turn	Repeat Turn mult	player scorer _	int	0	7	2	Repeat Turn mult											1	1	
 skip	nbr_holes			int				An init only parameter that is used to check the other parameters in the creation of game info.													
 skip	rules			RuleDict				An init only parameter that used to check the consistency of the game info. Errors and warnings are raised as the rules are processed.								1					
-skip	udirect		game_info _	bool	False			A derived parameter. Do not include in config files.				1		1	1						
+skip	udirect		game_info _	bool				A derived parameter. Do not include in config files. Set during game construction to True if any udir holes are set.				1		1	1						
+skip	mlength		game_info _	int				"A derived parameter. Do not include in config files. Set during game construction length of moves: 1 (int) or 2, 3 (tuple)."													
 Sow	sow_direct	Sow Direction	game_info _	Direct	CCW	0	0	"Direction of sow:
 - CW: clockwise
 - CCW: counter-clockwise

@@ -886,11 +886,12 @@ class TestSowCaptOwned:
 
     def test_goal_terr_seeds(self, game2):
         game2.board = utils.build_board([2, 3, 3],
-                                         [0, 3, 3])
+                                        [0, 3, 3])
         game2.turn = False
 
-        mdata = MoveData(game2, 1)
-        mdata.sow_loc, mdata.seeds = game2.deco.starter.start_sow(1)
+        move = gi.MoveTpl(not game2.turn, 1, None)
+        mdata = MoveData(game2, move)
+        mdata.sow_loc, mdata.seeds = game2.deco.starter.start_sow(move)
         mdata.direct = game2.info.sow_direct
         mdata = game2.deco.sower.sow_seeds(mdata)
 
