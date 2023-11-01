@@ -289,7 +289,7 @@ class RndSetupButtonBehavior(BehaviorIf):
 
         game = self.btn.game_ui.game
         game.set_board(self.btn.loc, Hold.nbr)
-        game.blocked(self.btn.loc, False)
+        game.set_blocked(self.btn.loc, False)
 
         self.btn.props.blocked = False
         self.btn.props.seeds = Hold.nbr
