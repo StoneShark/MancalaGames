@@ -166,8 +166,9 @@ class GameLog:
         added to the filename."""
 
         now = datetime.datetime.now()
-        filename = man_path.get_path(
-            'logs/log_' + now.strftime('%Y%m%d_%H%M%S') + '.txt')
+        dir_name = man_path.get_path('logs')
+        filename = dir_name + '/' + now.strftime('%Y%m%d_%H%M%S') + '.txt'
+
 
         with open(filename, 'w', encoding='utf-8') as file:
             print(param_string, file=file)
