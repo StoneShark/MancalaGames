@@ -9,7 +9,6 @@ import os
 import random
 
 import pytest
-pytestmark = pytest.mark.integtest
 
 from context import game_log
 from context import man_config
