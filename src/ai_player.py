@@ -14,11 +14,13 @@ import game_interface as gi
 import ginfo_rules
 import minimax
 import montecarlo_ts as mcts
+import negamax
 
 from game_interface import WinCond
 
 
 ALGORITHM_DICT = {'minimaxer': minimax.MiniMaxer,
+                  'negamaxer': negamax.NegaMaxer,
                   'montecarlo_ts': mcts.MonteCarloTS}
 
 AI_PARAM_DEFAULTS = {ckey.MM_DEPTH: [1, 1, 3, 5],
@@ -98,7 +100,7 @@ class AiPlayer(ai_interface.AiPlayerIf):
 
         self._diff = value
 
-        if isinstance(self.algo, minimax.MiniMaxer):
+        if isinstance(self.algo, (minimax.MiniMaxer, negamax.NegaMaxer)):
             max_depth = self.ai_params[ckey.MM_DEPTH][value]
             self.algo.set_params(max_depth)
 
@@ -421,12 +423,22 @@ def player_dict_rules():
 
     rules.add_rule(
         'no_side_access',
-        rule=lambda pdict, ginfo: (ginfo.no_sides
+        rule=lambda pdict, ginfo: (ginfo.mlength == 3
                                    and ckey.SCORER in pdict
                                    and ckey.ACCESS_M in pdict[ckey.SCORER]
                                    and pdict[ckey.SCORER][ckey.ACCESS_M]),
         both_objs=True,
-        msg='Scorer ACCESS_M multiplier is incompatible with NoSides',
+        msg='Scorer ACCESS_M multiplier is incompatible with'
+        'NO_SIDES or TERRITORY',
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'nmax_no_repeat',
+        rule=lambda pdict, ginfo: (ginfo.sow_own_store
+                                   and ckey.ALGORITHM in pdict
+                                   and pdict[ckey.ALGORITHM] == 'negamaxer'),
+        both_objs=True,
+        msg="NegaMax not compatible with repeat turns via SOW_OWN_STORE",
         excp=gi.GameInfoError)
 
     return rules

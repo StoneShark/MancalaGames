@@ -62,7 +62,9 @@ Game	about	About	game_info _	multi_str	"Sow counter-clockwise.
 Capture on evens. "	4	0	Short string describing the game possibly in multiple lines. Enough to remind the player what the game options are.													
 Game	name	Game Name	game_info _	str	Mancala	0	2	"The game name, may have spaces. Used for the config filename and the window title."						1							
 Game	nbr_start	Start Seeds	game_constants _	int	4	2	2	"The number of seeds in each hole at the start of a game, unless the sow pattern is not ALL_EQUAL. Other sow patterns use this as the number of seeds for some holes in the associated patterns."		1									1	1	
-Player	algorithm	Algorithm	player _	Algorithm	minimaxer	0	0	The algorithm used for the AI Player.	Note: Algorithm only exists in the STRING_DICTS table.												
+Player	algorithm	Algorithm	player _	Algorithm	minimaxer	0	0	"minimaxer: an Alpha-Beta Pruning MiniMaxer
+negamaxer: minimaxer with a very minor optimization for alternating turn games (no repeat turns). Uses minimaxer depths for difficulties.
+montecarlo_ts: a Monte Carlo Tree Search player (that is likely implemented wrong)."	Note: Algorithm only exists in the STRING_DICTS table.												
 Player	difficulty	Default Difficulty	player _	int	1	1	0	"The default difficulty. Can be changed at play time, even during game play, in the Mancala UI."													
 Player	mm_depth	MiniMaxer Depth	player ai_params _	list[int]	"[1, 3, 5, 7]"	3	0	"For each difficulty [0-3], the depth that the minimaxer will search to."													
 Player	mcts_bias	MCTS Bias	player ai_params _	list[int]	"[400, 400, 400, 400]"	5	0	"Bias for the Monte Carlo Tree seach algorithm for each difficulty level (0-3). 

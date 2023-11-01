@@ -591,7 +591,7 @@ class MancalaUI(tk.Frame):
 
 
     def _set_difficulty(self):
-        """Set the max search depth for the minimaxer."""
+        """Set the difficulty for the ai player."""
 
         diff = self.difficulty.get()
         self.player.difficulty = diff

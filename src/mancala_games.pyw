@@ -23,6 +23,7 @@ import tkinter as tk
 from tkinter import ttk
 import tkinter.filedialog as tkfile
 
+import ai_player
 import cfg_keys as ckey
 import game_constants as gc
 import game_interface as gi
@@ -683,6 +684,7 @@ class MancalaGames(tk.Frame):
                            **self.game_config[ckey.GAME_INFO])
 
         self.game = gclass(consts, info)
+        ai_player.AiPlayer(self.game, self.game_config[ckey.PLAYER])
         self.param_changed = False
 
 
