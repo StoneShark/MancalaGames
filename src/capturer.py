@@ -15,7 +15,9 @@ import abc
 from game_interface import ChildType
 from game_interface import CrossCaptOwn
 from game_interface import GrandSlam
+from game_interface import WinCond
 from game_log import game_log
+
 from incrementer import NOSKIPSTART
 
 
@@ -38,7 +40,11 @@ class CaptMethodIf(abc.ABC):
     @abc.abstractmethod
     def do_captures(self, mdata):
         """Do captures.
-        Return True if captures were done, False otherwise."""
+        Update mdata (both are inited to False):
+            capt_changed: there was a state change (picked, child made, etc.)
+        but not a capture
+            captured: there was an actual capture, this will be used for repeat turn
+        """
 
 
 # %% capture base
@@ -47,7 +53,7 @@ class CaptNone(CaptMethodIf):
     """No captures."""
 
     def do_captures(self, mdata):
-        return False
+        pass
 
 
 
@@ -64,8 +70,7 @@ class CaptSingle(CaptMethodIf):
 
             self.game.store[self.game.turn] += self.game.board[mdata.capt_loc]
             self.game.board[mdata.capt_loc] = 0
-            return True
-        return False
+            mdata.captured = True
 
 
 class CaptMultiple(CaptMethodIf):
@@ -74,18 +79,15 @@ class CaptMultiple(CaptMethodIf):
 
     def do_captures(self, mdata):
         """Capture loop"""
-        captures = False
         loc = mdata.capt_loc
 
         while self.game.deco.capt_ok.capture_ok(loc):
 
             self.game.store[self.game.turn] += self.game.board[loc]
             self.game.board[loc] = 0
-            captures = True
+            mdata.captured = True
 
             loc = self.game.deco.incr.incr(loc, mdata.direct, NOSKIPSTART)
-
-        return captures
 
 
 class CaptOppDirMultiple(CaptMethodIf):
@@ -95,7 +97,7 @@ class CaptOppDirMultiple(CaptMethodIf):
     def do_captures(self, mdata):
         """Change direction then use the deco chain."""
         mdata.direct = mdata.direct.opp_dir()
-        return self.decorator.do_captures(mdata)
+        self.decorator.do_captures(mdata)
 
 
 class CaptCross(CaptMethodIf):
@@ -111,9 +113,7 @@ class CaptCross(CaptMethodIf):
 
             self.game.store[self.game.turn] += self.game.board[cross]
             self.game.board[cross] = 0
-            return True
-
-        return False
+            mdata.captured = True
 
 
 class CaptTwoOut(CaptMethodIf):
@@ -135,8 +135,7 @@ class CaptTwoOut(CaptMethodIf):
 
             self.game.store[self.game.turn] += self.game.board[loc_p2]
             self.game.board[loc_p2] = 0
-            return True
-        return False
+            mdata.captured = True
 
 
 # %% cross capt decos
@@ -151,16 +150,14 @@ class CaptCrossPickOwnOnCapt(CaptMethodIf):
     def do_captures(self, mdata):
         """Test for and pick own."""
 
-        captures = self.decorator.do_captures(mdata)
+        self.decorator.do_captures(mdata)
 
-        if (captures
+        if (mdata.captured
                 and self.game.child[mdata.capt_loc] is None
                 and self.game.unlocked[mdata.capt_loc]):
 
             self.game.store[self.game.turn] += 1
             self.game.board[mdata.capt_loc] = 0
-
-        return captures
 
 
 class CaptCrossPickOwn(CaptMethodIf):
@@ -171,7 +168,7 @@ class CaptCrossPickOwn(CaptMethodIf):
     def do_captures(self, mdata):
         """Test for and pick own."""
 
-        captures = self.decorator.do_captures(mdata)
+        self.decorator.do_captures(mdata)
 
         side_ok = True
         if self.game.info.oppsidecapt:
@@ -184,11 +181,8 @@ class CaptCrossPickOwn(CaptMethodIf):
 
             self.game.store[self.game.turn] += 1
             self.game.board[mdata.capt_loc] = 0
-            if not captures:
-                captures = PICKED
-            game_log.step('Capturer (picked own w/o)', self)
-
-        return captures
+            mdata.capt_changed = True
+            game_log.add('Capturer (picked own w/o)', game_log.INFO)
 
 
 class CaptContinueXCapt(CaptMethodIf):
@@ -199,11 +193,9 @@ class CaptContinueXCapt(CaptMethodIf):
 
     def do_captures(self, mdata):
 
-        captures = self.decorator.do_captures(mdata)
-        if captures == PICKED:
-            return True
-        if not captures:
-            return False
+        self.decorator.do_captures(mdata)
+        if not mdata.captured:
+            return
 
         loc = mdata.capt_loc
         while True:
@@ -218,9 +210,7 @@ class CaptContinueXCapt(CaptMethodIf):
                 self.game.board[cross] = 0
 
             else:
-                break
-
-        return captures
+                return
 
 
 # %%  grand slam decos
@@ -230,21 +220,19 @@ class GrandSlamCapt(CaptMethodIf):
     This class is still abstract."""
 
     def is_grandslam(self, mdata):
-        """Return True if the capture was a grandslam and
-        True if there were any captures."""
+        """Return True if the capture was a grandslam"""
 
         # XXXX the test for start/end seeds could exclude children
 
         opp_rng = self.game.cts.get_opp_range(self.game.turn)
         start_seeds = any(mdata.board[tloc] for tloc in opp_rng)
 
-        captures = self.decorator.do_captures(mdata)
+        self.decorator.do_captures(mdata)
 
-        if start_seeds and captures:
-            end_seeds = any(self.game.board[tloc] for tloc in opp_rng)
-            return not end_seeds, True
+        if start_seeds and mdata.captured:
+            return not any(self.game.board[tloc] for tloc in opp_rng)
 
-        return False, captures
+        return False
 
 
 class GSNone(GrandSlamCapt):
@@ -254,13 +242,11 @@ class GSNone(GrandSlamCapt):
 
         saved_state = self.game.state
 
-        is_gs, captures = self.is_grandslam(mdata)
-        if is_gs:
+        if self.is_grandslam(mdata):
             game_log.add('GRANDSLAM: no capture', game_log.IMPORT)
             self.game.state = saved_state
-            return False
-
-        return captures
+            mdata.capt_changed = False
+            mdata.captured = False
 
 
 class GSKeep(GrandSlamCapt):
@@ -278,9 +264,7 @@ class GSKeep(GrandSlamCapt):
     def do_captures(self, mdata):
 
         saved_state = self.game.state
-
-        is_gs, captures = self.is_grandslam(mdata)
-        if is_gs:
+        if self.is_grandslam(mdata):
 
             turn = self.game.turn
             save_loc = self.keep[turn]
@@ -292,9 +276,7 @@ class GSKeep(GrandSlamCapt):
                 self.game.store[turn] -= seeds
 
                 # did we capture anything other than the keep hole?
-                return saved_state != self.game.state
-
-        return captures
+                mdata.captured = saved_state != self.game.state
 
 
 class GSOppGets(GrandSlamCapt):
@@ -302,18 +284,19 @@ class GSOppGets(GrandSlamCapt):
 
     def do_captures(self, mdata):
 
-        is_gs, captures = self.is_grandslam(mdata)
-        if is_gs:
+        if self.is_grandslam(mdata):
+
             game_log.add('GRANDSLAM: opp gets', game_log.IMPORT)
             opp_turn = not self.game.turn
             for tloc in self.game.cts.get_my_range(self.game.turn):
                 self.game.store[opp_turn] += self.game.board[tloc]
                 self.game.board[tloc] = 0
 
-        return captures
-
 
 # %%  child decorators
+
+# XXXX should making children be considered a capture?
+# haven't yet found a game where it's a repeat turn
 
 class MakeChild(CaptMethodIf):
     """If the hole constains child_cvt seeds
@@ -328,10 +311,10 @@ class MakeChild(CaptMethodIf):
                     or not self.game.info.oppsidecapt):
 
                 self.game.child[mdata.capt_loc] = self.game.turn
-                return True
-            return False
+                mdata.capt_changed = True
+                return
 
-        return self.decorator.do_captures(mdata)
+        self.decorator.do_captures(mdata)
 
 
 class CaptureToWalda(CaptMethodIf):
@@ -376,9 +359,9 @@ class CaptureToWalda(CaptMethodIf):
                     CaptureToWalda.WALDA_TEST[self.game.turn]):
 
             self.game.child[loc] = self.game.turn
-            return True
+            mdata.capt_changed = True
+            return
 
-        captures = False
         have_walda = False
         for walda in range(self.game.cts.dbl_holes):
             if self.game.child[walda] == self.game.turn:
@@ -386,13 +369,12 @@ class CaptureToWalda(CaptMethodIf):
                 break
 
         if have_walda:
-            if self.decorator.do_captures(mdata):
+            self.decorator.do_captures(mdata)
+            if mdata.captured:
                 self.game.board[walda] += self.game.store[self.game.turn]
                 self.game.store[self.game.turn] = 0
-                captures = True
 
         assert not sum(self.game.store)
-        return captures
 
 
 class MakeTuzdek(CaptMethodIf):
@@ -423,56 +405,79 @@ class MakeTuzdek(CaptMethodIf):
 
         if self.tuzdek_test(loc):
             self.game.child[loc] = self.game.turn
-            return True
+            mdata.capt_changed = True
+            return
 
-        return self.decorator.do_captures(mdata)
+        self.decorator.do_captures(mdata)
 
 
-# %% no single wrapper
+# %% some wrappers
 
 class NoSingleSeedCapt(CaptMethodIf):
     """Do not do captures with a single seed sow."""
 
     def do_captures(self, mdata):
 
-        if mdata.seeds == 1:
-            return False
+        if mdata.seeds != 1:
+            self.decorator.do_captures(mdata)
 
-        return self.decorator.do_captures(mdata)
+
+class RepeatTurn(CaptMethodIf):
+    """Convert mdata.captured to REPEAT_TURN."""
+
+    def do_captures(self, mdata):
+        self.decorator.do_captures(mdata)
+        if mdata.captured:
+            game_log.add('Capture repeat turn', game_log.INFO)
+            mdata.captured = WinCond.REPEAT_TURN
 
 
 # %% build deco chains
 
-def _add_cross_capt_deco(game, ginfo, capturer):
+def _add_cross_capt_deco(game, capturer):
     """Add the cross capture decorators to the capturer deco.
 
     crosscapt and multicapt is always captsamedir"""
 
     capturer = CaptCross(game, capturer)
 
-    if ginfo.xcpickown == CrossCaptOwn.PICK_ON_CAPT:
+    if game.info.xcpickown == CrossCaptOwn.PICK_ON_CAPT:
         capturer = CaptCrossPickOwnOnCapt(game, capturer)
 
-    elif ginfo.xcpickown == CrossCaptOwn.ALWAYS_PICK:
+    elif game.info.xcpickown == CrossCaptOwn.ALWAYS_PICK:
         capturer = CaptCrossPickOwn(game, capturer)
 
-    if ginfo.multicapt:
+    if game.info.multicapt:
         capturer = CaptContinueXCapt(game, capturer)
 
     return capturer
 
 
-def _add_grand_slam_deco(game, ginfo, capturer):
+def _add_grand_slam_deco(game, capturer):
     """Add the grand slam decorators to the capturer deco."""
 
-    if ginfo.grandslam == GrandSlam.NO_CAPT:
+    if game.info.grandslam == GrandSlam.NO_CAPT:
         capturer = GSNone(game, capturer)
 
-    elif ginfo.grandslam in (GrandSlam.LEAVE_LEFT, GrandSlam.LEAVE_RIGHT):
-        capturer = GSKeep(game, ginfo.grandslam, capturer)
+    elif game.info.grandslam in (GrandSlam.LEAVE_LEFT, GrandSlam.LEAVE_RIGHT):
+        capturer = GSKeep(game, game.info.grandslam, capturer)
 
-    elif ginfo.grandslam == GrandSlam.OPP_GETS_REMAIN:
+    elif game.info.grandslam == GrandSlam.OPP_GETS_REMAIN:
         capturer = GSOppGets(game, capturer)
+
+    return capturer
+
+
+def _add_child_deco(game, capturer):
+    """Add a child handling deco if needed.
+    only one child handler: waldas/tuzdek/children"""
+
+    if game.info.child_type == ChildType.WALDA:
+        capturer =  CaptureToWalda(game, capturer)
+    elif game.info.child_type == ChildType.ONE_CHILD:
+        capturer = MakeTuzdek(game, capturer)
+    elif game.info.child_type == ChildType.NORMAL:
+        capturer = MakeChild(game, capturer)
 
     return capturer
 
@@ -483,7 +488,7 @@ def deco_capturer(game):
     capturer = CaptNone(game)
 
     if game.info.crosscapt:
-        capturer = _add_cross_capt_deco(game, game.info, capturer)
+        capturer = _add_cross_capt_deco(game, capturer)
 
     elif game.info.multicapt:
         capturer = CaptMultiple(game, capturer)
@@ -498,17 +503,13 @@ def deco_capturer(game):
           or game.info.capt_max or game.info.capt_min):
         capturer = CaptSingle(game)
 
-    capturer = _add_grand_slam_deco(game, game.info, capturer)
-
-    # only one child handler: waldas/tuzdek/children
-    if game.info.child_type == ChildType.WALDA:
-        capturer =  CaptureToWalda(game, capturer)
-    elif game.info.child_type == ChildType.ONE_CHILD:
-        capturer = MakeTuzdek(game, capturer)
-    elif game.info.child_type == ChildType.NORMAL:
-        capturer = MakeChild(game, capturer)
+    capturer = _add_grand_slam_deco(game, capturer)
+    capturer = _add_child_deco(game, capturer)
 
     if game.info.nosinglecapt:
         capturer = NoSingleSeedCapt(game, capturer)
+
+    if game.info.capt_rturn:
+        capturer = RepeatTurn(game, capturer)
 
     return capturer

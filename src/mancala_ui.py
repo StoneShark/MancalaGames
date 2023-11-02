@@ -77,7 +77,7 @@ class GameTally:
         winner: boolean - player that won if win.
         win_cond: WinCond - outcome of the game."""
 
-        if win_cond in [WinCond.END_STORE, WinCond.ENDLESS]:
+        if win_cond in [WinCond.REPEAT_TURN, WinCond.ENDLESS]:
             return
 
         if win_cond is WinCond.ROUND_WIN:
@@ -616,7 +616,7 @@ class MancalaUI(tk.Frame):
         self._log_turn(last_turn)
         self._refresh()
 
-        if win_cond and win_cond != WinCond.END_STORE:
+        if win_cond and win_cond != WinCond.REPEAT_TURN:
             # self._save_file()   # for testing auto save the logs
             self._win_message_popup(win_cond)
             self._new_game(win_cond=win_cond, new_round_ok=True)

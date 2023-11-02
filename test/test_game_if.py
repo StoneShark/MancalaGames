@@ -21,6 +21,7 @@ from context import game_interface as gi
 from context import ginfo_rules
 
 from game_interface import Direct
+from game_interface import Goal
 from game_interface import WinCond
 
 
@@ -57,7 +58,7 @@ class TestEnumsClasses:
         assert WinCond.WIN.is_ended()
         assert WinCond.TIE.is_ended()
         assert WinCond.ENDLESS.is_ended()
-        assert not WinCond.END_STORE.is_ended()
+        assert not WinCond.REPEAT_TURN.is_ended()
 
 
     def test_move_tuple(self):
@@ -105,13 +106,42 @@ class TestConstruction:
         # confirm this is min game config, that doesn't generate errors
         ginfo = gi.GameInfo(nbr_holes=6,
                             capt_on=[2],
-                            sow_direct=Direct.CCW,
                             rules=rules)
 
+        # test derived params
         ginfo = gi.GameInfo(capt_on=[2],
-                            sow_direct=Direct.CCW,
                             nbr_holes=6,
                             rules=rules)
+        assert ginfo.mlength == 1
+        assert not ginfo.udirect
+
+        ginfo = gi.GameInfo(capt_on=[2],
+                            udir_holes=[2],
+                            sow_direct=Direct.SPLIT,
+                            nbr_holes=6,
+                            rules=rules)
+        assert ginfo.mlength == 2
+        assert ginfo.udirect
+
+        ginfo = gi.GameInfo(capt_on=[2],
+                            goal=Goal.TERRITORY,
+                            gparam_one=10,
+                            stores=True,
+                            nbr_holes=6,
+                            rules=rules)
+        assert ginfo.mlength == 3
+        assert not ginfo.udirect
+
+        ginfo = gi.GameInfo(capt_on=[2],
+                            goal=Goal.TERRITORY,
+                            gparam_one=10,
+                            stores=True,
+                            udir_holes=[2],
+                            sow_direct=Direct.SPLIT,
+                            nbr_holes=6,
+                            rules=rules)
+        assert ginfo.mlength == 3
+        assert ginfo.udirect
 
 
 class TestRuleDict:

@@ -184,60 +184,39 @@ class AllTwoRightmost(AllowableIf):
 class MustShare(AllowableIf):
     """If opponent has moves, return delegated get_allowable;
     Otherwise: Only allowable moves are those that provide
-    seeds to the opponent.
+    seeds to the opponent."""
 
-    MUSTSHARE is not supported for UDIRECT sow games.
-    Currently the MancalaUI makes a button active/inactive
-    not left and/or right active."""
+    def __init__(self, game, owners, decorator=None):
 
+        def get_owner_move(loc):
+            return gi.MoveTpl(loc < game.cts.holes, loc, None)
 
-    def opp_has_seeds(self, opp_range):
-        """Return true if the opponent has playable holes."""
+        def get_move(pos):
+            return pos
 
-        return any(self.game.board[loc] >= self.game.info.min_move
-                   for loc in opp_range
-                   if self.game.child[loc] is None)
+        def get_owner_owner(loc):
+            return game.owner[loc]
 
-    def get_allowable_holes(self):
-        """Return allowable moves."""
+        def get_owner_range(_):
+            return range(game.cts.dbl_holes)
 
-        my_rng, opp_rng = self.game.cts.get_ranges(self.game.turn)
-
-        if self.opp_has_seeds(opp_rng):
-            return self.decorator.get_allowable_holes()
-
-        rval = [False] * self.game.cts.holes
-        saved_state = self.game.state
-
-        for pos, loc in enumerate(my_rng):
-            if not self.allow_move(loc):
-                self.game.state = saved_state
-                continue
-
-            game_log.set_simulate()
-            cond = self.game.move(pos)
-            game_log.clear_simulate()
-
-            if cond is WinCond.ENDLESS:
-                game_log.add(f'Preventing ENDLESS move {loc}',
-                             game_log.IMPORT)
-                self.game.state = saved_state
-                continue
-
-            if self.opp_has_seeds(opp_rng):
-                rval[pos] = True
-
-            self.game.state = saved_state
-
-        return rval
+        def get_range(turn):
+            return game.cts.get_my_range(turn)
 
 
-class MustShareOwners(AllowableIf):
-    """If opponent has moves, return delegated get_allowable;
-    Otherwise: Only allowable moves are those that provide
-    seeds to the opponent.
+        super().__init__(game, decorator)
 
-    Moves are triples."""
+        if owners:
+            self.size = game.cts.dbl_holes
+            self.make_move = get_owner_move
+            self.owner = get_owner_owner
+            self.get_range = get_owner_range
+        else:
+            self.size = game.cts.holes
+            self.make_move = get_move
+            self.owner = game.cts.board_side
+            self.get_range = get_range
+
 
     def opp_has_seeds(self, opponent):
         """Return true if any holes owned by the opponent
@@ -245,8 +224,27 @@ class MustShareOwners(AllowableIf):
 
         return any(self.game.board[loc] >= self.game.info.min_move
                    for loc in range(self.game.cts.dbl_holes)
-                   if self.game.owner[loc] == opponent
-                       and self.game.child[loc] is None)
+                   if (self.owner(loc) == opponent
+                       and self.game.child[loc] is None))
+
+
+    def test_allowable(self, allow, opponent, pos, loc):
+        """Test pos/loc to see if it provides the opponent with seeds."""
+
+        if not self.allow_move(loc):
+            return
+
+        game_log.set_simulate()
+        cond = self.game.move(self.make_move(pos))
+        game_log.clear_simulate()
+
+        if cond is WinCond.ENDLESS:
+            game_log.add(f'Preventing ENDLESS move {loc}', game_log.IMPORT)
+            return
+
+        if self.opp_has_seeds(opponent):
+            allow[pos] = True
+
 
     def get_allowable_holes(self):
         """Return allowable moves."""
@@ -255,32 +253,14 @@ class MustShareOwners(AllowableIf):
         if self.opp_has_seeds(opponent):
             return self.decorator.get_allowable_holes()
 
-        holes = self.game.cts.holes
-        dbl_holes = self.game.cts.dbl_holes
-        rval = [False] * dbl_holes
+        allow = [False] * self.size
         saved_state = self.game.state
 
-        for loc in range(dbl_holes):
-            if not self.allow_move(loc):
-                self.game.state = saved_state
-                continue
-
-            game_log.set_simulate()
-            cond = self.game.move(gi.MoveTpl(loc < holes, loc, None))
-            game_log.clear_simulate()
-
-            if cond is WinCond.ENDLESS:
-                game_log.add(f'Preventing ENDLESS move {loc}',
-                             game_log.IMPORT)
-                self.game.state = saved_state
-                continue
-
-            if self.opp_has_seeds(opponent):
-                rval[loc] = True
-
+        for pos, loc in enumerate(self.get_range(self.game.turn)):
+            self.test_allowable(allow, opponent, pos, loc)
             self.game.state = saved_state
 
-        return rval
+        return allow
 
 
 class NoGrandSlam(AllowableIf):
@@ -407,10 +387,7 @@ def deco_allowable(game):
     allowable = deco_allow_rule(game, allowable)
 
     if game.info.mustshare:
-        if game.info.mlength == 3:
-            allowable = MustShareOwners(game, allowable)
-        else:
-            allowable = MustShare(game, allowable)
+        allowable = MustShare(game, game.info.mlength == 3, allowable)
 
     if game.info.grandslam == GrandSlam.NOT_LEGAL:
         allowable = NoGrandSlam(game, allowable)

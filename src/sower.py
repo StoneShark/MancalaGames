@@ -80,7 +80,7 @@ class SowSeeds(SowMethodIf):
 class SowSeedsNStore(SowMethodIf):
     """Sow a seed into the player's own store when passing it.
 
-    If the sow ends in the store, return WinCond.END_STORE.
+    If the sow ends in the store, return WinCond.REPEAT_TURN.
     Usually it means that sowing player gets another turn.
 
     Fill Store: If we have just incremented past current
@@ -127,7 +127,7 @@ class SowSeedsNStore(SowMethodIf):
                 self.game.store[turn] += 1
                 seeds -= 1
                 if not seeds:
-                    mdata.capt_loc = WinCond.END_STORE
+                    mdata.capt_loc = WinCond.REPEAT_TURN
                     return mdata
 
             self.game.board[loc] += 1
@@ -246,7 +246,7 @@ class SimpleLapCont(LapContinuerIf):
     def do_another_lap(self, mdata):
         """Determine if we are done sowing."""
 
-        if mdata.capt_loc is WinCond.END_STORE:
+        if mdata.capt_loc is WinCond.REPEAT_TURN:
             return False
 
         return self.game.board[mdata.capt_loc] > 1
@@ -261,7 +261,7 @@ class NextLapCont(LapContinuerIf):
     def do_another_lap(self, mdata):
         """Determine if we are done sowing."""
 
-        if mdata.capt_loc is WinCond.END_STORE:
+        if mdata.capt_loc is WinCond.REPEAT_TURN:
             return False
 
         loc = self.game.deco.incr.incr(mdata.capt_loc,
@@ -308,7 +308,7 @@ class ChildLapCont(LapContinuerIf):
         """Determine if we are done sowing."""
 
         loc = mdata.capt_loc
-        if loc is WinCond.END_STORE or self.game.child[loc] is not None:
+        if loc is WinCond.REPEAT_TURN or self.game.child[loc] is not None:
             return False
 
         if (mdata.seeds > 1
@@ -437,7 +437,7 @@ class SowVisitedMlap(SowMethodIf):
         game_log.add(f'    Sowing from {mdata.cont_sow_loc}.', game_log.DETAIL)
 
         mdata = self.single_sower.sow_seeds(mdata)
-        if mdata.capt_loc is WinCond.END_STORE:
+        if mdata.capt_loc is WinCond.REPEAT_TURN:
             return mdata
 
         visited_opp = (mdata.seeds >= self.game.cts.holes or

@@ -28,6 +28,8 @@ AI_PARAM_DEFAULTS = {ckey.MM_DEPTH: [1, 1, 3, 5],
                      ckey.MCTS_BIAS: [400, 400, 400, 400],
                      ckey.MCTS_POUTS: [1, 1, 1, 1]}
 
+NEGAMAXER = 'negamaxer'
+
 MCTS_BIAS_DIV = 1000
 
 
@@ -206,7 +208,7 @@ class AiPlayer(ai_interface.AiPlayerIf):
     def _score_repeat_turn(self, end_cond):
         """Score a repeat turn."""
 
-        if end_cond == WinCond.END_STORE:
+        if end_cond == WinCond.REPEAT_TURN:
             mult = -1 if self.game.turn else 1
             return mult * self.sc_params.repeat_turn
 
@@ -429,16 +431,18 @@ def player_dict_rules():
                                    and pdict[ckey.SCORER][ckey.ACCESS_M]),
         both_objs=True,
         msg='Scorer ACCESS_M multiplier is incompatible with'
-        'NO_SIDES or TERRITORY',
+        'NO_SIDES | TERRITORY',
         excp=gi.GameInfoError)
 
     rules.add_rule(
         'nmax_no_repeat',
-        rule=lambda pdict, ginfo: (ginfo.sow_own_store
+        rule=lambda pdict, ginfo: ((ginfo.sow_own_store
+                                    or ginfo.capt_rturn)
                                    and ckey.ALGORITHM in pdict
-                                   and pdict[ckey.ALGORITHM] == 'negamaxer'),
+                                   and pdict[ckey.ALGORITHM] == NEGAMAXER),
         both_objs=True,
-        msg="NegaMax not compatible with repeat turns via SOW_OWN_STORE",
+        msg="NegaMax not compatible with repeat turns"
+            "(SOW_OWN_STORE | CAPT_RTURN)",
         excp=gi.GameInfoError)
 
     return rules

@@ -18,6 +18,7 @@ from context import mancala
 
 from game_interface import AllowRule
 from game_interface import Direct
+from game_interface import Goal
 from game_interface import GrandSlam
 from game_interface import LapSower
 
@@ -104,9 +105,9 @@ class TestAllowables:
         seeds = game.cts.total_seeds - sum(game.board)
         quot, rem = divmod(seeds, 2)
         game.store = [quot, quot + rem]
-        print(game)
 
         assert game.deco.allow.get_allowable_holes() == eresult
+
 
 
     @pytest.mark.parametrize(
@@ -537,5 +538,58 @@ class TestTwosRight:
         game = mancala.Mancala(game_consts, game_info)
         game.turn = turn
         game.board = board
+
+        assert game.deco.allow.get_allowable_holes() == eresult
+
+
+
+class TestOwnerAllowables:
+
+    @pytest.mark.parametrize(
+        'turn, board, owners, eresult',
+        [
+            (True,
+             utils.build_board([2, 2, 0],
+                               [1, 0, 2]),
+             utils.build_board([T, T, T],
+                               [F, F, T]),
+             utils.build_board([T, T, F],
+                               [F, F, T])),
+
+            (True,
+             utils.build_board([2, 2, 0],
+                               [0, 0, 2]),
+             utils.build_board([T, T, T],
+                               [F, F, F]),
+             utils.build_board([T, T, F],
+                               [F, F, F])),
+
+            # TODO what's going on here
+            # (False,
+            #  utils.build_board([0, 2, 0],
+            #                    [1, 0, 2]),
+            #  utils.build_board([T, F, T],
+            #                    [F, F, F]),
+            #  utils.build_board([F, T, F],
+            #                    [F, F, T])),
+        ],
+        ids=[f'case_{cnt}' for cnt in range(2)])
+    def test_allowables(self, turn, board, owners, eresult):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(capt_on=[4],
+                                stores=True,
+                                goal=Goal.TERRITORY,
+                                gparam_one=6,
+                                mustshare=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = turn
+        game.board = board
+        game.owner = owners
+        seeds = game.cts.total_seeds - sum(game.board)
+        quot, rem = divmod(seeds, 2)
+        game.store = [quot, quot + rem]
 
         assert game.deco.allow.get_allowable_holes() == eresult

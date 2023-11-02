@@ -227,9 +227,9 @@ class TestScorers:
 
         assert player.score(None) == 0
         game.turn = False
-        assert player.score(WinCond.END_STORE) == 10
+        assert player.score(WinCond.REPEAT_TURN) == 10
         game.turn = True
-        assert player.score(WinCond.END_STORE) == -10
+        assert player.score(WinCond.REPEAT_TURN) == -10
 
 
     def test_sc_diff_evens(self, game, player):

@@ -100,13 +100,15 @@ class MoveData:
     cont_sow_loc    property fills         in/update
     capt_loc                               output       input
 
+    capt_change                                         filled
+    captured                                            filled
+
     note 1: board is used to determine if a grand slam is possible
     e.g. there must be seeds on oppside before the turn
 
     note 2: seeds are used only in NoSignleSeedCapt
 
-    note 3: this is the original start location, expected to be
-    used by derived class(es)   (Bao)
+    note 3: this is the original start location
     """
 
     def __init__(self, game, move):
@@ -119,6 +121,9 @@ class MoveData:
         self.cont_sow_loc = 0   # use by the sower (updated for lap sows)
         self.capt_loc = 0
 
+        self.capt_changed = False    # capt changed state  but didn't capture
+        self.captured = False       # there was an actual capture
+
     def __str__(self):
 
         string = f"MoveData({self.board}, {self.move}):\n"
@@ -126,7 +131,9 @@ class MoveData:
         string += f"  seeds={self.seeds}\n"
         string += f"  sow_loc={self.sow_loc}\n"
         string += f"  cont_sow_loc={self.cont_sow_loc}\n"
-        string += f"  capt_loc={self.capt_loc}"
+        string += f"  capt_loc={self.capt_loc}\n"
+        string += f"  capt_changed={self.capt_changed}\n"
+        string += f"  captured={self.captured}"
         return string
 
     @property
@@ -437,9 +444,13 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
     def capture_seeds(self, mdata):
         """Hand off the capture to the capturer deco."""
 
+        self.deco.capturer.do_captures(mdata)
+
         loc = mdata.capt_loc
-        if self.deco.capturer.do_captures(mdata):
+        if mdata.captured:
             game_log.step(f'Capture from {loc}', self)
+        elif mdata.capt_changed:
+            game_log.step('Captured changed state', self)
         else:
             game_log.step(f'No captures @ {loc}')
 
@@ -467,15 +478,19 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
         mdata = self.do_sow(move)
 
-        if mdata.capt_loc is WinCond.END_STORE:
+        if mdata.capt_loc is WinCond.REPEAT_TURN:
             win_cond = self.win_conditions(repeat_turn=True)
-            return win_cond if win_cond else WinCond.END_STORE
+            return win_cond if win_cond else WinCond.REPEAT_TURN
 
         if mdata.capt_loc is WinCond.ENDLESS:
             game_log.add('MLAP game ENDLESS', game_log.IMPORT)
             return WinCond.ENDLESS
 
         self.capture_seeds(mdata)
+
+        if mdata.captured == WinCond.REPEAT_TURN:
+            win_cond = self.win_conditions(repeat_turn=True)
+            return win_cond if win_cond else WinCond.REPEAT_TURN
 
         win_cond = self.win_conditions()
         if win_cond:

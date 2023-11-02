@@ -31,6 +31,7 @@ LEAVE_RIGHT: the capture is performed from all but the rightmost hole from the s
 Capture	moveunlock	Move Unlock for Capture	game_info _	bool	False	3	2	Captures may not be made from locked holes. Starting a sow from a hole unlocks it.						1			1				1
 Capture	nosinglecapt	No Single Seed Capture	game_info _	bool	False	4	2	"If the selected start hole contains one seed, no capture may be made with it."										1			
 Capture	capt_on	Capture On Values	game_info _	list[bool]	[]	6	2	Capture when the contents of the hole is in the capt_on list.									1	1			
+Capture	capt_rturn	Repeat Turn on Capture	game_info _	bool	False	7	0	Repeat turn if there was a capture. Making children is not currently considered making a capture.													
 Dynamics	stores	Stores	game_info _	bool	True	0	0	Are stores present on the UI. Stores might not be on the UI but used if seeds are taken out of play.		1									1	1	
 Dynamics	mustpass	Must Pass	game_info _	bool	False	1	0	"If a player has no allowable moves on their turn they must pass, until they have allowable moves. The game is over when neither play has an allowable move."				1							1	1	
 Dynamics	rounds	Rounds	game_info _	bool	False	4	0	Is the game played in rounds?		1									1	1	

@@ -168,12 +168,12 @@ class TestSower:
          # end in own store
          (2, False,          utils.build_board([2, 2, 2, 2],
                                                [2, 2, 2, 2]),
-          WinCond.END_STORE, utils.build_board([2, 2, 2, 2],
+          WinCond.REPEAT_TURN, utils.build_board([2, 2, 2, 2],
                                                [2, 2, 0, 3]), [1, 0]),
 
          (1, True,           utils.build_board([2, 2, 2, 2],
                                                [2, 2, 2, 2]),
-          WinCond.END_STORE, utils.build_board([3, 0, 2, 2],
+          WinCond.REPEAT_TURN, utils.build_board([3, 0, 2, 2],
                                                [2, 2, 2, 2]), [0, 1]),
           ])
 
@@ -214,7 +214,7 @@ class TestSower:
          # 4: CCW, end in own store
          (1, Direct.CCW, True,  utils.build_board([1, 2, 2],
                                                   [2, 3, 4]),
-          WinCond.END_STORE,    utils.build_board([2, 0, 2],
+          WinCond.REPEAT_TURN,    utils.build_board([2, 0, 2],
                                                   [2, 3, 4]), [0, 1]),
 
          # 5: CW, don't pass any stores
@@ -241,7 +241,7 @@ class TestSower:
          # 9: CW, end in own store
          (1, Direct.CW,  False, utils.build_board([1, 2, 3],
                                                   [2, 5, 4]),
-          WinCond.END_STORE,    utils.build_board([2, 3, 4],
+          WinCond.REPEAT_TURN,    utils.build_board([2, 3, 4],
                                                   [3, 0, 4]), [1, 0]),
           ])
 
@@ -271,14 +271,14 @@ class TestSower:
 
 
     @pytest.mark.parametrize('end_loc, board, eresult',
-                             [(WinCond.END_STORE, utils.build_board([1, 0, 3],
+                             [(WinCond.REPEAT_TURN, utils.build_board([1, 0, 3],
                                                                     [0, 3, 4]),
                               False),
                               (0, utils.build_board([1, 0, 3],
                                                     [1, 3, 4]), False),
                               (1, utils.build_board([1, 0, 3],
                                                     [1, 3, 4]), True),
-                              (WinCond.END_STORE, utils.build_board([1, 0, 3],
+                              (WinCond.REPEAT_TURN, utils.build_board([1, 0, 3],
                                                                     [0, 3, 4]),
                                False),
                               ])
@@ -293,7 +293,7 @@ class TestSower:
 
 
     @pytest.mark.parametrize('end_loc, board, eresult, cloc',
-                             [(WinCond.END_STORE, utils.build_board([1, 0, 3],
+                             [(WinCond.REPEAT_TURN, utils.build_board([1, 0, 3],
                                                                     [0, 3, 4]),
                               False, False),
                               (0, utils.build_board([1, 0, 3],
@@ -319,7 +319,7 @@ class TestSower:
 
     @pytest.mark.parametrize('end_loc, sown_seeds, board, child, eresult',
                              # 0: not on end store
-                             [(WinCond.END_STORE, 2,
+                             [(WinCond.REPEAT_TURN, 2,
                                utils.build_board([1, 4, 4],
                                                  [1, 3, 0]),
                                utils.build_board([N, N, N],
@@ -391,7 +391,7 @@ class TestSower:
 
     @pytest.mark.parametrize('end_loc, sown_seeds, board, child, eresult',
                              # 0: not on end store
-                             [(WinCond.END_STORE, 2,
+                             [(WinCond.REPEAT_TURN, 2,
                                utils.build_board([1, 4, 4],
                                                  [1, 3, 0]),
                                utils.build_board([N, N, N],
@@ -664,7 +664,7 @@ class TestVMlap:
         # 1: end_store
          (2, utils.build_board([1, 2, 3],
                                [2, 3, 6]),
-          WinCond.END_STORE,
+          WinCond.REPEAT_TURN,
              utils.build_board([2, 3, 4],
                                [3, 4, 0]), [1, 0]),
         # 2: visit opp -> stop for child
@@ -675,7 +675,7 @@ class TestVMlap:
         # 3: visit opp -> lapping
          (2, utils.build_board([2, 2, 3],
                                [0, 3, 3]),
-          WinCond.END_STORE,
+          WinCond.REPEAT_TURN,
              utils.build_board([0, 3, 4],
                                [1, 4, 0]), [1, 0]),
         # 4: visit opp -> no lapping

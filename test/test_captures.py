@@ -20,6 +20,7 @@ from game_interface import ChildType
 from game_interface import CrossCaptOwn
 from game_interface import Direct
 from game_interface import GrandSlam
+from game_interface import WinCond
 from mancala import MoveData
 
 
@@ -145,7 +146,8 @@ def test_no_capturer():
     mdata = MoveData(game, None)
     mdata.direct = Direct.CCW
     mdata.capt_loc = 5
-    assert not game.deco.capturer.do_captures(mdata)
+    game.deco.capturer.do_captures(mdata)
+    assert not mdata.captured
     assert game.board == [3] * 8
     assert game.store == [0, 0]
 
@@ -155,12 +157,12 @@ class TestCaptTable:
     @staticmethod
     def make_game(case):
 
-        child_type = ChildType.NORMAL if case.gparam_one else ChildType.NOCHILD
+        child_type = ChildType.NORMAL if case.child_cvt else ChildType.NOCHILD
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(capt_on=case.capt_on,
                                 capsamedir=case.capsamedir,
-                                child_cvt=case.gparam_one,
+                                child_cvt=case.child_cvt,
                                 child_type=child_type,
                                 crosscapt=case.xcapt,
                                 capt_min=case.capt_min,
@@ -204,10 +206,12 @@ class TestCaptTable:
         mdata.board = tuple(case.board)  # not quite right, but ok
         mdata.seeds = 3
 
-        captures = game.deco.capturer.do_captures(mdata)
+        game.deco.capturer.do_captures(mdata)
 
         assert sum(game.store) + sum(game.board) == game.cts.total_seeds
-        assert bool(captures) == case.erval
+
+        # TODO rework the test cases to test these individually
+        assert (mdata.captured | mdata.capt_changed) == case.erval
         assert game.board == case.eboard
         assert game.store == case.estore
         assert game.child == case.echild
@@ -223,7 +227,8 @@ class TestCaptTable:
         mdata.board = tuple(case.board)
         mdata.seeds = 1
 
-        assert not game.deco.capturer.do_captures(mdata)
+        game.deco.capturer.do_captures(mdata)
+        assert not mdata.captured
         assert game.board == case.board
         assert game.store == case.store
         assert game.child == case.children
@@ -255,7 +260,8 @@ def test_no_gs(gstype):
     mdata.seeds = 2
 
     game.board = [3, 0, 1, 1]
-    assert game.deco.capturer.do_captures(mdata)
+    game.deco.capturer.do_captures(mdata)
+    assert mdata.captured
     assert game.board == [3, 0, 0, 0]
     assert game.store == [5, 4]
 
@@ -356,7 +362,8 @@ class TestWaldas:
         mdata.board = tuple(game.board)
         mdata.seeds = 2
 
-        assert game.deco.capturer.do_captures(mdata) == ewalda
+        game.deco.capturer.do_captures(mdata)
+        assert mdata.capt_changed == ewalda
 
         assert game.board[loc] == 4
         assert game.child[loc] == (turn if ewalda else None)
@@ -375,7 +382,8 @@ class TestWaldas:
         mdata.board = tuple(game.board)
         mdata.seeds = 2
 
-        assert not game.deco.capturer.do_captures(mdata)
+        game.deco.capturer.do_captures(mdata)
+        assert not mdata.captured
         assert game.board[loc] == 3
         assert game.child[loc] == None
 
@@ -397,7 +405,8 @@ class TestWaldas:
         mdata.board = tuple(game.board)
         mdata.seeds = 2
 
-        assert game.deco.capturer.do_captures(mdata)
+        game.deco.capturer.do_captures(mdata)
+        assert mdata.captured
         assert game.board[loc] == 0
         assert game.board[wloc] == 8
         assert game.child[loc] == None
@@ -420,7 +429,8 @@ class TestWaldas:
         mdata.board = tuple(game.board)
         mdata.seeds = 2
 
-        assert not game.deco.capturer.do_captures(mdata)
+        game.deco.capturer.do_captures(mdata)
+        assert not mdata.captured
         assert game.board[loc] == 3
         assert game.board[wloc] == 3
         assert game.child[loc] == None
@@ -461,7 +471,12 @@ class TestTuzdek:
         mdata.board = tuple(game.board)
         mdata.seeds = 2
 
-        assert game.deco.capturer.do_captures(mdata)
+        game.deco.capturer.do_captures(mdata)
+        if eowner is None:
+            assert mdata.captured
+        else:
+            assert not mdata.captured
+            assert mdata.capt_changed
 
         assert game.board[loc] == 0 if eowner is None else 3
         assert game.child[loc] == eowner
@@ -482,8 +497,8 @@ class TestTuzdek:
         mdata.board = tuple(game.board)
         mdata.seeds = 2
 
-        assert game.deco.capturer.do_captures(mdata)
-        print(game)
+        game.deco.capturer.do_captures(mdata)
+        assert mdata.captured
 
         assert game.board[loc] == 0
         assert not game.child[loc]
@@ -504,10 +519,42 @@ class TestTuzdek:
         mdata.board = tuple(game.board)
         mdata.seeds = 2
 
-        assert game.deco.capturer.do_captures(mdata)
-        print(game)
+        game.deco.capturer.do_captures(mdata)
+        assert mdata.captured
 
         assert game.board[loc] == 0
+
+
+class TestRepeatTurn:
+
+    @pytest.fixture
+    def game(self):
+        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_info = gi.GameInfo(capt_rturn=True,
+                                stores=True,
+                                capt_on=[3],
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+    def test_repeat_turn(self, game):
+
+        game.turn = True
+        game.board = utils.build_board([2, 2, 3, 0],
+                                       [2, 1, 0, 3])
+        mdata = MoveData(game, None)
+        mdata.direct = Direct.CCW
+        mdata.capt_loc = 5
+        game.deco.capturer.do_captures(mdata)
+        assert mdata.captured == WinCond.REPEAT_TURN
+
+        mdata = MoveData(game, None)
+        mdata.direct = Direct.CCW
+        mdata.capt_loc = 1
+        game.deco.capturer.do_captures(mdata)
+        assert mdata.captured != WinCond.REPEAT_TURN
+
 
 
 # %%

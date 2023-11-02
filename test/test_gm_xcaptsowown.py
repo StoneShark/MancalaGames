@@ -36,7 +36,7 @@ class TestXCaptSowOwn:
         assert game.unlocked == [True, True, True, True, True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None, None, None, None, None]
         assert game.store == [1, 0]
-        assert cond.name == "END_STORE"
+        assert cond.name == "REPEAT_TURN"
 
         # move 2
         cond = game.move(5)
@@ -76,7 +76,7 @@ class TestXCaptSowOwn:
         assert game.unlocked == [True, True, True, True, True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None, None, None, None, None]
         assert game.store == [8, 2]
-        assert cond.name == "END_STORE"
+        assert cond.name == "REPEAT_TURN"
 
         # move 6
         cond = game.move(0)
@@ -86,7 +86,7 @@ class TestXCaptSowOwn:
         assert game.unlocked == [True, True, True, True, True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None, None, None, None, None]
         assert game.store == [8, 3]
-        assert cond.name == "END_STORE"
+        assert cond.name == "REPEAT_TURN"
 
         # move 7
         cond = game.move(3)
@@ -116,7 +116,7 @@ class TestXCaptSowOwn:
         assert game.unlocked == [True, True, True, True, True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None, None, None, None, None]
         assert game.store == [9, 5]
-        assert cond.name == "END_STORE"
+        assert cond.name == "REPEAT_TURN"
 
         # move 10
         cond = game.move(1)
@@ -136,7 +136,7 @@ class TestXCaptSowOwn:
         assert game.unlocked == [True, True, True, True, True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None, None, None, None, None]
         assert game.store == [10, 6]
-        assert cond.name == "END_STORE"
+        assert cond.name == "REPEAT_TURN"
 
         # move 12
         cond = game.move(2)
@@ -176,7 +176,7 @@ class TestXCaptSowOwn:
         assert game.unlocked == [True, True, True, True, True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None, None, None, None, None]
         assert game.store == [13, 7]
-        assert cond.name == "END_STORE"
+        assert cond.name == "REPEAT_TURN"
 
         # move 16
         cond = game.move(3)
@@ -196,7 +196,7 @@ class TestXCaptSowOwn:
         assert game.unlocked == [True, True, True, True, True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None, None, None, None, None]
         assert game.store == [14, 10]
-        assert cond.name == "END_STORE"
+        assert cond.name == "REPEAT_TURN"
 
         # move 18
         cond = game.move(4)
@@ -206,7 +206,7 @@ class TestXCaptSowOwn:
         assert game.unlocked == [True, True, True, True, True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None, None, None, None, None]
         assert game.store == [15, 10]
-        assert cond.name == "END_STORE"
+        assert cond.name == "REPEAT_TURN"
 
         # move 19
         cond = game.move(5)
@@ -216,7 +216,7 @@ class TestXCaptSowOwn:
         assert game.unlocked == [True, True, True, True, True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None, None, None, None, None]
         assert game.store == [16, 10]
-        assert cond.name == "END_STORE"
+        assert cond.name == "REPEAT_TURN"
 
         # move 20
         cond = game.move(1)
@@ -246,7 +246,7 @@ class TestXCaptSowOwn:
         assert game.unlocked == [True, True, True, True, True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None, None, None, None, None]
         assert game.store == [18, 10]
-        assert cond.name == "END_STORE"
+        assert cond.name == "REPEAT_TURN"
 
         # move 23
         cond = game.move(3)
@@ -266,7 +266,7 @@ class TestXCaptSowOwn:
         assert game.unlocked == [True, True, True, True, True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None, None, None, None, None]
         assert game.store == [18, 11]
-        assert cond.name == "END_STORE"
+        assert cond.name == "REPEAT_TURN"
 
         # move 25
         cond = game.move(4)
@@ -286,7 +286,7 @@ class TestXCaptSowOwn:
         assert game.unlocked == [True, True, True, True, True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None, None, None, None, None]
         assert game.store == [19, 11]
-        assert cond.name == "END_STORE"
+        assert cond.name == "REPEAT_TURN"
 
         # move 27
         cond = game.move(5)
@@ -296,7 +296,7 @@ class TestXCaptSowOwn:
         assert game.unlocked == [True, True, True, True, True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None, None, None, None, None]
         assert game.store == [20, 11]
-        assert cond.name == "END_STORE"
+        assert cond.name == "REPEAT_TURN"
 
         # move 28
         cond = game.move(2)
@@ -338,7 +338,7 @@ class TestXCaptSowOwn:
         assert game.unlocked == [True, True, True, True, True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None, None, None, None, None]
         assert game.store == [1, 0]
-        assert cond.name == "END_STORE"
+        assert cond.name == "REPEAT_TURN"
 
         # move 2
         cond = game.move(5)
@@ -368,7 +368,7 @@ class TestXCaptSowOwn:
         assert game.unlocked == [True, True, True, True, True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None, None, None, None, None]
         assert game.store == [3, 1]
-        assert cond.name == "END_STORE"
+        assert cond.name == "REPEAT_TURN"
 
         # move 5
         cond = game.move(5)
@@ -378,7 +378,7 @@ class TestXCaptSowOwn:
         assert game.unlocked == [True, True, True, True, True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None, None, None, None, None]
         assert game.store == [4, 1]
-        assert cond.name == "END_STORE"
+        assert cond.name == "REPEAT_TURN"
 
         # move 6
         cond = game.move(0)
@@ -398,7 +398,7 @@ class TestXCaptSowOwn:
         assert game.unlocked == [True, True, True, True, True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None, None, None, None, None]
         assert game.store == [10, 2]
-        assert cond.name == "END_STORE"
+        assert cond.name == "REPEAT_TURN"
 
         # move 8
         cond = game.move(0)
@@ -408,7 +408,7 @@ class TestXCaptSowOwn:
         assert game.unlocked == [True, True, True, True, True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None, None, None, None, None]
         assert game.store == [10, 3]
-        assert cond.name == "END_STORE"
+        assert cond.name == "REPEAT_TURN"
 
         # move 9
         cond = game.move(2)
@@ -428,7 +428,7 @@ class TestXCaptSowOwn:
         assert game.unlocked == [True, True, True, True, True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None, None, None, None, None]
         assert game.store == [11, 4]
-        assert cond.name == "END_STORE"
+        assert cond.name == "REPEAT_TURN"
 
         # move 11
         cond = game.move(5)
@@ -438,7 +438,7 @@ class TestXCaptSowOwn:
         assert game.unlocked == [True, True, True, True, True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None, None, None, None, None]
         assert game.store == [12, 4]
-        assert cond.name == "END_STORE"
+        assert cond.name == "REPEAT_TURN"
 
         # move 12
         cond = game.move(0)
@@ -488,7 +488,7 @@ class TestXCaptSowOwn:
         assert game.unlocked == [True, True, True, True, True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None, None, None, None, None]
         assert game.store == [13, 6]
-        assert cond.name == "END_STORE"
+        assert cond.name == "REPEAT_TURN"
 
         # move 17
         cond = game.move(4)
@@ -518,7 +518,7 @@ class TestXCaptSowOwn:
         assert game.unlocked == [True, True, True, True, True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None, None, None, None, None]
         assert game.store == [15, 6]
-        assert cond.name == "END_STORE"
+        assert cond.name == "REPEAT_TURN"
 
         # move 20
         cond = game.move(2)
@@ -568,7 +568,7 @@ class TestXCaptSowOwn:
         assert game.unlocked == [True, True, True, True, True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None, None, None, None, None]
         assert game.store == [19, 7]
-        assert cond.name == "END_STORE"
+        assert cond.name == "REPEAT_TURN"
 
         # move 25
         cond = game.move(4)
@@ -588,7 +588,7 @@ class TestXCaptSowOwn:
         assert game.unlocked == [True, True, True, True, True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None, None, None, None, None]
         assert game.store == [22, 8]
-        assert cond.name == "END_STORE"
+        assert cond.name == "REPEAT_TURN"
 
         # move 27
         cond = game.move(1)
@@ -598,7 +598,7 @@ class TestXCaptSowOwn:
         assert game.unlocked == [True, True, True, True, True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None, None, None, None, None]
         assert game.store == [22, 9]
-        assert cond.name == "END_STORE"
+        assert cond.name == "REPEAT_TURN"
 
         # move 28
         cond = game.move(0)
@@ -608,7 +608,7 @@ class TestXCaptSowOwn:
         assert game.unlocked == [True, True, True, True, True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None, None, None, None, None]
         assert game.store == [22, 10]
-        assert cond.name == "END_STORE"
+        assert cond.name == "REPEAT_TURN"
 
         # move 29
         cond = game.move(4)

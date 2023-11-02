@@ -161,9 +161,9 @@ class TestEndMove:
     @pytest.fixture
     def game(self):
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                evens=True,
+        game_info = gi.GameInfo(evens=True,
                                 stores=True,
+                                nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
@@ -171,10 +171,10 @@ class TestEndMove:
     @pytest.fixture
     def pagame(self):
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                evens=True,
+        game_info = gi.GameInfo(evens=True,
                                 mustpass=True,
                                 stores=True,
+                                nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
@@ -183,11 +183,11 @@ class TestEndMove:
     @pytest.fixture
     def rgame(self):
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                rounds=True,
+        game_info = gi.GameInfo(rounds=True,
                                 blocks=True,  # req with rounds
                                 evens=True,
                                 stores=True,
+                                nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
@@ -196,10 +196,10 @@ class TestEndMove:
     @pytest.fixture
     def mmgame(self):
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                min_move=2,
+        game_info = gi.GameInfo(min_move=2,
                                 evens=True,
                                 stores=True,
+                                nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
@@ -208,11 +208,11 @@ class TestEndMove:
     @pytest.fixture
     def mmshgame(self):
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                min_move=2,
+        game_info = gi.GameInfo(min_move=2,
                                 mustshare=True,
                                 evens=True,
                                 stores=True,
+                                nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
@@ -227,10 +227,10 @@ class TestEndMove:
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
         object.__setattr__(game_consts, 'win_count', game_consts.total_seeds)
 
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                mustshare=True,
+        game_info = gi.GameInfo(mustshare=True,
                                 evens=True,
                                 stores=True,
+                                nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)

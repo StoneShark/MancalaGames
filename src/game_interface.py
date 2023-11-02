@@ -144,11 +144,11 @@ class WinCond(enum.Enum):
 
     GAME_OVER = enum.auto()     # return this when game ended w/o winner
     ENDLESS = enum.auto()       # return this when multi-lap games get stuck
-    END_STORE = enum.auto()     # last seed sown was in the store
+    REPEAT_TURN = enum.auto()   # must be truthy
 
     def is_ended(self):
         """Has the game ended."""
-        return self is not WinCond.END_STORE
+        return self is not WinCond.REPEAT_TURN
 
 
 @dc.dataclass(frozen=True, kw_only=True)
@@ -207,6 +207,7 @@ class GameInfo:
 
     multicapt: bool = False
     grandslam: int = GrandSlam.LEGAL
+    capt_rturn: bool = False
 
     # list of seed counts to capture on (after sow)
     capt_on: list[int] = dc.field(default_factory=list)

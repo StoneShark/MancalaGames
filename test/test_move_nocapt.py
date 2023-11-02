@@ -201,7 +201,7 @@ class TestCCWSowingStore:
 
         ccw_game.turn = False
         cond = ccw_game.move(2)
-        assert cond == WinCond.END_STORE
+        assert cond == WinCond.REPEAT_TURN
         assert ccw_game.board == utils.build_board([4, 4, 4, 4, 4, 4],
                                                    [4, 4, 0, 5, 5, 5])
         assert ccw_game.store == [1, 0]
@@ -234,7 +234,7 @@ class TestCCWSowingStore:
 
         ccw_game.turn = True
         cond = ccw_game.move(3)
-        assert cond == WinCond.END_STORE
+        assert cond == WinCond.REPEAT_TURN
         assert ccw_game.board == utils.build_board([5, 5, 5, 0, 4, 4],
                                                    [4, 4, 4, 4, 4, 4])
         assert ccw_game.store == [0, 1]
@@ -299,7 +299,7 @@ class TestCWSowingStore:
                                           [4, 8, 4, 4, 4, 4])
 
         cond = cw_game.move(1)
-        assert cond == WinCond.END_STORE
+        assert cond == WinCond.REPEAT_TURN
         assert cw_game.board == utils.build_board([4, 4, 4, 4, 5, 5],
                                                   [5, 0, 4, 4, 4, 4])
         assert cw_game.store == [1, 0]
@@ -324,7 +324,7 @@ class TestCWSowingStore:
                                           [3, 3, 3, 3, 4, 4])
 
         cond = cw_game.move(4)
-        assert cond is WinCond.END_STORE
+        assert cond is WinCond.REPEAT_TURN
         assert cw_game.board == utils.build_board([4, 4, 4, 4, 0, 5],
                                                   [4, 4, 4, 4, 5, 5])
         assert cw_game.store == [0, 1]
