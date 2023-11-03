@@ -12,11 +12,19 @@ FIRST_TURN_ONLY_RIGHT_TWO: The first turn must start from one of the two rightmo
 Capture	capsamedir	Capture in Sow Direction	game_info _	bool	False	0	0	"Only meaninful, with multicapt. Captures are done in the same direction as the sowing, i.e. following the final hole sown. If not set, captures are done from the holes just sown."										1			
 Capture	oppsidecapt	Opp Side Capt Only	game_info _	bool	False	1	0	Captures may only be made from your oppents side of the board.								1	1	1			
 Capture	multicapt	Multiple Captures	game_info _	bool	False	2	0	"After the initial capture, continue capturing as long as the capture conditions are met."										1			
-Capture	evens	Capture Evens	game_info _	bool	True	3	0	"Capture when a hole contains an even number of seeds, greater than 0."									1	1			
-Capture	capt_max	Capture Max	game_info _	int	0	4	0	Capture when the contents of the hole are less than or equal to capt_max.									1	1			
-Capture	capt_min	Capture Min	game_info _	int	0	5	0	Capture when the contents of the hole are greater than or equal to capt_min.									1	1			
-Capture	capttwoout	Capture Two Out	game_info _	bool	False	6	0	"Capture when end in a hole with seeds, and the next hole is empty, then capture the seeds in the following hole."										1			
-Capture	crosscapt	Cross-Capture	game_info _	bool	False	0	2	"If the last sown seed is put in an empty hole, any seeds on the opposite side of the board are captured."										1			
+Capture	evens	Capture Evens	game_info _	bool	True	3	0	"Capture when a hole contains an even number of seeds, greater than 0.
+Supported for SOW_CAPT_ALL."									1	1			
+Capture	capt_max	Capture Max	game_info _	int	0	4	0	"Capture when the contents of the hole are less than or equal to capt_max.
+Supported for SOW_CAPT_ALL."									1	1			
+Capture	capt_min	Capture Min	game_info _	int	0	5	0	"Capture when the contents of the hole are greater than or equal to capt_min.
+Supported for SOW_CAPT_ALL."									1	1			
+Capture	capt_next	Capture Next	game_info _	bool	False	6	0	"Capture from the hole after the final seed sown into an empty hole. 
+Not supported for SOW_CAPT_ALL."													
+Capture	capttwoout	Capture Two Out	game_info _	bool	False	7	0	"Capture when end in a hole with seeds, and the next hole is empty, then capture the seeds in the following hole.
+Not supported for SOW_CAPT_ALL."										1			
+Capture	capt_rturn	Repeat Turn on Capture	game_info _	bool	False	8	0	Repeat turn if there was a capture. Making children is not currently considered making a capture.													
+Capture	crosscapt	Cross-Capture	game_info _	bool	False	0	2	"If the last sown seed is put in an empty hole, any seeds on the opposite side of the board are captured.
+Not supported for SOW_CAPT_ALL."										1			
 Capture	xcpickown	Own Seed on Xcapture	game_info _	CrossCaptOwn	LEAVE	1	2	"When crosscapt is set, defines what to do with the single seed initiating the cross capture.
 - LEAVE: always leave the signle seed
 - PICK_ON_CAPTURE: only pick (capture) the seed if there was a capture.
@@ -30,8 +38,8 @@ LEAVE_LEFT: the capture is performed from all but the leftmost hole from the sow
 LEAVE_RIGHT: the capture is performed from all but the rightmost hole from the sower perspective. This might leave your oppenents without seeds."			1							1			
 Capture	moveunlock	Move Unlock for Capture	game_info _	bool	False	3	2	Captures may not be made from locked holes. Starting a sow from a hole unlocks it.						1			1				1
 Capture	nosinglecapt	No Single Seed Capture	game_info _	bool	False	4	2	"If the selected start hole contains one seed, no capture may be made with it."										1			
-Capture	capt_on	Capture On Values	game_info _	list[bool]	[]	6	2	Capture when the contents of the hole is in the capt_on list.									1	1			
-Capture	capt_rturn	Repeat Turn on Capture	game_info _	bool	False	7	0	Repeat turn if there was a capture. Making children is not currently considered making a capture.													
+Capture	capt_on	Capture On Values	game_info _	list[bool]	[]	6	2	"Capture when the contents of the hole is in the capt_on list. 
+Supported for SOW_CAPT_ALL."									1	1			
 Dynamics	stores	Stores	game_info _	bool	True	0	0	Are stores present on the UI. Stores might not be on the UI but used if seeds are taken out of play.		1									1	1	
 Dynamics	mustpass	Must Pass	game_info _	bool	False	1	0	"If a player has no allowable moves on their turn they must pass, until they have allowable moves. The game is over when neither play has an allowable move."				1							1	1	
 Dynamics	rounds	Rounds	game_info _	bool	False	4	0	Is the game played in rounds?		1									1	1	

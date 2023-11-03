@@ -91,8 +91,7 @@ class CaptMultiple(CaptMethodIf):
 
 
 class CaptOppDirMultiple(CaptMethodIf):
-    """Multi capture, opposite direction.
-    capt_ok_deco encapsulates many of the capture parameters incl side."""
+    """Multi capture, opposite direction."""
 
     def do_captures(self, mdata):
         """Change direction then use the deco chain."""
@@ -113,6 +112,24 @@ class CaptCross(CaptMethodIf):
 
             self.game.store[self.game.turn] += self.game.board[cross]
             self.game.board[cross] = 0
+            mdata.captured = True
+
+
+class CaptNext(CaptMethodIf):
+    """If there are seeds in the next hole capture them."""
+
+    def do_captures(self, mdata):
+
+        loc = mdata.capt_loc
+        direct = mdata.direct
+        loc_next = self.game.deco.incr.incr(loc, direct, NOSKIPSTART)
+
+        if (self.game.board[loc] == 1
+                and self.game.board[loc_next]
+                and self.game.deco.capt_ok.capture_ok(loc_next)):
+
+            self.game.store[self.game.turn] += self.game.board[loc_next]
+            self.game.board[loc_next] = 0
             mdata.captured = True
 
 
@@ -495,6 +512,9 @@ def deco_capturer(game):
 
         if not game.info.capsamedir:
             capturer = CaptOppDirMultiple(game, capturer)
+
+    elif game.info.capt_next:
+        capturer = CaptNext(game)
 
     elif game.info.capttwoout:
         capturer = CaptTwoOut(game)

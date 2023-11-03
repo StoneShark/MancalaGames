@@ -302,7 +302,7 @@ def add_block_and_divert_rules(rules):
 
     capt_flags = ['capsamedir', 'crosscapt', 'evens', 'capt_min', 'capt_max',
                   'multicapt', 'oppsidecapt', 'xcpickown', 'capt_on',
-                  'capttwoout', 'sow_own_store']
+                  'capt_next', 'capttwoout', 'sow_own_store']
     for flag in capt_flags:
         rules.add_rule(
             f'bdiv_no_capt_{flag}',
@@ -484,6 +484,7 @@ def build_rules():
         'warn_no_capt',
         rule=lambda ginfo: not any([ginfo.sow_blkd_div,
                                     ginfo.capttwoout,
+                                    ginfo.capt_next,
                                     ginfo.evens,
                                     ginfo.crosscapt,
                                     ginfo.sow_own_store,
@@ -506,12 +507,11 @@ def build_rules():
     man_rules.add_rule(
         'warn_capsamedir_multicapt',
         rule=lambda ginfo: (not ginfo.capttwoout
+                            and not ginfo.capt_next
                             and ginfo.capsamedir
                             and not ginfo.multicapt),
-        msg="CAPSAMEDIR without MULTICAPT has no effect (unless CAPTTWOOUT).",
+        msg="CAPSAMEDIR without MULTICAPT has no effect",
         warn=True)
-
-
     man_rules.add_rule(
         'capt2out_needs_samedir',
         rule=lambda ginfo: ginfo.capttwoout and not ginfo.capsamedir,
@@ -539,12 +539,35 @@ def build_rules():
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
+        'captnext_needs_samedir',
+        rule=lambda ginfo: ginfo.capttwoout and not ginfo.capsamedir,
+        msg='CAPT_NEXT requires CAPSAMEDIR',
+        excp=gi.GameInfoError)
+
+    man_rules.add_rule(
+        'captnext_cross_incomp',
+        rule=lambda ginfo: ginfo.capt_next and ginfo.crosscapt,
+        msg="CAPT_NEXT and CROSSCAPT are incompatible",
+        warn=True)
+
+    man_rules.add_rule(
+        'captnext_child_incomp',
+        rule=lambda ginfo: ginfo.capt_next and ginfo.child_cvt,
+        msg="CAPT_NEXT and CHILDREN are incompatible",
+        warn=True)
+
+    man_rules.add_rule(
+        'captnext_multi_not',
+        rule=lambda ginfo: ginfo.capt_next and ginfo.multicapt,
+        msg="CAPT_NEXT with MULTICAPT is not implemented",
+        excp=NotImplementedError)
+
+    man_rules.add_rule(
         'sca_gs_not',
         rule=lambda ginfo: (ginfo.sow_capt_all
                             and ginfo.grandslam != GrandSlam.LEGAL),
         msg='SOW_CAPT_ALL requires that GRANDLAM be LEGAL',
         excp=gi.GameInfoError)
-
     man_rules.add_rule(
         'capt2_multi_incomp',
         rule=lambda ginfo: ginfo.capttwoout and ginfo.multicapt,

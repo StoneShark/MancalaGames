@@ -4,7 +4,6 @@ Created on Wed Sep 27 08:31:23 2023
 @author: Ann"""
 
 import collections
-import re
 
 import pytest
 pytestmark = pytest.mark.unittest
@@ -31,18 +30,28 @@ TEST_COVERS = ['src\\capturer.py']
 
 # %% read test cases
 
-SKEEP = slice(0, 42)
-SBOARD = slice(0, 4)
-SCHILD = slice(4, 8)
-SLOCKS = slice(8, 12)
-SSTORE = slice(12, 14)
-SINDIV = slice(14, 31)
-SEBOARD = slice(31, 35)
-SECHILD = slice(35, 39)
-SESTORE = slice(39, 41)
+CASE = 0    # leave as string
+BOARD = 1
+CHILD = 5
+LOCKS = 9
+STORE = 13
+INDIV = 15
+CAPT_ON = 19   # needed to translate str to list
+EBOARD = 33
+ECHILD = 37
+ESTORE = 41
+RESULT = 43
+END = 44
 
-CAPT_ON = 18
-RESULT = 41
+SKEEP = slice(0, END)
+SBOARD = slice(BOARD, CHILD)
+SCHILD = slice(CHILD, LOCKS)
+SLOCKS = slice(LOCKS, STORE)
+SSTORE = slice(STORE, INDIV)
+SINDIV = slice(INDIV, EBOARD)
+SEBOARD = slice(EBOARD, ECHILD)
+SECHILD = slice(ECHILD, ESTORE)
+SESTORE = slice(ESTORE, RESULT)
 
 CONVERT_DICT = {'N': None,
                 'T': True,
@@ -68,11 +77,14 @@ CONVERT_DICT = {'N': None,
 
 def convert(val, col, line):
 
+    if col == CASE:
+        return val
+
     if col == CAPT_ON:
         capts = []
         if val:
             for ival in val.split(' '):
-                if re.match('[0-9]+$', ival):
+                if ival.isdigit():
                     capts += [int(ival)]
                 else:
                     raise ValueError(f"Non-integer found for capt {line}.")
@@ -88,7 +100,7 @@ def convert(val, col, line):
     if val in CONVERT_DICT:
         return CONVERT_DICT[val]
 
-    if re.match('[0-9]+$', val):
+    if val.isdigit():
         return int(val)
 
     if not val:
@@ -127,7 +139,7 @@ def read_test_cases():
         echild = utils.build_board(line_one[SECHILD], line_two[SECHILD])
         estore = line_one[SESTORE]
 
-        CASES += [Case(board, child, locks, store,
+        CASES += [Case(line_one[CASE], board, child, locks, store,
                        *(line_one[SINDIV]),
                        eboard, echild, estore, line_one[RESULT])]
 
@@ -167,6 +179,7 @@ class TestCaptTable:
                                 crosscapt=case.xcapt,
                                 capt_min=case.capt_min,
                                 evens=case.evens,
+                                capt_next=case.capt_next,
                                 capttwoout=case.capttwoout,
                                 grandslam=case.gslam,
                                 moveunlock=case.moveunlock,
@@ -189,7 +202,8 @@ class TestCaptTable:
         return game
 
 
-    @pytest.fixture(params=CASES)
+    @pytest.fixture(params=CASES,
+                    ids=['case_' + case.case for case in CASES])
     def case(self, request):
         return request.param
 
@@ -206,8 +220,10 @@ class TestCaptTable:
         mdata.board = tuple(case.board)  # not quite right, but ok
         mdata.seeds = 3
 
+        print(game)
+        print(case)
         game.deco.capturer.do_captures(mdata)
-
+        print(game)
         assert sum(game.store) + sum(game.board) == game.cts.total_seeds
 
         # TODO rework the test cases to test these individually

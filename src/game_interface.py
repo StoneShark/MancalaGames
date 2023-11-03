@@ -200,6 +200,7 @@ class GameInfo:
     capt_min: int = 0
     capt_max: int = 0
     nosinglecapt: bool = False
+    capt_next: bool = False
     capttwoout: bool = False
 
     crosscapt: bool = False
