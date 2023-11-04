@@ -142,6 +142,7 @@ class TerritoryNewRound(NewGameIf):
 
         nbr_start = self.game.cts.nbr_start
         false_holes = self.game.compute_owners()
+        winner = self.game.turn
 
         if self.decorator.new_game(win_cond, new_round_ok):
             holes = self.game.cts.holes
@@ -151,13 +152,16 @@ class TerritoryNewRound(NewGameIf):
         self.game.store = [0, 0]
         self.game.blocked = [False] * self.game.cts.dbl_holes
 
-        for loc in range(self.game.cts.dbl_holes):
-            if loc < false_holes:
-                self.game.board[loc] = nbr_start
-                self.game.owner[loc] = False
-            else:
-                self.game.board[loc] = nbr_start
-                self.game.owner[loc] = True
+        loc = self.game.cts.holes if winner else 0
+        wholes = self.game.cts.dbl_holes - false_holes if winner \
+            else false_holes
+
+        for cnt in range(self.game.cts.dbl_holes):
+
+            self.game.board[loc] = nbr_start
+            self.game.owner[loc] = winner if cnt < wholes else not winner
+
+            loc = (loc + 1) % self.game.cts.dbl_holes
 
         return False
 
