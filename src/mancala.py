@@ -98,7 +98,7 @@ class MoveData:
     seeds          fill                    input        note 2
     sow_loc        fill                                 note 3
     cont_sow_loc    property fills         in/update
-    capt_loc                               output       input
+    capt_loc                               output       in/update
 
     capt_change                                         filled
     captured                                            filled
@@ -121,7 +121,7 @@ class MoveData:
         self.cont_sow_loc = 0   # use by the sower (updated for lap sows)
         self.capt_loc = 0
 
-        self.capt_changed = False    # capt changed state  but didn't capture
+        self.capt_changed = False    # capt changed state but didn't capture
         self.captured = False       # there was an actual capture
 
     def __str__(self):

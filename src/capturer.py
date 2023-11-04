@@ -134,25 +134,72 @@ class CaptNext(CaptMethodIf):
 
 
 class CaptTwoOut(CaptMethodIf):
-    """If the seed ended in a hole which previously had seeds,
+    """If the final contents of the hole (# of seeds) and
+    capture count meet the 'seed_cond' condition,
     and the next hole is empty, capture the seeds in the
-    following hole."""
+    following hole.
 
-    def do_captures(self, mdata):
+    capt_loc is updated for both MultiCaptTwoOut and PickCross.
+
+    Don't use capt_ok because it might be setup for sow_Capt_all"""
+
+    def __init__(self, game, seed_cond, decorator=None):
+
+        super().__init__(game, decorator)
+        self.seed_cond = seed_cond
+
+    def do_captures(self, mdata, cnt=1):
 
         loc = mdata.capt_loc
         direct = mdata.direct
         loc_p1 = self.game.deco.incr.incr(loc, direct, NOSKIPSTART)
         loc_p2 = self.game.deco.incr.incr(loc_p1, direct, NOSKIPSTART)
 
-        if (self.game.board[loc] > 1
+        if (self.seed_cond(self.game.board[loc], cnt)
                 and not self.game.board[loc_p1]
                 and self.game.board[loc_p2]
-                and self.game.deco.capt_ok.capture_ok(loc_p2)):
+                and self.game.child[loc_p2] is None
+                and self.game.unlocked[loc_p2]):
 
             self.game.store[self.game.turn] += self.game.board[loc_p2]
             self.game.board[loc_p2] = 0
             mdata.captured = True
+            mdata.capt_loc = loc_p2
+
+
+class MultiCaptTwoOut(CaptMethodIf):
+    """Multiple captures of two out are:
+         1 0 s1 0 s2 0 s3 ...
+       as long as there are alternating empty and occupied holes.
+
+       This adds its CaptTwoOut to the deco chain, because it
+       gets called directly with an additional parameter.
+
+       If capttwoout did a capture, it updates capt_loc."""
+
+    def __init__(self, game, decorator=None):
+        """Create the CaptTwoOut decorator."""
+
+        def check_seeds(seeds, cnt):
+            return cnt == 1 or (cnt > 1 and not seeds)
+
+        next_deco = CaptTwoOut(game, check_seeds, decorator)
+        super().__init__(game, next_deco)
+
+
+    def do_captures(self, mdata):
+        """Capture loop"""
+        loc = mdata.capt_loc
+
+        cnt = 1
+        while True:
+
+            self.decorator.do_captures(mdata, cnt)
+            if loc == mdata.capt_loc:
+                return
+
+            loc = mdata.capt_loc
+            cnt += 1
 
 
 # %% cross capt decos
@@ -449,6 +496,22 @@ class RepeatTurn(CaptMethodIf):
             mdata.captured = WinCond.REPEAT_TURN
 
 
+class PickCross(CaptMethodIf):
+    """Not a cross capture, but if there was a capture take any
+    seeds from the opposite side of the board too."""
+
+    def do_captures(self, mdata):
+
+        self.decorator.do_captures(mdata)
+        cross = self.game.cts.cross_from_loc(mdata.capt_loc)
+        if (mdata.captured
+                and self.game.child[cross] is None
+                and self.game.unlocked[cross]):
+
+            self.game.store[self.game.turn] += self.game.board[cross]
+            self.game.board[cross] = 0
+
+
 # %% build deco chains
 
 def _add_cross_capt_deco(game, capturer):
@@ -499,6 +562,25 @@ def _add_child_deco(game, capturer):
     return capturer
 
 
+def _add_capt_two_out_deco(game, capturer):
+    """There are three flavors of capt two out:
+    single lap, capture if sow in occupied hole, empty hole, occupied hole
+    multi lap, sing capt: capture on empty hole, occupied hole
+    multi lap, multi capt: capture on (empty hole, occupied hole) repeating
+
+    MultiCaptTwoOut adds the CaptTwoOut child decorator."""
+
+    if game.info.mlaps:
+        if game.info.multicapt:
+            capturer = MultiCaptTwoOut(game)
+        else:
+            capturer = CaptTwoOut(game, lambda _1, _2: True)
+    else:
+        capturer = CaptTwoOut(game, lambda seeds, _: seeds > 1)
+
+    return capturer
+
+
 def deco_capturer(game):
     """Build capture chain and return it."""
 
@@ -506,6 +588,10 @@ def deco_capturer(game):
 
     if game.info.crosscapt:
         capturer = _add_cross_capt_deco(game, capturer)
+
+    elif game.info.capttwoout:
+        # must check before mulitcapt
+        capturer = _add_capt_two_out_deco(game, capturer)
 
     elif game.info.multicapt:
         capturer = CaptMultiple(game, capturer)
@@ -516,15 +602,15 @@ def deco_capturer(game):
     elif game.info.capt_next:
         capturer = CaptNext(game)
 
-    elif game.info.capttwoout:
-        capturer = CaptTwoOut(game)
-
     elif (game.info.evens or game.info.capt_on
           or game.info.capt_max or game.info.capt_min):
         capturer = CaptSingle(game)
 
     capturer = _add_grand_slam_deco(game, capturer)
     capturer = _add_child_deco(game, capturer)
+
+    if game.info.pickcross:
+        capturer = PickCross(game, capturer)
 
     if game.info.nosinglecapt:
         capturer = NoSingleSeedCapt(game, capturer)

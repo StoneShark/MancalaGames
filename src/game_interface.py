@@ -205,6 +205,7 @@ class GameInfo:
 
     crosscapt: bool = False
     xcpickown: CrossCaptOwn = CrossCaptOwn.LEAVE
+    pickcross: bool = False
 
     multicapt: bool = False
     grandslam: int = GrandSlam.LEGAL

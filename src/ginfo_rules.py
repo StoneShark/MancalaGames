@@ -9,12 +9,7 @@ the actual game class is instantiated.
 
 This allows the default set of rules for the Mancala
 class to be defined below. Then classes derived from
-Mancala can add, change or delete rules. The base
-class (Mancala) no longer has to be a superset of
-acceptable parameter combinations. For example,
-the base Mancala class doesn't process BLOCKS without
-ROUNDS, so setting both can be enforced. But Deka,
-which uses BLOCKS without ROUNDS can remove that rule.
+Mancala can add, change or delete rules.
 
 Created on Mon Aug 21 06:54:24 2023
 @author: Ann"""
@@ -512,6 +507,7 @@ def build_rules():
                             and not ginfo.multicapt),
         msg="CAPSAMEDIR without MULTICAPT has no effect",
         warn=True)
+
     man_rules.add_rule(
         'capt2out_needs_samedir',
         rule=lambda ginfo: ginfo.capttwoout and not ginfo.capsamedir,
@@ -568,11 +564,6 @@ def build_rules():
                             and ginfo.grandslam != GrandSlam.LEGAL),
         msg='SOW_CAPT_ALL requires that GRANDLAM be LEGAL',
         excp=gi.GameInfoError)
-    man_rules.add_rule(
-        'capt2_multi_incomp',
-        rule=lambda ginfo: ginfo.capttwoout and ginfo.multicapt,
-        msg="CAPTTWOOUT and MULTICAPT are incompatible",
-        warn=True)
 
     man_rules.add_rule(
         'xpick_requires_cross',

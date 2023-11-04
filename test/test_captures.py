@@ -573,6 +573,162 @@ class TestRepeatTurn:
 
 
 
+class TestPickCross:
+
+    # actual captures are all on True side, picks on false side
+    test_cases = [
+        ([3, 3, 3, 2, 2, 2], True, 4, [3, 0, 3, 2, 0, 2], {'evens': True}),
+        ([3, 3, 3, 2, 2, 2], True, 4, [3, 0, 3, 0, 0, 2], {'evens': True,
+                                                           'multicapt': True}),
+        ([3, 1, 3, 2, 2, 2], True, 1, [3, 1, 3, 2, 0, 2], {'crosscapt': True}),
+        ([3, 3, 3, 4, 4, 2], False, 4, [3, 0, 3, 4, 0, 2], {'capt_on': [4]}),
+        ([3, 3, 3, 4, 0, 2], False, 3, [0, 3, 3, 4, 0, 0], {'capsamedir': True,
+                                                            'capttwoout': True})
+        ]
+
+    @pytest.mark.parametrize('board, turn, loc, eboard, options',
+                             test_cases,
+                             ids=[f'case_{f}'
+                                  for f in range(len(test_cases))])
+    def test_capts(self, board, turn, loc, eboard, options):
+
+        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_info = gi.GameInfo(stores=True,
+                                pickcross=True,
+                                **options,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        game.board = board.copy()
+        mdata = MoveData(game, None)
+        mdata.direct = game.info.sow_direct
+        mdata.capt_loc = loc
+        game.deco.capturer.do_captures(mdata)
+
+        assert mdata.captured
+        assert game.board == eboard
+
+
+    @pytest.mark.parametrize('board, turn, loc, eboard, options',
+                             test_cases,
+                             ids=[f'case_{f}'
+                                  for f in range(len(test_cases))])
+    def test_locks(self, board, turn, loc, eboard, options):
+        """capts from true side, pick from false side in data;
+        lock false side there should be no picks."""
+
+        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_info = gi.GameInfo(stores=True,
+                                pickcross=True,
+                                **options,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        game.board = board.copy()
+        game.unlocked = [False] * 3 + [True] * 3  # false side locked
+        mdata = MoveData(game, None)
+        mdata.direct = game.info.sow_direct
+        mdata.capt_loc = loc
+        game.deco.capturer.do_captures(mdata)
+
+        assert mdata.captured
+        assert game.board[:3] == board[:3]
+        assert game.board[3:] == eboard[3:]
+
+
+    @pytest.mark.parametrize('board, turn, loc, eboard, options',
+                             test_cases,
+                             ids=[f'case_{f}'
+                                  for f in range(len(test_cases))])
+    def test_child(self, board, turn, loc, eboard, options):
+        """capts from true side, pick from false side in data;
+        false side are children there should be no picks."""
+
+        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_info = gi.GameInfo(stores=True,
+                                pickcross=True,
+                                **options,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        game.board = board.copy()
+        game.child = [False] * 3 + [None] * 3  # false side children
+        mdata = MoveData(game, None)
+        mdata.direct = game.info.sow_direct
+        mdata.capt_loc = loc
+        game.deco.capturer.do_captures(mdata)
+
+        assert mdata.captured
+        assert game.board[:3] == board[:3]
+        assert game.board[3:] == eboard[3:]
+
+
+    def test_no_capt(self):
+
+        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_info = gi.GameInfo(stores=True,
+                                pickcross=True,
+                                evens=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        game.board = [3, 3, 3, 3, 3, 3]
+        mdata = MoveData(game, None)
+        mdata.direct = game.info.sow_direct
+        mdata.capt_loc = 4
+        game.deco.capturer.do_captures(mdata)
+
+        assert not mdata.captured
+        assert game.board == [3, 3, 3, 3, 3, 3]
+
+
+
+class TestCaptTwoOut:
+
+    # actual captures are all on True side, picks on false side
+    test_cases = [
+
+        ([3, 3, 3, 4, 0, 2], False, 3, [0, 3, 3, 4, 0, 0], {'capsamedir': True,
+                                                            'capttwoout': True}),
+
+        ([3, 3, 3, 4, 0, 2], False, 3, [0, 3, 3, 4, 0, 0], {'capsamedir': True,
+                                                            'capttwoout': True,
+                                                            'multicapt': True}),
+        ([0, 3, 0, 4, 0, 2], False, 3, [0] * 6, {'capsamedir': True,
+                                                 'capttwoout': True,
+                                                 'multicapt': True}),
+
+        ]
+
+    @pytest.mark.parametrize('board, turn, loc, eboard, options',
+                             test_cases,
+                             ids=[f'case_{f}'
+                                  for f in range(len(test_cases))])
+    def test_capts(self, board, turn, loc, eboard, options):
+
+        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_info = gi.GameInfo(stores=True,
+                                pickcross=True,
+                                mlaps=True,
+                                **options,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        game.board = board.copy()
+        mdata = MoveData(game, None)
+        mdata.direct = game.info.sow_direct
+        mdata.capt_loc = loc
+        game.deco.capturer.do_captures(mdata)
+
+        assert mdata.captured
+        assert game.board == eboard
+
+
 # %%
 
 """
