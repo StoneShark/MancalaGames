@@ -7,7 +7,7 @@ Created on Thu Mar 23 08:10:28 2023
 
 import functools as ft
 import os
-
+import textwrap
 import tkinter as tk
 
 import cfg_keys as ckey
@@ -43,6 +43,13 @@ def load_game_files():
 
             about_str = game_dict[ckey.GAME_INFO][ckey.ABOUT]
 
+            paragraphs = about_str.split('\n')
+            out_text = ''
+            for para in paragraphs:
+                fpara = textwrap.fill(para, 45) + '\n'
+                out_text += fpara
+            about_str = ''.join(out_text)
+
         choices[file[:-4]] = about_str
 
     return choices
@@ -73,7 +80,7 @@ class GameSelect(tk.Frame):
 
         self.pack()
 
-        new_col = len(CHOICES) // 2 - 1
+        new_col = len(CHOICES) // 3 - 1
         row = 0
         col = 0
         for name, about in CHOICES.items():
@@ -87,10 +94,9 @@ class GameSelect(tk.Frame):
 
             if row >= new_col:
                 row = 0
-                col = 1
+                col += 1
             else:
                 row += 1
-
 
 
     def _enter(self, button, text, _=None):

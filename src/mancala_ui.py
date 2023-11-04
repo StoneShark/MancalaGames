@@ -11,8 +11,8 @@ Created on Thu Mar  2 14:38:17 2023
 # %% imports
 
 import os
+import textwrap
 import traceback
-
 import tkinter as tk
 
 import ai_player
@@ -417,6 +417,13 @@ class MancalaUI(tk.Frame):
         atext = self.info.about
         if not atext or (isinstance(atext, str) and not atext.strip()):
             atext = 'Mancala Game Player'
+
+        paragraphs = atext.split('\n')
+        out_text = ''
+        for para in paragraphs:
+            fpara = textwrap.fill(para, 45) + '\n'
+            out_text += fpara
+        atext = ''.join(out_text)
 
         self._quiet_dialog('About', atext)
 
