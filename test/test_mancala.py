@@ -137,6 +137,7 @@ class TestGameState:
         state = mancala.GameState(board=board,
                                   store=store,
                                   _turn=turn,
+                                  mcount=0,
                                   unlocked=unlocked,
                                   blocked=blocked,
                                   child=child)
@@ -148,8 +149,8 @@ class TestGameState:
         assert state.blocked == blocked
         assert state.child == child
         gstrs = str(state).split('\n')
-        assert re.match(ere_one, gstrs[0])
-        assert re.match(ere_two, gstrs[1])
+        assert re.match(ere_one, gstrs[1])
+        assert re.match(ere_two, gstrs[2])
 
 
     @pytest.mark.parametrize(
@@ -217,6 +218,7 @@ class TestGameState:
         game.state = mancala.GameState(board=board,
                                        store=store,
                                        _turn=turn,
+                                       mcount=0,
                                        unlocked=unlocked,
                                        blocked=blocked,
                                        child=child)

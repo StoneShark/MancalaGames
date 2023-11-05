@@ -24,6 +24,7 @@ from game_log import game_log
 from game_interface import Direct
 from game_interface import Goal
 from game_interface import LapSower
+from game_interface import SowPrescribed
 from game_interface import WinCond
 from incrementer import NOSKIPSTART
 
@@ -455,6 +456,133 @@ class SowVisitedMlap(SowMethodIf):
         return mdata
 
 
+# %% prescribed opening moves
+
+# only use prescribe openings if the first player has a choice
+# if it's a standard pattern use start_pattern
+
+# Usage will be like this:
+
+# parent = SowMethodHolder(game, None)
+# parent.decorator = SowDoAlternates(game, 1, parent, sower)
+# sower = parent
+
+
+class SowMethodHolder(SowMethodIf):
+    """A deco delegates sow_seeds, but gives us a place and
+    means to delete a decorator out of the deco chain."""
+
+    def sow_seeds(self, mdata):
+        return self.decorator.sow_seeds(mdata)
+
+    def delete_deco(self):
+        """Delete the child decorator; it will have a child decorator."""
+        self.decorator = self.decorator.decorator
+
+
+class SowPrescribedIf(SowMethodIf):
+    """A deco that becomes obsolete after a one or more turns.
+    It has it's parent remove itself the deco chain,
+    the parent must be a SowMethodHolder.
+
+    Concrete subclasses should not provide sow_seeds."""
+
+    def __init__(self, game, count, parent, decorator=None):
+
+        super().__init__(game, decorator)
+        self.dispose = count
+        self.parent = parent
+
+    @abc.abstractmethod
+    def do_prescribed(self, mdata):
+        """Do the prescribed opening moves."""
+
+    def sow_seeds(self, mdata):
+        """If the decorator has expired, tell the parent to
+        remove this deco from the chain and this will be the
+        last call to decorator."""
+
+        mdata = self.do_prescribed(mdata)
+
+        if self.game.mcount >= self.dispose:
+            self.parent.delete_deco()
+
+        return mdata
+
+
+class SowOneOpp(SowPrescribedIf):
+    """The last seed must be on the opponents side of the board
+    skip our own holes, if required, to make that happen."""
+
+    def do_prescribed(self, mdata):
+
+        loc = mdata.cont_sow_loc
+        incrementer = self.game.deco.incr.incr
+
+        for _ in range(mdata.seeds - 1):
+
+            loc = incrementer(loc, mdata.direct, mdata.cont_sow_loc)
+            self.game.board[loc] += 1
+
+        loc = incrementer(loc, mdata.direct, mdata.cont_sow_loc)
+        while not self.game.cts.opp_side(self.game.turn, loc):
+            loc = incrementer(loc, mdata.direct, mdata.cont_sow_loc)
+        self.game.board[loc] += 1
+
+        mdata.capt_loc = loc
+        return mdata
+
+
+class SowTriples(SowPrescribedIf):
+    """from the selected hole sow:
+        1, 3, (0, 3, 3)+
+        """
+    # TODO how to adjust for other than 2 start seeds
+
+    def do_prescribed(self, mdata):
+
+        loc = mdata.cont_sow_loc
+        incrementer = self.game.deco.incr.incr
+
+        self.game.board[loc] = 1
+        loc = incrementer(loc, mdata.direct, mdata.cont_sow_loc)
+        self.game.board[loc] = 3
+
+        for cnt in range(self.game.cts.dbl_holes - 2):
+
+            loc = incrementer(loc, mdata.direct, mdata.cont_sow_loc)
+            self.game.board[loc] = 3 if cnt % 3 else 0
+
+        mdata.capt_loc = loc
+        return mdata
+
+
+class SowPlus1Minus1Capt(SowPrescribedIf):
+    """Starting after the selected move one seed forward
+    in every other hole.
+    Capture the seeds across from the start hole.
+
+    Requires stores, prohibit move unlock (or just ignore it?)"""
+
+    def do_prescribed(self, mdata):
+
+        loc = mdata.cont_sow_loc
+        incrementer = self.game.deco.incr.incr
+
+        for cnt in range(self.game.cts.dbl_holes - 1):
+            loc = incrementer(loc, mdata.direct, mdata.cont_sow_loc)
+            self.game.board[loc] += 1 if cnt % 2 else -1
+
+        # TODO need to assure same number of seeds
+
+        cross = self.game.cts.cross_from_loc(mdata.capt_loc)
+        self.game.store[self.game.turn] += self.game.board[cross]
+        self.game.board[cross] = 0
+
+        mdata.capt_loc = loc
+        return mdata
+
+
 # %% build deco chain
 
 
@@ -481,10 +609,8 @@ def deco_blkd_divert_sower(game):
     return sower
 
 
-def deco_sower(game):
-    """Build the sower chain.
-
-    The lambda is needed because the self parameter must be stuffed."""
+def deco_base_sower(game):
+    """Choose the base sower."""
 
     if game.info.sow_blkd_div:
         return deco_blkd_divert_sower(game)
@@ -501,20 +627,57 @@ def deco_sower(game):
     else:
         sower = SowSeeds(game)
 
+    return sower
+
+
+def deco_mlap_sower(game, sower):
+    """Build the deco chain elements for multiple lap sowing."""
+
     pre_lap_sower = sower
 
+    if game.info.child_cvt:
+        lap_cont = ChildLapCont(game)
+    elif game.info.mlaps == LapSower.LAPPER:
+        lap_cont = SimpleLapCont(game)
+    else:   # game.info.mlaps == LapSower.LAPPER_NEXT:
+        lap_cont = NextLapCont(game)
+
+    sower = SowMlapSeeds(game, sower, lap_cont)
+
+    if game.info.visit_opp:
+        sower = SowVisitedMlap(game, pre_lap_sower, sower, lap_cont)
+
+    return sower
+
+
+def deco_prescribed_sower(game, sower):
+    """Add two deco's to the chain, a stub class that will allow
+    the class derived from SowPrescribedIf to be deleted when we
+    are done with it."""
+
+    parent = SowMethodHolder(game, None)
+
+    if game.info.prescribed == SowPrescribed.SOW1OPP:
+        parent.decorator = SowOneOpp(game, 1, parent, sower)
+
+    elif game.info.prescribed == SowPrescribed.TRIPLES:
+        parent.decorator = SowTriples(game, 1, parent, sower)
+
+    elif game.info.prescribed == SowPrescribed.PLUS1MINUS1:
+        parent.decorator = SowPlus1Minus1Capt(game, 1, parent, sower)
+
+    return parent
+
+
+def deco_sower(game):
+    """Build the sower chain."""
+
+    sower = deco_base_sower(game)
+
     if game.info.mlaps != LapSower.OFF:
+        sower = deco_mlap_sower(game, sower)
 
-        if game.info.child_cvt:
-            lap_cont = ChildLapCont(game)
-        elif game.info.mlaps == LapSower.LAPPER:
-            lap_cont = SimpleLapCont(game)
-        else:   # game.info.mlaps == LapSower.LAPPER_NEXT:
-            lap_cont = NextLapCont(game)
-
-        sower = SowMlapSeeds(game, sower, lap_cont)
-
-        if game.info.visit_opp:
-            sower = SowVisitedMlap(game, pre_lap_sower, sower, lap_cont)
+    if game.info.prescribed != SowPrescribed.NONE:
+        sower = deco_prescribed_sower(game, sower)
 
     return sower

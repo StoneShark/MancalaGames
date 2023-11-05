@@ -37,6 +37,9 @@ LOCK = ['_', ' ']
 CHILD = {True: '˄',
          False: '˅',
          None: ' '}
+OWNER = {True: '\u2191 ',
+         False: '\u2193 ',
+         None: ' '}
 
 
 @dc.dataclass(frozen=True, kw_only=True)
@@ -46,6 +49,7 @@ class GameState(ai_interface.StateIf):
 
     board: tuple
     store: tuple
+    mcount: int
     _turn: bool
 
     unlocked: tuple = None
@@ -62,7 +66,7 @@ class GameState(ai_interface.StateIf):
         dbl_holes = len(self.board)
         holes = dbl_holes // 2
 
-        string = ''
+        string = f'Move number: {self.mcount}\n'
         for side, side_range in enumerate([range(dbl_holes - 1, holes - 1, -1),
                                            range(holes)]):
             for loc in side_range:
@@ -71,6 +75,8 @@ class GameState(ai_interface.StateIf):
                     string += '  x'
                 else:
                     string += f' {self.board[loc]:2}'
+                if self.owner:
+                    string += OWNER[self.owner[loc]]
                 if self.unlocked:
                     string += LOCK[self.unlocked[loc]]
                 if self.child:
@@ -211,6 +217,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
         self.board = [self.cts.nbr_start] * self.cts.dbl_holes
         self.store = [0, 0]
+        self.mcount = 0
         self.turn = random.choice([False, True])
         self.init_bprops()
         self.starter = self.turn
@@ -237,7 +244,8 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
         state_dict = {'board': tuple(self.board),
                       '_turn': self.turn,
-                      'store': tuple(self.store)}
+                      'store': tuple(self.store),
+                      'mcount': self.mcount}
 
         if self.info.moveunlock:
             state_dict |= {'unlocked': tuple(self.unlocked)}
@@ -260,6 +268,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         self.board = list(value.board)
         self.store = list(value.store)
         self.turn = value.turn
+        self.mcount = value.mcount
 
         if value.child:
             self.child = list(value.child)
@@ -468,7 +477,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
         On the assert, sum the stores even if they are not 'in play'
         (for Deka)."""
-
+        self.mcount += 1
         assert sum(self.store) + sum(self.board) == self.cts.total_seeds, \
             'seed count error before move'
 

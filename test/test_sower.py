@@ -21,6 +21,7 @@ from game_interface import ChildType
 from game_interface import Direct
 from game_interface import Goal
 from game_interface import LapSower
+from game_interface import SowPrescribed
 from game_interface import WinCond
 # from game_log import game_log
 from mancala import MoveData
@@ -84,29 +85,30 @@ class TestSower:
         return sower.deco_sower(game)
 
 
-    @pytest.mark.parametrize('start_pos, direct, turn, board, eloc, eboard',
-                             [(0, Direct.CCW, False,
-                               utils.build_board([1, 2, 3],
-                                                 [2, 3, 4]), 2,
-                               utils.build_board([1, 2, 3],
-                                                 [0, 4, 5])),
-                              (1, Direct.CCW, False,
-                               utils.build_board([1, 2, 3],
-                                                 [2, 3, 4]), 4,
-                               utils.build_board([1, 3, 4],
-                                                 [2, 0, 5])),
-                              (2, Direct.CCW, True,
-                               utils.build_board([1, 2, 2],
-                                                 [2, 3, 4]), 5,
-                               utils.build_board([2, 3, 0],
-                                                 [2, 3, 4])),
-                              (1, Direct.CCW, True,
-                               utils.build_board([1, 2, 2],
-                                                 [2, 3, 4]), 0,
-                               utils.build_board([2, 0, 2],
-                                                 [3, 3, 4])),
-                              ])
+    bsower_cases = [(0, Direct.CCW, False,
+                     utils.build_board([1, 2, 3],
+                                       [2, 3, 4]), 2,
+                     utils.build_board([1, 2, 3],
+                                       [0, 4, 5])),
+                    (1, Direct.CCW, False,
+                     utils.build_board([1, 2, 3],
+                                       [2, 3, 4]), 4,
+                     utils.build_board([1, 3, 4],
+                                       [2, 0, 5])),
+                    (2, Direct.CCW, True,
+                     utils.build_board([1, 2, 2],
+                                       [2, 3, 4]), 5,
+                     utils.build_board([2, 3, 0],
+                                       [2, 3, 4])),
+                    (1, Direct.CCW, True,
+                     utils.build_board([1, 2, 2],
+                                       [2, 3, 4]), 0,
+                     utils.build_board([2, 0, 2],
+                                       [3, 3, 4])),
+                    ]
 
+    @pytest.mark.parametrize('start_pos, direct, turn, board, eloc, eboard',
+                             bsower_cases)
     def test_base_sower(self, game, base_sower,
                         start_pos, direct, turn, board, eloc, eboard):
 
@@ -137,46 +139,48 @@ class TestSower:
         return mancala.Mancala(game_consts, game_info)
 
 
+    str_split_cases = [
+        #  don't pass any stores
+        (2, False, utils.build_board([2, 1, 1, 2],
+                                     [2, 1, 1, 2]),
+         3, utils.build_board([2, 1, 1, 2],
+                              [2, 1, 0, 3]), [0, 0]),
+        # sow past own store
+        (3, False, utils.build_board([2, 1, 1, 2],
+                                     [2, 1, 1, 2]),
+            4, utils.build_board([2, 1, 1, 3],
+                                 [2, 1, 1, 0]), [1, 0]),
+
+        (0, True, utils.build_board([2, 1, 1, 2],
+                                    [2, 1, 1, 2]),
+            0, utils.build_board([0, 1, 1, 2],
+                                 [3, 1, 1, 2]), [0, 1]),
+
+        # sow past opp store
+        (0, False, utils.build_board([2, 1, 1, 2],
+                                     [2, 1, 1, 2]),
+            6, utils.build_board([3, 2, 1, 2],
+                                 [0, 1, 1, 2]), [0, 0]),
+
+        (3, True, utils.build_board([2, 1, 1, 2],
+                                    [2, 1, 1, 2]),
+            2, utils.build_board([2, 1, 1, 0],
+                                 [2, 1, 2, 3]), [0, 0]),
+        # end in own store
+        (2, False, utils.build_board([2, 2, 2, 2],
+                                     [2, 2, 2, 2]),
+            WinCond.REPEAT_TURN, utils.build_board([2, 2, 2, 2],
+                                                   [2, 2, 0, 3]), [1, 0]),
+
+        (1, True, utils.build_board([2, 2, 2, 2],
+                                    [2, 2, 2, 2]),
+            WinCond.REPEAT_TURN, utils.build_board([3, 0, 2, 2],
+                                                   [2, 2, 2, 2]), [0, 1]),
+    ]
+
     @pytest.mark.parametrize(
         'start_pos, turn, board, eloc, eboard, estore',
-         #  don't pass any stores
-        [(2, False, utils.build_board([2, 1, 1, 2],
-                                      [2, 1, 1, 2]),
-          3,        utils.build_board([2, 1, 1, 2],
-                                      [2, 1, 0, 3]), [0, 0]),
-         # sow past own store
-         (3, False, utils.build_board([2, 1, 1, 2],
-                                      [2, 1, 1, 2]),
-          4,        utils.build_board([2, 1, 1, 3],
-                                      [2, 1, 1, 0]), [1, 0]),
-
-         (0, True,  utils.build_board([2, 1, 1, 2],
-                                      [2, 1, 1, 2]),
-          0,        utils.build_board([0, 1, 1, 2],
-                                      [3, 1, 1, 2]), [0, 1]),
-
-         # sow past opp store
-         (0, False, utils.build_board([2, 1, 1, 2],
-                                      [2, 1, 1, 2]),
-          6,        utils.build_board([3, 2, 1, 2],
-                                      [0, 1, 1, 2]), [0, 0]),
-
-         (3, True,  utils.build_board([2, 1, 1, 2],
-                                      [2, 1, 1, 2]),
-          2,        utils.build_board([2, 1, 1, 0],
-                                      [2, 1, 2, 3]), [0, 0]),
-         # end in own store
-         (2, False,          utils.build_board([2, 2, 2, 2],
-                                               [2, 2, 2, 2]),
-          WinCond.REPEAT_TURN, utils.build_board([2, 2, 2, 2],
-                                               [2, 2, 0, 3]), [1, 0]),
-
-         (1, True,           utils.build_board([2, 2, 2, 2],
-                                               [2, 2, 2, 2]),
-          WinCond.REPEAT_TURN, utils.build_board([3, 0, 2, 2],
-                                               [2, 2, 2, 2]), [0, 1]),
-          ])
-
+        str_split_cases)
     def test_store_split_sower(self, esgame,
                                start_pos, turn, board, eloc, eboard, estore):
 
@@ -189,62 +193,64 @@ class TestSower:
         assert esgame.store == estore
 
 
+    store_cases = [
+        # 0: CCW,  don't pass any stores
+        (0, Direct.CCW, False, utils.build_board([1, 2, 3],
+                                                 [2, 3, 4]),
+         2, utils.build_board([1, 2, 3],
+                              [0, 4, 5]), [0, 0]),
+        # 1: CCW, sow past own store
+        (1, Direct.CCW, False, utils.build_board([1, 2, 3],
+                                                 [2, 3, 4]),
+         3, utils.build_board([1, 2, 4],
+                              [2, 0, 5]), [1, 0]),
+        # 2: CCW, sow past both stores
+        (1, Direct.CCW, False, utils.build_board([1, 2, 3],
+                                                 [2, 6, 4]),
+         0, utils.build_board([2, 3, 4],
+                              [3, 0, 5]), [1, 0]),
+        # 3: CCW, sow past opp store
+        (2, Direct.CCW, True, utils.build_board([1, 2, 2],
+                                                [2, 3, 4]),
+         5, utils.build_board([2, 3, 0],
+                              [2, 3, 4]), [0, 0]),
+        # 4: CCW, end in own store
+        (1, Direct.CCW, True, utils.build_board([1, 2, 2],
+                                                [2, 3, 4]),
+         WinCond.REPEAT_TURN, utils.build_board([2, 0, 2],
+                                                [2, 3, 4]), [0, 1]),
+
+        # 5: CW, don't pass any stores
+        (1, Direct.CW, True, utils.build_board([1, 1, 2],
+                                               [2, 3, 4]),
+         3, utils.build_board([1, 0, 3],
+                              [2, 3, 4]), [0, 0]),
+
+        # 6: CW, sow past own store
+        (2, Direct.CW, True, utils.build_board([1, 2, 6],
+                                               [2, 3, 4]),
+         4, utils.build_board([2, 3, 0],
+                              [3, 4, 5]), [0, 1]),
+        # 7: CW, sow past both stores
+        (0, Direct.CW, False, utils.build_board([1, 2, 3],
+                                                [5, 3, 4]),
+         2, utils.build_board([2, 3, 4],
+                              [0, 3, 5]), [1, 0]),
+        # 8: CW, sow past opp store
+        (2, Direct.CW, True, utils.build_board([1, 2, 2],
+                                               [2, 3, 4]),
+         1, utils.build_board([1, 2, 0],
+                              [2, 4, 5]), [0, 0]),
+        # 9: CW, end in own store
+        (1, Direct.CW, False, utils.build_board([1, 2, 3],
+                                                [2, 5, 4]),
+         WinCond.REPEAT_TURN, utils.build_board([2, 3, 4],
+                                                [3, 0, 4]), [1, 0]),
+    ]
+
     @pytest.mark.parametrize(
         'start_pos, direct, turn, board, eloc, eboard, estore',
-        # 0: CCW,  don't pass any stores
-        [(0, Direct.CCW, False, utils.build_board([1, 2, 3],
-                                                  [2, 3, 4]),
-          2,                    utils.build_board([1, 2, 3],
-                                                  [0, 4, 5]), [0, 0]),
-         # 1: CCW, sow past own store
-         (1, Direct.CCW, False, utils.build_board([1, 2, 3],
-                                                  [2, 3, 4]),
-          3,                    utils.build_board([1, 2, 4],
-                                                  [2, 0, 5]), [1, 0]),
-         # 2: CCW, sow past both stores
-         (1, Direct.CCW, False, utils.build_board([1, 2, 3],
-                                                  [2, 6, 4]),
-          0,                    utils.build_board([2, 3, 4],
-                                                  [3, 0, 5]), [1, 0]),
-         # 3: CCW, sow past opp store
-         (2, Direct.CCW, True,  utils.build_board([1, 2, 2],
-                                                  [2, 3, 4]),
-          5,                    utils.build_board([2, 3, 0],
-                                                  [2, 3, 4]), [0, 0]),
-         # 4: CCW, end in own store
-         (1, Direct.CCW, True,  utils.build_board([1, 2, 2],
-                                                  [2, 3, 4]),
-          WinCond.REPEAT_TURN,    utils.build_board([2, 0, 2],
-                                                  [2, 3, 4]), [0, 1]),
-
-         # 5: CW, don't pass any stores
-         (1, Direct.CW,  True,  utils.build_board([1, 1, 2],
-                                                  [2, 3, 4]),
-          3,                    utils.build_board([1, 0, 3],
-                                                  [2, 3, 4]), [0, 0]),
-
-         # 6: CW, sow past own store
-         (2, Direct.CW,  True,  utils.build_board([1, 2, 6],
-                                                  [2, 3, 4]),
-          4,                    utils.build_board([2, 3, 0],
-                                                  [3, 4, 5]), [0, 1]),
-         # 7: CW, sow past both stores
-         (0, Direct.CW,  False, utils.build_board([1, 2, 3],
-                                                  [5, 3, 4]),
-          2,                    utils.build_board([2, 3, 4],
-                                                  [0, 3, 5]), [1, 0]),
-         # 8: CW, sow past opp store
-         (2, Direct.CW,  True,  utils.build_board([1, 2, 2],
-                                                  [2, 3, 4]),
-          1,                    utils.build_board([1, 2, 0],
-                                                  [2, 4, 5]), [0, 0]),
-         # 9: CW, end in own store
-         (1, Direct.CW,  False, utils.build_board([1, 2, 3],
-                                                  [2, 5, 4]),
-          WinCond.REPEAT_TURN,    utils.build_board([2, 3, 4],
-                                                  [3, 0, 4]), [1, 0]),
-          ])
-
+        store_cases)
     def test_store_sower(self, game,
                          start_pos, direct, turn, board, eloc, eboard, estore):
 
@@ -316,64 +322,66 @@ class TestSower:
         if cloc:
             assert mdata.capt_loc == cloc
 
+    chi_lap_cases = [
+        # 0: not on end store
+        (WinCond.REPEAT_TURN, 2,
+         utils.build_board([1, 4, 4],
+                           [1, 3, 0]),
+         utils.build_board([N, N, N],
+                           [N, N, N]), False),
+        # 1: not on end in child
+        (1, 2,
+         utils.build_board([1, 4, 4],
+                           [0, 3, 0]),
+         utils.build_board([N, N, N],
+                           [N, T, N]), False),
+        # 2: my side of the board
+        (1, 2,
+         utils.build_board([1, 4, 4],
+                           [0, 4, 0]),
+         utils.build_board([N, N, N],
+                           [N, N, N]), True),
+        # 3: no child on opps first hole and one seed
+        (3, 1,
+         utils.build_board([1, 4, 4],
+                           [0, 3, 0]),
+         utils.build_board([N, N, N],
+                           [N, N, N]), True),
+        # 4: not first hole with > 1 seed, make child
+        (3, 3,
+         utils.build_board([1, 4, 4],
+                           [0, 3, 4]),
+         utils.build_board([N, T, N],
+                           [N, N, N]), False),
+        # 5: not if we should make a child
+        (4, 3,
+         utils.build_board([1, 4, 4],
+                           [0, 3, 4]),
+         utils.build_board([N, N, N],
+                           [N, N, N]), False),
+        # 6: not if only one seed
+        (5, 3,
+         utils.build_board([1, 4, 4],
+                           [0, 3, 4]),
+         utils.build_board([N, N, N],
+                           [N, N, N]), False),
+        # 7: not if already a child
+        (5, 3,
+         utils.build_board([1, 4, 4],
+                           [0, 3, 4]),
+         utils.build_board([N, T, N],
+                           [N, N, N]), False),
+        # 8: seeds > 1 seed, not child, opp side
+        (4, 3,
+         utils.build_board([1, 5, 4],
+                           [0, 3, 4]),
+         utils.build_board([N, N, N],
+                           [N, N, N]), True),
+    ]
+
 
     @pytest.mark.parametrize('end_loc, sown_seeds, board, child, eresult',
-                             # 0: not on end store
-                             [(WinCond.REPEAT_TURN, 2,
-                               utils.build_board([1, 4, 4],
-                                                 [1, 3, 0]),
-                               utils.build_board([N, N, N],
-                                                 [N, N, N]), False),
-                              # 1: not on end in child
-                              (1, 2,
-                               utils.build_board([1, 4, 4],
-                                                 [0, 3, 0]),
-                               utils.build_board([N, N, N],
-                                                 [N, T, N]), False),
-                              # 2: my side of the board
-                              (1, 2,
-                               utils.build_board([1, 4, 4],
-                                                 [0, 4, 0]),
-                               utils.build_board([N, N, N],
-                                                 [N, N, N]), True),
-                              # 3: no child on opps first hole and one seed
-                              (3, 1,
-                               utils.build_board([1, 4, 4],
-                                                 [0, 3, 0]),
-                               utils.build_board([N, N, N],
-                                                 [N, N, N]), True),
-                              # 4: not first hole with > 1 seed, make child
-                              (3, 3,
-                               utils.build_board([1, 4, 4],
-                                                 [0, 3, 4]),
-                               utils.build_board([N, T, N],
-                                                 [N, N, N]), False),
-                              # 5: not if we should make a child
-                              (4, 3,
-                               utils.build_board([1, 4, 4],
-                                                 [0, 3, 4]),
-                               utils.build_board([N, N, N],
-                                                 [N, N, N]), False),
-                              # 6: not if only one seed
-                              (5, 3,
-                               utils.build_board([1, 4, 4],
-                                                 [0, 3, 4]),
-                               utils.build_board([N, N, N],
-                                                 [N, N, N]), False),
-                              # 7: not if already a child
-                              (5, 3,
-                               utils.build_board([1, 4, 4],
-                                                 [0, 3, 4]),
-                               utils.build_board([N, T, N],
-                                                 [N, N, N]), False),
-                              # 8: seeds > 1 seed, not child, opp side
-                              (4, 3,
-                               utils.build_board([1, 5, 4],
-                                                 [0, 3, 4]),
-                               utils.build_board([N, N, N],
-                                                 [N, N, N]), True),
-
-                              ])
+                            chi_lap_cases)
     def test_child_lap_with_opp(self, game, end_loc, sown_seeds,
                                 board, child, eresult):
 
@@ -389,63 +397,65 @@ class TestSower:
         assert lap_cont.do_another_lap(mdata) == eresult
 
 
-    @pytest.mark.parametrize('end_loc, sown_seeds, board, child, eresult',
-                             # 0: not on end store
-                             [(WinCond.REPEAT_TURN, 2,
-                               utils.build_board([1, 4, 4],
-                                                 [1, 3, 0]),
-                               utils.build_board([N, N, N],
-                                                 [N, N, N]), False),
-                              # 1: not on end in child
-                              (1, 2,
-                               utils.build_board([1, 4, 4],
-                                                 [0, 3, 0]),
-                               utils.build_board([N, N, N],
-                                                 [N, T, N]), False),
-                              # 2: my side of the board
-                              (1, 2,
-                               utils.build_board([1, 4, 4],
-                                                 [0, 4, 0]),
-                               utils.build_board([N, N, N],
-                                                 [N, N, N]), False),
-                              # 3: no child on opps first hole and one seed
-                              (3, 1,
-                               utils.build_board([1, 4, 4],
-                                                 [0, 3, 0]),
-                               utils.build_board([N, N, N],
-                                                 [N, N, N]), True),
-                              # 4: not first hole with > 1 seed, make child
-                              (3, 3,
-                               utils.build_board([1, 4, 4],
-                                                 [0, 3, 4]),
-                               utils.build_board([N, T, N],
-                                                 [N, N, N]), False),
-                              # 5: not if we should make a child
-                              (4, 3,
-                               utils.build_board([1, 4, 4],
-                                                 [0, 3, 4]),
-                               utils.build_board([N, N, N],
-                                                 [N, N, N]), False),
-                              # 6: not if only one seed
-                              (5, 3,
-                               utils.build_board([1, 4, 4],
-                                                 [0, 3, 4]),
-                               utils.build_board([N, N, N],
-                                                 [N, N, N]), False),
-                              # 7: not if already a child
-                              (5, 3,
-                               utils.build_board([1, 4, 4],
-                                                 [0, 3, 4]),
-                               utils.build_board([N, T, N],
-                                                 [N, N, N]), False),
-                              # 8: seeds > 1 seed, not child, opp side
-                              (4, 3,
-                               utils.build_board([1, 5, 4],
-                                                 [0, 3, 4]),
-                               utils.build_board([N, N, N],
-                                                 [N, N, N]), True),
+    chi_lap_not_cases = [
+        # 0: not on end store
+         (WinCond.REPEAT_TURN, 2,
+          utils.build_board([1, 4, 4],
+                            [1, 3, 0]),
+          utils.build_board([N, N, N],
+                            [N, N, N]), False),
+         # 1: not on end in child
+         (1, 2,
+          utils.build_board([1, 4, 4],
+                            [0, 3, 0]),
+          utils.build_board([N, N, N],
+                            [N, T, N]), False),
+         # 2: my side of the board
+         (1, 2,
+          utils.build_board([1, 4, 4],
+                            [0, 4, 0]),
+          utils.build_board([N, N, N],
+                            [N, N, N]), False),
+         # 3: no child on opps first hole and one seed
+         (3, 1,
+          utils.build_board([1, 4, 4],
+                            [0, 3, 0]),
+          utils.build_board([N, N, N],
+                            [N, N, N]), True),
+         # 4: not first hole with > 1 seed, make child
+         (3, 3,
+          utils.build_board([1, 4, 4],
+                            [0, 3, 4]),
+          utils.build_board([N, T, N],
+                            [N, N, N]), False),
+         # 5: not if we should make a child
+         (4, 3,
+          utils.build_board([1, 4, 4],
+                            [0, 3, 4]),
+          utils.build_board([N, N, N],
+                            [N, N, N]), False),
+         # 6: not if only one seed
+         (5, 3,
+          utils.build_board([1, 4, 4],
+                            [0, 3, 4]),
+          utils.build_board([N, N, N],
+                            [N, N, N]), False),
+         # 7: not if already a child
+         (5, 3,
+          utils.build_board([1, 4, 4],
+                            [0, 3, 4]),
+          utils.build_board([N, T, N],
+                            [N, N, N]), False),
+         # 8: seeds > 1 seed, not child, opp side
+         (4, 3,
+          utils.build_board([1, 5, 4],
+                            [0, 3, 4]),
+          utils.build_board([N, N, N],
+                            [N, N, N]), True),
+         ]
 
-                              ])
+    @pytest.mark.parametrize('end_loc, sown_seeds, board, child, eresult',
+                             chi_lap_not_cases)
     def test_child_lap_not_opp(self, nogame, end_loc, sown_seeds,
                        board, child, eresult):
 
@@ -653,38 +663,39 @@ class TestVMlap:
 
         return mancala.Mancala(game_consts, game_info)
 
+    vmlap_cases = [
+        # 0: no visit opp
+        (2, utils.build_board([1, 2, 3],
+                              [0, 3, 2]),
+         0, utils.build_board([1, 2, 3],
+                              [1, 4, 0]), [0, 0]),
+        # 1: end_store
+        (2, utils.build_board([1, 2, 3],
+                              [2, 3, 6]),
+         WinCond.REPEAT_TURN,
+         utils.build_board([2, 3, 4],
+                           [3, 4, 0]), [1, 0]),
+        # 2: visit opp -> stop for child
+        (2, utils.build_board([3, 2, 3],
+                              [0, 3, 3]),
+         5, utils.build_board([4, 2, 3],
+                              [1, 4, 0]), [0, 0]),
+        # 3: visit opp -> lapping
+        (2, utils.build_board([2, 2, 3],
+                              [0, 3, 3]),
+         WinCond.REPEAT_TURN,
+         utils.build_board([0, 3, 4],
+                           [1, 4, 0]), [1, 0]),
+        # 4: visit opp -> no lapping
+        (2, utils.build_board([0, 2, 3],
+                              [0, 3, 3]),
+         5, utils.build_board([1, 2, 3],
+                              [1, 4, 0]), [0, 0]),
+    ]
 
     @pytest.mark.parametrize(
         'start_pos, board, eloc, eboard, estore',
-        # 0: no visit opp
-        [(2, utils.build_board([1, 2, 3],
-                               [0, 3, 2]),
-          0, utils.build_board([1, 2, 3],
-                               [1, 4, 0]), [0, 0]),
-        # 1: end_store
-         (2, utils.build_board([1, 2, 3],
-                               [2, 3, 6]),
-          WinCond.REPEAT_TURN,
-             utils.build_board([2, 3, 4],
-                               [3, 4, 0]), [1, 0]),
-        # 2: visit opp -> stop for child
-         (2, utils.build_board([3, 2, 3],
-                               [0, 3, 3]),
-          5, utils.build_board([4, 2, 3],
-                               [1, 4, 0]), [0, 0]),
-        # 3: visit opp -> lapping
-         (2, utils.build_board([2, 2, 3],
-                               [0, 3, 3]),
-          WinCond.REPEAT_TURN,
-             utils.build_board([0, 3, 4],
-                               [1, 4, 0]), [1, 0]),
-        # 4: visit opp -> no lapping
-         (2, utils.build_board([0, 2, 3],
-                               [0, 3, 3]),
-          5, utils.build_board([1, 2, 3],
-                               [1, 4, 0]), [0, 0]),
-          ])
-
+        vmlap_cases)
     def test_vmlap_sower(self, game,
                         start_pos, board, eloc, eboard, estore):
 
@@ -717,49 +728,51 @@ class TestBlckDivertSower:
 
         return mancala.Mancala(game_consts, game_info)
 
+    divert_cases = [(False, 1,
+                     utils.build_board([2, 2, 2],
+                                       [2, 2, 2]), [0, 0],
+                     utils.build_board([F, F, F],
+                                       [F, F, F]),
+                     5,
+                     utils.build_board([0, 2, 2],
+                                       [3, 0, 2]), [3, 0],
+                     utils.build_board([T, F, F],
+                                       [F, F, F])),
+                    (False, 0,
+                     utils.build_board([0, 2, 2],
+                                       [3, 0, 2]), [3, 0],
+                     utils.build_board([T, F, F],
+                                       [F, F, F]),
+                     3,
+                     utils.build_board([0, 3, 0],
+                                       [0, 0, 2]), [7, 0],
+                     utils.build_board([T, F, T],
+                                       [F, F, F])),
+                    (False, 0,
+                     utils.build_board([0, 2, 2],
+                                       [4, 0, 0]), [3, 0],
+                     utils.build_board([T, F, F],
+                                       [F, F, T]),
+                     1,
+                     utils.build_board([0, 3, 3],
+                                       [0, 1, 0]), [4, 0],
+                     utils.build_board([T, F, F],
+                                       [F, F, T])),
+                    (False, 0,
+                     utils.build_board([0, 0, 2],
+                                       [2, 0, 0]), [3, 0],
+                     utils.build_board([T, T, F],
+                                       [F, F, T]),
+                     4,
+                     utils.build_board([0, 0, 2],
+                                       [0, 0, 0]), [5, 0],
+                     utils.build_board([T, T, F],
+                                       [F, F, T])),
+                    ]
+
     @pytest.mark.parametrize(
         'turn, spos, board, store, block, eloc, eboard, estore, eblock',
-        [(False, 1,
-          utils.build_board([2, 2, 2],
-                            [2, 2, 2]), [0, 0],
-          utils.build_board([F, F, F],
-                            [F, F, F]),
-          5,
-          utils.build_board([0, 2, 2],
-                            [3, 0, 2]), [3, 0],
-          utils.build_board([T, F, F],
-                            [F, F, F])),
-         (False, 0,
-          utils.build_board([0, 2, 2],
-                            [3, 0, 2]), [3, 0],
-          utils.build_board([T, F, F],
-                            [F, F, F]),
-          3,
-          utils.build_board([0, 3, 0],
-                            [0, 0, 2]), [7, 0],
-          utils.build_board([T, F, T],
-                            [F, F, F])),
-         (False, 0,
-          utils.build_board([0, 2, 2],
-                            [4, 0, 0]), [3, 0],
-          utils.build_board([T, F, F],
-                            [F, F, T]),
-          1,
-          utils.build_board([0, 3, 3],
-                            [0, 1, 0]), [4, 0],
-          utils.build_board([T, F, F],
-                            [F, F, T])),
-         (False, 0,
-          utils.build_board([0, 0, 2],
-                            [2, 0, 0]), [3, 0],
-          utils.build_board([T, T, F],
-                            [F, F, T]),
-          4,
-          utils.build_board([0, 0, 2],
-                            [0, 0, 0]), [5, 0],
-          utils.build_board([T, T, F],
-                            [F, F, T])),
-         ])
+        divert_cases)
     def test_divert_sower(self, game,
                           turn, spos, board, store, block,
                                 eloc, eboard, estore, eblock):
@@ -899,6 +912,107 @@ class TestSowCaptOwned:
         assert game2.board == utils.build_board([2, 4, 0],
                                                 [0, 0, 0])
         assert game2.store == [4, 4]
+
+
+class TestPrescribed:
+
+    @pytest.fixture
+    def game(self):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+        game_info = gi.GameInfo(evens=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        return mancala.Mancala(game_consts, game_info)
+
+
+    class Prescribe(sower.SowPrescribedIf):
+        """move all seeds to the left."""
+
+        def do_prescribed(self, mdata):
+
+                holes = self.game.cts.holes
+                sums = [sum(self.game.board[0:holes]),
+                        sum(self.game.board[holes:2*holes])]
+                self.game.board = [0] * (2*holes)
+                self.game.board[0] = sums[0]
+                self.game.board[holes] = sums[1]
+
+                return mdata
+
+
+    def test_mechanic(self, game):
+
+        swr = sower.SowSeeds(game)
+        parent = sower.SowMethodHolder(game, None)
+        parent.decorator = TestPrescribed.Prescribe(game, 2, parent, swr)
+
+        assert isinstance(parent, sower.SowMethodHolder)
+        assert isinstance(parent.decorator, sower.SowPrescribedIf)
+        assert isinstance(parent.decorator.decorator, sower.SowSeeds)
+
+        move = 1
+        mdata = MoveData(game, move)
+        mdata.sow_loc, mdata.seeds = game.deco.starter.start_sow(move)
+        mdata.direct = game.info.sow_direct
+
+        game.mcount += 1  # done at the top of _move
+        parent.sow_seeds(mdata)
+
+        # first call, chain not changed
+        assert isinstance(parent, sower.SowMethodHolder)
+        assert isinstance(parent.decorator, sower.SowPrescribedIf)
+        assert isinstance(parent.decorator.decorator, sower.SowSeeds)
+
+        # seeds moved to player's left
+        holes = game.cts.holes
+        assert game.board[0]
+        assert not any(game.board[1:holes])
+        assert game.board[holes]
+        assert not any(game.board[holes+1:2*holes])
+
+        # does nothing new, but is a second call; chain should change
+        game.mcount += 1  # done at the top of _move
+        parent.sow_seeds(mdata)
+
+        # deco chain reconstructed
+        assert isinstance(parent, sower.SowMethodHolder)
+        assert isinstance(parent.decorator, sower.SowSeeds)
+        assert not parent.decorator.decorator
+
+
+    @pytest.fixture
+    def game_1opp(self):
+
+        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_info = gi.GameInfo(evens=True,
+                                prescribed=SowPrescribed.SOW1OPP,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        return mancala.Mancala(game_consts, game_info)
+
+    sow1opp_cases = [
+        (False, [0, 3, 2, 2, 3, 2, 2, 2], 0),
+        (False, [2, 0, 3, 2, 3, 2, 2, 2], 1),
+        (False, [2, 2, 0, 3, 3, 2, 2, 2], 2),
+        (False, [2, 2, 2, 0, 3, 3, 2, 2], 3),
+        (True, [3, 2, 2, 2, 0, 3, 2, 2], 3),
+        (True, [3, 2, 2, 2, 2, 0, 3, 2], 2),
+        (True, [3, 2, 2, 2, 2, 2, 0, 3], 1),
+        (True, [3, 3, 2, 2, 2, 2, 2, 0], 0),
+        ]
+
+    @pytest.mark.parametrize('turn, eboard, move', sow1opp_cases)
+    def test_sow1opp(self, game_1opp, turn, move, eboard):
+
+        game_1opp.turn = turn
+        game_1opp.move(move)
+        print(eboard)
+        print(game_1opp.board)
+
+        assert game_1opp.board == eboard
+
+
 
 
 # %%

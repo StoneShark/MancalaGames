@@ -1,0 +1,36 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 12,
+      "nbr_start": 4
+   },
+   "game_info": {
+      "name": "Tapata",
+      "about": "Tapata:\nThe goal is to deprive the opponent of seeds.\nCounter-clockwise multi-lap sow. Prescribed opening move: one to oppenent. Moves must end in an empty hole or \nreach opponents side of the board. Seeds are taken out of play via cross-capture.\n\nVariations: Sedeqa, start pattern, allow rules, etc.",
+      "crosscapt": true,
+      "goal": 1,
+      "mlaps": 1,
+      "oppsidecapt": true,
+      "prescribed": 1,
+      "sow_direct": 1,
+      "start_pattern": 4
+   },
+   "player": {
+      "algorithm": "minimaxer",
+      "difficulty": 1,
+      "ai_params": {
+         "mm_depth": [2, 2, 5, 7]
+      },
+      "scorer": {
+         "stores_m": 0,
+         "access_m": 0,
+         "seeds_m": 4,
+         "empties_m": -2,
+         "child_cnt_m": 0,
+         "evens_m": 0,
+         "easy_rand": 2,
+         "repeat_turn": 0
+      }
+   },
+   "rules": "Russ, Laurence. Mancala Games. 1984. p34."
+}

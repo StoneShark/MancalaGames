@@ -68,7 +68,10 @@ ALTERNATES: everyother hole is filled with nbr_seeds, no seeds end up opposite e
 ALTS_WITH_1: like Alternates except the starter's 2nd from right hole with nbr_seeds is replaced with one seed.
 CLIPPEDTRIPLES: pattern of 0 S S (where S is nbr_seeds) is used to fill the holes; if a full cycle of 3 cannot be placed, the holes are left empty. The True and False sides are the same from the player's perspective, e.g. they will look reversed when viewed from one side of the game board.
 TWOEMPTY: all but the rightmost two holes for each player are filled with is nbr_seeds."		1											
-Dynamics	gparam_one	General input	game_info _	int	0	4	2	"Goal of Territory: defines the number of holes needed for a win.
+Dynamics	prescribed	Prescribed Opening Move	game_info _	SowPrescribed	NONE	3	2	"SOW1OPP: at least one seed must be sown on the opponents side of the board accomplished by sowing as normal until the final seed, then any remaining holes on the player side are skipped and the seed is dropped into the first of the opponent side holes.
+TRIPLES: needs work
+PLUS1MINUS1: proceed from the selected hole by moving one seed from the next hole into the following hole, next skip that hole and repeat moving seed forward. After cycling the board, capture across from the opening hole."													
+Dynamics	gparam_one	General input	game_info _	int	0	5	2	"Goal of Territory: defines the number of holes needed for a win.
 Goal of Deprive and Blocked Divert Sower: defines the number of seeds needed to close/block holes (sow_blkd_div)."								1		1	1	1	
 Game	class	Game Class	game_class	GameClasses	Mancala	0	0	The name of the Game Class. Currently only Mancala.	Note: GameClasses only exists in the STRING_DICTS table.												
 Game	holes	Holes per Side	game_constants _	int	3	2	0	Number of holes on each side of the board. Start Pattern may use this number differently.		1	1	1	1		1	1	1	1	1	1	

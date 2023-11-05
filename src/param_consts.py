@@ -19,6 +19,7 @@ from game_interface import Goal
 from game_interface import GrandSlam
 from game_interface import LapSower
 from game_interface import RoundStarter
+from game_interface import SowPrescribed
 from game_interface import StartPattern
 
 
@@ -110,6 +111,12 @@ STRING_DICTS = {
         {'Alternate': RoundStarter.ALTERNATE,
          'Round Winner': RoundStarter.WINNER,
          'Round Loser': RoundStarter.LOSER}),
+
+    'SowPrescribed': lookup_dicts(SowPrescribed,
+        {'None': SowPrescribed.NONE,
+         'Sow One Opposite': SowPrescribed.SOW1OPP,
+         'TRIPLES': SowPrescribed.TRIPLES,
+         'Plus 1, Minus 1': SowPrescribed.PLUS1MINUS1}),
 
     'StartPattern': lookup_dicts(StartPattern,
         {'All Equal': StartPattern.ALL_EQUAL,

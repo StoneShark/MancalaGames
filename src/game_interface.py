@@ -123,6 +123,16 @@ class AllowRule(enum.IntEnum):
 
 
 @enum.unique
+class SowPrescribed(enum.IntEnum):
+    """Define a prescribed opening."""
+
+    NONE = 0
+    SOW1OPP = 1
+    TRIPLES = 2
+    PLUS1MINUS1 = 3
+
+
+@enum.unique
 class LapSower(enum.IntEnum):
     """Defines if or what kind of lap sowing to do."""
 
@@ -169,6 +179,7 @@ class GameInfo:
     no_sides: bool = False
     stores: bool = False
     start_pattern: StartPattern = StartPattern.ALL_EQUAL
+    prescribed: SowPrescribed = SowPrescribed.NONE
 
     # **** allowable moves
     min_move: int = 1
