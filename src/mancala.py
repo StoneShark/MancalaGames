@@ -286,6 +286,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         holes = self.cts.holes
         dbl_holes = self.cts.dbl_holes
 
+        self.mcount = 0
         locks = not self.info.moveunlock
         self.unlocked = [locks] * dbl_holes
         self.blocked = [False] * dbl_holes

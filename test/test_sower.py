@@ -926,59 +926,68 @@ class TestPrescribed:
         return mancala.Mancala(game_consts, game_info)
 
 
-    class Prescribe(sower.SowPrescribedIf):
-        """move all seeds to the left."""
+    def test_mechanic(self, game, mocker):
 
-        def do_prescribed(self, mdata):
-
-                holes = self.game.cts.holes
-                sums = [sum(self.game.board[0:holes]),
-                        sum(self.game.board[holes:2*holes])]
-                self.game.board = [0] * (2*holes)
-                self.game.board[0] = sums[0]
-                self.game.board[holes] = sums[1]
-
-                return mdata
-
-
-    def test_mechanic(self, game):
+        mpresc = mocker.patch('sower.SowOneOpp.do_prescribed')
+        msower = mocker.patch('sower.SowSeeds.sow_seeds')
 
         swr = sower.SowSeeds(game)
-        parent = sower.SowMethodHolder(game, None)
-        parent.decorator = TestPrescribed.Prescribe(game, 2, parent, swr)
-
-        assert isinstance(parent, sower.SowMethodHolder)
-        assert isinstance(parent.decorator, sower.SowPrescribedIf)
-        assert isinstance(parent.decorator.decorator, sower.SowSeeds)
+        swr = sower.SowOneOpp(game, 2, swr)
 
         move = 1
         mdata = MoveData(game, move)
         mdata.sow_loc, mdata.seeds = game.deco.starter.start_sow(move)
         mdata.direct = game.info.sow_direct
 
-        game.mcount += 1  # done at the top of _move
-        parent.sow_seeds(mdata)
+        game.mcount += 1           # done at the top of _move
+        swr.sow_seeds(mdata)
 
-        # first call, chain not changed
-        assert isinstance(parent, sower.SowMethodHolder)
-        assert isinstance(parent.decorator, sower.SowPrescribedIf)
-        assert isinstance(parent.decorator.decorator, sower.SowSeeds)
+        mpresc.assert_called_once()
+        msower.assert_not_called()
 
-        # seeds moved to player's left
-        holes = game.cts.holes
-        assert game.board[0]
-        assert not any(game.board[1:holes])
-        assert game.board[holes]
-        assert not any(game.board[holes+1:2*holes])
+        # do_prescribed should be called again
+        game.mcount += 1
+        swr.sow_seeds(mdata)
 
-        # does nothing new, but is a second call; chain should change
-        game.mcount += 1  # done at the top of _move
-        parent.sow_seeds(mdata)
+        assert len(mpresc.mock_calls) == 2
+        msower.assert_not_called()
 
-        # deco chain reconstructed
-        assert isinstance(parent, sower.SowMethodHolder)
-        assert isinstance(parent.decorator, sower.SowSeeds)
-        assert not parent.decorator.decorator
+        # sower should be called
+        game.mcount += 1
+        swr.sow_seeds(mdata)
+
+        assert len(mpresc.mock_calls) == 2
+        msower.assert_called_once()
+
+        # confirm new_game resets behavior
+        game.new_game()
+        mpresc.reset_mock()
+        msower.reset_mock()
+
+        move = 1
+        mdata = MoveData(game, move)
+        mdata.sow_loc, mdata.seeds = game.deco.starter.start_sow(move)
+        mdata.direct = game.info.sow_direct
+
+        game.mcount += 1           # done at the top of _move
+        swr.sow_seeds(mdata)
+
+        mpresc.assert_called_once()
+        msower.assert_not_called()
+
+        # do_prescribed should be called again
+        game.mcount += 1
+        swr.sow_seeds(mdata)
+
+        assert len(mpresc.mock_calls) == 2
+        msower.assert_not_called()
+
+        # sower should be called
+        game.mcount += 1
+        swr.sow_seeds(mdata)
+
+        assert len(mpresc.mock_calls) == 2
+        msower.assert_called_once()
 
 
     @pytest.fixture
@@ -1007,9 +1016,6 @@ class TestPrescribed:
 
         game_1opp.turn = turn
         game_1opp.move(move)
-        print(eboard)
-        print(game_1opp.board)
-
         assert game_1opp.board == eboard
 
 

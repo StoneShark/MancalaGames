@@ -461,51 +461,28 @@ class SowVisitedMlap(SowMethodIf):
 # only use prescribe openings if the first player has a choice
 # if it's a standard pattern use start_pattern
 
-# Usage will be like this:
-
-# parent = SowMethodHolder(game, None)
-# parent.decorator = SowDoAlternates(game, 1, parent, sower)
-# sower = parent
-
-
-class SowMethodHolder(SowMethodIf):
-    """A deco delegates sow_seeds, but gives us a place and
-    means to delete a decorator out of the deco chain."""
-
-    def sow_seeds(self, mdata):
-        return self.decorator.sow_seeds(mdata)
-
-    def delete_deco(self):
-        """Delete the child decorator; it will have a child decorator."""
-        self.decorator = self.decorator.decorator
-
 
 class SowPrescribedIf(SowMethodIf):
-    """A deco that becomes obsolete after a one or more turns.
-    It has it's parent remove itself the deco chain,
-    the parent must be a SowMethodHolder.
+    """A deco that diverts to prescribed moves for one or more turns.
 
     Concrete subclasses should not provide sow_seeds."""
 
-    def __init__(self, game, count, parent, decorator=None):
+    def __init__(self, game, count, decorator=None):
 
         super().__init__(game, decorator)
         self.dispose = count
-        self.parent = parent
 
     @abc.abstractmethod
     def do_prescribed(self, mdata):
         """Do the prescribed opening moves."""
 
     def sow_seeds(self, mdata):
-        """If the decorator has expired, tell the parent to
-        remove this deco from the chain and this will be the
-        last call to decorator."""
+        """If the decorator has expired, call the child sower."""
 
-        mdata = self.do_prescribed(mdata)
-
-        if self.game.mcount >= self.dispose:
-            self.parent.delete_deco()
+        if self.game.mcount > self.dispose:
+            mdata = self.decorator.sow_seeds(mdata)
+        else:
+            mdata = self.do_prescribed(mdata)
 
         return mdata
 
@@ -655,18 +632,16 @@ def deco_prescribed_sower(game, sower):
     the class derived from SowPrescribedIf to be deleted when we
     are done with it."""
 
-    parent = SowMethodHolder(game, None)
-
     if game.info.prescribed == SowPrescribed.SOW1OPP:
-        parent.decorator = SowOneOpp(game, 1, parent, sower)
+        sower = SowOneOpp(game, 1, sower)
 
     elif game.info.prescribed == SowPrescribed.TRIPLES:
-        parent.decorator = SowTriples(game, 1, parent, sower)
+        sower = SowTriples(game, 1, sower)
 
     elif game.info.prescribed == SowPrescribed.PLUS1MINUS1:
-        parent.decorator = SowPlus1Minus1Capt(game, 1, parent, sower)
+        sower = SowPlus1Minus1Capt(game, 1, sower)
 
-    return parent
+    return sower
 
 
 def deco_sower(game):
