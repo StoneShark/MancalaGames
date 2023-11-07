@@ -120,6 +120,7 @@ class AllowRule(enum.IntEnum):
     TWO_ONLY_ALL = 5
     TWO_ONLY_ALL_RIGHT = 6
     FIRST_TURN_ONLY_RIGHT_TWO = 7
+    RIGHT_2_1ST_THEN_ALL_TWO = 8
 
 
 @enum.unique
@@ -130,6 +131,28 @@ class SowPrescribed(enum.IntEnum):
     SOW1OPP = 1
     TRIPLES = 2
     PLUS1MINUS1 = 3
+    BASIC_SOWER = 4
+    MLAPS_SOWER = 5
+
+
+@enum.unique
+class SowRule(enum.IntEnum):
+    """Defines special rules for sowing."""
+
+    NONE = 0
+    SOW_BLKD_DIV = 1
+    OWN_SOW_CAPT_ALL = 2
+    SOW_SOW_CAPT_ALL = 3
+    NO_SOW_OPP_2S = 4
+
+
+@enum.unique
+class CaptExtraPick(enum.IntEnum):
+    """Pick extra's over the captured seeds."""
+
+    NONE = 0
+    PICKCROSS = 1
+    PICKTWOS = 2
 
 
 @enum.unique
@@ -199,8 +222,7 @@ class GameInfo:
     child_cvt: int = 0
     child_type: ChildType = ChildType.NOCHILD
     gparam_one: int = 0
-    sow_blkd_div: bool = False
-    sow_capt_all: bool = False
+    sow_rule: SowRule = SowRule.NONE
 
     # **** capture
     capsamedir: bool = False
@@ -216,7 +238,7 @@ class GameInfo:
 
     crosscapt: bool = False
     xcpickown: CrossCaptOwn = CrossCaptOwn.LEAVE
-    pickcross: bool = False
+    pickextra: CaptExtraPick = CaptExtraPick.NONE
 
     multicapt: bool = False
     grandslam: int = GrandSlam.LEGAL

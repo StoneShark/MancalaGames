@@ -17,7 +17,7 @@
       "rnd_umove": false,
       "blocks": true,
       "sow_direct": 1,
-      "sow_capt_all": true,
+      "sow_rule": 2,
       "mlaps": 2
 
    },

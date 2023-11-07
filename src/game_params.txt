@@ -44,7 +44,9 @@ Capture	nosinglecapt	No Single Seed Capture	game_info _	bool	False	4	2	"If the s
 Capture	capt_on	Capture On Values	game_info _	list[bool]	[]	6	2	"Capture when the contents of the hole is in the capt_on list. 
 SOW_CAPT_ALL does this capture."									1	1			
 Capture	capt_rturn	Repeat Turn on Capture	game_info _	bool	False	8	2	Repeat turn if there was a capture. Making children is not currently considered making a capture.													
-Capture	pickcross	On Capture Take Opp Side Too	game_info _	bool	False	9	2	"When there is a capture, take the seeds from the opposite side of the board. "													
+Capture	pickextra	"On Capture, Take More Rule"	game_info _	CaptExtraPick	NONE	9	2	"NONE: Nothing extra
+PICKCROSS: Take the seeds from the opposite side of the board. 
+PICKTWOS: Take seeds from all holes containing two seeds but only after the first move."													
 Dynamics	stores	Stores	game_info _	bool	True	0	0	Are stores present on the UI. Stores might not be on the UI but used if seeds are taken out of play.		1									1	1	
 Dynamics	mustpass	Must Pass	game_info _	bool	False	1	0	"If a player has no allowable moves on their turn they must pass, until they have allowable moves. The game is over when neither play has an allowable move."				1							1	1	
 Dynamics	rounds	Rounds	game_info _	bool	False	4	0	Is the game played in rounds?		1									1	1	
@@ -110,9 +112,10 @@ Sow	sow_start	Sow Start Hole	game_info _	bool	False	1	0	"When selected, the firs
 Sow	skip_start	Skip Start on Lap	game_info _	bool	False	2	0	"When sowing a second or subsequent circuit of the board, skip the start hole. This will leave the start hole empty for single lap games."					1			1					
 Sow	sow_own_store	Sow Own Store	game_info _	bool	False	3	0	Sow seeds into your own store when passing it. Do not sow into your opponents store.								1					
 Sow	move_one	Move One Seed	game_info _	bool	False	5	0	"Only valid when sow_start is set. Changes the sow_start behavior so that if there is only one seed in the hole, it is moved in the sow direction one hole."						1							
-Sow	sow_blkd_div	"Skip Own Blocked, Capt Opp"	game_info _	bool	False	6	0	Blocked holes on own side are skipped when sowing and blocked holes on opp side are diverted out of play or captured.								1					
-Sow	sow_capt_all	Capture all while Sowing	game_info _	bool	False	7	0	"Capture all holes that are sown that meet the simple capture criteria: evens, min, max and  capture on. Other criteria are enforced: side of the board, unlocked, and not child.   Grand Slam rules are not applied.
-If the game goal TERRITORY the capturer is the hole owner; otherwise the capturer is done by side."								1					
+Sow	sow_rule	Special Sow Rules	game_info _	SowRule	NONE	6	0	"SOW_BLKD_DIV: Blocked holes on own side are skipped when sowing and blocked holes on opp side are diverted out of play or captured.
+OWN_SOW_CAPT_ALL: Capture all holes that are sown that meet the simple capture criteria: evens, min, max and  capture on. Other criteria are enforced: side of the board, unlocked, and not child.   Grand Slam rules are not applied. If the game goal TERRITORY the capturer is the hole owner; otherwise the capturer is done by side.
+SOW_SOW_CAPT_ALL: Capture all holes that sown that meed the simple capture criteria only on the SOWER's side of the board.
+NO_SOW_OPP_2S: Don't sow into opponents holes with 2 seeds."								1					
 Sow	udir_holes	User Chooses Direction	game_info _	list[bool]	[]	8	0	"A list of holes that the user can control the sow direction from. Control is via the mouse button: left is clockwise and right is counter-clockwise.
 Note: all holes respond to both mouse buttons, but if the hole is not in udir_holes, the sow direction will be that prescribed by sow_direct with either button."				1			1						
 Sow	mlaps	Multilap Sow	game_info _	LapSower	OFF	0	2	"OFF: Single lap sowing.

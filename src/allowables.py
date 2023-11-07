@@ -16,6 +16,7 @@ import game_interface as gi
 
 from game_log import game_log
 from game_interface import AllowRule
+from game_interface import Direct
 from game_interface import GrandSlam
 from game_interface import WinCond
 from incrementer import NOSKIPSTART
@@ -179,6 +180,46 @@ class AllTwoRightmost(AllowableIf):
                 break
 
         return allow
+
+
+class OnlyRightTwo(AllowableIf):
+    """Can only move from the right two holes.
+
+    Find the first hole with the incrementer, because it will
+    incr past blocks."""
+
+    # TODO rule to only support holes sized allowables not dbl_holes
+
+    def get_allowable_holes(self):
+        """Return allowable moves."""
+
+        if self.game.mcount < 1:
+            holes = self.game.cts.holes
+            dbl_holes = self.game.cts.dbl_holes
+
+            if self.game.turn:
+                start = self.game.deco.incr.incr(dbl_holes,
+                                                 Direct.CW,
+                                                 NOSKIPSTART)
+                print('r start', start)
+                pos = self.game.cts.xlate_pos_loc(not self.game.turn, start)
+                fright = holes - pos - 2
+                allow = min(holes - fright, 2)
+                fleft = holes - allow - fright
+                return [False] * fleft + [True] * allow + [False] * fright
+
+            else:
+                start = self.game.deco.incr.incr(holes,
+                                                 Direct.CW,
+                                                 NOSKIPSTART)
+                print('l start', start)
+                fright = holes - start - 1
+                allow = min(start + 1, 2)
+                fleft = holes - allow - fright
+
+                return [False] * fleft + [True] * allow + [False] * fright
+
+        return self.decorator.get_allowable_holes()
 
 
 class MustShare(AllowableIf):
@@ -370,8 +411,11 @@ def deco_allow_rule(game, allowable):
         allowable = AllTwoRightmost(game, allowable)
 
     elif game.info.allow_rule == AllowRule.FIRST_TURN_ONLY_RIGHT_TWO:
-        # TODO implement FIRST_TURN_ONLY_RIGHT_TWO (need to know turn #?)
-        raise NotImplementedError("FIRST_TURN_ONLY_RIGHT_TWO")
+        allowable = OnlyRightTwo(game, allowable)
+
+    elif game.info.allow_rule == AllowRule.RIGHT_2_1ST_THEN_ALL_TWO:
+        allowable = OnlyIfAllN(game, 2, allowable)
+        allowable = OnlyRightTwo(game, allowable)
 
     return allowable
 

@@ -15,6 +15,7 @@ from context import game_constants as gc
 from context import game_interface as gi
 from context import mancala
 
+from game_interface import CaptExtraPick
 from game_interface import ChildType
 from game_interface import CrossCaptOwn
 from game_interface import Direct
@@ -594,7 +595,7 @@ class TestPickCross:
 
         game_consts = gc.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(stores=True,
-                                pickcross=True,
+                                pickextra=CaptExtraPick.PICKCROSS,
                                 **options,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
@@ -620,7 +621,7 @@ class TestPickCross:
 
         game_consts = gc.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(stores=True,
-                                pickcross=True,
+                                pickextra=CaptExtraPick.PICKCROSS,
                                 **options,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
@@ -648,7 +649,7 @@ class TestPickCross:
 
         game_consts = gc.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(stores=True,
-                                pickcross=True,
+                                pickextra=CaptExtraPick.PICKCROSS,
                                 **options,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
@@ -670,7 +671,7 @@ class TestPickCross:
 
         game_consts = gc.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(stores=True,
-                                pickcross=True,
+                                pickextra=CaptExtraPick.PICKCROSS,
                                 evens=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
@@ -712,7 +713,7 @@ class TestCaptTwoOut:
 
         game_consts = gc.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(stores=True,
-                                pickcross=True,
+                                pickextra=CaptExtraPick.PICKCROSS,
                                 mlaps=True,
                                 **options,
                                 nbr_holes=game_consts.holes,

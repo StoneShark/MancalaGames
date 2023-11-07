@@ -12,6 +12,7 @@ Created on Fri Apr  7 08:52:03 2023
 
 import abc
 
+from game_interface import CaptExtraPick
 from game_interface import ChildType
 from game_interface import CrossCaptOwn
 from game_interface import GrandSlam
@@ -54,7 +55,6 @@ class CaptNone(CaptMethodIf):
 
     def do_captures(self, mdata):
         pass
-
 
 
 # %%  basic decos
@@ -475,6 +475,50 @@ class MakeTuzdek(CaptMethodIf):
         self.decorator.do_captures(mdata)
 
 
+# %% pickers
+
+# all one enum so only one of these can be used
+
+
+class PickCross(CaptMethodIf):
+    """Not a cross capture, but if there was a capture take any
+    seeds from the opposite side of the board too."""
+
+    def do_captures(self, mdata):
+
+        self.decorator.do_captures(mdata)
+        cross = self.game.cts.cross_from_loc(mdata.capt_loc)
+        if (mdata.captured
+                and self.game.child[cross] is None
+                and self.game.unlocked[cross]):
+
+            self.game.store[self.game.turn] += self.game.board[cross]
+            self.game.board[cross] = 0
+            game_log.add(f"Picking Cross at {cross}.", game_log.INFO)
+
+
+class PickOppTwos(CaptMethodIf):
+    """When there is a capture pick all 2s from opponent."""
+
+    def do_captures(self, mdata):
+
+        self.decorator.do_captures(mdata)
+        if self.game.mcount > 1 and mdata.captured:
+
+            msg = ''
+            for loc in self.game.cts.get_opp_range(self.game.turn):
+                if (self.game.board[loc] == 2
+                        and self.game.child[loc] is None
+                        and self.game.unlocked[loc]):
+
+                    msg += f' {loc}'
+                    self.game.store[self.game.turn] += self.game.board[loc]
+                    self.game.board[loc] = 0
+
+            msg = 'Pick 2s from' + msg if msg else 'Pick 2s but None'
+            game_log.add(msg, game_log.INFO)
+
+
 # %% some wrappers
 
 class NoSingleSeedCapt(CaptMethodIf):
@@ -494,22 +538,6 @@ class RepeatTurn(CaptMethodIf):
         if mdata.captured:
             game_log.add('Capture repeat turn', game_log.INFO)
             mdata.captured = WinCond.REPEAT_TURN
-
-
-class PickCross(CaptMethodIf):
-    """Not a cross capture, but if there was a capture take any
-    seeds from the opposite side of the board too."""
-
-    def do_captures(self, mdata):
-
-        self.decorator.do_captures(mdata)
-        cross = self.game.cts.cross_from_loc(mdata.capt_loc)
-        if (mdata.captured
-                and self.game.child[cross] is None
-                and self.game.unlocked[cross]):
-
-            self.game.store[self.game.turn] += self.game.board[cross]
-            self.game.board[cross] = 0
 
 
 # %% build deco chains
@@ -581,6 +609,18 @@ def _add_capt_two_out_deco(game, capturer):
     return capturer
 
 
+def _add_capt_pick_deco(game, capturer):
+    """Add any extra pickers."""
+
+    if game.info.pickextra == CaptExtraPick.PICKCROSS:
+        capturer = PickCross(game, capturer)
+
+    elif game.info.pickextra == CaptExtraPick.PICKTWOS:
+        capturer = PickOppTwos(game, capturer)
+
+    return capturer
+
+
 def deco_capturer(game):
     """Build capture chain and return it."""
 
@@ -608,9 +648,7 @@ def deco_capturer(game):
 
     capturer = _add_grand_slam_deco(game, capturer)
     capturer = _add_child_deco(game, capturer)
-
-    if game.info.pickcross:
-        capturer = PickCross(game, capturer)
+    capturer = _add_capt_pick_deco(game, capturer)
 
     if game.info.nosinglecapt:
         capturer = NoSingleSeedCapt(game, capturer)

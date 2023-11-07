@@ -17,16 +17,16 @@ Game configurations are stored in plain-text, json-string formatted files. They 
 ## Code Overview ##
 I’ve read that code is more testable if it is organized in a complex network of simple objects instead of a small set of complex objects. The evolution of Mancala Games has embraced the complex network of simple objects concept; possibly, it’s gone too far.
 
-Game play is broken up into small steps and each step is implemented as a decorator chain of operations. Each decorator chain is created when the game class is initialized, minimizing the number of flags that need to be checked during game play[^2]. 
+Game play is broken up into small steps and each step is implemented as a decorator chain of operations. Each decorator chain is created when the game class is initialized, minimizing the number of flags that need to be checked during game play[^2]. All steps are controlled by game rules:
 
 
 * New Game - initializes a game or round
 * Allowables - determines what holes may be played
-* Moves - determines valid moves
+* Moves - determines valid moves for computer player
 * Incrementer - increments clockwise, counter-clockwise, past blocks, etc.
-* Sow Starter - determines the number of seeds to sow possibly leaving one seed
+* Sow Starter - processes start hole by determining the number of seeds to sow possibly leaving one seed
 * Get Direction - determines which specific direction to sow 
-* Sower - sows the seeds--there are many options to control how this is done (uses incrementer)
+* Sower - sows the seeds (uses incrementer)
 * Capt_Ok - determines if the contents of a single hole can be captured
 * Capturer - executes the capture operations (uses capt_ok and incrementer)
 * Ender - ends a move, determines if the next player must past, if the game is over, etc.
@@ -36,7 +36,7 @@ Game play is broken up into small steps and each step is implemented as a decora
 ## Compatibility ##
 Mancala games can be run under Windows 10 & 11 and requires standard python 11 (including Tk)[^3].
 
-Development of Mancala Games uses many specialized tools. The UI definition table is in Excel (an open-source alternative crashed on my large table in Window 11 too often). GNU-WIN32 make, grep and core utilities are used to script the build and test processes. Pytest is the test framework (Excel files with macros are used to create test cases stored as CSV files for actual test code). Pyinstaller is used to create standalone executables. Documentation diagrams were created in LibreOffice Draw with pdf versions saved.
+Development of Mancala Games uses many specialized tools: The UI definition table is in Excel (an open-source alternative crashed on the large table in Window 11 too often). GNU-WIN32 make, grep and core utilities are used to script the build and test processes. Pytest is the test framework (Excel files with macros are used to create test cases stored as CSV files for actual test code). Pyinstaller is used to create standalone executables. Documentation diagrams were created in LibreOffice Draw with pdf versions saved.
 
 [^1]: Perhaps the default parameters are bad. There could also be an implementation error.
 

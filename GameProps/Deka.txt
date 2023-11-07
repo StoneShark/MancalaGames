@@ -13,7 +13,7 @@
       "mlaps": 1,
       "min_move": 1,
       "sow_direct": 1,
-      "sow_blkd_div": true
+      "sow_rule": 1
    },
    "player": {
       "scorer": {

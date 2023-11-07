@@ -12,6 +12,7 @@ import collections
 from ai_player import ALGORITHM_DICT
 from game_classes import GAME_CLASSES
 from game_interface import AllowRule
+from game_interface import CaptExtraPick
 from game_interface import ChildType
 from game_interface import CrossCaptOwn
 from game_interface import Direct
@@ -20,6 +21,7 @@ from game_interface import GrandSlam
 from game_interface import LapSower
 from game_interface import RoundStarter
 from game_interface import SowPrescribed
+from game_interface import SowRule
 from game_interface import StartPattern
 
 
@@ -69,7 +71,14 @@ STRING_DICTS = {
          'Doubles only when all doubles': AllowRule.TWO_ONLY_ALL,
          'Doubles, all doubles, rightmost': AllowRule.TWO_ONLY_ALL_RIGHT,
          'Rightmost two on first turn': AllowRule.FIRST_TURN_ONLY_RIGHT_TWO,
+         'Right 2 1st, then twos only if all 2s':
+             AllowRule.RIGHT_2_1ST_THEN_ALL_TWO
          }),
+
+    'CaptExtraPick': lookup_dicts(CaptExtraPick,
+        {'No additional': CaptExtraPick.NONE,
+         'Pick Cross Seeds': CaptExtraPick.PICKCROSS,
+         "Pick all Opponent's' 2s": CaptExtraPick.PICKTWOS}),
 
     'ChildType': lookup_dicts(ChildType,
         {'No Children': ChildType.NOCHILD,
@@ -114,9 +123,19 @@ STRING_DICTS = {
 
     'SowPrescribed': lookup_dicts(SowPrescribed,
         {'None': SowPrescribed.NONE,
+         'Sow Basic First': SowPrescribed.BASIC_SOWER,
+         'Sow Mlaps First': SowPrescribed.MLAPS_SOWER,
          'Sow One Opposite': SowPrescribed.SOW1OPP,
          'TRIPLES': SowPrescribed.TRIPLES,
          'Plus 1, Minus 1': SowPrescribed.PLUS1MINUS1}),
+
+    'SowRule': lookup_dicts(SowRule,
+        {"No Special Rule": SowRule.NONE,
+         "Skip Own Blocked, Capt Opp": SowRule.SOW_BLKD_DIV,
+         "Owners Capture all while Sow": SowRule.OWN_SOW_CAPT_ALL,
+         "Sower Captures own while Sow": SowRule.SOW_SOW_CAPT_ALL,
+         "Don't sow Opp holes w/2s": SowRule.NO_SOW_OPP_2S,
+         }),
 
     'StartPattern': lookup_dicts(StartPattern,
         {'All Equal': StartPattern.ALL_EQUAL,

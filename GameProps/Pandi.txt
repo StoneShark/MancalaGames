@@ -12,11 +12,11 @@
       "capt_on": [4],
       "capttwoout": true,
       "mlaps": 2,
-      "pickcross": true,
+      "pickextra": 1,
       "rnd_left_fill": true,
       "round_starter": 0,
       "rounds": true,
-      "sow_capt_all": true,
+      "sow_rule": 2,
       "sow_direct": 1,
       "stores": true
    },

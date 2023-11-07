@@ -25,6 +25,7 @@ from game_interface import Direct
 from game_interface import Goal
 from game_interface import LapSower
 from game_interface import SowPrescribed
+from game_interface import SowRule
 from game_interface import WinCond
 from incrementer import NOSKIPSTART
 
@@ -76,7 +77,7 @@ class SowSeeds(SowMethodIf):
         return mdata
 
 
-# %%
+# %%  more single sowers
 
 class SowSeedsNStore(SowMethodIf):
     """Sow a seed into the player's own store when passing it.
@@ -138,14 +139,13 @@ class SowSeedsNStore(SowMethodIf):
         return mdata
 
 
-
 class DivertSkipBlckdSower(SowMethodIf):
     """Divert blocked holes on opp side to store 0 (out of play).
     Skipped blocked holes on own side.
 
     Don't use the incrementer because it will skip blocks.
 
-    The option to select this is:  sow_blkd_div"""
+    The option to select this is:  sow_rule sow_blkd_div"""
 
     def sow_seeds(self, mdata):
         """Sow seeds."""
@@ -225,6 +225,35 @@ class SowCaptOwned(SowMethodIf):
         mdata.capt_loc = loc
         return mdata
 
+
+class SowSkipOppN(SowMethodIf):
+    """Skip sowing a constant value on the opponents side."""
+
+    def __init__(self, game, skip_set, decorator=None):
+        super().__init__(game, decorator)
+        self.skip_set = skip_set
+
+    def sow_seeds(self, mdata):
+        """Sow seeds."""
+
+        loc = mdata.cont_sow_loc
+        for _ in range(mdata.seeds):
+
+            loc = self.game.deco.incr.incr(loc,
+                                           mdata.direct,
+                                           mdata.cont_sow_loc)
+
+            while (self.game.cts.opp_side(self.game.turn, loc)
+                   and self.game.board[loc] in self.skip_set):
+
+                loc = self.game.deco.incr.incr(loc,
+                                               mdata.direct,
+                                               mdata.cont_sow_loc)
+
+            self.game.board[loc] += 1
+
+        mdata.capt_loc = loc
+        return mdata
 
 
 # %%  lap continue testers
@@ -483,8 +512,33 @@ class SowPrescribedIf(SowMethodIf):
             mdata = self.decorator.sow_seeds(mdata)
         else:
             mdata = self.do_prescribed(mdata)
+            # game_log.step('Prescribed', self.game)
 
         return mdata
+
+
+class SowBasicFirst(SowPrescribedIf):
+    """Use the default basic sower for the first sows."""
+
+    def __init__(self, game, count, decorator=None):
+        super().__init__(game, count, decorator)
+        self.sower = SowSeeds(game)
+
+    def do_prescribed(self, mdata):
+        return self.sower.sow_seeds(mdata)
+
+
+class SowMlapsFirst(SowPrescribedIf):
+    """Use the default mlap sower for the first sows."""
+
+    def __init__(self, game, count, decorator=None):
+        super().__init__(game, count, decorator)
+        sower = SowSeeds(game)
+        lap_cont = SimpleLapCont(game)
+        self.sower = SowMlapSeeds(game, sower, lap_cont)
+
+    def do_prescribed(self, mdata):
+        return self.sower.sow_seeds(mdata)
 
 
 class SowOneOpp(SowPrescribedIf):
@@ -589,14 +643,17 @@ def deco_blkd_divert_sower(game):
 def deco_base_sower(game):
     """Choose the base sower."""
 
-    if game.info.sow_blkd_div:
+    if game.info.sow_rule == SowRule.SOW_BLKD_DIV:
         return deco_blkd_divert_sower(game)
 
-    if game.info.sow_capt_all:
+    if game.info.sow_rule == SowRule.OWN_SOW_CAPT_ALL:
         if game.info.goal == Goal.TERRITORY:
             sower = SowCaptOwned(game, lambda loc: game.owner[loc])
         else:
             sower = SowCaptOwned(game, game.cts.board_side)
+
+    elif game.info.sow_rule == SowRule.NO_SOW_OPP_2S:
+        sower = SowSkipOppN(game, {2})
 
     elif game.info.sow_own_store:
         sower = SowSeedsNStore(game)
@@ -640,6 +697,12 @@ def deco_prescribed_sower(game, sower):
 
     elif game.info.prescribed == SowPrescribed.PLUS1MINUS1:
         sower = SowPlus1Minus1Capt(game, 1, sower)
+
+    elif game.info.prescribed == SowPrescribed.BASIC_SOWER:
+        sower = SowBasicFirst(game, 1, sower)
+
+    elif game.info.prescribed == SowPrescribed.MLAPS_SOWER:
+        sower = SowMlapsFirst(game, 1, sower)
 
     return sower
 

@@ -22,6 +22,7 @@ from game_interface import Direct
 from game_interface import Goal
 from game_interface import LapSower
 from game_interface import SowPrescribed
+from game_interface import SowRule
 from game_interface import WinCond
 # from game_log import game_log
 from mancala import MoveData
@@ -600,7 +601,7 @@ class TestGetSingle:
         game_consts = gc.GameConsts(nbr_start=4, holes=4)
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
-                                sow_capt_all=True,
+                                sow_rule=SowRule.OWN_SOW_CAPT_ALL,
                                 mlaps=mlaps,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
@@ -612,7 +613,7 @@ class TestGetSingle:
         game_info = gi.GameInfo(goal=Goal.DEPRIVE,
                                 blocks=True,
                                 gparam_one=2,
-                                sow_blkd_div=True,
+                                sow_rule=SowRule.SOW_BLKD_DIV,
                                 mlaps=mlaps,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
@@ -720,7 +721,7 @@ class TestBlckDivertSower:
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(sow_direct=Direct.CW,
                                 goal=Goal.DEPRIVE,
-                                sow_blkd_div=True,
+                                sow_rule=SowRule.SOW_BLKD_DIV,
                                 blocks=True,
                                 gparam_one=3,
                                 nbr_holes=game_consts.holes,
@@ -798,7 +799,7 @@ class TestBlckDivertSower:
 
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(sow_direct=Direct.CW,
-                                sow_blkd_div=True,
+                                sow_rule=SowRule.SOW_BLKD_DIV,
                                 goal=Goal.DEPRIVE,
                                 blocks=True,
                                 mlaps=LapSower.LAPPER,
@@ -850,7 +851,7 @@ class TestSowCaptOwned:
 
         game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(evens=True,
-                                sow_capt_all=True,
+                                sow_rule=SowRule.OWN_SOW_CAPT_ALL,
                                 sow_direct=Direct.CCW,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
@@ -887,7 +888,7 @@ class TestSowCaptOwned:
 
         game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(evens=True,
-                                sow_capt_all=True,
+                                sow_rule=SowRule.OWN_SOW_CAPT_ALL,
                                 goal=Goal.TERRITORY,
                                 gparam_one=4,
                                 stores=True,

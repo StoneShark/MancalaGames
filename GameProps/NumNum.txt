@@ -14,7 +14,7 @@
       "mustpass": true,
       "round_starter": 1,
       "rounds": true,
-      "sow_capt_all": true,
+      "sow_rule": 2,
       "sow_direct": 1,
       "stores": true
    },

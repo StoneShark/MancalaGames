@@ -7,7 +7,7 @@
       "blocks": true,
       "gparam_one": 4,
       "mlaps": 1,
-      "sow_blkd_div": true,
+      "sow_rule": 1,
       "sow_direct": 1
    },
    "game_class": "Mancala",

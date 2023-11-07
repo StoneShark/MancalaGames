@@ -27,6 +27,7 @@ from game_interface import Goal
 from game_interface import GrandSlam
 from game_interface import LapSower
 from game_interface import RoundStarter
+from game_interface import SowRule
 from fill_patterns import PCLASSES
 
 
@@ -260,38 +261,43 @@ def add_block_and_divert_rules(rules):
         flag, based only on a ginfo parameter."""
 
         def _divert_and(ginfo):
-            return ginfo.sow_blkd_div and getattr(ginfo, flag_name)
+            return (ginfo.sow_rule == SowRule.SOW_BLKD_DIV
+                    and getattr(ginfo, flag_name))
 
         return _divert_and
 
     rules.add_rule(
         'next_ml_no_bdiv',
         rule=lambda ginfo: (ginfo.mlaps == LapSower.LAPPER_NEXT
-                            and ginfo.sow_blkd_div),
+                            and ginfo.sow_rule == SowRule.SOW_BLKD_DIV),
         msg='MLAPS of LAPPER_NEXT is not supported with SOW_BLKD_DIV',
         excp=NotImplementedError)
 
     rules.add_rule(
         'bdiv_need_gparam1',
-        rule=lambda ginfo: ginfo.sow_blkd_div and not ginfo.gparam_one,
+        rule=lambda ginfo: (ginfo.sow_rule == SowRule.SOW_BLKD_DIV
+                            and not ginfo.gparam_one),
         msg='SOW_BLKD_DIV requires GPARAM_ONE for closing holes',
         excp=gi.GameInfoError)
 
     rules.add_rule(
         'bdiv_need_blocks',
-        rule=lambda ginfo: ginfo.sow_blkd_div and not ginfo.blocks,
+        rule=lambda ginfo: (ginfo.sow_rule == SowRule.SOW_BLKD_DIV
+                            and not ginfo.blocks),
         msg='SOW_BLKD_DIV requires BLOCKS for closing holes',
         excp=gi.GameInfoError)
 
     rules.add_rule(
         'bdiv_min_move_one',
-        rule=lambda ginfo: ginfo.sow_blkd_div and ginfo.min_move != 1,
+        rule=lambda ginfo: (ginfo.sow_rule == SowRule.SOW_BLKD_DIV
+                            and ginfo.min_move != 1),
         msg='SOW_BLKD_DIV requires a minimum move of 1',
         excp=gi.GameInfoError)
 
     rules.add_rule(
         'bdiv_min_req_dep_goal',
-        rule=lambda ginfo: ginfo.sow_blkd_div and ginfo.goal != Goal.DEPRIVE,
+        rule=lambda ginfo: (ginfo.sow_rule == SowRule.SOW_BLKD_DIV
+                            and ginfo.goal != Goal.DEPRIVE),
         msg='SOW_BLKD_DIV requires a goal of DEPRIVE',
         excp=gi.GameInfoError)
 
@@ -308,7 +314,8 @@ def add_block_and_divert_rules(rules):
 
     rules.add_rule(
         'bdiv_no_capt_on',
-        rule=lambda ginfo: ginfo.sow_blkd_div and any(ginfo.capt_on),
+        rule=lambda ginfo: (ginfo.sow_rule == SowRule.SOW_BLKD_DIV
+                            and any(ginfo.capt_on)),
         msg='sow_blkd_div closes holes to remove seeds from play, ' + \
             'no other capture mechanisms are allowed [CAPT_ON]',
         excp=gi.GameInfoError)
@@ -444,8 +451,9 @@ def build_rules():
 
     man_rules.add_rule(
         'sow_own_not_capt_all',
-        rule=lambda ginfo: ginfo.sow_own_store and ginfo.sow_capt_all,
-        msg='SOW_OWN_STORE is not supported with SOW_CAPT_ALL',
+        rule=lambda ginfo: (ginfo.sow_own_store
+                            and ginfo.sow_rule == SowRule.OWN_SOW_CAPT_ALL),
+        msg='SOW_OWN_STORE is not supported with OWN_SOW_CAPT_ALL',
         excp=NotImplementedError)
 
     man_rules.add_rule(
@@ -463,7 +471,7 @@ def build_rules():
     man_rules.add_rule(
         'blocks_wo_rounds',
         rule=lambda ginfo: (ginfo.blocks
-                            and not ginfo.sow_blkd_div
+                            and not ginfo.sow_rule == SowRule.SOW_BLKD_DIV
                             and not ginfo.rounds),
         msg='BLOCKS without ROUNDS or SOW_BLKD_DIV does nothing',
         warn=True)
@@ -477,7 +485,7 @@ def build_rules():
 
     man_rules.add_rule(
         'warn_no_capt',
-        rule=lambda ginfo: not any([ginfo.sow_blkd_div,
+        rule=lambda ginfo: not any([ginfo.sow_rule == SowRule.SOW_BLKD_DIV,
                                     ginfo.capttwoout,
                                     ginfo.capt_next,
                                     ginfo.evens,
@@ -560,9 +568,9 @@ def build_rules():
 
     man_rules.add_rule(
         'sca_gs_not',
-        rule=lambda ginfo: (ginfo.sow_capt_all
+        rule=lambda ginfo: (ginfo.sow_rule == SowRule.OWN_SOW_CAPT_ALL
                             and ginfo.grandslam != GrandSlam.LEGAL),
-        msg='SOW_CAPT_ALL requires that GRANDLAM be LEGAL',
+        msg='OWN_SOW_CAPT_ALL requires that GRANDLAM be LEGAL',
         excp=gi.GameInfoError)
 
     man_rules.add_rule(

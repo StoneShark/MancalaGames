@@ -17,7 +17,7 @@
       "rnd_umove": false,
       "round_starter": 0,
       "rounds": true,
-      "sow_capt_all": true,
+      "sow_rule": 2,
       "sow_direct": 1,
       "stores": true
 
