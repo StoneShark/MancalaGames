@@ -19,8 +19,6 @@ from game_interface import GrandSlam
 from game_interface import WinCond
 from game_log import game_log
 
-from incrementer import NOSKIPSTART
-
 
 # %% enum
 
@@ -87,7 +85,7 @@ class CaptMultiple(CaptMethodIf):
             self.game.board[loc] = 0
             mdata.captured = True
 
-            loc = self.game.deco.incr.incr(loc, mdata.direct, NOSKIPSTART)
+            loc = self.game.deco.incr.incr(loc, mdata.direct)
 
 
 class CaptOppDirMultiple(CaptMethodIf):
@@ -122,7 +120,7 @@ class CaptNext(CaptMethodIf):
 
         loc = mdata.capt_loc
         direct = mdata.direct
-        loc_next = self.game.deco.incr.incr(loc, direct, NOSKIPSTART)
+        loc_next = self.game.deco.incr.incr(loc, direct)
 
         if (self.game.board[loc] == 1
                 and self.game.board[loc_next]
@@ -152,8 +150,8 @@ class CaptTwoOut(CaptMethodIf):
 
         loc = mdata.capt_loc
         direct = mdata.direct
-        loc_p1 = self.game.deco.incr.incr(loc, direct, NOSKIPSTART)
-        loc_p2 = self.game.deco.incr.incr(loc_p1, direct, NOSKIPSTART)
+        loc_p1 = self.game.deco.incr.incr(loc, direct)
+        loc_p2 = self.game.deco.incr.incr(loc_p1, direct)
 
         if (self.seed_cond(self.game.board[loc], cnt)
                 and not self.game.board[loc_p1]
@@ -264,7 +262,7 @@ class CaptContinueXCapt(CaptMethodIf):
         loc = mdata.capt_loc
         while True:
 
-            loc = self.game.deco.incr.incr(loc, mdata.direct, NOSKIPSTART)
+            loc = self.game.deco.incr.incr(loc, mdata.direct)
             cross = self.game.cts.cross_from_loc(loc)
 
             if (not self.game.board[loc]

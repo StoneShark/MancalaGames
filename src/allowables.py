@@ -19,7 +19,6 @@ from game_interface import AllowRule
 from game_interface import Direct
 from game_interface import GrandSlam
 from game_interface import WinCond
-from incrementer import NOSKIPSTART
 
 
 # %%  allowable moves interface
@@ -121,7 +120,7 @@ class SingleToZero(AllowableIf):
 
             pos = self.game.cts.xlate_pos_loc(not self.game.turn, loc)
             direct = self.game.deco.get_dir.get_direction(loc, loc)
-            nloc = self.game.deco.incr.incr(loc, direct, NOSKIPSTART)
+            nloc = self.game.deco.incr.incr(loc, direct)
 
             if (allow[pos]
                     and self.game.board[loc] == 1
@@ -196,9 +195,7 @@ class OnlyRightTwo(AllowableIf):
             dbl_holes = self.game.cts.dbl_holes
 
             if self.game.turn:
-                start = self.game.deco.incr.incr(dbl_holes,
-                                                 Direct.CW,
-                                                 NOSKIPSTART)
+                start = self.game.deco.incr.incr(dbl_holes, Direct.CW)
                 print('r start', start)
                 pos = self.game.cts.xlate_pos_loc(not self.game.turn, start)
                 fright = holes - pos - 2
@@ -206,9 +203,7 @@ class OnlyRightTwo(AllowableIf):
                 fleft = holes - allow - fright
                 return [False] * fleft + [True] * allow + [False] * fright
 
-            start = self.game.deco.incr.incr(holes,
-                                             Direct.CW,
-                                             NOSKIPSTART)
+            start = self.game.deco.incr.incr(holes, Direct.CW)
             print('l start', start)
             fright = holes - start - 1
             allow = min(start + 1, 2)

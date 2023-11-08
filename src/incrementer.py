@@ -3,13 +3,6 @@
 start location and concrete direction (CW or CCW)
 determine the next hole to sow or attempt capture from.
 
-Sowing always implements the skip_start flag by
-incrementing past 'start', but capturing needs to not
-skip the start (i.e. the capture should end when we find
-an empty hole that was skipped in sowing).  The
-NOSKIPSTART token can be provided for 'start' to support
-this.
-
 The chained decorator is called first in each decorator
 (pre-call), allowing each decorator to increment futher
 if the next hole is not to be played (e.g. blocked,
@@ -32,7 +25,7 @@ import abc
 
 # %% constants
 
-# the capturer needs to disable the skip start when incrementing
+# disable the skip start when incrementing
 NOSKIPSTART = -1
 
 
@@ -46,7 +39,7 @@ class IncrementerIf(abc.ABC):
         self.decorator = decorator
 
     @abc.abstractmethod
-    def incr(self, loc, direct, start):
+    def incr(self, loc, direct, start=NOSKIPSTART):
         """Do one increment.
         RETURN new loc"""
 
@@ -56,7 +49,7 @@ class IncrementerIf(abc.ABC):
 class Increment(IncrementerIf):
     """Do increment with mod for board size."""
 
-    def incr(self, loc, direct, _):
+    def incr(self, loc, direct, _=NOSKIPSTART):
         """Do an increment."""
 
         return (loc + direct) % self.game.cts.dbl_holes
@@ -67,7 +60,7 @@ class Increment(IncrementerIf):
 class IncPastStart(IncrementerIf):
     """Do an increment past the start hole."""
 
-    def incr(self, loc, direct, start):
+    def incr(self, loc, direct, start=NOSKIPSTART):
         """Increment with skip_start."""
 
         loc = self.decorator.incr(loc, direct, start)
@@ -81,7 +74,7 @@ class IncPastStart(IncrementerIf):
 class IncPastBlocks(IncrementerIf):
     """Increment past blocked cells."""
 
-    def incr(self, loc, direct, start):
+    def incr(self, loc, direct, start=NOSKIPSTART):
         """Incerement past blocked holes"""
 
         loc = self.decorator.incr(loc, direct, start)

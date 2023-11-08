@@ -27,7 +27,6 @@ from game_interface import LapSower
 from game_interface import SowPrescribed
 from game_interface import SowRule
 from game_interface import WinCond
-from incrementer import NOSKIPSTART
 
 
 # %% constants
@@ -294,9 +293,7 @@ class NextLapCont(LapContinuerIf):
         if mdata.capt_loc is WinCond.REPEAT_TURN:
             return False
 
-        loc = self.game.deco.incr.incr(mdata.capt_loc,
-                                       mdata.direct,
-                                       NOSKIPSTART)
+        loc = self.game.deco.incr.incr(mdata.capt_loc, mdata.direct)
         if self.game.board[loc]:
             mdata.capt_loc = loc
             return True
