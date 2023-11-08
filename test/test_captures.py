@@ -573,6 +573,47 @@ class TestRepeatTurn:
         assert mdata.captured != WinCond.REPEAT_TURN
 
 
+class TestCaptTwoOut:
+
+    # actual captures are all on True side, picks on false side
+    test_cases = [
+
+        ([3, 3, 3, 4, 0, 2], False, 3, [0, 3, 3, 4, 0, 0], {'capsamedir': True,
+                                                            'capttwoout': True}),
+
+        ([3, 3, 3, 4, 0, 2], False, 3, [0, 3, 3, 4, 0, 0], {'capsamedir': True,
+                                                            'capttwoout': True,
+                                                            'multicapt': True}),
+        ([0, 3, 0, 4, 0, 2], False, 3, [0] * 6, {'capsamedir': True,
+                                                 'capttwoout': True,
+                                                 'multicapt': True}),
+
+        ]
+
+    @pytest.mark.parametrize('board, turn, loc, eboard, options',
+                             test_cases,
+                             ids=[f'case_{f}'
+                                  for f in range(len(test_cases))])
+    def test_capts(self, board, turn, loc, eboard, options):
+
+        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_info = gi.GameInfo(stores=True,
+                                pickextra=CaptExtraPick.PICKCROSS,
+                                mlaps=True,
+                                **options,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        game.board = board.copy()
+        mdata = MoveData(game, None)
+        mdata.direct = game.info.sow_direct
+        mdata.capt_loc = loc
+        game.deco.capturer.do_captures(mdata)
+
+        assert mdata.captured
+        assert game.board == eboard
+
 
 class TestPickCross:
 
@@ -687,51 +728,46 @@ class TestPickCross:
         assert game.board == [3, 3, 3, 3, 3, 3]
 
 
+class TestPickTwos:
 
-class TestCaptTwoOut:
-
-    # actual captures are all on True side, picks on false side
     test_cases = [
-
-        ([3, 3, 3, 4, 0, 2], False, 3, [0, 3, 3, 4, 0, 0], {'capsamedir': True,
-                                                            'capttwoout': True}),
-
-        ([3, 3, 3, 4, 0, 2], False, 3, [0, 3, 3, 4, 0, 0], {'capsamedir': True,
-                                                            'capttwoout': True,
-                                                            'multicapt': True}),
-        ([0, 3, 0, 4, 0, 2], False, 3, [0] * 6, {'capsamedir': True,
-                                                 'capttwoout': True,
-                                                 'multicapt': True}),
+        ([0, 0, 1, 2, 1, 2, 3, 2], False, 2, True,  [0, 0, 1, 2, 1, 0, 3, 0]),
+        ([2, 2, 2, 2, 2, 1, 0, 0], True,  5, True,  [0, 0, 0, 0, 2, 1, 0, 0]),
+        ([2, 2, 0, 2, 2, 1, 0, 0], True,  5, False, [2, 2, 0, 2, 2, 1, 0, 0]),
+        ([3, 1, 2, 1, 2, 1, 0, 0], True,  5, True,  [3, 1, 0, 1, 2, 1, 0, 0]),
 
         ]
-
-    @pytest.mark.parametrize('board, turn, loc, eboard, options',
+    @pytest.mark.parametrize('board, turn, caploc, eres, eboard',
                              test_cases,
                              ids=[f'case_{f}'
                                   for f in range(len(test_cases))])
-    def test_capts(self, board, turn, loc, eboard, options):
+    def test_capts(self, board, turn, caploc, eres, eboard):
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_consts = gc.GameConsts(nbr_start=2, holes=4)
         game_info = gi.GameInfo(stores=True,
-                                pickextra=CaptExtraPick.PICKCROSS,
-                                mlaps=True,
-                                **options,
+                                crosscapt=True,
+                                capt_on=[2],
+                                oppsidecapt=True,
+                                pickextra=CaptExtraPick.PICKTWOS,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
-
         game.board = board.copy()
+        game.turn = turn
+        print(game)
+
         mdata = MoveData(game, None)
         mdata.direct = game.info.sow_direct
-        mdata.capt_loc = loc
+        mdata.capt_loc = caploc
         game.deco.capturer.do_captures(mdata)
+        print(game)
 
-        assert mdata.captured
+        assert mdata.captured == eres
         assert game.board == eboard
 
 
 # %%
 
 """
-pytest.main(['test_captures.py::TestTuzdek'])
+pytest.main(['test_captures.py::TestPickTwo[case_1]'])
 """

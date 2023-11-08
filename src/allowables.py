@@ -188,8 +188,6 @@ class OnlyRightTwo(AllowableIf):
     Find the first hole with the incrementer, because it will
     incr past blocks."""
 
-    # TODO rule to only support holes sized allowables not dbl_holes
-
     def get_allowable_holes(self):
         """Return allowable moves."""
 
@@ -208,16 +206,15 @@ class OnlyRightTwo(AllowableIf):
                 fleft = holes - allow - fright
                 return [False] * fleft + [True] * allow + [False] * fright
 
-            else:
-                start = self.game.deco.incr.incr(holes,
-                                                 Direct.CW,
-                                                 NOSKIPSTART)
-                print('l start', start)
-                fright = holes - start - 1
-                allow = min(start + 1, 2)
-                fleft = holes - allow - fright
+            start = self.game.deco.incr.incr(holes,
+                                             Direct.CW,
+                                             NOSKIPSTART)
+            print('l start', start)
+            fright = holes - start - 1
+            allow = min(start + 1, 2)
+            fleft = holes - allow - fright
 
-                return [False] * fleft + [True] * allow + [False] * fright
+            return [False] * fleft + [True] * allow + [False] * fright
 
         return self.decorator.get_allowable_holes()
 

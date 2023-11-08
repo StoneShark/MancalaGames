@@ -487,13 +487,12 @@ class SowVisitedMlap(SowMethodIf):
 
 # %% prescribed opening moves
 
-# only use prescribe openings if the first player has a choice
+# use prescribed openings if the first player has a choice
 # if it's a standard pattern use start_pattern
 
 
 class SowPrescribedIf(SowMethodIf):
     """A deco that diverts to prescribed moves for one or more turns.
-
     Concrete subclasses should not provide sow_seeds."""
 
     def __init__(self, game, count, decorator=None):
@@ -512,9 +511,15 @@ class SowPrescribedIf(SowMethodIf):
             mdata = self.decorator.sow_seeds(mdata)
         else:
             mdata = self.do_prescribed(mdata)
-            # game_log.step('Prescribed', self.game)
 
         return mdata
+
+    def get_single_sower(self):    # pragma: no coverage
+        """ginfo rules should prevent this from being called.
+        don't try to force do_prescribed into valid sower rules
+        (until we want it :)"""
+        raise NotImplementedError(
+            "SowPrescribedIf doesn't know how to get single sower")
 
 
 class SowBasicFirst(SowPrescribedIf):

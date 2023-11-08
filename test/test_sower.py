@@ -277,6 +277,38 @@ class TestSower:
         assert game.store == estore
 
 
+    skip_cases = [
+        ([0, 0, 3, 3, 2, 2, 2, 2], 3, [1, 1, 4, 0, 2, 2, 2, 2], 2),
+        ([0, 0, 3, 3, 2, 1, 0, 2], 3, [1, 0, 3, 0, 2, 2, 1, 2], 0),
+        ([0, 0, 3, 3, 1, 1, 1, 1], 3, [0, 0, 3, 0, 2, 2, 2, 1], 6),
+        ([0, 0, 3, 5, 1, 1, 1, 1], 3, [1, 0, 3, 0, 2, 2, 2, 2], 0),
+        ([0, 2, 0, 0, 2, 2, 2, 2], 1, [0, 0, 1, 1, 2, 2, 2, 2], 3),
+
+        ]
+    @pytest.mark.parametrize('board, spos, eboard, ecloc',
+                             skip_cases)
+    def test_skip_opp_n(self, board, spos, eboard, ecloc):
+
+        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_info = gi.GameInfo(stores=True,
+                                evens=True,
+                                sow_rule=SowRule.NO_SOW_OPP_2S,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = False
+        game.board = board
+        game.store[0] = game.cts.total_seeds - sum(board)
+
+        mdata = MoveData(game, spos)
+        mdata.sow_loc, mdata.seeds = game.deco.starter.start_sow(spos)
+        mdata.direct = game.info.sow_direct
+        mdata = game.deco.sower.sow_seeds(mdata)
+
+        assert game.board == eboard
+        assert mdata.capt_loc == ecloc
+
+
     @pytest.mark.parametrize('end_loc, board, eresult',
                              [(WinCond.REPEAT_TURN, utils.build_board([1, 0, 3],
                                                                     [0, 3, 4]),
@@ -988,6 +1020,53 @@ class TestPrescribed:
         swr.sow_seeds(mdata)
 
         assert len(mpresc.mock_calls) == 2
+        msower.assert_called_once()
+
+
+    def test_basic_pres(self, mocker):
+        """the prescribed sower is SowSeeds, confirm it's called"""
+
+        msower = mocker.patch('sower.SowSeeds.sow_seeds')
+
+        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_info = gi.GameInfo(evens=True,
+                                prescribed=SowPrescribed.BASIC_SOWER,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        move = 1
+        mdata = MoveData(game, move)
+        mdata.sow_loc, mdata.seeds = game.deco.starter.start_sow(move)
+        mdata.direct = game.info.sow_direct
+
+        game.mcount += 1           # done at the top of _move
+        game.deco.sower.sow_seeds(mdata)
+
+        msower.assert_called_once()
+
+
+    def test_mlaps_pres(self, mocker):
+        """the prescribed sower is SowMlapSeeds, confirm it's called"""
+
+        msower = mocker.patch('sower.SowMlapSeeds.sow_seeds')
+
+        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_info = gi.GameInfo(evens=True,
+                                mlaps=True,
+                                prescribed=SowPrescribed.MLAPS_SOWER,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        move = 1
+        mdata = MoveData(game, move)
+        mdata.sow_loc, mdata.seeds = game.deco.starter.start_sow(move)
+        mdata.direct = game.info.sow_direct
+
+        game.mcount += 1           # done at the top of _move
+        game.deco.sower.sow_seeds(mdata)
+
         msower.assert_called_once()
 
 

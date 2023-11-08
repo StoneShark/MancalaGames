@@ -503,7 +503,7 @@ class PickOppTwos(CaptMethodIf):
     def do_captures(self, mdata):
 
         self.decorator.do_captures(mdata)
-        if self.game.mcount > 1 and mdata.captured:
+        if mdata.captured:
 
             msg = ''
             for loc in self.game.cts.get_opp_range(self.game.turn):

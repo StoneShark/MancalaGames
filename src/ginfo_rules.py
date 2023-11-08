@@ -27,6 +27,7 @@ from game_interface import Goal
 from game_interface import GrandSlam
 from game_interface import LapSower
 from game_interface import RoundStarter
+from game_interface import SowPrescribed
 from game_interface import SowRule
 from fill_patterns import PCLASSES
 
@@ -436,12 +437,32 @@ def build_rules():
     add_child_rules(man_rules)
     add_no_sides_rules(man_rules)
 
+
     man_rules.add_rule(
         'no_udir_1to0',
         rule=lambda ginfo: (ginfo.udirect
                             and ginfo.allow_rule == AllowRule.SINGLE_TO_ZERO),
-        msg='Allow rule SINGLE_TO_ZERO cannot be used with UDIR_HOLES.',
+        msg='Allow rule SINGLE_TO_ZERO cannot be used with UDIR_HOLES',
         excp=gi.GameInfoError)
+
+    man_rules.add_rule(
+        'no_right_two_ml3',
+        rule=lambda ginfo: (ginfo.mlength == 3
+                            and ginfo.allow_rule in
+                                {AllowRule.FIRST_TURN_ONLY_RIGHT_TWO,
+                                 AllowRule.RIGHT_2_1ST_THEN_ALL_TWO}),
+        msg='Right Two allow rules not supported for MLENGTH 3 games',
+        excp=gi.GameInfoError)
+        # what does 'right' mean if can move more than one side of the board
+
+    man_rules.add_rule(
+        'no_pres_opp_empty',
+        rule=lambda ginfo: (ginfo.prescribed != SowPrescribed.NONE
+                            and ginfo.allow_rule == AllowRule.OPP_OR_EMPTY),
+        msg='Prescribed moves not supported with OPP_OR_EMPTY',
+        excp=gi.GameInfoError)
+        # don't know how to get the single_sower from a prescribed sow,
+        # the don't have to follow a prescribed (pun intended) sow structure
 
     man_rules.add_rule(
         'sow_own_needs_stores',
