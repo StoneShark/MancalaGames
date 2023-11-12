@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Oware",
-      "about": "Oware: a single-lap mancala,\nsow direction is counter-clockwise,\ncapture on opponents side on 1s, 2s and 3s.",
+      "about": "Oware:\na single-lap mancala, sow direction is counter-clockwise, capture on opponents side on 1s, 2s and 3s.\n\nVariations:  remove capture on 1s, any Grand Slam rule",
       "grandslam": 2,
       "multicapt": true,
       "mustshare": true,
