@@ -335,6 +335,19 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         self.board[loc] = seeds
 
 
+    def get_store(self, row):
+        """return the number of seeds in the store for side.
+        row : 0 for top row, 1 for bottom  (opposite of player)"""
+
+        return self.store[(row + 1) % 2]
+
+
+    def set_store(self, row, seeds):
+        """Set the store seeds of owner."""
+        self.store[(row + 1) % 2] = seeds
+
+
+
     def set_blocked(self, loc, blocked):
         """Set the blocked status location."""
         self.blocked[loc] = blocked
@@ -561,13 +574,6 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
                             blocked=self.blocked[loc],
                             ch_owner=self.child[loc],
                             owner=self.owner[loc])
-
-
-    def get_store(self, row):
-        """return the number of seeds in the store for side.
-        row : 0 for top row, 1 for bottom  (opposite of player)"""
-
-        return self.store[(row + 1) % 2]
 
 
     def get_turn(self):

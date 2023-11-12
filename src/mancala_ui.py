@@ -29,9 +29,6 @@ from game_log import game_log
 
 AI_DELAY = [0, 1000, 3000]
 
-SYSTEM_COLOR = 'SystemButtonFace'
-TURN_COLOR = 'lightblue'
-
 
 # %%  GameTally
 
@@ -102,32 +99,6 @@ class GameTally:
             self.round_ties = 0
 
 
-# %% store
-
-class Store:
-    """Graphic for the seed storage spots."""
-
-    def __init__(self, parent, side):
-        """Create the Seed storage graphic."""
-        self.frame = tk.Frame(parent, padx=20, pady=20,
-                               borderwidth=3, relief='ridge')
-        self.frame.pack(side=side)
-
-        self.label = tk.Label(self.frame, width=3, text='',
-                              font='bold')
-        self.label.pack(expand=True, fill='both')
-
-
-    def set_store(self, seeds):
-        """Update the number of seeds in the store."""
-        self.label['text'] = str(seeds)
-
-    def set_color(self, color):
-        """Set the background color of the store."""
-        self.label['background'] = color
-        self.frame['background'] = color
-
-
 # %%  mancala ui
 
 class MancalaUI(tk.Frame):
@@ -181,7 +152,7 @@ class MancalaUI(tk.Frame):
         self._create_menus()
 
         if self.info.stores:
-            b_store = Store(self, 'left')
+            b_store = hbtn.StoreButton(self, self, 'left', True)
 
         land_frame = tk.Frame(self, padx=3, pady=3)
         land_frame.pack(side='left')
@@ -199,7 +170,7 @@ class MancalaUI(tk.Frame):
 
         self.stores = None
         if self.info.stores:
-            a_store = Store(self, 'right')
+            a_store = hbtn.StoreButton(self, self, 'right', False)
             self.stores = [b_store, a_store]
 
         # do not call new game
@@ -450,9 +421,8 @@ class MancalaUI(tk.Frame):
 
             player = row == turn_row
             if self.info.stores:
-                self.stores[row].set_store(self.game.get_store(row))
-                self.stores[row].set_color(
-                    TURN_COLOR if player else SYSTEM_COLOR)
+                self.stores[row].set_store(self.game.get_store(row),
+                                           player)
 
             for pos in range(self.game.cts.holes):
 
@@ -522,6 +492,8 @@ class MancalaUI(tk.Frame):
         for button_row in self.disp:
             for btn in button_row:
                 btn.set_behavior(mode)
+        self.stores[0].set_behavior(mode)
+        self.stores[1].set_behavior(mode)
 
         self._refresh()
         if mode == Behavior.GAMEPLAY:

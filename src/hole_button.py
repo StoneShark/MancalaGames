@@ -7,6 +7,7 @@ Created on Sun Aug 13 10:06:37 2023
 @author: Ann"""
 
 import abc
+import collections
 import enum
 
 import tkinter as tk
@@ -131,7 +132,7 @@ class Hold:
         Hold._top = None
 
 
-# %%  Behavior Interface
+# %%  Interfaces
 
 class BehaviorIf(abc.ABC):
     """Button behavior interface."""
@@ -149,6 +150,25 @@ class BehaviorIf(abc.ABC):
     @abc.abstractmethod
     def set_props(self, props, disable, cactive):
         """Set text, props and states of the hole."""
+
+    @abc.abstractmethod
+    def left_click(self):
+        """Do the left click action."""
+
+    @abc.abstractmethod
+    def right_click(self):
+        """Do the right click action"""
+
+
+class StoreBehaviorIf(abc.ABC):
+    """Store behavior interface."""
+
+    def __init__(self, store):
+        self.str = store
+
+    @abc.abstractmethod
+    def set_store(self, seeds, highlight):
+        """Set text, props and states of the store."""
 
     @abc.abstractmethod
     def left_click(self):
@@ -336,9 +356,109 @@ class RndSetupButtonBehavior(BehaviorIf):
             self.btn['text'] = ''
 
 
+class RndMoveSeedsButtonBehavior(BehaviorIf):
+    """Any number of seeds my placed on the board (by the loser)
+    each hole must contain at least one seed. Extra seeds may be
+    left in the store. Seeds cannot be moved from one side to
+    the other.
+    Winner's seeds will be arranged the same."""
+
+    # TODO Giuthi format message for new round; consider 'move to stores'
+
+    message = """Giuthi new rounds. The loser may
+    arrange the playable seeds how they wish.
+    The winner's seeds will be arranged the same way.
+    Do you wish to move seeds?"""
+
+    @classmethod
+    def ask_mode_change(cls, game_ui):
+
+        ans = tk.messagebox.askquestion(
+            title='Move seeds',
+            message=RndMoveSeedsButtonBehavior.message,
+            parent=game_ui)
+
+        if ans == YES_STR:
+            Hold.hold_menu(game_ui)
+            return True
+        return False
+
+
+    def set_props(self, props, _1, _2):
+        """Set text, props and states of the hole."""
+        self.btn.props = props
+        self._refresh()
+
+
+    def left_click(self):
+        """Drop any held seeds, update the game_board and button.
+        Don't drop seeds if:
+            1. there are no seeds in the hold
+            2. the seeds are being dropped on the wrong side of the board
+               from which they were picked up."""
+
+        if not Hold.nbr or Hold.owner != self.btn.row:
+            self.btn.bell()
+            return
+
+        game = self.btn.game_ui.game
+        seeds = game.get_board(self.btn.loc) + Hold.nbr
+        self.btn.props.seeds = seeds
+        game.set_board(self.btn.loc, seeds)
+        self._refresh()
+
+        Hold.empty()
+        self.btn.game_ui.config(cursor='')
+
+
+    def right_click(self):
+        """Pick up some or all of the seeds, but
+            1. only on loser side (game.turn is winner, row is not turn;
+                                   so loser row it game.turn)
+            2. if there are seeds to pick up
+            3. another condition that doesn't make sense at the moment !?!?!?
+
+            Always leave at least one seed in each hole."""
+
+        game = self.btn.game_ui.game
+        if (not game.turn == self.btn.row
+                or not self.btn.props.seeds
+                or Hold.owner not in (None, self.btn.row)):
+            self.btn.bell()
+            return
+
+        max_seeds = self.btn.props.seeds - 1
+        seeds = Hold.query_nbr_seeds(self.btn.row, max_seeds)
+
+        if seeds:
+            seeds = game.get_board(self.btn.loc) - seeds
+            self.btn.props.seeds = seeds
+            game.set_board(self.btn.loc, seeds)
+            self._refresh()
+
+            self.btn.game_ui.config(cursor='circle')
+
+
+    def _refresh(self):
+        """Make the UI match the behavior and game data."""
+
+        self.btn['background'] = SEED_COLOR
+        self.btn['state'] = 'normal'
+
+        if self.btn.props.blocked:
+            self.btn['text'] = 'x'
+
+        elif self.btn.props.seeds:
+            self.btn['text'] = str(self.btn.props.seeds)
+        else:
+            self.btn['text'] = ''
+
+
 class MoveSeedsButtonBehavior(BehaviorIf):
     """Move Seeds behavior. The seeds may be rearranged as
-    desired."""
+    desired.
+
+    This is intended to be used for Bao"""
 
     @classmethod
     def ask_mode_change(cls, game_ui):
@@ -347,7 +467,7 @@ class MoveSeedsButtonBehavior(BehaviorIf):
             title='Move seeds',
             message='At the start of this game you may  rearrange seeds\n'
             'on your side of the board. Your opponents seeds\n'
-            'will be arrangedd the same.\n\n'
+            'will be arranged the same.\n\n'
             'Rearranging seeds counts as your first move.\n\n'
             'A right click will query how many seeds to pick (or\n'
             'pick-up a single seed).\n'
@@ -427,6 +547,92 @@ class MoveSeedsButtonBehavior(BehaviorIf):
             self.btn['text'] = ''
 
 
+# %% store behaviors
+
+
+class NoStoreBehavior(StoreBehaviorIf):
+    """Store behavior that has no interaction.
+    Background color reflects the current turn."""
+
+    def set_store(self, seeds, highlight):
+        """Set the properties of the store button."""
+        print('NS', seeds, highlight, self.str.game_ui.game.turn)
+
+        self.str['state'] = 'disabled'
+
+        if seeds:
+            self.str['text'] = str(seeds)
+        else:
+            self.str['text'] = ''
+
+        self.str['background'] = MOVE_COLOR if highlight else SYSTEM_COLOR
+
+    def left_click(self):
+        """No interaction, do nothing."""
+
+    def right_click(self):
+        """No interaction, do nothing."""
+
+
+
+class RndMoveStoreBehavior(StoreBehaviorIf):
+    """Store behavior interface.
+
+    Seeds may be moved in and out of the loser's store.
+    Cursor is changed on the whole game_ui, when holding seeds.
+
+    Remember game.set(get)_store take a row not a turn or owner"""
+
+    def set_store(self, seeds, highlight):
+        """Set the properties of the store button."""
+        print('RM', seeds, highlight, self.str.game_ui.game.turn)
+
+        self.str['state'] = 'normal'
+
+        if seeds:
+            self.str['text'] = str(seeds)
+        else:
+            self.str['text'] = ''
+
+        self.str['background'] = SYSTEM_COLOR if highlight else SEED_COLOR
+
+
+    def left_click(self):
+        """Drop all picked up seeds."""
+
+        if not Hold.nbr and Hold.owner == self.str.owner:
+            self.str.bell()
+            return
+
+        game = self.str.game_ui.game
+        seeds = game.get_store(not self.str.owner) + Hold.nbr
+        self.set_store(seeds, False)
+        game.set_store(not self.str.owner, seeds)
+        print(game)
+
+        self.str.game_ui.config(cursor='')
+        Hold.empty()
+
+
+    def right_click(self):
+        """Pop up the nbr seeds query, and pickup seeds if
+        the user entered a valid number."""
+
+        game = self.str.game_ui.game
+        seeds = game.get_store(not self.str.owner)
+
+        if (not game.turn == self.str.owner
+                and Hold.query_nbr_seeds(not self.str.owner, seeds)):
+
+            game = self.str.game_ui.game
+            seeds -= Hold.nbr
+            self.set_store(seeds, False)
+            game.set_store(not self.str.owner, seeds)
+            print(game)
+
+            self.str.game_ui.config(cursor='circle')
+
+
 # %% enum, class list and global function
 
 class Behavior(enum.IntEnum):
@@ -434,19 +640,23 @@ class Behavior(enum.IntEnum):
 
     GAMEPLAY = 0
     RNDSETUP = 1
-    MOVESEEDS = 2
+    RNDMOVE = 2
+    MOVESEEDS = 3
 
 
-BEHAVIOR_CLASS = (PlayButtonBehavior,
-                  RndSetupButtonBehavior,
-                  MoveSeedsButtonBehavior)
+BTuples = collections.namedtuple('BTuples', ['button', 'store'])
+
+BEHAVIOR_CLASS = (BTuples(PlayButtonBehavior, NoStoreBehavior),
+                  BTuples(RndSetupButtonBehavior, NoStoreBehavior),
+                  BTuples(MoveSeedsButtonBehavior, NoStoreBehavior),
+                  BTuples(RndMoveSeedsButtonBehavior, RndMoveStoreBehavior))
 
 
 def ask_mode_change(behavior, game_ui):
     """Call the ask_mode_change for the specified behavior.
     Return it's result."""
 
-    return BEHAVIOR_CLASS[behavior].ask_mode_change(game_ui)
+    return BEHAVIOR_CLASS[behavior].button.ask_mode_change(game_ui)
 
 
 def force_mode_change():
@@ -454,7 +664,9 @@ def force_mode_change():
 
     Hold.cleanup()
 
-# %%  Button Class
+
+
+# %%  Button Classes
 
 
 class HoleButton(tk.Button):
@@ -480,14 +692,13 @@ class HoleButton(tk.Button):
                            disabledforeground='black', foreground='black',
                            anchor='center', font='bold',
                            command=self.left_click)
-
         self.bind('<Button-3>', self.right_click)
 
 
     def set_behavior(self, behavior):
         """Set the behavior of the button."""
 
-        self.behavior = BEHAVIOR_CLASS[behavior](self)
+        self.behavior = BEHAVIOR_CLASS[behavior].button(self)
         Hold.empty()
 
 
@@ -504,4 +715,44 @@ class HoleButton(tk.Button):
     def right_click(self, _=None):
         """Pass along right_click call.
         Don't care about the possible event parameter."""
+        self.behavior.right_click()
+
+
+
+class StoreButton(tk.Button):
+    """Implements one of the board stores."""
+
+    def __init__(self, pframe, game_ui, side, owner):
+        """Build the store button"""
+
+        self.game_ui = game_ui
+        self.owner = owner
+        self.behavior = NoStoreBehavior(self)
+
+        tk.Button.__init__(self, pframe, borderwidth=2, height=3, width=8,
+                           text='', padx=5, pady=10,
+                           disabledforeground='black', foreground='black',
+                           anchor='center', font='bold', relief='ridge',
+                           command=self.left_click)
+        self.pack(side=side)
+        self.bind('<Button-3>', self.right_click)
+
+
+    def set_behavior(self, behave):
+        """Set the behavior of the store."""
+        self.behavior = BEHAVIOR_CLASS[behave].store(self)
+
+
+    def set_store(self, seeds, turn):
+        """Set text, props and states of the store."""
+        self.behavior.set_store(seeds, turn)
+
+
+    def left_click(self):
+        """pass along left_click call."""
+        self.behavior.left_click()
+
+
+    def right_click(self, _=None):
+        """pass along right_click call."""
         self.behavior.right_click()
