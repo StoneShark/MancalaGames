@@ -20,12 +20,6 @@ from game_interface import WinCond
 from game_log import game_log
 
 
-# %% enum
-
-# picked own but did not capture, must be truthy
-PICKED = 2
-
-
 # %% capt interface
 
 
@@ -98,7 +92,7 @@ class CaptOppDirMultiple(CaptMethodIf):
 
 
 class CaptCross(CaptMethodIf):
-    """Cross capture, no pick own."""
+    """Cross capture."""
 
     def do_captures(self, mdata):
         """Do cross capture"""
@@ -111,6 +105,26 @@ class CaptCross(CaptMethodIf):
             self.game.store[self.game.turn] += self.game.board[cross]
             self.game.board[cross] = 0
             mdata.captured = True
+
+
+class CaptCrossVisited(CaptMethodIf):
+    """First, reject cross capt if not single seed or opponent's side.
+    Second, reject cross capt if have't sown opp hole this turn.
+    If rejecting cross capt, do repeat turn."""
+
+    def do_captures(self, mdata):
+
+        if (self.game.board[mdata.capt_loc] != 1
+                or self.game.cts.opp_side(self.game.turn, mdata.capt_loc)):
+            mdata.capture = None
+            return
+
+        cross = self.game.cts.cross_from_loc(mdata.capt_loc)
+        if mdata.board[cross] < self.game.board[cross]:
+            self.decorator.do_captures(mdata)
+            return
+
+        mdata.captured = WinCond.REPEAT_TURN
 
 
 class CaptNext(CaptMethodIf):
@@ -542,10 +556,12 @@ class RepeatTurn(CaptMethodIf):
 
 def _add_cross_capt_deco(game, capturer):
     """Add the cross capture decorators to the capturer deco.
-
     crosscapt and multicapt is always captsamedir"""
 
     capturer = CaptCross(game, capturer)
+
+    if game.info.xc_sown:
+        capturer = CaptCrossVisited(game, capturer)
 
     if game.info.xcpickown == CrossCaptOwn.PICK_ON_CAPT:
         capturer = CaptCrossPickOwnOnCapt(game, capturer)

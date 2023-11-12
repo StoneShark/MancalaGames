@@ -129,7 +129,7 @@ class SowPrescribed(enum.IntEnum):
 
     NONE = 0
     SOW1OPP = 1
-    TRIPLES = 2
+    #  Triples was here but it's not needed, 2 can be reused
     PLUS1MINUS1 = 3
     BASIC_SOWER = 4
     MLAPS_SOWER = 5
@@ -144,6 +144,7 @@ class SowRule(enum.IntEnum):
     OWN_SOW_CAPT_ALL = 2
     SOW_SOW_CAPT_ALL = 3
     NO_SOW_OPP_2S = 4
+    CHANGE_DIR_LAP = 5
 
 
 @enum.unique
@@ -237,6 +238,7 @@ class GameInfo:
     capttwoout: bool = False
 
     crosscapt: bool = False
+    xc_sown: bool = False
     xcpickown: CrossCaptOwn = CrossCaptOwn.LEAVE
     pickextra: CaptExtraPick = CaptExtraPick.NONE
 
@@ -303,7 +305,7 @@ class HoleProps:
     unlocked: bool
     blocked: bool
     ch_owner: bool  # child owner; actually one of False, True or None
-    owner: bool
+    owner: bool     # owner: Territory games: {False, True}; Else None
 
 
 class MoveTpl(tuple):

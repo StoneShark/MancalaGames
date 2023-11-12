@@ -28,23 +28,25 @@ SOW_CAPT_ALL does not do this capture.
 OPPSIDECAPT, EVENS, CAPT_MAX, CAPT_MIN, and CAPT_ON apply only to an optional SOW_CAPT_ALL and not the final capture."										1			
 Capture	crosscapt	Cross-Capture	game_info _	bool	False	0	2	"If the last sown seed is put in an empty hole, any seeds on the opposite side of the board are captured.
 SOW_CAPT_ALL does not do this capture."										1			
-Capture	xcpickown	Own Seed on Xcapture	game_info _	CrossCaptOwn	LEAVE	1	2	"When crosscapt is set, defines what to do with the single seed initiating the cross capture.
+Capture	xc_sown	Must sow opp for xcapt	game_info _	bool	False	1	2	"Don't do cross capture if have not sown into the opposite hole.
+If ending on own side of the board, but did not sow opposite hole, repeat turn."													
+Capture	xcpickown	Own Seed on Xcapture	game_info _	CrossCaptOwn	LEAVE	2	2	"When crosscapt is set, defines what to do with the single seed initiating the cross capture.
 - LEAVE: always leave the signle seed
 - PICK_ON_CAPTURE: only pick (capture) the seed if there was a capture.
 - ALWAYS_PICK: always pick (capture) the seed, even if there was not a capture"""										1			
-Capture	grandslam	Grand Slam	game_info _	GrandSlam	LEGAL	2	2	"A grandslam is when your opponent has seeds at the start of your turn and you capture them all. This option selects what to do:
+Capture	grandslam	Grand Slam	game_info _	GrandSlam	LEGAL	3	2	"A grandslam is when your opponent has seeds at the start of your turn and you capture them all. This option selects what to do:
 LEGAL: the seeds are captured
 NOT_LEGAL: you may not capture all of your opponents seeds, a move which would do so is not allowed
 NO_CAPT: you may sow the seeds, but the capture is not performed
 OPP_GETS_REMAIN: if you capture all your opponents seeds, they capture all of your remaining seeds and the game is over. Winner is determined by game goal.
 LEAVE_LEFT: the capture is performed from all but the leftmost hole from the sower perspective. This might leave your oppenents without seeds or might not capture any seeds.
 LEAVE_RIGHT: the capture is performed from all but the rightmost hole from the sower perspective. This might leave your oppenents without seeds."			1							1			
-Capture	moveunlock	Move Unlock for Capture	game_info _	bool	False	3	2	Captures may not be made from locked holes. Starting a sow from a hole unlocks it.						1			1				1
-Capture	nosinglecapt	No Single Seed Capture	game_info _	bool	False	4	2	"If the selected start hole contains one seed, no capture may be made with it."										1			
-Capture	capt_on	Capture On Values	game_info _	list[bool]	[]	6	2	"Capture when the contents of the hole is in the capt_on list. 
+Capture	moveunlock	Move Unlock for Capture	game_info _	bool	False	4	2	Captures may not be made from locked holes. Starting a sow from a hole unlocks it.						1			1				1
+Capture	nosinglecapt	No Single Seed Capture	game_info _	bool	False	5	2	"If the selected start hole contains one seed, no capture may be made with it."										1			
+Capture	capt_on	Capture On Values	game_info _	list[bool]	[]	7	2	"Capture when the contents of the hole is in the capt_on list. 
 SOW_CAPT_ALL does this capture."									1	1			
-Capture	capt_rturn	Repeat Turn on Capture	game_info _	bool	False	8	2	Repeat turn if there was a capture. Making children is not currently considered making a capture.													
-Capture	pickextra	"On Capture, Take More Rule"	game_info _	CaptExtraPick	NONE	9	2	"NONE: Nothing extra
+Capture	capt_rturn	Repeat Turn on Capture	game_info _	bool	False	9	2	Repeat turn if there was a capture. Making children is not currently considered making a capture.													
+Capture	pickextra	"On Capture, Take More Rule"	game_info _	CaptExtraPick	NONE	10	2	"NONE: Nothing extra
 PICKCROSS: Take the seeds from the opposite side of the board. 
 PICKTWOS: Take seeds from all holes containing two seeds but only after the first move."													
 Dynamics	stores	Stores	game_info _	bool	True	0	0	Are stores present on the UI. Stores might not be on the UI but used if seeds are taken out of play.		1									1	1	
@@ -70,8 +72,7 @@ ALTERNATES: everyother hole is filled with nbr_seeds, no seeds end up opposite e
 ALTS_WITH_1: like Alternates except the starter's 2nd from right hole with nbr_seeds is replaced with one seed.
 CLIPPEDTRIPLES: pattern of 0 S S (where S is nbr_seeds) is used to fill the holes; if a full cycle of 3 cannot be placed, the holes are left empty. The True and False sides are the same from the player's perspective, e.g. they will look reversed when viewed from one side of the game board.
 TWOEMPTY: all but the rightmost two holes for each player are filled with is nbr_seeds."		1											
-Dynamics	prescribed	Prescribed Opening Move	game_info _	SowPrescribed	NONE	3	2	"SOW1OPP: at least one seed must be sown on the opponents side of the board accomplished by sowing as normal until the final seed, then any remaining holes on the player side are skipped and the seed is dropped into the first of the opponent side holes.
-TRIPLES: needs work
+Dynamics	prescribed	Prescribed Opening Move	game_info _	SowPrescribed	NONE	3	2	"SOW1OPP: at least one seed must be sown on the opponents side of the board accomplished by sowing as normal until the final seed, then any remaining holes on the player side are skipped and the
 PLUS1MINUS1: proceed from the selected hole by moving one seed from the next hole into the following hole, next skip that hole and repeat moving seed forward. After cycling the board, capture across from the opening hole."													
 Dynamics	gparam_one	General input	game_info _	int	0	5	2	"Goal of Territory: defines the number of holes needed for a win.
 Goal of Deprive and Blocked Divert Sower: defines the number of seeds needed to close/block holes (sow_blkd_div)."								1		1	1	1	

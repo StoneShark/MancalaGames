@@ -126,7 +126,6 @@ STRING_DICTS = {
          'Sow Basic First': SowPrescribed.BASIC_SOWER,
          'Sow Mlaps First': SowPrescribed.MLAPS_SOWER,
          'Sow One Opposite': SowPrescribed.SOW1OPP,
-         'TRIPLES': SowPrescribed.TRIPLES,
          'Plus 1, Minus 1': SowPrescribed.PLUS1MINUS1}),
 
     'SowRule': lookup_dicts(SowRule,
@@ -135,6 +134,7 @@ STRING_DICTS = {
          "Owners Capture all while Sow": SowRule.OWN_SOW_CAPT_ALL,
          "Sower Captures own while Sow": SowRule.SOW_SOW_CAPT_ALL,
          "Don't sow Opp holes w/2s": SowRule.NO_SOW_OPP_2S,
+         "Change Direction each Lap": SowRule.CHANGE_DIR_LAP,
          }),
 
     'StartPattern': lookup_dicts(StartPattern,

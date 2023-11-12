@@ -754,13 +754,11 @@ class TestPickTwos:
         game = mancala.Mancala(game_consts, game_info)
         game.board = board.copy()
         game.turn = turn
-        print(game)
 
         mdata = MoveData(game, None)
         mdata.direct = game.info.sow_direct
         mdata.capt_loc = caploc
         game.deco.capturer.do_captures(mdata)
-        print(game)
 
         assert mdata.captured == eres
         assert game.board == eboard

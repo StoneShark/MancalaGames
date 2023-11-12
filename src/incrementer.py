@@ -25,7 +25,7 @@ import abc
 
 # %% constants
 
-# disable the skip start when incrementing
+# disable the skip start when incrementing, loc can never be -1
 NOSKIPSTART = -1
 
 
