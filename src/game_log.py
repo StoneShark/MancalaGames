@@ -183,11 +183,13 @@ class GameLog:
         legal.
         Do not use this for AI moves."""
         self._simulate = True
+        self.add('*** SIMULATE STARTED', self.SIMUL)
 
 
     def clear_simulate(self):
         """Turn simulate mode off."""
         self._simulate = False
+        self.add('*** SIMULATE STOPPED', self.SIMUL)
 
 
 # the global game_log
