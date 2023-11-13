@@ -10,6 +10,7 @@ import pytest
 
 
 from context import hole_button
+from context import game_tally
 from context import mancala_games
 from context import mancala_ui
 from context import play_mancala

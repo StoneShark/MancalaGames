@@ -84,24 +84,10 @@ class Hold:
             return
 
         Hold._game_ui = game_ui
-
-        xpos = game_ui.winfo_rootx() + game_ui.winfo_width() + 20
-        ypos = game_ui.winfo_rooty()
-
-        Hold._top = tk.Toplevel(game_ui)
-        Hold._top.wm_overrideredirect(1)
-        Hold._top.resizable(False, False)
-        Hold._top.title('Seed Hold')
-        Hold._top.wm_geometry(f'+{xpos}+{ypos}')
-        Hold._top.minsize(200, 100)
-
-        frame = tk.Frame(Hold._top,
-                         relief=tk.SOLID,
-                         borderwidth=1)
-        frame.pack(side='top', expand=True, fill='both')
+        frame = game_ui.rframe
 
         text = 'Right to pick seeds up.\n' + \
-               'Left to drop seeds from the hold.\n\n'
+               'Left to drop seeds from the hold.\n'
         tk.Label(frame, anchor='nw', justify='left', text=text
                  ).pack(side='top', expand=True, fill='both')
 
@@ -117,9 +103,8 @@ class Hold:
         """Go back to game play mode."""
 
         if Hold._game_ui.set_game_mode(Behavior.GAMEPLAY):
-            Hold._top.destroy()
-            Hold._label = None
-            Hold._top = None
+            for child in Hold._game_ui.rframe.winfo_children():
+                child.destroy()
 
 
     @staticmethod
@@ -127,9 +112,8 @@ class Hold:
         """Abandoning the game mode, cleanup."""
 
         Hold.empty()
-        Hold._top.destroy()
-        Hold._label = None
-        Hold._top = None
+        for child in Hold._game_ui.rframe.winfo_children():
+            child.destroy()
 
 
 # %%  Interfaces
@@ -363,7 +347,7 @@ class RndMoveSeedsButtonBehavior(BehaviorIf):
     the other.
     Winner's seeds will be arranged the same."""
 
-    # TODO Giuthi format message for new round; consider 'move to stores'
+    # TODO Giuthi format message for new round; consider 'move to stores' btn
 
     message = """Giuthi new rounds. The loser may
     arrange the playable seeds how they wish.
@@ -556,7 +540,6 @@ class NoStoreBehavior(StoreBehaviorIf):
 
     def set_store(self, seeds, highlight):
         """Set the properties of the store button."""
-        print('NS', seeds, highlight, self.str.game_ui.game.turn)
 
         self.str['state'] = 'disabled'
 
@@ -568,10 +551,10 @@ class NoStoreBehavior(StoreBehaviorIf):
         self.str['background'] = MOVE_COLOR if highlight else SYSTEM_COLOR
 
     def left_click(self):
-        """No interaction, do nothing."""
+        """No interaction, button disabled."""
 
     def right_click(self):
-        """No interaction, do nothing."""
+        """No interaction, button disabled."""
 
 
 
@@ -585,7 +568,6 @@ class RndMoveStoreBehavior(StoreBehaviorIf):
 
     def set_store(self, seeds, highlight):
         """Set the properties of the store button."""
-        print('RM', seeds, highlight, self.str.game_ui.game.turn)
 
         self.str['state'] = 'normal'
 

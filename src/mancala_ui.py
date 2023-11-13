@@ -18,6 +18,7 @@ import tkinter as tk
 import ai_player
 import hole_button as hbtn
 import game_interface as gi
+import game_tally as gt
 
 from hole_button import Behavior
 from game_interface import WinCond
@@ -28,75 +29,6 @@ from game_log import game_log
 # %%   constants
 
 AI_DELAY = [0, 1000, 3000]
-
-
-# %%  GameTally
-
-class GameTally:
-    """Class to collect game data across multiple games."""
-
-    def __init__(self):
-        """Set the counts to 0."""
-
-        self.games = 0
-        self.game_wins = [0, 0]
-        self.game_ties = 0
-
-        self.rounds = 0
-        self.round_wins = [0, 0]
-        self.round_ties = 0
-
-
-    def get_str(self):
-        """Return a string with win info."""
-
-        if self.rounds > 0:
-            return f'\n\nBottom: Rounds: {self.round_wins[0]} ' \
-                   f'Ties: {self.round_ties}   ' \
-                   f'Losses: {self.round_wins[1]}   ' \
-                   f'{self.round_wins[0]/self.rounds:6.1%}'
-
-        if self.games > 0:
-            return f'\n\nBottom: Wins: {self.game_wins[0]} ' \
-                   f'Ties: {self.game_ties}   ' \
-                   f'Losses: {self.game_wins[1]}   ' \
-                   f'{self.game_wins[0]/self.games:6.1%}'
-
-        return ''
-
-
-    def tally_game(self, winner, win_cond):
-        """Ignore the odd outcomes.
-
-        If we get round results tally them, but a game result
-        ends the rounds (so reset the round numbers).
-
-        winner: boolean - player that won if win.
-        win_cond: WinCond - outcome of the game."""
-
-        if win_cond in [WinCond.REPEAT_TURN, WinCond.ENDLESS]:
-            return
-
-        if win_cond is WinCond.ROUND_WIN:
-            self.rounds += 1
-            self.round_wins[winner] += 1
-
-        if win_cond is WinCond.ROUND_TIE:
-            self.rounds += 1
-            self.round_ties += 1
-
-        if win_cond is WinCond.WIN:
-            self.games += 1
-            self.game_wins[winner] += 1
-
-        if win_cond is WinCond.TIE:
-            self.games += 1
-            self.game_ties += 1
-
-        if win_cond in [WinCond.WIN, WinCond.TIE]:
-            self.rounds = 0
-            self.round_wins = [0, 0]
-            self.round_ties = 0
 
 
 # %%  mancala ui
@@ -122,7 +54,6 @@ class MancalaUI(tk.Frame):
         game_log.turn('Start Game', game)
 
         self.info = self.game.get_game_info()
-        self.tally = GameTally()
 
         if root_ui:
             self.master = tk.Toplevel(root_ui)
@@ -151,14 +82,52 @@ class MancalaUI(tk.Frame):
         self.pack()
         self._create_menus()
 
-        if self.info.stores:
-            b_store = hbtn.StoreButton(self, self, 'left', True)
-
-        land_frame = tk.Frame(self, padx=3, pady=3)
-        land_frame.pack(side='left')
+        self.tally = None
+        self.rframe = None
+        self._add_statuses()
 
         self.disp = [[None] * self.game.cts.holes,
                      [None] * self.game.cts.holes]
+        self.stores = None
+        self._add_board()
+
+        # do not call new game
+        # either it's already new or it's been set to a desired state
+        self._refresh()
+
+
+    def _add_statuses(self):
+        """Add status and info panes. Make them each 50% of the display."""
+
+        top_frame = tk.Frame(self)
+        top_frame.pack(side=tk.TOP, expand=True, fill=tk.X)
+
+        lframe = tk.Frame(top_frame, padx=5, pady=5,
+                          borderwidth=3, relief=tk.RIDGE)
+        lframe.grid(row=0, column=0, sticky=tk.NSEW)
+        self.tally = gt.GameTally(lframe)
+
+        self.rframe = tk.Frame(top_frame, padx=5, pady=5,
+                               borderwidth=3, relief=tk.RIDGE)
+        self.rframe.grid(row=0, column=1, sticky=tk.NSEW)
+
+        top_frame.grid_columnconfigure(0, weight=1, uniform="group1")
+        top_frame.grid_columnconfigure(1, weight=1, uniform="group1")
+        top_frame.grid_rowconfigure(0, weight=1)
+
+
+    def _add_board(self):
+        """Add the game board frame and widgets."""
+
+        board_frame = tk.Frame(self, borderwidth=7, relief=tk.RAISED)
+        board_frame.pack(side=tk.BOTTOM)
+
+        if self.info.stores:
+            b_store = hbtn.StoreButton(board_frame, self, tk.LEFT, True)
+
+        land_frame = tk.Frame(board_frame, padx=3, pady=3)
+        land_frame.pack(side=tk.LEFT)
+
         for row in range(2):
             dirs = self._get_hole_dirs(row)
 
@@ -168,14 +137,9 @@ class MancalaUI(tk.Frame):
                 self.disp[row][pos] = btn
                 self.disp[row][pos].grid(row=row, column=pos)
 
-        self.stores = None
         if self.info.stores:
-            a_store = hbtn.StoreButton(self, self, 'right', False)
+            a_store = hbtn.StoreButton(board_frame, self, tk.RIGHT, False)
             self.stores = [b_store, a_store]
-
-        # do not call new game
-        # either it's already new or it's been set to a desired state
-        self._refresh()
 
 
     def _get_hole_dirs(self, row):
@@ -537,10 +501,8 @@ class MancalaUI(tk.Frame):
 
         self.tally.tally_game(self.game.get_turn(), win_cond)
 
-        title, message = self.game.win_message(win_cond)
         if win_cond:
-            self._win_popup(title=title,
-                            message=message + self.tally.get_str())
+            self._win_popup(*self.game.win_message(win_cond))
 
 
     def _end_game(self):
