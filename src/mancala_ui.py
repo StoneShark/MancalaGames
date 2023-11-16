@@ -53,7 +53,7 @@ class MancalaUI(tk.Frame):
         self.player = ai_player.AiPlayer(self.game, player_dict)
 
         game_log.new()
-        game_log.turn('Start Game', game)
+        game_log.turn(0, 'Start Game', game)
 
         self.info = self.game.get_game_info()
 
@@ -411,7 +411,7 @@ class MancalaUI(tk.Frame):
         """Do the last steps in starting a new game:
         log the start and check for ai's turn."""
         game_log.new()
-        game_log.turn('Start Game', self.game)
+        game_log.turn(0, 'Start Game', self.game)
         self._ai_move()
 
 
@@ -532,7 +532,7 @@ class MancalaUI(tk.Frame):
             wtext += f'\n{win_cond.name} by {sturn}'
         elif win_cond:
             wtext += ' ' + win_cond.name
-        game_log.turn(wtext, self.game)
+        game_log.turn(self.game.mcount, wtext, self.game)
 
         self._refresh()
         self._win_message_popup(win_cond)

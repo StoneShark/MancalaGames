@@ -44,7 +44,6 @@ class GameLog:
 
         self._simulate = False
 
-        self._turn_nbr = -1
         self._log_records = collections.deque()
         self._move_start = collections.deque()
 
@@ -85,7 +84,6 @@ class GameLog:
         """Reset the game log."""
         self._log_records.clear()
         self._move_start.clear()
-        self._turn_nbr = -1
         self.add('\n*** New game', GameLog.MOVE)
 
 
@@ -107,14 +105,13 @@ class GameLog:
         """Add the turn start location to the move_start."""
 
         self._move_start.append(len(self._log_records))
-        self._turn_nbr += 1
 
 
-    def turn(self, move_desc, game_obj):
+    def turn(self, turn_nbr, move_desc, game_obj):
         """Log a turn in the game log (if it's active)."""
         if self._active:
             self._mark_turn()
-            self.add(f'\n{self._turn_nbr}: ' + move_desc, GameLog.MOVE)
+            self.add(f'\n{turn_nbr}: ' + move_desc, GameLog.MOVE)
             self.add(str(game_obj), GameLog.MOVE)
 
 

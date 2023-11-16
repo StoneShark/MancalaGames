@@ -537,7 +537,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         sturn = 'Top' if move_turn else 'Bottom'
         move_desc = f'{sturn} move {move}{wtext}'
 
-        game_log.turn(move_desc, self)
+        game_log.turn(self.mcount, move_desc, self)
 
 
     def move(self, move):

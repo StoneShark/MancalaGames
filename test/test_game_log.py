@@ -36,7 +36,6 @@ class TestGameLog:
         assert glog.active == True
         assert glog.live == False
         assert glog.level == glog.MOVE
-        assert glog._turn_nbr == -1
         assert not glog._log_records
         assert not glog._move_start
 
@@ -82,7 +81,6 @@ class TestGameLog:
         assert list(glog._move_start) == [0, 2]
 
         glog.new()                         # adds a record
-        assert glog._turn_nbr == -1
         assert len(glog._log_records) == 1
         assert not glog._move_start
 
@@ -187,30 +185,27 @@ class TestGameLog:
 
         glog.level = glog.STEP
 
-        glog.turn('start', game)
+        glog.turn(0, 'start', game)
         glog.step('step one', game)
         glog.step('step twp', game)
         glog.step('step three without game')
         glog.add('active one', glog.IMPORT)
 
-        assert glog._turn_nbr == 0
         assert len(glog._move_start) == 1
         assert len(glog._log_records) == 8
 
         glog.active = False
-        glog.turn('seconds', game)
+        glog.turn(1, 'seconds', game)
         glog.step('step two.one', game)
         glog.step('step two.two', game)
         glog.add('inactive one', glog.MOVE)
 
-        assert glog._turn_nbr == 0
         assert len(glog._move_start) == 1
         assert len(glog._log_records) == 8
 
         glog.active = True
         glog.add('active two', glog.MOVE)
 
-        assert glog._turn_nbr == 0
         assert len(glog._move_start) == 1
         assert len(glog._log_records) == 9
 
@@ -261,18 +256,16 @@ class TestGameLog:
 
 
         glog.level = glog.IMPORT
-        glog.turn('start', game)            # 2 recs
+        glog.turn(0, 'start', game)            # 2 recs
         glog.add('import', glog.IMPORT)
         glog.step('step 1', game)           # not logged
         glog.step('step 2', game)           # not logged
-        glog.turn('move 1', game)           # 2 recs
+        glog.turn(1, 'move 1', game)           # 2 recs
 
         assert len(glog._move_start) == 2
         assert len(glog._log_records) == 5
-        assert glog._turn_nbr == 1
 
         glog.new()
-        assert glog._turn_nbr == -1
         assert len(glog._move_start) == 0
         assert len(glog._log_records) == 1
 
@@ -281,7 +274,7 @@ class TestGameLog:
 
         lines = [0, 4, 2, 6, 3]
         for turn in range(1, 5):
-            glog.turn(f'move {turn}', game)
+            glog.turn(turn - 1, f'move {turn}', game)
             for line in range(1, lines[turn] + 1):
                 glog.add(f'turn {turn} line {line}', glog.MOVE)
 
@@ -331,11 +324,11 @@ class TestGameLog:
 
         glog.level = glog.STEP
 
-        glog.turn('start', game)
+        glog.turn(0, 'start', game)
         glog.add('import 1', glog.IMPORT)
         glog.step('step 1', game)
         glog.step('step 2', game)
-        glog.turn('move 1', game)
+        glog.turn(1, 'move 1', game)
         glog.add('import 2', glog.IMPORT)
 
         glog.save('parameter string')
