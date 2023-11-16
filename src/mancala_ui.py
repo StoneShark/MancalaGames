@@ -17,11 +17,11 @@ import tkinter as tk
 
 import ai_player
 import cfg_keys as ckey
-import hole_button as hbtn
+import btn_behaviors as btnb
 import game_interface as gi
 import game_tally as gt
 
-from hole_button import Behavior
+from btn_behaviors import Behavior
 from game_interface import WinCond
 from game_interface import Direct
 from game_interface import RoundFill
@@ -127,7 +127,7 @@ class MancalaUI(tk.Frame):
         board_frame.pack(side=tk.BOTTOM)
 
         if self.info.stores:
-            b_store = hbtn.StoreButton(board_frame, self, tk.LEFT, True)
+            b_store = btnb.StoreButton(board_frame, self, tk.LEFT, True)
 
         land_frame = tk.Frame(board_frame, padx=3, pady=3)
         land_frame.pack(side=tk.LEFT)
@@ -142,7 +142,7 @@ class MancalaUI(tk.Frame):
                 self.disp[row][pos].grid(row=row, column=pos)
 
         if self.info.stores:
-            a_store = hbtn.StoreButton(board_frame, self, tk.RIGHT, False)
+            a_store = btnb.StoreButton(board_frame, self, tk.RIGHT, False)
             self.stores = [b_store, a_store]
 
 
@@ -190,7 +190,7 @@ class MancalaUI(tk.Frame):
             left_move = pos
             rght_move = pos
 
-        return hbtn.HoleButton(land_frame, self, loc, left_move, rght_move)
+        return btnb.HoleButton(land_frame, self, loc, left_move, rght_move)
 
 
     @staticmethod
@@ -451,9 +451,9 @@ class MancalaUI(tk.Frame):
             "Don't force game mode change for anything but normal game play."
 
         if force:
-            hbtn.force_mode_change()
+            btnb.force_mode_change()
 
-        elif not hbtn.ask_mode_change(self.mode, mode, self):
+        elif not btnb.ask_mode_change(self.mode, mode, self):
             return False
 
         assert sum(self.game.store) + sum(self.game.board) == \

@@ -9,7 +9,7 @@ Created on Mon Jul 31 14:07:52 2023
 import pytest
 
 
-from context import hole_button
+from context import btn_behaviors
 from context import game_tally
 from context import mancala_games
 from context import mancala_ui

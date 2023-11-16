@@ -4,6 +4,7 @@
 MODULES = ai_interface.py
 MODULES += ai_player.py
 MODULES += allowables.py
+MODULES += btn_behaviors.py
 MODULES += capt_ok.py
 MODULES += capturer.py
 MODULES += cfg_keys.py
@@ -18,7 +19,6 @@ MODULES += game_tally.py
 MODULES += get_direction.py
 MODULES += get_moves.py
 MODULES += ginfo_rules.py
-MODULES += hole_button.py
 MODULES += incrementer.py
 MODULES += man_config.py
 MODULES += man_path.py
