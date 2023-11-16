@@ -17,6 +17,7 @@
    },
    "player": {
       "algorithm": "minimaxer",
+      "ai_active": true,
       "scorer": {
          "stores_m": 8,
          "access_m": 4,

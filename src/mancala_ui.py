@@ -78,8 +78,8 @@ class MancalaUI(tk.Frame):
                                     value=self.player.difficulty)
         self._set_difficulty()
 
-        start_ai = (ckey.AI_START in player_dict
-                    and player_dict[ckey.AI_START])
+        start_ai = (ckey.AI_ACTIVE in player_dict
+                    and player_dict[ckey.AI_ACTIVE])
         self.ai_active = tk.IntVar(self.master, value=start_ai)
         self.ai_delay = tk.BooleanVar(self.master, value=2)
 
@@ -98,7 +98,7 @@ class MancalaUI(tk.Frame):
         # do not call new game
         # either it's already new or it's been set to a desired state
         self._refresh()
-
+        self._ai_move()
 
     def _add_statuses(self):
         """Add status and info panes. Make them each 50% of the display."""

@@ -8,7 +8,7 @@ Created on Tue Jul 25 07:43:16 2023
 ABOUT = 'about'
 ACCESS_M = 'access_m'
 AI_PARAMS = 'ai_params'
-AI_START = 'ai_start'
+AI_ACTIVE = 'ai_active'
 ALGORITHM = 'algorithm'
 ALLOW_RULE = 'allow_rule'
 BLOCKS = 'blocks'

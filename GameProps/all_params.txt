@@ -53,7 +53,7 @@
    },
    "player": {
       "algorithm": "minimaxer",
-      "ai_start": false,
+      "ai_active": false,
       "difficulty": 1,
       "ai_params": {
          "mcts_bias": [
