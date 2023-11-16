@@ -430,7 +430,15 @@ class EndTurnNoPass(EndTurnIf):
 class EndTurnMustShare(EndTurnIf):
     """With MUSTSHARE, the game is over if
     the current player does not have seeds and the opponent
-    cannot make any seeds available to the current player."""
+    cannot make any seeds available to the current player.
+
+    If the game has ended or if we are going to go again (repeat turn--
+    can't share seeds with self), delegate to the deco chain.
+    Next do a scan to see if the current player is without seeds
+    and the opponent has seeds -- don't bother to simulate if we
+    don't need to.
+    Finally, check to see if the opponent can share. If not,
+    the game is over."""
 
     def __init__(self, game, owner_func, decorator=None):
         super().__init__(game, decorator)
@@ -438,11 +446,10 @@ class EndTurnMustShare(EndTurnIf):
 
     def game_ended(self, repeat_turn, ended=False):
 
-        if ended:
+        if ended or repeat_turn:
             return self.decorator.game_ended(repeat_turn, ended)
 
-        opponent = not self.game.turn if repeat_turn else self.game.turn
-
+        opponent = not self.game.turn
         player_seeds = opp_seeds = False
         for loc in range(self.game.cts.dbl_holes):
 
@@ -457,14 +464,14 @@ class EndTurnMustShare(EndTurnIf):
 
         if not player_seeds and opp_seeds:
             self.game.turn = not self.game.turn
-            ended = not any(self.game.get_allowable_holes())
+            no_share = not any(self.game.get_allowable_holes())
             self.game.turn = not self.game.turn
 
-            if ended:
+            if no_share:
                 game_log.add("Next player can't share, game ended.",
                              game_log.INFO)
+            return self.decorator.game_ended(repeat_turn, no_share)
 
-            return self.decorator.game_ended(repeat_turn, ended)
         return self.decorator.game_ended(repeat_turn, False)
 
 
