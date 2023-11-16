@@ -461,7 +461,7 @@ class MakeTuzdek(CaptMethodIf):
 
     This is the ONE_CHILD implementation."""
 
-    def tuzdek_test(self, loc):
+    def _tuzdek_test(self, loc):
         """Put the test in a function to keep the linter from
         complaining that it's too complex"""
 
@@ -480,7 +480,7 @@ class MakeTuzdek(CaptMethodIf):
 
         loc = mdata.capt_loc
 
-        if self.tuzdek_test(loc):
+        if self._tuzdek_test(loc):
             self.game.child[loc] = self.game.turn
             mdata.capt_changed = True
             return
