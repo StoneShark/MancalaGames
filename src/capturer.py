@@ -372,9 +372,6 @@ class GSOppGets(GrandSlamCapt):
 
 # %%  child decorators
 
-# XXXX should making children be considered a capture?
-# haven't yet found a game where it's a repeat turn
-
 class MakeChild(CaptMethodIf):
     """If the hole constains child_cvt seeds
     and the side test is good, designate a child.

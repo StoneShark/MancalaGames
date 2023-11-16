@@ -100,12 +100,12 @@ class NewRound(NewGameIf):
     def _set_starter(self):
         """Set the starter of the next round based on the game flag."""
 
-        match self.game.info.round_starter:
-            case RoundStarter.ALTERNATE:
-                self.game.turn = not self.game.starter
+        start_rule = self.game.info.round_starter
+        if start_rule == RoundStarter.ALTERNATE or self.game.turn is None:
+            self.game.turn = not self.game.starter
 
-            case RoundStarter.LOSER:
-                self.game.turn = not self.game.turn
+        elif start_rule == RoundStarter.LOSER:
+            self.game.turn = not self.game.turn
 
         self.game.starter = self.game.turn
 
