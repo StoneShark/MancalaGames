@@ -107,26 +107,6 @@ class CaptCross(CaptMethodIf):
             mdata.captured = True
 
 
-class CaptCrossVisited(CaptMethodIf):
-    """First, reject cross capt if not single seed or opponent's side.
-    Second, reject cross capt if have't sown opp hole this turn.
-    If rejecting cross capt, do repeat turn."""
-
-    def do_captures(self, mdata):
-
-        if (self.game.board[mdata.capt_loc] != 1
-                or self.game.cts.opp_side(self.game.turn, mdata.capt_loc)):
-            mdata.capture = None
-            return
-
-        cross = self.game.cts.cross_from_loc(mdata.capt_loc)
-        if mdata.board[cross] < self.game.board[cross]:
-            self.decorator.do_captures(mdata)
-            return
-
-        mdata.captured = WinCond.REPEAT_TURN
-
-
 class CaptNext(CaptMethodIf):
     """If there are seeds in the next hole capture them."""
 
@@ -216,6 +196,27 @@ class MultiCaptTwoOut(CaptMethodIf):
 
 # %% cross capt decos
 
+
+class CaptCrossVisited(CaptMethodIf):
+    """First, reject cross capt if not single seed or opponent's side.
+    Second, reject cross capt if have't sown opp hole this turn.
+    If rejecting cross capt, do repeat turn."""
+
+    def do_captures(self, mdata):
+
+        if (self.game.board[mdata.capt_loc] != 1
+                or self.game.cts.opp_side(self.game.turn, mdata.capt_loc)):
+            return
+
+        cross = self.game.cts.cross_from_loc(mdata.capt_loc)
+        if mdata.board[cross] < self.game.board[cross]:
+            self.decorator.do_captures(mdata)
+            return
+
+        mdata.captured = WinCond.REPEAT_TURN
+        game_log.add('XCVisit Repeat Turn', game_log.INFO)
+
+
 class CaptCrossPickOwnOnCapt(CaptMethodIf):
     """Cross capture, pick own if capture, but do not
     pick from a designated child or a locked hole.
@@ -228,7 +229,7 @@ class CaptCrossPickOwnOnCapt(CaptMethodIf):
 
         self.decorator.do_captures(mdata)
 
-        if (mdata.captured
+        if (mdata.captured is True
                 and self.game.child[mdata.capt_loc] is None
                 and self.game.unlocked[mdata.capt_loc]):
 

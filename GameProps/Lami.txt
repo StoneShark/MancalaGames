@@ -14,7 +14,7 @@
       "oppsidecapt": true,
       "mlaps": 1,
       "pickextra": 2,
-      "rnd_left_fill": true,
+      "round_fill": 1,
       "round_starter": 1,
       "rounds": true,
       "prescribed": 5,

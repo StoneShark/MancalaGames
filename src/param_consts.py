@@ -19,6 +19,7 @@ from game_interface import Direct
 from game_interface import Goal
 from game_interface import GrandSlam
 from game_interface import LapSower
+from game_interface import RoundFill
 from game_interface import RoundStarter
 from game_interface import SowPrescribed
 from game_interface import SowRule
@@ -115,6 +116,14 @@ STRING_DICTS = {
         {'Single sow': LapSower.OFF,
          'Lap Sower (end)': LapSower.LAPPER,
          'Lap Sower Next': LapSower.LAPPER_NEXT}),
+
+    'RoundFill': lookup_dicts(RoundFill,
+        {'No Rounds': RoundFill.NO_ROUNDS,
+         'Left Fill': RoundFill.LEFT_FILL,
+         'Right Fill': RoundFill.RIGHT_FILL,
+         'Outside In Fill': RoundFill.OUTSIDE_FILL,
+         'Choose Blocks': RoundFill.UCHOOSE,
+         'Rearrange Seeds': RoundFill.UMOVE}),
 
     'RoundStarter': lookup_dicts(RoundStarter,
         {'Alternate': RoundStarter.ALTERNATE,

@@ -67,6 +67,16 @@ class RoundStarter(enum.IntEnum):
     LOSER = 1
     WINNER = 2
 
+@enum.unique
+class RoundFill(enum.IntEnum):
+    """How rounds are filled when a new round starts."""
+
+    NO_ROUNDS = 0
+    LEFT_FILL = 1
+    RIGHT_FILL = 2
+    OUTSIDE_FILL = 3
+    UCHOOSE = 4
+    UMOVE = 5
 
 @enum.unique
 class CrossCaptOwn(enum.IntEnum):
@@ -198,8 +208,7 @@ class GameInfo:
     mustpass: bool = False
     rounds: bool = False
     round_starter: RoundStarter = RoundStarter.ALTERNATE
-    rnd_left_fill: bool = False
-    rnd_umove: bool = False
+    round_fill: RoundFill = RoundFill.NO_ROUNDS
     no_sides: bool = False
     stores: bool = False
     start_pattern: StartPattern = StartPattern.ALL_EQUAL

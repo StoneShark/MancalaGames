@@ -236,7 +236,7 @@ class MancalaGames(tk.Frame):
                  ('new_game', 'allow', 'moves', 'incr', 'starter',
                   'get_dir', 'sower', 'capt_ok', 'capturer', 'ender',
                   'quitter', 'gstr')]
-        ints = [fields.index(f) for f in ('row', 'col')]
+        ints = [fields.index(f) for f in ('row', 'col', 'order')]
 
         # pylint: disable=invalid-name
         Params = collections.namedtuple('Params', fields)
@@ -638,7 +638,7 @@ class MancalaGames(tk.Frame):
 
         self.game_config = {}
 
-        for param in self.params.values():
+        for param in sorted(self.params.values(), key=lambda v: v.order):
 
             if param.vtype == MSTR_TYPE:
                 value = self.tktexts[param.option].get('1.0', tk.END)
@@ -742,6 +742,9 @@ class MancalaGames(tk.Frame):
             for tag in self.loaded_config.keys():
                 if tag not in self.game_config:
                     self.game_config[tag] = self.loaded_config[tag]
+
+        # XXXX delete tags that have default values from game_info
+        # consider [player][ai_params] and [player][scorer]
 
         if not self.filename:
             self.filename = self.game_config[ckey.GAME_INFO][ckey.NAME] \

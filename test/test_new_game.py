@@ -13,6 +13,7 @@ from context import game_interface as gi
 from context import mancala
 
 from game_interface import Goal
+from game_interface import RoundFill
 from game_interface import RoundStarter
 from game_interface import WinCond
 
@@ -173,7 +174,11 @@ class TestNewGame:
           ])
     def test_fill_patterns(self, rgame, store, left_fill, blocks, estore):
 
-        object.__setattr__(rgame.info, 'rnd_left_fill', left_fill)
+        object.__setattr__(rgame.info, 'round_fill',
+                           RoundFill.LEFT_FILL if left_fill else RoundFill.OUTSIDE_FILL)
+
+        rgame.deco = mancala.ManDeco(rgame)
+
         rgame.unlocked = [False, True, True] * 2
         rgame.blocked = [True, False, True] * 2
         rgame.board = utils.build_board([0, 0, 0],
@@ -200,7 +205,10 @@ class TestNewGame:
        ])
     def test_no_blocks(self, nb_rgame, left_fill, store, estore):
 
-        object.__setattr__(nb_rgame.info, 'rnd_left_fill', left_fill)
+        object.__setattr__(nb_rgame.info, 'round_fill',
+                           RoundFill.LEFT_FILL if left_fill else RoundFill.OUTSIDE_FILL)
+        nb_rgame.deco = mancala.ManDeco(nb_rgame)
+
         nb_rgame.blocked = [True, False, True] * 2
         nb_rgame.board = utils.build_board([0, 0, 0],
                                            [0, 0, 0])

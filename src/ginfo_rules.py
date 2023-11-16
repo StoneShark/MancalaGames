@@ -26,6 +26,7 @@ from game_interface import Direct
 from game_interface import Goal
 from game_interface import GrandSlam
 from game_interface import LapSower
+from game_interface import RoundFill
 from game_interface import RoundStarter
 from game_interface import SowPrescribed
 from game_interface import SowRule
@@ -178,7 +179,7 @@ def add_deprive_rules(rules):
         excp=gi.GameInfoError)
 
     bad_flags = ['moveunlock', 'mustshare', 'mustpass',
-                 'rounds', 'round_starter', 'rnd_left_fill', 'rnd_umove',
+                 'rounds', 'round_starter', 'round_fill',
                  'no_sides', 'sow_own_store', 'stores',
                  'skip_start', 'sow_start', 'visit_opp']
     for flag in bad_flags:
@@ -321,8 +322,15 @@ def add_block_and_divert_rules(rules):
             'no other capture mechanisms are allowed [CAPT_ON]',
         excp=gi.GameInfoError)
 
+    rules.add_rule(
+        'sbd_not_umove',
+        rule=lambda ginfo: (ginfo.sow_rule == SowRule.SOW_BLKD_DIV
+                            and ginfo.round_fill == RoundFill.UMOVE),
+        msg='sow_blkd_div incompatible with UMOVE',
+        excp=gi.GameInfoError)
+
     bad_flags = ['child_cvt', 'moveunlock', 'mustshare', 'mustpass',
-                 'rounds', 'round_starter', 'rnd_left_fill', 'rnd_umove',
+                 'rounds', 'round_starter',
                  'no_sides', 'sow_own_store', 'stores',
                  'skip_start', 'sow_start', 'visit_opp']
     for flag in bad_flags:
@@ -410,7 +418,7 @@ def add_no_sides_rules(rules):
 
 
     bad_flags = ['grandslam', 'mustpass', 'mustshare', 'oppsidecapt',
-                 'rounds', 'round_starter', 'rnd_left_fill', 'rnd_umove',
+                 'rounds', 'round_starter', 'round_fill',
                  'visit_opp']
     for flag in bad_flags:
         rules.add_rule(

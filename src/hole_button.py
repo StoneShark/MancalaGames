@@ -66,8 +66,9 @@ class Hold:
             Hold.set_hold(Hold.nbr + 1, owner)
             return 1
 
-        nbr = tk.simpledialog.askinteger('Pickup Seeds',
-                                         'How many seeds to pick up?')
+        nbr = tk.simpledialog.askinteger(
+            'Pickup Seeds',
+            f'How many seeds to pick up (1 .. {max_seeds})?')
         if not nbr or nbr <= 0 or nbr > max_seeds:
             Hold._game_ui.bell()
             return 0
@@ -78,7 +79,7 @@ class Hold:
 
     @staticmethod
     def hold_menu(game_ui):
-        """Popup the hold window."""
+        """Fill the right status frame with controls."""
 
         if Hold._top:
             return
@@ -86,8 +87,8 @@ class Hold:
         Hold._game_ui = game_ui
         frame = game_ui.rframe
 
-        text = 'Right to pick seeds up.\n' + \
-               'Left to drop seeds from the hold.\n'
+        text = 'Right click to pick seeds up.\n' + \
+               'Left click to drop seeds from the hold.\n'
         tk.Label(frame, anchor='nw', justify='left', text=text
                  ).pack(side='top', expand=True, fill='both')
 
@@ -119,7 +120,10 @@ class Hold:
 # %%  Interfaces
 
 class BehaviorIf(abc.ABC):
-    """Button behavior interface."""
+    """Button behavior interface.
+
+    The button behavior class is sort of the master in determining when
+    ok to leave and enter behaviors."""
 
     def __init__(self, button):
         self.btn = button
@@ -130,6 +134,13 @@ class BehaviorIf(abc.ABC):
         """If the user should be asked to cnsent to the mode
         change, do so. Return True if the mode change is
         ok, False otherwise."""
+
+    @classmethod
+    def leave_mode(cls, game_ui):
+        """Is it ok to leave the mode (presumably to go back to GAMEPLAY).
+        Assume it is unless this is overridden."""
+        _ = game_ui
+        return True
 
     @abc.abstractmethod
     def set_props(self, props, disable, cactive):
@@ -163,7 +174,7 @@ class StoreBehaviorIf(abc.ABC):
         """Do the right click action"""
 
 
-# %%    Behaviors
+# %%    Hole Behaviors
 
 class PlayButtonBehavior(BehaviorIf):
     """The button behavior during game play."""
@@ -246,7 +257,7 @@ class PlayButtonBehavior(BehaviorIf):
             self.btn['state'] = 'normal'
 
 
-class RndSetupButtonBehavior(BehaviorIf):
+class RndChooseButtonBehavior(BehaviorIf):
     """Round setup behavior. All occupied holes must have the
     start number of seeds in them. Right click picks them all up
     and left click drops them all."""
@@ -349,6 +360,9 @@ class RndMoveSeedsButtonBehavior(BehaviorIf):
 
     # TODO Giuthi format message for new round; consider 'move to stores' btn
 
+    starter = None
+    loser = None
+
     message = """Giuthi new rounds. The loser may
     arrange the playable seeds how they wish.
     The winner's seeds will be arranged the same way.
@@ -356,16 +370,68 @@ class RndMoveSeedsButtonBehavior(BehaviorIf):
 
     @classmethod
     def ask_mode_change(cls, game_ui):
+        """If the user wants to enter move mode, need to collect
+        some data; need to save it in the class.
+
+        Save turn as the starter and set the turn to the loser.
+        We know that new_game left the board sides equal,
+        so we can compare the stores to determine the loser.
+
+        Note that we never go into this move mode without going
+        through this function and the leave_mode function can
+        undo the local changes."""
 
         ans = tk.messagebox.askquestion(
             title='Move seeds',
             message=RndMoveSeedsButtonBehavior.message,
             parent=game_ui)
 
-        if ans == YES_STR:
-            Hold.hold_menu(game_ui)
-            return True
-        return False
+        if ans != YES_STR:
+            return False
+
+        Hold.hold_menu(game_ui)
+
+        cls.starter = game_ui.game.turn
+        cls.loser = game_ui.game.store[0] > game_ui.game.store[1]
+        game_ui.game.turn = cls.loser
+
+        return True
+
+
+    @classmethod
+    def leave_mode(cls, game_ui):
+
+        game = game_ui.game
+        holes = game.cts.holes
+        dbl_holes = game.cts.dbl_holes
+
+        if cls.loser:
+            loser_slice = slice(holes, dbl_holes)
+            winner_slice = slice(0, holes)
+        else:
+            loser_slice = slice(0, holes)
+            winner_slice = slice(holes, dbl_holes)
+
+        # TODO  need a rule to make UMOVE incomp with children
+        if not any(seeds >= game.info.min_move
+                   for seeds in game.board[loser_slice]):
+            tk.messagebox.showerror(
+                title='Game Mode',
+                message='None of the holes have min_moves seed '
+                        f'({game.info.min_move}) seeds; game is not playable. '
+                        'Move more seeds back from store.',
+                parent=game_ui)
+            return False
+
+        start_seeds = sum(game.board[winner_slice])
+        game.board[winner_slice] = game.board[loser_slice]
+        game.store[not cls.loser] += (start_seeds -
+                                      sum(game.board[winner_slice]))
+
+        # revert to the round starter that was saved
+        game_ui.game.turn = cls.starter
+
+        return True
 
 
     def set_props(self, props, _1, _2):
@@ -405,7 +471,7 @@ class RndMoveSeedsButtonBehavior(BehaviorIf):
             Always leave at least one seed in each hole."""
 
         game = self.btn.game_ui.game
-        if (not game.turn == self.btn.row
+        if (game.turn == self.btn.row
                 or not self.btn.props.seeds
                 or Hold.owner not in (None, self.btn.row)):
             self.btn.bell()
@@ -576,7 +642,7 @@ class RndMoveStoreBehavior(StoreBehaviorIf):
         else:
             self.str['text'] = ''
 
-        self.str['background'] = SYSTEM_COLOR if highlight else SEED_COLOR
+        self.str['background'] =  SEED_COLOR if highlight else SYSTEM_COLOR
 
 
     def left_click(self):
@@ -588,9 +654,8 @@ class RndMoveStoreBehavior(StoreBehaviorIf):
 
         game = self.str.game_ui.game
         seeds = game.get_store(not self.str.owner) + Hold.nbr
-        self.set_store(seeds, False)
+        self.set_store(seeds, True)
         game.set_store(not self.str.owner, seeds)
-        print(game)
 
         self.str.game_ui.config(cursor='')
         Hold.empty()
@@ -603,14 +668,13 @@ class RndMoveStoreBehavior(StoreBehaviorIf):
         game = self.str.game_ui.game
         seeds = game.get_store(not self.str.owner)
 
-        if (not game.turn == self.str.owner
+        if (game.turn == self.str.owner
                 and Hold.query_nbr_seeds(not self.str.owner, seeds)):
 
             game = self.str.game_ui.game
             seeds -= Hold.nbr
-            self.set_store(seeds, False)
+            self.set_store(seeds, True)
             game.set_store(not self.str.owner, seeds)
-            print(game)
 
             self.str.game_ui.config(cursor='circle')
 
@@ -621,7 +685,7 @@ class Behavior(enum.IntEnum):
     """Enum for the button behaviors."""
 
     GAMEPLAY = 0
-    RNDSETUP = 1
+    RNDCHOOSE = 1
     RNDMOVE = 2
     MOVESEEDS = 3
 
@@ -629,16 +693,22 @@ class Behavior(enum.IntEnum):
 BTuples = collections.namedtuple('BTuples', ['button', 'store'])
 
 BEHAVIOR_CLASS = (BTuples(PlayButtonBehavior, NoStoreBehavior),
-                  BTuples(RndSetupButtonBehavior, NoStoreBehavior),
-                  BTuples(MoveSeedsButtonBehavior, NoStoreBehavior),
-                  BTuples(RndMoveSeedsButtonBehavior, RndMoveStoreBehavior))
+                  BTuples(RndChooseButtonBehavior, NoStoreBehavior),
+                  BTuples(RndMoveSeedsButtonBehavior, RndMoveStoreBehavior),
+                  BTuples(MoveSeedsButtonBehavior, NoStoreBehavior))
 
 
-def ask_mode_change(behavior, game_ui):
-    """Call the ask_mode_change for the specified behavior.
-    Return it's result."""
+def ask_mode_change(old_behavior, new_behavior, game_ui):
+    """If leaving a non-GAMEPLAY behavior, ask the button class (master)
+    if it's ok to leave (this might do some side effect operations).
+    If current behavior says it's ok, ask the new behavior if it's ok,
+    which generally asks the user when leaving GAMEPLAY."""
 
-    return BEHAVIOR_CLASS[behavior].button.ask_mode_change(game_ui)
+    if new_behavior == Behavior.GAMEPLAY:
+        if not BEHAVIOR_CLASS[old_behavior].button.leave_mode(game_ui):
+            return False
+
+    return BEHAVIOR_CLASS[new_behavior].button.ask_mode_change(game_ui)
 
 
 def force_mode_change():
@@ -720,9 +790,9 @@ class StoreButton(tk.Button):
         self.bind('<Button-3>', self.right_click)
 
 
-    def set_behavior(self, behave):
+    def set_behavior(self, behavior):
         """Set the behavior of the store."""
-        self.behavior = BEHAVIOR_CLASS[behave].store(self)
+        self.behavior = BEHAVIOR_CLASS[behavior].store(self)
 
 
     def set_store(self, seeds, turn):

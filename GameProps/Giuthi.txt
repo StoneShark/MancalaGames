@@ -1,0 +1,51 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 8,
+      "nbr_start": 6
+   },
+   "game_info": {
+      "name": "Giuthi",
+      "about": "Giuthi:\nA multilap mancala in which the current player chooses the sow direction for the first lap; subsequent laps alternate sow direction. Moves may only start from holes with 2 or more seeds; if a player cannot move they must pass.\nCross-capture from opponents side, but only if they have sown that hole (in the current turn). On capture, pick own seed. Multiple captures may be done in same direction as the final lap sowed.\nIf a player ends a turn on their side of the board without doing a capture, they get another move.\nThe round ends if neither player can move. The loser of each round, can rearrange the seeds on their side of the board with the restriction that each hole must contain at least one seed and that they have a valid move. Before the round is started the same pattern will be reflected on the winner's side.\nThe game ends when either player does not have enough seeds to fill their side of the board with a valid move (i.e. one hole with MIN_MOVE seeds and others with at least one seed).\nVariations: \n- Played as a single game (no rounds).\n- Board sizes 6 to 10 holes per side. \n- Start seeds varies from 4 to 9 (smaller board, fewer start seeds). \n- Some combinations of size and start seeds are quite unbanalnced.\n- Instead of minimum move of 2, singletons may start moves if all holes are empty or contain one seed (allow_rule == SINGLE_ONLY_ALL).",
+      "capsamedir": true,
+      "crosscapt": true,
+      "min_move": 2,
+      "mlaps": 1,
+      "multicapt": true,
+      "mustpass": true,
+      "oppsidecapt": true,
+      "round_fill": 5,
+      "round_starter": 2,
+      "rounds": true,
+      "sow_direct": 1,
+      "sow_rule": 5,
+      "stores": true,
+      "udir_holes": [0, 1, 2, 3, 4, 5, 6, 7],
+      "xc_sown": true,
+      "xcpickown": 1
+   },
+   "player": {
+      "algorithm": "minimaxer",
+      "ai_start": false,
+      "difficulty": 1,
+      "ai_params": {
+         "mcts_bias": [400, 400, 400, 400],
+         "mcts_nodes": [30, 50, 80, 110],
+         "mcts_pouts": [1, 1, 1, 1],
+         "mm_depth": [1, 1, 3, 5
+         ]
+      },
+      "scorer": {
+         "access_m": 0,
+         "child_cnt_m": 0,
+         "easy_rand": 0,
+         "empties_m": 1,
+         "evens_m": 0,
+         "repeat_turn": 1,
+         "seeds_m": 0,
+         "stores_m": 4
+      }
+   },
+   "rules": "Russ, Laurence. Mancala Games. 1984.",
+   "rule_contradict": "Game doesn't end until <= 4 seeds for loser, but in rearrangement all holes must contain a seed. Also, the winner's side is setup reversed of loser's side, so both players must have enough seeds for a valid move. Therefore, the game will end when there are not enough seeds for the loser to have a valid move."
+}

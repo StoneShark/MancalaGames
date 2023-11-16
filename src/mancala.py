@@ -28,6 +28,7 @@ import sower
 
 from fill_patterns import PCLASSES
 from game_interface import Goal
+from game_interface import RoundFill
 from game_interface import WinCond
 from game_interface import PASS_TOKEN
 from game_log import game_log
@@ -209,7 +210,8 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
                     game_consts.holes,
                     game_consts.nbr_start))
 
-        if game_info.goal == Goal.TERRITORY:
+        if (game_info.goal == Goal.TERRITORY
+                or game_info.round_fill == RoundFill.UMOVE):
             game_consts.set_win_all_seeds()
 
         self.cts = game_consts
@@ -345,7 +347,6 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
     def set_store(self, row, seeds):
         """Set the store seeds of owner."""
         self.store[(row + 1) % 2] = seeds
-
 
 
     def set_blocked(self, loc, blocked):

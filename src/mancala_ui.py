@@ -16,6 +16,7 @@ import traceback
 import tkinter as tk
 
 import ai_player
+import cfg_keys as ckey
 import hole_button as hbtn
 import game_interface as gi
 import game_tally as gt
@@ -23,6 +24,7 @@ import game_tally as gt
 from hole_button import Behavior
 from game_interface import WinCond
 from game_interface import Direct
+from game_interface import RoundFill
 from game_log import game_log
 
 
@@ -76,8 +78,10 @@ class MancalaUI(tk.Frame):
                                     value=self.player.difficulty)
         self._set_difficulty()
 
+        start_ai = (ckey.AI_START in player_dict
+                    and player_dict[ckey.AI_START])
+        self.ai_active = tk.IntVar(self.master, value=start_ai)
         self.ai_delay = tk.BooleanVar(self.master, value=2)
-        self.ai_active = tk.IntVar(self.master, value=False)
 
         self.pack()
         self._create_menus()
@@ -421,9 +425,15 @@ class MancalaUI(tk.Frame):
 
         self._refresh()
         self.update()
-        if not new_game and self.info.rnd_umove:
-            self.set_game_mode(Behavior.RNDSETUP)
-            return
+        if not new_game:
+            if self.info.round_fill == RoundFill.UCHOOSE:
+                if self.set_game_mode(Behavior.RNDCHOOSE):
+                    return
+
+            elif self.info.round_fill == RoundFill.UMOVE:
+                if self.set_game_mode(Behavior.RNDMOVE):
+                    return
+
         self._start_it()
 
 
@@ -443,14 +453,12 @@ class MancalaUI(tk.Frame):
         if force:
             hbtn.force_mode_change()
 
-        elif not hbtn.ask_mode_change(mode, self):
-            if mode != Behavior.GAMEPLAY:
-                self._start_it()
+        elif not hbtn.ask_mode_change(self.mode, mode, self):
             return False
 
         assert sum(self.game.store) + sum(self.game.board) == \
             self.game.cts.total_seeds, \
-            'Seed count error on switching back to GAMEPLAY mode.'
+            'Seed count error on switching UI mode.'
 
         self.mode = mode
         for button_row in self.disp:

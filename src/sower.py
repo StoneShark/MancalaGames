@@ -4,7 +4,7 @@ the game board, dropping one seed into each hole.
 
 Any 'soft' direction (e.g. split, user choice) has already been
 translated to clockwise or counter-clockwise (i.e. CW or CCW).
-The sow_starter deco chain has already adjusted the strat hole
+The sow_starter deco chain has already adjusted the start hole
 contents and determined the number of seeds to sow.
 
 The incrementer deco is used to select the increment options.
@@ -349,6 +349,7 @@ class ChildLapCont(LapContinuerIf):
 
         return self.game.board[loc] > 1 and self.game.child[loc] is None
 
+
 # %% mlap end lap operations
 
 class MlapEndOpIf(abc.ABC):
@@ -383,11 +384,10 @@ class DirChange(MlapEndOpIf):
     """Change direction on each lap."""
 
     def do_op(self, mdata):
-        mdata.direct = not mdata.direct
+        mdata.direct = mdata.direct.opp_dir()
 
 
 # %%  mlap sowers
-
 
 class MlapSowerIf(SowMethodIf):
     """An interface and init for mlap sowers."""
@@ -419,8 +419,8 @@ class SowMlapSeeds(MlapSowerIf):
         loc = mdata.cont_sow_loc
         for _ in range(MAX_LAPS):
 
-            game_log.add(f'    Sowing from {loc}.', game_log.DETAIL)
             mdata = self.decorator.sow_seeds(mdata)
+            game_log.step(f'Mlap sow from {loc}', self.game, game_log.DETAIL)
 
             if self.lap_cont.do_another_lap(mdata):
                 loc = mdata.capt_loc
@@ -465,9 +465,9 @@ class SowVisitedMlap(SowMethodIf):
     def sow_seeds(self, mdata):
         """Do the first sow."""
 
-        game_log.add(f'    Sowing from {mdata.cont_sow_loc}.', game_log.DETAIL)
-
         mdata = self.single_sower.sow_seeds(mdata)
+        game_log.step('Vis Mlap sow from {mdata.cont_sow_loc}',
+                      self.game, game_log.DETAIL)
         if mdata.capt_loc is WinCond.REPEAT_TURN:
             return mdata
 
@@ -597,7 +597,6 @@ class SowPlus1Minus1Capt(SowPrescribedIf):
 
 
 # %% build deco chain
-
 
 def deco_blkd_divert_sower(game):
     """Implement the sow_blkd_div sower.

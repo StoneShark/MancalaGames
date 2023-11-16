@@ -14,7 +14,9 @@ import end_move
 
 from game_interface import Goal
 from game_interface import WinCond
+from game_interface import RoundFill
 from game_interface import RoundStarter
+from game_log import game_log
 from fill_patterns import PCLASSES
 
 # %%  New Game interace
@@ -76,7 +78,26 @@ class NewGamePattern(NewGameIf):
 class NewRound(NewGameIf):
     """Create a new round if allowed."""
 
-    def set_starter(self):
+    def __init__(self, game, decorator=None, collector=None):
+
+        super().__init__(game, decorator, collector)
+
+        holes = self.game.cts.holes
+        dbl_holes = self.game.cts.dbl_holes
+
+        if self.game.info.round_fill == RoundFill.RIGHT_FILL:
+            self.fill_orders = [range(holes - 1, -1, -1),
+                                range(dbl_holes - 1, holes, -1)]
+
+        elif self.game.info.round_fill == RoundFill.LEFT_FILL:
+            self.fill_orders = [range(holes), range(holes, dbl_holes)]
+
+        else:   # RoundFill.OUTSIDE_FILL or user action
+            self.fill_orders = [self.game.cts.false_fill,
+                                self.game.cts.true_fill]
+
+
+    def _set_starter(self):
         """Set the starter of the next round based on the game flag."""
 
         match self.game.info.round_starter:
@@ -105,15 +126,10 @@ class NewRound(NewGameIf):
         blocks = self.game.info.blocks
         seeds = self.collector.claim_seeds()
 
-        self.set_starter()
+        self._set_starter()
         self.game.init_bprops()
 
-        if self.game.info.rnd_left_fill:
-            orders = [range(holes), range(holes, self.game.cts.dbl_holes)]
-        else:
-            orders = [self.game.cts.false_fill, self.game.cts.true_fill]
-
-        for store, brange in enumerate(orders):
+        for store, brange in enumerate(self.fill_orders):
 
             quot, rem = divmod(seeds[store], nbr_start)
             fill = min(quot, holes)
@@ -166,6 +182,56 @@ class TerritoryNewRound(NewGameIf):
         return False
 
 
+class UChooseNewRound(NewGameIf):
+    """Wrap the existing NewGame deco chain.
+    If the chain created a new game, do nothing else.
+    If the chain created a new round, unblock all the holes,
+    evenly distribute loser seeds (do same for winner),
+    and set the stores.
+
+    If none of the holes have sufficient seeds for a minimum move,
+    move enough seeds into rightmost holes for a valid move,
+    adjusting the store appropriately."""
+
+    def new_game(self, win_cond=None, new_round_ok=False):
+        """Adjust the game outcome."""
+
+        winner = self.game.turn
+        if self.decorator.new_game(win_cond, new_round_ok):
+            return True
+
+        cts = self.game.cts
+        self.game.blocked = [False] * cts.dbl_holes
+
+        loser_seeds = self.game.store[not winner] + \
+            sum(self.game.board[loc] for loc in cts.get_my_range(not winner))
+
+        seeds_per_hole = loser_seeds // cts.holes
+        seeds_per_side = seeds_per_hole * cts.holes
+
+        self.game.store = [loser_seeds - seeds_per_side,
+                           cts.total_seeds - loser_seeds - seeds_per_side]
+
+        for loc in range(cts.dbl_holes):
+            self.game.board[loc] = seeds_per_hole
+
+        min_move = self.game.info.min_move
+        if seeds_per_hole < min_move:
+            game_log.add('Adjusting seeds for minimum move.', game_log.IMPORT)
+
+            self.game.board[0] = min_move
+            self.game.store[0] -= min_move - 1
+
+            self.game.board[cts.holes] = min_move
+            self.game.board[1] -= min_move - 1
+
+            assert sum(self.game.store) + sum(self.game.board) \
+                == self.game.cts.total_seeds, \
+                    'seed count error in new_game, adj for min move'
+
+        return False
+
+
 # %%
 
 def deco_new_game(game):
@@ -183,6 +249,7 @@ def deco_new_game(game):
             new_game = NewRound(
                 game, new_game,
                 end_move.TakeOwnSeeds(game, lambda loc: game.owner[loc]))
+
         else:
             new_game = NewRound(
                 game, new_game,
@@ -190,5 +257,8 @@ def deco_new_game(game):
 
     if game.info.goal == Goal.TERRITORY:
         new_game = TerritoryNewRound(game, new_game)
+
+    elif game.info.round_fill == RoundFill.UMOVE:
+        new_game = UChooseNewRound(game, new_game)
 
     return new_game

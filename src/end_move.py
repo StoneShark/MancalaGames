@@ -31,6 +31,7 @@ import abc
 from game_log import game_log
 from game_interface import Goal
 from game_interface import ChildType
+from game_interface import RoundFill
 from game_interface import WinCond
 
 
@@ -360,11 +361,31 @@ class RoundWinner(EndTurnIf):
     """"If the game is played in rounds, let the rest of the
     chain decide the outcome, then adjust for end of game or
     end of round. The game is over if either player does not
-    have the minimum seeds to fill a hole for the start of
-    the game.
+    have the minimum seeds to continue the game.
 
-    This is at the top of the deco chain. If ended is True
+    For UMOVE / Giuthi rules contradict: game doesn't end
+    until <= 4 seeds for loser, but in rearrangement rules all
+    holes must contain a seed. Also, the winner's side is
+    setup reversed of loser's side, so both players
+    must have enough seeds for a valid move. Therefore, the
+    game will end when there are not enough seeds for loser
+    to have a valid move.
+
+    This is near the top of the deco chain. If ended is True
     actually end the game (not the round)."""
+
+    def __init__(self, game, decorator=None, claimer=None):
+
+        super().__init__(game, decorator, claimer)
+
+        if game.info.round_fill == RoundFill.UMOVE:
+            self.req_seeds = game.cts.holes + game.info.min_move - 1
+            self.msg = "Game, not round, ended (too few seeds for valid move)."
+
+        else:
+            self.req_seeds = game.cts.nbr_start
+            self.msg = "Game, not round, ended (too few seeds to fill a hole)."
+
 
     def game_ended(self, repeat_turn, ended=False):
 
@@ -374,9 +395,8 @@ class RoundWinner(EndTurnIf):
             return cond, player
 
         seeds = self.claimer.claim_seeds()
-        if (seeds[True] < self.game.cts.nbr_start
-                or seeds[False] < self.game.cts.nbr_start):
-            game_log.add("Game, not round, ended.", game_log.INFO)
+        if seeds[True] < self.req_seeds or seeds[False] < self.req_seeds:
+            game_log.add(self.msg, game_log.INFO)
             return cond, player
 
         if cond == WinCond.WIN:
@@ -476,7 +496,7 @@ class WaldaEndMove(EndTurnIf):
     Note that this code is only used if mustpass False."""
 
     @staticmethod
-    def find_waldas(game):
+    def _find_waldas(game):
         """Find and return a walda for each side, if one exists."""
 
         walda_locs = [-1, -1]
@@ -494,7 +514,7 @@ class WaldaEndMove(EndTurnIf):
         end_cond, winner = self.decorator.game_ended(repeat_turn, ended)
 
         if any(self.game.store):
-            walda_locs = self.find_waldas(self.game)
+            walda_locs = self._find_waldas(self.game)
 
             if all(loc >= 0 for loc in walda_locs):
                 self.game.board[walda_locs[0]] += self.game.store[0]
@@ -547,7 +567,7 @@ class TerritoryRoundGameWinner(EndTurnIf):
     EndTurnNoPass to decide if the game has ended.
     Note that win_count is patched so Winner will not end the game."""
 
-    def compare_seed_cnts(self, seeds):
+    def _compare_seed_cnts(self, seeds):
         """All of the seeds have been collected and the
         game is not over, determine the round outcome."""
 
@@ -560,7 +580,7 @@ class TerritoryRoundGameWinner(EndTurnIf):
         return WinCond.ROUND_TIE, self.game.turn
 
 
-    def test_winner(self):
+    def _test_winner(self):
         """Winner check is done before and after the rest of the
         deco chain, don't duplicate the code."""
 
@@ -579,15 +599,15 @@ class TerritoryRoundGameWinner(EndTurnIf):
         return None, None
 
 
-    def test_end_game(self):
+    def _test_end_game(self):
         """The game is over, determine if there is an outright
         winner or a round winner."""
 
-        cond, winner = self.test_winner()
+        cond, winner = self._test_winner()
         if cond:
             return cond, winner
 
-        return self.compare_seed_cnts(self.game.store)
+        return self._compare_seed_cnts(self.game.store)
 
 
     def game_ended(self, repeat_turn, ended=False):
@@ -600,12 +620,12 @@ class TerritoryRoundGameWinner(EndTurnIf):
                 game_log.INFO)
             self.game.store[self.game.turn] += remaining
 
-            return self.test_end_game()
+            return self._test_end_game()
 
         cond, winner = self.decorator.game_ended(repeat_turn, ended)
 
         if cond == WinCond.GAME_OVER:
-            return self.test_end_game()
+            return self._test_end_game()
 
         return cond, winner
 
