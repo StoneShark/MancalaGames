@@ -353,11 +353,6 @@ class GameInterface(abc.ABC):
         """Return: GameInfo -- describe the game"""
 
     @abc.abstractmethod
-    def get_store(self, row):
-        """row: int - 0 top row, 1 bottom row
-        Return: the number of seeds in the store for player"""
-
-    @abc.abstractmethod
     def get_turn(self):
         """Return: True if top player's turn,
         False if bottom player's turn"""
@@ -371,6 +366,15 @@ class GameInterface(abc.ABC):
     def set_board(self, loc, seeds):
         """Set the seeds at location..
         Interface for button behavior."""
+
+    @abc.abstractmethod
+    def get_store(self, row):
+        """return the number of seeds in the store for side.
+        row : 0 for top row, 1 for bottom  (opposite of player)"""
+
+    @abc.abstractmethod
+    def set_store(self, row, seeds):
+        """Set the store seeds of owner."""
 
     @abc.abstractmethod
     def set_blocked(self, loc, blocked):
