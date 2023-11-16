@@ -278,7 +278,6 @@ class SimpleLapCont(LapContinuerIf):
         if mdata.capt_loc is WinCond.REPEAT_TURN:
             return False
 
-        # TODO Deka - got here with an unknown WinCond (test_simul_players.py)
         return self.game.board[mdata.capt_loc] > 1
 
 
@@ -612,11 +611,7 @@ def deco_blkd_divert_sower(game):
 
     sower = DivertSkipBlckdSower(game)
 
-    if game.info.mlaps == LapSower.LAPPER:
-        sower = SowMlapSeeds(game, sower,
-                             DivertBlckdLapper(game), CloseOp(game))
-
-    else:
+    if game.info.mlaps != LapSower.LAPPER:
         sower = SowClosed(game, sower)
 
     return sower
@@ -626,9 +621,9 @@ def deco_base_sower(game):
     """Choose the base sower."""
 
     if game.info.sow_rule == SowRule.SOW_BLKD_DIV:
-        return deco_blkd_divert_sower(game)
+        sower = deco_blkd_divert_sower(game)
 
-    if game.info.sow_rule == SowRule.OWN_SOW_CAPT_ALL:
+    elif game.info.sow_rule == SowRule.OWN_SOW_CAPT_ALL:
         if game.info.goal == Goal.TERRITORY:
             sower = SowCaptOwned(game, lambda loc: game.owner[loc])
         else:
@@ -653,13 +648,17 @@ def deco_mlap_sower(game, sower):
 
     if game.info.child_cvt:
         lap_cont = ChildLapCont(game)
+    elif game.info.sow_rule == SowRule.SOW_BLKD_DIV:
+        lap_cont = DivertBlckdLapper(game)
     elif game.info.mlaps == LapSower.LAPPER:
         lap_cont = SimpleLapCont(game)
-    else:   # game.info.mlaps == LapSower.LAPPER_NEXT:
+    elif game.info.mlaps == LapSower.LAPPER_NEXT:
         lap_cont = NextLapCont(game)
 
     if game.info.sow_rule == SowRule.CHANGE_DIR_LAP:
         end_op = DirChange(game)
+    elif game.info.sow_rule == SowRule.SOW_BLKD_DIV:
+        end_op = CloseOp(game)
     else:
         end_op = NoOp(game)
 
