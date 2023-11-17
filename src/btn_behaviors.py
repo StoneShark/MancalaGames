@@ -135,14 +135,19 @@ class BehaviorIf(abc.ABC):
     @classmethod
     @abc.abstractmethod
     def ask_mode_change(cls, game_ui):
-        """If the user should be asked to cnsent to the mode
+        """If the user should be asked to consent to the mode
         change, do so. Return True if the mode change is
-        ok, False otherwise."""
+        ok, False otherwise.
+
+        class method because this is called before the object
+        is instantiated."""
 
     @classmethod
     def leave_mode(cls, game_ui):
         """Is it ok to leave the mode (presumably to go back to GAMEPLAY).
-        Assume it is unless this is overridden."""
+        Assume it is unless this is overridden.
+
+        class method to access any class scope vars set in ask_mode_change."""
         _ = game_ui
         return True
 
@@ -265,7 +270,9 @@ class PlayButtonBehavior(BehaviorIf):
 
 
 class RndChooseButtonBehavior(BehaviorIf):
-    """Round setup behavior. Choose which holes are blocked."""
+    """Round setup behavior. Choose which holes are blocked.
+
+    Moving seeds is enabled on the side with blocked holes."""
 
     @classmethod
     def ask_mode_change(cls, game_ui):
@@ -279,7 +286,8 @@ class RndChooseButtonBehavior(BehaviorIf):
                 A new round is begining, so you may
                 change the blocked holes on the loser's of the
                 board. A right click picks up the seeds from an
-                occupied hole. A left click drops those seeds in
+                occupied hole, blocking it.
+                A left click drops those seeds in
                 an empty hole, unblocking it.  Do you wish to
                 rearrange the blocks?"""), width=50),
                     parent=game_ui)
@@ -288,13 +296,13 @@ class RndChooseButtonBehavior(BehaviorIf):
             return False
 
         Hold.hold_menu(game_ui,
-                       'Choose which holes are blocked.')
+                       'Move seeds out of holes you wish to block.')
 
         cls.starter = game_ui.game.turn
-        cls.loser = any(game_ui.game.blocked[l]
-                        for l in range(game_ui.game.cts.holes,
-                                       game_ui.game.cts.dbl_holes))
-        game_ui.game.turn = cls.loser
+        loser = any(game_ui.game.blocked[l]
+                    for l in range(game_ui.game.cts.holes,
+                                   game_ui.game.cts.dbl_holes))
+        game_ui.game.turn = loser
         return True
 
 
@@ -678,7 +686,10 @@ class RndMoveStoreBehavior(StoreBehaviorIf):
     def set_store(self, seeds, highlight):
         """Set the properties of the store button."""
 
-        self.str['state'] = tk.NORMAL
+        if highlight:
+            self.str['state'] = tk.NORMAL
+        else:
+            self.str['state'] = tk.DISABLED
 
         if seeds:
             self.str['text'] = str(seeds)

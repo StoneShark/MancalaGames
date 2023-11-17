@@ -8,6 +8,10 @@ Test Naming conventions:
     test_simul...  heuristic tests of games, seek gross errors.
                    Often slow.
 
+    vizex_...      frameworks to exercise the UI elements.
+                   tests are interactive and require the human
+                   tester to decide test pass & failure ...
+
 
 Debugging in Spyder:
 
