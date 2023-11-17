@@ -9,6 +9,7 @@ Created on Sun Aug 13 10:06:37 2023
 import abc
 import collections
 import enum
+import textwrap
 
 import tkinter as tk
 
@@ -78,7 +79,7 @@ class Hold:
 
 
     @staticmethod
-    def hold_menu(game_ui):
+    def hold_menu(game_ui, message=None):
         """Fill the right status frame with controls."""
 
         if Hold._top:
@@ -89,6 +90,9 @@ class Hold:
 
         text = 'Right click to pick seeds up.\n' + \
                'Left click to drop seeds from the hold.\n'
+        if message:
+            text = message + '\n' + text
+
         tk.Label(frame, anchor='nw', justify='left', text=text
                  ).pack(side='top', expand=True, fill='both')
 
@@ -214,6 +218,9 @@ class PlayButtonBehavior(BehaviorIf):
     def right_click(self):
         """Move for the right click -- unless the hole is udirect
         this is the same as a left click"""
+        if self.btn['state'] == tk.DISABLED:
+            return
+
         self.btn.game_ui.move(self.btn.right_move)
 
 
@@ -252,15 +259,13 @@ class PlayButtonBehavior(BehaviorIf):
             self.btn['background'] = 'grey80'
 
         if disable:
-            self.btn['state'] = 'disabled'
+            self.btn['state'] = tk.DISABLED
         else:
-            self.btn['state'] = 'normal'
+            self.btn['state'] = tk.NORMAL
 
 
 class RndChooseButtonBehavior(BehaviorIf):
-    """Round setup behavior. All occupied holes must have the
-    start number of seeds in them. Right click picks them all up
-    and left click drops them all."""
+    """Round setup behavior. Choose which holes are blocked."""
 
     @classmethod
     def ask_mode_change(cls, game_ui):
@@ -270,24 +275,42 @@ class RndChooseButtonBehavior(BehaviorIf):
 
         ans = tk.messagebox.askquestion(
             title='Move seeds',
-            message='A new round is begining so you may change\n'
-                    'the occupied holes on each side of the board.\n\n'
-                    'A right click picks up seeds.\n'
-                    'A left click drops those seeds.\n'
-                    'Use Round -> Start Round to play.\n\n'
-                    'Do you wish to move any seeds?',
+            message=textwrap.fill(textwrap.dedent("""\
+                A new round is begining, so you may
+                change the blocked holes on the loser's of the
+                board. A right click picks up the seeds from an
+                occupied hole. A left click drops those seeds in
+                an empty hole, unblocking it.  Do you wish to
+                rearrange the blocks?"""), width=50),
                     parent=game_ui)
 
-        if ans == YES_STR:
-            Hold.hold_menu(game_ui)
-            return True
-        return False
+        if ans != YES_STR:
+            return False
+
+        Hold.hold_menu(game_ui,
+                       'Choose which holes are blocked.')
+
+        cls.starter = game_ui.game.turn
+        cls.loser = any(game_ui.game.blocked[l]
+                        for l in range(game_ui.game.cts.holes,
+                                       game_ui.game.cts.dbl_holes))
+        game_ui.game.turn = cls.loser
+        return True
 
 
-    def set_props(self, props, _1, _2):
+    @classmethod
+    def leave_mode(cls, game_ui):
+
+        # revert to the round starter that was saved
+        game_ui.game.turn = cls.starter
+        return True
+
+
+    def set_props(self, props, disable, _2):
         """Set text, props and states of the hole."""
         self.btn.props = props
-        self._refresh()
+        # print(self.btn.row, self.btn.loc, disable, props.blocked)
+        self._refresh(disable != props.blocked)
 
 
     def left_click(self):
@@ -319,6 +342,8 @@ class RndChooseButtonBehavior(BehaviorIf):
         unless we are already holding seeds
         or there are not any seeds to pick up."""
 
+        if self.btn['state'] == tk.DISABLED:
+            return
         if Hold.nbr or not self.btn.props.seeds:
             self.btn.bell()
             return
@@ -336,11 +361,15 @@ class RndChooseButtonBehavior(BehaviorIf):
         self.btn.frame.config(cursor='circle')
 
 
-    def _refresh(self):
+    def _refresh(self, disable=False):
         """Make the UI match the behavior and game data."""
 
-        self.btn['background'] = MOVE_COLOR
-        self.btn['state'] = 'normal'
+        if disable:
+            self.btn['background'] = 'SystemButtonFace'
+            self.btn['state'] = tk.DISABLED
+        else:
+            self.btn['background'] = MOVE_COLOR
+            self.btn['state'] = tk.NORMAL
 
         if self.btn.props.blocked:
             self.btn['text'] = 'x'
@@ -351,6 +380,7 @@ class RndChooseButtonBehavior(BehaviorIf):
             self.btn['text'] = ''
 
 
+
 class RndMoveSeedsButtonBehavior(BehaviorIf):
     """Any number of seeds my placed on the board (by the loser)
     each hole must contain at least one seed. Extra seeds may be
@@ -358,15 +388,8 @@ class RndMoveSeedsButtonBehavior(BehaviorIf):
     the other.
     Winner's seeds will be arranged the same."""
 
-    # TODO Giuthi format message for new round; consider 'move to stores' btn
-
     starter = None
     loser = None
-
-    message = """Giuthi new rounds. The loser may
-    arrange the playable seeds how they wish.
-    The winner's seeds will be arranged the same way.
-    Do you wish to move seeds?"""
 
     @classmethod
     def ask_mode_change(cls, game_ui):
@@ -383,13 +406,21 @@ class RndMoveSeedsButtonBehavior(BehaviorIf):
 
         ans = tk.messagebox.askquestion(
             title='Move seeds',
-            message=RndMoveSeedsButtonBehavior.message,
+            message=textwrap.fill(textwrap.dedent("""\
+                  Giuthi new rounds: The loser may
+                  arrange the playable seeds with the restrictions that each
+                  hole contain at least one seed and one hole is playable.
+                  Seeds maybe added or removed from the store.
+                  The winner's seeds will be arranged the same way.
+                  Do you wish to rearrange the seeds?"""), width=50),
             parent=game_ui)
 
         if ans != YES_STR:
             return False
 
-        Hold.hold_menu(game_ui)
+        Hold.hold_menu(game_ui,
+                       'Each hole must contain at least one seed and\n'
+                       'one hole must be playable.')
 
         cls.starter = game_ui.game.turn
         cls.loser = game_ui.game.store[0] > game_ui.game.store[1]
@@ -417,9 +448,10 @@ class RndMoveSeedsButtonBehavior(BehaviorIf):
                    for seeds in game.board[loser_slice]):
             tk.messagebox.showerror(
                 title='Game Mode',
-                message='None of the holes have min_moves seed '
-                        f'({game.info.min_move}) seeds; game is not playable. '
-                        'Move more seeds back from store.',
+                message=textwrap.fill(textwrap.dedent(f"""\
+                    None of the holes have min_moves seeds
+                    ({game.info.min_move}); thus the game is not playable.
+                    Move more seeds back from store."""), width=40),
                 parent=game_ui)
             return False
 
@@ -434,10 +466,12 @@ class RndMoveSeedsButtonBehavior(BehaviorIf):
         return True
 
 
-    def set_props(self, props, _1, _2):
-        """Set text, props and states of the hole."""
+    def set_props(self, props, disable, _2):
+        """Set text, props and states of the hole.
+        Because we set turn to the loser, disable will be set
+        True for the loser."""
         self.btn.props = props
-        self._refresh()
+        self._refresh(disable)
 
 
     def left_click(self):
@@ -469,6 +503,8 @@ class RndMoveSeedsButtonBehavior(BehaviorIf):
             3. another condition that doesn't make sense at the moment !?!?!?
 
             Always leave at least one seed in each hole."""
+        if self.btn['state'] == tk.DISABLED:
+            return
 
         game = self.btn.game_ui.game
         if (game.turn == self.btn.row
@@ -489,11 +525,15 @@ class RndMoveSeedsButtonBehavior(BehaviorIf):
             self.btn.game_ui.config(cursor='circle')
 
 
-    def _refresh(self):
+    def _refresh(self, disable=False):
         """Make the UI match the behavior and game data."""
 
-        self.btn['background'] = SEED_COLOR
-        self.btn['state'] = 'normal'
+        if disable:
+            self.btn['background'] = 'SystemButtonFace'
+            self.btn['state'] = tk.DISABLED
+        else:
+            self.btn['background'] = SEED_COLOR
+            self.btn['state'] = tk.NORMAL
 
         if self.btn.props.blocked:
             self.btn['text'] = 'x'
@@ -515,20 +555,21 @@ class MoveSeedsButtonBehavior(BehaviorIf):
 
         ans = tk.messagebox.askquestion(
             title='Move seeds',
-            message='At the start of this game you may  rearrange seeds\n'
-            'on your side of the board. Your opponents seeds\n'
-            'will be arranged the same.\n\n'
-            'Rearranging seeds counts as your first move.\n\n'
-            'A right click will query how many seeds to pick (or\n'
-            'pick-up a single seed).\n'
-            'A left click will drop any seeds held.\n'
-            'Do you wish to move any seeds?\n',
+            message=textwrap.fill(textwrap.dedent("""\
+                  At the start of this game you may rearrange seeds on
+                  your side of the board. Your opponents seeds will be
+                  arranged the same. Rearranging seeds counts as your
+                  first move. A right click will query how many seeds
+                  to pick-up (or pick-up a single seed). A left click
+                  will drop any seeds held. Do you wish to move any
+                  seeds?"""), width=50),
             parent=game_ui)
 
-        if ans == YES_STR:
-            Hold.hold_menu(game_ui)
-            return True
-        return False
+        if ans != YES_STR:
+            return False
+
+        Hold.hold_menu(game_ui)
+        return True
 
 
     def set_props(self, props, _1, _2):
@@ -561,6 +602,8 @@ class MoveSeedsButtonBehavior(BehaviorIf):
 
     def right_click(self):
         """Pick up some or all of the seeds."""
+        if self.btn['state'] == tk.DISABLED:
+            return
 
         if (not self.btn.props.seeds
                 or Hold.owner not in (None, self.btn.row)):
@@ -586,7 +629,7 @@ class MoveSeedsButtonBehavior(BehaviorIf):
         """Make the UI match the behavior and game data."""
 
         self.btn['background'] = SEED_COLOR
-        self.btn['state'] = 'normal'
+        self.btn['state'] = tk.NORMAL
 
         if self.btn.props.blocked:
             self.btn['text'] = 'x'
@@ -607,7 +650,7 @@ class NoStoreBehavior(StoreBehaviorIf):
     def set_store(self, seeds, highlight):
         """Set the properties of the store button."""
 
-        self.str['state'] = 'disabled'
+        self.str['state'] = tk.DISABLED
 
         if seeds:
             self.str['text'] = str(seeds)
@@ -620,7 +663,7 @@ class NoStoreBehavior(StoreBehaviorIf):
         """No interaction, button disabled."""
 
     def right_click(self):
-        """No interaction, button disabled."""
+        """No interaction."""
 
 
 
@@ -635,7 +678,7 @@ class RndMoveStoreBehavior(StoreBehaviorIf):
     def set_store(self, seeds, highlight):
         """Set the properties of the store button."""
 
-        self.str['state'] = 'normal'
+        self.str['state'] = tk.NORMAL
 
         if seeds:
             self.str['text'] = str(seeds)
