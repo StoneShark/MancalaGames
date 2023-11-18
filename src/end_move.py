@@ -596,7 +596,7 @@ class TerritoryRoundGameWinner(EndTurnIf):
 
         self.game.board = [0] * tot_holes
 
-        false_holes = self.game.compute_owners()
+        false_holes, _ = self.game.compute_owners()
 
         if false_holes >= gparam_one:
             return WinCond.WIN, False
@@ -633,6 +633,47 @@ class TerritoryRoundGameWinner(EndTurnIf):
 
         if cond == WinCond.GAME_OVER:
             return self._test_end_game()
+
+        return cond, winner
+
+
+class TerritoryGameWinner(EndTurnIf):
+    """If the game has already been determined to be ended,
+    pick the winner:
+
+    Otherwise call the deco chain; we need EndTurnMustShare and/or
+    EndTurnNoPass to decide if the game has ended.
+
+    If they decide the game is over, use the same criteria to
+    determine the round winner.
+
+    Note that win_count is patched so Winner will not end the game."""
+
+
+    def _test_winner(self):
+        """The game has ended decide who won or if a TIE."""
+
+        false_holes, _ = self.game.compute_owners()
+
+        if false_holes > self.game.cts.holes:
+            return WinCond.WIN, False
+
+        if false_holes < self.game.cts.holes:
+            return WinCond.WIN, True
+
+        return WinCond.TIE, None
+
+
+    def game_ended(self, repeat_turn, ended=False):
+        """Determine if the game ended."""
+
+        if ended:
+            return self._test_winner()
+
+        cond, winner = self.decorator.game_ended(repeat_turn, ended)
+
+        if cond == WinCond.GAME_OVER:
+            return self._test_winner()
 
         return cond, winner
 
@@ -692,7 +733,10 @@ def deco_end_move(game):
         ender = WaldaEndMove(game, ender)
 
     if game.info.goal == Goal.TERRITORY:
-        ender = TerritoryRoundGameWinner(game, ender)
+        if game.info.rounds:
+            ender = TerritoryRoundGameWinner(game, ender)
+        else:
+            ender = TerritoryGameWinner(game, ender)
 
     return ender
 
@@ -702,6 +746,8 @@ def deco_quitter(game):
 
     When no_sides: include MaxWinner because, CountOnlySeedsStores
     might move seeds off the board."""
+
+    # TODO is quitter "fair" for territory games??
 
     if game.info.no_sides:
         return MaxWinner(game,

@@ -157,7 +157,7 @@ class TerritoryNewRound(NewGameIf):
         """Adjust the game outcome."""
 
         nbr_start = self.game.cts.nbr_start
-        false_holes = self.game.compute_owners()
+        false_holes, _ = self.game.compute_owners()
         winner = self.game.turn
 
         if self.decorator.new_game(win_cond, new_round_ok):

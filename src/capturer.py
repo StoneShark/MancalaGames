@@ -485,6 +485,38 @@ class MakeTuzdek(CaptMethodIf):
         self.decorator.do_captures(mdata)
 
 
+class MakeWegCapture(CaptMethodIf):
+    """If the last seed falls into an opponents weg, capture
+    the seed just sown and one more (if there is one)
+    and take another turn.
+    If the last seed falls into non-weg and it has convert_cnt
+    seeds and is owned by the opponent, convert it to a weg.
+    If neither of those occur, check if any other capture
+    criteria are met (not part of standard weg game)."""
+
+    def do_captures(self, mdata):
+
+        loc = mdata.capt_loc
+        turn = self.game.turn
+
+        if self.game.child[loc] is (not turn):
+
+            capts = 2 if self.game.board[loc] >= 2 else 1
+            self.game.board[loc] -= capts
+            self.game.store[turn] += capts
+            mdata.captured = True
+            return
+
+        if (self.game.board[loc] == self.game.info.child_cvt
+                and self.game.owner[loc] is (not turn)):
+
+            self.game.child[loc] = turn
+            mdata.capt_changed = True
+            return
+
+        self.decorator.do_captures(mdata)
+
+
 # %% pickers
 
 # all one enum so only one of these can be used
@@ -590,14 +622,19 @@ def _add_grand_slam_deco(game, capturer):
 
 def _add_child_deco(game, capturer):
     """Add a child handling deco if needed.
-    only one child handler: waldas/tuzdek/children"""
+    only one child handler: weg/waldas/tuzdek/children"""
 
     if game.info.child_type == ChildType.WALDA:
         capturer =  CaptureToWalda(game, capturer)
+
     elif game.info.child_type == ChildType.ONE_CHILD:
         capturer = MakeTuzdek(game, capturer)
+
     elif game.info.child_type == ChildType.NORMAL:
         capturer = MakeChild(game, capturer)
+
+    elif game.info.child_type == ChildType.WEG:
+        capturer = MakeWegCapture(game, capturer)
 
     return capturer
 

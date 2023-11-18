@@ -21,6 +21,7 @@ Created on Fri Apr  7 15:57:47 2023
 import abc
 
 from game_log import game_log
+from game_interface import ChildType
 from game_interface import Direct
 from game_interface import Goal
 from game_interface import LapSower
@@ -339,14 +340,34 @@ class ChildLapCont(LapContinuerIf):
             return False
 
         if (mdata.seeds > 1
-                and self.game.board[loc] == self.game.info.child_cvt):
-            if ((self.game.info.oppsidecapt
-                    and self.game.cts.opp_side(self.game.turn, loc))
-                    or not self.game.info.oppsidecapt):
-
-                return False
+                and self.game.board[loc] == self.game.info.child_cvt
+                and ((self.game.info.oppsidecapt
+                     and self.game.cts.opp_side(self.game.turn, loc))
+                        or not self.game.info.oppsidecapt)):
+            return False
 
         return self.game.board[loc] > 1 and self.game.child[loc] is None
+
+
+class WegLapCont(LapContinuerIf):
+    """Multilap sow in the presence/creation of children:
+        1. Stop sowing if we end in a store or a child.
+        2. Stop sowing if we should make a child.
+        3. Continue sowing if end in hole with > 1 seeds"""
+
+    def do_another_lap(self, mdata):
+        """Determine if we are done sowing."""
+
+        loc = mdata.capt_loc
+        if self.game.child[loc] is not None:
+            return False
+
+        if (self.game.board[loc] == self.game.info.child_cvt
+                and self.game.owner[loc] is (not self.game.turn)):
+
+            return False
+
+        return self.game.board[loc] > 1
 
 
 # %% mlap end lap operations
@@ -587,6 +608,8 @@ class SowPlus1Minus1Capt(SowPrescribedIf):
 
         # TODO SowPlus1Minus1Capt need to assure no loss of seeds (not currently used)
 
+        # TODO set capt_loc and let the capturer do this?
+        #   is this made a weg?  is there a repeat turn?
         cross = self.game.cts.cross_from_loc(mdata.capt_loc)
         self.game.store[self.game.turn] += self.game.board[cross]
         self.game.board[cross] = 0
@@ -646,7 +669,9 @@ def deco_mlap_sower(game, sower):
 
     pre_lap_sower = sower
 
-    if game.info.child_cvt:
+    if game.info.child_type == ChildType.WEG:
+        lap_cont = WegLapCont(game)
+    elif game.info.child_cvt:
         lap_cont = ChildLapCont(game)
     elif game.info.sow_rule == SowRule.SOW_BLKD_DIV:
         lap_cont = DivertBlckdLapper(game)

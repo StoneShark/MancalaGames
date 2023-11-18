@@ -85,7 +85,8 @@ STRING_DICTS = {
         {'No Children': ChildType.NOCHILD,
          'Normal': ChildType.NORMAL,
          'Waldas': ChildType.WALDA,
-         'One Child (tuzdek)': ChildType.ONE_CHILD}),
+         'One Child (tuzdek)': ChildType.ONE_CHILD,
+         'Weg / Daughter': ChildType.WEG}),
 
     'CrossCaptOwn': lookup_dicts(CrossCaptOwn,
         {'Leave': CrossCaptOwn.LEAVE,

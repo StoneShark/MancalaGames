@@ -358,13 +358,20 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         """Compute the number of holes that False should own
         based on number of seeds (called on new round)."""
 
+        seeds = self.store.copy()
+        for loc in range(self.cts.dbl_holes):
+            if self.child[loc] is True:
+                seeds[True] += self.board[loc]
+            elif self.child[loc] is False:
+                seeds[False] += self.board[loc]
+
         nbr_start = self.cts.nbr_start
-        false_holes, rem = divmod(self.store[False], nbr_start)
+        false_holes, rem = divmod(seeds[False], nbr_start)
         if rem > nbr_start // 2:
             false_holes += 1
         game_log.add(f"False holes = {false_holes}", game_log.DETAIL)
 
-        return false_holes
+        return false_holes, seeds
 
 
     def new_game(self, win_cond=None, new_round_ok=False):
