@@ -564,15 +564,82 @@ class DepriveSeedsEndGame(EndTurnIf):
 
 
 
-class TerritoryRoundGameWinner(EndTurnIf):
-    """When there are fewer than nbr_start seeds on the board,
-    give the remaining seeds to the current player
-    (they just did the last possible capture).
-    Determine if there is a game winner by territory (gparam_one)
+class TerritoryGameWinner(EndTurnIf):
+    """If the game has already been determined to be ended,
+    pick the winner:
+        Rounds: if there is a game winner by territory (gparam_one)
     or compare the seeds to determine a round winner.
+        No Rounds: determine soley based on territory > holes
+
     Otherwise call the deco chain; we need EndTurnMustShare and/or
     EndTurnNoPass to decide if the game has ended.
+
+    If they decide the game is over, use the same criteria to
+    determine the round winner.
+
     Note that win_count is patched so Winner will not end the game."""
+
+
+    def __init__(self, game, decorator=None, claimer=None):
+
+        super().__init__(game, decorator, claimer)
+        self.min_occ = self._min_occupy(game)
+
+        if game.info.rounds:
+            self.winner_test = self._test_round_winner
+        else:
+            self.winner_test = self._test_winner
+
+    @staticmethod
+    def _min_occupy(game):
+        """Select a minimum number of seeds that can claim
+        or occupy more territory. Don't override total_seeds
+        if this feature shouldn't be used (sow own store or
+        wegs)"""
+
+        min_occ = game.cts.total_seeds
+
+        if (game.info.evens
+                or game.info.capt_next
+                or game.info.capttwoout
+                or game.info.crosscapt):
+            min_occ = min(2, min_occ)
+
+        if game.info.child_cvt:
+            min_occ = min(game.info.child_cvt, min_occ)
+
+        if game.info.capt_on:
+            min_occ = min(*game.info.capt_on, min_occ)
+
+        if game.info.capt_min:
+            min_occ = min(game.info.capt_min, min_occ)
+
+        return min_occ
+
+
+    def _cant_occupy_more(self):
+        """Based on min_occ, determine if we can occupy more
+        territory. if we can't move unclaimed seeds to the
+        current player's store."""
+
+        remaining = sum(self.game.board[loc]
+                        for loc in range(self.game.cts.dbl_holes)
+                        if self.game.child[loc] is None)
+
+        if remaining <= self.min_occ:
+            game_log.add(
+                'Too few seeds for to claim more territory,'
+                f'remaining going to {self.game.turn}.',
+                game_log.INFO)
+
+            self.game.store[self.game.turn] += remaining
+            for loc in range(self.game.cts.dbl_holes):
+                if self.game.child[loc] is None:
+                    self.game.board[loc] = 0
+            return True
+
+        return False
+
 
     def _compare_seed_cnts(self, seeds):
         """All of the seeds have been collected and the
@@ -587,71 +654,26 @@ class TerritoryRoundGameWinner(EndTurnIf):
         return WinCond.ROUND_TIE, self.game.turn
 
 
-    def _test_winner(self):
-        """Winner check is done before and after the rest of the
-        deco chain, don't duplicate the code."""
+    def _test_round_winner(self):
+        """The round has ended, determine if their is a game
+        winner, or the round outcome."""
 
         tot_holes = self.game.cts.dbl_holes
         gparam_one = self.game.info.gparam_one
 
-        self.game.board = [0] * tot_holes
-
-        false_holes, _ = self.game.compute_owners()
+        false_holes, seeds = self.game.compute_owners()
 
         if false_holes >= gparam_one:
             return WinCond.WIN, False
+
         if tot_holes - false_holes >= gparam_one:
             return WinCond.WIN, True
 
-        return None, None
-
-
-    def _test_end_game(self):
-        """The game is over, determine if there is an outright
-        winner or a round winner."""
-
-        cond, winner = self._test_winner()
-        if cond:
-            return cond, winner
-
-        return self._compare_seed_cnts(self.game.store)
-
-
-    def game_ended(self, repeat_turn, ended=False):
-        """Determine if the game ended."""
-
-        remaining = sum(self.game.board)
-        if remaining <= self.game.cts.nbr_start:
-            game_log.add(
-                f'Too few seeds, remaining going to {self.game.turn}.',
-                game_log.INFO)
-            self.game.store[self.game.turn] += remaining
-
-            return self._test_end_game()
-
-        cond, winner = self.decorator.game_ended(repeat_turn, ended)
-
-        if cond == WinCond.GAME_OVER:
-            return self._test_end_game()
-
-        return cond, winner
-
-
-class TerritoryGameWinner(EndTurnIf):
-    """If the game has already been determined to be ended,
-    pick the winner:
-
-    Otherwise call the deco chain; we need EndTurnMustShare and/or
-    EndTurnNoPass to decide if the game has ended.
-
-    If they decide the game is over, use the same criteria to
-    determine the round winner.
-
-    Note that win_count is patched so Winner will not end the game."""
+        return self._compare_seed_cnts(seeds)
 
 
     def _test_winner(self):
-        """The game has ended decide who won or if a TIE."""
+        """The game has ended, decide who won or if a TIE."""
 
         false_holes, _ = self.game.compute_owners()
 
@@ -667,13 +689,13 @@ class TerritoryGameWinner(EndTurnIf):
     def game_ended(self, repeat_turn, ended=False):
         """Determine if the game ended."""
 
-        if ended:
-            return self._test_winner()
+        if ended or self._cant_occupy_more():
+            return self.winner_test()
 
         cond, winner = self.decorator.game_ended(repeat_turn, ended)
 
         if cond == WinCond.GAME_OVER:
-            return self._test_winner()
+            return self.winner_test()
 
         return cond, winner
 
@@ -733,10 +755,7 @@ def deco_end_move(game):
         ender = WaldaEndMove(game, ender)
 
     if game.info.goal == Goal.TERRITORY:
-        if game.info.rounds:
-            ender = TerritoryRoundGameWinner(game, ender)
-        else:
-            ender = TerritoryGameWinner(game, ender)
+        ender = TerritoryGameWinner(game, ender)
 
     return ender
 
