@@ -17,6 +17,7 @@ from context import mancala
 
 from game_interface import CaptExtraPick
 from game_interface import ChildType
+from game_interface import ChildRule
 from game_interface import CrossCaptOwn
 from game_interface import Direct
 from game_interface import GrandSlam
@@ -171,6 +172,7 @@ class TestCaptTable:
     def make_game(case):
 
         child_type = ChildType.NORMAL if case.child_cvt else ChildType.NOCHILD
+        child_rule = ChildRule.NOT_1ST_OPP if case.oppside else ChildRule.NONE
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(capt_on=case.capt_on,
@@ -187,7 +189,7 @@ class TestCaptTable:
                                 multicapt=case.multicapt,
                                 nosinglecapt=True,
                                 oppsidecapt=case.oppside,
-                                ch_opp_only=case.oppside,
+                                child_rule=child_rule,
                                 skip_start=case.skip_start,
                                 xcpickown=case.xcapt_pick_own,
                                 nbr_holes=game_consts.holes,

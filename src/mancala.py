@@ -27,6 +27,7 @@ import sow_starter
 import sower
 
 from fill_patterns import PCLASSES
+from game_interface import ChildRule
 from game_interface import Goal
 from game_interface import RoundFill
 from game_interface import WinCond
@@ -187,19 +188,20 @@ class ManDeco:
         def base_test(game, mdata):
             return game.board[mdata.capt_loc] == game.info.child_cvt
 
-        def not_first_hole(game, mdata):
-            if mdata.capt_loc == game.cts.holes:
-                return mdata.seeds > 1
-            return True
-
         def only_opp_side(game, mdata):
             return game.cts.opp_side(game.turn, mdata.capt_loc)
 
+        def not_first_hole(_, mdata):
+            return mdata.seeds > 1
+
         func_list = [base_test]
-        if game.info.ch_not_first_1:
-            func_list += [not_first_hole]
-        if game.info.ch_opp_only:
+
+        if game.info.child_rule == ChildRule.OPP_ONLY:
             func_list += [only_opp_side]
+
+        if game.info.child_rule == ChildRule.NOT_1ST_OPP:
+            func_list += [only_opp_side]
+            func_list += [not_first_hole]
 
         def child_test(game, mdata):
             return all(f(game, mdata) for f in func_list)

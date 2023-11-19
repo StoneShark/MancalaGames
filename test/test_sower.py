@@ -18,6 +18,7 @@ from context import mancala
 from context import sower
 
 from game_interface import ChildType
+from game_interface import ChildRule
 from game_interface import Direct
 from game_interface import Goal
 from game_interface import LapSower
@@ -55,8 +56,7 @@ class TestSower:
         game_info = gi.GameInfo(capt_on=[2],
                                 child_type=ChildType.NORMAL,
                                 child_cvt=4,
-                                ch_opp_only=True,
-                                ch_not_first_1=True,
+                                child_rule=ChildRule.NOT_1ST_OPP,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
@@ -71,7 +71,6 @@ class TestSower:
         game_info = gi.GameInfo(capt_on=[2],
                                 child_type=ChildType.NORMAL,
                                 child_cvt=4,
-                                ch_not_first_1=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
@@ -458,12 +457,12 @@ class TestSower:
                             [0, 4, 0]),
           utils.build_board([N, N, N],
                             [N, N, N]), False),
-         # 3: no child on opps first hole and one seed
+         # 3: child on opps first hole and one seed
          (3, 1,
           utils.build_board([1, 4, 4],
                             [0, 3, 0]),
           utils.build_board([N, N, N],
-                            [N, N, N]), True),
+                            [N, N, N]), False),
          # 4: not first hole with > 1 seed, make child
          (3, 3,
           utils.build_board([1, 4, 4],
@@ -499,7 +498,7 @@ class TestSower:
     @pytest.mark.parametrize('end_loc, sown_seeds, board, child, eresult',
                              chi_lap_not_cases)
     def test_child_lap_not_opp(self, nogame, end_loc, sown_seeds,
-                       board, child, eresult):
+                               board, child, eresult):
 
         nogame.turn = False
         nogame.board = board

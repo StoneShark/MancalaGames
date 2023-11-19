@@ -177,6 +177,15 @@ class LapSower(enum.IntEnum):
 
 
 @enum.unique
+class ChildRule(enum.IntEnum):
+    """Defines additional child restrictions."""
+
+    NONE = 0
+    OPP_ONLY = 1
+    NOT_1ST_OPP = 2
+
+
+@enum.unique
 class WinCond(enum.Enum):
     """Win conditions.
     Not used in the config files."""
@@ -232,8 +241,7 @@ class GameInfo:
     visit_opp: bool = False
     child_cvt: int = 0
     child_type: ChildType = ChildType.NOCHILD
-    ch_opp_only: bool = False
-    ch_not_first_1: bool = False
+    child_rule: ChildRule = ChildRule.NONE
     gparam_one: int = 0
     sow_rule: SowRule = SowRule.NONE
 

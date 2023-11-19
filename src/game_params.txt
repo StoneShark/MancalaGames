@@ -137,5 +137,6 @@ WEG: children maybe created in holes owned by the opponent. Ending a sow in an o
 "													
 Sow	child_cvt	Child Convert Count	game_info _	26	int	0	4	2	"Defines the number of seeds required to make a child.
 "			1		1			1	1	1	1	1	1
-Sow	ch_opp_only	Child Opposite Side Only	game_info _	24	bool	FALSE	5	2	Only make children on the opposite side.													
-Sow	ch_not_first_1	Child not first with 1 Seed	game_info _	23	bool	FALSE	6	2	Don't make a child in the first hole on the opponents side with one seed.													
+Sow	child_rule	Child Restrictions	game_info _	24	ChildRule	NONE	5	2	"NONE: no additional restrictions.
+OPP_ONLY:  Only make children on the opposite side or in opponent's territory.
+NOT_1ST_OPP: Don't make a child in the first hole on the opponents side/territory with one seed."													

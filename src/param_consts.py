@@ -14,6 +14,7 @@ from game_classes import GAME_CLASSES
 from game_interface import AllowRule
 from game_interface import CaptExtraPick
 from game_interface import ChildType
+from game_interface import ChildRule
 from game_interface import CrossCaptOwn
 from game_interface import Direct
 from game_interface import Goal
@@ -87,6 +88,11 @@ STRING_DICTS = {
          'Waldas': ChildType.WALDA,
          'One Child (tuzdek)': ChildType.ONE_CHILD,
          'Weg / Daughter': ChildType.WEG}),
+
+    'ChildRule': lookup_dicts(ChildRule,
+        {'No additional restrictions': ChildRule.NONE,
+         'Opposite Side/Territory Only': ChildRule.OPP_ONLY,
+         'Not 1st Opposite with 1': ChildRule.NOT_1ST_OPP}),
 
     'CrossCaptOwn': lookup_dicts(CrossCaptOwn,
         {'Leave': CrossCaptOwn.LEAVE,
