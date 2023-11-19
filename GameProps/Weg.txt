@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Weg",
-      "about": "Weg: a territory game that uses both stores and wegs (children). Sow is multi-lap, counter-clockwise. Wegs are made when a final seed sows a hole to 4 seeds on your own territory. Captures are on the final seed being sown into an opponents weg. The sown seed and one more (if there is one) are captured to your store. Repeat turn on capture.\n\nVariations:\n- 2x6 with 3 start seeds\n- 2x10 with 4 start seeds\n- not played in rounds\n- no repeat turn on capture",
+      "about": "Weg: a territory game that uses both stores and wegs (children). Sow is multi-lap, counter-clockwise. Wegs are made when a final seed sows a hole to 4 seeds on your opponent's territory. Captures are on the final seed being sown into an opponents weg. The sown seed and one more (if there is one) are captured to your store. Repeat turn on capture.\n\nVariations:\n- 2x6 with 3 start seeds\n- 2x10 with 4 start seeds\n- not played in rounds\n- no repeat turn on capture",
       "capt_rturn": true,
       "child_cvt": 4,
       "child_type": 4,
