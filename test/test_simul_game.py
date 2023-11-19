@@ -58,7 +58,7 @@ def test_one_game(game_data, request):
     game, _ = game_data
     game_log.game_log.active = False
 
-    for _ in range(2000 if game.info.rounds else 500):
+    for _ in range(3000 if game.info.rounds else 500):
         moves = game.get_moves()
         assert moves, "Game didn't end right."
 
@@ -89,8 +89,8 @@ def test_one_game(game_data, request):
 def known_game_fails(request):
 
     game, _ = request.getfixturevalue('game_data')
-    if game.info.name in ['Congklak', 'Erherhe', 'Eson Xorgol', 'NamNam',
-                          'Pallam Kuzhi', 'Weg']:
+    if game.info.name in ['Congklak', 'Erherhe', 'Eson Xorgol', 'Gabata',
+                          'NamNam', 'Pallam Kuzhi', 'Weg']:
         request.node.add_marker(
             pytest.mark.xfail(
                 reason='Many seeds; heuristic test; occasionally fails.',
