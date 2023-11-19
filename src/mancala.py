@@ -28,6 +28,7 @@ import sower
 
 from fill_patterns import PCLASSES
 from game_interface import ChildRule
+from game_interface import ChildType
 from game_interface import Goal
 from game_interface import RoundFill
 from game_interface import WinCond
@@ -185,10 +186,22 @@ class ManDeco:
         mlap sowing (for generic children only). Used in the
         capturer to make generic children (not walda, weg, or tuzdek)."""
 
-        def base_test(game, mdata):
+        def base_case(game, mdata):
             loc = mdata.capt_loc
             return (game.child[loc] is None
                     and game.board[loc] == game.info.child_cvt)
+
+        def bull_case(game, mdata):
+            """Paired capt of child_cvt then child_cvt-1
+            or just child_cvt."""
+            loc = mdata.capt_loc
+            prev = game.deco.incr.incr(loc, mdata.direct.opp_dir())
+            return ((game.child[loc] is None
+                     and game.board[loc] == game.info.child_cvt - 1
+                     and game.child[prev] is None
+                     and game.board[prev] == game.info.child_cvt)
+                    or (game.child[loc] is None
+                        and game.board[loc] == game.info.child_cvt))
 
         def only_opp_side(game, mdata):
             return game.cts.opp_side(game.turn, mdata.capt_loc)
@@ -196,7 +209,10 @@ class ManDeco:
         def not_first_hole(_, mdata):
             return mdata.seeds > 1
 
-        func_list = [base_test]
+        if game.info.child_type == ChildType.BULL:
+            func_list = [bull_case]
+        else:
+            func_list = [base_case]
 
         if game.info.child_rule == ChildRule.OPP_ONLY:
             func_list += [only_opp_side]

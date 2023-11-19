@@ -514,26 +514,27 @@ class MakeWegCapture(CaptMethodIf):
 
 class MakeBull(CaptMethodIf):
     """If the last seed falls into non-bull and it has convert_cnt
-    seeds, convert it to a bull (child). If a new bull is preceeded
-    by a hole containing convert_cnt-1 seeds, make it a bull as well.
+    seeds, convert it to a bull (child). If the final two holes are
+    child_cvt and child_cvt in either order, make them both bulls.
     If no bull is made, check if any other capture
     criteria are met."""
 
     def do_captures(self, mdata):
 
         loc = mdata.capt_loc
-        turn = self.game.turn
+        game = self.game
 
-        if self.game.deco.make_child(self.game, mdata):
+        if game.deco.make_child(game, mdata):
 
-            self.game.child[loc] = turn
+            game.child[loc] = game.turn
             mdata.capt_changed = True
 
             prev = self.game.deco.incr.incr(loc, mdata.direct.opp_dir())
-            if (self.game.board[prev] == self.game.info.child_cvt - 1
-                    and self.game.owner[prev] is None):
-                self.game.child[prev] = turn
+            board_set = set([game.board[prev], game.board[loc]])
+            req_set = set([game.info.child_cvt - 1, game.info.child_cvt])
 
+            if board_set == req_set:
+                game.child[prev] = game.turn
             return
 
         self.decorator.do_captures(mdata)
