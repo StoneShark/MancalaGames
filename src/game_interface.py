@@ -105,6 +105,7 @@ class ChildType(enum.IntEnum):
     WALDA = 2
     ONE_CHILD = 3
     WEG = 4
+    BULL = 5
 
 
 @enum.unique

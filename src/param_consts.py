@@ -87,7 +87,8 @@ STRING_DICTS = {
          'Normal': ChildType.NORMAL,
          'Waldas': ChildType.WALDA,
          'One Child (tuzdek)': ChildType.ONE_CHILD,
-         'Weg / Daughter': ChildType.WEG}),
+         'Weg / Daughter': ChildType.WEG,
+         'Bull': ChildType.BULL}),
 
     'ChildRule': lookup_dicts(ChildRule,
         {'No additional restrictions': ChildRule.NONE,

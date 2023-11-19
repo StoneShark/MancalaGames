@@ -607,10 +607,7 @@ class SowOneOpp(SowPrescribedIf):
 
 class SowPlus1Minus1Capt(SowPrescribedIf):
     """Starting after the selected move one seed forward
-    in every other hole.
-    Make a weg across from the start hole.
-
-    Requires stores, prohibit move unlock (or just ignore it?)"""
+    in every other hole."""
 
     def do_prescribed(self, mdata):
 

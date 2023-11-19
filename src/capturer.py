@@ -512,6 +512,33 @@ class MakeWegCapture(CaptMethodIf):
         self.decorator.do_captures(mdata)
 
 
+class MakeBull(CaptMethodIf):
+    """If the last seed falls into non-bull and it has convert_cnt
+    seeds, convert it to a bull (child). If a new bull is preceeded
+    by a hole containing convert_cnt-1 seeds, make it a bull as well.
+    If no bull is made, check if any other capture
+    criteria are met."""
+
+    def do_captures(self, mdata):
+
+        loc = mdata.capt_loc
+        turn = self.game.turn
+
+        if self.game.deco.make_child(self.game, mdata):
+
+            self.game.child[loc] = turn
+            mdata.capt_changed = True
+
+            prev = self.game.deco.incr.incr(loc, mdata.direct.opp_dir())
+            if (self.game.board[prev] == self.game.info.child_cvt - 1
+                    and self.game.owner[prev] is None):
+                self.game.child[prev] = turn
+
+            return
+
+        self.decorator.do_captures(mdata)
+
+
 # %% pickers
 
 # all one enum so only one of these can be used
@@ -617,7 +644,7 @@ def _add_grand_slam_deco(game, capturer):
 
 def _add_child_deco(game, capturer):
     """Add a child handling deco if needed.
-    only one child handler: weg/waldas/tuzdek/children"""
+    only one child handler: bull/weg/waldas/tuzdek/children"""
 
     if game.info.child_type == ChildType.WALDA:
         capturer =  CaptureToWalda(game, capturer)
@@ -630,6 +657,9 @@ def _add_child_deco(game, capturer):
 
     elif game.info.child_type == ChildType.WEG:
         capturer = MakeWegCapture(game, capturer)
+
+    elif game.info.child_type == ChildType.BULL:
+        capturer = MakeBull(game, capturer)
 
     return capturer
 

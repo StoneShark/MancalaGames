@@ -186,7 +186,9 @@ class ManDeco:
         capturer to make generic children (not walda, weg, or tuzdek)."""
 
         def base_test(game, mdata):
-            return game.board[mdata.capt_loc] == game.info.child_cvt
+            loc = mdata.capt_loc
+            return (game.child[loc] is None
+                    and game.board[loc] == game.info.child_cvt)
 
         def only_opp_side(game, mdata):
             return game.cts.opp_side(game.turn, mdata.capt_loc)
