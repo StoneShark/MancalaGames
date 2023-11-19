@@ -55,7 +55,8 @@ class TestSower:
         game_info = gi.GameInfo(capt_on=[2],
                                 child_type=ChildType.NORMAL,
                                 child_cvt=4,
-                                oppsidecapt=True,
+                                ch_opp_only=True,
+                                ch_not_first_1=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
@@ -70,6 +71,7 @@ class TestSower:
         game_info = gi.GameInfo(capt_on=[2],
                                 child_type=ChildType.NORMAL,
                                 child_cvt=4,
+                                ch_not_first_1=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
@@ -328,6 +330,8 @@ class TestSower:
         mdata.capt_loc = end_loc
 
         lap_cont = sower.SimpleLapCont(game)
+        lap_cont = sower.StopRepeatTurn(game, lap_cont)
+
         assert lap_cont.do_another_lap(mdata) == eresult
 
 
@@ -351,6 +355,8 @@ class TestSower:
         mdata.capt_loc = end_loc
 
         lap_cont = sower.NextLapCont(game)
+        lap_cont = sower.StopRepeatTurn(game, lap_cont)
+
         assert lap_cont.do_another_lap(mdata) == eresult
         if cloc:
             assert mdata.capt_loc == cloc
@@ -427,6 +433,9 @@ class TestSower:
         mdata.seeds = sown_seeds
 
         lap_cont = sower.ChildLapCont(game)
+        lap_cont = sower.StopOnChild(game, lap_cont)
+        lap_cont = sower.StopRepeatTurn(game, lap_cont)
+
         assert lap_cont.do_another_lap(mdata) == eresult
 
 
@@ -501,6 +510,9 @@ class TestSower:
         mdata.seeds = sown_seeds
 
         lap_cont = sower.ChildLapCont(nogame)
+        lap_cont = sower.StopOnChild(nogame, lap_cont)
+        lap_cont = sower.StopRepeatTurn(nogame, lap_cont)
+
         assert lap_cont.do_another_lap(mdata) == eresult
 
 
@@ -510,9 +522,9 @@ class TestMlap:
     def game(self):
 
         game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                capt_on = [2],
+        game_info = gi.GameInfo(crosscapt=True,
                                 sow_direct=Direct.CW,
+                                nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
         return mancala.Mancala(game_consts, game_info)
 
@@ -684,14 +696,14 @@ class TestVMlap:
     def game(self):
 
         game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                sow_direct=Direct.CW,
+        game_info = gi.GameInfo(sow_direct=Direct.CW,
                                 stores=True,
                                 sow_own_store=True,
                                 mlaps=LapSower.LAPPER,
                                 visit_opp=True,
                                 child_type=ChildType.NORMAL,
                                 child_cvt=4,
+                                nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
@@ -739,6 +751,7 @@ class TestVMlap:
         mdata.sow_loc, mdata.seeds = game.deco.starter.start_sow(start_pos)
         mdata.direct = Direct.CW
         mdata =game.deco.sower.sow_seeds(mdata)
+        print(game)
 
         assert mdata.capt_loc == eloc
         assert game.board == eboard
@@ -868,6 +881,11 @@ class TestBlckDivertSower:
         mdata.sow_loc, mdata.seeds = mlgame.deco.starter.start_sow(spos)
         mdata.direct = mlgame.info.sow_direct
         mdata = mlgame.deco.sower.sow_seeds(mdata)
+
+        print(mlgame)
+        print(mlgame.deco.sower)
+        print(mlgame.deco.sower.lap_cont)
+        print(mlgame.deco.sower.end_lap_op)
 
         assert mdata.capt_loc == eloc
         assert mlgame.board == eboard

@@ -375,18 +375,24 @@ class GSOppGets(GrandSlamCapt):
 class MakeChild(CaptMethodIf):
     """If the hole constains child_cvt seeds
     and the side test is good, designate a child.
-    If a child is made don't do any other captures."""
+    If a child is made don't do any other captures.
+
+    mdata.make_child is set if the mlap sower decided we should
+    stop and make a child"""
+
+    # TODO child making logic should only be in one place
 
     def do_captures(self, mdata):
 
-        if self.game.board[mdata.capt_loc] == self.game.info.child_cvt:
-            if ((self.game.info.oppsidecapt
-                    and self.game.cts.opp_side(self.game.turn, mdata.capt_loc))
-                    or not self.game.info.oppsidecapt):
+        if (mdata.make_child
+            or (self.game.board[mdata.capt_loc] == self.game.info.child_cvt
+                and ((self.game.info.ch_opp_only
+                     and self.game.cts.opp_side(self.game.turn, mdata.capt_loc))
+                        or not self.game.info.ch_opp_only))):
 
-                self.game.child[mdata.capt_loc] = self.game.turn
-                mdata.capt_changed = True
-                return
+            self.game.child[mdata.capt_loc] = self.game.turn
+            mdata.capt_changed = True
+            return
 
         self.decorator.do_captures(mdata)
 

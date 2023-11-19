@@ -262,8 +262,9 @@ class LapContinuerIf(abc.ABC):
     """Interface for algorithm that determines if
     sowing should continue."""
 
-    def __init__(self, game):
+    def __init__(self, game, decorator=None):
         self.game = game
+        self.decorator = decorator
 
     def do_another_lap(self, mdata):
         """Return True if we should continue sowing, False otherwise."""
@@ -276,9 +277,6 @@ class SimpleLapCont(LapContinuerIf):
     def do_another_lap(self, mdata):
         """Determine if we are done sowing."""
 
-        if mdata.capt_loc is WinCond.REPEAT_TURN:
-            return False
-
         return self.game.board[mdata.capt_loc] > 1
 
 
@@ -288,19 +286,16 @@ class NextLapCont(LapContinuerIf):
 
     Laurence Russ calls this Indian Style lapping."""
 
+    # TODO consider making NextLapCont a wrapper, simply increments mdata.capt_loc
+
     def do_another_lap(self, mdata):
         """Determine if we are done sowing."""
-
-        if mdata.capt_loc is WinCond.REPEAT_TURN:
-            return False
 
         loc = self.game.deco.incr.incr(mdata.capt_loc, mdata.direct)
         if self.game.board[loc]:
             mdata.capt_loc = loc
             return True
         return False
-
-# XXXX could a deco chain be used to implement LAPPER_NEXT with CHILD & GS
 
 
 class DivertBlckdLapper(LapContinuerIf):
@@ -317,13 +312,8 @@ class DivertBlckdLapper(LapContinuerIf):
 
 class ChildLapCont(LapContinuerIf):
     """Multilap sow in the presence/creation of children:
-        1. Stop sowing if we end in a store or a child.
-        2. Stop sowing if we should make a child.
-        3. BUT don't make child in opponents first hole with
-           a single seed from our right-most hole.
-
-        4. Continue sowing if end in hole with > 1 seeds that
-           is not a designated child.
+    Stop sowing if we should make a child; and continue
+    sowing if end in hole with > 1 seeds.
 
     Mohr's book states that a turn ends when 'any' seed is sown
     into a child, but it doesn't describe what to do with the
@@ -332,21 +322,48 @@ class ChildLapCont(LapContinuerIf):
     p 44, first paragraph, but he also doesn't describe what to do
     with the remaining seeds."""
 
+    def __init__(self, game, decorator=None):
+
+        def gen_test(convert, opp_side, not_first):
+            """Generate a partially evaluated test function
+            that will return True if we should stop sowing
+            so that a child can be made."""
+
+            def _test(game, mdata):
+
+                loc = mdata.capt_loc
+                if game.board[loc] != convert:
+                    return False
+
+                if not_first and mdata.seeds == 1 and loc == game.cts.holes:
+                    return False
+
+                if opp_side and not game.cts.opp_side(game.turn, loc):
+                    return False
+
+                return True
+
+            return _test
+
+        super().__init__(game, decorator)
+        self.stop_make_child = gen_test(game.info.child_cvt,
+                                        game.info.ch_opp_only,
+                                        game.info.ch_not_first_1)
+
+
     def do_another_lap(self, mdata):
         """Determine if we are done sowing."""
 
         loc = mdata.capt_loc
-        if loc is WinCond.REPEAT_TURN or self.game.child[loc] is not None:
+
+        if self.game.board[loc] == 1:
             return False
 
-        if (mdata.seeds > 1
-                and self.game.board[loc] == self.game.info.child_cvt
-                and ((self.game.info.oppsidecapt
-                     and self.game.cts.opp_side(self.game.turn, loc))
-                        or not self.game.info.oppsidecapt)):
+        if self.stop_make_child(self.game, mdata):
+            mdata.make_child = True
             return False
 
-        return self.game.board[loc] > 1 and self.game.child[loc] is None
+        return True
 
 
 class WegLapCont(LapContinuerIf):
@@ -359,15 +376,45 @@ class WegLapCont(LapContinuerIf):
         """Determine if we are done sowing."""
 
         loc = mdata.capt_loc
-        if self.game.child[loc] is not None:
+        if self.game.board[loc] == 1:
             return False
 
         if (self.game.board[loc] == self.game.info.child_cvt
                 and self.game.owner[loc] is (not self.game.turn)):
-
             return False
 
-        return self.game.board[loc] > 1
+        return True
+
+
+
+class StopOnChild(LapContinuerIf):
+    """A wrapper: stop if we've ended in a child."""
+
+    def do_another_lap(self, mdata):
+
+        if self.game.child[mdata.capt_loc] is not None:
+            return False
+        return self.decorator.do_another_lap(mdata)
+
+
+class StopCaptureSeeds(LapContinuerIf):
+    """A wrapper: stop if we should capture."""
+
+    def do_another_lap(self, mdata):
+
+        if self.game.deco.capt_ok.capture_ok(mdata.capt_loc):
+            return False
+        return self.decorator.do_another_lap(mdata)
+
+
+class StopRepeatTurn(LapContinuerIf):
+    """A wrapper: stop if we know it's a repeat turn."""
+
+    def do_another_lap(self, mdata):
+
+        if mdata.capt_loc is WinCond.REPEAT_TURN:
+            return False
+        return self.decorator.do_another_lap(mdata)
 
 
 # %% mlap end lap operations
@@ -608,8 +655,7 @@ class SowPlus1Minus1Capt(SowPrescribedIf):
 
         # TODO SowPlus1Minus1Capt need to assure no loss of seeds (not currently used)
 
-        # TODO set capt_loc and let the capturer do this?
-        #   is this made a weg?  is there a repeat turn?
+        # TODO set capt_loc and let the capturer do this?  is there a repeat turn?
         cross = self.game.cts.cross_from_loc(mdata.capt_loc)
         self.game.store[self.game.turn] += self.game.board[cross]
         self.game.board[cross] = 0
@@ -664,21 +710,44 @@ def deco_base_sower(game):
     return sower
 
 
+def deco_build_lap_cont(game):
+    """Choose a base lap continuer, then add any wrappers."""
+
+    if game.info.child_type == ChildType.WEG:
+        lap_cont = WegLapCont(game)
+
+    elif game.info.child_cvt:
+        lap_cont = ChildLapCont(game)
+
+    elif game.info.sow_rule == SowRule.SOW_BLKD_DIV:
+        lap_cont = DivertBlckdLapper(game)
+
+    elif game.info.mlaps == LapSower.LAPPER:
+        lap_cont = SimpleLapCont(game)
+
+    elif game.info.mlaps == LapSower.LAPPER_NEXT:
+        lap_cont = NextLapCont(game)
+
+    if game.info.child_cvt or game.info.child_type:
+        lap_cont = StopOnChild(game, lap_cont)
+
+    if any([game.info.evens,
+            game.info.capt_on,
+            game.info.capt_max,
+            game.info.capt_min]):
+        lap_cont = StopCaptureSeeds(game, lap_cont)
+
+    if game.info.sow_own_store:
+        lap_cont = StopRepeatTurn(game, lap_cont)
+
+    return lap_cont
+
+
 def deco_mlap_sower(game, sower):
     """Build the deco chain elements for multiple lap sowing."""
 
     pre_lap_sower = sower
 
-    if game.info.child_type == ChildType.WEG:
-        lap_cont = WegLapCont(game)
-    elif game.info.child_cvt:
-        lap_cont = ChildLapCont(game)
-    elif game.info.sow_rule == SowRule.SOW_BLKD_DIV:
-        lap_cont = DivertBlckdLapper(game)
-    elif game.info.mlaps == LapSower.LAPPER:
-        lap_cont = SimpleLapCont(game)
-    elif game.info.mlaps == LapSower.LAPPER_NEXT:
-        lap_cont = NextLapCont(game)
 
     if game.info.sow_rule == SowRule.CHANGE_DIR_LAP:
         end_op = DirChange(game)
@@ -686,6 +755,8 @@ def deco_mlap_sower(game, sower):
         end_op = CloseOp(game)
     else:
         end_op = NoOp(game)
+
+    lap_cont = deco_build_lap_cont(game)
 
     sower = SowMlapSeeds(game, sower, lap_cont, end_op)
 

@@ -232,6 +232,8 @@ class GameInfo:
     visit_opp: bool = False
     child_cvt: int = 0
     child_type: ChildType = ChildType.NOCHILD
+    ch_opp_only: bool = False
+    ch_not_first_1: bool = False
     gparam_one: int = 0
     sow_rule: SowRule = SowRule.NONE
 

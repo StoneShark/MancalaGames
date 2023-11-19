@@ -187,6 +187,7 @@ class TestCaptTable:
                                 multicapt=case.multicapt,
                                 nosinglecapt=True,
                                 oppsidecapt=case.oppside,
+                                ch_opp_only=case.oppside,
                                 skip_start=case.skip_start,
                                 xcpickown=case.xcapt_pick_own,
                                 nbr_holes=game_consts.holes,
