@@ -312,8 +312,7 @@ class DivertBlckdLapper(LapContinuerIf):
 
 class ChildLapCont(LapContinuerIf):
     """Multilap sow in the presence/creation of children:
-    Stop sowing if we should make a child; and continue
-    sowing if end in hole with > 1 seeds.
+    Stop sowing if we should make a child.
 
     Mohr's book states that a turn ends when 'any' seed is sown
     into a child, but it doesn't describe what to do with the
@@ -322,45 +321,14 @@ class ChildLapCont(LapContinuerIf):
     p 44, first paragraph, but he also doesn't describe what to do
     with the remaining seeds."""
 
-    def __init__(self, game, decorator=None):
-
-        def gen_test(convert, opp_side, not_first):
-            """Generate a partially evaluated test function
-            that will return True if we should stop sowing
-            so that a child can be made."""
-
-            def _test(game, mdata):
-
-                loc = mdata.capt_loc
-                if game.board[loc] != convert:
-                    return False
-
-                if not_first and mdata.seeds == 1 and loc == game.cts.holes:
-                    return False
-
-                if opp_side and not game.cts.opp_side(game.turn, loc):
-                    return False
-
-                return True
-
-            return _test
-
-        super().__init__(game, decorator)
-        self.stop_make_child = gen_test(game.info.child_cvt,
-                                        game.info.ch_opp_only,
-                                        game.info.ch_not_first_1)
-
 
     def do_another_lap(self, mdata):
         """Determine if we are done sowing."""
 
-        loc = mdata.capt_loc
-
-        if self.game.board[loc] == 1:
+        if self.game.board[mdata.capt_loc] == 1:
             return False
 
-        if self.stop_make_child(self.game, mdata):
-            mdata.make_child = True
+        if self.game.deco.make_child(self.game, mdata):
             return False
 
         return True
@@ -653,8 +621,6 @@ class SowPlus1Minus1Capt(SowPrescribedIf):
         for cnt in range(self.game.cts.dbl_holes - 1):
             loc = incrementer(loc, mdata.direct, mdata.cont_sow_loc)
             self.game.board[loc] += 1 if cnt % 2 else -1
-
-        # TODO SowPlus1Minus1Capt need to assure no loss of seeds (fine at 2x6 w4)
 
         cross = self.game.cts.cross_from_loc(mdata.cont_sow_loc)
         self.game.board[cross] += 1

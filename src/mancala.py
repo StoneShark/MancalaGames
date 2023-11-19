@@ -105,7 +105,6 @@ class MoveData:
     seeds          fill                    input        note 2
     sow_loc        fill                                 note 3
     cont_sow_loc    property fills         in/update
-    make_child                             output       input
     capt_loc                               output       in/update
 
     capt_change                                         filled
@@ -127,7 +126,6 @@ class MoveData:
         self.seeds = 0
         self._sow_loc = 0
         self.cont_sow_loc = 0   # use by the sower (updated for lap sows)
-        self.make_child = False
         self.capt_loc = 0
 
         self.capt_changed = False    # capt changed state but didn't capture
@@ -176,6 +174,37 @@ class ManDeco:
         self.capt_ok = capt_ok.deco_capt_ok(game)
         self.capturer = capturer.deco_capturer(game)
         self.gstr = game_str.deco_get_string(game)
+        self.make_child = self.gen_child_test(game)
+
+
+    @staticmethod
+    def gen_child_test(game):
+        """Generate a test function that will return True
+        if a child should be made. Used in the sower to stop
+        mlap sowing (for generic children only). Used in the
+        capturer to make generic children (not walda, weg, or tuzdek)."""
+
+        def base_test(game, mdata):
+            return game.board[mdata.capt_loc] == game.info.child_cvt
+
+        def not_first_hole(game, mdata):
+            if mdata.capt_loc == game.cts.holes:
+                return mdata.seeds > 1
+            return True
+
+        def only_opp_side(game, mdata):
+            return game.cts.opp_side(game.turn, mdata.capt_loc)
+
+        func_list = [base_test]
+        if game.info.ch_not_first_1:
+            func_list += [not_first_hole]
+        if game.info.ch_opp_only:
+            func_list += [only_opp_side]
+
+        def child_test(game, mdata):
+            return all(f(game, mdata) for f in func_list)
+
+        return child_test
 
 
 class Mancala(ai_interface.AiGameIf, gi.GameInterface):
