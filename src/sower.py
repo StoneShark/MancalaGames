@@ -640,27 +640,26 @@ class SowOneOpp(SowPrescribedIf):
 class SowPlus1Minus1Capt(SowPrescribedIf):
     """Starting after the selected move one seed forward
     in every other hole.
-    Capture the seeds across from the start hole.
+    Make a weg across from the start hole.
 
     Requires stores, prohibit move unlock (or just ignore it?)"""
 
     def do_prescribed(self, mdata):
 
         loc = mdata.cont_sow_loc
+        self.game.board[loc] = mdata.seeds
         incrementer = self.game.deco.incr.incr
 
         for cnt in range(self.game.cts.dbl_holes - 1):
             loc = incrementer(loc, mdata.direct, mdata.cont_sow_loc)
             self.game.board[loc] += 1 if cnt % 2 else -1
 
-        # TODO SowPlus1Minus1Capt need to assure no loss of seeds (not currently used)
+        # TODO SowPlus1Minus1Capt need to assure no loss of seeds (fine at 2x6 w4)
 
-        # TODO set capt_loc and let the capturer do this?  is there a repeat turn?
-        cross = self.game.cts.cross_from_loc(mdata.capt_loc)
-        self.game.store[self.game.turn] += self.game.board[cross]
-        self.game.board[cross] = 0
+        cross = self.game.cts.cross_from_loc(mdata.cont_sow_loc)
+        self.game.board[cross] += 1
 
-        mdata.capt_loc = loc
+        mdata.capt_loc = cross
         return mdata
 
 
