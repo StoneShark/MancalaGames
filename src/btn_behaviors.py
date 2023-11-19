@@ -451,7 +451,6 @@ class RndMoveSeedsButtonBehavior(BehaviorIf):
             loser_slice = slice(0, holes)
             winner_slice = slice(holes, dbl_holes)
 
-        # TODO  need a rule to make UMOVE incomp with children
         if not any(seeds >= game.info.min_move
                    for seeds in game.board[loser_slice]):
             tk.messagebox.showerror(
