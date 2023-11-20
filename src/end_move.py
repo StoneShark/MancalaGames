@@ -107,7 +107,6 @@ class TakeOwnSeeds(ClaimSeedsIf):
 
     def claim_seeds(self):
         seeds = [0, 0]
-        game_log.step('pre collection', self.game)
 
         for loc in range(self.game.cts.dbl_holes):
 
