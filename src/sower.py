@@ -710,7 +710,6 @@ def deco_mlap_sower(game, sower):
 
     pre_lap_sower = sower
 
-
     if game.info.sow_rule == SowRule.CHANGE_DIR_LAP:
         end_op = DirChange(game)
     elif game.info.sow_rule == SowRule.SOW_BLKD_DIV:
@@ -719,7 +718,6 @@ def deco_mlap_sower(game, sower):
         end_op = NoOp(game)
 
     lap_cont = deco_build_lap_cont(game)
-
     sower = SowMlapSeeds(game, sower, lap_cont, end_op)
 
     if game.info.visit_opp:

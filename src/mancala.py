@@ -262,7 +262,8 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
                     game_consts.nbr_start))
 
         if (game_info.goal == Goal.TERRITORY
-                or game_info.round_fill == RoundFill.UMOVE):
+                or game_info.round_fill
+                    in (RoundFill.UMOVE, RoundFill.SHORTEN)):
             game_consts.set_win_all_seeds()
 
         self.cts = game_consts
@@ -532,7 +533,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         if mdata.captured:
             game_log.step(f'Capture from {loc}', self)
         elif mdata.capt_changed:
-            game_log.step('Captured changed state', self)
+            game_log.step('Capture changed state', self)
         else:
             game_log.step(f'No captures @ {loc}')
 

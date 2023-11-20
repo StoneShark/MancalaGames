@@ -87,10 +87,14 @@ class NewRound(NewGameIf):
 
         if self.game.info.round_fill == RoundFill.RIGHT_FILL:
             self.fill_orders = [range(holes - 1, -1, -1),
-                                range(dbl_holes - 1, holes, -1)]
+                                range(dbl_holes - 1, holes - 1, -1)]
 
         elif self.game.info.round_fill == RoundFill.LEFT_FILL:
             self.fill_orders = [range(holes), range(holes, dbl_holes)]
+
+        elif self.game.info.round_fill == RoundFill.SHORTEN:
+            self.fill_orders = [range(holes),
+                                range(dbl_holes - 1, holes - 1, -1)]
 
         else:   # RoundFill.OUTSIDE_FILL or user action
             self.fill_orders = [self.game.cts.false_fill,
@@ -110,6 +114,37 @@ class NewRound(NewGameIf):
         self.game.starter = self.game.turn
 
 
+    def _compute_fills(self):
+        """Detemine how many holes to fill on each side and
+        adjust the store to hold the remaining seeds.
+        If SHORTEN, both sides are filled the same based on the
+        number of seeds the loser has."""
+
+        fill = [0, 0]
+        seeds = self.collector.claim_seeds()
+
+        nbr_start = self.game.cts.nbr_start
+        holes = self.game.cts.holes
+
+        if self.game.info.round_fill == RoundFill.SHORTEN:
+
+            loser = 0 if seeds[0] < seeds[1] else 1
+            quot = seeds[loser] // nbr_start
+            fill[0] = fill[1] = min(quot, holes)
+
+            self.game.store[0] = seeds[0] - fill[0] * nbr_start
+            self.game.store[1] = seeds[1] - fill[1] * nbr_start
+
+        else:
+            for store in (False, True):
+                quot = seeds[store] // nbr_start
+                fill[store] = min(quot, holes)
+                self.game.store[store] = \
+                    seeds[store] - fill[store] * nbr_start
+
+        return fill
+
+
     def new_game(self, win_cond=None, new_round_ok=False):
         """Create a new round if allowed.
         Use pre-determine pattern to distribute the seeds for the
@@ -121,23 +156,18 @@ class NewRound(NewGameIf):
             self.decorator.new_game(win_cond, new_round_ok)
             return True
 
+        game_log.step('NewRound top', self.game)
         nbr_start = self.game.cts.nbr_start
-        holes = self.game.cts.holes
         blocks = self.game.info.blocks
-        seeds = self.collector.claim_seeds()
+        fill = self._compute_fills()
 
         self._set_starter()
         self.game.init_bprops()
 
         for store, brange in enumerate(self.fill_orders):
 
-            quot, rem = divmod(seeds[store], nbr_start)
-            fill = min(quot, holes)
-
-            self.game.store[store] = rem + (quot - fill) * nbr_start
-
             for cnt, pos in enumerate(brange):
-                if cnt < fill:
+                if cnt < fill[store]:
                     self.game.board[pos] = nbr_start
                 else:
                     self.game.board[pos] = 0

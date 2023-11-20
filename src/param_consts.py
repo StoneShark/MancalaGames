@@ -130,6 +130,7 @@ STRING_DICTS = {
          'Left Fill': RoundFill.LEFT_FILL,
          'Right Fill': RoundFill.RIGHT_FILL,
          'Outside In Fill': RoundFill.OUTSIDE_FILL,
+         'Shorten Board': RoundFill.SHORTEN,
          'Choose Blocks': RoundFill.UCHOOSE,
          'Rearrange Seeds': RoundFill.UMOVE}),
 

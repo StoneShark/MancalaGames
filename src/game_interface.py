@@ -77,6 +77,7 @@ class RoundFill(enum.IntEnum):
     OUTSIDE_FILL = 3
     UCHOOSE = 4
     UMOVE = 5
+    SHORTEN = 6
 
 @enum.unique
 class CrossCaptOwn(enum.IntEnum):

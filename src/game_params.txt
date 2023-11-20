@@ -61,6 +61,7 @@ NO_ROUNDS: game not played in rounds.
 LEFT_FILL: fill holes from the player's left.
 RIGHT_FILL: fill holes from the player's right. 
 OUTSIDE_FILL: fill holes from the outside ends toward the middle.
+SHORTEN: shorten the board so that all of the loser's holes are filled; the winner will have more seeds in their store but the same board arrangement.
 UCHOOSE: allow user to choose which holes have seeds (are not blocked) when ROUNDS with BLOCKS are used.
 UMOVE: allow the loser to choose where seeds are placed. At least one seed must be placed in each hole, remaining seeds are placed in the store. The winner's layout is the same layout but reflected."		1											
 Dynamics	blocks	Blocks	game_info _	15	bool	False	7	0	"Blocks remove holes from play and are shown on the UI with an X.
@@ -134,7 +135,7 @@ NORMAL: no special child rules
 WALDAS: Stores are not supported. Captures are instead moved into waldas, thus a player may not capture until they have created a walda. Child locations are limited.  Each player may create up to 6 waldas: on either end of each side of the board and the next outer hole on their own side of the board. Note that there are only 8 total places that waldas maybe created.
 ONE_CHILD: Use the tuzdek rules for children: only one child allowed on own side of the board, may not be in player's left most hole,  and may not be opposite eachother.
 WEG: children maybe created in holes owned by the opponent. Ending a sow in an opponent's weg captures the seed just sown and one more (if there is one); the player get's to play again.
-BULL: child conversion as nornal but also a second bull if the converted hole is preceeded by a hole containing CHILD_CVT-1 seeds.
+BULL: create one bull if final seed sows to CHILD_CVT, create two bulls if the final two seeds are sown to CHILD_CVT-1 and CHILD_CVT (in either order).
 "													
 Sow	child_cvt	Child Convert Count	game_info _	26	int	0	4	2	"Defines the number of seeds required to make a child.
 "			1		1			1	1	1	1	1	1
