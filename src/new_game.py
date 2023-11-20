@@ -149,6 +149,11 @@ class NewRound(NewGameIf):
         """Create a new round if allowed.
         Use pre-determine pattern to distribute the seeds for the
         next round.
+
+        If the board size is 4 or move and the fill method is SHORTEN,
+		stop making children if the playable board size 
+		is reduced to 3 or less.
+
         Return False if it a new round was started.
         True if a new game was started."""
 
@@ -163,6 +168,10 @@ class NewRound(NewGameIf):
 
         self._set_starter()
         self.game.init_bprops()
+
+        if (self.game.cts.holes > 3
+            and self.game.info.round_fill == RoundFill.SHORTEN):
+            self.game.prevent_child |= (fill[0] <= 3)
 
         for store, brange in enumerate(self.fill_orders):
 

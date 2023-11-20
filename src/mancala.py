@@ -183,8 +183,8 @@ class ManDeco:
     def gen_child_test(game):
         """Generate a test function that will return True
         if a child should be made. Used in the sower to stop
-        mlap sowing (for generic children only). Used in the
-        capturer to make generic children (not walda, weg, or tuzdek)."""
+        mlap sowing. Used in the capturer to make children
+        and bulls, but not waldas, wegs, or tuzdeks."""
 
         def base_case(game, mdata):
             loc = mdata.capt_loc
@@ -222,6 +222,8 @@ class ManDeco:
             func_list += [not_first_hole]
 
         def child_test(game, mdata):
+            if game.prevent_child:
+                return False
             return all(f(game, mdata) for f in func_list)
 
         return child_test
@@ -273,6 +275,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         self.store = [0, 0]
         self.mcount = 0
         self.turn = random.choice([False, True])
+        self.prevent_child = False
         self.init_bprops()
         self.starter = self.turn
 
@@ -345,6 +348,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         self.unlocked = [locks] * dbl_holes
         self.blocked = [False] * dbl_holes
         self.child = [None] * dbl_holes
+        self.prevent_child = False
 
         if self.info.goal == Goal.TERRITORY:
             self.owner = [False] * holes + [True] * holes
