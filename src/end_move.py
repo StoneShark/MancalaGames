@@ -103,10 +103,11 @@ class TakeOwnSeeds(ClaimSeedsIf):
 
     def __init__(self, game, owner_func):
         super().__init__(game)
-        self.owner = owner_func
+        self.get_owner = owner_func
 
     def claim_seeds(self):
         seeds = [0, 0]
+        game_log.step('pre collection', self.game)
 
         for loc in range(self.game.cts.dbl_holes):
 
@@ -117,7 +118,7 @@ class TakeOwnSeeds(ClaimSeedsIf):
                 seeds[False] += self.game.board[loc]
 
             else:
-                self.game.store[self.owner(loc)] += self.game.board[loc]
+                self.game.store[self.get_owner(loc)] += self.game.board[loc]
                 self.game.board[loc] = 0
 
         seeds[False] += self.game.store[False]
@@ -197,8 +198,8 @@ class DivvySeedsNoStores(ClaimSeedsIf):
     between the two players putting them in available
     children.
     Return the count of seeds owned by each player.
-    If there are no owned stores, return win_count's
-    to force a tie."""
+    If there are no owned stores, return half the total seed
+    to force a tie (win_count might not be half)."""
 
     def claim_seeds(self):
 
@@ -245,17 +246,16 @@ class DivvySeedsNoStores(ClaimSeedsIf):
             return seeds
 
         game_log.step('Divvy forcing tie', self.game)
-        half = self.game.cts.win_count
+        half = self.game.cts.total_seeds // 2
         return [half, half]
 
 
 class DivvyIgnoreSeeds(ClaimSeedsIf):
-    """If there are no stores or children, ignore
-    any seeds still in play.
-    Return win_count to force a tie."""
+    """If there are no stores or children, ignore any seeds still in play.
+    Return half the seeds to force a tie (win_count might not be half)."""
 
     def claim_seeds(self):
-        half = self.game.cts.win_count
+        half = self.game.cts.total_seeds // 2
         return [half, half]
 
 
