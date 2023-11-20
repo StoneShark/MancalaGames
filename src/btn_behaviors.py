@@ -18,9 +18,10 @@ import tkinter as tk
 
 SYSTEM_COLOR = 'SystemButtonFace'
 PLAY_INACTIVE_COLOR = 'grey80'
-CHOOSE_COLOR = 'lightblue'
+TURN_COLOR = 'lightblue'
+CHOOSE_COLOR = 'pink2'
 SEED_COLOR = 'light yellow'
-MOVE_COLOR = 'tan'
+MOVE_COLOR = 'sandy brown'
 
 YES_STR = 'yes'
 NO_STR = 'no'
@@ -286,7 +287,7 @@ class RndChooseButtonBehavior(BehaviorIf):
             message=textwrap.fill(textwrap.dedent("""\
                 A new round is begining, so you may
                 change the blocked holes on the loser's of the
-                board.\nDo you wish to
+                board. Do you wish to
                 rearrange the blocks?"""), width=50),
                     parent=game_ui)
 
@@ -418,7 +419,7 @@ class RndMoveSeedsButtonBehavior(BehaviorIf):
                   hole contain at least one seed and one hole is playable.
                   Seeds maybe added or removed from the store.
                   The winner's seeds will be arranged the same way.
-                  \nDo you wish to rearrange the seeds?"""), width=50),
+                  Do you wish to rearrange the seeds?"""), width=50),
             parent=game_ui)
 
         if ans != YES_STR:
@@ -565,14 +566,14 @@ class MoveSeedsButtonBehavior(BehaviorIf):
                   At the start of this game you may rearrange seeds on
                   your side of the board. Your opponents seeds will be
                   arranged the same. Rearranging seeds counts as your
-                  first move.\nDo you wish to move any
+                  first move. Do you wish to move any
                   seeds?"""), width=50),
             parent=game_ui)
 
         if ans != YES_STR:
             return False
 
-        # TODO save state and check for actual movement?
+        # TODO save state and check for actual movement
         Hold.hold_menu(game_ui)
         return True
 
@@ -682,7 +683,7 @@ class NoStoreBehavior(StoreBehaviorIf):
         else:
             self.str['text'] = ''
 
-        self.str['background'] = MOVE_COLOR if highlight else SYSTEM_COLOR
+        self.str['background'] = TURN_COLOR if highlight else SYSTEM_COLOR
 
     def left_click(self):
         """No interaction, button disabled."""
