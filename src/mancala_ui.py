@@ -412,7 +412,7 @@ class MancalaUI(tk.Frame):
         log the start and check for ai's turn."""
         game_log.new()
         game_log.turn(0, 'Start Game', self.game)
-        self._ai_move()
+        self._schedule_ai()
 
 
     def _new_game(self, win_cond=None, new_round_ok=False):
