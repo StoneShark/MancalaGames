@@ -501,7 +501,7 @@ class SowVisitedMlap(SowMethodIf):
         """Do the first sow."""
 
         mdata = self.single_sower.sow_seeds(mdata)
-        game_log.step('Vis Mlap sow from {mdata.cont_sow_loc}',
+        game_log.step(f'Vis Mlap sow from {mdata.cont_sow_loc}',
                       self.game, game_log.DETAIL)
         if mdata.capt_loc is WinCond.REPEAT_TURN:
             return mdata
