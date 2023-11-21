@@ -16,12 +16,13 @@ from game_interface import CaptExtraPick
 from game_interface import ChildType
 from game_interface import CrossCaptOwn
 from game_interface import GrandSlam
+from game_interface import SowPrescribed
+from game_interface import RoundFill
 from game_interface import WinCond
 from game_log import game_log
 
 
 # %% capt interface
-
 
 class CaptMethodIf(abc.ABC):
     """Interface for capturers."""
@@ -595,6 +596,15 @@ class NoSingleSeedCapt(CaptMethodIf):
             self.decorator.do_captures(mdata)
 
 
+class NoCaptures(CaptMethodIf):
+    """Do not allow captures or children."""
+
+    def do_captures(self, mdata):
+
+        if not self.game.deco.inhibitor.stop_me_capt(self.game.turn):
+            self.decorator.do_captures(mdata)
+
+
 class RepeatTurn(CaptMethodIf):
     """Convert mdata.captured to REPEAT_TURN."""
 
@@ -727,6 +737,11 @@ def deco_capturer(game):
 
     if game.info.nosinglecapt:
         capturer = NoSingleSeedCapt(game, capturer)
+
+    if (game.info.prescribed == SowPrescribed.ARNGE_LIMIT
+        or game.info.round_fill == RoundFill.SHORTEN
+        or game.info.nocaptfirst):
+        capturer = NoCaptures(game, capturer)
 
     if game.info.capt_rturn:
         capturer = RepeatTurn(game, capturer)

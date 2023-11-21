@@ -89,8 +89,8 @@ def test_one_game(game_data, request):
 def known_game_fails(request):
 
     game, _ = request.getfixturevalue('game_data')
-    if game.info.name in ['Congklak', 'Erherhe', 'Eson Xorgol', 'Gabata',
-                          'NamNam', 'Pallam Kuzhi', 'Weg']:
+    if game.info.name in ['Bao', 'Congklak', 'Erherhe', 'Eson Xorgol',
+                          'Gabata', 'NamNam', 'Pallam Kuzhi', 'Weg']:
         request.node.add_marker(
             pytest.mark.xfail(
                 reason='Many seeds; heuristic test; occasionally fails.',

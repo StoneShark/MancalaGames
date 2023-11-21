@@ -21,6 +21,7 @@ import game_str
 import get_direction
 import get_moves
 import ginfo_rules
+import inhibitor
 import incrementer
 import new_game
 import sow_starter
@@ -176,6 +177,7 @@ class ManDeco:
         self.capt_ok = capt_ok.deco_capt_ok(game)
         self.capturer = capturer.deco_capturer(game)
         self.gstr = game_str.deco_get_string(game)
+        self.inhibitor = inhibitor.deco_inhibitor(game)
         self.make_child = self.gen_child_test(game)
 
 
@@ -222,7 +224,7 @@ class ManDeco:
             func_list += [not_first_hole]
 
         def child_test(game, mdata):
-            if game.prevent_child:
+            if game.deco.inhibitor.stop_me_child(game.turn):
                 return False
             return all(f(game, mdata) for f in func_list)
 
@@ -275,11 +277,10 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         self.store = [0, 0]
         self.mcount = 0
         self.turn = random.choice([False, True])
-        self.prevent_child = False
-        self.init_bprops()
         self.starter = self.turn
 
         self.deco = ManDeco(self)
+        self.init_bprops()
 
         if game_info.start_pattern:
             self.deco.new_game.new_game(None, False)
@@ -348,12 +349,12 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         self.unlocked = [locks] * dbl_holes
         self.blocked = [False] * dbl_holes
         self.child = [None] * dbl_holes
-        self.prevent_child = False
 
         if self.info.goal == Goal.TERRITORY:
             self.owner = [False] * holes + [True] * holes
         else:
             self.owner = [None] * dbl_holes
+        self.deco.inhibitor.new_game()
 
 
     def params_str(self):
@@ -578,6 +579,8 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         if mdata.captured == WinCond.REPEAT_TURN:
             win_cond = self.win_conditions(repeat_turn=True)
             return win_cond if win_cond else WinCond.REPEAT_TURN
+
+        self.deco.inhibitor.clear_if(self, mdata)
 
         win_cond = self.win_conditions()
         if win_cond:

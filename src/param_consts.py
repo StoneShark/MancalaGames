@@ -144,7 +144,8 @@ STRING_DICTS = {
          'Sow Basic First': SowPrescribed.BASIC_SOWER,
          'Sow Mlaps First': SowPrescribed.MLAPS_SOWER,
          'Sow One Opposite': SowPrescribed.SOW1OPP,
-         'Plus 1, Minus 1': SowPrescribed.PLUS1MINUS1}),
+         'Plus 1, Minus 1': SowPrescribed.PLUS1MINUS1,
+         'Arrange or Limit ch & capts': SowPrescribed.ARNGE_LIMIT}),
 
     'SowRule': lookup_dicts(SowRule,
         {"No Special Rule": SowRule.NONE,

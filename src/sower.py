@@ -216,7 +216,11 @@ class SowCaptOwned(SowMethodIf):
                                            mdata.cont_sow_loc)
             self.game.board[loc] += 1
 
-            if scnt > 1 and self.game.deco.capt_ok.capture_ok(loc):
+            if (scnt > 1
+                    and not self.game.deco.inhibitor.stop_me_capt(
+                        self.game.turn)
+                    and self.game.deco.capt_ok.capture_ok(loc)):
+
                 owner = self.owner(loc)
                 game_log.step(f'Catpure from {loc} by {owner}')
                 self.game.store[owner] += self.game.board[loc]

@@ -25,6 +25,7 @@ from btn_behaviors import Behavior
 from game_interface import WinCond
 from game_interface import Direct
 from game_interface import RoundFill
+from game_interface import SowPrescribed
 from game_log import game_log
 
 
@@ -95,8 +96,7 @@ class MancalaUI(tk.Frame):
         self.stores = None
         self._add_board()
 
-        # do not call new game
-        # either it's already new or it's been set to a desired state
+        self._new_game()
         self._refresh()
         self._ai_move()
 
@@ -425,14 +425,18 @@ class MancalaUI(tk.Frame):
 
         self._refresh()
         self.update()
-        if not new_game:
-            if self.info.round_fill == RoundFill.UCHOOSE:
-                if self.set_game_mode(Behavior.RNDCHOOSE):
+        if new_game:
+            if self.info.prescribed == SowPrescribed.ARNGE_LIMIT:
+                if self.set_game_mode(Behavior.MOVESEEDS):
                     return
 
-            elif self.info.round_fill == RoundFill.UMOVE:
-                if self.set_game_mode(Behavior.RNDMOVE):
-                    return
+        elif self.info.round_fill == RoundFill.UCHOOSE:
+            if self.set_game_mode(Behavior.RNDCHOOSE):
+                return
+
+        elif self.info.round_fill == RoundFill.UMOVE:
+            if self.set_game_mode(Behavior.RNDMOVE):
+                return
 
         self._start_it()
 

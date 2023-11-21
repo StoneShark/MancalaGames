@@ -170,11 +170,10 @@ class NewRound(NewGameIf):
         self.game.init_bprops()
 
         if (self.game.cts.holes > 3
-            and self.game.info.round_fill == RoundFill.SHORTEN):
-            self.game.prevent_child |= (fill[0] <= 3)
+                and self.game.info.round_fill == RoundFill.SHORTEN):
+            self.game.deco.inhibitor.set_child(fill[0] <= 3)
 
         for store, brange in enumerate(self.fill_orders):
-
             for cnt, pos in enumerate(brange):
                 if cnt < fill[store]:
                     self.game.board[pos] = nbr_start

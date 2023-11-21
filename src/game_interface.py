@@ -142,7 +142,7 @@ class SowPrescribed(enum.IntEnum):
 
     NONE = 0
     SOW1OPP = 1
-    #  Triples was here but it's not needed, 2 can be reused
+    ARNGE_LIMIT = 2   # arrange seeds or limit children and captures
     PLUS1MINUS1 = 3
     BASIC_SOWER = 4
     MLAPS_SOWER = 5
@@ -256,6 +256,7 @@ class GameInfo:
     capt_min: int = 0
     capt_max: int = 0
     nosinglecapt: bool = False
+    nocaptfirst: bool = False
     capt_next: bool = False
     capttwoout: bool = False
 

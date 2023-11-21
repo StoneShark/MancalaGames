@@ -13,6 +13,8 @@ import textwrap
 
 import tkinter as tk
 
+from game_log import game_log
+
 
 # %%  constants
 
@@ -555,7 +557,12 @@ class MoveSeedsButtonBehavior(BehaviorIf):
     desired by the first player though all seeds must be
     left in play. This movement counts as the player's turn.
 
-    This is intended to be used for Bao"""
+    If the player doesn't change anything, they are disallowed
+    from capturing or making children until the opponent does
+    one of those.
+    The decos are not in the GameInterface--deal with it!
+
+    This is used for SowPrescribed.ARNGE_LIMIT (Bao)."""
 
     @classmethod
     def ask_mode_change(cls, game_ui):
@@ -571,9 +578,10 @@ class MoveSeedsButtonBehavior(BehaviorIf):
             parent=game_ui)
 
         if ans != YES_STR:
+            game_ui.game.deco.inhibitor.set_on(game_ui.game.turn)
             return False
 
-        # TODO save state and check for actual movement
+        cls.saved_state = game_ui.game.state
         Hold.hold_menu(game_ui)
         return True
 
@@ -582,6 +590,13 @@ class MoveSeedsButtonBehavior(BehaviorIf):
     def leave_mode(cls, game_ui):
 
         game = game_ui.game
+        if game.state == cls.saved_state:
+            game_log.add('No changes in arrangement mode.')
+            game_ui.game.deco.inhibitor.set_on(game_ui.game.turn)
+            return True
+        else:
+            game_ui.game.deco.inhibitor.set_off()
+
         holes = game.cts.holes
         dbl_holes = game.cts.dbl_holes
 

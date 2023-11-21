@@ -16,6 +16,7 @@
       "mlaps": 1,
       "multicapt": true,
       "oppsidecapt": true,
+      "prescribed": 2,
       "rounds": true,
       "round_fill": 6,
       "round_starter": 2,
