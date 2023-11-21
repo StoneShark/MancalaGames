@@ -5,7 +5,7 @@
       "holes": 7
    },
    "game_info": {
-      "name": "Bao",
+      "name": "Bao, Tanzanian",
       "about": "Bao: a multi-lap mancala,\nsow direction is counter-clockwise,\nsow to 4 on opposite side creates a child\nwhich collects seed but can't be captured.\nCross-capture on opponents side,\ncontinue capture in sow direction,\npick own seed on capture.\nPlayed in rounds; winner starts new round.",
       "blocks": true,
       "capsamedir": true,

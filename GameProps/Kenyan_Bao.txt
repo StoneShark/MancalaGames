@@ -5,8 +5,8 @@
       "nbr_start": 2
    },
    "game_info": {
-      "name": "Bao (31)",
-      "about": "Bao (31): Multilap, counter-clockwise sow.\nCan only move singles, if all singles\nand then only to empty holes.\nCross-capture.\n",
+      "name": "Bao, Kenyan",
+      "about": "Bao: Multilap, counter-clockwise sow.\nCan only move singles, if all singles\nand then only to empty holes.\nCross-capture.\n",
       "allow_rule": 4,
       "crosscapt": true,
       "stores": true,
