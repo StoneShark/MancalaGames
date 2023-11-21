@@ -6,7 +6,8 @@ Created on Wed Oct 11 17:54:37 2023
 
 import abc
 
-from game_interface import StartPattern
+import game_interface as gi
+
 
 FOUR = 4
 
@@ -192,10 +193,10 @@ class TwoEmptyPattern(StartPatternIf):
 
 # %%
 
-PCLASSES = [None] * len(StartPattern)
+PCLASSES = [None] * len(gi.StartPattern)
 
-PCLASSES[StartPattern.GAMACHA] = GamachaPattern
-PCLASSES[StartPattern.ALTERNATES] = AlternatesPattern
-PCLASSES[StartPattern.ALTS_WITH_1] = AltsWithOnePattern
-PCLASSES[StartPattern.CLIPPEDTRIPLES] = ClippedTriplesPattern
-PCLASSES[StartPattern.TWOEMPTY] = TwoEmptyPattern
+PCLASSES[gi.StartPattern.GAMACHA] = GamachaPattern
+PCLASSES[gi.StartPattern.ALTERNATES] = AlternatesPattern
+PCLASSES[gi.StartPattern.ALTS_WITH_1] = AltsWithOnePattern
+PCLASSES[gi.StartPattern.CLIPPEDTRIPLES] = ClippedTriplesPattern
+PCLASSES[gi.StartPattern.TWOEMPTY] = TwoEmptyPattern

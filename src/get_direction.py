@@ -7,7 +7,7 @@ Created on Thu Aug 10 04:26:30 2023
 
 import abc
 
-from game_interface import Direct
+import game_interface as gi
 
 
 # %% interface
@@ -49,12 +49,12 @@ class SplitDir(GetDirIf):
         super().__init__(game, decorator)
         holes = game.cts.holes
         half_holes, rem = divmod(holes, 2)
-        self.direction = [Direct.CW] * half_holes
+        self.direction = [gi.Direct.CW] * half_holes
         self.direction += [None] if rem else []
-        self.direction += [Direct.CCW] * half_holes
-        self.direction += [Direct.CW] * half_holes
+        self.direction += [gi.Direct.CCW] * half_holes
+        self.direction += [gi.Direct.CW] * half_holes
         self.direction += [None] if rem else []
-        self.direction += [Direct.CCW] * half_holes
+        self.direction += [gi.Direct.CCW] * half_holes
 
     def get_direction(self, _, loc):
 
@@ -112,7 +112,7 @@ def deco_dir_getter(game):
     if len(game.info.udir_holes) == game.cts.holes:
         return udir_getter
 
-    if game.info.sow_direct is Direct.SPLIT:
+    if game.info.sow_direct is gi.Direct.SPLIT:
         dir_getter = SplitDir(game)
     else:
         dir_getter = ConstDir(game)

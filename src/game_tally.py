@@ -8,7 +8,7 @@ Created on Sun Nov 12 20:33:14 2023
 
 import tkinter as tk
 
-from game_interface import WinCond
+import game_interface as gi
 
 
 class GameTally:
@@ -69,26 +69,26 @@ class GameTally:
         winner: boolean - player that won if win.
         win_cond: WinCond - outcome of the game."""
 
-        if win_cond in [WinCond.REPEAT_TURN, WinCond.ENDLESS]:
+        if win_cond in [gi.WinCond.REPEAT_TURN, gi.WinCond.ENDLESS]:
             return
 
-        if win_cond is WinCond.ROUND_WIN:
+        if win_cond is gi.WinCond.ROUND_WIN:
             self.rounds += 1
             self.round_wins[winner] += 1
 
-        if win_cond is WinCond.ROUND_TIE:
+        if win_cond is gi.WinCond.ROUND_TIE:
             self.rounds += 1
             self.round_ties += 1
 
-        if win_cond is WinCond.WIN:
+        if win_cond is gi.WinCond.WIN:
             self.games += 1
             self.game_wins[winner] += 1
 
-        if win_cond is WinCond.TIE:
+        if win_cond is gi.WinCond.TIE:
             self.games += 1
             self.game_ties += 1
 
-        if win_cond in [WinCond.WIN, WinCond.TIE]:
+        if win_cond in [gi.WinCond.WIN, gi.WinCond.TIE]:
             self.rounds = 0
             self.round_wins = [0, 0]
             self.round_ties = 0

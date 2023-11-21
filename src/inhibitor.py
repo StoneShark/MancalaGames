@@ -8,8 +8,8 @@ Created on Mon Nov 20 16:12:06 2023
 
 import abc
 
-from game_interface import RoundFill
-from game_interface import SowPrescribed
+import game_interface as gi
+
 from game_log import game_log
 
 
@@ -211,11 +211,11 @@ def deco_inhibitor(game):
         return InhibitorCaptN(1)
 
     # Bao
-    if (game.info.prescribed == SowPrescribed.ARNGE_LIMIT
-            and game.info.round_fill == RoundFill.SHORTEN):
+    if (game.info.prescribed == gi.SowPrescribed.ARNGE_LIMIT
+            and game.info.round_fill == gi.RoundFill.SHORTEN):
         return InhibitorBoth(arnge_limit_cond)
 
-    if game.info.round_fill == RoundFill.SHORTEN:
+    if game.info.round_fill == gi.RoundFill.SHORTEN:
         return InhibitorShorten()
 
     return InhibitorNone()

@@ -12,13 +12,8 @@ Created on Fri Apr  7 08:52:03 2023
 
 import abc
 
-from game_interface import CaptExtraPick
-from game_interface import ChildType
-from game_interface import CrossCaptOwn
-from game_interface import GrandSlam
-from game_interface import SowPrescribed
-from game_interface import RoundFill
-from game_interface import WinCond
+import game_interface as gi
+
 from game_log import game_log
 
 
@@ -214,7 +209,7 @@ class CaptCrossVisited(CaptMethodIf):
             self.decorator.do_captures(mdata)
             return
 
-        mdata.captured = WinCond.REPEAT_TURN
+        mdata.captured = gi.WinCond.REPEAT_TURN
         game_log.add('XCVisit Repeat Turn', game_log.INFO)
 
 
@@ -334,7 +329,7 @@ class GSKeep(GrandSlamCapt):
     def __init__(self, game, grandslam, decorator=None):
 
         super().__init__(game, decorator)
-        if grandslam == GrandSlam.LEAVE_LEFT:
+        if grandslam == gi.GrandSlam.LEAVE_LEFT:
             self.keep = (game.cts.dbl_holes - 1, game.cts.holes - 1)
         else:
             self.keep = (game.cts.holes, 0)
@@ -612,7 +607,7 @@ class RepeatTurn(CaptMethodIf):
         self.decorator.do_captures(mdata)
         if mdata.captured:
             game_log.add('Capture repeat turn', game_log.INFO)
-            mdata.captured = WinCond.REPEAT_TURN
+            mdata.captured = gi.WinCond.REPEAT_TURN
 
 
 # %% build deco chains
@@ -626,10 +621,10 @@ def _add_cross_capt_deco(game, capturer):
     if game.info.xc_sown:
         capturer = CaptCrossVisited(game, capturer)
 
-    if game.info.xcpickown == CrossCaptOwn.PICK_ON_CAPT:
+    if game.info.xcpickown == gi.CrossCaptOwn.PICK_ON_CAPT:
         capturer = CaptCrossPickOwnOnCapt(game, capturer)
 
-    elif game.info.xcpickown == CrossCaptOwn.ALWAYS_PICK:
+    elif game.info.xcpickown == gi.CrossCaptOwn.ALWAYS_PICK:
         capturer = CaptCrossPickOwn(game, capturer)
 
     if game.info.multicapt:
@@ -641,13 +636,14 @@ def _add_cross_capt_deco(game, capturer):
 def _add_grand_slam_deco(game, capturer):
     """Add the grand slam decorators to the capturer deco."""
 
-    if game.info.grandslam == GrandSlam.NO_CAPT:
+    if game.info.grandslam == gi.GrandSlam.NO_CAPT:
         capturer = GSNone(game, capturer)
 
-    elif game.info.grandslam in (GrandSlam.LEAVE_LEFT, GrandSlam.LEAVE_RIGHT):
+    elif game.info.grandslam in (gi.GrandSlam.LEAVE_LEFT,
+                                 gi.GrandSlam.LEAVE_RIGHT):
         capturer = GSKeep(game, game.info.grandslam, capturer)
 
-    elif game.info.grandslam == GrandSlam.OPP_GETS_REMAIN:
+    elif game.info.grandslam == gi.GrandSlam.OPP_GETS_REMAIN:
         capturer = GSOppGets(game, capturer)
 
     return capturer
@@ -657,19 +653,19 @@ def _add_child_deco(game, capturer):
     """Add a child handling deco if needed.
     only one child handler: bull/weg/waldas/tuzdek/children"""
 
-    if game.info.child_type == ChildType.WALDA:
+    if game.info.child_type == gi.ChildType.WALDA:
         capturer =  CaptureToWalda(game, capturer)
 
-    elif game.info.child_type == ChildType.ONE_CHILD:
+    elif game.info.child_type == gi.ChildType.ONE_CHILD:
         capturer = MakeTuzdek(game, capturer)
 
-    elif game.info.child_type == ChildType.NORMAL:
+    elif game.info.child_type == gi.ChildType.NORMAL:
         capturer = MakeChild(game, capturer)
 
-    elif game.info.child_type == ChildType.WEG:
+    elif game.info.child_type == gi.ChildType.WEG:
         capturer = MakeWegCapture(game, capturer)
 
-    elif game.info.child_type == ChildType.BULL:
+    elif game.info.child_type == gi.ChildType.BULL:
         capturer = MakeBull(game, capturer)
 
     return capturer
@@ -697,10 +693,10 @@ def _add_capt_two_out_deco(game, capturer):
 def _add_capt_pick_deco(game, capturer):
     """Add any extra pickers."""
 
-    if game.info.pickextra == CaptExtraPick.PICKCROSS:
+    if game.info.pickextra == gi.CaptExtraPick.PICKCROSS:
         capturer = PickCross(game, capturer)
 
-    elif game.info.pickextra == CaptExtraPick.PICKTWOS:
+    elif game.info.pickextra == gi.CaptExtraPick.PICKTWOS:
         capturer = PickOppTwos(game, capturer)
 
     return capturer
@@ -738,8 +734,8 @@ def deco_capturer(game):
     if game.info.nosinglecapt:
         capturer = NoSingleSeedCapt(game, capturer)
 
-    if (game.info.prescribed == SowPrescribed.ARNGE_LIMIT
-        or game.info.round_fill == RoundFill.SHORTEN
+    if (game.info.prescribed == gi.SowPrescribed.ARNGE_LIMIT
+        or game.info.round_fill == gi.RoundFill.SHORTEN
         or game.info.nocaptfirst):
         capturer = NoCaptures(game, capturer)
 

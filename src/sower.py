@@ -20,14 +20,9 @@ Created on Fri Apr  7 15:57:47 2023
 
 import abc
 
+import game_interface as gi
+
 from game_log import game_log
-from game_interface import ChildType
-from game_interface import Direct
-from game_interface import Goal
-from game_interface import LapSower
-from game_interface import SowPrescribed
-from game_interface import SowRule
-from game_interface import WinCond
 
 
 # %% constants
@@ -99,10 +94,10 @@ class SowSeedsNStore(SowMethodIf):
                            (0, 0),                         # not used
                            (self.game.cts.holes, 0))       # for CCW
 
-        if game.info.sow_direct == Direct.CW:
+        if game.info.sow_direct == gi.Direct.CW:
             self.poses = (self.game.cts.holes - 1,
                           self.game.cts.dbl_holes - 1)
-        elif game.info.sow_direct == Direct.CCW:
+        elif game.info.sow_direct == gi.Direct.CCW:
             self.poses = (0, self.game.cts.holes)
         else:
             self.poses = (0, self.game.cts.holes - 1,
@@ -129,7 +124,7 @@ class SowSeedsNStore(SowMethodIf):
                 self.game.store[turn] += 1
                 seeds -= 1
                 if not seeds:
-                    mdata.capt_loc = WinCond.REPEAT_TURN
+                    mdata.capt_loc = gi.WinCond.REPEAT_TURN
                     return mdata
 
             self.game.board[loc] += 1
@@ -384,7 +379,7 @@ class StopRepeatTurn(LapContinuerIf):
 
     def do_another_lap(self, mdata):
 
-        if mdata.capt_loc is WinCond.REPEAT_TURN:
+        if mdata.capt_loc is gi.WinCond.REPEAT_TURN:
             return False
         return self.decorator.do_another_lap(mdata)
 
@@ -472,7 +467,7 @@ class SowMlapSeeds(MlapSowerIf):
             else:
                 return mdata
 
-        mdata.capt_loc = WinCond.ENDLESS
+        mdata.capt_loc = gi.WinCond.ENDLESS
         return mdata
 
 
@@ -507,7 +502,7 @@ class SowVisitedMlap(SowMethodIf):
         mdata = self.single_sower.sow_seeds(mdata)
         game_log.step(f'Vis Mlap sow from {mdata.cont_sow_loc}',
                       self.game, game_log.DETAIL)
-        if mdata.capt_loc is WinCond.REPEAT_TURN:
+        if mdata.capt_loc is gi.WinCond.REPEAT_TURN:
             return mdata
 
         visited_opp = (mdata.seeds >= self.game.cts.holes or
@@ -646,7 +641,7 @@ def deco_blkd_divert_sower(game):
 
     sower = DivertSkipBlckdSower(game)
 
-    if game.info.mlaps != LapSower.LAPPER:
+    if game.info.mlaps != gi.LapSower.LAPPER:
         sower = SowClosed(game, sower)
 
     return sower
@@ -655,16 +650,16 @@ def deco_blkd_divert_sower(game):
 def deco_base_sower(game):
     """Choose the base sower."""
 
-    if game.info.sow_rule == SowRule.SOW_BLKD_DIV:
+    if game.info.sow_rule == gi.SowRule.SOW_BLKD_DIV:
         sower = deco_blkd_divert_sower(game)
 
-    elif game.info.sow_rule == SowRule.OWN_SOW_CAPT_ALL:
-        if game.info.goal == Goal.TERRITORY:
+    elif game.info.sow_rule == gi.SowRule.OWN_SOW_CAPT_ALL:
+        if game.info.goal == gi.Goal.TERRITORY:
             sower = SowCaptOwned(game, lambda loc: game.owner[loc])
         else:
             sower = SowCaptOwned(game, game.cts.board_side)
 
-    elif game.info.sow_rule == SowRule.NO_SOW_OPP_2S:
+    elif game.info.sow_rule == gi.SowRule.NO_SOW_OPP_2S:
         sower = SowSkipOppN(game, {2})
 
     elif game.info.sow_own_store:
@@ -679,19 +674,19 @@ def deco_base_sower(game):
 def deco_build_lap_cont(game):
     """Choose a base lap continuer, then add any wrappers."""
 
-    if game.info.child_type == ChildType.WEG:
+    if game.info.child_type == gi.ChildType.WEG:
         lap_cont = WegLapCont(game)
 
     elif game.info.child_cvt:
         lap_cont = ChildLapCont(game)
 
-    elif game.info.sow_rule == SowRule.SOW_BLKD_DIV:
+    elif game.info.sow_rule == gi.SowRule.SOW_BLKD_DIV:
         lap_cont = DivertBlckdLapper(game)
 
-    elif game.info.mlaps == LapSower.LAPPER:
+    elif game.info.mlaps == gi.LapSower.LAPPER:
         lap_cont = SimpleLapCont(game)
 
-    elif game.info.mlaps == LapSower.LAPPER_NEXT:
+    elif game.info.mlaps == gi.LapSower.LAPPER_NEXT:
         lap_cont = NextLapCont(game)
 
     if game.info.child_cvt or game.info.child_type:
@@ -714,9 +709,9 @@ def deco_mlap_sower(game, sower):
 
     pre_lap_sower = sower
 
-    if game.info.sow_rule == SowRule.CHANGE_DIR_LAP:
+    if game.info.sow_rule == gi.SowRule.CHANGE_DIR_LAP:
         end_op = DirChange(game)
-    elif game.info.sow_rule == SowRule.SOW_BLKD_DIV:
+    elif game.info.sow_rule == gi.SowRule.SOW_BLKD_DIV:
         end_op = CloseOp(game)
     else:
         end_op = NoOp(game)
@@ -735,16 +730,16 @@ def deco_prescribed_sower(game, sower):
     the class derived from SowPrescribedIf to be deleted when we
     are done with it."""
 
-    if game.info.prescribed == SowPrescribed.SOW1OPP:
+    if game.info.prescribed == gi.SowPrescribed.SOW1OPP:
         sower = SowOneOpp(game, 1, sower)
 
-    elif game.info.prescribed == SowPrescribed.PLUS1MINUS1:
+    elif game.info.prescribed == gi.SowPrescribed.PLUS1MINUS1:
         sower = SowPlus1Minus1Capt(game, 1, sower)
 
-    elif game.info.prescribed == SowPrescribed.BASIC_SOWER:
+    elif game.info.prescribed == gi.SowPrescribed.BASIC_SOWER:
         sower = SowBasicFirst(game, 1, sower)
 
-    elif game.info.prescribed == SowPrescribed.MLAPS_SOWER:
+    elif game.info.prescribed == gi.SowPrescribed.MLAPS_SOWER:
         sower = SowMlapsFirst(game, 1, sower)
 
     return sower
@@ -755,10 +750,10 @@ def deco_sower(game):
 
     sower = deco_base_sower(game)
 
-    if game.info.mlaps != LapSower.OFF:
+    if game.info.mlaps != gi.LapSower.OFF:
         sower = deco_mlap_sower(game, sower)
 
-    if game.info.prescribed != SowPrescribed.NONE:
+    if game.info.prescribed != gi.SowPrescribed.NONE:
         sower = deco_prescribed_sower(game, sower)
 
     return sower

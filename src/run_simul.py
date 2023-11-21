@@ -7,9 +7,9 @@ import random
 import time
 
 import ai_player
+import game_interface as gi
 import man_config
 
-from game_interface import WinCond
 from game_log import game_log
 
 
@@ -33,9 +33,9 @@ def test_random_one_game(game_path):
         move = random.choice(moves)
 
         cond = game.move(move)
-        if cond in (WinCond.WIN, WinCond.TIE, WinCond.ENDLESS):
+        if cond in (gi.WinCond.WIN, gi.WinCond.TIE, gi.WinCond.ENDLESS):
             break
-        if cond in (WinCond.ROUND_WIN, WinCond.ROUND_TIE):
+        if cond in (gi.WinCond.ROUND_WIN, gi.WinCond.ROUND_TIE):
             game_log.add(f'(rs) ROUND OVER: {cond}')
             if game.new_game(cond, new_round_ok=True):
                 game_log.save(game.params_str())
@@ -47,7 +47,7 @@ def test_random_one_game(game_path):
     else:
         game_log.add("(rs) Loop maxed before game ended.")
 
-    if cond == WinCond.ENDLESS:
+    if cond == gi.WinCond.ENDLESS:
         game_log.add('(rs) Abandoned due to endless mlaps.')
 
     elif cond:
@@ -103,9 +103,9 @@ def test_ai_one_game(game_path):
             move = random.choice(moves)
 
         cond = game.move(move)
-        if cond in (WinCond.WIN, WinCond.TIE, WinCond.ENDLESS):
+        if cond in (gi.WinCond.WIN, gi.WinCond.TIE, gi.WinCond.ENDLESS):
             break
-        if cond in (WinCond.ROUND_WIN, WinCond.ROUND_TIE):
+        if cond in (gi.WinCond.ROUND_WIN, gi.WinCond.ROUND_TIE):
             if game.new_game(cond, new_round_ok=True):
                 game_log.save(game.params_str())
                 return cond.value, game.turn
@@ -116,7 +116,7 @@ def test_ai_one_game(game_path):
     else:
         game_log.add("(rs) Loop maxed before game ended.")
 
-    if cond == WinCond.ENDLESS:
+    if cond == gi.WinCond.ENDLESS:
         game_log.add('(rs) Abandoned due to endless mlaps.')
 
     elif cond:

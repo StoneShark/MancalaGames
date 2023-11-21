@@ -16,8 +16,8 @@ import minimax
 import montecarlo_ts as mcts
 import negamax
 
-from game_interface import WinCond
 from game_log import game_log
+
 
 ALGORITHM_DICT = {'minimaxer': minimax.MiniMaxer,
                   'negamaxer': negamax.NegaMaxer,
@@ -193,13 +193,13 @@ class AiPlayer(ai_interface.AiPlayerIf):
         """Score the end game conditions.
         return None if not scored."""
 
-        if end_cond in (WinCond.ROUND_WIN, WinCond.WIN):
+        if end_cond in (gi.WinCond.ROUND_WIN, gi.WinCond.WIN):
             return -1000 if self.game.turn else 1000
 
-        if end_cond in (WinCond.ROUND_TIE, WinCond.TIE):
+        if end_cond in (gi.WinCond.ROUND_TIE, gi.WinCond.TIE):
             return -5 if self.game.turn else 5
 
-        if end_cond == WinCond.ENDLESS:
+        if end_cond == gi.WinCond.ENDLESS:
             return 0
 
         return None
@@ -208,7 +208,7 @@ class AiPlayer(ai_interface.AiPlayerIf):
     def _score_repeat_turn(self, end_cond):
         """Score a repeat turn."""
 
-        if end_cond == WinCond.REPEAT_TURN:
+        if end_cond == gi.WinCond.REPEAT_TURN:
             mult = -1 if self.game.turn else 1
             return mult * self.sc_params.repeat_turn
 

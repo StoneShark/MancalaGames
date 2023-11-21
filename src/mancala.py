@@ -28,12 +28,6 @@ import sow_starter
 import sower
 
 from fill_patterns import PCLASSES
-from game_interface import ChildRule
-from game_interface import ChildType
-from game_interface import Goal
-from game_interface import RoundFill
-from game_interface import WinCond
-from game_interface import PASS_TOKEN
 from game_log import game_log
 
 
@@ -211,15 +205,15 @@ class ManDeco:
         def not_first_hole(_, mdata):
             return mdata.seeds > 1
 
-        if game.info.child_type == ChildType.BULL:
+        if game.info.child_type == gi.ChildType.BULL:
             func_list = [bull_case]
         else:
             func_list = [base_case]
 
-        if game.info.child_rule == ChildRule.OPP_ONLY:
+        if game.info.child_rule == gi.ChildRule.OPP_ONLY:
             func_list += [only_opp_side]
 
-        if game.info.child_rule == ChildRule.NOT_1ST_OPP:
+        if game.info.child_rule == gi.ChildRule.NOT_1ST_OPP:
             func_list += [only_opp_side]
             func_list += [not_first_hole]
 
@@ -265,9 +259,9 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
                     game_consts.holes,
                     game_consts.nbr_start))
 
-        if (game_info.goal == Goal.TERRITORY
+        if (game_info.goal == gi.Goal.TERRITORY
                 or game_info.round_fill
-                    in (RoundFill.UMOVE, RoundFill.SHORTEN)):
+                    in (gi.RoundFill.UMOVE, gi.RoundFill.SHORTEN)):
             game_consts.set_win_all_seeds()
 
         self.cts = game_consts
@@ -314,7 +308,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         if self.info.child_cvt:
             state_dict |= {'child': tuple(self.child)}
 
-        if self.info.goal == Goal.TERRITORY:
+        if self.info.goal == gi.Goal.TERRITORY:
             state_dict |= {'owner': tuple(self.owner)}
 
         return GameState(**state_dict)
@@ -350,7 +344,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         self.blocked = [False] * dbl_holes
         self.child = [None] * dbl_holes
 
-        if self.info.goal == Goal.TERRITORY:
+        if self.info.goal == gi.Goal.TERRITORY:
             self.owner = [False] * holes + [True] * holes
         else:
             self.owner = [None] * dbl_holes
@@ -474,26 +468,26 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         rtext = 'the game'
         gtext = 'Game'
         title = 'Game Over'
-        if win_cond in (WinCond.ROUND_WIN, WinCond.ROUND_TIE):
+        if win_cond in (gi.WinCond.ROUND_WIN, gi.WinCond.ROUND_TIE):
             rtext = 'the round'
             gtext = 'The round'
             title = 'Round Over'
 
         message = f'Unexpected end condition {win_cond}.'
 
-        if win_cond in [WinCond.WIN, WinCond.ROUND_WIN]:
+        if win_cond in [gi.WinCond.WIN, gi.WinCond.ROUND_WIN]:
             player = 'Top' if self.turn else 'Bottom'
             message = f'{player} won {rtext} {reason[self.info.goal]}'
 
-        elif win_cond in [WinCond.TIE, WinCond.ROUND_TIE]:
-            if self.info.goal == Goal.MAX_SEEDS:
+        elif win_cond in [gi.WinCond.TIE, gi.WinCond.ROUND_TIE]:
+            if self.info.goal == gi.Goal.MAX_SEEDS:
                 message = f'{gtext} ended in a tie.'
-            elif self.info.goal == Goal.DEPRIVE:
+            elif self.info.goal == gi.Goal.DEPRIVE:
                 message = 'Both players ended with seeds, consider it a tie.'
-            elif self.info.goal == Goal.TERRITORY:
+            elif self.info.goal == gi.Goal.TERRITORY:
                 message = 'Each player controls half the holes (a tie).'
 
-        elif win_cond == WinCond.ENDLESS:
+        elif win_cond == gi.WinCond.ENDLESS:
             message = 'Game stuck in a loop. No winner.'
 
         return title, message
@@ -560,25 +554,25 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         assert sum(self.store) + sum(self.board) == self.cts.total_seeds, \
             'seed count error before move'
 
-        if move == PASS_TOKEN:
+        if move == gi.PASS_TOKEN:
             self.turn = not self.turn
             return None
 
         mdata = self.do_sow(move)
 
-        if mdata.capt_loc is WinCond.REPEAT_TURN:
+        if mdata.capt_loc is gi.WinCond.REPEAT_TURN:
             win_cond = self.win_conditions(repeat_turn=True)
-            return win_cond if win_cond else WinCond.REPEAT_TURN
+            return win_cond if win_cond else gi.WinCond.REPEAT_TURN
 
-        if mdata.capt_loc is WinCond.ENDLESS:
+        if mdata.capt_loc is gi.WinCond.ENDLESS:
             game_log.add('MLAP game ENDLESS', game_log.IMPORT)
-            return WinCond.ENDLESS
+            return gi.WinCond.ENDLESS
 
         self.capture_seeds(mdata)
 
-        if mdata.captured == WinCond.REPEAT_TURN:
+        if mdata.captured == gi.WinCond.REPEAT_TURN:
             win_cond = self.win_conditions(repeat_turn=True)
-            return win_cond if win_cond else WinCond.REPEAT_TURN
+            return win_cond if win_cond else gi.WinCond.REPEAT_TURN
 
         self.deco.inhibitor.clear_if(self, mdata)
 
@@ -594,7 +588,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         """Add to the play log and move history for the move."""
 
         wtext = ''
-        if win_cond in (WinCond.WIN, WinCond.ROUND_WIN):
+        if win_cond in (gi.WinCond.WIN, gi.WinCond.ROUND_WIN):
             sturn = 'Top' if self.get_turn() else 'Bottom'
             wtext = f'\n{win_cond.name} by {sturn}'
         elif win_cond:

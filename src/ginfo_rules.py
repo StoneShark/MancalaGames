@@ -20,16 +20,6 @@ import warnings
 
 import game_interface as gi
 
-from game_interface import AllowRule
-from game_interface import ChildType
-from game_interface import Direct
-from game_interface import Goal
-from game_interface import GrandSlam
-from game_interface import LapSower
-from game_interface import RoundFill
-from game_interface import RoundStarter
-from game_interface import SowPrescribed
-from game_interface import SowRule
 from fill_patterns import PCLASSES
 
 
@@ -76,7 +66,8 @@ class ParamRule:
 class RuleDict(dict):
     """A dictionary of game rules."""
 
-    def add_rule(self, name, *, rule, msg, both_objs=False, warn=False, excp=None):
+    def add_rule(self, name, *, rule, msg,
+                 both_objs=False, warn=False, excp=None):
         """Add a rule to the dictionary."""
         # pylint: disable=too-many-arguments
 
@@ -117,8 +108,8 @@ def add_creation_rules(rules):
 
     rules.add_rule(
         'sow_dir_type',
-        rule=lambda ginfo: not isinstance(ginfo.sow_direct, Direct),
-        msg='SOW_DIRECT not valid type, expected Direct',
+        rule=lambda ginfo: not isinstance(ginfo.sow_direct, gi.Direct),
+        msg='SOW_DIRECT not valid type, expected gi.Direct',
         excp=gi.GameInfoError)
 
     rules.add_rule(
@@ -167,14 +158,14 @@ def add_deprive_rules(rules):
         and the specified flag, based only on a ginfo parameter."""
 
         def _deprive_and(ginfo):
-            return ginfo.goal == Goal.DEPRIVE and getattr(ginfo, flag_name)
+            return ginfo.goal == gi.Goal.DEPRIVE and getattr(ginfo, flag_name)
 
         return _deprive_and
 
     rules.add_rule(
         'deprive_gs_legal',
-        rule=lambda ginfo: (ginfo.goal == Goal.DEPRIVE
-                            and ginfo.grandslam != GrandSlam.LEGAL),
+        rule=lambda ginfo: (ginfo.goal == gi.Goal.DEPRIVE
+                            and ginfo.grandslam != gi.GrandSlam.LEGAL),
         msg='Goal of DEPRIVE requires that GRANDSLAM be Legal',
         excp=gi.GameInfoError)
 
@@ -198,7 +189,7 @@ def add_territory_rules(rules):
     rules.add_rule(
         'terr_gparam_one',
         both_objs=True,
-        rule=lambda ginfo, holes: (ginfo.goal == Goal.TERRITORY
+        rule=lambda ginfo, holes: (ginfo.goal == gi.Goal.TERRITORY
                                    and (ginfo.gparam_one <= holes
                                         or ginfo.gparam_one > 2 * holes)),
         msg='Territory Goal requires GPARAM_ONE between holes and 2 * holes',
@@ -206,20 +197,21 @@ def add_territory_rules(rules):
 
     rules.add_rule(
         'terr_need_stores',
-        rule=lambda ginfo: ginfo.goal == Goal.TERRITORY and not ginfo.stores,
+        rule=lambda ginfo: (ginfo.goal == gi.Goal.TERRITORY
+                            and not ginfo.stores),
         msg='Territory goal requires stores',
         excp=gi.GameInfoError)
 
     rules.add_rule(
         'terr_no_sides_incomp',
-        rule=lambda ginfo: ginfo.goal == Goal.TERRITORY and ginfo.no_sides,
+        rule=lambda ginfo: ginfo.goal == gi.Goal.TERRITORY and ginfo.no_sides,
         msg='Territory goal is incompatible with NO_SIDES',
         excp=gi.GameInfoError)
         # XXXX could initial ownship be changed so that no_sides makes sense
 
     rules.add_rule(
         'terr_pattern_incomp',
-        rule=lambda ginfo: (ginfo.goal == Goal.TERRITORY
+        rule=lambda ginfo: (ginfo.goal == gi.Goal.TERRITORY
                             and ginfo.start_pattern),
         msg='Territory goal is incompatible with START_PATTERN',
         excp=gi.GameInfoError)
@@ -227,24 +219,24 @@ def add_territory_rules(rules):
 
     rules.add_rule(
         'terr_gs_not',
-        rule=lambda ginfo: (ginfo.goal == Goal.TERRITORY and
-                            ginfo.grandslam == GrandSlam.NOT_LEGAL),
+        rule=lambda ginfo: (ginfo.goal == gi.Goal.TERRITORY and
+                            ginfo.grandslam == gi.GrandSlam.NOT_LEGAL),
         msg='Territory goal and GRANDLAM=Not Legal are currently incompatible',
         excp=NotImplementedError)
         # territory requires move triples, GS allowables doesn't support
 
     rules.add_rule(
         'terr_no_opp_empty',
-        rule=lambda ginfo: (ginfo.goal == Goal.TERRITORY and
-                            ginfo.allow_rule == AllowRule.OPP_OR_EMPTY),
+        rule=lambda ginfo: (ginfo.goal == gi.Goal.TERRITORY and
+                            ginfo.allow_rule == gi.AllowRule.OPP_OR_EMPTY),
         msg='OPP_OR_EMPTY cannot be used with TERRITORY',
         excp=gi.GameInfoError)
         # TERRITORY: what does it mean if the hole is already opp?
 
     rules.add_rule(
         'confuse_allow',
-        rule=lambda ginfo: (ginfo.goal == Goal.TERRITORY and
-                            ginfo.allow_rule != AllowRule.NONE),
+        rule=lambda ginfo: (ginfo.goal == gi.Goal.TERRITORY and
+                            ginfo.allow_rule != gi.AllowRule.NONE),
         msg='Some ALLOW_RULEs are confusing with TERRITORY',
         warn=True)
         # AllowRules are not written for move triples
@@ -263,43 +255,43 @@ def add_block_and_divert_rules(rules):
         flag, based only on a ginfo parameter."""
 
         def _divert_and(ginfo):
-            return (ginfo.sow_rule == SowRule.SOW_BLKD_DIV
+            return (ginfo.sow_rule == gi.SowRule.SOW_BLKD_DIV
                     and getattr(ginfo, flag_name))
 
         return _divert_and
 
     rules.add_rule(
         'next_ml_no_bdiv',
-        rule=lambda ginfo: (ginfo.mlaps == LapSower.LAPPER_NEXT
-                            and ginfo.sow_rule == SowRule.SOW_BLKD_DIV),
+        rule=lambda ginfo: (ginfo.mlaps == gi.LapSower.LAPPER_NEXT
+                            and ginfo.sow_rule == gi.SowRule.SOW_BLKD_DIV),
         msg='MLAPS of LAPPER_NEXT is not supported with SOW_BLKD_DIV',
         excp=NotImplementedError)
 
     rules.add_rule(
         'bdiv_need_gparam1',
-        rule=lambda ginfo: (ginfo.sow_rule == SowRule.SOW_BLKD_DIV
+        rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.SOW_BLKD_DIV
                             and not ginfo.gparam_one),
         msg='SOW_BLKD_DIV requires GPARAM_ONE for closing holes',
         excp=gi.GameInfoError)
 
     rules.add_rule(
         'bdiv_need_blocks',
-        rule=lambda ginfo: (ginfo.sow_rule == SowRule.SOW_BLKD_DIV
+        rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.SOW_BLKD_DIV
                             and not ginfo.blocks),
         msg='SOW_BLKD_DIV requires BLOCKS for closing holes',
         excp=gi.GameInfoError)
 
     rules.add_rule(
         'bdiv_min_move_one',
-        rule=lambda ginfo: (ginfo.sow_rule == SowRule.SOW_BLKD_DIV
+        rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.SOW_BLKD_DIV
                             and ginfo.min_move != 1),
         msg='SOW_BLKD_DIV requires a minimum move of 1',
         excp=gi.GameInfoError)
 
     rules.add_rule(
         'bdiv_min_req_dep_goal',
-        rule=lambda ginfo: (ginfo.sow_rule == SowRule.SOW_BLKD_DIV
-                            and ginfo.goal != Goal.DEPRIVE),
+        rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.SOW_BLKD_DIV
+                            and ginfo.goal != gi.Goal.DEPRIVE),
         msg='SOW_BLKD_DIV requires a goal of DEPRIVE',
         excp=gi.GameInfoError)
 
@@ -316,7 +308,7 @@ def add_block_and_divert_rules(rules):
 
     rules.add_rule(
         'bdiv_no_capt_on',
-        rule=lambda ginfo: (ginfo.sow_rule == SowRule.SOW_BLKD_DIV
+        rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.SOW_BLKD_DIV
                             and any(ginfo.capt_on)),
         msg='sow_blkd_div closes holes to remove seeds from play, ' + \
             'no other capture mechanisms are allowed [CAPT_ON]',
@@ -324,8 +316,8 @@ def add_block_and_divert_rules(rules):
 
     rules.add_rule(
         'sbd_not_umove',
-        rule=lambda ginfo: (ginfo.sow_rule == SowRule.SOW_BLKD_DIV
-                            and ginfo.round_fill == RoundFill.UMOVE),
+        rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.SOW_BLKD_DIV
+                            and ginfo.round_fill == gi.RoundFill.UMOVE),
         msg='sow_blkd_div incompatible with UMOVE',
         excp=gi.GameInfoError)
 
@@ -346,8 +338,8 @@ def add_child_rules(rules):
 
     rules.add_rule(
         'next_ml_nochild',
-        rule=lambda ginfo: (ginfo.mlaps == LapSower.LAPPER_NEXT
-                            and (ginfo.child_type != ChildType.NOCHILD
+        rule=lambda ginfo: (ginfo.mlaps == gi.LapSower.LAPPER_NEXT
+                            and (ginfo.child_type != gi.ChildType.NOCHILD
                                  or ginfo.child_cvt)),
         msg='MLAPS of LAPPER_NEXT is not supported with CHILD',
         excp=NotImplementedError)
@@ -366,27 +358,27 @@ def add_child_rules(rules):
 
     rules.add_rule(
         'child_not_deprive',
-        rule=lambda ginfo: ginfo.child_cvt and ginfo.goal == Goal.DEPRIVE,
+        rule=lambda ginfo: ginfo.child_cvt and ginfo.goal == gi.Goal.DEPRIVE,
         msg='Children cannot be used with a game goal of DEPRIVE',
         excp=gi.GameInfoError)
 
     rules.add_rule(
         'child_no_gs',
         rule=lambda ginfo: (ginfo.child_cvt
-                            and ginfo.grandslam != GrandSlam.LEGAL),
+                            and ginfo.grandslam != gi.GrandSlam.LEGAL),
         msg='Children requires that GRANDSLAM be Legal',
         excp=NotImplementedError)
 
     rules.add_rule(
         'walda_store',
-        rule=lambda ginfo: (ginfo.child_type == ChildType.WALDA
+        rule=lambda ginfo: (ginfo.child_type == gi.ChildType.WALDA
                             and ginfo.stores),
         msg='WALDA does not use STORES',
         warn=True)
 
     rules.add_rule(
         'one_child_store',
-        rule=lambda ginfo: (ginfo.child_type == ChildType.ONE_CHILD
+        rule=lambda ginfo: (ginfo.child_type == gi.ChildType.ONE_CHILD
                             and not ginfo.stores),
         msg='ONE_CHILD requires STORES',
         excp=gi.GameInfoError)
@@ -412,7 +404,7 @@ def add_no_sides_rules(rules):
 
     rules.add_rule(
         'no_sides_req_max_seeds',
-        rule=lambda ginfo: ginfo.no_sides and ginfo.goal != Goal.MAX_SEEDS,
+        rule=lambda ginfo: ginfo.no_sides and ginfo.goal != gi.Goal.MAX_SEEDS,
         msg='NO_SIDES requires a goal of MAX_SEEDS',
         excp=gi.GameInfoError)
 
@@ -448,8 +440,8 @@ def build_rules():
 
     man_rules.add_rule(
         'no_udir_1to0',
-        rule=lambda ginfo: (ginfo.udirect
-                            and ginfo.allow_rule == AllowRule.SINGLE_TO_ZERO),
+        rule=lambda ginfo: (ginfo.udirect and
+                            ginfo.allow_rule == gi.AllowRule.SINGLE_TO_ZERO),
         msg='Allow rule SINGLE_TO_ZERO cannot be used with UDIR_HOLES',
         excp=gi.GameInfoError)
 
@@ -457,16 +449,16 @@ def build_rules():
         'no_right_two_ml3',
         rule=lambda ginfo: (ginfo.mlength == 3
                             and ginfo.allow_rule in
-                                {AllowRule.FIRST_TURN_ONLY_RIGHT_TWO,
-                                 AllowRule.RIGHT_2_1ST_THEN_ALL_TWO}),
+                                {gi.AllowRule.FIRST_TURN_ONLY_RIGHT_TWO,
+                                 gi.AllowRule.RIGHT_2_1ST_THEN_ALL_TWO}),
         msg='Right Two allow rules not supported for MLENGTH 3 games',
         excp=gi.GameInfoError)
         # what does 'right' mean if can move more than one side of the board
 
     man_rules.add_rule(
         'no_pres_opp_empty',
-        rule=lambda ginfo: (ginfo.prescribed != SowPrescribed.NONE
-                            and ginfo.allow_rule == AllowRule.OPP_OR_EMPTY),
+        rule=lambda ginfo: (ginfo.prescribed != gi.SowPrescribed.NONE
+                            and ginfo.allow_rule == gi.AllowRule.OPP_OR_EMPTY),
         msg='Prescribed moves not supported with OPP_OR_EMPTY',
         excp=gi.GameInfoError)
         # don't know how to get the single_sower from a prescribed sow,
@@ -481,13 +473,13 @@ def build_rules():
     man_rules.add_rule(
         'sow_own_not_capt_all',
         rule=lambda ginfo: (ginfo.sow_own_store
-                            and ginfo.sow_rule == SowRule.OWN_SOW_CAPT_ALL),
+                            and ginfo.sow_rule == gi.SowRule.OWN_SOW_CAPT_ALL),
         msg='SOW_OWN_STORE is not supported with OWN_SOW_CAPT_ALL',
         excp=NotImplementedError)
 
     man_rules.add_rule(
         'visit_opp_req_mlap',
-        rule=lambda ginfo: ginfo.visit_opp and ginfo.mlaps == LapSower.OFF,
+        rule=lambda ginfo: ginfo.visit_opp and ginfo.mlaps == gi.LapSower.OFF,
         msg='VISIT_OPP requires MLAPS',
         excp=gi.GameInfoError)
 
@@ -500,7 +492,7 @@ def build_rules():
     man_rules.add_rule(
         'blocks_wo_rounds',
         rule=lambda ginfo: (ginfo.blocks
-                            and not ginfo.sow_rule == SowRule.SOW_BLKD_DIV
+                            and not ginfo.sow_rule == gi.SowRule.SOW_BLKD_DIV
                             and not ginfo.rounds),
         msg='BLOCKS without ROUNDS or SOW_BLKD_DIV does nothing',
         warn=True)
@@ -508,14 +500,14 @@ def build_rules():
     man_rules.add_rule(
         'rstarter_wo_rounds',
         rule=lambda ginfo: not ginfo.rounds
-            and ginfo.round_starter != RoundStarter.ALTERNATE,
+            and ginfo.round_starter != gi.RoundStarter.ALTERNATE,
         msg='ROUND_STARTER requires ROUNDS',
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
         'warn_no_capt',
-        rule=lambda ginfo: not any([ginfo.sow_rule == SowRule.SOW_BLKD_DIV,
-                                    ginfo.child_type == ChildType.WEG,
+        rule=lambda ginfo: not any([ginfo.sow_rule == gi.SowRule.SOW_BLKD_DIV,
+                                    ginfo.child_type == gi.ChildType.WEG,
                                     ginfo.capttwoout,
                                     ginfo.capt_next,
                                     ginfo.evens,
@@ -568,7 +560,7 @@ def build_rules():
     man_rules.add_rule(
         'capt2_gs_legal',
         rule=lambda ginfo: (ginfo.capttwoout
-                            and ginfo.grandslam != GrandSlam.LEGAL),
+                            and ginfo.grandslam != gi.GrandSlam.LEGAL),
         msg="CAPTTWOOUT requires that GRANDSLAM be LEGAL",
         excp=gi.GameInfoError)
 
@@ -598,8 +590,8 @@ def build_rules():
 
     man_rules.add_rule(
         'sca_gs_not',
-        rule=lambda ginfo: (ginfo.sow_rule == SowRule.OWN_SOW_CAPT_ALL
-                            and ginfo.grandslam != GrandSlam.LEGAL),
+        rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.OWN_SOW_CAPT_ALL
+                            and ginfo.grandslam != gi.GrandSlam.LEGAL),
         msg='OWN_SOW_CAPT_ALL requires that GRANDLAM be LEGAL',
         excp=gi.GameInfoError)
 
@@ -651,7 +643,7 @@ def build_rules():
     man_rules.add_rule(
         'udir_gs_not',
         rule=lambda ginfo: (ginfo.udirect and
-                            ginfo.grandslam == GrandSlam.NOT_LEGAL),
+                            ginfo.grandslam == gi.GrandSlam.NOT_LEGAL),
         msg='UDIRECT and GRANDLAM=Not Legal are currently incompatible',
         excp=NotImplementedError)
         # see comment for udir_and_mshare rule above
@@ -659,7 +651,7 @@ def build_rules():
     man_rules.add_rule(
         'udir_allowrule',
         rule=lambda ginfo: (ginfo.udirect and
-                            ginfo.allow_rule != AllowRule.NONE),
+                            ginfo.allow_rule != gi.AllowRule.NONE),
         msg='UDIRECT and ALLOW_RULE are currently incompatible',
         excp=NotImplementedError)
         # see comment for udir_and_mshare rule above
@@ -667,7 +659,7 @@ def build_rules():
     man_rules.add_rule(
         'odd_split_udir',
         both_objs=True,
-        rule=lambda ginfo, holes: (ginfo.sow_direct == Direct.SPLIT
+        rule=lambda ginfo, holes: (ginfo.sow_direct == gi.Direct.SPLIT
                                    and holes % 2
                                    and holes // 2 not in ginfo.udir_holes),
         msg='SPLIT with odd number of holes, '
@@ -679,14 +671,14 @@ def build_rules():
         both_objs=True,
         rule=lambda ginfo, holes: (ginfo.udirect
                                    and len(ginfo.udir_holes) != holes
-                                   and ginfo.sow_direct != Direct.SPLIT),
+                                   and ginfo.sow_direct != gi.Direct.SPLIT),
         msg= 'Odd choice of sow direction when udir_holes != nbr_holes',
         warn=True)
 
     man_rules.add_rule(
         'gs_not_legal_no_tuple',
         rule=lambda ginfo: (ginfo.mlength > 1 and
-                            ginfo.grandslam == GrandSlam.NOT_LEGAL),
+                            ginfo.grandslam == gi.GrandSlam.NOT_LEGAL),
         msg='MLENGTH > 1 and GRANDLAM = Not Legal is not supported',
         excp=gi.GameInfoError)
         # GS allowables doesn't support tuples
@@ -695,7 +687,7 @@ def build_rules():
 
     man_rules.add_rule(
         'opp_empty_no_tuples',
-        rule=lambda ginfo: (ginfo.allow_rule == AllowRule.OPP_OR_EMPTY
+        rule=lambda ginfo: (ginfo.allow_rule == gi.AllowRule.OPP_OR_EMPTY
                             and ginfo.mlength > 1),
         msg='MLENGTH > 1 not supported with OPP_OR_EMPTY',
         excp=gi.GameInfoError)

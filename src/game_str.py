@@ -9,7 +9,7 @@ Created on Fri Apr  7 17:33:56 2023
 
 import abc
 
-from game_interface import Goal
+import game_interface as gi
 
 # %% constants
 
@@ -115,7 +115,7 @@ def deco_get_string(game):
 
     hole_deco = HoleMarker(None)
 
-    if game.info.goal == Goal.TERRITORY:
+    if game.info.goal == gi.Goal.TERRITORY:
         hole_deco = HoleMarker(game, OWNER, 'owner', hole_deco)
 
     if game.info.moveunlock:

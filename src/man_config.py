@@ -12,16 +12,11 @@ import ai_player
 import cfg_keys as ckey
 import game_constants as gc
 import game_interface as gi
+import param_consts as pc
 
 from ai_player import ALGORITHM_DICT
 from ai_player import AI_PARAM_DEFAULTS
 from game_classes import GAME_CLASSES
-from param_consts import INT_TYPE
-from param_consts import STR_TYPE
-# from param_consts import BOOL_TYPE
-from param_consts import MSTR_TYPE
-# from param_consts import BLIST_TYPE
-# from param_consts import ILIST_TYPE
 
 
 # %%
@@ -132,10 +127,10 @@ def get_construct_default(vtype, cspec, option):
     elif option == ckey.DIFFICULTY:
         rval = 1
 
-    elif vtype in (STR_TYPE, MSTR_TYPE):
+    elif vtype in (pc.STR_TYPE, pc.MSTR_TYPE):
         rval = ""
 
-    elif vtype == INT_TYPE:
+    elif vtype == pc.INT_TYPE:
         rval =  0
 
     return rval

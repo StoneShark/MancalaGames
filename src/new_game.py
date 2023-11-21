@@ -11,13 +11,11 @@ import abc
 import random
 
 import end_move
+import game_interface as gi
 
-from game_interface import Goal
-from game_interface import WinCond
-from game_interface import RoundFill
-from game_interface import RoundStarter
 from game_log import game_log
 from fill_patterns import PCLASSES
+
 
 # %%  New Game interace
 
@@ -85,14 +83,14 @@ class NewRound(NewGameIf):
         holes = self.game.cts.holes
         dbl_holes = self.game.cts.dbl_holes
 
-        if self.game.info.round_fill == RoundFill.RIGHT_FILL:
+        if self.game.info.round_fill == gi.RoundFill.RIGHT_FILL:
             self.fill_orders = [range(holes - 1, -1, -1),
                                 range(dbl_holes - 1, holes - 1, -1)]
 
-        elif self.game.info.round_fill == RoundFill.LEFT_FILL:
+        elif self.game.info.round_fill == gi.RoundFill.LEFT_FILL:
             self.fill_orders = [range(holes), range(holes, dbl_holes)]
 
-        elif self.game.info.round_fill == RoundFill.SHORTEN:
+        elif self.game.info.round_fill == gi.RoundFill.SHORTEN:
             self.fill_orders = [range(holes),
                                 range(dbl_holes - 1, holes - 1, -1)]
 
@@ -105,10 +103,10 @@ class NewRound(NewGameIf):
         """Set the starter of the next round based on the game flag."""
 
         start_rule = self.game.info.round_starter
-        if start_rule == RoundStarter.ALTERNATE or self.game.turn is None:
+        if start_rule == gi.RoundStarter.ALTERNATE or self.game.turn is None:
             self.game.turn = not self.game.starter
 
-        elif start_rule == RoundStarter.LOSER:
+        elif start_rule == gi.RoundStarter.LOSER:
             self.game.turn = not self.game.turn
 
         self.game.starter = self.game.turn
@@ -126,7 +124,7 @@ class NewRound(NewGameIf):
         nbr_start = self.game.cts.nbr_start
         holes = self.game.cts.holes
 
-        if self.game.info.round_fill == RoundFill.SHORTEN:
+        if self.game.info.round_fill == gi.RoundFill.SHORTEN:
 
             loser = 0 if seeds[0] < seeds[1] else 1
             quot = seeds[loser] // nbr_start
@@ -151,13 +149,14 @@ class NewRound(NewGameIf):
         next round.
 
         If the board size is 4 or move and the fill method is SHORTEN,
-		stop making children if the playable board size 
+		stop making children if the playable board size
 		is reduced to 3 or less.
 
         Return False if it a new round was started.
         True if a new game was started."""
 
-        if not new_round_ok or win_cond in (WinCond.WIN, WinCond.TIE, None):
+        if (not new_round_ok
+                or win_cond in (gi.WinCond.WIN, gi.WinCond.TIE, None)):
             self.decorator.new_game(win_cond, new_round_ok)
             return True
 
@@ -170,7 +169,7 @@ class NewRound(NewGameIf):
         self.game.init_bprops()
 
         if (self.game.cts.holes > 3
-                and self.game.info.round_fill == RoundFill.SHORTEN):
+                and self.game.info.round_fill == gi.RoundFill.SHORTEN):
             self.game.deco.inhibitor.set_child(fill[0] <= 3)
 
         for store, brange in enumerate(self.fill_orders):
@@ -283,7 +282,7 @@ def deco_new_game(game):
                               new_game)
 
     if game.info.rounds:
-        if game.info.goal == Goal.TERRITORY:
+        if game.info.goal == gi.Goal.TERRITORY:
             new_game = NewRound(
                 game, new_game,
                 end_move.TakeOwnSeeds(game, lambda loc: game.owner[loc]))
@@ -293,10 +292,10 @@ def deco_new_game(game):
                 game, new_game,
                 end_move.TakeOwnSeeds(game, game.cts.board_side))
 
-    if game.info.goal == Goal.TERRITORY:
+    if game.info.goal == gi.Goal.TERRITORY:
         new_game = TerritoryNewRound(game, new_game)
 
-    elif game.info.round_fill == RoundFill.UMOVE:
+    elif game.info.round_fill == gi.RoundFill.UMOVE:
         new_game = UChooseNewRound(game, new_game)
 
     return new_game

@@ -15,10 +15,6 @@ import abc
 import game_interface as gi
 
 from game_log import game_log
-from game_interface import AllowRule
-from game_interface import Direct
-from game_interface import GrandSlam
-from game_interface import WinCond
 
 
 # %%  allowable moves interface
@@ -195,7 +191,7 @@ class OnlyRightTwo(AllowableIf):
             dbl_holes = self.game.cts.dbl_holes
 
             if self.game.turn:
-                start = self.game.deco.incr.incr(dbl_holes, Direct.CW)
+                start = self.game.deco.incr.incr(dbl_holes, gi.Direct.CW)
                 print('r start', start)
                 pos = self.game.cts.xlate_pos_loc(not self.game.turn, start)
                 fright = holes - pos - 2
@@ -203,7 +199,7 @@ class OnlyRightTwo(AllowableIf):
                 fleft = holes - allow - fright
                 return [False] * fleft + [True] * allow + [False] * fright
 
-            start = self.game.deco.incr.incr(holes, Direct.CW)
+            start = self.game.deco.incr.incr(holes, gi.Direct.CW)
             print('l start', start)
             fright = holes - start - 1
             allow = min(start + 1, 2)
@@ -271,7 +267,7 @@ class MustShare(AllowableIf):
         cond = self.game.move(self.make_move(pos))
         game_log.clear_simulate()
 
-        if cond is WinCond.ENDLESS:
+        if cond is gi.WinCond.ENDLESS:
             game_log.add(f'Preventing ENDLESS move {loc}', game_log.IMPORT)
             return
 
@@ -328,7 +324,7 @@ class NoGrandSlam(AllowableIf):
 
             game_log.set_simulate()
             mdata = self.game.do_sow(pos)
-            if mdata.capt_loc is WinCond.ENDLESS:
+            if mdata.capt_loc is gi.WinCond.ENDLESS:
                 game_log.add(f'Preventing ENDLESS move {loc}',
                              game_log.IMPORT)
                 self.game.state = saved_state
@@ -383,29 +379,29 @@ class MemoizeAllowable(AllowableIf):
 def deco_allow_rule(game, allowable):
     """Add the allow rule decos."""
 
-    if game.info.allow_rule == AllowRule.OPP_OR_EMPTY:
+    if game.info.allow_rule == gi.AllowRule.OPP_OR_EMPTY:
         allowable = OppOrEmptyEnd(game, allowable)
 
-    elif game.info.allow_rule == AllowRule.SINGLE_TO_ZERO:
+    elif game.info.allow_rule == gi.AllowRule.SINGLE_TO_ZERO:
         allowable = SingleToZero(game, allowable)
 
-    elif game.info.allow_rule == AllowRule.SINGLE_ONLY_ALL:
+    elif game.info.allow_rule == gi.AllowRule.SINGLE_ONLY_ALL:
         allowable = OnlyIfAllN(game, 1, allowable)
 
-    elif game.info.allow_rule == AllowRule.SINGLE_ALL_TO_ZERO:
+    elif game.info.allow_rule == gi.AllowRule.SINGLE_ALL_TO_ZERO:
         allowable = OnlyIfAllN(game, 1, allowable)
         allowable = SingleToZero(game, allowable)
 
-    elif game.info.allow_rule == AllowRule.TWO_ONLY_ALL:
+    elif game.info.allow_rule == gi.AllowRule.TWO_ONLY_ALL:
         allowable = OnlyIfAllN(game, 2, allowable)
 
-    elif game.info.allow_rule == AllowRule.TWO_ONLY_ALL_RIGHT:
+    elif game.info.allow_rule == gi.AllowRule.TWO_ONLY_ALL_RIGHT:
         allowable = AllTwoRightmost(game, allowable)
 
-    elif game.info.allow_rule == AllowRule.FIRST_TURN_ONLY_RIGHT_TWO:
+    elif game.info.allow_rule == gi.AllowRule.FIRST_TURN_ONLY_RIGHT_TWO:
         allowable = OnlyRightTwo(game, allowable)
 
-    elif game.info.allow_rule == AllowRule.RIGHT_2_1ST_THEN_ALL_TWO:
+    elif game.info.allow_rule == gi.AllowRule.RIGHT_2_1ST_THEN_ALL_TWO:
         allowable = OnlyIfAllN(game, 2, allowable)
         allowable = OnlyRightTwo(game, allowable)
 
@@ -425,12 +421,12 @@ def deco_allowable(game):
     if game.info.mustshare:
         allowable = MustShare(game, game.info.mlength == 3, allowable)
 
-    if game.info.grandslam == GrandSlam.NOT_LEGAL:
+    if game.info.grandslam == gi.GrandSlam.NOT_LEGAL:
         allowable = NoGrandSlam(game, allowable)
 
     if (game.info.mustshare
             or game.info.allow_rule
-            or game.info.grandslam == GrandSlam.NOT_LEGAL):
+            or game.info.grandslam == gi.GrandSlam.NOT_LEGAL):
         allowable = MemoizeAllowable(game, allowable)
 
     return allowable

@@ -21,11 +21,6 @@ import btn_behaviors as btnb
 import game_interface as gi
 import game_tally as gt
 
-from btn_behaviors import Behavior
-from game_interface import WinCond
-from game_interface import Direct
-from game_interface import RoundFill
-from game_interface import SowPrescribed
 from game_log import game_log
 
 
@@ -50,7 +45,7 @@ class MancalaUI(tk.Frame):
             raise TypeError('Missing mancala_ui.GameInterface in game.')
 
         self.game = game
-        self.mode = Behavior.GAMEPLAY
+        self.mode = btnb.Behavior.GAMEPLAY
         self.player = ai_player.AiPlayer(self.game, player_dict)
 
         game_log.new()
@@ -152,9 +147,9 @@ class MancalaUI(tk.Frame):
         dirs = None
         if self.info.udirect:
             if row:
-                dirs = [Direct.CW, Direct.CCW]
+                dirs = [gi.Direct.CW, gi.Direct.CCW]
             else:
-                dirs = [Direct.CCW, Direct.CW]
+                dirs = [gi.Direct.CCW, gi.Direct.CW]
 
         return dirs
 
@@ -419,23 +414,23 @@ class MancalaUI(tk.Frame):
         """Start a new game and refresh the board."""
 
         self._cancel_pending_afters()
-        self.set_game_mode(Behavior.GAMEPLAY, force=True)
+        self.set_game_mode(btnb.Behavior.GAMEPLAY, force=True)
         new_game = self.game.new_game(win_cond=win_cond,
                                       new_round_ok=new_round_ok)
 
         self._refresh()
         self.update()
         if new_game:
-            if self.info.prescribed == SowPrescribed.ARNGE_LIMIT:
-                if self.set_game_mode(Behavior.MOVESEEDS):
+            if self.info.prescribed == gi.SowPrescribed.ARNGE_LIMIT:
+                if self.set_game_mode(btnb.Behavior.MOVESEEDS):
                     return
 
-        elif self.info.round_fill == RoundFill.UCHOOSE:
-            if self.set_game_mode(Behavior.RNDCHOOSE):
+        elif self.info.round_fill == gi.RoundFill.UCHOOSE:
+            if self.set_game_mode(btnb.Behavior.RNDCHOOSE):
                 return
 
-        elif self.info.round_fill == RoundFill.UMOVE:
-            if self.set_game_mode(Behavior.RNDMOVE):
+        elif self.info.round_fill == gi.RoundFill.UMOVE:
+            if self.set_game_mode(btnb.Behavior.RNDMOVE):
                 return
 
         self._start_it()
@@ -451,7 +446,7 @@ class MancalaUI(tk.Frame):
         if mode == self.mode:
             return True
 
-        assert not force or force and mode == Behavior.GAMEPLAY, \
+        assert not force or force and mode == btnb.Behavior.GAMEPLAY, \
             "Don't force game mode change for anything but normal game play."
 
         if force:
@@ -472,7 +467,7 @@ class MancalaUI(tk.Frame):
         self.stores[1].set_behavior(mode)
 
         self._refresh()
-        if mode == Behavior.GAMEPLAY:
+        if mode == btnb.Behavior.GAMEPLAY:
             self._start_it()
         return True
 
@@ -526,12 +521,12 @@ class MancalaUI(tk.Frame):
         if not do_it:
             return
         self.update()
-        self.set_game_mode(Behavior.GAMEPLAY, force=True)
+        self.set_game_mode(btnb.Behavior.GAMEPLAY, force=True)
 
         win_cond = self.game.end_game()
 
         wtext = 'Game Ended '
-        if win_cond in (WinCond.WIN, WinCond.ROUND_WIN):
+        if win_cond in (gi.WinCond.WIN, gi.WinCond.ROUND_WIN):
             sturn = 'Top' if self.game.get_turn() else 'Bottom'
             wtext += f'\n{win_cond.name} by {sturn}'
         elif win_cond:
@@ -569,7 +564,7 @@ class MancalaUI(tk.Frame):
         self._log_turn(last_turn)
         self._refresh()
 
-        if win_cond and win_cond != WinCond.REPEAT_TURN:
+        if win_cond and win_cond != gi.WinCond.REPEAT_TURN:
             # self._save_file()   # for testing auto save the logs
             self._win_message_popup(win_cond)
             self._new_game(win_cond=win_cond, new_round_ok=True)

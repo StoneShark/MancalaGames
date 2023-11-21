@@ -10,9 +10,7 @@ Created on Mon Apr 10 10:08:40 2023
 
 import abc
 
-from game_interface import Direct
-from game_interface import PASS_TOKEN
-from game_interface import MoveTpl
+import game_interface as gi
 
 
 # %%  mover  interface
@@ -55,10 +53,10 @@ class UdirMoves(MovesIf):
                 loc = self.game.cts.xlate_pos_loc(not self.game.turn, pos)
                 cnt = self.game.cts.loc_to_left_cnt(loc)
                 if cnt in self.game.info.udir_holes:
-                    moves += [MoveTpl(pos, Direct.CCW),
-                              MoveTpl(pos, Direct.CW)]
+                    moves += [gi.MoveTpl(pos, gi.Direct.CCW),
+                              gi.MoveTpl(pos, gi.Direct.CW)]
                 else:
-                    moves += [MoveTpl(pos, None)]
+                    moves += [gi.MoveTpl(pos, None)]
 
         return moves
 
@@ -76,7 +74,7 @@ class MovesTriples(MovesIf):
             if allow:
                 row = int(loc < self.game.cts.holes)
                 pos = self.game.cts.xlate_pos_loc(row, loc)
-                moves += [MoveTpl(row, pos, None)]
+                moves += [gi.MoveTpl(row, pos, None)]
 
         return moves
 
@@ -98,10 +96,10 @@ class MovesUdirTriples(MovesIf):
                 pos = self.game.cts.xlate_pos_loc(row, loc)
                 cnt = self.game.cts.loc_to_left_cnt(loc)
                 if cnt in self.game.info.udir_holes:
-                    moves += [MoveTpl(row, pos, Direct.CCW),
-                              MoveTpl(row, pos, Direct.CW)]
+                    moves += [gi.MoveTpl(row, pos, gi.Direct.CCW),
+                              gi.MoveTpl(row, pos, gi.Direct.CW)]
                 else:
-                    moves += [MoveTpl(row, pos, None)]
+                    moves += [gi.MoveTpl(row, pos, None)]
 
         return moves
 
@@ -115,7 +113,7 @@ class PassMoves(MovesIf):
         """If no moves, return PASS_TOKEN."""
 
         moves = self.decorator.get_moves()
-        return moves if moves else [PASS_TOKEN]
+        return moves if moves else [gi.PASS_TOKEN]
 
 
 

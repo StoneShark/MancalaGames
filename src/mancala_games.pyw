@@ -30,16 +30,10 @@ import game_interface as gi
 import mancala_ui
 import man_config
 import man_path
+import param_consts as pc
 
 from game_classes import GAME_CLASSES
-from game_constants import MAX_HOLES
-from param_consts import STRING_DICTS
-from param_consts import INT_TYPE
-from param_consts import STR_TYPE
-from param_consts import BOOL_TYPE
-from param_consts import MSTR_TYPE
-from param_consts import BLIST_TYPE
-from param_consts import ILIST_TYPE
+
 
 
 # %%  Constants
@@ -47,7 +41,7 @@ from param_consts import ILIST_TYPE
 # how many variables to make for lists
 # if the option for a 'list[int]' isn't here, 4 variables will be made
 MAKE_LVARS = {ckey.CAPT_ON: 5,
-              ckey.UDIR_HOLES: MAX_HOLES + 1}
+              ckey.UDIR_HOLES: gc.MAX_HOLES + 1}
 
 DESC_WIDTH = 60
 DASH_BULLET = '- '
@@ -326,7 +320,7 @@ class MancalaGames(tk.Frame):
         elif param.option in MAKE_LVARS:
             boxes = MAKE_LVARS[param.option]
 
-        elif param.vtype == ILIST_TYPE:
+        elif param.vtype == pc.ILIST_TYPE:
             boxes = 4
 
         else:
@@ -356,33 +350,33 @@ class MancalaGames(tk.Frame):
         blist - use MAKE_LVARS (want to make all of the udir_hole vars now"""
 
         for param in self.params.values():
-            if param.vtype == MSTR_TYPE:
+            if param.vtype == pc.MSTR_TYPE:
                 continue
 
-            if param.vtype in (STR_TYPE, INT_TYPE):
+            if param.vtype in (pc.STR_TYPE, pc.INT_TYPE):
                 self.tkvars[param.option] = tk.StringVar(self.master,
                                                          param.ui_default,
                                                          name=param.option)
-            elif param.vtype == BOOL_TYPE:
+            elif param.vtype == pc.BOOL_TYPE:
                 self.tkvars[param.option] = tk.BooleanVar(self.master,
                                                           param.ui_default,
                                                           name=param.option)
-            elif param.vtype == BLIST_TYPE:
+            elif param.vtype == pc.BLIST_TYPE:
                 boxes = MAKE_LVARS[param.option]
                 self.tkvars[param.option] = \
                     [tk.BooleanVar(self.master, False,
                                    name=f'{param.option}_{i}')
                      for i in range(boxes)]
 
-            elif param.vtype == ILIST_TYPE:
+            elif param.vtype == pc.ILIST_TYPE:
                 boxes = self._get_boxes_config(param)
                 self.tkvars[param.option] = \
                     [tk.StringVar(self.master, 0,
                                   name=f'{param.option}_{i}')
                      for i in range(boxes)]
 
-            elif param.vtype in STRING_DICTS:
-                _, inv_dict, enum_dict = STRING_DICTS[param.vtype]
+            elif param.vtype in pc.STRING_DICTS:
+                _, inv_dict, enum_dict = pc.STRING_DICTS[param.vtype]
                 value = inv_dict[enum_dict[param.ui_default]]
                 self.tkvars[param.option] = tk.StringVar(self.master,
                                                          value,
@@ -412,7 +406,7 @@ class MancalaGames(tk.Frame):
 
         holes = stoi(self.tkvars[ckey.HOLES].get())
 
-        if holes > MAX_HOLES:
+        if holes > gc.MAX_HOLES:
             print('value too big.')
             return
 
@@ -449,12 +443,12 @@ class MancalaGames(tk.Frame):
     def _make_entry(self, frame, param):
         """Make a single line string entry."""
 
-        length = 5 if param.vtype == INT_TYPE else 20
+        length = 5 if param.vtype == pc.INT_TYPE else 20
 
         lbl = tk.Label(frame, text=param.text)
         lbl.grid(row=param.row, column=param.col, sticky=tk.E)
 
-        if param.vtype == INT_TYPE:
+        if param.vtype == pc.INT_TYPE:
             ent = tk.Entry(frame,  width=length,
                            textvariable=self.tkvars[param.option],
                            validate=tk.ALL,
@@ -536,7 +530,7 @@ class MancalaGames(tk.Frame):
     def _make_option_list(self, frame, param):
         """Make an option list corresponding to the enum type."""
 
-        values = list(STRING_DICTS[param.vtype].str_dict.keys())
+        values = list(pc.STRING_DICTS[param.vtype].str_dict.keys())
 
         lbl = tk.Label(frame, text=param.text)
         lbl.grid(row=param.row, column=param.col, sticky=tk.E)
@@ -552,22 +546,22 @@ class MancalaGames(tk.Frame):
     def _make_ui_param(self, frame, param):
         """Make the ui elements for a single parameter."""
 
-        if param.vtype == MSTR_TYPE:
+        if param.vtype == pc.MSTR_TYPE:
             self._make_text_entry(frame, param)
 
-        elif param.vtype in (STR_TYPE, INT_TYPE):
+        elif param.vtype in (pc.STR_TYPE, pc.INT_TYPE):
             self._make_entry(frame, param)
 
-        elif param.vtype == BOOL_TYPE:
+        elif param.vtype == pc.BOOL_TYPE:
             self._make_checkbox(frame, param)
 
-        elif param.vtype == BLIST_TYPE:
+        elif param.vtype == pc.BLIST_TYPE:
             self._make_checkbox_list(frame, param)
 
-        elif param.vtype == ILIST_TYPE:
+        elif param.vtype == pc.ILIST_TYPE:
             self._make_entry_list(frame, param)
 
-        elif param.vtype in STRING_DICTS:
+        elif param.vtype in pc.STRING_DICTS:
             self._make_option_list(frame, param)
 
 
@@ -592,7 +586,7 @@ class MancalaGames(tk.Frame):
             raise ValueError(
                 f"Don't know how to fill {param.option} from {value}.")
 
-        if param.vtype == BLIST_TYPE:
+        if param.vtype == pc.BLIST_TYPE:
             for var in self.tkvars[param.option]:
                 var.set(False)
             sub_out = 1 if param.option == ckey.CAPT_ON else 0
@@ -614,21 +608,21 @@ class MancalaGames(tk.Frame):
             value = man_config.get_config_value(
                 self.loaded_config, param.cspec, param.option, param.vtype)
 
-            if param.vtype == MSTR_TYPE:
+            if param.vtype == pc.MSTR_TYPE:
                 self.tktexts[param.option].delete('1.0', tk.END)
                 self.tktexts[param.option].insert('1.0', value)
 
-            elif param.vtype in (STR_TYPE, BOOL_TYPE, INT_TYPE):
+            elif param.vtype in (pc.STR_TYPE, pc.BOOL_TYPE, pc.INT_TYPE):
                 self.tkvars[param.option].set(value)
 
-            elif param.vtype == BLIST_TYPE:
+            elif param.vtype == pc.BLIST_TYPE:
                 self._fill_tk_list(param, value)
 
-            elif param.vtype == ILIST_TYPE:
+            elif param.vtype == pc.ILIST_TYPE:
                 self._fill_tk_list(param, value)
 
-            elif param.vtype in STRING_DICTS:
-                inv_dict = STRING_DICTS[param.vtype].int_dict
+            elif param.vtype in pc.STRING_DICTS:
+                inv_dict = pc.STRING_DICTS[param.vtype].int_dict
                 self.tkvars[param.option].set(inv_dict[value])
 
 
@@ -640,27 +634,27 @@ class MancalaGames(tk.Frame):
 
         for param in sorted(self.params.values(), key=lambda v: v.order):
 
-            if param.vtype == MSTR_TYPE:
+            if param.vtype == pc.MSTR_TYPE:
                 value = self.tktexts[param.option].get('1.0', tk.END)
 
-            elif param.vtype in (STR_TYPE, BOOL_TYPE):
+            elif param.vtype in (pc.STR_TYPE, pc.BOOL_TYPE):
                 value = self.tkvars[param.option].get()
 
-            elif param.vtype == INT_TYPE:
+            elif param.vtype == pc.INT_TYPE:
                 value = stoi(self.tkvars[param.option].get())
 
-            elif param.vtype == BLIST_TYPE:
+            elif param.vtype == pc.BLIST_TYPE:
                 add_in = 1 if param.option == ckey.CAPT_ON else 0
                 value = [nbr + add_in
                          for nbr, var in enumerate(self.tkvars[param.option])
                          if var.get()]
 
-            elif param.vtype == ILIST_TYPE:
+            elif param.vtype == pc.ILIST_TYPE:
                 value = [int(var.get())
                          for nbr, var in enumerate(self.tkvars[param.option])]
 
-            elif param.vtype in STRING_DICTS:
-                str_dict = STRING_DICTS[param.vtype].str_dict
+            elif param.vtype in pc.STRING_DICTS:
+                str_dict = pc.STRING_DICTS[param.vtype].str_dict
                 value = self.tkvars[param.option].get()
                 value = str_dict[value]
 
@@ -820,20 +814,20 @@ class MancalaGames(tk.Frame):
 
         for param in self.params.values():
 
-            if param.vtype == MSTR_TYPE:
+            if param.vtype == pc.MSTR_TYPE:
                 self.tktexts[param.option].delete('1.0', tk.END)
                 self.tktexts[param.option].insert('1.0', param.ui_default)
 
-            elif param.vtype in STRING_DICTS:
-                _, inv_dict, enum_dict = STRING_DICTS[param.vtype]
+            elif param.vtype in pc.STRING_DICTS:
+                _, inv_dict, enum_dict = pc.STRING_DICTS[param.vtype]
                 value = inv_dict[enum_dict[param.ui_default]]
                 self.tkvars[param.option].set(value)
 
-            elif param.vtype == BLIST_TYPE:
+            elif param.vtype == pc.BLIST_TYPE:
                 for var in self.tkvars[param.option]:
                     var.set(False)
 
-            elif param.vtype == ILIST_TYPE:
+            elif param.vtype == pc.ILIST_TYPE:
                 default = param.ui_default
                 if (default
                         and isinstance(default, list)

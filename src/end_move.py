@@ -28,11 +28,9 @@ Created on Fri Apr  7 07:43:19 2023
 
 import abc
 
+import game_interface as gi
+
 from game_log import game_log
-from game_interface import Goal
-from game_interface import ChildType
-from game_interface import RoundFill
-from game_interface import WinCond
 
 
 # %% claim seeds
@@ -278,14 +276,14 @@ class EndTurnIf(abc.ABC):
         end game condition."""
 
         if seeds[True] > self.game.cts.win_count:
-            return WinCond.WIN, True
+            return gi.WinCond.WIN, True
 
         if seeds[False] > self.game.cts.win_count:
-            return WinCond.WIN, False
+            return gi.WinCond.WIN, False
 
         if (seeds[False] == self.game.cts.win_count
                 and seeds[False] == seeds[True]):
-            return WinCond.TIE, self.game.turn
+            return gi.WinCond.TIE, self.game.turn
 
         return None, self.game.turn
 
@@ -325,7 +323,7 @@ class Winner(EndTurnIf):
             return cond, winner
 
         if ended and not self.decorator:
-            return WinCond.GAME_OVER, None
+            return gi.WinCond.GAME_OVER, None
 
         return self.decorator.game_ended(repeat_turn, False)
 
@@ -342,18 +340,18 @@ class MaxWinner(EndTurnIf):
 
         cond, winner = self.decorator.game_ended(repeat_turn, ended)
 
-        if cond != WinCond.GAME_OVER:
+        if cond != gi.WinCond.GAME_OVER:
             return cond, winner
 
         seeds = self.decorator.claimer.claim_seeds()
 
         if seeds[0] > seeds[1]:
-            return WinCond.WIN, False
+            return gi.WinCond.WIN, False
 
         if seeds[0] < seeds[1]:
-            return WinCond.WIN, True
+            return gi.WinCond.WIN, True
 
-        return WinCond.TIE, None
+        return gi.WinCond.TIE, None
 
 
 class RoundWinner(EndTurnIf):
@@ -377,7 +375,7 @@ class RoundWinner(EndTurnIf):
 
         super().__init__(game, decorator, claimer)
 
-        if game.info.round_fill == RoundFill.UMOVE:
+        if game.info.round_fill == gi.RoundFill.UMOVE:
             self.req_seeds = game.cts.holes + game.info.min_move - 1
             self.msg = "Game, not round, ended (too few seeds for valid move)."
 
@@ -390,7 +388,7 @@ class RoundWinner(EndTurnIf):
 
         cond, player = self.decorator.game_ended(repeat_turn, ended)
 
-        if not cond or cond == WinCond.GAME_OVER or ended:
+        if not cond or cond == gi.WinCond.GAME_OVER or ended:
             return cond, player
 
         seeds = self.claimer.claim_seeds()
@@ -398,11 +396,11 @@ class RoundWinner(EndTurnIf):
             game_log.add(self.msg, game_log.INFO)
             return cond, player
 
-        if cond == WinCond.WIN:
-            return WinCond.ROUND_WIN, player
+        if cond == gi.WinCond.WIN:
+            return gi.WinCond.ROUND_WIN, player
 
         # if cond == WinCond.TIE:
-        return WinCond.ROUND_TIE, player
+        return gi.WinCond.ROUND_TIE, player
 
 
 class EndTurnNoPass(EndTurnIf):
@@ -553,11 +551,11 @@ class DepriveSeedsEndGame(EndTurnIf):
 
         if all(self.game.board[loc] < self.game.info.min_move
                for loc in self.game.cts.get_opp_range(self.game.turn)):
-            return WinCond.WIN, self.game.turn
+            return gi.WinCond.WIN, self.game.turn
 
         if all(self.game.board[loc] < self.game.info.min_move
                for loc in self.game.cts.get_my_range(self.game.turn)):
-            return WinCond.WIN, not self.game.turn
+            return gi.WinCond.WIN, not self.game.turn
 
         return None, None
 
@@ -645,12 +643,12 @@ class TerritoryGameWinner(EndTurnIf):
         game is not over, determine the round outcome."""
 
         if seeds[True] > seeds[False]:
-            return WinCond.ROUND_WIN, True
+            return gi.WinCond.ROUND_WIN, True
 
         if seeds[False] > seeds[True]:
-            return WinCond.ROUND_WIN, False
+            return gi.WinCond.ROUND_WIN, False
 
-        return WinCond.ROUND_TIE, self.game.turn
+        return gi.WinCond.ROUND_TIE, self.game.turn
 
 
     def _test_round_winner(self):
@@ -663,10 +661,10 @@ class TerritoryGameWinner(EndTurnIf):
         false_holes, seeds = self.game.compute_owners()
 
         if false_holes >= gparam_one:
-            return WinCond.WIN, False
+            return gi.WinCond.WIN, False
 
         if tot_holes - false_holes >= gparam_one:
-            return WinCond.WIN, True
+            return gi.WinCond.WIN, True
 
         return self._compare_seed_cnts(seeds)
 
@@ -677,12 +675,12 @@ class TerritoryGameWinner(EndTurnIf):
         false_holes, _ = self.game.compute_owners()
 
         if false_holes > self.game.cts.holes:
-            return WinCond.WIN, False
+            return gi.WinCond.WIN, False
 
         if false_holes < self.game.cts.holes:
-            return WinCond.WIN, True
+            return gi.WinCond.WIN, True
 
-        return WinCond.TIE, None
+        return gi.WinCond.TIE, None
 
 
     def game_ended(self, repeat_turn, ended=False):
@@ -693,7 +691,7 @@ class TerritoryGameWinner(EndTurnIf):
 
         cond, winner = self.decorator.game_ended(repeat_turn, ended)
 
-        if cond == WinCond.GAME_OVER:
+        if cond == gi.WinCond.GAME_OVER:
             return self.winner_test()
 
         return cond, winner
@@ -710,13 +708,13 @@ def deco_add_bottom_winner(game):
     if game.info.no_sides:
         ender = Winner(game, claimer=TakeOnlyChildNStores(game))
 
-    elif game.info.goal == Goal.TERRITORY:
+    elif game.info.goal == gi.Goal.TERRITORY:
         ender = Winner(game,
                        claimer=TakeOwnSeeds(game, lambda loc: game.owner[loc]))
     else:
         ender = Winner(game, claimer=TakeOwnSeeds(game, game.cts.board_side))
 
-    if game.info.goal == Goal.MAX_SEEDS:
+    if game.info.goal == gi.Goal.MAX_SEEDS:
         ender = MaxWinner(game, ender)
 
     return ender
@@ -725,7 +723,7 @@ def deco_add_bottom_winner(game):
 def deco_end_move(game):
     """Return a chain of move enders."""
 
-    if game.info.goal == Goal.DEPRIVE:
+    if game.info.goal == gi.Goal.DEPRIVE:
         return DepriveSeedsEndGame(game)
 
     if game.info.child_cvt:
@@ -739,7 +737,7 @@ def deco_end_move(game):
         ender = EndTurnNoPass(game, ender)
 
     if game.info.mustshare:
-        if game.info.goal == Goal.TERRITORY:
+        if game.info.goal == gi.Goal.TERRITORY:
             ender = EndTurnMustShare(game, lambda loc: game.owner[loc], ender)
         else:
             ender = EndTurnMustShare(game, game.cts.board_side, ender)
@@ -750,10 +748,10 @@ def deco_end_move(game):
     if game.info.rounds:
         ender = RoundWinner(game, ender, ClaimOwnSeeds(game))
 
-    if game.info.child_type == ChildType.WALDA:
+    if game.info.child_type == gi.ChildType.WALDA:
         ender = WaldaEndMove(game, ender)
 
-    if game.info.goal == Goal.TERRITORY:
+    if game.info.goal == gi.Goal.TERRITORY:
         ender = TerritoryGameWinner(game, ender)
 
     return ender

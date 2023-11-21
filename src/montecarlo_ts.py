@@ -11,8 +11,7 @@ import math
 import random
 
 import ai_interface
-
-from game_interface import WinCond
+import game_interface as gi
 
 
 # %% constants
@@ -253,7 +252,7 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
                 self.game.test_pass()
 
         winner, reward = None, 0
-        if cond in [WinCond.WIN, WinCond.ROUND_WIN]:
+        if cond in [gi.WinCond.WIN, gi.WinCond.ROUND_WIN]:
             winner = self.game.get_turn()
             reward = 1
 
