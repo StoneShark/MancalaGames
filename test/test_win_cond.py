@@ -91,7 +91,7 @@ class TestPassWConds:
                                                     [2, 2, 1])
         assert pass_game.store == [3, 4]
 
-        assert pass_game.move(mancala.PASS_TOKEN) is None
+        assert pass_game.move(gi.PASS_TOKEN) is None
         assert pass_game.turn
 
     def test_t_gover_win(self, pass_game):
