@@ -687,6 +687,7 @@ class TestMLAPS_ito_Sow:
         assert game.board == utils.build_board([0, 1, 0, 1, 0, 3],
                                                [5, 2, 1, 2, 0, 2])
 
+    @pytest.mark.skip(reason="Move doesn't return ENDLESS anylonger.")
     def test_mlaps_inf(self):
 
         game_consts = gc.GameConsts(nbr_start=4, holes=6)

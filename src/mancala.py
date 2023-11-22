@@ -565,8 +565,10 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             return win_cond if win_cond else gi.WinCond.REPEAT_TURN
 
         if mdata.capt_loc is gi.WinCond.ENDLESS:
-            game_log.add('MLAP game ENDLESS', game_log.IMPORT)
-            return gi.WinCond.ENDLESS
+            cond = self.end_game()
+            game_log.add(f'MLAP game ENDLESS, called end_game {cond}.',
+                          game_log.IMPORT)
+            return cond
 
         self.capture_seeds(mdata)
 

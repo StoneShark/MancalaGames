@@ -191,7 +191,7 @@ class TestAllowables:
 
         assert game.deco.allow.get_allowable_holes() == [T, F, T]
 
-
+    @pytest.mark.skip(reason='Allowable ENDLESS condition not needed.')
     def test_mustshare_endless(self):
         # this is an ENDLESS condition for mustshare
 

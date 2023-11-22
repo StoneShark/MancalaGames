@@ -806,146 +806,147 @@ class TestQuitter:
 
         return mancala.Mancala(game_consts, game_info)
 
+    CASES = \
+    [   # 0:  stores, no child - divvy odd, true gets extra
+        ('game',
+         utils.build_board([2, 2, 1],
+                           [0, 0, 0]), [3, 4], True, WinCond.TIE,
+         utils.build_board([N, N, N],
+                           [N, N, N]),
+         utils.build_board([0, 0, 0],
+                           [0, 0, 0]), [6, 6], True),
 
+        # 1:  stores, no child - divvy odd, false gets extra
+        ('game',
+         utils.build_board([2, 2, 1],
+                           [0, 0, 0]), [4, 3], True, WinCond.TIE,
+         utils.build_board([N, N, N],
+                           [N, N, N]),
+         utils.build_board([0, 0, 0],
+                           [0, 0, 0]), [6, 6], True),
+
+        # 2:  stores, no child - divvy even
+        ('game',
+         utils.build_board([0, 0, 0],
+                           [2, 2, 0]), [3, 5], True, WinCond.WIN,
+         utils.build_board([N, N, N],
+                           [N, N, N]),
+         utils.build_board([0, 0, 0],
+                           [0, 0, 0]), [5, 7], True),
+
+        # 3:  stores, child - divvy odd
+        ('chgame',
+         utils.build_board([0, 2, 1],
+                           [0, 2, 0]), [3, 4], True, WinCond.TIE,
+         utils.build_board([N, F, N],
+                           [N, T, N]),
+         utils.build_board([0, 2, 0],
+                           [0, 2, 0]), [4, 4], True),
+
+        # 4:  stores, child - divvy even
+        ('chgame',
+         utils.build_board([1, 2, 1],
+                           [0, 3, 0]), [2, 3], True, WinCond.WIN,
+         utils.build_board([N, F, N],
+                           [N, T, N]),
+         utils.build_board([0, 2, 0],
+                           [0, 3, 0]), [3, 4], True),
+
+        # 5: no store, no children
+        ('nsgame',
+         utils.build_board([2, 2, 1],
+                           [4, 0, 3]), [0, 0], True, WinCond.TIE,
+         utils.build_board([N, N, N],
+                           [N, N, N]),
+         utils.build_board([2, 2, 1],
+                           [4, 0, 3]), [0, 0], True),
+
+        # 6:  no stores, child - divvy odd
+        ('chnsgame',
+         utils.build_board([0, 3, 2],
+                           [0, 4, 3]), [0, 0], True, WinCond.TIE,
+         utils.build_board([N, F, N],
+                           [N, T, N]),
+         utils.build_board([0, 6, 0],
+                           [0, 6, 0]), [0, 0], True),
+
+        # 6b:  no stores, child - divvy odd
+        ('chnsgame',
+         utils.build_board([0, 4, 2],
+                           [0, 3, 3]), [0, 0], True, WinCond.TIE,
+         utils.build_board([N, F, N],
+                           [N, T, N]),
+         utils.build_board([0, 6, 0],
+                           [0, 6, 0]), [0, 0], True),
+
+        # 7:  no stores, child - divvy even
+        ('chnsgame',
+         utils.build_board([2, 3, 0],
+                           [2, 5, 0]), [0, 0], True, WinCond.WIN,
+         utils.build_board([N, F, N],
+                           [N, T, N]),
+         utils.build_board([0, 5, 0],
+                           [0, 7, 0]), [0, 0], True),
+
+        # 8:  no stores, True child only
+        ('chnsgame',
+         utils.build_board([2, 3, 0],
+                           [2, 5, 0]), [0, 0], True, WinCond.WIN,
+         utils.build_board([N, N, N],
+                           [N, T, N]),
+         utils.build_board([0, 0, 0],
+                           [0, 12, 0]), [0, 0], True),
+
+        # 9:  no stores, False child only
+        ('chnsgame',
+         utils.build_board([2, 3, 0],
+                           [2, 5, 0]), [0, 0], True, WinCond.WIN,
+         utils.build_board([N, N, N],
+                           [N, F, N]),
+         utils.build_board([0, 0, 0],
+                           [0, 12, 0]), [0, 0], False),
+
+        # 10:  no stores, child but none
+        ('chnsgame',
+         utils.build_board([2, 3, 0],
+                           [2, 5, 0]), [0, 0], True, WinCond.TIE,
+         utils.build_board([N, N, N],
+                           [N, N, N]),
+         utils.build_board([0, 0, 0],
+                           [0, 0, 0]), [0, 0], True),
+
+        # 11: rounds, end game returns definitive result
+        ('rgame',
+            utils.build_board([0, 2, 1],
+                              [0, 2, 0]), [3, 4], True, WinCond.TIE,
+            utils.build_board([N, F, N],
+                              [N, T, N]),
+            utils.build_board([0, 2, 0],
+                              [0, 2, 0]), [4, 4], True),
+
+        # 12: rounds, end game returns definitive result
+        ('rgame',
+         utils.build_board([1, 0, 0],
+                           [0, 0, 1]), [2, 8], True, WinCond.WIN,
+         utils.build_board([F, N, N],
+                           [N, N, T]),
+         utils.build_board([1, 0, 0],
+                           [0, 0, 1]), [2, 8], True),
+
+        # 13:
+        ('no_win_game',
+         utils.build_board([5, 0, 0],
+                           [0, 0, 0]), [3, 4], True, WinCond.TIE,
+         utils.build_board([N, N, N],
+                           [N, N, N]),
+         utils.build_board([0, 0, 0],
+                           [0, 0, 0]), [6, 6], None),
+
+    ]
     @pytest.mark.parametrize(
         'fixture, board, store, turn, '
         'eres, child, eboard, estore, eturn',
-        [   # 0:  stores, no child - divvy odd, true gets extra
-            ('game',
-             utils.build_board([2, 2, 1],
-                               [0, 0, 0]), [3, 4], True, WinCond.TIE,
-             utils.build_board([N, N, N],
-                               [N, N, N]),
-             utils.build_board([0, 0, 0],
-                               [0, 0, 0]), [6, 6], True),
-
-            # 1:  stores, no child - divvy odd, false gets extra
-            ('game',
-             utils.build_board([2, 2, 1],
-                               [0, 0, 0]), [4, 3], True, WinCond.TIE,
-             utils.build_board([N, N, N],
-                               [N, N, N]),
-             utils.build_board([0, 0, 0],
-                               [0, 0, 0]), [6, 6], True),
-
-            # 2:  stores, no child - divvy even
-            ('game',
-             utils.build_board([0, 0, 0],
-                               [2, 2, 0]), [3, 5], True, WinCond.WIN,
-             utils.build_board([N, N, N],
-                               [N, N, N]),
-             utils.build_board([0, 0, 0],
-                               [0, 0, 0]), [5, 7], True),
-
-            # 3:  stores, child - divvy odd
-            ('chgame',
-             utils.build_board([0, 2, 1],
-                               [0, 2, 0]), [3, 4], True, WinCond.TIE,
-             utils.build_board([N, F, N],
-                               [N, T, N]),
-             utils.build_board([0, 2, 0],
-                               [0, 2, 0]), [4, 4], True),
-
-            # 4:  stores, child - divvy even
-            ('chgame',
-             utils.build_board([1, 2, 1],
-                               [0, 3, 0]), [2, 3], True, WinCond.WIN,
-             utils.build_board([N, F, N],
-                               [N, T, N]),
-             utils.build_board([0, 2, 0],
-                               [0, 3, 0]), [3, 4], True),
-
-            # 5: no store, no children
-            ('nsgame',
-             utils.build_board([2, 2, 1],
-                               [4, 0, 3]), [0, 0], True, WinCond.TIE,
-             utils.build_board([N, N, N],
-                               [N, N, N]),
-             utils.build_board([2, 2, 1],
-                               [4, 0, 3]), [0, 0], True),
-
-            # 6:  no stores, child - divvy odd
-            ('chnsgame',
-             utils.build_board([0, 3, 2],
-                               [0, 4, 3]), [0, 0], True, WinCond.TIE,
-             utils.build_board([N, F, N],
-                               [N, T, N]),
-             utils.build_board([0, 6, 0],
-                               [0, 6, 0]), [0, 0], True),
-
-            # 6b:  no stores, child - divvy odd
-            ('chnsgame',
-             utils.build_board([0, 4, 2],
-                               [0, 3, 3]), [0, 0], True, WinCond.TIE,
-             utils.build_board([N, F, N],
-                               [N, T, N]),
-             utils.build_board([0, 6, 0],
-                               [0, 6, 0]), [0, 0], True),
-
-            # 7:  no stores, child - divvy even
-            ('chnsgame',
-             utils.build_board([2, 3, 0],
-                               [2, 5, 0]), [0, 0], True, WinCond.WIN,
-             utils.build_board([N, F, N],
-                               [N, T, N]),
-             utils.build_board([0, 5, 0],
-                               [0, 7, 0]), [0, 0], True),
-
-            # 8:  no stores, True child only
-            ('chnsgame',
-             utils.build_board([2, 3, 0],
-                               [2, 5, 0]), [0, 0], True, WinCond.WIN,
-             utils.build_board([N, N, N],
-                               [N, T, N]),
-             utils.build_board([0, 0, 0],
-                               [0, 12, 0]), [0, 0], True),
-
-            # 9:  no stores, False child only
-            ('chnsgame',
-             utils.build_board([2, 3, 0],
-                               [2, 5, 0]), [0, 0], True, WinCond.WIN,
-             utils.build_board([N, N, N],
-                               [N, F, N]),
-             utils.build_board([0, 0, 0],
-                               [0, 12, 0]), [0, 0], False),
-
-            # 10:  no stores, child but none
-            ('chnsgame',
-             utils.build_board([2, 3, 0],
-                               [2, 5, 0]), [0, 0], True, WinCond.TIE,
-             utils.build_board([N, N, N],
-                               [N, N, N]),
-             utils.build_board([0, 0, 0],
-                               [0, 0, 0]), [0, 0], True),
-
-            # 11: rounds, end game returns definitive result
-            ('rgame',
-                utils.build_board([0, 2, 1],
-                                  [0, 2, 0]), [3, 4], True, WinCond.TIE,
-                utils.build_board([N, F, N],
-                                  [N, T, N]),
-                utils.build_board([0, 2, 0],
-                                  [0, 2, 0]), [4, 4], True),
-
-            # 12: rounds, end game returns definitive result
-            ('rgame',
-             utils.build_board([1, 0, 0],
-                               [0, 0, 1]), [2, 8], True, WinCond.WIN,
-             utils.build_board([F, N, N],
-                               [N, N, T]),
-             utils.build_board([1, 0, 0],
-                               [0, 0, 1]), [2, 8], True),
-
-            # 13:
-            ('no_win_game',
-             utils.build_board([5, 0, 0],
-                               [0, 0, 0]), [3, 4], True, WinCond.GAME_OVER,
-             utils.build_board([N, N, N],
-                               [N, N, N]),
-             utils.build_board([0, 0, 0],
-                               [0, 0, 0]), [6, 6], None),
-
-        ])
+        CASES)
     def test_ended(self, request, fixture,
                    board, store, turn, child,
                    eres, eboard, estore, eturn):

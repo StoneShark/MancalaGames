@@ -186,11 +186,12 @@ class DivvySeedsStores(ClaimSeedsIf):
         seeds[False] += self.game.store[False]
         seeds[True] += self.game.store[True]
 
-        game_log.step('Divvied seeds', self.game)
+        if unclaimed:
+            game_log.step('Divvied seeds to stores', self.game)
         return seeds
 
 
-class DivvySeedsNoStores(ClaimSeedsIf):
+class DivvySeedsChildOnly(ClaimSeedsIf):
     """When there are no stores, split the unclaimed seeds
     between the two players putting them in available
     children.
@@ -206,16 +207,15 @@ class DivvySeedsNoStores(ClaimSeedsIf):
         children = [-1, -1]
 
         for loc in range(self.game.cts.dbl_holes):
-            owner = self.game.child[loc]
-            if owner is None:
+            ch_owner = self.game.child[loc]
+            if ch_owner is None:
                 unclaimed += board[loc]
                 board[loc] = 0
             else:
-                seeds[owner] += board[loc]
-                children[owner] = loc
+                seeds[ch_owner] += board[loc]
+                children[ch_owner] = loc
 
-        if all(children[i] >= 0 for i in range(2)):
-
+        if children[False] >= 0 and children[True] >= 0:
             quot, rem = divmod(unclaimed, 2)
             seeds[False] += quot
             seeds[True] += quot
@@ -229,7 +229,6 @@ class DivvySeedsNoStores(ClaimSeedsIf):
                 seeds[True] += rem
                 board[children[True]] += rem
 
-
         elif children[False] >= 0:
             seeds[False] += unclaimed
             board[children[False]] += unclaimed
@@ -239,17 +238,19 @@ class DivvySeedsNoStores(ClaimSeedsIf):
             self.game.board[children[True]] += unclaimed
 
         if any(seeds):
-            game_log.step('Divvied seeds', self.game)
+            if unclaimed:
+                game_log.step('Divvied seeds to children', self.game)
             return seeds
 
-        game_log.step('Divvy forcing tie', self.game)
+        game_log.step('Divvy forcing tie (no children)', self.game)
         half = self.game.cts.total_seeds // 2
         return [half, half]
 
 
 class DivvyIgnoreSeeds(ClaimSeedsIf):
-    """If there are no stores or children, ignore any seeds still in play.
-    Return half the seeds to force a tie (win_count might not be half)."""
+    """For DEPRIVE games: If there are seeds on the board
+    (which there are or the game would have ended),
+    end the game in a TIE."""
 
     def claim_seeds(self):
         half = self.game.cts.total_seeds // 2
@@ -698,6 +699,36 @@ class TerritoryGameWinner(EndTurnIf):
 
 
 
+class TerritoryEndGame(EndTurnIf):
+    """We are forcing the game to end, call the decorator
+    to collect the seeds. Decide who wins."""
+
+    def _test_winner(self):
+        """The game has ended, decide who won or if a TIE."""
+
+        false_holes, _ = self.game.compute_owners()
+
+        if false_holes > self.game.cts.holes:
+            return gi.WinCond.WIN, False
+
+        if false_holes < self.game.cts.holes:
+            return gi.WinCond.WIN, True
+
+        return gi.WinCond.TIE, None
+
+
+    def game_ended(self, repeat_turn, ended=False):
+        """Determine if the game ended."""
+
+        cond, winner = self.decorator.game_ended(repeat_turn, ended)
+
+        if cond == gi.WinCond.GAME_OVER:
+            return self._test_winner()
+
+        return cond, winner
+
+
+
 # %% build decorator chains
 
 
@@ -758,21 +789,35 @@ def deco_end_move(game):
 
 
 def deco_quitter(game):
-    """Return a chain for the quitter (user ended game).
+    """Return a chain for the quitter (user ended game or reached
+    an ENDLESS condition). Do something that seems fair. Assume that
+    seeds in play could belong to either player.
 
-    When no_sides: include MaxWinner because, CountOnlySeedsStores
-    might move seeds off the board."""
+    DEPRIVE: end in a TIE. Don't change the board.
 
-    # TODO is quitter "fair" for territory games??
+    TERRITORY: divvy the seeds and compute territory for each with
+    rounding rules. If outright winner based on gparam_one go with it,
+    otherwise TIE.
 
-    if game.info.no_sides:
-        return MaxWinner(game,
-                         Winner(game, claimer=TakeOnlyChildNStores(game)))
+    MAX_SEEDS: divvy the seeds, use MaxWinner to computer winner or TIE.
+
+    When divvying seeds move them to stores or children
+    (TERRITORY & MAX_SEEDS games must have one or both)."""
+
+    if game.info.goal == gi.Goal.DEPRIVE:
+        return Winner(game, claimer=DivvyIgnoreSeeds(game))
 
     if game.info.stores:
-        return Winner(game, claimer=DivvySeedsStores(game))
+        quitter = Winner(game, claimer=DivvySeedsStores(game))
+    elif game.info.child_cvt:
+        quitter = Winner(game, claimer=DivvySeedsChildOnly(game))
+    else:
+        # expect only test games will get here
+        return Winner(game, claimer=DivvyIgnoreSeeds(game))
 
-    if game.info.child_cvt:
-        return Winner(game, claimer=DivvySeedsNoStores(game))
+    if game.info.goal == gi.Goal.MAX_SEEDS:
+        quitter = MaxWinner(game, quitter)
+    elif game.info.goal == gi.Goal.TERRITORY:
+        quitter = TerritoryEndGame(game, quitter)
 
-    return Winner(game, claimer=DivvyIgnoreSeeds(game))
+    return quitter
