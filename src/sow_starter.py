@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Start the sowing by handling the start hole and
-determining the number of seeds.
+determining the number of seeds to sow.
+SOW_START is handled here.
 
 Created on Fri Apr  7 22:19:24 2023
 @author: Ann"""
@@ -12,7 +13,6 @@ import abc
 
 
 # %%  sow interface
-
 
 class SowStartIf(abc.ABC):
     """Interface for sowing."""
@@ -73,9 +73,7 @@ class SowStartMoveOne(SowStartIf):
         return loc, seeds
 
 
-
 # %% decorators
-
 
 class SowMarkUnlock(SowStartIf):
     """Start the sower. If locks are used then unlock the hole."""

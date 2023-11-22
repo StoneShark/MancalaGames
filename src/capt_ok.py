@@ -6,6 +6,8 @@ Each decorator acts as an ANDed condition. As soon as we know
 a capture cannot occur, return False. If a deco determines the capture
 is ok based on it's condition, continue the chain.
 
+The deco chain effectively decides if a capture cannot occur.
+
 Created on Fri Apr  7 08:52:03 2023
 @author: Ann"""
 
@@ -126,11 +128,7 @@ class CaptNeedSeedsNotChild(CaptOkIf):
 # %%  build deco chain
 
 def deco_capt_ok(game):
-    """Build the capture ok chain based on the params.
-    If capture mechanism are specified, put True at
-    the bottom of the deco chain.
-    If no capture mechanism are specified,
-    return a CaptFalse."""
+    """Build the capture ok chain based on the params."""
 
     capt_ok = CaptTrue(game)
 

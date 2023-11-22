@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-"""Mancala is contains the key game dynamics of the mancala player.
-Game constants and info define how the game is created and played.
+"""Mancala contains the game dynamics of the mancala player.
+It does not contain any UI elements or any specific ai (computer)
+player information.
 
 Created on Sun Mar 19 09:58:36 2023
 @author: Ann"""
@@ -43,7 +44,9 @@ OWNER = {True: '\u2191 ',
 @dc.dataclass(frozen=True, kw_only=True)
 class GameState(ai_interface.StateIf):
     """A simplified immuatble game state but enough to save
-    and restore the game state."""
+    and restore the game state.
+    Use this instead of copying the Mancala class, copying
+    all of the deco's is slow due to recursive references."""
 
     board: tuple
     store: tuple
@@ -100,20 +103,18 @@ class MoveData:
     move
     direct                    fill         input        input
     seeds          fill                    input        note 2
-    sow_loc        fill                                 note 3
-    cont_sow_loc    property fills         in/update
+    _sow_loc       fill                                 note 3
+    cont_sow_loc   property fills          in/update
     capt_loc                               output       in/update
-
     capt_change                                         filled
     captured                                            filled
 
     note 1: board is used to determine if a grand slam is possible
     e.g. there must be seeds on oppside before the turn
 
-    note 2: seeds are used only in NoSignleSeedCapt
+    note 2: the number seeds being sown, used in NoSignleSeedCapt
 
-    note 3: this is the original start location
-    """
+    note 3: the original start location"""
 
     def __init__(self, game, move):
 
@@ -155,7 +156,15 @@ class MoveData:
 
 class ManDeco:
     """Collect the decorator chains into one variable,
-    build them all together."""
+    build them all together.
+
+    Decorator chains can save data unique to the game
+    on startup/creation, but they should not store
+    state data that would be changed during the game.
+    Decos are not told about a new game or round
+    being started.
+
+    The inhibitor deco is told re-initialized."""
 
     def __init__(self, game):
 
@@ -180,7 +189,9 @@ class ManDeco:
         """Generate a test function that will return True
         if a child should be made. Used in the sower to stop
         mlap sowing. Used in the capturer to make children
-        and bulls, but not waldas, wegs, or tuzdeks."""
+        and bulls, but not waldas, wegs or tuzdeks.
+
+        The result is the ANDing of each functions return value."""
 
         def base_case(game, mdata):
             loc = mdata.capt_loc
@@ -218,6 +229,8 @@ class ManDeco:
             func_list += [not_first_hole]
 
         def child_test(game, mdata):
+            # XXXX shouldn't a call to stop_me_child be in the func list
+
             if game.deco.inhibitor.stop_me_child(game.turn):
                 return False
             return all(f(game, mdata) for f in func_list)
@@ -226,7 +239,7 @@ class ManDeco:
 
 
 class Mancala(ai_interface.AiGameIf, gi.GameInterface):
-    """An attempt to implement a wide variety of mancala games.
+    """Implement the dynamics of a wide variety of mancala games.
     Details of the game are defined in the game_constants and
     game_info parameters.
 
@@ -281,8 +294,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
 
     def __str__(self):
-        """ascii print of board for game logs."""
-
+        """Ascii print of board for game logs."""
         return self.deco.gstr.get_string()
 
 
@@ -292,7 +304,8 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         these must be able to completely return the game
         state to a previous position.
         Always return stores, because they may be used
-        even if not displayed (e.g. Deka)."""
+        even if not displayed (e.g. Deka).
+        If the lists aren't used don't include them."""
 
         state_dict = {'board': tuple(self.board),
                       '_turn': self.turn,
@@ -316,6 +329,8 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
     @state.setter
     def state(self, value):
+        """Copy the state variables back, convert the tuples
+        back to lists."""
 
         self.board = list(value.board)
         self.store = list(value.store)
@@ -373,8 +388,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
 
     def get_game_info(self):
-        """Return the GameInfo named tuple."""
-
+        """Return the GameInfo."""
         return self.info
 
 
@@ -389,9 +403,8 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
 
     def get_store(self, row):
-        """return the number of seeds in the store for side.
+        """Return the number of seeds in the store for side.
         row : 0 for top row, 1 for bottom  (opposite of player)"""
-
         return self.store[(row + 1) % 2]
 
 
@@ -407,8 +420,10 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
     def compute_owners(self):
         """Compute the number of holes that False should own
-        based on number of seeds (called on new round)."""
+        based on number of seeds. Called on new round for
+        Territory game."""
 
+        # XXXX I think there's duplication of this collection
         seeds = self.store.copy()
         for loc in range(self.cts.dbl_holes):
             if self.child[loc] is True:
@@ -429,12 +444,12 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         """Delegate to the new_game decorators.
         Return False if it a new round was started.
         True if a new game was started."""
-
         return self.deco.new_game.new_game(win_cond, new_round_ok)
 
 
     def end_game(self):
-        """The user has requested that the game be ended."""
+        """Either the player has requested that the game be ended
+        or an ENDLESS conditions was detected.  End the game fairly."""
 
         cond, winner = self.deco.quitter.game_ended(repeat_turn=False,
                                                     ended=True)
@@ -444,22 +459,20 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
     def win_conditions(self, repeat_turn=False, ended=False):
         """Check for end game.
-
         Return None if no victory/tie conditions are met.
-        If there is a winner, turn must be that player!"""
+        If there is a winner, set turn to that player."""
 
         cond, winner = self.deco.ender.game_ended(repeat_turn=repeat_turn,
                                                   ended=ended)
         if cond:
             self.turn = winner
             return cond
-
         return None
 
 
     def win_message(self, win_cond):
         """Return a game appropriate win message based on WinCond.
-        Return a window title and message strings."""
+        Return a window title and message string."""
 
         reason = ("by collecting the most seeds!",
                   "by eliminating their opponent's seeds.",
@@ -496,19 +509,19 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
     def do_sow(self, move):
         """Do the sowing steps:
 
-        2. deal with first hole, getting start loc and seeds to sow
+        2. deal with first hole, getting start loc, seeds to sow, and
+        sow start if specified.
         3. get sow direction
-        4. sow the seeds, return if something bad/interesting happened
+        4. sow the seeds, return updated mdata
 
         RETURN move data"""
 
         mdata = MoveData(self, move)
         mdata.sow_loc, mdata.seeds = self.deco.starter.start_sow(move)
         mdata.direct = self.deco.get_dir.get_direction(move, mdata.sow_loc)
-        mdata = self.deco.sower.sow_seeds(mdata)
+        self.deco.sower.sow_seeds(mdata)
 
         game_log.step(f'Sow from {mdata.sow_loc}', self)
-
         return mdata
 
 
@@ -519,12 +532,13 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         mdata.sow_loc, mdata.seeds = self.deco.starter.start_sow(move)
         mdata.direct = self.deco.get_dir.get_direction(move, mdata.sow_loc)
         single_sower = self.deco.sower.get_single_sower()
-        mdata = single_sower.sow_seeds(mdata)
+        single_sower.sow_seeds(mdata)
         return mdata
 
 
     def capture_seeds(self, mdata):
-        """Hand off the capture to the capturer deco."""
+        """Hand off the capture to the capturer deco;
+        update the game log on return."""
 
         self.deco.capturer.do_captures(mdata)
 
@@ -538,11 +552,9 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
 
     def _move(self, move):
-        """Do the move.
-        If pass, then change turn and return None (game continues).
-        Otherwise:
+        """Do the move:
 
-        1. swap turn if move is PASS, do nothing else
+        1. if PASS, swap turn and do nothing else
         Call do_sow for steps 2 to 4
         5. capture seeds
         6. if either player won or a tie occured, return that condition
@@ -567,7 +579,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         if mdata.capt_loc is gi.WinCond.ENDLESS:
             cond = self.end_game()
             game_log.add(f'MLAP game ENDLESS, called end_game {cond}.',
-                          game_log.IMPORT)
+                         game_log.IMPORT)
             return cond
 
         self.capture_seeds(mdata)
@@ -603,6 +615,9 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
 
     def move(self, move):
+        """Call the _move method to do most of the work
+        (move has several returns this wraps them all),
+        log the turn here."""
 
         cur_turn = self.turn
         wcond = self._move(move)
@@ -613,16 +628,14 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
     def test_pass(self):
         """If no valid moves, swap turn and return True.
         Can't put this in move or it will break the AiPlayer.
-        This method is likely only useable by the Ai
-        because of the side effect of swapping turns."""
 
-        if self.info.mustpass:
-            if not any(self.get_allowable_holes()):
+        If simulating games, call this after checking the
+        return value of move."""
 
-                self.turn = not self.turn
-                self._log_turn(not self.turn, 'PASS', None)
-                return True
-
+        if self.info.mustpass and not any(self.get_allowable_holes()):
+            self.turn = not self.turn
+            self._log_turn(not self.turn, 'PASS', None)
+            return True
         return False
 
 
@@ -641,17 +654,14 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
     def get_turn(self):
         """Return current turn."""
-
         return self.turn
 
 
     def get_allowable_holes(self):
         """Determine what holes are legal moves."""
-
         return self.deco.allow.get_allowable_holes()
 
 
     def get_moves(self):
         """Return the list of allowable moves."""
-
         return self.deco.moves.get_moves()

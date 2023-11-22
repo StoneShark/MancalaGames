@@ -171,8 +171,7 @@ class TestAllowables:
 
 
     def test_mlap_allowables(self):
-        # this includes an ENDLESS condition for grand slam
-
+        # TODO test_mlap_allowables not really testing gs not_legal?
         game_consts = gc.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 crosscapt=True,
@@ -189,26 +188,7 @@ class TestAllowables:
         quot, rem = divmod(seeds, 2)
         game.store = [quot, quot + rem]
 
-        assert game.deco.allow.get_allowable_holes() == [T, F, T]
-
-    @pytest.mark.skip(reason='Allowable ENDLESS condition not needed.')
-    def test_mustshare_endless(self):
-        # this is an ENDLESS condition for mustshare
-
-        game_consts = gc.GameConsts(nbr_start=4, holes=4)
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                crosscapt=True,
-                                mustshare=True,
-                                mlaps=LapSower.LAPPER,
-                                rules=mancala.Mancala.rules)
-
-        game = mancala.Mancala(game_consts, game_info)
-        game.turn = True
-        game.board = [0, 0, 0, 0, 1, 11, 7, 8]
-
-        game.store[0] = game.cts.total_seeds - sum(game.board)
-
-        assert game.deco.allow.get_allowable_holes() == [T, T, F, T]
+        assert game.deco.allow.get_allowable_holes() == [T, T, T]
 
 
     def test_sown_n_capt(self):

@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
-"""Provide the interface methods required by a mancala game
-for the mancala_ui. Constants and paramters used to
+"""Provide the interface methods required by a mancala
+game for the mancala_ui. Constants and paramters used to
 control game play are also included.
+
+IntEnums are used for enums that are stored in the
+config files
 
 Created on Thu Mar  9 08:38:28 2023
 @author: Ann"""
@@ -28,6 +31,69 @@ class GameInfoError(Exception):
 
 
 @enum.unique
+class AllowRule(enum.IntEnum):
+    """Defines special rules for allowable holes."""
+
+    NONE = 0
+    OPP_OR_EMPTY = 1
+    SINGLE_TO_ZERO = 2
+    SINGLE_ONLY_ALL = 3
+    SINGLE_ALL_TO_ZERO = 4
+    TWO_ONLY_ALL = 5
+    TWO_ONLY_ALL_RIGHT = 6
+    FIRST_TURN_ONLY_RIGHT_TWO = 7
+    RIGHT_2_1ST_THEN_ALL_TWO = 8
+
+
+@enum.unique
+class CaptExtraPick(enum.IntEnum):
+    """Pick extra's over the captured seeds."""
+
+    NONE = 0
+    PICKCROSS = 1
+    PICKTWOS = 2
+
+
+@enum.unique
+class ChildRule(enum.IntEnum):
+    """Defines additional child restrictions."""
+
+    NONE = 0
+    OPP_ONLY = 1
+    NOT_1ST_OPP = 2
+
+
+@enum.unique
+class ChildType(enum.IntEnum):
+    """Type of children."""
+
+    NOCHILD = 0
+    NORMAL = 1
+    WALDA = 2
+    ONE_CHILD = 3
+    WEG = 4
+    BULL = 5
+
+
+@enum.unique
+class CrossCaptOwn(enum.IntEnum):
+    """What to do with own seed on cross capture."""
+
+    LEAVE = 0
+    PICK_ON_CAPT = 1
+    ALWAYS_PICK = 2
+
+
+@enum.unique
+class Goal(enum.IntEnum):
+    """Goal of the game."""
+
+    MAX_SEEDS = 0
+    DEPRIVE = 1
+    TERRITORY = 2
+
+
+@enum.unique
 class Direct(enum.IntEnum):
     """Direction of sowing. 2nd Param to move on bi-directional holes."""
     CW = -1
@@ -49,7 +115,7 @@ class Direct(enum.IntEnum):
 @enum.unique
 class GrandSlam(enum.IntEnum):
     """Possible options for dealing with a grand slam (capturing
-    all of an opponents seeds)."""
+    all of an opponents seeds on one move)."""
 
     LEGAL = 0
     NOT_LEGAL = 1
@@ -60,12 +126,13 @@ class GrandSlam(enum.IntEnum):
 
 
 @enum.unique
-class RoundStarter(enum.IntEnum):
-    """Who starts each round."""
+class LapSower(enum.IntEnum):
+    """Defines if or what kind of lap sowing to do."""
 
-    ALTERNATE = 0
-    LOSER = 1
-    WINNER = 2
+    OFF = 0
+    LAPPER = 1
+    LAPPER_NEXT = 2
+
 
 @enum.unique
 class RoundFill(enum.IntEnum):
@@ -79,61 +146,14 @@ class RoundFill(enum.IntEnum):
     UMOVE = 5
     SHORTEN = 6
 
-@enum.unique
-class CrossCaptOwn(enum.IntEnum):
-    """What to do with own seed on cross capture."""
-
-    LEAVE = 0
-    PICK_ON_CAPT = 1
-    ALWAYS_PICK = 2
-
 
 @enum.unique
-class Goal(enum.IntEnum):
-    """Goal of the game."""
+class RoundStarter(enum.IntEnum):
+    """Who starts each round."""
 
-    MAX_SEEDS = 0
-    DEPRIVE = 1
-    TERRITORY = 2
-
-
-@enum.unique
-class ChildType(enum.IntEnum):
-    """Type of children."""
-
-    NOCHILD = 0
-    NORMAL = 1
-    WALDA = 2
-    ONE_CHILD = 3
-    WEG = 4
-    BULL = 5
-
-
-@enum.unique
-class StartPattern(enum.IntEnum):
-    """Defines the start patterns for the game."""
-
-    ALL_EQUAL = 0
-    GAMACHA = 1
-    ALTERNATES = 2
-    ALTS_WITH_1 = 3
-    CLIPPEDTRIPLES = 4
-    TWOEMPTY = 5
-
-
-@enum.unique
-class AllowRule(enum.IntEnum):
-    """Defines special rules for allowable holes."""
-
-    NONE = 0
-    OPP_OR_EMPTY = 1
-    SINGLE_TO_ZERO = 2
-    SINGLE_ONLY_ALL = 3
-    SINGLE_ALL_TO_ZERO = 4
-    TWO_ONLY_ALL = 5
-    TWO_ONLY_ALL_RIGHT = 6
-    FIRST_TURN_ONLY_RIGHT_TWO = 7
-    RIGHT_2_1ST_THEN_ALL_TWO = 8
+    ALTERNATE = 0
+    LOSER = 1
+    WINNER = 2
 
 
 @enum.unique
@@ -161,30 +181,15 @@ class SowRule(enum.IntEnum):
 
 
 @enum.unique
-class CaptExtraPick(enum.IntEnum):
-    """Pick extra's over the captured seeds."""
+class StartPattern(enum.IntEnum):
+    """Defines the start patterns for the game."""
 
-    NONE = 0
-    PICKCROSS = 1
-    PICKTWOS = 2
-
-
-@enum.unique
-class LapSower(enum.IntEnum):
-    """Defines if or what kind of lap sowing to do."""
-
-    OFF = 0
-    LAPPER = 1
-    LAPPER_NEXT = 2
-
-
-@enum.unique
-class ChildRule(enum.IntEnum):
-    """Defines additional child restrictions."""
-
-    NONE = 0
-    OPP_ONLY = 1
-    NOT_1ST_OPP = 2
+    ALL_EQUAL = 0
+    GAMACHA = 1
+    ALTERNATES = 2
+    ALTS_WITH_1 = 3
+    CLIPPEDTRIPLES = 4
+    TWOEMPTY = 5
 
 
 @enum.unique
@@ -286,7 +291,7 @@ class GameInfo:
 
     def __post_init__(self, nbr_holes, rules):
         """Do post init (any derived values) and apply the rules.
-        rules.test raises exceptions and warnings."""
+        rules which raise exceptions and warnings."""
 
         object.__setattr__(self, ckey.UDIRECT, bool(self.udir_holes))
 
@@ -299,9 +304,10 @@ class GameInfo:
 
         rules.test(self, nbr_holes)
 
+
     @classmethod
     def get_fields(cls):
-        """return the field names."""
+        """Return the field names."""
 
         return [field.name for field in dc.fields(cls)]
 
@@ -336,7 +342,8 @@ class MoveTpl(tuple):
     Override new so the contructor can take multiple arguements
     if two args: pos, direct
     if three args: row, pos, direct
-        used for all no_sides games even if no udirect"""
+        used for any game where a player can move from both rows
+        games even if no udirect"""
 
     def __new__(cls, *args):
         return super().__new__(cls, args)
@@ -358,9 +365,7 @@ class MoveTpl(tuple):
 class GameInterface(abc.ABC):
     """A mixin of interfaces required by the UI for a mancala game.
     The mancala_ui calls these -- the only interface between the game
-    logic and the UI.
-
-    This is interface methods only, NO __init__"""
+    logic and the UI."""
 
     @abc.abstractmethod
     def get_game_info(self):
@@ -383,62 +388,69 @@ class GameInterface(abc.ABC):
 
     @abc.abstractmethod
     def get_store(self, row):
-        """return the number of seeds in the store for side.
+        """Return the number of seeds in the store for side.
         row : 0 for top row, 1 for bottom  (opposite of player)"""
 
     @abc.abstractmethod
     def set_store(self, row, seeds):
-        """Set the store seeds of owner."""
+        """Set the store seeds of owner.
+        row : 0 for top row, 1 for bottom  (opposite of player)"""
 
     @abc.abstractmethod
     def set_blocked(self, loc, blocked):
-        """Set the blocked status location..
+        """Set the blocked status location.
         Interface for button behavior."""
 
     @abc.abstractmethod
     def get_hole_props(self, row, pos):
-        """Used to the properties of the specified hole, used for refresh.
-        row: int - 0 top row, 1 bottom row
+        """Used to get the properties of the specified hole,
+        used for refresh of UI.
+        row: int - 0 top row, 1 bottom row (opposite of player)
         pos:  int -  range 0..nbr_holes//2
         Return: HoleProps"""
 
     @abc.abstractmethod
     def get_allowable_holes(self):
         """Return: a list of positions that can be played by
-        the current player"""
+        the current player. Each hole is either playable or not,
+        it can't be only left or right click playable."""
 
     @abc.abstractmethod
     def new_game(self, win_cond=None, new_round_ok=False):
         """Reset the game to new state or
-        if new_round_ok is set, check to start a new round."""
+        if new_round_ok is set, check to start a new round.
+        Return True if a new game is created, False if a new round
+        is created."""
 
     @abc.abstractmethod
     def end_game(self):
-        """User requested to end the game.
-        The difficulty tester uses this interface so support it even if
-        there is not a user option to end the game.
+        """User requested to end the game or the game ended in an
+        ENDLESS looping condition.
         Return: WinCond"""
 
     @abc.abstractmethod
     def move(self, move):
-        """Select seeds from hole (pos) on the current player's
-        side of the board and sow per game rules.
-        move:  int -  range 0..nbr_holes//2 (pos)  or
-              unique object to game
-        Return: None or WinCond enum"""
+        """Select seeds from hole (move) and sow per game rules.
+        move:  one of:
+            int -  range 0..holes (pos)
+            pair - pos, direction for user choose holes
+            tuple - row, pos, direct for moves from either side
+        All steps of a move are performed, including determining
+        if the game is over.
+        Return: None or WinCond"""
 
     @abc.abstractmethod
     def test_pass(self):
         """If no valid moves, swap turn and return True.
         Can't put this in game move or it will break the minimaxer.
-        Return: Boolean - current player must pass"""
+        Return: True current player must pass"""
 
     @abc.abstractmethod
     def win_message(self, win_cond):
         """Return a game appropriate win message based on WinCond.
-        Return a window title and message strings."""
+        Return a window title and message string."""
 
     @abc.abstractmethod
     def params_str(self):
-        """Return a string describing the parameters of the
-        game."""
+        """Return a string describing the parameters of the game.
+        Used in saved game_logs."""

@@ -41,8 +41,9 @@ class ConstDir(GetDirIf):
 class SplitDir(GetDirIf):
     """Precompute the diretions for all locations,
     then lookup and return at game time.
-    This shouldn't be called if the board size is odd
-    for the center hole, return None."""
+
+    This shouldn't be called for the center hole
+    when the board size is odd, None will be returned."""
 
     def __init__(self, game, decorator=None):
 
@@ -57,7 +58,6 @@ class SplitDir(GetDirIf):
         self.direction += [gi.Direct.CCW] * half_holes
 
     def get_direction(self, _, loc):
-
         return self.direction[loc]
 
 
@@ -66,7 +66,6 @@ class UdirDir(GetDirIf):
     The UI/user picked the direction, just return it."""
 
     def get_direction(self, move, _):
-
         return move[1]
 
 
@@ -75,7 +74,6 @@ class UdirTripleDir(GetDirIf):
     The UI/user picked the direction, just return it."""
 
     def get_direction(self, move, _):
-
         return move[2]
 
 
@@ -95,7 +93,6 @@ class UdirOtherDir(GetDirIf):
             return self.udir_getter.get_direction(move, loc)
 
         return self.decorator.get_direction(move, loc)
-
 
 
 # %%  build deco

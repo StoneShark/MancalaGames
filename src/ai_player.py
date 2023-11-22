@@ -30,6 +30,7 @@ AI_PARAM_DEFAULTS = {ckey.MM_DEPTH: [1, 1, 3, 5],
 
 NEGAMAXER = 'negamaxer'
 
+# a divider for the bias so that we can store ints in the config file
 MCTS_BIAS_DIV = 1000
 
 
@@ -354,7 +355,6 @@ class AiPlayer(ai_interface.AiPlayerIf):
 
 
 # %%  rule dict
-
 
 DIFF_LEVELS = 4
 MAX_MINIMAX_DEPTH = 15

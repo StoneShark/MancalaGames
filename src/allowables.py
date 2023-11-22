@@ -74,7 +74,6 @@ class AllowableTriples(AllowableIf):
                 for loc in range(self.game.cts.dbl_holes)]
 
 
-
 # %%  decorators
 
 class OppOrEmptyEnd(AllowableIf):
@@ -142,7 +141,7 @@ class OnlyIfAllN(AllowableIf):
         """Return allowable moves."""
 
         allow = [self.allow_move(loc) and self.game.board[loc] != self.const
-                for loc in self.game.cts.get_my_range(self.game.turn)]
+                 for loc in self.game.cts.get_my_range(self.game.turn)]
         if any(allow):
             return allow
 
@@ -157,11 +156,11 @@ class AllTwoRightmost(AllowableIf):
         """Return allowable moves."""
 
         allow = [self.allow_move(loc) and self.game.board[loc] != 2
-                for loc in self.game.cts.get_my_range(self.game.turn)]
+                 for loc in self.game.cts.get_my_range(self.game.turn)]
         if any(allow):
             return allow
 
-        turn= self.game.turn
+        turn = self.game.turn
         holes = self.game.cts.holes
         dbl_holes = self.game.cts.dbl_holes
         rightedge = (dbl_holes if turn else holes) - 1
@@ -264,12 +263,8 @@ class MustShare(AllowableIf):
             return
 
         game_log.set_simulate()
-        cond = self.game.move(self.make_move(pos))
+        self.game.move(self.make_move(pos))
         game_log.clear_simulate()
-
-        if cond is gi.WinCond.ENDLESS:
-            game_log.add(f'Preventing ENDLESS move {loc}', game_log.IMPORT)
-            return
 
         if self.opp_has_seeds(opponent):
             allow[pos] = True
@@ -324,12 +319,13 @@ class NoGrandSlam(AllowableIf):
 
             game_log.set_simulate()
             mdata = self.game.do_sow(pos)
+
             if mdata.capt_loc is gi.WinCond.ENDLESS:
-                game_log.add(f'Preventing ENDLESS move {loc}',
-                             game_log.IMPORT)
+                rval[pos] = True
                 self.game.state = saved_state
                 game_log.clear_simulate()
                 continue
+
             self.game.capture_seeds(mdata)
             game_log.clear_simulate()
 
@@ -412,7 +408,7 @@ def deco_allowable(game):
     """Build the allowable deco."""
 
     if game.info.mlength == 3:
-        allowable =  AllowableTriples(game)
+        allowable = AllowableTriples(game)
     else:
         allowable = Allowable(game)
 

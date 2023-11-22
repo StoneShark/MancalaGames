@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """There are two  deco chains defined here:
     1. ender:  at the end of each turn determine if the game is over.
-    2. quitter:  user ended the game, do something fair.
+    2. quitter:  user ended the game or a sow resulted in ENDLESS,
+    do something fair.
 
 Return win/end-game-condition, winner from ender.game_ended.
 self.game.turn is the player that just finished moving.
@@ -257,7 +258,6 @@ class DivvyIgnoreSeeds(ClaimSeedsIf):
         return [half, half]
 
 
-
 # %%  end turn interface
 
 class EndTurnIf(abc.ABC):
@@ -301,9 +301,10 @@ class Winner(EndTurnIf):
     At the top (first/second), the decorator will exist and
     the claimer will be one of ClaimSeeds or ChildClaimSeeds.
 
-    At the bottom of deco chain, the decorator will be None
-    and the claimer will count all the seeds, therefore the
-    game will end via the test_seed_cnts (unless ...).
+    At the bottom of deco chain (called later), the decorator
+    will be None and the claimer will count all the seeds,
+    therefore the game will end via the test_seed_cnts
+    (unless ...).
 
     At the bottom of deco chain in a game which does not
     end the game via test_seed_cnts, return GAME_OVER.
@@ -728,9 +729,7 @@ class TerritoryEndGame(EndTurnIf):
         return cond, winner
 
 
-
 # %% build decorator chains
-
 
 def deco_add_bottom_winner(game):
     """Start the deco chain by adding the bottom Winner

@@ -120,7 +120,7 @@ class TestSower:
         mdata = MoveData(game, start_pos)
         mdata.sow_loc, mdata.seeds = game.deco.starter.start_sow(start_pos)
         mdata.direct = direct
-        mdata = base_sower.sow_seeds(mdata)
+        base_sower.sow_seeds(mdata)
 
         assert mdata.capt_loc == eloc
         assert game.board == eboard
@@ -271,7 +271,7 @@ class TestSower:
         mdata = MoveData(game, start_pos)
         mdata.sow_loc, mdata.seeds = game.deco.starter.start_sow(start_pos)
         mdata.direct = direct
-        mdata = store_sower.sow_seeds(mdata)
+        store_sower.sow_seeds(mdata)
 
         assert mdata.capt_loc == eloc
         assert game.board == eboard
@@ -304,7 +304,7 @@ class TestSower:
         mdata = MoveData(game, spos)
         mdata.sow_loc, mdata.seeds = game.deco.starter.start_sow(spos)
         mdata.direct = game.info.sow_direct
-        mdata = game.deco.sower.sow_seeds(mdata)
+        game.deco.sower.sow_seeds(mdata)
 
         assert game.board == eboard
         assert mdata.capt_loc == ecloc
@@ -328,7 +328,7 @@ class TestSower:
         mdata = MoveData(game, None)
         mdata.capt_loc = end_loc
 
-        lap_cont = sower.SimpleLapCont(game)
+        lap_cont = sower.StopSingleSeed(game, sower.LapContinue(game))
         lap_cont = sower.StopRepeatTurn(game, lap_cont)
 
         assert lap_cont.do_another_lap(mdata) == eresult
@@ -432,6 +432,7 @@ class TestSower:
         mdata.seeds = sown_seeds
 
         lap_cont = sower.ChildLapCont(game)
+        lap_cont = sower.StopSingleSeed(game, lap_cont)
         lap_cont = sower.StopOnChild(game, lap_cont)
         lap_cont = sower.StopRepeatTurn(game, lap_cont)
 
@@ -509,6 +510,7 @@ class TestSower:
         mdata.seeds = sown_seeds
 
         lap_cont = sower.ChildLapCont(nogame)
+        lap_cont = sower.StopSingleSeed(nogame, lap_cont)
         lap_cont = sower.StopOnChild(nogame, lap_cont)
         lap_cont = sower.StopRepeatTurn(nogame, lap_cont)
 
@@ -565,7 +567,7 @@ class TestMlap:
         mdata = MoveData(game, start_pos)
         mdata.sow_loc, mdata.seeds = game.deco.starter.start_sow(start_pos)
         mdata.direct = game.info.sow_direct
-        mdata = mlap_sower.sow_seeds(mdata)
+        mlap_sower.sow_seeds(mdata)
 
         assert mdata.capt_loc == eloc
         assert game.board == eboard
@@ -605,7 +607,7 @@ class TestMlap:
         mdata = MoveData(nlgame, start_pos)
         mdata.sow_loc, mdata.seeds = nlgame.deco.starter.start_sow(start_pos)
         mdata.direct = nlgame.info.sow_direct
-        mdata = nlgame.deco.sower.sow_seeds(mdata)
+        nlgame.deco.sower.sow_seeds(mdata)
 
         assert mdata.capt_loc == eloc
         assert nlgame.board == eboard
@@ -749,7 +751,7 @@ class TestVMlap:
         mdata = MoveData(game, start_pos)
         mdata.sow_loc, mdata.seeds = game.deco.starter.start_sow(start_pos)
         mdata.direct = Direct.CW
-        mdata =game.deco.sower.sow_seeds(mdata)
+        game.deco.sower.sow_seeds(mdata)
         print(game)
 
         assert mdata.capt_loc == eloc
@@ -830,7 +832,7 @@ class TestBlckDivertSower:
         mdata = MoveData(game, spos)
         mdata.sow_loc, mdata.seeds = game.deco.starter.start_sow(spos)
         mdata.direct = game.info.sow_direct
-        mdata = game.deco.sower.sow_seeds(mdata)
+        game.deco.sower.sow_seeds(mdata)
 
         assert mdata.capt_loc == eloc
         assert game.board == eboard
@@ -879,7 +881,7 @@ class TestBlckDivertSower:
         mdata = MoveData(mlgame, spos)
         mdata.sow_loc, mdata.seeds = mlgame.deco.starter.start_sow(spos)
         mdata.direct = mlgame.info.sow_direct
-        mdata = mlgame.deco.sower.sow_seeds(mdata)
+        mlgame.deco.sower.sow_seeds(mdata)
 
         print(mlgame)
         print(mlgame.deco.sower)
@@ -925,7 +927,7 @@ class TestSowCaptOwned:
         mdata = MoveData(game, start_pos)
         mdata.sow_loc, mdata.seeds = game.deco.starter.start_sow(start_pos)
         mdata.direct = game.info.sow_direct
-        mdata = game.deco.sower.sow_seeds(mdata)
+        game.deco.sower.sow_seeds(mdata)
 
         assert mdata.capt_loc == eloc
         assert game.board == eboard
@@ -956,7 +958,7 @@ class TestSowCaptOwned:
         mdata = MoveData(game2, move)
         mdata.sow_loc, mdata.seeds = game2.deco.starter.start_sow(move)
         mdata.direct = game2.info.sow_direct
-        mdata = game2.deco.sower.sow_seeds(mdata)
+        game2.deco.sower.sow_seeds(mdata)
 
         assert mdata.capt_loc == 4
         assert game2.board == utils.build_board([2, 4, 0],

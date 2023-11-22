@@ -13,6 +13,7 @@ Created on Fri Mar 17 14:59:55 2023
 
 import dataclasses as dc
 
+
 MAX_HOLES = 14
 MIN_HOLES = 2
 
@@ -59,17 +60,17 @@ class GameConsts:
 
         object.__setattr__(self, 'total_seeds',
                            self.dbl_holes * self.nbr_start)
-        object.__setattr__(self, 'win_count', self.total_seeds//2)
+        object.__setattr__(self, 'win_count', self.total_seeds // 2)
 
         object.__setattr__(self, 'false_range', range(0, self.holes))
         object.__setattr__(self, 'true_range',
-                           range(self.dbl_holes-1, self.holes-1, -1))
+                           range(self.dbl_holes - 1, self.holes - 1, -1))
 
         order = []
-        for i in range(self.holes//2):
+        for i in range(self.holes // 2):
             order += [i, -(i + 1)]
         if self.holes % 2:
-            order += [self.holes//2]
+            order += [self.holes // 2]
 
         vals = list(self.false_range)
         object.__setattr__(self, 'false_fill', [vals[i] for i in order])
@@ -79,17 +80,17 @@ class GameConsts:
 
 
     def __str__(self):
-        """Return a nice string representation."""
+        """Return a string with all the parameters."""
 
-        string =  f'GameConsts({self.nbr_start}, {self.holes})\n'
+        string = f'GameConsts({self.nbr_start}, {self.holes})\n'
         string += f'   dbl_holes={self.dbl_holes}\n'
         string += f'   half_holes={self.half_holes}\n'
         string += f'   total_seeds={self.total_seeds}\n'
         string += f'   win_count={self.win_count}\n'
-        string +=  '   false_range=' + repr(self.false_range) + '\n'
-        string +=  '   true_range=' + repr(self.true_range) + '\n'
-        string +=  '   false_fill=' + repr(self.false_fill) + '\n'
-        string +=  '   true_fill=' + repr(self.true_fill)
+        string += '   false_range=' + repr(self.false_range) + '\n'
+        string += '   true_range=' + repr(self.true_range) + '\n'
+        string += '   false_fill=' + repr(self.false_fill) + '\n'
+        string += '   true_fill=' + repr(self.true_fill)
 
         return string
 
@@ -127,6 +128,7 @@ class GameConsts:
     def loc_to_left_cnt(self, loc):
         """Translate loc to a count from the left side,
         based on player perspective."""
+
         return (loc - self.holes) if loc >= self.holes else loc
 
 
@@ -138,6 +140,7 @@ class GameConsts:
     def board_side(self, loc):
         """Return whose side of the board loc is on (as in turn
         not row)."""
+
         return loc >= self.holes
 
 

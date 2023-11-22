@@ -32,8 +32,8 @@ class CaptMethodIf(abc.ABC):
         Update mdata (both are inited to False):
             capt_changed: there was a state change (picked, child made, etc.)
         but not a capture
-            captured: there was an actual capture, this will be used for repeat turn
-        """
+            captured: there was an actual capture,
+            this will be used for repeat turn"""
 
 
 # %% capture base
@@ -46,7 +46,6 @@ class CaptNone(CaptMethodIf):
 
 
 # %%  basic decos
-
 
 class CaptSingle(CaptMethodIf):
     """Capture on selected values (CaptOn or Evens),
@@ -654,7 +653,7 @@ def _add_child_deco(game, capturer):
     only one child handler: bull/weg/waldas/tuzdek/children"""
 
     if game.info.child_type == gi.ChildType.WALDA:
-        capturer =  CaptureToWalda(game, capturer)
+        capturer = CaptureToWalda(game, capturer)
 
     elif game.info.child_type == gi.ChildType.ONE_CHILD:
         capturer = MakeTuzdek(game, capturer)
@@ -735,8 +734,8 @@ def deco_capturer(game):
         capturer = NoSingleSeedCapt(game, capturer)
 
     if (game.info.prescribed == gi.SowPrescribed.ARNGE_LIMIT
-        or game.info.round_fill == gi.RoundFill.SHORTEN
-        or game.info.nocaptfirst):
+            or game.info.round_fill == gi.RoundFill.SHORTEN
+            or game.info.nocaptfirst):
         capturer = NoCaptures(game, capturer)
 
     if game.info.capt_rturn:

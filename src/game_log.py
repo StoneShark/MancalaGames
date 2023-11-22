@@ -13,14 +13,6 @@ import textwrap
 import man_path
 
 
-class LogRecord:
-    """A log record."""
-
-    def __init__(self, text, lvl=0):
-
-        self.text = text
-        self.lvl = lvl
-
 
 class GameLog:
     """A simple game log that can keep track of where turns start,
@@ -96,7 +88,7 @@ class GameLog:
                 lvl = self.SIMUL
 
             if lvl <= self._level:
-                self._log_records.append(LogRecord(text, lvl))
+                self._log_records.append(text)
                 if self._live:
                     print(text)
 
@@ -147,7 +139,7 @@ class GameLog:
 
         print('\n****** Previous Turn')
         for idx in range(self._move_start[start], len(self._log_records)):
-            print(self._log_records[idx].text)
+            print(self._log_records[idx])
 
 
     def _output(self, file):
@@ -157,7 +149,7 @@ class GameLog:
               file=file)
 
         for lrec in self._log_records:
-            print(lrec.text, file=file)
+            print(lrec, file=file)
 
 
     def dump(self):
@@ -180,7 +172,7 @@ class GameLog:
 
 
     def set_simulate(self):
-        """Change the logging level of any logged during
+        """Change the logging level of any logged text during
         simulated ops to SIMUL.
         Use this when moves are being simulated to test
         game conditions, e.g. must share, grand slam not

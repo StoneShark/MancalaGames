@@ -29,12 +29,12 @@ class TestGameLog:
 
     def test_construct(self, glog):
 
-        assert glog._active == True
-        assert glog._live == False
+        assert glog._active
+        assert not glog._live
         assert glog._level == glog.MOVE
-        assert glog._simulate == False
-        assert glog.active == True
-        assert glog.live == False
+        assert not glog._simulate
+        assert glog.active
+        assert not glog.live
         assert glog.level == glog.MOVE
         assert not glog._log_records
         assert not glog._move_start

@@ -1,6 +1,14 @@
 # -*- coding: utf-8 -*-
 """Class describing alternate starting fill patterns.
 
+These are really collections of well defined operations
+group by start pattern for different pattern.
+The objects do need to be instantiated because there's
+no data.
+
+The patterns are available in a global variable in the
+same order as gi.StartPattern.
+
 Created on Wed Oct 11 17:54:37 2023
 @author: Ann"""
 
@@ -49,7 +57,7 @@ class GamachaPattern(StartPatternIf):
     @staticmethod
     def size_ok(holes):
         return holes >= 3
-    err_msg = 'Pattern One requires at least 3 holes'
+    err_msg = 'Gamacha Pattern requires at least 3 holes'
 
     @staticmethod
     def nbr_seeds(holes, nbr_start):
@@ -61,7 +69,7 @@ class GamachaPattern(StartPatternIf):
         """Compute the lower hole (destination).
         Starting at 3:
             1, 1, 3, 3, 3, 3, 5, 5, 5, 5, 7, 7 ..."""
-        return 1 + 2 * ((holes-1) // 4)
+        return 1 + 2 * ((holes - 1) // 4)
 
     @staticmethod
     def fill_seeds(game):
@@ -113,7 +121,7 @@ class AltsWithOnePattern(StartPatternIf):
     @staticmethod
     def size_ok(holes):
         return holes >= 3
-    err_msg = 'Sadeqa Pattern Two requires at least 3 holes'
+    err_msg = 'Alternates w/ 1 requires at least 3 holes'
 
 
     @staticmethod
@@ -188,7 +196,6 @@ class TwoEmptyPattern(StartPatternIf):
         for loc in range(holes - 2):
             game.board[loc] = seeds
         game.board[holes:dbl_holes] = game.board[:holes]
-
 
 
 # %%

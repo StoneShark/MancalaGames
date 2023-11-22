@@ -38,8 +38,7 @@ class MancalaUI(tk.Frame):
         """Create the UI for a mancala game.
 
         game : class built on GameInterface -  provide the mechanics of
-        the game w/o any UI
-        """
+        the game w/o any UI"""
 
         if not isinstance(game, gi.GameInterface):
             raise TypeError('Missing mancala_ui.GameInterface in game.')
@@ -94,6 +93,7 @@ class MancalaUI(tk.Frame):
         self._new_game()
         self._refresh()
         self._ai_move()
+
 
     def _add_statuses(self):
         """Add status and info panes. Make them each 50% of the display."""
@@ -236,7 +236,6 @@ class MancalaUI(tk.Frame):
                                command=self._set_difficulty)
 
         menubar.add_cascade(label='AI', menu=aimenu)
-
 
         logmenu = tk.Menu(menubar)
         logmenu.add_command(label='Show Prev', command=game_log.prev)

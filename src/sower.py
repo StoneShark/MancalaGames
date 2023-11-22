@@ -9,8 +9,8 @@ contents and determined the number of seeds to sow.
 
 The incrementer deco is used to select the increment options.
 
-For the multi lap sowers, sowing is terminated after 50 sows
-returning an error condition.
+For the multi lap sowers, sowing is terminated after MAX_LAPS
+sows returning an error condition.
 
 Created on Fri Apr  7 15:57:47 2023
 @author: Ann"""
@@ -42,8 +42,7 @@ class SowMethodIf(abc.ABC):
     @abc.abstractmethod
     def sow_seeds(self, mdata):
         """Sow seeds from mdata.cont_sow_loc.
-        Update mdata.capt_loc with the last sow location.
-        RETURN mdata."""
+        Update mdata.capt_loc with the last sow location."""
 
     def get_single_sower(self):
         """Return the first non-lap sower in the deco chain.
@@ -69,7 +68,6 @@ class SowSeeds(SowMethodIf):
             self.game.board[loc] += 1
 
         mdata.capt_loc = loc
-        return mdata
 
 
 # %%  more single sowers
@@ -78,13 +76,13 @@ class SowSeedsNStore(SowMethodIf):
     """Sow a seed into the player's own store when passing it.
 
     If the sow ends in the store, return WinCond.REPEAT_TURN.
-    Usually it means that sowing player gets another turn.
+
+    Poses: don't bother looking up fill_store if loc isn't
+    in this tuple.
 
     Fill Store: If we have just incremented past current
     player's store, eval True to state that we should stop
-    and put a seed into the store.
-    Poses: don't bother looking up fill_store if loc isn't
-    in this tuple."""
+    and put a seed into the store."""
 
     def __init__(self, game, decorator=None):
         super().__init__(game, decorator)
@@ -105,8 +103,7 @@ class SowSeedsNStore(SowMethodIf):
 
 
     def sow_seeds(self, mdata):
-        """Sow seeds.
-        Copy some deep values into locals a bit of speed."""
+        """Sow seeds."""
 
         turn = self.game.turn
         incr = self.game.deco.incr.incr
@@ -131,16 +128,20 @@ class SowSeedsNStore(SowMethodIf):
             seeds -= 1
 
         mdata.capt_loc = loc
-        return mdata
 
 
 class DivertSkipBlckdSower(SowMethodIf):
-    """Divert blocked holes on opp side to store 0 (out of play).
-    Skipped blocked holes on own side.
+    """Divert blocked holes on opp side out of play (to store 0).
+    Skip sowing blocked holes on own side of board.
 
     Don't use the incrementer because it will skip blocks.
+    The option to select this is:  sow_rule: SOW_BLKD_DIV
 
-    The option to select this is:  sow_rule sow_blkd_div"""
+    XXXX  visit_opp is not currently supported because we need to
+    close the hole if we end on gparam_one seeds (ie. block it).
+    This needs to occur if lapping or not.
+    This doesn't quite fit the model of the code right now but might
+    in the future."""
 
     def sow_seeds(self, mdata):
         """Sow seeds."""
@@ -153,12 +154,12 @@ class DivertSkipBlckdSower(SowMethodIf):
 
             while self.game.blocked[loc]:
                 if self.game.cts.opp_side(self.game.turn, loc):
-                    self.game.store[0] += 1
 
+                    self.game.store[0] += 1
                     seeds -= 1
                     if not seeds:
                         mdata.capt_loc = loc
-                        return mdata
+                        return
 
                 loc = (loc + mdata.direct) % self.game.cts.dbl_holes
 
@@ -166,19 +167,17 @@ class DivertSkipBlckdSower(SowMethodIf):
             seeds -= 1
 
         mdata.capt_loc = loc
-        return mdata
 
 
 class SowClosed(SowMethodIf):
-    """For non-multilap sowing, check for closing, remove the
-    final seeds from play and block the hole.
-
-    This included with sow_blkd_div without mlaps"""
+    """For SOW_BLKD_DIV without multilap sowing,
+    check for closing, remove the final seeds
+    from play (to store 0) and block the hole."""
 
     def sow_seeds(self, mdata):
         """Sow seeds."""
 
-        mdata = self.decorator.sow_seeds(mdata)
+        self.decorator.sow_seeds(mdata)
         loc = mdata.capt_loc
 
         if (self.game.board[loc] == self.game.info.gparam_one
@@ -187,7 +186,6 @@ class SowClosed(SowMethodIf):
             self.game.store[0] += self.game.board[loc]
             self.game.board[loc] = 0
             self.game.blocked[loc] = True
-        return mdata
 
 
 class SowCaptOwned(SowMethodIf):
@@ -203,12 +201,11 @@ class SowCaptOwned(SowMethodIf):
     def sow_seeds(self, mdata):
         """Sow seeds."""
 
+        incr = self.game.deco.incr.incr
         loc = mdata.cont_sow_loc
         for scnt in range(mdata.seeds, 0, -1):
 
-            loc = self.game.deco.incr.incr(loc,
-                                           mdata.direct,
-                                           mdata.cont_sow_loc)
+            loc = incr(loc, mdata.direct, mdata.cont_sow_loc)
             self.game.board[loc] += 1
 
             if (scnt > 1
@@ -222,11 +219,11 @@ class SowCaptOwned(SowMethodIf):
                 self.game.board[loc] = 0
 
         mdata.capt_loc = loc
-        return mdata
 
 
 class SowSkipOppN(SowMethodIf):
-    """Skip sowing a constant value on the opponents side."""
+    """Skip sowing holes with a specified number of seeds in them
+    on the opponents side of the board."""
 
     def __init__(self, game, skip_set, decorator=None):
         super().__init__(game, decorator)
@@ -235,30 +232,26 @@ class SowSkipOppN(SowMethodIf):
     def sow_seeds(self, mdata):
         """Sow seeds."""
 
+        incr = self.game.deco.incr.incr
         loc = mdata.cont_sow_loc
         for _ in range(mdata.seeds):
 
-            loc = self.game.deco.incr.incr(loc,
-                                           mdata.direct,
-                                           mdata.cont_sow_loc)
+            loc = incr(loc, mdata.direct, mdata.cont_sow_loc)
 
             while (self.game.cts.opp_side(self.game.turn, loc)
                    and self.game.board[loc] in self.skip_set):
 
-                loc = self.game.deco.incr.incr(loc,
-                                               mdata.direct,
-                                               mdata.cont_sow_loc)
+                loc = incr(loc, mdata.direct, mdata.cont_sow_loc)
 
             self.game.board[loc] += 1
 
         mdata.capt_loc = loc
-        return mdata
 
 
 # %%  lap continue testers
 
 class LapContinuerIf(abc.ABC):
-    """Interface for algorithm that determines if
+    """Interface for the algorithms that determine if
     sowing should continue."""
 
     def __init__(self, game, decorator=None):
@@ -269,23 +262,21 @@ class LapContinuerIf(abc.ABC):
         """Return True if we should continue sowing, False otherwise."""
 
 
-class SimpleLapCont(LapContinuerIf):
-    """Stop if we end a sow in a store, otherwise if have
-    more than one seed return to CONTINUE sowing."""
+class LapContinue(LapContinuerIf):
+    """A base lap continuer, always continue.
+    Wrapper test for other stop conditions."""
 
     def do_another_lap(self, mdata):
         """Determine if we are done sowing."""
-
-        return self.game.board[mdata.capt_loc] > 1
+        return True
 
 
 class NextLapCont(LapContinuerIf):
     """Continue sowing based on seeds being in the next
     hole. If there are any, continue from there.
+    This should not be wrapped with StopSingleSeed.
 
     Laurence Russ calls this Indian Style lapping."""
-
-    # TODO consider making NextLapCont a wrapper, simply increments mdata.capt_loc
 
     def do_another_lap(self, mdata):
         """Determine if we are done sowing."""
@@ -298,15 +289,13 @@ class NextLapCont(LapContinuerIf):
 
 
 class DivertBlckdLapper(LapContinuerIf):
-    """Continue sowing if end in hole with > 1 seeds, but
-    stop if we ended on a blocked hole (will be opp side,
-    i.e. last seed was taken out of play)."""
+    """Continue sowing if we ended on a blocked hole
+    (will be opp side, i.e. last seed was taken out
+     of play)."""
 
     def do_another_lap(self, mdata):
         """Determine if we are done sowing."""
-
-        loc = mdata.capt_loc
-        return not self.game.blocked[loc] and self.game.board[loc] > 1
+        return not self.game.blocked[mdata.capt_loc]
 
 
 class ChildLapCont(LapContinuerIf):
@@ -324,34 +313,34 @@ class ChildLapCont(LapContinuerIf):
     def do_another_lap(self, mdata):
         """Determine if we are done sowing."""
 
-        if self.game.board[mdata.capt_loc] == 1:
-            return False
-
         if self.game.deco.make_child(self.game, mdata):
             return False
-
         return True
 
 
 class WegLapCont(LapContinuerIf):
-    """Multilap sow in the presence/creation of children:
-        1. Stop sowing if we end in a store or a child.
-        2. Stop sowing if we should make a child.
-        3. Continue sowing if end in hole with > 1 seeds"""
+    """Multilap sow for weg style children: stop if we
+    should make our own child in opponents territory."""
 
     def do_another_lap(self, mdata):
         """Determine if we are done sowing."""
 
         loc = mdata.capt_loc
-        if self.game.board[loc] == 1:
-            return False
-
         if (self.game.board[loc] == self.game.info.child_cvt
                 and self.game.owner[loc] is (not self.game.turn)):
             return False
 
         return True
 
+
+class StopSingleSeed(LapContinuerIf):
+    """A wrapper: stop if there is zero or one seeds."""
+
+    def do_another_lap(self, mdata):
+
+        if self.game.board[mdata.capt_loc] <= 1:
+            return False
+        return self.decorator.do_another_lap(mdata)
 
 
 class StopOnChild(LapContinuerIf):
@@ -375,7 +364,9 @@ class StopCaptureSeeds(LapContinuerIf):
 
 
 class StopRepeatTurn(LapContinuerIf):
-    """A wrapper: stop if we know it's a repeat turn."""
+    """A wrapper: stop if we know it's a repeat turn.
+    This must be at the top so we don't try to use
+    REPEAT_TURN as an index."""
 
     def do_another_lap(self, mdata):
 
@@ -384,7 +375,7 @@ class StopRepeatTurn(LapContinuerIf):
         return self.decorator.do_another_lap(mdata)
 
 
-# %% mlap end lap operations
+# %% operations for each end of lap
 
 class MlapEndOpIf(abc.ABC):
     """An interface for the end of lap operations."""
@@ -393,7 +384,7 @@ class MlapEndOpIf(abc.ABC):
         self.game = game
 
     def do_op(self, mdata):
-        """do the operation, no return value."""
+        """Do the operation, no return value."""
 
 
 class NoOp(MlapEndOpIf):
@@ -453,7 +444,7 @@ class SowMlapSeeds(MlapSowerIf):
         loc = mdata.cont_sow_loc
         for _ in range(MAX_LAPS):
 
-            mdata = self.decorator.sow_seeds(mdata)
+            self.decorator.sow_seeds(mdata)
             game_log.step(f'Mlap sow from {loc}', self.game, game_log.DETAIL)
 
             if self.lap_cont.do_another_lap(mdata):
@@ -465,10 +456,9 @@ class SowMlapSeeds(MlapSowerIf):
                 self.game.board[loc] = 0
 
             else:
-                return mdata
+                return
 
         mdata.capt_loc = gi.WinCond.ENDLESS
-        return mdata
 
 
 class SowVisitedMlap(SowMethodIf):
@@ -499,25 +489,24 @@ class SowVisitedMlap(SowMethodIf):
     def sow_seeds(self, mdata):
         """Do the first sow."""
 
-        mdata = self.single_sower.sow_seeds(mdata)
+        self.single_sower.sow_seeds(mdata)
         game_log.step(f'Vis Mlap sow from {mdata.cont_sow_loc}',
                       self.game, game_log.DETAIL)
         if mdata.capt_loc is gi.WinCond.REPEAT_TURN:
-            return mdata
+            return
 
-        visited_opp = (mdata.seeds >= self.game.cts.holes or
-                       self.game.cts.opp_side(self.game.turn, mdata.capt_loc))
+        visited_opp = (mdata.seeds >= self.game.cts.holes
+                       or self.game.cts.opp_side(self.game.turn,
+                                                 mdata.capt_loc))
         if not visited_opp:
-            return mdata
+            return
 
         if self.lap_cont.do_another_lap(mdata):
             loc = mdata.capt_loc
             mdata.cont_sow_loc = loc
             mdata.seeds = self.game.board[loc]
             self.game.board[loc] = 0
-            return self.decorator.sow_seeds(mdata)
-
-        return mdata
+            self.decorator.sow_seeds(mdata)
 
 
 # %% prescribed opening moves
@@ -527,7 +516,7 @@ class SowVisitedMlap(SowMethodIf):
 
 
 class SowPrescribedIf(SowMethodIf):
-    """A deco that diverts to prescribed moves for one or more turns.
+    """A deco that does prescribed moves for one or more turns.
     Concrete subclasses should not provide sow_seeds."""
 
     def __init__(self, game, count, decorator=None):
@@ -543,11 +532,9 @@ class SowPrescribedIf(SowMethodIf):
         """If the decorator has expired, call the child sower."""
 
         if self.game.mcount > self.dispose:
-            mdata = self.decorator.sow_seeds(mdata)
+            self.decorator.sow_seeds(mdata)
         else:
-            mdata = self.do_prescribed(mdata)
-
-        return mdata
+            self.do_prescribed(mdata)
 
     def get_single_sower(self):    # pragma: no coverage
         """ginfo rules should prevent this from being called.
@@ -565,7 +552,7 @@ class SowBasicFirst(SowPrescribedIf):
         self.sower = SowSeeds(game)
 
     def do_prescribed(self, mdata):
-        return self.sower.sow_seeds(mdata)
+        self.sower.sow_seeds(mdata)
 
 
 class SowMlapsFirst(SowPrescribedIf):
@@ -574,11 +561,11 @@ class SowMlapsFirst(SowPrescribedIf):
     def __init__(self, game, count, decorator=None):
         super().__init__(game, count, decorator)
         sower = SowSeeds(game)
-        lap_cont = SimpleLapCont(game)
+        lap_cont = StopSingleSeed(game, LapContinue(game))
         self.sower = SowMlapSeeds(game, sower, lap_cont, NoOp(game))
 
     def do_prescribed(self, mdata):
-        return self.sower.sow_seeds(mdata)
+        self.sower.sow_seeds(mdata)
 
 
 class SowOneOpp(SowPrescribedIf):
@@ -601,7 +588,6 @@ class SowOneOpp(SowPrescribedIf):
         self.game.board[loc] += 1
 
         mdata.capt_loc = loc
-        return mdata
 
 
 class SowPlus1Minus1Capt(SowPrescribedIf):
@@ -622,7 +608,6 @@ class SowPlus1Minus1Capt(SowPrescribedIf):
         self.game.board[cross] += 1
 
         mdata.capt_loc = cross
-        return mdata
 
 
 # %% build deco chain
@@ -631,16 +616,9 @@ def deco_blkd_divert_sower(game):
     """Implement the sow_blkd_div sower.
     When sowing seeds, blocked holes on own side of the board are
     skipped and seeds for blocked opponent holes are diverted out
-    of play (actually store 0).
-
-    XXXX  visit_opp is not currently supported because we need to
-    close the hole if we end on gparam_one seeds (ie. block it).
-    This needs to occur if lapping or not.
-    This doesn't quite fit the model of the code right now but might
-    in the future."""
+    of play (actually store 0)."""
 
     sower = DivertSkipBlckdSower(game)
-
     if game.info.mlaps != gi.LapSower.LAPPER:
         sower = SowClosed(game, sower)
 
@@ -674,17 +652,20 @@ def deco_base_sower(game):
 def deco_build_lap_cont(game):
     """Choose a base lap continuer, then add any wrappers."""
 
-    if game.info.child_type == gi.ChildType.WEG:
-        lap_cont = WegLapCont(game)
+    if game.info.mlaps == gi.LapSower.LAPPER:
 
-    elif game.info.child_cvt:
-        lap_cont = ChildLapCont(game)
+        if game.info.child_type == gi.ChildType.WEG:
+            lap_cont = WegLapCont(game)
 
-    elif game.info.sow_rule == gi.SowRule.SOW_BLKD_DIV:
-        lap_cont = DivertBlckdLapper(game)
+        elif game.info.child_cvt:
+            lap_cont = ChildLapCont(game)
 
-    elif game.info.mlaps == gi.LapSower.LAPPER:
-        lap_cont = SimpleLapCont(game)
+        elif game.info.sow_rule == gi.SowRule.SOW_BLKD_DIV:
+            lap_cont = DivertBlckdLapper(game)
+        else:
+            lap_cont = LapContinue(game)
+
+        lap_cont = StopSingleSeed(game, lap_cont)
 
     elif game.info.mlaps == gi.LapSower.LAPPER_NEXT:
         lap_cont = NextLapCont(game)
@@ -705,7 +686,11 @@ def deco_build_lap_cont(game):
 
 
 def deco_mlap_sower(game, sower):
-    """Build the deco chain elements for multiple lap sowing."""
+    """Build the deco chain elements for multiple lap sowing.
+    Choose:
+        1. an op to perform between laps
+        2. a lap continue tester
+    then build the mlap sower. Wrap if needed, with Visited."""
 
     pre_lap_sower = sower
 
@@ -726,9 +711,7 @@ def deco_mlap_sower(game, sower):
 
 
 def deco_prescribed_sower(game, sower):
-    """Add two deco's to the chain, a stub class that will allow
-    the class derived from SowPrescribedIf to be deleted when we
-    are done with it."""
+    """Add the prescribed sowers to the deco chain."""
 
     if game.info.prescribed == gi.SowPrescribed.SOW1OPP:
         sower = SowOneOpp(game, 1, sower)
