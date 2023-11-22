@@ -54,7 +54,7 @@ def test_one_game(game_data):
             move = random.choice(moves)
 
         cond = game.move(move)
-        if cond in (WinCond.WIN, WinCond.TIE, WinCond.ENDLESS,
+        if cond in (WinCond.WIN, WinCond.TIE,
                     WinCond.ROUND_WIN, WinCond.ROUND_TIE):
             break
 
@@ -63,6 +63,3 @@ def test_one_game(game_data):
 
     else:
         print("Loop maxed before game ended.", game.info.name)
-
-    if cond == WinCond.ENDLESS:
-        print('Abandoned due to endless mlaps.')
