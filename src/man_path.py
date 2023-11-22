@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """Translate the filename into an absolute path.
+Determine where the filename might be.
+Use for directories for logs and writing game prop file.
 
 Created on Sat Aug 19 08:32:38 2023
 @author: Ann"""

@@ -29,6 +29,7 @@ ILIST_TYPE = 'list[int]'
 
 LDicts = collections.namedtuple('LDicts', 'str_dict, int_dict, enum_dict')
 
+
 def lookup_dicts(etype, adict):
     """Return the dict, it's inverse, and enum name: enum dict
     for the enum (etype)."""
@@ -52,7 +53,8 @@ STRING_DICTS = {
 
     'Algorithm': lookup_strs(ALGORITHM_DICT.keys()),
 
-    'AllowRule': lookup_dicts(gi.AllowRule,
+    'AllowRule': lookup_dicts(
+        gi.AllowRule,
         {'No special rule': gi.AllowRule.NONE,
          'End Empty or Opp Side': gi.AllowRule.OPP_OR_EMPTY,
          'Singles to Empties': gi.AllowRule.SINGLE_TO_ZERO,
@@ -60,17 +62,20 @@ STRING_DICTS = {
          'Singles when all & to Empty': gi.AllowRule.SINGLE_ALL_TO_ZERO,
          'Doubles only when all doubles': gi.AllowRule.TWO_ONLY_ALL,
          'Doubles, all doubles, rightmost': gi.AllowRule.TWO_ONLY_ALL_RIGHT,
-         'Rightmost two on first turn': gi.AllowRule.FIRST_TURN_ONLY_RIGHT_TWO,
+         'Rightmost two on first turn':
+             gi.AllowRule.FIRST_TURN_ONLY_RIGHT_TWO,
          'Right 2 1st, then twos only if all 2s':
              gi.AllowRule.RIGHT_2_1ST_THEN_ALL_TWO
          }),
 
-    'CaptExtraPick': lookup_dicts(gi.CaptExtraPick,
+    'CaptExtraPick': lookup_dicts(
+        gi.CaptExtraPick,
         {'No additional': gi.CaptExtraPick.NONE,
          'Pick Cross Seeds': gi.CaptExtraPick.PICKCROSS,
          "Pick all Opponent's' 2s": gi.CaptExtraPick.PICKTWOS}),
 
-    'ChildType': lookup_dicts(gi.ChildType,
+    'ChildType': lookup_dicts(
+        gi.ChildType,
         {'No Children': gi.ChildType.NOCHILD,
          'Normal': gi.ChildType.NORMAL,
          'Waldas': gi.ChildType.WALDA,
@@ -78,29 +83,34 @@ STRING_DICTS = {
          'Weg / Daughter': gi.ChildType.WEG,
          'Bull': gi.ChildType.BULL}),
 
-    'ChildRule': lookup_dicts(gi.ChildRule,
+    'ChildRule': lookup_dicts(
+        gi.ChildRule,
         {'No additional restrictions': gi.ChildRule.NONE,
          'Opposite Side/Territory Only': gi.ChildRule.OPP_ONLY,
          'Not 1st Opposite with 1': gi.ChildRule.NOT_1ST_OPP}),
 
-    'CrossCaptOwn': lookup_dicts(gi.CrossCaptOwn,
+    'CrossCaptOwn': lookup_dicts(
+        gi.CrossCaptOwn,
         {'Leave': gi.CrossCaptOwn.LEAVE,
          'Pick on Capture': gi.CrossCaptOwn.PICK_ON_CAPT,
          'Alway Pick': gi.CrossCaptOwn.ALWAYS_PICK}),
 
-    'Direct': lookup_dicts(gi.Direct,
+    'Direct': lookup_dicts(
+        gi.Direct,
         {'Clockwise': gi.Direct.CW,
          'Counter-clockwise': gi.Direct.CCW,
          'Split': gi.Direct.SPLIT}),
 
     'GameClasses': lookup_strs(GAME_CLASSES.keys()),
 
-    'Goal': lookup_dicts(gi.Goal,
+    'Goal': lookup_dicts(
+        gi.Goal,
         {'Max Seeds': gi.Goal.MAX_SEEDS,
          'Deprive Opponent': gi.Goal.DEPRIVE,
          'Territory': gi.Goal.TERRITORY}),
 
-    'GrandSlam': lookup_dicts(gi.GrandSlam,
+    'GrandSlam': lookup_dicts(
+        gi.GrandSlam,
         {"Legal": gi.GrandSlam.LEGAL,
          "Not Legal": gi.GrandSlam.NOT_LEGAL,
          "Legal but no capture": gi.GrandSlam.NO_CAPT,
@@ -108,12 +118,14 @@ STRING_DICTS = {
          "Legal but leave leftmost": gi.GrandSlam.LEAVE_LEFT,
          "Legal but leave rightmost": gi.GrandSlam.LEAVE_RIGHT}),
 
-    'LapSower': lookup_dicts(gi.LapSower,
+    'LapSower': lookup_dicts(
+        gi.LapSower,
         {'Single sow': gi.LapSower.OFF,
          'Lap Sower (end)': gi.LapSower.LAPPER,
          'Lap Sower Next': gi.LapSower.LAPPER_NEXT}),
 
-    'RoundFill': lookup_dicts(gi.RoundFill,
+    'RoundFill': lookup_dicts(
+        gi.RoundFill,
         {'No Rounds': gi.RoundFill.NO_ROUNDS,
          'Left Fill': gi.RoundFill.LEFT_FILL,
          'Right Fill': gi.RoundFill.RIGHT_FILL,
@@ -122,12 +134,14 @@ STRING_DICTS = {
          'Choose Blocks': gi.RoundFill.UCHOOSE,
          'Rearrange Seeds': gi.RoundFill.UMOVE}),
 
-    'RoundStarter': lookup_dicts(gi.RoundStarter,
+    'RoundStarter': lookup_dicts(
+        gi.RoundStarter,
         {'Alternate': gi.RoundStarter.ALTERNATE,
          'Round Winner': gi.RoundStarter.WINNER,
          'Round Loser': gi.RoundStarter.LOSER}),
 
-    'SowPrescribed': lookup_dicts(gi.SowPrescribed,
+    'SowPrescribed': lookup_dicts(
+        gi.SowPrescribed,
         {'None': gi.SowPrescribed.NONE,
          'Sow Basic First': gi.SowPrescribed.BASIC_SOWER,
          'Sow Mlaps First': gi.SowPrescribed.MLAPS_SOWER,
@@ -135,7 +149,8 @@ STRING_DICTS = {
          'Plus 1, Minus 1': gi.SowPrescribed.PLUS1MINUS1,
          'Arrange or Limit ch & capts': gi.SowPrescribed.ARNGE_LIMIT}),
 
-    'SowRule': lookup_dicts(gi.SowRule,
+    'SowRule': lookup_dicts(
+        gi.SowRule,
         {"No Special Rule": gi.SowRule.NONE,
          "Skip Own Blocked, Capt Opp": gi.SowRule.SOW_BLKD_DIV,
          "Owners Capture all while Sow": gi.SowRule.OWN_SOW_CAPT_ALL,
@@ -144,7 +159,8 @@ STRING_DICTS = {
          "Change Direction each Lap": gi.SowRule.CHANGE_DIR_LAP,
          }),
 
-    'StartPattern': lookup_dicts(gi.StartPattern,
+    'StartPattern': lookup_dicts(
+        gi.StartPattern,
         {'All Equal': gi.StartPattern.ALL_EQUAL,
          'Gamacha': gi.StartPattern.GAMACHA,
          'Alternates': gi.StartPattern.ALTERNATES,

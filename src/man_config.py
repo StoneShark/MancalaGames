@@ -27,10 +27,11 @@ MAX_CHARS = 3000
 NO_CONVERT = [ckey.NAME, ckey.ABOUT, ckey.HELP_FILE,
               ckey.UDIR_HOLES, ckey.CAPT_ON]
 
+SP = ' '
 OPT_TAG = '_'
-GI_TAG = 'game_info _'
-AI_TAG = 'player ai_params _'
-SCR_TAG = 'player scorer _'
+GI_TAG = ckey.GAME_INFO + SP + OPT_TAG
+AI_TAG = ckey.PLAYER + SP + ckey.AI_PARAMS + SP + OPT_TAG
+SCR_TAG = ckey.PLAYER + SP + ckey.SCORER + SP + OPT_TAG
 
 
 # %% read config files
@@ -91,9 +92,7 @@ def make_game(filename):
     return gclass(consts, info), player_dict
 
 
-
 # %% access config data and defaults
-
 
 def get_config_value(game_config, config_spec, option, vtype):
     """Get the value from the configuration, if it's not there
@@ -131,19 +130,19 @@ def get_construct_default(vtype, cspec, option):
         rval = ""
 
     elif vtype == pc.INT_TYPE:
-        rval =  0
+        rval = 0
 
     return rval
 
 
 def get_gc_value(game_config, cspec, option):
-    """game_config_spec format is one of
+    """Game_config_spec format is one of
         word+  or  word* _
     where option is substituted for _
 
     Lookup and return the value in a series of nested dictionaries."""
 
-    tags = cspec.split(' ')
+    tags = cspec.split(SP)
 
     vdict = game_config
     for tag in tags:
@@ -164,7 +163,7 @@ def set_config_value(game_config, cspec, option, value):
     """Set the value in a series of nested dictionaries;
     create empty dictionaries as required."""
 
-    tags = cspec.split(' ')
+    tags = cspec.split(SP)
 
     vdict = game_config
     for tag in tags[:-1]:

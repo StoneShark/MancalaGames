@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Direct interface to start a mancala game
-given a config file.
+"""Direct interface to start a mancala game given a config file.
 
 Created on Tue Jul 18 13:50:32 2023
 @author: Ann"""

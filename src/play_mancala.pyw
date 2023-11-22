@@ -57,7 +57,6 @@ def load_game_files():
 
 # %%  game select
 
-
 class GameSelect(tk.Frame):
     """Create a game select frame with popup tools tips
     that provide the game overview."""

@@ -103,8 +103,8 @@ class MovesUdirTriples(MovesIf):
 
         return moves
 
-# %% decorators
 
+# %% decorators
 
 class PassMoves(MovesIf):
     """Get moves when only mustpass is set."""
@@ -114,7 +114,6 @@ class PassMoves(MovesIf):
 
         moves = self.decorator.get_moves()
         return moves if moves else [gi.PASS_TOKEN]
-
 
 
 # %% build deco chain

@@ -15,7 +15,8 @@ class GameTally:
     """Class to collect game data across multiple games."""
 
     def __init__(self, frame):
-        """Set the counts to 0."""
+        """Set the counts to 0, creates tk variables, and
+        the UI elements."""
 
         self.games = 0
         self.game_wins = [0, 0]
@@ -61,16 +62,11 @@ class GameTally:
 
 
     def tally_game(self, winner, win_cond):
-        """Ignore the odd outcomes.
-
-        If we get round results tally them, but a game result
-        ends the rounds (so reset the round numbers).
+        """If we get round results tally them, but a game
+        result ends the rounds (so reset the round numbers).
 
         winner: boolean - player that won if win.
         win_cond: WinCond - outcome of the game."""
-
-        if win_cond in [gi.WinCond.REPEAT_TURN, gi.WinCond.ENDLESS]:
-            return
 
         if win_cond is gi.WinCond.ROUND_WIN:
             self.rounds += 1
