@@ -1,14 +1,16 @@
 {
    "game_info": {
       "name": "Enkushui",
-      "about": "Enkushui:\nMulti-lap, counter-clockwise sow.\nBulls can be made on either side when sowing to 4; if the preceeding hole has 3 seeds it is also made a bull. Cross-capture and pick own on capture.\n\nVariations:\n- 8, 10 or 12 board size\n- start patterns: CLIPPEDTRIPLES with 3 start seeds\n\n\n",
+      "about": "A multi-lap, counter-clockwise sow. Bulls can be made on either side when sowing to 4; if the preceeding hole has 3 seeds it is also made a bull. Cross-capture and pick own on capture.\n\nVariations:\n- 8, 10 or 12 board size\n- start patterns: CLIPPEDTRIPLES with 3 start seeds",
       "capsamedir": true,
       "child_cvt": 4,
       "child_type": 5,
       "crosscapt": true,
+      "min_move": 1,
       "mlaps": 1,
       "multicapt": true,
       "oppsidecapt": true,
+      "sow_direct": 1,
       "start_pattern": 5,
       "stores": true,
       "xcpickown": 1
@@ -36,5 +38,5 @@
       "holes": 8,
       "nbr_start": 4
    },
-   "rules": "Russ, Laurence. Mancala Games. 1984. Bull not exactly right: should be 3 then 4 OR 4 then 3"
+   "rules": "Russ, Laurence. Mancala Games. 1984. p42."
 }

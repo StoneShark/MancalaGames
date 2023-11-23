@@ -6,19 +6,19 @@
    },
    "game_info": {
       "name": "Erherhe",
-      "help_file": "",
-      "about": "Erherhe: a single-lap mancala,\nsow direction is counter-clockwise,\nmultiple capture on opponents side \non 1s and 3s.\nPlayed in rounds; loser starts new round.",
-         "blocks": true,
-         "multicapt": true,
-         "mustshare": true,
-         "oppsidecapt": true,
-         "rounds": true,
-         "round_starter": 1,
-         "round_fill": 4,
-         "skip_start": true,
-         "sow_direct": 1,
-         "stores": true,
-         "capt_on": [1, 3]
+      "about": "A single-lap mancala, sow direction is counter-clockwise, multiple capture on opponents side on 1s and 3s. Played in rounds; loser starts new round.",
+      "blocks": true,
+      "min_move": 1,
+      "multicapt": true,
+      "mustshare": true,
+      "oppsidecapt": true,
+      "rounds": true,
+      "round_starter": 1,
+      "round_fill": 4,
+      "skip_start": true,
+      "sow_direct": 1,
+      "stores": true,
+      "capt_on": [1, 3]
    },
    "player": {
       "scorer": {
@@ -36,5 +36,6 @@
          "mcts_nodes": [300, 500, 800, 1100],
          "mcts_bias": [350, 350, 350, 350]
       }
-   }
+   },
+   "rules": "Russ, Laurence. Mancala Games. 1984.  p19."   
 }

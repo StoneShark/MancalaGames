@@ -6,9 +6,10 @@
    },
    "game_info": {
       "name": "Sadeqa",
-      "about": "Sadeqa: counter-clockwise multi-lap sow.\nMoves must end in an empty hole or \nreach opponents side of the board.\nSeeds are taken out of play via cross-capture.\nThe goal is to deprive the opponent of seeds.\n\nVariations: ALTERNATES or ALTS_WITH_1",
+      "about": "Counter-clockwise multi-lap sow. The goal is to deprive the opponent of seeds. Moves must end in an empty hole or reach the opponents side of the board. Seeds are taken out of play via cross-capture. \n\nVariations: start patterns of ALTERNATES or ALTS_WITH_1",
       "crosscapt": true,
       "goal": 1,
+      "min_move": 1,
       "mlaps": 1,
       "allow_rule": 1,
       "oppsidecapt": true,

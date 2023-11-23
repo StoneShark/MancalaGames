@@ -1,14 +1,15 @@
 {
    "game_class": "Mancala",
    "game_constants": {
-      "nbr_start": 4,
-      "holes": 6
+      "holes": 6,   
+      "nbr_start": 4
    },
    "game_info": {
       "name": "XCaptSowOwn",
-      "about": "XCaptSowOwn: A single sow mancala,\nsow own store,\ncross capture and pickown.\n",
+      "about": "A single-sow mancala, sow own store, cross capture and pickown. Repeat turn if sow ends in your own store. On grand slam, the opposing player get's your remaining seeds.",
       "crosscapt": true,
       "grandslam": 3,
+      "min_move": 1,
       "oppsidecapt": true,
       "sow_direct": 1,
       "sow_own_store": true,
@@ -34,5 +35,5 @@
          "mcts_bias": [350, 350, 350, 350]
       }
    },
-   "rules": "Ramanujan & Selman, Trade-Offs in Sampling-Based Adversarial Planning, AAAI 2011.  Collecting opp seeds if you have no move is partially implemented via grandslam.OPP_GETS_REMAIN."
+   "rules": "Ramanujan & Selman. Trade-Offs in Sampling-Based Adversarial Planning. AAAI 2011.\nCollecting opp seeds if you have no move is partially implemented via grandslam.OPP_GETS_REMAIN."
 }

@@ -1,20 +1,20 @@
 {
    "game_class": "Mancala",
    "game_constants": {
-      "nbr_start": 5,
-      "holes": 7
+      "holes": 7,
+      "nbr_start": 5
    },
    "game_info": {
       "name": "Songo",
-      "about": "Songo: a single-lap mancala,\nsow direction is clockwise,\ncapture on opponents side on 2s and 4s.",
+      "about": "A single-lap mancala, sow direction is clockwise; skip start hole if cycle the board. Multiple capture on opponents side on 2s and 4s.",
+      "capt_on": [2, 4],
+      "min_move": 1,
       "multicapt": true,
       "mustshare": true,
       "oppsidecapt": true,
       "skip_start": true,
       "sow_direct": -1,
-      "stores": true,
-      "min_move": 1,
-      "capt_on": [2, 4]
+      "stores": true
    },
    "player": {
       "scorer": {
@@ -32,5 +32,5 @@
          "mcts_bias": [350, 350, 350, 350]
       }
    },
-   "rules": "Russ, Laurence. Mancala Games. 1984."
+   "rules": "Russ, Laurence. Mancala Games. 1984. p19."
 }

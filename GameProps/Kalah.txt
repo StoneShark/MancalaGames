@@ -6,14 +6,14 @@
    },
    "game_info": {
       "name": "Kalah",
-      "about": "Kalah: sow direction is counter-clockwise,\nsow into own store. Single seed on own side,\ncaptures opp seeds and takes own seed.\nExtra turn when last seed in store.",
+      "about": "Sow direction is counter-clockwise, sow into own store. Single seed on own side, captures opp seeds and takes own seed. Extra turn when last seed in store.",
       "crosscapt": true,
+      "min_move": 1,
       "oppsidecapt": true,
       "sow_direct": 1,
       "sow_own_store": true,
       "stores": true,
-      "xcpickown": 1,
-      "min_move": 1
+      "xcpickown": 1
    },
    "player": {
       "scorer": {

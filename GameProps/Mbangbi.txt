@@ -6,15 +6,15 @@
    },
    "game_info": {
       "name": "Mbangbi",
-      "about": "Mbangbi: player controls sow direction\nmust pass if no move,\nopposite side-multiple captures on 2 and 4.",
+      "about": "Player controls sow direction and must pass if they do not have a move, opposite side-multiple captures on 2s and 4s.",
+      "capt_on": [2, 4],
+      "min_move": 2,
       "multicapt": true,
       "mustpass": true,
       "oppsidecapt": true,
       "skip_start": true,
       "sow_direct": 1,
       "stores": true,
-      "min_move": 2,
-      "capt_on": [2, 4],
       "udir_holes": [0, 1, 2, 3, 4]
    },
    "player": {

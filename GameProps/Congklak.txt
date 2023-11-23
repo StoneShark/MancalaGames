@@ -6,9 +6,10 @@
    },
    "game_info": {
       "name": "Congklak",
-      "about": "Congklak: a multi-lap mancala played in rounds.\nSow direction is clockwise, sow into ones\nown store. Cross-capture with pick own.",
+      "about": "A multi-lap mancala played in rounds. Sow direction is clockwise, sow into ones own store. Cross-capture with pick own. Played in rounds with loser of previous round starting the next round. The game is over when either player cannot fill a single hole.",
       "blocks": true,
       "crosscapt": true,
+      "min_move": 1,
       "mlaps": 1,
       "oppsidecapt": true,
       "round_fill": 1,

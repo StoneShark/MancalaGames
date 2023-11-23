@@ -352,13 +352,11 @@ class MancalaUI(tk.Frame):
             atext = 'Mancala Game Player'
 
         paragraphs = atext.split('\n')
-        out_text = ''
+        out_text = self.info.name + ':\n'
         for para in paragraphs:
-            fpara = textwrap.fill(para, 45) + '\n'
-            out_text += fpara
-        atext = ''.join(out_text)
+            out_text += textwrap.fill(para, 45) + '\n'
 
-        self._quiet_dialog('About', atext)
+        self._quiet_dialog('About', ''.join(out_text))
 
 
     def _save_file(self):

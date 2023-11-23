@@ -6,16 +6,16 @@
    },
    "game_info": {
       "name": "Weg",
-      "about": "Weg: a territory game that uses both stores and wegs (children). Sow is multi-lap, counter-clockwise. Wegs are made when a final seed sows a hole to 4 seeds on your opponent's territory. Captures are on the final seed being sown into an opponents weg. The sown seed and one more (if there is one) are captured to your store. Repeat turn on capture.\n\nVariations:\n- 2x6 with 3 start seeds\n- 2x10 with 4 start seeds\n- not played in rounds\n- no repeat turn on capture",
+      "about": "A territory game that uses both stores and wegs (children); capturing 11 holds wins. Sow is multi-lap, counter-clockwise. Wegs are made when a final seed sows a hole to 4 seeds on your opponent's territory. Captures are on the final seed being sown into an opponents weg. The sown seed and one more (if there is one) are captured to your store. Repeat turn on capture. Played in rounds with start player alternating.\n\nVariations:\n- 2x6 with 3 start seeds\n- 2x10 with 4 start seeds\n- not played in rounds\n- no repeat turn on capture",
       "capt_rturn": true,
       "child_cvt": 4,
       "child_type": 4,
       "goal": 2,
       "gparam_one": 11,
+      "min_move": 1,
       "mlaps": 1,
       "mustpass": true,
       "round_fill": 2,
-      "round_starter": 0,
       "rounds": true,
       "sow_direct": 1,
       "stores": true
@@ -36,5 +36,5 @@
          "stores_m": 4
       }
    },
-   "rules": "Russ, Laurence. Mancala Games. 1984."   
+   "rules": "Russ, Laurence. Mancala Games. 1984. p48 details p46."   
 }

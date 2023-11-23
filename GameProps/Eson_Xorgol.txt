@@ -6,13 +6,14 @@
    },
    "game_info": {
       "name": "Eson_Xorgol",
-      "about": "Eson Xorgol:\nSingle-lap, clockwise-sow Mancala in which all holes are playable by both players. If sow ends in an occupied hole and the next hole is empty, capture the seeds in the following hole.\nCapture in sow direction (CW).",
-      "no_sides": true,
+      "about": "Single-lap, clockwise-sow Mancala in which all holes are playable by both players. If sow ends in an occupied hole and the next hole is empty, capture the seeds in the following hole. Capture in sow direction (CW).",
+      "capsamedir": true,
       "capttwoout": true,      
-      "stores": true,
-      "sow_direct": -1,
+      "min_move": 1,
+      "no_sides": true,
       "skip_start": true,
-      "capsamedir": true
+      "sow_direct": -1,
+      "stores": true
    },
    "player": {
       "scorer": {
@@ -24,5 +25,6 @@
       "ai_params": {
          "mm_depth": [1, 1, 3, 5]
       }
-   }
+   },
+   "rules": "Russ, Laurence. Mancala Games. 1984. p24."
 }

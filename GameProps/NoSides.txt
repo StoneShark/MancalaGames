@@ -6,7 +6,8 @@
    },
    "game_info": {
       "name": "NoSides",
-      "about": "NoSide: both players may move from any hole.\nStores are owned as usual.\nDefault game is capture on 2s.",
+      "about": "Both players may move from any hole, single lap and counter-clockwise. Player's store is to their right. Capture on 2s.",
+      "min_move": 1,
       "no_sides": true,
       "stores": true,
       "sow_direct": 1,

@@ -6,9 +6,10 @@
    },
    "game_info": {
       "name": "Dabuda",
-      "about": "Dabuda: a multi-lap mancala,\ncounter-clockwise sow.\nSow must reach opp side or \nend in empty hole.\nCross-capture when end in own\nhole with one seed.\nPick own seed on capture.\nGames ends if no moves.\nPlayed with 6 to 10 holes.",
+      "about": "A multi-lap mancala, counter-clockwise sow. Sow must reach opp side or end in empty hole. Cross-capture when end in own hole with one seed. Pick own seed on capture. The games ends if no moves.\n\nVariations:\nPlayed with 6 to 10 holes.",
       "allow_rule": 1,
       "crosscapt": true,
+      "min_move": 1,
       "mlaps": 1,
       "oppsidecapt": true,
       "sow_direct": 1,

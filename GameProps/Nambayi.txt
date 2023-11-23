@@ -1,21 +1,23 @@
 {
-   "game_info": {
-      "name": "Nambayi",
-      "about": "Nambayi:\nA multilap Mancala.\nThe goal is to deprive the opponent of seeds.\nHoles are closed on opponent side on 4s,\nsowing continues with those seeds.\nIn subsequent sowing of closed holes, \nown holes are skipped\nbut seeds for opponent's holes are taken out of play.\n",
-      "min_move": 1,
-      "goal": 1,
-      "blocks": true,
-      "gparam_one": 4,
-      "mlaps": 1,
-      "sow_rule": 1,
-      "sow_direct": 1
-   },
    "game_class": "Mancala",
    "game_constants": {
       "holes": 8,
       "nbr_start": 3
    },
+   "game_info": {
+      "name": "Nambayi",
+      "about": "A multilap Mancala. The goal is to deprive the opponent of seeds. Holes are closed on opponent side on 4s, sowing continues with those seeds. In subsequent sowing of closed holes, own holes are skipped but seeds for opponent's holes are taken out of play.",
+      "blocks": true,
+      "goal": 1,
+      "gparam_one": 4,
+      "min_move": 1,
+      "mlaps": 1,
+      "sow_direct": 1,
+      "sow_rule": 1
+   },
    "player": {
+      "algorithm": "minimaxer",
+      "difficulty": 0,
       "scorer": {
          "access_m": 0,
          "child_cnt_m": 0,
@@ -25,8 +27,7 @@
          "repeat_turn": 0,
          "seeds_m": 1,
          "stores_m": 0
-      },
-      "difficulty": 0,
-      "algorithm": "minimaxer"
-   }
+      }
+   },
+   "rules": "Russ, Laurence. Mancala Games. 1984. p41."
 }

@@ -6,14 +6,15 @@
    },
    "game_info": {
       "name": "No Sides Child",
-      "about": "NoSidesChild: both players may move in\neither direction from any hole.\nChildren created on 4s.\nStores are owned as usual.\nDefault game is capture on 2s.",
-      "no_sides": true,
-      "stores": true,
-      "sow_direct": 1,
-      "skip_start": true,
+      "about": "Both players may move in either direction from any hole; single-lap and counter-clockwise. Player's store is to their right. Children are created on 4s. Capture on 2s.",
+      "capt_on": [2],
       "child_cvt": 4,
       "child_type": 1,
-      "capt_on": [2],
+      "min_move": 1,
+      "no_sides": true,
+      "skip_start": true,
+      "sow_direct": 1,
+      "stores": true,
       "udir_holes": [0, 1, 2, 3, 4, 5, 6]
    },
    "player": {

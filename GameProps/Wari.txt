@@ -6,15 +6,15 @@
    },
    "game_info": {
       "name": "Wari",
-      "about": "Wari: a single-lap mancala,\nsow direction is counter-clockwise,\nmultiple capture on opponents side \non 2s and 3s.",
+      "about": "A single-lap mancala, sow direction is counter-clockwise, multiple capture on opponents side on 2s and 3s.",
+      "capt_on": [2, 3],
+      "min_move": 1,
       "multicapt": true,
       "mustshare": true,
       "oppsidecapt": true,
       "skip_start": true,
       "sow_direct": 1,
-      "stores": true,
-      "min_move": 1,
-      "capt_on": [2, 3]
+      "stores": true
    },
    "player": {
       "scorer": {
@@ -32,5 +32,6 @@
          "mcts_nodes": [300, 500, 800, 1100],
          "mcts_bias": [350, 350, 350, 350]
       }
-   }
+   },
+   "rules": "Russ, Laurence. Mancala Games. 1984. p14."
 }

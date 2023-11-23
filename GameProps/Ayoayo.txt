@@ -6,15 +6,16 @@
    },
    "game_info": {
       "name": "Ayoayo",
-      "about": "Ayoayo: a multi-lap mancala, sow \nskipping the start hole of each lap,\nsow direction counter-clockwise,\ncross-capture when end in own\nhole with one seed.",
-      "stores": true,
-      "sow_direct": 1,
-      "mustshare": true,
-      "mlaps": 1,
-      "oppsidecapt": true,
+      "about": "A multi-lap mancala; sow skipping the start hole of each lap,sow direction counter-clockwise, cross-capture when end in own hole with one seed. The game ends when one player captures more than half the seeds.",
       "crosscapt": true,
-      "xcpickown": 1,
-      "skip_start": true
+      "min_move": 1,
+      "mlaps": 1,
+      "mustshare": true,
+      "oppsidecapt": true,
+      "skip_start": true,
+      "sow_direct": 1,
+      "stores": true,
+      "xcpickown": 1
    },
    "player": {
       "scorer": {
@@ -33,6 +34,6 @@
          "mcts_bias": [350, 350, 350, 350]
       }
    },
-   "rules": "Mohr, Merilyn Simonds; The New Games Treasury, 1993",
+   "rules": "Mohr, Merilyn Simonds. The New Games Treasury. 1993. p102.",
    "question": "skip start: skip where the move started OR where each 'lap' starts? second is implemented, because the first results in lots of 'endless' sows."
 }

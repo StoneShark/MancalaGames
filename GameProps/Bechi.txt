@@ -6,20 +6,20 @@
    },
    "game_info": {
       "name": "Bechi",
-      "about": "Bechi: a single-lap mancala,\nfirst seed sowed in start hole,\nstart hole determines sow direction,\ncapture evens (after move from hole),\ncapture proceeds in sow direction.\nPlayed in rounds; round starter alternates.",
-      "mustpass": true,
-      "rounds": true,
-      "round_fill": 4,
-      "round_starter": 0,
-      "stores": true,
-      "sow_direct": 0,
-      "sow_start": true,
+      "about": "A single-lap mancala, first seed sowed in start hole, start hole determines sow direction, capture evens (after move from hole), capture proceeds in sow direction. Played in rounds; round starter alternates. The game is over when either player cannot fill a single hole.",
       "blocks": true,
       "capsamedir": true,
-      "moveunlock": true,
       "evens": true,
+      "min_move": 2,
+      "moveunlock": true,
       "multicapt": true,
-      "min_move": 2
+      "mustpass": true,
+      "round_fill": 4,
+      "round_starter": 0,
+      "rounds": true,
+      "sow_direct": 0,
+      "sow_start": true,
+      "stores": true
    },
    "player": {
       "scorer": {
@@ -36,5 +36,6 @@
          "mcts_nodes": [300, 500, 800, 1100],
          "mcts_bias": [350, 350, 350, 350]
       }
-   }
+   },
+   "rules": "Russ, Laurence. Mancala Games. 1984. p22."
 }

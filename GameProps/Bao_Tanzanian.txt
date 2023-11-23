@@ -1,30 +1,30 @@
 {
    "game_class": "Mancala",
    "game_constants": {
-      "nbr_start": 4,
-      "holes": 7
+      "holes": 7,
+      "nbr_start": 4
    },
    "game_info": {
       "name": "Bao_Tanzanian",
-      "about": "Bao: a multi-lap mancala,\nsow direction is counter-clockwise,\nsow to 4 on opposite side creates a child\nwhich collects seed but can't be captured.\nCross-capture on opponents side,\ncontinue capture in sow direction,\npick own seed on capture.\nPlayed in rounds; winner starts new round.",
+      "about": "A multi-lap mancala, sow direction is counter-clockwise, sow to 4 on opposite side creates a child which collects seed but can't be captured. Cross-capture on opponents side, continue capture in sow direction, pick own seed on capture. Played in rounds; winner starts new round. The game ends one player cannot fill a single hole.",
       "blocks": true,
       "capsamedir": true,
       "child_cvt": 4,
-      "child_type": 1,
       "child_rule": 2,
+      "child_type": 1,
       "crosscapt": true,
+      "min_move": 1,
       "mlaps": 1,
       "multicapt": true,
       "oppsidecapt": true,
       "prescribed": 2,
-      "rounds": true,
       "round_fill": 6,
       "round_starter": 2,
+      "rounds": true,
       "sow_direct": 1,
       "stores": true,
       "visit_opp": true,
-      "xcpickown": 1,
-      "min_move": 1
+      "xcpickown": 1
    },
    "player": {
       "scorer": {
@@ -42,6 +42,5 @@
          "mcts_bias": [350, 350, 350, 350]
       }
    },
-   "rules": "simplified from Mohr, Merilyn Simonds; The New Games Treasury, 1993.",
-   "question": "Both Mohr and Russ state the move is over when anyone sows any seed into a child. But what do you do with the remaining seeds?"
+   "rules": "Russ, Laurence. Mancala Games. 1984. p48 details p 46."   
 }

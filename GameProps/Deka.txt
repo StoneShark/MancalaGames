@@ -6,12 +6,12 @@
    },
    "game_info": {
       "name": "Deka",
-      "about": "Deka (an immitation):\nA multilap Mancala.\nThe goal is to deprive the opponent of seeds.\nHoles are closed on opponent side on 3s,\nsowing continues with those seeds.\nIn subsequent sowing of closed holes, \nown holes are skipped\nbut seeds for opponent's holes are taken out of play.",
+      "about": "The goal is to deprive the opponent of seeds. Sow counter-clockwise with multi-laps. Holes are closed on opponent side on 3s, sowing continues with those seeds. All holes may be closed. In subsequent sowing of closed holes, own holes are skipped but seeds for opponent's holes are taken out of play.",
       "blocks": true,
       "gparam_one": 3,
       "goal": 1,
-      "mlaps": 1,
       "min_move": 1,
+      "mlaps": 1,
       "sow_direct": 1,
       "sow_rule": 1
    },
@@ -31,5 +31,6 @@
           "mcts_nodes": [30, 30, 50, 90],
           "mcts_bias": [350, 350, 350, 350]
       }
-   }
+   },
+   "rules": "Russ, Laurence. Mancala Games. 1984. Imbelece: p41."   
 }

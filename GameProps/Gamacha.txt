@@ -6,9 +6,10 @@
    },
    "game_info": {
       "name": "Gamacha",
-      "about": "Gamacha:\nCounter-clockwise multi-lap sow. Moves must end in an empty hole or reach opponents side of the board. Seeds are taken out of play via cross-capture.\nThe goal is to deprive the opponent of seeds.\n\nVariations: Sadeqa, start pattern, allow rules, etc.",
+      "about": "Counter-clockwise, multi-lap sow. Moves must end in an empty hole or reach opponents side of the board. Seeds are taken out of play via cross-capture. The goal is to deprive the opponent of seeds.\n\nVariations: Sadeqa, start pattern, allow rules",
       "crosscapt": true,
       "goal": 1,
+      "min_move": 1,
       "mlaps": 1,
       "allow_rule": 1,
       "oppsidecapt": true,

@@ -6,14 +6,14 @@
    },
    "game_info": {
       "name": "Goat",
-      "about": "Goat: a single-lap mancala,\nsow direction depends on start location:\nleft side sow left, right side sow right,\nmouse button selectes direction for center,\ncapture on opponents side on 2s.",
-      "mustpass": true,
-      "stores": true,
-      "sow_direct": 0,
-      "oppsidecapt": true,
-      "multicapt": true,
-      "min_move": 2,
+      "about": "A single-lap mancala, sow direction depends on start location: left side sow left, right side sow right, mouse button selectes direction for center, capture on opponents side on 2s.",
       "capt_on": [2],
+      "min_move": 2,
+      "multicapt": true,
+      "mustpass": true,
+      "oppsidecapt": true,
+      "sow_direct": 0,
+      "stores": true,
       "udir_holes": [1]
    },
    "player": {
@@ -31,5 +31,6 @@
          "mcts_nodes": [300, 500, 800, 1100],
          "mcts_bias": [350, 350, 350, 350]
       }
-   }
+   },
+   "rules": "Mohr, Merilyn Simonds; The New Games Treasury, 1993."
 }

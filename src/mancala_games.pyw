@@ -35,7 +35,6 @@ import param_consts as pc
 from game_classes import GAME_CLASSES
 
 
-
 # %%  Constants
 
 # how many variables to make for lists
@@ -60,6 +59,7 @@ SKIP_TAB = 'skip'
 # %% helper funcs
 
 MINUS = '-'
+
 
 def stoi(sval):
     """make, a possibly empty, string a valid int."""
@@ -253,7 +253,7 @@ class MancalaGames(tk.Frame):
         """Determine what tabs are needed and add them."""
 
         tab_set = set(r.tab for r in self.params.values())
-        extra_tabs =  tab_set - set(PARAM_TABS)
+        extra_tabs = tab_set - set(PARAM_TABS)
         tabs = PARAM_TABS + tuple(extra_tabs)
 
         tab_control = ttk.Notebook(self)
@@ -262,7 +262,7 @@ class MancalaGames(tk.Frame):
             tab = ttk.Frame(tab_control, padding=3)
             self.tabs[tab_name] = tab
             tab_control.add(tab, text=tab_name, padding=5)
-        tab_control.pack(expand = 1, fill =tk.BOTH)
+        tab_control.pack(expand=1, fill=tk.BOTH)
 
 
     def _create_desc_pane(self):
@@ -449,12 +449,12 @@ class MancalaGames(tk.Frame):
         lbl.grid(row=param.row, column=param.col, sticky=tk.E)
 
         if param.vtype == pc.INT_TYPE:
-            ent = tk.Entry(frame,  width=length,
+            ent = tk.Entry(frame, width=length,
                            textvariable=self.tkvars[param.option],
                            validate=tk.ALL,
                            validatecommand=(INT_VALID_CMD, '%P'))
         else:
-            ent = tk.Entry(frame,  width=length,
+            ent = tk.Entry(frame, width=length,
                            textvariable=self.tkvars[param.option])
 
         ent.grid(row=param.row, column=param.col + 1, sticky=tk.W)
@@ -573,7 +573,7 @@ class MancalaGames(tk.Frame):
         for tname, tab in self.tabs.items():
             tab_params = sorted(
                 [p for p in self.params.values() if p.tab == tname],
-                key = lambda p: (p.col, p.row))
+                key=lambda p: (p.col, p.row))
 
             for param in tab_params:
                 self._make_ui_param(tab, param)
@@ -604,7 +604,7 @@ class MancalaGames(tk.Frame):
         """Set the tk vars (display vars) from the game_config
         dict."""
 
-        for param  in self.params.values():
+        for param in self.params.values():
             value = man_config.get_config_value(
                 self.loaded_config, param.cspec, param.option, param.vtype)
 

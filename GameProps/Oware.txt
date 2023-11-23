@@ -1,21 +1,21 @@
 {
    "game_class": "Mancala",
    "game_constants": {
-      "nbr_start": 4,
-      "holes": 6
+      "holes": 6,
+      "nbr_start": 4
    },
    "game_info": {
       "name": "Oware",
-      "about": "Oware:\na single-lap mancala, sow direction is counter-clockwise, capture on opponents side on 1s, 2s and 3s.\n\nVariations:  remove capture on 1s, any Grand Slam rule",
+      "about": "A single-lap mancala, sow direction is counter-clockwise, capture on opponents side on 1s, 2s and 3s.\n\nVariations:  remove capture on 1s, any Grand Slam rule",
+      "capt_on": [1, 2, 3],
       "grandslam": 2,
+      "min_move": 1,
       "multicapt": true,
       "mustshare": true,
       "oppsidecapt": true,
       "skip_start": true,
       "sow_direct": 1,
-      "stores": true,
-      "min_move": 1,
-      "capt_on": [ 1, 2, 3 ]
+      "stores": true
    },
    "player": {
       "scorer": {

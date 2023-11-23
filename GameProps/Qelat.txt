@@ -1,19 +1,19 @@
 {
    "game_class": "Mancala",
    "game_constants": {
-      "nbr_start": 4,
-      "holes": 6
+      "holes": 6,
+      "nbr_start": 4
    },
    "game_info": {
       "name": "Qelat",
-      "about": "Qelat: a single-lap mancala,\nstart hole determines sow direction,\nmust designate walda(s) before captures,\nfour seeds in eligible hole\ndesignates a walda, capture on 4s.",
-      "mustpass": true,
-      "sow_direct": 0,
-      "skip_start": true,
+      "about": "A single-lap mancala, start hole determines sow direction, must designate walda(s) before captures, four seeds in eligible hole designates a walda, capture on 4s.",
+      "capt_on": [4],
       "child_cvt": 4,
       "child_type": 2,
       "min_move": 1,
-      "capt_on": [4]
+      "mustpass": true,
+      "skip_start": true,
+      "sow_direct": 0
    },
    "player": {
       "scorer": {
