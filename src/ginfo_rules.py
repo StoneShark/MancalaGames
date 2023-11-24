@@ -88,6 +88,14 @@ class RuleDict(dict):
             rule.test(obj1, obj2)
 
 
+# %%
+
+def sow_blkd_div(ginfo):
+    """Test if either of the sow_blkd_div rules."""
+    return (ginfo.sow_rule in
+            (gi.SowRule.SOW_BLKD_DIV, gi.SowRule.SOW_BLKD_DIV_NR))
+
+
 # %% grouped rules
 
 def add_creation_rules(rules):
@@ -250,12 +258,13 @@ def add_block_and_divert_rules(rules):
     This concept was originally part of Deka which was a DEPRIVE
     goal, not requiring that here."""
 
+
     def divert_and(flag_name):
         """Return a function that the divert option and the specified
         flag, based only on a ginfo parameter."""
 
         def _divert_and(ginfo):
-            return (ginfo.sow_rule == gi.SowRule.SOW_BLKD_DIV
+            return (sow_blkd_div(ginfo)
                     and getattr(ginfo, flag_name))
 
         return _divert_and
@@ -263,36 +272,36 @@ def add_block_and_divert_rules(rules):
     rules.add_rule(
         'next_ml_no_bdiv',
         rule=lambda ginfo: (ginfo.mlaps == gi.LapSower.LAPPER_NEXT
-                            and ginfo.sow_rule == gi.SowRule.SOW_BLKD_DIV),
-        msg='MLAPS of LAPPER_NEXT is not supported with SOW_BLKD_DIV',
+                            and sow_blkd_div(ginfo)),
+        msg='MLAPS of LAPPER_NEXT is not supported with SOW_BLKD_DIV(_NR)',
         excp=NotImplementedError)
 
     rules.add_rule(
         'bdiv_need_gparam1',
-        rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.SOW_BLKD_DIV
+        rule=lambda ginfo: (sow_blkd_div(ginfo)
                             and not ginfo.gparam_one),
-        msg='SOW_BLKD_DIV requires GPARAM_ONE for closing holes',
+        msg='SOW_BLKD_DIV(_NR) requires GPARAM_ONE for closing holes',
         excp=gi.GameInfoError)
 
     rules.add_rule(
         'bdiv_need_blocks',
-        rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.SOW_BLKD_DIV
+        rule=lambda ginfo: (sow_blkd_div(ginfo)
                             and not ginfo.blocks),
-        msg='SOW_BLKD_DIV requires BLOCKS for closing holes',
+        msg='SOW_BLKD_DIV(_NR) requires BLOCKS for closing holes',
         excp=gi.GameInfoError)
 
     rules.add_rule(
         'bdiv_min_move_one',
-        rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.SOW_BLKD_DIV
+        rule=lambda ginfo: (sow_blkd_div(ginfo)
                             and ginfo.min_move != 1),
-        msg='SOW_BLKD_DIV requires a minimum move of 1',
+        msg='SOW_BLKD_DIV(_NR) requires a minimum move of 1',
         excp=gi.GameInfoError)
 
     rules.add_rule(
         'bdiv_min_req_dep_goal',
-        rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.SOW_BLKD_DIV
+        rule=lambda ginfo: (sow_blkd_div(ginfo)
                             and ginfo.goal != gi.Goal.DEPRIVE),
-        msg='SOW_BLKD_DIV requires a goal of DEPRIVE',
+        msg='SOW_BLKD_DIV(_NR) requires a goal of DEPRIVE',
         excp=gi.GameInfoError)
 
     capt_flags = ['capsamedir', 'crosscapt', 'evens', 'capt_min', 'capt_max',
@@ -302,21 +311,21 @@ def add_block_and_divert_rules(rules):
         rules.add_rule(
             f'bdiv_no_capt_{flag}',
             rule=divert_and(flag),
-            msg='sow_blkd_div closes holes to remove seeds from play, '
+            msg='SOW_BLKD_DIV(_NR) closes holes to remove seeds from play, '
                 f'no other capture mechanisms are allowed [{flag.upper()}]',
         excp=gi.GameInfoError)
 
     rules.add_rule(
         'bdiv_no_capt_on',
-        rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.SOW_BLKD_DIV
+        rule=lambda ginfo: (sow_blkd_div(ginfo)
                             and any(ginfo.capt_on)),
-        msg='sow_blkd_div closes holes to remove seeds from play, ' + \
+        msg='SOW_BLKD_DIV(_NR) closes holes to remove seeds from play, ' + \
             'no other capture mechanisms are allowed [CAPT_ON]',
         excp=gi.GameInfoError)
 
     rules.add_rule(
         'sbd_not_umove',
-        rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.SOW_BLKD_DIV
+        rule=lambda ginfo: (sow_blkd_div(ginfo)
                             and ginfo.round_fill == gi.RoundFill.UMOVE),
         msg='sow_blkd_div incompatible with UMOVE',
         excp=gi.GameInfoError)
@@ -492,9 +501,9 @@ def build_rules():
     man_rules.add_rule(
         'blocks_wo_rounds',
         rule=lambda ginfo: (ginfo.blocks
-                            and not ginfo.sow_rule == gi.SowRule.SOW_BLKD_DIV
+                            and not sow_blkd_div(ginfo)
                             and not ginfo.rounds),
-        msg='BLOCKS without ROUNDS or SOW_BLKD_DIV does nothing',
+        msg='BLOCKS without ROUNDS or SOW_BLKD_DIV(_NR) does nothing',
         warn=True)
 
     man_rules.add_rule(
@@ -506,7 +515,7 @@ def build_rules():
 
     man_rules.add_rule(
         'warn_no_capt',
-        rule=lambda ginfo: not any([ginfo.sow_rule == gi.SowRule.SOW_BLKD_DIV,
+        rule=lambda ginfo: not any([sow_blkd_div(ginfo),
                                     ginfo.child_type == gi.ChildType.WEG,
                                     ginfo.capttwoout,
                                     ginfo.capt_next,

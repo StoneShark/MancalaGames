@@ -174,13 +174,21 @@ class SowClosed(SowMethodIf):
     check for closing, remove the final seeds
     from play (to store 0) and block the hole."""
 
+    def __init__(self, game, not_right=False, decorator=None):
+        super().__init__(game, decorator)
+        if not_right:
+            self.no_close = (game.cts.holes - 1, game.cts.dbl_holes - 1)
+        else:
+            self.no_close = set()
+
     def sow_seeds(self, mdata):
         """Sow seeds."""
 
         self.decorator.sow_seeds(mdata)
         loc = mdata.capt_loc
 
-        if (self.game.board[loc] == self.game.info.gparam_one
+        if (loc not in self.no_close
+                and self.game.board[loc] == self.game.info.gparam_one
                 and self.game.cts.opp_side(self.game.turn, loc)):
 
             self.game.store[0] += self.game.board[loc]
@@ -397,10 +405,19 @@ class NoOp(MlapEndOpIf):
 class CloseOp(MlapEndOpIf):
     """Test for and close the hole by marking it as blocked."""
 
+    def __init__(self, game, not_right=False):
+        super().__init__(game)
+        if not_right:
+            self.no_close = (game.cts.holes - 1, game.cts.dbl_holes - 1)
+        else:
+            self.no_close = set()
+
+
     def do_op(self, mdata):
 
         loc = mdata.capt_loc
-        if (self.game.board[loc] == self.game.info.gparam_one
+        if (loc not in self.no_close
+                and self.game.board[loc] == self.game.info.gparam_one
                 and self.game.cts.opp_side(self.game.turn, loc)):
             self.game.blocked[loc] = True
 
@@ -620,8 +637,9 @@ def deco_blkd_divert_sower(game):
 
     sower = DivertSkipBlckdSower(game)
     if game.info.mlaps != gi.LapSower.LAPPER:
-        sower = SowClosed(game, sower)
-
+        sower = SowClosed(game,
+                          game.info.sow_rule == gi.SowRule.SOW_BLKD_DIV_NR,
+                          sower)
     return sower
 
 
@@ -698,6 +716,8 @@ def deco_mlap_sower(game, sower):
         end_op = DirChange(game)
     elif game.info.sow_rule == gi.SowRule.SOW_BLKD_DIV:
         end_op = CloseOp(game)
+    elif game.info.sow_rule == gi.SowRule.SOW_BLKD_DIV_NR:
+        end_op = CloseOp(game, True)
     else:
         end_op = NoOp(game)
 

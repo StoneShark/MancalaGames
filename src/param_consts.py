@@ -152,7 +152,8 @@ STRING_DICTS = {
     'SowRule': lookup_dicts(
         gi.SowRule,
         {"No Special Rule": gi.SowRule.NONE,
-         "Skip Own Blocked, Capt Opp": gi.SowRule.SOW_BLKD_DIV,
+         "Close, Skip Own, Capt Opp": gi.SowRule.SOW_BLKD_DIV,
+         "Close, Skip, Capt; (not right)": gi.SowRule.SOW_BLKD_DIV_NR,
          "Owners Capture all while Sow": gi.SowRule.OWN_SOW_CAPT_ALL,
          "Sower Captures own while Sow": gi.SowRule.SOW_SOW_CAPT_ALL,
          "Don't sow Opp holes w/2s": gi.SowRule.NO_SOW_OPP_2S,

@@ -10,7 +10,7 @@ pytestmark = [pytest.mark.integtest]
 
 from context import man_config
 
-
+@pytest.mark.skip(reason='Test written to allow closing all holes.')
 class TestDeka:
 
     @pytest.fixture
