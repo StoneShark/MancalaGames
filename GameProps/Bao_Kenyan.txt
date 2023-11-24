@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Bao_Kenyan",
-      "about": "Multi-lap, counter-clockwise sow. Can only move singles, if all singles and then only to empty holes. Cross-capture. The game ends when the current player has no moves.\n\nVariation: Multilap sow only cannot begin with single seed sow.",
+      "about": "Multi-lap, counter-clockwise sow. Can only move singles, if all singles and then only to empty holes. Cross-capture. The game ends when one player has more than half the seeds.\n\nVariation: Multilap sow only cannot begin with single seed sow.",
       "allow_rule": 4,
       "crosscapt": true,
       "min_move": 1,
