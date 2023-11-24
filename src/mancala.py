@@ -128,6 +128,7 @@ class MoveData:
 
         self.capt_changed = False    # capt changed state but didn't capture
         self.captured = False       # there was an actual capture
+        self.end_msg = None
 
     def __str__(self):
 
@@ -139,6 +140,7 @@ class MoveData:
         string += f"  capt_loc={self.capt_loc}\n"
         string += f"  capt_changed={self.capt_changed}\n"
         string += f"  captured={self.captured}"
+        string += f"  end_msg={self.end_msg}"
         return string
 
     @property
@@ -285,6 +287,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         self.mcount = 0
         self.turn = random.choice([False, True])
         self.starter = self.turn
+        self.last_mdata = None
 
         self.deco = ManDeco(self)
         self.init_bprops()
@@ -486,22 +489,27 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             gtext = 'The round'
             title = 'Round Over'
 
-        message = f'Unexpected end condition {win_cond}.'
+        message = ''
+        if self.last_mdata and self.last_mdata.end_msg:
+            message = self.last_mdata.end_msg
 
         if win_cond in [gi.WinCond.WIN, gi.WinCond.ROUND_WIN]:
             player = 'Top' if self.turn else 'Bottom'
-            message = f'{player} won {rtext} {reason[self.info.goal]}'
+            message += f'{player} won {rtext} {reason[self.info.goal]}'
 
         elif win_cond in [gi.WinCond.TIE, gi.WinCond.ROUND_TIE]:
             if self.info.goal == gi.Goal.MAX_SEEDS:
-                message = f'{gtext} ended in a tie.'
+                message += f'{gtext} ended in a tie.'
             elif self.info.goal == gi.Goal.DEPRIVE:
-                message = 'Both players ended with seeds, consider it a tie.'
+                message += 'Both players ended with seeds; consider it a tie.'
             elif self.info.goal == gi.Goal.TERRITORY:
-                message = 'Each player controls half the holes (a tie).'
+                message += 'Each player controls half the holes (a tie).'
 
         elif win_cond == gi.WinCond.ENDLESS:
-            message = 'Game stuck in a loop. No winner.'
+            message += 'Game stuck in a loop. No winner.'
+
+        else:
+            message += f'Unexpected end condition {win_cond}.'
 
         return title, message
 
@@ -571,6 +579,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             return None
 
         mdata = self.do_sow(move)
+        self.last_mdata = mdata   # keep this around for the win message
 
         if mdata.capt_loc is gi.WinCond.REPEAT_TURN:
             win_cond = self.win_conditions(repeat_turn=True)
@@ -578,6 +587,8 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
         if mdata.capt_loc is gi.WinCond.ENDLESS:
             cond = self.end_game()
+            mdata.end_msg = \
+                'Game ended due to detecting endless sow condition.\n'
             game_log.add(f'MLAP game ENDLESS, called end_game {cond}.',
                          game_log.IMPORT)
             return cond

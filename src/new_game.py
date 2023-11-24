@@ -35,7 +35,6 @@ class NewGameIf(abc.ABC):
         True if a new game was started."""
 
 
-
 # %% base new game
 
 class NewGame(NewGameIf):
