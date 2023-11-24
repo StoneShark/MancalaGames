@@ -78,25 +78,25 @@ class InhibitorCaptN(InhibitorIf):
     """An Inhibitor that prevents captures for a number of turns."""
 
     def __init__(self, expire=None):
-        self.captures = True
-        self.expire = expire
+        self._captures = True
+        self._expire = expire
 
     def new_game(self):
-        self.captures = True
+        self._captures = True
         game_log.add('Inhibiting captures.', game_log.IMPORT)
 
     def clear_if(self, game, mdata):
-        if game.mcount <= self.expire:
-            self.captures = False
+        if game.mcount <= self._expire:
+            self._captures = False
             game_log.add('Inhibit captures expired.', game_log.IMPORT)
 
     def set_on(self, turn):
         _ = turn
-        self.captures = True
+        self._captures = True
         game_log.add('Inhibiting captures.', game_log.IMPORT)
 
     def set_off(self):
-        self.captures = False
+        self._captures = False
         game_log.add('Allowing  captures.', game_log.IMPORT)
 
     def set_child(self, condition):
@@ -104,7 +104,7 @@ class InhibitorCaptN(InhibitorIf):
 
     def stop_me_capt(self, turn):
         _ = turn
-        return self.captures
+        return self._captures
 
     def stop_me_child(self, turn):
         _ = turn
@@ -116,7 +116,7 @@ class InhibitorShorten(InhibitorIf):
     Example usage: disable children when the board gets too small."""
 
     def __init__(self):
-        self.children = False
+        self._children = False
 
     def new_game(self):
         pass
@@ -130,10 +130,10 @@ class InhibitorShorten(InhibitorIf):
     def set_off(self):
         game_log.add('Clearing inhibit children (short board).',
                      game_log.IMPORT)
-        self.children = False
+        self._children = False
 
     def set_child(self, condition):
-        self.children = condition
+        self._children = condition
         game_log.add(f'Setting inhibit children {condition} (short board).',
                      game_log.IMPORT)
 
@@ -143,7 +143,7 @@ class InhibitorShorten(InhibitorIf):
 
     def stop_me_child(self, turn):
         _ = turn
-        return self.children
+        return self._children
 
 
 class InhibitorBoth(InhibitorIf):
@@ -151,47 +151,47 @@ class InhibitorBoth(InhibitorIf):
     limiting both children and captures."""
 
     def __init__(self, test_func=None):
-        self.turn = None
-        self.captures = False
-        self.children = False
-        self.child_only = False
-        self.test = test_func
+        self._turn = None
+        self._captures = False
+        self._children = False
+        self._child_only = False
+        self._test = test_func
 
     def new_game(self):
         pass
 
     def clear_if(self, game, mdata):
-        if self.test(game, mdata):
-            if self.captures:
+        if self._test(game, mdata):
+            if self._captures:
                 game_log.add('Allowing children and captures.',
                              game_log.IMPORT)
 
-            self.captures = False
-            self.children = False
+            self._captures = False
+            self._children = False
 
     def set_on(self, turn):
-        self.turn = turn
-        self.captures = True
-        self.children = True
-        game_log.add(f'inhibiting children and captures for {turn}.',
+        self._turn = turn
+        self._captures = True
+        self._children = True
+        game_log.add(f'Inhibiting children and captures for {turn}.',
                      game_log.IMPORT)
 
     def set_off(self):
-        self.turn = None
-        self.captures = False
-        self.children = False
+        self._turn = None
+        self._captures = False
+        self._children = False
         game_log.add('Allowing children and captures.', game_log.IMPORT)
 
     def set_child(self, condition):
-        self.child_only = condition
-        game_log.add(f'Setting inhibit children {condition}.',
+        self._child_only = condition
+        game_log.add(f'Setting inhibit children {condition} both players.',
                      game_log.IMPORT)
 
     def stop_me_capt(self, turn):
-        return self.turn == turn and self.captures
+        return self._turn == turn and self._captures
 
     def stop_me_child(self, turn):
-        return self.turn == turn and (self.children or self.child_only)
+        return (self._children and self._turn == turn) or self._child_only
 
 
 # %%  condition functions

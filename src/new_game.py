@@ -149,8 +149,8 @@ class NewRound(NewGameIf):
         next round.
 
         If the board size is 4 or move and the fill method is SHORTEN,
-		stop making children if the playable board size
-		is reduced to 3 or less.
+        stop making children if the playable board size
+        is reduced to 3 or less.
 
         Return False if it a new round was started.
         True if a new game was started."""
