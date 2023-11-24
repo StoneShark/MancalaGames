@@ -8,19 +8,28 @@ Created on Thu Aug 17 15:23:34 2023
 import pytest
 pytestmark = [pytest.mark.integtest]
 
+from context import game_interface as gi
 from context import man_config
+from context import mancala
 
-@pytest.mark.skip(reason='Test written to allow closing all holes.')
+
 class TestDeka:
 
     @pytest.fixture
-    def game_data(self):
-        return man_config.make_game('./GameProps/Deka.txt')
+    def game(self):
+        """This test was written before Deka was changed to *_NR
+        so patch back it here."""
+
+        game, _ = man_config.make_game('./GameProps/Deka.txt')
+        consts = game.cts
+        info = game.info
+        object.__setattr__(info, 'sow_rule', gi.SowRule.SOW_BLKD_DIV)
+        info.__post_init__(nbr_holes=game.cts.holes,
+                           rules=mancala.Mancala.rules)
+        return mancala.Mancala(consts, info)
 
 
-    def test_true_win(self, game_data):
-
-        game = game_data[0]
+    def test_true_win(self, game):
 
         game.turn = False
         assert game.turn is False
