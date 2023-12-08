@@ -191,7 +191,6 @@ class OnlyRightTwo(AllowableIf):
 
             if self.game.turn:
                 start = self.game.deco.incr.incr(dbl_holes, gi.Direct.CW)
-                print('r start', start)
                 pos = self.game.cts.xlate_pos_loc(not self.game.turn, start)
                 fright = holes - pos - 2
                 allow = min(holes - fright, 2)
@@ -199,7 +198,6 @@ class OnlyRightTwo(AllowableIf):
                 return [False] * fleft + [True] * allow + [False] * fright
 
             start = self.game.deco.incr.incr(holes, gi.Direct.CW)
-            print('l start', start)
             fright = holes - start - 1
             allow = min(start + 1, 2)
             fleft = holes - allow - fright
