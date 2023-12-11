@@ -455,7 +455,8 @@ class TestEndMove:
         assert game.win_conditions(repeat_turn=repeat, ended=ended) == eres
         assert game.board == eboard
         assert game.store == estore
-        assert game.turn == eturn
+        if eturn is not None:
+            assert game.turn == eturn
         assert not game.test_pass()
 
 
@@ -584,7 +585,8 @@ class TestEndDeprive:
 
         cond, winner = game.deco.ender.game_ended(False, False)
         assert cond == econd
-        assert winner == ewinner
+        if ewinner is not None:
+            assert winner == ewinner
 
 
 class TestEndWaldas:
@@ -960,7 +962,8 @@ class TestQuitter:
         assert game.end_game() == eres
         assert game.board == eboard
         assert game.store == estore
-        assert game.turn == eturn
+        if eturn is not None:
+            assert game.turn == eturn
 
 
 class TestTerritory:

@@ -325,7 +325,7 @@ class Winner(EndTurnIf):
             return cond, winner
 
         if ended and not self.decorator:
-            return gi.WinCond.GAME_OVER, None
+            return gi.WinCond.GAME_OVER, self.game.turn
 
         return self.decorator.game_ended(repeat_turn, False)
 
@@ -353,7 +353,7 @@ class MaxWinner(EndTurnIf):
         if seeds[0] < seeds[1]:
             return gi.WinCond.WIN, True
 
-        return gi.WinCond.TIE, None
+        return gi.WinCond.TIE, self.game.turn
 
 
 class RoundWinner(EndTurnIf):
@@ -559,7 +559,7 @@ class DepriveSeedsEndGame(EndTurnIf):
                for loc in self.game.cts.get_my_range(self.game.turn)):
             return gi.WinCond.WIN, not self.game.turn
 
-        return None, None
+        return None, self.game.turn
 
 
 
@@ -682,7 +682,7 @@ class TerritoryGameWinner(EndTurnIf):
         if false_holes < self.game.cts.holes:
             return gi.WinCond.WIN, True
 
-        return gi.WinCond.TIE, None
+        return gi.WinCond.TIE, self.game.turn
 
 
     def game_ended(self, repeat_turn, ended=False):
@@ -715,7 +715,7 @@ class TerritoryEndGame(EndTurnIf):
         if false_holes < self.game.cts.holes:
             return gi.WinCond.WIN, True
 
-        return gi.WinCond.TIE, None
+        return gi.WinCond.TIE, self.game.turn
 
 
     def game_ended(self, repeat_turn, ended=False):
