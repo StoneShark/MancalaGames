@@ -80,7 +80,7 @@ cltd['t_win_pct'] = cltd['score'] / (WIN_SCORE * cltd['nbr_runs'])
 
 cltd['mean'] = cltd['score'] / cltd['nbr_runs']
 cltd['stddev'] = \
-    np.sqrt((cltd['score_2'] \
+    np.sqrt((cltd['score_2']
              - ((cltd['score'] * cltd['score']) / cltd['nbr_runs']))
             / (cltd['nbr_runs'] - 1))
 
@@ -101,10 +101,12 @@ cltd['st_win_pct'] = cltd['st_score'] / (WIN_SCORE * cltd['nbr_runs'])
 
 cltd['st_mean'] = cltd['st_score'] / cltd['nbr_runs']
 cltd['st_stddev'] = \
-    np.sqrt((cltd['st_score_2'] \
+    np.sqrt((cltd['st_score_2']
              - ((cltd['st_score'] * cltd['st_score']) / cltd['nbr_runs']))
             / (cltd['nbr_runs'] - 1))
 
-cltd['st_fair'] = (((cltd['mean'] - EXPECTED_VAL)
-                  / (cltd['stddev'] / np.sqrt(cltd['nbr_runs'])))
+cltd['st_fair'] = (((cltd['st_mean'] - EXPECTED_VAL)
+                  / (cltd['st_stddev'] / np.sqrt(cltd['nbr_runs'])))
                  < CRIT_VALUE)
+
+cltd.to_csv('data/collected.csv')
