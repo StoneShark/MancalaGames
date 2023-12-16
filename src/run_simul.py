@@ -61,7 +61,7 @@ def test_random_one_game(game_path):
 
 
 PLAYER1 = {"algorithm": "minimaxer",
-           "difficulty": 1,
+           "difficulty": 0,
            "scorer": {
                "stores_m": 4,
                },
@@ -72,7 +72,7 @@ PLAYER1 = {"algorithm": "minimaxer",
 
 
 PLAYER2 = {"algorithm": "minimaxer",
-           "difficulty": 1,
+           "difficulty": 2,
            "scorer": {
                "stores_m": 4,
                },
@@ -92,12 +92,12 @@ def test_ai_one_game(game_path):
     game_log.turn('Start', game)
 
     tplayer = ai_player.AiPlayer(game, PLAYER1)
-    # fplayer = ai_player.AiPlayer(game, PLAYER2)
+    fplayer = ai_player.AiPlayer(game, PLAYER2)
 
     for _ in range(2000 if game.info.rounds else 500):
 
-        if game.turn:
-            move = tplayer.pick_move()
+        if not game.turn:
+            move = fplayer.pick_move()
         else:
             moves = game.get_moves()
             move = random.choice(moves)
@@ -127,16 +127,15 @@ def test_ai_one_game(game_path):
 
 # %%  main
 
-
 if  __name__ == '__main__':
 
-    gpath = "GameProps/NumNum.txt"
+    gpath = "../GameProps/Giuthi.txt"
 
-    for _ in range(30):
-        test_random_one_game(gpath)
-        game_log.new()
-        time.sleep(1)
+    # for _ in range(30):
+    #     test_random_one_game(gpath)
+    #     game_log.new()
+    #     time.sleep(1)
 
     # test_random_one_game(gpath)
 
-    # test_ai_one_game(gpath)
+    test_ai_one_game(gpath)

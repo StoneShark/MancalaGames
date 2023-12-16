@@ -130,6 +130,7 @@ STRING_DICTS = {
          'Left Fill': gi.RoundFill.LEFT_FILL,
          'Right Fill': gi.RoundFill.RIGHT_FILL,
          'Outside In Fill': gi.RoundFill.OUTSIDE_FILL,
+         'Even Fill': gi.RoundFill.EVEN_FILL,
          'Shorten Board': gi.RoundFill.SHORTEN,
          'Choose Blocks': gi.RoundFill.UCHOOSE,
          'Rearrange Seeds': gi.RoundFill.UMOVE}),

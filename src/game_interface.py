@@ -145,6 +145,7 @@ class RoundFill(enum.IntEnum):
     UCHOOSE = 4
     UMOVE = 5
     SHORTEN = 6
+    EVEN_FILL = 7
 
 
 @enum.unique

@@ -206,7 +206,8 @@ class TestNewGame:
     def test_no_blocks(self, nb_rgame, left_fill, store, estore):
 
         object.__setattr__(nb_rgame.info, 'round_fill',
-                           RoundFill.LEFT_FILL if left_fill else RoundFill.OUTSIDE_FILL)
+                           RoundFill.LEFT_FILL if left_fill
+                           else RoundFill.OUTSIDE_FILL)
         nb_rgame.deco = mancala.ManDeco(nb_rgame)
 
         nb_rgame.blocked = [True, False, True] * 2
@@ -221,23 +222,6 @@ class TestNewGame:
         assert all(nb_rgame.board[loc] in [0, 2]
                    for loc in range(nb_rgame.cts.dbl_holes))
         assert nb_rgame.store == estore
-
-
-    def test_rounds_start_nat(self, rgame):
-
-        rgame.unlocked = [False, True, True] * 2
-        rgame.blocked = [True, False, True] * 2
-        rgame.board = utils.build_board([0, 0, 0],
-                                        [0, 0, 0])
-        rgame.store = [11, 1]
-
-        assert rgame.new_game(new_round_ok=True)
-        assert rgame.board == [2] * 6
-        assert rgame.store == [0, 0]
-        assert rgame.turn in [False, True]
-        assert rgame.starter == rgame.turn
-        assert rgame.unlocked == [True] * 6
-        assert rgame.blocked == [False] * 6
 
 
 def test_patterns():

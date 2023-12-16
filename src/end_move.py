@@ -367,8 +367,8 @@ class RoundWinner(EndTurnIf):
     holes must contain a seed. Also, the winner's side is
     setup reversed of loser's side, so both players
     must have enough seeds for a valid move. Therefore, the
-    game will end when there are not enough seeds for loser
-    to have a valid move.
+    game will end when there are not enough seeds for the loser
+    to fill their side with a valid move.
 
     This is near the top of the deco chain. If ended is True
     actually end the game (not the round)."""
@@ -377,13 +377,14 @@ class RoundWinner(EndTurnIf):
 
         super().__init__(game, decorator, claimer)
 
+        intro = 'Game, not round, ended '
         if game.info.round_fill == gi.RoundFill.UMOVE:
             self.req_seeds = game.cts.holes + game.info.min_move - 1
-            self.msg = "Game, not round, ended (too few seeds for valid move)."
+            self.msg = intro + "(too few seeds to fill side)."
 
         else:
             self.req_seeds = game.cts.nbr_start
-            self.msg = "Game, not round, ended (too few seeds to fill a hole)."
+            self.msg = intro + "(too few seeds to fill a hole)."
 
 
     def game_ended(self, repeat_turn, ended=False):
@@ -395,7 +396,7 @@ class RoundWinner(EndTurnIf):
 
         seeds = self.claimer.claim_seeds()
         if seeds[True] < self.req_seeds or seeds[False] < self.req_seeds:
-            game_log.add(self.msg, game_log.INFO)
+            game_log.add(self.msg, game_log.IMPORT)
             return cond, player
 
         if cond == gi.WinCond.WIN:
