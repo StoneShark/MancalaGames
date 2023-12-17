@@ -272,7 +272,7 @@ class LapContinuerIf(abc.ABC):
 
 class LapContinue(LapContinuerIf):
     """A base lap continuer, always continue.
-    Wrapper test for other stop conditions."""
+    Wrappers test for other stop conditions."""
 
     def do_another_lap(self, mdata):
         """Determine if we are done sowing."""
@@ -311,9 +311,9 @@ class ChildLapCont(LapContinuerIf):
     Stop sowing if we should make a child.
 
     Mohr's book states that a turn ends when 'any' seed is sown
-    into a child, but it doesn't describe what to do with the
-    remaining seeds; therefore this condition is not
-    implemented here. (rules for Bao). Russ's book confirms this
+    into a child (in rules for Bao), but it doesn't describe
+    what to do with the remaining seeds; therefore this
+    condition is not implemented here. Russ's book confirms this
     p 44, first paragraph, but he also doesn't describe what to do
     with the remaining seeds."""
 
@@ -323,7 +323,8 @@ class ChildLapCont(LapContinuerIf):
 
 
 class StopSingleSeed(LapContinuerIf):
-    """A wrapper: stop if there is zero or one seeds."""
+    """A wrapper: stop if there is zero or one seed
+    (the one we just sowed)."""
 
     def do_another_lap(self, mdata):
 
@@ -666,7 +667,7 @@ def deco_build_lap_cont(game):
     elif game.info.mlaps == gi.LapSower.LAPPER_NEXT:
         lap_cont = NextLapCont(game)
 
-    if game.info.child_cvt or game.info.child_type:
+    if game.info.child_type:
         lap_cont = StopOnChild(game, lap_cont)
 
     if any([game.info.evens,

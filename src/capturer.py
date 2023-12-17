@@ -486,20 +486,20 @@ class MakeWegCapture(CaptMethodIf):
     def do_captures(self, mdata):
 
         loc = mdata.capt_loc
+        game = self.game
         turn = self.game.turn
 
-        if self.game.child[loc] is (not turn):
+        if game.child[loc] is (not turn):
 
-            capts = 2 if self.game.board[loc] >= 2 else 1
-            self.game.board[loc] -= capts
-            self.game.store[turn] += capts
+            capts = 2 if game.board[loc] >= 2 else 1
+            game.board[loc] -= capts
+            game.store[turn] += capts
             mdata.captured = True
             return
 
-        if (self.game.board[loc] == self.game.info.child_cvt
-                and self.game.owner[loc] is (not turn)):
+        if game.deco.make_child(game, mdata):
 
-            self.game.child[loc] = turn
+            game.child[loc] = turn
             mdata.capt_changed = True
             return
 

@@ -516,7 +516,7 @@ def build_rules():
     man_rules.add_rule(
         'warn_no_capt',
         rule=lambda ginfo: not any([sow_blkd_div(ginfo),
-                                    ginfo.child_type == gi.ChildType.WEG,
+                                    ginfo.child_type,
                                     ginfo.capttwoout,
                                     ginfo.capt_next,
                                     ginfo.evens,
