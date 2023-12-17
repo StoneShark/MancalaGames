@@ -253,9 +253,7 @@ class NewRoundEven(NewGameIf):
             self.game.store = [l_store, w_store]
         else:
             self.game.store = [w_store, l_store]
-
-        for loc in range(cts.dbl_holes):
-            self.game.board[loc] = seeds_per_hole
+        self.game.board = [seeds_per_hole] * self.game.cts.dbl_holes
 
         min_move = self.game.info.min_move
         if seeds_per_hole < min_move:
