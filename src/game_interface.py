@@ -138,7 +138,7 @@ class LapSower(enum.IntEnum):
 class RoundFill(enum.IntEnum):
     """How rounds are filled when a new round starts."""
 
-    NO_ROUNDS = 0
+    NOT_APPLICABLE = 0
     LEFT_FILL = 1
     RIGHT_FILL = 2
     OUTSIDE_FILL = 3
@@ -227,7 +227,7 @@ class GameInfo:
     mustpass: bool = False
     rounds: bool = False
     round_starter: RoundStarter = RoundStarter.ALTERNATE
-    round_fill: RoundFill = RoundFill.NO_ROUNDS
+    round_fill: RoundFill = RoundFill.NOT_APPLICABLE
     no_sides: bool = False
     stores: bool = False
     start_pattern: StartPattern = StartPattern.ALL_EQUAL

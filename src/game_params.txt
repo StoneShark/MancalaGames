@@ -58,7 +58,7 @@ Dynamics	round_starter	Round Starter	game_info _	63	RoundStarter	ALTERNATE	5	0	"
 - LOSER: the loser of the previous round starts the current round
 - WINNER: the winner of the previous round starts the current round"		1											
 Dynamics	round_fill	Round Fill Method	game_info _	62	RoundFill	NO_ROUNDS	6	0	"Choose how holes are filled when a new round strarts:
-NO_ROUNDS: game not played in rounds.
+NOT_APPLICABLE: round fill doesn't need to be specified. Either not played in rounds or game goal is TERRITORY.
 LEFT_FILL: fill holes from the player's left.
 RIGHT_FILL: fill holes from the player's right. 
 OUTSIDE_FILL: fill holes from the outside ends toward the middle.

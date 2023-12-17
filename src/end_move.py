@@ -700,7 +700,6 @@ class TerritoryGameWinner(EndTurnIf):
         return cond, winner
 
 
-
 class TerritoryEndGame(EndTurnIf):
     """We are forcing the game to end, call the decorator
     to collect the seeds. Decide who wins."""

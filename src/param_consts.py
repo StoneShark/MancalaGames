@@ -126,7 +126,7 @@ STRING_DICTS = {
 
     'RoundFill': lookup_dicts(
         gi.RoundFill,
-        {'No Rounds': gi.RoundFill.NO_ROUNDS,
+        {'Not Applicable': gi.RoundFill.NOT_APPLICABLE,
          'Left Fill': gi.RoundFill.LEFT_FILL,
          'Right Fill': gi.RoundFill.RIGHT_FILL,
          'Outside In Fill': gi.RoundFill.OUTSIDE_FILL,

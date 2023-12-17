@@ -15,7 +15,6 @@
       "min_move": 1,
       "mlaps": 1,
       "mustpass": true,
-      "round_fill": 2,
       "rounds": true,
       "sow_direct": 1,
       "stores": true

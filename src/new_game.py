@@ -17,8 +17,7 @@ from game_log import game_log
 from fill_patterns import PCLASSES
 
 
-
-# %%
+# %% set_round_starter
 
 def set_round_starter(game):
     """Set the starter of the next round based on the game flag."""
@@ -33,7 +32,7 @@ def set_round_starter(game):
     game.starter = game.turn
 
 
-# %%  New Game interace
+# %%  NewGame interace
 
 class NewGameIf(abc.ABC):
     """New Game Interface."""
