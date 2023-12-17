@@ -15,7 +15,6 @@
       "mustpass": true,
       "nocaptfirst": true,
       "round_starter": 1,
-      "round_fill": 3,
       "rounds": true,
       "sow_rule": 2,
       "sow_direct": 1,
