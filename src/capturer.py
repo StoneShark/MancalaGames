@@ -391,7 +391,6 @@ class CaptureToWalda(CaptMethodIf):
     walda."""
 
     WALDA_BOTH = -1
-
     WALDA_TEST = [[WALDA_BOTH, False],
                   [WALDA_BOTH, True]]
 

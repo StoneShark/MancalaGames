@@ -326,21 +326,6 @@ class ChildLapCont(LapContinuerIf):
         return True
 
 
-class WegLapCont(LapContinuerIf):
-    """Multilap sow for weg style children: stop if we
-    should make our own child in opponents territory."""
-
-    def do_another_lap(self, mdata):
-        """Determine if we are done sowing."""
-
-        loc = mdata.capt_loc
-        if (self.game.board[loc] == self.game.info.child_cvt
-                and self.game.owner[loc] is (not self.game.turn)):
-            return False
-
-        return True
-
-
 class StopSingleSeed(LapContinuerIf):
     """A wrapper: stop if there is zero or one seeds."""
 
@@ -672,10 +657,7 @@ def deco_build_lap_cont(game):
 
     if game.info.mlaps == gi.LapSower.LAPPER:
 
-        if game.info.child_type == gi.ChildType.WEG:
-            lap_cont = WegLapCont(game)
-
-        elif game.info.child_cvt:
+        if game.info.child_type:
             lap_cont = ChildLapCont(game)
 
         elif game.info.sow_rule == gi.SowRule.SOW_BLKD_DIV:

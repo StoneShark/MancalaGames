@@ -200,6 +200,11 @@ class ManDeco:
             return (game.child[loc] is None
                     and game.board[loc] == game.info.child_cvt)
 
+        def weg_case(game, mdata):
+            loc = mdata.capt_loc
+            return not (game.board[loc] == game.info.child_cvt
+                        and game.owner[loc] is (not game.turn))
+
         def bull_case(game, mdata):
             """Paired capt of child_cvt then child_cvt-1
             or just child_cvt."""
@@ -220,6 +225,8 @@ class ManDeco:
 
         if game.info.child_type == gi.ChildType.BULL:
             func_list = [bull_case]
+        elif game.info.child_type == gi.ChildType.WEG:
+            func_list = [weg_case]
         else:
             func_list = [base_case]
 
