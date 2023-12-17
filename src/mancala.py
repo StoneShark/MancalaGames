@@ -194,6 +194,7 @@ class ManDeco:
         and bulls, but not waldas, wegs or tuzdeks.
 
         The result is the ANDing of each functions return value."""
+        # pylint: disable=too-complex
 
         def base_case(game, mdata):
             loc = mdata.capt_loc
@@ -202,8 +203,8 @@ class ManDeco:
 
         def weg_case(game, mdata):
             loc = mdata.capt_loc
-            return not (game.board[loc] == game.info.child_cvt
-                        and game.owner[loc] is (not game.turn))
+            return (game.board[loc] == game.info.child_cvt
+                    and game.owner[loc] is (not game.turn))
 
         def bull_case(game, mdata):
             """Paired capt of child_cvt then child_cvt-1

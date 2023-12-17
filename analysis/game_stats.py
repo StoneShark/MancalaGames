@@ -13,7 +13,7 @@ import scipy
 
 # %% load data
 
-data = pd.read_csv('data/gstats_44_1000_1211_0933.csv',
+data = pd.read_csv('data/gstats_44_1000_1216_1608.csv',
                    dtype={'name': str,
                           'starter': bool,
                           'turns': int,
@@ -110,3 +110,37 @@ cltd['st_fair'] = (((cltd['st_mean'] - EXPECTED_VAL)
                  < CRIT_VALUE)
 
 cltd.to_csv('data/collected.csv')
+
+
+
+# %%
+
+adata = pd.read_csv('data/gstats_44_1000_1211_0933.csv',
+                   dtype={'name': str,
+                          'starter': bool,
+                          'turns': int,
+                          'outcome': str,
+                          'winner': bool,
+                          'passes': int,
+                          'repeats': int,
+                          'rounds': int,
+                          'rnd_turns': int},
+                   header=0,
+                   index_col='name')
+
+
+def score(outcome):
+    if outcome == 'WIN':
+        return WIN_SCORE
+    if outcome == 'TIE':
+        return TIE_SCORE
+    return 0
+
+adata['score'] = [score(out) for out in adata.outcome]
+
+# need to drop rows with mlap and turn == 9990 and not mlap and turn == 998
+
+for name, group in  adata[adata.rnd_turns == 0].groupby('name'):
+    print('{:15}  {:6}  {:12.8}'.format(
+            name, len(group),
+            scipy.stats.skew(group.score)))
