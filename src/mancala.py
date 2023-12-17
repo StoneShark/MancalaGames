@@ -36,8 +36,8 @@ LOCK = ['_', ' ']
 CHILD = {True: '˄',
          False: '˅',
          None: ' '}
-OWNER = {True: '\u2191 ',
-         False: '\u2193 ',
+OWNER = {True: '↑ ',     # \u2191
+         False: '↓ ',    # \u2193
          None: ' '}
 
 
@@ -190,8 +190,9 @@ class ManDeco:
     def gen_child_test(game):
         """Generate a test function that will return True
         if a child should be made. Used in the sower to stop
-        mlap sowing. Used in the capturer to make children
-        and bulls, but not waldas, wegs or tuzdeks.
+        mlap sowing and the capturer to make children, bulls
+        and wegs which use mlaps, but not waldas or tuzdeks
+        which don't use mlaps.
 
         The result is the ANDing of each functions return value."""
         # pylint: disable=too-complex
@@ -219,6 +220,7 @@ class ManDeco:
                         and game.board[loc] == game.info.child_cvt))
 
         def only_opp_side(game, mdata):
+            """opp side board (not opp owner as in weg)"""
             return game.cts.opp_side(game.turn, mdata.capt_loc)
 
         def not_first_hole(_, mdata):
