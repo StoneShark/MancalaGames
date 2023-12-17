@@ -424,7 +424,8 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
     def compute_owners(self):
         """Compute the number of holes that False should own
         based on number of seeds. Called on new round for
-        Territory game."""
+        Territory game.
+        Seeds have already been collected from non-children"""
 
         # XXXX I think there's duplication of this collection
         seeds = self.store.copy()
