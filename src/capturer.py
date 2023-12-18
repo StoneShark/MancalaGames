@@ -451,16 +451,15 @@ class MakeTuzdek(CaptMethodIf):
         """Put the test in a function to keep the linter from
         complaining that it's too complex"""
 
-        game = self.game
-        cross = game.cts.cross_from_loc(loc)
-        opp_range = game.cts.get_opp_range(game.turn)
+        cross = self.game.cts.cross_from_loc(loc)
+        opp_range = self.game.cts.get_opp_range(self.game.turn)
 
-        return (game.cts.opp_side(game.turn, loc)
-                and game.child[loc] is None
-                and game.child[cross] is None
-                and game.board[loc] == game.info.child_cvt
-                and game.cts.loc_to_left_cnt(loc)
-                and not any(game.child[tloc] is not None
+        return (self.game.cts.opp_side(self.game.turn, loc)
+                and self.game.child[loc] is None
+                and self.game.child[cross] is None
+                and self.game.board[loc] == self.game.info.child_cvt
+                and self.game.cts.loc_to_left_cnt(loc)
+                and not any(self.game.child[tloc] is not None
                             for tloc in opp_range))
 
     def do_captures(self, mdata):

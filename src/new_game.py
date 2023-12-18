@@ -209,7 +209,7 @@ class TerritoryNewRound(NewGameIf):
         wholes = self.game.cts.dbl_holes - false_holes if winner \
             else false_holes
         for cnt in range(self.game.cts.dbl_holes):
-            self.game.owner[loc] = winner if cnt <= wholes else not winner
+            self.game.owner[loc] = winner if cnt < wholes else not winner
             loc = (loc + 1) % self.game.cts.dbl_holes
 
         return False
