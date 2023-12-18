@@ -65,6 +65,10 @@ def define_parser():
                         help="""Use the minimaxer ai_player.
                         Default: %(default)s""")
 
+    parser.add_argument('--no_rounds', action='store_true',
+                        help="""Don't output round data.
+                        Default: %(default)s""")
+
     parser.add_argument('--output', action='store',
                         help="""Output file.
                         Month, day and time are always appended
@@ -154,9 +158,10 @@ def test_one_game(game, pdict):
             break
         if cond in (WinCond.ROUND_WIN, WinCond.ROUND_TIE):
             round_count += 1
-            data.loc[len(data)] = dc.asdict(GameRecord(
-                game.info.name, game.starter, turns, cond.name, game.turn,
-                passes, repeats, round_count, turns - round_start))
+            if not cargs.no_rounds:
+                data.loc[len(data)] = dc.asdict(GameRecord(
+                    game.info.name, game.starter, turns, cond.name, game.turn,
+                    passes, repeats, round_count, turns - round_start))
             round_start = turns
             repeats = passes = 0
 
