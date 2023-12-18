@@ -628,9 +628,9 @@ class TerritoryGameWinner(EndTurnIf):
 
         if remaining <= self.min_occ:
             game_log.add(
-                'Too few seeds for to claim more territory,'
+                'Too few seeds for anyone to claim more territory,'
                 f'remaining going to {self.game.turn}.',
-                game_log.INFO)
+                game_log.IMPORT)
 
             self.game.store[self.game.turn] += remaining
             for loc in range(self.game.cts.dbl_holes):
