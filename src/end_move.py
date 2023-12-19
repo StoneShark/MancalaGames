@@ -501,7 +501,7 @@ class EndTurnNotPlayable(EndTurnIf):
                         for loc in range(self.game.cts.dbl_holes))
 
         if ended:
-            game_log.add("No moves available, game ended.", game_log.INFO)
+            game_log.add("No moves available, game ended.", game_log.IMPORT)
 
         return self.decorator.game_ended(repeat_turn, ended)
 
@@ -604,9 +604,9 @@ class TerritoryGameWinner(EndTurnIf):
     @staticmethod
     def _min_occupy(game):
         """Select a minimum number of seeds that can claim
-        or occupy more territory. Don't override total_seeds
+        or occupy more territory. Disable with min_occ of -1,
         if this feature shouldn't be used (sow own store or
-        wegs)"""
+        childred [which are handled at runtime])."""
 
         min_occ = game.cts.total_seeds
 
@@ -616,14 +616,14 @@ class TerritoryGameWinner(EndTurnIf):
                 or game.info.crosscapt):
             min_occ = min(2, min_occ)
 
-        if game.info.child_cvt:
-            min_occ = min(game.info.child_cvt, min_occ)
-
         if game.info.capt_on:
             min_occ = min(*game.info.capt_on, min_occ)
 
         if game.info.capt_min:
             min_occ = min(game.info.capt_min, min_occ)
+
+        if min_occ == game.cts.total_seeds:
+            min_occ = -1
 
         return min_occ
 
@@ -639,9 +639,9 @@ class TerritoryGameWinner(EndTurnIf):
 
         if remaining <= self.min_occ:
             game_log.add(
-                'Too few seeds for to claim more territory,'
-                f'remaining going to {self.game.turn}.',
-                game_log.INFO)
+                'Too few seeds for more territory to be claimed '
+                f'(<= {self.min_occ}); remaining going to {self.game.turn}.',
+                game_log.IMPORT)
 
             self.game.store[self.game.turn] += remaining
             for loc in range(self.game.cts.dbl_holes):

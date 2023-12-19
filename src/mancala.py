@@ -447,9 +447,9 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
         nbr_start = self.cts.nbr_start
         false_holes, rem = divmod(seeds[False], nbr_start)
-        if rem > nbr_start // 2:
+        if rem >= nbr_start // 2:
             false_holes += 1
-        game_log.add(f"False holes = {false_holes}", game_log.DETAIL)
+        game_log.add(f"False holes = {false_holes}", game_log.IMPORT)
 
         return false_holes, seeds
 
