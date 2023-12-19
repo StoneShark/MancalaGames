@@ -9,6 +9,7 @@ Created on Fri Apr  7 17:33:56 2023
 
 import abc
 
+import deco_chain_if
 import game_interface as gi
 
 # %% constants
@@ -26,12 +27,8 @@ OWNER = {True: '\u2191 ',
 
 # %%  interfaces
 
-class HoleMarkerIf(abc.ABC):
+class HoleMarkerIf(deco_chain_if.DecoChainIf):
     """Generate a hole string."""
-
-    def __init__(self, game, decorator):
-        self.decorator = decorator
-        self.game = game
 
     @abc.abstractmethod
     def get_hole_str(self, loc):
@@ -80,6 +77,10 @@ class GameString(StringIf):
 
         super().__init__(game)
         self.hole_str = hole_str
+
+    def __str__(self):
+
+        return repr(self) + '\n' + str(self.hole_str)
 
     def get_string(self):
         """Get string with blocks and/or marks."""

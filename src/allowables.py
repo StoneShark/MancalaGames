@@ -12,6 +12,7 @@ Created on Sat Apr  8 09:15:30 2023
 
 import abc
 
+import deco_chain_if
 import game_interface as gi
 
 from game_log import game_log
@@ -19,12 +20,8 @@ from game_log import game_log
 
 # %%  allowable moves interface
 
-class AllowableIf(abc.ABC):
+class AllowableIf(deco_chain_if.DecoChainIf):
     """Allowable interface plus one common routine."""
-
-    def __init__(self, game, decorator=None):
-        self.game = game
-        self.decorator = decorator
 
     def allow_move(self, loc):
         """Allowable:

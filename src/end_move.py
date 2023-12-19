@@ -268,6 +268,17 @@ class EndTurnIf(abc.ABC):
         self.claimer = claimer
         self.decorator = decorator
 
+    def __str__(self):
+        """A recursive func to print the whole decorator chain."""
+
+        my_str = repr(self)
+        if self.claimer:
+            my_str += '\n   ' + repr(self.claimer)
+
+        if self.decorator:
+            return my_str + '\n' + str(self.decorator)
+        return my_str
+
     @abc.abstractmethod
     def game_ended(self, repeat_turn, ended=False):
         """Return the end condition and winner."""

@@ -8,6 +8,7 @@ MODULES += btn_behaviors.py
 MODULES += capt_ok.py
 MODULES += capturer.py
 MODULES += cfg_keys.py
+MODULES += deco_chain_if.py
 MODULES += end_move.py
 MODULES += fill_patterns.py
 MODULES += game_classes.py

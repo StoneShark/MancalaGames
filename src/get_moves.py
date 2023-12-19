@@ -10,17 +10,14 @@ Created on Mon Apr 10 10:08:40 2023
 
 import abc
 
+import deco_chain_if
 import game_interface as gi
 
 
 # %%  mover  interface
 
-class MovesIf(abc.ABC):
+class MovesIf(deco_chain_if.DecoChainIf):
     """get_moves interface."""
-
-    def __init__(self, game, decorator=None):
-        self.game = game
-        self.decorator = decorator
 
     @abc.abstractmethod
     def get_moves(self):

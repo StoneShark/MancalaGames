@@ -7,17 +7,14 @@ Created on Thu Aug 10 04:26:30 2023
 
 import abc
 
+import deco_chain_if
 import game_interface as gi
 
 
 # %% interface
 
-class GetDirIf(abc.ABC):
+class GetDirIf(deco_chain_if.DecoChainIf):
     """Determine the direction to sow the seeds."""
-
-    def __init__(self, game, decorator=None):
-        self.game = game
-        self.decorator = decorator
 
     @abc.abstractmethod
     def get_direction(self, move, loc):

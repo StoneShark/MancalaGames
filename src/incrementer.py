@@ -22,6 +22,7 @@ Created on Fri Apr  7 11:21:07 2023
 
 import abc
 
+import deco_chain_if
 
 # %% constants
 
@@ -31,12 +32,8 @@ NOSKIPSTART = -1
 
 # %%  incrementer interface
 
-class IncrementerIf(abc.ABC):
+class IncrementerIf(deco_chain_if.DecoChainIf):
     """Interface for incrementer."""
-
-    def __init__(self, game, decorator=None):
-        self.game = game
-        self.decorator = decorator
 
     @abc.abstractmethod
     def incr(self, loc, direct, start=NOSKIPSTART):

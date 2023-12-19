@@ -15,15 +15,12 @@ Created on Fri Apr  7 08:52:03 2023
 
 import abc
 
+import deco_chain_if
 
 # %%  capture ok
 
-class CaptOkIf(abc.ABC):
+class CaptOkIf(deco_chain_if.DecoChainIf):
     """Interface for capture tests, capture_ok."""
-
-    def __init__(self, game, decorator=None):
-        self.game = game
-        self.decorator = decorator
 
     @abc.abstractmethod
     def capture_ok(self, loc):

@@ -20,6 +20,7 @@ Created on Fri Apr  7 15:57:47 2023
 
 import abc
 
+import deco_chain_if
 import game_interface as gi
 
 from game_log import game_log
@@ -32,12 +33,8 @@ MAX_LAPS = 50
 
 # %%  sow interface
 
-class SowMethodIf(abc.ABC):
+class SowMethodIf(deco_chain_if.DecoChainIf):
     """Interface for sowing."""
-
-    def __init__(self, game, decorator=None):
-        self.game = game
-        self.decorator = decorator
 
     @abc.abstractmethod
     def sow_seeds(self, mdata):
@@ -258,13 +255,9 @@ class SowSkipOppN(SowMethodIf):
 
 # %%  lap continue testers
 
-class LapContinuerIf(abc.ABC):
+class LapContinuerIf(deco_chain_if.DecoChainIf):
     """Interface for the algorithms that determine if
     sowing should continue."""
-
-    def __init__(self, game, decorator=None):
-        self.game = game
-        self.decorator = decorator
 
     def do_another_lap(self, mdata):
         """Return True if we should continue sowing, False otherwise."""
@@ -422,6 +415,16 @@ class MlapSowerIf(SowMethodIf):
         self.lap_cont = lap_cont
         self.end_lap_op = end_lap_op
 
+    def __str__(self):
+        """A recursive func to print the whole decorator chain."""
+
+        my_str = '\n   '.join([repr(self),
+                               str(self.lap_cont),
+                               repr(self.end_lap_op)])
+
+        if self.decorator:
+            return my_str + '\n' + str(self.decorator)
+        return my_str
 
     def get_single_sower(self):
         """Return the first non-lap sower in the deco chain."""
@@ -476,6 +479,18 @@ class SowVisitedMlap(SowMethodIf):
         super().__init__(game, lap_sower)
         self.lap_cont = lap_cont
         self.single_sower = single_sower
+
+
+    def __str__(self):
+        """A recursive func to print the whole decorator chain."""
+
+        my_str = '\n   '.join([repr(self),
+                               str(self.single_sower),
+                               str(self.lap_cont)])
+
+        if self.decorator:
+            return my_str + '\n' + str(self.decorator)
+        return my_str
 
 
     def get_single_sower(self):

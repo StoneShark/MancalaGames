@@ -11,15 +11,12 @@ Created on Fri Apr  7 22:19:24 2023
 
 import abc
 
+import deco_chain_if
 
 # %%  sow interface
 
-class SowStartIf(abc.ABC):
+class SowStartIf(deco_chain_if.DecoChainIf):
     """Interface for sowing."""
-
-    def __init__(self, game, decorator=None):
-        self.game = game
-        self.decorator = decorator
 
     @abc.abstractmethod
     def start_sow(self, loc):

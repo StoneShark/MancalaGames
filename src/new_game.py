@@ -10,6 +10,7 @@ Created on Fri Apr  7 12:47:15 2023
 import abc
 import random
 
+import deco_chain_if
 import end_move
 import game_interface as gi
 
@@ -34,12 +35,8 @@ def set_round_starter(game):
 
 # %%  NewGame interace
 
-class NewGameIf(abc.ABC):
+class NewGameIf(deco_chain_if.DecoChainIf):
     """New Game Interface."""
-
-    def __init__(self, game, decorator=None):
-        self.game = game
-        self.decorator = decorator
 
     @abc.abstractmethod
     def new_game(self, win_cond=None, new_round_ok=False):
@@ -76,6 +73,14 @@ class NewGamePattern(NewGameIf):
         super().__init__(game, decorator)
         self.pattern = pattern
 
+    def __str__(self):
+        """A recursive func to print the whole decorator chain."""
+
+        my_str = repr(self) + '\n   ' + str(self.pattern)
+
+        if self.decorator:
+            return my_str + '\n' + str(self.decorator)
+        return my_str
 
     def new_game(self, win_cond=None, new_round_ok=False):
         """Reset the game to new state and choose random start player."""
