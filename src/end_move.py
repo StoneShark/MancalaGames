@@ -711,6 +711,14 @@ class TerritoryGameWinner(EndTurnIf):
         return cond, winner
 
 
+class DepriveEndGame(EndTurnIf):
+    """We are forcing the game to end, end in a tie."""
+
+    def game_ended(self, repeat_turn, ended=False):
+        """Determine if the game ended."""
+        return gi.WinCond.TIE, self.game.turn
+
+
 class TerritoryEndGame(EndTurnIf):
     """We are forcing the game to end, call the decorator
     to collect the seeds. Decide who wins."""
@@ -815,7 +823,7 @@ def deco_quitter(game):
     (TERRITORY & MAX_SEEDS games must have one or both)."""
 
     if game.info.goal == gi.Goal.DEPRIVE:
-        return Winner(game, claimer=DivvyIgnoreSeeds(game))
+        return DepriveEndGame(game)
 
     if game.info.stores:
         quitter = Winner(game, claimer=DivvySeedsStores(game))
