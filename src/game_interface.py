@@ -155,6 +155,7 @@ class RoundStarter(enum.IntEnum):
     ALTERNATE = 0
     LOSER = 1
     WINNER = 2
+    LAST_MOVER = 3
 
 
 @enum.unique

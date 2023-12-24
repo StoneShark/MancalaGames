@@ -1,0 +1,40 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 7,
+      "nbr_start": 7
+   },
+   "game_info": {
+      "name": "Dakon",
+      "about": "A multi-lap mancala played in rounds. Sow direction is counterclockwise, sow into ones own store. A player may move again when the final seed is sown into their store. Cross capture from opponents side only; pick own seed on capture. The player that moved last in a round round, starts the next round. The game is over when either player cannot fill a single hole.\n\nVariations:\n- played with 6 to 10 holes per side with the numnber of start seeds equaling number of holes\n- passing not allowed",
+      "blocks": true,
+      "crosscapt": true,
+      "min_move": 1,
+      "mlaps": 1,
+      "oppsidecapt": true,
+      "round_fill": 2,
+      "round_starter": 3,
+      "rounds": true,
+      "sow_direct": 1,
+      "sow_own_store": true,
+      "stores": true,
+      "xcpickown": 1
+   },
+   "player": {
+      "algorithm": "minimaxer",
+      "ai_params": {
+         "mm_depth": [1, 1, 5, 7]
+      },
+      "scorer": {
+         "access_m": 0,
+         "child_cnt_m": 0,
+         "easy_rand": 0,
+         "empties_m": 1,
+         "evens_m": 0,
+         "repeat_turn": 0,
+         "seeds_m": 0,
+         "stores_m": 4
+      }
+   },
+   "rules": "Russ, Laurence. Mancala Games. 1984. p62."
+}

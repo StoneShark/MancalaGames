@@ -118,6 +118,7 @@ class MoveData:
 
     def __init__(self, game, move):
 
+        self.player = game.turn
         self.board = tuple(game.board)   # pre-move state
         self.move = move
         self.direct = None   # an intentionally invalid direction
@@ -166,7 +167,8 @@ class ManDeco:
     Decos are not told about a new game or round
     being started.
 
-    The inhibitor deco is told re-initialized."""
+    Only the inhibitor deco is told to re-initialized on
+    new game."""
 
     def __init__(self, game):
 
@@ -184,6 +186,14 @@ class ManDeco:
         self.gstr = game_str.deco_get_string(game)
         self.inhibitor = inhibitor.deco_inhibitor(game)
         self.make_child = self.gen_child_test(game)
+
+
+    def __str__(self):
+
+        rval = ''
+        for dname, dobj in vars(self).items():
+            rval += f'{dname}:\n' + str(dobj) + '\n\n'
+        return rval
 
 
     @staticmethod

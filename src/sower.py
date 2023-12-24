@@ -219,7 +219,7 @@ class SowCaptOwned(SowMethodIf):
                     and self.game.deco.capt_ok.capture_ok(loc)):
 
                 owner = self.owner(loc)
-                game_log.step(f'Catpure from {loc} by {owner}')
+                game_log.step(f'Capture from {loc} by {owner}')
                 self.game.store[owner] += self.game.board[loc]
                 self.game.board[loc] = 0
 

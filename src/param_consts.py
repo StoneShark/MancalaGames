@@ -139,7 +139,8 @@ STRING_DICTS = {
         gi.RoundStarter,
         {'Alternate': gi.RoundStarter.ALTERNATE,
          'Round Winner': gi.RoundStarter.WINNER,
-         'Round Loser': gi.RoundStarter.LOSER}),
+         'Round Loser': gi.RoundStarter.LOSER,
+         'Last Mover': gi.RoundStarter.LAST_MOVER}),
 
     'SowPrescribed': lookup_dicts(
         gi.SowPrescribed,
