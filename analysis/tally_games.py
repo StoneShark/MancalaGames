@@ -158,15 +158,14 @@ def build_data_frame():
             del info['name']
             convert_list(info, 'udir_holes', 'udirect')
             convert_list(info, 'capt_on', 'capt_on_t')
-            info = {key: info[key] for key in sorted(info.keys())}
+            info = {key: int(info[key]) for key in sorted(info.keys())}
 
             data.loc[gname] = dict(**gdict['game_constants'], **info)
 
         for name, dval in FIELDS.items():
             if name in data:
                 data[name] = data[name].fillna(0)
-            if isinstance(dval, bool):
-                data[name] = data[name].astype(int)
+            data[name] = data[name].astype(int)
 
     dlen = len(cargs.game)
     for col in INIT_COLUMNS:
