@@ -10,3 +10,4 @@ coverage.json
 logs
 MancalaGames
 *.cov
+analysis/data
