@@ -28,6 +28,9 @@ MOVE_COLOR = 'sandy brown'
 YES_STR = 'yes'
 NO_STR = 'no'
 
+FILL_POPUP = 50
+FILL_HINTS = 65
+
 
 # %%  global data for mover
 
@@ -137,7 +140,7 @@ class BehaviorIf(abc.ABC):
         self.btn = button
 
     def refresh_nonplay(self, disable=False, bg_color=TURN_COLOR):
-        """Make the UI match the behavior and game data for the non-play 
+        """Make the UI match the behavior and game data for the non-play
 		behaviors."""
 
         if disable:
@@ -309,14 +312,16 @@ class RndChooseButtonBehavior(BehaviorIf):
                 A new round is begining, so you may
                 change the blocked holes on the loser's of the
                 board. Do you wish to
-                rearrange the blocks?"""), width=50),
+                rearrange the blocks?"""), width=FILL_POPUP),
                     parent=game_ui)
 
         if ans != YES_STR:
             return False
 
         Hold.hold_menu(game_ui,
-                       'Move seeds out of holes you wish to block.')
+                       textwrap.fill(textwrap.dedent("""\
+                           Move seeds out of holes you wish to block
+                           and into other holes."""), width=FILL_HINTS))
 
         cls.starter = game_ui.game.turn
         loser = any(game_ui.game.blocked[l]
@@ -391,7 +396,6 @@ class RndChooseButtonBehavior(BehaviorIf):
 
     def _refresh(self, disable=False):
         """Make the UI match the behavior and game data."""
-
         self.refresh_nonplay(disable, CHOOSE_COLOR)
 
 
@@ -427,15 +431,17 @@ class RndMoveSeedsButtonBehavior(BehaviorIf):
                   hole contain at least one seed and one hole is playable.
                   Seeds maybe added or removed from the store.
                   The winner's seeds will be arranged the same way.
-                  Do you wish to rearrange the seeds?"""), width=50),
+                  Do you wish to rearrange the seeds?"""), width=FILL_POPUP),
             parent=game_ui)
 
         if ans != YES_STR:
             return False
 
         Hold.hold_menu(game_ui,
-                       'Each hole must contain at least one seed and\n'
-                       'one hole must be playable.')
+                       textwrap.fill(textwrap.dedent("""\
+                           Each hole must contain at least one seed and
+                           at least one hole must be playable."""),
+                           width=FILL_HINTS))
 
         cls.starter = game_ui.game.turn
         cls.loser = game_ui.game.store[0] > game_ui.game.store[1]
@@ -541,7 +547,6 @@ class RndMoveSeedsButtonBehavior(BehaviorIf):
 
     def _refresh(self, disable=False):
         """Make the UI match the behavior and game data."""
-
         self.refresh_nonplay(disable, SEED_COLOR)
 
 
@@ -567,7 +572,7 @@ class MoveSeedsButtonBehavior(BehaviorIf):
                   your side of the board. Your opponents seeds will be
                   arranged the same. Rearranging seeds counts as your
                   first move. Do you wish to move any
-                  seeds?"""), width=50),
+                  seeds?"""), width=FILL_POPUP),
             parent=game_ui)
 
         if ans != YES_STR:
@@ -575,7 +580,12 @@ class MoveSeedsButtonBehavior(BehaviorIf):
             return False
 
         cls.saved_state = game_ui.game.state
-        Hold.hold_menu(game_ui)
+        Hold.hold_menu(game_ui,
+                       textwrap.fill(textwrap.dedent("""\
+                           Rearrange the seeds on your side of the board;
+                           no seeds may be put into the store.
+                           Your opponents seeds will reflect your position."""),
+                           width=FILL_HINTS))
         return True
 
 
@@ -659,13 +669,10 @@ class MoveSeedsButtonBehavior(BehaviorIf):
 
     def _refresh(self, disable=False):
         """Make the UI match the behavior and game data."""
-
         self.refresh_nonplay(disable, MOVE_COLOR)
 
 
-
 # %% store behaviors
-
 
 class NoStoreBehavior(StoreBehaviorIf):
     """Store behavior that has no interaction.
