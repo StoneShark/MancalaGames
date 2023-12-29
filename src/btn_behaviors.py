@@ -136,6 +136,25 @@ class BehaviorIf(abc.ABC):
     def __init__(self, button):
         self.btn = button
 
+    def refresh_nonplay(self, disable=False, bg_color=TURN_COLOR):
+        """Make the UI match the behavior and game data for the non-play 
+		behaviors."""
+
+        if disable:
+            self.btn['background'] = 'SystemButtonFace'
+            self.btn['state'] = tk.DISABLED
+        else:
+            self.btn['background'] = bg_color
+            self.btn['state'] = tk.NORMAL
+
+        if self.btn.props.blocked:
+            self.btn['text'] = 'x'
+
+        elif self.btn.props.seeds:
+            self.btn['text'] = str(self.btn.props.seeds)
+        else:
+            self.btn['text'] = ''
+
     @classmethod
     @abc.abstractmethod
     def ask_mode_change(cls, game_ui):
@@ -373,20 +392,7 @@ class RndChooseButtonBehavior(BehaviorIf):
     def _refresh(self, disable=False):
         """Make the UI match the behavior and game data."""
 
-        if disable:
-            self.btn['background'] = 'SystemButtonFace'
-            self.btn['state'] = tk.DISABLED
-        else:
-            self.btn['background'] = CHOOSE_COLOR
-            self.btn['state'] = tk.NORMAL
-
-        if self.btn.props.blocked:
-            self.btn['text'] = 'x'
-
-        elif self.btn.props.seeds:
-            self.btn['text'] = str(self.btn.props.seeds)
-        else:
-            self.btn['text'] = ''
+        self.refresh_nonplay(disable, CHOOSE_COLOR)
 
 
 
@@ -536,20 +542,7 @@ class RndMoveSeedsButtonBehavior(BehaviorIf):
     def _refresh(self, disable=False):
         """Make the UI match the behavior and game data."""
 
-        if disable:
-            self.btn['background'] = 'SystemButtonFace'
-            self.btn['state'] = tk.DISABLED
-        else:
-            self.btn['background'] = SEED_COLOR
-            self.btn['state'] = tk.NORMAL
-
-        if self.btn.props.blocked:
-            self.btn['text'] = 'x'
-
-        elif self.btn.props.seeds:
-            self.btn['text'] = str(self.btn.props.seeds)
-        else:
-            self.btn['text'] = ''
+        self.refresh_nonplay(disable, SEED_COLOR)
 
 
 class MoveSeedsButtonBehavior(BehaviorIf):
@@ -667,17 +660,8 @@ class MoveSeedsButtonBehavior(BehaviorIf):
     def _refresh(self, disable=False):
         """Make the UI match the behavior and game data."""
 
-        if disable:
-            self.btn['background'] = 'SystemButtonFace'
-            self.btn['state'] = tk.DISABLED
-        else:
-            self.btn['background'] = MOVE_COLOR
-            self.btn['state'] = tk.NORMAL
+        self.refresh_nonplay(disable, MOVE_COLOR)
 
-        if self.btn.props.seeds:
-            self.btn['text'] = str(self.btn.props.seeds)
-        else:
-            self.btn['text'] = ''
 
 
 # %% store behaviors
