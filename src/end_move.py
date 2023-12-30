@@ -652,49 +652,26 @@ class TerritoryGameWinner(EndTurnIf):
         return False
 
 
-    def _compare_seed_cnts(self, seeds):
-        """All of the seeds have been collected and the
-        game is not over, determine the round outcome."""
-
-        if seeds[True] > seeds[False]:
-            return gi.WinCond.ROUND_WIN, True
-
-        if seeds[False] > seeds[True]:
-            return gi.WinCond.ROUND_WIN, False
-
-        return gi.WinCond.ROUND_TIE, self.game.turn
-
-
     def _test_round_winner(self):
         """The round has ended, determine if their is a game
         winner, or the round outcome."""
 
-        tot_holes = self.game.cts.dbl_holes
-        gparam_one = self.game.info.gparam_one
+        winner, wholes = self.game.compute_win_holes()
 
-        false_holes, seeds = self.game.compute_owners()
-
-        if false_holes >= gparam_one:
-            return gi.WinCond.WIN, False
-
-        if tot_holes - false_holes >= gparam_one:
-            return gi.WinCond.WIN, True
-
-        return self._compare_seed_cnts(seeds)
+        if winner is None:
+            return gi.WinCond.ROUND_TIE, self.game.turn
+        if wholes >= self.game.info.gparam_one:
+            return gi.WinCond.WIN, winner
+        return gi.WinCond.ROUND_WIN, winner
 
 
     def _test_winner(self):
         """The game has ended, decide who won or if a TIE."""
 
-        false_holes, _ = self.game.compute_owners()
-
-        if false_holes > self.game.cts.holes:
-            return gi.WinCond.WIN, False
-
-        if false_holes < self.game.cts.holes:
-            return gi.WinCond.WIN, True
-
-        return gi.WinCond.TIE, self.game.turn
+        winner, _ = self.game.compute_win_holes()
+        if winner is None:
+            return gi.WinCond.TIE, self.game.turn
+        return gi.WinCond.WIN, winner
 
 
     def game_ended(self, repeat_turn, ended=False):
@@ -726,15 +703,10 @@ class TerritoryEndGame(EndTurnIf):
     def _test_winner(self):
         """The game has ended, decide who won or if a TIE."""
 
-        false_holes, _ = self.game.compute_owners()
-
-        if false_holes > self.game.cts.holes:
-            return gi.WinCond.WIN, False
-
-        if false_holes < self.game.cts.holes:
-            return gi.WinCond.WIN, True
-
-        return gi.WinCond.TIE, self.game.turn
+        winner, wholes = self.game.compute_win_holes()
+        if winner is None:
+            return gi.WinCond.TIE, self.game.turn
+        return gi.WinCond.WIN, winner
 
 
     def game_ended(self, repeat_turn, ended=False):
@@ -775,11 +747,6 @@ def deco_end_move(game):
     if game.info.goal == gi.Goal.DEPRIVE:
         return DepriveSeedsEndGame(game)
 
-    if game.info.child_cvt:
-        claimer = ChildClaimSeeds(game)
-    else:
-        claimer = ClaimSeeds(game)
-
     ender = deco_add_bottom_winner(game)
 
     if not game.info.mustpass:
@@ -792,6 +759,11 @@ def deco_end_move(game):
             ender = EndTurnMustShare(game, game.cts.board_side, ender)
 
     ender = EndTurnNotPlayable(game, ender)
+
+    if game.info.child_cvt:
+        claimer = ChildClaimSeeds(game)
+    else:
+        claimer = ClaimSeeds(game)
     ender = Winner(game, ender, claimer)
 
     if game.info.rounds:
@@ -830,7 +802,6 @@ def deco_quitter(game):
     elif game.info.child_cvt:
         quitter = Winner(game, claimer=DivvySeedsChildOnly(game))
     else:
-        # expect only test games will get here
         return Winner(game, claimer=DivvyIgnoreSeeds(game))
 
     if game.info.goal == gi.Goal.MAX_SEEDS:

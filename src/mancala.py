@@ -441,13 +441,13 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         self.blocked[loc] = blocked
 
 
-    def compute_owners(self):
-        """Compute the number of holes that False should own
-        based on number of seeds. Called on new round for
-        Territory game.
-        Seeds have already been collected from non-children"""
+    def compute_win_holes(self):
+        """Compute the number of holes that winner should own
+        based on number of seeds.
+        Seeds have already been collected from non-children.
+		Do not change the board.
+		Return: winner (or None for tie), and winner holes."""
 
-        # XXXX I think there's duplication of this collection
         seeds = self.store.copy()
         for loc in range(self.cts.dbl_holes):
             if self.child[loc] is True:
@@ -455,13 +455,17 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             elif self.child[loc] is False:
                 seeds[False] += self.board[loc]
 
-        nbr_start = self.cts.nbr_start
-        false_holes, rem = divmod(seeds[False], nbr_start)
-        if rem >= nbr_start // 2:
-            false_holes += 1
-        game_log.add(f"False holes = {false_holes}", game_log.IMPORT)
+        if seeds[True] == seeds[False]:
+            return None, self.cts.holes
 
-        return false_holes, seeds
+        nbr_start = self.cts.nbr_start
+        greater = seeds[True] > seeds[False]
+        greater_holes, rem = divmod(seeds[greater], nbr_start)
+        if rem > nbr_start // 2:
+            greater_holes += 1
+
+        game_log.add(f"{greater} holes = {greater_holes}", game_log.IMPORT)
+        return greater, greater_holes
 
 
     def new_game(self, win_cond=None, new_round_ok=False):
