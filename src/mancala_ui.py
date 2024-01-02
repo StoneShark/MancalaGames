@@ -354,7 +354,7 @@ class MancalaUI(tk.Frame):
         paragraphs = atext.split('\n')
         out_text = self.info.name + ':\n'
         for para in paragraphs:
-            out_text += textwrap.fill(para, 45) + '\n'
+            out_text += textwrap.fill(para, 55) + '\n'
 
         self._quiet_dialog('About', ''.join(out_text))
 
