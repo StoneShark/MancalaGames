@@ -703,7 +703,7 @@ class TerritoryEndGame(EndTurnIf):
     def _test_winner(self):
         """The game has ended, decide who won or if a TIE."""
 
-        winner, wholes = self.game.compute_win_holes()
+        winner, _ = self.game.compute_win_holes()
         if winner is None:
             return gi.WinCond.TIE, self.game.turn
         return gi.WinCond.WIN, winner
