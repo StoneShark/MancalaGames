@@ -277,9 +277,7 @@ class TestTerritory:
 
         game.board = [0] * game.cts.dbl_holes
         game.store = [fseeds, game.cts.total_seeds - fseeds]
-        print(game)
 
         cond = WinCond.WIN if win else WinCond.ROUND_WIN
         game.new_game(cond, new_round_ok=True)
-        print(game)
         assert game.owner == eowners

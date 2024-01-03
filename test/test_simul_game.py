@@ -72,7 +72,6 @@ def test_one_game(game_data, request):
         key_name = game.info.name + '/loop_max'
         cnt = request.config.cache.get(key_name, 0)
         request.config.cache.set(key_name, cnt + 1)
-        print("Loop maxed before game ended.", game.info.name)
 
 
 @pytest.fixture

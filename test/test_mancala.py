@@ -460,8 +460,6 @@ class TestWinMessage:
 
         title, message = game.win_message(wcond)
 
-        print(message)
-
         if wcond.name in ['WIN', 'ROUND_WIN']:
             if 'max' in game_fixt:
                 assert 'most seeds' in message
