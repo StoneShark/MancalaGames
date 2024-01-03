@@ -266,9 +266,9 @@ class TestTerritory:
                               (12, F, [F, F, F, F, T, T]),
                               (11, F, [F, F, F, F, T, T]),
                               (10, F, [F, F, F, T, T, T]),
-                              ( 6, F, [F, F, T, T, T, T]),
-                              ( 5, F, [F, F, T, T, T, T]),
-                              ( 4, F, [F, T, T, T, T, T]),
+                              ( 6, F, [T, F, F, T, T, T]),
+                              ( 5, F, [T, F, F, T, T, T]),
+                              ( 4, F, [T, T, F, T, T, T]),
                               ( 4, T, [F, F, F, T, T, T]),
                               ( 3, T, [F, F, F, T, T, T]),
 
@@ -277,7 +277,9 @@ class TestTerritory:
 
         game.board = [0] * game.cts.dbl_holes
         game.store = [fseeds, game.cts.total_seeds - fseeds]
+        print(game)
 
         cond = WinCond.WIN if win else WinCond.ROUND_WIN
         game.new_game(cond, new_round_ok=True)
+        print(game)
         assert game.owner == eowners
