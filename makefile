@@ -82,15 +82,6 @@ stress_tests: test/context.py
 	pytest test\\test_simul_game.py --nbr_runs 500
 	pytest test\\test_simul_players.py --nbr_runs 50
 
-	
-#  test individual files
-#	usage:   make <testfile>.cov
-#       example: make test_var.cov
-#  where <testfile> is a file of tests in the 'test' directory
-#  this rule cleans all previous coverage data and runs the one
-#  file from test. It reports the coverage of the files that
-#  are expected to be covered (via TEST_COVERS in the test file).
-
 
 vpath %.cov ./cov
 vpath %.py ./test
