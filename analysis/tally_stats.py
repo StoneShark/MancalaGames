@@ -6,6 +6,9 @@ Created on Sun Jul 23 11:29:10 2023
 
 # %% imports
 
+import argparse
+import sys
+
 import numpy as np
 import pandas as pd
 import scipy
@@ -56,14 +59,61 @@ ST_Z_SCORE = 'st_z_score'
 STARTER_FAIR = 'starter_fair'
 
 
+# %%  command line args
+
+def define_parser():
+    """Define the command line arguements."""
+
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('--input', action='store',
+                        required=True,
+                        help="""Input file.""")
+
+    parser.add_argument('--output', action='store',
+                        help="""Output file. Default is 'tall_' + input.""")
+
+    return parser
+
+
+def process_command_line():
+    """Process the command line. Store data in cargs."""
+
+    global cargs
+
+    parser = define_parser()
+    try:
+        cargs = parser.parse_args()
+    except argparse.ArgumentError:
+        parser.print_help()
+        sys.exit()
+
+    if not cargs.output:
+        cargs.output = 'tall_' + cargs.input
+
+    print(cargs)
+
+
 # %% read
 
-files = ['mlaps_rounds.csv', 'no_mlaps_rounds.csv', 'no_rounds.csv', 'sadeqa.csv']
+# files = ['mlaps_rounds.csv', 'no_mlaps_rounds.csv', 'no_rounds.csv', 'sadeqa.csv']
 
-data = pd.concat(
-    [pd.read_csv('data/run30000/' + file, header=0, index_col=0)
-     for file in files])
+# data = pd.concat(
+#     [pd.read_csv('data/run30000/' + file, header=0, index_col=0)
+#      for file in files])
 
+def read_data():
+
+    global data
+
+    data = pd.read_csv('data/' + cargs.input + '.csv',
+                       header=0,
+                       index_col=0)
+
+# %%   main
+
+process_command_line()
+read_data()
 
 # %%  add stats columns
 
@@ -123,4 +173,4 @@ data[STR_PCT] = data[ST_SCORE] / (WIN_SCORE * data[NBR_RUNS])
 
 # %%
 
-data.to_csv('data/tally_30K_games_1222.csv')
+data.to_csv('data/' + cargs.output + '.csv')

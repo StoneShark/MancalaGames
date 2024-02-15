@@ -29,10 +29,10 @@ MAX_TURNS = 'max_turns'
 
 # %% read data
 
-files = ['mlaps_rounds.csv', 'no_mlaps_rounds.csv', 'no_rounds.csv', 'sadeqa.csv']
+files = ['All_100K.csv']
 
 data = pd.concat(
-    [pd.read_csv('data/run30000/' + file, header=0, index_col=0)
+    [pd.read_csv('data/' + file, header=0, index_col=0)
      for file in files])
 
 data = data.sort_index()

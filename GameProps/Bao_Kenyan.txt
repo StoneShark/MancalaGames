@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Bao_Kenyan",
-      "about": "Multi-lap, counter-clockwise sow. Can only move singles, if all singles and then only to empty holes. Cross-capture. The game ends when one player has more than half the seeds.\n\nVariation: Multilap sow only cannot begin with single seed sow.",
+      "about": "Multi-lap, counter-clockwise sow. Minimum move is 2, unless all occupied holes have single seeds which may only be moved to empty holes. Cross-capture. The game ends when one player has more than half the seeds or when the current player cannot move.\n\nVariation: Single seed can begin multilap sow (allow_rule: SINGLE_ONLY_ALL).",
       "allow_rule": 4,
       "crosscapt": true,
       "min_move": 1,
@@ -24,10 +24,7 @@
          "access_m": 0,
          "seeds_m": 0,
          "empties_m": 0,
-         "child_cnt_m": 0,
-         "evens_m": 0,
-         "easy_rand": 0,
-         "repeat_turn": 0
+         "easy_rand": 0
       }
    },
    "rules": "Russ, Laurence. Mancala Games. 1984. p31."

@@ -4,8 +4,8 @@
 Created on Sat Jul 15 14:25:17 2023
 @author: Ann"""
 
-# %%
 
+# %%   imports
 
 import pytest
 pytestmark = pytest.mark.unittest
@@ -41,51 +41,50 @@ N = None
 
 # %%
 
-
-TEST_DATA = [
-    (True,  utils.build_board([2, 2, 2], [0, 0, 0]),   # 0
-     FALSES, NONES, False, 2, [T, T, T]),
-    (True,  utils.build_board([1, 2, 3], [0, 0, 0]),   # 1
-     FALSES, NONES, False, 2, [F, T, T]),
-    (False, utils.build_board([0, 0, 0], [1, 1, 1]),   # 2
-     FALSES, NONES, False, 1,            [T, T, T]),
-    (False, utils.build_board([0, 0, 0], [1, 2, 3]),   # 3
-      FALSES, NONES, False, 2,           [F, T, T]),
-
-    (True, utils.build_board([2, 2, 0], [1, 0, 0]),    # 4
-     FALSES, NONES, True, 1, [T, T, F]),
-    (False, utils.build_board([1, 0, 0], [2, 2, 0]),   # 5
-     FALSES, NONES, True, 1,             [T, T, F]),
-    (True, utils.build_board([2, 1, 0], [0, 0, 0]),    # 6
-     FALSES, NONES, True, 1, [T, F, F]),
-    (False, utils.build_board([0, 0, 0], [0, 1, 1]),   # 7
-     FALSES, NONES, True, 1,             [F, F, T]),
-
-    (True,                                             # 8
-     utils.build_board([2, 2, 0], [1, 0, 0]),
-     utils.build_board([T, F, T], [T, F, T]), NONES, True, 1,
-                       [F, T, F]),
-    (True,                                             # 9
-     utils.build_board([2, 2, 2], [1, 0, 0]),
-     utils.build_board([T, F, F], [T, F, T]),
-     utils.build_board([N, T, N], [N, F, T]), True, 1,
-                       [F, F, T]),
-    (True,                                             # 10
-     utils.build_board([2, 2, 0], [1, 0, 0]),
-     utils.build_board([F, T, F], [T, F, T]),
-     utils.build_board([N, T, N], [N, F, T]), True, 1,
-                       [T, F, F]),
-
-    (True, utils.build_board([2, 2, 0], [1, 0, 0]),    # 11
-     FALSES, NONES, True, 2, [T, F, F]),
-    ]
-
 class TestAllowables:
+
+    TEST_ALLOW_DATA = [
+        (True,  utils.build_board([2, 2, 2], [0, 0, 0]),   # 0
+         FALSES, NONES, False, 2, [T, T, T]),
+        (True,  utils.build_board([1, 2, 3], [0, 0, 0]),   # 1
+         FALSES, NONES, False, 2, [F, T, T]),
+        (False, utils.build_board([0, 0, 0], [1, 1, 1]),   # 2
+         FALSES, NONES, False, 1,            [T, T, T]),
+        (False, utils.build_board([0, 0, 0], [1, 2, 3]),   # 3
+          FALSES, NONES, False, 2,           [F, T, T]),
+
+        (True, utils.build_board([2, 2, 0], [1, 0, 0]),    # 4
+         FALSES, NONES, True, 1, [T, T, F]),
+        (False, utils.build_board([1, 0, 0], [2, 2, 0]),   # 5
+         FALSES, NONES, True, 1,             [T, T, F]),
+        (True, utils.build_board([8, 1, 0], [0, 0, 0]),    # 6
+         FALSES, NONES, True, 1, [T, F, F]),
+        (False, utils.build_board([0, 0, 0], [0, 1, 1]),   # 7
+         FALSES, NONES, True, 1,             [F, F, T]),
+
+        (True,                                             # 8
+         utils.build_board([2, 2, 0], [1, 0, 0]),
+         utils.build_board([T, F, T], [T, F, T]), NONES, True, 1,
+                           [F, T, F]),
+        (True,                                             # 9
+         utils.build_board([2, 2, 2], [1, 0, 0]),
+         utils.build_board([T, F, F], [T, F, T]),
+         utils.build_board([N, T, N], [N, F, T]), True, 1,
+                           [F, F, T]),
+        (True,                                             # 10
+         utils.build_board([2, 2, 0], [1, 0, 0]),
+         utils.build_board([F, T, F], [T, F, T]),
+         utils.build_board([N, T, N], [N, F, T]), True, 1,
+                           [T, F, F]),
+
+        (True, utils.build_board([2, 2, 0], [1, 0, 0]),    # 11
+         FALSES, NONES, True, 2, [T, F, F]),
+        ]
 
     @pytest.mark.parametrize(
         'turn, board, blocked, child, mustshare, min_move, eresult',
-        TEST_DATA,
-        ids=[f'case_{cnt}' for cnt in range(len(TEST_DATA))])
+        TEST_ALLOW_DATA,
+        ids=[f'case_{cnt}' for cnt in range(len(TEST_ALLOW_DATA))])
     def test_allowables(self, turn, board, blocked, child,
                         mustshare, min_move, eresult, request):
 
@@ -98,9 +97,9 @@ class TestAllowables:
 
         game = mancala.Mancala(game_consts, game_info)
         game.turn = turn
-        game.board = board
-        game.blocked = blocked
-        game.child = child
+        game.board = board.copy()
+        game.blocked = blocked.copy()
+        game.child = child.copy()
 
         seeds = game.cts.total_seeds - sum(game.board)
         quot, rem = divmod(seeds, 2)
@@ -109,9 +108,50 @@ class TestAllowables:
         assert game.deco.allow.get_allowable_holes() == eresult
 
 
-
     @pytest.mark.parametrize(
         'turn, board, blocked, child, mustshare, min_move, eresult',
+        TEST_ALLOW_DATA,
+        ids=[f'case_{cnt}' for cnt in range(len(TEST_ALLOW_DATA))])
+    def test_ml3_allowables(self, turn, board, blocked, child,
+                            mustshare, min_move, eresult):
+        """Use the same test data for move triples, but only check
+        the 3 (of 6) elements from the results against the expected
+        results."""
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(capt_on=[2],
+                                goal=2,
+                                gparam_one=6,
+                                stores=True,
+                                min_move=min_move,
+                                mustshare=mustshare,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = turn
+        game.board = board.copy()
+        game.blocked = blocked.copy()
+        game.child = child.copy()
+
+        seeds = game.cts.total_seeds - sum(game.board)
+        quot, rem = divmod(seeds, 2)
+        game.store = [quot, quot + rem]
+
+        print(game)
+        res = game.deco.allow.get_allowable_holes()
+        print(turn)
+        print(res)
+        print(eresult)
+        if turn:
+            assert res[:3] == [F, F, F]
+            assert (res[3:])[::-1] == eresult
+        else:
+            assert res[3:] == [F, F, F]
+            assert res[:3] == eresult
+
+
+    TEST_NOGS_DATA = \
         [(True,  utils.build_board([2, 2, 2], [0, 0, 0]),   # 0
           FALSES, NONES, False, 2, [T, T, T]),
          (True,  utils.build_board([1, 2, 3], [0, 0, 0]),   # 1
@@ -144,7 +184,12 @@ class TestAllowables:
           utils.build_board([F, T, F], [T, F, T]),
           utils.build_board([N, T, N], [N, F, T]), True, 2,
                             [T, F, F]),
-        ])
+        ]
+
+    @pytest.mark.parametrize(
+        'turn, board, blocked, child, mustshare, min_move, eresult',
+        TEST_NOGS_DATA,
+        ids=[f'case_{cnt}' for cnt in range(len(TEST_NOGS_DATA))])
     def test_nograndslam(self, turn, board, blocked, child,
                          mustshare, min_move, eresult):
 
@@ -167,7 +212,6 @@ class TestAllowables:
         game.store = [quot, quot + rem]
 
         assert game.deco.allow.get_allowable_holes() == eresult
-
 
 
     def test_mlap_allowables(self):
@@ -254,9 +298,7 @@ class TestMemoize:
 
 class TestNoSidesAllow:
 
-    @pytest.mark.parametrize('turn', [False, True])
-    @pytest.mark.parametrize(
-        'board, blocked, child, min_move, eresult',
+    TEST_DATA = \
         [([2, 2, 2, 0, 0, 0],   # 0
           FALSES, NONES, 2,
           [T, T, T, F, F, F]),
@@ -286,7 +328,12 @@ class TestNoSidesAllow:
           [F, T, F, T, F, T],
           [N, T, N, N, F, T], 2,
           [T, F, F, F, F, F]),
-        ])
+         ]
+
+    @pytest.mark.parametrize('turn', [False, True])
+    @pytest.mark.parametrize(
+        'board, blocked, child, min_move, eresult',
+        TEST_DATA)
     def test_allowables(self, turn, board, blocked, child, min_move, eresult):
 
         game_consts = gc.GameConsts(nbr_start=4, holes=3)
@@ -304,7 +351,6 @@ class TestNoSidesAllow:
         game.child = child
 
         assert game.deco.allow.get_allowable_holes() == eresult
-
 
 
 class TestOppEmpty:
@@ -334,8 +380,7 @@ class TestOppEmpty:
 
 class TestSingleToEmpty:
 
-    @pytest.mark.parametrize(
-        'direct, board, turn, eresult',
+    TEST_STE_DATA = \
         [(Direct.CCW, [4] * 8,  True, [T, T, T, T]),
 
          (Direct.CCW, utils.build_board([0, 1, 0, 2],
@@ -362,8 +407,12 @@ class TestSingleToEmpty:
                                           [1, 2, 0, 1]), True, [F, T, F, F]),
          (Direct.SPLIT, utils.build_board([1, 2, 0, 1],
                                           [1, 2, 0, 1]), False, [F, T, F, F]),
-        ],
-        ids=[f'case_{cnt}' for cnt in range(12)])
+        ]
+
+    @pytest.mark.parametrize(
+        'direct, board, turn, eresult',
+        TEST_STE_DATA,
+        ids=[f'case_{cnt}' for cnt in range(len(TEST_STE_DATA))])
     def test_allowables(self, direct, board, turn, eresult):
 
         game_consts = gc.GameConsts(nbr_start=4, holes=4)

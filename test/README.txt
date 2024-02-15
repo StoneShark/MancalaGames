@@ -19,4 +19,4 @@ Debugging in Spyder:
 - put breakpoints in test
 - execute something like:
 
-%debug pytest.main(['test_allowables.py::TestAllowables::test_allowables'])
+%debug pytest.main(['test_allowables.py::TestAllowables::test_ml3_allowables[case_6]'])
