@@ -25,8 +25,8 @@ class GameLog:
     STEP = 2
     INFO = 3
     DETAIL = 4
+    SHOWALL = DETAIL
     SIMUL = 5
-    SHOWALL = SIMUL
 
     def __init__(self):
 
@@ -68,7 +68,7 @@ class GameLog:
     @level.setter
     def level(self, value):
         """Set level."""
-        if 0 <= value <= self.SHOWALL:
+        if 0 <= value <= self.SIMUL:
             self._level = value
 
 
