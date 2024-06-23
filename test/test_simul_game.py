@@ -32,6 +32,7 @@ from context import game_log
 
 from game_interface import WinCond
 
+# uncomment, if you should wish to skip this test
 # pytest.skip(reason="Random play. Heuristic eval.", allow_module_level=True)
 
 
