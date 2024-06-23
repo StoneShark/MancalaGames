@@ -2,49 +2,7 @@
 <html lang="en">
 <head>
 <title>Mancala Games</title>
-<style>
-body {
-	max-width: 600px;
-	margin: 0 auto;
-	float: none;
-	font-family: Arial, sans-serif;
-}
-h1 {
-	text-align: center;
-}
-h1, h2, h3, h4 {
-	color: darkblue;
-}
-table {
-	border-collapse: collapse;
-}
-td {
-	border: 1px solid #000; padding:2px;
-}
-.thead {
-	background-color:lightblue;
-	color:darkblue;
-	text-align: center;
-	font-weight: bold;
-}
-.thead2 {
-	background-color:lightblue;
-	color:darkblue;
-	vertical-align:top;
-}
-.tdtop {
-	font-size:10pt;
-	vertical-align:top;
-}
-.center {
-	text-align: center;
-}
-.no_exspace {
-	color: grey;
-    margin-top:-2px;
-    margin-bottom:-2px;
-}
-</style>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <h1>Mancala Games</h1>
@@ -55,128 +13,70 @@ Games may be played with two players or one player and an
 <p>This engine supports games with two ranks of 2 to 12 holes per side.
 Game stores to the left and right of holes are optional.
 
+<h2>Game Play</h2>
 <p>Game play proceeds in the following steps:
 
-<ol>
-<li>Initialize game (or round).
+<ol type="I">
+<li class="over">Initialize game (or round).
 Game initialization distributes the number of start seeds into each hole.
 Round initialization distributes the seeds each player has into
 their holes, possibly blocking some holes from play for the round.
-<li>Play the game.
+<li class="over">Play the game.
 Players alternate turns performing these steps for each turn:
-	<p>Sowing Phase:
-	<ol><li>Current player removes the seeds from one hole
-	on their side of the board.
-	Depending on the game, only some of the players holes are available for
-	play.
-	<li>Those seeds are sown into new holes one at a time:
-	clockwise or counter-clockwise.
-	Sow direction depends on game parameters, and is occationally
-	under user control.
-	<li>Optionally, for multi-lap games,
-	the seeds in the final hole sown are picked up sowing continues.
-	<li>Optionally, for store sowing games,
-	a seed maybe sown into the players store when it is being passed.
-	</ol>
-	<p>Capture Phase:
-	<ol><li value=5>The player moves seeds from
-	prescribed holes to a store, walda, or child.
-	Prescription of holes is parametrically controlled via the
-	<a href="#opwindow">Mancala Options Window</a>.
-	<li>Some games support multiple captures.
-	</ol>
-	<p>Determine if there was a winner or other special
+	<ol type="A">
+	<li class="over">Sowing Phase:
+		<ol type='1'>
+		<li class="over">Current player removes the seeds from one hole
+		on their side of the board.
+		Depending on the game, only some of the players holes are available for
+		play.
+		<li class="over">Those seeds are sown into new holes one at a time:
+		clockwise or counter-clockwise.
+		Sow direction depends on game parameters, and is occationally
+		under user control.
+		<li class="over">Optionally, for multi-lap games,
+		the seeds in the final hole sown are picked up sowing continues.
+		<li class="over">Optionally, for store sowing games,
+		a seed maybe sown into the players store when it is being passed.
+		</ol>
+	<li class="over">Capture Phase:
+		<ol type="1">
+		<li class="over">The player moves seeds from
+		prescribed holes to a store, walda, or child.
+		Prescription of holes is parametrically controlled via the
+		<a href="#opwindow">Mancala Options UI</a>.
+		<li class="over">Some games support multiple captures.
+		</ol>
+	<li class="over">Determine if there was a winner or other special
 	conditions (such as a required pass).
-<li>Check for end game conditions: win, loss, tie, or end of round.
+	</ol>
+<li class="over">Check for end game conditions: win, loss, tie or end of round.
 </ol>
 
-<p>Mancala Games provides three ways to start games:
+<h2>Selecting and Starting Games</h2>
+<p>The Mancala Games Engine provides three ways to start a game.
+Game play is always via the <a href="#manwindow">Mancala UI</a>.
 
 <ol>
-<li><b>Play</b>: a command line interface to directly start a game given
-a mancala configuration file. Usage to play Wari (for example):
-<pre>
-     play.exe.lnk Wari
-</pre>
+<li><b>Mancala Games</b>: Pops up the full parameter selection
+window&mdash;see <a href="#opwindow">Mancala Options UI</a>.
+Game property files can be defined, loaded, edited and saved.
+Games can be played with the currently define parameters.
+<br><br>
 <li><b>Play Mancala</b>: a game that can be started via a double click on
 the game link (play_mancala.exe). A popup is provided which allows selection
 of any game in the GameProps directory. A tool tip is used to show
 the About string of each game.
-<li><b>Mancala Games</b>: Pops up the full parameter selection window.
-Game property files can be defined, loaded, edited and saved.
-Games can be played with the currently define parameters.
-Most game options can selected see <a href="#opwindow">Mancala Options Window</a>.
+<br><br>
+<li><b>Play</b>: a command line interface to directly start a game given
+a mancala configuration file. Usage to play Wari (for example):
+<pre>
+     play.exe.lnk Wari
+</pre>This method can be used to create a shortcut to startup your favorite game.
+
 </ol>
 
-<h2 id="opwindow">Mancala Options Window</h2>
-
-<p>The Mancala Options window provides about two dozen mancala game options.
-Each effects how the game is played.
-Some options are incompatible with each other, errors and inconsistencies
-are caught during parameter test.
-Some combinations are simply not yet supported (or may never be supported).
-
-After selecting the desired options the Command Buttons are used
-to test, load, save, and launch the game.
-
-<h3>Command Buttons</h3>
-<p>Command buttons appear across the bottom of the main window.
-<h4>Test</h4>
-<p>The test button checks the consistency of the selected options
-generating both warnings and errors.
-Warnings suggest that there might be odd game play, but you can proceed if you want.
-Errors mean that the game cannot be played with the options that you've selected.
-<h4>Load</h4>
-<p>The load button loads a saved game configuration.
-About a dozen game configurations are provided.
-They are described in <a href="#pregames">Preconfigured Games</a>.
-<p>The parameters are loaded and then checked for issues.
-Some errors will be correctable directly in the UI,
-others (created by editing the JSON file) may require
-going back to your text editor.
-<h4>Save</h4>
-<p>The save button saves the current options to a file.
-User save files will be larger than the provided
-games because all options are written to the file.
-The JSON text files which may be edited directly.
-A few parameters are only available in the JSON file.
-See <a href="#paramtable">Game Parameter Details</a>
-and <a href="#aiscorer">AI Player Parameters</a>.
-<h4>Play</h4>
-<p>The play button launches the Mancala Game window allowing
-a game to be played with the current options.
-If the selected options have not been tested or
-have been changed since the last test, they are tested before the
-game is started.
-<p>During game play all parameter entry is disabled, but left
-visible to allow review of the options.
-
-<h3>Game Options</h3>
-Game options are provided in the following categories, details of each are
-described in the <a href="#paramtable">Game Parameter Table</a>
-and <a href="#aiscorer">AI Player Parameters</a>.
-<ul>
-<li><b>Game Class</b>: the base logic that controls how the game is played.
-Mancala is the default for most games.
-<li><b>Board Props</b>: define the size, configuration and start conditions
-of a game.
-<li><b>Game Dynamics</b>: provide some high level of control over how
-game play is conducted.
-<li><b>Sow Parameters</b>: control how the seeds are sown (moved around)
-in the sow phase of a turn.
-<li><b>Capture Parameters</b>: control where seeds are captured from and
-any special mechanisms for multiple captures.
-<li><b>Scorer Parameters</b>: control how the AI player evaluates the
-board after each simulated move (see <a href="#aiplayer">AI Player</a>).
-<li><b>About</b>: this provides a place to define the text shown in the
-about window of the Mancala game.
-Generally, include a brief description of the intended game play
-and options.
-You'll find this a useful references when you switch playing between
-different games.
-</ul>
-
-<h2 id="manwindow">Mancala Game Window</h2>
+<h2 id="manwindow">Mancala UI</h2>
 
 <p>The Mancala Game window represents the playing surface: two ranks of
 holes for each player are provided and(if configured) stores are available on
@@ -199,16 +99,12 @@ If a player is required to pass, a window will popup to state that.
 
 <h4>Game</h4>
 <p><b>New</b>: Start a new game.
-<p><b>End Game</b>: End the current game.
-Seeds remaining in play are distributed evenly with a final odd
-seed going to the player with the fewer seeds.
+<p><b>End Game</b>: End the current game in as fair a way as possible.
 This is useful when the game has reached a stalemate, e.g. two seeds
 circling the game board.
-<p><b>Show Prev</b>: If the game was started from a console window,
-this will show a test description of the previous board layout
-(if there was one).
-<p><b>Show Log</b>: If the game was started from a console window,
-show a log of the game moves.
+Generally, any seeds remaining in play are distributed evenly
+with a final odd seed going to the player with the fewer seeds.
+
 
 <h4>AI</h4>
 <p><b>AI Player</b>: Enable or disable the ai player.
@@ -225,7 +121,7 @@ at the results of your move and which moves are available for the
 AI player You will see updates between repeat turns.
 <p><b>Long AI Delay</b>: Similar to 'Short AI Delay' but the delay
 lengthened to about 3 seconds.
-<p>Difficulty ratings set number of moves the AI player will look ahead
+<p><b class="inhead">Difficulty Ratings</b> set number of moves the AI player will look ahead
 and other effects listed below:
 <p><b>Easy</b>: Set the AI difficulty to easy. On the easy setting
 the 'Easy Error Random' will be included in minimaxer
@@ -239,6 +135,35 @@ Look ahead is typically 3 moves.
 The 'Access (d>1) Mult will be included in the scorer.
 Look ahead is typically 5 moves.
 
+<h4>Log</h4>
+<p><b>Show Prev</b>: If the game was started from a console window,
+this will show a test description of the previous board layout
+(if there was one).
+<p><b>Show Log</b>: If the game was started from a console window,
+show a log of the game moves.
+<p><b>Save Log</b>: Saves the log to the logs directory with a
+date and time stamp.
+
+<p>The current <b class="inhead">Log Level</b> controls what is added to the game log,
+each log level includes the items from the level above it:
+<ol>
+<li><b>Moves</b>: Records each move and a description for ai moves.
+<li><b>Important</b>: Records important actions or prohibitions
+which describe behavior that might appear as incorrect, but are part of the game rules.
+<li><b>Steps</b>: Adds a description of each game step to the log.
+<li><b>Information</b>: Adds game progress information to the log.
+These items are generally apparent to the players, but this creates a record.
+<li><b>Detail/All</b>: Includes very detailed information in the game log,
+e.g. individual sowing substeps in multilap games.
+</ol>
+
+<p>Two additional <b class="inhead">Log Controls</b> are provided:
+<p><b>Live Log</b>: The log is printed to the console as it is collected.
+Some information may give away the AI Players intenteded moves.
+<p><b>Log AI Analysis</b>: Turn on logging for the AI Player's analysis of moves.
+This can become quite verbose as the AI player considers each possible move and response.
+
+
 <h4>Help</h4>
 <p><b>Help...</b>: If there is a help file for the game,
 popit up in the system browser.
@@ -246,235 +171,46 @@ popit up in the system browser.
 that was included in the About pane of the Mancala Options window.
 
 
-<h2 id="paramtable">Game Parameter Details</h2>
+<h2 id="opwindow">Mancala Options UI</h2>
 
-<p>The table below shows for each parameter: title; description and values if not
-boolean; the parameter name in the config file; and the location within the config
-file.
-<table>
-<colgroup>
-<col width="15%"><col width="55%"/><col width="15%"/><col width="15%"/>
-</colgroup>
-<tr>
-<td class="thead"><p>Title</td>
-<td class="thead"><p>Description</td>
-<td class="thead"><p>Parameter name</td>
-<td class="thead"><p>Config File Location</td>
-</tr>
-<tr><td class="thead2" colspan="4">Board Props</td></tr>
-<tr>
-<td class="tdtop">Holes per Side</td>
-<td class="tdtop">The number of holes on each players side of the board.
-Generally, these are the holes that a player can initiate a move from.</td>
-<td class="tdtop">holes</td>
-<td class="tdtop">game_constants</td>
-</tr>
-<tr>
-<td class="tdtop">Start Seeds</td>
-<td class="tdtop">The number of seeds in each hole at the start of a game.</td>
-<td class="tdtop">nbr_start</td>
-<td class="tdtop">game_constants</td>
-</tr>
-<tr>
-<td class="tdtop">Stores Present</td>
-<td class="tdtop">If checked the game store are present on the Mancala UI.
-Generally, seeds collected in the capture phase are placed in the game store
-to the right of each player (when facing the game board).</td>
-<td class="tdtop">stores</td>
-<td class="tdtop">game_info / flags</td>
-</tr>
-<tr><td class="thead2" colspan="4">Game Dynamic</td></tr>
-<tr>
-<td class="tdtop">Play in Rounds</td>
-<td class="tdtop">The game is made up of multiple rounds.
-Each round has end criteria similar to a normal game.
-Each new round starts with the seeds being re-allocated to the holes.
-If a player doesn't have enough seeds to fill their holes,
-some holes may be blocked for the duration of the round.
-Blocked holes do not accept sown seeds.</td>
-<td class="tdtop">rounds</td>
-<td class="tdtop">game_info / flags</td>
-</tr>
-<tr>
-<td class="tdtop">Block Unused Holes</td>
-<td class="tdtop">A blocked hole is out of play for the game or round.
-When a game is played in rounds and some holes do not
-have seeds to start the round, the hole is out of play for the round.</td>
-<td class="tdtop">blocks</td>
-<td class="tdtop">game_info / flags</td>
-</tr>
-<tr>
-<td class="tdtop">Enable Child Holes</td>
-<td class="tdtop">Holes can be designated as a child hole during game play,
-i.e. they are owned by one of the players.
-Depending on the game, holes on either side of the board
-can be owned by either player.
-Seeds are sown in child holes. A turn may not start from child holes.
-In general, seeds cannot be captured from child holes.
-<br><br>Other names for child holes include daughters and waldas.</td>
-<td class="tdtop">child</td>
-<td class="tdtop">game_info / flags</td>
-</tr>
-<tr>
-<td class="tdtop">Convert Count</td>
-<td class="tdtop">The number of seeds for convertion to child or
-other game specific use (Deka closes on convert count).</td>
-<td class="tdtop">convert_cnt</td>
-<td class="tdtop">game_info / flags</td>
-</tr>
-<tr><td class="thead2" colspan="4">Sow Parameters</td></tr>
-<tr>
-<td class="tdtop">Minimum Move</td>
-<td class="tdtop">The minimum number of seeds a hole must contain for a move to
-start from that hole. The UI will not activate holes with fewer seeds.</td>
-<td class="tdtop">min_move</td>
-<td class="tdtop">game_info</td>
-</tr>
-<tr>
-<td class="tdtop">Sow Direction</td>
-<td class="tdtop">Sow direction:<br>
--1: sow clockwise<br>
-1: sow counter-clockwise<br>
-0: split sowing.
-From player perspective: left side of the board is clockwise,
-right side of board is counter-clockwise. The odd middle holes should be set to User Controlled direction.</td>
-<td class="tdtop">sow_direct</td>
-<td class="tdtop">game_info / flags</td>
-</tr>
-<tr>
-<td class="tdtop">Must Share</td>
-<td class="tdtop">If you opponent does not have any available moves,
-you will only be allowed moves that make moves available to them.
-If a player does not have any moves available at the start of their turn,
-the must pass option is performed.</td>
-<td class="tdtop">mustshare</td>
-<td class="tdtop">game_info / flags</td>
-</tr>
-<tr>
-<td class="tdtop">Must Pass</td>
-<td class="tdtop">If you do not have any playable holes, you must pass.
-The UI will do a popup to notify you of this.
-The AI will simply pass the turn back to you.
-If must pass is not check and you do not have moves the game/round will end.</td>
-<td class="tdtop">mustpass</td>
-<td class="tdtop">game_info / flags</td>
-</tr>
-<tr>
-<td class="tdtop">Sow into Start</td>
-<td class="tdtop">When starting to sow leave one seed in the starting hole.</td>
-<td class="tdtop">sow_start</td>
-<td class="tdtop">game_info / flags</td>
-</tr>
-<tr>
-<td class="tdtop">Sow Skip Start</td>
-<td class="tdtop">When sowing do not sow into the hole that the
-seeds were taken from.
-If there are enough seeds to sow completely around the board back
-to the starting hole, skip it.
-The starting hole will be left empty at the end of the turn.</td>
-<td class="tdtop">skip_start</td>
-<td class="tdtop">game_info / flags</td>
-</tr>
-<tr>
-<td class="tdtop">Sow Own Store</td>
-<td class="tdtop">When sowing and you reach the last hole before your store
-(either clockwise or counter-clockwise),
-the next seed will be sown into the store.</td>
-<td class="tdtop">sow_own_store</td>
-<td class="tdtop">game_info / flags</td>
-</tr>
-<tr>
-<td class="tdtop">Multi-Lap Sow</td>
-<td class="tdtop">Multi-lap means that when one sow operation is completed,
-another sow may be initiated by the same player.
-If the last seed of the first sow ends in a hole with at least one seed
-(makeing 2 or more seeds),
-the seeds from that hole are removed and sown in the usual way.
-The process continues, until the final seed of a sow ends in hole by
-itself.
-</td>
-<td class="tdtop">mlaps</td>
-<td class="tdtop">game_info / flags</td>
-</tr>
-<tr>
-<td class="tdtop">Visit Opp for Mlaps</td>
-<td class="tdtop">The visit opposite side for multiple laps limits a
-a second lap sow may be preformed when the first sow does reaches
-or pass through an opponent's side hole.
-</td>
-<td class="tdtop">visit_opp</td>
-<td class="tdtop">game_info / flags</td>
-</tr>
-<tr>
-<td class="tdtop">User Control Dir</td>
-<td class="tdtop">Any checked number will result in hole that player
-can select the direction to sow. Left click will sow to the player's left and
-a right click will sow to the player's right.</td>
-<td class="tdtop">udir_holes</td>
-<td class="tdtop">game_info  </td>
-</tr>
-<tr><td class="thead2" colspan="4">Capture Parameters</td></tr>
-<tr>
-<td class="tdtop">Capture in Sow Direct</td>
-<td class="tdtop">Capturing will proceed in the same direction as the
-sowing. When unchecked captures </td>
-<td class="tdtop">capsamedir</td>
-<td class="tdtop">game_info / flags</td>
-</tr>
-<tr>
-<td class="tdtop">Capture Opp Side Only</td>
-<td class="tdtop">When checked captures may only be made from the
-opponents side of the board. When unchecked captures may be made from
-both sides of the board.</td>
-<td class="tdtop">oppsidecapt</td>
-<td class="tdtop">game_info / flags</td>
-</tr>
-<tr>
-<td class="tdtop">Move Unlocks for Capture</td>
-<td class="tdtop">Captures cannot be made from holes until they are unlocked
-by starting a move from them.</td>
-<td class="tdtop">moveunlock</td>
-<td class="tdtop">game_info / flags</td>
-</tr>
-<tr>
-<td class="tdtop">Capture Evens</td>
-<td class="tdtop">Capture on evens greater than zero.
-The hole's seed count after sowing must be even for capture.</td>
-<td class="tdtop">evens</td>
-<td class="tdtop">game_info / flags</td>
-</tr>
-<tr>
-<td class="tdtop">Capture On</td>
-<td class="tdtop">The capture on checkboxes allow selection of what
-values captures are performed on.
-The hole's seed count after sowing must match one of the check numbers.</td>
-<td class="tdtop">capt_on</td>
-<td class="tdtop">game_info </td>
-</tr>
-<tr>
-<td class="tdtop">Do Multiple Captures</td>
-<td class="tdtop">After the first capture, if the capture conditions continue
-to be true multiple captures may occur.
-Capture in Sow Direct defines the direction of capture.</td>
-<td class="tdtop">multicapt</td>
-<td class="tdtop">game_info / flags</td>
-</tr>
-<tr>
-<td class="tdtop">Do Cross Capture</td>
-<td class="tdtop">If the final seed of a sow ends alone in a hole and
-the opposite side (usually opponents side) contains seeds,
-those seeds are capture.</td>
-<td class="tdtop">crosscapt</td>
-<td class="tdtop">game_info / flags</td>
-</tr>
-<tr>
-<td class="tdtop">Pick Own on Cross Capt</td>
-<td class="tdtop">If a cross capture performed, this option defines that the
-final sown seed should also be picked up leaving two holes empty.</td>
-<td class="tdtop">xcpickown</td>
-<td class="tdtop">game_info / flags</td>
-</tr>
-</table>
+<p>The Mancala Options user interface allows selecting
+values for the game options.
+Some options are incompatible with each other, errors and inconsistencies
+are caught during parameter test.
+Some combinations are simply not yet supported (or may never be supported).
+
+After selecting the desired options the Command Buttons are used
+to test, load, save, and launch the game.
+
+<h3>Command Buttons</h3>
+<p>Command buttons appear across the bottom of the main window.
+<h4>Test</h4>
+<p>The test button checks the consistency of the selected options
+generating both warnings and errors.
+Warnings suggest that there might be odd game play, but you can proceed if you want.
+Errors mean that the game cannot be played with the options that you've selected.
+<h4>Load</h4>
+<p>The load button loads a saved game configuration.
+Several game configurations are provided and you can create your own.
+They are described in <a href="about_games.html">Mancala Game Configurations</a>.
+<p>The parameters are loaded and then checked for issues.
+Some errors will be correctable directly in the UI,
+others (created by editing the JSON file) may require
+going back to your text editor.
+<h4>Save</h4>
+<p>The save button saves the current options to a file.
+User save files will be larger than the provided
+games because all options are written to the file.
+The JSON text files which may be edited directly.
+See <a href="game_params.html">Mancala Game Parameters</a>.
+<h4>Play</h4>
+<p>The play button launches the Mancala Game window allowing
+a game to be played with the current options.
+If the selected options have not been tested or
+have been changed since the last test, they are tested before the
+game is started.
+<p>During game play all parameter entry is disabled, but left
+visible to allow review of the options.
 
 <h2 id="aiplayer">AI Player</h2>
 <p>The AI player uses a clever algorithm that's been around since the 1920s
@@ -515,96 +251,49 @@ The UI imposes limits the range of values that
 can be selected, but any integer can be set directly in the config file.
 <p>The score for each board is the sum of the statistic difference times its multiplier:
 <p class="center">score = Easy_Error + &#931; ((Player_Stat - AI_Stat) * multiplier)
-<p>The parameters effecting the AI player are shown in the table below.
-<table id="aiscorer">
-<colgroup>
-<col width="15%"><col width="55%"/><col width="15%"/><col width="15%"/>
-</colgroup>
-<tr>
-<td class="thead"><p>Title</td>
-<td class="thead"><p>Description</td>
-<td class="thead"><p>Parameter name</td>
-<td class="thead"><p>Config File Location</td>
-</tr>
-<tr>
-<td class="tdtop">Minimax Depth per Difficulty (not on the UI)</td>
-<td class="tdtop">A list of how many levels deep the minimaxer will
-search.
-A value is provided for each of the four difficulty levels:
-easy, normal, hard, expert.
-<br><br>Example: [1, 1, 3, 5]</td>
-<td class="tdtop">mm_depth</td>
-<td class="tdtop">game_info</td>
-</tr>
-<tr><td class="thead2" colspan="4">Scorer</td></tr>
-<tr>
-<td class="tdtop">Stores Mult</td>
-<td class="tdtop">A multiplier applied to the difference between number of
-seeds in the players store versus the AI's store.</td>
-<td class="tdtop">stores_m</td>
-<td class="tdtop">scorer</td>
-</tr>
-<tr>
-<td class="tdtop">Seeds Mult</td>
-<td class="tdtop">A multiplier applied to the difference between
-the number of seeds that each player has in play.</td>
-<td class="tdtop">seeds_m</td>
-<td class="tdtop">game_info</td>
-</tr>
-<tr>
-<td class="tdtop">Empties Mult</td>
-<td class="tdtop">A multiplier applied to the difference between
-the number of empty holes of each player.</td>
-<td class="tdtop">empties_m</td>
-<td class="tdtop">game_info / scorer</td>
-</tr>
-<tr>
-<td class="tdtop">Evens Mult</td>
-<td class="tdtop">A multiplier applied to the difference in
-the number of holes with an even number of seeds.</td>
-<td class="tdtop">evens_m</td>
-<td class="tdtop">game_info / scorer</td>
-</tr>
-<tr>
-<td class="tdtop">Child Count Mult</td>
-<td class="tdtop">A multiplier applied to the difference in number
-of designated children by each player.</td>
-<td class="tdtop">child_cnt_m</td>
-<td class="tdtop">game_info / scorer</td>
-</tr>
-<td class="tdtop">Access (d > 1) Mult</td>
-<td class="tdtop">When the difficulty is set to hard or expert,
-a multiplier applied to the difference in the number of holes each
-player can access on the opponents side of the board.
-<br><br>This takes time to compute and is therefore not supported
-for multi-lap games.</td>
-<td class="tdtop">access_m</td>
-<td class="tdtop">game_info / scorer</td>
-</tr>
-<tr>
-<td class="tdtop">Easy Error Random</td>
-<td class="tdtop">When the difficulty is set to easy,
-a small random number may be added to or subtracted from score
-simulating a decision error.
-This parameters sets the range of the random number -value to +value.</td>
-<td class="tdtop">easy_rand</td>
-<td class="tdtop">game_info / scorer</td>
-</tr>
-<tr>
-<td class="tdtop">Repeat Turn Add in</td>
-<td class="tdtop">If the game is sow_own_store, this value will
-be used to increase/decrese the score of turns that end in the store.
-The value is signed for the appropriate turn.</td>
-<td class="tdtop">repeat_turn</td>
-<td class="tdtop">game_info / scorer</td>
-</tr>
-</table>
+<p>The parameters effecting the AI player are shown in the
+<a href="game_params.html#tab_Player">Mancala Game Parameters</a> table.
+
 
 <h2 id="pregames">Preconfigured Games</h2>
 <p>Mancala game names vary widely.
-One name may have different rule sets or one rule set may have different names to different people and regions.
+One name may have different rule sets or one rule set may have
+different names to different people and regions.
+<b><i>Liberties have been taken to distinctly identify all games provided.</i></b>
+If your favorite game is misnamed, change the file and game names.
+<p>See <a href="about_games.html">Mancala Game Configurations</a>
+for an overview of all preconfigured games.
 
-
+<h2>Game Definition File Format</h2>
+Each game is described in a parameter file that is a JSON string.
+These are text files that can be loaded, changed and saved with the Mancala Options UI.
+They may also be edited with any text editor.
+The JSON parser attempts to provide useful information about any errors found.
+<p>There are four required top level elements:
+    <ol>
+    <li><b class="inhead">game_class</b>:
+    A single value is required$emdash;the
+    name of python game class.  Currently only Mancala exists.
+    <li><b class="inhead">game_constants</b>:
+    The value is a JSON string with two required
+    key-value pairs: holes nad nbr_start.
+    No other elements are supported.
+    <li><b class="inhead">game_info</b>:
+    The value is a JSON string with potentially many
+    parameters in key-value pairs.
+    Most parameters that control game play are
+    defined in this element.
+    <li><b class="inhead">player</b>:
+    The value is a JSON string describing how the AI player
+    should operate for the game.
+    See <a href="mancala_help.html#aiplayer">AI Player</a> for more details.
+    </ol>
+<p>There is game property file "all_params.txt" that shows where all
+game parameters should be placed.
+When defining new game files, parameters only need be specified if the
+value is not the default value.
+<p>See <a href="game_params.html">Game Parameters</a> for a detailed
+description of every game parameter.
 
 </body>
 </html>

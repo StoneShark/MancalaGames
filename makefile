@@ -44,7 +44,19 @@ GAME_TESTS = $(wildcard test/test_gm_*.py)
 
 DATAFILES = GameProps/*.txt ./mancala_help.html logs/README.txt
 
-all: clean pylint all_tests exe
+all: clean pylint all_tests docs exe
+
+
+src/game_params.txt: src/game_params.xlsm
+	echo "Recreate src/game_params.txt from excel"
+	
+	
+# build documentation
+
+.PHONY: docs
+docs: $(GAMES) src/game_params.txt docs/build_docs.py src/mancala_games.pyw
+	cd docs && python build_docs.py
+
 
 
 #  tests
@@ -67,21 +79,28 @@ all_tests: $(SOURCES) $(TESTS) $(GAMES) test/context.py
 	-coverage run -m pytest
 	coverage html
 
-
+# run the tests with the verbose flag
+# mostly a reminder on how to do this
 .PHONY: vtest
 vtest: 
 	pytest -v test
 
+# a target to run only the test_gm files
 .PHONY: game_tests
 game_tests: test/context.py
 	-coverage run --branch -m pytest $(GAME_TESTS)
 	coverage html
-	
+
+# a target to run the stress tests with higher iterations
 .PHONY: strest_tests	
 stress_tests: test/context.py
 	pytest test\\test_simul_game.py --nbr_runs 500
 	pytest test\\test_simul_players.py --nbr_runs 50
 
+
+# cov_unit_tests
+#
+# determine coverage each of unit test for the code it should cover
 
 vpath %.cov ./cov
 vpath %.py ./test
@@ -91,7 +110,6 @@ vpath %.py ./test
 	coverage json
 	python test\\check_unit_cov.py $(subst .cov,,$@) > cov\\$@
 	type cov\\$@
-
 
 UNIT_TESTS += test_ai_player.cov
 UNIT_TESTS += test_allowables.cov
@@ -173,5 +191,3 @@ MancalaGames/mancala_games.exe: $(SOURCES) $(DATAFILES) mancala_games.spec
 	ln -s .\\MancalaGames\\runtime\\play_mancala .\\MancalaGames\\play_mancala.exe
 	ln -s .\\MancalaGames\\runtime\\mancala_games .\\MancalaGames\\mancala_games.exe
 	-rmdir /S /Q build
-
-
