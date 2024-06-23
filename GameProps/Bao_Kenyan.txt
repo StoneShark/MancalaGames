@@ -5,7 +5,7 @@
       "nbr_start": 2
    },
    "game_info": {
-      "name": "Bao_Kenyan",
+      "name": "Bao (Kenyan)",
       "about": "Multi-lap, counter-clockwise sow. Minimum move is 2, unless all occupied holes have single seeds which may only be moved to empty holes. Cross-capture. The game ends when one player has more than half the seeds or when the current player cannot move.\n\nVariation: Single seed can begin multilap sow (allow_rule: SINGLE_ONLY_ALL).",
       "allow_rule": 4,
       "crosscapt": true,

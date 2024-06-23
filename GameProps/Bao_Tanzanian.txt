@@ -5,8 +5,8 @@
       "nbr_start": 4
    },
    "game_info": {
-      "name": "Bao_Tanzanian",
-      "about": "A multi-lap mancala, sow direction is counter-clockwise, sow to 4 on opposite side creates a child which collects seed but can't be captured. Cross-capture on opponents side, continue capture in sow direction, pick own seed on capture. Played in rounds; winner starts new round. The game ends one player cannot fill a single hole.",
+      "name": "Bao (Tanzanian)",
+      "about": "A multi-lap mancala, sow direction is counter-clockwise, sowing to 4 on opposite side creates a child which collects seed but can't be captured. Cross-capture on opponents side, continue capture in sow direction, pick own seed on capture.\n\nThe starting player may choose to rearranged the seeds on their side of the board. This counts as the opening move. The opponents will be arranged in the same manner from the player perspective.\n\nCapturing and making children are prohibitied on the first move of a game or round.\n\nPlayed in rounds; winner starts new round. The game ends one player cannot fill a single hole. At the start of each round, the board is resized to the number of holes that the player with fewer seeds can fill completely. If the board size is reduced to 3 or less per side, no children maybe created.",
       "blocks": true,
       "capsamedir": true,
       "child_cvt": 4,

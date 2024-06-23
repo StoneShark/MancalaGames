@@ -5,7 +5,7 @@
       "holes": 5
    },
    "game_info": {
-      "name": "Eson_Xorgol",
+      "name": "Eson Xorgol",
       "about": "Single-lap, clockwise-sow Mancala in which all holes are playable by both players. If sow ends in an occupied hole and the next hole is empty, capture the seeds in the following hole. Capture in sow direction (CW).",
       "capsamedir": true,
       "capttwoout": true,      
