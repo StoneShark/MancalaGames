@@ -133,7 +133,7 @@ class MancalaGames(tk.Frame):
         self.prev_option = None
 
         super().__init__(self.master)
-        self.master.title('Choose Mancala Options')
+        self.master.title('Mancala Options')
         self.master.resizable(False, False)
         self.master.wm_geometry('+400+200')
         self.pack()
@@ -143,7 +143,7 @@ class MancalaGames(tk.Frame):
 
         self._create_menus()
         self._add_commands_ui()
-        self._read_params_file()
+        self.params = self.read_params_file()
         self._add_tabs()
         self._create_desc_pane()
         self._make_tkvars()
@@ -216,7 +216,8 @@ class MancalaGames(tk.Frame):
                   ).pack(side=tk.LEFT, expand=True, fill=tk.X)
 
 
-    def _read_params_file(self):
+    @staticmethod
+    def read_params_file():
         """Read the game parameters file."""
 
         with open(man_path.get_path('game_params.txt'), 'r',
@@ -227,11 +228,9 @@ class MancalaGames(tk.Frame):
         fields = data[0]
         option_idx = fields.index('option')
         ui_default_idx = fields.index('ui_default')
-        bools = [fields.index(f) for f in
-                 ('new_game', 'allow', 'moves', 'incr', 'starter',
-                  'get_dir', 'sower', 'capt_ok', 'capturer', 'ender',
-                  'quitter', 'gstr')]
+        bools = []
         ints = [fields.index(f) for f in ('row', 'col', 'order')]
+        params = {}
 
         # pylint: disable=invalid-name
         Params = collections.namedtuple('Params', fields)
@@ -247,7 +246,9 @@ class MancalaGames(tk.Frame):
                 rec[idx] = int(rec[idx])
             rec[ui_default_idx] = convert_value(rec[ui_default_idx])
 
-            self.params[rec[option_idx]] = Params(*rec)
+            params[rec[option_idx]] = Params(*rec)
+
+        return params
 
 
     def _add_tabs(self):
