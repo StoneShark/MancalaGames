@@ -4,7 +4,7 @@
 <title>Mancala Games</title>
 <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="narrow">
 <h1>Mancala Games</h1>
 <p>Mancala Games is an engine for playing several variants of Mancala.
 Games may be played with two players or one player and an
@@ -215,7 +215,7 @@ visible to allow review of the options.
 <h2 id="aiplayer">AI Player</h2>
 <p>The AI player uses a clever algorithm that's been around since the 1920s
 called minimax.
-<h3>MiniMaxing</h3>
+<h3>Minimaxer</h3>
 <p>The goal of minimax is to minimize the maximum possible loss,
 that is search for a move that minimizes your opponents best possible
 move in response to each of your best moves.
@@ -231,6 +231,11 @@ moves. The philosophy is that the greater the search depth,
 the better the selected move.
 There is a trade off the greater the search depth, the longer it takes to
 select the next move.
+
+<h3>Negamaxer</h3>
+<p><b class="todo">add algorithm description</b>.
+<h3>Monte Carlo Tree Search (MCTS)</h3>
+<p><b class="todo">add algorithm description</b>.
 
 <h3 id="aiparams">AI Player Params</h3>
 <p>The AI Player parameters control how the AI player evaluates the

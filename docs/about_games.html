@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Mancala Game Configurations</title>
+<link rel="stylesheet" href="styles.css">
+<script src="ddfiler.js"></script>
+</head>
+<body class="narrow">
+<h1>Mancala Game Configurations</h1>
+<p>A sampling of Mancala games that can be configured with
+the Manacala Game Engine are predefined.
+Descriptions are provided in the sections below.
+
+<p>If you are new to Mancala,
+<a href="#Wari">Wari</a> and <a href="#Oware">Oware</a>
+are good places to start.
+<a href="#Kalah">Kalah</a> is a simple cross capture game.
+
+<p><a href="#Bechi">Bechi</a>,
+<a href="#Cow">Cow</a> and
+<a href="#Qelat">Qelat</a>
+add interesting complications to the basic rules.
+<a href="#Bechi">Bechi</a> introduces the concept of playing in rounds.
+<a href="#Cow">Cow</a> introduces varying the sow direction.
+<a href="#Qelat">Qelat</a> adds the idea of hole ownership, in this case, called walda's.
+
+<p>Good introductions to multilap sowing are provided by
+<a href="#Endodoi">Endodoi</a> and
+<a href="#Ayoayo">Ayoayo</a>.
+
+<p>Not all games have the goal of capturing the most seeds.
+<a href="#Deka">Deka</a> and others have a goal of depriving
+your opponent of seeds.
+<a href="#Weg">Weg</a> and others involve capturing territory.
+
+<p>
+<p>Three games isolate unique game parameters:
+    <ul>
+    <li><a href="#NoCapt">NoCapt</a>:
+    Captures are only accomplished by sowing into your own store.
+    <li><a href="#NoSides">NoSides</a>:
+    Players are not limited to starting a move on their own side of the board,
+    instead a player may start a move from any hole.
+    <li><a href="#NoSidesChild">NoSidesChild</a>:
+    Players do not own the holes on their own side of the board;
+    instead ownership is claimed (i.e. making a child)
+    by sowing a hole to four seeds.
+    </ul>
+
+<p><i>Personal Note</i>:
+These configurations are my best understanding of the rules
+from various sources.
+I cannot be certain that I have faithfully reproduced any game.
+You may know a particular set of rules by a different name.
+You may have a particular "house rule" that varies from the specific
+configuration provided.
+I might simply have an implementation error.
+Please consider these file a starting point for defining your
+own favorite games.
+
+<h3 id="Ayoayo">Ayoayo</h3>
+<p>A multi-lap mancala; sow direction counter-clockwise skipping start hole on full cycle sow; cross-capture from opponents side when a sow ends in own empty hole. If your opponent has no seeds, you must make seeds available to them (if you can). The game ends when one player captures more than half the seeds.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+    <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER</p>
+    <p class="param"><a href="game_params.html#mustshare">Must Share</a>: Yes</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
+    <p class="param"><a href="game_params.html#skip_start">Skip Start on Lap</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#xcpickown">Own Seed on Xcapture</a>: PICK_ON_CAPT</p>
+  </div>
+</div>
+<p>Rules: Mohr, Merilyn Simonds. The New Games Treasury. 1993. p102.
+<p>Question: Regarding skip start: skip where the move started OR where each 'lap' starts? second is implemented, because the first results in lots of 'endless' sows.
+<h3 id="Bao (Kenyan)">Bao (Kenyan)</h3>
+<p>Multi-lap, counter-clockwise sow. Minimum move is 2, unless all occupied holes have single seeds which may only be moved to empty holes. Cross-capture. The game ends when one player has more than half the seeds or when the current player cannot move.
+<p>Variation: Single seed can begin multilap sow (allow_rule: SINGLE_ONLY_ALL).
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  8</p>
+    <p class="param">Start seeds:  2</p>
+    <p class="param"><a href="game_params.html#allow_rule">Special Move Restrictions</a>: SINGLE_ALL_TO_ZERO</p>
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER</p>
+    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p31.
+<h3 id="Bao (Tanzanian)">Bao (Tanzanian)</h3>
+<p>A multi-lap mancala, sow direction is counter-clockwise, sowing to 4 on opposite side creates a child which collects seed but can't be captured. Cross-capture on opponents side, continue capture in sow direction, pick own seed on capture.
+<p>The starting player may choose to rearranged the seeds on their side of the board. This counts as the opening move. The opponents will be arranged in the same manner from the player perspective.
+<p>Capturing and making children are prohibitied on the first move of a game or round.
+<p>Played in rounds; winner starts new round. The game ends one player cannot fill a single hole. At the start of each round, the board is resized to the number of holes that the player with fewer seeds can fill completely. If the board size is reduced to 3 or less per side, no children maybe created.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  7</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#blocks">Blocks</a>: Yes</p>
+    <p class="param"><a href="game_params.html#capsamedir">Capture in Sow Direction</a>: Yes</p>
+    <p class="param"><a href="game_params.html#child_cvt">Child Convert Count</a>: 4</p>
+    <p class="param"><a href="game_params.html#child_rule">Child Restrictions</a>: NOT_1ST_OPP</p>
+    <p class="param"><a href="game_params.html#child_type">Type of Children</a>: NORMAL</p>
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+    <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER</p>
+    <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: Yes</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
+    <p class="param"><a href="game_params.html#prescribed">Prescribed Opening Move</a>: ARNGE_LIMIT</p>
+    <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: SHORTEN</p>
+    <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: WINNER</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#visit_opp">Visit Opp for Mlaps</a>: Yes</p>
+    <p class="param"><a href="game_params.html#xcpickown">Own Seed on Xcapture</a>: PICK_ON_CAPT</p>
+  </div>
+</div>
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p48 details p 46.
+<h3 id="Bechi">Bechi</h3>
+<p>A single-lap mancala, first seed sowed in start hole, start hole determines sow direction, capture evens (after move from hole), capture proceeds in sow direction. Played in rounds; round starter alternates. The game is over when either player cannot fill a single hole.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  4</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#blocks">Blocks</a>: Yes</p>
+    <p class="param"><a href="game_params.html#capsamedir">Capture in Sow Direction</a>: Yes</p>
+    <p class="param"><a href="game_params.html#evens">Capture Evens</a>: Yes</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 2</p>
+    <p class="param"><a href="game_params.html#moveunlock">Move Unlock for Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: Yes</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
+    <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: UCHOOSE</p>
+    <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: SPLIT</p>
+    <p class="param"><a href="game_params.html#sow_start">Sow Start Hole</a>: Yes</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p22.
+<h3 id="Bosh">Bosh</h3>
+<p>Sow counter-clockwise via the multi-lap next-hole method. When the final seed sown (into an empty hole) is followed by an empty hole, capture any seeds in the following hole. Played in rounds where unfilled holes are out of play.
+<p>Variation:
+<ul><li>3 seeds per hole for start.
+</ul>
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  5</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#blocks">Blocks</a>: Yes</p>
+    <p class="param"><a href="game_params.html#capsamedir">Capture in Sow Direction</a>: Yes</p>
+    <p class="param"><a href="game_params.html#capttwoout">Capture Two Out</a>: Yes</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER_NEXT</p>
+    <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: RIGHT_FILL</p>
+    <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p45.
+<h3 id="Congklak">Congklak</h3>
+<p>A multi-lap mancala played in rounds. Sow direction is clockwise, sow into ones own store. Cross-capture with pick own. Played in rounds with loser of previous round starting the next round. The game is over when either player cannot fill a single hole.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  7</p>
+    <p class="param">Start seeds:  7</p>
+    <p class="param"><a href="game_params.html#blocks">Blocks</a>: Yes</p>
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+    <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER</p>
+    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
+    <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: LEFT_FILL</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: LOSER</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CW</p>
+    <p class="param"><a href="game_params.html#sow_own_store">Sow Own Store</a>: Yes</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#xcpickown">Own Seed on Xcapture</a>: ALWAYS_PICK</p>
+  </div>
+</div>
+<p>Rules: https://en.wikipedia.org/wiki/Southeast_Asian_mancala
+<h3 id="Cow">Cow</h3>
+<p>A single-lap mancala, sow direction depends on start location: left side sow left, right side sow right, mouse button selectes direction for center. Minimum move is 2 seeds. Multiple capture on opponents side on 2s and 4s. A player must pass, if they have no moves.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  5</p>
+    <p class="param">Start seeds:  5</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 2 4</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 2</p>
+    <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: Yes</p>
+    <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: SPLIT</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#udir_holes">User Chooses Direction</a>: 2</p>
+  </div>
+</div>
+<p>Rules: Mohr, Merilyn Simonds; The New Games Treasury, 1993.
+<h3 id="Dabuda">Dabuda</h3>
+<p>A multi-lap mancala, counter-clockwise sow. Sow must reach opp side or end in empty hole. Cross-capture when end in own hole with one seed. Pick own seed on capture. The games ends if no moves.
+<p>Variations:
+<p>Played with 6 to 10 holes.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  10</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#allow_rule">Special Move Restrictions</a>: OPP_OR_EMPTY</p>
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+    <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#xcpickown">Own Seed on Xcapture</a>: PICK_ON_CAPT</p>
+  </div>
+</div>
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p32.
+<h3 id="Dakon">Dakon</h3>
+<p>A multi-lap mancala played in rounds. Sow direction is counterclockwise, sow into ones own store. A player may move again when the final seed is sown into their store. Cross capture from opponents side only; pick own seed on capture. The player that moved last in a round round, starts the next round. The game is over when either player cannot fill a single hole.
+<p>Variations:
+<ul><li>played with 6 to 10 holes per side with the numnber of start seeds equaling number of holes
+<li>passing not allowed
+</ul>
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  7</p>
+    <p class="param">Start seeds:  7</p>
+    <p class="param"><a href="game_params.html#blocks">Blocks</a>: Yes</p>
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+    <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER</p>
+    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
+    <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: RIGHT_FILL</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: LAST_MOVER</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_own_store">Sow Own Store</a>: Yes</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#xcpickown">Own Seed on Xcapture</a>: PICK_ON_CAPT</p>
+  </div>
+</div>
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p62.
+<h3 id="Deka">Deka</h3>
+<p>The goal is to deprive the opponent of seeds. Sow counter-clockwise with multi-laps. Holes are closed on opponent side on 3s and multilap sowing continues with those 3 seeds. Each player's rightmost hole may not be closed. In subsequent sowing of closed holes (blocked), own holes are skipped but seeds for opponent's holes are taken out of play.
+<p>Variations:
+<ul><li>7 holes per side
+<li>allow closing of rightmost holes (sow_rule of SOW_BLKD_DIV)
+</ul>
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  3</p>
+    <p class="param"><a href="game_params.html#blocks">Blocks</a>: Yes</p>
+    <p class="param"><a href="game_params.html#gparam_one">General input</a>: 3</p>
+    <p class="param"><a href="game_params.html#goal">Game Goal</a>: DEPRIVE</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+    <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: SOW_BLKD_DIV_NR</p>
+  </div>
+</div>
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p40.
+<h3 id="Endodoi">Endodoi</h3>
+<p>A multi-lap mancala, sow direction counter-clockwise, cross-capture when end in own hole with one seed. Pick own seed on capture. Games ends if no moves.
+<p>Variation: Played with 6 to 10 holes.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  8</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+    <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#xcpickown">Own Seed on Xcapture</a>: PICK_ON_CAPT</p>
+  </div>
+</div>
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p28.
+<h3 id="Enkushui">Enkushui</h3>
+<p>A multi-lap, counter-clockwise sow. Bulls can be made on either side when sowing to 4; if the preceeding hole has 3 seeds it is also made a bull. Cross-capture and pick own on capture.
+<p>Variations:
+<ul><li>8, 10 or 12 board size
+<li>start patterns: CLIPPEDTRIPLES with 3 start seeds
+</ul>
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  8</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#capsamedir">Capture in Sow Direction</a>: Yes</p>
+    <p class="param"><a href="game_params.html#child_cvt">Child Convert Count</a>: 4</p>
+    <p class="param"><a href="game_params.html#child_type">Type of Children</a>: BULL</p>
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+    <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: Yes</p>
+    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#start_pattern">Start Pattern</a>: TWOEMPTY</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#xcpickown">Own Seed on Xcapture</a>: PICK_ON_CAPT</p>
+  </div>
+</div>
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p42.
+<h3 id="Erherhe">Erherhe</h3>
+<p>A single-lap mancala, sow direction is counter-clockwise, multiple capture on opponents side on 1s and 3s. Played in rounds; loser starts new round.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#blocks">Blocks</a>: Yes</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+    <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: Yes</p>
+    <p class="param"><a href="game_params.html#mustshare">Must Share</a>: Yes</p>
+    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: LOSER</p>
+    <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: UCHOOSE</p>
+    <p class="param"><a href="game_params.html#skip_start">Skip Start on Lap</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 1 3</p>
+  </div>
+</div>
+<p>Rules: Russ, Laurence. Mancala Games. 1984.  p19.
+<h3 id="Eson Xorgol">Eson Xorgol</h3>
+<p>Single-lap, clockwise-sow Mancala in which all holes are playable by both players. If sow ends in an occupied hole and the next hole is empty, capture the seeds in the following hole. Capture in sow direction (CW).
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  5</p>
+    <p class="param">Start seeds:  9</p>
+    <p class="param"><a href="game_params.html#capsamedir">Capture in Sow Direction</a>: Yes</p>
+    <p class="param"><a href="game_params.html#capttwoout">Capture Two Out</a>: Yes</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#no_sides">No Sides</a>: Yes</p>
+    <p class="param"><a href="game_params.html#skip_start">Skip Start on Lap</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p24.
+<h3 id="Gabata">Gabata</h3>
+<p>A territory game that uses both stores and wegs (children). Sow is multi-lap, counter-clockwise. The opening move is prescribed: Plus1Minus1. Wegs are made when a final seed sows a hole to 4 seeds on your opponent's territory. Captures are on the final seed being sown into an opponents weg. The sown seed and one more (if there is one) are captured to your store. Repeat turn on capture.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#capt_rturn">Repeat Turn on Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#child_cvt">Child Convert Count</a>: 4</p>
+    <p class="param"><a href="game_params.html#child_type">Type of Children</a>: WEG</p>
+    <p class="param"><a href="game_params.html#goal">Game Goal</a>: TERRITORY</p>
+    <p class="param"><a href="game_params.html#gparam_one">General input</a>: 10</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER</p>
+    <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
+    <p class="param"><a href="game_params.html#prescribed">Prescribed Opening Move</a>: PLUS1MINUS1</p>
+    <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p49.
+<h3 id="Gamacha">Gamacha</h3>
+<p>Counter-clockwise, multi-lap sow. Moves must end in an empty hole or reach opponents side of the board. Seeds are taken out of play via cross-capture. The goal is to deprive the opponent of seeds.
+<p>Variations: Sadeqa, start pattern, allow rules
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  12</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#goal">Game Goal</a>: DEPRIVE</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+    <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#allow_rule">Special Move Restrictions</a>: OPP_OR_EMPTY</p>
+    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#start_pattern">Start Pattern</a>: GAMACHA</p>
+  </div>
+</div>
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p33.
+<h3 id="Giuthi">Giuthi</h3>
+<p>A multilap mancala in which the current player chooses the sow direction for the first lap; subsequent laps alternate sow direction. Moves may only start from holes with 2 or more seeds; if a player cannot move they must pass.
+<p>Cross-capture from opponents side, but only if they have sown that hole (in the current turn). On capture, pick own seed. Multiple captures may be done in same direction as the final lap sowed.
+<p>If a player ends a turn on their side of the board without doing a capture, they get another move.
+<p>The round ends if neither player can move. The loser of each round, can rearrange the seeds on their side of the board with the restriction that each hole must contain at least one seed and that they have a valid move. Before the round is started the same pattern will be reflected on the winner's side.
+<p>The game ends when either player does not have enough seeds to fill their side of the board with a valid move (i.e. one hole with MIN_MOVE seeds and others with at least one seed).
+<p>Variations: 
+<ul><li>Played as a single game (no rounds).
+<li>Board sizes 6 to 10 holes per side. 
+<li>Start seeds varies from 4 to 9 (smaller board, fewer start seeds). 
+<li>Some combinations of size and start seeds are quite unbanalnced.
+<li>Instead of minimum move of 2, singletons may start moves if all holes are empty or contain one seed (allow_rule == SINGLE_ONLY_ALL).
+</ul>
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  8</p>
+    <p class="param">Start seeds:  6</p>
+    <p class="param"><a href="game_params.html#capsamedir">Capture in Sow Direction</a>: Yes</p>
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 2</p>
+    <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER</p>
+    <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: Yes</p>
+    <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
+    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
+    <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: UMOVE</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: WINNER</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: CHANGE_DIR_LAP</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#udir_holes">User Chooses Direction</a>: 0 1 2 3 4 5 6 7</p>
+    <p class="param"><a href="game_params.html#xc_sown">Must sow opp for xcapt</a>: Yes</p>
+    <p class="param"><a href="game_params.html#xcpickown">Own Seed on Xcapture</a>: PICK_ON_CAPT</p>
+  </div>
+</div>
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p37.
+<p>Rule_Contradict: Game doesn't end until <= 4 seeds for loser, but in rearrangement rules, all holes must contain a seed. Also, the winner's side is setup reversed of loser's side, so both players must have enough seeds for a valid move. Therefore, the game will end when there are not enough seeds for the loser to fill their side of the board with a valid move.
+<h3 id="Goat">Goat</h3>
+<p>A single-lap mancala, sow direction depends on start location: left side sow left, right side sow right, mouse button selectes direction for center. Minimum move is 2 seeds. Multiple capture on opponents side on 2s. A player must pass, if they have no moves.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  3</p>
+    <p class="param">Start seeds:  3</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 2</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 2</p>
+    <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: Yes</p>
+    <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: SPLIT</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#udir_holes">User Chooses Direction</a>: 1</p>
+  </div>
+</div>
+<p>Rules: Mohr, Merilyn Simonds; The New Games Treasury, 1993.
+<h3 id="J Odu">J Odu</h3>
+<p>Sow clockwise, multi-lap sow. Cross capture opposite-side but only up to 3 seeds, picking own on capture.
+<p>Variations: board size and start seeds.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  8</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#capt_max">Capture Max</a>: 3</p>
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+    <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#xcpickown">Own Seed on Xcapture</a>: PICK_ON_CAPT</p>
+  </div>
+</div>
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p35. with some assumptions.
+<h3 id="Kalah">Kalah</h3>
+<p>Sow direction is counter-clockwise, sow into own store. Single seed on own side, captures opp seeds and takes own seed. Extra turn when last seed in store.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_own_store">Sow Own Store</a>: Yes</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#xcpickown">Own Seed on Xcapture</a>: PICK_ON_CAPT</p>
+  </div>
+</div>
+<p>Rules: en.wikipedia.org/wiki/Kalah
+<h3 id="Lami">Lami</h3>
+<p>Counter-clockwise sow, multi-lap sow. After the first move, subsequent moves may only be played from holes:
+<ul><li>that do not contain 2 seeds,
+<li>unless all of the player's holes contain 2, then any hole maybe played.
+</ul>
+<p>When sowing skip opponents holes with two seeds (except first move). Cross-capture from opponents side of board but only if it contains 2 seeds; on capture pick all of opponents holes with 2 seeds. Played in Rounds.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  10</p>
+    <p class="param">Start seeds:  2</p>
+    <p class="param"><a href="game_params.html#allow_rule">Special Move Restrictions</a>: TWO_ONLY_ALL</p>
+    <p class="param"><a href="game_params.html#blocks">Blocks</a>: Yes</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 2</p>
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+    <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#pickextra">On Capture, Take More Rule</a>: PICKTWOS</p>
+    <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: LEFT_FILL</p>
+    <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: LOSER</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
+    <p class="param"><a href="game_params.html#prescribed">Prescribed Opening Move</a>: MLAPS_SOWER</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: NO_SOW_OPP_2S</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p36.
+<h3 id="Lamlameta">Lamlameta</h3>
+<p>Counter-clockwise sow, multi-lap sow. First move must be from player's rightmost two holes. Subsequent moves may only be played from holes:
+<ul><li>that do not contain 2 seeds,
+<li>unless all of the player's holes contain 2, then any hole maybe played.
+</ul>
+<p>When sowing skip opponents holes with two seeds (except first move). Cross-capture from opponents side of board but only if it contains 2 seeds; on capture pick all of opponents holes with 2 seeds. Played in Rounds.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  12</p>
+    <p class="param">Start seeds:  2</p>
+    <p class="param"><a href="game_params.html#allow_rule">Special Move Restrictions</a>: RIGHT_2_1ST_THEN_ALL_TWO</p>
+    <p class="param"><a href="game_params.html#blocks">Blocks</a>: Yes</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 2</p>
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+    <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#pickextra">On Capture, Take More Rule</a>: PICKTWOS</p>
+    <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: LEFT_FILL</p>
+    <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: LOSER</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
+    <p class="param"><a href="game_params.html#prescribed">Prescribed Opening Move</a>: MLAPS_SOWER</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: NO_SOW_OPP_2S</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p35.
+<h3 id="Lam Waladach">Lam Waladach</h3>
+<p>A multi-lap mancala played in rounds. The goal is to claim ownership of at least 10 holes. Each player initially owns the holes on their side of the board. Owners of holes are updated at the start of each round based on the number of seeds captured in the previous round. Captures are on 4s on the final sown seed by the sower (regardless of hole owner). Captures are disallowed on the first move of the game. The seeds of any hole sown to 4 are captured by the hole's owner (regardless of sower) after the first move. A player must pass, if they have no moves. If neither player has moves, the game is over.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  3</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 4</p>
+    <p class="param"><a href="game_params.html#goal">Game Goal</a>: TERRITORY</p>
+    <p class="param"><a href="game_params.html#gparam_one">General input</a>: 10</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+    <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER</p>
+    <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#nocaptfirst">No Capture First Move</a>: Yes</p>
+    <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: LOSER</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: OWN_SOW_CAPT_ALL</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p55.
+<h3 id="Longbeu-a-cha">Longbeu-a-cha</h3>
+<p>Sow counter-clockwise via the multi-lap next-hole method. Players capture holes sown to 4 (by either player) on their side of the board. When the final seed sown (into an empty hole) is followed by an empty hole, capture any seeds in the following hole. Continue to capture when holes are alternately empty and occupied. Played in rounds where unfilled holes are out of play.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  5</p>
+    <p class="param">Start seeds:  5</p>
+    <p class="param"><a href="game_params.html#blocks">Blocks</a>: Yes</p>
+    <p class="param"><a href="game_params.html#capsamedir">Capture in Sow Direction</a>: Yes</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 4</p>
+    <p class="param"><a href="game_params.html#capttwoout">Capture Two Out</a>: Yes</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+    <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER_NEXT</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: Yes</p>
+    <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: UCHOOSE</p>
+    <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: OWN_SOW_CAPT_ALL</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p60.
+<h3 id="Mbangbi">Mbangbi</h3>
+<p>Player controls sow direction and must pass if they do not have a move, opposite side-multiple captures on 2s and 4s.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  5</p>
+    <p class="param">Start seeds:  8</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 2 4</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 2</p>
+    <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: Yes</p>
+    <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
+    <p class="param"><a href="game_params.html#skip_start">Skip Start on Lap</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#udir_holes">User Chooses Direction</a>: 0 1 2 3 4</p>
+  </div>
+</div>
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p20.
+<p>Question: Should skip start be True? base game yes; variant not mentioned. There are a lot of seeds!!
+<h3 id="Mbothe">Mbothe</h3>
+<p>Counter-clockwise sow, multi-lap sow. After the first move, subsequent moves may only be played from holes:
+<ul><li>that do not contain 2 seeds,
+<li>unless all of the player's holes contain 2, then only the rightmost hole maybe played.
+</ul>
+<p>When sowing skip opponents holes with two seeds (except first move). Cross-capture from opponents side of board but only if it contains 2 seeds; on capture repeat turn.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  10</p>
+    <p class="param">Start seeds:  2</p>
+    <p class="param"><a href="game_params.html#allow_rule">Special Move Restrictions</a>: TWO_ONLY_ALL_RIGHT</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 2</p>
+    <p class="param"><a href="game_params.html#capt_rturn">Repeat Turn on Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+    <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER</p>
+    <p class="param"><a href="game_params.html#prescribed">Prescribed Opening Move</a>: MLAPS_SOWER</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: NO_SOW_OPP_2S</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p35.  With clarification on opening move from Wikipedia
+<h3 id="Nambayi">Nambayi</h3>
+<p>A multilap Mancala. The goal is to deprive the opponent of seeds. Holes are closed on opponent side on 4s, sowing continues with those seeds. In subsequent sowing of closed holes, own holes are skipped but seeds for opponent's holes are taken out of play.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  8</p>
+    <p class="param">Start seeds:  3</p>
+    <p class="param"><a href="game_params.html#blocks">Blocks</a>: Yes</p>
+    <p class="param"><a href="game_params.html#goal">Game Goal</a>: DEPRIVE</p>
+    <p class="param"><a href="game_params.html#gparam_one">General input</a>: 4</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+    <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: SOW_BLKD_DIV</p>
+  </div>
+</div>
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p41.
+<h3 id="NamNam">NamNam</h3>
+<p>A multi-lap mancala played in rounds. The goal is to claim ownership of at least 10 holes. Each player initially owns the holes on their side of the board. Owners of holes are updated at the start of each round based on the number of seeds captured in the previous round.
+<p>Captures are on 4s on the final sown seed by the sower (regardless of hole owner). The seeds of any hole sown to 4 are captured by the hole's owner (regardless of sower).
+<p>If, at the start of your turn, your opponent has no seeds; you must make seeds available to them, if you can, otherwise the game is over.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 4</p>
+    <p class="param"><a href="game_params.html#goal">Game Goal</a>: TERRITORY</p>
+    <p class="param"><a href="game_params.html#gparam_one">General input</a>: 10</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+    <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#mustshare">Must Share</a>: Yes</p>
+    <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: OWN_SOW_CAPT_ALL</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: http://www.oware.org/nam_nam.asp
+<h3 id="Ndoto">Ndoto</h3>
+<p>Sow multi-lap and counter-clockwise. Single seed sow may not start multilaps. Cross capture.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  8</p>
+    <p class="param">Start seeds:  2</p>
+    <p class="param"><a href="game_params.html#allow_rule">Special Move Restrictions</a>: SINGLE_TO_ZERO</p>
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER</p>
+    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p30.
+<h3 id="NoCapt">NoCapt</h3>
+<p>Sow direction is counter-clockwise, sow into own store, but no other capture. Extra turn when last seed in store.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+    <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
+    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#skip_start">Skip Start on Lap</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_own_store">Sow Own Store</a>: Yes</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<h3 id="NoSides">NoSides</h3>
+<p>Both players may move from any hole, single lap and counter-clockwise. Player's store is to their right. Capture on 2s.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  5</p>
+    <p class="param">Start seeds:  2</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+    <p class="param"><a href="game_params.html#no_sides">No Sides</a>: Yes</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#skip_start">Skip Start on Lap</a>: Yes</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 2</p>
+  </div>
+</div>
+<h3 id="No Sides Child">No Sides Child</h3>
+<p>Both players may move in either direction from any hole; single-lap and counter-clockwise. Player's store is to their right. Children are created on 4s. Capture on 2s.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  7</p>
+    <p class="param">Start seeds:  2</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 2</p>
+    <p class="param"><a href="game_params.html#child_cvt">Child Convert Count</a>: 4</p>
+    <p class="param"><a href="game_params.html#child_type">Type of Children</a>: NORMAL</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#no_sides">No Sides</a>: Yes</p>
+    <p class="param"><a href="game_params.html#skip_start">Skip Start on Lap</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#udir_holes">User Chooses Direction</a>: 0 1 2 3 4 5 6</p>
+  </div>
+</div>
+<h3 id="NumNum">NumNum</h3>
+<p>A multi-lap mancala played in rounds. The goal is to claim ownership of at least 10 holes. Each player initially owns the holes on their side of the board. Owners of holes are updated at the start of each round based on the number of seeds captured in the previous round.
+<p>Captures are on 4s on the final sown seed by the sower (regardless of hole owner). The seeds of any hole sown to 4 are captured by the hole's owner (regardless of sower).
+<p>A player must pass, if they have no moves. If neither player has moves, the game is over.
+<p>Variations:
+<ul><li>don't allow pass
+<li>change number of holes required for win
+<li>prescribed opening PLUS1MINUS1
+<li>repeat turn on capture
+<li>common board sizes: 6, 7 or 12
+<li>only sower captures during sowing (SowRule: SOW_SOW_CAPT_ALL)
+<li>see Lam Waladach
+</ul>
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 4</p>
+    <p class="param"><a href="game_params.html#goal">Game Goal</a>: TERRITORY</p>
+    <p class="param"><a href="game_params.html#gparam_one">General input</a>: 10</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+    <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
+    <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: LOSER</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: OWN_SOW_CAPT_ALL</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p54.
+<h3 id="Oware">Oware</h3>
+<p>A single-lap mancala, sow direction is counter-clockwise, capture on opponents side on 1s, 2s and 3s. A sow which cycles the board, will skip the hole that the move started from. If your opponent has no seeds, you must make seeds available to them (if you can).
+<p>Variations:
+<ul><li>remove capture on 1s
+<li>any Grand Slam rule
+</ul>
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 1 2 3</p>
+    <p class="param"><a href="game_params.html#grandslam">Grand Slam</a>: NO_CAPT</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+    <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: Yes</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#mustshare">Must Share</a>: Yes</p>
+    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
+    <p class="param"><a href="game_params.html#skip_start">Skip Start on Lap</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<h3 id="Pallam Kuzhi">Pallam Kuzhi</h3>
+<p>Sow counter-clockwise via the multi-lap next hole method. Players capture holes sown to 4 (by either player) on their side of the board. When the final seed sown (into an empty hole) is followed by an empty hole, capture any seeds in the following hole. Played in rounds where unfilled holes are out of play.
+<p>Variation:
+<ul><li> start seeds.
+<li>See Pandi and Longbeu-a-cha
+</ul>
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  7</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#blocks">Blocks</a>: Yes</p>
+    <p class="param"><a href="game_params.html#capsamedir">Capture in Sow Direction</a>: Yes</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 4</p>
+    <p class="param"><a href="game_params.html#capttwoout">Capture Two Out</a>: Yes</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+    <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER_NEXT</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: UCHOOSE</p>
+    <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: OWN_SOW_CAPT_ALL</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p58.
+<h3 id="Pandi">Pandi</h3>
+<p>Sow counter-clockwise via the multi-lap next hole method. Players capture holes sown to 4 (by either player) on their side of the board. When the final seed sown (into an empty hole) is followed by an empty hole, capture any seeds in the following hole and take any seeds on the opposite side of the board. Played in rounds where unfilled holes are out of play.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  7</p>
+    <p class="param">Start seeds:  5</p>
+    <p class="param"><a href="game_params.html#blocks">Blocks</a>: Yes</p>
+    <p class="param"><a href="game_params.html#capsamedir">Capture in Sow Direction</a>: Yes</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 4</p>
+    <p class="param"><a href="game_params.html#capttwoout">Capture Two Out</a>: Yes</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+    <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER_NEXT</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#pickextra">On Capture, Take More Rule</a>: PICKCROSS</p>
+    <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: LEFT_FILL</p>
+    <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: OWN_SOW_CAPT_ALL</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p60.
+<h3 id="Qelat">Qelat</h3>
+<p>A single-lap mancala, start hole determines sow direction, must designate walda(s) before captures, four seeds in eligible hole designates a walda, capture on 4s.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 4</p>
+    <p class="param"><a href="game_params.html#child_cvt">Child Convert Count</a>: 4</p>
+    <p class="param"><a href="game_params.html#child_type">Type of Children</a>: WALDA</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+    <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
+    <p class="param"><a href="game_params.html#skip_start">Skip Start on Lap</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: SPLIT</p>
+  </div>
+</div>
+<p>Rules: Mohr, Merilyn Simonds; The New Games Treasury, 1993. But with sow into Waldas as described here:  https://mancala.fandom.com/wiki/Qelat_(Beni_Amir_%26_Mensa)
+<h3 id="Sadeqa">Sadeqa</h3>
+<p>Counter-clockwise multi-lap sow. The goal is to deprive the opponent of seeds. Moves must end in an empty hole or reach the opponents side of the board. Seeds are taken out of play via cross-capture. 
+<p>Variations: start patterns of ALTERNATES or ALTS_WITH_1
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  12</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#goal">Game Goal</a>: DEPRIVE</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+    <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#allow_rule">Special Move Restrictions</a>: OPP_OR_EMPTY</p>
+    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#start_pattern">Start Pattern</a>: ALTS_WITH_1</p>
+  </div>
+</div>
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p33.
+<h3 id="Songo">Songo</h3>
+<p>A single-lap mancala, sow direction is clockwise; skip start hole if cycle the board. Multiple capture on opponents side on 2s and 4s.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  7</p>
+    <p class="param">Start seeds:  5</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 2 4</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+    <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: Yes</p>
+    <p class="param"><a href="game_params.html#mustshare">Must Share</a>: Yes</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
+    <p class="param"><a href="game_params.html#skip_start">Skip Start on Lap</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p19.
+<h3 id="Tapata">Tapata</h3>
+<p>The goal is to deprive the opponent of seeds. Counter-clockwise, multi-lap sow. Prescribed opening move: one seed must reach opponents side of the board. Moves must end in an empty hole or reach opponents side of the board.  Seeds are taken out of play via cross-capture on opponents side.
+<p>Variations:
+<ul><li>any start pattern
+<li>any allow rule
+<li>see Sedeqa
+</ul>
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  12</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#goal">Game Goal</a>: DEPRIVE</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+    <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
+    <p class="param"><a href="game_params.html#prescribed">Prescribed Opening Move</a>: SOW1OPP</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#start_pattern">Start Pattern</a>: CLIPPEDTRIPLES</p>
+  </div>
+</div>
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p34.
+<h3 id="Toguz Xorgol">Toguz Xorgol</h3>
+<p>A single-lap, clockwise-sow mancala. One seed is left in the start hole when sowing; unless there is only one seed, then it is move forward one hole. Capture on evens that are greater than or equal to 4. Each side can make one Tuzdek (child) with 3 seeds on the opponent's side of the board but not in the left most hole. Tuzdeks cannot be opposite eachother.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  9</p>
+    <p class="param">Start seeds:  9</p>
+    <p class="param"><a href="game_params.html#child_cvt">Child Convert Count</a>: 3</p>
+    <p class="param"><a href="game_params.html#child_type">Type of Children</a>: ONE_CHILD</p>
+    <p class="param"><a href="game_params.html#capt_min">Capture Min</a>: 4</p>
+    <p class="param"><a href="game_params.html#evens">Capture Evens</a>: Yes</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CW</p>
+    <p class="param"><a href="game_params.html#sow_start">Sow Start Hole</a>: Yes</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#move_one">Move One Seed</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p25.
+<h3 id="Vai Lun Thlan">Vai Lun Thlan</h3>
+<p>A single-lap mancala, sow direction is clockwise, capture on opponents side on 1s. Must pass if no moves.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  5</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 1</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+    <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: Yes</p>
+    <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
+    <p class="param"><a href="game_params.html#skip_start">Skip Start on Lap</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: Mohr, Merilyn Simonds; The New Games Treasury, 1993.
+<h3 id="Valah">Valah</h3>
+<p>Multilap sow in counter-clockwise direction. Sow into own store; no other capture mechanism.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+    <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_own_store">Sow Own Store</a>: Yes</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<h3 id="Wari">Wari</h3>
+<p>A single-lap mancala, sow direction is counter-clockwise, multiple capture on opponents side on 2s and 3s. A sow which cycles the board, will skip the hole that the move started from. If your opponent has no seeds, you must make seeds available to them (if you can).
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 2 3</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+    <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: Yes</p>
+    <p class="param"><a href="game_params.html#mustshare">Must Share</a>: Yes</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
+    <p class="param"><a href="game_params.html#skip_start">Skip Start on Lap</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p14.
+<h3 id="Weg">Weg</h3>
+<p>A territory game that uses both stores and wegs (children); capturing 10 holes wins. Sow is multi-lap, counter-clockwise. Wegs are made when a final seed sows a hole to 4 seeds in your opponent's territory. Captures are on the final seed being sown into an opponents weg. The sown seed and one more (if there is one) are captured to your store. Repeat turn on capture (but not making a weg). Played in rounds with start player alternating.
+<p>Variations:
+<ul><li>2x6 with 3 start seeds
+<li>2x10 with 4 start seeds
+<li>not played in rounds
+<li>no repeat turn on capture
+</ul>
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#capt_rturn">Repeat Turn on Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#child_cvt">Child Convert Count</a>: 4</p>
+    <p class="param"><a href="game_params.html#child_type">Type of Children</a>: WEG</p>
+    <p class="param"><a href="game_params.html#goal">Game Goal</a>: TERRITORY</p>
+    <p class="param"><a href="game_params.html#gparam_one">General input</a>: 10</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+    <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER</p>
+    <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p48 details p46.
+<h3 id="XCaptSowOwn">XCaptSowOwn</h3>
+<p>A single-sow mancala, sow own store, cross capture and pickown. Repeat turn if sow ends in your own store. On grand slam, the opposing player get's your remaining seeds.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#grandslam">Grand Slam</a>: OPP_GETS_REMAIN</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
+    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_own_store">Sow Own Store</a>: Yes</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#xcpickown">Own Seed on Xcapture</a>: PICK_ON_CAPT</p>
+  </div>
+</div>
+<p>Rules: Ramanujan & Selman. Trade-Offs in Sampling-Based Adversarial Planning. AAAI 2011.
+Collecting opp seeds if you have no move is partially implemented via grandslam.OPP_GETS_REMAIN.
+</body>
+</html>

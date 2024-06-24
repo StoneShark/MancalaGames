@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Mancala Game Parameters</title>
+<link rel="stylesheet" href="styles.css">
+<script src="ddfiler.js"></script>
+</head>
+<body class="narrow">
+<h1>Mancala Game Parameters</h1>
+<p>Game options are provided in the following categories
+(presented on corresponding tabs on the Mancala Options UI):
+<ul>
+<li><a href="#tab_Game"><b class="inhead">Game</b></a>:
+Provide high level information about a game: name, description,
+size, setup, etc.
+<li><a href="#tab_Dynamics"><b class="inhead">Dynamics</b></a>:
+Parameters that provide some high level of control over how
+game play is conducted.
+<li><a href="#tab_Allow"><b class="inhead">Allow</b></a>:
+Parameters that control which holes moves may be started from.
+<li><a href="#tab_Sow"><b class="inhead">Sow</b></a>:
+Parameters that control how the seeds are sown (moved around)
+in the sow phase of a turn.
+<li><a href="#tab_Capture"><b class="inhead">Capture</b></a>:
+Parameters that control where seeds are captured from and
+any special mechanisms for multiple captures.
+<li><a href="#tab_Player"><b class="inhead">Player</b></a>:
+Parameters that control how the AI player evaluates the
+board after each simulated move
+(see <a href="mancala_help.html#aiplayer"><b class="inhead">AI Player</b></a>).
+</ul>
+<p>An alphabetical parameter <a href="#index">index</a>
+is included after the parameter sections.
+
+<p>Each parameter description includes:
+    <ul>
+    <li>Location in Config File to describe where
+    the parameter is defined in the Game Description file.
+    <li>Type of the parameter with a link to the Parameter Types help.
+    <li>The default value for the parameter.
+    If the default value is to be used the key-value pair is not needed
+    in the game description file.
+    Note that Mancala Options UI has slightly different
+    defaults to yield a playable game.
+    <li>The Mancala Options UI tab on which the parameter can be set.
+    </ul>
+
+<h2 id="tab_Game">Game Tab</h2>
+<h4 id="class"> Game Class </h4>
+<p class="pdesc">Location in Config Files: game_class
+<p id="GameClasses" class="pdesc">Type: <a href="param_types.html#GameClasses"> GameClasses </a>
+<p class="pdesc">Default value: None
+<p class="pdesc">UI Tab: Game
+
+<p>The name of the Game Class. Currently only Mancala.
+<h4 id="holes"> Holes per Side </h4>
+<p class="pdesc">Location in Config Files: game_constants : holes
+<p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
+<p class="pdesc">Default value: None
+<p class="pdesc">UI Tab: Game
+
+<p>Number of holes on each side of the board. Start Pattern may use this number differently.
+<h4 id="help_file"> Help File </h4>
+<p class="pdesc">Location in Config Files: game_info : help_file
+<p id="str" class="pdesc">Type: <a href="param_types.html#str"> str </a>
+<p class="pdesc">Default value: 
+<p class="pdesc">UI Tab: Game
+
+<p>An html help file describing the game.
+<h4 id="about"> About </h4>
+<p class="pdesc">Location in Config Files: game_info : about
+<p id="multi_str" class="pdesc">Type: <a href="param_types.html#multi_str"> multi_str </a>
+<p class="pdesc">Default value: 
+<p class="pdesc">UI Tab: Game
+
+<p>Short string describing the game possibly in multiple lines. Enough to remind the player what the game options are.
+<h4 id="name"> Game Name </h4>
+<p class="pdesc">Location in Config Files: game_info : name
+<p id="str" class="pdesc">Type: <a href="param_types.html#str"> str </a>
+<p class="pdesc">Default value: Mancala
+<p class="pdesc">UI Tab: Game
+
+<p>The game name, may have spaces. Used for the config filename and the window title.
+<h4 id="nbr_start"> Start Seeds </h4>
+<p class="pdesc">Location in Config Files: game_constants : nbr_start
+<p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
+<p class="pdesc">Default value: None
+<p class="pdesc">UI Tab: Game
+
+<p>The number of seeds in each hole at the start of a game, unless the sow pattern is not ALL_EQUAL. Other sow patterns use this as the number of seeds for some holes in the associated patterns.
+<h2 id="tab_Dynamics">Dynamics Tab</h2>
+<h4 id="stores"> Stores </h4>
+<p class="pdesc">Location in Config Files: game_info : stores
+<p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
+<p class="pdesc">Default value: False
+<p class="pdesc">UI Tab: Dynamics
+
+<p>Are stores present on the UI. Stores might not be on the UI but used if seeds are taken out of play.
+<h4 id="mustpass"> Must Pass </h4>
+<p class="pdesc">Location in Config Files: game_info : mustpass
+<p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
+<p class="pdesc">Default value: False
+<p class="pdesc">UI Tab: Dynamics
+
+<p>If a player has no allowable moves on their turn they must pass, until they have allowable moves. The game is over when neither play has an allowable move.
+<h4 id="rounds"> Rounds </h4>
+<p class="pdesc">Location in Config Files: game_info : rounds
+<p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
+<p class="pdesc">Default value: False
+<p class="pdesc">UI Tab: Dynamics
+
+<p>Is the game played in rounds?
+<h4 id="round_starter"> Round Starter </h4>
+<p class="pdesc">Location in Config Files: game_info : round_starter
+<p id="RoundStarter" class="pdesc">Type: <a href="param_types.html#RoundStarter"> RoundStarter </a>
+<p class="pdesc">Default value: 0
+<p class="pdesc">UI Tab: Dynamics
+
+<p>Defines which player starts 2nd and subsequent rounds:
+<p>- ALTERNATE: the round starter alternates.
+<p>- LOSER: the loser of the previous round starts the current round.
+<p>- WINNER: the winner of the previous round starts the current round.
+<p>- LAST_MOVER: the player that made the last move of the previous round, starts the new round.
+<h4 id="round_fill"> Round Fill Method </h4>
+<p class="pdesc">Location in Config Files: game_info : round_fill
+<p id="RoundFill" class="pdesc">Type: <a href="param_types.html#RoundFill"> RoundFill </a>
+<p class="pdesc">Default value: 0
+<p class="pdesc">UI Tab: Dynamics
+
+<p>Choose how holes are filled when a new round strarts:
+<p>NOT_APPLICABLE: round fill doesn't need to be specified: either not played in rounds or game goal is TERRITORY (all holes filled).
+<p>LEFT_FILL: fill holes from the player's left.
+<p>RIGHT_FILL: fill holes from the player's right. 
+<p>OUTSIDE_FILL: fill holes from the outside ends toward the middle.
+<p>EVEN_FILL: fill both sides with the same number of seeds per hole, determined by dividing the losers seeds by the number of holes per side. If that is not playable base on minimum move, extra seeds are put in each players leftmost hole. Any extra seeds are put in each player's store.
+<p>SHORTEN: shorten the board so that all of the loser's holes are filled; the winner will have more seeds in their store but the same board arrangement. If the game uses children, they will not be created if the board size is reduced to 3 or less.
+<p>UCHOOSE: allow user to choose which holes have seeds (are not blocked) when ROUNDS with BLOCKS are used.
+<p>UMOVE: allow the loser to choose where seeds are placed. At least one seed must be placed in each hole, remaining seeds are placed in the store. The winner's layout is the same layout but reflected.
+<h4 id="blocks"> Blocks </h4>
+<p class="pdesc">Location in Config Files: game_info : blocks
+<p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
+<p class="pdesc">Default value: False
+<p class="pdesc">UI Tab: Dynamics
+
+<p>Blocks remove holes from play and are shown on the UI with an X.
+<p>When used with ROUNDS, the holes not filled from the player with fewer seeds are blocked and thus out of play for the round.
+<p>When used with DEPRIVE, SOW_BLCK_DIV and GPARAM_ONE holes are closed (blocked and removed from play) when sown to GPARAM_ONE seeds.
+<h4 id="goal"> Game Goal </h4>
+<p class="pdesc">Location in Config Files: game_info : goal
+<p id="Goal" class="pdesc">Type: <a href="param_types.html#Goal"> Goal </a>
+<p class="pdesc">Default value: 0
+<p class="pdesc">UI Tab: Dynamics
+
+<p>The overall goal of the game. Defines how a player wins.
+<p>MAX_SEEDS: player with the maximum number of seeds at the end of the game wins or they collect more than half of the total seeds
+<p>DEPRIVE: eliminate all of your opponents seeds.
+<p>TERRITORY: claim ownership of holes. Each round the ownership of holes is determined by the number of seeds captured in the previous round.
+<h4 id="no_sides"> No Sides </h4>
+<p class="pdesc">Location in Config Files: game_info : no_sides
+<p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
+<p class="pdesc">Default value: False
+<p class="pdesc">UI Tab: Dynamics
+
+<p>Holes are not owned. All holes are candidates for allowables and moves. Moves need specify side, position and directions.  
+<h4 id="start_pattern"> Start Pattern </h4>
+<p class="pdesc">Location in Config Files: game_info : start_pattern
+<p id="StartPattern" class="pdesc">Type: <a href="param_types.html#StartPattern"> StartPattern </a>
+<p class="pdesc">Default value: 0
+<p class="pdesc">UI Tab: Dynamics
+
+<p>Allows specifing non-all-equal start patterns. Four patterns are supported:
+<p>GAMACHA: starting from the third hold (from start player's left) place nbr_seeds in every other hole, the first move is prescribed move the center hole's seeds to the other side (this is done automatically).
+<p>ALTERNATES: everyother hole is filled with nbr_seeds, no seeds end up opposite eachother. If a player has fewer seeds than their opponent, then they start.
+<p>ALTS_WITH_1: like Alternates except the starter's 2nd from right hole with nbr_seeds is replaced with one seed.
+<p>CLIPPEDTRIPLES: pattern of 0 S S (where S is nbr_seeds) is used to fill the holes; if a full cycle of 3 cannot be placed, the holes are left empty. The True and False sides are the same from the player's perspective, e.g. they will look reversed when viewed from one side of the game board.
+<p>TWOEMPTY: all but the rightmost two holes for each player are filled with is nbr_seeds.
+<h4 id="prescribed"> Prescribed Opening Move </h4>
+<p class="pdesc">Location in Config Files: game_info : prescribed
+<p id="SowPrescribed" class="pdesc">Type: <a href="param_types.html#SowPrescribed"> SowPrescribed </a>
+<p class="pdesc">Default value: 0
+<p class="pdesc">UI Tab: Dynamics
+
+<p>BASIC_SOWER: the first sow follows general rules of single lap sowing.  Other sow parameters will be enacted  afterward.
+<p>MLAPS_SOWER: the first sow follows general rules of multi-lap sowing. Other sow parameters will be enacted  afterward.
+<p>SOW1OPP: at least one seed must be sown on the opponents side of the board accomplished by sowing as normal until the final seed, then any remaining holes on the player side are skipped and the
+<p>PLUS1MINUS1: proceed from the selected hole by moving one seed from the next hole into the following hole, next skip that hole and repeat moving seed forward. After cycling the board, capture across from the opening hole.
+<p>ARNGE_LIMIT: the first move may be used to rearrange the seeds (opponent is same layout). If the first move is not used for rearrangement, captures and child creation are not allowed from the starter until the second player makes a child or captures.
+<h4 id="gparam_one"> General input </h4>
+<p class="pdesc">Location in Config Files: game_info : gparam_one
+<p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
+<p class="pdesc">Default value: 0
+<p class="pdesc">UI Tab: Dynamics
+
+<p>Goal of Territory: defines the number of holes needed for a win.
+<p>Goal of Deprive and Blocked Divert Sower: defines the number of seeds needed to close/block holes (sow_blkd_div).
+<h2 id="tab_Allow">Allow Tab</h2>
+<h4 id="min_move"> Minimum Seeds for Move </h4>
+<p class="pdesc">Location in Config Files: game_info : min_move
+<p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
+<p class="pdesc">Default value: 1
+<p class="pdesc">UI Tab: Allow
+
+<p>The minimum number of seeds a hole must have for it to be an allowable move start hole.
+<h4 id="mustshare"> Must Share </h4>
+<p class="pdesc">Location in Config Files: game_info : mustshare
+<p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
+<p class="pdesc">Default value: False
+<p class="pdesc">UI Tab: Allow
+
+<p>If an opponent has no moves at the start of your turn, you must make seeds available to them if you can.
+<h4 id="allow_rule"> Special Move Restrictions </h4>
+<p class="pdesc">Location in Config Files: game_info : allow_rule
+<p id="AllowRule" class="pdesc">Type: <a href="param_types.html#AllowRule"> AllowRule </a>
+<p class="pdesc">Default value: 0
+<p class="pdesc">UI Tab: Allow
+
+<p>NONE: no special rule
+<p>OPP_OR_EMPTY:  Limit the allowable holes to those that end in an empty hole or reach the opponents side of the board.
+<p>SINGLE_TO_ZERO: Holes with single seeds may only be played if the next hole is empty.
+<p>SINGLE_ONLY_ALL: Holes with single seeds may only be played if all holes contain single seeds.
+<p>SINGLE_ALL_TO_ZERO: Holes with single seeds may only be played if all holes contain single seeds and then only if the next hole is empty.
+<p>TWO_ONLY_ALL: Holes with two seeds may only be played if all holes contain two seeds.
+<p>TWO_ONLY_ALL_RIGHT: Holes with two seeds may not be played, unless all holes contains two seeds, in which case the rightmost hole must be played.
+<p>FIRST_TURN_ONLY_RIGHT_TWO: The first turn must start from one of the two rightmost holes.
+<h2 id="tab_Sow">Sow Tab</h2>
+<h4 id="sow_direct"> Sow Direction </h4>
+<p class="pdesc">Location in Config Files: game_info : sow_direct
+<p id="Direct" class="pdesc">Type: <a href="param_types.html#Direct"> Direct </a>
+<p class="pdesc">Default value: 1
+<p class="pdesc">UI Tab: Sow
+
+<p>Direction of sow:
+<p>- CW: clockwise
+<p>- CCW: counter-clockwise
+<p>- SPLIT: left holes sow counter-clockwise and right holes sow clockwise, an odd middle hole must be set as udir_hole
+<p>Any hole can be set as udir_hole to aloow the user to override the sow_direct setting.
+<h4 id="sow_start"> Sow Start Hole </h4>
+<p class="pdesc">Location in Config Files: game_info : sow_start
+<p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
+<p class="pdesc">Default value: False
+<p class="pdesc">UI Tab: Sow
+
+<p>When selected, the first seed is sown into  (i.e. left in) the start hole.
+<h4 id="skip_start"> Skip Start on Lap </h4>
+<p class="pdesc">Location in Config Files: game_info : skip_start
+<p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
+<p class="pdesc">Default value: False
+<p class="pdesc">UI Tab: Sow
+
+<p>When sowing a second or subsequent circuit of the board, skip the start hole. This will leave the start hole empty for single lap games.
+<h4 id="sow_own_store"> Sow Own Store </h4>
+<p class="pdesc">Location in Config Files: game_info : sow_own_store
+<p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
+<p class="pdesc">Default value: False
+<p class="pdesc">UI Tab: Sow
+
+<p>Sow seeds into your own store when passing it. Do not sow into your opponents store.
+<h4 id="move_one"> Move One Seed </h4>
+<p class="pdesc">Location in Config Files: game_info : move_one
+<p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
+<p class="pdesc">Default value: False
+<p class="pdesc">UI Tab: Sow
+
+<p>Only valid when sow_start is set. Changes the sow_start behavior so that if there is only one seed in the hole, it is moved in the sow direction one hole.
+<h4 id="sow_rule"> Special Sow Rules </h4>
+<p class="pdesc">Location in Config Files: game_info : sow_rule
+<p id="SowRule" class="pdesc">Type: <a href="param_types.html#SowRule"> SowRule </a>
+<p class="pdesc">Default value: 0
+<p class="pdesc">UI Tab: Sow
+
+<p>SOW_BLKD_DIV: Holes sown to GPARAM_ONE are closed (blocked) and the hole's seeds are removed from play. Blocked holes on own side are skipped when sowing and blocked holes on opp side are diverted out of play or captured. 
+<p>SOW_BLKD_DIV_NR: SOW_BLKD_DIV except that each player's rightmost hole cannot be closed.
+<p>OWN_SOW_CAPT_ALL: Capture all holes that are sown that meet the simple capture criteria: evens, min, max and  capture on. Other criteria are enforced: side of the board, unlocked, and not child.   Grand Slam rules are not applied. If the game goal TERRITORY the capturer is the hole owner; otherwise the capturer is done by side. NOCAPTFIRST prevents this capture for the first move.
+<p>SOW_SOW_CAPT_ALL: Capture all holes that sown that meed the simple capture criteria only on the SOWER's side of the board. NOCAPTFIRST prevents this capture for the first move.
+<p>NO_SOW_OPP_2S: Don't sow into opponents holes with 2 seeds.
+<h4 id="udir_holes"> User Chooses Direction </h4>
+<p class="pdesc">Location in Config Files: game_info : udir_holes
+<p id="list[bool]" class="pdesc">Type: <a href="param_types.html#list[bool]"> list[bool] </a>
+<p class="pdesc">Default value: []
+<p class="pdesc">UI Tab: Sow
+
+<p>A list of holes that the user can control the sow direction from. Control is via the mouse button: left is clockwise and right is counter-clockwise.
+<p>Note: all holes respond to both mouse buttons, but if the hole is not in udir_holes, the sow direction will be that prescribed by sow_direct with either button.
+<h4 id="mlaps"> Multilap Sow </h4>
+<p class="pdesc">Location in Config Files: game_info : mlaps
+<p id="LapSower" class="pdesc">Type: <a href="param_types.html#LapSower"> LapSower </a>
+<p class="pdesc">Default value: 0
+<p class="pdesc">UI Tab: Sow
+
+<p>OFF: Single lap sowing.
+<p>LAPPER:  If the first sow ends in a hole with more than one seed, pickup all the seeds and continue sowing another lap. Continue until the final seed of a lap reaches an empty hole, unless there is another rule that stops the sowing (e.g. making a child).
+<p>LAPPER_NEXT:  If the first sow ends in a hole preceeding a hole with any seeds, pick up the seeds from that next hole and continue sowing another lap. Continue until the hole after the laps final seed is empty.
+<h4 id="visit_opp"> Visit Opp for Mlaps </h4>
+<p class="pdesc">Location in Config Files: game_info : visit_opp
+<p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
+<p class="pdesc">Default value: False
+<p class="pdesc">UI Tab: Sow
+
+<p>Sow is multiplap only if the first sow reaches the opponents side of the board.
+<h4 id="child_type"> Type of Children </h4>
+<p class="pdesc">Location in Config Files: game_info : child_type
+<p id="ChildType" class="pdesc">Type: <a href="param_types.html#ChildType"> ChildType </a>
+<p class="pdesc">Default value: 0
+<p class="pdesc">UI Tab: Sow
+
+<p>Games with children allow players to claim holes. These child holes are an extension of the stores and seeds in them count towards a win. Making a child stops any multiple lap sowing, moves cannot start from children, and they cannot be captured.
+<p>NORMAL: no special child rules
+<p>WALDAS: Stores are not supported. Captures are instead moved into waldas, thus a player may not capture until they have created a walda. Child locations are limited.  Each player may create up to 6 waldas: on either end of each side of the board and the next outer hole on their own side of the board. Note that there are only 8 total places that waldas maybe created.
+<p>ONE_CHILD: Use the tuzdek rules for children: only one child allowed on own side of the board, may not be in player's left most hole,  and may not be opposite eachother.
+<p>WEG: children maybe created in holes owned by the opponent. Ending a sow in an opponent's weg captures the seed just sown and one more (if there is one); the player get's to play again.
+<p>BULL: create one bull if final seed sows to CHILD_CVT, create two bulls if the final two seeds are sown to CHILD_CVT-1 and CHILD_CVT (in either order).
+<h4 id="child_cvt"> Child Convert Count </h4>
+<p class="pdesc">Location in Config Files: game_info : child_cvt
+<p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
+<p class="pdesc">Default value: 0
+<p class="pdesc">UI Tab: Sow
+
+<p>Defines the number of seeds required to make a child.
+<h4 id="child_rule"> Child Restrictions </h4>
+<p class="pdesc">Location in Config Files: game_info : child_rule
+<p id="ChildRule" class="pdesc">Type: <a href="param_types.html#ChildRule"> ChildRule </a>
+<p class="pdesc">Default value: 0
+<p class="pdesc">UI Tab: Sow
+
+<p>NONE: no additional restrictions.
+<p>OPP_ONLY:  Only make children on the opposite side or in opponent's territory.
+<p>NOT_1ST_OPP: Don't make a child in the first hole on the opponents side/territory with one seed.
+<h2 id="tab_Capture">Capture Tab</h2>
+<h4 id="capsamedir"> Capture in Sow Direction </h4>
+<p class="pdesc">Location in Config Files: game_info : capsamedir
+<p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
+<p class="pdesc">Default value: False
+<p class="pdesc">UI Tab: Capture
+
+<p>Only meaninful, with multicapt. Captures are done in the same direction as the sowing, i.e. following the final hole sown. If not set, captures are done from the holes just sown.
+<h4 id="oppsidecapt"> Opp Side Capt Only </h4>
+<p class="pdesc">Location in Config Files: game_info : oppsidecapt
+<p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
+<p class="pdesc">Default value: False
+<p class="pdesc">UI Tab: Capture
+
+<p>Captures may only be made from your oppents side of the board.
+<h4 id="multicapt"> Multiple Captures </h4>
+<p class="pdesc">Location in Config Files: game_info : multicapt
+<p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
+<p class="pdesc">Default value: False
+<p class="pdesc">UI Tab: Capture
+
+<p>After the initial capture, continue capturing as long as the capture conditions are met.
+<h4 id="evens"> Capture Evens </h4>
+<p class="pdesc">Location in Config Files: game_info : evens
+<p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
+<p class="pdesc">Default value: False
+<p class="pdesc">UI Tab: Capture
+
+<p>Capture when a hole contains an even number of seeds, greater than 0.
+<p>xxx_SOW_CAPT_ALL does this capture.
+<h4 id="capt_max"> Capture Max </h4>
+<p class="pdesc">Location in Config Files: game_info : capt_max
+<p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
+<p class="pdesc">Default value: 0
+<p class="pdesc">UI Tab: Capture
+
+<p>Capture when the contents of the hole are less than or equal to capt_max.
+<p>xxx_SOW_CAPT_ALL does this capture.
+<h4 id="capt_min"> Capture Min </h4>
+<p class="pdesc">Location in Config Files: game_info : capt_min
+<p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
+<p class="pdesc">Default value: 0
+<p class="pdesc">UI Tab: Capture
+
+<p>Capture when the contents of the hole are greater than or equal to capt_min.
+<p>xxx_SOW_CAPT_ALL does this capture.
+<h4 id="capt_next"> Capture Next </h4>
+<p class="pdesc">Location in Config Files: game_info : capt_next
+<p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
+<p class="pdesc">Default value: False
+<p class="pdesc">UI Tab: Capture
+
+<p>Capture from the hole after the final seed sown into an empty hole. 
+<p>xxx_SOW_CAPT_ALL does not do this capture.
+<h4 id="capttwoout"> Capture Two Out </h4>
+<p class="pdesc">Location in Config Files: game_info : capttwoout
+<p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
+<p class="pdesc">Default value: False
+<p class="pdesc">UI Tab: Capture
+
+<p>There are three flavors of capture two out:
+<p>Single Lap: capture if sow ends in occupied hole, then an empty hole, followed by an occupied hole (this is hole captured).
+<p>Multi lap but single capture: capture when last hole sown is followed by an empty hole which is then followed by an occupied hole.
+<p>Multi lap with multiple captures: capture when last hole sown is followed by an empty hole which is then followed by an occupied hole. Continue captures as long as the pattern of empty hole followed by an occupied hole continues.
+<p>xxx_SOW_CAPT_ALL does not do this capture.
+<p>OPPSIDECAPT, EVENS, CAPT_MAX, CAPT_MIN, and CAPT_ON apply only to an optional xxx_SOW_CAPT_ALL and not the final capture.
+<h4 id="crosscapt"> Cross-Capture </h4>
+<p class="pdesc">Location in Config Files: game_info : crosscapt
+<p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
+<p class="pdesc">Default value: False
+<p class="pdesc">UI Tab: Capture
+
+<p>If the last sown seed is put in an empty hole, any seeds on the opposite side of the board are captured.
+<p>xxx_SOW_CAPT_ALL does not do this capture.
+<h4 id="xc_sown"> Must sow opp for xcapt </h4>
+<p class="pdesc">Location in Config Files: game_info : xc_sown
+<p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
+<p class="pdesc">Default value: False
+<p class="pdesc">UI Tab: Capture
+
+<p>Don't do cross capture if have not sown into the opposite hole.
+<p>If ending on own side of the board, but did not sow opposite hole, repeat turn.
+<h4 id="xcpickown"> Own Seed on Xcapture </h4>
+<p class="pdesc">Location in Config Files: game_info : xcpickown
+<p id="CrossCaptOwn" class="pdesc">Type: <a href="param_types.html#CrossCaptOwn"> CrossCaptOwn </a>
+<p class="pdesc">Default value: 0
+<p class="pdesc">UI Tab: Capture
+
+<p>When crosscapt is set, defines what to do with the single seed initiating the cross capture.
+<p>- LEAVE: always leave the signle seed
+<p>- PICK_ON_CAPTURE: only pick (capture) the seed if there was a capture.
+<p>- ALWAYS_PICK: always pick (capture) the seed, even if there was not a capture"
+<h4 id="grandslam"> Grand Slam </h4>
+<p class="pdesc">Location in Config Files: game_info : grandslam
+<p id="GrandSlam" class="pdesc">Type: <a href="param_types.html#GrandSlam"> GrandSlam </a>
+<p class="pdesc">Default value: 0
+<p class="pdesc">UI Tab: Capture
+
+<p>A grandslam is when your opponent has seeds at the start of your turn and you capture them all. This option selects what to do:
+<p>LEGAL: the seeds are captured
+<p>NOT_LEGAL: you may not capture all of your opponents seeds, a move which would do so is not allowed
+<p>NO_CAPT: you may sow the seeds, but the capture is not performed
+<p>OPP_GETS_REMAIN: if you capture all your opponents seeds, they capture all of your remaining seeds and the game is over. Winner is determined by game goal.
+<p>LEAVE_LEFT: the capture is performed from all but the leftmost hole from the sower perspective. This might leave your oppenents without seeds or might not capture any seeds.
+<p>LEAVE_RIGHT: the capture is performed from all but the rightmost hole from the sower perspective. This might leave your oppenents without seeds.
+<h4 id="moveunlock"> Move Unlock for Capture </h4>
+<p class="pdesc">Location in Config Files: game_info : moveunlock
+<p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
+<p class="pdesc">Default value: False
+<p class="pdesc">UI Tab: Capture
+
+<p>Captures may not be made from locked holes. Starting a sow from a hole unlocks it.
+<h4 id="nosinglecapt"> No Single Seed Capture </h4>
+<p class="pdesc">Location in Config Files: game_info : nosinglecapt
+<p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
+<p class="pdesc">Default value: False
+<p class="pdesc">UI Tab: Capture
+
+<p>If the selected start hole contains one seed, no capture may be made with it.
+<h4 id="nocaptfirst"> No Capture First Move </h4>
+<p class="pdesc">Location in Config Files: game_info : nocaptfirst
+<p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
+<p class="pdesc">Default value: False
+<p class="pdesc">UI Tab: Capture
+
+<p>Don't allow captures on the first move.
+<h4 id="capt_on"> Capture On Values </h4>
+<p class="pdesc">Location in Config Files: game_info : capt_on
+<p id="list[bool]" class="pdesc">Type: <a href="param_types.html#list[bool]"> list[bool] </a>
+<p class="pdesc">Default value: []
+<p class="pdesc">UI Tab: Capture
+
+<p>Capture when the contents of the hole is in the capt_on list. 
+<p>xxx_SOW_CAPT_ALL does this capture.
+<h4 id="capt_rturn"> Repeat Turn on Capture </h4>
+<p class="pdesc">Location in Config Files: game_info : capt_rturn
+<p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
+<p class="pdesc">Default value: False
+<p class="pdesc">UI Tab: Capture
+
+<p>Repeat turn if there was a capture. Making children is not currently considered making a capture.
+<h4 id="pickextra"> On Capture, Take More Rule </h4>
+<p class="pdesc">Location in Config Files: game_info : pickextra
+<p id="CaptExtraPick" class="pdesc">Type: <a href="param_types.html#CaptExtraPick"> CaptExtraPick </a>
+<p class="pdesc">Default value: 0
+<p class="pdesc">UI Tab: Capture
+
+<p>NONE: Nothing extra
+<p>PICKCROSS: Take the seeds from the opposite side of the board. 
+<p>PICKTWOS: Take seeds from all holes containing two seeds but only after the first move.
+<h2 id="tab_Player">Player Tab</h2>
+<h4 id="algorithm"> Algorithm </h4>
+<p class="pdesc">Location in Config Files: player : algorithm
+<p id="Algorithm" class="pdesc">Type: <a href="param_types.html#Algorithm"> Algorithm </a>
+<p class="pdesc">Default value: None
+<p class="pdesc">UI Tab: Player
+
+<p>minimaxer: an Alpha-Beta Pruning MiniMaxer
+<p>negamaxer: minimaxer with a very minor optimization for alternating turn games (no repeat turns). Uses minimaxer depths for difficulties.
+<p>montecarlo_ts: a Monte Carlo Tree Search player (that is likely implemented wrong).
+<h4 id="difficulty"> Default Difficulty </h4>
+<p class="pdesc">Location in Config Files: player : difficulty
+<p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
+<p class="pdesc">Default value: None
+<p class="pdesc">UI Tab: Player
+
+<p>The default difficulty. Can be changed at play time, even during game play, in the Mancala UI.
+<h4 id="ai_active"> Start Active </h4>
+<p class="pdesc">Location in Config Files: player : ai_active
+<p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
+<p class="pdesc">Default value: None
+<p class="pdesc">UI Tab: Player
+
+<p>Automatically activate the AI player. The AI player can be manually deactivated.
+<h4 id="mm_depth"> MiniMaxer Depth </h4>
+<p class="pdesc">Location in Config Files: player : ai_params : mm_depth
+<p id="list[int]" class="pdesc">Type: <a href="param_types.html#list[int]"> list[int] </a>
+<p class="pdesc">Default value: None
+<p class="pdesc">UI Tab: Player
+
+<p>For each difficulty [0-3], the depth that the minimaxer will search to.
+<h4 id="mcts_bias"> MCTS Bias </h4>
+<p class="pdesc">Location in Config Files: player : ai_params : mcts_bias
+<p id="list[int]" class="pdesc">Type: <a href="param_types.html#list[int]"> list[int] </a>
+<p class="pdesc">Default value: None
+<p class="pdesc">UI Tab: Player
+
+<p>Bias for the Monte Carlo Tree seach algorithm for each difficulty level (0-3). 
+<p>Value is divided by 1000.
+<h4 id="mcts_nodes"> MCTS Nodes per Move </h4>
+<p class="pdesc">Location in Config Files: player : ai_params : mcts_nodes
+<p id="list[int]" class="pdesc">Type: <a href="param_types.html#list[int]"> list[int] </a>
+<p class="pdesc">Default value: None
+<p class="pdesc">UI Tab: Player
+
+<p>Number of leaf nodes to create each time we pick a new move. One value for each difficulty level (0-3).
+<h4 id="mcts_pouts"> MCTS Playouts per Node </h4>
+<p class="pdesc">Location in Config Files: player : ai_params : mcts_pouts
+<p id="list[int]" class="pdesc">Type: <a href="param_types.html#list[int]"> list[int] </a>
+<p class="pdesc">Default value: None
+<p class="pdesc">UI Tab: Player
+
+<p>Number of end games played out from each leaf node created. One value for each difficulty level (0-3).
+<h4 id="stores_m"> Stores mult </h4>
+<p class="pdesc">Location in Config Files: player : scorer : stores_m
+<p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
+<p class="pdesc">Default value: None
+<p class="pdesc">UI Tab: Player
+
+<p>The minimax scorer will use this as a multiplier to maximize the bottom players stores versus the top player's. 
+<h4 id="access_m"> Access mult </h4>
+<p class="pdesc">Location in Config Files: player : scorer : access_m
+<p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
+<p class="pdesc">Default value: None
+<p class="pdesc">UI Tab: Player
+
+<p>Access mult
+<h4 id="seeds_m"> Seeds mult </h4>
+<p class="pdesc">Location in Config Files: player : scorer : seeds_m
+<p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
+<p class="pdesc">Default value: None
+<p class="pdesc">UI Tab: Player
+
+<p>Seeds mult
+<h4 id="empties_m"> Empties mult </h4>
+<p class="pdesc">Location in Config Files: player : scorer : empties_m
+<p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
+<p class="pdesc">Default value: None
+<p class="pdesc">UI Tab: Player
+
+<p>Empties mult
+<h4 id="child_cnt_m"> Child Count mult </h4>
+<p class="pdesc">Location in Config Files: player : scorer : child_cnt_m
+<p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
+<p class="pdesc">Default value: None
+<p class="pdesc">UI Tab: Player
+
+<p>Child Count mult
+<h4 id="evens_m"> Evens mult </h4>
+<p class="pdesc">Location in Config Files: player : scorer : evens_m
+<p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
+<p class="pdesc">Default value: None
+<p class="pdesc">UI Tab: Player
+
+<p>Evens mult
+<h4 id="easy_rand"> Easy Random Addin </h4>
+<p class="pdesc">Location in Config Files: player : scorer : easy_rand
+<p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
+<p class="pdesc">Default value: None
+<p class="pdesc">UI Tab: Player
+
+<p>Easy Random Addin
+<h4 id="repeat_turn"> Repeat Turn mult </h4>
+<p class="pdesc">Location in Config Files: player : scorer : repeat_turn
+<p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
+<p class="pdesc">Default value: None
+<p class="pdesc">UI Tab: Player
+
+<p>Repeat Turn mult
+<br><br><br>
+<h2 id="index">Parameter Index</h2>
+<div class="cols_row">
+  <div class="column3">
+    <p class="param"><a href="#about">about</a></p>
+    <p class="param"><a href="#access_m">access_m</a></p>
+    <p class="param"><a href="#ai_active">ai_active</a></p>
+    <p class="param"><a href="#algorithm">algorithm</a></p>
+    <p class="param"><a href="#allow_rule">allow_rule</a></p>
+    <p class="param"><a href="#blocks">blocks</a></p>
+    <p class="param"><a href="#capsamedir">capsamedir</a></p>
+    <p class="param"><a href="#capt_max">capt_max</a></p>
+    <p class="param"><a href="#capt_min">capt_min</a></p>
+    <p class="param"><a href="#capt_next">capt_next</a></p>
+    <p class="param"><a href="#capt_on">capt_on</a></p>
+    <p class="param"><a href="#capt_rturn">capt_rturn</a></p>
+    <p class="param"><a href="#capttwoout">capttwoout</a></p>
+    <p class="param"><a href="#child_cnt_m">child_cnt_m</a></p>
+    <p class="param"><a href="#child_cvt">child_cvt</a></p>
+    <p class="param"><a href="#child_rule">child_rule</a></p>
+    <p class="param"><a href="#child_type">child_type</a></p>
+    <p class="param"><a href="#class">class</a></p>
+    <p class="param"><a href="#crosscapt">crosscapt</a></p>
+    <p class="param"><a href="#difficulty">difficulty</a></p>
+    <p class="param"><a href="#easy_rand">easy_rand</a></p>
+    <p class="param"><a href="#empties_m">empties_m</a></p>
+  </div>
+  <div class="column3">
+    <p class="param"><a href="#evens">evens</a></p>
+    <p class="param"><a href="#evens_m">evens_m</a></p>
+    <p class="param"><a href="#goal">goal</a></p>
+    <p class="param"><a href="#gparam_one">gparam_one</a></p>
+    <p class="param"><a href="#grandslam">grandslam</a></p>
+    <p class="param"><a href="#help_file">help_file</a></p>
+    <p class="param"><a href="#holes">holes</a></p>
+    <p class="param"><a href="#mcts_bias">mcts_bias</a></p>
+    <p class="param"><a href="#mcts_nodes">mcts_nodes</a></p>
+    <p class="param"><a href="#mcts_pouts">mcts_pouts</a></p>
+    <p class="param"><a href="#min_move">min_move</a></p>
+    <p class="param"><a href="#mlaps">mlaps</a></p>
+    <p class="param"><a href="#mm_depth">mm_depth</a></p>
+    <p class="param"><a href="#move_one">move_one</a></p>
+    <p class="param"><a href="#moveunlock">moveunlock</a></p>
+    <p class="param"><a href="#multicapt">multicapt</a></p>
+    <p class="param"><a href="#mustpass">mustpass</a></p>
+    <p class="param"><a href="#mustshare">mustshare</a></p>
+    <p class="param"><a href="#name">name</a></p>
+    <p class="param"><a href="#nbr_start">nbr_start</a></p>
+    <p class="param"><a href="#no_sides">no_sides</a></p>
+    <p class="param"><a href="#nocaptfirst">nocaptfirst</a></p>
+  </div>
+  <div class="column3">
+    <p class="param"><a href="#nosinglecapt">nosinglecapt</a></p>
+    <p class="param"><a href="#oppsidecapt">oppsidecapt</a></p>
+    <p class="param"><a href="#pickextra">pickextra</a></p>
+    <p class="param"><a href="#prescribed">prescribed</a></p>
+    <p class="param"><a href="#repeat_turn">repeat_turn</a></p>
+    <p class="param"><a href="#round_fill">round_fill</a></p>
+    <p class="param"><a href="#round_starter">round_starter</a></p>
+    <p class="param"><a href="#rounds">rounds</a></p>
+    <p class="param"><a href="#seeds_m">seeds_m</a></p>
+    <p class="param"><a href="#skip_start">skip_start</a></p>
+    <p class="param"><a href="#sow_direct">sow_direct</a></p>
+    <p class="param"><a href="#sow_own_store">sow_own_store</a></p>
+    <p class="param"><a href="#sow_rule">sow_rule</a></p>
+    <p class="param"><a href="#sow_start">sow_start</a></p>
+    <p class="param"><a href="#start_pattern">start_pattern</a></p>
+    <p class="param"><a href="#stores">stores</a></p>
+    <p class="param"><a href="#stores_m">stores_m</a></p>
+    <p class="param"><a href="#udir_holes">udir_holes</a></p>
+    <p class="param"><a href="#visit_opp">visit_opp</a></p>
+    <p class="param"><a href="#xc_sown">xc_sown</a></p>
+    <p class="param"><a href="#xcpickown">xcpickown</a></p>
+  </div>
+</div>
+</body>
+</html>
