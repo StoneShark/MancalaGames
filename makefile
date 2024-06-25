@@ -1,4 +1,5 @@
 
+all: clean pylint context all_tests docs exe
 
 
 MODULES = ai_interface.py
@@ -36,40 +37,69 @@ MODULES += play.py
 MODULES += sow_starter.py
 MODULES += sower.py
 
-
 SOURCES = src/*.py src/*.pyw
 GAMES = GameProps/*.txt
 TESTS = test/*.py
 GAME_TESTS = $(wildcard test/test_gm_*.py)
 
-HELPFILES = docs\\about_games.html
+HELPFILES = docs\\mancala_help.html
+HELPFILES += docs\\about_games.html
 HELPFILES += docs\\game_params.html
 HELPFILES += docs\\game_xref.html
-HELPFILES += docs\\mancala_help.html
-HELPFILES += docs\\param_types.html
+HELPFILES += docs\param_types.html
 
 DATAFILES = GameProps/*.txt $(HELPFILES) logs/README.txt
 
-all: clean pylint all_tests docs exe
+HELPINPUTS = src\\game_params.txt 
+HELPINPUTS += src\\mancala_games.pyw 
+HELPINPUTS += src\\game_classes.py 
+HELPINPUTS += src\\ai_player.py
+HELPINPUTS += docs\\build_docs.py 
+HELPINPUTS += docs\\context.py 
+
+GENEDHELPS = docs\\about_games.html 
+GENEDHELPS += docs\\game_params.html 
+GENEDHELPS += docs\\game_xref.html 
+GENEDHELPS += docs\\param_types.html
+
+CONTEXTS = test\\context.py
+CONTEXTS += docs\\context.py
+CONTEXTS += analysis\\context.py
 
 
-src/game_params.txt: src/game_params.xlsm
-	echo "Recreate src/game_params.txt from excel"
+# game params
+#
+# convert xlsx to txt for main programs
+# uses pandas which we don't want to use for main programs
+# exe can't be built with pandas
+
+src\\game_params.txt: src\\game_params.xlsx
+	python tools/convert_game_params.py
+
+context: $(CONTEXTS)
+
+
+# context files
+
+test\\context.py: src
+	python tools/make_context.py
+
+docs\\context.py: test\\context.py
+	copy test\\context.py docs\\context.py
+	
+analysis\\context.py: test\\context.py
+	copy test\\context.py analysis\\context.py
 	
 	
 # build documentation
 
-.PHONY: docs
-docs: $(GAMES) src/game_params.txt docs/build_docs.py src/mancala_games.pyw $(GAMES)
+docs: $(GENEDHELPS)
+
+$(GENEDHELPS): $(GAMES) $(HELPINPUTS)
 	cd docs && python build_docs.py
 
 
-
 #  tests
-
-test/context.py: src
-	python tools/make_context.py
-
 
 unit_tests: $(SOURCES) $(TESTS) $(GAMES) test/context.py
 	-coverage run -m pytest -m unittest
@@ -154,17 +184,21 @@ pylint: $(SOURCES) .pylint_report makefile
 	type .pylint_report
 
 
-#  clean
+#  clean/spotless
 #
-#  remove most of the accumulated stuff from builds
-#  generally causes any other target to re-run
+#  clean: remove most of the accumulated stuff from builds
+#  but leave things that are stored in configuration management
+#  generally causes any other target to be re-run
+#
+#  spotless: remove everything including the exes and generated files
 
 .PHONY : clean
 clean:
 	-rmdir /S /Q __pycache__
+	-rmdir /S /Q analysis\\__pycache__
+	-rmdir /S /Q doc\\__pycache__
 	-rmdir /S /Q src\\__pycache__
 	-rmdir /S /Q test\\__pycache__
-	-rmdir /S /Q doc\\__pycache__
 	-rmdir /S /Q .pytest_cache
 	-rmdir /S /Q build
 	-del .pylint_report
@@ -174,12 +208,18 @@ clean:
 	-del src\\.coverage
 	-del test\\context.py
 	-del cov\\*.cov
-
+	
+.PHONY : spotless
+spotless: clean
+	-rmdir /S /Q MancalaGames
+	-del $(GENEDHELPS)
+	-del $(CONTEXTS)
+	-del src\\game_params.txt
 
 # exe
 #
 # build stand alone executables with a shared runtime 
-
+#
 # cannot find a way in windows to make relative sym links or short cuts
 
 exe: MancalaGames/mancala_games.exe
