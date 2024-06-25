@@ -1,11 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Parameters Types</title>
-<link rel="stylesheet" href="styles.css">
-<script src="ddfiler.js"></script>
+    <title>Parameters Types</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body class="narrow">
+
+<div class="sidenav">
+<h3>Game Parameters</h2>
+  <a href="#top">Top</a>
+  <a href="#basic">Basic Types</a>
+  <a href="#descript">Description Types</a>
+  <a href="#enum">Enumeration Types</a>
+<h3>Other Help Files</h3>
+  <a href="mancala_help.html">Mancala Help</a>
+  <a href="about_games.html">Mancala Game Configurations</a>
+  <a href="game_params.html">Parameters</a>
+  <a href="game_xref.html">Cross Reference</a>
+</div>
+<div class="content">
+
 <h1>Parameters Types</h1>
 <p>This file provides a cross reference between the types and
 values accepted for them.
@@ -13,7 +27,7 @@ Detailed descriptions are found in the
 <a href="mancala_help.html">main help</a> or
 <a href="game_params.html">Game Parameteres help</a>.
 
-<h3>Basic Types</h3>
+<h3 id="basic">Basic Types</h3>
 <h4 id="int">int</h4>
 <p>The value must be an integer.
 Some are limited to a specific range.
@@ -24,16 +38,17 @@ Quotes on the value are not required.
 <p>The value must be an string surrounded by quotes (").
 <h4 id="multi_str">multi_str</h4>
 <p>The value must be a string surrounded by quotes (").
-It will be presented in such a way that new lines (
-)
+It will be presented in such a way that new lines (\n)
 will be expanded to new lines.
-<b class="todo">what else is supported in multi_str</b>.
 <h4 id="list_bool">list[bool]</h4>
-<b class="todo">add type description</b>.
+The value must be a list of hole indicies (0 origin) for which
+the property is true.
 <h4 id="list_int">list[int]</h4>
-<b class="todo">add type description</b>.
+The value must be an array of 4 integers.
+These are used for the four strength properties of the AI player.
+Each corresponds to a game difficulty.
 
-<h3>Description Types</h3>
+<h3 id="descript">Description Types</h3>
 Two types are description strings; allowed values are shown below.
 
 <h4 id="Algorithm">Algorithm <a href="game_params.html#Algorithm">(usage)</a></h4>
@@ -49,11 +64,11 @@ Two types are description strings; allowed values are shown below.
 <ul>
 <li>Mancala
 </ul>
-<h3>Enumeration Types</h3>
+<h3 id="enum">Enumeration Types</h3>
 <p>Enumeration types appear in the JSON configuration files
 as integers (int type).
-Each integer value represents an abstract value
-<b class="todo">finish</b>.
+Enumerations provide a list of names for parameter values.
+Only the integer is put in the configuration file.
 <p>Each enumeration type is listed below.
 For each type the values (integer), enumeration value name, and string
 description are list.
@@ -186,5 +201,17 @@ Detailed descriptions of the behavior of each value are in the
 <tr><td>1</td><td>PICK_ON_CAPT<td>Pick on Capture</td></tr>
 <tr><td>2</td><td>ALWAYS_PICK<td>Alway Pick</td></tr>
 </table>
+<p />
+<footer>
+<table>
+    <tr>
+    <td>GPL-3.0 license</td>
+    <td></td>
+    <td style="text-align:right">&copy; 2024, Ann Davies</td>
+    </tr>
+</table>
+</footer>
+
+</div>
 </body>
 </html>

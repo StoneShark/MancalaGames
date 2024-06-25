@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Bechi",
-      "about": "A single-lap mancala, first seed sowed in start hole, start hole determines sow direction, capture evens (after move from hole), capture proceeds in sow direction. Played in rounds; round starter alternates. The game is over when either player cannot fill a single hole.",
+      "about": "A single-lap mancala, the start hole determines sow direction of sow (left holes: CW, right holes: CCW), the first seed is sown in start hole, capture is on evens but only if a move has started from that hole, capture proceeds in sow direction. If a player has no valid move, they must pass. Played in rounds; round starter alternates. The game is over when either player cannot fill a single hole at the start of a round.",
       "blocks": true,
       "capsamedir": true,
       "evens": true,

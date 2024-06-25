@@ -1,11 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Mancala Game Configurations</title>
-<link rel="stylesheet" href="styles.css">
-<script src="ddfiler.js"></script>
+    <title>Mancala Game Configurations</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body class="narrow">
+
+<div class="sidenav">
+<h3>Game Configurations</h2>
+  <a href="#top">Top</a>
+  <a href="#index">Game Index</a>
+<h3>Other Help Files</h3>
+  <a href="mancala_help.html">Mancala Help</a>
+  <a href="game_params.html">Parameters</a>
+  <a href="param_types.html">Param Types</a>
+  <a href="game_xref.html">Cross Reference</a>
+</div>
+<div class="content">
+
 <h1>Mancala Game Configurations</h1>
 <p>A sampling of Mancala games that can be configured with
 the Manacala Game Engine are predefined.
@@ -22,7 +34,8 @@ are good places to start.
 add interesting complications to the basic rules.
 <a href="#Bechi">Bechi</a> introduces the concept of playing in rounds.
 <a href="#Cow">Cow</a> introduces varying the sow direction.
-<a href="#Qelat">Qelat</a> adds the idea of hole ownership, in this case, called walda's.
+<a href="#Qelat">Qelat</a> adds the idea of hole ownership,
+ in this case, called walda's.
 
 <p>Good introductions to multilap sowing are provided by
 <a href="#Endodoi">Endodoi</a> and
@@ -57,6 +70,9 @@ configuration provided.
 I might simply have an implementation error.
 Please consider these file a starting point for defining your
 own favorite games.
+<p>The <a href="game_xref.html">Game / Parameter Cross Reference table</a>
+can be used to determine if a particular set of rules has a different
+name than you expect.
 
 <h3 id="Ayoayo">Ayoayo</h3>
 <p>A multi-lap mancala; sow direction counter-clockwise skipping start hole on full cycle sow; cross-capture from opponents side when a sow ends in own empty hole. If your opponent has no seeds, you must make seeds available to them (if you can). The game ends when one player captures more than half the seeds.
@@ -131,7 +147,7 @@ own favorite games.
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p48 details p 46.
 <h3 id="Bechi">Bechi</h3>
-<p>A single-lap mancala, first seed sowed in start hole, start hole determines sow direction, capture evens (after move from hole), capture proceeds in sow direction. Played in rounds; round starter alternates. The game is over when either player cannot fill a single hole.
+<p>A single-lap mancala, the start hole determines sow direction of sow (left holes: CW, right holes: CCW), the first seed is sown in start hole, capture is on evens but only if a move has started from that hole, capture proceeds in sow direction. If a player has no valid move, they must pass. Played in rounds; round starter alternates. The game is over when either player cannot fill a single hole at the start of a round.
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  4</p>
@@ -201,7 +217,7 @@ own favorite games.
 </div>
 <p>Rules: https://en.wikipedia.org/wiki/Southeast_Asian_mancala
 <h3 id="Cow">Cow</h3>
-<p>A single-lap mancala, sow direction depends on start location: left side sow left, right side sow right, mouse button selectes direction for center. Minimum move is 2 seeds. Multiple capture on opponents side on 2s and 4s. A player must pass, if they have no moves.
+<p>A single-lap mancala, sow direction depends on start location: left side sow CW, right side sow CCW, mouse button selectes direction for center. Minimum move is 2 seeds. Multiple capture on opponents side on 2s and 4s. A player must pass, if they have no moves. The games ends when on player has more than half the seeds, or when neither player can move.
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  5</p>
@@ -218,7 +234,7 @@ own favorite games.
     <p class="param"><a href="game_params.html#udir_holes">User Chooses Direction</a>: 2</p>
   </div>
 </div>
-<p>Rules: Mohr, Merilyn Simonds; The New Games Treasury, 1993.
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p21.
 <h3 id="Dabuda">Dabuda</h3>
 <p>A multi-lap mancala, counter-clockwise sow. Sow must reach opp side or end in empty hole. Cross-capture when end in own hole with one seed. Pick own seed on capture. The games ends if no moves.
 <p>Variations:
@@ -909,7 +925,7 @@ own favorite games.
 <p>Rules: Mohr, Merilyn Simonds; The New Games Treasury, 1993. But with sow into Waldas as described here:  https://mancala.fandom.com/wiki/Qelat_(Beni_Amir_%26_Mensa)
 <h3 id="Sadeqa">Sadeqa</h3>
 <p>Counter-clockwise multi-lap sow. The goal is to deprive the opponent of seeds. Moves must end in an empty hole or reach the opponents side of the board. Seeds are taken out of play via cross-capture. 
-<p>Variations: start patterns of ALTERNATES or ALTS_WITH_1
+<p>Variations: ALTERNATES start pattern
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  12</p>
@@ -1092,5 +1108,73 @@ own favorite games.
 </div>
 <p>Rules: Ramanujan & Selman. Trade-Offs in Sampling-Based Adversarial Planning. AAAI 2011.
 Collecting opp seeds if you have no move is partially implemented via grandslam.OPP_GETS_REMAIN.
+<br><br><br>
+<h2 id="index">Game Index</h2>
+<div class="cols_row">
+  <div class="column3">
+    <p class="param"><a href="#Ayoayo">Ayoayo</a></p>
+    <p class="param"><a href="#Bao (Kenyan)">Bao (Kenyan)</a></p>
+    <p class="param"><a href="#Bao (Tanzanian)">Bao (Tanzanian)</a></p>
+    <p class="param"><a href="#Bechi">Bechi</a></p>
+    <p class="param"><a href="#Bosh">Bosh</a></p>
+    <p class="param"><a href="#Congklak">Congklak</a></p>
+    <p class="param"><a href="#Cow">Cow</a></p>
+    <p class="param"><a href="#Dabuda">Dabuda</a></p>
+    <p class="param"><a href="#Dakon">Dakon</a></p>
+    <p class="param"><a href="#Deka">Deka</a></p>
+    <p class="param"><a href="#Endodoi">Endodoi</a></p>
+    <p class="param"><a href="#Enkushui">Enkushui</a></p>
+    <p class="param"><a href="#Erherhe">Erherhe</a></p>
+    <p class="param"><a href="#Eson Xorgol">Eson Xorgol</a></p>
+    <p class="param"><a href="#Gabata">Gabata</a></p>
+    <p class="param"><a href="#Gamacha">Gamacha</a></p>
+  </div>
+  <div class="column3">
+    <p class="param"><a href="#Giuthi">Giuthi</a></p>
+    <p class="param"><a href="#Goat">Goat</a></p>
+    <p class="param"><a href="#J Odu">J Odu</a></p>
+    <p class="param"><a href="#Kalah">Kalah</a></p>
+    <p class="param"><a href="#Lam Waladach">Lam Waladach</a></p>
+    <p class="param"><a href="#Lami">Lami</a></p>
+    <p class="param"><a href="#Lamlameta">Lamlameta</a></p>
+    <p class="param"><a href="#Longbeu-a-cha">Longbeu-a-cha</a></p>
+    <p class="param"><a href="#Mbangbi">Mbangbi</a></p>
+    <p class="param"><a href="#Mbothe">Mbothe</a></p>
+    <p class="param"><a href="#NamNam">NamNam</a></p>
+    <p class="param"><a href="#Nambayi">Nambayi</a></p>
+    <p class="param"><a href="#Ndoto">Ndoto</a></p>
+    <p class="param"><a href="#No Sides Child">No Sides Child</a></p>
+    <p class="param"><a href="#NoCapt">NoCapt</a></p>
+    <p class="param"><a href="#NoSides">NoSides</a></p>
+  </div>
+  <div class="column3">
+    <p class="param"><a href="#NumNum">NumNum</a></p>
+    <p class="param"><a href="#Oware">Oware</a></p>
+    <p class="param"><a href="#Pallam Kuzhi">Pallam Kuzhi</a></p>
+    <p class="param"><a href="#Pandi">Pandi</a></p>
+    <p class="param"><a href="#Qelat">Qelat</a></p>
+    <p class="param"><a href="#Sadeqa">Sadeqa</a></p>
+    <p class="param"><a href="#Songo">Songo</a></p>
+    <p class="param"><a href="#Tapata">Tapata</a></p>
+    <p class="param"><a href="#Toguz Xorgol">Toguz Xorgol</a></p>
+    <p class="param"><a href="#Vai Lun Thlan">Vai Lun Thlan</a></p>
+    <p class="param"><a href="#Valah">Valah</a></p>
+    <p class="param"><a href="#Wari">Wari</a></p>
+    <p class="param"><a href="#Weg">Weg</a></p>
+    <p class="param"><a href="#XCaptSowOwn">XCaptSowOwn</a></p>
+  </div>
+</div>
+<p />
+<footer>
+<table>
+    <tr>
+    <td>GPL-3.0 license</td>
+    <td></td>
+    <td style="text-align:right">&copy; 2024, Ann Davies</td>
+    </tr>
+</table>
+</footer>
+
+</div>
 </body>
 </html>

@@ -5,6 +5,25 @@
 <link rel="stylesheet" href="styles.css">
 </head>
 <body class="narrow">
+
+<div class="sidenav">
+<h3>Mancala Games</h2>
+  <a href="#top">Top</a>
+  <a href="#game_play">Game Play</a>
+  <a href="#starting">Starting Games</a>
+  <a href="#manwindow">Mancala UI</a>
+  <a href="#opwindow">Mancala Options UI</a>
+  <a href="#aiplayer">AI Player</a>
+  <a href="#pregames">Preconfigured Games</a>
+  <a href="#fileformat">Game File Format</a>
+<h3>Other Help Files</h3>
+  <a href="about_games.html">Mancala Game Configurations</a>
+  <a href="game_params.html">Parameters</a>
+  <a href="param_types.html">Param Types</a>
+  <a href="game_xref.html">Cross Reference</a>
+</div>
+
+<div class="content">
 <h1>Mancala Games</h1>
 <p>Mancala Games is an engine for playing several variants of Mancala.
 Games may be played with two players or one player and an
@@ -13,7 +32,7 @@ Games may be played with two players or one player and an
 <p>This engine supports games with two ranks of 2 to 12 holes per side.
 Game stores to the left and right of holes are optional.
 
-<h2>Game Play</h2>
+<h2 id="game_play">Game Play</h2>
 <p>Game play proceeds in the following steps:
 
 <ol type="I">
@@ -53,7 +72,7 @@ Players alternate turns performing these steps for each turn:
 <li class="over">Check for end game conditions: win, loss, tie or end of round.
 </ol>
 
-<h2>Selecting and Starting Games</h2>
+<h2 id="starting">Selecting and Starting Games</h2>
 <p>The Mancala Games Engine provides three ways to start a game.
 Game play is always via the <a href="#manwindow">Mancala UI</a>.
 
@@ -213,8 +232,7 @@ game is started.
 visible to allow review of the options.
 
 <h2 id="aiplayer">AI Player</h2>
-<p>The AI player uses a clever algorithm that's been around since the 1920s
-called minimax.
+<p>Several AI Player algorithms are supported.
 <h3>Minimaxer</h3>
 <p>The goal of minimax is to minimize the maximum possible loss,
 that is search for a move that minimizes your opponents best possible
@@ -233,9 +251,22 @@ There is a trade off the greater the search depth, the longer it takes to
 select the next move.
 
 <h3>Negamaxer</h3>
-<p><b class="todo">add algorithm description</b>.
-<h3>Monte Carlo Tree Search (MCTS)</h3>
-<p><b class="todo">add algorithm description</b>.
+<p>The negamaxer algorithm is a slight optimization of the minimaxer
+algorithm. It can only be used for games without repeat turns.
+<p>The optimization takes advantage of the alternating turns and is able
+to simplify the math.
+This optimization is not significant or even noticable by a human player.
+
+<h3>Monte Carlo Tree Search</h3>
+<p>The Monte Carlo tree search (MCTS) algorithm uses random game play to determine
+the quality of a move. Random moves are selected and the game is played to
+completion. The quality of the move is then computed based on the game
+outcome.
+<p>A key advantage of this approach is that games states do not need to be
+statically evaluated.
+<p>Several parameters do control how the random search is performed and how a
+game's outcome is bubbled back up the game tree.
+<p><i>Note: this AI Player is bad; likely due to an implementaiton error.</i>
 
 <h3 id="aiparams">AI Player Params</h3>
 <p>The AI Player parameters control how the AI player evaluates the
@@ -269,7 +300,7 @@ If your favorite game is misnamed, change the file and game names.
 <p>See <a href="about_games.html">Mancala Game Configurations</a>
 for an overview of all preconfigured games.
 
-<h2>Game Definition File Format</h2>
+<h2 id="fileformat">Game Definition File Format</h2>
 Each game is described in a parameter file that is a JSON string.
 These are text files that can be loaded, changed and saved with the Mancala Options UI.
 They may also be edited with any text editor.
@@ -293,12 +324,24 @@ The JSON parser attempts to provide useful information about any errors found.
     should operate for the game.
     See <a href="mancala_help.html#aiplayer">AI Player</a> for more details.
     </ol>
+<p>Other top level elements may be included as notes or documentation.
+The same tag-value format required of JSON must be used.
+For example, most files have a "rules" tag with a value describing where the rules came from.
 <p>There is game property file "all_params.txt" that shows where all
 game parameters should be placed.
-When defining new game files, parameters only need be specified if the
+When defining new game files, parameters only need to be specified if the
 value is not the default value.
 <p>See <a href="game_params.html">Game Parameters</a> for a detailed
 description of every game parameter.
-
+<footer>
+<table>
+    <tr>
+    <td>GPL-3.0 license</td>
+    <td></td>
+    <td style="text-align:right">&copy; 2024, Ann Davies</td>
+    </tr>
+</table>
+</footer>
+</div>
 </body>
 </html>

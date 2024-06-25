@@ -1,7 +1,8 @@
 tab	option	text	cspec	order	vtype	ui_default	row	col	description	notes
 Allow	min_move	Minimum Seeds for Move	game_info _	43	int	1	0	0	The minimum number of seeds a hole must have for it to be an allowable move start hole.	
 Allow	mustshare	Must Share	game_info _	51	bool	False	1	0	"If an opponent has no moves at the start of your turn, you must make seeds available to them if you can."	
-Allow	allow_rule	Special Move Restrictions	game_info _	14	AllowRule	NONE	3	0	"NONE: no special rule
+Allow	allow_rule	Special Move Restrictions	game_info _	14	AllowRule	NONE	3	0	"Allow rules limit the holes from which moves may start.  Disallowed holes are not selectable.
+NONE: no special rule
 OPP_OR_EMPTY:  Limit the allowable holes to those that end in an empty hole or reach the opponents side of the board.
 SINGLE_TO_ZERO: Holes with single seeds may only be played if the next hole is empty.
 SINGLE_ONLY_ALL: Holes with single seeds may only be played if all holes contain single seeds.
@@ -74,7 +75,7 @@ Dynamics	goal	Game Goal	game_info _	35	Goal	MAX_SEEDS	0	2	"The overall goal of t
 MAX_SEEDS: player with the maximum number of seeds at the end of the game wins or they collect more than half of the total seeds
 DEPRIVE: eliminate all of your opponents seeds.
 TERRITORY: claim ownership of holes. Each round the ownership of holes is determined by the number of seeds captured in the previous round."	
-Dynamics	no_sides	No Sides	game_info _	55	bool	False	1	2	"Holes are not owned. All holes are candidates for allowables and moves. Moves need specify side, position and directions.  "	
+Dynamics	no_sides	No Sides	game_info _	55	bool	False	1	2	"Moves maybe made from any hole, independent of the side of the board. Moves need specify side, position and directions.  "	
 Dynamics	start_pattern	Start Pattern	game_info _	72	StartPattern	ALL_EQUAL	2	2	"Allows specifing non-all-equal start patterns. Four patterns are supported:
 GAMACHA: starting from the third hold (from start player's left) place nbr_seeds in every other hole, the first move is prescribed move the center hole's seeds to the other side (this is done automatically).
 ALTERNATES: everyother hole is filled with nbr_seeds, no seeds end up opposite eachother. If a player has fewer seeds than their opponent, then they start.

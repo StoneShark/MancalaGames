@@ -4,12 +4,74 @@ body.narrow {
 	float: none;
 	font-family: "Times New Roman", Times, serif;
 }
-h1 {
-	text-align: center;
+body.wide {
+	margin: 0 auto;
+	float: none;
+	font-family: "Times New Roman", Times, serif;
 }
+
+
+.sidenav {
+	height: 100%;
+	width: 200px;
+	position: fixed;
+	z-index: 1;
+	top: 0;
+	left: 0;
+	background-color: darkblue;
+	overflow-x: hidden;
+	font-family: Arial, Helvetica, sans-serif;
+}
+.sidenav a {
+	color: white;
+	padding: 8px;
+	margin-left: 20px;
+	text-decoration: none;
+	display: block;
+}
+.sidenav a:link {
+	color: white;
+}
+.sidenav a:visited {
+	color: white;
+}
+
+.sidenav a:hover {
+	background-color: lightblue;
+	color: black;
+}
+.sidenav h3 {
+	color: white;
+	margin-left: 5px;
+}
+
+.content {
+	margin-left: 20px;
+	padding-left: 20px;
+}
+
+@media print {
+    .sidenav {
+        display:none;
+    }
+    .content {
+ 	margin-left: 0px;
+	padding-left: 0px;
+    }
+}
+
+footer {
+  padding: 3px;
+  background-color: darkblue;
+  color: white;
+}
+
 h1, h2, h3, h4 {
 	color: darkblue;
 	font-family: Arial, Helvetica, sans-serif;
+}
+h1 {
+	text-align: center;
 }
 h3 {
 	font-size: 1.2em;
@@ -30,6 +92,13 @@ li.over {
 	margin-top:0.3em;
 	margin-bottom:0.3em;
 }
+a:link {
+	color: blue;
+}
+a:visited {
+	color: blue;
+}
+	
 .center {
 	text-align: center;
 }
@@ -55,7 +124,7 @@ th {
 	font-weight: bold;
 }
 
-/* the following support the multi-column options */
+/* for the multi-column options */
 * {
   box-sizing: border-box;
 }
@@ -82,9 +151,6 @@ th {
 
 /*  for the xref table */
 
-body.wide {
-}
-
 table.xref {
   margin: 0 auto;
   margin-top: 20px;
@@ -99,7 +165,9 @@ th.xref {
 	height: 140px;
 	white-space: nowrap;
 	padding: 0 !important;
-
+}
+th.xref a {
+	text-decoration: none;
 }
 
 th.xref > div {
@@ -109,7 +177,9 @@ th.xref > div {
     width: 30px;
 }
 td.odd {
+	text-align: center;
 }	
 td.even {
 	background-color:#c0c0cf;
+	text-align: center;
 }	

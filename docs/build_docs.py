@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 """Create the html help files from the source data:
+    Individual game property files (GameProps)
+    game_params.txt (output from game_params.xlsm)
+    param_consts source file
+    game_classes source file
+    ai_player source file
 
-    about_games.html from the GameProps files
-    game_params.html from the game_params.txt file
-
+The game & properties cross reference table is
+generated in both html and csv (props_used.csv).
 
 Created on Wed Nov 22 18:38:01 2023
 @author: Ann"""
@@ -29,29 +33,46 @@ EXFILE = 'all_params.txt'
 PARAMS = mancala_games.MancalaGames.read_params_file()
 
 
-
 # %% html extras
 
-def write_html_header(file, title, bclass='narrow'):
+
+HEADER = """\
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{title}</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="{bclass}">
+"""
+
+FOOTER = """\
+<footer>
+<table>
+    <tr>
+    <td>GPL-3.0 license</td>
+    <td></td>
+    <td style="text-align:right">&copy; 2024, Ann Davies</td>
+    </tr>
+</table>
+</footer>
+"""
+
+def write_html_header(file, title, nav_content='<div>', bclass='narrow'):
     """write the header: title, css, etc."""
 
-    print('<!DOCTYPE html>', file=file)
-    print('<html lang="en">', file=file)
-    print('<head>', file=file)
-    print(f'<title>{title}</title>', file=file)
-    print('<link rel="stylesheet" href="styles.css">', file=file)
-    print('</head>', file=file)
-    print(f'<body class="{bclass}">', file=file)
+    print(HEADER.format(title=title, bclass=bclass),
+          file=file)
+    print(nav_content, file=file)
     print(f'<h1>{title}</h1>', file=file)
-
-    # TODO add nav button for Mancala game
 
 
 def write_html_footer(file):
-    """Close the tags."""
+    """Write the footer and close the tags."""
 
-    # TODO add copyright and owner info
-
+    print('<p />', file=file)
+    print(FOOTER, file=file)
+    print('</div>', file=file)
     print('</body>', file=file)
     print('</html>', file=file)
 
@@ -78,6 +99,21 @@ def write_columns(file, text, ncols):
 
 # %%  write game help
 
+
+GAME_NAV = """\
+<div class="sidenav">
+<h3>Game Configurations</h2>
+  <a href="#top">Top</a>
+  <a href="#index">Game Index</a>
+<h3>Other Help Files</h3>
+  <a href="mancala_help.html">Mancala Help</a>
+  <a href="game_params.html">Parameters</a>
+  <a href="param_types.html">Param Types</a>
+  <a href="game_xref.html">Cross Reference</a>
+</div>
+<div class="content">
+"""
+
 GAME_INTRO = """\
 <p>A sampling of Mancala games that can be configured with
 the Manacala Game Engine are predefined.
@@ -94,7 +130,8 @@ are good places to start.
 add interesting complications to the basic rules.
 <a href="#Bechi">Bechi</a> introduces the concept of playing in rounds.
 <a href="#Cow">Cow</a> introduces varying the sow direction.
-<a href="#Qelat">Qelat</a> adds the idea of hole ownership, in this case, called walda's.
+<a href="#Qelat">Qelat</a> adds the idea of hole ownership,
+ in this case, called walda's.
 
 <p>Good introductions to multilap sowing are provided by
 <a href="#Endodoi">Endodoi</a> and
@@ -129,6 +166,9 @@ configuration provided.
 I might simply have an implementation error.
 Please consider these file a starting point for defining your
 own favorite games.
+<p>The <a href="game_xref.html">Game / Parameter Cross Reference table</a>
+can be used to determine if a particular set of rules has a different
+name than you expect.
 """
 
 def game_prop_text(game_dict):
@@ -164,13 +204,42 @@ def game_prop_text(game_dict):
     return ptxt
 
 
+def write_about_txt(about_str, ofile):
+    """Format the about string."""
+
+    in_list = False
+    for para in about_str.split('\n'):
+        if para == '':
+            continue
+
+        if not in_list and para[0] == '-':
+            in_list = True
+            print('<ul><li>', para[2:], sep='', file=ofile)
+
+        elif in_list and para[0] == '-':
+            print('<li>', para[2:], sep='', file=ofile)
+
+        elif in_list:
+            in_list = False
+            print('</ul>', file=ofile)
+            print('<p>', para, sep='', file=ofile)
+
+        else:
+            print('<p>', para, sep='', file=ofile)
+
+    if in_list:
+        in_list = False
+        print('</ul>', file=ofile)
+
+
 def write_games_help(filename):
     """Collect the about texts from the game files and
     create the associated help file."""
 
+    games = []
     with open(filename, 'w', encoding='utf-8') as ofile:
 
-        write_html_header(ofile, "Mancala Game Configurations")
+        write_html_header(ofile, "Mancala Game Configurations", GAME_NAV)
         print(GAME_INTRO, file=ofile)
 
         for file in os.listdir(GPROP_PATH):
@@ -187,6 +256,7 @@ def write_games_help(filename):
                 about_str = game_dict[ckey.GAME_INFO][ckey.ABOUT]
                 prop_text = game_prop_text(game_dict)
 
+                # delete the standard contents, extra is printed at the end
                 del game_dict[ckey.GAME_CLASS]
                 del game_dict[ckey.GAME_CONSTANTS]
                 del game_dict[ckey.GAME_INFO]
@@ -194,36 +264,18 @@ def write_games_help(filename):
 
             print(f'<h3 id="{gname}">', gname, '</h3>',
                   sep='', file=ofile)
+            games += [gname]
 
-            in_list = False
-            for para in about_str.split('\n'):
-                if para == '':
-                    continue
-
-                if not in_list and para[0] == '-':
-                    in_list = True
-                    print('<ul><li>', para[2:], sep='', file=ofile)
-
-                elif in_list and para[0] == '-':
-                    print('<li>', para[2:], sep='', file=ofile)
-
-                elif in_list:
-                    in_list = False
-                    print('</ul>', file=ofile)
-                    print('<p>', para, sep='', file=ofile)
-
-                else:
-                    print('<p>', para, sep='', file=ofile)
-
-            if in_list:
-                in_list = False
-                print('</ul>', file=ofile)
-
+            write_about_txt(about_str, ofile)
             write_columns(ofile, prop_text, 2)
-
             for key, text in game_dict.items():
                 print('<p>', key.title(), ': ', text, sep='', file=ofile)
 
+        print('<br><br><br>', file=ofile)
+        print('<h2 id="index">Game Index</h2>', file=ofile)
+        gindex = [f'<a href="#{gname}">' + gname + '</a>'
+                  for gname in sorted(games)]
+        write_columns(ofile, gindex, 3)
 
         write_html_footer(ofile)
 
@@ -232,6 +284,25 @@ def write_games_help(filename):
 # %% output param help
 
 
+PARAM_NAV = """\
+<div class="sidenav">
+<h3>Game Parameters</h2>
+  <a href="#top">Top</a>
+  <a href="#tab_Game">Game Tab</a>
+  <a href="#tab_Dynamics">Dynamics Tab</a>
+  <a href="#tab_Allow">Allow Tab</a>
+  <a href="#tab_Sow">Sow Tab</a>
+  <a href="#tab_Capture">Capture Tab</a>
+  <a href="#tab_Player">Player Tab</a>
+  <a href="#index">Parameter Index</a>
+<h3>Other Help Files</h3>
+  <a href="mancala_help.html">Mancala Help</a>
+  <a href="about_games.html">Mancala Game Configurations</a>
+  <a href="param_types.html">Param Types</a>
+  <a href="game_xref.html">Cross Reference</a>
+</div>
+<div class="content">
+"""
 
 PARAM_INTRO = """\
 <p>Game options are provided in the following categories
@@ -282,7 +353,7 @@ def write_params_help(filename):
     tabs = mancala_games.PARAM_TABS + tuple(extra_tabs)
 
     with open(filename, 'w', encoding='utf-8') as ofile:
-        write_html_header(ofile, "Mancala Game Parameters")
+        write_html_header(ofile, "Mancala Game Parameters", PARAM_NAV)
 
         print(PARAM_INTRO, file=ofile)
 
@@ -309,7 +380,6 @@ def write_params_help(filename):
                       '</a>',
                       file=ofile)
                 dval = gi.GameInfo.get_default(param.option)
-                # TODO lookup enumeration values?
                 print('<p class="pdesc">Default value:', dval,
                       file=ofile)
                 print('<p class="pdesc">UI Tab:', param.tab,
@@ -335,6 +405,23 @@ def write_params_help(filename):
 # %% types help file
 
 
+TYPES_NAV = """\
+<div class="sidenav">
+<h3>Game Parameters</h2>
+  <a href="#top">Top</a>
+  <a href="#basic">Basic Types</a>
+  <a href="#descript">Description Types</a>
+  <a href="#enum">Enumeration Types</a>
+<h3>Other Help Files</h3>
+  <a href="mancala_help.html">Mancala Help</a>
+  <a href="about_games.html">Mancala Game Configurations</a>
+  <a href="game_params.html">Parameters</a>
+  <a href="game_xref.html">Cross Reference</a>
+</div>
+<div class="content">
+"""
+
+
 BASIC_TYPES = """\
 <p>This file provides a cross reference between the types and
 values accepted for them.
@@ -342,7 +429,7 @@ Detailed descriptions are found in the
 <a href="mancala_help.html">main help</a> or
 <a href="game_params.html">Game Parameteres help</a>.
 
-<h3>Basic Types</h3>
+<h3 id="basic">Basic Types</h3>
 <h4 id="int">int</h4>
 <p>The value must be an integer.
 Some are limited to a specific range.
@@ -353,17 +440,19 @@ Quotes on the value are not required.
 <p>The value must be an string surrounded by quotes (").
 <h4 id="multi_str">multi_str</h4>
 <p>The value must be a string surrounded by quotes (").
-It will be presented in such a way that new lines (\n)
+It will be presented in such a way that new lines (\\n)
 will be expanded to new lines.
-<b class="todo">what else is supported in multi_str</b>.
 <h4 id="list_bool">list[bool]</h4>
-<b class="todo">add type description</b>.
+The value must be a list of hole indicies (0 origin) for which
+the property is true.
 <h4 id="list_int">list[int]</h4>
-<b class="todo">add type description</b>.
+The value must be an array of 4 integers.
+These are used for the four strength properties of the AI player.
+Each corresponds to a game difficulty.
 """
 
 DESC_TYPES = """\
-<h3>Description Types</h3>
+<h3 id="descript">Description Types</h3>
 Two types are description strings; allowed values are shown below.
 """
 
@@ -373,11 +462,11 @@ ALG_TYPES = """\
 """
 
 ENUM_INTRO = """\
-<h3>Enumeration Types</h3>
+<h3 id="enum">Enumeration Types</h3>
 <p>Enumeration types appear in the JSON configuration files
 as integers (int type).
-Each integer value represents an abstract value
-<b class="todo">finish</b>.
+Enumerations provide a list of names for parameter values.
+Only the integer is put in the configuration file.
 <p>Each enumeration type is listed below.
 For each type the values (integer), enumeration value name, and string
 description are list.
@@ -394,6 +483,7 @@ NOT_ENUMS = {'bool',
     'GameClasses'}
 
 def write_desc_types(ofile):
+    """Write the sections for the description strings."""
 
     print(DESC_TYPES, file=ofile)
     print('<h4 id="Algorithm">Algorithm',
@@ -413,11 +503,12 @@ def write_desc_types(ofile):
 
 
 def write_types_file(filename):
+    """Write the types help file."""
 
     types = [(pname, ptuple.vtype) for pname, ptuple in PARAMS.items()]
 
     with open(filename, 'w', encoding='utf-8') as ofile:
-        write_html_header(ofile, "Parameters Types")
+        write_html_header(ofile, "Parameters Types", TYPES_NAV)
         print(BASIC_TYPES, file=ofile)
         write_desc_types(ofile)
 
@@ -520,7 +611,7 @@ def write_xref_html(csv_filename, out_filename):
 
             print('<table class="xref">', file=ofile)
 
-            header = csvreader.__next__()
+            header = next(csvreader)
             print('<tr>', file=ofile)
             print ('<th class="xref">Game Name</th>', file=ofile)
             for title in header[1:]:

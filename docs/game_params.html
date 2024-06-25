@@ -1,11 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Mancala Game Parameters</title>
-<link rel="stylesheet" href="styles.css">
-<script src="ddfiler.js"></script>
+    <title>Mancala Game Parameters</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body class="narrow">
+
+<div class="sidenav">
+<h3>Game Parameters</h2>
+  <a href="#top">Top</a>
+  <a href="#tab_Game">Game Tab</a>
+  <a href="#tab_Dynamics">Dynamics Tab</a>
+  <a href="#tab_Allow">Allow Tab</a>
+  <a href="#tab_Sow">Sow Tab</a>
+  <a href="#tab_Capture">Capture Tab</a>
+  <a href="#tab_Player">Player Tab</a>
+  <a href="#index">Parameter Index</a>
+<h3>Other Help Files</h3>
+  <a href="mancala_help.html">Mancala Help</a>
+  <a href="about_games.html">Mancala Game Configurations</a>
+  <a href="param_types.html">Param Types</a>
+  <a href="game_xref.html">Cross Reference</a>
+</div>
+<div class="content">
+
 <h1>Mancala Game Parameters</h1>
 <p>Game options are provided in the following categories
 (presented on corresponding tabs on the Mancala Options UI):
@@ -161,7 +179,7 @@ is included after the parameter sections.
 <p class="pdesc">Default value: False
 <p class="pdesc">UI Tab: Dynamics
 
-<p>Holes are not owned. All holes are candidates for allowables and moves. Moves need specify side, position and directions.  
+<p>Moves maybe made from any hole, independent of the side of the board. Moves need specify side, position and directions.  
 <h4 id="start_pattern"> Start Pattern </h4>
 <p class="pdesc">Location in Config Files: game_info : start_pattern
 <p id="StartPattern" class="pdesc">Type: <a href="param_types.html#StartPattern"> StartPattern </a>
@@ -214,6 +232,7 @@ is included after the parameter sections.
 <p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Allow
 
+<p>Allow rules limit the holes from which moves may start.  Disallowed holes are not selectable.
 <p>NONE: no special rule
 <p>OPP_OR_EMPTY:  Limit the allowable holes to those that end in an empty hole or reach the opponents side of the board.
 <p>SINGLE_TO_ZERO: Holes with single seeds may only be played if the next hole is empty.
@@ -658,6 +677,18 @@ is included after the parameter sections.
     <p class="param"><a href="#xc_sown">xc_sown</a></p>
     <p class="param"><a href="#xcpickown">xcpickown</a></p>
   </div>
+</div>
+<p />
+<footer>
+<table>
+    <tr>
+    <td>GPL-3.0 license</td>
+    <td></td>
+    <td style="text-align:right">&copy; 2024, Ann Davies</td>
+    </tr>
+</table>
+</footer>
+
 </div>
 </body>
 </html>

@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Cow",
-      "about": "A single-lap mancala, sow direction depends on start location: left side sow left, right side sow right, mouse button selectes direction for center. Minimum move is 2 seeds. Multiple capture on opponents side on 2s and 4s. A player must pass, if they have no moves.",
+      "about": "A single-lap mancala, sow direction depends on start location: left side sow CW, right side sow CCW, mouse button selectes direction for center. Minimum move is 2 seeds. Multiple capture on opponents side on 2s and 4s. A player must pass, if they have no moves. The games ends when on player has more than half the seeds, or when neither player can move.",
       "capt_on": [2, 4],
       "min_move": 2,
       "multicapt": true,
@@ -30,5 +30,5 @@
          "mcts_bias": [350, 350, 350, 350]
       }
    },
-   "rules": "Mohr, Merilyn Simonds; The New Games Treasury, 1993."
+   "rules": "Russ, Laurence. Mancala Games. 1984. p21."
 }

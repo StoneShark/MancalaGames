@@ -42,7 +42,13 @@ GAMES = GameProps/*.txt
 TESTS = test/*.py
 GAME_TESTS = $(wildcard test/test_gm_*.py)
 
-DATAFILES = GameProps/*.txt ./mancala_help.html logs/README.txt
+HELPFILES = docs\\about_games.html
+HELPFILES += docs\\game_params.html
+HELPFILES += docs\\game_xref.html
+HELPFILES += docs\\mancala_help.html
+HELPFILES += docs\\param_types.html
+
+DATAFILES = GameProps/*.txt $(HELPFILES) logs/README.txt
 
 all: clean pylint all_tests docs exe
 
@@ -54,7 +60,7 @@ src/game_params.txt: src/game_params.xlsm
 # build documentation
 
 .PHONY: docs
-docs: $(GAMES) src/game_params.txt docs/build_docs.py src/mancala_games.pyw
+docs: $(GAMES) src/game_params.txt docs/build_docs.py src/mancala_games.pyw $(GAMES)
 	cd docs && python build_docs.py
 
 
@@ -178,10 +184,11 @@ clean:
 
 exe: MancalaGames/mancala_games.exe
 
-MancalaGames/mancala_games.exe: $(SOURCES) $(DATAFILES) mancala_games.spec
+MancalaGames/mancala_games.exe: $(SOURCES) $(DATAFILES) $(HELPFILES) mancala_games.spec
 	-rmdir /S /Q MancalaGames
 	pyinstaller mancala_games.spec --distpath MancalaGames
-	copy mancala_help.html MancalaGames
+	copy docs\\*.html MancalaGames
+	copy docs\\styles.css MancalaGames
 	mkdir MancalaGames\\GameProps
 	copy GameProps\\* MancalaGames\\GameProps
 	mkdir MancalaGames\\logs
