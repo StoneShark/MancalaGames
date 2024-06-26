@@ -265,14 +265,18 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
     Details of the game are defined in the game_constants and
     game_info parameters.
 
+    All game interface calls and responses will be (0, 0) upper/left of
+    display to (1, holes) bottom/right of display.
+
     The board is represented so that the next cell to sow or
     capture is +- away from the current location.
 
-    All game interface calls and responses will be 0, 0 upper/left of
-    display to 1, holes bottom/right of display.
+    Board index conventions for game logic:
 
-    |      bottom : False   |     top : True        |    Turn
-    | 0 | 1 | 2 | 3 | 4 | 5 | 5 | 4 | 3 | 2 | 1 | 0 |    Location
+    |      bottom : False   |     top : True          | Turn
+    | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | loc
+    | 0 | 1 | 2 | 3 | 4 | 5 | 5 | 4 | 3 | 2 |  1 |  0 | pos
+    | 0 | 1 | 2 | 3 | 4 | 5 | 0 | 1 | 2 | 3 |  4 |  5 | cnt (from player left)
 
     store [ bottom/False,  top/True ]
     turn = bottom/False,  top/True"""

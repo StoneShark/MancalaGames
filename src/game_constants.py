@@ -8,6 +8,9 @@ Use a frozen class so that the two base numbers
 can't be changed, assuring the other values are
 consistent and accurate.
 
+Index conventions are documented in class description
+for Mancala.
+
 Created on Fri Mar 17 14:59:55 2023
 @author: Ann"""
 
