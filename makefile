@@ -76,10 +76,9 @@ CONTEXTS += analysis\\context.py
 src\\game_params.txt: src\\game_params.xlsx
 	python tools/convert_game_params.py
 
-context: $(CONTEXTS)
-
-
 # context files
+
+context: $(CONTEXTS)
 
 test\\context.py: src
 	python tools/make_context.py
@@ -91,7 +90,9 @@ analysis\\context.py: test\\context.py
 	copy test\\context.py analysis\\context.py
 	
 	
-# build documentation
+# docs
+#
+# generate the html helps files
 
 docs: $(GENEDHELPS)
 
@@ -101,17 +102,17 @@ $(GENEDHELPS): $(GAMES) $(HELPINPUTS)
 
 #  tests
 
-unit_tests: $(SOURCES) $(TESTS) $(GAMES) test/context.py
+unit_tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py
 	-coverage run -m pytest -m unittest
 	coverage html
 
 
-integ_tests: $(SOURCES) $(TESTS) $(GAMES) test/context.py
+integ_tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py
 	-coverage run -m pytest -m integtest
 	coverage html
 
 
-all_tests: $(SOURCES) $(TESTS) $(GAMES) test/context.py
+all_tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py
 	-coverage run -m pytest
 	coverage html
 
@@ -123,13 +124,13 @@ vtest:
 
 # a target to run only the test_gm files
 .PHONY: game_tests
-game_tests: test/context.py
+game_tests: test\\context.py
 	-coverage run --branch -m pytest $(GAME_TESTS)
 	coverage html
 
 # a target to run the stress tests with higher iterations
 .PHONY: strest_tests	
-stress_tests: test/context.py
+stress_tests: test\\context.py
 	pytest test\\test_simul_game.py --nbr_runs 500
 	pytest test\\test_simul_players.py --nbr_runs 50
 
@@ -137,11 +138,20 @@ stress_tests: test/context.py
 # cov_unit_tests
 #
 # determine coverage each of unit test for the code it should cover
+#
+#	usage:   make <testfile>.cov
+#       example: make test_var.cov
+#  where <testfile> is a file of tests in the 'test' directory
+#  this rule cleans all previous coverage data and runs the one
+#  file from test. It reports the coverage of the files that
+#  are expected to be covered (via TEST_COVERS in the test file).
+#
+# TODO this isn't running after a "make clean"
 
-vpath %.cov ./cov
-vpath %.py ./test
+vpath %.cov .\\cov
+vpath %.py .\\test
 
-%.cov: test/context.py $(subst .cov,.py,$@)
+%.cov: test\\context.py $(subst .cov,.py,$@)
 	coverage run --branch -m pytest test\\$(subst .cov,.py,$@)
 	coverage json
 	python test\\check_unit_cov.py $(subst .cov,,$@) > cov\\$@

@@ -4,9 +4,7 @@ the current player. Used for both activating the UI buttons
 and refining into actual moves available for the AI.
 
 Created on Sat Apr  8 09:15:30 2023
-
-@author: Ann
-"""
+@author: Ann"""
 
 # %% imports
 
@@ -174,32 +172,32 @@ class AllTwoRightmost(AllowableIf):
 
 
 class OnlyRightTwo(AllowableIf):
-    """Can only move from the right two holes.
+    """Can only move from the right two holes, but avoid any blocks.
 
-    Find the first hole with the incrementer, because it will
-    incr past blocks."""
+    Start from rightmost side of current turn's board and increment
+    clockwise to move left. If we stay on our side of the board, it
+    is an allowable move."""
 
     def get_allowable_holes(self):
         """Return allowable moves."""
 
         if self.game.mcount < 1:
-            holes = self.game.cts.holes
-            dbl_holes = self.game.cts.dbl_holes
 
+            my_row = not self.game.turn
+            allow = [False] * self.game.cts.holes
             if self.game.turn:
-                start = self.game.deco.incr.incr(dbl_holes, gi.Direct.CW)
-                pos = self.game.cts.xlate_pos_loc(not self.game.turn, start)
-                fright = holes - pos - 2
-                allow = min(holes - fright, 2)
-                fleft = holes - allow - fright
-                return [False] * fleft + [True] * allow + [False] * fright
+                loc = self.game.cts.dbl_holes
+            else:
+                loc = self.game.cts.holes
 
-            start = self.game.deco.incr.incr(holes, gi.Direct.CW)
-            fright = holes - start - 1
-            allow = min(start + 1, 2)
-            fleft = holes - allow - fright
+            for _ in range(2):
 
-            return [False] * fleft + [True] * allow + [False] * fright
+                loc = self.game.deco.incr.incr(loc, gi.Direct.CW)
+                if self.game.cts.my_side(self.game.turn, loc):
+                    pos = self.game.cts.xlate_pos_loc(my_row, loc)
+                    allow[pos] = True
+
+            return allow
 
         return self.decorator.get_allowable_holes()
 
