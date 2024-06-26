@@ -59,7 +59,7 @@ class TestAllowables:
          FALSES, NONES, True, 1,             [T, T, F]),
         (True, utils.build_board([8, 1, 0], [0, 0, 0]),    # 6
          FALSES, NONES, True, 1, [T, F, F]),
-        (False, utils.build_board([0, 0, 0], [0, 1, 1]),   # 7
+        (False, utils.build_board([0, 0, 0], [0, 1, 3]),   # 7
          FALSES, NONES, True, 1,             [F, F, T]),
 
         (True,                                             # 8
@@ -138,11 +138,7 @@ class TestAllowables:
         quot, rem = divmod(seeds, 2)
         game.store = [quot, quot + rem]
 
-        print(game)
         res = game.deco.allow.get_allowable_holes()
-        print(turn)
-        print(res)
-        print(eresult)
         if turn:
             assert res[:3] == [F, F, F]
             assert (res[3:])[::-1] == eresult

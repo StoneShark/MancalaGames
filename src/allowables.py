@@ -211,10 +211,10 @@ class MustShare(AllowableIf):
 
     def __init__(self, game, owners, decorator=None):
 
-        def get_owner_move(loc):
-            return gi.MoveTpl(loc < game.cts.holes, loc, None)
+        def get_owner_move(row, pos):
+            return gi.MoveTpl(row, pos, None)
 
-        def get_move(pos):
+        def get_move(_, pos):
             return pos
 
         def get_owner_owner(loc):
@@ -251,18 +251,21 @@ class MustShare(AllowableIf):
                        and self.game.child[loc] is None))
 
 
-    def test_allowable(self, allow, opponent, pos, loc):
-        """Test pos/loc to see if it provides the opponent with seeds."""
+    def test_allowable(self, allow, opponent, row, pos, loc):
+        """Test row/pos/loc to see if it provides the
+        opponent with seeds."""
+        # pylint: disable=too-many-arguments
 
         if not self.allow_move(loc):
             return
 
         game_log.set_simulate()
-        self.game.move(self.make_move(pos))
+        self.game.move(self.make_move(row, pos))
         game_log.clear_simulate()
 
         if self.opp_has_seeds(opponent):
-            allow[pos] = True
+            idx = pos if self.size == self.game.cts.holes else loc
+            allow[idx] = True
 
 
     def get_allowable_holes(self):
@@ -275,8 +278,10 @@ class MustShare(AllowableIf):
         allow = [False] * self.size
         saved_state = self.game.state
 
-        for pos, loc in enumerate(self.get_range(self.game.turn)):
-            self.test_allowable(allow, opponent, pos, loc)
+        for loc in self.get_range(self.game.turn):
+            row = int(loc < self.game.cts.holes)
+            pos = self.game.cts.xlate_pos_loc(row, loc)
+            self.test_allowable(allow, opponent, row, pos, loc)
             self.game.state = saved_state
 
         return allow
