@@ -135,6 +135,7 @@ class MoveData:
 
         string = f"MoveData({self.board}, {self.move}):\n"
         string += f"  direct={self.direct}\n"
+        string += f"  move={self.move}\n"
         string += f"  seeds={self.seeds}\n"
         string += f"  sow_loc={self.sow_loc}\n"
         string += f"  cont_sow_loc={self.cont_sow_loc}\n"
@@ -265,8 +266,8 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
     Details of the game are defined in the game_constants and
     game_info parameters.
 
-    All game interface calls and responses will be (0, 0) upper/left of
-    display to (1, holes) bottom/right of display.
+    All game interface calls and responses will be (row, pos),
+    e.g. (0, 0) upper/left of display to (1, holes) bottom/right of display.
 
     The board is represented so that the next cell to sow or
     capture is +- away from the current location.
@@ -274,6 +275,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
     Board index conventions for game logic:
 
     |      bottom : False   |     top : True          | Turn
+    |      bottom : 1       |     top : 0             | row
     | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | loc
     | 0 | 1 | 2 | 3 | 4 | 5 | 5 | 4 | 3 | 2 |  1 |  0 | pos
     | 0 | 1 | 2 | 3 | 4 | 5 | 0 | 1 | 2 | 3 |  4 |  5 | cnt (from player left)
