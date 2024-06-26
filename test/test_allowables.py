@@ -549,8 +549,12 @@ class TestTwosRight:
                             [0, 2, 2, 0]), False, [F, F, T, F]),
          (utils.build_board([0, 2, 2, 0],
                             [2, 0, 0, 0]), False, [T, F, F, F]),
-       ],
-        ids=[f'case_{cnt}' for cnt in range(7)])
+
+         # the game would have ended ... but test it
+         (utils.build_board([0, 0, 0, 0],
+                            [0, 0, 0, 0]), False, [F, F, F, F]),
+         ],
+        ids=[f'case_{cnt}' for cnt in range(8)])
     def test_two_right(self, board, turn, eresult):
 
         game_consts = gc.GameConsts(nbr_start=4, holes=4)
@@ -616,5 +620,91 @@ class TestOwnerAllowables:
         seeds = game.cts.total_seeds - sum(game.board)
         quot, rem = divmod(seeds, 2)
         game.store = [quot, quot + rem]
+
+        assert game.deco.allow.get_allowable_holes() == eresult
+
+
+class TestOnlyRightTwo:
+
+    @pytest.mark.parametrize(
+        'board, blocks, move_nbr, turn, eresult',
+        [([4] * 8, [F] * 8, 0, True,  [T, T, F, F]),
+         ([4] * 8, [F] * 8, 0, False, [F, F, T, T]),
+
+         (utils.build_board([1, 2, 0, 2],
+                            [3, 1, 0, 2]), [F] * 8, 1, True, [T, T, F, T]),
+         (utils.build_board([0, 1, 0, 2],
+                            [3, 1, 0, 2]), [F] * 8, 1, False, [T, T, F, T]),
+
+         ([4] * 8,
+          utils.build_board([T, F, F, F],
+                            [F, F, F, T]), 0, True, [F, T, T, F]),
+         ([4] * 8,
+          utils.build_board([T, F, F, F],
+                            [F, F, T, T]), 0, False, [T, T, F, F]),
+
+         # Test non contiguous blocks and < 2 allowables
+         ([4] * 8,
+          utils.build_board([T, F, T, F],
+                            [F, F, F, T]), 0, True, [F, T, F, T]),
+
+         ([4] * 8,
+          utils.build_board([T, T, F, T],
+                            [F, F, F, T]), 0, True, [F, F, T, F]),
+        ],
+        ids=[f'case_{cnt}' for cnt in range(8)])
+    def test_r2_allowables(self, board, blocks, move_nbr, turn, eresult):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=4)
+        game_info = gi.GameInfo(capt_on=[2],
+                                allow_rule=AllowRule.FIRST_TURN_ONLY_RIGHT_TWO,
+                                stores=True,
+                                blocks=True,
+                                rounds=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = turn
+        game.board = board
+        game.blocked = blocks
+        game.mcount = move_nbr
+
+        assert game.deco.allow.get_allowable_holes() == eresult
+
+
+    @pytest.mark.parametrize(
+        'board, blocks, move_nbr, turn, eresult',
+        [([4] * 8, [F] * 8, 0, True,  [T, T, F, F]),
+         ([4] * 8, [F] * 8, 0, False, [F, F, T, T]),
+
+         (utils.build_board([1, 2, 0, 2],
+                            [3, 1, 0, 2]), [F] * 8, 1, True, [T, F, F, F]),
+         (utils.build_board([0, 1, 0, 2],
+                            [3, 1, 0, 2]), [F] * 8, 1, False, [T, T, F, F]),
+
+         (utils.build_board([2, 2, 0, 2],
+                            [2, 0, 2, 2]), [F] * 8, 1, True, [T, T, F, T]),
+         (utils.build_board([0, 2, 0, 2],
+                            [2, 0, 0, 2]), [F] * 8, 1, False, [T, F, F, T]),
+
+        ],
+        ids=[f'case_{cnt}' for cnt in range(6)])
+    def test_r2a2_allowables(self, board, blocks, move_nbr, turn, eresult):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=4)
+        game_info = gi.GameInfo(capt_on=[2],
+                                allow_rule=AllowRule.RIGHT_2_1ST_THEN_ALL_TWO,
+                                stores=True,
+                                blocks=True,
+                                rounds=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = turn
+        game.board = board
+        game.blocked = blocks
+        game.mcount = move_nbr
 
         assert game.deco.allow.get_allowable_holes() == eresult

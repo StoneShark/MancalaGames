@@ -187,6 +187,7 @@ is included after the parameter sections.
 <p class="pdesc">UI Tab: Dynamics
 
 <p>Allows specifing non-all-equal start patterns. Four patterns are supported:
+<p>ALL_EQUAL: all holes start with the same number of seeds.
 <p>GAMACHA: starting from the third hold (from start player's left) place nbr_seeds in every other hole, the first move is prescribed move the center hole's seeds to the other side (this is done automatically).
 <p>ALTERNATES: everyother hole is filled with nbr_seeds, no seeds end up opposite eachother. If a player has fewer seeds than their opponent, then they start.
 <p>ALTS_WITH_1: like Alternates except the starter's 2nd from right hole with nbr_seeds is replaced with one seed.
@@ -198,6 +199,7 @@ is included after the parameter sections.
 <p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Dynamics
 
+<p>NONE: there is no prescribed opening move.
 <p>BASIC_SOWER: the first sow follows general rules of single lap sowing.  Other sow parameters will be enacted  afterward.
 <p>MLAPS_SOWER: the first sow follows general rules of multi-lap sowing. Other sow parameters will be enacted  afterward.
 <p>SOW1OPP: at least one seed must be sown on the opponents side of the board accomplished by sowing as normal until the final seed, then any remaining holes on the player side are skipped and the
@@ -241,6 +243,7 @@ is included after the parameter sections.
 <p>TWO_ONLY_ALL: Holes with two seeds may only be played if all holes contain two seeds.
 <p>TWO_ONLY_ALL_RIGHT: Holes with two seeds may not be played, unless all holes contains two seeds, in which case the rightmost hole must be played.
 <p>FIRST_TURN_ONLY_RIGHT_TWO: The first turn must start from one of the two rightmost holes.
+<p>RIGHT_2_1ST_THEN_ALL_TWO:  The first turn must start from one of the two rightmost holes. Subsequent moves may only start from holes without 2 seeds, unless all holes contain zero or 2 seeds.
 <h2 id="tab_Sow">Sow Tab</h2>
 <h4 id="sow_direct"> Sow Direction </h4>
 <p class="pdesc">Location in Config Files: game_info : sow_direct
@@ -287,6 +290,7 @@ is included after the parameter sections.
 <p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Sow
 
+<p>NONE: there is no special sowing rules.
 <p>SOW_BLKD_DIV: Holes sown to GPARAM_ONE are closed (blocked) and the hole's seeds are removed from play. Blocked holes on own side are skipped when sowing and blocked holes on opp side are diverted out of play or captured. 
 <p>SOW_BLKD_DIV_NR: SOW_BLKD_DIV except that each player's rightmost hole cannot be closed.
 <p>OWN_SOW_CAPT_ALL: Capture all holes that are sown that meet the simple capture criteria: evens, min, max and  capture on. Other criteria are enforced: side of the board, unlocked, and not child.   Grand Slam rules are not applied. If the game goal TERRITORY the capturer is the hole owner; otherwise the capturer is done by side. NOCAPTFIRST prevents this capture for the first move.
@@ -323,7 +327,8 @@ is included after the parameter sections.
 <p class="pdesc">UI Tab: Sow
 
 <p>Games with children allow players to claim holes. These child holes are an extension of the stores and seeds in them count towards a win. Making a child stops any multiple lap sowing, moves cannot start from children, and they cannot be captured.
-<p>NORMAL: no special child rules
+<p>NOCHILD: children are not used.
+<p>NORMAL: no special child rules.
 <p>WALDAS: Stores are not supported. Captures are instead moved into waldas, thus a player may not capture until they have created a walda. Child locations are limited.  Each player may create up to 6 waldas: on either end of each side of the board and the next outer hole on their own side of the board. Note that there are only 8 total places that waldas maybe created.
 <p>ONE_CHILD: Use the tuzdek rules for children: only one child allowed on own side of the board, may not be in player's left most hole,  and may not be opposite eachother.
 <p>WEG: children maybe created in holes owned by the opponent. Ending a sow in an opponent's weg captures the seed just sown and one more (if there is one); the player get's to play again.

@@ -538,6 +538,11 @@ def write_types_file(filename):
                       '</td><td>', e_val.name,
                       '<td>', strings[e_val], '</td></tr>',
                       sep='', file=ofile)
+
+                if e_val.name not in PARAMS[pname].description:
+                    print('  Doc Error:',
+                          f'{e_val.name} is not in {pname} description.')
+
             print('</table>', file=ofile)
 
         write_html_footer(ofile)
@@ -626,7 +631,12 @@ def write_xref_html(csv_filename, out_filename):
                 odd_row = not odd_row
 
                 print('<tr>', file=ofile)
-                for value in row:
+                print(f'<td class={td_class}>',
+                      f'<a href="about_games.html#{row[0]}">',
+                      f'{row[0]}</a></td>',
+                      sep='', file=ofile)
+
+                for value in row[1:]:
                     print(f'<td class={td_class}>{value}</td>', file=ofile)
                 print('</tr>', file=ofile)
 
@@ -636,7 +646,7 @@ def write_xref_html(csv_filename, out_filename):
             write_html_footer(ofile)
 
 
-# %%
+# %%  main
 
 
 if __name__ == '__main__':
