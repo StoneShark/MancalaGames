@@ -83,7 +83,7 @@ class NewGamePattern(NewGameIf):
 
         if self.decorator:
             return my_str + '\n' + str(self.decorator)
-        return my_str
+        return my_str          # pragma: no coverage
 
     def new_game(self, win_cond=None, new_round_ok=False):
         """Reset the game to new state and choose random start player."""

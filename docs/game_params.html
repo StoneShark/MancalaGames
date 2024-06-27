@@ -154,6 +154,7 @@ is included after the parameter sections.
 <p>SHORTEN: shorten the board so that all of the loser's holes are filled; the winner will have more seeds in their store but the same board arrangement. If the game uses children, they will not be created if the board size is reduced to 3 or less.
 <p>UCHOOSE: allow user to choose which holes have seeds (are not blocked) when ROUNDS with BLOCKS are used.
 <p>UMOVE: allow the loser to choose where seeds are placed. At least one seed must be placed in each hole, remaining seeds are placed in the store. The winner's layout is the same layout but reflected.
+<p>Note: These are not in numerical order.
 <h4 id="blocks"> Blocks </h4>
 <p class="pdesc">Location in Config Files: game_info : blocks
 <p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
@@ -172,7 +173,7 @@ is included after the parameter sections.
 <p>The overall goal of the game. Defines how a player wins.
 <p>MAX_SEEDS: player with the maximum number of seeds at the end of the game wins or they collect more than half of the total seeds
 <p>DEPRIVE: eliminate all of your opponents seeds.
-<p>TERRITORY: claim ownership of holes. Each round the ownership of holes is determined by the number of seeds captured in the previous round.
+<p>TERRITORY: claim ownership of holes. Each round the ownership of holes is determined by the number of seeds captured in the previous round. In a TERRITORY game without rounds, the winner is the player gained the most territory during play.
 <h4 id="no_sides"> No Sides </h4>
 <p class="pdesc">Location in Config Files: game_info : no_sides
 <p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>

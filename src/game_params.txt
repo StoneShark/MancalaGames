@@ -68,14 +68,15 @@ OUTSIDE_FILL: fill holes from the outside ends toward the middle.
 EVEN_FILL: fill both sides with the same number of seeds per hole, determined by dividing the losers seeds by the number of holes per side. If that is not playable base on minimum move, extra seeds are put in each players leftmost hole. Any extra seeds are put in each player's store.
 SHORTEN: shorten the board so that all of the loser's holes are filled; the winner will have more seeds in their store but the same board arrangement. If the game uses children, they will not be created if the board size is reduced to 3 or less.
 UCHOOSE: allow user to choose which holes have seeds (are not blocked) when ROUNDS with BLOCKS are used.
-UMOVE: allow the loser to choose where seeds are placed. At least one seed must be placed in each hole, remaining seeds are placed in the store. The winner's layout is the same layout but reflected."
+UMOVE: allow the loser to choose where seeds are placed. At least one seed must be placed in each hole, remaining seeds are placed in the store. The winner's layout is the same layout but reflected.
+Note: These are not in numerical order."
 Dynamics	blocks	Blocks	game_info _	15	bool	False	7	0	"Blocks remove holes from play and are shown on the UI with an X.
 When used with ROUNDS, the holes not filled from the player with fewer seeds are blocked and thus out of play for the round.
 When used with DEPRIVE, SOW_BLCK_DIV and GPARAM_ONE holes are closed (blocked and removed from play) when sown to GPARAM_ONE seeds."
 Dynamics	goal	Game Goal	game_info _	35	Goal	MAX_SEEDS	0	2	"The overall goal of the game. Defines how a player wins.
 MAX_SEEDS: player with the maximum number of seeds at the end of the game wins or they collect more than half of the total seeds
 DEPRIVE: eliminate all of your opponents seeds.
-TERRITORY: claim ownership of holes. Each round the ownership of holes is determined by the number of seeds captured in the previous round."
+TERRITORY: claim ownership of holes. Each round the ownership of holes is determined by the number of seeds captured in the previous round. In a TERRITORY game without rounds, the winner is the player gained the most territory during play."
 Dynamics	no_sides	No Sides	game_info _	55	bool	False	1	2	Moves maybe made from any hole, independent of the side of the board. Moves need specify side, position and directions.  
 Dynamics	start_pattern	Start Pattern	game_info _	72	StartPattern	ALL_EQUAL	2	2	"Allows specifing non-all-equal start patterns. Four patterns are supported:
 ALL_EQUAL: all holes start with the same number of seeds.

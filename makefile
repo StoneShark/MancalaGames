@@ -157,6 +157,7 @@ vpath %.py .\\test
 	python test\\check_unit_cov.py $(subst .cov,,$@) > cov\\$@
 	type cov\\$@
 
+
 UNIT_TESTS += test_ai_player.cov
 UNIT_TESTS += test_allowables.cov
 UNIT_TESTS += test_capt_ok.cov
