@@ -65,6 +65,7 @@ GENEDHELPS += docs\\param_types.html
 CONTEXTS = test\\context.py
 CONTEXTS += docs\\context.py
 CONTEXTS += analysis\\context.py
+CONTEXTS += tools\\context.py
 
 
 # game params
@@ -75,6 +76,7 @@ CONTEXTS += analysis\\context.py
 
 src\\game_params.txt: src\\game_params.xlsx
 	python tools/convert_game_params.py
+
 
 # context files
 
@@ -89,7 +91,9 @@ docs\\context.py: test\\context.py
 analysis\\context.py: test\\context.py
 	copy test\\context.py analysis\\context.py
 	
-	
+tools\\context.py: test\\context.py
+	copy test\\context.py tools\\context.py
+
 # docs
 #
 # generate the html helps files

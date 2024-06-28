@@ -84,7 +84,8 @@ def read_game_config(filename):
 
 
 def make_game(filename):
-    """Return a constructed game from the configuration."""
+    """Return a constructed game from the configuration
+    and the player dictionary."""
 
     class_name, consts, info, player_dict = read_game_config(filename)
 

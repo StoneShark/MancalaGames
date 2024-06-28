@@ -675,6 +675,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         return value of move."""
 
         if self.info.mustpass and not any(self.get_allowable_holes()):
+            self.mcount += 1
             self.turn = not self.turn
             self._log_turn(not self.turn, 'PASS', None)
             return True
