@@ -51,22 +51,35 @@ class WegChild(MakeChildIf):
 
 
 class BullChild(MakeChildIf):
-    """Paired capt of child_cvt then child_cvt-1
-        or just child_cvt."""
+    """One or two children can be made:
+
+        - one, if loc is not a child and has child_cvt
+        - two, if neither loc or prev is a child AND
+        they contain child_cvt and child_cvt - 1 (in either order)
+
+        Return True if children can be made, False otherwise.
+
+        BullChild does not call down the deco chain!"""
 
     def test(self, mdata):
 
-        if not self.decorator.test(mdata):
+        loc = mdata.capt_loc
+        game = self.game
+
+        if game.child[loc] is not None:
             return False
 
-        loc = mdata.capt_loc
-        prev = self.game.deco.incr.incr(loc, mdata.direct.opp_dir())
-        return ((self.game.child[loc] is None
-                 and self.game.board[loc] == self.game.info.child_cvt - 1
-                 and self.game.child[prev] is None
-                 and self.game.board[prev] == self.game.info.child_cvt)
-                or (self.game.child[loc] is None
-                    and self.game.board[loc] == self.game.info.child_cvt))
+        prev = game.deco.incr.incr(loc, mdata.direct.opp_dir())
+
+        if game.child[prev] is None:
+            board_set = set([game.board[prev], game.board[loc]])
+            req_set = set([game.info.child_cvt - 1, game.info.child_cvt])
+            if board_set == req_set:
+                # we can make two children
+                return True
+
+        # test for one child
+        return game.board[loc] == game.info.child_cvt
 
 
 class OneChild(MakeChildIf):
@@ -96,8 +109,8 @@ class OppSideChild(MakeChildIf):
 
     def test(self, mdata):
 
-        if self.decorator.test(mdata):
-            return self.game.cts.opp_side(self.game.turn, mdata.capt_loc)
+        if self.game.cts.opp_side(self.game.turn, mdata.capt_loc):
+            return self.decorator.test(mdata)
 
         return False
 

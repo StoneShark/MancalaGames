@@ -470,11 +470,19 @@ class MakeWegCapture(CaptMethodIf):
 
 
 class MakeBull(CaptMethodIf):
-    """If the last seed falls into non-bull and it has convert_cnt
-    seeds, convert it to a bull (child). If the final two holes are
-    child_cvt and child_cvt in either order, make them both bulls.
-    If no bull is made, check if any other capture
-    criteria are met."""
+    """If deco.make_child returns True, we know that we
+    can make mdata.capt_loc a child via either:
+        - it being child convert
+        - the pair convert conditions are met
+
+    We then need to test to see if the previous hole,
+    can also be made a child:
+        - must not already be a child
+        - loc and previous must have convert_cnt and convert - 1
+        in them in either order
+
+    There is duplicate work between make_child.test and this
+    method, don't see a way around it"""
 
     def do_captures(self, mdata):
 
@@ -487,11 +495,13 @@ class MakeBull(CaptMethodIf):
             mdata.capt_changed = True
 
             prev = self.game.deco.incr.incr(loc, mdata.direct.opp_dir())
-            board_set = set([game.board[prev], game.board[loc]])
-            req_set = set([game.info.child_cvt - 1, game.info.child_cvt])
+            if game.child[prev] is None:
 
-            if board_set == req_set:
-                game.child[prev] = game.turn
+                board_set = set([game.board[prev], game.board[loc]])
+                req_set = set([game.info.child_cvt - 1, game.info.child_cvt])
+                if board_set == req_set:
+                    game.child[prev] = game.turn
+                    mdata.capt_changed = True
             return
 
         self.decorator.do_captures(mdata)

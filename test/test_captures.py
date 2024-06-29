@@ -28,7 +28,8 @@ from mancala import MoveData
 
 # %%
 
-TEST_COVERS = ['src\\capturer.py']
+TEST_COVERS = ['src\\capturer.py',
+               'src\\make_child.py']
 
 
 T = True
@@ -658,7 +659,6 @@ class TestBull:
         game.store = [7, 7]
         return game
 
-    # putting this here keeps it out of the error trace
     BULL_CASES = [(0, (0, 7)),
                   (1, (0, 1)),
                   (2, (1, 2)),
@@ -666,16 +666,14 @@ class TestBull:
                   (4, None),
                   (5, [5]),
                   (6, None),
-                  (7, (0, 7)),
+                  (7, [7]),
                 ]
 
-    @pytest.mark.skip(reason='possible make child error')
     @pytest.mark.parametrize('turn', (False, True))
     @pytest.mark.parametrize('loc, ebulls', BULL_CASES)
     def test_bull(self, game, turn, loc, ebulls):
-        """Test eweg making and captures:
-        eweg - should weg/child have been created
-        ecapt - how many seeds should have been captured"""
+        """Test basic bull making in the absence of
+        existing bulls."""
 
         game.turn = turn
         mdata = MoveData(game, None)
@@ -703,7 +701,43 @@ class TestBull:
                            for idx in range(game.cts.holes))
 
 
-    # TODO test bull with cells already as children
+    WBULL_CASES = [(0, None),
+                   (1, [1]),
+                   (2, (1, 2)),
+                   (3, None),
+                   (4, None),
+                   (5, [5]),
+                   (6, None),
+                   (7, None),
+                  ]
+    @pytest.mark.parametrize('loc, ebulls', WBULL_CASES)
+    def test_with_bulls(self, game, loc, ebulls):
+        """Test same basic cases but set holes 0 and 7
+        to already be bulls."""
+
+        game.turn = True
+        game.child[0] = False
+        game.child[7] = True
+
+        mdata = MoveData(game, None)
+        mdata.direct = game.info.sow_direct
+        mdata.capt_loc = loc
+        mdata.board = tuple(game.board)
+        mdata.seeds = 2
+
+        game.deco.capturer.do_captures(mdata)
+
+        assert not mdata.captured
+        assert tuple(game.board) == mdata.board
+
+        if ebulls:
+            assert mdata.capt_changed
+            for idx in ebulls:
+                assert game.child[idx] == True
+
+        else:
+            assert not mdata.capt_changed
+            assert all(game.child[idx] == None for idx in range(1, 7))
 
 
 class TestRepeatTurn:
