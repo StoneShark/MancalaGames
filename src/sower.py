@@ -312,7 +312,7 @@ class ChildLapCont(LapContinuerIf):
 
     def do_another_lap(self, mdata):
         """Determine if we are done sowing."""
-        return not self.game.deco.make_child(self.game, mdata)
+        return not self.game.deco.make_child.test(mdata)
 
 
 class StopSingleSeed(LapContinuerIf):

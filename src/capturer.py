@@ -369,7 +369,7 @@ class MakeChild(CaptMethodIf):
 
     def do_captures(self, mdata):
 
-        if self.game.deco.make_child(self.game, mdata):
+        if self.game.deco.make_child.test(mdata):
 
             self.game.child[mdata.capt_loc] = self.game.turn
             mdata.capt_changed = True
@@ -379,7 +379,7 @@ class MakeChild(CaptMethodIf):
 
 
 class CaptureToWalda(CaptMethodIf):
-    """Test to make a walda base on allowable walda locations
+    """Test to make a walda based on allowable walda locations
     and on captures put the seeds into a walda. If a walda is
     made don't do any other captures.
 
@@ -437,41 +437,6 @@ class CaptureToWalda(CaptMethodIf):
         assert not sum(self.game.store)
 
 
-class MakeTuzdek(CaptMethodIf):
-    """A tuzdek (child) may not be made in leftmost hole on
-    either side.  Each player can only have one tuzdek and player's
-    tuzdeks must not be opposite eachother on the board.
-
-    This is the ONE_CHILD implementation."""
-
-    def _tuzdek_test(self, loc):
-        """Put the test in a function to keep the linter from
-        complaining that it's too complex"""
-
-        game = self.game
-        cross = game.cts.cross_from_loc(loc)
-        opp_range = game.cts.get_opp_range(game.turn)
-
-        return (game.cts.opp_side(game.turn, loc)
-                and game.child[loc] is None
-                and game.child[cross] is None
-                and game.board[loc] == game.info.child_cvt
-                and game.cts.loc_to_left_cnt(loc)
-                and not any(game.child[tloc] is not None
-                            for tloc in opp_range))
-
-    def do_captures(self, mdata):
-
-        loc = mdata.capt_loc
-
-        if self._tuzdek_test(loc):
-            self.game.child[loc] = self.game.turn
-            mdata.capt_changed = True
-            return
-
-        self.decorator.do_captures(mdata)
-
-
 class MakeWegCapture(CaptMethodIf):
     """If the last seed falls into an opponents weg, capture
     the seed just sown and one more (if there is one)
@@ -495,7 +460,7 @@ class MakeWegCapture(CaptMethodIf):
             mdata.captured = True
             return
 
-        if game.deco.make_child(game, mdata):
+        if game.deco.make_child.test(mdata):
 
             game.child[loc] = turn
             mdata.capt_changed = True
@@ -516,7 +481,7 @@ class MakeBull(CaptMethodIf):
         loc = mdata.capt_loc
         game = self.game
 
-        if game.deco.make_child(game, mdata):
+        if game.deco.make_child.test(mdata):
 
             game.child[loc] = game.turn
             mdata.capt_changed = True
@@ -652,10 +617,7 @@ def _add_child_deco(game, capturer):
     if game.info.child_type == gi.ChildType.WALDA:
         capturer = CaptureToWalda(game, capturer)
 
-    elif game.info.child_type == gi.ChildType.ONE_CHILD:
-        capturer = MakeTuzdek(game, capturer)
-
-    elif game.info.child_type == gi.ChildType.NORMAL:
+    elif game.info.child_type in (gi.ChildType.NORMAL, gi.ChildType.ONE_CHILD):
         capturer = MakeChild(game, capturer)
 
     elif game.info.child_type == gi.ChildType.WEG:

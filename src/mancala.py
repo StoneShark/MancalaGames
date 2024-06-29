@@ -187,7 +187,7 @@ class ManDeco:
         self.capturer = capturer.deco_capturer(game)
         self.gstr = game_str.deco_get_string(game)
         self.inhibitor = inhibitor.deco_inhibitor(game)
-        self.make_child = make_child.gen_child_test(game)
+        self.make_child = make_child.deco_child(game)
 
 
     def __str__(self):
