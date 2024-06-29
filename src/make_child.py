@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
-"""
+"""Determine if children should be made.
+
+Used in
+    - the sower to stop mlap sowing (for games using mlap)
+    - the capturer to decide make children
+
+Waldas are completely handled in the capturer.
+
 Created on Sat Jun 29 14:21:46 2024
 @author: Ann"""
 
@@ -21,8 +28,8 @@ class NoChildren(MakeChildIf):
     """Never make children for this game.
     Don't stack this with other decos."""
 
-    @staticmethod
-    def test(_):
+    def test(self, mdata):
+        _ = mdata
         return False
 
 
@@ -45,7 +52,7 @@ class WegChild(MakeChildIf):
 
         loc = mdata.capt_loc
         if self.decorator.test(mdata):
-            return (self.game.owner[loc] is (not self.game.turn))
+            return self.game.owner[loc] is (not self.game.turn)
 
         return False
 
@@ -141,13 +148,8 @@ class NotInhibited(MakeChildIf):
 
 
 def deco_child(game):
-    """Generate the make_child deco chain.
+    """Generate the make_child deco chain."""
 
-    Used in
-        - the sower to stop mlap sowing (for games using mlap)
-        - the capturer to decide make children
-
-    Waldas are completely handled in the capturer."""
 
     if game.info.child_type == gi.ChildType.NOCHILD:
         return NoChildren(game)

@@ -23,6 +23,7 @@ MODULES += get_moves.py
 MODULES += ginfo_rules.py
 MODULES += incrementer.py
 MODULES += inhibitor.py
+MODULES += make_child.py
 MODULES += man_config.py
 MODULES += man_path.py
 MODULES += mancala_games.pyw
