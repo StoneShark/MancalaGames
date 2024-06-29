@@ -161,6 +161,11 @@ vpath %.py .\\test
 	python test\\check_unit_cov.py $(subst .cov,,$@) > cov\\$@
 	type cov\\$@
 
+.PHONY: %.test
+%.test: test\\context.py $(subst .test,.py,$@)
+	coverage run --branch -m pytest test\\$(subst .test,.py,$@)
+	coverage html
+
 
 UNIT_TESTS += test_ai_player.cov
 UNIT_TESTS += test_allowables.cov

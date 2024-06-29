@@ -5,6 +5,7 @@ Created on Wed Sep 27 08:31:23 2023
 
 import collections
 
+import pandas as pd
 import pytest
 pytestmark = pytest.mark.unittest
 
@@ -58,8 +59,10 @@ SESTORE = slice(ESTORE, RESULT)
 CONVERT_DICT = {'N': None,
                 'T': True,
                 'TRUE': True,
+                'True': True,
                 'F': False,
                 'FALSE': False,
+                'False': False,
                 '': 0,
 
                 'CCW': Direct.CCW,
@@ -102,8 +105,8 @@ def convert(val, col, line):
     if val in CONVERT_DICT:
         return CONVERT_DICT[val]
 
-    if val.isdigit():
-        return int(val)
+    if val.replace('.0', '').isdigit() :
+        return int(val.replace('.0', ''))
 
     if not val:
         return 0
@@ -115,7 +118,14 @@ def read_test_cases():
 
     global FIELD_NAMES, CASES
 
-    with open('test/capture_test_data.csv', 'r', encoding='utf-8') as file:
+    tfile = 'test/capture_test_data.csv'
+    tc_dframe = pd.read_excel('test/capture_test_data.xlsx',
+                              header=None)
+    with open(tfile, 'w', newline='', encoding='utf-8') as file:
+        tc_dframe.to_csv(file, header=False, index=False)
+
+
+    with open(tfile, 'r', encoding='utf-8') as file:
         lines = file.readlines()
     lines[0] = lines[0][1:]
 
