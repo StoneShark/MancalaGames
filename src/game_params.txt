@@ -149,7 +149,7 @@ NOCHILD: children are not used.
 NORMAL: no special child rules.
 WALDAS: Stores are not supported. Captures are instead moved into waldas, thus a player may not capture until they have created a walda. Child locations are limited.  Each player may create up to 6 waldas: on either end of each side of the board and the next outer hole on their own side of the board. Note that there are only 8 total places that waldas maybe created.
 ONE_CHILD: Use the tuzdek rules for children: only one child allowed on own side of the board, may not be in player's left most hole,  and may not be opposite eachother.
-WEG: children maybe created in holes owned by the opponent. Ending a sow in an opponent's weg captures the seed just sown and one more (if there is one); generally, the player get's to play again (per CAPT_RTURN).
+WEG: children maybe created in holes owned by the opponent. Ending a sow in an opponent's weg captures the seed just sown and one more (if there is one); generally, the player get's to play again (per CAPT_RTURN). WEGs are supported for TERRITORY games only (hole ownership required).
 BULL: create one bull if final seed sows to CHILD_CVT, create two bulls if the final two seeds are sown to CHILD_CVT-1 and CHILD_CVT (in either order).
 "
 Sow	child_cvt	Child Convert Count	game_info _	26	int	0	4	2	"Defines the number of seeds required to make a child.

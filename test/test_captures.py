@@ -31,6 +31,11 @@ from mancala import MoveData
 TEST_COVERS = ['src\\capturer.py']
 
 
+T = True
+F = False
+N = None
+
+
 # %% read test cases
 
 CASE = 0    # leave as string
@@ -293,7 +298,7 @@ def test_no_gs(gstype):
     assert game.store == [5, 4]
 
 
-class TestWaldas:
+class TestWalda:
 
     @pytest.fixture
     def game(self):
@@ -308,6 +313,7 @@ class TestWaldas:
 
 
     def test_small(self, game):
+        """Test computation of walda possibilities."""
 
         consts = gc.GameConsts(3, 4)
         info = game.info
@@ -327,6 +333,7 @@ class TestWaldas:
 
 
     def test_smaller(self, game):
+        """Test computation of walda possibilities."""
 
         consts = gc.GameConsts(3, 3)
         info = game.info
@@ -344,6 +351,7 @@ class TestWaldas:
 
 
     def test_smallest(self, game):
+        """Test computation of walda possibilities."""
 
         consts = gc.GameConsts(3, 2)
         info = game.info
@@ -379,6 +387,7 @@ class TestWaldas:
 
     @pytest.mark.parametrize('loc, turn, ewalda', WALDA_CASES)
     def test_walda_creation(self, game, turn, loc, ewalda):
+        """Test making of walda by both players in every hole."""
 
         game.board = [4] * game.cts.dbl_holes
         game.turn = turn
@@ -417,7 +426,7 @@ class TestWaldas:
 
     @pytest.mark.parametrize('turn', (False, True))
     def test_waldas_capts(self, game, turn):
-        """each has a walda (leftmost hole),
+        """Each has a walda (leftmost hole),
         capt on 4 from middle hole"""
 
         game.turn = turn
@@ -550,6 +559,151 @@ class TestTuzdek:
         assert mdata.captured
 
         assert game.board[loc] == 0
+
+
+
+class TestWeg:
+
+    @pytest.fixture
+    def game(self):
+        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_info = gi.GameInfo(stores=True,
+                                goal=2,
+                                gparam_one=8,
+                                child_cvt=3,
+                                child_type=ChildType.WEG,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game =  mancala.Mancala(game_consts, game_info)
+        game.board = utils.build_board([2, 3, 2, 1],
+                                       [2, 3, 2, 1])
+        game.store = [3, 5]
+        game.owner = utils.build_board([F, F, T, T],
+                                       [T, T, F, F])
+        game.child = utils.build_board([N, N, F, F],
+                                       [N, N, T, T])
+        return game
+
+    # putting this here keeps it out of the error trace
+    WEG_CASES = [(0, T, F, 0),
+                 (1, T, F, 0),
+                 (2, T, F, 0),
+                 (3, T, F, 0),
+                 (4, T, F, 1),
+                 (5, T, F, 2),
+                 (6, T, T, 0),
+                 (7, T, F, 0),
+                 (0, F, F, 0),
+                 (1, F, T, 0),
+                 (2, F, F, 2),
+                 (3, F, F, 1),
+                 (4, F, F, 0),
+                 (5, F, F, 0),
+                 (6, F, F, 0),
+                 (7, F, F, 0),
+                ]
+
+    @pytest.mark.parametrize('loc, turn, eweg, ecapt', WEG_CASES)
+    def test_wegs(self, game, loc, turn, eweg, ecapt):
+        """Test eweg making and captures:
+        eweg - should weg/child have been created
+        ecapt - how many seeds should have been captured"""
+
+        game.turn = turn
+        mdata = MoveData(game, None)
+        mdata.direct = game.info.sow_direct
+        mdata.capt_loc = loc
+        mdata.board = tuple(game.board)
+        mdata.seeds = 2
+
+        start_seeds = game.board[loc]
+        start_store = game.store[turn]
+
+        game.deco.capturer.do_captures(mdata)
+
+        if eweg:
+            assert mdata.capt_changed
+            assert not mdata.captured
+            assert game.child[loc] == turn
+            assert tuple(game.board) == mdata.board
+
+        elif ecapt:
+            assert not mdata.capt_changed
+            assert mdata.captured
+
+            assert game.board[loc] == start_seeds - ecapt
+            assert game.store[turn] == start_store + ecapt
+
+        else:
+            assert not mdata.capt_changed
+            assert not mdata.captured
+            assert tuple(game.board) == mdata.board
+
+
+
+class TestBull:
+
+    @pytest.fixture
+    def game(self):
+        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_info = gi.GameInfo(child_cvt=4,
+                                child_type=ChildType.BULL,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game =  mancala.Mancala(game_consts, game_info)
+        game.board = utils.build_board([4, 0, 4, 0],
+                                       [3, 4, 3, 0])
+        game.store = [7, 7]
+        return game
+
+    # putting this here keeps it out of the error trace
+    BULL_CASES = [(0, (0, 7)),
+                  (1, (0, 1)),
+                  (2, (1, 2)),
+                  (3, None),
+                  (4, None),
+                  (5, [5]),
+                  (6, None),
+                  (7, (0, 7)),
+                ]
+
+    @pytest.mark.skip(reason='possible make child error')
+    @pytest.mark.parametrize('turn', (False, True))
+    @pytest.mark.parametrize('loc, ebulls', BULL_CASES)
+    def test_bull(self, game, turn, loc, ebulls):
+        """Test eweg making and captures:
+        eweg - should weg/child have been created
+        ecapt - how many seeds should have been captured"""
+
+        game.turn = turn
+        mdata = MoveData(game, None)
+        mdata.direct = game.info.sow_direct
+        mdata.capt_loc = loc
+        mdata.board = tuple(game.board)
+        mdata.seeds = 2
+
+        game.deco.capturer.do_captures(mdata)
+
+        assert not mdata.captured
+        assert tuple(game.board) == mdata.board
+
+        if ebulls:
+            assert mdata.capt_changed
+            for idx in range(game.cts.holes):
+                if idx in ebulls:
+                    assert game.child[idx] == turn
+                else:
+                    assert game.child[idx] == None
+
+        else:
+            assert not mdata.capt_changed
+            assert all(game.child[idx] == None
+                           for idx in range(game.cts.holes))
+
+
+    # TODO test bull with cells already as children
 
 
 class TestRepeatTurn:

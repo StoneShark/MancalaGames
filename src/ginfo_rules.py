@@ -386,6 +386,13 @@ def add_child_rules(rules):
         warn=True)
 
     rules.add_rule(
+        'weg_territory',
+        rule=lambda ginfo: (ginfo.child_type == gi.ChildType.WEG
+                            and ginfo.goal != gi.Goal.TERRITORY),
+        msg='Weg children are only supported for TERRITORY games',
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
         'one_child_store',
         rule=lambda ginfo: (ginfo.child_type == gi.ChildType.ONE_CHILD
                             and not ginfo.stores),
