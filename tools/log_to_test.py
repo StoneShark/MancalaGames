@@ -139,7 +139,7 @@ def set_start(holes, line_iter):
     print(f'game.store = [{store_f}, {store_t}]')
 
 
-def test_board(holes, true_line, false_line):
+def write_test_board(holes, true_line, false_line):
     """Parse the two lines and write the assert tests."""
     # pylint: disable=too-many-locals
 
@@ -260,7 +260,7 @@ def gen_test_code(lines):
         write_move_call(move_str)
 
         cond_line, true_line, false_line = get_board_lines(line_iter)
-        test_board(holes, true_line, false_line)
+        write_test_board(holes, true_line, false_line)
         action = write_cond_assert(result, cond_line)
 
         if action == CondAction.CONTINUE:
@@ -270,7 +270,7 @@ def gen_test_code(lines):
             print('game.new_game(cond, new_round_ok=True)')
             find_first_move(line_iter)
             cond_line, true_line, false_line = get_board_lines(line_iter)
-            test_board(holes, true_line, false_line)
+            write_test_board(holes, true_line, false_line)
             turn_no = 1
         else:
             break
