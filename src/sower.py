@@ -424,7 +424,7 @@ class MlapSowerIf(SowMethodIf):
 
         if self.decorator:
             return my_str + '\n' + str(self.decorator)
-        return my_str
+        return my_str  # pragma: no coverage
 
     def get_single_sower(self):
         """Return the first non-lap sower in the deco chain."""
@@ -490,7 +490,7 @@ class SowVisitedMlap(SowMethodIf):
 
         if self.decorator:
             return my_str + '\n' + str(self.decorator)
-        return my_str
+        return my_str   # pragma: no coverage
 
 
     def get_single_sower(self):
@@ -643,7 +643,8 @@ def deco_blkd_divert_sower(game):
 def deco_base_sower(game):
     """Choose the base sower."""
 
-    if game.info.sow_rule == gi.SowRule.SOW_BLKD_DIV:
+    if game.info.sow_rule in (gi.SowRule.SOW_BLKD_DIV,
+                              gi.SowRule.SOW_BLKD_DIV_NR):
         sower = deco_blkd_divert_sower(game)
 
     elif game.info.sow_rule == gi.SowRule.OWN_SOW_CAPT_ALL:

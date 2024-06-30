@@ -41,6 +41,9 @@ T = True
 F = False
 N = None
 
+CCW = gi.Direct.CCW
+CW = gi.Direct.CW
+
 
 # %%
 
@@ -57,20 +60,6 @@ class TestSower:
                                 child_type=ChildType.NORMAL,
                                 child_cvt=4,
                                 child_rule=ChildRule.NOT_1ST_OPP,
-                                nbr_holes=game_consts.holes,
-                                rules=mancala.Mancala.rules)
-
-        return mancala.Mancala(game_consts, game_info)
-
-
-    @pytest.fixture
-    def nogame(self):
-        """not opp for conversion."""
-
-        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
-        game_info = gi.GameInfo(capt_on=[2],
-                                child_type=ChildType.NORMAL,
-                                child_cvt=4,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
@@ -496,6 +485,21 @@ class TestSower:
                             [N, N, N]), True),
          ]
 
+    @pytest.fixture
+    def nogame(self):
+        """not opp for conversion."""
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+        game_info = gi.GameInfo(capt_on=[2],
+                                child_type=ChildType.NORMAL,
+                                child_cvt=4,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+
+
     @pytest.mark.parametrize('end_loc, sown_seeds, board, child, eresult',
                              chi_lap_not_cases)
     def test_child_lap_not_opp(self, nogame, end_loc, sown_seeds,
@@ -515,6 +519,8 @@ class TestSower:
         lap_cont = sower.StopRepeatTurn(nogame, lap_cont)
 
         assert lap_cont.do_another_lap(mdata) == eresult
+
+
 
 
 class TestMlap:
@@ -612,6 +618,45 @@ class TestMlap:
         assert mdata.capt_loc == eloc
         assert nlgame.board == eboard
         assert nlgame.store == [0, 0]
+
+
+    @pytest.fixture
+    def opgame(self):
+
+        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_info = gi.GameInfo(capt_on=[1],
+                                mlaps=gi.LapSower.LAPPER,
+                                sow_rule=gi.SowRule.CHANGE_DIR_LAP,
+                                udir_holes=[0, 1, 2, 3],
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        return mancala.Mancala(game_consts, game_info)
+
+
+
+    @pytest.mark.parametrize('turn, spos, sdirect, eboard, eloc',
+                             [(T, 0, CCW, utils.build_board([2, 0, 3, 3],
+                                                            [6, 6, 1, 3]), 2),
+                              (T, 0, CW, utils.build_board([2, 6, 6, 1],
+                                                           [0, 3, 3, 3]), 4),
+                              (F, 2, CW, utils.build_board([1, 3, 3, 3],
+                                                           [6, 6, 2, 0]), 7),
+                              (F, 2, CCW, utils.build_board([3, 3, 1, 6],
+                                                            [3, 0, 2, 6]), 5)
+                              ],
+                             ids=['T_7_CCW', 'T_7_CW', 'F_2_CW', 'F_2_CCW'])
+    def test_change_dir(self, opgame, turn, spos, sdirect, eboard, eloc):
+        """Test changing directions on each lap."""
+
+        opgame.turn = turn
+        move = gi.MoveTpl(spos, sdirect)
+        mdata = MoveData(opgame, move)
+        mdata.sow_loc, mdata.seeds = opgame.deco.starter.start_sow(move)
+        mdata.direct = sdirect
+        opgame.deco.sower.sow_seeds(mdata)
+
+        assert opgame.board == eboard
+        assert mdata.capt_loc == eloc
 
 
 class TestGetSingle:
@@ -758,6 +803,8 @@ class TestVMlap:
         assert game.board == eboard
         assert game.store == estore
 
+        assert 'VisitedMlap' in str(game.deco.sower)
+
 
 class TestBlckDivertSower:
 
@@ -775,7 +822,21 @@ class TestBlckDivertSower:
 
         return mancala.Mancala(game_consts, game_info)
 
-    divert_cases = [(False, 1,
+    @pytest.fixture
+    def game_nr(self):
+
+        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(sow_direct=Direct.CW,
+                                goal=Goal.DEPRIVE,
+                                sow_rule=SowRule.SOW_BLKD_DIV_NR,
+                                blocks=True,
+                                gparam_one=3,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+    divert_cases = [('game', False, 1,
                      utils.build_board([2, 2, 2],
                                        [2, 2, 2]), [0, 0],
                      utils.build_board([F, F, F],
@@ -785,7 +846,7 @@ class TestBlckDivertSower:
                                        [3, 0, 2]), [3, 0],
                      utils.build_board([T, F, F],
                                        [F, F, F])),
-                    (False, 0,
+                    ('game', False, 0,
                      utils.build_board([0, 2, 2],
                                        [3, 0, 2]), [3, 0],
                      utils.build_board([T, F, F],
@@ -795,7 +856,7 @@ class TestBlckDivertSower:
                                        [0, 0, 2]), [7, 0],
                      utils.build_board([T, F, T],
                                        [F, F, F])),
-                    (False, 0,
+                    ('game', False, 0,
                      utils.build_board([0, 2, 2],
                                        [4, 0, 0]), [3, 0],
                      utils.build_board([T, F, F],
@@ -805,7 +866,7 @@ class TestBlckDivertSower:
                                        [0, 1, 0]), [4, 0],
                      utils.build_board([T, F, F],
                                        [F, F, T])),
-                    (False, 0,
+                    ('game', False, 0,
                      utils.build_board([0, 0, 2],
                                        [2, 0, 0]), [3, 0],
                      utils.build_board([T, T, F],
@@ -815,14 +876,49 @@ class TestBlckDivertSower:
                                        [0, 0, 0]), [5, 0],
                      utils.build_board([T, T, F],
                                        [F, F, T])),
+
+                    ('game_nr', False, 1,   # don't close True's  right
+                     utils.build_board([2, 2, 2],
+                                       [2, 2, 2]), [0, 0],
+                     utils.build_board([F, F, F],
+                                       [F, F, F]),
+                     5,
+                     utils.build_board([3, 2, 2],
+                                       [3, 0, 2]), [0, 0],
+                     utils.build_board([F, F, F],
+                                       [F, F, F])),
+
+                    ('game_nr', False, 0,   # divert sow & close left
+                     utils.build_board([0, 0, 2],
+                                       [3, 0, 2]), [3, 0],
+                     utils.build_board([F, T, F],
+                                       [F, F, F]),
+                     3,
+                     utils.build_board([1, 0, 0],
+                                       [0, 0, 2]), [7, 0],
+                     utils.build_board([F, T, T],
+                                       [F, F, F])),
+
+                    ('game_nr', True, 1,   # don't close False's right
+                     utils.build_board([2, 2, 2],
+                                       [2, 2, 2]), [0, 0],
+                     utils.build_board([F, F, F],
+                                       [F, F, F]),
+                     2,
+                     utils.build_board([2, 0, 3],
+                                       [2, 2, 3]), [0, 0],
+                     utils.build_board([F, F, F],
+                                       [F, F, F])),
                     ]
 
     @pytest.mark.parametrize(
-        'turn, spos, board, store, block, eloc, eboard, estore, eblock',
+        'game_fixt, turn, spos, board, store, block, eloc, eboard, estore, eblock',
         divert_cases)
-    def test_divert_sower(self, game,
+    def test_divert_sower(self, request, game_fixt,
                           turn, spos, board, store, block,
                                 eloc, eboard, estore, eblock):
+
+        game = request.getfixturevalue(game_fixt)
 
         game.board = board
         game.store = store
@@ -856,10 +952,25 @@ class TestBlckDivertSower:
         return mancala.Mancala(game_consts, game_info)
 
 
+    @pytest.fixture
+    def mlgame_nr(self):
+
+        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(sow_direct=Direct.CW,
+                                sow_rule=SowRule.SOW_BLKD_DIV_NR,
+                                goal=Goal.DEPRIVE,
+                                blocks=True,
+                                mlaps=LapSower.LAPPER,
+                                gparam_one=3,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
 
     @pytest.mark.parametrize(
-        'turn, spos, board, store, block, eloc, eboard, estore, eblock',
-        [(False, 1,
+        'game_fixt, turn, spos, board, store, block,'
+        ' eloc, eboard, estore, eblock',
+        [('mlgame', False, 1,
           utils.build_board([2, 2, 2],
                             [2, 2, 2]), [0, 0],
           utils.build_board([F, F, F],
@@ -869,10 +980,23 @@ class TestBlckDivertSower:
                             [4, 1, 0]), [1, 0],
           utils.build_board([T, F, F],
                             [F, F, F])),
+
+         ('mlgame_nr', False, 1,
+           utils.build_board([2, 2, 2],
+                             [2, 2, 2]), [0, 0],
+           utils.build_board([F, F, F],
+                             [F, F, F]),
+           5,
+           utils.build_board([1, 3, 3],
+                             [4, 1, 0]), [0, 0],
+           utils.build_board([F, F, F],
+                             [F, F, F]))
          ])
-    def test_divert_laps_sower(self, mlgame,
+
+    def test_divert_laps_sower(self, request, game_fixt,
                                turn, spos, board, store, block,
                                      eloc, eboard, estore, eblock):
+        mlgame = request.getfixturevalue(game_fixt)
         mlgame.board = board
         mlgame.store = store
         mlgame.blocked = block
@@ -883,17 +1007,17 @@ class TestBlckDivertSower:
         mdata.direct = mlgame.info.sow_direct
         mlgame.deco.sower.sow_seeds(mdata)
 
-        print(mlgame)
-        print(mlgame.deco.sower)
-        print(mlgame.deco.sower.lap_cont)
-        print(mlgame.deco.sower.end_lap_op)
-
         assert mdata.capt_loc == eloc
         assert mlgame.board == eboard
         assert mlgame.store == estore
         assert mlgame.blocked == eblock
 
-
+        assert 'SowMlap' in str(mlgame.deco.sower)
+        assert 'CloseOp' in str(mlgame.deco.sower.end_lap_op)
+        if game_fixt == 'mlgame':
+            assert 'Divert' in str(mlgame.deco.sower.lap_cont)
+        else:
+            assert 'LapCont' in str(mlgame.deco.sower.lap_cont)
 
 class TestSowCaptOwned:
 
@@ -1118,9 +1242,34 @@ class TestPrescribed:
         assert game_1opp.board == eboard
 
 
+    @pytest.fixture
+    def game_p1m1(self):
+
+        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_info = gi.GameInfo(evens=True,
+                                prescribed=SowPrescribed.PLUS1MINUS1,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        return mancala.Mancala(game_consts, game_info)
+
+    sowp1m1_cases = [
+        (False, [2, 1, 3, 1, 3, 1, 3, 0], 0),
+        (False, [1, 2, 1, 3, 1, 3, 0, 3], 1),
+        (True, [0, 3, 1, 3, 1, 3, 1, 2], 0),
+        (True, [3, 0, 3, 1, 3, 1, 2, 1], 1),
+        ]
+
+    @pytest.mark.parametrize('turn, eboard, move', sowp1m1_cases)
+    def test_sowp1m1(self, game_p1m1, turn, move, eboard):
+
+        game_p1m1.turn = turn
+        game_p1m1.move(move)
+        assert game_p1m1.board == eboard
+
 
 
 # %%
 """
+in test dir
 %debug pytest.main(['-v', 'test_sower.py::TestMlap::test_mlap_nsower'])
 """
