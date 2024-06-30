@@ -17,7 +17,7 @@ import game_interface as gi
 
 
 class MakeChildIf(deco_chain_if.DecoChainIf):
-    """Generate a hole string."""
+    """Interface for MakeChild classes."""
 
     @abc.abstractmethod
     def test(self, mdata):

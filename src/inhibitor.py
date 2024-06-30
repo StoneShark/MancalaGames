@@ -111,30 +111,32 @@ class InhibitorCaptN(InhibitorIf):
         return False
 
 
-class InhibitorShorten(InhibitorIf):
-    """An Inhibitor that only deals with shortened boards.
-    Example usage: disable children when the board gets too small."""
+class InhibitorChildrenOnly(InhibitorIf):
+    """An Inhibitor that only allows turning on and off
+    making of children."""
 
     def __init__(self):
         self._children = False
 
     def new_game(self):
-        pass
+        self._children = False
+        game_log.add('Clearing inhibit children.', game_log.IMPORT)
 
     def clear_if(self, game, mdata):
         _ = game, mdata
 
     def set_on(self, turn):
         _ = turn
+        self._children = True
+        game_log.add('Setting inhibit children.', game_log.IMPORT)
 
     def set_off(self):
-        game_log.add('Clearing inhibit children (short board).',
-                     game_log.IMPORT)
+        game_log.add('Clearing inhibit children.', game_log.IMPORT)
         self._children = False
 
     def set_child(self, condition):
         self._children = condition
-        game_log.add(f'Setting inhibit children {condition} (short board).',
+        game_log.add(f'Setting inhibit children {condition}.',
                      game_log.IMPORT)
 
     def stop_me_capt(self, turn):
@@ -158,16 +160,17 @@ class InhibitorBoth(InhibitorIf):
         self._test = test_func
 
     def new_game(self):
-        pass
+        self._turn = None
+        self._captures = False
+        self._children = False
+        self._child_only = False
+        game_log.add('Allowing children and captures.', game_log.IMPORT)
 
     def clear_if(self, game, mdata):
         if self._test(game, mdata):
-            if self._captures:
-                game_log.add('Allowing children and captures.',
-                             game_log.IMPORT)
-
             self._captures = False
             self._children = False
+            game_log.add('Allowing children and captures.', game_log.IMPORT)
 
     def set_on(self, turn):
         self._turn = turn
@@ -216,6 +219,6 @@ def deco_inhibitor(game):
         return InhibitorBoth(arnge_limit_cond)
 
     if game.info.round_fill == gi.RoundFill.SHORTEN:
-        return InhibitorShorten()
+        return InhibitorChildrenOnly()
 
     return InhibitorNone()

@@ -180,6 +180,7 @@ UNIT_TESTS += test_gconsts.cov
 UNIT_TESTS += test_get_direct.cov
 UNIT_TESTS += test_get_moves.cov
 UNIT_TESTS += test_incr.cov
+UNIT_TESTS += test_inhibitor.cov
 UNIT_TESTS += test_man_config.cov
 UNIT_TESTS += test_mancala.cov
 UNIT_TESTS += test_minimax.cov

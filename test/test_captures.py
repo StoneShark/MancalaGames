@@ -165,7 +165,7 @@ def read_test_cases():
 read_test_cases()
 
 
-# %%  the tests
+# %%  test capturers
 
 @pytest.mark.filterwarnings("ignore")
 def test_no_capturer():
@@ -185,8 +185,7 @@ def test_no_capturer():
 
 class TestNoCaptures:
 
-    @pytest.fixture
-    def game(self):
+    def test_no_capture(self):
         game_consts = gc.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(nocaptfirst=True,
                                 stores=True,
@@ -194,10 +193,7 @@ class TestNoCaptures:
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
-        return mancala.Mancala(game_consts, game_info)
-
-
-    def test_no_capture(self, game):
+        game = mancala.Mancala(game_consts, game_info)
 
         mdata = MoveData(game, None)
         mdata.direct = game.info.sow_direct
@@ -208,12 +204,14 @@ class TestNoCaptures:
         game.turn = True
         assert game.mcount == 0
         game.deco.inhibitor.clear_if(game, mdata)
+        assert game.deco.inhibitor.stop_me_capt(game.turn)
 
         game.deco.capturer.do_captures(mdata)
         assert not mdata.captured
 
         game.mcount = 2
         game.deco.inhibitor.clear_if(game, mdata)
+        assert not game.deco.inhibitor.stop_me_capt(game.turn)
 
         game.deco.capturer.do_captures(mdata)
         assert mdata.captured
@@ -1038,6 +1036,123 @@ class TestPickTwos:
 
         assert mdata.captured == eres
         assert game.board == eboard
+
+
+
+# %% make_child only tests
+
+
+class TestNoChildren:
+
+    def test_opp_child(self):
+
+        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_info = gi.GameInfo(stores=True,
+                                evens=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        mdata = MoveData(game, None)
+        mdata.direct = game.info.sow_direct
+        mdata.board = tuple(game.board)
+
+        game.turn = True
+        mdata.capt_loc = 1
+        mdata.seeds = 1
+        assert game.deco.make_child.test(mdata) == False
+
+
+class TestChildInhibitor:
+    """Complicated game to get Inhibitor both."""
+
+    def test_inhibited(self):
+
+        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_info = gi.GameInfo(prescribed=gi.SowPrescribed.ARNGE_LIMIT,
+                                child_type=gi.ChildType.NORMAL,
+                                child_cvt=3,
+                                rounds=True,
+                                round_fill=gi.RoundFill.SHORTEN,
+                                stores=True,
+                                evens=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        mdata = MoveData(game, None)
+        mdata.direct = game.info.sow_direct
+        mdata.capt_loc = 3
+        mdata.board = tuple(game.board)
+        mdata.seeds = 2
+
+        game.turn = True
+        game.deco.inhibitor.set_on(game.turn)
+        assert game.deco.inhibitor.stop_me_child(game.turn)
+        assert not game.deco.make_child.test(mdata)
+
+        game.deco.inhibitor.set_off()
+        assert not game.deco.inhibitor.stop_me_child(game.turn)
+        assert game.deco.make_child.test(mdata)
+
+
+
+class TestOppChild:
+
+    def test_opp_child(self):
+
+        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_info = gi.GameInfo(child_type=gi.ChildType.NORMAL,
+                                child_cvt=3,
+                                child_rule=gi.ChildRule.OPP_ONLY,
+                                evens=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        mdata = MoveData(game, None)
+        mdata.direct = game.info.sow_direct
+        mdata.board = tuple(game.board)
+        mdata.seeds = 2
+
+        game.turn = True
+        mdata.capt_loc = 3
+        assert not game.deco.make_child.test(mdata)
+
+        mdata.capt_loc = 2
+        assert game.deco.make_child.test(mdata)
+
+
+
+class TestNotWithOne:
+
+    @pytest.mark.parametrize('turn, hole, seeds, etest',
+                             [(False, 3, 1, False),
+                              (False, 3, 2, True),
+                              (False, 4, 2, True),
+                              (True, 0, 1, False),
+                              (True, 0, 2, True),
+                              (True, 2, 2, True),])
+    def test_opp_child(self, turn, hole, seeds, etest):
+
+        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_info = gi.GameInfo(child_type=gi.ChildType.NORMAL,
+                                child_cvt=3,
+                                child_rule=gi.ChildRule.NOT_1ST_OPP,
+                                evens=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        mdata = MoveData(game, None)
+        mdata.direct = game.info.sow_direct
+        mdata.board = tuple(game.board)
+
+        game.turn = turn
+        mdata.capt_loc = hole
+        mdata.seeds = seeds
+        assert game.deco.make_child.test(mdata) == etest
+
 
 
 # %%
