@@ -187,12 +187,12 @@ class TestGameLog:
 
         glog.turn(0, 'start', game)
         glog.step('step one', game)
-        glog.step('step twp', game)
+        glog.step('step twp (no game print)', game, glog.DETAIL)
         glog.step('step three without game')
         glog.add('active one', glog.IMPORT)
 
         assert len(glog._move_start) == 1
-        assert len(glog._log_records) == 8
+        assert len(glog._log_records) == 7
 
         glog.active = False
         glog.turn(1, 'seconds', game)
@@ -201,13 +201,13 @@ class TestGameLog:
         glog.add('inactive one', glog.MOVE)
 
         assert len(glog._move_start) == 1
-        assert len(glog._log_records) == 8
+        assert len(glog._log_records) == 7
 
         glog.active = True
         glog.add('active two', glog.MOVE)
 
         assert len(glog._move_start) == 1
-        assert len(glog._log_records) == 9
+        assert len(glog._log_records) == 8
 
 
     def test_live(self, glog, capsys):

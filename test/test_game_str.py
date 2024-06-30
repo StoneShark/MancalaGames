@@ -41,6 +41,8 @@ class TestGameStr:
 
     def test_basic_str(self, game):
 
+        assert 'GameString' in str(game.deco.gstr)
+
         gstr = str(game)
         assert gstr == '  4  4  4  4  4  4   \n  4  4  4  4  4  4  *'
 
