@@ -86,7 +86,7 @@ class InhibitorCaptN(InhibitorIf):
         game_log.add('Inhibiting captures.', game_log.IMPORT)
 
     def clear_if(self, game, mdata):
-        if game.mcount <= self._expire:
+        if game.mcount > self._expire:
             self._captures = False
             game_log.add('Inhibit captures expired.', game_log.IMPORT)
 

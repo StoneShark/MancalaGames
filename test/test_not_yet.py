@@ -16,6 +16,7 @@ from context import mancala_ui
 from context import play_mancala
 from context import play
 from context import montecarlo_ts
+from context import inhibitor
 
 
 def test_files_not():

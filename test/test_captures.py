@@ -182,6 +182,43 @@ def test_no_capturer():
     assert game.store == [0, 0]
 
 
+
+class TestNoCaptures:
+
+    @pytest.fixture
+    def game(self):
+        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(nocaptfirst=True,
+                                stores=True,
+                                evens=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+
+    def test_no_capture(self, game):
+
+        mdata = MoveData(game, None)
+        mdata.direct = game.info.sow_direct
+        mdata.capt_loc = 3
+        mdata.board = tuple(game.board)
+        mdata.seeds = 2
+
+        game.turn = True
+        assert game.mcount == 0
+        game.deco.inhibitor.clear_if(game, mdata)
+
+        game.deco.capturer.do_captures(mdata)
+        assert not mdata.captured
+
+        game.mcount = 2
+        game.deco.inhibitor.clear_if(game, mdata)
+
+        game.deco.capturer.do_captures(mdata)
+        assert mdata.captured
+
+
 class TestCaptTable:
 
     @staticmethod
@@ -741,6 +778,7 @@ class TestBull:
 
 
 class TestRepeatTurn:
+    """Test repeat turn due to capt_rturn."""
 
     @pytest.fixture
     def game(self):
@@ -769,6 +807,46 @@ class TestRepeatTurn:
         mdata.capt_loc = 1
         game.deco.capturer.do_captures(mdata)
         assert mdata.captured != WinCond.REPEAT_TURN
+
+
+class TestCaptCrossVisited:
+    """Only testing the result of do_captures because,
+    CaptCrossVisited doesn't actually do the capturing."""
+
+    @pytest.fixture
+    def game(self):
+        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(crosscapt=True,
+                                xc_sown=True,
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+    CASES = [([4, 4, 4, 4, 4, 4], [5, 4, 0, 5, 5, 5], 0, False),  # cycle board, not end in one
+             ([4, 4, 4, 4, 4, 4], [4, 0, 5, 5, 5, 5], 5, False),  # end on opp side
+
+             ([1, 6, 6, 6, 5, 0], [2, 1, 7, 7, 6, 1], 1, True),  # cross capt
+
+             ([2, 3, 0, 1, 5, 1], [0, 4, 1, 1, 5, 1], 2, WinCond.REPEAT_TURN),
+             ([1, 6, 3, 2, 0, 2], [0, 7, 3, 2, 0, 2], 1, False)  # end on own sidee, but no repeat turn
+             ]
+
+    @pytest.mark.parametrize('before_sow, after_sow, capt_loc, eresult',
+                             CASES)
+    def test_xc_visited(self, game, before_sow, after_sow, capt_loc, eresult):
+
+        mdata = MoveData(game, None)
+        mdata.board = tuple(before_sow)
+        mdata.capt_loc = capt_loc
+        mdata.direct = game.info.sow_direct
+        game.board = after_sow
+        game.turn = False
+
+        game.deco.capturer.do_captures(mdata)
+        assert mdata.captured == eresult
+
 
 
 class TestCaptTwoOut:
