@@ -361,7 +361,6 @@ class TestNewGame:
 
         assert not game.new_game(win_cond=WinCond.ROUND_WIN,
                                  new_round_ok=True)
-        print(game)
 
         # positive seeds and no loss of seeds
         assert game.store[0] >= 0 and game.store[1] >= 0
@@ -395,7 +394,6 @@ class TestNewGame:
         game = request.getfixturevalue(game_fixt)
         object.__setattr__(game.info, 'round_fill', round_fill)
         game.deco = mancala.ManDeco(game)
-        print(game.deco.new_game)
 
         game.blocked = [True, False, True] * 2
         game.board = utils.build_board([0, 0, 0],
@@ -407,7 +405,6 @@ class TestNewGame:
 
         assert not game.new_game(win_cond=WinCond.ROUND_WIN,
                                  new_round_ok=True)
-        print(game)
 
         if round_fill == RoundFill.UMOVE:
             assert game.store == estore_move
