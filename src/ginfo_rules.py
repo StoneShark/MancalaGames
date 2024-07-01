@@ -536,6 +536,19 @@ def build_rules():
         warn=True)
 
     man_rules.add_rule(
+        'capt_conflict',
+        rule=lambda ginfo: any(
+            [ginfo.capt_min > ginfo.capt_max,
+             ginfo.evens and all(cval % 2 == 1 for cval in ginfo.capt_on),
+             ginfo.nosinglecapt and ginfo.capt_on == [1],
+             ginfo.capt_on and max(ginfo.capt_on) < ginfo.capt_min,
+             ginfo.capt_on and min(ginfo.capt_on) > ginfo.capt_max,
+             ]),
+        msg='Selected capture mechanisms conflict (no captures)',
+        warn=True)
+        # this doesn't catch all conflicts :(
+
+    man_rules.add_rule(
         'xcapt_multi_same',
         rule=lambda ginfo: (ginfo.crosscapt and ginfo.multicapt
                             and not ginfo.capsamedir),
