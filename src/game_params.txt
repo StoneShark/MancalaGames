@@ -74,9 +74,13 @@ Dynamics	blocks	Blocks	game_info _	15	bool	False	7	0	"Blocks remove holes from p
 When used with ROUNDS, the holes not filled from the player with fewer seeds are blocked and thus out of play for the round.
 When used with DEPRIVE, SOW_BLCK_DIV and GPARAM_ONE holes are closed (blocked and removed from play) when sown to GPARAM_ONE seeds."
 Dynamics	goal	Game Goal	game_info _	35	Goal	MAX_SEEDS	0	2	"The overall goal of the game. Defines how a player wins.
-MAX_SEEDS: player with the maximum number of seeds at the end of the game wins or they collect more than half of the total seeds
-DEPRIVE: eliminate all of your opponents seeds.
-TERRITORY: claim ownership of holes. Each round the ownership of holes is determined by the number of seeds captured in the previous round. In a TERRITORY game without rounds, the winner is the player gained the most territory during play."
+- MAX_SEEDS: player with the maximum number of seeds at the end of the game wins or they collect more than half of the total seeds
+- DEPRIVE: eliminate all of your opponents seeds. 
+GRAND_SLAM must be legal for DEPRIVE games.
+The following options are incompatible with DEPRIVE games: MOVEUNLOCK, MUSTPASS, MUSTSHARE, ROUNDS, ROUND_STARTER, ROUND_FILL, NO_SIDES, SKIP_START, SOW_OWN_STORE, STORES, SOW_START, VISIT_OPP. 
+- TERRITORY: claim ownership of holes. Each round the ownership of holes is determined by the number of seeds captured in the previous round. In a TERRITORY game without rounds, the winner is the player that gained the most territory during play. 
+TERRITORY games require STORES and that GPARAM_ONE be set to a value between the number of holes and two times the number of holes.
+TERRITORY games are incompatible with NO_SIDES, START_PATTERN, GRANDSLAM of NOT_LEGAL, ALLOW_RULE of OPP_OR_EMPTY, "
 Dynamics	no_sides	No Sides	game_info _	55	bool	False	1	2	Moves maybe made from any hole, independent of the side of the board. Moves need specify side, position and directions.  
 Dynamics	start_pattern	Start Pattern	game_info _	72	StartPattern	ALL_EQUAL	2	2	"Allows specifing non-all-equal start patterns. Four patterns are supported:
 ALL_EQUAL: all holes start with the same number of seeds.

@@ -624,7 +624,7 @@ class TerritoryGameWinner(EndTurnIf):
         if game.info.capt_on:
             if game.info.evens:
                 min_occ = min(cval for cval in game.info.capt_on
-                              if cval % 1 == 0)
+                                    if not cval % 1)
             else:
                 min_occ = min(*game.info.capt_on, min_occ)
 
@@ -719,7 +719,7 @@ class DepriveEndGame(EndTurnIf):
 
 class TerritoryEndGame(EndTurnIf):
     """We are forcing the game to end, call the decorator
-    to collect the seeds. Decide who wins."""
+    to collect the seeds and then decide who wins."""
 
     def _test_winner(self):
         """The game has ended, decide who won or if a TIE."""
@@ -733,12 +733,12 @@ class TerritoryEndGame(EndTurnIf):
     def game_ended(self, repeat_turn, ended=False):
         """Determine if the game ended."""
 
-        cond, winner = self.decorator.game_ended(repeat_turn, ended)
+        # call this to execute the divier
+        self.decorator.game_ended(repeat_turn, ended)
 
-        if cond == gi.WinCond.GAME_OVER:
-            return self._test_winner()
+        # win_count is patched to total_seeds so determine the winner here
+        return self._test_winner()
 
-        return cond, winner
 
 
 # %% build decorator chains

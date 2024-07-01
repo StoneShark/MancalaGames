@@ -171,9 +171,13 @@ is included after the parameter sections.
 <p class="pdesc">UI Tab: Dynamics
 
 <p>The overall goal of the game. Defines how a player wins.
-<p>MAX_SEEDS: player with the maximum number of seeds at the end of the game wins or they collect more than half of the total seeds
-<p>DEPRIVE: eliminate all of your opponents seeds.
-<p>TERRITORY: claim ownership of holes. Each round the ownership of holes is determined by the number of seeds captured in the previous round. In a TERRITORY game without rounds, the winner is the player gained the most territory during play.
+<p>- MAX_SEEDS: player with the maximum number of seeds at the end of the game wins or they collect more than half of the total seeds
+<p>- DEPRIVE: eliminate all of your opponents seeds. 
+<p>GRAND_SLAM must be legal for DEPRIVE games.
+<p>The following options are incompatible with DEPRIVE games: MOVEUNLOCK, MUSTPASS, MUSTSHARE, ROUNDS, ROUND_STARTER, ROUND_FILL, NO_SIDES, SKIP_START, SOW_OWN_STORE, STORES, SOW_START, VISIT_OPP. 
+<p>- TERRITORY: claim ownership of holes. Each round the ownership of holes is determined by the number of seeds captured in the previous round. In a TERRITORY game without rounds, the winner is the player that gained the most territory during play. 
+<p>TERRITORY games require STORES and that GPARAM_ONE be set to a value between the number of holes and two times the number of holes.
+<p>TERRITORY games are incompatible with NO_SIDES, START_PATTERN, GRANDSLAM of NOT_LEGAL, ALLOW_RULE of OPP_OR_EMPTY, 
 <h4 id="no_sides"> No Sides </h4>
 <p class="pdesc">Location in Config Files: game_info : no_sides
 <p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>

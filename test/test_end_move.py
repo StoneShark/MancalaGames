@@ -790,9 +790,32 @@ class TestQuitter:
     def rgame(self):
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(rounds=True,
-                                blocks=True,  # req with rounds
                                 evens=True,
                                 stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+
+    @pytest.fixture
+    def dipgame(self):
+        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(evens=True,
+                                goal=gi.Goal.DEPRIVE,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+
+    @pytest.fixture
+    def tergame(self):
+        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(evens=True,
+                                stores=True,
+                                goal=gi.Goal.TERRITORY,
+                                gparam_one=4,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
@@ -883,7 +906,7 @@ class TestQuitter:
          utils.build_board([0, 6, 0],
                            [0, 6, 0]), [0, 0], True),
 
-        # 6b:  no stores, child - divvy odd
+        # 7:  no stores, child - divvy odd
         ('chnsgame',
          utils.build_board([0, 4, 2],
                            [0, 3, 3]), [0, 0], True, WinCond.TIE,
@@ -892,7 +915,7 @@ class TestQuitter:
          utils.build_board([0, 6, 0],
                            [0, 6, 0]), [0, 0], True),
 
-        # 7:  no stores, child - divvy even
+        # 8:  no stores, child - divvy even
         ('chnsgame',
          utils.build_board([2, 3, 0],
                            [2, 5, 0]), [0, 0], True, WinCond.WIN,
@@ -901,7 +924,7 @@ class TestQuitter:
          utils.build_board([0, 5, 0],
                            [0, 7, 0]), [0, 0], True),
 
-        # 8:  no stores, True child only
+        # 9:  no stores, True child only
         ('chnsgame',
          utils.build_board([2, 3, 0],
                            [2, 5, 0]), [0, 0], True, WinCond.WIN,
@@ -910,7 +933,7 @@ class TestQuitter:
          utils.build_board([0, 0, 0],
                            [0, 12, 0]), [0, 0], True),
 
-        # 9:  no stores, False child only
+        # 10:  no stores, False child only
         ('chnsgame',
          utils.build_board([2, 3, 0],
                            [2, 5, 0]), [0, 0], True, WinCond.WIN,
@@ -919,7 +942,7 @@ class TestQuitter:
          utils.build_board([0, 0, 0],
                            [0, 12, 0]), [0, 0], False),
 
-        # 10:  no stores, child but none
+        # 11:  no stores, child but none
         ('chnsgame',
          utils.build_board([2, 3, 0],
                            [2, 5, 0]), [0, 0], True, WinCond.TIE,
@@ -928,7 +951,7 @@ class TestQuitter:
          utils.build_board([0, 0, 0],
                            [0, 0, 0]), [0, 0], True),
 
-        # 11: rounds, end game returns definitive result
+        # 12: rounds, end game returns definitive result
         ('rgame',
             utils.build_board([0, 2, 1],
                               [0, 2, 0]), [3, 4], True, WinCond.TIE,
@@ -937,7 +960,7 @@ class TestQuitter:
             utils.build_board([0, 2, 0],
                               [0, 2, 0]), [4, 4], True),
 
-        # 12: rounds, end game returns definitive result
+        # 13: rounds, end game returns definitive result
         ('rgame',
          utils.build_board([1, 0, 0],
                            [0, 0, 1]), [2, 8], True, WinCond.WIN,
@@ -946,7 +969,7 @@ class TestQuitter:
          utils.build_board([1, 0, 0],
                            [0, 0, 1]), [2, 8], True),
 
-        # 13:
+        # 14:
         ('no_win_game',
          utils.build_board([5, 0, 0],
                            [0, 0, 0]), [3, 4], True, WinCond.TIE,
@@ -955,11 +978,39 @@ class TestQuitter:
          utils.build_board([0, 0, 0],
                            [0, 0, 0]), [6, 6], None),
 
+        #15
+        ('dipgame',
+         utils.build_board([1, 0, 0],
+                           [0, 0, 1]), [2, 8], True, WinCond.TIE,
+         utils.build_board([N, N, N],
+                           [N, N, N]),
+         utils.build_board([1, 0, 0],
+                           [0, 0, 1]), [2, 8], True),
+
+        #16
+        ('tergame',
+         utils.build_board([1, 0, 0],
+                           [0, 0, 1]), [5, 5], True, WinCond.TIE,
+         utils.build_board([N, N, N],
+                           [N, N, N]),
+         utils.build_board([0, 0, 0],
+                           [0, 0, 0]), [6, 6], True),
+
+        #17
+        ('tergame',
+         utils.build_board([1, 0, 0],
+                           [0, 0, 1]), [2, 8], True, WinCond.WIN,
+         utils.build_board([N, N, N],
+                           [N, N, N]),
+         utils.build_board([0, 0, 0],
+                           [0, 0, 0]), [3, 9], True),
+
     ]
     @pytest.mark.parametrize(
         'fixture, board, store, turn, '
         'eres, child, eboard, estore, eturn',
-        CASES)
+        CASES,
+        ids=[f'case_{c}' for c in range(len(CASES))])
     def test_ended(self, request, fixture,
                    board, store, turn, child,
                    eres, eboard, estore, eturn):
@@ -1086,7 +1137,6 @@ class TestTerritory:
 
         if result:
             assert any(seeds for seeds in game.store)
-
 
 
     TERR_CASES = [
