@@ -24,5 +24,13 @@ Debugging in Spyder:
 
 if the file loads a test table run from MancalaGames like this:
 
-%debug pytes
-t.main(['test/test_end_move.py::TestTerritory::test_cant_occ_more[case_1]'])
+%debug pytest.main(['test/test_end_move.py::TestTerritory::test_cant_occ_more[case_1]'])
+
+
+To run a verbose test from the command line:
+
+pytest -v test\\test_end_move.py::TestClaimers
+
+To capture output:
+
+pytest -vs test\\test_end_move.py::TestClaimers::test_claimer[case2-DivvySeedsChildOnly]
