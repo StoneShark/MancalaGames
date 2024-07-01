@@ -8,6 +8,7 @@ Created on Fri Sep 15 03:57:49 2023
 
 import collections
 
+import pandas as  pd
 import pytest
 pytestmark = pytest.mark.unittest
 
@@ -54,14 +55,21 @@ CONVERT_DICT = {'N': None,
                 '': None}
 
 def make_ints(vals):
-    return [int(val) for val in vals]
+    return [int(val.replace('.0', '')) for val in vals]
 
 
 def read_claimer_cases():
 
     global TNAMES, CASES
 
-    with open('test/eg_claimers_cases.csv', 'r', encoding='utf-8') as file:
+    tfile = 'test/eg_claimers_cases.csv'
+    tc_dframe = pd.read_excel('test/eg_claimers_cases.xlsx',
+                              header=None)
+    with open(tfile, 'w', newline='', encoding='utf-8') as file:
+        tc_dframe.to_csv(file, header=False, index=False)
+
+
+    with open(tfile, 'r', encoding='utf-8') as file:
         lines = file.readlines()
     lines[0] = lines[0][1:]
 
@@ -184,7 +192,6 @@ class TestEndMove:
     def rgame(self):
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(rounds=True,
-                                blocks=True,  # req with rounds
                                 evens=True,
                                 stores=True,
                                 nbr_holes=game_consts.holes,
@@ -235,6 +242,10 @@ class TestEndMove:
 
         return mancala.Mancala(game_consts, game_info)
 
+
+    def test_str(self, game):
+        """Printing the claimer is unique to enders."""
+        assert 'ClaimSeeds' in str(game.deco.ender)
 
     @pytest.mark.parametrize(
         'fixture, ended, repeat, board, store, turn,'
@@ -969,14 +980,15 @@ class TestQuitter:
 class TestTerritory:
 
     @pytest.fixture
-    def game(self):
+    def rgame(self):
 
         game_consts = gc.GameConsts(nbr_start=3, holes=3)
-        game_info = gi.GameInfo(capt_on = [2],
+        game_info = gi.GameInfo(capt_on = [1],
                                 stores=True,
                                 gparam_one=5,
                                 goal=Goal.TERRITORY,
                                 rounds=True,
+                                round_fill=gi.RoundFill.UMOVE,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
@@ -985,38 +997,148 @@ class TestTerritory:
         return game
 
 
+    @pytest.fixture
+    def game(self):
+
+        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_info = gi.GameInfo(capt_on = [1],
+                                stores=True,
+                                gparam_one=5,
+                                goal=Goal.TERRITORY,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = False
+        return game
+
+
+    @pytest.mark.parametrize('capt_methods, emin_occ',
+                             [([('evens', True)], 2),
+                              ([('crosscapt', True)], 2),
+                              ([('capt_next', True)], 2),
+                              ([('capttwoout', True)], 2),
+                              ([('capt_on', [3])], 3),
+                              ([('capt_on', [1, 2, 3])], 1),
+                              ([('capt_min', 2)], 2),
+
+                              ([('capt_on', [4]),
+                                ('evens', True)], 4),
+                              ([('capt_min', 4),
+                                ('evens', True)], 4),
+                              ([('child_type', gi.ChildType.NORMAL),
+                                ('child_cvt', 3)], 3),
+                              ([('child_type', gi.ChildType.NORMAL),
+                                ('child_cvt', 3),
+                                ('evens', True)], 2),
+
+                              ([('sow_own_store', True)], -1),
+                              ((), -1),  # no capture method
+                                 ])
+    def test_min_occupy(self, game, capt_methods, emin_occ):
+        """Test the minimum capture criteria."""
+
+        object.__setattr__(game.info, 'capt_on', [])
+
+        for cmethod, cvalue in capt_methods:
+            object.__setattr__(game.info, cmethod, cvalue)
+        deco = end_move.deco_end_move(game)
+
+        assert deco._min_occupy(game) == emin_occ
+
+
     @pytest.mark.parametrize(
-        'board, store, econd, ewinner',
-        [
-            (utils.build_board([0, 2, 1],
-                               [0, 2, 0]), [6, 7], None, False),
-            (utils.build_board([0, 0, 0],
-                               [0, 2, 0]), [8, 8], WinCond.ROUND_WIN, False),
-            (utils.build_board([0, 0, 0],
-                               [0, 0, 0]), [3, 18-3],  WinCond.WIN, True),
-            (utils.build_board([0, 0, 0],
-                               [0, 0, 0]), [4, 18-4],  WinCond.WIN, True),
-            (utils.build_board([0, 0, 0],
-                               [0, 0, 0]), [5, 18-5],  WinCond.ROUND_WIN, True),
-            (utils.build_board([0, 0, 0],
-                               [0, 0, 0]), [18-3, 3],  WinCond.WIN, False),
-            (utils.build_board([0, 0, 0],
-                               [0, 0, 0]), [18-4, 3],  WinCond.WIN, False),
-            (utils.build_board([0, 0, 0],
-                               [0, 0, 0]), [18-5, 5],  WinCond.ROUND_WIN, False),
-            (utils.build_board([0, 0, 0],
-                               [0, 0, 0]), [9, 9],  WinCond.ROUND_TIE, False),
-            (utils.build_board([0, 0, 0],
-                               [1, 1, 0]), [7, 9], WinCond.ROUND_TIE, False),
-            ])
-    def test_territory(self, game, board, store, econd, ewinner):
+        'capt_methods, board, child, eresult',
+        [([('evens', True)], [1, 0, 1, 0, 1, 0], [N, N, N, N, N, N], False),
+         ([('evens', True)], [1, 0, 1, 0, 0, 0], [N, N, N, N, N, N], False),
+         ([('evens', True)], [1, 0, 0, 0, 0, 0], [N, N, N, N, N, N], True),
+
+         ([('child_type', gi.ChildType.NORMAL), ('child_cvt', 3)],
+          [1, 0, 1, 0, 1, 0], [N, N, N, N, N, N], False), # no child, just enough
+
+         ([('child_type', gi.ChildType.NORMAL), ('child_cvt', 3)],
+          [1, 0, 1, 0, 0, 0], [N, N, N, N, N, N], True), # no child, too few
+
+         ([('child_type', gi.ChildType.NORMAL), ('child_cvt', 3)],
+          [1, 0, 1, 0, 0, 0], [N, T, N, N, N, N], False),  # too few but child
+
+         ([('sow_own_store', True)],
+          [1, 0, 1, 0, 1, 0], [N, N, N, N, N, N], False),
+
+         ([], [1, 0, 1, 0, 1, 0], [N, N, N, N, N, N], False),
+         ],
+        ids=[f'case_{c}' for c in range(8)])
+    def test_cant_occ_more(self, game, capt_methods, board, child, eresult):
+        """Test the minimum capture criteria."""
+
+        object.__setattr__(game.info, 'capt_on', [])
+        for cmethod, cvalue in capt_methods:
+            object.__setattr__(game.info, cmethod, cvalue)
+        deco = end_move.deco_end_move(game)
+        game.board = board
+        game.child = child
+
+        print(deco)
+        print(deco.min_occ)
+
+        result = deco._cant_occupy_more()
+        assert result == eresult
+
+        if result:
+            assert any(seeds for seeds in game.store)
+
+
+
+    TERR_CASES = [
+        (utils.build_board([0, 2, 1],
+                           [0, 2, 0]), [6, 7], None, False),
+        (utils.build_board([0, 0, 0],
+                           [0, 2, 0]), [8, 8], WinCond.ROUND_WIN, False),
+        (utils.build_board([0, 0, 0],
+                           [0, 0, 0]), [3, 18-3],  WinCond.WIN, True),
+        (utils.build_board([0, 0, 0],
+                           [0, 0, 0]), [4, 18-4],  WinCond.WIN, True),
+        (utils.build_board([0, 0, 0],
+                           [0, 0, 0]), [5, 18-5],  WinCond.ROUND_WIN, True),
+        (utils.build_board([0, 0, 0],
+                           [0, 0, 0]), [18-3, 3],  WinCond.WIN, False),
+        (utils.build_board([0, 0, 0],
+                           [0, 0, 0]), [18-4, 3],  WinCond.WIN, False),
+        (utils.build_board([0, 0, 0],
+                           [0, 0, 0]), [18-5, 5],  WinCond.ROUND_WIN, False),
+        (utils.build_board([0, 0, 0],
+                           [0, 0, 0]), [9, 9],  WinCond.ROUND_TIE, False),
+        (utils.build_board([0, 0, 0],
+                           [1, 1, 0]), [7, 9], WinCond.ROUND_TIE, False),
+        ]
+
+    @pytest.mark.parametrize('board, store, econd, ewinner', TERR_CASES)
+    def test_territory(self, rgame, board, store, econd, ewinner):
+
+        rgame.board = board
+        rgame.store = store
+
+        cond, winner = rgame.deco.ender.game_ended(False, False)
+
+        assert cond == econd
+        assert winner == ewinner
+
+
+    @pytest.mark.parametrize('board, store, econd, ewinner', TERR_CASES)
+    def test_no_rounds_territory(self, game, board, store, econd, ewinner):
+        """Same test cases but with a non round territory game."""
 
         game.board = board
         game.store = store
 
         cond, winner = game.deco.ender.game_ended(False, False)
 
-        assert cond == econd
+        if econd == WinCond.ROUND_WIN:
+            assert cond == WinCond.WIN
+        elif econd == WinCond.ROUND_TIE:
+            assert cond == WinCond.TIE
+        else:
+            assert cond == econd
         assert winner == ewinner
 
 

@@ -132,12 +132,12 @@ Sow	skip_start	Skip Start on Lap	game_info _	67	bool	False	2	0	When sowing a sec
 Sow	sow_own_store	Sow Own Store	game_info _	69	bool	False	3	0	Sow seeds into your own store when passing it. Do not sow into your opponents store.
 Sow	move_one	Move One Seed	game_info _	47	bool	False	5	0	Only valid when sow_start is set. Changes the sow_start behavior so that if there is only one seed in the hole, it is moved in the sow direction one hole.
 Sow	sow_rule	Special Sow Rules	game_info _	70	SowRule	NONE	6	0	"NONE: there is no special sowing rules.
-SOW_BLKD_DIV: Holes sown to GPARAM_ONE are closed (blocked) and the hole's seeds are removed from play. Blocked holes on own side are skipped when sowing and blocked holes on opp side are diverted out of play or captured. 
-SOW_BLKD_DIV_NR: SOW_BLKD_DIV except that each player's rightmost hole cannot be closed.
+SOW_BLKD_DIV: Holes sown to GPARAM_ONE are closed (blocked) and the hole's seeds are removed from play. Blocked holes on own side are skipped when sowing and blocked holes on opp side are diverted out of play or captured. GOAL must be DEPRIVE.
+SOW_BLKD_DIV_NR: SOW_BLKD_DIV except that each player's rightmost hole cannot be closed. GOAL must be DEPRIVE.
 OWN_SOW_CAPT_ALL: Capture all holes that are sown that meet the simple capture criteria: evens, min, max and  capture on. Other criteria are enforced: side of the board, unlocked, and not child.   Grand Slam rules are not applied. If the game goal TERRITORY the capturer is the hole owner; otherwise the capturer is done by side. NOCAPTFIRST prevents this capture for the first move.
 SOW_SOW_CAPT_ALL: Capture all holes that sown that meed the simple capture criteria only on the SOWER's side of the board. NOCAPTFIRST prevents this capture for the first move.
 NO_SOW_OPP_2S: Don't sow into opponents holes with 2 seeds.
-"
+Note: These are not in numerical order."
 Sow	udir_holes	User Chooses Direction	game_info _	75	list[bool]	[]	8	0	"A list of holes that the user can control the sow direction from. Control is via the mouse button: left is clockwise and right is counter-clockwise.
 Note: all holes respond to both mouse buttons, but if the hole is not in udir_holes, the sow direction will be that prescribed by sow_direct with either button."
 Sow	mlaps	Multilap Sow	game_info _	44	LapSower	OFF	0	2	"OFF: Single lap sowing.

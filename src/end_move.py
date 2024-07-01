@@ -605,10 +605,15 @@ class TerritoryGameWinner(EndTurnIf):
     def _min_occupy(game):
         """Select a minimum number of seeds that can claim
         or occupy more territory. Disable with min_occ of -1,
-        if this feature shouldn't be used (sow own store or
-        childred [which are handled at runtime])."""
+        if this feature shouldn't be used (sow_own_store)."""
 
-        min_occ = game.cts.total_seeds
+        if game.info.sow_own_store:
+            return -1
+
+        if game.info.child_type:
+            min_occ = game.info.child_cvt
+        else:
+            min_occ = game.cts.total_seeds  # max possible and flag
 
         if (game.info.evens
                 or game.info.capt_next
@@ -617,10 +622,18 @@ class TerritoryGameWinner(EndTurnIf):
             min_occ = min(2, min_occ)
 
         if game.info.capt_on:
-            min_occ = min(*game.info.capt_on, min_occ)
+            if game.info.evens:
+                min_occ = min(cval for cval in game.info.capt_on
+                              if cval % 1 == 0)
+            else:
+                min_occ = min(*game.info.capt_on, min_occ)
 
+        # a capt_min value overrides any other
         if game.info.capt_min:
-            min_occ = min(game.info.capt_min, min_occ)
+            if min_occ == game.cts.total_seeds:
+                min_occ = game.info.capt_min
+            else:
+                min_occ = max(game.info.capt_min, min_occ)
 
         if min_occ == game.cts.total_seeds:
             min_occ = -1
@@ -629,24 +642,32 @@ class TerritoryGameWinner(EndTurnIf):
 
 
     def _cant_occupy_more(self):
-        """Based on min_occ, determine if we can occupy more
-        territory. if we can't move unclaimed seeds to the
-        current player's store."""
+        """Determine if we can occupy more territory.
+        If min_occ feature was disabled (== -1), return False.
+        If there are any children, return False (sowing into children
+        may claim more territory).
+        If there are too few seeds left to claim more territory,
+        return True.
 
-        remaining = sum(self.game.board[loc]
-                        for loc in range(self.game.cts.dbl_holes)
-                        if self.game.child[loc] is None)
+        If we can't move unclaimed seeds to the current player's store."""
 
-        if remaining <= self.min_occ:
+        if self.min_occ < 0:
+            return False
+
+        remaining = 0
+        for loc in range(self.game.cts.dbl_holes):
+            if self.game.child[loc] is None:
+                remaining += self.game.board[loc]
+            else:
+                return False
+
+        if remaining < self.min_occ:
             game_log.add(
                 'Too few seeds for more territory to be claimed '
                 f'(<= {self.min_occ}); remaining going to {self.game.turn}.',
                 game_log.IMPORT)
 
             self.game.store[self.game.turn] += remaining
-            for loc in range(self.game.cts.dbl_holes):
-                if self.game.child[loc] is None:
-                    self.game.board[loc] = 0
             return True
 
         return False
@@ -806,7 +827,7 @@ def deco_quitter(game):
 
     if game.info.goal == gi.Goal.MAX_SEEDS:
         quitter = MaxWinner(game, quitter)
-    elif game.info.goal == gi.Goal.TERRITORY:
+    else:  # elif game.info.goal == gi.Goal.TERRITORY:
         quitter = TerritoryEndGame(game, quitter)
 
     return quitter
