@@ -680,7 +680,7 @@ def deco_build_lap_cont(game):
 
         lap_cont = StopSingleSeed(game, lap_cont)
 
-    elif game.info.mlaps == gi.LapSower.LAPPER_NEXT:
+    else:   # elif game.info.mlaps == gi.LapSower.LAPPER_NEXT:
         lap_cont = NextLapCont(game)
 
     if game.info.child_type:
@@ -737,7 +737,7 @@ def deco_prescribed_sower(game, sower):
     elif game.info.prescribed == gi.SowPrescribed.BASIC_SOWER:
         sower = SowBasicFirst(game, 1, sower)
 
-    elif game.info.prescribed == gi.SowPrescribed.MLAPS_SOWER:
+    else:  # elif game.info.prescribed == gi.SowPrescribed.MLAPS_SOWER:
         sower = SowMlapsFirst(game, 1, sower)
 
     return sower
