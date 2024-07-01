@@ -150,9 +150,9 @@ class TestClaimers:
             claimer = tclass(game)
         seeds = claimer.claim_seeds()
 
-        assert seeds == case.results[tname].seeds
         assert game.board == case.results[tname].board
         assert game.store == case.results[tname].store
+        assert seeds == case.results[tname].seeds
         if case.results[tname].error:
             assert sum(game.board) + sum(game.store) != game.cts.total_seeds
         else:
@@ -1195,6 +1195,8 @@ class TestTerritory:
     @pytest.mark.parametrize(
         'board, store, econd, ewinner',
         [(utils.build_board([0, 0, 0, 0],
+                            [2, 2, 0, 2]), [10, 8], None, True),  # can share game continues
+         (utils.build_board([0, 0, 0, 0],
                             [2, 2, 0, 0]), [10, 10], WinCond.ROUND_WIN, False),
          (utils.build_board([0, 0, 0, 0],
                             [2, 2, 0, 0]), [2, 18], WinCond.WIN, True),
