@@ -15,7 +15,6 @@ Test Naming conventions:
 
 Debugging in Spyder:
 
-- evaluate the file
 - put breakpoints in test
 - execute something like:
 
