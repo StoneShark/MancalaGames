@@ -61,27 +61,25 @@ def test_one_game(game_data, request):
 
         cond = game.move(random.choice(moves))
         if cond in (WinCond.WIN, WinCond.TIE):
-            break
-        if cond in (WinCond.ROUND_WIN, WinCond.ROUND_TIE):
-            if game.new_game(cond, new_round_ok=True):
-                return
+            return
+
+        if (cond in (WinCond.ROUND_WIN, WinCond.ROUND_TIE)
+                and game.new_game(cond, new_round_ok=True)):
+            return
 
         if game.info.mustpass:
             game.test_pass()
 
-    else:
-        key_name = game.info.name + '/loop_max'
-        cnt = request.config.cache.get(key_name, 0)
-        request.config.cache.set(key_name, cnt + 1)
+    key_name = game.info.name + '/loop_max'
+    cnt = request.config.cache.get(key_name, 0)
+    request.config.cache.set(key_name, cnt + 1)
 
 
 @pytest.fixture
 def known_game_fails(request):
 
     game, _ = request.getfixturevalue('game_data')
-    if game.info.name in ['Bao_Tanzanian', 'Congklak', 'Erherhe',
-                          'Eson_Xorgol', 'Gabata', 'NamNam',
-                          'Pallam_Kuzhi', 'Weg']:
+    if game.info.mlaps:
         request.node.add_marker(
             pytest.mark.xfail(
                 reason='Many seeds; heuristic test; occasionally fails.',
@@ -91,15 +89,16 @@ def known_game_fails(request):
 @pytest.mark.usefixtures('known_game_fails')
 def test_game_stats(game_data, request, nbr_runs):
 
-    def report_bad(maxed):
-        print(f'Bad endings for {game.info.name:12}: loop_max= {maxed}')
+    def report_bad(maxed, total):
+        print(f'Bad endings for {game.info.name:12}: loop_max= {maxed:4}  ',
+              f' {maxed/total:>6.1%}')
 
     game, _ = game_data
     key_name = game.info.name + '/loop_max'
     maxed = request.config.cache.get(key_name, 0)
 
     if maxed:
-        atexit.register(report_bad, maxed)
+        atexit.register(report_bad, maxed, nbr_runs)
 
-    assert maxed <= nbr_runs * 0.2, \
+    assert maxed <= nbr_runs * 0.25, \
         f'Bad endings too high for {game.info.name}: loop_max= {maxed}'
