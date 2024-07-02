@@ -81,7 +81,8 @@ STRING_DICTS = {
          'Waldas': gi.ChildType.WALDA,
          'One Child (tuzdek)': gi.ChildType.ONE_CHILD,
          'Weg / Daughter': gi.ChildType.WEG,
-         'Bull': gi.ChildType.BULL}),
+         'Bull': gi.ChildType.BULL,
+         'Qur': gi.ChildType.QUR}),
 
     'ChildRule': lookup_dicts(
         gi.ChildRule,

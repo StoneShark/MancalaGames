@@ -399,6 +399,15 @@ def add_child_rules(rules):
         msg='ONE_CHILD requires STORES',
         excp=gi.GameInfoError)
 
+    rules.add_rule(
+        'ch_rule_opp_incom',
+        rule=lambda ginfo: (ginfo.child_type in (gi.ChildType.BULL,
+                                                 gi.ChildType.QUR,
+                                                 gi.ChildType.WEG)
+                            and ginfo.child_rule == gi.ChildRule.OPP_ONLY),
+        msg='CHILD_RULE: OPP_ONLY is incompatible with selected CHILD_TYPE',
+        excp=gi.GameInfoError)
+
 
 def add_no_sides_rules(rules):
     """Add the no_sides rules."""

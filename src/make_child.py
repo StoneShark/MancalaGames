@@ -102,6 +102,7 @@ class OneChild(MakeChildIf):
         cross = game.cts.cross_from_loc(loc)
         opp_range = game.cts.get_opp_range(game.turn)
 
+        # TODO remove opp_side test, add RULE OPP_ONLY to selected games
         return (game.cts.opp_side(game.turn, loc)
                 and game.child[loc] is None
                 and game.child[cross] is None
@@ -109,6 +110,22 @@ class OneChild(MakeChildIf):
                 and game.cts.loc_to_left_cnt(loc)
                 and not any(game.child[tloc] is not None
                             for tloc in opp_range))
+
+
+class QurChild(MakeChildIf):
+    """Make a qur when sowing into empty hole on own side of
+    board and opposite side of board has CHILD_CVT seeds."""
+
+    def test(self, mdata):
+
+        game = self.game
+        loc = mdata.capt_loc
+        cross = game.cts.cross_from_loc(loc)
+
+        return (game.cts.my_side(game.turn, loc)
+                and game.board[loc] == 1
+                and game.child[loc] is None
+                and game.board[cross] == game.info.child_cvt)
 
 
 class OppSideChild(MakeChildIf):
@@ -164,6 +181,9 @@ def deco_child(game):
 
     elif game.info.child_type == gi.ChildType.ONE_CHILD:
         deco = OneChild(game, deco)
+
+    elif game.info.child_type == gi.ChildType.QUR:
+        deco = QurChild(game, deco)
 
     if game.info.child_rule == gi.ChildRule.OPP_ONLY:
         deco = OppSideChild(game, deco)

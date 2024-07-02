@@ -73,6 +73,7 @@ class ChildType(enum.IntEnum):
     ONE_CHILD = 3
     WEG = 4
     BULL = 5
+    QUR = 6
 
 
 @enum.unique

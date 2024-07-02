@@ -507,6 +507,27 @@ class MakeBull(CaptMethodIf):
         self.decorator.do_captures(mdata)
 
 
+class MakeQur(CaptMethodIf):
+    """When making a qur, make both the hole sown to child_cvt
+    and the hole opposit QURs."""
+
+    def do_captures(self, mdata):
+
+        if self.game.deco.make_child.test(mdata):
+
+            self.game.child[mdata.capt_loc] = self.game.turn
+
+            cross = self.game.cts.cross_from_loc(mdata.capt_loc)
+            self.game.child[cross] = self.game.turn
+
+            # XXXX equalize seeds (though, how does it effect game play?)
+
+            mdata.capt_changed = True
+            return
+
+        self.decorator.do_captures(mdata)
+
+
 # %% pickers
 
 # all one enum so only one of these can be used
@@ -635,6 +656,10 @@ def _add_child_deco(game, capturer):
 
     elif game.info.child_type == gi.ChildType.BULL:
         capturer = MakeBull(game, capturer)
+
+    elif game.info.child_type == gi.ChildType.QUR:
+        capturer = MakeQur(game, capturer)
+
 
     return capturer
 

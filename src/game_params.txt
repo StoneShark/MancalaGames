@@ -151,13 +151,14 @@ Sow	visit_opp	Visit Opp for Mlaps	game_info _	77	bool	False	1	2	Sow is multiplap
 Sow	child_type	Type of Children	game_info _	27	ChildType	NOCHILD	3	2	"Games with children allow players to claim holes. These child holes are an extension of the stores and seeds in them count towards a win. Making a child stops any multiple lap sowing, moves cannot start from children, and they cannot be captured.
 NOCHILD: children are not used.
 NORMAL: children are made when a final seeds sows a hole to CHILD_CVT.
-WALDAS: Stores are not supported. Captures are instead moved into waldas, thus a player may not capture until they have created a walda. Child locations are limited.  Each player may create up to 6 waldas: on either end of each side of the board and the next outer hole on their own side of the board. Note that there are only 8 total places that waldas maybe created.
+WALDA: Stores are not supported. Captures are instead moved into waldas, thus a player may not capture until they have created a walda. Child locations are limited.  Each player may create up to 6 waldas: on either end of each side of the board and the next outer hole on their own side of the board. Note that there are only 8 total places that waldas maybe created.
 ONE_CHILD: Use the tuzdek rules for children: only one child allowed on opponent's side of the board, may not be in player's left most hole,  and may not be opposite eachother.
 WEG: children maybe created in holes owned by the opponent. Ending a sow in an opponent's weg captures the seed just sown and one more (if there is one); generally, the player get's to play again (per CAPT_RTURN). WEGs are supported for TERRITORY games only (hole ownership required).
 BULL: create one bull if final seed sows to CHILD_CVT, create two bulls if the final two seeds are sown to CHILD_CVT-1 and CHILD_CVT (in either order).
+QUR: when a seed is sown into an empty hole on the player's side of the board and the opposite hole contains CHILD_CVT, create children in both holes: final seed location and opposite.
 "
 Sow	child_cvt	Child Convert Count	game_info _	26	int	0	4	2	"Defines the number of seeds required to make a child.
 "
 Sow	child_rule	Child Restrictions	game_info _	24	ChildRule	NONE	5	2	"NONE: no additional restrictions.
-OPP_ONLY:  Only make children on the opposite side or in opponent's territory.
+OPP_ONLY:  Only make children on the opposite side or in opponent's territory. Incompatible with BULL, QUR, and WEG child types.
 NOT_1ST_OPP: Don't make a child in the first hole on the opponents side/territory with one seed."

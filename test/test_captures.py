@@ -775,6 +775,74 @@ class TestBull:
             assert all(game.child[idx] == None for idx in range(1, 7))
 
 
+class TestQur:
+
+    @pytest.fixture
+    def game(self):
+        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_info = gi.GameInfo(child_cvt=3,
+                                child_type=ChildType.QUR,
+                                crosscapt=True,
+                                xcpickown=1,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game =  mancala.Mancala(game_consts, game_info)
+        game.board = utils.build_board([2, 3, 1, 1],
+                                       [1, 1, 3, 2])
+        game.store = [1, 1]
+        return game
+
+    QCASES = [
+        (False, 0, [], False, [4, 1]),  # don't make, opp side wrong, but capt
+        (False, 3, [], False, None),  # don't make, not single seed
+        (False, 1, [], True, None),   # make
+        (False, 1, [1], False, None),  # don't make or capt, already child
+
+        (True, 0, [], False, None),  # don't make, not single seed
+        (True, 2, [], True, None),   # make
+        (True, 2, [2], False, None),  # don't make or capt, already child
+        (True, 3, [], False, [1, 4]),  # don't make, opp side wrong, but capt
+
+              ]
+    @pytest.mark.parametrize('turn, pos, child_cols, emake, estore',
+                             QCASES,
+                             ids=[f'case_{f}' for f in range(len(QCASES))])
+    def test_makin_qur(self, game, turn, pos, child_cols, emake, estore):
+
+        game.turn = turn
+        for col in child_cols:
+            cross = game.cts.cross_from_loc(col) # pos == loc for False
+            game.child[col] = True
+            game.child[cross] = True
+
+        saved_child = tuple(game.child)
+        saved_store = tuple(game.store)
+
+        loc = game.cts.xlate_pos_loc(not turn, pos)
+        cross = game.cts.cross_from_loc(loc)
+
+        mdata = MoveData(game, None)
+        mdata.direct = game.info.sow_direct
+        mdata.capt_loc = loc
+        mdata.board = tuple(game.board)
+        mdata.seeds = 2
+
+        game.deco.capturer.do_captures(mdata)
+
+        if emake:
+            assert game.child[loc] == turn and game.child[cross] == turn
+        else:
+            assert tuple(game.child) == saved_child
+
+        if estore:
+            assert game.store == estore
+            assert game.board[loc] == 0 and game.board[cross] == 0
+        else:
+            assert tuple(game.store) == saved_store
+            assert tuple(game.board) == mdata.board
+
+
 class TestRepeatTurn:
     """Test repeat turn due to capt_rturn."""
 
