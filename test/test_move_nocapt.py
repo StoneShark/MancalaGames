@@ -687,25 +687,6 @@ class TestMLAPS_ito_Sow:
         assert game.board == utils.build_board([0, 1, 0, 1, 0, 3],
                                                [5, 2, 1, 2, 0, 2])
 
-    @pytest.mark.skip(reason="Move doesn't return ENDLESS anylonger.")
-    def test_mlaps_inf(self):
-
-        game_consts = gc.GameConsts(nbr_start=4, holes=6)
-
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                mlaps=LapSower.LAPPER,
-                                sow_direct=Direct.CCW,
-                                rules=mancala.Mancala.rules)
-
-        game = mancala.Mancala(game_consts, game_info)
-
-        game.board = utils.build_board([0, 1, 0, 1, 0, 3],
-                                       [5, 2, 1, 2, 0, 2])
-        game.store = [20, 11]
-        game.turn = False
-        cond = game.move(3)
-        assert cond == WinCond.ENDLESS
-
 
 @pytest.mark.filterwarnings("ignore")
 class TestPASS_ito_Sow:
