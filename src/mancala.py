@@ -470,7 +470,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
                 message += f'{gtext} ended in a tie.'
             elif self.info.goal == gi.Goal.DEPRIVE:
                 message += 'Both players ended with seeds; consider it a tie.'
-            elif self.info.goal == gi.Goal.TERRITORY:
+            else :  # if self.info.goal == gi.Goal.TERRITORY:
                 message += 'Each player controls half the holes (a tie).'
 
         elif win_cond == gi.WinCond.ENDLESS:
@@ -482,12 +482,14 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         return title, message
 
 
-    def do_sow(self, move):
-        """Do the sowing steps:
+    def do_sow(self, move, single=False):
+        """Do the sowing steps
 
         2. deal with first hole, getting start loc, seeds to sow, and
         sow start if specified.
         3. get sow direction
+
+        if single sower, with single sower; otherwise with deco.sower
         4. sow the seeds, return updated mdata
 
         RETURN move data"""
@@ -495,21 +497,21 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         mdata = MoveData(self, move)
         mdata.sow_loc, mdata.seeds = self.deco.starter.start_sow(move)
         mdata.direct = self.deco.get_dir.get_direction(move, mdata.sow_loc)
-        self.deco.sower.sow_seeds(mdata)
 
-        game_log.step(f'Sow from {mdata.sow_loc}', self)
+        if single:
+            single_sower = self.deco.sower.get_single_sower()
+            single_sower.sow_seeds(mdata)
+        else:
+            self.deco.sower.sow_seeds(mdata)
+            game_log.step(f'Sow from {mdata.sow_loc}', self)
+
         return mdata
 
 
     def do_single_sow(self, move):
-        """For move simulation, just do the a single sow."""
+        """For move simulation, just do a single sow."""
 
-        mdata = MoveData(self, move)
-        mdata.sow_loc, mdata.seeds = self.deco.starter.start_sow(move)
-        mdata.direct = self.deco.get_dir.get_direction(move, mdata.sow_loc)
-        single_sower = self.deco.sower.get_single_sower()
-        single_sower.sow_seeds(mdata)
-        return mdata
+        return self.do_sow(move, single=True)
 
 
     def capture_seeds(self, mdata):
