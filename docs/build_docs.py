@@ -16,6 +16,7 @@ import csv
 import dataclasses as dc
 import enum
 import os
+import re
 
 from context import ai_player
 from context import cfg_keys as ckey
@@ -30,7 +31,33 @@ GPROP_PATH = '../GameProps/'
 TXTPART = '.txt'
 EXFILE = 'all_params.txt'
 
+
+
+# %% fill global tables
+
+
 PARAMS = mancala_games.MancalaGames.read_params_file()
+
+def get_game_names():
+    """Scan the files and get the game names."""
+
+    game_names = []
+    for file in os.listdir(GPROP_PATH):
+
+        if file[-4:] != TXTPART or file == EXFILE:
+            continue
+        game_dict = man_config.read_game(GPROP_PATH + file)
+
+        if ckey.GAME_INFO in game_dict:
+            game_names += [game_dict[ckey.GAME_INFO][ckey.NAME]]
+
+    return game_names
+
+GAMES = get_game_names()
+UPARAMS = {param.upper() for param in PARAMS.keys()}
+
+PUNCT = '().,?!;:'
+SEP_PUNCT_RE = re.compile('([' + PUNCT + ']*)([-a-zA-Z_0-9]+)([' + PUNCT + ']*)')
 
 
 # %% html extras
@@ -95,6 +122,100 @@ def write_columns(file, text, ncols):
 
     print('</div>', file=file)
 
+
+def sub_links(para):
+    """For parameter names and games substitute in links.
+
+    The handling of multi word game names seems forced :("""
+
+
+    word_list = para.split(' ')
+    w_links = []
+    skip_words = 0
+
+    for idx, word in enumerate(word_list):
+
+        if skip_words:
+            skip_words -= 1
+            continue
+
+        match = SEP_PUNCT_RE.match(word)
+        if match:
+            pre, tword, post = match.groups()
+        else:
+            pre = post = ''
+            tword = word
+
+        mwgames = [' '.join(word_list[idx:idx + 2]),
+                  ' '.join(word_list[idx:idx + 3])]
+
+        if tword in UPARAMS:
+            w_links += [f'{pre}'
+                         + f'<a href="game_params.html#{tword.lower()}">'
+                         + f'{tword}</a>'
+                         + f'{post}']
+
+        elif tword in GAMES:
+
+            w_links += [f'{pre}'
+                         + f'<a href="about_games.html#{tword}">'
+                         + f'{tword}</a>'
+                         + f'{post}']
+
+        elif mwgames[0] in GAMES:
+
+            w_links += [f'{pre}'
+                         + f'<a href="about_games.html#{mwgames[0]}">'
+                         + f'{mwgames[0]}</a>'
+                         + f'{post}']
+            skip_words = 1
+
+        elif mwgames[1] in GAMES:
+
+            w_links += [f'{pre}'
+                         + f'<a href="about_games.html#{mwgames[1]}">'
+                         + f'{mwgames[1]}</a>'
+                         + f'{post}']
+            skip_words = 2
+
+        else:
+            w_links += [word]
+
+    return ' '.join(w_links)
+
+
+def write_para(text, ofile):
+    """Write a paragraph with
+        * posible bullet lists for lines that start with -
+        * make lines that start with 'Note: ' be in italic
+        """
+
+    in_list = False
+    for para in text.split('\n'):
+        if para == '':
+            continue
+
+        if para[:6] == 'Note: ':
+            print('<p><i>', sub_links(para), '</i>', file=ofile)
+
+        elif not in_list and para[0] == '-':
+            in_list = True
+            print('<ul><li class="helptext">', sub_links(para[2:]), sep='', file=ofile)
+
+        elif in_list and para[0] == '-':
+            print('<li class="helptext">', sub_links(para[2:]), sep='', file=ofile)
+
+        elif in_list:
+            in_list = False
+            print('</ul>', file=ofile)
+            print('<p>', sub_links(para), sep='', file=ofile)
+
+        else:
+            print('<p>', sub_links(para), sep='', file=ofile)
+
+    if in_list:
+        in_list = False
+        print('</ul>', file=ofile)
 
 
 # %%  write game help
@@ -177,12 +298,15 @@ def game_prop_text(game_dict):
 
     holes = game_dict[ckey.GAME_CONSTANTS][ckey.HOLES]
     start = game_dict[ckey.GAME_CONSTANTS][ckey.NBR_START]
+    goal = game_dict[ckey.GAME_INFO].get(ckey.GOAL, gi.Goal.MAX_SEEDS)
+
     ptxt = [f'Holes per side:  {holes}',
-            f'Start seeds:  {start}' ]
+            f'Start seeds:  {start}',
+            f'<a href="game_params.html#goal">Goal</a>: {goal.name}']
 
     for param, value in game_dict[ckey.GAME_INFO].items():
 
-        if param in (ckey.NAME, ckey.ABOUT):
+        if param in (ckey.NAME, ckey.ABOUT, ckey.GOAL):
             continue
 
         if param in (ckey.CAPT_ON, ckey.UDIR_HOLES):
@@ -203,33 +327,6 @@ def game_prop_text(game_dict):
 
     return ptxt
 
-
-def write_about_txt(about_str, ofile):
-    """Format the about string."""
-
-    in_list = False
-    for para in about_str.split('\n'):
-        if para == '':
-            continue
-
-        if not in_list and para[0] == '-':
-            in_list = True
-            print('<ul><li>', para[2:], sep='', file=ofile)
-
-        elif in_list and para[0] == '-':
-            print('<li>', para[2:], sep='', file=ofile)
-
-        elif in_list:
-            in_list = False
-            print('</ul>', file=ofile)
-            print('<p>', para, sep='', file=ofile)
-
-        else:
-            print('<p>', para, sep='', file=ofile)
-
-    if in_list:
-        in_list = False
-        print('</ul>', file=ofile)
 
 
 def write_games_help(filename):
@@ -266,7 +363,7 @@ def write_games_help(filename):
                   sep='', file=ofile)
             games += [gname]
 
-            write_about_txt(about_str, ofile)
+            write_para(about_str, ofile)
             write_columns(ofile, prop_text, 2)
             for key, text in game_dict.items():
                 print('<p>', key.title(), ': ', text, sep='', file=ofile)
@@ -386,11 +483,7 @@ def write_params_help(filename):
                       file=ofile)
                 print(file=ofile)
 
-                for para in param.description.split('\n'):
-                    if para == '':
-                        continue
-
-                    print('<p>', para, sep='', file=ofile)
+                write_para(param.description, ofile)
 
         print('<br><br><br>', file=ofile)
         print('<h2 id="index">Parameter Index</h2>', file=ofile)

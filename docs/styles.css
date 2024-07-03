@@ -92,6 +92,11 @@ li.over {
 	margin-top:0.3em;
 	margin-bottom:0.3em;
 }
+li.helptext {
+	margin-top:0.3em;
+	margin-bottom:0.5em;
+}
+
 a:link {
 	color: blue;
 }
