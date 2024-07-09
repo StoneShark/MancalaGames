@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Sat Mar 25 07:32:54 2023
-
-@author: Ann
+"""Test mancala tests the logic specific to the mancala.py file.
+It does not test the whole game--integration tests do that.
+Concentration here is that the methods pass the real work
+on to the correct decos.
 
 
 added these packages:
@@ -17,7 +17,8 @@ To get branch coverage in Anaconda Prompt:
 coverage run --branch -m pytest
 coverage html
 
-"""
+Created on Sat Mar 25 07:32:54 2023
+@author: Ann"""
 
 
 # %% imports
@@ -451,7 +452,7 @@ class TestBasicIfs:
 
 
 class TestDelegates:
-    """Confirm delegates interfaces are, well, delegated.
+    """Confirm delegated interfaces are, well, delegated.
     Set unique return values to confirm the game object
     returns the right data. """
 
@@ -838,3 +839,250 @@ class TestHoleProp:
         assert props.blocked == 'block' + str(eindex)
         assert props.ch_owner == 'child' + str(eindex)
         assert props.owner == 'owner' + str(eindex)
+
+
+class TestMove:
+
+    @pytest.fixture
+    def game(self):
+
+        game_consts = gc.GameConsts(nbr_start=2, holes=2)
+        game_info = gi.GameInfo(capt_on = [2],
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+
+    def test_move(self, mocker, game):
+        """Test delegations of move."""
+
+        game.turn = True
+
+        m_move = mocker.patch.object(game, '_move')
+        m_move.return_value = 123
+        mlog = mocker.patch.object(game, '_log_turn')
+
+        assert game.move(1) == 123
+
+        m_move.assert_called_once()
+        mlog.assert_called_once_with(True, 1, 123)
+
+
+
+    @pytest.mark.parametrize(
+        'board, store, eresult',
+        [([2, 2, 2, 2], [0, 0], False),
+         ([2, 2, 2, 2], [2, 0], True),  # too many, store
+         ([2, 2, 4, 2], [0, 0], True),    # too many, board
+         ([2, 2, 0, 2], [0, 0], True),  # too few
+         ([2, 2, 0, 2], [0, 2], False),  # good, some store
+         ([0, 0, 0, 0], [0, 0], True),   # none
+         ([0, 0, 0, 0], [8, 0], False),  # all store
+         ])
+    def test_seed_count(self, game, board, store, eresult):
+        """test the 'conservation of seeds' assert at the top
+        of move."""
+
+        game.board = board
+        game.store = store
+
+        assert game.cts.total_seeds == 8
+
+        if eresult:
+            with pytest.raises(AssertionError):
+                game._move(2)
+        else:
+            game._move(2)
+
+
+    @pytest.mark.parametrize('turn', [False, True])
+    def test_pass(self, mocker, game, turn):
+        """test that pass does not change the game, does not
+        call do_sow, but does change the game turn"""
+
+        game.turn = turn
+        mobj = mocker.patch.object(game, 'do_sow')
+
+        assert game.move(gi.PASS_TOKEN) is None
+
+        assert game.board == [2, 2, 2, 2]
+        assert game.store == [0, 0]
+        assert game.turn == (not turn)
+        assert not mobj.do_sow.called
+
+
+    def test__move_basic (self, mocker, game):
+        """basic flow, no winner"""
+
+        game.last_mdata = None
+
+        msow = mocker.patch.object(game, 'do_sow')
+        mdata = mancala.MoveData(game, 1)
+        mdata.sow_loc = 123
+        msow.return_value = mdata
+
+        mcapt = mocker.patch.object(game, 'capture_seeds')
+        mwin = mocker.patch.object(game, 'win_conditions')
+        mwin.return_value = False
+        minh = mocker.patch.object(game.deco.inhibitor, 'clear_if')
+
+        assert game._move(1) is None
+
+        assert game.last_mdata.sow_loc == 123
+        msow.assert_called_once_with(1)
+        mcapt.assert_called_once_with(mdata)
+        mwin.assert_called_once()
+        minh.assert_called_once_with(game, mdata)
+
+
+    def test__move_repeat_turn (self, mocker, game):
+        """do sow determines repeat turn, no winner"""
+
+        msow = mocker.patch.object(game, 'do_sow')
+        mdata = mancala.MoveData(game, 1)
+        mdata.capt_loc = gi.WinCond.REPEAT_TURN
+        msow.return_value = mdata
+
+        mcapt = mocker.patch.object(game, 'capture_seeds')
+        mwin = mocker.patch.object(game, 'win_conditions')
+        mwin.return_value = None
+
+        assert game._move(1) is gi.WinCond.REPEAT_TURN
+
+        msow.assert_called_once_with(1)
+        mwin.assert_called_once()
+        assert not mcapt.capture_seeds.called
+
+
+    def test__move_repeat_win (self, mocker, game):
+        """do sow determines repeat turn and the game is won"""
+
+        msow = mocker.patch.object(game, 'do_sow')
+        mdata = mancala.MoveData(game, 1)
+        mdata.capt_loc = gi.WinCond.REPEAT_TURN
+        msow.return_value = mdata
+
+        mcapt = mocker.patch.object(game, 'capture_seeds')
+        mwin = mocker.patch.object(game, 'win_conditions')
+        mwin.return_value = gi.WinCond.WIN
+
+        assert game._move(1) is gi.WinCond.WIN
+
+        msow.assert_called_once_with(1)
+        mwin.assert_called_once()
+        assert not mcapt.capture_seeds.called
+        assert not mdata.end_msg
+
+
+    def test__move_endless (self, mocker, game):
+        """do sow determines endless sow"""
+
+        msow = mocker.patch.object(game, 'do_sow')
+        mdata = mancala.MoveData(game, 1)
+        mdata.capt_loc = gi.WinCond.ENDLESS
+        msow.return_value = mdata
+
+        mcapt = mocker.patch.object(game, 'capture_seeds')
+        mwin = mocker.patch.object(game, 'win_conditions')
+        mwin.return_value = gi.WinCond.WIN
+        mend = mocker.patch.object(game, 'end_game')
+        mend.return_value = gi.WinCond.TIE
+
+        assert game._move(1) is gi.WinCond.TIE
+
+        msow.assert_called_once_with(1)
+        mend.assert_called_once()
+        assert mdata.end_msg
+
+        assert not mwin.win_conditions.called
+        assert not mcapt.capture_seeds.called
+
+
+    def test__move_c_repeat_turn (self, mocker, game):
+        """capture_seeds determines repeat turn, no winner"""
+
+        msow = mocker.patch.object(game, 'do_sow')
+        mdata = mancala.MoveData(game, 1)
+        mdata.capt_loc = 3
+        msow.return_value = mdata
+
+        mcapt = mocker.patch.object(game, 'capture_seeds')
+        mcapt.side_effect = lambda _ : setattr(mdata, 'captured',
+                                               gi.WinCond.REPEAT_TURN)
+
+        mwin = mocker.patch.object(game, 'win_conditions')
+        mwin.return_value = None
+
+        assert game._move(1) is gi.WinCond.REPEAT_TURN
+
+        msow.assert_called_once_with(1)
+        mwin.assert_called_once()
+        mcapt.assert_called_once()
+
+
+    def test__move_c_repeat_win (self, mocker, game):
+        """capture_seeds determines repeat turn and the game is won"""
+
+        msow = mocker.patch.object(game, 'do_sow')
+        mdata = mancala.MoveData(game, 1)
+        mdata.capt_loc = 3
+        msow.return_value = mdata
+
+        mcapt = mocker.patch.object(game, 'capture_seeds')
+        mcapt.side_effect = lambda _ : setattr(mdata, 'captured',
+                                               gi.WinCond.REPEAT_TURN)
+
+        mwin = mocker.patch.object(game, 'win_conditions')
+        mwin.return_value = gi.WinCond.WIN
+
+        assert game._move(1) is gi.WinCond.WIN
+
+        msow.assert_called_once_with(1)
+        mwin.assert_called_once()
+        mcapt.assert_called_once()
+
+
+
+class TestLogMove:
+
+    @pytest.fixture
+    def game(self):
+
+        game_consts = gc.GameConsts(nbr_start=2, holes=2)
+        game_info = gi.GameInfo(capt_on = [2],
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+    @pytest.mark.parametrize('turn, move_turn',
+                             [(False, False),
+                              (True, False),
+                              (False, True),
+                              (True, True),
+                              ])
+    @pytest.mark.parametrize('win_cond', gi.WinCond)
+    def test_log_move(self, mocker, game, turn, move_turn, win_cond):
+        """Test all conditions of turn logging.
+        This is pretty specific to the actual log text;
+        code changes might break it."""
+
+        game.turn = turn
+
+        mlog = mocker.patch.object(game_log.game_log, 'turn')
+        game._log_turn(move_turn, 1, win_cond)
+
+        arg_str = mlog.call_args.args[1]
+        print(arg_str)
+        assert win_cond.name in arg_str
+        assert 'move 1' in arg_str
+        if move_turn:
+            assert 'Top move' in arg_str
+        else:
+            assert 'Bottom move' in arg_str
+        if 'WIN' in arg_str:
+            if turn:
+                assert 'by Top' in arg_str
+            else:
+                assert 'by Bottom' in arg_str
