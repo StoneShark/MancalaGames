@@ -9,6 +9,7 @@
       "about": "A single-lap, clockwise-sow mancala. One seed is left in the start hole when sowing; unless there is only one seed, then it is move forward one hole. Capture on evens that are greater than or equal to 4. Each side can make one Tuzdek (child) with 3 seeds on the opponent's side of the board but not in the left most hole. Tuzdeks cannot be opposite eachother.",
       "child_cvt": 3,
       "child_type": 3,
+      "child_rule": 1,
       "capt_min": 4,
       "evens": true,
       "min_move": 1,

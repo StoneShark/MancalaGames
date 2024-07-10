@@ -90,11 +90,11 @@ class BullChild(MakeChildIf):
 
 
 class OneChild(MakeChildIf):
-    """Test the one child rule (tuzdek).
+    """Test the one child rule: may not be made in leftmost hole on
+    either side.  Each player can only have one child and player's
+    children must not be opposite eachother on the board.
 
-    A tuzdek (child) may not be made in leftmost hole on
-    either side.  Each player can only have one tuzdek and player's
-    tuzdeks must not be opposite eachother on the board."""
+    To create Tuzdek add child_rule=opp_only."""
 
     def test(self, mdata):
         game = self.game
@@ -102,9 +102,7 @@ class OneChild(MakeChildIf):
         cross = game.cts.cross_from_loc(loc)
         opp_range = game.cts.get_opp_range(game.turn)
 
-        # TODO remove opp_side test, add RULE OPP_ONLY to selected games
-        return (game.cts.opp_side(game.turn, loc)
-                and game.child[loc] is None
+        return (game.child[loc] is None
                 and game.child[cross] is None
                 and game.board[loc] == game.info.child_cvt
                 and game.cts.loc_to_left_cnt(loc)

@@ -515,6 +515,7 @@ class TestTuzdek:
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(child_cvt=3,
                                 child_type=ChildType.ONE_CHILD,
+                                child_rule=ChildRule.OPP_ONLY,
 								stores=True,
                                 capt_on=[3],
                                 nbr_holes=game_consts.holes,

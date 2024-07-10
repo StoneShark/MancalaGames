@@ -413,8 +413,7 @@ class CaptureToWalda(CaptMethodIf):
     def do_captures(self, mdata):
 
         loc = mdata.capt_loc
-        if (self.game.board[loc] == self.game.info.child_cvt
-                and self.game.child[loc] is None
+        if (self.game.deco.make_child.test(mdata)
                 and self.walda_poses[loc] in
                     CaptureToWalda.WALDA_TEST[self.game.turn]):
 
@@ -659,7 +658,6 @@ def _add_child_deco(game, capturer):
 
     elif game.info.child_type == gi.ChildType.QUR:
         capturer = MakeQur(game, capturer)
-
 
     return capturer
 

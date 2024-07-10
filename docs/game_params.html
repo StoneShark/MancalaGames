@@ -347,7 +347,7 @@ is included after the parameter sections.
 <ul><li class="helptext">NOCHILD: children are not used.
 <li class="helptext">NORMAL: children are made when a final seeds sows a hole to <a href="game_params.html#child_cvt">CHILD_CVT</a>.
 <li class="helptext">WALDA: Stores are not supported. Captures are instead moved into waldas, thus a player may not capture until they have created a walda. Child locations are limited.  Each player may create up to 6 waldas: on either end of each side of the board and the next outer hole on their own side of the board. Note that there are only 8 total places that waldas maybe created.
-<li class="helptext">ONE_CHILD: Use the tuzdek rules for children: only one child allowed on opponent's side of the board, may not be in player's left most hole,  and may not be opposite eachother.
+<li class="helptext">ONE_CHILD: only one child allowed per player, may not be in player's left most hole,  and may not be opposite eachother. Used to create tuzdek style children along with <a href="game_params.html#child_rule">CHILD_RULE</a> of OPP_ONLY.
 <li class="helptext">WEG: children maybe created in holes owned by the opponent. Ending a sow in an opponent's weg captures the seed just sown and one more (if there is one); generally, the player get's to play again (per <a href="game_params.html#capt_rturn">CAPT_RTURN</a>). WEGs are supported for TERRITORY games only (hole ownership required).
 <li class="helptext">BULL: create one bull if final seed sows to <a href="game_params.html#child_cvt">CHILD_CVT</a>, create two bulls if the final two seeds are sown to CHILD_CVT-1 and <a href="game_params.html#child_cvt">CHILD_CVT</a> (in either order).
 <li class="helptext">QUR: when a seed is sown into an empty hole on the player's side of the board and the opposite hole contains <a href="game_params.html#child_cvt">CHILD_CVT</a>, create children in both holes: final seed location and opposite.
@@ -367,7 +367,7 @@ is included after the parameter sections.
 
 <p>Addiitonal child creation requirements may be set:
 <ul><li class="helptext">NONE: no additional restrictions.
-<li class="helptext">OPP_ONLY:  Only make children on the opposite side or in opponent's territory. Incompatible with BULL, QUR, and WEG child types.
+<li class="helptext">OPP_ONLY:  Only make children on the opposite side of the board. Incompatible with BULL, QUR, and WEG child types.
 <li class="helptext">NOT_1ST_OPP: Don't make a child in the first hole on the opponents side/territory with one seed.
 </ul>
 <h2 id="tab_Capture">Capture Tab</h2>
