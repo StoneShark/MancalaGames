@@ -625,7 +625,6 @@ class TestDelegates:
     @pytest.mark.parametrize('capted', [True, False])
     @pytest.mark.parametrize('changed', [True, False])
     def test_dlg_capture_seeds(self, capsys, game, mocker, capted, changed):
-        """Not really testing exactly what is put in the log."""
 
         mdata = mancala.MoveData(game, 4)
         mdata.capt_loc = 6
@@ -639,6 +638,14 @@ class TestDelegates:
 
         mobj.assert_called_once()
         mglog.assert_called_once()
+
+        log_str = mglog.call_args.args[0]
+        if capted:
+            assert 'Capture from' in log_str
+        if not capted and changed:
+            assert 'changed' in log_str
+        if not capted and not changed:
+            assert 'No capture' in log_str
 
 
 class TestWinHoles:
@@ -1074,7 +1081,7 @@ class TestLogMove:
         game._log_turn(move_turn, 1, win_cond)
 
         arg_str = mlog.call_args.args[1]
-        print(arg_str)
+
         assert win_cond.name in arg_str
         assert 'move 1' in arg_str
         if move_turn:
