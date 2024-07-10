@@ -382,7 +382,11 @@ class MancalaUI(tk.Frame):
 
             for pos in range(self.game.cts.holes):
 
-                if self.game.info.mlength == 3:
+                if self.mode != btnb.Behavior.GAMEPLAY:
+                    cactive = True
+                    disable = not player
+
+                elif self.game.info.mlength == 3:
                     loc = self.game.cts.xlate_pos_loc(row, pos)
                     cactive = actives[loc]
                     disable = not actives[loc]

@@ -149,13 +149,13 @@ is included after the parameter sections.
 
 <p>Choose how holes are filled when a new round strarts:
 <ul><li class="helptext">NOT_APPLICABLE: round fill doesn't need to be specified: either not played in rounds or game goal is TERRITORY (all holes filled).
-<li class="helptext">LEFT_FILL: fill holes from the player's left.
-<li class="helptext">RIGHT_FILL: fill holes from the player's right. 
-<li class="helptext">OUTSIDE_FILL: fill holes from the outside ends toward the middle.
-<li class="helptext">EVEN_FILL: fill both sides with the same number of seeds per hole, determined by dividing the losers seeds by the number of holes per side. If that is not playable base on minimum move, extra seeds are put in each players leftmost hole. Any extra seeds are put in each player's store.
-<li class="helptext">SHORTEN: shorten the board so that all of the loser's holes are filled; the winner will have more seeds in their store but the same board arrangement. If the game uses children, they will not be created if the board size is reduced to 3 or less.
+<li class="helptext">LEFT_FILL: fill the round loser's holes from the player's left with <a href="game_params.html#nbr_start">NBR_START</a> seeds each.  Holes that cannot be filled with <a href="game_params.html#nbr_start">NBR_START</a> seeds (on the loser's side) are left empty; if <a href="game_params.html#blocks">BLOCKS</a> is selected they are out of play for the round. All winner's holes are filled and are in play.
+<li class="helptext">RIGHT_FILL: fill holes from the player's right. Other dynamics mimic left_fill.
+<li class="helptext">OUTSIDE_FILL: fill holes from the outside ends toward the middle. Other dynamics mimic left_fill.
+<li class="helptext">EVEN_FILL: fill all holes (both sides) with the same number of seeds; determined by dividing the losers seeds by the number of holes per side. If that is not playable based on the minimum number of seeds required for a move (<a href="game_params.html#min_move">MIN_MOVE</a>); extra seeds are put in each players leftmost hole. Any extra seeds are put in each player's store.
+<li class="helptext">SHORTEN: the number of holes that the round loser can fill with <a href="game_params.html#nbr_start">NBR_START</a> seeds are fill on both sides, other holes are left empty. Holes are filled opposite eachother. If <a href="game_params.html#blocks">BLOCKS</a> is selected, the board is shortened to the number of holes filled (empty holes are blocked and out of play). If the game uses children, they will not be created if the board size is reduced to 3 or less.
 <li class="helptext">UCHOOSE: allow user to choose which holes have seeds (are not blocked) when <a href="game_params.html#rounds">ROUNDS</a> and <a href="game_params.html#blocks">BLOCKS</a> are used.
-<li class="helptext">UMOVE: allow the loser to choose where seeds are placed. At least one seed must be placed in each hole, remaining seeds are placed in the store. The winner's layout is the same layout but reflected.
+<li class="helptext">UMOVE: allow the loser to choose where seeds are placed. At least one seed must be placed in each hole and the game must be playable (at least one hole has <a href="game_params.html#min_move">MIN_MOVE</a> seeds), remaining seeds are placed in the store. The winner's layout is the same layout but reflected.
 <p><i> Note: These are not in numerical order. </i>
 </ul>
 <h4 id="blocks"> Blocks </h4>

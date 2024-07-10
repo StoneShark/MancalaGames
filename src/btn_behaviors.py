@@ -223,7 +223,7 @@ class PlayButtonBehavior(BehaviorIf):
         if Hold.nbr:
             tk.messagebox.showerror(
                 title='Game Mode',
-                message='Hold is not empty;'
+                message='Hold is not empty; '
                 'place seeds before returning to game mode.',
                 parent=game_ui)
             return False
@@ -342,8 +342,7 @@ class RndChooseButtonBehavior(BehaviorIf):
     def set_props(self, props, disable, _2):
         """Set text, props and states of the hole."""
         self.btn.props = props
-        # print(self.btn.row, self.btn.loc, disable, props.blocked)
-        self._refresh(disable != props.blocked)
+        self._refresh(disable)
 
 
     def left_click(self):
@@ -519,7 +518,7 @@ class RndMoveSeedsButtonBehavior(BehaviorIf):
         """Pick up some or all of the seeds, but
             1. only on loser side (game.turn is winner, row is not turn;
                                    so loser row it game.turn)
-            2. if there are seeds to pick up
+            2. if there are seeds to pick up (must leave 1)
             3. another condition that doesn't make sense at the moment !?!?!?
 
             Always leave at least one seed in each hole."""
@@ -528,7 +527,7 @@ class RndMoveSeedsButtonBehavior(BehaviorIf):
 
         game = self.btn.game_ui.game
         if (game.turn == self.btn.row
-                or not self.btn.props.seeds
+                or self.btn.props.seeds <= 1
                 or Hold.owner not in (None, self.btn.row)):
             self.btn.bell()
             return
