@@ -1141,6 +1141,7 @@ class TestChildInhibitor:
                                 child_type=gi.ChildType.NORMAL,
                                 child_cvt=3,
                                 rounds=True,
+                                blocks=True,
                                 round_fill=gi.RoundFill.SHORTEN,
                                 stores=True,
                                 evens=True,

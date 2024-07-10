@@ -735,4 +735,11 @@ def build_rules():
         # UDIRECT: partials hole activation not supported
         # TERRITORY: what does it mean if the hole is already opp?
 
+    man_rules.add_rule(
+        'short_no_blocks',
+        rule=lambda ginfo: (ginfo.round_fill == gi.RoundFill.SHORTEN
+                            and not ginfo.blocks),
+        msg='RoundFill SHORTEN without BLOCKS, yields an odd game dynamic',
+        warn=True)
+
     return man_rules
