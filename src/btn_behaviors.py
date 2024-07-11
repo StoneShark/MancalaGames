@@ -698,9 +698,7 @@ class NoStoreBehavior(StoreBehaviorIf):
 
 
 class RndMoveStoreBehavior(StoreBehaviorIf):
-    """Store behavior interface.
-
-    Seeds may be moved in and out of the loser's store.
+    """Seeds may be moved in and out of the loser's store.
     Cursor is changed on the whole game_ui, when holding seeds.
 
     Remember game.set(get)_store take a row not a turn or owner"""

@@ -3,6 +3,9 @@
 It does not contain any UI elements or any specific ai (computer)
 player information.
 
+See Mancala class doc string for board representation and
+index/variable naming conventions.
+
 Created on Sun Mar 19 09:58:36 2023
 @author: Ann"""
 
