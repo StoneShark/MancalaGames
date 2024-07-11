@@ -523,13 +523,14 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
         self.deco.capturer.do_captures(mdata)
 
-        loc = mdata.capt_loc
-        if mdata.captured:
-            game_log.step(f'Capture from {loc}', self)
+        if mdata.captured == gi.WinCond.REPEAT_TURN:
+            game_log.step('Capture: repeat turn')
+        elif mdata.captured:
+            game_log.step(f'Capture from {mdata.capt_loc}', self)
         elif mdata.capt_changed:
             game_log.step('Capture changed state', self)
         else:
-            game_log.step(f'No captures @ {loc}')
+            game_log.step(f'No captures @ {mdata.capt_loc}')
 
 
     def _move(self, move):

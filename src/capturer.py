@@ -611,9 +611,6 @@ def _add_cross_capt_deco(game, capturer):
 
     capturer = CaptCross(game, capturer)
 
-    if game.info.xc_sown:
-        capturer = CaptCrossVisited(game, capturer)
-
     if game.info.xcpickown == gi.CrossCaptOwn.PICK_ON_CAPT:
         capturer = CaptCrossPickOwnOnCapt(game, capturer)
 
@@ -622,6 +619,9 @@ def _add_cross_capt_deco(game, capturer):
 
     if game.info.multicapt:
         capturer = CaptContinueXCapt(game, capturer)
+
+    if game.info.xc_sown:
+        capturer = CaptCrossVisited(game, capturer)
 
     return capturer
 

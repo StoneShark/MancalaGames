@@ -622,7 +622,7 @@ class TestDelegates:
         assert mdata.direct == 'lost'
 
 
-    @pytest.mark.parametrize('capted', [True, False])
+    @pytest.mark.parametrize('capted', [True, False, gi.WinCond.REPEAT_TURN])
     @pytest.mark.parametrize('changed', [True, False])
     def test_dlg_capture_seeds(self, capsys, game, mocker, capted, changed):
 
@@ -640,8 +640,12 @@ class TestDelegates:
         mglog.assert_called_once()
 
         log_str = mglog.call_args.args[0]
-        if capted:
+
+        if capted == gi.WinCond.REPEAT_TURN:
+            assert 'repeat' in log_str
+        elif capted:
             assert 'Capture from' in log_str
+
         if not capted and changed:
             assert 'changed' in log_str
         if not capted and not changed:
