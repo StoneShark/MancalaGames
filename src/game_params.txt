@@ -30,8 +30,8 @@ Additionally, a SOWRULE of OWN_SOW_CAPT_ALL or SOW_SOW_CAPT_ALL includes this ca
 OPPSIDECAPT, EVENS, CAPT_MAX, CAPT_MIN, and CAPT_ON apply only to an optional xxx_SOW_CAPT_ALL and not the final capture."
 Capture	crosscapt	Cross-Capture	game_info _	29	bool	False	0	2	"If the last sown seed is put in an empty hole, any seeds on the opposite side of the board are captured.
 SOW_RULE of either SOW_CAPT_ALL do not do this capture."
-Capture	xc_sown	Must sow opp for xcapt	game_info _	78	bool	False	1	2	"Only allow cross capture if the player has sown into the hole on the opposite side of board (the one to be captured from). 
-If a player ends on their own side of the board in an empty hole, but did not sow any opposite hole, the get a repeat turn."
+Capture	xc_sown	Must sow opp for xcapt	game_info _	78	bool	False	1	2	"Only allow cross capture if the player has sown onto the opposite side of board. 
+If a player ends on their own side of the board in an empty hole, but did not sow any opposite hole, they get a repeat turn."
 Capture	xcpickown	Own Seed on Xcapture	game_info _	79	CrossCaptOwn	LEAVE	2	2	"When crosscapt is set, defines what to do with the single seed initiating the cross capture.
 - LEAVE: always leave the signle seed
 - PICK_ON_CAPTURE: only pick (capture) the seed if there was a capture.

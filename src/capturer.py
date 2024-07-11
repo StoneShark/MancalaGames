@@ -190,9 +190,11 @@ class MultiCaptTwoOut(CaptMethodIf):
 
 
 class CaptCrossVisited(CaptMethodIf):
-    """First, reject cross capt if not single seed or opponent's side.
-    Second, reject cross capt if have't sown opp hole this turn.
-    If rejecting cross capt, do repeat turn."""
+    """Reject cross capt and repeat turn, if not single seed or
+    end on opponent's side.
+    Continue capture chain, if have sown opp side this turn.
+    If end in empty hole on own side and have not sown to the
+    opposite side of the board, do repeat turn."""
 
     def do_captures(self, mdata):
 
@@ -200,8 +202,8 @@ class CaptCrossVisited(CaptMethodIf):
                 or self.game.cts.opp_side(self.game.turn, mdata.capt_loc)):
             return
 
-        cross = self.game.cts.cross_from_loc(mdata.capt_loc)
-        if mdata.board[cross] < self.game.board[cross]:
+        if any(mdata.board[loc] != self.game.board[loc]
+                for loc in self.game.cts.get_opp_range(self.game.turn)):
             self.decorator.do_captures(mdata)
             return
 
