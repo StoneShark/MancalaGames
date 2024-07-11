@@ -14,7 +14,7 @@
       "moveunlock": true,
       "multicapt": true,
       "mustpass": true,
-      "round_fill": 4,
+      "round_fill": 6,
       "round_starter": 0,
       "rounds": true,
       "sow_direct": 0,

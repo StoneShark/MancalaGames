@@ -143,10 +143,10 @@ class RoundFill(enum.IntEnum):
     LEFT_FILL = 1
     RIGHT_FILL = 2
     OUTSIDE_FILL = 3
-    UCHOOSE = 4
-    UMOVE = 5
-    SHORTEN = 6
-    EVEN_FILL = 7
+    EVEN_FILL = 4
+    SHORTEN = 5
+    UCHOOSE = 6
+    UMOVE = 7
 
 
 @enum.unique

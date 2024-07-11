@@ -14,7 +14,7 @@
       "min_move": 1,
       "mlaps": 2,
       "multicapt": true,
-      "round_fill": 4,
+      "round_fill": 6,
       "round_starter": 0,
       "rounds": true,
       "sow_rule": 2,

@@ -14,7 +14,7 @@
       "multicapt": true,
       "mustpass": true,
       "oppsidecapt": true,
-      "round_fill": 5,
+      "round_fill": 7,
       "round_starter": 2,
       "rounds": true,
       "sow_direct": 1,

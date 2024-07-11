@@ -14,7 +14,7 @@
       "oppsidecapt": true,
       "rounds": true,
       "round_starter": 1,
-      "round_fill": 4,
+      "round_fill": 6,
       "skip_start": true,
       "sow_direct": 1,
       "stores": true,

@@ -69,8 +69,7 @@ Dynamics	round_fill	Round Fill Method	game_info _	62	RoundFill	NOT_APPLICABLE	6	
 - EVEN_FILL: fill all holes (both sides) with the same number of seeds; determined by dividing the losers seeds by the number of holes per side. If that is not playable based on the minimum number of seeds required for a move (MIN_MOVE); extra seeds are put in each players leftmost hole. Any extra seeds are put in each player's store.
 - SHORTEN: the number of holes that the round loser can fill with NBR_START seeds are fill on both sides, other holes are left empty. Holes are filled opposite eachother. If BLOCKS is selected, the board is shortened to the number of holes filled (empty holes are blocked and out of play). If the game uses children, they will not be created if the board size is reduced to 3 or less.
 - UCHOOSE: allow user to choose which holes have seeds (are not blocked) when ROUNDS and BLOCKS are used.
-- UMOVE: allow the loser to choose where seeds are placed. At least one seed must be placed in each hole and the game must be playable (at least one hole has MIN_MOVE seeds), remaining seeds are placed in the store. The winner's layout is the same layout but reflected.
-Note: These are not in numerical order."
+- UMOVE: allow the loser to choose where seeds are placed. At least one seed must be placed in each hole and the game must be playable (at least one hole has MIN_MOVE seeds), remaining seeds are placed in the store. The winner's layout is the same layout but reflected."
 Dynamics	blocks	Blocks	game_info _	15	bool	False	7	0	"Blocks remove holes from play and are shown on the UI with an X.
 When used with ROUNDS, the holes not filled from the player with fewer seeds are blocked and thus out of play for the round.
 When used with DEPRIVE, SOW_BLCK_DIV and GPARAM_ONE holes are closed (blocked and removed from play) when sown to GPARAM_ONE seeds."

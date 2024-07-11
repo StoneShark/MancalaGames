@@ -13,7 +13,7 @@
       "capttwoout": true,
       "min_move": 1,
       "mlaps": 2,
-      "round_fill": 4,
+      "round_fill": 6,
       "round_starter": 0,
       "rounds": true,
       "sow_direct": 1,
