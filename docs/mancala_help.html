@@ -98,21 +98,89 @@ a mancala configuration file. Usage to play Wari (for example):
 <h2 id="manwindow">Mancala UI</h2>
 
 <p>The Mancala Game window represents the playing surface: two ranks of
-holes for each player are provided and(if configured) stores are available on
+holes for each player are provided and (if configured) stores are available on
 either side. The right store is for the lower player and the left hole
 is for the upper player.
-<p><b>Moves:</b> Mouse clicks on the main UI game holes inititiates a sow.
-If the sew direction is clockwise (CW), counter-clockwise (CCW) or
-split, a left click determines which hole a move starts from.
-On split sow, the left half of the holes sow to the player's left
-(CW for lower and CCW for upper) and
-the right half of holes sow to the player's right  (CCW for lower and CW for upper).
-For user directed holes, (udir_holes) a left click moves seeds to the
-players left  and a right click sows seeds to the player's right
-(in the CW/CCW manner as for split sow).
+
+<h3>Game Play</h3>
+<p>Game moves are made by clicking on the desired hole to start sowing from.
+Sow direction is defined by <a href="game_params.html#sow_direct">SOW_DIRECT</a>
+and <a href="game_params.html#udir_holes">UDIR_HOLES</a>.
+
+<p>If udir_holes are not selected,
+the sow direction is completely controlled via <a href="game_params.html#sow_direct">SOW_DIRECT</a>.
+For holes configured without UDIR_HOLES,
+both the left and right buttons sow in the defined direction.
+Clockwise (CW) and counter-clockwise (CCW) apply to all holes.
+
+<p>If SOW_DIRECT is set to SPLIT sow, the left half of the holes sow to the player's left
+(CW for the bottom player and CCW for the top player) and
+the right half of holes sow to the player's right
+(CCW for the bottom player and CW for the top player).
+If there is an odd number of holes per side, the center hole will follow the SOW_DIRECT
+unless it is designated a user directed hole (see below).
+
+<p>Some or all of the holes may be configured to be user controlled sow direction
+via <a href="game_params.html#udir_holes">UDIR_HOLES</a>.
+For these holes the player chooses the sow direction on each move based on which
+mouse button initiates the move:
+a left click sows seeds to the player's left and
+a right click sows seeds to the player's right.
 
 <p>All of the rest of the move steps are performed automatically.
 If a player is required to pass, a window will popup to state that.
+
+<h3>Special Seed Movement Modes</h3>
+<p>Some games involve special seed movement phases either at the
+start of the game or between rounds. When in one of these modes
+the holes are given a special color.
+<p>A right click will pick up seeds and a left click will drop
+seeds. When the board is setup as desired hit the "Done" button.
+A check will be made to assure that the game rules are not
+violated. All seeds must be dropped (placed) somewhere.
+
+<h4>Choose Blocks Behavior</h4>
+When the <a href="game_params.html#round_fill">ROUND_FILL</a>
+parameter is set to UCHOOSE the looser may choose which holes are blocked
+at the start of each round.
+Move seeds out of the holes that you wish to be blocked and into
+the holes that you do not wish to be blocked.
+Seeds may not be moved in or out of the stores.
+
+
+<h4>Seed Movement for New Round</h4>
+<p>When the <a href="game_params.html#round_fill">ROUND_FILL</a>
+parameter is set to UMOVE the loser may choose where seeds are placed
+on their side of the board at the start of each round.
+
+<p>Any number of seeds may be placed on the board or in the store
+with the following restrictions:
+<ul>
+<li>Each hole must contain at least one seed.
+<li>The game must be playable, that is, at least one hole must have
+<a href="game_params.html#min_move">min_move</a> seeds.
+</ul>
+Seeds cannot be moved between sides of the board.
+<p>The winner's seeds will be arranged in the same layout
+as the loser's side, but will be relected.
+The number of seeds per player is not changed, any extra
+seeds that the winner had will be placed in their store.
+
+
+<h4>Move Seeds Turn</h4>
+<p>If the game is configured with
+<a href="game_params.html#prescribed">PRESCRIBED</a>
+as ARNGE_LIMIT, the first player may choose to rearrange the seeds
+instead of a normal sow/capture move.
+Seed rearragement is the player's turn.
+
+<p>The starting player may arrange the seeds on their side of the board and
+the other player's seeds will be arranged in the same order but reflected.
+All seeds must be left in play.
+
+<p>If the player doesn't change the seed arrangement,
+they are disallowed from capturing or making children
+until their opponent has does one of those.
 
 <h3>Menus</h3>
 
@@ -144,7 +212,7 @@ lengthened to about 3 seconds.
 and other effects listed below:
 <p><b>Easy</b>: Set the AI difficulty to easy. On the easy setting
 the 'Easy Error Random' will be included in minimaxer
-<a href="#aiscorer">scores</a>. Look ahead is typically 1 move.
+<a href="#aiparams">scores</a>. Look ahead is typically 1 move.
 <p><b>Normal</b>: Set the AI difficulty to normal.
 Look ahead is typically 1 move.
 <p><b>Hard</b>: Set the AI difficulty to hard.
@@ -152,7 +220,6 @@ The 'Access (d>1) Mult will be included in the scorer.
 Look ahead is typically 3 moves.
 <p><b>Expert</b>: Set the AI difficulty to hard.
 The 'Access (d>1) Mult will be included in the scorer.
-Look ahead is typically 5 moves.
 
 <h4>Log</h4>
 <p><b>Show Prev</b>: If the game was started from a console window,
