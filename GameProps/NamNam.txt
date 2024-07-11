@@ -15,7 +15,7 @@
       "mustshare": true,
       "round_starter": 0,
       "rounds": true,
-      "sow_rule": 2,
+      "sow_rule": 3,
       "sow_direct": 1,
       "stores": true
    },

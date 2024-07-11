@@ -18,7 +18,7 @@
       "round_starter": 2,
       "rounds": true,
       "sow_direct": 1,
-      "sow_rule": 5,
+      "sow_rule": 6,
       "stores": true,
       "udir_holes": [0, 1, 2, 3, 4, 5, 6, 7],
       "xc_sown": true,

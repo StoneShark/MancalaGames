@@ -177,11 +177,11 @@ class SowRule(enum.IntEnum):
 
     NONE = 0
     SOW_BLKD_DIV = 1
-    OWN_SOW_CAPT_ALL = 2
-    SOW_SOW_CAPT_ALL = 3
-    NO_SOW_OPP_2S = 4
-    CHANGE_DIR_LAP = 5
-    SOW_BLKD_DIV_NR = 6
+    SOW_BLKD_DIV_NR = 2
+    OWN_SOW_CAPT_ALL = 3
+    SOW_SOW_CAPT_ALL = 4
+    NO_SOW_OPP_2S = 5
+    CHANGE_DIR_LAP = 6
 
 
 @enum.unique

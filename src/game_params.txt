@@ -143,7 +143,7 @@ Sow	sow_rule	Special Sow Rules	game_info _	70	SowRule	NONE	6	0	"Special sow rule
 - OWN_SOW_CAPT_ALL: Capture all holes that are sown that meet the simple capture criteria: evens, min, max and  capture on. Other criteria are enforced: side of the board, unlocked, and not child.   GRANDSLAM rules are not applied. If the game GOAL is TERRITORY the capturer is the hole owner; otherwise the capturer is done by side. NOCAPTFIRST prevents this capture for the first move.
 - SOW_SOW_CAPT_ALL: Capture all holes that sown that meed the simple capture criteria only on the SOWER's side of the board. NOCAPTFIRST prevents this capture for the first move.
 - NO_SOW_OPP_2S: Don't sow into opponents holes with 2 seeds.
-Note: These are not in numerical order."
+- CHANGE_DIR_LAP: Change the direction for each lap sown. Generally used with UDIR_HOLES so the player may choose the first direction."
 Sow	udir_holes	User Chooses Direction	game_info _	75	list[bool]	[]	8	0	"A list of holes that the user can control the sow direction from. Control is via the mouse button: left is clockwise and right is counter-clockwise.
 Note: all holes respond to both mouse buttons, but if the hole is not in udir_holes, the sow direction will be that prescribed by sow_direct with either button."
 Sow	mlaps	Multilap Sow	game_info _	44	LapSower	OFF	0	2	"Determines if seeds from more the start hole are picked up and sown:

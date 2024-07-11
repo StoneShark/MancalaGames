@@ -16,7 +16,7 @@
       "nocaptfirst": true,
       "round_starter": 1,
       "rounds": true,
-      "sow_rule": 2,
+      "sow_rule": 3,
       "sow_direct": 1,
       "stores": true
    },

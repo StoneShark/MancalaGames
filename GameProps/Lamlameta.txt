@@ -20,7 +20,7 @@
       "rounds": true,
       "prescribed": 5,
       "sow_direct": 1,
-      "sow_rule": 4,
+      "sow_rule": 5,
       "stores": true
    },
    "player": {
