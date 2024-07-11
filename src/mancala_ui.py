@@ -14,12 +14,14 @@ import os
 import textwrap
 import traceback
 import tkinter as tk
+import webbrowser
 
 import ai_player
 import cfg_keys as ckey
 import btn_behaviors as btnb
 import game_interface as gi
 import game_tally as gt
+import man_path
 
 from game_log import game_log
 
@@ -323,21 +325,38 @@ class MancalaUI(tk.Frame):
         tk.Button(frame, text='Ok', command=top.destroy).pack(side='bottom')
 
 
+    @staticmethod
+    def _try_help_file(filename, tag=None):
+        """Attempt to pop open the help file.
+        Return True if it no problems detected."""
+
+        # pylint: disable=too-many-try-statements
+
+        pathname = man_path.get_path(filename)
+        try:
+            if os.path.isfile(pathname):
+                if tag:
+                    pathname += '#' + tag
+
+                webbrowser.open(pathname)
+                return True
+
+        except FileNotFoundError:
+            pass
+
+        return False
+
+
     def _help(self):
-        """Have the os pop open the help file in a browser,
-        if there's a problem popup a 'no help' window."""
+        """If the game has a help file, open it.
+        If not, try to open the about_games at the specified game name.
+        If that doesn't work, try the default help file.
+        If that doesn't work, pop up a "no help" message."""
 
-        no_help = True
-        if os.path.isfile(self.info.help_file):
-            no_help = False
-            try:
-                os.startfile(self.info.help_file)
-
-            except FileNotFoundError:
-                no_help = True
-
-        if no_help:
-            self._quiet_dialog('Help', 'Help not provided.')
+        _ = (self._try_help_file(self.info.help_file)
+             or self._try_help_file('about_games.html', self.info.name)
+             or self._try_help_file('mancala_help.html')
+             or self._quiet_dialog('Help', 'Help not found.'))
 
 
     def _about(self):

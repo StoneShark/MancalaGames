@@ -22,6 +22,7 @@ import warnings
 import tkinter as tk
 from tkinter import ttk
 import tkinter.filedialog as tkfile
+import webbrowser
 
 import ai_player
 import cfg_keys as ckey
@@ -181,7 +182,7 @@ class MancalaGames(tk.Frame):
     def _help():
         """Have the os pop open the help file in a browser."""
 
-        os.startfile(man_path.get_path('mancala_help.html'))
+        webbrowser.open(man_path.get_path('mancala_help.html'))
 
 
     def _create_menus(self):
@@ -423,6 +424,7 @@ class MancalaGames(tk.Frame):
                            variable=self.tkvars[ckey.UDIR_HOLES][idx - 1]
                            ).pack(side=tk.LEFT)
 
+
     def _make_text_entry(self, frame, param):
         """Make a text box entry with scroll bar."""
 
@@ -646,14 +648,17 @@ class MancalaGames(tk.Frame):
                 value = stoi(self.tkvars[param.option].get())
 
             elif param.vtype == pc.BLIST_TYPE:
+                holes = len(self.tkvars[param.option])
+                if param.option == ckey.UDIR_HOLES:
+                    holes = stoi(self.tkvars[ckey.HOLES].get())
+
                 add_in = 1 if param.option == ckey.CAPT_ON else 0
                 value = [nbr + add_in
                          for nbr, var in enumerate(self.tkvars[param.option])
-                         if var.get()]
+                         if var.get() and nbr < holes]
 
             elif param.vtype == pc.ILIST_TYPE:
-                value = [int(var.get())
-                         for nbr, var in enumerate(self.tkvars[param.option])]
+                value = [int(var.get()) for var in self.tkvars[param.option]]
 
             elif param.vtype in pc.STRING_DICTS:
                 str_dict = pc.STRING_DICTS[param.vtype].str_dict
