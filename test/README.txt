@@ -2,15 +2,15 @@
 
 Test Naming conventions:
 
-    test_gm...     tests full complete games with pre-defined
-                   sequences of moves
+    test_gm...       tests full complete games with pre-defined
+                     sequences of moves
 
-    test_simul...  heuristic tests of games, seek gross errors.
-                   Often slow.
+    test_z_simul...  heuristic tests of games, seek gross errors.
+                     Often slow. z forces to be tested last.
 
-    vizex_...      frameworks to exercise the UI elements.
-                   tests are interactive and require the human
-                   tester to decide test pass & failure ...
+    vizex_...        frameworks to exercise the UI elements.
+                     tests are interactive and require the human
+                     tester to decide test pass & failure ...
 
 
 Debugging in Spyder:
