@@ -35,11 +35,12 @@ N = None
 # %%
 
 class TestSingleClasses:
-
+    """Test each of the classes by instatiating directly
+    with a test game fixture."""
 
     @pytest.fixture
     def game(self):
-        """minimum game class for capt_ok"""
+        """minimum game class"""
 
         class Info:
             def __init__(self):
@@ -150,6 +151,41 @@ class TestSingleClasses:
         assert cok.capture_ok(loc) == eok
 
 
+    @pytest.mark.parametrize('seeds, eok',
+                             [(1, False),
+                              (2, False),
+                              (3, True),
+                              (4, True),
+                              (5, True),
+                              ])
+    def test_capt_min(self, game, seeds, eok):
+
+        loc = 0
+        game.board[loc] = seeds
+        game.info.capt_min = 3
+        cok = capt_ok.CaptMin(game, capt_ok.CaptTrue(game))
+
+        assert cok.capture_ok(loc) == eok
+
+
+    @pytest.mark.parametrize('seeds, eok',
+                             [(1, True),
+                              (2, True),
+                              (3, True),
+                              (4, False),
+                              (5, False),
+                              (5, False),
+                              ])
+    def test_capt_max(self, game, seeds, eok):
+
+        loc = 0
+        game.board[loc] = seeds
+        game.info.capt_max = 3
+        cok = capt_ok.CaptMax(game, capt_ok.CaptTrue(game))
+
+        assert cok.capture_ok(loc) == eok
+
+
 # %%  test cases and methods
 
 
@@ -213,8 +249,6 @@ GPARAMS = {'ex_no_flags': {},
 TEST_METHODS = GPARAMS.keys()
 
 
-
-# %%
 
 @pytest.mark.filterwarnings("ignore")
 class TestCaptOk:
