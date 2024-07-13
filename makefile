@@ -136,8 +136,8 @@ game_tests: test\\context.py
 # a target to run the stress tests with higher iterations
 .PHONY: strest_tests	
 stress_tests: test\\context.py
-	pytest test\\test_simul_game.py --nbr_runs 500
-	pytest test\\test_simul_players.py --nbr_runs 50
+	pytest test\\test_z_simul_game.py --nbr_runs 500
+	pytest test\\test_z_simul_players.py --nbr_runs 50
 
 
 # cov_unit_tests
