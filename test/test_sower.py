@@ -1019,6 +1019,7 @@ class TestBlckDivertSower:
         else:
             assert 'LapCont' in str(mlgame.deco.sower.lap_cont)
 
+
 class TestSowCaptOwned:
 
     @pytest.fixture
@@ -1034,16 +1035,17 @@ class TestSowCaptOwned:
 
 
     @pytest.mark.parametrize(
-        'start_pos, board, eloc, eboard',
+        'start_pos, board, eloc, eboard, estore',
         [(1, utils.build_board([2, 2, 3],
                                [0, 3, 2]),
           4, utils.build_board([2, 3, 0],
-                               [0, 0, 3])),
-          (1, utils.build_board([2, 3, 3],
-                                [0, 3, 2]),
-           4, utils.build_board([2, 4, 0],
-                                [0, 0, 3])),])
-    def test_goal_mseeds(self, game, start_pos, board, eloc, eboard):  # TODO
+                               [0, 0, 3]), [0, 4]),
+           (1, utils.build_board([2, 3, 3],
+                                 [0, 3, 2]),
+            4, utils.build_board([2, 0, 0],
+                                 [0, 0, 3]), [0, 8]),
+          ])
+    def test_goal_mseeds(self, game, start_pos, board, eloc, eboard, estore):
 
         game.board = board
         game.turn = False
@@ -1055,7 +1057,7 @@ class TestSowCaptOwned:
 
         assert mdata.capt_loc == eloc
         assert game.board == eboard
-        assert game.store == [0, 4]
+        assert game.store == estore
 
 
     @pytest.fixture
@@ -1085,9 +1087,89 @@ class TestSowCaptOwned:
         game2.deco.sower.sow_seeds(mdata)
 
         assert mdata.capt_loc == 4
-        assert game2.board == utils.build_board([2, 4, 0],
+        assert game2.board == utils.build_board([2, 0, 0],
                                                 [0, 0, 0])
-        assert game2.store == [4, 4]
+        assert game2.store == [4, 8]
+
+
+    @pytest.fixture
+    def game_ss(self):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+        game_info = gi.GameInfo(evens=True,
+                                sow_rule=SowRule.SOW_SOW_CAPT_ALL,
+                                sow_direct=Direct.CCW,
+                                mlaps=gi.LapSower.LAPPER,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        return mancala.Mancala(game_consts, game_info)
+
+
+    @pytest.mark.parametrize(
+        'start_pos, board, eloc, eboard, estore',
+        [(1, utils.build_board([2, 2, 3],
+                               [0, 3, 2]),
+          1, utils.build_board([3, 0, 0],
+                               [1, 1, 3]), [4, 0]),
+          (1, utils.build_board([2, 3, 3],
+                                [0, 3, 2]),
+           4, utils.build_board([2, 4, 0],
+                                [0, 0, 3]), [4, 0]),
+          (1, utils.build_board([2, 3, 3],
+                                [0, 3, 3]),
+           4, utils.build_board([2, 4, 0],
+                                [0, 0, 4]), [4, 0]),   # don't capt 4 on own side
+          ])
+    def test_ss_goal_mseeds(self, game_ss, start_pos, board,
+                            eloc, eboard, estore):
+
+        game_ss.board = board
+        game_ss.turn = False
+
+        mdata = MoveData(game_ss, start_pos)
+        mdata.sow_loc, mdata.seeds = game_ss.deco.starter.start_sow(start_pos)
+        mdata.direct = game_ss.info.sow_direct
+        game_ss.deco.sower.sow_seeds(mdata)
+        print(game_ss)
+
+        assert mdata.capt_loc == eloc
+        assert game_ss.board == eboard
+        assert game_ss.store == estore
+
+
+    @pytest.fixture
+    def game2_ss(self):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+        game_info = gi.GameInfo(evens=True,
+                                sow_rule=SowRule.SOW_SOW_CAPT_ALL,
+                                goal=Goal.TERRITORY,
+                                gparam_one=4,
+                                stores=True,
+                                sow_direct=Direct.CCW,
+                                mlaps=gi.LapSower.LAPPER,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        return mancala.Mancala(game_consts, game_info)
+
+
+    def test_ss_goal_terr_seeds(self, game2_ss):
+        game2_ss.board = utils.build_board([2, 3, 3],
+                                           [0, 3, 3])
+        game2_ss.turn = False
+
+        move = gi.MoveTpl(not game2_ss.turn, 1, None)
+        mdata = MoveData(game2_ss, move)
+        mdata.sow_loc, mdata.seeds = game2_ss.deco.starter.start_sow(move)
+        mdata.direct = game2_ss.info.sow_direct
+        game2_ss.deco.sower.sow_seeds(mdata)
+        print(game2_ss)
+
+        assert mdata.capt_loc == 4
+        assert game2_ss.board == utils.build_board([2, 4, 0],
+                                                   [0, 0, 4])
+        assert game2_ss.store == [4, 0]
+
 
 
 class TestPrescribed:

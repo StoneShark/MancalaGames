@@ -195,13 +195,60 @@ class SowClosed(SowMethodIf):
 
 class SowCaptOwned(SowMethodIf):
     """Any holes sown to allow capture are captured by the hole's
-    owner, except for the last seed. The last hole may be captured
-    from the opponent's hole (let the capturer do that--keeps the
-    log nice)."""
+    owner.
 
-    def __init__(self, game, owner_func, decorator=None):
+    OWN_SOW_CAPT_ALL:
+
+    LAPPER: Owner's capture seeds with capt_ok, until the last seed.
+    The hole that the last seed is sown into may be captured from
+    the  opponent's hole (let the capturer deal with it).
+
+    LAPPER_NEXT: Any seed with capt_ok is captured by the hole
+    owner.
+
+    SOW_SOW_CAPT_ALL:
+        similar to above, but only the sower captures on from
+        the opponents holes.
+    """
+
+    def __init__(self, game, decorator=None):
+        """Create a list of conditions (as lambda functions)
+        to be tested for each hole sown.
+        Prototype is cfunc(seed#, loc, turn)
+
+        Define an owner function with prototype owner(loc, turn)"""
+
         super().__init__(game, decorator)
-        self.owner = owner_func
+
+        self.conds = []
+
+        if self.game.info.sow_rule == gi.SowRule.OWN_SOW_CAPT_ALL:
+
+            # no added conditions, only need to determine owner
+
+            if self.game.info.goal == gi.Goal.TERRITORY:
+                self.owner = lambda loc, turn: game.owner[loc]
+
+            else:
+                self.owner = lambda loc, turn: game.cts.board_side(loc)
+
+        else:  #  self.game.info.sow_rule == gi.SowRule.SOW_SOW_CAPT_ALL
+
+            # capturer is always current player,
+            # but the hole must belong to the opponent
+
+            self.owner = lambda loc, turn: turn
+
+            if self.game.info.goal == gi.Goal.TERRITORY:
+                self.conds += [lambda scnt, loc, turn:
+                                   turn != game.owner[loc]]
+            else:
+                self.conds += [lambda scnt, loc, turn:
+                                   turn != game.cts.board_side(loc)]
+
+        if self.game.info.mlaps == gi.LapSower.LAPPER:
+            self.conds += [lambda scnt, loc, turn: scnt > 1]
+
 
     def sow_seeds(self, mdata):
         """Sow seeds."""
@@ -213,12 +260,13 @@ class SowCaptOwned(SowMethodIf):
             loc = incr(loc, mdata.direct, mdata.cont_sow_loc)
             self.game.board[loc] += 1
 
-            if (scnt > 1
+            if (all(cfunc(scnt, loc, self.game.turn) for cfunc in self.conds)
                     and not self.game.deco.inhibitor.stop_me_capt(
-                        self.game.turn)
+                                self.game.turn)
                     and self.game.deco.capt_ok.capture_ok(loc)):
 
-                owner = self.owner(loc)
+                owner = self.owner(loc, self.game.turn)
+                print(owner)
                 game_log.step(f'Capture from {loc} by {owner}')
                 self.game.store[owner] += self.game.board[loc]
                 self.game.board[loc] = 0
@@ -419,8 +467,8 @@ class MlapSowerIf(SowMethodIf):
         """A recursive func to print the whole decorator chain."""
 
         my_str = '\n   '.join([repr(self),
-                               str(self.lap_cont),
-                               repr(self.end_lap_op)])
+                               'lap cont:  ' + str(self.lap_cont),
+                               'end l op:  ' + str(self.end_lap_op)])
 
         if self.decorator:
             return my_str + '\n' + str(self.decorator)
@@ -485,8 +533,8 @@ class SowVisitedMlap(SowMethodIf):
         """A recursive func to print the whole decorator chain."""
 
         my_str = '\n   '.join([repr(self),
-                               str(self.single_sower),
-                               str(self.lap_cont)])
+                               'single s: ' + str(self.single_sower),
+                               'lap cont: ' + str(self.lap_cont)])
 
         if self.decorator:
             return my_str + '\n' + str(self.decorator)
@@ -647,11 +695,9 @@ def deco_base_sower(game):
                               gi.SowRule.SOW_BLKD_DIV_NR):
         sower = deco_blkd_divert_sower(game)
 
-    elif game.info.sow_rule == gi.SowRule.OWN_SOW_CAPT_ALL:
-        if game.info.goal == gi.Goal.TERRITORY:
-            sower = SowCaptOwned(game, lambda loc: game.owner[loc])
-        else:
-            sower = SowCaptOwned(game, game.cts.board_side)
+    elif game.info.sow_rule in {gi.SowRule.OWN_SOW_CAPT_ALL,
+                                gi.SowRule.SOW_SOW_CAPT_ALL}:
+        sower = SowCaptOwned(game)
 
     elif game.info.sow_rule == gi.SowRule.NO_SOW_OPP_2S:
         sower = SowSkipOppN(game, {2})
@@ -686,10 +732,11 @@ def deco_build_lap_cont(game):
     if game.info.child_type:
         lap_cont = StopOnChild(game, lap_cont)
 
-    if any([game.info.evens,
-            game.info.capt_on,
-            game.info.capt_max,
-            game.info.capt_min]):
+    if (any([game.info.evens,
+             game.info.capt_on,
+             game.info.capt_max,
+             game.info.capt_min])
+        and game.info.mlaps is not gi.LapSower.LAPPER_NEXT):
         lap_cont = StopCaptureSeeds(game, lap_cont)
 
     if game.info.sow_own_store:

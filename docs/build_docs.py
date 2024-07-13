@@ -200,10 +200,16 @@ def write_para(text, ofile):
 
         elif not in_list and para[0] == '-':
             in_list = True
-            print('<ul><li class="helptext">', sub_links(para[2:]), sep='', file=ofile)
+            print('<ul><li class="helptext">', sub_links(para[2:]),
+                  sep='', file=ofile)
 
         elif in_list and para[0] == '-':
-            print('<li class="helptext">', sub_links(para[2:]), sep='', file=ofile)
+            print('<li class="helptext">', sub_links(para[2:]),
+                  sep='', file=ofile)
+
+        elif in_list and para[:3] == '  +':
+            print('<p class="helptext">', sub_links(para[3:]),
+                  sep='', file=ofile)
 
         elif in_list:
             in_list = False
