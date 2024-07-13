@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
-"""Common deco chain code:
-If the deco chain doesn't do anything unique in
-__init__ or __str__ use this class instead of abc.ABC.
+"""The base class for decorator chains.
+
+Decorator chains can save data unique to the game
+on startup/creation, but they should not store
+state data that would be changed during the game.
+
+Decos are not told about a new game or round
+being started.
 
 Created on Tue Dec 19 12:11:06 2023
 @author: Ann"""

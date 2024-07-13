@@ -29,6 +29,7 @@ Created on Fri Apr  7 07:43:19 2023
 
 import abc
 
+import deco_chain_if
 import game_interface as gi
 
 from game_log import game_log
@@ -44,7 +45,8 @@ from game_log import game_log
 
 
 class ClaimSeedsIf(abc.ABC):
-    """Interface for seed claimer."""
+    """Interface for seed claimer.
+    This is not a decorator chain, one class must do all the work."""
 
     def __init__(self, game):
         self.game = game
@@ -260,13 +262,13 @@ class DivvyIgnoreSeeds(ClaimSeedsIf):
 
 # %%  end turn interface
 
-class EndTurnIf(abc.ABC):
+class EndTurnIf(deco_chain_if.DecoChainIf):
     """Interface for determining if the game is over."""
 
     def __init__(self, game, decorator=None, claimer=None):
-        self.game = game
+
+        super().__init__(game, decorator)
         self.claimer = claimer
-        self.decorator = decorator
 
     def __str__(self):
         """A recursive func to print the whole decorator chain."""

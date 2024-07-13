@@ -35,11 +35,8 @@ class HoleMarkerIf(deco_chain_if.DecoChainIf):
         """Generate a hole string."""
 
 
-class StringIf(abc.ABC):
+class StringIf(deco_chain_if.DecoChainIf):
     """Interface for strings."""
-
-    def __init__(self, game):
-        self.game = game
 
     @abc.abstractmethod
     def get_string(self):
