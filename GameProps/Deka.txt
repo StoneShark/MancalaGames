@@ -2,17 +2,18 @@
    "game_class": "Mancala",
    "game_constants": {
       "holes": 6,
-      "nbr_start": 3
+      "nbr_start": 2
 
    },
    "game_info": {
       "name": "Deka",
-      "about": "The goal is to deprive the opponent of seeds. Sow counter-clockwise with multi-laps. Holes are closed on opponent side on 3s and multilap sowing continues with those 3 seeds. Each player's rightmost hole may not be closed. In subsequent sowing of closed holes (blocked), own holes are skipped but seeds for opponent's holes are taken out of play.\n\nVariations:\n- 7 holes per side\n- allow closing of rightmost holes (sow_rule of SOW_BLKD_DIV)",
+      "about": "The goal is to deprive the opponent of seeds. Sow counter-clockwise with multiple laps (LAPPER). After the first turn, holes are closed on opponent side when the final seed of a lap brings the seeds in a hole to 3. Sowing then continues with those 3 seeds. Each player's rightmost hole may not be closed. In subsequent sowing of closed holes (blocked), own holes are skipped but seeds for opponent's holes are taken out of play.\nThe Deka board is not a 2 rank board, but hole assignment yields itself to moving the middle end holes to the respective player's side thus making it a 2 rank board.\n\nVariations:\n- 6 to 8 holes per side\n- 2 to 4 start seeds\n- allow closing of rightmost holes (SOW_RULE of SOW_BLKD_DIV)",
       "blocks": true,
       "gparam_one": 3,
       "goal": 1,
       "min_move": 1,
       "mlaps": 1,
+      "nocaptfirst": true,
       "sow_direct": 1,
       "sow_rule": 2
    },

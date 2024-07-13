@@ -1012,12 +1012,10 @@ class TestBlckDivertSower:
         assert mlgame.store == estore
         assert mlgame.blocked == eblock
 
+        print(mlgame.deco.sower.lap_cont)
         assert 'SowMlap' in str(mlgame.deco.sower)
         assert 'CloseOp' in str(mlgame.deco.sower.end_lap_op)
-        if game_fixt == 'mlgame':
-            assert 'Divert' in str(mlgame.deco.sower.lap_cont)
-        else:
-            assert 'LapCont' in str(mlgame.deco.sower.lap_cont)
+        assert 'Divert' in str(mlgame.deco.sower.lap_cont)
 
 
 class TestSowCaptOwned:

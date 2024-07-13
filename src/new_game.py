@@ -178,7 +178,7 @@ class NewRound(NewGameIf):
 
         if (self.game.cts.holes > 3
                 and self.game.info.round_fill == gi.RoundFill.SHORTEN):
-            self.game.deco.inhibitor.set_child(fill[0] <= 3)
+            self.game.inhibitor.set_child(fill[0] <= 3)
 
         for store, brange in enumerate(self.fill_orders):
             for cnt, loc in enumerate(brange):

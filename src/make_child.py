@@ -156,7 +156,7 @@ class NotInhibited(MakeChildIf):
 
     def test(self, mdata):
 
-        if self.game.deco.inhibitor.stop_me_child(self.game.turn):
+        if self.game.inhibitor.stop_me_child(self.game.turn):
             return False
 
         return self.decorator.test(mdata)

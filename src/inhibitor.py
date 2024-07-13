@@ -21,6 +21,16 @@ class InhibitorIf(abc.ABC):
         """Init the inhibitor for a new game (not new round)."""
 
     @abc.abstractmethod
+    def get_state(self):
+        """Return any state data, it must be immutable
+        (single value or tuple)."""
+
+    @abc.abstractmethod
+    def set_state(self, istate):
+        """Restore the inhibitor state from the istate data
+        (previously collected from get_state)"""
+
+    @abc.abstractmethod
     def clear_if(self, game, mdata):
         """Clear flags based on inputs"""
 
@@ -53,6 +63,12 @@ class InhibitorNone(InhibitorIf):
     def new_game(self):
         pass
 
+    def get_state(self):
+        return None
+
+    def set_state(self, istate):
+        pass
+
     def clear_if(self, game, mdata):
         _ = game, mdata
 
@@ -78,17 +94,25 @@ class InhibitorCaptN(InhibitorIf):
     """An Inhibitor that prevents captures for a number of turns."""
 
     def __init__(self, expire=None):
-        self._captures = True
+        self._captures = True   # game state
         self._expire = expire
 
     def new_game(self):
         self._captures = True
         game_log.add('Inhibiting captures.', game_log.IMPORT)
 
+    def get_state(self):
+        return self._captures
+
+    def set_state(self, istate):
+        self._captures = istate
+
     def clear_if(self, game, mdata):
-        if game.mcount > self._expire:
+        logit = self._captures
+        if game.mcount >= self._expire:
             self._captures = False
-            game_log.add('Inhibit captures expired.', game_log.IMPORT)
+            if logit:
+                game_log.add('Inhibit captures expired.', game_log.IMPORT)
 
     def set_on(self, turn):
         _ = turn
@@ -116,11 +140,17 @@ class InhibitorChildrenOnly(InhibitorIf):
     making of children."""
 
     def __init__(self):
-        self._children = False
+        self._children = False   # game state
 
     def new_game(self):
         self._children = False
         game_log.add('Clearing inhibit children.', game_log.IMPORT)
+
+    def get_state(self):
+        return self._children
+
+    def set_state(self, istate):
+        self._children = istate
 
     def clear_if(self, game, mdata):
         _ = game, mdata
@@ -153,10 +183,10 @@ class InhibitorBoth(InhibitorIf):
     limiting both children and captures."""
 
     def __init__(self, test_func=None):
-        self._turn = None
-        self._captures = False
-        self._children = False
-        self._child_only = False
+        self._turn = None          # game state
+        self._captures = False     # game state
+        self._children = False     # game state
+        self._child_only = False   # game state
         self._test = test_func
 
     def new_game(self):
@@ -165,6 +195,12 @@ class InhibitorBoth(InhibitorIf):
         self._children = False
         self._child_only = False
         game_log.add('Allowing children and captures.', game_log.IMPORT)
+
+    def get_state(self):
+        return (self._turn, self._captures, self._children, self._child_only)
+
+    def set_state(self, istate):
+        self._turn, self._captures, self._children, self._child_only = istate
 
     def clear_if(self, game, mdata):
         if self._test(game, mdata):
@@ -207,7 +243,7 @@ def arnge_limit_cond(_, mdata):
 
 # %%  build the deco
 
-def deco_inhibitor(game):
+def make_inhibitor(game):
     """Make the inhibitor.  It's not a chain."""
 
     if game.info.nocaptfirst:

@@ -37,6 +37,7 @@ from context import mancala
 from game_interface import ChildType
 from game_interface import Direct
 from game_interface import Goal
+from game_interface import RoundFill
 from game_interface import WinCond
 
 # %%
@@ -56,34 +57,35 @@ N = None
 class TestGameState:
 
     @pytest.mark.parametrize(
-        'board, store, turn, unlocked, blocked, child, owner, ere_one, ere_two',
+        'board, store, turn, unlocked, blocked, '
+        'child, owner, istate, ere_one, ere_two',
         [((1, 2, 3, 4), [0, 0], False,
-          None, None, None, None,
+          None, None, None, None, (F, T),
           ' *4 +3 *', ' *1 +2 +\\* *'),
          ((1, 2, 3, 4), [2, 0], True,
-           None, None, None, None,
+           None, None, None, None, F,
            ' *4 +3 +\\* *', ' *1 +2 +2 *'),
          ((1, 2, 3, 4), [0, 2], True,
-           None, None, None, None,
+           None, None, None, None, (N, N),
            ' *4 +3 +\\* +2 *', ' *1 +2 *'),
          ((1, 2, 3, 4), [0, 0], True,
-          [T, F, F, T], None, None, None,
+          [T, F, F, T], None, None, None, None,
           ' *4 +3_ +\\* *', ' *1 +2_ *'),
          ((1, 2, 3, 4), [0, 0], True,
-          None, [T, F, F, T], None, None,
+          None, [T, F, F, T], None, None, 123,
           ' *x +3 +\\* *', ' *x +2 *'),
          ((1, 2, 3, 4), [0, 0], True,
-          None, None, [T, F, N, N], None,
+          None, None, [T, F, N, N], None, 'st',
           ' *4 +3 +\\* *', ' *1˄ +2˅ *'),
          ((1, 2, 3, 4), [0, 0], True,
-          [T, F, F, T], None, [T, F, N, N], None,
+          [T, F, F, T], None, [T, F, N, N], None, ('sd', 2),
           ' *4 +3_ +\\* *', ' *1 ˄ +2_˅ *'),
          ((1, 2, 3, 4), [0, 0], True,
-          [T, F, F, T], None, None, [T, F, N, N],
+          [T, F, F, T], None, None, [T, F, N, N], T,
           ' *4 +3 *_ +\\* *', ' *1 *↑ +2↓ _ *'),
          ])
     def test_state_const(self, board, store, turn,
-                         unlocked, blocked, child, owner,
+                         unlocked, blocked, child, owner, istate,
                          ere_one, ere_two):
 
         state = mancala.GameState(board=board,
@@ -93,7 +95,8 @@ class TestGameState:
                                   unlocked=unlocked,
                                   blocked=blocked,
                                   child=child,
-                                  owner=owner)
+                                  owner=owner,
+                                  istate=istate)
         assert state.board == board
         assert state.store == store
         assert state._turn == turn
@@ -102,6 +105,7 @@ class TestGameState:
         assert state.blocked == blocked
         assert state.child == child
         assert state.owner == owner
+        assert state.istate == istate
         gstrs = str(state).split('\n')
         assert re.fullmatch(ere_one, gstrs[1])
         assert re.fullmatch(ere_two, gstrs[2])
@@ -116,6 +120,7 @@ class TestGameState:
         game_info = gi.GameInfo(capt_on = [2],
                                 blocks=True,
                                 rounds=True,
+                                round_fill=RoundFill.SHORTEN,  # game will use child inhibitor
                                 child_type=ChildType.NORMAL,
                                 child_cvt=2,
                                 goal=gi.Goal.TERRITORY,
@@ -126,20 +131,25 @@ class TestGameState:
         game = mancala.Mancala(game_consts, game_info)
         return game
 
+    ST_CASES = [
+        ((1, 2, 3, 4), (0, 0), False, None, None, None, None, False),
+        ((1, 2, 3, 4), (2, 0), True,  None, None, None, None, True),
+        ((1, 2, 3, 4), (0, 2), True,  None, None, None, None, False),
+        ((1, 2, 3, 4), (0, 0), True, (T, F, F, T), None, None, None, True),
+        ((1, 2, 3, 4), (0, 0), True, None, (T, F, F, T), None, None, False),
+        ((1, 2, 3, 4), (0, 0), True, None, None, (T, F, N, N), None, True),
+        ((1, 2, 3, 4), (0, 0), True, (T, F, F, T), None, (T, F, N, N), None, True),
+        ((1, 2, 3, 4), (0, 2), True, None, None, None, (T, F, F, T), True),
+        ]
 
     @pytest.mark.parametrize(
-        'board, store, turn, unlocked, blocked, child, owner',
-        [((1, 2, 3, 4), (0, 0), False, None, None, None, None),
-         ((1, 2, 3, 4), (2, 0), True,  None, None, None, None),
-         ((1, 2, 3, 4), (0, 2), True,  None, None, None, None),
-         ((1, 2, 3, 4), (0, 0), True, (T, F, F, T), None, None, None),
-         ((1, 2, 3, 4), (0, 0), True, None, (T, F, F, T), None, None),
-         ((1, 2, 3, 4), (0, 0), True, None, None, (T, F, N, N), None),
-         ((1, 2, 3, 4), (0, 0), True, (T, F, F, T), None, (T, F, N, N), None),
-         ((1, 2, 3, 4), (0, 0), True, None, None, None, (T, F, F, T)),
-         ])
+        'board, store, turn, unlocked, blocked, child, owner, istate',
+        ST_CASES)
     def test_getter(self, game, board, store, turn,
-                    unlocked, blocked, child, owner):
+                    unlocked, blocked, child, owner, istate):
+        """Adjust the game to have the input parameters, then get the
+        state from the game and confirm that the state matches the values
+        set. """
 
         game.board = board
         game.store = store
@@ -165,6 +175,8 @@ class TestGameState:
             # this will only effect capturing the state
             object.__setattr__(game.info, 'goal', gi.Goal.MAX_SEEDS)
 
+        game.inhibitor._children = istate
+
 
         state = game.state
         print(state)
@@ -176,6 +188,7 @@ class TestGameState:
         assert state.unlocked == unlocked
         assert state.blocked == blocked
         assert state.child == child
+        assert state.istate == istate
 
         if owner:
             assert state.owner == owner
@@ -184,18 +197,12 @@ class TestGameState:
 
 
     @pytest.mark.parametrize(
-        'board, store, turn, unlocked, blocked, child, owner',
-        [((1, 2, 3, 4), (0, 0), False, None, None, None, None),
-         ((1, 2, 3, 4), (2, 0), True,  None, None, None, None),
-         ((1, 2, 3, 4), (0, 2), True,  None, None, None, None),
-         ((1, 2, 3, 4), (0, 0), True,  (T, F, F, T), None, None, None),
-         ((1, 2, 3, 4), (0, 0), True,  None, (T, F, F, T), None, None),
-         ((1, 2, 3, 4), (0, 0), True,  None, None, (T, F, N, N), None),
-         ((1, 2, 3, 4), (0, 0), True,  (T, F, F, T), None, (T, F, N, N), None),
-         ((1, 2, 3, 4), (0, 2), True,  None, None, None, (T, F, F, T)),
-         ])
+        'board, store, turn, unlocked, blocked, child, owner, istate',
+        ST_CASES)
     def test_setter(self, game, board, store, turn,
-                    unlocked, blocked, child, owner):
+                    unlocked, blocked, child, owner, istate):
+        """Build a game state from the parameters and assign it to the game;
+        then confirm that the data was put in the right places."""
 
         game.state = mancala.GameState(board=board,
                                        store=store,
@@ -204,7 +211,8 @@ class TestGameState:
                                        unlocked=unlocked,
                                        blocked=blocked,
                                        child=child,
-                                       owner=owner)
+                                       owner=owner,
+                                       istate=istate)
 
         assert game.board == list(board)
         assert game.store == list(store)
@@ -230,6 +238,8 @@ class TestGameState:
         else:
             # game was initialized as TERRITORY
             assert game.owner == [F, F, T, T]
+
+        assert game.inhibitor._children == istate
 
 
 class TestMoveData:
@@ -315,7 +325,6 @@ class TestManDeco:
         assert game.deco.capt_ok
         assert game.deco.capturer
         assert game.deco.gstr
-        assert game.deco.inhibitor
         assert game.deco.make_child
 
         dstr = str(game.deco)
@@ -936,7 +945,7 @@ class TestMove:
         mcapt = mocker.patch.object(game, 'capture_seeds')
         mwin = mocker.patch.object(game, 'win_conditions')
         mwin.return_value = False
-        minh = mocker.patch.object(game.deco.inhibitor, 'clear_if')
+        minh = mocker.patch.object(game.inhibitor, 'clear_if')
 
         assert game._move(1) is None
 

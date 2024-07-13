@@ -186,7 +186,8 @@ class SowClosed(SowMethodIf):
 
         if (loc not in self.no_close
                 and self.game.board[loc] == self.game.info.gparam_one
-                and self.game.cts.opp_side(self.game.turn, loc)):
+                and self.game.cts.opp_side(self.game.turn, loc)
+                and not self.game.inhibitor.stop_me_capt(self.game.turn)):
 
             self.game.store[0] += self.game.board[loc]
             self.game.board[loc] = 0
@@ -261,8 +262,7 @@ class SowCaptOwned(SowMethodIf):
             self.game.board[loc] += 1
 
             if (all(cfunc(scnt, loc, self.game.turn) for cfunc in self.conds)
-                    and not self.game.deco.inhibitor.stop_me_capt(
-                                self.game.turn)
+                    and not self.game.inhibitor.stop_me_capt(self.game.turn)
                     and self.game.deco.capt_ok.capture_ok(loc)):
 
                 owner = self.owner(loc, self.game.turn)
@@ -409,7 +409,8 @@ class StopRepeatTurn(LapContinuerIf):
 # %% operations for each end of lap
 
 class MlapEndOpIf(abc.ABC):
-    """An interface for the end of lap operations."""
+    """An interface for the end of lap operations.
+    These are not decorators, one class does the whole operation."""
 
     def __init__(self, game):
         self.game = game
@@ -441,7 +442,8 @@ class CloseOp(MlapEndOpIf):
         loc = mdata.capt_loc
         if (loc not in self.no_close
                 and self.game.board[loc] == self.game.info.gparam_one
-                and self.game.cts.opp_side(self.game.turn, loc)):
+                and self.game.cts.opp_side(self.game.turn, loc)
+                and not self.game.inhibitor.stop_me_capt(self.game.turn)):
             self.game.blocked[loc] = True
 
 
@@ -681,7 +683,7 @@ def deco_blkd_divert_sower(game):
     of play (actually store 0)."""
 
     sower = DivertSkipBlckdSower(game)
-    if game.info.mlaps != gi.LapSower.LAPPER:
+    if game.info.mlaps == gi.LapSower.OFF:
         sower = SowClosed(game,
                           game.info.sow_rule == gi.SowRule.SOW_BLKD_DIV_NR,
                           sower)
@@ -691,8 +693,8 @@ def deco_blkd_divert_sower(game):
 def deco_base_sower(game):
     """Choose the base sower."""
 
-    if game.info.sow_rule in (gi.SowRule.SOW_BLKD_DIV,
-                              gi.SowRule.SOW_BLKD_DIV_NR):
+    if game.info.sow_rule in {gi.SowRule.SOW_BLKD_DIV,
+                              gi.SowRule.SOW_BLKD_DIV_NR}:
         sower = deco_blkd_divert_sower(game)
 
     elif game.info.sow_rule in {gi.SowRule.OWN_SOW_CAPT_ALL,
@@ -719,7 +721,8 @@ def deco_build_lap_cont(game):
         if game.info.child_type:
             lap_cont = ChildLapCont(game)
 
-        elif game.info.sow_rule == gi.SowRule.SOW_BLKD_DIV:
+        elif game.info.sow_rule in {gi.SowRule.SOW_BLKD_DIV,
+                                    gi.SowRule.SOW_BLKD_DIV_NR}:
             lap_cont = DivertBlckdLapper(game)
         else:
             lap_cont = LapContinue(game)

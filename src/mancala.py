@@ -62,6 +62,8 @@ class GameState(ai_interface.StateIf):
     child: tuple = None
     owner: tuple = None
 
+    istate: tuple = None
+
     @property
     def turn(self):
         return self._turn
@@ -189,7 +191,6 @@ class ManDeco:
         self.capt_ok = capt_ok.deco_capt_ok(game)
         self.capturer = capturer.deco_capturer(game)
         self.gstr = game_str.deco_get_string(game)
-        self.inhibitor = inhibitor.deco_inhibitor(game)
         self.make_child = make_child.deco_child(game)
 
 
@@ -254,6 +255,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         self.turn = random.choice([False, True])
         self.starter = self.turn
         self.last_mdata = None
+        self.inhibitor = inhibitor.make_inhibitor(self)
 
         self.deco = ManDeco(self)
         self.init_bprops()
@@ -293,6 +295,8 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         if self.info.goal == gi.Goal.TERRITORY:
             state_dict |= {'owner': tuple(self.owner)}
 
+        state_dict |= {'istate': self.inhibitor.get_state()}
+
         return GameState(**state_dict)
 
 
@@ -315,6 +319,8 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         if value.owner:
             self.owner = list(value.owner)
 
+        self.inhibitor.set_state(value.istate)
+
 
     def init_bprops(self):
         """Initialize the board properties but not the board or stores."""
@@ -332,7 +338,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             self.owner = [False] * holes + [True] * holes
         else:
             self.owner = [None] * dbl_holes
-        self.deco.inhibitor.new_game()
+        self.inhibitor.new_game()
 
 
     def params_str(self):
@@ -573,7 +579,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             win_cond = self.win_conditions(repeat_turn=True)
             return win_cond if win_cond else gi.WinCond.REPEAT_TURN
 
-        self.deco.inhibitor.clear_if(self, mdata)
+        self.inhibitor.clear_if(self, mdata)
 
         win_cond = self.win_conditions()
         if win_cond:

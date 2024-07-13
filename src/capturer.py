@@ -589,7 +589,7 @@ class NoCaptures(CaptMethodIf):
 
     def do_captures(self, mdata):
 
-        if not self.game.deco.inhibitor.stop_me_capt(self.game.turn):
+        if not self.game.inhibitor.stop_me_capt(self.game.turn):
             self.decorator.do_captures(mdata)
 
 

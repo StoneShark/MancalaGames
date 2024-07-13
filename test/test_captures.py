@@ -203,15 +203,15 @@ class TestNoCaptures:
 
         game.turn = True
         assert game.mcount == 0
-        game.deco.inhibitor.clear_if(game, mdata)
-        assert game.deco.inhibitor.stop_me_capt(game.turn)
+        game.inhibitor.clear_if(game, mdata)
+        assert game.inhibitor.stop_me_capt(game.turn)
 
         game.deco.capturer.do_captures(mdata)
         assert not mdata.captured
 
         game.mcount = 2
-        game.deco.inhibitor.clear_if(game, mdata)
-        assert not game.deco.inhibitor.stop_me_capt(game.turn)
+        game.inhibitor.clear_if(game, mdata)
+        assert not game.inhibitor.stop_me_capt(game.turn)
 
         game.deco.capturer.do_captures(mdata)
         assert mdata.captured
@@ -1158,12 +1158,12 @@ class TestChildInhibitor:
         mdata.seeds = 2
 
         game.turn = True
-        game.deco.inhibitor.set_on(game.turn)
-        assert game.deco.inhibitor.stop_me_child(game.turn)
+        game.inhibitor.set_on(game.turn)
+        assert game.inhibitor.stop_me_child(game.turn)
         assert not game.deco.make_child.test(mdata)
 
-        game.deco.inhibitor.set_off()
-        assert not game.deco.inhibitor.stop_me_child(game.turn)
+        game.inhibitor.set_off()
+        assert not game.inhibitor.stop_me_child(game.turn)
         assert game.deco.make_child.test(mdata)
 
 

@@ -293,22 +293,25 @@ name than you expect.
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p62.
 <h3 id="Deka">Deka</h3>
-<p>The goal is to deprive the opponent of seeds. Sow counter-clockwise with multi-laps. Holes are closed on opponent side on 3s and multilap sowing continues with those 3 seeds. Each player's rightmost hole may not be closed. In subsequent sowing of closed holes (blocked), own holes are skipped but seeds for opponent's holes are taken out of play.
+<p>The goal is to deprive the opponent of seeds. Sow counter-clockwise with multiple laps (LAPPER). After the first turn, holes are closed on opponent side when the final seed of a lap brings the seeds in a hole to 3. Sowing then continues with those 3 seeds. Each player's rightmost hole may not be closed. In subsequent sowing of closed holes (blocked), own holes are skipped but seeds for opponent's holes are taken out of play.
+<p>The <a href="about_games.html#Deka">Deka</a> board is not a 2 rank board, but hole assignment yields itself to moving the middle end holes to the respective player's side thus making it a 2 rank board.
 <p>Variations:
-<ul><li class="helptext">7 holes per side
-<li class="helptext">allow closing of rightmost holes (sow_rule of SOW_BLKD_DIV)
+<ul><li class="helptext">6 to 8 holes per side
+<li class="helptext">2 to 4 start seeds
+<li class="helptext">allow closing of rightmost holes (<a href="game_params.html#sow_rule">SOW_RULE</a> of SOW_BLKD_DIV)
 </ul>
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  6</p>
-    <p class="param">Start seeds:  3</p>
+    <p class="param">Start seeds:  2</p>
     <p class="param"><a href="game_params.html#goal">Goal</a>: DEPRIVE</p>
     <p class="param"><a href="game_params.html#blocks">Blocks</a>: Yes</p>
     <p class="param"><a href="game_params.html#gparam_one">General input</a>: 3</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
   </div>
   <div class="column2">
-    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
     <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER</p>
+    <p class="param"><a href="game_params.html#nocaptfirst">No Capture First Move</a>: Yes</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
     <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: SOW_BLKD_DIV_NR</p>
   </div>

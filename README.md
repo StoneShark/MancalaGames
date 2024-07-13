@@ -34,7 +34,7 @@ Game play is broken up into small steps and each step is implemented as a decora
 * Game String - used for the game logger to prepare text formatted game state messages (utf-8)
 
 ## Compatibility ##
-Mancala games can be run under Windows 10 & 11 and requires standard python 11 (including Tk)[^3].
+Mancala games can be run under Windows 10 & 11 and requires standard python 3.11 (including Tk)[^3].
 
 Development of Mancala Games uses many specialized tools: The UI definition table is in Excel (an open-source alternative crashed on the large table in Windows 11 too often). GNU-WIN32 make, grep and core utilities are used to script the build and test processes. Pytest is the test framework (Excel files with macros are used to create test cases stored as CSV files for actual test code). Pyinstaller is used to create standalone executables. Documentation diagrams were created in LibreOffice Draw with pdf versions saved.
 

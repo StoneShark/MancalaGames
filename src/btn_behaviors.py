@@ -575,7 +575,7 @@ class MoveSeedsButtonBehavior(BehaviorIf):
             parent=game_ui)
 
         if ans != YES_STR:
-            game_ui.game.deco.inhibitor.set_on(game_ui.game.turn)
+            game_ui.game.inhibitor.set_on(game_ui.game.turn)
             return False
 
         cls.saved_state = game_ui.game.state
@@ -594,10 +594,10 @@ class MoveSeedsButtonBehavior(BehaviorIf):
         game = game_ui.game
         if game.state == cls.saved_state:
             game_log.add('No changes in arrangement mode.')
-            game_ui.game.deco.inhibitor.set_on(game_ui.game.turn)
+            game_ui.game.inhibitor.set_on(game_ui.game.turn)
             return True
 
-        game_ui.game.deco.inhibitor.set_off()
+        game_ui.game.inhibitor.set_off()
         holes = game.cts.holes
         dbl_holes = game.cts.dbl_holes
 

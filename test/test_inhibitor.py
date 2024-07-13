@@ -47,44 +47,48 @@ def test_none():
     game = GameStub()
     mdata = MdataStub()
 
-    deco = inhibitor.deco_inhibitor(game)
-    assert 'InhibitorNone' in str(deco)
+    inhibit = inhibitor.make_inhibitor(game)
+    assert 'InhibitorNone' in str(inhibit)
 
-    deco.new_game()
-    assert not deco.stop_me_child(True)
-    assert not deco.stop_me_child(False)
-    assert not deco.stop_me_capt(True)
-    assert not deco.stop_me_capt(False)
+    inhibit.new_game()
+    assert not inhibit.stop_me_child(True)
+    assert not inhibit.stop_me_child(False)
+    assert not inhibit.stop_me_capt(True)
+    assert not inhibit.stop_me_capt(False)
 
-    deco.set_on(True)
-    assert not deco.stop_me_child(True)
-    assert not deco.stop_me_child(False)
-    assert not deco.stop_me_capt(True)
-    assert not deco.stop_me_capt(False)
+    inhibit.set_on(True)
+    assert not inhibit.stop_me_child(True)
+    assert not inhibit.stop_me_child(False)
+    assert not inhibit.stop_me_capt(True)
+    assert not inhibit.stop_me_capt(False)
 
-    deco.set_off()
-    assert not deco.stop_me_child(True)
-    assert not deco.stop_me_child(False)
-    assert not deco.stop_me_capt(True)
-    assert not deco.stop_me_capt(False)
+    inhibit.set_off()
+    assert not inhibit.stop_me_child(True)
+    assert not inhibit.stop_me_child(False)
+    assert not inhibit.stop_me_capt(True)
+    assert not inhibit.stop_me_capt(False)
 
-    deco.set_child(True)
-    assert not deco.stop_me_child(True)
-    assert not deco.stop_me_child(False)
-    assert not deco.stop_me_capt(True)
-    assert not deco.stop_me_capt(False)
+    inhibit.set_child(True)
+    assert not inhibit.stop_me_child(True)
+    assert not inhibit.stop_me_child(False)
+    assert not inhibit.stop_me_capt(True)
+    assert not inhibit.stop_me_capt(False)
 
-    deco.set_child(False)
-    assert not deco.stop_me_child(True)
-    assert not deco.stop_me_child(False)
-    assert not deco.stop_me_capt(True)
-    assert not deco.stop_me_capt(False)
+    inhibit.set_child(False)
+    assert not inhibit.stop_me_child(True)
+    assert not inhibit.stop_me_child(False)
+    assert not inhibit.stop_me_capt(True)
+    assert not inhibit.stop_me_capt(False)
 
-    deco.clear_if(game, mdata)
-    assert not deco.stop_me_child(True)
-    assert not deco.stop_me_child(False)
-    assert not deco.stop_me_capt(True)
-    assert not deco.stop_me_capt(False)
+    inhibit.clear_if(game, mdata)
+    assert not inhibit.stop_me_child(True)
+    assert not inhibit.stop_me_child(False)
+    assert not inhibit.stop_me_capt(True)
+    assert not inhibit.stop_me_capt(False)
+
+    assert inhibit.get_state() is None
+    inhibit.set_state(True)
+    assert inhibit.get_state() is None
 
 
 def test_capt_n():
@@ -93,74 +97,90 @@ def test_capt_n():
     game.info.nocaptfirst = True
     mdata = MdataStub()
 
-    deco = inhibitor.deco_inhibitor(game)
-    assert 'InhibitorCaptN' in str(deco)
+    inhibit = inhibitor.make_inhibitor(game)
+    assert 'InhibitorCaptN' in str(inhibit)
 
-    deco.new_game()
-    assert not deco.stop_me_child(True)
-    assert not deco.stop_me_child(False)
-    assert deco.stop_me_capt(True)
-    assert deco.stop_me_capt(False)
+    inhibit.new_game()
+    assert not inhibit.stop_me_child(True)
+    assert not inhibit.stop_me_child(False)
+    assert inhibit.stop_me_capt(True)
+    assert inhibit.stop_me_capt(False)
 
-    deco.set_on(True)
-    assert not deco.stop_me_child(True)
-    assert not deco.stop_me_child(False)
-    assert deco.stop_me_capt(True)
-    assert deco.stop_me_capt(False)
+    inhibit.set_on(True)
+    assert not inhibit.stop_me_child(True)
+    assert not inhibit.stop_me_child(False)
+    assert inhibit.stop_me_capt(True)
+    assert inhibit.stop_me_capt(False)
 
-    deco.set_off()
-    assert not deco.stop_me_child(True)
-    assert not deco.stop_me_child(False)
-    assert not deco.stop_me_capt(True)
-    assert not deco.stop_me_capt(False)
+    inhibit.set_off()
+    assert not inhibit.stop_me_child(True)
+    assert not inhibit.stop_me_child(False)
+    assert not inhibit.stop_me_capt(True)
+    assert not inhibit.stop_me_capt(False)
 
-    deco.set_child(True)
+    inhibit.set_child(True)
     # no change from last setting
-    assert not deco.stop_me_child(True)
-    assert not deco.stop_me_child(False)
-    assert not deco.stop_me_capt(True)
-    assert not deco.stop_me_capt(False)
+    assert not inhibit.stop_me_child(True)
+    assert not inhibit.stop_me_child(False)
+    assert not inhibit.stop_me_capt(True)
+    assert not inhibit.stop_me_capt(False)
 
-    deco.set_child(False)
+    inhibit.set_child(False)
     # no change from last setting
-    assert not deco.stop_me_child(True)
-    assert not deco.stop_me_child(False)
-    assert not deco.stop_me_capt(True)
-    assert not deco.stop_me_capt(False)
+    assert not inhibit.stop_me_child(True)
+    assert not inhibit.stop_me_child(False)
+    assert not inhibit.stop_me_capt(True)
+    assert not inhibit.stop_me_capt(False)
 
     # reset the inhibitor
-    deco.new_game()
-    deco.clear_if(game, mdata)
-    assert not deco.stop_me_child(True)
-    assert not deco.stop_me_child(False)
-    assert deco.stop_me_capt(True)
-    assert deco.stop_me_capt(False)
+    inhibit.new_game()
+    assert inhibit.get_state()
+    inhibit.clear_if(game, mdata)
+    assert not inhibit.stop_me_child(True)
+    assert not inhibit.stop_me_child(False)
+    assert inhibit.stop_me_capt(True)
+    assert inhibit.stop_me_capt(False)
 
-    deco.set_child(True)
+    inhibit.set_child(True)
     # no change from last setting
-    assert deco.stop_me_capt(True)
-    assert deco.stop_me_capt(False)
+    assert inhibit.stop_me_capt(True)
+    assert inhibit.stop_me_capt(False)
 
-    deco.set_child(False)
+    inhibit.set_child(False)
     # no change from last setting
-    assert deco.stop_me_capt(True)
-    assert deco.stop_me_capt(False)
+    assert inhibit.stop_me_capt(True)
+    assert inhibit.stop_me_capt(False)
+
+    # test clear_if for move 0
+    game.mcount = 0
+    inhibit.clear_if(game, mdata)
+    assert not inhibit.stop_me_child(True)
+    assert not inhibit.stop_me_child(False)
+    assert inhibit.stop_me_capt(True)
+    assert inhibit.stop_me_capt(False)
+    assert inhibit.get_state()
 
     # test clear_if for move 1
     game.mcount = 1
-    deco.clear_if(game, mdata)
-    assert not deco.stop_me_child(True)
-    assert not deco.stop_me_child(False)
-    assert deco.stop_me_capt(True)
-    assert deco.stop_me_capt(False)
+    inhibit.clear_if(game, mdata)
+    assert not inhibit.stop_me_child(True)
+    assert not inhibit.stop_me_child(False)
+    assert not inhibit.stop_me_capt(True)
+    assert not inhibit.stop_me_capt(False)
+    assert not inhibit.get_state()
 
     # test clear_if for move 2
     game.mcount = 2
-    deco.clear_if(game, mdata)
-    assert not deco.stop_me_child(True)
-    assert not deco.stop_me_child(False)
-    assert not deco.stop_me_capt(True)
-    assert not deco.stop_me_capt(False)
+    inhibit.clear_if(game, mdata)
+    assert not inhibit.stop_me_child(True)
+    assert not inhibit.stop_me_child(False)
+    assert not inhibit.stop_me_capt(True)
+    assert not inhibit.stop_me_capt(False)
+    # TODO test that the 'expired' log entry doesn't appear again
+
+    assert not inhibit.get_state()
+    inhibit.set_state(True)
+    assert inhibit.get_state()
 
 
 class TestChildOnly:
@@ -179,57 +199,62 @@ class TestChildOnly:
     @pytest.mark.parametrize('turn', [False, True])
     def test_child(self, game, turn):
 
-        deco = inhibitor.deco_inhibitor(game)
+        inhibit = inhibitor.make_inhibitor(game)
 
-        assert 'InhibitorChildrenOnly' in str(deco)
-        assert not deco.stop_me_child(turn)
-        assert not deco.stop_me_capt(turn)
+        assert 'InhibitorChildrenOnly' in str(inhibit)
+        assert not inhibit.stop_me_child(turn)
+        assert not inhibit.stop_me_capt(turn)
 
-        deco.set_on(True)
-        assert deco.stop_me_child(turn)
-        assert not deco.stop_me_capt(turn)
+        inhibit.set_on(True)
+        assert inhibit.stop_me_child(turn)
+        assert not inhibit.stop_me_capt(turn)
 
-        deco.new_game()
-        assert not deco.stop_me_child(turn)
-        assert not deco.stop_me_capt(turn)
+        inhibit.new_game()
+        assert not inhibit.stop_me_child(turn)
+        assert not inhibit.stop_me_capt(turn)
 
-        deco.set_on(True)
-        deco.set_off()
-        assert not deco.stop_me_child(turn)
-        assert not deco.stop_me_capt(turn)
+        inhibit.set_on(True)
+        inhibit.set_off()
+        assert not inhibit.stop_me_child(turn)
+        assert not inhibit.stop_me_capt(turn)
 
-        deco.set_on(False)
-        assert deco.stop_me_child(turn)
-        assert not deco.stop_me_capt(turn)
+        inhibit.set_on(False)
+        assert inhibit.stop_me_child(turn)
+        assert not inhibit.stop_me_capt(turn)
+
+        inhibit.new_game()
+        assert not inhibit.get_state()
+        inhibit.set_state(True)
+        assert inhibit.get_state()
 
 
     @pytest.mark.parametrize('turn', [False, True])
     def test_set_child(self, game, turn):
 
-        deco = inhibitor.deco_inhibitor(game)
+        inhibit = inhibitor.make_inhibitor(game)
 
-        deco.set_child(True)
-        assert deco.stop_me_child(turn)
-        assert not deco.stop_me_capt(turn)
+        inhibit.set_child(True)
+        assert inhibit.stop_me_child(turn)
+        assert not inhibit.stop_me_capt(turn)
 
-        deco.set_child(False)
-        assert not deco.stop_me_child(turn)
-        assert not deco.stop_me_capt(turn)
+        inhibit.set_child(False)
+        assert not inhibit.stop_me_child(turn)
+        assert not inhibit.stop_me_capt(turn)
 
 
     @pytest.mark.parametrize('turn', [False, True])
     def test_clear_cond(self, game, mdata, turn):
         """clear_if does nothing for child only."""
 
-        deco = inhibitor.deco_inhibitor(game)
-        deco.set_on(turn)
+        inhibit = inhibitor.make_inhibitor(game)
+        inhibit.set_on(turn)
 
-        assert deco.stop_me_child(turn)
-        assert deco.stop_me_child(not turn)
+        assert inhibit.stop_me_child(turn)
+        assert inhibit.stop_me_child(not turn)
 
-        deco.clear_if(game, mdata)
-        assert deco.stop_me_child(turn)
-        assert deco.stop_me_child(not turn)
+        inhibit.clear_if(game, mdata)
+        assert inhibit.stop_me_child(turn)
+        assert inhibit.stop_me_child(not turn)
 
 
 
@@ -248,110 +273,128 @@ class TestBoth:
 
     def test_both(self, game):
 
-        deco = inhibitor.deco_inhibitor(game)
+        inhibit = inhibitor.make_inhibitor(game)
 
-        assert 'InhibitorBoth' in str(deco)
-        assert not deco.stop_me_child(True)
-        assert not deco.stop_me_child(False)
-        assert not deco.stop_me_capt(True)
-        assert not deco.stop_me_capt(False)
+        assert 'InhibitorBoth' in str(inhibit)
+        assert not inhibit.stop_me_child(True)
+        assert not inhibit.stop_me_child(False)
+        assert not inhibit.stop_me_capt(True)
+        assert not inhibit.stop_me_capt(False)
 
-        deco.set_on(True)
+        inhibit.set_on(True)
         # turn is set to True
-        assert deco.stop_me_child(True)
-        assert not deco.stop_me_child(False)
-        assert deco.stop_me_capt(True)
-        assert not deco.stop_me_capt(False)
+        assert inhibit.stop_me_child(True)
+        assert not inhibit.stop_me_child(False)
+        assert inhibit.stop_me_capt(True)
+        assert not inhibit.stop_me_capt(False)
 
-        deco.new_game()
-        assert not deco.stop_me_child(True)
-        assert not deco.stop_me_child(False)
-        assert not deco.stop_me_capt(True)
-        assert not deco.stop_me_capt(False)
+        inhibit.new_game()
+        assert not inhibit.stop_me_child(True)
+        assert not inhibit.stop_me_child(False)
+        assert not inhibit.stop_me_capt(True)
+        assert not inhibit.stop_me_capt(False)
 
-        deco.set_on(True)
-        deco.set_off()
-        assert not deco.stop_me_child(True)
-        assert not deco.stop_me_child(False)
-        assert not deco.stop_me_capt(True)
-        assert not deco.stop_me_capt(False)
+        inhibit.set_on(True)
+        inhibit.set_off()
+        assert not inhibit.stop_me_child(True)
+        assert not inhibit.stop_me_child(False)
+        assert not inhibit.stop_me_capt(True)
+        assert not inhibit.stop_me_capt(False)
 
-        deco.set_on(False)
-        assert not deco.stop_me_child(True)
-        assert deco.stop_me_child(False)
-        assert not deco.stop_me_capt(True)
-        assert deco.stop_me_capt(False)
+        inhibit.set_on(False)
+        assert not inhibit.stop_me_child(True)
+        assert inhibit.stop_me_child(False)
+        assert not inhibit.stop_me_capt(True)
+        assert inhibit.stop_me_capt(False)
 
 
     def test_set_child(self, game):
 
-        deco = inhibitor.deco_inhibitor(game)
+        inhibit = inhibitor.make_inhibitor(game)
 
-        deco.set_child(True)
-        assert deco.stop_me_child(True)
-        assert deco.stop_me_child(False)
-        assert not deco.stop_me_capt(True)
-        assert not deco.stop_me_capt(False)
+        inhibit.set_child(True)
+        assert inhibit.stop_me_child(True)
+        assert inhibit.stop_me_child(False)
+        assert not inhibit.stop_me_capt(True)
+        assert not inhibit.stop_me_capt(False)
 
-        deco.set_child(False)
-        assert not deco.stop_me_child(True)
-        assert not deco.stop_me_child(False)
-        assert not deco.stop_me_capt(True)
-        assert not deco.stop_me_capt(False)
+        inhibit.set_child(False)
+        assert not inhibit.stop_me_child(True)
+        assert not inhibit.stop_me_child(False)
+        assert not inhibit.stop_me_capt(True)
+        assert not inhibit.stop_me_capt(False)
 
 
     def test_independent(self, game):
         # test that changing child doesn't change capture
 
-        deco = inhibitor.deco_inhibitor(game)
-        deco.set_on(True)  # turn both inhibits on for True
+        inhibit = inhibitor.make_inhibitor(game)
+        inhibit.set_on(True)  # turn both inhibits on for True
 
-        deco.set_child(True)  # allow children, but don't change capture
-        assert deco.stop_me_child(True)
-        assert deco.stop_me_child(False)
-        assert deco.stop_me_capt(True)
-        assert not deco.stop_me_capt(False)
+        inhibit.set_child(True)  # allow children, but don't change capture
+        assert inhibit.stop_me_child(True)
+        assert inhibit.stop_me_child(False)
+        assert inhibit.stop_me_capt(True)
+        assert not inhibit.stop_me_capt(False)
 
-        deco.set_child(False)   # inhibit children, but don't change capture
+        inhibit.set_child(False)   # inhibit children, but don't change capture
         # TODO this behavior seems wrong, doesn't match log notes
-        # assert not deco.stop_me_child(True)
-        # assert not deco.stop_me_child(False)
-        assert deco.stop_me_capt(True)
-        assert not deco.stop_me_capt(False)
+        # assert not inhibit.stop_me_child(True)
+        # assert not inhibit.stop_me_child(False)
+        assert inhibit.stop_me_capt(True)
+        assert not inhibit.stop_me_capt(False)
 
 
     def test_clear_cond(self, game, mdata):
 
-        deco = inhibitor.deco_inhibitor(game)
-        deco.set_on(True)  # turn both inhibits on for True
+        inhibit = inhibitor.make_inhibitor(game)
+        inhibit.set_on(True)  # turn both inhibits on for True
 
-        assert deco.stop_me_child(True)
-        assert not deco.stop_me_child(False)
-        assert deco.stop_me_capt(True)
-        assert not deco.stop_me_capt(False)
+        assert inhibit.stop_me_child(True)
+        assert not inhibit.stop_me_child(False)
+        assert inhibit.stop_me_capt(True)
+        assert not inhibit.stop_me_capt(False)
 
-        deco.clear_if(game, mdata)
-        assert deco.stop_me_child(True)
-        assert not deco.stop_me_child(False)
-        assert deco.stop_me_capt(True)
-        assert not deco.stop_me_capt(False)
+        inhibit.clear_if(game, mdata)
+        assert inhibit.stop_me_child(True)
+        assert not inhibit.stop_me_child(False)
+        assert inhibit.stop_me_capt(True)
+        assert not inhibit.stop_me_capt(False)
 
         mdata.captured = True  # first condition
-        deco.clear_if(game, mdata)
-        assert not deco.stop_me_child(True)
-        assert not deco.stop_me_child(False)
-        assert not deco.stop_me_capt(True)
-        assert not deco.stop_me_capt(False)
+        inhibit.clear_if(game, mdata)
+        assert not inhibit.stop_me_child(True)
+        assert not inhibit.stop_me_child(False)
+        assert not inhibit.stop_me_capt(True)
+        assert not inhibit.stop_me_capt(False)
 
-        deco.set_on(False)    # turn both inhibits on for False
-        assert not deco.stop_me_child(True)
-        assert deco.stop_me_child(False)
-        assert not deco.stop_me_capt(True)
-        assert deco.stop_me_capt(False)
+        inhibit.set_on(False)    # turn both inhibits on for False
+        assert not inhibit.stop_me_child(True)
+        assert inhibit.stop_me_child(False)
+        assert not inhibit.stop_me_capt(True)
+        assert inhibit.stop_me_capt(False)
 
         mdata.capt_changed = True   # second condition
-        deco.clear_if(game, mdata)
-        assert not deco.stop_me_child(True)
-        assert not deco.stop_me_child(False)
-        assert not deco.stop_me_capt(True)
-        assert not deco.stop_me_capt(False)
+        inhibit.clear_if(game, mdata)
+        assert not inhibit.stop_me_child(True)
+        assert not inhibit.stop_me_child(False)
+        assert not inhibit.stop_me_capt(True)
+        assert not inhibit.stop_me_capt(False)
+
+
+    def test_state(self, game):
+
+        inhibit = inhibitor.make_inhibitor(game)
+
+        istate = inhibit.get_state()
+        assert len(istate) == 4
+        assert istate[0] == None
+        assert istate[1] == False
+        assert istate[2] == False
+        assert istate[3] == False
+
+        inhibit.set_state((123, 234, 345, 456))
+        assert inhibit._turn == 123
+        assert inhibit._captures == 234
+        assert inhibit._children == 345
+        assert inhibit._child_only == 456

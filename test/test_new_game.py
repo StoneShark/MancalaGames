@@ -444,12 +444,12 @@ class TestNewGame:
         # setup end game conditions
         game.board = [0] * (2 * nbr_holes)
         game.store = [fseeds, game.cts.total_seeds - fseeds]
-        assert not game.deco.inhibitor._children
+        assert not game.inhibitor._children
 
         assert not game.new_game(win_cond=WinCond.ROUND_WIN,
                                  new_round_ok=True)
 
-        assert game.deco.inhibitor._children == einhibit
+        assert game.inhibitor._children == einhibit
 
 
 
