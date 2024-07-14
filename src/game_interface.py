@@ -164,11 +164,11 @@ class SowPrescribed(enum.IntEnum):
     """Define a prescribed opening."""
 
     NONE = 0
-    SOW1OPP = 1
-    ARNGE_LIMIT = 2   # arrange seeds or limit children and captures
-    PLUS1MINUS1 = 3
-    BASIC_SOWER = 4
-    MLAPS_SOWER = 5
+    BASIC_SOWER = 1
+    MLAPS_SOWER = 2
+    SOW1OPP = 3
+    PLUS1MINUS1 = 4
+    ARNGE_LIMIT = 5   # arrange seeds or limit children and captures
 
 
 @enum.unique

@@ -15,7 +15,7 @@
       "min_move": 1,
       "mlaps": 1,
       "mustpass": true,
-      "prescribed": 3,
+      "prescribed": 4,
       "round_starter": 0,
       "rounds": true,
       "sow_direct": 1,

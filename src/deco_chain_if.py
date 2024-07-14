@@ -6,7 +6,7 @@ on startup/creation, but they should not store
 state data that would be changed during the game.
 
 Decos are not told about a new game or round
-being started.
+being started. Data is not saved with game state!
 
 Created on Tue Dec 19 12:11:06 2023
 @author: Ann"""

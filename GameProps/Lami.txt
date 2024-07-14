@@ -18,7 +18,7 @@
       "round_fill": 1,
       "round_starter": 1,
       "rounds": true,
-      "prescribed": 5,
+      "prescribed": 2,
       "sow_direct": 1,
       "sow_rule": 5,
       "stores": true
