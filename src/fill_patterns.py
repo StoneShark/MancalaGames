@@ -1,10 +1,23 @@
 # -*- coding: utf-8 -*-
-"""Class describing alternate starting fill patterns.
+"""Classes describing alternate starting fill patterns.
 
-These are really collections of well defined operations
-group by start pattern for different pattern.
+Each class is a collection of well defined operations
+for a start pattern. The class is an easy way to group them.
 The objects do need to be instantiated because there's
 no data.
+
+Start patterns differ from prescribed openings (see
+sower.SowPrescribedIf and game_interface.SowPrescirbed)
+in that start patterns do not require any user input
+and may simply be executed.
+
+Not all patterns can be used for all board sizes (size_ok).
+Start patterns may change the total number of seeds
+used in the game (nbr_seeds).
+
+The new_game decorator chain (NewGamePattern) calls the
+fill_seeds method.
+
 
 The patterns are available in a global variable in the
 same order as gi.StartPattern.
@@ -20,7 +33,7 @@ import game_interface as gi
 FOUR = 4
 
 
-class StartPatternIf:
+class StartPatternIf(abc.ABC):
     """A group of pattern methods."""
 
     @staticmethod
@@ -41,7 +54,7 @@ class StartPatternIf:
 
 
     @staticmethod
-    def rev_board(game):
+    def _rev_board(game):
         """Rotate the board (as though you picked up the
         board and rotated it 180 degrees)."""
 
@@ -85,7 +98,7 @@ class GamachaPattern(StartPatternIf):
         game.board[source] = 0
 
         if game.turn:
-            game.board = StartPatternIf.rev_board(game)
+            game.board = StartPatternIf._rev_board(game)
 
 
 class AlternatesPattern(StartPatternIf):
@@ -111,7 +124,7 @@ class AlternatesPattern(StartPatternIf):
             game.board[loc] = game.cts.nbr_start
 
         if game.cts.holes % 2 and game.turn:
-            game.board = StartPatternIf.rev_board(game)
+            game.board = StartPatternIf._rev_board(game)
 
 
 class AltsWithOnePattern(StartPatternIf):
@@ -140,7 +153,7 @@ class AltsWithOnePattern(StartPatternIf):
         game.board[second] = 1
 
         if not game.turn:
-            game.board = StartPatternIf.rev_board(game)
+            game.board = StartPatternIf._rev_board(game)
 
 
 class ClippedTriplesPattern(StartPatternIf):
@@ -198,7 +211,7 @@ class TwoEmptyPattern(StartPatternIf):
         game.board[holes:dbl_holes] = game.board[:holes]
 
 
-# %%
+# %% Pattern Classes variable
 
 PCLASSES = [None] * len(gi.StartPattern)
 
