@@ -39,8 +39,11 @@ class MancalaUI(tk.Frame):
     def __init__(self, game, player_dict, root_ui=None):
         """Create the UI for a mancala game.
 
-        game : class built on GameInterface -  provide the mechanics of
-        the game w/o any UI"""
+        game: class built on GameInterface -  provide the mechanics of
+        the game w/o any UI
+
+        player_dict: player element from game config file; a dictionary
+        of parameters to configure the ai player"""
 
         if not isinstance(game, gi.GameInterface):
             raise TypeError('Missing mancala_ui.GameInterface in game.')
