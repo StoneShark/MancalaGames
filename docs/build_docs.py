@@ -139,6 +139,11 @@ def sub_links(para):
             skip_words -= 1
             continue
 
+        if word[:4] == 'http':
+            w_links += [f'<a href="{word}" target="_blank">{word}</a>']
+            continue
+
+
         match = SEP_PUNCT_RE.match(word)
         if match:
             pre, tword, post = match.groups()
@@ -148,6 +153,7 @@ def sub_links(para):
 
         mwgames = [' '.join(word_list[idx:idx + 2]),
                   ' '.join(word_list[idx:idx + 3])]
+
 
         if tword in UPARAMS:
             w_links += [f'{pre}'
@@ -372,7 +378,8 @@ def write_games_help(filename):
             write_para(about_str, ofile)
             write_columns(ofile, prop_text, 2)
             for key, text in game_dict.items():
-                print('<p>', key.title(), ': ', text, sep='', file=ofile)
+                print('<p>', key.title(), ': ', sub_links(text),
+                      sep='', file=ofile)
 
         print('<br><br><br>', file=ofile)
         print('<h2 id="index">Game Index</h2>', file=ofile)
