@@ -22,5 +22,6 @@ def pytest_generate_tests(metafunc):
         metafunc.fixturenames.append('run_cnt')
         metafunc.parametrize('run_cnt', range(count))
 
+    # add this fixture for the test_game_stats (and maybe others)
     if 'nbr_runs' in metafunc.fixturenames:
         metafunc.parametrize('nbr_runs', [count])
