@@ -122,10 +122,12 @@ def define_get_game(depth):
             """Have the player pick the move."""
             return self.algo.pick_move()
 
-
         def get_move_desc(self):
             """Get the description from the player."""
             return self.algo.get_move_desc()
+
+        def clear_history(self):
+            pass
 
     game = SmallGame(depth)
     player = SmallPlayer(game, {})

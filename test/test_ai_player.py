@@ -463,6 +463,9 @@ class TestAiIf:
                 def get_move_desc(self):
                     return 'desc'
 
+                def clear_history(self):
+                    pass
+
         with pytest.raises(ValueError):
             Tplr(None, None)
 
@@ -479,6 +482,9 @@ class TestAiIf:
                 return "Move desc"
 
             def set_params(self, *args):
+                pass
+
+            def clear_history(self):
                 pass
 
         with pytest.raises(ValueError):
