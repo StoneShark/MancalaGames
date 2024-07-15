@@ -436,6 +436,7 @@ class MancalaUI(tk.Frame):
         self.set_game_mode(btnb.Behavior.GAMEPLAY, force=True)
         new_game = self.game.new_game(win_cond=win_cond,
                                       new_round_ok=new_round_ok)
+        self.player.clear_history()
 
         self._refresh()
         self.update()

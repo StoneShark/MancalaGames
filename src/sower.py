@@ -266,7 +266,6 @@ class SowCaptOwned(SowMethodIf):
                     and self.game.deco.capt_ok.capture_ok(loc)):
 
                 owner = self.owner(loc, self.game.turn)
-                print(owner)
                 game_log.step(f'Capture from {loc} by {owner}')
                 self.game.store[owner] += self.game.board[loc]
                 self.game.board[loc] = 0
@@ -466,7 +465,7 @@ class MlapSowerIf(SowMethodIf):
         self.end_lap_op = end_lap_op
 
     def __str__(self):
-        """A recursive func to print the whole decorator chain."""
+        """Added lap continuer and end lap op to the string."""
 
         my_str = '\n   '.join([repr(self),
                                'lap cont:  ' + str(self.lap_cont),
@@ -532,7 +531,7 @@ class SowVisitedMlap(SowMethodIf):
 
 
     def __str__(self):
-        """A recursive func to print the whole decorator chain."""
+        """Add single sower and lap continuer to the string."""
 
         my_str = '\n   '.join([repr(self),
                                'single s: ' + str(self.single_sower),

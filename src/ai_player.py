@@ -24,9 +24,9 @@ ALGORITHM_DICT = {'minimaxer': minimax.MiniMaxer,
                   'montecarlo_ts': mcts.MonteCarloTS}
 
 AI_PARAM_DEFAULTS = {ckey.MM_DEPTH: [1, 1, 3, 5],
-                     ckey.MCTS_NODES: [30, 50, 80, 110],
-                     ckey.MCTS_BIAS: [400, 400, 400, 400],
-                     ckey.MCTS_POUTS: [1, 1, 1, 1]}
+                     ckey.MCTS_NODES: [100, 300, 500, 800],
+                     ckey.MCTS_BIAS: [200, 200, 200, 200],
+                     ckey.MCTS_POUTS: [1, 2, 3, 4]}
 
 NEGAMAXER = 'negamaxer'
 
@@ -171,6 +171,12 @@ class AiPlayer(ai_interface.AiPlayerIf):
                     self.scorers += [cnt_func]
                 else:
                     self.scorers += [diff_func]
+
+
+    def clear_history(self):
+        """Tell the algorithm to reset/clear any history or
+        saved game states."""
+        self.algo.clear_history()
 
 
     def is_max_player(self):
@@ -439,12 +445,13 @@ def player_dict_rules():
     rules.add_rule(
         'nmax_no_repeat',
         rule=lambda pdict, ginfo: ((ginfo.sow_own_store
-                                    or ginfo.capt_rturn)
+                                    or ginfo.capt_rturn
+                                    or ginfo.xc_sown)
                                    and ckey.ALGORITHM in pdict
                                    and pdict[ckey.ALGORITHM] == NEGAMAXER),
         both_objs=True,
-        msg="NegaMax not compatible with repeat turns"
-            "(SOW_OWN_STORE | CAPT_RTURN)",
+        msg="NegaMax not compatible with repeat turns "
+            "(SOW_OWN_STORE | CAPT_RTURN | XC_SOWN)",
         excp=gi.GameInfoError)
 
     return rules

@@ -86,6 +86,11 @@ class AiPlayerIf(abc.ABC):
     def get_move_desc(self):
         """Return a description of the previous move."""
 
+    @abc.abstractmethod
+    def clear_history(self):
+        """Clear any game state or history (called when
+        a new game is started)."""
+
 
 class AiAlgorithmIf(abc.ABC):
     """The ai algorithm interfaces required by a player."""
@@ -110,3 +115,7 @@ class AiAlgorithmIf(abc.ABC):
     @abc.abstractmethod
     def set_params(self, *args):
         """Set the parameters for the player."""
+
+    def clear_history(self):
+        """Clear any game state or history (called when
+        a new game is started)."""

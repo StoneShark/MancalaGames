@@ -18,7 +18,7 @@ import game_interface as gi
 
 # these are only used if the config file does not have values
 BIAS = 0.25
-NBR_NODES = 200
+NBR_NODES = 300
 NBR_POUTS = 1
 
 MAX_TURNS = 500
@@ -118,23 +118,25 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
         return node
 
 
-    def _new_root(self):
+    def clear_history(self):
         """Reset the game tree and create a new root."""
 
         self.node_dict = {}
         self.game_nodes = collections.deque()
         self.next_id = 0
 
-        state = self.game.state
-        start_node = self.add_node(state, moves=self.game.get_moves())
-
-        return start_node
+        self.add_node(self.game.state, moves=self.game.get_moves())
 
 
     def pick_move(self):
         """Pick the best next move."""
 
-        start_node = self._new_root()
+        game_state = self.game.state
+        if game_state in self.node_dict:
+            start_node = self.node_dict[game_state]
+        else:
+            start_node = self.add_node(game_state,
+                                       moves=self.game.get_moves())
 
         for _ in range(self.new_nodes):
 
@@ -232,7 +234,6 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
     def _one_playout(self, node_id):
         """Simulate a random game from node,
         return the winner (if there was one) and reward."""
-        # XXXX could choose eval func (score?) instead of random choice
 
         saved_state = self.game.state
         self.game.state = self.game_nodes[node_id].state
