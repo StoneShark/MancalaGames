@@ -26,9 +26,7 @@
          "easy_rand": 6
       },
       "ai_params": {
-         "mm_depth": [1, 1, 3, 5],
-         "mcts_nodes": [300, 500, 800, 1100],
-         "mcts_bias": [350, 350, 350, 350]
+         "mm_depth": [1, 1, 3, 5]
       }
    },
    "rules": "Mohr, Merilyn Simonds; The New Games Treasury, 1993. But with sow into Waldas as described here:  https://mancala.fandom.com/wiki/Qelat_(Beni_Amir_%26_Mensa)"

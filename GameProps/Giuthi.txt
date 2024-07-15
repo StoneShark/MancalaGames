@@ -29,9 +29,7 @@
       "ai_start": false,
       "difficulty": 1,
       "ai_params": {
-         "mcts_bias": [400, 400, 400, 400],
-         "mcts_nodes": [30, 50, 80, 110],
-         "mcts_pouts": [1, 1, 1, 1],
+
          "mm_depth": [1, 1, 3, 5]
       },
       "scorer": {

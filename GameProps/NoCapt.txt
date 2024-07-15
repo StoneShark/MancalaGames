@@ -27,9 +27,7 @@
          "repeat_turn": 50
       },
       "ai_params": {
-         "mm_depth": [1, 5, 8, 12],
-         "mcts_nodes": [300, 500, 800, 1100],
-         "mcts_bias": [350, 350, 350, 350]
+         "mm_depth": [1, 5, 8, 12]
       }
    }
 }

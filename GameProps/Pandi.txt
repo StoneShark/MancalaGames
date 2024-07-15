@@ -23,10 +23,7 @@
    },
    "player": {
       "ai_params": {
-         "mm_depth": [1, 1, 3, 7],
-         "mcts_bias": [400, 400, 400, 400],
-         "mcts_nodes": [30, 50, 80, 110],
-         "mcts_pouts": [1, 1, 1, 1]
+         "mm_depth": [1, 1, 3, 7]
       },
       "scorer": {
          "stores_m": 4,
