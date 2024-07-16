@@ -24,9 +24,9 @@ ALGORITHM_DICT = {'minimaxer': minimax.MiniMaxer,
                   'montecarlo_ts': mcts.MonteCarloTS}
 
 AI_PARAM_DEFAULTS = {ckey.MM_DEPTH: [1, 1, 3, 5],
+                     ckey.MCTS_BIAS: [300, 200, 100, 100],
                      ckey.MCTS_NODES: [100, 300, 500, 800],
-                     ckey.MCTS_BIAS: [200, 200, 200, 200],
-                     ckey.MCTS_POUTS: [1, 2, 3, 4]}
+                     ckey.MCTS_POUTS: [1, 1, 1, 1]}
 
 NEGAMAXER = 'negamaxer'
 
