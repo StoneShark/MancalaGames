@@ -118,4 +118,8 @@ class AiAlgorithmIf(abc.ABC):
 
     def clear_history(self):
         """Clear any game state or history (called when
-        a new game is started)."""
+        a new game is started).
+
+        Don't require an implementation. If no state is
+        maintained between moves, this method does not
+        need to be implemented."""
