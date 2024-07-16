@@ -151,16 +151,20 @@ class TestConstruction:
 
     def test_interfaces(self, game, mocker):
 
-        pdict = {'algorithm': 'minimaxer'}
+        pdict = {'algorithm': 'montecarlo_ts'}
         player = ai_player.AiPlayer(game, pdict)
 
-        m_pick_move = mocker.patch('minimax.MiniMaxer.pick_move')
+        m_pick_move = mocker.patch('montecarlo_ts.MonteCarloTS.pick_move')
         player.pick_move()
         m_pick_move.assert_called_once()
 
-        m_get_desc = mocker.patch('minimax.MiniMaxer.get_move_desc')
+        m_get_desc = mocker.patch('montecarlo_ts.MonteCarloTS.get_move_desc')
         player.get_move_desc()
         m_get_desc.assert_called_once()
+
+        m_clear_hist = mocker.patch('montecarlo_ts.MonteCarloTS.clear_history')
+        player.clear_history()
+        m_clear_hist.assert_called_once()
 
 
 class TestScorers:
