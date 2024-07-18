@@ -141,6 +141,7 @@ class MancalaGames(tk.Frame):
 
         self.master.report_callback_exception = self._exception_callback
         warnings.showwarning = self._warning
+        warnings.simplefilter('always', UserWarning)
 
         self._create_menus()
         self._add_commands_ui()
