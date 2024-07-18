@@ -29,6 +29,7 @@ AI_PARAM_DEFAULTS = {ckey.MM_DEPTH: [1, 1, 3, 5],
                      ckey.MCTS_POUTS: [1, 1, 1, 1]}
 
 NEGAMAXER = 'negamaxer'
+MCTS = 'montecarlo_ts'
 
 # a divider for the bias so that we can store ints in the config file
 MCTS_BIAS_DIV = 1000
@@ -453,5 +454,22 @@ def player_dict_rules():
         msg="NegaMax not compatible with repeat turns "
             "(SOW_OWN_STORE | CAPT_RTURN | XC_SOWN)",
         excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'mcts_move_nbrs',
+        rule=lambda pdict, ginfo: ((ginfo.prescribed
+                                    or ginfo.nocaptfirst
+                                    or ginfo.allow_rule in
+                                        {gi.AllowRule.FIRST_TURN_ONLY_RIGHT_TWO,
+                                         gi.AllowRule.RIGHT_2_1ST_THEN_ALL_TWO}
+                                    )
+                                   and ckey.ALGORITHM in pdict
+                                   and pdict[ckey.ALGORITHM] == MCTS),
+        both_objs=True,
+        msg="Monte Carlo Tree Search might not work well with options that "
+            "vary behavior with move number (prescribed openings, allow "
+            "rules that only apply to some moves, no first move captures).",
+        warn=True)
+        # this might really only be an issue after the first move
 
     return rules

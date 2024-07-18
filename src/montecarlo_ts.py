@@ -53,11 +53,6 @@ class GameNode:
         self.visits = 0
 
 
-    # def __repr__(self):
-    #     return f'GameNode({self.node_id}, {self.leaf}, ' \
-    #         f'{self.reward}, {self.visits}, {self.childs})'
-
-
     def __str__(self):
         string = f'Id: {self.node_id}  Reward: {self.reward}  ' \
             f'Visits: {self.visits}\n'
@@ -264,7 +259,7 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
 
         saved_state = self.game.state
 
-        # TODO fix mcount, we maybe several moves beyond game.mcount
+        # XXXX mcount is likely too low, see ai_player rule mcts_move_nbrs
         self.game.state = set_mcount_from(self.game, pnode.state)
 
         cond = self.game.move(move)
@@ -312,7 +307,7 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
 
         saved_state = self.game.state
 
-        # TODO fix mcount, we are several moves beyond game.mcount
+        # XXXX mcount is likely too low, see ai_player rule mcts_move_nbrs
         self.game.state = set_mcount_from(self.game,
                                           self.game_nodes[node_id].state)
 
@@ -349,8 +344,6 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
         reward = 0.0
         for _ in range(self.nbr_pouts):
             reward += self._one_playout(node_id)
-
-        # TODO should the reward per game be averaged (with nbr_pouts)
 
         return reward
 
