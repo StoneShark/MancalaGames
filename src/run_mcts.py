@@ -4,7 +4,7 @@
 Created on Sun Aug 13 01:42:21 2023
 @author: Ann"""
 
-from game_log import game_log
+from game_logger import game_log
 import man_config
 import mancala_ui
 

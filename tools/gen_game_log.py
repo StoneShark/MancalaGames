@@ -16,7 +16,7 @@ import sys
 from context import ai_player
 from context import game_interface as gi
 from context import man_config
-from context import game_log as gl
+from context import game_logger as gl
 
 cargs = None
 

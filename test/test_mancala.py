@@ -30,7 +30,7 @@ pytestmark = pytest.mark.unittest
 
 from context import game_constants as gc
 from context import game_interface as gi
-from context import game_log
+from context import game_logger
 from context import ginfo_rules
 from context import mancala
 
@@ -641,7 +641,7 @@ class TestDelegates:
         mdata.capt_changed = changed
 
         mobj = mocker.patch.object(game.deco.capturer, 'do_captures')
-        mglog = mocker.patch.object(game_log.game_log, 'step')
+        mglog = mocker.patch.object(game_logger.game_log, 'step')
 
         game.capture_seeds(mdata)
 
@@ -1090,7 +1090,7 @@ class TestLogMove:
 
         game.turn = turn
 
-        mlog = mocker.patch.object(game_log.game_log, 'turn')
+        mlog = mocker.patch.object(game_logger.game_log, 'turn')
         game._log_turn(move_turn, 1, win_cond)
 
         arg_str = mlog.call_args.args[1]

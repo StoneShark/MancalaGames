@@ -23,14 +23,14 @@ import tqdm
 
 from context import ai_player
 from context import man_config
-from context import game_log
+from context import game_logger
 
 from game_interface import WinCond
 
 
 # %% disable logger
 
-game_log.game_log.active = False
+game_logger.game_log.active = False
 
 
 # %%  constants

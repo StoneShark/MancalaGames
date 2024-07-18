@@ -33,7 +33,7 @@ import sow_starter
 import sower
 
 from fill_patterns import PCLASSES
-from game_log import game_log
+from game_logger import game_log
 
 
 LOCK = ['_', ' ']

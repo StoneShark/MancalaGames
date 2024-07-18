@@ -26,13 +26,13 @@ import pandas as pd
 import tqdm
 
 from context import ai_player
-from context import game_log
+from context import game_logger
 from context import man_config
 
 from game_interface import WinCond
 
 
-game_log.game_log.active = False
+game_logger.game_log.active = False
 
 
 # %%  game index list

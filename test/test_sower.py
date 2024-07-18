@@ -25,7 +25,6 @@ from game_interface import LapSower
 from game_interface import SowPrescribed
 from game_interface import SowRule
 from game_interface import WinCond
-# from game_log import game_log
 from mancala import MoveData
 
 # %%

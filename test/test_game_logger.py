@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """Test the game_log.
 
-For tests which use the global _game_log,
-the game_log module is re-imported at the start of
+For tests which use the global game_logger,
+the game_logger module is re-imported at the start of
 each so that we know we have a consistent starting
 point.
 
@@ -14,17 +14,17 @@ import datetime
 import pytest
 pytestmark = pytest.mark.unittest
 
-from context import game_log
+from context import game_logger
 
 
-TEST_COVERS = ['src\\game_log.py']
+TEST_COVERS = ['src\\game_logger.py']
 
 
 class TestGameLog:
 
     @pytest.fixture
     def glog(self):
-        return game_log.GameLog()
+        return game_logger.GameLog()
 
 
     def test_construct(self, glog):

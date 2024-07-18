@@ -29,7 +29,7 @@ import pytest
 from context import ai_player
 from context import cfg_keys as ckey
 from context import game_interface as gi
-from context import game_log
+from context import game_logger
 from context import man_config
 
 from game_interface import WinCond
@@ -57,7 +57,7 @@ def game_data(request):
 def test_one_game(game_data, algo):
     """Play a shortend game to exercise the Ai players."""
 
-    game_log.game_log.active = False
+    game_logger.game_log.active = False
     game, pdict = game_data
 
     if algo != CONFIGED:

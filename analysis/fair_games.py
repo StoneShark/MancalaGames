@@ -29,7 +29,7 @@ import tqdm
 from context import ai_player
 from context import man_config
 
-from game_log import game_log
+from game_logger import game_log
 from game_interface import WinCond
 
 

@@ -15,7 +15,7 @@ import abc
 import deco_chain_if
 import game_interface as gi
 
-from game_log import game_log
+from game_logger import game_log
 
 
 # %% capt interface

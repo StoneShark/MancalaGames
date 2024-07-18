@@ -13,7 +13,7 @@ import textwrap
 
 import tkinter as tk
 
-from game_log import game_log
+from game_logger import game_log
 
 
 # %%  constants

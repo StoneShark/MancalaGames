@@ -28,7 +28,7 @@ import pytest
 pytestmark = pytest.mark.integtest
 
 from context import man_config
-from context import game_log
+from context import game_logger
 
 from game_interface import WinCond
 
@@ -53,7 +53,7 @@ def game_data(request):
 def test_one_game(game_data, request):
 
     game, _ = game_data
-    game_log.game_log.active = False
+    game_logger.game_log.active = False
 
     for _ in range(3000 if game.info.rounds else 500):
         moves = game.get_moves()

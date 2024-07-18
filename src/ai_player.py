@@ -16,7 +16,7 @@ import minimax
 import montecarlo_ts as mcts
 import negamax
 
-from game_log import game_log
+from game_logger import game_log
 
 
 ALGORITHM_DICT = {'minimaxer': minimax.MiniMaxer,

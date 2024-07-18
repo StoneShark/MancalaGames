@@ -23,7 +23,7 @@ import game_interface as gi
 import game_tally as gt
 import man_path
 
-from game_log import game_log
+from game_logger import game_log
 
 
 # %%   constants
