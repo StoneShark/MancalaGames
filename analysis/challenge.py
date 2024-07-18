@@ -95,7 +95,7 @@ class FindLoops:
         if gstate in self.game_states:
             self.dupl_cnt += 1
 
-            if self.save_cnt > self.max_loop:
+            if self.dupl_cnt > self.max_loop:
                 print(f"Game cycle found {len(self.game_states)}")
                 return True
         else:
@@ -110,13 +110,13 @@ class FindLoops:
 
 tplayer = fplayer = None
 
-def test_one_game(game):
+def test_one_game(game, pdict):
 
     global tplayer, fplayer
 
     fplayer = tplayer = None
     if cargs.t_minimaxer:
-        tplayer = ai_player.AiPlayer(game, PLAYER1)
+        tplayer = ai_player.AiPlayer(game, pdict)
     if cargs.f_mcts:
         fplayer = ai_player.AiPlayer(game, PLAYER2)
 
@@ -172,14 +172,14 @@ def play_one_config(data):
 
     for cnt in tqdm.tqdm(range(cargs.nbr_runs)):
 
-        game, _ = man_config.make_game('../GameProps/' + cargs.game + '.txt')
+        game, pdict = man_config.make_game('../GameProps/' + cargs.game + '.txt')
 
         if cnt < cargs.nbr_runs // 2:
             starter = game.turn = True
         else:
             starter = game.turn = False
 
-        result, winner = test_one_game(game)
+        result, winner = test_one_game(game, pdict)
         col = result_name(starter, result, winner)
         data.loc[idx, col] += 1
 
