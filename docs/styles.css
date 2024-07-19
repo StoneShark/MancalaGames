@@ -96,6 +96,10 @@ li.helptext, p.helptext {
 	margin-top:0.6em;
 	margin-bottom:0.5em;
 }
+li.spaced, p.dpaced {
+	margin-top:0.6em;
+	margin-bottom:0.6em;
+}
 
 
 a:link {

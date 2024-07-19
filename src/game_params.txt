@@ -107,22 +107,36 @@ Game	name	Game Name	game_info _	1	str	Mancala	0	2	The game name, may have spaces
 Game	nbr_start	Start Seeds	game_constants _	54	int	4	2	2	The number of seeds in each hole at the start of a game when START_PATTERN is ALL_EQUAL. Other sow patterns use this as the number of seeds for some holes in the associated patterns.
 Player	algorithm	Algorithm	player _	13	Algorithm	minimaxer	0	0	"minimaxer: an Alpha-Beta Pruning MiniMaxer
 negamaxer: minimaxer with a very minor optimization for alternating turn games (no repeat turns). Uses minimaxer depths for difficulties.
-montecarlo_ts: a Monte Carlo Tree Search player (that is likely implemented wrong)."
-Player	difficulty	Default Difficulty	player _	30	int	1	1	0	The default difficulty. Can be changed at play time, even during game play, in the Mancala UI.
-Player	ai_active	Start Active	player _	12	bool	False	2	0	Automatically activate the AI player. The AI player can be manually deactivated.
-Player	mm_depth	MiniMaxer Depth	player ai_params _	46	list[int]	[1, 3, 5, 7]	4	0	For each difficulty [0-3], the depth that the minimaxer will search to.
-Player	mcts_bias	MCTS Bias	player ai_params _	40	list[int]	[400, 400, 400, 400]	6	0	"Bias for the Monte Carlo Tree seach algorithm for each difficulty level (0-3). 
+montecarlo_ts: a Monte Carlo Tree Search player."
+Player	difficulty	Default Difficulty	player _	30	int	1	1	0	The default difficulty for the game. The difficulty can be changed at play time,  even during game play, in the Mancala UI.
+Player	ai_active	Start Active	player _	12	bool	False	2	0	Automatically activate the AI player. The AI player can be manually deactivated, but it is selected for the starter it will start the game.
+Player	mm_depth	MiniMaxer Depth	player ai_params _	46	list[int]	[1, 3, 5, 7]	4	0	There are four game difficulties. Each select a set of parameters give the algorithm choosen.
+Player	mcts_bias	MCTS Bias	player ai_params _	40	list[int]	[400, 400, 400, 400]	6	0	"Bias for the Monte Carlo Tree seach algorithm for each difficulty level (0-3).  A larger bias encourages move game tree exploration, but defocuses the exploration from the best choices. This is critical in avoiding getting stuck in sub-obtimal move choices.
 Value is divided by 1000."
-Player	mcts_nodes	MCTS Nodes per Move	player ai_params _	41	list[int]	[30, 50, 80, 110]	7	0	Number of leaf nodes to create each time we pick a new move. One value for each difficulty level (0-3).
-Player	mcts_pouts	MCTS Playouts per Node	player ai_params _	42	list[int]	[1, 1, 1, 1]	8	0	Number of end games played out from each leaf node created. One value for each difficulty level (0-3).
-Player	stores_m	Stores mult	player scorer _	74	int	4	0	2	The minimax scorer will use this as a multiplier to maximize the bottom players stores versus the top player's. 
-Player	access_m	Access mult	player scorer _	11	int	0	1	2	Access mult
-Player	seeds_m	Seeds mult	player scorer _	66	int	0	2	2	Seeds mult
-Player	empties_m	Empties mult	player scorer _	32	int	0	3	2	Empties mult
-Player	child_cnt_m	Child Count mult	player scorer _	25	int	0	4	2	Child Count mult
-Player	evens_m	Evens mult	player scorer _	34	int	0	5	2	Evens mult
-Player	easy_rand	Easy Random Addin	player scorer _	31	int	0	6	2	Easy Random Addin
-Player	repeat_turn	Repeat Turn mult	player scorer _	61	int	0	7	2	Repeat Turn mult
+Player	mcts_nodes	MCTS Nodes per Move	player ai_params _	41	list[int]	[30, 50, 80, 110]	7	0	Number of game tree expansions to perform each time we pick a new move. One value for each difficulty level (0-3).
+Player	mcts_pouts	MCTS Playouts per Node	player ai_params _	42	list[int]	[1, 1, 1, 1]	8	0	Number of end games played out from each expanded node. One value for each difficulty level (0-3).
+Player	stores_m	Stores mult	player scorer _	74	int	4	0	2	"The multiplier for the stores scorer. It is applied to the difference of the seeds in each players store.
+The stores scorer may not be used in games with STORES. A zero multiplier disables the stores scorer.
+Used only for  minimax & negamax players."
+Player	access_m	Access mult	player scorer _	11	int	0	1	2	"The multiplier for the access scorer. The access scorer computes how many of the opponents holes can be accessed for the given game state.
+The access scorer is slow and therefore is prohibited from being used in multilap games (MLAPS); games with user choice of move direction (UDIR_HOLES); and games where hole owners are not predefined (NO_SIDES). In these game configurations, the multiplier must be zero to disable the access scorer.
+Used only for minimax & negamax players."
+Player	seeds_m	Seeds mult	player scorer _	66	int	0	2	2	"The multiplier for the seeds scorer. The seeds scorer computes how many seeds each player has on the game board.
+TODO does this properly deal with children or hole owners?
+Used only for minimax & negamax players."
+Player	empties_m	Empties mult	player scorer _	32	int	0	3	2	"The multiplier for the empties scorer. The empties scorer counts the number empty holes each player has on the board.
+Used only for minimax & negamax players."
+Player	child_cnt_m	Child Count mult	player scorer _	25	int	0	4	2	"The multiplier for the child scorer. The child scorer counts the number children each player has.
+The child scorer may only be used on games with children. If the game does not include child the multiplier must be zero.
+Used only for the minimax & negamax players."
+Player	evens_m	Evens mult	player scorer _	34	int	0	5	2	"The multiplier for the even scorer. The even scorer counts the number of holes with an even number of seeds. This is useful to use when the capture mechanism is evens.
+Used only for minimax & negamax players."
+Player	easy_rand	Easy Random Addin	player scorer _	31	int	0	6	2	"If the game is being played on easy mode (game difficult of easy/0), a random value may be added to the static evaluation. This can be done to induce errors into the ai player's game play. A random value is selected between -easy_rand and + easy_rand.
+The specific value for this should be selected based on the ranges of the paremeters and multiplier.
+Used only for minimax & negamax players."
+Player	repeat_turn	Repeat Turn mult	player scorer _	61	int	0	7	2	"A value used to encourage or discourage repeat turns. The value is added in for the current player and subtracted off the score for the opposing playing. Use a positive value to encourage the AI player to repeat turns.
+This parameter may only be used for games in which repeated turns are possible (SOW_OWN_STORE, CAPT_RTURN or XC_SOWN).
+Used only for minimax & negamax players."
 skip	mlength		game_info _	45	int		0	0	A derived parameter. Do not include in config files. Set during game construction length of moves: 1 (int) or 2, 3 (tuple).
 skip	nbr_holes			53	int		0	0	An init only parameter that is used to check the other parameters in the creation of game info.
 skip	rules			65	RuleDict		0	0	An init only parameter that used to check the consistency of the game info. Errors and warnings are raised as the rules are processed.

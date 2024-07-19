@@ -19,6 +19,12 @@ import negamax
 from game_logger import game_log
 
 
+# TODO ai player data should be in player files
+# will this work:
+#   define the variables in the ai_interface
+#   add to them in the player files
+#   use them here
+
 ALGORITHM_DICT = {'minimaxer': minimax.MiniMaxer,
                   'negamaxer': negamax.NegaMaxer,
                   'montecarlo_ts': mcts.MonteCarloTS}
@@ -161,6 +167,7 @@ class AiPlayer(ai_interface.AiPlayerIf):
         if self.sc_params.access_m:
             self.scorers += [self._score_access]
 
+        # TODO is this cnt versus diff really the right thing to do for mlength == 3
         scorer_trips = [
             ('evens_m', self._score_cnt_evens, self._score_diff_evens),
             ('seeds_m', self._score_cnt_seeds, self._score_diff_seeds),
@@ -283,7 +290,9 @@ class AiPlayer(ai_interface.AiPlayerIf):
 
     def _score_diff_seeds(self, _):
         """Score the seeds on each side of the board.
-        Sometime hoarding seeds is a good strategy."""
+        Sometimes hoarding seeds is a good strategy."""
+
+        # TODO should seed scorer exclude seeds in child holes?
 
         sum_t = sum(self.game.board[loc] for loc in self.game.cts.true_range)
         sum_f = sum(self.game.board[loc] for loc in self.game.cts.false_range)
@@ -294,8 +303,12 @@ class AiPlayer(ai_interface.AiPlayerIf):
         """Score count of seeds remaining on the board.
         To make min values best for true, mult by -1."""
 
+        # TODO should seed scorer should seeds in child holes?
+        # TODO does this deal with hole owners properly??
+
         tmult = -1 if self.game.turn else 1
         return sum(self.game.board) * self.sc_params.seeds_m * tmult
+
 
 
     def _score_diff_empties(self, _):
@@ -403,6 +416,16 @@ def player_dict_rules():
         excp=gi.GameInfoError)
 
     rules.add_rule(
+        'stores_scorer',
+        rule=lambda pdict, ginfo: (not ginfo.stores
+                                   and ckey.SCORER in pdict
+                                   and ckey.STORES_M in pdict[ckey.SCORER]
+                                   and pdict[ckey.SCORER][ckey.STORES_M]),
+        both_objs=True,
+        msg='Stores scorer is not supported without stores.',
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
         'mlaps_access_prohibit',
         rule=lambda pdict, ginfo: (ginfo.mlaps
                                    and ckey.SCORER in pdict
@@ -423,6 +446,17 @@ def player_dict_rules():
         excp=gi.GameInfoError)
 
     rules.add_rule(
+        'no_side_access',
+        rule=lambda pdict, ginfo: (ginfo.mlength == 3
+                                   and ckey.SCORER in pdict
+                                   and ckey.ACCESS_M in pdict[ckey.SCORER]
+                                   and pdict[ckey.SCORER][ckey.ACCESS_M]),
+        both_objs=True,
+        msg='Scorer ACCESS_M multiplier is incompatible with'
+        'NO_SIDES and TERRITORY',
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
         'child_scorer',
         rule=lambda pdict, ginfo: (not ginfo.child_cvt
                                    and ckey.SCORER in pdict
@@ -433,14 +467,16 @@ def player_dict_rules():
         excp=gi.GameInfoError)
 
     rules.add_rule(
-        'no_side_access',
-        rule=lambda pdict, ginfo: (ginfo.mlength == 3
+        'no_repeat_scorer',
+        rule=lambda pdict, ginfo: (not (ginfo.sow_own_store
+                                        or ginfo.capt_rturn
+                                        or ginfo.xc_sown)
                                    and ckey.SCORER in pdict
-                                   and ckey.ACCESS_M in pdict[ckey.SCORER]
-                                   and pdict[ckey.SCORER][ckey.ACCESS_M]),
+                                   and ckey.REPEAT_TURN in pdict[ckey.SCORER]
+                                   and pdict[ckey.SCORER][ckey.REPEAT_TURN]),
         both_objs=True,
-        msg='Scorer ACCESS_M multiplier is incompatible with'
-        'NO_SIDES | TERRITORY',
+        msg="Repeat turn scorer not supported without repeat turns "
+            "(SOW_OWN_STORE | CAPT_RTURN | XC_SOWN)",
         excp=gi.GameInfoError)
 
     rules.add_rule(

@@ -539,35 +539,35 @@ is included after the parameter sections.
 
 <p>minimaxer: an Alpha-Beta Pruning MiniMaxer
 <p>negamaxer: minimaxer with a very minor optimization for alternating turn games (no repeat turns). Uses minimaxer depths for difficulties.
-<p>montecarlo_ts: a Monte Carlo Tree Search player (that is likely implemented wrong).
+<p>montecarlo_ts: a Monte Carlo Tree Search player.
 <h4 id="difficulty"> Default Difficulty </h4>
 <p class="pdesc">Location in Config Files: player : difficulty
 <p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
 <p class="pdesc">Default value: None
 <p class="pdesc">UI Tab: Player
 
-<p>The default difficulty. Can be changed at play time, even during game play, in the Mancala UI.
+<p>The default difficulty for the game. The difficulty can be changed at play time,  even during game play, in the Mancala UI.
 <h4 id="ai_active"> Start Active </h4>
 <p class="pdesc">Location in Config Files: player : ai_active
 <p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
 <p class="pdesc">Default value: None
 <p class="pdesc">UI Tab: Player
 
-<p>Automatically activate the AI player. The AI player can be manually deactivated.
+<p>Automatically activate the AI player. The AI player can be manually deactivated, but it is selected for the starter it will start the game.
 <h4 id="mm_depth"> MiniMaxer Depth </h4>
 <p class="pdesc">Location in Config Files: player : ai_params : mm_depth
 <p id="list[int]" class="pdesc">Type: <a href="param_types.html#list[int]"> list[int] </a>
 <p class="pdesc">Default value: None
 <p class="pdesc">UI Tab: Player
 
-<p>For each difficulty [0-3], the depth that the minimaxer will search to.
+<p>There are four game difficulties. Each select a set of parameters give the algorithm choosen.
 <h4 id="mcts_bias"> MCTS Bias </h4>
 <p class="pdesc">Location in Config Files: player : ai_params : mcts_bias
 <p id="list[int]" class="pdesc">Type: <a href="param_types.html#list[int]"> list[int] </a>
 <p class="pdesc">Default value: None
 <p class="pdesc">UI Tab: Player
 
-<p>Bias for the Monte Carlo Tree seach algorithm for each difficulty level (0-3). 
+<p>Bias for the Monte Carlo Tree seach algorithm for each difficulty level (0-3).  A larger bias encourages move game tree exploration, but defocuses the exploration from the best choices. This is critical in avoiding getting stuck in sub-obtimal move choices.
 <p>Value is divided by 1000.
 <h4 id="mcts_nodes"> MCTS Nodes per Move </h4>
 <p class="pdesc">Location in Config Files: player : ai_params : mcts_nodes
@@ -575,70 +575,84 @@ is included after the parameter sections.
 <p class="pdesc">Default value: None
 <p class="pdesc">UI Tab: Player
 
-<p>Number of leaf nodes to create each time we pick a new move. One value for each difficulty level (0-3).
+<p>Number of game tree expansions to perform each time we pick a new move. One value for each difficulty level (0-3).
 <h4 id="mcts_pouts"> MCTS Playouts per Node </h4>
 <p class="pdesc">Location in Config Files: player : ai_params : mcts_pouts
 <p id="list[int]" class="pdesc">Type: <a href="param_types.html#list[int]"> list[int] </a>
 <p class="pdesc">Default value: None
 <p class="pdesc">UI Tab: Player
 
-<p>Number of end games played out from each leaf node created. One value for each difficulty level (0-3).
+<p>Number of end games played out from each expanded node. One value for each difficulty level (0-3).
 <h4 id="stores_m"> Stores mult </h4>
 <p class="pdesc">Location in Config Files: player : scorer : stores_m
 <p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
 <p class="pdesc">Default value: None
 <p class="pdesc">UI Tab: Player
 
-<p>The minimax scorer will use this as a multiplier to maximize the bottom players stores versus the top player's. 
+<p>The multiplier for the stores scorer. It is applied to the difference of the seeds in each players store.
+<p>The stores scorer may not be used in games with <a href="game_params.html#stores">STORES</a>. A zero multiplier disables the stores scorer.
+<p>Used only for  minimax & negamax players.
 <h4 id="access_m"> Access mult </h4>
 <p class="pdesc">Location in Config Files: player : scorer : access_m
 <p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
 <p class="pdesc">Default value: None
 <p class="pdesc">UI Tab: Player
 
-<p>Access mult
+<p>The multiplier for the access scorer. The access scorer computes how many of the opponents holes can be accessed for the given game state.
+<p>The access scorer is slow and therefore is prohibited from being used in multilap games (<a href="game_params.html#mlaps">MLAPS</a>); games with user choice of move direction (<a href="game_params.html#udir_holes">UDIR_HOLES</a>); and games where hole owners are not predefined (<a href="game_params.html#no_sides">NO_SIDES</a>). In these game configurations, the multiplier must be zero to disable the access scorer.
+<p>Used only for minimax & negamax players.
 <h4 id="seeds_m"> Seeds mult </h4>
 <p class="pdesc">Location in Config Files: player : scorer : seeds_m
 <p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
 <p class="pdesc">Default value: None
 <p class="pdesc">UI Tab: Player
 
-<p>Seeds mult
+<p>The multiplier for the seeds scorer. The seeds scorer computes how many seeds each player has on the game board.
+<p>TODO does this properly deal with children or hole owners?
+<p>Used only for minimax & negamax players.
 <h4 id="empties_m"> Empties mult </h4>
 <p class="pdesc">Location in Config Files: player : scorer : empties_m
 <p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
 <p class="pdesc">Default value: None
 <p class="pdesc">UI Tab: Player
 
-<p>Empties mult
+<p>The multiplier for the empties scorer. The empties scorer counts the number empty holes each player has on the board.
+<p>Used only for minimax & negamax players.
 <h4 id="child_cnt_m"> Child Count mult </h4>
 <p class="pdesc">Location in Config Files: player : scorer : child_cnt_m
 <p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
 <p class="pdesc">Default value: None
 <p class="pdesc">UI Tab: Player
 
-<p>Child Count mult
+<p>The multiplier for the child scorer. The child scorer counts the number children each player has.
+<p>The child scorer may only be used on games with children. If the game does not include child the multiplier must be zero.
+<p>Used only for the minimax & negamax players.
 <h4 id="evens_m"> Evens mult </h4>
 <p class="pdesc">Location in Config Files: player : scorer : evens_m
 <p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
 <p class="pdesc">Default value: None
 <p class="pdesc">UI Tab: Player
 
-<p>Evens mult
+<p>The multiplier for the even scorer. The even scorer counts the number of holes with an even number of seeds. This is useful to use when the capture mechanism is evens.
+<p>Used only for minimax & negamax players.
 <h4 id="easy_rand"> Easy Random Addin </h4>
 <p class="pdesc">Location in Config Files: player : scorer : easy_rand
 <p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
 <p class="pdesc">Default value: None
 <p class="pdesc">UI Tab: Player
 
-<p>Easy Random Addin
+<p>If the game is being played on easy mode (game difficult of easy/0), a random value may be added to the static evaluation. This can be done to induce errors into the ai player's game play. A random value is selected between -easy_rand and + easy_rand.
+<p>The specific value for this should be selected based on the ranges of the paremeters and multiplier.
+<p>Used only for minimax & negamax players.
 <h4 id="repeat_turn"> Repeat Turn mult </h4>
 <p class="pdesc">Location in Config Files: player : scorer : repeat_turn
 <p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
 <p class="pdesc">Default value: None
 <p class="pdesc">UI Tab: Player
 
-<p>Repeat Turn mult
+<p>A value used to encourage or discourage repeat turns. The value is added in for the current player and subtracted off the score for the opposing playing. Use a positive value to encourage the AI player to repeat turns.
+<p>This parameter may only be used for games in which repeated turns are possible (<a href="game_params.html#sow_own_store">SOW_OWN_STORE</a>, <a href="game_params.html#capt_rturn">CAPT_RTURN</a> or <a href="game_params.html#xc_sown">XC_SOWN</a>).
+<p>Used only for minimax & negamax players.
 <br><br><br>
 <h2 id="index">Parameter Index</h2>
 <div class="cols_row">

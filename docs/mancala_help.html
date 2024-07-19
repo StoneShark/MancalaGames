@@ -299,7 +299,8 @@ game is started.
 visible to allow review of the options.
 
 <h2 id="aiplayer">AI Player</h2>
-<p>Several AI Player algorithms are supported.
+<p>Several AI Player algorithms are supported: minimaxer, negamaxer and monte carlo tree search.
+
 <h3>Minimaxer</h3>
 <p>The goal of minimax is to minimize the maximum possible loss,
 that is search for a move that minimizes your opponents best possible
@@ -326,20 +327,58 @@ This optimization is not significant or even noticable by a human player.
 
 <h3>Monte Carlo Tree Search</h3>
 <p>The Monte Carlo tree search (MCTS) algorithm uses random game play to determine
-the quality of a move. Random moves are selected and the game is played to
-completion. The quality of the move is then computed based on the game
-outcome.
-<p>A key advantage of this approach is that games states do not need to be
-statically evaluated.
-<p>Several parameters do control how the random search is performed and how a
-game's outcome is bubbled back up the game tree.
-<p><i>Note: this AI Player is bad; likely due to an implementaiton error.</i>
+the quality game moves.
+This quality is computed based on the final game outcomes.
+This is a key advantage to MCTS because games states do not need to be
+statically evaluated based on <i>a priori</i> knowledge of the game.
 
-<h3 id="aiparams">AI Player Params</h3>
-<p>The AI Player parameters control how the AI player evaluates the
-game after each simulated move.
-Negative (or low) values are good for the AI moves.
-Positive (or high) values are good for the player.
+<ol>
+<li class="spaced">Expand the game tree from the
+<b class="inhead">current-game-node</b> by mcts_nodes.
+At each iteration, this expansion adds an unexplored
+<b class="inhead">game-node</b> to the game tree.
+The expasion tends towards the best moves, but also uses mcts_bias to spread the search.
+Steps 2 and 3 are done for each expansion.
+<li class="spaced">From this new, unexplored <b class="inhead">game-node</b>,
+play out mcts_pouts games.
+Random moves are selected for this playout.
+When the game simulation is completed a concrete reward is known for the
+choices made.
+<li>Backpropagate the reward from those play outs from the expanded
+<b class="inhead">game-node</b> up to current-game-node.
+<li class="spaced">Select the best node from the <b class="inhead">current-game-node</b>,
+given the new information.
+The bias is not used in this selection--the best move (based on data collected so far)
+will be choosen.
+</ol>
+
+<p>Several parameters control how the game tree is expanded and searched:
+
+<ul>
+<li class="spaced"><b><a href="game_params.html#mcts_nodes">MCTS_NODES</a></b>:
+defines how many nodes are added to the game tree on each turn.
+<li class="spaced"><b><a href="game_params.html#mcts_pouts">MCTS_POUTS</a></b>:
+defines how many games are played out from each of the new nodes added to the game tree.
+The result of these play outs, are used for the score (reward) for the node played out.
+<li class="spaced"><b><a href="game_params.html#mcts_bias">MCTS_BIAS</a></b>:
+defines how likely we are to explore the game tree,
+instead of focusing only on the best paths found so far.
+Without this exploration the player might never find the overall best path
+(i.e. it would get stuck in local maxima).
+</ul>
+
+<h3 id="aiparams">Minimaxer/Negamaxer Evaluation Multipliers</h3>
+<p>The Minimaxer and Negamaxer statically evaluate
+each game state after each simulated move.
+Game properties are collected for a given game state and
+multipliers are applied to determine the state's score.
+For example, the number of empty holes on each side of the board is
+numerical property. The available properties are predetermined,
+but the multipliers selectable parameters defined in the game configuration
+or adjusted with via <a href="#opwindow">Mancala Options UI</a>.
+The parameters are described in <a href="game_params.html#tab_Player">Mancala Parameters</a>
+page under Player Tab .
+
 <p>The multipliers are applied to a difference of each players statistic.
 For example, the number of seeds the AI player has are
 subtracted from the human players seeds and then the multiplier is
@@ -347,16 +386,15 @@ applied:
 <p class="center">(&#931; (Human seeds) - &#931; (AI seeds)) * seeds_m
 <p>thus the multipler can be used to either maximize or minimize the
 statistic.
-Positive multipliers maximize it and negative multipliers will minimize it.
+Positive multipliers maximize it and negative multipliers will minimize it
+from the perspective of the AI player.
 <p>The multipliers set the relative importance of each factor in evaluating
 the state of the board; higher absolute values are more important.
 The UI imposes limits the range of values that
 can be selected, but any integer can be set directly in the config file.
 <p>The score for each board is the sum of the statistic difference times its multiplier:
 <p class="center">score = Easy_Error + &#931; ((Player_Stat - AI_Stat) * multiplier)
-<p>The parameters effecting the AI player are shown in the
-<a href="game_params.html#tab_Player">Mancala Game Parameters</a> table.
-
+<p>Easy_Error sets the range of a random number added to the state's score.
 
 <h2 id="pregames">Preconfigured Games</h2>
 <p>Mancala game names vary widely.
