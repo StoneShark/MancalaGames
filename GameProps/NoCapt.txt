@@ -7,9 +7,7 @@
    "game_info": {
       "name": "NoCapt",
       "about": "Sow direction is counter-clockwise, sow into own store, but no other capture. Extra turn when last seed in store.",
-      "min_move": 1,
       "mustpass": true,
-      "oppsidecapt": true,
       "skip_start": true,
       "sow_direct": 1,
       "sow_own_store": true,
