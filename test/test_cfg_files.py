@@ -21,7 +21,7 @@ import pytest
 # report warnings as test failures
 pytestmark = [pytest.mark.integtest, pytest.mark.filterwarnings("error")]
 
-
+from context import ai_player
 from context import man_config
 
 
@@ -36,7 +36,8 @@ if BAD_CFG in FILES:
 @pytest.mark.parametrize('file', FILES)
 def test_config_files(file):
 
-    man_config.make_game(PATH + file)
+    game, pdict = man_config.make_game(PATH + file)
+    ai_player.AiPlayer(game, pdict)
 
 
 def test_bad_file():

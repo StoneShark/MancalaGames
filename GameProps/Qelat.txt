@@ -17,7 +17,7 @@
    },
    "player": {
       "scorer": {
-         "stores_m": 6,
+         "stores_m": 0,
          "access_m": 0,
          "seeds_m": 0,
          "empties_m": 0,
