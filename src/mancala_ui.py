@@ -265,8 +265,12 @@ class MancalaUI(tk.Frame):
             value=game_log.INFO, variable=self.log_level,
             command=lambda: setattr(game_log, 'level', self.log_level.get()))
         logmenu.add_radiobutton(
-            label='Detail/ALL',
+            label='Detail',
             value=game_log.DETAIL, variable=self.log_level,
+            command=lambda: setattr(game_log, 'level', self.log_level.get()))
+        logmenu.add_radiobutton(
+            label='Simulated Moves',
+            value=game_log.SIMUL, variable=self.log_level,
             command=lambda: setattr(game_log, 'level', self.log_level.get()))
         logmenu.add_separator()
         logmenu.add_checkbutton(

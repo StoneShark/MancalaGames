@@ -512,7 +512,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             single_sower.sow_seeds(mdata)
         else:
             self.deco.sower.sow_seeds(mdata)
-            game_log.step(f'Sow from {mdata.sow_loc}', self)
+        game_log.step(f'Sow from {mdata.sow_loc}', self)
 
         return mdata
 
