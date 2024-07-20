@@ -12,6 +12,8 @@ import random
 
 import ai_interface
 
+from game_logger import game_log
+
 
 # %% constants
 
@@ -253,7 +255,9 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
             if all(cstate for cstate in node.childs.values()):
                 node = self._best_child(node, self.bias).node
                 if node.node_id in node_hist:
-                    print("Found Loop in Tree Policy; ending move search.")
+                    game_log.add_ai(
+                        "Found Loop in Tree Policy; ending move search.",
+                        game_log.INFO)
                     return None
 
                 node_hist.appendleft(node.node_id)
@@ -263,17 +267,18 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
                 if node.node_id in node_hist:
                     # don't loop, expand another node
                     node.reward -= 1
-                    print("Found Loop in expand:\n",
-                          f"Reducing reward of {node.node_id};",
-                          f"now reward= {node.reward}")
+                    game_log.add_ai(
+                        "Found Loop in expand:\n"
+                        + f"Reducing reward of {node.node_id};"
+                        + f"now reward= {node.reward}", game_log.INFO)
                     continue
 
                 node_hist.appendleft(node.node_id)
                 break
 
         else:
-            print(self.game)
-            print(node_hist)
+            game_log.add_ai(str(self.game), game_log.MOVE)
+            game_log.add_ai(str(node_hist), game_log.MOVE)
             msg = f"Stuck in TREE Policy for {MAX_TURNS}"
             assert False, msg
 

@@ -627,10 +627,12 @@ class MancalaUI(tk.Frame):
         """If it's the AI's turn, do a move. AI is top player."""
 
         if self.ai_active.get() and self.game.get_turn():
-            saved_active = game_log.active
 
-            game_log.active = self.log_ai.get()
+            if not self.log_ai.get():
+                game_log.set_ai_mode()
+
             move = self.player.pick_move()
-            game_log.active = saved_active
+
+            game_log.clear_ai_mode()
 
             self.move(move)

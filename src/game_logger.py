@@ -7,10 +7,25 @@ Created on Fri Aug 11 15:01:16 2023
 
 import collections
 import datetime
+import enum
 import sys
 import textwrap
 
 import man_path
+
+
+class LogMode(enum.Enum):
+    """The states that the logger may be in."""
+
+    OFF = 0
+    ACTIVE = 1
+    ACT_IN_AI = 2  # active but supressed for AI
+    SIMULATE = 3   # active but move all log items to SIMUL (sort of)
+
+
+    def do_log(self):
+        """Is there an active logging mode."""
+        return self in {self.ACTIVE, self.SIMULATE}
 
 
 
@@ -20,21 +35,22 @@ class GameLog:
     moves.  The game object is passed in, it's "str" is printed in
     the log."""
 
+    # Log levels
     MOVE = 0
     IMPORT = 1
     STEP = 2
     INFO = 3
     DETAIL = 4
-    SHOWALL = DETAIL
     SIMUL = 5
+    SHOWALL = SIMUL
+
 
     def __init__(self):
 
-        self._active = True
+        self._state = LogMode.ACTIVE
         self._live = False
         self._level = GameLog.MOVE
-
-        self._simulate = False
+        self._sim_count = 0   # count of nested set_simulate calls
 
         self._log_records = collections.deque()
         self._move_start = collections.deque()
@@ -43,12 +59,21 @@ class GameLog:
     @property
     def active(self):
         """Get active property."""
-        return self._active
+        return self._state == LogMode.ACTIVE
 
     @active.setter
     def active(self, value):
-        """Set active."""
-        self._active = value
+        """Set logging active -- value a boolean."""
+
+        if value is True and self._state in (LogMode.OFF, LogMode.ACTIVE):
+            self._state = LogMode.ACTIVE
+
+        elif value is False and self._state in (LogMode.OFF, LogMode.ACTIVE):
+            self._state = LogMode.OFF
+
+        else:
+            print(f'Ignoring log active set prop (_state={self._state})')
+
 
     @property
     def live(self):
@@ -74,23 +99,41 @@ class GameLog:
 
     def new(self):
         """Reset the game log."""
+
         self._log_records.clear()
         self._move_start.clear()
+        self._sim_count = 0
         self.add('\n*** New game', GameLog.MOVE)
 
 
-    def add(self, text, lvl=DETAIL):
-        """Add the text to the log.
+    def _add(self, text, lvl):
+        """Already know the log is active.
+        Add the text to the log.
         If simulate is on set the log lvl to SIMUL"""
 
-        if self._active:
-            if self._simulate:
-                lvl = self.SIMUL
+        if self._state == LogMode.SIMULATE:
+            lvl = self.SIMUL
 
-            if lvl <= self._level:
-                self._log_records.append(text)
-                if self._live:
-                    print(text)
+        if lvl <= self._level:
+            self._log_records.append(text)
+            if self._live:
+                print(text)
+
+
+    def add(self, text, lvl=DETAIL):
+        """Check if active, if so call _add"""
+
+        if self._state.do_log():
+            self._add(text, lvl)
+
+
+    def add_ai(self, text, lvl=DETAIL):
+        """Call during ACT_IN_AI to force an entry to be
+        added to the log.  Use sparingly!"""
+
+        if self._state in {LogMode.ACT_IN_AI,
+                           LogMode.ACTIVE}:
+            self._add(text, lvl)
 
 
     def _mark_turn(self):
@@ -101,27 +144,27 @@ class GameLog:
 
     def turn(self, turn_nbr, move_desc, game_obj):
         """Log a turn in the game log (if it's active)."""
-        if self._active:
+        if self._state.do_log():
             self._mark_turn()
-            self.add(f'\n{turn_nbr}: ' + move_desc, GameLog.MOVE)
-            self.add(str(game_obj), GameLog.MOVE)
+            self._add(f'\n{turn_nbr}: ' + move_desc, GameLog.MOVE)
+            self._add(str(game_obj), GameLog.MOVE)
 
 
     def step(self, step_name, game_obj=None, lvl=None):
         """Add a game step to the log."""
 
-        if self._active:
+        if self._state.do_log():
             lvl = lvl if lvl else GameLog.STEP
 
             if not game_obj:
-                self.add(f'\n    {step_name}.', GameLog.STEP)
+                self._add(f'\n    {step_name}.', GameLog.STEP)
 
             elif lvl > GameLog.STEP and lvl > self._level:
-                self.add(f'    {step_name}.', GameLog.STEP)
+                self._add(f'    {step_name}.', GameLog.STEP)
 
             else:
-                self.add(f'\n    {step_name}:', lvl)
-                self.add(textwrap.indent(str(game_obj), '    '), lvl)
+                self._add(f'\n    {step_name}:', lvl)
+                self._add(textwrap.indent(str(game_obj), '    '), lvl)
 
 
     def prev(self):
@@ -172,20 +215,53 @@ class GameLog:
 
 
     def set_simulate(self):
-        """Change the logging level of any logged text during
-        simulated ops to SIMUL.
+        """While in SIMULATE mode change the logging level
+        of any logged text during simulated ops to SIMUL.
         Use this when moves are being simulated to test
         game conditions, e.g. must share, grand slam not
         legal.
+
+        If set_simulate calls are nested, the mode will
+        remain active the same number of calls have been
+        made to clear_simulate.
+
         Do not use this for AI moves."""
-        self._simulate = True
-        self.add('*** SIMULATE STARTED', self.SIMUL)
+
+        if self._state == LogMode.ACTIVE:
+            self._state = LogMode.SIMULATE
+            self.add('*** SIMULATE STARTED', self.SIMUL)
+
+        if self._state == LogMode.SIMULATE:
+            self._sim_count += 1
 
 
     def clear_simulate(self):
         """Turn simulate mode off."""
-        self._simulate = False
-        self.add('*** SIMULATE STOPPED', self.SIMUL)
+
+        if self._state == LogMode.SIMULATE:
+            self._sim_count -= 1
+
+            if not self._sim_count:
+                self._state = LogMode.ACTIVE
+                self.add('*** SIMULATE STOPPED', self.SIMUL)
+
+
+    def set_ai_mode(self):
+        """When in AI mode most output is prevented."""
+
+        if self._state == LogMode.ACT_IN_AI:
+            raise NotImplementedError(
+                "Nested set_ai_mode calls not supported.")
+
+        if self._state == LogMode.ACTIVE:
+            self._state = LogMode.ACT_IN_AI
+
+
+    def clear_ai_mode(self):
+        """Turn simulate mode off."""
+
+        if self._state == LogMode.ACT_IN_AI:
+            self._state = LogMode.ACTIVE
 
 
 # the global game_log

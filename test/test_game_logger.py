@@ -29,13 +29,15 @@ class TestGameLog:
 
     def test_construct(self, glog):
 
-        assert glog._active
-        assert not glog._live
-        assert glog._level == glog.MOVE
-        assert not glog._simulate
+        assert glog._state == game_logger.LogMode.ACTIVE
         assert glog.active
-        assert not glog.live
+
+        assert glog._level == glog.MOVE
         assert glog.level == glog.MOVE
+
+        assert not glog._live
+        assert not glog.live
+
         assert not glog._log_records
         assert not glog._move_start
 
@@ -162,16 +164,23 @@ class TestGameLog:
 
     def test_active_basic(self, glog, capsys):
 
+        assert glog._state == game_logger.LogMode.ACTIVE
         glog.add('active one', glog.MOVE)
 
         glog.active = False
+        assert not glog.active
+        assert glog._state == game_logger.LogMode.OFF
         glog.add('not active one', glog.MOVE)
 
         glog.active = True
+        assert glog.active
+        assert glog._state == game_logger.LogMode.ACTIVE
+
         glog.add('active two', glog.MOVE)
 
         glog.dump()
         data = capsys.readouterr().out.split('\n')
+        print(data)
 
         assert len(data) == 5
         assert '' == data[0]
@@ -179,6 +188,35 @@ class TestGameLog:
         assert 'active one' == data[2]
         assert 'active two' == data[3]
         assert '' == data[4]
+
+
+    def test_odd_cases(self, glog):
+
+        assert glog._state == game_logger.LogMode.ACTIVE
+
+        glog.active = False
+        assert not glog.active
+        assert glog._state == game_logger.LogMode.OFF
+
+        glog.active = False
+        assert not glog.active
+        assert glog._state == game_logger.LogMode.OFF
+
+        glog.active = 12
+        assert not glog.active
+        assert glog._state == game_logger.LogMode.OFF
+
+        glog.active = True
+        assert glog.active
+        assert glog._state == game_logger.LogMode.ACTIVE
+
+        glog.active = True
+        assert glog.active
+        assert glog._state == game_logger.LogMode.ACTIVE
+
+        glog.active = 12
+        assert glog.active
+        assert glog._state == game_logger.LogMode.ACTIVE
 
 
     def test_active_ops(self, glog, game):
@@ -340,10 +378,13 @@ class TestGameLog:
         assert len(glog._log_records) == 1
 
         glog.set_simulate()
-        assert glog._simulate
+        assert glog._state == game_logger.LogMode.SIMULATE
 
         # not added, logged as SIMUL but log level is MOVE
         glog.add('test line two', glog.MOVE)
+        assert len(glog._log_records) == 1
+
+        glog.add_ai('message from ai not logged', glog.MOVE)
         assert len(glog._log_records) == 1
 
         # now logged
@@ -358,15 +399,99 @@ class TestGameLog:
         assert len(glog._log_records) == 1
 
         glog.set_simulate()
-        assert glog._simulate
+        assert glog._state == game_logger.LogMode.SIMULATE
 
         # not added, logged as SIMUL but log level is MOVE
         glog.add('test line two', glog.MOVE)
         assert len(glog._log_records) == 1
 
         glog.clear_simulate()
-        assert not glog._simulate
+        assert glog._state == game_logger.LogMode.ACTIVE
 
         # now logged with MOVE
         glog.add('test line two', glog.MOVE)
         assert len(glog._log_records) == 2
+
+
+    def test_nested_simulates(self, glog):
+
+        assert glog._state == game_logger.LogMode.ACTIVE
+
+        glog.set_simulate()
+        assert glog._state == game_logger.LogMode.SIMULATE
+        assert glog._sim_count == 1
+
+        glog.set_simulate()
+        assert glog._state == game_logger.LogMode.SIMULATE
+        assert glog._sim_count == 2
+
+        glog.clear_simulate()
+        assert glog._state == game_logger.LogMode.SIMULATE
+        assert glog._sim_count == 1
+
+        glog.clear_simulate()
+        assert glog._state == game_logger.LogMode.ACTIVE
+        assert glog._sim_count == 0
+
+        glog.clear_simulate()
+        assert glog._state == game_logger.LogMode.ACTIVE
+        assert glog._sim_count == 0
+
+
+    def test_mixed_modes(self, glog):
+
+        # if in ai_mode, cant go to simulate mode
+        glog.set_ai_mode()
+        assert glog._state == game_logger.LogMode.ACT_IN_AI
+        assert glog._sim_count == 0
+
+        glog.set_simulate()
+        assert glog._state == game_logger.LogMode.ACT_IN_AI
+        assert glog._sim_count == 0
+
+        # confirm back to active
+        glog.clear_ai_mode()
+        assert glog._state == game_logger.LogMode.ACTIVE
+
+        # if in simulate mode, can't go to ai_mode
+        glog.set_simulate()
+        assert glog._state == game_logger.LogMode.SIMULATE
+        assert glog._sim_count == 1
+
+        glog.set_ai_mode()
+        assert glog._state == game_logger.LogMode.SIMULATE
+
+
+    def test_ai_mode(self, glog):
+
+        assert glog._state == game_logger.LogMode.ACTIVE
+
+        # confirm both add and add_ai work in ACTIVE mode
+        glog.add('test line one', glog.MOVE)
+        assert len(glog._log_records) == 1
+
+        glog.add_ai('message from ai mode (but active)', glog.MOVE)
+        assert len(glog._log_records) == 2
+
+
+        # confirm only add_ai works in ai_mode
+        glog.set_ai_mode()
+        assert glog._state == game_logger.LogMode.ACT_IN_AI
+
+        glog.add('test line two (not logged)', glog.MOVE)
+        assert len(glog._log_records) == 2
+
+        glog.add_ai('message from ai mode', glog.MOVE)
+        assert len(glog._log_records) == 3
+
+
+        # nested set_ai_mode calls not supported
+        with pytest.raises(NotImplementedError):
+            glog.set_ai_mode()
+
+
+        glog.clear_ai_mode()
+        assert glog._state == game_logger.LogMode.ACTIVE
+
+        glog.clear_ai_mode()
+        assert glog._state == game_logger.LogMode.ACTIVE
