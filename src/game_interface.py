@@ -215,6 +215,10 @@ class WinCond(enum.Enum):
         """Has the game ended."""
         return self is not WinCond.REPEAT_TURN
 
+    def is_win(self):
+        """Did the game or round end winner."""
+        return self in (WinCond.WIN, WinCond.ROUND_WIN)
+
 
 @dc.dataclass(frozen=True, kw_only=True)
 class GameInfo:

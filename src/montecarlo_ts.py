@@ -11,7 +11,6 @@ import math
 import random
 
 import ai_interface
-import game_interface as gi
 
 
 # %% constants
@@ -37,6 +36,9 @@ class BestMove:
 # %%  game nodes
 
 
+BSTRS = ['F', 'T']
+
+
 class GameNode:
     """A class for keeping the game tree nodes."""
 
@@ -55,22 +57,49 @@ class GameNode:
 
     def __str__(self):
         string = f'Id: {self.node_id}  Reward: {self.reward}  ' \
-            f'Visits: {self.visits}\n'
+            f'Visits: {self.visits}'
         if self.leaf:
-            string += f'Leaf: {self.leaf}\n'
-        string += str(self.state) + '\n'
-        string += 'Leaf  ' if self.leaf else ''
-        for move, child in self.childs.items():
-            ctext = f'{child.node_id},{child.reward}' if child else 'none'
-            string += f'{move}: {ctext} '
-        string += ' (id,reward)'
+            string += '  Leaf'
+        string += '\n'
+        string += str(self.state)
+
+        if self.childs:
+            string += '\n'
+            for move, child in self.childs.items():
+                ctext = f'{child.node_id},{child.reward}' if child else 'none'
+                string += f'{move}: {ctext} '
+            string += ' (id,reward)'
+
         return string
 
 
-    def add_child_state(self, move, cstate):
-        """Save the child state for move."""
+    def rprint(self, indent='', printed=None):
+        """Do a recursive print of the game tree."""
 
-        self.childs[move] = cstate
+        if printed:
+            printed += [self]
+        else:
+            printed = [self]
+
+        print(f'id={self.node_id}  {self.reward}  {self.visits} ',
+              f'{BSTRS[self.leaf]}')
+
+        indent += '    '
+        for move, child in self.childs.items():
+            print(indent, f'mv {move}: ', end='')
+            if not child:
+                print('None')
+            elif child in printed:
+                print(f'{child.node_id} already printed.')
+            else:
+                child.rprint(indent, printed)
+
+
+    def add_child_state(self, move, cnode):
+        """Save the child node for move."""
+
+        self.childs[move] = cnode
+
 
 # %%
 
@@ -164,7 +193,7 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
             assert self.my_turn_id == self.game.get_turn(), \
                 "MCTS can only be used by one player"
         else:
-            self.my_turn_id = self.game.turn
+            self.my_turn_id = self.game.get_turn()
 
         game_state = clear_mcount(self.game.state)
         if game_state in self.node_dict:
@@ -182,11 +211,13 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
 
             tree_node = self.game_nodes[node_hist[0]]
             if not tree_node.leaf:
-                reward = self._rollouts(node_hist[0])
+                reward = self._rollouts(tree_node)
+                visits = self.nbr_pouts
             else:
-                reward = tree_node.reward
+                reward = 1.0 if tree_node.reward else 0.0
+                visits = 1
 
-            self._backprop(node_hist, reward)
+            self._backprop(node_hist, reward, visits)
 
         node = self._best_child(start_node, 0.0)
         return node.move
@@ -301,7 +332,7 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
         return max(moves, key=lambda b: b.score)
 
 
-    def _one_playout(self, node_id):
+    def _one_playout(self, tree_node):
         """Simulate a random game from node,
         return the winner (if there was one) and reward."""
 
@@ -309,7 +340,7 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
 
         # XXXX mcount is likely too low, see ai_player rule mcts_move_nbrs
         self.game.state = set_mcount_from(self.game,
-                                          self.game_nodes[node_id].state)
+                                          tree_node.state)
 
         for _ in range(MAX_TURNS):
 
@@ -322,41 +353,38 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
             if cond and cond.is_ended():
                 break
 
-            if self.game.info.mustpass:
-                self.game.test_pass()
-
         else:
             cond = None
 
         reward = 0.0
-        if (cond in [gi.WinCond.WIN, gi.WinCond.ROUND_WIN]
-            and self.game.get_turn() == self.my_turn_id):
+        if cond and cond.is_win() and self.game.get_turn() == self.my_turn_id:
             reward = 1.0
 
         self.game.state = saved_state
         return reward
 
 
-    def _rollouts(self, node_id):
+    def _rollouts(self, tree_node):
         """Do playouts.
         Do a small number of play_outs sum the rewards."""
 
         reward = 0.0
         for _ in range(self.nbr_pouts):
-            reward += self._one_playout(node_id)
+            reward += self._one_playout(tree_node)
 
         return reward
 
 
-    def _backprop(self, node_hist, reward):
+    def _backprop(self, node_hist, reward, visits):
         """Propagate reward back through move history
         node_hist is a deque of node_ids with newest elements first."""
 
         for node_id in node_hist:
 
             node = self.game_nodes[node_id]
-            node.visits += 1
+            node.visits += visits
             node.reward += reward
+
 
 
     def get_move_desc(self):
