@@ -829,7 +829,9 @@ def deco_quitter(game):
 
     if game.info.goal == gi.Goal.MAX_SEEDS:
         quitter = MaxWinner(game, quitter)
-    else:  # elif game.info.goal == gi.Goal.TERRITORY:
+    elif game.info.goal == gi.Goal.TERRITORY:
         quitter = TerritoryEndGame(game, quitter)
+    else:
+        raise NotImplementedError(f"Goal {game.info.goal} not implemented.")
 
     return quitter

@@ -14,6 +14,7 @@ import utils
 from context import capturer
 from context import game_constants as gc
 from context import game_interface as gi
+from context import make_child
 from context import mancala
 
 from game_interface import CaptExtraPick
@@ -1224,6 +1225,86 @@ class TestNotWithOne:
         mdata.seeds = seeds
         assert game.deco.make_child.test(mdata) == etest
 
+
+
+class TestBadEnums:
+
+    def test_bad_cross_capt(self):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(capt_on=[4],
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        object.__setattr__(game_info, 'crosscapt', True)
+        object.__setattr__(game_info, 'xcpickown', 12)
+
+        with pytest.raises(NotImplementedError):
+            mancala.Mancala(game_consts, game_info)
+
+
+    def test_bad_grand_slam(self):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(capt_on=[4],
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        object.__setattr__(game_info, 'grandslam', 12)
+
+        with pytest.raises(NotImplementedError):
+            mancala.Mancala(game_consts, game_info)
+
+
+    def test_bad_child_type(self):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(capt_on=[4],
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        object.__setattr__(game_info, 'child_type', 12)
+
+        with pytest.raises(NotImplementedError):
+            mancala.Mancala(game_consts, game_info)
+
+
+    def test_bad_child_type_decos(self):
+        """Two decos should raise the error, check both"""
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(capt_on=[4],
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        object.__setattr__(game.info, 'child_type', 12)
+
+        with pytest.raises(NotImplementedError):
+            make_child.deco_child(game)
+
+        with pytest.raises(NotImplementedError):
+            capturer.deco_capturer(game)
+
+
+    def test_bad_child_rule(self):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(capt_on=[4],
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        object.__setattr__(game.info, 'child_type', gi.ChildType.NORMAL)
+        object.__setattr__(game.info, 'child_rule', 12)
+
+        with pytest.raises(NotImplementedError):
+            mancala.Mancala(game_consts, game_info)
 
 
 # %%

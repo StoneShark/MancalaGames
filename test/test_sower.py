@@ -1347,6 +1347,54 @@ class TestPrescribed:
 
 
 
+class TestBadEnums:
+
+    def test_bad_sow_rule(self):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(capt_on=[4],
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        object.__setattr__(game_info, 'sow_rule', 12)
+
+        with pytest.raises(NotImplementedError):
+            mancala.Mancala(game_consts, game_info)
+
+
+    def test_bad_mlaps(self):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(capt_on=[4],
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        object.__setattr__(game_info, 'mlaps', 12)
+
+        with pytest.raises(NotImplementedError):
+            mancala.Mancala(game_consts, game_info)
+
+
+    def test_bad_prescribed(self):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(capt_on=[4],
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        # sower doesn't handle
+        object.__setattr__(game_info, 'prescribed', SowPrescribed.ARNGE_LIMIT)
+        mancala.Mancala(game_consts, game_info)
+
+        object.__setattr__(game_info, 'prescribed', 12)
+        with pytest.raises(NotImplementedError):
+            mancala.Mancala(game_consts, game_info)
+
+
+
 # %%
 """
 in test dir

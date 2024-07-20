@@ -708,3 +708,20 @@ class TestOnlyRightTwo:
         game.mcount = move_nbr
 
         assert game.deco.allow.get_allowable_holes() == eresult
+
+
+
+class TestBadEnums:
+
+    def test_bad_allow_rule(self):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(capt_on=[4],
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        object.__setattr__(game_info, 'allow_rule', 12)
+
+        with pytest.raises(NotImplementedError):
+            mancala.Mancala(game_consts, game_info)

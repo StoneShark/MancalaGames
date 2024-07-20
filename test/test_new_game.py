@@ -495,3 +495,34 @@ class TestTerritory:
         cond = WinCond.WIN if win else WinCond.ROUND_WIN
         game.new_game(cond, new_round_ok=True)
         assert game.owner == eowners
+
+
+class TestBadEnums:
+
+    def test_bad_round_fill(self):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(capt_on=[4],
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        object.__setattr__(game_info, 'rounds', True)
+        object.__setattr__(game_info, 'round_fill', 12)
+
+        with pytest.raises(NotImplementedError):
+            mancala.Mancala(game_consts, game_info)
+
+    def test_bad_round_starter(self):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(capt_on=[4],
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        object.__setattr__(game_info, 'rounds', True)
+        object.__setattr__(game_info, 'round_starter', 12)
+
+        with pytest.raises(NotImplementedError):
+            mancala.Mancala(game_consts, game_info)

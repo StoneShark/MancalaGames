@@ -1225,3 +1225,19 @@ class TestTerritory:
         cond, winner = game.deco.ender.game_ended(False, False)
         assert cond == econd
         assert winner == ewinner
+
+
+class TestBadEnums:
+
+    def test_bad_goal(self):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(capt_on=[4],
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        object.__setattr__(game_info, 'goal', 12)
+
+        with pytest.raises(NotImplementedError):
+            mancala.Mancala(game_consts, game_info)

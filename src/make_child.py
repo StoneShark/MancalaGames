@@ -165,7 +165,6 @@ class NotInhibited(MakeChildIf):
 def deco_child(game):
     """Generate the make_child deco chain."""
 
-
     if game.info.child_type == gi.ChildType.NOCHILD:
         return NoChildren(game)
 
@@ -183,12 +182,21 @@ def deco_child(game):
     elif game.info.child_type == gi.ChildType.QUR:
         deco = QurChild(game, deco)
 
+    elif game.info.child_type not in (gi.ChildType.NORMAL,
+                                      gi.ChildType.WALDA):
+        raise NotImplementedError(
+            f"ChildType {game.info.child_type} not implemented.")
+
     if game.info.child_rule == gi.ChildRule.OPP_ONLY:
         deco = OppSideChild(game, deco)
 
-    if game.info.child_rule == gi.ChildRule.NOT_1ST_OPP:
+    elif game.info.child_rule == gi.ChildRule.NOT_1ST_OPP:
         deco = OppSideChild(game, deco)
         deco = NotWithOne(game, deco)
+
+    elif game.info.child_rule != gi.ChildRule.NONE:
+        raise NotImplementedError(
+            f"ChildRule {game.info.child_rule} not implemented.")
 
     deco = NotInhibited(game, deco)
 

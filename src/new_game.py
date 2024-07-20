@@ -116,9 +116,17 @@ class NewRound(NewGameIf):
             self.fill_orders = [range(holes),
                                 range(dbl_holes - 1, holes - 1, -1)]
 
-        else:   # RoundFill.OUTSIDE_FILL or user action
+        elif self.game.info.round_fill in (gi.RoundFill.NOT_APPLICABLE,
+                                           gi.RoundFill.OUTSIDE_FILL,
+                                           gi.RoundFill.UCHOOSE,
+                                           gi.RoundFill.UMOVE):
             self.fill_orders = [self.game.cts.false_fill,
                                 self.game.cts.true_fill]
+
+        else:
+            raise NotImplementedError(
+                    f"RoundFill {game.info.round_fill} not implemented.")
+
 
 
     def _compute_fills(self):
@@ -302,5 +310,13 @@ def deco_new_game(game):
 
         else:
             new_game = NewRound(game, new_game)
+
+        # catch an error in round starter at construction time
+        if game.info.round_starter not in (gi.RoundStarter.ALTERNATE,
+                                           gi.RoundStarter.LOSER,
+                                           gi.RoundStarter.WINNER,
+                                           gi.RoundStarter.LAST_MOVER):
+            raise NotImplementedError(
+                    f"RoundStarter {game.info.round_starter} not implemented.")
 
     return new_game

@@ -373,7 +373,10 @@ class MemoizeAllowable(AllowableIf):
 def deco_allow_rule(game, allowable):
     """Add the allow rule decos."""
 
-    if game.info.allow_rule == gi.AllowRule.OPP_OR_EMPTY:
+    if game.info.allow_rule == gi.AllowRule.NONE:
+        pass
+
+    elif game.info.allow_rule == gi.AllowRule.OPP_OR_EMPTY:
         allowable = OppOrEmptyEnd(game, allowable)
 
     elif game.info.allow_rule == gi.AllowRule.SINGLE_TO_ZERO:
@@ -398,6 +401,10 @@ def deco_allow_rule(game, allowable):
     elif game.info.allow_rule == gi.AllowRule.RIGHT_2_1ST_THEN_ALL_TWO:
         allowable = OnlyIfAllN(game, 2, allowable)
         allowable = OnlyRightTwo(game, allowable)
+
+    else:
+        raise NotImplementedError(
+                f"AllowRule {game.info.allow_rule} not implemented.")
 
     return allowable
 

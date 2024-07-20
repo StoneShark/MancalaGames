@@ -611,11 +611,18 @@ def _add_cross_capt_deco(game, capturer):
 
     capturer = CaptCross(game, capturer)
 
-    if game.info.xcpickown == gi.CrossCaptOwn.PICK_ON_CAPT:
+    if game.info.xcpickown == gi.CrossCaptOwn.LEAVE:
+        pass
+
+    elif game.info.xcpickown == gi.CrossCaptOwn.PICK_ON_CAPT:
         capturer = CaptCrossPickOwnOnCapt(game, capturer)
 
     elif game.info.xcpickown == gi.CrossCaptOwn.ALWAYS_PICK:
         capturer = CaptCrossPickOwn(game, capturer)
+
+    else:
+        raise NotImplementedError(
+                f"CrossCaptOwn {game.info.xcpickown} not implemented.")
 
     if game.info.multicapt:
         capturer = CaptContinueXCapt(game, capturer)
@@ -639,6 +646,15 @@ def _add_grand_slam_deco(game, capturer):
     elif game.info.grandslam == gi.GrandSlam.OPP_GETS_REMAIN:
         capturer = GSOppGets(game, capturer)
 
+    elif game.info.grandslam in (gi.GrandSlam.LEGAL,
+                                 gi.GrandSlam.NOT_LEGAL):
+        # grand slam rule does not need a capture deco
+        pass
+
+    else:
+        raise NotImplementedError(
+                f"GrandSlam {game.info.grandslam} not implemented.")
+
     return capturer
 
 
@@ -646,10 +662,14 @@ def _add_child_deco(game, capturer):
     """Add a child handling deco if needed.
     only one child handler: bull/weg/waldas/tuzdek/children"""
 
-    if game.info.child_type == gi.ChildType.WALDA:
+    if game.info.child_type == gi.ChildType.NOCHILD:
+        pass
+
+    elif game.info.child_type == gi.ChildType.WALDA:
         capturer = CaptureToWalda(game, capturer)
 
-    elif game.info.child_type in (gi.ChildType.NORMAL, gi.ChildType.ONE_CHILD):
+    elif game.info.child_type in (gi.ChildType.NORMAL,
+                                  gi.ChildType.ONE_CHILD):
         capturer = MakeChild(game, capturer)
 
     elif game.info.child_type == gi.ChildType.WEG:
@@ -660,6 +680,10 @@ def _add_child_deco(game, capturer):
 
     elif game.info.child_type == gi.ChildType.QUR:
         capturer = MakeQur(game, capturer)
+
+    else:
+        raise NotImplementedError(
+                f"ChildType {game.info.child_type} not implemented.")
 
     return capturer
 

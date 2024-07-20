@@ -692,22 +692,34 @@ def deco_blkd_divert_sower(game):
 def deco_base_sower(game):
     """Choose the base sower."""
 
-    if game.info.sow_rule in {gi.SowRule.SOW_BLKD_DIV,
-                              gi.SowRule.SOW_BLKD_DIV_NR}:
-        sower = deco_blkd_divert_sower(game)
+    sower = None
+    if game.info.sow_rule:
+        if game.info.sow_rule in {gi.SowRule.SOW_BLKD_DIV,
+                                  gi.SowRule.SOW_BLKD_DIV_NR}:
+            sower = deco_blkd_divert_sower(game)
 
-    elif game.info.sow_rule in {gi.SowRule.OWN_SOW_CAPT_ALL,
-                                gi.SowRule.SOW_SOW_CAPT_ALL}:
-        sower = SowCaptOwned(game)
+        elif game.info.sow_rule in {gi.SowRule.OWN_SOW_CAPT_ALL,
+                                    gi.SowRule.SOW_SOW_CAPT_ALL}:
+            sower = SowCaptOwned(game)
 
-    elif game.info.sow_rule == gi.SowRule.NO_SOW_OPP_2S:
-        sower = SowSkipOppN(game, {2})
+        elif game.info.sow_rule == gi.SowRule.NO_SOW_OPP_2S:
+            sower = SowSkipOppN(game, {2})
 
-    elif game.info.sow_own_store:
-        sower = SowSeedsNStore(game)
+        elif game.info.sow_rule in (gi.SowRule.NONE,
+                                    gi.SowRule.CHANGE_DIR_LAP):
+            # pick a base sower below
+            pass
 
-    else:
-        sower = SowSeeds(game)
+        else:
+            raise NotImplementedError(
+                    f"SowRule {game.info.sow_rule} not implemented.")
+
+    if not sower:
+        if game.info.sow_own_store:
+            sower = SowSeedsNStore(game)
+
+        else:
+            sower = SowSeeds(game)
 
     return sower
 
@@ -728,8 +740,12 @@ def deco_build_lap_cont(game):
 
         lap_cont = StopSingleSeed(game, lap_cont)
 
-    else:   # elif game.info.mlaps == gi.LapSower.LAPPER_NEXT:
+    elif game.info.mlaps == gi.LapSower.LAPPER_NEXT:
         lap_cont = NextLapCont(game)
+
+    else:
+        raise NotImplementedError(
+                    f"LapSower {game.info.mlaps} not implemented.")
 
     if game.info.child_type:
         lap_cont = StopOnChild(game, lap_cont)
@@ -786,8 +802,16 @@ def deco_prescribed_sower(game, sower):
     elif game.info.prescribed == gi.SowPrescribed.BASIC_SOWER:
         sower = SowBasicFirst(game, 1, sower)
 
-    else:  # elif game.info.prescribed == gi.SowPrescribed.MLAPS_SOWER:
+    elif game.info.prescribed == gi.SowPrescribed.MLAPS_SOWER:
         sower = SowMlapsFirst(game, 1, sower)
+
+    elif game.info.prescribed == gi.SowPrescribed.ARNGE_LIMIT:
+        # sower deco not needed
+        pass
+
+    else:
+        raise NotImplementedError(
+                f"SowPrescribed {game.info.prescribed} not implemented.")
 
     return sower
 
