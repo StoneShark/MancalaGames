@@ -93,6 +93,9 @@ def define_get_game(depth):
             self.node = value[0]
             self.turn = value[1]
 
+        def get_turn(self):
+            return self.turn
+
 
     class SmallPlayer(ai_interface.AiPlayerIf):
 
@@ -128,6 +131,7 @@ def define_get_game(depth):
 
         def clear_history(self):
             pass
+
 
     game = SmallGame(depth)
     player = SmallPlayer(game, {})

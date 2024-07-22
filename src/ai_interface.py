@@ -21,10 +21,20 @@ class StateIf(abc.ABC):
     def turn(self):
         """Only need getter, return the current turn."""
 
+    # mcts uses these -- could add these to if but need a generic name
+    # def clear_mcount(self)
+    # def set_mcount_from(self, game)
+
+
 
 class AiGameIf(abc.ABC):
     """The game interface required by an ai algorithm.
     This game class should inherit this (i.e. mixedin)."""
+
+    @abc.abstractmethod
+    def get_turn(self):
+        """The current player's turn id"""
+
 
     @abc.abstractmethod
     def get_moves(self):
