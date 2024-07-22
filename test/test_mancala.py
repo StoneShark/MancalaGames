@@ -242,6 +242,29 @@ class TestGameState:
         assert game.inhibitor._children == istate
 
 
+    def test_mcount_ops(self, game):
+
+        assert game.mcount == 0
+        assert game.state.mcount == 0
+
+        game.mcount = 10
+
+        # make new state and test it's mcount
+
+        state = game.state
+        assert state.mcount == 10
+
+        state.clear_mcount()
+        assert state.mcount == 0
+
+        # change mcount in game but not the state we just collected
+        game.mcount = 20
+
+        state.set_mcount_from(game)
+        assert state.mcount == 20
+
+
+
 class TestMoveData:
 
     @pytest.fixture

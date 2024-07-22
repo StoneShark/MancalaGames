@@ -97,6 +97,22 @@ class GameState(ai_interface.StateIf):
                 string += '\n'
         return string
 
+    def clear_mcount(self):
+        """Clear the move count from the game states used
+        as dictionary keys in the node_dict of MonteCarloTS
+
+        The move count should be accurate for the GameNode.state"""
+
+        object.__setattr__(self, 'mcount', 0)
+        return self
+
+    def set_mcount_from(self, game):
+        """Set the move number to match that in the game."""
+
+        object.__setattr__(self, 'mcount', game.mcount)
+        return self
+
+
 
 class MoveData:
     """A place to collect premove and move data.
