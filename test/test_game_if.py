@@ -60,6 +60,11 @@ class TestEnumsClasses:
         assert WinCond.ENDLESS.is_ended()
         assert not WinCond.REPEAT_TURN.is_ended()
 
+        assert WinCond.WIN.is_win()
+        assert WinCond.ROUND_WIN.is_win()
+        assert not WinCond.TIE.is_win()
+        assert not WinCond.ENDLESS.is_win()
+
 
     def test_move_tuple(self):
 
