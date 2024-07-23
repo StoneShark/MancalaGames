@@ -1,6 +1,11 @@
 
 all: clean pylint context all_tests docs exe
 
+long_tests: stress_tests player_tests cov_unit_tests
+
+# do in this order so that html coverage dir is output from all_tests
+final: spotless long_tests all
+
 
 MODULES = ai_interface.py
 MODULES += ai_player.py
@@ -63,11 +68,6 @@ GENEDHELPS += docs\\game_params.html
 GENEDHELPS += docs\\game_xref.html 
 GENEDHELPS += docs\\param_types.html
 
-CONTEXTS = test\\context.py
-CONTEXTS += docs\\context.py
-CONTEXTS += analysis\\context.py
-CONTEXTS += tools\\context.py
-
 
 # game params
 #
@@ -75,49 +75,41 @@ CONTEXTS += tools\\context.py
 # uses pandas which we don't want to use for main programs
 # exe can't be built with pandas
 
-src\\game_params.txt: src\\game_params.xlsx
+src\\game_params.txt: src\\game_params.xlsx context
 	python tools/convert_game_params.py
 
 
 # context files
 
-context: $(CONTEXTS)
-
-test\\context.py: src
+context: src
 	python tools/make_context.py
-
-docs\\context.py: test\\context.py
 	copy test\\context.py docs\\context.py
-	
-analysis\\context.py: test\\context.py
 	copy test\\context.py analysis\\context.py
-	
-tools\\context.py: test\\context.py
 	copy test\\context.py tools\\context.py
 
 # docs
 #
 # generate the html helps files
 
-docs: $(GENEDHELPS)
+docs: $(GENEDHELPS) context
 
-$(GENEDHELPS): $(GAMES) $(HELPINPUTS)
+$(GENEDHELPS): $(GAMES) $(HELPINPUTS) context
 	cd docs && python build_docs.py
 
 
 #  tests
 
-unit_tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py
+unit_tests: $(SOURCES) $(TESTS) $(GAMES) context
 	-coverage run -m pytest -m unittest
 	coverage html
 
 
-integ_tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py
+integ_tests: $(SOURCES) $(TESTS) $(GAMES) context
 	-coverage run -m pytest -m integtest
 	coverage html
 
 
-all_tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py
+all_tests: $(SOURCES) $(TESTS) $(GAMES) context
 	-coverage run -m pytest
 	coverage html
 
@@ -129,18 +121,20 @@ vtest:
 
 # a target to run only the test_gm files
 .PHONY: game_tests
-game_tests: test\\context.py
+game_tests: context
 	-coverage run --branch -m pytest $(GAME_TESTS)
 	coverage html
 
 # a target to run the stress tests with higher iterations
 .PHONY: strest_tests	
-stress_tests: test\\context.py player_tests
-	pytest test\\test_z_simul_game.py --nbr_runs 500
+stress_tests: context
+	-pytest test\\test_z_simul_game.py --nbr_runs 500
 	
 .PHONY: player_tests
-player_tests:
-	pytest -sv test\\test_z_simul_players.py --run_slow 
+player_tests: context
+	-pytest -sv test\\test_z_simul_players.py --run_slow 
+
+
 
 # cov_unit_tests
 #
@@ -158,14 +152,14 @@ player_tests:
 vpath %.cov .\\cov
 vpath %.py .\\test
 
-%.cov: test\\context.py $(subst .cov,.py,$@)
+%.cov: context $(subst .cov,.py,$@)
 	coverage run --branch -m pytest test\\$(subst .cov,.py,$@)
 	coverage json
 	python test\\check_unit_cov.py $(subst .cov,,$@) > cov\\$@
 	type cov\\$@
 
 .PHONY: %.test
-%.test: test\\context.py $(subst .test,.py,$@)
+%.test: context $(subst .test,.py,$@)
 	coverage run --branch -m pytest test\\$(subst .test,.py,$@)
 	coverage html
 
@@ -178,6 +172,7 @@ UNIT_TESTS += test_end_move.cov
 UNIT_TESTS += test_game_if.cov
 UNIT_TESTS += test_game_logger.cov
 UNIT_TESTS += test_game_str.cov
+#  UNIT_TESTS += test_game_tally.cov     doesn't report coverage, don't know why
 UNIT_TESTS += test_gconsts.cov
 UNIT_TESTS += test_get_direct.cov
 UNIT_TESTS += test_get_moves.cov
@@ -186,7 +181,9 @@ UNIT_TESTS += test_inhibitor.cov
 UNIT_TESTS += test_man_config.cov
 UNIT_TESTS += test_mancala.cov
 UNIT_TESTS += test_minimax.cov
+UNIT_TESTS += test_montecarlo_ts.cov
 UNIT_TESTS += test_mpath.cov
+UNIT_TESTS += test_negamax.cov
 UNIT_TESTS += test_new_game.cov
 UNIT_TESTS += test_patterns.cov
 UNIT_TESTS += test_sow_starter.cov
@@ -194,6 +191,8 @@ UNIT_TESTS += test_sower.cov
 
 cov_unit_tests: $(UNIT_TESTS)
 	grep src cov\\*.cov
+
+
 
 
 #  pylint
@@ -262,3 +261,16 @@ MancalaGames/mancala_games.exe: $(SOURCES) $(DATAFILES) $(HELPFILES) mancala_gam
 	ln -s .\\MancalaGames\\runtime\\play_mancala .\\MancalaGames\\play_mancala.exe
 	ln -s .\\MancalaGames\\runtime\\mancala_games .\\MancalaGames\\mancala_games.exe
 	-rmdir /S /Q build
+
+
+.PHONY: list
+list:
+	@grep -Eo "^[a-zA-Z0-9\\/._]+:" makefile | sed -e "s/://" | sed -e "/PHONY/d" | sort
+	
+# includes Not a target files	
+#	@$(MAKE) -pRrq | grep -Eo "^[a-zA-Z0-9\\/._]+:" | sed -e "s/://" | sed -e "/PHONY/d" | sort
+
+# doesn't work
+#	@LC_ALL=C $(MAKE) -pRrq -f $(firstword $(MAKEFILE_LIST)) : 2>/dev/null | awk -v RS= -F: '/(^|\n)# Files(\n|$$)/,/(^|\n)# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | grep -E -v -e '^[^[:alnum:]]' -e '^$@$$'
+
+

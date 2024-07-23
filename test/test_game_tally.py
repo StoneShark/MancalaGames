@@ -12,7 +12,6 @@ Created on Wed Jul 17 08:33:21 2024
 import pytest
 pytestmark = pytest.mark.unittest
 
-from context import game_interface as gi
 from context import game_tally
 
 from game_interface import WinCond

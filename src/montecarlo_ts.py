@@ -399,7 +399,7 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
 
         argc = len(args)
         if argc >= 1 and args[0] >= 0:
-            if args[0] == 0 or isinstance(args[0], float):
+            if not args[0] or isinstance(args[0], float):
                 self.bias = args[0]
             else:
                 raise TypeError('MCTS Bias must be a float (or 0).')

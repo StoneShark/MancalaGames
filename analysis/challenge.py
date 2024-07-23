@@ -85,8 +85,6 @@ class FindLoops:
         self.game_states = collections.deque(maxlen=max_cycle)
         self.dupl_cnt = 0
 
-    # TODO implement chess rule for repeated states 3 repeats is draw
-
     def game_state_loop(self, game):
 
         gstate = game.state
@@ -196,7 +194,7 @@ def challenge():
 
     play_one_config(data)
 
-    data.to_csv('data/challenge.csv')
+    data.to_csv('data/mcts_v_minimax/ch_' + cargs.game + '.csv')
 
     return data
 
@@ -241,6 +239,12 @@ def process_command_line():
         parser.print_help()
         sys.exit()
 
+    # forfiles /p ..\GameProps /C "python challenge.py @fname --t_minimax --f_mcts --nbr_runs=100"
+    path_parts = cargs.game.split('\\')
+    print(path_parts)
+    if len(path_parts) > 1:
+        cargs.game = path_parts[-1]
+
     print(cargs)
 
 
@@ -251,4 +255,9 @@ if __name__ == '__main__':
     process_command_line()
 
     results = challenge()
-    print(results.loc[cargs.game])
+    winp = (results.loc[cargs.game]['WIN-False-False'] +
+            results.loc[cargs.game]['WIN-True-False']) / cargs.nbr_runs
+    print(cargs.game, winp * 100, '%')
+
+    with open('data/mcts_v_minimax/summary.txt', 'a') as file:
+        print(f'{cargs.game:20}    {winp:10.2%}', file=file)

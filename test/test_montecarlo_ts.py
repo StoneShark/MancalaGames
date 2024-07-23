@@ -458,7 +458,7 @@ class TestMonteCarloTS:
         assert not algo.game_nodes
         assert not algo.node_dict
         assert algo.next_id == 0
-        assert algo.move_desc is ''
+        assert algo.move_desc == ''
         assert algo.my_turn_id is None
 
 
