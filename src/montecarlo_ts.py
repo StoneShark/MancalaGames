@@ -45,7 +45,7 @@ class GameNode:
     """A class for keeping the game tree nodes."""
 
     def __init__(self, state, node_id,
-                 *, leaf=False, reward=0.0, moves=()):
+                 *, leaf=False, reward=0, moves=()):
 
         self.state = state
         self.node_id = node_id
@@ -75,7 +75,7 @@ class GameNode:
         return string
 
 
-    def rprint(self, indent='', printed=None):
+    def rprint(self, indent='', pstate=False, printed=None):
         """Do a recursive print of the game tree."""
 
         if printed:
@@ -84,7 +84,11 @@ class GameNode:
             printed = [self]
 
         print(f'id={self.node_id}  {self.reward}  {self.visits} ',
-              f'{BSTRS[self.leaf]}')
+              f'{BSTRS[self.leaf]}', end='     ')
+
+        if pstate:
+            print(self.state, end='')
+        print()
 
         indent += '    '
         for move, child in self.childs.items():
@@ -94,7 +98,7 @@ class GameNode:
             elif child in printed:
                 print(f'{child.node_id} already printed.')
             else:
-                child.rprint(indent, printed)
+                child.rprint(indent, pstate, printed)
 
 
     def add_child_state(self, move, cnode):
@@ -102,24 +106,6 @@ class GameNode:
 
         self.childs[move] = cnode
 
-
-# %%
-
-def clear_mcount(state):
-    """Clear the move count from the game states used
-    as dictionary keys in the node_dict of MonteCarloTS
-
-    The move count should be accurate for the GameNode.state"""
-
-    object.__setattr__(state, 'mcount', 0)
-    return state
-
-
-def set_mcount_from(game, state):
-    """Set the move number to match that in the game."""
-
-    object.__setattr__(state, 'mcount', game.mcount)
-    return state
 
 
 # %%
@@ -141,12 +127,12 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
 
         self.game_nodes = collections.deque()  # list of game nodes by id
         self.node_dict = {}                    # dict of game nodes by game state
-        self.move_desc = None
+        self.move_desc = ''
 
         self.next_id = 0  # cummulative count of node ids
 
 
-    def add_node(self, state, moves=(), *, leaf=False, reward=0.0):
+    def add_node(self, state, moves=(), *, leaf=False, reward=0):
         """Create the game node and add it to both the dict
         and node list.
 
@@ -156,15 +142,14 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
         This must be used for all node creation to keep
         self.game_nodes[id].node_id == id."""
 
-        state_nocount = clear_mcount(state)
-
-        node = GameNode(state_nocount, self.next_id,
+        state.clear_mcount()
+        node = GameNode(state, self.next_id,
                         leaf=leaf, reward=reward, moves=moves)
 
         self.game_nodes.append(node)
         self.next_id += 1
 
-        self.node_dict[state_nocount] = node
+        self.node_dict[state] = node
 
         return node
 
@@ -176,6 +161,7 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
         self.node_dict = {}
         self.game_nodes = collections.deque()
         self.next_id = 0
+        self.move_desc = ''
 
 
     def pick_move(self):
@@ -183,27 +169,14 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
         If a current game state has a node use it, otherwise
         build a node for the current game state.
 
-        1. If first call, save who we are (my turn id), otherwise check it.
-        2. Find or create a start_node representing the current game state.
-        3. Do tree policy to find a new node to explore
-        4. Do the rollouts
-        5. Back propagate the reward
-        6. Pick the best child of the start_node
+        1. Setup for the move
+        2. Do tree policy to find a new node to explore
+        3. Do the rollouts
+        4. Back propagate the reward
+        5. Pick the best child of the start_node
         """
 
-        if self.my_turn_id:
-            assert self.my_turn_id == self.game.get_turn(), \
-                "MCTS can only be used by one player"
-        else:
-            self.my_turn_id = self.game.get_turn()
-
-        game_state = clear_mcount(self.game.state)
-        if game_state in self.node_dict:
-            start_node = self.node_dict[game_state]
-            set_mcount_from(self.game, start_node)
-        else:
-            start_node = self.add_node(game_state, moves=self.game.get_moves())
-
+        start_node = self._setup()
 
         for _ in range(self.new_nodes):
 
@@ -216,13 +189,34 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
                 reward = self._rollouts(tree_node)
                 visits = self.nbr_pouts
             else:
-                reward = 1.0 if tree_node.reward else 0.0
+                reward = 1 if tree_node.reward else 0
                 visits = 1
 
             self._backprop(node_hist, reward, visits)
 
-        node = self._best_child(start_node, 0.0)
+        node = self._best_child(start_node, 0)
         return node.move
+
+
+    def _setup(self):
+        """Setup for picking a move, by determining/confirming our
+        turn id and by adding/confirming that the current game
+        state is in the game nodes."""
+
+        if self.my_turn_id is None:
+            self.my_turn_id = self.game.get_turn()
+        else:
+            assert self.my_turn_id == self.game.get_turn(), \
+                "MCTS can only be used by one player"
+
+        game_state = self.game.state
+        if game_state in self.node_dict:
+            start_node = self.node_dict[game_state]
+            start_node.state.set_mcount_from(self.game)
+        else:
+            start_node = self.add_node(game_state, moves=self.game.get_moves())
+
+        return start_node
 
 
     def _tree_policy(self, node):
@@ -276,7 +270,7 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
                 node_hist.appendleft(node.node_id)
                 break
 
-        else:
+        else:  # pragma: no coverage
             game_log.add_ai(str(self.game), game_log.MOVE)
             game_log.add_ai(str(node_hist), game_log.MOVE)
             msg = f"Stuck in TREE Policy for {MAX_TURNS}"
@@ -296,16 +290,16 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
         saved_state = self.game.state
 
         # XXXX mcount is likely too low, see ai_player rule mcts_move_nbrs
-        self.game.state = set_mcount_from(self.game, pnode.state)
+        self.game.state = pnode.state.set_mcount_from(self.game)
 
         cond = self.game.move(move)
-        new_state = clear_mcount(self.game.state)
+        new_state = self.game.state.clear_mcount()
 
         if new_state in self.node_dict:
             node = self.node_dict[new_state]
 
         elif cond and cond.is_ended():
-            reward = 1.0 if new_state.turn == self.my_turn_id else 0.0
+            reward = 1 if new_state.turn == self.my_turn_id else 0
             node = self.add_node(new_state, leaf=True, reward=reward)
 
         else:
@@ -344,8 +338,7 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
         saved_state = self.game.state
 
         # XXXX mcount is likely too low, see ai_player rule mcts_move_nbrs
-        self.game.state = set_mcount_from(self.game,
-                                          tree_node.state)
+        self.game.state = tree_node.state.set_mcount_from(self.game)
 
         for _ in range(MAX_TURNS):
 
@@ -361,9 +354,9 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
         else:
             cond = None
 
-        reward = 0.0
+        reward = 0
         if cond and cond.is_win() and self.game.get_turn() == self.my_turn_id:
-            reward = 1.0
+            reward = 1
 
         self.game.state = saved_state
         return reward
@@ -373,7 +366,7 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
         """Do playouts.
         Do a small number of play_outs sum the rewards."""
 
-        reward = 0.0
+        reward = 0
         for _ in range(self.nbr_pouts):
             reward += self._one_playout(tree_node)
 
@@ -391,7 +384,6 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
             node.reward += reward
 
 
-
     def get_move_desc(self):
         """Return a description of the previous move."""
         return self.move_desc
@@ -406,11 +398,20 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
         self.nbr_pouts = NBR_POUTS
 
         argc = len(args)
-        if argc >= 1 and args[0] > 0:
-            self.bias = args[0]
+        if argc >= 1 and args[0] >= 0:
+            if args[0] == 0 or isinstance(args[0], float):
+                self.bias = args[0]
+            else:
+                raise TypeError('MCTS Bias must be a float (or 0).')
 
         if argc >= 2 and args[1] > 0:
-            self.new_nodes = args[1]
+            if isinstance(args[1], int):
+                self.new_nodes = args[1]
+            else:
+                raise TypeError('MCTS Nodes must be an integer > 0.')
 
         if argc >= 3 and args[2] > 0:
-            self.nbr_pouts = args[2]
+            if isinstance(args[2], int):
+                self.nbr_pouts = args[2]
+            else:
+                raise TypeError('MCTS Play outs must be an integer > 0.')
