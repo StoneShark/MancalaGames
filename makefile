@@ -80,6 +80,8 @@ CONTEXTS += tools\\context.py
 # uses pandas which we don't want to use for main programs
 # exe can't be built with pandas
 
+params: src\\game_params.txt
+
 src\\game_params.txt: src\\game_params.xlsx tools\\context.py
 	python tools/convert_game_params.py
 
