@@ -169,7 +169,6 @@ class TestConstruction:
 
 class TestScorers:
 
-
     @pytest.fixture
     def game(self):
 
@@ -181,6 +180,7 @@ class TestScorers:
         game = mancala.Mancala(game_consts, game_info)
         game.turn = False
         return game
+
 
     @pytest.fixture
     def player(self, game):
@@ -204,6 +204,27 @@ class TestScorers:
     @pytest.fixture
     def nsplayer(self, nsgame):
         return ai_player.AiPlayer(nsgame, {})
+
+    @pytest.fixture
+    def tgame(self):
+
+        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_info = gi.GameInfo(capt_on=[2],
+                                stores=True,
+                                goal=gi.Goal.TERRITORY,
+                                gparam_one=5,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = False
+        return game
+
+
+    @pytest.fixture
+    def tplayer(self, tgame):
+        return ai_player.AiPlayer(tgame, {})
+
 
 
     def test_score_endgame(self, game, player):
@@ -251,6 +272,23 @@ class TestScorers:
         assert player.score(None) == (1 - 2) * 2
 
 
+    def test_sc_down_evens(self, tgame, tplayer):
+
+        tplayer.sc_params.evens_m = 2
+        tplayer.sc_params.stores_m = 0
+        tplayer.sc_params.easy_rand = 0
+        tplayer.collect_scorers()
+
+        assert tplayer.sc_params.evens_m == 2
+        assert sum(vars(tplayer.sc_params).values()) == 2
+
+        tgame.board = utils.build_board([2, 4, 0, 1],
+                                        [0, 5, 4, 1])
+        tgame.owner = utils.build_board([T, F, N, T],
+                                        [N, T, F, F])
+        assert tplayer.score(None) == (2 - 1) * 2
+
+
     def test_sc_cnt_evens(self, nsgame, nsplayer):
 
         nsplayer.sc_params.evens_m = 2
@@ -284,6 +322,25 @@ class TestScorers:
         assert player.score(None) == (10 - 7) * 3
 
 
+    def test_sc_down_seeds(self, tgame, tplayer):
+
+        tplayer.sc_params.seeds_m = 3
+        tplayer.sc_params.stores_m = 0
+        tplayer.sc_params.easy_rand = 0
+        tplayer.collect_scorers()
+
+        assert tplayer.sc_params.seeds_m == 3
+        assert sum(vars(tplayer.sc_params).values()) == 3
+
+        tgame.board = utils.build_board([2, 4, 0, 1],
+                                        [0, 5, 4, 1])
+        tgame.owner = utils.build_board([T, F, N, T],
+                                        [N, T, F, F])
+        tgame.child = utils.build_board([N, N, N, T],
+                                        [N, N, N, F])
+        assert tplayer.score(None) == (8 - 7) * 3
+
+
     def test_sc_cnt_seeds(self, nsgame, nsplayer):
 
         nsplayer.sc_params.seeds_m = 3
@@ -315,6 +372,25 @@ class TestScorers:
         game.board = utils.build_board([2, 4, 0, 0],
                                        [0, 5, 4, 1])
         assert player.score(None) == (1 - 2) * 2
+
+
+    def test_sc_down_empties(self, tgame, tplayer):
+
+        tplayer.sc_params.empties_m = 3
+        tplayer.sc_params.stores_m = 0
+        tplayer.sc_params.easy_rand = 0
+        tplayer.collect_scorers()
+
+        assert tplayer.sc_params.empties_m == 3
+        assert sum(vars(tplayer.sc_params).values()) == 3
+
+        tgame.board = utils.build_board([0, 4, 0, 0],
+                                        [0, 5, 0, 0])
+        tgame.owner = utils.build_board([T, F, N, T],
+                                        [N, T, F, F])
+        tgame.child = utils.build_board([N, N, N, T],
+                                        [N, N, N, F])
+        assert tplayer.score(None) == (1 - 1) * 3
 
 
     def test_sc_cnt_empties(self, nsgame, nsplayer):

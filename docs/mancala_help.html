@@ -372,12 +372,13 @@ Without this exploration the player might never find the overall best path
 each game state after each simulated move.
 Game properties are collected for a given game state and
 multipliers are applied to determine the state's score.
-For example, the number of empty holes on each side of the board is
+For example, the number of empty holes each player has is
 numerical property. The available properties are predetermined,
-but the multipliers selectable parameters defined in the game configuration
+but the multipliers are selectable parameters defined in the game configuration
 or adjusted with via <a href="#opwindow">Mancala Options UI</a>.
-The parameters are described in <a href="game_params.html#tab_Player">Mancala Parameters</a>
-page under Player Tab .
+The parameters are described in
+<a href="game_params.html#tab_Player">Mancala Parameters</a>
+page under Player Tab.
 
 <p>The multipliers are applied to a difference of each players statistic.
 For example, the number of seeds the AI player has are
@@ -395,6 +396,17 @@ can be selected, but any integer can be set directly in the config file.
 <p>The score for each board is the sum of the statistic difference times its multiplier:
 <p class="center">score = Easy_Error + &#931; ((Player_Stat - AI_Stat) * multiplier)
 <p>Easy_Error sets the range of a random number added to the state's score.
+
+<p>For EVENS_M, SEEDS_M, and EMPTIES_M, the multipliers are applied
+to game properties in slighly different
+ways based on the game configuration:
+<ul><li>In games with NO_SIDES, multipliers are applied to the total
+count of the properties.
+<li>In games with a goal of TERRITORY, the properties are computed by hole owner.
+Then the multiplier is applied to the human - ai player parameter.
+<li>In all other games, the properties are computed by the side of the board
+and the multiplier is applied to the human - ai player parameter.
+</ul>
 
 <h2 id="pregames">Preconfigured Games</h2>
 <p>Mancala game names vary widely.

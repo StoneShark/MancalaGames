@@ -19,7 +19,7 @@ import negamax
 from game_logger import game_log
 
 
-# TODO ai player data should be in player files
+# XXXX ai player data should be in player files
 # will this work:
 #   define the variables in the ai_interface
 #   add to them in the player files
@@ -146,6 +146,7 @@ class AiPlayer(ai_interface.AiPlayerIf):
     def collect_scorers(self):
         """Collect the list of scorers.
         This must be called if any of the multipliers are enabled/disabled."""
+        # pylint: disable=too-complex
 
         self.scorers = []
 
@@ -167,16 +168,25 @@ class AiPlayer(ai_interface.AiPlayerIf):
         if self.sc_params.access_m:
             self.scorers += [self._score_access]
 
-        # TODO is this cnt versus diff really the right thing to do for mlength == 3
-        scorer_trips = [
-            ('evens_m', self._score_cnt_evens, self._score_diff_evens),
-            ('seeds_m', self._score_cnt_seeds, self._score_diff_seeds),
-            ('empties_m', self._score_cnt_empties, self._score_diff_empties)]
+        scorer_trips = [('evens_m',
+                         self._score_cnt_evens,
+                         self._score_diff_evens,
+                         self._score_down_evens),
+                        ('seeds_m',
+                         self._score_cnt_seeds,
+                         self._score_diff_seeds,
+                         self._score_down_seeds),
+                        ('empties_m',
+                         self._score_cnt_empties,
+                         self._score_diff_empties,
+                         self._score_down_empties)]
 
-        for param, cnt_func, diff_func in scorer_trips:
+        for param, cnt_func, diff_func, diff_own_func in scorer_trips:
             if getattr(self.sc_params, param):
-                if self.game.info.mlength == 3:
+                if self.game.info.no_sides:
                     self.scorers += [cnt_func]
+                elif self.game.info.goal == gi.Goal.TERRITORY:
+                    self.scorers += [diff_own_func]
                 else:
                     self.scorers += [diff_func]
 
@@ -267,11 +277,32 @@ class AiPlayer(ai_interface.AiPlayerIf):
         If capturing on evens, having evens prevents captures."""
 
         even_t = sum(1 for loc in self.game.cts.true_range
-                     if self.game.board[loc] > 0
+                     if self.game.child[loc] is None
+                         and self.game.board[loc] > 0
                          and not self.game.board[loc] % 2)
         even_f = sum(1 for loc in self.game.cts.false_range
-                     if self.game.board[loc] > 0
+                     if self.game.child[loc] is None
+                         and self.game.board[loc] > 0
                          and not self.game.board[loc] % 2)
+        return (even_f - even_t) * self.sc_params.evens_m
+
+
+    def _score_down_evens(self, _):
+        """Score evens based on the hole owners.
+        If capturing on evens, having evens prevents captures."""
+
+        even_t = even_f = 0
+        for loc in range(self.game.cts.dbl_holes):
+            if (self.game.child[loc] is None
+                    and self.game.board[loc]
+                    and not self.game.board[loc] % 2):
+
+                if self.game.owner[loc] is True:
+                    even_t += 1
+
+                if self.game.owner[loc] is False:
+                    even_f += 1
+
         return (even_f - even_t) * self.sc_params.evens_m
 
 
@@ -281,7 +312,8 @@ class AiPlayer(ai_interface.AiPlayerIf):
         If capturing on evens, having evens prevents captures."""
 
         even_cnt = sum(1 for loc in range(self.game.cts.dbl_holes)
-                       if self.game.board[loc] > 0
+                       if self.game.child[loc] is None
+                             and self.game.board[loc] > 0
                              and not self.game.board[loc] % 2)
         tmult = -1 if self.game.turn else 1
 
@@ -292,10 +324,28 @@ class AiPlayer(ai_interface.AiPlayerIf):
         """Score the seeds on each side of the board.
         Sometimes hoarding seeds is a good strategy."""
 
-        # TODO should seed scorer exclude seeds in child holes?
+        sum_t = sum(self.game.board[loc]
+                    for loc in self.game.cts.true_range
+                    if self.game.child[loc] is None)
+        sum_f = sum(self.game.board[loc]
+                    for loc in self.game.cts.false_range
+                    if self.game.child[loc] is None)
+        return (sum_f - sum_t) * self.sc_params.seeds_m
 
-        sum_t = sum(self.game.board[loc] for loc in self.game.cts.true_range)
-        sum_f = sum(self.game.board[loc] for loc in self.game.cts.false_range)
+
+    def _score_down_seeds(self, _):
+        """Score seeds based on the hole owners."""
+
+        sum_t = sum_f = 0
+        for loc in range(self.game.cts.dbl_holes):
+            if self.game.child[loc] is None:
+
+                if self.game.owner[loc] is True:
+                    sum_t += self.game.board[loc]
+
+                if self.game.owner[loc] is False:
+                    sum_f += self.game.board[loc]
+
         return (sum_f - sum_t) * self.sc_params.seeds_m
 
 
@@ -303,12 +353,11 @@ class AiPlayer(ai_interface.AiPlayerIf):
         """Score count of seeds remaining on the board.
         To make min values best for true, mult by -1."""
 
-        # TODO should seed scorer should seeds in child holes?
-        # TODO does this deal with hole owners properly??
-
         tmult = -1 if self.game.turn else 1
-        return sum(self.game.board) * self.sc_params.seeds_m * tmult
-
+        seeds_sum = sum(self.game.board[loc]
+                        for loc in range(self.game.cts.dbl_holes)
+                        if self.game.child[loc] is None)
+        return seeds_sum * self.sc_params.seeds_m * tmult
 
 
     def _score_diff_empties(self, _):
@@ -319,6 +368,23 @@ class AiPlayer(ai_interface.AiPlayerIf):
                       if not self.game.board[loc])
         empty_f = sum(1 for loc in self.game.cts.false_range
                       if not self.game.board[loc])
+        return (empty_f - empty_t) * self.sc_params.empties_m
+
+
+    def _score_down_empties(self, _):
+        """Score seeds based on the hole owners."""
+
+        empty_t = empty_f = 0
+        for loc in range(self.game.cts.dbl_holes):
+            if (self.game.child[loc] is None
+                    and self.game.board[loc]):
+
+                if self.game.owner[loc] is True:
+                    empty_t += 1
+
+                if self.game.owner[loc] is False:
+                    empty_f += 1
+
         return (empty_f - empty_t) * self.sc_params.empties_m
 
 
@@ -418,11 +484,12 @@ def player_dict_rules():
     rules.add_rule(
         'stores_scorer',
         rule=lambda pdict, ginfo: (not ginfo.stores
+                                   and not ginfo.child_cvt
                                    and ckey.SCORER in pdict
                                    and ckey.STORES_M in pdict[ckey.SCORER]
                                    and pdict[ckey.SCORER][ckey.STORES_M]),
         both_objs=True,
-        msg='Stores scorer is not supported without stores.',
+        msg='Stores scorer is not supported without stores or children.',
         excp=gi.GameInfoError)
 
     rules.add_rule(

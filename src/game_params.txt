@@ -115,8 +115,8 @@ Player	mcts_bias	MCTS Bias	player ai_params _	40	list[int]	[400, 400, 400, 400]	
 Value is divided by 1000."
 Player	mcts_nodes	MCTS Nodes per Move	player ai_params _	41	list[int]	[30, 50, 80, 110]	7	0	Number of game tree expansions to perform each time we pick a new move. One value for each difficulty level (0-3).
 Player	mcts_pouts	MCTS Playouts per Node	player ai_params _	42	list[int]	[1, 1, 1, 1]	8	0	Number of end games played out from each expanded node. One value for each difficulty level (0-3).
-Player	stores_m	Stores mult	player scorer _	74	int	4	0	2	"The multiplier for the stores scorer. It is applied to the difference of the seeds in each players store.
-The stores scorer may not be used in games with STORES. A zero multiplier disables the stores scorer.
+Player	stores_m	Stores (captured) mult	player scorer _	74	int	4	0	2	"The multiplier for the stores scorer. Seeds in stores and children are included.
+The stores scorer may not be used in games without STORES or CHILDREN. A zero multiplier disables the stores scorer.
 Used only for  minimax & negamax players."
 Player	access_m	Access mult	player scorer _	11	int	0	1	2	"The multiplier for the access scorer. The access scorer computes how many of the opponents holes can be accessed for the given game state.
 The access scorer is slow and therefore is prohibited from being used in multilap games (MLAPS); games with user choice of move direction (UDIR_HOLES); and games where hole owners are not predefined (NO_SIDES). In these game configurations, the multiplier must be zero to disable the access scorer.
