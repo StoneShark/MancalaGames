@@ -110,7 +110,7 @@ negamaxer: minimaxer with a very minor optimization for alternating turn games (
 montecarlo_ts: a Monte Carlo Tree Search player."
 Player	difficulty	Default Difficulty	player _	30	int	1	1	0	The default difficulty for the game. The difficulty can be changed at play time,  even during game play, in the Mancala UI.
 Player	ai_active	Start Active	player _	12	bool	False	2	0	Automatically activate the AI player. The AI player can be manually deactivated, but it is selected for the starter it will start the game.
-Player	mm_depth	MiniMaxer Depth	player ai_params _	46	list[int]	[1, 3, 5, 7]	4	0	There are four game difficulties. Each select a set of parameters give the algorithm choosen.
+Player	mm_depth	MiniMaxer Depth	player ai_params _	46	list[int]	[1, 3, 5, 7]	4	0	The depth that the minimaxer or negamaxer will search the game tree from the current node. One value for each difficulty.
 Player	mcts_bias	MCTS Bias	player ai_params _	40	list[int]	[400, 400, 400, 400]	6	0	"Bias for the Monte Carlo Tree seach algorithm for each difficulty level (0-3).  A larger bias encourages move game tree exploration, but defocuses the exploration from the best choices. This is critical in avoiding getting stuck in sub-obtimal move choices.
 Value is divided by 1000."
 Player	mcts_nodes	MCTS Nodes per Move	player ai_params _	41	list[int]	[30, 50, 80, 110]	7	0	Number of game tree expansions to perform each time we pick a new move. One value for each difficulty level (0-3).

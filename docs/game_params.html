@@ -560,7 +560,7 @@ is included after the parameter sections.
 <p class="pdesc">Default value: None
 <p class="pdesc">UI Tab: Player
 
-<p>There are four game difficulties. Each select a set of parameters give the algorithm choosen.
+<p>The depth that the minimaxer or negamaxer will search the game tree from the current node. One value for each difficulty.
 <h4 id="mcts_bias"> MCTS Bias </h4>
 <p class="pdesc">Location in Config Files: player : ai_params : mcts_bias
 <p id="list[int]" class="pdesc">Type: <a href="param_types.html#list[int]"> list[int] </a>
@@ -583,14 +583,14 @@ is included after the parameter sections.
 <p class="pdesc">UI Tab: Player
 
 <p>Number of end games played out from each expanded node. One value for each difficulty level (0-3).
-<h4 id="stores_m"> Stores mult </h4>
+<h4 id="stores_m"> Stores (captured) mult </h4>
 <p class="pdesc">Location in Config Files: player : scorer : stores_m
 <p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
 <p class="pdesc">Default value: None
 <p class="pdesc">UI Tab: Player
 
-<p>The multiplier for the stores scorer. It is applied to the difference of the seeds in each players store.
-<p>The stores scorer may not be used in games with <a href="game_params.html#stores">STORES</a>. A zero multiplier disables the stores scorer.
+<p>The multiplier for the stores scorer. Seeds in stores and children are included.
+<p>The stores scorer may not be used in games without <a href="game_params.html#stores">STORES</a> or CHILDREN. A zero multiplier disables the stores scorer.
 <p>Used only for  minimax & negamax players.
 <h4 id="access_m"> Access mult </h4>
 <p class="pdesc">Location in Config Files: player : scorer : access_m
