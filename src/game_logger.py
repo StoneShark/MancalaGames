@@ -25,7 +25,7 @@ class LogMode(enum.Enum):
 
     def do_log(self):
         """Is there an active logging mode."""
-        return self in {self.ACTIVE, self.SIMULATE}
+        return self in (self.ACTIVE, self.SIMULATE)
 
 
 
@@ -131,8 +131,7 @@ class GameLog:
         """Call during ACT_IN_AI to force an entry to be
         added to the log.  Use sparingly!"""
 
-        if self._state in {LogMode.ACT_IN_AI,
-                           LogMode.ACTIVE}:
+        if self._state in (LogMode.ACT_IN_AI, LogMode.ACTIVE):
             self._add(text, lvl)
 
 
