@@ -68,6 +68,11 @@ GENEDHELPS += docs\\game_params.html
 GENEDHELPS += docs\\game_xref.html 
 GENEDHELPS += docs\\param_types.html
 
+CONTEXTS = test\\context.py
+CONTEXTS += docs\\context.py
+CONTEXTS += analysis\\context.py
+CONTEXTS += tools\\context.py
+
 
 # game params
 #
@@ -75,41 +80,49 @@ GENEDHELPS += docs\\param_types.html
 # uses pandas which we don't want to use for main programs
 # exe can't be built with pandas
 
-src\\game_params.txt: src\\game_params.xlsx context
+src\\game_params.txt: src\\game_params.xlsx tools\\context.py
 	python tools/convert_game_params.py
 
 
 # context files
 
-context: src
+context: $(CONTEXTS)
+
+test\\context.py: src
 	python tools/make_context.py
+
+docs\\context.py: test\\context.py
 	copy test\\context.py docs\\context.py
+	
+analysis\\context.py: test\\context.py
 	copy test\\context.py analysis\\context.py
+	
+tools\\context.py: test\\context.py
 	copy test\\context.py tools\\context.py
 
 # docs
 #
 # generate the html helps files
 
-docs: $(GENEDHELPS) context
+docs: $(GENEDHELPS) docs\\context.py
 
-$(GENEDHELPS): $(GAMES) $(HELPINPUTS) context
+$(GENEDHELPS): $(GAMES) $(HELPINPUTS) docs\\context.py
 	cd docs && python build_docs.py
 
 
 #  tests
 
-unit_tests: $(SOURCES) $(TESTS) $(GAMES) context
+unit_tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py
 	-coverage run -m pytest -m unittest
 	coverage html
 
 
-integ_tests: $(SOURCES) $(TESTS) $(GAMES) context
+integ_tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py
 	-coverage run -m pytest -m integtest
 	coverage html
 
 
-all_tests: $(SOURCES) $(TESTS) $(GAMES) context
+all_tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py
 	-coverage run -m pytest
 	coverage html
 
@@ -121,17 +134,17 @@ vtest:
 
 # a target to run only the test_gm files
 .PHONY: game_tests
-game_tests: context
+game_tests: test\\context.py
 	-coverage run --branch -m pytest $(GAME_TESTS)
 	coverage html
 
 # a target to run the stress tests with higher iterations
 .PHONY: strest_tests	
-stress_tests: context
-	-pytest test\\test_z_simul_game.py --nbr_runs 500
+stress_tests: test\\context.py
+	pytest test\\test_z_simul_game.py --nbr_runs 500
 	
 .PHONY: player_tests
-player_tests: context
+player_tests: test\\context.py
 	-pytest -sv test\\test_z_simul_players.py --run_slow 
 
 
@@ -152,14 +165,14 @@ player_tests: context
 vpath %.cov .\\cov
 vpath %.py .\\test
 
-%.cov: context $(subst .cov,.py,$@)
+%.cov: test\\context.py $(subst .cov,.py,$@)
 	coverage run --branch -m pytest test\\$(subst .cov,.py,$@)
 	coverage json
 	python test\\check_unit_cov.py $(subst .cov,,$@) > cov\\$@
 	type cov\\$@
 
 .PHONY: %.test
-%.test: context $(subst .test,.py,$@)
+%.test: test\\context.py $(subst .test,.py,$@)
 	coverage run --branch -m pytest test\\$(subst .test,.py,$@)
 	coverage html
 
