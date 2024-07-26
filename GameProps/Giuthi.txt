@@ -44,5 +44,5 @@
       }
    },
    "rules": "Russ, Laurence. Mancala Games. 1984. p37.", 
-   "rule_contradict": "Game doesn't end until <= 4 seeds for loser, but in rearrangement rules, all holes must contain a seed. Also, the winner's side is setup reversed of loser's side, so both players must have enough seeds for a valid move. Therefore, the game will end when there are not enough seeds for the loser to fill their side of the board with a valid move."
+   "deviation": "Game doesn't end until <= 4 seeds for loser, but in rearrangement rules, all holes must contain a seed. Also, the winner's side is setup reversed of loser's side, so both players must have enough seeds for a valid move. Therefore, the game will end when there are not enough seeds for the loser to fill their side of the board with a valid move."
 }
