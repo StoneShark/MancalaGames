@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Wari",
-      "about": "A single-lap mancala, sow direction is counter-clockwise, multiple capture on opponents side on 2s and 3s. A sow which cycles the board, will skip the hole that the move started from. If your opponent has no seeds, you must make seeds available to them (if you can).",
+      "about": "A single-lap mancala, sow direction is counter-clockwise, multiple capture on opponents side on 2s and 3s. A sow which cycles the board, will skip the hole that the move started from. If your opponent has no seeds, you must make seeds available to them (if you can).\n\nVariations:\n\n- a single seed may not be used for capture, NOSINGLECAPT \n- capturing all of your opponents seeds results in them taking your remaining seeds, GRANDSLAM of OPP_GETS_REMAIN",
       "capt_on": [2, 3],
       "min_move": 1,
       "multicapt": true,
