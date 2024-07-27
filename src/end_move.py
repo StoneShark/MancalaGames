@@ -605,9 +605,10 @@ class NoOutcomeChange(EndTurnIf):
 
     @staticmethod
     def _min_for_capture(game):
-        """Select a minimum number of seeds that can claim
-        or occupy more territory. Disable with min_occ of -1,
-        if this feature shouldn't be used (sow_own_store)."""
+        """Select a minimum number of seeds that must be on the
+        board for a capture or to claim territory.
+        Disable with min_occ of -1,  if this feature shouldn't
+        be used (sow_own_store)."""
         # pylint: disable=too-complex    disable=too-many-branches
 
         if game.info.sow_own_store:

@@ -366,26 +366,30 @@ name than you expect.
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p42.
 <h3 id="Erherhe">Erherhe</h3>
-<p>A single-lap mancala, sow direction is counter-clockwise, multiple capture on opponents side on 1s and 3s. Played in rounds; loser starts new round.
+<p>A single-lap mancala, sow direction is counter-clockwise, multiple capture on opponents side on 1s and 3s. A sow which cycles the board, will skip the hole that the move started from. If your opponent has no seeds, you must make seeds available to them (if you can). Played in rounds; loser starts new round. Holes that the loser cannot fill are out of play for the round.
+<p>Variation:
+<ul><li class="helptext">Another value for <a href="game_params.html#round_starter">ROUND_STARTER</a>
+</ul>
+<p> Another value for <a href="game_params.html#round_fill">ROUND_FILL</a>
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  6</p>
     <p class="param">Start seeds:  4</p>
     <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
     <p class="param"><a href="game_params.html#blocks">Blocks</a>: Yes</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 1 3</p>
     <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
     <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: Yes</p>
     <p class="param"><a href="game_params.html#mustshare">Must Share</a>: Yes</p>
-    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
   </div>
   <div class="column2">
+    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
     <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: LOSER</p>
     <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: UCHOOSE</p>
     <p class="param"><a href="game_params.html#skip_start">Skip Start on Lap</a>: Yes</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
-    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 1 3</p>
   </div>
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984.  p19.
@@ -694,7 +698,8 @@ name than you expect.
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p60.
 <h3 id="Mbangbi">Mbangbi</h3>
-<p>Player controls sow direction and must pass if they do not have a move, opposite side-multiple captures on 2s and 4s.
+<p>A single-lap mancala in which each player chooses the sow direction on each move. Moves may only be started from holes with 2 or more seeds.  If a player does not have a move they must pass until they do have a move or the game ends.
+<p>Captures are on 2s and 4s from the opponent's side (final seed sown makes either 2 or 4).  As long as there is a an unbroken group of holes containing 2 or 4 seeds immediately preceeding the final hole sown, these holes are also captured.
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  5</p>
@@ -714,7 +719,7 @@ name than you expect.
   </div>
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p20.
-<p>Question: Should skip start be True? base game yes; variant not mentioned. There are a lot of seeds!!
+<p>Deviation: <a href="game_params.html#skip_start">SKIP_START</a> is set; it's not clear from the stated game rules if it should be.
 <h3 id="Mbothe">Mbothe</h3>
 <p>Counter-clockwise sow, multi-lap sow. After the first move, subsequent moves may only be played from holes:
 <ul><li class="helptext">that do not contain 2 seeds,
@@ -1008,7 +1013,8 @@ name than you expect.
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p33.
 <h3 id="Songo">Songo</h3>
-<p>A single-lap mancala, sow direction is clockwise; skip start hole if cycle the board. Multiple capture on opponents side on 2s and 4s.
+<p>A single-lap mancala, sow direction is clockwise; skip start hole if cycle the board. A sow which cycles the board, will skip the hole that the move started from. If your opponent has no seeds, you must make seeds available to them (if you can).
+<p>Captures are on 2s and 3s on opponents side (final seed sown makes either 2 or 4).  As long as there is a an unbroken group of holes containing 2 or 4 seeds immediately preceeding the final hole sown, the holes are also captured.
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  7</p>
@@ -1111,10 +1117,15 @@ name than you expect.
   </div>
 </div>
 <h3 id="Wari">Wari</h3>
-<p>A single-lap mancala, sow direction is counter-clockwise, multiple capture on opponents side on 2s and 3s. A sow which cycles the board, will skip the hole that the move started from. If your opponent has no seeds, you must make seeds available to them (if you can).
+<p>A single-lap mancala, sow direction is counter-clockwise. A sow which cycles the board, will skip the hole that the move started from. If your opponent has no seeds, you must make seeds available to them (if you can).
+<p>Captures are on 2s and 3s from the opponent's side (final seed sown makes either 2 or 3).  As long as there is a an unbroken group of holes containing 2 or 3 seeds immediately preceeding the final hole sown, these holes are also captured.
 <p>Variations:
-<ul><li class="helptext">a single seed may not be used for capture, <a href="game_params.html#nosinglecapt">NOSINGLECAPT</a> 
+<ul><li class="helptext">board sizes from 5 - 12 holes per side
+<li class="helptext">number of start seeds per hole, as many as 10
+<li class="helptext">captures on various numbers of seeds
+<li class="helptext">a single seed may not be used for capture, <a href="game_params.html#nosinglecapt">NOSINGLECAPT</a> 
 <li class="helptext">capturing all of your opponents seeds results in them taking your remaining seeds, <a href="game_params.html#grandslam">GRANDSLAM</a> of OPP_GETS_REMAIN
+<li class="helptext">leave one seed in the start hole (<a href="game_params.html#sow_start">SOW_START</a>)
 </ul>
 <div class="cols_row">
   <div class="column2">

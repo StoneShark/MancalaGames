@@ -1,13 +1,14 @@
 {
    "game_class": "Mancala",
    "game_constants": {
-      "nbr_start": 4,
-      "holes": 6
+      "holes": 6,
+      "nbr_start": 4
    },
    "game_info": {
       "name": "Erherhe",
-      "about": "A single-lap mancala, sow direction is counter-clockwise, multiple capture on opponents side on 1s and 3s. Played in rounds; loser starts new round.",
+      "about": "A single-lap mancala, sow direction is counter-clockwise, multiple capture on opponents side on 1s and 3s. A sow which cycles the board, will skip the hole that the move started from. If your opponent has no seeds, you must make seeds available to them (if you can). Played in rounds; loser starts new round. Holes that the loser cannot fill are out of play for the round.\n\nVariation:\n\n- Another value for ROUND_STARTER\n Another value for ROUND_FILL",
       "blocks": true,
+      "capt_on": [1, 3],
       "min_move": 1,
       "multicapt": true,
       "mustshare": true,
@@ -17,19 +18,15 @@
       "round_fill": 6,
       "skip_start": true,
       "sow_direct": 1,
-      "stores": true,
-      "capt_on": [1, 3]
+      "stores": true
    },
    "player": {
       "scorer": {
          "stores_m": 4,
-         "access_m": 1,
-         "seeds_m": 0,
-         "empties_m": -1,
-         "child_cnt_m": 0,
-         "evens_m": 0,
-         "easy_rand": 10,
-         "repeat_turn": 0
+         "access_m": 2,
+         "seeds_m": 1,
+         "empties_m": 0,
+         "easy_rand": 10
       },
       "ai_params": {
          "mm_depth": [1, 3, 5, 8]
