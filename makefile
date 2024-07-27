@@ -106,7 +106,7 @@ tools\\context.py: test\\context.py
 #
 # generate the html helps files
 
-docs: $(GENEDHELPS) docs\\context.py
+docs: $(GENEDHELPS) docs\\context.py params
 
 $(GENEDHELPS): $(GAMES) $(HELPINPUTS) docs\\context.py
 	cd docs && python build_docs.py
