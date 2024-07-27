@@ -72,7 +72,9 @@ STRING_DICTS = {
         gi.CaptExtraPick,
         {'No additional': gi.CaptExtraPick.NONE,
          'Pick Cross Seeds': gi.CaptExtraPick.PICKCROSS,
-         "Pick all Opponent's' 2s": gi.CaptExtraPick.PICKTWOS}),
+         "Pick all Opponent's' 2s": gi.CaptExtraPick.PICKTWOS,
+         "Pick last seeds <= nbr_start": gi.CaptExtraPick.PICKLASTSEEDS,
+         "Pick last seeds <= 2x nbr_start": gi.CaptExtraPick.PICK2XLASTSEEDS}),
 
     'ChildType': lookup_dicts(
         gi.ChildType,

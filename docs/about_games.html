@@ -491,7 +491,7 @@ name than you expect.
   </div>
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p37.
-<p>Rule_Contradict: Game doesn't end until <= 4 seeds for loser, but in rearrangement rules, all holes must contain a seed. Also, the winner's side is setup reversed of loser's side, so both players must have enough seeds for a valid move. Therefore, the game will end when there are not enough seeds for the loser to fill their side of the board with a valid move.
+<p>Deviation: Game doesn't end until <= 4 seeds for loser, but in rearrangement rules, all holes must contain a seed. Also, the winner's side is setup reversed of loser's side, so both players must have enough seeds for a valid move. Therefore, the game will end when there are not enough seeds for the loser to fill their side of the board with a valid move.
 <h3 id="Goat">Goat</h3>
 <p>A single-lap mancala, sow direction depends on start location: left side sow left, right side sow right, mouse button selectes direction for center. Minimum move is 2 seeds. Multiple capture on opponents side on 2s. A player must pass, if they have no moves.
 <div class="cols_row">
@@ -615,20 +615,23 @@ name than you expect.
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p35.
 <h3 id="Lam Waladach">Lam Waladach</h3>
-<p>A multi-lap mancala played in rounds. The goal is to claim ownership of at least 10 holes. Each player initially owns the holes on their side of the board. Owners of holes are updated at the start of each round based on the number of seeds captured in the previous round. Captures are on 4s on the final sown seed by the sower (regardless of hole owner). Captures are disallowed on the first move of the game. The seeds of any hole sown to 4 are captured by the hole's owner (regardless of sower) after the first move. A player must pass, if they have no moves. If neither player has moves, the game is over.
+<p>A multi-lap mancala played in rounds. The goal is to claim ownership of at least 9 holes. Each player initially owns the holes on their side of the board. Owners of holes are updated at the start of each round based on the number of seeds captured in the previous round. 
+<p>The seeds of any hole sown to 4 are captured by the hole's owner (regardless of sower). Captures are on 4s on the final sown seed by the sower (regardless of hole owner). A capture results in  a repeat turn. Captures and pick 4s are allowed on the first move of the game. A player must pass, if they have no moves.
+<p>If neither player has moves, the game is over. The game also ends if there are fewer that 6 seeds in play, with the seeds going to the round starter.
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  6</p>
     <p class="param">Start seeds:  3</p>
     <p class="param"><a href="game_params.html#goal">Goal</a>: TERRITORY</p>
     <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 4</p>
-    <p class="param"><a href="game_params.html#gparam_one">General input</a>: 10</p>
+    <p class="param"><a href="game_params.html#capt_rturn">Repeat Turn on Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#gparam_one">General input</a>: 9</p>
     <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
     <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER</p>
-    <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
   </div>
   <div class="column2">
-    <p class="param"><a href="game_params.html#nocaptfirst">No Capture First Move</a>: Yes</p>
+    <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
+    <p class="param"><a href="game_params.html#pickextra">On Capture, Take More Rule</a>: PICK2XLASTSEEDS</p>
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: LOSER</p>
     <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
     <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: OWN_SOW_CAPT_ALL</p>
@@ -636,7 +639,9 @@ name than you expect.
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
   </div>
 </div>
-<p>Rules: Russ, Laurence. Mancala Games. 1984. p55.
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p55. (with liberties)
+<p>Deviation: Both captures and pick 4s are allowed on the first turn. The Mancala Game engine doesn't allow doing one of these, but not the other. The game ends when fewer than 6 seeds are in play, with the round starter taking these last seeds.
+<p>Note: Hole ownership of > 9, results very many rounds and long games.
 <h3 id="Leyla-Gobale">Leyla-Gobale</h3>
 <p>Sow clockwise.  Cross capture, opposite side only. Qurs are created in pairs on both sides of the board when a seed is sown into an empy hole on the player's side of the board and the opposite hole contains three seeds (no capture is made).
 <p>Variations:
@@ -862,7 +867,8 @@ name than you expect.
 <li class="helptext"><a href="game_params.html#prescribed">PRESCRIBED</a> opening PLUS1MINUS1
 <li class="helptext">repeat turn on capture (<a href="game_params.html#capt_rturn">CAPT_RTURN</a>)
 <li class="helptext">only sower captures during sowing (<a href="game_params.html#sow_rule">SOW_RULE</a>: SOW_SOW_CAPT_ALL)
-<li class="helptext">see <a href="about_games.html#Lam Waladach">Lam Waladach</a> (no captures on first turn <a href="game_params.html#nocaptfirst">NOCAPTFIRST</a>)
+<li class="helptext">hen 8 seeds or fewer, the round starter takes them (<a href="game_params.html#pickextra">PICKEXTRA</a>: PICK2NLASTSEEDS)
+<li class="helptext">see <a href="about_games.html#Lam Waladach">Lam Waladach</a>
 </ul>
 <div class="cols_row">
   <div class="column2">
@@ -873,9 +879,10 @@ name than you expect.
     <p class="param"><a href="game_params.html#gparam_one">General input</a>: 10</p>
     <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
     <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER</p>
+    <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
   </div>
   <div class="column2">
-    <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
+    <p class="param"><a href="game_params.html#pickextra">On Capture, Take More Rule</a>: PICKLASTSEEDS</p>
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: LOSER</p>
     <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
     <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: OWN_SOW_CAPT_ALL</p>

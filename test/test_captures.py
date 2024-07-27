@@ -1109,6 +1109,75 @@ class TestPickTwos:
         assert game.board == eboard
 
 
+class TestPickLastSeeds:
+
+    test_cases = [
+        ([2, 2, 2, 2], [0, 0], [N, N, N, N], True,
+         gi.CaptExtraPick.PICKLASTSEEDS,
+         False, [2, 2, 2, 2], [0, 0]),
+        ([2, 2, 2, 2], [0, 0], [N, N, N, N], True,
+         gi.CaptExtraPick.PICKLASTSEEDS,
+         False, [2, 2, 2, 2], [0, 0]),
+
+        ([1, 1, 0, 0], [3, 3], [N, N, N, N], True,
+         gi.CaptExtraPick.PICKLASTSEEDS,
+         True, [0, 0, 0, 0], [3, 5]),
+        ([1, 1, 0, 0], [3, 3], [N, N, N, N], False,
+         gi.CaptExtraPick.PICKLASTSEEDS,
+         True, [0, 0, 0, 0], [5, 3]),
+
+        ([1, 1, 0, 0], [3, 3], [T,F, N, N], False,   # same test but both child
+         gi.CaptExtraPick.PICKLASTSEEDS,
+         False, [1, 1, 0, 0], [3, 3]),
+        ([1, 1, 0, 0], [3, 3], [T, N, N, N], False, # only one child
+         gi.CaptExtraPick.PICKLASTSEEDS,
+         True, [1, 0, 0, 0], [4, 3]),
+
+        ([2, 1, 0, 0], [2, 3], [N, N, N, N], True,
+         gi.CaptExtraPick.PICK2XLASTSEEDS,
+         True, [0, 0, 0, 0], [5, 3]),           # seeds got round starter for 2x
+        ([2, 1, 0, 0], [2, 3], [N, N, N, N], False,
+         gi.CaptExtraPick.PICK2XLASTSEEDS,
+         True, [0, 0, 0, 0], [2, 6]),
+
+        ([1, 2, 0, 0], [2, 3], [T,F, N, N], False,   #  both child
+         gi.CaptExtraPick.PICK2XLASTSEEDS,
+         False, [1, 2, 0, 0], [2, 3]),
+        ([1, 2, 0, 0], [2, 3], [T, N, N, N], False, # only one child
+         gi.CaptExtraPick.PICK2XLASTSEEDS,
+         True, [1, 0, 0, 0], [2, 5]),
+
+        ]
+    @pytest.mark.parametrize('board, store, child, turn, picker,'
+                             'eres, eboard, estore',
+                             test_cases,
+                             ids=[f'case_{f}'
+                                  for f in range(len(test_cases))])
+    def test_capts(self, board, store, child, turn, picker,
+                   eres, eboard, estore):
+
+        game_consts = gc.GameConsts(nbr_start=2, holes=2)
+        game_info = gi.GameInfo(stores=True,
+                                capt_on=[4],
+                                sow_rule=gi.SowRule.OWN_SOW_CAPT_ALL,
+                                pickextra=picker,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+        game.board = board
+        game.child = child
+        game.store = store
+        game.turn = turn
+        game.starter = not turn
+
+        mdata = MoveData(game, None)
+        mdata.direct = game.info.sow_direct
+        game.deco.capturer.do_captures(mdata)
+
+        assert mdata.capt_changed == eres
+        assert game.board == eboard
+        assert game.store == estore
+
 
 # %% make_child only tests
 
@@ -1302,6 +1371,23 @@ class TestBadEnums:
 
         object.__setattr__(game.info, 'child_type', gi.ChildType.NORMAL)
         object.__setattr__(game.info, 'child_rule', 12)
+
+        with pytest.raises(NotImplementedError):
+            mancala.Mancala(game_consts, game_info)
+
+
+    def test_bad_pick_extra(self):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(stores=True,
+                                capt_on=[4],
+                                sow_rule=gi.SowRule.OWN_SOW_CAPT_ALL,
+                                pickextra=gi.CaptExtraPick.PICK2XLASTSEEDS,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        object.__setattr__(game.info, 'pickextra', 12)
 
         with pytest.raises(NotImplementedError):
             mancala.Mancala(game_consts, game_info)

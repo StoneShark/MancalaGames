@@ -52,6 +52,8 @@ class CaptExtraPick(enum.IntEnum):
     NONE = 0
     PICKCROSS = 1
     PICKTWOS = 2
+    PICKLASTSEEDS = 3
+    PICK2XLASTSEEDS = 4
 
 
 @enum.unique

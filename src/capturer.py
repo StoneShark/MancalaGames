@@ -573,6 +573,49 @@ class PickOppTwos(CaptMethodIf):
             game_log.add(msg, game_log.INFO)
 
 
+class PickLastSeeds(CaptMethodIf):
+    """If the specified number of seeds or fewer are left
+    on the board either the current player or
+    round starter takes them (based on turn_takes).
+
+    Set capt_changed if we change the board.
+
+    Can't check the mdata.captured flag because we want to support and
+    sow rules of *_SOW_CAPT_ALL which might move seeds out of play."""
+
+    def __init__(self, game, decorator=None, turn_takes=True):
+
+        super().__init__(game, decorator)
+
+        self.turn_takes = turn_takes
+
+        nbr_start = game.cts.nbr_start
+        self.seeds = nbr_start if turn_takes else 2 * nbr_start
+
+
+    def do_captures(self, mdata):
+
+        self.decorator.do_captures(mdata)
+
+        game = self.game
+        seeds = sum(game.board[loc]
+                    for loc in range(game.cts.dbl_holes)
+                    if game.child[loc] is None)
+
+        if  0 < seeds <= self.seeds:
+            taker = game.turn if self.turn_takes else game.starter
+
+            for loc in range(game.cts.dbl_holes):
+                if game.child[loc] is None:
+                    game.store[taker] += game.board[loc]
+                    game.board[loc] = 0
+
+            msg = f'Seeds left <= {self.seeds}, {taker} collected them.'
+            game_log.add(msg, game_log.INFO)
+            mdata.capt_changed = True
+
+
+
 # %% some wrappers
 
 class NoSingleSeedCapt(CaptMethodIf):
@@ -710,11 +753,24 @@ def _add_capt_two_out_deco(game, capturer):
 def _add_capt_pick_deco(game, capturer):
     """Add any extra pickers."""
 
-    if game.info.pickextra == gi.CaptExtraPick.PICKCROSS:
+    if game.info.pickextra == gi.CaptExtraPick.NONE:
+        pass
+
+    elif game.info.pickextra == gi.CaptExtraPick.PICKCROSS:
         capturer = PickCross(game, capturer)
 
     elif game.info.pickextra == gi.CaptExtraPick.PICKTWOS:
         capturer = PickOppTwos(game, capturer)
+
+    elif game.info.pickextra == gi.CaptExtraPick.PICKLASTSEEDS:
+        capturer = PickLastSeeds(game, capturer, turn_takes=True)
+
+    elif game.info.pickextra == gi.CaptExtraPick.PICK2XLASTSEEDS:
+        capturer = PickLastSeeds(game, capturer, turn_takes=False)
+
+    else:
+        raise NotImplementedError(
+                f"CaptExtraPick {game.info.pickextra} not implemented.")
 
     return capturer
 
