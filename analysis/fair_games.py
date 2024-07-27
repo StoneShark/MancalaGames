@@ -370,7 +370,7 @@ def define_parser():
                         Default: %(default)s""")
 
     parser.add_argument('--ai_player', action='store_true',
-                        help="""Use the minimaxer ai_player.
+                        help="""Use the configured ai_player.
                         Default: %(default)s""")
 
     parser.add_argument('--no_params', action='store_true',
