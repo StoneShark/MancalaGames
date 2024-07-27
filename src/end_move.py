@@ -577,7 +577,7 @@ class DepriveSeedsEndGame(EndTurnIf):
 
 
 
-class TerritoryGameWinner(EndTurnIf):
+class NoOutcomeChange(EndTurnIf):
     """If the game has already been determined to be ended,
     pick the winner:
         Rounds: if there is a game winner by territory (gparam_one)
@@ -596,7 +596,7 @@ class TerritoryGameWinner(EndTurnIf):
     def __init__(self, game, decorator=None, claimer=None):
 
         super().__init__(game, decorator, claimer)
-        self.min_occ = self._min_occupy(game)
+        self.min_occ = self._min_for_capture(game)
 
         if game.info.rounds:
             self.winner_test = self._test_round_winner
@@ -604,10 +604,11 @@ class TerritoryGameWinner(EndTurnIf):
             self.winner_test = self._test_winner
 
     @staticmethod
-    def _min_occupy(game):
+    def _min_for_capture(game):
         """Select a minimum number of seeds that can claim
         or occupy more territory. Disable with min_occ of -1,
         if this feature shouldn't be used (sow_own_store)."""
+        # pylint: disable=too-complex    disable=too-many-branches
 
         if game.info.sow_own_store:
             return -1
@@ -619,9 +620,14 @@ class TerritoryGameWinner(EndTurnIf):
 
         if (game.info.evens
                 or game.info.capt_next
-                or game.info.capttwoout
                 or game.info.crosscapt):
             min_occ = min(2, min_occ)
+
+        if game.info.capttwoout:
+            if game.info.mlaps:
+                min_occ = min(2, min_occ)
+            else:
+                min_occ = min(3, min_occ)
 
         if game.info.capt_on:
             if game.info.evens:
@@ -643,15 +649,15 @@ class TerritoryGameWinner(EndTurnIf):
         return min_occ
 
 
-    def _cant_occupy_more(self):
-        """Determine if we can occupy more territory.
+    def _cant_capt_more(self):
+        """Determine if we can capture more seeds.
         If min_occ feature was disabled (== -1), return False.
-        If there are any children, return False (sowing into children
-        may claim more territory).
-        If there are too few seeds left to claim more territory,
-        return True.
+        If there are any children, return False (can sow into children).
+        If there are not any seeds, return False to let the other
+        decos decide outcome.
 
-        If we can't move unclaimed seeds to the current player's store."""
+        If there are too few seeds left to do a capture, return True.
+        and call the quitter to do something fair based on game params."""
 
         if self.min_occ < 0:
             return False
@@ -663,13 +669,15 @@ class TerritoryGameWinner(EndTurnIf):
             else:
                 return False
 
+        if not remaining:
+            return False
+
         if remaining < self.min_occ:
             game_log.add(
-                'Too few seeds for more territory to be claimed '
-                f'(< {self.min_occ}); remaining going to {self.game.turn}.',
+                f'Too few seeds for more captures (< {self.min_occ}).',
                 game_log.IMPORT)
 
-            self.game.store[self.game.turn] += remaining
+            self.game.deco.quitter.game_ended(False, True)
             return True
 
         return False
@@ -700,7 +708,10 @@ class TerritoryGameWinner(EndTurnIf):
     def game_ended(self, repeat_turn, ended=False):
         """Determine if the game ended."""
 
-        if ended or self._cant_occupy_more():
+        if ended:
+            return self.decorator.game_ended(repeat_turn, ended)
+
+        if self._cant_capt_more():
             return self.winner_test()
 
         cond, winner = self.decorator.game_ended(repeat_turn, ended)
@@ -795,8 +806,7 @@ def deco_end_move(game):
     if game.info.child_type == gi.ChildType.WALDA:
         ender = WaldaEndMove(game, ender)
 
-    if game.info.goal == gi.Goal.TERRITORY:
-        ender = TerritoryGameWinner(game, ender)
+    ender = NoOutcomeChange(game, ender)
 
     return ender
 

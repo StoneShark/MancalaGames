@@ -247,213 +247,230 @@ class TestEndMove:
         """Printing the claimer is unique to enders."""
         assert 'ClaimSeeds' in str(game.deco.ender)
 
+
+    WINCASES = [  # 0: no win
+                ('game', False, False,
+                 utils.build_board([0, 2, 1],
+                                   [0, 2, 0]), [3, 4], True, None,
+                 utils.build_board([0, 2, 1],
+                                   [0, 2, 0]), [3, 4], True),
+
+                # 1: true win on true turn, playable
+                ('game', False, False,
+                 utils.build_board([1, 0, 0],
+                                   [0, 0, 1]), [2, 8], True, WinCond.WIN,
+                 utils.build_board([1, 0, 0],
+                                   [0, 0, 1]), [2, 8], True),
+
+                # 2: true win on false turn, playable
+                ('game', False, False,
+                 utils.build_board([1, 0, 0],
+                                   [0, 0, 1]), [2, 8], False, WinCond.WIN,
+                 utils.build_board([1, 0, 0],
+                                   [0, 0, 1]), [2, 8], True),
+
+                # 3: false win on false turn, playable
+                ('game', False, False,
+                 utils.build_board([1, 0, 0],
+                                   [0, 0, 1]), [8, 2], False, WinCond.WIN,
+                 utils.build_board([1, 0, 0],
+                                   [0, 0, 1]), [8, 2], False),
+
+                # 4: false win on true turn, playable
+                ('game', False, False,
+                 utils.build_board([1, 0, 0],
+                                   [0, 0, 1]), [8, 2], True, WinCond.WIN,
+                 utils.build_board([1, 0, 0],
+                                   [0, 0, 1]), [8, 2], False),
+
+                # 5: tie on false turn, playable
+                ('game', False, False,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [6, 6], False, WinCond.TIE,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [6, 6], False),
+
+                # 6: tie on true turn, playable
+                ('game', False, False,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [6, 6], True, WinCond.TIE,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [6, 6], True),
+
+                # 7: true's turn ended, false has no moves
+                ('game', False, False,
+                 utils.build_board([5, 0, 0],
+                                   [0, 0, 0]), [3, 4], True, WinCond.WIN,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [3, 9], True),
+
+                # 8: false's turn ended, true has no moves
+                ('game', False, False,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 5]), [3, 4], False, WinCond.WIN,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [8, 4], False),
+
+                # 9: true win on true turn, playable
+                ('rgame', False, False,
+                 utils.build_board([1, 0, 0],
+                                   [0, 0, 1]), [2, 8], True, WinCond.ROUND_WIN,
+                 utils.build_board([1, 0, 0],
+                                   [0, 0, 1]), [2, 8], True),
+
+                # 10: test_ft_win
+                ('rgame', False, False,
+                 utils.build_board([1, 0, 0],
+                                   [0, 0, 1]), [2, 8], False, WinCond.ROUND_WIN,
+                 utils.build_board([1, 0, 0],
+                                   [0, 0, 1]), [2, 8], True),
+
+                # 11: test_ff_win
+                ('rgame', False, False,
+                 utils.build_board([1, 0, 0],
+                                   [0, 0, 1]), [8, 2], False, WinCond.ROUND_WIN,
+                 utils.build_board([1, 0, 0],
+                                   [0, 0, 1]), [8, 2], False),
+
+                # 12: test_tf_win
+                ('rgame', False, False,
+                 utils.build_board([1, 0, 0],
+                                   [0, 0, 1]), [8, 2], True, WinCond.ROUND_WIN,
+                 utils.build_board([1, 0, 0],
+                                   [0, 0, 1]), [8, 2], False),
+
+                # 13: test_f_tie_win
+                ('rgame', False, False,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [6, 6], False, WinCond.ROUND_TIE,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [6, 6], False),
+
+                # 14: test_t_tie_win
+                ('rgame', False, False,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [6, 6], True, WinCond.ROUND_TIE,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [6, 6], True),
+
+                # 15: false's turn ended, true has won, doesn't have seeds
+                ('rgame', False, False,
+                 utils.build_board([2, 0, 0],
+                                   [0, 0, 0]), [0, 10], False, WinCond.WIN,
+                 utils.build_board([2, 0, 0],
+                                   [0, 0, 0]), [0, 10], True),
+
+                # 16: true's turn ended, false has won, true can't continue
+                ('rgame', False, False,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 2]), [10, 0], True, WinCond.WIN,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 2]), [10, 0], False),
+
+                # 17: game ended, true has won
+                ('game', True, False,
+                 utils.build_board([2, 2, 0],
+                                   [0, 0, 1]), [3, 4], True, WinCond.WIN,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [4, 8], True),
+
+                # 18: game ended, false has won
+                ('rgame', True, False,
+                 utils.build_board([1, 0, 0],
+                                   [0, 2, 2]), [4, 3], False, WinCond.WIN,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [8, 4], False),
+
+                # 19: false's turn ended, no valid moves, true wins
+                ('mmgame', False, False,
+                 utils.build_board([1, 1, 0],
+                                   [0, 1, 1]), [3, 5], False, WinCond.WIN,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [5, 7], True),
+
+                # 20: true's turn ended, no valid moves, false wins
+                ('mmgame', False, False,
+                 utils.build_board([1, 1, 0],
+                                   [0, 1, 1]), [5, 3], True, WinCond.WIN,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [7, 5], False),
+
+                # 21: true's turn ended, no valid moves, false wins
+                ('mmshgame', False, False,
+                 utils.build_board([1, 1, 0],
+                                   [0, 1, 1]), [5, 3], True, WinCond.WIN,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [7, 5], False),
+
+                # 22: true's turn ended, false has no moves, no pass
+                ('no_win_game', False, False,
+                 utils.build_board([5, 0, 0],
+                                   [0, 0, 0]), [3, 4], True, WinCond.WIN,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [3, 9], True),
+
+                # 23: true's turn ended without seeds, false can't share
+                ('no_win_game', False, False,
+                 utils.build_board([0, 0, 0],
+                                   [1, 1, 0]), [5, 5], True, WinCond.WIN,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [7, 5], False),
+
+                # 24: true's turn ended without seeds, false can't share
+                ('no_win_game', False, False,
+                 utils.build_board([0, 0, 0],
+                                   [1, 1, 0]), [4, 6], True, WinCond.TIE,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [6, 6], None),
+
+                # 25: true has a repeat_turn but no moves, false wins
+                ('game', False, True,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 5]), [3, 4], True, WinCond.WIN,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [8, 4], False),
+
+                # 26: true's turn ended without moves, false can share and capture
+                ('mmshgame', False, False,
+                 utils.build_board([1, 1, 0],
+                                   [0, 1, 3]), [3, 3], True, WinCond.WIN,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [7, 5], False),
+
+                # 27: true has no moves but has a repeat turn, false can share
+                ('mmshgame', False, True,
+                 utils.build_board([1, 1, 0],
+                                   [0, 1, 3]), [3, 3], True, WinCond.WIN,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [7, 5], False),
+
+                # 28: true's turn ended, false has no moves, pass
+                ('pagame', False, False,
+                 utils.build_board([5, 0, 0],
+                                   [0, 0, 0]), [3, 4], True, None,
+                 utils.build_board([5, 0, 0],
+                                   [0, 0, 0]), [3, 4], True),
+
+                # 29: false's turn ended, true has won, too few to continue
+                ('rgame', False, False,
+                 utils.build_board([1, 0, 0],
+                                   [0, 0, 0]), [0, 11], False, WinCond.WIN,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [1, 11], True),
+
+                # 30: true's turn ended, false has won, too few to continue
+                ('rgame', False, False,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 1]), [11, 0], True, WinCond.WIN,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [11, 1], False),
+
+            ]
     @pytest.mark.parametrize(
         'fixture, ended, repeat, board, store, turn,'
         ' eres, eboard, estore, eturn',
-        [  # 0: no win
-            ('game', False, False,
-             utils.build_board([0, 2, 1],
-                               [0, 2, 0]), [3, 4], True, None,
-             utils.build_board([0, 2, 1],
-                               [0, 2, 0]), [3, 4], True),
-
-            # 1: true win on true turn, playable
-            ('game', False, False,
-             utils.build_board([1, 0, 0],
-                               [0, 0, 1]), [2, 8], True, WinCond.WIN,
-             utils.build_board([1, 0, 0],
-                               [0, 0, 1]), [2, 8], True),
-
-            # 2: true win on false turn, playable
-            ('game', False, False,
-             utils.build_board([1, 0, 0],
-                               [0, 0, 1]), [2, 8], False, WinCond.WIN,
-             utils.build_board([1, 0, 0],
-                               [0, 0, 1]), [2, 8], True),
-
-            # 3: false win on false turn, playable
-            ('game', False, False,
-             utils.build_board([1, 0, 0],
-                               [0, 0, 1]), [8, 2], False, WinCond.WIN,
-             utils.build_board([1, 0, 0],
-                               [0, 0, 1]), [8, 2], False),
-
-            # 4: false win on true turn, playable
-            ('game', False, False,
-             utils.build_board([1, 0, 0],
-                               [0, 0, 1]), [8, 2], True, WinCond.WIN,
-             utils.build_board([1, 0, 0],
-                               [0, 0, 1]), [8, 2], False),
-
-            # 5: tie on false turn, playable
-            ('game', False, False,
-             utils.build_board([0, 0, 0],
-                               [0, 0, 0]), [6, 6], False, WinCond.TIE,
-             utils.build_board([0, 0, 0],
-                               [0, 0, 0]), [6, 6], False),
-
-            # 6: tie on true turn, playable
-            ('game', False, False,
-             utils.build_board([0, 0, 0],
-                               [0, 0, 0]), [6, 6], True, WinCond.TIE,
-             utils.build_board([0, 0, 0],
-                               [0, 0, 0]), [6, 6], True),
-
-            # 7: true's turn ended, false has no moves
-            ('game', False, False,
-             utils.build_board([5, 0, 0],
-                               [0, 0, 0]), [3, 4], True, WinCond.WIN,
-             utils.build_board([0, 0, 0],
-                               [0, 0, 0]), [3, 9], True),
-
-            # 8: false's turn ended, true has no moves
-            ('game', False, False,
-             utils.build_board([0, 0, 0],
-                               [0, 0, 5]), [3, 4], False, WinCond.WIN,
-             utils.build_board([0, 0, 0],
-                               [0, 0, 0]), [8, 4], False),
-
-            # 9: true win on true turn, playable
-            ('rgame', False, False,
-             utils.build_board([1, 0, 0],
-                               [0, 0, 1]), [2, 8], True, WinCond.ROUND_WIN,
-             utils.build_board([1, 0, 0],
-                               [0, 0, 1]), [2, 8], True),
-
-            # 10: test_ft_win
-            ('rgame', False, False,
-             utils.build_board([1, 0, 0],
-                               [0, 0, 1]), [2, 8], False, WinCond.ROUND_WIN,
-             utils.build_board([1, 0, 0],
-                               [0, 0, 1]), [2, 8], True),
-
-            # 11: test_ff_win
-            ('rgame', False, False,
-             utils.build_board([1, 0, 0],
-                               [0, 0, 1]), [8, 2], False, WinCond.ROUND_WIN,
-             utils.build_board([1, 0, 0],
-                               [0, 0, 1]), [8, 2], False),
-
-            # 12: test_tf_win
-            ('rgame', False, False,
-             utils.build_board([1, 0, 0],
-                               [0, 0, 1]), [8, 2], True, WinCond.ROUND_WIN,
-             utils.build_board([1, 0, 0],
-                               [0, 0, 1]), [8, 2], False),
-
-            # 13: test_f_tie_win
-            ('rgame', False, False,
-             utils.build_board([0, 0, 0],
-                               [0, 0, 0]), [6, 6], False, WinCond.ROUND_TIE,
-             utils.build_board([0, 0, 0],
-                               [0, 0, 0]), [6, 6], False),
-
-            # 14: test_t_tie_win
-            ('rgame', False, False,
-             utils.build_board([0, 0, 0],
-                               [0, 0, 0]), [6, 6], True, WinCond.ROUND_TIE,
-             utils.build_board([0, 0, 0],
-                               [0, 0, 0]), [6, 6], True),
-
-            # 15: false's turn ended, true has won, doesn't have seeds
-            ('rgame', False, False,
-             utils.build_board([1, 0, 0],
-                               [0, 0, 0]), [0, 11], False, WinCond.WIN,
-             utils.build_board([1, 0, 0],
-                               [0, 0, 0]), [0, 11], True),
-
-            # 16: true's turn ended, false has won, true can't continue
-            ('rgame', False, False,
-             utils.build_board([0, 0, 0],
-                               [0, 0, 1]), [11, 0], True, WinCond.WIN,
-             utils.build_board([0, 0, 0],
-                               [0, 0, 1]), [11, 0], False),
-
-            # 17: game ended, true has won
-            ('game', True, False,
-             utils.build_board([2, 2, 0],
-                               [0, 0, 1]), [3, 4], True, WinCond.WIN,
-             utils.build_board([0, 0, 0],
-                               [0, 0, 0]), [4, 8], True),
-
-            # 18: game ended, false has won
-            ('rgame', True, False,
-             utils.build_board([1, 0, 0],
-                               [0, 2, 2]), [4, 3], False, WinCond.WIN,
-             utils.build_board([0, 0, 0],
-                               [0, 0, 0]), [8, 4], False),
-
-            # 19: false's turn ended, no valid moves, true wins
-            ('mmgame', False, False,
-             utils.build_board([1, 1, 0],
-                               [0, 1, 1]), [3, 5], False, WinCond.WIN,
-             utils.build_board([0, 0, 0],
-                               [0, 0, 0]), [5, 7], True),
-
-            # 20: true's turn ended, no valid moves, false wins
-            ('mmgame', False, False,
-             utils.build_board([1, 1, 0],
-                               [0, 1, 1]), [5, 3], True, WinCond.WIN,
-             utils.build_board([0, 0, 0],
-                               [0, 0, 0]), [7, 5], False),
-
-            # 21: true's turn ended, no valid moves, false wins
-            ('mmshgame', False, False,
-             utils.build_board([1, 1, 0],
-                               [0, 1, 1]), [5, 3], True, WinCond.WIN,
-             utils.build_board([0, 0, 0],
-                               [0, 0, 0]), [7, 5], False),
-
-            # 22: true's turn ended, false has no moves, no pass
-            ('no_win_game', False, False,
-             utils.build_board([5, 0, 0],
-                               [0, 0, 0]), [3, 4], True, WinCond.WIN,
-             utils.build_board([0, 0, 0],
-                               [0, 0, 0]), [3, 9], True),
-
-            # 23: true's turn ended without seeds, false can't share
-            ('no_win_game', False, False,
-             utils.build_board([0, 0, 0],
-                               [1, 1, 0]), [5, 5], True, WinCond.WIN,
-             utils.build_board([0, 0, 0],
-                               [0, 0, 0]), [7, 5], False),
-
-            # 24: true's turn ended without seeds, false can't share
-            ('no_win_game', False, False,
-             utils.build_board([0, 0, 0],
-                               [1, 1, 0]), [4, 6], True, WinCond.TIE,
-             utils.build_board([0, 0, 0],
-                               [0, 0, 0]), [6, 6], None),
-
-            # 25: true has a repeat_turn but no moves, false wins
-            ('game', False, True,
-             utils.build_board([0, 0, 0],
-                               [0, 0, 5]), [3, 4], True, WinCond.WIN,
-             utils.build_board([0, 0, 0],
-                               [0, 0, 0]), [8, 4], False),
-
-            # 26: true's turn ended without moves, false can share and capture
-            ('mmshgame', False, False,
-             utils.build_board([1, 1, 0],
-                               [0, 1, 3]), [3, 3], True, WinCond.WIN,
-             utils.build_board([0, 0, 0],
-                               [0, 0, 0]), [7, 5], False),
-
-            # 27: true has no moves but has a repeat turn, false can share
-            ('mmshgame', False, True,
-             utils.build_board([1, 1, 0],
-                               [0, 1, 3]), [3, 3], True, WinCond.WIN,
-             utils.build_board([0, 0, 0],
-                               [0, 0, 0]), [7, 5], False),
-
-            # 28: true's turn ended, false has no moves, pass
-            ('pagame', False, False,
-             utils.build_board([5, 0, 0],
-                               [0, 0, 0]), [3, 4], True, None,
-             utils.build_board([5, 0, 0],
-                               [0, 0, 0]), [3, 4], True),
-
-        ])
+        WINCASES,
+       ids=[f'case_{c}' for c in range(len(WINCASES))])
     def test_wincond(self, request, fixture, ended,
                      repeat, board, store, turn,
                      eres, eboard, estore, eturn):
@@ -1068,10 +1085,13 @@ class TestTerritory:
                              [([('evens', True)], 2),
                               ([('crosscapt', True)], 2),
                               ([('capt_next', True)], 2),
-                              ([('capttwoout', True)], 2),
+                              ([('capttwoout', True)], 3),
                               ([('capt_on', [3])], 3),
                               ([('capt_on', [1, 2, 3])], 1),
                               ([('capt_min', 2)], 2),
+
+                              ([('capttwoout', True),
+                                ('mlaps', True)], 2),
 
                               ([('capt_on', [4]),
                                 ('evens', True)], 4),
@@ -1086,7 +1106,7 @@ class TestTerritory:
                               ([('sow_own_store', True)], -1),
                               ((), -1),  # no capture method
                                  ])
-    def test_min_occupy(self, game, capt_methods, emin_occ):
+    def test_min_capture(self, game, capt_methods, emin_occ):
         """Test the minimum capture criteria."""
 
         object.__setattr__(game.info, 'capt_on', [])
@@ -1095,7 +1115,7 @@ class TestTerritory:
             object.__setattr__(game.info, cmethod, cvalue)
         deco = end_move.deco_end_move(game)
 
-        assert deco._min_occupy(game) == emin_occ
+        assert deco._min_for_capture(game) == emin_occ
 
 
     @pytest.mark.parametrize(
@@ -1132,7 +1152,7 @@ class TestTerritory:
         print(deco)
         print(deco.min_occ)
 
-        result = deco._cant_occupy_more()
+        result = deco._cant_capt_more()
         assert result == eresult
 
         if result:
