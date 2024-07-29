@@ -223,7 +223,14 @@ name than you expect.
 </div>
 <p>Rules: <a href="https://en.wikipedia.org/wiki/Southeast_Asian_mancala" target="_blank">https://en.wikipedia.org/wiki/Southeast_Asian_mancala</a>
 <h3 id="Cow">Cow</h3>
-<p>A single-lap mancala, sow direction depends on start location: left side sow CW, right side sow CCW, mouse button selectes direction for center. Minimum move is 2 seeds. Multiple capture on opponents side on 2s and 4s. A player must pass, if they have no moves. The games ends when on player has more than half the seeds, or when neither player can move.
+<p>A single-lap mancala with a SPLIT <a href="game_params.html#sow_direct">SOW_DIRECT</a>. The sow direction depends on start location:
+<ul><li class="helptext">Moves started from the left 2 holes will sow CW. Either mouse button maybe used.
+<li class="helptext">Moves started from the right 2 holes will sow CCW. Either mouse button maybe used.
+<li class="helptext">For the center hole, the mouse button used to start the move selects the sow direction. The left mouse button will sow CW and the right mouse button will sow CCW.
+</ul>
+<p>Two seeds are required for a move. A player must pass, if they have no moves.
+<p>Captures are on 2s and 4s on the opponents side with multiple captures occuring in the preceeding holes. Specifically, the capture direction is the reverse of the sow direction used for the move.
+<p>The games ends when one player has more than half the seeds or when neither player can move.
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  5</p>
@@ -497,7 +504,7 @@ name than you expect.
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p37.
 <p>Deviation: Game doesn't end until <= 4 seeds for loser, but in rearrangement rules, all holes must contain a seed. Also, the winner's side is setup reversed of loser's side, so both players must have enough seeds for a valid move. Therefore, the game will end when there are not enough seeds for the loser to fill their side of the board with a valid move.
 <h3 id="Goat">Goat</h3>
-<p>A single-lap mancala, sow direction depends on start location: left side sow left, right side sow right, mouse button selectes direction for center. Minimum move is 2 seeds. Multiple capture on opponents side on 2s. A player must pass, if they have no moves.
+<p>A single-lap mancala with SPLIT <a href="game_params.html#sow_direct">SOW_DIRECT</a>. Minimum move is 2 seeds. Multiple capture on opponents side on 2s. A player must pass, if they have no moves. A simplified version of <a href="about_games.html#Cow">Cow</a>.
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  3</p>
@@ -698,7 +705,7 @@ name than you expect.
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p60.
 <h3 id="Mbangbi">Mbangbi</h3>
-<p>A single-lap mancala in which each player chooses the sow direction on each move. Moves may only be started from holes with 2 or more seeds.  If a player does not have a move they must pass until they do have a move or the game ends.
+<p>A single-lap mancala in which each player chooses the sow direction on each move. Left-mouse sows clockwise and right-mouse button sows counter-clockwise. Moves may only be started from holes with 2 or more seeds.  If a player does not have a move they must pass until they do have a move or the game ends.
 <p>Captures are on 2s and 4s from the opponent's side (final seed sown makes either 2 or 4).  As long as there is a an unbroken group of holes containing 2 or 4 seeds immediately preceeding the final hole sown, these holes are also captured.
 <div class="cols_row">
   <div class="column2">

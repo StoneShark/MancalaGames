@@ -263,9 +263,10 @@ is included after the parameter sections.
 <p>Direction of sow:
 <ul><li class="helptext">CW: clockwise
 <li class="helptext">CCW: counter-clockwise
-<li class="helptext">SPLIT: left side holes sow counter-clockwise and right side holes sow clockwise, an odd middle hole must be set as UDIR_HOLE. 
+<li class="helptext">SPLIT: left side holes sow counter-clockwise and right side holes sow clockwise, an odd middle hole must be set in <a href="game_params.html#udir_holes">UDIR_HOLES</a>.
 </ul>
-<p>Any hole can be set as UDIR_HOLE to allow the user to override the sow_direct setting.
+<p>Both mouse buttons will start a move no matter the sow direction. If the hole is marked as <a href="game_params.html#udir_holes">UDIR_HOLES</a>, the button selects sow direction. On the other hand, if the hole is not marked as <a href="game_params.html#udir_holes">UDIR_HOLES</a>, either button will sow in the prescribed direction. This can be useful, mechanism to remind yourself that on SPLIT sow, the left holes go CW by using the left button and the right holes go CCW by using the right button.
+<p>Any hole can be set as <a href="game_params.html#udir_holes">UDIR_HOLES</a> to allow the user to override the sow_direct setting.
 <h4 id="sow_start"> Sow Start Hole </h4>
 <p class="pdesc">Location in Config Files: game_info : sow_start
 <p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>

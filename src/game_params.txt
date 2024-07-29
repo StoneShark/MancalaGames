@@ -146,8 +146,9 @@ skip	udirect		game_info _	76	bool		0	0	A derived parameter. Do not include in co
 Sow	sow_direct	Sow Direction	game_info _	68	Direct	CCW	0	0	"Direction of sow:
 - CW: clockwise
 - CCW: counter-clockwise
-- SPLIT: left side holes sow counter-clockwise and right side holes sow clockwise, an odd middle hole must be set as UDIR_HOLE. 
-Any hole can be set as UDIR_HOLE to allow the user to override the sow_direct setting."
+- SPLIT: left side holes sow counter-clockwise and right side holes sow clockwise, an odd middle hole must be set in UDIR_HOLES.
+Both mouse buttons will start a move no matter the sow direction. If the hole is marked as UDIR_HOLES, the button selects sow direction. On the other hand, if the hole is not marked as UDIR_HOLES, either button will sow in the prescribed direction. This can be useful, mechanism to remind yourself that on SPLIT sow, the left holes go CW by using the left button and the right holes go CCW by using the right button.
+Any hole can be set as UDIR_HOLES to allow the user to override the sow_direct setting."
 Sow	sow_start	Sow Start Hole	game_info _	71	bool	False	1	0	When selected, the first seed is sown into  (i.e. left in) the start hole.
 Sow	skip_start	Skip Start on Lap	game_info _	67	bool	False	2	0	When sowing a second or subsequent circuit of the board, skip the start hole. This will leave the start hole empty for single lap games.
 Sow	sow_own_store	Sow Own Store	game_info _	69	bool	False	3	0	Sow seeds into your own store when passing it. Do not sow into your opponents store. Sow the final seed of a move into the store, results in a repeat turn.
