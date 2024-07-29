@@ -10,7 +10,7 @@ import re
 
 
 PATH = './src/'
-PYFILE = '\.pyw?'
+PYFILE = '\\.pyw?'
 BAD_FILE_RE = ['pycache', '^run_', 'Copy']
 
 
