@@ -32,14 +32,6 @@ BAD_CFG = 'all_params.txt'
 INDEX = [fname[:-4] for fname in os.listdir(PATH) if fname != BAD_CFG]
 
 
-@dataclasses.dataclass
-class ExperConfig:
-
-    nbr_runs: int = 0
-    save_logs: bool = False
-    output: str = 'output.txt'
-
-
 # %%  player config
 
 PLAYER_CONFIG_MSG = \
@@ -48,7 +40,7 @@ Player configurations:
     as_config [algo <aname>] [diff <level>]   - config file player with substitions
     algo <aname> [params <values>]            - specified algo with either
                                                 default params or those specified
-    random                                    - player will make random moves
+    random                                    - player will make random moves (default)
 
 where:
     <aname>    is one of {set(ai_player.ALGORITHM_DICT.keys())}
@@ -151,11 +143,15 @@ def build_player(game, pdict, arg_list):
         # don't use them, e.g. don't set difficulty
 
         if len(arg_list) == 2:
-            player.algo.set_params(int(arg_list[1]))
-        elif len(arg_list) == 4:
-            player.algo.set_params(float(arg_list[1]),
-                                   int(arg_list[2]),
-                                   int(arg_list[3]))
+            pass
+
+        elif len(arg_list) == 3:
+            player.algo.set_params(int(arg_list[2]))
+
+        elif len(arg_list) == 5:
+            player.algo.set_params(float(arg_list[2]),
+                                   int(arg_list[3]),
+                                   int(arg_list[4]))
         else:
             print("Got confused in 'algo'. Try --help")
             sys.exit()
@@ -174,7 +170,7 @@ def game_n_players_gen(cargs):
         tplayer = build_player(game, pdict, cargs.tplayer)
         fplayer = build_player(game, pdict, cargs.fplayer)
 
-        yield game, tplayer, fplayer
+        yield game, tplayer, fplayer, gname
 
 
 def get_configuration():
@@ -184,11 +180,6 @@ def get_configuration():
 
     cargs = process_command_line()
 
-    if cargs.save_logs:
-        game_logger.game_log.active = True
-    else:
-        game_logger.game_log.active = False
+    game_logger.game_log.active = cargs.save_logs
 
-    return game_n_players_gen(cargs), ExperConfig(nbr_runs=cargs.nbr_runs,
-                                                  save_logs=cargs.save_logs,
-                                                  output=cargs.output)
+    return game_n_players_gen(cargs), cargs

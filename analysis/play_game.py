@@ -9,11 +9,14 @@ Created on Sun Jul 28 12:33:30 2024
 import collections
 import enum
 import random
+import time
 
 import tqdm
 
 from context import game_interface as gi
 from context import game_logger
+
+from game_logger import game_log
 
 
 # %%  constants
@@ -37,22 +40,22 @@ class GameResult(enum.Enum):
 def result_name(starter, result, winner):
     """Create a short string for the game result"""
 
-    if result == GameResult.WIN.value:
+    if result == GameResult.WIN:
         return f'WIN{BOOL_STR[winner]}-S{BOOL_STR[starter]}'
 
-    if result == GameResult.TIE.value:
+    if result == GameResult.TIE:
         return f'TIE-S{BOOL_STR[starter]}'
 
-    return GameResult(result).name
+    return result.name
 
 
 # define a list of game result strings
 # without making assumptions about result_name is written
 
-GAME_RESULTS = list(set([result_name(starter, result.value, winner)
-                         for starter in (False, True)
-                         for winner in (False, True)
-                         for result in GameResult]))
+GAME_RESULTS = sorted(list(set([result_name(starter, result, winner)
+                                for starter in (False, True)
+                                for winner in (False, True)
+                                for result in GameResult])))
 
 
 # %%  helper classes
@@ -111,7 +114,7 @@ class FindLoops:
 # %% play the game
 
 
-def play_one_game(game, tplayer=None, fplayer=None):
+def play_one_game(game, tplayer, fplayer, save_logs=False):
     """Play one game between the two players, returning the results.
     If either/both is None, use random choice moves.
     Otherwise use the player."""
@@ -121,9 +124,13 @@ def play_one_game(game, tplayer=None, fplayer=None):
     for _ in range(2000 if game.info.rounds else 500):
 
         if game.turn and tplayer:
+            game_log.active = False
             move = tplayer.pick_move()
+            game_log.active = save_logs
         elif not game.turn and fplayer:
+            game_log.active = False
             move = fplayer.pick_move()
+            game_log.active = save_logs
         else:
             moves = game.get_moves()
             assert moves, "Game didn't end right."
@@ -131,26 +138,25 @@ def play_one_game(game, tplayer=None, fplayer=None):
 
         cond = game.move(move)
         if cond in (gi.WinCond.WIN, gi.WinCond.TIE, gi.WinCond.ENDLESS):
-            break
+            return GameResult(cond.value), game.turn
+
         if cond in (gi.WinCond.ROUND_WIN, gi.WinCond.ROUND_TIE):
             if game.new_game(cond, new_round_ok=True):
-                return cond.value, game.turn
+                return GameResult(cond.value), game.turn
 
         if stuck.game_state_loop(game):
-            return GameResult.LOOPED.value, None
+            return GameResult.LOOPED, None
 
         if game.info.mustpass:
             game.test_pass()
             if stuck.game_state_loop(game):
-                return GameResult.LOOPED.value, None
+                return GameResult.LOOPED, None
 
-    else:
-        return GameResult.MAX_TURNS.value, None
-
-    return cond.value, game.turn
+    return GameResult.MAX_TURNS, None
 
 
-def play_games(game, tplayer, fplayer, nbr_runs, save_logs):
+def play_games(game, tplayer, fplayer, nbr_runs, save_logs,
+               result_func=None):
     """Play a bunch of games between two players."""
 
     game_results = GameStats()
@@ -164,10 +170,18 @@ def play_games(game, tplayer, fplayer, nbr_runs, save_logs):
         else:
             starter = game.starter = game.turn = False
 
-        result, winner = play_one_game(game, tplayer, fplayer)
+        result, winner = play_one_game(game, tplayer, fplayer, save_logs)
         if save_logs:
-            game_logger.game_log.save('play game\n' + game.params_str())
+            game_logger.game_log.save(
+                'Simulate Game.\n'
+                + f'T Player: {tplayer}\nF Player: {fplayer}\n'
+                + f'Starter: {game.starter}\n\n'
+                + game.params_str())
+            game_logger.game_log.new()
+            time.sleep(1)
 
         game_results.tally(starter, result, winner)
+        if result_func:
+            result_func(starter, result, winner)
 
     return game_results
