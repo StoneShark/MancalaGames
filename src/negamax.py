@@ -36,6 +36,9 @@ class NegaMaxer(ai_interface.AiAlgorithmIf):
         self.max_depth = 5
         self.last_scores = None
 
+    def __str__(self):
+        return f'NegaMaxer(max_depth={self.max_depth})'
+
 
     def negamax(self, pmult, depth=0, alpha=MIN_INT, beta=MAX_INT):
         """Run a negamax with alpha/beta pruning from the

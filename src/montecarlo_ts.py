@@ -131,6 +131,10 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
 
         self.next_id = 0  # cummulative count of node ids
 
+    def __str__(self):
+        return f'MonteCarlTS(bias={self.bias}, ' \
+                + f'new_nodes={self.new_nodes}, ' \
+                + f'nbr_pouts={self.nbr_pouts})'
 
     def add_node(self, state, moves=(), *, leaf=False, reward=0):
         """Create the game node and add it to both the dict

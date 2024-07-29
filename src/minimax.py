@@ -37,6 +37,9 @@ class MiniMaxer(ai_interface.AiAlgorithmIf):
         self.max_depth = 3
         self.last_scores = None
 
+    def __str__(self):
+        return f'MiniMaxer(max_depth={self.max_depth})'
+
 
     def minimax_ab(self, depth=0, alpha=MIN_INT, beta=MAX_INT):
         """Run a minimax with alpha/beta pruning from the
