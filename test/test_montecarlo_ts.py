@@ -150,6 +150,20 @@ class TestMonteCarloTS:
         return mcts.MonteCarloTS(game, player)
 
 
+    def test_string(self, algo):
+        """Confirm str contain class name and three
+        param values. Other tests confirm actual assignment order
+        from set_params."""
+
+        algo.set_params(0.6, 1000, 20)
+        string = str(algo)
+
+        assert 'MonteCarloTS' in string
+        assert '0.6' in string
+        assert '1000' in string
+        assert '20' in string
+
+
     @pytest.mark.parametrize('params, egood',
                              [
                               # these values should be set
@@ -182,6 +196,8 @@ class TestMonteCarloTS:
                 assert algo.new_nodes == params[1]
             if len(params) >= 3:
                 assert algo.nbr_pouts == params[2]
+
+
 
         elif egood is False:
             with pytest.raises(TypeError):

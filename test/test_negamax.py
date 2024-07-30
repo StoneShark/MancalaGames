@@ -144,6 +144,19 @@ def define_get_game(depth):
 
 class TestNegaMaxer:
 
+
+    def test_string(self):
+        """Confirm str contain class name and depth."""
+
+        game, player = define_get_game(1)
+        algo = player.algo
+
+        algo.set_params(15)
+        string = str(algo)
+
+        assert 'NegaMaxer' in string
+        assert '15' in string
+
     def test_level1(self):
 
         game, player = define_get_game(1)

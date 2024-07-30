@@ -132,7 +132,7 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
         self.next_id = 0  # cummulative count of node ids
 
     def __str__(self):
-        return f'MonteCarlTS(bias={self.bias}, ' \
+        return f'MonteCarloTS(bias={self.bias}, ' \
                 + f'new_nodes={self.new_nodes}, ' \
                 + f'nbr_pouts={self.nbr_pouts})'
 
