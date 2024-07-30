@@ -27,11 +27,10 @@ from game_interface import WinCond
 from mancala import MoveData
 
 
-# %%
+# %% constants
 
 TEST_COVERS = ['src\\capturer.py',
                'src\\make_child.py']
-
 
 T = True
 F = False
@@ -86,6 +85,9 @@ CONVERT_DICT = {'N': None,
                 'KRIGHT': GrandSlam.LEAVE_RIGHT,
 
                 }
+
+FIELD_NAMES = {}
+CASES= []
 
 def convert(val, col, line):
 

@@ -10,12 +10,10 @@ import pytest
 
 
 from context import btn_behaviors
-from context import game_tally
 from context import mancala_games
 from context import mancala_ui
 from context import play_mancala
 from context import play
-from context import montecarlo_ts
 
 
 def test_files_not():
