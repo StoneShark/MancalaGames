@@ -42,8 +42,7 @@ class TestGameLog:
         assert not glog._move_start
 
 
-    @pytest.mark.skip("has_calls went away : needs rewrite")
-    def test_add(self, mocker, glog):
+    def test_save_log(self, mocker, glog):
 
         glog.add('test line one', glog.MOVE)
         glog.add('test line two', glog.MOVE)
@@ -55,8 +54,12 @@ class TestGameLog:
             glog._output(file)
 
         mopen.assert_called_once_with('logfile', 'w')
-        handle = mopen()
-        handle.write.has_calls('test line one', 'test line two')
+
+        # don't care about the specific calls, check for the required data
+        call_text = ' '.join(str(c) for c in mopen.mock_calls)
+        assert 'Game history' in call_text
+        assert 'test line one' in call_text
+        assert 'test line two' in call_text
 
 
     def test_add_level(self, glog):
