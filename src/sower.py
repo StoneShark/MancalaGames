@@ -740,6 +740,12 @@ def deco_build_lap_cont(game):
 
         lap_cont = StopSingleSeed(game, lap_cont)
 
+        if not game.info.crosscapt and any([game.info.evens,
+                                            game.info.capt_on,
+                                            game.info.capt_max,
+                                            game.info.capt_min]):
+            lap_cont = StopCaptureSeeds(game, lap_cont)
+
     elif game.info.mlaps == gi.LapSower.LAPPER_NEXT:
         lap_cont = NextLapCont(game)
 
@@ -749,13 +755,6 @@ def deco_build_lap_cont(game):
 
     if game.info.child_type:
         lap_cont = StopOnChild(game, lap_cont)
-
-    if (any([game.info.evens,
-             game.info.capt_on,
-             game.info.capt_max,
-             game.info.capt_min])
-        and game.info.mlaps is not gi.LapSower.LAPPER_NEXT):
-        lap_cont = StopCaptureSeeds(game, lap_cont)
 
     if game.info.sow_own_store:
         lap_cont = StopRepeatTurn(game, lap_cont)
