@@ -11,24 +11,29 @@ Allow	allow_rule	Special Move Restrictions	game_info _	14	AllowRule	NONE	3	0	"Al
 - TWO_ONLY_ALL_RIGHT: Holes with two seeds may not be played, unless all holes contains two seeds, in which case the rightmost hole must be played.
 - FIRST_TURN_ONLY_RIGHT_TWO: The first turn must start from one of the two rightmost holes.
 - RIGHT_2_1ST_THEN_ALL_TWO:  The first turn must start from one of the two rightmost holes. Subsequent moves may only start from holes without 2 seeds, unless all holes contain zero or 2 seeds."
-Capture	capsamedir	Capture in Sow Direction	game_info _	16	bool	False	0	0	Only meaninful, with MULTICAPT. Captures are done in the same direction as the sowing, i.e. following the final hole sown. If not set, captures are done from the holes just sown.
+Capture	capsamedir	Capture in Sow Direction	game_info _	16	bool	False	0	0	Only meaninful with MULTICAPT. Captures are done in the same direction as the sowing, i.e. following the final hole sown. If not set, captures are done from the holes just sown.
 Capture	oppsidecapt	Opp Side Capt Only	game_info _	58	bool	False	1	0	Captures may only be made from your oppents side of the board.
-Capture	multicapt	Multiple Captures	game_info _	49	bool	False	2	0	After the initial capture, continue capturing as long as the capture conditions are met.
-Capture	evens	Capture Evens	game_info _	33	bool	True	3	0	"Capture when a hole contains an even number of seeds, greater than 0.
-Additionally, a SOWRULE of OWN_SOW_CAPT_ALL or SOW_SOW_CAPT_ALL includes this capture mechanism."
+Capture	multicapt	Multiple Captures	game_info _	49	bool	False	2	0	"After the initial capture, continue capturing as long as the capture conditions are met. This multiple capture may happen in the sow direction (unsown holes) or in the opposite direction (sown holes) as determined by CAPSAMEDIR.
+See individual capture mechanism for any special requirements."
+Capture	evens	Capture Evens	game_info _	33	bool	True	3	0	"Capture when a hole contains an even number of seeds, greater than 0. When selected with other basic capture mechanisms, the capture mechanism are ANDed (all must be true for capture). Basic capture mechanisms are: CAPT_MAX, CAPT_MIN, CAPT_ON and EVENS with restrictions from OPPSIDECAPT, MOVEUNLOCK and not child holes of any type.
+MLAPS LAPPER sowing will stop the sowing on a final seed that would capture based on the selected basic capture mechanisms.
+Either SOW_RULE of OWN_SOW_CAPT_ALL or SOW_SOW_CAPT_ALL includes the basic capture mechanisms."
 Capture	capt_max	Capture Max	game_info _	17	int	0	4	0	"Capture when the contents of the hole are less than or equal to capt_max.
-Additionally, a SOWRULE of OWN_SOW_CAPT_ALL or SOW_SOW_CAPT_ALL includes this capture mechanism."
+When selected with other basic capture mechanisms, the capture mechanism are ANDed (all must be true for capture). Basic capture mechanisms are: CAPT_MAX, CAPT_MIN, CAPT_ON and EVENS  with restrictions from OPPSIDECAPT, MOVEUNLOCK and not child holes of any type.
+MLAPS LAPPER sowing will stop the sowing on a final seed that would capture based on the selected basic capture mechanisms.
+Either SOW_RULE of OWN_SOW_CAPT_ALL or SOW_SOW_CAPT_ALL includes the basic capture mechanisms."
 Capture	capt_min	Capture Min	game_info _	18	int	0	5	0	"Capture when the contents of the hole are greater than or equal to capt_min.
-Additionally, a SOWRULE of OWN_SOW_CAPT_ALL or SOW_SOW_CAPT_ALL includes this capture mechanism."
+When selected with other basic capture mechanisms, the capture mechanism are ANDed (all must be true for capture). Basic capture mechanisms are: CAPT_MAX, CAPT_MIN, CAPT_ON and EVENS  with restrictions from OPPSIDECAPT, MOVEUNLOCK and not child holes of any type.
+MLAP LAPPER sowing will stop the sowing on a final seed that would capture based on the selected basic capture mechanisms.
+Either SOW_RULE of OWN_SOW_CAPT_ALL or SOW_SOW_CAPT_ALL includes the basic capture mechanisms."
 Capture	capt_next	Capture Next	game_info _	19	bool	False	6	0	"Capture from the hole after the final seed sown into an empty hole. 
-Additionally, a SOWRULE of OWN_SOW_CAPT_ALL or SOW_SOW_CAPT_ALL includes this capture mechanism."
+"
 Capture	capttwoout	Capture Two Out	game_info _	22	bool	False	7	0	"There are three flavors of capture two out:
 Single Lap: capture if sow ends in occupied hole, then an empty hole, followed by an occupied hole (this is hole captured).
 Multi lap but single capture: capture when last hole sown is followed by an empty hole which is then followed by an occupied hole.
 Multi lap with multiple captures: capture when last hole sown is followed by an empty hole which is then followed by an occupied hole. Continue captures as long as the pattern of empty hole followed by an occupied hole continues.
-Additionally, a SOWRULE of OWN_SOW_CAPT_ALL or SOW_SOW_CAPT_ALL includes this capture mechanism.
-OPPSIDECAPT, EVENS, CAPT_MAX, CAPT_MIN, and CAPT_ON apply only to an optional xxx_SOW_CAPT_ALL and not the final capture."
-Capture	crosscapt	Cross-Capture	game_info _	29	bool	False	0	2	"If the last sown seed is put in an empty hole, any seeds on the opposite side of the board are captured.
+"
+Capture	crosscapt	Cross-Capture	game_info _	29	bool	False	0	2	"If the last sown seed is put in an empty hole, seeds on the opposite side of the board are captured. The capture of those seeds can be limited by CAPT_MAX, CAPT_MIN, CAPT_ON, EVENS, MOVEUNLOCK, OPPSIDECAPT. For example, crosscapt with evens will only capture when there are an even number of seeds in the opposite hole.
 SOW_RULE of either SOW_CAPT_ALL do not do this capture."
 Capture	xc_sown	Must sow opp for xcapt	game_info _	78	bool	False	1	2	"Only allow cross capture if the player has sown onto the opposite side of board. 
 If a player ends on their own side of the board in an empty hole, but did not sow any opposite hole, they get a repeat turn."
@@ -43,18 +48,20 @@ Capture	grandslam	Grand Slam	game_info _	37	GrandSlam	LEGAL	3	2	"A grandslam is 
 - OPP_GETS_REMAIN: if you capture all your opponents seeds, they capture all of your remaining seeds and the game is over. Winner is determined by game goal.
 - LEAVE_LEFT: the capture is performed from all but the leftmost hole from the sower perspective. This might leave your oppenents without seeds or might not capture any seeds.
 - LEAVE_RIGHT: the capture is performed from all but the rightmost hole from the sower perspective. This might leave your oppenents without seeds."
-Capture	moveunlock	Move Unlock for Capture	game_info _	48	bool	False	4	2	Holes in the game start each round locked. Captures may not be made from locked holes. Starting a sow from a hole unlocks it.
+Capture	moveunlock	Move Unlock for Capture	game_info _	48	bool	False	4	2	Holes in the game start each game and round locked. Captures may not be made from locked holes. Starting a sow from a hole unlocks it allowing future captures.
 Capture	nosinglecapt	No Single Seed Capture	game_info _	57	bool	False	5	2	If the selected start hole contains one seed, no capture may be made with it.
 Capture	nocaptfirst	No Capture First Move	game_info _	56	bool	False	6	2	Don't allow captures or closing of holes (SOW_RULE of SOW_BLKD_DIV) on the first move of the game or round.
 Capture	capt_on	Capture On Values	game_info _	20	list[bool]	[]	8	2	"Capture when the contents of the hole is in the capt_on list. 
-Additionally, a SOWRULE of OWN_SOW_CAPT_ALL or SOW_SOW_CAPT_ALL includes this capture mechanism."
+When selected with other basic capture mechanisms, the capture mechanism are ANDed (all must be true for capture). Basic capture mechanisms are: CAPT_MAX, CAPT_MIN, CAPT_ON and EVENS   with restrictions from OPPSIDECAPT, MOVEUNLOCK and not child holes of any type.
+MLAP LAPPER sowing will stop the sowing on a final seed that would capture based on the selected basic capture mechanisms.
+Either SOWRULE of OWN_SOW_CAPT_ALL or SOW_SOW_CAPT_ALL includes the basic capture mechanisms."
 Capture	capt_rturn	Repeat Turn on Capture	game_info _	21	bool	False	9	2	Repeat turn if there was a capture. Making children is not a capture.
 Capture	pickextra	On Capture, Take More Rule	game_info _	59	CaptExtraPick	NONE	10	2	"Rules to allow taking of more than otherwise captured or picked seeds:
 - NONE: Nothing extra
 - PICKCROSS: Take the seeds from the opposite side of the board. 
 - PICKTWOS: Take seeds from all holes containing two seeds but only after the first move.
 - PICKLASTSEEDS: If there are the number of starts seeds or fewer left,  the current player collects them and the game is over. This rule is applied at the end of each turn, even if there is not a capture because the sow phase may have reduced the seed count.
-- PICK2XLASTSEEDS: if there are 2 times the number of start seeds or fewer, the round starter picks them. This rule is applied at the end of each turn, even if there is not a capture because the sow phase may have reduced the seed count."
+- PICK2XLASTSEEDS: If there are 2 times the number of start seeds or fewer, the round starter picks them. This rule is applied at the end of each turn, even if there is not a capture because the sow phase may have reduced the seed count."
 Dynamics	stores	Stores	game_info _	73	bool	True	0	0	Are stores present on the game board?
 Dynamics	mustpass	Must Pass	game_info _	50	bool	False	1	0	When a player has no allowable moves on their turn, they must pass, and continue to do so until they have allowable moves or the game is over. The game is over when there is a clear winner or tie condition, or when neither player has an allowable move.
 Dynamics	rounds	Rounds	game_info _	64	bool	False	4	0	Is the game played in a series of rounds? In the case of a round win or tie  a new starter is determined via ROUND_STARTER and  the board is reset according to ROUND_FILL. BLOCKS are used in many games and set between rounds based on the seed placement.
@@ -175,7 +182,7 @@ Sow	mlaps	Multilap Sow	game_info _	44	LapSower	OFF	0	2	"Determines if seeds from
 - LAPPER:  If the first sow ends in a hole with more than one seed, pickup all the seeds and continue sowing another lap. Continue until the final seed of a lap reaches an empty hole, unless there is another rule that stops the sowing (e.g. making a child).
 - LAPPER_NEXT:  If the first sow ends in a hole preceeding a hole with any seeds, pick up the seeds from that next hole and continue sowing another lap. Continue until the hole after the laps final seed is empty."
 Sow	visit_opp	Visit Opp for Mlaps	game_info _	77	bool	False	1	2	Sow is multiplap only if the first sow (seeds from the starting hole) reaches the opponents side of the board.
-Sow	child_type	Type of Children	game_info _	27	ChildType	NOCHILD	3	2	"Games with children allow players to claim holes. These child holes are an extension of the stores and seeds in them count towards a win. Making a child stops any multiple lap sowing, moves cannot start from children, and they cannot be captured.
+Sow	child_type	Type of Children	game_info _	27	ChildType	NOCHILD	3	2	"Games with children allow players to claim holes. These child holes are an extension of the stores and seeds in them count towards a win. Making a child stops any multiple lap sowing, moves cannot start from children, and they cannot be captured (except for special rules associated with WEGs).
 - NOCHILD: children are not used.
 - NORMAL: children are made when a final seeds sows a hole to CHILD_CVT.
 - WALDA: STORES are not supported. Captures are instead moved into waldas, thus a player may not capture until they have created a walda. 
