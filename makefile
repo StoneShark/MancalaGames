@@ -1,5 +1,5 @@
 
-all: clean pylint context all_tests docs exe
+all: clean pylint context params all_tests docs exe
 
 long_tests: stress_tests player_tests cov_unit_tests
 
@@ -227,6 +227,7 @@ pylint: $(SOURCES) .pylint_report makefile
 #  clean: remove most of the accumulated stuff from builds
 #  but leave things that are stored in configuration management
 #  generally causes any other target to be re-run
+#  leave the exe too
 #
 #  spotless: remove everything including the exes and generated files
 
