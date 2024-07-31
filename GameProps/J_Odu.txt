@@ -5,7 +5,7 @@
       "nbr_start": 4
    },
    "game_info": {
-      "name": "J Odu",
+      "name": "J'Odu",
       "about": "Sow clockwise, multi-lap sow. Cross capture opposite-side but only up to 3 seeds, picking own on capture.\n\nVariations: board size and start seeds.",
       "capt_max": 3,
       "crosscapt": true,
@@ -24,8 +24,8 @@
       "scorer": {
          "stores_m": 4,
          "access_m": 0,
-         "seeds_m": 0,
-         "empties_m": 0,
+         "seeds_m": 1,
+         "empties_m": 2,
          "child_cnt_m": 0,
          "evens_m": 0,
          "easy_rand": 0,
