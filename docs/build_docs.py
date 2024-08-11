@@ -190,11 +190,36 @@ def sub_links(para):
     return ' '.join(w_links)
 
 
-def write_para(text, ofile):
+ENUM_NAME = re.compile('([A-Z0-9_]+): ')
+
+def bold_first_word(para, ofile):
+    """Bold the first word of a list item if it is an enum name;
+    actually all caps followed by a ': '.
+    param should have the '- ' stripped off already."""
+
+    print('<li class="helptext">', file=ofile)
+    result =  ENUM_NAME.match(para)
+    if not result:
+        print(sub_links(para), sep='', file=ofile)
+        return
+
+    word = result.groups()[0]
+    nw_idx = len(word)
+
+    print('<b class="enum">', word, '</b>', sep='', end='', file=ofile)
+    print(sub_links(para[nw_idx:]), file=ofile)
+
+
+def write_para(text, ofile, number=False):
     """Write a paragraph with
         * posible bullet lists for lines that start with -
         * make lines that start with 'Note: ' be in italic
-        """
+
+    If number is True, number the items instead of bulleted.
+    Start numbering at 0 which MIGHT cause the items to
+    match the assigned enumerations."""
+
+    li_tag = 'ol' if number else 'ul'
 
     in_list = False
     for para in text.split('\n'):
@@ -206,12 +231,11 @@ def write_para(text, ofile):
 
         elif not in_list and para[0] == '-':
             in_list = True
-            print('<ul><li class="helptext">', sub_links(para[2:]),
-                  sep='', file=ofile)
+            print('<', li_tag, ' start=0>', sep='', end='', file=ofile)
+            bold_first_word(para[2:], ofile)
 
         elif in_list and para[0] == '-':
-            print('<li class="helptext">', sub_links(para[2:]),
-                  sep='', file=ofile)
+            bold_first_word(para[2:], ofile)
 
         elif in_list and para[:3] == '  +':
             print('<p class="helptext">', sub_links(para[3:]),
@@ -219,7 +243,7 @@ def write_para(text, ofile):
 
         elif in_list:
             in_list = False
-            print('</ul>', file=ofile)
+            print('</', li_tag, '>', sep='', file=ofile)
             print('<p>', sub_links(para), sep='', file=ofile)
 
         else:
@@ -227,7 +251,7 @@ def write_para(text, ofile):
 
     if in_list:
         in_list = False
-        print('</ul>', file=ofile)
+        print('</', li_tag, '>', sep='', file=ofile)
 
 
 # %%  write game help
@@ -496,7 +520,10 @@ def write_params_help(filename):
                       file=ofile)
                 print(file=ofile)
 
-                write_para(param.description, ofile)
+                if param.vtype == 'Direct':
+                    write_para(param.description, ofile)
+                else:
+                    write_para(param.description, ofile, True)
 
         print('<br><br><br>', file=ofile)
         print('<h2 id="index">Parameter Index</h2>', file=ofile)
