@@ -84,6 +84,10 @@ b.inhead {
 	font-weight: bold;
 	color: darkblue;
 }
+b.enum {
+	font-weight: bold;
+	color: darkblue;
+}
 b.todo {
 	color: red;
 	font-weight: bold;	
