@@ -2,6 +2,9 @@
 
 Test Naming conventions:
 
+    test_cmp_...     tests composistions of deco chains
+                     a black box test of the each deco chain
+    
     test_gm...       tests full complete games with pre-defined
                      sequences of moves
 

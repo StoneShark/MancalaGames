@@ -1,5 +1,5 @@
 
-all: clean pylint context all_tests docs exe
+all: clean pylint context params all_tests docs exe
 
 long_tests: stress_tests player_tests cov_unit_tests
 

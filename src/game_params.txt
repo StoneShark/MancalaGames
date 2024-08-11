@@ -29,7 +29,7 @@ Either SOW_RULE of OWN_SOW_CAPT_ALL or SOW_SOW_CAPT_ALL includes the basic captu
 Capture	capt_next	Capture Next	game_info _	19	bool	False	6	0	"Capture from the hole after the final seed sown into an empty hole. 
 "
 Capture	capttwoout	Capture Two Out	game_info _	22	bool	False	7	0	"There are three flavors of capture two out:
-Single Lap: capture if sow ends in occupied hole, then an empty hole, followed by an occupied hole (this is hole captured).
+Single Lap: capture if sow ends in occupied hole, then an empty hole, followed by an occupied hole the contents of this are hole captured.
 Multi lap but single capture: capture when last hole sown is followed by an empty hole which is then followed by an occupied hole.
 Multi lap with multiple captures: capture when last hole sown is followed by an empty hole which is then followed by an occupied hole. Continue captures as long as the pattern of empty hole followed by an occupied hole continues.
 "
@@ -91,19 +91,20 @@ Dynamics	goal	Game Goal	game_info _	35	Goal	MAX_SEEDS	0	2	"The overall goal of t
   + TERRITORY games require STORES and that GPARAM_ONE be set to a value between the number of holes and two times the number of holes.
   + TERRITORY games are incompatible with NO_SIDES, START_PATTERN, GRANDSLAM of NOT_LEGAL, ALLOW_RULE of OPP_OR_EMPTY, "
 Dynamics	no_sides	No Sides	game_info _	55	bool	False	1	2	Moves maybe made from any hole, independent of the side of the board. Moves need specify side, position and directions.  
-Dynamics	start_pattern	Start Pattern	game_info _	72	StartPattern	ALL_EQUAL	2	2	"Allows specifing non-all-equal start patterns. Four patterns are supported:
-ALL_EQUAL: all holes start with the same number of seeds.
-GAMACHA: starting from the third hold (from start player's left) place nbr_seeds in every other hole, the first move is prescribed move the center hole's seeds to the other side (this is done automatically).
-ALTERNATES: everyother hole is filled with nbr_seeds, no seeds end up opposite eachother. If a player has fewer seeds than their opponent, then they start.
-ALTS_WITH_1: like Alternates except the starter's 2nd from right hole with nbr_seeds is replaced with one seed.
-CLIPPEDTRIPLES: pattern of 0 S S (where S is nbr_seeds) is used to fill the holes; if a full cycle of 3 cannot be placed, the holes are left empty. The True and False sides are the same from the player's perspective, e.g. they will look reversed when viewed from one side of the game board.
-TWOEMPTY: all but the rightmost two holes for each player are filled with is nbr_seeds."
-Dynamics	prescribed	Prescribed Opening Move	game_info _	60	SowPrescribed	NONE	3	2	"NONE: there is no prescribed opening move.
-BASIC_SOWER: the first sow follows general rules of single lap sowing.  Other sow parameters will be enacted  afterward.
-MLAPS_SOWER: the first sow follows general rules of multi-lap sowing. Other sow parameters will be enacted  afterward.
-SOW1OPP: at least one seed must be sown on the opponents side of the board accomplished by sowing as normal until the final seed, then any remaining holes on the player side are skipped and the
-PLUS1MINUS1: proceed from the selected hole by moving one seed from the next hole into the following hole, next skip that hole and repeat moving seed forward. After cycling the board, capture across from the opening hole.
-ARNGE_LIMIT: the first move may be used to rearrange the seeds (opponent is same layout). If the first move is not used for rearrangement, captures and child creation are not allowed from the starter until the second player makes a child or captures."
+Dynamics	start_pattern	Start Pattern	game_info _	72	StartPattern	ALL_EQUAL	2	2	"Allows specifing non-all-equal start patterns. The following patterns are supported:
+- ALL_EQUAL: all holes start with the same number of seeds.
+- GAMACHA: starting from the third hold (from start player's left) place nbr_seeds in every other hole, the first move is prescribed move the center hole's seeds to the other side (this is done automatically).
+- ALTERNATES: everyother hole is filled with nbr_seeds, no seeds end up opposite eachother. If a player has fewer seeds than their opponent, then they start.
+- ALTS_WITH_1: like Alternates except the starter's 2nd from right hole with nbr_seeds is replaced with one seed.
+- CLIPPEDTRIPLES: pattern of 0 S S (where S is nbr_seeds) is used to fill the holes; if a full cycle of 3 cannot be placed, the holes are left empty. The True and False sides are the same from the player's perspective, e.g. they will look reversed when viewed from one side of the game board.
+- TWOEMPTY: all but the rightmost two holes for each player are filled with is nbr_seeds."
+Dynamics	prescribed	Prescribed Opening Move	game_info _	60	SowPrescribed	NONE	3	2	"The first sow of the game maybe defined by a specific rule. Prescribed openings are different than start patterns because the player may choose the sow start point. SOW_OWN_STORE and SOW_RULE are ignored during the prescribed openings.
+- NONE: there is no prescribed opening move.
+- BASIC_SOWER: the first sow is a very basic pickup the seeds and drop them one at a time in each hole ignoring any other sow parameters. Other sow parameters will be enacted  afterward. This can be used to force the first sow of an MLAPS game to be a single sow. 
+- MLAPS_SOWER: the first sow follows basic rules of multi-lap sowing (LAPPER). Other sow parameters will be enacted  afterward. 
+- SOW1OPP: at least one seed must be sown on the opponents side of the board which is accomplished by sowing as normal until the final seed, then any remaining holes on the player's side are skipped and the last seed is sown in the oppenents first hole (based on current sow direction).
+- PLUS1MINUS1: proceed from the selected hole by moving one seed from the next hole into the following hole, next skip that hole and repeat moving seed forward. After cycling the board, capture across from the opening hole. 
+- ARNGE_LIMIT: the first move may be used to rearrange the seeds (opponent is same layout). If the first move is not used for rearrangement, captures and child creation are not allowed from the starter until the second player makes a child or captures."
 Dynamics	gparam_one	General input	game_info _	36	int	0	5	2	"Goal of Territory: defines the number of holes needed for a win.
 Goal of Deprive and Blocked Divert Sower: defines the number of seeds needed to close/block holes (sow_blkd_div)."
 Game	class	Game Class	game_class	28	GameClasses	Mancala	0	0	The name of the Game Class. Currently only Mancala.
@@ -181,7 +182,7 @@ Sow	mlaps	Multilap Sow	game_info _	44	LapSower	OFF	0	2	"Determines if seeds from
 - OFF: Single lap sowing. Seeds from the start hole are sown, typically, one per hole until expened.
 - LAPPER:  If the first sow ends in a hole with more than one seed, pickup all the seeds and continue sowing another lap. Continue until the final seed of a lap reaches an empty hole, unless there is another rule that stops the sowing (e.g. making a child).
 - LAPPER_NEXT:  If the first sow ends in a hole preceeding a hole with any seeds, pick up the seeds from that next hole and continue sowing another lap. Continue until the hole after the laps final seed is empty."
-Sow	visit_opp	Visit Opp for Mlaps	game_info _	77	bool	False	1	2	Sow is multiplap only if the first sow (seeds from the starting hole) reaches the opponents side of the board.
+Sow	visit_opp	Visit Opp for Mlaps	game_info _	77	bool	False	1	2	Requires MLAPS. If the first 'lap' does not reach the opponent's side of the board, the sowing ends after the first lap. 
 Sow	child_type	Type of Children	game_info _	27	ChildType	NOCHILD	3	2	"Games with children allow players to claim holes. These child holes are an extension of the stores and seeds in them count towards a win. Making a child stops any multiple lap sowing, moves cannot start from children, and they cannot be captured (except for special rules associated with WEGs).
 - NOCHILD: children are not used.
 - NORMAL: children are made when a final seeds sows a hole to CHILD_CVT.

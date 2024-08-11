@@ -663,9 +663,13 @@ class SowPlus1Minus1Capt(SowPrescribedIf):
         self.game.board[loc] = mdata.seeds
         incrementer = self.game.deco.incr.incr
 
-        for cnt in range(self.game.cts.dbl_holes - 1):
+        add_one = False
+        while True:
             loc = incrementer(loc, mdata.direct, mdata.cont_sow_loc)
-            self.game.board[loc] += 1 if cnt % 2 else -1
+            if loc == mdata.cont_sow_loc:
+                break
+            self.game.board[loc] += 1 if add_one else -1
+            add_one = not add_one
 
         cross = self.game.cts.cross_from_loc(mdata.cont_sow_loc)
         self.game.board[cross] += 1

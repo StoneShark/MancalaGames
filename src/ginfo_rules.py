@@ -503,6 +503,18 @@ def build_rules():
         excp=NotImplementedError)
 
     man_rules.add_rule(
+        'sow_own_prescribed',
+        rule=lambda ginfo: (ginfo.sow_own_store
+                            and ginfo.prescribed in
+                                (gi.SowPrescribed.BASIC_SOWER,
+                                 gi.SowPrescribed.MLAPS_SOWER,
+                                 gi.SowPrescribed.SOW1OPP,
+                                 gi.SowPrescribed.PLUS1MINUS1)
+                            ),
+        msg='SOW_OWN_STORE is ignored for the selected first prescribed sow.',
+        warn=True)
+
+    man_rules.add_rule(
         'visit_opp_req_mlap',
         rule=lambda ginfo: ginfo.visit_opp and ginfo.mlaps == gi.LapSower.OFF,
         msg='VISIT_OPP requires MLAPS',
@@ -656,6 +668,13 @@ def build_rules():
         msg='MIN_MOVE of 1 with SOW_START play is confusing (unless MOVE_ONE)',
         excp=gi.GameInfoError)
         # pick-up a seed, sow it back into the same hole -> no change of state
+
+    man_rules.add_rule(
+        'p1m1_conflict',
+        rule=lambda ginfo: (ginfo.prescribed == gi.SowPrescribed.PLUS1MINUS1
+                            and (ginfo.sow_start or ginfo.move_one)),
+        msg='PLUS1MINUS1 is incompatible with SOW_START and/or MOVE_ONE',
+        excp=gi.GameInfoError)
 
     man_rules.add_rule(
         'too_many_udir',
