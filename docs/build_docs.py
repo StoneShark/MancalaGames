@@ -212,14 +212,15 @@ def bold_first_word(para, ofile):
 
 def write_para(text, ofile, number=False):
     """Write a paragraph with
-        * posible bullet lists for lines that start with -
+        * possible bullet lists for lines that start with -
         * make lines that start with 'Note: ' be in italic
 
     If number is True, number the items instead of bulleted.
     Start numbering at 0 which MIGHT cause the items to
     match the assigned enumerations."""
 
-    li_tag = 'ol' if number else 'ul'
+    li_tag = 'ul' if number is False else 'ol'
+    start = '' if number is False else f' start={number}'
 
     in_list = False
     for para in text.split('\n'):
@@ -231,7 +232,7 @@ def write_para(text, ofile, number=False):
 
         elif not in_list and para[0] == '-':
             in_list = True
-            print('<', li_tag, ' start=0>', sep='', end='', file=ofile)
+            print('<', li_tag, start, '>', sep='', end='', file=ofile)
             bold_first_word(para[2:], ofile)
 
         elif in_list and para[0] == '-':
@@ -521,9 +522,9 @@ def write_params_help(filename):
                 print(file=ofile)
 
                 if param.vtype == 'Direct':
-                    write_para(param.description, ofile)
+                    write_para(param.description, ofile, -1)
                 else:
-                    write_para(param.description, ofile, True)
+                    write_para(param.description, ofile, 0)
 
         print('<br><br><br>', file=ofile)
         print('<h2 id="index">Parameter Index</h2>', file=ofile)
