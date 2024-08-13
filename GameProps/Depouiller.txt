@@ -1,0 +1,35 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 5,
+      "nbr_start": 2
+   },
+   "game_info": {
+      "name": "Dépouiller",
+      "about": "A deprive game. Moves are only allowed from holes that reach the opponents side or end in an empty hole. Sow direction is CCW. Cross capture from either side.\n\nAI player is MCTS and active with expert difficulty.",
+      "allow_rule": 1,
+      "crosscapt": true,
+      "goal": 1
+   },
+   "player": {
+      "scorer": {
+         "access_m": 0,
+         "child_cnt_m": 0,
+         "easy_rand": 0,
+         "empties_m": -1,
+         "evens_m": 0,
+         "repeat_turn": 0,
+         "seeds_m": 2,
+         "stores_m": 0
+      },
+      "ai_active": true,
+      "algorithm": "montecarlo_ts",
+      "difficulty": 3,
+      "ai_params": {
+         "mcts_bias": [ 200, 200, 200, 200 ],
+         "mcts_nodes": [ 30, 300, 500, 1000 ],
+         "mcts_pouts": [ 2, 3, 3, 3 ],
+         "mm_depth": [ 1, 5, 7, 11 ]
+      }
+   }
+}

@@ -170,7 +170,10 @@ def play_them_all():
 
         eval_game(gname, config.nbr_runs)
 
-    data.to_csv(f'data/{config.output}.csv')
+    if config.output:
+        data.to_csv(f'data/{config.output}.csv')
+    else:
+        print(data.to_string())
 
 
 # %%

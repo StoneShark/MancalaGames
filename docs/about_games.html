@@ -333,6 +333,20 @@ allow closing of rightmost holes (<a href="game_params.html#sow_rule">SOW_RULE</
   </div>
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p40.
+<h3 id="Dépouiller">Dépouiller</h3>
+<p>A deprive game. Moves are only allowed from holes that reach the opponents side or end in an empty hole. Sow direction is CCW. Cross capture from either side.
+<p>AI player is MCTS and active with expert difficulty.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  5</p>
+    <p class="param">Start seeds:  2</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: DEPRIVE</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#allow_rule">Special Move Restrictions</a>: OPP_OR_EMPTY</p>
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+  </div>
+</div>
 <h3 id="Endodoi">Endodoi</h3>
 <p>A multi-lap mancala, sow direction counter-clockwise, cross-capture when end in own hole with one seed. Pick own seed on capture. Games ends if no moves.
 <p>Variation: Played with 6 to 10 holes.
@@ -1266,6 +1280,7 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Dabuda">Dabuda</a></p>
     <p class="param"><a href="#Dakon">Dakon</a></p>
     <p class="param"><a href="#Deka">Deka</a></p>
+    <p class="param"><a href="#Dépouiller">Dépouiller</a></p>
     <p class="param"><a href="#Endodoi">Endodoi</a></p>
     <p class="param"><a href="#Enkushui">Enkushui</a></p>
     <p class="param"><a href="#Erherhe">Erherhe</a></p>
@@ -1290,9 +1305,9 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Ndoto">Ndoto</a></p>
     <p class="param"><a href="#No Sides Child">No Sides Child</a></p>
     <p class="param"><a href="#NoCapt">NoCapt</a></p>
+    <p class="param"><a href="#NoSides">NoSides</a></p>
   </div>
   <div class="column3">
-    <p class="param"><a href="#NoSides">NoSides</a></p>
     <p class="param"><a href="#NumNum">NumNum</a></p>
     <p class="param"><a href="#Oware">Oware</a></p>
     <p class="param"><a href="#Pallam Kuzhi">Pallam Kuzhi</a></p>

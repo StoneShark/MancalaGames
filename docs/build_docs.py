@@ -754,9 +754,15 @@ def write_xref_html(csv_filename, out_filename):
             print('<tr>', file=ofile)
             print ('<th class="xref">Game Name</th>', file=ofile)
             for title in header[1:]:
-                print('<th class="xref"><div>',
-                      f'<a href="game_params.html#{title}">{title}',
-                      '</a></div></th>', file=ofile)
+                print('<th class="xref"><div>', end='',  file=ofile)
+                if title == 'mlength':
+                    print(f'<a href="#note">{title} (note)',
+                          end='', file=ofile)
+                else:
+                    print(f'<a href="game_params.html#{title}">{title}',
+                          end='', file=ofile)
+                print('</a></div></th>', file=ofile)
+
             print('</tr>', file=ofile)
 
             odd_row = True
@@ -776,6 +782,9 @@ def write_xref_html(csv_filename, out_filename):
 
 
             print('</table>', file=ofile)
+            print('<p id="note"><i>Note: mlength is not a input parameter. '
+                  'It is computed during initialization to describe '
+                  'the length of the move tuple required.</i>', file=ofile)
 
             write_html_footer(ofile)
 
