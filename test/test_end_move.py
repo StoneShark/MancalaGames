@@ -579,35 +579,67 @@ class TestEndDeprive:
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(goal=Goal.DEPRIVE,
                                 capt_on=[4],
+                                min_move=2,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
 
+    CASES = [
+        # 0: Will be true's turn, but they have no moves
+        (False, utils.build_board([0, 0, 0],
+                                  [0, 3, 0]),
+         WinCond.WIN, False),
+        # 1:  Will be false's turn, but they have no moves
+        (True, utils.build_board([0, 3, 0],
+                                 [0, 0, 0]),
+         WinCond.WIN, True),
+
+        # 2: Will be true's turn and they have no moves
+        # both have seeds -> a TIE
+        (False, utils.build_board([0, 1, 0],
+                                  [0, 1, 0]),
+         WinCond.TIE, False),
+
+        # 4: Will be false's turn and they have no moves
+        # both have seeds -> a TIE
+        (False, utils.build_board([0, 1, 0],
+                                  [0, 1, 0]),
+         WinCond.TIE, False),
+
+        # 4: False gave away all seeds but not their turn
+        (False, utils.build_board([0, 3, 0],
+                                  [0, 0, 0]),
+         None, False),
+        # 5: True gave away all seeds but not their turn
+        (True, utils.build_board([0, 0, 0],
+                                 [0, 3, 0]),
+         None, True),
+
+        # 6: False gave away all seeds but true has seeds
+        (False, utils.build_board([0, 1, 0],
+                                  [0, 0, 0]),
+         WinCond.WIN, True),
+        # 7: True gave away all seeds but false has seeds
+        (True, utils.build_board([0, 0, 0],
+                                 [0, 1, 0]),
+         WinCond.WIN, False),
+
+        #8: game continues
+        (True, utils.build_board([0, 3, 0],
+                                 [0, 3, 0]),
+         None, None),
+
+        #9: game continues
+        (False, utils.build_board([0, 3, 0],
+                                  [0, 3, 0]),
+         None, None),
+
+    ]
+
     @pytest.mark.parametrize('turn, board, econd, ewinner',
-                             [(False, utils.build_board([0, 0, 0],
-                                                        [0, 3, 0]),
-                               WinCond.WIN, False),
-                              (True, utils.build_board([0, 0, 0],
-                                                       [0, 3, 0]),
-                                WinCond.WIN, False),
-
-                              (False, utils.build_board([0, 3, 0],
-                                                        [0, 0, 0]),
-                               WinCond.WIN, True),
-                              (True, utils.build_board([0, 3, 0],
-                                                        [0, 0, 0]),
-                               WinCond.WIN, True),
-                              (True, utils.build_board([0, 3, 0],
-                                                       [0, 3, 0]),
-                                None, None),
-                              (False, utils.build_board([0, 3, 0],
-                                                        [0, 3, 0]),
-                               None, None),
-
-                              ])
+                             CASES)
     def test_end_game(self, game, turn, board, econd, ewinner):
-
         game.board = board
         game.turn = turn
 

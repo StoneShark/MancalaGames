@@ -177,10 +177,10 @@ def add_deprive_rules(rules):
         msg='Goal of DEPRIVE requires that GRANDSLAM be Legal',
         excp=gi.GameInfoError)
 
-    bad_flags = ['moveunlock', 'mustshare', 'mustpass',
-                 'rounds', 'round_starter', 'round_fill',
-                 'no_sides', 'sow_own_store', 'stores',
-                 'skip_start', 'sow_start', 'visit_opp']
+    bad_flags = ['child_cvt', 'child_rule', 'child_type',
+                 'moveunlock', 'mustshare', 'mustpass',
+                 'no_sides', 'rounds', 'round_starter', 'round_fill',
+                 'sow_own_store', 'stores']
     for flag in bad_flags:
         rules.add_rule(
             f'deprive_bad_{flag}',
@@ -291,25 +291,28 @@ def add_block_and_divert_rules(rules):
         excp=gi.GameInfoError)
 
     rules.add_rule(
-        'bdiv_min_move_one',
-        rule=lambda ginfo: (sow_blkd_div(ginfo)
-                            and ginfo.min_move != 1),
-        msg='SOW_BLKD_DIV(_NR) requires a minimum move of 1',
-        excp=gi.GameInfoError)
-
-    rules.add_rule(
         'bdiv_min_req_dep_goal',
         rule=lambda ginfo: (sow_blkd_div(ginfo)
                             and ginfo.goal != gi.Goal.DEPRIVE),
         msg='SOW_BLKD_DIV(_NR) requires a goal of DEPRIVE',
         excp=gi.GameInfoError)
 
-    capt_flags = ['capsamedir', 'crosscapt', 'evens', 'capt_min', 'capt_max',
-                  'multicapt', 'oppsidecapt', 'xcpickown', 'capt_on',
-                  'capt_next', 'capttwoout', 'sow_own_store']
+    rules.add_rule(
+        'bdiv_min_move_one',
+        rule=lambda ginfo: (sow_blkd_div(ginfo)
+                            and ginfo.min_move != 1),
+        msg='SOW_BLKD_DIV(_NR) requires a minimum move of 1',
+        excp=gi.GameInfoError)
+    # can't deprive opp of seeds, if they can't move them all
+
+
+    capt_flags = ['capsamedir', 'capt_max', 'capt_min', 'capt_next',
+                  'capt_on', 'capt_rturn', 'capttwoout', 'crosscapt',
+                  'evens', 'multicapt',
+                  'nosinglecapt', 'oppsidecapt', 'pickextra', 'xcpickown']
     for flag in capt_flags:
         rules.add_rule(
-            f'bdiv_no_capt_{flag}',
+            f'bdiv_nocapt_{flag}',
             rule=divert_and(flag),
             msg='SOW_BLKD_DIV(_NR) closes holes to remove seeds from play, '
                 f'no other capture mechanisms are allowed [{flag.upper()}]',
@@ -323,23 +326,23 @@ def add_block_and_divert_rules(rules):
             'no other capture mechanisms are allowed [CAPT_ON]',
         excp=gi.GameInfoError)
 
-    rules.add_rule(
-        'sbd_not_umove',
-        rule=lambda ginfo: (sow_blkd_div(ginfo)
-                            and ginfo.round_fill == gi.RoundFill.UMOVE),
-        msg='sow_blkd_div incompatible with UMOVE',
-        excp=gi.GameInfoError)
-
-    bad_flags = ['child_cvt', 'moveunlock', 'mustshare', 'mustpass',
-                 'rounds', 'round_starter',
-                 'no_sides', 'sow_own_store', 'stores',
-                 'skip_start', 'sow_start', 'visit_opp']
+    bad_flags = ['allow_rule', 'sow_start']
     for flag in bad_flags:
         rules.add_rule(
             f'bdiv_bad_{flag}',
             rule=divert_and(flag),
-            msg=f'sow_blkd_div cannot be used with {flag.upper()}',
+            msg=f'sow_blkd_div is incompatible with {flag.upper()}',
             excp=gi.GameInfoError)
+
+    bad_flags = ['skip_start', 'visit_opp']
+    for flag in bad_flags:
+        rules.add_rule(
+            f'bdiv_not_{flag}',
+            rule=divert_and(flag),
+            msg=f'sow_blkd_div is not supported with {flag.upper()}',
+            excp=NotImplementedError)
+    # sower doesn't use incrementer which implements skip_start
+    # visit_opp cuz the DivertSkipBlckdSower sower comment says so
 
 
 def add_child_rules(rules):
@@ -496,10 +499,13 @@ def build_rules():
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
-        'sow_own_not_capt_all',
+        'sow_own_not_rules',
         rule=lambda ginfo: (ginfo.sow_own_store
-                            and ginfo.sow_rule == gi.SowRule.OWN_SOW_CAPT_ALL),
-        msg='SOW_OWN_STORE is not supported with OWN_SOW_CAPT_ALL',
+                            and ginfo.sow_rule in
+                                (gi.SowRule.OWN_SOW_CAPT_ALL,
+                                 gi.SowRule.SOW_SOW_CAPT_ALL,
+                                 gi.SowRule.NO_SOW_OPP_2S)),
+        msg='SOW_OWN_STORE is not supported with the selected sow rule',
         excp=NotImplementedError)
 
     man_rules.add_rule(

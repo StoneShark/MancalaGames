@@ -419,7 +419,7 @@ class RoundWinner(EndTurnIf):
         return gi.WinCond.ROUND_TIE, player
 
 
-class EndTurnNoPass(EndTurnIf):
+class EndTurnNoMoves(EndTurnIf):
     """No Pass, end game if there are no seeds for the next player."""
 
     def game_ended(self, repeat_turn, ended=False):
@@ -435,7 +435,7 @@ class EndTurnNoPass(EndTurnIf):
             self.game.turn = not self.game.turn
 
         if ended:
-            game_log.add("Next player can't pass, game ended.", game_log.INFO)
+            game_log.add("No moves for next player; game ended.", game_log.INFO)
 
         return self.decorator.game_ended(repeat_turn, ended)
 
@@ -559,22 +559,44 @@ class WaldaEndMove(EndTurnIf):
 
 
 class DepriveSeedsEndGame(EndTurnIf):
-    """Determine if either player has been deprived of seeds.
+    """Determine if a deprive game is over.
+    If the opp doesn't have a move, the game IS over.
+    Base TIE versus WIN on who has seeds, thus separating
+    having seeds and having a move.
+
+    If opponent does not have seeds, current player WINS.
+
+    If opponent cannot move and both players have seeds, TIE.
+
+    If oppenent cannot move but current player does not have seeds,
+    the opponents WINS because they have forced the current player
+    to give away all their seeds.
+
     This is not used with stores or children."""
 
     def game_ended(self, repeat_turn, ended=False):
         """Check for end game."""
 
-        if all(self.game.board[loc] < self.game.info.min_move
-               for loc in self.game.cts.get_opp_range(self.game.turn)):
+        cts = self.game.cts
+
+        op_seeds = sum(self.game.board[loc]
+                       for loc in cts.get_opp_range(self.game.turn))
+        if not op_seeds:
             return gi.WinCond.WIN, self.game.turn
 
-        if all(self.game.board[loc] < self.game.info.min_move
-               for loc in self.game.cts.get_my_range(self.game.turn)):
+        self.game.turn = not self.game.turn
+        no_opp_moves = not any(self.game.get_allowable_holes())
+        self.game.turn = not self.game.turn
+        if no_opp_moves:
+            my_seeds = sum(self.game.board[loc]
+                           for loc in cts.get_my_range(self.game.turn))
+
+            if my_seeds:
+                return gi.WinCond.TIE, self.game.turn
+
             return gi.WinCond.WIN, not self.game.turn
 
         return None, self.game.turn
-
 
 
 class NoOutcomeChange(EndTurnIf):
@@ -585,7 +607,7 @@ class NoOutcomeChange(EndTurnIf):
         No Rounds: determine soley based on territory > holes
 
     Otherwise call the deco chain; we need EndTurnMustShare and/or
-    EndTurnNoPass to decide if the game has ended.
+    EndTurnNoMoves to decide if the game has ended.
 
     If they decide the game is over, use the same criteria to
     determine the round winner.
@@ -785,7 +807,7 @@ def deco_end_move(game):
     ender = deco_add_bottom_winner(game)
 
     if not game.info.mustpass:
-        ender = EndTurnNoPass(game, ender)
+        ender = EndTurnNoMoves(game, ender)
 
     if game.info.mustshare:
         if game.info.goal == gi.Goal.TERRITORY:

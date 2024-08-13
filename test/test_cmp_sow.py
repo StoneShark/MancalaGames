@@ -15,7 +15,6 @@ from context import game_constants as gc
 from context import mancala
 
 
-
 # %% consts
 
 HOLES = 5
@@ -30,7 +29,8 @@ CW = gi.Direct.CW
 ESTR = [0, 0]
 NBLCK = [F] * (2 * HOLES)
 
-# %%
+
+# %% setup and cases
 
 
 GAMECONF = {'basic':
@@ -43,12 +43,6 @@ GAMECONF = {'basic':
 
             'ms_no_mlap':   # prescr MLAPS without mlaps => mlap on first
                 {'prescribed': gi.SowPrescribed.MLAPS_SOWER,
-                 'evens': True},
-
-            's1_store':   # prescr SOW1OPP with stores => store not sown
-                {'prescribed': gi.SowPrescribed.SOW1OPP,
-                 'stores': True,
-                 'sow_own_store': True,
                  'evens': True},
 
             's1_move1':   # prescr SOW1OPP with move_one, one should be opp
@@ -85,9 +79,32 @@ GAMECONF = {'basic':
                  'stores': True,
                  'udir_holes': [0, 1, 2, 3, 4],
                  'blocks': True,
-                 'rounds': True,  # only to avoid warning
+                 'rounds': True,
                  'evens': True},
 
+            'dep_capta':
+                {'goal': gi.Goal.DEPRIVE,
+                 'sow_rule': gi.SowRule.OWN_SOW_CAPT_ALL,
+                 'mlaps': gi.LapSower.LAPPER,
+                 'evens': True},
+
+            'chd_capta':
+                {'child_type': gi.ChildType.NORMAL,
+                 'child_cvt': 3,
+                 'sow_rule': gi.SowRule.OWN_SOW_CAPT_ALL,
+                 'mlaps': gi.LapSower.LAPPER,
+                 'capt_on': [3]},
+
+            'no2s':         # no prescribed opening
+                {'sow_rule': gi.SowRule.NO_SOW_OPP_2S,
+                 'capt_on': [3]},
+
+            'no2schd':  # with children, don't stop for child
+                {'child_type': gi.ChildType.NORMAL,
+                 'child_cvt': 3,
+                 'sow_rule': gi.SowRule.NO_SOW_OPP_2S,
+                 'stores': True,
+                 'capt_on': [3]},
 
             }
 
@@ -95,12 +112,14 @@ START = {'start':
              mancala.GameState(board=(2, 2, 2, 2, 2, 2, 2, 2, 2, 2),
                                store=(0, 0),
                                mcount=1,    # mcount is inc'ed at top of move
-                               _turn=False),
+                               _turn=False,
+                               blocked=(F, F, F, F, F, F, F, F, F, F)),
         'second':
              mancala.GameState(board=(2, 2, 2, 2, 2, 2, 2, 2, 2, 2),
                                store=(0, 0),
                                mcount=2,   # second turn
-                               _turn=False),
+                               _turn=False,
+                               blocked=(F, F, F, F, F, F, F, F, F, F)),
 
         'ones':
              mancala.GameState(board=(1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
@@ -112,8 +131,8 @@ START = {'start':
              mancala.GameState(board=(2, 2, 2, 2, 0, 0, 2, 2, 2, 2),
                                store=(2, 2),
                                mcount=1,
-                               blocked=(F, F, F, F, T, T, F, F, F, F),
-                               _turn=False),
+                               _turn=False,
+                               blocked=(F, F, F, F, T, T, F, F, F, F)),
 
         }
 
@@ -122,16 +141,15 @@ CASES = [('basic', 'start', F, 2,
 
          ('bs_mlap', 'start', F, 2,
           4, (2, 2, 0, 3, 3, 2, 2, 2, 2, 2), ESTR, NBLCK),
+         # stop mlaps for capt
          ('bs_mlap', 'second', F, 2,
-          3, (0, 3, 1, 4, 0, 3, 3, 0, 3, 3), ESTR, NBLCK), # stop mlaps for capt
+          3, (0, 3, 1, 4, 0, 3, 3, 0, 3, 3), ESTR, NBLCK),
 
          ('ms_no_mlap', 'start', F, 2,
           7, (0, 3, 1, 0, 1, 4, 4, 1, 3, 3), ESTR, NBLCK),
          ('ms_no_mlap', 'second', F, 2,
           4, (2, 2, 0, 3, 3, 2, 2, 2, 2, 2), ESTR, NBLCK),
 
-         ('s1_store', 'start', T, 1,
-          0, (3, 2, 2, 2, 2, 2, 2, 2, 0, 3), ESTR, NBLCK),
          ('s1_move1', 'ones', F, 0,
           5, (0, 1, 1, 1, 1, 2, 1, 1, 1, 1), [5, 5], NBLCK),
          ('s1_split', 'start', F, gi.MoveTpl(2, CCW),
@@ -159,8 +177,22 @@ CASES = [('basic', 'start', F, 2,
           7, (3, 1, 2, 1, 0, 0, 3, 2, 3, 1), [2, 2],
           (F, F, F, F, T, T, F, F, F, F)),
 
+         ('dep_capta', 'start', F, 1,
+          2, (3, 1, 4, 0, 3, 3, 0, 3, 3, 0), ESTR, NBLCK),
+
+         # capture during sow, stop mlap to make child
+         ('chd_capta', 'start', F, 1,
+          3, (2, 0, 0, 3, 2, 2, 2, 2, 2, 2), [3, 0], NBLCK),
+
+         ('no2s', 'start', F, 4,
+          1, (3, 3, 2, 2, 0, 2, 2, 2, 2, 2), ESTR, NBLCK),
+         ('no2schd', 'start', F, 4,
+          1, (3, 3, 2, 2, 0, 2, 2, 2, 2, 2), ESTR, NBLCK),
+
          ]
 
+
+# %% test_sower
 
 @pytest.mark.parametrize('conf_name, state_name, turn, move,'
                          'eloc, eboard, estore, eblocks',
