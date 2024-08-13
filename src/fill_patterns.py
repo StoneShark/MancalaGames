@@ -139,7 +139,7 @@ class AltsWithOnePattern(StartPatternIf):
 
     @staticmethod
     def nbr_seeds(holes, nbr_start):
-        return holes * nbr_start - 3
+        return (holes - 1) * nbr_start + 1
 
 
     @staticmethod
