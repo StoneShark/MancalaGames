@@ -698,19 +698,18 @@ def deco_base_sower(game):
 
     sower = None
     if game.info.sow_rule:
-        if game.info.sow_rule in {gi.SowRule.SOW_BLKD_DIV,
-                                  gi.SowRule.SOW_BLKD_DIV_NR}:
+        if game.info.sow_rule in (gi.SowRule.SOW_BLKD_DIV,
+                                  gi.SowRule.SOW_BLKD_DIV_NR):
             sower = deco_blkd_divert_sower(game)
 
-        elif game.info.sow_rule in {gi.SowRule.OWN_SOW_CAPT_ALL,
-                                    gi.SowRule.SOW_SOW_CAPT_ALL}:
+        elif game.info.sow_rule in (gi.SowRule.OWN_SOW_CAPT_ALL,
+                                    gi.SowRule.SOW_SOW_CAPT_ALL):
             sower = SowCaptOwned(game)
 
         elif game.info.sow_rule == gi.SowRule.NO_SOW_OPP_2S:
             sower = SowSkipOppN(game, {2})
 
-        elif game.info.sow_rule in (gi.SowRule.NONE,
-                                    gi.SowRule.CHANGE_DIR_LAP):
+        elif game.info.sow_rule == gi.SowRule.CHANGE_DIR_LAP:
             # pick a base sower below
             pass
 

@@ -132,8 +132,7 @@ Used only for  minimax & negamax players."
 Player	access_m	Access mult	player scorer _	11	int	0	1	2	"The multiplier for the access scorer. The access scorer computes how many of the opponents holes can be accessed for the given game state.
 The access scorer is slow and therefore is prohibited from being used in multilap games (MLAPS); games with user choice of move direction (UDIR_HOLES); and games where hole owners are not predefined (NO_SIDES). In these game configurations, the multiplier must be zero to disable the access scorer.
 Used only for minimax & negamax players."
-Player	seeds_m	Seeds mult	player scorer _	66	int	0	2	2	"The multiplier for the seeds scorer. The seeds scorer computes how many seeds each player has on the game board.
-TODO does this properly deal with children or hole owners?
+Player	seeds_m	Seeds mult	player scorer _	66	int	0	2	2	"The multiplier for the seeds scorer. The seeds scorer computes how many seeds each player has on the game board that are not in children.
 Used only for minimax & negamax players."
 Player	empties_m	Empties mult	player scorer _	32	int	0	3	2	"The multiplier for the empties scorer. The empties scorer counts the number empty holes each player has on the board.
 Used only for minimax & negamax players."

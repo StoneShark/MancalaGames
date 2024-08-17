@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-"""
+"""The goal of this testing to exercise the sower deco
+chain in unique ways.
+
 Created on Sat Aug 10 18:15:40 2024
 @author: Ann"""
 
@@ -81,6 +83,13 @@ GAMECONF = {'basic':
                  'blocks': True,
                  'rounds': True,
                  'evens': True},
+
+            'sbd_udir':   # sow block div with udir but no mlaps, check both dirs
+                {'goal': gi.Goal.DEPRIVE,
+                 'sow_rule': gi.SowRule.SOW_BLKD_DIV,
+                 'gparam_one': 3,
+                 'blocks': True,
+                 'udir_holes': [0, 1, 2, 3, 4]},
 
             'dep_capta':
                 {'goal': gi.Goal.DEPRIVE,
@@ -176,6 +185,15 @@ CASES = [('basic', 'start', F, 2,
          ('p1m1_blocks', 'st_blocks', F, gi.MoveTpl(2, CW),
           7, (3, 1, 2, 1, 0, 0, 3, 2, 3, 1), [2, 2],
           (F, F, F, F, T, T, F, F, F, F)),
+
+         ('sbd_udir', 'start', F, gi.MoveTpl(4, CCW),
+          6, (2, 2, 2, 2, 0, 3, 0, 2, 2, 2), [3, 0],
+             (F, F, F, F, F, F, T, F, F, F)),
+         ('sbd_udir', 'start', T, gi.MoveTpl(1, CW),
+          6, (2, 2, 2, 2, 2, 2, 3, 3, 0, 2), ESTR, NBLCK),
+         ('sbd_udir', 'st_blocks', F, gi.MoveTpl(3, CCW),
+          6, (2, 2, 2, 0, 0, 0, 0, 2, 2, 2), [6, 2],
+             (F, F, F, F, T, T, T, F, F, F)),
 
          ('dep_capta', 'start', F, 1,
           2, (3, 1, 4, 0, 3, 3, 0, 3, 3, 0), ESTR, NBLCK),
