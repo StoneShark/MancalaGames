@@ -44,6 +44,12 @@ if BAD_CFG in FILES:
     FILES.remove(BAD_CFG)
 
 
+@pytest.fixture(autouse=True)
+def no_logger():
+    """Make certain that no other test left the logger active."""
+    game_logger.game_log.active = False
+
+
 @pytest.fixture(params=FILES)
 def game_data(request):
     return man_config.make_game(PATH + request.param)
@@ -53,7 +59,6 @@ def game_data(request):
 def test_one_game(game_data, request):
 
     game, _ = game_data
-    game_logger.game_log.active = False
 
     for _ in range(3000 if game.info.rounds else 500):
         moves = game.get_moves()

@@ -44,7 +44,6 @@ from game_interface import WinCond
 
 TEST_COVERS = ['src\\mancala.py']
 
-
 # %% constants
 
 T = True
@@ -1089,6 +1088,13 @@ class TestMove:
 
 class TestLogMove:
 
+    @pytest.fixture()
+    def logger(self):
+        """activate the logger for the test, but deactivate it after"""
+        game_logger.game_log.active = True
+        yield
+        game_logger.game_log.active = False
+
     @pytest.fixture
     def game(self):
 
@@ -1106,10 +1112,13 @@ class TestLogMove:
                               (True, True),
                               ])
     @pytest.mark.parametrize('win_cond', gi.WinCond)
-    def test_log_move(self, mocker, game, turn, move_turn, win_cond):
-        """Test all conditions of turn logging.
+    def test_log_move(self, mocker, game, turn, move_turn, win_cond,
+                      logger):
+        """Test conditions of turn logging.
         This is pretty specific to the actual log text;
         code changes might break it."""
+
+        assert game_logger.game_log.active
 
         game.turn = turn
 

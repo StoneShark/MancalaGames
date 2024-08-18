@@ -68,6 +68,12 @@ CONFIGED = 'configed'
 ALGOS = [CONFIGED] + list(ai_player.ALGORITHM_DICT.keys())
 
 
+@pytest.fixture(autouse=True)
+def no_logger():
+    """Make certain that no other test left the logger active."""
+    game_logger.game_log.active = False
+
+
 @pytest.fixture(params=FILES)
 def game_data(request):
     return man_config.make_game(PATH + request.param)
@@ -78,7 +84,6 @@ def game_data(request):
 def test_one_game(game_data, algo):
     """Play a shortend game to exercise the Ai players."""
 
-    game_logger.game_log.active = False
     game, pdict = game_data
 
    # for test repeatability AND avoids move MCTS/move nbr issues

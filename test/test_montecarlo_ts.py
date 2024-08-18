@@ -34,10 +34,13 @@ NODES = 100
 POUTS = 1
 
 
-game_logger.game_log.active = False
-
 
 # %%
+
+@pytest.fixture(autouse=True)
+def no_logger():
+    """Make certain that no other test left the logger active."""
+    game_logger.game_log.active = False
 
 
 class TestGameNode:
