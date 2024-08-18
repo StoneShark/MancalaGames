@@ -301,7 +301,7 @@ your opponent of seeds.
 <a href="#Weg">Weg</a> and others involve capturing territory.
 
 <p>
-<p>Three games isolate unique game parameters:
+<p>Several games isolate unique game parameters:
     <ul>
     <li><a href="#NoCapt">NoCapt</a>:
     Captures are only accomplished by sowing into your own store.
@@ -312,6 +312,9 @@ your opponent of seeds.
     Players do not own the holes on their own side of the board;
     instead ownership is claimed (i.e. making a child)
     by sowing a hole to four seeds.
+    <li><a href="#SowOpDirs">SowOpDirs</a>:
+    Players sow in opposite directions.
+    The first move of each game defines the directions for each player.
     </ul>
 
 <p><i>Personal Note</i>:

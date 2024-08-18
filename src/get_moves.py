@@ -113,6 +113,30 @@ class PassMoves(MovesIf):
         return moves if moves else [gi.PASS_TOKEN]
 
 
+class AltDirMoves(MovesIf):
+    """For PLAYALTDIR: first player selects the direction then,
+    directions alternate by player. Allow direction to be specified
+    for first move, then filter it to None and remove duplicates.
+    get_direction decides the actual direction for sowing.
+
+    moves are always MoveTpl's or PASS.
+    mcount is not updated until the move is selected e.g. by Mancala.move"""
+
+    def get_moves(self):
+
+        moves = self.decorator.get_moves()
+
+        if not self.game.mcount or gi.PASS_TOKEN in moves:
+            return moves
+
+        new_moves = set()
+        for move in moves:
+            new_moves.add(move.set_dir(None))
+
+        return list(new_moves)
+
+
+
 # %% build deco chain
 
 def deco_moves(game):
@@ -132,5 +156,8 @@ def deco_moves(game):
 
     if game.info.mustpass:
         moves = PassMoves(game, moves)
+
+    if game.info.sow_direct == gi.Direct.PLAYALTDIR:
+        moves = AltDirMoves(game, moves)
 
     return moves

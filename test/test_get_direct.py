@@ -3,6 +3,8 @@
 Created on Sat Sep 16 09:48:59 2023
 @author: Ann"""
 
+import itertools as it
+
 import pytest
 pytestmark = pytest.mark.unittest
 
@@ -157,3 +159,96 @@ class TestGetDirection:
 
         move = (start < holes, game_consts.loc_to_left_cnt(start), None)
         assert game.deco.get_dir.get_direction(move, start) == exp_dir
+
+
+    @pytest.mark.parametrize('turn', [True, False])
+    @pytest.mark.parametrize('moves',
+                             [
+                              (gi.MoveTpl(2, Direct.CW), Direct.CW,
+                               gi.MoveTpl(2, None), Direct.CCW,
+                               gi.MoveTpl(2, None), Direct.CW,
+                               gi.MoveTpl(2, None), Direct.CCW),
+
+                              (gi.MoveTpl(2, Direct.CCW), Direct.CCW,
+                               gi.MoveTpl(2, None), Direct.CW,
+                               gi.MoveTpl(2, Direct.CW), Direct.CCW,
+                               gi.MoveTpl(2, Direct.CCW), Direct.CW),
+
+                              (gi.MoveTpl(True, 2, Direct.CW), Direct.CW,
+                               gi.MoveTpl(False, 2, None), Direct.CCW,
+                               gi.MoveTpl(False, 2, None), Direct.CW,
+                               gi.MoveTpl(True, None), Direct.CCW),
+
+                              (gi.MoveTpl(True, 2, Direct.CCW), Direct.CCW,
+                               gi.MoveTpl(True, 2, None), Direct.CW,
+                               gi.MoveTpl(True, 2, Direct.CW), Direct.CCW,
+                               gi.MoveTpl(True, 2, Direct.CCW), Direct.CW),
+
+                              ])
+    def test_players_alt(self, turn, moves):
+        """After the first move, the direction in the move doesn't
+        matter.
+        Test both MoveTpl lengths.
+        The starting play does not matter, but test it."""
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(capt_on=[2],
+                                sow_direct=Direct.PLAYALTDIR,
+                                no_sides=len(moves[0]) == 3,
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = turn
+
+        for move_nbr, (move, edir) in enumerate(it.batched(moves, 2)):
+            game.mcount = move_nbr + 1
+            game.turn = not game.turn
+
+            assert game.deco.get_dir.get_direction(move, 1) == edir
+
+
+
+    @pytest.mark.parametrize('turn', [True, False])
+    @pytest.mark.parametrize('moves',
+                             [
+                              (gi.MoveTpl(2, Direct.CW), Direct.CW,
+                               gi.MoveTpl(2, None), Direct.CCW,
+                               gi.MoveTpl(2, None), Direct.CW,
+                               gi.MoveTpl(2, None), Direct.CCW,
+                               gi.MoveTpl(2, Direct.CCW), Direct.CCW,  # reset move_nbr here
+                               gi.MoveTpl(2, None), Direct.CW,
+                               gi.MoveTpl(2, Direct.CW), Direct.CCW,
+                               gi.MoveTpl(2, Direct.CCW), Direct.CW),
+
+                              (gi.MoveTpl(True, 2, Direct.CW), Direct.CW,
+                               gi.MoveTpl(False, 2, None), Direct.CCW,
+                               gi.MoveTpl(False, 2, None), Direct.CW,
+                               gi.MoveTpl(True, None), Direct.CCW,
+                               gi.MoveTpl(True, 2, Direct.CCW), Direct.CCW,  # reset move_nbr here
+                               gi.MoveTpl(True, 2, None), Direct.CW,
+                               gi.MoveTpl(True, 2, Direct.CW), Direct.CCW,
+                               gi.MoveTpl(True, 2, Direct.CCW), Direct.CW),
+
+                              ])
+    def test_players_alt_reset(self, turn, moves):
+        """test that the directions are collected again when
+        mcount is reset to 1."""
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(capt_on=[2],
+                                sow_direct=Direct.PLAYALTDIR,
+                                no_sides=len(moves[0]) == 3,
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = turn
+
+        for move_nbr, (move, edir) in enumerate(it.batched(moves, 2)):
+            game.mcount = (move_nbr % 4) + 1
+            game.turn = not game.turn
+
+            assert game.deco.get_dir.get_direction(move, 1) == edir

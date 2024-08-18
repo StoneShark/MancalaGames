@@ -155,8 +155,9 @@ Sow	sow_direct	Sow Direction	game_info _	68	Direct	CCW	0	0	"Direction of sow:
 - CW: clockwise
 - SPLIT: left side holes sow counter-clockwise and right side holes sow clockwise, an odd middle hole must be set in UDIR_HOLES.
 - CCW: counter-clockwise
+- PLAYALTDIR: on the first move of the game, the first player chooses their sow direction using the UDIR_HOLES method (by mouse button). The second player will sow their moves in the opposite direction. Once the first player makes their first move, both player's sow directions are set for the duration of the game no matter which button is used.  All UDIR_HOLES will apply to the game configuration.
 Both mouse buttons will start a move no matter the sow direction. If the hole is marked as UDIR_HOLES, the button selects sow direction. On the other hand, if the hole is not marked as UDIR_HOLES, either button will sow in the prescribed direction. This can be useful, mechanism to remind yourself that on SPLIT sow, the left holes go CW by using the left button and the right holes go CCW by using the right button.
-Any hole can be set as UDIR_HOLES to allow the user to override the sow_direct setting."
+When PLAYALTDIR is not selected, any hole can be set as UDIR_HOLES to allow the user to override the sow_direct setting."
 Sow	sow_start	Sow Start Hole	game_info _	71	bool	False	1	0	When selected, the first seed is sown into  (i.e. left in) the start hole.
 Sow	skip_start	Skip Start on Lap	game_info _	67	bool	False	2	0	"When sowing a second or subsequent circuit of the board, skip the start hole. This will leave the start hole empty for single lap games.
 In multilap games, the start hole for the current lap is skipped. Second or subsequent laps may sow into the original start hole."
@@ -177,8 +178,9 @@ Sow	sow_rule	Special Sow Rules	game_info _	70	SowRule	NONE	6	0	"Special sow rule
   + GRANDSLAM rules are not applied. NOCAPTFIRST prevents this capture for the first move.
 - NO_SOW_OPP_2S: Don't sow into opponents holes with 2 seeds.
 - CHANGE_DIR_LAP: Change the direction for each lap sown. Generally used with UDIR_HOLES so the player may choose the first direction."
-Sow	udir_holes	User Chooses Direction	game_info _	75	list[bool]	[]	8	0	"A list of holes that the user can control the sow direction from. Control is via the mouse button: left is clockwise and right is counter-clockwise.
-Note: all holes respond to both mouse buttons, but if the hole is not in udir_holes, the sow direction will be that prescribed by sow_direct with either button."
+Sow	udir_holes	User Chooses Direction	game_info _	75	list[bool]	[]	8	0	"A list of holes from which the user can choose the sow direction. Control is via the mouse button: left is clockwise and right is counter-clockwise.
+Note: all holes respond to both mouse buttons, but if the hole is not in udir_holes, the sow direction will be that prescribed by sow_direct with either button.
+Games with any hole set to user chooses direction must not use MUSTSHARE; GRANDSLAM must be LEGAL; and no special ALLOW_RULE is supported."
 Sow	mlaps	Multilap Sow	game_info _	44	LapSower	OFF	0	2	"Determines if seeds from more the start hole are picked up and sown:
 - OFF: Single lap sowing. Seeds from the start hole are sown, typically, one per hole until expened.
 - LAPPER:  If the first sow ends in a hole with more than one seed, pickup all the seeds and continue sowing another lap. Continue until the final seed of a lap reaches an empty hole, unless there is another rule that stops the sowing (e.g. making a child).

@@ -152,6 +152,7 @@ class TestNoSidesMoves:
         ])
 
     def test_get_moves(self, turn, board, min_move, eresult):
+        """eresult is a set so the order doesn't matter"""
 
         game_consts = gc.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[2],
@@ -189,6 +190,7 @@ class TestTerrMoves:
            (0, 2, None)}),
         ])
     def test_get_moves(self, turn, board, min_move, eresult):
+        """eresult is a set so the order doesn't matter"""
 
         game_consts = gc.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[2],
@@ -204,3 +206,41 @@ class TestTerrMoves:
         game.board = board
 
         assert set(game.deco.moves.get_moves()) == eresult
+
+
+
+class TestAltDirMoves:
+
+    @pytest.mark.parametrize('turn', [True, False])
+    @pytest.mark.parametrize('sides', [True, False])
+    def test_get_moves(self, turn, sides):
+        """Get moves is called before mcount is incremented."""
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=2)
+        game_info = gi.GameInfo(capt_on=[2],
+                                min_move=2,
+                                sow_direct=Direct.PLAYALTDIR,
+                                no_sides=sides,
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = turn
+
+        game.mcount = 0
+        moves = game.deco.moves.get_moves()
+        assert len(moves) == 8 if sides else 4
+        assert all(tpl[-1] is not None for tpl in moves)
+        assert not sum(tpl[-1] for tpl in moves)   # same number of CW and CCW
+
+        game.mcount = 1
+        moves = game.deco.moves.get_moves()
+        assert len(moves) == 4 if sides else 2
+        assert all(tpl[-1] is None for tpl in moves)
+
+        # no moves available
+        game.board = [1, 1, 1, 1]
+        game.mcount = 0
+        moves = game.deco.moves.get_moves()
+        assert not len(moves)

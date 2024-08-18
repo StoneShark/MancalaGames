@@ -1138,3 +1138,31 @@ class TestLogMove:
                 assert 'by Top' in arg_str
             else:
                 assert 'by Bottom' in arg_str
+
+
+    @pytest.mark.parametrize('move', [gi.MoveTpl(2, None),
+                                      gi.MoveTpl(2, gi.Direct.CW)])
+    def test_log_move_tpl(self, mocker, game, move, logger):
+        """Test the setting of the direction in the move."""
+
+        assert game_logger.game_log.active
+
+        game.last_mdata = mancala.MoveData(game, 2)
+        game.last_mdata.direct = gi.Direct.CCW
+
+        mlog = mocker.patch.object(game_logger.game_log, 'turn')
+        game._log_turn(True, move, None)
+
+        arg_str = mlog.call_args.args[1]
+        assert '(2, CCW)' in arg_str
+
+
+    def test_log_move_inactive(self, mocker, game):
+        """Test with logger in inactive."""
+
+        assert not game_logger.game_log.active
+
+        mlog = mocker.patch.object(game_logger.game_log, 'turn')
+        game._log_turn(False, 1, None)
+
+        mlog.assert_not_called()

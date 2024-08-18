@@ -606,7 +606,14 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
 
     def _log_turn(self, move_turn, move, win_cond):
-        """Add to the play log and move history for the move."""
+        """Add to the play log and move history for the move.
+
+        Rebuild the move with the direction computed be get_direction,
+        which may have overridden an actual direction in the move tuple
+        (or None)."""
+
+        if not game_log.active:
+            return
 
         wtext = ''
         if win_cond in (gi.WinCond.WIN, gi.WinCond.ROUND_WIN):
@@ -616,8 +623,10 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             wtext = ' ' + win_cond.name
 
         sturn = 'Top' if move_turn else 'Bottom'
-        move_desc = f'{sturn} move {move}{wtext}'
+        if isinstance(move, gi.MoveTpl):
+            move = move.set_dir(self.last_mdata.direct)
 
+        move_desc = f'{sturn} move {move}{wtext}'
         game_log.turn(self.mcount, move_desc, self)
 
 

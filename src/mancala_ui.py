@@ -632,7 +632,13 @@ class MancalaUI(tk.Frame):
                 game_log.set_ai_mode()
 
             move = self.player.pick_move()
-
             game_log.clear_ai_mode()
-
             self.move(move)
+
+            if (self.game.info.sow_direct == gi.Direct.PLAYALTDIR
+                and self.game.mcount == 1):
+
+                message = 'Player direction is ' + move[-1].opp_dir().name
+                tk.messagebox.showinfo(title='Player Direction',
+                                       message=message,
+                                       parent=self)

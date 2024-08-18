@@ -47,7 +47,7 @@ your opponent of seeds.
 <a href="#Weg">Weg</a> and others involve capturing territory.
 
 <p>
-<p>Three games isolate unique game parameters:
+<p>Several games isolate unique game parameters:
     <ul>
     <li><a href="#NoCapt">NoCapt</a>:
     Captures are only accomplished by sowing into your own store.
@@ -58,6 +58,9 @@ your opponent of seeds.
     Players do not own the holes on their own side of the board;
     instead ownership is claimed (i.e. making a child)
     by sowing a hole to four seeds.
+    <li><a href="#SowOpDirs">SowOpDirs</a>:
+    Players sow in opposite directions.
+    The first move of each game defines the directions for each player.
     </ul>
 
 <p><i>Personal Note</i>:
@@ -728,16 +731,15 @@ played in rounds with UMOVE style RoundFill
     <p class="param"><a href="game_params.html#capsamedir">Capture in Sow Direction</a>: Yes</p>
     <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 4</p>
     <p class="param"><a href="game_params.html#capttwoout">Capture Two Out</a>: Yes</p>
-    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
     <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER_NEXT</p>
   </div>
   <div class="column2">
     <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: Yes</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
     <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: UCHOOSE</p>
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
-    <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
-    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: OWN_SOW_CAPT_ALL</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: OWN_SOW_CAPT_ALL</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
   </div>
 </div>
@@ -951,6 +953,31 @@ see <a href="about_games.html#Lam Waladach">Lam Waladach</a>
   </div>
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p54.
+<h3 id="Olinda">Olinda</h3>
+<p>The starting player chooses the sow direction they will use for the game; the second player will use the opposite direction for the game. Sowing is done in multiple laps from the next hole. Players capture holes sown to 4 (by either player) on their side of the board. When the final seed sown (into an empty hole) is followed by an empty hole, capture any seeds in the following hole.
+<p>Played in rounds where unfilled holes are out of play.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  7</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#blocks">Blocks</a>: Yes</p>
+    <p class="param"><a href="game_params.html#capsamedir">Capture in Sow Direction</a>: Yes</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 4</p>
+    <p class="param"><a href="game_params.html#capttwoout">Capture Two Out</a>: Yes</p>
+    <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER_NEXT</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: Yes</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
+    <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: EVEN_FILL</p>
+    <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: PLAYALTDIR</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: OWN_SOW_CAPT_ALL</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p61.
 <h3 id="Oware">Oware</h3>
 <p>A single-lap mancala, sow direction is counter-clockwise, capture on opponents side on 1s, 2s and 3s. A sow which cycles the board, will skip the hole that the move started from. If your opponent has no seeds, you must make seeds available to them (if you can).
 <p>Variations:
@@ -1092,6 +1119,23 @@ See <a href="about_games.html#Pandi">Pandi</a> and <a href="about_games.html#Lon
   </div>
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p19.
+<h3 id="SowOpDirs">SowOpDirs</h3>
+<p>The first player picks their sow direction for the game. The second player will sow in the opposite direction for the game.
+<p>Capture on either side on evens. Players must pass if they have no moves.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  5</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#evens">Capture Evens</a>: Yes</p>
+    <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#skip_start">Skip Start on Lap</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: PLAYALTDIR</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
 <h3 id="Tapata">Tapata</h3>
 <p>The goal is to deprive the opponent of seeds. Counter-clockwise, multi-lap sow. Prescribed opening move: one seed must reach opponents side of the board. Moves must end in an empty hole or reach opponents side of the board.  Seeds are taken out of play via cross-capture on opponents side.
 <p>Variations:
@@ -1309,12 +1353,14 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
   </div>
   <div class="column3">
     <p class="param"><a href="#NumNum">NumNum</a></p>
+    <p class="param"><a href="#Olinda">Olinda</a></p>
     <p class="param"><a href="#Oware">Oware</a></p>
     <p class="param"><a href="#Pallam Kuzhi">Pallam Kuzhi</a></p>
     <p class="param"><a href="#Pandi">Pandi</a></p>
     <p class="param"><a href="#Qelat">Qelat</a></p>
     <p class="param"><a href="#Sadeqa">Sadeqa</a></p>
     <p class="param"><a href="#Songo">Songo</a></p>
+    <p class="param"><a href="#SowOpDirs">SowOpDirs</a></p>
     <p class="param"><a href="#Tapata">Tapata</a></p>
     <p class="param"><a href="#Toguz Xorgol">Toguz Xorgol</a></p>
     <p class="param"><a href="#Vai Lun Thlan">Vai Lun Thlan</a></p>

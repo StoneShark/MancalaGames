@@ -693,7 +693,7 @@ def build_rules():
     man_rules.add_rule(
         'udir_and_mshare',
         rule=lambda ginfo: ginfo.udirect and ginfo.mustshare,
-        msg='UDIRECT and MUSTSHARE are currently incompatible',
+        msg='UDIR_HOLES and MUSTSHARE are incompatible',
         excp=NotImplementedError)
         # supporting udirect and mustshare would require a UI design change
         # to support partially active buttons (left/right)
@@ -703,7 +703,7 @@ def build_rules():
         'udir_gs_not',
         rule=lambda ginfo: (ginfo.udirect and
                             ginfo.grandslam == gi.GrandSlam.NOT_LEGAL),
-        msg='UDIRECT and GRANDLAM=Not Legal are currently incompatible',
+        msg='UDIR_HOLES and GRANDLAM=Not Legal are incompatible',
         excp=NotImplementedError)
         # see comment for udir_and_mshare rule above
 
@@ -711,7 +711,7 @@ def build_rules():
         'udir_allowrule',
         rule=lambda ginfo: (ginfo.udirect and
                             ginfo.allow_rule != gi.AllowRule.NONE),
-        msg='UDIRECT and ALLOW_RULE are currently incompatible',
+        msg='UDIR_HOLES and ALLOW_RULE are incompatible',
         excp=NotImplementedError)
         # see comment for udir_and_mshare rule above
 

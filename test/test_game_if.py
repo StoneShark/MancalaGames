@@ -50,6 +50,9 @@ class TestEnumsClasses:
         with pytest.raises(gi.GameInfoError):
             Direct.SPLIT.opp_dir()
 
+        with pytest.raises(gi.GameInfoError):
+            Direct.PLAYALTDIR.opp_dir()
+
 
     def test_win(self):
 
@@ -72,17 +75,34 @@ class TestEnumsClasses:
         assert isinstance(tup, tuple)
         assert str(tup) == '(3, CCW)'
 
+        new_tup = tup.set_dir(Direct.CCW)
+        assert tup == new_tup
+        assert isinstance(new_tup, tuple)
+        assert str(new_tup) == '(3, CCW)'
+
         tup = gi.MoveTpl(2, None)
         assert isinstance(tup, tuple)
         assert str(tup) == '(2, None)'
+
+        new_tup = tup.set_dir(Direct.CW)
+        assert tup != new_tup
+        assert isinstance(new_tup, tuple)
+        assert str(new_tup) == '(2, CW)'
 
         tup = gi.MoveTpl(True, 3, Direct.CW)
         assert isinstance(tup, tuple)
         assert str(tup) == '(True, 3, CW)'
 
+        new_tup = tup.set_dir(Direct.CCW)
+        assert tup != new_tup
+        assert isinstance(new_tup, tuple)
+        assert str(new_tup) == '(True, 3, CCW)'
+
         tup = gi.MoveTpl(False, 2, None)
         assert isinstance(tup, tuple)
         assert str(tup) == '(False, 2, None)'
+
+
 
 
 class TestConstruction:
@@ -147,6 +167,28 @@ class TestConstruction:
                             rules=rules)
         assert ginfo.mlength == 3
         assert ginfo.udirect
+
+
+        ginfo = gi.GameInfo(capt_on=[2],
+                            sow_direct=Direct.PLAYALTDIR,
+                            nbr_holes=6,
+                            rules=rules)
+        assert ginfo.mlength == 2
+        assert ginfo.udirect
+
+        ginfo = gi.GameInfo(capt_on=[2],
+                            goal=Goal.TERRITORY,
+                            gparam_one=10,
+                            stores=True,
+                            udir_holes=[2],
+                            sow_direct=Direct.PLAYALTDIR,
+                            nbr_holes=6,
+                            rules=rules)
+        assert ginfo.mlength == 3
+        assert ginfo.udirect
+        assert len(ginfo.udir_holes) == 6
+
+
 
 
 class TestRuleDict:

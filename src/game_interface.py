@@ -103,6 +103,7 @@ class Direct(enum.IntEnum):
     CCW = 1
 
     SPLIT = 0
+    PLAYALTDIR = 2
 
     def opp_dir(self):
         """Return the opposite direction of self."""
@@ -303,6 +304,8 @@ class GameInfo:
         """Do post init (any derived values) and apply the rules.
         rules which raise exceptions and warnings."""
 
+        if self.sow_direct == Direct.PLAYALTDIR:
+            object.__setattr__(self, ckey.UDIR_HOLES, list(range(nbr_holes)))
         object.__setattr__(self, ckey.UDIRECT, bool(self.udir_holes))
 
         mlength = 1
@@ -368,6 +371,14 @@ class MoveTpl(tuple):
         if self[1]:
             return f'({self[0]}, {self[1].name})'
         return f'({self[0]}, None)'
+
+
+    def set_dir(self, direct):
+        """Return a new MoveTpl with a new direction."""
+
+        tmove = list(self)
+        tmove[-1] = direct
+        return MoveTpl(*tmove)
 
 
 # %%  game interface abstract base class -- the UI requires these

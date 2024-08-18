@@ -102,7 +102,8 @@ STRING_DICTS = {
         gi.Direct,
         {'Clockwise': gi.Direct.CW,
          'Counter-clockwise': gi.Direct.CCW,
-         'Split': gi.Direct.SPLIT}),
+         'Split': gi.Direct.SPLIT,
+         'Players Alternate': gi.Direct.PLAYALTDIR}),
 
     'GameClasses': lookup_strs(GAME_CLASSES.keys()),
 

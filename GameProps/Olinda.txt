@@ -1,12 +1,12 @@
 {
    "game_class": "Mancala",
    "game_constants": {
-      "holes": 5,
-      "nbr_start": 5
+      "holes": 7,
+      "nbr_start": 4
    },
    "game_info": {
-      "name": "Longbeu-a-cha",
-      "about": "Sow counter-clockwise via the multi-lap next-hole method. Players capture holes sown to 4 (by either player) on their side of the board. When the final seed sown (into an empty hole) is followed by an empty hole, capture any seeds in the following hole. Continue to capture when holes are alternately empty and occupied. Played in rounds where unfilled holes are out of play.",
+      "name": "Olinda",
+      "about": "The starting player chooses the sow direction they will use for the game; the second player will use the opposite direction for the game. Sowing is done in multiple laps from the next hole. Players capture holes sown to 4 (by either player) on their side of the board. When the final seed sown (into an empty hole) is followed by an empty hole, capture any seeds in the following hole.\nPlayed in rounds where unfilled holes are out of play.",
       "blocks": true,
       "capsamedir": true,
       "capt_on": [4],
@@ -14,9 +14,9 @@
       "mlaps": 2,
       "multicapt": true,
       "rounds": true,
-      "round_fill": 6,
+      "round_fill": 4,
       "round_starter": 0,
-      "sow_direct": 1,
+      "sow_direct": 2,
       "sow_rule": 3,
       "stores": true
 
@@ -38,5 +38,5 @@
          "repeat_turn": 0
       }
    },
-   "rules": "Russ, Laurence. Mancala Games. 1984. p60."
+   "rules": "Russ, Laurence. Mancala Games. 1984. p61."
 }

@@ -1,0 +1,34 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 5,
+      "nbr_start": 4
+   },
+   "game_info": {
+      "name": "SowOpDirs",
+      "about": "The first player picks their sow direction for the game. The second player will sow in the opposite direction for the game.\nCapture on either side on evens. Players must pass if they have no moves.",
+      "evens": true,
+      "mustpass": true,
+      "skip_start": true,
+      "sow_direct": 2,
+      "stores": true
+   },
+   "player": {
+      "algorithm": "minimaxer",
+      "difficulty": 1,
+      "ai_active": false,
+      "scorer": {
+         "access_m": 0,
+         "child_cnt_m": 0,
+         "easy_rand": 0,
+         "empties_m": 0,
+         "evens_m": 2,
+         "repeat_turn": 0,
+         "seeds_m": 0,
+         "stores_m": 4
+      },
+      "ai_params": {
+         "mm_depth": [1, 1, 5, 7]
+      }
+   }
+}

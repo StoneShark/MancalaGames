@@ -92,6 +92,26 @@ class UdirOtherDir(GetDirIf):
         return self.decorator.get_direction(move, loc)
 
 
+class PlayAltDir(GetDirIf):
+    """After the first player chooses the direction,
+    players alternate directions."""
+
+    def __init__(self, game, decorator):
+
+        super().__init__(game, decorator)
+        self.player_dirs = [None, None]
+
+    def get_direction(self, move, loc):
+
+        turn = self.game.turn
+        if self.game.mcount == 1:
+            direct = self.decorator.get_direction(move, loc)
+            self.player_dirs[turn] = direct
+            self.player_dirs[not turn] = direct.opp_dir()
+
+        return self.player_dirs[turn]
+
+
 # %%  build deco
 
 def deco_dir_getter(game):
@@ -104,6 +124,9 @@ def deco_dir_getter(game):
             udir_getter = UdirDir(game)
 
     if len(game.info.udir_holes) == game.cts.holes:
+        if game.info.sow_direct == gi.Direct.PLAYALTDIR:
+            return PlayAltDir(game, udir_getter)
+
         return udir_getter
 
     if game.info.sow_direct is gi.Direct.SPLIT:
