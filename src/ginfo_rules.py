@@ -467,13 +467,6 @@ def build_rules():
 
 
     man_rules.add_rule(
-        'no_udir_1to0',
-        rule=lambda ginfo: (ginfo.udirect and
-                            ginfo.allow_rule == gi.AllowRule.SINGLE_TO_ZERO),
-        msg='Allow rule SINGLE_TO_ZERO cannot be used with UDIR_HOLES',
-        excp=gi.GameInfoError)
-
-    man_rules.add_rule(
         'no_right_two_ml3',
         rule=lambda ginfo: (ginfo.mlength == 3
                             and ginfo.allow_rule in
