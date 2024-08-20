@@ -64,7 +64,10 @@ Capture	pickextra	On Capture, Take More Rule	game_info _	59	CaptExtraPick	NONE	1
 - PICK2XLASTSEEDS: If there are 2 times the number of start seeds or fewer, the round starter picks them. This rule is applied at the end of each turn, even if there is not a capture because the sow phase may have reduced the seed count."
 Dynamics	stores	Stores	game_info _	73	bool	True	0	0	Are stores present on the game board?
 Dynamics	mustpass	Must Pass	game_info _	50	bool	False	1	0	When a player has no allowable moves on their turn, they must pass, and continue to do so until they have allowable moves or the game is over. The game is over when there is a clear winner or tie condition, or when neither player has an allowable move.
-Dynamics	rounds	Rounds	game_info _	64	bool	False	4	0	Is the game played in a series of rounds? In the case of a round win or tie  a new starter is determined via ROUND_STARTER and  the board is reset according to ROUND_FILL. BLOCKS are used in many games and set between rounds based on the seed placement.
+Dynamics	rounds	Rounds	game_info _	64	bool	False	4	0	"Is the game played in a series of rounds? When rounds are employed, each round may end under conditions that do not win the overall game. The board is then setup again per the game rules, generally with some feature changed based on the previous round: hole ownership, holes out of play, a shortened board. Play continues in rounds until either player meets the overall game winning condition.
+For example: In Weg each round ends when neither player has a valid move. The board is then set up again after determining who owns what territory (holes). Rounds continue until one player has claimed sufficient territory to be declared the game winner (e.g. ownership of 10 or more holes).
+In the case of a round win or tie  a new starter is determined via ROUND_STARTER and  the board is reset according to ROUND_FILL.
+BLOCKS are used in many games and set between rounds based on the seed placement. TERRITORY GOAL games adjust hole ownership between rounds."
 Dynamics	round_starter	Round Starter	game_info _	63	RoundStarter	ALTERNATE	5	0	"Defines which player starts 2nd and subsequent rounds:
 - ALTERNATE: the round starter alternates.
 - LOSER: the loser of the previous round starts the current round.
@@ -169,10 +172,10 @@ Sow	sow_rule	Special Sow Rules	game_info _	70	SowRule	NONE	6	0	"Special sow rule
   + When sowing, blocked holes on your own side of the board are skipped  and blocked holes on opponent's side are diverted out of play or captured.
   +  Game GOAL must be DEPRIVE and all of the associated restrictions apply. NOCAPTFIRST maybe used to prevent closing holes on the first move. Capture mechanisms other than closing holes are not supported. The minimum move must be 1 and thus SOW_START is incompatible.  ALLOW_RULE may not be used to limit allowable moves.  SKIP_START and VISIT_OPP are not supported with SOW_BLKD_DIV. 
 - SOW_BLKD_DIV_NR: Behaves the same as SOW_BLKD_DIV except that each player's rightmost hole cannot be closed. 
-- OWN_SOW_CAPT_ALL: The hole OWNer captures all holes that are sown to meet the simple capture criteria: evens, min, max and capture on. Other criteria are enforced: side of the board, unlocked, and not child.
-  + The capture is done by the hole owner, so the non-sower may capture seeds during their opponents sowing. If the game GOAL is TERRITORY the capturer is the hole owner; otherwise each player captures from their own side of the board no matter who is sowing. 
-  + If MLAPS is LAPPER and the final seed sown for any lap meets the capture criteria, the contents of the hole are captured by the sower and not the hole owner and the turn is over.
-  + GRANDSLAM rules are not applied. NOCAPTFIRST prevents this capture for the first move.
+- OWN_SOW_CAPT_ALL: The hole OWNer captures all holes that are sown to meet the simple capture criteria no matter who sowed them.  The simple capture criteria are: evens, min, max and capture on. Other criteria are enforced: side of the board, unlocked, and not child.
+  + The capture is done by the hole owner, so the non-sower may capture seeds while their opponents sows. If the game GOAL is TERRITORY the capturer is the hole owner; otherwise each player captures from their own side of the board no matter who is sowing. 
+  + If MLAPS is LAPPER and the final seed sown for any lap meets the simple capture criteria for that hole, the contents of the hole are captured by the sower and not the hole owner and the turn is over. For CAPTTWOOUT, CAPT_NEXT and CROSSCAPT captures, the sower always does the final capture.
+  + GRANDSLAM rules are not applied. NOCAPTFIRST prevents these capture for the first move.
 - SOW_SOW_CAPT_ALL: Similar to OWN_SOW_CAPT_ALL but only the SOWer captures seeds from their opponent's holes. 
   + If mlaps is LAPPER and the final seed sown for any lap meets the capture criteria, the contents of the hole are captured by the sower and not the hole owner and the turn is over.
   + GRANDSLAM rules are not applied. NOCAPTFIRST prevents this capture for the first move.
@@ -183,8 +186,8 @@ Note: all holes respond to both mouse buttons, but if the hole is not in udir_ho
 Games with any hole set to user chooses direction must not use MUSTSHARE; GRANDSLAM must be LEGAL; and no special ALLOW_RULE is supported."
 Sow	mlaps	Multilap Sow	game_info _	44	LapSower	OFF	0	2	"Determines if seeds from more the start hole are picked up and sown:
 - OFF: Single lap sowing. Seeds from the start hole are sown, typically, one per hole until expened.
-- LAPPER:  If the first sow ends in a hole with more than one seed, pickup all the seeds and continue sowing another lap. Continue until the final seed of a lap reaches an empty hole, unless there is another rule that stops the sowing (e.g. making a child).
-- LAPPER_NEXT:  If the first sow ends in a hole preceeding a hole with any seeds, pick up the seeds from that next hole and continue sowing another lap. Continue until the hole after the laps final seed is empty."
+- LAPPER:  If the first sow ends in a hole with more than one seed, pickup all the seeds and continue sowing another ""lap"". Note that lap here does not mean a full cicuit of the board, only an individual sow operation. In general, sowing laps continues in this manner until the final seed of a lap reaches an empty hole. There are games with other conditions for ending a multilap low such as making a capture or making a child.
+- LAPPER_NEXT:  For lapper_next sowing, the number of seeds in the last sown hole of lap do not matter. Instead, if the hole after the last sown hole has any seeds, those seeds are used to continue sowing the next lap. Sowing continues until the hole after the lap's final seed is empty. There are games with other conditions for ending a multilap low such as making a capture or making a child."
 Sow	visit_opp	Visit Opp for Mlaps	game_info _	77	bool	False	1	2	Requires MLAPS. If the first 'lap' does not reach the opponent's side of the board, the sowing ends after the first lap. 
 Sow	child_type	Type of Children	game_info _	27	ChildType	NOCHILD	3	2	"Games with children allow players to claim holes. These child holes are an extension of the stores and seeds in them count towards a win. Making a child stops any multiple lap sowing, moves cannot start from children, and they cannot be captured (except for special rules associated with WEGs).
 - NOCHILD: children are not used.

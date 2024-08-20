@@ -6,19 +6,18 @@
    },
    "game_info": {
       "name": "Pandi",
-      "about": "Sow counter-clockwise via the multi-lap next hole method. Players capture holes sown to 4 (by either player) on their side of the board. When the final seed sown (into an empty hole) is followed by an empty hole, capture any seeds in the following hole and take any seeds on the opposite side of the board. Played in rounds where unfilled holes are out of play.",
+      "about": "Sow counter-clockwise via the multi-lap next hole method (MLAPS of LAPPER_NEXT).\nWhile either player is sowing, both players capture all holes sown to 4 on their side of the board.\nWhen the final seed sown (into an empty hole) is followed by an empty hole, capture any seeds in the following hole and take any seeds on the opposite side of the board.\nPlayed in ROUNDS where unfilled holes are out of play.\n\nVariations:\n- SOW_RULE of SOW_SOW_CAPT_ALL instead of OWN_SOW_CAPT_ALL.\n- Other options for ROUND_STARTER and ROUND_FILL.\n- See Longbeu-a-cha, Olinda, and Pallam Kuzhi.",  
       "blocks": true,
       "capsamedir": true,
       "capt_on": [4],
       "capttwoout": true,
-      "min_move": 1,
       "mlaps": 2,
       "pickextra": 1,
+      "rounds": true,
       "round_fill": 1,
       "round_starter": 0,
-      "rounds": true,
-      "sow_rule": 3,
       "sow_direct": 1,
+      "sow_rule": 3,
       "stores": true
    },
    "player": {

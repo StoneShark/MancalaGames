@@ -128,7 +128,10 @@ is included after the parameter sections.
 <p class="pdesc">Default value: False
 <p class="pdesc">UI Tab: Dynamics
 
-<p>Is the game played in a series of rounds? In the case of a round win or tie  a new starter is determined via <a href="game_params.html#round_starter">ROUND_STARTER</a> and  the board is reset according to <a href="game_params.html#round_fill">ROUND_FILL</a>. <a href="game_params.html#blocks">BLOCKS</a> are used in many games and set between rounds based on the seed placement.
+<p>Is the game played in a series of rounds? When rounds are employed, each round may end under conditions that do not win the overall game. The board is then setup again per the game rules, generally with some feature changed based on the previous round: hole ownership, holes out of play, a shortened board. Play continues in rounds until either player meets the overall game winning condition.
+<p>For example: In <a href="about_games.html#Weg">Weg</a> each round ends when neither player has a valid move. The board is then set up again after determining who owns what territory (holes). Rounds continue until one player has claimed sufficient territory to be declared the game winner (e.g. ownership of 10 or more holes).
+<p>In the case of a round win or tie  a new starter is determined via <a href="game_params.html#round_starter">ROUND_STARTER</a> and  the board is reset according to <a href="game_params.html#round_fill">ROUND_FILL</a>.
+<p><a href="game_params.html#blocks">BLOCKS</a> are used in many games and set between rounds based on the seed placement. TERRITORY <a href="game_params.html#goal">GOAL</a> games adjust hole ownership between rounds.
 <h4 id="round_starter"> Round Starter </h4>
 <p class="pdesc">Location in Config Files: game_info : round_starter
 <p id="RoundStarter" class="pdesc">Type: <a href="param_types.html#RoundStarter"> RoundStarter </a>
@@ -357,10 +360,10 @@ is included after the parameter sections.
 <li class="helptext">
 <b class="enum">SOW_BLKD_DIV_NR</b>: Behaves the same as SOW_BLKD_DIV except that each player's rightmost hole cannot be closed. 
 <li class="helptext">
-<b class="enum">OWN_SOW_CAPT_ALL</b>: The hole OWNer captures all holes that are sown to meet the simple capture criteria: evens, min, max and capture on. Other criteria are enforced: side of the board, unlocked, and not child.
-<p class="helptext"> The capture is done by the hole owner, so the non-sower may capture seeds during their opponents sowing. If the game <a href="game_params.html#goal">GOAL</a> is TERRITORY the capturer is the hole owner; otherwise each player captures from their own side of the board no matter who is sowing. 
-<p class="helptext"> If <a href="game_params.html#mlaps">MLAPS</a> is LAPPER and the final seed sown for any lap meets the capture criteria, the contents of the hole are captured by the sower and not the hole owner and the turn is over.
-<p class="helptext"> <a href="game_params.html#grandslam">GRANDSLAM</a> rules are not applied. <a href="game_params.html#nocaptfirst">NOCAPTFIRST</a> prevents this capture for the first move.
+<b class="enum">OWN_SOW_CAPT_ALL</b>: The hole OWNer captures all holes that are sown to meet the simple capture criteria no matter who sowed them.  The simple capture criteria are: evens, min, max and capture on. Other criteria are enforced: side of the board, unlocked, and not child.
+<p class="helptext"> The capture is done by the hole owner, so the non-sower may capture seeds while their opponents sows. If the game <a href="game_params.html#goal">GOAL</a> is TERRITORY the capturer is the hole owner; otherwise each player captures from their own side of the board no matter who is sowing. 
+<p class="helptext"> If <a href="game_params.html#mlaps">MLAPS</a> is LAPPER and the final seed sown for any lap meets the simple capture criteria for that hole, the contents of the hole are captured by the sower and not the hole owner and the turn is over. For <a href="game_params.html#capttwoout">CAPTTWOOUT</a>, <a href="game_params.html#capt_next">CAPT_NEXT</a> and <a href="game_params.html#crosscapt">CROSSCAPT</a> captures, the sower always does the final capture.
+<p class="helptext"> <a href="game_params.html#grandslam">GRANDSLAM</a> rules are not applied. <a href="game_params.html#nocaptfirst">NOCAPTFIRST</a> prevents these capture for the first move.
 <li class="helptext">
 <b class="enum">SOW_SOW_CAPT_ALL</b>: Similar to OWN_SOW_CAPT_ALL but only the SOWer captures seeds from their opponent's holes. 
 <p class="helptext"> If mlaps is LAPPER and the final seed sown for any lap meets the capture criteria, the contents of the hole are captured by the sower and not the hole owner and the turn is over.
@@ -389,9 +392,9 @@ is included after the parameter sections.
 <ol start=0><li class="helptext">
 <b class="enum">OFF</b>: Single lap sowing. Seeds from the start hole are sown, typically, one per hole until expened.
 <li class="helptext">
-<b class="enum">LAPPER</b>:  If the first sow ends in a hole with more than one seed, pickup all the seeds and continue sowing another lap. Continue until the final seed of a lap reaches an empty hole, unless there is another rule that stops the sowing (e.g. making a child).
+<b class="enum">LAPPER</b>:  If the first sow ends in a hole with more than one seed, pickup all the seeds and continue sowing another "lap". Note that lap here does not mean a full cicuit of the board, only an individual sow operation. In general, sowing laps continues in this manner until the final seed of a lap reaches an empty hole. There are games with other conditions for ending a multilap low such as making a capture or making a child.
 <li class="helptext">
-<b class="enum">LAPPER_NEXT</b>:  If the first sow ends in a hole preceeding a hole with any seeds, pick up the seeds from that next hole and continue sowing another lap. Continue until the hole after the laps final seed is empty.
+<b class="enum">LAPPER_NEXT</b>:  For lapper_next sowing, the number of seeds in the last sown hole of lap do not matter. Instead, if the hole after the last sown hole has any seeds, those seeds are used to continue sowing the next lap. Sowing continues until the hole after the lap's final seed is empty. There are games with other conditions for ending a multilap low such as making a capture or making a child.
 </ol>
 <h4 id="visit_opp"> Visit Opp for Mlaps </h4>
 <p class="pdesc">Location in Config Files: game_info : visit_opp

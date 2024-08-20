@@ -6,20 +6,18 @@
    },
    "game_info": {
       "name": "Olinda",
-      "about": "The starting player chooses the sow direction they will use for the game; the second player will use the opposite direction for the game. Sowing is done in multiple laps from the next hole. Players capture holes sown to 4 (by either player) on their side of the board. When the final seed sown (into an empty hole) is followed by an empty hole, capture any seeds in the following hole.\nPlayed in rounds where unfilled holes are out of play.",
-      "blocks": true,
+      "about": "The starting player chooses the sow direction that they will use for the game; the second player will use the opposite direction for the game. Sowing is done in multiple laps from the next hole (MLAPS of LAPPER_NEXT).\nWhile either player is sowing, both players capture all holes sown to 4 on their side of the board.\nWhen the final seed sown (into an empty hole) is followed by an empty hole, capture any seeds in the following hole. Captures continue while holes are alternately empty and occupied.\nPlayed in ROUNDS where unfilled holes are out of play.\n\nVariations:\n- SOW_RULE of SOW_SOW_CAPT_ALL instead of OWN_SOW_CAPT_ALL\n- Other options for ROUND_STARTER and ROUND_FILL.\n- See Longbeu-a-cha, Pallam Kuzhi, and Pandi.",
       "capsamedir": true,
       "capt_on": [4],
       "capttwoout": true,
       "mlaps": 2,
       "multicapt": true,
       "rounds": true,
-      "round_fill": 4,
+      "round_fill": 6,
       "round_starter": 0,
       "sow_direct": 2,
       "sow_rule": 3,
       "stores": true
-
    },
    "player": {
       "algorithm": "minimaxer",

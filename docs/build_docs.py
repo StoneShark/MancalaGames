@@ -57,7 +57,7 @@ GAMES = get_game_names()
 UPARAMS = {param.upper() for param in PARAMS.keys()}
 
 PUNCT = '().,?!;:'
-SEP_PUNCT_RE = re.compile('([' + PUNCT + ']*)([-a-zA-Z_0-9]+)([' + PUNCT + ']*)')
+SEP_PUNCT_RE = re.compile('([' + PUNCT + ']*)([-a-zA-Z_0-9 ]+)([' + PUNCT + ']*)')
 
 
 # %% html extras
@@ -123,6 +123,19 @@ def write_columns(file, text, ncols):
     print('</div>', file=file)
 
 
+def sep_punct(game_name):
+    """separate any punctuation from the game name."""
+
+    match = SEP_PUNCT_RE.match(game_name)
+    if match:
+        pre, tword, post = match.groups()
+    else:
+        pre = post = ''
+        tword = game_name
+
+    return pre, tword, post
+
+
 def sub_links(para):
     """For parameter names and games substitute in links.
 
@@ -143,17 +156,11 @@ def sub_links(para):
             w_links += [f'<a href="{word}" target="_blank">{word}</a>']
             continue
 
+        pre, tword, post = sep_punct(word)
 
-        match = SEP_PUNCT_RE.match(word)
-        if match:
-            pre, tword, post = match.groups()
-        else:
-            pre = post = ''
-            tword = word
-
-        mwgames = [' '.join(word_list[idx:idx + 2]),
-                  ' '.join(word_list[idx:idx + 3])]
-
+        # check for multiword games
+        mwgames = [sep_punct(' '.join(word_list[idx:idx + 2])),
+                   sep_punct(' '.join(word_list[idx:idx + 3]))]
 
         if tword in UPARAMS:
             w_links += [f'{pre}'
@@ -162,26 +169,23 @@ def sub_links(para):
                          + f'{post}']
 
         elif tword in GAMES:
-
             w_links += [f'{pre}'
                          + f'<a href="about_games.html#{tword}">'
                          + f'{tword}</a>'
                          + f'{post}']
 
-        elif mwgames[0] in GAMES:
-
-            w_links += [f'{pre}'
-                         + f'<a href="about_games.html#{mwgames[0]}">'
-                         + f'{mwgames[0]}</a>'
-                         + f'{post}']
+        elif mwgames[0][1] in GAMES:   # two word game name
+            w_links += [f'{mwgames[0][0]}'
+                         + f'<a href="about_games.html#{mwgames[0][1]}">'
+                         + f'{mwgames[0][1]}</a>'
+                         + f'{mwgames[0][2]}']
             skip_words = 1
 
-        elif mwgames[1] in GAMES:
-
-            w_links += [f'{pre}'
-                         + f'<a href="about_games.html#{mwgames[1]}">'
-                         + f'{mwgames[1]}</a>'
-                         + f'{post}']
+        elif mwgames[1][1] in GAMES:   # three word game name
+            w_links += [f'{mwgames[1][0]}'
+                         + f'<a href="about_games.html#{mwgames[1][1]}">'
+                         + f'{mwgames[1][1]}</a>'
+                         + f'{mwgames[1][2]}']
             skip_words = 2
 
         else:
