@@ -53,7 +53,8 @@ is included after the parameter sections.
 <p>Each parameter description includes:
     <ul>
     <li>Location in Config File to describe where
-    the parameter is defined in the Game Description file.
+    the parameter is defined in a Game Description file. The all_params.txt
+    file shows all game options and their default values.
     <li>Type of the parameter with a link to the Parameter Types help.
     <li>The default value for the parameter.
     If the default value is to be used the key-value pair is not needed
@@ -193,7 +194,7 @@ is included after the parameter sections.
 <li class="helptext">
 <b class="enum">DEPRIVE</b>: eliminate all of your opponents seeds.
 <p class="helptext"> If a player has no seeds at the start of their turn, they loose. If a player has no moves at the start of their turn, then the game outcome is determined by who has seeds: If both players have seeds, the game ends in a tie. If the current player has seeds, but the previous player does not, then the current player wins because they forced the previous player to give away all their seeds.
-<p class="helptext"> GRAND_SLAM must be legal for DEPRIVE games.
+<p class="helptext"> <a href="game_params.html#grandslam">GRANDSLAM</a> must be legal for DEPRIVE games.
 <p class="helptext"> Deprive games cannot be played in <a href="game_params.html#rounds">ROUNDS</a>, use <a href="game_params.html#stores">STORES</a>, or use children. Additionally, the following options are incompatible with DEPRIVE games: <a href="game_params.html#moveunlock">MOVEUNLOCK</a>, <a href="game_params.html#mustpass">MUSTPASS</a>, <a href="game_params.html#mustshare">MUSTSHARE</a> and <a href="game_params.html#no_sides">NO_SIDES</a>.
 <li class="helptext">
 <b class="enum">TERRITORY</b>: claim ownership of holes. Each round the ownership of holes is determined by the number of seeds captured in the previous round. In a TERRITORY game without rounds, the winner is the player that gained the most territory during play. 
@@ -206,7 +207,7 @@ is included after the parameter sections.
 <p class="pdesc">Default value: False
 <p class="pdesc">UI Tab: Dynamics
 
-<p>Moves maybe made from any hole, independent of the side of the board. Moves need specify side, position and directions.  
+<p>Moves maybe made from any hole, independent of the side of the board. Moves need to specify side, position and directions.  
 <h4 id="start_pattern"> Start Pattern </h4>
 <p class="pdesc">Location in Config Files: game_info : start_pattern
 <p id="StartPattern" class="pdesc">Type: <a href="param_types.html#StartPattern"> StartPattern </a>
@@ -247,14 +248,14 @@ is included after the parameter sections.
 <li class="helptext">
 <b class="enum">ARNGE_LIMIT</b>: the first move may be used to rearrange the seeds (opponent is same layout). If the first move is not used for rearrangement, captures and child creation are not allowed from the starter until the second player makes a child or captures.
 </ol>
-<h4 id="gparam_one"> General input </h4>
+<h4 id="gparam_one"> General Input </h4>
 <p class="pdesc">Location in Config Files: game_info : gparam_one
 <p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
 <p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Dynamics
 
-<p>Goal of Territory: defines the number of holes needed for a win.
-<p>Goal of Deprive and Blocked Divert Sower: defines the number of seeds needed to close/block holes (sow_blkd_div).
+<p><a href="game_params.html#goal">GOAL</a> of Territory: defines the number of holes needed for a win.
+<p><a href="game_params.html#goal">GOAL</a> of Deprive and Blocked Divert Sower: defines the number of seeds needed to close/block holes (sow_blkd_div).
 <h2 id="tab_Allow">Allow Tab</h2>
 <h4 id="min_move"> Minimum Seeds for Move </h4>
 <p class="pdesc">Location in Config Files: game_info : min_move
@@ -269,7 +270,7 @@ is included after the parameter sections.
 <p class="pdesc">Default value: False
 <p class="pdesc">UI Tab: Allow
 
-<p>If an opponent has no moves at the start of your turn, you must make seeds available to them if you can. This condition is enforced by only activating holes on the UI will make seeds available.
+<p>If an opponent has no moves at the start of your turn, you must make seeds available to them if you can. This condition is enforced by only activating holes on the UI which will make seeds available to the opponent.
 <h4 id="allow_rule"> Special Move Restrictions </h4>
 <p class="pdesc">Location in Config Files: game_info : allow_rule
 <p id="AllowRule" class="pdesc">Type: <a href="param_types.html#AllowRule"> AllowRule </a>
@@ -336,7 +337,7 @@ is included after the parameter sections.
 <p class="pdesc">Default value: False
 <p class="pdesc">UI Tab: Sow
 
-<p>Sow seeds into your own store when passing it. Do not sow into your opponents store. Sow the final seed of a move into the store, results in a repeat turn.
+<p>Sow seeds into your own store when passing it. Do not sow into your opponents store. When the final seed is sown into the store, the sower gets another turn.
 <h4 id="move_one"> Move One Seed </h4>
 <p class="pdesc">Location in Config Files: game_info : move_one
 <p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
@@ -439,7 +440,7 @@ is included after the parameter sections.
 <p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Sow
 
-<p>Addiitonal child creation requirements may be set:
+<p>Additional child creation requirements may be set:
 <ol start=0><li class="helptext">
 <b class="enum">NONE</b>: no additional restrictions.
 <li class="helptext">
@@ -513,9 +514,9 @@ is included after the parameter sections.
 <p class="pdesc">UI Tab: Capture
 
 <p>There are three flavors of capture two out:
-<p>Single Lap: capture if sow ends in occupied hole, then an empty hole, followed by an occupied hole the contents of this are hole captured.
-<p>Multi lap but single capture: capture when last hole sown is followed by an empty hole which is then followed by an occupied hole.
-<p>Multi lap with multiple captures: capture when last hole sown is followed by an empty hole which is then followed by an occupied hole. Continue captures as long as the pattern of empty hole followed by an occupied hole continues.
+<p>Single lap game: capture if sow ends in occupied hole, then an empty hole, followed by an occupied hole the contents of this are hole captured.
+<p>Multi lap game but single capture: capture when last hole sown is followed by an empty hole which is then followed by an occupied hole.
+<p>Multi lap game with multiple captures: capture when last hole sown is followed by an empty hole which is then followed by an occupied hole. Continue captures as long as the pattern of empty hole followed by an occupied hole continues.
 <h4 id="crosscapt"> Cross-Capture </h4>
 <p class="pdesc">Location in Config Files: game_info : crosscapt
 <p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
@@ -629,6 +630,7 @@ is included after the parameter sections.
 <p class="pdesc">Default value: None
 <p class="pdesc">UI Tab: Player
 
+<p>The algorithm value is the name of the AI player algorithm (a string):
 <p>minimaxer: an Alpha-Beta Pruning MiniMaxer
 <p>negamaxer: minimaxer with a very minor optimization for alternating turn games (no repeat turns). Uses minimaxer depths for difficulties.
 <p>montecarlo_ts: a Monte Carlo Tree Search player.
@@ -675,7 +677,7 @@ is included after the parameter sections.
 <p class="pdesc">UI Tab: Player
 
 <p>Number of end games played out from each expanded node. One value for each difficulty level (0-3).
-<h4 id="stores_m"> Stores (captured) mult </h4>
+<h4 id="stores_m"> Stores (captured) Multiplier </h4>
 <p class="pdesc">Location in Config Files: player : scorer : stores_m
 <p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
 <p class="pdesc">Default value: None
@@ -684,7 +686,7 @@ is included after the parameter sections.
 <p>The multiplier for the stores scorer. Seeds in stores and children are included.
 <p>The stores scorer may not be used in games without <a href="game_params.html#stores">STORES</a> or CHILDREN. A zero multiplier disables the stores scorer.
 <p>Used only for  minimax & negamax players.
-<h4 id="access_m"> Access mult </h4>
+<h4 id="access_m"> Access Multiplier </h4>
 <p class="pdesc">Location in Config Files: player : scorer : access_m
 <p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
 <p class="pdesc">Default value: None
@@ -693,7 +695,7 @@ is included after the parameter sections.
 <p>The multiplier for the access scorer. The access scorer computes how many of the opponents holes can be accessed for the given game state.
 <p>The access scorer is slow and therefore is prohibited from being used in multilap games (<a href="game_params.html#mlaps">MLAPS</a>); games with user choice of move direction (<a href="game_params.html#udir_holes">UDIR_HOLES</a>); and games where hole owners are not predefined (<a href="game_params.html#no_sides">NO_SIDES</a>). In these game configurations, the multiplier must be zero to disable the access scorer.
 <p>Used only for minimax & negamax players.
-<h4 id="seeds_m"> Seeds mult </h4>
+<h4 id="seeds_m"> Seeds Multiplier </h4>
 <p class="pdesc">Location in Config Files: player : scorer : seeds_m
 <p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
 <p class="pdesc">Default value: None
@@ -701,7 +703,7 @@ is included after the parameter sections.
 
 <p>The multiplier for the seeds scorer. The seeds scorer computes how many seeds each player has on the game board that are not in children.
 <p>Used only for minimax & negamax players.
-<h4 id="empties_m"> Empties mult </h4>
+<h4 id="empties_m"> Empties Multiplier </h4>
 <p class="pdesc">Location in Config Files: player : scorer : empties_m
 <p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
 <p class="pdesc">Default value: None
@@ -709,7 +711,7 @@ is included after the parameter sections.
 
 <p>The multiplier for the empties scorer. The empties scorer counts the number empty holes each player has on the board.
 <p>Used only for minimax & negamax players.
-<h4 id="child_cnt_m"> Child Count mult </h4>
+<h4 id="child_cnt_m"> Child Count Multiplier </h4>
 <p class="pdesc">Location in Config Files: player : scorer : child_cnt_m
 <p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
 <p class="pdesc">Default value: None
@@ -718,7 +720,7 @@ is included after the parameter sections.
 <p>The multiplier for the child scorer. The child scorer counts the number children each player has.
 <p>The child scorer may only be used on games with children. If the game does not include child the multiplier must be zero.
 <p>Used only for the minimax & negamax players.
-<h4 id="evens_m"> Evens mult </h4>
+<h4 id="evens_m"> Evens Multiplier </h4>
 <p class="pdesc">Location in Config Files: player : scorer : evens_m
 <p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
 <p class="pdesc">Default value: None
@@ -735,7 +737,7 @@ is included after the parameter sections.
 <p>If the game is being played on easy mode (game difficult of easy/0), a random value may be added to the static evaluation. This can be done to induce errors into the ai player's game play. A random value is selected between -easy_rand and + easy_rand.
 <p>The specific value for this should be selected based on the ranges of the paremeters and multiplier.
 <p>Used only for minimax & negamax players.
-<h4 id="repeat_turn"> Repeat Turn mult </h4>
+<h4 id="repeat_turn"> Repeat Turn Multiplier </h4>
 <p class="pdesc">Location in Config Files: player : scorer : repeat_turn
 <p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
 <p class="pdesc">Default value: None

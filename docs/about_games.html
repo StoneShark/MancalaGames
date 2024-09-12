@@ -325,7 +325,7 @@ allow closing of rightmost holes (<a href="game_params.html#sow_rule">SOW_RULE</
     <p class="param">Start seeds:  2</p>
     <p class="param"><a href="game_params.html#goal">Goal</a>: DEPRIVE</p>
     <p class="param"><a href="game_params.html#blocks">Blocks</a>: Yes</p>
-    <p class="param"><a href="game_params.html#gparam_one">General input</a>: 3</p>
+    <p class="param"><a href="game_params.html#gparam_one">General Input</a>: 3</p>
     <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
   </div>
   <div class="column2">
@@ -458,7 +458,7 @@ Another value for <a href="game_params.html#round_starter">ROUND_STARTER</a>
     <p class="param"><a href="game_params.html#capt_rturn">Repeat Turn on Capture</a>: Yes</p>
     <p class="param"><a href="game_params.html#child_cvt">Child Convert Count</a>: 4</p>
     <p class="param"><a href="game_params.html#child_type">Type of Children</a>: WEG</p>
-    <p class="param"><a href="game_params.html#gparam_one">General input</a>: 10</p>
+    <p class="param"><a href="game_params.html#gparam_one">General Input</a>: 10</p>
     <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
   </div>
   <div class="column2">
@@ -579,7 +579,13 @@ Instead of minimum move of 2, singletons may start moves if all holes are empty 
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p35. with some assumptions.
 <h3 id="Kalah">Kalah</h3>
-<p>Sow direction is counter-clockwise, sow into own store. Single seed on own side, captures opp seeds and takes own seed. Extra turn when last seed in store.
+<p>A single lap mancala with a counter-clockwise sow direction. When sowing past the right edge of the board, sow a seed into your own store (<a href="game_params.html#sow_own_store">SOW_OWN_STORE</a>). Do not sow into your opponent's store.
+<p>If the last seed ends in an empty hole on your side of the board, capture any seeds from the opposite hole (<a href="game_params.html#crosscapt">CROSSCAPT</a>). When performing a capture, take the final single seed sown as well. Pick your own seed only when opponents seeds are captured.
+<p>If your sow ends in your own store, repeat your turn.
+<p>Variation:
+<ul><li class="helptext">
+Require must share (<a href="game_params.html#mustshare">MUSTSHARE</a>) because it removes the seed hoarding strategy.
+</ul>
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  6</p>
@@ -596,7 +602,7 @@ Instead of minimum move of 2, singletons may start moves if all holes are empty 
     <p class="param"><a href="game_params.html#xcpickown">Own Seed on Xcapture</a>: PICK_ON_CAPT</p>
   </div>
 </div>
-<p>Rules: en.wikipedia.org/wiki/Kalah
+<p>Rules: <a href="https://en.wikipedia.org/wiki/Kalah" target="_blank">https://en.wikipedia.org/wiki/Kalah</a>
 <h3 id="Lami">Lami</h3>
 <p>Counter-clockwise sow, multi-lap sow. After the first move, subsequent moves may only be played from holes:
 <ul><li class="helptext">
@@ -674,7 +680,7 @@ unless all of the player's holes contain 2, then any hole maybe played.
     <p class="param"><a href="game_params.html#goal">Goal</a>: TERRITORY</p>
     <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 4</p>
     <p class="param"><a href="game_params.html#capt_rturn">Repeat Turn on Capture</a>: Yes</p>
-    <p class="param"><a href="game_params.html#gparam_one">General input</a>: 9</p>
+    <p class="param"><a href="game_params.html#gparam_one">General Input</a>: 9</p>
     <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
     <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER</p>
   </div>
@@ -809,7 +815,7 @@ unless all of the player's holes contain 2, then only the rightmost hole maybe p
     <p class="param">Start seeds:  3</p>
     <p class="param"><a href="game_params.html#goal">Goal</a>: DEPRIVE</p>
     <p class="param"><a href="game_params.html#blocks">Blocks</a>: Yes</p>
-    <p class="param"><a href="game_params.html#gparam_one">General input</a>: 4</p>
+    <p class="param"><a href="game_params.html#gparam_one">General Input</a>: 4</p>
   </div>
   <div class="column2">
     <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
@@ -829,7 +835,7 @@ unless all of the player's holes contain 2, then only the rightmost hole maybe p
     <p class="param">Start seeds:  4</p>
     <p class="param"><a href="game_params.html#goal">Goal</a>: TERRITORY</p>
     <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 4</p>
-    <p class="param"><a href="game_params.html#gparam_one">General input</a>: 10</p>
+    <p class="param"><a href="game_params.html#gparam_one">General Input</a>: 10</p>
     <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
     <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER</p>
   </div>
@@ -943,7 +949,7 @@ see <a href="about_games.html#Lam Waladach">Lam Waladach</a>
     <p class="param">Start seeds:  4</p>
     <p class="param"><a href="game_params.html#goal">Goal</a>: TERRITORY</p>
     <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 4</p>
-    <p class="param"><a href="game_params.html#gparam_one">General input</a>: 10</p>
+    <p class="param"><a href="game_params.html#gparam_one">General Input</a>: 10</p>
     <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
     <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER</p>
     <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
@@ -1307,7 +1313,7 @@ no repeat turn on capture
     <p class="param"><a href="game_params.html#capt_rturn">Repeat Turn on Capture</a>: Yes</p>
     <p class="param"><a href="game_params.html#child_cvt">Child Convert Count</a>: 4</p>
     <p class="param"><a href="game_params.html#child_type">Type of Children</a>: WEG</p>
-    <p class="param"><a href="game_params.html#gparam_one">General input</a>: 10</p>
+    <p class="param"><a href="game_params.html#gparam_one">General Input</a>: 10</p>
   </div>
   <div class="column2">
     <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 1</p>
