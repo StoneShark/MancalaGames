@@ -130,6 +130,7 @@ class MancalaGames(tk.Frame):
         self.udir_frame = None
         self.param_changed = False
         self.tabs = {}
+        self.but_frame = None
         self.desc = None
         self.prev_option = None
 
@@ -793,6 +794,7 @@ class MancalaGames(tk.Frame):
 
         for tab in self.tabs.values():
             self._set_frame_active(tab, new_state)
+        self._set_frame_active(self.but_frame, new_state)
 
 
     def _play(self):
