@@ -10,7 +10,6 @@
       "blocks": true,
       "capsamedir": true,
       "capttwoout": true,
-      "min_move": 1,
       "mlaps": 2,
       "round_fill": 2,
       "round_starter": 0,

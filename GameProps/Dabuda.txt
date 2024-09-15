@@ -9,7 +9,6 @@
       "about": "A multi-lap mancala, counter-clockwise sow. Sow must reach opp side or end in empty hole. Cross-capture when end in own hole with one seed. Pick own seed on capture. The games ends if no moves.\n\nVariations:\nPlayed with 6 to 10 holes.",
       "allow_rule": 1,
       "crosscapt": true,
-      "min_move": 1,
       "mlaps": 1,
       "oppsidecapt": true,
       "sow_direct": 1,

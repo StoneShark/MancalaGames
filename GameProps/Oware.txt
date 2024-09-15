@@ -9,7 +9,6 @@
       "about": "A single-lap mancala, sow direction is counter-clockwise, capture on opponents side on 1s, 2s and 3s. A sow which cycles the board, will skip the hole that the move started from. If your opponent has no seeds, you must make seeds available to them (if you can).\n\nVariations:\n- remove capture on 1s\n- any Grand Slam rule",
       "capt_on": [1, 2, 3],
       "grandslam": 2,
-      "min_move": 1,
       "multicapt": true,
       "mustshare": true,
       "oppsidecapt": true,

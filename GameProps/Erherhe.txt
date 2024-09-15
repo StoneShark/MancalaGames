@@ -9,7 +9,6 @@
       "about": "A single-lap mancala, sow direction is counter-clockwise, multiple capture on opponents side on 1s and 3s. A sow which cycles the board, will skip the hole that the move started from. If your opponent has no seeds, you must make seeds available to them (if you can). Played in rounds; loser starts new round. Holes that the loser cannot fill are out of play for the round.\n\nVariation:\n\n- Another value for ROUND_STARTER\n Another value for ROUND_FILL",
       "blocks": true,
       "capt_on": [1, 3],
-      "min_move": 1,
       "multicapt": true,
       "mustshare": true,
       "oppsidecapt": true,

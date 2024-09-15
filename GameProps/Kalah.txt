@@ -8,7 +8,6 @@
       "name": "Kalah",
       "about": "A single lap mancala with a counter-clockwise sow direction. When sowing past the right edge of the board, sow a seed into your own store (SOW_OWN_STORE). Do not sow into your opponent's store.\nIf the last seed ends in an empty hole on your side of the board, capture any seeds from the opposite hole (CROSSCAPT). When performing a capture, take the final single seed sown as well. Pick your own seed only when opponents seeds are captured.\nIf your sow ends in your own store, repeat your turn.\n\nVariation:\n\n- Require must share (MUSTSHARE) because it removes the seed hoarding strategy.",
       "crosscapt": true,
-      "min_move": 1,
       "oppsidecapt": true,
       "sow_direct": 1,
       "sow_own_store": true,

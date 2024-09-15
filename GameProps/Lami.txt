@@ -12,7 +12,6 @@
       "capt_on": [2],
       "crosscapt": true,
       "oppsidecapt": true,
-      "min_move": 1,
       "mlaps": 1,
       "pickextra": 2,
       "round_fill": 1,

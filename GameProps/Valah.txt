@@ -7,7 +7,6 @@
    "game_info": {
       "name": "Valah",
       "about": "Multilap sow in counter-clockwise direction. Sow into own store; no other capture mechanism. If your sow ends in your own store, repeat your turn.",
-      "min_move": 1,
       "mlaps": 1,
       "sow_direct": 1,
       "sow_own_store": true,

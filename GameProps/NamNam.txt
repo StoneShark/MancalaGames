@@ -10,7 +10,6 @@
       "capt_on": [4],
       "goal": 2,
       "gparam_one": 10,
-      "min_move": 1,
       "mlaps": 1,
       "mustshare": true,
       "round_starter": 0,

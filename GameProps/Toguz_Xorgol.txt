@@ -12,7 +12,6 @@
       "child_rule": 1,
       "capt_min": 4,
       "evens": true,
-      "min_move": 1,
       "oppsidecapt": true,
       "sow_direct": -1,
       "sow_start": true,

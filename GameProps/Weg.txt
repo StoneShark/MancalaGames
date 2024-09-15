@@ -12,7 +12,6 @@
       "child_type": 4,
       "goal": 2,
       "gparam_one": 10,
-      "min_move": 1,
       "mlaps": 1,
       "mustpass": true,
       "rounds": true,

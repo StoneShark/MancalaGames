@@ -6,7 +6,6 @@
       "child_cvt": 4,
       "child_type": 5,
       "crosscapt": true,
-      "min_move": 1,
       "mlaps": 1,
       "multicapt": true,
       "oppsidecapt": true,

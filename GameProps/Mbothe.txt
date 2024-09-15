@@ -12,7 +12,6 @@
       "capt_rturn": true,
       "crosscapt": true,
       "oppsidecapt": true,
-      "min_move": 1,
       "mlaps": 1,
       "prescribed": 2,
       "sow_direct": 1,

@@ -9,7 +9,6 @@
       "about": "The goal is to deprive the opponent of seeds. Counter-clockwise, multi-lap sow. Prescribed opening move: one seed must reach opponents side of the board. Moves must end in an empty hole or reach opponents side of the board.  Seeds are taken out of play via cross-capture on opponents side.\n\nVariations:\n- any start pattern\n- any allow rule\n- see Sedeqa",
       "crosscapt": true,
       "goal": 1,
-      "min_move": 1,
       "mlaps": 1,
       "oppsidecapt": true,
       "prescribed": 3,

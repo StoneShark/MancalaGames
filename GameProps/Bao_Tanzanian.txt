@@ -13,7 +13,6 @@
       "child_rule": 2,
       "child_type": 1,
       "crosscapt": true,
-      "min_move": 1,
       "mlaps": 1,
       "multicapt": true,
       "oppsidecapt": true,

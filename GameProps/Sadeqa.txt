@@ -9,7 +9,6 @@
       "about": "Counter-clockwise multi-lap sow. The goal is to deprive the opponent of seeds. Moves must end in an empty hole or reach the opponents side of the board. Seeds are taken out of play via cross-capture. \n\nVariations: ALTERNATES start pattern",
       "crosscapt": true,
       "goal": 1,
-      "min_move": 1,
       "mlaps": 1,
       "allow_rule": 1,
       "oppsidecapt": true,

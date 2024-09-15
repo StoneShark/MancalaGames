@@ -8,7 +8,6 @@
       "name": "Ayoayo",
       "about": "A multi-lap mancala; sow direction counter-clockwise skipping start hole on full cycle sow; cross-capture from opponents side when a sow ends in own empty hole. If your opponent has no seeds, you must make seeds available to them (if you can). The game ends when one player captures more than half the seeds.",
       "crosscapt": true,
-      "min_move": 1,
       "mlaps": 1,
       "mustshare": true,
       "oppsidecapt": true,

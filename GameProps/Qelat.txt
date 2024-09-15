@@ -10,7 +10,6 @@
       "capt_on": [4],
       "child_cvt": 4,
       "child_type": 2,
-      "min_move": 1,
       "mustpass": true,
       "skip_start": true,
       "sow_direct": 0

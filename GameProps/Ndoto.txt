@@ -9,7 +9,6 @@
       "about": "Sow multi-lap and counter-clockwise. Single seed sow may not start multilaps. Cross capture.",
       "allow_rule": 2,
       "crosscapt": true,
-      "min_move": 1,
       "mlaps": 1,
       "oppsidecapt": true,
       "sow_direct": 1,

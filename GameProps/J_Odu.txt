@@ -9,7 +9,6 @@
       "about": "Sow clockwise, multi-lap sow. Cross capture opposite-side but only up to 3 seeds, picking own on capture.\n\nVariations: board size and start seeds.",
       "capt_max": 3,
       "crosscapt": true,
-      "min_move": 1,
       "mlaps": 1,
       "oppsidecapt": true,
       "sow_direct": 1,

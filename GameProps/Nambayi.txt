@@ -10,7 +10,6 @@
       "blocks": true,
       "goal": 1,
       "gparam_one": 4,
-      "min_move": 1,
       "mlaps": 1,
       "sow_direct": 1,
       "sow_rule": 1

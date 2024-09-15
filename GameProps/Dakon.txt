@@ -9,7 +9,6 @@
       "about": "A multi-lap mancala played in rounds. Sow direction is counterclockwise, sow into ones own store. A player may move again when the final seed is sown into their store. Cross capture from opponents side only; pick own seed on capture. The player that moved last in a round round, starts the next round. The game is over when either player cannot fill a single hole.\n\nVariations:\n- played with 6 to 10 holes per side with the numnber of start seeds equaling number of holes\n- passing not allowed",
       "blocks": true,
       "crosscapt": true,
-      "min_move": 1,
       "mlaps": 1,
       "oppsidecapt": true,
       "round_fill": 2,
