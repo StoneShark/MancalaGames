@@ -115,6 +115,13 @@ GAMECONF = {'basic':
                  'stores': True,
                  'capt_on': [3]},
 
+            'mlvisopd':  # mlap, visit opp, change dir
+                {'mlaps': gi.LapSower.LAPPER,
+                 'sow_rule': gi.SowRule.CHANGE_DIR_LAP,
+                 'visit_opp': True,
+                 'stores': True,
+                 'crosscapt': True},
+
             }
 
 START = {'start':
@@ -207,6 +214,12 @@ CASES = [('basic', 'start', F, 2,
          ('no2schd', 'start', F, 4,
           1, (3, 3, 2, 2, 0, 2, 2, 2, 2, 2), ESTR, NBLCK),
 
+         # ops with visit
+         ('mlvisopd', 'start', T, 2,  # didn't reach
+          9, (2, 2, 2, 2, 2, 2, 2, 0, 3, 3), ESTR, NBLCK),
+         ('mlvisopd', 'start', T, 1,  # does reach, dir change after 1st lap
+          0, (1, 2, 2, 2, 2, 2, 2, 0, 2, 5), ESTR, NBLCK),
+
          ]
 
 
@@ -217,7 +230,7 @@ CASES = [('basic', 'start', F, 2,
                          CASES,
                          ids=[f'{case[0]}-{case[1]}-{case[2]}-idx{idx}'
                               for idx, case in enumerate(CASES)])
-def test_sower(conf_name, state_name, turn, move,
+def test_sower(logger, conf_name, state_name, turn, move,
                eloc, eboard, estore, eblocks):    # expected values
     """Use do_sow from Mancala class. It uses the starter, get_direction,
     and sower."""

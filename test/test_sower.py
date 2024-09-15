@@ -44,6 +44,7 @@ CCW = gi.Direct.CCW
 CW = gi.Direct.CW
 
 
+
 # %%
 
 class TestSower:
@@ -814,13 +815,10 @@ class TestVMlap:
         mdata.sow_loc, mdata.seeds = game.deco.starter.start_sow(start_pos)
         mdata.direct = Direct.CW
         game.deco.sower.sow_seeds(mdata)
-        print(game)
 
         assert mdata.capt_loc == eloc
         assert game.board == eboard
         assert game.store == estore
-
-        assert 'VisitedMlap' in str(game.deco.sower)
 
 
 class TestBlckDivertSower:

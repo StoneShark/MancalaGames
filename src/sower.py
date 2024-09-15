@@ -379,6 +379,7 @@ class StopOnChild(LapContinuerIf):
     def do_another_lap(self, mdata):
 
         if self.game.child[mdata.capt_loc] is not None:
+            game_log.add('MLap stop in child')
             return False
         return self.decorator.do_another_lap(mdata)
 
@@ -389,7 +390,26 @@ class StopCaptureSeeds(LapContinuerIf):
     def do_another_lap(self, mdata):
 
         if self.game.deco.capt_ok.capture_ok(mdata.capt_loc):
+            game_log.add('MLap stop for capture')
             return False
+        return self.decorator.do_another_lap(mdata)
+
+
+class MustVisitOpp(LapContinuerIf):
+    """A wrapper: on the first lap sow, must reach the
+    opposite side of the board. In otherwords, a second lap may not
+    be started on a players side of the board, unless they have
+    passed through the opponents side of the board."""
+
+    def do_another_lap(self, mdata):
+
+        if (not mdata.lap_nbr
+                and not (mdata.seeds >= self.game.cts.holes
+                         or self.game.cts.opp_side(self.game.turn,
+                                                   mdata.capt_loc))):
+            game_log.add("First mlap didn't reach opp")
+            return False
+
         return self.decorator.do_another_lap(mdata)
 
 
@@ -401,6 +421,7 @@ class StopRepeatTurn(LapContinuerIf):
     def do_another_lap(self, mdata):
 
         if mdata.capt_loc is gi.WinCond.REPEAT_TURN:
+            game_log.add('MLap stop for for repeat turn')
             return False
         return self.decorator.do_another_lap(mdata)
 
@@ -505,71 +526,12 @@ class SowMlapSeeds(MlapSowerIf):
 
                 self.end_lap_op.do_op(mdata)
                 self.game.board[loc] = 0
+                mdata.lap_nbr += 1
 
             else:
                 return
 
         mdata.capt_loc = gi.WinCond.ENDLESS
-
-
-class SowVisitedMlap(SowMethodIf):
-    """Enforce an mlap option in which the first sow, must reach or
-    pass through the opponents side of the board before a second
-    lap may begin. A sow that does not reach the opponents side of
-    the board, ends the turn. In otherwords, a second lap may not
-    be started on a players side of the board, unless they have
-    passed through the opponents side of the board.
-
-    Can check the child array even if the child flag not set, because
-    it is initialized to None (not a designated child)."""
-
-    def __init__(self, game, single_sower, lap_sower, lap_cont):
-
-        super().__init__(game, lap_sower)
-        self.lap_cont = lap_cont
-        self.single_sower = single_sower
-
-
-    def __str__(self):
-        """Add single sower and lap continuer to the string."""
-
-        my_str = '\n   '.join([repr(self),
-                               'single s: ' + str(self.single_sower),
-                               'lap cont: ' + str(self.lap_cont)])
-
-        if self.decorator:
-            return my_str + '\n' + str(self.decorator)
-        return my_str   # pragma: no coverage
-
-
-    def get_single_sower(self):
-        """Return the first non-lap sower in the deco chain.
-        This is not a single sower, override the default to call
-        down the deco chain"""
-        return self.decorator.get_single_sower()
-
-
-    def sow_seeds(self, mdata):
-        """Do the first sow."""
-
-        self.single_sower.sow_seeds(mdata)
-        game_log.step(f'Vis Mlap sow from {mdata.cont_sow_loc}',
-                      self.game, game_log.DETAIL)
-        if mdata.capt_loc is gi.WinCond.REPEAT_TURN:
-            return
-
-        visited_opp = (mdata.seeds >= self.game.cts.holes
-                       or self.game.cts.opp_side(self.game.turn,
-                                                 mdata.capt_loc))
-        if not visited_opp:
-            return
-
-        if self.lap_cont.do_another_lap(mdata):
-            loc = mdata.capt_loc
-            mdata.cont_sow_loc = loc
-            mdata.seeds = self.game.board[loc]
-            self.game.board[loc] = 0
-            self.decorator.sow_seeds(mdata)
 
 
 # %% prescribed opening moves
@@ -759,6 +721,9 @@ def deco_build_lap_cont(game):
     if game.info.child_type:
         lap_cont = StopOnChild(game, lap_cont)
 
+    if game.info.visit_opp:
+        lap_cont = MustVisitOpp(game, lap_cont)
+
     if game.info.sow_own_store:
         lap_cont = StopRepeatTurn(game, lap_cont)
 
@@ -772,8 +737,6 @@ def deco_mlap_sower(game, sower):
         2. a lap continue tester
     then build the mlap sower. Wrap if needed, with Visited."""
 
-    pre_lap_sower = sower
-
     if game.info.sow_rule == gi.SowRule.CHANGE_DIR_LAP:
         end_op = DirChange(game)
     elif game.info.sow_rule == gi.SowRule.SOW_BLKD_DIV:
@@ -785,9 +748,6 @@ def deco_mlap_sower(game, sower):
 
     lap_cont = deco_build_lap_cont(game)
     sower = SowMlapSeeds(game, sower, lap_cont, end_op)
-
-    if game.info.visit_opp:
-        sower = SowVisitedMlap(game, pre_lap_sower, sower, lap_cont)
 
     return sower
 

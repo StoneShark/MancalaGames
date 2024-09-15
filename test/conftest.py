@@ -11,6 +11,9 @@ Created on Fri Sep 15 09:07:52 2023
 
 import pytest
 
+from context import game_logger
+
+
 def pytest_addoption(parser):
     parser.addoption("--nbr_runs", action="store", default="10")
     parser.addoption("--run_slow", action="store_true", default=False)
@@ -37,3 +40,18 @@ def pytest_generate_tests(metafunc):
     # add this fixture for the test_game_stats (and maybe others)
     if 'nbr_runs' in metafunc.fixturenames:
         metafunc.parametrize('nbr_runs', [count])
+
+
+@pytest.fixture()
+def logger():
+    """Include this fixture to activate the logger for the test,
+    it will be deactivated after the test."""
+
+    log_level = game_logger.game_log.level
+    game_logger.game_log.active = True
+    game_logger.game_log.level = game_logger.game_log.DETAIL
+    game_logger.game_log.live = True
+    yield
+    game_logger.game_log.active = False
+    game_logger.game_log.level = log_level
+    game_logger.game_log.live = False

@@ -127,6 +127,7 @@ class MoveData:
     seeds          fill                    input        note 2
     _sow_loc       fill                                 note 3
     cont_sow_loc   property fills          in/update
+    lap_nbr                                used
     capt_loc                               output       in/update
     capt_change                                         filled
     captured                                            filled
@@ -147,6 +148,7 @@ class MoveData:
         self.seeds = 0
         self._sow_loc = 0
         self.cont_sow_loc = 0   # use by the sower (updated for lap sows)
+        self.lap_nbr = 0
         self.capt_loc = 0
 
         self.capt_changed = False    # capt changed state but didn't capture
@@ -161,6 +163,7 @@ class MoveData:
         string += f"  seeds={self.seeds}\n"
         string += f"  sow_loc={self.sow_loc}\n"
         string += f"  cont_sow_loc={self.cont_sow_loc}\n"
+        string += f"  lap_nbr={self.lap_nbr}\n"
         string += f"  capt_loc={self.capt_loc}\n"
         string += f"  capt_changed={self.capt_changed}\n"
         string += f"  captured={self.captured}"
