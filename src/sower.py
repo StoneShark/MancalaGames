@@ -359,7 +359,10 @@ class ChildLapCont(LapContinuerIf):
 
     def do_another_lap(self, mdata):
         """Determine if we are done sowing."""
-        return not self.game.deco.make_child.test(mdata)
+        make_child = self.game.deco.make_child.test(mdata)
+        if make_child:
+            game_log.add('MLap stop to make child')
+        return not make_child
 
 
 class StopSingleSeed(LapContinuerIf):

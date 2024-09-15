@@ -122,6 +122,15 @@ GAMECONF = {'basic':
                  'stores': True,
                  'crosscapt': True},
 
+            'mlaps_cnt':
+                {'mlaps': gi.LapSower.LAPPER,
+                 'child_type': gi.ChildType.NORMAL,
+                 'child_cvt': 3,
+                 'visit_opp': True,
+                 'sow_own_store': True,
+                 'stores': True,
+                 'capt_on': [2]},
+
             }
 
 START = {'start':
@@ -129,19 +138,22 @@ START = {'start':
                                store=(0, 0),
                                mcount=1,    # mcount is inc'ed at top of move
                                _turn=False,
-                               blocked=(F, F, F, F, F, F, F, F, F, F)),
+                               blocked=(F, F, F, F, F, F, F, F, F, F),
+                               child=(N, N, N, N, N, N, N, N, N, N)),
         'second':
              mancala.GameState(board=(2, 2, 2, 2, 2, 2, 2, 2, 2, 2),
                                store=(0, 0),
                                mcount=2,   # second turn
                                _turn=False,
-                               blocked=(F, F, F, F, F, F, F, F, F, F)),
+                               blocked=(F, F, F, F, F, F, F, F, F, F),
+                               child=(N, N, N, N, N, N, N, N, N, N)),
 
         'ones':
              mancala.GameState(board=(1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
                                store=(5, 5),
                                mcount=1,
-                               _turn=False),
+                               _turn=False,
+                               child=(N, N, N, N, N, N, N, N, N, N)),
 
         'st_blocks':
              mancala.GameState(board=(2, 2, 2, 2, 0, 0, 2, 2, 2, 2),
@@ -149,6 +161,22 @@ START = {'start':
                                mcount=1,
                                _turn=False,
                                blocked=(F, F, F, F, T, T, F, F, F, F)),
+
+        'wchild':
+            mancala.GameState(board=(1, 1, 1, 3, 3, 3, 4, 2, 1, 0),
+                              child=(N, N, N, N, N, F, N, N, N, N),
+                              store=(0, 1),
+                              mcount=1,
+                              _turn=False,
+                              blocked=(F, F, F, F, F, F, F, F, F, F)),
+
+        'wochild':
+            mancala.GameState(board=(1, 1, 1, 3, 1, 3, 0, 0, 0, 0),
+                              child=(N, N, N, N, N, N, N, N, N, N),
+                              store=(5, 5),
+                              mcount=1,
+                              _turn=False,
+                              blocked=(F, F, F, F, F, F, F, F, F, F)),
 
         }
 
@@ -220,6 +248,23 @@ CASES = [('basic', 'start', F, 2,
          ('mlvisopd', 'start', T, 1,  # does reach, dir change after 1st lap
           0, (1, 2, 2, 2, 2, 2, 2, 0, 2, 5), ESTR, NBLCK),
 
+         # mlap continuer
+         ('mlaps_cnt', 'ones', F, 1, # stop no visit
+          2, (1, 0, 2, 1, 1, 1, 1, 1, 1, 1), [5, 5], NBLCK),
+         ('mlaps_cnt', 'start', F, 1, # stop no visit (1st) &  make child
+          3, (2, 0, 3, 3, 2, 2, 2, 2, 2, 2), ESTR, NBLCK),
+         ('mlaps_cnt', 'start', F, 4, # stop make child
+          5, (2, 2, 2, 2, 0, 3, 2, 2, 2, 2), [1, 0], NBLCK),
+         ('mlaps_cnt', 'wchild', F, 3, # stop in child
+          5, (1, 1, 1, 0, 4, 4, 4, 2, 1, 0), [1, 1], NBLCK),
+         ('mlaps_cnt', 'start', F, 3, # repeat turn (end in store)
+          gi.WinCond.REPEAT_TURN,
+          (2, 2, 2, 0, 3, 2, 2, 2, 2, 2), [1, 0], NBLCK),
+         ('mlaps_cnt', 'wchild', F, 4, # do mlaps, then capt
+          1, (2, 2, 1, 3, 0, 4, 0, 3, 2, 1), [1, 1], NBLCK),
+          ('mlaps_cnt', 'wochild', F, 3, # do mlaps, then stop
+           9, (1, 1, 1, 0, 2, 0, 1, 1, 1, 1), [6, 5], NBLCK),
+
          ]
 
 
@@ -250,12 +295,13 @@ def test_sower(logger, conf_name, state_name, turn, move,
         "Test config error: seed count wrong!"
     assert not game.info.blocks or (game.info.blocks and start_state.blocked), \
         "Test config error: game.info.blocks inconsistent with start_state"
+    assert not game.info.child_type or (game.info.child_type and start_state.child), \
+        "Test config error: game.info.child_type inconsistent with start_state"
 
     print(GAMECONF[conf_name])
     print(game)
-    print(move)
+    print('move:', move)
     mdata = game.do_sow(move)
-    print(game)
 
     # check the expected changes
     assert mdata.capt_loc == eloc
