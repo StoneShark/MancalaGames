@@ -137,7 +137,7 @@ vtest:
 # a target to run only the test_gm files
 .PHONY: game_tests
 game_tests: test\\context.py
-	-coverage run --branch -m pytest $(GAME_TESTS)
+	-coverage run -m pytest $(GAME_TESTS)
 	coverage html
 
 # a target to run the stress tests with higher iterations
@@ -168,14 +168,14 @@ vpath %.cov .\\cov
 vpath %.py .\\test
 
 %.cov: test\\context.py $(subst .cov,.py,$@)
-	coverage run --branch -m pytest test\\$(subst .cov,.py,$@)
+	coverage run -m pytest test\\$(subst .cov,.py,$@)
 	coverage json
 	python test\\check_unit_cov.py $(subst .cov,,$@) > cov\\$@
 	type cov\\$@
 
 .PHONY: %.test
 %.test: test\\context.py $(subst .test,.py,$@)
-	coverage run --branch -m pytest test\\$(subst .test,.py,$@)
+	coverage run -m pytest test\\$(subst .test,.py,$@)
 	coverage html
 
 
