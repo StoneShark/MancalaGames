@@ -161,6 +161,9 @@ def play_games(game, tplayer, fplayer, nbr_runs, save_logs,
 
     game_results = GameStats()
 
+    if save_logs:
+        game_log.level = game_log.DETAIL
+
     for cnt in tqdm.tqdm(range(nbr_runs)):
 
         game.new_game()
