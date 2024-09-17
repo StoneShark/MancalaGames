@@ -1,0 +1,30 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 10,
+      "nbr_start": 3
+   },
+   "game_info": {
+      "name": "Ot-tjin",
+      "about": "A multi-lap mancala with a clockwise sow.  Capture on 3s on either side of the board.\n\nVariations:\n- played with start seeds of 2 to 5 with the capture-on value equaling the number of start seeds",
+      "capt_on": [3],
+      "mlaps": 1,
+      "sow_direct": -1,
+      "stores": true
+   },
+   "player": {
+      "algorithm": "minimaxer",
+      "difficulty": 1,
+      "scorer": {
+         "access_m": 0,
+         "child_cnt_m": 0,
+         "easy_rand": 0,
+         "empties_m": 0,
+         "evens_m": 0,
+         "repeat_turn": 0,
+         "seeds_m": 0,
+         "stores_m": 4
+      }
+   },
+   "rules": "Russ, Laurence. Mancala Games. 1984. p64."
+}
