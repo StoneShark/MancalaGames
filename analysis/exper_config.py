@@ -98,7 +98,7 @@ def process_command_line():
         parser.print_help()
         sys.exit()
 
-    if not cargs.game or cargs.game == ALL:
+    if not cargs.game or cargs.game == [ALL]:
         cargs.game = INDEX
 
     if cargs.save_logs and (len(cargs.game) > 1 or cargs.nbr_runs > 50):
