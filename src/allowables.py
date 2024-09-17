@@ -426,7 +426,7 @@ def deco_allowable(game):
         allowable = NoGrandSlam(game, allowable)
 
     if (game.info.mustshare
-            or game.info.allow_rule
+            or game.info.allow_rule == gi.AllowRule.OPP_OR_EMPTY
             or game.info.grandslam == gi.GrandSlam.NOT_LEGAL):
         allowable = MemoizeAllowable(game, allowable)
 

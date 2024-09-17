@@ -211,7 +211,6 @@ class TestAllowables:
 
 
     def test_mlap_allowables(self):
-        # TODO test_mlap_allowables not really testing gs not_legal?
         game_consts = gc.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 crosscapt=True,
@@ -593,16 +592,15 @@ class TestOwnerAllowables:
              utils.build_board([T, T, F],
                                [F, F, F])),
 
-            # TODO what's going on here
-            # (False,
-            #  utils.build_board([0, 2, 0],
-            #                    [1, 0, 2]),
-            #  utils.build_board([T, F, T],
-            #                    [F, F, F]),
-            #  utils.build_board([F, T, F],
-            #                    [F, F, T])),
+            (False,
+              utils.build_board([0, 2, 0],
+                                [1, 0, 2]),
+              utils.build_board([T, F, T],
+                                [F, F, F]),
+              utils.build_board([F, T, F],
+                                [F, F, T])),
         ],
-        ids=[f'case_{cnt}' for cnt in range(2)])
+        ids=[f'case_{cnt}' for cnt in range(3)])
     def test_allowables(self, turn, board, owners, eresult):
 
         game_consts = gc.GameConsts(nbr_start=4, holes=3)
