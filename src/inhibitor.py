@@ -97,6 +97,9 @@ class InhibitorCaptN(InhibitorIf):
         self._captures = True   # game state
         self._expire = expire
 
+    def __str__(self):
+        return f'InhibitorCaptN(capture={self._captures}, expire={self._expire})'
+
     def new_game(self):
         self._captures = True
         game_log.add('Inhibiting captures.', game_log.IMPORT)
@@ -141,6 +144,9 @@ class InhibitorChildrenOnly(InhibitorIf):
 
     def __init__(self):
         self._children = False   # game state
+
+    def __str__(self):
+        return f'InhibitorChildrenOnly(children={self._children})'
 
     def new_game(self):
         self._children = False
@@ -188,6 +194,16 @@ class InhibitorBoth(InhibitorIf):
         self._children = False     # game state
         self._child_only = False   # game state
         self._test = test_func
+
+    def __str__(self):
+
+        rstr = 'InhibitorBoth:\n'
+        rstr += f'  turn: {self._turn}'
+        rstr += f'  capture: {self._captures}'
+        rstr += f'  children: {self._children}'
+        rstr += f'  child_only: {self._child_only}'
+        rstr += f'  test func: {self._test}'
+        return rstr
 
     def new_game(self):
         self._turn = None

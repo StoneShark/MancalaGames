@@ -492,6 +492,12 @@ def build_rules():
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
+        'sow_own_nocapt',
+        rule=lambda ginfo: ginfo.sow_own_store and ginfo.nocaptfirst,
+        msg='SOW_OWN_STORE cannot be used with NOCAPTFIRST',
+        excp=gi.GameInfoError)
+
+    man_rules.add_rule(
         'sow_own_not_rules',
         rule=lambda ginfo: (ginfo.sow_own_store
                             and ginfo.sow_rule in

@@ -28,8 +28,9 @@ N = None
 CCW = gi.Direct.CCW
 CW = gi.Direct.CW
 
-ESTR = [0, 0]
 NBLCK = [F] * (2 * HOLES)
+
+NSTR = 1967  # no change in the store expected
 
 
 # %% setup and cases
@@ -181,78 +182,78 @@ START = {'start':
         }
 
 CASES = [('basic', 'start', F, 2,
-          4, (2, 2, 0, 3, 3, 2, 2, 2, 2, 2), ESTR, NBLCK),
+          4, (2, 2, 0, 3, 3, 2, 2, 2, 2, 2), NSTR, NBLCK),
 
          ('bs_mlap', 'start', F, 2,
-          4, (2, 2, 0, 3, 3, 2, 2, 2, 2, 2), ESTR, NBLCK),
+          4, (2, 2, 0, 3, 3, 2, 2, 2, 2, 2), NSTR, NBLCK),
          # stop mlaps for capt
          ('bs_mlap', 'second', F, 2,
-          3, (0, 3, 1, 4, 0, 3, 3, 0, 3, 3), ESTR, NBLCK),
+          3, (0, 3, 1, 4, 0, 3, 3, 0, 3, 3), NSTR, NBLCK),
 
          ('ms_no_mlap', 'start', F, 2,
-          7, (0, 3, 1, 0, 1, 4, 4, 1, 3, 3), ESTR, NBLCK),
+          7, (0, 3, 1, 0, 1, 4, 4, 1, 3, 3), NSTR, NBLCK),
          ('ms_no_mlap', 'second', F, 2,
-          4, (2, 2, 0, 3, 3, 2, 2, 2, 2, 2), ESTR, NBLCK),
+          4, (2, 2, 0, 3, 3, 2, 2, 2, 2, 2), NSTR, NBLCK),
 
          ('s1_move1', 'ones', F, 0,
-          5, (0, 1, 1, 1, 1, 2, 1, 1, 1, 1), [5, 5], NBLCK),
+          5, (0, 1, 1, 1, 1, 2, 1, 1, 1, 1), NSTR, NBLCK),
          ('s1_split', 'start', F, gi.MoveTpl(2, CCW),
-          5, (2, 2, 0, 3, 2, 3, 2, 2, 2, 2), ESTR, NBLCK),
+          5, (2, 2, 0, 3, 2, 3, 2, 2, 2, 2), NSTR, NBLCK),
          ('s1_split', 'start', F, gi.MoveTpl(2, CW),
-          9, (2, 3, 0, 2, 2, 2, 2, 2, 2, 3), ESTR, NBLCK),
+          9, (2, 3, 0, 2, 2, 2, 2, 2, 2, 3), NSTR, NBLCK),
 
          ('s1_blocks', 'st_blocks', F, gi.MoveTpl(1, CCW),
-          6, (2, 0, 3, 2, 0, 0, 3, 2, 2, 2), [2, 2],
+          6, (2, 0, 3, 2, 0, 0, 3, 2, 2, 2), NSTR,
           (F, F, F, F, T, T, F, F, F, F)),
          ('s1_blocks', 'st_blocks', F, gi.MoveTpl(2, CW),
-          9, (2, 3, 0, 2, 0, 0, 2, 2, 2, 3), [2, 2],
+          9, (2, 3, 0, 2, 0, 0, 2, 2, 2, 3), NSTR,
           (F, F, F, F, T, T, F, F, F, F)),
 
          # actual direction doesn't matter
          ('p1m1_udir', 'start', F, gi.MoveTpl(4, CCW),
-          5, (3, 1, 3, 1, 2, 2, 3, 1, 3, 1), ESTR, NBLCK),
+          5, (3, 1, 3, 1, 2, 2, 3, 1, 3, 1), NSTR, NBLCK),
          ('p1m1_udir', 'start', F, gi.MoveTpl(4, CW),
-          5, (3, 1, 3, 1, 2, 2, 3, 1, 3, 1), ESTR, NBLCK),
+          5, (3, 1, 3, 1, 2, 2, 3, 1, 3, 1), NSTR, NBLCK),
 
          ('p1m1_blocks', 'st_blocks', F, gi.MoveTpl(1, CCW),
-          8, (1, 2, 1, 3, 0, 0, 1, 3, 2, 3), [2, 2],
+          8, (1, 2, 1, 3, 0, 0, 1, 3, 2, 3), NSTR,
           (F, F, F, F, T, T, F, F, F, F)),
          ('p1m1_blocks', 'st_blocks', F, gi.MoveTpl(2, CW),
-          7, (3, 1, 2, 1, 0, 0, 3, 2, 3, 1), [2, 2],
+          7, (3, 1, 2, 1, 0, 0, 3, 2, 3, 1), NSTR,
           (F, F, F, F, T, T, F, F, F, F)),
 
          ('sbd_udir', 'start', F, gi.MoveTpl(4, CCW),
           6, (2, 2, 2, 2, 0, 3, 0, 2, 2, 2), [3, 0],
              (F, F, F, F, F, F, T, F, F, F)),
          ('sbd_udir', 'start', T, gi.MoveTpl(1, CW),
-          6, (2, 2, 2, 2, 2, 2, 3, 3, 0, 2), ESTR, NBLCK),
+          6, (2, 2, 2, 2, 2, 2, 3, 3, 0, 2), NSTR, NBLCK),
          ('sbd_udir', 'st_blocks', F, gi.MoveTpl(3, CCW),
           6, (2, 2, 2, 0, 0, 0, 0, 2, 2, 2), [6, 2],
              (F, F, F, F, T, T, T, F, F, F)),
 
          ('dep_capta', 'start', F, 1,
-          2, (3, 1, 4, 0, 3, 3, 0, 3, 3, 0), ESTR, NBLCK),
+          2, (3, 1, 4, 0, 3, 3, 0, 3, 3, 0), NSTR, NBLCK),
 
          # capture during sow, stop mlap to make child
          ('chd_capta', 'start', F, 1,
           3, (2, 0, 0, 3, 2, 2, 2, 2, 2, 2), [3, 0], NBLCK),
 
          ('no2s', 'start', F, 4,
-          1, (3, 3, 2, 2, 0, 2, 2, 2, 2, 2), ESTR, NBLCK),
+          1, (3, 3, 2, 2, 0, 2, 2, 2, 2, 2), NSTR, NBLCK),
          ('no2schd', 'start', F, 4,
-          1, (3, 3, 2, 2, 0, 2, 2, 2, 2, 2), ESTR, NBLCK),
+          1, (3, 3, 2, 2, 0, 2, 2, 2, 2, 2), NSTR, NBLCK),
 
          # ops with visit
          ('mlvisopd', 'start', T, 2,  # didn't reach
-          9, (2, 2, 2, 2, 2, 2, 2, 0, 3, 3), ESTR, NBLCK),
+          9, (2, 2, 2, 2, 2, 2, 2, 0, 3, 3), NSTR, NBLCK),
          ('mlvisopd', 'start', T, 1,  # does reach, dir change after 1st lap
-          0, (1, 2, 2, 2, 2, 2, 2, 0, 2, 5), ESTR, NBLCK),
+          0, (1, 2, 2, 2, 2, 2, 2, 0, 2, 5), NSTR, NBLCK),
 
          # mlap continuer
          ('mlaps_cnt', 'ones', F, 1, # stop no visit
-          2, (1, 0, 2, 1, 1, 1, 1, 1, 1, 1), [5, 5], NBLCK),
+          2, (1, 0, 2, 1, 1, 1, 1, 1, 1, 1), NSTR, NBLCK),
          ('mlaps_cnt', 'start', F, 1, # stop no visit (1st) &  make child
-          3, (2, 0, 3, 3, 2, 2, 2, 2, 2, 2), ESTR, NBLCK),
+          3, (2, 0, 3, 3, 2, 2, 2, 2, 2, 2), NSTR, NBLCK),
          ('mlaps_cnt', 'start', F, 4, # stop make child
           5, (2, 2, 2, 2, 0, 3, 2, 2, 2, 2), [1, 0], NBLCK),
          ('mlaps_cnt', 'wchild', F, 3, # stop in child
@@ -267,14 +268,21 @@ CASES = [('basic', 'start', F, 2,
 
          ]
 
+CIDS = [f'{case[0]}-{case[1]}-{case[2]}-idx{idx}' for idx, case in enumerate(CASES)]
+
+
+BAD_INHIBITOR_TESTS = [
+
+    # cannot have blocked holes on the first move of a deprive game
+    'test_inhibit_sower[sbd_udir-st_blocks-False-idx16-1]',
+    ]
+
 
 # %% test_sower
 
 @pytest.mark.parametrize('conf_name, state_name, turn, move,'
                          'eloc, eboard, estore, eblocks',
-                         CASES,
-                         ids=[f'{case[0]}-{case[1]}-{case[2]}-idx{idx}'
-                              for idx, case in enumerate(CASES)])
+                         CASES, ids=CIDS)
 def test_sower(logger, conf_name, state_name, turn, move,
                eloc, eboard, estore, eblocks):    # expected values
     """Use do_sow from Mancala class. It uses the starter, get_direction,
@@ -292,11 +300,11 @@ def test_sower(logger, conf_name, state_name, turn, move,
 
     # check game and state consistency
     assert sum(game.store) + sum(game.board) == game.cts.total_seeds, \
-        "Test config error: seed count wrong!"
+        "Test error: seed count wrong!"
     assert not game.info.blocks or (game.info.blocks and start_state.blocked), \
-        "Test config error: game.info.blocks inconsistent with start_state"
+        "Test error: game.info.blocks inconsistent with start_state"
     assert not game.info.child_type or (game.info.child_type and start_state.child), \
-        "Test config error: game.info.child_type inconsistent with start_state"
+        "Test error: game.info.child_type inconsistent with start_state"
 
     print(GAMECONF[conf_name])
     print(game)
@@ -306,7 +314,12 @@ def test_sower(logger, conf_name, state_name, turn, move,
     # check the expected changes
     assert mdata.capt_loc == eloc
     assert game.board == list(eboard)
-    assert game.store == estore
+    if estore == NSTR:
+        assert tuple(game.store) == start_state.store
+    else:
+        assert game.store == estore
+        assert tuple(game.store) != start_state.store, \
+            "Test error: use NSTR when store expected to be unchanged"
     assert game.blocked == list(eblocks)
     if start_state.unlocked:
         assert game.board[mdata.sow_loc].unlocked   # starter does this
@@ -318,6 +331,66 @@ def test_sower(logger, conf_name, state_name, turn, move,
         assert game.child == list(start_state.child)
     if start_state.owner:
         assert game.owner == list(start_state.owner)
-    # TODO ok to ignore istate?
+    assert game.inhibitor.get_state() == start_state.istate
+
+    assert sum(game.store) + sum(game.board) == game.cts.total_seeds
+
+
+@pytest.mark.parametrize('mcount', (1, 2))
+@pytest.mark.parametrize('conf_name, state_name, turn, move,'
+                         'eloc, eboard, estore, eblocks',
+                         CASES, ids=CIDS)
+def test_inhibit_sower(logger, request,
+                       mcount, conf_name, state_name, turn, move,
+                       eloc, eboard, estore, eblocks):    # expected values
+    """Use the same test cases for both first and second move of the game,
+    but set nocaptfirst for all. If there's error in building game_info,
+    skip the test."""
+
+    if request.node.name in BAD_INHIBITOR_TESTS:
+        return
+
+    game_consts = gc.GameConsts(nbr_start=2, holes=HOLES)
+    try:
+        game_info = gi.GameInfo(**GAMECONF[conf_name],
+                                nocaptfirst=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+    except gi.GameInfoError:
+        pytest.skip('nocaptfirst conflict')
+    game =  mancala.Mancala(game_consts, game_info)
+
+    # save istate and put it back after copying in test state
+    istate = game.inhibitor.get_state()
+    start_state = START[state_name]
+    game.state = start_state
+    game.inhibitor.set_state(istate)
+
+    game.turn = turn
+
+    # clear_if is called at end of move, but we want to simulate
+    # it being called for the previous turn
+    game.mcount = mcount - 1
+    game.inhibitor.clear_if(game, None)  # mdata isn't used in this inhibitor
+    game.mcount = mcount
+
+    # confirm inhibitor config
+    assert game.inhibitor.stop_me_capt(turn) == (not bool(mcount - 1))
+
+    print("sower")
+    print(game.deco.sower)
+    print(game.info.sow_own_store)
+
+    game.do_sow(move)
+
+    if mcount == 1 or estore == NSTR:
+        # blocks & stores should be unchanged
+        if game.info.blocks:
+            assert tuple(game.blocked) == start_state.blocked
+        assert tuple(game.store) == start_state.store
+    else:
+        # blocks and stores changed as expected
+        assert game.blocked == list(eblocks)
+        assert game.store == estore
 
     assert sum(game.store) + sum(game.board) == game.cts.total_seeds
