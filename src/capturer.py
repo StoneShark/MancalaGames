@@ -627,8 +627,9 @@ class NoSingleSeedCapt(CaptMethodIf):
             self.decorator.do_captures(mdata)
 
 
-class NoCaptures(CaptMethodIf):
-    """Do not allow captures or children."""
+class NotInhibited(CaptMethodIf):
+    """Do not allow captures.
+    Child inhibitor is enforced via make_child deco"""
 
     def do_captures(self, mdata):
 
@@ -810,7 +811,7 @@ def deco_capturer(game):
     if (game.info.prescribed == gi.SowPrescribed.ARNGE_LIMIT
             or game.info.round_fill == gi.RoundFill.SHORTEN
             or game.info.nocaptfirst):
-        capturer = NoCaptures(game, capturer)
+        capturer = NotInhibited(game, capturer)
 
     if game.info.capt_rturn:
         capturer = RepeatTurn(game, capturer)
