@@ -118,6 +118,8 @@ class SowSeedsNStore(SowMethodIf):
                 self.game.store[turn] += 1
                 seeds -= 1
                 if not seeds:
+                    game_log.add('Sow ended in store REPEAT TURN',
+                                 game_log.INFO)
                     mdata.capt_loc = gi.WinCond.REPEAT_TURN
                     return mdata
 
