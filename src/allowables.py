@@ -1,10 +1,20 @@
 # -*- coding: utf-8 -*-
 """Determine which game holes are available for play for
-the current player. Used for both activating the UI buttons
-and refining into actual moves available for the AI.
+the current player. Used for activating the UI buttons;
+determining if the game is over, if there should be a
+required pass, and the moves available for the AI player.
+
+Memoize should be added at the top of any deco chain that
+involves simulating moves. Getting and checking state is
+not trivial, so don't add it indiscriminantely.
+
+In general the individual decos defer to the child deco
+until Allowable or AllowableTriples and then filter the
+result by removing some allowable holes.
 
 Created on Sat Apr  8 09:15:30 2023
 @author: Ann"""
+
 
 # %% imports
 
@@ -19,7 +29,7 @@ from game_logger import game_log
 # %%  allowable moves interface
 
 class AllowableIf(deco_chain_if.DecoChainIf):
-    """Allowable interface plus one common routine."""
+    """Allowable interface plus some utility methods."""
 
     def allow_move(self, loc):
         """Allowable:
@@ -36,6 +46,25 @@ class AllowableIf(deco_chain_if.DecoChainIf):
         return (self.game.board[loc] >= self.game.info.min_move
                 and not self.game.blocked[loc]
                 and self.game.child[loc] is None)
+
+
+    def get_holes_idx(self):
+        """Return a pair of lists (one for each side) that correlates
+        the index in the allowables array with the hole loc.
+        If triples, use the same array for both.
+        Otherwise, the index is pos."""
+
+        holes = self.game.cts.holes
+        dbl_holes = self.game.cts.dbl_holes
+
+        if self.game.info.mlength == 3:
+            fholes = [(p, p) for p in range(dbl_holes)]
+            tholes = fholes
+        else:
+            fholes = [(p, p) for p in range(holes)]
+            tholes = [(dbl_holes - p - 1, p) for p in range(holes, dbl_holes)]
+        return fholes, tholes
+
 
     @abc.abstractmethod
     def get_allowable_holes(self):
@@ -99,113 +128,134 @@ class OppOrEmptyEnd(AllowableIf):
 
 class SingleToZero(AllowableIf):
     """Can only move holes with single seeds to the next hole
-    if it empty."""
+    if it empty.
+    Support allow length of holes and dbl_holes (move triples)."""
+
+    def __init__(self, game, decorator=None):
+
+        super().__init__(game, decorator)
+        self.fholes, self.tholes = self.get_holes_idx()
 
     def get_allowable_holes(self):
         """Return allowable moves."""
 
         allow = self.decorator.get_allowable_holes()
 
-        for loc in self.game.cts.get_my_range(self.game.turn):
+        holes = self.tholes if self.game.turn else self.fholes
+        for idx, loc in holes:
 
-            pos = self.game.cts.xlate_pos_loc(not self.game.turn, loc)
             direct = self.game.deco.get_dir.get_direction(loc, loc)
             nloc = self.game.deco.incr.incr(loc, direct)
 
-            if (allow[pos]
+            if (allow[idx]
                     and self.game.board[loc] == 1
                     and self.game.board[nloc]):
-                allow[pos] = False
+                allow[idx] = False
 
         return allow
 
 
 class OnlyIfAllN(AllowableIf):
-    """Can't move from a hole with a N seed unless they
-    are all N seeds (or zero).
-
-    Pass 1: exclude all holes with N, use this if any allowable
-    Pass 2: can move from any allowable hole"""
+    """Can't move from a hole with N seeds unless they
+    are all N seeds (or not allowable for another reason).
+    Support allow length of holes and dbl_holes (move triples)."""
 
     def __init__(self, game, const, decorator=None):
 
         super().__init__(game, decorator)
         self.const = const
+        self.fholes, self.tholes = self.get_holes_idx()
 
     def get_allowable_holes(self):
         """Return allowable moves."""
 
-        allow = [self.allow_move(loc) and self.game.board[loc] != self.const
-                 for loc in self.game.cts.get_my_range(self.game.turn)]
-        if any(allow):
-            return allow
+        allow = self.decorator.get_allowable_holes()
+        holes = self.tholes if self.game.turn else self.fholes
 
-        return self.decorator.get_allowable_holes()
+        if any(allow[idx] and self.game.board[loc] != self.const
+               for idx, loc in holes):
+
+            for idx, loc in holes:
+                if allow[idx] and self.game.board[loc] == self.const:
+                    allow[idx] = False
+
+        return allow
 
 
 class AllTwoRightmost(AllowableIf):
     """Can't move from holes containing two, unless all holes
-    have two (or zero), and THEN only the rightmost hole with two seeds."""
+    have two (or zero), and THEN only the rightmost hole with two seeds.
+    This class does not support move triples, but still uses get_holes_idx."""
+
+    def __init__(self, game, decorator=None):
+
+        super().__init__(game, decorator)
+        self.fholes, self.tholes = self.get_holes_idx()
 
     def get_allowable_holes(self):
         """Return allowable moves."""
 
-        allow = [self.allow_move(loc) and self.game.board[loc] != 2
-                 for loc in self.game.cts.get_my_range(self.game.turn)]
-        if any(allow):
-            return allow
+        allow = self.decorator.get_allowable_holes()
+        holes = self.tholes if self.game.turn else self.fholes
 
-        turn = self.game.turn
-        holes = self.game.cts.holes
-        dbl_holes = self.game.cts.dbl_holes
-        rightedge = (dbl_holes if turn else holes) - 1
-        leftedge = (holes if turn else 0) - 1
-        allow = [False] * holes
+        if any(allow[idx] and self.game.board[loc] != 2 for idx, loc in holes):
 
-        for loc in range(rightedge, leftedge, -1):
-            if self.game.board[loc] == 2:
-                pos = self.game.cts.xlate_pos_loc(not self.game.turn, loc)
-                allow[pos] = True
-                break
+            # allowables do not all have 2 seeds, remove any holes with 2 seeds
+            for idx, loc in holes:
+                if self.game.board[loc] == 2:
+                    allow[idx] = False
+
+        else:
+            # all allowables contain 2 seeds, remove all but rightmost hole
+            if self.game.turn:
+                from_right = range(0, self.game.cts.holes, 1)
+            else:
+                from_right = range(self.game.cts.holes - 1, -1, -1)
+
+            found = False
+            for pos in from_right:
+                if allow[pos]:
+                    if found:
+                        allow[pos] = False
+                    found = True
 
         return allow
 
 
 class OnlyRightTwo(AllowableIf):
-    """Can only move from the right two holes, but avoid any blocks.
-
-    Start from rightmost side of current turn's board and increment
-    clockwise to move left. If we stay on our side of the board, it
-    is an allowable move."""
+    """On the first turn (called before mcount's first increment),
+    can only move from the rightmost two allowable holes."""
 
     def get_allowable_holes(self):
         """Return allowable moves."""
 
-        if self.game.mcount < 1:
-
-            my_row = not self.game.turn
-            allow = [False] * self.game.cts.holes
-            if self.game.turn:
-                loc = self.game.cts.dbl_holes
-            else:
-                loc = self.game.cts.holes
-
-            for _ in range(2):
-
-                loc = self.game.deco.incr.incr(loc, gi.Direct.CW)
-                if self.game.cts.my_side(self.game.turn, loc):
-                    pos = self.game.cts.xlate_pos_loc(my_row, loc)
-                    allow[pos] = True
-
+        allow = self.decorator.get_allowable_holes()
+        if self.game.mcount:
             return allow
 
-        return self.decorator.get_allowable_holes()
+        if self.game.turn:
+            from_right = range(0, self.game.cts.holes, 1)
+        else:
+            from_right = range(self.game.cts.holes - 1, -1, -1)
+
+        found = 0
+        for pos in from_right:
+
+            if allow[pos]:
+                found += 1
+
+                if found > 2:
+                    allow[pos] = False
+
+        return allow
+
 
 
 class MustShare(AllowableIf):
     """If opponent has moves, return delegated get_allowable;
-    Otherwise: Only allowable moves are those that provide
-    seeds to the opponent."""
+    Otherwise, filter out allowables that do not provide seeds
+    to the opponent.
+    Support allow length of holes and dbl_holes (move triples)."""
 
     def __init__(self, game, owners, decorator=None):
 
@@ -218,25 +268,15 @@ class MustShare(AllowableIf):
         def get_owner_owner(loc):
             return game.owner[loc]
 
-        def get_owner_range(_):
-            return range(game.cts.dbl_holes)
-
-        def get_range(turn):
-            return game.cts.get_my_range(turn)
-
-
         super().__init__(game, decorator)
+        self.fholes, self.tholes = self.get_holes_idx()
 
         if owners:
-            self.size = game.cts.dbl_holes
             self.make_move = get_owner_move
             self.owner = get_owner_owner
-            self.get_range = get_owner_range
         else:
-            self.size = game.cts.holes
             self.make_move = get_move
             self.owner = game.cts.board_side
-            self.get_range = get_range
 
 
     def opp_has_seeds(self, opponent):
@@ -249,37 +289,35 @@ class MustShare(AllowableIf):
                        and self.game.child[loc] is None))
 
 
-    def test_allowable(self, allow, opponent, row, pos, loc):
-        """Test row/pos/loc to see if it provides the
-        opponent with seeds."""
-        # pylint: disable=too-many-arguments
-
-        if not self.allow_move(loc):
-            return
-
-        game_log.set_simulate()
-        self.game.move(self.make_move(row, pos))
-        game_log.clear_simulate()
-
-        if self.opp_has_seeds(opponent):
-            idx = pos if self.size == self.game.cts.holes else loc
-            allow[idx] = True
-
-
     def get_allowable_holes(self):
         """Return allowable moves."""
 
+        allow = self.decorator.get_allowable_holes()
+
         opponent = not self.game.turn
         if self.opp_has_seeds(opponent):
-            return self.decorator.get_allowable_holes()
+            return allow
 
-        allow = [False] * self.size
+        holes = self.tholes if self.game.turn else self.fholes
         saved_state = self.game.state
 
-        for loc in self.get_range(self.game.turn):
+        for idx, loc in holes:
+            if not allow[idx]:
+                continue
+
             row = int(loc < self.game.cts.holes)
             pos = self.game.cts.xlate_pos_loc(row, loc)
-            self.test_allowable(allow, opponent, row, pos, loc)
+
+            game_log.set_simulate()
+            # wcond = self.game.move(self.make_move(row, pos))
+            self.game.move(self.make_move(row, pos))
+            game_log.clear_simulate()
+
+            # game_over = wcond and wcond.is_ended()
+            # if not game_over and not self.opp_has_seeds(opponent):
+            if not self.opp_has_seeds(opponent):
+                allow[idx] = False
+
             self.game.state = saved_state
 
         return allow
@@ -288,9 +326,10 @@ class MustShare(AllowableIf):
 class NoGrandSlam(AllowableIf):
     """Grand slam - taking all of opponents seeds is not legal.
 
-    If the opponent doesn't have any seeds at the start,
-    pass test down the chain.
-    If the opponent has seeds, we must not capture them all.
+    If the opponent doesn't have any playable seeds at the start,
+    grandslam not possible, return the unfiltered allowables.
+    If the opponent has seeds, filter any moves that remove them
+    all.
 
     MUSTSHARE is don't care because we only process here if
     opp has seeds. That is, only one of NoGrandSlam &
@@ -300,18 +339,26 @@ class NoGrandSlam(AllowableIf):
     sow games, because it would make this more complicated
     and the UI doesn't support making holes partially active."""
 
+    def no_seeds(self, opp_rng):
+        """Return true if there are not any seeds outside of children
+        in opp_rng."""
+
+        return not any(self.game.board[loc]
+                       for loc in opp_rng
+                       if self.game.child[loc] is None)
+
     def get_allowable_holes(self):
 
         my_rng, opp_rng = self.game.cts.get_ranges(self.game.turn)
+        allow = self.decorator.get_allowable_holes()
 
-        if not any(self.game.board[tloc] for tloc in opp_rng):
-            return self.decorator.get_allowable_holes()
+        if self.no_seeds(opp_rng):
+            return allow
 
-        rval = [False] * self.game.cts.holes
         saved_state = self.game.state
 
         for pos, loc in enumerate(my_rng):
-            if not self.allow_move(loc):
+            if not allow[pos]:
                 self.game.state = saved_state
                 continue
 
@@ -319,7 +366,6 @@ class NoGrandSlam(AllowableIf):
             mdata = self.game.do_sow(pos)
 
             if mdata.capt_loc is gi.WinCond.ENDLESS:
-                rval[pos] = True
                 self.game.state = saved_state
                 game_log.clear_simulate()
                 continue
@@ -327,14 +373,13 @@ class NoGrandSlam(AllowableIf):
             self.game.capture_seeds(mdata)
             game_log.clear_simulate()
 
-            if any(self.game.board[tloc] for tloc in opp_rng):
-                rval[pos] = True
-            else:
+            if self.no_seeds(opp_rng):
+                allow[pos] = False
                 game_log.add(f'GRANDSLAM: prevented {loc}', game_log.IMPORT)
 
             self.game.state = saved_state
 
-        return rval
+        return allow
 
 
 class MemoizeAllowable(AllowableIf):

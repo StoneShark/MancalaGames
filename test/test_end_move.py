@@ -466,6 +466,7 @@ class TestEndMove:
                                    [0, 0, 0]), [11, 1], False),
 
             ]
+    @pytest.mark.filterwarnings("ignore")
     @pytest.mark.parametrize(
         'fixture, ended, repeat, board, store, turn,'
         ' eres, eboard, estore, eturn',

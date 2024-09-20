@@ -41,6 +41,7 @@ N = None
 
 # %%
 
+@pytest.mark.filterwarnings("ignore")
 class TestAllowables:
 
     TEST_ALLOW_DATA = [
@@ -148,46 +149,55 @@ class TestAllowables:
 
 
     TEST_NOGS_DATA = \
-        [(True,  utils.build_board([2, 2, 2], [0, 0, 0]),   # 0
-          FALSES, NONES, False, 2, [T, T, T]),
-         (True,  utils.build_board([1, 2, 3], [0, 0, 0]),   # 1
-          FALSES, NONES, False, 2, [F, T, T]),
-         (False, utils.build_board([0, 0, 0], [1, 1, 1]),   # 2
-          FALSES, NONES, False, 1,            [T, T, T]),
-         (False, utils.build_board([0, 0, 0], [1, 2, 3]),   # 3
-           FALSES, NONES, False, 2,           [F, T, T]),
+        [
+            # GS doesn't do anything,  no opp seeds
+            (True,  utils.build_board([2, 2, 2], [0, 0, 0]),
+             NONES, False, 1, [T, T, T]),
+            (False,  utils.build_board([0, 0, 0], [2, 2, 2]),
+             NONES, False, 1, [T, T, T]),
 
-         (True, utils.build_board([2, 2, 0], [1, 0, 0]),    # 4  diff above
-          FALSES, NONES, True, 2, [T, F, F]),
-         (False, utils.build_board([1, 0, 0], [2, 2, 0]),   # 5
-          FALSES, NONES, True, 2,             [T, T, F]),
-         (True, utils.build_board([2, 1, 0], [0, 0, 0]),    # 6
-          FALSES, NONES, True, 1, [T, F, F]),
-         (False, utils.build_board([0, 0, 0], [0, 1, 1]),   # 7
-          FALSES, NONES, True, 1,             [F, F, T]),
+            # GS doesn't do anything,  no opp seeds outside children
+            (True,  utils.build_board([2, 2, 2], [2, 0, 0]),
+                    utils.build_board([F, N, N], [T, N, N]),
+                    False, 1, [F, T, T]),
+            (False, utils.build_board([2, 0, 0], [2, 2, 2]),
+                    utils.build_board([F, N, N], [T, N, N]),
+                    False, 1, [F, T, T]),
 
-         (True,                                             # 8 diff above
-          utils.build_board([2, 2, 0], [1, 0, 0]),
-          utils.build_board([T, F, T], [T, F, T]), NONES, True, 2,
-                            [F, F, F]),
-         (True,                                             # 9
-          utils.build_board([2, 2, 2], [1, 0, 0]),
-          utils.build_board([T, F, F], [T, F, T]),
-          utils.build_board([N, T, N], [N, F, T]), True, 2,
-                            [F, F, T]),
-         (True,                                             # 10
-          utils.build_board([2, 2, 0], [1, 0, 0]),
-          utils.build_board([F, T, F], [T, F, T]),
-          utils.build_board([N, T, N], [N, F, T]), True, 2,
-                            [T, F, F]),
+            # GS doesn't do anything, no captures
+            (True,  utils.build_board([2, 2, 2], [2, 2, 2]),
+             NONES, False, 1, [T, T, T]),
+            (False,  utils.build_board([2, 2, 2], [2, 2, 2]),
+             NONES, False, 1, [T, T, T]),
+
+            # GS doesn't do anything, captures & not all allowable before GS
+            (False,  utils.build_board([2, 2, 2], [2, 1, 1]),
+             NONES, False, 2, [T, F, F]),
+            (True,  utils.build_board([2, 1, 1], [2, 2, 2]),
+             NONES, False, 2, [T, F, F]),
+
+            # GS prevented
+            (True, utils.build_board([2, 2, 0], [1, 0, 0]),
+             NONES, False, 1, [T, F, F]),
+            (False,  utils.build_board([0, 0, 1], [0, 2, 2]),
+             NONES, False, 1, [F, F, T]),
+
+            # GS prevented, with child
+            (True, utils.build_board([2, 2, 0], [1, 1, 0]),
+                   utils.build_board([N, N, N], [T, N, N]),
+                   False, 1,         [F, T, F]),
+            (False,  utils.build_board([0, 1, 1], [0, 2, 2]),
+                     utils.build_board([N, N, T], [N, N, N]),
+                    False, 1,                     [F, T, F]),
+
         ]
 
     @pytest.mark.parametrize(
-        'turn, board, blocked, child, mustshare, min_move, eresult',
+        'turn, board, child, mustshare, min_move, eresult',
         TEST_NOGS_DATA,
         ids=[f'case_{cnt}' for cnt in range(len(TEST_NOGS_DATA))])
-    def test_nograndslam(self, turn, board, blocked, child,
-                         mustshare, min_move, eresult):
+    def test_nograndslam(self, turn, board, child, mustshare, min_move,
+                         eresult):
 
         game_consts = gc.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
@@ -200,7 +210,6 @@ class TestAllowables:
         game = mancala.Mancala(game_consts, game_info)
         game.turn = turn
         game.board = board
-        game.blocked = blocked
         game.child = child
 
         seeds = game.cts.total_seeds - sum(game.board)
@@ -547,7 +556,7 @@ class TestTwosRight:
          (utils.build_board([0, 2, 2, 0],
                             [0, 2, 2, 0]), False, [F, F, T, F]),
          (utils.build_board([0, 2, 2, 0],
-                            [2, 0, 0, 0]), False, [T, F, F, F]),
+                            [2, 2, 0, 0]), False, [F, T, F, F]),
 
          # the game would have ended ... but test it
          (utils.build_board([0, 0, 0, 0],

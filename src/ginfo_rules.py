@@ -233,22 +233,6 @@ def add_territory_rules(rules):
         excp=NotImplementedError)
         # territory requires move triples, GS allowables doesn't support
 
-    rules.add_rule(
-        'terr_no_opp_empty',
-        rule=lambda ginfo: (ginfo.goal == gi.Goal.TERRITORY and
-                            ginfo.allow_rule == gi.AllowRule.OPP_OR_EMPTY),
-        msg='OPP_OR_EMPTY cannot be used with TERRITORY',
-        excp=gi.GameInfoError)
-        # TERRITORY: what does it mean if the hole is already opp?
-
-    rules.add_rule(
-        'confuse_allow',
-        rule=lambda ginfo: (ginfo.goal == gi.Goal.TERRITORY and
-                            ginfo.allow_rule != gi.AllowRule.NONE),
-        msg='Some ALLOW_RULEs are confusing with TERRITORY',
-        warn=True)
-        # AllowRules are not written for move triples
-
 
 def add_block_and_divert_rules(rules):
     """sow_blkd_div is implemented primarily by the sower and the
@@ -380,6 +364,7 @@ def add_child_rules(rules):
                             and ginfo.grandslam != gi.GrandSlam.LEGAL),
         msg='Children requires that GRANDSLAM be Legal',
         excp=NotImplementedError)
+    # NOT_LEGAL is now supported, others are not
 
     rules.add_rule(
         'walda_store',
@@ -467,14 +452,23 @@ def build_rules():
 
 
     man_rules.add_rule(
-        'no_right_two_ml3',
+        'allowrule_mlen3',
         rule=lambda ginfo: (ginfo.mlength == 3
                             and ginfo.allow_rule in
-                                {gi.AllowRule.FIRST_TURN_ONLY_RIGHT_TWO,
+                                {gi.AllowRule.TWO_ONLY_ALL_RIGHT,
+                                 gi.AllowRule.FIRST_TURN_ONLY_RIGHT_TWO,
                                  gi.AllowRule.RIGHT_2_1ST_THEN_ALL_TWO}),
-        msg='Right Two allow rules not supported for MLENGTH 3 games',
+        msg='Selected allow rule not supported for MLENGTH 3 games',
         excp=gi.GameInfoError)
-        # what does 'right' mean if can move more than one side of the board
+
+    man_rules.add_rule(
+        'opp_empty_no_tuples',
+        rule=lambda ginfo: (ginfo.allow_rule == gi.AllowRule.OPP_OR_EMPTY
+                            and ginfo.mlength > 1),
+        msg='MLENGTH > 1 not supported with OPP_OR_EMPTY',
+        excp=gi.GameInfoError)
+        # UDIRECT: partials hole activation not supported
+        # TERRITORY: what does it mean if the hole is already opp?
 
     man_rules.add_rule(
         'no_pres_opp_empty',
@@ -675,6 +669,12 @@ def build_rules():
         # pick-up a seed, sow it back into the same hole -> no change of state
 
     man_rules.add_rule(
+        'mmg1_mustshare',
+        rule=lambda ginfo: ginfo.min_move > 1 and ginfo.mustshare,
+        msg='Shared seeds from MUSTSHARE might not be playable with min_move > 1',
+        warn=True)
+
+    man_rules.add_rule(
         'p1m1_conflict',
         rule=lambda ginfo: (ginfo.prescribed == gi.SowPrescribed.PLUS1MINUS1
                             and (ginfo.sow_start or ginfo.move_one)),
@@ -749,15 +749,6 @@ def build_rules():
         # GS allowables doesn't support tuples
         # UDIRECT: partials hole activation not supported
         # TERRITORY: partial side ownership is not implemented
-
-    man_rules.add_rule(
-        'opp_empty_no_tuples',
-        rule=lambda ginfo: (ginfo.allow_rule == gi.AllowRule.OPP_OR_EMPTY
-                            and ginfo.mlength > 1),
-        msg='MLENGTH > 1 not supported with OPP_OR_EMPTY',
-        excp=gi.GameInfoError)
-        # UDIRECT: partials hole activation not supported
-        # TERRITORY: what does it mean if the hole is already opp?
 
     man_rules.add_rule(
         'short_no_blocks',

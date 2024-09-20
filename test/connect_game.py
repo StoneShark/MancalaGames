@@ -7,7 +7,6 @@ Created on Fri Jul 19 09:52:07 2024
 
 import enum
 import dataclasses as dc
-import random
 
 from context import ai_interface
 
@@ -77,7 +76,7 @@ class ConnectFour(ai_interface.AiGameIf):
             assert "ConnectFour needs both or neither: board and turn."
 
         else:
-            self.turn = random.choice(PLAYERS)
+            self.turn = True
             self.board = [0] * BSIZE
 
     def __str__(self):
