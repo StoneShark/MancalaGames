@@ -55,6 +55,7 @@ def game_data(request):
     return man_config.make_game(PATH + request.param)
 
 
+@pytest.mark.no_seed
 @pytest.mark.stresstest
 def test_one_game(game_data, request):
 

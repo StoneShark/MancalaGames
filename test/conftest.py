@@ -9,6 +9,8 @@ Make the number of runs available as a fixture named: nbr_runs
 Created on Fri Sep 15 09:07:52 2023
 @author: Ann"""
 
+import random
+
 import pytest
 
 from context import game_logger
@@ -55,3 +57,19 @@ def logger():
     game_logger.game_log.active = False
     game_logger.game_log.level = log_level
     game_logger.game_log.live = False
+
+
+@pytest.fixture(autouse=True)
+def random_seed(request):
+    """Force the random number generator to produce
+    consistent random values.
+
+    Tests which intentionally use the random number generator,
+    e.g. simulations should be marked with:
+        @pytest.mark.no_seed
+    """
+
+    if 'no_seed' in request.keywords:
+        return
+
+    random.seed(10)

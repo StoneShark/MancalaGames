@@ -78,6 +78,8 @@ def no_logger():
 def game_data(request):
     return man_config.make_game(PATH + request.param)
 
+
+@pytest.mark.no_seed
 @pytest.mark.slow
 @pytest.mark.filterwarnings('ignore:Monte Carlo')
 @pytest.mark.parametrize('algo', ALGOS)
