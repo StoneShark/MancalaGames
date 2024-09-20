@@ -433,9 +433,9 @@ class TestEndMove:
                 # 26: true's turn ended without moves, false can share and capture
                 ('mmshgame', False, False,
                  utils.build_board([1, 1, 0],
-                                   [0, 1, 3]), [3, 3], True, WinCond.WIN,
-                 utils.build_board([0, 0, 0],
-                                   [0, 0, 0]), [7, 5], False),
+                                   [0, 1, 3]), [3, 3], True, None,
+                 utils.build_board([1, 1, 0],
+                                   [0, 1, 3]), [3, 3], True),
 
                 # 27: true has no moves but has a repeat turn, false can share
                 ('mmshgame', False, True,

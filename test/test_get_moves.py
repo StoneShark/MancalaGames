@@ -58,13 +58,9 @@ class TestGetMove:
              utils.build_board([2, 2, 0], [1, 0, 0]),
              utils.build_board([T, F, T], [T, F, T]), NONES,
              True, False, 1, [1]),
-            (True,                                             # 8
-             utils.build_board([2, 2, 2], [1, 0, 0]),
-             utils.build_board([T, F, F], [T, F, T]),
-             utils.build_board([N, T, N], [N, F, T]),
-             True, True, 2, [PASS_TOKEN]),
+
         ],
-        ids=[f'case_{cnt}' for cnt in range(9)])
+        ids=[f'case_{cnt}' for cnt in range(8)])
     def test_basic_moves(self, turn, board, blocked, child,
                     mustshare, mustpass, min_move, eresult):
 

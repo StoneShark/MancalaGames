@@ -281,9 +281,9 @@ class MustShare(AllowableIf):
 
     def opp_has_seeds(self, opponent):
         """Return true if any holes owned by the opponent
-        have playbale seeds in them."""
+        have seeds in them."""
 
-        return any(self.game.board[loc] >= self.game.info.min_move
+        return any(self.game.board[loc]
                    for loc in range(self.game.cts.dbl_holes)
                    if (self.owner(loc) == opponent
                        and self.game.child[loc] is None))
