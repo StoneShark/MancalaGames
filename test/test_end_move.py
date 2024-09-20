@@ -1182,9 +1182,6 @@ class TestTerritory:
         game.board = board
         game.child = child
 
-        print(deco)
-        print(deco.min_occ)
-
         result = deco._cant_capt_more()
         assert result == eresult
 

@@ -168,6 +168,7 @@ class TestGameLog:
 
     def test_active_basic(self, glog, capsys):
 
+        glog.live = False
         assert glog._state == game_logger.LogMode.ACTIVE
         glog.add('active one', glog.MOVE)
 
@@ -184,7 +185,6 @@ class TestGameLog:
 
         glog.dump()
         data = capsys.readouterr().out.split('\n')
-        print(data)
 
         assert len(data) == 5
         assert '' == data[0]
@@ -196,6 +196,7 @@ class TestGameLog:
 
     def test_odd_cases(self, glog):
 
+        glog.live = False
         assert glog._state == game_logger.LogMode.ACTIVE
 
         glog.active = False
@@ -359,6 +360,7 @@ class TestGameLog:
         # don't know why the output is to the console
         # capsys doesn't capture it
         # filename ends up being a MagicMock
+        glog.live = False
 
         mock_now = mocker.patch('datetime.datetime')
         mock_now.now.return_value = datetime.datetime(2023, 1, 2, 12, 30, 15)

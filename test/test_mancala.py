@@ -169,16 +169,13 @@ class TestGameState:
             object.__setattr__(game.info, 'child_type', ChildType.NOCHILD)
         if owner:
             game.owner = list(owner)
-            print(game.owner)
         else:
             # this will only effect capturing the state
             object.__setattr__(game.info, 'goal', gi.Goal.MAX_SEEDS)
 
         game.inhibitor._children = istate
 
-
         state = game.state
-        print(state)
 
         assert state.board == board
         assert state.store == store

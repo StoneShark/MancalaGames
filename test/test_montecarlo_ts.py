@@ -452,7 +452,7 @@ class TestMonteCarloTS:
 
         while True:
 
-            print(game)
+            # print(game)
             if game.turn == connect_game.PLAYERS[0]:
                 cond = game.move(algo.pick_move())
                 # print(algo.get_move_desc())

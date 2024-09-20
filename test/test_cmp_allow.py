@@ -166,7 +166,7 @@ CIDS = [f'{case[0]}-{case[1]}-idx{idx}' for idx, case in enumerate(CASES)]
 
 @pytest.mark.parametrize('conf_name, state_name,e_f_allow, e_t_allow',
                          CASES, ids=CIDS)
-def test_allowables(logger, conf_name, state_name,
+def test_allowables(conf_name, state_name,
                     e_t_allow, e_f_allow):    # expected values
     """Check allowables for both True and False in each test case."""
 
@@ -179,9 +179,9 @@ def test_allowables(logger, conf_name, state_name,
     start_state = START[state_name]
     game.state = start_state
 
-    print(GAMECONF[conf_name])
-    print(game)
-    print(game.deco.allow)
+    # print(GAMECONF[conf_name])
+    # print(game)
+    # print(game.deco.allow)
 
     # check game consistency
     assert sum(game.store) + sum(game.board) == game.cts.total_seeds, \
@@ -189,16 +189,10 @@ def test_allowables(logger, conf_name, state_name,
 
     game.turn = False
     allowables = game.deco.allow.get_allowable_holes()
-    print(allowables)
-    print(e_f_allow)
-    print()
     assert allowables == e_f_allow
 
     game.turn = True
     allowables = game.deco.allow.get_allowable_holes()
-    print(allowables)
-    print(e_t_allow)
-    print()
     assert allowables == e_t_allow
 
     # confirm game state unchanged (don't check things that weren't set)

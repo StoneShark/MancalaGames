@@ -1027,7 +1027,7 @@ class TestBlckDivertSower:
         assert mlgame.store == estore
         assert mlgame.blocked == eblock
 
-        print(mlgame.deco.sower.lap_cont)
+        # print(mlgame.deco.sower.lap_cont)
         assert 'SowMlap' in str(mlgame.deco.sower)
         assert 'CloseOp' in str(mlgame.deco.sower.end_lap_op)
         assert 'Divert' in str(mlgame.deco.sower.lap_cont)
@@ -1143,7 +1143,7 @@ class TestSowCaptOwned:
         mdata.sow_loc, mdata.seeds = game_ss.deco.starter.start_sow(start_pos)
         mdata.direct = game_ss.info.sow_direct
         game_ss.deco.sower.sow_seeds(mdata)
-        print(game_ss)
+        # print(game_ss)
 
         assert mdata.capt_loc == eloc
         assert game_ss.board == eboard

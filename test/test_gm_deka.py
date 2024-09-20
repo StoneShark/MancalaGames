@@ -355,7 +355,6 @@ class TestDeka:
 
         # move 30
         cond = game.move(2)
-        print(game)
         assert game.turn is True
         assert game.board == [0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 1, 3]
         assert game.blocked == [T, F, F, T, F, F, F, T, F, F, F, F]

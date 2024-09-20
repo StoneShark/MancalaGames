@@ -283,7 +283,7 @@ BAD_INHIBITOR_TESTS = [
 @pytest.mark.parametrize('conf_name, state_name, turn, move,'
                          'eloc, eboard, estore, eblocks',
                          CASES, ids=CIDS)
-def test_sower(logger, conf_name, state_name, turn, move,
+def test_sower(conf_name, state_name, turn, move,
                eloc, eboard, estore, eblocks):    # expected values
     """Use do_sow from Mancala class. It uses the starter, get_direction,
     and sower."""
@@ -306,9 +306,9 @@ def test_sower(logger, conf_name, state_name, turn, move,
     assert not game.info.child_type or (game.info.child_type and start_state.child), \
         "Test error: game.info.child_type inconsistent with start_state"
 
-    print(GAMECONF[conf_name])
-    print(game)
-    print('move:', move)
+    # print(GAMECONF[conf_name])
+    # print(game)
+    # print('move:', move)
     mdata = game.do_sow(move)
 
     # check the expected changes
@@ -340,7 +340,7 @@ def test_sower(logger, conf_name, state_name, turn, move,
 @pytest.mark.parametrize('conf_name, state_name, turn, move,'
                          'eloc, eboard, estore, eblocks',
                          CASES, ids=CIDS)
-def test_inhibit_sower(logger, request,
+def test_inhibit_sower(request,
                        mcount, conf_name, state_name, turn, move,
                        eloc, eboard, estore, eblocks):    # expected values
     """Use the same test cases for both first and second move of the game,
@@ -376,10 +376,6 @@ def test_inhibit_sower(logger, request,
 
     # confirm inhibitor config
     assert game.inhibitor.stop_me_capt(turn) == (not bool(mcount - 1))
-
-    print("sower")
-    print(game.deco.sower)
-    print(game.info.sow_own_store)
 
     game.do_sow(move)
 
