@@ -78,8 +78,11 @@ class TestAllowables:
          utils.build_board([N, T, N], [N, F, T]), True, 1,
                            [T, F, F]),
 
-        # (True, utils.build_board([2, 2, 0], [1, 0, 0]),    # 11
-        #  FALSES, NONES, True, 2, [T, F, F]),
+        # opp has seeds, skip mustshare move simul, even though
+        # not all playable
+        (True, utils.build_board([2, 2, 0], [1, 0, 0]),    # 11
+          FALSES, NONES, True, 2, [T, T, F]),
+
         ]
 
     @pytest.mark.parametrize(

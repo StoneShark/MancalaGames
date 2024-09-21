@@ -59,6 +59,23 @@ def logger():
     game_logger.game_log.live = False
 
 
+@pytest.fixture()
+def logger_sim():
+    """Include this fixture to activate the logger for the test
+    and set the logger to show simulated moves,
+    it will be deactivated after the test."""
+
+    log_level = game_logger.game_log.level
+    game_logger.game_log.active = True
+    game_logger.game_log.level = game_logger.game_log.SIMUL
+    game_logger.game_log.live = True
+    yield
+    game_logger.game_log.active = False
+    game_logger.game_log.level = log_level
+    game_logger.game_log.live = False
+
+
+
 @pytest.fixture(autouse=True)
 def random_seed(request):
     """Force the random number generator to produce

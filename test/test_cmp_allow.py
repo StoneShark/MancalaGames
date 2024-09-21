@@ -63,6 +63,13 @@ GAMECONF = {'basic':
                  'start_pattern': gi.StartPattern.ALTERNATES,
                  'allow_rule': gi.AllowRule.TWO_ONLY_ALL_RIGHT},
 
+            'mshare_sowo':
+                {'evens': True,
+                 'stores': True,
+                 'mustshare': True,
+                 'sow_own_store': True},
+
+
             # game configs with mlength = 3
             'ter':
                 {'evens': True,
@@ -142,6 +149,10 @@ CASES = [('basic', 'start', [T, T, T, T, T], [T, T, T, T, T]),
          ('rght2_all', 'altpatt', [F, T, F, T, F], [T, F, T, F, F]),
          ('first2rgt', 'altpatt', [F, T, F, T, F], [T, F, T, F, F]),
          ('no2s_right', 'altpatt', [F, F, F, T, F], [T, F, F, F, F]),
+
+         # can't move any seeds to opp because they don't reach
+         ('mshare_sowo', 'onefshare', [F, F, F, F, F], [F, F, F, F, F]),
+         ('mshare_sowo', 'onetshare', [F, F, F, F, F], [F, F, F, F, F]),
 
          ('ter', 'start',
           [T, T, T, T, T, F, F, F, F, F],

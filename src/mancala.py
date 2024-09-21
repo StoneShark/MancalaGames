@@ -536,10 +536,13 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         return mdata
 
 
-    def do_single_sow(self, move):
+    def sim_single_sow(self, move):
         """For move simulation, just do a single sow."""
 
-        return self.do_sow(move, single=True)
+        game_log.set_simulate()
+        mdata = self.do_sow(move, single=True)
+        game_log.clear_simulate()
+        return mdata
 
 
     def capture_seeds(self, mdata):
@@ -556,6 +559,21 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             game_log.step('Capture changed state', self)
         else:
             game_log.step(f'No captures @ {mdata.capt_loc}')
+
+
+    def sim_sow_capt(self, move):
+        """Simulate only the sowing and capturing steps.
+        Do not call an ender"""
+
+        game_log.set_simulate()
+        mdata = self.do_sow(move)
+
+        if mdata.capt_loc not in (gi.WinCond.REPEAT_TURN,
+                                  gi.WinCond.ENDLESS):
+            self.capture_seeds(mdata)
+        game_log.clear_simulate()
+
+        return mdata
 
 
     def _move(self, move):

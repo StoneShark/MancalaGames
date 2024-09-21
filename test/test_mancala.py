@@ -594,8 +594,33 @@ class TestDelegates:
         mobj = mocker.patch.object(game, 'do_sow')
         mobj.return_value = 123
 
-        assert game.do_single_sow(5) == 123
+        assert game.sim_single_sow(5) == 123
         mobj.assert_called_once_with(5, single=True)
+
+
+    def test_dlg_sow_capt(self, game, mocker):
+
+        msow = mocker.patch.object(game, 'do_sow')
+        mcapt = mocker.patch.object(game, 'capture_seeds')
+
+        assert game.sim_sow_capt(5)
+        msow.assert_called_once_with(5)
+        mcapt.assert_called_once()
+
+
+    def test_dlg_sow_capt_not(self, game, mocker):
+        """capt not called"""
+
+        msow = mocker.patch.object(game, 'do_sow')
+        mdata = mancala.MoveData(game, 5)
+        mdata.capt_loc = gi.WinCond.REPEAT_TURN
+        msow.return_value = mdata
+
+        mcapt = mocker.patch.object(game, 'capture_seeds')
+
+        assert game.sim_sow_capt(5)
+        msow.assert_called_once_with(5)
+        mcapt.assert_not_called()
 
 
     def test_dlg_do_sow(self, game, mocker):

@@ -114,13 +114,12 @@ class OppOrEmptyEnd(AllowableIf):
             if not allow[pos] or self.game.board[pos] > self.game.cts.holes:
                 continue
 
-            game_log.set_simulate()
-            mdata = self.game.do_single_sow(pos)
-            game_log.clear_simulate()
+            mdata = self.game.sim_single_sow(pos)
             self.game.state = saved_state
 
             end_loc = mdata.capt_loc
             if end_loc in my_rng and self.game.board[end_loc]:
+                game_log.add(f'OppOrEmpty: prevented {pos}', game_log.DETAIL)
                 allow[pos] = False
 
         return allow
@@ -307,15 +306,10 @@ class MustShare(AllowableIf):
 
             row = int(loc < self.game.cts.holes)
             pos = self.game.cts.xlate_pos_loc(row, loc)
+            self.game.sim_sow_capt(self.make_move(row, pos))
 
-            game_log.set_simulate()
-            # wcond = self.game.move(self.make_move(row, pos))
-            self.game.move(self.make_move(row, pos))
-            game_log.clear_simulate()
-
-            # game_over = wcond and wcond.is_ended()
-            # if not game_over and not self.opp_has_seeds(opponent):
             if not self.opp_has_seeds(opponent):
+                game_log.add(f'MUSTSHARE: prevented {loc}', game_log.DETAIL)
                 allow[idx] = False
 
             self.game.state = saved_state
@@ -362,16 +356,7 @@ class NoGrandSlam(AllowableIf):
                 self.game.state = saved_state
                 continue
 
-            game_log.set_simulate()
-            mdata = self.game.do_sow(pos)
-
-            if mdata.capt_loc is gi.WinCond.ENDLESS:
-                self.game.state = saved_state
-                game_log.clear_simulate()
-                continue
-
-            self.game.capture_seeds(mdata)
-            game_log.clear_simulate()
+            self.game.sim_sow_capt(pos)
 
             if self.no_seeds(opp_rng):
                 allow[pos] = False
