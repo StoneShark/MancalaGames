@@ -42,8 +42,6 @@ class Hold:
     nbr = 0
     owner = None
 
-    # for the popup
-    _top = None
     _game_ui = None
     _label = None
 
@@ -89,9 +87,6 @@ class Hold:
     def hold_menu(game_ui, message=None):
         """Fill the right status frame with controls."""
 
-        if Hold._top:
-            return
-
         Hold._game_ui = game_ui
         frame = game_ui.rframe
 
@@ -111,12 +106,21 @@ class Hold:
 
 
     @staticmethod
+    def destroy_ui():
+        """Remove the children we created in rframe.
+        Clear local access to them."""
+
+        for child in Hold._game_ui.rframe.winfo_children():
+            child.destroy()
+        Hold._label = None
+
+
+    @staticmethod
     def done():
         """Go back to game play mode."""
 
         if Hold._game_ui.set_game_mode(Behavior.GAMEPLAY):
-            for child in Hold._game_ui.rframe.winfo_children():
-                child.destroy()
+            Hold.destroy_ui()
 
 
     @staticmethod
@@ -124,8 +128,7 @@ class Hold:
         """Abandoning the game mode, cleanup."""
 
         Hold.empty()
-        for child in Hold._game_ui.rframe.winfo_children():
-            child.destroy()
+        Hold.destroy_ui()
 
 
 # %%  Interfaces
@@ -696,7 +699,6 @@ class NoStoreBehavior(StoreBehaviorIf):
         """No interaction."""
 
 
-
 class RndMoveStoreBehavior(StoreBehaviorIf):
     """Seeds may be moved in and out of the loser's store.
     Cursor is changed on the whole game_ui, when holding seeds.
@@ -791,7 +793,6 @@ def force_mode_change():
     Hold.cleanup()
 
 
-
 # %%  Button Classes
 
 
@@ -824,6 +825,8 @@ class HoleButton(tk.Button):
     def set_behavior(self, behavior):
         """Set the behavior of the button."""
 
+        self.config(cursor='')
+        self.frame.config(cursor='')
         self.behavior = BEHAVIOR_CLASS[behavior].button(self)
         Hold.empty()
 
@@ -866,6 +869,8 @@ class StoreButton(tk.Button):
 
     def set_behavior(self, behavior):
         """Set the behavior of the store."""
+        self.config(cursor='')
+        self.game_ui.config(cursor='')
         self.behavior = BEHAVIOR_CLASS[behavior].store(self)
 
 

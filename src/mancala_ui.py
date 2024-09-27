@@ -437,13 +437,14 @@ class MancalaUI(tk.Frame):
         """Start a new game and refresh the board."""
 
         self._cancel_pending_afters()
-        self.set_game_mode(btnb.Behavior.GAMEPLAY, force=True)
+
         new_game = self.game.new_game(win_cond=win_cond,
                                       new_round_ok=new_round_ok)
         self.player.clear_history()
+        self.set_game_mode(btnb.Behavior.GAMEPLAY, force=True)
 
         self._refresh()
-        self.update()
+        # TODO self.update()
         if new_game:
             if self.info.prescribed == gi.SowPrescribed.ARNGE_LIMIT:
                 if self.set_game_mode(btnb.Behavior.MOVESEEDS):
@@ -539,13 +540,21 @@ class MancalaUI(tk.Frame):
     def _end_game(self):
         """End the game. Report result to user."""
 
+        if self.mode != btnb.Behavior.GAMEPLAY:
+            message = 'End game during setup will force New Game. Continue?'
+            do_it = tk.messagebox.askokcancel(title='End Game',
+                                              message=message,
+                                              parent=self)
+            if do_it:
+                self._new_game()
+            return
+
         message = 'Are you sure you wish to end the game?'
         do_it = tk.messagebox.askokcancel(title='End Game', message=message,
                                           parent=self)
         if not do_it:
             return
-        self.update()
-        self.set_game_mode(btnb.Behavior.GAMEPLAY, force=True)
+        # TODO self.update()
 
         win_cond = self.game.end_game()
 
@@ -619,7 +628,7 @@ class MancalaUI(tk.Frame):
             if sel_delay:
                 self.after(AI_DELAY[sel_delay], self._ai_move)
             else:
-                self.update()
+                # TODO self.update()
                 self._ai_move()
 
 
