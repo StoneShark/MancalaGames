@@ -26,8 +26,8 @@
       "algorithm": "montecarlo_ts",
       "difficulty": 3,
       "ai_params": {
-         "mcts_bias": [ 200, 200, 200, 200 ],
-         "mcts_nodes": [ 30, 300, 500, 1000 ],
+         "mcts_bias": [ 200, 200, 300, 300 ],
+         "mcts_nodes": [ 30, 300, 500, 800 ],
          "mcts_pouts": [ 2, 3, 3, 3 ],
          "mm_depth": [ 1, 5, 7, 11 ]
       }
