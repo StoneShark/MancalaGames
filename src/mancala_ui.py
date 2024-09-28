@@ -30,6 +30,10 @@ from game_logger import game_log
 
 AI_DELAY = [0, 1000, 3000]
 
+NO_TALLY_OP = 0
+VIS_TALLY_OP = 1
+RET_TALLY_OP = 2
+
 
 # %%  mancala ui
 
@@ -62,6 +66,9 @@ class MancalaUI(tk.Frame):
         else:
             self.master = tk.Tk()
 
+        self.show_tally = tk.BooleanVar(self.master, True)
+        self.tally_was_off = False
+        self.facing_players = tk.BooleanVar(self.master, False)
         self.log_ai = tk.BooleanVar(self.master, False)
         self.live_log = tk.BooleanVar(self.master, game_log.live)
         self.log_level = tk.IntVar(self.master, game_log.level)
@@ -103,21 +110,21 @@ class MancalaUI(tk.Frame):
     def _add_statuses(self):
         """Add status and info panes. Make them each 50% of the display."""
 
-        top_frame = tk.Frame(self)
-        top_frame.pack(side=tk.TOP, expand=True, fill=tk.X)
+        self.tally_frame = tk.Frame(self)
+        self.tally_frame.pack(side=tk.TOP, expand=True, fill=tk.X)
 
-        lframe = tk.Frame(top_frame, padx=5, pady=5,
+        lframe = tk.Frame(self.tally_frame, padx=5, pady=5,
                           borderwidth=3, relief=tk.RIDGE)
         lframe.grid(row=0, column=0, sticky=tk.NSEW)
         self.tally = gt.GameTally(lframe)
 
-        self.rframe = tk.Frame(top_frame, padx=5, pady=5,
+        self.rframe = tk.Frame(self.tally_frame, padx=5, pady=5,
                                borderwidth=3, relief=tk.RIDGE)
         self.rframe.grid(row=0, column=1, sticky=tk.NSEW)
 
-        top_frame.grid_columnconfigure(0, weight=1, uniform="group1")
-        top_frame.grid_columnconfigure(1, weight=1, uniform="group1")
-        top_frame.grid_rowconfigure(0, weight=1)
+        self.tally_frame.grid_columnconfigure(0, weight=1, uniform="group1")
+        self.tally_frame.grid_columnconfigure(1, weight=1, uniform="group1")
+        self.tally_frame.grid_rowconfigure(0, weight=1)
 
 
     def _add_board(self):
@@ -284,6 +291,18 @@ class MancalaUI(tk.Frame):
 
         menubar.add_cascade(label='Log', menu=logmenu)
 
+        showmenu = tk.Menu(menubar)
+        showmenu.add_checkbutton(label='Show Tally',
+                             variable=self.show_tally,
+                             onvalue=True, offvalue=False,
+                             command=self._toggle_tally)
+        showmenu.add_checkbutton(label='Facing Players',
+                             variable=self.facing_players,
+                             onvalue=True, offvalue=False,
+                             command=self._toggle_facing)
+        menubar.add_cascade(label='Display', menu=showmenu)
+
+
         helpmenu = tk.Menu(menubar)
         helpmenu.add_command(label='Help...', command=self._help)
         helpmenu.add_command(label='About...', command=self._about)
@@ -308,6 +327,40 @@ class MancalaUI(tk.Frame):
         """window was closed."""
 
         self._cancel_pending_afters()
+
+
+    def _toggle_tally(self, vis_op=NO_TALLY_OP):
+        """Adjust tally frame visibility."""
+
+        if vis_op == VIS_TALLY_OP:
+            # force tally to be visible (status pane is needed)
+            self.tally_frame.pack(side=tk.TOP, expand=True, fill=tk.X)
+            self.tally_was_off = not self.show_tally.get()
+            self.show_tally.set(True)
+
+        elif vis_op == RET_TALLY_OP and self.tally_was_off:
+            # return tally to the state it was before VIS_TALLY_OP called
+            self.tally_frame.forget()
+            self.show_tally.set(False)
+            self.tally_was_off = False
+
+        elif self.mode == btnb.Behavior.GAMEPLAY:
+            # only allow user toggle when in GAMEPLAY state
+            if self.show_tally.get():
+                self.tally_frame.pack(side=tk.TOP, expand=True, fill=tk.X)
+            else:
+                self.tally_frame.forget()
+
+        else:
+            self.bell()
+            self.show_tally.set(True)
+
+
+    def _toggle_facing(self):
+        """Players are facing eachother. Rotate the text for the
+        top player."""
+        _ = self
+        print('facing players is not implemented')
 
 
     def _quiet_dialog(self, title, text):
@@ -444,7 +497,6 @@ class MancalaUI(tk.Frame):
         self.set_game_mode(btnb.Behavior.GAMEPLAY, force=True)
 
         self._refresh()
-        # TODO self.update()
         if new_game:
             if self.info.prescribed == gi.SowPrescribed.ARNGE_LIMIT:
                 if self.set_game_mode(btnb.Behavior.MOVESEEDS):
@@ -494,6 +546,9 @@ class MancalaUI(tk.Frame):
         self._refresh()
         if mode == btnb.Behavior.GAMEPLAY:
             self._start_it()
+            self._toggle_tally(vis_op=RET_TALLY_OP)
+        else:
+            self._toggle_tally(vis_op=VIS_TALLY_OP)
         return True
 
 
@@ -554,7 +609,6 @@ class MancalaUI(tk.Frame):
                                           parent=self)
         if not do_it:
             return
-        # TODO self.update()
 
         win_cond = self.game.end_game()
 
@@ -628,7 +682,6 @@ class MancalaUI(tk.Frame):
             if sel_delay:
                 self.after(AI_DELAY[sel_delay], self._ai_move)
             else:
-                # TODO self.update()
                 self._ai_move()
 
 
