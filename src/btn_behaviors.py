@@ -814,10 +814,10 @@ class HoleButton(tk.Button):
         self.props = 0
         self.behavior = PlayButtonBehavior(self)
 
-        tk.Button.__init__(self, pframe, borderwidth=2, height=3, width=10,
+        tk.Button.__init__(self, pframe, borderwidth=2, height=3, width=8,
                            text='',
                            disabledforeground='black', foreground='black',
-                           anchor='center', font='bold',
+                           anchor='center', font='bold, 14',
                            command=self.left_click)
         self.bind('<Button-3>', self.right_click)
 
@@ -858,10 +858,10 @@ class StoreButton(tk.Button):
         self.owner = owner
         self.behavior = NoStoreBehavior(self)
 
-        tk.Button.__init__(self, pframe, borderwidth=2, height=3, width=8,
+        tk.Button.__init__(self, pframe, borderwidth=2, height=3, width=7,
                            text='', padx=5, pady=10,
                            disabledforeground='black', foreground='black',
-                           anchor='center', font='bold', relief='ridge',
+                           anchor='center', font='bold, 14', relief='ridge',
                            command=self.left_click)
         self.pack(side=side)
         self.bind('<Button-3>', self.right_click)
