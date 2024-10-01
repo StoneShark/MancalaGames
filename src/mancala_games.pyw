@@ -57,6 +57,8 @@ NORMAL = 'normal'
 
 SKIP_TAB = 'skip'
 
+ALL_PARAMS = 'all_params.txt'
+
 
 # %% helper funcs
 
@@ -198,6 +200,7 @@ class MancalaGames(tk.Frame):
         gamemenu = tk.Menu(menubar)
 
         gamemenu.add_command(label='Reset', command=self._reset)
+        gamemenu.add_command(label='Set Defaults', command=self._reset_const)
         gamemenu.add_command(label='Help ...', command=self._help)
         menubar.add_cascade(label='Game', menu=gamemenu)
 
@@ -736,6 +739,21 @@ class MancalaGames(tk.Frame):
         self._test()
 
 
+    def _del_defaults(self):
+        """Delete most tags that have the default value."""
+
+        for param in self.params.values():
+
+            if param.option not in (ckey.GAME_CLASS,
+                                    ckey.HOLES, ckey.NBR_START,
+                                    ckey.NAME, ckey.ABOUT):
+
+                man_config.del_default_config_tag(self.game_config,
+                                                  param.vtype,
+                                                  param.cspec,
+                                                  param.option)
+
+
     def _save(self):
         """Save params to file.
         Preserve any tags/comments that were in a loaded config."""
@@ -746,8 +764,6 @@ class MancalaGames(tk.Frame):
                 if tag not in self.game_config:
                     self.game_config[tag] = self.loaded_config[tag]
 
-        # XXXX delete tags that have default values from game_info
-        # consider [player][ai_params] and [player][scorer]
 
         if not self.filename:
             self.filename = self.game_config[ckey.GAME_INFO][ckey.NAME] \
@@ -763,6 +779,9 @@ class MancalaGames(tk.Frame):
             defaultextension='.txt')
         if not filename:
             return
+
+        if filename[-len(ALL_PARAMS):] != ALL_PARAMS:
+            self._del_defaults()
 
         with open(filename, 'w', encoding='utf-8') as file:
             json.dump(self.game_config, file, indent=3)
@@ -848,6 +867,42 @@ class MancalaGames(tk.Frame):
 
             else:
                 self.tkvars[param.option].set(param.ui_default)
+
+
+
+    def _reset_const(self):
+        """Reset to defaults; clear loaded config dictionary."""
+
+        self.loaded_config = None
+
+        for param in self.params.values():
+
+            default = man_config.get_construct_default(
+                        param.vtype, param.cspec, param.option)
+
+            if param.vtype == pc.MSTR_TYPE:
+                self.tktexts[param.option].delete('1.0', tk.END)
+                self.tktexts[param.option].insert('1.0', default)
+
+            elif param.vtype in pc.STRING_DICTS:
+                inv_dict = pc.STRING_DICTS[param.vtype][1]
+                value = inv_dict[default]
+                self.tkvars[param.option].set(value)
+
+            elif param.vtype == pc.BLIST_TYPE:
+                for var in self.tkvars[param.option]:
+                    var.set(False)
+
+            elif param.vtype == pc.ILIST_TYPE:
+                if (default
+                        and isinstance(default, list)
+                        and len(default) == self._get_boxes_config(param)):
+
+                    for var, val in zip(self.tkvars[param.option], default):
+                        var.set(val)
+
+            else:
+                self.tkvars[param.option].set(default)
 
 
 # %%  main

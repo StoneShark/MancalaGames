@@ -3,7 +3,7 @@
 Created on Fri Jul 21 10:24:10 2023
 @author: Ann"""
 
-
+import copy
 import os
 import random
 import string
@@ -286,6 +286,9 @@ class TestGc:
         assert man_config.get_construct_default('str',
                                                 'player  _',
                                                 'difficulty') == 1
+        assert man_config.get_construct_default('GameClasses',
+                                                '_',
+                                                'game_class') == 'Mancala'
         assert man_config.get_construct_default('str',
                                                 'junk  _',
                                                 'more_junk') == ""
@@ -323,3 +326,96 @@ class TestGc:
                                            'game_info _',
                                            'min_move',
                                            'int') == 1
+
+
+
+
+class TestResetDefs:
+
+    @pytest.fixture
+    def config_file(self, tmp_path):
+
+        filename = os.path.join(tmp_path,'config.txt')
+        with open(filename, 'w', encoding='utf-8') as file:
+            print("""{
+                       "game_class": "Mancala",
+                       "game_constants": {
+                          "holes": 6,
+                          "nbr_start": 4
+                       },
+                       "game_info": {
+                           "capt_on": [4],
+                           "sow_direct": 1,
+                           "evens": false
+                       },
+                       "player": {
+                           "ai_params": {
+                               "mcts_bias": [10, 10, 10],
+                               "mm_depth": [1, 1, 3, 5]
+                           }
+                        }
+                     }
+                """, file=file)
+        return filename
+
+
+    def test_del_default(self, config_file):
+        """confirm deletion of construction default but not
+        ui defaults."""
+
+        game_dict = man_config.read_game(config_file)
+
+        assert ckey.SOW_DIRECT in game_dict[ckey.GAME_INFO]
+        assert ckey.EVENS in game_dict[ckey.GAME_INFO]
+        assert ckey.MM_DEPTH in game_dict[ckey.PLAYER][ckey.AI_PARAMS]
+
+        man_config.del_default_config_tag(game_dict,
+                                          'list[int',
+                                          'game_info _',
+                                          ckey.CAPT_ON)   # not default
+        man_config.del_default_config_tag(game_dict,
+                                          'Direct',
+                                          'game_info _',
+                                          ckey.SOW_DIRECT)  # default
+        man_config.del_default_config_tag(game_dict,
+                                          'bool',
+                                          'game_info _',
+                                          ckey.EVENS)     # not default, but UI default
+        man_config.del_default_config_tag(game_dict,
+                                          'list[int]',
+                                          'player ai_params _',
+                                          ckey.MCTS_BIAS) # not default
+        man_config.del_default_config_tag(game_dict,
+                                          'list[int]',
+                                          'player ai_params _',
+                                          ckey.MM_DEPTH)   # default
+
+
+        assert ckey.SOW_DIRECT not in game_dict[ckey.GAME_INFO]
+        assert ckey.EVENS not in game_dict[ckey.GAME_INFO]
+        assert ckey.MM_DEPTH not in game_dict[ckey.PLAYER][ckey.AI_PARAMS]
+
+        assert ckey.CAPT_ON in game_dict[ckey.GAME_INFO]
+        assert ckey.MCTS_BIAS in game_dict[ckey.PLAYER][ckey.AI_PARAMS]
+
+
+    def test_del_def_nothing(self, config_file):
+        """test case where del_def.... does nothing because of
+        an invalid tag"""
+
+        game_dict = man_config.read_game(config_file)
+        gd_copy = copy.deepcopy(game_dict)
+
+        man_config.del_default_config_tag(game_dict,
+                                          'bool',
+                                          'player invalid_tag _',
+                                          ckey.MM_DEPTH)
+        man_config.del_default_config_tag(game_dict,
+                                          'bool',
+                                          'player ai_params _',
+                                          'junk')
+        man_config.del_default_config_tag(game_dict,
+                                          'bool',
+                                          'player ai_params',
+                                          'junk')
+        assert gd_copy == game_dict

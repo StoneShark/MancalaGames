@@ -1,7 +1,7 @@
 tab	option	text	cspec	order	vtype	ui_default	row	col	description
-Allow	min_move	Minimum Seeds for Move	game_info _	43	int	1	0	0	The minimum number of seeds a hole must have for it to be an allowable move start hole.
-Allow	mustshare	Must Share	game_info _	51	bool	False	1	0	If an opponent has no moves at the start of your turn, you must make seeds available to them if you can. This condition is enforced by only activating holes on the UI which will make seeds available to the opponent.
-Allow	allow_rule	Special Move Restrictions	game_info _	14	AllowRule	NONE	3	0	"Allow rules limit the holes from which moves may start.  Disallowed holes are not selectable.
+Allow	min_move	Minimum Seeds for Move	game_info _	119	int	1	0	0	The minimum number of seeds a hole must have for it to be an allowable move start hole.
+Allow	mustshare	Must Share	game_info _	126	bool	False	1	0	If an opponent has no moves at the start of your turn, you must make seeds available to them if you can. This condition is enforced by only activating holes on the UI which will make seeds available to the opponent.
+Allow	allow_rule	Special Move Restrictions	game_info _	101	AllowRule	NONE	3	0	"Allow rules limit the holes from which moves may start.  Disallowed holes are not selectable.
 - NONE: no special rule
 - OPP_OR_EMPTY:  Limit the allowable holes to those that end in an empty hole or reach the opponents side of the board.
 - SINGLE_TO_ZERO: Holes with single seeds may only be played if the next hole is empty.
@@ -11,69 +11,69 @@ Allow	allow_rule	Special Move Restrictions	game_info _	14	AllowRule	NONE	3	0	"Al
 - TWO_ONLY_ALL_RIGHT: Holes with two seeds may not be played, unless all holes contains two seeds, in which case the rightmost hole must be played.
 - FIRST_TURN_ONLY_RIGHT_TWO: The first turn must start from one of the two rightmost holes.
 - RIGHT_2_1ST_THEN_ALL_TWO:  The first turn must start from one of the two rightmost holes. Subsequent moves may only start from holes without 2 seeds, unless all holes contain zero or 2 seeds."
-Capture	capsamedir	Capture in Sow Direction	game_info _	16	bool	False	0	0	Only meaninful with MULTICAPT. Captures are done in the same direction as the sowing, i.e. following the final hole sown. If not set, captures are done from the holes just sown.
-Capture	oppsidecapt	Opp Side Capt Only	game_info _	58	bool	False	1	0	Captures may only be made from your oppents side of the board.
-Capture	multicapt	Multiple Captures	game_info _	49	bool	False	2	0	"After the initial capture, continue capturing as long as the capture conditions are met. This multiple capture may happen in the sow direction (unsown holes) or in the opposite direction (sown holes) as determined by CAPSAMEDIR.
+Capture	capsamedir	Capture in Sow Direction	game_info _	103	bool	False	0	0	Only meaninful with MULTICAPT. Captures are done in the same direction as the sowing, i.e. following the final hole sown. If not set, captures are done from the holes just sown.
+Capture	oppsidecapt	Opp Side Capt Only	game_info _	130	bool	False	1	0	Captures may only be made from your oppents side of the board.
+Capture	multicapt	Multiple Captures	game_info _	124	bool	False	2	0	"After the initial capture, continue capturing as long as the capture conditions are met. This multiple capture may happen in the sow direction (unsown holes) or in the opposite direction (sown holes) as determined by CAPSAMEDIR.
 See individual capture mechanism for any special requirements."
-Capture	evens	Capture Evens	game_info _	33	bool	True	3	0	"Capture when a hole contains an even number of seeds, greater than 0. When selected with other basic capture mechanisms, the capture mechanism are ANDed (all must be true for capture). Basic capture mechanisms are: CAPT_MAX, CAPT_MIN, CAPT_ON and EVENS with restrictions from OPPSIDECAPT, MOVEUNLOCK and not child holes of any type.
+Capture	evens	Capture Evens	game_info _	114	bool	True	3	0	"Capture when a hole contains an even number of seeds, greater than 0. When selected with other basic capture mechanisms, the capture mechanism are ANDed (all must be true for capture). Basic capture mechanisms are: CAPT_MAX, CAPT_MIN, CAPT_ON and EVENS with restrictions from OPPSIDECAPT, MOVEUNLOCK and not child holes of any type.
 MLAPS LAPPER sowing will stop the sowing on a final seed that would capture based on the selected basic capture mechanisms.
 Either SOW_RULE of OWN_SOW_CAPT_ALL or SOW_SOW_CAPT_ALL includes the basic capture mechanisms."
-Capture	capt_max	Capture Max	game_info _	17	int	0	4	0	"Capture when the contents of the hole are less than or equal to capt_max.
+Capture	capt_max	Capture Max	game_info _	104	int	0	4	0	"Capture when the contents of the hole are less than or equal to capt_max.  Disable with 0 value.
 When selected with other basic capture mechanisms, the capture mechanism are ANDed (all must be true for capture). Basic capture mechanisms are: CAPT_MAX, CAPT_MIN, CAPT_ON and EVENS  with restrictions from OPPSIDECAPT, MOVEUNLOCK and not child holes of any type.
 MLAPS LAPPER sowing will stop the sowing on a final seed that would capture based on the selected basic capture mechanisms.
 Either SOW_RULE of OWN_SOW_CAPT_ALL or SOW_SOW_CAPT_ALL includes the basic capture mechanisms."
-Capture	capt_min	Capture Min	game_info _	18	int	0	5	0	"Capture when the contents of the hole are greater than or equal to capt_min.
+Capture	capt_min	Capture Min	game_info _	105	int	0	5	0	"Capture when the contents of the hole are greater than or equal to capt_min. Disable with 0 value.
 When selected with other basic capture mechanisms, the capture mechanism are ANDed (all must be true for capture). Basic capture mechanisms are: CAPT_MAX, CAPT_MIN, CAPT_ON and EVENS  with restrictions from OPPSIDECAPT, MOVEUNLOCK and not child holes of any type.
 MLAP LAPPER sowing will stop the sowing on a final seed that would capture based on the selected basic capture mechanisms.
 Either SOW_RULE of OWN_SOW_CAPT_ALL or SOW_SOW_CAPT_ALL includes the basic capture mechanisms."
-Capture	capt_next	Capture Next	game_info _	19	bool	False	6	0	"Capture from the hole after the final seed sown into an empty hole. 
+Capture	capt_next	Capture Next	game_info _	106	bool	False	6	0	"Capture from the hole after the final seed sown into an empty hole. 
 "
-Capture	capttwoout	Capture Two Out	game_info _	22	bool	False	7	0	"There are three flavors of capture two out:
+Capture	capttwoout	Capture Two Out	game_info _	109	bool	False	7	0	"There are three flavors of capture two out:
 Single lap game: capture if sow ends in occupied hole, then an empty hole, followed by an occupied hole the contents of this are hole captured.
 Multi lap game but single capture: capture when last hole sown is followed by an empty hole which is then followed by an occupied hole.
 Multi lap game with multiple captures: capture when last hole sown is followed by an empty hole which is then followed by an occupied hole. Continue captures as long as the pattern of empty hole followed by an occupied hole continues.
 "
-Capture	crosscapt	Cross-Capture	game_info _	29	bool	False	0	2	"If the last sown seed is put in an empty hole, seeds on the opposite side of the board are captured. The capture of those seeds can be limited by CAPT_MAX, CAPT_MIN, CAPT_ON, EVENS, MOVEUNLOCK, OPPSIDECAPT. For example, crosscapt with evens will only capture when there are an even number of seeds in the opposite hole.
+Capture	crosscapt	Cross-Capture	game_info _	113	bool	False	0	2	"If the last sown seed is put in an empty hole, seeds on the opposite side of the board are captured. The capture of those seeds can be limited by CAPT_MAX, CAPT_MIN, CAPT_ON, EVENS, MOVEUNLOCK, OPPSIDECAPT. For example, crosscapt with evens will only capture when there are an even number of seeds in the opposite hole.
 SOW_RULE of either SOW_CAPT_ALL do not do this capture."
-Capture	xc_sown	Must sow opp for xcapt	game_info _	78	bool	False	1	2	"Only allow cross capture if the player has sown onto the opposite side of board. 
+Capture	xc_sown	Must sow opp for xcapt	game_info _	146	bool	False	1	2	"Only allow cross capture if the player has sown onto the opposite side of board. 
 If a player ends on their own side of the board in an empty hole, but did not sow any opposite hole, they get a repeat turn."
-Capture	xcpickown	Own Seed on Xcapture	game_info _	79	CrossCaptOwn	LEAVE	2	2	"When crosscapt is set, defines what to do with the single seed initiating the cross capture.
+Capture	xcpickown	Own Seed on Xcapture	game_info _	147	CrossCaptOwn	LEAVE	2	2	"When crosscapt is set, defines what to do with the single seed initiating the cross capture.
 - LEAVE: always leave the signle seed
 - PICK_ON_CAPTURE: only pick (capture) the seed if there was a capture.
 - ALWAYS_PICK: always pick (capture) the seed, even if there was not a capture"""
-Capture	grandslam	Grand Slam	game_info _	37	GrandSlam	LEGAL	3	2	"A grandslam is when your opponent has seeds at the start of your turn and you capture them all. This option selects what to do:
+Capture	grandslam	Grand Slam	game_info _	117	GrandSlam	LEGAL	3	2	"A grandslam is when your opponent has seeds at the start of your turn and you capture them all. This option selects what to do:
 - LEGAL: the seeds are captured
 - NOT_LEGAL: you may not capture all of your opponents seeds, a move which would do so is not allowed
 - NO_CAPT: you may sow the seeds, but the capture is not performed
 - OPP_GETS_REMAIN: if you capture all your opponents seeds, they capture all of your remaining seeds and the game is over. Winner is determined by game goal.
 - LEAVE_LEFT: the capture is performed from all but the leftmost hole from the sower perspective. This might leave your oppenents without seeds or might not capture any seeds.
 - LEAVE_RIGHT: the capture is performed from all but the rightmost hole from the sower perspective. This might leave your oppenents without seeds."
-Capture	moveunlock	Move Unlock for Capture	game_info _	48	bool	False	4	2	Holes in the game start each game and round locked. Captures may not be made from locked holes. Starting a sow from a hole unlocks it allowing future captures.
-Capture	nosinglecapt	No Single Seed Capture	game_info _	57	bool	False	5	2	If the selected start hole contains one seed, no capture may be made with it.
-Capture	nocaptfirst	No Capture First Move	game_info _	56	bool	False	6	2	Don't allow captures or closing of holes (SOW_RULE of SOW_BLKD_DIV) on the first move of the game or round.
-Capture	capt_on	Capture On Values	game_info _	20	list[bool]	[]	8	2	"Capture when the contents of the hole is in the capt_on list. 
+Capture	moveunlock	Move Unlock for Capture	game_info _	123	bool	False	4	2	Holes in the game start each game and round locked. Captures may not be made from locked holes. Starting a sow from a hole unlocks it allowing future captures.
+Capture	nosinglecapt	No Single Seed Capture	game_info _	129	bool	False	5	2	If the selected start hole contains one seed, no capture may be made with it.
+Capture	nocaptfirst	No Capture First Move	game_info _	128	bool	False	6	2	Don't allow captures or closing of holes (SOW_RULE of SOW_BLKD_DIV) on the first move of the game or round.
+Capture	capt_on	Capture On Values	game_info _	107	list[bool]	[]	8	2	"Capture when the contents of the hole is in the capt_on list. The Mancala Games UI only has checkboxes for 1 to 5 seeds, but any number may be put into the configuration file.
 When selected with other basic capture mechanisms, the capture mechanism are ANDed (all must be true for capture). Basic capture mechanisms are: CAPT_MAX, CAPT_MIN, CAPT_ON and EVENS   with restrictions from OPPSIDECAPT, MOVEUNLOCK and not child holes of any type.
 MLAP LAPPER sowing will stop the sowing on a final seed that would capture based on the selected basic capture mechanisms.
 Either SOWRULE of OWN_SOW_CAPT_ALL or SOW_SOW_CAPT_ALL includes the basic capture mechanisms."
-Capture	capt_rturn	Repeat Turn on Capture	game_info _	21	bool	False	9	2	Repeat turn if there was a capture. Making children is not a capture.
-Capture	pickextra	On Capture, Take More Rule	game_info _	59	CaptExtraPick	NONE	10	2	"Rules to allow taking of more than otherwise captured or picked seeds:
+Capture	capt_rturn	Repeat Turn on Capture	game_info _	108	bool	False	9	2	Repeat turn if there was a capture. Making children is not a capture.
+Capture	pickextra	On Capture, Take More Rule	game_info _	131	CaptExtraPick	NONE	10	2	"Rules to allow taking of more than otherwise captured or picked seeds:
 - NONE: Nothing extra
 - PICKCROSS: Take the seeds from the opposite side of the board. 
 - PICKTWOS: Take seeds from all holes containing two seeds but only after the first move.
 - PICKLASTSEEDS: If there are the number of starts seeds or fewer left,  the current player collects them and the game is over. This rule is applied at the end of each turn, even if there is not a capture because the sow phase may have reduced the seed count.
 - PICK2XLASTSEEDS: If there are 2 times the number of start seeds or fewer, the round starter picks them. This rule is applied at the end of each turn, even if there is not a capture because the sow phase may have reduced the seed count."
-Dynamics	stores	Stores	game_info _	73	bool	True	0	0	Are stores present on the game board?
-Dynamics	mustpass	Must Pass	game_info _	50	bool	False	1	0	When a player has no allowable moves on their turn, they must pass, and continue to do so until they have allowable moves or the game is over. The game is over when there is a clear winner or tie condition, or when neither player has an allowable move.
-Dynamics	rounds	Rounds	game_info _	64	bool	False	4	0	"Is the game played in a series of rounds? When rounds are employed, each round may end under conditions that do not win the overall game. The board is then setup again per the game rules, generally with some feature changed based on the previous round: hole ownership, holes out of play, a shortened board. Play continues in rounds until either player meets the overall game winning condition.
+Dynamics	stores	Stores	game_info _	142	bool	True	0	0	Are stores present on the game board?
+Dynamics	mustpass	Must Pass	game_info _	125	bool	False	1	0	When a player has no allowable moves on their turn, they must pass, and continue to do so until they have allowable moves or the game is over. The game is over when there is a clear winner or tie condition, or when neither player has an allowable move.
+Dynamics	rounds	Rounds	game_info _	135	bool	False	4	0	"Is the game played in a series of rounds? When rounds are employed, each round may end under conditions that do not win the overall game. The board is then setup again per the game rules, generally with some feature changed based on the previous round: hole ownership, holes out of play, a shortened board. Play continues in rounds until either player meets the overall game winning condition.
 For example: In Weg each round ends when neither player has a valid move. The board is then set up again after determining who owns what territory (holes). Rounds continue until one player has claimed sufficient territory to be declared the game winner (e.g. ownership of 10 or more holes).
 In the case of a round win or tie  a new starter is determined via ROUND_STARTER and  the board is reset according to ROUND_FILL.
 BLOCKS are used in many games and set between rounds based on the seed placement. TERRITORY GOAL games adjust hole ownership between rounds."
-Dynamics	round_starter	Round Starter	game_info _	63	RoundStarter	ALTERNATE	5	0	"Defines which player starts 2nd and subsequent rounds:
+Dynamics	round_starter	Round Starter	game_info _	134	RoundStarter	ALTERNATE	5	0	"Defines which player starts 2nd and subsequent rounds:
 - ALTERNATE: the round starter alternates.
 - LOSER: the loser of the previous round starts the current round.
 - WINNER: the winner of the previous round starts the current round.
 - LAST_MOVER: the player that made the last move of the previous round, starts the new round."
-Dynamics	round_fill	Round Fill Method	game_info _	62	RoundFill	NOT_APPLICABLE	6	0	"Choose how holes are filled when a new round strarts:
+Dynamics	round_fill	Round Fill Method	game_info _	133	RoundFill	NOT_APPLICABLE	6	0	"Choose how holes are filled when a new round strarts:
 - NOT_APPLICABLE: round fill doesn't need to be specified: either not played in rounds or game goal is TERRITORY (all holes filled).
 - LEFT_FILL: fill the round loser's holes from the player's left with NBR_START seeds each.  Holes that cannot be filled with NBR_START seeds (on the loser's side) are left empty; if BLOCKS is selected they are out of play for the round. All winner's holes are filled and are in play.
 - RIGHT_FILL: fill holes from the player's right. Other dynamics mimic left_fill.
@@ -82,10 +82,10 @@ Dynamics	round_fill	Round Fill Method	game_info _	62	RoundFill	NOT_APPLICABLE	6	
 - SHORTEN: the number of holes that the round loser can fill with NBR_START seeds are fill on both sides, other holes are left empty. Holes are filled opposite eachother. If BLOCKS is selected, the board is shortened to the number of holes filled (empty holes are blocked and out of play). If the game uses children, they will not be created if the board size is reduced to 3 or less.
 - UCHOOSE: allow user to choose which holes have seeds (are not blocked) when ROUNDS and BLOCKS are used.
 - UMOVE: allow the loser to choose where seeds are placed. At least one seed must be placed in each hole and the game must be playable (at least one hole has MIN_MOVE seeds), remaining seeds are placed in the store. The winner's layout is the same layout but reflected."
-Dynamics	blocks	Blocks	game_info _	15	bool	False	7	0	"Blocks remove holes from play and are shown on the UI with an X.
+Dynamics	blocks	Blocks	game_info _	102	bool	False	7	0	"Blocks remove holes from play and are shown on the UI with an X.
 When used with ROUNDS, the holes not filled from the player with fewer seeds are blocked and thus out of play for the round.
 When used with DEPRIVE, SOW_BLCK_DIV and GPARAM_ONE holes are closed (blocked and removed from play) when sown to GPARAM_ONE seeds."
-Dynamics	goal	Game Goal	game_info _	35	Goal	MAX_SEEDS	0	2	"The overall goal of the game. Defines how a player wins.
+Dynamics	goal	Game Goal	game_info _	115	Goal	MAX_SEEDS	0	2	"The overall goal of the game. Defines how a player wins.
 - MAX_SEEDS: player with the maximum number of seeds at the end of the game wins or they collect more than half of the total seeds
 - DEPRIVE: eliminate all of your opponents seeds.
   + If a player has no seeds at the start of their turn, they loose. If a player has no moves at the start of their turn, then the game outcome is determined by who has seeds: If both players have seeds, the game ends in a tie. If the current player has seeds, but the previous player does not, then the current player wins because they forced the previous player to give away all their seeds.
@@ -94,80 +94,80 @@ Dynamics	goal	Game Goal	game_info _	35	Goal	MAX_SEEDS	0	2	"The overall goal of t
 - TERRITORY: claim ownership of holes. Each round the ownership of holes is determined by the number of seeds captured in the previous round. In a TERRITORY game without rounds, the winner is the player that gained the most territory during play. 
   + TERRITORY games require STORES and that GPARAM_ONE be set to a value between the number of holes and two times the number of holes.
   + TERRITORY games are incompatible with NO_SIDES, START_PATTERN, GRANDSLAM of NOT_LEGAL, ALLOW_RULE of OPP_OR_EMPTY, "
-Dynamics	no_sides	No Sides	game_info _	55	bool	False	1	2	Moves maybe made from any hole, independent of the side of the board. Moves need to specify side, position and directions.  
-Dynamics	start_pattern	Start Pattern	game_info _	72	StartPattern	ALL_EQUAL	2	2	"Allows specifing non-all-equal start patterns. The following patterns are supported:
+Dynamics	no_sides	No Sides	game_info _	127	bool	False	1	2	Moves maybe made from any hole, independent of the side of the board. Moves need to specify side, position and directions.  
+Dynamics	start_pattern	Start Pattern	game_info _	141	StartPattern	ALL_EQUAL	2	2	"Allows specifing non-all-equal start patterns. The following patterns are supported:
 - ALL_EQUAL: all holes start with the same number of seeds.
 - GAMACHA: starting from the third hold (from start player's left) place nbr_seeds in every other hole, the first move is prescribed move the center hole's seeds to the other side (this is done automatically).
 - ALTERNATES: everyother hole is filled with nbr_seeds, no seeds end up opposite eachother. If a player has fewer seeds than their opponent, then they start.
 - ALTS_WITH_1: like Alternates except the starter's 2nd from right hole with nbr_seeds is replaced with one seed.
 - CLIPPEDTRIPLES: pattern of 0 S S (where S is nbr_seeds) is used to fill the holes; if a full cycle of 3 cannot be placed, the holes are left empty. The True and False sides are the same from the player's perspective, e.g. they will look reversed when viewed from one side of the game board.
 - TWOEMPTY: all but the rightmost two holes for each player are filled with is nbr_seeds."
-Dynamics	prescribed	Prescribed Opening Move	game_info _	60	SowPrescribed	NONE	3	2	"The first sow of the game maybe defined by a specific rule. Prescribed openings are different than start patterns because the player may choose the sow start point. SOW_OWN_STORE and SOW_RULE are ignored during the prescribed openings.
+Dynamics	prescribed	Prescribed Opening Move	game_info _	132	SowPrescribed	NONE	3	2	"The first sow of the game maybe defined by a specific rule. Prescribed openings are different than start patterns because the player may choose the sow start point. SOW_OWN_STORE and SOW_RULE are ignored during the prescribed openings.
 - NONE: there is no prescribed opening move.
 - BASIC_SOWER: the first sow is a very basic pickup the seeds and drop them one at a time in each hole ignoring any other sow parameters. Other sow parameters will be enacted  afterward. This can be used to force the first sow of an MLAPS game to be a single sow. 
 - MLAPS_SOWER: the first sow follows basic rules of multi-lap sowing (LAPPER). Other sow parameters will be enacted  afterward. 
 - SOW1OPP: at least one seed must be sown on the opponents side of the board which is accomplished by sowing as normal until the final seed, then any remaining holes on the player's side are skipped and the last seed is sown in the oppenents first hole (based on current sow direction).
 - PLUS1MINUS1: proceed from the selected hole by moving one seed from the next hole into the following hole, next skip that hole and repeat moving seed forward. After cycling the board, capture across from the opening hole. 
 - ARNGE_LIMIT: the first move may be used to rearrange the seeds (opponent is same layout). If the first move is not used for rearrangement, captures and child creation are not allowed from the starter until the second player makes a child or captures."
-Dynamics	gparam_one	General Input	game_info _	36	int	0	5	2	"GOAL of Territory: defines the number of holes needed for a win.
+Dynamics	gparam_one	General Input	game_info _	116	int	0	5	2	"GOAL of Territory: defines the number of holes needed for a win.
 GOAL of Deprive and Blocked Divert Sower: defines the number of seeds needed to close/block holes (sow_blkd_div)."
-Game	class	Game Class	game_class	28	GameClasses	Mancala	0	0	The name of the Game Class. Currently only Mancala.
-Game	holes	Holes per Side	game_constants _	39	int	3	2	0	Number of holes on each side of the board.
-Game	help_file	Help File	game_info _	38	str	mancala_help.html	3	0	An html help file describing the game (mancala_help.html is the main help file).
-Game	about	About	game_info _	2	multi_str	"Sow counter-clockwise.
+Game	game_class	Game Class	game_class	1	GameClasses	Mancala	0	0	The name of the Game Class. Currently only Mancala.
+Game	holes	Holes per Side	game_constants _	2	int	3	2	0	Number of holes on each side of the board.
+Game	help_file	Help File	game_info _	118	str	mancala_help.html	3	0	An html help file describing the game (mancala_help.html is the main help file).
+Game	about	About	game_info _	5	multi_str	"Sow counter-clockwise.
 Capture on evens. "	4	0	"A description of the game, typically enough to remind the player what the game options are.
 New lines can be inserted with \n."
-Game	name	Game Name	game_info _	1	str	Mancala	0	2	The game name, may have spaces. Used for the window title and the filename (with spaces replaced with underscores).
-Game	nbr_start	Start Seeds	game_constants _	54	int	4	2	2	The number of seeds in each hole at the start of a game when START_PATTERN is ALL_EQUAL. Other sow patterns use this as the number of seeds for some holes in the associated patterns.
-Player	algorithm	Algorithm	player _	13	Algorithm	minimaxer	0	0	"The algorithm value is the name of the AI player algorithm (a string):
+Game	name	Game Name	game_info _	4	str	Mancala	0	2	The game name, may have spaces. Used for the window title and the filename (with spaces replaced with underscores).
+Game	nbr_start	Start Seeds	game_constants _	3	int	4	2	2	The number of seeds in each hole at the start of a game when START_PATTERN is ALL_EQUAL. Other sow patterns use this as the number of seeds for some holes in the associated patterns.
+Player	algorithm	Algorithm	player _	201	Algorithm	minimaxer	0	0	"The algorithm value is the name of the AI player algorithm (a string):
 minimaxer: an Alpha-Beta Pruning MiniMaxer
 negamaxer: minimaxer with a very minor optimization for alternating turn games (no repeat turns). Uses minimaxer depths for difficulties.
 montecarlo_ts: a Monte Carlo Tree Search player."
-Player	difficulty	Default Difficulty	player _	30	int	1	1	0	The default difficulty for the game. The difficulty can be changed at play time,  even during game play, in the Mancala UI.
-Player	ai_active	Start Active	player _	12	bool	False	2	0	Automatically activate the AI player. The AI player can be manually deactivated, but it is selected for the starter it will start the game.
-Player	mm_depth	MiniMaxer Depth	player ai_params _	46	list[int]	[1, 3, 5, 7]	4	0	The depth that the minimaxer or negamaxer will search the game tree from the current node. One value for each difficulty.
-Player	mcts_bias	MCTS Bias	player ai_params _	40	list[int]	[400, 400, 400, 400]	6	0	"Bias for the Monte Carlo Tree seach algorithm for each difficulty level (0-3).  A larger bias encourages move game tree exploration, but defocuses the exploration from the best choices. This is critical in avoiding getting stuck in sub-obtimal move choices.
+Player	difficulty	Default Difficulty	player _	203	int	1	1	0	The default difficulty for the game. The difficulty can be changed at play time,  even during game play, in the Mancala UI.
+Player	ai_active	Start Active	player _	202	bool	False	2	0	Automatically activate the AI player. The AI player can be manually deactivated, but it is selected for the starter it will start the game.
+Player	mm_depth	MiniMaxer Depth	player ai_params _	213	list[int]	[1, 1, 3, 5]	4	0	The depth that the minimaxer or negamaxer will search the game tree from the current node. One value for each difficulty.
+Player	mcts_bias	MCTS Bias	player ai_params _	210	list[int]	[300, 200, 100, 100]	6	0	"Bias for the Monte Carlo Tree seach algorithm for each difficulty level (0-3).  A larger bias encourages move game tree exploration, but defocuses the exploration from the best choices. This is critical in avoiding getting stuck in sub-obtimal move choices.
 Value is divided by 1000."
-Player	mcts_nodes	MCTS Nodes per Move	player ai_params _	41	list[int]	[30, 50, 80, 110]	7	0	Number of game tree expansions to perform each time we pick a new move. One value for each difficulty level (0-3).
-Player	mcts_pouts	MCTS Playouts per Node	player ai_params _	42	list[int]	[1, 1, 1, 1]	8	0	Number of end games played out from each expanded node. One value for each difficulty level (0-3).
-Player	stores_m	Stores (captured) Multiplier	player scorer _	74	int	4	0	2	"The multiplier for the stores scorer. Seeds in stores and children are included.
+Player	mcts_nodes	MCTS Nodes per Move	player ai_params _	211	list[int]	[100, 300, 500, 800]	7	0	Number of game tree expansions to perform each time we pick a new move. One value for each difficulty level (0-3).
+Player	mcts_pouts	MCTS Playouts per Node	player ai_params _	212	list[int]	[1, 1, 1, 1]	8	0	Number of end games played out from each expanded node. One value for each difficulty level (0-3).
+Player	stores_m	Stores (captured) Multiplier	player scorer _	220	int	4	0	2	"The multiplier for the stores scorer. Seeds in stores and children are included.
 The stores scorer may not be used in games without STORES or CHILDREN. A zero multiplier disables the stores scorer.
 Used only for  minimax & negamax players."
-Player	access_m	Access Multiplier	player scorer _	11	int	0	1	2	"The multiplier for the access scorer. The access scorer computes how many of the opponents holes can be accessed for the given game state.
+Player	access_m	Access Multiplier	player scorer _	221	int	0	1	2	"The multiplier for the access scorer. The access scorer computes how many of the opponents holes can be accessed for the given game state.
 The access scorer is slow and therefore is prohibited from being used in multilap games (MLAPS); games with user choice of move direction (UDIR_HOLES); and games where hole owners are not predefined (NO_SIDES). In these game configurations, the multiplier must be zero to disable the access scorer.
 Used only for minimax & negamax players."
-Player	seeds_m	Seeds Multiplier	player scorer _	66	int	0	2	2	"The multiplier for the seeds scorer. The seeds scorer computes how many seeds each player has on the game board that are not in children.
+Player	seeds_m	Seeds Multiplier	player scorer _	222	int	0	2	2	"The multiplier for the seeds scorer. The seeds scorer computes how many seeds each player has on the game board that are not in children.
 Used only for minimax & negamax players."
-Player	empties_m	Empties Multiplier	player scorer _	32	int	0	3	2	"The multiplier for the empties scorer. The empties scorer counts the number empty holes each player has on the board.
+Player	empties_m	Empties Multiplier	player scorer _	223	int	0	3	2	"The multiplier for the empties scorer. The empties scorer counts the number empty holes each player has on the board.
 Used only for minimax & negamax players."
-Player	child_cnt_m	Child Count Multiplier	player scorer _	25	int	0	4	2	"The multiplier for the child scorer. The child scorer counts the number children each player has.
+Player	child_cnt_m	Child Count Multiplier	player scorer _	224	int	0	4	2	"The multiplier for the child scorer. The child scorer counts the number children each player has.
 The child scorer may only be used on games with children. If the game does not include child the multiplier must be zero.
 Used only for the minimax & negamax players."
-Player	evens_m	Evens Multiplier	player scorer _	34	int	0	5	2	"The multiplier for the even scorer. The even scorer counts the number of holes with an even number of seeds. This is useful to use when the capture mechanism is evens.
+Player	evens_m	Evens Multiplier	player scorer _	225	int	0	5	2	"The multiplier for the even scorer. The even scorer counts the number of holes with an even number of seeds. This is useful to use when the capture mechanism is evens.
 Used only for minimax & negamax players."
-Player	easy_rand	Easy Random Addin	player scorer _	31	int	0	7	2	"If the game is being played on easy mode (game difficult of easy/0), a random value may be added to the static evaluation. This can be done to induce errors into the ai player's game play. A random value is selected between -easy_rand and + easy_rand.
-The specific value for this should be selected based on the ranges of the paremeters and multiplier.
-Used only for minimax & negamax players."
-Player	repeat_turn	Repeat Turn Multiplier	player scorer _	61	int	0	6	2	"A value used to encourage or discourage repeat turns. The value is added in for the current player and subtracted off the score for the opposing playing. Use a positive value to encourage the AI player to repeat turns.
+Player	repeat_turn	Repeat Turn Multiplier	player scorer _	226	int	0	6	2	"A value used to encourage or discourage repeat turns. The value is added in for the current player and subtracted off the score for the opposing playing. Use a positive value to encourage the AI player to repeat turns.
 This parameter may only be used for games in which repeated turns are possible (SOW_OWN_STORE, CAPT_RTURN or XC_SOWN).
 Used only for minimax & negamax players."
-skip	mlength		game_info _	45	int		0	0	A derived parameter. Do not include in config files. Set during game construction length of moves: 1 (int) or 2, 3 (tuple).
-skip	nbr_holes			53	int		0	0	An init only parameter that is used to check the other parameters in the creation of game info.
-skip	rules			65	RuleDict		0	0	An init only parameter that used to check the consistency of the game info. Errors and warnings are raised as the rules are processed.
-skip	udirect		game_info _	76	bool		0	0	A derived parameter. Do not include in config files. Set during game construction to True if any udir holes are set.
-Sow	sow_direct	Sow Direction	game_info _	68	Direct	CCW	0	0	"Direction of sow:
+Player	easy_rand	Easy Random Addin	player scorer _	227	int	0	7	2	"If the game is being played on easy mode (game difficult of easy/0), a random value may be added to the static evaluation. This can be done to induce errors into the ai player's game play. A random value is selected between -easy_rand and + easy_rand.
+The specific value for this should be selected based on the ranges of the paremeters and multiplier.
+Used only for minimax & negamax players."
+skip	mlength		game_info _	121	int		0	0	A derived parameter. Do not include in config files. Set during game construction length of moves: 1 (int) or 2, 3 (tuple).
+skip	udirect		game_info _	144	bool		0	0	A derived parameter. Do not include in config files. Set during game construction to True if any udir holes are set.
+skip	rules			500	RuleDict		0	0	An init only parameter that used to check the consistency of the game info. Errors and warnings are raised as the rules are processed.
+skip	nbr_holes			501	int		0	0	An init only parameter that is used to check the other parameters in the creation of game info.
+Sow	sow_direct	Sow Direction	game_info _	137	Direct	CCW	0	0	"Direction of sow:
 - CW: clockwise
 - SPLIT: left side holes sow counter-clockwise and right side holes sow clockwise, an odd middle hole must be set in UDIR_HOLES.
 - CCW: counter-clockwise
 - PLAYALTDIR: on the first move of the game, the first player chooses their sow direction using the UDIR_HOLES method (by mouse button). The second player will sow their moves in the opposite direction. Once the first player makes their first move, both player's sow directions are set for the duration of the game no matter which button is used.  All UDIR_HOLES will apply to the game configuration.
 Both mouse buttons will start a move no matter the sow direction. If the hole is marked as UDIR_HOLES, the button selects sow direction. On the other hand, if the hole is not marked as UDIR_HOLES, either button will sow in the prescribed direction. This can be useful, mechanism to remind yourself that on SPLIT sow, the left holes go CW by using the left button and the right holes go CCW by using the right button.
 When PLAYALTDIR is not selected, any hole can be set as UDIR_HOLES to allow the user to override the sow_direct setting."
-Sow	sow_start	Sow Start Hole	game_info _	71	bool	False	1	0	When selected, the first seed is sown into  (i.e. left in) the start hole.
-Sow	skip_start	Skip Start on Lap	game_info _	67	bool	False	2	0	"When sowing a second or subsequent circuit of the board, skip the start hole. This will leave the start hole empty for single lap games.
+Sow	sow_start	Sow Start Hole	game_info _	140	bool	False	1	0	When selected, the first seed is sown into  (i.e. left in) the start hole.
+Sow	skip_start	Skip Start on Lap	game_info _	136	bool	False	2	0	"When sowing a second or subsequent circuit of the board, skip the start hole. This will leave the start hole empty for single lap games.
 In multilap games, the start hole for the current lap is skipped. Second or subsequent laps may sow into the original start hole."
-Sow	sow_own_store	Sow Own Store	game_info _	69	bool	False	3	0	Sow seeds into your own store when passing it. Do not sow into your opponents store. When the final seed is sown into the store, the sower gets another turn.
-Sow	move_one	Move One Seed	game_info _	47	bool	False	5	0	Only valid when SOW_START is set. Changes the SOW_START behavior so that if there is only one seed in the hole, it is moved in the sow direction by one hole.
-Sow	sow_rule	Special Sow Rules	game_info _	70	SowRule	NONE	6	0	"Special sow rules add additional behavior or restrictions to the sowing phase:
+Sow	sow_own_store	Sow Own Store	game_info _	138	bool	False	3	0	Sow seeds into your own store when passing it. Do not sow into your opponents store. When the final seed is sown into the store, the sower gets another turn.
+Sow	move_one	Move One Seed	game_info _	122	bool	False	5	0	Only valid when SOW_START is set. Changes the SOW_START behavior so that if there is only one seed in the hole, it is moved in the sow direction by one hole.
+Sow	sow_rule	Special Sow Rules	game_info _	139	SowRule	NONE	6	0	"Special sow rules add additional behavior or restrictions to the sowing phase:
 - NONE: there is no special sowing rule.
 - SOW_BLKD_DIV: If the final seed of an individual sow lands on the opposite side of the board and brings the contents of that hole to GPARAM_ONE seeds, the hole is closed closed (blocked). In single lap games, the hole's seeds are removed from play. In multilap games, the seeds are used to continue sowing.
   + When sowing, blocked holes on your own side of the board are skipped  and blocked holes on opponent's side are diverted out of play or captured.
@@ -182,17 +182,17 @@ Sow	sow_rule	Special Sow Rules	game_info _	70	SowRule	NONE	6	0	"Special sow rule
   + GRANDSLAM rules are not applied. NOCAPTFIRST prevents this capture for the first move.
 - NO_SOW_OPP_2S: Don't sow into opponents holes with 2 seeds.
 - CHANGE_DIR_LAP: Change the direction for each lap sown. Generally used with UDIR_HOLES so the player may choose the first direction."
-Sow	udir_holes	User Chooses Direction	game_info _	75	list[bool]	[]	8	0	"A list of holes from which the user can choose the sow direction. Control is via the mouse button: left is clockwise and right is counter-clockwise.
+Sow	udir_holes	User Chooses Direction	game_info _	143	list[bool]	[]	8	0	"A list of holes from which the user can choose the sow direction. Control is via the mouse button: left is clockwise and right is counter-clockwise.
 Note: all holes respond to both mouse buttons, but if the hole is not in udir_holes, the sow direction will be that prescribed by sow_direct with either button.
 Games with any hole set to user chooses direction must not use MUSTSHARE; GRANDSLAM must be LEGAL; and no special ALLOW_RULE is supported."
-Sow	mlaps	Multilap Sow	game_info _	44	LapSower	OFF	0	2	"Determines if seeds from more the start hole are picked up and sown:
+Sow	mlaps	Multilap Sow	game_info _	120	LapSower	OFF	0	2	"Determines if seeds from more the start hole are picked up and sown:
 - OFF: Single lap sowing. Seeds from the start hole are sown, typically, one per hole until expened.
 - LAPPER:  If the first sow ends in a hole with more than one seed, pickup all the seeds and continue sowing another ""lap"". Note that lap here does not mean a full cicuit of the board, only an individual sow operation. In general, sowing laps continues in this manner until the final seed of a lap reaches an empty hole. There are games with other conditions for ending a multilap low such as making a capture or making a child. 
   + Several values of SOW_RULE perform an operation after each lap sown: SOW_CLKD_DIV(_NR) closes the final hole and CHANGE_DIR_LAP changes the direction of sowing after each lap.
 - LAPPER_NEXT:  For lapper_next sowing, the number of seeds in the last sown hole of lap do not matter. Instead, if the hole after the last sown hole has any seeds, those seeds are used to continue sowing the next lap. Sowing continues until the hole after the lap's final seed is empty. There are games with other conditions for ending a multilap low such as making a capture or making a child.
   + A SOW_RULE of CHANGE_DIR_LAP changes the direction of sowing after each lap. SOW_BLKD_DIV(_NR) is not supported for LAPPER_NEXT."
-Sow	visit_opp	Visit Opp for Mlaps	game_info _	77	bool	False	1	2	Requires MLAPS. If the first 'lap' does not reach the opponent's side of the board, the sowing ends after the first lap. 
-Sow	child_type	Type of Children	game_info _	27	ChildType	NOCHILD	3	2	"Games with children allow players to claim holes. These child holes are an extension of the stores and seeds in them count towards a win. Making a child stops any multiple lap sowing, moves cannot start from children, and they cannot be captured (except for special rules associated with WEGs).
+Sow	visit_opp	Visit Opp for Mlaps	game_info _	145	bool	False	1	2	Requires MLAPS. If the first 'lap' does not reach the opponent's side of the board, the sowing ends after the first lap. 
+Sow	child_type	Type of Children	game_info _	112	ChildType	NOCHILD	3	2	"Games with children allow players to claim holes. These child holes are an extension of the stores and seeds in them count towards a win. Making a child stops any multiple lap sowing, moves cannot start from children, and they cannot be captured (except for special rules associated with WEGs).
 - NOCHILD: children are not used.
 - NORMAL: children are made when a final seeds sows a hole to CHILD_CVT.
 - WALDA: STORES are not supported. Captures are instead moved into waldas, thus a player may not capture until they have created a walda. 
@@ -202,9 +202,9 @@ Sow	child_type	Type of Children	game_info _	27	ChildType	NOCHILD	3	2	"Games with
 - BULL: create one bull if final seed sows to CHILD_CVT, create two bulls if the final two seeds are sown to CHILD_CVT-1 and CHILD_CVT (in either order).
 - QUR: when a seed is sown into an empty hole on the player's side of the board and the opposite hole contains CHILD_CVT, create children in both holes: final seed location and opposite.
 "
-Sow	child_cvt	Child Convert Count	game_info _	26	int	0	4	2	"Defines the number of seeds required to make a child.
+Sow	child_cvt	Child Convert Count	game_info _	110	int	0	4	2	"Defines the number of seeds required to make a child.
 "
-Sow	child_rule	Child Restrictions	game_info _	24	ChildRule	NONE	5	2	"Additional child creation requirements may be set:
+Sow	child_rule	Child Restrictions	game_info _	111	ChildRule	NONE	5	2	"Additional child creation requirements may be set:
 - NONE: no additional restrictions.
 - OPP_ONLY:  Only make children on the opposite side of the board. Incompatible with BULL, QUR, and WEG child types.
 - NOT_1ST_OPP: Don't make a child in the first hole on the opponents side/territory with one seed."

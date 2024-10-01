@@ -329,7 +329,7 @@ You may know a particular set of rules by a different name.
 You may have a particular "house rule" that varies from the specific
 configuration provided.
 I might simply have an implementation error.
-Please consider these file a starting point for defining your
+Please consider these files a starting point for defining your
 own favorite games.
 <p>The <a href="game_xref.html">Game / Parameter Cross Reference table</a>
 can be used to determine if a particular set of rules has a different
@@ -488,6 +488,40 @@ is included after the parameter sections.
 """
 
 
+def write_defaults(param, ofile):
+    """Write the Constructio and UI defaults for parameters
+    that have them."""
+
+    if ckey.GAME_CONSTANTS in param.cspec:
+        print('<p class="pdesc">Required Parameter',
+              file=ofile)
+
+    elif (ckey.GAME_CLASS in param.cspec
+             or ckey.GAME_INFO in param.cspec
+             or ckey.PLAYER in param.cspec):
+
+        dval = man_config.get_construct_default(param.vtype,
+                                                param.cspec,
+                                                param.option)
+        print('<p class="pdesc">Default value:',
+              'None' if dval is None or dval == [] else dval,
+              file=ofile)
+
+        if param.option in (ckey.ABOUT, ckey.HELP_FILE):
+            return
+
+        if param.vtype in pc.STRING_DICTS:
+            enum_dict = pc.STRING_DICTS[param.vtype][2]
+            ui_default = enum_dict[param.ui_default]
+
+        else:
+            ui_default = param.ui_default
+
+        if dval != ui_default:
+            print('<p class="pdesc">UI default value:',
+                  ui_default, file=ofile)
+
+
 def write_params_help(filename):
     """Create the game_params help file."""
 
@@ -522,9 +556,8 @@ def write_params_help(filename):
                       param.vtype,
                       '</a>',
                       file=ofile)
-                dval = gi.GameInfo.get_default(param.option)
-                print('<p class="pdesc">Default value:', dval,
-                      file=ofile)
+
+                write_defaults(param, ofile)
                 print('<p class="pdesc">UI Tab:', param.tab,
                       file=ofile)
                 print(file=ofile)

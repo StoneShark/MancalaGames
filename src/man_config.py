@@ -124,6 +124,9 @@ def get_construct_default(vtype, cspec, option):
     elif option == ckey.ALGORITHM:
         rval = list(ALGORITHM_DICT.keys())[0]
 
+    elif option == ckey.GAME_CLASS:
+        rval = list(GAME_CLASSES.keys())[0]
+
     elif option == ckey.DIFFICULTY:
         rval = 1
 
@@ -176,3 +179,24 @@ def set_config_value(game_config, cspec, option, value):
         vdict[option] = value
     else:
         vdict[tags[-1]] = value
+
+
+def del_default_config_tag(game_config, vtype, cspec, option):
+    """If the option has the default value,
+    delete it from it's parent dictionary."""
+
+    tags = cspec.split(SP)
+
+    vdict = game_config
+    for tag in tags:
+        if tag == OPT_TAG:
+            if option in vdict:
+                default = get_construct_default(vtype, cspec, option)
+                if vdict[option] == default:
+                    vdict.pop(option, None)
+                return
+
+        if tag in vdict:
+            vdict = vdict[tag]
+        else:
+            return

@@ -17,6 +17,8 @@ import os
 
 import pytest
 
+from context import game_constants as gc
+
 # this file contains integration tests
 # report warnings as test failures
 pytestmark = [pytest.mark.integtest, pytest.mark.filterwarnings("error")]
@@ -42,8 +44,5 @@ def test_config_files(file):
 
 def test_bad_file():
 
-    with pytest.warns(UserWarning) as record:
+    with pytest.raises(gc.GameConstsError):
         man_config.read_game_config(PATH + BAD_CFG)
-
-    assert len(record) == 1
-    assert 'No capture mechanism provided' in record[0].message.args[0]
