@@ -3,7 +3,7 @@ The goal of Mancala Games is to create a means to play a variety of mancala game
 
 ## Overview ##
 
-Mancala Games only supports two row mancala games. Stores are optional and there are 50 or so other game parameters. Three computer players are provided: Negamaxer can only be used in games with alternating turns and is a slightly optimized version of the MiniMaxer. The Monte Carlo Tree Search doesn't play well[^1].
+Mancala Games only supports two row mancala games. Stores are optional and there are 50 or so other game parameters. Three computer players are provided: Negamaxer can only be used in games with alternating turns and is a slightly optimized version of the MiniMaxer. The Monte Carlo Tree Search works[^1] best for game in which it hard to configure the MiniMaxer scorer.
 
 There are 3 ways to startup Mancala Games:
 
@@ -25,6 +25,7 @@ Game play is broken up into small steps and each step is implemented as a decora
 * Moves - determines valid moves for computer player
 * Incrementer - increments clockwise, counter-clockwise, past blocks, etc.
 * Sow Starter - processes start hole by determining the number of seeds to sow possibly leaving one seed
+* Make Child - stops sowing when a child should be made and is the test for making a child in the capturer
 * Get Direction - determines which specific direction to sow 
 * Sower - sows the seeds (uses incrementer)
 * Capt_Ok - determines if the contents of a single hole can be captured
@@ -36,9 +37,9 @@ Game play is broken up into small steps and each step is implemented as a decora
 ## Compatibility ##
 Mancala games can be run under Windows 10 & 11 and requires standard python 3.11 (including Tk)[^3].
 
-Development of Mancala Games uses many specialized tools: The UI definition table is in Excel (an open-source alternative crashed on the large table in Windows 11 too often). GNU-WIN32 make, grep and core utilities are used to script the build and test processes. Pytest is the test framework (Excel files with macros are used to create test cases stored as CSV files for actual test code). Pyinstaller is used to create standalone executables. Documentation diagrams were created in LibreOffice Draw with pdf versions saved.
+Development of Mancala Games uses many specialized tools: The UI definition table is in Excel (an open-source alternative crashed on the large table in Windows 11 too often). GNU-WIN32 make, grep and core utilities are used to script the build and test processes. Pytest is the test framework (Excel files with macros are used to create test cases stored as CSV files for actual test code). Some tests require python 3.12 (itertools.batch is so much nicer than the alternative). Pyinstaller is used to create standalone executables. Documentation diagrams were created in LibreOffice Draw with pdf versions saved.
 
-[^1]: Perhaps the default parameters are bad. There could also be an implementation error.
+[^1]: Monte Carlo Tree Search is now working. There were significant algorithm errors and the parameters were bad.
 
 [^2]: Speed isn't an issue for moves by human players but the computer players simulate very many moves to choose one. One profiling experiment noted nearly a second deciding to return a constant (for direction); the decorator chain resolved it to basically zero.
 
