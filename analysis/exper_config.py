@@ -12,8 +12,8 @@ Created on Sun Jul 28 13:41:27 2024
 # %% imports
 
 import argparse
-import dataclasses
 import itertools as it
+import json
 import os
 import sys
 
@@ -40,6 +40,8 @@ Player configurations:
     as_config [algo <aname>] [diff <level>]   - config file player with substitions
     algo <aname> [params <values>]            - specified algo with either
                                                 default params or those specified
+                                                scorer config will be per config file
+    pdict <filename>                          - specify a player dict file (in pdicts dir)
     random                                    - player will make random moves (default)
 
 where:
@@ -47,7 +49,7 @@ where:
     <level>    is one of 1, 2, 3, 4 for difficulty
     <values>   is either
                    an integer, for depth of minimax or negamax search
-                   bias, new_nodes, number play outs
+                   bias (float), new_nodes (int), number play outs (int)
                       for the monte carlo tree search"""
 
 # %% command line proc
@@ -61,7 +63,7 @@ def define_parser():
         epilog=PLAYER_CONFIG_MSG)
 
     parser.add_argument('--game', action='append',
-                        choices=[ALL] + INDEX,
+                        choices=[ALL] + INDEX, required=True,
                         help="""Select the games to simulate. Use multiple
                         options to select multiple games.""")
 
@@ -138,23 +140,32 @@ def build_player(game, pdict, arg_list):
 
     elif arg_list[0] == 'algo':
 
+        tdict = {}
+        tdict['scorer'] = pdict['scorer']  # default minimaxer scorers are bad
+        tdict['algorithm'] = arg_list[1]
         player = ai_player.AiPlayer(game, {'algorithm': arg_list[1]})
-        # the ai_params in the player will be the construction defaults
-        # don't use them, e.g. don't set difficulty
 
-        if len(arg_list) == 2:
+        nargs = len(arg_list)
+        if nargs == 2:
             pass
 
-        elif len(arg_list) == 3:
+        elif nargs == 3:
             player.algo.set_params(int(arg_list[2]))
 
-        elif len(arg_list) == 5:
-            player.algo.set_params(float(arg_list[2]),
-                                   int(arg_list[3]),
-                                   int(arg_list[4]))
+        elif nargs == 6:
+            player.algo.set_params(float(arg_list[3]),
+                                   int(arg_list[4]),
+                                   int(arg_list[5]))
         else:
             print("Got confused in 'algo'. Try --help")
             sys.exit()
+
+    elif arg_list[0] == 'pdict':
+
+        with open('pdicts/' + arg_list[1], 'r', encoding='utf-8') as file:
+            pdict = json.load(file)
+
+        player = ai_player.AiPlayer(game, pdict)
 
     return player
 
@@ -170,7 +181,7 @@ def game_n_players_gen(cargs):
         tplayer = build_player(game, pdict, cargs.tplayer)
         fplayer = build_player(game, pdict, cargs.fplayer)
 
-        yield game, tplayer, fplayer, gname
+        yield game, fplayer, tplayer, gname
 
 
 def get_configuration():
@@ -179,7 +190,5 @@ def get_configuration():
         an ExperConfig with the rest of the configuration"""
 
     cargs = process_command_line()
-
-    game_logger.game_log.active = cargs.save_logs
 
     return game_n_players_gen(cargs), cargs

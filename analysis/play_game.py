@@ -16,7 +16,6 @@ import tqdm
 from context import game_interface as gi
 from context import game_logger
 
-from game_logger import game_log
 
 
 # %%  constants
@@ -52,10 +51,10 @@ def result_name(starter, result, winner):
 # define a list of game result strings
 # without making assumptions about result_name is written
 
-GAME_RESULTS = sorted(list(set([result_name(starter, result, winner)
+GAME_RESULTS = sorted(list({result_name(starter, result, winner)
                                 for starter in (False, True)
                                 for winner in (False, True)
-                                for result in GameResult])))
+                                for result in GameResult}))
 
 
 # %%  helper classes
@@ -79,9 +78,25 @@ class GameStats:
         self.stats[result_name(starter, result, winner)] += 1
         self.total += 1
 
+    @property
+    def wins(self):
+        """Return a tuple of (wins by False, wins by True) independent
+        of starter"""
+        return [sum(self.stats[result_name(starter, GameResult.WIN, winner)]
+                    for starter in (False, True))
+                for winner in (False, True)]
+
+    @property
+    def ties(self):
+        """Return the number of ties independent of starter"""
+        return sum(self.stats[result_name(starter, GameResult.TIE, None)]
+                   for starter in (False, True))
+
 
 class FindLoops:
     """A class to help find cycles in games."""
+
+    # pylint: disable=too-few-public-methods
 
     def __init__(self, max_cycle=15, max_loop=20):
         """
@@ -95,6 +110,7 @@ class FindLoops:
         self.dupl_cnt = 0
 
     def game_state_loop(self, game):
+        """Determine if their is a loop in the game states."""
 
         gstate = game.state.clear_mcount()
 
@@ -114,7 +130,7 @@ class FindLoops:
 # %% play the game
 
 
-def play_one_game(game, tplayer, fplayer, save_logs=False):
+def play_one_game(game, fplayer, tplayer, save_logs=False):
     """Play one game between the two players, returning the results.
     If either/both is None, use random choice moves.
     Otherwise use the player."""
@@ -124,13 +140,13 @@ def play_one_game(game, tplayer, fplayer, save_logs=False):
     for _ in range(2000 if game.info.rounds else 500):
 
         if game.turn and tplayer:
-            game_log.active = False
+            game_logger.game_log.active = False
             move = tplayer.pick_move()
-            game_log.active = save_logs
+            game_logger.game_log.active = save_logs
         elif not game.turn and fplayer:
-            game_log.active = False
+            game_logger.game_log.active = False
             move = fplayer.pick_move()
-            game_log.active = save_logs
+            game_logger.game_log.active = save_logs
         else:
             moves = game.get_moves()
             assert moves, "Game didn't end right."
@@ -144,6 +160,7 @@ def play_one_game(game, tplayer, fplayer, save_logs=False):
             if game.new_game(cond, new_round_ok=True):
                 return GameResult(cond.value), game.turn
 
+
         if stuck.game_state_loop(game):
             return GameResult.LOOPED, None
 
@@ -155,25 +172,23 @@ def play_one_game(game, tplayer, fplayer, save_logs=False):
     return GameResult.MAX_TURNS, None
 
 
-def play_games(game, tplayer, fplayer, nbr_runs, save_logs,
+def play_games(game, fplayer, tplayer, nbr_runs, save_logs,
                result_func=None):
     """Play a bunch of games between two players."""
+    # pylint: disable=too-many-arguments
 
     game_results = GameStats()
 
     if save_logs:
-        game_log.level = game_log.DETAIL
+        game_logger.game_log.active = True
+        game_logger.game_log.level = game_logger.game_log.DETAIL
 
     for cnt in tqdm.tqdm(range(nbr_runs)):
 
         game.new_game()
+        starter = game.starter = game.turn = bool(cnt < nbr_runs // 2)
 
-        if cnt < nbr_runs // 2:
-            starter = game.starter = game.turn = True
-        else:
-            starter = game.starter = game.turn = False
-
-        result, winner = play_one_game(game, tplayer, fplayer, save_logs)
+        result, winner = play_one_game(game, fplayer, tplayer, save_logs)
         if save_logs:
             game_logger.game_log.save(
                 'Simulate Game.\n'

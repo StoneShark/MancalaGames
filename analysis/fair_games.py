@@ -162,9 +162,9 @@ def eval_game(gname, nbr_runs):
 
 def play_them_all():
 
-    for game, tplayer, fplayer, gname in game_players_gen:
+    for game, fplayer, tplayer, gname in game_players_gen:
         print(game.info.name)
-        play_game.play_games(game, tplayer, fplayer,
+        play_game.play_games(game, fplayer, tplayer,
                              config.nbr_runs, config.save_logs,
                              ft.partial(score_game, gname))
 

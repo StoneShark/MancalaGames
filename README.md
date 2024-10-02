@@ -3,7 +3,7 @@ The goal of Mancala Games is to create a means to play a variety of mancala game
 
 ## Overview ##
 
-Mancala Games only supports two row mancala games. Stores are optional and there are 50 or so other game parameters. Three computer players are provided: Negamaxer can only be used in games with alternating turns and is a slightly optimized version of the MiniMaxer. The Monte Carlo Tree Search works[^1] best for game in which it hard to configure the MiniMaxer scorer.
+Mancala Games only supports two row mancala games. Stores are optional and there are 50 or so other game parameters. Three computer players are provided: Negamaxer can only be used in games with alternating turns and is a slightly optimized version of the MiniMaxer. The Monte Carlo Tree Search works[^1] best for games in which it hard to configure the MiniMaxer scorer.
 
 There are 3 ways to startup Mancala Games:
 

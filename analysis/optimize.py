@@ -3,10 +3,15 @@
 
 Optimize the given configuration, by choosing the best set from
 a set of neighbors.
-Neighbors are only selected along the axies.
+Neighbors are only selected along the axes not diagonals.
 
 Choose more random starting points and optimize from each,
-keeping the overall best set of parameters.
+keeping the overall best set of parameters. New start points
+are chosen near the current best point.
+
+Only the si scorer parameters listed in the game config file
+will be explored, thus remove any that do not apply to the
+game.
 
 Created on Sun Oct 15 09:45:43 2023
 @author: Ann"""
@@ -14,18 +19,15 @@ Created on Sun Oct 15 09:45:43 2023
 # %%  imports
 
 import argparse
-import enum
 import os
 import random
 import sys
 
-import tqdm
-
+import play_game
 from context import ai_player
+from context import cfg_keys as ckey
 from context import man_config
 from context import game_logger
-
-from game_interface import WinCond
 
 
 # %% disable logger
@@ -40,16 +42,16 @@ BAD_CFG = 'all_params.txt'
 INDEX = [fname[:-4] for fname in os.listdir(PATH) if fname != BAD_CFG]
 
 
-PN_TEST_VALS = [-8, -4, -2, -1, 0, 1, 2, 4, 8]
+PN_TEST_VALS =  [-8, -4, -2, -1, 0, 1, 2, 4, 8]
 POS_TEST_VALS = [0, 10, 20, 30, 40, 50, 60, 70, 80]
 
-PARAMS_VALS = {'access_m': PN_TEST_VALS,
-               'child_cnt_m': PN_TEST_VALS,
-               'empties_m': PN_TEST_VALS,
-               'evens_m':PN_TEST_VALS,
-               'seeds_m': PN_TEST_VALS,
-               'stores_m': PN_TEST_VALS,
-               'repeat_turn': POS_TEST_VALS,
+PARAMS_VALS = {ckey.ACCESS_M: PN_TEST_VALS,
+               ckey.CHILD_CNT_M: PN_TEST_VALS,
+               ckey.EMPTIES_M: PN_TEST_VALS,
+               ckey.EVENS_M:PN_TEST_VALS,
+               ckey.SEEDS_M: PN_TEST_VALS,
+               ckey.STORES_M: PN_TEST_VALS,
+               ckey.REPEAT_TURN: POS_TEST_VALS,
                }
 
 # %% global variables
@@ -90,8 +92,13 @@ def define_parser():
                         Default: %(default)s""")
 
     parser.add_argument('--thresh', action='store',
-                        default=0.02, type=float,
+                        default=0.12, type=float,
                         help="""Select the improvement threshold.
+                        Default: %(default)s""")
+
+    parser.add_argument('--depth', action='store',
+                        default=5, type=float,
+                        help="""Select minimaxer depth.
                         Default: %(default)s""")
 
     parser.add_argument('--output', action='store',
@@ -132,68 +139,15 @@ def dbl_print(*args, sep=' '):
 
 # %%  test pair of players
 
-class GameResult(enum.Enum):
-    """Game results.  Using 'values' to combine two enums."""
-
-    WIN = WinCond.WIN.value
-    TIE = WinCond.TIE.value
-    MAX_TURNS = enum.auto()
-
-
-def test_one_game(game, tplayer, fplayer):
-    """Play one game with tplayer against fplayer"""
-
-    for _ in range(2000 if game.info.rounds else 500):
-
-        if game.turn:
-            move = tplayer.pick_move()
-        else:
-            move = fplayer.pick_move()
-
-        cond = game.move(move)
-        if cond in (WinCond.WIN, WinCond.TIE, WinCond.ENDLESS):
-            break
-        if cond in (WinCond.ROUND_WIN, WinCond.ROUND_TIE):
-            if game.new_game(cond, new_round_ok=True):
-                break
-
-        if game.info.mustpass:
-            game.test_pass()
-
-    else:
-        return GameResult.MAX_TURNS.value, None
-    return cond.value, game.turn
-
 
 def get_win_percent(game, player1, player2):
     """Play a number of games of player1 against player2.
-    Have each player start half of the games.
-    Return the win percentages for player2:
-        wins 1 point, ties 0.5 point
+    Return the win percentages for player2: wins 1 point, ties 0.5 point
     Ignore any games that do not complete."""
 
-    comp_games = p2_win_cnt = 0
-    half_games = cargs.nbr_runs
-
-    for cnt in tqdm.tqdm(range(cargs.nbr_runs)):
-        game.new_game()
-
-        if cnt < half_games:
-            game.turn = True
-        else:
-            game.turn = False
-        result, winner = test_one_game(game, player1, player2)
-
-        if result == GameResult.MAX_TURNS.value:
-            continue
-
-        comp_games += 1
-        if result == GameResult.WIN.value and not winner:
-            p2_win_cnt += 1
-        elif result == GameResult.TIE.value:
-            p2_win_cnt += 0.5
-
-    return p2_win_cnt / comp_games
+                                      #  False     True
+    gstats = play_game.play_games(game, player1, player2,  cargs.nbr_runs, False)
+    return (gstats.wins[True] + (gstats.ties * 0.5)) / gstats.total
 
 
 # %% utility functions
@@ -208,12 +162,39 @@ def pname_list(pdict):
     return pnames
 
 
-def get_random_value(axis):
-    """Choose a random parameter value."""
+def add_random_offset(vlist, value):
+    """Pick a value that might be a small way away
+    from the current value.
+
+    Try to keep the likelihood of not moving the same
+    even if on ends by wrapping the offsets when at
+    an endpoint."""
+
+    vlen = len(vlist)
+
+    if value in vlist:
+        idx = vlist.index(value)
+    else:
+        idx = vlen // 2 + 1
+
+    offset = random.randint(-2, 2)
+    if idx == 0:
+        offset = abs(offset)
+    elif idx == vlen:
+        offset = -abs(offset)
+
+    idx = max(0, min(idx + offset, vlen - 1))
+
+    return vlist[idx]
+
+
+def get_random_value(value, axis):
+    """Choose a new parameter value that a few steps away
+    from the current value."""
 
     if axis == 'repeat_turn':
-        return random.choice(POS_TEST_VALS)
-    return random.choice(PN_TEST_VALS)
+        return add_random_offset(POS_TEST_VALS, value)
+    return add_random_offset(PN_TEST_VALS, value)
 
 
 def get_value_neighs(axis, cur_val):
@@ -309,7 +290,7 @@ def optimize_from(game, player1, player2, pnames):
         local_best_params = params
         update_player(player1, params)
 
-    starts += [(start_params, params, i)]
+    starts += [(start_params, local_best_params, i+1)]
     return local_best_params
 
 
@@ -321,11 +302,17 @@ def optimize():
     previous best."""
 
     game, pdict = man_config.make_game(PATH + cargs.game + '.txt')
+
+    if ckey.ALGORITHM in pdict and pdict[ckey.ALGORITHM] != 'minimaxer':
+        raise ValueError("game not configured for minimaxer")
+
     pnames = pname_list(pdict)
     dbl_print('Parameters to optimize: ', pnames)
 
     player1 = ai_player.AiPlayer(game, pdict)
     player2 = ai_player.AiPlayer(game, pdict)
+    player1.algo.set_params(cargs.depth)
+    player2.algo.set_params(cargs.depth)
     best_params = vars(player1.sc_params)
 
     for i in range(cargs.nbr_starts):
@@ -334,7 +321,7 @@ def optimize():
             new_start = best_params
             dbl_print(f'\n{i}: Starting point: \n', best_params)
         else:
-            new_start = {k: get_random_value(k) for k in pnames}
+            new_start = {k: get_random_value(best_params[k], k) for k in pnames}
             update_player(player1, new_start)
             dbl_print(f'\n{i}: New random start:\n', new_start)
 
@@ -348,13 +335,14 @@ def optimize():
             update_player(player2, params)
             win_pct = get_win_percent(game, player1, player2)
 
-            if win_pct > 0.52:
+            if win_pct > 0.50 + cargs.thresh:
                 dbl_print(f'New Best Params: {win_pct:6.3%} over previous best.\n',
                       params)
                 best_params = params.copy()
             else:
                 dbl_print(f'Not better {win_pct:6.3%}.')
-        log_file.flush()
+        if log_file:
+            log_file.flush()
 
     return best_params
 
@@ -369,6 +357,7 @@ if __name__ == '__main__':
     dbl_print('\nStart points and best from there:')
     for start, best, steps in starts:
         dbl_print(start, best, steps, sep='\n')
+        dbl_print('')
 
     dbl_print('\nBest Overall Params: ')
     dbl_print(selected_params)
