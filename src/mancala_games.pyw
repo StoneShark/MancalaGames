@@ -780,7 +780,7 @@ class MancalaGames(tk.Frame):
         if not filename:
             return
 
-        if filename[-len(ALL_PARAMS):] != ALL_PARAMS:
+        if not filename.endswith(ALL_PARAMS):
             self._del_defaults()
 
         with open(filename, 'w', encoding='utf-8') as file:
