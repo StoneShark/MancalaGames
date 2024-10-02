@@ -19,7 +19,7 @@ import negamax
 from game_logger import game_log
 
 
-# XXXX ai player data should be in player files
+# XXXX ai player data should be in algo files
 # will this work:
 #   define the variables in the ai_interface
 #   add to them in the player files
@@ -84,8 +84,6 @@ class AiPlayer(ai_interface.AiPlayerIf):
         self.dbl_holes = self.game.cts.dbl_holes
         self.holes = self.game.cts.holes
 
-        self._diff = player_dict.get(ckey.DIFFICULTY, 1)
-
         if ckey.SCORER in player_dict:
             self.sc_params = ScoreParams(**(player_dict[ckey.SCORER]))
         else:
@@ -95,8 +93,20 @@ class AiPlayer(ai_interface.AiPlayerIf):
             player_dict[ckey.AI_PARAMS] = {}
         self.ai_params = AI_PARAM_DEFAULTS | player_dict[ckey.AI_PARAMS]
 
+        self._diff = 0
+        self.difficulty = player_dict.get(ckey.DIFFICULTY, 1)
+
         self.scorers = []
         self.collect_scorers()
+
+
+    def __str__(self):
+
+        rstr = 'AiPlayer:\n'
+        rstr += '   Algorithm: ' + str(self.algo) + '\n'
+        rstr += '   Difficulty: ' + str(self._diff) + '\n'
+        rstr += '   ' + str(self.sc_params) + '\n'
+        return rstr
 
 
     @property
