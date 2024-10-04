@@ -38,7 +38,39 @@ ESTR = [0, 0]
 GAMECONF = {'basic':
                 {'evens': True},
 
+            'gsnone_pick2': {'stores': True,
+                             'capt_on': [2, 3],
+                             'grandslam': gi.GrandSlam.NO_CAPT,
+                             'pickextra': gi.CaptExtraPick.PICKTWOS,
+                             },
+
+            'gsnone_pickend': {'stores': True,
+                               'capt_on': [2, 3],
+                               'grandslam': gi.GrandSlam.NO_CAPT,
+                               'pickextra': gi.CaptExtraPick.PICKLASTSEEDS,
+                               },
+
+            'gsopp_pickend': {'stores': True,
+                               'capt_on': [2, 3],
+                               'grandslam': gi.GrandSlam.OPP_GETS_REMAIN,
+                               'pickextra': gi.CaptExtraPick.PICKLASTSEEDS,
+                               },
+
+            'pickend': {'stores': True,
+                               'capt_on': [2, 3],
+                               'pickextra': gi.CaptExtraPick.PICKLASTSEEDS,
+                               },
+
+            'lock_pick2x': {'stores': True,
+                            'moveunlock': True,
+                            'capt_on': [2, 3],
+                            'pickextra': gi.CaptExtraPick.PICK2XLASTSEEDS,
+                            },
+
             }
+
+
+# remember the board setup is after the sow has occured!!
 
 START = {'start':
              mancala.GameState(board=(2, 2, 2, 2, 2, 2, 2, 2, 2, 2),
@@ -47,10 +79,67 @@ START = {'start':
                                _turn=False,
                                child=(N, N, N, N, N, N, N, N, N, N)),
 
+        'sow4':
+             mancala.GameState(board=(2, 2, 2, 0, 3, 3, 2, 2, 2, 2),
+                               store=(0, 0),
+                               mcount=1,
+                               _turn=False,
+                               child=(N, N, N, N, N, N, N, N, N, N)),
+
+        'end_capt':
+             mancala.GameState(board=(0, 0, 1, 0, 0, 2, 0, 0, 1, 0),
+                               store=(0, 16),
+                               mcount=20,
+                               _turn=False,
+                               child=(N, N, N, N, N, N, N, N, N, N)),
+
+
+        'end_capt2':
+             mancala.GameState(board=(0, 0, 3, 0, 0, 2, 0, 0, 0, 0),
+                               store=(0, 15),
+                               mcount=20,
+                               _turn=False,
+                               child=(N, N, N, N, N, N, N, N, N, N)),
+
+        # unlikely that there will be pickable seeds in a locked hole
+        'locked':
+             mancala.GameState(board=(0, 0, 3, 0, 0, 2, 0, 0, 0, 0),
+                               store=(0, 15),
+                               mcount=20,
+                               _turn=False,
+                               child=(N, N, N, N, N, N, N, N, N, N),
+                               unlocked=(T, T, F, T, T, T, T, T, T, T)),
+
+
         }
 
 CASES = [('basic', 'start', F, 2,
           2, (2, 2, 0, 2, 2, 2, 2, 2, 2, 2), (2, 0), NCHILD, F, T),
+
+         # capture and pick are gs, don't do either
+         ('gsnone_pick2', 'sow4', F, 5,
+          5, (2, 2, 2, 0, 3, 3, 2, 2, 2, 2), (0, 0), NCHILD, F, F),
+
+         # no gs, game ends via capt and pick -- see next test
+         ('pickend', 'end_capt', F, 5,
+          5, (0, 0, 0, 0, 0, 0, 0, 0, 0, 0), (4, 16), NCHILD, T, T),
+
+         # gs None prevents ending game via capt and pick
+         ('gsnone_pickend', 'end_capt', F, 5,
+          5, (0, 0, 1, 0, 0, 2, 0, 0, 1, 0), (0, 16), NCHILD, F, F),
+
+         # don't pick from locked holes (this is an unlikely game state)
+         ('lock_pick2x', 'locked', F, 5,
+          5, (0, 0, 3, 0, 0, 0, 0, 0, 0, 0), (2, 15), NCHILD, F, T ),
+
+         # gs opp doesn't restore the state, when gs any of Fs remaining
+         # seeds would go to true but F picked them all
+         ('gsopp_pickend', 'end_capt', F, 5,
+          5, (0, 0, 0, 0, 0, 0, 0, 0, 0, 0), (4, 16), NCHILD, T, T),
+
+         # same as above but no pick, gs moves 3 remain F seeds to T
+         ('gsopp_pickend', 'end_capt2', F, 5,
+          5, (0, 0, 0, 0, 0, 0, 0, 0, 0, 0), (2, 18), NCHILD, F, T),
 
          ]
 
@@ -96,6 +185,7 @@ def test_capturer(logger, conf_name, state_name, turn, capt_loc,
     mdata.capt_loc = capt_loc
 
     game.deco.capturer.do_captures(mdata)
+    print(game)
 
     # check the expected outputs and changes
     assert mdata.capt_loc == eloc
@@ -116,3 +206,63 @@ def test_capturer(logger, conf_name, state_name, turn, capt_loc,
     assert game.inhibitor.get_state() == start_state.istate
 
     assert sum(game.store) + sum(game.board) == game.cts.total_seeds
+
+
+# %%
+
+BAD_CONFIGS = {
+
+    'xc_pickextra':
+        ({'stores': True,
+          'crosscapt': True,
+          'pickextra': gi.CaptExtraPick.PICKCROSS,
+          },
+         UserWarning),
+
+    'even_xc_pickextra':
+        ({'stores': True,
+          'evens': True,
+          'crosscapt': True,
+          'pickextra': gi.CaptExtraPick.PICKCROSS,
+          },
+        gi.GameInfoError),
+
+    'max_xc_pickextra':
+        ({'stores': True,
+          'capt_max': 4,
+          'crosscapt': True,
+          'pickextra': gi.CaptExtraPick.PICKCROSS,
+          },
+        gi.GameInfoError),
+
+    'min_xc_pickextra':
+        ({'stores': True,
+          'capt_min': 2,
+          'crosscapt': True,
+          'pickextra': gi.CaptExtraPick.PICKCROSS,
+          },
+        gi.GameInfoError),
+
+    'on_xc_pickextra':
+        ({'stores': True,
+          'capt_on': [2, 3],
+          'crosscapt': True,
+          'pickextra': gi.CaptExtraPick.PICKCROSS,
+          },
+        gi.GameInfoError),
+
+    }
+
+@pytest.mark.filterwarnings("error")
+@pytest.mark.parametrize('config_dict, result',
+                         BAD_CONFIGS.values(),
+                         ids=BAD_CONFIGS.keys())
+def test_bad_config(config_dict, result):
+    """ginfo_rules prevents these games so they are not tested.
+    if ginfo_rules is changed to allow them,
+    report an error so tests are written."""
+
+    with pytest.raises(result):
+        gi.GameInfo(**config_dict,
+                    nbr_holes=HOLES,
+                    rules=mancala.Mancala.rules)

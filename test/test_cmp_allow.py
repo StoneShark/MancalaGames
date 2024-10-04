@@ -69,6 +69,11 @@ GAMECONF = {'basic':
                  'mustshare': True,
                  'sow_own_store': True},
 
+            'gsnot_pick2s':
+                {'capt_on': [2, 3],
+                 'stores': True,
+                 'grandslam': gi.GrandSlam.NOT_LEGAL,
+                 'pickextra': gi.CaptExtraPick.PICKTWOS},
 
             # game configs with mlength = 3
             'ter':
@@ -153,6 +158,9 @@ CASES = [('basic', 'start', [T, T, T, T, T], [T, T, T, T, T]),
          # can't move any seeds to opp because they don't reach
          ('mshare_sowo', 'onefshare', [F, F, F, F, F], [F, F, F, F, F]),
          ('mshare_sowo', 'onetshare', [F, F, F, F, F], [F, F, F, F, F]),
+
+         # game config can pick all opps seeds on start moves
+         ('gsnot_pick2s', 'start', [F, F, F, F, T], [T, F, F, F, F]),
 
          ('ter', 'start',
           [T, T, T, T, T, F, F, F, F, F],

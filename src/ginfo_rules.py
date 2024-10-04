@@ -654,6 +654,24 @@ def build_rules():
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
+        'xc_const_pickextra',
+        rule=lambda ginfo: (ginfo.crosscapt
+                            and any([ginfo.capt_max,
+                                     ginfo.capt_min,
+                                     ginfo.capt_on,
+                                     ginfo.evens])
+                            and ginfo.pickextra == gi.CaptExtraPick.PICKCROSS),
+        msg="A constrainted CROSSCAPT with PICKEXTRA=PICKCROSS will ingnore constraint.",
+        excp=gi.GameInfoError)
+
+    man_rules.add_rule(
+        'xpick_pickcross',
+        rule=lambda ginfo: (ginfo.crosscapt
+                            and ginfo.pickextra == gi.CaptExtraPick.PICKCROSS),
+        msg="PICKEXTRA=PICKCROSS with CROSSCAPT is redundant.",
+        warn=True)
+
+    man_rules.add_rule(
         'move_one_start',
         rule=lambda ginfo: ginfo.move_one and not ginfo.sow_start,
         msg='MOVE_ONE requires SOW_START',

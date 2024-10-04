@@ -969,7 +969,11 @@ class TestPickCross:
         ([3, 3, 3, 2, 2, 2], True, 4, [3, 0, 3, 2, 0, 2], {'evens': True}),
         ([3, 3, 3, 2, 2, 2], True, 4, [3, 0, 3, 0, 0, 2], {'evens': True,
                                                            'multicapt': True}),
-        ([3, 1, 3, 2, 2, 2], True, 1, [3, 1, 3, 2, 0, 2], {'crosscapt': True}),
+
+        pytest.param(
+            [3, 1, 3, 2, 2, 2], True, 1, [3, 1, 3, 2, 0, 2], {'crosscapt': True},
+            marks=pytest.mark.filterwarnings("ignore")),
+
         ([3, 3, 3, 4, 4, 2], False, 4, [3, 0, 3, 4, 0, 2], {'capt_on': [4]}),
         ([3, 3, 3, 4, 0, 2], False, 3, [0, 3, 3, 4, 0, 0], {'capsamedir': True,
                                                             'capttwoout': True})

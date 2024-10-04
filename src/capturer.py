@@ -543,6 +543,7 @@ class PickCross(CaptMethodIf):
         self.decorator.do_captures(mdata)
         cross = self.game.cts.cross_from_loc(mdata.capt_loc)
         if (mdata.captured
+                and self.game.board[cross]
                 and self.game.child[cross] is None
                 and self.game.unlocked[cross]):
 
@@ -600,13 +601,14 @@ class PickLastSeeds(CaptMethodIf):
         game = self.game
         seeds = sum(game.board[loc]
                     for loc in range(game.cts.dbl_holes)
-                    if game.child[loc] is None)
+                    if game.child[loc] is None
+                        and game.unlocked[loc])
 
         if  0 < seeds <= self.seeds:
             taker = game.turn if self.turn_takes else game.starter
 
             for loc in range(game.cts.dbl_holes):
-                if game.child[loc] is None:
+                if game.child[loc] is None and game.unlocked[loc]:
                     game.store[taker] += game.board[loc]
                     game.board[loc] = 0
 
@@ -801,9 +803,9 @@ def deco_capturer(game):
           or game.info.capt_max or game.info.capt_min):
         capturer = CaptSingle(game)
 
-    capturer = _add_grand_slam_deco(game, capturer)
     capturer = _add_child_deco(game, capturer)
     capturer = _add_capt_pick_deco(game, capturer)
+    capturer = _add_grand_slam_deco(game, capturer)
 
     if game.info.nosinglecapt:
         capturer = NoSingleSeedCapt(game, capturer)

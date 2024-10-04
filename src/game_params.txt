@@ -39,13 +39,13 @@ Capture	xc_sown	Must sow opp for xcapt	game_info _	146	bool	False	1	2	"Only allo
 If a player ends on their own side of the board in an empty hole, but did not sow any opposite hole, they get a repeat turn."
 Capture	xcpickown	Own Seed on Xcapture	game_info _	147	CrossCaptOwn	LEAVE	2	2	"When crosscapt is set, defines what to do with the single seed initiating the cross capture.
 - LEAVE: always leave the signle seed
-- PICK_ON_CAPTURE: only pick (capture) the seed if there was a capture.
-- ALWAYS_PICK: always pick (capture) the seed, even if there was not a capture"""
+- PICK_ON_CAPT: only pick (capture) the seed if there was a capture
+- ALWAYS_PICK: always pick (capture) the final single seed, even if there was not a capture"
 Capture	grandslam	Grand Slam	game_info _	117	GrandSlam	LEGAL	3	2	"A grandslam is when your opponent has seeds at the start of your turn and you capture them all. This option selects what to do:
 - LEGAL: the seeds are captured
 - NOT_LEGAL: you may not capture all of your opponents seeds, a move which would do so is not allowed
 - NO_CAPT: you may sow the seeds, but the capture is not performed
-- OPP_GETS_REMAIN: if you capture all your opponents seeds, they capture all of your remaining seeds and the game is over. Winner is determined by game goal.
+- OPP_GETS_REMAIN: if you capture all your opponents seeds, they capture all of your remaining seeds and the game is over. Winner is determined by game goal. Seeds picked because of PICKEXTRA PICK*LASTSEEDS go the current player and not the opponent.
 - LEAVE_LEFT: the capture is performed from all but the leftmost hole from the sower perspective. This might leave your oppenents without seeds or might not capture any seeds.
 - LEAVE_RIGHT: the capture is performed from all but the rightmost hole from the sower perspective. This might leave your oppenents without seeds."
 Capture	moveunlock	Move Unlock for Capture	game_info _	123	bool	False	4	2	Holes in the game start each game and round locked. Captures may not be made from locked holes. Starting a sow from a hole unlocks it allowing future captures.
@@ -59,9 +59,10 @@ Capture	capt_rturn	Repeat Turn on Capture	game_info _	108	bool	False	9	2	Repeat 
 Capture	pickextra	On Capture, Take More Rule	game_info _	131	CaptExtraPick	NONE	10	2	"Rules to allow taking of more than otherwise captured or picked seeds:
 - NONE: Nothing extra
 - PICKCROSS: Take the seeds from the opposite side of the board. 
-- PICKTWOS: Take seeds from all holes containing two seeds but only after the first move.
+- PICKTWOS: Take seeds from opponents holes containing two seeds.
 - PICKLASTSEEDS: If there are the number of starts seeds or fewer left,  the current player collects them and the game is over. This rule is applied at the end of each turn, even if there is not a capture because the sow phase may have reduced the seed count.
-- PICK2XLASTSEEDS: If there are 2 times the number of start seeds or fewer, the round starter picks them. This rule is applied at the end of each turn, even if there is not a capture because the sow phase may have reduced the seed count."
+- PICK2XLASTSEEDS: If there are 2 times the number of start seeds or fewer, the round starter picks them. This rule is applied at the end of each turn, even if there is not a capture because the sow phase may have reduced the seed count.
+In terms of GRANDSLAM, these picks are considered captures."
 Dynamics	stores	Stores	game_info _	142	bool	True	0	0	Are stores present on the game board?
 Dynamics	mustpass	Must Pass	game_info _	125	bool	False	1	0	When a player has no allowable moves on their turn, they must pass, and continue to do so until they have allowable moves or the game is over. The game is over when there is a clear winner or tie condition, or when neither player has an allowable move.
 Dynamics	rounds	Rounds	game_info _	135	bool	False	4	0	"Is the game played in a series of rounds? When rounds are employed, each round may end under conditions that do not win the overall game. The board is then setup again per the game rules, generally with some feature changed based on the previous round: hole ownership, holes out of play, a shortened board. Play continues in rounds until either player meets the overall game winning condition.
