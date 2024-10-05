@@ -8,8 +8,6 @@ Created on Sat Aug 19 08:32:38 2023
 
 import os.path
 
-SRC = 'src'
-
 
 def get_path(filename):
     """Provide compatibility between different ways the
