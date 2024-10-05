@@ -12,12 +12,13 @@ import tkinter as tk
 
 import cfg_keys as ckey
 import man_config
+import man_path
 import mancala_ui
 
 
 # %% constants
 
-PATH = '../GameProps/'
+PATH = 'GameProps/'
 
 TXTPART = '.txt'
 EXFILE = 'all_params.txt'
@@ -30,7 +31,7 @@ def load_game_files():
     create a dictionary of game name and about text."""
 
     choices = {}
-    for file in os.listdir(PATH):
+    for file in os.listdir(man_path.get_path(PATH)):
 
         if file[-4:] != TXTPART or file == EXFILE:
             continue

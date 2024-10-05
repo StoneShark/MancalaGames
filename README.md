@@ -16,7 +16,7 @@ Game configurations are stored in plain-text, json-string formatted files. They 
 
 ## Distribution Files ##
 
-To download and play Mancala Games, get the MancalaGames.zip file. It is a 
+To download and play Mancala Games, get the MancalaGames.tgz file. It is a 
 self contained set of executables and all required files. No installation is
 required, just expand the zip file which requires 31MB.
 

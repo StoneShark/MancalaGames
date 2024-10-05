@@ -248,6 +248,7 @@ clean:
 	-del src\\.coverage
 	-del test\\context.py
 	-del cov\\*.cov
+	-del MancalaGames.tgz
 	
 .PHONY : spotless
 spotless: clean
@@ -276,7 +277,7 @@ MancalaGames/mancala_games.exe: $(SOURCES) $(DATAFILES) $(HELPFILES) mancala_gam
 	copy logs\\README.txt MancalaGames\\logs
 	copy src\\game_params.txt MancalaGames
 	-rmdir /S /Q build
-	tar -czf MancalaGames.tar MancalaGames
+	tar -czf MancalaGames.tgz MancalaGames
 
 
 .PHONY: list
