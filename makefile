@@ -259,8 +259,7 @@ spotless: clean
 # exe
 #
 # build stand alone executables with a shared runtime 
-#
-# cannot find a way in windows to make relative sym links or short cuts
+# put it into a compressed tar file for github
 
 exe: MancalaGames/mancala_games.exe
 
@@ -277,6 +276,7 @@ MancalaGames/mancala_games.exe: $(SOURCES) $(DATAFILES) $(HELPFILES) mancala_gam
 	copy logs\\README.txt MancalaGames\\logs
 	copy src\\game_params.txt MancalaGames
 	-rmdir /S /Q build
+	tar -czf MancalaGames.tar MancalaGames
 
 
 .PHONY: list
@@ -288,5 +288,3 @@ list:
 
 # doesn't work
 #	@LC_ALL=C $(MAKE) -pRrq -f $(firstword $(MAKEFILE_LIST)) : 2>/dev/null | awk -v RS= -F: '/(^|\n)# Files(\n|$$)/,/(^|\n)# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | grep -E -v -e '^[^[:alnum:]]' -e '^$@$$'
-
-

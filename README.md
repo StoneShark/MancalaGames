@@ -14,6 +14,12 @@ There are 3 ways to startup Mancala Games:
 
 Game configurations are stored in plain-text, json-string formatted files. They may be edited directly. Parameters with default values need not be included.
 
+## Distribution Files ##
+
+To download and play Mancala Games, get the MancalaGames.zip file. It is a 
+self contained set of executables and all required files. No installation is
+required, just expand the zip file which requires 31MB.
+
 ## Code Overview ##
 I’ve read that code is more testable if it is organized in a complex network of simple objects instead of a small set of complex objects. The evolution of Mancala Games has embraced the complex network of simple objects concept; possibly, it’s gone too far.
 
@@ -35,7 +41,7 @@ Game play is broken up into small steps and each step is implemented as a decora
 * Game String - used for the game logger to prepare text formatted game state messages (utf-8)
 
 ## Compatibility ##
-Mancala games can be run under Windows 10 & 11 and requires standard python 3.11 (including Tk)[^3].
+Mancala games can be run under Windows 10 & 11 and requires standard python 3.11 (including Tk).
 
 Development of Mancala Games uses many specialized tools: The UI definition table is in Excel (an open-source alternative crashed on the large table in Windows 11 too often). GNU-WIN32 make, grep and core utilities are used to script the build and test processes. Pytest is the test framework (Excel files with macros are used to create test cases stored as CSV files for actual test code). Some tests require python 3.12 (itertools.batch is so much nicer than the alternative). Pyinstaller is used to create standalone executables. Documentation diagrams were created in LibreOffice Draw with pdf versions saved.
 
@@ -43,4 +49,3 @@ Development of Mancala Games uses many specialized tools: The UI definition tabl
 
 [^2]: Speed isn't an issue for moves by human players but the computer players simulate very many moves to choose one. One profiling experiment noted nearly a second deciding to return a constant (for direction); the decorator chain resolved it to basically zero.
 
-[^3]: Pyinstaller creates a nice playable directory, but Windows doesn't seem to support relative-path shortcuts so it currently isn't in the repo. 
