@@ -52,7 +52,8 @@ HELPFILES = docs\\mancala_help.html
 HELPFILES += docs\\about_games.html
 HELPFILES += docs\\game_params.html
 HELPFILES += docs\\game_xref.html
-HELPFILES += docs\param_types.html
+HELPFILES += docs\\param_types.html
+HELPFILES += docs\\dist_readme.txt
 
 DATAFILES = GameProps/*.txt $(HELPFILES) logs/README.txt
 
@@ -265,17 +266,16 @@ exe: MancalaGames/mancala_games.exe
 
 MancalaGames/mancala_games.exe: $(SOURCES) $(DATAFILES) $(HELPFILES) mancala_games.spec
 	-rmdir /S /Q MancalaGames
-	pyinstaller mancala_games.spec --distpath MancalaGames
-	copy docs\\*.html MancalaGames
-	copy docs\\styles.css MancalaGames
+	pyinstaller mancala_games.spec --distpath .
+	mkdir MancalaGames\\help
+	copy docs\\*.html MancalaGames\\help
+	copy docs\\styles.css MancalaGames\\help
+	copy docs\\dist_readme.txt MancalaGames\\README.txt
 	mkdir MancalaGames\\GameProps
 	copy GameProps\\* MancalaGames\\GameProps
 	mkdir MancalaGames\\logs
 	copy logs\\README.txt MancalaGames\\logs
 	copy src\\game_params.txt MancalaGames
-	ln -s .\\MancalaGames\\runtime\\play .\\MancalaGames\\play.exe
-	ln -s .\\MancalaGames\\runtime\\play_mancala .\\MancalaGames\\play_mancala.exe
-	ln -s .\\MancalaGames\\runtime\\mancala_games .\\MancalaGames\\mancala_games.exe
 	-rmdir /S /Q build
 
 
