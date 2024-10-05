@@ -19,10 +19,12 @@ Created on Sun Oct 15 09:45:43 2023
 # %%  imports
 
 import argparse
+import logging
 import os
 import random
 import sys
 
+import ana_logger
 import play_game
 from context import ai_player
 from context import cfg_keys as ckey
@@ -30,7 +32,9 @@ from context import man_config
 from context import game_logger
 
 
-# %% disable logger
+# %% loggers
+
+logger = logging.getLogger('optimize')
 
 game_logger.game_log.active = False
 
@@ -42,8 +46,8 @@ BAD_CFG = 'all_params.txt'
 INDEX = [fname[:-4] for fname in os.listdir(PATH) if fname != BAD_CFG]
 
 
-PN_TEST_VALS =  [-8, -4, -2, -1, 0, 1, 2, 4, 8]
-POS_TEST_VALS = [0, 10, 20, 30, 40, 50, 60, 70, 80]
+PN_TEST_VALS =  [-16, -12 -8, -4, -2, -1, 0, 1, 2, 4, 8, 12, 16]
+POS_TEST_VALS = [0, 2, 4, 8, 12, 16, 32, 56, 64]
 
 PARAMS_VALS = {ckey.ACCESS_M: PN_TEST_VALS,
                ckey.CHILD_CNT_M: PN_TEST_VALS,
@@ -119,35 +123,8 @@ def process_command_line():
         parser.print_help()
         sys.exit()
 
-    if cargs.output:
-        log_file = open(cargs.output, 'w', encoding='utf-8')
-
-    print(cargs)
-
-
-# %%  print & saver
-
-def dbl_print(*args, sep=' '):
-    """Print the args with the specified separator.
-    If log_file is not None, print it there too."""
-
-    string = sep.join(str(arg) for arg in args)
-    print(string)
-    if log_file:
-        print(string, file=log_file)
-
-
-# %%  test pair of players
-
-
-def get_win_percent(game, player1, player2):
-    """Play a number of games of player1 against player2.
-    Return the win percentages for player2: wins 1 point, ties 0.5 point
-    Ignore any games that do not complete."""
-
-                                      #  False     True
-    gstats = play_game.play_games(game, player1, player2,  cargs.nbr_runs, False)
-    return (gstats.wins[True] + (gstats.ties * 0.5)) / gstats.total
+    ana_logger.config(logger, cargs.output)
+    logger.info(cargs)
 
 
 # %% utility functions
@@ -254,14 +231,15 @@ def one_step(game, player1, player2, pnames):
             pcopy[axis] = nval
             update_player(player2, pcopy)
 
-            win_pct = get_win_percent(game, player1, player2)
+            win_pct = play_game.get_win_percent(game, player1, player2,
+                                                cargs.nbr_runs)
 
             if win_pct > better_pct + cargs.thresh:
                 better_pct = win_pct
                 best_params = pcopy
 
-                dbl_print(f'One Step: Better Params: {win_pct:6.3%}\n',
-                          best_params)
+                logger.info(f'One Step: Better Params: {win_pct:6.3%}\n%s',
+                            best_params)
 
     return best_params
 
@@ -277,12 +255,12 @@ def optimize_from(game, player1, player2, pnames):
 
     for i in range(cargs.nbr_steps):
 
-        dbl_print(f'\nOpt from: Step local {i}:')
+        logger.info(f'\nOpt from: Step local {i}:')
         params = one_step(game, player1, player2, pnames)
         if params is None:
             break
         if params == start_params:
-            dbl_print('\nOpt from: found a cycle - stopping.')
+            logger.info('\nOpt from: found a cycle - stopping.')
             local_best_params = None
             break
 
@@ -307,7 +285,7 @@ def optimize():
         raise ValueError("game not configured for minimaxer")
 
     pnames = pname_list(pdict)
-    dbl_print('Parameters to optimize: ', pnames)
+    logger.info('Parameters to optimize: %s', pnames)
 
     player1 = ai_player.AiPlayer(game, pdict)
     player2 = ai_player.AiPlayer(game, pdict)
@@ -319,30 +297,29 @@ def optimize():
 
         if i < 1:
             new_start = best_params
-            dbl_print(f'\n{i}: Starting point: \n', best_params)
+            logger.info(f'\n{i}: Starting point: \n%s', best_params)
         else:
             new_start = {k: get_random_value(best_params[k], k) for k in pnames}
             update_player(player1, new_start)
-            dbl_print(f'\n{i}: New random start:\n', new_start)
+            logger.info(f'\n{i}: New random start:\n%s', new_start)
 
         params = optimize_from(game, player1, player2, pnames)
 
         if params:
-            dbl_print('\nOptimize: Comparing best_params:\n', best_params)
-            dbl_print(' to new param set:\n', params)
+            logger.info('\nOptimize: Comparing best_params:\n%s', best_params)
+            logger.info(' to new param set: \n%s', params)
 
             update_player(player1, best_params)
             update_player(player2, params)
-            win_pct = get_win_percent(game, player1, player2)
+            win_pct = play_game.get_win_percent(game, player1, player2,
+                                                cargs.nbr_runs)
 
             if win_pct > 0.50 + cargs.thresh:
-                dbl_print(f'New Best Params: {win_pct:6.3%} over previous best.\n',
-                      params)
+                logger.info(f'New Best Params: {win_pct:6.3%} over previous best.')
+                logger.info(params)
                 best_params = params.copy()
             else:
-                dbl_print(f'Not better {win_pct:6.3%}.')
-        if log_file:
-            log_file.flush()
+                logger.info(f'Not better {win_pct:6.3%}.')
 
     return best_params
 
@@ -354,13 +331,14 @@ if __name__ == '__main__':
     process_command_line()
     selected_params = optimize()
 
-    dbl_print('\nStart points and best from there:')
+    logger.info('\nStart points and best from there:')
     for start, best, steps in starts:
-        dbl_print(start, best, steps, sep='\n')
-        dbl_print('')
+        logger.info(start)
+        logger.info(best)
+        logger.info(steps)
+        logger.info('')
 
-    dbl_print('\nBest Overall Params: ')
-    dbl_print(selected_params)
+    logger.info('\nBest Overall Params: ')
+    logger.info(selected_params)
 
-    if log_file:
-        log_file.close()
+    ana_logger.close(logger)

@@ -17,17 +17,22 @@ Created on Sun Jul 23 11:29:10 2023
 # %% imports
 
 import functools as ft
+import logging
 import math
 
 import pandas as pd
 import scipy
 
+import ana_logger
 import exper_config
 import play_game
 
 from context import game_logger
 
 from play_game import GameResult
+
+
+logger = logging.getLogger('fair_game')
 
 
 # %% column names and types
@@ -163,17 +168,16 @@ def eval_game(gname, nbr_runs):
 def play_them_all():
 
     for game, fplayer, tplayer, gname in game_players_gen:
-        print(game.info.name)
+        logger.info(game.info.name)
         play_game.play_games(game, fplayer, tplayer,
                              config.nbr_runs, config.save_logs,
                              ft.partial(score_game, gname))
 
         eval_game(gname, config.nbr_runs)
 
+    logger.info(data.to_string())
     if config.output:
-        data.to_csv(f'data/{config.output}.csv')
-    else:
-        print(data.to_string())
+        data.to_csv(f'{config.output}.csv')
 
 
 # %%
@@ -183,6 +187,9 @@ if __name__ == '__main__':
     game_logger.game_log.level = game_logger.game_log.STEP
 
     game_players_gen, config = exper_config.get_configuration()
+    ana_logger.config(logger, config.output)
+
     data = build_data_frame()
 
     play_them_all()
+    ana_logger.close(logger)

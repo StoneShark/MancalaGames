@@ -7,9 +7,11 @@ Created on Sat Oct  5 08:49:08 2024
 # %%  imports
 
 import argparse
+import logging
 import os
 import sys
 
+import ana_logger
 import play_game
 import exper_config
 
@@ -19,9 +21,13 @@ from context import man_config
 from context import game_logger
 
 
-# %% disable game logger
+# %% loggers
 
+logger = logging.getLogger('mcts param')
+
+# disable the game logger
 game_logger.game_log.active = False
+
 
 
 # %%  constants
@@ -40,7 +46,6 @@ MCTS_KEYS = ['bias', 'nodes', 'pouts']
 # %% global variables
 
 cargs = None
-log_file = None
 
 
 # %%  command line args
@@ -92,27 +97,11 @@ def process_command_line():
         parser.print_help()
         sys.exit()
 
-    if cargs.output:
-        log_file = open(cargs.output, 'w', encoding='utf-8')
-
-    dbl_print(cargs)
-
-
-# %%  print & saver
-
-def dbl_print(*args, sep=' '):
-    """Print the args with the specified separator.
-    If log_file is not None, print it there too."""
-
-    string = sep.join(str(arg) for arg in args)
-    print(string)
-    if log_file:
-        print(string, file=log_file)
+    ana_logger.config(logger, cargs.output)
+    logger.info(cargs)
 
 
 # %%
-
-
 
 def parametrize():
     """."""
@@ -120,16 +109,16 @@ def parametrize():
     game, pdict = man_config.make_game(PATH + cargs.game + '.txt')
 
     if ckey.ALGORITHM not in pdict or pdict[ckey.ALGORITHM] != 'montecarlo_ts':
-        dbl_print("Overriding config'ed algorithm to montecarlo_ts.")
+        logger.info("Overriding config'ed algorithm to montecarlo_ts.")
         pdict[ckey.ALGORITHM] = 'montecarlo_ts'
     if (ckey.AI_PARAMS not in pdict
             or any(key not in pdict[ckey.AI_PARAMS] for key in MKEYS)):
-        dbl_print('Not all MCTS params in config, using default(s).')
+        logger.info('Not all MCTS params in config, using default(s).')
 
     base_player = exper_config.build_player(game, pdict, cargs.base_player)
     vary_player = ai_player.AiPlayer(game, pdict)
 
-    dbl_print('Base', str(base_player) if base_player else 'random')
+    logger.info('Base %s', str(base_player) if base_player else 'random')
 
     pidx = MCTS_KEYS.index(cargs.vparam)
     params = [vary_player.algo.bias,
@@ -141,13 +130,13 @@ def parametrize():
 
         params[pidx] = pvalue if pidx else pvalue / 1000
         vary_player.algo.set_params(*params)
-        dbl_print('Testing:', str(vary_player.algo))
+        logger.info('Testing: ' + str(vary_player.algo))
 
         results[pvalue] = play_game.get_win_percent(game,
                                                     base_player,
                                                     vary_player,
                                                     cargs.nbr_runs)
-        dbl_print(f'True win= {results[pvalue]:8.3%}')
+        logger.info(f'True win= {results[pvalue]:8.3%}')
 
     return results
 
@@ -158,7 +147,5 @@ if __name__ == '__main__':
 
     process_command_line()
     data_dict = parametrize()
-    dbl_print(data_dict)
-
-    if log_file:
-        log_file.close()
+    logger.info(data_dict)
+    ana_logger.close(logger)

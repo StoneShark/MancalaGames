@@ -6,6 +6,10 @@ get_configuration is intended interface to generate
     generator for: games tplayer fplayer
     other config options
 
+Don't use the  ana_logger in this file because we don't
+have the log file until after the command line args
+are processed.
+
 Created on Sun Jul 28 13:41:27 2024
 @author: Ann"""
 
@@ -18,8 +22,9 @@ import os
 import sys
 
 from context import ai_player
-from context import game_logger
 from context import man_config
+
+# the logger is not setup before this file
 
 
 # %% contants

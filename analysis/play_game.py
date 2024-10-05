@@ -8,6 +8,7 @@ Created on Sun Jul 28 12:33:30 2024
 
 import collections
 import enum
+import logging
 import random
 import time
 
@@ -16,6 +17,10 @@ import tqdm
 from context import game_interface as gi
 from context import game_logger
 
+
+# %%  get the logger
+
+logger = logging.getLogger(__name__)
 
 
 # %%  constants
@@ -118,7 +123,7 @@ class FindLoops:
             self.dupl_cnt += 1
 
             if self.dupl_cnt > self.max_loop:
-                print(f"Game cycle found {len(self.game_states)}")
+                logger.info(f"Game cycle found {len(self.game_states)}")
                 return True
         else:
             self.game_states.append(game.state)
@@ -203,3 +208,15 @@ def play_games(game, fplayer, tplayer, nbr_runs, save_logs,
             result_func(starter, result, winner)
 
     return game_results
+
+
+def get_win_percent(game, player1, player2, nbr_runs):
+    """Play a number of games of player1 against player2.
+    Return the win percentages for player2: wins 1 point, ties 0.5 point
+    Ignore any games that do not complete."""
+
+    gstats = play_games(game, player1, player2, nbr_runs, False)
+    if gstats.stats['MAX_TURNS'] > nbr_runs // 2:
+        logger.info(f"Many max_TURNS games {gstats.stats['MAX_TURNS']}")
+
+    return (gstats.wins[True] + (gstats.ties * 0.5)) / gstats.total
