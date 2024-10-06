@@ -6,10 +6,6 @@ get_configuration is intended interface to generate
     generator for: games tplayer fplayer
     other config options
 
-Don't use the  ana_logger in this file because we don't
-have the log file until after the command line args
-are processed.
-
 Created on Sun Jul 28 13:41:27 2024
 @author: Ann"""
 
@@ -18,13 +14,16 @@ Created on Sun Jul 28 13:41:27 2024
 import argparse
 import itertools as it
 import json
+import logging
 import os
 import sys
 
+import ana_logger
 from context import ai_player
 from context import man_config
 
-# the logger is not setup before this file
+
+logger = logging.getLogger(__name__)
 
 
 # %% contants
@@ -87,10 +86,15 @@ def define_parser():
                         default=None,
                         help="""Output file. Default: console output only""")
 
+    parser.add_argument('--restart', action='store_true',
+                        help="""Do not append to the output file.""")
+
     parser.add_argument('--tplayer', action='store',
-                        type=str, nargs='+', help="""Define player t. See below.""")
+                        type=str, nargs='+',
+                        help="""Define player t. See below.""")
     parser.add_argument('--fplayer', action='store',
-                        type=str, nargs='+', help="""Define player f. See below""")
+                        type=str, nargs='+',
+                        help="""Define player f. See below""")
 
     return parser
 
@@ -112,9 +116,12 @@ def process_command_line():
         print("save_logs only valid for <= 1 game and <= 50 runs.")
         sys.exit()
 
-    print('Command line:')
+    # configure the root logger
+    ana_logger.config(logging.getLogger(), cargs.output, cargs.restart)
+
+    logger.info('Command line:')
     for var, val in vars(cargs).items():
-        print('  ', var, val)
+        logger.info("   %s:   %s", var, val)
     return cargs
 
 
@@ -124,6 +131,7 @@ def build_player(game, pdict, arg_list):
     """Build and configure the player as spec'ed in the arg_list.
     Lots of things can go wrong ... not going to try to catch them
     ... exceptions will be be thrown."""
+    # pylint: disable=too-many-branches
 
     player = None
 
@@ -140,7 +148,7 @@ def build_player(game, pdict, arg_list):
             elif keyw == 'diff':
                 player.difficulty = int(value)
             else:
-                print("Got confused in 'as_config'. Try --help.")
+                logger.info("Got confused in 'as_config'. Try --help.")
                 sys.exit()
 
     elif arg_list[0] == 'algo':
@@ -162,7 +170,7 @@ def build_player(game, pdict, arg_list):
                                    int(arg_list[4]),
                                    int(arg_list[5]))
         else:
-            print("Got confused in 'algo'. Try --help")
+            logger.info("Got confused in 'algo'. Try --help")
             sys.exit()
 
     elif arg_list[0] == 'pdict':
@@ -171,6 +179,9 @@ def build_player(game, pdict, arg_list):
             pdict = json.load(file)
 
         player = ai_player.AiPlayer(game, pdict)
+
+    else:
+        logger.info("Unknown player config: %s", arg_list[0])
 
     return player
 

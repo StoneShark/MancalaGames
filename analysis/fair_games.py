@@ -32,7 +32,7 @@ from context import game_logger
 from play_game import GameResult
 
 
-logger = logging.getLogger('fair_game')
+logger = logging.getLogger()
 
 
 # %% column names and types
@@ -124,7 +124,7 @@ def build_data_frame():
 def std_dev(xsum, x_sqr_sum, nbr):
     """Use two sum formula to compute standard deviation."""
 
-    return math.sqrt((x_sqr_sum - ((xsum * xsum) / nbr)) / (nbr - 1))
+    # return math.sqrt((x_sqr_sum - ((xsum * xsum) / nbr)) / (nbr - 1))
 
 
 def fail_to_reject(gname, nbr_runs, tag, confidence=0.95):
@@ -156,6 +156,13 @@ def eval_game(gname, nbr_runs):
     data.loc[gname, STARTER_FAIR] = fail_to_reject(gname, nbr_runs, ST_SCORE)
 
     nbr_games = nbr_runs - data.loc[gname, NO_RESULT]
+
+    if not nbr_games:
+        data.loc[gname, WIN_PCT] = 0
+        data.loc[gname, STR_PCT] = 0
+        data.loc[gname, TIE_PCT] = 0
+        return
+
     data.loc[gname, WIN_PCT] = data.loc[gname, SCORE] / (WIN_SCORE * nbr_games)
     data.loc[gname, STR_PCT] = data.loc[gname, ST_SCORE] / (WIN_SCORE * nbr_games)
     data.loc[gname, TIE_PCT] = \
@@ -171,13 +178,13 @@ def play_them_all():
         logger.info(game.info.name)
         play_game.play_games(game, fplayer, tplayer,
                              config.nbr_runs, config.save_logs,
-                             ft.partial(score_game, gname))
+                              ft.partial(score_game, gname))
 
         eval_game(gname, config.nbr_runs)
 
     logger.info(data.to_string())
     if config.output:
-        data.to_csv(f'{config.output}.csv')
+        data.to_csv(config.output + '.csv')
 
 
 # %%
@@ -187,7 +194,6 @@ if __name__ == '__main__':
     game_logger.game_log.level = game_logger.game_log.STEP
 
     game_players_gen, config = exper_config.get_configuration()
-    ana_logger.config(logger, config.output)
 
     data = build_data_frame()
 

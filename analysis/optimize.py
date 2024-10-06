@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Goal: improve the minimaxer configuration
+"""Goal: improve the game configuration
 
 Optimize the given configuration, by choosing the best set from
 a set of neighbors.
@@ -9,7 +9,8 @@ Choose more random starting points and optimize from each,
 keeping the overall best set of parameters. New start points
 are chosen near the current best point.
 
-Only the si scorer parameters listed in the game config file
+For minimaxer and negamaxer:
+Only the scorer parameters listed in the game config file
 will be explored, thus remove any that do not apply to the
 game.
 
@@ -25,17 +26,19 @@ import random
 import sys
 
 import ana_logger
+import param_ops
 import play_game
 from context import ai_player
 from context import cfg_keys as ckey
-from context import man_config
 from context import game_logger
+from context import man_config
 
 
 # %% loggers
 
-logger = logging.getLogger('optimize')
+logger = logging.getLogger()
 
+# disable the game logger
 game_logger.game_log.active = False
 
 
@@ -52,16 +55,19 @@ POS_TEST_VALS = [0, 2, 4, 8, 12, 16, 32, 56, 64]
 PARAMS_VALS = {ckey.ACCESS_M: PN_TEST_VALS,
                ckey.CHILD_CNT_M: PN_TEST_VALS,
                ckey.EMPTIES_M: PN_TEST_VALS,
-               ckey.EVENS_M:PN_TEST_VALS,
+               ckey.EVENS_M: PN_TEST_VALS,
                ckey.SEEDS_M: PN_TEST_VALS,
                ckey.STORES_M: PN_TEST_VALS,
                ckey.REPEAT_TURN: POS_TEST_VALS,
+
+               ckey.MCTS_BIAS: list(range(100, 1000, 50)),
+               ckey.MCTS_NODES: list(range(100, 3000, 100)),
+               ckey.MCTS_POUTS: list(range(1, 5, 1))
                }
 
 # %% global variables
 
 cargs = None
-log_file = None
 starts = []
 
 
@@ -77,7 +83,7 @@ def define_parser():
                         help="""Select the game to optimize.""")
 
     parser.add_argument('--nbr_runs', action='store',
-                        default=1_000, type=int,
+                        default=250, type=int,
                         help="""Select the number of games to simulate
                         for each test pair.
                         Default: %(default)s""")
@@ -107,14 +113,15 @@ def define_parser():
 
     parser.add_argument('--output', action='store',
                         help="""Save the ouptut to the specified file.
-                        Skip for output to console only.""")
+                        Skip for output to console only.
+                        Output file is always restarted.""")
     return parser
 
 
 def process_command_line():
     """Process the command line arguments."""
 
-    global cargs, log_file
+    global cargs
 
     parser = define_parser()
     try:
@@ -123,21 +130,11 @@ def process_command_line():
         parser.print_help()
         sys.exit()
 
-    ana_logger.config(logger, cargs.output)
+    ana_logger.config(logger, cargs.output, True)
     logger.info(cargs)
 
 
-# %% utility functions
-
-def pname_list(pdict):
-    """Get the list of parameter names to vary,
-    use those listed in player dict, minus easy_rand."""
-
-    pnames = list(pdict['scorer'].keys())
-    if 'easy_rand' in pnames:
-        pnames.remove('easy_rand')
-    return pnames
-
+# %%  neighbors
 
 def add_random_offset(vlist, value):
     """Pick a value that might be a small way away
@@ -165,7 +162,7 @@ def add_random_offset(vlist, value):
     return vlist[idx]
 
 
-def get_random_value(value, axis):
+def get_random_neigh(value, axis):
     """Choose a new parameter value that a few steps away
     from the current value."""
 
@@ -203,14 +200,6 @@ def get_value_neighs(axis, cur_val):
     return test_vals
 
 
-def update_player(player, new_params):
-    """Update the scorer parameters in the player
-    with values from new_params dictionary."""
-
-    player.sc_params = ai_player.ScoreParams(**new_params)
-    player.collect_scorers()
-
-
 # %%    optimizers
 
 def one_step(game, player1, player2, pnames):
@@ -221,16 +210,17 @@ def one_step(game, player1, player2, pnames):
     directly compared."""
 
     best_params = None
-    better_pct = 0.5   # assume p1 v p1 is 50%
-    p1_params = vars(player1.sc_params)
+    better_pct = 0.5   # assume p1 v p1 is 50% i.e. fair
+    p1_params = param_ops.get_params(player1)
 
     for axis in pnames:
         for nval in get_value_neighs(axis, p1_params[axis]):
 
             pcopy = p1_params.copy()
             pcopy[axis] = nval
-            update_player(player2, pcopy)
+            param_ops.update_player(player2, pcopy)
 
+            logger.info('Param update %s %s', axis, nval)
             win_pct = play_game.get_win_percent(game, player1, player2,
                                                 cargs.nbr_runs)
 
@@ -238,8 +228,8 @@ def one_step(game, player1, player2, pnames):
                 better_pct = win_pct
                 best_params = pcopy
 
-                logger.info(f'One Step: Better Params: {win_pct:6.3%}\n%s',
-                            best_params)
+                logger.info('One Step: Better Params: %8.3f%%', win_pct * 100)
+                logger.info(best_params)
 
     return best_params
 
@@ -251,22 +241,22 @@ def optimize_from(game, player1, player2, pnames):
     global starts
 
     local_best_params = None
-    start_params = vars(player1.sc_params)
+    start_params = param_ops.get_params(player1).copy()
 
     for i in range(cargs.nbr_steps):
 
-        logger.info(f'\nOpt from: Step local {i}:')
+        logger.info('\n\nOpt from: Step local %s:', i)
         params = one_step(game, player1, player2, pnames)
         if params is None:
             break
         if params == start_params:
-            logger.info('\nOpt from: found a cycle - stopping.')
+            logger.info('\n\nOpt from: found a cycle - stopping.')
             local_best_params = None
             break
 
         # we've taken a step in better direction, update player1
-        local_best_params = params
-        update_player(player1, params)
+        local_best_params = params.copy()
+        param_ops.update_player(player1, params)
 
     starts += [(start_params, local_best_params, i+1)]
     return local_best_params
@@ -281,45 +271,48 @@ def optimize():
 
     game, pdict = man_config.make_game(PATH + cargs.game + '.txt')
 
-    if ckey.ALGORITHM in pdict and pdict[ckey.ALGORITHM] != 'minimaxer':
-        raise ValueError("game not configured for minimaxer")
-
-    pnames = pname_list(pdict)
-    logger.info('Parameters to optimize: %s', pnames)
-
     player1 = ai_player.AiPlayer(game, pdict)
     player2 = ai_player.AiPlayer(game, pdict)
-    player1.algo.set_params(cargs.depth)
-    player2.algo.set_params(cargs.depth)
-    best_params = vars(player1.sc_params)
+    param_ops.add_algo_name(player1)
+    param_ops.add_algo_name(player2)
+    param_ops.set_depth(player1, cargs.depth)
+    param_ops.set_depth(player2, cargs.depth)
+
+    pnames = param_ops.get_pnames(player1, pdict)
+    logger.info('Parameters to optimize: %s', pnames)
+
+    best_params = param_ops.get_params(player1)
 
     for i in range(cargs.nbr_starts):
 
         if i < 1:
-            new_start = best_params
-            logger.info(f'\n{i}: Starting point: \n%s', best_params)
+            new_start = best_params.copy()
+            logger.info('\n%d: Starting point: \n%s', i, best_params)
         else:
-            new_start = {k: get_random_value(best_params[k], k) for k in pnames}
-            update_player(player1, new_start)
-            logger.info(f'\n{i}: New random start:\n%s', new_start)
+            new_start = {k: get_random_neigh(best_params[k], k) for k in pnames}
+            param_ops.update_player(player1, new_start)
+            logger.info('\n%d: New random start:\n%s', i, new_start)
 
         params = optimize_from(game, player1, player2, pnames)
 
         if params:
-            logger.info('\nOptimize: Comparing best_params:\n%s', best_params)
-            logger.info(' to new param set: \n%s', params)
+            logger.info('\n\nOptimize: Comparing best_params:')
+            logger.info(best_params)
+            logger.info(' to new param set:')
+            logger.info(params)
 
-            update_player(player1, best_params)
-            update_player(player2, params)
+            param_ops.update_player(player1, best_params)
+            param_ops.update_player(player2, params)
             win_pct = play_game.get_win_percent(game, player1, player2,
                                                 cargs.nbr_runs)
 
             if win_pct > 0.50 + cargs.thresh:
-                logger.info(f'New Best Params: {win_pct:6.3%} over previous best.')
+                logger.info('New Best Params: %8.3f%% over previous best.',
+                            win_pct * 100)
                 logger.info(params)
                 best_params = params.copy()
             else:
-                logger.info(f'Not better {win_pct:6.3%}.')
+                logger.info('Not better %8.3f%%.', win_pct * 100)
 
     return best_params
 
@@ -333,12 +326,8 @@ if __name__ == '__main__':
 
     logger.info('\nStart points and best from there:')
     for start, best, steps in starts:
-        logger.info(start)
-        logger.info(best)
-        logger.info(steps)
-        logger.info('')
+        logger.info('\n%s\n%s\n%s\n', start, best, steps)
 
-    logger.info('\nBest Overall Params: ')
-    logger.info(selected_params)
+    logger.info('\nBest Overall Params:\n%s', selected_params)
 
     ana_logger.close(logger)

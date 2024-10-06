@@ -10,7 +10,8 @@ Created on Sat Oct  5 13:51:41 2024
 
 import logging
 
-def config(logger, outfile):
+
+def config(logger, outfile, restart=False):
     """Configure the logger to do a brief date/timestamp,
     logger name, and message.
     If outfile, create a second handler to output messages
@@ -25,7 +26,10 @@ def config(logger, outfile):
     logger.addHandler(console)
 
     if outfile:
-        ofile = logging.FileHandler(outfile)
+        if restart:
+            ofile = logging.FileHandler(outfile, mode='w')
+        else:
+            ofile = logging.FileHandler(outfile)
         ofile.setFormatter(formatter)
         logger.addHandler(ofile)
 

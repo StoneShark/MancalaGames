@@ -123,7 +123,7 @@ class FindLoops:
             self.dupl_cnt += 1
 
             if self.dupl_cnt > self.max_loop:
-                logger.info(f"Game cycle found {len(self.game_states)}")
+                logger.info("Game cycle found %d", len(self.game_states))
                 return True
         else:
             self.game_states.append(game.state)
@@ -217,6 +217,6 @@ def get_win_percent(game, player1, player2, nbr_runs):
 
     gstats = play_games(game, player1, player2, nbr_runs, False)
     if gstats.stats['MAX_TURNS'] > nbr_runs // 2:
-        logger.info(f"Many max_TURNS games {gstats.stats['MAX_TURNS']}")
+        logger.info("Many MAX_TURNS games %d", gstats.stats['MAX_TURNS'])
 
     return (gstats.wins[True] + (gstats.ties * 0.5)) / gstats.total

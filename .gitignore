@@ -11,3 +11,5 @@ logs
 MancalaGames
 *.cov
 analysis/data
+analysis/pdicts
+context.py
