@@ -72,61 +72,62 @@ class SowSeeds(SowMethodIf):
 class SowSeedsNStore(SowMethodIf):
     """Sow a seed into the player's own store when passing it.
 
-    If the sow ends in the store, return WinCond.REPEAT_TURN.
+    If the sow ends in the store, set capt_loc to WinCond.REPEAT_TURN.
 
-    Poses: don't bother looking up fill_store if loc isn't
-    in this tuple.
-
-    Fill Store: If we have just incremented past current
-    player's store, eval True to state that we should stop
-    and put a seed into the store."""
+    This assumes that at least one hole is not blocked on
+    each side of the board."""
 
     def __init__(self, game, decorator=None):
+
+        def f_to_t_store(ploc, loc):
+            """Return True if ploc is false side of the board
+            (not store) and loc is on the true side of the board."""
+
+            return (ploc != gi.WinCond.REPEAT_TURN
+                    and 0 <= ploc < self.game.cts.holes
+                    and self.game.cts.holes <= loc < self.game.cts.dbl_holes)
+
+        def t_to_f_store(ploc, loc):
+            """Return True if ploc is true side of the board
+            (not store) and loc is on the false side of the board."""
+
+            return (ploc != gi.WinCond.REPEAT_TURN
+                    and self.game.cts.holes <= ploc < self.game.cts.dbl_holes
+                    and 0 <= loc < self.game.cts.holes)
+
         super().__init__(game, decorator)
 
-        self.fill_store = ((self.game.cts.holes - 1,       # for CW not turn
-                            self.game.cts.dbl_holes - 1),  # for CW turn
-                           (0, 0),                         # not used
-                           (self.game.cts.holes, 0))       # for CCW
-
-        if game.info.sow_direct == gi.Direct.CW:
-            self.poses = (self.game.cts.holes - 1,
-                          self.game.cts.dbl_holes - 1)
-        elif game.info.sow_direct == gi.Direct.CCW:
-            self.poses = (0, self.game.cts.holes)
-        else:
-            self.poses = (0, self.game.cts.holes - 1,
-                          self.game.cts.holes, self.game.cts.dbl_holes - 1)
+        self.sow_store = {gi.Direct.CCW: [f_to_t_store, t_to_f_store],
+                          gi.Direct.CW: [t_to_f_store, f_to_t_store]}
 
 
     def sow_seeds(self, mdata):
-        """Sow seeds."""
+        """Sow seeds.
+        ploc is start hole and then follows along as the
+        previously hole sown."""
 
         turn = self.game.turn
         incr = self.game.deco.incr.incr
+        sow_store = self.sow_store[mdata.direct][turn]
 
-        loc = mdata.cont_sow_loc
-        seeds = mdata.seeds
+        ploc = mdata.cont_sow_loc
+        loc = incr(ploc, mdata.direct, mdata.cont_sow_loc)
 
-        while seeds > 0:
+        for _ in range(mdata.seeds):
 
-            loc = incr(loc, mdata.direct, mdata.cont_sow_loc)
-
-            if (loc in self.poses
-                    and loc == self.fill_store[mdata.direct + 1][turn]):
-
+            if sow_store(ploc, loc):
                 self.game.store[turn] += 1
-                seeds -= 1
-                if not seeds:
-                    game_log.add('Sow ended in store REPEAT TURN',
-                                 game_log.INFO)
-                    mdata.capt_loc = gi.WinCond.REPEAT_TURN
-                    return mdata
+                ploc = gi.WinCond.REPEAT_TURN
 
-            self.game.board[loc] += 1
-            seeds -= 1
+            else:
+                self.game.board[loc] += 1
+                ploc = loc
+                loc = incr(loc, mdata.direct, mdata.cont_sow_loc)
 
-        mdata.capt_loc = loc
+        if ploc == gi.WinCond.REPEAT_TURN:
+            game_log.add('Sow ended in store REPEAT TURN', game_log.INFO)
+
+        mdata.capt_loc = ploc
 
 
 class DivertSkipBlckdSower(SowMethodIf):

@@ -132,6 +132,25 @@ GAMECONF = {'basic':
                  'stores': True,
                  'capt_on': [2]},
 
+            's_own_rnds':
+                {"blocks": True,
+                 "crosscapt": True,
+                 "mustpass": True,
+                 "rounds": True,
+                 "sow_own_store": True,
+                 "stores": True,
+                 },
+
+            's_own_rnds_lap':
+                {"blocks": True,
+                 "mlaps": True,
+                 "crosscapt": True,
+                 "mustpass": True,
+                 "rounds": True,
+                 "sow_own_store": True,
+                 "stores": True,
+                 }
+
             }
 
 START = {'start':
@@ -179,6 +198,19 @@ START = {'start':
                               _turn=False,
                               blocked=(F, F, F, F, F, F, F, F, F, F)),
 
+        '2ndround':
+             mancala.GameState(board=(2, 4, 2, 0, 3, 0, 0, 0, 0, 0),
+                               store=(0, 9),
+                               mcount=5,
+                               _turn=False,
+                               blocked=(F, F, F, F, F, T, F, F, F, F)),
+
+        '2ndround2b':
+             mancala.GameState(board=(2, 4, 2, 2, 0, 0, 0, 0, 0, 0),
+                               store=(0, 10),
+                               mcount=5,
+                               _turn=False,
+                               blocked=(F, F, F, F, T, T, F, F, F, F)),
         }
 
 CASES = [('basic', 'start', F, 2,
@@ -266,6 +298,25 @@ CASES = [('basic', 'start', F, 2,
           ('mlaps_cnt', 'wochild', F, 3, # do mlaps, then stop
            9, (1, 1, 1, 0, 2, 0, 1, 1, 1, 1), [6, 5], NBLCK),
 
+          # sow own err with block/rounds
+          ('s_own_rnds', '2ndround', F, 1,
+           gi.WinCond.REPEAT_TURN,
+           (2, 0, 3, 1, 4, 0, 0, 0, 0, 0), [1, 9],
+           (F, F, F, F, F, T, F, F, F, F)),
+          ('s_own_rnds', '2ndround2b', F, 2,
+           gi.WinCond.REPEAT_TURN,
+           (2, 4, 0, 3, 0, 0, 0, 0, 0, 0), [1, 10],
+           (F, F, F, F, T, T, F, F, F, F)),
+          ('s_own_rnds', '2ndround2b', F, 3,   # don't sow on own side, 1st is in store
+           6,
+           (2, 4, 2, 0, 0, 0, 1, 0, 0, 0), [1, 10],
+           (F, F, F, F, T, T, F, F, F, F)),
+
+          ('s_own_rnds_lap', '2ndround', F, 0,
+           gi.WinCond.REPEAT_TURN,
+           (0, 5, 0, 1, 4, 0, 0, 0, 0, 0), [1, 9],
+           (F, F, F, F, F, T, F, F, F, F)),
+
          ]
 
 CIDS = [f'{case[0]}-{case[1]}-{case[2]}-idx{idx}' for idx, case in enumerate(CASES)]
@@ -280,6 +331,7 @@ BAD_INHIBITOR_TESTS = [
 
 # %% test_sower
 
+# @pytest.mark.usefixtures('logger')
 @pytest.mark.parametrize('conf_name, state_name, turn, move,'
                          'eloc, eboard, estore, eblocks',
                          CASES, ids=CIDS)
@@ -335,7 +387,10 @@ def test_sower(conf_name, state_name, turn, move,
 
     assert sum(game.store) + sum(game.board) == game.cts.total_seeds
 
+    assert False
 
+
+# @pytest.mark.usefixtures('logger')
 @pytest.mark.parametrize('mcount', (1, 2))
 @pytest.mark.parametrize('conf_name, state_name, turn, move,'
                          'eloc, eboard, estore, eblocks',
