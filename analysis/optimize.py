@@ -49,7 +49,7 @@ BAD_CFG = 'all_params.txt'
 INDEX = [fname[:-4] for fname in os.listdir(PATH) if fname != BAD_CFG]
 
 
-PN_TEST_VALS =  [-16, -12 -8, -4, -2, -1, 0, 1, 2, 4, 8, 12, 16]
+PN_TEST_VALS =  [-16, -12, -8, -4, -2, -1, 0, 1, 2, 4, 8, 12, 16]
 POS_TEST_VALS = [0, 2, 4, 8, 12, 16, 32, 56, 64]
 
 PARAMS_VALS = {ckey.ACCESS_M: PN_TEST_VALS,
@@ -64,6 +64,10 @@ PARAMS_VALS = {ckey.ACCESS_M: PN_TEST_VALS,
                ckey.MCTS_NODES: list(range(100, 3000, 100)),
                ckey.MCTS_POUTS: list(range(1, 5, 1))
                }
+
+# the number of steps in above arrays that a parameter might
+# be adjusted for
+RANDOM_DIST = 3
 
 # %% global variables
 
@@ -142,7 +146,18 @@ def process_command_line():
 
 # %%  neighbors
 
-def add_random_offset(vlist, value):
+
+def get_closest_index(vlist, cur_val):
+    """Return the index of the value closest to cur_val in vlist"""
+
+    if cur_val in vlist:
+        return vlist.index(cur_val)
+
+    return min(enumerate(vlist),
+               key=lambda idx_val: abs(cur_val - idx_val[1]))[0]
+
+
+def get_random_neigh(axis, cur_val):
     """Pick a value that might be a small way away
     from the current value.
 
@@ -150,57 +165,43 @@ def add_random_offset(vlist, value):
     even if on ends by wrapping the offsets when at
     an endpoint."""
 
+    vlist = PARAMS_VALS[axis]
     vlen = len(vlist)
+    idx = get_closest_index(vlist, cur_val)
 
-    if value in vlist:
-        idx = vlist.index(value)
-    else:
-        idx = vlen // 2 + 1
-
-    offset = random.randint(-2, 2)
+    offset = random.randint(-RANDOM_DIST, RANDOM_DIST)
     if idx == 0:
         offset = abs(offset)
     elif idx == vlen:
         offset = -abs(offset)
 
     idx = max(0, min(idx + offset, vlen - 1))
-
     return vlist[idx]
-
-
-def get_random_neigh(axis, cur_val):
-    """Choose a new parameter value that a few steps away
-    from the current value."""
-
-    plist = PARAMS_VALS[axis]
-    return add_random_offset(plist, cur_val)
 
 
 def get_value_neighs(axis, cur_val):
     """Get the values that appear on either side of the cur_val.
     cur_val might not be in  PARAMS_VALS."""
-    plist = PARAMS_VALS[axis]
+    vlist = PARAMS_VALS[axis]
 
-    if cur_val < plist[0]:
-        test_vals = [plist[0]]
+    if cur_val < vlist[0]:
+        test_vals = [vlist[0]]
 
-    elif cur_val == plist[0]:
-        test_vals = [plist[1]]
+    elif cur_val == vlist[0]:
+        test_vals = [vlist[1]]
 
-    elif plist[-1] < cur_val:
-        test_vals = [plist[-1]]
+    elif vlist[-1] < cur_val:
+        test_vals = [vlist[-1]]
 
-    elif plist[-1] == cur_val:
-        test_vals = [plist[-2]]
+    elif vlist[-1] == cur_val:
+        test_vals = [vlist[-2]]
 
     else:
-        for pidx, pval in enumerate(plist):
-            if cur_val <= pval:
-                break
-        if cur_val == pval:
-            test_vals = [plist[pidx - 1], plist[pidx + 1]]
+        pidx = get_closest_index(vlist, cur_val)
+        if cur_val == vlist[pidx]:
+            test_vals = [vlist[pidx - 1], vlist[pidx + 1]]
         else:
-            test_vals = [plist[pidx - 1], plist[pidx]]
+            test_vals = [vlist[pidx - 1], vlist[pidx]]
 
     return test_vals
 
