@@ -82,6 +82,12 @@ def define_parser():
                         choices=list(INDEX),
                         help="""Select the game to optimize.""")
 
+    parser.add_argument('--skip_start', action='store_true',
+                        help="""Do not test the start configuration
+                        The start location will still be used as the
+                        focus for the random starts. This will not
+                        test the points up/down each axis.""")
+
     parser.add_argument('--nbr_runs', action='store',
                         default=250, type=int,
                         help="""Select the number of games to simulate
@@ -162,13 +168,12 @@ def add_random_offset(vlist, value):
     return vlist[idx]
 
 
-def get_random_neigh(value, axis):
+def get_random_neigh(axis, cur_val):
     """Choose a new parameter value that a few steps away
     from the current value."""
 
-    if axis == 'repeat_turn':
-        return add_random_offset(POS_TEST_VALS, value)
-    return add_random_offset(PN_TEST_VALS, value)
+    plist = PARAMS_VALS[axis]
+    return add_random_offset(plist, cur_val)
 
 
 def get_value_neighs(axis, cur_val):
@@ -285,11 +290,11 @@ def optimize():
 
     for i in range(cargs.nbr_starts):
 
-        if i < 1:
+        if not cargs.skip_start and i < 1:
             new_start = best_params.copy()
             logger.info('\n%d: Starting point: \n%s', i, best_params)
         else:
-            new_start = {k: get_random_neigh(best_params[k], k) for k in pnames}
+            new_start = {k: get_random_neigh(k, best_params[k]) for k in pnames}
             param_ops.update_player(player1, new_start)
             logger.info('\n%d: New random start:\n%s', i, new_start)
 

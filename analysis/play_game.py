@@ -141,8 +141,15 @@ def play_one_game(game, fplayer, tplayer, save_logs=False):
     Otherwise use the player."""
 
     stuck = FindLoops()
+    game_logger.game_log.turn(0, 'Start Game', game)
 
-    for _ in range(2000 if game.info.rounds else 500):
+    nbr_games = 500
+    if game.info.rounds:
+        nbr_games *= 4
+    if game.info.capt_rturn or game.info.sow_own_store:
+        nbr_games *= 2
+
+    for _ in range(nbr_games):
 
         if game.turn and tplayer:
             game_logger.game_log.active = False
@@ -164,7 +171,8 @@ def play_one_game(game, fplayer, tplayer, save_logs=False):
         if cond in (gi.WinCond.ROUND_WIN, gi.WinCond.ROUND_TIE):
             if game.new_game(cond, new_round_ok=True):
                 return GameResult(cond.value), game.turn
-
+            else:
+                game_logger.game_log.turn(0, 'Start Game', game)
 
         if stuck.game_state_loop(game):
             return GameResult.LOOPED, None
