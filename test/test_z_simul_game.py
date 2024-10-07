@@ -61,7 +61,13 @@ def test_one_game(game_data, request):
 
     game, _ = game_data
 
-    for _ in range(3000 if game.info.rounds else 500):
+    nbr_games = 500
+    if game.info.rounds:
+        nbr_games *= 4
+    if game.info.capt_rturn or game.info.sow_own_store:
+        nbr_games *= 2
+
+    for _ in range(nbr_games):
         moves = game.get_moves()
         assert moves, "Game didn't end right."
 
