@@ -387,8 +387,6 @@ def test_sower(conf_name, state_name, turn, move,
 
     assert sum(game.store) + sum(game.board) == game.cts.total_seeds
 
-    assert False
-
 
 # @pytest.mark.usefixtures('logger')
 @pytest.mark.parametrize('mcount', (1, 2))
