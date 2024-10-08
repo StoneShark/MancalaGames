@@ -139,6 +139,15 @@ class LapSower(enum.IntEnum):
 
 
 @enum.unique
+class Rounds(enum.IntEnum):
+    """Game played in rounds and how it ends."""
+
+    NO_ROUNDS = 0
+    HALF_SEEDS = 1
+    NO_MOVES = 2   # mustpass determines if only current player or both
+
+
+@enum.unique
 class RoundFill(enum.IntEnum):
     """How rounds are filled when a new round starts."""
 
@@ -234,7 +243,7 @@ class GameInfo:
     # **** game dynamics
     goal: Goal = Goal.MAX_SEEDS
     mustpass: bool = False
-    rounds: bool = False
+    rounds: Rounds = Rounds.NO_ROUNDS
     round_starter: RoundStarter = RoundStarter.ALTERNATE
     round_fill: RoundFill = RoundFill.NOT_APPLICABLE
     no_sides: bool = False

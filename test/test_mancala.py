@@ -118,7 +118,7 @@ class TestGameState:
         game_consts = gc.GameConsts(nbr_start=4, holes=2)
         game_info = gi.GameInfo(capt_on = [2],
                                 blocks=True,
-                                rounds=True,
+                                rounds=gi.Rounds.HALF_SEEDS,
                                 round_fill=RoundFill.SHORTEN,  # game will use child inhibitor
                                 child_type=ChildType.NORMAL,
                                 child_cvt=2,

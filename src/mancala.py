@@ -261,8 +261,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
                     game_consts.nbr_start))
 
         if (game_info.goal == gi.Goal.TERRITORY
-                or game_info.round_fill
-                    in (gi.RoundFill.UMOVE, gi.RoundFill.SHORTEN)):
+                or game_info.rounds == gi.Rounds.NO_MOVES):
             game_consts.set_win_all_seeds()
 
         self.cts = game_consts

@@ -15,7 +15,7 @@
       "mustpass": true,
       "pickextra": 4,
       "round_starter": 1,
-      "rounds": true,
+      "rounds": 2,
       "sow_rule": 3,
       "sow_direct": 1,
       "stores": true

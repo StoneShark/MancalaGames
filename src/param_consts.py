@@ -128,6 +128,12 @@ STRING_DICTS = {
          'Lap Sower (end)': gi.LapSower.LAPPER,
          'Lap Sower Next': gi.LapSower.LAPPER_NEXT}),
 
+    'Rounds': lookup_dicts(
+        gi.Rounds,
+        {'Not Played in Rounds': gi.Rounds.NO_ROUNDS,
+         'Half seeds ends Rounds': gi.Rounds.HALF_SEEDS,
+         'No Moves': gi.Rounds.NO_MOVES}),
+
     'RoundFill': lookup_dicts(
         gi.RoundFill,
         {'Not Applicable': gi.RoundFill.NOT_APPLICABLE,

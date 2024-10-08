@@ -670,7 +670,7 @@ class TestOnlyRightTwo:
                                 allow_rule=AllowRule.FIRST_TURN_ONLY_RIGHT_TWO,
                                 stores=True,
                                 blocks=True,
-                                rounds=True,
+                                rounds=gi.Rounds.NO_MOVES,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
@@ -707,7 +707,7 @@ class TestOnlyRightTwo:
                                 allow_rule=AllowRule.RIGHT_2_1ST_THEN_ALL_TWO,
                                 stores=True,
                                 blocks=True,
-                                rounds=True,
+                                rounds=gi.Rounds.NO_MOVES,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 

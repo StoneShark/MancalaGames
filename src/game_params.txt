@@ -65,7 +65,11 @@ Capture	pickextra	On Capture, Take More Rule	game_info _	131	CaptExtraPick	NONE	
 In terms of GRANDSLAM, these picks are considered captures."
 Dynamics	stores	Stores	game_info _	142	bool	True	0	0	Are stores present on the game board?
 Dynamics	mustpass	Must Pass	game_info _	125	bool	False	1	0	When a player has no allowable moves on their turn, they must pass, and continue to do so until they have allowable moves or the game is over. The game is over when there is a clear winner or tie condition, or when neither player has an allowable move.
-Dynamics	rounds	Rounds	game_info _	135	bool	False	4	0	"Is the game played in a series of rounds? When rounds are employed, each round may end under conditions that do not win the overall game. The board is then setup again per the game rules, generally with some feature changed based on the previous round: hole ownership, holes out of play, a shortened board. Play continues in rounds until either player meets the overall game winning condition.
+Dynamics	rounds	Rounds	game_info _	135	Rounds	NO_ROUNDS	4	0	"When rounds are employed, each round may end under conditions that do not win the overall game. The board is then setup again per the game rules, generally with some feature changed based on the previous round: hole ownership, holes out of play, a shortened board. Play continues in rounds until either player meets the overall game winning condition.
+If the game is played in round, defines how each round ends: 
+- NO_ROUNDS: the game is not played in rounds
+- HALF_SEEDS: each round ends when one player has more that half the seeds
+- NO_MOVES: When MUSTSHARE is set, each round ends when neither player has a valid move.  When MUSTSHARE is not set, each round ends when a  player does have not a valid move at the start of their turn.
 For example: In Weg each round ends when neither player has a valid move. The board is then set up again after determining who owns what territory (holes). Rounds continue until one player has claimed sufficient territory to be declared the game winner (e.g. ownership of 10 or more holes).
 In the case of a round win or tie  a new starter is determined via ROUND_STARTER and  the board is reset according to ROUND_FILL.
 BLOCKS are used in many games and set between rounds based on the seed placement. TERRITORY GOAL games adjust hole ownership between rounds."
@@ -87,7 +91,10 @@ Dynamics	blocks	Blocks	game_info _	102	bool	False	7	0	"Blocks remove holes from 
 When used with ROUNDS, the holes not filled from the player with fewer seeds are blocked and thus out of play for the round.
 When used with DEPRIVE, SOW_BLCK_DIV and GPARAM_ONE holes are closed (blocked and removed from play) when sown to GPARAM_ONE seeds."
 Dynamics	goal	Game Goal	game_info _	115	Goal	MAX_SEEDS	0	2	"The overall goal of the game. Defines how a player wins.
-- MAX_SEEDS: player with the maximum number of seeds at the end of the game wins or they collect more than half of the total seeds
+- MAX_SEEDS: The goal is to collect the maximum number of seeds.
+  + If the game is not played in rounds, the game will end when one player has more than half of the total seeds.
+  + If the game is played in rounds, the round end condition is determined by ROUNDS. These games end when one player has collected sufficient seeds to prevent the opponent from filling the required number of holes. Generally, the required number of holes is one but this may be increased by setting GPARAM_ONE. 
+  + In MAX_SEEDS/ROUNDS games the player only controls the holes on their side of the board, where as, in TERRITORY games a player may control holes on either side of the board.
 - DEPRIVE: eliminate all of your opponents seeds.
   + If a player has no seeds at the start of their turn, they loose. If a player has no moves at the start of their turn, then the game outcome is determined by who has seeds: If both players have seeds, the game ends in a tie. If the current player has seeds, but the previous player does not, then the current player wins because they forced the previous player to give away all their seeds.
   + GRANDSLAM must be legal for DEPRIVE games.
@@ -111,7 +118,8 @@ Dynamics	prescribed	Prescribed Opening Move	game_info _	132	SowPrescribed	NONE	3
 - PLUS1MINUS1: proceed from the selected hole by moving one seed from the next hole into the following hole, next skip that hole and repeat moving seed forward. After cycling the board, capture across from the opening hole. 
 - ARNGE_LIMIT: the first move may be used to rearrange the seeds (opponent is same layout). If the first move is not used for rearrangement, captures and child creation are not allowed from the starter until the second player makes a child or captures."
 Dynamics	gparam_one	General Input	game_info _	116	int	0	5	2	"GOAL of Territory: defines the number of holes needed for a win.
-GOAL of Deprive and Blocked Divert Sower: defines the number of seeds needed to close/block holes (sow_blkd_div)."
+GOAL of Deprive and Blocked Divert Sower: defines the number of seeds needed to close/block holes (sow_blkd_div).
+GOAL of Max Seeds and ROUNDS: define the minimum number of holes each player must have to continue the game."
 Game	game_class	Game Class	game_class	1	GameClasses	Mancala	0	0	The name of the Game Class. Currently only Mancala.
 Game	holes	Holes per Side	game_constants _	2	int	3	2	0	Number of holes on each side of the board.
 Game	help_file	Help File	game_info _	118	str	mancala_help.html	3	0	An html help file describing the game (mancala_help.html is the main help file).

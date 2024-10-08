@@ -126,11 +126,19 @@ is included after the parameter sections.
 <p>When a player has no allowable moves on their turn, they must pass, and continue to do so until they have allowable moves or the game is over. The game is over when there is a clear winner or tie condition, or when neither player has an allowable move.
 <h4 id="rounds"> Rounds </h4>
 <p class="pdesc">Location in Config Files: game_info : rounds
-<p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
-<p class="pdesc">Default value: False
+<p id="Rounds" class="pdesc">Type: <a href="param_types.html#Rounds"> Rounds </a>
+<p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Dynamics
 
-<p>Is the game played in a series of rounds? When rounds are employed, each round may end under conditions that do not win the overall game. The board is then setup again per the game rules, generally with some feature changed based on the previous round: hole ownership, holes out of play, a shortened board. Play continues in rounds until either player meets the overall game winning condition.
+<p>When rounds are employed, each round may end under conditions that do not win the overall game. The board is then setup again per the game rules, generally with some feature changed based on the previous round: hole ownership, holes out of play, a shortened board. Play continues in rounds until either player meets the overall game winning condition.
+<p>If the game is played in round, defines how each round ends: 
+<ol start=0><li class="helptext">
+<b class="enum">NO_ROUNDS</b>: the game is not played in rounds
+<li class="helptext">
+<b class="enum">HALF_SEEDS</b>: each round ends when one player has more that half the seeds
+<li class="helptext">
+<b class="enum">NO_MOVES</b>: When <a href="game_params.html#mustshare">MUSTSHARE</a> is set, each round ends when neither player has a valid move.  When <a href="game_params.html#mustshare">MUSTSHARE</a> is not set, each round ends when a  player does have not a valid move at the start of their turn.
+</ol>
 <p>For example: In <a href="about_games.html#Weg">Weg</a> each round ends when neither player has a valid move. The board is then set up again after determining who owns what territory (holes). Rounds continue until one player has claimed sufficient territory to be declared the game winner (e.g. ownership of 10 or more holes).
 <p>In the case of a round win or tie  a new starter is determined via <a href="game_params.html#round_starter">ROUND_STARTER</a> and  the board is reset according to <a href="game_params.html#round_fill">ROUND_FILL</a>.
 <p><a href="game_params.html#blocks">BLOCKS</a> are used in many games and set between rounds based on the seed placement. TERRITORY <a href="game_params.html#goal">GOAL</a> games adjust hole ownership between rounds.
@@ -191,7 +199,10 @@ is included after the parameter sections.
 
 <p>The overall goal of the game. Defines how a player wins.
 <ol start=0><li class="helptext">
-<b class="enum">MAX_SEEDS</b>: player with the maximum number of seeds at the end of the game wins or they collect more than half of the total seeds
+<b class="enum">MAX_SEEDS</b>: The goal is to collect the maximum number of seeds.
+<p class="helptext"> If the game is not played in rounds, the game will end when one player has more than half of the total seeds.
+<p class="helptext"> If the game is played in rounds, the round end condition is determined by <a href="game_params.html#rounds">ROUNDS</a>. These games end when one player has collected sufficient seeds to prevent the opponent from filling the required number of holes. Generally, the required number of holes is one but this may be increased by setting <a href="game_params.html#gparam_one">GPARAM_ONE</a>. 
+<p class="helptext"> In MAX_SEEDS/ROUNDS games the player only controls the holes on their side of the board, where as, in TERRITORY games a player may control holes on either side of the board.
 <li class="helptext">
 <b class="enum">DEPRIVE</b>: eliminate all of your opponents seeds.
 <p class="helptext"> If a player has no seeds at the start of their turn, they loose. If a player has no moves at the start of their turn, then the game outcome is determined by who has seeds: If both players have seeds, the game ends in a tie. If the current player has seeds, but the previous player does not, then the current player wins because they forced the previous player to give away all their seeds.
@@ -257,6 +268,7 @@ is included after the parameter sections.
 
 <p><a href="game_params.html#goal">GOAL</a> of Territory: defines the number of holes needed for a win.
 <p><a href="game_params.html#goal">GOAL</a> of Deprive and Blocked Divert Sower: defines the number of seeds needed to close/block holes (sow_blkd_div).
+<p><a href="game_params.html#goal">GOAL</a> of Max Seeds and <a href="game_params.html#rounds">ROUNDS</a>: define the minimum number of holes each player must have to continue the game.
 <h2 id="tab_Allow">Allow Tab</h2>
 <h4 id="min_move"> Minimum Seeds for Move </h4>
 <p class="pdesc">Location in Config Files: game_info : min_move

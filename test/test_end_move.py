@@ -191,7 +191,7 @@ class TestEndMove:
     @pytest.fixture
     def rgame(self):
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
-        game_info = gi.GameInfo(rounds=True,
+        game_info = gi.GameInfo(rounds=gi.Rounds.HALF_SEEDS,
                                 evens=True,
                                 stores=True,
                                 nbr_holes=game_consts.holes,
@@ -506,7 +506,7 @@ class TestEndChildren:
     def rgame(self):
         """NOTE: game_info rule checking is turned off."""
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
-        game_info = gi.GameInfo(rounds=True,
+        game_info = gi.GameInfo(rounds=gi.Rounds.HALF_SEEDS,
                                 blocks=True,  # req with rounds
                                 child_cvt=2,
                                 child_type=ChildType.NORMAL,
@@ -839,7 +839,7 @@ class TestQuitter:
     @pytest.fixture
     def rgame(self):
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
-        game_info = gi.GameInfo(rounds=True,
+        game_info = gi.GameInfo(rounds=gi.Rounds.HALF_SEEDS,
                                 evens=True,
                                 stores=True,
                                 nbr_holes=game_consts.holes,
@@ -1088,7 +1088,7 @@ class TestTerritory:
                                 stores=True,
                                 gparam_one=5,
                                 goal=Goal.TERRITORY,
-                                rounds=True,
+                                rounds=gi.Rounds.NO_MOVES,
                                 round_fill=gi.RoundFill.UMOVE,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
@@ -1260,7 +1260,7 @@ class TestTerritory:
                                 stores=True,
                                 gparam_one=6,
                                 goal=Goal.TERRITORY,
-                                rounds=True,
+                                rounds=gi.Rounds.NO_MOVES,
                                 mustshare=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)

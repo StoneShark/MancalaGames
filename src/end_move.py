@@ -395,6 +395,11 @@ class RoundWinner(EndTurnIf):
             self.req_seeds = game.cts.holes + game.info.min_move - 1
             self.msg = intro + "(too few seeds to fill side)."
 
+        elif game.info.gparam_one > 0:
+            self.req_seeds = game.cts.nbr_start * game.info.gparam_one
+            self.msg = intro + "(too few seeds to fill at least " \
+                + f"{game.info.gparam_one} holes)."
+
         else:
             self.req_seeds = game.cts.nbr_start
             self.msg = intro + "(too few seeds to fill a hole)."

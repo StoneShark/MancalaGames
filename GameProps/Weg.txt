@@ -14,7 +14,7 @@
       "gparam_one": 10,
       "mlaps": 1,
       "mustpass": true,
-      "rounds": true,
+      "rounds": 2,
       "sow_direct": 1,
       "stores": true
    },

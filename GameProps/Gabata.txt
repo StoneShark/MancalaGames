@@ -16,7 +16,7 @@
       "mustpass": true,
       "prescribed": 4,
       "round_starter": 0,
-      "rounds": true,
+      "rounds": 2,
       "sow_direct": 1,
       "stores": true
    },

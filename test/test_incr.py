@@ -181,7 +181,7 @@ class TestIncr:
                                 sow_direct=Direct.CW,
                                 skip_start=True,
                                 blocks=True,
-                                rounds=True,
+                                rounds=gi.Rounds.NO_MOVES,
                                 rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)

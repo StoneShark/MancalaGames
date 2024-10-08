@@ -69,7 +69,7 @@ class TestNewGame:
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on = [2],
-                                rounds=True,
+                                rounds=gi.Rounds.NO_MOVES,
                                 blocks=True,
                                 stores=True,
                                 rules=mancala.Mancala.rules)
@@ -86,7 +86,7 @@ class TestNewGame:
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on = [2],
-                                rounds=True,
+                                rounds=gi.Rounds.NO_MOVES,
                                 stores=True,
                                 rules=mancala.Mancala.rules)
 
@@ -429,7 +429,7 @@ class TestNewGame:
         game_consts = gc.GameConsts(nbr_start=2, holes=nbr_holes)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on = [2],
-                                rounds=True,
+                                rounds=gi.Rounds.NO_MOVES,
                                 blocks=True,
                                 stores=True,
                                 child_type=ChildType.NORMAL,
@@ -463,7 +463,7 @@ class TestTerritory:
                                 stores=True,
                                 gparam_one=5,
                                 goal=Goal.TERRITORY,
-                                rounds=True,
+                                rounds=gi.Rounds.NO_MOVES,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
@@ -507,7 +507,7 @@ class TestBadEnums:
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
-        object.__setattr__(game_info, 'rounds', True)
+        object.__setattr__(game_info, 'rounds', gi.Rounds.HALF_SEEDS)
         object.__setattr__(game_info, 'round_fill', 12)
 
         with pytest.raises(NotImplementedError):

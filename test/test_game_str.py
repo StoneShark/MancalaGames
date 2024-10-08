@@ -60,7 +60,7 @@ class TestGameStr:
         game_info = gi.GameInfo(mustpass=True,
                                 stores=True,
                                 blocks=True,
-                                rounds=True,
+                                rounds=gi.Rounds.NO_MOVES,
                                 moveunlock=True,
                                 sow_direct=Direct.CCW,
                                 evens=True,

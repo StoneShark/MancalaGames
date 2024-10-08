@@ -167,6 +167,21 @@ class TestConstruction:
         m_clear_hist.assert_called_once()
 
 
+    def test_str(self, game, capsys):
+
+        pdict = {'algorithm': 'minimaxer',
+                 'scorer': {'stores_m': 8}}
+        player = ai_player.AiPlayer(game, pdict)
+        print(player)
+        data = capsys.readouterr().out
+
+        assert 'AiPlayer' in data
+        assert 'Algorithm' in data
+        assert 'Difficulty' in data
+        assert 'ScoreParams' in data
+
+
+
 class TestScorers:
 
     @pytest.fixture

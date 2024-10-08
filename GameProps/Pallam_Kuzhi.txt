@@ -12,7 +12,7 @@
       "capt_on": [4],
       "capttwoout": true,
       "mlaps": 2,
-      "rounds": true,
+      "rounds": 2,
       "round_fill": 6,
       "round_starter": 0,
       "sow_direct": 1,

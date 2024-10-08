@@ -13,7 +13,7 @@
       "capttwoout": true,
       "mlaps": 2,
       "pickextra": 1,
-      "rounds": true,
+      "rounds": 2,
       "round_fill": 1,
       "round_starter": 0,
       "sow_direct": 1,

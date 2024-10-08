@@ -233,6 +233,14 @@ def add_territory_rules(rules):
         excp=NotImplementedError)
         # territory requires move triples, GS allowables doesn't support
 
+    rules.add_rule(
+        'terr_half_rounds',
+        rule=lambda ginfo: (ginfo.goal == gi.Goal.TERRITORY and
+                            ginfo.rounds == gi.Rounds.HALF_SEEDS),
+        msg='Territory goal is incompatible with ROUNDS.HALF_SEEDS',
+        excp=gi.GameInfoError)
+        # territory always patches win_seeds to max
+
 
 def add_block_and_divert_rules(rules):
     """sow_blkd_div is implemented primarily by the sower and the
@@ -538,6 +546,15 @@ def build_rules():
         rule=lambda ginfo: not ginfo.rounds
             and ginfo.round_starter != gi.RoundStarter.ALTERNATE,
         msg='ROUND_STARTER requires ROUNDS',
+        excp=gi.GameInfoError)
+
+    man_rules.add_rule(
+        'mx_round_limit',
+        both_objs=True,
+        rule=lambda ginfo, holes: (ginfo.rounds
+                                   and ginfo.goal == gi.Goal.MAX_SEEDS
+                                   and ginfo.gparam_one > holes),
+        msg='Minimum holes needed to play another round must be less the holes per side',
         excp=gi.GameInfoError)
 
     man_rules.add_rule(

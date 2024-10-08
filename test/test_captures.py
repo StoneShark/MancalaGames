@@ -1218,7 +1218,7 @@ class TestChildInhibitor:
         game_info = gi.GameInfo(prescribed=gi.SowPrescribed.ARNGE_LIMIT,
                                 child_type=gi.ChildType.NORMAL,
                                 child_cvt=3,
-                                rounds=True,
+                                rounds=gi.Rounds.NO_MOVES,
                                 blocks=True,
                                 round_fill=gi.RoundFill.SHORTEN,
                                 stores=True,

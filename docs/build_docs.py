@@ -286,11 +286,11 @@ Descriptions are provided in the sections below.
 are good places to start.
 <a href="#Kalah">Kalah</a> is a simple cross capture game.
 
-<p><a href="#Bechi">Bechi</a>,
+<p><a href="#Bechi">Erherhe</a>,
 <a href="#Cow">Cow</a> and
 <a href="#Qelat">Qelat</a>
 add interesting complications to the basic rules.
-<a href="#Bechi">Bechi</a> introduces the concept of playing in rounds.
+<a href="#Bechi">Erherhe</a> introduces the concept of playing in rounds.
 <a href="#Cow">Cow</a> introduces varying the sow direction.
 <a href="#Qelat">Qelat</a> adds the idea of hole ownership,
  in this case, called walda's.

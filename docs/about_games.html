@@ -28,11 +28,11 @@ Descriptions are provided in the sections below.
 are good places to start.
 <a href="#Kalah">Kalah</a> is a simple cross capture game.
 
-<p><a href="#Bechi">Bechi</a>,
+<p><a href="#Bechi">Erherhe</a>,
 <a href="#Cow">Cow</a> and
 <a href="#Qelat">Qelat</a>
 add interesting complications to the basic rules.
-<a href="#Bechi">Bechi</a> introduces the concept of playing in rounds.
+<a href="#Bechi">Erherhe</a> introduces the concept of playing in rounds.
 <a href="#Cow">Cow</a> introduces varying the sow direction.
 <a href="#Qelat">Qelat</a> adds the idea of hole ownership,
  in this case, called walda's.
@@ -118,10 +118,11 @@ name than you expect.
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p31.
 <h3 id="Bao (Tanzanian)">Bao (Tanzanian)</h3>
-<p>A multi-lap mancala, sow direction is counter-clockwise, sowing to 4 on opposite side creates a child which collects seed but can't be captured. Cross-capture on opponents side, continue capture in sow direction, pick own seed on capture.
-<p>The starting player may choose to rearranged the seeds on their side of the board. This counts as the opening move. The opponents will be arranged in the same manner from the player perspective.
-<p>Capturing and making children are prohibitied on the first move of a game or round.
-<p>Played in rounds; winner starts new round. The game ends one player cannot fill a single hole. At the start of each round, the board is resized to the number of holes that the player with fewer seeds can fill completely. If the board size is reduced to 3 or less per side, no children maybe created.
+<p>The starting player may choose to rearrange the seeds on their side of the board. The opponent's side will be arranged in the same manner from their perspective. If the player choses to rearrange the board, it counts as their opening move. If they do not so choose, they cannot make a child or capture until their opponent does either.
+<p>Sow is multi-lap in a counter-clockwise direction. Sowing the final seed of a lap to 4 on opposite side, creates a child which will collect seedd but can't be captured. A child may not be created with a single seed in a move that was initiated from the player's rightmost hole. Moves may not start from children.
+<p>Cross-capture on opponents side. On capture, take the seed initiating the capture. Multiple captures may be made in sow direction as long as the player's side holes are empty. Seeds from child holes may not be captured.
+<p>Played in rounds. Each round ends when neither player has a move. At the start of each round, the board is resized to the number of holes that the player with fewer seeds can fill completely.
+<p>If the board size is reduced to 3 or less per side, no children maybe created.
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  7</p>
@@ -141,19 +142,19 @@ name than you expect.
     <p class="param"><a href="game_params.html#prescribed">Prescribed Opening Move</a>: ARNGE_LIMIT</p>
     <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: SHORTEN</p>
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: WINNER</p>
-    <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
     <p class="param"><a href="game_params.html#visit_opp">Visit Opp for Mlaps</a>: Yes</p>
     <p class="param"><a href="game_params.html#xcpickown">Own Seed on Xcapture</a>: PICK_ON_CAPT</p>
   </div>
 </div>
-<p>Rules: Russ, Laurence. Mancala Games. 1984. p48 details p 46.
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p43.
 <h3 id="Bechi">Bechi</h3>
-<p>A single-lap mancala game.  Moves may only be started from holes with two or more seeds. The start hole determines sow direction of sow (left holes: CW, right holes: CCW).  The first seed is sown in start hole.
+<p>A single-lap mancala game.  Moves may only be started from holes with two or more seeds. The start hole determines sow direction of sow (left holes: CW, right holes: CCW).  The first seed is sown in the start hole (that is, it is left in the hole).
 <p>Captures are on evens on either side of the board. Multiple captures proceed in the sow direction. Captures may not occur from locked holes.  Holes are unlocked when a move is started from the hole.
 <p>If a player has no valid move, they must pass.
-<p>Games are played in rounds. A round ends when one player has more than half the total seeds or when there are four or fewer seeds left.
+<p>Games are played in rounds. A round ends when neither player has a valid move or when there are four or fewer seeds left.
 <p>To setup the next round, seeds from each player's store are distributed 4 per hole for as many holes as can be completely filled on the player's side of the board. The player's remaining seeds are put into each player's store. Unfilled holes are out of play for the round, but may be put back into play in subsequent rounds. By default the holes are filled inward from each side; if desired, the blocked holes can be changed by the player. The player that moved last in a round, starts the next round.
 <p>A game is over when either player cannot fill a single hole, i.e. has fewer than four seeds.
 <div class="cols_row">
@@ -172,7 +173,7 @@ name than you expect.
     <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
     <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: UCHOOSE</p>
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
-    <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: SPLIT</p>
     <p class="param"><a href="game_params.html#sow_start">Sow Start Hole</a>: Yes</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
@@ -198,34 +199,11 @@ name than you expect.
     <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER_NEXT</p>
     <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: RIGHT_FILL</p>
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
-    <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
   </div>
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p45.
-<h3 id="Congklak">Congklak</h3>
-<p>A multi-lap mancala played in rounds. Sow direction is clockwise, sow into ones own store. Cross-capture with pick own. Played in rounds with loser of previous round starting the next round. The game is over when either player cannot fill a single hole.
-<div class="cols_row">
-  <div class="column2">
-    <p class="param">Holes per side:  7</p>
-    <p class="param">Start seeds:  7</p>
-    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
-    <p class="param"><a href="game_params.html#blocks">Blocks</a>: Yes</p>
-    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
-    <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER</p>
-    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
-    <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: LEFT_FILL</p>
-  </div>
-  <div class="column2">
-    <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: LOSER</p>
-    <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
-    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CW</p>
-    <p class="param"><a href="game_params.html#sow_own_store">Sow Own Store</a>: Yes</p>
-    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
-    <p class="param"><a href="game_params.html#xcpickown">Own Seed on Xcapture</a>: ALWAYS_PICK</p>
-  </div>
-</div>
-<p>Rules: <a href="https://en.wikipedia.org/wiki/Southeast_Asian_mancala" target="_blank">https://en.wikipedia.org/wiki/Southeast_Asian_mancala</a>
 <h3 id="Cow">Cow</h3>
 <p>A single-lap mancala with a SPLIT <a href="game_params.html#sow_direct">SOW_DIRECT</a>. The sow direction depends on start location:
 <ul><li class="helptext">
@@ -280,12 +258,12 @@ For the center hole, the mouse button used to start the move selects the sow dir
 <h3 id="Dakon">Dakon</h3>
 <p>A multi-lap mancala played in rounds. Sow direction is counter-clockwise, sow into ones own store. A player may move again when the final seed is sown into their store. Cross capture from opponents side only; pick own seed on capture. If a player has no seeds at the start of their turn, they must pass.
 <p>A round ends when all seeds have been moved into the stores.  To setup the next round, seeds from each player's store are distributed 7 per hole for as many holes as can be completely filled on the player's side of the board. The player's remaining seeds are put into the player's store. Unfilled holes are out of play for the round, but may be put back into play in subsequent rounds. The player that moved last in a round, starts the next round.
-<p>The game is over when either player cannot fill a single hole.
+<p>The game is over when either player cannot fill a 4 holes.
 <p>Variations:
 <ul><li class="helptext">
-played with 6 to 10 holes per side with the number of start seeds equaling number of holes
+played with 6 to 10 holes per side with the number of start seeds equaling number of holes.
 <li class="helptext">
-passing not allowed
+passing disallowed - a player with no moves at the start of their turn loses.
 </ul>
 <div class="cols_row">
   <div class="column2">
@@ -294,6 +272,7 @@ passing not allowed
     <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
     <p class="param"><a href="game_params.html#blocks">Blocks</a>: Yes</p>
     <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#gparam_one">General Input</a>: 4</p>
     <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER</p>
     <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
     <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
@@ -301,7 +280,7 @@ passing not allowed
   <div class="column2">
     <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: RIGHT_FILL</p>
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: LAST_MOVER</p>
-    <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
     <p class="param"><a href="game_params.html#sow_own_store">Sow Own Store</a>: Yes</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
@@ -309,6 +288,7 @@ passing not allowed
   </div>
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p62.
+<p>Note: <a href="game_params.html#gparam_one">GPARAM_ONE</a> set to 4 to limit game length
 <h3 id="Deka">Deka</h3>
 <p>The goal is to deprive the opponent of seeds. Sow counter-clockwise with multiple laps (LAPPER). After the first turn, holes are closed on opponent side when the final seed of a lap brings the seeds in a hole to 3. Sowing then continues with those 3 seeds. Each player's rightmost hole may not be closed. In subsequent sowing of closed holes (blocked), own holes are skipped but seeds for opponent's holes are taken out of play.
 <p>The <a href="about_games.html#Deka">Deka</a> board is not a 2 rank board, but hole assignment yields itself to moving the middle end holes to the respective player's side thus making it a 2 rank board.
@@ -399,12 +379,15 @@ start patterns: CLIPPEDTRIPLES with 3 start seeds
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p42.
 <h3 id="Erherhe">Erherhe</h3>
-<p>A single-lap mancala, sow direction is counter-clockwise, multiple capture on opponents side on 1s and 3s. A sow which cycles the board, will skip the hole that the move started from. If your opponent has no seeds, you must make seeds available to them (if you can). Played in rounds; loser starts new round. Holes that the loser cannot fill are out of play for the round.
+<p>A single-lap mancala, sow direction is counter-clockwise, multiple capture on opponents side on 1s and 3s. A sow which cycles the board, will skip the hole that the move started from. If your opponent has no seeds, you must make seeds available to them (if you can).
+<p><a href="about_games.html#Erherhe">Erherhe</a> is played in rounds. A round ends when either player has more than half of the seeds. Players then collect the seeds remaining on their side of the board. To setup the next round, each player fills as many holes as they can with 4 seeds. Left over seeds are placed in their store (3 or fewer for loser). The looser's holes that cannot be filled are out of play for the round. The loser starts new round.
+<p>The game is over when either player cannot fill two holes; that is, the winner will have collected all but 1 to 3 seeds.
 <p>Variation:
 <ul><li class="helptext">
 Another value for <a href="game_params.html#round_starter">ROUND_STARTER</a>
+<li class="helptext">
+Another value for <a href="game_params.html#round_fill">ROUND_FILL</a>
 </ul>
-<p> Another value for <a href="game_params.html#round_fill">ROUND_FILL</a>
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  6</p>
@@ -412,12 +395,13 @@ Another value for <a href="game_params.html#round_starter">ROUND_STARTER</a>
     <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
     <p class="param"><a href="game_params.html#blocks">Blocks</a>: Yes</p>
     <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 1 3</p>
+    <p class="param"><a href="game_params.html#gparam_one">General Input</a>: 2</p>
     <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: Yes</p>
     <p class="param"><a href="game_params.html#mustshare">Must Share</a>: Yes</p>
-    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
   </div>
   <div class="column2">
-    <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
+    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: HALF_SEEDS</p>
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: LOSER</p>
     <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: UCHOOSE</p>
     <p class="param"><a href="game_params.html#skip_start">Skip Start on Lap</a>: Yes</p>
@@ -426,6 +410,7 @@ Another value for <a href="game_params.html#round_starter">ROUND_STARTER</a>
   </div>
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984.  p19.
+<p>Note: <a href="game_params.html#gparam_one">GPARAM_ONE</a> set to 2 to limit game length
 <h3 id="Eson Xorgol">Eson Xorgol</h3>
 <p>Single-lap, clockwise-sow Mancala in which all holes are playable by both players. If sow ends in an occupied hole and the next hole is empty, capture the seeds in the following hole. Capture in sow direction (CW).
 <div class="cols_row">
@@ -461,7 +446,7 @@ Another value for <a href="game_params.html#round_starter">ROUND_STARTER</a>
     <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
     <p class="param"><a href="game_params.html#prescribed">Prescribed Opening Move</a>: PLUS1MINUS1</p>
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
-    <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
   </div>
@@ -520,7 +505,7 @@ Instead of minimum move of 2, singletons may start moves if all holes are empty 
   <div class="column2">
     <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: UMOVE</p>
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: WINNER</p>
-    <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
     <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: CHANGE_DIR_LAP</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
@@ -595,6 +580,32 @@ Require must share (<a href="game_params.html#mustshare">MUSTSHARE</a>) because 
   </div>
 </div>
 <p>Rules: <a href="https://en.wikipedia.org/wiki/Kalah" target="_blank">https://en.wikipedia.org/wiki/Kalah</a>
+<h3 id="Lagerung">Lagerung</h3>
+<p>A multi-lap mancala played in rounds. Sow direction is clockwise and sow into ones own store. To sow one's own store a move must either start with enough seeds to sow all of the opponents holes (and more) or chain laps to reach one's own store.
+<p>If the final seeds lands in your store, play again. If the final seed lands on your side of the board, move it to your store (always_pick) and perform a cross-capture (if there are any seeds on the opposite side).
+<p>Played in rounds. A round ends when neither player can move. The loser of previous round starts the next round. The game is over when either player cannot fill at least 4 holes (<a href="game_params.html#gparam_one">GPARAM_ONE</a>).
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  7</p>
+    <p class="param">Start seeds:  7</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#blocks">Blocks</a>: Yes</p>
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#gparam_one">General Input</a>: 4</p>
+    <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER</p>
+    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: LEFT_FILL</p>
+    <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: LOSER</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CW</p>
+    <p class="param"><a href="game_params.html#sow_own_store">Sow Own Store</a>: Yes</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#xcpickown">Own Seed on Xcapture</a>: ALWAYS_PICK</p>
+  </div>
+</div>
+<p>Note: <a href="game_params.html#gparam_one">GPARAM_ONE</a> set to 4 to limit game length
 <h3 id="Lami">Lami</h3>
 <p>Counter-clockwise sow, multi-lap sow. After the first move, subsequent moves may only be played from holes:
 <ul><li class="helptext">
@@ -621,7 +632,7 @@ unless all of the player's holes contain 2, then any hole maybe played.
     <p class="param"><a href="game_params.html#pickextra">On Capture, Take More Rule</a>: PICKTWOS</p>
     <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: LEFT_FILL</p>
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: LOSER</p>
-    <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
     <p class="param"><a href="game_params.html#prescribed">Prescribed Opening Move</a>: MLAPS_SOWER</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
     <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: NO_SOW_OPP_2S</p>
@@ -655,7 +666,7 @@ unless all of the player's holes contain 2, then any hole maybe played.
     <p class="param"><a href="game_params.html#pickextra">On Capture, Take More Rule</a>: PICKTWOS</p>
     <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: LEFT_FILL</p>
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: LOSER</p>
-    <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
     <p class="param"><a href="game_params.html#prescribed">Prescribed Opening Move</a>: MLAPS_SOWER</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
     <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: NO_SOW_OPP_2S</p>
@@ -681,7 +692,7 @@ unless all of the player's holes contain 2, then any hole maybe played.
   <div class="column2">
     <p class="param"><a href="game_params.html#pickextra">On Capture, Take More Rule</a>: PICK2XLASTSEEDS</p>
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: LOSER</p>
-    <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
     <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: OWN_SOW_CAPT_ALL</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
@@ -832,7 +843,7 @@ unless all of the player's holes contain 2, then only the rightmost hole maybe p
   </div>
   <div class="column2">
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
-    <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
     <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: OWN_SOW_CAPT_ALL</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
@@ -943,7 +954,7 @@ see <a href="about_games.html#Lam Waladach">Lam Waladach</a>
   <div class="column2">
     <p class="param"><a href="game_params.html#pickextra">On Capture, Take More Rule</a>: PICKLASTSEEDS</p>
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: LOSER</p>
-    <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
     <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: OWN_SOW_CAPT_ALL</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
@@ -954,7 +965,7 @@ see <a href="about_games.html#Lam Waladach">Lam Waladach</a>
 <p>The starting player chooses the sow direction that they will use for the game; the second player will use the opposite direction for the game. Sowing is done in multiple laps from the next hole (<a href="game_params.html#mlaps">MLAPS</a> of LAPPER_NEXT).
 <p>While either player is sowing, both players capture all holes sown to 4 on their side of the board.
 <p>When the final seed sown (into an empty hole) is followed by an empty hole, capture any seeds in the following hole. Captures continue while holes are alternately empty and occupied.
-<p>Played in <a href="game_params.html#rounds">ROUNDS</a> where unfilled holes are out of play.
+<p>Played in <a href="game_params.html#rounds">ROUNDS</a> where unfilled holes are out of play. Each round ends when the current player does not have a move.
 <p>Variations:
 <ul><li class="helptext">
 <a href="game_params.html#sow_rule">SOW_RULE</a> of SOW_SOW_CAPT_ALL instead of OWN_SOW_CAPT_ALL
@@ -975,7 +986,7 @@ See <a href="about_games.html#Longbeu-a-cha">Longbeu-a-cha</a>, <a href="about_g
     <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: Yes</p>
   </div>
   <div class="column2">
-    <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
     <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: UCHOOSE</p>
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: PLAYALTDIR</p>
@@ -1057,7 +1068,7 @@ See <a href="about_games.html#Longbeu-a-cha">Longbeu-a-cha</a>, <a href="about_g
     <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER_NEXT</p>
   </div>
   <div class="column2">
-    <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
     <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: UCHOOSE</p>
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
@@ -1092,7 +1103,7 @@ See <a href="about_games.html#Longbeu-a-cha">Longbeu-a-cha</a>, <a href="about_g
   </div>
   <div class="column2">
     <p class="param"><a href="game_params.html#pickextra">On Capture, Take More Rule</a>: PICKCROSS</p>
-    <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
     <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: LEFT_FILL</p>
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
@@ -1315,7 +1326,7 @@ no repeat turn on capture
   <div class="column2">
     <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER</p>
     <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
-    <p class="param"><a href="game_params.html#rounds">Rounds</a>: Yes</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
   </div>
@@ -1350,7 +1361,6 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Bao (Tanzanian)">Bao (Tanzanian)</a></p>
     <p class="param"><a href="#Bechi">Bechi</a></p>
     <p class="param"><a href="#Bosh">Bosh</a></p>
-    <p class="param"><a href="#Congklak">Congklak</a></p>
     <p class="param"><a href="#Cow">Cow</a></p>
     <p class="param"><a href="#Dabuda">Dabuda</a></p>
     <p class="param"><a href="#Dakon">Dakon</a></p>
@@ -1363,11 +1373,12 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Gabata">Gabata</a></p>
     <p class="param"><a href="#Gamacha">Gamacha</a></p>
     <p class="param"><a href="#Giuthi">Giuthi</a></p>
+    <p class="param"><a href="#Goat">Goat</a></p>
   </div>
   <div class="column3">
-    <p class="param"><a href="#Goat">Goat</a></p>
     <p class="param"><a href="#J'Odu">J'Odu</a></p>
     <p class="param"><a href="#Kalah">Kalah</a></p>
+    <p class="param"><a href="#Lagerung">Lagerung</a></p>
     <p class="param"><a href="#Lam Waladach">Lam Waladach</a></p>
     <p class="param"><a href="#Lami">Lami</a></p>
     <p class="param"><a href="#Lamlameta">Lamlameta</a></p>

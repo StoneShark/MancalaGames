@@ -591,7 +591,7 @@ class TestBlocks_ito_Sow:
 
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 blocks=True,
-                                rounds=True,
+                                rounds=gi.Rounds.NO_MOVES,
                                 sow_direct=Direct.CCW,
                                 rules=mancala.Mancala.rules)
 
