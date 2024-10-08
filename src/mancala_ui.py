@@ -296,12 +296,12 @@ class MancalaUI(tk.Frame):
                              variable=self.show_tally,
                              onvalue=True, offvalue=False,
                              command=self._toggle_tally)
-        showmenu.add_checkbutton(label='Facing Players',
-                             variable=self.facing_players,
-                             onvalue=True, offvalue=False,
-                             command=self._toggle_facing)
+        # TODO facing players
+        # showmenu.add_checkbutton(label='Facing Players',
+        #                      variable=self.facing_players,
+        #                      onvalue=True, offvalue=False,
+        #                      command=self._toggle_facing)
         menubar.add_cascade(label='Display', menu=showmenu)
-
 
         helpmenu = tk.Menu(menubar)
         helpmenu.add_command(label='Help...', command=self._help)
