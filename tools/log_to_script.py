@@ -45,6 +45,10 @@ STORE_RE = re.compile(r'([0-9]*) ?([A-Z_]+)?$')
 BOARD_RE = re.compile(r'([0-9x]+)([ _˄˅↑↓]*) ')
 
 
+SHORT_VALS = {None: 'N', False: 'F', True: 'T'}
+
+
+
 def get_board_params(line_iter):
     """Get the start seeds per hole and size of the board."""
 
@@ -92,68 +96,21 @@ def owner_val(spec):
     return None
 
 
-def print_indent(lvl, *args):
+def get_short_str(in_list):
+    """Use the short names"""
+    return '[' + ', '.join(SHORT_VALS[v] for v in in_list) + ']'
+
+
+def print_indent(lvl, *pargs):
     """indent the prints by lvl spaces"""
 
     print(' ' * (lvl * 4), end='')
-    print(*args)
+    print(*pargs)
 
 
-def set_start(holes, line_iter):
-    """Parse the initial board and set the start conditions
-
-    If config file is being loaded and started wo change;
-    this output is not needed (or wanted) in the test code."""
+def process_board(holes, true_line, false_line):
+    """convert two game lines to asserts."""
     # pylint: disable=too-many-locals
-
-    true_line = next(line_iter)
-    false_line = next(line_iter)
-
-    turn = TURN in true_line
-    print_indent(1, 'def test_game_setup(self, gstate):')
-    print_indent(2, 'game = gstate.game')
-    print_indent(2, f'game.turn = {turn}')
-    print_indent(2, f'game.starter = {turn}')
-
-    # board settings
-    board_t = list(reversed(BOARD_RE.findall(true_line)))[:holes]
-    board_f = BOARD_RE.findall(false_line)[:holes]
-
-    board = [int(seeds) if seeds != BLOCK else 0
-             for seeds, _ in board_f] + \
-            [int(seeds) if seeds != BLOCK else 0
-             for seeds, _ in board_t]
-    blocked = [seeds == BLOCK for seeds, _ in board_f] + \
-              [seeds == BLOCK for seeds, _ in board_t]
-    unlocked = [LOCK not in spec for _, spec in board_f] + \
-               [LOCK not in spec for _, spec in board_t]
-    child = [child_val(spec) for _, spec in board_f] + \
-            [child_val(spec) for _, spec in board_t]
-    owner = [owner_val(spec) for _, spec in board_f] + \
-            [owner_val(spec) for _, spec in board_t]
-
-    print_indent(2, f'assert game.board == {board}')
-    print_indent(2, f'assert game.blocked == {blocked}')
-    print_indent(2, f'assert game.unlocked == {unlocked}')
-    print_indent(2, f'assert game.child == {child}')
-    print_indent(2, f'assert game.owner == {owner}')
-
-    # set the stores
-    store_m_t = STORE_RE.search(true_line)
-    store_m_f = STORE_RE.search(false_line)
-    store_t_str, store_f_str = store_m_t.groups()[0], store_m_f.groups()[0]
-    store_t = int(store_t_str) if store_t_str else 0
-    store_f = int(store_f_str) if store_f_str else 0
-    print_indent(2, f'assert game.store == [{store_f}, {store_t}]')
-
-
-def write_test_board(holes, true_line, false_line):
-    """Parse the two lines and write the assert tests."""
-    # pylint: disable=too-many-locals
-
-    # check the turn
-    turn = TURN in true_line
-    print_indent(2, f'assert game.turn is {turn}')
 
     # check the board settings
     board_t = list(reversed(BOARD_RE.findall(true_line)))[:holes]
@@ -172,6 +129,11 @@ def write_test_board(holes, true_line, false_line):
     owner = [owner_val(spec) for _, spec in board_f] + \
             [owner_val(spec) for _, spec in board_t]
 
+    blocked = get_short_str(blocked)
+    unlocked = get_short_str(unlocked)
+    child = get_short_str(child)
+    owner = get_short_str(owner)
+
     print_indent(2, f'assert game.board == {board}')
     print_indent(2, f'assert game.blocked == {blocked}')
     print_indent(2, f'assert game.unlocked == {unlocked}')
@@ -185,6 +147,31 @@ def write_test_board(holes, true_line, false_line):
     store_t = int(store_t_str) if store_t_str else 0
     store_f = int(store_f_str) if store_f_str else 0
     print_indent(2, f'assert game.store == [{store_f}, {store_t}]')
+
+
+def set_start(holes, line_iter):
+    """Parse the initial board and set the start conditions"""
+
+    true_line = next(line_iter)
+    false_line = next(line_iter)
+
+    turn = TURN in true_line
+    print_indent(1, 'def test_game_setup(self, gstate):')
+    print_indent(2, 'game = gstate.game')
+    print_indent(2, f'game.turn = {turn}')
+    print_indent(2, f'game.starter = {turn}')
+
+    process_board(holes, true_line, false_line)
+
+
+def write_test_board(holes, true_line, false_line):
+    """Parse the two lines and write the assert tests."""
+
+    # check the turn
+    turn = TURN in true_line
+    print_indent(2, f'assert game.turn is {turn}')
+
+    process_board(holes, true_line, false_line)
 
 
 def find_move_start(line_iter):
