@@ -274,6 +274,7 @@ class NewRoundEven(NewGameIf):
         if seeds_per_hole < min_move:
 
             loser_extra = self.game.store[not winner]
+            # TODO if the loser doesn't have extra the game will not be playable
             self.game.board[0] += loser_extra
             self.game.board[cts.holes] += loser_extra
 

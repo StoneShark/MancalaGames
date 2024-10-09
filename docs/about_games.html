@@ -830,7 +830,7 @@ unless all of the player's holes contain 2, then only the rightmost hole maybe p
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p41.
 <h3 id="NamNam">NamNam</h3>
 <p>A multi-lap mancala played in rounds. The goal is to claim ownership of at least 10 holes. Each player initially owns the holes on their side of the board. Owners of holes are updated at the start of each round based on the number of seeds captured in the previous round.
-<p>Captures are on 4s on the final sown seed by the sower (regardless of hole owner). The seeds of any hole sown to 4 are captured by the hole's owner (regardless of sower).
+<p>Captures are on 4s on the final sown seed by the sower (regardless of hole owner). The seeds of any hole sown to 4 are captured by the hole's owner (regardless of sower). On capture, if there are 4 or fewer seeds left on the board the capture takes them as well.
 <p>If, at the start of your turn, your opponent has no seeds; you must make seeds available to them, if you can, otherwise the game is over.
 <div class="cols_row">
   <div class="column2">
@@ -843,6 +843,7 @@ unless all of the player's holes contain 2, then only the rightmost hole maybe p
     <p class="param"><a href="game_params.html#mustshare">Must Share</a>: Yes</p>
   </div>
   <div class="column2">
+    <p class="param"><a href="game_params.html#pickextra">On Capture, Take More Rule</a>: PICKLASTSEEDS</p>
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
     <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
     <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: OWN_SOW_CAPT_ALL</p>
