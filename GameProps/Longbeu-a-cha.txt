@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Longbeu-a-cha",
-      "about": "Sow counter-clockwise via the multi-lap next-hole method (MLAPS of LAPPER_NEXT).\nWhile either player is sowing, both players capture all holes sown to 4 on their side of the board.\nWhen the final seed sown (into an empty hole) is followed by an empty hole, capture any seeds in the following hole. Captures continue while holes are alternately empty and occupied.\nUnlike Pallam Kuzhi, this game is not played in rounds.\n\nVariations:\n- SOW_RULE of SOW_SOW_CAPT_ALL instead of OWN_SOW_CAPT_ALL\n- See Olinda, Pallam Kuzhi, and Pandi.",
+      "about": "Sow counter-clockwise via the multi-lap next-hole method (MLAPS of LAPPER_NEXT).\nWhile either player is sowing, both players capture all holes sown to 4 on their side of the board.\nWhen the hole from which a new lap should start is empty, capture any seeds in the hole following the empty hole. That is, captures are made when the hole after the hole in which the final seed of a lap was sown, is empty and there are seeds in the hole 'two out' from the last sown seed.\nCaptures continue while holes are alternately empty and occupied in the counter-clockwise direction.\nUnlike Pallam Kuzhi, this game is not played in rounds.\n\nVariations:\n- SOW_RULE of SOW_SOW_CAPT_ALL instead of OWN_SOW_CAPT_ALL\n- See Olinda, Pallam Kuzhi, and Pandi.",
       "capsamedir": true,
       "capt_on": [4],
       "capttwoout": true,

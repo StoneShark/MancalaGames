@@ -164,15 +164,18 @@ is included after the parameter sections.
 <p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Dynamics
 
-<p>Choose how holes are filled when a new round strarts:
+<p>The round fill method determines which holes are filled and how many seeds they are filled with when setting up for a new round.
+<p>Several round fill mechanisms use the same general approach called the Empty Hole Method. The loser of the previous round will end up with empty holes. These holes are not playable if <a href="game_params.html#blocks">BLOCKS</a> are used; otherwise they are playable.
+<p>The seeds each player accummulated in the previous round are distributed into holes with exactly the same number in each. That number of seeds is <a href="game_params.html#nbr_start">NBR_START</a>. The winner will fill all of their holes and put any remaining seeds into their own store. The loser will fill as many holes as they can with nbr_start seeds and put any remaining seeds (fewer than nbr_start) into their own store.
+<p>LEFT_FILE, RIGHT_FILL and OUTSIDE_FILL define which holes that the loser must fill. UCHOOSE allows the loser to choose which holes have seeds.
 <ol start=0><li class="helptext">
-<b class="enum">NOT_APPLICABLE</b>: round fill doesn't need to be specified: either not played in rounds or game goal is TERRITORY (all holes filled).
+<b class="enum">NOT_APPLICABLE</b>: round fill doesn't need to be specified: either the game not played in rounds (DEPRIVE game included) or game goal is TERRITORY (all holes filled).
 <li class="helptext">
-<b class="enum">LEFT_FILL</b>: fill the round loser's holes from the player's left with <a href="game_params.html#nbr_start">NBR_START</a> seeds each.  Holes that cannot be filled with <a href="game_params.html#nbr_start">NBR_START</a> seeds (on the loser's side) are left empty; if <a href="game_params.html#blocks">BLOCKS</a> is selected they are out of play for the round. All winner's holes are filled and are in play.
+<b class="enum">LEFT_FILL</b>: fill the round loser's holes from the player's left with nbr_start seeds each.  
 <li class="helptext">
-<b class="enum">RIGHT_FILL</b>: fill holes from the player's right. Other dynamics mimic left_fill.
+<b class="enum">RIGHT_FILL</b>: fill the round loser's holes from the player's right with nbr_start seeds each. 
 <li class="helptext">
-<b class="enum">OUTSIDE_FILL</b>: fill holes from the outside ends toward the middle. Other dynamics mimic left_fill.
+<b class="enum">OUTSIDE_FILL</b>: fill the round loser's holes from the outside ends toward the middle with nbr_start seeds each. Leftmost, rightmost, 2nd leftmost, 2nd rightmost, etc. until the seeds are used up.
 <li class="helptext">
 <b class="enum">EVEN_FILL</b>: fill all holes (both sides) with the same number of seeds; determined by dividing the losers seeds by the number of holes per side. If that is not playable based on the minimum number of seeds required for a move (<a href="game_params.html#min_move">MIN_MOVE</a>); extra seeds are put in each players leftmost hole. Any extra seeds are put in each player's store.
 <li class="helptext">

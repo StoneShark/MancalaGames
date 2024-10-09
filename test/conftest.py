@@ -44,6 +44,38 @@ def pytest_generate_tests(metafunc):
         metafunc.parametrize('nbr_runs', [count])
 
 
+# %% incremental test hooks
+
+# for test_gm _* where each test step is a separate method in class
+# that relies on the previous step passing
+# after the first fail all the rest will be marked as xfail
+# mark the test class with @pytest.mark.incremental
+#
+# got these from here:
+# https://stackoverflow.com/questions/12411431/how-to-skip-the-rest-of-tests-in-the-class-if-one-has-failed/12579625#12579625
+
+
+def pytest_runtest_setup(item):
+    """If a parent node has a record that a test failed,
+    mark this as expected fail."""
+
+    previousfailed = getattr(item.parent, "_previousfailed", None)
+    if previousfailed is not None:
+        pytest.xfail("previous test failed (%s)" % previousfailed.name)
+
+
+def pytest_runtest_makereport(item, call):
+    """If a test is marked incremental and exception was raised
+    record that there was a failure in the parent node."""
+
+    if "incremental" in item.keywords:
+        if call.excinfo is not None:
+            parent = item.parent
+            parent._previousfailed = item
+
+
+# %% global fixtures
+
 @pytest.fixture()
 def logger():
     """Include this fixture to activate the logger for the test,
@@ -73,7 +105,6 @@ def logger_sim():
     game_logger.game_log.active = False
     game_logger.game_log.level = log_level
     game_logger.game_log.live = False
-
 
 
 @pytest.fixture(autouse=True)

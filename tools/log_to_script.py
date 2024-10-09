@@ -4,9 +4,6 @@
 THIS DOES NOT ASSURE THAT THE TEST IS CORRECT!!
 The log must be carefully reviewed to assure correctness.
 
-
-forfiles /M 2024*.txt /C "cmd /c python ..\tools\log_to_test.py @file junk.txt"
-
 Created on Wed Aug 16 13:25:51 2023
 @author: Ann"""
 
@@ -42,7 +39,7 @@ GAMECONST_RE = re.compile(r'GameConsts.nbr_start=([0-9]+), holes=([0-9]+)')
 
 MOVE_RE = re.compile(r'^([0-9]+):.*move (PASS|([0-9]+)|(\(.+\)))( )?([A-Z_]+)?')
 
-COND_LINE_RE = re.compile(r'^(ROUND_WIN|WIN)')
+COND_LINE_RE = re.compile(r'^(ROUND_WIN|WIN|ROUND_TIE|TIE)')
 
 STORE_RE = re.compile(r'([0-9]*) ?([A-Z_]+)?$')
 BOARD_RE = re.compile(r'([0-9x]+)([ _˄˅↑↓]*) ')
@@ -52,7 +49,9 @@ def get_board_params(line_iter):
     """Get the start seeds per hole and size of the board."""
 
     line = next(line_iter)
-    line = next(line_iter)
+    while 'GameConsts' not in line:
+        line = next(line_iter)
+
     match = GAMECONST_RE.search(line)
     groups = match.groups()
     start_seeds = int(groups[0])
@@ -93,6 +92,13 @@ def owner_val(spec):
     return None
 
 
+def print_indent(lvl, *args):
+    """indent the prints by lvl spaces"""
+
+    print(' ' * (lvl * 4), end='')
+    print(*args)
+
+
 def set_start(holes, line_iter):
     """Parse the initial board and set the start conditions
 
@@ -104,8 +110,10 @@ def set_start(holes, line_iter):
     false_line = next(line_iter)
 
     turn = TURN in true_line
-    print(f'game.turn = {turn}')
-    print(f'game.starter = {turn}')
+    print_indent(1, 'def test_game_setup(self, gstate):')
+    print_indent(2, 'game = gstate.game')
+    print_indent(2, f'game.turn = {turn}')
+    print_indent(2, f'game.starter = {turn}')
 
     # board settings
     board_t = list(reversed(BOARD_RE.findall(true_line)))[:holes]
@@ -124,11 +132,11 @@ def set_start(holes, line_iter):
     owner = [owner_val(spec) for _, spec in board_f] + \
             [owner_val(spec) for _, spec in board_t]
 
-    print(f'game.board = {board}')
-    print(f'game.blocked = {blocked}')
-    print(f'game.unlocked = {unlocked}')
-    print(f'game.child = {child}')
-    print(f'game.owner = {owner}')
+    print_indent(2, f'assert game.board == {board}')
+    print_indent(2, f'assert game.blocked == {blocked}')
+    print_indent(2, f'assert game.unlocked == {unlocked}')
+    print_indent(2, f'assert game.child == {child}')
+    print_indent(2, f'assert game.owner == {owner}')
 
     # set the stores
     store_m_t = STORE_RE.search(true_line)
@@ -136,7 +144,7 @@ def set_start(holes, line_iter):
     store_t_str, store_f_str = store_m_t.groups()[0], store_m_f.groups()[0]
     store_t = int(store_t_str) if store_t_str else 0
     store_f = int(store_f_str) if store_f_str else 0
-    print(f'game.store = [{store_f}, {store_t}]')
+    print_indent(2, f'assert game.store == [{store_f}, {store_t}]')
 
 
 def write_test_board(holes, true_line, false_line):
@@ -145,7 +153,7 @@ def write_test_board(holes, true_line, false_line):
 
     # check the turn
     turn = TURN in true_line
-    print(f'assert game.turn is {turn}')
+    print_indent(2, f'assert game.turn is {turn}')
 
     # check the board settings
     board_t = list(reversed(BOARD_RE.findall(true_line)))[:holes]
@@ -164,11 +172,11 @@ def write_test_board(holes, true_line, false_line):
     owner = [owner_val(spec) for _, spec in board_f] + \
             [owner_val(spec) for _, spec in board_t]
 
-    print(f'assert game.board == {board}')
-    print(f'assert game.blocked == {blocked}')
-    print(f'assert game.unlocked == {unlocked}')
-    print(f'assert game.child == {child}')
-    print(f'assert game.owner == {owner}')
+    print_indent(2, f'assert game.board == {board}')
+    print_indent(2, f'assert game.blocked == {blocked}')
+    print_indent(2, f'assert game.unlocked == {unlocked}')
+    print_indent(2, f'assert game.child == {child}')
+    print_indent(2, f'assert game.owner == {owner}')
 
     # check the stores
     store_m_t = STORE_RE.search(true_line)
@@ -176,7 +184,7 @@ def write_test_board(holes, true_line, false_line):
     store_t_str, store_f_str = store_m_t.groups()[0], store_m_f.groups()[0]
     store_t = int(store_t_str) if store_t_str else 0
     store_f = int(store_f_str) if store_f_str else 0
-    print(f'assert game.store == [{store_f}, {store_t}]')
+    print_indent(2, f'assert game.store == [{store_f}, {store_t}]')
 
 
 def find_move_start(line_iter):
@@ -186,7 +194,7 @@ def find_move_start(line_iter):
     while True:
         line = next(line_iter)
         if 'GRAND' in line:
-            print('# ', line)
+            print_indent(2, '# ', line)
         match = MOVE_RE.search(line)
         if match:
             break
@@ -200,7 +208,7 @@ def get_board_lines(line_iter):
 
     cond_line = None
     true_line = next(line_iter)
-    if WIN in true_line:
+    if WIN in true_line or TIE in true_line:
         cond_line = true_line
         true_line = next(line_iter)
     false_line = next(line_iter)
@@ -211,11 +219,13 @@ def get_board_lines(line_iter):
 def write_move_call(move_str):
     """Given the move string, output the call to game.move:
 
-    PASS needs to be translated to PASS_TOKEN (65535)
+    PASS needs to be translated to PASS_TOKEN
     otherwise use move_str"""
 
-    move = 65535 if move_str == PASS else move_str
-    print(f'cond = game.move({move})')
+    if move_str == PASS:
+        print_indent(2, 'cond = game.move(gi.PASS_TOKEN)')
+    else:
+        print_indent(2, f'cond = game.move({move_str})')
 
 
 def write_cond_assert(result, cond_line):
@@ -227,17 +237,18 @@ def write_cond_assert(result, cond_line):
 
     action = CondAction.CONTINUE
     if result:
-        print(f'assert cond.name == "{result}"')
+        print_indent(2, f'assert cond.name == "{result}"')
 
     elif cond_line:
         match = COND_LINE_RE.search(cond_line)
         assert match, "Unexpected game cond line: " + cond_line
         rname = match.groups()[0]
-        print(f'assert cond.name == "{rname}"')
+        print_indent(2, f'assert cond.name == "{rname}"')
         action = CondAction.DONE if rname in (WIN, TIE) else CondAction.RESTART
 
     else:
-        print('assert cond is None')
+        print_indent(2, 'assert cond is None')
+    print_indent(2, 'gstate.cond = cond')
 
     return action
 
@@ -250,10 +261,13 @@ def gen_test_code(lines):
     find_first_move(line_iter)
     set_start(holes, line_iter)
 
+    round_no = 1
     turn_no = 1
     while True:
 
-        print(f'\n# move {turn_no}')
+        print()
+        print_indent(1, f'def test_round_{round_no}_move_{turn_no}(self, gstate):')
+        print_indent(2, 'game = gstate.game')
         mnbr_str, move_str, result = find_move_start(line_iter)
         assert int(mnbr_str) == turn_no, f'file error {mnbr_str} != {turn_no}'
 
@@ -266,8 +280,11 @@ def gen_test_code(lines):
         if action == CondAction.CONTINUE:
             turn_no += 1
         elif action == CondAction.RESTART:
-            print('\n# New Round Start')
-            print('game.new_game(cond, new_round_ok=True)')
+            round_no += 1
+            print()
+            print_indent(1, f'def test_round_{round_no}_setup(self, gstate):')
+            print_indent(2, 'game = gstate.game')
+            print_indent(2, 'game.new_game(gstate.cond, new_round_ok=True)')
             find_first_move(line_iter)
             cond_line, true_line, false_line = get_board_lines(line_iter)
             write_test_board(holes, true_line, false_line)
