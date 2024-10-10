@@ -648,7 +648,8 @@ that do not contain 2 seeds,
 unless all of the player's holes contain 2, then any hole maybe played.
 </ul>
 <p>When sowing skip opponents holes with two seeds (except first move).
-<p>No capture on game opening move. Cross-capture from opponents side of board but only if it contains 2 seeds; on capture pick all of opponents holes with 2 seeds. Played in Rounds.
+<p>No capture on game opening move. Cross-capture from opponents side of board but only if it contains 2 seeds; on capture pick all of opponents holes with 2 seeds.
+<p>Played in Rounds. Each round ends when the current player has not moves. The game ends when one player can fill 4 holes at the start of the round (change with <a href="game_params.html#gparam_one">GPARAM_ONE</a>).
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  12</p>
@@ -657,12 +658,13 @@ unless all of the player's holes contain 2, then any hole maybe played.
     <p class="param"><a href="game_params.html#allow_rule">Special Move Restrictions</a>: RIGHT_2_1ST_THEN_ALL_TWO</p>
     <p class="param"><a href="game_params.html#blocks">Blocks</a>: Yes</p>
     <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 2</p>
+    <p class="param"><a href="game_params.html#gparam_one">General Input</a>: 4</p>
     <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
     <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
     <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER</p>
-    <p class="param"><a href="game_params.html#nocaptfirst">No Capture First Move</a>: Yes</p>
   </div>
   <div class="column2">
+    <p class="param"><a href="game_params.html#nocaptfirst">No Capture First Move</a>: Yes</p>
     <p class="param"><a href="game_params.html#pickextra">On Capture, Take More Rule</a>: PICKTWOS</p>
     <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: LEFT_FILL</p>
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: LOSER</p>
@@ -674,6 +676,7 @@ unless all of the player's holes contain 2, then any hole maybe played.
   </div>
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p35.
+<p>Note: <a href="game_params.html#gparam_one">GPARAM_ONE</a> is set to 4 to limit game length
 <h3 id="Lam Waladach">Lam Waladach</h3>
 <p>A multi-lap mancala played in rounds. The goal is to claim ownership of at least 9 holes. Each player initially owns the holes on their side of the board. Owners of holes are updated at the start of each round based on the number of seeds captured in the previous round. 
 <p>The seeds of any hole sown to 4 are captured by the hole's owner (regardless of sower). Captures are on 4s on the final sown seed by the sower (regardless of hole owner). A capture results in  a repeat turn. Captures and pick 4s are allowed on the first move of the game. A player must pass, if they have no moves.

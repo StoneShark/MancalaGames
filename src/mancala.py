@@ -124,7 +124,7 @@ class MoveData:
     board                                               note 1
     move
     direct                    fill         input        input
-    seeds          fill                    input        note 2
+    seeds          fill                    in/update     note 2
     _sow_loc       fill                                 note 3
     cont_sow_loc   property fills          in/update
     lap_nbr                                used
