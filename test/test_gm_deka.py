@@ -13,28 +13,42 @@ N = None
 T = True
 F = False
 
-class TestDeka:
 
-    @pytest.fixture
-    def game_data(self):
+class GameTestData:
+    """allow passing move end cond between tests."""
 
-        return man_config.make_game('./GameProps/Deka.txt')
+    def __init__(self, game):
+        self.game = game
+        self.cond = None
 
 
-    def test_deka_1(self, game_data):
+@pytest.fixture(scope="class")
+def gstate():
+    """This fixture will maintain state between tests in the
+    same class but will be reconstructed for each class."""
 
-        game, _ = game_data
+    game, _ = man_config.make_game('./GameProps/Deka.txt')
+    gstate = GameTestData(game)
+    return gstate
 
+
+@pytest.mark.incremental
+class TestDeka1:
+
+    def test_setup(self, gstate):
+
+        game = gstate.game
         game.turn = False
         game.starter = False
-        game.board = [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
-        game.blocked = [F, F, F, F, F, F, F, F, F, F, F, F]
-        game.unlocked = [T, T, T, T, T, T, T, T, T, T, T, T]
-        game.child = [N, N, N, N, N, N, N, N, N, N, N, N]
-        game.owner = [N, N, N, N, N, N, N, N, N, N, N, N]
-        game.store = [0, 0]
+        assert game.board == [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+        assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F]
+        assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
+        assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
+        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
+        assert game.store == [0, 0]
 
-        # move 1
+    def test_move_1(self, gstate):
+        game = gstate.game
         cond = game.move(5)
         assert game.turn is True
         assert game.board == [3, 0, 3, 3, 0, 1, 4, 1, 3, 3, 0, 3]
@@ -44,8 +58,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [0, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 2
+    def test_move_2(self, gstate):
+        game = gstate.game
         cond = game.move(5)
         assert game.turn is False
         assert game.board == [3, 0, 3, 3, 0, 1, 0, 2, 4, 4, 1, 3]
@@ -55,8 +71,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [0, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 3
+    def test_move_3(self, gstate):
+        game = gstate.game
         cond = game.move(2)
         assert game.turn is True
         assert game.board == [1, 2, 0, 6, 1, 1, 0, 0, 0, 6, 1, 5]
@@ -66,8 +84,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [1, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 4
+    def test_move_4(self, gstate):
+        game = gstate.game
         cond = game.move(0)
         assert game.turn is False
         assert game.board == [2, 3, 1, 7, 0, 2, 1, 0, 0, 6, 1, 0]
@@ -77,8 +97,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [1, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 5
+    def test_move_5(self, gstate):
+        game = gstate.game
         cond = game.move(1)
         assert game.turn is True
         assert game.board == [2, 0, 2, 8, 1, 2, 1, 0, 0, 6, 1, 0]
@@ -88,8 +110,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [1, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 6
+    def test_move_6(self, gstate):
+        game = gstate.game
         cond = game.move(1)
         assert game.turn is False
         assert game.board == [2, 0, 2, 8, 1, 2, 1, 0, 0, 6, 0, 1]
@@ -99,8 +123,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [1, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 7
+    def test_move_7(self, gstate):
+        game = gstate.game
         cond = game.move(2)
         assert game.turn is True
         assert game.board == [2, 0, 0, 9, 0, 3, 0, 0, 1, 6, 0, 1]
@@ -110,8 +136,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [2, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 8
+    def test_move_8(self, gstate):
+        game = gstate.game
         cond = game.move(0)
         assert game.turn is False
         assert game.board == [0, 3, 1, 2, 1, 0, 1, 0, 4, 1, 3, 3]
@@ -121,8 +149,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [5, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 9
+    def test_move_9(self, gstate):
+        game = gstate.game
         cond = game.move(4)
         assert game.turn is True
         assert game.board == [0, 3, 1, 2, 0, 1, 1, 0, 4, 1, 3, 3]
@@ -132,8 +162,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [5, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 10
+    def test_move_10(self, gstate):
+        game = gstate.game
         cond = game.move(3)
         assert game.turn is False
         assert game.board == [0, 3, 1, 2, 0, 1, 1, 0, 0, 2, 4, 4]
@@ -143,8 +175,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [6, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 11
+    def test_move_11(self, gstate):
+        game = gstate.game
         cond = game.move(5)
         assert game.turn is True
         assert game.board == [0, 3, 1, 2, 0, 0, 0, 0, 1, 2, 4, 4]
@@ -154,8 +188,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [7, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 12
+    def test_move_12(self, gstate):
+        game = gstate.game
         cond = game.move(2)
         assert game.turn is False
         assert game.board == [0, 4, 2, 3, 1, 0, 0, 0, 1, 0, 5, 0]
@@ -165,8 +201,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [8, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 13
+    def test_move_13(self, gstate):
+        game = gstate.game
         cond = game.move(4)
         assert game.turn is True
         assert game.board == [0, 4, 2, 3, 0, 1, 0, 0, 1, 0, 5, 0]
@@ -176,8 +214,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [8, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 14
+    def test_move_14(self, gstate):
+        game = gstate.game
         cond = game.move(3)
         assert game.turn is False
         assert game.board == [0, 4, 2, 3, 0, 1, 0, 0, 0, 1, 5, 0]
@@ -187,8 +227,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [8, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 15
+    def test_move_15(self, gstate):
+        game = gstate.game
         cond = game.move(3)
         assert game.turn is True
         assert game.board == [0, 4, 2, 0, 1, 2, 1, 0, 0, 1, 5, 0]
@@ -198,8 +240,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [8, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 16
+    def test_move_16(self, gstate):
+        game = gstate.game
         cond = game.move(5)
         assert game.turn is False
         assert game.board == [0, 4, 2, 0, 1, 2, 0, 0, 1, 1, 5, 0]
@@ -209,8 +253,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [8, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 17
+    def test_move_17(self, gstate):
+        game = gstate.game
         cond = game.move(1)
         assert game.turn is True
         assert game.board == [0, 1, 4, 2, 3, 1, 1, 0, 0, 2, 0, 1]
@@ -220,8 +266,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [9, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 18
+    def test_move_18(self, gstate):
+        game = gstate.game
         cond = game.move(2)
         assert game.turn is False
         assert game.board == [0, 0, 5, 0, 4, 2, 0, 0, 1, 1, 1, 0]
@@ -231,8 +279,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [10, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 19
+    def test_move_19(self, gstate):
+        game = gstate.game
         cond = game.move(2)
         assert game.turn is True
         assert game.board == [0, 1, 0, 0, 5, 3, 1, 0, 0, 2, 0, 1]
@@ -242,8 +292,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [11, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 20
+    def test_move_20(self, gstate):
+        game = gstate.game
         cond = game.move(2)
         assert game.turn is False
         assert game.board == [0, 0, 1, 0, 5, 3, 1, 0, 0, 0, 1, 0]
@@ -253,8 +305,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [13, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 21
+    def test_move_21(self, gstate):
+        game = gstate.game
         cond = game.move(4)
         assert game.turn is True
         assert game.board == [0, 0, 1, 0, 0, 4, 2, 0, 1, 1, 1, 0]
@@ -264,8 +318,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [14, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 22
+    def test_move_22(self, gstate):
+        game = gstate.game
         cond = game.move(3)
         assert game.turn is False
         assert game.board == [0, 0, 1, 0, 0, 4, 2, 0, 0, 0, 2, 1]
@@ -275,8 +331,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [14, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 23
+    def test_move_23(self, gstate):
+        game = gstate.game
         cond = game.move(2)
         assert game.turn is True
         assert game.board == [0, 0, 0, 0, 1, 4, 2, 0, 0, 0, 2, 1]
@@ -286,8 +344,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [14, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 24
+    def test_move_24(self, gstate):
+        game = gstate.game
         cond = game.move(1)
         assert game.turn is False
         assert game.board == [0, 0, 0, 0, 1, 4, 2, 0, 0, 0, 0, 2]
@@ -297,8 +357,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [15, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 25
+    def test_move_25(self, gstate):
+        game = gstate.game
         cond = game.move(5)
         assert game.turn is True
         assert game.board == [0, 0, 0, 0, 1, 0, 3, 0, 1, 1, 0, 2]
@@ -308,8 +370,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [16, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 26
+    def test_move_26(self, gstate):
+        game = gstate.game
         cond = game.move(2)
         assert game.turn is False
         assert game.board == [0, 0, 0, 0, 1, 0, 3, 0, 1, 0, 1, 2]
@@ -319,8 +383,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [16, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 27
+    def test_move_27(self, gstate):
+        game = gstate.game
         cond = game.move(4)
         assert game.turn is True
         assert game.board == [0, 0, 0, 0, 0, 1, 3, 0, 1, 0, 1, 2]
@@ -330,8 +396,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [16, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 28
+    def test_move_28(self, gstate):
+        game = gstate.game
         cond = game.move(5)
         assert game.turn is False
         assert game.board == [0, 0, 0, 0, 0, 1, 0, 0, 2, 1, 0, 3]
@@ -341,8 +409,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [17, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 29
+    def test_move_29(self, gstate):
+        game = gstate.game
         cond = game.move(5)
         assert game.turn is True
         assert game.board == [0, 0, 0, 0, 0, 0, 1, 0, 2, 1, 0, 3]
@@ -352,8 +422,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [17, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 30
+    def test_move_30(self, gstate):
+        game = gstate.game
         cond = game.move(2)
         assert game.turn is True
         assert game.board == [0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 1, 3]
@@ -363,22 +435,26 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [17, 0]
         assert cond.name == "WIN"
+        gstate.cond = cond
 
 
-    def test_deka_2(self, game_data):
+@pytest.mark.incremental
+class TestDeka2:
 
-        game, _ = game_data
+    def test_setup(self, gstate):
 
+        game = gstate.game
         game.turn = False
         game.starter = False
-        game.board = [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
-        game.blocked = [F, F, F, F, F, F, F, F, F, F, F, F]
-        game.unlocked = [T, T, T, T, T, T, T, T, T, T, T, T]
-        game.child = [N, N, N, N, N, N, N, N, N, N, N, N]
-        game.owner = [N, N, N, N, N, N, N, N, N, N, N, N]
-        game.store = [0, 0]
+        assert game.board == [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+        assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F]
+        assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
+        assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
+        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
+        assert game.store == [0, 0]
 
-        # move 1
+    def test_move_1(self, gstate):
+        game = gstate.game
         cond = game.move(5)
         assert game.turn is True
         assert game.board == [3, 0, 3, 3, 0, 1, 4, 1, 3, 3, 0, 3]
@@ -388,8 +464,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [0, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 2
+    def test_move_2(self, gstate):
+        game = gstate.game
         cond = game.move(2)
         assert game.turn is False
         assert game.board == [0, 1, 4, 4, 1, 1, 4, 1, 3, 0, 1, 4]
@@ -399,8 +477,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [0, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 3
+    def test_move_3(self, gstate):
+        game = gstate.game
         cond = game.move(2)
         assert game.turn is True
         assert game.board == [2, 0, 2, 7, 1, 3, 1, 0, 5, 2, 0, 1]
@@ -410,8 +490,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [0, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 4
+    def test_move_4(self, gstate):
+        game = gstate.game
         cond = game.move(5)
         assert game.turn is False
         assert game.board == [4, 0, 4, 1, 2, 4, 1, 0, 1, 4, 0, 3]
@@ -421,8 +503,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [0, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 5
+    def test_move_5(self, gstate):
+        game = gstate.game
         cond = game.move(2)
         assert game.turn is True
         assert game.board == [4, 0, 0, 2, 3, 5, 0, 0, 0, 5, 0, 3]
@@ -432,8 +516,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [2, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 6
+    def test_move_6(self, gstate):
+        game = gstate.game
         cond = game.move(0)
         assert game.turn is False
         assert game.board == [5, 1, 1, 2, 3, 5, 0, 0, 0, 5, 0, 0]
@@ -443,8 +529,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [2, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 7
+    def test_move_7(self, gstate):
+        game = gstate.game
         cond = game.move(2)
         assert game.turn is True
         assert game.board == [5, 1, 0, 0, 4, 6, 1, 0, 0, 5, 0, 0]
@@ -454,8 +542,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [2, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 8
+    def test_move_8(self, gstate):
+        game = gstate.game
         cond = game.move(2)
         assert game.turn is False
         assert game.board == [6, 2, 1, 1, 4, 6, 1, 0, 0, 0, 0, 1]
@@ -465,8 +555,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [2, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 9
+    def test_move_9(self, gstate):
+        game = gstate.game
         cond = game.move(1)
         assert game.turn is True
         assert game.board == [0, 1, 3, 1, 6, 1, 3, 0, 1, 1, 0, 2]
@@ -476,8 +568,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [5, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 10
+    def test_move_10(self, gstate):
+        game = gstate.game
         cond = game.move(5)
         assert game.turn is False
         assert game.board == [1, 2, 0, 2, 7, 2, 1, 0, 2, 2, 0, 0]
@@ -487,8 +581,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [5, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 11
+    def test_move_11(self, gstate):
+        game = gstate.game
         cond = game.move(1)
         assert game.turn is True
         assert game.board == [1, 0, 1, 0, 8, 3, 0, 0, 0, 3, 0, 1]
@@ -498,8 +594,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [7, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 12
+    def test_move_12(self, gstate):
+        game = gstate.game
         cond = game.move(0)
         assert game.turn is False
         assert game.board == [1, 2, 1, 2, 1, 4, 1, 0, 0, 4, 0, 1]
@@ -509,8 +607,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [7, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 13
+    def test_move_13(self, gstate):
+        game = gstate.game
         cond = game.move(2)
         assert game.turn is True
         assert game.board == [1, 2, 0, 0, 2, 5, 0, 0, 0, 4, 0, 1]
@@ -520,8 +620,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [9, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 14
+    def test_move_14(self, gstate):
+        game = gstate.game
         cond = game.move(2)
         assert game.turn is False
         assert game.board == [2, 3, 1, 0, 2, 5, 0, 0, 0, 0, 0, 2]
@@ -531,8 +633,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [9, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 15
+    def test_move_15(self, gstate):
+        game = gstate.game
         cond = game.move(4)
         assert game.turn is True
         assert game.board == [2, 3, 1, 0, 0, 6, 1, 0, 0, 0, 0, 2]
@@ -542,8 +646,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [9, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 16
+    def test_move_16(self, gstate):
+        game = gstate.game
         cond = game.move(0)
         assert game.turn is False
         assert game.board == [4, 1, 3, 0, 2, 1, 2, 0, 0, 1, 0, 1]
@@ -553,8 +659,10 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [9, 0]
         assert cond is None
+        gstate.cond = cond
 
-        # move 17
+    def test_move_17(self, gstate):
+        game = gstate.game
         cond = game.move(5)
         assert game.turn is False
         assert game.board == [5, 0, 4, 1, 2, 0, 0, 0, 0, 0, 0, 0]
@@ -564,3 +672,4 @@ class TestDeka:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [12, 0]
         assert cond.name == "WIN"
+        gstate.cond = cond
