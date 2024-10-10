@@ -254,12 +254,14 @@ class NewRoundEven(NewGameIf):
         winner = self.game.turn
         set_round_starter(self.game)
         self.game.init_bprops()
+
         cts = self.game.cts
+        min_move = self.game.info.min_move
 
         loser_seeds = self.game.store[not winner] + \
             sum(self.game.board[loc] for loc in cts.get_my_range(not winner))
 
-        seeds_per_hole = loser_seeds // cts.holes
+        seeds_per_hole = (loser_seeds - min_move) // (cts.holes - 1)
         seeds_per_side = seeds_per_hole * cts.holes
 
         l_store = loser_seeds - seeds_per_side
@@ -270,11 +272,9 @@ class NewRoundEven(NewGameIf):
             self.game.store = [w_store, l_store]
         self.game.board = [seeds_per_hole] * self.game.cts.dbl_holes
 
-        min_move = self.game.info.min_move
         if seeds_per_hole < min_move:
 
             loser_extra = self.game.store[not winner]
-            # TODO if the loser doesn't have extra the game will not be playable
             self.game.board[0] += loser_extra
             self.game.board[cts.holes] += loser_extra
 

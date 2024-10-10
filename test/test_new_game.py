@@ -95,6 +95,23 @@ class TestNewGame:
         game.starter = False
         return game
 
+    @pytest.fixture
+    def nbmm_rgame(self):
+        """game rounds but no blocks"""
+
+        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+                                capt_on = [2],
+                                min_move=2,
+                                rounds=gi.Rounds.NO_MOVES,
+                                stores=True,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = False
+        game.starter = False
+        return game
+
 
     def test_no_rounds_start(self, game):
 
@@ -333,19 +350,34 @@ class TestNewGame:
             assert nb_rgame.store == estore
 
 
+    EVEN_CASES = [
+        # even fill no adjustment
+        ('rgame',    [4, 8], [1, 1, 1, 1, 1, 1], [1, 5]),
+        ('rgame',    [8, 4], [1, 1, 1, 1, 1, 1], [5, 1]),
+        ('nb_rgame', [4, 8], [1, 1, 1, 1, 1, 1], [1, 5]),
+        ('nb_rgame', [8, 4], [1, 1, 1, 1, 1, 1], [5, 1]),
 
-    @pytest.mark.parametrize('game_fixt', ['rgame', 'nb_rgame'])
+        # even will with 0, add two to make playable
+        ('rgame',    [2, 10], [2, 0, 0, 2, 0, 0], [0, 8]),
+        ('rgame',    [10, 2], [2, 0, 0, 2, 0, 0], [8, 0]),
+        ('nb_rgame', [2, 10], [2, 0, 0, 2, 0, 0], [0, 8]),
+        ('nb_rgame', [10, 2], [2, 0, 0, 2, 0, 0], [8, 0]),
+
+        # min move set to 2
+        ('nbmm_rgame', [4, 8], [2, 1, 1, 2, 1, 1], [0, 4]),
+        ('nbmm_rgame', [8, 4], [2, 1, 1, 2, 1, 1], [4, 0]),
+        ('nbmm_rgame', [2, 10], [2, 0, 0, 2, 0, 0], [0, 8]),
+        ('nbmm_rgame', [10, 2], [2, 0, 0, 2, 0, 0], [8, 0]),
+        ('nbmm_rgame', [3, 9], [3, 0, 0, 3, 0, 0], [0, 6]),
+        ('nbmm_rgame', [9, 3], [3, 0, 0, 3, 0, 0], [6, 0]),
+           ]
+
     @pytest.mark.parametrize(
-        'store, estore, even_ok',
-        [([4, 8], [1, 5], True),
-         ([8, 4], [5, 1], True),
-         ([2, 10], [0, 8], False),
-         ([10, 2], [8, 0], False),
-       ])
-    def test_even_rounds(self, request, game_fixt, store, estore, even_ok):
-        """The test is somewhat dependent on the test cases.
-        even_ok == False, with different game parameters (e.g. min_move)
-        could yield a different result."""
+        'game_fixt, store, eboard, estore', EVEN_CASES,
+        ids=[f'{game_fixt}-{a}-{b}-case{i}'
+             for (i, (game_fixt, (a, b), *_)) in enumerate(EVEN_CASES)]
+        )
+    def test_even_rounds(self, request, game_fixt, store, estore, eboard):
 
         game = request.getfixturevalue(game_fixt)
         object.__setattr__(game.info, 'round_fill', RoundFill.EVEN_FILL)
@@ -361,20 +393,23 @@ class TestNewGame:
 
         assert not game.new_game(win_cond=WinCond.ROUND_WIN,
                                  new_round_ok=True)
+        print(game)
 
         # positive seeds and no loss of seeds
         assert game.store[0] >= 0 and game.store[1] >= 0
-        assert (sum(game.store) + sum(game.board) == game.cts.total_seeds)
+        assert sum(game.store) + sum(game.board) == game.cts.total_seeds
+
+        # the resulting game is playable
+        game.turn = True
+        assert any(game.get_allowable_holes())
+        game.turn = False
+        assert any(game.get_allowable_holes())
 
         # test blocks, board and stores
         assert not any(game.blocked)
         assert game.store == estore
-        if even_ok:
-            assert all(game.board[0] == game.board[loc]
-                           for loc in range(game.cts.dbl_holes))
-        else:
-            assert (game.board[0] == 2 and game.board[3] == 2 and
-                        all(game.board[loc] == 0 for loc in [1, 2, 4, 5]))
+        assert game.board == eboard
+
 
 
     @pytest.mark.parametrize('game_fixt', ['rgame', 'nb_rgame'])
