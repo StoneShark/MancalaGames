@@ -100,7 +100,6 @@ class GameStats:
 
 class FindLoops:
     """A class to help find cycles in games."""
-
     # pylint: disable=too-few-public-methods
 
     def __init__(self, max_cycle=15, max_loop=20):
@@ -123,13 +122,14 @@ class FindLoops:
             self.dupl_cnt += 1
 
             if self.dupl_cnt > self.max_loop:
-                logger.info("Game cycle found %d", len(self.game_states))
+                logger.info("Likely game cycle found.")
                 return True
         else:
-            self.game_states.append(game.state)
+            self.game_states.append(gstate)
             self.dupl_cnt = 0
 
         return False
+
 
 
 # %% play the game
@@ -159,7 +159,8 @@ def play_one_game(game, fplayer, tplayer, save_logs=False):
         to this value afterward.
     """
 
-    stuck = FindLoops()
+    stuck = FindLoops(max_cycle=game.cts.holes * 3,
+                      max_loop=game.cts.holes * 2)
     game_logger.game_log.turn(0, 'Start Game', game)
 
     nbr_games = 500
