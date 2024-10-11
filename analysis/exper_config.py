@@ -2,9 +2,19 @@
 """Build command lines options that allow selecting games
 and configuring players.
 
-get_configuration is intended interface to generate
+get_configuration is the intended interface to generate
     generator for: games tplayer fplayer
     other config options
+
+The player's are recreated for each game because the
+have links back to the game object and must be
+recreated for each game.
+
+The help message contains details on the options.
+
+PLAYER_CONFIG_MSG and build_player are available to
+accept player configurations where the rest of the
+options are not wanted.
 
 Created on Sun Jul 28 13:41:27 2024
 @author: Ann"""
@@ -45,12 +55,13 @@ Player configurations:
     algo <aname> [params <values>]            - specified algo with either
                                                 default params or those specified
                                                 scorer config will be per config file
-    pdict <filename>                          - specify a player dict file (in pdicts dir)
+    pdict <filename>                          - specify a player dict file
+                                                (in pdicts dir, see the README there)
     random                                    - player will make random moves (default)
 
 where:
     <aname>    is one of {set(ai_player.ALGORITHM_DICT.keys())}
-    <level>    is one of 1, 2, 3, 4 for difficulty
+    <level>    is one of 0, 1, 2, 3 for difficulty
     <values>   is either
                    an integer, for depth of minimax or negamax search
                    bias (float), new_nodes (int), number play outs (int)
@@ -130,7 +141,27 @@ def process_command_line():
 def build_player(game, pdict, arg_list):
     """Build and configure the player as spec'ed in the arg_list.
     Lots of things can go wrong ... not going to try to catch them
-    ... exceptions will be be thrown."""
+    ... exceptions will be be thrown.
+
+    Parameters
+    ----------
+    game : Mancala
+        The game the player will be used with.
+
+    pdict : dict
+        The base player dictionary, that is, a dictionary that could
+        be the toplevel key "player" from a configuration file.
+        see GameProps/all_params.txt
+
+    arg_list : list, str
+        The list of strings collected by argparse from the command
+        line arguments. See PLAYER_CONFIG_MSG.
+
+    Returns
+    -------
+    player : AiPlayer
+        AI player configured as described.
+    """
     # pylint: disable=too-many-branches
 
     player = None
@@ -202,9 +233,11 @@ def game_n_players_gen(cargs):
 
 def get_configuration():
     """Process the command line and return:
-        a generator of tuples: game player1 player2
-        an ExperConfig with the rest of the configuration"""
+        a generator of tuples: game player1 player2 and
+        a namespace with the rest of the configuration
+
+    The root logger is configured so that output maybe
+    started here."""
 
     cargs = process_command_line()
-
     return game_n_players_gen(cargs), cargs

@@ -124,7 +124,7 @@ def build_data_frame():
 def std_dev(xsum, x_sqr_sum, nbr):
     """Use two sum formula to compute standard deviation."""
 
-    # return math.sqrt((x_sqr_sum - ((xsum * xsum) / nbr)) / (nbr - 1))
+    return math.sqrt((x_sqr_sum - ((xsum * xsum) / nbr)) / (nbr - 1))
 
 
 def fail_to_reject(gname, nbr_runs, tag, confidence=0.95):
@@ -171,14 +171,14 @@ def eval_game(gname, nbr_runs):
 
 # %%  play and collect
 
-
 def play_them_all():
 
     for game, fplayer, tplayer, gname in game_players_gen:
         logger.info(game.info.name)
-        play_game.play_games(game, fplayer, tplayer,
-                             config.nbr_runs, config.save_logs,
-                              ft.partial(score_game, gname))
+        game_res = play_game.play_games(game, fplayer, tplayer,
+                                        config.nbr_runs, config.save_logs,
+                                        ft.partial(score_game, gname))
+        logger.info(game_res)
 
         eval_game(gname, config.nbr_runs)
 

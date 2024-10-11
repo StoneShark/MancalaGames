@@ -138,7 +138,26 @@ class FindLoops:
 def play_one_game(game, fplayer, tplayer, save_logs=False):
     """Play one game between the two players, returning the results.
     If either/both is None, use random choice moves.
-    Otherwise use the player."""
+    Otherwise use the player.
+
+    Parameters
+    ----------
+    game : Mancala
+        The game to play.
+
+    fplayer : AiPlayer
+        The configuration to use for the False player.
+
+    tplayer : AiPlayer
+        The configuration to use for the True player.
+
+    save_logs : bool
+        True if the game_logger should be used for this game.
+        Records the start turn of the game.
+        The game_logger is disabled while the AiPlayers are
+        selecting a move, the logger state will be returned
+        to this value afterward.
+    """
 
     stuck = FindLoops()
     game_logger.game_log.turn(0, 'Start Game', game)
@@ -187,7 +206,45 @@ def play_one_game(game, fplayer, tplayer, save_logs=False):
 
 def play_games(game, fplayer, tplayer, nbr_runs, save_logs,
                result_func=None):
-    """Play a bunch of games between two players."""
+    """Play a nbr_runs games between two players. Half will be
+    started by False and half by True.
+
+    Parameters
+    ----------
+    game : Mancala
+        The game to play.
+
+    fplayer : AiPlayer
+        The configuration to use for the False player.
+
+    tplayer : AiPlayer
+        The configuration to use for the True player.
+
+    nbr_runs : int
+        The number of runs to perform.
+
+    save_logs : bool
+        If True, the game logger is set to DETAIL. Each log
+        will be pre-pended with the player configurations
+        and the game configuration.
+        Only one game will be played per second (to avoid
+        filename conflicts in the game logger).
+
+    result_func : function, optional
+                  prototype: result_func(starter, result, winner)
+        starter: bool - player that started the game
+        result: TODO
+        winner: bool or None - player that won the game
+
+        If this function is provided, it will be called after
+        every game played.
+
+    Returns
+    -------
+    game_results : GameStats
+        Accumulated game results in GameStats.
+
+    """
     # pylint: disable=too-many-arguments
 
     game_results = GameStats()
@@ -220,8 +277,30 @@ def play_games(game, fplayer, tplayer, nbr_runs, save_logs,
 
 def get_win_percent(game, player1, player2, nbr_runs):
     """Play a number of games of player1 against player2.
-    Return the win percentages for player2: wins 1 point, ties 0.5 point
-    Ignore any games that do not complete."""
+    This is a small wrapper around play_games.
+    Games that do not complete for any reason, are not included.
+
+    Parameters
+    ----------
+    game : Mancala
+        The game to play.
+
+    fplayer : AiPlayer
+        The configuration to use for the False player.
+
+    tplayer : AiPlayer
+        The configuration to use for the True player.
+
+    nbr_runs : int
+        The number of runs to perform.
+
+    Returns
+    -------
+    win percentage : float
+         player2's win percentages: wins 1 point, ties 0.5 point
+         divided by the total games play (not those that ended in
+         win or tie).
+    """
 
     gstats = play_games(game, player1, player2, nbr_runs, False)
     if gstats.stats['MAX_TURNS'] > nbr_runs // 2:

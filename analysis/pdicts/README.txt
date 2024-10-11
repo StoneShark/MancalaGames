@@ -6,7 +6,8 @@ A pdict file may contain the following parameters. The file
 must be a valid JSON string. Key/value pairs with default
 values need not be included.
 
-Comments are not allowed; include only text below.
+Comments are not allowed; include only text below and only 
+the key/value pairs you want.
 {
       "algorithm": "minimaxer",
       "ai_active": false,
