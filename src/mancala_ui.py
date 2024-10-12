@@ -102,6 +102,9 @@ class MancalaUI(tk.Frame):
         self.stores = None
         self._add_board()
 
+        self.show_tally.set(False)
+        self.tally_frame.forget()   # don't show tally by default
+
         self._new_game()
         self._refresh()
         self._ai_move()
@@ -296,7 +299,7 @@ class MancalaUI(tk.Frame):
                              variable=self.show_tally,
                              onvalue=True, offvalue=False,
                              command=self._toggle_tally)
-        # TODO facing players
+        # XXXX facing players
         # showmenu.add_checkbutton(label='Facing Players',
         #                      variable=self.facing_players,
         #                      onvalue=True, offvalue=False,
