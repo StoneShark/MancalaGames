@@ -99,30 +99,40 @@ class GameStats:
 
 
 class FindLoops:
-    """A class to help find cycles in games."""
-    # pylint: disable=too-few-public-methods
+    """A class to help find cycles in games.
 
-    def __init__(self, max_cycle=15, max_loop=20):
-        """
-        max_cycle =  number of states to keep in the deque
-        max_loop = error, if we haven't changed the deque
-        contents in this many moves
-        """
+    Doesn't exactly find a loop, but doesn't do much
+    extra processing. If we don't find a new state in
+    dupl_states moves; assume that we have a cycle."""
 
-        self.max_loop = max_loop
-        self.game_states = collections.deque(maxlen=max_cycle)
+    def __init__(self, qsize=18, dupl_states=12):
+        """Parameters:
+        qsize =  number of states to keep in the deque
+        dupl_states = error, if we haven't changed the deque
+        contents in this many moves"""
+
+        self.dupl_states = dupl_states
+        self.qsize = qsize
+        self.game_states = collections.deque(maxlen=qsize)
         self.dupl_cnt = 0
 
+    def __repr__(self):
+        return f"FindLoops(qsize={self.qsize}, dupl_states={self.dupl_states})"
+
     def game_state_loop(self, game):
-        """Determine if their is a loop in the game states."""
+        """The queue only gets unique states.
+        Clear the move count, because they wont match in
+        future comparisons. For most games, they don't
+        matter after the first move."""
 
         gstate = game.state.clear_mcount()
 
         if gstate in self.game_states:
             self.dupl_cnt += 1
 
-            if self.dupl_cnt > self.max_loop:
-                logger.info("Likely game cycle found.")
+            if self.dupl_cnt > self.dupl_states:
+                game_logger.game_log.add(f"Likely game cycle found by {self}.",
+                                         game_logger.game_log.IMPORT)
                 return True
         else:
             self.game_states.append(gstate)
@@ -157,10 +167,16 @@ def play_one_game(game, fplayer, tplayer, save_logs=False):
         The game_logger is disabled while the AiPlayers are
         selecting a move, the logger state will be returned
         to this value afterward.
-    """
 
-    stuck = FindLoops(max_cycle=game.cts.holes * 3,
-                      max_loop=game.cts.holes * 2)
+    Returns
+    -------
+    (result, winner) : tuple(GameResult, bool/None)
+        Game result and winner (or None).
+    """
+    # pylint: disable=too-many-branches
+
+    stuck = FindLoops(qsize=game.cts.holes * 3,
+                      dupl_states=game.cts.holes * 2)
     game_logger.game_log.turn(0, 'Start Game', game)
 
     nbr_games = 500
@@ -191,8 +207,7 @@ def play_one_game(game, fplayer, tplayer, save_logs=False):
         if cond in (gi.WinCond.ROUND_WIN, gi.WinCond.ROUND_TIE):
             if game.new_game(cond, new_round_ok=True):
                 return GameResult(cond.value), game.turn
-            else:
-                game_logger.game_log.turn(0, 'Start Game', game)
+            game_logger.game_log.turn(0, 'Start Game', game)
 
         if stuck.game_state_loop(game):
             return GameResult.LOOPED, None
@@ -244,7 +259,6 @@ def play_games(game, fplayer, tplayer, nbr_runs, save_logs,
     -------
     game_results : GameStats
         Accumulated game results in GameStats.
-
     """
     # pylint: disable=too-many-arguments
 
