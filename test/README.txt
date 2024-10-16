@@ -1,3 +1,6 @@
+Tests which are use game configuration from GameProps
+should (if possible) use the global game_pdict fixture.
+This will report a configure file error only once.
 
 
 Test Naming conventions:
@@ -7,13 +10,13 @@ Test Naming conventions:
     
     test_gm...       tests full complete games with pre-defined
                      sequences of moves
+                     these tests cannot use the game_pdict
+                     fixture because most generate the game in
+                     a class scope fixture (game_pdict is a 
+                     function scope fixture).
 
     test_z_simul...  heuristic tests of games, seek gross errors.
                      Often slow. z forces to be tested last.
-
-    vizex_...        frameworks to exercise the UI elements.
-                     tests are interactive and require the human
-                     tester to decide test pass & failure ...
 
 
 Debugging in Spyder:
