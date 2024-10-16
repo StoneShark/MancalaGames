@@ -45,7 +45,7 @@ class NewGameIf(deco_chain_if.DecoChainIf):
     def new_game(self, win_cond=None, new_round_ok=False):
         """collect seeds when game ended.
 
-        Return False if it a new round was started.
+        Return False if a new round was started.
         True if a new game was started."""
 
 
@@ -55,13 +55,13 @@ class NewGame(NewGameIf):
     """Default new game reset all variables."""
 
     def new_game(self, _1=None, _2=False):
-        """Reset the game to new state and choose random start player."""
+        """Reset the game to new state and alternate start player."""
 
         self.game.store = [0, 0]
         self.game.board = [self.game.cts.nbr_start] * self.game.cts.dbl_holes
         self.game.init_bprops()
 
-        self.game.turn = random.choice([False, True])
+        self.game.turn = not self.game.starter
         self.game.starter = self.game.turn
         return True
 
