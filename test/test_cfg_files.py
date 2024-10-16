@@ -35,10 +35,10 @@ BAD_CFG = 'all_params.txt'
 if BAD_CFG in FILES:
     FILES.remove(BAD_CFG)
 
-@pytest.mark.parametrize('file', FILES)
-def test_config_files(file):
+@pytest.mark.parametrize('game_pdict', FILES, indirect=True)
+def test_config_files(game_pdict):
 
-    game, pdict = man_config.make_game(PATH + file)
+    game, pdict = game_pdict
     ai_player.AiPlayer(game, pdict)
 
 

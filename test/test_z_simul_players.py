@@ -44,7 +44,6 @@ from context import ai_player
 from context import cfg_keys as ckey
 from context import game_interface as gi
 from context import game_logger
-from context import man_config
 
 from game_interface import WinCond
 
@@ -74,19 +73,15 @@ def no_logger():
     game_logger.game_log.active = False
 
 
-@pytest.fixture(params=FILES)
-def game_data(request):
-    return man_config.make_game(PATH + request.param)
-
-
 @pytest.mark.no_seed
 @pytest.mark.slow
 @pytest.mark.filterwarnings('ignore:Monte Carlo')
 @pytest.mark.parametrize('algo', ALGOS)
-def test_one_game(game_data, algo):
+@pytest.mark.parametrize('game_pdict', FILES, indirect=True)
+def test_one_game(game_pdict, algo):
     """Play a shortend game to exercise the Ai players."""
 
-    game, pdict = game_data
+    game, pdict = game_pdict
 
    # for test repeatability AND avoids move MCTS/move nbr issues
     game.turn = True

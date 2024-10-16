@@ -27,7 +27,6 @@ import random
 import pytest
 pytestmark = pytest.mark.integtest
 
-from context import man_config
 from context import game_logger
 
 from game_interface import WinCond
@@ -50,16 +49,12 @@ def no_logger():
     game_logger.game_log.active = False
 
 
-@pytest.fixture(params=FILES)
-def game_data(request):
-    return man_config.make_game(PATH + request.param)
-
-
 @pytest.mark.no_seed
 @pytest.mark.stresstest
-def test_one_game(game_data, request):
+@pytest.mark.parametrize('game_pdict', FILES, indirect=True)
+def test_one_game(request, game_pdict):
 
-    game, _ = game_data
+    game, _ = game_pdict
 
     nbr_games = 500
     if game.info.rounds:
@@ -82,7 +77,7 @@ def test_one_game(game_data, request):
         if game.info.mustpass:
             game.test_pass()
 
-    key_name = game.info.name + '/loop_max'
+    key_name = game.info.name + '_loop_max'
     cnt = request.config.cache.get(key_name, 0)
     request.config.cache.set(key_name, cnt + 1)
 
@@ -90,7 +85,7 @@ def test_one_game(game_data, request):
 @pytest.fixture
 def known_game_fails(request):
 
-    game, _ = request.getfixturevalue('game_data')
+    game, _ = request.getfixturevalue('game_pdict')
     if game.info.mlaps:
         request.node.add_marker(
             pytest.mark.xfail(
@@ -99,14 +94,15 @@ def known_game_fails(request):
 
 
 @pytest.mark.usefixtures('known_game_fails')
-def test_game_stats(game_data, request, nbr_runs):
+@pytest.mark.parametrize('game_pdict', FILES, indirect=True)
+def test_game_stats(request, game_pdict, nbr_runs):
 
     def report_bad(maxed, total):
         print(f'Bad endings for {game.info.name:12}: loop_max= {maxed:4}  ',
               f' {maxed/total:>6.1%}')
 
-    game, _ = game_data
-    key_name = game.info.name + '/loop_max'
+    game, _ = game_pdict
+    key_name = game.info.name + '_loop_max'
     maxed = request.config.cache.get(key_name, 0)
 
     if maxed:

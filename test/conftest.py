@@ -9,11 +9,13 @@ Make the number of runs available as a fixture named: nbr_runs
 Created on Fri Sep 15 09:07:52 2023
 @author: Ann"""
 
+import json
 import random
 
 import pytest
 
 from context import game_logger
+from context import man_config
 
 
 def pytest_addoption(parser):
@@ -121,3 +123,38 @@ def random_seed(request):
         return
 
     random.seed(10)
+
+
+@pytest.fixture
+def game_pdict(request):
+    """Parametrize with game config file(s).
+    Then use with indirect, to convert the game config file name
+    to an actual game and pdict.  As in:
+        @pytest.mark.parametrize('game_pdict', FILES, indirect=True)
+    or
+        @pytest.mark.parametrize('game_pdict ...',
+                                 ...FILES...,    # full param lists
+                                 indirect=['game_pdict'])
+
+
+    If the cache contains a failure, mark the test as xfail.
+    Otherwise try to make the game, if it fails save the failure
+    in the cache and reraise the exception.
+
+    This causes only one failure report to be generated for each
+    test session."""
+
+    cfg_filename = request.param
+    key_name = cfg_filename.replace('.', '_') + '_failed'
+
+    if request.config.cache.get(key_name, False):
+        pytest.xfail("Game cfg error (again)")
+
+    try:
+        game_data = man_config.make_game("./GameProps/" + cfg_filename)
+
+    except json.decoder.JSONDecodeError:
+        request.config.cache.set(key_name, True)
+        raise
+
+    return game_data
