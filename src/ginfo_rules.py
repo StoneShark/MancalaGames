@@ -572,6 +572,22 @@ def build_rules():
         msg='No capture mechanism provided',
         warn=True)
 
+    # TODO this rule causes 506 tests to fail, fix tests & integrate w/o other changes
+    # man_rules.add_rule(
+    #     'capt_req_place',
+    #     rule=lambda ginfo: (ginfo.goal != gi.Goal.DEPRIVE
+    #                         and not ginfo.stores
+    #                         and ginfo.child_type != gi.ChildType.WALDA
+    #                         and any([ginfo.capttwoout,
+    #                                  ginfo.capt_next,
+    #                                  ginfo.evens,
+    #                                  ginfo.crosscapt,
+    #                                  ginfo.capt_max,
+    #                                  ginfo.capt_min,
+    #                                  ginfo.capt_on])),
+    #     msg='There is no place to put captured seeds (need waldas or stores or Goal=Deprive).',
+    #     excp=gi.GameInfoError)
+
     man_rules.add_rule(
         'capt_conflict',
         rule=lambda ginfo: any(

@@ -167,85 +167,71 @@ class TestClaimers:
 class TestEndMove:
 
     @pytest.fixture
-    def game(self):
+    def game(self, request):
+
+        game_props = TestEndMove.GAME_PROPS[request.param]
+
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
-        game_info = gi.GameInfo(evens=True,
-                                stores=True,
-                                nbr_holes=game_consts.holes,
-                                rules=mancala.Mancala.rules)
+        if request.param == 'no_win_game':
+            object.__setattr__(game_consts, 'win_count',
+                               game_consts.total_seeds)
 
-        return mancala.Mancala(game_consts, game_info)
-
-    @pytest.fixture
-    def pagame(self):
-        game_consts = gc.GameConsts(nbr_start=2, holes=3)
-        game_info = gi.GameInfo(evens=True,
-                                mustpass=True,
-                                stores=True,
-                                nbr_holes=game_consts.holes,
-                                rules=mancala.Mancala.rules)
-
-        return mancala.Mancala(game_consts, game_info)
-
-
-    @pytest.fixture
-    def rgame(self):
-        game_consts = gc.GameConsts(nbr_start=2, holes=3)
-        game_info = gi.GameInfo(rounds=gi.Rounds.HALF_SEEDS,
-                                evens=True,
-                                stores=True,
+        game_info = gi.GameInfo(**game_props,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
 
 
-    @pytest.fixture
-    def mmgame(self):
-        game_consts = gc.GameConsts(nbr_start=2, holes=3)
-        game_info = gi.GameInfo(min_move=2,
-                                evens=True,
-                                stores=True,
-                                nbr_holes=game_consts.holes,
-                                rules=mancala.Mancala.rules)
+    GAME_PROPS = {
+        'game': {'evens': True,
+                 'stores': True,
+                 },
 
-        return mancala.Mancala(game_consts, game_info)
+        'pagame': {'evens': True,
+                   'mustpass': True,
+                   'stores': True,
+                   },
+
+        'rgame': {'rounds': gi.Rounds.HALF_SEEDS,
+                  'evens': True,
+                  'stores': True,
+                  },
+
+        'mmgame': {'min_move': 2,
+                   'evens': True,
+                   'stores': True,
+                   },
+
+        'mmshgame': {'min_move': 2,
+                     'mustshare': True,
+                     'evens': True,
+                     'stores': True,
+                     },
+        'no_win_game': {'mustshare': True,
+                        'evens': True,
+                        'stores': True,
+                        },
+
+        'rugame': {'rounds': gi.Rounds.HALF_SEEDS,
+                   'round_fill': gi.RoundFill.UMOVE,
+                   'min_move': 2,
+                   'evens': True,
+                   'stores': True,
+                  },
+
+        'r2game': {'rounds': gi.Rounds.HALF_SEEDS,
+                   'gparam_one': 2,   # need two holes to continue (new round)
+                   'evens': True,
+                   'stores': True,
+                  },
+
+        'cogame': {'capt_on': [6],
+                   'stores': True,
+                  },
 
 
-    @pytest.fixture
-    def mmshgame(self):
-        game_consts = gc.GameConsts(nbr_start=2, holes=3)
-        game_info = gi.GameInfo(min_move=2,
-                                mustshare=True,
-                                evens=True,
-                                stores=True,
-                                nbr_holes=game_consts.holes,
-                                rules=mancala.Mancala.rules)
-
-        return mancala.Mancala(game_consts, game_info)
-
-
-    @pytest.fixture
-    def no_win_game(self):
-        """win_count is patched so that the Winner class will not
-        declare a winner; that is no one has winner_cnt seeds.
-        The Winner class should collect seeds and return GAME_OVER. """
-
-        game_consts = gc.GameConsts(nbr_start=2, holes=3)
-        object.__setattr__(game_consts, 'win_count', game_consts.total_seeds)
-
-        game_info = gi.GameInfo(mustshare=True,
-                                evens=True,
-                                stores=True,
-                                nbr_holes=game_consts.holes,
-                                rules=mancala.Mancala.rules)
-
-        return mancala.Mancala(game_consts, game_info)
-
-
-    def test_str(self, game):
-        """Printing the claimer is unique to enders."""
-        assert 'ClaimSeeds' in str(game.deco.ender)
+    }
 
 
     WINCASES = [  # 0: no win
@@ -451,66 +437,113 @@ class TestEndMove:
                  utils.build_board([5, 0, 0],
                                    [0, 0, 0]), [3, 4], True),
 
-                # 29: false's turn ended, true has won, too few to continue
-                ('rgame', False, False,
-                 utils.build_board([1, 0, 0],
-                                   [0, 0, 0]), [0, 11], False, WinCond.WIN,
-                 utils.build_board([0, 0, 0],
-                                   [0, 0, 0]), [1, 11], True),
+                # 29: UMOVE game
+                ('rugame', False, False,
+                 utils.build_board([2, 2, 2],
+                                   [2, 2, 2]), [0, 0], True, None,
+                 utils.build_board([2, 2, 2],
+                                   [2, 2, 2]), [0, 0], True),
 
-                # 30: true's turn ended, false has won, too few to continue
-                ('rgame', False, False,
+                # 30:  True has just enough seeds to continue
+                ('rugame', False, False,
+                 utils.build_board([2, 1, 1],
+                                   [1, 1, 0]), [5, 0], True, WinCond.ROUND_WIN,
                  utils.build_board([0, 0, 0],
-                                   [0, 0, 1]), [11, 0], True, WinCond.WIN,
+                                   [0, 0, 0]), [7, 4], False),
+
+                #31: True does not have enough seeds to continue
+                ('rugame', False, False,
+                 utils.build_board([2, 1, 0],
+                                   [1, 1, 1]), [6, 0], True, WinCond.WIN,
                  utils.build_board([0, 0, 0],
-                                   [0, 0, 0]), [11, 1], False),
+                                   [0, 0, 0]), [9, 3], False),
+
+                # 32: gparam_one with MAX_SEEDS & rounds, e.g. don't need all
+                ('r2game', False, False,
+                 utils.build_board([2, 2, 2],
+                                   [2, 2, 2]), [0, 6], True, None,
+                 utils.build_board([2, 2, 2],
+                                   [2, 2, 2]), [0, 6], True),
+
+                # 33: enough seeds to keep playing
+                ('r2game', False, False,
+                 utils.build_board([2, 2, 0],
+                                   [0, 2, 2]), [0, 10], False, WinCond.ROUND_WIN,
+                 utils.build_board([2, 2, 0],
+                                   [0, 2, 2]), [0, 10], True),
+
+                # 34: not enough seeds to keep playing
+                ('r2game', False, False,
+                 utils.build_board([2, 1, 0],
+                                   [0, 1, 2]), [0, 10], False, WinCond.WIN,
+                 utils.build_board([2, 1, 0],
+                                   [0, 1, 2]), [0, 10], True),
+
+                # 35: capt_on = 6, can't capt more
+                ('cogame', False, False,
+                 utils.build_board([2, 0, 0],
+                                   [0, 2, 0]), [4, 4], False, WinCond.TIE,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [6, 6], None),
 
             ]
     @pytest.mark.filterwarnings("ignore")
+    # @pytest.mark.usefixtures("logger")
     @pytest.mark.parametrize(
-        'fixture, ended, repeat, board, store, turn,'
+        'game, ended, repeat, board, store, turn,'
         ' eres, eboard, estore, eturn',
         WINCASES,
-       ids=[f'case_{c}' for c in range(len(WINCASES))])
-    def test_wincond(self, request, fixture, ended,
-                     repeat, board, store, turn,
-                     eres, eboard, estore, eturn):
+        indirect=['game'],
+        ids=[f'case_{c}' for c in range(len(WINCASES))])
+    def test_game_ended(self, game, ended,
+                        repeat, board, store, turn,
+                        eres, eboard, estore, eturn):
 
-        game = request.getfixturevalue(fixture)
         game.board = board
         game.store = store
         game.turn = turn
-
-        assert game.win_conditions(repeat_turn=repeat, ended=ended) == eres
+        cond, winner = game.deco.ender.game_ended(repeat_turn=repeat,
+                                                  ended=ended)
+        assert cond == eres
         assert game.board == eboard
         assert game.store == estore
         if eturn is not None:
-            assert game.turn == eturn
+            assert winner == eturn
         assert not game.test_pass()
+
+
+    @pytest.mark.parametrize(
+        'game', ['game'], indirect=['game'])
+    def test_str(self, game):
+        """Printing the claimer is unique to enders."""
+        assert 'ClaimSeeds' in str(game.deco.ender)
+
 
 
 class TestEndChildren:
 
-    @pytest.fixture
-    def game(self):
-        game_consts = gc.GameConsts(nbr_start=2, holes=3)
-        game_info = gi.GameInfo(child_cvt=2,
-                                child_type=ChildType.NORMAL,
-                                evens=True,
-                                nbr_holes=game_consts.holes,
-                                rules=mancala.Mancala.rules)
 
-        return mancala.Mancala(game_consts, game_info)
+    GAME_PROPS = {
+       'game':  {'child_cvt': 2,
+                 'child_type': ChildType.NORMAL,
+                 'evens': True},
+
+       'rgame': {'rounds': gi.Rounds.HALF_SEEDS,
+                 'blocks': True,
+                 'child_cvt': 2,
+                 'child_type': ChildType.NORMAL,
+                 'evens': True},
+       }
+
 
     @pytest.fixture
-    def rgame(self):
+    def game(self, request):
         """NOTE: game_info rule checking is turned off."""
+
+        game_props = TestEndChildren.GAME_PROPS[request.param]
+
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
-        game_info = gi.GameInfo(rounds=gi.Rounds.HALF_SEEDS,
-                                blocks=True,  # req with rounds
-                                child_cvt=2,
-                                child_type=ChildType.NORMAL,
-                                evens=True,
+        game_info = gi.GameInfo(**game_props,
                                 nbr_holes=game_consts.holes,
                                 rules=ginfo_rules.RuleDict())
 
@@ -518,7 +551,7 @@ class TestEndChildren:
 
 
     @pytest.mark.parametrize(
-        'fixture, ended, board, store, turn, '
+        'game, ended, board, store, turn, '
         'eres, child, eboard, estore, eturn',
         [  # 0: collect seeds and count children to determine win
             ('game', False,
@@ -555,21 +588,21 @@ class TestEndChildren:
                                [N, N, T]),
              utils.build_board([1, 0, 0],
                                [0, 0, 1]), [2, 8], True),
-        ])
-    def test_wincond(self, request, fixture, ended,
+        ], indirect=['game'])
+    def test_wincond(self, game, ended,
                      board, store, turn, child,
                      eres, eboard, estore, eturn):
 
-        game = request.getfixturevalue(fixture)
         game.board = board
         game.child = child
         game.store = store
         game.turn = turn
 
-        assert game.win_conditions(ended=ended) == eres
+        cond, winner = game.deco.ender.game_ended(False, ended)
+        assert cond == eres
         assert game.board == eboard
         assert game.store == estore
-        assert game.turn == eturn
+        assert winner == eturn
         assert not game.test_pass()
 
 
@@ -789,108 +822,67 @@ class TestNoSides:
     def test_no_sides(self, game):
         """Everything except construction is already tested."""
 
-        pass
+        assert game.info.no_sides
+        assert len(game.get_allowable_holes()) == 6
 
 
 class TestQuitter:
 
     @pytest.fixture
-    def game(self):
+    def game(self, request):
+
+        game_props = TestQuitter.GAME_PROPS[request.param]
+
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
-        game_info = gi.GameInfo(evens=True,
-                                stores=True,
-                                nbr_holes=game_consts.holes,
-                                rules=mancala.Mancala.rules)
+        if request.param == 'no_win_game':
+            object.__setattr__(game_consts, 'win_count',
+                               game_consts.total_seeds)
 
-        return mancala.Mancala(game_consts, game_info)
-
-    @pytest.fixture
-    def chgame(self):
-        game_consts = gc.GameConsts(nbr_start=2, holes=3)
-        game_info = gi.GameInfo(evens=True,
-                                child_type=ChildType.NORMAL,
-                                child_cvt=2,
-                                stores=True,
-                                nbr_holes=game_consts.holes,
-                                rules=mancala.Mancala.rules)
-
-        return mancala.Mancala(game_consts, game_info)
-
-    @pytest.fixture
-    def nsgame(self):
-        game_consts = gc.GameConsts(nbr_start=2, holes=3)
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                evens=True,
-                                rules=mancala.Mancala.rules)
-
-        return mancala.Mancala(game_consts, game_info)
-
-    @pytest.fixture
-    def chnsgame(self):
-        game_consts = gc.GameConsts(nbr_start=2, holes=3)
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                evens=True,
-                                child_type=ChildType.NORMAL,
-                                child_cvt=2,
-                                rules=mancala.Mancala.rules)
-
-        return mancala.Mancala(game_consts, game_info)
-
-    @pytest.fixture
-    def rgame(self):
-        game_consts = gc.GameConsts(nbr_start=2, holes=3)
-        game_info = gi.GameInfo(rounds=gi.Rounds.HALF_SEEDS,
-                                evens=True,
-                                stores=True,
+        game_info = gi.GameInfo(**game_props,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
 
 
-    @pytest.fixture
-    def dipgame(self):
-        game_consts = gc.GameConsts(nbr_start=2, holes=3)
-        game_info = gi.GameInfo(evens=True,
-                                goal=gi.Goal.DEPRIVE,
-                                nbr_holes=game_consts.holes,
-                                rules=mancala.Mancala.rules)
+    GAME_PROPS = {'game': {'evens': True,
+                           'stores': True,
+                           },
 
-        return mancala.Mancala(game_consts, game_info)
+                  'chgame': {'evens': True,
+                             'child_type': ChildType.NORMAL,
+                             'child_cvt': 2,
+                             'stores': True,
+                             },
 
+                  'nsgame': {'evens': True,
+                             },
 
-    @pytest.fixture
-    def tergame(self):
-        game_consts = gc.GameConsts(nbr_start=2, holes=3)
-        game_info = gi.GameInfo(evens=True,
-                                stores=True,
-                                goal=gi.Goal.TERRITORY,
-                                gparam_one=4,
-                                nbr_holes=game_consts.holes,
-                                rules=mancala.Mancala.rules)
+                  'chnsgame': {'evens': True,
+                               'child_type': ChildType.NORMAL,
+                               'child_cvt': 2,
+                               },
 
-        return mancala.Mancala(game_consts, game_info)
+                  'rgame': {'rounds': gi.Rounds.HALF_SEEDS,
+                            'evens': True,
+                            'stores': True,
+                            },
 
-    @pytest.fixture
-    def no_win_game(self):
-        """win_count is patched so that the Winner class will not
-        declare a winner.  The Winner class should collect seeds
-        and return GAME_OVER. Expectation is that a derived
-        game dynamics class will wrap the deco chain and do the
-        right thing with GAME_OVER--none of the rest of code
-        is designed to handle it.
+                  'dipgame': {'evens': True,
+                              'goal': gi.Goal.DEPRIVE,
+                              },
 
-        GAME_OVER is only return if something in the deco chain
-        decides that the game is over (e.g. MUSTSHARE, NOPASS)."""
-        game_consts = gc.GameConsts(nbr_start=2, holes=3)
-        object.__setattr__(game_consts, 'win_count', game_consts.total_seeds)
+                  'tergame': {'evens': True,
+                              'stores': True,
+                              'goal': gi.Goal.TERRITORY,
+                              'gparam_one': 4,
+                              },
 
-        game_info = gi.GameInfo(evens=True,
-                                stores=True,
-                                nbr_holes=game_consts.holes,
-                                rules=mancala.Mancala.rules)
+                  'no_win_game': {'evens': True,
+                                  'stores': True,
+                                  },
+                  }
 
-        return mancala.Mancala(game_consts, game_info)
 
     CASES = \
     [   # 0:  stores, no child - divvy odd, true gets extra
@@ -1057,15 +1049,14 @@ class TestQuitter:
 
     ]
     @pytest.mark.parametrize(
-        'fixture, board, store, turn, '
+        'game, board, store, turn, '
         'eres, child, eboard, estore, eturn',
         CASES,
+        indirect=['game'],
         ids=[f'case_{c}' for c in range(len(CASES))])
-    def test_ended(self, request, fixture,
-                   board, store, turn, child,
+    def test_ended(self, game, board, store, turn, child,
                    eres, eboard, estore, eturn):
 
-        game = request.getfixturevalue(fixture)
         game.board = board
         game.child = child
         game.store = store
@@ -1135,20 +1126,20 @@ class TestTerritory:
                               ([('child_type', gi.ChildType.NORMAL),
                                 ('child_cvt', 3),
                                 ('evens', True)], 2),
-
-                              ([('sow_own_store', True)], -1),
-                              ((), -1),  # no capture method
-                                 ])
+                              ])
     def test_min_capture(self, game, capt_methods, emin_occ):
         """Test the minimum capture criteria."""
 
         object.__setattr__(game.info, 'capt_on', [])
-
         for cmethod, cvalue in capt_methods:
             object.__setattr__(game.info, cmethod, cvalue)
-        deco = end_move.deco_end_move(game)
 
-        assert deco._min_for_capture(game) == emin_occ
+        deco = end_move.deco_end_move(game)
+        while deco and not isinstance(deco, end_move.NoOutcomeChange):
+            deco = deco.decorator
+
+        assert deco
+        assert deco._min_for_change(game) == emin_occ
 
 
     @pytest.mark.parametrize(
@@ -1166,27 +1157,25 @@ class TestTerritory:
          ([('child_type', gi.ChildType.NORMAL), ('child_cvt', 3)],
           [1, 0, 1, 0, 0, 0], [N, T, N, N, N, N], False),  # too few but child
 
-         ([('sow_own_store', True)],
-          [1, 0, 1, 0, 1, 0], [N, N, N, N, N, N], False),
-
-         ([], [1, 0, 1, 0, 1, 0], [N, N, N, N, N, N], False),
          ],
-        ids=[f'case_{c}' for c in range(8)])
+        ids=[f'case_{c}' for c in range(6)])
     def test_cant_occ_more(self, game, capt_methods, board, child, eresult):
         """Test the minimum capture criteria."""
 
         object.__setattr__(game.info, 'capt_on', [])
         for cmethod, cvalue in capt_methods:
             object.__setattr__(game.info, cmethod, cvalue)
-        deco = end_move.deco_end_move(game)
+
         game.board = board
         game.child = child
 
-        result = deco._cant_capt_more()
-        assert result == eresult
+        deco = end_move.deco_end_move(game)
+        while deco and not isinstance(deco, end_move.NoOutcomeChange):
+            deco = deco.decorator
+        assert deco
 
-        if result:
-            assert any(seeds for seeds in game.store)
+        result = deco._too_few_for_change()
+        assert result == eresult
 
 
     TERR_CASES = [
@@ -1212,6 +1201,7 @@ class TestTerritory:
                            [1, 1, 0]), [7, 9], WinCond.ROUND_TIE, False),
         ]
 
+    # @pytest.mark.usefixtures("logger")
     @pytest.mark.parametrize('board, store, econd, ewinner', TERR_CASES)
     def test_territory(self, rgame, board, store, econd, ewinner):
 
@@ -1256,7 +1246,7 @@ class TestTerritory:
         over."""
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
-        game_info = gi.GameInfo(capt_on = [2],
+        game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
                                 gparam_one=6,
                                 goal=Goal.TERRITORY,
@@ -1266,7 +1256,7 @@ class TestTerritory:
                                 rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)
-        assert game.cts.win_count == 3*4*2
+        assert game.deco.ender.win_seeds == 23 # one less than all
 
         game.turn = True
         game.board = board
@@ -1277,17 +1267,15 @@ class TestTerritory:
         assert winner == ewinner
 
 
-class TestBadEnums:
+class TestNoOutcomeChangeOddities:
 
-    def test_bad_goal(self):
+    def test_unneded_nooutcome(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
-        game_info = gi.GameInfo(capt_on=[4],
-                                stores=True,
-                                nbr_holes=game_consts.holes,
-                                rules=mancala.Mancala.rules)
+        game_consts = gc.GameConsts(nbr_start=3, holes=3)
 
-        object.__setattr__(game_info, 'goal', 12)
+        with pytest.warns(UserWarning):
+            game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+                                    rules=mancala.Mancala.rules)
 
-        with pytest.raises(NotImplementedError):
+        with pytest.raises(gi.GameInfoError):
             mancala.Mancala(game_consts, game_info)

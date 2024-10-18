@@ -260,10 +260,6 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
                     game_consts.holes,
                     game_consts.nbr_start))
 
-        if (game_info.goal == gi.Goal.TERRITORY
-                or game_info.rounds == gi.Rounds.NO_MOVES):
-            game_consts.set_win_all_seeds()
-
         self.cts = game_consts
         self.info = game_info
 
@@ -455,13 +451,13 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         return cond
 
 
-    def win_conditions(self, repeat_turn=False, ended=False):
+    def win_conditions(self, repeat_turn=False):
         """Check for end game.
         Return None if no victory/tie conditions are met.
         If there is a winner, set turn to that player."""
 
         cond, winner = self.deco.ender.game_ended(repeat_turn=repeat_turn,
-                                                  ended=ended)
+                                                  ended=False)
         if cond:
             self.turn = winner
             return cond
@@ -551,8 +547,9 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         self.deco.capturer.do_captures(mdata)
 
         if mdata.captured == gi.WinCond.REPEAT_TURN:
+            game_log.step(f'Capture from {mdata.capt_loc}', self)
             game_log.step('Capture: repeat turn')
-        elif mdata.captured:
+        elif mdata.captured is True:
             game_log.step(f'Capture from {mdata.capt_loc}', self)
         elif mdata.capt_changed:
             game_log.step('Capture changed state', self)

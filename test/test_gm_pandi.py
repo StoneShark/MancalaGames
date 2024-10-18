@@ -788,6 +788,10 @@ class TestPandi:
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.store == [40, 30]
-        assert cond.name == "WIN"
+        assert game.store == [41, 29]
+        assert cond.name == "ROUND_WIN"
         gstate.cond = cond
+
+        # this was a WIN before, rewrite of NoOutcomeChange
+
+        # TODO need to test Pandi end game

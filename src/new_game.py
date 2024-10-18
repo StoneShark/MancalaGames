@@ -8,7 +8,6 @@ Created on Fri Apr  7 12:47:15 2023
 # %% imports
 
 import abc
-import random
 
 import deco_chain_if
 import end_move

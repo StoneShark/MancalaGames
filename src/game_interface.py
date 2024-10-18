@@ -219,7 +219,6 @@ class WinCond(enum.Enum):
     ROUND_WIN = enum.auto()
     ROUND_TIE = enum.auto()
 
-    GAME_OVER = enum.auto()     # return this when game ended w/o winner
     ENDLESS = enum.auto()       # return this when multi-lap games get stuck
     REPEAT_TURN = enum.auto()   # must be truthy
 

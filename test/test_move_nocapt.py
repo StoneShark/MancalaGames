@@ -38,7 +38,8 @@ class TestCCWSowing:
     @pytest.fixture
     def ccw_game(self):
         game_consts = gc.GameConsts(nbr_start=4, holes=6)
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+        game_info = gi.GameInfo(capt_on=[12],  # to keep NoOutcomeChange happy
+                                nbr_holes=game_consts.holes,
                                 sow_direct=Direct.CCW,
                                 rules=mancala.Mancala.rules)
 
@@ -49,8 +50,6 @@ class TestCCWSowing:
         # did we build the fixture right?
         assert ccw_game.board == utils.build_board([4, 4, 4, 4, 4, 4],
                                                    [4, 4, 4, 4, 4, 4])
-        assert len(ccw_game.info.capt_on) == 0
-
         ccw_game.turn = False
         ccw_game.move(0)
         assert ccw_game.board == utils.build_board([4, 4, 4, 4, 4, 4],
@@ -80,8 +79,6 @@ class TestCCWSowing:
 
         assert ccw_game.board == utils.build_board([4, 4, 4, 4, 4, 4],
                                                    [4, 4, 4, 4, 4, 4])
-        assert len(ccw_game.info.capt_on) == 0
-
         ccw_game.turn = True
         ccw_game.move(0)
         assert ccw_game.board == utils.build_board([0, 4, 4, 4, 4, 4],
@@ -111,7 +108,8 @@ class TestCWSowing:
         """Game that does little but is CW."""
 
         game_consts = gc.GameConsts(nbr_start=4, holes=6)
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+        game_info = gi.GameInfo(capt_on=[12],  # to keep NoOutcomeChange happy
+                                nbr_holes=game_consts.holes,
                                 sow_direct=Direct.CW,
                                 rules=mancala.Mancala.rules)
 
@@ -122,8 +120,6 @@ class TestCWSowing:
         # did we build the fixture right?
         assert cw_game.board == utils.build_board([4, 4, 4, 4, 4, 4],
                                                   [4, 4, 4, 4, 4, 4])
-        assert len(cw_game.info.capt_on) == 0
-
         cw_game.turn = False
         cw_game.move(1)
         assert cw_game.board == utils.build_board([5, 5, 5, 4, 4, 4],
@@ -153,8 +149,6 @@ class TestCWSowing:
 
         assert cw_game.board == utils.build_board([4, 4, 4, 4, 4, 4],
                                                   [4, 4, 4, 4, 4, 4])
-        assert len(cw_game.info.capt_on) == 0
-
         cw_game.turn = True
         cw_game.move(0)
         assert cw_game.board == utils.build_board([0, 5, 5, 5, 5, 4],
@@ -197,8 +191,6 @@ class TestCCWSowingStore:
         assert ccw_game.board == utils.build_board([4, 4, 4, 4, 4, 4],
                                                    [4, 4, 4, 4, 4, 4])
         assert ccw_game.store == [0, 0]
-        assert len(ccw_game.info.capt_on) == 0
-
         ccw_game.turn = False
         cond = ccw_game.move(2)
         assert cond == WinCond.REPEAT_TURN
@@ -272,7 +264,8 @@ class TestCWSowingStore:
         """Game that does little but is CW."""
 
         game_consts = gc.GameConsts(nbr_start=4, holes=6)
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+        game_info = gi.GameInfo(capt_on=[12],  # to keep NoOutcomeChange happy
+                                nbr_holes=game_consts.holes,
                                 stores=True,
                                 sow_direct=Direct.CW,
                                 sow_own_store=True,
@@ -339,7 +332,8 @@ class TestStartHole:
         """Game that does little but is CCW."""
 
         game_consts = gc.GameConsts(nbr_start=4, holes=6)
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+        game_info = gi.GameInfo(capt_on=[12],  # to keep NoOutcomeChange happy
+                                nbr_holes=game_consts.holes,
                                 min_move=2,
                                 sow_start=True,
                                 sow_direct=Direct.CCW,
@@ -352,7 +346,8 @@ class TestStartHole:
         """Game that does little but is CW."""
 
         game_consts = gc.GameConsts(nbr_start=4, holes=6)
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+        game_info = gi.GameInfo(capt_on=[12],  # to keep NoOutcomeChange happy
+                                nbr_holes=game_consts.holes,
                                 min_move=2,
                                 sow_start=True,
                                 sow_direct=Direct.CW,
@@ -365,8 +360,6 @@ class TestStartHole:
         # did we build the fixture right?
         assert ccw_game.board == utils.build_board([4, 4, 4, 4, 4, 4],
                                                    [4, 4, 4, 4, 4, 4])
-        assert len(ccw_game.info.capt_on) == 0
-
         ccw_game.turn = False
         ccw_game.move(0)
         assert ccw_game.board == utils.build_board([4, 4, 4, 4, 4, 4],
@@ -388,8 +381,6 @@ class TestStartHole:
         # did we build the fixture right?
         assert cw_game.board == utils.build_board([4, 4, 4, 4, 4, 4],
                                                   [4, 4, 4, 4, 4, 4])
-        assert len(cw_game.info.capt_on) == 0
-
         cw_game.turn = False
         cw_game.move(1)
         assert cw_game.board == utils.build_board([5, 5, 4, 4, 4, 4],
@@ -416,7 +407,8 @@ class TestSkipStart:
 
         game_consts = gc.GameConsts(nbr_start=4, holes=6)
 
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+        game_info = gi.GameInfo(capt_on=[12],  # to keep NoOutcomeChange happy
+                                nbr_holes=game_consts.holes,
                                 skip_start=True,
                                 sow_direct=Direct.CCW,
                                 rules=mancala.Mancala.rules)
@@ -429,7 +421,8 @@ class TestSkipStart:
 
         game_consts = gc.GameConsts(nbr_start=4, holes=6)
 
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+        game_info = gi.GameInfo(capt_on=[12],  # to keep NoOutcomeChange happy
+                                nbr_holes=game_consts.holes,
                                 skip_start=True,
                                 sow_direct=Direct.CW,
                                 rules=mancala.Mancala.rules)
@@ -485,7 +478,8 @@ class TestSpSowingNoU:
 
         game_consts = gc.GameConsts(nbr_start=4, holes=4)
 
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+        game_info = gi.GameInfo(capt_on=[12],  # to keep NoOutcomeChange happy
+                                nbr_holes=game_consts.holes,
                                 sow_direct=Direct.SPLIT,
                                 rules=mancala.Mancala.rules)
 
@@ -495,7 +489,8 @@ class TestSpSowingNoU:
     def sgame_odd(self):
 
         game_consts = gc.GameConsts(nbr_start=4, holes=3)
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+        game_info = gi.GameInfo(capt_on=[12],  # to keep NoOutcomeChange happy
+                                nbr_holes=game_consts.holes,
                                 udir_holes=[1],
                                 sow_direct=Direct.SPLIT,
                                 udirect=True,
@@ -541,7 +536,8 @@ class TestUdirAll:
     def uagame(self):
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+        game_info = gi.GameInfo(capt_on=[12],  # to keep NoOutcomeChange happy
+                                nbr_holes=game_consts.holes,
                                 udir_holes=[0, 1, 2, 3],
                                 sow_direct=Direct.SPLIT,
                                 udirect=True,
@@ -559,8 +555,6 @@ class TestUdirAll:
         # did we build the fixture right?
         assert uagame.board == utils.build_board([3, 3, 3, 3],
                                                  [3, 3, 3, 3])
-        assert len(uagame.info.capt_on) == 0
-
         uagame.turn = False
         uagame.move((0, Direct.CW))
         assert uagame.board == utils.build_board([4, 4, 4, 3],
@@ -589,7 +583,8 @@ class TestBlocks_ito_Sow:
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
 
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+        game_info = gi.GameInfo(capt_on=[12],  # to keep NoOutcomeChange happy
+                                nbr_holes=game_consts.holes,
                                 blocks=True,
                                 rounds=gi.Rounds.NO_MOVES,
                                 sow_direct=Direct.CCW,
@@ -619,7 +614,8 @@ class TestMoveunlock_ito_Sow:
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
 
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+        game_info = gi.GameInfo(capt_on=[12],  # to keep NoOutcomeChange happy
+                                nbr_holes=game_consts.holes,
                                 moveunlock=True,
                                 sow_direct=Direct.CCW,
                                 rules=mancala.Mancala.rules)
@@ -648,9 +644,10 @@ class TestMLAPS_ito_Sow:
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
 
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+        game_info = gi.GameInfo(capt_on=[12],  # to keep NoOutcomeChange happy
                                 mlaps=LapSower.LAPPER,
                                 sow_direct=Direct.CCW,
+                                nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
@@ -671,7 +668,8 @@ class TestMLAPS_ito_Sow:
 
         game_consts = gc.GameConsts(nbr_start=4, holes=6)
 
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+        game_info = gi.GameInfo(capt_on=[12],  # to keep NoOutcomeChange happy
+                                nbr_holes=game_consts.holes,
                                 mlaps=LapSower.LAPPER,
                                 sow_direct=Direct.CCW,
                                 rules=mancala.Mancala.rules)
@@ -697,7 +695,8 @@ class TestPASS_ito_Sow:
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
 
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+        game_info = gi.GameInfo(capt_on=[12],  # to keep NoOutcomeChange happy
+                                nbr_holes=game_consts.holes,
                                 mlaps=LapSower.LAPPER,
                                 sow_direct=Direct.CCW,
                                 rules=mancala.Mancala.rules)

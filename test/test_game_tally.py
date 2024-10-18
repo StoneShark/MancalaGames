@@ -65,8 +65,6 @@ class TestGameTally:
               (False, WinCond.ROUND_WIN,      0, 0, 0, 0, 1, 1, 0, 0),
               (True,  WinCond.ROUND_TIE,      0, 0, 0, 0, 1, 0, 0, 1),
               (False, WinCond.ROUND_TIE,      0, 0, 0, 0, 1, 0, 0, 1),
-              (True,  WinCond.GAME_OVER,      0, 0, 0, 0, 0, 0, 0, 0),
-              (False, WinCond.GAME_OVER,      0, 0, 0, 0, 0, 0, 0, 0),
               (True,  WinCond.ENDLESS,        0, 0, 0, 0, 0, 0, 0, 0),
               (False, WinCond.ENDLESS,        0, 0, 0, 0, 0, 0, 0, 0),
               (True,  WinCond.REPEAT_TURN,    0, 0, 0, 0, 0, 0, 0, 0),

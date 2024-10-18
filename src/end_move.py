@@ -11,14 +11,11 @@ Process is as follows:
     0. RoundWinner defers to the rest of the chain
        (on returns it adjusts the outcome).
     1. Determine outright game winner or game tie
-       via Winner.
-    2. Check for end condition: not playable, mustshare, or
-       cannot pass (not mustpass).
+       via ClearWinner.
+    2. Check for end condition: no outcome change, not playable,
+       mustshare, or cannot pass (not mustpass).
     3. If the game has ended, collect seeds and determine if
        round/game winner or round/game tie.
-
-Winner is used in steps 1 and 3 of the deco chain with
-a different seed claimer and follow-on decorator.
 
 Log a step if anything is changed on the board, e.g. TakeOwnSeeds.
 
@@ -107,6 +104,7 @@ class TakeOwnSeeds(ClaimSeedsIf):
         self.get_owner = owner_func
 
     def claim_seeds(self):
+        # seeds moved into stores, then added in later
         seeds = [0, 0]
 
         for loc in range(self.game.cts.dbl_holes):
@@ -129,9 +127,8 @@ class TakeOwnSeeds(ClaimSeedsIf):
 
 
 class TakeOnlyChildNStores(ClaimSeedsIf):
-    """Ignore unclaimed seeds; count stores and children
-
-    Duplicated code from DivvySeedsStores, can this be consolidated?"""
+    """Ignore unclaimed seeds; count stores and children.
+    NoSides uses this."""
 
     def claim_seeds(self):
 
@@ -146,11 +143,9 @@ class TakeOnlyChildNStores(ClaimSeedsIf):
                 seeds[False] += self.game.board[loc]
 
             else:
-                # XXXX is removing unclaimed seeds right for game play?
-                # the game is over so we don't need preserve seed count
                 self.game.board[loc] = 0
 
-        game_log.step('Divvied seeds', self.game)
+        game_log.step('Take seeds', self.game)
         return seeds
 
 
@@ -250,16 +245,6 @@ class DivvySeedsChildOnly(ClaimSeedsIf):
         return [half, half]
 
 
-class DivvyIgnoreSeeds(ClaimSeedsIf):
-    """For DEPRIVE games: If there are seeds on the board
-    (which there are or the game would have ended),
-    end the game in a TIE."""
-
-    def claim_seeds(self):
-        half = self.game.cts.total_seeds // 2
-        return [half, half]
-
-
 # %%  end turn interface
 
 class EndTurnIf(deco_chain_if.DecoChainIf):
@@ -269,6 +254,8 @@ class EndTurnIf(deco_chain_if.DecoChainIf):
 
         super().__init__(game, decorator)
         self.claimer = claimer
+        self.win_seeds = self.compute_win_seeds(game)
+
 
     def __str__(self):
         """A recursive func to print the whole decorator chain."""
@@ -283,19 +270,46 @@ class EndTurnIf(deco_chain_if.DecoChainIf):
 
     @abc.abstractmethod
     def game_ended(self, repeat_turn, ended=False):
-        """Return the end condition and winner."""
+        """Return the end condition and winner.
+        End condition will be one of None, WIN, TIE,
+        ROUND_WIN and ROUND_TIE. The other values of
+        WinCond are not generated here."""
 
-    def test_seed_cnts(self, seeds):
+    @staticmethod
+    def compute_win_seeds(game):
+        """Compute the number of seeds a player needs for an
+        outright win."""
+
+        game_goal = game.info.goal
+        gparam_one = game.info.gparam_one
+        nbr_start = game.cts.nbr_start
+
+        win_seeds = -1
+
+        if game.info.rounds == gi.Rounds.NO_MOVES:
+            win_seeds = game.cts.total_seeds - 1
+
+        elif game_goal == gi.Goal.TERRITORY:
+            win_seeds = gparam_one * nbr_start
+
+        elif game_goal == gi.Goal.MAX_SEEDS:
+            half, rem = divmod(game.cts.total_seeds, 2)
+            win_seeds = half + rem
+
+        return win_seeds
+
+
+    def has_seeds_for_win(self, seeds):
         """Determine if seed counts result in an
         end game condition."""
 
-        if seeds[True] > self.game.cts.win_count:
+        if seeds[True] > self.win_seeds:
             return gi.WinCond.WIN, True
 
-        if seeds[False] > self.game.cts.win_count:
+        if seeds[False] > self.win_seeds:
             return gi.WinCond.WIN, False
 
-        if (seeds[False] == self.game.cts.win_count
+        if (seeds[False] == self.win_seeds
                 and seeds[False] == seeds[True]):
             return gi.WinCond.TIE, self.game.turn
 
@@ -304,112 +318,68 @@ class EndTurnIf(deco_chain_if.DecoChainIf):
 
 # %%
 
-class Winner(EndTurnIf):
-    """If either player has won based on seed count returned by
-    the claimer, return the end game conditions.
-
-    This needs to be able to run at the top and bottom of the
-    deco chain. In both cases ended can be True or False.
-
-    At the top (first/second), the decorator will exist and
-    the claimer will be one of ClaimSeeds or ChildClaimSeeds.
-
-    At the bottom of deco chain (called later), the decorator
-    will be None and the claimer will count all the seeds,
-    therefore the game will end via the test_seed_cnts
-    (unless ...).
-
-    At the bottom of deco chain in a game which does not
-    end the game via test_seed_cnts, return GAME_OVER.
-    A deco higher in the chain, must translate to an actual
-    game result and winner. In this case we do want to call
-    the claimer to collect the seeds."""
+class ClearWinner(EndTurnIf):
+    """Determine if the seed counts result in a clear winner.
+    There must be decorators in the chain below this."""
 
     def game_ended(self, repeat_turn, ended=False):
 
-        if ended and self.decorator:
+        if ended:
             return self.decorator.game_ended(repeat_turn, ended)
 
-        if not ended and not self.decorator:
-            return None, self.game.turn
-
-        cond, winner = self.test_seed_cnts(self.claimer.claim_seeds())
+        cond, winner = self.has_seeds_for_win(self.claimer.claim_seeds())
         if cond:
             return cond, winner
 
-        if ended and not self.decorator:
-            return gi.WinCond.GAME_OVER, self.game.turn
-
         return self.decorator.game_ended(repeat_turn, False)
-
-
-class MaxWinner(EndTurnIf):
-    """In some games not all seeds count towards the win,
-    i.e. the game is over but neither player will have
-    win_count seeds. The player with the max seeds wins.
-
-    This should only be used to wrap Winner with a seed
-    taker; the same claimer is used here."""
-
-    def game_ended(self, repeat_turn, ended=False):
-
-        cond, winner = self.decorator.game_ended(repeat_turn, ended)
-
-        if cond != gi.WinCond.GAME_OVER:
-            return cond, winner
-
-        seeds = self.decorator.claimer.claim_seeds()
-
-        if seeds[0] > seeds[1]:
-            return gi.WinCond.WIN, False
-
-        if seeds[0] < seeds[1]:
-            return gi.WinCond.WIN, True
-
-        return gi.WinCond.TIE, self.game.turn
 
 
 class RoundWinner(EndTurnIf):
     """"If the game is played in rounds, let the rest of the
     chain decide the outcome, then adjust for end of game or
-    end of round. The game is over if either player does not
-    have the minimum seeds to continue the game.
-
-    For UMOVE / Giuthi rules contradict: game doesn't end
-    until <= 4 seeds for loser, but in rearrangement rules all
-    holes must contain a seed. Also, the winner's side is
-    setup reversed of loser's side, so both players
-    must have enough seeds for a valid move. Therefore, the
-    game will end when there are not enough seeds for the loser
-    to fill their side with a valid move.
+    end of round. Additionally, the game is over if either player
+    does not have the minimum seeds to continue the game.
 
     This is near the top of the deco chain. If ended is True
     actually end the game (not the round)."""
 
     def __init__(self, game, decorator=None, claimer=None):
+        """Init the parent deco's; then fill:
+
+        req_seeds: the number of seeds required to keep playing
+        the game.
+
+        msg: message to log if either player has fewer
+        than win_seeds"""
 
         super().__init__(game, decorator, claimer)
 
-        intro = 'Game, not round, ended '
-        if game.info.round_fill == gi.RoundFill.UMOVE:
+        nbr_start = game.cts.nbr_start
+        gparam_one = game.info.gparam_one
+        intro = "Game, not round, ended (too few seeds to fill "
+
+        if game.info.goal == gi.Goal.TERRITORY:
+            req_holes = game.cts.dbl_holes - gparam_one + 1
+            self.req_seeds = req_holes * nbr_start - nbr_start // 2
+            self.msg = intro + f"at least {req_holes} holes)."
+
+        elif game.info.round_fill == gi.RoundFill.UMOVE:
             self.req_seeds = game.cts.holes + game.info.min_move - 1
-            self.msg = intro + "(too few seeds to fill side)."
+            self.msg = intro + "playable side)."
 
         elif game.info.gparam_one > 0:
-            self.req_seeds = game.cts.nbr_start * game.info.gparam_one
-            self.msg = intro + "(too few seeds to fill at least " \
-                + f"{game.info.gparam_one} holes)."
+            self.req_seeds = nbr_start * game.info.gparam_one
+            self.msg = intro + f"at least {gparam_one} holes)."
 
         else:
-            self.req_seeds = game.cts.nbr_start
-            self.msg = intro + "(too few seeds to fill a hole)."
+            self.req_seeds = nbr_start
+            self.msg = intro + "a hole)."
 
 
     def game_ended(self, repeat_turn, ended=False):
 
         cond, player = self.decorator.game_ended(repeat_turn, ended)
-
-        if not cond or cond == gi.WinCond.GAME_OVER or ended:
+        if ended or not cond:
             return cond, player
 
         seeds = self.claimer.claim_seeds()
@@ -420,12 +390,13 @@ class RoundWinner(EndTurnIf):
         if cond == gi.WinCond.WIN:
             return gi.WinCond.ROUND_WIN, player
 
-        # if cond == WinCond.TIE:
+        # if cond == gi.WinCond.TIE:
         return gi.WinCond.ROUND_TIE, player
 
 
 class EndTurnNoMoves(EndTurnIf):
-    """No Pass, end game if there are no seeds for the next player."""
+    """No Pass, end game if there are no moves for the next player
+    OR on repeat turn, the current player has no moves."""
 
     def game_ended(self, repeat_turn, ended=False):
 
@@ -434,13 +405,15 @@ class EndTurnNoMoves(EndTurnIf):
 
         if repeat_turn:
             ended = not any(self.game.get_allowable_holes())
+            msg = "No moves for repeat turn; game ended."
         else:
             self.game.turn = not self.game.turn
             ended = not any(self.game.get_allowable_holes())
             self.game.turn = not self.game.turn
+            msg = "No moves for next player; game ended."
 
         if ended:
-            game_log.add("No moves for next player; game ended.", game_log.INFO)
+            game_log.add(msg, game_log.INFO)
 
         return self.decorator.game_ended(repeat_turn, ended)
 
@@ -496,7 +469,11 @@ class EndTurnMustShare(EndTurnIf):
 class EndTurnNotPlayable(EndTurnIf):
     """If the game is no longer playable in any circustances,
     end it. Specifically, if none of the holes on the board
-    have the minimum seeds required for a move, it's over."""
+    have the minimum seeds required for a move, it's over.
+    This is faster than simulating allowable moves and is
+    needed for games w/o either mustshare or mustpass .
+
+    This ends most territory games and rounds."""
 
     def game_ended(self, repeat_turn, ended=False):
 
@@ -508,7 +485,8 @@ class EndTurnNotPlayable(EndTurnIf):
                         for loc in range(self.game.cts.dbl_holes))
 
         if ended:
-            game_log.add("No moves available, game ended.", game_log.IMPORT)
+            game_log.add("No moves available, round/game ended.",
+                         game_log.IMPORT)
 
         return self.decorator.game_ended(repeat_turn, ended)
 
@@ -577,7 +555,7 @@ class DepriveSeedsEndGame(EndTurnIf):
     the opponents WINS because they have forced the current player
     to give away all their seeds.
 
-    This is not used with stores or children."""
+    This is not to be used with stores or children."""
 
     def game_ended(self, repeat_turn, ended=False):
         """Check for end game."""
@@ -605,90 +583,75 @@ class DepriveSeedsEndGame(EndTurnIf):
 
 
 class NoOutcomeChange(EndTurnIf):
-    """If the game has already been determined to be ended,
-    pick the winner:
-        Rounds: if there is a game winner by territory (gparam_one)
-    or compare the seeds to determine a round winner.
-        No Rounds: determine soley based on territory > holes
+    """Call the deco chain to decide if the game ends by normal
+    means. If the game hasn't ended by normal means, determine
+    if there can be any change in outcome based on seeds still
+    in play.
 
-    Otherwise call the deco chain; we need EndTurnMustShare and/or
-    EndTurnNoMoves to decide if the game has ended.
+    If the game outcome cannot change, use the claimer, a Taker,
+    to move seeds to the owner's stores and call the deco again
+    to end the game.
 
-    If they decide the game is over, use the same criteria to
-    determine the round winner.
-
-    Note that win_count is patched so Winner will not end the game."""
-
+    Games that use this class must either employ Waldas or have
+    stores. In the case of Waldas, WaldaEndMove will cleanup."""
 
     def __init__(self, game, decorator=None, claimer=None):
 
         super().__init__(game, decorator, claimer)
-        self.min_occ = self._min_for_capture(game)
+        self.min_needed = self._min_for_change(game)
 
-        if game.info.rounds:
-            self.winner_test = self._test_round_winner
-        else:
-            self.winner_test = self._test_winner
 
     @staticmethod
-    def _min_for_capture(game):
+    def _min_for_change(game):
         """Select a minimum number of seeds that must be on the
-        board for a capture or to claim territory.
-        Disable with min_occ of -1,  if this feature shouldn't
-        be used (sow_own_store)."""
-        # pylint: disable=too-complex    disable=too-many-branches
-
-        if game.info.sow_own_store:
-            return -1
+        board for a capture or to claim territory."""
+        # pylint: disable=too-many-branches
 
         if game.info.child_type:
-            min_occ = game.info.child_cvt
+            min_needed = game.info.child_cvt
         else:
-            min_occ = game.cts.total_seeds  # max possible and flag
+            min_needed = game.cts.total_seeds  # max possible and flag
 
         if (game.info.evens
                 or game.info.capt_next
                 or game.info.crosscapt):
-            min_occ = min(2, min_occ)
+            min_needed = min(2, min_needed)
 
         if game.info.capttwoout:
             if game.info.mlaps:
-                min_occ = min(2, min_occ)
+                min_needed = min(2, min_needed)
             else:
-                min_occ = min(3, min_occ)
+                min_needed = min(3, min_needed)
 
         if game.info.capt_on:
             if game.info.evens:
-                min_occ = min(cval for cval in game.info.capt_on
+                min_needed = min(cval for cval in game.info.capt_on
                                     if not cval % 1)
             else:
-                min_occ = min(*game.info.capt_on, min_occ)
+                min_needed = min(*game.info.capt_on, min_needed)
 
         # a capt_min value overrides any other
         if game.info.capt_min:
-            if min_occ == game.cts.total_seeds:
-                min_occ = game.info.capt_min
+            if min_needed == game.cts.total_seeds:
+                min_needed = game.info.capt_min
             else:
-                min_occ = max(game.info.capt_min, min_occ)
+                min_needed = max(game.info.capt_min, min_needed)
 
-        if min_occ == game.cts.total_seeds:
-            min_occ = -1
+        if min_needed == game.cts.total_seeds:
+            raise gi.GameInfoError("NoOutcomeChange included but unused.")
 
-        return min_occ
+        return min_needed
 
 
-    def _cant_capt_more(self):
-        """Determine if we can capture more seeds.
-        If min_occ feature was disabled (== -1), return False.
+    def _too_few_for_change(self):
+        """Determine if the game outcome can change.
+        If min_needed feature was disabled (== -1), return False.
         If there are any children, return False (can sow into children).
-        If there are not any seeds, return False to let the other
-        decos decide outcome.
+        If there are not any seeds, return False (this isn't called
+        when there are no seeds).
 
-        If there are too few seeds left to do a capture, return True.
-        and call the quitter to do something fair based on game params."""
-
-        if self.min_occ < 0:
-            return False
+        If there are too few seeds left to change the outcome,
+        return True."""
 
         remaining = 0
         for loc in range(self.game.cts.dbl_holes):
@@ -697,108 +660,85 @@ class NoOutcomeChange(EndTurnIf):
             else:
                 return False
 
-        if not remaining:
-            return False
-
-        if remaining < self.min_occ:
+        if 0 < remaining < self.min_needed:
             game_log.add(
-                f'Too few seeds for more captures (< {self.min_occ}).',
+                f'Too few seeds for outcome change (< {self.min_needed}).',
                 game_log.IMPORT)
-
-            self.game.deco.quitter.game_ended(False, True)
             return True
 
         return False
 
 
-    def _test_round_winner(self):
-        """The round has ended, determine if their is a game
-        winner, or the round outcome."""
-
-        winner, wholes = self.game.compute_win_holes()
-
-        if winner is None:
-            return gi.WinCond.ROUND_TIE, self.game.turn
-        if wholes >= self.game.info.gparam_one:
-            return gi.WinCond.WIN, winner
-        return gi.WinCond.ROUND_WIN, winner
-
-
-    def _test_winner(self):
-        """The game has ended, decide who won or if a TIE."""
-
-        winner, _ = self.game.compute_win_holes()
-        if winner is None:
-            return gi.WinCond.TIE, self.game.turn
-        return gi.WinCond.WIN, winner
-
-
     def game_ended(self, repeat_turn, ended=False):
         """Determine if the game ended."""
 
-        if ended:
-            return self.decorator.game_ended(repeat_turn, ended)
-
-        if self._cant_capt_more():
-            return self.winner_test()
-
         cond, winner = self.decorator.game_ended(repeat_turn, ended)
 
-        if cond == gi.WinCond.GAME_OVER:
-            return self.winner_test()
+        if not ended and not cond and self._too_few_for_change():
+            return self.decorator.game_ended(repeat_turn, True)
 
         return cond, winner
 
 
-class DepriveEndGame(EndTurnIf):
-    """We are forcing the game to end, end in a tie."""
+class EndGameWinner(EndTurnIf):
+    """This is intended to be at the bottom of the deco chain.
+    If any deco has determined that the game should end,
+    this will end the game and pick a winner.
+
+    The claimer should be a taker.
+    The seeds for win is checked again (after running claimer/taker).
+
+    Any child deco is ignored."""
+
+    def game_ended(self, repeat_turn, ended=False):
+
+        if not ended:
+            return None, self.game.turn
+
+        # check for clear win condition
+        seeds = self.claimer.claim_seeds()
+        print(seeds)
+        print(self.game)
+        cond, winner = self.has_seeds_for_win(seeds)
+        print(cond)
+        if cond:
+            return cond, winner
+
+        # no clear win condition, pick player with most seeds
+        if seeds[0] > seeds[1]:
+            return gi.WinCond.WIN, False
+
+        if seeds[0] < seeds[1]:
+            return gi.WinCond.WIN, True
+
+        return gi.WinCond.TIE, self.game.turn
+
+
+class QuitToTie(EndTurnIf):
+    """Force the game to end in a tie; don't change the board.
+    Used for DEPRIVE games."""
 
     def game_ended(self, repeat_turn, ended=False):
         """Determine if the game ended."""
         return gi.WinCond.TIE, self.game.turn
 
 
-class TerritoryEndGame(EndTurnIf):
-    """We are forcing the game to end, call the decorator
-    to collect the seeds and then decide who wins."""
-
-    def _test_winner(self):
-        """The game has ended, decide who won or if a TIE."""
-
-        winner, _ = self.game.compute_win_holes()
-        if winner is None:
-            return gi.WinCond.TIE, self.game.turn
-        return gi.WinCond.WIN, winner
-
-
-    def game_ended(self, repeat_turn, ended=False):
-        """Determine if the game ended."""
-
-        # call this to execute the divier
-        self.decorator.game_ended(repeat_turn, ended)
-
-        # win_count is patched to total_seeds so determine the winner here
-        return self._test_winner()
-
-
-
 # %% build decorator chains
 
 def deco_add_bottom_winner(game):
     """Start the deco chain by adding the bottom Winner
-    and MaxWinner (if needed)."""
+    and MoreSeedsWinner (if needed)."""
 
     if game.info.no_sides:
-        ender = Winner(game, claimer=TakeOnlyChildNStores(game))
+        ender = EndGameWinner(
+            game, claimer=TakeOnlyChildNStores(game))
 
     elif game.info.goal == gi.Goal.TERRITORY:
-        ender = Winner(game,
-                       claimer=TakeOwnSeeds(game, lambda loc: game.owner[loc]))
+        ender = EndGameWinner(
+            game, claimer=TakeOwnSeeds(game, lambda loc: game.owner[loc]))
     else:
-        ender = Winner(game, claimer=TakeOwnSeeds(game, game.cts.board_side))
-
-    if game.info.goal == gi.Goal.MAX_SEEDS:
-        ender = MaxWinner(game, ender)
+        ender = EndGameWinner(
+            game, claimer=TakeOwnSeeds(game, game.cts.board_side))
 
     return ender
 
@@ -822,11 +762,11 @@ def deco_end_move(game):
 
     ender = EndTurnNotPlayable(game, ender)
 
-    if game.info.child_cvt:
-        claimer = ChildClaimSeeds(game)
-    else:
-        claimer = ClaimSeeds(game)
-    ender = Winner(game, ender, claimer)
+    if not (game.info.sow_own_store or game.info.mustshare):
+        ender = NoOutcomeChange(game, ender)
+
+    claimer = ChildClaimSeeds(game) if game.info.child_cvt else ClaimSeeds(game)
+    ender = ClearWinner(game, ender, claimer)
 
     if game.info.rounds:
         ender = RoundWinner(game, ender, ClaimOwnSeeds(game))
@@ -834,42 +774,23 @@ def deco_end_move(game):
     if game.info.child_type == gi.ChildType.WALDA:
         ender = WaldaEndMove(game, ender)
 
-    ender = NoOutcomeChange(game, ender)
-
     return ender
 
 
 def deco_quitter(game):
-    """Return a chain for the quitter (user ended game or reached
-    an ENDLESS condition). Do something that seems fair. Assume that
-    seeds in play could belong to either player.
+    """Return a quitter. Used when either the user ended game or
+    the game reached an ENDLESS condition.
 
-    DEPRIVE: end in a TIE. Don't change the board.
-
-    TERRITORY: divvy the seeds and compute territory for each with
-    rounding rules. If outright winner based on gparam_one go with it,
-    otherwise TIE.
-
-    MAX_SEEDS: divvy the seeds, use MaxWinner to computer winner or TIE.
-
-    When divvying seeds move them to stores or children
-    (TERRITORY & MAX_SEEDS games must have one or both)."""
-
-    if game.info.goal == gi.Goal.DEPRIVE:
-        return DepriveEndGame(game)
+    Do something that seems fair. Assume that seeds in play could
+    belong to either player."""
 
     if game.info.stores:
-        quitter = Winner(game, claimer=DivvySeedsStores(game))
-    elif game.info.child_cvt:
-        quitter = Winner(game, claimer=DivvySeedsChildOnly(game))
-    else:
-        return Winner(game, claimer=DivvyIgnoreSeeds(game))
+        quitter = EndGameWinner(game, claimer=DivvySeedsStores(game))
 
-    if game.info.goal == gi.Goal.MAX_SEEDS:
-        quitter = MaxWinner(game, quitter)
-    elif game.info.goal == gi.Goal.TERRITORY:
-        quitter = TerritoryEndGame(game, quitter)
+    elif game.info.child_cvt:
+        quitter = EndGameWinner(game, claimer=DivvySeedsChildOnly(game))
+
     else:
-        raise NotImplementedError(f"Goal {game.info.goal} not implemented.")
+        quitter = QuitToTie(game)
 
     return quitter

@@ -256,18 +256,12 @@ class TestCaptOk:
     @pytest.fixture
     def make_game(self):
 
-        def _make_game (turn, seeds, child, unlocked,
-                        evens=False, oppsidecapt=False,
-                        moveunlock=False, capt_on=(),
-                        capt_max=0, capt_min=0):
+        def _make_game (turn, seeds, child, unlocked, game_options):
 
             game_consts = gc.GameConsts(nbr_start=4, holes=2)
-            game_info = gi.GameInfo(capt_on=capt_on,
-                                    evens=evens,
-                                    oppsidecapt=oppsidecapt,
-                                    moveunlock=moveunlock,
-                                    capt_max=capt_max,
-                                    capt_min=capt_min,
+            game_info = gi.GameInfo(sow_own_store=True,
+                                    stores=True,
+                                    **game_options,
                                     nbr_holes=game_consts.holes,
                                     rules=mancala.Mancala.rules)
 
@@ -294,13 +288,5 @@ class TestCaptOk:
     def test_capt_ok(self, method, case, make_game):
 
         game = make_game(case.turn, case.seeds, case.child, case.unlocked,
-                         **GPARAMS[method])
+                         GPARAMS[method])
         assert game.deco.capt_ok.capture_ok(case.loc) == getattr(case, method)
-
-
-
-# %%
-
-"""
-pytest.main(['test_capt_ok.py'])
-"""

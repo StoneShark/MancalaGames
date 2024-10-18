@@ -34,7 +34,6 @@ class GameResult(enum.Enum):
 
     WIN = gi.WinCond.WIN.value
     TIE = gi.WinCond.TIE.value
-    GAME_OVER = gi.WinCond.GAME_OVER.value
     ENDLESS = gi.WinCond.ENDLESS.value
 
     MAX_TURNS = enum.auto()

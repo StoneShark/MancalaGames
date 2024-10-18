@@ -47,7 +47,6 @@ def test_odd_holes():
     assert game_consts.dbl_holes == 10
     assert game_consts.half_holes == 2
     assert game_consts.total_seeds == 60
-    assert game_consts.win_count == 30
 
     assert list(game_consts.false_range) == [0, 1, 2, 3, 4]
     assert list(game_consts.true_range) == [9, 8, 7, 6, 5]
@@ -63,7 +62,6 @@ def test_odd_holes():
 
     game_consts.adjust_total_seeds(21)
     assert game_consts.total_seeds == 21
-    assert game_consts.win_count == 11
 
 
 def test_even_holes():
@@ -76,7 +74,6 @@ def test_even_holes():
     assert game_consts.dbl_holes == 12
     assert game_consts.half_holes == 3
     assert game_consts.total_seeds == 36
-    assert game_consts.win_count == 18
 
     assert list(game_consts.false_range) == [0, 1, 2, 3, 4, 5]
     assert list(game_consts.true_range) == [11, 10, 9, 8, 7, 6]
@@ -92,7 +89,6 @@ def test_even_holes():
 
     game_consts.adjust_total_seeds(20)
     assert game_consts.total_seeds == 20
-    assert game_consts.win_count == 10
 
 
 def test_print():
@@ -100,15 +96,6 @@ def test_print():
     # -1 : nbr_start and holes are both on the first line of the output
     game_consts = gc.GameConsts(6, 2)
     assert len(str(game_consts).split('\n')) == len(vars(game_consts)) - 1
-
-
-def test_set_win():
-
-    game_consts = gc.GameConsts(6, 2)
-    assert game_consts.win_count == 6*2
-
-    game_consts.set_win_all_seeds()
-    assert game_consts.win_count == 6*2*2
 
 
 class TestCtsFuncs:
