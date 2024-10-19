@@ -407,33 +407,6 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         self.blocked[loc] = blocked
 
 
-    def compute_win_holes(self):
-        """Compute the number of holes that winner should own
-        based on number of seeds.
-        Seeds have already been collected from non-children.
-		Do not change the board.
-		Return: winner (or None for tie), and winner holes."""
-
-        seeds = self.store.copy()
-        for loc in range(self.cts.dbl_holes):
-            if self.child[loc] is True:
-                seeds[True] += self.board[loc]
-            elif self.child[loc] is False:
-                seeds[False] += self.board[loc]
-
-        if seeds[True] == seeds[False]:
-            return None, self.cts.holes
-
-        nbr_start = self.cts.nbr_start
-        greater = seeds[True] > seeds[False]
-        greater_holes, rem = divmod(seeds[greater], nbr_start)
-        if rem > nbr_start // 2:
-            greater_holes += 1
-
-        game_log.add(f"{greater} holes = {greater_holes}", game_log.IMPORT)
-        return greater, greater_holes
-
-
     def new_game(self, win_cond=None, new_round_ok=False):
         """Delegate to the new_game decorators.
         Return False if it a new round was started.

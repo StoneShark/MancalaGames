@@ -212,9 +212,7 @@ class TerritoryNewRound(NewGameIf):
             self.decorator.new_game(win_cond, new_round_ok)
             return True
 
-        winner, wholes = self.game.compute_win_holes()
-        if winner is None:
-            winner = True  # tie round, either will do
+        winner, wholes = self.game.deco.ender.compute_win_holes()
         set_round_starter(self.game)
 
         self.game.store = [0, 0]
@@ -223,9 +221,6 @@ class TerritoryNewRound(NewGameIf):
 
         loc = self.game.cts.holes if winner else 0
         direct = 1
-        # loc = self.game.cts.holes - 1 if winner else \
-        #     self.game.cts.dbl_holes - 1
-        # direct = -1
 
         for cnt in range(self.game.cts.dbl_holes):
             self.game.owner[loc] = winner if cnt < wholes else not winner

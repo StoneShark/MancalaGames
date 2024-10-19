@@ -1176,7 +1176,7 @@ class TestSowCaptOwned:
         mdata.sow_loc, mdata.seeds = game2_ss.deco.starter.start_sow(move)
         mdata.direct = game2_ss.info.sow_direct
         game2_ss.deco.sower.sow_seeds(mdata)
-        print(game2_ss)
+        # print(game2_ss)
 
         assert mdata.capt_loc == 4
         assert game2_ss.board == utils.build_board([2, 4, 0],

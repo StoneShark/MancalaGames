@@ -393,7 +393,7 @@ class TestNewGame:
 
         assert not game.new_game(win_cond=WinCond.ROUND_WIN,
                                  new_round_ok=True)
-        print(game)
+        # print(game)
 
         # positive seeds and no loss of seeds
         assert game.store[0] >= 0 and game.store[1] >= 0

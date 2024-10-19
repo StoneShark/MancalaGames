@@ -275,6 +275,48 @@ class EndTurnIf(deco_chain_if.DecoChainIf):
         ROUND_WIN and ROUND_TIE. The other values of
         WinCond are not generated here."""
 
+
+
+    def compute_win_holes(self):
+        """Compute the number of holes that winner should own
+        based on number of seeds. Seeds have already been collected
+        from non-children.
+
+        Return: fill start side for greater_holes (winner or True, for tie)
+        and number of winner holes.
+
+        This is used by the new_game deco."""
+
+        game = self.game
+        nbr_start = game.cts.nbr_start
+
+        seeds = game.store.copy()
+        for loc in range(game.cts.dbl_holes):
+            if game.child[loc] is True:
+                seeds[True] += game.board[loc]
+            elif game.child[loc] is False:
+                seeds[False] += game.board[loc]
+
+        if seeds[True] == seeds[False]:
+            # doesn't matter where fill starts for tie
+            return True, game.cts.holes
+
+        greater = seeds[True] > seeds[False]
+        greater_holes, rem = divmod(seeds[greater], nbr_start)
+        if rem > nbr_start // 2:
+            greater_holes += 1
+
+        game_log.add(f"{greater} holes = {greater_holes}", game_log.IMPORT)
+        return greater, greater_holes
+
+
+    @staticmethod
+    def round_seeds_for_win(req_holes, nbr_start):
+        """Seeds required for round win."""
+
+        return req_holes * nbr_start - (nbr_start - 1) // 2
+
+
     @staticmethod
     def compute_win_seeds(game):
         """Compute the number of seeds a player needs for an
@@ -290,7 +332,7 @@ class EndTurnIf(deco_chain_if.DecoChainIf):
             win_seeds = game.cts.total_seeds - 1
 
         elif game_goal == gi.Goal.TERRITORY:
-            win_seeds = gparam_one * nbr_start
+            win_seeds = EndTurnIf.round_seeds_for_win(gparam_one, nbr_start)
 
         elif game_goal == gi.Goal.MAX_SEEDS:
             half, rem = divmod(game.cts.total_seeds, 2)
@@ -360,7 +402,7 @@ class RoundWinner(EndTurnIf):
 
         if game.info.goal == gi.Goal.TERRITORY:
             req_holes = game.cts.dbl_holes - gparam_one + 1
-            self.req_seeds = req_holes * nbr_start - nbr_start // 2
+            self.req_seeds = self.round_seeds_for_win(req_holes, nbr_start)
             self.msg = intro + f"at least {req_holes} holes)."
 
         elif game.info.round_fill == gi.RoundFill.UMOVE:
@@ -368,13 +410,13 @@ class RoundWinner(EndTurnIf):
             self.msg = intro + "playable side)."
 
         elif game.info.gparam_one > 0:
-            self.req_seeds = nbr_start * game.info.gparam_one
+            self.req_seeds = self.round_seeds_for_win(game.info.gparam_one,
+                                                      nbr_start)
             self.msg = intro + f"at least {gparam_one} holes)."
 
         else:
             self.req_seeds = nbr_start
             self.msg = intro + "a hole)."
-
 
     def game_ended(self, repeat_turn, ended=False):
 
@@ -588,10 +630,6 @@ class NoOutcomeChange(EndTurnIf):
     if there can be any change in outcome based on seeds still
     in play.
 
-    If the game outcome cannot change, use the claimer, a Taker,
-    to move seeds to the owner's stores and call the deco again
-    to end the game.
-
     Games that use this class must either employ Waldas or have
     stores. In the case of Waldas, WaldaEndMove will cleanup."""
 
@@ -608,6 +646,7 @@ class NoOutcomeChange(EndTurnIf):
         # pylint: disable=too-many-branches
 
         if game.info.child_type:
+            # presence of children checked at play-time
             min_needed = game.info.child_cvt
         else:
             min_needed = game.cts.total_seeds  # max possible and flag
@@ -697,10 +736,10 @@ class EndGameWinner(EndTurnIf):
 
         # check for clear win condition
         seeds = self.claimer.claim_seeds()
-        print(seeds)
-        print(self.game)
+        # print(seeds)
+        # print(self.game)
         cond, winner = self.has_seeds_for_win(seeds)
-        print(cond)
+        # print(cond)
         if cond:
             return cond, winner
 
@@ -762,7 +801,11 @@ def deco_end_move(game):
 
     ender = EndTurnNotPlayable(game, ender)
 
-    if not (game.info.sow_own_store or game.info.mustshare):
+    if not any([game.info.sow_own_store,
+                game.info.mustshare,
+                game.info.pickextra == gi.CaptExtraPick.PICKLASTSEEDS,
+                game.info.pickextra == gi.CaptExtraPick.PICK2XLASTSEEDS,
+                ]):
         ender = NoOutcomeChange(game, ender)
 
     claimer = ChildClaimSeeds(game) if game.info.child_cvt else ClaimSeeds(game)

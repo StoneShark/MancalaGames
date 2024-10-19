@@ -40,18 +40,81 @@ if BAD_CFG in FILES:
 
 # %% ender config
 
-# these parameters control how the ender works at run-time
-# they do not control how the ender deco chain is built
+"""
+these parameters control how the ender works at run-time
+they do not control how the ender deco chain is built
+
+  win_seeds is in base class, > win_seeds wins the game
+
+  min_needed is in NoOutcomeChange, if seeds <  min_needed for either player
+  the game outcome cannot change, end it
+
+  rnd_req_seeds is req_seeds in RoundWinner, number of seeds required by
+  either player to start a new round
+
+"""
 
 Config = collections.namedtuple('Config',
                                 ['win_seeds', 'min_needed', 'rnd_req_seeds'],
-                                defaults=[0])
+                                defaults=[0, 0])
 
 CONFIG_CASES = {
-    'Ayoayo': Config(24, 0),       # NoOutcomeChange should not be included
+    'Ayoayo': Config(24),       # mustshare no NoOutcomeChange
     'Bao_Kenyan': Config(16, 2),
-    'Bao_Tanzanian': Config(55, 2, 4),
+    'Bao_Tanzanian': Config(55, 2, 4),  # child but capt also
+    'Bechi': Config(4*6*2 - 1, 2, 6),   # TERRITORY
+    'Bosh': Config(5*4*2 - 1, 2, 4),
+    'Cow': Config(5*5, 2),
+    'Dabuda': Config(10*4, 2),
+    'Dakon': Config(7*7*2 - 1, 0, 4*7 - 3),
+    'Deka': Config(-1),   # DEPRIVE games no win_seeds or NoOutcomeChange
+    'Depouiller': Config(-1),   # DEPRIVE
 
+    'Endodoi': Config(8*4, 2),
+    'Enkeshui': Config(24, 2),   # start pattern
+    'Erherhe': Config(6*4, 0, 2*4 - 1) ,  # mustshare
+    'Eson_Xorgol': Config(5*9, 3),
+    'Gabata': Config(4*6*2 - 1, 4, 2*6 - 1),   # only children
+    'Gamacha': Config(-1),
+    'Giuthi': Config(8*6*2 - 1, 2, 8 + 1),  # UMOVE
+    'Goat': Config(3*3, 2),
+    'J_Odu': Config(8*4, 2),
+    'Kalah': Config(6*4),
+
+    'Lagerung': Config(7*7*2 - 1, 0, 7*4 - 3),
+    'Lami': Config(10*2*2 - 1, 2, 2),
+    'Lamlameta': Config(12*2*2 - 1, 2, 4*2),
+    'Lam_Waladach': Config(6*3*2 - 1, 0, (12-9)*3 - 1),  # pick2xlastseeds no NoOutcomeChange
+    'Leyla-Gobale': Config(8*4, 2),
+    'Longbeu-a-cha': Config(5*5, 3),
+    'Mbangbi': Config(5*8, 2),
+    'Mbothe': Config(10*2, 2),
+    'Nambayi': Config(-1),
+    'NamNam': Config(6*4*2 - 1, 0, (12-10)*4 - 1), # picklastseeds no NoOutcomeChange
+
+    'Ndoto': Config(8*2, 2),
+    'NoCapt': Config(6*4),   # sow_own_store
+    'NoSides': Config(5*2, 2),
+    'NoSidesChild': Config(7*2, 2),
+    'NumNum': Config(6*4*2 - 1, 0, (12-10)*4 - 1), # picklastseeds no NoOutcomeChange
+    'Olinda': Config(7*4*2 - 1, 2, 4),
+    'Ot-tjin': Config(10*3, 3),
+    'Oware': Config(6*4),
+    'Pallam_Kuzhi': Config(7*4*2 - 1, 4, 2),
+    'Pandi': Config(7*5*2 - 1, 2, 5),
+
+    'Qelat': Config(6*4, 4),
+    'Sadeqa': Config(-1),
+    'Songo': Config(7*5),  # mustshare
+    'SowOpDirs': Config(5*4, 2),
+    'Tapata': Config(-1),
+    'Toguz_Xorgol': Config(9*9, 3),
+    'Vai_Lun_Thlan': Config(6*5, 1),
+    'Valah': Config(6*4),  # sow_own_store
+    'Wari': Config(6*4),  # mustshare
+    'Weg': Config(6*4*2 - 1, 4, (12-10)*4),
+
+    'XCaptSowOwn': Config(6*4),
 }
 
 
@@ -83,6 +146,7 @@ class TestEnderConfig:
 
     @pytest.mark.parametrize('game_pdict, econfig',
                              zip(FILES, FILES),
+                             ids=[f[:-4] for f in FILES],
                              indirect=True)
     def test_game_const(self, game_pdict, econfig):
         """Test that the game and ender are configured/constructed
@@ -103,13 +167,12 @@ class TestEnderConfig:
         else:
             assert not nooutcome
 
-        # set to zero for no rounds, find round ender and check req_seeds
-        if not econfig.rnd_req_seeds:
-            return
-
         rnd_ender = self.find_ender_deco(game, end_move.RoundWinner)
-        assert rnd_ender
-        assert rnd_ender.req_seeds == econfig.rnd_req_seeds
+        if econfig.rnd_req_seeds:
+            assert rnd_ender
+            assert rnd_ender.req_seeds == econfig.rnd_req_seeds
+        else:
+            assert not rnd_ender
 
 
 # %% end game tests
@@ -293,13 +356,13 @@ class TestEndGames:
 
         game, _ = game_pdict
         game.state = gstate
-        print(game)
+        # print(game)
         assert sum(game.store) + sum(game.board) == game.cts.total_seeds, \
             "Test Config Error: missing seeds"
 
         cond, winner = game.deco.ender.game_ended(repeat_turn=False,
                                                   ended=False)
-        print(game)
+        # print(game)
 
         assert cond == econd
         if ewinner != DONT_CARE:
