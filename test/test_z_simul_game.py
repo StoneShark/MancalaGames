@@ -64,7 +64,8 @@ def test_one_game(request, game_pdict):
 
     for _ in range(nbr_games):
         moves = game.get_moves()
-        assert moves, "Game didn't end right."
+        if not moves:
+            pytest.fail("Game didn't end right.")
 
         cond = game.move(random.choice(moves))
         if cond in (WinCond.WIN, WinCond.TIE):
@@ -82,18 +83,20 @@ def test_one_game(request, game_pdict):
     request.config.cache.set(key_name, cnt + 1)
 
 
-@pytest.fixture
-def known_game_fails(request):
+# @pytest.fixture
+# def known_game_fails(request):
 
-    game, _ = request.getfixturevalue('game_pdict')
-    if game.info.mlaps:
-        request.node.add_marker(
-            pytest.mark.xfail(
-                reason='Many seeds; heuristic test; occasionally fails.',
-                strict=False))
+#     game, _ = request.getfixturevalue('game_pdict')
+#     if game.info.mlaps:
+#         request.node.add_marker(
+#             pytest.mark.xfail(
+#                 reason='Many seeds; heuristic test; occasionally fails.',
+#                 strict=False))
 
 
-@pytest.mark.usefixtures('known_game_fails')
+# @pytest.mark.usefixtures('known_game_fails')
+
+
 @pytest.mark.parametrize('game_pdict', FILES, indirect=True)
 def test_game_stats(request, game_pdict, nbr_runs):
 
@@ -108,5 +111,10 @@ def test_game_stats(request, game_pdict, nbr_runs):
     if maxed:
         atexit.register(report_bad, maxed, nbr_runs)
 
-    assert maxed <= nbr_runs * 0.25, \
+    if game.info.mlaps:
+        thresh = 0.75
+    else:
+        thresh = 0.25
+
+    assert maxed <= nbr_runs * thresh, \
         f'Bad endings too high for {game.info.name}: loop_max= {maxed}'
