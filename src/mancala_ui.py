@@ -75,8 +75,8 @@ class MancalaUI(tk.Frame):
 
         self.master.title(self.info.name)
         self.master.option_add('*tearOff', False)
-        self.master.resizable(False, False)
-        self.master.wm_geometry('+500+300')
+        # self.master.resizable(False, False)
+        # self.master.wm_geometry('+500+300')
 
         super().__init__(self.master)
         self.master.report_callback_exception = self._exception_callback
@@ -90,7 +90,7 @@ class MancalaUI(tk.Frame):
         self.ai_active = tk.IntVar(self.master, value=start_ai)
         self.ai_delay = tk.BooleanVar(self.master, value=2)
 
-        self.pack()
+        self.pack(expand=True, fill=tk.BOTH)
         self._create_menus()
 
         self.tally = None
@@ -134,26 +134,40 @@ class MancalaUI(tk.Frame):
         """Add the game board frame and widgets."""
 
         board_frame = tk.Frame(self, borderwidth=7, relief=tk.RAISED)
-        board_frame.pack(side=tk.BOTTOM)
+        board_frame.pack(side=tk.BOTTOM, expand=True, fill=tk.BOTH)
 
         if self.info.stores:
             b_store = btnb.StoreButton(board_frame, self, tk.LEFT, True)
+            b_store.grid(row=0, column=0, sticky="nsew")
 
         land_frame = tk.Frame(board_frame, padx=3, pady=3)
-        land_frame.pack(side=tk.LEFT)
+        land_frame.grid(row=0, column=1, sticky="nsew")
 
         for row in range(2):
             dirs = self._get_hole_dirs(row)
 
             for pos in range(self.game.cts.holes):
-
                 btn = self._build_button(land_frame, row, pos, dirs)
                 self.disp[row][pos] = btn
-                self.disp[row][pos].grid(row=row, column=pos)
+                self.disp[row][pos].grid(row=row, column=pos,
+                                         sticky="nsew")
+
+        land_frame.grid_rowconfigure('all', weight=1)
+        land_frame.grid_columnconfigure('all', weight=1)
 
         if self.info.stores:
             a_store = btnb.StoreButton(board_frame, self, tk.RIGHT, False)
+            a_store.grid(row=0, column=2, sticky="nsew")
             self.stores = [b_store, a_store]
+
+            board_frame.grid_rowconfigure(0, weight=1)
+            board_frame.grid_columnconfigure([0, 2], weight=1)
+            board_frame.grid_columnconfigure(1, weight=4)
+
+        else:
+            board_frame.grid_rowconfigure(0, weight=1)
+            board_frame.grid_columnconfigure(0, weight=1)
+
 
 
     def _get_hole_dirs(self, row):

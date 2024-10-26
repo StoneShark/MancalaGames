@@ -863,7 +863,6 @@ class StoreButton(tk.Button):
                            disabledforeground='black', foreground='black',
                            anchor='center', font='bold, 14', relief='ridge',
                            command=self.left_click)
-        self.pack(side=side)
         self.bind('<Button-3>', self.right_click)
 
 
