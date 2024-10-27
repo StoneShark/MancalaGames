@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """These tests start by verifying the game configurations and
 expected end games.  End games don't occur often and this behavior
-is  of more concern than finding configurations not tested in the games.
+is of more concern than finding configurations not tested in the games.
 
 The purpose of the game config tests is two fold:
 
@@ -41,7 +41,7 @@ if BAD_CFG in FILES:
 # %% ender config
 
 """
-these parameters control how the ender works at run-time
+These parameters control how the ender works at run-time
 they do not control how the ender deco chain is built
 
   win_seeds is in base class, > win_seeds wins the game
@@ -50,7 +50,7 @@ they do not control how the ender deco chain is built
   the game outcome cannot change, end it
 
   rnd_req_seeds is req_seeds in RoundWinner, number of seeds required by
-  either player to start a new round
+  either player to start a new round (otherwise a new game is started)
 
 """
 
@@ -62,45 +62,45 @@ CONFIG_CASES = {
     'Ayoayo': Config(24),       # mustshare no NoOutcomeChange
     'Bao_Kenyan': Config(16, 2),
     'Bao_Tanzanian': Config(55, 2, 4),  # child but capt also
-    'Bechi': Config(4*6*2 - 1, 2, 6),   # TERRITORY
+    'Bechi': Config(4*6*2 - 1, 2, 6),
     'Bosh': Config(5*4*2 - 1, 2, 4),
     'Cow': Config(5*5, 2),
     'Dabuda': Config(10*4, 2),
-    'Dakon': Config(7*7*2 - 1, 0, 4*7 - 3),
+    'Dakon': Config(7*7*2 - 1, 0, 7*4),
     'Deka': Config(-1),   # DEPRIVE games no win_seeds or NoOutcomeChange
     'Depouiller': Config(-1),   # DEPRIVE
 
     'Endodoi': Config(8*4, 2),
     'Enkeshui': Config(24, 2),   # start pattern
-    'Erherhe': Config(6*4, 0, 2*4 - 1) ,  # mustshare
+    'Erherhe': Config(6*4, 0, 8) ,  # mustshare
     'Eson_Xorgol': Config(5*9, 3),
-    'Gabata': Config(4*6*2 - 1, 4, 2*6 - 1),   # only children
+    'Gabata': Config(4*6*2 - 1, 4, 11),   # only children
     'Gamacha': Config(-1),
-    'Giuthi': Config(8*6*2 - 1, 2, 8 + 1),  # UMOVE
+    'Giuthi': Config(8*6*2 - 1, 2, 9),  # UMOVE: 1 seed in 7 holes, 2 in 1 hole
     'Goat': Config(3*3, 2),
     'J_Odu': Config(8*4, 2),
     'Kalah': Config(6*4),
 
-    'Lagerung': Config(7*7*2 - 1, 0, 7*4 - 3),
+    'Lagerung': Config(7*7*2 - 1, 0, 7*4),
     'Lami': Config(10*2*2 - 1, 2, 2),
-    'Lamlameta': Config(12*2*2 - 1, 2, 4*2),
-    'Lam_Waladach': Config(6*3*2 - 1, 0, (12-9)*3 - 1),  # pick2xlastseeds no NoOutcomeChange
+    'Lamlameta': Config(12*2*2 - 1, 2, 2*4),
+    'Lam_Waladach': Config(6*3*2 - 1, 0, 11),  # pick2xlastseeds no NoOutcomeChange
     'Leyla-Gobale': Config(8*4, 2),
-    'Longbeu-a-cha': Config(5*5, 3),
+    'Longbeu-a-cha': Config(5*5, 2),
     'Mbangbi': Config(5*8, 2),
     'Mbothe': Config(10*2, 2),
     'Nambayi': Config(-1),
-    'NamNam': Config(6*4*2 - 1, 0, (12-10)*4 - 1), # picklastseeds no NoOutcomeChange
+    'NamNam': Config(6*4*2 - 1, 0, 11), # picklastseeds no NoOutcomeChange
 
     'Ndoto': Config(8*2, 2),
     'NoCapt': Config(6*4),   # sow_own_store
     'NoSides': Config(5*2, 2),
     'NoSidesChild': Config(7*2, 2),
-    'NumNum': Config(6*4*2 - 1, 0, (12-10)*4 - 1), # picklastseeds no NoOutcomeChange
+    'NumNum': Config(6*4*2 - 1, 0, 11), # picklastseeds no NoOutcomeChange
     'Olinda': Config(7*4*2 - 1, 2, 4),
     'Ot-tjin': Config(10*3, 3),
     'Oware': Config(6*4),
-    'Pallam_Kuzhi': Config(7*4*2 - 1, 4, 2),
+    'Pallam_Kuzhi': Config(7*4*2 - 1, 2, 4),
     'Pandi': Config(7*5*2 - 1, 2, 5),
 
     'Qelat': Config(6*4, 4),
@@ -108,11 +108,11 @@ CONFIG_CASES = {
     'Songo': Config(7*5),  # mustshare
     'SowOpDirs': Config(5*4, 2),
     'Tapata': Config(-1),
-    'Toguz_Xorgol': Config(9*9, 3),
+    'Toguz_Xorgol': Config(9*9, 4),  # min capt = 4
     'Vai_Lun_Thlan': Config(6*5, 1),
     'Valah': Config(6*4),  # sow_own_store
     'Wari': Config(6*4),  # mustshare
-    'Weg': Config(6*4*2 - 1, 4, (12-10)*4),
+    'Weg': Config(6*4*2 - 1, 4, 11),
 
     'XCaptSowOwn': Config(6*4),
 }
@@ -124,18 +124,18 @@ class TestEnderConfig:
     @pytest.fixture
     def econfig(self, request):
         """Use with indirect to look up the expected configuration
-        from the game config file name.
-
-        We want tests for which there is no expected config to
-        be shown as skipped."""
+        from the game config file name."""
         key = request.param[:-4]
         if key in CONFIG_CASES:
             return CONFIG_CASES[key]
 
         return None
 
+
     @staticmethod
     def find_ender_deco(game, dclass):
+        """Find the deco of the specified class, return None
+        if there is no deco of the specified type"""
 
         deco = game.deco.ender
         while deco and not isinstance(deco, dclass):
@@ -182,13 +182,16 @@ DONT_CARE = -5
 
 
 def make_state(board, store, turn=False):
+    """Helper function to make game states.
+    Generally, don't care about mcount, const > 1 is fine."""
+
     return mancala.GameState(board=board,
                              store=store,
                              _turn=turn,
                              mcount=25)
 
 
-#  test case # are counted with in each game
+#  test case ids are counted with in each game (see case_ids)
 
 END_CASES = {
     'Ayoayo': [

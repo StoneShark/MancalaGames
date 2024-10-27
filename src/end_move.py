@@ -276,7 +276,6 @@ class EndTurnIf(deco_chain_if.DecoChainIf):
         WinCond are not generated here."""
 
 
-
     def compute_win_holes(self):
         """Compute the number of holes that winner should own
         based on number of seeds. Seeds have already been collected
@@ -302,9 +301,7 @@ class EndTurnIf(deco_chain_if.DecoChainIf):
             return True, game.cts.holes
 
         greater = seeds[True] > seeds[False]
-        greater_holes, rem = divmod(seeds[greater], nbr_start)
-        if rem > nbr_start // 2:
-            greater_holes += 1
+        greater_holes = (seeds[greater] + nbr_start // 2) // nbr_start
 
         game_log.add(f"{greater} holes = {greater_holes}", game_log.IMPORT)
         return greater, greater_holes
@@ -312,29 +309,31 @@ class EndTurnIf(deco_chain_if.DecoChainIf):
 
     @staticmethod
     def round_seeds_for_win(req_holes, nbr_start):
-        """Seeds required for round win."""
+        """Seeds required for round win in territory games."""
 
-        return req_holes * nbr_start - (nbr_start - 1) // 2
+        return req_holes * nbr_start - nbr_start + nbr_start // 2 + 1
 
 
     @staticmethod
     def compute_win_seeds(game):
         """Compute the number of seeds a player needs for an
-        outright win."""
+        outright win (or round win). A player collecting more
+        that win_seeds wins.
+
+        DEPRIVE games do not use this value, so -1."""
 
         game_goal = game.info.goal
-        gparam_one = game.info.gparam_one
-        nbr_start = game.cts.nbr_start
-
         win_seeds = -1
 
         if game.info.rounds == gi.Rounds.NO_MOVES:
             win_seeds = game.cts.total_seeds - 1
 
         elif game_goal == gi.Goal.TERRITORY:
-            win_seeds = EndTurnIf.round_seeds_for_win(gparam_one, nbr_start)
+            win_seeds = EndTurnIf.round_seeds_for_win(game.info.gparam_one,
+                                                      game.cts.nbr_start)
 
         elif game_goal == gi.Goal.MAX_SEEDS:
+            # do this math in case a start_pattern leaves an odd total seeds
             half, rem = divmod(game.cts.total_seeds, 2)
             win_seeds = half + rem
 
@@ -407,11 +406,11 @@ class RoundWinner(EndTurnIf):
 
         elif game.info.round_fill == gi.RoundFill.UMOVE:
             self.req_seeds = game.cts.holes + game.info.min_move - 1
-            self.msg = intro + "playable side)."
+            self.msg = intro + "a playable side)."
 
         elif game.info.gparam_one > 0:
-            self.req_seeds = self.round_seeds_for_win(game.info.gparam_one,
-                                                      nbr_start)
+            # max seeds games do not round seeds
+            self.req_seeds = game.info.gparam_one * nbr_start
             self.msg = intro + f"at least {gparam_one} holes)."
 
         else:
@@ -736,10 +735,8 @@ class EndGameWinner(EndTurnIf):
 
         # check for clear win condition
         seeds = self.claimer.claim_seeds()
-        # print(seeds)
-        # print(self.game)
         cond, winner = self.has_seeds_for_win(seeds)
-        # print(cond)
+
         if cond:
             return cond, winner
 
