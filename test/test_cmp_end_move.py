@@ -97,7 +97,7 @@ CONFIG_CASES = {
     'NoSides': Config(5*2, 2),
     'NoSidesChild': Config(7*2, 2),
     'NumNum': Config(6*4*2 - 1, 0, 11), # picklastseeds no NoOutcomeChange
-    'Olinda': Config(7*4*2 - 1, 2, 4),
+    'Olinda': Config(7*4*2 - 1, 0, 4),
     'Ot-tjin': Config(10*3, 3),
     'Oware': Config(6*4),
     'Pallam_Kuzhi': Config(7*4*2 - 1, 2, 4),
