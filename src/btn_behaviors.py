@@ -851,7 +851,7 @@ class HoleButton(tk.Button):
 class StoreButton(tk.Button):
     """Implements one of the board stores."""
 
-    def __init__(self, pframe, game_ui, side, owner):
+    def __init__(self, pframe, game_ui, owner):
         """Build the store button"""
 
         self.game_ui = game_ui

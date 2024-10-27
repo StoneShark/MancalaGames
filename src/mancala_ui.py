@@ -137,7 +137,7 @@ class MancalaUI(tk.Frame):
         board_frame.pack(side=tk.BOTTOM, expand=True, fill=tk.BOTH)
 
         if self.info.stores:
-            b_store = btnb.StoreButton(board_frame, self, tk.LEFT, True)
+            b_store = btnb.StoreButton(board_frame, self, True)
             b_store.grid(row=0, column=0, sticky="nsew")
 
         land_frame = tk.Frame(board_frame, padx=3, pady=3)
@@ -156,7 +156,7 @@ class MancalaUI(tk.Frame):
         land_frame.grid_columnconfigure('all', weight=1)
 
         if self.info.stores:
-            a_store = btnb.StoreButton(board_frame, self, tk.RIGHT, False)
+            a_store = btnb.StoreButton(board_frame, self, False)
             a_store.grid(row=0, column=2, sticky="nsew")
             self.stores = [b_store, a_store]
 
