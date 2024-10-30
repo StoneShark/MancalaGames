@@ -768,7 +768,7 @@ def write_game_xref(filename):
                     pval = getattr(info, param)
                     if pval is True:
                         vstr = 'x'
-                    elif pval not in (0, False):
+                    elif param == 'sow_direct' or pval not in (0, False):
                         vstr = str(getattr(info, param))
 
                 pvals += [vstr]
