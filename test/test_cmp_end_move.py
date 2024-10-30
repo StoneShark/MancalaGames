@@ -38,6 +38,14 @@ if BAD_CFG in FILES:
     FILES.remove(BAD_CFG)
 
 
+N = None
+T = True
+F = False
+
+REPEAT_TURN = True
+ENDED = True
+
+
 # %% ender config
 
 """
@@ -62,9 +70,9 @@ CONFIG_CASES = {
     'Ayoayo': Config(24),       # mustshare no NoOutcomeChange
     'Bao_Kenyan': Config(16, 2),
     'Bao_Tanzanian': Config(55, 2, 4),  # child but capt also
-    'Bechi': Config(4*6*2 - 1, 2, 6),
+    'Bechi': Config(4*6*2 - 1, 0, 6),  # NoOutcomeChange dupl EndGameNotPlayable  (NOC dupl EGNP)
     'Bosh': Config(5*4*2 - 1, 2, 4),
-    'Cow': Config(5*5, 2),
+    'Cow': Config(5*5),   # NOC dupl EGNP
     'Dabuda': Config(10*4, 2),
     'Dakon': Config(7*7*2 - 1, 0, 7*4),
     'Deka': Config(-1),   # DEPRIVE games no win_seeds or NoOutcomeChange
@@ -76,8 +84,8 @@ CONFIG_CASES = {
     'Eson_Xorgol': Config(5*9, 3),
     'Gabata': Config(4*6*2 - 1, 4, 11),   # only children
     'Gamacha': Config(-1),
-    'Giuthi': Config(8*6*2 - 1, 2, 9),  # UMOVE: 1 seed in 7 holes, 2 in 1 hole
-    'Goat': Config(3*3, 2),
+    'Giuthi': Config(8*6*2 - 1, 0, 9),  # NOC dupl EGNP; UMOVE: 1 seed in 7 holes, 2 in 1 hole
+    'Goat': Config(3*3),
     'J_Odu': Config(8*4, 2),
     'Kalah': Config(6*4),
 
@@ -87,19 +95,19 @@ CONFIG_CASES = {
     'Lam_Waladach': Config(6*3*2 - 1, 0, 11),  # pick2xlastseeds no NoOutcomeChange
     'Leyla-Gobale': Config(8*4, 2),
     'Longbeu-a-cha': Config(5*5, 2),
-    'Mbangbi': Config(5*8, 2),
+    'Mbangbi': Config(5*8),  # NOC dupl EGNP
     'Mbothe': Config(10*2, 2),
     'Nambayi': Config(-1),
-    'NamNam': Config(6*4*2 - 1, 0, 11), # picklastseeds no NoOutcomeChange
+    'NamNam': Config(6*4*2 - 1, 0, 11),  # picklastseeds no NoOutcomeChange
 
     'Ndoto': Config(8*2, 2),
     'NoCapt': Config(6*4),   # sow_own_store
     'NoSides': Config(5*2, 2),
     'NoSidesChild': Config(7*2, 2),
-    'NumNum': Config(6*4*2 - 1, 0, 11), # picklastseeds no NoOutcomeChange
-    'Olinda': Config(7*4*2 - 1, 0, 4),
+    'NumNum': Config(6*4*2 - 1, 0, 11),  # picklastseeds no NoOutcomeChange
+    'Olinda': Config(7*4*2 - 1, 0, 4),   # picklastseeds no NoOutcomeChange
     'Ot-tjin': Config(10*3, 3),
-    'Oware': Config(6*4),
+    'Oware': Config(6*4),   # mustshare
     'Pallam_Kuzhi': Config(7*4*2 - 1, 2, 4),
     'Pandi': Config(7*5*2 - 1, 2, 5),
 
@@ -109,7 +117,7 @@ CONFIG_CASES = {
     'SowOpDirs': Config(5*4, 2),
     'Tapata': Config(-1),
     'Toguz_Xorgol': Config(9*9, 4),  # min capt = 4
-    'Vai_Lun_Thlan': Config(6*5, 1),
+    'Vai_Lun_Thlan': Config(6*5),  # capt on 1s
     'Valah': Config(6*4),  # sow_own_store
     'Wari': Config(6*4),  # mustshare
     'Weg': Config(6*4*2 - 1, 4, 11),
@@ -181,17 +189,18 @@ class TestEnderConfig:
 DONT_CARE = -5
 
 
-def make_state(board, store, turn=False):
+def make_state(board, store, turn=False, **kwargs):
     """Helper function to make game states.
     Generally, don't care about mcount, const > 1 is fine."""
 
     return mancala.GameState(board=board,
                              store=store,
                              _turn=turn,
-                             mcount=25)
+                             mcount=25,
+                             **kwargs)
 
 
-#  test case ids are counted with in each game (see case_ids)
+#  test case ids are counted within each game (see case_ids)
 
 END_CASES = {
     'Ayoayo': [
@@ -260,7 +269,7 @@ END_CASES = {
                     turn=True),
          None, DONT_CARE],
 
-    ],
+    ],  # end Ayoayo
 
     'Bao_Kenyan': [
         #                  1  2  3  4  5  6  7  8\/
@@ -311,19 +320,351 @@ END_CASES = {
                     turn=True),
          gi.WinCond.WIN, False],
 
-    ],
+    ],  # end Bao_Kenyan
+
+    'Bao_Tanzanian': [
+        #                  1  2  3  4  5  6  7\/7  6  5  4  3  2  1
+        # 0: start game
+        [make_state(board=(4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4),
+                    store=(0, 0),
+                    child=(N, N, N, N, N, N, N, N, N, N, N, N, N, N),
+                    istate=(F, F, F, F)),
+         None, DONT_CARE],
+
+        # 1: four seeds still in play
+        [make_state(board=(0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0),
+                    store=(0, 52),
+                    child=(N, N, N, N, N, N, N, N, N, N, N, N, N, N),
+                    istate=(F, F, F, F)),
+         None, DONT_CARE],
+
+        # 2: four seeds still in play
+        [make_state(board=(0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0),
+                    store=(52, 0),
+                    child=(N, N, N, N, N, N, N, N, N, N, N, N, N, N),
+                    istate=(F, F, F, F)),
+         None, DONT_CARE],
+
+        # 3: true collected all seeds, no children
+        [make_state(board=(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                    store=(0, 56),
+                    child=(N, N, N, N, N, N, N, N, N, N, N, N, N, N),
+                    istate=(F, F, F, F)),
+         gi.WinCond.WIN, True],
+
+        # 4: false collected all seeds, no children
+        [make_state(board=(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                    store=(56, 0),
+                    child=(N, N, N, N, N, N, N, N, N, N, N, N, N, N),
+                    istate=(F, F, F, F)),
+         gi.WinCond.WIN, False],
+
+        # 5: not enough seeds to do a cross capt
+        [make_state(board=(0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0),
+                    store=(0, 55),
+                    child=(N, N, N, N, N, N, N, N, N, N, N, N, N, N),
+                    istate=(F, F, F, F)),
+         gi.WinCond.WIN, True],
+
+        # 6: not enough seeds to do a cross capt
+        [make_state(board=(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0),
+                    store=(55, 0),
+                    child=(N, N, N, N, N, N, N, N, N, N, N, N, N, N),
+                    istate=(F, F, F, F)),
+         gi.WinCond.WIN, False],
+
+        # 7: pure tie round
+        [make_state(board=(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                    store=(28, 28),
+                    child=(N, N, N, N, N, N, N, N, N, N, N, N, N, N),
+                    istate=(F, F, F, F)),
+         gi.WinCond.ROUND_TIE, DONT_CARE],
+
+        # 8: tie in children
+        [make_state(board=(14, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 14),
+                    store=(0, 0),
+                    child=(T, F, N, N, N, N, N, N, N, N, N, N, T, F),
+                    istate=(F, F, F, F)),
+         gi.WinCond.ROUND_TIE, DONT_CARE],
+
+        # 9: T has most seeds in children, but no moves on next turn
+        # F has enough seeds to fill a few holes
+        [make_state(board=(0, 10, 10, 10, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                    store=(16, 0),
+                    turn=False,
+                    child=(N, T, T, T, T, T, N, N, N, N, N, N, N, N),
+                    istate=(F, F, F, F)),
+         gi.WinCond.ROUND_WIN, True],
+
+        # 10: T has most seeds in children, but no moves on next turn
+        # playable seeds all on F side
+        [make_state(board=(8, 10, 10, 10, 10, 8, 0, 0, 0, 0, 0, 0, 0, 0),
+                    store=(0, 0),
+                    turn=False,
+                    child=(N, T, T, T, T, T, N, N, N, N, N, N, N, N),
+                    istate=(F, F, F, F)),
+         gi.WinCond.ROUND_WIN, True],
+
+        # 11: F just enough seeds to fill one hole
+        [make_state(board=(12, 10, 10, 10, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                    store=(4, 0),
+                    turn=False,
+                    child=(T, T, T, T, T, T, N, N, N, N, N, N, N, N),
+                    istate=(F, F, F, F)),
+         gi.WinCond.ROUND_WIN, True],
+
+        # 12: T not enough holes to fill a hole
+        [make_state(board=(13, 10, 10, 10, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                    store=(0, 3),
+                    turn=False,
+                    child=(F, F, F, F, F, F, N, N, N, N, N, N, N, N),
+                    istate=(F, F, F, F)),
+         gi.WinCond.WIN, False],
+
+        # 13: (case 5 but child) not enough seeds to do a cross capt, game continues
+        [make_state(board=(0, 0, 0, 20, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0),
+                    store=(0, 35),
+                    child=
+                          (N, N, N, T, N, N, N, N, N, N, N, N, N, N),
+                    istate=(F, F, F, F)),
+         None, DONT_CARE],
+
+    ],  # end Bao_Tanzanian
+
+    'Bechi': [
+        #                  1  2  3  4\/4  3  2  1
+        # 0: start game
+        [make_state(board=(6, 6, 6, 6, 6, 6, 6, 6),
+                    store=(0, 0),
+                    unlocked=(F, F, F, F, F, F, F, F)),  # is not used in the ender
+         None, DONT_CARE],
+
+        # 1: tie game
+        [make_state(board=(0, 0, 0, 0, 0, 0, 0, 0),
+                    store=(24, 24)),
+         gi.WinCond.ROUND_TIE, DONT_CARE],
+
+        # 2: T all seeds, ClearWinner ends
+        [make_state(board=(0, 0, 0, 0, 0, 0, 0, 0),
+                    store=(0, 48)),
+         gi.WinCond.WIN, True],
+
+        # 3: F all seeds, ClearWinner ends
+        [make_state(board=(0, 0, 0, 0, 0, 0, 0, 0),
+                    store=(48, 0)),
+         gi.WinCond.WIN, False],
+
+        # 4: not playable, EndTurnNotPlayable ends
+        [make_state(board=(0, 0, 1, 0, 0, 1, 0, 0),
+                    store=(6, 40),
+                    turn=True),
+         gi.WinCond.ROUND_WIN, True],
+
+        # 5: not playable, EndTurnNotPlayable ends
+        [make_state(board=(0, 1, 0, 0, 0, 0, 1, 0),
+                    store=(40, 6),
+                    turn=False),
+         gi.WinCond.ROUND_WIN, False],
+
+        # 6: playable by False but not True (False's turn)
+        [make_state(board=(0, 0, 2, 0, 0, 1, 0, 0),
+                    store=(6, 39),
+                    turn=True),
+         None, DONT_CARE],
+
+        # 7: playable by False but not True, True would pass
+        [make_state(board=(0, 0, 2, 0, 0, 1, 0, 0),
+                    store=(39, 6),
+                    turn=False),
+         None, DONT_CARE],
+
+    ],  # end Bechi
+
+    'Cow': [
+        #                  1  2  3  4  5\/5  4  3  2  1
+        # 0: start game
+        [make_state(board=(5, 5, 5, 5, 5, 5, 5, 5, 5, 5),
+                    store=(0, 0)),
+         None, DONT_CARE],
+
+        # 1: no moves, TIE
+        [make_state(board=(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                    store=(25, 25)),
+         gi.WinCond.TIE, DONT_CARE],
+
+         # 2: no win
+         [make_state(board=(0, 2, 2, 0, 0, 0, 0, 2, 2, 0),
+                     store=(25, 17)),
+          None, DONT_CARE],
+
+         # 3: WIN by F
+         [make_state(board=(0, 2, 2, 0, 0, 0, 0, 2, 2, 0),
+                     store=(26, 16)),
+          gi.WinCond.WIN, False],
+
+        # 5: no moves for T, WIN by T
+        [make_state(board=(0, 0, 2, 0, 0, 0, 0, 0, 0, 0),
+                    store=(10, 38),
+                    turn=False),
+         gi.WinCond.WIN, True],
+
+        ],   # end Cow
+
+    'Dakon': [
+        #                  1  2  3  4  5  6  7\/7  6  5  4  3  2  1
+        # 0: start game
+        [make_state(board=(7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7),
+                    store=(0, 0)),
+         None, DONT_CARE],
+
+        # 1: TIE game, no moves
+        [make_state(board=(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                    store=(49, 49)),
+         gi.WinCond.ROUND_TIE, DONT_CARE],
+
+        # 2: T all seeds, ClearWinner ends, RoundWinner leaves
+        [make_state(board=(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                    store=(0, 98)),
+         gi.WinCond.WIN, True],
+
+        # 3: F all seeds, ClearWinner ends, RoundWinner leaves
+        [make_state(board=(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                    store=(98, 0)),
+         gi.WinCond.WIN, False],
+
+        # 4: not playable, EndTurnNotPlayable ends, 5 holes so RoundWinner changes
+        [make_state(board=(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                    store=(58, 40)),
+         gi.WinCond.ROUND_WIN, False],
+
+        # 5: not playable, EndTurnNotPlayable ends,
+        #    RoundWinner leaves, not enough seeds for 4 holes
+        [make_state(board=(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                    store=(27, 71)),
+         gi.WinCond.WIN, True],
+
+        # 6: not playable, EndTurnNotPlayable ends,
+        #    RoundWinner leaves, exactly enough seeds for 4 holes
+        [make_state(board=(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                    store=(28, 70)),
+         gi.WinCond.ROUND_WIN, True],
+
+        # 7: playable by False but not True (False's turn)
+        [make_state(board=(2, 2, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                    store=(45, 39),
+                    turn=True),
+         None, DONT_CARE],
+
+        # 8: playable by False but not True, True would pass
+        [make_state(board=(2, 2, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                    store=(39, 45),
+                    turn=False),
+         None, DONT_CARE],
+
+        ],   # end Dakon
+
+    'Deka': [    # deprive game
+        #                  1  2  3  4  5  6\/6  5  4  3  2  1
+        # 0: start game
+        [make_state(board=(2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2),
+                    store=(0, 0),
+                    blocked=(F, F, F, F, F, F, F, F, F, F, F, F)), # not used in ender
+         None, DONT_CARE],
+
+        # 1: False gave away their seeds, but it will be True's turn
+        [make_state(board=(0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 0),
+                    store=(17, 0),   # seeds out of play
+                    turn=False),
+         None, DONT_CARE],
+
+        # 2: False has no seeds, True captured them
+        [make_state(board=(0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 0),
+                    store=(17, 0),
+                    turn=True),
+         gi.WinCond.WIN, True],
+
+        ],  # end Deka
+
+    'Depouiller': [    # deprive game
+        #                  1  2  3  4  5\/5  4  3  2  1
+        # 0: start game
+        [make_state(board=(2, 2, 2, 2, 2, 2, 2, 2, 2, 2),
+                    store=(0, 0)),
+         None, DONT_CARE],
+
+        # 1: False gave away their seeds, but it will be True's turn
+        [make_state(board=(0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 0),
+                    store=(13, 0),   # seeds out of play
+                    turn=False),
+         None, DONT_CARE],
+
+        # 3: False has no seeds, True captured them
+        [make_state(board=(0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 0),
+                    store=(13, 0),
+                    turn=True),
+         gi.WinCond.WIN, True],
+
+        ],  # end Depouiller
+
+    'Kalah': [
+        #                  1  2  3  4  5  6\/6  5  4  3  2  1
+        # 0: start game
+        [make_state(board=(4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4),
+                    store=(0, 0)),
+         None, DONT_CARE],
+
+        # 1: False has no moves, TIE after collecting seeds
+        [make_state(board=(0, 0, 0, 0, 0, 0, 0, 4, 0, 3, 4, 0),
+                    store=(24, 13),
+                    turn=True),
+         gi.WinCond.TIE, DONT_CARE],
+
+        # 2: True has no moves, False wins by collecting own seeds
+        [make_state(board=(0, 4, 0, 3, 4, 0, 0, 0, 0, 0, 0, 0),
+                    store=(24, 13),
+                    turn=False),
+         gi.WinCond.WIN, False],
+
+        # next two cases are same but turn changed and repeat turn set
+
+        # 3: False sowed final seed into their own store, TIE after collecting seeds
+        [make_state(board=(0, 0, 0, 0, 0, 0, 0, 4, 0, 3, 4, 0),
+                    store=(24, 13),
+                    turn=False),
+         gi.WinCond.TIE, DONT_CARE, REPEAT_TURN, False],
+
+        # 4: True sowed final seed into their own store,
+        #    False wins by collecting own seeds
+        [make_state(board=(0, 4, 0, 3, 4, 0, 0, 0, 0, 0, 0, 0),
+                    store=(24, 13),
+                    turn=True),
+         gi.WinCond.WIN, False, REPEAT_TURN, False],
+
+
+        ],   # end kalah
+
+
+    'Qelat': [
+
+        ],  #end Qelat
+
+        # TODO cmp_end_move Weg,
+
 }
 
 
 def end_cases(files):
     """Build the applicable test case list based
-    on the contents of files and END_CASES."""
+    on the contents of files and END_CASES.
+    case_ids must match order."""
 
     for config_file in files:
         gname = config_file[:-4]
         if gname in END_CASES:
             for test_case in END_CASES[gname]:
-                yield [config_file] + test_case
+                yield [config_file, test_case]
+        else:
+            yield [config_file, None]
 
 
 def case_ids(files):
@@ -335,10 +676,12 @@ def case_ids(files):
     for config_file in files:
         gname = config_file[:-4]
         if gname in END_CASES:
-            for idx, (state, cond, winner) in enumerate(END_CASES[gname]):
+            for idx, (state, cond, winner, *rest) in enumerate(END_CASES[gname]):
                 cname = cond.name if cond else "None"
                 wname = winner if winner > DONT_CARE else "DC"
                 yield f"{gname}-case{idx}-{cname}-{wname}"
+        else:
+            yield f"{gname}"
 
 
 class TestEndGames:
@@ -351,20 +694,32 @@ class TestEndGames:
         assert all(cfg + '.txt' in FILES for cfg in END_CASES.keys())
 
 
-    @pytest.mark.usefixtures('logger')
-    @pytest.mark.parametrize('game_pdict, gstate, econd, ewinner',
+    # @pytest.mark.usefixtures('logger')
+    @pytest.mark.parametrize('game_pdict, test_case',
                              end_cases(FILES), indirect=['game_pdict'],
                              ids=case_ids(FILES))
-    def test_end_game(self, game_pdict, gstate, econd, ewinner):
+    def test_end_game(self, game_pdict, test_case):
+
+
+        if test_case is None:
+            pytest.skip("no end game test cases")
+            return
+
+        gstate, econd, ewinner, *rest = test_case
+        if rest:
+            repeat_turn, ended = rest
+        else:
+            repeat_turn = False
+            ended = False
 
         game, _ = game_pdict
         game.state = gstate
         # print(game)
         assert sum(game.store) + sum(game.board) == game.cts.total_seeds, \
-            "Test Config Error: missing seeds"
+            "Test Config Error: seed count wrong"
 
-        cond, winner = game.deco.ender.game_ended(repeat_turn=False,
-                                                  ended=False)
+        cond, winner = game.deco.ender.game_ended(repeat_turn=repeat_turn,
+                                                  ended=ended)
         # print(game)
 
         assert cond == econd

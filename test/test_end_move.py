@@ -37,6 +37,8 @@ N = None
 T = True
 F = False
 
+REPEAT_TURN = True
+ENDED = True
 
 # %%
 
@@ -231,6 +233,12 @@ class TestEndMove:
                   },
 
 
+        'shgame': {'mustshare': True,
+                   'evens': True,
+                   'stores': True,
+                   'capt_rturn': True,
+                  },
+
     }
 
 
@@ -354,14 +362,14 @@ class TestEndMove:
                                    [0, 0, 2]), [10, 0], False),
 
                 # 17: game ended, true has won
-                ('game', True, False,
+                ('game', ENDED, False,
                  utils.build_board([2, 2, 0],
                                    [0, 0, 1]), [3, 4], True, WinCond.WIN,
                  utils.build_board([0, 0, 0],
                                    [0, 0, 0]), [4, 8], True),
 
                 # 18: game ended, false has won
-                ('rgame', True, False,
+                ('rgame', ENDED, False,
                  utils.build_board([1, 0, 0],
                                    [0, 2, 2]), [4, 3], False, WinCond.WIN,
                  utils.build_board([0, 0, 0],
@@ -410,7 +418,7 @@ class TestEndMove:
                                    [0, 0, 0]), [6, 6], None),
 
                 # 25: true has a repeat_turn but no moves, false wins
-                ('game', False, True,
+                ('game', False, REPEAT_TURN,
                  utils.build_board([0, 0, 0],
                                    [0, 0, 5]), [3, 4], True, WinCond.WIN,
                  utils.build_board([0, 0, 0],
@@ -485,6 +493,23 @@ class TestEndMove:
                                    [0, 2, 0]), [4, 4], False, WinCond.TIE,
                  utils.build_board([0, 0, 0],
                                    [0, 0, 0]), [6, 6], None),
+
+
+                # 36: F moved all but one seed to T, now Ts move
+                ('shgame', False, False,
+                 utils.build_board([0, 1, 2],
+                                   [1, 0, 0]), [5, 5], False, None,
+                 utils.build_board([0, 1, 2],
+                                   [1, 0, 0]), [5, 5], False),
+
+                # 37: move after 36  Ts move, first move capt all F seeds,
+                #     now T repeat turn but can't share,
+                #     T still wins on seed collection
+                ('shgame', False, REPEAT_TURN,
+                 utils.build_board([0, 0, 2],
+                                   [0, 0, 0]), [5, 5], True, WinCond.WIN,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [5, 7], True),
 
             ]
     @pytest.mark.filterwarnings("ignore")
@@ -1111,7 +1136,6 @@ class TestTerritory:
                               ([('capt_next', True)], 2),
                               ([('capttwoout', True)], 3),
                               ([('capt_on', [3])], 3),
-                              ([('capt_on', [1, 2, 3])], 1),
                               ([('capt_min', 2)], 2),
 
                               ([('capttwoout', True),
@@ -1126,6 +1150,13 @@ class TestTerritory:
                               ([('child_type', gi.ChildType.NORMAL),
                                 ('child_cvt', 3),
                                 ('evens', True)], 2),
+
+                              ([('capt_on', [1, 2, 3])], None),
+                              ([('min_move', 2),
+                                ('evens', True)], None),
+                              ([('sow_own_store', True),
+                                ('capt_on', [5])], None),
+                              ((), None),  # no capture method
                               ])
     def test_min_capture(self, game, capt_methods, emin_occ):
         """Test the minimum capture criteria."""
@@ -1138,8 +1169,11 @@ class TestTerritory:
         while deco and not isinstance(deco, end_move.NoOutcomeChange):
             deco = deco.decorator
 
-        assert deco
-        assert deco._min_for_change(game) == emin_occ
+        if emin_occ:
+            assert deco
+            assert deco.min_for_change(game) == emin_occ
+        else:
+            assert not deco
 
 
     @pytest.mark.parametrize(
@@ -1302,18 +1336,3 @@ class TestWinHoles:
         game.child = child
 
         assert game.deco.ender.compute_win_holes() == (fill_start, holes)
-
-
-
-class TestNoOutcomeChangeOddities:
-
-    def test_unneded_nooutcome(self):
-
-        game_consts = gc.GameConsts(nbr_start=3, holes=3)
-
-        with pytest.warns(UserWarning):
-            game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                    rules=mancala.Mancala.rules)
-
-        with pytest.raises(gi.GameInfoError):
-            mancala.Mancala(game_consts, game_info)

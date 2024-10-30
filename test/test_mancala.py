@@ -356,8 +356,7 @@ class TestConstruction:
 
     @pytest.fixture
     def min_game_if(self):
-        return gi.GameInfo(mustshare=True,  # don't config NoOutcomeChange
-                           nbr_holes=6,
+        return gi.GameInfo(nbr_holes=6,
                            rules=mancala.Mancala.rules)
 
     def test_bad_params(self, min_game_if):

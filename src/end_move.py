@@ -460,17 +460,19 @@ class EndTurnNoMoves(EndTurnIf):
 
 
 class EndTurnMustShare(EndTurnIf):
-    """With MUSTSHARE, the game is over if
-    the current player does not have seeds and the opponent
-    cannot make any seeds available to the current player.
+    """With MUSTSHARE, the game is over if the next player to
+    move needs to make seeds available to an opponent and cannot.
 
-    If the game has ended or if we are going to go again (repeat turn--
-    can't share seeds with self), delegate to the deco chain.
-    Next do a scan to see if the current player is without seeds
-    and the opponent has seeds -- don't bother to simulate if we
-    don't need to.
-    Finally, check to see if the opponent can share. If not,
-    the game is over."""
+    On repeat turn: if the opponent does not have have seeds
+    and the current player does but can't make any available.
+
+    On a first turn: if the current player does not have seeds
+    and the opponent cannot make any seeds available to
+    the current player.
+
+    If the game has ended, delegate to the deco chain.
+    Do a scan for seeds and if required do the simulation
+    to determine if the game is over."""
 
     def __init__(self, game, owner_func, decorator=None):
         super().__init__(game, decorator)
@@ -478,7 +480,7 @@ class EndTurnMustShare(EndTurnIf):
 
     def game_ended(self, repeat_turn, ended=False):
 
-        if ended or repeat_turn:
+        if ended:
             return self.decorator.game_ended(repeat_turn, ended)
 
         opponent = not self.game.turn
@@ -492,19 +494,29 @@ class EndTurnMustShare(EndTurnIf):
                     opp_seeds = True
                 else:
                     player_seeds = True
-                    break
 
-        if not player_seeds and opp_seeds:
+        if repeat_turn and player_seeds and not opp_seeds:
+
+            no_share = not any(self.game.get_allowable_holes())
+
+        elif not repeat_turn and not player_seeds and opp_seeds:
+
             self.game.turn = not self.game.turn
             no_share = not any(self.game.get_allowable_holes())
             self.game.turn = not self.game.turn
 
-            if no_share:
+        else:
+            return self.decorator.game_ended(repeat_turn, False)
+
+        if no_share:
+            if repeat_turn:
+                game_log.add("Player can't share on repeat turn, game ended.",
+                             game_log.INFO)
+            else:
                 game_log.add("Next player can't share, game ended.",
                              game_log.INFO)
-            return self.decorator.game_ended(repeat_turn, no_share)
+        return self.decorator.game_ended(repeat_turn, no_share)
 
-        return self.decorator.game_ended(repeat_turn, False)
 
 
 class EndTurnNotPlayable(EndTurnIf):
@@ -632,16 +644,19 @@ class NoOutcomeChange(EndTurnIf):
     Games that use this class must either employ Waldas or have
     stores. In the case of Waldas, WaldaEndMove will cleanup."""
 
-    def __init__(self, game, decorator=None, claimer=None):
+    def __init__(self, game, min_needed, decorator=None, claimer=None):
 
         super().__init__(game, decorator, claimer)
-        self.min_needed = self._min_for_change(game)
+        self.min_needed = min_needed
 
 
     @staticmethod
-    def _min_for_change(game):
+    def min_for_change(game):
         """Select a minimum number of seeds that must be on the
-        board for a capture or to claim territory."""
+        board for a capture or to claim territory.
+
+        Called by deco creator to decide if this class should
+        be included."""
         # pylint: disable=too-many-branches
 
         if game.info.child_type:
@@ -674,9 +689,6 @@ class NoOutcomeChange(EndTurnIf):
                 min_needed = game.info.capt_min
             else:
                 min_needed = max(game.info.capt_min, min_needed)
-
-        if min_needed == game.cts.total_seeds:
-            raise gi.GameInfoError("NoOutcomeChange included but unused.")
 
         return min_needed
 
@@ -779,6 +791,27 @@ def deco_add_bottom_winner(game):
     return ender
 
 
+def deco_add_no_change(game, ender):
+    """Consider adding the NoOutcomeChange deco.
+    Don't include it if it won't do anything:
+        if easy cases based on game props (see code)
+        if min_for_change returns sentinel value
+        if EndTurnNotPlayable covers what NoOutcomeChange would do"""
+
+    if any([game.info.sow_own_store,
+            game.info.mustshare,
+            game.info.pickextra == gi.CaptExtraPick.PICKLASTSEEDS,
+            game.info.pickextra == gi.CaptExtraPick.PICK2XLASTSEEDS]):
+        return ender
+
+    min_seeds = NoOutcomeChange.min_for_change(game)
+
+    if game.info.min_move < min_seeds < game.cts.total_seeds:
+        ender = NoOutcomeChange(game, min_seeds, ender)
+
+    return ender
+
+
 def deco_end_move(game):
     """Return a chain of move enders."""
 
@@ -797,13 +830,7 @@ def deco_end_move(game):
             ender = EndTurnMustShare(game, game.cts.board_side, ender)
 
     ender = EndTurnNotPlayable(game, ender)
-
-    if not any([game.info.sow_own_store,
-                game.info.mustshare,
-                game.info.pickextra == gi.CaptExtraPick.PICKLASTSEEDS,
-                game.info.pickextra == gi.CaptExtraPick.PICK2XLASTSEEDS,
-                ]):
-        ender = NoOutcomeChange(game, ender)
+    ender = deco_add_no_change(game, ender)
 
     claimer = ChildClaimSeeds(game) if game.info.child_cvt else ClaimSeeds(game)
     ender = ClearWinner(game, ender, claimer)

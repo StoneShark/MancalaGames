@@ -122,8 +122,8 @@ name than you expect.
 <p>The starting player may choose to rearrange the seeds on their side of the board. The opponent's side will be arranged in the same manner from their perspective. If the player choses to rearrange the board, it counts as their opening move. If they do not so choose, they cannot make a child or capture until their opponent does either.
 <p>Sow is multi-lap in a counter-clockwise direction. Sowing the final seed of a lap to 4 on opposite side, creates a child which will collect seedd but can't be captured. A child may not be created with a single seed in a move that was initiated from the player's rightmost hole. Moves may not start from children.
 <p>Cross-capture on opponents side. On capture, take the seed initiating the capture. Multiple captures may be made in sow direction as long as the player's side holes are empty. Seeds from child holes may not be captured.
-<p>Played in rounds. Each round ends when neither player has a move. At the start of each round, the board is resized to the number of holes that the player with fewer seeds can fill completely.
-<p>If the board size is reduced to 3 or less per side, no children maybe created.
+<p>Played in rounds. Each round ends when the current player does not have a move or there is only one seed left in play without children. The game ends when one player cannot fill a single hole.
+<p>At the start of each round, the board is resized to the number of holes that the player with fewer seeds can fill completely. If the board size is reduced to 3 or less per side, no children maybe created.
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  7</p>
@@ -195,12 +195,13 @@ name than you expect.
     <p class="param"><a href="game_params.html#blocks">Blocks</a>: Yes</p>
     <p class="param"><a href="game_params.html#capsamedir">Capture in Sow Direction</a>: Yes</p>
     <p class="param"><a href="game_params.html#capttwoout">Capture Two Out</a>: Yes</p>
+    <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER_NEXT</p>
   </div>
   <div class="column2">
-    <p class="param"><a href="game_params.html#mlaps">Multilap Sow</a>: LAPPER_NEXT</p>
     <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: RIGHT_FILL</p>
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
     <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
   </div>
 </div>
@@ -325,10 +326,11 @@ allow closing of rightmost holes (<a href="game_params.html#sow_rule">SOW_RULE</
     <p class="param">Holes per side:  5</p>
     <p class="param">Start seeds:  2</p>
     <p class="param"><a href="game_params.html#goal">Goal</a>: DEPRIVE</p>
+    <p class="param"><a href="game_params.html#allow_rule">Special Move Restrictions</a>: OPP_OR_EMPTY</p>
   </div>
   <div class="column2">
-    <p class="param"><a href="game_params.html#allow_rule">Special Move Restrictions</a>: OPP_OR_EMPTY</p>
     <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
   </div>
 </div>
 <h3 id="Endodoi">Endodoi</h3>
@@ -561,7 +563,7 @@ Instead of minimum move of 2, singletons may start moves if all holes are empty 
 <p>A single lap mancala with a counter-clockwise sow direction. When sowing past the right edge of the board, sow a seed into your own store (<a href="game_params.html#sow_own_store">SOW_OWN_STORE</a>). Do not sow into your opponent's store.
 <p>If the last seed ends in an empty hole on the player's own side of the board, capture any seeds from the opposite hole (<a href="game_params.html#crosscapt">CROSSCAPT</a>). When performing a capture, take the final single seed sown as well. Pick your own seed only when opponents seeds are captured.
 <p>If a player's sow ends in their own store, they take another turn (repeat turn).
-<p>If a player has no seeds at the start of their turn, the game is over: the opponent collects the remainder of their seeds and the winner is determined based on final seed count.
+<p>If a player has no seeds at the start of their turn, the game is over: the opponent collects the remainder of their seeds and the winner is determined based on final seed count. This includes a prescribed repeat turn, if a player sows their last seed into their store, seeds are collected and an outcome is determined.
 <p>Variation:
 <ul><li class="helptext">
 Require must share (<a href="game_params.html#mustshare">MUSTSHARE</a>) because it removes the seed hoarding strategy.

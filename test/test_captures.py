@@ -173,9 +173,7 @@ read_test_cases()
 @pytest.mark.filterwarnings("ignore")
 def test_no_capturer():
     game_consts = gc.GameConsts(nbr_start=3, holes=4)
-    game_info = gi.GameInfo(sow_own_store=True,
-                            stores=True,
-                            nbr_holes=game_consts.holes,
+    game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                             rules=mancala.Mancala.rules)
     game = mancala.Mancala(game_consts, game_info)
     mdata = MoveData(game, None)
