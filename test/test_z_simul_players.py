@@ -94,12 +94,15 @@ def test_one_game(game_pdict, algo):
         player = ai_player.AiPlayer(game, pdict)
     except gi.GameInfoError as error:
 
-        if algo == CONFIGED:
+        if algo == 'negamaxer' and any([game.info.sow_own_store,
+                                        game.info.capt_rturn,
+                                        game.info.xc_sown]):
+            # negamaxer cannot be used with games that do not alternate turns
+            pytest.skip("negamaxer requires alternate turns")
+        else:
             emsg = error.__class__.__name__ + ':  ' + str(error)
             msg = "\nAI config conflict:\n" + emsg
             pytest.fail(msg)
-        else:
-            pytest.skip('AI config conflict')
 
     start = time.monotonic()
     for mnbr in range(NBR_MOVES):

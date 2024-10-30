@@ -409,8 +409,11 @@ def test_inhibit_sower(request,
                                 nocaptfirst=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
-    except gi.GameInfoError:
-        pytest.skip('nocaptfirst conflict')
+    except gi.GameInfoError as error:
+        if 'sow_own_nocapt' in repr(error):
+            pytest.skip('nocaptfirst incomp with sow_own_store')
+        else:
+            pytest.fail('nocaptfirst conflict for unkown reason')
     game =  mancala.Mancala(game_consts, game_info)
 
     # save istate and put it back after copying in test state
