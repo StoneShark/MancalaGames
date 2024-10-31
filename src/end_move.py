@@ -523,8 +523,9 @@ class EndTurnNotPlayable(EndTurnIf):
     """If the game is no longer playable in any circustances,
     end it. Specifically, if none of the holes on the board
     have the minimum seeds required for a move, it's over.
+
     This is faster than simulating allowable moves and is
-    needed for games w/o either mustshare or mustpass .
+    needed for games w/o either mustshare or mustpass.
 
     This ends most territory games and rounds."""
 
@@ -547,9 +548,7 @@ class EndTurnNotPlayable(EndTurnIf):
 class WaldaEndMove(EndTurnIf):
     """The rest of the deco chain may collect seeds into
     the stores (if the game has ended). Move any seeds
-    from the stores into available waldas.
-
-    Note that this code is only used if mustpass False."""
+    from the stores into available children."""
 
     @staticmethod
     def _find_waldas(game):
@@ -578,15 +577,23 @@ class WaldaEndMove(EndTurnIf):
 
             elif walda_locs[0] >= 0:
                 self.game.board[walda_locs[0]] += sum(self.game.store)
+                game_log.add('Only False has walda, gets all store seeds.',
+                             game_log.INFO)
 
             elif walda_locs[1] >= 0:
                 self.game.board[walda_locs[1]] += sum(self.game.store)
+                game_log.add('Only True has walda, gets all store seeds.',
+                             game_log.INFO)
 
-            else:    # end_cond == WinCond.WIN:
-                loc = self.game.cts.holes if winner else 0
-                self.game.board[loc] += sum(self.game.store)
+            else:
+                # game ended w/o waldas, move seeds from stores onto board
+                self.game.board[0] += self.game.store[False]
+                self.game.board[-1] += self.game.store[True]
+                game_log.add('No waldas, but put seeds on board.',
+                             game_log.INFO)
 
             self.game.store = [0, 0]
+            game_log.step('Moved store seeds to walda', self.game)
 
         assert sum(self.game.board) == self.game.cts.total_seeds, \
             'Walda: seeds missing from board.'
@@ -695,11 +702,9 @@ class NoOutcomeChange(EndTurnIf):
 
     def _too_few_for_change(self):
         """Determine if the game outcome can change.
-        If min_needed feature was disabled (== -1), return False.
         If there are any children, return False (can sow into children).
-        If there are not any seeds, return False (this isn't called
+        If there are not any seeds, return False (but this isn't called
         when there are no seeds).
-
         If there are too few seeds left to change the outcome,
         return True."""
 
@@ -798,10 +803,32 @@ def deco_add_no_change(game, ender):
         if min_for_change returns sentinel value
         if EndTurnNotPlayable covers what NoOutcomeChange would do"""
 
-    if any([game.info.sow_own_store,
-            game.info.mustshare,
-            game.info.pickextra == gi.CaptExtraPick.PICKLASTSEEDS,
-            game.info.pickextra == gi.CaptExtraPick.PICK2XLASTSEEDS]):
+    ginfo = game.info
+    if any([
+            # single seeds may be moved into store,
+            # all seeds will be moved out of play
+            ginfo.sow_own_store,
+
+            # game ends when a player has no seeds and opp can't share
+            ginfo.mustshare,
+
+            # picks take care of ending game
+            ginfo.pickextra == gi.CaptExtraPick.PICKLASTSEEDS,
+            ginfo.pickextra == gi.CaptExtraPick.PICK2XLASTSEEDS,
+
+            # seeds only moved to waldas, no stores
+            ginfo.child_type == gi.ChildType.WALDA,
+
+            # if can only capture from children
+            (ginfo.child_type == gi.ChildType.WEG
+             and not any([ginfo.capt_max,
+                          ginfo.capt_min,
+                          ginfo.capt_next,
+                          ginfo.capt_on,
+                          ginfo.capttwoout,
+                          ginfo.crosscapt,
+                          ginfo.evens,
+                          ginfo.sow_own_store]))]):
         return ender
 
     min_seeds = NoOutcomeChange.min_for_change(game)
@@ -838,7 +865,7 @@ def deco_end_move(game):
     if game.info.rounds:
         ender = RoundWinner(game, ender, ClaimOwnSeeds(game))
 
-    if game.info.child_type == gi.ChildType.WALDA:
+    if game.info.child_type and not game.info.stores:
         ender = WaldaEndMove(game, ender)
 
     return ender

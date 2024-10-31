@@ -551,10 +551,12 @@ class TestEndChildren:
     GAME_PROPS = {
        'game':  {'child_cvt': 2,
                  'child_type': ChildType.NORMAL,
+                 'stores': True,
                  'evens': True},
 
        'rgame': {'rounds': gi.Rounds.HALF_SEEDS,
                  'blocks': True,
+                 'stores': True,
                  'child_cvt': 2,
                  'child_type': ChildType.NORMAL,
                  'evens': True},

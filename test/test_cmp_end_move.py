@@ -75,14 +75,14 @@ CONFIG_CASES = {
     'Cow': Config(5*5),   # NOC dupl EGNP
     'Dabuda': Config(10*4, 2),
     'Dakon': Config(7*7*2 - 1, 0, 7*4),
-    'Deka': Config(-1),   # DEPRIVE games no win_seeds or NoOutcomeChange
+    'Deka': Config(-1),   # DEPRIVE games no win_seeds, rounds or NoOutcomeChange
     'Depouiller': Config(-1),   # DEPRIVE
 
     'Endodoi': Config(8*4, 2),
     'Enkeshui': Config(24, 2),   # start pattern
     'Erherhe': Config(6*4, 0, 8) ,  # mustshare
     'Eson_Xorgol': Config(5*9, 3),
-    'Gabata': Config(4*6*2 - 1, 4, 11),   # only children
+    'Gabata': Config(4*6*2 - 1, 0, 11),   # only children
     'Gamacha': Config(-1),
     'Giuthi': Config(8*6*2 - 1, 0, 9),  # NOC dupl EGNP; UMOVE: 1 seed in 7 holes, 2 in 1 hole
     'Goat': Config(3*3),
@@ -111,7 +111,7 @@ CONFIG_CASES = {
     'Pallam_Kuzhi': Config(7*4*2 - 1, 2, 4),
     'Pandi': Config(7*5*2 - 1, 2, 5),
 
-    'Qelat': Config(6*4, 4),
+    'Qelat': Config(6*4),  # WALDA seeds in play or waldas, don't need NoOutcomeChange
     'Sadeqa': Config(-1),
     'Songo': Config(7*5),  # mustshare
     'SowOpDirs': Config(5*4, 2),
@@ -120,7 +120,7 @@ CONFIG_CASES = {
     'Vai_Lun_Thlan': Config(6*5),  # capt on 1s
     'Valah': Config(6*4),  # sow_own_store
     'Wari': Config(6*4),  # mustshare
-    'Weg': Config(6*4*2 - 1, 4, 11),
+    'Weg': Config(6*4*2 - 1, 0, 11),
 
     'XCaptSowOwn': Config(6*4),
 }
@@ -201,6 +201,9 @@ def make_state(board, store, turn=False, **kwargs):
 
 
 #  test case ids are counted within each game (see case_ids)
+#  element order:
+#      gstate, econd, ewinner, [repeat_turn, ended]
+
 
 END_CASES = {
     'Ayoayo': [
@@ -625,7 +628,7 @@ END_CASES = {
                     turn=False),
          gi.WinCond.WIN, False],
 
-        # next two cases are same but turn changed and repeat turn set
+        # next two cases are same as prev two but turn changed and repeat turn set
 
         # 3: False sowed final seed into their own store, TIE after collecting seeds
         [make_state(board=(0, 0, 0, 0, 0, 0, 0, 4, 0, 3, 4, 0),
@@ -645,43 +648,121 @@ END_CASES = {
 
 
     'Qelat': [
+        #                  1  2  3  4  5  6\/6  5  4  3  2  1
+        # 0: start game
+        [make_state(board=(4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4),
+                    store=(0, 0),
+                    child=[N, N, N, N, N, N, N, N, N, N, N, N]),
+         None, DONT_CARE],
 
-        ],  #end Qelat
+        # 1: not enough seeds for win
+        [make_state(board=(20, 4, 2, 2, 2, 2, 2, 2, 2, 0, 5, 5),
+                    store=(0, 0),
+                    child=[T, T, N, N, N, N, N, N, N, N, F, F]),
+         None, DONT_CARE],
 
-        # TODO cmp_end_move Weg,
+        # 2: just enough seeds for win
+        [make_state(board=(20, 5, 2, 2, 2, 2, 2, 2, 2, 0, 4, 5),
+                    store=(0, 0),
+                    child=[T, T, N, N, N, N, N, N, N, N, F, F]),
+         gi.WinCond.WIN, True],
 
+        # 3: force walda collection, ClearWinner but seeds in store
+        #      these force conditions are not possible in game play
+        [make_state(board=(20, 5, 2, 2, 2, 2, 2, 0, 0, 0, 4, 5),
+                    store=(2, 2),
+                    child=[T, T, N, N, N, N, N, N, N, N, F, F]),
+         gi.WinCond.WIN, True],
+
+        # 4: force walda collection, both
+        [make_state(board=(10, 4, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4),
+                    store=(20, 6),
+                    child=[T, T, N, N, N, N, N, N, N, N, F, F]),
+         gi.WinCond.WIN, False],
+
+        # 5: force walda collection, only T has walda's
+        [make_state(board=(15, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3),
+                    store=(20, 6),
+                    child=[T, T, N, N, N, N, N, N, N, N, N, N]),
+         gi.WinCond.WIN, True],
+
+        # 6: force walda collection, only F has walda's
+        [make_state(board=(15, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3),
+                    store=(20, 6),
+                    child=[F, F, N, N, N, N, N, N, N, N, N, N]),
+         gi.WinCond.WIN, False],
+
+        # 7: force walda collection, no waldas (not a real condition)
+        #    EndGameWinner collects seeds and decides TIE,
+        #    WaldaEndMove puts them back on the board
+        [make_state(board=(4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4),
+                    store=(0, 0),
+                    child=[N, N, N, N, N, N, N, N, N, N, N, N]),
+         gi.WinCond.TIE, DONT_CARE, False, ENDED],
+
+        # 8: Not playable, TIE
+        [make_state(board=(20, 4, 0, 0, 0, 0, 0, 0, 0, 0, 4, 20),
+                    store=(0, 0),
+                    child=[T, T, N, N, N, N, N, N, N, N, F, F]),
+         gi.WinCond.TIE, DONT_CARE],
+
+        # 9: Not playable, but ClearWinner detects F win
+        [make_state(board=(20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 20),
+                    store=(0, 0),
+                    child=[T, T, N, N, N, N, N, N, N, N, F, F]),
+         gi.WinCond.WIN, False],
+
+        # 10: Not playable, but ClearWinner detects T win
+        [make_state(board=(20, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20),
+                    store=(0, 0),
+                    child=[T, T, N, N, N, N, N, N, N, N, F, F]),
+         gi.WinCond.WIN, True],
+
+
+        ],  # end Qelat
+
+    'Weg': [
+        #                  1  2  3  4  5  6\/6  5  4  3  2  1
+        # 0: start game
+        [make_state(board=(4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4),
+                    store=(0, 0),
+                    child=[N, N, N, N, N, N, N, N, N, N, N, N]),
+         None, DONT_CARE],
+
+        # 1: end a new game (not the quitter)
+        [make_state(board=(4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4),
+                    store=(0, 0),
+                    child=[N, N, N, N, N, N, N, N, N, N, N, N]),
+         gi.WinCond.TIE, DONT_CARE, False, ENDED],
+
+        # TODO weg testcases
+
+    ] # end Weg
 }
 
 
-def end_cases(files):
+def end_cases():
     """Build the applicable test case list based
     on the contents of files and END_CASES.
-    case_ids must match order."""
-
-    for config_file in files:
-        gname = config_file[:-4]
-        if gname in END_CASES:
-            for test_case in END_CASES[gname]:
-                yield [config_file, test_case]
-        else:
-            yield [config_file, None]
-
-
-def case_ids(files):
-    """Build a list of easy to understand case names.
-    Order must exactly match end_cases.
+    Give each an easy to understand case name:
     Count cases w/i each game config and translate the
     win condition and winner to good names."""
 
-    for config_file in files:
+    for config_file in FILES:
         gname = config_file[:-4]
         if gname in END_CASES:
-            for idx, (state, cond, winner, *rest) in enumerate(END_CASES[gname]):
+
+            for idx, test_case in enumerate(END_CASES[gname]):
+                cond = test_case[1]
+                winner = test_case[2]
                 cname = cond.name if cond else "None"
                 wname = winner if winner > DONT_CARE else "DC"
-                yield f"{gname}-case{idx}-{cname}-{wname}"
+
+                yield pytest.param(config_file, test_case,
+                                   id=f"{gname}-case{idx}-{cname}-{wname}")
         else:
-            yield f"{gname}"
+            yield pytest.param(config_file, None,
+                               id=f"{gname}")
 
 
 class TestEndGames:
@@ -696,8 +777,7 @@ class TestEndGames:
 
     # @pytest.mark.usefixtures('logger')
     @pytest.mark.parametrize('game_pdict, test_case',
-                             end_cases(FILES), indirect=['game_pdict'],
-                             ids=case_ids(FILES))
+                             end_cases(), indirect=['game_pdict'])
     def test_end_game(self, game_pdict, test_case):
 
 
@@ -714,6 +794,7 @@ class TestEndGames:
 
         game, _ = game_pdict
         game.state = gstate
+        # print(test_case)
         # print(game)
         assert sum(game.store) + sum(game.board) == game.cts.total_seeds, \
             "Test Config Error: seed count wrong"
