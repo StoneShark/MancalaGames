@@ -90,24 +90,45 @@ class BullChild(MakeChildIf):
 
 
 class OneChild(MakeChildIf):
-    """Test the one child rule: may not be made in leftmost hole on
-    either side.  Each player can only have one child and player's
+    """Each player can only have one child and player's
     children must not be opposite eachother on the board.
+    Children cannot be made in some holes based on the
+    sow direction:
+        CW: cannot make children in rightmost opposite side hole.
+        CCW: cannot make children in leftmost opposite side hole.
+        others: cannot make children in any end hole.
 
     To create Tuzdek add child_rule=opp_only."""
+
+    def __init__(self, game, decorator):
+
+        super().__init__(game, decorator)
+
+        self.no_child_locs = [-1, -1]
+        if game.info.sow_direct == gi.Direct.CW:
+            self.no_child_locs = [{game.cts.holes}, {0}]
+
+        elif game.info.sow_direct == gi.Direct.CCW:
+            self.no_child_locs = [{game.cts.holes - 1},
+                                  {game.cts.dbl_holes - 1}]
+
+        else:
+            not_ends = {0, game.cts.holes - 1, game.cts.holes,
+                                   game.cts.dbl_holes - 1}
+            self.no_child_locs = [not_ends, not_ends]
+
 
     def test(self, mdata):
         game = self.game
         loc = mdata.capt_loc
         cross = game.cts.cross_from_loc(loc)
-        opp_range = game.cts.get_opp_range(game.turn)
 
         return (game.child[loc] is None
                 and game.child[cross] is None
                 and game.board[loc] == game.info.child_cvt
-                and game.cts.loc_to_left_cnt(loc)
-                and not any(game.child[tloc] is not None
-                            for tloc in opp_range))
+                and loc not in self.no_child_locs[game.turn]
+                and not any(game.child[tloc] is game.turn
+                            for tloc in range(game.cts.dbl_holes)))
 
 
 class QurChild(MakeChildIf):

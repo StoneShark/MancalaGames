@@ -389,13 +389,6 @@ def add_child_rules(rules):
         excp=gi.GameInfoError)
 
     rules.add_rule(
-        'one_child_store',
-        rule=lambda ginfo: (ginfo.child_type == gi.ChildType.ONE_CHILD
-                            and not ginfo.stores),
-        msg='ONE_CHILD requires STORES',
-        excp=gi.GameInfoError)
-
-    rules.add_rule(
         'ch_rule_opp_incom',
         rule=lambda ginfo: (ginfo.child_type in (gi.ChildType.BULL,
                                                  gi.ChildType.QUR,

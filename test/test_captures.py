@@ -511,6 +511,107 @@ class TestWalda:
         assert game.child[loc] == None
 
 
+class TestOneChild:
+    """Expose errors in make_child.test for OneChild"""
+
+    @pytest.fixture
+    def game(self):
+        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_info = gi.GameInfo(child_cvt=3,
+                                child_type=ChildType.ONE_CHILD,
+                                sow_direct=gi.Direct.CCW,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+
+    @pytest.mark.parametrize('loc', range(8))
+    @pytest.mark.parametrize('turn', [False, True])
+    @pytest.mark.parametrize('direct, evals',
+         [[gi.Direct.CCW, [[T, T, T, F, T, T, T, T],   # False locations allowed
+                           [T, T, T, T, T, T, T, F]]],   # True locations allowed
+
+          [gi.Direct.CW, [[T, T, T, T, F, T, T, T],
+                          [F, T, T, T, T, T, T, T]]],
+
+          [gi.Direct.SPLIT, [[F, T, T, F, F, T, T, F],
+                             [F, T, T, F, F, T, T, F]]],
+          ], ids=['CCW', 'CW', 'SPLIT'])
+    def test_disallowed(self, loc, turn, direct, evals):
+
+        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_info = gi.GameInfo(child_cvt=3,
+                                child_type=ChildType.ONE_CHILD,
+                                sow_direct=direct,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+
+        game.turn = turn
+        game.board[loc] = 3
+        mdata = MoveData(game, None)
+        mdata.direct = Direct.CCW
+        mdata.capt_loc = loc
+        mdata.board = tuple(game.board)
+        mdata.seeds = 2
+
+        assert game.deco.make_child.test(mdata) == evals[turn][loc]
+
+
+    @pytest.mark.parametrize('loc, turn',
+                              [(7, False),
+                               (3, True),
+                              ])
+    @pytest.mark.parametrize('board',
+                             [# opp side
+                              utils.build_board([None, None, False, None],
+                                                [None, True, None, None]),
+                              # own side
+                              utils.build_board([None, None, True, None],
+                                                [None, False, None, None]),
+                              # both T side
+                              utils.build_board([None, False, True, None],
+                                                [None, None, None, None]),
+                              # both F side
+                              utils.build_board([None, None, None, None],
+                                                [None, False, True, None]),
+                             ])
+    def test_only_one(self, game, turn, loc, board):
+        """All boards have children for both players and so
+        none should be allowed."""
+
+        game.turn = turn
+        game.child = board
+        mdata = MoveData(game, None)
+        mdata.direct = Direct.CCW
+        mdata.capt_loc = loc
+        mdata.board = tuple(game.board)
+        mdata.seeds = 2
+
+        assert not game.deco.make_child.test(mdata)
+
+
+    @pytest.mark.parametrize('child_loc, loc',
+                             [(1, 6), (6, 1), (2, 5), (5, 2)])
+    @pytest.mark.parametrize('turn', [False, True])
+    def test_not_opp(self, game, turn, loc, child_loc):
+        """Put a opponents child on opp side (child_loc),
+        no child should be allowed in loc."""
+
+        game.turn = turn
+        game.child[child_loc] = not turn
+
+        mdata = MoveData(game, None)
+        mdata.direct = Direct.CCW
+        mdata.capt_loc = loc
+        mdata.board = tuple(game.board)
+        mdata.seeds = 2
+
+        assert not game.deco.make_child.test(mdata)
+
+
 class TestTuzdek:
 
     @pytest.fixture
@@ -519,6 +620,7 @@ class TestTuzdek:
         game_info = gi.GameInfo(child_cvt=3,
                                 child_type=ChildType.ONE_CHILD,
                                 child_rule=ChildRule.OPP_ONLY,
+                                sow_direct=gi.Direct.CW,
 								stores=True,
                                 capt_on=[3],
                                 nbr_holes=game_consts.holes,
@@ -599,7 +701,6 @@ class TestTuzdek:
         assert mdata.captured
 
         assert game.board[loc] == 0
-
 
 
 class TestWeg:
