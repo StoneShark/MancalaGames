@@ -209,8 +209,12 @@ Sow	child_type	Type of Children	game_info _	112	ChildType	NOCHILD	3	2	"Games wit
 - NORMAL: children are made when a final seeds sows a hole to CHILD_CVT.
 - WALDA: STORES are not supported. Captures are instead moved into waldas, thus a player may not capture until they have created a walda. 
   + Walda locations are limited.  Each player may create up to 6 waldas: on either end of each side of the board and the next two outer holes on their own side of the board. Note that there are only 8 total places that waldas maybe created.
-- ONE_CHILD: only one child allowed per player  and may not be opposite eachother. Depending on sow direction some holes are prohibited from being made children: 
-  + CW & CCW:  the last of your opponents holes that you would sow into may not be made a child.
+- ONE_CHILD: only one child allowed per player.
+  + Children must not be symmetrically opposite eachother. For example,  in a 9 hole per side game with holes numbered as follows, tuzdeks may not be in the same numbered holes:
+  + 9 8 7 6 5 4 3 2 1
+  + 1 2 3 4 5 6 7 8 9 
+  + Depending on sow direction some holes are prohibited from being made children: 
+  + CW & CCW:  the last of your opponents holes that you would sow into may not be made a child. CW holes numbered 1 above and CCW holes numberd 9 above.
   + SPLIT: no end holes may be made children.
   + Used to create tuzdek style children along with CHILD_RULE of OPP_ONLY.
 - WEG: children maybe created in holes owned by the opponent. Ending a sow in an opponent's weg captures the seed just sown and one more (if there is one); generally, the player gets to play again (per CAPT_RTURN). WEGs are supported for TERRITORY games only (hole ownership required).

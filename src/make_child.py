@@ -14,6 +14,7 @@ import abc
 import deco_chain_if
 
 import game_interface as gi
+from game_logger import game_log
 
 
 class MakeChildIf(deco_chain_if.DecoChainIf):
@@ -91,12 +92,20 @@ class BullChild(MakeChildIf):
 
 class OneChild(MakeChildIf):
     """Each player can only have one child and player's
-    children must not be opposite eachother on the board.
+    children must not be symmetric to eachother. For example,
+    in a 9 hole per side game:
+          8 7 6 5 4 3 2 1 0
+          0 1 2 3 4 5 6 7 8
+    Tuzdeks may not be in the same numbered holes.
+
     Children cannot be made in some holes based on the
     sow direction:
         CW: cannot make children in rightmost opposite side hole.
+        Hole 0 above.
         CCW: cannot make children in leftmost opposite side hole.
-        others: cannot make children in any end hole.
+        Hole 8 above.
+        others: cannot make children in any end hole. Holes 0 and 8
+        above.
 
     To create Tuzdek add child_rule=opp_only."""
 
@@ -121,14 +130,25 @@ class OneChild(MakeChildIf):
     def test(self, mdata):
         game = self.game
         loc = mdata.capt_loc
-        cross = game.cts.cross_from_loc(loc)
 
-        return (game.child[loc] is None
-                and game.child[cross] is None
+        if (game.child[loc] is None
                 and game.board[loc] == game.info.child_cvt
                 and loc not in self.no_child_locs[game.turn]
                 and not any(game.child[tloc] is game.turn
-                            for tloc in range(game.cts.dbl_holes)))
+                            for tloc in range(game.cts.dbl_holes))):
+
+            holes = game.cts.holes
+            symmetric = (loc + holes) if loc < holes else (loc - holes)
+
+            if game.child[symmetric] is None:
+                return True
+
+            else:
+                game_log.add(f"OneChild prevented child in symmetric hole @ {loc}.",
+                             game_log.IMPORT)
+
+        return False
+
 
 
 class QurChild(MakeChildIf):

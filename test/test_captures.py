@@ -593,15 +593,17 @@ class TestOneChild:
         assert not game.deco.make_child.test(mdata)
 
 
-    @pytest.mark.parametrize('child_loc, loc',
-                             [(1, 6), (6, 1), (2, 5), (5, 2)])
+    @pytest.mark.parametrize('loc, child_loc',
+                             [(1, 5), (5, 1), (2, 6), (6, 2)])
     @pytest.mark.parametrize('turn', [False, True])
     def test_not_opp(self, game, turn, loc, child_loc):
-        """Put a opponents child on opp side (child_loc),
+        """Put a opponents child in symmetrically opp hole (child_loc),
         no child should be allowed in loc."""
 
         game.turn = turn
         game.child[child_loc] = not turn
+        print(game)
+        print(loc)
 
         mdata = MoveData(game, None)
         mdata.direct = Direct.CCW
@@ -683,8 +685,8 @@ class TestTuzdek:
 
 
     @pytest.mark.parametrize('loc, turn, child',
-                             [(6, False, 1),
-                              (2, True, 5),
+                             [(6, False, 2),
+                              (5, True, 1),
                               ])
     def test_not_opp(self, game, turn, loc, child):
 

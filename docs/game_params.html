@@ -437,8 +437,12 @@ is included after the parameter sections.
 <b class="enum">WALDA</b>: <a href="game_params.html#stores">STORES</a> are not supported. Captures are instead moved into waldas, thus a player may not capture until they have created a walda. 
 <p class="helptext"> Walda locations are limited.  Each player may create up to 6 waldas: on either end of each side of the board and the next two outer holes on their own side of the board. Note that there are only 8 total places that waldas maybe created.
 <li class="helptext">
-<b class="enum">ONE_CHILD</b>: only one child allowed per player  and may not be opposite eachother. Depending on sow direction some holes are prohibited from being made children: 
-<p class="helptext"> CW & CCW:  the last of your opponents holes that you would sow into may not be made a child.
+<b class="enum">ONE_CHILD</b>: only one child allowed per player.
+<p class="helptext"> Children must not be symmetrically opposite eachother. For example,  in a 9 hole per side game with holes numbered as follows, tuzdeks may not be in the same numbered holes:
+<p class="helptext"> 9 8 7 6 5 4 3 2 1
+<p class="helptext"> 1 2 3 4 5 6 7 8 9 
+<p class="helptext"> Depending on sow direction some holes are prohibited from being made children: 
+<p class="helptext"> CW & CCW:  the last of your opponents holes that you would sow into may not be made a child. CW holes numbered 1 above and CCW holes numberd 9 above.
 <p class="helptext"> SPLIT: no end holes may be made children.
 <p class="helptext"> Used to create tuzdek style children along with <a href="game_params.html#child_rule">CHILD_RULE</a> of OPP_ONLY.
 <li class="helptext">
