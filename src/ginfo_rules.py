@@ -239,7 +239,8 @@ def add_territory_rules(rules):
                             ginfo.rounds == gi.Rounds.HALF_SEEDS),
         msg='Territory goal is incompatible with ROUNDS.HALF_SEEDS',
         excp=gi.GameInfoError)
-        # territory always patches win_seeds to max
+        # half seeds would lead to endless territory games
+        # most seeds must be moved out of play for territory games
 
 
 def add_block_and_divert_rules(rules):

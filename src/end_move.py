@@ -32,6 +32,17 @@ import game_interface as gi
 from game_logger import game_log
 
 
+# %% make owner function
+
+def make_owner_func(game):
+    """Return a function to determine hole owner."""
+
+    if game.info.goal == gi.Goal.TERRITORY:
+        return lambda loc: game.owner[loc]
+
+    return game.cts.board_side
+
+
 # %% claim seeds
 
 # Naming convensions:
@@ -77,20 +88,24 @@ class ChildClaimSeeds(ClaimSeedsIf):
 
 class ClaimOwnSeeds(ClaimSeedsIf):
     """Claim seeds in stores, any owned childrens, and
-    own side of the board.  Don't move any."""
+    owned holes.  Don't move any."""
+
+    def __init__(self, game):
+        super().__init__(game)
+        self.get_owner = make_owner_func(game)
 
     def claim_seeds(self):
         seeds = self.game.store.copy()
 
-        for side, side_range in enumerate([self.game.cts.false_range,
-                                           self.game.cts.true_range]):
-            for loc in side_range:
-                if self.game.child[loc] is True:
-                    seeds[True] += self.game.board[loc]
-                elif self.game.child[loc] is False:
-                    seeds[False] += self.game.board[loc]
-                else:
-                    seeds[side] += self.game.board[loc]
+        for loc in range(self.game.cts.dbl_holes):
+            if self.game.child[loc] is True:
+                seeds[True] += self.game.board[loc]
+
+            elif self.game.child[loc] is False:
+                seeds[False] += self.game.board[loc]
+
+            else:
+                seeds[self.get_owner(loc)] += self.game.board[loc]
 
         return seeds
 
@@ -99,9 +114,9 @@ class TakeOwnSeeds(ClaimSeedsIf):
     """The game has ended, move the unowned seeds (non-child)
     to the stores.  Count all of the owned seeds."""
 
-    def __init__(self, game, owner_func):
+    def __init__(self, game):
         super().__init__(game)
-        self.get_owner = owner_func
+        self.get_owner = make_owner_func(game)
 
     def claim_seeds(self):
         # seeds moved into stores, then added in later
@@ -474,9 +489,9 @@ class EndTurnMustShare(EndTurnIf):
     Do a scan for seeds and if required do the simulation
     to determine if the game is over."""
 
-    def __init__(self, game, owner_func, decorator=None):
+    def __init__(self, game, decorator=None):
         super().__init__(game, decorator)
-        self.owner = owner_func
+        self.owner = make_owner_func(game)
 
     def game_ended(self, repeat_turn, ended=False):
 
@@ -786,12 +801,8 @@ def deco_add_bottom_winner(game):
         ender = EndGameWinner(
             game, claimer=TakeOnlyChildNStores(game))
 
-    elif game.info.goal == gi.Goal.TERRITORY:
-        ender = EndGameWinner(
-            game, claimer=TakeOwnSeeds(game, lambda loc: game.owner[loc]))
     else:
-        ender = EndGameWinner(
-            game, claimer=TakeOwnSeeds(game, game.cts.board_side))
+        ender = EndGameWinner(game, claimer=TakeOwnSeeds(game))
 
     return ender
 
@@ -839,6 +850,7 @@ def deco_add_no_change(game, ender):
     return ender
 
 
+
 def deco_end_move(game):
     """Return a chain of move enders."""
 
@@ -851,10 +863,7 @@ def deco_end_move(game):
         ender = EndTurnNoMoves(game, ender)
 
     if game.info.mustshare:
-        if game.info.goal == gi.Goal.TERRITORY:
-            ender = EndTurnMustShare(game, lambda loc: game.owner[loc], ender)
-        else:
-            ender = EndTurnMustShare(game, game.cts.board_side, ender)
+        ender = EndTurnMustShare(game, ender)
 
     ender = EndTurnNotPlayable(game, ender)
     ender = deco_add_no_change(game, ender)

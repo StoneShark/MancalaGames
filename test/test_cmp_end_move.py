@@ -183,7 +183,7 @@ class TestEnderConfig:
             assert not rnd_ender
 
 
-# %% end game tests
+# %% end move tests
 
 # don't check the winner result
 DONT_CARE = -5
@@ -191,7 +191,7 @@ DONT_CARE = -5
 
 def make_state(board, store, turn=False, **kwargs):
     """Helper function to make game states.
-    Generally, don't care about mcount, const > 1 is fine."""
+    Don't care about mcount, const > 1 is fine."""
 
     return mancala.GameState(board=board,
                              store=store,
@@ -200,8 +200,8 @@ def make_state(board, store, turn=False, **kwargs):
                              **kwargs)
 
 
-#  test case ids are counted within each game (see case_ids)
-#  element order:
+#  test case ids are counted within each game (see make_cases)
+#  test case element order:
 #      gstate, econd, ewinner, [repeat_turn, ended]
 
 
@@ -643,9 +643,7 @@ END_CASES = {
                     turn=True),
          gi.WinCond.WIN, False, REPEAT_TURN, False],
 
-
         ],   # end kalah
-
 
     'Qelat': [
         #                  1  2  3  4  5  6\/6  5  4  3  2  1
@@ -726,22 +724,78 @@ END_CASES = {
         # 0: start game
         [make_state(board=(4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4),
                     store=(0, 0),
-                    child=[N, N, N, N, N, N, N, N, N, N, N, N]),
+                    child=[N, N, N, N, N, N, N, N, N, N, N, N],
+                    owner=[F, F, F, F, F, F, T, T, T, T, T, T]),
          None, DONT_CARE],
 
         # 1: end a new game (not the quitter)
         [make_state(board=(4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4),
                     store=(0, 0),
-                    child=[N, N, N, N, N, N, N, N, N, N, N, N]),
+                    child=[N, N, N, N, N, N, N, N, N, N, N, N],
+                    owner=[F, F, F, F, F, F, T, T, T, T, T, T]),
          gi.WinCond.TIE, DONT_CARE, False, ENDED],
 
-        # TODO weg testcases
+        # 2: clear winner
+        [make_state(board=(0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                    store=(44, 0),
+                    child=[N, F, N, N, N, N, N, N, N, N, N, N],
+                    owner=[T, T, T, T, F, F, F, F, F, F, F, F]),
+         gi.WinCond.WIN, False],
+
+        # 3: not playable
+        [make_state(board=(2, 2, 2, 0, 0, 0, 6, 0, 2, 0, 6, 0),
+                    store=(14, 14),
+                    child=[F, F, F, N, N, N, T, N, T, N, T, N],
+                    owner=[T, T, T, T, F, F, F, F, F, F, F, F]),
+         gi.WinCond.ROUND_WIN, True],
+
+        # 4: not playable - no seeds in stores
+        [make_state(board=(9, 9, 9, 0, 0, 0, 6, 0, 9, 0, 6, 0),
+                    store=(0, 0),
+                    child=[F, F, F, N, N, N, T, N, T, N, T, N],
+                    owner=[T, T, T, T, F, F, F, F, F, F, F, F]),
+         gi.WinCond.ROUND_WIN, False],
+
+        # 5: Round Win - based on rounding, False
+        [make_state(board=(10, 10, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                    store=(7, 11),
+                    child=[F, F, F, N, N, N, T, N, T, N, T, N],
+                    owner=[T, T, T, T, F, F, F, F, F, F, F, F]),
+         gi.WinCond.ROUND_WIN, False],
+
+        # 6: Round Win - based on rounding, True
+        [make_state(board=(0, 0, 0, 0, 0, 0, 10, 0, 10, 0, 10, 0),
+                    store=(11, 7),
+                    child=[F, F, F, N, N, N, T, N, T, N, T, N],
+                    owner=[T, T, T, T, F, F, F, F, F, F, F, F]),
+         gi.WinCond.ROUND_WIN, True],
+
+        # 7: game Win - can't round up, True
+        [make_state(board=(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                    store=(10, 38),
+                    child=[F, F, F, N, N, N, T, N, T, N, T, N],
+                    owner=[T, T, T, T, F, F, F, F, F, F, F, F]),
+         gi.WinCond.WIN, True],
+
+        # 8: game Win - can't round up, False
+        [make_state(board=(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                    store=(38, 10),
+                    child=[F, F, F, N, N, N, T, N, T, N, T, N],
+                    owner=[T, T, T, T, F, F, F, F, F, F, F, F]),
+         gi.WinCond.WIN, False],
+
+        # 9: round tie
+        [make_state(board=(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+                    store=(24, 24),
+                    child=[F, F, F, N, N, N, T, N, T, N, T, N],
+                    owner=[T, T, T, T, F, F, F, F, F, F, F, F]),
+         gi.WinCond.ROUND_TIE, DONT_CARE],
 
     ] # end Weg
 }
 
 
-def end_cases():
+def make_cases():
     """Build the applicable test case list based
     on the contents of files and END_CASES.
     Give each an easy to understand case name:
@@ -777,7 +831,7 @@ class TestEndGames:
 
     # @pytest.mark.usefixtures('logger')
     @pytest.mark.parametrize('game_pdict, test_case',
-                             end_cases(), indirect=['game_pdict'])
+                             make_cases(), indirect=['game_pdict'])
     def test_end_game(self, game_pdict, test_case):
 
 

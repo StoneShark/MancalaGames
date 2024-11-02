@@ -120,9 +120,9 @@ Dynamics	prescribed	Prescribed Opening Move	game_info _	132	SowPrescribed	NONE	3
 - SOW1OPP: at least one seed must be sown on the opponents side of the board which is accomplished by sowing as normal until the final seed, then any remaining holes on the player's side are skipped and the last seed is sown in the oppenents first hole (based on current sow direction).
 - PLUS1MINUS1: proceed from the selected hole by moving one seed from the next hole into the following hole, next skip that hole and repeat moving seed forward. After cycling the board, capture across from the opening hole. 
 - ARNGE_LIMIT: the first move may be used to rearrange the seeds (opponent is same layout). If the first move is not used for rearrangement, captures and child creation are not allowed from the starter until the second player makes a child or captures."
-Dynamics	gparam_one	General Input	game_info _	116	int	0	5	2	"GOAL of Territory: defines the number of holes needed for a win.
+Dynamics	gparam_one	General Input	game_info _	116	int	0	5	2	"GOAL of Territory: defines the number of holes needed for a win. The number of holes for each player are computed by rounding the number of seeds collected divided by the number of start seeds per hole.
 GOAL of Deprive and Blocked Divert Sower: defines the number of seeds needed to close/block holes (sow_blkd_div).
-GOAL of Max Seeds and ROUNDS: define the minimum number of holes each player must have to continue the game."
+GOAL of Max Seeds and ROUNDS: defines the minimum number of holes each player must have to continue the game. The player with fewer seeds must have enough seeds to fill gparam_one holes each with start_seeds in order to continue playing.  There is no rounding of seed counts as in territory games."
 Game	game_class	Game Class	game_class	1	GameClasses	Mancala	0	0	The name of the Game Class. Currently only Mancala.
 Game	holes	Holes per Side	game_constants _	2	int	3	2	0	Number of holes on each side of the board.
 Game	help_file	Help File	game_info _	118	str	mancala_help.html	3	0	An html help file describing the game (mancala_help.html is the main help file).

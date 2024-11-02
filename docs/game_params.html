@@ -269,9 +269,9 @@ is included after the parameter sections.
 <p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Dynamics
 
-<p><a href="game_params.html#goal">GOAL</a> of Territory: defines the number of holes needed for a win.
+<p><a href="game_params.html#goal">GOAL</a> of Territory: defines the number of holes needed for a win. The number of holes for each player are computed by rounding the number of seeds collected divided by the number of start seeds per hole.
 <p><a href="game_params.html#goal">GOAL</a> of Deprive and Blocked Divert Sower: defines the number of seeds needed to close/block holes (sow_blkd_div).
-<p><a href="game_params.html#goal">GOAL</a> of Max Seeds and <a href="game_params.html#rounds">ROUNDS</a>: define the minimum number of holes each player must have to continue the game.
+<p><a href="game_params.html#goal">GOAL</a> of Max Seeds and <a href="game_params.html#rounds">ROUNDS</a>: defines the minimum number of holes each player must have to continue the game. The player with fewer seeds must have enough seeds to fill gparam_one holes each with start_seeds in order to continue playing.  There is no rounding of seed counts as in territory games.
 <h2 id="tab_Allow">Allow Tab</h2>
 <h4 id="min_move"> Minimum Seeds for Move </h4>
 <p class="pdesc">Location in Config Files: game_info : min_move

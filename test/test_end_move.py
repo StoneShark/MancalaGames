@@ -124,12 +124,17 @@ class TestClaimers:
     def game(self):
         """minimum game class for claimers"""
 
+        class Info:
+            def __init__(self):
+                self.goal = gi.Goal.MAX_SEEDS
+
         class ClaimerTestGame:
             def __init__(self):
                 self.cts = gc.GameConsts(nbr_start=2, holes=4)
                 self.board = [2, 2, 2, 2]
                 self.child = [F, F, F, F]
                 self.store = [0, 0]
+                self.info = Info()
 
         return ClaimerTestGame()
 
@@ -146,10 +151,7 @@ class TestClaimers:
             "Game setup error."
 
         tclass = getattr(end_move, tname)
-        if tname =='TakeOwnSeeds':
-            claimer = tclass(game, game.cts.board_side)
-        else:
-            claimer = tclass(game)
+        claimer = tclass(game)
         seeds = claimer.claim_seeds()
 
         assert game.board == case.results[tname].board
@@ -159,9 +161,6 @@ class TestClaimers:
             assert sum(game.board) + sum(game.store) != game.cts.total_seeds
         else:
             assert sum(game.board) + sum(game.store) == game.cts.total_seeds
-
-
-
 
 
 # %%
@@ -494,7 +493,6 @@ class TestEndMove:
                  utils.build_board([0, 0, 0],
                                    [0, 0, 0]), [6, 6], None),
 
-
                 # 36: F moved all but one seed to T, now Ts move
                 ('shgame', False, False,
                  utils.build_board([0, 1, 2],
@@ -527,8 +525,10 @@ class TestEndMove:
         game.board = board
         game.store = store
         game.turn = turn
+        # print(game)
         cond, winner = game.deco.ender.game_ended(repeat_turn=repeat,
                                                   ended=ended)
+        # print('after:', game, sep='\n')
         assert cond == eres
         assert game.board == eboard
         assert game.store == estore

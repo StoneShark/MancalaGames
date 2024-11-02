@@ -143,9 +143,8 @@ class OneChild(MakeChildIf):
             if game.child[symmetric] is None:
                 return True
 
-            else:
-                game_log.add(f"OneChild prevented child in symmetric hole @ {loc}.",
-                             game_log.IMPORT)
+            game_log.add(f"OneChild prevented child in symmetric hole @ {loc}.",
+                         game_log.IMPORT)
 
         return False
 
