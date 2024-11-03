@@ -78,6 +78,8 @@ CONFIG_CASES = {
     'Deka': Config(-1),   # DEPRIVE games no win_seeds, rounds or NoOutcomeChange
     'Depouiller': Config(-1),   # DEPRIVE
 
+    'Diffusion': Config(-1),  # Diffusion class
+
     'Endodoi': Config(8*4, 2),
     'Enkeshui': Config(24, 2),   # start pattern
     'Erherhe': Config(6*4, 0, 8) ,  # mustshare

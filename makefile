@@ -15,6 +15,7 @@ MODULES += capt_ok.py
 MODULES += capturer.py
 MODULES += cfg_keys.py
 MODULES += deco_chain_if.py
+MODULES += diffusion.py
 MODULES += end_move.py
 MODULES += fill_patterns.py
 MODULES += game_classes.py
@@ -54,6 +55,7 @@ HELPFILES += docs\\game_params.html
 HELPFILES += docs\\game_xref.html
 HELPFILES += docs\\param_types.html
 HELPFILES += docs\\dist_readme.txt
+HELPFILES += docs\\Diffusion_rules.pdf
 
 DATAFILES = GameProps/*.txt $(HELPFILES) logs/README.txt
 
@@ -268,7 +270,7 @@ MancalaGames/mancala_games.exe: $(SOURCES) $(DATAFILES) $(HELPFILES) mancala_gam
 	-rmdir /S /Q MancalaGames
 	pyinstaller mancala_games.spec --distpath .
 	mkdir MancalaGames\\help
-	copy docs\\*.html MancalaGames\\help
+	cp $(HELPFILES) MancalaGames\\help
 	copy docs\\styles.css MancalaGames\\help
 	copy docs\\dist_readme.txt MancalaGames\\README.txt
 	mkdir MancalaGames\\GameProps

@@ -348,9 +348,18 @@ def game_prop_text(game_dict):
             f'Start seeds:  {start}',
             f'<a href="game_params.html#goal">Goal</a>: {goal.name}']
 
+    if (ckey.GAME_CLASS in game_dict
+            and game_dict[ckey.GAME_CLASS] != 'Mancala'):
+        game_class  = game_dict[ckey.GAME_CLASS]
+        ptxt += [f'Game class:  {game_class}']
+
+    if ckey.HELP_FILE in game_dict[ckey.GAME_INFO]:
+        help_file  = game_dict[ckey.GAME_INFO][ckey.HELP_FILE]
+        ptxt += [f'Help File:  <a href="{help_file}">{help_file}</a>']
+
     for param, value in game_dict[ckey.GAME_INFO].items():
 
-        if param in (ckey.NAME, ckey.ABOUT, ckey.GOAL):
+        if param in (ckey.NAME, ckey.ABOUT, ckey.GOAL, ckey.HELP_FILE):
             continue
 
         if param in (ckey.CAPT_ON, ckey.UDIR_HOLES):
@@ -370,7 +379,6 @@ def game_prop_text(game_dict):
         ptxt += [f'{pstr} {vstr}']
 
     return ptxt
-
 
 
 def write_games_help(filename):

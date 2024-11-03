@@ -9,6 +9,8 @@ more.
 Created on Sun Jul 30 09:41:09 2023
 @author: Ann"""
 
+import diffusion
 import mancala
 
-GAME_CLASSES = {'Mancala': mancala.Mancala}
+GAME_CLASSES = {'Mancala': mancala.Mancala,
+                'Diffusion': diffusion.Diffusion}

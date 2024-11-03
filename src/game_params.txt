@@ -123,7 +123,9 @@ Dynamics	prescribed	Prescribed Opening Move	game_info _	132	SowPrescribed	NONE	3
 Dynamics	gparam_one	General Input	game_info _	116	int	0	5	2	"GOAL of Territory: defines the number of holes needed for a win. The number of holes for each player are computed by rounding the number of seeds collected divided by the number of start seeds per hole.
 GOAL of Deprive and Blocked Divert Sower: defines the number of seeds needed to close/block holes (sow_blkd_div).
 GOAL of Max Seeds and ROUNDS: defines the minimum number of holes each player must have to continue the game. The player with fewer seeds must have enough seeds to fill gparam_one holes each with start_seeds in order to continue playing.  There is no rounding of seed counts as in territory games."
-Game	game_class	Game Class	game_class	1	GameClasses	Mancala	0	0	The name of the Game Class. Currently only Mancala.
+Game	game_class	Game Class	game_class	1	GameClasses	Mancala	0	0	"The name of the Game Class. One of:
+Mancala: allows setting all parameters though there are limited combinations.
+Diffusion: has unique sow method and win conditions. Only very limited parameters may be changed from defaults."
 Game	holes	Holes per Side	game_constants _	2	int	3	2	0	Number of holes on each side of the board.
 Game	help_file	Help File	game_info _	118	str	mancala_help.html	3	0	An html help file describing the game (mancala_help.html is the main help file).
 Game	about	About	game_info _	5	multi_str	"Sow counter-clockwise.
