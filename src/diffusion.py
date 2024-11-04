@@ -24,7 +24,6 @@ def build_rules():
     Not much is allowed:
         - change board size, but it must be even
         - stores can be included or not (useful to know whose turn it is)
-          thier contents do not matter to game play
     """
 
     rules = ginfo_rules.RuleDict()
@@ -263,3 +262,16 @@ class Diffusion(DiffusionV2):
         super().__init__(game_consts, game_info)
 
         self.deco.ender = ClearSideEndGame(self)
+
+
+    def win_message(self, win_cond):
+        """Return a window title and message string.
+        This is only called if win_cond is truthy.
+        Ender only returns WIN or none, therefore
+        this is only called for win."""
+
+        title = 'Game Over'
+        player = 'Left' if self.turn else 'Right'
+        message = f'{player} won by giving away all their seeds.'
+
+        return title, message

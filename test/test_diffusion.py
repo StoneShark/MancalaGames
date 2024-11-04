@@ -189,7 +189,7 @@ class TestDiffusion:
                            [4, 4, 5, 0]), 3],
     ]
 
-    @pytest.mark.usefixtures('logger')
+    # @pytest.mark.usefixtures('logger')
     @pytest.mark.parametrize('row, pos, board, eboard, eooplay',
                              SOW_CASES,
                              ids=[f"case_{i}" for i in range(len(SOW_CASES))])
@@ -208,3 +208,24 @@ class TestDiffusion:
 
         assert diff.board == eboard
         assert sum(diff.store) == eooplay
+
+
+    def test_win_message_v1(self, diff):
+
+        diff.turn = True
+        _, message = diff.win_message(gi.WinCond.WIN)
+        assert 'Left' in message
+
+        diff.turn = False
+        _, message = diff.win_message(gi.WinCond.WIN)
+        assert 'Right' in message
+
+    def test_win_message_v2(self, diff_v2):
+
+        diff_v2.turn = True
+        _, message = diff_v2.win_message(gi.WinCond.WIN)
+        assert 'Top' in message
+
+        diff_v2.turn = False
+        _, message = diff_v2.win_message(gi.WinCond.WIN)
+        assert 'Bottom' in message
