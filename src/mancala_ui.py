@@ -473,8 +473,11 @@ class MancalaUI(tk.Frame):
 
             player = row == turn_row
             if self.info.stores:
-                self.stores[row].set_store(self.game.get_store(row),
-                                           player)
+                if self.info.goal in (gi.Goal.DEPRIVE,  gi.Goal.CLEAR):
+                    seeds = 0
+                else:
+                    seeds = self.game.get_store(row)
+                self.stores[row].set_store(seeds, player)
 
             for pos in range(self.game.cts.holes):
 

@@ -79,9 +79,11 @@ CONFIG_CASES = {
     'Depouiller': Config(-1),   # DEPRIVE
 
     'Diffusion': Config(-1),  # Diffusion class
+    'DiffusionV2': Config(-1),  # DiffusionV2 class
 
     'Endodoi': Config(8*4, 2),
     'Enkeshui': Config(24, 2),   # start pattern
+    'Enlightenment': Config(-1),
     'Erherhe': Config(6*4, 0, 8) ,  # mustshare
     'Eson_Xorgol': Config(5*9, 3),
     'Gabata': Config(4*6*2 - 1, 0, 11),   # only children

@@ -94,6 +94,7 @@ class Goal(enum.IntEnum):
     MAX_SEEDS = 0
     DEPRIVE = 1
     TERRITORY = 2
+    CLEAR = 3
 
 
 @enum.unique

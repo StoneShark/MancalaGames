@@ -710,6 +710,74 @@ class TestEndDeprive:
             assert winner == ewinner
 
 
+class TestEndClear:
+
+    @pytest.fixture
+    def game(self):
+        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(goal=Goal.CLEAR,
+                                capt_on=[4],
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+    CASES = [
+        # 0: Will be true's turn, but they have no moves
+        (False, utils.build_board([0, 0, 0],
+                                  [0, 3, 0]),
+         WinCond.WIN, True),
+
+        # 1: Will be false's turn, but they have no moves
+        (True, utils.build_board([0, 3, 0],
+                                 [0, 0, 0]),
+         WinCond.WIN, False),
+
+        # 2: False gave away all seeds but not their turn
+        (False, utils.build_board([0, 3, 0],
+                                  [0, 0, 0]),
+         WinCond.WIN, False),
+
+        # 3: True gave away all seeds but not their turn
+        (True, utils.build_board([0, 0, 0],
+                                 [0, 3, 0]),
+         WinCond.WIN, True),
+
+        # 4: False gave away all seeds but true has seeds
+        (False, utils.build_board([0, 1, 0],
+                                  [0, 0, 0]),
+         WinCond.WIN, False),
+
+        # 5: True gave away all seeds but false has seeds
+        (True, utils.build_board([0, 0, 0],
+                                 [0, 1, 0]),
+         WinCond.WIN, True),
+
+        # 6: game continues
+        (True, utils.build_board([0, 3, 0],
+                                 [0, 3, 0]),
+         None, None),
+
+        # 7: game continues
+        (False, utils.build_board([0, 3, 0],
+                                  [0, 3, 0]),
+         None, None),
+
+    ]
+
+    @pytest.mark.parametrize('turn, board, econd, ewinner',
+                             CASES)
+    def test_end_game(self, game, turn, board, econd, ewinner):
+        game.board = board
+        game.turn = turn
+
+        cond, winner = game.deco.ender.game_ended(False, False)
+        assert cond == econd
+        if ewinner is not None:
+            assert winner == ewinner
+
+
+
 class TestEndWaldas:
 
     @pytest.fixture

@@ -503,6 +503,17 @@ def player_dict_rules():
         excp=gi.GameInfoError)
 
     rules.add_rule(
+        'stores_scorer_inv',
+        rule=lambda pdict, ginfo: (ginfo.goal in (gi.Goal.CLEAR,
+                                                  gi.Goal.DEPRIVE)
+                                   and ckey.SCORER in pdict
+                                   and ckey.STORES_M in pdict[ckey.SCORER]
+                                   and pdict[ckey.SCORER][ckey.STORES_M]),
+        both_objs=True,
+        msg='Stores scorer is not supported for CLEAR or DEPRIVE games.',
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
         'mlaps_access_prohibit',
         rule=lambda pdict, ginfo: (ginfo.mlaps
                                    and ckey.SCORER in pdict

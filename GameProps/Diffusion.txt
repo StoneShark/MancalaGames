@@ -6,16 +6,18 @@
    },
    "game_info": {
       "name": "Diffusion",
-      "about": "A mancala game with unique sow pattern and win condition.\nGame rules: Copyright (c) January 2006 by Mark Steere. See pdf file for rules.\nThe minimaxer will not work well with this game because the sides do not aling with player sides.",
+      "about": "A mancala game with a unique sow pattern and win condition. Right player owns right 6 holes. Left player owns left 6 holes--AI plays this side if enabled.\nThe minimaxer will not work well with this game because scorers use top versus bottom.\nGame rules: Copyright (c) January 2006 by Mark Steere. See pdf file for rules.",
       "help_file": "Diffusion_rules.pdf",
+      "goal": 3,
       "no_sides": true,
       "stores": true
    },
    "player": {
       "algorithm": "montecarlo_ts",
       "ai_params": {
-         "mcts_bias": [ 300, 200, 200, 200 ],
-         "mcts_pouts": [ 1, 1, 2, 2 ]
+         "mcts_bias": [300, 200, 200, 200],
+         "mcts_nodes": [300, 500, 700, 800],
+         "mcts_pouts": [1, 1, 2, 2]
       },
       "scorer": {
          "stores_m": 0,

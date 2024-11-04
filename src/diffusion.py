@@ -44,11 +44,17 @@ def build_rules():
         # either player may move from any hole
 
     rules.add_rule(
+        'goal_clear',
+        rule=lambda ginfo: not ginfo.goal == gi.Goal.CLEAR,
+        msg='Diffusion requires clear goal',
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
         'store_for_turn',
         rule=lambda ginfo: not ginfo.stores,
         msg=textwrap.dedent("""\
-                            In Diffusion, keeping track of the
-                            current player is hard w/o stores."""),
+                            In Diffusion, make stores visible to
+                            the current player."""),
         warn=True)
 
     rules.add_rule(
@@ -155,37 +161,47 @@ class DiffusionSower(sower.SowMethodIf):
                          self.game.cts.cross_from_loc,
                          one_ccw,
                          one_ccw,
-                         self.game.cts.cross_from_loc,
-                         one_ccw]   # filler loc, it wont be used
+                         self.game.cts.cross_from_loc]
+
+        btm_left = 0
+        btm_right = self.game.cts.holes - 1
+        top_right = self.game.cts.holes
+        top_left = self.game.cts.dbl_holes - 1
+
+        # dict move_from: divert out of play at loc
+        self.divert_loc = {btm_left: top_left,
+                           btm_right: btm_right,
+                           top_right: btm_right,
+                           top_left: top_left}
 
     def sow_seeds(self, mdata):
         """Sow seeds."""
 
-        move_from = mdata.sow_loc
-        loc = self.incr_ops[0](move_from)
+        move_from = loc = mdata.sow_loc
+        divert_loc = self.divert_loc.get(move_from, -1)
+
         sow_str = 2
 
         for idx in range(mdata.seeds):
 
-            if (sow_str
-                and ((move_from == self.game.cts.holes - 1
-                      and loc == self.game.cts.holes)
-                     or (move_from == self.game.cts.dbl_holes - 1
-                         and not loc))):
+            if sow_str and loc == divert_loc:
                 self.game.store[0] += 1
                 sow_str -= 1
                 # don't move on until we've put 2 seeds in the store
 
             else:
+                loc = self.incr_ops[idx](loc)
+
                 if self.game.board[loc] == FIVE:
                     self.game.store[0] += 1
                 else:
                     self.game.board[loc] += 1
 
-                loc = self.incr_ops[idx + 1](loc)
+        # this isn't actually used because all capts must be off
+        mdata.capt_loc = loc
 
 
-class CharitySideEndGame(end_move.EndTurnIf):
+class ClearSideEndGame(end_move.EndTurnIf):
     """Win by giving away all seeds or your left/right side of the board."""
 
     def __init__(self, game, decorator=None, claimer=None):
@@ -206,14 +222,21 @@ class CharitySideEndGame(end_move.EndTurnIf):
         if not my_seeds:
             return gi.WinCond.WIN, self.game.turn
 
+        opp_seeds = sum(self.game.board[loc]
+                        for loc in self.holes[not self.game.turn])
+        if not opp_seeds:
+            return gi.WinCond.WIN, not self.game.turn
+
         return None, self.game.turn
 
 
-# %% Diffusion game class
+# %% Diffusion game classes
 
-class Diffusion(mancala.Mancala):
+
+class DiffusionV2(mancala.Mancala):
     """Diffusion game by Mark Streere:  marksteeregames.com
-    Game rules: Copyright (c) January 2006 by Mark Steere"""
+    Game rules: Copyright (c) January 2006 by Mark Steere
+    Version 2: win by top/bottom"""
 
     rules = build_rules()
 
@@ -223,17 +246,20 @@ class Diffusion(mancala.Mancala):
 
         self.deco.incr = None   # make certain this isn't used
         self.deco.sower = DiffusionSower(self)
-        self.deco.ender = CharitySideEndGame(self)
-        self.deco.quitter = end_move.QuitToTie(self)
 
-    def win_message(self, win_cond):
-        """Return a window title and message string.
-        This is only called if win_cond is truthy.
-        Ender only returns WIN or none, therefore
-        this is only called for win."""
 
-        title = 'Game Over'
-        player = 'Left' if self.turn else 'Right'
-        message = f'{player} won by giving away all their seeds.'
+class Diffusion(DiffusionV2):
+    """Diffusion game by Mark Streere:  marksteeregames.com
+    Game rules: Copyright (c) January 2006 by Mark Steere
 
-        return title, message
+         True  | False
+         side  | side
+
+      11 10  9 | 8  7  6
+       0  1  2 | 3  4  5"""
+
+    def __init__(self, game_consts, game_info):
+
+        super().__init__(game_consts, game_info)
+
+        self.deco.ender = ClearSideEndGame(self)

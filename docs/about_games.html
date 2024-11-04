@@ -334,15 +334,31 @@ allow closing of rightmost holes (<a href="game_params.html#sow_rule">SOW_RULE</
   </div>
 </div>
 <h3 id="Diffusion">Diffusion</h3>
-<p>A mancala game with unique sow pattern and win condition.
+<p>A mancala game with a unique sow pattern and win condition. Right player owns right 6 holes. Left player owns left 6 holes--AI plays this side if enabled.
+<p>The minimaxer will not work well with this game because scorers use top versus bottom.
 <p>Game rules: Copyright (c) January 2006 by Mark Steere. See pdf file for rules.
-<p>The minimaxer will not work well with this game because the sides do not aling with player sides.
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  6</p>
     <p class="param">Start seeds:  4</p>
-    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: CLEAR</p>
     <p class="param">Game class:  Diffusion</p>
+  </div>
+  <div class="column2">
+    <p class="param">Help File:  <a href="Diffusion_rules.pdf">Diffusion_rules.pdf</a></p>
+    <p class="param"><a href="game_params.html#no_sides">No Sides</a>: Yes</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<h3 id="Diffusion V2">Diffusion V2</h3>
+<p>A mancala game with a unique sow pattern and win condition. Right store highlight indicates bottom player's turn.
+<p>Game rules: Copyright (c) January 2006 by Mark Steere. See pdf file for rules.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: CLEAR</p>
+    <p class="param">Game class:  DiffusionV2</p>
   </div>
   <div class="column2">
     <p class="param">Help File:  <a href="Diffusion_rules.pdf">Diffusion_rules.pdf</a></p>
@@ -398,6 +414,24 @@ start patterns: CLIPPEDTRIPLES with 3 start seeds
   </div>
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p42.
+<h3 id="Enlightenment">Enlightenment</h3>
+<p>Move from any hole on the board. Split sow.
+<p>The goal is to clear all of your own seeds. Seeds from all holes sown to 2 or 4 are removed from play.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  5</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: CLEAR</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 2 4</p>
+    <p class="param"><a href="game_params.html#no_sides">No Sides</a>: Yes</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: SPLIT</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: OWN_SOW_CAPT_ALL</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#udir_holes">User Chooses Direction</a>: 2</p>
+  </div>
+</div>
 <h3 id="Erherhe">Erherhe</h3>
 <p>A single-lap mancala, sow direction is counter-clockwise, multiple capture on opponents side on 1s and 3s. A sow which cycles the board, will skip the hole that the move started from. If your opponent has no seeds, you must make seeds available to them (if you can).
 <p><a href="about_games.html#Erherhe">Erherhe</a> is played in rounds. A round ends when either player has more than half of the seeds. Players then collect the seeds remaining on their side of the board. To setup the next round, each player fills as many holes as they can with 4 seeds. Left over seeds are placed in their store (3 or fewer for loser). The looser's holes that cannot be filled are out of play for the round. The loser starts new round.
@@ -1406,16 +1440,18 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Dakon">Dakon</a></p>
     <p class="param"><a href="#Deka">Deka</a></p>
     <p class="param"><a href="#Diffusion">Diffusion</a></p>
+    <p class="param"><a href="#Diffusion V2">Diffusion V2</a></p>
     <p class="param"><a href="#Dépouiller">Dépouiller</a></p>
     <p class="param"><a href="#Endodoi">Endodoi</a></p>
     <p class="param"><a href="#Enkeshui">Enkeshui</a></p>
+    <p class="param"><a href="#Enlightenment">Enlightenment</a></p>
     <p class="param"><a href="#Erherhe">Erherhe</a></p>
     <p class="param"><a href="#Eson Xorgol">Eson Xorgol</a></p>
     <p class="param"><a href="#Gabata">Gabata</a></p>
     <p class="param"><a href="#Gamacha">Gamacha</a></p>
-    <p class="param"><a href="#Giuthi">Giuthi</a></p>
   </div>
   <div class="column3">
+    <p class="param"><a href="#Giuthi">Giuthi</a></p>
     <p class="param"><a href="#Goat">Goat</a></p>
     <p class="param"><a href="#J'Odu">J'Odu</a></p>
     <p class="param"><a href="#Kalah">Kalah</a></p>

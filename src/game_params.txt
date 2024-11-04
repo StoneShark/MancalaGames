@@ -63,7 +63,7 @@ Capture	pickextra	On Capture, Take More Rule	game_info _	131	CaptExtraPick	NONE	
 - PICKLASTSEEDS: If there are the number of starts seeds or fewer left,  the current player collects them and the game is over. This rule is applied at the end of each turn, even if there is not a capture because the sow phase may have reduced the seed count.
 - PICK2XLASTSEEDS: If there are 2 times the number of start seeds or fewer, the round starter picks them. This rule is applied at the end of each turn, even if there is not a capture because the sow phase may have reduced the seed count.
 In terms of GRANDSLAM, these picks are considered captures."
-Dynamics	stores	Stores	game_info _	142	bool	True	0	0	Are stores present on the game board?
+Dynamics	stores	Stores	game_info _	142	bool	True	0	0	True when stores are present on the game board. For games with GOAL of DEPRIVE or CLEAR, stores can be used to show whose turn it is (seed counts will not be sown).
 Dynamics	mustpass	Must Pass	game_info _	125	bool	False	1	0	When a player has no allowable moves on their turn, they must pass, and continue to do so until they have allowable moves or the game is over. The game is over when there is a clear winner or tie condition, or when neither player has an allowable move.
 Dynamics	rounds	Rounds	game_info _	135	Rounds	NO_ROUNDS	4	0	"When rounds are employed, each round may end under conditions that do not win the overall game. The board is then setup again per the game rules, generally with some feature changed based on the previous round: hole ownership, holes out of play, a shortened board. Play continues in rounds until either player meets the overall game winning condition.
 If the game is played in round, defines how each round ends: 
@@ -101,10 +101,13 @@ Dynamics	goal	Game Goal	game_info _	115	Goal	MAX_SEEDS	0	2	"The overall goal of 
 - DEPRIVE: eliminate all of your opponents seeds.
   + If a player has no seeds at the start of their turn, they loose. If a player has no moves at the start of their turn, then the game outcome is determined by who has seeds: If both players have seeds, the game ends in a tie. If the current player has seeds, but the previous player does not, then the current player wins because they forced the previous player to give away all their seeds.
   + GRANDSLAM must be legal for DEPRIVE games.
-  + Deprive games cannot be played in ROUNDS, use STORES, or use children. Additionally, the following options are incompatible with DEPRIVE games: MOVEUNLOCK, MUSTPASS, MUSTSHARE and NO_SIDES.
+  + Deprive games cannot be played in ROUNDS or use children. Additionally, the following options are incompatible with DEPRIVE games: MOVEUNLOCK, MUSTPASS and MUSTSHARE.
 - TERRITORY: claim ownership of holes. Each round the ownership of holes is determined by the number of seeds captured in the previous round. In a TERRITORY game without rounds, the winner is the player that gained the most territory during play. 
   + TERRITORY games require STORES and that GPARAM_ONE be set to a value between the number of holes and two times the number of holes.
-  + TERRITORY games are incompatible with NO_SIDES, START_PATTERN, GRANDSLAM of NOT_LEGAL, ALLOW_RULE of OPP_OR_EMPTY, "
+  + TERRITORY games are incompatible with NO_SIDES, START_PATTERN, GRANDSLAM of NOT_LEGAL, ALLOW_RULE of OPP_OR_EMPTY.
+- CLEAR: clear seeds from your own holes.
+  + Moves must always be possible so MIN_MOVE must be 1 and ALLOW_RULE single_all_to_zero may not be used.
+  + GRANDSLAM must be legal for DEPRIVE games.  Deprive games cannot be played in ROUNDS or use children. Additionally, the following options are incompatible with DEPRIVE games: MOVEUNLOCK, MUSTPASS and MUSTSHARE."
 Dynamics	no_sides	No Sides	game_info _	127	bool	False	1	2	Moves maybe made from any hole, independent of the side of the board. Moves need to specify side, position and directions.  
 Dynamics	start_pattern	Start Pattern	game_info _	141	StartPattern	ALL_EQUAL	2	2	"Allows specifing non-all-equal start patterns. The following patterns are supported:
 - ALL_EQUAL: all holes start with the same number of seeds.

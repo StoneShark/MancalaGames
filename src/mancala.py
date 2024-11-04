@@ -443,7 +443,8 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
         reason = ("by collecting the most seeds!",
                   "by eliminating their opponent's seeds.",
-                  "by claiming more holes.")
+                  "by claiming more holes.",
+                  "by clearing all their seeds.")
 
         rtext = 'the game'
         gtext = 'Game'

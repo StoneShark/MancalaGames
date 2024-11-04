@@ -1,0 +1,30 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 5,
+      "nbr_start": 4
+   },
+   "game_info": {
+      "name": "Enlightenment",
+      "about": "Move from any hole on the board. Split sow.\nThe goal is to clear all of your own seeds. Seeds from all holes sown to 2 or 4 are removed from play.\n\n",
+      "capt_on": [ 2, 4 ],
+      "goal": 3,
+      "no_sides": true,
+      "sow_direct": 0,
+      "sow_rule": 3,
+      "stores": true,
+      "udir_holes": [ 2 ]
+   },
+   "player": {
+      "algorithm": "montecarlo_ts",
+      "ai_params": {
+         "mcts_nodes": [ 200, 400, 600, 800 ],
+         "mcts_pouts": [ 1, 1, 2, 2 ]
+      },
+      "scorer": {
+         "stores_m": 0,
+         "seeds_m": -1,
+         "empties_m": 2
+      }
+   }
+}

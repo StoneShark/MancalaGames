@@ -157,36 +157,50 @@ def add_pattern_rules(rules):
         excp=gi.GameInfoError)
 
 
-def add_deprive_rules(rules):
-    """Add rules for the game goal of depriving the opponent of
-    seeds."""
+def add_elim_seeds_goal_rules(rules):
+    """Add rules for the game eliminating our own or opponents seeds."""
 
     def deprive_and(flag_name):
         """Return a function that tests that goal is divert
         and the specified flag, based only on a ginfo parameter."""
 
         def _deprive_and(ginfo):
-            return ginfo.goal == gi.Goal.DEPRIVE and getattr(ginfo, flag_name)
+            return (ginfo.goal in (gi.Goal.DEPRIVE, gi.Goal.CLEAR)
+                    and getattr(ginfo, flag_name))
 
         return _deprive_and
 
     rules.add_rule(
-        'deprive_gs_legal',
-        rule=lambda ginfo: (ginfo.goal == gi.Goal.DEPRIVE
+        'elseed_gs_legal',
+        rule=lambda ginfo: (ginfo.goal in (gi.Goal.DEPRIVE, gi.Goal.CLEAR)
                             and ginfo.grandslam != gi.GrandSlam.LEGAL),
-        msg='Goal of DEPRIVE requires that GRANDSLAM be Legal',
+        msg='CLEAR & DEPRIVE games require that GRANDSLAM be Legal',
         excp=gi.GameInfoError)
 
     bad_flags = ['child_cvt', 'child_rule', 'child_type',
                  'moveunlock', 'mustshare', 'mustpass',
-                 'no_sides', 'rounds', 'round_starter', 'round_fill',
-                 'sow_own_store', 'stores']
+                 'rounds', 'round_starter', 'round_fill']
     for flag in bad_flags:
         rules.add_rule(
-            f'deprive_bad_{flag}',
+            f'elseed_bad_{flag}',
             rule=deprive_and(flag),
-            msg=f'Goal of DEPRIVE cannot be used with {flag.upper()}',
+            msg=f'CLEAR & DEPRIVE games cannot be used with {flag.upper()}',
             excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'clear_no_min_move',
+        rule=lambda ginfo: (ginfo.goal == gi.Goal.CLEAR
+                            and ginfo.min_move != 1),
+        msg='CLEAR games require that MIN_MOVE be 1',
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'clear_no_1all_zero',
+        rule=lambda ginfo: (
+            ginfo.goal == gi.Goal.CLEAR
+            and ginfo.allow_rule == gi.AllowRule.SINGLE_ALL_TO_ZERO),
+        msg='CLEAR games prohibits ALLOW_RULE SINGLE_ALL_TO_ZERO',
+        excp=gi.GameInfoError)
 
     return rules
 
@@ -417,11 +431,6 @@ def add_no_sides_rules(rules):
         msg='NO_SIDES requires STORES.',
         excp=gi.GameInfoError)
 
-    rules.add_rule(
-        'no_sides_req_max_seeds',
-        rule=lambda ginfo: ginfo.no_sides and ginfo.goal != gi.Goal.MAX_SEEDS,
-        msg='NO_SIDES requires a goal of MAX_SEEDS',
-        excp=gi.GameInfoError)
 
 
     bad_flags = ['grandslam', 'mustpass', 'mustshare', 'oppsidecapt',
@@ -446,7 +455,7 @@ def build_rules():
 
     add_creation_rules(man_rules)
     add_pattern_rules(man_rules)
-    add_deprive_rules(man_rules)
+    add_elim_seeds_goal_rules(man_rules)
     add_territory_rules(man_rules)
     add_block_and_divert_rules(man_rules)
     add_child_rules(man_rules)

@@ -118,7 +118,7 @@ is included after the parameter sections.
 <p class="pdesc">UI default value: True
 <p class="pdesc">UI Tab: Dynamics
 
-<p>Are stores present on the game board?
+<p>True when stores are present on the game board. For games with <a href="game_params.html#goal">GOAL</a> of DEPRIVE or CLEAR, stores can be used to show whose turn it is (seed counts will not be sown).
 <h4 id="mustpass"> Must Pass </h4>
 <p class="pdesc">Location in Config Files: game_info : mustpass
 <p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
@@ -212,11 +212,15 @@ is included after the parameter sections.
 <b class="enum">DEPRIVE</b>: eliminate all of your opponents seeds.
 <p class="helptext"> If a player has no seeds at the start of their turn, they loose. If a player has no moves at the start of their turn, then the game outcome is determined by who has seeds: If both players have seeds, the game ends in a tie. If the current player has seeds, but the previous player does not, then the current player wins because they forced the previous player to give away all their seeds.
 <p class="helptext"> <a href="game_params.html#grandslam">GRANDSLAM</a> must be legal for DEPRIVE games.
-<p class="helptext"> Deprive games cannot be played in <a href="game_params.html#rounds">ROUNDS</a>, use <a href="game_params.html#stores">STORES</a>, or use children. Additionally, the following options are incompatible with DEPRIVE games: <a href="game_params.html#moveunlock">MOVEUNLOCK</a>, <a href="game_params.html#mustpass">MUSTPASS</a>, <a href="game_params.html#mustshare">MUSTSHARE</a> and <a href="game_params.html#no_sides">NO_SIDES</a>.
+<p class="helptext"> Deprive games cannot be played in <a href="game_params.html#rounds">ROUNDS</a> or use children. Additionally, the following options are incompatible with DEPRIVE games: <a href="game_params.html#moveunlock">MOVEUNLOCK</a>, <a href="game_params.html#mustpass">MUSTPASS</a> and <a href="game_params.html#mustshare">MUSTSHARE</a>.
 <li class="helptext">
 <b class="enum">TERRITORY</b>: claim ownership of holes. Each round the ownership of holes is determined by the number of seeds captured in the previous round. In a TERRITORY game without rounds, the winner is the player that gained the most territory during play. 
 <p class="helptext"> TERRITORY games require <a href="game_params.html#stores">STORES</a> and that <a href="game_params.html#gparam_one">GPARAM_ONE</a> be set to a value between the number of holes and two times the number of holes.
-<p class="helptext"> TERRITORY games are incompatible with <a href="game_params.html#no_sides">NO_SIDES</a>, <a href="game_params.html#start_pattern">START_PATTERN</a>, <a href="game_params.html#grandslam">GRANDSLAM</a> of NOT_LEGAL, <a href="game_params.html#allow_rule">ALLOW_RULE</a> of OPP_OR_EMPTY, 
+<p class="helptext"> TERRITORY games are incompatible with <a href="game_params.html#no_sides">NO_SIDES</a>, <a href="game_params.html#start_pattern">START_PATTERN</a>, <a href="game_params.html#grandslam">GRANDSLAM</a> of NOT_LEGAL, <a href="game_params.html#allow_rule">ALLOW_RULE</a> of OPP_OR_EMPTY.
+<li class="helptext">
+<b class="enum">CLEAR</b>: clear seeds from your own holes.
+<p class="helptext"> Moves must always be possible so <a href="game_params.html#min_move">MIN_MOVE</a> must be 1 and <a href="game_params.html#allow_rule">ALLOW_RULE</a> single_all_to_zero may not be used.
+<p class="helptext"> <a href="game_params.html#grandslam">GRANDSLAM</a> must be legal for DEPRIVE games.  Deprive games cannot be played in <a href="game_params.html#rounds">ROUNDS</a> or use children. Additionally, the following options are incompatible with DEPRIVE games: <a href="game_params.html#moveunlock">MOVEUNLOCK</a>, <a href="game_params.html#mustpass">MUSTPASS</a> and <a href="game_params.html#mustshare">MUSTSHARE</a>.
 </ol>
 <h4 id="no_sides"> No Sides </h4>
 <p class="pdesc">Location in Config Files: game_info : no_sides

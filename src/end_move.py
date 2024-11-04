@@ -630,7 +630,7 @@ class DepriveSeedsEndGame(EndTurnIf):
     the opponents WINS because they have forced the current player
     to give away all their seeds.
 
-    This is not to be used with stores or children."""
+    This is not to be used with children."""
 
     def game_ended(self, repeat_turn, ended=False):
         """Check for end game."""
@@ -652,6 +652,26 @@ class DepriveSeedsEndGame(EndTurnIf):
             if my_seeds:
                 return gi.WinCond.TIE, self.game.turn
 
+            return gi.WinCond.WIN, not self.game.turn
+
+        return None, self.game.turn
+
+
+class ClearSeedsEndGame(EndTurnIf):
+    """Win by giving away all your seeds.
+    TIEs are not awarded."""
+
+    def game_ended(self, repeat_turn, ended=False):
+        """Check for end game."""
+
+        my_range, opp_range = self.game.cts.get_ranges(self.game.turn)
+
+        my_seeds = sum(self.game.board[loc] for loc in my_range)
+        if not my_seeds:
+            return gi.WinCond.WIN, self.game.turn
+
+        opp_seeds = sum(self.game.board[loc] for loc in opp_range)
+        if not opp_seeds:
             return gi.WinCond.WIN, not self.game.turn
 
         return None, self.game.turn
@@ -857,6 +877,9 @@ def deco_end_move(game):
     if game.info.goal == gi.Goal.DEPRIVE:
         return DepriveSeedsEndGame(game)
 
+    if game.info.goal == gi.Goal.CLEAR:
+        return ClearSeedsEndGame(game)
+
     ender = deco_add_bottom_winner(game)
 
     if not game.info.mustpass:
@@ -887,7 +910,10 @@ def deco_quitter(game):
     Do something that seems fair. Assume that seeds in play could
     belong to either player."""
 
-    if game.info.stores:
+    if game.info.goal == gi.Goal.CLEAR:
+        quitter = QuitToTie(game)
+
+    elif game.info.stores:
         quitter = EndGameWinner(game, claimer=DivvySeedsStores(game))
 
     elif game.info.child_cvt:
