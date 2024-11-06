@@ -276,7 +276,7 @@ class TestGc:
                                                 'min_move') == 1
         assert man_config.get_construct_default('int',
                                                 'player scorer _',
-                                                'stores_m') == 4
+                                                'stores_m') == 0
         assert man_config.get_construct_default('list[int]',
                                                 'player ai_params _',
                                                 'mm_depth') == [1, 1, 3, 5]

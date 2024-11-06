@@ -18,10 +18,7 @@
          "mcts_bias": [300, 200, 200, 200],
          "mcts_nodes": [300, 500, 700, 800],
          "mcts_pouts": [1, 1, 2, 2]
-      },
-      "scorer": {
-         "stores_m": 0,
-         "seeds_m": -5
       }
+
    }
 }

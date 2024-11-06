@@ -42,11 +42,7 @@ class TestConstruction:
 
     def test_default_scorer(self):
 
-        for var in vars(ai_player.ScoreParams):
-            if var == 'stores_m':
-                assert ai_player.ScoreParams.get_default('stores_m') == 4
-            else:
-                assert ai_player.ScoreParams.get_default(var) == 0
+        assert not sum(vars(ai_player.ScoreParams()).values())
 
 
     @pytest.fixture
@@ -76,7 +72,7 @@ class TestConstruction:
         player = ai_player.AiPlayer(game, pdict)
         assert isinstance(player.algo, montecarlo_ts.MonteCarloTS)
         assert player.sc_params.easy_rand == 6
-        assert sum(vars(player.sc_params).values()) == 10
+        assert sum(vars(player.sc_params).values()) == 6
 
         pdict = {'algorithm': 'montecarlo_ts',
                  'scorer': {'stores_m': 0,
@@ -88,8 +84,8 @@ class TestConstruction:
 
         pdict = {'algorithm': 'minimaxer'}
         player = ai_player.AiPlayer(game, pdict)
-        assert player.sc_params.stores_m == 4
-        assert sum(vars(player.sc_params).values()) == 4
+        assert player.sc_params.stores_m == 0
+        assert sum(vars(player.sc_params).values()) == 0
 
         pdict = {'scorer': {'stores_m': 8}}
         player = ai_player.AiPlayer(game, pdict)
@@ -429,9 +425,9 @@ class TestScorers:
     def test_sc_stores(self, game, player):
 
         player.sc_params.easy_rand = 0
+        player.sc_params.stores_m = 4
         player.collect_scorers()
 
-        assert player.sc_params.stores_m == 4
         assert sum(vars(player.sc_params).values()) == 4
 
         game.store = [5, 3]
@@ -461,9 +457,9 @@ class TestScorers:
         object.__setattr__(game.info, 'child_cvt', 4)
 
         player.sc_params.easy_rand = 0
+        player.sc_params.stores_m = 4
         player.collect_scorers()
 
-        assert player.sc_params.stores_m == 4
         assert sum(vars(player.sc_params).values()) == 4
 
         game.board = board

@@ -20,7 +20,6 @@
          "mcts_pouts": [1, 1, 2, 2]
       },
       "scorer": {
-         "stores_m": 0,
          "seeds_m": -5
       }
    }

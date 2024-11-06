@@ -47,7 +47,7 @@ class ScoreParams:
     easy_rand is the +- error introduced on easy difficulty.
     access_m if positive, is only used on Hard or Expert."""
 
-    stores_m: int = 4
+    stores_m: int = 0
     access_m: int = 0
     seeds_m: int = 0
     empties_m: int = 0
