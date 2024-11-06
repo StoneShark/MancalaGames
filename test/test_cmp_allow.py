@@ -31,7 +31,8 @@ CW = gi.Direct.CW
 
 
 GAMECONF = {'basic':
-                {'evens': True},   # not an input, but avoid no capt warning
+                {'evens': True,
+                 'stores': True},   # not inputs, but avoid capt warnings
 
             'msh_all2':
                 {'evens': True,

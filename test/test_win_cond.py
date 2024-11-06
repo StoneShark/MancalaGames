@@ -38,6 +38,7 @@ class TestPassWConds:
                                 sow_direct=Direct.CCW,
                                 mustpass=True,
                                 evens=True,
+                                stores=True,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)

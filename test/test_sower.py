@@ -532,6 +532,7 @@ class TestMlap:
         game_info = gi.GameInfo(crosscapt=True,
                                 mlaps=LapSower.LAPPER,
                                 sow_direct=Direct.CW,
+                                stores=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
         return mancala.Mancala(game_consts, game_info)
@@ -543,6 +544,7 @@ class TestMlap:
         game_info = gi.GameInfo(evens=True,
                                 mlaps=LapSower.LAPPER_NEXT,
                                 sow_direct=Direct.CCW,
+                                stores=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
         return mancala.Mancala(game_consts, game_info)
@@ -554,6 +556,7 @@ class TestMlap:
         game_info = gi.GameInfo(evens=True,
                                 mlaps=LapSower.LAPPER,
                                 sow_direct=Direct.CCW,
+                                stores=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
         return mancala.Mancala(game_consts, game_info)
@@ -566,6 +569,7 @@ class TestMlap:
                                 evens=True,
                                 mlaps=LapSower.LAPPER,
                                 sow_direct=Direct.CCW,
+                                stores=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
         return mancala.Mancala(game_consts, game_info)
@@ -646,6 +650,7 @@ class TestMlap:
                                 mlaps=gi.LapSower.LAPPER,
                                 sow_rule=gi.SowRule.CHANGE_DIR_LAP,
                                 udir_holes=[0, 1, 2, 3],
+                                stores=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
         return mancala.Mancala(game_consts, game_info)
@@ -1042,6 +1047,7 @@ class TestSowCaptOwned:
         game_info = gi.GameInfo(evens=True,
                                 sow_rule=SowRule.OWN_SOW_CAPT_ALL,
                                 sow_direct=Direct.CCW,
+                                stores=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
         return mancala.Mancala(game_consts, game_info)
@@ -1110,6 +1116,7 @@ class TestSowCaptOwned:
 
         game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(evens=True,
+                                stores=True,
                                 sow_rule=SowRule.SOW_SOW_CAPT_ALL,
                                 sow_direct=Direct.CCW,
                                 mlaps=gi.LapSower.LAPPER,
@@ -1155,10 +1162,10 @@ class TestSowCaptOwned:
 
         game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(evens=True,
+                                stores=True,
                                 sow_rule=SowRule.SOW_SOW_CAPT_ALL,
                                 goal=Goal.TERRITORY,
                                 gparam_one=4,
-                                stores=True,
                                 sow_direct=Direct.CCW,
                                 mlaps=gi.LapSower.LAPPER,
                                 nbr_holes=game_consts.holes,
@@ -1192,6 +1199,7 @@ class TestPrescribed:
 
         game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(evens=True,
+                                stores=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
         return mancala.Mancala(game_consts, game_info)
@@ -1268,6 +1276,7 @@ class TestPrescribed:
 
         game_consts = gc.GameConsts(nbr_start=2, holes=4)
         game_info = gi.GameInfo(evens=True,
+                                stores=True,
                                 prescribed=SowPrescribed.BASIC_SOWER,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
@@ -1292,6 +1301,7 @@ class TestPrescribed:
         game_consts = gc.GameConsts(nbr_start=2, holes=4)
         game_info = gi.GameInfo(evens=True,
                                 mlaps=True,
+                                stores=True,
                                 prescribed=SowPrescribed.MLAPS_SOWER,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
@@ -1313,6 +1323,7 @@ class TestPrescribed:
 
         game_consts = gc.GameConsts(nbr_start=2, holes=4)
         game_info = gi.GameInfo(evens=True,
+                                stores=True,
                                 prescribed=SowPrescribed.SOW1OPP,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
@@ -1342,6 +1353,7 @@ class TestPrescribed:
 
         game_consts = gc.GameConsts(nbr_start=2, holes=4)
         game_info = gi.GameInfo(evens=True,
+                                stores=True,
                                 prescribed=SowPrescribed.PLUS1MINUS1,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)

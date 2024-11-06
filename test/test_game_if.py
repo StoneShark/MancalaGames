@@ -103,8 +103,6 @@ class TestEnumsClasses:
         assert str(tup) == '(False, 2, None)'
 
 
-
-
 class TestConstruction:
 
     def test_gf_existence(self):
@@ -130,11 +128,13 @@ class TestConstruction:
 
         # confirm this is min game config, that doesn't generate errors
         ginfo = gi.GameInfo(nbr_holes=6,
+                            stores=True,
                             capt_on=[2],
                             rules=rules)
 
         # test derived params
         ginfo = gi.GameInfo(capt_on=[2],
+                            stores=True,
                             nbr_holes=6,
                             rules=rules)
         assert ginfo.mlength == 1
@@ -143,6 +143,7 @@ class TestConstruction:
         ginfo = gi.GameInfo(capt_on=[2],
                             udir_holes=[2],
                             sow_direct=Direct.SPLIT,
+                            stores=True,
                             nbr_holes=6,
                             rules=rules)
         assert ginfo.mlength == 2
@@ -172,6 +173,7 @@ class TestConstruction:
         ginfo = gi.GameInfo(capt_on=[2],
                             sow_direct=Direct.PLAYALTDIR,
                             nbr_holes=6,
+                            stores=True,
                             rules=rules)
         assert ginfo.mlength == 2
         assert ginfo.udirect

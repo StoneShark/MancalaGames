@@ -36,7 +36,8 @@ ESTR = [0, 0]
 
 
 GAMECONF = {'basic':
-                {'evens': True},
+                {'evens': True,
+                 'stores': True},
 
             'gsnone_pick2': {'stores': True,
                              'capt_on': [2, 3],

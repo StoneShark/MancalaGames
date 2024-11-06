@@ -267,6 +267,7 @@ class TestMemoize:
 
         game_consts = gc.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+                                stores=True,
                                 capt_on=[2],
                                 mustshare=True,
                                 rules=mancala.Mancala.rules)

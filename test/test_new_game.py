@@ -33,6 +33,7 @@ def test_patterns():
     game_consts = gc.GameConsts(nbr_start=4, holes=4)
     game_info = gi.GameInfo(start_pattern=2,
                             capt_on=[2],
+                            stores=True,
                             nbr_holes=game_consts.holes,
                             rules=mancala.Mancala.rules)
 

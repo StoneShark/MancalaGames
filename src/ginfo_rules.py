@@ -431,8 +431,6 @@ def add_no_sides_rules(rules):
         msg='NO_SIDES requires STORES.',
         excp=gi.GameInfoError)
 
-
-
     bad_flags = ['grandslam', 'mustpass', 'mustshare', 'oppsidecapt',
                  'rounds', 'round_starter', 'round_fill',
                  'visit_opp']
@@ -443,6 +441,155 @@ def add_no_sides_rules(rules):
             msg=f'NO_SIDES cannot be used with {flag.upper()}',
             excp=gi.GameInfoError)
 
+
+def add_capture_rules(rules):
+    """Most of the capture rules are added here."""
+
+    rules.add_rule(
+        'warn_no_capt',
+        rule=lambda ginfo: not any([sow_blkd_div(ginfo),
+                                    ginfo.child_type,
+                                    ginfo.capttwoout,
+                                    ginfo.capt_next,
+                                    ginfo.evens,
+                                    ginfo.crosscapt,
+                                    ginfo.sow_own_store,
+                                    ginfo.capt_max,
+                                    ginfo.capt_min,
+                                    ginfo.capt_on]),
+        msg='No capture mechanism provided',
+        warn=True)
+
+    rules.add_rule(
+        'capt_no_place',
+        rule=lambda ginfo: (ginfo.goal in (gi.Goal.MAX_SEEDS, gi.Goal.TERRITORY)
+                            and not (ginfo.stores or ginfo.child_type)
+                            and any([ginfo.capttwoout,
+                                     ginfo.capt_next,
+                                     ginfo.evens,
+                                     ginfo.crosscapt,
+                                     ginfo.capt_max,
+                                     ginfo.capt_min,
+                                     ginfo.capt_on])),
+        msg="The game has captures configured but there is no place " +
+            "to put captured seeds. Suggest stores or children be used.",
+        warn=True)
+
+    rules.add_rule(
+        'capt_conflict',
+        rule=lambda ginfo: any(
+            [(ginfo.capt_min and ginfo.capt_max
+                  and ginfo.capt_min > ginfo.capt_max),
+             (ginfo.capt_on and ginfo.evens
+                  and all(cval % 2 == 1 for cval in ginfo.capt_on)),
+             (ginfo.capt_min and ginfo.capt_on
+                  and max(ginfo.capt_on) < ginfo.capt_min),
+             (ginfo.capt_max and ginfo.capt_on
+                  and min(ginfo.capt_on) > ginfo.capt_max),
+              ]),
+        msg='Selected capture mechanisms conflict (no captures)',
+        warn=True)
+        # this doesn't catch all conflicts :(
+
+    rules.add_rule(
+        'xcapt_multi_same',
+        rule=lambda ginfo: (ginfo.crosscapt and ginfo.multicapt
+                            and not ginfo.capsamedir),
+        msg="CROSSCAPT with MULTICAPT without CAPSAMEDIR"
+            "is the same as just CROSSCAPT.",
+        warn=True)
+        # capturing the opp dir (as usual) wont capture because
+        # the preceeding holes were just sown, that is, not empty
+
+    rules.add_rule(
+        'warn_capsamedir_multicapt',
+        rule=lambda ginfo: (not ginfo.capttwoout
+                            and not ginfo.capt_next
+                            and ginfo.capsamedir
+                            and not ginfo.multicapt),
+        msg="CAPSAMEDIR without MULTICAPT has no effect",
+        warn=True)
+
+    rules.add_rule(
+        'capt2out_needs_samedir',
+        rule=lambda ginfo: ginfo.capttwoout and not ginfo.capsamedir,
+        msg='CAPTTWOOUT requires CAPSAMEDIR because the preceeding '
+            'holes were just sown (not empty)',
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'capt2_cross_incomp',
+        rule=lambda ginfo: ginfo.capttwoout and ginfo.crosscapt,
+        msg="CAPTTWOOUT and CROSSCAPT are incompatible",
+        warn=True)
+
+    rules.add_rule(
+        'capt2_child_incomp',
+        rule=lambda ginfo: ginfo.capttwoout and ginfo.child_cvt,
+        msg="CAPTTWOOUT and CHILDREN are incompatible",
+        warn=True)
+
+    rules.add_rule(
+        'capt2_gs_legal',
+        rule=lambda ginfo: (ginfo.capttwoout
+                            and ginfo.grandslam != gi.GrandSlam.LEGAL),
+        msg="CAPTTWOOUT requires that GRANDSLAM be LEGAL",
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'captnext_needs_samedir',
+        rule=lambda ginfo: ginfo.capttwoout and not ginfo.capsamedir,
+        msg='CAPT_NEXT requires CAPSAMEDIR',
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'captnext_cross_incomp',
+        rule=lambda ginfo: ginfo.capt_next and ginfo.crosscapt,
+        msg="CAPT_NEXT and CROSSCAPT are incompatible",
+        warn=True)
+
+    rules.add_rule(
+        'captnext_child_incomp',
+        rule=lambda ginfo: ginfo.capt_next and ginfo.child_cvt,
+        msg="CAPT_NEXT and CHILDREN are incompatible",
+        warn=True)
+
+    rules.add_rule(
+        'captnext_multi_not',
+        rule=lambda ginfo: ginfo.capt_next and ginfo.multicapt,
+        msg="CAPT_NEXT with MULTICAPT is not implemented",
+        excp=NotImplementedError)
+
+    rules.add_rule(
+        'sca_gs_not',
+        rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.OWN_SOW_CAPT_ALL
+                            and ginfo.grandslam != gi.GrandSlam.LEGAL),
+        msg='OWN_SOW_CAPT_ALL requires that GRANDLAM be LEGAL',
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'xpick_requires_cross',
+        rule=lambda ginfo: ginfo.xcpickown and not ginfo.crosscapt,
+        msg="XCPICKOWN without CROSSCAPT doesn't do anything",
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'xc_const_pickextra',
+        rule=lambda ginfo: (ginfo.crosscapt
+                            and any([ginfo.capt_max,
+                                     ginfo.capt_min,
+                                     ginfo.capt_on,
+                                     ginfo.evens])
+                            and ginfo.pickextra == gi.CaptExtraPick.PICKCROSS),
+        msg="A constrainted CROSSCAPT with PICKEXTRA=PICKCROSS will ingnore constraint.",
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'xpick_pickcross',
+        rule=lambda ginfo: (ginfo.crosscapt
+                            and ginfo.pickextra == gi.CaptExtraPick.PICKCROSS),
+        msg="PICKEXTRA=PICKCROSS with CROSSCAPT is redundant.",
+        warn=True)
 
 
 # %% the base ruleset
@@ -460,7 +607,7 @@ def build_rules():
     add_block_and_divert_rules(man_rules)
     add_child_rules(man_rules)
     add_no_sides_rules(man_rules)
-
+    add_capture_rules(man_rules)
 
     man_rules.add_rule(
         'allowrule_mlen3',
@@ -559,153 +706,6 @@ def build_rules():
                                    and ginfo.gparam_one > holes),
         msg='Minimum holes needed to play another round must be less the holes per side',
         excp=gi.GameInfoError)
-
-    man_rules.add_rule(
-        'warn_no_capt',
-        rule=lambda ginfo: not any([sow_blkd_div(ginfo),
-                                    ginfo.child_type,
-                                    ginfo.capttwoout,
-                                    ginfo.capt_next,
-                                    ginfo.evens,
-                                    ginfo.crosscapt,
-                                    ginfo.sow_own_store,
-                                    ginfo.capt_max,
-                                    ginfo.capt_min,
-                                    ginfo.capt_on]),
-        msg='No capture mechanism provided',
-        warn=True)
-
-    # TODO this rule causes 506 tests to fail, fix tests & integrate w/o other changes
-    # man_rules.add_rule(
-    #     'capt_req_place',
-    #     rule=lambda ginfo: (ginfo.goal != gi.Goal.DEPRIVE
-    #                         and not ginfo.stores
-    #                         and ginfo.child_type != gi.ChildType.WALDA
-    #                         and any([ginfo.capttwoout,
-    #                                  ginfo.capt_next,
-    #                                  ginfo.evens,
-    #                                  ginfo.crosscapt,
-    #                                  ginfo.capt_max,
-    #                                  ginfo.capt_min,
-    #                                  ginfo.capt_on])),
-    #     msg='There is no place to put captured seeds (need waldas or stores or Goal=Deprive).',
-    #     excp=gi.GameInfoError)
-
-    man_rules.add_rule(
-        'capt_conflict',
-        rule=lambda ginfo: any(
-            [(ginfo.capt_min and ginfo.capt_max
-                  and ginfo.capt_min > ginfo.capt_max),
-             (ginfo.capt_on and ginfo.evens
-                  and all(cval % 2 == 1 for cval in ginfo.capt_on)),
-             (ginfo.capt_min and ginfo.capt_on
-                  and max(ginfo.capt_on) < ginfo.capt_min),
-             (ginfo.capt_max and ginfo.capt_on
-                  and min(ginfo.capt_on) > ginfo.capt_max),
-              ]),
-        msg='Selected capture mechanisms conflict (no captures)',
-        warn=True)
-        # this doesn't catch all conflicts :(
-
-    man_rules.add_rule(
-        'xcapt_multi_same',
-        rule=lambda ginfo: (ginfo.crosscapt and ginfo.multicapt
-                            and not ginfo.capsamedir),
-        msg="CROSSCAPT with MULTICAPT without CAPSAMEDIR"
-            "is the same as just CROSSCAPT.",
-        warn=True)
-        # capturing the opp dir (as usual) wont capture because
-        # the preceeding holes were just sown, that is, not empty
-
-    man_rules.add_rule(
-        'warn_capsamedir_multicapt',
-        rule=lambda ginfo: (not ginfo.capttwoout
-                            and not ginfo.capt_next
-                            and ginfo.capsamedir
-                            and not ginfo.multicapt),
-        msg="CAPSAMEDIR without MULTICAPT has no effect",
-        warn=True)
-
-    man_rules.add_rule(
-        'capt2out_needs_samedir',
-        rule=lambda ginfo: ginfo.capttwoout and not ginfo.capsamedir,
-        msg='CAPTTWOOUT requires CAPSAMEDIR because the preceeding '
-            'holes were just sown (not empty)',
-        excp=gi.GameInfoError)
-
-    man_rules.add_rule(
-        'capt2_cross_incomp',
-        rule=lambda ginfo: ginfo.capttwoout and ginfo.crosscapt,
-        msg="CAPTTWOOUT and CROSSCAPT are incompatible",
-        warn=True)
-
-    man_rules.add_rule(
-        'capt2_child_incomp',
-        rule=lambda ginfo: ginfo.capttwoout and ginfo.child_cvt,
-        msg="CAPTTWOOUT and CHILDREN are incompatible",
-        warn=True)
-
-    man_rules.add_rule(
-        'capt2_gs_legal',
-        rule=lambda ginfo: (ginfo.capttwoout
-                            and ginfo.grandslam != gi.GrandSlam.LEGAL),
-        msg="CAPTTWOOUT requires that GRANDSLAM be LEGAL",
-        excp=gi.GameInfoError)
-
-    man_rules.add_rule(
-        'captnext_needs_samedir',
-        rule=lambda ginfo: ginfo.capttwoout and not ginfo.capsamedir,
-        msg='CAPT_NEXT requires CAPSAMEDIR',
-        excp=gi.GameInfoError)
-
-    man_rules.add_rule(
-        'captnext_cross_incomp',
-        rule=lambda ginfo: ginfo.capt_next and ginfo.crosscapt,
-        msg="CAPT_NEXT and CROSSCAPT are incompatible",
-        warn=True)
-
-    man_rules.add_rule(
-        'captnext_child_incomp',
-        rule=lambda ginfo: ginfo.capt_next and ginfo.child_cvt,
-        msg="CAPT_NEXT and CHILDREN are incompatible",
-        warn=True)
-
-    man_rules.add_rule(
-        'captnext_multi_not',
-        rule=lambda ginfo: ginfo.capt_next and ginfo.multicapt,
-        msg="CAPT_NEXT with MULTICAPT is not implemented",
-        excp=NotImplementedError)
-
-    man_rules.add_rule(
-        'sca_gs_not',
-        rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.OWN_SOW_CAPT_ALL
-                            and ginfo.grandslam != gi.GrandSlam.LEGAL),
-        msg='OWN_SOW_CAPT_ALL requires that GRANDLAM be LEGAL',
-        excp=gi.GameInfoError)
-
-    man_rules.add_rule(
-        'xpick_requires_cross',
-        rule=lambda ginfo: ginfo.xcpickown and not ginfo.crosscapt,
-        msg="XCPICKOWN without CROSSCAPT doesn't do anything",
-        excp=gi.GameInfoError)
-
-    man_rules.add_rule(
-        'xc_const_pickextra',
-        rule=lambda ginfo: (ginfo.crosscapt
-                            and any([ginfo.capt_max,
-                                     ginfo.capt_min,
-                                     ginfo.capt_on,
-                                     ginfo.evens])
-                            and ginfo.pickextra == gi.CaptExtraPick.PICKCROSS),
-        msg="A constrainted CROSSCAPT with PICKEXTRA=PICKCROSS will ingnore constraint.",
-        excp=gi.GameInfoError)
-
-    man_rules.add_rule(
-        'xpick_pickcross',
-        rule=lambda ginfo: (ginfo.crosscapt
-                            and ginfo.pickextra == gi.CaptExtraPick.PICKCROSS),
-        msg="PICKEXTRA=PICKCROSS with CROSSCAPT is redundant.",
-        warn=True)
 
     man_rules.add_rule(
         'move_one_start',

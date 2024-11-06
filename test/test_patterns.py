@@ -69,6 +69,7 @@ def test_fill_patterns(case):
     game_consts = gc.GameConsts(nbr_start=4, holes=case.holes)
     game_info = gi.GameInfo(start_pattern=case.pattern,
                             capt_on=[2],
+                            stores=True,
                             nbr_holes=game_consts.holes,
                             rules=mancala.Mancala.rules)
 

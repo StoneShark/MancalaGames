@@ -229,7 +229,8 @@ class TestCaptTable:
         child_rule = ChildRule.NOT_1ST_OPP if case.oppside else ChildRule.NONE
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
-        game_info = gi.GameInfo(capt_on=case.capt_on,
+        game_info = gi.GameInfo(stores=True,
+                                capt_on=case.capt_on,
                                 capsamedir=case.capsamedir,
                                 child_cvt=case.child_cvt,
                                 child_type=child_type,
@@ -316,6 +317,7 @@ def test_no_gs(gstype):
 
     game_consts = gc.GameConsts(nbr_start=3, holes=2)
     game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+                            stores=True,
                             capt_on=[1],
                             multicapt=True,
                             grandslam=gstype,

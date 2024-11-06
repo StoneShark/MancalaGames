@@ -42,7 +42,14 @@ class TestConstruction:
 
     def test_default_scorer(self):
 
-        assert not sum(vars(ai_player.ScoreParams()).values())
+        default_scorer = ai_player.ScoreParams()
+
+        assert not sum(vars(default_scorer).values())
+
+        for var, value in vars(default_scorer).items():
+            assert ai_player.ScoreParams.get_default(var) == value
+
+        assert ai_player.ScoreParams.get_default('not_a_param') == 0
 
 
     @pytest.fixture

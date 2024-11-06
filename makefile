@@ -150,7 +150,7 @@ stress_tests: test\\context.py
 	
 .PHONY: player_tests
 player_tests: test\\context.py
-	-pytest -sv test\\test_z_simul_players.py --run_slow 
+	-pytest test\\test_z_simul_players.py --run_slow 
 
 
 

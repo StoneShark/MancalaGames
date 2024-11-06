@@ -50,6 +50,7 @@ class TestSowStarter:
         game_info = gi.GameInfo(capt_on = [2],
                                 sow_start = sow_start,
                                 moveunlock = unlock,
+                                stores=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
@@ -82,6 +83,7 @@ class TestSowStarter:
                                 capt_on = [2],
                                 sow_start = sow_start,
                                 moveunlock = unlock,
+                                stores=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
@@ -115,6 +117,7 @@ class TestSowStarter:
                                 sow_direct=Direct.SPLIT,
                                 sow_start = sow_start,
                                 moveunlock = unlock,
+                                stores=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)

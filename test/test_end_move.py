@@ -1026,13 +1026,14 @@ class TestQuitter:
                            [0, 3, 0]), [3, 4], True),
 
         # 5: no store, no children
-        ('nsgame',
+        pytest.param('nsgame',
          utils.build_board([2, 2, 1],
                            [4, 0, 3]), [0, 0], True, WinCond.TIE,
          utils.build_board([N, N, N],
                            [N, N, N]),
          utils.build_board([2, 2, 1],
-                           [4, 0, 3]), [0, 0], True),
+                           [4, 0, 3]), [0, 0], True,
+         marks=pytest.mark.filterwarnings("ignore")),
 
         # 6:  no stores, child - divvy odd
         ('chnsgame',

@@ -37,16 +37,19 @@ NSTR = 1967  # no change in the store expected
 
 
 GAMECONF = {'basic':
-                {'evens': True},   # avoid the no capt warning
+                {'evens': True,
+                 'stores': True},   # avoid the capt warnings
 
             'bs_mlap':    # prescr BASIC with mlaps => no mlap on first
                 {'prescribed': gi.SowPrescribed.BASIC_SOWER,
                  'mlaps': True,
-                 'evens': True},
+                 'evens': True,
+                 'stores': True},
 
             'ms_no_mlap':   # prescr MLAPS without mlaps => mlap on first
                 {'prescribed': gi.SowPrescribed.MLAPS_SOWER,
-                 'evens': True},
+                 'evens': True,
+                 'stores': True},
 
             's1_move1':   # prescr SOW1OPP with move_one, one should be opp
                 {'prescribed': gi.SowPrescribed.SOW1OPP,
@@ -96,18 +99,21 @@ GAMECONF = {'basic':
                 {'goal': gi.Goal.DEPRIVE,
                  'sow_rule': gi.SowRule.OWN_SOW_CAPT_ALL,
                  'mlaps': gi.LapSower.LAPPER,
-                 'evens': True},
+                 'evens': True,
+                 'stores': True},
 
             'chd_capta':
                 {'child_type': gi.ChildType.NORMAL,
                  'child_cvt': 3,
                  'sow_rule': gi.SowRule.OWN_SOW_CAPT_ALL,
                  'mlaps': gi.LapSower.LAPPER,
-                 'capt_on': [3]},
+                 'capt_on': [3],
+                  'stores': True},
 
             'no2s':         # no prescribed opening
                 {'sow_rule': gi.SowRule.NO_SOW_OPP_2S,
-                 'capt_on': [3]},
+                 'capt_on': [3],
+                  'stores': True},
 
             'no2schd':  # with children, don't stop for child
                 {'child_type': gi.ChildType.NORMAL,

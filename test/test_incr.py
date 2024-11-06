@@ -46,8 +46,9 @@ class TestIncr:
 
         game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
 
-        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
-                                capt_on=[2],
+        game_info = gi.GameInfo(capt_on=[2],
+                                stores=True,
+                                nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
@@ -176,12 +177,13 @@ class TestIncr:
         game_consts = gc.GameConsts(nbr_start=4, holes=4)
 
         game_info = gi.GameInfo(name='my name',
-                                nbr_holes=game_consts.holes,
                                 capt_on=[2],
                                 sow_direct=Direct.CW,
                                 skip_start=True,
                                 blocks=True,
                                 rounds=gi.Rounds.NO_MOVES,
+                                stores=True,
+                                nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
         game = mancala.Mancala(game_consts, game_info)

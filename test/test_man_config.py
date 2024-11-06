@@ -44,7 +44,8 @@ class TestBasicConstruction:
                        },
                        "game_info": {
                            "capt_on": [4],
-                           "sow_direct": -1
+                           "sow_direct": -1,
+                           "stores": true
                        },
                        "player": {
                            "mm_depth": [1, 1, 3, 5]
@@ -140,7 +141,8 @@ class TestBasicConstruction:
                           "nbr_start": 2
                        },
                        "game_info": {
-                           "capt_on": [2]
+                           "capt_on": [2],
+                           "stores": true
                        },
                        "player": {
                            "mm_depth": [1, 1, 3, 5]
@@ -238,7 +240,8 @@ class TestGc:
                       "nbr_start": 2
                     },
                     "game_info": {
-                        "capt_on": [2]
+                        "capt_on": [2],
+                        "stores": True
                     },
                     "player": {
                         "ai_params": {
@@ -346,7 +349,8 @@ class TestResetDefs:
                        "game_info": {
                            "capt_on": [4],
                            "sow_direct": 1,
-                           "evens": false
+                           "evens": false,
+                           "stores": true
                        },
                        "player": {
                            "ai_params": {

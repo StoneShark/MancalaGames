@@ -269,6 +269,7 @@ class TestMoveData:
 
         game_consts = gc.GameConsts(nbr_start=4, holes=2)
         game_info = gi.GameInfo(capt_on=[2],
+                                stores=True,
                                 nbr_holes=game_consts.holes,
                                 rules=ginfo_rules.RuleDict())
 
@@ -323,6 +324,7 @@ class TestManDeco:
 
         game_consts = gc.GameConsts(nbr_start=4, holes=2)
         game_info = gi.GameInfo(capt_on=[2],
+                                stores=True,
                                 nbr_holes=game_consts.holes,
                                 rules=ginfo_rules.RuleDict())
 
@@ -388,6 +390,7 @@ class TestConstruction:
         game_consts = gc.GameConsts(nbr_start=4, holes=4)
         game_info = gi.GameInfo(capt_on=[2],
                                 start_pattern=gi.StartPattern.ALTERNATES,
+                                stores=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
@@ -404,6 +407,7 @@ class TestBasicIfs:
 
         game_consts = gc.GameConsts(nbr_start=4, holes=6)
         game_info = gi.GameInfo(capt_on=[2],
+                                stores=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
@@ -489,6 +493,7 @@ class TestDelegates:
 
         game_consts = gc.GameConsts(nbr_start=4, holes=6)
         game_info = gi.GameInfo(capt_on=[2],
+                                stores=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
@@ -713,6 +718,7 @@ class TestWinMessage:
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(goal=Goal.MAX_SEEDS,
                                 capt_on = [2],
+                                stores=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
@@ -835,6 +841,7 @@ class TestHoleProp:
 
         game_consts = gc.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(capt_on = [2],
+                                stores=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
@@ -875,7 +882,8 @@ class TestMove:
     def game(self):
 
         game_consts = gc.GameConsts(nbr_start=2, holes=2)
-        game_info = gi.GameInfo(capt_on = [2],
+        game_info = gi.GameInfo(capt_on=[2],
+                                stores=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
@@ -1086,6 +1094,7 @@ class TestLogMove:
 
         game_consts = gc.GameConsts(nbr_start=2, holes=2)
         game_info = gi.GameInfo(capt_on = [2],
+                                stores=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
