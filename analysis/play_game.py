@@ -144,6 +144,46 @@ class FindLoops:
 # %% play the game
 
 
+def make_one_move(game, move, save_logs=False):
+    """
+    Make a move for the next player.
+
+    Parameters
+    ----------
+    game : Mancala
+        The game being played.
+
+    move : gi.MoveTpl or int
+
+    save_logs : bool
+        True if the game_logger should be used for this game.
+        Records the start turn of the game.
+        The game_logger is disabled while the AiPlayers are
+        selecting a move, the logger state will be returned
+        to this value afterward.
+
+    Returns
+    -------
+    (result, winner) : tuple(GameResult, bool/None)
+        Game result and winner (or None).
+    None : game not over
+    """
+
+    cond = game.move(move)
+    if cond in (gi.WinCond.WIN, gi.WinCond.TIE, gi.WinCond.ENDLESS):
+        return GameResult(cond.value), game.turn
+
+    if cond in (gi.WinCond.ROUND_WIN, gi.WinCond.ROUND_TIE):
+        if game.new_game(cond, new_round_ok=True):
+            return GameResult(cond.value), game.turn
+        game_logger.game_log.turn(0, 'Start Game', game)
+
+    if game.info.mustpass:
+        game.test_pass()
+
+    return None, game.turn
+
+
 def play_one_game(game, fplayer, tplayer, save_logs=False):
     """Play one game between the two players, returning the results.
     If either/both is None, use random choice moves.
@@ -178,13 +218,13 @@ def play_one_game(game, fplayer, tplayer, save_logs=False):
                       dupl_states=game.cts.holes * 2)
     game_logger.game_log.turn(0, 'Start Game', game)
 
-    nbr_games = 500
+    move_limit = 500
     if game.info.rounds:
-        nbr_games *= 4
+        move_limit *= 4
     if game.info.capt_rturn or game.info.sow_own_store:
-        nbr_games *= 2
+        move_limit *= 2
 
-    for _ in range(nbr_games):
+    for _ in range(move_limit):
 
         if game.turn and tplayer:
             game_logger.game_log.active = False
@@ -199,22 +239,12 @@ def play_one_game(game, fplayer, tplayer, save_logs=False):
             assert moves, "Game didn't end right."
             move = random.choice(moves)
 
-        cond = game.move(move)
-        if cond in (gi.WinCond.WIN, gi.WinCond.TIE, gi.WinCond.ENDLESS):
-            return GameResult(cond.value), game.turn
-
-        if cond in (gi.WinCond.ROUND_WIN, gi.WinCond.ROUND_TIE):
-            if game.new_game(cond, new_round_ok=True):
-                return GameResult(cond.value), game.turn
-            game_logger.game_log.turn(0, 'Start Game', game)
+        cond, winner = make_one_move(game, move, save_logs)
+        if cond:
+            return cond, winner
 
         if stuck.game_state_loop(game):
             return GameResult.LOOPED, None
-
-        if game.info.mustpass:
-            game.test_pass()
-            if stuck.game_state_loop(game):
-                return GameResult.LOOPED, None
 
     return GameResult.MAX_TURNS, None
 
