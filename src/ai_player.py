@@ -473,12 +473,14 @@ def player_dict_rules():
 
     rules.add_rule(
         'scorer_vals',
-        rule=lambda pdict: (ckey.SCORER in pdict
-                            and all(not val
-                                    for val in
-                                        pdict[ckey.SCORER].values())),
-        msg='At least one scorer value should be non-zero'
-            'to prevent random play',
+        rule=lambda pdict: ((ckey.ALGORITHM not in pdict
+                             or (ckey.ALGORITHM in pdict
+                                 and ckey.ALGORITHM in ('minimaxer',
+                                                        'negamaxer')))
+                             and ckey.SCORER in pdict
+                             and not sum(pdict[ckey.SCORER].values())),
+        msg='At least one scorer value should be non-zero '
+            'to prevent random play for Minimaxer or Negamaxer',
         warn=True)
 
     rules.add_rule(

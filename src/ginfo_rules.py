@@ -56,10 +56,10 @@ class ParamRule:
 
         error = self.rule(obj1, obj2) if self.both_objs else self.rule(obj1)
         if error:
+            msg = self.msg + f' ({self.name}).'
             if self.warn:
-                warnings.warn(self.msg)
+                warnings.warn(msg)
             else:
-                msg = self.msg + f' ({self.name}).'
                 raise self.excp(msg)
 
 
