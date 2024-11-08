@@ -17,6 +17,7 @@ import tkinter as tk
 import webbrowser
 
 import ai_player
+import aspect_frame
 import cfg_keys as ckey
 import btn_behaviors as btnb
 import game_interface as gi
@@ -28,7 +29,7 @@ from game_logger import game_log
 
 # %%   constants
 
-AI_DELAY = [0, 1000, 3000]
+AI_DELAY = [0, 1000, 4000]
 
 NO_TALLY_OP = 0
 VIS_TALLY_OP = 1
@@ -131,43 +132,57 @@ class MancalaUI(tk.Frame):
 
 
     def _add_board(self):
-        """Add the game board frame and widgets."""
+        """Add the game board frame and widgets.
+        Use aspect frame for the interior elements so that they
+        maintain a squarish elements when resized."""
 
         board_frame = tk.Frame(self, borderwidth=7, relief=tk.RAISED)
         board_frame.pack(side=tk.BOTTOM, expand=True, fill=tk.BOTH)
 
         if self.info.stores:
-            b_store = btnb.StoreButton(board_frame, self, True)
-            b_store.grid(row=0, column=0, sticky="nsew")
+            b_frame = aspect_frame.AspectFrames(board_frame,
+                                                padx=5, pady=5,
+                                                aratio=0.8)
+            b_frame.pad.grid(row=0, column=0, sticky="nsew")
 
-        land_frame = tk.Frame(board_frame, padx=3, pady=3)
-        land_frame.grid(row=0, column=1, sticky="nsew")
+            b_store = btnb.StoreButton(b_frame.content, self, True)
+            b_store.grid(row=0, column=0, sticky="nsew")
+            b_frame.row_col_config()
+
+        land_frame = aspect_frame.AspectFrames(board_frame,
+                                               padx=5, pady=5,
+                                               aratio=self.game.cts.holes / 2)
+        land_frame.pad.grid(row=0, column=1, sticky="nsew")
 
         for row in range(2):
             dirs = self._get_hole_dirs(row)
 
             for pos in range(self.game.cts.holes):
-                btn = self._build_button(land_frame, row, pos, dirs)
+                btn = self._build_button(land_frame.content, row, pos, dirs)
                 self.disp[row][pos] = btn
                 self.disp[row][pos].grid(row=row, column=pos,
                                          sticky="nsew")
-
-        land_frame.grid_rowconfigure('all', weight=1)
-        land_frame.grid_columnconfigure('all', weight=1)
+        land_frame.row_col_config()
 
         if self.info.stores:
-            a_store = btnb.StoreButton(board_frame, self, False)
-            a_store.grid(row=0, column=2, sticky="nsew")
+            a_frame = aspect_frame.AspectFrames(board_frame,
+                                                padx=5, pady=5,
+                                                aratio=0.8)
+            a_frame.pad.grid(row=0, column=2, sticky="nsew")
+
+            a_store = btnb.StoreButton(a_frame.content, self, False)
+            a_store.grid(row=0, column=0, sticky="nsew")
+            a_frame.row_col_config()
+
             self.stores = [b_store, a_store]
 
             board_frame.grid_rowconfigure(0, weight=1)
             board_frame.grid_columnconfigure([0, 2], weight=1)
-            board_frame.grid_columnconfigure(1, weight=4)
+            board_frame.grid_columnconfigure(1, weight=self.game.cts.holes)
 
         else:
             board_frame.grid_rowconfigure(0, weight=1)
-            board_frame.grid_columnconfigure(0, weight=1)
-
+            board_frame.grid_columnconfigure('all', weight=1)
 
 
     def _get_hole_dirs(self, row):

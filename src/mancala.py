@@ -568,11 +568,11 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         mdata = self.do_sow(move)
         self.last_mdata = mdata   # keep this around for the win message
 
-        if mdata.capt_loc is gi.WinCond.REPEAT_TURN:
+        if mdata.capt_loc == gi.WinCond.REPEAT_TURN:
             win_cond = self.win_conditions(repeat_turn=True)
             return win_cond if win_cond else gi.WinCond.REPEAT_TURN
 
-        if mdata.capt_loc is gi.WinCond.ENDLESS:
+        if mdata.capt_loc == gi.WinCond.ENDLESS:
             cond = self.end_game()
             mdata.end_msg = \
                 'Game ended due to detecting endless sow condition.\n'
