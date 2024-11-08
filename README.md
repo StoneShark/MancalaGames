@@ -3,12 +3,13 @@ The goal of Mancala Games is to create a means to play a variety of mancala game
 
 ## Overview ##
 
-Mancala Games only supports two row mancala games. Stores are optional and there are 50 or so other game parameters. Three computer players are provided: Negamaxer can only be used in games with alternating turns and is a slightly optimized version of the MiniMaxer. The Monte Carlo Tree Search works[^1] best for games in which it hard to configure the MiniMaxer scorer.
+Mancala Games only supports two row mancala games. Stores are optional and there are 50 or so other game parameters (see [Mancala Game Parameters](https://html-preview.github.io/?url=https://github.com/StoneShark/MancalaGames/blob/main/docs/game_params.html)).  Many preconfigured games are provided (see [Mancala Game Configurations](https://html-preview.github.io/?url=https://github.com/StoneShark/MancalaGames/blob/main/docs/about_games.html)). 
+
+Three computer players are provided: Negamaxer can only be used in games with alternating turns and is a slightly optimized version of the MiniMaxer. The Monte Carlo Tree Search works best for games in which it hard to configure the MiniMaxer scorer.
 
 There are 3 ways to startup Mancala Games:
 
-
-1. **mancala_games.pyw** - allows adjustment of all parameters, does some error checking, game configurations can loaded, saved and played.
+1. **mancala_games.pyw** - allows adjustment of all parameters, does some error checking, game configurations can be loaded, saved and played.
 1. **play_mancala.pyw** - opens a window showing all games that are preconfigured, shows a tool tip of the About description for each game and allows it to be launched.
 1. **play.py** - allows starting a preconfigured game from a command line or via short cut.
 
@@ -16,14 +17,14 @@ Game configurations are stored in plain-text, json-string formatted files. They 
 
 ## Distribution Files ##
 
-To download and play Mancala Games, get the MancalaGames.tgz file. It is a 
+To download and play Mancala Games on Windows, get the [MancalaGames.tgz](https://github.com/StoneShark/MancalaGames/blob/main/MancalaGames.tgz) file. It is a 
 self contained set of executables and all required files. No installation is
-required, just expand the zip file which requires 31MB.
+required, just expand the zip file which requires 34MB.
 
 ## Code Overview ##
-I’ve read that code is more testable if it is organized in a complex network of simple objects instead of a small set of complex objects. The evolution of Mancala Games has embraced the complex network of simple objects concept; possibly, it’s gone too far.
+I’ve read that code is more testable if it is organized in a complex network of simple objects instead of a small set of complex objects. The evolution of Mancala Games has embraced the complex network of simple objects concept; possibly, it’s gone too far (see [GameClasses.pdf](https://github.com/StoneShark/MancalaGames/blob/main/docs/GameClasses.pdf)).
 
-Game play is broken up into small steps and each step is implemented as a decorator chain of operations. Each decorator chain is created when the game class is initialized, minimizing the number of flags that need to be checked during game play[^2]. All steps are controlled by game parameters:
+Game play is broken up into small steps and each step is implemented as a decorator chain of operations. Each decorator chain is created when the game class is initialized, minimizing the number of flags that need to be checked during game play[^1]. All steps are controlled by game parameters:
 
 
 * New Game - initializes a game or round
@@ -41,11 +42,10 @@ Game play is broken up into small steps and each step is implemented as a decora
 * Game String - used for the game logger to prepare text formatted game state messages (utf-8)
 
 ## Compatibility ##
-Mancala games can be run under Windows 10 & 11 and requires standard python 3.11 (including Tk).
+Mancala games can be run under Windows 10 & 11. Only standard python 3.12 (including Tk) is required so running from the source files is likely supported in other operating systems.
 
-Development of Mancala Games uses many specialized tools: The UI definition table is in Excel (an open-source alternative crashed on the large table in Windows 11 too often). GNU-WIN32 make, grep and core utilities are used to script the build and test processes. Pytest is the test framework (Excel files with macros are used to create test cases stored as CSV files for actual test code). Some tests require python 3.12 (itertools.batch is so much nicer than the alternative). Pyinstaller is used to create standalone executables. Documentation diagrams were created in LibreOffice Draw with pdf versions saved.
+Development of Mancala Games uses many specialized tools: The UI definition table is in Excel (an open-source alternative crashed on the large table in Windows 11 too often). GNU-WIN32 make, grep and core utilities are used to script the build and test processes. Pytest is the test framework (Excel files are used to create test cases which are converted to CSV files by Pandas for actual test code). Some tests require python 3.12. Pyinstaller is used to create standalone executables. Documentation diagrams were created in LibreOffice Draw with pdf versions saved.
 
-[^1]: Monte Carlo Tree Search is now working. There were significant algorithm errors and the parameters were bad.
 
-[^2]: Speed isn't an issue for moves by human players but the computer players simulate very many moves to choose one. One profiling experiment noted nearly a second deciding to return a constant (for direction); the decorator chain resolved it to basically zero.
+[^1]: Speed isn't an issue for moves by human players but the computer players simulate very many moves to choose one. One profiling experiment noted nearly a second deciding to return a constant (for direction); the decorator chain resolved it to basically zero.
 
