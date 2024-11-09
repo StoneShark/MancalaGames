@@ -338,7 +338,7 @@ class TestManDeco:
         assert game.deco.allow
         assert game.deco.moves
         assert game.deco.incr
-        assert game.deco.starter
+        assert game.deco.drawer
         assert game.deco.get_dir
         assert game.deco.sower
         assert game.deco.ender
@@ -630,7 +630,7 @@ class TestDelegates:
 
     def test_dlg_do_sow(self, game, mocker):
 
-        mstart = mocker.patch.object(game.deco.starter, 'start_sow')
+        mstart = mocker.patch.object(game.deco.drawer, 'draw')
         mstart.return_value = 'first', 'second'
         mgdir = mocker.patch.object(game.deco.get_dir, 'get_direction')
         mgdir.return_value = 'lost'
@@ -655,7 +655,7 @@ class TestDelegates:
         and then confirm that sow_seeds is called on the generic
         mock."""
 
-        mstart = mocker.patch.object(game.deco.starter, 'start_sow')
+        mstart = mocker.patch.object(game.deco.drawer, 'draw')
         mstart.return_value = 'first', 'second'
 
         mgdir = mocker.patch.object(game.deco.get_dir, 'get_direction')

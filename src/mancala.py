@@ -29,7 +29,7 @@ import inhibitor
 import incrementer
 import make_child
 import new_game
-import sow_starter
+import drawer
 import sower
 
 from fill_patterns import PCLASSES
@@ -202,7 +202,7 @@ class ManDeco:
         self.allow = allowables.deco_allowable(game)
         self.moves = get_moves.deco_moves(game)
         self.incr = incrementer.deco_incrementer(game)
-        self.starter = sow_starter.deco_sow_starter(game)
+        self.drawer = drawer.deco_drawer(game)
         self.get_dir = get_direction.deco_dir_getter(game)
         self.sower = sower.deco_sower(game)
         self.ender = end_move.deco_end_move(game)
@@ -492,7 +492,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         RETURN move data"""
 
         mdata = MoveData(self, move)
-        mdata.sow_loc, mdata.seeds = self.deco.starter.start_sow(move)
+        mdata.sow_loc, mdata.seeds = self.deco.drawer.draw(move)
         mdata.direct = self.deco.get_dir.get_direction(move, mdata.sow_loc)
 
         if single:

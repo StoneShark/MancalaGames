@@ -201,7 +201,7 @@ class TestDiffusion:
         move = gi.MoveTpl(row, pos, None)
 
         mdata = mancala.MoveData(diff, move)
-        mdata.sow_loc, mdata.seeds = diff.deco.starter.start_sow(move)
+        mdata.sow_loc, mdata.seeds = diff.deco.drawer.draw(move)
         diff.deco.sower.sow_seeds(mdata)
 
         print(diff)
