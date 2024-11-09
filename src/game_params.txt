@@ -162,7 +162,7 @@ The child scorer may only be used on games with children. If the game does not i
 Used only for the minimax & negamax players."
 Player	evens_m	Evens Multiplier	player scorer _	225	int	0	5	2	"The multiplier for the even scorer. The even scorer counts the number of holes with an even number of seeds. This is useful to use when the capture mechanism is evens.
 Used only for minimax & negamax players."
-Player	repeat_turn	Repeat Turn Multiplier	player scorer _	226	int	0	6	2	"A value used to encourage or discourage repeat turns. The value is added in for the current player and subtracted off the score for the opposing playing. Use a positive value to encourage the AI player to repeat turns.
+Player	repeat_turn	Repeat Turn Addin	player scorer _	226	int	0	6	2	"A value used to encourage or discourage repeat turns. The value is added in for the current player and subtracted off the score for the opposing playing. Use a positive value to encourage the AI player to repeat turns.
 This parameter may only be used for games in which repeated turns are possible (SOW_OWN_STORE, CAPT_RTURN or XC_SOWN).
 Used only for minimax & negamax players."
 Player	easy_rand	Easy Random Addin	player scorer _	227	int	0	7	2	"If the game is being played on easy mode (game difficult of easy/0), a random value may be added to the static evaluation. This can be done to induce errors into the ai player's game play. A random value is selected between -easy_rand and + easy_rand.

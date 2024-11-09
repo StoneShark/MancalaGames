@@ -19,12 +19,13 @@
       "algorithm": "negamaxer",
       "ai_params": {
          "mcts_bias": [400, 300, 200, 200],
-         "mcts_nodes": [200, 400, 600, 1200],
-         "mcts_pouts": [1, 1, 2, 2]
+         "mcts_nodes": [200, 400, 700, 1200],
+         "mcts_pouts": [1, 1, 2, 2],
+         "mm_depth": [1, 3, 5, 7]
       },
       "scorer": {
-         "evens_m": 0,
-         "seeds_m": -1,
+         "evens_m": -4,
+         "seeds_m": -12,
          "empties_m": 2
       }
    }

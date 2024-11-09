@@ -122,7 +122,7 @@ CONFIG_CASES = {
     'Tapata': Config(-1),
     'Toguz_Xorgol': Config(9*9, 4),  # min capt = 4
     'Vai_Lun_Thlan': Config(6*5),  # capt on 1s
-    'Valah': Config(6*4),  # sow_own_store
+    'Valah': Config(5*3),  # sow_own_store
     'Wari': Config(6*4),  # mustshare
     'Weg': Config(6*4*2 - 1, 0, 11),
 
