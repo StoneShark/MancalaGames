@@ -167,7 +167,7 @@ is included after the parameter sections.
 <p class="pdesc">UI Tab: Dynamics
 
 <p>The round fill method determines which holes are filled and how many seeds they are filled with when setting up for a new round.
-<p>Several round fill mechanisms use the same general approach called the Empty Hole Method. The loser of the previous round will end up with empty holes. These holes are not playable if <a href="game_params.html#blocks">BLOCKS</a> are used; otherwise they are playable.
+<p>Several round fill mechanisms use the same general approach called the Empty Hole Method. The loser of the previous round will end up with empty holes. These holes are not playable if <a href="game_params.html#blocks">BLOCKS</a> are used; otherwise they are playable. This method is not used for RND_ <a href="game_params.html#goal">GOAL</a> games.
 <p>The seeds each player accummulated in the previous round are distributed into holes with exactly the same number in each. That number of seeds is <a href="game_params.html#nbr_start">NBR_START</a>. The winner will fill all of their holes and put any remaining seeds into their own store. The loser will fill as many holes as they can with nbr_start seeds and put any remaining seeds (fewer than nbr_start) into their own store.
 <p>LEFT_FILE, RIGHT_FILL and OUTSIDE_FILL define which holes that the loser must fill. UCHOOSE allows the loser to choose which holes have seeds.
 <ol start=0><li class="helptext">
@@ -221,6 +221,14 @@ is included after the parameter sections.
 <b class="enum">CLEAR</b>: clear seeds from your own holes.
 <p class="helptext"> Moves must always be possible so <a href="game_params.html#min_move">MIN_MOVE</a> must be 1 and <a href="game_params.html#allow_rule">ALLOW_RULE</a> single_all_to_zero may not be used.
 <p class="helptext"> <a href="game_params.html#grandslam">GRANDSLAM</a> must be legal for DEPRIVE games.  Deprive games cannot be played in <a href="game_params.html#rounds">ROUNDS</a> or use children. Additionally, the following options are incompatible with DEPRIVE games: <a href="game_params.html#moveunlock">MOVEUNLOCK</a>, <a href="game_params.html#mustpass">MUSTPASS</a> and <a href="game_params.html#mustshare">MUSTSHARE</a>.
+<li class="helptext">
+<b class="enum">RND_WIN_COUNT</b>:  win gparam_one rounds. <a href="game_params.html#round_fill">ROUND_FILL</a> is not used; each round is setup as the start of the game.
+<li class="helptext">
+<b class="enum">RND_SEED_COUNT</b>: collect gparam_one across several rounds. <a href="game_params.html#round_fill">ROUND_FILL</a> is not used; each round is setup as the start of the game.
+<li class="helptext">
+<b class="enum">RND_EXTRA_SEEDS</b>: collect gparam_one extra seeds (winner - loser seeds).  <a href="game_params.html#round_fill">ROUND_FILL</a> is not used; each round is setup as the start of the game.
+<li class="helptext">
+<b class="enum">RND_POINTS</b>:  score gparam_one points. WIN is 1 point. WIN and skunk (> 3/4 of seeds) is 2 points.  <a href="game_params.html#round_fill">ROUND_FILL</a> is not used; each round is setup as the start of the game.
 </ol>
 <h4 id="no_sides"> No Sides </h4>
 <p class="pdesc">Location in Config Files: game_info : no_sides

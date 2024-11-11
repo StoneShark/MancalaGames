@@ -260,6 +260,79 @@ class TestGameState:
         assert state.mcount == 20
 
 
+class TestRtally:
+
+    @pytest.fixture(params=gi.Goal)
+    def game(self, request):
+        """a game of each goal type"""
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=2)
+        game_info = gi.GameInfo(capt_on=[2],
+                                stores=True,
+                                goal=request.param,
+                                rounds=gi.Rounds.NO_MOVES,
+                                nbr_holes=game_consts.holes,
+                                rules=ginfo_rules.RuleDict())
+
+        game = mancala.Mancala(game_consts, game_info)
+        return game
+
+
+    def test_rtally(self, game):
+
+        if 'RND' in game.info.goal.name:
+            assert game.rtally
+        else:
+            assert not game.rtally
+
+
+    @pytest.fixture
+    def esgame(self, request):
+        """extra seeds game goal"""
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=2)
+        game_info = gi.GameInfo(capt_on=[2],
+                                stores=True,
+                                goal=gi.Goal.RND_EXTRA_SEEDS,
+                                rounds=gi.Rounds.NO_MOVES,
+                                nbr_holes=game_consts.holes,
+                                rules=ginfo_rules.RuleDict())
+
+        game = mancala.Mancala(game_consts, game_info)
+        return game
+
+
+    def test_state_getter(self, esgame):
+
+        assert esgame.rtally
+        assert esgame.state.rstate == ((0, 0), (0, 0), (0, 0), (0, 0))
+
+        esgame.rtally.round_wins = [0, 3]
+        esgame.rtally.seeds = [1, 4]
+        esgame.rtally.diff_sums = [1, 5]
+        esgame.rtally.score = [9, 2]
+
+        assert esgame.state.rstate == ((0, 3), (1, 4), (1, 5), (9, 2))
+
+
+    def test_state_setter(self, esgame):
+
+        assert esgame.rtally
+        assert esgame.state.rstate == ((0, 0), (0, 0), (0, 0), (0, 0))
+
+        state = mancala.GameState(board=(1, 2, 3, 4),
+                                  store=(10, 20),
+                                  _turn=False,
+                                  mcount=5,
+                                  rstate=((0, 3), (1, 4), (1, 5), (9, 2)))
+
+        esgame.state = state
+
+        assert esgame.rtally.round_wins == [0, 3]
+        assert esgame.rtally.seeds == [1, 4]
+        assert esgame.rtally.diff_sums == [1, 5]
+        assert esgame.rtally.score == [9, 2]
+
 
 class TestMoveData:
 
@@ -719,6 +792,7 @@ class TestWinMessage:
         game_info = gi.GameInfo(goal=Goal.MAX_SEEDS,
                                 capt_on = [2],
                                 stores=True,
+                                rounds=gi.Rounds.HALF_SEEDS,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
@@ -739,6 +813,7 @@ class TestWinMessage:
         game_consts = gc.GameConsts(nbr_start=3, holes=6)
         game_info = gi.GameInfo(goal=Goal.TERRITORY,
                                 stores=True,
+                                rounds=gi.Rounds.NO_MOVES,
                                 gparam_one=10,
                                 capt_on=[4],
                                 nbr_holes=game_consts.holes,
@@ -795,7 +870,7 @@ class TestWinMessage:
 
         title, message = game.win_message(wcond)
 
-        if wcond.name in ['WIN', 'ROUND_WIN']:
+        if wcond.name == 'WIN':
             if 'max' in game_fixt:
                 assert 'most seeds' in message
             elif 'dep' in game_fixt:
@@ -803,6 +878,14 @@ class TestWinMessage:
             elif 'ter' in game_fixt:
                 assert 'claiming' in message
             return
+
+        if wcond.name == 'ROUND_WIN':
+            if 'max' in game_fixt:
+                assert 'half' in message
+            elif 'ter' in game_fixt:
+                assert 'no moves' in message
+            return
+
 
         if 'TIE' in wcond.name:
             if 'max' in game_fixt:

@@ -19,6 +19,7 @@ import dataclasses as dc
 import warnings
 
 import game_interface as gi
+import round_tally
 
 from fill_patterns import PCLASSES
 
@@ -705,6 +706,27 @@ def build_rules():
                                    and ginfo.goal == gi.Goal.MAX_SEEDS
                                    and ginfo.gparam_one > holes),
         msg='Minimum holes needed to play another round must be less the holes per side',
+        excp=gi.GameInfoError)
+
+    man_rules.add_rule(
+        'rnd_goals_rounds',
+        rule=lambda ginfo: (ginfo.goal in round_tally.RoundTally.GOALS
+                            and not ginfo.rounds),
+        msg='RND_* goal requires game be played in rounds',
+        excp=gi.GameInfoError)
+
+    man_rules.add_rule(
+        'rnd_goals_gp1',
+        rule=lambda ginfo: (ginfo.goal in round_tally.RoundTally.GOALS
+                            and ginfo.gparam_one <= 0),
+        msg='RND_* goal requires GPARAM_ONE be greater than 0 to define win condition',
+        excp=gi.GameInfoError)
+
+    man_rules.add_rule(
+        'rnd_goals_no_fill',
+        rule=lambda ginfo: (ginfo.goal in round_tally.RoundTally.GOALS
+                            and ginfo.round_fill),
+        msg='RND_* goal does not use round_fill',
         excp=gi.GameInfoError)
 
     man_rules.add_rule(

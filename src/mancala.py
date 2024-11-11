@@ -18,6 +18,7 @@ import allowables
 import capt_ok
 import capturer
 import cfg_keys as ckey
+import drawer
 import end_move
 import game_constants as gc
 import game_interface as gi
@@ -29,7 +30,7 @@ import inhibitor
 import incrementer
 import make_child
 import new_game
-import drawer
+import round_tally
 import sower
 
 from fill_patterns import PCLASSES
@@ -63,6 +64,7 @@ class GameState(ai_interface.StateIf):
     owner: tuple = None
 
     istate: tuple = None
+    rstate: tuple = None
 
     @property
     def turn(self):
@@ -271,6 +273,12 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         self.last_mdata = None
         self.inhibitor = inhibitor.make_inhibitor(self)
 
+        self.rtally = None
+        if self.info.goal in round_tally.RoundTally.GOALS:
+            self.rtally = round_tally.RoundTally(self.info.goal,
+                                                 self.info.gparam_one,
+                                                 self.cts.total_seeds)
+
         self.deco = ManDeco(self)
         self.init_bprops()
 
@@ -311,6 +319,9 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
         state_dict |= {'istate': self.inhibitor.get_state()}
 
+        if self.rtally:
+            state_dict |= {'rstate': self.rtally.state}
+
         return GameState(**state_dict)
 
 
@@ -334,6 +345,9 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             self.owner = list(value.owner)
 
         self.inhibitor.set_state(value.istate)
+
+        if value.rstate:
+            self.rtally.state = value.rstate
 
 
     def init_bprops(self):
@@ -441,10 +455,20 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         """Return a game appropriate win message based on WinCond.
         Return a window title and message string."""
 
+        win_param = self.info.gparam_one
+
         reason = ("by collecting the most seeds!",
                   "by eliminating their opponent's seeds.",
                   "by claiming more holes.",
-                  "by clearing all their seeds.")
+                  "by clearing all their seeds.",
+                  f"by winning {win_param} rounds.",
+                  f"by collecting {win_param} total seeds.",
+                  f"by collecting {win_param} more seeds opponent.",
+                  f"by earning {win_param} points.")
+
+        rnd_reason = ("not used",
+                      "by collecting at least half the seeds.",
+                      "because there are no moves.")
 
         rtext = 'the game'
         gtext = 'Game'
@@ -458,17 +482,20 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         if self.last_mdata and self.last_mdata.end_msg:
             message = self.last_mdata.end_msg
 
-        if win_cond in [gi.WinCond.WIN, gi.WinCond.ROUND_WIN]:
-            player = 'Top' if self.turn else 'Bottom'
+        player = 'Top' if self.turn else 'Bottom'
+        if win_cond == gi.WinCond.WIN:
             message += f'{player} won {rtext} {reason[self.info.goal]}'
 
+        elif win_cond == gi.WinCond.ROUND_WIN:
+            message += f'{player} won {rtext} {rnd_reason[self.info.rounds]}'
+
         elif win_cond in [gi.WinCond.TIE, gi.WinCond.ROUND_TIE]:
-            if self.info.goal == gi.Goal.MAX_SEEDS:
-                message += f'{gtext} ended in a tie.'
-            elif self.info.goal == gi.Goal.DEPRIVE:
+            if self.info.goal == gi.Goal.DEPRIVE:
                 message += 'Both players ended with seeds; consider it a tie.'
-            else :  # if self.info.goal == gi.Goal.TERRITORY:
+            elif self.info.goal == gi.Goal.TERRITORY:
                 message += 'Each player controls half the holes (a tie).'
+            else:
+                message += f'{gtext} ended in a tie.'
 
         elif win_cond == gi.WinCond.ENDLESS:
             message += 'Game stuck in a loop. No winner.'

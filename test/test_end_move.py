@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Created on Fri Sep 15 03:57:49 2023
 @author: Ann"""
@@ -6,15 +5,14 @@ Created on Fri Sep 15 03:57:49 2023
 
 # %% imports
 
-import collections
-
-import pandas as  pd
 import pytest
 pytestmark = pytest.mark.unittest
 
 import utils
 
 from context import end_move
+from context import end_move_decos as emd
+from context import end_move_rounds as emr
 from context import game_constants as gc
 from context import game_interface as gi
 from context import ginfo_rules
@@ -28,7 +26,9 @@ from game_interface import WinCond
 
 # %%
 
-TEST_COVERS = ['src\\end_move.py']
+TEST_COVERS = ['src\\end_move.py',
+               'src\\end_move_decos.py',
+               'src\\end_move_rounds.py']
 
 
 # %% some constants
@@ -40,127 +40,6 @@ F = False
 REPEAT_TURN = True
 ENDED = True
 
-# %%
-
-SBOARD = slice(0, 4)
-SCHILD = slice(4, 8)
-STORE = 8
-
-OSTORE = 4
-OSEEDS = 5
-OERROR = 6
-
-
-CONVERT_DICT = {'N': None,
-                'T': True,
-                'F': False,
-                '': None}
-
-def make_ints(vals):
-    return [int(val.replace('.0', '')) for val in vals]
-
-
-def read_claimer_cases():
-
-    global TNAMES, CASES
-
-    tfile = 'test/eg_claimers_cases.csv'
-    tc_dframe = pd.read_excel('test/eg_claimers_cases.xlsx',
-                              header=None)
-    with open(tfile, 'w', newline='', encoding='utf-8') as file:
-        tc_dframe.to_csv(file, header=False, index=False)
-
-
-    with open(tfile, 'r', encoding='utf-8') as file:
-        lines = file.readlines()
-    lines[0] = lines[0][1:]
-
-    tnames = lines[0].split(',')
-    TNAMES = [name for name in tnames[:-1] if name]
-
-    Case = collections.namedtuple('Case',
-                                  ['board', 'child', 'store', 'results'])
-    Result = collections.namedtuple('Result',
-                                    ['board', 'store', 'seeds', 'error'])
-
-    CASES = []
-    for lcnt in range(3, len(lines), 2):
-
-        line_one = lines[lcnt].split(',')
-        line_two = lines[lcnt + 1].split(',')
-
-        case = Case(
-            make_ints(utils.build_board(line_one[SBOARD], line_two[SBOARD])),
-            [CONVERT_DICT[val] for val in
-                 utils.build_board(line_one[SCHILD], line_two[SCHILD])],
-            make_ints([line_two[STORE], line_one[STORE]]),
-            {})
-
-        CASES += [case]
-
-        start = STORE + 1
-        for name in TNAMES:
-
-            case.results[name] = Result(
-                make_ints(utils.build_board(
-                    line_one[(start):(start + 4)],
-                    line_two[(start):(start + 4)])),
-                make_ints([line_two[start + OSTORE],
-                           line_one[start + OSTORE]]),
-                make_ints([line_two[start + OSEEDS],
-                           line_one[start + OSEEDS]]),
-                CONVERT_DICT[line_one[start + OERROR]])
-
-            start += OERROR + 1
-
-read_claimer_cases()
-
-
-# %%
-
-class TestClaimers:
-
-    @pytest.fixture
-    def game(self):
-        """minimum game class for claimers"""
-
-        class Info:
-            def __init__(self):
-                self.goal = gi.Goal.MAX_SEEDS
-
-        class ClaimerTestGame:
-            def __init__(self):
-                self.cts = gc.GameConsts(nbr_start=2, holes=4)
-                self.board = [2, 2, 2, 2]
-                self.child = [F, F, F, F]
-                self.store = [0, 0]
-                self.info = Info()
-
-        return ClaimerTestGame()
-
-
-    @pytest.mark.parametrize('tname', TNAMES)
-    @pytest.mark.parametrize('case', CASES)
-    def test_claimer(self, game, tname, case):
-
-        game.board = case.board.copy()
-        game.child = case.child.copy()
-        game.store = case.store.copy()
-
-        assert sum(game.board) + sum(game.store) == game.cts.total_seeds, \
-            "Game setup error."
-
-        tclass = getattr(end_move, tname)
-        claimer = tclass(game)
-        seeds = claimer.claim_seeds()
-
-        assert game.board == case.results[tname].board
-        assert game.store == case.results[tname].store
-        assert seeds == case.results[tname].seeds
-        if case.results[tname].error:
-            assert sum(game.board) + sum(game.store) != game.cts.total_seeds
-        else:
-            assert sum(game.board) + sum(game.store) == game.cts.total_seeds
 
 
 # %%
@@ -1237,7 +1116,7 @@ class TestTerritory:
             object.__setattr__(game.info, cmethod, cvalue)
 
         deco = end_move.deco_end_move(game)
-        while deco and not isinstance(deco, end_move.NoOutcomeChange):
+        while deco and not isinstance(deco, emd.NoOutcomeChange):
             deco = deco.decorator
 
         if emin_occ:
@@ -1275,7 +1154,7 @@ class TestTerritory:
         game.child = child
 
         deco = end_move.deco_end_move(game)
-        while deco and not isinstance(deco, end_move.NoOutcomeChange):
+        while deco and not isinstance(deco, emd.NoOutcomeChange):
             deco = deco.decorator
         assert deco
 
@@ -1381,6 +1260,7 @@ class TestWinHoles:
 
         game_consts = gc.GameConsts(nbr_start=3, holes=2)
         game_info = gi.GameInfo(capt_on=[2],
+                                stores=True,
                                 nbr_holes=game_consts.holes,
                                 rules=ginfo_rules.RuleDict())
 

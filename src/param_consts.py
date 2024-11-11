@@ -112,7 +112,12 @@ STRING_DICTS = {
         {'Max Seeds': gi.Goal.MAX_SEEDS,
          'Deprive Opponent': gi.Goal.DEPRIVE,
          'Territory': gi.Goal.TERRITORY,
-         'Clear Own': gi.Goal.CLEAR}),
+         'Clear Own': gi.Goal.CLEAR,
+         'Win Rounds': gi.Goal.RND_WIN_COUNT,
+         'Collect total seeds': gi.Goal.RND_SEED_COUNT,
+         'Collect extra seeds': gi.Goal.RND_EXTRA_SEEDS,
+         'Score Points': gi.Goal.RND_POINTS,
+         }),
 
     'GrandSlam': lookup_dicts(
         gi.GrandSlam,

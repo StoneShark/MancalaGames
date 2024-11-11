@@ -79,7 +79,7 @@ Dynamics	round_starter	Round Starter	game_info _	134	RoundStarter	ALTERNATE	5	0	
 - WINNER: the winner of the previous round starts the current round.
 - LAST_MOVER: the player that made the last move of the previous round, starts the new round."
 Dynamics	round_fill	Round Fill Method	game_info _	133	RoundFill	NOT_APPLICABLE	6	0	"The round fill method determines which holes are filled and how many seeds they are filled with when setting up for a new round.
-Several round fill mechanisms use the same general approach called the Empty Hole Method. The loser of the previous round will end up with empty holes. These holes are not playable if BLOCKS are used; otherwise they are playable.
+Several round fill mechanisms use the same general approach called the Empty Hole Method. The loser of the previous round will end up with empty holes. These holes are not playable if BLOCKS are used; otherwise they are playable. This method is not used for RND_ GOAL games.
 The seeds each player accummulated in the previous round are distributed into holes with exactly the same number in each. That number of seeds is NBR_START. The winner will fill all of their holes and put any remaining seeds into their own store. The loser will fill as many holes as they can with nbr_start seeds and put any remaining seeds (fewer than nbr_start) into their own store.
 LEFT_FILE, RIGHT_FILL and OUTSIDE_FILL define which holes that the loser must fill. UCHOOSE allows the loser to choose which holes have seeds.
 - NOT_APPLICABLE: round fill doesn't need to be specified: either the game not played in rounds (DEPRIVE game included) or game goal is TERRITORY (all holes filled).
@@ -107,7 +107,11 @@ Dynamics	goal	Game Goal	game_info _	115	Goal	MAX_SEEDS	0	2	"The overall goal of 
   + TERRITORY games are incompatible with NO_SIDES, START_PATTERN, GRANDSLAM of NOT_LEGAL, ALLOW_RULE of OPP_OR_EMPTY.
 - CLEAR: clear seeds from your own holes.
   + Moves must always be possible so MIN_MOVE must be 1 and ALLOW_RULE single_all_to_zero may not be used.
-  + GRANDSLAM must be legal for DEPRIVE games.  Deprive games cannot be played in ROUNDS or use children. Additionally, the following options are incompatible with DEPRIVE games: MOVEUNLOCK, MUSTPASS and MUSTSHARE."
+  + GRANDSLAM must be legal for DEPRIVE games.  Deprive games cannot be played in ROUNDS or use children. Additionally, the following options are incompatible with DEPRIVE games: MOVEUNLOCK, MUSTPASS and MUSTSHARE.
+- RND_WIN_COUNT:  win gparam_one rounds. ROUND_FILL is not used; each round is setup as the start of the game.
+- RND_SEED_COUNT: collect gparam_one across several rounds. ROUND_FILL is not used; each round is setup as the start of the game.
+- RND_EXTRA_SEEDS: collect gparam_one extra seeds (winner - loser seeds).  ROUND_FILL is not used; each round is setup as the start of the game.
+- RND_POINTS:  score gparam_one points. WIN is 1 point. WIN and skunk (> 3/4 of seeds) is 2 points.  ROUND_FILL is not used; each round is setup as the start of the game."
 Dynamics	no_sides	No Sides	game_info _	127	bool	False	1	2	Moves maybe made from any hole, independent of the side of the board. Moves need to specify side, position and directions.  
 Dynamics	start_pattern	Start Pattern	game_info _	141	StartPattern	ALL_EQUAL	2	2	"Allows specifing non-all-equal start patterns. The following patterns are supported:
 - ALL_EQUAL: all holes start with the same number of seeds.

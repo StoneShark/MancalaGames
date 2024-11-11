@@ -9,9 +9,10 @@ Created on Fri Apr  7 12:47:15 2023
 
 import abc
 
+import claimer
 import deco_chain_if
-import end_move
 import game_interface as gi
+import round_tally
 
 from game_logger import game_log
 from fill_patterns import PCLASSES
@@ -99,7 +100,7 @@ class NewRound(NewGameIf):
     def __init__(self, game, decorator=None):
 
         super().__init__(game, decorator)
-        self.collector = end_move.ClaimOwnSeeds(game)
+        self.collector = claimer.ClaimOwnSeeds(game)
 
         holes = self.game.cts.holes
         dbl_holes = self.game.cts.dbl_holes
@@ -283,6 +284,33 @@ class NewRoundEven(NewGameIf):
         return False
 
 
+class NewRoundTally(NewGameIf):
+    """New game for tally games. If starting a new game (not round)
+    clear the round tallies."""
+
+    def new_game(self, win_cond=None, new_round_ok=False):
+        """Adjust the game outcome.
+
+        NewGame alternates starters, we want to follow the
+        round_starter method, so save and restore starter &
+        turn info, then call set_round_starter"""
+
+        starter = self.game.starter
+        winner = self.game.turn
+        self.decorator.new_game(win_cond, new_round_ok)
+
+        self.game.starter = starter
+        self.game.turn = winner
+        set_round_starter(self.game)
+
+        if (not new_round_ok
+            or win_cond in (gi.WinCond.WIN, gi.WinCond.TIE)):
+            self.game.rtally.clear()
+            return True
+
+        return False
+
+
 # %%
 
 def deco_new_game(game):
@@ -298,6 +326,9 @@ def deco_new_game(game):
     if game.info.rounds:
         if game.info.goal == gi.Goal.TERRITORY:
             new_game = TerritoryNewRound(game, new_game)
+
+        elif game.info.goal in round_tally.RoundTally.GOALS:
+            new_game = NewRoundTally(game, new_game)
 
         elif game.info.round_fill in (gi.RoundFill.EVEN_FILL,
                                       gi.RoundFill.UMOVE):

@@ -8,7 +8,7 @@ Created on Sat Nov  2 15:39:39 2024
 
 import textwrap
 
-import end_move
+import end_move_decos as emd
 import game_interface as gi
 import ginfo_rules
 import mancala
@@ -200,7 +200,7 @@ class DiffusionSower(sower.SowMethodIf):
         mdata.capt_loc = loc
 
 
-class ClearSideEndGame(end_move.EndTurnIf):
+class ClearSideEndGame(emd.EndTurnIf):
     """Win by giving away all seeds or your left/right side of the board."""
 
     def __init__(self, game, decorator=None, claimer=None):
@@ -215,6 +215,7 @@ class ClearSideEndGame(end_move.EndTurnIf):
 
     def game_ended(self, repeat_turn, ended=False):
         """Check for end game."""
+        _, _ = repeat_turn, ended
 
         my_seeds = sum(self.game.board[loc]
                        for loc in self.holes[self.game.turn])

@@ -88,16 +88,6 @@ class CrossCaptOwn(enum.IntEnum):
 
 
 @enum.unique
-class Goal(enum.IntEnum):
-    """Goal of the game."""
-
-    MAX_SEEDS = 0
-    DEPRIVE = 1
-    TERRITORY = 2
-    CLEAR = 3
-
-
-@enum.unique
 class Direct(enum.IntEnum):
     """Direction of sowing. 2nd Param to move on bi-directional holes."""
     CW = -1
@@ -115,6 +105,20 @@ class Direct(enum.IntEnum):
             return self.CW
 
         raise GameInfoError("Can't take opposite of " + self.name)
+
+
+@enum.unique
+class Goal(enum.IntEnum):
+    """Goal of the game."""
+
+    MAX_SEEDS = 0
+    DEPRIVE = 1
+    TERRITORY = 2
+    CLEAR = 3
+    RND_WIN_COUNT = 4
+    RND_SEED_COUNT = 5
+    RND_EXTRA_SEEDS = 6
+    RND_POINTS = 7
 
 
 @enum.unique

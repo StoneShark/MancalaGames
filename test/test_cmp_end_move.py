@@ -19,7 +19,8 @@ import os
 
 import pytest
 
-from context import end_move
+from context import end_move_decos as emd
+from context import end_move_rounds as emr
 from context import game_interface as gi
 from context import mancala
 
@@ -172,14 +173,14 @@ class TestEnderConfig:
 
         assert game.deco.ender.win_seeds == econfig.win_seeds
 
-        nooutcome = self.find_ender_deco(game, end_move.NoOutcomeChange)
+        nooutcome = self.find_ender_deco(game, emd.NoOutcomeChange)
         if econfig.min_needed:
             assert nooutcome
             assert nooutcome.min_needed == econfig.min_needed
         else:
             assert not nooutcome
 
-        rnd_ender = self.find_ender_deco(game, end_move.RoundWinner)
+        rnd_ender = self.find_ender_deco(game, emr.RoundWinner)
         if econfig.rnd_req_seeds:
             assert rnd_ender
             assert rnd_ender.req_seeds == econfig.rnd_req_seeds
