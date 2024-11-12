@@ -233,6 +233,13 @@ def add_territory_rules(rules):
         # XXXX could initial ownship be changed so that no_sides makes sense
 
     rules.add_rule(
+        'terr_no_rfill',
+        rule=lambda ginfo: (ginfo.goal == gi.Goal.TERRITORY
+                            and ginfo.round_fill),
+        msg='Round Fill is ignored for Territory goal',
+        warn=True)
+
+    rules.add_rule(
         'terr_pattern_incomp',
         rule=lambda ginfo: (ginfo.goal == gi.Goal.TERRITORY
                             and ginfo.start_pattern),
