@@ -40,7 +40,7 @@ class EndTurnIf(deco_chain_if.DecoChainIf):
 
         super().__init__(game, decorator)
         self.sclaimer = sclaimer
-        self.win_seeds = self.compute_win_seeds(game)
+        self.win_seeds = self.compute_win_seeds()
 
 
     def __str__(self):
@@ -100,30 +100,28 @@ class EndTurnIf(deco_chain_if.DecoChainIf):
         return req_holes * nbr_start - nbr_start + nbr_start // 2 + 1
 
 
-    def compute_win_seeds(self, game):
+    def compute_win_seeds(self):
         """Compute the number of seeds a player needs for an
         outright win (or round win). A player collecting more
         that win_seeds wins.
 
         DEPRIVE games do not use this value, so -1."""
 
-        game_goal = game.info.goal
+        game_goal = self.game.info.goal
         win_seeds = -1
 
-        if game.info.rounds == gi.Rounds.NO_MOVES:
-            win_seeds = game.cts.total_seeds - 1
+        if self.game.info.rounds == gi.Rounds.NO_MOVES:
+            win_seeds = self.game.cts.total_seeds - 1
 
         elif game_goal == gi.Goal.TERRITORY:
-            win_seeds = EndTurnIf.round_seeds_for_win(game.info.gparam_one,
-                                                      game.cts.nbr_start)
+            win_seeds = EndTurnIf.round_seeds_for_win(self.game.info.gparam_one,
+                                                      self.game.cts.nbr_start)
 
         elif (game_goal == gi.Goal.MAX_SEEDS
-              or game.info.rounds == gi.Rounds.HALF_SEEDS):
+              or self.game.info.rounds == gi.Rounds.HALF_SEEDS):
             # do this math in case a start_pattern leaves an odd total seeds
-            half, rem = divmod(game.cts.total_seeds, 2)
+            half, rem = divmod(self.game.cts.total_seeds, 2)
             win_seeds = half + rem
-
-        game_log.add(f"Seeds for win {win_seeds}.")
 
         return win_seeds
 

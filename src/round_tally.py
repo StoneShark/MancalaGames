@@ -22,6 +22,10 @@ class RoundTally:
              gi.Goal.RND_EXTRA_SEEDS,
              gi.Goal.RND_POINTS}
 
+    PSTR = {gi.Goal.RND_WIN_COUNT: "Round Wins",
+            gi.Goal.RND_SEED_COUNT: "Total Seeds",
+            gi.Goal.RND_EXTRA_SEEDS: "Extra Seeds",
+            gi.Goal.RND_POINTS: "Round Points"}
 
     def __init__(self, goal, req_win, total_seeds):
         """Clear the counts.
@@ -133,10 +137,16 @@ class RoundTally:
             game_log.add(self.msg, game_log.IMPORT)
             return gi.WinCond.TIE, None
 
-        for player in (False, True):
-            if self.parameter(player) >= self.required_win:
-                game_log.add(self.msg, game_log.IMPORT)
-                return gi.WinCond.WIN, player
+        ok_win = [self.parameter(player) >= self.required_win
+                  for player in (False, True)]
+
+        if all(ok_win):
+            return self.end_it()  # award win to higher total
+
+        elif ok_win[False]:
+            return gi.WinCond.WIN, False
+        elif ok_win[True]:
+            return gi.WinCond.WIN, True
 
         return None, None
 

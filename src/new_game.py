@@ -128,7 +128,6 @@ class NewRound(NewGameIf):
                     f"RoundFill {game.info.round_fill} not implemented.")
 
 
-
     def _compute_fills(self):
         """Detemine how many holes to fill on each side and
         adjust the store to hold the remaining seeds.

@@ -39,6 +39,8 @@ def deco_add_bottom_winner(game):
     """Start the deco chain by adding the bottom Winner
     and MoreSeedsWinner (if needed)."""
 
+    # TODO this claimer/taker should vary based on if the final seeds score
+
     if game.info.no_sides:
         ender = emd.EndGameWinner(
             game, sclaimer=claimer.TakeOnlyChildNStores(game))
@@ -120,10 +122,12 @@ def deco_end_move(game):
     ender = emd.ClearWinner(game, ender, sclaimer)
 
     if game.info.rounds:
+        # the claimer here decides if game or round ends; after we know it ended
         if game.info.goal in round_tally.RoundTally.GOALS:
-            ender = emr.RoundTallyWinner(game, ender,
-                                         claimer.ClaimOwnSeeds(game))
+            # use the same claimer as for clear winner
+            ender = emr.RoundTallyWinner(game, ender, sclaimer=sclaimer)
         else:
+            # use claim all seeds in owned holes (might be side or owner)
             ender = emr.RoundWinner(game, ender, claimer.ClaimOwnSeeds(game))
 
     if game.info.child_type and not game.info.stores:
@@ -149,11 +153,14 @@ def deco_quitter(game):
         else:  # if game.info.child_cvt:
             sclaimer = claimer.DivvySeedsChildOnly(game)
 
-        if game.info.goal in round_tally.RoundTally.GOALS:
-            quitter = emr.QuitRoundTally(game, sclaimer=sclaimer)
+        quitter = emd.EndGameWinner(game, sclaimer=sclaimer)
 
-        else:
-            quitter = emd.EndGameWinner(game, sclaimer=sclaimer)
+        if game.info.goal in round_tally.RoundTally.GOALS:
+            # ChildClaimSeeds will work for both children games and not
+            # the divvier on EndGameWinner did the divvying work
+            quitter = emr.QuitRoundTally(game,
+                                         quitter,
+                                         sclaimer=claimer.ChildClaimSeeds(game))
 
     else:
         warnings.warn("Quitter configuration defaulting to QuitToTie")

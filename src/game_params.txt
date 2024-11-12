@@ -109,9 +109,9 @@ Dynamics	goal	Game Goal	game_info _	115	Goal	MAX_SEEDS	0	2	"The overall goal of 
   + Moves must always be possible so MIN_MOVE must be 1 and ALLOW_RULE single_all_to_zero may not be used.
   + GRANDSLAM must be legal for DEPRIVE games.  Deprive games cannot be played in ROUNDS or use children. Additionally, the following options are incompatible with DEPRIVE games: MOVEUNLOCK, MUSTPASS and MUSTSHARE.
 - RND_WIN_COUNT:  win gparam_one rounds. ROUND_FILL is not used; each round is setup as the start of the game.
-- RND_SEED_COUNT: collect gparam_one across several rounds. ROUND_FILL is not used; each round is setup as the start of the game.
+- RND_SEED_COUNT: collect gparam_one seeds across several rounds. ROUND_FILL is not used; each round is setup as the start of the game.
 - RND_EXTRA_SEEDS: collect gparam_one extra seeds (winner - loser seeds).  ROUND_FILL is not used; each round is setup as the start of the game.
-- RND_POINTS:  score gparam_one points. WIN is 1 point. WIN and skunk (> 3/4 of seeds) is 2 points.  ROUND_FILL is not used; each round is setup as the start of the game."
+- RND_POINTS:  score gparam_one points. WIN is 1 point. WIN and skunk (> 3/4 of total seeds) is 2 points.  ROUND_FILL is not used; each round is setup as the start of the game."
 Dynamics	no_sides	No Sides	game_info _	127	bool	False	1	2	Moves maybe made from any hole, independent of the side of the board. Moves need to specify side, position and directions.  
 Dynamics	start_pattern	Start Pattern	game_info _	141	StartPattern	ALL_EQUAL	2	2	"Allows specifing non-all-equal start patterns. The following patterns are supported:
 - ALL_EQUAL: all holes start with the same number of seeds.
@@ -128,8 +128,9 @@ Dynamics	prescribed	Prescribed Opening Move	game_info _	132	SowPrescribed	NONE	3
 - PLUS1MINUS1: proceed from the selected hole by moving one seed from the next hole into the following hole, next skip that hole and repeat moving seed forward. After cycling the board, capture across from the opening hole. 
 - ARNGE_LIMIT: the first move may be used to rearrange the seeds (opponent is same layout). If the first move is not used for rearrangement, captures and child creation are not allowed from the starter until the second player makes a child or captures."
 Dynamics	gparam_one	General Input	game_info _	116	int	0	5	2	"GOAL of Territory: defines the number of holes needed for a win. The number of holes for each player are computed by rounding the number of seeds collected divided by the number of start seeds per hole.
-GOAL of Deprive and Blocked Divert Sower: defines the number of seeds needed to close/block holes (sow_blkd_div).
-GOAL of Max Seeds and ROUNDS: defines the minimum number of holes each player must have to continue the game. The player with fewer seeds must have enough seeds to fill gparam_one holes each with start_seeds in order to continue playing.  There is no rounding of seed counts as in territory games."
+Goal of Deprive and Blocked Divert Sower: defines the number of seeds needed to close/block holes (sow_blkd_div).
+Goal of Max Seeds and ROUNDS: defines the minimum number of holes each player must have to continue the game. The player with fewer seeds must have enough seeds to fill gparam_one holes each with start_seeds in order to continue playing.  There is no rounding of seed counts as in territory games.
+RND_* Goals: number of specified parameter for win."
 Game	game_class	Game Class	game_class	1	GameClasses	Mancala	0	0	"The name of the Game Class. One of:
 Mancala: allows setting all parameters though there are limited combinations.
 Diffusion: has unique sow method and win conditions. Only very limited parameters may be changed from defaults."

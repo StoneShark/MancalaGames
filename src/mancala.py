@@ -461,10 +461,10 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
                   "by eliminating their opponent's seeds.",
                   "by claiming more holes.",
                   "by clearing all their seeds.",
-                  f"by winning {win_param} rounds.",
-                  f"by collecting {win_param} total seeds.",
-                  f"by collecting {win_param} more seeds opponent.",
-                  f"by earning {win_param} points.")
+                  f"by winning more than {win_param} rounds.",
+                  f"by collecting more than {win_param} total seeds.",
+                  f"by collecting more than {win_param} more seeds opponent.",
+                  f"by earning more than {win_param} points.")
 
         rnd_reason = ("not used",
                       "by collecting at least half the seeds.",

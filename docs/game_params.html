@@ -224,11 +224,11 @@ is included after the parameter sections.
 <li class="helptext">
 <b class="enum">RND_WIN_COUNT</b>:  win gparam_one rounds. <a href="game_params.html#round_fill">ROUND_FILL</a> is not used; each round is setup as the start of the game.
 <li class="helptext">
-<b class="enum">RND_SEED_COUNT</b>: collect gparam_one across several rounds. <a href="game_params.html#round_fill">ROUND_FILL</a> is not used; each round is setup as the start of the game.
+<b class="enum">RND_SEED_COUNT</b>: collect gparam_one seeds across several rounds. <a href="game_params.html#round_fill">ROUND_FILL</a> is not used; each round is setup as the start of the game.
 <li class="helptext">
 <b class="enum">RND_EXTRA_SEEDS</b>: collect gparam_one extra seeds (winner - loser seeds).  <a href="game_params.html#round_fill">ROUND_FILL</a> is not used; each round is setup as the start of the game.
 <li class="helptext">
-<b class="enum">RND_POINTS</b>:  score gparam_one points. WIN is 1 point. WIN and skunk (> 3/4 of seeds) is 2 points.  <a href="game_params.html#round_fill">ROUND_FILL</a> is not used; each round is setup as the start of the game.
+<b class="enum">RND_POINTS</b>:  score gparam_one points. WIN is 1 point. WIN and skunk (> 3/4 of total seeds) is 2 points.  <a href="game_params.html#round_fill">ROUND_FILL</a> is not used; each round is setup as the start of the game.
 </ol>
 <h4 id="no_sides"> No Sides </h4>
 <p class="pdesc">Location in Config Files: game_info : no_sides
@@ -284,8 +284,9 @@ is included after the parameter sections.
 <p class="pdesc">UI Tab: Dynamics
 
 <p><a href="game_params.html#goal">GOAL</a> of Territory: defines the number of holes needed for a win. The number of holes for each player are computed by rounding the number of seeds collected divided by the number of start seeds per hole.
-<p><a href="game_params.html#goal">GOAL</a> of Deprive and Blocked Divert Sower: defines the number of seeds needed to close/block holes (sow_blkd_div).
-<p><a href="game_params.html#goal">GOAL</a> of Max Seeds and <a href="game_params.html#rounds">ROUNDS</a>: defines the minimum number of holes each player must have to continue the game. The player with fewer seeds must have enough seeds to fill gparam_one holes each with start_seeds in order to continue playing.  There is no rounding of seed counts as in territory games.
+<p>Goal of Deprive and Blocked Divert Sower: defines the number of seeds needed to close/block holes (sow_blkd_div).
+<p>Goal of Max Seeds and <a href="game_params.html#rounds">ROUNDS</a>: defines the minimum number of holes each player must have to continue the game. The player with fewer seeds must have enough seeds to fill gparam_one holes each with start_seeds in order to continue playing.  There is no rounding of seed counts as in territory games.
+<p>RND_* Goals: number of specified parameter for win.
 <h2 id="tab_Allow">Allow Tab</h2>
 <h4 id="min_move"> Minimum Seeds for Move </h4>
 <p class="pdesc">Location in Config Files: game_info : min_move

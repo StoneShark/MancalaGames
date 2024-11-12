@@ -14,7 +14,7 @@ import game_interface as gi
 class GameTally:
     """Class to collect game data across multiple games."""
 
-    def __init__(self, frame):
+    def __init__(self, frame, param_name=None, required=0):
         """Set the counts to 0, creates tk variables, and
         the UI elements."""
 
@@ -36,6 +36,7 @@ class GameTally:
         self.rfwins_str = tk.StringVar(frame, '  0')
         self.rties_str = tk.StringVar(frame, '  0')
 
+
         tk.Label(frame, text='Games Played:'
                  ).grid(row=0, column=0, columnspan=2)
         tk.Label(frame, textvariable=self.games_str).grid(row=0, column=2)
@@ -47,18 +48,32 @@ class GameTally:
         tk.Label(frame, text='Ties:').grid(row=1, column=4)
         tk.Label(frame, textvariable=self.gties_str).grid(row=1, column=5)
 
-        tk.Label(frame, text=' ').grid(row=2, column=0)
-
         tk.Label(frame, text='Rounds Played:', anchor=tk.W
-                 ).grid(row=3, column=0, columnspan=2)
-        tk.Label(frame, textvariable=self.rounds_str).grid(row=3, column=2)
+                 ).grid(row=2, column=0, columnspan=2)
+        tk.Label(frame, textvariable=self.rounds_str).grid(row=2, column=2)
 
-        tk.Label(frame, text='Wins:').grid(row=4, column=0)
-        tk.Label(frame, textvariable=self.rfwins_str).grid(row=4, column=1)
-        tk.Label(frame, text='Loses:').grid(row=4, column=2)
-        tk.Label(frame, textvariable=self.rtwins_str).grid(row=4, column=3)
-        tk.Label(frame, text='Ties:').grid(row=4, column=4)
-        tk.Label(frame, textvariable=self.rties_str).grid(row=4, column=5)
+        tk.Label(frame, text='Wins:').grid(row=3, column=0)
+        tk.Label(frame, textvariable=self.rfwins_str).grid(row=3, column=1)
+        tk.Label(frame, text='Loses:').grid(row=3, column=2)
+        tk.Label(frame, textvariable=self.rtwins_str).grid(row=3, column=3)
+        tk.Label(frame, text='Ties:').grid(row=3, column=4)
+        tk.Label(frame, textvariable=self.rties_str).grid(row=3, column=5)
+
+
+        if param_name:
+            tk.Label(frame, text=' ').grid(row=5, column=0)
+
+            self.param_tstr = tk.StringVar(frame, '   0')
+            self.param_fstr = tk.StringVar(frame, '   0')
+
+            tk.Label(frame, text=f'{param_name} Tally:', anchor=tk.W
+                     ).grid(row=6, column=0, columnspan=2)
+
+            tk.Label(frame, text='Top:').grid(row=7, column=0)
+            tk.Label(frame, textvariable=self.param_tstr).grid(row=7, column=1)
+            tk.Label(frame, text='Bottom:').grid(row=7, column=2)
+            tk.Label(frame, textvariable=self.param_fstr).grid(row=7, column=3)
+            tk.Label(frame, text=f'   Required: {required}').grid(row=7, column=4)
 
 
     def tally_game(self, winner, win_cond):
@@ -98,3 +113,10 @@ class GameTally:
         self.rtwins_str.set(f'{self.round_wins[1]:3}')
         self.rfwins_str.set(f'{self.round_wins[0]:3}')
         self.rties_str.set(f'{self.round_ties:3}')
+
+
+    def param_tally(self, pvalues):
+        """Update the parameter values on the tally."""
+
+        self.param_fstr.set(f'{pvalues(0):4}')
+        self.param_tstr.set(f'{pvalues(1):4}')

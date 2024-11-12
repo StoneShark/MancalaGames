@@ -488,6 +488,87 @@ class TestNewGame:
         assert game.inhibitor._children == einhibit
 
 
+class TestRoundTally:
+
+    @pytest.fixture
+    def game(self):
+
+        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_info = gi.GameInfo(capt_on = [2],
+                                stores=True,
+                                goal=Goal.RND_WIN_COUNT,
+                                rounds=gi.Rounds.NO_MOVES,
+                                gparam_one=5,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = False
+        return game
+
+
+    @pytest.mark.parametrize('cond', [WinCond.TIE, WinCond.WIN,
+                                      WinCond.ROUND_TIE, WinCond.ROUND_WIN])
+    @pytest.mark.parametrize('board',
+                             [(0, 0, 0, 0),
+                              (1, 2, 3, 4),
+                              (8, 8, 8, 8),
+                              ])
+    def test_restart(self, game, board, cond):
+
+        game.rtally.state = ((1, 1), (2, 3), (5, 8), (3, 0))
+        game.board = list(board)
+        game.store = (12, 12)
+
+        game.new_game(cond, new_round_ok=True)
+
+        assert game.board == [3, 3, 3, 3, 3, 3, 3, 3]
+        assert game.store == [0, 0]
+
+        if 'ROUND' not in cond.name:
+            assert game.rtally.state == ((0, 0), (0, 0), (0, 0), (0, 0))
+        else:
+            assert game.rtally.state != ((0, 0), (0, 0), (0, 0), (0, 0))
+
+
+    @pytest.mark.parametrize('cond', [WinCond.TIE, WinCond.WIN,
+                                      WinCond.ROUND_TIE, WinCond.ROUND_WIN])
+    @pytest.mark.parametrize('start_rule, starter, winner, last, estarter',
+                             [
+                                 (gi.RoundStarter.ALTERNATE, T, T, T, F),
+                                 (gi.RoundStarter.ALTERNATE, T, F, F, F),
+                                 (gi.RoundStarter.ALTERNATE, F, T, T, T),
+                                 (gi.RoundStarter.ALTERNATE, F, F, F, T),
+                                 (gi.RoundStarter.LOSER, T, T, T, F),
+                                 (gi.RoundStarter.LOSER, T, T, F, F),
+                                 (gi.RoundStarter.LOSER, T, F, T, T),
+                                 (gi.RoundStarter.LOSER, T, F, F, T),
+                                 (gi.RoundStarter.WINNER, T, T, T, T),
+                                 (gi.RoundStarter.WINNER, T, T, F, T),
+                                 (gi.RoundStarter.WINNER, T, F, T, F),
+                                 (gi.RoundStarter.WINNER, T, F, F, F),
+                                 (gi.RoundStarter.LAST_MOVER, T, T, T, T),
+                                 (gi.RoundStarter.LAST_MOVER, T, T, F, F),
+                                 (gi.RoundStarter.LAST_MOVER, T, F, T, T),
+                                 (gi.RoundStarter.LAST_MOVER, T, F, F, F),
+
+                             ])
+    def test_new_starter(self, game, cond,
+                         start_rule, starter, winner, last, estarter):
+        """we don't know who started the game, so the
+        starter for ROUND_WIN and WIN are always the same"""
+
+        object.__setattr__(game.info, 'round_starter', start_rule)
+        game.starter = starter
+        game.turn = winner
+        game.last_mdata = mancala.MoveData(game, 4)
+        game.last_mdata.player = last
+
+        game.new_game(cond, new_round_ok=True)
+
+        assert game.starter == estarter
+        assert game.turn == estarter
+
 
 class TestTerritory:
 

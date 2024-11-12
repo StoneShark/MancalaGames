@@ -12,7 +12,6 @@ import utils
 
 from context import end_move
 from context import end_move_decos as emd
-from context import end_move_rounds as emr
 from context import game_constants as gc
 from context import game_interface as gi
 from context import ginfo_rules
@@ -673,35 +672,36 @@ class TestEndWaldas:
 
         return mancala.Mancala(game_consts, game_info)
 
+    WALDA_CASES = [(True,
+                 [0, 0, 0, 0, 10, 12, 2, 1, 1, 0, 4, 18],
+                 [None, None, None, None, True, True,
+                  None, None, None, None, None, False],
+                 [0, 0, 0, 0, 18, 12, 0, 0, 0, 0, 0, 18]),
+                (True,
+                 [0, 0, 0, 0, 10, 12, 2, 1, 1, 0, 4, 18],
+                 [None, None, None, None, True, True,
+                  None, None, None, None, None, None],
+                 [0, 0, 0, 0, 36, 12, 0, 0, 0, 0, 0, 0]),
+                (False,
+                 [2, 1, 1, 0, 4, 40, 0, 0, 0, 0, 0, 0],
+                 [None, None, None, None, None, None,
+                  None, None, None, None, None, False],
+                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 48]),
+                (False,
+                 [2, 1, 1, 0, 4, 40, 0, 0, 0, 0, 0, 0],
+                 [None, None, None, None, None, None,
+                  None, None, None, None, None, None],
+                 [48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
+                (True,
+                  [0, 0, 0, 0, 18, 12, 0, 0, 0, 0, 0, 18],
+                  [None, None, None, None, True, True,
+                   None, None, None, None, None, False],
+                  [0, 0, 0, 0, 18, 12, 0, 0, 0, 0, 0, 18],
+                  ),
+                ]
 
     @pytest.mark.parametrize('turn, board, child, eboard',
-                             [(True,
-                               [0, 0, 0, 0, 10, 12, 2, 1, 1, 0, 4, 18],
-                               [None, None, None, None, True, True,
-                                None, None, None, None, None, False],
-                               [0, 0, 0, 0, 18, 12, 0, 0, 0, 0, 0, 18]),
-                              (True,
-                               [0, 0, 0, 0, 10, 12, 2, 1, 1, 0, 4, 18],
-                               [None, None, None, None, True, True,
-                                None, None, None, None, None, None],
-                               [0, 0, 0, 0, 36, 12, 0, 0, 0, 0, 0, 0]),
-                              (False,
-                               [2, 1, 1, 0, 4, 40, 0, 0, 0, 0, 0, 0],
-                               [None, None, None, None, None, None,
-                                None, None, None, None, None, False],
-                               [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 48]),
-                              (False,
-                               [2, 1, 1, 0, 4, 40, 0, 0, 0, 0, 0, 0],
-                               [None, None, None, None, None, None,
-                                None, None, None, None, None, None],
-                               [48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
-                              (True,
-                                [0, 0, 0, 0, 18, 12, 0, 0, 0, 0, 0, 18],
-                                [None, None, None, None, True, True,
-                                 None, None, None, None, None, False],
-                                [0, 0, 0, 0, 18, 12, 0, 0, 0, 0, 0, 18],
-                                ),
-                              ],
+                             WALDA_CASES,
                              ids=[f'case_{c}' for c in range(5)])
     def test_no_pass(self, game, turn, board, child, eboard):
 
@@ -1055,7 +1055,6 @@ class TestTerritory:
                                 gparam_one=5,
                                 goal=Goal.TERRITORY,
                                 rounds=gi.Rounds.NO_MOVES,
-                                round_fill=gi.RoundFill.UMOVE,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
@@ -1287,3 +1286,153 @@ class TestWinHoles:
         game.child = child
 
         assert game.deco.ender.compute_win_holes() == (fill_start, holes)
+
+
+class TestRoundTally:
+
+    # TODO RoundTally games with children are not tested
+
+    @pytest.fixture
+    def game(self):
+        """round tally game"""
+
+        game_consts = gc.GameConsts(nbr_start=3, holes=2)
+        game_info = gi.GameInfo(evens=True,
+                                stores=True,
+                                goal=gi.Goal.RND_POINTS,
+                                gparam_one=5,
+                                rounds=gi.Rounds.NO_MOVES,
+                                nbr_holes=game_consts.holes,
+                                rules=ginfo_rules.RuleDict())
+
+        game = mancala.Mancala(game_consts, game_info)
+        return game
+
+    CASES = [
+        # 0: start game, not over
+        (False, [3, 3, 3, 3], [0, 0], (0, 0), None, False),
+
+        # 1: round over (no moves), no points yet
+        (True, [0, 0, 2, 0], [4, 6], (0, 0), WinCond.ROUND_WIN, True),
+        # 2: round over (no moves), points still low
+        (True, [0, 0, 2, 0], [4, 6], (0, 3), WinCond.ROUND_WIN, True),
+        # 3: round over (no moves), points just enough
+        (True, [0, 0, 2, 0], [4, 6], (0, 4), WinCond.WIN, True),
+
+        # 4: round over (two few), no points yet
+        (False, [0, 0, 1, 0], [7, 4], (0, 0), WinCond.ROUND_WIN, False),
+        # 5: round over (two few), points still low
+        (False, [0, 0, 1, 0], [7, 4], (3, 0), WinCond.ROUND_WIN, False),
+        # 6: round over (two few), points just enough
+        (False, [0, 0, 1, 0], [7, 4], (4, 0), WinCond.WIN, False),
+
+        # 7: round over, skunk so win
+        (False, [0, 0, 1, 0], [9, 2], (3, 0), WinCond.WIN, False),
+        # 8: round over, points just enough
+        (False, [0, 0, 1, 0], [9, 2], (4, 0), WinCond.WIN, False),
+
+        # 9: round over (no moves), no points yet
+        (True, [0, 0, 2, 0], [6, 4], (0, 0), WinCond.ROUND_TIE, True),
+        # 10: round over (no moves), points still low
+        (True, [0, 0, 2, 0], [6, 4], (0, 4), WinCond.ROUND_TIE, True),
+
+        # 11: round over (no moves), points just enough
+        # an odd case because the game should have ended on the last round
+        # seeds might have been a better test case
+        (True, [0, 0, 2, 0], [6, 4], (5, 5), WinCond.TIE, None),
+
+        # 12: both over threshhold, higher player should win
+        # an odd case because the game should have ended on the last round
+        (True, [0, 0, 2, 0], [6, 4], (6, 8), WinCond.WIN, True),
+
+        ]
+
+    # @pytest.mark.usefixtures("logger")
+    @pytest.mark.parametrize('turn, board, store, ptally, econd, ewinner',
+                             CASES,
+                             ids=[f"case_{idx}" for idx in range(len(CASES))])
+    def test_round_tally(self, game, turn, board, store, ptally,
+                         econd, ewinner):
+
+        game.turn = turn
+        game.board = board
+        game.store = store
+        game.rtally.state = ((0, 0), (0, 0), (0, 0), ptally)
+
+        cond, winner = game.deco.ender.game_ended(False, False)
+
+        assert cond == econd
+        assert winner == ewinner
+
+
+    END_CASES = [
+        # 0: current game tie, result tie
+        (False, [3, 3, 3, 3], [0, 0], (0, 0), WinCond.TIE, None),
+
+        # 1: current game goes to T, T wins
+        (True, [0, 0, 2, 0], [4, 6], (0, 0), WinCond.WIN, True),
+
+        # 2: current game goes to F, F wins
+        (False, [0, 2, 0, 0], [6, 4], (0, 0), WinCond.WIN, False),
+
+        # 3: current game goes to T, T wins
+        (True, [0, 0, 2, 0], [4, 6], (4, 4), WinCond.WIN, True),
+
+        # 4: current game goes to F, F wins
+        (False, [0, 2, 0, 0], [6, 4], (4, 4), WinCond.WIN, False),
+        ]
+
+    # @pytest.mark.usefixtures("logger")
+    @pytest.mark.parametrize('turn, board, store, ptally, econd, ewinner',
+                             END_CASES,
+                             ids=[f"case_{idx}" for idx in range(len(END_CASES))])
+    def test_end_round_tally(self, game, turn, board, store, ptally,
+                             econd, ewinner):
+
+        game.turn = turn
+        game.board = board
+        game.store = store
+        game.rtally.state = ((0, 0), (0, 0), (0, 0), ptally)
+
+        cond, winner = game.deco.ender.game_ended(False, True)
+
+        assert cond == econd
+        assert winner == ewinner
+
+
+    QUIT_CASES = [
+        # 0: current game tie, result tie
+        (False, [3, 3, 3, 3], [0, 0], (0, 0), WinCond.TIE, None),
+
+        # 1: divvy to 5, 7, T wins
+        (True, [0, 0, 2, 0], [4, 6], (0, 0), WinCond.WIN, True),
+
+        # 2: diffy to 7, 5, F wins
+        (False, [0, 2, 0, 0], [6, 4], (0, 0), WinCond.WIN, False),
+
+        # 3: divvy to 5, 7, T wins
+        (True, [0, 0, 1, 0], [4, 7], (4, 4), WinCond.WIN, True),
+
+        # 4: divvy to 7, 5, F wins
+        (False, [0, 1, 0, 0], [7, 4], (4, 4), WinCond.WIN, False),
+        ]
+
+    @pytest.mark.usefixtures("logger")
+    @pytest.mark.parametrize('turn, board, store, ptally, econd, ewinner',
+                             QUIT_CASES,
+                             ids=[f"case_{idx}"
+                                  for idx in range(len(QUIT_CASES))])
+    def test_quit_round_tally(self, game, turn, board, store, ptally,
+                             econd, ewinner):
+
+        game.turn = turn
+        game.board = board
+        game.store = store
+        game.rtally.state = ((0, 0), (0, 0), (0, 0), ptally)
+        print(game)
+
+        cond, winner = game.deco.quitter.game_ended(False, True)
+        print(game)
+
+        assert cond == econd
+        assert winner == ewinner

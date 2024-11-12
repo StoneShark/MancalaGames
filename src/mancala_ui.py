@@ -23,6 +23,7 @@ import btn_behaviors as btnb
 import game_interface as gi
 import game_tally as gt
 import man_path
+import round_tally
 
 from game_logger import game_log
 
@@ -120,7 +121,14 @@ class MancalaUI(tk.Frame):
         lframe = tk.Frame(self.tally_frame, padx=5, pady=5,
                           borderwidth=3, relief=tk.RIDGE)
         lframe.grid(row=0, column=0, sticky=tk.NSEW)
-        self.tally = gt.GameTally(lframe)
+
+        goal = self.game.info.goal
+        if goal in round_tally.RoundTally.GOALS:
+            self.tally = gt.GameTally(lframe,
+                                      round_tally.RoundTally.PSTR[goal],
+                                      self.game.info.gparam_one)
+        else:
+            self.tally = gt.GameTally(lframe)
 
         self.rframe = tk.Frame(self.tally_frame, padx=5, pady=5,
                                borderwidth=3, relief=tk.RIDGE)
@@ -533,6 +541,8 @@ class MancalaUI(tk.Frame):
 
         self._refresh()
         if new_game:
+            self.tally.param_tally(self.game.rtally.parameter)   # TODO not in the game if
+
             if self.info.prescribed == gi.SowPrescribed.ARNGE_LIMIT:
                 if self.set_game_mode(btnb.Behavior.MOVESEEDS):
                     return
@@ -621,9 +631,10 @@ class MancalaUI(tk.Frame):
         """If someone won or there was a tie,
         popup the winner dialog box."""
 
-        self.tally.tally_game(self.game.get_turn(), win_cond)
-
         if win_cond:
+            self.tally.tally_game(self.game.get_turn(), win_cond)
+            self.tally.param_tally(self.game.rtally.parameter)   # TODO not in the game if
+
             self._win_popup(*self.game.win_message(win_cond))
 
 

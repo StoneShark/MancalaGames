@@ -13,13 +13,15 @@ from game_logger import game_log
 # %%  enders
 
 class RoundWinner(emd.EndTurnIf):
-    """"If the game is played in rounds, let the rest of the
-    chain decide the outcome, then adjust for end of game or
-    end of round. Additionally, the game is over if either player
-    does not have the minimum seeds to continue the game.
+    """"If the game is played in rounds where seeds collected
+    are used to setup the board for a new round, let the rest
+    of the chain decide the outcome, then adjust for end of
+    game or end of round.
 
-    This is near the top of the deco chain. If ended is True
-    actually end the game (not the round)."""
+    Additionally, the game is over if either player does not have
+    the minimum seeds to continue the game.  The claimer is used
+    after the game is known to be over to determine if the
+    round or game is over."""
 
     def __init__(self, game, decorator=None, sclaimer=None):
         """Init the parent deco's; then fill:
@@ -76,30 +78,29 @@ class RoundWinner(emd.EndTurnIf):
 class RoundTallyWinner(emd.EndTurnIf):
     """"If the game is played in rounds, let the rest of the
     chain decide the outcome, then adjust for end of game or
-    end of round.
+    end of round based on the tallier."""
 
-    The RoundTally is state data but it doesn't change during
-    a single game.
-    """
-
-    def end_it(self):
-        """The game has ended pick a winner."""
+    def end_it(self, cond):
+        """The game has ended pick a winner.
+        The claimer here is not a taker, but we called down the
+        deco chain to EndGameWinner which is configured with a
+        taker to determine this games outcome."""
 
         seeds = self.sclaimer.claim_seeds()
-        self.game.rtally.tally(gi.WinCond.TIE, self.game.turn, seeds)
+        self.game.rtally.tally(cond, self.game.turn, seeds)
 
         return self.game.rtally.end_it()
 
 
     def game_ended(self, repeat_turn, ended=False):
 
-        if ended:
-            game_log.add("Calling RoundTallyWinner.end_it.")
-            self.end_it()
-
         cond, player = self.decorator.game_ended(repeat_turn, ended)
         if not cond:
             return cond, player
+
+        if ended:
+            game_log.add("Calling RoundTallyWinner.end_it.")
+            return self.end_it(cond)
 
         seeds = self.sclaimer.claim_seeds()
         self.game.rtally.tally(cond, player, seeds)
@@ -117,11 +118,13 @@ class RoundTallyWinner(emd.EndTurnIf):
 # %%  quitter
 
 class QuitRoundTally(emd.EndTurnIf):
-    """End a round tally game. Do not include a decorator in the call."""
+    """End a round tally game. Decorator is used to end the current
+    game then the tallier decides the game outcome."""
 
     def game_ended(self, repeat_turn, ended=False):
 
+        cond, player = self.decorator.game_ended(repeat_turn, ended)
         seeds = self.sclaimer.claim_seeds()
-        self.game.rtally.tally(gi.WinCond.TIE, None, seeds)
+        self.game.rtally.tally(cond, player, seeds)
 
         return self.game.rtally.end_it()
