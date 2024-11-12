@@ -18,6 +18,8 @@ MIN_INT = -sys.maxsize
 
 # %%
 
+# pylint: disable=duplicate-code
+
 @dc.dataclass
 class MoveScore:
     """Scores for each move."""
