@@ -584,7 +584,7 @@ def player_dict_rules():
     # rules.add_rule(
     #     'mcts_move_nbrs',
     #     rule=lambda pdict, ginfo: ((ginfo.prescribed
-    #                                 or ginfo.nocaptfirst
+    #                                 or ginfo.nocaptmoves
     #                                 or ginfo.allow_rule in
     #                                     {gi.AllowRule.FIRST_TURN_ONLY_RIGHT_TWO,
     #                                      gi.AllowRule.RIGHT_2_1ST_THEN_ALL_TWO}

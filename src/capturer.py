@@ -812,7 +812,7 @@ def deco_capturer(game):
 
     if (game.info.prescribed == gi.SowPrescribed.ARNGE_LIMIT
             or game.info.round_fill == gi.RoundFill.SHORTEN
-            or game.info.nocaptfirst):
+            or game.info.nocaptmoves):
         capturer = NotInhibited(game, capturer)
 
     if game.info.capt_rturn:

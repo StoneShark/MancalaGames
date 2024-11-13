@@ -28,7 +28,7 @@ class MdataStub:
 class InfoStub:
 
     def __init__(self):
-        self.nocaptfirst = False
+        self.nocaptmoves = 0
         self.round_fill = None
         self.prescribed = None
 
@@ -94,7 +94,7 @@ def test_none():
 def test_capt_n():
 
     game = GameStub()
-    game.info.nocaptfirst = True
+    game.info.nocaptmoves = 1
     mdata = MdataStub()
 
     inhibit = inhibitor.make_inhibitor(game)

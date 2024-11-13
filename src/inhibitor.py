@@ -262,8 +262,8 @@ def arnge_limit_cond(_, mdata):
 def make_inhibitor(game):
     """Make the inhibitor.  It's not a chain."""
 
-    if game.info.nocaptfirst:
-        return InhibitorCaptN(1)
+    if game.info.nocaptmoves:
+        return InhibitorCaptN(game.info.nocaptmoves)
 
     # Bao
     if (game.info.prescribed == gi.SowPrescribed.ARNGE_LIMIT

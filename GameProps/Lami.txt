@@ -13,7 +13,7 @@
       "crosscapt": true,
       "oppsidecapt": true,
       "mlaps": 1,
-      "nocaptfirst": true,
+      "nocaptmoves": 1,
       "pickextra": 2,
       "round_fill": 1,
       "round_starter": 1,

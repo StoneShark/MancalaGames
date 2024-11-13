@@ -388,18 +388,18 @@ is included after the parameter sections.
 <li class="helptext">
 <b class="enum">SOW_BLKD_DIV</b>: If the final seed of an individual sow lands on the opposite side of the board and brings the contents of that hole to goal_param seeds, the hole is closed closed (blocked). In single lap games, the hole's seeds are removed from play. In multilap games, the seeds are used to continue sowing.
 <p class="helptext"> When sowing, blocked holes on your own side of the board are skipped  and blocked holes on opponent's side are diverted out of play or captured.
-<p class="helptext">  Game <a href="game_params.html#goal">GOAL</a> must be DEPRIVE and all of the associated restrictions apply. <a href="game_params.html#nocaptfirst">NOCAPTFIRST</a> maybe used to prevent closing holes on the first move. Capture mechanisms other than closing holes are not supported. The minimum move must be 1 and thus <a href="game_params.html#sow_start">SOW_START</a> is incompatible.  <a href="game_params.html#allow_rule">ALLOW_RULE</a> may not be used to limit allowable moves.  <a href="game_params.html#skip_start">SKIP_START</a> and <a href="game_params.html#visit_opp">VISIT_OPP</a> are not supported with SOW_BLKD_DIV.  <a href="game_params.html#mlaps">MLAPS</a> of LAPPER_NEXT is not supported with SOW_BLKD_DIV(_NR).
+<p class="helptext">  Game <a href="game_params.html#goal">GOAL</a> must be DEPRIVE and all of the associated restrictions apply. <a href="game_params.html#nocaptmoves">NOCAPTMOVES</a> maybe used to prevent closing holes on the initial games moves. Capture mechanisms other than closing holes are not supported. The minimum move must be 1 and thus <a href="game_params.html#sow_start">SOW_START</a> is incompatible.  <a href="game_params.html#allow_rule">ALLOW_RULE</a> may not be used to limit allowable moves.  <a href="game_params.html#skip_start">SKIP_START</a> and <a href="game_params.html#visit_opp">VISIT_OPP</a> are not supported with SOW_BLKD_DIV.  <a href="game_params.html#mlaps">MLAPS</a> of LAPPER_NEXT is not supported with SOW_BLKD_DIV(_NR).
 <li class="helptext">
 <b class="enum">SOW_BLKD_DIV_NR</b>: Behaves the same as SOW_BLKD_DIV except that each player's rightmost hole cannot be closed. 
 <li class="helptext">
 <b class="enum">OWN_SOW_CAPT_ALL</b>: The hole OWNer captures all holes that are sown to meet the simple capture criteria no matter who sowed them.  The simple capture criteria are: evens, min, max and capture on. Other criteria are enforced: side of the board, unlocked, and not child.
 <p class="helptext"> The capture is done by the hole owner, so the non-sower may capture seeds while their opponents sows. If the game <a href="game_params.html#goal">GOAL</a> is TERRITORY the capturer is the hole owner; otherwise each player captures from their own side of the board no matter who is sowing. 
 <p class="helptext"> If <a href="game_params.html#mlaps">MLAPS</a> is LAPPER and the final seed sown for any lap meets the simple capture criteria for that hole, the contents of the hole are captured by the sower and not the hole owner and the turn is over. For <a href="game_params.html#capttwoout">CAPTTWOOUT</a>, <a href="game_params.html#capt_next">CAPT_NEXT</a> and <a href="game_params.html#crosscapt">CROSSCAPT</a> captures, the sower always does the final capture.
-<p class="helptext"> <a href="game_params.html#grandslam">GRANDSLAM</a> rules are not applied. <a href="game_params.html#nocaptfirst">NOCAPTFIRST</a> prevents these capture for the first move.
+<p class="helptext"> <a href="game_params.html#grandslam">GRANDSLAM</a> rules are not applied. <a href="game_params.html#nocaptmoves">NOCAPTMOVES</a> prevents these capture for the first moves.
 <li class="helptext">
 <b class="enum">SOW_SOW_CAPT_ALL</b>: Similar to OWN_SOW_CAPT_ALL but only the SOWer captures seeds from their opponent's holes. 
 <p class="helptext"> If mlaps is LAPPER and the final seed sown for any lap meets the capture criteria, the contents of the hole are captured by the sower and not the hole owner and the turn is over.
-<p class="helptext"> <a href="game_params.html#grandslam">GRANDSLAM</a> rules are not applied. <a href="game_params.html#nocaptfirst">NOCAPTFIRST</a> prevents this capture for the first move.
+<p class="helptext"> <a href="game_params.html#grandslam">GRANDSLAM</a> rules are not applied. <a href="game_params.html#nocaptmoves">NOCAPTMOVES</a> prevents this capture for the first number of specified moves.
 <li class="helptext">
 <b class="enum">NO_SOW_OPP_2S</b>: Don't sow into opponents holes with 2 seeds.
 <li class="helptext">
@@ -622,13 +622,13 @@ is included after the parameter sections.
 <p class="pdesc">UI Tab: Capture
 
 <p>If the selected start hole contains one seed, no capture may be made with it.
-<h4 id="nocaptfirst"> No Capture First Move </h4>
-<p class="pdesc">Location in Config Files: game_info : nocaptfirst
-<p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
-<p class="pdesc">Default value: False
+<h4 id="nocaptmoves"> Start Moves w/o Capture </h4>
+<p class="pdesc">Location in Config Files: game_info : nocaptmoves
+<p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
+<p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Capture
 
-<p>Don't allow captures or closing of holes (<a href="game_params.html#sow_rule">SOW_RULE</a> of SOW_BLKD_DIV) on the first move of the game or round.
+<p>Don't allow captures or closing of holes (<a href="game_params.html#sow_rule">SOW_RULE</a> of SOW_BLKD_DIV) for the first specified number of moves of the game or round.
 <h4 id="capt_on"> Capture On Values </h4>
 <p class="pdesc">Location in Config Files: game_info : capt_on
 <p id="list[bool]" class="pdesc">Type: <a href="param_types.html#list[bool]"> list[bool] </a>
@@ -838,7 +838,7 @@ is included after the parameter sections.
     <p class="param"><a href="#name">name</a></p>
     <p class="param"><a href="#nbr_start">nbr_start</a></p>
     <p class="param"><a href="#no_sides">no_sides</a></p>
-    <p class="param"><a href="#nocaptfirst">nocaptfirst</a></p>
+    <p class="param"><a href="#nocaptmoves">nocaptmoves</a></p>
   </div>
   <div class="column3">
     <p class="param"><a href="#nosinglecapt">nosinglecapt</a></p>

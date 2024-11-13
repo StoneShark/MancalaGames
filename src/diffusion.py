@@ -128,7 +128,7 @@ def build_rules():
 
     capt_flags = ['capsamedir', 'capt_max', 'capt_min', 'capt_next',
                   'capt_on', 'capt_rturn', 'capttwoout', 'crosscapt',
-                  'evens', 'grandslam', 'multicapt', 'nocaptfirst',
+                  'evens', 'grandslam', 'multicapt', 'nocaptmoves',
                   'nosinglecapt', 'oppsidecapt', 'pickextra', 'xcpickown']
     rules.add_rule(
         'no_capt_mech',

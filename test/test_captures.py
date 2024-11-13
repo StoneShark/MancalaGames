@@ -190,7 +190,7 @@ class TestNoCaptures:
 
     def test_no_capture(self):
         game_consts = gc.GameConsts(nbr_start=4, holes=3)
-        game_info = gi.GameInfo(nocaptfirst=True,
+        game_info = gi.GameInfo(nocaptmoves=1,
                                 stores=True,
                                 evens=True,
                                 nbr_holes=game_consts.holes,

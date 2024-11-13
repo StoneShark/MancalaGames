@@ -403,7 +403,7 @@ def test_inhibit_sower(request,
                        mcount, conf_name, state_name, turn, move,
                        eloc, eboard, estore, eblocks):    # expected values
     """Use the same test cases for both first and second move of the game,
-    but set nocaptfirst for all. If there's error in building game_info,
+    but set nocaptmoves for all. If there's error in building game_info,
     skip the test."""
 
     if request.node.name in BAD_INHIBITOR_TESTS:
@@ -412,14 +412,14 @@ def test_inhibit_sower(request,
     game_consts = gc.GameConsts(nbr_start=2, holes=HOLES)
     try:
         game_info = gi.GameInfo(**GAMECONF[conf_name],
-                                nocaptfirst=True,
+                                nocaptmoves=1,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
     except gi.GameInfoError as error:
         if 'sow_own_nocapt' in repr(error):
-            pytest.skip('nocaptfirst incomp with sow_own_store')
+            pytest.skip('nocaptmoves incomp with sow_own_store')
         else:
-            pytest.fail('nocaptfirst conflict for unkown reason')
+            pytest.fail('nocaptmoves conflict for unkown reason')
     game =  mancala.Mancala(game_consts, game_info)
 
     # save istate and put it back after copying in test state

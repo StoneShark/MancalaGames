@@ -33,7 +33,7 @@
       "mustpass": false,
       "mustshare": false,
       "no_sides": false,
-      "nocaptfirst": false,
+      "nocaptmoves": 0,
       "nosinglecapt": false,
       "oppsidecapt": false,
       "pickextra": 0,

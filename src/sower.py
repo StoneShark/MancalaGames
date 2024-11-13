@@ -395,7 +395,8 @@ class StopCaptureSeeds(LapContinuerIf):
 
     def do_another_lap(self, mdata):
 
-        if self.game.deco.capt_ok.capture_ok(mdata.capt_loc):
+        if (not self.game.inhibitor.stop_me_capt(self.game.turn)
+                and self.game.deco.capt_ok.capture_ok(mdata.capt_loc)):
             game_log.add('MLap stop for capture')
             return False
         return self.decorator.do_another_lap(mdata)

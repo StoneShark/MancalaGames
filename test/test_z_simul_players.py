@@ -17,7 +17,7 @@ move number not being right in the Monte Carlo Tree Search
 algorithm:
     - prescribed openings will not be by AI player
     - allowable OnlyRightTwo only applies to the first move
-    - nocaptfirst only applies to the first turn
+    - nocaptmoves only applies to the first N turn
 
 All games are limited to 50 moves;
 that'll be about 25 for the ai player.
