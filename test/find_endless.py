@@ -33,7 +33,7 @@ def build_game():
                             goal=Goal.DEPRIVE,
                             sow_blkd_div=True,
                             blocks=True,
-                            gparam_one=3,
+                            goal_param=3,
                             nbr_holes=game_consts.holes,
                             rules=mancala.Mancala.rules)
     return mancala.Mancala(game_consts, game_info)

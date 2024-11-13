@@ -230,7 +230,7 @@ class TestScorers:
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
                                 goal=gi.Goal.TERRITORY,
-                                gparam_one=5,
+                                goal_param=5,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 

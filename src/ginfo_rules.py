@@ -210,12 +210,12 @@ def add_territory_rules(rules):
     """Add the rules for games with a goal of territory."""
 
     rules.add_rule(
-        'terr_gparam_one',
+        'terr_goal_param',
         both_objs=True,
         rule=lambda ginfo, holes: (ginfo.goal == gi.Goal.TERRITORY
-                                   and (ginfo.gparam_one <= holes
-                                        or ginfo.gparam_one > 2 * holes)),
-        msg='Territory Goal requires GPARAM_ONE between holes and 2 * holes',
+                                   and (ginfo.goal_param <= holes
+                                        or ginfo.goal_param > 2 * holes)),
+        msg='Territory Goal requires GOAL_PARAM between holes and 2 * holes',
         excp=gi.GameInfoError)
 
     rules.add_rule(
@@ -292,10 +292,10 @@ def add_block_and_divert_rules(rules):
         excp=NotImplementedError)
 
     rules.add_rule(
-        'bdiv_need_gparam1',
+        'bdiv_need_gparam',
         rule=lambda ginfo: (sow_blkd_div(ginfo)
-                            and not ginfo.gparam_one),
-        msg='SOW_BLKD_DIV(_NR) requires GPARAM_ONE for closing holes',
+                            and not ginfo.goal_param),
+        msg='SOW_BLKD_DIV(_NR) requires GOAL_PARAM for closing holes',
         excp=gi.GameInfoError)
 
     rules.add_rule(
@@ -711,7 +711,7 @@ def build_rules():
         both_objs=True,
         rule=lambda ginfo, holes: (ginfo.rounds
                                    and ginfo.goal == gi.Goal.MAX_SEEDS
-                                   and ginfo.gparam_one > holes),
+                                   and ginfo.goal_param > holes),
         msg='Minimum holes needed to play another round must be less the holes per side',
         excp=gi.GameInfoError)
 
@@ -725,8 +725,8 @@ def build_rules():
     man_rules.add_rule(
         'rnd_goals_gp1',
         rule=lambda ginfo: (ginfo.goal in round_tally.RoundTally.GOALS
-                            and ginfo.gparam_one <= 0),
-        msg='RND_* goal requires GPARAM_ONE be greater than 0 to define win condition',
+                            and ginfo.goal_param <= 0),
+        msg='RND_* goal requires GOAL_PARAM be greater than 0 to define win condition',
         excp=gi.GameInfoError)
 
     man_rules.add_rule(

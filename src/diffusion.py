@@ -57,9 +57,9 @@ def build_rules():
         warn=True)
 
     rules.add_rule(
-        'gparam_one',
-        rule=lambda ginfo: ginfo.gparam_one,
-        msg='GPARAM_ONE is not used in Diffusion.',
+        'goal_param',
+        rule=lambda ginfo: ginfo.goal_param,
+        msg='GOAL_PARAM is not used in Diffusion.',
         warn=True)
 
     rules.add_rule(

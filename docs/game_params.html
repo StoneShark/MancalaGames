@@ -195,7 +195,7 @@ is included after the parameter sections.
 
 <p>Blocks remove holes from play and are shown on the UI with an X.
 <p>When used with <a href="game_params.html#rounds">ROUNDS</a>, the holes not filled from the player with fewer seeds are blocked and thus out of play for the round.
-<p>When used with DEPRIVE, SOW_BLCK_DIV and <a href="game_params.html#gparam_one">GPARAM_ONE</a> holes are closed (blocked and removed from play) when sown to <a href="game_params.html#gparam_one">GPARAM_ONE</a> seeds.
+<p>When used with DEPRIVE, SOW_BLCK_DIV and goal_param holes are closed (blocked and removed from play) when sown to goal_param seeds.
 <h4 id="goal"> Game Goal </h4>
 <p class="pdesc">Location in Config Files: game_info : goal
 <p id="Goal" class="pdesc">Type: <a href="param_types.html#Goal"> Goal </a>
@@ -206,7 +206,7 @@ is included after the parameter sections.
 <ol start=0><li class="helptext">
 <b class="enum">MAX_SEEDS</b>: The goal is to collect the maximum number of seeds.
 <p class="helptext"> If the game is not played in rounds, the game will end when one player has more than half of the total seeds.
-<p class="helptext"> If the game is played in rounds, the round end condition is determined by <a href="game_params.html#rounds">ROUNDS</a>. These games end when one player has collected sufficient seeds to prevent the opponent from filling the required number of holes. Generally, the required number of holes is one but this may be increased by setting <a href="game_params.html#gparam_one">GPARAM_ONE</a>. 
+<p class="helptext"> If the game is played in rounds, the round end condition is determined by <a href="game_params.html#rounds">ROUNDS</a>. These games end when one player has collected sufficient seeds to prevent the opponent from filling the required number of holes. Generally, the required number of holes is one but this may be increased by setting goal_param. 
 <p class="helptext"> In MAX_SEEDS/ROUNDS games the player only controls the holes on their side of the board, where as, in TERRITORY games a player may control holes on either side of the board.
 <li class="helptext">
 <b class="enum">DEPRIVE</b>: eliminate all of your opponents seeds.
@@ -215,21 +215,31 @@ is included after the parameter sections.
 <p class="helptext"> Deprive games cannot be played in <a href="game_params.html#rounds">ROUNDS</a> or use children. Additionally, the following options are incompatible with DEPRIVE games: <a href="game_params.html#moveunlock">MOVEUNLOCK</a>, <a href="game_params.html#mustpass">MUSTPASS</a> and <a href="game_params.html#mustshare">MUSTSHARE</a>.
 <li class="helptext">
 <b class="enum">TERRITORY</b>: claim ownership of holes. Each round the ownership of holes is determined by the number of seeds captured in the previous round. In a TERRITORY game without rounds, the winner is the player that gained the most territory during play. 
-<p class="helptext"> TERRITORY games require <a href="game_params.html#stores">STORES</a> and that <a href="game_params.html#gparam_one">GPARAM_ONE</a> be set to a value between the number of holes and two times the number of holes.
+<p class="helptext"> TERRITORY games require <a href="game_params.html#stores">STORES</a> and that goal_param be set to a value between the number of holes and two times the number of holes.
 <p class="helptext"> TERRITORY games are incompatible with <a href="game_params.html#no_sides">NO_SIDES</a>, <a href="game_params.html#start_pattern">START_PATTERN</a>, <a href="game_params.html#grandslam">GRANDSLAM</a> of NOT_LEGAL, <a href="game_params.html#allow_rule">ALLOW_RULE</a> of OPP_OR_EMPTY.
 <li class="helptext">
 <b class="enum">CLEAR</b>: clear seeds from your own holes.
 <p class="helptext"> Moves must always be possible so <a href="game_params.html#min_move">MIN_MOVE</a> must be 1 and <a href="game_params.html#allow_rule">ALLOW_RULE</a> single_all_to_zero may not be used.
 <p class="helptext"> <a href="game_params.html#grandslam">GRANDSLAM</a> must be legal for DEPRIVE games.  Deprive games cannot be played in <a href="game_params.html#rounds">ROUNDS</a> or use children. Additionally, the following options are incompatible with DEPRIVE games: <a href="game_params.html#moveunlock">MOVEUNLOCK</a>, <a href="game_params.html#mustpass">MUSTPASS</a> and <a href="game_params.html#mustshare">MUSTSHARE</a>.
 <li class="helptext">
-<b class="enum">RND_WIN_COUNT</b>:  win gparam_one rounds. <a href="game_params.html#round_fill">ROUND_FILL</a> is not used; each round is setup as the start of the game.
+<b class="enum">RND_WIN_COUNT</b>:  win goal_param rounds. <a href="game_params.html#round_fill">ROUND_FILL</a> is not used; each round is setup as the start of the game.
 <li class="helptext">
-<b class="enum">RND_SEED_COUNT</b>: collect gparam_one seeds across several rounds. <a href="game_params.html#round_fill">ROUND_FILL</a> is not used; each round is setup as the start of the game.
+<b class="enum">RND_SEED_COUNT</b>: collect goal_param seeds across several rounds. <a href="game_params.html#round_fill">ROUND_FILL</a> is not used; each round is setup as the start of the game.
 <li class="helptext">
-<b class="enum">RND_EXTRA_SEEDS</b>: collect gparam_one extra seeds (winner - loser seeds).  <a href="game_params.html#round_fill">ROUND_FILL</a> is not used; each round is setup as the start of the game.
+<b class="enum">RND_EXTRA_SEEDS</b>: collect goal_param extra seeds (winner - loser seeds).  <a href="game_params.html#round_fill">ROUND_FILL</a> is not used; each round is setup as the start of the game.
 <li class="helptext">
-<b class="enum">RND_POINTS</b>:  score gparam_one points. WIN is 1 point. WIN and skunk (> 3/4 of total seeds) is 2 points.  <a href="game_params.html#round_fill">ROUND_FILL</a> is not used; each round is setup as the start of the game.
+<b class="enum">RND_POINTS</b>:  score goal_param points. WIN is 1 point. WIN and skunk (> 3/4 of total seeds) is 2 points.  <a href="game_params.html#round_fill">ROUND_FILL</a> is not used; each round is setup as the start of the game.
 </ol>
+<h4 id="goal_param"> Goal Parameter </h4>
+<p class="pdesc">Location in Config Files: game_info : goal_param
+<p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
+<p class="pdesc">Default value: 0
+<p class="pdesc">UI Tab: Dynamics
+
+<p><a href="game_params.html#goal">GOAL</a> of Territory: defines the number of holes needed for a win. The number of holes for each player are computed by rounding the number of seeds collected divided by the number of start seeds per hole.
+<p>Goal of Deprive and Blocked Divert Sower: defines the number of seeds needed to close/block holes (sow_blkd_div).
+<p>Goal of Max Seeds and <a href="game_params.html#rounds">ROUNDS</a>: defines the minimum number of holes each player must have to continue the game. The player with fewer seeds must have enough seeds to fill goal_param holes each with start_seeds in order to continue playing.  There is no rounding of seed counts as in territory games.
+<p>RND_* Goals: number of specified parameter for win.
 <h4 id="no_sides"> No Sides </h4>
 <p class="pdesc">Location in Config Files: game_info : no_sides
 <p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
@@ -277,16 +287,6 @@ is included after the parameter sections.
 <li class="helptext">
 <b class="enum">ARNGE_LIMIT</b>: the first move may be used to rearrange the seeds (opponent is same layout). If the first move is not used for rearrangement, captures and child creation are not allowed from the starter until the second player makes a child or captures.
 </ol>
-<h4 id="gparam_one"> General Input </h4>
-<p class="pdesc">Location in Config Files: game_info : gparam_one
-<p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
-<p class="pdesc">Default value: 0
-<p class="pdesc">UI Tab: Dynamics
-
-<p><a href="game_params.html#goal">GOAL</a> of Territory: defines the number of holes needed for a win. The number of holes for each player are computed by rounding the number of seeds collected divided by the number of start seeds per hole.
-<p>Goal of Deprive and Blocked Divert Sower: defines the number of seeds needed to close/block holes (sow_blkd_div).
-<p>Goal of Max Seeds and <a href="game_params.html#rounds">ROUNDS</a>: defines the minimum number of holes each player must have to continue the game. The player with fewer seeds must have enough seeds to fill gparam_one holes each with start_seeds in order to continue playing.  There is no rounding of seed counts as in territory games.
-<p>RND_* Goals: number of specified parameter for win.
 <h2 id="tab_Allow">Allow Tab</h2>
 <h4 id="min_move"> Minimum Seeds for Move </h4>
 <p class="pdesc">Location in Config Files: game_info : min_move
@@ -386,7 +386,7 @@ is included after the parameter sections.
 <ol start=0><li class="helptext">
 <b class="enum">NONE</b>: there is no special sowing rule.
 <li class="helptext">
-<b class="enum">SOW_BLKD_DIV</b>: If the final seed of an individual sow lands on the opposite side of the board and brings the contents of that hole to <a href="game_params.html#gparam_one">GPARAM_ONE</a> seeds, the hole is closed closed (blocked). In single lap games, the hole's seeds are removed from play. In multilap games, the seeds are used to continue sowing.
+<b class="enum">SOW_BLKD_DIV</b>: If the final seed of an individual sow lands on the opposite side of the board and brings the contents of that hole to goal_param seeds, the hole is closed closed (blocked). In single lap games, the hole's seeds are removed from play. In multilap games, the seeds are used to continue sowing.
 <p class="helptext"> When sowing, blocked holes on your own side of the board are skipped  and blocked holes on opponent's side are diverted out of play or captured.
 <p class="helptext">  Game <a href="game_params.html#goal">GOAL</a> must be DEPRIVE and all of the associated restrictions apply. <a href="game_params.html#nocaptfirst">NOCAPTFIRST</a> maybe used to prevent closing holes on the first move. Capture mechanisms other than closing holes are not supported. The minimum move must be 1 and thus <a href="game_params.html#sow_start">SOW_START</a> is incompatible.  <a href="game_params.html#allow_rule">ALLOW_RULE</a> may not be used to limit allowable moves.  <a href="game_params.html#skip_start">SKIP_START</a> and <a href="game_params.html#visit_opp">VISIT_OPP</a> are not supported with SOW_BLKD_DIV.  <a href="game_params.html#mlaps">MLAPS</a> of LAPPER_NEXT is not supported with SOW_BLKD_DIV(_NR).
 <li class="helptext">
@@ -820,7 +820,7 @@ is included after the parameter sections.
     <p class="param"><a href="#evens_m">evens_m</a></p>
     <p class="param"><a href="#game_class">game_class</a></p>
     <p class="param"><a href="#goal">goal</a></p>
-    <p class="param"><a href="#gparam_one">gparam_one</a></p>
+    <p class="param"><a href="#goal_param">goal_param</a></p>
     <p class="param"><a href="#grandslam">grandslam</a></p>
     <p class="param"><a href="#help_file">help_file</a></p>
     <p class="param"><a href="#holes">holes</a></p>

@@ -276,7 +276,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         self.rtally = None
         if self.info.goal in round_tally.RoundTally.GOALS:
             self.rtally = round_tally.RoundTally(self.info.goal,
-                                                 self.info.gparam_one,
+                                                 self.info.goal_param,
                                                  self.cts.total_seeds)
 
         self.deco = ManDeco(self)
@@ -438,6 +438,15 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         return cond
 
 
+    def rtally_param_func(self):
+        """If we created a round tallier, return the
+        func that get the param values."""
+
+        if self.rtally:
+            return self.rtally.parameter
+        return None
+
+
     def win_conditions(self, repeat_turn=False):
         """Check for end game.
         Return None if no victory/tie conditions are met.
@@ -455,16 +464,16 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         """Return a game appropriate win message based on WinCond.
         Return a window title and message string."""
 
-        win_param = self.info.gparam_one
+        win_param = self.info.goal_param
 
         reason = ("by collecting the most seeds!",
                   "by eliminating their opponent's seeds.",
                   "by claiming more holes.",
                   "by clearing all their seeds.",
-                  f"by winning more than {win_param} rounds.",
-                  f"by collecting more than {win_param} total seeds.",
-                  f"by collecting more than {win_param} more seeds opponent.",
-                  f"by earning more than {win_param} points.")
+                  f"by winning {win_param} or more rounds.",
+                  f"by collecting {win_param} or more total seeds.",
+                  f"by collecting at least {win_param} more seeds than opponent.",
+                  f"by earning {win_param} or more points.")
 
         rnd_reason = ("not used",
                       "by collecting at least half the seeds.",

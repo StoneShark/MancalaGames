@@ -814,7 +814,7 @@ class TestWinMessage:
         game_info = gi.GameInfo(goal=Goal.TERRITORY,
                                 stores=True,
                                 rounds=gi.Rounds.NO_MOVES,
-                                gparam_one=10,
+                                goal_param=10,
                                 capt_on=[4],
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)

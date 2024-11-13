@@ -193,7 +193,7 @@ class TestTerrMoves:
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
                                 goal=Goal.TERRITORY,
-                                gparam_one=5,
+                                goal_param=5,
                                 min_move=min_move,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)

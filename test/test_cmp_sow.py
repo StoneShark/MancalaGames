@@ -91,7 +91,7 @@ GAMECONF = {'basic':
             'sbd_udir':   # sow block div with udir but no mlaps, check both dirs
                 {'goal': gi.Goal.DEPRIVE,
                  'sow_rule': gi.SowRule.SOW_BLKD_DIV,
-                 'gparam_one': 3,
+                 'goal_param': 3,
                  'blocks': True,
                  'udir_holes': [0, 1, 2, 3, 4]},
 

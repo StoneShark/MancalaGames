@@ -14,8 +14,6 @@ class RoundTally:
     Collect them all even though we only use one at a time."""
     # pylint: disable=too-many-instance-attributes
 
-    # TODO the primary param should be on the UI
-
     # Create a RoundTally for these game goals
     GOALS = {gi.Goal.RND_WIN_COUNT,
              gi.Goal.RND_SEED_COUNT,
@@ -143,9 +141,10 @@ class RoundTally:
         if all(ok_win):
             return self.end_it()  # award win to higher total
 
-        elif ok_win[False]:
+        if ok_win[False]:
             return gi.WinCond.WIN, False
-        elif ok_win[True]:
+
+        if ok_win[True]:
             return gi.WinCond.WIN, True
 
         return None, None

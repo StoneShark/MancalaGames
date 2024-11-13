@@ -138,7 +138,7 @@ class DivertSkipBlckdSower(SowMethodIf):
     The option to select this is:  sow_rule: SOW_BLKD_DIV
 
     XXXX  visit_opp is not currently supported because we need to
-    close the hole if we end on gparam_one seeds (ie. block it).
+    close the hole if we end on goal_param seeds (ie. block it).
     This needs to occur if lapping or not.
     This doesn't quite fit the model of the code right now but might
     in the future."""
@@ -188,7 +188,7 @@ class SowClosed(SowMethodIf):
         loc = mdata.capt_loc
 
         if (loc not in self.no_close
-                and self.game.board[loc] == self.game.info.gparam_one
+                and self.game.board[loc] == self.game.info.goal_param
                 and self.game.cts.opp_side(self.game.turn, loc)
                 and not self.game.inhibitor.stop_me_capt(self.game.turn)):
 
@@ -467,7 +467,7 @@ class CloseOp(MlapEndOpIf):
 
         loc = mdata.capt_loc
         if (loc not in self.no_close
-                and self.game.board[loc] == self.game.info.gparam_one
+                and self.game.board[loc] == self.game.info.goal_param
                 and self.game.cts.opp_side(self.game.turn, loc)
                 and not self.game.inhibitor.stop_me_capt(self.game.turn)):
             self.game.blocked[loc] = True

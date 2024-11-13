@@ -498,7 +498,7 @@ class TestRoundTally:
                                 stores=True,
                                 goal=Goal.RND_WIN_COUNT,
                                 rounds=gi.Rounds.NO_MOVES,
-                                gparam_one=5,
+                                goal_param=5,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
@@ -578,7 +578,7 @@ class TestTerritory:
         game_consts = gc.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(capt_on = [2],
                                 stores=True,
-                                gparam_one=5,
+                                goal_param=5,
                                 goal=Goal.TERRITORY,
                                 rounds=gi.Rounds.NO_MOVES,
                                 nbr_holes=game_consts.holes,

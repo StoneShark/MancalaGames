@@ -125,7 +125,7 @@ class TestAllowables:
         game_consts = gc.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[2],
                                 goal=2,
-                                gparam_one=6,
+                                goal_param=6,
                                 stores=True,
                                 min_move=min_move,
                                 mustshare=mustshare,
@@ -620,7 +620,7 @@ class TestOwnerAllowables:
         game_info = gi.GameInfo(capt_on=[4],
                                 stores=True,
                                 goal=Goal.TERRITORY,
-                                gparam_one=6,
+                                goal_param=6,
                                 mustshare=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)

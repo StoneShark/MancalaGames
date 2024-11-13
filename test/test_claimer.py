@@ -326,7 +326,7 @@ class TestClaimers:
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
                                 goal=request.param,
-                                gparam_one=8,
+                                goal_param=8,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 

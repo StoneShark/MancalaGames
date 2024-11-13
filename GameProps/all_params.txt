@@ -22,7 +22,7 @@
       "crosscapt": false,
       "evens": false,
       "goal": 0,
-      "gparam_one": 0,
+      "goal_param": 0,
       "grandslam": 0,
       "help_file": "",
       "min_move": 1,

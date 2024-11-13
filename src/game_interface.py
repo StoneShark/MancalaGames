@@ -273,7 +273,7 @@ class GameInfo:
     child_cvt: int = 0
     child_type: ChildType = ChildType.NOCHILD
     child_rule: ChildRule = ChildRule.NONE
-    gparam_one: int = 0
+    goal_param: int = 0
     sow_rule: SowRule = SowRule.NONE
 
     # **** capture
@@ -483,6 +483,12 @@ class GameInterface(abc.ABC):
     def win_message(self, win_cond):
         """Return a game appropriate win message based on WinCond.
         Return a window title and message string."""
+
+    @abc.abstractmethod
+    def rtally_param_func(self):
+        """If there is a rount tally return a function
+        that returns the true and false tallies for the
+        parameter"""
 
     @abc.abstractmethod
     def params_str(self):

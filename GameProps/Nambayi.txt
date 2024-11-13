@@ -9,7 +9,7 @@
       "about": "A multilap Mancala. The goal is to deprive the opponent of seeds. Holes are closed on opponent side on 4s, sowing continues with those seeds. In subsequent sowing of closed holes, own holes are skipped but seeds for opponent's holes are taken out of play.",
       "blocks": true,
       "goal": 1,
-      "gparam_one": 4,
+      "goal_param": 4,
       "mlaps": 1,
       "sow_direct": 1,
       "sow_rule": 1

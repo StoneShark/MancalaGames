@@ -81,20 +81,20 @@ GAMECONF = {'basic':
                 {'evens': True,
                  'stores': True,
                  'goal': gi.Goal.TERRITORY,
-                 'gparam_one': 2 * HOLES},
+                 'goal_param': 2 * HOLES},
 
             'ter1_0':
                 {'evens': True,
                  'stores': True,
                  'goal': gi.Goal.TERRITORY,
-                 'gparam_one': 2 * HOLES,
+                 'goal_param': 2 * HOLES,
                  'allow_rule': gi.AllowRule.SINGLE_TO_ZERO},
 
             'ter1all':
                 {'evens': True,
                  'stores': True,
                  'goal': gi.Goal.TERRITORY,
-                 'gparam_one': 2 * HOLES,
+                 'goal_param': 2 * HOLES,
                  'allow_rule': gi.AllowRule.SINGLE_ONLY_ALL},
 
 
@@ -237,21 +237,21 @@ BAD_CONFIGS = {
         {'evens': True,
          'stores': True,
          'goal': gi.Goal.TERRITORY,
-         'gparam_one': 2 * HOLES,
+         'goal_param': 2 * HOLES,
          'allow_rule': gi.AllowRule.OPP_OR_EMPTY},
 
     'two_or_right':
         {'evens': True,
          'stores': True,
          'goal': gi.Goal.TERRITORY,
-         'gparam_one': 2 * HOLES,
+         'goal_param': 2 * HOLES,
          'allow_rule': gi.AllowRule.TWO_ONLY_ALL_RIGHT},
 
     'right_two':
         {'evens': True,
          'stores': True,
          'goal': gi.Goal.TERRITORY,
-         'gparam_one': 2 * HOLES,
+         'goal_param': 2 * HOLES,
          'allow_rule': gi.AllowRule.FIRST_TURN_ONLY_RIGHT_TWO},
 
     'right21all':

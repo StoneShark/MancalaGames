@@ -35,11 +35,11 @@ class RoundWinner(emd.EndTurnIf):
         super().__init__(game, decorator, sclaimer)
 
         nbr_start = game.cts.nbr_start
-        gparam_one = game.info.gparam_one
+        goal_param = game.info.goal_param
         intro = "Game, not round, ended (too few seeds to fill "
 
         if game.info.goal == gi.Goal.TERRITORY:
-            req_holes = game.cts.dbl_holes - gparam_one + 1
+            req_holes = game.cts.dbl_holes - goal_param + 1
             self.req_seeds = self.round_seeds_for_win(req_holes, nbr_start)
             self.msg = intro + f"at least {req_holes} holes)."
 
@@ -47,10 +47,10 @@ class RoundWinner(emd.EndTurnIf):
             self.req_seeds = game.cts.holes + game.info.min_move - 1
             self.msg = intro + "a playable side)."
 
-        elif game.info.gparam_one > 0:
+        elif game.info.goal_param > 0:
             # max seeds games do not round seeds
-            self.req_seeds = game.info.gparam_one * nbr_start
-            self.msg = intro + f"at least {gparam_one} holes)."
+            self.req_seeds = game.info.goal_param * nbr_start
+            self.msg = intro + f"at least {goal_param} holes)."
 
         else:
             self.req_seeds = nbr_start

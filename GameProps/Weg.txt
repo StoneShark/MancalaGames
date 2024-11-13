@@ -11,7 +11,7 @@
       "child_cvt": 4,
       "child_type": 4,
       "goal": 2,
-      "gparam_one": 10,
+      "goal_param": 10,
       "mlaps": 1,
       "mustpass": true,
       "rounds": 2,

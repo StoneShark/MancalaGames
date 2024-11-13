@@ -100,7 +100,7 @@ class TestEndMove:
                   },
 
         'r2game': {'rounds': gi.Rounds.HALF_SEEDS,
-                   'gparam_one': 2,   # need two holes to continue (new round)
+                   'goal_param': 2,   # need two holes to continue (new round)
                    'evens': True,
                    'stores': True,
                   },
@@ -343,7 +343,7 @@ class TestEndMove:
                  utils.build_board([0, 0, 0],
                                    [0, 0, 0]), [9, 3], False),
 
-                # 32: gparam_one with MAX_SEEDS & rounds, e.g. don't need all
+                # 32: goal_param with MAX_SEEDS & rounds, e.g. don't need all
                 ('r2game', False, False,
                  utils.build_board([2, 2, 2],
                                    [2, 2, 2]), [0, 6], True, None,
@@ -849,7 +849,7 @@ class TestQuitter:
                   'tergame': {'evens': True,
                               'stores': True,
                               'goal': gi.Goal.TERRITORY,
-                              'gparam_one': 4,
+                              'goal_param': 4,
                               },
 
                   'no_win_game': {'evens': True,
@@ -1052,7 +1052,7 @@ class TestTerritory:
         game_consts = gc.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(capt_on = [1],
                                 stores=True,
-                                gparam_one=5,
+                                goal_param=5,
                                 goal=Goal.TERRITORY,
                                 rounds=gi.Rounds.NO_MOVES,
                                 nbr_holes=game_consts.holes,
@@ -1069,7 +1069,7 @@ class TestTerritory:
         game_consts = gc.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(capt_on = [1],
                                 stores=True,
-                                gparam_one=5,
+                                goal_param=5,
                                 goal=Goal.TERRITORY,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
@@ -1231,7 +1231,7 @@ class TestTerritory:
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
-                                gparam_one=6,
+                                goal_param=6,
                                 goal=Goal.TERRITORY,
                                 rounds=gi.Rounds.NO_MOVES,
                                 mustshare=True,
@@ -1300,7 +1300,7 @@ class TestRoundTally:
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
                                 goal=gi.Goal.RND_POINTS,
-                                gparam_one=5,
+                                goal_param=5,
                                 rounds=gi.Rounds.NO_MOVES,
                                 nbr_holes=game_consts.holes,
                                 rules=ginfo_rules.RuleDict())

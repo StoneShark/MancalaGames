@@ -151,7 +151,7 @@ class TestConstruction:
 
         ginfo = gi.GameInfo(capt_on=[2],
                             goal=Goal.TERRITORY,
-                            gparam_one=10,
+                            goal_param=10,
                             stores=True,
                             nbr_holes=6,
                             rules=rules)
@@ -160,7 +160,7 @@ class TestConstruction:
 
         ginfo = gi.GameInfo(capt_on=[2],
                             goal=Goal.TERRITORY,
-                            gparam_one=10,
+                            goal_param=10,
                             stores=True,
                             udir_holes=[2],
                             sow_direct=Direct.SPLIT,
@@ -180,7 +180,7 @@ class TestConstruction:
 
         ginfo = gi.GameInfo(capt_on=[2],
                             goal=Goal.TERRITORY,
-                            gparam_one=10,
+                            goal_param=10,
                             stores=True,
                             udir_holes=[2],
                             sow_direct=Direct.PLAYALTDIR,

@@ -10,7 +10,7 @@
       "allow_rule": 8,
       "blocks": true,
       "capt_on": [2],
-      "gparam_one": 4,
+      "goal_param": 4,
       "crosscapt": true,
       "oppsidecapt": true,
       "mlaps": 1,

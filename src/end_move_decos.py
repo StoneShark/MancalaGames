@@ -114,7 +114,7 @@ class EndTurnIf(deco_chain_if.DecoChainIf):
             win_seeds = self.game.cts.total_seeds - 1
 
         elif game_goal == gi.Goal.TERRITORY:
-            win_seeds = EndTurnIf.round_seeds_for_win(self.game.info.gparam_one,
+            win_seeds = EndTurnIf.round_seeds_for_win(self.game.info.goal_param,
                                                       self.game.cts.nbr_start)
 
         elif (game_goal == gi.Goal.MAX_SEEDS
