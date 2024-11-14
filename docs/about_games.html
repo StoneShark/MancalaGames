@@ -375,7 +375,12 @@ allow closing of rightmost holes (<a href="game_params.html#sow_rule">SOW_RULE</
 </div>
 <h3 id="Endodoi">Endodoi</h3>
 <p>A multi-lap mancala, sow direction counter-clockwise, cross-capture when end in own hole with one seed. Pick own seed on capture. Games ends if no moves.
-<p>Variation: Played with 6 to 10 holes.
+<p>Variations:
+<ul><li class="helptext">
+Played with 6 to 10 holes.
+<li class="helptext">
+Use a <a href="game_params.html#goal">GOAL</a> of RND_SEED_COUNT where the winner is the first to collect 100 total seeds (Valdez).
+</ul>
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  8</p>
@@ -542,11 +547,9 @@ Another value for <a href="game_params.html#round_fill">ROUND_FILL</a>
 <ul><li class="helptext">
 Played as a single game (no rounds).
 <li class="helptext">
-Board sizes 6 to 10 holes per side. 
+A player loses if they have no moves at the start of their turn (no <a href="game_params.html#mustpass">MUSTPASS</a>).
 <li class="helptext">
-Start seeds varies from 4 to 9 (smaller board, fewer start seeds). 
-<li class="helptext">
-Some combinations of size and start seeds are quite unbanalnced.
+Board sizes 6 to 10 holes per side with start seeds varying from 4 to 9 (smaller board, fewer start seeds). Some combinations of size and start seeds are quite unbanalnced.
 <li class="helptext">
 Instead of minimum move of 2, singletons may start moves if all holes are empty or contain one seed (allow_rule == SINGLE_ONLY_ALL).
 </ul>
@@ -827,6 +830,24 @@ See <a href="about_games.html#Olinda">Olinda</a>, <a href="about_games.html#Pall
   </div>
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p60.
+<h3 id="Mangala II">Mangala II</h3>
+<p>A single-lap mancala, sow direction is counter-clockwise, capture on opponents side on 2s, 4s and 6s.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  6</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 2 4 6</p>
+    <p class="param"><a href="game_params.html#grandslam">Grand Slam</a>: NO_CAPT</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: Yes</p>
+    <p class="param"><a href="game_params.html#mustshare">Must Share</a>: Yes</p>
+    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p47.
 <h3 id="Mbangbi">Mbangbi</h3>
 <p>A single-lap mancala in which each player chooses the sow direction on each move. Left-mouse sows clockwise and right-mouse button sows counter-clockwise. Moves may only be started from holes with 2 or more seeds.  If a player does not have a move they must pass until they do have a move or the game ends.
 <p>Captures are on 2s and 4s from the opponent's side (final seed sown makes either 2 or 4).  As long as there is a an unbroken group of holes containing 2 or 4 seeds immediately preceeding the final hole sown, these holes are also captured.
@@ -1317,6 +1338,32 @@ see Sedeqa
   </div>
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p25.
+<h3 id="Urim">Urim</h3>
+<p>A single-lap mancala, sow direction is counter-clockwise, capture on opponents side on 2s, 3s and 4s. A sow which cycles the board, will skip the hole that the move started from. Holes may never be sown above 17 seeds; skip such holes while sowing. If your opponent has no seeds, you must make seeds available to them (if you can).
+<p>If a grand slam were to occur, the seeds are left on the board, that is, they are not captured.
+<p>A round ends when the current player cannot move or when the outcome cannot change. The game ends when one player scores 10 points: 1 point for each win and another point for a skunk, i.e. collecting 36 or more seeds for the win.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: RND_POINTS</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 2 3 4</p>
+    <p class="param"><a href="game_params.html#goal_param">Goal Parameter</a>: 10</p>
+    <p class="param"><a href="game_params.html#grandslam">Grand Slam</a>: NOT_LEGAL</p>
+    <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: Yes</p>
+    <p class="param"><a href="game_params.html#mustshare">Must Share</a>: Yes</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
+    <p class="param"><a href="game_params.html#skip_start">Skip Start on Lap</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: MAX_SOW</p>
+    <p class="param"><a href="game_params.html#sow_param">Sow Parameter</a>: 17</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p55.
+<p>Deviation: Per the rules: after the first capture on 2 or 3 subsequent captures (multicapt) are made on 2, 3 or 4 seed holes. Mancala Games only supports the capture mechanism being the same for the first and multiple captures.
 <h3 id="Vai Lun Thlan">Vai Lun Thlan</h3>
 <p>A single-lap mancala, sow direction is clockwise, capture on 1s. A player must pass if they don't have a move.
 <div class="cols_row">
@@ -1475,9 +1522,9 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Eson Xorgol">Eson Xorgol</a></p>
     <p class="param"><a href="#Gabata">Gabata</a></p>
     <p class="param"><a href="#Gamacha">Gamacha</a></p>
+    <p class="param"><a href="#Giuthi">Giuthi</a></p>
   </div>
   <div class="column3">
-    <p class="param"><a href="#Giuthi">Giuthi</a></p>
     <p class="param"><a href="#Goat">Goat</a></p>
     <p class="param"><a href="#J'Odu">J'Odu</a></p>
     <p class="param"><a href="#Kalah">Kalah</a></p>
@@ -1487,6 +1534,7 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Lamlameta">Lamlameta</a></p>
     <p class="param"><a href="#Leyla-Gobale">Leyla-Gobale</a></p>
     <p class="param"><a href="#Longbeu-a-cha">Longbeu-a-cha</a></p>
+    <p class="param"><a href="#Mangala II">Mangala II</a></p>
     <p class="param"><a href="#Mbangbi">Mbangbi</a></p>
     <p class="param"><a href="#Mbothe">Mbothe</a></p>
     <p class="param"><a href="#NamNam">NamNam</a></p>
@@ -1496,9 +1544,9 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#NoCapt">NoCapt</a></p>
     <p class="param"><a href="#NoSides">NoSides</a></p>
     <p class="param"><a href="#NumNum">NumNum</a></p>
+    <p class="param"><a href="#Olinda">Olinda</a></p>
   </div>
   <div class="column3">
-    <p class="param"><a href="#Olinda">Olinda</a></p>
     <p class="param"><a href="#Ot-tjin">Ot-tjin</a></p>
     <p class="param"><a href="#Oware">Oware</a></p>
     <p class="param"><a href="#Pallam Kuzhi">Pallam Kuzhi</a></p>
@@ -1509,6 +1557,7 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#SowOpDirs">SowOpDirs</a></p>
     <p class="param"><a href="#Tapata">Tapata</a></p>
     <p class="param"><a href="#Toguz Xorgol">Toguz Xorgol</a></p>
+    <p class="param"><a href="#Urim">Urim</a></p>
     <p class="param"><a href="#Vai Lun Thlan">Vai Lun Thlan</a></p>
     <p class="param"><a href="#Valah">Valah</a></p>
     <p class="param"><a href="#Wari">Wari</a></p>

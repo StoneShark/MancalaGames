@@ -43,6 +43,13 @@ if BAD_CFG in FILES:
     FILES.remove(BAD_CFG)
 
 
+# games that generally fail and the reason
+
+XFAIL_GAMES = {
+    'Urim': "10 points can't generally be achieved within test limits.",
+    }
+
+
 @pytest.fixture(autouse=True)
 def no_logger():
     """Make certain that no other test left the logger active."""
@@ -83,20 +90,17 @@ def test_one_game(request, game_pdict):
     request.config.cache.set(key_name, cnt + 1)
 
 
-# @pytest.fixture
-# def known_game_fails(request):
+@pytest.fixture
+def known_game_fails(request):
 
-#     game, _ = request.getfixturevalue('game_pdict')
-#     if game.info.mlaps:
-#         request.node.add_marker(
-#             pytest.mark.xfail(
-#                 reason='Many seeds; heuristic test; occasionally fails.',
-#                 strict=False))
-
-
-# @pytest.mark.usefixtures('known_game_fails')
+    game, _ = request.getfixturevalue('game_pdict')
+    if game.info.name in XFAIL_GAMES:
+        request.node.add_marker(
+            pytest.mark.xfail(reason=XFAIL_GAMES[game.info.name],
+                              strict=False))
 
 
+@pytest.mark.usefixtures('known_game_fails')
 @pytest.mark.parametrize('game_pdict', FILES, indirect=True)
 def test_game_stats(request, game_pdict, nbr_runs):
 

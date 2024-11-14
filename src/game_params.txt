@@ -35,9 +35,9 @@ Multi lap game with multiple captures: capture when last hole sown is followed b
 "
 Capture	crosscapt	Cross-Capture	game_info _	113	bool	False	0	2	"If the last sown seed is put in an empty hole, seeds on the opposite side of the board are captured. The capture of those seeds can be limited by CAPT_MAX, CAPT_MIN, CAPT_ON, EVENS, MOVEUNLOCK, OPPSIDECAPT. For example, crosscapt with evens will only capture when there are an even number of seeds in the opposite hole.
 SOW_RULE of either SOW_CAPT_ALL do not do this capture."
-Capture	xc_sown	Must sow opp for xcapt	game_info _	146	bool	False	1	2	"Only allow cross capture if the player has sown onto the opposite side of board. 
+Capture	xc_sown	Must sow opp for xcapt	game_info _	147	bool	False	1	2	"Only allow cross capture if the player has sown onto the opposite side of board. 
 If a player ends on their own side of the board in an empty hole, but did not sow any opposite hole, they get a repeat turn."
-Capture	xcpickown	Own Seed on Xcapture	game_info _	147	CrossCaptOwn	LEAVE	2	2	"When crosscapt is set, defines what to do with the single seed initiating the cross capture.
+Capture	xcpickown	Own Seed on Xcapture	game_info _	148	CrossCaptOwn	LEAVE	2	2	"When crosscapt is set, defines what to do with the single seed initiating the cross capture.
 - LEAVE: always leave the signle seed
 - PICK_ON_CAPT: only pick (capture) the seed if there was a capture
 - ALWAYS_PICK: always pick (capture) the final single seed, even if there was not a capture"
@@ -63,7 +63,7 @@ Capture	pickextra	On Capture, Take More Rule	game_info _	131	CaptExtraPick	NONE	
 - PICKLASTSEEDS: If there are the number of starts seeds or fewer left,  the current player collects them and the game is over. This rule is applied at the end of each turn, even if there is not a capture because the sow phase may have reduced the seed count.
 - PICK2XLASTSEEDS: If there are 2 times the number of start seeds or fewer, the round starter picks them. This rule is applied at the end of each turn, even if there is not a capture because the sow phase may have reduced the seed count.
 In terms of GRANDSLAM, these picks are considered captures."
-Dynamics	stores	Stores	game_info _	142	bool	True	0	0	True when stores are present on the game board. For games with GOAL of DEPRIVE or CLEAR, stores can be used to show whose turn it is (seed counts will not be sown).
+Dynamics	stores	Stores	game_info _	143	bool	True	0	0	True when stores are present on the game board. For games with GOAL of DEPRIVE or CLEAR, stores can be used to show whose turn it is (seed counts will not be sown).
 Dynamics	mustpass	Must Pass	game_info _	125	bool	False	1	0	When a player has no allowable moves on their turn, they must pass, and continue to do so until they have allowable moves or the game is over. The game is over when there is a clear winner or tie condition, or when neither player has an allowable move.
 Dynamics	rounds	Rounds	game_info _	135	Rounds	NO_ROUNDS	4	0	"When rounds are employed, each round may end under conditions that do not win the overall game. The board is then setup again per the game rules, generally with some feature changed based on the previous round: hole ownership, holes out of play, a shortened board. Play continues in rounds until either player meets the overall game winning condition.
 If the game is played in round, defines how each round ends: 
@@ -117,7 +117,7 @@ Goal of Deprive and Blocked Divert Sower: defines the number of seeds needed to 
 Goal of Max Seeds and ROUNDS: defines the minimum number of holes each player must have to continue the game. The player with fewer seeds must have enough seeds to fill goal_param holes each with start_seeds in order to continue playing.  There is no rounding of seed counts as in territory games.
 RND_* Goals: number of specified parameter for win."
 Dynamics	no_sides	No Sides	game_info _	127	bool	False	2	2	Moves maybe made from any hole, independent of the side of the board. Moves need to specify side, position and directions.  
-Dynamics	start_pattern	Start Pattern	game_info _	141	StartPattern	ALL_EQUAL	3	2	"Allows specifing non-all-equal start patterns. The following patterns are supported:
+Dynamics	start_pattern	Start Pattern	game_info _	142	StartPattern	ALL_EQUAL	3	2	"Allows specifing non-all-equal start patterns. The following patterns are supported:
 - ALL_EQUAL: all holes start with the same number of seeds.
 - GAMACHA: starting from the third hold (from start player's left) place nbr_seeds in every other hole, the first move is prescribed move the center hole's seeds to the other side (this is done automatically).
 - ALTERNATES: everyother hole is filled with nbr_seeds, no seeds end up opposite eachother. If a player has fewer seeds than their opponent, then they start.
@@ -174,7 +174,7 @@ Player	easy_rand	Easy Random Addin	player scorer _	227	int	0	7	2	"If the game is
 The specific value for this should be selected based on the ranges of the paremeters and multiplier.
 Used only for minimax & negamax players."
 skip	mlength		game_info _	121	int		0	0	A derived parameter. Do not include in config files. Set during game construction length of moves: 1 (int) or 2, 3 (tuple).
-skip	udirect		game_info _	144	bool		0	0	A derived parameter. Do not include in config files. Set during game construction to True if any udir holes are set.
+skip	udirect		game_info _	145	bool		0	0	A derived parameter. Do not include in config files. Set during game construction to True if any udir holes are set.
 skip	rules			500	RuleDict		0	0	An init only parameter that used to check the consistency of the game info. Errors and warnings are raised as the rules are processed.
 skip	nbr_holes			501	int		0	0	An init only parameter that is used to check the other parameters in the creation of game info.
 Sow	sow_direct	Sow Direction	game_info _	137	Direct	CCW	0	0	"Direction of sow:
@@ -203,8 +203,11 @@ Sow	sow_rule	Special Sow Rules	game_info _	139	SowRule	NONE	6	0	"Special sow rul
   + If mlaps is LAPPER and the final seed sown for any lap meets the capture criteria, the contents of the hole are captured by the sower and not the hole owner and the turn is over.
   + GRANDSLAM rules are not applied. NOCAPTMOVES prevents this capture for the first number of specified moves.
 - NO_SOW_OPP_2S: Don't sow into opponents holes with 2 seeds.
-- CHANGE_DIR_LAP: Change the direction for each lap sown. Generally used with UDIR_HOLES so the player may choose the first direction."
-Sow	udir_holes	User Chooses Direction	game_info _	143	list[bool]	[]	8	0	"A list of holes from which the user can choose the sow direction. Control is via the mouse button: left is clockwise and right is counter-clockwise.
+- CHANGE_DIR_LAP: Change the direction for each lap sown. Generally used with UDIR_HOLES so the player may choose the first direction.
+- MAX_SOW: holes sow_param seeds are skipped when sowing. That is, holes will never contain more seeds than sow_param."
+Sow	sow_param	Sow Parameter	game_info _	141	int	0	7	0	"A general parameter for sowing. Usage is based on other sow options:
+- Sow rule of MAX_SOW: maximum number of seeds a hole may contain"
+Sow	udir_holes	User Chooses Direction	game_info _	144	list[bool]	[]	8	0	"A list of holes from which the user can choose the sow direction. Control is via the mouse button: left is clockwise and right is counter-clockwise.
 Note: all holes respond to both mouse buttons, but if the hole is not in udir_holes, the sow direction will be that prescribed by sow_direct with either button.
 Games with any hole set to user chooses direction must not use MUSTSHARE; GRANDSLAM must be LEGAL; and no special ALLOW_RULE is supported."
 Sow	mlaps	Multilap Sow	game_info _	120	LapSower	OFF	0	2	"Determines if seeds from more the start hole are picked up and sown:
@@ -213,14 +216,14 @@ Sow	mlaps	Multilap Sow	game_info _	120	LapSower	OFF	0	2	"Determines if seeds fro
   + Several values of SOW_RULE perform an operation after each lap sown: SOW_CLKD_DIV(_NR) closes the final hole and CHANGE_DIR_LAP changes the direction of sowing after each lap.
 - LAPPER_NEXT:  For lapper_next sowing, the number of seeds in the last sown hole of lap do not matter. Instead, if the hole after the last sown hole has any seeds, those seeds are used to continue sowing the next lap. Sowing continues until the hole after the lap's final seed is empty. There are games with other conditions for ending a multilap low such as making a capture or making a child.
   + A SOW_RULE of CHANGE_DIR_LAP changes the direction of sowing after each lap. SOW_BLKD_DIV(_NR) is not supported for LAPPER_NEXT."
-Sow	visit_opp	Visit Opp for Mlaps	game_info _	145	bool	False	1	2	Requires MLAPS. If the first 'lap' does not reach the opponent's side of the board, the sowing ends after the first lap. 
+Sow	visit_opp	Visit Opp for Mlaps	game_info _	146	bool	False	1	2	Requires MLAPS. If the first 'lap' does not reach the opponent's side of the board, the sowing ends after the first lap. 
 Sow	child_type	Type of Children	game_info _	112	ChildType	NOCHILD	3	2	"Games with children allow players to claim holes. These child holes are an extension of the stores and seeds in them count towards a win. Making a child stops any multiple lap sowing, moves cannot start from children, and they cannot be captured (except for special rules associated with WEGs).
 - NOCHILD: children are not used.
 - NORMAL: children are made when a final seeds sows a hole to CHILD_CVT.
 - WALDA: STORES are not supported. Captures are instead moved into waldas, thus a player may not capture until they have created a walda. 
   + Walda locations are limited.  Each player may create up to 6 waldas: on either end of each side of the board and the next two outer holes on their own side of the board. Note that there are only 8 total places that waldas maybe created.
 - ONE_CHILD: only one child allowed per player.
-  + Children must not be symmetrically opposite eachother. For example,  in a 9 hole per side game with holes numbered as follows, tuzdeks may not be in the same numbered holes:
+  + Children must not be symmetrically opposite eachother. For example,  in a 9 hole per side game with holes numbered as follows, children may not be in the same numbered holes:
   + 9 8 7 6 5 4 3 2 1
   + 1 2 3 4 5 6 7 8 9 
   + Depending on sow direction some holes are prohibited from being made children: 

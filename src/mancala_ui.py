@@ -256,6 +256,8 @@ class MancalaUI(tk.Frame):
 
         gamemenu = tk.Menu(menubar)
         gamemenu.add_command(label='New', command=self._new_game)
+        gamemenu.add_separator()
+        gamemenu.add_command(label='End Round', command=self._end_round)
         gamemenu.add_command(label='End Game', command=self._end_game)
         menubar.add_cascade(label='Game', menu=gamemenu)
 
@@ -644,6 +646,35 @@ class MancalaUI(tk.Frame):
             self._param_tally()
 
             self._win_popup(*self.game.win_message(win_cond))
+
+
+    def _end_round(self):
+        """End the round. Report result to user."""
+
+        if not self.game.info.rounds or self.mode != btnb.Behavior.GAMEPLAY:
+            self._end_game()
+            return
+
+        message = 'Are you sure you wish to end the round?'
+        do_it = tk.messagebox.askokcancel(title='End Round',
+                                          message=message,
+                                          parent=self)
+        if not do_it:
+            return
+
+        win_cond = self.game.end_round()
+
+        wtext = 'Round Ended '
+        if win_cond in (gi.WinCond.WIN, gi.WinCond.ROUND_WIN):
+            sturn = 'Top' if self.game.get_turn() else 'Bottom'
+            wtext += f'\n{win_cond.name} by {sturn}'
+        elif win_cond:
+            wtext += ' ' + win_cond.name
+        game_log.turn(self.game.mcount, wtext, self.game)
+
+        self._refresh()
+        self._win_message_popup(win_cond)
+        self._new_game(win_cond=win_cond, new_round_ok=True)
 
 
     def _end_game(self):

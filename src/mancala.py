@@ -428,6 +428,15 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         return self.deco.new_game.new_game(win_cond, new_round_ok)
 
 
+    def end_round(self):
+        """The player has requested that the round be ended."""
+
+        cond, winner = self.deco.ender.game_ended(repeat_turn=False,
+                                                  ended='round')
+        self.turn = winner
+        return cond
+
+
     def end_game(self):
         """Either the player has requested that the game be ended
         or an ENDLESS conditions was detected.  End the game fairly."""

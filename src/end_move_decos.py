@@ -59,7 +59,11 @@ class EndTurnIf(deco_chain_if.DecoChainIf):
         """Return the end condition and winner.
         End condition will be one of None, WIN, TIE,
         ROUND_WIN and ROUND_TIE. The other values of
-        WinCond are not generated here."""
+        WinCond are not generated here.
+
+        If ended is truthy but not True and the game
+        is played in rounds, end the round but not the
+        game; unless ending the round also ends the game."""
 
 
     def compute_win_holes(self):

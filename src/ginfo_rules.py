@@ -668,6 +668,13 @@ def build_rules():
         excp=NotImplementedError)
 
     man_rules.add_rule(
+        'max_sow_param',
+        rule=lambda ginfo: (not ginfo.sow_param
+                            and ginfo.sow_rule == gi.SowRule.MAX_SOW),
+        msg='Sow rule MAX_SOW requires that sow_param be greater than 0',
+        excp=gi.GameInfoError)
+
+    man_rules.add_rule(
         'sow_own_prescribed',
         rule=lambda ginfo: (ginfo.sow_own_store
                             and ginfo.prescribed in

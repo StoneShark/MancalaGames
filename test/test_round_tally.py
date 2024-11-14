@@ -138,6 +138,7 @@ class TestRoundTally:
         (gi.Goal.RND_WIN_COUNT, ((8, 8), (4, 4), (4, 4), (4, 4)), (gi.WinCond.TIE, None)),
         (gi.Goal.RND_WIN_COUNT, ((8, 6), (4, 4), (4, 4), (4, 4)), (gi.WinCond.WIN, False)),
         (gi.Goal.RND_WIN_COUNT, ((6, 8), (4, 4), (4, 4), (4, 4)), (gi.WinCond.WIN, True)),
+        (gi.Goal.RND_WIN_COUNT, ((12, 10), (4, 4), (4, 4), (4, 4)), (gi.WinCond.WIN, False)),
 
         (gi.Goal.RND_SEED_COUNT, ((4, 4), (8, 8), (4, 4), (4, 4)), (gi.WinCond.TIE, None)),
         (gi.Goal.RND_SEED_COUNT, ((4, 4), (8, 6), (4, 4), (4, 4)), (gi.WinCond.WIN, False)),

@@ -522,6 +522,54 @@ class TestSower:
 
 
 
+    @pytest.fixture
+    def maxgame(self):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+        game_info = gi.GameInfo(evens=True,
+                                stores=True,
+                                sow_rule=7,
+                                sow_param=5,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+
+    max_cases = [# normal sow cases
+                 (0, Direct.CCW, False, (2, 3, 4, 3, 2, 1), 2,
+                                        (0, 4, 5, 3, 2, 1)),
+                 (0, Direct.CW, False, (2, 3, 4, 3, 2, 1), 4,
+                                       (0, 3, 4, 3, 3, 2)),
+
+                 # skip one five
+                 (2, Direct.CCW, False, (0, 0, 3, 4, 5, 4), 0,
+                                        (1, 0, 0, 5, 5, 5)),
+
+                 # skip all op side
+                 (2, Direct.CCW, False, (0, 0, 3, 5, 5, 5), 2,
+                                        (1, 1, 1, 5, 5, 5)),
+                    ]
+
+    @pytest.mark.parametrize('start_pos, direct, turn, board, eloc, eboard',
+                             max_cases)
+    def test_max_sower(self, maxgame, base_sower,
+                        start_pos, direct, turn, board, eloc, eboard):
+
+        maxgame.board = list(board)
+        maxgame.turn = turn
+
+        mdata = MoveData(maxgame, start_pos)
+        mdata.sow_loc, mdata.seeds = maxgame.deco.drawer.draw(start_pos)
+        mdata.direct = direct
+        maxgame.deco.sower.sow_seeds(mdata)
+
+        assert mdata.capt_loc == eloc
+        assert maxgame.board == list(eboard)
+        assert maxgame.store == [0, 0]
+
+
+
 
 class TestMlap:
 

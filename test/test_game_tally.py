@@ -144,3 +144,25 @@ class TestGameTally:
         assert gtally.rounds == 0
         assert gtally.round_wins == [0, 0]
         assert gtally.round_ties == 0
+
+
+
+    @pytest.fixture
+    def pgtally(self, mocker):
+
+        mocker.patch('tkinter.StringVar', MyStrVar)
+        mocker.patch('tkinter.Label', mocker.MagicMock())
+        return game_tally.GameTally(None, 'a param name')
+
+
+    def test_rtally(self, pgtally):
+
+        # stub default value
+        assert mint(pgtally.param_fstr.get()) == 1999
+        assert mint(pgtally.param_tstr.get()) == 1999
+
+        pfunc = lambda idx: 10 if idx else 20
+        pgtally.param_tally(pfunc)
+
+        assert mint(pgtally.param_fstr.get()) == 20
+        assert mint(pgtally.param_tstr.get()) == 10

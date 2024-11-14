@@ -404,6 +404,18 @@ is included after the parameter sections.
 <b class="enum">NO_SOW_OPP_2S</b>: Don't sow into opponents holes with 2 seeds.
 <li class="helptext">
 <b class="enum">CHANGE_DIR_LAP</b>: Change the direction for each lap sown. Generally used with <a href="game_params.html#udir_holes">UDIR_HOLES</a> so the player may choose the first direction.
+<li class="helptext">
+<b class="enum">MAX_SOW</b>: holes sow_param seeds are skipped when sowing. That is, holes will never contain more seeds than sow_param.
+</ol>
+<h4 id="sow_param"> Sow Parameter </h4>
+<p class="pdesc">Location in Config Files: game_info : sow_param
+<p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
+<p class="pdesc">Default value: 0
+<p class="pdesc">UI Tab: Sow
+
+<p>A general parameter for sowing. Usage is based on other sow options:
+<ol start=0><li class="helptext">
+Sow rule of MAX_SOW: maximum number of seeds a hole may contain
 </ol>
 <h4 id="udir_holes"> User Chooses Direction </h4>
 <p class="pdesc">Location in Config Files: game_info : udir_holes
@@ -453,7 +465,7 @@ is included after the parameter sections.
 <p class="helptext"> Walda locations are limited.  Each player may create up to 6 waldas: on either end of each side of the board and the next two outer holes on their own side of the board. Note that there are only 8 total places that waldas maybe created.
 <li class="helptext">
 <b class="enum">ONE_CHILD</b>: only one child allowed per player.
-<p class="helptext"> Children must not be symmetrically opposite eachother. For example,  in a 9 hole per side game with holes numbered as follows, tuzdeks may not be in the same numbered holes:
+<p class="helptext"> Children must not be symmetrically opposite eachother. For example,  in a 9 hole per side game with holes numbered as follows, children may not be in the same numbered holes:
 <p class="helptext"> 9 8 7 6 5 4 3 2 1
 <p class="helptext"> 1 2 3 4 5 6 7 8 9 
 <p class="helptext"> Depending on sow direction some holes are prohibited from being made children: 
@@ -815,9 +827,9 @@ is included after the parameter sections.
     <p class="param"><a href="#easy_rand">easy_rand</a></p>
     <p class="param"><a href="#empties_m">empties_m</a></p>
     <p class="param"><a href="#evens">evens</a></p>
+    <p class="param"><a href="#evens_m">evens_m</a></p>
   </div>
   <div class="column3">
-    <p class="param"><a href="#evens_m">evens_m</a></p>
     <p class="param"><a href="#game_class">game_class</a></p>
     <p class="param"><a href="#goal">goal</a></p>
     <p class="param"><a href="#goal_param">goal_param</a></p>
@@ -839,10 +851,10 @@ is included after the parameter sections.
     <p class="param"><a href="#nbr_start">nbr_start</a></p>
     <p class="param"><a href="#no_sides">no_sides</a></p>
     <p class="param"><a href="#nocaptmoves">nocaptmoves</a></p>
-  </div>
-  <div class="column3">
     <p class="param"><a href="#nosinglecapt">nosinglecapt</a></p>
     <p class="param"><a href="#oppsidecapt">oppsidecapt</a></p>
+  </div>
+  <div class="column3">
     <p class="param"><a href="#pickextra">pickextra</a></p>
     <p class="param"><a href="#prescribed">prescribed</a></p>
     <p class="param"><a href="#repeat_turn">repeat_turn</a></p>
@@ -853,6 +865,7 @@ is included after the parameter sections.
     <p class="param"><a href="#skip_start">skip_start</a></p>
     <p class="param"><a href="#sow_direct">sow_direct</a></p>
     <p class="param"><a href="#sow_own_store">sow_own_store</a></p>
+    <p class="param"><a href="#sow_param">sow_param</a></p>
     <p class="param"><a href="#sow_rule">sow_rule</a></p>
     <p class="param"><a href="#sow_start">sow_start</a></p>
     <p class="param"><a href="#start_pattern">start_pattern</a></p>

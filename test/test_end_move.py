@@ -1310,48 +1310,49 @@ class TestRoundTally:
 
     CASES = [
         # 0: start game, not over
-        (False, [3, 3, 3, 3], [0, 0], (0, 0), None, False),
+        (False, [3, 3, 3, 3], [0, 0], (0, 0), None, False, (0, 0)),
 
         # 1: round over (no moves), no points yet
-        (True, [0, 0, 2, 0], [4, 6], (0, 0), WinCond.ROUND_WIN, True),
+        (True, [0, 0, 2, 0], [4, 6], (0, 0), WinCond.ROUND_WIN, True, (0, 1)),
         # 2: round over (no moves), points still low
-        (True, [0, 0, 2, 0], [4, 6], (0, 3), WinCond.ROUND_WIN, True),
+        (True, [0, 0, 2, 0], [4, 6], (0, 3), WinCond.ROUND_WIN, True, (0, 4)),
         # 3: round over (no moves), points just enough
-        (True, [0, 0, 2, 0], [4, 6], (0, 4), WinCond.WIN, True),
+        (True, [0, 0, 2, 0], [4, 6], (0, 4), WinCond.WIN, True, (0, 5)),
 
         # 4: round over (two few), no points yet
-        (False, [0, 0, 1, 0], [7, 4], (0, 0), WinCond.ROUND_WIN, False),
+        (False, [0, 0, 1, 0], [7, 4], (0, 0), WinCond.ROUND_WIN, False, (1, 0)),
         # 5: round over (two few), points still low
-        (False, [0, 0, 1, 0], [7, 4], (3, 0), WinCond.ROUND_WIN, False),
+        (False, [0, 0, 1, 0], [7, 4], (3, 0), WinCond.ROUND_WIN, False, (4, 0)),
         # 6: round over (two few), points just enough
-        (False, [0, 0, 1, 0], [7, 4], (4, 0), WinCond.WIN, False),
+        (False, [0, 0, 1, 0], [7, 4], (4, 0), WinCond.WIN, False, (5, 0)),
 
         # 7: round over, skunk so win
-        (False, [0, 0, 1, 0], [9, 2], (3, 0), WinCond.WIN, False),
+        (False, [0, 0, 1, 0], [9, 2], (3, 0), WinCond.WIN, False, (5, 0)),
         # 8: round over, points just enough
-        (False, [0, 0, 1, 0], [9, 2], (4, 0), WinCond.WIN, False),
+        (False, [0, 0, 1, 0], [9, 2], (4, 0), WinCond.WIN, False, (6, 0)),
 
         # 9: round over (no moves), no points yet
-        (True, [0, 0, 2, 0], [6, 4], (0, 0), WinCond.ROUND_TIE, True),
+        (True, [0, 0, 2, 0], [6, 4], (0, 0), WinCond.ROUND_TIE, True, (0, 0)),
         # 10: round over (no moves), points still low
-        (True, [0, 0, 2, 0], [6, 4], (0, 4), WinCond.ROUND_TIE, True),
+        (True, [0, 0, 2, 0], [6, 4], (0, 4), WinCond.ROUND_TIE, True, (0, 4)),
 
         # 11: round over (no moves), points just enough
         # an odd case because the game should have ended on the last round
         # seeds might have been a better test case
-        (True, [0, 0, 2, 0], [6, 4], (5, 5), WinCond.TIE, None),
+        (True, [0, 0, 2, 0], [6, 4], (5, 5), WinCond.TIE, None, (5, 5)),
 
         # 12: both over threshhold, higher player should win
         # an odd case because the game should have ended on the last round
-        (True, [0, 0, 2, 0], [6, 4], (6, 8), WinCond.WIN, True),
+        # points not awarded because this game ends in a TIE
+        (True, [0, 0, 2, 0], [6, 4], (6, 8), WinCond.WIN, True, (6, 8)),
 
         ]
 
-    # @pytest.mark.usefixtures("logger")
-    @pytest.mark.parametrize('turn, board, store, ptally, econd, ewinner',
+    @pytest.mark.usefixtures("logger")
+    @pytest.mark.parametrize('turn, board, store, ptally, econd, ewinner, etally',
                              CASES,
                              ids=[f"case_{idx}" for idx in range(len(CASES))])
-    def test_round_tally(self, game, turn, board, store, ptally,
+    def test_round_tally(self, game, turn, board, store, ptally, etally,
                          econd, ewinner):
 
         game.turn = turn
@@ -1363,11 +1364,63 @@ class TestRoundTally:
 
         assert cond == econd
         assert winner == ewinner
+        assert game.rtally.parameter(0) == etally[0]
+        assert game.rtally.parameter(1) == etally[1]
+
+
+    RND_CASES = [
+        # 0: start game
+        (False, [3, 3, 3, 3], [0, 0], (0, 0), WinCond.ROUND_TIE, False, (0, 0)),
+
+        # 1:  ending round
+        (False, [2, 0, 2, 1], [3, 4], (0, 0), WinCond.ROUND_WIN, True, (0, 1)),
+
+        # 2:  ending round should be a skunk
+        (False, [2, 0, 2, 1], [7, 0], (0, 0), WinCond.ROUND_WIN, False, (2, 0)),
+
+        # 3: ending round, T win round
+        (True, [2, 0, 2, 0], [3, 5], (0, 3), WinCond.ROUND_WIN, True, (0, 4)),
+
+        # 4: even though ending the round the game ends
+        (True, [2, 0, 2, 0], [3, 5], (0, 4), WinCond.WIN, True, (0, 5)),
+
+        # 5:  ending round from even points
+        (False, [2, 0, 2, 1], [3, 4], (4, 4), WinCond.WIN, True, (4, 5)),
+
+        # 6:  ending round from even points
+        (False, [2, 1, 2, 1], [3, 3], (4, 4), WinCond.ROUND_TIE, False, (4, 4)),
+
+        # 7: round over (no moves), points just enough
+        # an odd case because the game should have ended on the last round
+        # seeds might have been a better test case
+        (True, [0, 0, 2, 0], [6, 4], (5, 5), WinCond.TIE, None, (5, 5)),
+
+        ]
+    # @pytest.mark.usefixtures("logger")
+    @pytest.mark.parametrize('turn, board, store, ptally, econd, ewinner, etally',
+                             RND_CASES,
+                             ids=[f"case_{idx}" for idx in range(len(RND_CASES))])
+    def test_rend_tally(self, game, turn, board, store, ptally,
+                         econd, ewinner, etally):
+        """Test the use round end command"""
+
+        game.turn = turn
+        game.board = board
+        game.store = store
+        game.rtally.state = ((0, 0), (0, 0), (0, 0), ptally)
+
+        cond, winner = game.deco.ender.game_ended(False, "round")
+
+        assert cond == econd
+        assert winner == ewinner
+
+        assert game.rtally.parameter(0) == etally[0]
+        assert game.rtally.parameter(1) == etally[1]
 
 
     END_CASES = [
         # 0: current game tie, result tie
-        (False, [3, 3, 3, 3], [0, 0], (0, 0), WinCond.TIE, None),
+        (False, [3, 3, 3, 3], [0, 0], (0, 0), WinCond.TIE, False),
 
         # 1: current game goes to T, T wins
         (True, [0, 0, 2, 0], [4, 6], (0, 0), WinCond.WIN, True),

@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Endodoi",
-      "about": "A multi-lap mancala, sow direction counter-clockwise, cross-capture when end in own hole with one seed. Pick own seed on capture. Games ends if no moves.\n\nVariation: Played with 6 to 10 holes.",
+      "about": "A multi-lap mancala, sow direction counter-clockwise, cross-capture when end in own hole with one seed. Pick own seed on capture. Games ends if no moves.\n\nVariations:\n\n- Played with 6 to 10 holes.\n- Use a GOAL of RND_SEED_COUNT where the winner is the first to collect 100 total seeds (Valdez).",
       "crosscapt": true,
       "mlaps": 1,
       "oppsidecapt": true,

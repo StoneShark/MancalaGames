@@ -40,7 +40,7 @@ from game_classes import GAME_CLASSES
 
 # how many variables to make for lists
 # if the option for a 'list[int]' isn't here, 4 variables will be made
-MAKE_LVARS = {ckey.CAPT_ON: 5,
+MAKE_LVARS = {ckey.CAPT_ON: 6,
               ckey.UDIR_HOLES: gc.MAX_HOLES + 1}
 
 DESC_WIDTH = 60

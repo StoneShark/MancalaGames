@@ -1,0 +1,28 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 6,
+      "nbr_start": 6
+   },
+   "game_info": {
+      "name": "Mangala II",
+      "about": "A single-lap mancala, sow direction is counter-clockwise, capture on opponents side on 2s, 4s and 6s.\n",
+      "capt_on": [ 2, 4, 6 ],
+      "grandslam": 2,
+      "multicapt": true,
+      "mustshare": true,
+      "oppsidecapt": true,
+      "stores": true
+   },
+   "player": {
+      "ai_params": {
+         "mm_depth": [ 1, 3, 5, 8 ]
+      },
+      "scorer": {
+         "stores_m": 4,
+         "evens_m": 1,
+         "easy_rand": 10
+      }
+   },
+   "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p47."
+}

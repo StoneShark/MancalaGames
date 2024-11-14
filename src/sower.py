@@ -303,6 +303,30 @@ class SowSkipOppN(SowMethodIf):
         mdata.capt_loc = loc
 
 
+class SowMaxN(SowMethodIf):
+    """Never sow a hole to more than the specified number
+    of seeds."""
+
+    def __init__(self, game, max_seeds, decorator=None):
+        super().__init__(game, decorator)
+        self.max_seeds = max_seeds
+
+    def sow_seeds(self, mdata):
+        """Sow seeds."""
+
+        incr = self.game.deco.incr.incr
+        loc = mdata.cont_sow_loc
+        for _ in range(mdata.seeds):
+
+            loc = incr(loc, mdata.direct, mdata.cont_sow_loc)
+            while self.game.board[loc] >= self.max_seeds:
+                loc = incr(loc, mdata.direct, mdata.cont_sow_loc)
+
+            self.game.board[loc] += 1
+
+        mdata.capt_loc = loc
+
+
 # %%  lap continue testers
 
 class LapContinuerIf(deco_chain_if.DecoChainIf):
@@ -677,6 +701,9 @@ def deco_base_sower(game):
 
         elif game.info.sow_rule == gi.SowRule.NO_SOW_OPP_2S:
             sower = SowSkipOppN(game, {2})
+
+        elif game.info.sow_rule == gi.SowRule.MAX_SOW:
+            sower = SowMaxN(game, game.info.sow_param)
 
         elif game.info.sow_rule == gi.SowRule.CHANGE_DIR_LAP:
             # pick a base sower below

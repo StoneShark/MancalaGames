@@ -613,6 +613,19 @@ class TestDelegates:
     @pytest.mark.parametrize('tcase',
                              [(True, 123),
                               (False, 345)])
+    def test_dlg_end_round(self, game, mocker, tcase):
+
+        mobj = mocker.patch.object(game.deco.ender, 'game_ended')
+        mobj.return_value = tcase
+
+        assert game.end_round() == tcase[0]
+        assert game.turn == tcase[1]
+        mobj.assert_called_once()
+
+
+    @pytest.mark.parametrize('tcase',
+                             [(True, 123),
+                              (False, 345)])
     def test_dlg_quitter(self, game, mocker, tcase):
 
         mobj = mocker.patch.object(game.deco.quitter, 'game_ended')
@@ -781,6 +794,39 @@ class TestDelegates:
             assert 'changed' in log_str
         if not capted and not changed:
             assert 'No capture' in log_str
+
+
+    @pytest.fixture
+    def rtgame(self):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=6)
+        game_info = gi.GameInfo(capt_on=[2],
+                                stores=True,
+                                goal=gi.Goal.RND_SEED_COUNT,
+                                goal_param=40,
+                                rounds=gi.Rounds.NO_MOVES,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = False
+        return game
+
+
+    def test_dlg_rt_param(self, game, rtgame):
+        """the delegate is only a lamba function."""
+
+        assert not game.rtally
+        assert game.rtally_param_func() is None
+
+        assert rtgame.rtally
+        rtgame.rtally.state = ((1, 2), (3, 4), (5, 6), (7, 8))
+
+        pfunc = rtgame.rtally_param_func()
+        assert pfunc
+        assert pfunc(0) == 3
+        assert pfunc(1) == 4
+
 
 
 class TestWinMessage:

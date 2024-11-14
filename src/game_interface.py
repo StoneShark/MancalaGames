@@ -199,6 +199,7 @@ class SowRule(enum.IntEnum):
     SOW_SOW_CAPT_ALL = 4
     NO_SOW_OPP_2S = 5
     CHANGE_DIR_LAP = 6
+    MAX_SOW = 7
 
 
 @enum.unique
@@ -275,6 +276,7 @@ class GameInfo:
     child_rule: ChildRule = ChildRule.NONE
     goal_param: int = 0
     sow_rule: SowRule = SowRule.NONE
+    sow_param: int = 0
 
     # **** capture
     capsamedir: bool = False
@@ -455,6 +457,11 @@ class GameInterface(abc.ABC):
         if new_round_ok is set, check to start a new round.
         Return True if a new game is created, False if a new round
         is created."""
+
+    @abc.abstractmethod
+    def end_round(self):
+        """User requested to end the round.
+        Return: WinCond"""
 
     @abc.abstractmethod
     def end_game(self):

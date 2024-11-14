@@ -59,7 +59,7 @@ class RoundWinner(emd.EndTurnIf):
     def game_ended(self, repeat_turn, ended=False):
 
         cond, player = self.decorator.game_ended(repeat_turn, ended)
-        if ended or not cond:
+        if ended is True or not cond:
             return cond, player
 
         seeds = self.sclaimer.claim_seeds()
@@ -80,27 +80,15 @@ class RoundTallyWinner(emd.EndTurnIf):
     chain decide the outcome, then adjust for end of game or
     end of round based on the tallier."""
 
-    def end_it(self, cond):
-        """The game has ended pick a winner.
-        The claimer here is not a taker, but we called down the
-        deco chain to EndGameWinner which is configured with a
-        taker to determine this games outcome."""
-
-        seeds = self.sclaimer.claim_seeds()
-        self.game.rtally.tally(cond, self.game.turn, seeds)
-
-        return self.game.rtally.end_it()
-
-
     def game_ended(self, repeat_turn, ended=False):
+        """ended can be truthy, but only actually end the game
+        if it exactly True; otherwise we are going to end the
+        round."""
+        # pylint: disable=simplifiable-if-expression
 
         cond, player = self.decorator.game_ended(repeat_turn, ended)
-        if not cond:
+        if ended is True or not cond:
             return cond, player
-
-        if ended:
-            game_log.add("Calling RoundTallyWinner.end_it.")
-            return self.end_it(cond)
 
         seeds = self.sclaimer.claim_seeds()
         self.game.rtally.tally(cond, player, seeds)
