@@ -5,6 +5,12 @@ sets to files is supported.
 
 The file game_info.txt drives much of what happens here.
 
+Labels can be included in the table:
+    - the option must be unique, as it is used as a key
+      for the param dict
+    - the order and ui_default fields must be 0
+      to keep read_csv interpretting the col as ints
+
 Created on Thu Mar 30 13:43:39 2023
 @author: Ann"""
 
@@ -48,7 +54,7 @@ DASH_BULLET = '- '
 INT_LIST_CHARS = '0123456789, '
 
 # these are the expected tabs, put them in this order (add any extras)
-PARAM_TABS = ('Game', 'Dynamics', 'Allow', 'Sow', 'Capture', 'Player')
+PARAM_TABS = ('Game', 'Dynamics', 'Sow', 'Capture', 'Player')
 
 # widget states
 DISABLED = 'disabled'
@@ -358,7 +364,7 @@ class MancalaGames(tk.Frame):
         blist - use MAKE_LVARS (want to make all of the udir_hole vars now"""
 
         for param in self.params.values():
-            if param.vtype == pc.MSTR_TYPE:
+            if param.vtype in (pc.MSTR_TYPE, pc.LABEL_TYPE):
                 continue
 
             if param.vtype in (pc.STR_TYPE, pc.INT_TYPE):
@@ -434,14 +440,15 @@ class MancalaGames(tk.Frame):
         """Make a text box entry with scroll bar."""
 
         tframe = tk.LabelFrame(frame, text=param.text, labelanchor='nw')
-        tframe.grid(row=param.row, column=param.col, columnspan=4, rowspan=2)
+        tframe.grid(row=param.row, column=param.col, columnspan=4,
+                    sticky='nsew')
 
         text_box = tk.Text(tframe, width=50, height=12)
         self.tktexts[param.option] = text_box
 
         scroll = tk.Scrollbar(tframe)
         text_box.configure(yscrollcommand=scroll.set)
-        text_box.pack(side=tk.LEFT)
+        text_box.pack(side=tk.LEFT, expand=True, fill='both')
 
         scroll.config(command=text_box.yview)
         scroll.pack(side=tk.RIGHT, fill=tk.Y)
@@ -452,7 +459,7 @@ class MancalaGames(tk.Frame):
     def _make_entry(self, frame, param):
         """Make a single line string entry."""
 
-        length = 5 if param.vtype == pc.INT_TYPE else 20
+        length = 5 if param.vtype == pc.INT_TYPE else 30
 
         lbl = tk.Label(frame, text=param.text)
         lbl.grid(row=param.row, column=param.col, sticky=tk.E)
@@ -493,8 +500,12 @@ class MancalaGames(tk.Frame):
 
         boxes = self._get_boxes_config(param)
         boxes_fr = tk.Frame(frame)
-        boxes_fr.grid(row=param.row, column=param.col + 1,
-                      columnspan=3, sticky=tk.W)
+        if param.option == ckey.UDIR_HOLES:
+            boxes_fr.grid(row=param.row, column=param.col + 1,
+                          columnspan=3, sticky=tk.W)
+        else:
+            boxes_fr.grid(row=param.row, column=param.col + 1,
+                          sticky=tk.W)
 
         if param.option == ckey.UDIR_HOLES:
             self.udir_frame = boxes_fr
@@ -517,8 +528,7 @@ class MancalaGames(tk.Frame):
 
         boxes = self._get_boxes_config(param)
         eframe = tk.Frame(frame)
-        eframe.grid(row=param.row, column=param.col + 1,
-                    columnspan=2, sticky=tk.W)
+        eframe.grid(row=param.row, column=param.col, sticky=tk.W)
 
         if param.option == ckey.UDIR_HOLES:
             self.udir_frame = eframe
@@ -542,7 +552,7 @@ class MancalaGames(tk.Frame):
         values = list(pc.STRING_DICTS[param.vtype].str_dict.keys())
 
         lbl = tk.Label(frame, text=param.text)
-        lbl.grid(row=param.row, column=param.col, sticky=tk.E)
+        lbl.grid(row=param.row, column=param.col,sticky=tk.E)
 
         opmenu = tk.OptionMenu(frame, self.tkvars[param.option], *values)
         opmenu.config(width=2 + max(len(str(val)) for val in values))
@@ -550,6 +560,17 @@ class MancalaGames(tk.Frame):
 
         lbl.bind('<Enter>', ft.partial(self._update_desc, param.option))
         opmenu.bind('<Enter>', ft.partial(self._update_desc, param.option))
+
+
+    def _make_label_row(self, frame, param):
+        """Make label row spanning two columns."""
+        _ = self
+
+        lbl = tk.Label(frame, text=param.text, bg='darkgrey')
+        lbl.grid(row=param.row, column=param.col, columnspan=2,
+                 padx=4, sticky='ew')
+
+        # lbl.bind('<Enter>', ft.partial(self._update_desc, param.option))
 
 
     def _make_ui_param(self, frame, param):
@@ -573,6 +594,9 @@ class MancalaGames(tk.Frame):
         elif param.vtype in pc.STRING_DICTS:
             self._make_option_list(frame, param)
 
+        elif param.vtype == pc.LABEL_TYPE:
+            self._make_label_row(frame, param)
+
 
     def _make_ui_elements(self):
         """Make the UI elements corresponding to the parameter table.
@@ -586,6 +610,10 @@ class MancalaGames(tk.Frame):
 
             for param in tab_params:
                 self._make_ui_param(tab, param)
+
+        for tab in self.tabs.values():
+            tab.grid_rowconfigure('all', weight=1)
+            tab.grid_columnconfigure('all', weight=1)
 
 
     def _fill_tk_list(self, param, value):
@@ -642,6 +670,9 @@ class MancalaGames(tk.Frame):
         self.game_config = {}
 
         for param in sorted(self.params.values(), key=lambda v: v.order):
+
+            if param.vtype == pc.LABEL_TYPE:
+                continue
 
             if param.vtype == pc.MSTR_TYPE:
                 value = self.tktexts[param.option].get('1.0', tk.END)
@@ -746,7 +777,7 @@ class MancalaGames(tk.Frame):
 
             if param.option not in (ckey.GAME_CLASS,
                                     ckey.HOLES, ckey.NBR_START,
-                                    ckey.NAME, ckey.ABOUT):
+                                    ckey.NAME, ckey.ABOUT, ckey.SOW_DIRECT):
 
                 man_config.del_default_config_tag(self.game_config,
                                                   param.vtype,
@@ -865,7 +896,7 @@ class MancalaGames(tk.Frame):
                     for var, val in zip(self.tkvars[param.option], default):
                         var.set(val)
 
-            else:
+            elif param.vtype != pc.LABEL_TYPE:
                 self.tkvars[param.option].set(param.ui_default)
 
 
@@ -901,7 +932,7 @@ class MancalaGames(tk.Frame):
                     for var, val in zip(self.tkvars[param.option], default):
                         var.set(val)
 
-            else:
+            elif param.vtype != pc.LABEL_TYPE:
                 self.tkvars[param.option].set(default)
 
 

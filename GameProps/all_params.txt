@@ -40,12 +40,13 @@
       "prescribed": 0,
       "round_fill": 0,
       "round_starter": 0,
-      "rounds": false,
+      "rounds": 0,
       "skip_start": false,
       "sow_direct": 1,
       "sow_own_store": false,
       "sow_rule": 0,
       "sow_start": false,
+      "sow_param": 0,
       "start_pattern": 0,
       "stores": false,
       "udir_holes": [],
@@ -84,7 +85,7 @@
          ]
       },
       "scorer": {
-         "stores_m": 4,
+         "stores_m": 0,
          "access_m": 0,
          "seeds_m": 0,
          "empties_m": 0,

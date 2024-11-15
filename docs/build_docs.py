@@ -440,7 +440,6 @@ PARAM_NAV = """\
   <a href="#top">Top</a>
   <a href="#tab_Game">Game Tab</a>
   <a href="#tab_Dynamics">Dynamics Tab</a>
-  <a href="#tab_Allow">Allow Tab</a>
   <a href="#tab_Sow">Sow Tab</a>
   <a href="#tab_Capture">Capture Tab</a>
   <a href="#tab_Player">Player Tab</a>
@@ -463,9 +462,7 @@ Provide high level information about a game: name, description,
 size, setup, etc.
 <li><a href="#tab_Dynamics"><b class="inhead">Dynamics</b></a>:
 Parameters that provide some high level of control over how
-game play is conducted.
-<li><a href="#tab_Allow"><b class="inhead">Allow</b></a>:
-Parameters that control which holes moves may be started from.
+game play is conducted and control which holes moves may be started from.
 <li><a href="#tab_Sow"><b class="inhead">Sow</b></a>:
 Parameters that control how the seeds are sown (moved around)
 in the sow phase of a turn.
@@ -546,7 +543,7 @@ def write_params_help(filename):
             print(f'<h2 id="tab_{tab}">{tab} Tab</h2>', file=ofile)
 
             for param in PARAMS.values():
-                if param.tab != tab:
+                if param.tab != tab or param.vtype == pc.LABEL_TYPE:
                     continue
 
                 print(f'<h4 id="{param.option}">', param.text, '</h4>',
@@ -577,8 +574,9 @@ def write_params_help(filename):
 
         print('<br><br><br>', file=ofile)
         print('<h2 id="index">Parameter Index</h2>', file=ofile)
-        pindex = [f'<a href="#{param}">' + param + '</a>'
-                  for param in sorted(PARAMS.keys())]
+        pindex = [f'<a href="#{param.option}">' + param.option + '</a>'
+                  for param in sorted(PARAMS.values())
+                  if param.vtype != pc.LABEL_TYPE]
         write_columns(ofile, pindex, 3)
 
         write_html_footer(ofile)
@@ -663,7 +661,8 @@ NOT_ENUMS = {'bool',
     'multi_str',
     'str',
     'Algorithm',
-    'GameClasses'}
+    'GameClasses',
+    'label'}
 
 def write_desc_types(ofile):
     """Write the sections for the description strings."""

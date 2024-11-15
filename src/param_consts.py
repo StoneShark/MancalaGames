@@ -24,6 +24,8 @@ MSTR_TYPE = 'multi_str'
 BLIST_TYPE = 'list[bool]'
 ILIST_TYPE = 'list[int]'
 
+LABEL_TYPE = 'label'   # just a label, no value or param
+
 
 # %% enum dictionaries
 
