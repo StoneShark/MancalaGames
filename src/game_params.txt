@@ -112,7 +112,7 @@ Dynamics	grandslam	Grand Slam	game_info _	117	GrandSlam	LEGAL	5	2	"A grandslam i
 - OPP_GETS_REMAIN: if you capture all your opponents seeds, they capture all of your remaining seeds and the game is over. Winner is determined by game goal. Seeds picked because of PICKEXTRA PICK*LASTSEEDS go the current player and not the opponent.
 - LEAVE_LEFT: the capture is performed from all but the leftmost hole from the sower perspective. This might leave your oppenents without seeds or might not capture any seeds.
 - LEAVE_RIGHT: the capture is performed from all but the rightmost hole from the sower perspective. This might leave your oppenents without seeds."
-Dynamics	rnd_lbl	Rounds Parameters		0	label	0	6	2	junk text
+Dynamics	rnd_lbl	Rounds Parameters		0	label	0	6	2	
 Dynamics	rounds	Rounds	game_info _	135	Rounds	NO_ROUNDS	7	2	"When rounds are employed, each round may end under conditions that do not win the overall game. The board is then setup again per the game rules, generally with some feature changed based on the previous round: hole ownership, holes out of play, a shortened board. Play continues in rounds until either player meets the overall game winning condition.
 If the game is played in round, defines how each round ends: 
 - NO_ROUNDS: the game is not played in rounds

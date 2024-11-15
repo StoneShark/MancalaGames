@@ -100,7 +100,8 @@ class CaptCross(CaptMethodIf):
 
 
 class CaptNext(CaptMethodIf):
-    """If there are seeds in the next hole capture them."""
+    """If there are seeds in the next hole capture them
+    and call down the deco chain for possible multiple captures."""
 
     def do_captures(self, mdata):
 
@@ -115,6 +116,9 @@ class CaptNext(CaptMethodIf):
             self.game.store[self.game.turn] += self.game.board[loc_next]
             self.game.board[loc_next] = 0
             mdata.captured = True
+
+            mdata.capt_loc = self.game.deco.incr.incr(loc_next, mdata.direct)
+            self.decorator.do_captures(mdata)
 
 
 class CaptTwoOut(CaptMethodIf):
@@ -790,14 +794,16 @@ def deco_capturer(game):
         # must check before mulitcapt
         capturer = _add_capt_two_out_deco(game, capturer)
 
+    elif game.info.capt_next:
+        if game.info.multicapt:
+            capturer = CaptMultiple(game, capturer)
+        capturer = CaptNext(game, capturer)
+
     elif game.info.multicapt:
         capturer = CaptMultiple(game, capturer)
 
         if not game.info.capsamedir:
             capturer = CaptOppDirMultiple(game, capturer)
-
-    elif game.info.capt_next:
-        capturer = CaptNext(game)
 
     elif (game.info.evens or game.info.capt_on
           or game.info.capt_max or game.info.capt_min):

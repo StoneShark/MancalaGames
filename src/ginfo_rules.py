@@ -563,12 +563,6 @@ def add_capture_rules(rules):
         warn=True)
 
     rules.add_rule(
-        'captnext_multi_not',
-        rule=lambda ginfo: ginfo.capt_next and ginfo.multicapt,
-        msg="CAPT_NEXT with MULTICAPT is not implemented",
-        excp=NotImplementedError)
-
-    rules.add_rule(
         'sca_gs_not',
         rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.OWN_SOW_CAPT_ALL
                             and ginfo.grandslam != gi.GrandSlam.LEGAL),
