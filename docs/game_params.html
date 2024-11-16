@@ -224,6 +224,8 @@ is included after the parameter sections.
 <b class="enum">FIRST_TURN_ONLY_RIGHT_TWO</b>: The first turn must start from one of the two rightmost holes.
 <li class="helptext">
 <b class="enum">RIGHT_2_1ST_THEN_ALL_TWO</b>:  The first turn must start from one of the two rightmost holes. Subsequent moves may only start from holes without 2 seeds, unless all holes contain zero or 2 seeds.
+<li class="helptext">
+<b class="enum">MOVE_ALL_HOLES_FIRST</b>: a move must initiated from each hole once before a second move may be made from any hole.  MOVE_ALL is incompatible with all pickers and capttwoout.
 </ol>
 <h4 id="stores"> Stores </h4>
 <p class="pdesc">Location in Config Files: game_info : stores
@@ -593,7 +595,8 @@ Sow rule of MAX_SOW: maximum number of seeds a hole may contain
 <p class="pdesc">Default value: False
 <p class="pdesc">UI Tab: Capture
 
-<p>Capture from the hole after the final seed sown into an empty hole. 
+<p>Capture from the hole after the final seed sown. 
+<p>When multiple lap sowing, the sowing does not stop for captures. Instead, sowing continues until the final seed is sown into an empty hole. Then the capture test is made on the next hole.
 <h4 id="capttwoout"> Capture Two Out </h4>
 <p class="pdesc">Location in Config Files: game_info : capttwoout
 <p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
@@ -801,6 +804,12 @@ Sow rule of MAX_SOW: maximum number of seeds a hole may contain
 <h2 id="index">Parameter Index</h2>
 <div class="cols_row">
   <div class="column3">
+    <p class="param"><a href="#about">about</a></p>
+    <p class="param"><a href="#access_m">access_m</a></p>
+    <p class="param"><a href="#ai_active">ai_active</a></p>
+    <p class="param"><a href="#algorithm">algorithm</a></p>
+    <p class="param"><a href="#allow_rule">allow_rule</a></p>
+    <p class="param"><a href="#blocks">blocks</a></p>
     <p class="param"><a href="#capsamedir">capsamedir</a></p>
     <p class="param"><a href="#capt_max">capt_max</a></p>
     <p class="param"><a href="#capt_min">capt_min</a></p>
@@ -808,69 +817,63 @@ Sow rule of MAX_SOW: maximum number of seeds a hole may contain
     <p class="param"><a href="#capt_on">capt_on</a></p>
     <p class="param"><a href="#capt_rturn">capt_rturn</a></p>
     <p class="param"><a href="#capttwoout">capttwoout</a></p>
-    <p class="param"><a href="#crosscapt">crosscapt</a></p>
-    <p class="param"><a href="#evens">evens</a></p>
-    <p class="param"><a href="#moveunlock">moveunlock</a></p>
-    <p class="param"><a href="#multicapt">multicapt</a></p>
-    <p class="param"><a href="#nocaptmoves">nocaptmoves</a></p>
-    <p class="param"><a href="#nosinglecapt">nosinglecapt</a></p>
-    <p class="param"><a href="#oppsidecapt">oppsidecapt</a></p>
-    <p class="param"><a href="#pickextra">pickextra</a></p>
-    <p class="param"><a href="#xc_sown">xc_sown</a></p>
-    <p class="param"><a href="#xcpickown">xcpickown</a></p>
-    <p class="param"><a href="#allow_rule">allow_rule</a></p>
-    <p class="param"><a href="#blocks">blocks</a></p>
-    <p class="param"><a href="#goal">goal</a></p>
-    <p class="param"><a href="#goal_param">goal_param</a></p>
-    <p class="param"><a href="#grandslam">grandslam</a></p>
-    <p class="param"><a href="#min_move">min_move</a></p>
-  </div>
-  <div class="column3">
-    <p class="param"><a href="#mustpass">mustpass</a></p>
-    <p class="param"><a href="#mustshare">mustshare</a></p>
-    <p class="param"><a href="#no_sides">no_sides</a></p>
-    <p class="param"><a href="#prescribed">prescribed</a></p>
-    <p class="param"><a href="#round_fill">round_fill</a></p>
-    <p class="param"><a href="#round_starter">round_starter</a></p>
-    <p class="param"><a href="#rounds">rounds</a></p>
-    <p class="param"><a href="#start_pattern">start_pattern</a></p>
-    <p class="param"><a href="#stores">stores</a></p>
-    <p class="param"><a href="#about">about</a></p>
-    <p class="param"><a href="#game_class">game_class</a></p>
-    <p class="param"><a href="#help_file">help_file</a></p>
-    <p class="param"><a href="#holes">holes</a></p>
-    <p class="param"><a href="#name">name</a></p>
-    <p class="param"><a href="#nbr_start">nbr_start</a></p>
-    <p class="param"><a href="#access_m">access_m</a></p>
-    <p class="param"><a href="#ai_active">ai_active</a></p>
-    <p class="param"><a href="#algorithm">algorithm</a></p>
     <p class="param"><a href="#child_cnt_m">child_cnt_m</a></p>
-    <p class="param"><a href="#difficulty">difficulty</a></p>
-    <p class="param"><a href="#easy_rand">easy_rand</a></p>
-    <p class="param"><a href="#empties_m">empties_m</a></p>
-    <p class="param"><a href="#evens_m">evens_m</a></p>
-  </div>
-  <div class="column3">
-    <p class="param"><a href="#mcts_bias">mcts_bias</a></p>
-    <p class="param"><a href="#mcts_nodes">mcts_nodes</a></p>
-    <p class="param"><a href="#mcts_pouts">mcts_pouts</a></p>
-    <p class="param"><a href="#mm_depth">mm_depth</a></p>
-    <p class="param"><a href="#repeat_turn">repeat_turn</a></p>
-    <p class="param"><a href="#seeds_m">seeds_m</a></p>
-    <p class="param"><a href="#stores_m">stores_m</a></p>
     <p class="param"><a href="#child_cvt">child_cvt</a></p>
     <p class="param"><a href="#child_rule">child_rule</a></p>
     <p class="param"><a href="#child_type">child_type</a></p>
+    <p class="param"><a href="#crosscapt">crosscapt</a></p>
+    <p class="param"><a href="#difficulty">difficulty</a></p>
+    <p class="param"><a href="#easy_rand">easy_rand</a></p>
+    <p class="param"><a href="#empties_m">empties_m</a></p>
+    <p class="param"><a href="#evens">evens</a></p>
+    <p class="param"><a href="#evens_m">evens_m</a></p>
+  </div>
+  <div class="column3">
+    <p class="param"><a href="#game_class">game_class</a></p>
+    <p class="param"><a href="#goal">goal</a></p>
+    <p class="param"><a href="#goal_param">goal_param</a></p>
+    <p class="param"><a href="#grandslam">grandslam</a></p>
+    <p class="param"><a href="#help_file">help_file</a></p>
+    <p class="param"><a href="#holes">holes</a></p>
+    <p class="param"><a href="#mcts_bias">mcts_bias</a></p>
+    <p class="param"><a href="#mcts_nodes">mcts_nodes</a></p>
+    <p class="param"><a href="#mcts_pouts">mcts_pouts</a></p>
+    <p class="param"><a href="#min_move">min_move</a></p>
     <p class="param"><a href="#mlaps">mlaps</a></p>
+    <p class="param"><a href="#mm_depth">mm_depth</a></p>
     <p class="param"><a href="#move_one">move_one</a></p>
+    <p class="param"><a href="#moveunlock">moveunlock</a></p>
+    <p class="param"><a href="#multicapt">multicapt</a></p>
+    <p class="param"><a href="#mustpass">mustpass</a></p>
+    <p class="param"><a href="#mustshare">mustshare</a></p>
+    <p class="param"><a href="#name">name</a></p>
+    <p class="param"><a href="#nbr_start">nbr_start</a></p>
+    <p class="param"><a href="#no_sides">no_sides</a></p>
+    <p class="param"><a href="#nocaptmoves">nocaptmoves</a></p>
+    <p class="param"><a href="#nosinglecapt">nosinglecapt</a></p>
+    <p class="param"><a href="#oppsidecapt">oppsidecapt</a></p>
+  </div>
+  <div class="column3">
+    <p class="param"><a href="#pickextra">pickextra</a></p>
+    <p class="param"><a href="#prescribed">prescribed</a></p>
+    <p class="param"><a href="#repeat_turn">repeat_turn</a></p>
+    <p class="param"><a href="#round_fill">round_fill</a></p>
+    <p class="param"><a href="#round_starter">round_starter</a></p>
+    <p class="param"><a href="#rounds">rounds</a></p>
+    <p class="param"><a href="#seeds_m">seeds_m</a></p>
     <p class="param"><a href="#skip_start">skip_start</a></p>
     <p class="param"><a href="#sow_direct">sow_direct</a></p>
     <p class="param"><a href="#sow_own_store">sow_own_store</a></p>
     <p class="param"><a href="#sow_param">sow_param</a></p>
     <p class="param"><a href="#sow_rule">sow_rule</a></p>
     <p class="param"><a href="#sow_start">sow_start</a></p>
+    <p class="param"><a href="#start_pattern">start_pattern</a></p>
+    <p class="param"><a href="#stores">stores</a></p>
+    <p class="param"><a href="#stores_m">stores_m</a></p>
     <p class="param"><a href="#udir_holes">udir_holes</a></p>
     <p class="param"><a href="#visit_opp">visit_opp</a></p>
+    <p class="param"><a href="#xc_sown">xc_sown</a></p>
+    <p class="param"><a href="#xcpickown">xcpickown</a></p>
   </div>
 </div>
 <p />

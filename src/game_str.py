@@ -116,7 +116,8 @@ def deco_get_string(game):
     if game.info.goal == gi.Goal.TERRITORY:
         hole_deco = HoleMarker(game, OWNER, 'owner', hole_deco)
 
-    if game.info.moveunlock:
+    if (game.info.moveunlock
+            or game.info.allow_rule == gi.AllowRule.MOVE_ALL_HOLES_FIRST):
         hole_deco = HoleMarker(game, LOCK, 'unlocked', hole_deco)
 
     if game.info.child_cvt:

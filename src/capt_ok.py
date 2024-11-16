@@ -145,6 +145,7 @@ def deco_capt_ok(game):
         capt_ok = CaptOppSide(game, capt_ok)
 
     if game.info.moveunlock:
+        # do not include this for gi.AllowRule.MOVE_ALL_HOLES_FIRST games
         capt_ok = CaptUnlocked(game, capt_ok)
 
     capt_ok = CaptNeedSeedsNotChild(game, capt_ok)

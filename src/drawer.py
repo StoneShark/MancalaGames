@@ -13,6 +13,8 @@ import abc
 
 import deco_chain_if
 
+import game_interface as gi
+
 # %%  sow interface
 
 class DrawerIf(deco_chain_if.DecoChainIf):
@@ -143,7 +145,8 @@ def deco_drawer(game):
     else:
         drawer = DrawAll(game)
 
-    if game.info.moveunlock:
+    if (game.info.moveunlock
+            or game.info.allow_rule == gi.AllowRule.MOVE_ALL_HOLES_FIRST):
         drawer = MarkUnlock(game, drawer)
 
     if game.info.mlength == 2:

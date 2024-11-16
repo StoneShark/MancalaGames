@@ -532,12 +532,6 @@ def add_capture_rules(rules):
         warn=True)
 
     rules.add_rule(
-        'capt2_child_incomp',
-        rule=lambda ginfo: ginfo.capttwoout and ginfo.child_cvt,
-        msg="CAPTTWOOUT and CHILDREN are incompatible",
-        warn=True)
-
-    rules.add_rule(
         'capt2_gs_legal',
         rule=lambda ginfo: (ginfo.capttwoout
                             and ginfo.grandslam != gi.GrandSlam.LEGAL),
@@ -547,7 +541,7 @@ def add_capture_rules(rules):
     rules.add_rule(
         'captnext_needs_samedir',
         rule=lambda ginfo: ginfo.capttwoout and not ginfo.capsamedir,
-        msg='CAPT_NEXT requires CAPSAMEDIR',
+        msg='CAPTTWOOUT requires CAPSAMEDIR',
         excp=gi.GameInfoError)
 
     rules.add_rule(
@@ -555,12 +549,8 @@ def add_capture_rules(rules):
         rule=lambda ginfo: ginfo.capt_next and ginfo.crosscapt,
         msg="CAPT_NEXT and CROSSCAPT are incompatible",
         warn=True)
-
-    rules.add_rule(
-        'captnext_child_incomp',
-        rule=lambda ginfo: ginfo.capt_next and ginfo.child_cvt,
-        msg="CAPT_NEXT and CHILDREN are incompatible",
-        warn=True)
+        # TODO this isn't complete: only one of crosscapt, capttwoout or capt_next
+        # should be allowed - maybe it should be an enumeration?
 
     rules.add_rule(
         'sca_gs_not',
@@ -583,7 +573,8 @@ def add_capture_rules(rules):
                                      ginfo.capt_on,
                                      ginfo.evens])
                             and ginfo.pickextra == gi.CaptExtraPick.PICKCROSS),
-        msg="A constrainted CROSSCAPT with PICKEXTRA=PICKCROSS will ingnore constraint.",
+        msg="A constrainted CROSSCAPT with PICKEXTRA=PICKCROSS will ' \
+            'ingnore constraint.",
         excp=gi.GameInfoError)
 
     rules.add_rule(
@@ -592,6 +583,35 @@ def add_capture_rules(rules):
                             and ginfo.pickextra == gi.CaptExtraPick.PICKCROSS),
         msg="PICKEXTRA=PICKCROSS with CROSSCAPT is redundant.",
         warn=True)
+
+    rules.add_rule(
+        'moveall_no_locks',
+        rule=lambda ginfo: (ginfo.allow_rule == gi.AllowRule.MOVE_ALL_HOLES_FIRST
+                            and ginfo.moveunlock),
+        msg='Do not set MOVEUNLOCK with MOVE_ALL_HOLES_FIRST. ' \
+            'Locks are automatically used to limit first moves but not captures',
+        excp=gi.GameInfoError)
+        # we do not want CaptUnlocked added to the capt_ok deco
+        # which causes captures to be limited by locks
+
+    rules.add_rule(
+        'moveall_no_2out',
+        rule=lambda ginfo: (ginfo.allow_rule == gi.AllowRule.MOVE_ALL_HOLES_FIRST
+                            and ginfo.capttwoout),
+        msg='MOVE_ALL_HOLES_FIRST is incompatible with CAPTTWOOUT',
+        excp=gi.GameInfoError)
+        # capt two out doesn't use capt_ok, but checks the locks directly
+
+    rules.add_rule(
+        'moveall_no_picker',
+        rule=lambda ginfo: (ginfo.allow_rule == gi.AllowRule.MOVE_ALL_HOLES_FIRST
+                            and (ginfo.xcpickown or ginfo.pickextra)),
+        msg='MOVE_ALL_HOLES_FIRST is incompatible with all pickers',
+        excp=gi.GameInfoError)
+        # the pickers check the locks directly
+        # an alternate approach could be to not check any locks on pickers
+        # locks are rarely used
+
 
 
 # %% the base ruleset

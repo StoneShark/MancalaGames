@@ -367,6 +367,31 @@ class NoGrandSlam(AllowableIf):
         return allow
 
 
+class MoveAllFirst(AllowableIf):
+    """Must move from each of the holes in the first dbl_holes
+    moves.
+
+    Locks are used: initially all holes are locked.
+    Until all the holes are unlocked, moves are only allowed from
+    holes that are locked and allowable.
+
+    After all holes have been unlocked the allowable result is
+    always returned."""
+
+    def get_allowable_holes(self):
+
+        unlocked = [self.game.unlocked[loc]
+                    for loc in self.game.cts.get_my_range(self.game.turn)]
+        allowable = self.decorator.get_allowable_holes()
+
+        if all(unlocked):
+            return allowable
+
+        return [not unlocked[loc] and allowable[loc]
+                for loc in range(self.game.cts.holes)]
+
+
+
 class MemoizeAllowable(AllowableIf):
     """Allowables are checked in several places--move/end_move,
     test_pass and get_allowables--for each move.  If the game
@@ -402,6 +427,7 @@ class MemoizeAllowable(AllowableIf):
 
 def deco_allow_rule(game, allowable):
     """Add the allow rule decos."""
+    # pylint: disable=too-complex
 
     if game.info.allow_rule == gi.AllowRule.NONE:
         pass
@@ -431,6 +457,9 @@ def deco_allow_rule(game, allowable):
     elif game.info.allow_rule == gi.AllowRule.RIGHT_2_1ST_THEN_ALL_TWO:
         allowable = OnlyIfAllN(game, 2, allowable)
         allowable = OnlyRightTwo(game, allowable)
+
+    elif game.info.allow_rule == gi.AllowRule.MOVE_ALL_HOLES_FIRST:
+        allowable = MoveAllFirst(game, allowable)
 
     else:
         raise NotImplementedError(

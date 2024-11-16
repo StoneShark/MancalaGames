@@ -43,6 +43,7 @@ class AllowRule(enum.IntEnum):
     TWO_ONLY_ALL_RIGHT = 6
     FIRST_TURN_ONLY_RIGHT_TWO = 7
     RIGHT_2_1ST_THEN_ALL_TWO = 8
+    MOVE_ALL_HOLES_FIRST = 9
 
 
 @enum.unique

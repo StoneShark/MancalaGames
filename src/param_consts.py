@@ -67,7 +67,9 @@ STRING_DICTS = {
          'Rightmost two on first turn':
              gi.AllowRule.FIRST_TURN_ONLY_RIGHT_TWO,
          'Right 2 1st, then twos only if all 2s':
-             gi.AllowRule.RIGHT_2_1ST_THEN_ALL_TWO
+             gi.AllowRule.RIGHT_2_1ST_THEN_ALL_TWO,
+         'Move from all holes once first':
+             gi.AllowRule.MOVE_ALL_HOLES_FIRST,
          }),
 
     'CaptExtraPick': lookup_dicts(

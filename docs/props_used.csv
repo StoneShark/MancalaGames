@@ -1,4 +1,5 @@
 ,holes,nbr_start,allow_rule,blocks,capsamedir,capt_max,capt_min,capt_next,capt_on,capt_rturn,capttwoout,child_cvt,child_rule,child_type,crosscapt,evens,goal,goal_param,grandslam,min_move,mlaps,mlength,move_one,moveunlock,multicapt,mustpass,mustshare,no_sides,nocaptmoves,nosinglecapt,oppsidecapt,pickextra,prescribed,round_fill,round_starter,rounds,skip_start,sow_direct,sow_own_store,sow_param,sow_rule,sow_start,start_pattern,stores,udir_holes,visit_opp,xc_sown,xcpickown
+Adji-boto,5,10,9,,x,,,x,1 3 5,,,,,,,,,,,2,,1,,,x,x,,,2,,,,,,,,,1,,,,,,x,,,,
 Ayoayo,6,4,,,,,,,,,,,,,x,,,,,1,1,1,,,,,x,,,,x,,,,,,x,1,,,,,,x,,,,1
 Bao_Kenyan,8,2,4,,,,,,,,,,,,x,,,,,1,1,1,,,,,,,,,x,,,,,,,1,,,,,,x,,,,
 Bao_Tanzanian,7,4,,x,x,,,,,,,4,2,1,x,,,,,1,1,1,,,x,,,,,,x,,5,5,2,2,,1,,,,,,x,,x,,1

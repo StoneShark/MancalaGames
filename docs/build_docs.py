@@ -575,7 +575,8 @@ def write_params_help(filename):
         print('<br><br><br>', file=ofile)
         print('<h2 id="index">Parameter Index</h2>', file=ofile)
         pindex = [f'<a href="#{param.option}">' + param.option + '</a>'
-                  for param in sorted(PARAMS.values())
+                  for param in sorted(PARAMS.values(),
+                                      key=lambda param: param.option)
                   if param.vtype != pc.LABEL_TYPE]
         write_columns(ofile, pindex, 3)
 

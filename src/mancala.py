@@ -305,7 +305,8 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
                       'store': tuple(self.store),
                       'mcount': self.mcount}
 
-        if self.info.moveunlock:
+        if (self.info.moveunlock
+                or self.info.allow_rule == gi.AllowRule.MOVE_ALL_HOLES_FIRST):
             state_dict |= {'unlocked': tuple(self.unlocked)}
 
         if self.info.blocks:
@@ -357,8 +358,13 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         dbl_holes = self.cts.dbl_holes
 
         self.mcount = 0
-        locks = not self.info.moveunlock
+
+        if self.info.allow_rule == gi.AllowRule.MOVE_ALL_HOLES_FIRST:
+            locks = False
+        else:
+            locks = not self.info.moveunlock
         self.unlocked = [locks] * dbl_holes
+
         self.blocked = [False] * dbl_holes
         self.child = [None] * dbl_holes
 

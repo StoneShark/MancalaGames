@@ -25,8 +25,8 @@ Capture	xcpickown	Own Seed on Xcapture	game_info _	148	CrossCaptOwn	LEAVE	7	0	"W
 Capture	xc_sown	Must sow opp for xcapt	game_info _	147	bool	False	8	0	"Only allow cross capture if the player has sown onto the opposite side of board. 
 If a player ends on their own side of the board in an empty hole, but did not sow any opposite hole, they get a repeat turn."
 Capture	ocapt_lbl	Other Captures		0	label	0 	9	0	
-Capture	capt_next	Capture Next	game_info _	106	bool	False	10	0	"Capture from the hole after the final seed sown into an empty hole. 
-"
+Capture	capt_next	Capture Next	game_info _	106	bool	False	10	0	"Capture from the hole after the final seed sown. 
+When multiple lap sowing, the sowing does not stop for captures. Instead, sowing continues until the final seed is sown into an empty hole. Then the capture test is made on the next hole."
 Capture	capttwoout	Capture Two Out	game_info _	109	bool	False	11	0	"There are three flavors of capture two out:
 Single lap game: capture if sow ends in occupied hole, then an empty hole, followed by an occupied hole the contents of this are hole captured.
 Multi lap game but single capture: capture when last hole sown is followed by an empty hole which is then followed by an occupied hole.
@@ -99,7 +99,8 @@ Dynamics	allow_rule	Special Move Restrictions	game_info _	101	AllowRule	NONE	8	0
 - TWO_ONLY_ALL: Holes with two seeds may only be played if all holes contain two seeds.
 - TWO_ONLY_ALL_RIGHT: Holes with two seeds may not be played, unless all holes contains two seeds, in which case the rightmost hole must be played.
 - FIRST_TURN_ONLY_RIGHT_TWO: The first turn must start from one of the two rightmost holes.
-- RIGHT_2_1ST_THEN_ALL_TWO:  The first turn must start from one of the two rightmost holes. Subsequent moves may only start from holes without 2 seeds, unless all holes contain zero or 2 seeds."
+- RIGHT_2_1ST_THEN_ALL_TWO:  The first turn must start from one of the two rightmost holes. Subsequent moves may only start from holes without 2 seeds, unless all holes contain zero or 2 seeds.
+- MOVE_ALL_HOLES_FIRST: a move must initiated from each hole once before a second move may be made from any hole.  MOVE_ALL is incompatible with all pickers and capttwoout."
 Dynamics	stores	Stores	game_info _	143	bool	True	0	2	True when stores are present on the game board. For games with GOAL of DEPRIVE or CLEAR, stores can be used to show whose turn it is (seed counts will not be sown).
 Dynamics	no_sides	No Sides	game_info _	127	bool	False	1	2	Moves maybe made from any hole, independent of the side of the board. Moves need to specify side, position and directions.  
 Dynamics	mdyno_lbl	Move Dynamics		0	label	0	2	2	

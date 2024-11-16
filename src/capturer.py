@@ -103,13 +103,22 @@ class CaptNext(CaptMethodIf):
     """If there are seeds in the next hole capture them
     and call down the deco chain for possible multiple captures."""
 
+    def __init__(self, game, decorator=None):
+
+        super().__init__(game, decorator)
+
+        if game.info.mlaps:
+            self.seed_cond = lambda loc: game.board[loc] == 1
+        else:
+            self.seed_cond = lambda loc : True
+
     def do_captures(self, mdata):
 
-        loc = mdata.capt_loc
+        loc = saved_capt_loc = mdata.capt_loc
         direct = mdata.direct
         loc_next = self.game.deco.incr.incr(loc, direct)
 
-        if (self.game.board[loc] == 1
+        if (self.seed_cond(loc)
                 and self.game.board[loc_next]
                 and self.game.deco.capt_ok.capture_ok(loc_next)):
 
@@ -119,6 +128,7 @@ class CaptNext(CaptMethodIf):
 
             mdata.capt_loc = self.game.deco.incr.incr(loc_next, mdata.direct)
             self.decorator.do_captures(mdata)
+            mdata.capt_loc = saved_capt_loc
 
 
 class CaptTwoOut(CaptMethodIf):
@@ -738,6 +748,21 @@ def _add_child_deco(game, capturer):
     return capturer
 
 
+def _add_capt_next_deco(game, capturer):
+    """Capt two out may be done with or without changing direction
+    or capturing multiples."""
+
+    if game.info.multicapt:
+        capturer = CaptMultiple(game, capturer)
+
+    capturer = CaptNext(game, capturer)
+
+    if not game.info.capsamedir:
+        capturer = CaptOppDirMultiple(game, capturer)
+
+    return capturer
+
+
 def _add_capt_two_out_deco(game, capturer):
     """There are three flavors of capt two out:
     single lap, capture if sow in occupied hole, empty hole, occupied hole
@@ -795,13 +820,10 @@ def deco_capturer(game):
         capturer = _add_capt_two_out_deco(game, capturer)
 
     elif game.info.capt_next:
-        if game.info.multicapt:
-            capturer = CaptMultiple(game, capturer)
-        capturer = CaptNext(game, capturer)
+        capturer = _add_capt_next_deco(game, capturer)
 
     elif game.info.multicapt:
         capturer = CaptMultiple(game, capturer)
-
         if not game.info.capsamedir:
             capturer = CaptOppDirMultiple(game, capturer)
 

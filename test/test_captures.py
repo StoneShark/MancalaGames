@@ -185,7 +185,6 @@ def test_no_capturer():
     assert game.store == [0, 0]
 
 
-
 class TestNoCaptures:
 
     def test_no_capture(self):
@@ -305,6 +304,66 @@ class TestCaptTable:
         assert game.store == case.store
         assert game.child == case.children
 
+
+    @pytest.mark.parametrize('case',
+                             [case for case in CASES if case.capt_next],
+                             ids=['case_' + case.case
+                                  for case in CASES if case.capt_next])
+    def test_mlap_capt_next(self, case):
+
+        child_type = ChildType.NORMAL if case.child_cvt else ChildType.NOCHILD
+        child_rule = ChildRule.NOT_1ST_OPP if case.oppside else ChildRule.NONE
+
+        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_info = gi.GameInfo(mlaps=gi.LapSower.LAPPER,  # change to make_game
+                                stores=True,
+                                capt_on=case.capt_on,
+                                capsamedir=case.capsamedir,
+                                child_cvt=case.child_cvt,
+                                child_type=child_type,
+                                crosscapt=case.xcapt,
+                                capt_min=case.capt_min,
+                                evens=case.evens,
+                                capt_next=case.capt_next,
+                                capttwoout=case.capttwoout,
+                                grandslam=case.gslam,
+                                moveunlock=case.moveunlock,
+                                multicapt=case.multicapt,
+                                nosinglecapt=True,
+                                oppsidecapt=case.oppside,
+                                child_rule=child_rule,
+                                skip_start=case.skip_start,
+                                xcpickown=case.xcapt_pick_own,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+
+        game.turn = case.turn
+        game.board = case.board.copy()
+        game.child = case.children.copy()
+        game.unlocked = case.unlocked.copy()
+        game.store = case.store.copy()
+
+        mdata = MoveData(game, None)
+        mdata.direct = case.direct
+        mdata.capt_loc = case.loc
+        mdata.board = tuple(case.board)  # not quite right, but ok
+        mdata.seeds = 3
+
+        game.deco.capturer.do_captures(mdata)
+        assert sum(game.store) + sum(game.board) == game.cts.total_seeds
+
+        if case.board[case.loc] == 1:
+            assert (mdata.captured | mdata.capt_changed) == case.erval
+            assert game.board == case.eboard
+            assert game.store == case.estore
+            assert game.child == case.echild
+        else:
+            assert not mdata.captured
+            assert game.board == case.board
+            assert game.store == case.store
+            assert game.child == case.children
 
 
 @pytest.mark.parametrize('gstype',
