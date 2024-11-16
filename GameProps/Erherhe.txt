@@ -10,7 +10,7 @@
       "blocks": true,
       "capt_on": [1, 3],
       "goal_param": 2,
-      "multicapt": true,
+      "multicapt": -1,
       "mustshare": true,
       "oppsidecapt": true,
       "rounds": 1,

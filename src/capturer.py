@@ -61,14 +61,21 @@ class CaptMultiple(CaptMethodIf):
     """Multi capture, in specified direction.
     capt_ok_deco encapsulates many of the capture parameters incl side."""
 
+    def __init__(self, game, max_capt, decorator=None):
+
+        super().__init__(game, decorator)
+        self.max_capt = max_capt
+
     def do_captures(self, mdata):
         """Capture loop"""
         loc = mdata.capt_loc
+        capts = self.max_capt
 
-        while self.game.deco.capt_ok.capture_ok(loc):
+        while capts and self.game.deco.capt_ok.capture_ok(loc):
 
             self.game.store[self.game.turn] += self.game.board[loc]
             self.game.board[loc] = 0
+            capts -= 1
             mdata.captured = True
 
             loc = self.game.deco.incr.incr(loc, mdata.direct)
@@ -753,7 +760,7 @@ def _add_capt_next_deco(game, capturer):
     or capturing multiples."""
 
     if game.info.multicapt:
-        capturer = CaptMultiple(game, capturer)
+        capturer = CaptMultiple(game, game.info.multicapt - 1, capturer)
 
     capturer = CaptNext(game, capturer)
 
@@ -823,7 +830,7 @@ def deco_capturer(game):
         capturer = _add_capt_next_deco(game, capturer)
 
     elif game.info.multicapt:
-        capturer = CaptMultiple(game, capturer)
+        capturer = CaptMultiple(game, game.info.multicapt, capturer)
         if not game.info.capsamedir:
             capturer = CaptOppDirMultiple(game, capturer)
 

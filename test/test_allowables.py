@@ -246,7 +246,7 @@ class TestAllowables:
 
         game_consts = gc.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[1, 2],
-                                multicapt=True,
+                                multicapt=-1,
                                 mustshare=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)

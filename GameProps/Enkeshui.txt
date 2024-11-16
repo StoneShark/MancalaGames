@@ -7,7 +7,7 @@
       "child_type": 5,
       "crosscapt": true,
       "mlaps": 1,
-      "multicapt": true,
+      "multicapt": -1,
       "oppsidecapt": true,
       "sow_direct": 1,
       "start_pattern": 5,

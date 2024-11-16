@@ -11,7 +11,7 @@
       "capt_on": [4],
       "capttwoout": true,
       "mlaps": 2,
-      "multicapt": true,
+      "multicapt": -1,
       "sow_direct": 1,
       "sow_rule": 3,
       "stores": true

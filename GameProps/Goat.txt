@@ -9,7 +9,7 @@
       "about": "A single-lap mancala with SPLIT SOW_DIRECT. Minimum move is 2 seeds. Multiple capture on opponents side on 2s. A player must pass, if they have no moves. A simplified version of Cow.",
       "capt_on": [2],
       "min_move": 2,
-      "multicapt": true,
+      "multicapt": -1,
       "mustpass": true,
       "oppsidecapt": true,
       "sow_direct": 0,

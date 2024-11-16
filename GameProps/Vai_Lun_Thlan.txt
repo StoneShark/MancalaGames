@@ -8,7 +8,7 @@
       "name": "Vai Lun Thlan",
       "about": "A single-lap mancala, sow direction is clockwise, capture on 1s. A player must pass if they don't have a move.",
       "capt_on": [1],
-      "multicapt": true,
+      "multicapt": -1,
       "mustpass": true,
       "skip_start": true,
       "sow_direct": -1,

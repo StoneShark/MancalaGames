@@ -12,7 +12,7 @@
       "evens": true,
       "min_move": 2,
       "moveunlock": true,
-      "multicapt": true,
+      "multicapt": -1,
       "mustpass": true,
       "round_fill": 6,
       "round_starter": 0,

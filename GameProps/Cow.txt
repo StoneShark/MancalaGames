@@ -9,7 +9,7 @@
       "about": "A single-lap mancala with a SPLIT SOW_DIRECT. The sow direction depends on start location:\n- Moves started from the left 2 holes will sow CW. Either mouse button maybe used.\n- Moves started from the right 2 holes will sow CCW. Either mouse button maybe used.\n- For the center hole, the mouse button used to start the move selects the sow direction. The left mouse button will sow CW and the right mouse button will sow CCW.\nTwo seeds are required for a move. A player must pass, if they have no moves.\nCaptures are on 2s and 4s on the opponents side with multiple captures occuring in the preceeding holes. Specifically, the capture direction is the reverse of the sow direction used for the move.\nThe games ends when one player has more than half the seeds or when neither player can move.",
       "capt_on": [2, 4],
       "min_move": 2,
-      "multicapt": true,
+      "multicapt": -1,
       "mustpass": true,
       "oppsidecapt": true,
       "sow_direct": 0,

@@ -297,7 +297,7 @@ class GameInfo:
     xcpickown: CrossCaptOwn = CrossCaptOwn.LEAVE
     pickextra: CaptExtraPick = CaptExtraPick.NONE
 
-    multicapt: bool = False
+    multicapt: int = 0
     grandslam: int = GrandSlam.LEGAL
     capt_rturn: bool = False
 

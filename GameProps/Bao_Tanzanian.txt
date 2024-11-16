@@ -14,7 +14,7 @@
       "child_type": 1,
       "crosscapt": true,
       "mlaps": 1,
-      "multicapt": true,
+      "multicapt": -1,
       "oppsidecapt": true,
       "prescribed": 5,
       "round_fill": 5,

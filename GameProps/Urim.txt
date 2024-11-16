@@ -11,7 +11,7 @@
       "goal": 7,
       "goal_param": 10,
       "grandslam": 1,
-      "multicapt": true,
+      "multicapt": -1,
       "mustshare": true,
       "oppsidecapt": true,
       "rounds": 2,

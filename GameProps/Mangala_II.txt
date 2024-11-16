@@ -9,7 +9,7 @@
       "about": "A single-lap mancala, sow direction is counter-clockwise, multiple capture on opponents side on 2s, 4s and 6s.\n",
       "capt_on": [ 2, 4, 6 ],
       "grandslam": 2,
-      "multicapt": true,
+      "multicapt": -1,
       "mustshare": true,
       "oppsidecapt": true,
       "stores": true

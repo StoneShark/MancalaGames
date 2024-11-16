@@ -117,8 +117,8 @@ def convert(val, col, line):
     if val.replace('.0', '').isdigit() :
         return int(val.replace('.0', ''))
 
-    if not val:
-        return 0
+    if val.isdigit() or (val[0] == '-' and val[1:].isdigit()):
+        return int(val)
 
     raise ValueError(f"Unknown value type at col/line {col}/{line}: {val}")
 
@@ -378,7 +378,7 @@ def test_no_gs(gstype):
     game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                             stores=True,
                             capt_on=[1],
-                            multicapt=True,
+                            multicapt=-1,
                             grandslam=gstype,
                             rules=mancala.Mancala.rules)
     game = mancala.Mancala(game_consts, game_info)
@@ -1094,10 +1094,10 @@ class TestCaptTwoOut:
 
         ([3, 3, 3, 4, 0, 2], False, 3, [0, 3, 3, 4, 0, 0], {'capsamedir': True,
                                                             'capttwoout': True,
-                                                            'multicapt': True}),
+                                                            'multicapt': -1}),
         ([0, 3, 0, 4, 0, 2], False, 3, [0] * 6, {'capsamedir': True,
                                                  'capttwoout': True,
-                                                 'multicapt': True}),
+                                                 'multicapt': -1}),
 
         ]
 
@@ -1132,7 +1132,7 @@ class TestPickCross:
     test_cases = [
         ([3, 3, 3, 2, 2, 2], True, 4, [3, 0, 3, 2, 0, 2], {'evens': True}),
         ([3, 3, 3, 2, 2, 2], True, 4, [3, 0, 3, 0, 0, 2], {'evens': True,
-                                                           'multicapt': True}),
+                                                           'multicapt': -1}),
 
         pytest.param(
             [3, 1, 3, 2, 2, 2], True, 1, [3, 1, 3, 2, 0, 2], {'crosscapt': True},

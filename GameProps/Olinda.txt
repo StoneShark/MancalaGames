@@ -12,7 +12,7 @@
       "capt_on": [4],
       "capttwoout": true,
       "mlaps": 2,
-      "multicapt": true,
+      "multicapt": -1,
       "pickextra": 3,
       "rounds": 2,
       "round_fill": 6,

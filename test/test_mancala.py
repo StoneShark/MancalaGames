@@ -34,6 +34,7 @@ from context import game_logger
 from context import ginfo_rules
 from context import mancala
 
+from game_interface import AllowRule
 from game_interface import ChildType
 from game_interface import Direct
 from game_interface import Goal
@@ -827,6 +828,77 @@ class TestDelegates:
         assert pfunc(0) == 3
         assert pfunc(1) == 4
 
+
+
+class TestBProp:
+
+
+    @pytest.mark.parametrize('goal, moveunlock, allow_rule, eunlock, eowner',
+                             [[Goal.MAX_SEEDS, False, AllowRule.NONE,
+                               [T, T, T, T], [N, N, N, N]],
+
+                              [Goal.TERRITORY, False, AllowRule.NONE,
+                               [T, T, T, T], [F, F, T, T]],
+
+                              [Goal.MAX_SEEDS, False, AllowRule.MOVE_ALL_HOLES_FIRST,
+                               [F, F, F, F], [N, N, N, N]],
+
+                              [Goal.TERRITORY, False, AllowRule.MOVE_ALL_HOLES_FIRST,
+                               [F, F, F, F], [F, F, T, T]],
+
+                              [Goal.MAX_SEEDS, True, AllowRule.NONE,
+                                [F, F, F, F], [N, N, N, N]],
+
+                               [Goal.TERRITORY, True, AllowRule.NONE,
+                                [F, F, F, F], [F, F, T, T]],
+
+                               # other two combos are invalid and tested below
+                             ])
+    def test_init_bprop(self, goal, moveunlock, allow_rule, eunlock, eowner):
+
+        game_consts = gc.GameConsts(nbr_start=2, holes=2)
+        game_info = gi.GameInfo(goal=goal,
+                                goal_param=3 if goal == Goal.TERRITORY else 0,
+                                evens=True,
+                                stores=True,
+                                moveunlock=moveunlock,
+                                allow_rule=allow_rule,
+                                rounds=gi.Rounds.NO_MOVES,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game =  mancala.Mancala(game_consts, game_info)
+
+        assert game.mcount == 0
+        assert game.board == [2, 2, 2, 2]
+        assert game.child == [N, N, N, N]
+        assert game.blocked == [F, F, F, F]
+        assert game.unlocked == eunlock
+        assert game.owner == eowner
+
+
+    @pytest.mark.parametrize('goal, moveunlock, allow_rule',
+                             [[Goal.MAX_SEEDS, True,
+                               AllowRule.MOVE_ALL_HOLES_FIRST],
+
+                              [Goal.TERRITORY, True,
+                               AllowRule.MOVE_ALL_HOLES_FIRST],
+
+                             ])
+    def test_ibprop_bad(self, goal, moveunlock, allow_rule):
+
+        game_consts = gc.GameConsts(nbr_start=2, holes=2)
+
+        with pytest.raises(gi.GameInfoError) as error:
+            gi.GameInfo(goal=goal,
+                        goal_param=3 if goal == Goal.TERRITORY else 0,
+                        evens=True,
+                        stores=True,
+                        moveunlock=moveunlock,
+                        allow_rule=allow_rule,
+                        rounds=gi.Rounds.NO_MOVES,
+                        nbr_holes=game_consts.holes,
+                        rules=mancala.Mancala.rules)
+        assert 'moveall_no_locks' in str(error)
 
 
 class TestWinMessage:

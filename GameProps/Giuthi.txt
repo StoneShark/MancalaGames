@@ -11,7 +11,7 @@
       "crosscapt": true,
       "min_move": 2,
       "mlaps": 1,
-      "multicapt": true,
+      "multicapt": -1,
       "mustpass": true,
       "oppsidecapt": true,
       "round_fill": 7,

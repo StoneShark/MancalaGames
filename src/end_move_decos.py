@@ -373,7 +373,8 @@ class DepriveSeedsEndGame(EndTurnIf):
 
 class ClearSeedsEndGame(EndTurnIf):
     """Win by giving away all your seeds.
-    TIEs are not awarded."""
+    TIEs are not awarded--if both players end up wo seeds the win
+    is awarded to the current player."""
 
     def game_ended(self, repeat_turn, ended=False):
         """Check for end game."""
