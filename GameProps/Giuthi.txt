@@ -13,7 +13,7 @@
       "mlaps": 1,
       "multicapt": -1,
       "mustpass": true,
-      "oppsidecapt": true,
+      "capt_side": 1,
       "round_fill": 7,
       "round_starter": 2,
       "rounds": 2,

@@ -12,7 +12,7 @@
       "child_rule": 1,
       "capt_min": 4,
       "evens": true,
-      "oppsidecapt": true,
+      "capt_side": 1,
       "sow_direct": -1,
       "sow_start": true,
       "stores": true,

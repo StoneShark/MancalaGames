@@ -11,7 +11,7 @@
       "blocks": true,
       "capt_on": [2],
       "crosscapt": true,
-      "oppsidecapt": true,
+      "capt_side": 1,
       "mlaps": 1,
       "nocaptmoves": 1,
       "pickextra": 2,

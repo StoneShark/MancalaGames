@@ -10,7 +10,7 @@
       "crosscapt": true,
       "mlaps": 1,
       "mustshare": true,
-      "oppsidecapt": true,
+      "capt_side": 1,
       "skip_start": true,
       "sow_direct": 1,
       "stores": true,

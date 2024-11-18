@@ -11,7 +11,7 @@
       "crosscapt": true,
       "goal_param": 4,
       "mlaps": 1,
-      "oppsidecapt": true,
+      "capt_side": 1,
       "round_fill": 1,
       "round_starter": 1,
       "rounds": 2,

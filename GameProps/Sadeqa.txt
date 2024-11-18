@@ -11,7 +11,7 @@
       "goal": 1,
       "mlaps": 1,
       "allow_rule": 1,
-      "oppsidecapt": true,
+      "capt_side": 1,
       "sow_direct": 1,
       "start_pattern": 3
    },

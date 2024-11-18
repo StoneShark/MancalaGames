@@ -11,7 +11,7 @@
       "capt_on": [2],
       "capt_rturn": true,
       "crosscapt": true,
-      "oppsidecapt": true,
+      "capt_side": 1,
       "mlaps": 1,
       "prescribed": 2,
       "sow_direct": 1,

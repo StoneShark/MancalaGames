@@ -10,7 +10,7 @@
       "capt_max": 3,
       "crosscapt": true,
       "mlaps": 1,
-      "oppsidecapt": true,
+      "capt_side": 1,
       "sow_direct": 1,
       "stores": true,
       "xcpickown": 1

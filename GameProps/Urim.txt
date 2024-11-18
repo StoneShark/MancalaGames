@@ -13,7 +13,7 @@
       "grandslam": 1,
       "multicapt": -1,
       "mustshare": true,
-      "oppsidecapt": true,
+      "capt_side": 1,
       "rounds": 2,
       "skip_start": true,
       "sow_rule": 7,

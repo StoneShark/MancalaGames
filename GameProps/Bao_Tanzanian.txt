@@ -15,7 +15,7 @@
       "crosscapt": true,
       "mlaps": 1,
       "multicapt": -1,
-      "oppsidecapt": true,
+      "capt_side": 1,
       "prescribed": 5,
       "round_fill": 5,
       "round_starter": 2,

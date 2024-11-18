@@ -12,7 +12,7 @@
       "child_cvt": 3,
       "child_type": 6,
       "crosscapt": true,
-      "oppsidecapt": true,
+      "capt_side": 1,
       "xcpickown": 1
    },
    "player": {

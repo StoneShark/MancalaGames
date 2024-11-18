@@ -8,7 +8,7 @@
       "name": "Kalah",
       "about": "A single lap mancala with a counter-clockwise sow direction. When sowing past the right edge of the board, sow a seed into your own store (SOW_OWN_STORE). Do not sow into your opponent's store.\nIf the last seed ends in an empty hole on the player's own side of the board, capture any seeds from the opposite hole (CROSSCAPT). When performing a capture, take the final single seed sown as well. Pick your own seed only when opponents seeds are captured.\nIf a player's sow ends in their own store, they take another turn (repeat turn).\nIf a player has no seeds at the start of their turn, the game is over: the opponent collects the remainder of their seeds and the winner is determined based on final seed count. This includes a prescribed repeat turn, if a player sows their last seed into their store, seeds are collected and an outcome is determined.\n\nVariation:\n\n- Use always_pick for XCPICKOWN (Valdez).\n- Require must share (MUSTSHARE) because it removes the seed hoarding strategy.",
       "crosscapt": true,
-      "oppsidecapt": true,
+      "capt_side": 1,
       "sow_direct": 1,
       "sow_own_store": true,
       "stores": true,

@@ -40,28 +40,24 @@ class TestSingleClasses:
 
     @pytest.fixture
     def game(self):
-        """minimum game class"""
 
-        class Info:
+        game_consts = gc.GameConsts(nbr_start=4, holes=2)
+        game_info = gi.GameInfo(evens=True,
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+
+    @pytest.fixture
+    def mdata(self):
+
+        class MData:
             def __init__(self):
-                self.capt_on = ()
+                self.capt_loc = None
 
-        class Cts:
-           def opp_side(self, turn, loc):
-               if turn:
-                   return loc in [0, 1]
-               return loc in [2, 3]
-
-        class CaptOkTestGame:
-            def __init__(self):
-                self.turn = False
-                self.info = Info()
-                self.cts = Cts()
-                self.board = [2, 2, 2, 2]
-                self.child = [F, F, F, F]
-                self.unlocked = [T, T, T, T]
-
-        return CaptOkTestGame()
+        return MData()
 
 
     @pytest.mark.parametrize('child, seeds, eok',
@@ -80,7 +76,7 @@ class TestSingleClasses:
 
         cok = capt_ok.CaptNeedSeedsNotChild(game, capt_ok.CaptTrue(game))
 
-        assert cok.capture_ok(loc) == eok
+        assert cok.capture_ok(None, loc) == eok
 
 
     @pytest.mark.parametrize('unlocked, seeds, eok',
@@ -95,7 +91,7 @@ class TestSingleClasses:
 
         cok = capt_ok.CaptUnlocked(game, capt_ok.CaptTrue(game))
 
-        assert cok.capture_ok(loc) == eok
+        assert cok.capture_ok(None, loc) == eok
 
 
     @pytest.mark.parametrize('turn, loc, eok',
@@ -108,12 +104,14 @@ class TestSingleClasses:
                               (True, 2, False),
                               (True, 3, False),
                               ])
-    def test_oppside(self, game, turn, loc, eok):
+    def test_sideok(self, game, mdata, turn, loc, eok):
 
         game.turn = turn
-        cok = capt_ok.CaptOppSide(game, capt_ok.CaptTrue(game))
+        object.__setattr__(game.info, 'capt_side', 1)
+        cok = capt_ok.CaptSideOk(game, capt_ok.CaptTrue(game))
 
-        assert cok.capture_ok(loc) == eok
+        mdata.capt_loc = loc
+        assert cok.capture_ok(mdata, loc) == eok
 
 
     @pytest.mark.parametrize('seeds, eok',
@@ -130,7 +128,7 @@ class TestSingleClasses:
         game.board[loc] = seeds
         cok = capt_ok.CaptEvens(game, capt_ok.CaptTrue(game))
 
-        assert cok.capture_ok(loc) == eok
+        assert cok.capture_ok(None, loc) == eok
 
 
     @pytest.mark.parametrize('seeds, eok',
@@ -145,10 +143,10 @@ class TestSingleClasses:
 
         loc = 0
         game.board[loc] = seeds
-        game.info.capt_on = [1, 3, 4]
+        object.__setattr__(game.info, 'capt_on', [1, 3, 4])
         cok = capt_ok.CaptOn(game, capt_ok.CaptTrue(game))
 
-        assert cok.capture_ok(loc) == eok
+        assert cok.capture_ok(None, loc) == eok
 
 
     @pytest.mark.parametrize('seeds, eok',
@@ -162,10 +160,10 @@ class TestSingleClasses:
 
         loc = 0
         game.board[loc] = seeds
-        game.info.capt_min = 3
+        object.__setattr__(game.info, 'capt_min', 3)
         cok = capt_ok.CaptMin(game, capt_ok.CaptTrue(game))
 
-        assert cok.capture_ok(loc) == eok
+        assert cok.capture_ok(None, loc) == eok
 
 
     @pytest.mark.parametrize('seeds, eok',
@@ -180,10 +178,10 @@ class TestSingleClasses:
 
         loc = 0
         game.board[loc] = seeds
-        game.info.capt_max = 3
+        object.__setattr__(game.info, 'capt_max', 3)
         cok = capt_ok.CaptMax(game, capt_ok.CaptTrue(game))
 
-        assert cok.capture_ok(loc) == eok
+        assert cok.capture_ok(None, loc) == eok
 
 
 # %%  test cases and methods
@@ -234,15 +232,15 @@ GPARAMS = {'ex_no_flags': {},
            'ex_evens': {'evens': True},
            'ex_capt_max': {'capt_max': 3},
            'ex_capt_min': {'capt_min': 4},
-           'ex_opp_side': {'oppsidecapt': True},
+           'ex_opp_side': {'capt_side': True},
            'ex_unlocked': {'moveunlock': True},
            'ex_evens_opp': {'evens': True,
-                            'oppsidecapt': True},
+                            'capt_side': True},
            'ex_capt_on_opp': {'capt_on':(1, 3, 4),
-                              'oppsidecapt': True},
+                              'capt_side': True},
            'ex_all_set': {'evens': True,
                           'moveunlock': True,
-                          'oppsidecapt': True,
+                          'capt_side': True,
                           'capt_on': (1, 3, 4)}
            }
 
@@ -289,4 +287,4 @@ class TestCaptOk:
 
         game = make_game(case.turn, case.seeds, case.child, case.unlocked,
                          GPARAMS[method])
-        assert game.deco.capt_ok.capture_ok(case.loc) == getattr(case, method)
+        assert game.deco.capt_ok.capture_ok(None, case.loc) == getattr(case, method)

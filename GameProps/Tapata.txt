@@ -10,7 +10,7 @@
       "crosscapt": true,
       "goal": 1,
       "mlaps": 1,
-      "oppsidecapt": true,
+      "capt_side": 1,
       "prescribed": 3,
       "sow_direct": 1,
       "start_pattern": 4

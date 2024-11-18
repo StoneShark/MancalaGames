@@ -266,7 +266,7 @@ class SowCaptOwned(SowMethodIf):
 
             if (all(cfunc(scnt, loc, self.game.turn) for cfunc in self.conds)
                     and not self.game.inhibitor.stop_me_capt(self.game.turn)
-                    and self.game.deco.capt_ok.capture_ok(loc)):
+                    and self.game.deco.capt_ok.capture_ok(mdata, loc)):
 
                 owner = self.owner(loc, self.game.turn)
                 game_log.step(f'Capture from {loc} by {owner}')
@@ -420,7 +420,7 @@ class StopCaptureSeeds(LapContinuerIf):
     def do_another_lap(self, mdata):
 
         if (not self.game.inhibitor.stop_me_capt(self.game.turn)
-                and self.game.deco.capt_ok.capture_ok(mdata.capt_loc)):
+                and self.game.deco.capt_ok.capture_ok(mdata, mdata.capt_loc)):
             game_log.add('MLap stop for capture')
             return False
         return self.decorator.do_another_lap(mdata)

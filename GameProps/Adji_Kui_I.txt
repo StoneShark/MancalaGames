@@ -11,7 +11,7 @@
       "min_move": 2,
       "multicapt": -1,
       "mustpass": true,
-      "oppsidecapt": true,
+      "capt_side": 1,
       "sow_direct": 1,
       "stores": true
    },

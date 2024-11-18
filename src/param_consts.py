@@ -72,6 +72,14 @@ STRING_DICTS = {
              gi.AllowRule.MOVE_ALL_HOLES_FIRST,
          }),
 
+    'CaptSide': lookup_dicts(
+        gi.CaptSide,
+        {'BOTH': gi.CaptSide.BOTH,
+         'Opposite': gi.CaptSide.OPP_SIDE,
+         'Own': gi.CaptSide.OWN_SIDE,
+         'First Opp, then either': gi.CaptSide.OPP_CONT,
+         'First Own, then either': gi.CaptSide.OWN_CONT}),
+
     'CaptExtraPick': lookup_dicts(
         gi.CaptExtraPick,
         {'No additional': gi.CaptExtraPick.NONE,

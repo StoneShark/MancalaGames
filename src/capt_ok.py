@@ -16,6 +16,8 @@ Created on Fri Apr  7 08:52:03 2023
 import abc
 
 import deco_chain_if
+import game_interface as gi
+
 
 # %%  capture ok
 
@@ -23,8 +25,9 @@ class CaptOkIf(deco_chain_if.DecoChainIf):
     """Interface for capture tests, capture_ok."""
 
     @abc.abstractmethod
-    def capture_ok(self, loc):
-        """Return True if capture from loc is ok."""
+    def capture_ok(self, mdata, loc):
+        """Return True if capture from loc is ok,
+        return False otherwise."""
 
 
 # %%  base capt ok
@@ -32,8 +35,8 @@ class CaptOkIf(deco_chain_if.DecoChainIf):
 class CaptTrue(CaptOkIf):
     """Found no reason not to do the capture, return True."""
 
-    def capture_ok(self, loc):
-        """Return True if capture from loc is ok"""
+    def capture_ok(self, _1,  _2):
+        """Return True"""
         return True
 
 
@@ -42,69 +45,93 @@ class CaptTrue(CaptOkIf):
 class CaptOn(CaptOkIf):
     """Test for Capture On values."""
 
-    def capture_ok(self, loc):
+    def capture_ok(self, mdata,  loc):
         """Return True if capture from loc is ok"""
 
         if not self.game.board[loc] in self.game.info.capt_on:
             return False
-        return self.decorator.capture_ok(loc)
+        return self.decorator.capture_ok(mdata, loc)
 
 
 class CaptEvens(CaptOkIf):
     """Capture on Evens that are > 0."""
 
-    def capture_ok(self, loc):
-        """Return True if capture from loc is ok"""
+    def capture_ok(self, mdata,  loc):
+        """Return Fales if capture from loc is not ok,
+        otherwise delegate."""
 
         if self.game.board[loc] % 2:
             return False
-        return self.decorator.capture_ok(loc)
+        return self.decorator.capture_ok(mdata, loc)
 
 
 class CaptMax(CaptOkIf):
     """Capture on values <= capt_max."""
 
-    def capture_ok(self, loc):
-        """Return True if capture from loc is ok"""
+    def capture_ok(self, mdata,  loc):
+        """Return Fales if capture from loc is not ok,
+        otherwise delegate."""
 
         if self.game.board[loc] > self.game.info.capt_max:
             return False
-        return self.decorator.capture_ok(loc)
+        return self.decorator.capture_ok(mdata, loc)
 
 
 class CaptMin(CaptOkIf):
     """Capture on values >= capt_min."""
 
-    def capture_ok(self, loc):
-        """Return True if capture from loc is ok"""
+    def capture_ok(self, mdata,  loc):
+        """Return Fales if capture from loc is not ok,
+        otherwise delegate."""
 
         if self.game.board[loc] < self.game.info.capt_min:
             return False
-        return self.decorator.capture_ok(loc)
+        return self.decorator.capture_ok(mdata, loc)
 
 
-class CaptOppSide(CaptOkIf):
-    """Capture from opposite side only."""
+class CaptSideOk(CaptOkIf):
+    """Capture from specified side."""
 
-    def capture_ok(self, loc):
-        """Return True if capture from loc is ok"""
+    def __init__(self, game, decorator=None):
 
-        if not self.game.cts.opp_side(self.game.turn, loc):
+        super().__init__(game, decorator)
+
+        if game.info.capt_side == gi.CaptSide.OPP_SIDE:
+            self.side_ok = lambda _, turn, loc: game.cts.opp_side(turn, loc)
+
+        elif game.info.capt_side == gi.CaptSide.OWN_SIDE:
+            self.side_ok = lambda _, turn, loc: game.cts.my_side(turn, loc)
+
+        elif game.info.capt_side == gi.CaptSide.OWN_CONT:
+            self.side_ok = lambda mdata, turn, loc: \
+                game.cts.my_side(turn, mdata.capt_loc)
+
+        elif game.info.capt_side == gi.CaptSide.OPP_CONT:
+            self.side_ok = lambda mdata, turn, loc: \
+                game.cts.opp_side(turn, mdata.capt_loc)
+
+    def capture_ok(self, mdata, loc):
+        """Return Fales if capture from loc is not ok,
+        otherwise delegate."""
+
+        if not self.side_ok(mdata, self.game.turn, loc):
             return False
 
-        return self.decorator.capture_ok(loc)
+        return self.decorator.capture_ok(mdata, loc)
+
 
 
 class CaptUnlocked(CaptOkIf):
     """Can't capture from locked holes."""
 
-    def capture_ok(self, loc):
-        """Return True if capture from loc is ok"""
+    def capture_ok(self, mdata,  loc):
+        """Return Fales if capture from loc is not ok,
+        otherwise delegate."""
 
         if not self.game.unlocked[loc]:
             return False
 
-        return self.decorator.capture_ok(loc)
+        return self.decorator.capture_ok(mdata, loc)
 
 
 class CaptNeedSeedsNotChild(CaptOkIf):
@@ -113,13 +140,14 @@ class CaptNeedSeedsNotChild(CaptOkIf):
     Either condition should end a sequence of captures.
     Blocked holes will have zero seeds."""
 
-    def capture_ok(self, loc):
-        """is capture ok"""
+    def capture_ok(self, mdata,  loc):
+        """Return Fales if capture from loc is not ok,
+        otherwise delegate."""
 
         if not self.game.board[loc] or self.game.child[loc] is not None:
             return False
 
-        return self.decorator.capture_ok(loc)
+        return self.decorator.capture_ok(mdata, loc)
 
 
 # %%  build deco chain
@@ -141,8 +169,8 @@ def deco_capt_ok(game):
     if game.info.capt_max:
         capt_ok = CaptMax(game, capt_ok)
 
-    if game.info.oppsidecapt:
-        capt_ok = CaptOppSide(game, capt_ok)
+    if game.info.capt_side:
+        capt_ok = CaptSideOk(game, capt_ok)
 
     if game.info.moveunlock:
         # do not include this for gi.AllowRule.MOVE_ALL_HOLES_FIRST games

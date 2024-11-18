@@ -324,7 +324,7 @@ def add_block_and_divert_rules(rules):
     capt_flags = ['capsamedir', 'capt_max', 'capt_min', 'capt_next',
                   'capt_on', 'capt_rturn', 'capttwoout', 'crosscapt',
                   'evens', 'multicapt',
-                  'nosinglecapt', 'oppsidecapt', 'pickextra', 'xcpickown']
+                  'nosinglecapt', 'capt_side', 'pickextra', 'xcpickown']
     for flag in capt_flags:
         rules.add_rule(
             f'bdiv_nocapt_{flag}',
@@ -439,7 +439,7 @@ def add_no_sides_rules(rules):
         msg='NO_SIDES requires STORES.',
         excp=gi.GameInfoError)
 
-    bad_flags = ['grandslam', 'mustpass', 'mustshare', 'oppsidecapt',
+    bad_flags = ['grandslam', 'mustpass', 'mustshare', 'capt_side',
                  'rounds', 'round_starter', 'round_fill',
                  'visit_opp']
     for flag in bad_flags:

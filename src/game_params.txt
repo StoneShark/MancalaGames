@@ -41,7 +41,12 @@ See individual capture mechanism for any special requirements."
 Capture	capsamedir	Capture in Sow Direction	game_info _	103	bool	False	2	2	Only meaninful with MULTICAPT. Captures are done in the same direction as the sowing, i.e. following the final hole sown. If not set, captures are done from the holes just sown.
 Capture	clim_lbl	Capture Restrictions		0	label	0	3	2	
 Capture	nocaptmoves	Nbr Start Moves w/o Capture	game_info _	128	int	0	4	2	Don't allow captures or closing of holes (SOW_RULE of SOW_BLKD_DIV) for the first specified number of moves of the game or round.
-Capture	oppsidecapt	Opp Side Capt Only	game_info _	130	bool	False	5	2	Captures may only be made from your oppents side of the board.
+Capture	capt_side	Capture side	game_info _	130	CaptSide	BOTH	5	2	"Limits which side of the board captures maybe done on:
+- BOTH: no limitations
+- OPP_SIDE: opposite side capture only.
+- OWN_SIDE: captures on own side of board only.
+- OPP_CONT: a multi-capture must begin on the opposite side of the board, but may continue onto your own side.  Requires MULTICAPT.
+- OWN_CONT: a multi-capture must being on your own side of the board and may continue onto your opponent's side. Requires multicapt."
 Capture	nosinglecapt	No Single Seed Capture	game_info _	129	bool	False	6	2	If the selected start hole contains one seed, no capture may be made with it.
 Capture	moveunlock	Move Unlock for Capture	game_info _	123	bool	False	7	2	Holes in the game start each game and round locked. Captures may not be made from locked holes. Starting a sow from a hole unlocks it allowing future captures.
 Capture	cdyno_lbl	Capture Dynamics		0	label	0	8	2	

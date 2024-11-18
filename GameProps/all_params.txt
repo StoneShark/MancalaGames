@@ -35,7 +35,7 @@
       "no_sides": false,
       "nocaptmoves": 0,
       "nosinglecapt": false,
-      "oppsidecapt": false,
+      "capt_side": false,
       "pickextra": 0,
       "prescribed": 0,
       "round_fill": 0,

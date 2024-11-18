@@ -900,7 +900,6 @@ class MancalaGames(tk.Frame):
                 self.tkvars[param.option].set(param.ui_default)
 
 
-
     def _reset_const(self):
         """Reset to defaults; clear loaded config dictionary."""
 

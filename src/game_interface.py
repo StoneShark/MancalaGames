@@ -58,6 +58,17 @@ class CaptExtraPick(enum.IntEnum):
 
 
 @enum.unique
+class CaptSide(enum.IntEnum):
+    """The sides that captures may be done on."""
+
+    BOTH = 0
+    OPP_SIDE = 1
+    OWN_SIDE = 2
+    OPP_CONT = 3    # opp side but continue onto own side
+    OWN_CONT = 4    # own side but continue onto opp side
+
+
+@enum.unique
 class ChildRule(enum.IntEnum):
     """Defines additional child restrictions."""
 
@@ -294,7 +305,7 @@ class GameInfo:
     # **** capture
     capsamedir: bool = False
 
-    oppsidecapt: bool = False
+    capt_side: CaptSide = CaptSide.BOTH
     moveunlock: bool = False
     evens: bool = False
     capt_min: int = 0

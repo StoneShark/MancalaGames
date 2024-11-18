@@ -9,7 +9,7 @@
       "about": "A single-sow mancala, sow own store, cross capture and pickown. Repeat turn if sow ends in your own store. On grand slam, the opposing player get's your remaining seeds.",
       "crosscapt": true,
       "grandslam": 3,
-      "oppsidecapt": true,
+      "capt_side": 1,
       "sow_direct": 1,
       "sow_own_store": true,
       "stores": true,
