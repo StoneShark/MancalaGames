@@ -4,20 +4,13 @@
     2. quitter:  user ended the game or a sow resulted in ENDLESS,
     do something fair.
 
-Return win/end-game-condition, winner from ender.game_ended.
-self.game.turn is the player that just finished moving.
+Decos return win/end-game-condition, if the game has ended.
+These are called before the game.turn is changed at the end of
+a move.
 
-Process is as follows:
-    0. RoundWinner defers to the rest of the chain
-       (on returns it adjusts the outcome).
-    1. Determine outright game winner or game tie
-       via ClearWinner.
-    2. Check for end condition: no outcome change, not playable,
-       mustshare, or cannot pass (not mustpass).
-    3. If the game has ended, collect seeds and determine if
-       round/game winner or round/game tie.
-
-Log a step if anything is changed on the board, e.g. TakeOwnSeeds.
+Decos will use claimers to determine what seeds to count.
+game.info.unclaimed describes how to score seeds when
+the game has ended.
 
 Created on Fri Apr  7 07:43:19 2023
 @author: Ann"""
@@ -35,23 +28,37 @@ import round_tally
 
 # %% build decorator chains
 
-def deco_add_bottom_winner(game):
-    """Start the deco chain by adding the bottom Winner
-    and MoreSeedsWinner (if needed)."""
+def _add_end_game_winner(game):
+    """Start the deco chain by adding the EndGameWinner.
+    Select a claimer based on how the unclaimed seeds
+    should be scored.  Some of the claimers create
+    lambda's to look the actual player later.
 
-    # TODO this claimer/taker should vary based on if the final seeds score
+    EndGameMustShare does the taker if can't share,
+    so this uses the default taker here."""
 
-    if game.info.no_sides:
-        ender = emd.EndGameWinner(
-            game, sclaimer=claimer.TakeOnlyChildNStores(game))
+    if (game.info.no_sides
+            or game.info.unclaimed == gi.EndGameSeeds.DONT_SCORE
+            or game.info.unclaimed == gi.EndGameSeeds.UNFED_PLAYER):
+        sclaimer = claimer.TakeOnlyChildNStores(game)
+
+    elif game.info.unclaimed == gi.EndGameSeeds.HOLE_OWNER:
+        sclaimer = claimer.TakeOwnSeeds(game)
+
+    elif game.info.unclaimed == gi.EndGameSeeds.LAST_MOVER:
+        sclaimer = claimer.TakeAllUnclaimed(game)
+
+    elif game.info.unclaimed == gi.EndGameSeeds.DIVVIED:
+        sclaimer = claimer.DivvySeedsStores(game)
 
     else:
-        ender = emd.EndGameWinner(game, sclaimer=claimer.TakeOwnSeeds(game))
+        raise NotImplementedError(
+                f"Unclaimed {game.info.unclaimed} not implemented.")
 
-    return ender
+    return emd.EndGameWinner(game, sclaimer=sclaimer)
 
 
-def deco_add_no_change(game, ender):
+def _add_no_change(game, ender):
     """Consider adding the NoOutcomeChange deco.
     Don't include it if it won't do anything:
         if easy cases based on game props (see code)
@@ -71,8 +78,8 @@ def deco_add_no_change(game, ender):
             ginfo.pickextra == gi.CaptExtraPick.PICKLASTSEEDS,
             ginfo.pickextra == gi.CaptExtraPick.PICK2XLASTSEEDS,
 
-            # seeds only moved to waldas, no stores
-            ginfo.child_type == gi.ChildType.WALDA,
+            # seeds only moved to children, no stores
+            game.info.child_type and not game.info.stores,
 
             # if can only capture from children
             (ginfo.child_type == gi.ChildType.WEG
@@ -94,6 +101,34 @@ def deco_add_no_change(game, ender):
     return ender
 
 
+def _add_must_share_ender(game, ender):
+    """Add the must share ender. If the scoring of unclaimed
+    seeds is UNFED_PLAYER, provide a seed taker to
+    do that. Otherwise, provide a claimer that does nothing."""
+
+    if game.info.unclaimed == gi.EndGameSeeds.UNFED_PLAYER:
+        sclaimer = claimer.TakeAllUnclaimed(game)
+
+    else:
+        sclaimer = claimer.ClaimSeeds(game)
+
+    return emd.EndTurnMustShare(game, ender, sclaimer)
+
+
+def _add_round_ender(game, ender, sclaimer):
+    """Add the round ender."""
+
+    # the claimer here decides if game or round ends; after we know it ended
+    if game.info.goal in round_tally.RoundTally.GOALS:
+        # use the same claimer as for clear winner
+        ender = emr.RoundTallyWinner(game, ender, sclaimer)
+
+    else:
+        # use claim all seeds in owned holes (might be side or owner)
+        ender = emr.RoundWinner(game, ender, claimer.ClaimOwnSeeds(game))
+
+    return ender
+
 
 def deco_end_move(game):
     """Return a chain of move enders."""
@@ -104,16 +139,16 @@ def deco_end_move(game):
     if game.info.goal == gi.Goal.CLEAR:
         return emd.ClearSeedsEndGame(game)
 
-    ender = deco_add_bottom_winner(game)
+    ender = _add_end_game_winner(game)
 
     if not game.info.mustpass:
         ender = emd.EndTurnNoMoves(game, ender)
 
     if game.info.mustshare:
-        ender = emd.EndTurnMustShare(game, ender)
+        ender = _add_must_share_ender(game, ender)
 
     ender = emd.EndTurnNotPlayable(game, ender)
-    ender = deco_add_no_change(game, ender)
+    ender = _add_no_change(game, ender)
 
     if game.info.child_cvt:
         sclaimer = claimer.ChildClaimSeeds(game)
@@ -122,16 +157,10 @@ def deco_end_move(game):
     ender = emd.ClearWinner(game, ender, sclaimer)
 
     if game.info.rounds:
-        # the claimer here decides if game or round ends; after we know it ended
-        if game.info.goal in round_tally.RoundTally.GOALS:
-            # use the same claimer as for clear winner
-            ender = emr.RoundTallyWinner(game, ender, sclaimer=sclaimer)
-        else:
-            # use claim all seeds in owned holes (might be side or owner)
-            ender = emr.RoundWinner(game, ender, claimer.ClaimOwnSeeds(game))
+        ender = _add_round_ender(game, ender, sclaimer)
 
     if game.info.child_type and not game.info.stores:
-        ender = emd.WaldaEndMove(game, ender)
+        ender = emd.ChildNoStoresEnder(game, ender)
 
     return ender
 
@@ -150,6 +179,7 @@ def deco_quitter(game):
 
         if game.info.stores:
             sclaimer = claimer.DivvySeedsStores(game)
+
         else:  # if game.info.child_cvt:
             sclaimer = claimer.DivvySeedsChildOnly(game)
 

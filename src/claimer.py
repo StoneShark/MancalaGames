@@ -1,6 +1,18 @@
 # -*- coding: utf-8 -*-
 """Define the claimers, takers and divviers used by the enders.
 
+Claimers can always use the stores:
+
+    1. If the game is configured without stores but with children
+       then ChildNoStoresEnder, will move the seeds back to
+       the board.
+
+    2. If it's a clear or deprive game (no stores and no children),
+       claimers are not used in the enders.
+
+    3. Other games without stores or children are dumb.
+
+
 Naming convensions:
 
     Claim_*:    don't move any seeds, but count them
@@ -9,6 +21,7 @@ Naming convensions:
 
 Created on Sun Nov 10 07:22:16 2024
 @author: Ann"""
+
 
 # %%  imports
 
@@ -123,7 +136,7 @@ class TakeOwnSeeds(ClaimSeedsIf):
 
 class TakeOnlyChildNStores(ClaimSeedsIf):
     """Ignore unclaimed seeds; count stores and children.
-    NoSides uses this."""
+    NoSides and DONT_score use this."""
 
     def claim_seeds(self):
 
@@ -141,6 +154,48 @@ class TakeOnlyChildNStores(ClaimSeedsIf):
                 self.game.board[loc] = 0
 
         game_log.step('Take seeds', self.game)
+        return seeds
+
+
+class TakeAllUnclaimed(ClaimSeedsIf):
+    """The game has ended, move the unowned seeds (non-child)
+    to the stores.  Count all of the owned seeds."""
+
+    def __init__(self, game):
+        super().__init__(game)
+
+        if game.info.unclaimed == gi.EndGameSeeds.LAST_MOVER:
+            self.collector = lambda tgame: tgame.last_mdata.player
+
+        elif game.info.unclaimed == gi.EndGameSeeds.UNFED_PLAYER:
+            # make certain turn is set properly before call
+            self.collector = lambda tgame: tgame.turn
+
+        else:
+            raise gi.GameInfoError(
+                "Don't know who collector should be in TakeAllUnclaimedSeeds")
+
+    def claim_seeds(self):
+        # seeds moved into stores, then added in later
+        seeds = [0, 0]
+        collector = self.collector(self.game)
+
+        for loc in range(self.game.cts.dbl_holes):
+
+            if self.game.child[loc] is True:
+                seeds[True] += self.game.board[loc]
+
+            elif self.game.child[loc] is False:
+                seeds[False] += self.game.board[loc]
+
+            else:
+                self.game.store[collector] += self.game.board[loc]
+                self.game.board[loc] = 0
+
+        seeds[False] += self.game.store[False]
+        seeds[True] += self.game.store[True]
+
+        game_log.step(f'Take all seeds by {collector}', self.game)
         return seeds
 
 

@@ -779,6 +779,13 @@ def build_rules():
         warn=True)
 
     man_rules.add_rule(
+        'unfed_mustshare',
+        rule=lambda ginfo: (ginfo.unclaimed == gi.EndGameSeeds.UNFED_PLAYER
+                            and not ginfo.mustshare),
+        msg='EndGameSeeds UNFED_PLAYER cannot be used without MUSTSHARE',
+        excp=gi.GameInfoError)
+
+    man_rules.add_rule(
         'p1m1_conflict',
         rule=lambda ginfo: (ginfo.prescribed == gi.SowPrescribed.PLUS1MINUS1
                             and (ginfo.sow_start or ginfo.move_one)),

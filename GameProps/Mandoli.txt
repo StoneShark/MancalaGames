@@ -1,0 +1,27 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 6,
+      "nbr_start": 6
+   },
+   "game_info": {
+      "name": "Mandoli",
+      "about": "Sow is counter-clockwise in multiple laps. \nCaptures are not allowed on each players first move. Captures are on evens from the final hole sown and one hole before it.\nThe game ends when one player has collected half the seeds or if the current player cannot move. In the latter case, the unclaimed seeds on the board do not score.\nGoal: collect more than half of the seeds or the most seeds. \n\n",
+      "evens": true,
+      "goal_param": 1,
+      "mlaps": 1,
+      "multicapt": 2,
+      "nocaptmoves": 2,
+      "sow_direct": 1,
+      "stores": true,
+      "unclaimed": 1
+   },
+   "player": {
+      "ai_params": {},
+      "scorer": {
+         "stores_m": 4
+      }
+   },
+   "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p19.",
+   "deviation": "Per the rules: the game does not end until there are no moves. This is not implemented as there is no reason to continue playing once a winner is determined; the win cannot be undone, it's just moving seeds."
+}

@@ -18,11 +18,11 @@ Either SOWRULE of OWN_SOW_CAPT_ALL or SOW_SOW_CAPT_ALL includes the basic captur
 Capture	xc_lbl	Cross Capture		0	label	0	5	0	
 Capture	crosscapt	Cross-Capture	game_info _	113	bool	False	6	0	"If the last sown seed is put in an empty hole, seeds on the opposite side of the board are captured. The capture of those seeds can be limited by CAPT_MAX, CAPT_MIN, CAPT_ON, EVENS, MOVEUNLOCK, OPPSIDECAPT. For example, crosscapt with evens will only capture when there are an even number of seeds in the opposite hole.
 SOW_RULE of either SOW_CAPT_ALL do not do this capture."
-Capture	xcpickown	Own Seed on Xcapture	game_info _	148	CrossCaptOwn	LEAVE	7	0	"When crosscapt is set, defines what to do with the single seed initiating the cross capture.
+Capture	xcpickown	Own Seed on Xcapture	game_info _	149	CrossCaptOwn	LEAVE	7	0	"When crosscapt is set, defines what to do with the single seed initiating the cross capture.
 - LEAVE: always leave the signle seed
 - PICK_ON_CAPT: only pick (capture) the seed if there was a capture
 - ALWAYS_PICK: always pick (capture) the final single seed, even if there was not a capture"
-Capture	xc_sown	Must sow opp for xcapt	game_info _	147	bool	False	8	0	"Only allow cross capture if the player has sown onto the opposite side of board. 
+Capture	xc_sown	Must sow opp for xcapt	game_info _	148	bool	False	8	0	"Only allow cross capture if the player has sown onto the opposite side of board. 
 If a player ends on their own side of the board in an empty hole, but did not sow any opposite hole, they get a repeat turn."
 Capture	ocapt_lbl	Other Captures		0	label	0 	9	0	
 Capture	capt_next	Capture Next	game_info _	106	bool	False	10	0	"Capture from the hole after the final seed sown. 
@@ -76,24 +76,30 @@ Dynamics	goal_param	Goal Parameter	game_info _	116	int	0	1	0	"GOAL of Territory:
 Goal of Deprive and Blocked Divert Sower: defines the number of seeds needed to close/block holes (sow_blkd_div).
 Goal of Max Seeds and ROUNDS: defines the minimum number of holes each player must have to continue the game. The player with fewer seeds must have enough seeds to fill goal_param holes each with start_seeds in order to continue playing.  There is no rounding of seed counts as in territory games.
 RND_* Goals: number of specified parameter for win."
-Dynamics	setup_lbl	Initial Setup		0	label	0	2	0	Parameters that control the initial game setup.
-Dynamics	start_pattern	Start Pattern	game_info _	142	StartPattern	ALL_EQUAL	3	0	"Allows specifing non-all-equal start patterns. The following patterns are supported:
+Dynamics	unclaimed	End Game Seeds	game_info _	146	EndGameSeeds	HOLE_OWNER	2	0	"Defines how to score any unclaimed seeds when a game has ended. This is not used if the game has a clear winner, e.g. one player has collected more than half the seeds for a MAX_SEEDS game.
+- HOLE_OWNER: unclaimed seeds go to the hole owner.
+- DONT_SCORE: unclaimed seeds do not score (they are ignored).
+- LAST_MOVER: unclaimed seeds go the player that moved last.
+- UNFED_PLAYER: only valid for MUSTSHARE games. If the game ended without one player being able share seeds, the seeds go to the player without seeds (the unfed player).
+- DIVVIED: the seeds are divided between the two players (an extra seed goes to the player with fewer seeds)."
+Dynamics	setup_lbl	Initial Setup		0	label	0	3	0	
+Dynamics	start_pattern	Start Pattern	game_info _	142	StartPattern	ALL_EQUAL	4	0	"Allows specifing non-all-equal start patterns. The following patterns are supported:
 - ALL_EQUAL: all holes start with the same number of seeds.
 - GAMACHA: starting from the third hold (from start player's left) place nbr_seeds in every other hole, the first move is prescribed move the center hole's seeds to the other side (this is done automatically).
 - ALTERNATES: everyother hole is filled with nbr_seeds, no seeds end up opposite eachother. If a player has fewer seeds than their opponent, then they start.
 - ALTS_WITH_1: like Alternates except the starter's 2nd from right hole with nbr_seeds is replaced with one seed.
 - CLIPPEDTRIPLES: pattern of 0 S S (where S is nbr_seeds) is used to fill the holes; if a full cycle of 3 cannot be placed, the holes are left empty. The True and False sides are the same from the player's perspective, e.g. they will look reversed when viewed from one side of the game board.
 - TWOEMPTY: all but the rightmost two holes for each player are filled with is nbr_seeds."
-Dynamics	prescribed	Prescribed Opening Move	game_info _	132	SowPrescribed	NONE	4	0	"The first sow of the game maybe defined by a specific rule. Prescribed openings are different than start patterns because the player may choose the sow start point. SOW_OWN_STORE and SOW_RULE are ignored during the prescribed openings.
+Dynamics	prescribed	Prescribed Opening Move	game_info _	132	SowPrescribed	NONE	5	0	"The first sow of the game maybe defined by a specific rule. Prescribed openings are different than start patterns because the player may choose the sow start point. SOW_OWN_STORE and SOW_RULE are ignored during the prescribed openings.
 - NONE: there is no prescribed opening move.
 - BASIC_SOWER: the first sow is a very basic pickup the seeds and drop them one at a time in each hole ignoring any other sow parameters. Other sow parameters will be enacted  afterward. This can be used to force the first sow of an MLAPS game to be a single sow. 
 - MLAPS_SOWER: the first sow follows basic rules of multi-lap sowing (LAPPER). Other sow parameters will be enacted  afterward. 
 - SOW1OPP: at least one seed must be sown on the opponents side of the board which is accomplished by sowing as normal until the final seed, then any remaining holes on the player's side are skipped and the last seed is sown in the oppenents first hole (based on current sow direction).
 - PLUS1MINUS1: proceed from the selected hole by moving one seed from the next hole into the following hole, next skip that hole and repeat moving seed forward. After cycling the board, capture across from the opening hole. 
 - ARNGE_LIMIT: the first move may be used to rearrange the seeds (opponent is same layout). If the first move is not used for rearrangement, captures and child creation are not allowed from the starter until the second player makes a child or captures."
-Dynamics	draw_lbl	Draw Parameters		0	label	0	6	0	
-Dynamics	min_move	Minimum Seeds for Move	game_info _	119	int	1	7	0	The minimum number of seeds a hole must have for it to be an allowable move start hole.
-Dynamics	allow_rule	Special Move Restrictions	game_info _	101	AllowRule	NONE	8	0	"Allow rules limit the holes from which moves may start.  Disallowed holes are not selectable.
+Dynamics	draw_lbl	Draw Parameters		0	label	0	7	0	
+Dynamics	min_move	Minimum Seeds for Move	game_info _	119	int	1	8	0	The minimum number of seeds a hole must have for it to be an allowable move start hole.
+Dynamics	allow_rule	Special Move Restrictions	game_info _	101	AllowRule	NONE	9	0	"Allow rules limit the holes from which moves may start.  Disallowed holes are not selectable.
 - NONE: no special rule
 - OPP_OR_EMPTY:  Limit the allowable holes to those that end in an empty hole or reach the opponents side of the board.
 - SINGLE_TO_ZERO: Holes with single seeds may only be played if the next hole is empty.
@@ -106,18 +112,18 @@ Dynamics	allow_rule	Special Move Restrictions	game_info _	101	AllowRule	NONE	8	0
 - MOVE_ALL_HOLES_FIRST: a move must initiated from each hole once before a second move may be made from any hole.  MOVE_ALL is incompatible with all pickers and capttwoout."
 Dynamics	stores	Stores	game_info _	143	bool	True	0	2	True when stores are present on the game board. For games with GOAL of DEPRIVE or CLEAR, stores can be used to show whose turn it is (seed counts will not be sown).
 Dynamics	no_sides	No Sides	game_info _	127	bool	False	1	2	Moves maybe made from any hole, independent of the side of the board. Moves need to specify side, position and directions.  
-Dynamics	mdyno_lbl	Move Dynamics		0	label	0	2	2	
-Dynamics	mustpass	Must Pass	game_info _	125	bool	False	3	2	When a player has no allowable moves on their turn, they must pass, and continue to do so until they have allowable moves or the game is over. The game is over when there is a clear winner or tie condition, or when neither player has an allowable move.
-Dynamics	mustshare	Must Share	game_info _	126	bool	False	4	2	If an opponent has no moves at the start of your turn, you must make seeds available to them if you can. This condition is enforced by only activating holes on the UI which will make seeds available to the opponent.
-Dynamics	grandslam	Grand Slam	game_info _	117	GrandSlam	LEGAL	5	2	"A grandslam is when your opponent has seeds at the start of your turn and you capture them all. This option selects what to do:
+Dynamics	mdyno_lbl	Move Dynamics		0	label	0	3	2	
+Dynamics	mustpass	Must Pass	game_info _	125	bool	False	4	2	When a player has no allowable moves on their turn, they must pass, and continue to do so until they have allowable moves or the game is over. The game is over when there is a clear winner or tie condition, or when neither player has an allowable move.
+Dynamics	mustshare	Must Share	game_info _	126	bool	False	5	2	If an opponent has no moves at the start of your turn, you must make seeds available to them if you can. This condition is enforced by only activating holes on the UI which will make seeds available to the opponent.
+Dynamics	grandslam	Grand Slam	game_info _	117	GrandSlam	LEGAL	6	2	"A grandslam is when your opponent has seeds at the start of your turn and you capture them all. This option selects what to do:
 - LEGAL: the seeds are captured
 - NOT_LEGAL: you may not capture all of your opponents seeds, a move which would do so is not allowed
 - NO_CAPT: you may sow the seeds, but the capture is not performed
 - OPP_GETS_REMAIN: if you capture all your opponents seeds, they capture all of your remaining seeds and the game is over. Winner is determined by game goal. Seeds picked because of PICKEXTRA PICK*LASTSEEDS go the current player and not the opponent.
 - LEAVE_LEFT: the capture is performed from all but the leftmost hole from the sower perspective. This might leave your oppenents without seeds or might not capture any seeds.
 - LEAVE_RIGHT: the capture is performed from all but the rightmost hole from the sower perspective. This might leave your oppenents without seeds."
-Dynamics	rnd_lbl	Rounds Parameters		0	label	0	6	2	
-Dynamics	rounds	Rounds	game_info _	135	Rounds	NO_ROUNDS	7	2	"When rounds are employed, each round may end under conditions that do not win the overall game. The board is then setup again per the game rules, generally with some feature changed based on the previous round: hole ownership, holes out of play, a shortened board. Play continues in rounds until either player meets the overall game winning condition.
+Dynamics	rnd_lbl	Rounds Parameters		0	label	0	7	2	
+Dynamics	rounds	Rounds	game_info _	135	Rounds	NO_ROUNDS	8	2	"When rounds are employed, each round may end under conditions that do not win the overall game. The board is then setup again per the game rules, generally with some feature changed based on the previous round: hole ownership, holes out of play, a shortened board. Play continues in rounds until either player meets the overall game winning condition.
 If the game is played in round, defines how each round ends: 
 - NO_ROUNDS: the game is not played in rounds
 - HALF_SEEDS: each round ends when one player has more that half the seeds
@@ -125,12 +131,12 @@ If the game is played in round, defines how each round ends:
 For example: In Weg each round ends when neither player has a valid move. The board is then set up again after determining who owns what territory (holes). Rounds continue until one player has claimed sufficient territory to be declared the game winner (e.g. ownership of 10 or more holes).
 In the case of a round win or tie  a new starter is determined via ROUND_STARTER and  the board is reset according to ROUND_FILL.
 BLOCKS are used in many games and set between rounds based on the seed placement. TERRITORY GOAL games adjust hole ownership between rounds."
-Dynamics	round_starter	Round Starter	game_info _	134	RoundStarter	ALTERNATE	8	2	"Defines which player starts 2nd and subsequent rounds:
+Dynamics	round_starter	Round Starter	game_info _	134	RoundStarter	ALTERNATE	9	2	"Defines which player starts 2nd and subsequent rounds:
 - ALTERNATE: the round starter alternates.
 - LOSER: the loser of the previous round starts the current round.
 - WINNER: the winner of the previous round starts the current round.
 - LAST_MOVER: the player that made the last move of the previous round, starts the new round."
-Dynamics	round_fill	Round Fill Method	game_info _	133	RoundFill	NOT_APPLICABLE	9	2	"The round fill method determines which holes are filled and how many seeds they are filled with when setting up for a new round.
+Dynamics	round_fill	Round Fill Method	game_info _	133	RoundFill	NOT_APPLICABLE	10	2	"The round fill method determines which holes are filled and how many seeds they are filled with when setting up for a new round.
 Several round fill mechanisms use the same general approach called the Empty Hole Method. The loser of the previous round will end up with empty holes. These holes are not playable if BLOCKS are used; otherwise they are playable. This method is not used for RND_ GOAL games.
 The seeds each player accummulated in the previous round are distributed into holes with exactly the same number in each. That number of seeds is NBR_START. The winner will fill all of their holes and put any remaining seeds into their own store. The loser will fill as many holes as they can with nbr_start seeds and put any remaining seeds (fewer than nbr_start) into their own store.
 LEFT_FILE, RIGHT_FILL and OUTSIDE_FILL define which holes that the loser must fill. UCHOOSE allows the loser to choose which holes have seeds.
@@ -142,7 +148,7 @@ LEFT_FILE, RIGHT_FILL and OUTSIDE_FILL define which holes that the loser must fi
 - SHORTEN: the number of holes that the round loser can fill with NBR_START seeds are fill on both sides, other holes are left empty. Holes are filled opposite eachother. If BLOCKS is selected, the board is shortened to the number of holes filled (empty holes are blocked and out of play). If the game uses children, they will not be created if the board size is reduced to 3 or less.
 - UCHOOSE: allow user to choose which holes have seeds (are not blocked) when ROUNDS and BLOCKS are used.
 - UMOVE: allow the loser to choose where seeds are placed. At least one seed must be placed in each hole and the game must be playable (at least one hole has MIN_MOVE seeds), remaining seeds are placed in the store. The winner's layout is the same layout but reflected."
-Dynamics	blocks	Blocks	game_info _	102	bool	False	10	2	"Blocks remove holes from play and are shown on the UI with an X.
+Dynamics	blocks	Blocks	game_info _	102	bool	False	11	2	"Blocks remove holes from play and are shown on the UI with an X.
 When used with ROUNDS, the holes not filled from the player with fewer seeds are blocked and thus out of play for the round.
 When used with DEPRIVE, SOW_BLCK_DIV and goal_param holes are closed (blocked and removed from play) when sown to goal_param seeds."
 Game	game_class	Game Class	game_class	1	GameClasses	Mancala	0	0	"The name of the Game Class. One of:
@@ -190,9 +196,9 @@ Player	easy_rand	Easy Random Addin	player scorer _	227	int	0	10	2	"If the game i
 The specific value for this should be selected based on the ranges of the paremeters and multiplier.
 Used only for minimax & negamax players."
 skip	mlength		game_info _	121	int		0	0	A derived parameter. Do not include in config files. Set during game construction length of moves: 1 (int) or 2, 3 (tuple).
-skip	udirect		game_info _	145	bool		0	0	A derived parameter. Do not include in config files. Set during game construction to True if any udir holes are set.
-skip	rules			500	RuleDict		0	0	An init only parameter that used to check the consistency of the game info. Errors and warnings are raised as the rules are processed.
 skip	nbr_holes			501	int		0	0	An init only parameter that is used to check the other parameters in the creation of game info.
+skip	rules			500	RuleDict		0	0	An init only parameter that used to check the consistency of the game info. Errors and warnings are raised as the rules are processed.
+skip	udirect		game_info _	145	bool		0	0	A derived parameter. Do not include in config files. Set during game construction to True if any udir holes are set.
 Sow	mlaps	Sow Type	game_info _	120	LapSower	OFF	0	0	"Determines if seeds from more the start hole are picked up and sown:
 - OFF: Single lap sowing. Seeds from the start hole are sown, typically, one per hole until expened.
 - LAPPER:  If the first sow ends in a hole with more than one seed, pickup all the seeds and continue sowing another ""lap"". Note that lap here does not mean a full cicuit of the board, only an individual sow operation. In general, sowing laps continues in this manner until the final seed of a lap reaches an empty hole. There are games with other conditions for ending a multilap low such as making a capture or making a child. 
@@ -215,7 +221,7 @@ Sow	skip_start	Skip Start on Cycle	game_info _	136	bool	False	5	0	"When sowing a
 In multilap games, the start hole for the current lap is skipped. Second or subsequent laps may sow into the original start hole."
 Sow	sow_own_store	Sow Own Store	game_info _	138	bool	False	6	0	Sow seeds into your own store when passing it. Do not sow into your opponents store. When the final seed is sown into the store, the sower gets another turn.
 Sow	move_one	Move One Seed	game_info _	122	bool	False	7	0	Only valid when SOW_START is set. Changes the SOW_START behavior so that if there is only one seed in the hole, it is moved in the sow direction by one hole.
-Sow	visit_opp	Visit Opp for Mlaps	game_info _	146	bool	False	8	0	Requires MLAPS. If the first 'lap' does not reach the opponent's side of the board, the sowing ends after the first lap. 
+Sow	visit_opp	Visit Opp for Mlaps	game_info _	147	bool	False	8	0	Requires MLAPS. If the first 'lap' does not reach the opponent's side of the board, the sowing ends after the first lap. 
 Sow	sow_rule	Special Sow Rules	game_info _	139	SowRule	NONE	9	0	"Special sow rules add additional behavior or restrictions to the sowing phase:
 - NONE: there is no special sowing rule.
 - SOW_BLKD_DIV: If the final seed of an individual sow lands on the opposite side of the board and brings the contents of that hole to goal_param seeds, the hole is closed closed (blocked). In single lap games, the hole's seeds are removed from play. In multilap games, the seeds are used to continue sowing.

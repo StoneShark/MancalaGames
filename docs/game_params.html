@@ -152,6 +152,24 @@ is included after the parameter sections.
 <p>Goal of Deprive and Blocked Divert Sower: defines the number of seeds needed to close/block holes (sow_blkd_div).
 <p>Goal of Max Seeds and <a href="game_params.html#rounds">ROUNDS</a>: defines the minimum number of holes each player must have to continue the game. The player with fewer seeds must have enough seeds to fill goal_param holes each with start_seeds in order to continue playing.  There is no rounding of seed counts as in territory games.
 <p>RND_* Goals: number of specified parameter for win.
+<h4 id="unclaimed"> End Game Seeds </h4>
+<p class="pdesc">Location in Config Files: game_info : unclaimed
+<p id="EndGameSeeds" class="pdesc">Type: <a href="param_types.html#EndGameSeeds"> EndGameSeeds </a>
+<p class="pdesc">Default value: 0
+<p class="pdesc">UI Tab: Dynamics
+
+<p>Defines how to score any unclaimed seeds when a game has ended. This is not used if the game has a clear winner, e.g. one player has collected more than half the seeds for a MAX_SEEDS game.
+<ol start=0><li class="helptext">
+<b class="enum">HOLE_OWNER</b>: unclaimed seeds go to the hole owner.
+<li class="helptext">
+<b class="enum">DONT_SCORE</b>: unclaimed seeds do not score (they are ignored).
+<li class="helptext">
+<b class="enum">LAST_MOVER</b>: unclaimed seeds go the player that moved last.
+<li class="helptext">
+<b class="enum">UNFED_PLAYER</b>: only valid for <a href="game_params.html#mustshare">MUSTSHARE</a> games. If the game ended without one player being able share seeds, the seeds go to the player without seeds (the unfed player).
+<li class="helptext">
+<b class="enum">DIVVIED</b>: the seeds are divided between the two players (an extra seed goes to the player with fewer seeds).
+</ol>
 <h4 id="start_pattern"> Start Pattern </h4>
 <p class="pdesc">Location in Config Files: game_info : start_pattern
 <p id="StartPattern" class="pdesc">Type: <a href="param_types.html#StartPattern"> StartPattern </a>
@@ -874,6 +892,7 @@ Sow rule of MAX_SOW: maximum number of seeds a hole may contain
     <p class="param"><a href="#stores">stores</a></p>
     <p class="param"><a href="#stores_m">stores_m</a></p>
     <p class="param"><a href="#udir_holes">udir_holes</a></p>
+    <p class="param"><a href="#unclaimed">unclaimed</a></p>
     <p class="param"><a href="#visit_opp">visit_opp</a></p>
     <p class="param"><a href="#xc_sown">xc_sown</a></p>
     <p class="param"><a href="#xcpickown">xcpickown</a></p>

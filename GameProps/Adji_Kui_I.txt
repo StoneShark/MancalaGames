@@ -1,0 +1,26 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 6,
+      "nbr_start": 4
+   },
+   "game_info": {
+      "name": "Adji Kui I",
+      "about": "Sow counter-clockwise.\nMultiple capture on 2s and 3s from opposite side.\nGoal: capture more than half of the seeds.",
+      "capt_on": [ 2, 3 ],
+      "min_move": 2,
+      "multicapt": -1,
+      "mustpass": true,
+      "oppsidecapt": true,
+      "sow_direct": 1,
+      "stores": true
+   },
+   "player": {
+      "ai_params": {},
+      "scorer": {
+         "stores_m": 4
+      }
+   },
+   "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p88.",
+   "deviation": "Game ends a soon as a player has half the seeds."
+}

@@ -6,28 +6,25 @@
    },
    "game_info": {
       "name": "Vai Lun Thlan",
-      "about": "A single-lap mancala, sow direction is clockwise, capture on 1s. A player must pass if they don't have a move.",
+      "about": "A single-lap mancala, sow direction is clockwise, capture on 1s. A player must pass, if they don't have a move. Goal: collect more seeds than opponent.",
       "capt_on": [1],
       "multicapt": -1,
       "mustpass": true,
-      "skip_start": true,
       "sow_direct": -1,
       "stores": true
    },
    "player": {
       "scorer": {
          "stores_m": 4,
-         "access_m": 2,
          "seeds_m": 0,
          "empties_m": -1,
-         "child_cnt_m": 0,
          "evens_m": 0,
-         "easy_rand": 20,
-         "repeat_turn": 0
+         "easy_rand": 20
       },
       "ai_params": {
          "mm_depth": [1, 1, 3, 5]
       }
    },
-   "rules": "Mohr, Merilyn Simonds; The New Games Treasury, 1993. p99."
+   "rules": "Mohr, Merilyn Simonds. The New Games Treasury. 1993. p99.",
+   "deviation": "Game ends when one player has move than half the seeds."
 }

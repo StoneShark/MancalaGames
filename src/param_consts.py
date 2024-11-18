@@ -109,6 +109,15 @@ STRING_DICTS = {
          'Split': gi.Direct.SPLIT,
          'Players Alternate': gi.Direct.PLAYALTDIR}),
 
+    'EndGameSeeds': lookup_dicts(
+        gi.EndGameSeeds,
+        {'Hole Owner': gi.EndGameSeeds.HOLE_OWNER,
+         'Not Scored': gi.EndGameSeeds.DONT_SCORE,
+         'Last Mover': gi.EndGameSeeds.LAST_MOVER,
+         'Unfed Player': gi.EndGameSeeds.UNFED_PLAYER,
+         'Divvied Equally': gi.EndGameSeeds.DIVVIED,
+            }),
+
     'GameClasses': lookup_strs(GAME_CLASSES.keys()),
 
     'Goal': lookup_dicts(

@@ -1,0 +1,27 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 6,
+      "nbr_start": 4
+   },
+   "game_info": {
+      "name": "Obridjie",
+      "about": "Sow multi-lap counter-clockwise.  All holes sown to 4 are taken by the hole owner.\nCapture on 4s.\nGoal: capture at least half of the seeds.\n\n",
+      "capt_on": [
+         4
+      ],
+      "mlaps": 1,
+      "sow_direct": 1,
+      "sow_rule": 3,
+      "stores": true,
+      "unclaimed": 1
+   },
+   "player": {
+      "ai_params": {},
+      "scorer": {
+         "stores_m": 4
+      }
+   },
+   "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p21.",
+   "deviation": "Game ends a soon as a player has half the seeds."
+}

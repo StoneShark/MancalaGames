@@ -109,6 +109,17 @@ class Direct(enum.IntEnum):
 
 
 @enum.unique
+class EndGameSeeds(enum.IntEnum):
+    """what to do with unclaimed seeds at the end game."""
+
+    HOLE_OWNER = 0
+    DONT_SCORE = 1
+    LAST_MOVER = 2
+    UNFED_PLAYER = 3
+    DIVVIED = 4
+
+
+@enum.unique
 class Goal(enum.IntEnum):
     """Goal of the game."""
 
@@ -256,6 +267,7 @@ class GameInfo:
     stores: bool = False
     start_pattern: StartPattern = StartPattern.ALL_EQUAL
     prescribed: SowPrescribed = SowPrescribed.NONE
+    unclaimed: EndGameSeeds = EndGameSeeds.HOLE_OWNER
 
     # **** allowable moves
     min_move: int = 1

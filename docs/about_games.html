@@ -102,6 +102,28 @@ name than you expect.
   </div>
 </div>
 <p>Rules: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p61.
+<h3 id="Adji Kui I">Adji Kui I</h3>
+<p>Sow counter-clockwise.
+<p>Multiple capture on 2s and 3s from opposite side.
+<p>Goal: capture more than half of the seeds.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 2 3</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 2</p>
+    <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: -1</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
+    <p class="param"><a href="game_params.html#oppsidecapt">Opp Side Capt Only</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p88.
+<p>Deviation: Game ends a soon as a player has half the seeds.
 <h3 id="Ayoayo">Ayoayo</h3>
 <p>A multi-lap mancala; sow direction counter-clockwise skipping start hole on full cycle sow; cross-capture from opponents side when a sow ends in own empty hole. If your opponent has no seeds, you must make seeds available to them (if you can).
 <p>The game ends when one player captures more than half the seeds; when the current player cannot share seeds to an opponent without seeds; or when there is only one seed left on the board.
@@ -855,6 +877,30 @@ See <a href="about_games.html#Olinda">Olinda</a>, <a href="about_games.html#Pall
   </div>
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p60.
+<h3 id="Mandoli">Mandoli</h3>
+<p>Sow is counter-clockwise in multiple laps. 
+<p>Captures are not allowed on each players first move. Captures are on evens from the final hole sown and one hole before it.
+<p>The game ends when one player has collected half the seeds or if the current player cannot move. In the latter case, the unclaimed seeds on the board do not score.
+<p>Goal: collect more than half of the seeds or the most seeds. 
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  6</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#evens">Capture Evens</a>: Yes</p>
+    <p class="param"><a href="game_params.html#goal_param">Goal Parameter</a>: 1</p>
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: 2</p>
+    <p class="param"><a href="game_params.html#nocaptmoves">Nbr Start Moves w/o Capture</a>: 2</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#unclaimed">End Game Seeds</a>: DONT_SCORE</p>
+  </div>
+</div>
+<p>Rules: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p19.
+<p>Deviation: Per the rules: the game does not end until there are no moves. This is not implemented as there is no reason to continue playing once a winner is determined; the win cannot be undone, it's just moving seeds.
 <h3 id="Mangala II">Mangala II</h3>
 <p>A single-lap mancala, sow direction is counter-clockwise, multiple capture on opponents side on 2s, 4s and 6s.
 <div class="cols_row">
@@ -1076,6 +1122,27 @@ see <a href="about_games.html#Lam Waladach">Lam Waladach</a>
   </div>
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p54.
+<h3 id="Obridjie">Obridjie</h3>
+<p>Sow multi-lap counter-clockwise.  All holes sown to 4 are taken by the hole owner.
+<p>Capture on 4s.
+<p>Goal: capture at least half of the seeds.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 4</p>
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: OWN_SOW_CAPT_ALL</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#unclaimed">End Game Seeds</a>: DONT_SCORE</p>
+  </div>
+</div>
+<p>Rules: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p21.
+<p>Deviation: Game ends a soon as a player has half the seeds.
 <h3 id="Olinda">Olinda</h3>
 <p>The starting player chooses the sow direction that they will use for the game; the second player will use the opposite direction for the game. Sowing is done in multiple laps from the next hole (<a href="game_params.html#mlaps">MLAPS</a> of LAPPER_NEXT).
 <p>While either player is sowing, both players capture all holes sown to 4 on their side of the board. Specifically, the non-sower may capture seeds from holes sown to 4 on their own side of the board.
@@ -1390,7 +1457,7 @@ see Sedeqa
 <p>Rules: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p55.
 <p>Deviation: Per the rules: after the first capture on 2 or 3 subsequent captures (multicapt) are made on 2, 3 or 4 seed holes. Mancala Games only supports the capture mechanism being the same for the first and multiple captures.
 <h3 id="Vai Lun Thlan">Vai Lun Thlan</h3>
-<p>A single-lap mancala, sow direction is clockwise, capture on 1s. A player must pass if they don't have a move.
+<p>A single-lap mancala, sow direction is clockwise, capture on 1s. A player must pass, if they don't have a move. Goal: collect more seeds than opponent.
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  6</p>
@@ -1401,12 +1468,12 @@ see Sedeqa
   </div>
   <div class="column2">
     <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
-    <p class="param"><a href="game_params.html#skip_start">Skip Start on Cycle</a>: Yes</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CW</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
   </div>
 </div>
-<p>Rules: Mohr, Merilyn Simonds; The New Games Treasury, 1993. p99.
+<p>Rules: Mohr, Merilyn Simonds. The New Games Treasury. 1993. p99.
+<p>Deviation: Game ends when one player has move than half the seeds.
 <h3 id="Valah">Valah</h3>
 <p>Multilap sow in counter-clockwise direction. Sow into own store; no other capture mechanism. If your sow ends in your own store, repeat your turn.
 <div class="cols_row">
@@ -1528,6 +1595,7 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
 <h2 id="index">Game Index</h2>
 <div class="cols_row">
   <div class="column3">
+    <p class="param"><a href="#Adji Kui I">Adji Kui I</a></p>
     <p class="param"><a href="#Adji-boto">Adji-boto</a></p>
     <p class="param"><a href="#Ayoayo">Ayoayo</a></p>
     <p class="param"><a href="#Bao (Kenyan)">Bao (Kenyan)</a></p>
@@ -1560,6 +1628,7 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Lamlameta">Lamlameta</a></p>
     <p class="param"><a href="#Leyla-Gobale">Leyla-Gobale</a></p>
     <p class="param"><a href="#Longbeu-a-cha">Longbeu-a-cha</a></p>
+    <p class="param"><a href="#Mandoli">Mandoli</a></p>
     <p class="param"><a href="#Mangala II">Mangala II</a></p>
     <p class="param"><a href="#Mbangbi">Mbangbi</a></p>
     <p class="param"><a href="#Mbothe">Mbothe</a></p>
@@ -1572,6 +1641,7 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#NumNum">NumNum</a></p>
   </div>
   <div class="column3">
+    <p class="param"><a href="#Obridjie">Obridjie</a></p>
     <p class="param"><a href="#Olinda">Olinda</a></p>
     <p class="param"><a href="#Ot-tjin">Ot-tjin</a></p>
     <p class="param"><a href="#Oware">Oware</a></p>

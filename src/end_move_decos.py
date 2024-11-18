@@ -4,6 +4,9 @@
 Return win/end-game-condition, winner from ender.game_ended.
 self.game.turn is the player that just finished moving.
 
+NOTE:  The ender results can be confusing so the logger is left
+active when get_allowable_holes is called.
+
 Process is as follows:
     0. RoundWinner defers to the rest of the chain
        (on returns it adjusts the outcome).
@@ -153,6 +156,9 @@ class ClearWinner(EndTurnIf):
     """Determine if the seed counts result in a clear winner.
     There must be decorators in the chain below this."""
 
+    def __str__(self):
+        return super().__str__() + f'\n   win_seeds: {self.win_seeds}'
+
     def game_ended(self, repeat_turn, ended=False):
 
         if ended:
@@ -192,6 +198,11 @@ class EndTurnNoMoves(EndTurnIf):
 class EndTurnMustShare(EndTurnIf):
     """With MUSTSHARE, the game is over if the next player to
     move needs to make seeds available to an opponent and cannot.
+    If the game has ended, delegate to the deco chain and return
+    the results.
+
+    Do a scan for seeds and if required do the simulation
+    to determine if the game is over.
 
     On repeat turn: if the opponent does not have have seeds
     and the current player does but can't make any available.
@@ -200,12 +211,14 @@ class EndTurnMustShare(EndTurnIf):
     and the opponent cannot make any seeds available to
     the current player.
 
-    If the game has ended, delegate to the deco chain.
-    Do a scan for seeds and if required do the simulation
-    to determine if the game is over."""
+    If seeds cannot be shared by the required player,
+    call the claimer which may be configure as a taker.
+    game.turn must be set to the player that should get
+    the seeds."""
 
-    def __init__(self, game, decorator=None):
-        super().__init__(game, decorator)
+    def __init__(self, game, decorator=None, sclaimer=None):
+
+        super().__init__(game, decorator, sclaimer)
         self.owner = claimer.make_owner_func(game)
 
     def game_ended(self, repeat_turn, ended=False):
@@ -240,11 +253,16 @@ class EndTurnMustShare(EndTurnIf):
 
         if no_share:
             if repeat_turn:
+                self.game.turn = not self.game.turn
+                self.sclaimer.claim_seeds()
+                self.game.turn = not self.game.turn
                 game_log.add("Player can't share on repeat turn, game ended.",
                              game_log.INFO)
             else:
+                self.sclaimer.claim_seeds()
                 game_log.add("Next player can't share, game ended.",
                              game_log.INFO)
+
         return self.decorator.game_ended(repeat_turn, no_share)
 
 
@@ -274,58 +292,58 @@ class EndTurnNotPlayable(EndTurnIf):
         return self.decorator.game_ended(repeat_turn, ended)
 
 
-class WaldaEndMove(EndTurnIf):
+class ChildNoStoresEnder(EndTurnIf):
     """The rest of the deco chain may collect seeds into
     the stores (if the game has ended). Move any seeds
     from the stores into available children."""
 
     @staticmethod
-    def _find_waldas(game):
-        """Find and return a walda for each side, if one exists."""
+    def _find_child_stores(game):
+        """Find and return a child for each side, if one exists."""
 
-        walda_locs = [-1, -1]
+        child_locs = [-1, -1]
         for side in (False, True):
-            for walda in range(game.cts.dbl_holes):
-                if game.child[walda] == side:
-                    walda_locs[int(side)] = walda
+            for child in range(game.cts.dbl_holes):
+                if game.child[child] == side:
+                    child_locs[int(side)] = child
                     break
 
-        return walda_locs
+        return child_locs
 
     def game_ended(self, repeat_turn, ended=False):
-        """Walda end move wrapper."""
+        """Children but no stores end move wrapper."""
 
         end_cond, winner = self.decorator.game_ended(repeat_turn, ended)
 
         if any(self.game.store):
-            walda_locs = self._find_waldas(self.game)
+            child_locs = self._find_child_stores(self.game)
 
-            if all(loc >= 0 for loc in walda_locs):
-                self.game.board[walda_locs[0]] += self.game.store[0]
-                self.game.board[walda_locs[1]] += self.game.store[1]
+            if all(loc >= 0 for loc in child_locs):
+                self.game.board[child_locs[0]] += self.game.store[0]
+                self.game.board[child_locs[1]] += self.game.store[1]
 
-            elif walda_locs[0] >= 0:
-                self.game.board[walda_locs[0]] += sum(self.game.store)
-                game_log.add('Only False has walda, gets all store seeds.',
+            elif child_locs[0] >= 0:
+                self.game.board[child_locs[0]] += sum(self.game.store)
+                game_log.add('Only False has child, gets all store seeds.',
                              game_log.INFO)
 
-            elif walda_locs[1] >= 0:
-                self.game.board[walda_locs[1]] += sum(self.game.store)
-                game_log.add('Only True has walda, gets all store seeds.',
+            elif child_locs[1] >= 0:
+                self.game.board[child_locs[1]] += sum(self.game.store)
+                game_log.add('Only True has child, gets all store seeds.',
                              game_log.INFO)
 
             else:
-                # game ended w/o waldas, move seeds from stores onto board
+                # game ended w/o child, move seeds from stores onto board
                 self.game.board[0] += self.game.store[False]
                 self.game.board[-1] += self.game.store[True]
-                game_log.add('No waldas, but put seeds on board.',
+                game_log.add('No children, but put seeds on board.',
                              game_log.INFO)
 
             self.game.store = [0, 0]
-            game_log.step('Moved store seeds to walda', self.game)
+            game_log.step('Moved store seeds to children', self.game)
 
         assert sum(self.game.board) == self.game.cts.total_seeds, \
-            'Walda: seeds missing from board.'
+            'ChildNoStoresEnder: seeds missing from board.'
 
         return end_cond, winner
 
@@ -405,6 +423,10 @@ class NoOutcomeChange(EndTurnIf):
 
         super().__init__(game, decorator, sclaimer)
         self.min_needed = min_needed
+
+
+    def __str__(self):
+        return super().__str__() + f'\n   min_needed: {self.min_needed}'
 
 
     @staticmethod
