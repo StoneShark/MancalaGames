@@ -721,6 +721,149 @@ class TestOnlyRightTwo:
         assert game.deco.allow.get_allowable_holes() == eresult
 
 
+def reverse(lst):
+
+    lst.reverse()
+    return lst
+
+
+class TestMoveAllFirst:
+
+    @pytest.fixture
+    def game(self):
+        game_consts = gc.GameConsts(nbr_start=4, holes=4)
+        game_info = gi.GameInfo(evens=True,
+                                stores=True,
+                                allow_rule=AllowRule.MOVE_ALL_HOLES_FIRST,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        return mancala.Mancala(game_consts, game_info)
+
+
+    HCASES = [
+        #start state
+        ['start',
+         utils.make_state(board=(4, 4, 4, 4, 4, 4, 4, 4),
+                          store=[0, 0],
+                          unlocked=(F, F, F, F, F, F, F, F),
+                         ),
+         [T, T, T, T], [T, T, T, T]],
+
+        ['moves2',
+         utils.make_state(board=(3, 4, 6, 4, 2, 1, 5, 4),
+                          store=[0, 0],
+                          unlocked=(F, T, F, F, F, F, F, T),
+                         ),
+         [T, F, T, T], reverse([T, T, T, F])],
+
+        ['all',
+         utils.make_state(board=(3, 4, 6, 4, 2, 1, 5, 4),
+                          store=[0, 0],
+                          unlocked=(T, T, T, T, T, T, T, T),
+                         ),
+         [T, T, T, T], [T, T, T, T]],
+
+        ]
+
+    @pytest.mark.parametrize('state, efresult, etresult',
+                             [case[1:] for case in HCASES],
+                             ids=[case[0] for case in HCASES])
+    def test_maf_half(self, game, state, efresult, etresult):
+
+        game.state = state
+        game.turn = True
+        assert game.deco.allow.get_allowable_holes() == etresult
+
+        game.turn = False
+        assert game.deco.allow.get_allowable_holes() == efresult
+
+
+    @pytest.fixture
+    def fgame(self):
+        game_consts = gc.GameConsts(nbr_start=4, holes=4)
+        game_info = gi.GameInfo(evens=True,
+                                stores=True,
+                                goal=gi.Goal.TERRITORY,
+                                goal_param=6,
+                                rounds=gi.Rounds.NO_MOVES,
+                                allow_rule=AllowRule.MOVE_ALL_HOLES_FIRST,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        return mancala.Mancala(game_consts, game_info)
+
+
+    FCASES = [
+        ['start',
+         utils.make_state(board=(4, 4, 4, 4, 4, 4, 4, 4),
+                          store=[0, 0],
+                          unlocked=(F, F, F, F, F, F, F, F),
+                          owner=(F, F, F, F, T, T, T, T),
+                         ),
+         [T, T, T, T, F, F, F, F],
+         [F, F, F, F, T, T, T, T]],
+
+        ['moves2',
+         utils.make_state(board=(3, 4, 6, 4, 2, 1, 5, 4),
+                          store=[0, 0],
+                          unlocked=(F, T, F, F, F, F, F, T),
+                          owner=(F, F, F, F, T, T, T, T),
+                         ),
+         [T, F, T, T, F, F, F, F],
+         [F, F, F, F, T, T, T, F]],
+
+        ['all',
+         utils.make_state(board=(3, 4, 6, 4, 2, 1, 5, 4),
+                          store=[0, 0],
+                          unlocked=(T, T, T, T, T, T, T, T),
+                          owner=(F, F, F, F, T, T, T, T),
+                        ),
+         [T, T, T, T, F, F, F, F],
+         [F, F, F, F, T, T, T, T]],
+
+        ['start_own',
+         utils.make_state(board=(4, 4, 4, 4, 4, 4, 4, 4),
+                          store=[0, 0],
+                          unlocked=(F, F, F, F, F, F, F, F),
+                          owner=(F, F, T, T, T, T, T, F),
+                         ),
+         [T, T, F, F, F, F, F, T],
+         [F, F, T, T, T, T, T, F]],
+
+        ['moves2_own',
+         utils.make_state(board=(3, 4, 6, 4, 2, 1, 5, 4),
+                          store=[0, 0],
+                          unlocked=(F, T, F, F, F, F, T, F),
+                          owner=   (F, F, T, T, T, T, T, F),
+                         ),
+         [T, F, F, F, F, F, F, T],
+         [F, F, T, T, T, T, F, F]],
+
+        ['all_own',
+         utils.make_state(board=(3, 4, 6, 4, 2, 1, 5, 4),
+                          store=[0, 0],
+                          unlocked=(T, T, T, T, T, T, T, T),
+                          owner=(F, F, T, T, T, T, T, F),
+                        ),
+         [T, T, F, F, F, F, F, T],
+         [F, F, T, T, T, T, T, F]],
+        ]
+
+    @pytest.mark.parametrize('state, efresult, etresult',
+                             [case[1:] for case in FCASES],
+                             ids=[case[0] for case in FCASES])
+    def test_maf_full(self, fgame, state, efresult, etresult):
+
+        fgame.state = state
+        fgame.turn = True
+        print(fgame)
+        assert fgame.deco.allow.get_allowable_holes() == etresult
+
+        fgame.turn = False
+        print(fgame)
+        assert fgame.deco.allow.get_allowable_holes() == efresult
+
+
+
 
 class TestBadEnums:
 

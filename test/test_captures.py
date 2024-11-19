@@ -1262,7 +1262,6 @@ class TestPickTwos:
         game_info = gi.GameInfo(stores=True,
                                 crosscapt=True,
                                 capt_on=[2],
-                                capt_side=True,
                                 pickextra=CaptExtraPick.PICKTWOS,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)

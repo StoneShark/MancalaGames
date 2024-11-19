@@ -94,24 +94,62 @@ class TestSingleClasses:
         assert cok.capture_ok(None, loc) == eok
 
 
-    @pytest.mark.parametrize('turn, loc, eok',
-                             [(False, 0, False),
-                              (False, 1, False),
-                              (False, 2, True),
-                              (False, 3, True),
-                              (True, 0, True),
-                              (True, 1, True),
-                              (True, 2, False),
-                              (True, 3, False),
+    @pytest.mark.parametrize('cside, turn, loc, sloc, eok',
+                             [(1, False, 0, N, False),
+                              (1, False, 1, N, False),
+                              (1, False, 2, N, True),
+                              (1, False, 3, N, True),
+                              (1, True, 0, N, True),
+                              (1, True, 1, N, True),
+                              (1, True, 2, N, False),
+                              (1, True, 3, N, False),
+
+                              (2, False, 0, N, True),
+                              (2, False, 1, N, True),
+                              (2, False, 2, N, False),
+                              (2, False, 3, N, False),
+                              (2, True, 0, N, False),
+                              (2, True, 1, N, False),
+                              (2, True, 2, N, True),
+                              (2, True, 3, N, True),
+
+                              #   OPP_CONT
+                              (3, False, 0, 0, False),
+                              (3, False, 1, 2, True),
+                              (3, False, 2, 0, False),
+                              (3, False, 3, 2, True),
+                              (3, True, 0, 0, True),
+                              (3, True, 1, 2, False),
+                              (3, True, 2, 0, True),
+                              (3, True, 3, 2, False),
+
+                              #   OWN_CONT
+                              (4, False, 0, 0, True),
+                              (4, False, 1, 2, False),
+                              (4, False, 2, 0, True),
+                              (4, False, 3, 2, False),
+                              (4, True, 0, 0, False),
+                              (4, True, 1, 2, True),
+                              (4, True, 2, 0, False),
+                              (4, True, 3, 2, True),
+
                               ])
-    def test_sideok(self, game, mdata, turn, loc, eok):
+    def test_sideok(self, game, mdata, cside, turn, loc, sloc, eok):
 
         game.turn = turn
-        object.__setattr__(game.info, 'capt_side', 1)
+        object.__setattr__(game.info, 'capt_side', cside)
         cok = capt_ok.CaptSideOk(game, capt_ok.CaptTrue(game))
 
-        mdata.capt_loc = loc
+        mdata.capt_loc = sloc
         assert cok.capture_ok(mdata, loc) == eok
+
+
+    def test_bad_side(self, game):
+
+        object.__setattr__(game.info, 'capt_side', 12)
+
+        with pytest.raises(NotImplementedError):
+            capt_ok.CaptSideOk(game, capt_ok.CaptTrue(game))
 
 
     @pytest.mark.parametrize('seeds, eok',

@@ -236,8 +236,9 @@ class CaptCrossPickOwnOnCapt(CaptMethodIf):
     """Cross capture, pick own if capture, but do not
     pick from a designated child or a locked hole.
 
-    Don't used capt_ok, because capt_side might prevent
-    picking."""
+    The capture already confirmed we are on the right
+    side if mdata.captured is true; which is opposite
+    from capt_side."""
 
     def do_captures(self, mdata):
         """Test for and pick own."""
@@ -255,18 +256,32 @@ class CaptCrossPickOwnOnCapt(CaptMethodIf):
 class CaptCrossPickOwn(CaptMethodIf):
     """Cross capture, pick own even if no capture,
     but do not pick from a designated child
-    or a locked hole."""
+    or a locked hole. If captures are limited by side, we
+    need the opposite side here."""
+
+
+    def __init__(self, game, decorator=None):
+
+        super().__init__(game, decorator)
+
+        if game.info.capt_side in (gi.CaptSide.OPP_SIDE,
+                                   gi.CaptSide.OPP_CONT):
+            self.side_ok = game.cts.my_side
+
+        elif game.info.capt_side in (gi.CaptSide.OWN_SIDE,
+                                     gi.CaptSide.OWN_CONT):
+            self.side_ok = game.cts.opp_side
+
+        else:
+            self.side_ok = lambda _1, _2: True
+
 
     def do_captures(self, mdata):
         """Test for and pick own."""
 
         self.decorator.do_captures(mdata)
 
-        side_ok = True
-        if self.game.info.capt_side:
-            side_ok = self.game.cts.my_side(self.game.turn, mdata.capt_loc)
-
-        if (side_ok
+        if (self.side_ok(self.game.turn, mdata.capt_loc)
                 and self.game.board[mdata.capt_loc] == 1
                 and self.game.child[mdata.capt_loc] is None
                 and self.game.unlocked[mdata.capt_loc]):

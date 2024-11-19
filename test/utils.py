@@ -4,7 +4,7 @@ Created on Sat Jul 15 05:28:35 2023
 @author: Ann"""
 
 
-import mancala
+from context import mancala
 
 
 def build_board(trow, frow):

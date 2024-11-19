@@ -110,6 +110,10 @@ class CaptSideOk(CaptOkIf):
             self.side_ok = lambda mdata, turn, loc: \
                 game.cts.opp_side(turn, mdata.capt_loc)
 
+        else:
+            raise NotImplementedError(
+                f"CaptSide {game.info.capt_side} is not implemented")
+
     def capture_ok(self, mdata, loc):
         """Return Fales if capture from loc is not ok,
         otherwise delegate."""
@@ -118,7 +122,6 @@ class CaptSideOk(CaptOkIf):
             return False
 
         return self.decorator.capture_ok(mdata, loc)
-
 
 
 class CaptUnlocked(CaptOkIf):

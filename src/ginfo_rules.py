@@ -612,6 +612,20 @@ def add_capture_rules(rules):
         # an alternate approach could be to not check any locks on pickers
         # locks are rarely used
 
+    rules.add_rule(
+        'scont_mcapt',
+        rule=lambda ginfo: (ginfo.capt_side in (gi.CaptSide.OWN_CONT,
+                                                gi.CaptSide.OPP_CONT)
+                            and not ginfo.multicapt),
+        msg='CAPT_SIDE *_CONT requires multicapt',
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'capt2out_cside',
+        rule=lambda ginfo: ginfo.capt_side and ginfo.capttwoout,
+        msg='CAPTTWOOUT cannot be used with CAPT_SIDE other than BOTH',
+        excp=gi.GameInfoError)
+
 
 
 # %% the base ruleset
