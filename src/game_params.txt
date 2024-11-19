@@ -242,7 +242,8 @@ Sow	sow_rule	Special Sow Rules	game_info _	139	SowRule	NONE	9	0	"Special sow rul
   + GRANDSLAM rules are not applied. NOCAPTMOVES prevents this capture for the first number of specified moves.
 - NO_SOW_OPP_2S: Don't sow into opponents holes with 2 seeds.
 - CHANGE_DIR_LAP: Change the direction for each lap sown. Generally used with UDIR_HOLES so the player may choose the first direction.
-- MAX_SOW: holes sow_param seeds are skipped when sowing. That is, holes will never contain more seeds than sow_param."
+- MAX_SOW: holes sow_param seeds are skipped when sowing. That is, holes will never contain more seeds than sow_param.
+- LAP_CAPT: after each lapt check for a capture, if there is a capture continue sowing with another lap."
 Sow	sow_param	Sow Parameter	game_info _	141	int	0	10	0	"A general parameter for sowing. Usage is based on other sow options:
 - Sow rule of MAX_SOW: maximum number of seeds a hole may contain"
 Sow	schld_lbl	Children		0	label	0	3	2	

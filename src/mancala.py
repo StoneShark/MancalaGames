@@ -168,7 +168,7 @@ class MoveData:
         string += f"  lap_nbr={self.lap_nbr}\n"
         string += f"  capt_loc={self.capt_loc}\n"
         string += f"  capt_changed={self.capt_changed}\n"
-        string += f"  captured={self.captured}"
+        string += f"  captured={self.captured}\n"
         string += f"  end_msg={self.end_msg}"
         return string
 

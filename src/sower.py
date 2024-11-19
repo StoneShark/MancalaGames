@@ -403,6 +403,22 @@ class StopSingleSeed(LapContinuerIf):
         return self.decorator.do_another_lap(mdata)
 
 
+class StopLapNoCapt(LapContinuerIf):
+    """A wrapper: stop if there is one seed
+    (the one we just sowed) and possibly do a capture.
+    If did a capture, continue lap with the one seed sown."""
+
+    def do_another_lap(self, mdata):
+
+        if self.game.board[mdata.capt_loc] == 1:
+            self.game.capture_seeds(mdata)
+            cont = mdata.captured
+            mdata.captured = False
+            return cont
+
+        return self.decorator.do_another_lap(mdata)
+
+
 class StopOnChild(LapContinuerIf):
     """A wrapper: stop if we've ended in a child."""
 
@@ -705,7 +721,8 @@ def deco_base_sower(game):
         elif game.info.sow_rule == gi.SowRule.MAX_SOW:
             sower = SowMaxN(game, game.info.sow_param)
 
-        elif game.info.sow_rule == gi.SowRule.CHANGE_DIR_LAP:
+        elif game.info.sow_rule in (gi.SowRule.CHANGE_DIR_LAP,
+                                    gi.SowRule.LAP_CAPT):
             # pick a base sower below
             pass
 
@@ -731,13 +748,16 @@ def deco_build_lap_cont(game):
         if game.info.child_type:
             lap_cont = ChildLapCont(game)
 
-        elif game.info.sow_rule in {gi.SowRule.SOW_BLKD_DIV,
-                                    gi.SowRule.SOW_BLKD_DIV_NR}:
+        elif game.info.sow_rule in (gi.SowRule.SOW_BLKD_DIV,
+                                    gi.SowRule.SOW_BLKD_DIV_NR):
             lap_cont = DivertBlckdLapper(game)
         else:
             lap_cont = LapContinue(game)
 
-        lap_cont = StopSingleSeed(game, lap_cont)
+        if game.info.sow_rule == gi.SowRule.LAP_CAPT:
+            lap_cont = StopLapNoCapt(game, lap_cont)
+        else:
+            lap_cont = StopSingleSeed(game, lap_cont)
 
         if not game.info.crosscapt and any([game.info.evens,
                                             game.info.capt_on,
@@ -777,6 +797,11 @@ def deco_mlap_sower(game, sower):
         end_op = CloseOp(game)
     elif game.info.sow_rule == gi.SowRule.SOW_BLKD_DIV_NR:
         end_op = CloseOp(game, True)
+    elif game.info.sow_rule == gi.SowRule.SOW_BLKD_DIV_NR:
+        end_op = CloseOp(game, True)
+    # elif game.info.sow_rule == gi.SowRule.LAP_CAPT:
+    #     end_op = DoCapture(game)
+
     else:
         end_op = NoOp(game)
 
