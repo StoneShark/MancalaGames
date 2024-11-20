@@ -1423,6 +1423,73 @@ class TestPrescribed:
 
 
 
+class TestCaptMlap:
+
+    @pytest.fixture
+    def ccgame(self):
+
+        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_info = gi.GameInfo(crosscapt=True,
+                                stores=True,
+                                sow_direct=Direct.CW,
+                                mlaps=LapSower.LAPPER,
+                                sow_rule=SowRule.LAP_CAPT,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        return mancala.Mancala(game_consts, game_info)
+
+    @pytest.fixture
+    def evgame(self):
+
+        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_info = gi.GameInfo(evens=True,
+                                stores=True,
+                                sow_direct=Direct.CCW,
+                                mlaps=LapSower.LAPPER,
+                                sow_rule=SowRule.LAP_CAPT,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        return mancala.Mancala(game_consts, game_info)
+
+
+    CASES = [
+        ('ccgame', 0, F, [2, 2, 2, 2, 2, 2, 2, 2],
+         7, [0, 3, 3, 0, 3, 3, 0, 1], [3, 0]),
+
+        ('evgame', 3, F, [2, 2, 2, 2, 2, 2, 2, 2],
+         3, [0, 3, 3, 1, 3, 0 ,3, 3], [0, 0]),
+
+        ('evgame', 3, T, [3, 1, 3, 0, 3, 3, 0, 3],
+         3, [0, 2, 4, 1, 0, 4, 1, 0], [0, 4]),
+    ]
+    @pytest.mark.usefixtures('logger')
+    @pytest.mark.parametrize('game_fixt, start_pos, turn, board, ' \
+                             'eloc, eboard, estore',
+                             CASES, ids=[f"{case[0]}-case{idx}"
+                                         for idx, case in enumerate(CASES)])
+    def test_mlap_sower(self, request, game_fixt,
+                        start_pos, turn, board,
+                        eloc, eboard, estore):
+
+        game = request.getfixturevalue(game_fixt)
+        game.board = board
+        game.turn = turn
+        print(game.deco.sower)
+        print(game)
+        print(start_pos)
+
+        mdata = MoveData(game, start_pos)
+        mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(start_pos)
+        mdata.direct = game.info.sow_direct
+        game.deco.sower.sow_seeds(mdata)
+
+        print(game)
+
+        assert mdata.capt_loc == eloc
+        assert game.board == eboard
+        assert game.store == estore
+
+
 class TestBadEnums:
 
     def test_bad_sow_rule(self):
@@ -1468,6 +1535,9 @@ class TestBadEnums:
         object.__setattr__(game_info, 'prescribed', 12)
         with pytest.raises(NotImplementedError):
             mancala.Mancala(game_consts, game_info)
+
+
+
 
 
 

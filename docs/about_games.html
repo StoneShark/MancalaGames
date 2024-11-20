@@ -344,7 +344,7 @@ passing disallowed - a player with no moves at the start of their turn loses.
   </div>
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p62.
-<p>Note: GPARAM_ONE set to 4 to limit game length
+<p>Note: <a href="game_params.html#goal_param">GOAL_PARAM</a> set to 4 to limit game length
 <h3 id="Deka">Deka</h3>
 <p>The goal is to deprive the opponent of seeds. Sow counter-clockwise with multiple laps (LAPPER). After the first turn, holes are closed on opponent side when the final seed of a lap brings the seeds in a hole to 3. Sowing then continues with those 3 seeds. Each player's rightmost hole may not be closed. In subsequent sowing of closed holes (blocked), own holes are skipped but seeds for opponent's holes are taken out of play.
 <p>The <a href="about_games.html#Deka">Deka</a> board is not a 2 rank board, but hole assignment yields itself to moving the middle end holes to the respective player's side thus making it a 2 rank board.
@@ -523,7 +523,7 @@ Another value for <a href="game_params.html#round_fill">ROUND_FILL</a>
   </div>
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984.  p19.
-<p>Note: GPARAM_ONE set to 2 to limit game length
+<p>Note: <a href="game_params.html#goal_param">GOAL_PARAM</a> set to 2 to limit game length
 <h3 id="Eson Xorgol">Eson Xorgol</h3>
 <p>Single-lap, clockwise-sow Mancala in which all holes are playable by both players. If sow ends in an occupied hole and the next hole is empty, capture the seeds in the following hole. Capture in sow direction (CW).
 <div class="cols_row">
@@ -717,7 +717,7 @@ Require must share (<a href="game_params.html#mustshare">MUSTSHARE</a>) because 
 <h3 id="Lagerung">Lagerung</h3>
 <p>A multi-lap mancala played in rounds. Sow direction is clockwise and sow into ones own store. To sow one's own store a move must either start with enough seeds to sow all of the opponents holes (and more) or chain laps to reach one's own store.
 <p>If the final seeds lands in your store, play again. If the final seed lands on your side of the board, move it to your store (always_pick) and perform a cross-capture (if there are any seeds on the opposite side).
-<p>Played in rounds. A round ends when neither player can move. The loser of previous round starts the next round. The game is over when either player cannot fill at least 4 holes (GPARAM_ONE).
+<p>Played in rounds. A round ends when neither player can move. The loser of previous round starts the next round. The game is over when either player cannot fill at least 4 holes (<a href="game_params.html#goal_param">GOAL_PARAM</a>).
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  7</p>
@@ -739,7 +739,7 @@ Require must share (<a href="game_params.html#mustshare">MUSTSHARE</a>) because 
     <p class="param"><a href="game_params.html#xcpickown">Own Seed on Xcapture</a>: ALWAYS_PICK</p>
   </div>
 </div>
-<p>Note: GPARAM_ONE set to 4 to limit game length
+<p>Note: <a href="game_params.html#goal_param">GOAL_PARAM</a> set to 4 to limit game length
 <h3 id="Lami">Lami</h3>
 <p>Counter-clockwise sow, multi-lap sow. After the first move, subsequent moves may only be played from holes:
 <ul><li class="helptext">
@@ -783,7 +783,7 @@ unless all of the player's holes contain 2, then any hole maybe played.
 </ul>
 <p>When sowing skip opponents holes with two seeds (except first move).
 <p>No capture on game opening move. Cross-capture from opponents side of board but only if it contains 2 seeds; on capture pick all of opponents holes with 2 seeds.
-<p>Played in Rounds. Each round ends when the current player has no moves. The game ends when one player can fill 4 holes at the start of the round (change with GPARAM_ONE).
+<p>Played in Rounds. Each round ends when the current player has no moves. The game ends when one player can fill 4 holes at the start of the round (change with <a href="game_params.html#goal_param">GOAL_PARAM</a>).
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  12</p>
@@ -810,7 +810,7 @@ unless all of the player's holes contain 2, then any hole maybe played.
   </div>
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p35.
-<p>Note: GPARAM_ONE is set to 4 to limit game length
+<p>Note: <a href="game_params.html#goal_param">GOAL_PARAM</a> is set to 4 to limit game length
 <h3 id="Lam Waladach">Lam Waladach</h3>
 <p>A multi-lap mancala played in rounds. The goal is to claim ownership of at least 9 holes. Each player initially owns the holes on their side of the board. Owners of holes are updated at the start of each round based on the number of seeds captured in the previous round. 
 <p>The seeds of any hole sown to 4 are captured by the hole's owner (regardless of sower). Captures are on 4s on the final sown seed by the sower (regardless of hole owner). A capture results in  a repeat turn. Captures and pick 4s are allowed on the first move of the game. A player must pass, if they have no moves.
@@ -837,7 +837,7 @@ unless all of the player's holes contain 2, then any hole maybe played.
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p55. (with liberties)
 <p>Deviation: Both captures and pick 4s are allowed on the first turn. The Mancala Game engine doesn't allow doing one of these, but not the other. The game ends when fewer than 6 seeds are in play, with the round starter taking these last seeds.
-<p>Note: Hole ownership of > 9, results very many rounds and long games.
+<p>Note: Hole ownership of > 9, results very many rounds and long games (<a href="game_params.html#goal_param">GOAL_PARAM</a>).
 <h3 id="Leyla-Gobale">Leyla-Gobale</h3>
 <p>Sow clockwise.  Cross capture, opposite side only. Qurs are created in pairs on both sides of the board when a seed is sown into an empy hole on the player's side of the board and the opposite hole contains three seeds (no capture is made).
 <p>Variations:
@@ -990,6 +990,29 @@ unless all of the player's holes contain 2, then only the rightmost hole maybe p
   </div>
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p35.  With clarification on opening move from Wikipedia
+<h3 id="Motiq">Motiq</h3>
+<p>Sow counter-clockwise in multiple laps. Continue lapping until the last seed falls into an empty hole or makes a hole containing 4 seeds. If the last seed of a lap makes 4 seeds, capture those seeds and continue the lap sowing with the seeds in the next hole. If there are not seeds in the next hole, the turn is over.
+<p>A round ends when one player cannot move. Seeds left on the board are allocated to the player that performed the last move. For the next round, holes are allocated to each player based on how many seeds they collected in the previous round.
+<p>The game is over when one player has control of 11 holes.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  7</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: TERRITORY</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 4</p>
+    <p class="param"><a href="game_params.html#evens">Capture Evens</a>: Yes</p>
+    <p class="param"><a href="game_params.html#goal_param">Goal Parameter</a>: 11</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: LAP_CAPT</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p65.
+<p>Note: <a href="game_params.html#goal_param">GOAL_PARAM</a> set to 11 to limit game length
 <h3 id="Nambayi">Nambayi</h3>
 <p>A multilap Mancala. The goal is to deprive the opponent of seeds. Holes are closed on opponent side on 4s, sowing continues with those seeds. In subsequent sowing of closed holes, own holes are skipped but seeds for opponent's holes are taken out of play.
 <div class="cols_row">
@@ -1108,7 +1131,7 @@ unless all of the player's holes contain 2, then only the rightmost hole maybe p
 <ul><li class="helptext">
 common board sizes: 6, 7 or 12
 <li class="helptext">
-change number of holes required for win (GPARAM_ONE)
+change number of holes required for win (<a href="game_params.html#goal_param">GOAL_PARAM</a>)
 <li class="helptext">
 don't allow passing (<a href="game_params.html#mustpass">MUSTPASS</a>)
 <li class="helptext">
@@ -1449,6 +1472,7 @@ see Sedeqa
     <p class="param"><a href="game_params.html#unclaimed">End Game Seeds</a>: LAST_MOVER</p>
   </div>
 </div>
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p30.
 <h3 id="Toguz Xorgol">Toguz Xorgol</h3>
 <p>A single-lap, clockwise-sow mancala. One seed is left in the start hole when sowing; unless there is only one seed, then it is move forward one hole.
 <p>Capture on evens that are greater than or equal to 4.
@@ -1680,6 +1704,7 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Mangala II">Mangala II</a></p>
     <p class="param"><a href="#Mbangbi">Mbangbi</a></p>
     <p class="param"><a href="#Mbothe">Mbothe</a></p>
+    <p class="param"><a href="#Motiq">Motiq</a></p>
     <p class="param"><a href="#NamNam">NamNam</a></p>
     <p class="param"><a href="#Nambayi">Nambayi</a></p>
     <p class="param"><a href="#Ndoto">Ndoto</a></p>
@@ -1687,9 +1712,9 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#NoCapt">NoCapt</a></p>
     <p class="param"><a href="#NoSides">NoSides</a></p>
     <p class="param"><a href="#NumNum">NumNum</a></p>
-    <p class="param"><a href="#Obridjie">Obridjie</a></p>
   </div>
   <div class="column3">
+    <p class="param"><a href="#Obridjie">Obridjie</a></p>
     <p class="param"><a href="#Olinda">Olinda</a></p>
     <p class="param"><a href="#Ot-tjin">Ot-tjin</a></p>
     <p class="param"><a href="#Oware">Oware</a></p>

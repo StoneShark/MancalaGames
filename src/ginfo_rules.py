@@ -370,6 +370,8 @@ def add_child_rules(rules):
                                  or ginfo.child_cvt)),
         msg='MLAPS of LAPPER_NEXT is not supported with CHILD',
         excp=NotImplementedError)
+        # StopOnChild would need to change and ChildLapCont would
+        # need to be integrated into the lap continuer chain
 
     rules.add_rule(
         'child_need_cvt',
@@ -553,6 +555,14 @@ def add_capture_rules(rules):
         # should be allowed - maybe it should be an enumeration?
 
     rules.add_rule(
+        'lcapt_no_next_2out',
+        rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.LAP_CAPT
+                            and (ginfo.capt_next or ginfo.capttwoout)),
+        msg='LAP_CAPT is only supported for basic captures and cross capture.',
+        excp=NotImplementedError)
+        # would need to carefully decide how it would work
+
+    rules.add_rule(
         'sca_gs_not',
         rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.OWN_SOW_CAPT_ALL
                             and ginfo.grandslam != gi.GrandSlam.LEGAL),
@@ -701,6 +711,14 @@ def build_rules():
                             and ginfo.sow_rule == gi.SowRule.MAX_SOW),
         msg='Sow rule MAX_SOW requires that sow_param be greater than 0',
         excp=gi.GameInfoError)
+
+    man_rules.add_rule(
+        'lcapt_no_lnext',
+        rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.LAP_CAPT
+                            and ginfo.mlaps == gi.LapSower.LAPPER_NEXT),
+        msg='LAP_CAPT is not supported with LAPPER_NEXT',
+        excp=NotImplementedError)
+        # would need to carefully decide how it would work
 
     man_rules.add_rule(
         'sow_own_prescribed',

@@ -403,9 +403,9 @@ class StopSingleSeed(LapContinuerIf):
         return self.decorator.do_another_lap(mdata)
 
 
-class StopLapNoCapt(LapContinuerIf):
-    """A wrapper: stop if there is one seed
-    (the one we just sowed) and possibly do a capture.
+class ContIfXCapt(LapContinuerIf):
+    """A wrapper: if there is one seed
+    (the one we just sowed), and possibly do a capture.
     If did a capture, continue lap with the one seed sown."""
 
     def do_another_lap(self, mdata):
@@ -415,6 +415,22 @@ class StopLapNoCapt(LapContinuerIf):
             cont = mdata.captured
             mdata.captured = False
             return cont
+
+        return self.decorator.do_another_lap(mdata)
+
+
+class ContIfBasicCapt(LapContinuerIf):
+    """A wrapper: Attempt a capture.
+    If did a capture, continue lapping with the next hole."""
+
+    def do_another_lap(self, mdata):
+
+        self.game.capture_seeds(mdata)
+        if mdata.captured:
+            mdata.capt_loc = self.game.deco.incr.incr(mdata.capt_loc,
+                                                      mdata.direct)
+            mdata.captured = False
+            return True
 
         return self.decorator.do_another_lap(mdata)
 
@@ -564,7 +580,8 @@ class SowMlapSeeds(MlapSowerIf):
         for _ in range(MAX_LAPS):
 
             self.decorator.sow_seeds(mdata)
-            game_log.step(f'Mlap sow from {loc}', self.game, game_log.DETAIL)
+            game_log.step(f'Mlap {mdata.lap_nbr} sow from {loc}',
+                          self.game, game_log.DETAIL)
 
             if self.lap_cont.do_another_lap(mdata):
                 loc = mdata.capt_loc
@@ -688,7 +705,7 @@ class SowPlus1Minus1Capt(SowPrescribedIf):
 
 # %% build deco chain
 
-def deco_blkd_divert_sower(game):
+def _add_blkd_divert_sower(game):
     """Implement the sow_blkd_div sower.
     When sowing seeds, blocked holes on own side of the board are
     skipped and seeds for blocked opponent holes are diverted out
@@ -702,14 +719,14 @@ def deco_blkd_divert_sower(game):
     return sower
 
 
-def deco_base_sower(game):
+def _add_base_sower(game):
     """Choose the base sower."""
 
     sower = None
     if game.info.sow_rule:
         if game.info.sow_rule in (gi.SowRule.SOW_BLKD_DIV,
                                   gi.SowRule.SOW_BLKD_DIV_NR):
-            sower = deco_blkd_divert_sower(game)
+            sower = _add_blkd_divert_sower(game)
 
         elif game.info.sow_rule in (gi.SowRule.OWN_SOW_CAPT_ALL,
                                     gi.SowRule.SOW_SOW_CAPT_ALL):
@@ -740,7 +757,33 @@ def deco_base_sower(game):
     return sower
 
 
-def deco_build_lap_cont(game):
+def _add_capt_stop_lap_cont(game, lap_cont):
+    """Add the stop on 1; stop to capture; and/or
+    lap capture lap-continuer decos"""
+
+    if game.info.sow_rule == gi.SowRule.LAP_CAPT and game.info.crosscapt:
+        lap_cont = ContIfXCapt(game, lap_cont)
+
+    else:
+
+        if (not game.info.crosscapt
+                and any([game.info.evens,
+                         game.info.capt_on,
+                         game.info.capt_max,
+                         game.info.capt_min])):
+
+            if game.info.sow_rule == gi.SowRule.LAP_CAPT:
+                lap_cont = ContIfBasicCapt(game, lap_cont)
+
+            else:
+                lap_cont = StopCaptureSeeds(game, lap_cont)
+
+        lap_cont = StopSingleSeed(game, lap_cont)
+
+    return lap_cont
+
+
+def _build_lap_cont(game):
     """Choose a base lap continuer, then add any wrappers."""
 
     if game.info.mlaps == gi.LapSower.LAPPER:
@@ -754,16 +797,10 @@ def deco_build_lap_cont(game):
         else:
             lap_cont = LapContinue(game)
 
-        if game.info.sow_rule == gi.SowRule.LAP_CAPT:
-            lap_cont = StopLapNoCapt(game, lap_cont)
-        else:
-            lap_cont = StopSingleSeed(game, lap_cont)
+        lap_cont = _add_capt_stop_lap_cont(game, lap_cont)
 
-        if not game.info.crosscapt and any([game.info.evens,
-                                            game.info.capt_on,
-                                            game.info.capt_max,
-                                            game.info.capt_min]):
-            lap_cont = StopCaptureSeeds(game, lap_cont)
+        if game.info.child_type:
+            lap_cont = StopOnChild(game, lap_cont)
 
     elif game.info.mlaps == gi.LapSower.LAPPER_NEXT:
         lap_cont = NextLapCont(game)
@@ -771,9 +808,6 @@ def deco_build_lap_cont(game):
     else:
         raise NotImplementedError(
                     f"LapSower {game.info.mlaps} not implemented.")
-
-    if game.info.child_type:
-        lap_cont = StopOnChild(game, lap_cont)
 
     if game.info.visit_opp:
         lap_cont = MustVisitOpp(game, lap_cont)
@@ -784,7 +818,7 @@ def deco_build_lap_cont(game):
     return lap_cont
 
 
-def deco_mlap_sower(game, sower):
+def _add_mlap_sower(game, sower):
     """Build the deco chain elements for multiple lap sowing.
     Choose:
         1. an op to perform between laps
@@ -797,21 +831,16 @@ def deco_mlap_sower(game, sower):
         end_op = CloseOp(game)
     elif game.info.sow_rule == gi.SowRule.SOW_BLKD_DIV_NR:
         end_op = CloseOp(game, True)
-    elif game.info.sow_rule == gi.SowRule.SOW_BLKD_DIV_NR:
-        end_op = CloseOp(game, True)
-    # elif game.info.sow_rule == gi.SowRule.LAP_CAPT:
-    #     end_op = DoCapture(game)
-
     else:
         end_op = NoOp(game)
 
-    lap_cont = deco_build_lap_cont(game)
+    lap_cont = _build_lap_cont(game)
     sower = SowMlapSeeds(game, sower, lap_cont, end_op)
 
     return sower
 
 
-def deco_prescribed_sower(game, sower):
+def _add_prescribed_sower(game, sower):
     """Add the prescribed sowers to the deco chain."""
 
     if game.info.prescribed == gi.SowPrescribed.SOW1OPP:
@@ -840,12 +869,12 @@ def deco_prescribed_sower(game, sower):
 def deco_sower(game):
     """Build the sower chain."""
 
-    sower = deco_base_sower(game)
+    sower = _add_base_sower(game)
 
     if game.info.mlaps != gi.LapSower.OFF:
-        sower = deco_mlap_sower(game, sower)
+        sower = _add_mlap_sower(game, sower)
 
     if game.info.prescribed != gi.SowPrescribed.NONE:
-        sower = deco_prescribed_sower(game, sower)
+        sower = _add_prescribed_sower(game, sower)
 
     return sower
