@@ -35,5 +35,5 @@
       }
    },
    "rules": "Russ, Laurence. Mancala Games. 1984. p62.",
-   "note": "GPARAM_ONE set to 4 to limit game length"
+   "note": "GOAL_PARAM set to 4 to limit game length"
 }

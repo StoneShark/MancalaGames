@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Lagerung",
-      "about": "A multi-lap mancala played in rounds. Sow direction is clockwise and sow into ones own store. To sow one's own store a move must either start with enough seeds to sow all of the opponents holes (and more) or chain laps to reach one's own store.\nIf the final seeds lands in your store, play again. If the final seed lands on your side of the board, move it to your store (always_pick) and perform a cross-capture (if there are any seeds on the opposite side).\nPlayed in rounds. A round ends when neither player can move. The loser of previous round starts the next round. The game is over when either player cannot fill at least 4 holes (GPARAM_ONE).",
+      "about": "A multi-lap mancala played in rounds. Sow direction is clockwise and sow into ones own store. To sow one's own store a move must either start with enough seeds to sow all of the opponents holes (and more) or chain laps to reach one's own store.\nIf the final seeds lands in your store, play again. If the final seed lands on your side of the board, move it to your store (always_pick) and perform a cross-capture (if there are any seeds on the opposite side).\nPlayed in rounds. A round ends when neither player can move. The loser of previous round starts the next round. The game is over when either player cannot fill at least 4 holes (GOAL_PARAM).",
       "blocks": true,
       "crosscapt": true,
       "goal_param": 4,
@@ -33,5 +33,5 @@
          "mm_depth": [1, 1, 3, 5]
       }
    },
-   "note": "GPARAM_ONE set to 4 to limit game length"
+   "note": "GOAL_PARAM set to 4 to limit game length"
 }

@@ -35,5 +35,5 @@
    },
    "rules": "Russ, Laurence. Mancala Games. 1984. p55. (with liberties)",
    "deviation": "Both captures and pick 4s are allowed on the first turn. The Mancala Game engine doesn't allow doing one of these, but not the other. The game ends when fewer than 6 seeds are in play, with the round starter taking these last seeds.",
-   "note": "Hole ownership of > 9, results very many rounds and long games."
+   "note": "Hole ownership of > 9, results very many rounds and long games (GOAL_PARAM)."
 }
