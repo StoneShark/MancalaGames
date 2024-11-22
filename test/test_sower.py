@@ -1292,7 +1292,7 @@ class TestSowCaptOwned:
                               [0, 0, 0]), [0, 0]),
         ]
 
-    @pytest.mark.usefixtures("logger")
+    # @pytest.mark.usefixtures("logger")
     @pytest.mark.parametrize(
         'game2_ss, start_pos, board, eloc, eboard, estore',
         TSSCASES, ids=[f"case_{i}" for i in range(len(TSSCASES))],
@@ -1307,7 +1307,7 @@ class TestSowCaptOwned:
         mdata.sow_loc, mdata.seeds = game2_ss.deco.drawer.draw(move)
         mdata.direct = game2_ss.info.sow_direct
         game2_ss.deco.sower.sow_seeds(mdata)
-        print(game2_ss)
+        # print(game2_ss)
 
         assert mdata.capt_loc == eloc
         assert game2_ss.board == board
