@@ -327,6 +327,74 @@ class SowMaxN(SowMethodIf):
         mdata.capt_loc = loc
 
 
+# %% precature decorators
+
+# captures occur after prescribed openings, (i.e. don't occur if
+# there was a prescribed opeing) and before the rest of the sower
+
+# choosing not to set captured --
+#   no repeat turn; Mancala doesn't need to print as changes logged below
+
+
+class SCaptOne(SowMethodIf):
+    """Take one seeds on the opening move."""
+
+    def sow_seeds(self, mdata):
+
+        self.game.store[self.game.turn] += 1
+        mdata.seeds -= 1
+        game_log.step('Presow Capt from lap', self.game, game_log.DETAIL)
+
+        self.decorator.sow_seeds(mdata)
+
+
+class SCaptCrossOnOne(SowMethodIf):
+    """If one seed then capture any cross.
+    SOW_START and XDRAW_1_XCAPT will capture the 1 drawn seed
+    when there are two seeds in the start hole. Warning is produced."""
+
+    def sow_seeds(self, mdata):
+
+        cross = self.game.cts.cross_from_loc(mdata.cont_sow_loc)
+
+        if (mdata.seeds == 1
+            and self.game.board[cross]
+            and self.game.child[cross] is None):
+
+            self.game.store[self.game.turn] += self.game.board[cross]
+            self.game.board[cross] = 0
+
+            game_log.step(f'Presow Capt Cross at {mdata.cont_sow_loc}',
+                          self.game, game_log.DETAIL)
+
+        self.decorator.sow_seeds(mdata)
+
+
+class SCaptCrossSingles(SowMethodIf):
+    """Capture across from any holes that have a singleton"""
+
+    def sow_seeds(self, mdata):
+
+        log = []
+
+        for loc in self.game.cts.get_my_range(self.game.turn):
+            cross = self.game.cts.cross_from_loc(loc)
+
+            if (self.game.board[loc] == 1
+                and self.game.board[cross]
+                and self.game.child[cross] is None):
+
+                self.game.store[self.game.turn] += self.game.board[cross]
+                self.game.board[cross] = 0
+                log += [cross]
+
+        if log:
+            game_log.step(f'Presow Capt Cross all 1s from {log}',
+                          self.game, game_log.DETAIL)
+
+        self.decorator.sow_seeds(mdata)
+
+
 # %%  lap continue testers
 
 class LapContinuerIf(deco_chain_if.DecoChainIf):
@@ -535,6 +603,7 @@ class DirChange(MlapEndOpIf):
 
     def do_op(self, mdata):
         mdata.direct = mdata.direct.opp_dir()
+
 
 
 # %%  mlap sowers
@@ -757,6 +826,25 @@ def _add_base_sower(game):
     return sower
 
 
+def _add_pre_sow_capt(game, sower):
+    """Add a presow capturer."""
+
+    if game.info.presowcapt == gi.PreSowCapt.CAPT_ONE:
+        sower = SCaptOne(game, sower)
+
+    elif game.info.presowcapt == gi.PreSowCapt.ALL_SINGLE_XCAPT:
+        sower = SCaptCrossSingles(game, sower)
+
+    elif game.info.presowcapt == gi.PreSowCapt.DRAW_1_XCAPT:
+        sower = SCaptCrossOnOne(game, sower)
+
+    else:
+        raise NotImplementedError(
+                f"PreSowCapt {game.info.presowcapt} not implemented.")
+
+    return sower
+
+
 def _add_capt_stop_lap_cont(game, lap_cont):
     """Add the stop on 1; stop to capture; and/or
     lap capture lap-continuer decos"""
@@ -870,6 +958,9 @@ def deco_sower(game):
     """Build the sower chain."""
 
     sower = _add_base_sower(game)
+
+    if game.info.presowcapt != gi.PreSowCapt.NONE:
+        sower = _add_pre_sow_capt(game, sower)
 
     if game.info.mlaps != gi.LapSower.OFF:
         sower = _add_mlap_sower(game, sower)

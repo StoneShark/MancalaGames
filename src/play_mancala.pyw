@@ -18,7 +18,8 @@ import mancala_ui
 
 # %% constants
 
-PATH = 'GameProps/'
+DIR = 'GameProps'
+PATH = man_path.get_path(DIR) + '/'
 
 TXTPART = '.txt'
 EXFILE = 'all_params.txt'
@@ -31,7 +32,7 @@ def load_game_files():
     create a dictionary of game name and about text."""
 
     choices = {}
-    for file in os.listdir(man_path.get_path(PATH)):
+    for file in os.listdir(PATH):
 
         if file[-4:] != TXTPART or file == EXFILE:
             continue
@@ -80,7 +81,7 @@ class GameSelect(tk.Frame):
 
         self.pack()
 
-        new_col = len(CHOICES) // 3 - 1
+        new_col = self._item_per_row(len(CHOICES))
         row = 0
         col = 0
         for name, about in CHOICES.items():
@@ -97,6 +98,20 @@ class GameSelect(tk.Frame):
                 col += 1
             else:
                 row += 1
+
+
+    @staticmethod
+    def _item_per_row(nitems):
+        """Compute a nice number of elements for each row.
+        Start with a number less than the square root,
+        if columns can be even use that number."""
+
+        start = int(nitems ** 0.4) + 1
+        for ritems in range(start, 0, -1):
+            if not nitems % ritems:
+                return max(ritems, nitems // ritems)
+
+        return max(start, nitems // start)
 
 
     def _enter(self, button, text, _=None):

@@ -863,6 +863,46 @@ class TestMoveAllFirst:
         assert fgame.deco.allow.get_allowable_holes() == efresult
 
 
+class TestNotXFrom1:
+
+    @pytest.fixture
+    def game(self):
+        game_consts = gc.GameConsts(nbr_start=4, holes=4)
+        game_info = gi.GameInfo(evens=True,
+                                stores=True,
+                                allow_rule=AllowRule.NOT_XFROM_1S,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        return mancala.Mancala(game_consts, game_info)
+
+    CASES = [
+         ['start',
+          utils.make_state(board=(4, 4, 4, 4, 4, 4, 4, 4),
+                           store=[0, 0],
+                          ),
+          [T, T, T, T], [T, T, T, T]],
+
+         ['ones',
+          utils.make_state(board=(4, 4, 1, 4, 1, 4, 4, 4),
+                           store=[0, 0],
+                          ),
+          [T, T, T, F], [T, T, F, T]],
+
+     ]
+
+    @pytest.mark.parametrize('state, efresult, etresult',
+                             [case[1:] for case in CASES],
+                             ids=[case[0] for case in CASES])
+    def test_not_xfrom_1(self, game, state, efresult, etresult):
+
+        game.state = state
+        game.turn = True
+        assert game.deco.allow.get_allowable_holes() == etresult
+
+        game.turn = False
+        assert game.deco.allow.get_allowable_holes() == efresult
+
+
 
 
 class TestBadEnums:

@@ -401,6 +401,20 @@ class MoveAllFirst(AllowableIf):
                 for (unlock, allow) in zip(unlocked, allowable)]
 
 
+class NotXfromOnes(AllowableIf):
+    """Holes across from 1s are not allowable.
+    This not supported for move triples."""
+
+    def get_allowable_holes(self):
+
+        ones = [self.game.board[loc] == 1
+                    for loc in self.game.cts.get_opp_range(self.game.turn)]
+        allowable = self.decorator.get_allowable_holes()
+
+        return [not ones and allow
+                for (ones, allow) in zip(ones, allowable)]
+
+
 class MemoizeAllowable(AllowableIf):
     """Allowables are checked in several places--move/end_move,
     test_pass and get_allowables--for each move.  If the game
@@ -469,6 +483,9 @@ def deco_allow_rule(game, allowable):
 
     elif game.info.allow_rule == gi.AllowRule.MOVE_ALL_HOLES_FIRST:
         allowable = MoveAllFirst(game, allowable)
+
+    elif game.info.allow_rule == gi.AllowRule.NOT_XFROM_1S:
+        allowable = NotXfromOnes(game, allowable)
 
     else:
         raise NotImplementedError(

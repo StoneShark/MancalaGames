@@ -22,6 +22,7 @@ from game_interface import ChildRule
 from game_interface import Direct
 from game_interface import Goal
 from game_interface import LapSower
+from game_interface import PreSowCapt
 from game_interface import SowPrescribed
 from game_interface import SowRule
 from game_interface import WinCond
@@ -1422,7 +1423,6 @@ class TestPrescribed:
         assert game_p1m1.board == eboard
 
 
-
 class TestCaptMlap:
 
     @pytest.fixture
@@ -1462,7 +1462,7 @@ class TestCaptMlap:
         ('evgame', 3, T, [3, 1, 3, 0, 3, 3, 0, 3],
          3, [0, 2, 4, 1, 0, 4, 1, 0], [0, 4]),
     ]
-    @pytest.mark.usefixtures('logger')
+    # @pytest.mark.usefixtures('logger')
     @pytest.mark.parametrize('game_fixt, start_pos, turn, board, ' \
                              'eloc, eboard, estore',
                              CASES, ids=[f"{case[0]}-case{idx}"
@@ -1474,16 +1474,105 @@ class TestCaptMlap:
         game = request.getfixturevalue(game_fixt)
         game.board = board
         game.turn = turn
-        print(game.deco.sower)
-        print(game)
-        print(start_pos)
+        # print(game.deco.sower)
+        # print(game)
+        # print(start_pos)
 
         mdata = MoveData(game, start_pos)
         mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(start_pos)
         mdata.direct = game.info.sow_direct
         game.deco.sower.sow_seeds(mdata)
 
-        print(game)
+        # print(game)
+
+        assert mdata.capt_loc == eloc
+        assert game.board == eboard
+        assert game.store == estore
+
+
+class TestSCapt:
+
+    @pytest.fixture
+    def c1game(self):
+
+        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_info = gi.GameInfo(evens=True,
+                                stores=True,
+                                sow_direct=Direct.CW,
+                                mlaps=LapSower.LAPPER,
+                                presowcapt=PreSowCapt.CAPT_ONE,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        return mancala.Mancala(game_consts, game_info)
+
+    @pytest.fixture
+    def a1game(self):
+
+        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_info = gi.GameInfo(evens=True,
+                                stores=True,
+                                sow_direct=Direct.CCW,
+                                presowcapt=PreSowCapt.ALL_SINGLE_XCAPT,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        return mancala.Mancala(game_consts, game_info)
+
+
+    @pytest.fixture
+    def d1game(self):
+
+        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_info = gi.GameInfo(evens=True,
+                                stores=True,
+                                sow_direct=Direct.CCW,
+                                presowcapt=PreSowCapt.DRAW_1_XCAPT,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        return mancala.Mancala(game_consts, game_info)
+
+
+    CASES = [
+        ('c1game', 0, F, [2, 2, 2, 2, 2, 2, 2, 2],
+         7, [1, 0, 3, 0, 3, 0, 3, 1], [5, 0]),
+
+        # no capt
+        ('a1game', 0, F, [2, 2, 2, 2, 2, 2, 2, 2],
+         2, [0, 3, 3, 2, 2, 2 ,2, 2], [0, 0]),
+
+        # capt & sow
+        ('a1game', 0, F, [2, 1, 2, 1, 2, 2, 2, 2],
+         2, [0, 2, 3, 1, 0, 2, 0, 2], [4, 0]),
+
+        # no capt, sow
+        ('d1game', 0, F, [2, 1, 2, 1, 2, 2, 2, 2],
+         2, [0, 2, 3, 1, 2, 2, 2, 2], [0, 0]),
+
+        # capt & sow
+        ('d1game', 1, F, [2, 1, 2, 1, 2, 2, 2, 2],
+         2, [2, 0, 3, 1, 2, 2, 0, 2], [2, 0]),
+
+        ]
+    # @pytest.mark.usefixtures('logger')
+    @pytest.mark.parametrize('game_fixt, start_pos, turn, board, ' \
+                             'eloc, eboard, estore',
+                             CASES, ids=[f"{case[0]}-case{idx}"
+                                         for idx, case in enumerate(CASES)])
+    def test_mlap_sower(self, request, game_fixt,
+                        start_pos, turn, board,
+                        eloc, eboard, estore):
+
+        game = request.getfixturevalue(game_fixt)
+        game.board = board
+        game.turn = turn
+        # print(game.deco.sower)
+        # print(game)
+        # print(start_pos)
+
+        mdata = MoveData(game, start_pos)
+        mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(start_pos)
+        mdata.direct = game.info.sow_direct
+        game.deco.sower.sow_seeds(mdata)
+        # print(game)
 
         assert mdata.capt_loc == eloc
         assert game.board == eboard
@@ -1536,6 +1625,19 @@ class TestBadEnums:
         with pytest.raises(NotImplementedError):
             mancala.Mancala(game_consts, game_info)
 
+
+    def test_bad_presowcapt(self):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(capt_on=[4],
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        object.__setattr__(game_info, 'presowcapt', 12)
+
+        with pytest.raises(NotImplementedError):
+            mancala.Mancala(game_consts, game_info)
 
 
 

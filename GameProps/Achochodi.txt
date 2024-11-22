@@ -1,0 +1,27 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 6,
+      "nbr_start": 4
+   },
+   "game_info": {
+      "name": "Achochodi",
+      "about": "Sow counter-clockwise. If you draw a single seed, capture the contents of the hole opposite. If you draw enough seeds to cycle the board, skip sowing the start hole. If your opponent does not have any seeds you must make some available, if possible.\n\nMultiple capture on 2s and 3s. You must start on your opponents side of the board, but the chain may continue onto your own side of the board. A cycling game can be ended by the Round End menu command.\n\nGoal: capture more than half of the seeds.\n",
+      "capt_on": [ 2, 3 ],
+      "multicapt": -1,
+      "mustshare": true,
+      "capt_side": 3,
+      "presowcapt": 3,
+      "skip_start": true,
+      "sow_direct": 1,
+      "stores": true,
+      "unclaimed": 2
+   },
+   "player": {
+      "ai_params": {},
+      "scorer": {
+         "stores_m": 4
+      }
+   },
+   "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p63."
+}

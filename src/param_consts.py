@@ -70,6 +70,7 @@ STRING_DICTS = {
              gi.AllowRule.RIGHT_2_1ST_THEN_ALL_TWO,
          'Move from all holes once first':
              gi.AllowRule.MOVE_ALL_HOLES_FIRST,
+         'Not across from 1s': gi.AllowRule.NOT_XFROM_1S,
          }),
 
     'CaptSide': lookup_dicts(
@@ -154,6 +155,14 @@ STRING_DICTS = {
         {'Single sow': gi.LapSower.OFF,
          'Lap Sower (end)': gi.LapSower.LAPPER,
          'Lap Sower Next': gi.LapSower.LAPPER_NEXT}),
+
+    'PreSowCapt': lookup_dicts(
+        gi.PreSowCapt,
+        {'No PreSow Capture': gi.PreSowCapt.NONE,
+         'Capture 1 seed (per lap)': gi.PreSowCapt.CAPT_ONE,
+         'Capture across from all 1s': gi.PreSowCapt.ALL_SINGLE_XCAPT,
+         'Cross capture when drawing 1': gi.PreSowCapt.DRAW_1_XCAPT,
+        }),
 
     'Rounds': lookup_dicts(
         gi.Rounds,

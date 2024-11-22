@@ -44,6 +44,7 @@ class AllowRule(enum.IntEnum):
     FIRST_TURN_ONLY_RIGHT_TWO = 7
     RIGHT_2_1ST_THEN_ALL_TWO = 8
     MOVE_ALL_HOLES_FIRST = 9
+    NOT_XFROM_1S = 10
 
 
 @enum.unique
@@ -164,6 +165,15 @@ class LapSower(enum.IntEnum):
     OFF = 0
     LAPPER = 1
     LAPPER_NEXT = 2
+
+@enum.unique
+class PreSowCapt(enum.IntEnum):
+    """Define a type of presow capture."""
+
+    NONE = 0
+    CAPT_ONE = 1
+    ALL_SINGLE_XCAPT = 2
+    DRAW_1_XCAPT = 3
 
 
 @enum.unique
@@ -300,6 +310,7 @@ class GameInfo:
     child_type: ChildType = ChildType.NOCHILD
     child_rule: ChildRule = ChildRule.NONE
     goal_param: int = 0
+    presowcapt: PreSowCapt = PreSowCapt.NONE
     sow_rule: SowRule = SowRule.NONE
     sow_param: int = 0
 

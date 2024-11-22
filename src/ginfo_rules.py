@@ -466,7 +466,8 @@ def add_capture_rules(rules):
                                     ginfo.sow_own_store,
                                     ginfo.capt_max,
                                     ginfo.capt_min,
-                                    ginfo.capt_on]),
+                                    ginfo.capt_on,
+                                    ginfo.presowcapt]),
         msg='No capture mechanism provided',
         warn=True)
 
@@ -480,7 +481,8 @@ def add_capture_rules(rules):
                                      ginfo.crosscapt,
                                      ginfo.capt_max,
                                      ginfo.capt_min,
-                                     ginfo.capt_on])),
+                                     ginfo.capt_on,
+                                     ginfo.presowcapt])),
         msg="The game has captures configured but there is no place " +
             "to put captured seeds. Suggest stores or children be used.",
         warn=True)
@@ -661,7 +663,8 @@ def build_rules():
                             and ginfo.allow_rule in
                                 {gi.AllowRule.TWO_ONLY_ALL_RIGHT,
                                  gi.AllowRule.FIRST_TURN_ONLY_RIGHT_TWO,
-                                 gi.AllowRule.RIGHT_2_1ST_THEN_ALL_TWO}),
+                                 gi.AllowRule.RIGHT_2_1ST_THEN_ALL_TWO,
+                                 gi.AllowRule.NOT_XFROM_1S}),
         msg='Selected allow rule not supported for MLENGTH 3 games',
         excp=gi.GameInfoError)
 
@@ -796,6 +799,22 @@ def build_rules():
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
+        'xc_draw1_sowstart',
+        rule=lambda ginfo: (ginfo.presowcapt == gi.PreSowCapt.DRAW_1_XCAPT
+                            and ginfo.sow_start),
+        msg='DRAW_1_XCAPT with SOW_START will capture when start hole ' \
+            'has 2 seeds (1 is drawn)',
+        warn=True)
+
+    man_rules.add_rule(
+        'presowcapt_locks',
+        rule=lambda ginfo: ginfo.presowcapt and ginfo.moveunlock,
+        msg='PRESOWRULEs are not supported with MOVEUNLOCK',
+        excp=gi.GameInfoError)
+        # locks have two purposes: don't capt from locks and moveall first
+        # see no need to make these compatible with presowcapt
+
+    man_rules.add_rule(
         'needs_moves',
         rule=lambda ginfo: (ginfo.min_move == 1
                             and ginfo.sow_start
@@ -857,12 +876,21 @@ def build_rules():
         # see comment for udir_and_mshare rule above
 
     man_rules.add_rule(
-        'udir_allowrule',
-        rule=lambda ginfo: (ginfo.udirect and
-                            ginfo.allow_rule != gi.AllowRule.NONE),
+        'udir_bad_allowrule',
+        rule=lambda ginfo: (ginfo.allow_rule not in  (
+                                  gi.AllowRule.NONE,
+                                  gi.AllowRule.TWO_ONLY_ALL,
+                                  gi.AllowRule.TWO_ONLY_ALL_RIGHT,
+                                  gi.AllowRule.FIRST_TURN_ONLY_RIGHT_TWO,
+                                  gi.AllowRule.RIGHT_2_1ST_THEN_ALL_TWO,
+                                  gi.AllowRule.MOVE_ALL_HOLES_FIRST,
+                                  gi.AllowRule.NOT_XFROM_1S)
+                             and ginfo.udirect),
         msg='UDIR_HOLES and ALLOW_RULE are incompatible',
         excp=NotImplementedError)
         # see comment for udir_and_mshare rule above
+        # allow rules which do no depend on sow direction are fine
+        # listing those so new allow rules are excluded with code changes
 
     man_rules.add_rule(
         'odd_split_udir',
