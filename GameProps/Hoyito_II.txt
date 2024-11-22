@@ -1,0 +1,30 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 6,
+      "nbr_start": 4
+   },
+   "game_info": {
+      "name": "Hoyito II",
+      "about": "\n\n",
+      "blocks": true,
+      "capt_on": [
+         4
+      ],
+      "mlaps": 1,
+      "multicapt": -1,
+      "capt_rturn": true,
+      "capt_side": 1,
+      "pickextra": 3,
+      "round_fill": 1,
+      "rounds": 2,
+      "sow_direct": 1,
+      "stores": true
+   },
+   "player": {
+      "ai_params": {},
+      "scorer": {
+         "stores_m": 4
+      }
+   }
+}

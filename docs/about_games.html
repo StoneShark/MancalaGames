@@ -717,6 +717,46 @@ Instead of minimum move of 2, singletons may start moves if all holes are empty 
     <p class="param"><a href="game_params.html#unclaimed">End Game Seeds</a>: UNFED_PLAYER</p>
   </div>
 </div>
+<h3 id="Hoyito I">Hoyito I</h3>
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#blocks">Blocks</a>: Yes</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 4</p>
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
+    <p class="param"><a href="game_params.html#pickextra">On Capture, Take More Rule</a>: PICKLASTSEEDS</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: LEFT_FILL</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: SOW_CAPT_ALL</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<h3 id="Hoyito II">Hoyito II</h3>
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#blocks">Blocks</a>: Yes</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 4</p>
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
+    <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: -1</p>
+    <p class="param"><a href="game_params.html#capt_rturn">Repeat Turn on Capture</a>: Yes</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OPP_SIDE</p>
+    <p class="param"><a href="game_params.html#pickextra">On Capture, Take More Rule</a>: PICKLASTSEEDS</p>
+    <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: LEFT_FILL</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
 <h3 id="J'Odu">J'Odu</h3>
 <p>Sow clockwise, multi-lap sow. Cross capture opposite-side but only up to 3 seeds, picking own on capture.
 <p>Variations: board size and start seeds.
@@ -974,7 +1014,7 @@ played in rounds with UMOVE style RoundFill
 <p>Unlike <a href="about_games.html#Pallam Kuzhi">Pallam Kuzhi</a>, this game is not played in rounds.
 <p>Variations:
 <ul><li class="helptext">
-<a href="game_params.html#sow_rule">SOW_RULE</a> of SOW_SOW_CAPT_ALL instead of OWN_SOW_CAPT_ALL
+<a href="game_params.html#sow_rule">SOW_RULE</a> of SOW_CAPT_ALL instead of OWN_SOW_CAPT_ALL
 <li class="helptext">
 See <a href="about_games.html#Olinda">Olinda</a>, <a href="about_games.html#Pallam Kuzhi">Pallam Kuzhi</a>, and <a href="about_games.html#Pandi">Pandi</a>.
 </ul>
@@ -1238,7 +1278,7 @@ don't allow passing (<a href="game_params.html#mustpass">MUSTPASS</a>)
 <li class="helptext">
 repeat turn on capture (<a href="game_params.html#capt_rturn">CAPT_RTURN</a>)
 <li class="helptext">
-only sower captures during sowing (<a href="game_params.html#sow_rule">SOW_RULE</a>: SOW_SOW_CAPT_ALL)
+only sower captures during sowing (<a href="game_params.html#sow_rule">SOW_RULE</a>: SOW_CAPT_ALL)
 <li class="helptext">
 hen 8 seeds or fewer, the round starter takes them (<a href="game_params.html#pickextra">PICKEXTRA</a>: PICK2NLASTSEEDS)
 <li class="helptext">
@@ -1294,7 +1334,7 @@ see <a href="about_games.html#Lam Waladach">Lam Waladach</a>
 <p>The game is over when either player cannot fill a single hole.
 <p>Variations:
 <ul><li class="helptext">
-<a href="game_params.html#sow_rule">SOW_RULE</a> of SOW_SOW_CAPT_ALL instead of OWN_SOW_CAPT_ALL
+<a href="game_params.html#sow_rule">SOW_RULE</a> of SOW_CAPT_ALL instead of OWN_SOW_CAPT_ALL
 <li class="helptext">
 Other options for <a href="game_params.html#round_starter">ROUND_STARTER</a> and <a href="game_params.html#round_fill">ROUND_FILL</a>.
 <li class="helptext">
@@ -1380,7 +1420,7 @@ any Grand Slam rule
 <ul><li class="helptext">
 6 start seeds.
 <li class="helptext">
-<a href="game_params.html#sow_rule">SOW_RULE</a> of SOW_SOW_CAPT_ALL instead of OWN_SOW_CAPT_ALL.
+<a href="game_params.html#sow_rule">SOW_RULE</a> of SOW_CAPT_ALL instead of OWN_SOW_CAPT_ALL.
 <li class="helptext">
 Other options for <a href="game_params.html#round_starter">ROUND_STARTER</a> and <a href="game_params.html#round_fill">ROUND_FILL</a>.
 <li class="helptext">
@@ -1416,7 +1456,7 @@ See <a href="about_games.html#Longbeu-a-cha">Longbeu-a-cha</a>, <a href="about_g
 <p>The game is over when either player cannot fill a single hole.
 <p>Variations:
 <ul><li class="helptext">
-<a href="game_params.html#sow_rule">SOW_RULE</a> of SOW_SOW_CAPT_ALL instead of OWN_SOW_CAPT_ALL.
+<a href="game_params.html#sow_rule">SOW_RULE</a> of SOW_CAPT_ALL instead of OWN_SOW_CAPT_ALL.
 <li class="helptext">
 Other options for <a href="game_params.html#round_starter">ROUND_STARTER</a> and <a href="game_params.html#round_fill">ROUND_FILL</a>.
 <li class="helptext">
@@ -1831,10 +1871,12 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Gamacha">Gamacha</a></p>
     <p class="param"><a href="#Gelech">Gelech</a></p>
     <p class="param"><a href="#Giuthi">Giuthi</a></p>
+    <p class="param"><a href="#Goat">Goat</a></p>
   </div>
   <div class="column3">
-    <p class="param"><a href="#Goat">Goat</a></p>
     <p class="param"><a href="#Halusa">Halusa</a></p>
+    <p class="param"><a href="#Hoyito I">Hoyito I</a></p>
+    <p class="param"><a href="#Hoyito II">Hoyito II</a></p>
     <p class="param"><a href="#J'Odu">J'Odu</a></p>
     <p class="param"><a href="#Kalah">Kalah</a></p>
     <p class="param"><a href="#Kale">Kale</a></p>

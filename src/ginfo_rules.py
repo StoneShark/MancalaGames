@@ -570,6 +570,7 @@ def add_capture_rules(rules):
                             and ginfo.grandslam != gi.GrandSlam.LEGAL),
         msg='OWN_SOW_CAPT_ALL requires that GRANDLAM be LEGAL',
         excp=gi.GameInfoError)
+    # TODO why isn't GS Legal required for SOW_CAPT_ALL?
 
     rules.add_rule(
         'xpick_requires_cross',
@@ -703,7 +704,7 @@ def build_rules():
         rule=lambda ginfo: (ginfo.sow_own_store
                             and ginfo.sow_rule in
                                 (gi.SowRule.OWN_SOW_CAPT_ALL,
-                                 gi.SowRule.SOW_SOW_CAPT_ALL,
+                                 gi.SowRule.SOW_CAPT_ALL,
                                  gi.SowRule.NO_SOW_OPP_2S)),
         msg='SOW_OWN_STORE is not supported with the selected sow rule',
         excp=NotImplementedError)

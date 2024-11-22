@@ -210,9 +210,9 @@ class SowCaptOwned(SowMethodIf):
     LAPPER_NEXT: Any seed with capt_ok is captured by the hole
     owner.
 
-    SOW_SOW_CAPT_ALL:
-        similar to above, but only the sower captures on from
-        the opponents holes.
+    SOW_CAPT_ALL:
+        similar to above, but only the sower captures from
+        the holes as specified by CAPT_SIDE.
     """
 
     def __init__(self, game, decorator=None):
@@ -220,37 +220,48 @@ class SowCaptOwned(SowMethodIf):
         to be tested for each hole sown.
         Prototype is cfunc(seed#, loc, turn)
 
-        Define an owner function with prototype owner(loc, turn)"""
+        Define an captor function with prototype owner(loc, turn)"""
 
         super().__init__(game, decorator)
-
         self.conds = []
 
-        if self.game.info.sow_rule == gi.SowRule.OWN_SOW_CAPT_ALL:
+        if game.info.sow_rule == gi.SowRule.OWN_SOW_CAPT_ALL:
 
-            # no added conditions, only need to determine owner
+            # no added conditions, only need to determine capturer
 
-            if self.game.info.goal == gi.Goal.TERRITORY:
-                self.owner = lambda loc, turn: game.owner[loc]
+            if game.info.goal == gi.Goal.TERRITORY:
+                self.captor = lambda loc, turn: game.owner[loc]
 
             else:
-                self.owner = lambda loc, turn: game.cts.board_side(loc)
+                self.captor = lambda loc, turn: game.cts.board_side(loc)
 
-        else:  #  self.game.info.sow_rule == gi.SowRule.SOW_SOW_CAPT_ALL
+        else:  #  self.game.info.sow_rule == gi.SowRule.SOW_CAPT_ALL
 
-            # capturer is always current player,
-            # but the hole must belong to the opponent
+            # capturer is always current player
+            self.captor = lambda loc, turn: turn
 
-            self.owner = lambda loc, turn: turn
+            if self.game.info.capt_side in (gi.CaptSide.OWN_SIDE,
+                                            gi.CaptSide.OWN_CONT):
 
-            if self.game.info.goal == gi.Goal.TERRITORY:
-                self.conds += [lambda scnt, loc, turn:
-                                   turn != game.owner[loc]]
-            else:
-                self.conds += [lambda scnt, loc, turn:
-                                   turn != game.cts.board_side(loc)]
+                if game.info.goal == gi.Goal.TERRITORY:
+                    self.conds += [lambda scnt, loc, turn:
+                                       turn == game.owner[loc]]
+                else:
+                    self.conds += [lambda scnt, loc, turn:
+                                       turn == game.cts.board_side(loc)]
 
-        if self.game.info.mlaps == gi.LapSower.LAPPER:
+            elif self.game.info.capt_side in (gi.CaptSide.OPP_SIDE,
+                                              gi.CaptSide.OPP_CONT):
+
+                if game.info.goal == gi.Goal.TERRITORY:
+                    self.conds += [lambda scnt, loc, turn:
+                                       turn != game.owner[loc]]
+                else:
+                    self.conds += [lambda scnt, loc, turn:
+                                       turn != game.cts.board_side(loc)]
+
+        # LAPPER do not pick on the last seed, it's captured instead
+        if game.info.mlaps == gi.LapSower.LAPPER:
             self.conds += [lambda scnt, loc, turn: scnt > 1]
 
 
@@ -268,9 +279,9 @@ class SowCaptOwned(SowMethodIf):
                     and not self.game.inhibitor.stop_me_capt(self.game.turn)
                     and self.game.deco.capt_ok.capture_ok(mdata, loc)):
 
-                owner = self.owner(loc, self.game.turn)
-                game_log.step(f'Capture from {loc} by {owner}')
-                self.game.store[owner] += self.game.board[loc]
+                captor = self.captor(loc, self.game.turn)
+                game_log.step(f'Capture from {loc} by {captor}')
+                self.game.store[captor] += self.game.board[loc]
                 self.game.board[loc] = 0
 
         mdata.capt_loc = loc
@@ -798,7 +809,7 @@ def _add_base_sower(game):
             sower = _add_blkd_divert_sower(game)
 
         elif game.info.sow_rule in (gi.SowRule.OWN_SOW_CAPT_ALL,
-                                    gi.SowRule.SOW_SOW_CAPT_ALL):
+                                    gi.SowRule.SOW_CAPT_ALL):
             sower = SowCaptOwned(game)
 
         elif game.info.sow_rule == gi.SowRule.NO_SOW_OPP_2S:

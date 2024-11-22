@@ -244,6 +244,8 @@ is included after the parameter sections.
 <b class="enum">RIGHT_2_1ST_THEN_ALL_TWO</b>:  The first turn must start from one of the two rightmost holes. Subsequent moves may only start from holes without 2 seeds, unless all holes contain zero or 2 seeds.
 <li class="helptext">
 <b class="enum">MOVE_ALL_HOLES_FIRST</b>: a move must initiated from each hole once before a second move may be made from any hole.  MOVE_ALL is incompatible with all pickers and capttwoout.
+<li class="helptext">
+<b class="enum">NOT_XFROM_1S</b>: moves may not start from holes with a singleton opposite it.
 </ol>
 <h4 id="stores"> Stores </h4>
 <p class="pdesc">Location in Config Files: game_info : stores
@@ -481,7 +483,7 @@ is included after the parameter sections.
 <p class="helptext"> If <a href="game_params.html#mlaps">MLAPS</a> is LAPPER and the final seed sown for any lap meets the simple capture criteria for that hole, the contents of the hole are captured by the sower and not the hole owner and the turn is over. For <a href="game_params.html#capttwoout">CAPTTWOOUT</a>, <a href="game_params.html#capt_next">CAPT_NEXT</a> and <a href="game_params.html#crosscapt">CROSSCAPT</a> captures, the sower always does the final capture.
 <p class="helptext"> <a href="game_params.html#grandslam">GRANDSLAM</a> rules are not applied. <a href="game_params.html#nocaptmoves">NOCAPTMOVES</a> prevents these capture for the first moves.
 <li class="helptext">
-<b class="enum">SOW_SOW_CAPT_ALL</b>: Similar to OWN_SOW_CAPT_ALL but only the SOWer captures seeds from their opponent's holes. 
+<b class="enum">SOW_CAPT_ALL</b>: Similar to OWN_SOW_CAPT_ALL but only the SOWer captures seeds from the side specified by <a href="game_params.html#capt_side">CAPT_SIDE</a>. BOTH sower capturers from any hole. OPP sower capturer only from opponents holes.  OWN sower captures only from their own holes. 
 <p class="helptext"> If mlaps is LAPPER and the final seed sown for any lap meets the capture criteria, the contents of the hole are captured by the sower and not the hole owner and the turn is over.
 <p class="helptext"> <a href="game_params.html#grandslam">GRANDSLAM</a> rules are not applied. <a href="game_params.html#nocaptmoves">NOCAPTMOVES</a> prevents this capture for the first number of specified moves.
 <li class="helptext">

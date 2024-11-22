@@ -114,7 +114,8 @@ Dynamics	allow_rule	Special Move Restrictions	game_info _	101	AllowRule	NONE	9	0
 - TWO_ONLY_ALL_RIGHT: Holes with two seeds may not be played, unless all holes contains two seeds, in which case the rightmost hole must be played.
 - FIRST_TURN_ONLY_RIGHT_TWO: The first turn must start from one of the two rightmost holes.
 - RIGHT_2_1ST_THEN_ALL_TWO:  The first turn must start from one of the two rightmost holes. Subsequent moves may only start from holes without 2 seeds, unless all holes contain zero or 2 seeds.
-- MOVE_ALL_HOLES_FIRST: a move must initiated from each hole once before a second move may be made from any hole.  MOVE_ALL is incompatible with all pickers and capttwoout."
+- MOVE_ALL_HOLES_FIRST: a move must initiated from each hole once before a second move may be made from any hole.  MOVE_ALL is incompatible with all pickers and capttwoout.
+- NOT_XFROM_1S: moves may not start from holes with a singleton opposite it."
 Dynamics	stores	Stores	game_info _	144	bool	True	0	2	True when stores are present on the game board. For games with GOAL of DEPRIVE or CLEAR, stores can be used to show whose turn it is (seed counts will not be sown).
 Dynamics	no_sides	No Sides	game_info _	127	bool	False	1	2	Moves maybe made from any hole, independent of the side of the board. Moves need to specify side, position and directions.  
 Dynamics	mdyno_lbl	Move Dynamics		0	label	0	3	2	
@@ -242,7 +243,7 @@ Sow	sow_rule	Special Sow Rules	game_info _	140	SowRule	NONE	10	0	"Special sow ru
   + The capture is done by the hole owner, so the non-sower may capture seeds while their opponents sows. If the game GOAL is TERRITORY the capturer is the hole owner; otherwise each player captures from their own side of the board no matter who is sowing. 
   + If MLAPS is LAPPER and the final seed sown for any lap meets the simple capture criteria for that hole, the contents of the hole are captured by the sower and not the hole owner and the turn is over. For CAPTTWOOUT, CAPT_NEXT and CROSSCAPT captures, the sower always does the final capture.
   + GRANDSLAM rules are not applied. NOCAPTMOVES prevents these capture for the first moves.
-- SOW_SOW_CAPT_ALL: Similar to OWN_SOW_CAPT_ALL but only the SOWer captures seeds from their opponent's holes. 
+- SOW_CAPT_ALL: Similar to OWN_SOW_CAPT_ALL but only the SOWer captures seeds from the side specified by CAPT_SIDE. BOTH sower capturers from any hole. OPP sower capturer only from opponents holes.  OWN sower captures only from their own holes. 
   + If mlaps is LAPPER and the final seed sown for any lap meets the capture criteria, the contents of the hole are captured by the sower and not the hole owner and the turn is over.
   + GRANDSLAM rules are not applied. NOCAPTMOVES prevents this capture for the first number of specified moves.
 - NO_SOW_OPP_2S: Don't sow into opponents holes with 2 seeds.

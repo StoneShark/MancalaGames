@@ -229,7 +229,7 @@ class SowRule(enum.IntEnum):
     SOW_BLKD_DIV = 1
     SOW_BLKD_DIV_NR = 2
     OWN_SOW_CAPT_ALL = 3
-    SOW_SOW_CAPT_ALL = 4
+    SOW_CAPT_ALL = 4
     NO_SOW_OPP_2S = 5
     CHANGE_DIR_LAP = 6
     MAX_SOW = 7

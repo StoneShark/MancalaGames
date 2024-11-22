@@ -217,7 +217,7 @@ UNIT_TESTS += test_round_tally.cov
 UNIT_TESTS += test_sower.cov
 
 cov_unit_tests: $(UNIT_TESTS)
-	grep src cov\\*.cov
+	grep -h src cov\\*.cov
 
 
 

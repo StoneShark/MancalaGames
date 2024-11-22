@@ -17,6 +17,7 @@ from context import game_constants as gc
 from context import mancala
 from context import sower
 
+from game_interface import CaptSide
 from game_interface import ChildType
 from game_interface import ChildRule
 from game_interface import Direct
@@ -1161,45 +1162,95 @@ class TestSowCaptOwned:
 
 
     @pytest.fixture
-    def game_ss(self):
+    def game_ss(self, request):
 
         game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
-                                sow_rule=SowRule.SOW_SOW_CAPT_ALL,
+                                sow_rule=SowRule.SOW_CAPT_ALL,
+                                capt_side=request.param,
                                 sow_direct=Direct.CCW,
                                 mlaps=gi.LapSower.LAPPER,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
         return mancala.Mancala(game_consts, game_info)
 
+    SSCASES = [
+        (CaptSide.OPP_SIDE,                 # two laps, pick 4
+         1, utils.build_board([2, 2, 3],
+                              [0, 3, 2]),
+         1, utils.build_board([3, 0, 0],
+                              [1, 1, 3]), [4, 0]),
 
+        (CaptSide.OPP_SIDE,                 # stop 1st lap for capture @  4
+         1, utils.build_board([2, 3, 3],
+                              [0, 3, 2]),
+         4, utils.build_board([2, 4, 0],
+                              # capture not done yet
+                              [0, 0, 3]), [4, 0]),
+
+        (CaptSide.OPP_SIDE,                 # don't capt 4 on own side
+         1, utils.build_board([2, 3, 3],
+                              [0, 3, 3]),
+         4, utils.build_board([2, 4, 0],
+                              [0, 0, 4]), [4, 0]),
+
+        (CaptSide.OWN_SIDE,                 # pick 4 @ 2, no capture @ 4 cont sow
+         1, utils.build_board([2, 2, 3],
+                              [0, 2, 3]),
+         1, utils.build_board([3, 3, 0],
+                              [1, 1, 0]), [4, 0]),
+
+        (CaptSide.OWN_SIDE,                 # stop for capt @ 2
+         1, utils.build_board([2, 3, 3],
+                              [0, 3, 2]),
+         2, utils.build_board([3, 0, 4],
+                              # capture not done yet
+                              [1, 1, 4]), [0, 0]),
+
+        (CaptSide.OWN_SIDE,                 #
+         1, utils.build_board([2, 3, 3],
+                              [0, 3, 3]),
+         2, utils.build_board([3, 0, 4],
+                              [1, 1, 1]), [4, 0]),
+
+
+        (CaptSide.BOTH,                 # stop for capture at 4
+         1, utils.build_board([2, 2, 3],
+                              [0, 2, 3]),
+         3, utils.build_board([2, 2, 4],
+                              [0, 0, 0]), [4, 0]),
+
+        (CaptSide.BOTH,                 # pick 4, stop for capt @ 5
+         1, utils.build_board([2, 3, 3],
+                              [0, 3, 2]),
+         4, utils.build_board([2, 4, 0],
+                              [0, 0, 3]), [4, 0]),
+
+        (CaptSide.BOTH,                 # pick 3 & 4, stop for capt @ 5
+         1, utils.build_board([2, 3, 3],
+                              [0, 3, 3]),
+         4, utils.build_board([2, 4, 0],
+                              [0, 0, 0]), [8, 0]),
+
+    ]
+    # @pytest.mark.usefixtures("logger")
     @pytest.mark.parametrize(
-        'start_pos, board, eloc, eboard, estore',
-        [(1, utils.build_board([2, 2, 3],
-                               [0, 3, 2]),
-          1, utils.build_board([3, 0, 0],
-                               [1, 1, 3]), [4, 0]),
-          (1, utils.build_board([2, 3, 3],
-                                [0, 3, 2]),
-           4, utils.build_board([2, 4, 0],
-                                [0, 0, 3]), [4, 0]),
-          (1, utils.build_board([2, 3, 3],
-                                [0, 3, 3]),
-           4, utils.build_board([2, 4, 0],
-                                [0, 0, 4]), [4, 0]),   # don't capt 4 on own side
-          ])
+        'game_ss, start_pos, board, eloc, eboard, estore',
+        SSCASES, ids=[f"case_{i}" for i in range(len(SSCASES))],
+        indirect=['game_ss'])
     def test_ss_goal_mseeds(self, game_ss, start_pos, board,
                             eloc, eboard, estore):
 
         game_ss.board = board
         game_ss.turn = False
+        # print(game_ss)
 
         mdata = MoveData(game_ss, start_pos)
         mdata.sow_loc, mdata.seeds = game_ss.deco.drawer.draw(start_pos)
         mdata.direct = game_ss.info.sow_direct
         game_ss.deco.sower.sow_seeds(mdata)
-        # print(game_ss)
+        # print('after', game_ss, sep='\n')
 
         assert mdata.capt_loc == eloc
         assert game_ss.board == eboard
@@ -1207,12 +1258,13 @@ class TestSowCaptOwned:
 
 
     @pytest.fixture
-    def game2_ss(self):
+    def game2_ss(self, request):
 
         game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
-                                sow_rule=SowRule.SOW_SOW_CAPT_ALL,
+                                sow_rule=SowRule.SOW_CAPT_ALL,
+                                capt_side=request.param,
                                 goal=Goal.TERRITORY,
                                 goal_param=4,
                                 sow_direct=Direct.CCW,
@@ -1221,10 +1273,33 @@ class TestSowCaptOwned:
                                 rules=mancala.Mancala.rules)
         return mancala.Mancala(game_consts, game_info)
 
+    TSSCASES = [
+        (CaptSide.OPP_SIDE,
+         1, utils.build_board([2, 3, 3],
+                              [0, 3, 3]),
+         4, utils.build_board([2, 4, 0],
+                              [0, 0, 4]), [4, 0]),
 
-    def test_ss_goal_terr_seeds(self, game2_ss):
-        game2_ss.board = utils.build_board([2, 3, 3],
-                                           [0, 3, 3])
+        (CaptSide.OWN_SIDE,
+         1, utils.build_board([2, 3, 3],
+                              [0, 3, 3]),
+         2, utils.build_board([3, 0, 4],
+                              [1, 1, 1]), [4, 0]),
+        (CaptSide.BOTH,
+         1, utils.build_board([2, 3, 0],
+                              [0, 3, 0]),
+         4, utils.build_board([2, 4, 0],
+                              [0, 0, 0]), [0, 0]),
+        ]
+
+    @pytest.mark.usefixtures("logger")
+    @pytest.mark.parametrize(
+        'game2_ss, start_pos, board, eloc, eboard, estore',
+        TSSCASES, ids=[f"case_{i}" for i in range(len(TSSCASES))],
+        indirect=['game2_ss'])
+    def test_ss_goal_terr_seeds(self, game2_ss, start_pos, board,
+                            eloc, eboard, estore):
+        game2_ss.board = board
         game2_ss.turn = False
 
         move = gi.MoveTpl(not game2_ss.turn, 1, None)
@@ -1232,12 +1307,11 @@ class TestSowCaptOwned:
         mdata.sow_loc, mdata.seeds = game2_ss.deco.drawer.draw(move)
         mdata.direct = game2_ss.info.sow_direct
         game2_ss.deco.sower.sow_seeds(mdata)
-        # print(game2_ss)
+        print(game2_ss)
 
-        assert mdata.capt_loc == 4
-        assert game2_ss.board == utils.build_board([2, 4, 0],
-                                                   [0, 0, 4])
-        assert game2_ss.store == [4, 0]
+        assert mdata.capt_loc == eloc
+        assert game2_ss.board == board
+        assert game2_ss.store == estore
 
 
 
