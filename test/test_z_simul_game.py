@@ -38,7 +38,7 @@ from game_interface import WinCond
 PATH = './GameProps/'
 FILES = os.listdir(PATH)
 
-BAD_CFG = 'all_params.txt'
+BAD_CFG = '_all_params.txt'
 if BAD_CFG in FILES:
     FILES.remove(BAD_CFG)
 
@@ -116,7 +116,7 @@ def test_game_stats(request, game_pdict, nbr_runs):
         atexit.register(report_bad, maxed, nbr_runs)
 
     if game.info.mlaps:
-        thresh = 0.75
+        thresh = 0.50
     else:
         thresh = 0.25
 

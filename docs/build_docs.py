@@ -29,7 +29,7 @@ from context import param_consts as pc
 
 GPROP_PATH = '../GameProps/'
 TXTPART = '.txt'
-EXFILE = 'all_params.txt'
+EXFILE = '_all_params.txt'
 
 
 
@@ -480,7 +480,7 @@ is included after the parameter sections.
 <p>Each parameter description includes:
     <ul>
     <li>Location in Config File to describe where
-    the parameter is defined in a Game Description file. The all_params.txt
+    the parameter is defined in a Game Description file. The _all_params.txt
     file shows all game options and their default values.
     <li>Type of the parameter with a link to the Parameter Types help.
     <li>The default value for the parameter.

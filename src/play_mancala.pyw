@@ -22,7 +22,7 @@ DIR = 'GameProps'
 PATH = man_path.get_path(DIR) + '/'
 
 TXTPART = '.txt'
-EXFILE = 'all_params.txt'
+EXFILE = '_all_params.txt'
 
 
 # %%  load games

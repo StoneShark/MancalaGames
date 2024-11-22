@@ -4,8 +4,8 @@ for game_consts and game_info which do the error
 checking.
 
 Warngings are set to be test failures for all but
-all_params.txt.
-One warning is accepted from all_params.txt:
+_all_params.txt.
+One warning is accepted from _all_params.txt:
 No capture mechanism provided
 any other errors will generate a warning.
 
@@ -31,7 +31,7 @@ PATH = './GameProps/'
 FILES = os.listdir(PATH)
 
 
-BAD_CFG = 'all_params.txt'
+BAD_CFG = '_all_params.txt'
 if BAD_CFG in FILES:
     FILES.remove(BAD_CFG)
 

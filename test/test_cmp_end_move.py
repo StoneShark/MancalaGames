@@ -34,7 +34,7 @@ PATH = './GameProps/'
 FILES = os.listdir(PATH)
 
 
-BAD_CFG = 'all_params.txt'
+BAD_CFG = '_all_params.txt'
 if BAD_CFG in FILES:
     FILES.remove(BAD_CFG)
 

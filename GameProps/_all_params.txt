@@ -1,0 +1,98 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 0,
+      "nbr_start": 0
+   },
+   "game_info": {
+      "name": "Mancala",
+      "about": "\n",
+      "allow_rule": 0,
+      "blocks": false,
+      "capsamedir": false,
+      "capt_max": 0,
+      "capt_min": 0,
+      "capt_next": false,
+      "capt_on": [],
+      "capt_rturn": false,
+      "capttwoout": false,
+      "child_cvt": 0,
+      "child_rule": 0,
+      "child_type": 0,
+      "crosscapt": false,
+      "evens": false,
+      "goal": 0,
+      "goal_param": 0,
+      "grandslam": 0,
+      "help_file": "",
+      "min_move": 1,
+      "mlaps": 0,
+      "move_one": false,
+      "moveunlock": false,
+      "multicapt": false,
+      "mustpass": false,
+      "mustshare": false,
+      "no_sides": false,
+      "nocaptmoves": 0,
+      "nosinglecapt": false,
+      "capt_side": false,
+      "pickextra": 0,
+      "prescribed": 0,
+      "round_fill": 0,
+      "round_starter": 0,
+      "rounds": 0,
+      "skip_start": false,
+      "sow_direct": 1,
+      "sow_own_store": false,
+      "sow_rule": 0,
+      "sow_start": false,
+      "sow_param": 0,
+      "start_pattern": 0,
+      "stores": false,
+      "udir_holes": [],
+      "visit_opp": false,
+      "xc_sown": false,
+      "xcpickown": 0
+   },
+   "player": {
+      "algorithm": "minimaxer",
+      "ai_active": false,
+      "difficulty": 1,
+      "ai_params": {
+         "mcts_bias": [
+            300,
+            200,
+            100,
+            100
+         ],
+         "mcts_nodes": [
+            100,
+            300,
+            500,
+            800
+         ],
+         "mcts_pouts": [
+            1,
+            1,
+            1,
+            1
+         ],
+         "mm_depth": [
+            1,
+            1,
+            3,
+            5
+         ]
+      },
+      "scorer": {
+         "stores_m": 0,
+         "access_m": 0,
+         "seeds_m": 0,
+         "empties_m": 0,
+         "child_cnt_m": 0,
+         "evens_m": 0,
+         "repeat_turn": 0,
+         "easy_rand": 0
+      }
+   }
+}

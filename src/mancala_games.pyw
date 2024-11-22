@@ -63,7 +63,7 @@ NORMAL = 'normal'
 
 SKIP_TAB = 'skip'
 
-ALL_PARAMS = 'all_params.txt'
+ALL_PARAMS = '_all_params.txt'
 
 
 # %% helper funcs
