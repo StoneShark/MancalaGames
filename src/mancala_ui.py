@@ -603,6 +603,15 @@ class MancalaUI(tk.Frame):
         return True
 
 
+    def set_gameplay_mode(self):
+        """The behaviors file cannot import btn_behaviors
+        (circular deps), but the behavior objects have a
+        pointer to the game_ui object so we'll set_gameplay_move
+        for them here"""
+
+        return self.set_game_mode(btnb.Behavior.GAMEPLAY)
+
+
     def _win_popup(self, title, message):
         """Popup the win window with a game dump option."""
 

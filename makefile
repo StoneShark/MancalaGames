@@ -11,6 +11,7 @@ MODULES = ai_interface.py
 MODULES += ai_player.py
 MODULES += allowables.py
 MODULES += aspect_frame.py
+MODULES += behaviors.py
 MODULES += btn_behaviors.py
 MODULES += capt_ok.py
 MODULES += capturer.py
