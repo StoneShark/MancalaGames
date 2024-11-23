@@ -183,6 +183,8 @@ class Rounds(enum.IntEnum):
     NO_ROUNDS = 0
     HALF_SEEDS = 1
     NO_MOVES = 2   # mustpass determines if only current player or both
+    END_S_SEEDS = 3
+    END_2S_SEEDS = 4
 
 
 @enum.unique
@@ -197,6 +199,7 @@ class RoundFill(enum.IntEnum):
     SHORTEN = 5
     UCHOOSE = 6
     UMOVE = 7
+    UCHOWN = 8
 
 
 @enum.unique

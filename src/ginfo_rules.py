@@ -235,7 +235,8 @@ def add_territory_rules(rules):
     rules.add_rule(
         'terr_no_rfill',
         rule=lambda ginfo: (ginfo.goal == gi.Goal.TERRITORY
-                            and ginfo.round_fill),
+                            and ginfo.round_fill not in (gi.RoundFill.NOT_APPLICABLE,
+                                                         gi.RoundFill.UCHOWN)),
         msg='Round Fill is ignored for Territory goal',
         warn=True)
 

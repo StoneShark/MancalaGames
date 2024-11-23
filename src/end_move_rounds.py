@@ -12,6 +12,7 @@ from game_logger import game_log
 
 # %%  enders
 
+
 class RoundWinner(emd.EndTurnIf):
     """"If the game is played in rounds where seeds collected
     are used to setup the board for a new round, let the rest
@@ -84,7 +85,6 @@ class RoundTallyWinner(emd.EndTurnIf):
         """ended can be truthy, but only actually end the game
         if it exactly True; otherwise we are going to end the
         round."""
-        # pylint: disable=simplifiable-if-expression
 
         cond, player = self.decorator.game_ended(repeat_turn, ended)
         if ended is True or not cond:
@@ -101,6 +101,44 @@ class RoundTallyWinner(emd.EndTurnIf):
 
         # if cond == gi.WinCond.TIE:
         return gi.WinCond.ROUND_TIE, player
+
+
+
+class RoundEndLimit(emd.EndTurnIf):
+    """A round ender deco.  Add below one of the other
+    round end decorators.
+
+    If there are fewer than the specified number of seeds
+    on the board in play, call down the decorator chain
+    with ended = True.
+
+    EndGameWinner will collect seeds as configured
+    and when we return to the parent deco, it will decide
+    if the game or round has ended."""
+
+    def __init__(self, game, decorator=None, sclaimer=None):
+
+        super().__init__(game, decorator, sclaimer)
+
+        if game.info.rounds == gi.Rounds.END_S_SEEDS:
+            self.stop_at = game.cts.nbr_start
+        else:   #  if game.info.rounds == gi.Rounds.END_2S_SEEDS:
+            self.stop_at = 2 * game.cts.nbr_start
+
+
+    def game_ended(self, repeat_turn, ended=False):
+
+        remaining = 0
+        for loc in range(self.game.cts.dbl_holes):
+            if self.game.child[loc] is None:
+                remaining += self.game.board[loc]
+
+        if remaining <= self.stop_at:
+            game_log.add("Round end limit reached, ending.",
+                         game_log.IMPORT)
+            return self.decorator.game_ended(repeat_turn, True)
+
+        return self.decorator.game_ended(repeat_turn, ended)
 
 
 # %%  quitter

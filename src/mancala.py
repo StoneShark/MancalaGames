@@ -492,7 +492,10 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
         rnd_reason = ("not used",
                       "by collecting at least half the seeds.",
-                      "because there are no moves.")
+                      ". Round ended because there are no moves.",
+                      f". Round ended because there were <= {self.cts.nbr_start} seeds left",
+                      f". Round ended because There were <= {2 * self.cts.nbr_start} seeds left",
+                      )
 
         rtext = 'the game'
         gtext = 'Game'

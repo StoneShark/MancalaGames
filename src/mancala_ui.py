@@ -78,7 +78,7 @@ class MancalaUI(tk.Frame):
         self.master.title(self.info.name)
         self.master.option_add('*tearOff', False)
         # self.master.resizable(False, False)
-        self.master.wm_geometry('1000x250+500+300')
+        self.master.wm_geometry('+500+300')
 
         super().__init__(self.master)
         self.master.report_callback_exception = self._exception_callback
@@ -555,6 +555,10 @@ class MancalaUI(tk.Frame):
 
         elif self.info.round_fill == gi.RoundFill.UMOVE:
             if self.set_game_mode(btnb.Behavior.RNDMOVE):
+                return
+
+        elif self.info.round_fill == gi.RoundFill.UCHOWN:
+            if self.set_game_mode(btnb.Behavior.RNDCHOWN):
                 return
 
         self._start_it()

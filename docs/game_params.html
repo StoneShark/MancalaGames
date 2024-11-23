@@ -124,7 +124,7 @@ is included after the parameter sections.
 <b class="enum">DEPRIVE</b>: eliminate all of your opponents seeds.
 <p class="helptext"> If a player has no seeds at the start of their turn, they loose. If a player has no moves at the start of their turn, then the game outcome is determined by who has seeds: If both players have seeds, the game ends in a tie. If the current player has seeds, but the previous player does not, then the current player wins because they forced the previous player to give away all their seeds.
 <p class="helptext"> <a href="game_params.html#grandslam">GRANDSLAM</a> must be legal for DEPRIVE games.
-<p class="helptext"> Deprive games cannot be played in <a href="game_params.html#rounds">ROUNDS</a> or use children. Additionally, the following options are incompatible with DEPRIVE games: <a href="game_params.html#moveunlock">MOVEUNLOCK</a>, <a href="game_params.html#mustpass">MUSTPASS</a> and <a href="game_params.html#mustshare">MUSTSHARE</a>.
+<p class="helptext"> DEPRIVE games cannot be played in <a href="game_params.html#rounds">ROUNDS</a> or use children. Additionally, the following options are incompatible with DEPRIVE games: <a href="game_params.html#moveunlock">MOVEUNLOCK</a>, <a href="game_params.html#mustpass">MUSTPASS</a> and <a href="game_params.html#mustshare">MUSTSHARE</a>.
 <li class="helptext">
 <b class="enum">TERRITORY</b>: claim ownership of holes. Each round the ownership of holes is determined by the number of seeds captured in the previous round. In a TERRITORY game without rounds, the winner is the player that gained the most territory during play. 
 <p class="helptext"> TERRITORY games require <a href="game_params.html#stores">STORES</a> and that goal_param be set to a value between the number of holes and two times the number of holes.
@@ -132,7 +132,7 @@ is included after the parameter sections.
 <li class="helptext">
 <b class="enum">CLEAR</b>: clear seeds from your own holes.
 <p class="helptext"> Moves must always be possible so <a href="game_params.html#min_move">MIN_MOVE</a> must be 1 and <a href="game_params.html#allow_rule">ALLOW_RULE</a> single_all_to_zero may not be used.
-<p class="helptext"> <a href="game_params.html#grandslam">GRANDSLAM</a> must be legal for DEPRIVE games.  Deprive games cannot be played in <a href="game_params.html#rounds">ROUNDS</a> or use children. Additionally, the following options are incompatible with DEPRIVE games: <a href="game_params.html#moveunlock">MOVEUNLOCK</a>, <a href="game_params.html#mustpass">MUSTPASS</a> and <a href="game_params.html#mustshare">MUSTSHARE</a>.
+<p class="helptext"> <a href="game_params.html#grandslam">GRANDSLAM</a> must be legal for CLEAR games.  CLEAR games cannot be played in <a href="game_params.html#rounds">ROUNDS</a> or use children. Additionally, the following options are incompatible with CLEAR games: <a href="game_params.html#moveunlock">MOVEUNLOCK</a>, <a href="game_params.html#mustpass">MUSTPASS</a> and <a href="game_params.html#mustshare">MUSTSHARE</a>.
 <li class="helptext">
 <b class="enum">RND_WIN_COUNT</b>:  win goal_param rounds. <a href="game_params.html#round_fill">ROUND_FILL</a> is not used; each round is setup as the start of the game.
 <li class="helptext">
@@ -310,6 +310,10 @@ is included after the parameter sections.
 <b class="enum">HALF_SEEDS</b>: each round ends when one player has more that half the seeds
 <li class="helptext">
 <b class="enum">NO_MOVES</b>: When <a href="game_params.html#mustshare">MUSTSHARE</a> is set, each round ends when neither player has a valid move.  When <a href="game_params.html#mustshare">MUSTSHARE</a> is not set, each round ends when a  player does have not a valid move at the start of their turn.
+<li class="helptext">
+<b class="enum">END_S_SEEDS</b>: End the round when there are number of start seeds or fewer in play.
+<li class="helptext">
+<b class="enum">END_2S_SEEDS</b>: End the round when there are two times the number of start seeds or fewer in play.
 </ol>
 <p>For example: In <a href="about_games.html#Weg">Weg</a> each round ends when neither player has a valid move. The board is then set up again after determining who owns what territory (holes). Rounds continue until one player has claimed sufficient territory to be declared the game winner (e.g. ownership of 10 or more holes).
 <p>In the case of a round win or tie  a new starter is determined via <a href="game_params.html#round_starter">ROUND_STARTER</a> and  the board is reset according to <a href="game_params.html#round_fill">ROUND_FILL</a>.
@@ -337,11 +341,11 @@ is included after the parameter sections.
 <p class="pdesc">UI Tab: Dynamics
 
 <p>The round fill method determines which holes are filled and how many seeds they are filled with when setting up for a new round.
-<p>Several round fill mechanisms use the same general approach called the Empty Hole Method. The loser of the previous round will end up with empty holes. These holes are not playable if <a href="game_params.html#blocks">BLOCKS</a> are used; otherwise they are playable. This method is not used for RND_ <a href="game_params.html#goal">GOAL</a> games.
+<p>Several round fill mechanisms use the same general approach called the Empty Hole Method. The loser of the previous round will end up with empty holes. These holes are not playable if <a href="game_params.html#blocks">BLOCKS</a> are used; otherwise they are playable. This method is not used for RND_* <a href="game_params.html#goal">GOAL</a> games.
 <p>The seeds each player accummulated in the previous round are distributed into holes with exactly the same number in each. That number of seeds is <a href="game_params.html#nbr_start">NBR_START</a>. The winner will fill all of their holes and put any remaining seeds into their own store. The loser will fill as many holes as they can with nbr_start seeds and put any remaining seeds (fewer than nbr_start) into their own store.
 <p>LEFT_FILE, RIGHT_FILL and OUTSIDE_FILL define which holes that the loser must fill. UCHOOSE allows the loser to choose which holes have seeds.
 <ol start=0><li class="helptext">
-<b class="enum">NOT_APPLICABLE</b>: round fill doesn't need to be specified: either the game not played in rounds (DEPRIVE game included) or game goal is TERRITORY (all holes filled).
+<b class="enum">NOT_APPLICABLE</b>: round fill doesn't need to be specified: either the game not played in rounds (CLEAR & DEPRIVE games included) or game goal is TERRITORY  without UCHOWN (see below, all holes filled).
 <li class="helptext">
 <b class="enum">LEFT_FILL</b>: fill the round loser's holes from the player's left with nbr_start seeds each.  
 <li class="helptext">
@@ -356,6 +360,8 @@ is included after the parameter sections.
 <b class="enum">UCHOOSE</b>: allow user to choose which holes have seeds (are not blocked) when <a href="game_params.html#rounds">ROUNDS</a> and <a href="game_params.html#blocks">BLOCKS</a> are used.
 <li class="helptext">
 <b class="enum">UMOVE</b>: allow the loser to choose where seeds are placed. At least one seed must be placed in each hole and the game must be playable (at least one hole has <a href="game_params.html#min_move">MIN_MOVE</a> seeds), remaining seeds are placed in the store. The winner's layout is the same layout but reflected.
+<li class="helptext">
+<b class="enum">UCHOWN</b>: The only round fill supported for territory games. The winner may choose which holes they control.
 </ol>
 <h4 id="blocks"> Blocks </h4>
 <p class="pdesc">Location in Config Files: game_info : blocks

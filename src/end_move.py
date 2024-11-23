@@ -118,6 +118,10 @@ def _add_must_share_ender(game, ender):
 def _add_round_ender(game, ender, sclaimer):
     """Add the round ender."""
 
+    if game.info.rounds in (gi.Rounds.END_S_SEEDS,
+                            gi.Rounds.END_2S_SEEDS):
+        ender = emr.RoundEndLimit(game, ender)
+
     # the claimer here decides if game or round ends; after we know it ended
     if game.info.goal in round_tally.RoundTally.GOALS:
         # use the same claimer as for clear winner

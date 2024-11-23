@@ -66,13 +66,13 @@ Dynamics	goal	Game Goal	game_info _	115	Goal	MAX_SEEDS	0	0	"The overall goal of 
 - DEPRIVE: eliminate all of your opponents seeds.
   + If a player has no seeds at the start of their turn, they loose. If a player has no moves at the start of their turn, then the game outcome is determined by who has seeds: If both players have seeds, the game ends in a tie. If the current player has seeds, but the previous player does not, then the current player wins because they forced the previous player to give away all their seeds.
   + GRANDSLAM must be legal for DEPRIVE games.
-  + Deprive games cannot be played in ROUNDS or use children. Additionally, the following options are incompatible with DEPRIVE games: MOVEUNLOCK, MUSTPASS and MUSTSHARE.
+  + DEPRIVE games cannot be played in ROUNDS or use children. Additionally, the following options are incompatible with DEPRIVE games: MOVEUNLOCK, MUSTPASS and MUSTSHARE.
 - TERRITORY: claim ownership of holes. Each round the ownership of holes is determined by the number of seeds captured in the previous round. In a TERRITORY game without rounds, the winner is the player that gained the most territory during play. 
   + TERRITORY games require STORES and that goal_param be set to a value between the number of holes and two times the number of holes.
   + TERRITORY games are incompatible with NO_SIDES, START_PATTERN, GRANDSLAM of NOT_LEGAL, ALLOW_RULE of OPP_OR_EMPTY.
 - CLEAR: clear seeds from your own holes.
   + Moves must always be possible so MIN_MOVE must be 1 and ALLOW_RULE single_all_to_zero may not be used.
-  + GRANDSLAM must be legal for DEPRIVE games.  Deprive games cannot be played in ROUNDS or use children. Additionally, the following options are incompatible with DEPRIVE games: MOVEUNLOCK, MUSTPASS and MUSTSHARE.
+  + GRANDSLAM must be legal for CLEAR games.  CLEAR games cannot be played in ROUNDS or use children. Additionally, the following options are incompatible with CLEAR games: MOVEUNLOCK, MUSTPASS and MUSTSHARE.
 - RND_WIN_COUNT:  win goal_param rounds. ROUND_FILL is not used; each round is setup as the start of the game.
 - RND_SEED_COUNT: collect goal_param seeds across several rounds. ROUND_FILL is not used; each round is setup as the start of the game.
 - RND_EXTRA_SEEDS: collect goal_param extra seeds (winner - loser seeds).  ROUND_FILL is not used; each round is setup as the start of the game.
@@ -134,6 +134,8 @@ If the game is played in round, defines how each round ends:
 - NO_ROUNDS: the game is not played in rounds
 - HALF_SEEDS: each round ends when one player has more that half the seeds
 - NO_MOVES: When MUSTSHARE is set, each round ends when neither player has a valid move.  When MUSTSHARE is not set, each round ends when a  player does have not a valid move at the start of their turn.
+- END_S_SEEDS: End the round when there are number of start seeds or fewer in play.
+- END_2S_SEEDS: End the round when there are two times the number of start seeds or fewer in play.
 For example: In Weg each round ends when neither player has a valid move. The board is then set up again after determining who owns what territory (holes). Rounds continue until one player has claimed sufficient territory to be declared the game winner (e.g. ownership of 10 or more holes).
 In the case of a round win or tie  a new starter is determined via ROUND_STARTER and  the board is reset according to ROUND_FILL.
 BLOCKS are used in many games and set between rounds based on the seed placement. TERRITORY GOAL games adjust hole ownership between rounds."
@@ -143,17 +145,18 @@ Dynamics	round_starter	Round Starter	game_info _	135	RoundStarter	ALTERNATE	9	2	
 - WINNER: the winner of the previous round starts the current round.
 - LAST_MOVER: the player that made the last move of the previous round, starts the new round."
 Dynamics	round_fill	Round Fill Method	game_info _	134	RoundFill	NOT_APPLICABLE	10	2	"The round fill method determines which holes are filled and how many seeds they are filled with when setting up for a new round.
-Several round fill mechanisms use the same general approach called the Empty Hole Method. The loser of the previous round will end up with empty holes. These holes are not playable if BLOCKS are used; otherwise they are playable. This method is not used for RND_ GOAL games.
+Several round fill mechanisms use the same general approach called the Empty Hole Method. The loser of the previous round will end up with empty holes. These holes are not playable if BLOCKS are used; otherwise they are playable. This method is not used for RND_* GOAL games.
 The seeds each player accummulated in the previous round are distributed into holes with exactly the same number in each. That number of seeds is NBR_START. The winner will fill all of their holes and put any remaining seeds into their own store. The loser will fill as many holes as they can with nbr_start seeds and put any remaining seeds (fewer than nbr_start) into their own store.
 LEFT_FILE, RIGHT_FILL and OUTSIDE_FILL define which holes that the loser must fill. UCHOOSE allows the loser to choose which holes have seeds.
-- NOT_APPLICABLE: round fill doesn't need to be specified: either the game not played in rounds (DEPRIVE game included) or game goal is TERRITORY (all holes filled).
+- NOT_APPLICABLE: round fill doesn't need to be specified: either the game not played in rounds (CLEAR & DEPRIVE games included) or game goal is TERRITORY  without UCHOWN (see below, all holes filled).
 - LEFT_FILL: fill the round loser's holes from the player's left with nbr_start seeds each.  
 - RIGHT_FILL: fill the round loser's holes from the player's right with nbr_start seeds each. 
 - OUTSIDE_FILL: fill the round loser's holes from the outside ends toward the middle with nbr_start seeds each. Leftmost, rightmost, 2nd leftmost, 2nd rightmost, etc. until the seeds are used up.
 - EVEN_FILL: fill all holes (both sides) with the same number of seeds; determined by dividing the losers seeds by the number of holes per side. If that is not playable based on the minimum number of seeds required for a move (MIN_MOVE); extra seeds are put in each players leftmost hole. Any extra seeds are put in each player's store.
 - SHORTEN: the number of holes that the round loser can fill with NBR_START seeds are fill on both sides, other holes are left empty. Holes are filled opposite eachother. If BLOCKS is selected, the board is shortened to the number of holes filled (empty holes are blocked and out of play). If the game uses children, they will not be created if the board size is reduced to 3 or less.
 - UCHOOSE: allow user to choose which holes have seeds (are not blocked) when ROUNDS and BLOCKS are used.
-- UMOVE: allow the loser to choose where seeds are placed. At least one seed must be placed in each hole and the game must be playable (at least one hole has MIN_MOVE seeds), remaining seeds are placed in the store. The winner's layout is the same layout but reflected."
+- UMOVE: allow the loser to choose where seeds are placed. At least one seed must be placed in each hole and the game must be playable (at least one hole has MIN_MOVE seeds), remaining seeds are placed in the store. The winner's layout is the same layout but reflected.
+- UCHOWN: The only round fill supported for territory games. The winner may choose which holes they control."
 Dynamics	blocks	Blocks	game_info _	102	bool	False	11	2	"Blocks remove holes from play and are shown on the UI with an X.
 When used with ROUNDS, the holes not filled from the player with fewer seeds are blocked and thus out of play for the round.
 When used with DEPRIVE, SOW_BLCK_DIV and goal_param holes are closed (blocked and removed from play) when sown to goal_param seeds."

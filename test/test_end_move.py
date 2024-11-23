@@ -36,6 +36,7 @@ N = None
 T = True
 F = False
 
+DONT_CARE = None
 REPEAT_TURN = True
 ENDED = True
 
@@ -140,6 +141,18 @@ class TestEndMove:
                     'stores': True,
                     'mustshare': True,
                     'unclaimed': gi.EndGameSeeds.DIVVIED},
+
+        'st_game': {'evens': True,
+                    'stores': True,
+                    'rounds': gi.Rounds.END_S_SEEDS,
+                    'goal_param': 2,   # need two holes to continue
+                    },
+
+        'st2_game': {'evens': True,
+                     'stores': True,
+                     'rounds': gi.Rounds.END_2S_SEEDS,
+                     'goal_param': 2,   # need two holes to continue
+                     },
     }
 
 
@@ -316,7 +329,7 @@ class TestEndMove:
                  utils.build_board([0, 0, 0],
                                    [1, 1, 0]), [4, 6], True, WinCond.TIE,
                  utils.build_board([0, 0, 0],
-                                   [0, 0, 0]), [6, 6], None),
+                                   [0, 0, 0]), [6, 6], DONT_CARE),
 
                 # true has a repeat_turn but no moves, false wins
                 ('25', 'game', False, REPEAT_TURN,
@@ -393,7 +406,7 @@ class TestEndMove:
                  utils.build_board([2, 0, 0],
                                    [0, 2, 0]), [4, 4], False, WinCond.TIE,
                  utils.build_board([0, 0, 0],
-                                   [0, 0, 0]), [6, 6], None),
+                                   [0, 0, 0]), [6, 6], DONT_CARE),
 
                 # F moved all but one seed to T, now Ts move
                 ('36', 'shgame', False, False,
@@ -436,9 +449,52 @@ class TestEndMove:
                  utils.build_board([0, 0, 0],
                                    [0, 0, 0]), [6, 6], False),
 
+                # RoundEndLimit tests
+                ('rnd_not_send', 'st_game', False, False,
+                 utils.build_board([2, 2, 2],
+                                   [2, 2, 2]), [0, 0], False, None,
+                 utils.build_board([2, 2, 2],
+                                   [2, 2, 2]), [0, 0], False),
+
+                ('rnd_send_3', 'st_game', False, False,
+                 utils.build_board([0, 1, 1],
+                                   [0, 1, 0]), [5, 4], False, None,
+                 utils.build_board([0, 1, 1],
+                                   [0, 1, 0]), [5, 4], False),
+
+                ('rnd_send_tie', 'st_game', False, False,
+                 utils.build_board([0, 1, 0],
+                                   [0, 1, 0]), [5, 5], False, WinCond.ROUND_TIE,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [6, 6], False),
+
+                ('rnd_send_win', 'st_game', False, False,
+                 utils.build_board([0, 1, 1],
+                                   [0, 0, 0]), [4, 6], False, WinCond.ROUND_WIN,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [4, 8], DONT_CARE),
+
+                ('rnd_send_win', 'st_game', False, False,
+                 utils.build_board([0, 1, 1],
+                                   [0, 0, 0]), [2, 8], False, WinCond.WIN,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [2, 10], DONT_CARE),
+
+                ('rnd_not_s2end', 'st2_game', False, False,
+                 utils.build_board([2, 2, 2],
+                                   [2, 2, 2]), [0, 0], False, None,
+                 utils.build_board([2, 2, 2],
+                                   [2, 2, 2]), [0, 0], False),
+
+                ('rnd_s2end_win', 'st2_game', False, False,
+                 utils.build_board([1, 1, 1],
+                                   [0, 1, 0]), [4, 6], False, WinCond.ROUND_WIN,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [5, 9], DONT_CARE),
+
             ]
     @pytest.mark.filterwarnings("ignore")
-    # @pytest.mark.usefixtures("logger")
+    @pytest.mark.usefixtures("logger")
     @pytest.mark.parametrize(
         'case, game, ended, repeat, board, store, turn,'
         ' eres, eboard, estore, eturn',
@@ -452,16 +508,16 @@ class TestEndMove:
         game.board = board
         game.store = store
         game.turn = turn
-        # print(game)
-        # print(game.deco.ender)
+        print(game)
+        print(game.deco.ender)
         cond, winner = game.deco.ender.game_ended(repeat_turn=repeat,
                                                   ended=ended)
-        # print('after:', game, sep='\n')
-        # print(cond, winner)
+        print('after:', game, sep='\n')
+        print(cond, winner)
         assert cond == eres
         assert game.board == eboard
         assert game.store == estore
-        if eturn is not None:
+        if eturn != DONT_CARE:
             assert winner == eturn
         assert not game.test_pass()
 
@@ -580,6 +636,13 @@ class TestEndChildren:
                  'child_cvt': 2,
                  'child_type': ChildType.NORMAL,
                  'evens': True},
+
+       's2game': {'rounds': gi.Rounds.END_2S_SEEDS,
+                  'stores': True,
+                  'child_cvt': 2,
+                  'child_type': ChildType.NORMAL,
+                  'evens': True},
+
        }
 
 
@@ -633,6 +696,16 @@ class TestEndChildren:
                            [N, N, T]),
          utils.build_board([1, 0, 0],
                            [0, 0, 1]), [2, 8], True),
+
+        # 4:  RoundEndLimit finds no new seeds, win decided by clear winner
+        ('s2game', False,
+         utils.build_board([1, 0, 0],
+                           [0, 0, 1]), [2, 8], True, WinCond.ROUND_WIN,
+         utils.build_board([F, N, N],
+                           [N, N, T]),
+         utils.build_board([1, 0, 0],
+                           [0, 0, 1]), [2, 8], True),
+
         ]
 
     @pytest.mark.parametrize(

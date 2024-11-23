@@ -168,7 +168,10 @@ STRING_DICTS = {
         gi.Rounds,
         {'Not Played in Rounds': gi.Rounds.NO_ROUNDS,
          'Half seeds ends Rounds': gi.Rounds.HALF_SEEDS,
-         'No Moves': gi.Rounds.NO_MOVES}),
+         'No Moves': gi.Rounds.NO_MOVES,
+         'End when start seeds left': gi.Rounds.END_S_SEEDS,
+         'End when 2x start seeds left': gi.Rounds.END_2S_SEEDS,
+         }),
 
     'RoundFill': lookup_dicts(
         gi.RoundFill,
@@ -179,7 +182,8 @@ STRING_DICTS = {
          'Even Fill': gi.RoundFill.EVEN_FILL,
          'Shorten Board': gi.RoundFill.SHORTEN,
          'Choose Blocks': gi.RoundFill.UCHOOSE,
-         'Rearrange Seeds': gi.RoundFill.UMOVE}),
+         'Rearrange Seeds': gi.RoundFill.UMOVE,
+         'Winner Chooses Owners': gi.RoundFill.UCHOWN}),
 
     'RoundStarter': lookup_dicts(
         gi.RoundStarter,
