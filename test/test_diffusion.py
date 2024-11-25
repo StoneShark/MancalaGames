@@ -197,14 +197,14 @@ class TestDiffusion:
                         row, pos, board, eboard, eooplay):
 
         diff.board = board
-        print(diff)
+        # print(diff)
         move = gi.MoveTpl(row, pos, None)
 
         mdata = mancala.MoveData(diff, move)
         mdata.sow_loc, mdata.seeds = diff.deco.drawer.draw(move)
         diff.deco.sower.sow_seeds(mdata)
 
-        print(diff)
+        # print(diff)
 
         assert diff.board == eboard
         assert sum(diff.store) == eooplay

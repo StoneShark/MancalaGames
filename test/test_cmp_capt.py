@@ -176,9 +176,9 @@ def test_capturer(logger, conf_name, state_name, turn, capt_loc,
     assert not game.info.child_type or (game.info.child_type and start_state.child), \
         "Test error: game.info.child_type inconsistent with start_state"
 
-    print(GAMECONF[conf_name])
-    print(game)
-    print('capt_loc:', capt_loc)
+    # print(GAMECONF[conf_name])
+    # print(game)
+    # print('capt_loc:', capt_loc)
 
     mdata = mancala.MoveData(game, None)   # move isn't used in capturer
     mdata.direct = game.info.sow_direct
@@ -186,7 +186,7 @@ def test_capturer(logger, conf_name, state_name, turn, capt_loc,
     mdata.capt_loc = capt_loc
 
     game.deco.capturer.do_captures(mdata)
-    print(game)
+    # print(game)
 
     # check the expected outputs and changes
     assert mdata.capt_loc == eloc

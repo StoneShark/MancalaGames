@@ -258,7 +258,7 @@ CASES = [
 
 CIDS = [f'{case[0]}-{case[1]}-{case[2]}-{idx}' for idx, case in enumerate(CASES)]
 
-@pytest.mark.usefixtures('logger')
+# @pytest.mark.usefixtures('logger')
 @pytest.mark.parametrize('conf_name, state_name, sclaimer,'
                          'eseeds, eboard, estore, eloss',
                          CASES, ids=CIDS)
@@ -282,14 +282,14 @@ def test_claimer(conf_name, state_name, sclaimer,
     # last_mdata.turn is used in TakeAllUnclaimed
     game.last_mdata = mancala.MoveData(game, None)
 
-    print(GAMECONF[conf_name])
-    print(game)
+    # print(GAMECONF[conf_name])
+    # print(game)
 
     tclass = getattr(claimer, sclaimer)
     sclaimer = tclass(game)
     seeds = sclaimer.claim_seeds()
-    print(seeds)
-    print(game)
+    # print(seeds)
+    # print(game)
 
     assert seeds == eseeds
     if eboard == NO_CHANGE:

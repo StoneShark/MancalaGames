@@ -494,7 +494,7 @@ class TestEndMove:
 
             ]
     @pytest.mark.filterwarnings("ignore")
-    @pytest.mark.usefixtures("logger")
+    # @pytest.mark.usefixtures("logger")
     @pytest.mark.parametrize(
         'case, game, ended, repeat, board, store, turn,'
         ' eres, eboard, estore, eturn',
@@ -508,12 +508,12 @@ class TestEndMove:
         game.board = board
         game.store = store
         game.turn = turn
-        print(game)
-        print(game.deco.ender)
+        # print(game)
+        # print(game.deco.ender)
         cond, winner = game.deco.ender.game_ended(repeat_turn=repeat,
                                                   ended=ended)
-        print('after:', game, sep='\n')
-        print(cond, winner)
+        # print('after:', game, sep='\n')
+        # print(cond, winner)
         assert cond == eres
         assert game.board == eboard
         assert game.store == estore
@@ -1567,7 +1567,7 @@ class TestRoundTally:
 
         ]
 
-    @pytest.mark.usefixtures("logger")
+    # @pytest.mark.usefixtures("logger")
     @pytest.mark.parametrize('turn, board, store, ptally, econd, ewinner, etally',
                              CASES,
                              ids=[f"case_{idx}" for idx in range(len(CASES))])
@@ -1689,7 +1689,7 @@ class TestRoundTally:
         (False, [0, 1, 0, 0], [7, 4], (4, 4), WinCond.WIN, False),
         ]
 
-    @pytest.mark.usefixtures("logger")
+    # @pytest.mark.usefixtures("logger")
     @pytest.mark.parametrize('turn, board, store, ptally, econd, ewinner',
                              QUIT_CASES,
                              ids=[f"case_{idx}"
@@ -1701,10 +1701,10 @@ class TestRoundTally:
         game.board = board
         game.store = store
         game.rtally.state = ((0, 0), (0, 0), (0, 0), ptally)
-        print(game)
+        # print(game)
 
         cond, winner = game.deco.quitter.game_ended(False, True)
-        print(game)
+        # print(game)
 
         assert cond == econd
         assert winner == ewinner

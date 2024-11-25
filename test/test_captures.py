@@ -663,8 +663,8 @@ class TestOneChild:
 
         game.turn = turn
         game.child[child_loc] = not turn
-        print(game)
-        print(loc)
+        # print(game)
+        # print(loc)
 
         mdata = MoveData(game, None)
         mdata.direct = Direct.CCW
