@@ -100,6 +100,59 @@ class AllowableTriples(AllowableIf):
 
 # %%  decorators
 
+
+class DontUndoMoveOne(AllowableIf):
+    """For two-sided (mlength != 3), split sow games
+    don't allow moving a singleton back across the board side
+    in the immediate next move."""
+
+    def __init__(self, game, decorator=None):
+
+        super().__init__(game, decorator)
+        self.end_sets = [set([0, game.cts.dbl_holes - 1]),
+                         set([game.cts.holes - 1, game.cts.holes])]
+
+    @staticmethod
+    def include(game):
+        """Return True if this deco should be included, otherwise False.
+        Only two sided games.
+        Min move must be 1.
+        SPLIT sow but without either end in the UDIR_HOLES"""
+
+        return (game.info.mlength < 3
+                and game.info.min_move == 1
+                and game.info.sow_direct == gi.Direct.SPLIT
+                and 0 not in game.info.udir_holes
+                and game.cts.holes - 1 not in game.info.udir_holes)
+
+    def get_allowable_holes(self):
+
+        allow = self.decorator.get_allowable_holes()
+        lmdata = self.game.last_mdata
+        if not lmdata:
+            return allow
+
+        capt_loc = lmdata.capt_loc
+        if capt_loc == gi.WinCond.REPEAT_TURN:
+            return allow
+
+        pos = capt_loc
+        if pos >= self.game.cts.holes:
+            pos = self.game.cts.dbl_holes - pos - 1
+        if not allow[pos]:
+            return allow
+
+        if (lmdata.seeds == 1
+                and self.game.board[capt_loc] == 1
+                and any(set([lmdata.sow_loc, capt_loc]) == test_set
+                        for test_set in self.end_sets)):
+
+            game_log.add(f"Preventing undo @ {pos}.")
+            allow[pos] = False
+
+        return allow
+
+
 class OppOrEmptyEnd(AllowableIf):
     """Can only play from holes that end in an empty hole or
     on the opponents side of the board."""
@@ -509,6 +562,9 @@ def deco_allowable(game):
 
     if game.info.grandslam == gi.GrandSlam.NOT_LEGAL:
         allowable = NoGrandSlam(game, allowable)
+
+    if DontUndoMoveOne.include(game):
+        allowable = DontUndoMoveOne(game, allowable)
 
     if (game.info.mustshare
             or game.info.allow_rule == gi.AllowRule.OPP_OR_EMPTY

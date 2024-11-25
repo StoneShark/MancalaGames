@@ -38,6 +38,9 @@ T = True
 F = False
 N = None
 
+CW = Direct.CW
+CCW = Direct.CCW
+
 
 # %%
 
@@ -855,11 +858,11 @@ class TestMoveAllFirst:
 
         fgame.state = state
         fgame.turn = True
-        print(fgame)
+        # print(fgame)
         assert fgame.deco.allow.get_allowable_holes() == etresult
 
         fgame.turn = False
-        print(fgame)
+        # print(fgame)
         assert fgame.deco.allow.get_allowable_holes() == efresult
 
 
@@ -903,6 +906,114 @@ class TestNotXFrom1:
         assert game.deco.allow.get_allowable_holes() == efresult
 
 
+class TestDontUndoMoveOne:
+
+    GAME_CFG =  {'no_sides': {'no_sides': True},
+                 'not_split': {'sow_direct': gi.Direct.CCW},
+                 'udir': {'sow_direct': gi.Direct.SPLIT,
+                          'udir_holes': [1, 2]},
+                 'include': {'sow_direct': gi.Direct.SPLIT,
+                             'udir_holes': [1]},
+                }
+
+    @pytest.fixture
+    def game(self, request):
+
+        game_props = TestDontUndoMoveOne.GAME_CFG[request.param]
+        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(capt_on=[5],
+                                stores=True,
+                                **(game_props),
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+
+    INCLUDE =  {'no_sides': False,
+                'not_split': False,
+                'udir': False,
+                'include': True,
+                }
+
+    @pytest.mark.parametrize('key, game', zip(INCLUDE.keys(), INCLUDE.keys()),
+                             ids=INCLUDE.keys(),
+                             indirect=['game'])
+    def test_include(self, key, game):
+
+        if TestDontUndoMoveOne.INCLUDE[key]:
+            assert 'DontUndoMoveOne' in str(game.deco.allow)
+        else:
+            assert 'DontUndoMoveOne' not in str(game.deco.allow)
+
+    CASES = [
+        # prevent cases (T, T, T)
+        ('include', [1, 2, 0, 0, 2, 0], F, (0, None), [F, T, F]),
+        ('include', [0, 2, 1, 0, 2, 0], F, (2, None), [F, T, F]),
+        ('include', [0, 2, 0, 1, 2, 0], T, (2, None), [F, T, F]),
+        ('include', [0, 2, 0, 0, 2, 1], T, (0, None), [F, T, F]),
+
+        # don't prevent cases -- not one seed at capt_loc after move (T, F, T)
+        ('include', [1, 2, 0, 0, 2, 1], F, (0, None), [T, T, F]),
+        ('include', [0, 2, 1, 1, 2, 0], F, (2, None), [F, T, T]),
+        ('include', [0, 2, 1, 1, 2, 0], T, (2, None), [F, T, T]),
+        ('include', [1, 2, 0, 0, 2, 1], T, (0, None), [T, T, F]),
+
+        # T, F, F: sow 1, capt_loc seeds != 1, sl & cl not edges
+        ('include', [2, 1, 2, 0, 2, 2], F, (1, CCW), [T, T, F]),
+        # T, T, F: sow 1 seed, capt_loc seeds == 1, but sl & cl not edges
+        ('include', [2, 1, 0, 0, 2, 2], F, (1, CCW), [T, T, F]),
+        # F, T, F: sow 2 seeds, capt_loc seeds == 1, sl & cl not edges
+        ('include', [2, 2, 0, 3, 0, 0], F, (0, None), [T, T, T]),
+        # F, F, F: sow 2 seeds, capt_loc seeds > 1, sl & cl not edges
+        ('include', [2, 2, 0, 0, 2, 2], F, (0, None), [T, T, F]),
+
+        # hole not allowable to start
+        ('include', [0, 2, 1, 1, 2, 0], F, (0, None), [F, T, T]),
+        ]
+
+    # @pytest.mark.usefixtures("logger")
+    @pytest.mark.parametrize('game, board, turn, move, eresult',
+                             CASES,
+                             ids=[f"case_{idx}" for idx in range(len(CASES))],
+                             indirect=['game'])
+    def test_stop(self, game, board, turn, move, eresult):
+
+        game.board = board
+        quot, rem = divmod(12 - sum(board), 2)
+        game.store = [quot, quot + rem]
+        game.turn = turn
+        # print(game)
+        game.move(move)
+        # print(game.last_mdata)
+
+        # print(game.last_mdata.seeds == 1,
+        #       game.board[game.last_mdata.capt_loc] == 1,
+        #       any(set(
+        #           [game.last_mdata.sow_loc, game.last_mdata.capt_loc])
+        #              == test_set
+        #           for test_set in game.deco.allow.end_sets))
+
+        assert game.get_allowable_holes() == eresult
+
+
+    @pytest.mark.parametrize('game',
+                             ['include'],
+                             indirect=['game'])
+    def test_rturn(self, game):
+        """Force a test of capt_loc == REPEAT TURN"""
+
+        game.board = [2, 2, 2, 2, 2, 2]
+        game.store = [0, 0]
+        game.turn= False
+        game.move((0, CW))
+
+        allowables = game.get_allowable_holes()
+        assert allowables == [T, T, T]
+
+        game.last_mdata.capt_loc = gi.WinCond.REPEAT_TURN
+
+        assert game.get_allowable_holes() == allowables
 
 
 class TestBadEnums:
