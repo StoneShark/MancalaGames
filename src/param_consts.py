@@ -222,6 +222,7 @@ STRING_DICTS = {
          "Change Direction each Lap": gi.SowRule.CHANGE_DIR_LAP,
          "Never sow holes above sow_param": gi.SowRule.MAX_SOW,
          "Do captures on each lap": gi.SowRule.LAP_CAPT,
+         "Do not sow opponents children": gi.SowRule.NO_OPP_CHILD,
          }),
 
     'StartPattern': lookup_dicts(

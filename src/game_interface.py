@@ -251,6 +251,7 @@ class SowRule(enum.IntEnum):
     CHANGE_DIR_LAP = 6
     MAX_SOW = 7
     LAP_CAPT = 8
+    NO_OPP_CHILD = 9
 
 
 @enum.unique

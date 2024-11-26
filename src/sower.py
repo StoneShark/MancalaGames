@@ -212,8 +212,7 @@ class SowCaptOwned(SowMethodIf):
 
     SOW_CAPT_ALL:
         similar to above, but only the sower captures from
-        the holes as specified by CAPT_SIDE.
-    """
+        the holes as specified by CAPT_SIDE."""
 
     def __init__(self, game, decorator=None):
         """Create a list of conditions (as lambda functions)
@@ -338,6 +337,25 @@ class SowMaxN(SowMethodIf):
         mdata.capt_loc = loc
 
 
+class SowSkipOppChild(SowMethodIf):
+    """Skip sowing opponents children."""
+
+    def sow_seeds(self, mdata):
+        """Sow seeds."""
+
+        incr = self.game.deco.incr.incr
+        loc = mdata.cont_sow_loc
+        for _ in range(mdata.seeds):
+
+            loc = incr(loc, mdata.direct, mdata.cont_sow_loc)
+            while self.game.child[loc] == (not self.game.turn):
+                loc = incr(loc, mdata.direct, mdata.cont_sow_loc)
+
+            self.game.board[loc] += 1
+
+        mdata.capt_loc = loc
+
+
 # %% precature decorators
 
 # captures occur after prescribed openings, (i.e. don't occur if
@@ -345,7 +363,6 @@ class SowMaxN(SowMethodIf):
 
 # choosing not to set captured --
 #   no repeat turn; Mancala doesn't need to print as changes logged below
-
 
 class SCaptOne(SowMethodIf):
     """Take one seeds on the opening move."""
@@ -616,7 +633,6 @@ class DirChange(MlapEndOpIf):
         mdata.direct = mdata.direct.opp_dir()
 
 
-
 # %%  mlap sowers
 
 class MlapSowerIf(SowMethodIf):
@@ -682,7 +698,6 @@ class SowMlapSeeds(MlapSowerIf):
 
 # use prescribed openings if the first player has a choice
 # if it's a standard pattern use start_pattern
-
 
 class SowPrescribedIf(SowMethodIf):
     """A deco that does prescribed moves for one or more turns.
@@ -818,10 +833,12 @@ def _add_base_sower(game):
         elif game.info.sow_rule == gi.SowRule.MAX_SOW:
             sower = SowMaxN(game, game.info.sow_param)
 
+        elif game.info.sow_rule == gi.SowRule.NO_OPP_CHILD:
+            sower = SowSkipOppChild(game)
+
         elif game.info.sow_rule in (gi.SowRule.CHANGE_DIR_LAP,
                                     gi.SowRule.LAP_CAPT):
-            # pick a base sower below
-            pass
+            pass    # pick a base sower below
 
         else:
             raise NotImplementedError(
@@ -830,7 +847,6 @@ def _add_base_sower(game):
     if not sower:
         if game.info.sow_own_store:
             sower = SowSeedsNStore(game)
-
         else:
             sower = SowSeeds(game)
 
@@ -864,7 +880,6 @@ def _add_capt_stop_lap_cont(game, lap_cont):
         lap_cont = ContIfXCapt(game, lap_cont)
 
     else:
-
         if (not game.info.crosscapt
                 and any([game.info.evens,
                          game.info.capt_on,
@@ -873,7 +888,6 @@ def _add_capt_stop_lap_cont(game, lap_cont):
 
             if game.info.sow_rule == gi.SowRule.LAP_CAPT:
                 lap_cont = ContIfBasicCapt(game, lap_cont)
-
             else:
                 lap_cont = StopCaptureSeeds(game, lap_cont)
 
@@ -955,8 +969,7 @@ def _add_prescribed_sower(game, sower):
         sower = SowMlapsFirst(game, 1, sower)
 
     elif game.info.prescribed == gi.SowPrescribed.ARNGE_LIMIT:
-        # sower deco not needed
-        pass
+        pass    # sower deco not needed
 
     else:
         raise NotImplementedError(

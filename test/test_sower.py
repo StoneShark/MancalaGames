@@ -571,6 +571,34 @@ class TestSower:
         assert maxgame.store == [0, 0]
 
 
+    # @pytest.mark.usefixtures("logger")
+    def test_no_sow_child(self):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+        game_info = gi.GameInfo(evens=True,
+                                stores=True,
+                                child_type = gi.ChildType.NORMAL,
+                                child_cvt = 6,
+                                sow_rule=gi.SowRule.NO_OPP_CHILD,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game =  mancala.Mancala(game_consts, game_info)
+
+        game.board = [0, 5, 2, 2, 2, 2]
+        game.child = [T, N, T, F, T, N]
+        # print(game)
+
+        sow_pos = 1
+        mdata = MoveData(game, sow_pos)
+        mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(sow_pos)
+        mdata.direct = gi.Direct.CCW
+        game.deco.sower.sow_seeds(mdata)
+        # print(game)
+
+        assert game.board == [0, 1, 2, 4, 2, 4]
+        assert mdata.capt_loc == 5
+
 
 
 class TestMlap:

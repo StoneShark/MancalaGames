@@ -416,6 +416,13 @@ def add_child_rules(rules):
         msg='CHILD_RULE: OPP_ONLY is incompatible with selected CHILD_TYPE',
         excp=gi.GameInfoError)
 
+    rules.add_rule(
+        'no_opp_child_req',
+        rule=lambda ginfo: (not ginfo.child_type
+                            and ginfo.sow_rule == gi.SowRule.NO_OPP_CHILD),
+        msg='Sow rule NO_OPP_CHILD requires children',
+        excp=gi.GameInfoError)
+
 
 def add_no_sides_rules(rules):
     """Add the no_sides rules."""
@@ -560,11 +567,11 @@ def add_capture_rules(rules):
 
     rules.add_rule(
         'sca_gs_not',
-        rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.OWN_SOW_CAPT_ALL
+        rule=lambda ginfo: (ginfo.sow_rule in (gi.SowRule.OWN_SOW_CAPT_ALL,
+                                               gi.SowRule.SOW_CAPT_ALL)
                             and ginfo.grandslam != gi.GrandSlam.LEGAL),
-        msg='OWN_SOW_CAPT_ALL requires that GRANDLAM be LEGAL',
+        msg='(OWN_)SOW_CAPT_ALL requires that GRANDLAM be LEGAL',
         excp=gi.GameInfoError)
-    # TODO why isn't GS Legal required for SOW_CAPT_ALL?
 
     rules.add_rule(
         'xpick_requires_cross',
@@ -717,6 +724,7 @@ def build_rules():
         msg='LAP_CAPT is not supported with LAPPER_NEXT',
         excp=NotImplementedError)
         # would need to carefully decide how it would work
+
 
     man_rules.add_rule(
         'sow_own_prescribed',
