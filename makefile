@@ -92,7 +92,7 @@ CONTEXTS += tools\\context.py
 
 params: src\\game_params.txt
 
-src\\game_params.txt: src\\game_params.xlsx tools\\context.py
+src\\game_params.txt: src\\game_params.xlsx tools\\context.py tools\\convert_game_params.py
 	python tools/convert_game_params.py
 
 

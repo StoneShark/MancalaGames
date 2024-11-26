@@ -258,9 +258,7 @@ Sow	sow_param	Sow Parameter	game_info _	142	int	0	11	0	"A general parameter for 
 Sow	schld_lbl	Children		0	label	0	3	2	
 Sow	child_type	Type of Children	game_info _	112	ChildType	NOCHILD	4	2	"Games with children allow players to claim holes. These child holes are an extension of the stores and seeds in them count towards a win. Making a child stops any multiple lap sowing, moves cannot start from children, and they cannot be captured (except for special rules associated with WEGs).
 - NOCHILD: children are not used.
-- NORMAL: children are made when a final seeds sows a hole to CHILD_CVT.
-- WALDA: STORES are not supported. Captures are instead moved into waldas, thus a player may not capture until they have created a walda. 
-  + Walda locations are limited.  Each player may create up to 6 waldas: on either end of each side of the board and the next two outer holes on their own side of the board. Note that there are only 8 total places that waldas maybe created.
+- NORMAL: children are made when a final seeds sows a hole to CHILD_CVT. If stores are not included captures are instead moved into children, thus a player may not capture until they have created a child. 
 - ONE_CHILD: only one child allowed per player.
   + Children must not be symmetrically opposite eachother. For example,  in a 9 hole per side game with holes numbered as follows, children may not be in the same numbered holes:
   + 9 8 7 6 5 4 3 2 1
@@ -275,7 +273,32 @@ Sow	child_type	Type of Children	game_info _	112	ChildType	NOCHILD	4	2	"Games wit
 "
 Sow	child_cvt	Child Convert Count	game_info _	110	int	0	5	2	"Defines the number of seeds required to make a child.
 "
-Sow	child_rule	Child Restrictions	game_info _	111	ChildRule	NONE	6	2	"Additional child creation requirements may be set:
+Sow	child_rule	Child Restrictions	game_info _	111	ChildRule	NONE	6	2	"Additional child creation requirements may be set. These are in addition to location restrictions specified by CHILD_LOCS.
 - NONE: no additional restrictions.
 - OPP_ONLY:  Only make children on the opposite side of the board. Incompatible with BULL, QUR, and WEG child types.
 - NOT_1ST_OPP: Don't make a child in the first hole on the opponents side/territory with one seed."
+Sow	child_locs	Child Locations	game_info _	112	ChildLocs	ANYWHERE	7	2	"Locations where children can be made by each player. The notes designate players as: T - top player, B - bottom player. N - neither player. For shorter boards, the pattern is generated using assignments (a b c d e) as:
+board length 2: a e
+board length 3: a c e
+board length 4: a b d e
+The center hole  (c) is replicated for larger boards. 
+- ANYWHERE: children may be made anywhere.
+- ENDS_ONLY: children may be made in the end holes only.
+  + TB N N N TB
+  + TB N N N TB
+- NO_ENDS: children may only be made on internal holes, no end holes.
+  + N TB TB TB N
+  + N TB TB TB N
+- INV_ENDS_PLUS_MID: children may be made by each player on the opposite side ends and all own side middle holes.
+  + B T T T B
+  + T B B B T
+- ENDS_PLUS_ONE_OPP: Either player may make children in any end hole, but the next inner hole can only be made on the opposite side. 
+  +  Used for Walda type children: Each player may create up to 6 walda: on either end of each side of the board and the next two outer holes on their own side of the board. Note that there are only 8 total places that walda maybe created.
+  + TB B N B TB
+  + TB T N T TB
+- NO_OWN_RIGHT: children may not be made on the your own rightmost hole. 
+  + B TB TB TB TB
+  + TB TB TB TB T
+- NO_OPP_RIGHT: children may not be made on the opposite rightmost hole.
+  + TB TB TB TB T
+  + B TB TB TB TB"

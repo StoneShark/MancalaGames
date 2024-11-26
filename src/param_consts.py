@@ -89,11 +89,21 @@ STRING_DICTS = {
          "Pick last seeds <= nbr_start": gi.CaptExtraPick.PICKLASTSEEDS,
          "Pick last seeds <= 2x nbr_start": gi.CaptExtraPick.PICK2XLASTSEEDS}),
 
+    'ChildLocs': lookup_dicts(
+        gi.ChildLocs,
+        {'Anywhere': gi.ChildLocs.ANYWHERE,
+         'Ends Only': gi.ChildLocs.ENDS_ONLY,
+         'Not Ends': gi.ChildLocs.NO_ENDS,
+         'Opposite Ends plus all own Inner': gi.ChildLocs.INV_ENDS_PLUS_MID,
+         'Any end hole plus one': gi.ChildLocs.ENDS_PLUS_ONE_OPP,
+         'No own rightmost': gi.ChildLocs.NO_OWN_RIGHT,
+         'No opposite righmost': gi.ChildLocs.NO_OPP_RIGHT,
+         }),
+
     'ChildType': lookup_dicts(
         gi.ChildType,
         {'No Children': gi.ChildType.NOCHILD,
          'Normal': gi.ChildType.NORMAL,
-         'Waldas': gi.ChildType.WALDA,
          'One Child (tuzdek)': gi.ChildType.ONE_CHILD,
          'Weg / Daughter': gi.ChildType.WEG,
          'Bull': gi.ChildType.BULL,

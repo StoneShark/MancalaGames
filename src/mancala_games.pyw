@@ -255,6 +255,8 @@ class MancalaGames(tk.Frame):
             for idx in bools:
                 rec[idx] = bool(rec[idx])
             for idx in ints:
+                if not rec[idx].isdigit():
+                    print("Data Error:\n", rec)
                 rec[idx] = int(rec[idx])
             rec[ui_default_idx] = convert_value(rec[ui_default_idx])
 

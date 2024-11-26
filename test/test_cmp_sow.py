@@ -155,7 +155,13 @@ GAMECONF = {'basic':
                  "rounds": True,
                  "sow_own_store": True,
                  "stores": True,
-                 }
+                 },
+
+            'mlaps_walda':
+                {'mlaps': gi.LapSower.LAPPER,
+                 'child_type': gi.ChildType.NORMAL,
+                 'child_locs': gi.ChildLocs.ENDS_PLUS_ONE_OPP,
+                 'child_cvt': 3},
 
             }
 
@@ -217,6 +223,14 @@ START = {'start':
                                mcount=5,
                                _turn=False,
                                blocked=(F, F, F, F, T, T, F, F, F, F)),
+
+        'walda_nostop':
+             mancala.GameState(board=(0, 2, 3, 0, 0, 1, 1, 2, 0, 4),
+                               store=(3, 4),
+                               mcount=5,
+                               _turn=False,
+                               child=(N, N, N, N, N, N, N, N, N, N)),
+
         }
 
 CASES = [('basic', 'start', F, 2,
@@ -323,6 +337,9 @@ CASES = [('basic', 'start', F, 2,
            (0, 5, 0, 1, 4, 0, 0, 0, 0, 0), [1, 9],
            (F, F, F, F, F, T, F, F, F, F)),
 
+          ('mlaps_walda', 'walda_nostop', F, 2,
+           0, (1, 2, 0, 1, 1, 0, 2, 0, 1, 5), NSTR, NBLCK),
+
          ]
 
 CIDS = [f'{case[0]}-{case[1]}-{case[2]}-idx{idx}' for idx, case in enumerate(CASES)]
@@ -337,7 +354,7 @@ BAD_INHIBITOR_TESTS = [
 
 # %% test_sower
 
-# @pytest.mark.usefixtures('logger')
+@pytest.mark.usefixtures('logger')
 @pytest.mark.parametrize('conf_name, state_name, turn, move,'
                          'eloc, eboard, estore, eblocks',
                          CASES, ids=CIDS)
@@ -364,9 +381,9 @@ def test_sower(conf_name, state_name, turn, move,
     assert not game.info.child_type or (game.info.child_type and start_state.child), \
         "Test error: game.info.child_type inconsistent with start_state"
 
-    # print(GAMECONF[conf_name])
-    # print(game)
-    # print('move:', move)
+    print(GAMECONF[conf_name])
+    print(game)
+    print('move:', move)
     mdata = game.do_sow(move)
 
     # check the expected changes

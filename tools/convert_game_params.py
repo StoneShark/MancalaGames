@@ -10,7 +10,8 @@ Created on Tue Jun 25 12:05:51 2024
 import pandas as pd
 
 
-gparams = pd.read_excel('src/game_params.xlsx')
+gparams = pd.read_excel('src/game_params.xlsx',
+                        dtype={'order': str, 'row': str, 'col': str})
 
 with open('src/game_params.txt', 'w', newline='') as file:
     gparams.to_csv(file, sep='\t', index=False)

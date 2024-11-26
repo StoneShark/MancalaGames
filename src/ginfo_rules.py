@@ -401,13 +401,6 @@ def add_child_rules(rules):
     # NOT_LEGAL is now supported, others are not
 
     rules.add_rule(
-        'walda_store',
-        rule=lambda ginfo: (ginfo.child_type == gi.ChildType.WALDA
-                            and ginfo.stores),
-        msg='WALDA does not use STORES',
-        warn=True)
-
-    rules.add_rule(
         'weg_territory',
         rule=lambda ginfo: (ginfo.child_type == gi.ChildType.WEG
                             and ginfo.goal != gi.Goal.TERRITORY),

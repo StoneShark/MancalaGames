@@ -70,6 +70,20 @@ class CaptSide(enum.IntEnum):
 
 
 @enum.unique
+class ChildLocs(enum.IntEnum):
+    """Defines where children may be made.
+    Child Rules are also applied."""
+
+    ANYWHERE = 0
+    ENDS_ONLY = 1
+    NO_ENDS = 2
+    INV_ENDS_PLUS_MID = 3
+    ENDS_PLUS_ONE_OPP = 4
+    NO_OWN_RIGHT = 5
+    NO_OPP_RIGHT = 6
+
+
+@enum.unique
 class ChildRule(enum.IntEnum):
     """Defines additional child restrictions."""
 
@@ -84,7 +98,7 @@ class ChildType(enum.IntEnum):
 
     NOCHILD = 0
     NORMAL = 1
-    WALDA = 2
+    # WALDA = 2  not different than NORMAL (now with child_locs)
     ONE_CHILD = 3
     WEG = 4
     BULL = 5
@@ -312,6 +326,7 @@ class GameInfo:
     child_cvt: int = 0
     child_type: ChildType = ChildType.NOCHILD
     child_rule: ChildRule = ChildRule.NONE
+    child_locs: ChildLocs = ChildLocs.ANYWHERE
     goal_param: int = 0
     presowcapt: PreSowCapt = PreSowCapt.NONE
     sow_rule: SowRule = SowRule.NONE

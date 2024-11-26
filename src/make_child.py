@@ -5,8 +5,6 @@ Used in
     - the sower to stop mlap sowing (for games using mlap)
     - the capturer to decide make children
 
-Waldas are completely handled in the capturer.
-
 Created on Sat Jun 29 14:21:46 2024
 @author: Ann"""
 
@@ -96,36 +94,8 @@ class OneChild(MakeChildIf):
     in a 9 hole per side game:
           8 7 6 5 4 3 2 1 0
           0 1 2 3 4 5 6 7 8
-    Tuzdeks may not be in the same numbered holes.
-
-    Children cannot be made in some holes based on the
-    sow direction:
-        CW: cannot make children in rightmost opposite side hole.
-        Hole 0 above.
-        CCW: cannot make children in leftmost opposite side hole.
-        Hole 8 above.
-        others: cannot make children in any end hole. Holes 0 and 8
-        above.
-
+    children may not be in the same numbered holes.
     To create Tuzdek add child_rule=opp_only."""
-
-    def __init__(self, game, decorator):
-
-        super().__init__(game, decorator)
-
-        self.no_child_locs = [-1, -1]
-        if game.info.sow_direct == gi.Direct.CW:
-            self.no_child_locs = [{game.cts.holes}, {0}]
-
-        elif game.info.sow_direct == gi.Direct.CCW:
-            self.no_child_locs = [{game.cts.holes - 1},
-                                  {game.cts.dbl_holes - 1}]
-
-        else:
-            not_ends = {0, game.cts.holes - 1, game.cts.holes,
-                                   game.cts.dbl_holes - 1}
-            self.no_child_locs = [not_ends, not_ends]
-
 
     def test(self, mdata):
         game = self.game
@@ -133,7 +103,6 @@ class OneChild(MakeChildIf):
 
         if (game.child[loc] is None
                 and game.board[loc] == game.info.child_cvt
-                and loc not in self.no_child_locs[game.turn]
                 and not any(game.child[tloc] is game.turn
                             for tloc in range(game.cts.dbl_holes))):
 
@@ -147,7 +116,6 @@ class OneChild(MakeChildIf):
                          game_log.IMPORT)
 
         return False
-
 
 
 class QurChild(MakeChildIf):
@@ -164,6 +132,96 @@ class QurChild(MakeChildIf):
                 and game.board[loc] == 1
                 and game.child[loc] is None
                 and game.board[cross] == game.info.child_cvt)
+
+
+# %% child wrappers
+
+
+class ChildLocOk(MakeChildIf):
+    """Check the allowable child locations.
+
+    Each side of the board is broken up into 5 parts:
+         0 1 [3 .. holes-4] holes-2 holes-1
+
+    The PATTERN describes which players may have children
+    in each part.
+    """
+
+    BOTH = (False, True)
+    FALSE = tuple([False])
+    TRUE = tuple([True])
+
+    # T row  first (top) but reversed; F row second
+    PATTERN = {
+
+        gi.ChildLocs.ENDS_ONLY:
+            [[BOTH, None, None, None, BOTH],
+             [BOTH, None, None, None, BOTH]],
+
+        gi.ChildLocs.NO_ENDS:
+            [[None, BOTH, BOTH, BOTH, None],
+             [None, BOTH, BOTH, BOTH, None]],
+
+        gi.ChildLocs.INV_ENDS_PLUS_MID:
+            [[FALSE, TRUE, TRUE, TRUE, FALSE],
+             [TRUE, FALSE, FALSE, FALSE, TRUE]],
+
+        gi.ChildLocs.ENDS_PLUS_ONE_OPP:
+            [[BOTH, FALSE, None, FALSE, BOTH],
+             [BOTH, TRUE, None, TRUE, BOTH]],
+
+        gi.ChildLocs.NO_OWN_RIGHT:                 # was OneChild CCW
+            [[FALSE, BOTH, BOTH, BOTH, BOTH],
+             [BOTH, BOTH, BOTH, BOTH, TRUE]],
+
+        gi.ChildLocs.NO_OPP_RIGHT:                 # was OneCild CW
+            [[BOTH, BOTH, BOTH, BOTH, TRUE],
+             [FALSE, BOTH, BOTH, BOTH, BOTH]],
+
+        }
+
+    BTRANS = {2: [0, 4, 5, 9],
+              3: [0, 2, 4, 5, 7, 9],
+              4: [0, 1, 3, 4, 5, 6, 8, 9]}
+
+    def __init__(self, game, decorator):
+        """pattern: select the pattern from PATTERN and adjust
+        it so that it is the same order as the a board. Though
+        it will always still be 10 elements long.
+
+        loc_trans: an array that is the same length of the game's
+        board used to translate between a board location and
+        the pattern.  Boards which are shorter than 5, use
+        the BTRANS to map the board location to the pattern
+        location."""
+
+        super().__init__(game, decorator)
+
+        if game.info.child_locs not in self.PATTERN:
+            raise NotImplementedError(
+                f"ChildLocs {game.info.child_locs} not implemented.")
+
+        plist = self.PATTERN[game.info.child_locs]
+        self.pattern = plist[1] + plist[0][::-1]
+
+        holes = game.cts.holes
+        if holes in ChildLocOk.BTRANS:
+            self.loc_trans = ChildLocOk.BTRANS[holes]
+
+        else:
+            half = [0, 1] + [2] * (holes - 4) + [3, 4]
+            self.loc_trans = half + [val + 5 for val in half]
+
+
+    def test(self, mdata):
+
+        test_loc = self.loc_trans[mdata.capt_loc]
+        ok_players = self.pattern[test_loc]
+
+        if bool(ok_players) and self.game.turn in ok_players:
+            return self.decorator.test(mdata)
+
+        return False
 
 
 class OppSideChild(MakeChildIf):
@@ -202,13 +260,10 @@ class NotInhibited(MakeChildIf):
         return self.decorator.test(mdata)
 
 
-def deco_child(game):
-    """Generate the make_child deco chain."""
+# %% build the deco
 
-    if game.info.child_type == gi.ChildType.NOCHILD:
-        return NoChildren(game)
-
-    deco = BaseChild(game)
+def _add_child_type(game, deco):
+    """Add a more specific child type handler"""
 
     if game.info.child_type == gi.ChildType.BULL:
         deco = BullChild(game, deco)
@@ -222,10 +277,15 @@ def deco_child(game):
     elif game.info.child_type == gi.ChildType.QUR:
         deco = QurChild(game, deco)
 
-    elif game.info.child_type not in (gi.ChildType.NORMAL,
-                                      gi.ChildType.WALDA):
+    elif game.info.child_type != gi.ChildType.NORMAL:
         raise NotImplementedError(
             f"ChildType {game.info.child_type} not implemented.")
+
+    return deco
+
+
+def _add_child_wrappers(game, deco):
+    """Add any child wrappers include handling the child rules."""
 
     if game.info.child_rule == gi.ChildRule.OPP_ONLY:
         deco = OppSideChild(game, deco)
@@ -238,6 +298,21 @@ def deco_child(game):
         raise NotImplementedError(
             f"ChildRule {game.info.child_rule} not implemented.")
 
+    if game.info.child_locs:
+        deco = ChildLocOk(game, deco)
+
+    return deco
+
+
+def deco_child(game):
+    """Generate the make_child deco chain."""
+
+    if game.info.child_type == gi.ChildType.NOCHILD:
+        return NoChildren(game)
+
+    deco = BaseChild(game)
+    deco = _add_child_type(game, deco)
+    deco = _add_child_wrappers(game, deco)
     deco = NotInhibited(game, deco)
 
     return deco

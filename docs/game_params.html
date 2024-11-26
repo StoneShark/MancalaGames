@@ -521,10 +521,7 @@ Sow rule of MAX_SOW: maximum number of seeds a hole may contain
 <ol start=0><li class="helptext">
 <b class="enum">NOCHILD</b>: children are not used.
 <li class="helptext">
-<b class="enum">NORMAL</b>: children are made when a final seeds sows a hole to <a href="game_params.html#child_cvt">CHILD_CVT</a>.
-<li class="helptext">
-<b class="enum">WALDA</b>: <a href="game_params.html#stores">STORES</a> are not supported. Captures are instead moved into waldas, thus a player may not capture until they have created a walda. 
-<p class="helptext"> Walda locations are limited.  Each player may create up to 6 waldas: on either end of each side of the board and the next two outer holes on their own side of the board. Note that there are only 8 total places that waldas maybe created.
+<b class="enum">NORMAL</b>: children are made when a final seeds sows a hole to <a href="game_params.html#child_cvt">CHILD_CVT</a>. If stores are not included captures are instead moved into children, thus a player may not capture until they have created a child. 
 <li class="helptext">
 <b class="enum">ONE_CHILD</b>: only one child allowed per player.
 <p class="helptext"> Children must not be symmetrically opposite eachother. For example,  in a 9 hole per side game with holes numbered as follows, children may not be in the same numbered holes:
@@ -554,13 +551,52 @@ Sow rule of MAX_SOW: maximum number of seeds a hole may contain
 <p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Sow
 
-<p>Additional child creation requirements may be set:
+<p>Additional child creation requirements may be set. These are in addition to location restrictions specified by <a href="game_params.html#child_locs">CHILD_LOCS</a>.
 <ol start=0><li class="helptext">
 <b class="enum">NONE</b>: no additional restrictions.
 <li class="helptext">
 <b class="enum">OPP_ONLY</b>:  Only make children on the opposite side of the board. Incompatible with BULL, QUR, and WEG child types.
 <li class="helptext">
 <b class="enum">NOT_1ST_OPP</b>: Don't make a child in the first hole on the opponents side/territory with one seed.
+</ol>
+<h4 id="child_locs"> Child Locations </h4>
+<p class="pdesc">Location in Config Files: game_info : child_locs
+<p id="ChildLocs" class="pdesc">Type: <a href="param_types.html#ChildLocs"> ChildLocs </a>
+<p class="pdesc">Default value: 0
+<p class="pdesc">UI Tab: Sow
+
+<p>Locations where children can be made by each player. The notes designate players as: T - top player, B - bottom player. N - neither player. For shorter boards, the pattern is generated using assignments (a b c d e) as:
+<p>board length 2: a e
+<p>board length 3: a c e
+<p>board length 4: a b d e
+<p>The center hole  (c) is replicated for larger boards. 
+<ol start=0><li class="helptext">
+<b class="enum">ANYWHERE</b>: children may be made anywhere.
+<li class="helptext">
+<b class="enum">ENDS_ONLY</b>: children may be made in the end holes only.
+<p class="helptext"> TB N N N TB
+<p class="helptext"> TB N N N TB
+<li class="helptext">
+<b class="enum">NO_ENDS</b>: children may only be made on internal holes, no end holes.
+<p class="helptext"> N TB TB TB N
+<p class="helptext"> N TB TB TB N
+<li class="helptext">
+<b class="enum">INV_ENDS_PLUS_MID</b>: children may be made by each player on the opposite side ends and all own side middle holes.
+<p class="helptext"> B T T T B
+<p class="helptext"> T B B B T
+<li class="helptext">
+<b class="enum">ENDS_PLUS_ONE_OPP</b>: Either player may make children in any end hole, but the next inner hole can only be made on the opposite side. 
+<p class="helptext">  Used for Walda type children: Each player may create up to 6 walda: on either end of each side of the board and the next two outer holes on their own side of the board. Note that there are only 8 total places that walda maybe created.
+<p class="helptext"> TB B N B TB
+<p class="helptext"> TB T N T TB
+<li class="helptext">
+<b class="enum">NO_OWN_RIGHT</b>: children may not be made on the your own rightmost hole. 
+<p class="helptext"> B TB TB TB TB
+<p class="helptext"> TB TB TB TB T
+<li class="helptext">
+<b class="enum">NO_OPP_RIGHT</b>: children may not be made on the opposite rightmost hole.
+<p class="helptext"> TB TB TB TB T
+<p class="helptext"> B TB TB TB TB
 </ol>
 <h2 id="tab_Capture">Capture Tab</h2>
 <h4 id="evens"> Capture Evens </h4>
@@ -878,6 +914,7 @@ Sow rule of MAX_SOW: maximum number of seeds a hole may contain
     <p class="param"><a href="#capttwoout">capttwoout</a></p>
     <p class="param"><a href="#child_cnt_m">child_cnt_m</a></p>
     <p class="param"><a href="#child_cvt">child_cvt</a></p>
+    <p class="param"><a href="#child_locs">child_locs</a></p>
     <p class="param"><a href="#child_rule">child_rule</a></p>
     <p class="param"><a href="#child_type">child_type</a></p>
     <p class="param"><a href="#crosscapt">crosscapt</a></p>
@@ -910,9 +947,9 @@ Sow rule of MAX_SOW: maximum number of seeds a hole may contain
     <p class="param"><a href="#no_sides">no_sides</a></p>
     <p class="param"><a href="#nocaptmoves">nocaptmoves</a></p>
     <p class="param"><a href="#nosinglecapt">nosinglecapt</a></p>
+    <p class="param"><a href="#pickextra">pickextra</a></p>
   </div>
   <div class="column3">
-    <p class="param"><a href="#pickextra">pickextra</a></p>
     <p class="param"><a href="#prescribed">prescribed</a></p>
     <p class="param"><a href="#presowcapt">presowcapt</a></p>
     <p class="param"><a href="#repeat_turn">repeat_turn</a></p>

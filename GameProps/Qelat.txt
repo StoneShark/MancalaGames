@@ -9,7 +9,8 @@
       "about": "A single-lap mancala, start hole determines sow direction, must designate walda(s) before captures, four seeds in eligible hole designates a walda, capture on 4s.",
       "capt_on": [4],
       "child_cvt": 4,
-      "child_type": 2,
+      "child_locs": 4,
+      "child_type": 1,
       "mustpass": true,
       "skip_start": true,
       "sow_direct": 0

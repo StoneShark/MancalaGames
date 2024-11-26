@@ -416,59 +416,32 @@ class MakeChild(CaptMethodIf):
         self.decorator.do_captures(mdata)
 
 
-class CaptureToWalda(CaptMethodIf):
-    """Test to make a walda based on allowable walda locations
-    and on captures put the seeds into a walda. If a walda is
-    made don't do any other captures.
+class CaptureToChild(CaptMethodIf):
+    """Used when we have no stores, but collect captures into
+    children.
 
-    If we have a walda, use the rest of the deco chain to see
+    If we have a chilren, use the rest of the deco chain to see
     if captures are made, then move any captured seeds to the
-    walda."""
-
-    WALDA_BOTH = -1
-    WALDA_TEST = [[WALDA_BOTH, False],
-                  [WALDA_BOTH, True]]
-
-    def __init__(self, game, decorator=None):
-
-        super().__init__(game, decorator)
-
-        holes = self.game.cts.holes
-        dbl_holes = self.game.cts.dbl_holes
-
-        self.walda_poses = [None] * dbl_holes
-        self.walda_poses[0] = CaptureToWalda.WALDA_BOTH
-        self.walda_poses[holes - 1] = CaptureToWalda.WALDA_BOTH
-        self.walda_poses[holes] = CaptureToWalda.WALDA_BOTH
-        self.walda_poses[dbl_holes - 1] = CaptureToWalda.WALDA_BOTH
-        if holes >= 3:
-            self.walda_poses[1] = True
-            self.walda_poses[holes - 2] = True
-            self.walda_poses[holes + 1] = False
-            self.walda_poses[dbl_holes - 2] = False
-
+    children."""
 
     def do_captures(self, mdata):
 
         loc = mdata.capt_loc
-        if (self.game.deco.make_child.test(mdata)
-                and self.walda_poses[loc] in
-                    CaptureToWalda.WALDA_TEST[self.game.turn]):
-
+        if self.game.deco.make_child.test(mdata):
             self.game.child[loc] = self.game.turn
             mdata.capt_changed = True
             return
 
-        have_walda = False
-        for walda in range(self.game.cts.dbl_holes):
-            if self.game.child[walda] == self.game.turn:
-                have_walda = True
+        have_child = False
+        for child in range(self.game.cts.dbl_holes):
+            if self.game.child[child] == self.game.turn:
+                have_child = True
                 break
 
-        if have_walda:
+        if have_child:
             self.decorator.do_captures(mdata)
             if mdata.captured:
-                self.game.board[walda] += self.game.store[self.game.turn]
+                self.game.board[child] += self.game.store[self.game.turn]
                 self.game.store[self.game.turn] = 0
 
         assert not sum(self.game.store)
@@ -747,12 +720,13 @@ def _add_child_deco(game, capturer):
     if game.info.child_type == gi.ChildType.NOCHILD:
         pass
 
-    elif game.info.child_type == gi.ChildType.WALDA:
-        capturer = CaptureToWalda(game, capturer)
-
     elif game.info.child_type in (gi.ChildType.NORMAL,
                                   gi.ChildType.ONE_CHILD):
-        capturer = MakeChild(game, capturer)
+
+        if game.info.stores:
+            capturer = MakeChild(game, capturer)
+        else:
+            capturer = CaptureToChild(game, capturer)
 
     elif game.info.child_type == gi.ChildType.WEG:
         capturer = MakeWegCapture(game, capturer)

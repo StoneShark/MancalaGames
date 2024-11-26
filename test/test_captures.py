@@ -17,20 +17,10 @@ from context import game_interface as gi
 from context import make_child
 from context import mancala
 
-from game_interface import CaptExtraPick
-from game_interface import ChildType
-from game_interface import ChildRule
-from game_interface import CrossCaptOwn
-from game_interface import Direct
-from game_interface import GrandSlam
-from game_interface import WinCond
-from mancala import MoveData
-
 
 # %% constants
 
-TEST_COVERS = ['src\\capturer.py',
-               'src\\make_child.py']
+TEST_COVERS = ['src\\capturer.py']
 
 T = True
 F = False
@@ -71,18 +61,18 @@ CONVERT_DICT = {'N': None,
                 'False': False,
                 '': 0,
 
-                'CCW': Direct.CCW,
-                'CW': Direct.CW,
-                'SPLIT': Direct.SPLIT,
+                'CCW': gi.Direct.CCW,
+                'CW': gi.Direct.CW,
+                'SPLIT': gi.Direct.SPLIT,
 
-                'PICKCAPT': CrossCaptOwn.PICK_ON_CAPT,
-                'ALWAYS': CrossCaptOwn.ALWAYS_PICK,
+                'PICKCAPT': gi.CrossCaptOwn.PICK_ON_CAPT,
+                'ALWAYS': gi.CrossCaptOwn.ALWAYS_PICK,
 
-                'LEGAL': GrandSlam.LEGAL,    # the default
-                'NO_CAPT': GrandSlam.NO_CAPT,
-                'OPP_GETS': GrandSlam.OPP_GETS_REMAIN,
-                'KLEFT': GrandSlam.LEAVE_LEFT,
-                'KRIGHT': GrandSlam.LEAVE_RIGHT,
+                'LEGAL': gi.GrandSlam.LEGAL,    # the default
+                'NO_CAPT': gi.GrandSlam.NO_CAPT,
+                'OPP_GETS': gi.GrandSlam.OPP_GETS_REMAIN,
+                'KLEFT': gi.GrandSlam.LEAVE_LEFT,
+                'KRIGHT': gi.GrandSlam.LEAVE_RIGHT,
 
                 }
 
@@ -176,8 +166,8 @@ def test_no_capturer():
     game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                             rules=mancala.Mancala.rules)
     game = mancala.Mancala(game_consts, game_info)
-    mdata = MoveData(game, None)
-    mdata.direct = Direct.CCW
+    mdata = mancala.MoveData(game, None)
+    mdata.direct = gi.Direct.CCW
     mdata.capt_loc = 5
     game.deco.capturer.do_captures(mdata)
     assert not mdata.captured
@@ -197,7 +187,7 @@ class TestNoCaptures:
 
         game = mancala.Mancala(game_consts, game_info)
 
-        mdata = MoveData(game, None)
+        mdata = mancala.MoveData(game, None)
         mdata.direct = game.info.sow_direct
         mdata.capt_loc = 3
         mdata.board = tuple(game.board)
@@ -224,8 +214,8 @@ class TestCaptTable:
     @staticmethod
     def make_game(case):
 
-        child_type = ChildType.NORMAL if case.child_cvt else ChildType.NOCHILD
-        child_rule = ChildRule.NOT_1ST_OPP if case.oppside else ChildRule.NONE
+        child_type = gi.ChildType.NORMAL if case.child_cvt else gi.ChildType.NOCHILD
+        child_rule = gi.ChildRule.NOT_1ST_OPP if case.oppside else gi.ChildRule.NONE
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(stores=True,
@@ -272,7 +262,7 @@ class TestCaptTable:
         assert sum(game.store) + sum(game.board) == game.cts.total_seeds, \
             f"Game setup error: board={sum(game.board)} stores={sum(game.store)}"
 
-        mdata = MoveData(game, None)
+        mdata = mancala.MoveData(game, None)
         mdata.direct = case.direct
         mdata.capt_loc = case.loc
         mdata.board = tuple(case.board)  # not quite right, but ok
@@ -292,7 +282,7 @@ class TestCaptTable:
 
         game = self.make_game(case)
 
-        mdata = MoveData(game, None)
+        mdata = mancala.MoveData(game, None)
         mdata.direct = case.direct
         mdata.capt_loc = case.loc
         mdata.board = tuple(case.board)
@@ -311,8 +301,8 @@ class TestCaptTable:
                                   for case in CASES if case.capt_next])
     def test_mlap_capt_next(self, case):
 
-        child_type = ChildType.NORMAL if case.child_cvt else ChildType.NOCHILD
-        child_rule = ChildRule.NOT_1ST_OPP if case.oppside else ChildRule.NONE
+        child_type = gi.ChildType.NORMAL if case.child_cvt else gi.ChildType.NOCHILD
+        child_rule = gi.ChildRule.NOT_1ST_OPP if case.oppside else gi.ChildRule.NONE
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(mlaps=gi.LapSower.LAPPER,  # change to make_game
@@ -345,7 +335,7 @@ class TestCaptTable:
         game.unlocked = case.unlocked.copy()
         game.store = case.store.copy()
 
-        mdata = MoveData(game, None)
+        mdata = mancala.MoveData(game, None)
         mdata.direct = case.direct
         mdata.capt_loc = case.loc
         mdata.board = tuple(case.board)  # not quite right, but ok
@@ -367,11 +357,11 @@ class TestCaptTable:
 
 
 @pytest.mark.parametrize('gstype',
-                         [GrandSlam.LEGAL,
-                          GrandSlam.NO_CAPT,
-                          GrandSlam.OPP_GETS_REMAIN,
-                          GrandSlam.LEAVE_LEFT,
-                          GrandSlam.LEAVE_RIGHT])
+                         [gi.GrandSlam.LEGAL,
+                          gi.GrandSlam.NO_CAPT,
+                          gi.GrandSlam.OPP_GETS_REMAIN,
+                          gi.GrandSlam.LEAVE_LEFT,
+                          gi.GrandSlam.LEAVE_RIGHT])
 def test_no_gs(gstype):
 
     game_consts = gc.GameConsts(nbr_start=3, holes=2)
@@ -385,8 +375,8 @@ def test_no_gs(gstype):
     game.store = [3, 4]
     game.turn = False
 
-    mdata = MoveData(game, None)
-    mdata.direct = Direct.CCW
+    mdata = mancala.MoveData(game, None)
+    mdata.direct = gi.Direct.CCW
     mdata.capt_loc = 3
     mdata.board = (3, 2, 0, 0)
     mdata.seeds = 2
@@ -404,64 +394,14 @@ class TestWalda:
     def game(self):
         game_consts = gc.GameConsts(nbr_start=3, holes=5)
         game_info = gi.GameInfo(child_cvt=4,
-                                child_type=ChildType.WALDA,
+                                child_type=gi.ChildType.NORMAL,
+                                child_locs=gi.ChildLocs.ENDS_PLUS_ONE_OPP,
                                 capt_on=[4],
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
 
-
-    def test_small(self, game):
-        """Test computation of walda possibilities."""
-
-        consts = gc.GameConsts(3, 4)
-        info = game.info
-        info.__post_init__(nbr_holes=4,
-                           rules=mancala.Mancala.rules)
-        game = mancala.Mancala(consts, info)
-
-        assert game.deco.capturer.walda_poses == \
-            [capturer.CaptureToWalda.WALDA_BOTH,
-             True,
-             True,
-             capturer.CaptureToWalda.WALDA_BOTH,
-             capturer.CaptureToWalda.WALDA_BOTH,
-             False,
-             False,
-             capturer.CaptureToWalda.WALDA_BOTH]
-
-
-    def test_smaller(self, game):
-        """Test computation of walda possibilities."""
-
-        consts = gc.GameConsts(3, 3)
-        info = game.info
-        info.__post_init__(nbr_holes=3,
-                           rules=mancala.Mancala.rules)
-        game = mancala.Mancala(consts, info)
-
-        assert game.deco.capturer.walda_poses == \
-            [capturer.CaptureToWalda.WALDA_BOTH,
-             True,
-             capturer.CaptureToWalda.WALDA_BOTH,
-             capturer.CaptureToWalda.WALDA_BOTH,
-             False,
-             capturer.CaptureToWalda.WALDA_BOTH]
-
-
-    def test_smallest(self, game):
-        """Test computation of walda possibilities."""
-
-        consts = gc.GameConsts(3, 2)
-        info = game.info
-        info.__post_init__(nbr_holes=2,
-                           rules=mancala.Mancala.rules)
-        game = mancala.Mancala(consts, info)
-
-        walda_poses = game.deco.capturer.walda_poses
-        assert all(walda_poses[i] == capturer.CaptureToWalda.WALDA_BOTH
-                   for i in range(4))
 
     WALDA_CASES = [(0, False, True),
                    (1, False, False),
@@ -492,8 +432,8 @@ class TestWalda:
         game.board = [4] * game.cts.dbl_holes
         game.turn = turn
 
-        mdata = MoveData(game, None)
-        mdata.direct = Direct.CCW
+        mdata = mancala.MoveData(game, None)
+        mdata.direct = gi.Direct.CCW
         mdata.capt_loc = loc
         mdata.board = tuple(game.board)
         mdata.seeds = 2
@@ -512,8 +452,8 @@ class TestWalda:
         game.board = [3] * game.cts.dbl_holes
         game.turn = turn
 
-        mdata = MoveData(game, None)
-        mdata.direct = Direct.CCW
+        mdata = mancala.MoveData(game, None)
+        mdata.direct = gi.Direct.CCW
         mdata.capt_loc = loc
         mdata.board = tuple(game.board)
         mdata.seeds = 2
@@ -535,8 +475,8 @@ class TestWalda:
         game.child[wloc] = turn
 
         loc = game.cts.xlate_pos_loc(not turn, 2)
-        mdata = MoveData(game, None)
-        mdata.direct = Direct.CCW
+        mdata = mancala.MoveData(game, None)
+        mdata.direct = gi.Direct.CCW
         mdata.capt_loc = loc
         mdata.board = tuple(game.board)
         mdata.seeds = 2
@@ -559,8 +499,8 @@ class TestWalda:
         game.child[wloc] = turn
 
         loc = game.cts.xlate_pos_loc(not turn, 2)
-        mdata = MoveData(game, None)
-        mdata.direct = Direct.CCW
+        mdata = mancala.MoveData(game, None)
+        mdata.direct = gi.Direct.CCW
         mdata.capt_loc = loc
         mdata.board = tuple(game.board)
         mdata.seeds = 2
@@ -572,107 +512,6 @@ class TestWalda:
         assert game.child[loc] == None
 
 
-class TestOneChild:
-    """Expose errors in make_child.test for OneChild"""
-
-    @pytest.fixture
-    def game(self):
-        game_consts = gc.GameConsts(nbr_start=3, holes=4)
-        game_info = gi.GameInfo(child_cvt=3,
-                                child_type=ChildType.ONE_CHILD,
-                                sow_direct=gi.Direct.CCW,
-                                nbr_holes=game_consts.holes,
-                                rules=mancala.Mancala.rules)
-
-        return mancala.Mancala(game_consts, game_info)
-
-
-    @pytest.mark.parametrize('loc', range(8))
-    @pytest.mark.parametrize('turn', [False, True])
-    @pytest.mark.parametrize('direct, evals',
-         [[gi.Direct.CCW, [[T, T, T, F, T, T, T, T],   # False locations allowed
-                           [T, T, T, T, T, T, T, F]]],   # True locations allowed
-
-          [gi.Direct.CW, [[T, T, T, T, F, T, T, T],
-                          [F, T, T, T, T, T, T, T]]],
-
-          [gi.Direct.SPLIT, [[F, T, T, F, F, T, T, F],
-                             [F, T, T, F, F, T, T, F]]],
-          ], ids=['CCW', 'CW', 'SPLIT'])
-    def test_disallowed(self, loc, turn, direct, evals):
-
-        game_consts = gc.GameConsts(nbr_start=3, holes=4)
-        game_info = gi.GameInfo(child_cvt=3,
-                                child_type=ChildType.ONE_CHILD,
-                                sow_direct=direct,
-                                nbr_holes=game_consts.holes,
-                                rules=mancala.Mancala.rules)
-
-        game = mancala.Mancala(game_consts, game_info)
-
-        game.turn = turn
-        game.board[loc] = 3
-        mdata = MoveData(game, None)
-        mdata.direct = Direct.CCW
-        mdata.capt_loc = loc
-        mdata.board = tuple(game.board)
-        mdata.seeds = 2
-
-        assert game.deco.make_child.test(mdata) == evals[turn][loc]
-
-
-    @pytest.mark.parametrize('loc, turn',
-                              [(7, False),
-                               (3, True),
-                              ])
-    @pytest.mark.parametrize('board',
-                             [# opp side
-                              utils.build_board([None, None, False, None],
-                                                [None, True, None, None]),
-                              # own side
-                              utils.build_board([None, None, True, None],
-                                                [None, False, None, None]),
-                              # both T side
-                              utils.build_board([None, False, True, None],
-                                                [None, None, None, None]),
-                              # both F side
-                              utils.build_board([None, None, None, None],
-                                                [None, False, True, None]),
-                             ])
-    def test_only_one(self, game, turn, loc, board):
-        """All boards have children for both players and so
-        none should be allowed."""
-
-        game.turn = turn
-        game.child = board
-        mdata = MoveData(game, None)
-        mdata.direct = Direct.CCW
-        mdata.capt_loc = loc
-        mdata.board = tuple(game.board)
-        mdata.seeds = 2
-
-        assert not game.deco.make_child.test(mdata)
-
-
-    @pytest.mark.parametrize('loc, child_loc',
-                             [(1, 5), (5, 1), (2, 6), (6, 2)])
-    @pytest.mark.parametrize('turn', [False, True])
-    def test_not_opp(self, game, turn, loc, child_loc):
-        """Put a opponents child in symmetrically opp hole (child_loc),
-        no child should be allowed in loc."""
-
-        game.turn = turn
-        game.child[child_loc] = not turn
-        # print(game)
-        # print(loc)
-
-        mdata = MoveData(game, None)
-        mdata.direct = Direct.CCW
-        mdata.capt_loc = loc
-        mdata.board = tuple(game.board)
-        mdata.seeds = 2
-
-        assert not game.deco.make_child.test(mdata)
 
 
 class TestTuzdek:
@@ -681,10 +520,11 @@ class TestTuzdek:
     def game(self):
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(child_cvt=3,
-                                child_type=ChildType.ONE_CHILD,
-                                child_rule=ChildRule.OPP_ONLY,
+                                child_type=gi.ChildType.ONE_CHILD,
+                                child_rule=gi.ChildRule.OPP_ONLY,
+                                child_locs=gi.ChildLocs.NO_OPP_RIGHT,
                                 sow_direct=gi.Direct.CW,
-								stores=True,
+                                stores=True,
                                 capt_on=[3],
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
@@ -706,8 +546,8 @@ class TestTuzdek:
 
         game.turn = turn
 
-        mdata = MoveData(game, None)
-        mdata.direct = Direct.CCW
+        mdata = mancala.MoveData(game, None)
+        mdata.direct = gi.Direct.CCW
         mdata.capt_loc = loc
         mdata.board = tuple(game.board)
         mdata.seeds = 2
@@ -732,8 +572,8 @@ class TestTuzdek:
         game.turn = turn
         game.child = utils.build_board([None, None, False, None],
                                        [None, True, None, None])
-        mdata = MoveData(game, None)
-        mdata.direct = Direct.CCW
+        mdata = mancala.MoveData(game, None)
+        mdata.direct = gi.Direct.CCW
         mdata.capt_loc = loc
         mdata.board = tuple(game.board)
         mdata.seeds = 2
@@ -754,8 +594,8 @@ class TestTuzdek:
         game.turn = turn
         game.child[child] = True
 
-        mdata = MoveData(game, None)
-        mdata.direct = Direct.CCW
+        mdata = mancala.MoveData(game, None)
+        mdata.direct = gi.Direct.CCW
         mdata.capt_loc = loc
         mdata.board = tuple(game.board)
         mdata.seeds = 2
@@ -775,7 +615,7 @@ class TestWeg:
                                 goal=2,
                                 goal_param=8,
                                 child_cvt=3,
-                                child_type=ChildType.WEG,
+                                child_type=gi.ChildType.WEG,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
@@ -815,7 +655,7 @@ class TestWeg:
         ecapt - how many seeds should have been captured"""
 
         game.turn = turn
-        mdata = MoveData(game, None)
+        mdata = mancala.MoveData(game, None)
         mdata.direct = game.info.sow_direct
         mdata.capt_loc = loc
         mdata.board = tuple(game.board)
@@ -852,7 +692,7 @@ class TestBull:
     def game(self):
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(child_cvt=4,
-                                child_type=ChildType.BULL,
+                                child_type=gi.ChildType.BULL,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
@@ -879,7 +719,7 @@ class TestBull:
         existing bulls."""
 
         game.turn = turn
-        mdata = MoveData(game, None)
+        mdata = mancala.MoveData(game, None)
         mdata.direct = game.info.sow_direct
         mdata.capt_loc = loc
         mdata.board = tuple(game.board)
@@ -922,7 +762,7 @@ class TestBull:
         game.child[0] = False
         game.child[7] = True
 
-        mdata = MoveData(game, None)
+        mdata = mancala.MoveData(game, None)
         mdata.direct = game.info.sow_direct
         mdata.capt_loc = loc
         mdata.board = tuple(game.board)
@@ -949,7 +789,7 @@ class TestQur:
     def game(self):
         game_consts = gc.GameConsts(nbr_start=2, holes=4)
         game_info = gi.GameInfo(child_cvt=3,
-                                child_type=ChildType.QUR,
+                                child_type=gi.ChildType.QUR,
                                 crosscapt=True,
                                 xcpickown=1,
                                 nbr_holes=game_consts.holes,
@@ -990,7 +830,7 @@ class TestQur:
         loc = game.cts.xlate_pos_loc(not turn, pos)
         cross = game.cts.cross_from_loc(loc)
 
-        mdata = MoveData(game, None)
+        mdata = mancala.MoveData(game, None)
         mdata.direct = game.info.sow_direct
         mdata.capt_loc = loc
         mdata.board = tuple(game.board)
@@ -1030,17 +870,17 @@ class TestRepeatTurn:
         game.turn = True
         game.board = utils.build_board([2, 2, 3, 0],
                                        [2, 1, 0, 3])
-        mdata = MoveData(game, None)
-        mdata.direct = Direct.CCW
+        mdata = mancala.MoveData(game, None)
+        mdata.direct = gi.Direct.CCW
         mdata.capt_loc = 5
         game.deco.capturer.do_captures(mdata)
-        assert mdata.captured == WinCond.REPEAT_TURN
+        assert mdata.captured == gi.WinCond.REPEAT_TURN
 
-        mdata = MoveData(game, None)
-        mdata.direct = Direct.CCW
+        mdata = mancala.MoveData(game, None)
+        mdata.direct = gi.Direct.CCW
         mdata.capt_loc = 1
         game.deco.capturer.do_captures(mdata)
-        assert mdata.captured != WinCond.REPEAT_TURN
+        assert mdata.captured != gi.WinCond.REPEAT_TURN
 
 
 class TestCaptCrossVisited:
@@ -1064,7 +904,7 @@ class TestCaptCrossVisited:
              ([1, 6, 6, 6, 5, 0], [2, 1, 7, 7, 6, 1], 1, True),  # cross capt
              ([2, 3, 0, 1, 3, 1], [1, 4, 1, 1, 0, 1], 2, True),  # opp sow not cross hole, capt
 
-             ([2, 3, 0, 1, 5, 1], [0, 4, 1, 1, 5, 1], 2, WinCond.REPEAT_TURN),
+             ([2, 3, 0, 1, 5, 1], [0, 4, 1, 1, 5, 1], 2, gi.WinCond.REPEAT_TURN),
              ([1, 6, 3, 2, 0, 2], [0, 7, 3, 2, 0, 2], 1, False)  # end on own sidee, but no repeat turn
              ]
 
@@ -1072,7 +912,7 @@ class TestCaptCrossVisited:
                              CASES)
     def test_xc_visited(self, game, before_sow, after_sow, capt_loc, eresult):
 
-        mdata = MoveData(game, None)
+        mdata = mancala.MoveData(game, None)
         mdata.board = tuple(before_sow)
         mdata.capt_loc = capt_loc
         mdata.direct = game.info.sow_direct
@@ -1109,7 +949,7 @@ class TestCaptTwoOut:
 
         game_consts = gc.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(stores=True,
-                                pickextra=CaptExtraPick.PICKCROSS,
+                                pickextra=gi.CaptExtraPick.PICKCROSS,
                                 mlaps=True,
                                 **options,
                                 nbr_holes=game_consts.holes,
@@ -1117,7 +957,7 @@ class TestCaptTwoOut:
         game = mancala.Mancala(game_consts, game_info)
 
         game.board = board.copy()
-        mdata = MoveData(game, None)
+        mdata = mancala.MoveData(game, None)
         mdata.direct = game.info.sow_direct
         mdata.capt_loc = loc
         game.deco.capturer.do_captures(mdata)
@@ -1151,14 +991,14 @@ class TestPickCross:
 
         game_consts = gc.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(stores=True,
-                                pickextra=CaptExtraPick.PICKCROSS,
+                                pickextra=gi.CaptExtraPick.PICKCROSS,
                                 **options,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
 
         game.board = board.copy()
-        mdata = MoveData(game, None)
+        mdata = mancala.MoveData(game, None)
         mdata.direct = game.info.sow_direct
         mdata.capt_loc = loc
         game.deco.capturer.do_captures(mdata)
@@ -1177,7 +1017,7 @@ class TestPickCross:
 
         game_consts = gc.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(stores=True,
-                                pickextra=CaptExtraPick.PICKCROSS,
+                                pickextra=gi.CaptExtraPick.PICKCROSS,
                                 **options,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
@@ -1185,7 +1025,7 @@ class TestPickCross:
 
         game.board = board.copy()
         game.unlocked = [False] * 3 + [True] * 3  # false side locked
-        mdata = MoveData(game, None)
+        mdata = mancala.MoveData(game, None)
         mdata.direct = game.info.sow_direct
         mdata.capt_loc = loc
         game.deco.capturer.do_captures(mdata)
@@ -1205,7 +1045,7 @@ class TestPickCross:
 
         game_consts = gc.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(stores=True,
-                                pickextra=CaptExtraPick.PICKCROSS,
+                                pickextra=gi.CaptExtraPick.PICKCROSS,
                                 **options,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
@@ -1213,7 +1053,7 @@ class TestPickCross:
 
         game.board = board.copy()
         game.child = [False] * 3 + [None] * 3  # false side children
-        mdata = MoveData(game, None)
+        mdata = mancala.MoveData(game, None)
         mdata.direct = game.info.sow_direct
         mdata.capt_loc = loc
         game.deco.capturer.do_captures(mdata)
@@ -1227,14 +1067,14 @@ class TestPickCross:
 
         game_consts = gc.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(stores=True,
-                                pickextra=CaptExtraPick.PICKCROSS,
+                                pickextra=gi.CaptExtraPick.PICKCROSS,
                                 evens=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
 
         game.board = [3, 3, 3, 3, 3, 3]
-        mdata = MoveData(game, None)
+        mdata = mancala.MoveData(game, None)
         mdata.direct = game.info.sow_direct
         mdata.capt_loc = 4
         game.deco.capturer.do_captures(mdata)
@@ -1262,14 +1102,14 @@ class TestPickTwos:
         game_info = gi.GameInfo(stores=True,
                                 crosscapt=True,
                                 capt_on=[2],
-                                pickextra=CaptExtraPick.PICKTWOS,
+                                pickextra=gi.CaptExtraPick.PICKTWOS,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
         game.board = board.copy()
         game.turn = turn
 
-        mdata = MoveData(game, None)
+        mdata = mancala.MoveData(game, None)
         mdata.direct = game.info.sow_direct
         mdata.capt_loc = caploc
         game.deco.capturer.do_captures(mdata)
@@ -1339,7 +1179,7 @@ class TestPickLastSeeds:
         game.turn = turn
         game.starter = not turn
 
-        mdata = MoveData(game, None)
+        mdata = mancala.MoveData(game, None)
         mdata.direct = game.info.sow_direct
         game.deco.capturer.do_captures(mdata)
 
@@ -1362,7 +1202,7 @@ class TestNoChildren:
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
 
-        mdata = MoveData(game, None)
+        mdata = mancala.MoveData(game, None)
         mdata.direct = game.info.sow_direct
         mdata.board = tuple(game.board)
 
@@ -1390,7 +1230,7 @@ class TestChildInhibitor:
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
 
-        mdata = MoveData(game, None)
+        mdata = mancala.MoveData(game, None)
         mdata.direct = game.info.sow_direct
         mdata.capt_loc = 3
         mdata.board = tuple(game.board)
@@ -1420,7 +1260,7 @@ class TestOppChild:
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
 
-        mdata = MoveData(game, None)
+        mdata = mancala.MoveData(game, None)
         mdata.direct = game.info.sow_direct
         mdata.board = tuple(game.board)
         mdata.seeds = 2
@@ -1454,7 +1294,7 @@ class TestNotWithOne:
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
 
-        mdata = MoveData(game, None)
+        mdata = mancala.MoveData(game, None)
         mdata.direct = game.info.sow_direct
         mdata.board = tuple(game.board)
 

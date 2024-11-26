@@ -170,6 +170,25 @@ name than you expect.
   </div>
 </div>
 <p>Rules: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p88.
+<h3 id="Andot">Andot</h3>
+<p>Split sow. Make children on 4 on opposite side ends and four middle holes on own side.
+<p>Cannot move a singleton that has been moved across the side of the board back to where is was the previous turn.
+<p>Goal: collect move than half of the seeds in child holes.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#child_cvt">Child Convert Count</a>: 4</p>
+    <p class="param"><a href="game_params.html#child_type">Type of Children</a>: NORMAL</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#child_locs">Child Locations</a>: INV_ENDS_PLUS_MID</p>
+    <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: SPLIT</p>
+    <p class="param"><a href="game_params.html#unclaimed">End Game Seeds</a>: DONT_SCORE</p>
+  </div>
+</div>
 <h3 id="Ayoayo">Ayoayo</h3>
 <p>A multi-lap mancala; sow direction counter-clockwise skipping start hole on full cycle sow; cross-capture from opponents side when a sow ends in own empty hole. If your opponent has no seeds, you must make seeds available to them (if you can).
 <p>The game ends when one player captures more than half the seeds; when the current player cannot share seeds to an opponent without seeds; or when there is only one seed left on the board.
@@ -1517,9 +1536,10 @@ See <a href="about_games.html#Longbeu-a-cha">Longbeu-a-cha</a>, <a href="about_g
     <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
     <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 4</p>
     <p class="param"><a href="game_params.html#child_cvt">Child Convert Count</a>: 4</p>
+    <p class="param"><a href="game_params.html#child_locs">Child Locations</a>: ENDS_PLUS_ONE_OPP</p>
   </div>
   <div class="column2">
-    <p class="param"><a href="game_params.html#child_type">Type of Children</a>: WALDA</p>
+    <p class="param"><a href="game_params.html#child_type">Type of Children</a>: NORMAL</p>
     <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
     <p class="param"><a href="game_params.html#skip_start">Skip Start on Cycle</a>: Yes</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: SPLIT</p>
@@ -1684,7 +1704,7 @@ see Sedeqa
 <p>If the final seed of a sow brings a hole to three seeds, a tuzdek is made (child). A tuzdek cannot be made on rightmost hole on the opponents side--this would be the last hole before sowing would continue back to your own side of the board. Tuzdeks cannot be symmetrically opposite to eachother (see <a href="game_params.html#child_type">CHILD_TYPE</a>).
 <p>Variation:
 <ul><li class="helptext">
-<a href="https://en.wikipedia.org/wiki/Toguz_korgol" target="_blank">https://en.wikipedia.org/wiki/Toguz_korgol</a> describes a game in which seeds are sown counter-clockwise and the prohibited holes follow the rules described in <a href="game_params.html#child_type">CHILD_TYPE</a> ONE_CHILD) for CCW. Also, the minimum capture option is removed; holes sown to 2 may also be captured.
+<a href="https://en.wikipedia.org/wiki/Toguz_korgol" target="_blank">https://en.wikipedia.org/wiki/Toguz_korgol</a> describes a game in which seeds are sown counter-clockwise and the prohibited holes follow the <a href="game_params.html#child_locs">CHILD_LOCS</a> NO_OPP_RIGHT pattern). Also, the minimum capture option is removed; holes sown to 2 may also be captured.
 </ul>
 <div class="cols_row">
   <div class="column2">
@@ -1692,6 +1712,7 @@ see Sedeqa
     <p class="param">Start seeds:  9</p>
     <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
     <p class="param"><a href="game_params.html#child_cvt">Child Convert Count</a>: 3</p>
+    <p class="param"><a href="game_params.html#child_locs">Child Locations</a>: NO_OWN_RIGHT</p>
     <p class="param"><a href="game_params.html#child_type">Type of Children</a>: ONE_CHILD</p>
     <p class="param"><a href="game_params.html#child_rule">Child Restrictions</a>: OPP_ONLY</p>
     <p class="param"><a href="game_params.html#capt_min">Capture Min</a>: 4</p>
@@ -1875,6 +1896,7 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Adji Kui I">Adji Kui I</a></p>
     <p class="param"><a href="#Adji Kui II">Adji Kui II</a></p>
     <p class="param"><a href="#Adji-boto">Adji-boto</a></p>
+    <p class="param"><a href="#Andot">Andot</a></p>
     <p class="param"><a href="#Ayoayo">Ayoayo</a></p>
     <p class="param"><a href="#Bao (Kenyan)">Bao (Kenyan)</a></p>
     <p class="param"><a href="#Bao (Tanzanian)">Bao (Tanzanian)</a></p>
@@ -1895,9 +1917,9 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Gabata">Gabata</a></p>
     <p class="param"><a href="#Gamacha">Gamacha</a></p>
     <p class="param"><a href="#Gelech">Gelech</a></p>
-    <p class="param"><a href="#Giuthi">Giuthi</a></p>
   </div>
   <div class="column3">
+    <p class="param"><a href="#Giuthi">Giuthi</a></p>
     <p class="param"><a href="#Goat">Goat</a></p>
     <p class="param"><a href="#Halusa">Halusa</a></p>
     <p class="param"><a href="#Hoyito I">Hoyito I</a></p>
@@ -1922,9 +1944,9 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Ndoto">Ndoto</a></p>
     <p class="param"><a href="#No Sides Child">No Sides Child</a></p>
     <p class="param"><a href="#NoCapt">NoCapt</a></p>
-    <p class="param"><a href="#NoSides">NoSides</a></p>
   </div>
   <div class="column3">
+    <p class="param"><a href="#NoSides">NoSides</a></p>
     <p class="param"><a href="#NumNum">NumNum</a></p>
     <p class="param"><a href="#Obridjie">Obridjie</a></p>
     <p class="param"><a href="#Olinda">Olinda</a></p>

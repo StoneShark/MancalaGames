@@ -880,7 +880,8 @@ class TestEndWaldas:
     def game(self):
         game_consts = gc.GameConsts(nbr_start=4, holes=6)
         game_info = gi.GameInfo(child_cvt=4,
-                                child_type=ChildType.WALDA,
+                                child_type=ChildType.NORMAL,
+                                child_locs=gi.ChildLocs.ENDS_PLUS_ONE_OPP,
                                 mustpass=True,
                                 sow_direct=Direct.SPLIT,
                                 capt_on=[4],
