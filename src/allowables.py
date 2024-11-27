@@ -102,9 +102,8 @@ class AllowableTriples(AllowableIf):
 
 
 class DontUndoMoveOne(AllowableIf):
-    """For two-sided (mlength != 3), split sow games
-    don't allow moving a singleton back across the board side
-    in the immediate next move."""
+    """For split sow games don't allow moving a singleton
+    back across the board side in the immediate next move."""
 
     def __init__(self, game, decorator=None):
 
@@ -112,15 +111,19 @@ class DontUndoMoveOne(AllowableIf):
         self.end_sets = [set([0, game.cts.dbl_holes - 1]),
                          set([game.cts.holes - 1, game.cts.holes])]
 
+        if game.info.mlength == 3:
+            self.aidx = lambda cloc: cloc
+        else:
+            self.aidx = lambda cloc: cloc if cloc < game.cts.holes \
+                                          else game.cts.dbl_holes - cloc - 1
+
     @staticmethod
     def include(game):
         """Return True if this deco should be included, otherwise False.
-        Only two sided games.
         Min move must be 1.
         SPLIT sow but without either end in the UDIR_HOLES"""
 
-        return (game.info.mlength < 3
-                and game.info.min_move == 1
+        return (game.info.min_move == 1
                 and game.info.sow_direct == gi.Direct.SPLIT
                 and 0 not in game.info.udir_holes
                 and game.cts.holes - 1 not in game.info.udir_holes)
@@ -136,10 +139,8 @@ class DontUndoMoveOne(AllowableIf):
         if capt_loc == gi.WinCond.REPEAT_TURN:
             return allow
 
-        pos = capt_loc
-        if pos >= self.game.cts.holes:
-            pos = self.game.cts.dbl_holes - pos - 1
-        if not allow[pos]:
+        aidx = self.aidx(capt_loc)
+        if not allow[aidx]:
             return allow
 
         if (lmdata.seeds == 1
@@ -147,8 +148,8 @@ class DontUndoMoveOne(AllowableIf):
                 and any(set([lmdata.sow_loc, capt_loc]) == test_set
                         for test_set in self.end_sets)):
 
-            game_log.add(f"Preventing undo @ {pos}.")
-            allow[pos] = False
+            game_log.add(f"Preventing undo @ {aidx}.")
+            allow[aidx] = False
 
         return allow
 

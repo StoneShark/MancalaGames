@@ -19,5 +19,6 @@
          "stores_m": 4,
          "easy_rand": 10
       }
-   }
+   },
+   "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p132."
 }
