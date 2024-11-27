@@ -40,7 +40,7 @@ game_logger.game_log.active = False
 # %%  constants
 
 PATH = '../GameProps/'
-BAD_CFG = 'all_params.txt'
+BAD_CFG = '_all_params.txt'
 INDEX = [fname[:-4] for fname in os.listdir(PATH) if fname != BAD_CFG]
 
 PARAM_KEYS = [ckey.ACCESS_M,

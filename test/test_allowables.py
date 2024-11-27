@@ -912,6 +912,9 @@ class TestDontUndoMoveOne:
                  'not_split': {'sow_direct': gi.Direct.CCW},
                  'udir': {'sow_direct': gi.Direct.SPLIT,
                           'udir_holes': [1, 2]},
+                 'ns_split': {'no_sides': True,
+                              'sow_direct': gi.Direct.SPLIT,
+                                       'udir_holes': [1]},
                  'include': {'sow_direct': gi.Direct.SPLIT,
                              'udir_holes': [1]},
                 }
@@ -933,6 +936,7 @@ class TestDontUndoMoveOne:
     INCLUDE =  {'no_sides': False,
                 'not_split': False,
                 'udir': False,
+                'ns_split': True,
                 'include': True,
                 }
 
@@ -970,6 +974,17 @@ class TestDontUndoMoveOne:
 
         # hole not allowable to start
         ('include', [0, 2, 1, 1, 2, 0], F, (0, None), [F, T, T]),
+
+        # prevent cases (T, T, T)
+        ('ns_split', [1, 2, 0, 0, 2, 0], F, (1, 0, None),
+                     [F, T, F, F, T, F]),
+        ('ns_split', [0, 2, 1, 0, 2, 0], F, (1, 2, None),
+                     [F, T, F, F, T, F]),
+        ('ns_split', [0, 2, 0, 1, 2, 0], T, (0, 2, None),
+                     [F, T, F, F, T, F]),
+        ('ns_split', [0, 2, 0, 0, 2, 1], T, (0, 0, None),
+                     [F, T, F, F, T, F]),
+
         ]
 
     # @pytest.mark.usefixtures("logger")
