@@ -1302,12 +1302,12 @@ class TestTerritory:
     @pytest.mark.parametrize('capt_methods, emin_occ',
                              [([('evens', True)], 2),
                               ([('crosscapt', True)], 2),
-                              ([('capt_next', True)], 2),
-                              ([('capttwoout', True)], 3),
+                              ([('capt_type', gi.CaptType.NEXT)], 2),
+                              ([('capt_type', gi.CaptType.TWO_OUT)], 3),
                               ([('capt_on', [3])], 3),
                               ([('capt_min', 2)], 2),
 
-                              ([('capttwoout', True),
+                              ([('capt_type', gi.CaptType.TWO_OUT),
                                 ('mlaps', True)], 2),
 
                               ([('capt_on', [4]),

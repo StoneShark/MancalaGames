@@ -126,8 +126,8 @@ def build_rules():
                           width=50),
         excp=gi.GameInfoError)
 
-    capt_flags = ['capsamedir', 'capt_max', 'capt_min', 'capt_next',
-                  'capt_on', 'capt_rturn', 'capttwoout', 'crosscapt',
+    capt_flags = ['capsamedir', 'capt_max', 'capt_min', 'capt_type',
+                  'capt_on', 'capt_rturn', 'crosscapt',
                   'evens', 'grandslam', 'multicapt', 'nocaptmoves',
                   'nosinglecapt', 'capt_side', 'pickextra', 'xcpickown']
     rules.add_rule(

@@ -19,6 +19,7 @@ Created on Fri Apr  7 15:57:47 2023
 # %% imports
 
 import abc
+import copy
 
 import deco_chain_if
 import game_interface as gi
@@ -554,6 +555,32 @@ class StopCaptureSeeds(LapContinuerIf):
         return self.decorator.do_another_lap(mdata)
 
 
+class StopCaptureSimul(LapContinuerIf):
+    """A wrapper: stop based on simulated capture.
+    Use this when the capture conditions are non-trivial
+    and really shouldn't be duplicated (some capt_type's)."""
+
+    def do_another_lap(self, mdata):
+
+        if not self.game.inhibitor.stop_me_capt(self.game.turn):
+
+            saved_state = self.game.state
+            saved_mdata = copy.copy(mdata)
+            game_log.set_simulate()
+
+            self.game.capture_seeds(mdata)
+            captured = mdata.captured
+
+            game_log.clear_simulate()
+            self.game.state = saved_state
+            mdata = saved_mdata
+
+            if captured:
+                game_log.add('MLap stop for simul capture')
+                return False
+        return self.decorator.do_another_lap(mdata)
+
+
 class MustVisitOpp(LapContinuerIf):
     """A wrapper: on the first lap sow, must reach the
     opposite side of the board. In otherwords, a second lap may not
@@ -890,6 +917,9 @@ def _add_capt_stop_lap_cont(game, lap_cont):
                 lap_cont = ContIfBasicCapt(game, lap_cont)
             else:
                 lap_cont = StopCaptureSeeds(game, lap_cont)
+
+        elif game.info.capt_type == gi.CaptType.MATCH_OPP:
+            lap_cont = StopCaptureSimul(game, lap_cont)
 
         lap_cont = StopSingleSeed(game, lap_cont)
 

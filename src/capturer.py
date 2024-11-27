@@ -207,6 +207,28 @@ class MultiCaptTwoOut(CaptMethodIf):
             cnt += 1
 
 
+class CaptMatchOpp(CaptMethodIf):
+    """If the number of seeds in the capture hole and the
+    hole cross, capture them both."""
+
+    def do_captures(self, mdata):
+
+        loc = mdata.capt_loc
+        cross = self.game.cts.cross_from_loc(mdata.capt_loc)
+
+        if (self.game.board[loc] == self.game.board[cross]
+                and self.game.child[loc] is None
+                and self.game.child[cross] is None
+                and self.game.unlocked[loc]
+                and self.game.unlocked[cross]):
+
+            self.game.store[self.game.turn] += self.game.board[loc]
+            self.game.store[self.game.turn] += self.game.board[cross]
+            self.game.board[loc] = 0
+            self.game.board[cross] = 0
+            mdata.captured = True
+
+
 # %% cross capt decos
 
 
@@ -778,6 +800,21 @@ def _add_capt_two_out_deco(game, capturer):
     return capturer
 
 
+def _add_capt_type_deco(game, capturer):
+
+    if game.info.capt_type == gi.CaptType.TWO_OUT:
+        # must check before mulitcapt
+        capturer = _add_capt_two_out_deco(game, capturer)
+
+    elif game.info.capt_type == gi.CaptType.NEXT:
+        capturer = _add_capt_next_deco(game, capturer)
+
+    elif game.info.capt_type == gi.CaptType.MATCH_OPP:
+        capturer = CaptMatchOpp(game, capturer)
+
+    return capturer
+
+
 def _add_capt_pick_deco(game, capturer):
     """Add any extra pickers."""
 
@@ -811,12 +848,8 @@ def deco_capturer(game):
     if game.info.crosscapt:
         capturer = _add_cross_capt_deco(game, capturer)
 
-    elif game.info.capttwoout:
-        # must check before mulitcapt
-        capturer = _add_capt_two_out_deco(game, capturer)
-
-    elif game.info.capt_next:
-        capturer = _add_capt_next_deco(game, capturer)
+    elif game.info.capt_type:
+        capturer = _add_capt_type_deco(game, capturer)
 
     elif game.info.multicapt:
         capturer = CaptMultiple(game, game.info.multicapt, capturer)

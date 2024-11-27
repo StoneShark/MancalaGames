@@ -445,11 +445,11 @@ class NoOutcomeChange(EndTurnIf):
             min_needed = game.cts.total_seeds  # max possible and flag
 
         if (game.info.evens
-                or game.info.capt_next
+                or game.info.capt_type == gi.CaptType.NEXT
                 or game.info.crosscapt):
             min_needed = min(2, min_needed)
 
-        if game.info.capttwoout:
+        if game.info.capt_type == gi.CaptType.TWO_OUT:
             if game.info.mlaps:
                 min_needed = min(2, min_needed)
             else:

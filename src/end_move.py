@@ -85,9 +85,8 @@ def _add_no_change(game, ender):
             (ginfo.child_type == gi.ChildType.WEG
              and not any([ginfo.capt_max,
                           ginfo.capt_min,
-                          ginfo.capt_next,
                           ginfo.capt_on,
-                          ginfo.capttwoout,
+                          ginfo.capt_type,
                           ginfo.crosscapt,
                           ginfo.evens,
                           ginfo.sow_own_store]))]):

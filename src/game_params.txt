@@ -25,13 +25,14 @@ Capture	xcpickown	Own Seed on Xcapture	game_info _	150	CrossCaptOwn	LEAVE	7	0	"W
 Capture	xc_sown	Must sow opp for xcapt	game_info _	149	bool	False	8	0	"Only allow cross capture if the player has sown onto the opposite side of board. 
 If a player ends on their own side of the board in an empty hole, but did not sow any opposite hole, they get a repeat turn."
 Capture	ocapt_lbl	Other Captures		0	label	0 	9	0	
-Capture	capt_next	Capture Next	game_info _	106	bool	False	10	0	"Capture from the hole after the final seed sown. 
-When multiple lap sowing, the sowing does not stop for captures. Instead, sowing continues until the final seed is sown into an empty hole. Then the capture test is made on the next hole."
-Capture	capttwoout	Capture Two Out	game_info _	109	bool	False	11	0	"There are three flavors of capture two out:
-Single lap game: capture if sow ends in occupied hole, then an empty hole, followed by an occupied hole the contents of this are hole captured.
-Multi lap game but single capture: capture when last hole sown is followed by an empty hole which is then followed by an occupied hole.
-Multi lap game with multiple captures: capture when last hole sown is followed by an empty hole which is then followed by an occupied hole. Continue captures as long as the pattern of empty hole followed by an occupied hole continues.
-"
+Capture	capt_type	Capture Type	game_info _	106	CaptType	NONE	10	0	"Capture type.  Basic capture rules are not applied and are incompatible with cross capture.
+- NEXT: Capture from the hole after the final seed sown. 
+  + When multiple lap sowing, the sowing does not stop for captures. Instead, sowing continues until the final seed is sown into an empty hole. Then the capture test is made on the next hole.
+- TWO_OUT: There are three flavors of capture two out:
+  + Single lap game: capture if sow ends in occupied hole, then an empty hole, followed by an occupied hole the contents of this are hole captured.
+  + Multi lap game but single capture: capture when last hole sown is followed by an empty hole which is then followed by an occupied hole.
+  + Multi lap game with multiple captures: capture when last hole sown is followed by an empty hole which is then followed by an occupied hole. Continue captures as long as the pattern of empty hole followed by an occupied hole continues.
+- MATCH_OPP: capture when the number of seeds in the final hole sown match the oppocite hole."
 Capture	mcapt_lbl	Multiple Captures		0	label	0	0	2	
 Capture	multicapt	Multiple Captures	game_info _	124	int	0	1	2	"An int to describe possible multicaptures:
  0 no multiple captures.

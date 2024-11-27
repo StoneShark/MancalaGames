@@ -322,8 +322,8 @@ def add_block_and_divert_rules(rules):
     # can't deprive opp of seeds, if they can't move them all
 
 
-    capt_flags = ['capsamedir', 'capt_max', 'capt_min', 'capt_next',
-                  'capt_on', 'capt_rturn', 'capttwoout', 'crosscapt',
+    capt_flags = ['capsamedir', 'capt_max', 'capt_min', 'capt_type',
+                  'capt_on', 'capt_rturn', 'crosscapt',
                   'evens', 'multicapt',
                   'nosinglecapt', 'capt_side', 'pickextra', 'xcpickown']
     for flag in capt_flags:
@@ -460,8 +460,7 @@ def add_capture_rules(rules):
         'warn_no_capt',
         rule=lambda ginfo: not any([sow_blkd_div(ginfo),
                                     ginfo.child_type,
-                                    ginfo.capttwoout,
-                                    ginfo.capt_next,
+                                    ginfo.capt_type,
                                     ginfo.evens,
                                     ginfo.crosscapt,
                                     ginfo.sow_own_store,
@@ -476,8 +475,7 @@ def add_capture_rules(rules):
         'capt_no_place',
         rule=lambda ginfo: (ginfo.goal in (gi.Goal.MAX_SEEDS, gi.Goal.TERRITORY)
                             and not (ginfo.stores or ginfo.child_type)
-                            and any([ginfo.capttwoout,
-                                     ginfo.capt_next,
+                            and any([ginfo.capt_type,
                                      ginfo.evens,
                                      ginfo.crosscapt,
                                      ginfo.capt_max,
@@ -516,8 +514,8 @@ def add_capture_rules(rules):
 
     rules.add_rule(
         'warn_capsamedir_multicapt',
-        rule=lambda ginfo: (not ginfo.capttwoout
-                            and not ginfo.capt_next
+        rule=lambda ginfo: (ginfo.capt_type != gi.CaptType.TWO_OUT
+                            and ginfo.capt_type != gi.CaptType.NEXT
                             and ginfo.capsamedir
                             and not ginfo.multicapt),
         msg="CAPSAMEDIR without MULTICAPT has no effect",
@@ -525,42 +523,30 @@ def add_capture_rules(rules):
 
     rules.add_rule(
         'capt2out_needs_samedir',
-        rule=lambda ginfo: ginfo.capttwoout and not ginfo.capsamedir,
-        msg='CAPTTWOOUT requires CAPSAMEDIR because the preceeding '
-            'holes were just sown (not empty)',
+        rule=lambda ginfo: (ginfo.capt_type == gi.CaptType.TWO_OUT
+                            and not ginfo.capsamedir),
+        msg='Capture type TWO_OUT requires CAPSAMEDIR because '
+            'the preceeding holes were just sown (not empty)',
         excp=gi.GameInfoError)
 
     rules.add_rule(
-        'capt2_cross_incomp',
-        rule=lambda ginfo: ginfo.capttwoout and ginfo.crosscapt,
-        msg="CAPTTWOOUT and CROSSCAPT are incompatible",
+        'capttype_xcross_incomp',
+        rule=lambda ginfo: ginfo.capt_type and ginfo.crosscapt,
+        msg="CAPT_TYPE and CROSSCAPT are incompatible",
         warn=True)
 
-    rules.add_rule(
-        'capt2_gs_legal',
-        rule=lambda ginfo: (ginfo.capttwoout
-                            and ginfo.grandslam != gi.GrandSlam.LEGAL),
-        msg="CAPTTWOOUT requires that GRANDSLAM be LEGAL",
-        excp=gi.GameInfoError)
+    # rules.add_rule(
+    #     'capt2_gs_legal',
+    #     rule=lambda ginfo: (ginfo.capttwoout
+    #                         and ginfo.grandslam != gi.GrandSlam.LEGAL),
+    #     msg="CAPTTWOOUT requires that GRANDSLAM be LEGAL",
+    #     excp=gi.GameInfoError)
+    #  DON'T KNOW WHY THIS WAS HERE
 
     rules.add_rule(
-        'captnext_needs_samedir',
-        rule=lambda ginfo: ginfo.capttwoout and not ginfo.capsamedir,
-        msg='CAPTTWOOUT requires CAPSAMEDIR',
-        excp=gi.GameInfoError)
-
-    rules.add_rule(
-        'captnext_cross_incomp',
-        rule=lambda ginfo: ginfo.capt_next and ginfo.crosscapt,
-        msg="CAPT_NEXT and CROSSCAPT are incompatible",
-        warn=True)
-        # TODO this isn't complete: only one of crosscapt, capttwoout or capt_next
-        # should be allowed - maybe it should be an enumeration?
-
-    rules.add_rule(
-        'lcapt_no_next_2out',
+        'lcapt_no_ctype',
         rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.LAP_CAPT
-                            and (ginfo.capt_next or ginfo.capttwoout)),
+                            and ginfo.capt_type),
         msg='LAP_CAPT is only supported for basic captures and cross capture.',
         excp=NotImplementedError)
         # would need to carefully decide how it would work
@@ -609,12 +595,12 @@ def add_capture_rules(rules):
         # which causes captures to be limited by locks
 
     rules.add_rule(
-        'moveall_no_2out',
+        'moveall_no_capttype',
         rule=lambda ginfo: (ginfo.allow_rule == gi.AllowRule.MOVE_ALL_HOLES_FIRST
-                            and ginfo.capttwoout),
-        msg='MOVE_ALL_HOLES_FIRST is incompatible with CAPTTWOOUT',
+                            and ginfo.capt_type == gi.CaptType.TWO_OUT),
+        msg='MOVE_ALL_HOLES_FIRST is incompatible with CAPT_TYPE TWO_OUT',
         excp=gi.GameInfoError)
-        # capt two out doesn't use capt_ok, but checks the locks directly
+        # decos do not use capt_ok, but checks the locks directly
 
     rules.add_rule(
         'moveall_no_picker',
@@ -636,8 +622,9 @@ def add_capture_rules(rules):
 
     rules.add_rule(
         'capt2out_cside',
-        rule=lambda ginfo: ginfo.capt_side and ginfo.capttwoout,
-        msg='CAPTTWOOUT cannot be used with CAPT_SIDE other than BOTH',
+        rule=lambda ginfo: (ginfo.capt_side
+                            and ginfo.capt_type == gi.CaptType.TWO_OUT),
+        msg='Capture TWO_OUT cannot be used with CAPT_SIDE other than BOTH',
         excp=gi.GameInfoError)
 
 

@@ -1,0 +1,24 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 6,
+      "nbr_start": 4
+   },
+   "game_info": {
+      "name": "Mangala_I",
+      "about": "The initial board is setup with a random allocation of the 70 seeds in each hole. The games initial randomization moves are simulated without player intervention.\n\nSow counter-clockwise in multiple laps.\n\nCapture when the final seed of a lap sow makes the two holes opposite each other have the same number of seeds. Capture seeds from both holes.\n\nThe game is over when one player does not have any seeds. The seeds left on the baoard do not score. The winner is the player with the most seeds.\n\n",
+      "capt_type": 3,
+      "help_file": "mancala_help.html",
+      "mlaps": 1,
+      "sow_direct": 1,
+      "start_pattern": 6,
+      "stores": true,
+      "unclaimed": 1
+   },
+   "player": {
+      "ai_params": {},
+      "scorer": {
+         "stores_m": 4
+      }
+   }
+}

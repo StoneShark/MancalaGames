@@ -70,6 +70,16 @@ class CaptSide(enum.IntEnum):
 
 
 @enum.unique
+class CaptType(enum.IntEnum):
+    """Additional capture mechanisms."""
+
+    NONE = 0
+    NEXT = 1
+    TWO_OUT = 2
+    MATCH_OPP = 3
+
+
+@enum.unique
 class ChildLocs(enum.IntEnum):
     """Defines where children may be made.
     Child Rules are also applied."""
@@ -264,6 +274,7 @@ class StartPattern(enum.IntEnum):
     ALTS_WITH_1 = 3
     CLIPPEDTRIPLES = 4
     TWOEMPTY = 5
+    RANDOM = 6
 
 
 @enum.unique
@@ -343,8 +354,7 @@ class GameInfo:
     capt_max: int = 0
     nosinglecapt: bool = False
     nocaptmoves: int = 0
-    capt_next: bool = False
-    capttwoout: bool = False
+    capt_type: CaptType = CaptType.NONE
 
     crosscapt: bool = False
     xc_sown: bool = False

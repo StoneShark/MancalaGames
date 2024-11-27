@@ -73,6 +73,14 @@ STRING_DICTS = {
          'Not across from 1s': gi.AllowRule.NOT_XFROM_1S,
          }),
 
+    'CaptExtraPick': lookup_dicts(
+        gi.CaptExtraPick,
+        {'No additional': gi.CaptExtraPick.NONE,
+         'Pick Cross Seeds': gi.CaptExtraPick.PICKCROSS,
+         "Pick all Opponent's' 2s": gi.CaptExtraPick.PICKTWOS,
+         "Pick last seeds <= nbr_start": gi.CaptExtraPick.PICKLASTSEEDS,
+         "Pick last seeds <= 2x nbr_start": gi.CaptExtraPick.PICK2XLASTSEEDS}),
+
     'CaptSide': lookup_dicts(
         gi.CaptSide,
         {'BOTH': gi.CaptSide.BOTH,
@@ -81,13 +89,12 @@ STRING_DICTS = {
          'First Opp, then either': gi.CaptSide.OPP_CONT,
          'First Own, then either': gi.CaptSide.OWN_CONT}),
 
-    'CaptExtraPick': lookup_dicts(
-        gi.CaptExtraPick,
-        {'No additional': gi.CaptExtraPick.NONE,
-         'Pick Cross Seeds': gi.CaptExtraPick.PICKCROSS,
-         "Pick all Opponent's' 2s": gi.CaptExtraPick.PICKTWOS,
-         "Pick last seeds <= nbr_start": gi.CaptExtraPick.PICKLASTSEEDS,
-         "Pick last seeds <= 2x nbr_start": gi.CaptExtraPick.PICK2XLASTSEEDS}),
+    'CaptType': lookup_dicts(
+        gi.CaptType,
+        {'None': gi.CaptType.NONE,
+         'Capture next': gi.CaptType.NEXT,
+         'Capture two out': gi.CaptType.TWO_OUT,
+         'Capture matching': gi.CaptType.MATCH_OPP}),
 
     'ChildLocs': lookup_dicts(
         gi.ChildLocs,
@@ -232,6 +239,7 @@ STRING_DICTS = {
          'Alternates': gi.StartPattern.ALTERNATES,
          'Alts with 1': gi.StartPattern.ALTS_WITH_1,
          'Clipped Triples': gi.StartPattern.CLIPPEDTRIPLES,
-         'Two Empty': gi.StartPattern.TWOEMPTY}),
+         'Two Empty': gi.StartPattern.TWOEMPTY,
+         'Random (seeds=holes*10 + nstart*2)': gi.StartPattern.RANDOM}),
 
 }

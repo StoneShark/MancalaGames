@@ -217,6 +217,13 @@ class TestCaptTable:
         child_type = gi.ChildType.NORMAL if case.child_cvt else gi.ChildType.NOCHILD
         child_rule = gi.ChildRule.NOT_1ST_OPP if case.oppside else gi.ChildRule.NONE
 
+        if case.capt_next:
+            capt_type = gi.CaptType.NEXT
+        elif case.capttwoout:
+            capt_type = gi.CaptType.TWO_OUT
+        else:
+            capt_type = gi.CaptType.NONE
+
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(stores=True,
                                 capt_on=case.capt_on,
@@ -226,8 +233,7 @@ class TestCaptTable:
                                 crosscapt=case.xcapt,
                                 capt_min=case.capt_min,
                                 evens=case.evens,
-                                capt_next=case.capt_next,
-                                capttwoout=case.capttwoout,
+                                capt_type=capt_type,
                                 grandslam=case.gslam,
                                 moveunlock=case.moveunlock,
                                 multicapt=case.multicapt,
@@ -314,8 +320,7 @@ class TestCaptTable:
                                 crosscapt=case.xcapt,
                                 capt_min=case.capt_min,
                                 evens=case.evens,
-                                capt_next=case.capt_next,
-                                capttwoout=case.capttwoout,
+                                capt_type=gi.CaptType.NEXT,
                                 grandslam=case.gslam,
                                 moveunlock=case.moveunlock,
                                 multicapt=case.multicapt,
@@ -930,13 +935,13 @@ class TestCaptTwoOut:
     test_cases = [
 
         ([3, 3, 3, 4, 0, 2], False, 3, [0, 3, 3, 4, 0, 0], {'capsamedir': True,
-                                                            'capttwoout': True}),
+                                                            'capt_type': gi.CaptType.TWO_OUT}),
 
         ([3, 3, 3, 4, 0, 2], False, 3, [0, 3, 3, 4, 0, 0], {'capsamedir': True,
-                                                            'capttwoout': True,
+                                                            'capt_type': gi.CaptType.TWO_OUT,
                                                             'multicapt': -1}),
         ([0, 3, 0, 4, 0, 2], False, 3, [0] * 6, {'capsamedir': True,
-                                                 'capttwoout': True,
+                                                 'capt_type': gi.CaptType.TWO_OUT,
                                                  'multicapt': -1}),
 
         ]
@@ -980,7 +985,7 @@ class TestPickCross:
 
         ([3, 3, 3, 4, 4, 2], False, 4, [3, 0, 3, 4, 0, 2], {'capt_on': [4]}),
         ([3, 3, 3, 4, 0, 2], False, 3, [0, 3, 3, 4, 0, 0], {'capsamedir': True,
-                                                            'capttwoout': True})
+                                                            'capt_type': gi.CaptType.TWO_OUT})
         ]
 
     @pytest.mark.parametrize('board, turn, loc, eboard, options',

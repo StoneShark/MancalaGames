@@ -26,6 +26,8 @@ Created on Wed Oct 11 17:54:37 2023
 @author: Ann"""
 
 import abc
+import itertools as it
+import random
 
 import game_interface as gi
 
@@ -211,6 +213,42 @@ class TwoEmptyPattern(StartPatternIf):
         game.board[holes:dbl_holes] = game.board[:holes]
 
 
+class RandomPattern(StartPatternIf):
+    """Fill with random seeds."""
+
+    @staticmethod
+    def size_ok(holes):
+        return True
+    err_msg = 'RandomPattern is always good'
+
+
+    @staticmethod
+    def nbr_seeds(holes, nbr_start):
+        return (holes * 10) + (nbr_start * 2)
+
+
+    @staticmethod
+    def fill_seeds(game):
+
+        total = game.cts.total_seeds
+        dbl_holes = game.cts.dbl_holes
+
+        rnumbers = sorted([0, 1] + [random.random()
+                                    for _ in range(dbl_holes)])
+        values = [int(total * (b - a) + 0.4)
+                  for a, b in it.pairwise(rnumbers)]
+
+        error = total - sum(values)
+        if error > 0:
+            values[values.index(min(values))] += error
+
+        elif error < 0:
+            values[values.index(max(values))] += error
+
+        game.board = values
+
+
+
 # %% Pattern Classes variable
 
 PCLASSES = [None] * len(gi.StartPattern)
@@ -220,3 +258,4 @@ PCLASSES[gi.StartPattern.ALTERNATES] = AlternatesPattern
 PCLASSES[gi.StartPattern.ALTS_WITH_1] = AltsWithOnePattern
 PCLASSES[gi.StartPattern.CLIPPEDTRIPLES] = ClippedTriplesPattern
 PCLASSES[gi.StartPattern.TWOEMPTY] = TwoEmptyPattern
+PCLASSES[gi.StartPattern.RANDOM] = RandomPattern

@@ -486,7 +486,7 @@ is included after the parameter sections.
 <li class="helptext">
 <b class="enum">OWN_SOW_CAPT_ALL</b>: The hole OWNer captures all holes that are sown to meet the simple capture criteria no matter who sowed them.  The simple capture criteria are: evens, min, max and capture on. Other criteria are enforced: side of the board, unlocked, and not child.
 <p class="helptext"> The capture is done by the hole owner, so the non-sower may capture seeds while their opponents sows. If the game <a href="game_params.html#goal">GOAL</a> is TERRITORY the capturer is the hole owner; otherwise each player captures from their own side of the board no matter who is sowing. 
-<p class="helptext"> If <a href="game_params.html#mlaps">MLAPS</a> is LAPPER and the final seed sown for any lap meets the simple capture criteria for that hole, the contents of the hole are captured by the sower and not the hole owner and the turn is over. For <a href="game_params.html#capttwoout">CAPTTWOOUT</a>, <a href="game_params.html#capt_next">CAPT_NEXT</a> and <a href="game_params.html#crosscapt">CROSSCAPT</a> captures, the sower always does the final capture.
+<p class="helptext"> If <a href="game_params.html#mlaps">MLAPS</a> is LAPPER and the final seed sown for any lap meets the simple capture criteria for that hole, the contents of the hole are captured by the sower and not the hole owner and the turn is over. For CAPTTWOOUT, CAPT_NEXT and <a href="game_params.html#crosscapt">CROSSCAPT</a> captures, the sower always does the final capture.
 <p class="helptext"> <a href="game_params.html#grandslam">GRANDSLAM</a> rules are not applied. <a href="game_params.html#nocaptmoves">NOCAPTMOVES</a> prevents these capture for the first moves.
 <li class="helptext">
 <b class="enum">SOW_CAPT_ALL</b>: Similar to OWN_SOW_CAPT_ALL but only the SOWer captures seeds from the side specified by <a href="game_params.html#capt_side">CAPT_SIDE</a>. BOTH sower capturers from any hole. OPP sower capturer only from opponents holes.  OWN sower captures only from their own holes. 
@@ -671,24 +671,24 @@ Sow rule of MAX_SOW: maximum number of seeds a hole may contain
 
 <p>Only allow cross capture if the player has sown onto the opposite side of board. 
 <p>If a player ends on their own side of the board in an empty hole, but did not sow any opposite hole, they get a repeat turn.
-<h4 id="capt_next"> Capture Next </h4>
-<p class="pdesc">Location in Config Files: game_info : capt_next
-<p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
-<p class="pdesc">Default value: False
+<h4 id="capt_type"> Capture Type </h4>
+<p class="pdesc">Location in Config Files: game_info : capt_type
+<p id="CaptType" class="pdesc">Type: <a href="param_types.html#CaptType"> CaptType </a>
+<p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Capture
 
-<p>Capture from the hole after the final seed sown. 
-<p>When multiple lap sowing, the sowing does not stop for captures. Instead, sowing continues until the final seed is sown into an empty hole. Then the capture test is made on the next hole.
-<h4 id="capttwoout"> Capture Two Out </h4>
-<p class="pdesc">Location in Config Files: game_info : capttwoout
-<p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
-<p class="pdesc">Default value: False
-<p class="pdesc">UI Tab: Capture
-
-<p>There are three flavors of capture two out:
-<p>Single lap game: capture if sow ends in occupied hole, then an empty hole, followed by an occupied hole the contents of this are hole captured.
-<p>Multi lap game but single capture: capture when last hole sown is followed by an empty hole which is then followed by an occupied hole.
-<p>Multi lap game with multiple captures: capture when last hole sown is followed by an empty hole which is then followed by an occupied hole. Continue captures as long as the pattern of empty hole followed by an occupied hole continues.
+<p>Capture type.  Basic capture rules are not applied and are incompatible with cross capture.
+<ol start=0><li class="helptext">
+<b class="enum">NEXT</b>: Capture from the hole after the final seed sown. 
+<p class="helptext"> When multiple lap sowing, the sowing does not stop for captures. Instead, sowing continues until the final seed is sown into an empty hole. Then the capture test is made on the next hole.
+<li class="helptext">
+<b class="enum">TWO_OUT</b>: There are three flavors of capture two out:
+<p class="helptext"> Single lap game: capture if sow ends in occupied hole, then an empty hole, followed by an occupied hole the contents of this are hole captured.
+<p class="helptext"> Multi lap game but single capture: capture when last hole sown is followed by an empty hole which is then followed by an occupied hole.
+<p class="helptext"> Multi lap game with multiple captures: capture when last hole sown is followed by an empty hole which is then followed by an occupied hole. Continue captures as long as the pattern of empty hole followed by an occupied hole continues.
+<li class="helptext">
+<b class="enum">MATCH_OPP</b>: capture when the number of seeds in the final hole sown match the oppocite hole.
+</ol>
 <h4 id="multicapt"> Multiple Captures </h4>
 <p class="pdesc">Location in Config Files: game_info : multicapt
 <p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
@@ -909,11 +909,10 @@ Sow rule of MAX_SOW: maximum number of seeds a hole may contain
     <p class="param"><a href="#capsamedir">capsamedir</a></p>
     <p class="param"><a href="#capt_max">capt_max</a></p>
     <p class="param"><a href="#capt_min">capt_min</a></p>
-    <p class="param"><a href="#capt_next">capt_next</a></p>
     <p class="param"><a href="#capt_on">capt_on</a></p>
     <p class="param"><a href="#capt_rturn">capt_rturn</a></p>
     <p class="param"><a href="#capt_side">capt_side</a></p>
-    <p class="param"><a href="#capttwoout">capttwoout</a></p>
+    <p class="param"><a href="#capt_type">capt_type</a></p>
     <p class="param"><a href="#child_cnt_m">child_cnt_m</a></p>
     <p class="param"><a href="#child_cvt">child_cvt</a></p>
     <p class="param"><a href="#child_locs">child_locs</a></p>
@@ -949,9 +948,9 @@ Sow rule of MAX_SOW: maximum number of seeds a hole may contain
     <p class="param"><a href="#no_sides">no_sides</a></p>
     <p class="param"><a href="#nocaptmoves">nocaptmoves</a></p>
     <p class="param"><a href="#nosinglecapt">nosinglecapt</a></p>
-    <p class="param"><a href="#pickextra">pickextra</a></p>
   </div>
   <div class="column3">
+    <p class="param"><a href="#pickextra">pickextra</a></p>
     <p class="param"><a href="#prescribed">prescribed</a></p>
     <p class="param"><a href="#presowcapt">presowcapt</a></p>
     <p class="param"><a href="#repeat_turn">repeat_turn</a></p>
