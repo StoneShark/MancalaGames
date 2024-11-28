@@ -50,6 +50,8 @@ MODULES += play_mancala.pyw
 MODULES += play.py
 MODULES += round_tally.py
 MODULES += sower.py
+MODULES += sower_decos.py
+MODULES += sower_mlap_decos.py
 
 SOURCES = src/*.py src/*.pyw
 GAMES = GameProps/*.txt

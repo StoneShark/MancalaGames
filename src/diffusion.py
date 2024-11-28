@@ -12,7 +12,7 @@ import end_move_decos as emd
 import game_interface as gi
 import ginfo_rules
 import mancala
-import sower
+import sower_decos as sowd
 
 
 FIVE = 5
@@ -145,7 +145,7 @@ def build_rules():
 
 # %% deco replacements
 
-class DiffusionSower(sower.SowMethodIf):
+class DiffusionSower(sowd.SowMethodIf):
     """Sow counter-clockwise around start hole from the hole that is
     most clockwise."""
 
