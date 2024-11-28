@@ -288,7 +288,7 @@ class MancalaGames(tk.Frame):
                                labelanchor='nw')
         dframe.pack(side=tk.BOTTOM, expand=True, fill=tk.BOTH)
 
-        self.desc = tk.Text(dframe, width=DESC_WIDTH, height=8)
+        self.desc = tk.Text(dframe, width=DESC_WIDTH, height=12)
 
         scroll = tk.Scrollbar(dframe)
         self.desc.configure(yscrollcommand=scroll.set)

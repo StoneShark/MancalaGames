@@ -74,6 +74,10 @@ CONVERT_DICT = {'N': None,
                 'KLEFT': gi.GrandSlam.LEAVE_LEFT,
                 'KRIGHT': gi.GrandSlam.LEAVE_RIGHT,
 
+                'NEXT': gi.CaptType.NEXT,
+                'TWOOUT': gi.CaptType.TWO_OUT,
+                'MOPP': gi.CaptType.MATCH_OPP,
+
                 }
 
 FIELD_NAMES = {}
@@ -213,16 +217,13 @@ class TestCaptTable:
 
     @staticmethod
     def make_game(case):
+        """nosingleseed capt is always true, the first time
+        throught the table (test_capturer) it will never
+        activate because mdata.seeds is set to 3.
+        If is actually tested with test_no_singles."""
 
         child_type = gi.ChildType.NORMAL if case.child_cvt else gi.ChildType.NOCHILD
         child_rule = gi.ChildRule.NOT_1ST_OPP if case.oppside else gi.ChildRule.NONE
-
-        if case.capt_next:
-            capt_type = gi.CaptType.NEXT
-        elif case.capttwoout:
-            capt_type = gi.CaptType.TWO_OUT
-        else:
-            capt_type = gi.CaptType.NONE
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(stores=True,
@@ -233,7 +234,7 @@ class TestCaptTable:
                                 crosscapt=case.xcapt,
                                 capt_min=case.capt_min,
                                 evens=case.evens,
-                                capt_type=capt_type,
+                                capt_type=case.capt_type,
                                 grandslam=case.gslam,
                                 moveunlock=case.moveunlock,
                                 multicapt=case.multicapt,
@@ -262,6 +263,7 @@ class TestCaptTable:
         return request.param
 
 
+    @pytest.mark.usefixtures("logger")
     def test_capturer(self, case):
 
         game = self.make_game(case)
@@ -273,8 +275,11 @@ class TestCaptTable:
         mdata.capt_loc = case.loc
         mdata.board = tuple(case.board)  # not quite right, but ok
         mdata.seeds = 3
+        print(game.deco.capturer)
+        print(game)
 
         game.deco.capturer.do_captures(mdata)
+        print(game)
         assert sum(game.store) + sum(game.board) == game.cts.total_seeds
 
         # TODO rework the test cases to test these individually
@@ -302,9 +307,9 @@ class TestCaptTable:
 
 
     @pytest.mark.parametrize('case',
-                             [case for case in CASES if case.capt_next],
+                             [case for case in CASES if case.capt_type == gi.CaptType.NEXT],
                              ids=['case_' + case.case
-                                  for case in CASES if case.capt_next])
+                                  for case in CASES if case.capt_type == gi.CaptType.NEXT])
     def test_mlap_capt_next(self, case):
 
         child_type = gi.ChildType.NORMAL if case.child_cvt else gi.ChildType.NOCHILD
@@ -1322,6 +1327,20 @@ class TestBadEnums:
 
         object.__setattr__(game_info, 'crosscapt', True)
         object.__setattr__(game_info, 'xcpickown', 12)
+
+        with pytest.raises(NotImplementedError):
+            mancala.Mancala(game_consts, game_info)
+
+
+    def test_bad_capt_type(self):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(capt_on=[4],
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        object.__setattr__(game_info, 'capt_type', 12)
 
         with pytest.raises(NotImplementedError):
             mancala.Mancala(game_consts, game_info)

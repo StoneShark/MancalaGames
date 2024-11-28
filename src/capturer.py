@@ -211,26 +211,52 @@ class CaptMatchOpp(CaptMethodIf):
     """If the number of seeds in the capture hole and the
     hole cross, capture them both."""
 
+    def test_match_opp(self, loc, cross):
+        """Determine if conditions for a match capt are
+        met and not contraindicated at loc and cross"""
+
+        return (self.game.board[loc]
+                and self.game.board[loc] == self.game.board[cross]
+                and self.game.child[loc] is None
+                and self.game.child[cross] is None
+                and self.game.unlocked[loc]
+                and self.game.unlocked[cross])
+
+    def do_match_capt(self, mdata, loc, cross):
+        """Do the actual match opp capt from both sides"""
+
+        self.game.store[self.game.turn] += self.game.board[loc]
+        self.game.store[self.game.turn] += self.game.board[cross]
+        self.game.board[loc] = 0
+        self.game.board[cross] = 0
+        mdata.captured = True
+
     def do_captures(self, mdata):
 
         loc = mdata.capt_loc
         cross = self.game.cts.cross_from_loc(mdata.capt_loc)
 
-        if (self.game.board[loc] == self.game.board[cross]
-                and self.game.child[loc] is None
-                and self.game.child[cross] is None
-                and self.game.unlocked[loc]
-                and self.game.unlocked[cross]):
+        if self.test_match_opp(loc, cross):
+            self.do_match_capt(mdata, loc, cross)
 
-            self.game.store[self.game.turn] += self.game.board[loc]
-            self.game.store[self.game.turn] += self.game.board[cross]
-            self.game.board[loc] = 0
-            self.game.board[cross] = 0
-            mdata.captured = True
+
+class CaptMatchOppMulti(CaptMatchOpp):
+    """If the number of seeds in the capture hole and the
+    hole cross, capture them both."""
+
+    def do_captures(self, mdata):
+
+        loc = mdata.capt_loc
+        cross = self.game.cts.cross_from_loc(loc)
+
+        while self.test_match_opp(loc, cross):
+            self.do_match_capt(mdata, loc, cross)
+
+            loc = self.game.deco.incr.incr(loc, mdata.direct)
+            cross = self.game.cts.cross_from_loc(loc)
 
 
 # %% cross capt decos
-
 
 class CaptCrossVisited(CaptMethodIf):
     """Reject cross capt and repeat turn, if not single seed or
@@ -768,7 +794,8 @@ def _add_child_deco(game, capturer):
 
 def _add_capt_next_deco(game, capturer):
     """Capt two out may be done with or without changing direction
-    or capturing multiples."""
+    or capturing multiples.
+    NOTE: multipcapt value is one less because CaptNext does first capture"""
 
     if game.info.multicapt:
         capturer = CaptMultiple(game, game.info.multicapt - 1, capturer)
@@ -801,16 +828,26 @@ def _add_capt_two_out_deco(game, capturer):
 
 
 def _add_capt_type_deco(game, capturer):
+    """Add the capture type decos along the multicapt decos,
+    if supported by generic decos: CaptMultiple and CaptOppDirMultiple"""
 
     if game.info.capt_type == gi.CaptType.TWO_OUT:
-        # must check before mulitcapt
         capturer = _add_capt_two_out_deco(game, capturer)
 
     elif game.info.capt_type == gi.CaptType.NEXT:
         capturer = _add_capt_next_deco(game, capturer)
 
     elif game.info.capt_type == gi.CaptType.MATCH_OPP:
-        capturer = CaptMatchOpp(game, capturer)
+        if game.info.multicapt:
+            capturer = CaptMatchOppMulti(game, capturer)
+            if not game.info.capsamedir:
+                capturer = CaptOppDirMultiple(game, capturer)
+        else:
+            capturer = CaptMatchOpp(game, capturer)
+
+    else:
+        raise NotImplementedError(
+            f"CaptType {game.info.capt_type} not implemented.")
 
     return capturer
 
@@ -835,7 +872,7 @@ def _add_capt_pick_deco(game, capturer):
 
     else:
         raise NotImplementedError(
-                f"CaptExtraPick {game.info.pickextra} not implemented.")
+            f"CaptExtraPick {game.info.pickextra} not implemented.")
 
     return capturer
 
@@ -849,6 +886,7 @@ def deco_capturer(game):
         capturer = _add_cross_capt_deco(game, capturer)
 
     elif game.info.capt_type:
+        # opp dir and multicapt handled
         capturer = _add_capt_type_deco(game, capturer)
 
     elif game.info.multicapt:

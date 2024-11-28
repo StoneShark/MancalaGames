@@ -92,17 +92,17 @@ STRING_DICTS = {
     'CaptType': lookup_dicts(
         gi.CaptType,
         {'None': gi.CaptType.NONE,
-         'Capture next': gi.CaptType.NEXT,
-         'Capture two out': gi.CaptType.TWO_OUT,
-         'Capture matching': gi.CaptType.MATCH_OPP}),
+         'Next Hole': gi.CaptType.NEXT,
+         'Two Out (across gap)': gi.CaptType.TWO_OUT,
+         'Match Opposite Side': gi.CaptType.MATCH_OPP}),
 
     'ChildLocs': lookup_dicts(
         gi.ChildLocs,
         {'Anywhere': gi.ChildLocs.ANYWHERE,
          'Ends Only': gi.ChildLocs.ENDS_ONLY,
          'Not Ends': gi.ChildLocs.NO_ENDS,
-         'Opposite Ends plus all own Inner': gi.ChildLocs.INV_ENDS_PLUS_MID,
-         'Any end hole plus one': gi.ChildLocs.ENDS_PLUS_ONE_OPP,
+         'Opposite Ends plus all own inner': gi.ChildLocs.INV_ENDS_PLUS_MID,
+         'Any end holes plus next two inner': gi.ChildLocs.ENDS_PLUS_ONE_OPP,
          'No own rightmost': gi.ChildLocs.NO_OWN_RIGHT,
          'No opposite righmost': gi.ChildLocs.NO_OPP_RIGHT,
          }),
@@ -240,6 +240,6 @@ STRING_DICTS = {
          'Alts with 1': gi.StartPattern.ALTS_WITH_1,
          'Clipped Triples': gi.StartPattern.CLIPPEDTRIPLES,
          'Two Empty': gi.StartPattern.TWOEMPTY,
-         'Random (seeds=holes*10 + nstart*2)': gi.StartPattern.RANDOM}),
+         'Random': gi.StartPattern.RANDOM}),
 
 }

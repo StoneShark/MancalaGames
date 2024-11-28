@@ -25,14 +25,15 @@ Capture	xcpickown	Own Seed on Xcapture	game_info _	150	CrossCaptOwn	LEAVE	7	0	"W
 Capture	xc_sown	Must sow opp for xcapt	game_info _	149	bool	False	8	0	"Only allow cross capture if the player has sown onto the opposite side of board. 
 If a player ends on their own side of the board in an empty hole, but did not sow any opposite hole, they get a repeat turn."
 Capture	ocapt_lbl	Other Captures		0	label	0 	9	0	
-Capture	capt_type	Capture Type	game_info _	106	CaptType	NONE	10	0	"Capture type.  Basic capture rules are not applied and are incompatible with cross capture.
-- NEXT: Capture from the hole after the final seed sown. 
+Capture	capt_type	Capture Type	game_info _	106	CaptType	NONE	10	0	"Capture type.
+- NONE: No other capture type.
+- NEXT: Capture from the hole after the final seed sown. Basic capture rules are applied; capture side is checked; and multiple captures in either direction are supported.
   + When multiple lap sowing, the sowing does not stop for captures. Instead, sowing continues until the final seed is sown into an empty hole. Then the capture test is made on the next hole.
-- TWO_OUT: There are three flavors of capture two out:
+- TWO_OUT: Basic capture rules and capture side are ignored. There are three flavors of capture two out:
   + Single lap game: capture if sow ends in occupied hole, then an empty hole, followed by an occupied hole the contents of this are hole captured.
   + Multi lap game but single capture: capture when last hole sown is followed by an empty hole which is then followed by an occupied hole.
-  + Multi lap game with multiple captures: capture when last hole sown is followed by an empty hole which is then followed by an occupied hole. Continue captures as long as the pattern of empty hole followed by an occupied hole continues.
-- MATCH_OPP: capture when the number of seeds in the final hole sown match the oppocite hole."
+  + Multi lap game with multiple captures: capture when last hole sown is followed by an empty hole which is then followed by an occupied hole. Continue captures as long as the pattern of empty hole followed by an occupied hole continues. CAPSAMEDIR must be true. 
+- MATCH_OPP: capture when the number of seeds in the final hole sown match the opposite-side hole. Multiple captures maybe made in either direction. Multilap sowing does stop for captures."
 Capture	mcapt_lbl	Multiple Captures		0	label	0	0	2	
 Capture	multicapt	Multiple Captures	game_info _	124	int	0	1	2	"An int to describe possible multicaptures:
  0 no multiple captures.
@@ -95,7 +96,8 @@ Dynamics	start_pattern	Start Pattern	game_info _	143	StartPattern	ALL_EQUAL	4	0	
 - ALTERNATES: everyother hole is filled with nbr_seeds, no seeds end up opposite eachother. If a player has fewer seeds than their opponent, then they start.
 - ALTS_WITH_1: like Alternates except the starter's 2nd from right hole with nbr_seeds is replaced with one seed.
 - CLIPPEDTRIPLES: pattern of 0 S S (where S is nbr_seeds) is used to fill the holes; if a full cycle of 3 cannot be placed, the holes are left empty. The True and False sides are the same from the player's perspective, e.g. they will look reversed when viewed from one side of the game board.
-- TWOEMPTY: all but the rightmost two holes for each player are filled with is nbr_seeds."
+- TWOEMPTY: all but the rightmost two holes for each player are filled with is nbr_seeds.
+- RANDOM: the total seeds are computed as (10 * holes) + (2 * nbr_start). The seeds are randomly distributed into all holes."
 Dynamics	prescribed	Prescribed Opening Move	game_info _	132	SowPrescribed	NONE	5	0	"The first sow of the game maybe defined by a specific rule. Prescribed openings are different than start patterns because the player may choose the sow start point. SOW_OWN_STORE and SOW_RULE are ignored during the prescribed openings.
 - NONE: there is no prescribed opening move.
 - BASIC_SOWER: the first sow is a very basic pickup the seeds and drop them one at a time in each hole ignoring any other sow parameters. Other sow parameters will be enacted  afterward. This can be used to force the first sow of an MLAPS game to be a single sow. 

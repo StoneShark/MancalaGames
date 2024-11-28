@@ -189,6 +189,8 @@ is included after the parameter sections.
 <b class="enum">CLIPPEDTRIPLES</b>: pattern of 0 S S (where S is nbr_seeds) is used to fill the holes; if a full cycle of 3 cannot be placed, the holes are left empty. The True and False sides are the same from the player's perspective, e.g. they will look reversed when viewed from one side of the game board.
 <li class="helptext">
 <b class="enum">TWOEMPTY</b>: all but the rightmost two holes for each player are filled with is nbr_seeds.
+<li class="helptext">
+<b class="enum">RANDOM</b>: the total seeds are computed as (10 * holes) + (2 * nbr_start). The seeds are randomly distributed into all holes.
 </ol>
 <h4 id="prescribed"> Prescribed Opening Move </h4>
 <p class="pdesc">Location in Config Files: game_info : prescribed
@@ -677,17 +679,19 @@ Sow rule of MAX_SOW: maximum number of seeds a hole may contain
 <p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Capture
 
-<p>Capture type.  Basic capture rules are not applied and are incompatible with cross capture.
+<p>Capture type.
 <ol start=0><li class="helptext">
-<b class="enum">NEXT</b>: Capture from the hole after the final seed sown. 
+<b class="enum">NONE</b>: No other capture type.
+<li class="helptext">
+<b class="enum">NEXT</b>: Capture from the hole after the final seed sown. Basic capture rules are applied; capture side is checked; and multiple captures in either direction are supported.
 <p class="helptext"> When multiple lap sowing, the sowing does not stop for captures. Instead, sowing continues until the final seed is sown into an empty hole. Then the capture test is made on the next hole.
 <li class="helptext">
-<b class="enum">TWO_OUT</b>: There are three flavors of capture two out:
+<b class="enum">TWO_OUT</b>: Basic capture rules and capture side are ignored. There are three flavors of capture two out:
 <p class="helptext"> Single lap game: capture if sow ends in occupied hole, then an empty hole, followed by an occupied hole the contents of this are hole captured.
 <p class="helptext"> Multi lap game but single capture: capture when last hole sown is followed by an empty hole which is then followed by an occupied hole.
-<p class="helptext"> Multi lap game with multiple captures: capture when last hole sown is followed by an empty hole which is then followed by an occupied hole. Continue captures as long as the pattern of empty hole followed by an occupied hole continues.
+<p class="helptext"> Multi lap game with multiple captures: capture when last hole sown is followed by an empty hole which is then followed by an occupied hole. Continue captures as long as the pattern of empty hole followed by an occupied hole continues. <a href="game_params.html#capsamedir">CAPSAMEDIR</a> must be true. 
 <li class="helptext">
-<b class="enum">MATCH_OPP</b>: capture when the number of seeds in the final hole sown match the oppocite hole.
+<b class="enum">MATCH_OPP</b>: capture when the number of seeds in the final hole sown match the opposite-side hole. Multiple captures maybe made in either direction. Multilap sowing does stop for captures.
 </ol>
 <h4 id="multicapt"> Multiple Captures </h4>
 <p class="pdesc">Location in Config Files: game_info : multicapt

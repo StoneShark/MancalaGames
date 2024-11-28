@@ -652,6 +652,18 @@ class TestMlap:
                                 rules=mancala.Mancala.rules)
         return mancala.Mancala(game_consts, game_info)
 
+    @pytest.fixture
+    def moppgame(self):
+        """match opposite capture -- should stop mlapping"""
+        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+        game_info = gi.GameInfo(stores=True,
+                                mlaps=LapSower.LAPPER,
+                                sow_direct=Direct.CCW,
+                                capt_type=gi.CaptType.MATCH_OPP,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        return mancala.Mancala(game_consts, game_info)
+
     MLCASES = [
         # 0: no lapping
         ('game',
@@ -699,7 +711,30 @@ class TestMlap:
                               [1, 3, 0]),
          4, utils.build_board([1, 1, 2],
                               [0, 1, 0])),
+
+        # 7:  laps, stop on single seed, capt will occur
+        ('moppgame',
+         1, utils.build_board([0, 1, 0],
+                              [1, 3, 0]),
+         4, utils.build_board([1, 1, 2],
+                              [0, 1, 0])),
+
+        # 8:  laps, stop on one
+        ('moppgame',
+         1, utils.build_board([1, 1, 0],
+                              [0, 3, 0]),
+         0, utils.build_board([2, 0, 1],
+                              [1, 0, 1])),
+
+        # 7:  laps, stop for simul capt
+        ('moppgame',
+         1, utils.build_board([1, 0, 1],
+                              [2, 2, 1]),
+         3, utils.build_board([1, 0, 2],
+                              [2, 0, 2])),
+
     ]
+    # @pytest.mark.usefixtures("logger")
     @pytest.mark.parametrize('game_fixt, start_pos, board, eloc, eboard',
                              MLCASES)
     def test_mlap_sower(self, request, game_fixt,
@@ -709,14 +744,55 @@ class TestMlap:
 
         game.board = board
         game.turn = False
+        # print(game.deco.sower)
 
         mdata = MoveData(game, start_pos)
         mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(start_pos)
         mdata.direct = game.info.sow_direct
         game.deco.sower.sow_seeds(mdata)
+        # print(mdata)
 
         assert mdata.capt_loc == eloc
         assert game.board == eboard
+        assert game.store == [0, 0]
+
+
+    # @pytest.mark.usefixtures("logger")
+    def test_mlap_mopp_inhibit(self):
+        """This is case 7 above that stopped for simul capture:
+                # 7:  laps, stop for simul capt
+                ('moppgame',
+                 1, utils.build_board([1, 0, 1],
+                                      [2, 2, 1]),
+
+        But it doesn't stop for the capture because they are inhibited
+        on the first turn."""
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+        game_info = gi.GameInfo(stores=True,
+                                mlaps=LapSower.LAPPER,
+                                sow_direct=Direct.CCW,
+                                nocaptmoves=1,
+                                capt_type=gi.CaptType.MATCH_OPP,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        start_pos = 1
+        game.board = utils.build_board([1, 0, 1],
+                                       [2, 2, 1])
+        game.turn = False
+        # print(game.deco.sower)
+
+        mdata = MoveData(game, start_pos)
+        mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(start_pos)
+        mdata.direct = game.info.sow_direct
+        game.deco.sower.sow_seeds(mdata)
+        # print(mdata)
+
+        assert mdata.capt_loc == 1
+        assert game.board == utils.build_board([0, 1, 0],
+                                               [3, 1, 2])
         assert game.store == [0, 0]
 
 
@@ -1740,8 +1816,6 @@ class TestBadEnums:
 
         with pytest.raises(NotImplementedError):
             mancala.Mancala(game_consts, game_info)
-
-
 
 
 

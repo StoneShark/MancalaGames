@@ -88,7 +88,7 @@ def test_rules():
     assert fp.GamachaPattern.size_ok(3)
 
     assert fp.AlternatesPattern.size_ok(2)
-    assert fp.AlternatesPattern.size_ok(2)
+    assert fp.AlternatesPattern.size_ok(3)
 
     assert not fp.AltsWithOnePattern.size_ok(2)
     assert fp.AltsWithOnePattern.size_ok(3)
@@ -99,3 +99,53 @@ def test_rules():
     assert not fp.TwoEmptyPattern.size_ok(2)
     assert not fp.TwoEmptyPattern.size_ok(3)
     assert fp.TwoEmptyPattern.size_ok(4)
+
+    assert fp.RandomPattern.size_ok(2)
+    assert fp.RandomPattern.size_ok(3)
+
+
+
+class TestRandom:
+
+    @pytest.fixture
+    def game(self, request):
+
+        (holes, start) = request.param
+        game_consts = gc.GameConsts(nbr_start=start, holes=holes)
+        game_info = gi.GameInfo(start_pattern=gi.StartPattern.RANDOM,
+                                evens=True,
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+
+    @pytest.mark.parametrize('game, etot',
+                             [((2, 4), 28),
+                              ((2, 8), 36),
+                              ((6, 4), 68),
+                              ((6, 12), 84),
+                              ], indirect=['game'])
+    def test_totals(self, game, etot):
+
+        assert game.cts.total_seeds == etot
+
+
+    @pytest.mark.no_seed
+    @pytest.mark.parametrize('game',
+                             [(2, 4),
+                              (2, 8),
+                              (6, 4),
+                              (6, 12),
+                              ], indirect=['game'])
+    def test_patterns(self, game):
+        """Fill the game pattern a bunch of times, confirming
+        the total number of seeds and that they are all
+        0 or positive."""
+
+        for _ in range(50):
+            fp.PCLASSES[game.info.start_pattern].fill_seeds(game)
+
+            assert sum(game.board) == game.cts.total_seeds
+            assert all(s >= 0 for s in game.board)

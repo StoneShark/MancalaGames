@@ -105,9 +105,9 @@ Detailed descriptions of the behavior of each value are in the
 <table>
 <tr><th style="width:10%">Value</th><th style="width:40%">Id</th><th style="width:40%">UI string</th></tr>
 <tr><td>0</td><td>NONE<td>None</td></tr>
-<tr><td>1</td><td>NEXT<td>Capture next</td></tr>
-<tr><td>2</td><td>TWO_OUT<td>Capture two out</td></tr>
-<tr><td>3</td><td>MATCH_OPP<td>Capture matching</td></tr>
+<tr><td>1</td><td>NEXT<td>Next Hole</td></tr>
+<tr><td>2</td><td>TWO_OUT<td>Two Out (across gap)</td></tr>
+<tr><td>3</td><td>MATCH_OPP<td>Match Opposite Side</td></tr>
 </table>
 <h4 id="ChildLocs">ChildLocs (<a href="game_params.html#child_locs">usage</a>)</h4>
 <table>
@@ -115,8 +115,8 @@ Detailed descriptions of the behavior of each value are in the
 <tr><td>0</td><td>ANYWHERE<td>Anywhere</td></tr>
 <tr><td>1</td><td>ENDS_ONLY<td>Ends Only</td></tr>
 <tr><td>2</td><td>NO_ENDS<td>Not Ends</td></tr>
-<tr><td>3</td><td>INV_ENDS_PLUS_MID<td>Opposite Ends plus all own Inner</td></tr>
-<tr><td>4</td><td>ENDS_PLUS_ONE_OPP<td>Any end hole plus one</td></tr>
+<tr><td>3</td><td>INV_ENDS_PLUS_MID<td>Opposite Ends plus all own inner</td></tr>
+<tr><td>4</td><td>ENDS_PLUS_ONE_OPP<td>Any end holes plus next two inner</td></tr>
 <tr><td>5</td><td>NO_OWN_RIGHT<td>No own rightmost</td></tr>
 <tr><td>6</td><td>NO_OPP_RIGHT<td>No opposite righmost</td></tr>
 </table>
@@ -254,7 +254,7 @@ Detailed descriptions of the behavior of each value are in the
 <tr><td>3</td><td>ALTS_WITH_1<td>Alts with 1</td></tr>
 <tr><td>4</td><td>CLIPPEDTRIPLES<td>Clipped Triples</td></tr>
 <tr><td>5</td><td>TWOEMPTY<td>Two Empty</td></tr>
-<tr><td>6</td><td>RANDOM<td>Random (seeds=holes*10 + nstart*2)</td></tr>
+<tr><td>6</td><td>RANDOM<td>Random</td></tr>
 </table>
 <h4 id="EndGameSeeds">EndGameSeeds (<a href="game_params.html#unclaimed">usage</a>)</h4>
 <table>
