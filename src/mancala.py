@@ -493,8 +493,10 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         rnd_reason = ("not used",
                       "by collecting at least half the seeds.",
                       ". Round ended because there are no moves.",
-                      f". Round ended because there were <= {self.cts.nbr_start} seeds left",
-                      f". Round ended because There were <= {2 * self.cts.nbr_start} seeds left",
+                      ". Round ended because there were <= "
+                          + f"{self.cts.nbr_start} seeds left",
+                      ". Round ended because There were <= "
+                          + f"{2 * self.cts.nbr_start} seeds left",
                       )
 
         rtext = 'the game'
@@ -610,7 +612,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         7. swap the turn and return None (game continues)
 
         On the assert, sum the stores even if they are not 'in play'
-        (for Deka)."""
+        (e.g. for Deka)."""
         self.mcount += 1
         assert sum(self.store) + sum(self.board) == self.cts.total_seeds, \
             'seed count error before move'
