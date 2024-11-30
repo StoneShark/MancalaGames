@@ -396,37 +396,6 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         return strings
 
 
-    def get_game_info(self):
-        """Return the GameInfo."""
-        return self.info
-
-
-    def get_board(self, loc):
-        """Return the seeds at location."""
-        return self.board[loc]
-
-
-    def set_board(self, loc, seeds):
-        """Set the seeds at location."""
-        self.board[loc] = seeds
-
-
-    def get_store(self, row):
-        """Return the number of seeds in the store for side.
-        row : 0 for top row, 1 for bottom  (opposite of player)"""
-        return self.store[(row + 1) % 2]
-
-
-    def set_store(self, row, seeds):
-        """Set the store seeds of owner."""
-        self.store[(row + 1) % 2] = seeds
-
-
-    def set_blocked(self, loc, blocked):
-        """Set the blocked status location."""
-        self.blocked[loc] = blocked
-
-
     def new_game(self, win_cond=None, new_round_ok=False):
         """Delegate to the new_game decorators.
         Return False if it a new round was started.

@@ -9,6 +9,7 @@ Created on Sun Aug 13 10:06:37 2023
 # TODO behaviors is using interfaces that are not in GameInterface
 
 import abc
+import enum
 import textwrap
 
 import tkinter as tk
@@ -19,17 +20,27 @@ from game_logger import game_log
 # %%  constants
 
 SYSTEM_COLOR = 'SystemButtonFace'
-PLAY_INACTIVE_COLOR = 'grey80'
-TURN_COLOR = 'lightblue'
+INACTIVE_COLOR = 'grey60'
 CHOOSE_COLOR = 'pink2'
-SEED_COLOR = 'light yellow'
+SEED_COLOR = 'goldenrod'
 MOVE_COLOR = 'sandy brown'
+
+TURN_COLOR = 'LightBlue2'
+TURN_DARK_COLOR = 'LightBlue4'
 
 YES_STR = 'yes'
 NO_STR = 'no'
 
 FILL_POPUP = 50
 FILL_HINTS = 65
+
+
+class BtnState(enum.Enum):
+    """The three states of the button holes."""
+
+    ACTIVE = enum.auto()
+    LOOK_ACTIVE = enum.auto()
+    DISABLE = enum.auto
 
 
 # %%  global data for mover
@@ -234,12 +245,12 @@ class BehaviorIf(abc.ABC):
     def __init__(self, button):
         self.btn = button
 
-    def refresh_nonplay(self, disable=False, bg_color=TURN_COLOR):
+    def refresh_nonplay(self, bstate, bg_color=TURN_COLOR):
         """Make the UI match the behavior and game data for the non-play
-		behaviors."""
+        behaviors."""
 
-        if disable:
-            self.btn['background'] = 'SystemButtonFace'
+        if bstate == BtnState.DISABLE:
+            self.btn['background'] = SYSTEM_COLOR
             self.btn['state'] = tk.DISABLED
         else:
             self.btn['background'] = bg_color
@@ -280,8 +291,8 @@ class BehaviorIf(abc.ABC):
         return True
 
     @abc.abstractmethod
-    def set_props(self, props, disable, cactive):
-        """Set text, props and states of the hole."""
+    def set_props(self, props, bstate):
+        """Set props and state of the hole."""
 
     @abc.abstractmethod
     def left_click(self):
@@ -332,15 +343,11 @@ class PlayButtonBehavior(BehaviorIf):
         return True
 
 
-    def set_props(self, props, disable, cactive):
-        """Set the number of seeds and properties, then refresh the hole.
-
-        active_color: boolean - color as though active (even if it's not)
-        disable: boolean - should the user be able to select the button
-        (always no for AI)"""
+    def set_props(self, props, bstate):
+        """Set props and state of the hole."""
 
         self.btn.props = props
-        self._refresh(disable, cactive)
+        self._refresh(bstate)
 
 
     def left_click(self):
@@ -357,9 +364,8 @@ class PlayButtonBehavior(BehaviorIf):
         self.btn.game_ui.move(self.btn.right_move)
 
 
-    def _refresh(self, disable=False, cactive=True):
-        """Set text, props and states."""
-        # pylint: disable=too-many-branches
+    def _set_btn_text(self):
+        """Set the button text to match the props."""
 
         if self.btn.props.blocked:
             self.btn['text'] = 'x'
@@ -381,20 +387,40 @@ class PlayButtonBehavior(BehaviorIf):
             else:
                 self.btn['text'] = otext + ''
 
+
+    def _set_btn_ui_props(self, bstate):
+        """Set the UI properties of the button"""
+
         if not self.btn.props.unlocked:
             self.btn['relief'] = 'ridge'
         else:
             self.btn['relief'] = 'raised'
 
-        if cactive:
-            self.btn['background'] = 'SystemButtonFace'
-        else:
-            self.btn['background'] = 'grey80'
-
-        if disable:
-            self.btn['state'] = tk.DISABLED
-        else:
+        if bstate == BtnState.ACTIVE:
+            self.btn['background'] = TURN_COLOR
             self.btn['state'] = tk.NORMAL
+
+        elif bstate == BtnState.LOOK_ACTIVE:
+            self.btn['background'] = TURN_COLOR
+            self.btn['state'] = tk.DISABLED
+
+        else:
+            game = self.btn.game_ui.game
+            if (self.btn.props.owner == game.turn
+                or (not game.info.no_sides
+                    and self.btn.props.owner is None
+                    and self.btn.row != game.turn)):
+                self.btn['background'] = TURN_DARK_COLOR
+            else:
+                self.btn['background'] = INACTIVE_COLOR
+            self.btn['state'] = tk.DISABLED
+
+
+    def _refresh(self, bstate=BtnState.ACTIVE):
+        """Set text and ui props."""
+
+        self._set_btn_text()
+        self._set_btn_ui_props(bstate)
 
 
 class RndChooseButtonBehavior(BehaviorIf):
@@ -441,10 +467,10 @@ class RndChooseButtonBehavior(BehaviorIf):
         return True
 
 
-    def set_props(self, props, disable, _2):
-        """Set text, props and states of the hole."""
+    def set_props(self, props, bstate):
+        """Set props and state of the hole."""
         self.btn.props = props
-        self._refresh(disable)
+        self._refresh(bstate)
 
 
     def left_click(self):
@@ -460,8 +486,8 @@ class RndChooseButtonBehavior(BehaviorIf):
             return
 
         game = self.btn.game_ui.game
-        game.set_board(self.btn.loc, Hold.nbr)
-        game.set_blocked(self.btn.loc, False)
+        game.board[self.btn.loc] = Hold.nbr
+        game.blocked[self.btn.loc] = False
 
         self.btn.props.blocked = False
         self.btn.props.seeds = Hold.nbr
@@ -485,8 +511,8 @@ class RndChooseButtonBehavior(BehaviorIf):
         Hold.set_hold(self.btn.props.seeds, self.btn.row)
 
         game = self.btn.game_ui.game
-        game.set_board(self.btn.loc, 0)
-        game.set_blocked(self.btn.loc, True)
+        game.board[self.btn.loc] = 0
+        game.blocked[self.btn.loc] = True
 
         self.btn.props.blocked = True
         self.btn.props.seeds = 0
@@ -495,9 +521,9 @@ class RndChooseButtonBehavior(BehaviorIf):
         self.btn.frame.config(cursor='circle')
 
 
-    def _refresh(self, disable=False):
+    def _refresh(self, bstate=BtnState.ACTIVE):
         """Make the UI match the behavior and game data."""
-        self.refresh_nonplay(disable, CHOOSE_COLOR)
+        self.refresh_nonplay(bstate, CHOOSE_COLOR)
 
 
 
@@ -587,12 +613,12 @@ class RndMoveSeedsButtonBehavior(BehaviorIf):
         return True
 
 
-    def set_props(self, props, disable, _2):
+    def set_props(self, props, bstate):
         """Set text, props and states of the hole.
         Because we set turn to the loser, disable will be set
         True for the loser."""
         self.btn.props = props
-        self._refresh(disable)
+        self._refresh(bstate)
 
 
     def left_click(self):
@@ -607,9 +633,9 @@ class RndMoveSeedsButtonBehavior(BehaviorIf):
             return
 
         game = self.btn.game_ui.game
-        seeds = game.get_board(self.btn.loc) + Hold.nbr
+        seeds = game.board[self.btn.loc] + Hold.nbr
         self.btn.props.seeds = seeds
-        game.set_board(self.btn.loc, seeds)
+        game.board[self.btn.loc]  = seeds
         self._refresh()
 
         Hold.empty()
@@ -638,17 +664,17 @@ class RndMoveSeedsButtonBehavior(BehaviorIf):
         seeds = Hold.query_nbr_seeds(self.btn.row, max_seeds)
 
         if seeds:
-            seeds = game.get_board(self.btn.loc) - seeds
+            seeds = game.board[self.btn.loc] - seeds
             self.btn.props.seeds = seeds
-            game.set_board(self.btn.loc, seeds)
+            game.board[self.btn.loc] = seeds
             self._refresh()
 
             self.btn.game_ui.config(cursor='circle')
 
 
-    def _refresh(self, disable=False):
+    def _refresh(self, bstate=BtnState.ACTIVE):
         """Make the UI match the behavior and game data."""
-        self.refresh_nonplay(disable, SEED_COLOR)
+        self.refresh_nonplay(bstate, SEED_COLOR)
 
 
 class MoveSeedsButtonBehavior(BehaviorIf):
@@ -716,10 +742,10 @@ class MoveSeedsButtonBehavior(BehaviorIf):
         return True
 
 
-    def set_props(self, props, disable, _2):
+    def set_props(self, props, bstate):
         """Set text, props and states of the hole."""
         self.btn.props = props
-        self._refresh(disable)
+        self._refresh(bstate)
 
 
     def left_click(self):
@@ -734,9 +760,9 @@ class MoveSeedsButtonBehavior(BehaviorIf):
             return
 
         game = self.btn.game_ui.game
-        seeds = game.get_board(self.btn.loc) + Hold.nbr
+        seeds = game.board[self.btn.loc] + Hold.nbr
 
-        game.set_board(self.btn.loc, seeds)
+        game.board[self.btn.loc] = seeds
         self.btn.props.seeds = seeds
         self._refresh()
 
@@ -759,18 +785,18 @@ class MoveSeedsButtonBehavior(BehaviorIf):
 
         if seeds:
             game = self.btn.game_ui.game
-            seeds = game.get_board(self.btn.loc) - seeds
+            seeds = game.board[self.btn.loc] - seeds
 
-            game.set_board(self.btn.loc, seeds)
+            game.board[self.btn.loc] = seeds
             self.btn.props.seeds = seeds
             self._refresh()
 
             self.btn.frame.config(cursor='circle')
 
 
-    def _refresh(self, disable=False):
+    def _refresh(self, bstate=BtnState.ACTIVE):
         """Make the UI match the behavior and game data."""
-        self.refresh_nonplay(disable, MOVE_COLOR)
+        self.refresh_nonplay(bstate, MOVE_COLOR)
 
 
 class SelectOwnedHoles(BehaviorIf):
@@ -797,7 +823,8 @@ class SelectOwnedHoles(BehaviorIf):
                   The winner may choose which holes on the opposite
                   side that they would like to own. The number of
                   holes owned by each player may not be changed.
-                  Do you wish to change any hole ownership?"""), width=FILL_POPUP),
+                  Do you wish to change any hole ownership?"""),
+                  width=FILL_POPUP),
             parent=game_ui)
 
         if ans != YES_STR:
@@ -825,10 +852,10 @@ class SelectOwnedHoles(BehaviorIf):
         return True
 
 
-    def set_props(self, props, disable, _2):
+    def set_props(self, props, bstate):
         """Set text, props and states of the hole."""
         self.btn.props = props
-        self._refresh(disable)
+        self._refresh(bstate)
 
 
     def left_click(self):
@@ -848,9 +875,33 @@ class SelectOwnedHoles(BehaviorIf):
         """Right click does nothing in this mode."""
 
 
-    def _refresh(self, disable=False):
+    def _refresh(self, bstate=BtnState.ACTIVE):
         """Make the UI match the behavior and game data."""
-        self.refresh_nonplay(disable, MOVE_COLOR)
+
+        if bstate == BtnState.DISABLE:
+            self.btn['background'] = SYSTEM_COLOR
+            self.btn['state'] = tk.DISABLED
+        else:
+            game = self.btn.game_ui.game
+            if self.btn.props.owner == game.turn:
+                self.btn['background'] = MOVE_COLOR
+            else:
+                self.btn['background'] = SYSTEM_COLOR
+            self.btn['state'] = tk.NORMAL
+
+        otext = ''
+        if self.btn.props.owner is True:
+            otext += '\u2191 '
+        elif self.btn.props.owner is False:
+            otext += '\u2193 '
+
+        if self.btn.props.blocked:
+            self.btn['text'] = 'x'
+
+        elif self.btn.props.seeds:
+            self.btn['text'] = otext + str(self.btn.props.seeds)
+        else:
+            self.btn['text'] = ''
 
 
 # %% store behaviors
@@ -871,8 +922,10 @@ class NoStoreBehavior(StoreBehaviorIf):
 
         self.str['background'] = TURN_COLOR if highlight else SYSTEM_COLOR
 
+
     def left_click(self):
         """No interaction, button disabled."""
+
 
     def right_click(self):
         """No interaction."""
@@ -908,9 +961,9 @@ class RndMoveStoreBehavior(StoreBehaviorIf):
             return
 
         game = self.str.game_ui.game
-        seeds = game.get_store(not self.str.owner) + Hold.nbr
+        seeds = game.store[not self.str.owner] + Hold.nbr
         self.set_store(seeds, True)
-        game.set_store(not self.str.owner, seeds)
+        game.store[not self.str.owner] = seeds
 
         self.str.game_ui.config(cursor='')
         Hold.empty()
@@ -921,7 +974,7 @@ class RndMoveStoreBehavior(StoreBehaviorIf):
         the user entered a valid number."""
 
         game = self.str.game_ui.game
-        seeds = game.get_store(not self.str.owner)
+        seeds = game.store[not self.str.owner]
 
         if (game.turn == self.str.owner
                 and Hold.query_nbr_seeds(not self.str.owner, seeds)):
@@ -929,6 +982,6 @@ class RndMoveStoreBehavior(StoreBehaviorIf):
             game = self.str.game_ui.game
             seeds -= Hold.nbr
             self.set_store(seeds, True)
-            game.set_store(not self.str.owner, seeds)
+            game.store[not self.str.owner] = seeds
 
             self.str.game_ui.config(cursor='circle')

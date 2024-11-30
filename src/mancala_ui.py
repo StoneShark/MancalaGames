@@ -19,6 +19,7 @@ import webbrowser
 import ai_player
 import aspect_frame
 import cfg_keys as ckey
+import behaviors
 import btn_behaviors as btnb
 import game_interface as gi
 import game_tally as gt
@@ -61,7 +62,7 @@ class MancalaUI(tk.Frame):
         game_log.new()
         game_log.turn(0, 'Start Game', game)
 
-        self.info = self.game.get_game_info()
+        self.info = self.game.info
 
         if root_ui:
             self.master = tk.Toplevel(root_ui)
@@ -149,7 +150,7 @@ class MancalaUI(tk.Frame):
 
         if self.info.stores:
             b_frame = aspect_frame.AspectFrames(board_frame,
-                                                padx=5, pady=5,
+
                                                 aratio=0.8)
             b_frame.pad.grid(row=0, column=0, sticky="nsew")
 
@@ -158,7 +159,7 @@ class MancalaUI(tk.Frame):
             b_frame.row_col_config()
 
         land_frame = aspect_frame.AspectFrames(board_frame,
-                                               padx=5, pady=5,
+
                                                aratio=self.game.cts.holes / 2)
         land_frame.pad.grid(row=0, column=1, sticky="nsew")
 
@@ -174,7 +175,7 @@ class MancalaUI(tk.Frame):
 
         if self.info.stores:
             a_frame = aspect_frame.AspectFrames(board_frame,
-                                                padx=5, pady=5,
+
                                                 aratio=0.8)
             a_frame.pad.grid(row=0, column=2, sticky="nsew")
 
@@ -482,13 +483,24 @@ class MancalaUI(tk.Frame):
         game_log.save(self.game.params_str())
 
 
-    def _refresh(self):
-        """Make UI match mancala game.
+    @staticmethod
+    def _button_state(aidx, ai_turn, ptest, actives):
+        """Return one of the three button states."""
 
-        If the ai is active and it's the ai's turn (True), disable all holes.
-        Additionally, disable holes that:
-            1. are not the current players hole
-            2. are not available for play (e.g. no allowable move)"""
+        if ai_turn and ptest and actives[aidx]:
+            btnstate = behaviors.BtnState.LOOK_ACTIVE
+
+        elif ptest and actives[aidx]:
+            btnstate = behaviors.BtnState.ACTIVE
+
+        else:
+            btnstate = behaviors.BtnState.DISABLE
+
+        return btnstate
+
+
+    def _refresh(self):
+        """Make UI match mancala game."""
 
         turn = self.game.get_turn()
         actives = self.game.get_allowable_holes()
@@ -507,20 +519,22 @@ class MancalaUI(tk.Frame):
             for pos in range(self.game.cts.holes):
 
                 if self.mode != btnb.Behavior.GAMEPLAY:
-                    cactive = True
-                    disable = not player
+                    if player:
+                        btnstate = behaviors.BtnState.ACTIVE
+                    else:
+                        btnstate = behaviors.BtnState.DISABLE
 
                 elif self.game.info.mlength == 3:
-                    loc = self.game.cts.xlate_pos_loc(row, pos)
-                    cactive = actives[loc]
-                    disable = not actives[loc]
+                    aidx = self.game.cts.xlate_pos_loc(row, pos)
+                    btnstate = self._button_state(
+                                        aidx, ai_turn, True, actives)
                 else:
-                    cactive = player and actives[pos]
-                    disable = ai_turn or not cactive
+                    btnstate = self._button_state(
+                                        pos, ai_turn, player, actives)
 
                 self.disp[row][pos].set_props(
                     self.game.get_hole_props(row, pos),
-                    disable, cactive)
+                    btnstate)
 
 
     def _start_it(self):

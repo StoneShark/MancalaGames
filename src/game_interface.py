@@ -465,42 +465,9 @@ class MoveTpl(tuple):
 
 class GameInterface(abc.ABC):
     """A mixin of interfaces required by the UI for a mancala game.
-    The mancala_ui calls these -- the only interface between the game
-    logic and the UI."""
+    The mancala_ui calls these.
 
-    @abc.abstractmethod
-    def get_game_info(self):
-        """Return: GameInfo -- describe the game"""
-
-    @abc.abstractmethod
-    def get_turn(self):
-        """Return: True if top player's turn,
-        False if bottom player's turn"""
-
-    @abc.abstractmethod
-    def get_board(self, loc):
-        """Return the seeds at location.
-        Interface for button behavior."""
-
-    @abc.abstractmethod
-    def set_board(self, loc, seeds):
-        """Set the seeds at location..
-        Interface for button behavior."""
-
-    @abc.abstractmethod
-    def get_store(self, row):
-        """Return the number of seeds in the store for side.
-        row : 0 for top row, 1 for bottom  (opposite of player)"""
-
-    @abc.abstractmethod
-    def set_store(self, row, seeds):
-        """Set the store seeds of owner.
-        row : 0 for top row, 1 for bottom  (opposite of player)"""
-
-    @abc.abstractmethod
-    def set_blocked(self, loc, blocked):
-        """Set the blocked status location.
-        Interface for button behavior."""
+    There are also direct read/assignments to Mancala attributes."""
 
     @abc.abstractmethod
     def get_hole_props(self, row, pos):

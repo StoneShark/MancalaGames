@@ -90,6 +90,7 @@ class HoleButton(tk.Button):
                            command=self.left_click)
         self.bind('<Button-3>', self.right_click)
 
+
     def set_behavior(self, behavior):
         """Set the behavior of the button."""
 
@@ -99,13 +100,16 @@ class HoleButton(tk.Button):
         behaviors.Hold.empty()
         behaviors.Owners.empty()
 
-    def set_props(self, props, disable, cactive):
+
+    def set_props(self, props, bstate):
         """Pass along set_props call."""
-        self.behavior.set_props(props, disable, cactive)
+        self.behavior.set_props(props, bstate)
+
 
     def left_click(self):
         """Pass along left_click call."""
         self.behavior.left_click()
+
 
     def right_click(self, _=None):
         """Pass along right_click call.
@@ -130,19 +134,23 @@ class StoreButton(tk.Button):
                            command=self.left_click)
         self.bind('<Button-3>', self.right_click)
 
+
     def set_behavior(self, behavior):
         """Set the behavior of the store."""
         self.config(cursor='')
         self.game_ui.config(cursor='')
         self.behavior = BEHAVIOR_CLASS[behavior].store(self)
 
+
     def set_store(self, seeds, turn):
         """Set text, props and states of the store."""
         self.behavior.set_store(seeds, turn)
 
+
     def left_click(self):
         """pass along left_click call."""
         self.behavior.left_click()
+
 
     def right_click(self, _=None):
         """pass along right_click call."""

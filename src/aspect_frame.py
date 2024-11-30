@@ -40,7 +40,7 @@ class AspectFrames:
         self.aspect_ratio = aratio
 
         self.pad = tk.Frame(parent, **kwargs)
-        self.content = tk.Frame(self.pad, padx=2, pady=2)
+        self.content = tk.Frame(self.pad)
         self.content.pack(expand=True, fill='both')
 
         self.pad.bind("<Configure>", self._enforce_aspect_ratio)
@@ -56,14 +56,14 @@ class AspectFrames:
         Center the content frame in the pad frame."""
 
         desired_width = event.width
-        desired_height = int(event.width / self.aspect_ratio)
+        desired_height = int(event.width / self.aspect_ratio + 0.5)
 
         if desired_height > event.height:
             desired_height = event.height
-            desired_width = int(event.height * self.aspect_ratio)
+            desired_width = int(event.height * self.aspect_ratio + 0.5)
 
-        xloc = (event.width - desired_width) // 2 - 2
-        yloc = (event.height - desired_height) // 2 - 2
+        xloc = (event.width - desired_width) // 2
+        yloc = (event.height - desired_height) // 2
         self.content.place(in_=self.pad, x=xloc, y=yloc,
                           width=desired_width, height=desired_height)
 
