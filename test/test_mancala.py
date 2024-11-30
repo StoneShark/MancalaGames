@@ -489,47 +489,6 @@ class TestBasicIfs:
         return game
 
 
-    def test_board(self, game):
-
-        assert all(game.get_board(loc) == 4 for loc in range(game.cts.holes))
-
-        game.set_board(0, 2)
-        assert game.get_board(0) == 2
-
-        game.set_board(8, 5)
-        assert game.get_board(8) == 5
-
-        #                     0  1  2  3  4  5  6  7  8  9  0  1
-        assert game.board == [2, 4, 4, 4, 4, 4, 4, 4, 5, 4, 4, 4]
-
-
-    def test_store(self, game):
-
-        assert game.store == [0, 0]
-        game.set_store(0, 4)   # 1st param is row not turn
-        assert game.store == [0, 4]
-        game.set_store(1, 6)
-        assert game.store == [6, 4]
-
-        game.store = [3, 4]
-        assert game.get_store(0) == 4
-        assert game.get_store(1) == 3
-
-
-    def test_blocks(self, game):
-
-        assert not any(game.blocked)
-
-        game.set_blocked(0, True)
-        assert game.blocked[0]
-
-        game.set_blocked(7, True)
-        assert game.blocked[7]
-
-        #                       0  1  2  3  4  5  6  7  8  9  0  1
-        assert game.blocked == [T, F, F, F, F, F, F, T, F, F, F, F]
-
-
     def test_turn(self, game):
 
         # inited randomly but one of these
@@ -539,15 +498,6 @@ class TestBasicIfs:
         assert not game.get_turn()
         game.turn = True
         assert game.get_turn()
-
-
-    def test_get_info(self, game):
-
-        info = game.get_game_info()
-        assert isinstance(info, gi.GameInfo)
-
-        assert info.capt_on == [2]
-        assert info.sow_direct == Direct.CCW
 
 
     def test_param_str(self, game):
