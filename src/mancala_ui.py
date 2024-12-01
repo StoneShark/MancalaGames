@@ -513,7 +513,7 @@ class MancalaUI(tk.Frame):
                 if self.info.goal in (gi.Goal.DEPRIVE,  gi.Goal.CLEAR):
                     seeds = 0
                 else:
-                    seeds = self.game.get_store(row)
+                    seeds = self.game.store[not row]
                 self.stores[row].set_store(seeds, player)
 
             for pos in range(self.game.cts.holes):

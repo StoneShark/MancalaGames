@@ -635,7 +635,7 @@ class RndMoveSeedsButtonBehavior(BehaviorIf):
         game = self.btn.game_ui.game
         seeds = game.board[self.btn.loc] + Hold.nbr
         self.btn.props.seeds = seeds
-        game.board[self.btn.loc]  = seeds
+        game.board[self.btn.loc] = seeds
         self._refresh()
 
         Hold.empty()
@@ -961,9 +961,9 @@ class RndMoveStoreBehavior(StoreBehaviorIf):
             return
 
         game = self.str.game_ui.game
-        seeds = game.store[not self.str.owner] + Hold.nbr
+        seeds = game.store[self.str.owner] + Hold.nbr
         self.set_store(seeds, True)
-        game.store[not self.str.owner] = seeds
+        game.store[self.str.owner] = seeds
 
         self.str.game_ui.config(cursor='')
         Hold.empty()
@@ -974,7 +974,7 @@ class RndMoveStoreBehavior(StoreBehaviorIf):
         the user entered a valid number."""
 
         game = self.str.game_ui.game
-        seeds = game.store[not self.str.owner]
+        seeds = game.store[self.str.owner]
 
         if (game.turn == self.str.owner
                 and Hold.query_nbr_seeds(not self.str.owner, seeds)):
@@ -982,6 +982,6 @@ class RndMoveStoreBehavior(StoreBehaviorIf):
             game = self.str.game_ui.game
             seeds -= Hold.nbr
             self.set_store(seeds, True)
-            game.store[not self.str.owner] = seeds
+            game.store[self.str.owner] = seeds
 
             self.str.game_ui.config(cursor='circle')
