@@ -6,7 +6,6 @@ game states.
 Created on Sun Aug 13 10:06:37 2023
 @author: Ann"""
 
-# TODO behaviors is using interfaces that are not in GameInterface
 
 import abc
 import enum
