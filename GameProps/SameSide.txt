@@ -1,0 +1,26 @@
+{
+   "game_class": "SameSide",
+   "game_constants": {
+      "holes": 6,
+      "nbr_start": 2
+   },
+   "game_info": {
+      "name": "SameSide",
+      "about": "Sow counter-clockwise but only on your own side of the board.\n\nMultiple capture on evens, but place captured seeds in opponents hole of your choice.\n\nGoal: clear your own side of the board.",
+      "capt_side": 2,
+      "evens": true,
+      "goal": 3,
+      "multicapt": -1,
+      "no_sides": true,
+      "sow_direct": 1,
+      "stores": true
+   },
+   "player": {
+      "ai_params": {
+         "mm_depth": [ 1, 3, 5, 7 ]
+      },
+      "scorer": {
+         "seeds_m": -8
+      }
+   }
+}

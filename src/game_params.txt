@@ -164,8 +164,9 @@ Dynamics	blocks	Blocks	game_info _	102	bool	False	11	2	"Blocks remove holes from
 When used with ROUNDS, the holes not filled from the player with fewer seeds are blocked and thus out of play for the round.
 When used with DEPRIVE, SOW_BLCK_DIV and goal_param holes are closed (blocked and removed from play) when sown to goal_param seeds."
 Game	game_class	Game Class	game_class	1	GameClasses	Mancala	0	0	"The name of the Game Class. One of:
-Mancala: allows setting all parameters though there are limited combinations.
-Diffusion: has unique sow method and win conditions. Only very limited parameters may be changed from defaults."
+Mancala: allows setting all parameters though some combinations are limited.
+Diffusion: has unique sow method and win conditions.  The game is basically preconfigured, only the board size can be changed to any even size. Likely only suitable for the two games already defined (or very similar variants): Diffusion and DiffusionV2.
+SameSide: a game class in which seeds are only sown on the player's own side of the board. If a capture is made, the capturer chooses one of their opponent's holes to put the seeds into. All seeds go into exactly one hole. Capture mechanisms must be limited to one side of the board: basic captures, next, and two out."
 Game	holes	Holes per Side	game_constants _	2	int	3	2	0	Number of holes on each side of the board.
 Game	help_file	Help File	game_info _	118	str	mancala_help.html	3	0	An html help file describing the game (mancala_help.html is the main help file).
 Game	about	About	game_info _	5	multi_str	"Sow counter-clockwise.

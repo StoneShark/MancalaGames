@@ -161,15 +161,15 @@ def add_pattern_rules(rules):
 def add_elim_seeds_goal_rules(rules):
     """Add rules for the game eliminating our own or opponents seeds."""
 
-    def deprive_and(flag_name):
+    def dep_clr_and(flag_name):
         """Return a function that tests that goal is divert
         and the specified flag, based only on a ginfo parameter."""
 
-        def _deprive_and(ginfo):
+        def _dep_clr_and(ginfo):
             return (ginfo.goal in (gi.Goal.DEPRIVE, gi.Goal.CLEAR)
                     and getattr(ginfo, flag_name))
 
-        return _deprive_and
+        return _dep_clr_and
 
     rules.add_rule(
         'elseed_gs_legal',
@@ -184,7 +184,7 @@ def add_elim_seeds_goal_rules(rules):
     for flag in bad_flags:
         rules.add_rule(
             f'elseed_bad_{flag}',
-            rule=deprive_and(flag),
+            rule=dep_clr_and(flag),
             msg=f'CLEAR & DEPRIVE games cannot be used with {flag.upper()}',
             excp=gi.GameInfoError)
 
@@ -202,6 +202,12 @@ def add_elim_seeds_goal_rules(rules):
             and ginfo.allow_rule == gi.AllowRule.SINGLE_ALL_TO_ZERO),
         msg='CLEAR games prohibits ALLOW_RULE SINGLE_ALL_TO_ZERO',
         excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'clear_nogparam',
+        rule=lambda ginfo: ginfo.goal == gi.Goal.CLEAR and ginfo.goal_param,
+        msg='GOAL_PARAM is not used for CLEAR games',
+        warn=True)
 
     return rules
 

@@ -49,6 +49,7 @@ MODULES += param_consts.py
 MODULES += play_mancala.pyw
 MODULES += play.py
 MODULES += round_tally.py
+MODULES += same_side.py
 MODULES += sower.py
 MODULES += sower_decos.py
 MODULES += sower_mlap_decos.py
