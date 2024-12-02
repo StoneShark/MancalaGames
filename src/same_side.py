@@ -190,6 +190,17 @@ class SameSide(mancala.Mancala):
         self.empty_store = state.empty_store
 
 
+    def new_game(self, win_cond=None, new_round_ok=False):
+
+        super().new_game(win_cond, new_round_ok)
+        self.empty_store = False
+
+
+    def end_game(self):
+        super().end_game()
+        self.empty_store = False
+
+
     def get_allowable_holes(self):
         """If EMPTY_STORE allow selection of any of opponents holes.
         Otherwise, only allow own holes that are allowable."""
