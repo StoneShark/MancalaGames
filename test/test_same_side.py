@@ -345,7 +345,7 @@ class TestSameSide:
         """mancala.Mancala.move is called"""
 
         mobj = mocker.patch('mancala.Mancala.move')
-        game.move((0, 3))
+        game.move((0, 3, None))
         mobj.assert_called_once()
 
 
@@ -354,7 +354,7 @@ class TestSameSide:
 
         mobj = mocker.patch('mancala.Mancala.move')
         game.empty_store = True
-        game.move((0, 3))
+        game.move((0, 3, None))
         mobj.assert_not_called()
 
 
@@ -378,13 +378,13 @@ class TestSameSide:
         ([5, 2, 4, 2, 0, 0, 1, 2], [0, 0], (0, 1, None), True, False,
          [5, 2, 4, 2, 0, 0, 0, 0], [0, 3], gi.WinCond.WIN, True),
 
-        # SameSide.move -- seeds move from store & turn changed
+        # SameSide.move -- seeds moved from store & turn changed
         ([0, 2, 0, 3, 2, 2, 2, 2], [3, 0], (0, 3, None), False, True,
          [0, 2, 0, 3, 5, 2, 2, 2], [0, 0], None, True),
 
         ]
 
-    @pytest.mark.usefixtures("logger")
+    # @pytest.mark.usefixtures("logger")
     @pytest.mark.parametrize(
         'board, store, move, turn, mtype, eboard, estore, ewcond, eturn',
         MCASES)
@@ -396,7 +396,7 @@ class TestSameSide:
         game.store = store
         game.turn = turn
         game.empty_store = mtype
-        print(game)
+        # print(game)
 
         wcond = game.move(move)
         assert wcond == ewcond
