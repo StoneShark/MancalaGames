@@ -233,7 +233,10 @@ class SameSide(mancala.Mancala):
 
     def move(self, move):
         """If the move is an EMPTY_STORE, move the store
-        seeds to the selected hole, check for win, etc.
+        seeds to the selected hole, log move and swap turn.
+        In this case the game cannot end, the previous
+        non-EMPTY_STORE move would have detected the win.
+
         Otherwise, have the parent class do the move."""
 
         if self.empty_store:
@@ -244,11 +247,7 @@ class SameSide(mancala.Mancala):
             self.store[self.turn] = 0
             self.empty_store = False
 
-            win_cond = self.win_conditions()
-            self._log_turn(cur_turn, move, win_cond)
-            if win_cond:
-                return win_cond
-
+            self._log_turn(cur_turn, move, None)
             self.turn = not self.turn
             return None
 

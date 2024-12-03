@@ -203,7 +203,7 @@ UNIT_TESTS += test_end_move.cov
 UNIT_TESTS += test_game_if.cov
 UNIT_TESTS += test_game_logger.cov
 UNIT_TESTS += test_game_str.cov
-#  UNIT_TESTS += test_game_tally.cov     TODO doesn't report coverage, don't know why
+# UNIT_TESTS += test_game_tally.cov     doesn't report coverage, likely tk not covered
 UNIT_TESTS += test_gconsts.cov
 UNIT_TESTS += test_get_direct.cov
 UNIT_TESTS += test_get_moves.cov
@@ -218,6 +218,7 @@ UNIT_TESTS += test_negamax.cov
 UNIT_TESTS += test_new_game.cov
 UNIT_TESTS += test_patterns.cov
 UNIT_TESTS += test_round_tally.cov
+UNIT_TESTS += test_same_side.cov
 UNIT_TESTS += test_sower.cov
 
 cov_unit_tests: $(UNIT_TESTS)
