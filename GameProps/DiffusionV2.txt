@@ -22,5 +22,7 @@
       "scorer": {
          "seeds_m": -5
       }
-   }
+   },
+   "rules": "Copyright (c) January 2006 by Mark Steere. See pdf file for rules.",
+   "Author Link": "https://marksteeregames.com/"
 }

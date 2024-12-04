@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 """SameSide a game class in which sowing for each
 player is all done on the same side of the board.
-Top only sows the top row. Bottom only sows the bottom row.
+
+SameSide:  Top only sows the top row. Bottom only sows the bottom row.
+Ohojichi: West only west. East only east.
 
 Created on Sun Dec  1 07:10:20 2024
 @author: Ann"""
@@ -11,6 +13,7 @@ Created on Sun Dec  1 07:10:20 2024
 import dataclasses as dc
 import textwrap
 
+import diffusion
 import incrementer
 import game_interface as gi
 import ginfo_rules
@@ -31,6 +34,8 @@ def build_rules():
         rule=lambda ginfo: not ginfo.goal == gi.Goal.CLEAR,
         msg='SameSide requires CLEAR goal',
         excp=gi.GameInfoError)
+        # CLEAR includes many base mancala rules:
+        #  GS legal, many options prohibited
 
     rules.add_rule(
         'ss_no_sides',
@@ -80,7 +85,7 @@ def build_rules():
         excp=gi.GameInfoError)
 
     rules.add_rule(
-        'ss_side_both_own',
+        'ss_side_own',
         rule=lambda ginfo: ginfo.capt_side != gi.CaptSide.OWN_SIDE,
         msg="""SameSide requires that CAPT_SIDE be OWN_SIDE""",
         excp=gi.GameInfoError)
@@ -110,8 +115,50 @@ def build_rules():
     # add in the mancala rules, delete those we don't want
     man_rules = ginfo_rules.build_rules()
     del man_rules['no_sides_bad_capt_side']
-
     rules |= man_rules
+
+    return rules
+
+
+def build_ew_rules():
+    """Build the rules for SameSide.
+    We want the more specific rules first."""
+
+    rules = ginfo_rules.RuleDict()
+
+    rules.add_rule(
+        'oho_even',
+        both_objs=True,
+        rule=lambda _, holes: holes % 2,
+        msg='Ohojichi requires an even number of holes per side',
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'oho_side_both',
+        rule=lambda ginfo: ginfo.capt_side != gi.CaptSide.BOTH,
+        msg="Ohojichi requires that CAPT_SIDE be BOTH",
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'oho_splt_udir_all',
+        both_objs=True,
+        rule=lambda ginfo, holes: (ginfo.sow_direct == gi.Direct.SPLIT
+                                   and len(ginfo.udir_holes) != holes),
+        msg="Ohojichi requires that all holes be UDIR for SPLIT SOW",
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'oho_udir_all',
+        both_objs=True,
+        rule=lambda ginfo, holes: (len(ginfo.udir_holes) > 0
+                                   and len(ginfo.udir_holes) != holes),
+        msg="Ohojichi requires that all holes be UDIR or none of them",
+        excp=gi.GameInfoError)
+
+
+    ss_rules = build_rules()
+    del ss_rules['ss_side_own']
+    rules |= ss_rules
 
     return rules
 
@@ -121,7 +168,13 @@ def build_rules():
 class BoardSideIncr(incrementer.IncrementerIf):
     """Increment that keeps seeds only on your own side
     of the board: TOP/BOTTOM
-    This is a replacement for the Increment (the base incr class)."""
+    This is a replacement for the Increment (the base incr class).
+
+    This incrementer is dependent on TURN, which is ok
+    because the incrementer will always be used on the same side
+    as the current turn.   That is, never a need to increment
+    through opponents holes, because sows and captures only
+    occur on our side of the board."""
 
     def incr(self, loc, direct, _=incrementer.NOSKIPSTART):
         """Do an increment."""
@@ -131,6 +184,38 @@ class BoardSideIncr(incrementer.IncrementerIf):
             loc += self.game.cts.holes
 
         return loc
+
+
+class EastWestIncr(incrementer.IncrementerIf):
+    """Increment that keeps seeds only on your own side
+    of the board: EAST/WEST
+    This is a replacement for the Increment (the base incr class)."""
+
+    def __init__(self, game, decorator=None):
+
+        super().__init__(game, decorator)
+
+        dbl_holes = game.cts.dbl_holes
+        half = game.cts.holes // 2
+        half_3x = half * 3
+
+        self.ccw_map = list(range(1, dbl_holes)) + [0]
+        self.ccw_map[half - 1] = half_3x
+        self.ccw_map[half_3x - 1] = half
+
+        self.cw_map = [11] + list(range(dbl_holes - 1))
+        self.cw_map[half] = half_3x - 1
+        self.cw_map[half_3x] = half - 1
+
+
+    def incr(self, loc, direct, _=incrementer.NOSKIPSTART):
+        """Do an increment. Do the direction check at play-time
+        to support UDIR sow."""
+
+        if direct == gi.Direct.CCW:
+            return self.ccw_map[loc]
+
+        return self.cw_map[loc]
 
 
 # %% SameSide game class
@@ -144,7 +229,8 @@ class SSGameState(mancala.GameState):
 
 
 class SameSide(mancala.Mancala):
-    """almost Ohojichi but it is divided by EAST/WEST"""
+    """Sow only on your side of the board, deposit capture in
+    opponents holes."""
 
     rules = build_rules()
 
@@ -152,17 +238,17 @@ class SameSide(mancala.Mancala):
 
         super().__init__(game_consts, game_info)
 
-        self.fix_incr_deco()
+        self.fix_incr_deco(BoardSideIncr)
         self.empty_store = False
 
 
-    def fix_incr_deco(self):
+    def fix_incr_deco(self, new_class):
         """Replace the Increment deco with BoardSideIncr.
         Increment is always at the bottom of the deco chain."""
 
         incr = self.deco.incr
         if isinstance(incr, incrementer.Increment):
-            self.deco.incr = BoardSideIncr(self)
+            self.deco.incr = new_class(self)
             return
 
         while (incr.decorator
@@ -170,7 +256,7 @@ class SameSide(mancala.Mancala):
             incr = incr.decorator
         assert incr.decorator, "Didn't find Increment in deco chain."
 
-        incr.decorator = BoardSideIncr(self)
+        incr.decorator = new_class(self)
 
 
     @property
@@ -252,3 +338,48 @@ class SameSide(mancala.Mancala):
             return None
 
         return super().move(move)
+
+
+# %%
+
+class Ohojichi(SameSide):
+    """Sow only on your side of the board east/west,
+    deposit capture in opponents holes.
+
+    These build on call to the mancala.Mancala methods
+    not the SameSide method."""
+
+    rules = build_ew_rules()
+
+    def __init__(self, game_consts, game_info):
+        # pylint: disable=non-parent-init-called
+        # pylint: disable=super-init-not-called
+
+        mancala.Mancala.__init__(self, game_consts, game_info)
+
+        self.deco.ender = diffusion.ClearSideEndGame(self)
+        self.fix_incr_deco(EastWestIncr)
+        self.empty_store = False
+
+        holes = self.cts.holes
+        half = holes // 2
+        self.true_holes = tuple([True] * half
+                                + [False] * holes
+                                + [True] * half)
+
+    def get_allowable_holes(self):
+        """If EMPTY_STORE allow selection of any of opponents holes.
+        Otherwise, only allow own holes that are allowable."""
+
+        if self.empty_store:
+            if self.turn:
+                allows = [not val for val in self.true_holes]
+            else:
+                allows = list(self.true_holes)
+
+        else:
+            pallow = mancala.Mancala.get_allowable_holes(self)
+            allows = [allow and (self.turn == thole)
+                      for thole, allow in zip(self.true_holes, pallow)]
+
+        return allows

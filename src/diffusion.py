@@ -38,7 +38,7 @@ def build_rules():
     rules.add_rule(
         'no_sides',
         rule=lambda ginfo: not ginfo.no_sides,
-        msg='Diffusion require no_sides be true',
+        msg='Diffusion requires no_sides be true',
         excp=gi.GameInfoError)
         # either player may move from any hole
 
@@ -49,35 +49,27 @@ def build_rules():
         excp=gi.GameInfoError)
 
     rules.add_rule(
-        'store_for_turn',
-        rule=lambda ginfo: not ginfo.stores,
-        msg=textwrap.dedent("""\
-                            In Diffusion, make stores visible to
-                            the current player."""),
-        warn=True)
-
-    rules.add_rule(
         'goal_param',
         rule=lambda ginfo: ginfo.goal_param,
-        msg='GOAL_PARAM is not used in Diffusion.',
+        msg='GOAL_PARAM is not used with Diffusion',
         warn=True)
 
     rules.add_rule(
         'gs_legal',
         rule=lambda ginfo: ginfo.grandslam,
-        msg='Grandslam must be legal in Diffusion.',
+        msg='Grandslam must be legal with Diffusion',
         excp=gi.GameInfoError)
 
     rules.add_rule(
         'no_allow_rule',
         rule=lambda ginfo: ginfo.allow_rule,
-        msg="""Diffusion is incompatible with special allow rules.""",
+        msg="""Diffusion is incompatible with special allow rules""",
         excp=gi.GameInfoError)
 
     rules.add_rule(
         'min_move_1',
         rule=lambda ginfo: ginfo.min_move != 1,
-        msg="""Diffusion requires that min_move be 1.""",
+        msg="""Diffusion requires that min_move be 1""",
         excp=gi.GameInfoError)
 
     round_flags = ['blocks', 'rounds', 'round_fill', 'round_starter']
@@ -94,7 +86,7 @@ def build_rules():
         msg=textwrap.dedent("""\
                             Diffusion always sows from most CW hole
                             around start hole in the CCW direction
-                            (sow_direct must be CCW)."""),
+                            (sow_direct must be CCW)"""),
         excp=gi.GameInfoError)
 
     sow_flags = ['mlaps', 'move_one', 'moveunlock', 'mustpass', 'mustshare',
@@ -112,9 +104,9 @@ def build_rules():
         'no_sow_own',
         rule=lambda ginfo: ginfo.sow_own_store,
         msg=textwrap.dedent("""\
-                            Diffusion incompatible with sow_own_store,
+                            Diffusion is incompatible with sow_own_store,
                             2 seeds are automatically sown into the stores
-                            when indicated. There is no repeat turn."""),
+                            when indicated. There is no repeat turn"""),
         excp=gi.GameInfoError)
 
     child_flags = ['child_cvt', 'child_rule', 'child_type']

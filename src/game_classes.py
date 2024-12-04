@@ -12,4 +12,5 @@ import same_side
 GAME_CLASSES = {'Mancala': mancala.Mancala,
                 'Diffusion': diffusion.Diffusion,
                 'DiffusionV2': diffusion.DiffusionV2,
-                'SameSide': same_side.SameSide}
+                'SameSide': same_side.SameSide,
+                'Ohojichi': same_side.Ohojichi}

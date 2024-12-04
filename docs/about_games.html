@@ -470,6 +470,8 @@ allow closing of rightmost holes (<a href="game_params.html#sow_rule">SOW_RULE</
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
   </div>
 </div>
+<p>Rules: Copyright (c) January 2006 by Mark Steere. See pdf file for rules.
+<p>Author Link: <a href="https://marksteeregames.com/" target="_blank">https://marksteeregames.com/</a>
 <h3 id="Diffusion V2">Diffusion V2</h3>
 <p>A mancala game with a unique sow pattern and win condition. Right store highlight indicates bottom player's turn.
 <p>Game rules: Copyright (c) January 2006 by Mark Steere. See pdf file for rules.
@@ -486,6 +488,8 @@ allow closing of rightmost holes (<a href="game_params.html#sow_rule">SOW_RULE</
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
   </div>
 </div>
+<p>Rules: Copyright (c) January 2006 by Mark Steere. See pdf file for rules.
+<p>Author Link: <a href="https://marksteeregames.com/" target="_blank">https://marksteeregames.com/</a>
 <h3 id="Endodoi">Endodoi</h3>
 <p>A multi-lap mancala, sow direction counter-clockwise, cross-capture when end in own hole with one seed. Pick own seed on capture. Games ends if no moves.
 <p>Variations:
@@ -1421,6 +1425,29 @@ see <a href="about_games.html#Lam Waladach">Lam Waladach</a>
 </div>
 <p>Rules: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p21.
 <p>Deviation: Game ends a soon as a player has half the seeds.
+<h3 id="Ohojichi">Ohojichi</h3>
+<p>Sow counter-clockwise but only on your own side of the board. The board is divided vertically into East and West players. When active the AI plays East.
+<p>Multiple capture on 4s, but place captured seeds in opponents hole of your choice.
+<p>A move has the typical draw, sow and check capture phases. If there is a capture, another user input is accepted to identify where the capture seeds should be put. The indicator for this is subtle: your store will still show your turn and you opponents holes will be highlighted for input.
+<p>When the AI player does a capture, the AI delay is done between move/capture and seed placement; wait for the AI to finish the turn before starting your turn.
+<p>In this game, the number of captured seeds will always be a multiple of 4.
+<p>Goal: clear your own side (east/west) of the board.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: CLEAR</p>
+    <p class="param">Game class:  Ohojichi</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 4</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: -1</p>
+    <p class="param"><a href="game_params.html#no_sides">No Sides</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p85.
 <h3 id="Olinda">Olinda</h3>
 <p>The starting player chooses the sow direction that they will use for the game; the second player will use the opposite direction for the game. Sowing is done in multiple laps from the next hole (<a href="game_params.html#mlaps">MLAPS</a> of LAPPER_NEXT).
 <p>While either player is sowing, both players capture all holes sown to 4 on their side of the board. Specifically, the non-sower may capture seeds from holes sown to 4 on their own side of the board.
@@ -1645,12 +1672,12 @@ See <a href="about_games.html#Longbeu-a-cha">Longbeu-a-cha</a>, <a href="about_g
 <p>Sow counter-clockwise but only on your own side of the board.
 <p>Multiple capture on evens, but place captured seeds in opponents hole of your choice.
 <p>A move has the typical draw, sow and check capture phases. If there is a capture, another user input is accepted to identify where the capture seeds should be put. The indicator for this is subtle: your store will still show your turn and you opponents holes will be highlighted for input.
-<p>The AI delay occurs between these two moves when it is the AI turn's; wait for the AI to finish the turn before starting your turn.
+<p>When the AI player does a capture, the AI delay is done between move/capture and seed placement; wait for the AI to finish the turn before starting your turn.
 <p>In this game, the number of captured seeds will always be even.
 <p>Goal: clear your own side of the board.
 <div class="cols_row">
   <div class="column2">
-    <p class="param">Holes per side:  6</p>
+    <p class="param">Holes per side:  5</p>
     <p class="param">Start seeds:  2</p>
     <p class="param"><a href="game_params.html#goal">Goal</a>: CLEAR</p>
     <p class="param">Game class:  SameSide</p>
@@ -1994,9 +2021,9 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Gamacha">Gamacha</a></p>
     <p class="param"><a href="#Gelech">Gelech</a></p>
     <p class="param"><a href="#Giuthi">Giuthi</a></p>
+    <p class="param"><a href="#Goat">Goat</a></p>
   </div>
   <div class="column3">
-    <p class="param"><a href="#Goat">Goat</a></p>
     <p class="param"><a href="#Halusa">Halusa</a></p>
     <p class="param"><a href="#Hoyito I">Hoyito I</a></p>
     <p class="param"><a href="#Hoyito II">Hoyito II</a></p>
@@ -2022,11 +2049,12 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Ndoto">Ndoto</a></p>
     <p class="param"><a href="#No Sides Child">No Sides Child</a></p>
     <p class="param"><a href="#NoCapt">NoCapt</a></p>
-  </div>
-  <div class="column3">
     <p class="param"><a href="#NoSides">NoSides</a></p>
     <p class="param"><a href="#NumNum">NumNum</a></p>
+  </div>
+  <div class="column3">
     <p class="param"><a href="#Obridjie">Obridjie</a></p>
+    <p class="param"><a href="#Ohojichi">Ohojichi</a></p>
     <p class="param"><a href="#Olinda">Olinda</a></p>
     <p class="param"><a href="#Ot-tjin">Ot-tjin</a></p>
     <p class="param"><a href="#Oware">Oware</a></p>

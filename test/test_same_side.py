@@ -123,7 +123,7 @@ class TestGameState:
 
 
 class TestBoardSideIncr:
-    """Test for TestBoardSideIncr and fix_incr_deco."""
+    """Test for BoardSideIncr and fix_incr_deco."""
 
     @pytest.fixture
     def game(self):
@@ -403,3 +403,95 @@ class TestSameSide:
         assert game.board == eboard
         assert game.store == estore
         assert game.turn == eturn
+
+
+class TestOhojichi:
+    """Tests unique to Ohojichi."""
+
+    @pytest.fixture
+    def game(self):
+
+        game_consts = gc.GameConsts(nbr_start=2, holes=6)
+        game_info = gi.GameInfo(capt_on=[2],
+                                stores=True,
+                                goal=3,
+                                no_sides=True,
+                                skip_start=True,
+                                capt_side=gi.CaptSide.BOTH,
+                                nbr_holes=game_consts.holes,
+                                rules=same_side.Ohojichi.rules)
+
+        game = same_side.Ohojichi(game_consts, game_info)
+        game.turn = False
+        return game
+
+    def test_ewincr(self, game):
+        """Incrementer is not dependent on turn"""
+
+        incr = same_side.EastWestIncr(game)
+
+        # CW, west side
+        assert incr.incr(0, gi.Direct.CW) == 11
+        assert incr.incr(1, gi.Direct.CW) == 0
+        assert incr.incr(2, gi.Direct.CW) == 1
+        assert incr.incr(9, gi.Direct.CW) == 2
+        assert incr.incr(10, gi.Direct.CW) == 9
+        assert incr.incr(11, gi.Direct.CW) == 10
+
+        # CW, east side
+        assert incr.incr(3, gi.Direct.CW) == 8
+        assert incr.incr(4, gi.Direct.CW) == 3
+        assert incr.incr(5, gi.Direct.CW) == 4
+        assert incr.incr(6, gi.Direct.CW) == 5
+        assert incr.incr(7, gi.Direct.CW) == 6
+        assert incr.incr(8, gi.Direct.CW) == 7
+
+        # CCW, west side
+        assert incr.incr(0, gi.Direct.CCW) == 1
+        assert incr.incr(1, gi.Direct.CCW) == 2
+        assert incr.incr(2, gi.Direct.CCW) == 9
+        assert incr.incr(9, gi.Direct.CCW) == 10
+        assert incr.incr(10, gi.Direct.CCW) == 11
+        assert incr.incr(11, gi.Direct.CCW) == 0
+
+        # CCW, east side
+        assert incr.incr(3, gi.Direct.CCW) == 4
+        assert incr.incr(4, gi.Direct.CCW) == 5
+        assert incr.incr(5, gi.Direct.CCW) == 6
+        assert incr.incr(6, gi.Direct.CCW) == 7
+        assert incr.incr(7, gi.Direct.CCW) == 8
+        assert incr.incr(8, gi.Direct.CCW) == 3
+
+
+    def test_allow(self, game, mocker):
+        """When in empty_store move, don't call mancala.
+        When not,  call mancala (not SameSide)."""
+
+        mobj = mocker.patch('mancala.Mancala.get_allowable_holes')
+        mobj.return_value = [T] * 12
+
+        game.empty_store = True
+        game.turn = False
+        result = game.get_allowable_holes()
+        mobj.assert_not_called()
+        assert result == [T, T, T, F, F, F, F, F, F, T, T, T]
+                # west holes for F captures
+
+        game.turn = True
+        result = game.get_allowable_holes()
+        mobj.assert_not_called()
+        assert result == [F, F, F, T, T, T, T, T, T, F, F, F]
+                # east holes for T captures
+
+        game.empty_store = False
+        game.turn = False
+        result = game.get_allowable_holes()
+        mobj.assert_called_once()
+        assert result == [F, F, F, T, T, T, T, T, T, F, F, F]
+                # east holes for F move
+
+        game.turn = True
+        mobj.return_value = [T] * 12          # reset, previous call changed it
+        result = game.get_allowable_holes()
+        assert result == [T, T, T, F, F, F, F, F, F, T, T, T]
+                # west holes for T move

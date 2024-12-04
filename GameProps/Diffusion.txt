@@ -19,6 +19,7 @@
          "mcts_nodes": [300, 500, 700, 800],
          "mcts_pouts": [1, 1, 2, 2]
       }
-
-   }
+   },
+   "rules": "Copyright (c) January 2006 by Mark Steere. See pdf file for rules.",
+   "Author Link": "https://marksteeregames.com/"
 }
