@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Diffusion V2",
-      "about": "A mancala game with a unique sow pattern and win condition. Right store highlight indicates bottom player's turn.\nGame rules: Copyright (c) January 2006 by Mark Steere. See pdf file for rules.",
+      "about": "A mancala game with a unique sow pattern. Right store highlight indicates bottom player's turn. Goal is clear your side of the board.\nGame rules: Copyright (c) January 2006 by Mark Steere. See pdf file for rules.",
       "help_file": "Diffusion_rules.pdf",
       "goal": 3,
       "no_sides": true,

@@ -18,6 +18,7 @@ from context import game_interface as gi
 from context import mancala
 from context import minimax
 from context import montecarlo_ts
+from context import same_side
 
 from game_interface import ChildType
 from game_interface import WinCond
@@ -238,11 +239,30 @@ class TestScorers:
         game.turn = False
         return game
 
-
     @pytest.fixture
     def tplayer(self, tgame):
         return ai_player.AiPlayer(tgame, {})
 
+
+    @pytest.fixture
+    def ogame(self):
+
+        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_info = gi.GameInfo(capt_on=[2],
+                                stores=True,
+                                goal=gi.Goal.CLEAR,
+                                no_sides=True,
+                                capt_side=gi.CaptSide.BOTH,
+                                nbr_holes=game_consts.holes,
+                                rules=same_side.Ohojichi.rules)
+
+        game = same_side.Ohojichi(game_consts, game_info)
+        game.turn = False
+        return game
+
+    @pytest.fixture
+    def oplayer(self, ogame):
+        return ai_player.AiPlayer(ogame, {})
 
 
     def test_score_endgame(self, game, player):
@@ -290,6 +310,22 @@ class TestScorers:
         assert player.score(None) == (1 - 2) * 2
 
 
+    def test_sc_odiff_evens(self, ogame, oplayer):
+
+        oplayer.sc_params.evens_m = 2
+        oplayer.sc_params.stores_m = 0
+        oplayer.sc_params.easy_rand = 0
+        oplayer.collect_scorers()
+
+        assert oplayer.sc_params.evens_m == 2
+        assert sum(vars(oplayer.sc_params).values()) == 2
+
+        #                              Tside | Fside
+        ogame.board = utils.build_board([2, 4, 1, 2],
+                                        [0, 5, 4, 2])
+        assert oplayer.score(None) == (3 - 2) * 2
+
+
     def test_sc_down_evens(self, tgame, tplayer):
 
         tplayer.sc_params.evens_m = 2
@@ -301,7 +337,7 @@ class TestScorers:
         assert sum(vars(tplayer.sc_params).values()) == 2
 
         tgame.board = utils.build_board([2, 4, 0, 1],
-                                        [0, 5, 4, 1])
+                                        [2, 5, 4, 1])
         tgame.owner = utils.build_board([T, F, N, T],
                                         [N, T, F, F])
         assert tplayer.score(None) == (2 - 1) * 2

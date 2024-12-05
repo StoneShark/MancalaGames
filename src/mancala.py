@@ -264,6 +264,8 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
         self.cts = game_consts
         self.info = game_info
+        self.true_holes = tuple([False] * self.cts.holes
+                                + [True] * self.cts.holes)
 
         self.board = [self.cts.nbr_start] * self.cts.dbl_holes
         self.store = [0, 0]
@@ -450,17 +452,17 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
         win_param = self.info.goal_param
 
-        reason = ("by collecting the most seeds!",
-                  "by eliminating their opponent's seeds.",
-                  "by claiming more holes.",
-                  "by clearing all their seeds.",
-                  f"by winning {win_param} or more rounds.",
-                  f"by collecting {win_param} or more total seeds.",
-                  f"by collecting at least {win_param} more seeds than opponent.",
-                  f"by earning {win_param} or more points.")
+        reason = (" by collecting the most seeds!",
+                  " by eliminating their opponent's seeds.",
+                  " by claiming more holes.",
+                  " by clearing all their seeds.",
+                  f" by winning {win_param} or more rounds.",
+                  f" by collecting {win_param} or more total seeds.",
+                  f" by collecting at least {win_param} more seeds than opponent.",
+                  f" by earning {win_param} or more points.")
 
         rnd_reason = ("not used",
-                      "by collecting at least half the seeds.",
+                      " by collecting at least half the seeds.",
                       ". Round ended because there are no moves.",
                       ". Round ended because there were <= "
                           + f"{self.cts.nbr_start} seeds left",
@@ -482,10 +484,10 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
         player = 'Top' if self.turn else 'Bottom'
         if win_cond == gi.WinCond.WIN:
-            message += f'{player} won {rtext} {reason[self.info.goal]}'
+            message += f'{player} won {rtext}{reason[self.info.goal]}'
 
         elif win_cond == gi.WinCond.ROUND_WIN:
-            message += f'{player} won {rtext} {rnd_reason[self.info.rounds]}'
+            message += f'{player} won {rtext}{rnd_reason[self.info.rounds]}'
 
         elif win_cond in [gi.WinCond.TIE, gi.WinCond.ROUND_TIE]:
             if self.info.goal == gi.Goal.DEPRIVE:

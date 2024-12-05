@@ -483,15 +483,35 @@ class MancalaUI(tk.Frame):
         game_log.save(self.game.params_str())
 
 
-    @staticmethod
-    def _button_state(aidx, ai_turn, ptest, actives):
-        """Return one of the three button states."""
+    def _button_state(self, allows, ai_turn, loc, aidx):
+        """Return one of the four button states.
 
-        if ai_turn and ptest and actives[aidx]:
-            btnstate = behaviors.BtnState.LOOK_ACTIVE
+        Cannot do East/West coloring the way North/South
+        is done. Diffusion requires moves from all holes
+        and Ohojichi requires moves from all holes (move
+        only own holes, capture placement opps holes)."""
 
-        elif ptest and actives[aidx]:
-            btnstate = behaviors.BtnState.ACTIVE
+        turn = self.game.turn
+        owner = self.game.owner[loc]
+        true_hole = self.game.true_holes[loc]
+        all_holes = self.info.no_sides
+
+        player_hole = (owner == turn
+                       or all_holes
+                       or (not all_holes
+                           and owner is None
+                           and true_hole == turn))
+
+        if player_hole and allows[aidx]:
+
+            if ai_turn and true_hole:
+                btnstate = behaviors.BtnState.LOOK_ACTIVE
+
+            else:
+                btnstate = behaviors.BtnState.ACTIVE
+
+        elif player_hole and not all_holes:
+            btnstate = behaviors.BtnState.PLAY_DISABLE
 
         else:
             btnstate = behaviors.BtnState.DISABLE
@@ -503,7 +523,7 @@ class MancalaUI(tk.Frame):
         """Make UI match mancala game."""
 
         turn = self.game.get_turn()
-        actives = self.game.get_allowable_holes()
+        allows = self.game.get_allowable_holes()
         turn_row = int(not turn)
         ai_turn = self.ai_active.get() and turn
         for row in range(2):
@@ -524,13 +544,14 @@ class MancalaUI(tk.Frame):
                     else:
                         btnstate = behaviors.BtnState.DISABLE
 
-                elif self.game.info.mlength == 3:
-                    aidx = self.game.cts.xlate_pos_loc(row, pos)
-                    btnstate = self._button_state(
-                                        aidx, ai_turn, True, actives)
                 else:
-                    btnstate = self._button_state(
-                                        pos, ai_turn, player, actives)
+                    aidx = pos
+                    loc = self.game.cts.xlate_pos_loc(row, pos)
+                    if self.game.info.mlength == 3:
+                        aidx = loc
+
+                    btnstate = self._button_state(allows, ai_turn,
+                                                  loc, aidx)
 
                 self.disp[row][pos].set_props(
                     self.game.get_hole_props(row, pos),

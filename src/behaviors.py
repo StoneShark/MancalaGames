@@ -39,7 +39,8 @@ class BtnState(enum.Enum):
 
     ACTIVE = enum.auto()
     LOOK_ACTIVE = enum.auto()
-    DISABLE = enum.auto
+    DISABLE = enum.auto()
+    PLAY_DISABLE = enum.auto()
 
 
 # %%  global data for mover
@@ -399,20 +400,16 @@ class PlayButtonBehavior(BehaviorIf):
             self.btn['background'] = TURN_COLOR
             self.btn['state'] = tk.NORMAL
 
-        elif bstate == BtnState.LOOK_ACTIVE:
-            self.btn['background'] = TURN_COLOR
-            self.btn['state'] = tk.DISABLED
-
         else:
-            game = self.btn.game_ui.game
-            if (self.btn.props.owner == game.turn
-                or (not game.info.no_sides
-                    and self.btn.props.owner is None
-                    and self.btn.row != game.turn)):
+            self.btn['state'] = tk.DISABLED
+            if bstate == BtnState.LOOK_ACTIVE:
+                self.btn['background'] = TURN_COLOR
+
+            elif bstate == BtnState.PLAY_DISABLE:
                 self.btn['background'] = TURN_DARK_COLOR
+
             else:
                 self.btn['background'] = INACTIVE_COLOR
-            self.btn['state'] = tk.DISABLED
 
 
     def _refresh(self, bstate=BtnState.ACTIVE):

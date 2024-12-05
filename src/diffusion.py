@@ -23,7 +23,6 @@ def build_rules():
     """Build the rules for Diffusion.
     Not much is allowed:
         - change board size, but it must be even
-        - stores can be included or not (useful to know whose turn it is)
     """
 
     rules = ginfo_rules.RuleDict()
@@ -47,6 +46,14 @@ def build_rules():
         rule=lambda ginfo: not ginfo.goal == gi.Goal.CLEAR,
         msg='Diffusion requires clear goal',
         excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'store_for_turn',
+        rule=lambda ginfo: not ginfo.stores,
+        msg=textwrap.dedent("""\
+                            In Diffusion, make stores visible to
+                            identify the current player."""),
+        warn=True)
 
     rules.add_rule(
         'goal_param',
@@ -255,6 +262,13 @@ class Diffusion(DiffusionV2):
         super().__init__(game_consts, game_info)
 
         self.deco.ender = ClearSideEndGame(self)
+
+        holes = self.cts.holes
+        half = holes // 2
+        self.true_holes = tuple([True] * half
+                                + [False] * holes
+                                + [True] * half)
+
 
 
     def win_message(self, win_cond):

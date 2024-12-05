@@ -6,6 +6,7 @@ Created on Fri Oct 13 14:40:46 2023
 @author: Ann"""
 
 import dataclasses as dc
+import functools as ft
 import random
 
 import ai_interface
@@ -157,6 +158,7 @@ class AiPlayer(ai_interface.AiPlayerIf):
         """Collect the list of scorers.
         This must be called if any of the multipliers are enabled/disabled."""
         # pylint: disable=too-complex
+        # pylint: disable=too-many-branches
 
         self.scorers = []
 
@@ -178,27 +180,29 @@ class AiPlayer(ai_interface.AiPlayerIf):
         if self.sc_params.access_m:
             self.scorers += [self._score_access]
 
-        scorer_trips = [('evens_m',
-                         self._score_cnt_evens,
-                         self._score_diff_evens,
-                         self._score_down_evens),
-                        ('seeds_m',
-                         self._score_cnt_seeds,
-                         self._score_diff_seeds,
-                         self._score_down_seeds),
-                        ('empties_m',
-                         self._score_cnt_empties,
-                         self._score_diff_empties,
-                         self._score_down_empties)]
+        scorers = [('evens_m',
+                     self._score_cnt_evens,
+                     self._score_diff_evens),
+                    ('seeds_m',
+                     self._score_cnt_seeds,
+                     self._score_diff_seeds),
+                    ('empties_m',
+                     self._score_cnt_empties,
+                     self._score_diff_empties)]
 
-        for param, cnt_func, diff_func, diff_own_func in scorer_trips:
+        if self.game.info.goal == gi.Goal.TERRITORY:
+            who_list = 'owner'
+        else:
+            who_list = 'true_holes'
+
+        for param, cnt_func, diff_func in scorers:
             if getattr(self.sc_params, param):
-                if self.game.info.no_sides:
+
+                # if true_holes[0] if True, it's an EAST/WEST game
+                if self.game.info.no_sides and not self.game.true_holes[0]:
                     self.scorers += [cnt_func]
-                elif self.game.info.goal == gi.Goal.TERRITORY:
-                    self.scorers += [diff_own_func]
                 else:
-                    self.scorers += [diff_func]
+                    self.scorers += [ft.partial(diff_func, who_list)]
 
 
     def clear_history(self):
@@ -282,35 +286,20 @@ class AiPlayer(ai_interface.AiPlayerIf):
         return (child_f - child_t) * self.sc_params.child_cnt_m
 
 
-    def _score_diff_evens(self, _):
+    def _score_diff_evens(self, who_list, _):
         """Score evens on each side of the board.
         If capturing on evens, having evens prevents captures."""
 
-        even_t = sum(1 for loc in self.game.cts.true_range
-                     if self.game.child[loc] is None
-                         and self.game.board[loc] > 0
-                         and not self.game.board[loc] % 2)
-        even_f = sum(1 for loc in self.game.cts.false_range
-                     if self.game.child[loc] is None
-                         and self.game.board[loc] > 0
-                         and not self.game.board[loc] % 2)
-        return (even_f - even_t) * self.sc_params.evens_m
-
-
-    def _score_down_evens(self, _):
-        """Score evens based on the hole owners.
-        If capturing on evens, having evens prevents captures."""
-
         even_t = even_f = 0
-        for loc in range(self.game.cts.dbl_holes):
+        for loc, who in enumerate(getattr(self.game, who_list)):
+
             if (self.game.child[loc] is None
                     and self.game.board[loc]
                     and not self.game.board[loc] % 2):
 
-                if self.game.owner[loc] is True:
+                if who is True:
                     even_t += 1
-
-                if self.game.owner[loc] is False:
+                elif who is False:
                     even_f += 1
 
         return (even_f - even_t) * self.sc_params.evens_m
@@ -330,30 +319,17 @@ class AiPlayer(ai_interface.AiPlayerIf):
         return even_cnt * self.sc_params.evens_m * tmult
 
 
-    def _score_diff_seeds(self, _):
+    def _score_diff_seeds(self, who_list, _):
         """Score the seeds on each side of the board.
         Sometimes hoarding seeds is a good strategy."""
 
-        sum_t = sum(self.game.board[loc]
-                    for loc in self.game.cts.true_range
-                    if self.game.child[loc] is None)
-        sum_f = sum(self.game.board[loc]
-                    for loc in self.game.cts.false_range
-                    if self.game.child[loc] is None)
-        return (sum_f - sum_t) * self.sc_params.seeds_m
-
-
-    def _score_down_seeds(self, _):
-        """Score seeds based on the hole owners."""
-
         sum_t = sum_f = 0
-        for loc in range(self.game.cts.dbl_holes):
+        for loc, who in enumerate(getattr(self.game, who_list)):
             if self.game.child[loc] is None:
 
-                if self.game.owner[loc] is True:
+                if who is True:
                     sum_t += self.game.board[loc]
-
-                if self.game.owner[loc] is False:
+                elif who is False:
                     sum_f += self.game.board[loc]
 
         return (sum_f - sum_t) * self.sc_params.seeds_m
@@ -370,29 +346,17 @@ class AiPlayer(ai_interface.AiPlayerIf):
         return seeds_sum * self.sc_params.seeds_m * tmult
 
 
-    def _score_diff_empties(self, _):
+    def _score_diff_empties(self, who_list, _):
         """Score the number of empties on each side of the board.
         Without empties, cross captures cannot occur."""
 
-        empty_t = sum(1 for loc in self.game.cts.true_range
-                      if not self.game.board[loc])
-        empty_f = sum(1 for loc in self.game.cts.false_range
-                      if not self.game.board[loc])
-        return (empty_f - empty_t) * self.sc_params.empties_m
-
-
-    def _score_down_empties(self, _):
-        """Score seeds based on the hole owners."""
-
         empty_t = empty_f = 0
-        for loc in range(self.game.cts.dbl_holes):
-            if (self.game.child[loc] is None
-                    and self.game.board[loc]):
+        for loc, who in enumerate(getattr(self.game, who_list)):
+            if self.game.child[loc] is None and not self.game.board[loc]:
 
-                if self.game.owner[loc] is True:
+                if who is True:
                     empty_t += 1
-
-                if self.game.owner[loc] is False:
+                elif who is False:
                     empty_f += 1
 
         return (empty_f - empty_t) * self.sc_params.empties_m

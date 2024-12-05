@@ -346,14 +346,15 @@ class Ohojichi(SameSide):
     """Sow only on your side of the board east/west,
     deposit capture in opponents holes.
 
-    These build on call to the mancala.Mancala methods
-    not the SameSide method."""
+    These build on calls to the mancala.Mancala methods
+    not the SameSide method, SameSide does the wrong things."""
 
     rules = build_ew_rules()
 
     def __init__(self, game_consts, game_info):
         # pylint: disable=non-parent-init-called
         # pylint: disable=super-init-not-called
+        # pylint: disable=duplicate-code
 
         mancala.Mancala.__init__(self, game_consts, game_info)
 
@@ -366,6 +367,7 @@ class Ohojichi(SameSide):
         self.true_holes = tuple([True] * half
                                 + [False] * holes
                                 + [True] * half)
+
 
     def get_allowable_holes(self):
         """If EMPTY_STORE allow selection of any of opponents holes.
