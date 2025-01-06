@@ -818,6 +818,7 @@ class MancalaGames(tk.Frame):
 
         with open(filename, 'w', encoding='utf-8') as file:
             json.dump(self.game_config, file, indent=3)
+        self.filename = filename
 
 
     def _set_frame_active(self, frame, new_state):
