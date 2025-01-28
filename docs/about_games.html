@@ -661,7 +661,7 @@ Another value for <a href="game_params.html#round_fill">ROUND_FILL</a>
 <p>Goal: win 10 games.
 <p>Variant:
 <ul><li class="helptext">
-Allow moves from holes across from singles (Valdez calls Huroy).
+Allow moves from holes across from singles (<a href="about_games.html#Huroy">Huroy</a>).
 </ul>
 <div class="cols_row">
   <div class="column2">
@@ -813,6 +813,32 @@ Instead of minimum move of 2, singletons may start moves if all holes are empty 
   </div>
 </div>
 <p>Rules: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p100.
+<h3 id="Huroy">Huroy</h3>
+<p>Sow in the direction of your choice.
+<p>Before each sow, if any holes on your side of the board have 1s, capture any seeds across from them. Then sow as normal. No other capture is provided.
+<p>Played in rounds. A round ends when either player cannot move. Any seeds remaining on the board go to the last player to move.
+<p>Goal: win 10 games.
+<p>Variant:
+<ul><li class="helptext">
+<a href="about_games.html#Gelech">Gelech</a> does not allow moves from holes with 1 seed opposite.
+</ul>
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: RND_WIN_COUNT</p>
+    <p class="param"><a href="game_params.html#goal_param">Goal Parameter</a>: 10</p>
+    <p class="param"><a href="game_params.html#presowcapt">Pre Sow Capture</a>: ALL_SINGLE_XCAPT</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: SPLIT</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#udir_holes">User Chooses Direction</a>: 0 1 2 3 4 5</p>
+    <p class="param"><a href="game_params.html#unclaimed">End Game Seeds</a>: LAST_MOVER</p>
+  </div>
+</div>
+<p>Rules: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p28.
 <h3 id="J'Odu">J'Odu</h3>
 <p>Sow clockwise, multi-lap sow. Cross capture opposite-side but only up to 3 seeds, picking own on capture.
 <p>Variations: board size and start seeds.
@@ -953,9 +979,9 @@ Require must share (<a href="game_params.html#mustshare">MUSTSHARE</a>) because 
   </div>
 </div>
 <p>Rules: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p30.
-<p>Deviations: Rounding rules are applied to all territory games, no drawing of lots to choose who gets the extra hole. The winner does not get to choose which holes they occupy.
+<p>Deviations: Rounding rules are applied to all territory games, no drawing of lots to choose who gets the extra hole.
 <p>Note 1: <a href="game_params.html#goal_param">GOAL_PARAM</a> set to 11 to limit game length
-<p>Note 2: Russ describes <a href="about_games.html#Motiq">Motiq</a> which is a very similar game.
+<p>Note 2: Russ describes <a href="about_games.html#Motiq">Motiq</a> which is a very similar game (also predefined).
 <h3 id="Lami">Lami</h3>
 <p>Counter-clockwise sow, multi-lap sow. After the first move, subsequent moves may only be played from holes:
 <ul><li class="helptext">
@@ -2026,6 +2052,7 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Halusa">Halusa</a></p>
     <p class="param"><a href="#Hoyito I">Hoyito I</a></p>
     <p class="param"><a href="#Hoyito II">Hoyito II</a></p>
+    <p class="param"><a href="#Huroy">Huroy</a></p>
     <p class="param"><a href="#J'Odu">J'Odu</a></p>
     <p class="param"><a href="#Kalah">Kalah</a></p>
     <p class="param"><a href="#Kale">Kale</a></p>
@@ -2049,9 +2076,9 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#No Sides Child">No Sides Child</a></p>
     <p class="param"><a href="#NoCapt">NoCapt</a></p>
     <p class="param"><a href="#NoSides">NoSides</a></p>
-    <p class="param"><a href="#NumNum">NumNum</a></p>
   </div>
   <div class="column3">
+    <p class="param"><a href="#NumNum">NumNum</a></p>
     <p class="param"><a href="#Obridjie">Obridjie</a></p>
     <p class="param"><a href="#Ohojichi">Ohojichi</a></p>
     <p class="param"><a href="#Olinda">Olinda</a></p>

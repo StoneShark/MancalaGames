@@ -99,7 +99,9 @@ class ChildRule(enum.IntEnum):
 
     NONE = 0
     OPP_ONLY = 1
-    NOT_1ST_OPP = 2
+    OWN_ONLY = 2
+    NOT_1ST_OPP = 3
+
 
 
 @enum.unique

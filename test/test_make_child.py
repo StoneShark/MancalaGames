@@ -86,6 +86,32 @@ class TestOppChild:
         assert game.deco.make_child.test(mdata)
 
 
+class TestOwnChild:
+
+    def test_opp_child(self):
+
+        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_info = gi.GameInfo(child_type=gi.ChildType.NORMAL,
+                                child_cvt=3,
+                                child_rule=gi.ChildRule.OWN_ONLY,
+                                evens=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        mdata = mancala.MoveData(game, None)
+        mdata.direct = game.info.sow_direct
+        mdata.board = tuple(game.board)
+        mdata.seeds = 2
+
+        game.turn = False
+        mdata.capt_loc = 3
+        assert not game.deco.make_child.test(mdata)
+
+        mdata.capt_loc = 2
+        assert game.deco.make_child.test(mdata)
+
+
 class TestNotWithOne:
 
     @pytest.mark.parametrize('turn, hole, seeds, etest',

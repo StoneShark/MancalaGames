@@ -28,7 +28,7 @@
       }
    },
    "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p30.",
-   "deviations": "Rounding rules are applied to all territory games, no drawing of lots to choose who gets the extra hole. The winner does not get to choose which holes they occupy.",
+   "deviations": "Rounding rules are applied to all territory games, no drawing of lots to choose who gets the extra hole.",
    "note 1": "GOAL_PARAM set to 11 to limit game length",
-   "note 2": "Russ describes Motiq which is a very similar game."
+   "note 2": "Russ describes Motiq which is a very similar game (also predefined)."
 }

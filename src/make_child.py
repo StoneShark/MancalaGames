@@ -235,6 +235,17 @@ class OppSideChild(MakeChildIf):
         return False
 
 
+class OwnSideChild(MakeChildIf):
+    """Require own side of the board"""
+
+    def test(self, mdata):
+
+        if self.game.cts.my_side(self.game.turn, mdata.capt_loc):
+            return self.decorator.test(mdata)
+
+        return False
+
+
 class NotWithOne(MakeChildIf):
     """Don't make a child if sowing started with one seed.
 
@@ -289,6 +300,9 @@ def _add_child_wrappers(game, deco):
 
     if game.info.child_rule == gi.ChildRule.OPP_ONLY:
         deco = OppSideChild(game, deco)
+
+    elif game.info.child_rule == gi.ChildRule.OWN_ONLY:
+        deco = OwnSideChild(game, deco)
 
     elif game.info.child_rule == gi.ChildRule.NOT_1ST_OPP:
         deco = OppSideChild(game, deco)

@@ -418,8 +418,9 @@ def add_child_rules(rules):
         rule=lambda ginfo: (ginfo.child_type in (gi.ChildType.BULL,
                                                  gi.ChildType.QUR,
                                                  gi.ChildType.WEG)
-                            and ginfo.child_rule == gi.ChildRule.OPP_ONLY),
-        msg='CHILD_RULE: OPP_ONLY is incompatible with selected CHILD_TYPE',
+                            and ginfo.child_rule in (gi.ChildRule.OPP_ONLY,
+                                                     gi.ChildRule.OWN_ONLY)),
+        msg='CHILD_RULE: OPP/OWN_ONLY is incompatible with selected CHILD_TYPE',
         excp=gi.GameInfoError)
 
     rules.add_rule(

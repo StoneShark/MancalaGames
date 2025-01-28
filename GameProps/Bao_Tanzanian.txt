@@ -10,7 +10,7 @@
       "blocks": true,
       "capsamedir": true,
       "child_cvt": 4,
-      "child_rule": 2,
+      "child_rule": 3,
       "child_type": 1,
       "crosscapt": true,
       "mlaps": 1,

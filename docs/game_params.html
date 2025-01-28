@@ -534,9 +534,6 @@ Sow rule of MAX_SOW: maximum number of seeds a hole may contain
 <p class="helptext"> Children must not be symmetrically opposite eachother. For example,  in a 9 hole per side game with holes numbered as follows, children may not be in the same numbered holes:
 <p class="helptext"> 9 8 7 6 5 4 3 2 1
 <p class="helptext"> 1 2 3 4 5 6 7 8 9 
-<p class="helptext"> Depending on sow direction some holes are prohibited from being made children: 
-<p class="helptext"> CW & CCW:  the last of your opponents holes that you would sow into may not be made a child. CW holes numbered 1 above and CCW holes numberd 9 above.
-<p class="helptext"> SPLIT: no end holes may be made children.
 <p class="helptext"> Used to create tuzdek style children along with <a href="game_params.html#child_rule">CHILD_RULE</a> of OPP_ONLY.
 <li class="helptext">
 <b class="enum">WEG</b>: children maybe created in holes owned by the opponent. Ending a sow in an opponent's weg captures the seed just sown and one more (if there is one); generally, the player gets to play again (per <a href="game_params.html#capt_rturn">CAPT_RTURN</a>). WEGs are supported for TERRITORY games only (hole ownership required).
@@ -563,6 +560,8 @@ Sow rule of MAX_SOW: maximum number of seeds a hole may contain
 <b class="enum">NONE</b>: no additional restrictions.
 <li class="helptext">
 <b class="enum">OPP_ONLY</b>:  Only make children on the opposite side of the board. Incompatible with BULL, QUR, and WEG child types.
+<li class="helptext">
+<b class="enum">OWN_ONLY</b>: Only make children on own side of the board.  Incompatible with BULL, QUR, and WEG child types.
 <li class="helptext">
 <b class="enum">NOT_1ST_OPP</b>: Don't make a child in the first hole on the opponents side/territory with one seed.
 </ol>

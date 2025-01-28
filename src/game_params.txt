@@ -270,9 +270,6 @@ Sow	child_type	Type of Children	game_info _	112	ChildType	NOCHILD	4	2	"Games wit
   + Children must not be symmetrically opposite eachother. For example,  in a 9 hole per side game with holes numbered as follows, children may not be in the same numbered holes:
   + 9 8 7 6 5 4 3 2 1
   + 1 2 3 4 5 6 7 8 9 
-  + Depending on sow direction some holes are prohibited from being made children: 
-  + CW & CCW:  the last of your opponents holes that you would sow into may not be made a child. CW holes numbered 1 above and CCW holes numberd 9 above.
-  + SPLIT: no end holes may be made children.
   + Used to create tuzdek style children along with CHILD_RULE of OPP_ONLY.
 - WEG: children maybe created in holes owned by the opponent. Ending a sow in an opponent's weg captures the seed just sown and one more (if there is one); generally, the player gets to play again (per CAPT_RTURN). WEGs are supported for TERRITORY games only (hole ownership required).
 - BULL: create one bull if final seed sows to CHILD_CVT, create two bulls if the final two seeds are sown to CHILD_CVT-1 and CHILD_CVT (in either order).
@@ -283,6 +280,7 @@ Sow	child_cvt	Child Convert Count	game_info _	110	int	0	5	2	"Defines the number 
 Sow	child_rule	Child Restrictions	game_info _	111	ChildRule	NONE	6	2	"Additional child creation requirements may be set. These are in addition to location restrictions specified by CHILD_LOCS.
 - NONE: no additional restrictions.
 - OPP_ONLY:  Only make children on the opposite side of the board. Incompatible with BULL, QUR, and WEG child types.
+- OWN_ONLY: Only make children on own side of the board.  Incompatible with BULL, QUR, and WEG child types.
 - NOT_1ST_OPP: Don't make a child in the first hole on the opponents side/territory with one seed."
 Sow	child_locs	Child Locations	game_info _	112	ChildLocs	ANYWHERE	7	2	"Locations where children can be made by each player. The notes designate players as: T - top player, B - bottom player. N - neither player. For shorter boards, the pattern is generated using assignments (a b c d e) as:
 board length 2: a e
