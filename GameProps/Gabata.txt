@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Gabata",
-      "about": "A territory game that uses both stores and wegs (children). Sow is multi-lap, counter-clockwise. The opening move is prescribed: Plus1Minus1. Wegs are made when a final seed sows a hole to 4 seeds on your opponent's territory. Captures are on the final seed being sown into an opponents weg. The sown seed and one more (if there is one) are captured to your store. Repeat turn on capture.",
+      "about": "A territory game that uses both stores and wegs (children). Sow is multi-lap, counter-clockwise. The opening move is prescribed: Plus1Minus1. Wegs are made when a final seed sows a hole to 4 seeds on your opponent's territory. Captures are on the final seed being sown into an opponent's weg. The sown seed and one more (if there is one) are captured to your store. Repeat turn on capture.",
       "capt_rturn": true,
       "child_cvt": 4,
       "child_type": 4,

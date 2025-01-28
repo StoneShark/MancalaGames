@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Vai Lun Thlan",
-      "about": "A single-lap mancala, sow direction is clockwise, capture on 1s. A player must pass, if they don't have a move. Goal: collect more seeds than opponent.",
+      "about": "A single-lap mancala, sow direction is clockwise, capture on 1s. A player must pass, if they don't have a move. Goal: collect more seeds than your opponent.",
       "capt_on": [1],
       "multicapt": -1,
       "mustpass": true,
@@ -26,5 +26,5 @@
       }
    },
    "rules": "Mohr, Merilyn Simonds. The New Games Treasury. 1993. p99.",
-   "deviation": "Game ends when one player has move than half the seeds."
+   "deviation": "Game ends when one player has more than half the seeds."
 }

@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Tapata",
-      "about": "The goal is to deprive the opponent of seeds. Counter-clockwise, multi-lap sow. Prescribed opening move: one seed must reach opponents side of the board. Moves must end in an empty hole or reach opponents side of the board.  Seeds are taken out of play via cross-capture on opponents side.\n\nVariations:\n- any start pattern\n- any allow rule\n- see Sedeqa",
+      "about": "The goal is to deprive the opponent of seeds. Counter-clockwise, multi-lap sow. Prescribed opening move: one seed must reach opponent's side of the board. Moves must end in an empty hole or reach opponent's side of the board.  Seeds are taken out of play via cross-capture on opponent's side.\n\nVariations:\n- any start pattern\n- any allow rule\n- see Sedeqa",
       "crosscapt": true,
       "goal": 1,
       "mlaps": 1,

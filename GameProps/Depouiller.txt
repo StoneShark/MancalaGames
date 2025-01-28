@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Dépouiller",
-      "about": "A deprive game. Moves are only allowed from holes that reach the opponents side or end in an empty hole. Sow direction is CCW. Cross capture from either side.\n\nAI player is MCTS and active with expert difficulty.",
+      "about": "A deprive game. Moves are only allowed from holes that reach the opponent's side or end in an empty hole. Sow direction is CCW. Cross capture from either side.\n\nAI player is MCTS and active with expert difficulty.",
       "allow_rule": 1,
       "crosscapt": true,
       "goal": 1,

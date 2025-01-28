@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Adji-boto",
-      "about": "Sow single-lap, CCW. The minimum move is 2 seeds. Captures may not be made on the first move by either player.\nEach of the first 10 moves must start from a different hole. This is accomplished by using the unlock mechanism, moving from a hole unlocks it. Until all of a players holes are unlocked, moves may only start from locked holes.\nIf a player does not have a move, they must pass.\nCaptures are made when the hole after the final seed sown contains 1, 3 or 5 seeds. Those seeds (in the next hole) are captured, but not any from the final hole sown. These captures do not check the lock status.\nThe game ends when one player has accumulated more than half of the seeds or when neither player can move. Unclaimed seeds go to the hole owners.",
+      "about": "Sow single-lap, CCW. The minimum move is 2 seeds. Captures may not be made on the first move by either player.\nEach of the first 10 moves must start from a different hole. This is accomplished by using the unlock mechanism, moving from a hole unlocks it. Until all of a player's holes are unlocked, moves may only start from locked holes.\nIf a player does not have a move, they must pass.\nCaptures are made when the hole after the final seed sown contains 1, 3 or 5 seeds. Those seeds (in the next hole) are captured, but not any from the final hole sown. These captures do not check the lock status.\nThe game ends when one player has accumulated more than half of the seeds or when neither player can move. Unclaimed seeds go to the hole owners.",
       "allow_rule": 9,
       "capsamedir": true,
       "capt_type": 1,

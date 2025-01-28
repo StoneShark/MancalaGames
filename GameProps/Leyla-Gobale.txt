@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Leyla-Gobale",
-      "about": "Sow clockwise.  Cross capture, opposite side only. Qurs are created in pairs on both sides of the board when a seed is sown into an empy hole on the player's side of the board and the opposite hole contains three seeds (no capture is made).\n\nVariations:\n\n- 6 or 12 board size\n- play with multilap sow\n- played in rounds with UMOVE style RoundFill",
+      "about": "Sow clockwise.  Cross capture, opposite side only. Qurs are created in pairs on both sides of the board when a seed is sown into an empty hole on the player's side of the board and the opposite hole contains three seeds (no capture is made).\n\nVariations:\n\n- 6 or 12 board size\n- play with multilap sow\n- played in rounds with UMOVE style RoundFill",
       "stores": true,
       "sow_direct": -1,
       "child_cvt": 3,

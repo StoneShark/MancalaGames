@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Hoyito II",
-      "about": "Sow counter-clockwise in multiple laps. Multiple capture with the final seed on 4s on your opponents side of the board.\n\nPlayed in rounds. After each round players fill as many holes as they can with 4 seeds each. Extra seeds are placed in their store. Unfilled holes are out of play for the round.\n\nThe game is over when one player cannot fill a single hole.\n\n",
+      "about": "Sow counter-clockwise in multiple laps. Multiple capture with the final seed on 4s on your opponent's side of the board.\n\nPlayed in rounds. After each round players fill as many holes as they can with 4 seeds each. Extra seeds are placed in their store. Unfilled holes are out of play for the round.\n\nThe game is over when one player cannot fill a single hole.\n\n",
       "blocks": true,
       "capt_on": [ 4 ],
       "mlaps": 1,

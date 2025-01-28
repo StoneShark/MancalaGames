@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Lami",
-      "about": "Counter-clockwise sow, multi-lap sow. After the first move, subsequent moves may only be played from holes:\n- that do not contain 2 seeds,\n- unless all of the player's holes contain 2, then any hole maybe played.\nWhen sowing skip opponents holes with two seeds (except first move).\nNo capture on game opening move. Cross-capture from opponents side of board but only if it contains 2 seeds; on capture pick all of opponents holes with 2 seeds. Played in Rounds.",
+      "about": "Counter-clockwise sow, multi-lap sow. After the first move, subsequent moves may only be played from holes:\n- that do not contain 2 seeds,\n- unless all of the player's holes contain 2, then any hole maybe played.\nWhen sowing, skip opponent's holes with two seeds (except first move).\nNo capture on game opening move. Cross-capture from opponents side of board but only if it contains 2 seeds; on capture pick all of opponent's holes with 2 seeds. Played in Rounds.",
       "allow_rule": 5,
       "blocks": true,
       "capt_on": [2],

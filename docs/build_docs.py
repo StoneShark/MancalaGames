@@ -316,6 +316,9 @@ your opponent of seeds.
     Players do not own the holes on their own side of the board;
     instead ownership is claimed (i.e. making a child)
     by sowing a hole to four seeds.
+    <li><a href="#SameSide">SameSide</a>: players only sow on their
+    own side of the board. Captured seeds are placed in an opponent's
+    hole.
     <li><a href="#SowOpDirs">SowOpDirs</a>:
     Players sow in opposite directions.
     The first move of each game defines the directions for each player.

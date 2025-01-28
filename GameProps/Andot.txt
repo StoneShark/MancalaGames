@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Andot",
-      "about": "Split sow. Make children on 4 on opposite side ends and four middle holes on own side.\n\nCannot move a singleton that has been moved across the side of the board back to where is was the previous turn.\n\nGoal: collect move than half of the seeds in child holes.\n\n",
+      "about": "Split sow. Make children on 4 on opposite-side ends and four middle holes on own side.\n\nCannot move a singleton that has been moved across the side of the board back to where it was the previous turn.\n\nGoal: collect more than half of the seeds in child holes.\n\n",
       "child_cvt": 4,
       "child_type": 1,
       "child_locs": 3,

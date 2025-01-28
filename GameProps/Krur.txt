@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Krur",
-      "about": "Sow counter-clockwise but skip opponents children.\n\nChildren are made on the opposite side on 4s. The only capture mechanism is collect seeds in your own children.\n\nGoal: collect at least half the seeds in your own children.\n\n\n",
+      "about": "Sow counter-clockwise but skip opponents children.\n\nChildren are made on the opposite side on 4s. The only capture mechanism is to collect seeds in your own children.\n\nGoal: collect at least half the seeds in your own children.",
       "child_cvt": 4,
       "child_rule": 1,
       "child_type": 1,

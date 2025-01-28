@@ -22,5 +22,5 @@
       }
    },
    "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p88.",
-   "deviation": "Game ends a soon as a player has half the seeds."
+   "deviation": "Game ends as soon as a player has half the seeds."
 }

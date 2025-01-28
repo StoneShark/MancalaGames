@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Toguz Xorgol",
-      "about": "A single-lap, clockwise-sow mancala. One seed is left in the start hole when sowing; unless there is only one seed, then it is move forward one hole.\nCapture on evens that are greater than or equal to 4.\nIf the final seed of a sow brings a hole to three seeds, a tuzdek is made (child). A tuzdek cannot be made on rightmost hole on the opponents side--this would be the last hole before sowing would continue back to your own side of the board. Tuzdeks cannot be symmetrically opposite to eachother (see CHILD_TYPE).\n\nVariation:\n- https://en.wikipedia.org/wiki/Toguz_korgol describes a game in which seeds are sown counter-clockwise and the prohibited holes follow the CHILD_LOCS NO_OPP_RIGHT pattern). Also, the minimum capture option is removed; holes sown to 2 may also be captured.",
+      "about": "A single-lap, clockwise-sow mancala. One seed is left in the start hole when sowing; unless there is only one seed, then it is moved' forward one hole.\nCapture on evens that are greater than or equal to 4.\nIf the final seed of a sow brings a hole to three seeds, a tuzdek is made (child). A tuzdek cannot be made on rightmost hole on the opponent's side--this would be the last hole before sowing would continue back to your own side of the board. Tuzdeks cannot be symmetrically opposite to each other (see CHILD_TYPE).\n\nVariation:\n- https://en.wikipedia.org/wiki/Toguz_korgol describes a game in which seeds are sown counter-clockwise and the prohibited holes follow the CHILD_LOCS NO_OPP_RIGHT pattern). Also, the minimum capture option is removed; holes sown to 2 may also be captured.",
       "child_cvt": 3,
       "child_locs": 5,
       "child_type": 3,
