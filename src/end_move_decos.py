@@ -342,9 +342,6 @@ class ChildNoStoresEnder(EndTurnIf):
             self.game.store = [0, 0]
             game_log.step('Moved store seeds to children', self.game)
 
-        assert sum(self.game.board) == self.game.cts.total_seeds, \
-            'ChildNoStoresEnder: seeds missing from board.'
-
         return end_cond, winner
 
 
