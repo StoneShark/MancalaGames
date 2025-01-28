@@ -1,0 +1,26 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 6,
+      "nbr_start": 4
+   },
+   "game_info": {
+      "name": "Huroy",
+      "about": "Sow in the direction of your choice.\n\nBefore each sow, if any holes on your side of the board have 1s, capture any seeds across from them. Then sow as normal. No other capture is provided.\n\nPlayed in rounds. A round ends when either player cannot move. Any seeds remaining on the board go to the last player to move.\n\nGoal: win 10 games.\n\nVariant:\n\n- Gelech does not allow moves from holes with 1 seed opposite.",
+      "goal": 4,
+      "goal_param": 10,
+      "presowcapt": 2,
+      "rounds": 2,
+      "sow_direct": 0,
+      "stores": true,
+      "udir_holes": [ 0, 1, 2, 3, 4, 5 ],
+      "unclaimed": 2
+   },
+   "player": {
+      "ai_params": {},
+      "scorer": {
+         "stores_m": 4
+      }
+   },
+   "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p28."
+}
