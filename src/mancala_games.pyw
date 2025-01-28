@@ -20,14 +20,11 @@ Created on Thu Mar 30 13:43:39 2023
 import collections
 import csv
 import functools as ft
-import json
-import os.path
 import textwrap
 import traceback
 import warnings
 import tkinter as tk
 from tkinter import ttk
-import tkinter.filedialog as tkfile
 import webbrowser
 
 import ai_player
@@ -37,6 +34,7 @@ import game_interface as gi
 import mancala_ui
 import man_config
 import man_path
+import mg_config
 import param_consts as pc
 
 from game_classes import GAME_CLASSES
@@ -63,7 +61,7 @@ NORMAL = 'normal'
 
 SKIP_TAB = 'skip'
 
-ALL_PARAMS = '_all_params.txt'
+WTITLE = 'Mancala Options'
 
 
 # %% helper funcs
@@ -128,11 +126,6 @@ class MancalaGames(tk.Frame):
     def __init__(self, master):
 
         self.master = master
-        self.game = None
-        self.params = {}
-        self.filename = None
-        self.loaded_config = None     # keep for persistent comment entries
-        self.game_config = None       # constructed config for playing
         self.tkvars = {}
         self.tktexts = {}
         self.udir_frame = None
@@ -142,8 +135,12 @@ class MancalaGames(tk.Frame):
         self.desc = None
         self.prev_option = None
 
+        self.params = self.read_params_file()
+        self.config = mg_config.GameConfig(self.master, self.params)
+        self.game = None
+
         super().__init__(self.master)
-        self.master.title('Mancala Options')
+        self.master.title(WTITLE)
         self.master.resizable(False, False)
         self.master.wm_geometry('+400+200')
         self.pack()
@@ -154,7 +151,6 @@ class MancalaGames(tk.Frame):
 
         self._create_menus()
         self._add_commands_ui()
-        self.params = self.read_params_file()
         self._add_tabs()
         self._create_desc_pane()
         self._make_tkvars()
@@ -165,6 +161,11 @@ class MancalaGames(tk.Frame):
     def destroy(self):
         """Remove the traces from the tk variables.
         Don't change the name, we're overriding Frame method."""
+
+        self.config.edited |= \
+            any(field.edit_modified() for field in self.tktexts.values())
+        if self.config.check_save_cancel():
+            return
 
         for var in self.tkvars.values():
             if isinstance(var, list):
@@ -407,9 +408,11 @@ class MancalaGames(tk.Frame):
 
         _ = (index, mode)
         self.param_changed = True
+        self.config.edited = True
+        self.master.title(WTITLE + '*')
 
         if var == ckey.NAME:
-            self.filename = self.tkvars[ckey.NAME].get() + '.txt'
+            self.config.init_fname(self.tkvars[ckey.NAME].get())
 
         elif var == ckey.HOLES:
             self._resize_udirs()
@@ -645,7 +648,8 @@ class MancalaGames(tk.Frame):
 
         for param in self.params.values():
             value = man_config.get_config_value(
-                self.loaded_config, param.cspec, param.option, param.vtype)
+                self.config.loaded_config,
+                param.cspec, param.option, param.vtype)
 
             if param.vtype == pc.MSTR_TYPE:
                 self.tktexts[param.option].delete('1.0', tk.END)
@@ -669,7 +673,7 @@ class MancalaGames(tk.Frame):
         """Get the values from the tkvars and set them into
         the a game_config dict."""
 
-        self.game_config = {}
+        self.config.game_config = {}
 
         for param in sorted(self.params.values(), key=lambda v: v.order):
 
@@ -704,7 +708,7 @@ class MancalaGames(tk.Frame):
                 value = str_dict[value]
 
             man_config.set_config_value(
-                self.game_config, param.cspec, param.option, value)
+                self.config.game_config, param.cspec, param.option, value)
 
 
     def _prepare_game(self):
@@ -714,16 +718,16 @@ class MancalaGames(tk.Frame):
         exceptions/warnings might be raised."""
 
         self._make_config_from_tk()
-        game_class = self.game_config[ckey.GAME_CLASS]
+        game_class = self.config.game_config[ckey.GAME_CLASS]
         gclass = GAME_CLASSES[game_class]
 
-        consts = gc.GameConsts(**self.game_config[ckey.GAME_CONSTANTS])
+        consts = gc.GameConsts(**self.config.game_config[ckey.GAME_CONSTANTS])
         info = gi.GameInfo(nbr_holes=consts.holes,
                            rules=gclass.rules,
-                           **self.game_config[ckey.GAME_INFO])
+                           **self.config.game_config[ckey.GAME_INFO])
 
         self.game = gclass(consts, info)
-        ai_player.AiPlayer(self.game, self.game_config[ckey.PLAYER])
+        ai_player.AiPlayer(self.game, self.config.game_config[ckey.PLAYER])
         self.param_changed = False
 
 
@@ -735,6 +739,8 @@ class MancalaGames(tk.Frame):
             any(field.edit_modified() for field in self.tktexts.values())
         if self.game and not self.param_changed:
             return
+
+        self.master.title(WTITLE + '*')
 
         try:
             self._prepare_game()
@@ -748,77 +754,29 @@ class MancalaGames(tk.Frame):
 
 
     def _load(self):
-        """Load params from file. Check size for reasonableness.
+        """Load params from file.
         Translate the json string. Convert non-primitive types.
-        Build game_consts and game_info.
-        json.JSONDecodeError is dervied from ValueError."""
+        Build game_consts and game_info."""
 
-        filename = tkfile.askopenfilename(
-            parent=self.master,
-            title='Load Parameters',
-            initialdir=man_path.get_path('GameProps'))
-        if not filename:
-            return
-
-        self.filename = os.path.basename(filename)
-
-        try:
-            self.loaded_config = man_config.read_game(filename)
-        except ValueError as error:
-            tk.messagebox.showerror('JSON File Error', error)
-            return
-
+        self.config.edited |= \
+            any(field.edit_modified() for field in self.tktexts.values())
+        self.config.load()
         self._fill_tk_from_config()
         self._test()
+        self.config.edited = False
 
-
-    def _del_defaults(self):
-        """Delete most tags that have the default value."""
-
-        for param in self.params.values():
-
-            if param.option not in (ckey.GAME_CLASS,
-                                    ckey.HOLES, ckey.NBR_START,
-                                    ckey.NAME, ckey.ABOUT, ckey.SOW_DIRECT):
-
-                man_config.del_default_config_tag(self.game_config,
-                                                  param.vtype,
-                                                  param.cspec,
-                                                  param.option)
-
+        self.master.title(WTITLE)
+        for field in self.tktexts.values():
+            field.edit_modified(False)
 
     def _save(self):
-        """Save params to file.
-        Preserve any tags/comments that were in a loaded config."""
+        """Save params to file."""
 
         self._make_config_from_tk()
-        if self.loaded_config:
-            for tag in self.loaded_config.keys():
-                if tag not in self.game_config:
-                    self.game_config[tag] = self.loaded_config[tag]
-
-
-        if not self.filename:
-            self.filename = self.game_config[ckey.GAME_INFO][ckey.NAME] \
-                + '.txt'
-
-        filename = tkfile.asksaveasfilename(
-            parent=self.master,
-            title='Save Parameters',
-            confirmoverwrite=True,
-            initialdir=man_path.get_path('GameProps'),
-            initialfile=self.filename,
-            filetypes=[('text file', '.txt')],
-            defaultextension='.txt')
-        if not filename:
-            return
-
-        if not filename.endswith(ALL_PARAMS):
-            self._del_defaults()
-
-        with open(filename, 'w', encoding='utf-8') as file:
-            json.dump(self.game_config, file, indent=3)
-        self.filename = filename
+        self.config.save()
+        self.master.title(WTITLE)
+        for field in self.tktexts.values():
+            field.edit_modified(False)
 
 
     def _set_frame_active(self, frame, new_state):
@@ -860,11 +818,20 @@ class MancalaGames(tk.Frame):
             return
 
         game_ui = mancala_ui.MancalaUI(self.game,
-                                       self.game_config[ckey.PLAYER],
+                                       self.config.game_config[ckey.PLAYER],
                                        self.master)
         self._set_active(False)
         game_ui.wait_window()
         self._set_active(True)
+
+
+    def _reset_edited(self):
+        """Clear the edited flags and config data."""
+
+        self.master.title(WTITLE)
+        self.config.reset()
+        for field in self.tktexts.values():
+            field.edit_modified(False)
 
 
     def _reset(self):
@@ -872,8 +839,6 @@ class MancalaGames(tk.Frame):
 
         Call this at initialization to fill the text boxes which don't
         have preinitialized variables."""
-
-        self.loaded_config = None
 
         for param in self.params.values():
 
@@ -902,11 +867,11 @@ class MancalaGames(tk.Frame):
             elif param.vtype != pc.LABEL_TYPE:
                 self.tkvars[param.option].set(param.ui_default)
 
+        self._reset_edited()
+
 
     def _reset_const(self):
         """Reset to defaults; clear loaded config dictionary."""
-
-        self.loaded_config = None
 
         for param in self.params.values():
 
@@ -936,6 +901,8 @@ class MancalaGames(tk.Frame):
 
             elif param.vtype != pc.LABEL_TYPE:
                 self.tkvars[param.option].set(default)
+
+        self._reset_edited()
 
 
 # %%  main
