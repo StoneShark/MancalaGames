@@ -1,9 +1,7 @@
 
-all: clean pylint context params all_tests docs exe
+all: clean pylint context params tests docs exe
 
-long_tests: stress_tests player_tests cov_unit_tests
-
-# do in this order so that html coverage dir is output from all_tests
+# do in this order so that html coverage dir is output from tests
 final: spotless long_tests all
 
 
@@ -137,9 +135,14 @@ integ_tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py
 	coverage html
 
 
-all_tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py
+tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py
 	-coverage run -m pytest
 	coverage html
+
+long_tests: stress_tests player_tests cov_unit_tests
+
+all_tests: tests long_tests
+
 
 # run the tests with the verbose flag
 # mostly a reminder on how to do this
