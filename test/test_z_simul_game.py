@@ -47,6 +47,7 @@ if BAD_CFG in FILES:
 
 XFAIL_GAMES = {
     'Urim': "10 points can't generally be achieved within test limits.",
+    'Ohojichi': "Random play is very bad; games don't finish.",
     }
 
 
