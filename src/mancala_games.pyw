@@ -17,14 +17,12 @@ Created on Thu Mar 30 13:43:39 2023
 
 # %% import
 
-import collections
-import csv
 import functools as ft
 import textwrap
 import traceback
-import warnings
 import tkinter as tk
 from tkinter import ttk
+import warnings
 import webbrowser
 
 import ai_player
@@ -49,7 +47,6 @@ MAKE_LVARS = {ckey.CAPT_ON: 6,
 
 DESC_WIDTH = 60
 DASH_BULLET = '- '
-INT_LIST_CHARS = '0123456789, '
 
 # these are the expected tabs, put them in this order (add any extras)
 PARAM_TABS = ('Game', 'Dynamics', 'Sow', 'Capture', 'Player')
@@ -87,36 +84,6 @@ def int_validate(value):
     return True
 
 
-def convert_value(value):
-    """convert the ui_defaults to nice python types."""
-
-    convert_dict = {'n': None,
-                    't': True,
-                    'true': True,
-                    'f': False,
-                    'false': False,
-                    }
-    elist_str = '[]'
-    value = value.strip()
-
-    if (key := value.lower()) in convert_dict:
-        return convert_dict[key]
-
-    if value.isdigit() or (value[0] == MINUS and value[1:].isdigit()):
-        return int(value)
-
-    if value == elist_str:
-        return []
-
-    if (value[0] == elist_str[0]
-            and value[-1] == elist_str[-1]
-            and all(c in INT_LIST_CHARS for c in value[1:-1])):
-        substrs = value[1:-1].split(',')
-        return [int(val.strip()) for val in substrs]
-
-    return value
-
-
 # %%  game params UI
 
 class MancalaGames(tk.Frame):
@@ -135,7 +102,7 @@ class MancalaGames(tk.Frame):
         self.desc = None
         self.prev_option = None
 
-        self.params = self.read_params_file()
+        self.params = man_config.ParamData()
         self.config = mg_config.GameConfig(self.master, self.params)
         self.game = None
 
@@ -227,43 +194,6 @@ class MancalaGames(tk.Frame):
                   ).pack(side=tk.LEFT, expand=True, fill=tk.X)
         tk.Button(self.but_frame, text='Play', command=self._play
                   ).pack(side=tk.LEFT, expand=True, fill=tk.X)
-
-
-    @staticmethod
-    def read_params_file():
-        """Read the game parameters file."""
-
-        with open(man_path.get_path('game_params.txt'), 'r',
-                  encoding='us-ascii') as file:
-            reader = csv.reader(file, delimiter='\t')
-            data = list(reader)
-
-        fields = data[0]
-        option_idx = fields.index('option')
-        ui_default_idx = fields.index('ui_default')
-        bools = []
-        ints = [fields.index(f) for f in ('row', 'col', 'order')]
-        params = {}
-
-        # pylint: disable=invalid-name
-        Params = collections.namedtuple('Params', fields)
-
-        for rec in data[1:]:
-
-            if rec[0] == SKIP_TAB:
-                continue
-
-            for idx in bools:
-                rec[idx] = bool(rec[idx])
-            for idx in ints:
-                if not rec[idx].isdigit():
-                    print("Data Error:\n", rec)
-                rec[idx] = int(rec[idx])
-            rec[ui_default_idx] = convert_value(rec[ui_default_idx])
-
-            params[rec[option_idx]] = Params(*rec)
-
-        return params
 
 
     def _add_tabs(self):

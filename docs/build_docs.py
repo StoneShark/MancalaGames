@@ -32,11 +32,10 @@ TXTPART = '.txt'
 EXFILE = '_all_params.txt'
 
 
-
 # %% fill global tables
 
 
-PARAMS = mancala_games.MancalaGames.read_params_file()
+PARAMS = man_config.ParamData()
 
 def get_game_names():
     """Scan the files and get the game names."""

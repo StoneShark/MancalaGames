@@ -39,6 +39,7 @@ MODULES += man_path.py
 MODULES += mancala_games.pyw
 MODULES += mancala_ui.py
 MODULES += mancala.py
+MODULES += mg_config.py
 MODULES += minimax.py
 MODULES += montecarlo_ts.py
 MODULES += negamax.py
@@ -68,7 +69,8 @@ HELPFILES += docs\\Diffusion_rules.pdf
 DATAFILES = GameProps/*.txt $(HELPFILES) logs/README.txt
 
 HELPINPUTS = src\\game_params.txt 
-HELPINPUTS += src\\mancala_games.pyw 
+HELPINPUTS += src\\game_param_descs.txt
+HELPINPUTS += src\\man_config.pyw 
 HELPINPUTS += src\\game_classes.py 
 HELPINPUTS += src\\ai_player.py
 HELPINPUTS += docs\\build_docs.py 
