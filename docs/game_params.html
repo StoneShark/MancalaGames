@@ -179,13 +179,13 @@ is included after the parameter sections.
 <p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Dynamics
 
-<p>Allows specifing non-all-equal start patterns. The following patterns are supported:
+<p>Allows specifying non-all-equal start patterns. The following patterns are supported:
 <ol start=0><li class="helptext">
 <b class="enum">ALL_EQUAL</b>: all holes start with the same number of seeds.
 <li class="helptext">
 <b class="enum">GAMACHA</b>: starting from the third hold (from start player's left) place nbr_seeds in every other hole, the first move is prescribed move the center hole's seeds to the other side (this is done automatically).
 <li class="helptext">
-<b class="enum">ALTERNATES</b>: everyother hole is filled with nbr_seeds, no seeds end up opposite eachother. If a player has fewer seeds than their opponent, then they start.
+<b class="enum">ALTERNATES</b>: every other hole is filled with nbr_seeds, no seeds end up opposite each other. If a player has fewer seeds than their opponent, then they start.
 <li class="helptext">
 <b class="enum">ALTS_WITH_1</b>: like Alternates except the starter's 2nd from right hole with nbr_seeds is replaced with one seed.
 <li class="helptext">
@@ -209,7 +209,7 @@ is included after the parameter sections.
 <li class="helptext">
 <b class="enum">MLAPS_SOWER</b>: the first sow follows basic rules of multi-lap sowing (LAPPER). Other sow parameters will be enacted  afterward. 
 <li class="helptext">
-<b class="enum">SOW1OPP</b>: at least one seed must be sown on the opponents side of the board which is accomplished by sowing as normal until the final seed, then any remaining holes on the player's side are skipped and the last seed is sown in the oppenents first hole (based on current sow direction).
+<b class="enum">SOW1OPP</b>: at least one seed must be sown on the opponents side of the board which is accomplished by sowing as normal until the final seed, then any remaining holes on the player's side are skipped and the last seed is sown in the opponents first hole (based on current sow direction).
 <li class="helptext">
 <b class="enum">PLUS1MINUS1</b>: proceed from the selected hole by moving one seed from the next hole into the following hole, next skip that hole and repeat moving seed forward. After cycling the board, capture across from the opening hole. 
 <li class="helptext">
@@ -297,9 +297,9 @@ is included after the parameter sections.
 <li class="helptext">
 <b class="enum">OPP_GETS_REMAIN</b>: if you capture all your opponents seeds, they capture all of your remaining seeds and the game is over. Winner is determined by game goal. Seeds picked because of <a href="game_params.html#pickextra">PICKEXTRA</a> PICK*LASTSEEDS go the current player and not the opponent.
 <li class="helptext">
-<b class="enum">LEAVE_LEFT</b>: the capture is performed from all but the leftmost hole from the sower perspective. This might leave your oppenents without seeds or might not capture any seeds.
+<b class="enum">LEAVE_LEFT</b>: the capture is performed from all but the leftmost hole from the sower perspective. This might leave your opponents without seeds or might not capture any seeds.
 <li class="helptext">
-<b class="enum">LEAVE_RIGHT</b>: the capture is performed from all but the rightmost hole from the sower perspective. This might leave your oppenents without seeds.
+<b class="enum">LEAVE_RIGHT</b>: the capture is performed from all but the rightmost hole from the sower perspective. This might leave your opponents without seeds.
 </ol>
 <h4 id="rounds"> Rounds </h4>
 <p class="pdesc">Location in Config Files: game_info : rounds
@@ -347,7 +347,7 @@ is included after the parameter sections.
 
 <p>The round fill method determines which holes are filled and how many seeds they are filled with when setting up for a new round.
 <p>Several round fill mechanisms use the same general approach called the Empty Hole Method. The loser of the previous round will end up with empty holes. These holes are not playable if <a href="game_params.html#blocks">BLOCKS</a> are used; otherwise they are playable. This method is not used for RND_* <a href="game_params.html#goal">GOAL</a> games.
-<p>The seeds each player accummulated in the previous round are distributed into holes with exactly the same number in each. That number of seeds is <a href="game_params.html#nbr_start">NBR_START</a>. The winner will fill all of their holes and put any remaining seeds into their own store. The loser will fill as many holes as they can with nbr_start seeds and put any remaining seeds (fewer than nbr_start) into their own store.
+<p>The seeds each player accumulated in the previous round are distributed into holes with exactly the same number in each. That number of seeds is <a href="game_params.html#nbr_start">NBR_START</a>. The winner will fill all of their holes and put any remaining seeds into their own store. The loser will fill as many holes as they can with nbr_start seeds and put any remaining seeds (fewer than nbr_start) into their own store.
 <p>LEFT_FILE, RIGHT_FILL and OUTSIDE_FILL define which holes that the loser must fill. UCHOOSE allows the loser to choose which holes have seeds.
 <ol start=0><li class="helptext">
 <b class="enum">NOT_APPLICABLE</b>: round fill doesn't need to be specified: either the game not played in rounds (CLEAR & DEPRIVE games included) or game goal is TERRITORY  without UCHOWN (see below, all holes filled).
@@ -360,7 +360,7 @@ is included after the parameter sections.
 <li class="helptext">
 <b class="enum">EVEN_FILL</b>: fill all holes (both sides) with the same number of seeds; determined by dividing the losers seeds by the number of holes per side. If that is not playable based on the minimum number of seeds required for a move (<a href="game_params.html#min_move">MIN_MOVE</a>); extra seeds are put in each players leftmost hole. Any extra seeds are put in each player's store.
 <li class="helptext">
-<b class="enum">SHORTEN</b>: the number of holes that the round loser can fill with <a href="game_params.html#nbr_start">NBR_START</a> seeds are fill on both sides, other holes are left empty. Holes are filled opposite eachother. If <a href="game_params.html#blocks">BLOCKS</a> is selected, the board is shortened to the number of holes filled (empty holes are blocked and out of play). If the game uses children, they will not be created if the board size is reduced to 3 or less.
+<b class="enum">SHORTEN</b>: the number of holes that the round loser can fill with <a href="game_params.html#nbr_start">NBR_START</a> seeds are fill on both sides, other holes are left empty. Holes are filled opposite each other. If <a href="game_params.html#blocks">BLOCKS</a> is selected, the board is shortened to the number of holes filled (empty holes are blocked and out of play). If the game uses children, they will not be created if the board size is reduced to 3 or less.
 <li class="helptext">
 <b class="enum">UCHOOSE</b>: allow user to choose which holes have seeds (are not blocked) when <a href="game_params.html#rounds">ROUNDS</a> and <a href="game_params.html#blocks">BLOCKS</a> are used.
 <li class="helptext">
@@ -386,9 +386,9 @@ is included after the parameter sections.
 
 <p>Determines if seeds from more the start hole are picked up and sown:
 <ol start=0><li class="helptext">
-<b class="enum">OFF</b>: Single lap sowing. Seeds from the start hole are sown, typically, one per hole until expened.
+<b class="enum">OFF</b>: Single lap sowing. Seeds from the start hole are sown, typically, one per hole until expended.
 <li class="helptext">
-<b class="enum">LAPPER</b>:  If the first sow ends in a hole with more than one seed, pickup all the seeds and continue sowing another "lap". Note that lap here does not mean a full cicuit of the board, only an individual sow operation. In general, sowing laps continues in this manner until the final seed of a lap reaches an empty hole. There are games with other conditions for ending a multilap low such as making a capture or making a child. 
+<b class="enum">LAPPER</b>:  If the first sow ends in a hole with more than one seed, pickup all the seeds and continue sowing another "lap". Note that lap here does not mean a full circuit of the board, only an individual sow operation. In general, sowing laps continues in this manner until the final seed of a lap reaches an empty hole. There are games with other conditions for ending a multilap low such as making a capture or making a child. 
 <p class="helptext"> Several values of <a href="game_params.html#sow_rule">SOW_RULE</a> perform an operation after each lap sown: SOW_CLKD_DIV(_NR) closes the final hole and CHANGE_DIR_LAP changes the direction of sowing after each lap.
 <li class="helptext">
 <b class="enum">LAPPER_NEXT</b>:  For lapper_next sowing, the number of seeds in the last sown hole of lap do not matter. Instead, if the hole after the last sown hole has any seeds, those seeds are used to continue sowing the next lap. Sowing continues until the hole after the lap's final seed is empty. There are games with other conditions for ending a multilap low such as making a capture or making a child.
@@ -483,7 +483,7 @@ is included after the parameter sections.
 <ol start=0><li class="helptext">
 <b class="enum">NONE</b>: there is no special sowing rule.
 <li class="helptext">
-<b class="enum">SOW_BLKD_DIV</b>: If the final seed of an individual sow lands on the opposite side of the board and brings the contents of that hole to goal_param seeds, the hole is closed closed (blocked). In single lap games, the hole's seeds are removed from play. In multilap games, the seeds are used to continue sowing.
+<b class="enum">SOW_BLKD_DIV</b>: If the final seed of an individual sow lands on the opposite side of the board and brings the contents of that hole to goal_param seeds, the hole is closed  (blocked). In single lap games, the hole's seeds are removed from play. In multilap games, the seeds are used to continue sowing.
 <p class="helptext"> When sowing, blocked holes on your own side of the board are skipped  and blocked holes on opponent's side are diverted out of play or captured.
 <p class="helptext">  Game <a href="game_params.html#goal">GOAL</a> must be DEPRIVE and all of the associated restrictions apply. <a href="game_params.html#nocaptmoves">NOCAPTMOVES</a> maybe used to prevent closing holes on the initial games moves. Capture mechanisms other than closing holes are not supported. The minimum move must be 1 and thus <a href="game_params.html#sow_start">SOW_START</a> is incompatible.  <a href="game_params.html#allow_rule">ALLOW_RULE</a> may not be used to limit allowable moves.  <a href="game_params.html#skip_start">SKIP_START</a> and <a href="game_params.html#visit_opp">VISIT_OPP</a> are not supported with SOW_BLKD_DIV.  <a href="game_params.html#mlaps">MLAPS</a> of LAPPER_NEXT is not supported with SOW_BLKD_DIV(_NR).
 <li class="helptext">
@@ -504,7 +504,7 @@ is included after the parameter sections.
 <li class="helptext">
 <b class="enum">MAX_SOW</b>: holes sow_param seeds are skipped when sowing. That is, holes will never contain more seeds than sow_param.
 <li class="helptext">
-<b class="enum">LAP_CAPT</b>: after each lapt check for a capture, if there is a capture continue sowing with another lap. If a basic capture is configured (evens, capt on, max or min), the hole after the captured seeds is drawn to continue lapping.
+<b class="enum">LAP_CAPT</b>: after each lap check for a capture, if there is a capture continue sowing with another lap. If a basic capture is configured (evens, capt on, max or min), the hole after the captured seeds is drawn to continue lapping.
 <li class="helptext">
 <b class="enum">NO_OPP_CHILD</b>: do not sow into your opponents children.
 </ol>
@@ -531,7 +531,7 @@ Sow rule of MAX_SOW: maximum number of seeds a hole may contain
 <b class="enum">NORMAL</b>: children are made when a final seeds sows a hole to <a href="game_params.html#child_cvt">CHILD_CVT</a>. If stores are not included captures are instead moved into children, thus a player may not capture until they have created a child. 
 <li class="helptext">
 <b class="enum">ONE_CHILD</b>: only one child allowed per player.
-<p class="helptext"> Children must not be symmetrically opposite eachother. For example,  in a 9 hole per side game with holes numbered as follows, children may not be in the same numbered holes:
+<p class="helptext"> Children must not be symmetrically opposite each other. For example,  in a 9 hole per side game with holes numbered as follows, children may not be in the same numbered holes:
 <p class="helptext"> 9 8 7 6 5 4 3 2 1
 <p class="helptext"> 1 2 3 4 5 6 7 8 9 
 <p class="helptext"> Used to create tuzdek style children along with <a href="game_params.html#child_rule">CHILD_RULE</a> of OPP_ONLY.
@@ -661,7 +661,7 @@ Sow rule of MAX_SOW: maximum number of seeds a hole may contain
 
 <p>When crosscapt is set, defines what to do with the single seed initiating the cross capture.
 <ol start=0><li class="helptext">
-<b class="enum">LEAVE</b>: always leave the signle seed
+<b class="enum">LEAVE</b>: always leave the single seed
 <li class="helptext">
 <b class="enum">PICK_ON_CAPT</b>: only pick (capture) the seed if there was a capture
 <li class="helptext">
@@ -712,7 +712,7 @@ Sow rule of MAX_SOW: maximum number of seeds a hole may contain
 <p class="pdesc">Default value: False
 <p class="pdesc">UI Tab: Capture
 
-<p>Only meaninful with <a href="game_params.html#multicapt">MULTICAPT</a>. Captures are done in the same direction as the sowing, i.e. following the final hole sown. If not set, captures are done from the holes just sown.
+<p>Only meaningful with <a href="game_params.html#multicapt">MULTICAPT</a>. Captures are done in the same direction as the sowing, i.e. following the final hole sown. If not set, captures are done from the holes just sown.
 <h4 id="nocaptmoves"> Nbr Start Moves w/o Capture </h4>
 <p class="pdesc">Location in Config Files: game_info : nocaptmoves
 <p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
@@ -809,7 +809,7 @@ Sow rule of MAX_SOW: maximum number of seeds a hole may contain
 <p class="pdesc">Default value: [300, 200, 100, 100]
 <p class="pdesc">UI Tab: Player
 
-<p>Bias for the Monte Carlo Tree seach algorithm for each difficulty level (0-3).  A larger bias encourages move game tree exploration, but defocuses the exploration from the best choices. This is critical in avoiding getting stuck in sub-obtimal move choices.
+<p>Bias for the Monte Carlo Tree search algorithm for each difficulty level (0-3).  A larger bias encourages move game tree exploration, but defocuses the exploration from the best choices. This is critical in avoiding getting stuck in sub-optimal move choices.
 <p>Value is divided by 1000.
 <h4 id="mcts_nodes"> MCTS Nodes per Move </h4>
 <p class="pdesc">Location in Config Files: player : ai_params : mcts_nodes
@@ -900,7 +900,7 @@ Sow rule of MAX_SOW: maximum number of seeds a hole may contain
 <p class="pdesc">UI Tab: Player
 
 <p>If the game is being played on easy mode (game difficult of easy/0), a random value may be added to the static evaluation. This can be done to induce errors into the ai player's game play. A random value is selected between -easy_rand and + easy_rand.
-<p>The specific value for this should be selected based on the ranges of the paremeters and multiplier.
+<p>The specific value for this should be selected based on the ranges of the parameters and multiplier.
 <p>Used only for minimax & negamax players.
 <br><br><br>
 <h2 id="index">Parameter Index</h2>

@@ -50,20 +50,39 @@ body.wide {
 	padding-left: 20px;
 }
 
+@media screen and (max-width: 1000px) {
+	.sidenav {
+		height: 20%;
+		width: 100%;
+		column-count: 4;
+	}
+	.sidenav a {
+		color: white;
+		padding: 4px;
+		margin-left: 0px;
+	}
+	.content {
+		margin-top: 15%;
+		padding-top: 15%;	
+		margin-left: 10px;
+		padding-left: 10px;
+	}
+}
+
 @media print {
-    .sidenav {
-        display:none;
-    }
-    .content {
- 	margin-left: 0px;
-	padding-left: 0px;
-    }
+	.sidenav {
+		display:none;
+	}
+	.content {
+		margin-left: 0px;
+		padding-left: 0px;
+	}
 }
 
 footer {
-  padding: 3px;
-  background-color: darkblue;
-  color: white;
+	padding: 3px;
+	background-color: darkblue;
+	color: white;
 }
 
 h1, h2, h3, h4 {
