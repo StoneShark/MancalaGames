@@ -245,6 +245,28 @@ class BehaviorIf(abc.ABC):
     def __init__(self, button):
         self.btn = button
 
+
+    def orient_text(self):
+        """Orient the text according to the display option and row."""
+
+        if not self.btn.row:
+            if self.btn.game_ui.facing_players.get():
+                self.btn.itemconfigure(self.btn.text_id, angle=180)
+            else:
+                self.btn.itemconfigure(self.btn.text_id, angle=0)
+
+    def owner_arrow(self):
+        """Show the owner ship arrow if enabled by the display option."""
+
+        otext = ''
+        if self.btn.game_ui.owner_arrows.get():
+            if self.btn.props.owner is True:
+                otext += '\u2191 '
+            elif self.btn.props.owner is False:
+                otext += '\u2193 '
+
+        return otext
+
     def refresh_nonplay(self, bstate, bg_color=TURN_COLOR):
         """Make the UI match the behavior and game data for the non-play
         behaviors."""
@@ -256,19 +278,18 @@ class BehaviorIf(abc.ABC):
             self.btn['background'] = bg_color
             self.btn['state'] = tk.NORMAL
 
-        otext = ''
-        if self.btn.props.owner is True:
-            otext += '\u2191 '
-        elif self.btn.props.owner is False:
-            otext += '\u2193 '
-
         if self.btn.props.blocked:
             self.btn['text'] = 'x'
 
         elif self.btn.props.seeds:
-            self.btn['text'] = otext + str(self.btn.props.seeds)
+            self.btn['text'] = self.owner_arrow() + str(self.btn.props.seeds)
         else:
             self.btn['text'] = ''
+
+        if self.btn.right_id:
+            self.btn.itemconfigure(self.btn.right_id, state='hidden')
+
+        self.orient_text()
 
 
     @classmethod
@@ -364,6 +385,27 @@ class PlayButtonBehavior(BehaviorIf):
         self.btn.game_ui.move(self.btn.right_move)
 
 
+    def _get_child_pointer(self):
+        """Return the child pointer. If the text is rotated
+        180 degrees, then flip the arrow direction so it points
+        at the child owner."""
+
+        otext = ''
+        if not self.btn.row and self.btn.game_ui.facing_players.get():
+            if self.btn.props.ch_owner is True:
+                otext += '\u02c5 '
+            elif self.btn.props.ch_owner is False:
+                otext += '\u02c4 '
+
+        elif self.btn.props.ch_owner is True:
+            otext += '\u02c4 '
+
+        elif self.btn.props.ch_owner is False:
+            otext += '\u02c5 '
+
+        return otext
+
+
     def _set_btn_text(self):
         """Set the button text to match the props."""
 
@@ -372,20 +414,15 @@ class PlayButtonBehavior(BehaviorIf):
 
         else:
             otext = ''
-            if self.btn.props.ch_owner is True:
-                otext += '\u02c4 '
-            elif self.btn.props.ch_owner is False:
-                otext += '\u02c5 '
-
-            if self.btn.props.owner is True:
-                otext += '\u2191 '
-            elif self.btn.props.owner is False:
-                otext += '\u2193 '
+            otext += self._get_child_pointer()
+            otext += self.owner_arrow()
 
             if self.btn.props.seeds:
                 self.btn['text'] = otext + str(self.btn.props.seeds)
             else:
                 self.btn['text'] = otext + ''
+
+        self.orient_text()
 
 
     def _set_btn_ui_props(self, bstate):
@@ -410,6 +447,12 @@ class PlayButtonBehavior(BehaviorIf):
 
             else:
                 self.btn['background'] = INACTIVE_COLOR
+
+        if self.btn.right_id:
+            if self.btn.game_ui.touch_screen.get():
+                self.btn.itemconfigure(self.btn.right_id, state='normal')
+            else:
+                self.btn.itemconfigure(self.btn.right_id, state='hidden')
 
 
     def _refresh(self, bstate=BtnState.ACTIVE):

@@ -77,17 +77,17 @@ Players alternate turns performing these steps for each turn:
 Game play is always via the <a href="#manwindow">Mancala UI</a>.
 
 <ol>
-<li><b>Mancala Games</b>: Pops up the full parameter selection
+<li><b>mancala_games</b>: Pops up the full parameter selection
 window&mdash;see <a href="#opwindow">Mancala Options UI</a> (mancala_games.exe).
 Game property files can be defined, loaded, edited and saved.
 Games can be played with the currently define parameters.
 <br><br>
-<li><b>Play Mancala</b>: a game that can be started via a double click on
+<li><b>play_mancala</b>: a game that can be started via a double click on
 the game link (play_mancala.exe). A popup is provided which allows selection
 of any game in the GameProps directory. A tool tip is used to show
 the About string of each game.
 <br><br>
-<li><b>Play</b>: a command line interface to directly start a game given
+<li><b>play</b>: a command line interface to directly start a game given
 a mancala configuration file. Usage to play Wari (for example):
 <pre>
      play.exe Wari
@@ -101,6 +101,10 @@ a mancala configuration file. Usage to play Wari (for example):
 holes for each player are provided and (if configured) stores are available on
 either side. The right store is for the lower player and the left hole
 is for the upper player.
+
+The Mancala UI is directly created by the Play command, is created after a
+game is selected by Play_Mancala, and is created when the Play button is hit
+in Mancala_Games.
 
 <h3>Game Play</h3>
 <p>Game moves are made by clicking on the desired hole to start sowing from.
@@ -249,6 +253,19 @@ Some information may give away the AI Players intenteded moves.
 <p><b>Log AI Analysis</b>: Turn on logging for the AI Player's analysis of moves.
 This can become quite verbose as the AI player considers each possible move and response.
 
+<h4>Display</h4>
+<p><b>Show Tally</b>: Show or hide the tally frame.
+<p><b>Touch Screen</b>: Enable or disable touch screen mode. Touch screen mode
+facilitates user selected sow direction without requiring a two-button mouse.
+A rectangle is dithered onto any user directed buttons for the right click.
+<p><b>Facing Players</b>: Rotate the text for the top player as though two players
+are sitting on opposite sides of a screen. When facing players is active, the
+left and right mouse button operations as swapped (for user directed holes).
+Specifically, if facing players is set, a left click will sow counter-clockwise
+and a right click will sow clockwise for the player closest to the menu bar.
+<p><b>Ownership Arrows</b>: Show the hole ownership arrows.
+Colors are used to identify the current players holes, but arrows can also be
+shown to show hole ownership in TERRITORY goal games.
 
 <h4>Help</h4>
 <p><b>Help...</b>: If there is a help file for the game,
@@ -260,7 +277,8 @@ that was included in the About pane of the Mancala Options window.
 <h2 id="opwindow">Mancala Options UI</h2>
 
 <p>The Mancala Options user interface allows selecting
-values for the game options.
+values for the game options. It is started via the mancala_games python file
+or executable.
 Some options are incompatible with each other, errors and inconsistencies
 are caught during parameter test.
 Some combinations are simply not yet supported (or may never be supported).

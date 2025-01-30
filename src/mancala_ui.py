@@ -72,6 +72,8 @@ class MancalaUI(tk.Frame):
         self.show_tally = tk.BooleanVar(self.master, True)
         self.tally_was_off = False
         self.facing_players = tk.BooleanVar(self.master, False)
+        self.touch_screen = tk.BooleanVar(self.master, False)
+        self.owner_arrows = tk.BooleanVar(self.master, False)
         self.log_ai = tk.BooleanVar(self.master, False)
         self.live_log = tk.BooleanVar(self.master, game_log.live)
         self.log_level = tk.IntVar(self.master, game_log.level)
@@ -150,7 +152,6 @@ class MancalaUI(tk.Frame):
 
         if self.info.stores:
             b_frame = aspect_frame.AspectFrames(board_frame,
-
                                                 aratio=0.8)
             b_frame.pad.grid(row=0, column=0, sticky="nsew")
 
@@ -159,7 +160,6 @@ class MancalaUI(tk.Frame):
             b_frame.row_col_config()
 
         land_frame = aspect_frame.AspectFrames(board_frame,
-
                                                aratio=self.game.cts.holes / 2)
         land_frame.pad.grid(row=0, column=1, sticky="nsew")
 
@@ -175,7 +175,6 @@ class MancalaUI(tk.Frame):
 
         if self.info.stores:
             a_frame = aspect_frame.AspectFrames(board_frame,
-
                                                 aratio=0.8)
             a_frame.pad.grid(row=0, column=2, sticky="nsew")
 
@@ -336,14 +335,22 @@ class MancalaUI(tk.Frame):
 
         showmenu = tk.Menu(menubar)
         showmenu.add_checkbutton(label='Show Tally',
-                             variable=self.show_tally,
-                             onvalue=True, offvalue=False,
-                             command=self._toggle_tally)
-        # XXXX facing players
-        # showmenu.add_checkbutton(label='Facing Players',
-        #                      variable=self.facing_players,
-        #                      onvalue=True, offvalue=False,
-        #                      command=self._toggle_facing)
+                                 variable=self.show_tally,
+                                 onvalue=True, offvalue=False,
+                                 command=self._toggle_tally)
+        showmenu.add_separator()
+        showmenu.add_checkbutton(label='Touch Screen',
+                                 variable=self.touch_screen,
+                                 onvalue=True, offvalue=False,
+                                 command=self._refresh)
+        showmenu.add_checkbutton(label='Facing Players',
+                                 variable=self.facing_players,
+                                 onvalue=True, offvalue=False,
+                                 command=self._toggle_facing)
+        showmenu.add_checkbutton(label='Ownership Arrows',
+                                 variable=self.owner_arrows,
+                                 onvalue=True, offvalue=False,
+                                 command=self._refresh)
         menubar.add_cascade(label='Display', menu=showmenu)
 
         helpmenu = tk.Menu(menubar)
@@ -400,10 +407,18 @@ class MancalaUI(tk.Frame):
 
 
     def _toggle_facing(self):
-        """Players are facing eachother. Rotate the text for the
-        top player."""
-        _ = self
-        print('facing players is not implemented')
+        """Players are facing eachother. Force a configure event,
+        it orients and sizes the dithering (for touch screen mode)
+        and then refresh to rotate the text."""
+
+        # all hole buttons are the same size
+        width = self.disp[0][0].winfo_width()
+        height = self.disp[0][0].winfo_height()
+
+        for pos in range(self.game.cts.holes):
+            self.disp[0][pos].event_generate("<Configure>",
+                                             width=width, height=height)
+        self._refresh()
 
 
     def _quiet_dialog(self, title, text):

@@ -28,7 +28,8 @@ load-plugins=pylint.extensions.bad_builtin,
 disable=consider-using-assignment-expr,
 	consider-using-namedtuple-or-dataclass,
 	too-few-public-methods,
-	too-many-instance-attributes
+	too-many-instance-attributes,
+	too-many-ancestors
 
 
 [MAGIC-VALUE]

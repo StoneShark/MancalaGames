@@ -65,13 +65,21 @@ def force_mode_change():
 
 # %%  Button Classes
 
-class HoleButton(tk.Button):
+BTN_SIZE = 100
+DO_RIGHT = 0.6
+TEXT = 'text'
+
+class HoleButton(tk.Canvas):
     """Implements a single hole on the board."""
 
     def __init__(self, pframe, game_ui, loc, left_move, right_move):
         """Create button.
         loc is the index to use for get/set board/blocked.
-        left and right move are the moves for left/right click"""
+        left and right move are the moves for left/right click.
+
+        If the left move is different than the right, create
+        a rectangle on the canvas to support touch screen mode
+        (e.g. no right clicks)."""
         # pylint: disable=too-many-arguments
 
         self.frame = pframe
@@ -83,12 +91,57 @@ class HoleButton(tk.Button):
         self.props = 0
         self.behavior = behaviors.PlayButtonBehavior(self)
 
-        tk.Button.__init__(self, pframe, borderwidth=2, height=3, width=8,
-                           text='',
-                           disabledforeground='black', foreground='black',
-                           anchor='center', font='bold, 14',
-                           command=self.left_click)
+        tk.Canvas.__init__(self, pframe,
+                           borderwidth=4, relief='raised',
+                           width=BTN_SIZE, height=BTN_SIZE)
+
+        self.right_id = None
+        if left_move != right_move:
+            self.right_id = self.create_rectangle(
+                *self._get_coords(BTN_SIZE, BTN_SIZE),
+                outline='', fill='grey', stipple='gray25')
+            self.tag_bind(self.right_id, "<Button-1>", self.right_click)
+
+            if not self.game_ui.touch_screen.get():
+                self.itemconfigure(self.right_id, state='hidden')
+
+        self.text_id = self.create_text(BTN_SIZE//2, BTN_SIZE//2,
+                                        text='', font='bold, 14')
+
+        self.bind('<Button-1>', self.left_click)
         self.bind('<Button-3>', self.right_click)
+        self.bind("<Configure>", self._move_text)
+
+
+    def __setitem__(self, key, value):
+        """Capture setting the text attribute and set it on the
+        text element on the canvas, otherwise, let the parent
+        handle the setting."""
+
+        if key == TEXT:
+            self.itemconfig(self.text_id, text=value)
+        else:
+            super().__setitem__(key, value)
+
+
+    def _get_coords(self, width, height):
+        """Return the coordinates for the touch screen mode
+        rectangle for right clicks."""
+
+        if not self.row and self.game_ui.facing_players.get():
+            return (8, 8, int(width * (1 - DO_RIGHT)), height)
+
+        return (int(width * DO_RIGHT), 8, width, height)
+
+
+    def _move_text(self, event):
+        """Keep the text widget in the center of the canvas
+        and resize the tablet mode rectangle (if there is one)."""
+
+        self.coords(self.text_id, event.width//2, event.height//2)
+        if self.right_id:
+            self.coords(self.right_id,
+                        self._get_coords(event.width, event.height))
 
 
     def set_behavior(self, behavior):
@@ -106,15 +159,34 @@ class HoleButton(tk.Button):
         self.behavior.set_props(props, bstate)
 
 
-    def left_click(self):
-        """Pass along left_click call."""
-        self.behavior.left_click()
+    def left_click(self, _=None):
+        """Pass along left_click call.
+        If the button is in the top row and facing players is set,
+        then swap the left and right button actions.
+        Don't care about the possible event parameter."""
+
+        if self['state'] == tk.DISABLED:
+            return
+
+        if not self.row and self.game_ui.facing_players.get():
+            self.behavior.right_click()
+        else:
+            self.behavior.left_click()
 
 
     def right_click(self, _=None):
         """Pass along right_click call.
+        If the button is in the top row and facing players is set,
+        then swap the left and right button actions.
         Don't care about the possible event parameter."""
-        self.behavior.right_click()
+
+        if self['state'] == tk.DISABLED:
+            return
+
+        if not self.row and self.game_ui.facing_players.get():
+            self.behavior.left_click()
+        else:
+            self.behavior.right_click()
 
 
 class StoreButton(tk.Button):
