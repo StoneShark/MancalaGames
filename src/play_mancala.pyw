@@ -107,7 +107,7 @@ class GameSelect(tk.Frame):
         if columns can be even use that number."""
 
         start = int(nitems ** 0.4) + 1
-        for ritems in range(start, 0, -1):
+        for ritems in range(start, 1, -1):
             if not nitems % ritems:
                 return max(ritems, nitems // ritems)
 
