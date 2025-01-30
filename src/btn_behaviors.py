@@ -12,6 +12,8 @@ import enum
 import tkinter as tk
 
 import behaviors
+import bhv_hold
+import bhv_owners
 
 
 # %% enum, class list and global function
@@ -32,13 +34,17 @@ BTuples = collections.namedtuple('BTuples', ['button', 'store'])
 
 BEHAVIOR_CLASS = (BTuples(behaviors.PlayButtonBehavior,
                           behaviors.NoStoreBehavior),
-                  BTuples(behaviors.RndChooseButtonBehavior,
+
+                  BTuples(bhv_hold.RndChooseButtonBehavior,
                           behaviors.NoStoreBehavior),
-                  BTuples(behaviors.RndMoveSeedsButtonBehavior,
-                          behaviors.RndMoveStoreBehavior),
-                  BTuples(behaviors.MoveSeedsButtonBehavior,
+
+                  BTuples(bhv_hold.RndMoveSeedsButtonBehavior,
+                          bhv_hold.RndMoveStoreBehavior),
+
+                  BTuples(bhv_hold.MoveSeedsButtonBehavior,
                           behaviors.NoStoreBehavior),
-                  BTuples(behaviors.SelectOwnedHoles,
+
+                  BTuples(bhv_owners.SelectOwnedHoles,
                           behaviors.NoStoreBehavior),
                   )
 
@@ -59,8 +65,8 @@ def ask_mode_change(old_behavior, new_behavior, game_ui):
 def force_mode_change():
     """Do any cleanup because the mode change will be forced."""
 
-    behaviors.Hold.cleanup()
-    behaviors.Owners.cleanup()
+    bhv_hold.Hold.cleanup()
+    bhv_owners.Owners.cleanup()
 
 
 # %%  Button Classes
@@ -150,8 +156,8 @@ class HoleButton(tk.Canvas):
         self.config(cursor='')
         self.frame.config(cursor='')
         self.behavior = BEHAVIOR_CLASS[behavior].button(self)
-        behaviors.Hold.empty()
-        behaviors.Owners.empty()
+        bhv_hold.Hold.empty()
+        bhv_owners.Owners.empty()
 
 
     def set_props(self, props, bstate):
