@@ -70,7 +70,7 @@ DATAFILES = GameProps/*.txt $(HELPFILES) logs/README.txt
 
 HELPINPUTS = src\\game_params.txt 
 HELPINPUTS += src\\game_param_descs.txt
-HELPINPUTS += src\\man_config.pyw 
+HELPINPUTS += src\\man_config.py
 HELPINPUTS += src\\game_classes.py 
 HELPINPUTS += src\\ai_player.py
 HELPINPUTS += docs\\build_docs.py 
