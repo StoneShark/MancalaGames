@@ -263,7 +263,7 @@ class TestCaptTable:
         return request.param
 
 
-    @pytest.mark.usefixtures("logger")
+    # @pytest.mark.usefixtures("logger")
     def test_capturer(self, case):
 
         game = self.make_game(case)
@@ -354,16 +354,10 @@ class TestCaptTable:
         game.deco.capturer.do_captures(mdata)
         assert sum(game.store) + sum(game.board) == game.cts.total_seeds
 
-        if case.board[case.loc] == 1:
-            assert (mdata.captured | mdata.capt_changed) == case.erval
-            assert game.board == case.eboard
-            assert game.store == case.estore
-            assert game.child == case.echild
-        else:
-            assert not mdata.captured
-            assert game.board == case.board
-            assert game.store == case.store
-            assert game.child == case.children
+        assert (mdata.captured | mdata.capt_changed) == case.erval
+        assert game.board == case.eboard
+        assert game.store == case.estore
+        assert game.child == case.echild
 
 
 @pytest.mark.parametrize('gstype',
@@ -1091,6 +1085,47 @@ class TestPickCross:
 
         assert not mdata.captured
         assert game.board == [3, 3, 3, 3, 3, 3]
+
+
+class TestPickFinal:
+
+    test_cases = [
+        ([2, 0, 1, 2, 2, 1, 2, 1], True, 2, False, [2, 0, 1, 2, 2, 1, 2, 1]),
+
+        # this second test case also tests the capture across the boundary
+        # with CaptNext and LAPPER (final seed on opp side, but capture is
+        # on own side)
+        ([2, 0, 1, 2, 2, 1, 2, 1], True, 3, True,  [2, 0, 1, 0, 0, 1, 2, 1]),
+
+        ]
+    @pytest.mark.parametrize('board, turn, caploc, eres, eboard',
+                             test_cases,
+                             ids=[f'case_{f}'
+                                  for f in range(len(test_cases))])
+    def test_capts(self, board, turn, caploc, eres, eboard):
+
+        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_info = gi.GameInfo(stores=True,
+                                capt_side=1,
+                                capt_on=[2],
+                                capsamedir=True,
+                                mlaps=gi.LapSower.LAPPER,   # loc is tested for capt
+                                capt_type=gi.CaptType.NEXT,
+                                pickextra=gi.CaptExtraPick.PICKFINAL,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+        game.board = board.copy()
+        game.turn = turn
+
+        mdata = mancala.MoveData(game, None)
+        mdata.direct = game.info.sow_direct
+        mdata.capt_loc = caploc
+        game.deco.capturer.do_captures(mdata)
+        print(game)
+
+        assert mdata.captured == eres
+        assert game.board == eboard
 
 
 class TestPickTwos:

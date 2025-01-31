@@ -295,7 +295,7 @@ is included after the parameter sections.
 <li class="helptext">
 <b class="enum">NO_CAPT</b>: you may sow the seeds, but the capture is not performed
 <li class="helptext">
-<b class="enum">OPP_GETS_REMAIN</b>: if you capture all your opponent?s seeds, they capture all your remaining seeds, and the game is over. The winner is determined by game goal. Seeds picked because of <a href="game_params.html#pickextra">PICKEXTRA</a> PICK*LASTSEEDS go the current player and not the opponent.
+<b class="enum">OPP_GETS_REMAIN</b>: if you capture all your opponent?s seeds, they capture all your remaining seeds, and the game is over. The winner is determined by game goal. Seeds picked because of <a href="game_params.html#pickextra">PICKEXTRA</a> PICK*LASTSEEDS go to the current player and not the opponent.
 <li class="helptext">
 <b class="enum">LEAVE_LEFT</b>: the capture is performed from all but the leftmost hole from the sower perspective. This might leave your opponents without seeds or might not capture any seeds.
 <li class="helptext">
@@ -685,8 +685,9 @@ Sow rule of MAX_SOW: maximum number of seeds a hole may contain
 <ol start=0><li class="helptext">
 <b class="enum">NONE</b>: No other capture type.
 <li class="helptext">
-<b class="enum">NEXT</b>: Capture from the hole after the final seed sown. Basic capture rules are applied; capture side is checked; and multiple captures in either direction are supported.
-<p class="helptext"> When multiple lap sowing, the sowing does not stop for captures. Instead, sowing continues until the final seed is sown into an empty hole. Then the capture test is made on the next hole.
+<b class="enum">NEXT</b>: Capture from the hole after the final seed sown. Captures in may be in either direction (set via <a href="game_params.html#capsamedir">CAPSAMEDIR</a>) and multiple captures are supported. The hole tested for the basic capture criteria differs when lap sowing or not:
+<p class="helptext"> When not lap sowing, basic capture rules are applied and capture side is checked on the hole from which the seeds will be captured. 
+<p class="helptext"> When multiple lap sowing, the basic capture rules define when the multilap sowing will end. When the final seed of a lap meets the basic capture criteria, multilap sowing ends and the seeds in the next hole (defined by <a href="game_params.html#capsamedir">CAPSAMEDIR</a> setting) are captured.
 <li class="helptext">
 <b class="enum">TWO_OUT</b>: Basic capture rules and capture side are ignored. There are three flavors of capture two out:
 <p class="helptext"> Single lap game: capture if the sow ends in occupied hole, then an empty hole, followed by an occupied hole the contents of this are hole captured.
@@ -712,7 +713,7 @@ Sow rule of MAX_SOW: maximum number of seeds a hole may contain
 <p class="pdesc">Default value: False
 <p class="pdesc">UI Tab: Capture
 
-<p>Only meaningful with <a href="game_params.html#multicapt">MULTICAPT</a>. Captures are done in the same direction as the sowing, i.e. following the final hole sown. If not set, captures are done from the holes just sown.
+<p>Only meaningful with <a href="game_params.html#multicapt">MULTICAPT</a> or <a href="game_params.html#capt_type">CAPT_TYPE</a> of NEXT or TWO_OUT. Captures are done in the same direction as the sowing, i.e. following the final hole sown. If not set, captures are done from the holes just sown.
 <h4 id="nocaptmoves"> Nbr Start Moves w/o Capture </h4>
 <p class="pdesc">Location in Config Files: game_info : nocaptmoves
 <p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
@@ -776,6 +777,8 @@ Sow rule of MAX_SOW: maximum number of seeds a hole may contain
 <b class="enum">PICKLASTSEEDS</b>: If there are the number of starts seeds or fewer left, the current player collects them, and the game is over. This rule is applied at the end of each turn, even if there is not a capture because the sow phase may have reduced the seed count.
 <li class="helptext">
 <b class="enum">PICK2XLASTSEEDS</b>: If there are twice the number of start seeds or fewer, the round starter picks them. This rule is applied at the end of each turn, even if there is not a capture because the sow phase may have reduced the seed count.
+<li class="helptext">
+<b class="enum">PICKFINAL</b>: Take the seeds from the final hole sown. These seeds are not taken if the hole is locked or a child. This option is useful for capture next and two out.
 </ol>
 <p>In terms of <a href="game_params.html#grandslam">GRANDSLAM</a>, these picks are considered captures.
 <h2 id="tab_Player">Player Tab</h2>

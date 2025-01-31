@@ -51,11 +51,6 @@ DASH_BULLET = '- '
 # these are the expected tabs, put them in this order (add any extras)
 PARAM_TABS = ('Game', 'Dynamics', 'Sow', 'Capture', 'Player')
 
-# widget states
-DISABLED = 'disabled'
-ACTIVE = 'active'
-NORMAL = 'normal'
-
 SKIP_TAB = 'skip'
 
 WTITLE = 'Mancala Options'
@@ -64,6 +59,13 @@ WTITLE = 'Mancala Options'
 OPTIONS = 0
 PARAMS = 1
 GAMES = 2
+ABOUT = 4
+
+
+RELEASE_TEXT = textwrap.dedent("""\
+                Mancala Games
+                License: GPL-3.0   © 2024, Ann Davies
+                Version 1.1""")
 
 
 # %% helper funcs
@@ -163,18 +165,43 @@ class MancalaGames(tk.Frame):
         tk.messagebox.showwarning('Parameter Warning', message)
 
 
-    @staticmethod
-    def _help(what=OPTIONS):
+    def _help(self, what=OPTIONS):
         """Have the os pop open the help file in a browser."""
 
         if what == OPTIONS:
             webbrowser.open(man_path.get_path('mancala_help.html'))
 
-        if what == PARAMS:
+        elif what == PARAMS:
             webbrowser.open(man_path.get_path('game_params.html'))
 
-        if what == GAMES:
+        elif what == GAMES:
             webbrowser.open(man_path.get_path('about_games.html'))
+
+        elif what == ABOUT:
+            self._quiet_dialog('About Manacala Games', RELEASE_TEXT)
+
+
+    def _quiet_dialog(self, title, text):
+        """Popup a quiet dialog message."""
+        # pylint: disable=duplicate-code
+
+        xpos = self.winfo_rootx() + 100
+        ypos = self.winfo_rooty() + 50
+
+        top = tk.Toplevel(self)
+        top.resizable(False, False)
+        top.lift(aboveThis=self)
+        top.title(title)
+        top.wm_geometry(f'+{xpos}+{ypos}')
+        top.minsize(200, 100)
+        top.grab_set()
+
+        frame = tk.Frame(top, borderwidth=10)
+        frame.pack(side='top', expand=True)
+
+        tk.Label(frame, anchor='nw', justify='left', text=text
+                 ).pack(side='top')
+        tk.Button(frame, text='Ok', command=top.destroy).pack(side='bottom')
 
 
     def _update_title(self):
@@ -215,6 +242,9 @@ class MancalaGames(tk.Frame):
                              command=ft.partial(self._help, PARAMS))
         helpmenu.add_command(label='Games...',
                              command=ft.partial(self._help, GAMES))
+        helpmenu.add_separator()
+        helpmenu.add_command(label='About...',
+                             command=ft.partial(self._help, ABOUT))
         self.menubar.add_cascade(label='Help', menu=helpmenu)
 
 
@@ -761,7 +791,7 @@ class MancalaGames(tk.Frame):
                 pass
 
             elif isinstance(child, tk.Text):
-                tstate = new_state if new_state == DISABLED else NORMAL
+                tstate = new_state if new_state == tk.DISABLED else tk.NORMAL
                 child.configure(state=tstate)
 
             else:
@@ -771,7 +801,7 @@ class MancalaGames(tk.Frame):
     def _set_active(self, activate):
         """Activate or deactivate main window wingets."""
 
-        new_state = NORMAL if activate else DISABLED
+        new_state = tk.NORMAL if activate else tk.DISABLED
 
         for tab in self.tabs.values():
             self._set_frame_active(tab, new_state)

@@ -55,7 +55,7 @@ When used with ROUNDS, the holes not filled from the player with fewer seeds are
 When used with DEPRIVE, SOW_BLCK_DIV and goal_param holes are closed (blocked and removed from play) when sown to goal_param seeds.
 
 <param capsamedir>
-Only meaningful with MULTICAPT. Captures are done in the same direction as the sowing, i.e. following the final hole sown. If not set, captures are done from the holes just sown.
+Only meaningful with MULTICAPT or CAPT_TYPE of NEXT or TWO_OUT. Captures are done in the same direction as the sowing, i.e. following the final hole sown. If not set, captures are done from the holes just sown.
 
 <param capt_max>
 Capture when the contents of the hole are less than or equal to capt_max. Disable with 0 value.
@@ -105,9 +105,11 @@ Capture type.
 
 - NONE: No other capture type.
 
-- NEXT: Capture from the hole after the final seed sown. Basic capture rules are applied; capture side is checked; and multiple captures in either direction are supported.
+- NEXT: Capture from the hole after the final seed sown. Captures in may be in either direction (set via CAPSAMEDIR) and multiple captures are supported. The hole tested for the basic capture criteria differs when lap sowing or not:
 
-  + When multiple lap sowing, the sowing does not stop for captures. Instead, sowing continues until the final seed is sown into an empty hole. Then the capture test is made on the next hole.
+  + When not lap sowing, basic capture rules are applied and capture side is checked on the hole from which the seeds will be captured. 
+
+  + When multiple lap sowing, the basic capture rules define when the multilap sowing will end. When the final seed of a lap meets the basic capture criteria, multilap sowing ends and the seeds in the next hole (defined by CAPSAMEDIR setting) are captured.
 
 - TWO_OUT: Basic capture rules and capture side are ignored. There are three flavors of capture two out:
 
@@ -316,7 +318,7 @@ A grandslam is when your opponent has seeds at the start of your turn, and you c
 
 - NO_CAPT: you may sow the seeds, but the capture is not performed
 
-- OPP_GETS_REMAIN: if you capture all your opponent?s seeds, they capture all your remaining seeds, and the game is over. The winner is determined by game goal. Seeds picked because of PICKEXTRA PICK*LASTSEEDS go the current player and not the opponent.
+- OPP_GETS_REMAIN: if you capture all your opponent?s seeds, they capture all your remaining seeds, and the game is over. The winner is determined by game goal. Seeds picked because of PICKEXTRA PICK*LASTSEEDS go to the current player and not the opponent.
 
 - LEAVE_LEFT: the capture is performed from all but the leftmost hole from the sower perspective. This might leave your opponents without seeds or might not capture any seeds.
 
@@ -408,6 +410,8 @@ Rules to allow taking of more than otherwise captured or picked seeds:
 - PICKLASTSEEDS: If there are the number of starts seeds or fewer left, the current player collects them, and the game is over. This rule is applied at the end of each turn, even if there is not a capture because the sow phase may have reduced the seed count.
 
 - PICK2XLASTSEEDS: If there are twice the number of start seeds or fewer, the round starter picks them. This rule is applied at the end of each turn, even if there is not a capture because the sow phase may have reduced the seed count.
+
+- PICKFINAL: Take the seeds from the final hole sown. These seeds are not taken if the hole is locked or a child. This option is useful for capture next and two out.
 
 In terms of GRANDSLAM, these picks are considered captures.
 

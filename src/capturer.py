@@ -115,19 +115,19 @@ class CaptNext(CaptMethodIf):
         super().__init__(game, decorator)
 
         if game.info.mlaps:
-            self.seed_cond = lambda loc: game.board[loc] == 1
+            self.seed_cond = lambda mdata, loc, nloc: (
+                self.game.deco.capt_ok.capture_ok(mdata, loc))
         else:
-            self.seed_cond = lambda loc : True
+            self.seed_cond = lambda mdata, loc, nloc: (
+                self.game.deco.capt_ok.capture_ok(mdata, nloc))
 
     def do_captures(self, mdata):
 
         loc = saved_capt_loc = mdata.capt_loc
-        direct = mdata.direct
-        loc_next = self.game.deco.incr.incr(loc, direct)
+        loc_next = self.game.deco.incr.incr(loc, mdata.direct)
 
-        if (self.seed_cond(loc)
-                and self.game.board[loc_next]
-                and self.game.deco.capt_ok.capture_ok(mdata, loc_next)):
+        if (self.seed_cond(mdata, loc, loc_next)
+                and self.game.board[loc_next]):
 
             self.game.store[self.game.turn] += self.game.board[loc_next]
             self.game.board[loc_next] = 0
@@ -591,6 +591,23 @@ class MakeQur(CaptMethodIf):
 # all one enum so only one of these can be used
 
 
+class PickFinal(CaptMethodIf):
+    """On capture take seeds from final hole sown."""
+
+    def do_captures(self, mdata):
+
+        self.decorator.do_captures(mdata)
+        loc = mdata.capt_loc
+        if (mdata.captured
+                and self.game.board[loc]
+                and self.game.child[loc] is None
+                and self.game.unlocked[loc]):
+
+            self.game.store[self.game.turn] += self.game.board[loc]
+            self.game.board[loc] = 0
+            game_log.add(f"Picking Final Hole at {loc}.", game_log.INFO)
+
+
 class PickCross(CaptMethodIf):
     """Not a cross capture, but if there was a capture take any
     seeds from the opposite side of the board too."""
@@ -869,6 +886,9 @@ def _add_capt_pick_deco(game, capturer):
 
     elif game.info.pickextra == gi.CaptExtraPick.PICK2XLASTSEEDS:
         capturer = PickLastSeeds(game, capturer, turn_takes=False)
+
+    elif game.info.pickextra == gi.CaptExtraPick.PICKFINAL:
+        capturer = PickFinal(game, capturer)
 
     else:
         raise NotImplementedError(
