@@ -61,6 +61,11 @@ SKIP_TAB = 'skip'
 WTITLE = 'Mancala Options'
 
 
+OPTIONS = 0
+PARAMS = 1
+GAMES = 2
+
+
 # %% helper funcs
 
 MINUS = '-'
@@ -86,6 +91,7 @@ def int_validate(value):
 
 # %%  game params UI
 
+
 class MancalaGames(tk.Frame):
     """Main interface to select game parameters, save & load games,
     and play Mancala games."""
@@ -101,6 +107,7 @@ class MancalaGames(tk.Frame):
         self.but_frame = None
         self.desc = None
         self.prev_option = None
+        self.menubar = None
 
         self.params = man_config.ParamData()
         self.config = mg_config.GameConfig(self.master, self.params)
@@ -157,10 +164,25 @@ class MancalaGames(tk.Frame):
 
 
     @staticmethod
-    def _help():
+    def _help(what=OPTIONS):
         """Have the os pop open the help file in a browser."""
 
-        webbrowser.open(man_path.get_path('mancala_help.html'))
+        if what == OPTIONS:
+            webbrowser.open(man_path.get_path('mancala_help.html'))
+
+        if what == PARAMS:
+            webbrowser.open(man_path.get_path('game_params.html'))
+
+        if what == GAMES:
+            webbrowser.open(man_path.get_path('about_games.html'))
+
+
+    def _update_title(self):
+        """Update the window title with the filename and
+        edited status."""
+
+        self.master.title((self.config.filename or WTITLE)
+                          + ('*' if self.config.edited else ''))
 
 
     def _create_menus(self):
@@ -168,15 +190,32 @@ class MancalaGames(tk.Frame):
 
         self.master.option_add('*tearOff', False)
 
-        menubar = tk.Menu(self.master)
-        self.master.config(menu=menubar)
+        self.menubar = tk.Menu(self.master)
+        self.master.config(menu=self.menubar)
 
-        gamemenu = tk.Menu(menubar)
+        gamemenu = tk.Menu(self.menubar)
+        gamemenu.add_command(label='Load...', command=self._load)
+        gamemenu.add_command(label='Save', command=self._save)
+        gamemenu.add_command(label='Save As...',
+                             command=ft.partial(self._save, True))
+        gamemenu.add_separator()
+        gamemenu.add_command(label='Play', command=self._play)
+        gamemenu.add_command(label='Test', command=self._test)
+        self.menubar.add_cascade(label='Game', menu=gamemenu)
 
-        gamemenu.add_command(label='Reset', command=self._reset)
-        gamemenu.add_command(label='Set Defaults', command=self._reset_const)
-        gamemenu.add_command(label='Help ...', command=self._help)
-        menubar.add_cascade(label='Game', menu=gamemenu)
+        mguimenu = tk.Menu(self.menubar)
+        mguimenu.add_command(label='Set UI Defaults', command=self._reset)
+        mguimenu.add_command(label='Set Defaults', command=self._reset_const)
+        self.menubar.add_cascade(label='Controls', menu=mguimenu)
+
+        helpmenu = tk.Menu(self.menubar)
+        helpmenu.add_command(label='Help...',
+                             command=ft.partial(self._help, OPTIONS))
+        helpmenu.add_command(label='Parameters...',
+                             command=ft.partial(self._help, PARAMS))
+        helpmenu.add_command(label='Games...',
+                             command=ft.partial(self._help, GAMES))
+        self.menubar.add_cascade(label='Help', menu=helpmenu)
 
 
     def _add_commands_ui(self):
@@ -339,7 +378,7 @@ class MancalaGames(tk.Frame):
         _ = (index, mode)
         self.param_changed = True
         self.config.edited = True
-        self.master.title(WTITLE + '*')
+        self._update_title()
 
         if var == ckey.NAME:
             self.config.init_fname(self.tkvars[ckey.NAME].get())
@@ -670,7 +709,7 @@ class MancalaGames(tk.Frame):
         if self.game and not self.param_changed:
             return
 
-        self.master.title(WTITLE + '*')
+        self._update_title()
 
         try:
             self._prepare_game()
@@ -695,16 +734,17 @@ class MancalaGames(tk.Frame):
         self._test()
         self.config.edited = False
 
-        self.master.title(WTITLE)
+        self._update_title()
         for field in self.tktexts.values():
             field.edit_modified(False)
 
-    def _save(self):
+
+    def _save(self, askfile=False):
         """Save params to file."""
 
         self._make_config_from_tk()
-        self.config.save()
-        self.master.title(WTITLE)
+        self.config.save(askfile)
+        self._update_title()
         for field in self.tktexts.values():
             field.edit_modified(False)
 
@@ -737,6 +777,9 @@ class MancalaGames(tk.Frame):
             self._set_frame_active(tab, new_state)
         self._set_frame_active(self.but_frame, new_state)
 
+        self.menubar.entryconfig('Game', state=new_state)
+        self.menubar.entryconfig('Controls', state=new_state)
+
 
     def _play(self):
         """Create and play the game. deactivate param ui and block
@@ -758,10 +801,10 @@ class MancalaGames(tk.Frame):
     def _reset_edited(self):
         """Clear the edited flags and config data."""
 
-        self.master.title(WTITLE)
         self.config.reset()
         for field in self.tktexts.values():
             field.edit_modified(False)
+        self._update_title()
 
 
     def _reset(self):

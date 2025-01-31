@@ -833,7 +833,7 @@ def write_xref_html(csv_filename, out_filename):
 
 
             print('</table>', file=ofile)
-            print('<p id="note"><i>Note: mlength is not a input parameter. '
+            print('<p id="note"><i>Note: mlength is not an input parameter. '
                   'It is computed during initialization to describe '
                   'the length of the move tuple required.</i>', file=ofile)
 

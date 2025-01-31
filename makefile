@@ -299,6 +299,7 @@ MancalaGames/mancala_games.exe: $(SOURCES) $(DATAFILES) $(HELPFILES) mancala_gam
 	mkdir MancalaGames\\logs
 	copy logs\\README.txt MancalaGames\\logs
 	copy src\\game_params.txt MancalaGames
+	copy src\\game_param_descs.txt MancalaGames
 	-rmdir /S /Q build
 	tar -czf MancalaGames.tgz MancalaGames
 

@@ -262,7 +262,6 @@ class MancalaUI(tk.Frame):
         menubar.add_cascade(label='Game', menu=gamemenu)
 
         aimenu = tk.Menu(menubar)
-
         aimenu.add_checkbutton(label='AI Player', variable=self.ai_active,
                                onvalue=True, offvalue=False,
                                command=self._ai_move)
@@ -456,7 +455,7 @@ class MancalaUI(tk.Frame):
                 if tag:
                     pathname += '#' + tag
 
-                webbrowser.open(pathname)
+                webbrowser.open('file:///' + pathname)
                 return True
 
         except FileNotFoundError:

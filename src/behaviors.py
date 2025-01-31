@@ -159,7 +159,7 @@ class PlayButtonBehavior(BehaviorIf):
     def ask_mode_change(cls, game_ui):
         """leave_mode of the previous behavior prevents
         leaving if conditions are not good. Here we always
-        find with entering GAMEPLAY."""
+        find with entering GAMEPLAY ok."""
 
         return True
 

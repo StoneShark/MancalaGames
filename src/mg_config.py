@@ -26,8 +26,9 @@ class GameConfig:
         self._params = params    # link to parameter dict
 
         self._dir = man_path.get_path('GameProps')
-        self._filename = None
+        self._known = False      # what this previously loaded or saved
 
+        self.filename = None
         self.edited = False           # is there an edit that hasn't been saved
         self.loaded_config = None     # keep for persistent comment entries
         self.game_config = None       # constructed config for playing
@@ -37,7 +38,8 @@ class GameConfig:
         """Reset data to initial values"""
 
         self._dir = man_path.get_path('GameProps')
-        self._filename = None
+        self.filename = None
+        self._known = False
 
         self.edited = False
         self.loaded_config = None
@@ -48,8 +50,8 @@ class GameConfig:
         """If we don't have a filename yet,
         initialize it with the game name."""
 
-        if not self._filename and game_name:
-            self._filename = game_name + '.txt'
+        if not self.filename and game_name:
+            self.filename = game_name.replace(' ', '_') + '.txt'
 
 
     def load(self):
@@ -60,16 +62,14 @@ class GameConfig:
         if self.check_save_cancel():
             return
 
-        filename = tkfile.askopenfilename(
-            parent=self._master,
-            title='Load Parameters',
-            initialdir=self._dir)
+        filename = tkfile.askopenfilename(parent=self._master,
+                                          title='Load Parameters',
+                                          initialdir=self._dir)
         if not filename:
             return
 
-        self._dir, self._filename = os.path.split(filename)
+        self._dir, self.filename = os.path.split(filename)
         os.chdir(self._dir)
-        self.edited = False
 
         try:
             self.loaded_config = man_config.read_game(filename)
@@ -77,6 +77,9 @@ class GameConfig:
             tk.messagebox.showerror('JSON File Error', error,
                                     parent=self._master)
             return
+
+        self.edited = False
+        self._known = True
 
 
     def _del_defaults(self):
@@ -93,7 +96,7 @@ class GameConfig:
                                                   param.cspec,
                                                   param.option)
 
-    def save(self):
+    def save(self, askfile=False):
         """Save the game configuration to a file.
         Preserve any tags/comments that were in a loaded config.
         Set the working dir to the selected dir."""
@@ -103,31 +106,37 @@ class GameConfig:
                 if tag not in self.game_config:
                     self.game_config[tag] = self.loaded_config[tag]
 
-        if not self._filename:
-            game_name = self.game_config[ckey.GAME_INFO].get([ckey.NAME],
-                                                             'Mancala')
-            self._filename =  game_name + '.txt'
+        if not self.filename:
+            game_name = 'Mancala'
+            if (ckey.GAME_INFO in self.game_config
+                    and ckey.NAME in self.game_config[ckey.GAME_INFO]):
+                game_name = (self.game_config[ckey.GAME_INFO][ckey.NAME]
+                             or 'Mancala')
+            self.filename =  game_name + '.txt'
 
-        filename = tkfile.asksaveasfilename(
-            parent=self._master,
-            title='Save Parameters',
-            confirmoverwrite=True,
-            initialdir=self._dir,
-            initialfile=self._filename,
-            filetypes=[('text file', '.txt')],
-            defaultextension='.txt')
-        if not filename:
-            return
+        if askfile or not self._known:
+            filename = tkfile.asksaveasfilename(
+                                    parent=self._master,
+                                    title='Save Parameters',
+                                    confirmoverwrite=True,
+                                    initialdir=self._dir,
+                                    initialfile=self.filename,
+                                    filetypes=[('text file', '.txt')],
+                                    defaultextension='.txt')
+            if not filename:
+                return
 
-        if not filename.endswith(ALL_PARAMS):
+            self._dir, self.filename = os.path.split(filename)
+            os.chdir(self._dir)
+
+        if not self.filename.endswith(ALL_PARAMS):
             self._del_defaults()
 
-        with open(filename, 'w', encoding='utf-8') as file:
+        with open(self.filename, 'w', encoding='utf-8') as file:
             json.dump(self.game_config, file, indent=3)
 
-        self._dir, self._filename = os.path.split(filename)
-        os.chdir(self._dir)
         self.edited = False
+        self._known = True
 
 
     def check_save_cancel(self):
@@ -137,7 +146,7 @@ class GameConfig:
         Return True to cancel the operation."""
 
         if self.edited:
-            message = f'Save changes to {self._filename}?'
+            message = f'Save changes to {self.filename}?'
             do_it = tk.messagebox.askyesnocancel(title='Save Changes',
                                                  message=message,
                                                  parent=self._master)
