@@ -11,6 +11,7 @@ import tkinter as tk
 import textwrap
 
 import behaviors as bhv
+import man_config
 from game_logger import game_log
 
 
@@ -238,7 +239,7 @@ class RndChooseButtonBehavior(bhv.BehaviorIf):
 
     def _refresh(self, bstate=bhv.BtnState.ACTIVE):
         """Make the UI match the behavior and game data."""
-        self.refresh_nonplay(bstate, bhv.CHOOSE_COLOR)
+        self.refresh_nonplay(bstate, man_config.CONFIG['choose_color'])
 
 
 
@@ -393,7 +394,7 @@ class RndMoveSeedsButtonBehavior(bhv.BehaviorIf):
 
     def _refresh(self, bstate=bhv.BtnState.ACTIVE):
         """Make the UI match the behavior and game data."""
-        self.refresh_nonplay(bstate, bhv.SEED_COLOR)
+        self.refresh_nonplay(bstate, man_config.CONFIG['seed_color'])
 
 
 class MoveSeedsButtonBehavior(bhv.BehaviorIf):
@@ -518,7 +519,7 @@ class MoveSeedsButtonBehavior(bhv.BehaviorIf):
 
     def _refresh(self, bstate=bhv.BtnState.ACTIVE):
         """Make the UI match the behavior and game data."""
-        self.refresh_nonplay(bstate, bhv.MOVE_COLOR)
+        self.refresh_nonplay(bstate, man_config.CONFIG['move_color'])
 
 
 # %% store behavior
@@ -534,7 +535,11 @@ class RndMoveStoreBehavior(bhv.StoreBehaviorIf):
 
         self.str['state'] = tk.NORMAL if highlight else tk.DISABLED
         self.str['text'] = str(seeds) if seeds else ''
-        self.str['bg'] = bhv.SEED_COLOR if highlight else bhv.SYSTEM_COLOR
+
+        if highlight:
+            self.str['background'] = man_config.CONFIG['seed_color']
+        else:
+            self.str['background'] = man_config.CONFIG['system_color']
 
 
     def left_click(self):

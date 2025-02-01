@@ -9,6 +9,7 @@ import tkinter as tk
 import textwrap
 
 import behaviors as bhv
+import man_config
 # from game_logger import game_log
 
 
@@ -180,14 +181,14 @@ class SelectOwnedHoles(bhv.BehaviorIf):
         """Make the UI match the behavior and game data."""
 
         if bstate == bhv.BtnState.DISABLE:
-            self.btn['background'] = bhv.SYSTEM_COLOR
+            self.btn['background'] = man_config.CONFIG['system_color']
             self.btn['state'] = tk.DISABLED
         else:
             game = self.btn.game_ui.game
             if self.btn.props.owner == game.turn:
-                self.btn['background'] = bhv.MOVE_COLOR
+                self.btn['background'] = man_config.CONFIG['move_color']
             else:
-                self.btn['background'] = bhv.SYSTEM_COLOR
+                self.btn['background'] = man_config.CONFIG['system_color']
             self.btn['state'] = tk.NORMAL
 
         otext = ''

@@ -28,14 +28,9 @@ class LogMode(enum.Enum):
         return self in (self.ACTIVE, self.SIMULATE)
 
 
+class Level(enum.IntEnum):
+    """An enum for name lookup."""
 
-class GameLog:
-    """A simple game log that can keep track of where turns start,
-    knows about turns and moves, and supports logging steps within
-    moves.  The game object is passed in, it's "str" is printed in
-    the log."""
-
-    # Log levels
     MOVE = 0
     IMPORT = 1
     STEP = 2
@@ -44,6 +39,27 @@ class GameLog:
     SIMUL = 5
     SHOWALL = SIMUL
 
+    @staticmethod
+    def from_name(name):
+        """Create an enum value from the name."""
+        return Level[name.upper()]
+
+
+
+class GameLog:
+    """A simple game log that can keep track of where turns start,
+    knows about turns and moves, and supports logging steps within
+    moves.  The game object is passed in, it's "str" is printed in
+    the log."""
+
+    # Log levels
+    MOVE = Level.MOVE
+    IMPORT = Level.IMPORT
+    STEP = Level.STEP
+    INFO = Level.INFO
+    DETAIL = Level.DETAIL
+    SIMUL = Level.SIMUL
+    SHOWALL = Level.SHOWALL
 
     def __init__(self):
 

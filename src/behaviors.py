@@ -9,20 +9,12 @@ Created on Sun Aug 13 10:06:37 2023
 
 import abc
 import enum
-
 import tkinter as tk
 
+import man_config
 
 # %%  constants
 
-SYSTEM_COLOR = 'SystemButtonFace'
-INACTIVE_COLOR = 'grey60'
-CHOOSE_COLOR = 'pink2'
-SEED_COLOR = 'goldenrod'
-MOVE_COLOR = 'sandy brown'
-
-TURN_COLOR = 'LightBlue2'
-TURN_DARK_COLOR = 'LightBlue4'
 
 YES_STR = 'yes'
 NO_STR = 'no'
@@ -57,7 +49,7 @@ class BehaviorIf(abc.ABC):
         """Orient the text according to the display option and row."""
 
         if not self.btn.row:
-            if self.btn.game_ui.facing_players.get():
+            if self.btn.game_ui.vars.facing_players.get():
                 self.btn.itemconfigure(self.btn.text_id, angle=180)
             else:
                 self.btn.itemconfigure(self.btn.text_id, angle=0)
@@ -66,7 +58,7 @@ class BehaviorIf(abc.ABC):
         """Show the owner ship arrow if enabled by the display option."""
 
         otext = ''
-        if self.btn.game_ui.owner_arrows.get():
+        if self.btn.game_ui.vars.owner_arrows.get():
             if self.btn.props.owner is True:
                 otext += '\u2191 '
             elif self.btn.props.owner is False:
@@ -74,15 +66,15 @@ class BehaviorIf(abc.ABC):
 
         return otext
 
-    def refresh_nonplay(self, bstate, bg_color=TURN_COLOR):
+    def refresh_nonplay(self, bstate, bg_color=None):
         """Make the UI match the behavior and game data for the non-play
         behaviors."""
 
         if bstate == BtnState.DISABLE:
-            self.btn['background'] = SYSTEM_COLOR
+            self.btn['background'] = man_config.CONFIG['system_color']
             self.btn['state'] = tk.DISABLED
         else:
-            self.btn['background'] = bg_color
+            self.btn['background'] = bg_color or man_config.CONFIG['turn_color']
             self.btn['state'] = tk.NORMAL
 
         if self.btn.props.blocked:
@@ -191,7 +183,7 @@ class PlayButtonBehavior(BehaviorIf):
         at the child owner."""
 
         otext = ''
-        if not self.btn.row and self.btn.game_ui.facing_players.get():
+        if not self.btn.row and self.btn.game_ui.vars.facing_players.get():
             if self.btn.props.ch_owner is True:
                 otext += '\u02c5 '
             elif self.btn.props.ch_owner is False:
@@ -234,22 +226,22 @@ class PlayButtonBehavior(BehaviorIf):
             self.btn['relief'] = 'raised'
 
         if bstate == BtnState.ACTIVE:
-            self.btn['background'] = TURN_COLOR
+            self.btn['background'] = man_config.CONFIG['turn_color']
             self.btn['state'] = tk.NORMAL
 
         else:
             self.btn['state'] = tk.DISABLED
             if bstate == BtnState.LOOK_ACTIVE:
-                self.btn['background'] = TURN_COLOR
+                self.btn['background'] = man_config.CONFIG['turn_color']
 
             elif bstate == BtnState.PLAY_DISABLE:
-                self.btn['background'] = TURN_DARK_COLOR
+                self.btn['background'] = man_config.CONFIG['turn_dark_color']
 
             else:
-                self.btn['background'] = INACTIVE_COLOR
+                self.btn['background'] = man_config.CONFIG['inactive_color']
 
         if self.btn.right_id:
-            if self.btn.game_ui.touch_screen.get():
+            if self.btn.game_ui.vars.touch_screen.get():
                 self.btn.itemconfigure(self.btn.right_id, state='normal')
             else:
                 self.btn.itemconfigure(self.btn.right_id, state='hidden')
@@ -278,7 +270,10 @@ class NoStoreBehavior(StoreBehaviorIf):
         else:
             self.str['text'] = ''
 
-        self.str['background'] = TURN_COLOR if highlight else SYSTEM_COLOR
+        if highlight:
+            self.str['background'] = man_config.CONFIG['turn_color']
+        else:
+            self.str['background'] = man_config.CONFIG['system_color']
 
 
     def left_click(self):

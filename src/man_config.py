@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Handles the configuration files for mancala games:
 
-Read a game configuration file and return
+Read a specified game configuration file and return
 the game class, game constants, game info, and
 player dictionary.
 
@@ -13,13 +13,18 @@ Read the parameters data files game_params and
 game_param_descs, return a dictionary of
     param_name: Param
 
+Reads (or creates) the ini for UI options.
+
 Created on Tue Jul 18 12:16:20 2023
 @author: Ann"""
 
+import configparser
 import csv
 import dataclasses as dc
 import json
 import re
+import os
+from tkinter import font
 
 import ai_player
 import cfg_keys as ckey
@@ -357,3 +362,118 @@ class ParamData(dict):
 
             rec[UI_DEFAULT_IDX] = convert_default_value(rec[UI_DEFAULT_IDX])
             self[opt_name] = Param(*rec)
+
+
+# %% read and process config ini
+
+INI_FILENAME = 'mancala.ini'
+
+DEFAULTS = {
+    'button_size': '100',
+
+    'system_color': 'SystemButtonFace',
+    'turn_color': 'LightBlue2',
+    'turn_dark_color': 'LightBlue4',
+    'inactive_color': 'grey60',
+
+    'choose_color': 'pink2',
+    'seed_color': 'goldenrod',
+    'move_color': 'sandy brown',
+
+    'font_family' : 'Helvetica',
+    'font_size' : '14',
+    'font_weight' : 'bold',
+
+    'show_tally': 'no',
+    'touch_screen': 'no',
+    'facing_players': 'no',
+    'ownership_arrows': 'no',
+
+    'ai_active': 'no',
+    'ai_delay': '1',
+    'difficulty': '1',
+
+    'log_live': 'no',
+    'log_level': 'move',
+    }
+
+DEFAULT = 'default'
+
+
+class ConfigData:
+    """Read/create configuration data."""
+
+    def __init__(self):
+
+        pathname = man_path.get_path(INI_FILENAME, no_error=True)
+        if not pathname:
+            self.create_ini_file()
+            return
+
+        self._config = configparser.ConfigParser()
+        self._config.read(pathname)
+
+        if DEFAULT not in self._config.sections():
+            self.create_ini_file()
+
+
+    def __getitem__(self, key):
+        """Get the item from the default dicitonary"""
+
+        return self._config[DEFAULT].get(key, DEFAULTS[key])
+
+
+    def create_ini_file(self):
+        """Create a default ini file.
+        Make an attempt to put the ini file at the project root."""
+
+        directory = os.getcwd()
+        pdir, bdir = os.path.split(directory)
+        if bdir in {'GameProps', 'GamePropsNoRelease', 'src'}:
+            directory = pdir
+        fullpath = os.path.join(directory, INI_FILENAME)
+
+        self._config = configparser.ConfigParser()
+        self._config[DEFAULT] = DEFAULTS
+
+        with open(fullpath, 'w', encoding='UTF-8') as configfile:
+            self._config.write(configfile)
+
+
+    def get_int(self, key, default=0):
+        """Attempt to get an int from the config.
+        If it is missing or invalid return the default."""
+
+        if key not in self._config[DEFAULT]:
+            return default
+
+        try:
+            int_val = int(self._config[DEFAULT][key])
+        except ValueError:
+            int_val = int(DEFAULTS[key])
+
+        return max(0, int_val)
+
+
+    def get_bool(self, key):
+        """Interpret the value as an affirmative or not.
+        If the key is not there return False"""
+
+        if key in self._config[DEFAULT]:
+            return self._config[DEFAULT][key].lower() in {'yes', 'true'}
+
+        return False
+
+
+    def get_font(self):
+        """Attempt to get a font from the config.
+        If it is missing return the default.
+        If it invalid, 'font.Font' will pick the best match."""
+
+        ftuple = (self['font_family'],
+                  self.get_int('font_size'),
+                  self['font_weight'])
+        return font.Font(font=ftuple)
+
+
+CONFIG = ConfigData()

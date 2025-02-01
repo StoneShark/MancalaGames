@@ -14,6 +14,7 @@ import tkinter as tk
 import behaviors
 import bhv_hold
 import bhv_owners
+import man_config
 
 
 # %% enum, class list and global function
@@ -71,7 +72,6 @@ def force_mode_change():
 
 # %%  Button Classes
 
-BTN_SIZE = 100
 DO_RIGHT = 0.6
 TEXT = 'text'
 
@@ -96,23 +96,25 @@ class HoleButton(tk.Canvas):
         self.right_move = right_move
         self.props = 0
         self.behavior = behaviors.PlayButtonBehavior(self)
+        btn_size = man_config.CONFIG.get_int('button_size')
 
         tk.Canvas.__init__(self, pframe,
                            borderwidth=4, relief='raised',
-                           width=BTN_SIZE, height=BTN_SIZE)
+                           width=btn_size, height=btn_size)
 
         self.right_id = None
         if left_move != right_move:
             self.right_id = self.create_rectangle(
-                *self._get_coords(BTN_SIZE, BTN_SIZE),
+                *self._get_coords(btn_size, btn_size),
                 outline='', fill='grey', stipple='gray25')
             self.tag_bind(self.right_id, "<Button-1>", self.right_click)
 
             if not self.game_ui.touch_screen.get():
                 self.itemconfigure(self.right_id, state='hidden')
 
-        self.text_id = self.create_text(BTN_SIZE//2, BTN_SIZE//2,
-                                        text='', font='bold, 14')
+        self.text_id = self.create_text(btn_size//2, btn_size//2,
+                                        text='',
+                                        font=man_config.CONFIG.get_font())
 
         self.bind('<Button-1>', self.left_click)
         self.bind('<Button-3>', self.right_click)
@@ -208,7 +210,8 @@ class StoreButton(tk.Button):
         tk.Button.__init__(self, pframe, borderwidth=2, height=3, width=7,
                            text='', padx=5, pady=10,
                            disabledforeground='black', foreground='black',
-                           anchor='center', font='bold, 14', relief='ridge',
+                           anchor='center', relief='ridge',
+                           font=man_config.CONFIG.get_font(),
                            command=self.left_click)
         self.bind('<Button-3>', self.right_click)
 

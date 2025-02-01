@@ -9,7 +9,7 @@ Created on Sat Aug 19 08:32:38 2023
 import os.path
 
 
-def get_path(filename):
+def get_path(filename, no_error=False):
     """Provide compatibility between different ways the
     software can be run."""
 
@@ -21,6 +21,9 @@ def get_path(filename):
             break
 
     else:
-        raise FileNotFoundError(f"Can't file {filename}.")
+        if no_error:
+            return False
+
+        raise FileNotFoundError(f"Can't find file {filename}.")
 
     return os.path.abspath(pathname)

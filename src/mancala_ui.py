@@ -22,7 +22,9 @@ import cfg_keys as ckey
 import behaviors
 import btn_behaviors as btnb
 import game_interface as gi
+import game_logger
 import game_tally as gt
+import man_config
 import man_path
 import round_tally
 
@@ -36,7 +38,6 @@ AI_DELAY = [0, 1000, 4000]
 NO_TALLY_OP = 0
 VIS_TALLY_OP = 1
 RET_TALLY_OP = 2
-
 
 # %%
 
@@ -62,6 +63,45 @@ def quiet_dialog(parent, title, text):
     tk.Label(frame, anchor='nw', justify='left', text=text
              ).pack(side='top')
     tk.Button(frame, text='Ok', command=top.destroy).pack(side='bottom')
+
+
+class TkVars:
+    """Collect the tk status variables here and one stray."""
+
+    def __init__(self, man_ui, player_dict):
+
+        # must be visible for construction
+        self.show_tally = tk.BooleanVar(man_ui.master, True)
+        self.tally_was_off = False
+
+        self.facing_players = tk.BooleanVar(
+            man_ui.master, man_config.CONFIG.get_bool('facing_players'))
+        self.touch_screen = tk.BooleanVar(
+            man_ui.master, man_config.CONFIG.get_bool('touch_screen'))
+        self.owner_arrows = tk.BooleanVar(
+            man_ui.master, man_config.CONFIG.get_bool('owner_arrows'))
+
+        self.log_ai = tk.BooleanVar(man_ui.master, False)
+        game_log.live = man_config.CONFIG.get_bool('log_live')
+
+        self.live_log = tk.BooleanVar(man_ui.master, game_log.live)
+
+        value = man_config.CONFIG['log_level']
+        if value:
+            game_log.level = game_logger.Level.from_name(value)
+        self.log_level = tk.IntVar(man_ui.master, game_log.level)
+
+        value = man_ui.player.difficulty
+        value = man_config.CONFIG.get_int('difficulty', value)
+        self.difficulty = tk.IntVar(man_ui.master, value)
+
+        value = ((ckey.AI_ACTIVE in player_dict
+                     and player_dict[ckey.AI_ACTIVE])
+                    or man_config.CONFIG.get_bool('ai_active'))
+        self.ai_active = tk.IntVar(man_ui.master, value)
+
+        self.ai_delay = tk.IntVar(
+            man_ui.master, min(man_config.CONFIG.get_int('ai_delay', 1), 2))
 
 
 # %%  mancala ui
@@ -95,31 +135,15 @@ class MancalaUI(tk.Frame):
         else:
             self.master = tk.Tk()
 
-        self.show_tally = tk.BooleanVar(self.master, True)
-        self.tally_was_off = False
-        self.facing_players = tk.BooleanVar(self.master, False)
-        self.touch_screen = tk.BooleanVar(self.master, False)
-        self.owner_arrows = tk.BooleanVar(self.master, False)
-        self.log_ai = tk.BooleanVar(self.master, False)
-        self.live_log = tk.BooleanVar(self.master, game_log.live)
-        self.log_level = tk.IntVar(self.master, game_log.level)
-
         self.master.title(self.info.name)
         self.master.option_add('*tearOff', False)
-        # self.master.resizable(False, False)
         self.master.wm_geometry('+500+300')
 
         super().__init__(self.master)
         self.master.report_callback_exception = self._exception_callback
 
-        self.difficulty = tk.IntVar(self.master,
-                                    value=self.player.difficulty)
+        self.vars = TkVars(self, player_dict)
         self._set_difficulty()
-
-        start_ai = (ckey.AI_ACTIVE in player_dict
-                    and player_dict[ckey.AI_ACTIVE])
-        self.ai_active = tk.IntVar(self.master, value=start_ai)
-        self.ai_delay = tk.BooleanVar(self.master, value=2)
 
         self.pack(expand=True, fill=tk.BOTH)
         self._create_menus()
@@ -133,8 +157,10 @@ class MancalaUI(tk.Frame):
         self.stores = None
         self._add_board()
 
-        self.show_tally.set(False)
-        self.tally_frame.forget()   # don't show tally by default
+        tally = man_config.CONFIG.get_bool('show_tally')
+        self.vars.show_tally.set(tally)
+        if not tally:
+            self.tally_frame.forget()
 
         self._new_game()
         self._refresh()
@@ -274,6 +300,12 @@ class MancalaUI(tk.Frame):
         traceback.print_exception(args[0], args[1], args[2])
 
 
+    def _set_log_level(self):
+        """Set the game log level"""
+
+        game_log.level = self.vars.log_level
+
+
     def _create_menus(self):
         """Create the game control menus."""
 
@@ -288,30 +320,31 @@ class MancalaUI(tk.Frame):
         menubar.add_cascade(label='Game', menu=gamemenu)
 
         aimenu = tk.Menu(menubar)
-        aimenu.add_checkbutton(label='AI Player', variable=self.ai_active,
+        aimenu.add_checkbutton(label='AI Player',
+                               variable=self.vars.ai_active,
                                onvalue=True, offvalue=False,
                                command=self._ai_move)
 
         aimenu.add_separator()
-        aimenu.add_radiobutton(label='No AI Delay', variable=self.ai_delay,
-                               value=0)
-        aimenu.add_radiobutton(label='Short AI Delay', variable=self.ai_delay,
-                               value=1)
-        aimenu.add_radiobutton(label='Long AI Delay', variable=self.ai_delay,
-                               value=2)
+        aimenu.add_radiobutton(label='No AI Delay',
+                               variable=self.vars.ai_delay, value=0)
+        aimenu.add_radiobutton(label='Short AI Delay',
+                               variable=self.vars.ai_delay, value=1)
+        aimenu.add_radiobutton(label='Long AI Delay',
+                               variable=self.vars.ai_delay, value=2)
 
         aimenu.add_separator()
         aimenu.add_radiobutton(label='Easy',
-                               value=0, variable=self.difficulty,
+                               value=0, variable=self.vars.difficulty,
                                command=self._set_difficulty)
         aimenu.add_radiobutton(label='Normal',
-                               value=1, variable=self.difficulty,
+                               value=1, variable=self.vars.difficulty,
                                command=self._set_difficulty)
         aimenu.add_radiobutton(label='Hard',
-                               value=2, variable=self.difficulty,
+                               value=2, variable=self.vars.difficulty,
                                command=self._set_difficulty)
         aimenu.add_radiobutton(label='Expert',
-                               value=3, variable=self.difficulty,
+                               value=3, variable=self.vars.difficulty,
                                command=self._set_difficulty)
 
         menubar.add_cascade(label='AI', menu=aimenu)
@@ -324,56 +357,56 @@ class MancalaUI(tk.Frame):
 
         logmenu.add_radiobutton(
             label='Moves',
-            value=game_log.MOVE, variable=self.log_level,
-            command=lambda: setattr(game_log, 'level', self.log_level.get()))
+            value=game_log.MOVE, variable=self.vars.log_level,
+            command=self._set_log_level)
         logmenu.add_radiobutton(
             label='Important',
-            value=game_log.IMPORT, variable=self.log_level,
-            command=lambda: setattr(game_log, 'level', self.log_level.get()))
+            value=game_log.IMPORT, variable=self.vars.log_level,
+            command=self._set_log_level)
         logmenu.add_radiobutton(
             label='Steps',
-            value=game_log.STEP, variable=self.log_level,
-            command=lambda: setattr(game_log, 'level', self.log_level.get()))
+            value=game_log.STEP, variable=self.vars.log_level,
+            command=self._set_log_level)
         logmenu.add_radiobutton(
             label='Information',
-            value=game_log.INFO, variable=self.log_level,
-            command=lambda: setattr(game_log, 'level', self.log_level.get()))
+            value=game_log.INFO, variable=self.vars.log_level,
+            command=self._set_log_level)
         logmenu.add_radiobutton(
             label='Detail',
-            value=game_log.DETAIL, variable=self.log_level,
-            command=lambda: setattr(game_log, 'level', self.log_level.get()))
+            value=game_log.DETAIL, variable=self.vars.log_level,
+            command=self._set_log_level)
         logmenu.add_radiobutton(
             label='Simulated Moves',
-            value=game_log.SIMUL, variable=self.log_level,
-            command=lambda: setattr(game_log, 'level', self.log_level.get()))
+            value=game_log.SIMUL, variable=self.vars.log_level,
+            command=self._set_log_level)
         logmenu.add_separator()
         logmenu.add_checkbutton(
             label='Live Log',
             onvalue=True, offvalue=False,
-            variable=self.live_log,
-            command=lambda: setattr(game_log, 'live', self.live_log.get()))
+            variable=self.vars.live_log,
+            command=lambda: setattr(game_log, 'live', self.vars.live_log.get()))
         logmenu.add_checkbutton(label='Log AI Analysis',
-                                variable=self.log_ai,
+                                variable=self.vars.log_ai,
                                 onvalue=True, offvalue=False)
 
         menubar.add_cascade(label='Log', menu=logmenu)
 
         showmenu = tk.Menu(menubar)
         showmenu.add_checkbutton(label='Show Tally',
-                                 variable=self.show_tally,
+                                 variable=self.vars.show_tally,
                                  onvalue=True, offvalue=False,
                                  command=self._toggle_tally)
         showmenu.add_separator()
         showmenu.add_checkbutton(label='Touch Screen',
-                                 variable=self.touch_screen,
+                                 variable=self.vars.touch_screen,
                                  onvalue=True, offvalue=False,
                                  command=self._refresh)
         showmenu.add_checkbutton(label='Facing Players',
-                                 variable=self.facing_players,
+                                 variable=self.vars.facing_players,
                                  onvalue=True, offvalue=False,
                                  command=self._toggle_facing)
         showmenu.add_checkbutton(label='Ownership Arrows',
-                                 variable=self.owner_arrows,
+                                 variable=self.vars.owner_arrows,
                                  onvalue=True, offvalue=False,
                                  command=self._refresh)
         menubar.add_cascade(label='Display', menu=showmenu)
@@ -410,25 +443,25 @@ class MancalaUI(tk.Frame):
         if vis_op == VIS_TALLY_OP:
             # force tally to be visible (status pane is needed)
             self.tally_frame.pack(side=tk.TOP, expand=True, fill=tk.X)
-            self.tally_was_off = not self.show_tally.get()
-            self.show_tally.set(True)
+            self.vars.tally_was_off = not self.vars.show_tally.get()
+            self.vars.show_tally.set(True)
 
-        elif vis_op == RET_TALLY_OP and self.tally_was_off:
+        elif vis_op == RET_TALLY_OP and self.vars.tally_was_off:
             # return tally to the state it was before VIS_TALLY_OP called
             self.tally_frame.forget()
-            self.show_tally.set(False)
-            self.tally_was_off = False
+            self.vars.show_tally.set(False)
+            self.vars.tally_was_off = False
 
         elif self.mode == btnb.Behavior.GAMEPLAY:
             # only allow user toggle when in GAMEPLAY state
-            if self.show_tally.get():
+            if self.vars.show_tally.get():
                 self.tally_frame.pack(side=tk.TOP, expand=True, fill=tk.X)
             else:
                 self.tally_frame.forget()
 
         else:
             self.bell()
-            self.show_tally.set(True)
+            self.vars.show_tally.set(True)
 
 
     def _toggle_facing(self):
@@ -543,7 +576,7 @@ class MancalaUI(tk.Frame):
         turn = self.game.get_turn()
         allows = self.game.get_allowable_holes()
         turn_row = int(not turn)
-        ai_turn = self.ai_active.get() and turn
+        ai_turn = self.vars.ai_active.get() and turn
         for row in range(2):
 
             player = row == turn_row
@@ -779,7 +812,7 @@ class MancalaUI(tk.Frame):
     def _set_difficulty(self):
         """Set the difficulty for the ai player."""
 
-        diff = self.difficulty.get()
+        diff = self.vars.difficulty.get()
         self.player.difficulty = diff
         game_log.add(f'Changing difficulty {diff}', game_log.INFO)
 
@@ -788,7 +821,7 @@ class MancalaUI(tk.Frame):
         """Add the ai description to the game log (Mancala doesn't
         know if the ai is playing)."""
 
-        if self.ai_active.get() and last_turn:
+        if self.vars.ai_active.get() and last_turn:
             game_log.add(self.player.get_move_desc(), game_log.MOVE)
 
 
@@ -808,7 +841,7 @@ class MancalaUI(tk.Frame):
             self._new_game(win_cond=win_cond, new_round_ok=True)
             return
 
-        if self.ai_active.get() and self.game.get_turn():
+        if self.vars.ai_active.get() and self.game.get_turn():
             self._schedule_ai()
 
         elif self.info.mustpass and self.game.test_pass():
@@ -826,9 +859,9 @@ class MancalaUI(tk.Frame):
         """Do AI move or schedule the AI turn (if the AI is enabled
         and it's the AI's turn)"""
 
-        if self.ai_active.get() and self.game.get_turn():
+        if self.vars.ai_active.get() and self.game.get_turn():
             self._cancel_pending_afters()
-            sel_delay = self.ai_delay.get()
+            sel_delay = self.vars.ai_delay.get()
 
             if sel_delay:
                 self.after(AI_DELAY[sel_delay], self._ai_move)
@@ -839,9 +872,9 @@ class MancalaUI(tk.Frame):
     def _ai_move(self):
         """If it's the AI's turn, do a move. AI is top player."""
 
-        if self.ai_active.get() and self.game.get_turn():
+        if self.vars.ai_active.get() and self.game.get_turn():
 
-            if not self.log_ai.get():
+            if not self.vars.log_ai.get():
                 game_log.set_ai_mode()
 
             move = self.player.pick_move()
