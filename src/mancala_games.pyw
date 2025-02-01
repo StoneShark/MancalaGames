@@ -178,30 +178,8 @@ class MancalaGames(tk.Frame):
             webbrowser.open(man_path.get_path('about_games.html'))
 
         elif what == ABOUT:
-            self._quiet_dialog('About Manacala Games', RELEASE_TEXT)
-
-
-    def _quiet_dialog(self, title, text):
-        """Popup a quiet dialog message."""
-        # pylint: disable=duplicate-code
-
-        xpos = self.winfo_rootx() + 100
-        ypos = self.winfo_rooty() + 50
-
-        top = tk.Toplevel(self)
-        top.resizable(False, False)
-        top.lift(aboveThis=self)
-        top.title(title)
-        top.wm_geometry(f'+{xpos}+{ypos}')
-        top.minsize(200, 100)
-        top.grab_set()
-
-        frame = tk.Frame(top, borderwidth=10)
-        frame.pack(side='top', expand=True)
-
-        tk.Label(frame, anchor='nw', justify='left', text=text
-                 ).pack(side='top')
-        tk.Button(frame, text='Ok', command=top.destroy).pack(side='bottom')
+            mancala_ui.quiet_dialog(self, 'About Manacala Games',
+                                    RELEASE_TEXT)
 
 
     def _update_title(self):

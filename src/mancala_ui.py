@@ -38,6 +38,32 @@ VIS_TALLY_OP = 1
 RET_TALLY_OP = 2
 
 
+# %%
+
+def quiet_dialog(parent, title, text):
+    """Popup a quiet dialog message.
+    This is used in mancala_ui.py and mancala_games.pyw,
+    so not in the class"""
+
+    xpos = parent.winfo_rootx() + 100
+    ypos = parent.winfo_rooty() + 50
+
+    top = tk.Toplevel(parent)
+    top.resizable(False, False)
+    top.lift(aboveThis=parent)
+    top.title(title)
+    top.wm_geometry(f'+{xpos}+{ypos}')
+    top.minsize(200, 100)
+    top.grab_set()
+
+    frame = tk.Frame(top, borderwidth=10)
+    frame.pack(side='top', expand=True)
+
+    tk.Label(frame, anchor='nw', justify='left', text=text
+             ).pack(side='top')
+    tk.Button(frame, text='Ok', command=top.destroy).pack(side='bottom')
+
+
 # %%  mancala ui
 
 class MancalaUI(tk.Frame):
@@ -420,28 +446,6 @@ class MancalaUI(tk.Frame):
         self._refresh()
 
 
-    def _quiet_dialog(self, title, text):
-        """Popup a quiet dialog message."""
-
-        xpos = self.winfo_rootx() + 100
-        ypos = self.winfo_rooty() + 50
-
-        top = tk.Toplevel(self)
-        top.resizable(False, False)
-        top.lift(aboveThis=self)
-        top.title(title)
-        top.wm_geometry(f'+{xpos}+{ypos}')
-        top.minsize(200, 100)
-        top.grab_set()
-
-        frame = tk.Frame(top, borderwidth=10)
-        frame.pack(side='top', expand=True)
-
-        tk.Label(frame, anchor='nw', justify='left', text=text
-                 ).pack(side='top')
-        tk.Button(frame, text='Ok', command=top.destroy).pack(side='bottom')
-
-
     @staticmethod
     def _try_help_file(filename, tag=None):
         """Attempt to pop open the help file.
@@ -473,7 +477,7 @@ class MancalaUI(tk.Frame):
         _ = (self._try_help_file(self.info.help_file)
              or self._try_help_file('about_games.html', self.info.name)
              or self._try_help_file('mancala_help.html')
-             or self._quiet_dialog('Help', 'Help not found.'))
+             or quiet_dialog(self, 'Help', 'Help not found.'))
 
 
     def _about(self):
@@ -488,7 +492,7 @@ class MancalaUI(tk.Frame):
         for para in paragraphs:
             out_text += textwrap.fill(para, 55) + '\n'
 
-        self._quiet_dialog('About', ''.join(out_text))
+        quiet_dialog(self, 'About', ''.join(out_text))
 
 
     def _save_file(self):
