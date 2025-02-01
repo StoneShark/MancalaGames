@@ -59,10 +59,16 @@ class BehaviorIf(abc.ABC):
 
         otext = ''
         if self.btn.game_ui.vars.owner_arrows.get():
-            if self.btn.props.owner is True:
-                otext += '\u2191 '
-            elif self.btn.props.owner is False:
-                otext += '\u2193 '
+            if not self.btn.row and self.btn.game_ui.vars.facing_players.get():
+                if self.btn.props.owner is True:
+                    otext += '\u2193 '
+                elif self.btn.props.owner is False:
+                    otext += '\u2191 '
+            else:
+                if self.btn.props.owner is True:
+                    otext += '\u2191 '
+                elif self.btn.props.owner is False:
+                    otext += '\u2193 '
 
         return otext
 

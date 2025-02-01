@@ -109,7 +109,7 @@ class HoleButton(tk.Canvas):
                 outline='', fill='grey', stipple='gray25')
             self.tag_bind(self.right_id, "<Button-1>", self.right_click)
 
-            if not self.game_ui.touch_screen.get():
+            if not self.game_ui.vars.touch_screen.get():
                 self.itemconfigure(self.right_id, state='hidden')
 
         self.text_id = self.create_text(btn_size//2, btn_size//2,
@@ -136,7 +136,7 @@ class HoleButton(tk.Canvas):
         """Return the coordinates for the touch screen mode
         rectangle for right clicks."""
 
-        if not self.row and self.game_ui.facing_players.get():
+        if not self.row and self.game_ui.vars.facing_players.get():
             return (8, 8, int(width * (1 - DO_RIGHT)), height)
 
         return (int(width * DO_RIGHT), 8, width, height)
@@ -176,7 +176,7 @@ class HoleButton(tk.Canvas):
         if self['state'] == tk.DISABLED:
             return
 
-        if not self.row and self.game_ui.facing_players.get():
+        if not self.row and self.game_ui.vars.facing_players.get():
             self.behavior.right_click()
         else:
             self.behavior.left_click()
@@ -191,13 +191,13 @@ class HoleButton(tk.Canvas):
         if self['state'] == tk.DISABLED:
             return
 
-        if not self.row and self.game_ui.facing_players.get():
+        if not self.row and self.game_ui.vars.facing_players.get():
             self.behavior.left_click()
         else:
             self.behavior.right_click()
 
 
-class StoreButton(tk.Button):
+class StoreButton(tk.Canvas):
     """Implements one of the board stores."""
 
     def __init__(self, pframe, game_ui, owner):
@@ -207,14 +207,34 @@ class StoreButton(tk.Button):
         self.owner = owner
         self.behavior = behaviors.NoStoreBehavior(self)
 
-        tk.Button.__init__(self, pframe, borderwidth=2, height=3, width=7,
-                           text='', padx=5, pady=10,
-                           disabledforeground='black', foreground='black',
-                           anchor='center', relief='ridge',
-                           font=man_config.CONFIG.get_font(),
-                           command=self.left_click)
-        self.bind('<Button-3>', self.right_click)
+        btn_size = man_config.CONFIG.get_int('button_size')
+        tk.Canvas.__init__(self, pframe,
+                           borderwidth=4, relief='ridge',
+                           width=btn_size, height=btn_size)
 
+        self.text_id = self.create_text(btn_size, btn_size,
+                                        text='',
+                                        font=man_config.CONFIG.get_font())
+
+        self.bind('<Button-1>', self.left_click)
+        self.bind('<Button-3>', self.right_click)
+        self.bind("<Configure>", self._move_text)
+
+
+    def __setitem__(self, key, value):
+        """Capture setting the text attribute and set it on the
+        text element on the canvas, otherwise, let the parent
+        handle the setting."""
+
+        if key == TEXT:
+            self.itemconfig(self.text_id, text=value)
+        else:
+            super().__setitem__(key, value)
+
+    def _move_text(self, event):
+        """Keep the text widget in the center of the canvas)."""
+
+        self.coords(self.text_id, event.width//2, event.height//2)
 
     def set_behavior(self, behavior):
         """Set the behavior of the store."""
@@ -228,7 +248,7 @@ class StoreButton(tk.Button):
         self.behavior.set_store(seeds, turn)
 
 
-    def left_click(self):
+    def left_click(self, _=None):
         """pass along left_click call."""
         self.behavior.left_click()
 
