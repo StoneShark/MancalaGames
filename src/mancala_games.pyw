@@ -65,7 +65,7 @@ ABOUT = 4
 RELEASE_TEXT = textwrap.dedent("""\
                 Mancala Games
                 License: GPL-3.0   © 2024, Ann Davies
-                Version 1.1""")
+                Version 1.1 +develop""")
 
 
 # %% helper funcs
