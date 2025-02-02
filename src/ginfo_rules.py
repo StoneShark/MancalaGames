@@ -855,14 +855,15 @@ def build_rules():
         msg='Udir_holes value out of range 0..nbr_holes-1',
         excp=gi.GameInfoError)
 
-    man_rules.add_rule(
-        'udir_and_mshare',
-        rule=lambda ginfo: ginfo.udirect and ginfo.mustshare,
-        msg='UDIR_HOLES and MUSTSHARE are incompatible',
-        excp=NotImplementedError)
-        # supporting udirect and mustshare would require a UI design change
-        # to support partially active buttons (left/right)
-        # and would make allowables and get_moves more complicated
+    # TODO did we manage to support udir_and_mshare?
+    # man_rules.add_rule(
+    #     'udir_and_mshare',
+    #     rule=lambda ginfo: ginfo.udirect and ginfo.mustshare,
+    #     msg='UDIR_HOLES and MUSTSHARE are incompatible',
+    #     excp=NotImplementedError)
+    #     # supporting udirect and mustshare would require a UI design change
+    #     # to support partially active buttons (left/right)
+    #     # and would make allowables and get_moves more complicated
 
     man_rules.add_rule(
         'udir_gs_not',
@@ -870,7 +871,8 @@ def build_rules():
                             ginfo.grandslam == gi.GrandSlam.NOT_LEGAL),
         msg='UDIR_HOLES and GRANDLAM=Not Legal are incompatible',
         excp=NotImplementedError)
-        # see comment for udir_and_mshare rule above
+        # no games use these two features together, 
+        # implement when there's a use
 
     man_rules.add_rule(
         'udir_bad_allowrule',
@@ -885,8 +887,7 @@ def build_rules():
                              and ginfo.udirect),
         msg='UDIR_HOLES and ALLOW_RULE are incompatible',
         excp=NotImplementedError)
-        # see comment for udir_and_mshare rule above
-        # allow rules which do no depend on sow direction are fine
+        # allow rules which do not depend on sow direction are fine
         # listing those so new allow rules are excluded with code changes
 
     man_rules.add_rule(

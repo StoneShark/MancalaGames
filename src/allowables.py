@@ -371,6 +371,87 @@ class MustShare(AllowableIf):
         return allow
 
 
+class MustShareUdir(MustShare):
+    """Must Share for games with some udirect holes."""
+
+    def __init__(self, game, decorator=None):
+
+        def get_move_triple(row, pos, direct=None):
+            return gi.MoveTpl(row, pos, direct)
+
+        def get_move_pair(_, pos, direct=None):
+            return gi.MoveTpl(pos, direct)
+
+        def get_move(_1, pos, _2=None):
+            return pos
+
+        def get_owner_owner(loc):
+            return game.owner[loc]
+
+        super().__init__(game, False, decorator)
+        self.fholes, self.tholes = self.get_holes_idx()
+        # self.udirs = TODO precompute what holes to process
+
+        self.make_move = [get_move,
+                          get_move_pair,
+                          get_move_triple][game.info.mlength - 1]
+
+        if game.info.mlength == 3:          # TODO is the right condition TERRITORY?
+            self.owner = get_owner_owner
+        else:
+            self.owner = game.cts.board_side
+
+
+    def get_allowable_holes(self):
+        """Return allowable moves."""
+
+        allow = self.decorator.get_allowable_holes()
+
+        opponent = not self.game.turn
+        if self.opp_has_seeds(opponent):
+            return allow
+
+        holes = self.tholes if self.game.turn else self.fholes
+        saved_state = self.game.state
+
+        for idx, loc in holes:
+            if not allow[idx]:
+                continue
+
+            row = int(loc < self.game.cts.holes)
+            pos = self.game.cts.xlate_pos_loc(row, loc)
+
+            cnt = self.game.cts.loc_to_left_cnt(loc)
+            if cnt in self.game.info.udir_holes:
+                pos_allow = [True, True]
+                for pidx, direct in enumerate([gi.Direct.CW, gi.Direct.CCW]):
+
+                    move = self.make_move(row, pos, direct)
+                    self.game.sim_sow_capt(move)
+                    if not self.opp_has_seeds(opponent):
+                        game_log.add(f'MUSTSHARE: prevented {loc} {direct}',
+                                     game_log.DETAIL)
+                        pos_allow[pidx] = False
+
+                    self.game.state = saved_state
+
+                if not pos_allow[0] and not pos_allow[1]:
+                    allow[idx] = False
+                elif pos_allow[0] != pos_allow[1]:
+                    allow[idx] = pos_allow
+
+            else:
+                self.game.sim_sow_capt(self.make_move(row, pos, None))
+
+                if not self.opp_has_seeds(opponent):
+                    game_log.add(f'MUSTSHARE: prevented {loc}', game_log.DETAIL)
+                    allow[idx] = False
+
+                self.game.state = saved_state
+
+        return allow
+
+
 class NoGrandSlam(AllowableIf):
     """Grand slam - taking all of opponents seeds is not legal.
 
@@ -559,7 +640,10 @@ def deco_allowable(game):
     allowable = deco_allow_rule(game, allowable)
 
     if game.info.mustshare:
-        allowable = MustShare(game, game.info.mlength == 3, allowable)
+        if game.info.udirect:
+            allowable = MustShareUdir(game, allowable)
+        else:
+            allowable = MustShare(game, game.info.mlength == 3, allowable)
 
     if game.info.grandslam == gi.GrandSlam.NOT_LEGAL:
         allowable = NoGrandSlam(game, allowable)

@@ -32,6 +32,33 @@ class BtnState(enum.Enum):
     DISABLE = enum.auto()
     PLAY_DISABLE = enum.auto()
 
+    ACT_CCW_ONLY = enum.auto()
+    ACT_CW_ONLY = enum.auto()
+    LACT_CCW_ONLY = enum.auto()
+    LACT_CW_ONLY = enum.auto()
+
+    def is_active(self):
+        """An active state."""
+        return self in  {BtnState.ACTIVE,
+                         BtnState.ACT_CW_ONLY,
+                         BtnState.ACT_CCW_ONLY}
+
+    def is_look_active(self):
+        """A look active state."""
+        return self in  {BtnState.LOOK_ACTIVE,
+                         BtnState.LACT_CW_ONLY,
+                         BtnState.LACT_CCW_ONLY}
+
+    def grid_ccw(self):
+        """grid for ccw"""
+        return self in {BtnState.ACT_CW_ONLY,
+                        BtnState.LACT_CW_ONLY}
+
+    def grid_cw(self):
+        """grid for cw"""
+        return self in {BtnState.ACT_CCW_ONLY,
+                        BtnState.LACT_CCW_ONLY}
+
 
 # %% interface
 
@@ -178,9 +205,6 @@ class PlayButtonBehavior(BehaviorIf):
     def right_click(self):
         """Move for the right click -- unless the hole is udirect
         this is the same as a left click"""
-        if self.btn['state'] == tk.DISABLED:
-            return
-
         self.btn.game_ui.move(self.btn.right_move)
 
 
@@ -224,6 +248,43 @@ class PlayButtonBehavior(BehaviorIf):
         self.orient_text()
 
 
+    def _update_active_grids(self, bstate):
+        """Show hide the grids and adjust the mouse bindings.
+        This is only called if the left and right actions are
+        different (e.g. right_id is set)."""
+
+        # TODO need to rotate? meanings if facing_players
+
+        if bstate.grid_ccw():
+            self.btn.itemconfigure(self.btn.ccw_id, state='normal')
+            self.btn.itemconfigure(self.btn.cw_id, state='hidden')
+            self.btn.bind('<Button-1>', self.btn.left_click)
+            self.btn.unbind('<Button-3>')
+
+            if self.btn.game_ui.vars.touch_screen.get():
+                self.btn.itemconfig(self.btn.right_id, state='hidden')
+
+        elif bstate.grid_cw():
+            self.btn.itemconfigure(self.btn.ccw_id, state='hidden')
+            self.btn.itemconfigure(self.btn.cw_id, state='normal')
+            self.btn.unbind('<Button-1>')
+            self.btn.bind('<Button-3>', self.btn.right_click)
+
+            if self.btn.game_ui.vars.touch_screen.get():
+                self.btn.itemconfig(self.btn.right_id, state='normal')
+
+        else:
+            self.btn.itemconfigure(self.btn.ccw_id, state='hidden')
+            self.btn.itemconfigure(self.btn.cw_id, state='hidden')
+            self.btn.bind('<Button-1>', self.btn.left_click)
+            self.btn.bind('<Button-3>', self.btn.right_click)
+
+            if self.btn.game_ui.vars.touch_screen.get():
+                self.btn.itemconfigure(self.btn.right_id, state='normal')
+            else:
+                self.btn.itemconfigure(self.btn.right_id, state='hidden')
+
+
     def _set_btn_ui_props(self, bstate):
         """Set the UI properties of the button"""
 
@@ -232,13 +293,13 @@ class PlayButtonBehavior(BehaviorIf):
         else:
             self.btn['relief'] = 'raised'
 
-        if bstate == BtnState.ACTIVE:
+        if bstate.is_active():
             self.btn['background'] = man_config.CONFIG['turn_color']
             self.btn['state'] = tk.NORMAL
 
         else:
             self.btn['state'] = tk.DISABLED
-            if bstate == BtnState.LOOK_ACTIVE:
+            if bstate.is_look_active():
                 self.btn['background'] = man_config.CONFIG['turn_color']
 
             elif bstate == BtnState.PLAY_DISABLE:
@@ -248,10 +309,7 @@ class PlayButtonBehavior(BehaviorIf):
                 self.btn['background'] = man_config.CONFIG['inactive_color']
 
         if self.btn.right_id:
-            if self.btn.game_ui.vars.touch_screen.get():
-                self.btn.itemconfigure(self.btn.right_id, state='normal')
-            else:
-                self.btn.itemconfigure(self.btn.right_id, state='hidden')
+            self._update_active_grids(bstate)
 
 
     def _refresh(self, bstate=BtnState.ACTIVE):

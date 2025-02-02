@@ -561,6 +561,19 @@ class MancalaUI(tk.Frame):
             else:
                 btnstate = behaviors.BtnState.ACTIVE
 
+            # translate state if can only sow in one direction
+            if allows[aidx] == [False, True]:
+                if btnstate == behaviors.BtnState.LOOK_ACTIVE:
+                    btnstate = behaviors.BtnState.LACT_CCW_ONLY
+                else:
+                    btnstate = behaviors.BtnState.ACT_CCW_ONLY
+
+            elif allows[aidx] == [True, False]:
+                if btnstate == behaviors.BtnState.LOOK_ACTIVE:
+                    btnstate = behaviors.BtnState.LACT_CW_ONLY
+                else:
+                    btnstate = behaviors.BtnState.ACT_CW_ONLY
+
         elif player_hole and not all_holes:
             btnstate = behaviors.BtnState.PLAY_DISABLE
 
