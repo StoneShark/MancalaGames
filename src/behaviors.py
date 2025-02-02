@@ -56,6 +56,7 @@ class BehaviorIf(abc.ABC):
 
     def owner_arrow(self):
         """Show the owner ship arrow if enabled by the display option."""
+        # pylint: disable=else-if-used
 
         otext = ''
         if self.btn.game_ui.vars.owner_arrows.get():
