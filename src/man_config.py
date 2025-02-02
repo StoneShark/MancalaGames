@@ -440,11 +440,13 @@ class ConfigData:
             self._config.write(configfile)
 
 
-    def get_int(self, key, default=0):
+    def get_int(self, key, default=None):
         """Attempt to get an int from the config.
-        If it is missing or invalid return the default."""
+        If it is missing and default was provided use it.
+        If there is an error converting the value from the
+        ini file use the value from the dictionary."""
 
-        if key not in self._config[DEFAULT]:
+        if default is not None and key not in self._config[DEFAULT]:
             return default
 
         try:
