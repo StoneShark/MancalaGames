@@ -118,7 +118,7 @@ def deco_dir_getter(game):
     """Create the dir_getter chain."""
 
     if game.info.udirect:
-        if game.info.no_sides:
+        if game.info.mlength == 3:
             udir_getter = UdirTripleDir(game)
         else:
             udir_getter = UdirDir(game)
