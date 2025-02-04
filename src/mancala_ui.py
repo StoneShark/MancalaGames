@@ -137,7 +137,7 @@ class MancalaUI(tk.Frame):
 
         self.master.title(self.info.name)
         self.master.option_add('*tearOff', False)
-        self.master.wm_geometry('+500+300')
+        self.master.wm_geometry('+250+150')
 
         super().__init__(self.master)
         self.master.report_callback_exception = self._exception_callback

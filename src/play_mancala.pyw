@@ -73,7 +73,7 @@ class GameSelect(tk.Frame):
 
         self.master.title('Choose Variant')
         self.master.resizable(False, False)
-        self.master.wm_geometry('+400+300')
+        self.master.wm_geometry('+200+150')
         super().__init__(self.master)
 
         self.cur_button = None

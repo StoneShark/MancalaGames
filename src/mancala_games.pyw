@@ -118,7 +118,7 @@ class MancalaGames(tk.Frame):
         super().__init__(self.master)
         self.master.title(WTITLE)
         self.master.resizable(False, False)
-        self.master.wm_geometry('+400+200')
+        self.master.wm_geometry('+200+100')
         self.pack()
 
         self.master.report_callback_exception = self._exception_callback
