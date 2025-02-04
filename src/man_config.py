@@ -376,6 +376,10 @@ DEFAULTS = {
     'turn_dark_color': 'LightBlue4',
     'inactive_color': 'grey60',
 
+    'rclick_color': 'grey',
+    'grid_color': 'red',
+    'grid_density': '25',
+
     'choose_color': 'pink2',
     'seed_color': 'goldenrod',
     'move_color': 'sandy brown',
@@ -398,6 +402,14 @@ DEFAULTS = {
     }
 
 DEFAULT = 'default'
+DIFFICULTY = 'difficulty'
+
+VALID_DENSITY = {'12', '25', '50', '75'}
+VALID_DELAY = {'0', '1', '2'}
+VALID_DIFFICULTY = {'0', '1', '2', '3'}
+
+# intentionally not including the "too much detail" levels
+VALID_LOG_LEVEL = {'move', 'import', 'step', 'info', 'detail'}
 
 
 class ConfigData:
@@ -416,11 +428,36 @@ class ConfigData:
         if DEFAULT not in self._config.sections():
             self.create_ini_file()
 
+        # not checking colors (requires root which isn't available yet)
+        # bools, ints and fonts are interpreted in their get_ funcs
+        self.validate('grid_density', VALID_DENSITY)
+        self.validate('ai_delay', VALID_DELAY)
+        self.validate('log_level', VALID_LOG_LEVEL)
+
+        if (DIFFICULTY in self._config[DEFAULT]
+                and self._config[DEFAULT]['difficulty'] not in VALID_DIFFICULTY):
+            print('Deleting invalid difficulty in mancala.ini file.')
+            del self._config[DEFAULT]['difficulty']
+
 
     def __getitem__(self, key):
         """Get the item from the default dicitonary"""
 
         return self._config[DEFAULT].get(key, DEFAULTS[key])
+
+
+    def validate(self, key, valid_values):
+        """Check the value against the valid values, if
+        missing or not valid, set it to a default.
+
+        Do not check difficulty because it's absence is
+        treated differently than the default."""
+
+        value = self._config[DEFAULT].get(key, DEFAULTS[key])
+        if value not in valid_values:
+            print('Revert invalid {key} in mancala.ini file to default.')
+            print('Values:', valid_values)
+            self._config[DEFAULT][key] = DEFAULTS[key]
 
 
     def create_ini_file(self):

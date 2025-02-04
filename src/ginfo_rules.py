@@ -855,29 +855,20 @@ def build_rules():
         msg='Udir_holes value out of range 0..nbr_holes-1',
         excp=gi.GameInfoError)
 
-    # TODO did we manage to support udir_and_mshare?
-    # man_rules.add_rule(
-    #     'udir_and_mshare',
-    #     rule=lambda ginfo: ginfo.udirect and ginfo.mustshare,
-    #     msg='UDIR_HOLES and MUSTSHARE are incompatible',
-    #     excp=NotImplementedError)
-    #     # supporting udirect and mustshare would require a UI design change
-    #     # to support partially active buttons (left/right)
-    #     # and would make allowables and get_moves more complicated
-
     man_rules.add_rule(
         'udir_gs_not',
         rule=lambda ginfo: (ginfo.udirect and
                             ginfo.grandslam == gi.GrandSlam.NOT_LEGAL),
         msg='UDIR_HOLES and GRANDLAM=Not Legal are incompatible',
         excp=NotImplementedError)
-        # no games use these two features together, 
+        # no games use these two features together,
         # implement when there's a use
 
     man_rules.add_rule(
         'udir_bad_allowrule',
         rule=lambda ginfo: (ginfo.allow_rule not in  (
                                   gi.AllowRule.NONE,
+                                  gi.AllowRule.SINGLE_ONLY_ALL,
                                   gi.AllowRule.TWO_ONLY_ALL,
                                   gi.AllowRule.TWO_ONLY_ALL_RIGHT,
                                   gi.AllowRule.FIRST_TURN_ONLY_RIGHT_TWO,

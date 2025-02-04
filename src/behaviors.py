@@ -119,8 +119,8 @@ class BehaviorIf(abc.ABC):
         else:
             self.btn['text'] = ''
 
-        if self.btn.right_id:
-            self.btn.itemconfigure(self.btn.right_id, state='hidden')
+        if self.btn.rclick_id:
+            self.btn.itemconfigure(self.btn.rclick_id, state='hidden')
 
         self.orient_text()
 
@@ -251,38 +251,57 @@ class PlayButtonBehavior(BehaviorIf):
     def _update_active_grids(self, bstate):
         """Show hide the grids and adjust the mouse bindings.
         This is only called if the left and right actions are
-        different (e.g. right_id is set)."""
+        different (e.g. rclick_id is set)."""
+        # pylint: disable=too-many-boolean-expressions
 
-        # TODO need to rotate? meanings if facing_players
+        gccw = bstate.grid_ccw()
+        gcw = bstate.grid_cw()
 
-        if bstate.grid_ccw():
-            self.btn.itemconfigure(self.btn.ccw_id, state='normal')
-            self.btn.itemconfigure(self.btn.cw_id, state='hidden')
-            self.btn.bind('<Button-1>', self.btn.left_click)
-            self.btn.unbind('<Button-3>')
+        top = not self.btn.row
+        owner = self.btn.props.owner
+        trot = (self.btn.game_ui.vars.facing_players.get()
+                and ((owner is None and top) or owner))
 
-            if self.btn.game_ui.vars.touch_screen.get():
-                self.btn.itemconfig(self.btn.right_id, state='hidden')
+        # show red grid on right
+        if (gccw and not top) or (gcw and top) or (gcw and trot):
+            self.btn.itemconfigure(self.btn.right_id, state='normal')
+            self.btn.itemconfigure(self.btn.left_id, state='hidden')
 
-        elif bstate.grid_cw():
-            self.btn.itemconfigure(self.btn.ccw_id, state='hidden')
-            self.btn.itemconfigure(self.btn.cw_id, state='normal')
-            self.btn.unbind('<Button-1>')
-            self.btn.bind('<Button-3>', self.btn.right_click)
-
-            if self.btn.game_ui.vars.touch_screen.get():
-                self.btn.itemconfig(self.btn.right_id, state='normal')
-
-        else:
-            self.btn.itemconfigure(self.btn.ccw_id, state='hidden')
-            self.btn.itemconfigure(self.btn.cw_id, state='hidden')
-            self.btn.bind('<Button-1>', self.btn.left_click)
-            self.btn.bind('<Button-3>', self.btn.right_click)
-
-            if self.btn.game_ui.vars.touch_screen.get():
-                self.btn.itemconfigure(self.btn.right_id, state='normal')
+            if trot:
+                self.btn.unbind('<Button-1>')
+                self.btn.bind('<Button-3>', self.btn.right_click)
             else:
-                self.btn.itemconfigure(self.btn.right_id, state='hidden')
+                self.btn.bind('<Button-1>', self.btn.left_click)
+                self.btn.unbind('<Button-3>')
+
+            if self.btn.game_ui.vars.touch_screen.get():
+                self.btn.itemconfig(self.btn.rclick_id, state='normal')
+            else:
+                self.btn.itemconfig(self.btn.rclick_id, state='hidden')
+
+        # show red grid on left
+        elif (gcw and not top) or (gccw and top) or (gccw and trot):
+            self.btn.itemconfigure(self.btn.right_id, state='hidden')
+            self.btn.itemconfigure(self.btn.left_id, state='normal')
+
+            if trot:
+                self.btn.bind('<Button-1>', self.btn.left_click)
+                self.btn.unbind('<Button-3>')
+            else:
+                self.btn.unbind('<Button-1>')
+                self.btn.bind('<Button-3>', self.btn.right_click)
+
+            self.btn.itemconfig(self.btn.rclick_id, state='hidden')
+        else:
+            self.btn.itemconfigure(self.btn.right_id, state='hidden')
+            self.btn.itemconfigure(self.btn.left_id, state='hidden')
+            self.btn.bind('<Button-1>', self.btn.left_click)
+            self.btn.bind('<Button-3>', self.btn.right_click)
+
+            if self.btn.game_ui.vars.touch_screen.get():
+                self.btn.itemconfigure(self.btn.rclick_id, state='normal')
+            else:
+                self.btn.itemconfigure(self.btn.rclick_id, state='hidden')
 
 
     def _set_btn_ui_props(self, bstate):
@@ -308,7 +327,7 @@ class PlayButtonBehavior(BehaviorIf):
             else:
                 self.btn['background'] = man_config.CONFIG['inactive_color']
 
-        if self.btn.right_id:
+        if self.btn.rclick_id:
             self._update_active_grids(bstate)
 
 

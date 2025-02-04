@@ -1,0 +1,30 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 6,
+      "nbr_start": 4
+   },
+   "game_info": {
+      "name": "Je ki n je",
+      "about": "Multilap sow in either direction from your own holes (UDIR_HOLES). Multilap sowing ends when there is a single seed in the final hole. \n\nWhen multilap sow ends on your opponent's side of the board, capture the final seed sown and the seeds in the next hole in the choosen sow direction, even if it is on your side of the board.\n\nGoal: collect more seeds than your opponent.\n\nTODO:  facing_players ui option is wrong for the combination of MUSTSHARE and UDIR_HOLES.",
+      "capsamedir": true,
+      "capt_type": 1,
+      "capt_on": [ 1 ],
+      "mlaps": 1,
+      "mustshare": true,
+      "capt_side": 1,
+      "pickextra": 5,
+      "sow_direct": 1,
+      "stores": true,
+      "udir_holes": [ 0, 1, 2, 3, 4, 5 ]
+   },
+   "player": {
+      "ai_params": {
+         "mm_depth": [ 1, 3, 5, 7 ]
+      },
+      "scorer": {
+         "stores_m": 10,
+         "empties_m": -1
+      }
+   }
+}

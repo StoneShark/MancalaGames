@@ -232,13 +232,13 @@ is included after the parameter sections.
 <ol start=0><li class="helptext">
 <b class="enum">NONE</b>: no special rule
 <li class="helptext">
-<b class="enum">OPP_OR_EMPTY</b>: Limit the allowable holes to those that end in an empty hole or reach the opponents side of the board.
+<b class="enum">OPP_OR_EMPTY</b>: Limit the allowable holes to those that end in an empty hole or reach the opponents side of the board. Not supported with <a href="game_params.html#udir_holes">UDIR_HOLES</a>.
 <li class="helptext">
-<b class="enum">SINGLE_TO_ZERO</b>: Holes with single seeds may only be played if the next hole is empty.
+<b class="enum">SINGLE_TO_ZERO</b>: Holes with single seeds may only be played if the next hole is empty.  Not supported with <a href="game_params.html#udir_holes">UDIR_HOLES</a>.
 <li class="helptext">
 <b class="enum">SINGLE_ONLY_ALL</b>: Holes with single seeds may only be played if all holes have single seeds.
 <li class="helptext">
-<b class="enum">SINGLE_ALL_TO_ZERO</b>: Holes with single seeds may only be played if all holes have single seeds and then only if the next hole is empty.
+<b class="enum">SINGLE_ALL_TO_ZERO</b>: Holes with single seeds may only be played if all holes have single seeds and then only if the next hole is empty.  Not supported with <a href="game_params.html#udir_holes">UDIR_HOLES</a>.
 <li class="helptext">
 <b class="enum">TWO_ONLY_ALL</b>: Holes with two seeds may only be played if all holes have two seeds.
 <li class="helptext">
@@ -280,7 +280,8 @@ is included after the parameter sections.
 <p class="pdesc">Default value: False
 <p class="pdesc">UI Tab: Dynamics
 
-<p>If an opponent has no moves at the start of your turn, you must make seeds available to them if you can. This condition is enforced by only activating holes in the UI which will make seeds available to the opponent.
+<p>If an opponent has no moves at the start of your turn, you must make seeds available to them, if you can. 
+<p>This condition is enforced by only activating holes in the UI which will make seeds available to the opponent. If used with <a href="game_params.html#udir_holes">UDIR_HOLES</a>, grids are used to show which direction cannot be sown.
 <h4 id="grandslam"> Grand Slam </h4>
 <p class="pdesc">Location in Config Files: game_info : grandslam
 <p id="GrandSlam" class="pdesc">Type: <a href="param_types.html#GrandSlam"> GrandSlam </a>
@@ -301,6 +302,7 @@ is included after the parameter sections.
 <li class="helptext">
 <b class="enum">LEAVE_RIGHT</b>: the capture is performed from all but the rightmost hole from the sower perspective. This might leave your opponents without seeds.
 </ol>
+<p>Grandslam must be legal to use <a href="game_params.html#udir_holes">UDIR_HOLES</a>.
 <h4 id="rounds"> Rounds </h4>
 <p class="pdesc">Location in Config Files: game_info : rounds
 <p id="Rounds" class="pdesc">Type: <a href="param_types.html#Rounds"> Rounds </a>
@@ -420,7 +422,7 @@ is included after the parameter sections.
 
 <p>A list of holes from which the user can choose the sow direction. Control is via the mouse button: left is clockwise, and right is counter-clockwise.
 <p><i> Note: all holes respond to both mouse buttons, but if the hole is not in udir_holes, the sow direction will be that prescribed by sow_direct with either button. </i>
-<p>Games with any hole set to user chooses direction must not use <a href="game_params.html#mustshare">MUSTSHARE</a>; <a href="game_params.html#grandslam">GRANDSLAM</a> must be LEGAL; and no special <a href="game_params.html#allow_rule">ALLOW_RULE</a> is supported.
+<p>Games with any hole set to user chooses direction must have <a href="game_params.html#grandslam">GRANDSLAM</a> be LEGAL and only <a href="game_params.html#allow_rule">ALLOW_RULE</a> s that do not depend on sow direction are supported.
 <h4 id="sow_start"> Sow Start Hole </h4>
 <p class="pdesc">Location in Config Files: game_info : sow_start
 <p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>

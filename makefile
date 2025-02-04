@@ -129,6 +129,12 @@ $(GENEDHELPS): $(GAMES) $(HELPINPUTS) docs\\context.py
 
 #  tests
 
+# ui_tests are not run well under pytest because
+# it occationally fails to find tk
+
+ui_tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py
+	python test/ui_button_ops.py
+
 unit_tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py
 	-coverage run -m pytest -m unittest
 	coverage html
@@ -145,7 +151,7 @@ tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py
 
 long_tests: stress_tests player_tests cov_unit_tests
 
-all_tests: tests long_tests
+all_tests: tests ui_tests long_tests
 
 
 # run the tests with the verbose flag

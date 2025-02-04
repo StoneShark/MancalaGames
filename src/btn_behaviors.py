@@ -102,28 +102,31 @@ class HoleButton(tk.Canvas):
                            borderwidth=4, relief='raised',
                            width=btn_size, height=btn_size)
 
-        self.right_id = None
+        self.rclick_id = None
         if left_move != right_move:
             # simulate right click via touch/left click with this
             # rect when in table mode
-            self.right_id = self.create_rectangle(
+            color = man_config.CONFIG['rclick_color']
+            density = 'gray' + man_config.CONFIG['grid_density']
+            self.rclick_id = self.create_rectangle(
                 *self._get_coords(btn_size, btn_size),
-                outline='', fill='grey', stipple='gray25')
-            self.tag_bind(self.right_id, "<Button-1>", self.right_click)
+                outline='', fill=color, stipple=density)
+            self.tag_bind(self.rclick_id, "<Button-1>", self.right_click)
 
             if not self.game_ui.vars.touch_screen.get():
-                self.itemconfigure(self.right_id, state='hidden')
+                self.itemconfigure(self.rclick_id, state='hidden')
 
             # show grids and filter cw/ccw sow based on allowable
             # sow directions
-            self.ccw_id = self.create_rectangle(
+            gcolor = man_config.CONFIG['grid_color']
+            self.right_id = self.create_rectangle(
                 *self._get_coords(btn_size, btn_size, False),
-                outline='', fill='red', stipple='gray25')
-            self.cw_id = self.create_rectangle(
+                outline='', fill=gcolor, stipple=density)
+            self.left_id = self.create_rectangle(
                 *self._get_coords(btn_size, btn_size, True),
-                outline='', fill='red', stipple='gray25')
-            self.itemconfigure(self.ccw_id, state='hidden')
-            self.itemconfigure(self.cw_id, state='hidden')
+                outline='', fill=gcolor, stipple=density)
+            self.itemconfigure(self.right_id, state='hidden')
+            self.itemconfigure(self.left_id, state='hidden')
 
         self.text_id = self.create_text(btn_size//2, btn_size//2,
                                         text='',
@@ -164,13 +167,12 @@ class HoleButton(tk.Canvas):
         and resize the tablet mode rectangle (if there is one)."""
 
         self.coords(self.text_id, event.width//2, event.height//2)
-        if self.right_id:
-            self.coords(self.right_id,
+        if self.rclick_id:
+            self.coords(self.rclick_id,
                         self._get_coords(event.width, event.height - 8))
-            # TODO reverse for facing_players?
-            self.coords(self.ccw_id,
+            self.coords(self.right_id,
                         self._get_coords(event.width, event.height - 8, False))
-            self.coords(self.cw_id,
+            self.coords(self.left_id,
                         self._get_coords(event.width, event.height - 8, True))
 
 

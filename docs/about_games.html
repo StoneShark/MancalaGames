@@ -842,6 +842,30 @@ Instead of a minimum move of 2, singletons may start moves if all holes are empt
   </div>
 </div>
 <p>Rules: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p28.
+<h3 id="Je ki n je">Je ki n je</h3>
+<p>Multilap sow in either direction from your own holes (<a href="game_params.html#udir_holes">UDIR_HOLES</a>). Multilap sowing ends when there is a single seed in the final hole. 
+<p>When multilap sow ends on your opponent's side of the board, capture the final seed sown and the seeds in the next hole in the choosen sow direction, even if it is on your side of the board.
+<p>Goal: collect more seeds than your opponent.
+<p>TODO:  facing_players ui option is wrong for the combination of <a href="game_params.html#mustshare">MUSTSHARE</a> and <a href="game_params.html#udir_holes">UDIR_HOLES</a>.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#capsamedir">Capture in Sow Direction</a>: Yes</p>
+    <p class="param"><a href="game_params.html#capt_type">Capture Type</a>: NEXT</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 1</p>
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#mustshare">Must Share</a>: Yes</p>
+    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OPP_SIDE</p>
+    <p class="param"><a href="game_params.html#pickextra">On Capture, Take More Rule</a>: PICKFINAL</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#udir_holes">User Chooses Direction</a>: 0 1 2 3 4 5</p>
+  </div>
+</div>
 <h3 id="J'Odu">J'Odu</h3>
 <p>Sow clockwise, multi-lap sow. Cross capture opposite-side but only up to 3 seeds, picking own on capture.
 <p>Variations: board size and start seeds.
@@ -2057,6 +2081,7 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Hoyito II">Hoyito II</a></p>
     <p class="param"><a href="#Huroy">Huroy</a></p>
     <p class="param"><a href="#J'Odu">J'Odu</a></p>
+    <p class="param"><a href="#Je ki n je">Je ki n je</a></p>
     <p class="param"><a href="#Kalah">Kalah</a></p>
     <p class="param"><a href="#Kale">Kale</a></p>
     <p class="param"><a href="#Krur">Krur</a></p>
@@ -2078,9 +2103,9 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Ndoto">Ndoto</a></p>
     <p class="param"><a href="#No Sides Child">No Sides Child</a></p>
     <p class="param"><a href="#NoCapt">NoCapt</a></p>
-    <p class="param"><a href="#NoSides">NoSides</a></p>
   </div>
   <div class="column3">
+    <p class="param"><a href="#NoSides">NoSides</a></p>
     <p class="param"><a href="#NumNum">NumNum</a></p>
     <p class="param"><a href="#Obridjie">Obridjie</a></p>
     <p class="param"><a href="#Ohojichi">Ohojichi</a></p>

@@ -390,13 +390,12 @@ class MustShareUdir(MustShare):
 
         super().__init__(game, False, decorator)
         self.fholes, self.tholes = self.get_holes_idx()
-        # self.udirs = TODO precompute what holes to process
 
         self.make_move = [get_move,
                           get_move_pair,
                           get_move_triple][game.info.mlength - 1]
 
-        if game.info.mlength == 3:          # TODO is the right condition TERRITORY?
+        if game.info.goal == gi.Goal.TERRITORY:
             self.owner = get_owner_owner
         else:
             self.owner = game.cts.board_side
@@ -429,7 +428,7 @@ class MustShareUdir(MustShare):
                     move = self.make_move(row, pos, direct)
                     self.game.sim_sow_capt(move)
                     if not self.opp_has_seeds(opponent):
-                        game_log.add(f'MUSTSHARE: prevented {loc} {direct}',
+                        game_log.add(f'MUSTSHARE: prevented {loc} {direct.name}',
                                      game_log.DETAIL)
                         pos_allow[pidx] = False
 

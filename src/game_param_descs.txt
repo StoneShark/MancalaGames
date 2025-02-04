@@ -27,13 +27,13 @@ Allow rules limit the holes from which moves may start. Disallowed holes are not
 
 - NONE: no special rule
 
-- OPP_OR_EMPTY: Limit the allowable holes to those that end in an empty hole or reach the opponents side of the board.
+- OPP_OR_EMPTY: Limit the allowable holes to those that end in an empty hole or reach the opponents side of the board. Not supported with UDIR_HOLES.
 
-- SINGLE_TO_ZERO: Holes with single seeds may only be played if the next hole is empty.
+- SINGLE_TO_ZERO: Holes with single seeds may only be played if the next hole is empty.  Not supported with UDIR_HOLES.
 
 - SINGLE_ONLY_ALL: Holes with single seeds may only be played if all holes have single seeds.
 
-- SINGLE_ALL_TO_ZERO: Holes with single seeds may only be played if all holes have single seeds and then only if the next hole is empty.
+- SINGLE_ALL_TO_ZERO: Holes with single seeds may only be played if all holes have single seeds and then only if the next hole is empty.  Not supported with UDIR_HOLES.
 
 - TWO_ONLY_ALL: Holes with two seeds may only be played if all holes have two seeds.
 
@@ -324,6 +324,8 @@ A grandslam is when your opponent has seeds at the start of your turn, and you c
 
 - LEAVE_RIGHT: the capture is performed from all but the rightmost hole from the sower perspective. This might leave your opponents without seeds.
 
+Grandslam must be legal to use UDIR_HOLES.
+
 <param help_file>
 An html help file describing the game (mancala_help.html is the main help file).
 
@@ -381,7 +383,9 @@ See individual capture mechanism for any unique requirements.
 When a player has no allowable moves on their turn, they must pass and continue to do so until they have allowable moves, or the game is over. The game is over when there is a clear winner or tie condition, or when neither player has an allowable move.
 
 <param mustshare>
-If an opponent has no moves at the start of your turn, you must make seeds available to them if you can. This condition is enforced by only activating holes in the UI which will make seeds available to the opponent.
+If an opponent has no moves at the start of your turn, you must make seeds available to them, if you can. 
+
+This condition is enforced by only activating holes in the UI which will make seeds available to the opponent. If used with UDIR_HOLES, grids are used to show which direction cannot be sown.
 
 <param name>
 The game name which may have spaces. Used for the window title and the filename (with spaces replaced with underscores).
@@ -612,7 +616,7 @@ A list of holes from which the user can choose the sow direction. Control is via
 
 Note: all holes respond to both mouse buttons, but if the hole is not in udir_holes, the sow direction will be that prescribed by sow_direct with either button.
 
-Games with any hole set to user chooses direction must not use MUSTSHARE; GRANDSLAM must be LEGAL; and no special ALLOW_RULE is supported.
+Games with any hole set to user chooses direction must have GRANDSLAM be LEGAL and only ALLOW_RULE s that do not depend on sow direction are supported.
 
 <param unclaimed>
 Defines how to score any unclaimed seeds when a game has ended. This is not used if the game has a clear winner, e.g., one player has collected more than half the seeds for a MAX_SEEDS game.
