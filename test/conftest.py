@@ -1,16 +1,32 @@
 # -*- coding: utf-8 -*-
-"""Allow the number of runs of tests marked with 'stresstest'
-to be set via the command line, as in:
+"""Configuration for a pytest run:
 
-    pytest -k simul --nbr_runs 500
+    1. command line option nbr_runs: tests marked stress_test
+       are run this many times. Also, make the number of runs
+       available as a fixture named nbr_runs
 
-Make the number of runs available as a fixture named: nbr_runs
+    2. command line option run_slow: to run tests marked slow
+
+    3. incremental tests:  classes where each method
+       is a test step, mark incremental. Only the failed
+       step will generate a report.
+
+    4. global fixtures:
+
+            logger and logger_sim - to support debugging
+
+            random_seed - make most tests run predictably,
+            use no_seed mark to disable
+
+            game_pdict - only report the failure to load a
+            game configuration file once per test session
 
 Created on Fri Sep 15 09:07:52 2023
 @author: Ann"""
 
 import json
 import random
+import time
 
 import pytest
 
@@ -48,8 +64,8 @@ def pytest_generate_tests(metafunc):
 
 # %% incremental test hooks
 
-# for test_gm _* where each test step is a separate method in class
-# that relies on the previous step passing
+# for test_gm _* where each test step is a separate method
+# in the test class that relies on the previous step passing
 # after the first fail all the rest will be marked as xfail
 # mark the test class with @pytest.mark.incremental
 #
@@ -117,9 +133,14 @@ def random_seed(request):
     Tests which intentionally use the random number generator,
     e.g. simulations should be marked with:
         @pytest.mark.no_seed
+    These tests will be seeded with the time, otherwise the
+    previous instantiation of this fixture will leave the
+    random number generator behaving with more consistency
+    than desired.
     """
 
     if 'no_seed' in request.keywords:
+        random.seed(time.time())
         return
 
     random.seed(10)
