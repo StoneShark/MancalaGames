@@ -513,7 +513,6 @@ class TestOnlyIfAllToZero:
         assert game.deco.allow.get_allowable_holes() == eresult
 
 
-
     @pytest.mark.parametrize(
         'board, turn, eresult',
         [([4] * 8,  True, [T, T, T, T]),
@@ -1029,6 +1028,84 @@ class TestDontUndoMoveOne:
         game.last_mdata.capt_loc = gi.WinCond.REPEAT_TURN
 
         assert game.get_allowable_holes() == allowables
+
+
+@pytest.mark.filterwarnings("ignore")
+class TestMustShareUDir:
+
+    TEST_ALLOW_DATA = [
+        [utils.make_state(board=(4, 4, 4, 4, 4, 4)),
+         {'udir_holes': [1],
+          'sow_direct': gi.Direct.SPLIT},
+         [T, T, T]],
+
+        [utils.make_state(board=(2, 4, 4, 0, 0, 0)),  # 0 not udir & no share
+         {'udir_holes': [1],
+          'sow_direct': gi.Direct.CCW},
+         [F, T, T]],
+
+        [utils.make_state(board=(0, 1, 1, 0, 0, 0)),  # swap 2 from T to F, T
+         {'udir_holes': [0, 1, 2],
+          'sow_direct': gi.Direct.SPLIT},
+         [F, F, [F, T]]],
+
+        [utils.make_state(board=(0, 2, 1, 0, 0, 0)),  # leave center True
+         {'udir_holes': [1],
+          'sow_direct': gi.Direct.SPLIT},
+         [F, T, T]],
+
+        [utils.make_state(board=(4, 4, 4, 4, 4, 4)),
+         {'udir_holes': [1],
+          'goal': gi.Goal.TERRITORY,
+          'goal_param': 5,
+          'sow_direct': gi.Direct.SPLIT},
+         [T, T, T, F, F, F]],
+
+        [utils.make_state(board=(2, 4, 4, 0, 0, 0)),  # 0 not udir & no share
+         {'udir_holes': [1],
+          'goal': gi.Goal.TERRITORY,
+          'goal_param': 5,
+          'sow_direct': gi.Direct.CCW},
+         [F, T, T, F, F, F]],
+
+        [utils.make_state(board=(0, 1, 1, 0, 0, 0)),  # swap 2 from T to F, T
+         {'udir_holes': [0, 1, 2],
+          'goal': gi.Goal.TERRITORY,
+          'goal_param': 5,
+          'sow_direct': gi.Direct.SPLIT},
+         [F, F, [F, T], F, F, F]],
+
+        [utils.make_state(board=(0, 2, 1, 0, 0, 0)),  # leave center True
+         {'udir_holes': [1],
+          'goal': gi.Goal.TERRITORY,
+          'goal_param': 5,
+          'sow_direct': gi.Direct.SPLIT},
+         [F, T, T, F, F, F]],
+
+        ]
+
+    @pytest.mark.parametrize(
+        'game_state, game_dict, eresult',
+        TEST_ALLOW_DATA,
+        ids=[f'case_{cnt}' for cnt in range(len(TEST_ALLOW_DATA))])
+    def test_allowables(self, game_state, game_dict, eresult, request):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(stores=True,
+                                evens=True,
+                                mustshare=True,
+                                **game_dict,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.state = game_state
+
+        seeds = game.cts.total_seeds - sum(game.board)
+        quot, rem = divmod(seeds, 2)
+        game.store = [quot, quot + rem]
+
+        assert game.deco.allow.get_allowable_holes() == eresult
 
 
 class TestBadEnums:

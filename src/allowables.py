@@ -382,18 +382,14 @@ class MustShareUdir(MustShare):
         def get_move_pair(_, pos, direct=None):
             return gi.MoveTpl(pos, direct)
 
-        def get_move(_1, pos, _2=None):
-            return pos
-
         def get_owner_owner(loc):
             return game.owner[loc]
 
         super().__init__(game, False, decorator)
         self.fholes, self.tholes = self.get_holes_idx()
 
-        self.make_move = [get_move,
-                          get_move_pair,
-                          get_move_triple][game.info.mlength - 1]
+        self.make_move = [get_move_pair,
+                          get_move_triple][game.info.mlength - 2]
 
         if game.info.goal == gi.Goal.TERRITORY:
             self.owner = get_owner_owner
