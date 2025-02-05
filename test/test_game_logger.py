@@ -41,6 +41,9 @@ class TestGameLog:
         assert not glog._log_records
         assert not glog._move_start
 
+        assert game_logger.Level.from_name('move') == glog.MOVE
+        assert game_logger.Level.from_name('step') == glog.STEP
+
 
     def test_save_log(self, mocker, glog):
 
