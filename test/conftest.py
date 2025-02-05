@@ -1,25 +1,25 @@
 # -*- coding: utf-8 -*-
 """Configuration for a pytest run:
 
-    1. command line option nbr_runs: tests marked stress_test
-       are run this many times. Also, make the number of runs
-       available as a fixture named nbr_runs
+1. command line option nbr_runs: tests marked stress_test
+   are run this many times. Also, make the number of runs
+   available as a fixture named nbr_runs
 
-    2. command line option run_slow: to run tests marked slow
+2. command line option run_slow: to run tests marked slow
 
-    3. incremental tests:  classes where each method
-       is a test step, mark incremental. Only the failed
-       step will generate a report.
+3. incremental tests:  classes where each method
+   is a test step, mark incremental. Only the failed
+   step will generate a report.
 
-    4. global fixtures:
+4. global fixtures:
 
-            logger and logger_sim - to support debugging
+        logger and logger_sim - to support debugging
 
-            random_seed - make most tests run predictably,
-            use no_seed mark to disable
+        random_seed - make most tests run predictably,
+        use no_seed mark to disable
 
-            game_pdict - only report the failure to load a
-            game configuration file once per test session
+        game_pdict - only report the failure to load a
+        game configuration file once per test session
 
 Created on Fri Sep 15 09:07:52 2023
 @author: Ann"""

@@ -135,17 +135,17 @@ $(GENEDHELPS): $(GAMES) $(HELPINPUTS) docs\\context.py
 ui_tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py
 	python test/ui_button_ops.py
 
-unit_tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py
+unit_tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py src\\game_params.txt
 	-coverage run -m pytest -m unittest
 	coverage html
 
 
-integ_tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py
+integ_tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py src\\game_params.txt
 	-coverage run -m pytest -m integtest
 	coverage html
 
 
-tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py
+tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py src\\game_params.txt
 	-coverage run -m pytest
 	coverage html
 
@@ -193,14 +193,14 @@ player_tests: test\\context.py
 vpath %.cov .\\cov
 vpath %.py .\\test
 
-%.cov: test\\context.py $(subst .cov,.py,$@)
+%.cov: test\\context.py src\\game_params.txt $(subst .cov,.py,$@) 
 	coverage run -m pytest test\\$(subst .cov,.py,$@)
 	coverage json
 	python test\\check_unit_cov.py $(subst .cov,,$@) > cov\\$@
 	type cov\\$@
 
 .PHONY: %.test
-%.test: test\\context.py $(subst .test,.py,$@)
+%.test: test\\context.py src\\game_params.txt $(subst .test,.py,$@)
 	coverage run -m pytest test\\$(subst .test,.py,$@)
 	coverage html
 
@@ -306,6 +306,7 @@ MancalaGames/mancala_games.exe: $(SOURCES) $(DATAFILES) $(HELPFILES) mancala_gam
 	copy logs\\README.txt MancalaGames\\logs
 	copy src\\game_params.txt MancalaGames
 	copy src\\game_param_descs.txt MancalaGames
+	copy mancala.ini MancalaGames
 	-rmdir /S /Q build
 	tar -czf MancalaGames.tgz MancalaGames
 
