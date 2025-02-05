@@ -24,6 +24,7 @@ import dataclasses as dc
 import json
 import re
 import os
+import tkinter as tk
 from tkinter import font
 
 import ai_player
@@ -368,6 +369,8 @@ class ParamData(dict):
 
 INI_FILENAME = 'mancala.ini'
 
+# don't define  default for difficulty, if present it overrides game files
+
 DEFAULTS = {
     'button_size': '100',
 
@@ -395,7 +398,6 @@ DEFAULTS = {
 
     'ai_active': 'no',
     'ai_delay': '1',
-    'difficulty': '1',
 
     'log_live': 'no',
     'log_level': 'move',
@@ -403,6 +405,8 @@ DEFAULTS = {
 
 DEFAULT = 'default'
 DIFFICULTY = 'difficulty'
+COLORS = ['system_color', 'turn_color', 'turn_dark_color', 'inactive_color',
+          'rclick_color', 'grid_color']
 
 VALID_DENSITY = {'12', '25', '50', '75'}
 VALID_DELAY = {'0', '1', '2'}
@@ -415,7 +419,8 @@ VALID_LOG_LEVEL = {'move', 'import', 'step', 'info', 'detail'}
 class ConfigData:
     """Read/create configuration data."""
 
-    def __init__(self):
+    def __init__(self, tk_root=None):
+        # pylint: disable=bare-except
 
         pathname = man_path.get_path(INI_FILENAME, no_error=True)
         if not pathname:
@@ -423,27 +428,50 @@ class ConfigData:
             return
 
         self._config = configparser.ConfigParser()
-        self._config.read(pathname)
-
-        if DEFAULT not in self._config.sections():
+        try:
+            self._config.read(pathname)
+        except:
             self.create_ini_file()
 
-        # not checking colors (requires root which isn't available yet)
         # bools, ints and fonts are interpreted in their get_ funcs
+        self._check_colors(tk_root)
         self.validate('grid_density', VALID_DENSITY)
         self.validate('ai_delay', VALID_DELAY)
         self.validate('log_level', VALID_LOG_LEVEL)
 
         if (DIFFICULTY in self._config[DEFAULT]
-                and self._config[DEFAULT]['difficulty'] not in VALID_DIFFICULTY):
+                and self._config[DEFAULT][DIFFICULTY] not in VALID_DIFFICULTY):
             print('Deleting invalid difficulty in mancala.ini file.')
-            del self._config[DEFAULT]['difficulty']
+            del self._config[DEFAULT][DIFFICULTY]
 
 
     def __getitem__(self, key):
-        """Get the item from the default dicitonary"""
+        """Get the item from the config dictionary or defaults.
+        'difficulty' is not in the dictionary, it should only
+        be retrieved with get_int and a default specified."""
 
         return self._config[DEFAULT].get(key, DEFAULTS[key])
+
+
+    def _check_colors(self, tk_root):
+        """Check all of the colors, delete any bad ones,
+        causing __getitem__ to return default."""
+
+        if tk_root is None:
+            print("Tk app not provided, colors not tested")
+            return
+
+        for color in COLORS:
+
+            if color in self._config[DEFAULT]:
+                color_string = self._config[DEFAULT][color]
+
+                try:
+                    tk_root.winfo_rgb(color_string)
+
+                except tk.TclError:
+                    print(f"{color} value invalid, using default.")
+                    del self._config[DEFAULT][color]
 
 
     def validate(self, key, valid_values):
@@ -455,20 +483,29 @@ class ConfigData:
 
         value = self._config[DEFAULT].get(key, DEFAULTS[key])
         if value not in valid_values:
-            print('Revert invalid {key} in mancala.ini file to default.')
+            print(f'Revert invalid {key} in mancala.ini file to default.')
             print('Values:', valid_values)
             self._config[DEFAULT][key] = DEFAULTS[key]
+
+
+    @staticmethod
+    def _get_filename():
+        """Find a suitable place for the ini file.
+        Seperate fuction to support testing."""
+
+        directory = os.getcwd()
+        pdir, bdir = os.path.split(directory)
+        if bdir in {'GameProps', 'GamePropsNoRelease', 'src'}:
+            directory = pdir
+
+        return os.path.join(directory, INI_FILENAME)
 
 
     def create_ini_file(self):
         """Create a default ini file.
         Make an attempt to put the ini file at the project root."""
 
-        directory = os.getcwd()
-        pdir, bdir = os.path.split(directory)
-        if bdir in {'GameProps', 'GamePropsNoRelease', 'src'}:
-            directory = pdir
-        fullpath = os.path.join(directory, INI_FILENAME)
+        fullpath = self._get_filename()
 
         self._config = configparser.ConfigParser()
         self._config[DEFAULT] = DEFAULTS
@@ -488,10 +525,13 @@ class ConfigData:
 
         try:
             int_val = int(self._config[DEFAULT][key])
-        except ValueError:
+        except (KeyError, ValueError):
             int_val = int(DEFAULTS[key])
 
-        return max(0, int_val)
+        if int_val < 0:
+            int_val = int(DEFAULTS[key])
+
+        return int_val
 
 
     def get_bool(self, key):
@@ -515,4 +555,16 @@ class ConfigData:
         return font.Font(font=ftuple)
 
 
-CONFIG = ConfigData()
+
+CONFIG = None
+
+def read_ini_file(tk_root=None):
+    """Read the ini file.
+    MancalaUI cannot do it directly or we would get
+    circular imports.
+    tk_root is required to test the color values,
+    if it is not provided the colors are not tested."""
+    # pylint: disable=global-statement
+
+    global CONFIG
+    CONFIG = ConfigData(tk_root)

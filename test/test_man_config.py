@@ -7,12 +7,14 @@ import copy
 import os
 import random
 import string
+import tkinter as tk
 
 import pytest
 pytestmark = pytest.mark.unittest
 
 from context import cfg_keys as ckey
 from context import man_config
+from context import man_path
 from context import mancala
 
 from game_interface import Direct
@@ -24,7 +26,7 @@ TEST_COVERS = ['src\\man_config.py']
 
 
 
-# %%
+# %%  test game config files
 
 class TestBasicConstruction:
 
@@ -196,7 +198,6 @@ class TestRejectFile:
             man_config.read_game_config(ffixt)
 
 
-
 class TestGc:
 
     def test_gc_get(self):
@@ -331,8 +332,6 @@ class TestGc:
                                            'int') == 1
 
 
-
-
 class TestResetDefs:
 
     @pytest.fixture
@@ -423,3 +422,391 @@ class TestResetDefs:
                                           'player ai_params',
                                           'junk')
         assert gd_copy == game_dict
+
+
+# %%  test reading params
+
+class TestParamDict:
+
+    def test_param_dict(self):
+
+        param_dict = man_config.ParamData()
+        assert len(param_dict) > 50
+
+
+    @pytest.mark.parametrize(
+        'columns',
+        ["tab	option	text	order	vtype	ui_default	row	col",
+         "tab	option	text	order	vtype	cspecui_default	row	col",
+         "tab	option	text	order	vtype	ui_default	row",
+         ])
+    def test_bad_cols(self, mocker, tmp_path, columns):
+
+        params = os.path.join(tmp_path,'game_params.txt')
+        with open(params, 'w', encoding='utf-8') as file:
+            print(columns, file=file)
+
+        descs = os.path.join(tmp_path,'game_param_descs.txt')
+        with open(descs, 'w', encoding='utf-8') as file:
+            print("""
+                """, file=file)
+
+        def test_files(fname):
+            if fname == 'game_params.txt':
+                return params
+
+            if fname == 'game_param_descs.txt':
+                return descs
+
+            pytest.fail(reason='Unknown file read')
+
+        mocker.patch.object(man_path, 'get_path', test_files)
+
+
+        with pytest.raises(ValueError):
+            man_config.ParamData()
+
+
+    def test_dupl_param(self, mocker, tmp_path):
+
+        params = os.path.join(tmp_path,'game_params.txt')
+        with open(params, 'w', encoding='utf-8') as file:
+            print("""tab	option	text	cspec	order	vtype	ui_default	row	col
+Capture	evens	Basic Capture		0	label	0	0	0
+skip	evens	Capture Evens	game_info _	114	bool	True	1	0
+Capture	evens	Capture Max	game_info _	104	int	0	2	0
+                """, file=file)
+
+        descs = os.path.join(tmp_path,'game_param_descs.txt')
+        with open(descs, 'w', encoding='utf-8') as file:
+            print("""
+                """, file=file)
+
+        def test_files(fname):
+            if fname == 'game_params.txt':
+                return params
+
+            if fname == 'game_param_descs.txt':
+                return descs
+
+            pytest.fail(reason='Unknown file read')
+
+        mocker.patch.object(man_path, 'get_path', test_files)
+
+
+        with pytest.raises(ValueError):
+            man_config.ParamData()
+
+
+    def test_bad_int_param(self, mocker, tmp_path):
+
+        params = os.path.join(tmp_path,'game_params.txt')
+        with open(params, 'w', encoding='utf-8') as file:
+            print("""tab	option	text	cspec	order	vtype	ui_default	row	col
+Capture	evens	Basic Capture		0	label	0	0	notint
+
+                """, file=file)
+
+        descs = os.path.join(tmp_path,'game_param_descs.txt')
+        with open(descs, 'w', encoding='utf-8') as file:
+            print("""
+                """, file=file)
+
+        def test_files(fname):
+            if fname == 'game_params.txt':
+                return params
+
+            if fname == 'game_param_descs.txt':
+                return descs
+
+            pytest.fail(reason='Unknown file read')
+
+        mocker.patch.object(man_path, 'get_path', test_files)
+
+
+        with pytest.raises(ValueError):
+            man_config.ParamData()
+
+
+    def test_bad_desc_param(self, mocker, tmp_path):
+
+        descs = os.path.join(tmp_path,'game_param_descs.txt')
+        with open(descs, 'w', encoding='utf-8') as file:
+            print("""<param missing>
+                  mydata
+                """, file=file)
+
+        oget_path = man_path.get_path
+
+        def test_files(fname):
+            if fname == 'game_params.txt':
+                return oget_path('game_params.txt')
+
+            if fname == 'game_param_descs.txt':
+                return descs
+
+            pytest.fail(reason='Unknown file read')
+
+        mocker.patch.object(man_path, 'get_path', test_files)
+
+        with pytest.raises(ValueError):
+            man_config.ParamData()
+
+
+# %%  test config data
+
+
+class TestConfig:
+
+    def test_config(self):
+
+        man_config.read_ini_file()
+
+        assert man_config.CONFIG
+        assert man_config.CONFIG['button_size']
+
+
+    def test_get_filename(self, mocker):
+
+        man_config.read_ini_file()
+
+        mcwd = mocker.patch.object(os, 'getcwd')
+        mcwd.side_effect = ['.\\',
+                            '.\\GameProps',
+                            '.\\src']
+
+        assert man_config.CONFIG._get_filename() == '.\\mancala.ini'
+        assert man_config.CONFIG._get_filename() == '.\\mancala.ini'
+        assert man_config.CONFIG._get_filename() == '.\\mancala.ini'
+
+
+    def test_no_file(self, mocker, tmp_path):
+
+        # man_path doesn't find the file
+        mpath = mocker.patch.object(man_path, 'get_path')
+        mpath.return_value = None
+
+        # patch this so we don't overwrite the proper ini file
+        mdata = mocker.patch.object(man_config.ConfigData, '_get_filename')
+        mdata.return_value = os.path.join(tmp_path, 'mancala.ini')
+
+        config = man_config.ConfigData()
+
+        assert config._config['default'] == man_config.DEFAULTS
+        assert 'difficulty' not in config._config['default']
+
+
+    def test_junk_file(self, mocker, tmp_path):
+
+        path = os.path.join(tmp_path, 'mancala.ini')
+        with open(path, 'w', encoding='utf-8') as file:
+            print("""junk in the file""", file=file)
+
+        # man_path finds the file where we just put it
+        mpath = mocker.patch.object(man_path, 'get_path')
+        mpath.return_value = path
+
+        # patch this so we don't overwrite the proper ini file
+        mdata = mocker.patch.object(man_config.ConfigData, '_get_filename')
+        mdata.return_value = path
+
+        config = man_config.ConfigData()
+
+        assert config._config['default'] == man_config.DEFAULTS
+
+
+    def test_no_default(self, mocker, tmp_path):
+
+        path = os.path.join(tmp_path, 'mancala.ini')
+        with open(path, 'w', encoding='utf-8') as file:
+            print("""[section]
+                  keyword""", file=file)
+
+        # man_path finds the file where we just put it
+        mpath = mocker.patch.object(man_path, 'get_path')
+        mpath.return_value = path
+
+        # patch this so we don't overwrite the proper ini file
+        mdata = mocker.patch.object(man_config.ConfigData, '_get_filename')
+        mdata.return_value = path
+
+        config = man_config.ConfigData()
+
+        assert config._config['default'] == man_config.DEFAULTS
+
+
+    def test_bad_values(self, mocker, tmp_path):
+
+        path = os.path.join(tmp_path, 'mancala.ini')
+        with open(path, 'w', encoding='utf-8') as file:
+            print("""[default]
+                  button_size = 20
+                  difficulty = 2
+                  grid_density = 33
+                  ai_delay = 10
+                  log_level = ten""", file=file)
+
+        # man_path finds the file where we just put it
+        mpath = mocker.patch.object(man_path, 'get_path')
+        mpath.return_value = path
+
+        config = man_config.ConfigData()
+        print(list(config._config['default'].items()))
+
+        # good values
+        assert config['button_size'] == '20'
+
+        # diff is not in default dict, must use get_int
+        with pytest.raises(KeyError):
+            config._config['difficulty']
+        assert config.get_int('difficulty', 0) == 2
+
+        # bad values
+        assert config['grid_density'] == man_config.DEFAULTS['grid_density']
+        assert config['ai_delay'] == man_config.DEFAULTS['ai_delay']
+        assert config['log_level'] == man_config.DEFAULTS['log_level']
+
+
+    def test_bad_difficulty(self, mocker, tmp_path):
+
+        path = os.path.join(tmp_path, 'mancala.ini')
+        with open(path, 'w', encoding='utf-8') as file:
+            print("""[default]
+                  button_size = 20
+                  difficulty = 33
+                  """, file=file)
+
+        # man_path finds the file where we just put it
+        mpath = mocker.patch.object(man_path, 'get_path')
+        mpath.return_value = path
+
+        config = man_config.ConfigData()
+
+        assert config['button_size'] == '20'
+        assert 'difficulty' not in config._config
+
+
+    def test_get_int(self, mocker, tmp_path):
+
+        path = os.path.join(tmp_path, 'mancala.ini')
+        with open(path, 'w', encoding='utf-8') as file:
+            print("""[default]
+                  button_size = astring
+                  font_size = -5
+                  """, file=file)
+
+        # man_path finds the file where we just put it
+        mpath = mocker.patch.object(man_path, 'get_path')
+        mpath.return_value = path
+
+        config = man_config.ConfigData()
+
+        # difficult is not in the default dictionary
+        with pytest.raises(KeyError):
+            config.get_int('difficulty')
+        assert config.get_int('difficulty', 0) == 0
+
+        # missing key, get_int handled differently with default or not
+        assert config.get_int('grid_density', 20) == 20
+        assert config.get_int('grid_density') \
+            == int(man_config.DEFAULTS['grid_density'])
+
+        # bad values reverted to defaults
+        assert config.get_int('button_size') \
+            == int(man_config.DEFAULTS['button_size'])
+
+        assert config.get_int('font_size') \
+            == int(man_config.DEFAULTS['font_size'])
+
+
+    def test_get_bool(self, mocker, tmp_path):
+
+        path = os.path.join(tmp_path, 'mancala.ini')
+        with open(path, 'w', encoding='utf-8') as file:
+            print("""[default]
+                  log_live = astring
+                  show_tally = -5
+                  ai_active = yes
+                  touch_screen = true
+                  true_value = TRUE
+                  """, file=file)
+
+        # man_path finds the file where we just put it
+        mpath = mocker.patch.object(man_path, 'get_path')
+        mpath.return_value = path
+
+        config = man_config.ConfigData()
+
+        # missing or bad values revert to False
+        assert not config.get_bool('log_live')
+        assert not config.get_bool('show_tally')
+        assert not config.get_bool('junk_key')
+
+        assert config.get_bool('ai_active')
+        assert config.get_bool('touch_screen')
+        assert config.get_bool('true_value')
+
+
+    @pytest.fixture
+    def tk_root(self):
+        """Create a tk app and then clean up after it.
+        This will pop a window up on the screen.
+        This will occationally report that tcl is not
+        installed properly!"""
+
+        root = tk.Tk()
+        yield root
+
+        root.after(20, root.destroy)
+        root.mainloop()
+        root.update()
+
+
+    @pytest.mark.parametrize('family, size, weight',
+                              [('', '', ''),
+                              ('Serif', '', ''),
+                              ('Times', '20', 'bold'),
+                              ])
+    def test_get_font(self, mocker, tmp_path, family, size, weight, tk_root):
+
+        path = os.path.join(tmp_path, 'mancala.ini')
+        with open(path, 'w', encoding='utf-8') as file:
+            print(f"""[default]
+                  font_family = {family}
+                  size = {size}
+                  weight = {weight}
+                  """, file=file)
+
+        # man_path finds the file where we just put it
+        mpath = mocker.patch.object(man_path, 'get_path')
+        mpath.return_value = path
+
+        config = man_config.ConfigData(tk_root)
+
+        assert isinstance(config.get_font(), tk.font.Font)
+
+
+    def test_colors(self, mocker, tmp_path, tk_root):
+
+        path = os.path.join(tmp_path, 'mancala.ini')
+        with open(path, 'w', encoding='utf-8') as file:
+            print("""[default]
+                  system_color = SystemButtonFace
+                  turn_color = #303030
+                  turn_dark_color = not_a_color
+                  inactive_color = #1234567890
+                  """, file=file)
+
+        # man_path finds the file where we just put it
+        mpath = mocker.patch.object(man_path, 'get_path')
+        mpath.return_value = path
+
+        config = man_config.ConfigData(tk_root)
+
+        assert config['system_color'] == 'SystemButtonFace'
+        assert config['turn_color'] == '#303030'
+
+        assert config['turn_dark_color'] == \
+            man_config.DEFAULTS['turn_dark_color']
+        assert config['inactive_color'] == \
+            man_config.DEFAULTS['inactive_color']

@@ -44,3 +44,9 @@ class TestMPath:
         testfile = tmp_path / 'junk.txt'
         with pytest.raises(FileNotFoundError):
             man_path.get_path(testfile)
+
+
+    def test_no_error(self, tmp_path):
+
+        testfile = tmp_path / 'junk.txt'
+        assert man_path.get_path(testfile, no_error=True) is False

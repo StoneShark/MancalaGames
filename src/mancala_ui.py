@@ -39,6 +39,7 @@ NO_TALLY_OP = 0
 VIS_TALLY_OP = 1
 RET_TALLY_OP = 2
 
+
 # %%
 
 def quiet_dialog(parent, title, text):
@@ -134,6 +135,7 @@ class MancalaUI(tk.Frame):
             self.master = tk.Toplevel(root_ui)
         else:
             self.master = tk.Tk()
+        man_config.read_ini_file(self.master)
 
         self.master.title(self.info.name)
         self.master.option_add('*tearOff', False)
