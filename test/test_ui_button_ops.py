@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
-"""Does the UI render as expected and do the mouse clicks
-behave as expected.
-
-These tests do not run well from with in pytest,
-generally 1 in 8 fails to find Tk.
-
+"""Does the UI render buttons as expected and
+do the mouse clicks do behave as expected.
+This was written primarily to test the mustshare
+and udir_holes options together.
 
 Created on Mon Feb  3 07:30:40 2025
 @author: Ann"""
@@ -13,7 +11,8 @@ Created on Mon Feb  3 07:30:40 2025
 
 import dataclasses as dc
 import functools as ft
-import time
+
+import pytest
 
 from context import game_constants as gconsts
 from context import game_interface as gi
@@ -43,7 +42,8 @@ START = 3
 ALL_HOLES = list(range(HOLES))
 NONES = [N, N, N, N, N, N, N, N]
 
-# %% support functions
+
+# %% support function
 
 def get_button(game_ui, loc):
     """Return the button object associated with loc."""
@@ -153,7 +153,7 @@ class ERender:
 
 # %% test prolog and epilog
 
-def test_setup(game_opt, setup, ui_opt):
+def prolog(game_opt, setup, ui_opt):
     """Build the game and game_ui, and update the game_ui."""
 
     game = make_game(game_opt)
@@ -167,11 +167,12 @@ def test_setup(game_opt, setup, ui_opt):
     return game_ui, game
 
 
-def test_cleanup(game_ui):
+def epilog(game_ui):
     """Add the destroy action and run the loop.
+    The test can add events via the after, but
+    delay must be less than 200ms.
     Do final update because it seems to need it."""
 
-    # time.sleep(3)
     game_ui.master.after(200, game_ui.master.destroy)
     game_ui.ui_loop()
     game_ui.master.update()
@@ -283,7 +284,8 @@ TGRID_CASES = {
     }
 
 
-def test_render(prefix, casename):
+@pytest.mark.parametrize('casename', TGRID_CASES.keys())
+def test_render(casename):
     """Test if the button is drawn as expected with the
     right click present when requested and in the right spot,
     check for present/absence of sow direction blocks,
@@ -291,11 +293,9 @@ def test_render(prefix, casename):
 
     Checking bindings/actions is NOT done here."""
 
-    print(f"{prefix} {casename}...")
-
     game_opt, setup, ui_opt, ecell_dict = TGRID_CASES[casename]
 
-    game_ui, game = test_setup(game_opt, setup, ui_opt)
+    game_ui, game = prolog(game_opt, setup, ui_opt)
     success = True
 
     for loc, exp in ecell_dict.items():
@@ -346,8 +346,9 @@ def test_render(prefix, casename):
             print(f"{loc}: left grid not as expected, actual {left_state}")
             success = False
 
-    test_cleanup(game_ui)
-    return success
+    # don't fail the test above, need to do the epilog
+    epilog(game_ui)
+    assert success
 
 
 def debug_render(cname):
@@ -355,7 +356,7 @@ def debug_render(cname):
     print(f"{cname}...")
 
     game_opt, setup, ui_opt, ecell_dict = TGRID_CASES[cname]
-    game_ui, game = test_setup(game_opt, setup, ui_opt)
+    game_ui, game = setup(game_opt, setup, ui_opt)
     game_ui.ui_loop()
 
     # user must close window
@@ -519,15 +520,16 @@ CLICK_CASES = {
     }
 
 
-def test_click(prefix, cname):
+@pytest.mark.parametrize('cname', CLICK_CASES.keys())
+def test_click(cname):
 
-    print(f"{prefix} {cname}...")
     game_opt, setup, ui_opt, action, eboard = CLICK_CASES[cname]
-
-    game_ui, game = test_setup(game_opt, setup, ui_opt)
-
+    game_ui, game = prolog(game_opt, setup, ui_opt)
     game_ui.master.after(100, gen_event_fnc(game_ui, action))
-    test_cleanup(game_ui)
+
+    # need main loop to run to process event
+    # and don't need ui for actual test
+    epilog(game_ui)
 
     if game.board != eboard:
         print("Board doesn't match:",
@@ -535,41 +537,12 @@ def test_click(prefix, cname):
               f"actual   {game.board}", sep='\n')
         return False
 
-    return True
-
-
 
 def debug_click(cname):
 
     print(f"{cname}...")
     game_opt, setup, ui_opt, action, eboard = CLICK_CASES[cname]
-    game_ui, game = test_setup(game_opt, setup, ui_opt)
+    game_ui, game = setup(game_opt, setup, ui_opt)
     game_ui.ui_loop()
 
     # user must close the window
-
-
-# %%  test runner and reporter
-
-
-def run_tests(prefix, cases, test_func):
-
-    for cname in cases.keys():
-        summary[prefix + ' ' + cname] = test_func(prefix, cname)
-
-def report_tests():
-    print("\n\nTest Summary:")
-    for cname, result in summary.items():
-        print(f"{cname:.<35}", 'Passed' if result else 'Failed')
-
-
-# %%  main
-
-if __name__ == '__main__':
-
-    summary = {}
-
-    run_tests("Render", TGRID_CASES, test_render)
-    run_tests("Click", CLICK_CASES, test_click)
-
-    report_tests()
