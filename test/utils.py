@@ -11,7 +11,7 @@ def build_board(trow, frow):
     return frow + trow[::-1]
 
 
-def make_state(board, store, turn=False, **kwargs):
+def make_state(board, store=(0, 0), turn=False, **kwargs):
     """Helper function to make game states.
     Don't care about mcount, const > 1 is fine."""
 
