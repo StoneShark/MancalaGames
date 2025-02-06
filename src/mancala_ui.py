@@ -486,19 +486,13 @@ class MancalaUI(tk.Frame):
         """Attempt to pop open the help file.
         Return True if it no problems detected."""
 
-        # pylint: disable=too-many-try-statements
+        pathname = man_path.get_path(filename, no_error=True)
+        if pathname:
+            if tag:
+                pathname += '#' + tag.replace(' ', '%20')
 
-        pathname = man_path.get_path(filename)
-        try:
-            if os.path.isfile(pathname):
-                if tag:
-                    pathname += '#' + tag
-
-                webbrowser.open('file:///' + pathname)
-                return True
-
-        except FileNotFoundError:
-            pass
+            webbrowser.open('file:///' + pathname)
+            return True
 
         return False
 
@@ -509,7 +503,8 @@ class MancalaUI(tk.Frame):
         If that doesn't work, try the default help file.
         If that doesn't work, pop up a "no help" message."""
 
-        _ = (self._try_help_file(self.info.help_file)
+        _ = ((self.info.help_file
+              and self._try_help_file(self.info.help_file))
              or self._try_help_file('about_games.html', self.info.name)
              or self._try_help_file('mancala_help.html')
              or quiet_dialog(self, 'Help', 'Help not found.'))

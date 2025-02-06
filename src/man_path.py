@@ -13,7 +13,8 @@ def get_path(filename, no_error=False):
     """Provide compatibility between different ways the
     software can be run."""
 
-    places = ['.', '..', 'src', '../src', 'docs', '../docs', 'help']
+    places = ['.', '..', 'src', '../src', 'docs', '../docs',
+              'help', '../help']
 
     for dirname in places:
         pathname = os.path.join(dirname, filename)
