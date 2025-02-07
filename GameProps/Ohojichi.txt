@@ -10,7 +10,6 @@
       "capt_on": [ 4 ],
       "goal": 3,
       "multicapt": -1,
-      "no_sides": true,
       "sow_direct": 1,
       "stores": true
    },

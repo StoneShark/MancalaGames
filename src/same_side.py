@@ -13,6 +13,7 @@ Created on Sun Dec  1 07:10:20 2024
 import dataclasses as dc
 import textwrap
 
+import cfg_keys as ckey
 import diffusion
 import incrementer
 import game_interface as gi
@@ -36,15 +37,6 @@ def build_rules():
         excp=gi.GameInfoError)
         # CLEAR includes many base mancala rules:
         #  GS legal, many options prohibited
-
-    rules.add_rule(
-        'ss_no_sides',
-        rule=lambda ginfo: not ginfo.no_sides,
-        msg='SameSide requires no_sides be true',
-        excp=gi.GameInfoError)
-        # moves are controled by type:
-        # if empty_store move, any opp hole allowed
-        # else own allowable holes
 
     rules.add_rule(
         'ss_no_spatter',
@@ -236,6 +228,8 @@ class SameSide(mancala.Mancala):
 
     def __init__(self, game_consts, game_info):
 
+        # override mlength value in the game_info
+        object.__setattr__(game_info, ckey.MLENGTH, 3)
         super().__init__(game_consts, game_info)
 
         self.fix_incr_deco(BoardSideIncr)
@@ -356,6 +350,8 @@ class Ohojichi(SameSide):
         # pylint: disable=super-init-not-called
         # pylint: disable=duplicate-code
 
+        # override mlength value in the game_info
+        object.__setattr__(game_info, ckey.MLENGTH, 3)
         mancala.Mancala.__init__(self, game_consts, game_info)
 
         self.deco.ender = diffusion.ClearSideEndGame(self)
