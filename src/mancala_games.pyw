@@ -62,12 +62,6 @@ GAMES = 2
 ABOUT = 4
 
 
-RELEASE_TEXT = textwrap.dedent("""\
-                Mancala Games
-                License: GPL-3.0   ©Ann Davies 2024-2025
-                Version 1.3""")
-
-
 # %% helper funcs
 
 MINUS = '-'
@@ -179,7 +173,7 @@ class MancalaGames(tk.Frame):
 
         elif what == ABOUT:
             mancala_ui.quiet_dialog(self, 'About Manacala Games',
-                                    RELEASE_TEXT)
+                                    mancala_ui.RELEASE_TEXT)
 
 
     def _update_title(self):

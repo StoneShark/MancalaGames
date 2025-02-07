@@ -38,6 +38,11 @@ NO_TALLY_OP = 0
 VIS_TALLY_OP = 1
 RET_TALLY_OP = 2
 
+RELEASE_TEXT = textwrap.dedent("""\
+                Mancala Games
+                License: GPL-3.0   ©Ann Davies 2024-2025
+                Version 1.4""")
+
 
 # %%
 
@@ -102,6 +107,7 @@ class TkVars:
 
         self.ai_delay = tk.IntVar(
             man_ui.master, min(man_config.CONFIG.get_int('ai_delay', 1), 2))
+        self.ai_filter = tk.BooleanVar(man_ui.master, True)
 
 
 # %%  mancala ui
@@ -389,6 +395,9 @@ class MancalaUI(tk.Frame):
         logmenu.add_checkbutton(label='Log AI Analysis',
                                 variable=self.vars.log_ai,
                                 onvalue=True, offvalue=False)
+        logmenu.add_checkbutton(label='Filter AI Scores',
+                                variable=self.vars.ai_filter,
+                                onvalue=True, offvalue=False,)
 
         menubar.add_cascade(label='Log', menu=logmenu)
 
@@ -405,7 +414,7 @@ class MancalaUI(tk.Frame):
         showmenu.add_checkbutton(label='Facing Players',
                                  variable=self.vars.facing_players,
                                  onvalue=True, offvalue=False,
-                                 command=self._toggle_facing)
+                                 command=self.toggle_facing)
         showmenu.add_checkbutton(label='Ownership Arrows',
                                  variable=self.vars.owner_arrows,
                                  onvalue=True, offvalue=False,
@@ -465,7 +474,7 @@ class MancalaUI(tk.Frame):
             self.vars.show_tally.set(True)
 
 
-    def _toggle_facing(self):
+    def toggle_facing(self):
         """Players are facing eachother. Force a configure event,
         it orients and sizes the dithering (for touch screen mode)
         and then refresh to rotate the text."""
@@ -519,7 +528,9 @@ class MancalaUI(tk.Frame):
         paragraphs = atext.split('\n')
         out_text = self.info.name + ':\n'
         for para in paragraphs:
-            out_text += textwrap.fill(para, 55) + '\n'
+            out_text += textwrap.fill(para, 70) + '\n'
+
+        out_text += RELEASE_TEXT
 
         quiet_dialog(self, 'About', ''.join(out_text))
 
@@ -830,7 +841,9 @@ class MancalaUI(tk.Frame):
         """Add the ai description to the game log (Mancala doesn't
         know if the ai is playing)."""
 
-        if self.vars.ai_active.get() and last_turn:
+        if (last_turn
+                and self.vars.ai_active.get()
+                and not self.vars.ai_filter.get()):
             game_log.add(self.player.get_move_desc(), game_log.MOVE)
 
 
