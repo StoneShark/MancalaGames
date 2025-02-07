@@ -133,6 +133,9 @@ class SelectOwnedHoles(bhv.BehaviorIf):
             return False
 
         cls.starter = game_ui.game.turn
+        cls.facing = game_ui.vars.facing_players.get()
+        game_ui.vars.facing_players.set(False)
+        game_ui.toggle_facing()
         game_ui.game.turn = loser
 
         Owners.fill_it(game_ui)
@@ -151,6 +154,8 @@ class SelectOwnedHoles(bhv.BehaviorIf):
             return False
 
         game_ui.game.turn = cls.starter
+        game_ui.vars.facing_players.set(cls.facing)
+        game_ui.toggle_facing()
         return True
 
 
