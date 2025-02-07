@@ -118,7 +118,7 @@ class MancalaGames(tk.Frame):
         super().__init__(self.master)
         self.master.title(WTITLE)
         self.master.resizable(False, False)
-        self.master.wm_geometry('+200+100')
+        self.master.wm_geometry('+100+100')
         self.pack()
 
         self.master.report_callback_exception = self._exception_callback
@@ -388,10 +388,7 @@ class MancalaGames(tk.Frame):
         self.config.edited = True
         self._update_title()
 
-        if var == ckey.NAME:
-            self.config.init_fname(self.tkvars[ckey.NAME].get())
-
-        elif var == ckey.HOLES:
+        if var == ckey.HOLES:
             self._resize_udirs()
 
 
@@ -750,6 +747,7 @@ class MancalaGames(tk.Frame):
     def _save(self, askfile=False):
         """Save params to file."""
 
+        self.config.init_fname(self.tkvars[ckey.NAME].get())
         self._make_config_from_tk()
         self.config.save(askfile)
         self._update_title()
