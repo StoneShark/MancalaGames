@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Andot",
-      "about": "Split sow. Make children on 4 on opposite-side ends and four middle holes on own side.\n\nCannot move a singleton that has been moved across the side of the board back to where it was the previous turn.\n\nGoal: collect more than half of the seeds in child holes.\n\n",
+      "about": "Split sow. Make children on 4 on opposite-side ends and four middle holes on own side.\n\nCannot move a singleton that has been moved across the side of the board back to where it was the previous turn.\n\nGoal: collect more than half of the seeds in child holes.\n",
       "child_cvt": 4,
       "child_type": 1,
       "child_locs": 3,
@@ -16,10 +16,11 @@
    },
    "player": {
       "ai_params": {
-         "mm_depth": [ 1, 2, 3, 5 ]
+         "mm_depth": [ 1, 3, 5, 7 ]
       },
       "scorer": {
-         "stores_m": 4
+         "stores_m": 4,
+         "child_cnt_m": 8
       }
    },
    "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p134."
