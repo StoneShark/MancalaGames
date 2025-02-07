@@ -200,6 +200,8 @@ Games with children allow players to claim holes. These child holes are an exten
 
 - NORMAL: children are made when a final seed sows a hole to CHILD_CVT. If stores are not included captures are instead moved into children, thus a player may not capture until they have created a child. 
 
+- RESERVED: unused value
+
 - ONE_CHILD: only one child allowed per player.
 
   + Children must not be symmetrically opposite each other. For example, in a 9 hole per side game with holes numbered as follows, children may not be in the same numbered holes:
@@ -571,7 +573,7 @@ Special sow rules add additional behavior or restrictions to the sowing phase:
 
   + GRANDSLAM rules are not applied. NOCAPTMOVES prevents this capture for the first number of specified moves.
 
-- NO_SOW_OPP_2S: Don't sow into opponent?s holes with 2 seeds.
+- NO_SOW_OPP_2S: Don't sow into opponent's holes with 2 seeds.
 
 - CHANGE_DIR_LAP: Change the direction for each lap sown. Generally used with UDIR_HOLES so the player may choose the first direction.
 
@@ -579,7 +581,7 @@ Special sow rules add additional behavior or restrictions to the sowing phase:
 
 - LAP_CAPT: after each lap check for a capture, if there is a capture continue sowing with another lap. If a basic capture is configured (evens, capt_on, max or min), the hole after the captured seeds is drawn to continue lapping.
 
-- NO_OPP_CHILD: do not sow into your opponent?s children.
+- NO_OPP_CHILD: do not sow into your opponent's children.
 
 <param sow_start>
 When selected, the first seed is sown into (i.e., left in) the start hole.
