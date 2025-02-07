@@ -94,7 +94,7 @@ class HoleButton(tk.Canvas):
         self.row = int(loc < self.game_ui.game.cts.holes)
         self.left_move = left_move
         self.right_move = right_move
-        self.props = 0
+        self.props = None
         self.behavior = behaviors.PlayButtonBehavior(self)
         btn_size = man_config.CONFIG.get_int('button_size')
 
@@ -148,15 +148,49 @@ class HoleButton(tk.Canvas):
             super().__setitem__(key, value)
 
 
+    def hole_owner(self):
+        """Return the hole owner or None if not owned."""
+
+        game = self.game_ui.game
+
+        if game.info.no_sides:
+            return None
+
+        if self.props.owner in {False, True}:
+            return self.props.owner
+
+        if game.true_holes[0] is True:
+            return game.true_holes[self.loc]
+
+        return not self.row
+
+
+    def rotate_text(self):
+        """Determine if the text should be rotated for facing
+        players. Facing players is not supported for no_sides
+        games because both players can play from all holes.
+        If true_holes is set for hole 0 (usually a False hole)
+        then use the true_holes value. Otherwise check by row
+        and/or owner."""
+
+        game = self.game_ui.game
+        if (not self.game_ui.vars.facing_players.get()
+                or game.info.no_sides):
+            return False
+
+        if game.true_holes[0] is True:
+            return game.true_holes[self.loc]
+
+        top = not self.row
+        owner = self.props.owner
+        return ((owner is None and top) or owner)
+
+
     def _get_coords(self, width, height, left=None):
         """Return the coordinates for the touch screen mode
         rectangle for right clicks."""
 
-        if (left or
-            (left is None
-             and not self.row
-             and self.game_ui.vars.facing_players.get())):
-
+        if (left or (left is None and self.rotate_text())):
             return (8, 8, int(width * (1 - DO_RIGHT)), height)
 
         return (int(width * DO_RIGHT), 8, width, height)
@@ -200,7 +234,7 @@ class HoleButton(tk.Canvas):
         if self['state'] == tk.DISABLED:
             return
 
-        if not self.row and self.game_ui.vars.facing_players.get():
+        if self.rotate_text():
             self.behavior.right_click()
         else:
             self.behavior.left_click()
@@ -215,7 +249,7 @@ class HoleButton(tk.Canvas):
         if self['state'] == tk.DISABLED:
             return
 
-        if not self.row and self.game_ui.vars.facing_players.get():
+        if self.rotate_text():
             self.behavior.left_click()
         else:
             self.behavior.right_click()
@@ -252,13 +286,20 @@ class StoreButton(tk.Canvas):
 
         if key == TEXT:
             self.itemconfig(self.text_id, text=value)
+
+            if self.game_ui.vars.facing_players.get() and self.owner:
+                self.itemconfigure(self.text_id, angle=180)
+            else:
+                self.itemconfigure(self.text_id, angle=0)
         else:
             super().__setitem__(key, value)
+
 
     def _move_text(self, event):
         """Keep the text widget in the center of the canvas)."""
 
         self.coords(self.text_id, event.width//2, event.height//2)
+
 
     def set_behavior(self, behavior):
         """Set the behavior of the store."""

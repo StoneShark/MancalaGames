@@ -22,6 +22,11 @@ NO_STR = 'no'
 FILL_POPUP = 50
 FILL_HINTS = 65
 
+# ownership arrows
+DN_ARROW = '\u2193'
+UP_ARROW = '\u2191'
+
+
 # %% enum
 
 class BtnState(enum.Enum):
@@ -73,32 +78,33 @@ class BehaviorIf(abc.ABC):
 
 
     def orient_text(self):
-        """Orient the text according to the display option and row."""
+        """Orient the text according to the display option and
+        rotate_text."""
 
-        if not self.btn.row:
-            if self.btn.game_ui.vars.facing_players.get():
-                self.btn.itemconfigure(self.btn.text_id, angle=180)
-            else:
-                self.btn.itemconfigure(self.btn.text_id, angle=0)
+        if self.btn.rotate_text():
+            self.btn.itemconfigure(self.btn.text_id, angle=180)
+        else:
+            self.btn.itemconfigure(self.btn.text_id, angle=0)
+
 
     def owner_arrow(self):
         """Show the owner ship arrow if enabled by the display option."""
-        # pylint: disable=else-if-used
 
         otext = ''
         if self.btn.game_ui.vars.owner_arrows.get():
-            if not self.btn.row and self.btn.game_ui.vars.facing_players.get():
+            if self.btn.rotate_text():
                 if self.btn.props.owner is True:
-                    otext += '\u2193 '
+                    otext += DN_ARROW
                 elif self.btn.props.owner is False:
-                    otext += '\u2191 '
-            else:
-                if self.btn.props.owner is True:
-                    otext += '\u2191 '
-                elif self.btn.props.owner is False:
-                    otext += '\u2193 '
+                    otext += UP_ARROW
 
-        return otext
+            elif self.btn.props.owner is True:
+                otext += UP_ARROW
+            elif self.btn.props.owner is False:
+                otext += DN_ARROW
+
+        return otext + ' '
+
 
     def refresh_nonplay(self, bstate, bg_color=None):
         """Make the UI match the behavior and game data for the non-play
@@ -135,6 +141,7 @@ class BehaviorIf(abc.ABC):
         class method because this is called before the object
         is instantiated."""
 
+
     @classmethod
     def leave_mode(cls, game_ui):
         """Is it ok to leave the mode (presumably to go back to GAMEPLAY).
@@ -144,13 +151,16 @@ class BehaviorIf(abc.ABC):
         _ = game_ui
         return True
 
+
     @abc.abstractmethod
     def set_props(self, props, bstate):
         """Set props and state of the hole."""
 
+
     @abc.abstractmethod
     def left_click(self):
         """Do the left click action."""
+
 
     @abc.abstractmethod
     def right_click(self):
@@ -214,7 +224,7 @@ class PlayButtonBehavior(BehaviorIf):
         at the child owner."""
 
         otext = ''
-        if not self.btn.row and self.btn.game_ui.vars.facing_players.get():
+        if self.btn.rotate_text():
             if self.btn.props.ch_owner is True:
                 otext += '\u02c5 '
             elif self.btn.props.ch_owner is False:
@@ -222,7 +232,6 @@ class PlayButtonBehavior(BehaviorIf):
 
         elif self.btn.props.ch_owner is True:
             otext += '\u02c4 '
-
         elif self.btn.props.ch_owner is False:
             otext += '\u02c5 '
 
@@ -258,9 +267,7 @@ class PlayButtonBehavior(BehaviorIf):
         gcw = bstate.grid_cw()
 
         top = not self.btn.row
-        owner = self.btn.props.owner
-        trot = (self.btn.game_ui.vars.facing_players.get()
-                and ((owner is None and top) or owner))
+        trot = self.btn.rotate_text()
 
         # show red grid on right
         if (gccw and not top) or (gcw and top) or (gcw and trot):

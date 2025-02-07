@@ -14,12 +14,17 @@ import functools as ft
 
 import pytest
 
+from context import behaviors
 from context import game_constants as gconsts
 from context import game_interface as gi
 from context import mancala
 from context import mancala_ui
 
 from context import game_logger
+
+
+UP_ARROW = behaviors.UP_ARROW
+DN_ARROW = behaviors.DN_ARROW
 
 
 # %% constants
@@ -62,6 +67,8 @@ class GameOpts:
     GameInfo is too big and checks rules."""
 
     sow_dir: int = gi.Direct.CCW
+    goal: int = 0
+    goal_param: int = 0
     no_sides: bool = False
     udir_holes: list = dc.field(default_factory=list)
     mustshare: bool = False
@@ -72,6 +79,8 @@ def make_game(game_opt):
     game_consts = gconsts.GameConsts(nbr_start=START, holes=HOLES)
     game_info = gi.GameInfo(stores=True,
                             evens=True,
+                            goal=game_opt.goal,
+                            goal_param=game_opt.goal_param,
                             sow_direct=game_opt.sow_dir,
                             no_sides=game_opt.no_sides,
                             mustshare=game_opt.mustshare,
@@ -104,7 +113,7 @@ class UIOpts:
 
     facing_players: bool = False
     touch_screen: bool = False
-    ownership_arrows: bool = False
+    owner_arrows: bool = False
 
 def make_ui(game, ui_opt):
 
@@ -112,6 +121,7 @@ def make_ui(game, ui_opt):
 
     game_ui.vars.facing_players.set(ui_opt.facing_players)
     game_ui.vars.touch_screen.set(ui_opt.touch_screen)
+    game_ui.vars.owner_arrows.set(ui_opt.owner_arrows)
 
     return game_ui
 
@@ -143,7 +153,7 @@ class ERender:
     rc_grid, rblock and lblock test visibility of grid."""
 
     rc_grid: bool = False
-    rc_grid_loc: str = RIGHT
+    rc_grid_loc: str = RIGHT   # relative to bottom of screen
 
     rblock: bool = False   # can sow to player's right (not spec ccw or cw)
     lblock: bool = False   # can sow to player's left (not spec ccw or cw)
@@ -188,6 +198,11 @@ GAME_OPTS = {
     'spl_mshare': GameOpts(sow_dir=gi.Direct.SPLIT,
                           mustshare=True,
                           udir_holes=ALL_HOLES),
+
+    'terr':  GameOpts(sow_dir=gi.Direct.SPLIT,
+                      goal=2,
+                      goal_param=8,
+                      udir_holes=ALL_HOLES),
 }
 
 SETUPS = {
@@ -205,6 +220,13 @@ SETUPS = {
     'ms_1_1_2_4_t': SetupOpts(turn=True,
                               board=[0, 0, 0, 0, 1, 1, 2, 4],
                               owner=NONES),
+
+    'terr_f': SetupOpts(turn=False,
+                        board=[2, 2, 2, 2, 2, 2, 2, 2],
+                        owner=[F, T, T, F, T, T, T, T]),
+    'terr_t': SetupOpts(turn=True,
+                        board=[2, 2, 2, 2, 2, 2, 2, 2],
+                        owner=[F, T, T, F, T, T, T, T]),
 
 }
 
@@ -281,6 +303,48 @@ TGRID_CASES = {
           7: ERender(rotate=True, rc_grid=True, rc_grid_loc=LEFT),
           }],
 
+
+    'terr_twos_f':
+        [GAME_OPTS['terr'],
+         SETUPS['terr_f'],
+         UIOpts(facing_players=True, touch_screen=True, owner_arrows=True),
+         {0: ERender(rc_grid=True),
+          1: ERender(rotate=True, rc_grid=True, rc_grid_loc=LEFT),
+          2: ERender(rotate=True, rc_grid=True, rc_grid_loc=LEFT),
+          3: ERender(rc_grid=True),
+          4: ERender(rotate=True, rc_grid=True, rc_grid_loc=LEFT),
+          5: ERender(rotate=True, rc_grid=True, rc_grid_loc=LEFT),
+          6: ERender(rotate=True, rc_grid=True, rc_grid_loc=LEFT),
+          7: ERender(rotate=True, rc_grid=True, rc_grid_loc=LEFT),
+          }],
+    'terr_twos_t':
+        [GAME_OPTS['terr'],
+         SETUPS['terr_t'],
+         UIOpts(facing_players=True, touch_screen=True, owner_arrows=True),
+         {0: ERender(rc_grid=True),
+          1: ERender(rotate=True, rc_grid=True, rc_grid_loc=LEFT),
+          2: ERender(rotate=True, rc_grid=True, rc_grid_loc=LEFT),
+          3: ERender(rc_grid=True),
+          4: ERender(rotate=True, rc_grid=True, rc_grid_loc=LEFT),
+          5: ERender(rotate=True, rc_grid=True, rc_grid_loc=LEFT),
+          6: ERender(rotate=True, rc_grid=True, rc_grid_loc=LEFT),
+          7: ERender(rotate=True, rc_grid=True, rc_grid_loc=LEFT),
+          }],
+
+    'terr_twos_t_nrot':
+        [GAME_OPTS['terr'],
+         SETUPS['terr_t'],
+         UIOpts(touch_screen=True, owner_arrows=True),
+         {0: ERender(rc_grid=True),
+          1: ERender(rc_grid=True),
+          2: ERender(rc_grid=True),
+          3: ERender(rc_grid=True),
+          4: ERender(rc_grid=True),
+          5: ERender(rc_grid=True),
+          6: ERender(rc_grid=True),
+          7: ERender(rc_grid=True),
+          }],
+
     }
 
 
@@ -308,7 +372,19 @@ def test_render(casename):
             success = False
             continue
 
-        # TODO test rotation of owners and children markers
+        if ui_opt.owner_arrows:
+            owner = btn.hole_owner()
+            text = btn.itemcget(btn.text_id, 'text')
+            if ((owner is False and DN_ARROW not in text)
+                    or (owner is True
+                            and rot_angle == '0.0' and  UP_ARROW not in text)
+                    or (owner is True
+                            and rot_angle == '180.0' and DN_ARROW not in text)
+                    ):
+                print(f'{loc}: owner arrow wrong {owner} {text}')
+                success = False
+
+        # TODO test rotation of children markers
 
         if not btn.rclick_id:
             print(f"{loc}: rclick_id not set, grids not tested")
@@ -318,7 +394,6 @@ def test_render(casename):
 
         # confirm expected presence of right click grid
         if exp.rc_grid != bool(rclick_state == NORMAL):
-            print('touch:', game_ui.vars.touch_screen.get())
             print(f"{loc}: right click grid not as expected, actual {rclick_state}")
             success = False
 
@@ -356,7 +431,7 @@ def debug_render(cname):
     print(f"{cname}...")
 
     game_opt, setup, ui_opt, ecell_dict = TGRID_CASES[cname]
-    game_ui, game = setup(game_opt, setup, ui_opt)
+    game_ui, game = prolog(game_opt, setup, ui_opt)
     game_ui.ui_loop()
 
     # user must close window
@@ -517,6 +592,31 @@ CLICK_CASES = {
          Action(loc=6, click=RIGHT_CLICK),
          [1, 0, 0, 0, 1, 1, 0, 5]],    # facing players: do same op as _f_f_t_6
 
+    'terr_twos_t_1r':
+        [GAME_OPTS['terr'],
+         SETUPS['terr_t'],
+         UIOpts(facing_players=True, touch_screen=True, owner_arrows=True),
+         Action(loc=1, click=RIGHT_CLICK),
+         [3, 0, 2, 2, 2, 2, 2, 3]],   # ccw sow
+    'terr_twos_t_1l':
+        [GAME_OPTS['terr'],
+         SETUPS['terr_t'],
+         UIOpts(facing_players=True, touch_screen=True, owner_arrows=True),
+         Action(loc=1, click=LEFT_CLICK),
+         [2, 0, 3, 3, 2, 2, 2, 2]],   # cw sow
+    'terr_twos_t_5r':
+        [GAME_OPTS['terr'],
+         SETUPS['terr_t'],
+         UIOpts(facing_players=True, touch_screen=True, owner_arrows=True),
+         Action(loc=5, click=RIGHT_CLICK),
+         [2, 2, 2, 2, 2, 0, 3, 3]],  # cw sow
+    'terr_twos_t_5l':
+        [GAME_OPTS['terr'],
+         SETUPS['terr_t'],
+         UIOpts(facing_players=True, touch_screen=True, owner_arrows=True),
+         Action(loc=5, click=LEFT_CLICK),
+         [2, 2, 2, 3, 3, 0, 2, 2]], # ccw sow
+
     }
 
 
@@ -542,7 +642,7 @@ def debug_click(cname):
 
     print(f"{cname}...")
     game_opt, setup, ui_opt, action, eboard = CLICK_CASES[cname]
-    game_ui, game = setup(game_opt, setup, ui_opt)
+    game_ui, game = prolog(game_opt, setup, ui_opt)
     game_ui.ui_loop()
 
     # user must close the window
