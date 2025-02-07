@@ -10,7 +10,6 @@ Created on Thu Mar  2 14:38:17 2023
 
 # %% imports
 
-import os
 import textwrap
 import traceback
 import tkinter as tk
