@@ -41,7 +41,7 @@ RET_TALLY_OP = 2
 RELEASE_TEXT = textwrap.dedent("""\
                 Mancala Games
                 License: GPL-3.0   ©Ann Davies 2024-2025
-                Version 1.4""")
+                Version 1.4 +develop""")
 
 
 # %%
@@ -310,7 +310,7 @@ class MancalaUI(tk.Frame):
     def _set_log_level(self):
         """Set the game log level"""
 
-        game_log.level = self.vars.log_level
+        game_log.level = self.vars.log_level.get()
 
 
     def _create_menus(self):
