@@ -159,13 +159,7 @@ class SelectOwnedHoles(bhv.BehaviorIf):
         return True
 
 
-    def set_props(self, props, bstate):
-        """Set text, props and states of the hole."""
-        self.btn.props = props
-        self._refresh(bstate)
-
-
-    def left_click(self):
+    def do_left_click(self):
         """Toggle the hole ownership update the Owners"""
 
         game = self.btn.game_ui.game
@@ -173,16 +167,16 @@ class SelectOwnedHoles(bhv.BehaviorIf):
 
         game.owner[loc] = not game.owner[loc]
         self.btn.props.owner = game.owner[loc]
-        self._refresh()
+        self.refresh()
 
         Owners.change_owner(game.owner[loc])
 
 
-    def right_click(self):
+    def do_right_click(self):
         """Right click does nothing in this mode."""
 
 
-    def _refresh(self, bstate=bhv.BtnState.ACTIVE):
+    def refresh(self, bstate=bhv.BtnState.ACTIVE):
         """Make the UI match the behavior and game data."""
 
         if bstate == bhv.BtnState.DISABLE:

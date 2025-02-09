@@ -19,7 +19,7 @@ import ai_player
 import aspect_frame
 import cfg_keys as ckey
 import behaviors
-import btn_behaviors as btnb
+import buttons
 import game_interface as gi
 import game_logger
 import game_tally as gt
@@ -128,7 +128,7 @@ class MancalaUI(tk.Frame):
             raise TypeError('Missing mancala_ui.GameInterface in game.')
 
         self.game = game
-        self.mode = btnb.Behavior.GAMEPLAY
+        self.mode = buttons.Behavior.GAMEPLAY
         self.player = ai_player.AiPlayer(self.game, player_dict)
 
         game_log.new()
@@ -214,7 +214,7 @@ class MancalaUI(tk.Frame):
                                                 aratio=0.8)
             b_frame.pad.grid(row=0, column=0, sticky="nsew")
 
-            b_store = btnb.StoreButton(b_frame.content, self, True)
+            b_store = buttons.StoreButton(b_frame.content, self, True)
             b_store.grid(row=0, column=0, sticky="nsew")
             b_frame.row_col_config()
 
@@ -237,7 +237,7 @@ class MancalaUI(tk.Frame):
                                                 aratio=0.8)
             a_frame.pad.grid(row=0, column=2, sticky="nsew")
 
-            a_store = btnb.StoreButton(a_frame.content, self, False)
+            a_store = buttons.StoreButton(a_frame.content, self, False)
             a_store.grid(row=0, column=0, sticky="nsew")
             a_frame.row_col_config()
 
@@ -296,7 +296,7 @@ class MancalaUI(tk.Frame):
             left_move = pos
             rght_move = pos
 
-        return btnb.HoleButton(land_frame, self, loc, left_move, rght_move)
+        return buttons.HoleButton(land_frame, self, loc, left_move, rght_move)
 
 
     @staticmethod
@@ -462,7 +462,7 @@ class MancalaUI(tk.Frame):
             self.vars.show_tally.set(False)
             self.vars.tally_was_off = False
 
-        elif self.mode == btnb.Behavior.GAMEPLAY:
+        elif self.mode == buttons.Behavior.GAMEPLAY:
             # only allow user toggle when in GAMEPLAY state
             if self.vars.show_tally.get():
                 self.tally_frame.pack(side=tk.TOP, expand=True, fill=tk.X)
@@ -609,7 +609,7 @@ class MancalaUI(tk.Frame):
 
             for pos in range(self.game.cts.holes):
 
-                if self.mode != btnb.Behavior.GAMEPLAY:
+                if self.mode != buttons.Behavior.GAMEPLAY:
                     if player:
                         btnstate = behaviors.BtnState.ACTIVE
                     else:
@@ -645,26 +645,26 @@ class MancalaUI(tk.Frame):
         new_game = self.game.new_game(win_cond=win_cond,
                                       new_round_ok=new_round_ok)
         self.player.clear_history()
-        self.set_game_mode(btnb.Behavior.GAMEPLAY, force=True)
+        self.set_game_mode(buttons.Behavior.GAMEPLAY, force=True)
 
         self._refresh()
         if new_game:
             self._param_tally()
 
             if self.info.prescribed == gi.SowPrescribed.ARNGE_LIMIT:
-                if self.set_game_mode(btnb.Behavior.MOVESEEDS):
+                if self.set_game_mode(buttons.Behavior.MOVESEEDS):
                     return
 
         elif self.info.round_fill == gi.RoundFill.UCHOOSE:
-            if self.set_game_mode(btnb.Behavior.RNDCHOOSE):
+            if self.set_game_mode(buttons.Behavior.RNDCHOOSE):
                 return
 
         elif self.info.round_fill == gi.RoundFill.UMOVE:
-            if self.set_game_mode(btnb.Behavior.RNDMOVE):
+            if self.set_game_mode(buttons.Behavior.RNDMOVE):
                 return
 
         elif self.info.round_fill == gi.RoundFill.UCHOWN:
-            if self.set_game_mode(btnb.Behavior.RNDCHOWN):
+            if self.set_game_mode(buttons.Behavior.RNDCHOWN):
                 return
 
         self._start_it()
@@ -680,13 +680,13 @@ class MancalaUI(tk.Frame):
         if mode == self.mode:
             return True
 
-        assert not force or force and mode == btnb.Behavior.GAMEPLAY, \
+        assert not force or force and mode == buttons.Behavior.GAMEPLAY, \
             "Don't force game mode change for anything but normal game play."
 
         if force:
-            btnb.force_mode_change()
+            buttons.force_mode_change()
 
-        elif not btnb.ask_mode_change(self.mode, mode, self):
+        elif not buttons.ask_mode_change(self.mode, mode, self):
             return False
 
         assert sum(self.game.store) + sum(self.game.board) == \
@@ -701,7 +701,7 @@ class MancalaUI(tk.Frame):
         self.stores[1].set_behavior(mode)
 
         self._refresh()
-        if mode == btnb.Behavior.GAMEPLAY:
+        if mode == buttons.Behavior.GAMEPLAY:
             self._start_it()
             self._toggle_tally(vis_op=RET_TALLY_OP)
         else:
@@ -715,7 +715,7 @@ class MancalaUI(tk.Frame):
         pointer to the game_ui object so we'll set_gameplay_move
         for them here"""
 
-        return self.set_game_mode(btnb.Behavior.GAMEPLAY)
+        return self.set_game_mode(buttons.Behavior.GAMEPLAY)
 
 
     def _win_popup(self, title, message):
@@ -770,7 +770,7 @@ class MancalaUI(tk.Frame):
     def _end_round(self):
         """End the round. Report result to user."""
 
-        if not self.game.info.rounds or self.mode != btnb.Behavior.GAMEPLAY:
+        if not self.game.info.rounds or self.mode != buttons.Behavior.GAMEPLAY:
             self._end_game()
             return
 
@@ -799,7 +799,7 @@ class MancalaUI(tk.Frame):
     def _end_game(self):
         """End the game. Report result to user."""
 
-        if self.mode != btnb.Behavior.GAMEPLAY:
+        if self.mode != buttons.Behavior.GAMEPLAY:
             message = 'End game during setup will force New Game. Continue?'
             do_it = tk.messagebox.askokcancel(title='End Game',
                                               message=message,

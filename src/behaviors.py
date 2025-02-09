@@ -77,6 +77,42 @@ class BehaviorIf(abc.ABC):
         self.btn = button
 
 
+    @classmethod
+    @abc.abstractmethod
+    def ask_mode_change(cls, game_ui):
+        """If the user should be asked to consent to the mode
+        change, do so. Return True if the mode change is
+        ok, False otherwise.
+
+        class method because this is called before the object
+        is instantiated."""
+
+
+    @classmethod
+    def leave_mode(cls, game_ui):
+        """Is it ok to leave the mode (presumably to go back to GAMEPLAY).
+        Assume it is unless this is overridden.
+
+        class method to access any class scope vars set in ask_mode_change."""
+        _ = game_ui
+        return True
+
+
+    @abc.abstractmethod
+    def refresh(self, bstate=BtnState.ACTIVE):
+        """Refresh the button appearance."""
+
+
+    @abc.abstractmethod
+    def do_left_click(self):
+        """Do the left click action."""
+
+
+    @abc.abstractmethod
+    def do_right_click(self):
+        """Do the right click action"""
+
+
     def orient_text(self):
         """Orient the text according to the display option and
         rotate_text."""
@@ -125,46 +161,21 @@ class BehaviorIf(abc.ABC):
         else:
             self.btn['text'] = ''
 
+        self.orient_text()
+
         if self.btn.rclick_id:
             self.btn.itemconfigure(self.btn.rclick_id, state='hidden')
 
-        self.orient_text()
+        # TODO right click grid in non-play behaviors not working
+        #   left click on grid -- does right click, then left click (2 events)
+        # if (self.btn.non_play_grid
+        #         and self.btn.game_ui.vars.touch_screen.get()):
+        #     self.btn.itemconfigure(self.btn.rclick_id, state='normal')
+        #     self.btn.tag_raise(self.btn.rclick_id)
+        # else:
+        #     self.btn.itemconfigure(self.btn.rclick_id, state='hidden')
 
 
-    @classmethod
-    @abc.abstractmethod
-    def ask_mode_change(cls, game_ui):
-        """If the user should be asked to consent to the mode
-        change, do so. Return True if the mode change is
-        ok, False otherwise.
-
-        class method because this is called before the object
-        is instantiated."""
-
-
-    @classmethod
-    def leave_mode(cls, game_ui):
-        """Is it ok to leave the mode (presumably to go back to GAMEPLAY).
-        Assume it is unless this is overridden.
-
-        class method to access any class scope vars set in ask_mode_change."""
-        _ = game_ui
-        return True
-
-
-    @abc.abstractmethod
-    def set_props(self, props, bstate):
-        """Set props and state of the hole."""
-
-
-    @abc.abstractmethod
-    def left_click(self):
-        """Do the left click action."""
-
-
-    @abc.abstractmethod
-    def right_click(self):
-        """Do the right click action"""
 
 
 class StoreBehaviorIf(abc.ABC):
@@ -178,11 +189,11 @@ class StoreBehaviorIf(abc.ABC):
         """Set text, props and states of the store."""
 
     @abc.abstractmethod
-    def left_click(self):
+    def do_left_click(self):
         """Do the left click action."""
 
     @abc.abstractmethod
-    def right_click(self):
+    def do_right_click(self):
         """Do the right click action"""
 
 
@@ -200,19 +211,12 @@ class PlayButtonBehavior(BehaviorIf):
         return True
 
 
-    def set_props(self, props, bstate):
-        """Set props and state of the hole."""
-
-        self.btn.props = props
-        self._refresh(bstate)
-
-
-    def left_click(self):
+    def do_left_click(self):
         """Tell parent to move."""
         self.btn.game_ui.move(self.btn.left_move)
 
 
-    def right_click(self):
+    def do_right_click(self):
         """Move for the right click -- unless the hole is udirect
         this is the same as a left click"""
         self.btn.game_ui.move(self.btn.right_move)
@@ -257,10 +261,10 @@ class PlayButtonBehavior(BehaviorIf):
         self.orient_text()
 
 
-    def _update_active_grids(self, bstate):
+    def _update_grids(self, bstate):
         """Show hide the grids and adjust the mouse bindings.
         This is only called if the left and right actions are
-        different (e.g. rclick_id is set)."""
+        different."""
         # pylint: disable=too-many-boolean-expressions
 
         gccw = bstate.grid_ccw()
@@ -299,6 +303,7 @@ class PlayButtonBehavior(BehaviorIf):
                 self.btn.bind('<Button-3>', self.btn.right_click)
 
             self.btn.itemconfig(self.btn.rclick_id, state='hidden')
+
         else:
             self.btn.itemconfigure(self.btn.right_id, state='hidden')
             self.btn.itemconfigure(self.btn.left_id, state='hidden')
@@ -334,11 +339,11 @@ class PlayButtonBehavior(BehaviorIf):
             else:
                 self.btn['background'] = man_config.CONFIG['inactive_color']
 
-        if self.btn.rclick_id:
-            self._update_active_grids(bstate)
+        if self.btn.split_grids:
+            self._update_grids(bstate)
 
 
-    def _refresh(self, bstate=BtnState.ACTIVE):
+    def refresh(self, bstate=BtnState.ACTIVE):
         """Set text and ui props."""
 
         self._set_btn_text()
@@ -367,9 +372,9 @@ class NoStoreBehavior(StoreBehaviorIf):
             self.str['background'] = man_config.CONFIG['system_color']
 
 
-    def left_click(self):
+    def do_left_click(self):
         """No interaction, button disabled."""
 
 
-    def right_click(self):
+    def do_right_click(self):
         """No interaction."""

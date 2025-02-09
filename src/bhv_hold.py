@@ -183,13 +183,7 @@ class RndChooseButtonBehavior(bhv.BehaviorIf):
         return True
 
 
-    def set_props(self, props, bstate):
-        """Set props and state of the hole."""
-        self.btn.props = props
-        self._refresh(bstate)
-
-
-    def left_click(self):
+    def do_left_click(self):
         """Drop any held seeds, update the game_board and button.
         Don't drop seeds if:
             1. there are no seeds in the hold
@@ -207,19 +201,17 @@ class RndChooseButtonBehavior(bhv.BehaviorIf):
 
         self.btn.props.blocked = False
         self.btn.props.seeds = Hold.nbr
-        self._refresh()
+        self.refresh()
 
         Hold.empty()
         self.btn.frame.config(cursor='')
 
 
-    def right_click(self):
+    def do_right_click(self):
         """Pick up all of the seeds in the hole,
         unless we are already holding seeds
         or there are not any seeds to pick up."""
 
-        if self.btn['state'] == tk.DISABLED:
-            return
         if Hold.nbr or not self.btn.props.seeds:
             self.btn.bell()
             return
@@ -232,12 +224,12 @@ class RndChooseButtonBehavior(bhv.BehaviorIf):
 
         self.btn.props.blocked = True
         self.btn.props.seeds = 0
-        self._refresh()
+        self.refresh()
 
         self.btn.frame.config(cursor='circle')
 
 
-    def _refresh(self, bstate=bhv.BtnState.ACTIVE):
+    def refresh(self, bstate=bhv.BtnState.ACTIVE):
         """Make the UI match the behavior and game data."""
         self.refresh_nonplay(bstate, man_config.CONFIG['choose_color'])
 
@@ -333,15 +325,7 @@ class RndMoveSeedsButtonBehavior(bhv.BehaviorIf):
         return True
 
 
-    def set_props(self, props, bstate):
-        """Set text, props and states of the hole.
-        Because we set turn to the loser, disable will be set
-        True for the loser."""
-        self.btn.props = props
-        self._refresh(bstate)
-
-
-    def left_click(self):
+    def do_left_click(self):
         """Drop any held seeds, update the game_board and button.
         Don't drop seeds if:
             1. there are no seeds in the hold
@@ -356,13 +340,13 @@ class RndMoveSeedsButtonBehavior(bhv.BehaviorIf):
         seeds = game.board[self.btn.loc] + Hold.nbr
         self.btn.props.seeds = seeds
         game.board[self.btn.loc] = seeds
-        self._refresh()
+        self.refresh()
 
         Hold.empty()
         self.btn.game_ui.config(cursor='')
 
 
-    def right_click(self):
+    def do_right_click(self):
         """Pick up some or all of the seeds, but
             1. only on loser side (game.turn is winner, row is not turn;
                                    so loser row it game.turn)
@@ -370,8 +354,6 @@ class RndMoveSeedsButtonBehavior(bhv.BehaviorIf):
             3. another condition that doesn't make sense at the moment !?!?!?
 
             Always leave at least one seed in each hole."""
-        if self.btn['state'] == tk.DISABLED:
-            return
 
         game = self.btn.game_ui.game
         if (game.turn == self.btn.row
@@ -387,12 +369,12 @@ class RndMoveSeedsButtonBehavior(bhv.BehaviorIf):
             seeds = game.board[self.btn.loc] - seeds
             self.btn.props.seeds = seeds
             game.board[self.btn.loc] = seeds
-            self._refresh()
+            self.refresh()
 
             self.btn.game_ui.config(cursor='circle')
 
 
-    def _refresh(self, bstate=bhv.BtnState.ACTIVE):
+    def refresh(self, bstate=bhv.BtnState.ACTIVE):
         """Make the UI match the behavior and game data."""
         self.refresh_nonplay(bstate, man_config.CONFIG['seed_color'])
 
@@ -465,13 +447,7 @@ class MoveSeedsButtonBehavior(bhv.BehaviorIf):
         return True
 
 
-    def set_props(self, props, bstate):
-        """Set text, props and states of the hole."""
-        self.btn.props = props
-        self._refresh(bstate)
-
-
-    def left_click(self):
+    def do_left_click(self):
         """Drop any held seeds, update the game_board and button.
         Don't drop seeds if:
             1. there are no seeds in the hold
@@ -487,16 +463,14 @@ class MoveSeedsButtonBehavior(bhv.BehaviorIf):
 
         game.board[self.btn.loc] = seeds
         self.btn.props.seeds = seeds
-        self._refresh()
+        self.refresh()
 
         Hold.empty()
         self.btn.frame.config(cursor='')
 
 
-    def right_click(self):
+    def do_right_click(self):
         """Pick up some or all of the seeds."""
-        if self.btn['state'] == tk.DISABLED:
-            return
 
         if (not self.btn.props.seeds
                 or Hold.owner not in (None, self.btn.row)):
@@ -512,12 +486,12 @@ class MoveSeedsButtonBehavior(bhv.BehaviorIf):
 
             game.board[self.btn.loc] = seeds
             self.btn.props.seeds = seeds
-            self._refresh()
+            self.refresh()
 
             self.btn.frame.config(cursor='circle')
 
 
-    def _refresh(self, bstate=bhv.BtnState.ACTIVE):
+    def refresh(self, bstate=bhv.BtnState.ACTIVE):
         """Make the UI match the behavior and game data."""
         self.refresh_nonplay(bstate, man_config.CONFIG['move_color'])
 
@@ -528,7 +502,7 @@ class RndMoveStoreBehavior(bhv.StoreBehaviorIf):
     """Seeds may be moved in and out of the loser's store.
     Cursor is changed on the whole game_ui, when holding seeds.
 
-    Remember game.set(get)_store take a row not a turn or owner"""
+    Remember game.set(get)_store takes a row not a turn or owner"""
 
     def set_store(self, seeds, highlight):
         """Set the properties of the store button."""
@@ -542,7 +516,7 @@ class RndMoveStoreBehavior(bhv.StoreBehaviorIf):
             self.str['background'] = man_config.CONFIG['system_color']
 
 
-    def left_click(self):
+    def do_left_click(self):
         """Drop all picked up seeds."""
 
         if not Hold.nbr and Hold.owner == self.str.owner:
@@ -558,7 +532,7 @@ class RndMoveStoreBehavior(bhv.StoreBehaviorIf):
         Hold.empty()
 
 
-    def right_click(self):
+    def do_right_click(self):
         """Pop up the nbr seeds query, and pickup seeds if
         the user entered a valid number."""
 

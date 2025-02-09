@@ -14,6 +14,7 @@ import tkinter as tk
 import behaviors
 import bhv_hold
 import bhv_owners
+import game_interface as gi
 import man_config
 
 
@@ -101,11 +102,21 @@ class HoleButton(tk.Canvas):
         tk.Canvas.__init__(self, pframe,
                            borderwidth=4, relief='raised',
                            width=btn_size, height=btn_size)
+        self.text_id = self.create_text(btn_size//2, btn_size//2,
+                                        text='',
+                                        font=man_config.CONFIG.get_font())
+        self.bind('<Button-1>', self.left_click)
+        self.bind('<Button-3>', self.right_click)
+        self.bind("<Configure>", self._move_text)
 
-        self.rclick_id = None
-        if left_move != right_move:
-            # simulate right click via touch/left click with this
-            # rect when in table mode
+        self.rclick_id = self.right_id = self.left_id = None
+        self.split_grids = left_move != right_move
+        self.non_play_grid = (self.game_ui.game.info.round_fill
+                                in (gi.RoundFill.UCHOOSE, gi.RoundFill.UMOVE))
+        # simulate right click via touch/left click with this
+        # rect when in table mode
+        if self.split_grids or self.non_play_grid:
+
             color = man_config.CONFIG['rclick_color']
             density = 'gray' + man_config.CONFIG['grid_density']
             self.rclick_id = self.create_rectangle(
@@ -113,11 +124,13 @@ class HoleButton(tk.Canvas):
                 outline='', fill=color, stipple=density)
             self.tag_bind(self.rclick_id, "<Button-1>", self.right_click)
 
-            if not self.game_ui.vars.touch_screen.get():
+            if not self.split_grids or not self.game_ui.vars.touch_screen.get():
                 self.itemconfigure(self.rclick_id, state='hidden')
 
-            # show grids and filter cw/ccw sow based on allowable
-            # sow directions
+        # show grids and filter cw/ccw sow based on allowable
+        # sow directions
+        if self.split_grids:
+
             gcolor = man_config.CONFIG['grid_color']
             self.right_id = self.create_rectangle(
                 *self._get_coords(btn_size, btn_size, False),
@@ -127,14 +140,6 @@ class HoleButton(tk.Canvas):
                 outline='', fill=gcolor, stipple=density)
             self.itemconfigure(self.right_id, state='hidden')
             self.itemconfigure(self.left_id, state='hidden')
-
-        self.text_id = self.create_text(btn_size//2, btn_size//2,
-                                        text='',
-                                        font=man_config.CONFIG.get_font())
-
-        self.bind('<Button-1>', self.left_click)
-        self.bind('<Button-3>', self.right_click)
-        self.bind("<Configure>", self._move_text)
 
 
     def __setitem__(self, key, value):
@@ -204,6 +209,8 @@ class HoleButton(tk.Canvas):
         if self.rclick_id:
             self.coords(self.rclick_id,
                         self._get_coords(event.width, event.height - 8))
+
+        if self.right_id:
             self.coords(self.right_id,
                         self._get_coords(event.width, event.height - 8, False))
             self.coords(self.left_id,
@@ -221,11 +228,12 @@ class HoleButton(tk.Canvas):
 
 
     def set_props(self, props, bstate):
-        """Pass along set_props call."""
-        self.behavior.set_props(props, bstate)
+        """Set props and state of the hole."""
+        self.props = props
+        self.behavior.refresh(bstate)
 
 
-    def left_click(self, _=None):
+    def left_click(self, event=None):
         """Pass along left_click call.
         If the button is in the top row and facing players is set,
         then swap the left and right button actions.
@@ -233,14 +241,15 @@ class HoleButton(tk.Canvas):
 
         if self['state'] == tk.DISABLED:
             return
+        # print("left click - button", event, event.widget)
 
         if self.rotate_text():
-            self.behavior.right_click()
+            self.behavior.do_right_click()
         else:
-            self.behavior.left_click()
+            self.behavior.do_left_click()
 
 
-    def right_click(self, _=None):
+    def right_click(self, event=None):
         """Pass along right_click call.
         If the button is in the top row and facing players is set,
         then swap the left and right button actions.
@@ -248,11 +257,12 @@ class HoleButton(tk.Canvas):
 
         if self['state'] == tk.DISABLED:
             return
+        # print("right click - button", event, event.widget)
 
         if self.rotate_text():
-            self.behavior.left_click()
+            self.behavior.do_left_click()
         else:
-            self.behavior.right_click()
+            self.behavior.do_right_click()
 
 
 class StoreButton(tk.Canvas):
@@ -315,9 +325,9 @@ class StoreButton(tk.Canvas):
 
     def left_click(self, _=None):
         """pass along left_click call."""
-        self.behavior.left_click()
+        self.behavior.do_left_click()
 
 
     def right_click(self, _=None):
         """pass along right_click call."""
-        self.behavior.right_click()
+        self.behavior.do_right_click()
