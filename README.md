@@ -5,7 +5,7 @@ The goal of Mancala Games is to create a means to play a variety of mancala game
 
 Mancala Games only supports two row mancala games. Stores are optional and there are 50 or so other game parameters (see [Mancala Game Parameters](https://html-preview.github.io/?url=https://github.com/StoneShark/MancalaGames/blob/main/docs/game_params.html)).  Many preconfigured games are provided (see [Mancala Game Configurations](https://html-preview.github.io/?url=https://github.com/StoneShark/MancalaGames/blob/main/docs/about_games.html)). 
 
-Three computer players are provided: Negamaxer can only be used in games with alternating turns and is a slightly optimized version of the MiniMaxer. The Monte Carlo Tree Search works best for games in which it hard to configure the MiniMaxer scorer.
+Three computer players are provided: Negamaxer can only be used in games with alternating turns and is a slightly optimized version of the MiniMaxer. The Monte Carlo Tree Search works best for games in which it is hard to configure the MiniMaxer scorer.
 
 There are 3 ways to startup Mancala Games:
 
@@ -31,7 +31,7 @@ Game play is broken up into small steps and each step is implemented as a decora
 * Allowables - determines what holes may be played
 * Moves - determines valid moves for computer player
 * Incrementer - increments clockwise, counter-clockwise, past blocks, etc.
-* Sow Starter - processes start hole by determining the number of seeds to sow possibly leaving one seed
+* Drawer - start a move by taking the seeds from the selected hole, determining the number of seeds to sow possibly leaving one seed, possibly unlocking the hole
 * Make Child - stops sowing when a child should be made and is the test for making a child in the capturer
 * Get Direction - determines which specific direction to sow 
 * Sower - sows the seeds (uses incrementer)

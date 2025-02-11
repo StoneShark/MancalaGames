@@ -601,7 +601,7 @@ class MancalaUI(tk.Frame):
 
             player = row == turn_row
             if self.info.stores:
-                if self.info.goal in (gi.Goal.DEPRIVE,  gi.Goal.CLEAR):
+                if self.info.goal in (gi.Goal.DEPRIVE, gi.Goal.CLEAR):
                     seeds = 0
                 else:
                     seeds = self.game.store[not row]

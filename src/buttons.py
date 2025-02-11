@@ -18,7 +18,7 @@ import game_interface as gi
 import man_config
 
 
-# %% enum, class list and global function
+# %% top level behavior interfaces for mancala_ui
 
 @enum.unique
 class Behavior(enum.IntEnum):
@@ -97,8 +97,9 @@ class HoleButton(tk.Canvas):
         self.right_move = right_move
         self.props = None
         self.behavior = behaviors.PlayButtonBehavior(self)
-        btn_size = man_config.CONFIG.get_int('button_size')
+        self.last_event = 0   # last event.serial
 
+        btn_size = man_config.CONFIG.get_int('button_size')
         tk.Canvas.__init__(self, pframe,
                            borderwidth=4, relief='raised',
                            width=btn_size, height=btn_size)
@@ -107,7 +108,7 @@ class HoleButton(tk.Canvas):
                                         font=man_config.CONFIG.get_font())
         self.bind('<Button-1>', self.left_click)
         self.bind('<Button-3>', self.right_click)
-        self.bind("<Configure>", self._move_text)
+        self.bind('<Configure>', self._move_text)
 
         self.rclick_id = self.right_id = self.left_id = None
         self.split_grids = left_move != right_move
@@ -122,10 +123,10 @@ class HoleButton(tk.Canvas):
             self.rclick_id = self.create_rectangle(
                 *self._get_coords(btn_size, btn_size),
                 outline='', fill=color, stipple=density)
-            self.tag_bind(self.rclick_id, "<Button-1>", self.right_click)
+            self.tag_bind(self.rclick_id, '<Button-1>', self.right_click)
 
             if not self.split_grids or not self.game_ui.vars.touch_screen.get():
-                self.itemconfigure(self.rclick_id, state='hidden')
+                self.itemconfig(self.rclick_id, state='hidden')
 
         # show grids and filter cw/ccw sow based on allowable
         # sow directions
@@ -138,8 +139,8 @@ class HoleButton(tk.Canvas):
             self.left_id = self.create_rectangle(
                 *self._get_coords(btn_size, btn_size, True),
                 outline='', fill=gcolor, stipple=density)
-            self.itemconfigure(self.right_id, state='hidden')
-            self.itemconfigure(self.left_id, state='hidden')
+            self.itemconfig(self.right_id, state='hidden')
+            self.itemconfig(self.left_id, state='hidden')
 
 
     def __setitem__(self, key, value):
@@ -203,14 +204,15 @@ class HoleButton(tk.Canvas):
 
     def _move_text(self, event):
         """Keep the text widget in the center of the canvas
-        and resize the tablet mode rectangle (if there is one)."""
+        and resize the tablet mode and block grid rectangles
+        (if they were created)."""
 
         self.coords(self.text_id, event.width//2, event.height//2)
         if self.rclick_id:
             self.coords(self.rclick_id,
                         self._get_coords(event.width, event.height - 8))
 
-        if self.right_id:
+        if self.split_grids:
             self.coords(self.right_id,
                         self._get_coords(event.width, event.height - 8, False))
             self.coords(self.left_id,
@@ -233,15 +235,18 @@ class HoleButton(tk.Canvas):
         self.behavior.refresh(bstate)
 
 
-    def left_click(self, event=None):
+    def left_click(self, event):
         """Pass along left_click call.
         If the button is in the top row and facing players is set,
         then swap the left and right button actions.
-        Don't care about the possible event parameter."""
 
-        if self['state'] == tk.DISABLED:
+        Use event.serial to determine if two events were generated
+        from the click--this seems to happen when using right click
+        grid in non-play modes. Only process unique events."""
+
+        if self['state'] == tk.DISABLED or event.serial == self.last_event:
             return
-        # print("left click - button", event, event.widget)
+        self.last_event = event.serial
 
         if self.rotate_text():
             self.behavior.do_right_click()
@@ -249,15 +254,18 @@ class HoleButton(tk.Canvas):
             self.behavior.do_left_click()
 
 
-    def right_click(self, event=None):
+    def right_click(self, event):
         """Pass along right_click call.
         If the button is in the top row and facing players is set,
         then swap the left and right button actions.
-        Don't care about the possible event parameter."""
 
-        if self['state'] == tk.DISABLED:
+        Use event.serial to determine if two events were generated
+        from the click--this seems to happen when using right click
+        grid in non-play modes. Only process unique events."""
+
+        if self['state'] == tk.DISABLED or event.serial == self.last_event:
             return
-        # print("right click - button", event, event.widget)
+        self.last_event = event.serial
 
         if self.rotate_text():
             self.behavior.do_left_click()
@@ -298,9 +306,9 @@ class StoreButton(tk.Canvas):
             self.itemconfig(self.text_id, text=value)
 
             if self.game_ui.vars.facing_players.get() and self.owner:
-                self.itemconfigure(self.text_id, angle=180)
+                self.itemconfig(self.text_id, angle=180)
             else:
-                self.itemconfigure(self.text_id, angle=0)
+                self.itemconfig(self.text_id, angle=0)
         else:
             super().__setitem__(key, value)
 

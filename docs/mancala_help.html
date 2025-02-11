@@ -102,17 +102,23 @@ holes for each player are provided and (if configured) stores are available on
 either side. The right store is for the lower player and the left hole
 is for the upper player.
 
-The Mancala UI is directly created by the Play command, is created after a
-game is selected by Play_Mancala, and is created when the Play button is hit
-in Mancala_Games.
+<p>The Mancala UI is directly created by the Play command line script;
+is created after a game is selected in Play_Mancala;
+and is created when the Play button is hit in Mancala_Games.
+
+<p>Visual and behavior options of the Mancala UI may be set via a mancala.ini file.
+If this file doesn't exist it is created. Comments in the distribution file
+describe the options, what they do, and valid values.
+Some validation is done when loading the file but errors may still slip through.
 
 <h3>Game Play</h3>
-<p>Game moves are made by clicking on the desired hole to start sowing from.
+<p>Game moves are made by clicking on the desired hole to start sowing from (the draw).
 Sow direction is defined by <a href="game_params.html#sow_direct">SOW_DIRECT</a>
 and <a href="game_params.html#udir_holes">UDIR_HOLES</a>.
 
 <p>If udir_holes are not selected,
-the sow direction is completely controlled via <a href="game_params.html#sow_direct">SOW_DIRECT</a>.
+the sow direction is completely controlled via
+<a href="game_params.html#sow_direct">SOW_DIRECT</a>.
 For holes configured without UDIR_HOLES,
 both the left and right buttons sow in the defined direction.
 Clockwise (CW) and counter-clockwise (CCW) apply to all holes.
@@ -130,6 +136,11 @@ For these holes the player chooses the sow direction on each move based on which
 mouse button initiates the move:
 a left click sows seeds to the player's left and
 a right click sows seeds to the player's right.
+
+<p>A Touch Screen option allows the direction of sow to be selected only with
+a left clicks. A grid is shown on the 'right' side of the button, selecting
+it will perform the right direction sow. The visual properites (color and density)
+of the grid may be defined in the mancala.ini file.
 
 <p>All of the rest of the move steps are performed automatically.
 If a player is required to pass, a window will popup to state that.
@@ -209,7 +220,7 @@ updates between repeat turns.
 <p><b>Short AI Delay</b>: There is a short delay after your move,
 before the AI plays. This allows a brief glance (about 1 second)
 at the results of your move and which moves are available for the
-AI player You will see updates between repeat turns.
+AI player. You will see updates between repeat turns.
 <p><b>Long AI Delay</b>: Similar to 'Short AI Delay' but the delay
 lengthened to about 3 seconds.
 <p><b class="inhead">Difficulty Ratings</b> set number of moves the AI player will look ahead
@@ -247,11 +258,13 @@ These items are generally apparent to the players, but this creates a record.
 e.g. individual sowing substeps in multilap games.
 </ol>
 
-<p>Two additional <b class="inhead">Log Controls</b> are provided:
+<p>Three additional <b class="inhead">Log Controls</b> are provided:
 <p><b>Live Log</b>: The log is printed to the console as it is collected.
 Some information may give away the AI Players intenteded moves.
 <p><b>Log AI Analysis</b>: Turn on logging for the AI Player's analysis of moves.
 This can become quite verbose as the AI player considers each possible move and response.
+<p><b>Filter AI Scores</b>: Don't show the scores that the AI uses to pick moves.
+On by default, not supported from ini file.
 
 <h4>Display</h4>
 <p><b>Show Tally</b>: Show or hide the tally frame.
@@ -260,7 +273,7 @@ facilitates user selected sow direction without requiring a two-button mouse.
 A rectangle is dithered onto any user directed buttons for the right click.
 <p><b>Facing Players</b>: Rotate the text for the top player as though two players
 are sitting on opposite sides of a screen. When facing players is active, the
-left and right mouse button operations are swapped 
+left and right mouse button operations are swapped
 for the player closest to the menu bar.
 Specifically, if facing players is set, a left click will sow counter-clockwise
 and a right click will sow clockwise for the player closest to the menu bar.

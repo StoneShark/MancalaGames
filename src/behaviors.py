@@ -15,7 +15,6 @@ import man_config
 
 # %%  constants
 
-
 YES_STR = 'yes'
 NO_STR = 'no'
 
@@ -118,9 +117,9 @@ class BehaviorIf(abc.ABC):
         rotate_text."""
 
         if self.btn.rotate_text():
-            self.btn.itemconfigure(self.btn.text_id, angle=180)
+            self.btn.itemconfig(self.btn.text_id, angle=180)
         else:
-            self.btn.itemconfigure(self.btn.text_id, angle=0)
+            self.btn.itemconfig(self.btn.text_id, angle=0)
 
 
     def owner_arrow(self):
@@ -163,19 +162,11 @@ class BehaviorIf(abc.ABC):
 
         self.orient_text()
 
-        if self.btn.rclick_id:
-            self.btn.itemconfigure(self.btn.rclick_id, state='hidden')
-
-        # TODO right click grid in non-play behaviors not working
-        #   left click on grid -- does right click, then left click (2 events)
-        # if (self.btn.non_play_grid
-        #         and self.btn.game_ui.vars.touch_screen.get()):
-        #     self.btn.itemconfigure(self.btn.rclick_id, state='normal')
-        #     self.btn.tag_raise(self.btn.rclick_id)
-        # else:
-        #     self.btn.itemconfigure(self.btn.rclick_id, state='hidden')
-
-
+        if (self.btn.non_play_grid
+                and self.btn.game_ui.vars.touch_screen.get()):
+            self.btn.itemconfig(self.btn.rclick_id, state='normal')
+        else:
+            self.btn.itemconfig(self.btn.rclick_id, state='hidden')
 
 
 class StoreBehaviorIf(abc.ABC):
@@ -197,7 +188,7 @@ class StoreBehaviorIf(abc.ABC):
         """Do the right click action"""
 
 
-# %%    Hole Behaviors
+# %%  Play mode behavior
 
 class PlayButtonBehavior(BehaviorIf):
     """The button behavior during game play."""
@@ -262,10 +253,12 @@ class PlayButtonBehavior(BehaviorIf):
 
 
     def _update_grids(self, bstate):
-        """Show hide the grids and adjust the mouse bindings.
-        This is only called if the left and right actions are
-        different."""
+        """Show hide the grids and adjust the mouse bindings."""
         # pylint: disable=too-many-boolean-expressions
+
+        if not self.btn.split_grids:
+            self.btn.itemconfig(self.btn.rclick_id, state='hidden')
+            return
 
         gccw = bstate.grid_ccw()
         gcw = bstate.grid_cw()
@@ -275,8 +268,8 @@ class PlayButtonBehavior(BehaviorIf):
 
         # show red grid on right
         if (gccw and not top) or (gcw and top) or (gcw and trot):
-            self.btn.itemconfigure(self.btn.right_id, state='normal')
-            self.btn.itemconfigure(self.btn.left_id, state='hidden')
+            self.btn.itemconfig(self.btn.right_id, state='normal')
+            self.btn.itemconfig(self.btn.left_id, state='hidden')
 
             if trot:
                 self.btn.unbind('<Button-1>')
@@ -292,8 +285,8 @@ class PlayButtonBehavior(BehaviorIf):
 
         # show red grid on left
         elif (gcw and not top) or (gccw and top) or (gccw and trot):
-            self.btn.itemconfigure(self.btn.right_id, state='hidden')
-            self.btn.itemconfigure(self.btn.left_id, state='normal')
+            self.btn.itemconfig(self.btn.right_id, state='hidden')
+            self.btn.itemconfig(self.btn.left_id, state='normal')
 
             if trot:
                 self.btn.bind('<Button-1>', self.btn.left_click)
@@ -305,15 +298,15 @@ class PlayButtonBehavior(BehaviorIf):
             self.btn.itemconfig(self.btn.rclick_id, state='hidden')
 
         else:
-            self.btn.itemconfigure(self.btn.right_id, state='hidden')
-            self.btn.itemconfigure(self.btn.left_id, state='hidden')
+            self.btn.itemconfig(self.btn.right_id, state='hidden')
+            self.btn.itemconfig(self.btn.left_id, state='hidden')
             self.btn.bind('<Button-1>', self.btn.left_click)
             self.btn.bind('<Button-3>', self.btn.right_click)
 
             if self.btn.game_ui.vars.touch_screen.get():
-                self.btn.itemconfigure(self.btn.rclick_id, state='normal')
+                self.btn.itemconfig(self.btn.rclick_id, state='normal')
             else:
-                self.btn.itemconfigure(self.btn.rclick_id, state='hidden')
+                self.btn.itemconfig(self.btn.rclick_id, state='hidden')
 
 
     def _set_btn_ui_props(self, bstate):
@@ -339,8 +332,7 @@ class PlayButtonBehavior(BehaviorIf):
             else:
                 self.btn['background'] = man_config.CONFIG['inactive_color']
 
-        if self.btn.split_grids:
-            self._update_grids(bstate)
+        self._update_grids(bstate)
 
 
     def refresh(self, bstate=BtnState.ACTIVE):
@@ -350,7 +342,7 @@ class PlayButtonBehavior(BehaviorIf):
         self._set_btn_ui_props(bstate)
 
 
-# %% store behaviors
+# %% no interaction store behavior
 
 class NoStoreBehavior(StoreBehaviorIf):
     """Store behavior that has no interaction.
