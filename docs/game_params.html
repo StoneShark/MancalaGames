@@ -124,7 +124,7 @@ is included after the parameter sections.
 <p class="helptext"> If the game is played in rounds, the round end condition is decided by <a href="game_params.html#rounds">ROUNDS</a>. These games end when one player has collected sufficient seeds to prevent the opponent from filling the required number of holes. Generally, the required number of holes is one, but this may be increased by setting goal_param. 
 <p class="helptext"> In MAX_SEEDS/ROUNDS games the player only controls the holes on their side of the board, while, in TERRITORY games a player may control holes on either side of the board.
 <li class="helptext">
-<b class="enum">DEPRIVE</b>: eliminate all your opponent?s seeds.
+<b class="enum">DEPRIVE</b>: eliminate all your opponent's seeds.
 <p class="helptext"> If a player has no seeds at the start of their turn, they lose. If a player has no moves at the start of their turn, then the game outcome is decided by who has seeds: If both players have seeds, the game ends in a tie. If the current player has seeds, but the previous player does not, then the current player wins because they forced the previous player to give away all their seeds.
 <p class="helptext"> <a href="game_params.html#grandslam">GRANDSLAM</a> must be legal for DEPRIVE games.
 <p class="helptext"> DEPRIVE games cannot be played in <a href="game_params.html#rounds">ROUNDS</a> or use children. Additionally, the following options are incompatible with DEPRIVE games: <a href="game_params.html#moveunlock">MOVEUNLOCK</a>, <a href="game_params.html#mustpass">MUSTPASS</a> and <a href="game_params.html#mustshare">MUSTSHARE</a>.
@@ -292,11 +292,11 @@ is included after the parameter sections.
 <ol start=0><li class="helptext">
 <b class="enum">LEGAL</b>: the seeds are captured
 <li class="helptext">
-<b class="enum">NOT_LEGAL</b>: you may not capture all your opponent?s seeds, a move which would do so is not allowed
+<b class="enum">NOT_LEGAL</b>: you may not capture all your opponent's seeds, a move which would do so is not allowed
 <li class="helptext">
 <b class="enum">NO_CAPT</b>: you may sow the seeds, but the capture is not performed
 <li class="helptext">
-<b class="enum">OPP_GETS_REMAIN</b>: if you capture all your opponent?s seeds, they capture all your remaining seeds, and the game is over. The winner is determined by game goal. Seeds picked because of <a href="game_params.html#pickextra">PICKEXTRA</a> PICK*LASTSEEDS go to the current player and not the opponent.
+<b class="enum">OPP_GETS_REMAIN</b>: if you capture all your opponent's seeds, they capture all your remaining seeds, and the game is over. The winner is determined by game goal. Seeds picked because of <a href="game_params.html#pickextra">PICKEXTRA</a> PICK*LASTSEEDS go to the current player and not the opponent.
 <li class="helptext">
 <b class="enum">LEAVE_LEFT</b>: the capture is performed from all but the leftmost hole from the sower perspective. This might leave your opponents without seeds or might not capture any seeds.
 <li class="helptext">
@@ -391,9 +391,9 @@ is included after the parameter sections.
 <b class="enum">OFF</b>: Single lap sowing. Seeds from the start hole are sown, typically, one per hole until expended.
 <li class="helptext">
 <b class="enum">LAPPER</b>: If the first sow ends in a hole with more than one seed, pick up all the seeds and continue sowing another lap. Note that lap here does not mean a full circuit of the board, only an individual sow operation. In general, sowing laps continues in this manner until the final seed of a lap reaches an empty hole. There are games with other conditions for ending a multilap sow such as making a capture or child. 
-<p class="helptext"> Several values of <a href="game_params.html#sow_rule">SOW_RULE</a> perform an operation after each lap sown: SOW_CLKD_DIV(_NR) closes the final hole and CHANGE_DIR_LAP changes the direction of sowing after each lap.
+<p class="helptext"> Several values of <a href="game_params.html#sow_rule">SOW_RULE</a> perform an operation after each lap sown: SOW_BLKD_DIV(_NR) closes the final hole and CHANGE_DIR_LAP changes the direction of sowing after each lap.
 <li class="helptext">
-<b class="enum">LAPPER_NEXT</b>: For lapper_next sowing, the number of seeds in the last sown hole of lap do not matter. Instead, if the hole after the last sown hole has any seeds, those seeds are used to continue sowing the next lap. Sowing continues until the hole after the lap's final seed is empty. There are games with other conditions for ending a multilap sow such as making a capture or making a child.
+<b class="enum">LAPPER_NEXT</b>: For lapper_next sowing, the number of seeds in the last sown hole of lap does not matter. Instead, if the hole after the last sown hole has any seeds, those seeds are used to continue sowing the next lap. Sowing continues until the hole after the lap's final seed is empty. There are games with other conditions for ending a multilap sow such as making a capture or making a child.
 <p class="helptext"> A <a href="game_params.html#sow_rule">SOW_RULE</a> of CHANGE_DIR_LAP changes the direction of sowing after each lap. SOW_BLKD_DIV(_NR) is not supported for LAPPER_NEXT.
 </ol>
 <h4 id="sow_direct"> Sow Direction </h4>
@@ -444,7 +444,7 @@ is included after the parameter sections.
 <p class="pdesc">Default value: False
 <p class="pdesc">UI Tab: Sow
 
-<p>Sow seeds into your own store when passing it. Do not sow into your opponent?s store. When the final seed is sown into the store, the sower gets another turn.
+<p>Sow seeds into your own store when passing it. Do not sow into your opponent's store. When the final seed is sown into the store, the sower gets another turn.
 <h4 id="move_one"> Move One Seed </h4>
 <p class="pdesc">Location in Config Files: game_info : move_one
 <p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
@@ -496,11 +496,11 @@ is included after the parameter sections.
 <p class="helptext"> If <a href="game_params.html#mlaps">MLAPS</a> is LAPPER and the final seed sown for any lap meets the simple capture criteria for that hole, the contents of the hole are captured by the sower and not the hole owner and the turn is over. For CAPTTWOOUT, CAPT_NEXT and <a href="game_params.html#crosscapt">CROSSCAPT</a> captures, the sower always does the final capture.
 <p class="helptext"> <a href="game_params.html#grandslam">GRANDSLAM</a> rules are not applied. <a href="game_params.html#nocaptmoves">NOCAPTMOVES</a> prevents this capture for the first moves.
 <li class="helptext">
-<b class="enum">SOW_CAPT_ALL</b>: Like OWN_SOW_CAPT_ALL but only the SOWer captures seeds from the side specified by <a href="game_params.html#capt_side">CAPT_SIDE</a>: BOTH sower captures from any hole. OPP sower capturer only from opponent?s holes.  OWN sower captures only from their own holes. 
+<b class="enum">SOW_CAPT_ALL</b>: Like OWN_SOW_CAPT_ALL but only the SOWer captures seeds from the side specified by <a href="game_params.html#capt_side">CAPT_SIDE</a>: BOTH sower captures from any hole. OPP sower capturer only from opponent's holes.  OWN sower captures only from their own holes. 
 <p class="helptext"> If mlaps is LAPPER and the final seed sown for any lap meets the capture criteria, the contents of the hole are captured by the sower and not the hole owner and the turn is over.
 <p class="helptext"> <a href="game_params.html#grandslam">GRANDSLAM</a> rules are not applied. <a href="game_params.html#nocaptmoves">NOCAPTMOVES</a> prevents this capture for the first number of specified moves.
 <li class="helptext">
-<b class="enum">NO_SOW_OPP_2S</b>: Don't sow into opponent's holes with 2 seeds.
+<b class="enum">NO_SOW_OPP_NS</b>: Don't sow into opponent's holes with sow_param seeds.
 <li class="helptext">
 <b class="enum">CHANGE_DIR_LAP</b>: Change the direction for each lap sown. Generally used with <a href="game_params.html#udir_holes">UDIR_HOLES</a> so the player may choose the first direction.
 <li class="helptext">
@@ -509,6 +509,8 @@ is included after the parameter sections.
 <b class="enum">LAP_CAPT</b>: after each lap check for a capture, if there is a capture continue sowing with another lap. If a basic capture is configured (evens, capt_on, max or min), the hole after the captured seeds is drawn to continue lapping.
 <li class="helptext">
 <b class="enum">NO_OPP_CHILD</b>: do not sow into your opponent's children.
+<li class="helptext">
+<b class="enum">OPP_GETS_OWN_LAST</b>: Use LAP_CAPT sow rule until there are only sow_param seeds left. Then when down to the last seeds (sow_param or less at the start of a lap): seeds sown on the opponent's side are captured by the opponent. If the last seed would do a normal capture, the sower takes those seeds, including the last seed sown.
 </ol>
 <h4 id="sow_param"> Sow Parameter </h4>
 <p class="pdesc">Location in Config Files: game_info : sow_param
@@ -517,9 +519,9 @@ is included after the parameter sections.
 <p class="pdesc">UI Tab: Sow
 
 <p>A general parameter for sowing. Usage is based on other sow options:
-<ol start=0><li class="helptext">
-Sow rule of MAX_SOW: maximum number of seeds a hole may contain
-</ol>
+<p>Sow rule of MAX_SOW: maximum number of seeds a hole may contain
+<p>Sow rule of NO_SOW_OPP_NS: don't sow opposite holes with sow_param seeds
+<p>Sow rule of OPP_GETS_OWN_LAST: number of seeds to switch from straight LAP_CAPT sowing to opponent capturing seeds sown on their side of the board, unless final seed does capture
 <h4 id="child_type"> Type of Children </h4>
 <p class="pdesc">Location in Config Files: game_info : child_type
 <p id="ChildType" class="pdesc">Type: <a href="param_types.html#ChildType"> ChildType </a>
@@ -567,7 +569,7 @@ Sow rule of MAX_SOW: maximum number of seeds a hole may contain
 <li class="helptext">
 <b class="enum">OWN_ONLY</b>: Only make children on your own side of the board. Incompatible with BULL, QUR, and WEG child types.
 <li class="helptext">
-<b class="enum">NOT_1ST_OPP</b>: Don't make a child in the first hole on the opponent?s side/territory with one seed.
+<b class="enum">NOT_1ST_OPP</b>: Don't make a child in the first hole on the opponent's side/territory with one seed.
 </ol>
 <h4 id="child_locs"> Child Locations </h4>
 <p class="pdesc">Location in Config Files: game_info : child_locs
@@ -575,7 +577,8 @@ Sow rule of MAX_SOW: maximum number of seeds a hole may contain
 <p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Sow
 
-<p>Locations where children can be made by each player. The notes designate players as: T - top player, B - bottom player. N - neither player. For shorter boards, the pattern is generated using assignments (a b c d e) as:
+<p>Locations where children can be made by each player. Child locations are further limited by <a href="game_params.html#child_rule">CHILD_RULE</a>.
+<p>The notes designate players as: T - top player, B - bottom player. N - neither player. For shorter boards, the pattern is generated using assignments (a b c d e) as:
 <p>board length 2: a e
 <p>board length 3: a c e
 <p>board length 4: a b d e
@@ -776,7 +779,7 @@ Sow rule of MAX_SOW: maximum number of seeds a hole may contain
 <li class="helptext">
 <b class="enum">PICKCROSS</b>: Take the seeds from the opposite side of the board. 
 <li class="helptext">
-<b class="enum">PICKTWOS</b>: Take seeds from your opponent?s holes with exactly two seeds each.
+<b class="enum">PICKTWOS</b>: Take seeds from your opponent's holes with exactly two seeds each.
 <li class="helptext">
 <b class="enum">PICKLASTSEEDS</b>: If there are the number of starts seeds or fewer left, the current player collects them, and the game is over. This rule is applied at the end of each turn, even if there is not a capture because the sow phase may have reduced the seed count.
 <li class="helptext">
@@ -855,7 +858,7 @@ Sow rule of MAX_SOW: maximum number of seeds a hole may contain
 <p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Player
 
-<p>The multiplier for the access scorer. The access scorer computes how many of the opponent?s holes can be accessed for the given game state.
+<p>The multiplier for the access scorer. The access scorer computes how many of the opponent's holes can be accessed for the given game state.
 <p>The access scorer is slow and therefore is prohibited from being used in multilap games (<a href="game_params.html#mlaps">MLAPS</a>); games with user choice of move direction (<a href="game_params.html#udir_holes">UDIR_HOLES</a>); and games where hole owners are not predefined (<a href="game_params.html#no_sides">NO_SIDES</a>). In these game configurations, the multiplier must be zero to disable the access scorer.
 <p>Used only for minimax & negamax players.
 <h4 id="seeds_m"> Seeds Multiplier </h4>

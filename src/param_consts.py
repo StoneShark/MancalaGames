@@ -227,11 +227,12 @@ STRING_DICTS = {
          "Close, Skip, Capt; (not right)": gi.SowRule.SOW_BLKD_DIV_NR,
          "Owners Capture all while Sow": gi.SowRule.OWN_SOW_CAPT_ALL,
          "Sower Captures while Sow from captside(s)": gi.SowRule.SOW_CAPT_ALL,
-         "Don't sow Opp holes w/2s": gi.SowRule.NO_SOW_OPP_2S,
+         "Don't sow Opp holes w/sow_param seeds": gi.SowRule.NO_SOW_OPP_NS,
          "Change Direction each Lap": gi.SowRule.CHANGE_DIR_LAP,
          "Never sow holes above sow_param": gi.SowRule.MAX_SOW,
          "Do captures on each lap": gi.SowRule.LAP_CAPT,
          "Do not sow opponents children": gi.SowRule.NO_OPP_CHILD,
+         "Lap Capt Then Opp takes Own (< sow_param)": gi.SowRule.OPP_GETS_OWN_LAST,
          }),
 
     'StartPattern': lookup_dicts(

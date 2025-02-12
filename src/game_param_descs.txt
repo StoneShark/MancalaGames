@@ -4,7 +4,7 @@ A description of the game, typically enough to remind the player what the game o
 New lines can be inserted with \n.
 
 <param access_m>
-The multiplier for the access scorer. The access scorer computes how many of the opponent?s holes can be accessed for the given game state.
+The multiplier for the access scorer. The access scorer computes how many of the opponent's holes can be accessed for the given game state.
 
 The access scorer is slow and therefore is prohibited from being used in multilap games (MLAPS); games with user choice of move direction (UDIR_HOLES); and games where hole owners are not predefined (NO_SIDES). In these game configurations, the multiplier must be zero to disable the access scorer.
 
@@ -132,7 +132,9 @@ Used only for the minimax & negamax players.
 Defines the number of seeds required to make a child.
 
 <param child_locs>
-Locations where children can be made by each player. The notes designate players as: T - top player, B - bottom player. N - neither player. For shorter boards, the pattern is generated using assignments (a b c d e) as:
+Locations where children can be made by each player. Child locations are further limited by CHILD_RULE.
+
+The notes designate players as: T - top player, B - bottom player. N - neither player. For shorter boards, the pattern is generated using assignments (a b c d e) as:
 
 board length 2: a e
 
@@ -191,7 +193,7 @@ Additional child creation requirements may be set. These are in addition to loca
 
 - OWN_ONLY: Only make children on your own side of the board. Incompatible with BULL, QUR, and WEG child types.
 
-- NOT_1ST_OPP: Don't make a child in the first hole on the opponent?s side/territory with one seed.
+- NOT_1ST_OPP: Don't make a child in the first hole on the opponent's side/territory with one seed.
 
 <param child_type>
 Games with children allow players to claim holes. These child holes are an extension of the stores and seeds in them count towards a win. Making a child stops any multilap sowing, moves cannot start from children, and they cannot be captured (except for special rules associated with WEGs).
@@ -274,7 +276,7 @@ The overall goal of the game. Defines how a player wins.
 
   + In MAX_SEEDS/ROUNDS games the player only controls the holes on their side of the board, while, in TERRITORY games a player may control holes on either side of the board.
 
-- DEPRIVE: eliminate all your opponent?s seeds.
+- DEPRIVE: eliminate all your opponent's seeds.
 
   + If a player has no seeds at the start of their turn, they lose. If a player has no moves at the start of their turn, then the game outcome is decided by who has seeds: If both players have seeds, the game ends in a tie. If the current player has seeds, but the previous player does not, then the current player wins because they forced the previous player to give away all their seeds.
 
@@ -316,11 +318,11 @@ A grandslam is when your opponent has seeds at the start of your turn, and you c
 
 - LEGAL: the seeds are captured
 
-- NOT_LEGAL: you may not capture all your opponent?s seeds, a move which would do so is not allowed
+- NOT_LEGAL: you may not capture all your opponent's seeds, a move which would do so is not allowed
 
 - NO_CAPT: you may sow the seeds, but the capture is not performed
 
-- OPP_GETS_REMAIN: if you capture all your opponent?s seeds, they capture all your remaining seeds, and the game is over. The winner is determined by game goal. Seeds picked because of PICKEXTRA PICK*LASTSEEDS go to the current player and not the opponent.
+- OPP_GETS_REMAIN: if you capture all your opponent's seeds, they capture all your remaining seeds, and the game is over. The winner is determined by game goal. Seeds picked because of PICKEXTRA PICK*LASTSEEDS go to the current player and not the opponent.
 
 - LEAVE_LEFT: the capture is performed from all but the leftmost hole from the sower perspective. This might leave your opponents without seeds or might not capture any seeds.
 
@@ -355,9 +357,9 @@ Determines if seeds from more than the initial start hole are picked up and sown
 
 - LAPPER: If the first sow ends in a hole with more than one seed, pick up all the seeds and continue sowing another lap. Note that lap here does not mean a full circuit of the board, only an individual sow operation. In general, sowing laps continues in this manner until the final seed of a lap reaches an empty hole. There are games with other conditions for ending a multilap sow such as making a capture or child. 
 
-  + Several values of SOW_RULE perform an operation after each lap sown: SOW_CLKD_DIV(_NR) closes the final hole and CHANGE_DIR_LAP changes the direction of sowing after each lap.
+  + Several values of SOW_RULE perform an operation after each lap sown: SOW_BLKD_DIV(_NR) closes the final hole and CHANGE_DIR_LAP changes the direction of sowing after each lap.
 
-- LAPPER_NEXT: For lapper_next sowing, the number of seeds in the last sown hole of lap do not matter. Instead, if the hole after the last sown hole has any seeds, those seeds are used to continue sowing the next lap. Sowing continues until the hole after the lap's final seed is empty. There are games with other conditions for ending a multilap sow such as making a capture or making a child.
+- LAPPER_NEXT: For lapper_next sowing, the number of seeds in the last sown hole of lap does not matter. Instead, if the hole after the last sown hole has any seeds, those seeds are used to continue sowing the next lap. Sowing continues until the hole after the lap's final seed is empty. There are games with other conditions for ending a multilap sow such as making a capture or making a child.
 
   + A SOW_RULE of CHANGE_DIR_LAP changes the direction of sowing after each lap. SOW_BLKD_DIV(_NR) is not supported for LAPPER_NEXT.
 
@@ -411,7 +413,7 @@ Rules to allow taking of more than otherwise captured or picked seeds:
 
 - PICKCROSS: Take the seeds from the opposite side of the board. 
 
-- PICKTWOS: Take seeds from your opponent?s holes with exactly two seeds each.
+- PICKTWOS: Take seeds from your opponent's holes with exactly two seeds each.
 
 - PICKLASTSEEDS: If there are the number of starts seeds or fewer left, the current player collects them, and the game is over. This rule is applied at the end of each turn, even if there is not a capture because the sow phase may have reduced the seed count.
 
@@ -539,12 +541,16 @@ Both mouse buttons will start a move no matter the sow direction. If the hole is
 When PLAYALTDIR is not selected, any hole can be set as UDIR_HOLES to allow the user to override the sow_direct setting.
 
 <param sow_own_store>
-Sow seeds into your own store when passing it. Do not sow into your opponent?s store. When the final seed is sown into the store, the sower gets another turn.
+Sow seeds into your own store when passing it. Do not sow into your opponent's store. When the final seed is sown into the store, the sower gets another turn.
 
 <param sow_param>
 A general parameter for sowing. Usage is based on other sow options:
 
-- Sow rule of MAX_SOW: maximum number of seeds a hole may contain
+Sow rule of MAX_SOW: maximum number of seeds a hole may contain
+
+Sow rule of NO_SOW_OPP_NS: don't sow opposite holes with sow_param seeds
+
+Sow rule of OPP_GETS_OWN_LAST: number of seeds to switch from straight LAP_CAPT sowing to opponent capturing seeds sown on their side of the board, unless final seed does capture
 
 <param sow_rule>
 Special sow rules add additional behavior or restrictions to the sowing phase:
@@ -567,13 +573,13 @@ Special sow rules add additional behavior or restrictions to the sowing phase:
 
   + GRANDSLAM rules are not applied. NOCAPTMOVES prevents this capture for the first moves.
 
-- SOW_CAPT_ALL: Like OWN_SOW_CAPT_ALL but only the SOWer captures seeds from the side specified by CAPT_SIDE: BOTH sower captures from any hole. OPP sower capturer only from opponent?s holes.  OWN sower captures only from their own holes. 
+- SOW_CAPT_ALL: Like OWN_SOW_CAPT_ALL but only the SOWer captures seeds from the side specified by CAPT_SIDE: BOTH sower captures from any hole. OPP sower capturer only from opponent's holes.  OWN sower captures only from their own holes. 
 
   + If mlaps is LAPPER and the final seed sown for any lap meets the capture criteria, the contents of the hole are captured by the sower and not the hole owner and the turn is over.
 
   + GRANDSLAM rules are not applied. NOCAPTMOVES prevents this capture for the first number of specified moves.
 
-- NO_SOW_OPP_2S: Don't sow into opponent's holes with 2 seeds.
+- NO_SOW_OPP_NS: Don't sow into opponent's holes with sow_param seeds.
 
 - CHANGE_DIR_LAP: Change the direction for each lap sown. Generally used with UDIR_HOLES so the player may choose the first direction.
 
@@ -582,6 +588,8 @@ Special sow rules add additional behavior or restrictions to the sowing phase:
 - LAP_CAPT: after each lap check for a capture, if there is a capture continue sowing with another lap. If a basic capture is configured (evens, capt_on, max or min), the hole after the captured seeds is drawn to continue lapping.
 
 - NO_OPP_CHILD: do not sow into your opponent's children.
+
+- OPP_GETS_OWN_LAST: Use LAP_CAPT sow rule until there are only sow_param seeds left. Then when down to the last seeds (sow_param or less at the start of a lap): seeds sown on the opponent's side are captured by the opponent. If the last seed would do a normal capture, the sower takes those seeds, including the last seed sown.
 
 <param sow_start>
 When selected, the first seed is sown into (i.e., left in) the start hole.

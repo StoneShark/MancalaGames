@@ -260,11 +260,12 @@ class SowRule(enum.IntEnum):
     SOW_BLKD_DIV_NR = 2
     OWN_SOW_CAPT_ALL = 3
     SOW_CAPT_ALL = 4
-    NO_SOW_OPP_2S = 5
+    NO_SOW_OPP_NS = 5
     CHANGE_DIR_LAP = 6
     MAX_SOW = 7
     LAP_CAPT = 8
     NO_OPP_CHILD = 9
+    OPP_GETS_OWN_LAST = 10
 
 
 @enum.unique

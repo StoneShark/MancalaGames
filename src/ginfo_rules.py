@@ -544,11 +544,10 @@ def add_capture_rules(rules):
 
     # rules.add_rule(
     #     'capt2_gs_legal',
-    #     rule=lambda ginfo: (ginfo.capttwoout
+    #     rule=lambda ginfo: (ginfo.capt_type == gi.CaptType.TWO_OUT
     #                         and ginfo.grandslam != gi.GrandSlam.LEGAL),
     #     msg="CAPTTWOOUT requires that GRANDSLAM be LEGAL",
     #     excp=gi.GameInfoError)
-    #  DON'T KNOW WHY THIS WAS HERE
 
     rules.add_rule(
         'lcapt_no_ctype',
@@ -557,6 +556,14 @@ def add_capture_rules(rules):
         msg='LAP_CAPT is only supported for basic captures and cross capture.',
         excp=NotImplementedError)
         # would need to carefully decide how it would work
+
+    rules.add_rule(
+        'ogol_no_ctype',
+        rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.OPP_GETS_OWN_LAST
+                            and ginfo.capt_type),
+        msg='OPP_GETS_OWN_LAST is only supported for basic captures and cross capture.',
+        excp=NotImplementedError)
+        # see lcapt_no_ctype
 
     rules.add_rule(
         'sca_gs_not',
@@ -700,9 +707,16 @@ def build_rules():
                             and ginfo.sow_rule in
                                 (gi.SowRule.OWN_SOW_CAPT_ALL,
                                  gi.SowRule.SOW_CAPT_ALL,
-                                 gi.SowRule.NO_SOW_OPP_2S)),
+                                 gi.SowRule.NO_SOW_OPP_NS)),
         msg='SOW_OWN_STORE is not supported with the selected sow rule',
         excp=NotImplementedError)
+
+    man_rules.add_rule(
+        'no_opp_n_sparam',
+        rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.NO_SOW_OPP_NS
+                            and not ginfo.sow_param),
+        msg='NO_SOW_OPP_NS requires sow_param',
+        excp=gi.GameInfoError)
 
     man_rules.add_rule(
         'max_sow_param',
@@ -719,6 +733,12 @@ def build_rules():
         excp=NotImplementedError)
         # would need to carefully decide how it would work
 
+    man_rules.add_rule(
+        'ogol_no_lnext',
+        rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.OPP_GETS_OWN_LAST
+                            and ginfo.mlaps == gi.LapSower.LAPPER_NEXT),
+        msg='OPP_GETS_OWN_LAST is not supported with LAPPER_NEXT',
+        excp=NotImplementedError)
 
     man_rules.add_rule(
         'sow_own_prescribed',

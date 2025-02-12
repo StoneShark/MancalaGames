@@ -21,6 +21,7 @@
       "prescribed": 2,
       "sow_direct": 1,
       "sow_rule": 5,
+      "sow_param": 2,
       "stores": true
    },
    "player": {

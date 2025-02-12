@@ -288,7 +288,8 @@ class TestSower:
         game_consts = gc.GameConsts(nbr_start=2, holes=4)
         game_info = gi.GameInfo(stores=True,
                                 evens=True,
-                                sow_rule=SowRule.NO_SOW_OPP_2S,
+                                sow_rule=SowRule.NO_SOW_OPP_NS,
+                                sow_param=2,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
@@ -1759,6 +1760,73 @@ class TestSCapt:
         assert mdata.capt_loc == eloc
         assert game.board == eboard
         assert game.store == estore
+
+
+class TestCaptOppOwnLast:
+
+    @pytest.fixture
+    def game(self):
+
+        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_info = gi.GameInfo(evens=True,
+                                stores=True,
+                                sow_direct=Direct.CCW,
+                                mlaps=LapSower.LAPPER,
+                                sow_rule=SowRule.OPP_GETS_OWN_LAST,
+                                sow_param=6,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        return mancala.Mancala(game_consts, game_info)
+
+
+    CASES = [
+        # two test cases from LAP_CAPT for evens game
+        (3, F, [2, 2, 2, 2, 2, 2, 2, 2], [0, 0],
+         3,    [0, 3, 3, 1, 3, 0 ,3, 3], [0, 0]),
+
+        (3, T, [3, 1, 3, 0, 3, 3, 0, 3], [0, 0],
+         3,    [0, 2, 4, 1, 0, 4, 1, 0], [0, 4]),
+
+        # capture so final loc is 5 not 4 (i.e., try to sow from next hole)
+        (3, F, [0, 0, 3, 1, 3, 0, 3, 0], [3, 3],
+         5,    [0, 0, 3, 0, 0, 0, 3, 0], [7, 3]),
+
+        # sow one own hole, one opp -> opp captures, final even -> sow capts
+        # end loc is next hole
+        (2, F, [0, 1, 3, 0, 0, 1, 0, 0], [4, 7],
+         6,    [0, 1, 0, 1, 0, 0, 0, 0], [6, 8]),
+
+        # wrap opp side -> all capt, no final capt so end on last hole sown
+        (3, F, [0, 0, 0, 6, 0, 0, 0, 0], [6, 4],
+         1,    [1, 1, 0, 0, 0, 0, 0, 0], [6, 8]),
+
+        ]
+    # @pytest.mark.usefixtures('logger')
+    @pytest.mark.parametrize('start_pos, turn, board, store, ' \
+                             'eloc, eboard, estore',
+                             CASES, ids=[f"case{idx}"
+                                         for idx, case in enumerate(CASES)])
+    def test_ogol_sower(self, game, start_pos, turn, board, store,
+                        eloc, eboard, estore):
+
+        game.board = board
+        game.store = store
+        game.turn = turn
+        # print(game.deco.sower)
+        # print(game)
+        # print(start_pos)
+
+        mdata = MoveData(game, start_pos)
+        mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(start_pos)
+        mdata.direct = game.info.sow_direct
+        game.deco.sower.sow_seeds(mdata)
+
+        # print(game)
+
+        assert mdata.capt_loc == eloc
+        assert game.board == eboard
+        assert game.store == estore
+
 
 
 class TestBadEnums:

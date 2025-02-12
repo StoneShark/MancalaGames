@@ -346,6 +346,47 @@ class SowSkipOppChild(SowMethodIf):
         mdata.capt_loc = loc
 
 
+class SowOppCaptsLast(SowMethodIf):
+    """A sower that wraps another sower until we are down to
+    the last few seeds.
+
+    When down to the last seeds (sow_param): seeds sown on the
+    opponent's side are captured by the opponent. If the last
+    seed would do a normal capture, the sower takes those seeds,
+    including the last seed sown."""
+
+    def sow_seeds(self, mdata):
+
+        # use a base sower until down to the spec number of seeds
+        if sum(self.game.board) > self.game.info.sow_param:
+            self.decorator.sow_seeds(mdata)
+            return
+
+        incr = self.game.deco.incr.incr
+        opp_side = self.game.cts.opp_side
+        capt_ok = self.game.deco.capt_ok.capture_ok
+
+        loc = mdata.cont_sow_loc
+        opp_took = 0
+        for rem_seeds in range(mdata.seeds, 0, -1):
+
+            loc = incr(loc, mdata.direct, mdata.cont_sow_loc)
+            self.game.board[loc] += 1    # for capt_ok test
+
+            if (opp_side(self.game.turn, loc)
+                    and (rem_seeds > 1 or not capt_ok(mdata, loc))):
+                self.game.board[loc] -= 1
+                self.game.store[not self.game.turn] += 1
+                opp_took += 1
+                mdata.captured = True
+
+        if opp_took:
+            game_log.add(f'{not self.game.turn} takes own {opp_took}.',
+                         game_log.DETAIL)
+
+        mdata.capt_loc = loc
+
+
 # %% precature decorators
 
 # captures occur after prescribed openings, (i.e. don't occur if

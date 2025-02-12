@@ -33,6 +33,7 @@ def _add_blkd_divert_sower(game):
 
 def _add_base_sower(game):
     """Choose the base sower."""
+    # pylint: disable=too-complex
 
     sower = None
     if game.info.sow_rule:
@@ -44,14 +45,18 @@ def _add_base_sower(game):
                                     gi.SowRule.SOW_CAPT_ALL):
             sower = sowd.SowCaptOwned(game)
 
-        elif game.info.sow_rule == gi.SowRule.NO_SOW_OPP_2S:
-            sower = sowd.SowSkipOppN(game, {2})
+        elif game.info.sow_rule == gi.SowRule.NO_SOW_OPP_NS:
+            sower = sowd.SowSkipOppN(game, {game.info.sow_param})
 
         elif game.info.sow_rule == gi.SowRule.MAX_SOW:
             sower = sowd.SowMaxN(game, game.info.sow_param)
 
         elif game.info.sow_rule == gi.SowRule.NO_OPP_CHILD:
             sower = sowd.SowSkipOppChild(game)
+
+        elif game.info.sow_rule == gi.SowRule.OPP_GETS_OWN_LAST:
+            sower = sowd.SowSeeds(game)
+            sower = sowd.SowOppCaptsLast(game, sower)
 
         elif game.info.sow_rule in (gi.SowRule.CHANGE_DIR_LAP,
                                     gi.SowRule.LAP_CAPT):
@@ -93,7 +98,9 @@ def _add_capt_stop_lap_cont(game, lap_cont):
     """Add the stop on 1; stop to capture; and/or
     lap capture lap-continuer decos"""
 
-    if game.info.sow_rule == gi.SowRule.LAP_CAPT and game.info.crosscapt:
+    if (game.info.sow_rule in (gi.SowRule.LAP_CAPT,
+                               gi.SowRule.OPP_GETS_OWN_LAST)
+            and game.info.crosscapt):
         lap_cont = msowd.ContIfXCapt(game, lap_cont)
 
     else:
@@ -103,7 +110,8 @@ def _add_capt_stop_lap_cont(game, lap_cont):
                          game.info.capt_max,
                          game.info.capt_min])):
 
-            if game.info.sow_rule == gi.SowRule.LAP_CAPT:
+            if game.info.sow_rule in (gi.SowRule.LAP_CAPT,
+                                      gi.SowRule.OPP_GETS_OWN_LAST):
                 lap_cont = msowd.ContIfBasicCapt(game, lap_cont)
             else:
                 lap_cont = msowd.StopCaptureSeeds(game, lap_cont)

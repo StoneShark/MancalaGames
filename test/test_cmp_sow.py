@@ -111,14 +111,16 @@ GAMECONF = {'basic':
                   'stores': True},
 
             'no2s':         # no prescribed opening
-                {'sow_rule': gi.SowRule.NO_SOW_OPP_2S,
+                {'sow_rule': gi.SowRule.NO_SOW_OPP_NS,
+                 'sow_param': 2,
                  'capt_on': [3],
                   'stores': True},
 
             'no2schd':  # with children, don't stop for child
                 {'child_type': gi.ChildType.NORMAL,
                  'child_cvt': 3,
-                 'sow_rule': gi.SowRule.NO_SOW_OPP_2S,
+                 'sow_rule': gi.SowRule.NO_SOW_OPP_NS,
+                 'sow_param': 2,
                  'stores': True,
                  'capt_on': [3]},
 
