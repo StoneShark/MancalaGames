@@ -6,9 +6,9 @@ Created on Thu Feb 13 07:34:32 2025
 
 import textwrap
 
-DATETIME = 'Thu Feb 13 07:51:58 2025'
-VERSION = 'v_1_1'
-BRANCH = 'develop'
+DATETIME = 'Thu Feb 13 08:33:05 2025'
+VERSION = 'v_1_5'
+BRANCH = 'main'
 
 RELEASE_TEXT = textwrap.dedent(f"""\
                 Mancala Games

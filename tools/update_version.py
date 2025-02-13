@@ -12,7 +12,7 @@ import git
 
 date = datetime.datetime.now().ctime()
 
-repo = git.repo(os.getcwd())
+repo = git.Repo(os.getcwd())
 branch = repo.active_branch.name
 version = sorted(repo.tags, key=lambda t: t.tag.tagged_date)[-1].name
 

@@ -291,10 +291,11 @@ spotless: clean
 # build stand alone executables with a shared runtime 
 # put it into a compressed tar file for github
 
-exe: MancalaGames/mancala_games.exe
+exe: MancalaGames/mancala_games.exe makefile
 
 MancalaGames/mancala_games.exe: $(SOURCES) $(DATAFILES) $(HELPFILES) mancala_games.spec
 	-rmdir /S /Q MancalaGames
+	python tools\\update_version.py
 	pyinstaller mancala_games.spec --distpath .
 	mkdir MancalaGames\\help
 	cp $(HELPFILES) MancalaGames\\help
