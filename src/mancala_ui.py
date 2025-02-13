@@ -26,6 +26,7 @@ import game_tally as gt
 import man_config
 import man_path
 import round_tally
+import version
 
 from game_logger import game_log
 
@@ -37,11 +38,6 @@ AI_DELAY = [0, 1000, 4000]
 NO_TALLY_OP = 0
 VIS_TALLY_OP = 1
 RET_TALLY_OP = 2
-
-RELEASE_TEXT = textwrap.dedent("""\
-                Mancala Games
-                License: GPL-3.0   ©Ann Davies 2024-2025
-                Version 1.4 +develop""")
 
 
 # %%
@@ -530,7 +526,7 @@ class MancalaUI(tk.Frame):
         for para in paragraphs:
             out_text += textwrap.fill(para, 70) + '\n'
 
-        out_text += RELEASE_TEXT
+        out_text += version.RELEASE_TEXT
 
         quiet_dialog(self, 'About', ''.join(out_text))
 

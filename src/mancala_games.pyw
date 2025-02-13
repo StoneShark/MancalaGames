@@ -34,6 +34,7 @@ import man_config
 import man_path
 import mg_config
 import param_consts as pc
+import version
 
 from game_classes import GAME_CLASSES
 
@@ -173,7 +174,7 @@ class MancalaGames(tk.Frame):
 
         elif what == ABOUT:
             mancala_ui.quiet_dialog(self, 'About Manacala Games',
-                                    mancala_ui.RELEASE_TEXT)
+                                    version.RELEASE_TEXT)
 
 
     def _update_title(self):
