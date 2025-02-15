@@ -438,6 +438,7 @@ class MoveTpl(tuple):
     """A class to print the move tuples nicely.
     Override new so the contructor can take multiple arguements
     if two args: pos, direct
+        used for games where a player can choose the sow direction
     if three args: row, pos, direct
         used for any game where a player can move from both rows
         games even if no udirect"""

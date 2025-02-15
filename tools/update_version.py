@@ -14,7 +14,7 @@ date = datetime.datetime.now().ctime()
 
 repo = git.Repo(os.getcwd())
 branch = repo.active_branch.name
-version = sorted(repo.tags, key=lambda t: t.tag.tagged_date)[-1].name
+version = repo.git.describe('--tag')
 
 
 with open('src/version.py', 'r', encoding='utf-8') as file:
