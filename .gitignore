@@ -13,3 +13,6 @@ MancalaGames
 analysis/data
 analysis/pdicts
 context.py
+GamePropsNoRelease
+src/run_*
+docs/props_used.xlsx
