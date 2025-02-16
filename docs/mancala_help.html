@@ -200,14 +200,24 @@ until their opponent has does one of those.
 <h3>Menus</h3>
 
 <h4>Game</h4>
-<p><b>New</b>: Start a new game.
-<p><b>End Game</b>: End the current game in as fair a way as possible.
-This is useful when the game has reached a stalemate, e.g. two seeds
-circling the game board.
-Generally, any seeds remaining in play are distributed evenly
-with a final odd seed going to the player with the fewer seeds.
-
-
+<p><b>New</b>: Start a new game. An in-progress game is not tallied.
+<p><b>End Round</b>: End the current round. This can used to score a
+round, but not end the game. Use this if there are seeds cycling on the board.
+<p><b>End Game</b>: End the current game and tally the game.
+Use this if there are seeds cycling on the board.
+For clear and deprive goal games,
+the game will be ended in a tie.
+If the game involves stores or children, the
+<a href="game_params.html#unclaimed">UNCLAIMED</a> parameter specifies
+the handling:
+<ul>
+<li>DONT_SCORE: not scored for either player</li>
+<li>LAST_MOVE: scored for the last player to move</li>
+<li>UNFED_PLAYER: hole owner</li>
+<li>DIVVIED or HOLE_OWNER: the seeds are divided between the two players.
+An extra seed goes to the player with fewer seeds.
+Hole owner is only honored when the game ends due to the normal conditions.</li>
+</ul>
 <h4>AI</h4>
 <p><b>AI Player</b>: Enable or disable the ai player.
 The AI Player plays the top row; you play the bottom row.

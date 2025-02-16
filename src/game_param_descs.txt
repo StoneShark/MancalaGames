@@ -43,7 +43,7 @@ Allow rules limit the holes from which moves may start. Disallowed holes are not
 
 - RIGHT_2_1ST_THEN_ALL_TWO: The first turn must start from one of the two rightmost holes. Subsequent moves may only start from holes without 2 seeds, unless all holes contain zero or 2 seeds.
 
-- MOVE_ALL_HOLES_FIRST: a move must be initiated from each hole once before a second move may be made from any hole.  MOVE_ALL is incompatible with all pickers and capttwoout.
+- MOVE_ALL_HOLES_FIRST: a move must be initiated from each hole once before a second move may be made from any hole.  This option is incompatible with MOVEUNLOCK, CAPT_TYPE of TWO_OUT, and any PICKEXTRA.
 
 - NOT_XFROM_1S: moves may not start from holes with a singleton opposite it.
 
@@ -637,7 +637,7 @@ Defines how to score any unclaimed seeds when a game has ended. This is not used
 
 - LAST_MOVER: unclaimed seeds go the player that moved last.
 
-- UNFED_PLAYER: only valid for MUSTSHARE games. If the game ended without one player being able to share seeds, the seeds go to the player without seeds (the unfed player).
+- UNFED_PLAYER: only valid for MUSTSHARE games. If the game ended without one player being able to share seeds, the seeds go to the player without seeds (the unfed player). If the menu command End Game is used to end the game, the seeds go to the hole owners.
 
 - DIVVIED: the seeds are divided between the two players (an extra seed goes to the player with fewer seeds).
 

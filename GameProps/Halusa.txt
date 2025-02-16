@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Halusa",
-      "about": "Sow counter-clockwise. If your opponent does not have seeds, you must make some available if you can.\nCapture on evens on your own side of the board.\nIf the game ends because one player cannot share their seeds with the current mover, that player gets the remaining seeds (that is, the unfed player).\n\nGoal: collect more than half of the seeds.",
+      "about": "Sow counter-clockwise. If your opponent does not have seeds, you must make some available if you can.\nCapture on evens on your own side of the board.\nIf the game ends because one player cannot share their seeds with the current mover, that player gets the remaining seeds (that is, the unfed player). Games caught in cycles can be ended by the menu command End Game, in this case, unclaimed seeds go to the hole owners.\n\nGoal: collect more than half of the seeds.",
       "evens": true,
       "mustshare": true,
       "capt_side": 2,

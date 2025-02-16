@@ -82,7 +82,8 @@ name than you expect.
 
 <h3 id="Achochodi">Achochodi</h3>
 <p>Sow counter-clockwise. If you draw a single seed, capture the contents of the hole opposite. If you draw enough seeds to cycle the board, skip sowing the start hole. If your opponent does not have any seeds, you must make some available, if possible.
-<p>Multiple capture on 2s and 3s. You must start your capture on your opponent's side of the board, but the capture chain may continue onto your own side of the board. A cycling game can be ended by the Round End menu command; unclaimed seeds will go to the last player that moved.
+<p>Multiple capture on 2s and 3s. You must start your capture on your opponent's side of the board, but the capture chain may continue onto your own side of the board.
+<p>A cycling game can be ended by the End Game menu command; unclaimed seeds will go to the last player that moved.
 <p>Goal: capture more than half of the seeds.
 <div class="cols_row">
   <div class="column2">
@@ -104,7 +105,7 @@ name than you expect.
 </div>
 <p>Rules: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p63.
 <h3 id="Adji-boto">Adji-boto</h3>
-<p>Sow single-lap, CCW. The minimum move is 2 seeds. Captures may not be made on the first move by either player.
+<p>Sow single-lap, CCW. Leave one seed in the move start hole. The minimum move is 2 seeds. Captures may not be made on the first move by either player.
 <p>Each of the first 10 moves must start from a different hole. This is accomplished by using the unlock mechanism, moving from a hole unlocks it. Until all of a player's holes are unlocked, moves may only start from locked holes.
 <p>If a player does not have a move, they must pass.
 <p>Captures are made when the hole after the final seed sown contains 1, 3 or 5 seeds. Those seeds (in the next hole) are captured, but not any from the final hole sown. These captures do not check the lock status.
@@ -118,12 +119,14 @@ name than you expect.
     <p class="param"><a href="game_params.html#capsamedir">Capture in Sow Direction</a>: Yes</p>
     <p class="param"><a href="game_params.html#capt_type">Capture Type</a>: NEXT</p>
     <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 1 3 5</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 2</p>
   </div>
   <div class="column2">
-    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 2</p>
     <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: -1</p>
     <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
     <p class="param"><a href="game_params.html#nocaptmoves">Nbr Start Moves w/o Capture</a>: 2</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_start">Sow Start Hole</a>: Yes</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
   </div>
 </div>
@@ -176,6 +179,7 @@ name than you expect.
 <h3 id="Andot">Andot</h3>
 <p>Split sow. Make children on 4 on opposite-side ends and four middle holes on own side.
 <p>Cannot move a singleton that has been moved across the side of the board back to where it was the previous turn.
+<p>Cycling games can be ended with the End Game menu command, unclaimed seeds will not score.
 <p>Goal: collect more than half of the seeds in child holes.
 <div class="cols_row">
   <div class="column2">
@@ -750,7 +754,7 @@ Instead of a minimum move of 2, singletons may start moves if all holes are empt
 <h3 id="Halusa">Halusa</h3>
 <p>Sow counter-clockwise. If your opponent does not have seeds, you must make some available if you can.
 <p>Capture on evens on your own side of the board.
-<p>If the game ends because one player cannot share their seeds with the current mover, that player gets the remaining seeds (that is, the unfed player).
+<p>If the game ends because one player cannot share their seeds with the current mover, that player gets the remaining seeds (that is, the unfed player). Games caught in cycles can be ended by the menu command End Game, in this case, unclaimed seeds go to the hole owners.
 <p>Goal: collect more than half of the seeds.
 <div class="cols_row">
   <div class="column2">
@@ -916,7 +920,7 @@ Require must share (<a href="game_params.html#mustshare">MUSTSHARE</a>) because 
 <h3 id="Kale">Kale</h3>
 <p>Sow counter-clockwise. If your opponent has no seeds, you must make some available, if you can.
 <p>Capture on 2s and 3s. The first capture must be on the opponent's side of the board, but a multi-capture chain may continue onto your own side of the board. A grand slam does not capture--the seeds are left on the  board.
-<p>The game ends when seeds cannot be shared with a player without seeds. The remaining seeds on the board go that the player (the unfed one). Games caught in cycles can be ended by the menu command End Round.
+<p>The game ends when seeds cannot be shared with a player without seeds. The remaining seeds on the board go that the player (the unfed one). Games caught in cycles can be ended by the menu command End Game, in this case, unclaimed seeds go to the hole owners.
 <p>Goal: capture at least half of the seeds.
 <div class="cols_row">
   <div class="column2">
@@ -1703,7 +1707,7 @@ See <a href="about_games.html#Longbeu-a-cha">Longbeu-a-cha</a>, <a href="about_g
 <p>Rules: Mohr, Merilyn Simonds; The New Games Treasury, 1993. But with sow into Waldas as described here:  <a href="https://mancala.fandom.com/wiki/Qelat_(Beni_Amir_%26_Mensa)" target="_blank">https://mancala.fandom.com/wiki/Qelat_(Beni_Amir_%26_Mensa)</a>
 <h3 id="Rio Kadalis">Rio Kadalis</h3>
 <p>Sow counter-clockwise in multiple laps. Any hole sown to 4 seeds is captured by the hole owner, except if the final seed of a lap sows a hole to 4, then the sower captures the seeds.
-<p>Played in rounds. A round ends when there are not moves or the seeds are cycling the board (use the Round End menu option). Seeds left on the board go to the hole owners. To set up for a new round each player fills as many holes as they can with 4 seeds, placing extra seeds in their store.
+<p>Played in rounds. A round ends when a player has no valid moves on their turn. Seeds left on the board go to the hole owners. To set up for a new round each player fills as many holes as they can with 4 seeds, placing extra seeds in their store.
 <p>The games ends when one player does not have sufficient seeds to fill one hole.
 <div class="cols_row">
   <div class="column2">
@@ -1853,7 +1857,7 @@ see Sedeqa
 <p>   1. If that hole is on your opponent's side of the board
 <p>   2. If that hole is on your side of the board and the opponent's hole opposite is empty
 <p>If there are seeds opposite that hole, capture them and then continue the lap sowing with the single seed. Instead of simply stopping multi-lap sowing for captures as many other multi-lap games, capturing continues the multi-lap sowing. 
-<p>A round ends when one player cannot move. Seeds left on the board are allocated to the player that performed the last move. When setting for the next round each player fills as many holes as they with 4 seeds each, any leftover seeds are put into the stores. The unoccupied holes are for play during the round.
+<p>A round ends when one player cannot move. Seeds left on the board are allocated to the player that performed the last move. To setup for the next round, each player fills as many holes on their side of the board as they can with 4 seeds each and any leftover seeds are put into their store. The unoccupied holes are available for play during the round.
 <p>The game ends when one player cannot fill 4 holes.
 <div class="cols_row">
   <div class="column2">

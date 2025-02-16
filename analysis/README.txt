@@ -2,8 +2,8 @@ Top level analysis scripts:
 
 challenge.py     Use exper_config to select game and configure players
                  useful for creating log files with different players
-                  manually testing one player configuration against another
-                  win percentage is reported for the tplayer
+                 manually testing one player configuration against another
+                 win percentage is reported for the tplayer
 
 fair_games.py    Uses hypothesis testing to determine if games are likely
                  fair. Considers both 

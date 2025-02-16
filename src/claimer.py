@@ -136,7 +136,7 @@ class TakeOwnSeeds(ClaimSeedsIf):
 
 class TakeOnlyChildNStores(ClaimSeedsIf):
     """Ignore unclaimed seeds; count stores and children.
-    NoSides and DONT_score use this."""
+    NoSides and DONT_SCORE use this."""
 
     def claim_seeds(self):
 

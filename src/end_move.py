@@ -180,7 +180,17 @@ def deco_quitter(game):
 
     elif game.info.stores or game.info.child_cvt:
 
-        if game.info.stores:
+        if game.info.unclaimed == gi.EndGameSeeds.DONT_SCORE:
+            sclaimer = claimer.TakeOnlyChildNStores(game)
+
+        elif game.info.unclaimed == gi.EndGameSeeds.LAST_MOVER:
+            sclaimer = claimer.TakeAllUnclaimed(game)
+
+        elif game.info.unclaimed == gi.EndGameSeeds.UNFED_PLAYER:
+            # seeds go to hole owners
+            sclaimer = claimer.TakeOwnSeeds(game)
+
+        elif game.info.stores:
             sclaimer = claimer.DivvySeedsStores(game)
 
         else:  # if game.info.child_cvt:

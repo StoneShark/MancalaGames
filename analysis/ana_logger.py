@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Convinience functions for the analysis software logger.
+"""Convenience functions for the analysis software logger.
 It adds date/timestamp to all messages and can
 output to both the console and a file.
 
