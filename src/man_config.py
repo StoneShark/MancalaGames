@@ -61,6 +61,8 @@ SKIP_TAB = 'skip'
 
 PARAM = re.compile('^<param ([a-z0-9_]+)>')
 
+REMOVE_TAGS = [re.compile(r'<a[^>]+>'),
+               re.compile(r'</a>')]
 
 # %% read config files
 
@@ -232,33 +234,6 @@ def del_default_config_tag(game_config, vtype, cspec, option):
 
 # %% parameters files
 
-def convert_default_value(value):
-    """Convert the ui_defaults to appropriate python values.
-
-    NONE is an enumeration value (usually 0) not the value None."""
-
-    convert_dict = {'true': True,
-                    'false': False,
-                    }
-    value = value.strip()
-
-    if (key := value.lower()) in convert_dict:
-        return convert_dict[key]
-
-    if value.isdigit() or (value[0] == MINUS and value[1:].isdigit()):
-        return int(value)
-
-    if value == ELIST_STR:
-        return []
-
-    if (value[0] == ELIST_STR[0]
-            and value[-1] == ELIST_STR[-1]
-            and all(c in INT_LIST_CHARS for c in value[1:-1])):
-        substrs = value[1:-1].split(',')
-        return [int(val.strip()) for val in substrs]
-
-    return value
-
 
 @dc.dataclass
 class Param:
@@ -288,14 +263,14 @@ class ParamData(dict):
     """A dictionary of the parameter data. Keys are the 'option'
     column (parameter name); values are Param dataclass objects."""
 
-    def __init__(self, **kwargs):
+    def __init__(self, del_tags=True):
 
-        super().__init__(**kwargs)
+        super().__init__()
         self._read_params_table()
-        self._read_param_descriptions()
+        self._read_param_descriptions(del_tags)
 
 
-    def _read_param_descriptions(self):
+    def _read_param_descriptions(self, del_tags):
         """Read the parameter descriptions file.
         static method because read_params_file is used outside
         mancala_games."""
@@ -313,7 +288,6 @@ class ParamData(dict):
                 continue
 
             pmatch = PARAM.match(line)
-
             if pmatch:
                 # if we have a param name, save the accumulated data
                 if param:
@@ -326,11 +300,46 @@ class ParamData(dict):
                     msg = f"Description without game_params data {param}"
                     raise ValueError(msg)
 
+            elif del_tags:
+                tline = line
+                for tag in REMOVE_TAGS:
+                    tline, _ = tag.subn('', tline, count=5)
+                text += tline
+
             else:
                 text += line
 
         # add the last parameter
         self[param].description = text
+
+
+    @staticmethod
+    def convert_default(value):
+        """Convert the ui_defaults to appropriate python values.
+
+        NONE is an enumeration value (usually 0) not the value None."""
+
+        convert_dict = {'true': True,
+                        'false': False,
+                        }
+        value = value.strip()
+
+        if (key := value.lower()) in convert_dict:
+            return convert_dict[key]
+
+        if value.isdigit() or (value[0] == MINUS and value[1:].isdigit()):
+            return int(value)
+
+        if value == ELIST_STR:
+            return []
+
+        if (value[0] == ELIST_STR[0]
+                and value[-1] == ELIST_STR[-1]
+                and all(c in INT_LIST_CHARS for c in value[1:-1])):
+            substrs = value[1:-1].split(',')
+            return [int(val.strip()) for val in substrs]
+
+        return value
 
 
     def _read_params_table(self):
@@ -361,7 +370,7 @@ class ParamData(dict):
                     raise ValueError("Expected int for {opt_name} col {idx}.")
                 rec[idx] = int(rec[idx])
 
-            rec[UI_DEFAULT_IDX] = convert_default_value(rec[UI_DEFAULT_IDX])
+            rec[UI_DEFAULT_IDX] = self.convert_default(rec[UI_DEFAULT_IDX])
             self[opt_name] = Param(*rec)
 
 

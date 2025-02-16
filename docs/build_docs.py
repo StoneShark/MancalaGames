@@ -35,7 +35,7 @@ EXFILE = '_all_params.txt'
 # %% fill global tables
 
 
-PARAMS = man_config.ParamData()
+PARAMS = man_config.ParamData(del_tags=False)
 
 def get_game_names():
     """Scan the files and get the game names."""

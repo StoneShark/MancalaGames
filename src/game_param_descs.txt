@@ -363,6 +363,8 @@ Determines if seeds from more than the initial start hole are picked up and sown
 
   + A SOW_RULE of CHANGE_DIR_LAP changes the direction of sowing after each lap. SOW_BLKD_DIV(_NR) is not supported for LAPPER_NEXT.
 
+Multilap games may get stuck in seemingly endless sowing loops. If more than 50 laps are sown, the computer will end the game using the same mechanism as the menu command <a href="mancala_help.html#gamemenu">End Game</a> based on GOAL and UNCLAIMED. 
+
 <param mm_depth>
 The depth that the minimaxer or negamaxer will search the game tree from the current node. One value for each difficulty.
 
@@ -629,7 +631,7 @@ Note: all holes respond to both mouse buttons, but if the hole is not in udir_ho
 Games with any hole set to user chooses direction must have GRANDSLAM be LEGAL and only ALLOW_RULE s that do not depend on sow direction are supported.
 
 <param unclaimed>
-Defines how to score any unclaimed seeds when a game has ended. This is not used if the game has a clear winner, e.g., one player has collected more than half the seeds for a MAX_SEEDS game.
+Defines how to score any unclaimed seeds when a game has ended, i.e., seeds that are not in children or in stores. This is not used if the game has a clear winner, e.g., one player has collected more than half the seeds for a MAX_SEEDS game. This parameter effects the menu command <a href="mancala_help.html#gamemenu">End Game</a> works.
 
 - HOLE_OWNER: unclaimed seeds go to the hole owner.
 

@@ -161,7 +161,7 @@ is included after the parameter sections.
 <p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Dynamics
 
-<p>Defines how to score any unclaimed seeds when a game has ended. This is not used if the game has a clear winner, e.g., one player has collected more than half the seeds for a MAX_SEEDS game.
+<p>Defines how to score any unclaimed seeds when a game has ended, i.e., seeds that are not in children or in stores. This is not used if the game has a clear winner, e.g., one player has collected more than half the seeds for a MAX_SEEDS game. This parameter effects the menu command <a href="mancala_help.html#gamemenu">End Game</a> works.
 <ol start=0><li class="helptext">
 <b class="enum">HOLE_OWNER</b>: unclaimed seeds go to the hole owner.
 <li class="helptext">
@@ -396,6 +396,7 @@ is included after the parameter sections.
 <b class="enum">LAPPER_NEXT</b>: For lapper_next sowing, the number of seeds in the last sown hole of lap does not matter. Instead, if the hole after the last sown hole has any seeds, those seeds are used to continue sowing the next lap. Sowing continues until the hole after the lap's final seed is empty. There are games with other conditions for ending a multilap sow such as making a capture or making a child.
 <p class="helptext"> A <a href="game_params.html#sow_rule">SOW_RULE</a> of CHANGE_DIR_LAP changes the direction of sowing after each lap. SOW_BLKD_DIV(_NR) is not supported for LAPPER_NEXT.
 </ol>
+<p>Multilap games may get stuck in seemingly endless sowing loops. If more than 50 laps are sown, the computer will end the game using the same mechanism as the menu command <a href="mancala_help.html#gamemenu">End Game</a> based on <a href="game_params.html#goal">GOAL</a> and <a href="game_params.html#unclaimed">UNCLAIMED</a>. 
 <h4 id="sow_direct"> Sow Direction </h4>
 <p class="pdesc">Location in Config Files: game_info : sow_direct
 <p id="Direct" class="pdesc">Type: <a href="param_types.html#Direct"> Direct </a>
