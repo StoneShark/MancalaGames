@@ -31,5 +31,5 @@
       }
    },
    "rules": "Russ, Laurence. Mancala Games. 1984. p32.",
-   "note": "Valdez describes a variant that has 6 holes per side, does not pick own seed on capture, and allows moves to start in any hole."
+   "note": "Valdez (p17) describes a multilap variant that has 6 holes per side, does not pick own seed on capture, and allows moves to start in any hole."
 }

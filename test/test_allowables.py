@@ -984,9 +984,12 @@ class TestDontUndoMoveOne:
         ('ns_split', [0, 2, 0, 0, 2, 1], T, (0, 0, None),
                      [F, T, F, F, T, F]),
 
+        # no prevents
+        ('include', [0, 2, 0, 2, 3, 1], F, (0, CCW), [T, T, T]),
+
         ]
 
-    # @pytest.mark.usefixtures("logger")
+    @pytest.mark.usefixtures("logger")
     @pytest.mark.parametrize('game, board, turn, move, eresult',
                              CASES,
                              ids=[f"case_{idx}" for idx in range(len(CASES))],
@@ -997,16 +1000,16 @@ class TestDontUndoMoveOne:
         quot, rem = divmod(12 - sum(board), 2)
         game.store = [quot, quot + rem]
         game.turn = turn
-        # print(game)
+        print(game)
         game.move(move)
         # print(game.last_mdata)
 
-        # print(game.last_mdata.seeds == 1,
-        #       game.board[game.last_mdata.capt_loc] == 1,
-        #       any(set(
-        #           [game.last_mdata.sow_loc, game.last_mdata.capt_loc])
-        #              == test_set
-        #           for test_set in game.deco.allow.end_sets))
+        print(game.last_mdata.seeds == 1,
+              game.board[game.last_mdata.capt_loc] == 1,
+              any(set(
+                  [game.last_mdata.sow_loc, game.last_mdata.capt_loc])
+                      == test_set
+                  for test_set in game.deco.allow.end_sets))
 
         assert game.get_allowable_holes() == eresult
 

@@ -1635,6 +1635,49 @@ class TestCaptMlap:
         return mancala.Mancala(game_consts, game_info)
 
 
+    @pytest.fixture
+    def c1game(self):
+
+        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_info = gi.GameInfo(capt_on=[1],
+                                stores=True,
+                                sow_direct=Direct.CCW,
+                                mlaps=LapSower.LAPPER,
+                                sow_rule=SowRule.LAP_CAPT,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        return mancala.Mancala(game_consts, game_info)
+
+
+    @pytest.fixture
+    def gapgame(self):
+
+        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_info = gi.GameInfo(capt_type=gi.CaptType.TWO_OUT,
+                                capsamedir=True,
+                                stores=True,
+                                sow_direct=Direct.CCW,
+                                mlaps=LapSower.LAPPER,
+                                sow_rule=SowRule.LAP_CAPT,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        return mancala.Mancala(game_consts, game_info)
+
+    @pytest.fixture
+    def nextgame(self):
+
+        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_info = gi.GameInfo(capt_type=gi.CaptType.NEXT,
+                                capsamedir=True,
+                                stores=True,
+                                sow_direct=Direct.CCW,
+                                mlaps=LapSower.LAPPER,
+                                sow_rule=SowRule.LAP_CAPT,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        return mancala.Mancala(game_consts, game_info)
+
+
     CASES = [
         ('ccgame', 0, F, [2, 2, 2, 2, 2, 2, 2, 2],
          7, [0, 3, 3, 0, 3, 3, 0, 1], [3, 0]),
@@ -1644,8 +1687,38 @@ class TestCaptMlap:
 
         ('evgame', 3, T, [3, 1, 3, 0, 3, 3, 0, 3],
          3, [0, 2, 4, 1, 0, 4, 1, 0], [0, 4]),
+
+        # basic capture of 1s (StopSingleSeed was in wrong place on deco chain)
+        ('c1game', 1, F, [1, 3, 1, 1, 0, 1, 0, 1],
+         6, [0, 1, 0, 3, 1, 0, 0, 0], [3, 0]),
+
+        # 4: end in hole with one seed and capture left for capturer
+        ('nextgame', 2, F, [3, 1, 2, 1, 0, 1, 1, 1],
+         4, [3, 1, 0, 2, 1, 1, 1, 1], [0, 0]),
+
+        # 5: end in hole with one seed but no capture
+        ('nextgame', 2, F, [3, 1, 2, 1, 0, 0, 1, 1],
+         4, [3, 1, 0, 2, 1, 0, 1, 1], [0, 0]),
+
+        # 6: end in hole with one seed and capture left for capturer
+        ('nextgame', 2, F, [3, 1, 2, 1, 0, 0, 1, 1],
+         4, [3, 1, 0, 2, 1, 0, 1, 1], [0, 0]),
+
+        # 7: end in hole with one seed but no capture
+        ('gapgame', 2, F, [3, 1, 2, 1, 0, 1, 1, 1],
+         4, [3, 1, 0, 2, 1, 1, 1, 1], [0, 0]),
+
+        # 8: actual mlap sow with captures
+        ('nextgame', 1, F, [3, 1, 2, 1, 0, 1, 1, 1],
+         1, [1, 1, 0, 1, 1, 0, 1, 0], [5, 0]),
+
+        # 9: actual mlap sow with captures
+        ('gapgame', 1, F, [3, 1, 2, 0, 1, 1, 1, 0],
+         7, [3, 0, 0, 1, 1, 0, 2, 1], [1, 0]),
+
     ]
-    # @pytest.mark.usefixtures('logger')
+
+    @pytest.mark.usefixtures('logger')
     @pytest.mark.parametrize('game_fixt, start_pos, turn, board, ' \
                              'eloc, eboard, estore',
                              CASES, ids=[f"{case[0]}-case{idx}"
@@ -1657,16 +1730,16 @@ class TestCaptMlap:
         game = request.getfixturevalue(game_fixt)
         game.board = board
         game.turn = turn
-        # print(game.deco.sower)
-        # print(game)
-        # print(start_pos)
+        print(game.deco.sower)
+        print(game)
+        print(start_pos)
 
         mdata = MoveData(game, start_pos)
         mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(start_pos)
         mdata.direct = game.info.sow_direct
         game.deco.sower.sow_seeds(mdata)
 
-        # print(game)
+        print(game)
 
         assert mdata.capt_loc == eloc
         assert game.board == eboard
@@ -1780,23 +1853,23 @@ class TestCaptOppOwnLast:
 
 
     CASES = [
-        # two test cases from LAP_CAPT for evens game
+        # 0 & 1: two test cases from LAP_CAPT for evens game
         (3, F, [2, 2, 2, 2, 2, 2, 2, 2], [0, 0],
          3,    [0, 3, 3, 1, 3, 0 ,3, 3], [0, 0]),
 
         (3, T, [3, 1, 3, 0, 3, 3, 0, 3], [0, 0],
          3,    [0, 2, 4, 1, 0, 4, 1, 0], [0, 4]),
 
-        # capture so final loc is 5 not 4 (i.e., try to sow from next hole)
+        # 2: capture so final loc is 5 not 4 (i.e., try to sow from next hole)
         (3, F, [0, 0, 3, 1, 3, 0, 3, 0], [3, 3],
          5,    [0, 0, 3, 0, 0, 0, 3, 0], [7, 3]),
 
-        # sow one own hole, one opp -> opp captures, final even -> sow capts
+        # 3: sow one own hole, one opp -> opp captures, final even -> sow capts
         # end loc is next hole
         (2, F, [0, 1, 3, 0, 0, 1, 0, 0], [4, 7],
          6,    [0, 1, 0, 1, 0, 0, 0, 0], [6, 8]),
 
-        # wrap opp side -> all capt, no final capt so end on last hole sown
+        # 4: wrap opp side -> all capt, no final capt so end on last hole sown
         (3, F, [0, 0, 0, 6, 0, 0, 0, 0], [6, 4],
          1,    [1, 1, 0, 0, 0, 0, 0, 0], [6, 8]),
 

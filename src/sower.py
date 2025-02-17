@@ -95,31 +95,34 @@ def _add_pre_sow_capt(game, sower):
 
 
 def _add_capt_stop_lap_cont(game, lap_cont):
-    """Add the stop on 1; stop to capture; and/or
-    lap capture lap-continuer decos"""
+    """Add the stop on 1 and then, one of the lap capture
+    lap-continuer or a stop on capture decos."""
 
-    if (game.info.sow_rule in (gi.SowRule.LAP_CAPT,
-                               gi.SowRule.OPP_GETS_OWN_LAST)
-            and game.info.crosscapt):
-        lap_cont = msowd.ContIfXCapt(game, lap_cont)
+    lap_cont = msowd.StopSingleSeed(game, lap_cont)
 
-    else:
-        if (not game.info.crosscapt
-                and any([game.info.evens,
-                         game.info.capt_on,
-                         game.info.capt_max,
-                         game.info.capt_min])):
+    basic_capt = any([game.info.evens,
+                      game.info.capt_on,
+                      game.info.capt_max,
+                      game.info.capt_min])
 
-            if game.info.sow_rule in (gi.SowRule.LAP_CAPT,
-                                      gi.SowRule.OPP_GETS_OWN_LAST):
-                lap_cont = msowd.ContIfBasicCapt(game, lap_cont)
-            else:
-                lap_cont = msowd.StopCaptureSeeds(game, lap_cont)
+    if game.info.sow_rule in (gi.SowRule.LAP_CAPT,
+                              gi.SowRule.OPP_GETS_OWN_LAST):
 
-        elif game.info.capt_type == gi.CaptType.MATCH_OPP:
-            lap_cont = msowd.StopCaptureSimul(game, lap_cont)
+        if game.info.crosscapt:
+            lap_cont = msowd.ContIfXCapt(game, lap_cont)
 
-        lap_cont = msowd.StopSingleSeed(game, lap_cont)
+        elif game.info.capt_type in (gi.CaptType.NEXT,
+                                     gi.CaptType.TWO_OUT):
+            lap_cont = msowd.GapNextCapt(game, lap_cont)
+
+        else:   # if basic_capt:
+            lap_cont = msowd.ContIfBasicCapt(game, lap_cont)
+
+    elif game.info.capt_type == gi.CaptType.MATCH_OPP:
+        lap_cont = msowd.StopCaptureSimul(game, lap_cont)
+
+    elif basic_capt and not game.info.crosscapt:
+        lap_cont = msowd.StopCaptureSeeds(game, lap_cont)
 
     return lap_cont
 

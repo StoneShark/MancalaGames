@@ -6,8 +6,8 @@ Created on Thu Feb 13 07:34:32 2025
 
 import textwrap
 
-DATETIME = 'Sat Feb 15 09:33:33 2025'
-VERSION = 'dev_1_5'
+DATETIME = 'Mon Feb 17 17:43:00 2025'
+VERSION = 'dev_1_5-9-gccae48b'
 BRANCH = 'develop'
 
 RELEASE_TEXT = textwrap.dedent(f"""\

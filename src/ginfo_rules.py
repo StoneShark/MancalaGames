@@ -552,16 +552,22 @@ def add_capture_rules(rules):
     rules.add_rule(
         'lcapt_no_ctype',
         rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.LAP_CAPT
-                            and ginfo.capt_type),
-        msg='LAP_CAPT is only supported for basic captures and cross capture.',
+                            and ginfo.capt_type not in (gi.CaptType.NONE,
+                                                        gi.CaptType.TWO_OUT,
+                                                        gi.CaptType.NEXT)),
+        msg='LAP_CAPT is only supported for basic captures, '
+            'cross capture, capt two out, and capt next.',
         excp=NotImplementedError)
-        # would need to carefully decide how it would work
+        # currently only MATCH_OPP is not supported
 
     rules.add_rule(
         'ogol_no_ctype',
         rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.OPP_GETS_OWN_LAST
-                            and ginfo.capt_type),
-        msg='OPP_GETS_OWN_LAST is only supported for basic captures and cross capture.',
+                            and ginfo.capt_type not in (gi.CaptType.NONE,
+                                                        gi.CaptType.TWO_OUT,
+                                                        gi.CaptType.NEXT)),
+        msg='OPP_GETS_OWN_LAST is only supported for basic captures, '
+            'cross capture, capt two out, and capt next.',
         excp=NotImplementedError)
         # see lcapt_no_ctype
 

@@ -587,7 +587,13 @@ Special sow rules add additional behavior or restrictions to the sowing phase:
 
 - MAX_SOW: holes sow_param seeds are skipped when sowing. That is, holes will never contain more seeds than sow_param.
 
-- LAP_CAPT: after each lap check for a capture, if there is a capture continue sowing with another lap. If a basic capture is configured (evens, capt_on, max or min), the hole after the captured seeds is drawn to continue lapping.
+- LAP_CAPT: consider captures on each lap sown (only supported for MLAPS of LAPPER):
+
+  + If a basic capture is configured (EVENS, CAPT_ON, CAPT_MAX or CAPT_MIN), check for capture. It there is a capture, the hole after the captured seeds is drawn to continue lapping. 
+  
+  + If CROSSCAPT is configured and the last seed is sown into empty hole, check for cross capture. If there is a capture, continue sowing with the single seed.
+  
+  + If the CAPT_TYPE is NEXT or TWO_OUT and the last seed of a lap ends in an occupied hole, do a possible capture. Then, continue lap sowing even if there is no capture.
 
 - NO_OPP_CHILD: do not sow into your opponent's children.
 

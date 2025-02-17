@@ -432,6 +432,14 @@ class TestParamDict:
 
         param_dict = man_config.ParamData()
         assert len(param_dict) > 50
+        assert '</a>' not in param_dict['mlaps'].description
+
+
+    def test_param_dict_tags(self):
+
+        param_dict = man_config.ParamData(del_tags=False)
+        assert len(param_dict) > 50
+        assert '</a>' in param_dict['mlaps'].description
 
 
     @pytest.mark.parametrize(

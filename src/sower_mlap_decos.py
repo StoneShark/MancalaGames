@@ -100,40 +100,80 @@ class StopSingleSeed(LapContinuerIf):
     def do_another_lap(self, mdata):
 
         if self.game.board[mdata.capt_loc] <= 1:
+            game_log.add('MLap stop single seed')
             return False
+        return self.decorator.do_another_lap(mdata)
+
+
+class GapNextCapt(LapContinuerIf):
+    """A wrapper: if the final seed falls in an occupied house,
+    possibly do a capture, then continue sowing from
+    the current hole (capture or not).
+
+    mdata.capt_loc must be returned to the location that
+    it started, so the sowing continues from there."""
+
+    def do_another_lap(self, mdata):
+
+        if self.game.board[mdata.capt_loc] > 1:
+            saved_loc = mdata.capt_loc
+            self.game.capture_seeds(mdata)
+
+            mdata.capt_loc = saved_loc
+            return True
+
         return self.decorator.do_another_lap(mdata)
 
 
 class ContIfXCapt(LapContinuerIf):
     """A wrapper: if there is one seed
     (the one we just sowed), and possibly do a capture.
-    If did a capture, continue lap with the one seed sown."""
+    If did a capture, continue lap with the one seed sown.
+
+    mdata.captured must be left set to whether a capture
+    has occured during the sow. If it was previously set,
+    it must stay set, even if we don't do a capture now."""
 
     def do_another_lap(self, mdata):
 
-        if self.game.board[mdata.capt_loc] == 1:
-            self.game.capture_seeds(mdata)
-            cont = mdata.captured
-            mdata.captured = False
-            return cont
+        if self.game.board[mdata.capt_loc] != 1:
+            return self.decorator.do_another_lap(mdata)
 
-        return self.decorator.do_another_lap(mdata)
+        saved = mdata.captured
+        mdata.captured = False              # temp clear for test
+        self.game.capture_seeds(mdata)
+
+        cont = mdata.captured
+        mdata.captured |= saved
+        if cont:
+            game_log.add('MLap continues, captured.')
+        else:
+            game_log.add('MLap stop--no cross capture.')
+
+        return cont
+
 
 
 class ContIfBasicCapt(LapContinuerIf):
-    """A wrapper: Attempt a capture.
-    If did a capture, continue lapping with the next hole."""
+    """A wrapper: Attempt a basic capture.
+
+    Use only with basic captures alone.  Do not use if
+    combined with other capture types.
+    If did a capture, continue lapping with the next hole.
+
+    Need to use capt_ok to test for the capture, because
+    the previous sowing might have already set mdata.captured
+    via OPP_GETS_OWN_LAST."""
 
     def do_another_lap(self, mdata):
 
-        self.game.capture_seeds(mdata)
-        if mdata.captured:
-            mdata.capt_loc = self.game.deco.incr.incr(mdata.capt_loc,
-                                                      mdata.direct)
-            mdata.captured = False
-            return True
+        if not self.game.deco.capt_ok.capture_ok(mdata, mdata.capt_loc):
+            return self.decorator.do_another_lap(mdata)
 
-        return self.decorator.do_another_lap(mdata)
+        self.game.capture_seeds(mdata)
+        mdata.capt_loc = self.game.deco.incr.incr(mdata.capt_loc,
+                                                  mdata.direct)
+        return True
 
 
 class StopOnChild(LapContinuerIf):
@@ -148,7 +188,9 @@ class StopOnChild(LapContinuerIf):
 
 
 class StopCaptureSeeds(LapContinuerIf):
-    """A wrapper: stop if we should capture."""
+    """A wrapper: stop if we should capture.
+    Doesn't need to check for cross-capture because we stop
+    on a single seed."""
 
     def do_another_lap(self, mdata):
 
@@ -161,8 +203,8 @@ class StopCaptureSeeds(LapContinuerIf):
 
 class StopCaptureSimul(LapContinuerIf):
     """A wrapper: stop based on simulated capture.
-    Use this when the capture conditions are non-trivial
-    and really shouldn't be duplicated (some capt_type's)."""
+    Use this instead of StopCaptureSeeds when capt_ok
+    or StopSingleSeeds are enough to stop for capture."""
 
     def do_another_lap(self, mdata):
 

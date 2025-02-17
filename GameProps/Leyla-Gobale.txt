@@ -32,5 +32,5 @@
    },
    "rules": "Russ, Laurence. Mancala Games. 1984. p44.",
    "deviation": "Seeds are not moved between the newly created qur holes as there would be no impact on play.",
-   "see also": "https://mancala.fandom.com/wiki/Layli_Goobalay_(short_board) and https://mancala.fandom.com/wiki/Layli_Goobalay_(long_board)  Valdez describes a very similar game with CW sow and round fill is UMOVE but not reflected instead opposites have the same seed counts."
+   "see also": "https://mancala.fandom.com/wiki/Layli_Goobalay_(short_board) and https://mancala.fandom.com/wiki/Layli_Goobalay_(long_board)  Valdez (p140) describes a very similar game with CW sow and round fill is UMOVE but not reflected instead opposites have the same seed counts."
 }

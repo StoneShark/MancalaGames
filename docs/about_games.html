@@ -383,7 +383,7 @@ Allow moves to start from any hole on your side of the board.
   </div>
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p32.
-<p>Note: Valdez describes a variant that has 6 holes per side, does not pick own seed on capture, and allows moves to start in any hole.
+<p>Note: Valdez (p17) describes a multilap variant that has 6 holes per side, does not pick own seed on capture, and allows moves to start in any hole.
 <h3 id="Dakon">Dakon</h3>
 <p>A multi-lap mancala played in rounds. Sow direction is counter-clockwise, sow into one's own store. A player may move again when the final seed is sown into their store. Cross capture from opponent's side only; pick own seed on capture. If a player has no seeds at the start of their turn, they must pass.
 <p>A round ends when all seeds have been moved into the stores.  To setup the next round, seeds from each player's store are distributed 7 per hole for as many holes as can be completely filled on the player's side of the board. The player's remaining seeds are put into the player's store. Unfilled holes are out of play for the round, but may be put back into play in subsequent rounds. The player that moved last in a round, starts the next round.
@@ -502,7 +502,7 @@ allow closing of rightmost holes (<a href="game_params.html#sow_rule">SOW_RULE</
 <ul><li class="helptext">
 Played with 6 to 10 holes.
 <li class="helptext">
-Use a <a href="game_params.html#goal">GOAL</a> of RND_SEED_COUNT where the winner is the first to collect 100 total seeds (Valdez).
+Use a <a href="game_params.html#goal">GOAL</a> of RND_SEED_COUNT where the winner is the first to collect 100 total seeds (<a href="about_games.html#En Dodoi">En Dodoi</a>).
 </ul>
 <div class="cols_row">
   <div class="column2">
@@ -568,6 +568,32 @@ start patterns: CLIPPEDTRIPLES with 3 start seeds
     <p class="param"><a href="game_params.html#udir_holes">User Chooses Direction</a>: 2</p>
   </div>
 </div>
+<h3 id="En Dodoi">En Dodoi</h3>
+<p>A multi-lap mancala, sow direction counter-clockwise, cross-capture when end in own hole with one seed. Pick own seed on capture. 
+<p>Played in rounds. Each round ends when the current player does not have a valid move.
+<p>The goal is to be the first to collect 100 total seeds.
+<p>Variation:
+<ul><li class="helptext">
+Not played in rounds (<a href="about_games.html#Endodoi">Endodoi</a>).
+</ul>
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  8</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: RND_SEED_COUNT</p>
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#goal_param">Goal Parameter</a>: 100</p>
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OPP_SIDE</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#xcpickown">Own Seed on Xcapture</a>: PICK_ON_CAPT</p>
+  </div>
+</div>
+<p>Rules: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p33.
 <h3 id="Erherhe">Erherhe</h3>
 <p>A single-lap mancala, sow direction is counter-clockwise, multiple capture on opponents side on 1s and 3s. A sow which cycles the board, will skip the hole that the move started from. If your opponent has no seeds, you must make seeds available to them (if you can).
 <p><a href="about_games.html#Erherhe">Erherhe</a> is played in rounds. A round ends when either player has more than half of the seeds. Players then collect the seeds remaining on their side of the board. To setup the next round, each player fills as many holes as they can with 4 seeds. Leftover seeds are placed in their store (3 or fewer for loser). The loser's holes that cannot be filled are out of play for the round. The previous round loser starts each new round.
@@ -897,7 +923,7 @@ Instead of a minimum move of 2, singletons may start moves if all holes are empt
 <p>If a player has no seeds at the start of their turn, the game is over: the opponent collects the remainder of their seeds and the winner is determined based on final seed count. This includes a prescribed repeat turn, if a player sows their last seed into their store, seeds are collected, and an outcome is determined.
 <p>Variation:
 <ul><li class="helptext">
-Use always_pick for <a href="game_params.html#xcpickown">XCPICKOWN</a> (Valdez).
+Use always_pick for <a href="game_params.html#xcpickown">XCPICKOWN</a> (Valdez, p10).
 <li class="helptext">
 Require must share (<a href="game_params.html#mustshare">MUSTSHARE</a>) because it removes the seed hoarding strategy.
 </ul>
@@ -1141,7 +1167,7 @@ played in rounds with UMOVE style RoundFill
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p44.
 <p>Deviation: Seeds are not moved between the newly created qur holes as there would be no impact on play.
-<p>See Also: <a href="https://mancala.fandom.com/wiki/Layli_Goobalay_(short_board)" target="_blank">https://mancala.fandom.com/wiki/Layli_Goobalay_(short_board)</a> and <a href="https://mancala.fandom.com/wiki/Layli_Goobalay_(long_board)" target="_blank">https://mancala.fandom.com/wiki/Layli_Goobalay_(long_board)</a>  Valdez describes a very similar game with CW sow and round fill is UMOVE but not reflected instead opposites have the same seed counts.
+<p>See Also: <a href="https://mancala.fandom.com/wiki/Layli_Goobalay_(short_board)" target="_blank">https://mancala.fandom.com/wiki/Layli_Goobalay_(short_board)</a> and <a href="https://mancala.fandom.com/wiki/Layli_Goobalay_(long_board)" target="_blank">https://mancala.fandom.com/wiki/Layli_Goobalay_(long_board)</a>  Valdez (p140) describes a very similar game with CW sow and round fill is UMOVE but not reflected instead opposites have the same seed counts.
 <h3 id="Longbeu-a-cha">Longbeu-a-cha</h3>
 <p>Sow counter-clockwise via the multi-lap next-hole method (<a href="game_params.html#mlaps">MLAPS</a> of LAPPER_NEXT).
 <p>While either player is sowing, both players capture all holes sown to 4 on their side of the board.
@@ -1825,6 +1851,28 @@ See <a href="about_games.html#Longbeu-a-cha">Longbeu-a-cha</a>, <a href="about_g
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
   </div>
 </div>
+<h3 id="Tap-Urdy">Tap-Urdy</h3>
+<p>Sow counter-clockwise in multiple laps. If a lap ends in an occupied hole, capture any seeds across a gap of one empty hole. Then, continue sowing even if no capture.
+<p>Goal: capture more seeds than your opponent.
+<p>.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#capsamedir">Capture in Sow Direction</a>: Yes</p>
+    <p class="param"><a href="game_params.html#capt_type">Capture Type</a>: TWO_OUT</p>
+    <p class="param"><a href="game_params.html#evens">Capture Evens</a>: Yes</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: LAP_CAPT</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#unclaimed">End Game Seeds</a>: DONT_SCORE</p>
+  </div>
+</div>
+<p>Rules: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p113.
 <h3 id="Tapata">Tapata</h3>
 <p>The goal is to deprive the opponent of seeds. Counter-clockwise, multi-lap sow. Prescribed opening move: one seed must reach opponent's side of the board. Moves must end in an empty hole or reach opponent's side of the board.  Seeds are taken out of play via cross-capture on opponent's side.
 <p>Variations:
@@ -2090,6 +2138,7 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Diffusion">Diffusion</a></p>
     <p class="param"><a href="#Diffusion V2">Diffusion V2</a></p>
     <p class="param"><a href="#Dépouiller">Dépouiller</a></p>
+    <p class="param"><a href="#En Dodoi">En Dodoi</a></p>
     <p class="param"><a href="#Endodoi">Endodoi</a></p>
     <p class="param"><a href="#Enkeshui">Enkeshui</a></p>
     <p class="param"><a href="#Enlightenment">Enlightenment</a></p>
@@ -2100,9 +2149,9 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Gelech">Gelech</a></p>
     <p class="param"><a href="#Giuthi">Giuthi</a></p>
     <p class="param"><a href="#Goat">Goat</a></p>
-    <p class="param"><a href="#Halusa">Halusa</a></p>
   </div>
   <div class="column3">
+    <p class="param"><a href="#Halusa">Halusa</a></p>
     <p class="param"><a href="#Hoyito I">Hoyito I</a></p>
     <p class="param"><a href="#Hoyito II">Hoyito II</a></p>
     <p class="param"><a href="#Huroy">Huroy</a></p>
@@ -2130,9 +2179,9 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Ndoto">Ndoto</a></p>
     <p class="param"><a href="#No Sides Child">No Sides Child</a></p>
     <p class="param"><a href="#NoCapt">NoCapt</a></p>
-    <p class="param"><a href="#NoSides">NoSides</a></p>
   </div>
   <div class="column3">
+    <p class="param"><a href="#NoSides">NoSides</a></p>
     <p class="param"><a href="#NumNum">NumNum</a></p>
     <p class="param"><a href="#Obridjie">Obridjie</a></p>
     <p class="param"><a href="#Ohojichi">Ohojichi</a></p>
@@ -2148,6 +2197,7 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Sokusowó">Sokusowó</a></p>
     <p class="param"><a href="#Songo">Songo</a></p>
     <p class="param"><a href="#SowOpDirs">SowOpDirs</a></p>
+    <p class="param"><a href="#Tap-Urdy">Tap-Urdy</a></p>
     <p class="param"><a href="#Tapata">Tapata</a></p>
     <p class="param"><a href="#Tegre">Tegre</a></p>
     <p class="param"><a href="#Toguz Xorgol">Toguz Xorgol</a></p>

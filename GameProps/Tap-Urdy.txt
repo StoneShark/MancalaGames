@@ -1,0 +1,29 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 6,
+      "nbr_start": 4
+   },
+   "game_info": {
+      "name": "Tap-Urdy",
+      "about": "Sow counter-clockwise in multiple laps. If a lap ends in an occupied hole, capture any seeds across a gap of one empty hole. Then, continue sowing even if no capture.\n\nGoal: capture more seeds than your opponent.\n.",
+      "capsamedir": true,
+      "capt_type": 2,
+      "evens": true,
+      "mlaps": 1,
+      "sow_direct": 1,
+      "sow_rule": 8,
+      "stores": true,
+      "unclaimed": 1
+   },
+   "player": {
+      "ai_params": {
+         "mm_depth": [ 1, 3, 5, 7 ]
+      },
+      "scorer": {
+         "stores_m": 8,
+         "empties_m": -1
+      }
+   },
+   "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p113."
+}
