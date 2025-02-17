@@ -57,16 +57,20 @@ class GameConfig:
     def load(self):
         """Load the game configuration from a file.
         Set the working dir to the selected dir.
-        json.JSONDecodeError is dervied from ValueError."""
+        json.JSONDecodeError is dervied from ValueError.
+
+        Return False if the user cancels or there
+        is an error in file. Return True if the file
+        was successfully loaded."""
 
         if self.check_save_cancel():
-            return
+            return False
 
         filename = tkfile.askopenfilename(parent=self._master,
                                           title='Load Parameters',
                                           initialdir=self._dir)
         if not filename:
-            return
+            return False
 
         self._dir, self.filename = os.path.split(filename)
         os.chdir(self._dir)
@@ -76,10 +80,11 @@ class GameConfig:
         except ValueError as error:
             tk.messagebox.showerror('JSON File Error', error,
                                     parent=self._master)
-            return
+            return False
 
         self.edited = False
         self._known = True
+        return True
 
 
     def _del_defaults(self):

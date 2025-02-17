@@ -729,7 +729,9 @@ class MancalaGames(tk.Frame):
 
         self.config.edited |= \
             any(field.edit_modified() for field in self.tktexts.values())
-        self.config.load()
+        if not self.config.load():
+            return
+
         self._fill_tk_from_config()
         self._test()
         self.config.edited = False
