@@ -565,7 +565,6 @@ class MemoizeAllowable(AllowableIf):
             cur_state = self.game.state
 
             if cur_state == self.saved_state:
-                game_log.add('Re-using allowable result.', game_log.DETAIL)
                 return self.return_val
 
         rval = self.decorator.get_allowable_holes()
