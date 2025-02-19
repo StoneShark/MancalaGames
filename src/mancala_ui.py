@@ -318,6 +318,8 @@ class MancalaUI(tk.Frame):
         gamemenu = tk.Menu(menubar)
         gamemenu.add_command(label='New', command=self._new_game)
         gamemenu.add_separator()
+        gamemenu.add_command(label='Swap Sides', command=self._pie_rule)
+        gamemenu.add_separator()
         gamemenu.add_command(label='End Round', command=self._end_round)
         gamemenu.add_command(label='End Game', command=self._end_game)
         menubar.add_cascade(label='Game', menu=gamemenu)
@@ -761,6 +763,42 @@ class MancalaUI(tk.Frame):
             self._param_tally()
 
             self._win_popup(*self.game.win_message(win_cond))
+
+
+    def _pie_rule(self):
+        """Allow a human player to swap sides after the first
+        move, aka 'Pie Rule'.
+        Only allowed on the first move of the game.
+        This is often used to nutralize the unfair advantage
+        that starter of some games has.  Not all mancala games
+        have an advantage for the starter, but allow it for all.
+
+        The AI history is cleared which currently only applies to
+        MCTS. This does seem extreme but the AI turn and node tree
+        have already been started correcting them seems error prone."""
+
+        game = self.game
+        if game.mcount != 1:
+            tk.messagebox.showerror(
+                title="Swap Not Allowed",
+                message="Swapping sides is only allowed by a " \
+                    "human player after the first move.")
+            return
+
+        game.mcount += 1
+        holes = game.cts.holes
+        dholes = game.cts.dbl_holes
+        game.board =  game.board[holes:dholes] + game.board[0:holes]
+        game.store = list(reversed(game.store))
+        game.turn = not game.turn
+
+        self.player.clear_history()
+
+        self._refresh()
+        game_log.turn(game.mcount, "Swap Sides (pie rule)", game)
+
+        if self.vars.ai_active.get() and self.game.get_turn():
+            self._schedule_ai()
 
 
     def _end_round(self):
