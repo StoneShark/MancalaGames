@@ -105,6 +105,7 @@ class MancalaGames(tk.Frame):
         self.desc = None
         self.prev_option = None
         self.menubar = None
+        self.quitting = False
 
         self.params = man_config.ParamData()
         self.config = mg_config.GameConfig(self.master, self.params)
@@ -114,6 +115,7 @@ class MancalaGames(tk.Frame):
         self.master.title(WTITLE)
         self.master.resizable(False, False)
         self.master.wm_geometry('+100+100')
+        self.master.protocol("WM_DELETE_WINDOW", self._check_destroy)
         self.pack()
 
         self.master.report_callback_exception = self._exception_callback
@@ -129,14 +131,26 @@ class MancalaGames(tk.Frame):
         self._reset()
 
 
-    def destroy(self):
-        """Remove the traces from the tk variables.
-        Don't change the name, we're overriding Frame method."""
+    def _check_destroy(self):
+        """On destory window, do our own clean up.
+        Bind to WM_DELETE_WINDOW instead of overriding destory,
+        so that the cancel operation will work.
+
+        Check for save, allowing cancel.
+        Set the quiting flag so we don't try to reactivate
+        when wait_window of game_ui returns.
+        Remove the traces from the tk variables.
+        Call destroy on self."""
 
         self.config.edited |= \
             any(field.edit_modified() for field in self.tktexts.values())
+        if self.config.edited:
+            self.config.init_fname(self.tkvars[ckey.NAME].get())
+            self._make_config_from_tk()
         if self.config.check_save_cancel():
             return
+
+        self.quitting = True
 
         for var in self.tkvars.values():
             if isinstance(var, list):
@@ -144,6 +158,8 @@ class MancalaGames(tk.Frame):
                     cvar.trace_remove(*cvar.trace_info()[0])
             else:
                 var.trace_remove(*var.trace_info()[0])
+
+        self.master.destroy()
 
 
     @staticmethod
@@ -787,7 +803,10 @@ class MancalaGames(tk.Frame):
     def _play(self):
         """Create and play the game. deactivate param ui and block
         while the game is being played. reactivate when the game
-        is exited."""
+        is exited.
+
+        If quitting is set, wait_window returned because we are
+        quiting, so don't try to reactivate."""
 
         self._test()
         if not self.game:
@@ -798,7 +817,9 @@ class MancalaGames(tk.Frame):
                                        self.master)
         self._set_active(False)
         game_ui.wait_window()
-        self._set_active(True)
+
+        if not self.quitting:
+            self._set_active(True)
 
 
     def _reset_edited(self):
