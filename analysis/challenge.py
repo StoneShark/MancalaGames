@@ -25,6 +25,7 @@ for game, fplayer, tplayer, gname in game_players_gen:
     gstats = play_game.play_games(game, fplayer, tplayer,
                                   config.nbr_runs,
                                   save_logs=config.save_logs,
+                                  end_all=config.end_all,
                                   move_limit=config.max_moves)
     logger.info(gstats)
 

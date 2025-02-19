@@ -95,6 +95,11 @@ def define_parser():
                         then x4 if played in rounds.
                         Default: %(default)s.""")
 
+    parser.add_argument('--end_all', action='store_true',
+                        help="""Score all games as WIN or TIE;
+                        no LOOPED or MAX_TURNS will be reported.
+                        If these were to be reported, call game.end_game.""")
+
     parser.add_argument('--save_logs', action='store_true',
                         help="""Save the game logs. Only one game maybe
                         selected and nbr_games must be < 50.

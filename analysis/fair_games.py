@@ -179,6 +179,7 @@ def play_them_all():
                                         config.nbr_runs,
                                         save_logs=config.save_logs,
                                         move_limit=config.max_moves,
+                                        end_all=config.end_all,
                                         result_func=ft.partial(score_game, gname))
         logger.info(game_res)
 

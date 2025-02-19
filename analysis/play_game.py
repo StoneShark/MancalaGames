@@ -176,7 +176,8 @@ def make_one_move(game, move):
     return None, game.turn
 
 
-def play_one_game(game, fplayer, tplayer, save_logs=False, move_limit=0):
+def play_one_game(game, fplayer, tplayer,
+                  *, save_logs=False, move_limit=0, end_all=False):
     """Play one game between the two players, returning the results.
     If either/both is None, use random choice moves.
     Otherwise use the player.
@@ -202,6 +203,9 @@ def play_one_game(game, fplayer, tplayer, save_logs=False, move_limit=0):
     move_limit : int (optional)
         Number of turns to limit each game to. Games which
         exceed this are tallied as MAX_TURNS
+
+    end_all : bool
+        Force all games to end in a WIN or TIE.
 
     Returns
     -------
@@ -241,13 +245,20 @@ def play_one_game(game, fplayer, tplayer, save_logs=False, move_limit=0):
             return cond, winner
 
         if stuck.game_state_loop(game):
+            if end_all:
+                cond = game.end_game()
+                return GameResult(cond.value), game.turn
+
             return GameResult.LOOPED, None
 
+    if end_all:
+        cond = game.end_game()
+        return GameResult(cond.value), game.turn
     return GameResult.MAX_TURNS, None
 
 
-def play_games(game, fplayer, tplayer, nbr_runs,
-               *, save_logs=False, move_limit=0, result_func=None):
+def play_games(game, fplayer, tplayer, nbr_runs, *,
+               save_logs=False, move_limit=0, end_all=False, result_func=None):
     """Play a nbr_runs games between two players. Half will be
     started by False and half by True.
 
@@ -285,6 +296,9 @@ def play_games(game, fplayer, tplayer, nbr_runs,
         If this function is provided, it will be called after
         every game played.
 
+    end_all : bool
+        Force all games to end in a WIN or TIE.
+
     Returns
     -------
     game_results : GameStats
@@ -306,7 +320,9 @@ def play_games(game, fplayer, tplayer, nbr_runs,
         starter = game.starter = game.turn = bool(cnt < nbr_runs // 2)
 
         result, winner = play_one_game(game, fplayer, tplayer,
-                                       save_logs=save_logs, move_limit=move_limit)
+                                       save_logs=save_logs,
+                                       move_limit=move_limit,
+                                       end_all=end_all)
         if save_logs:
             game_logger.game_log.save(
                 'Simulate Game.\n'
