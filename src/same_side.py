@@ -233,6 +233,8 @@ class SameSide(mancala.Mancala):
         super().__init__(game_consts, game_info)
 
         self.fix_incr_deco(BoardSideIncr)
+
+         # when true the next turn must empty the store (move seeds to op hole)
         self.empty_store = False
 
 
@@ -277,8 +279,10 @@ class SameSide(mancala.Mancala):
 
 
     def end_game(self):
-        super().end_game()
+        """call end game and clear the store"""
+        cond = super().end_game()
         self.empty_store = False
+        return cond
 
 
     def get_allowable_holes(self):
