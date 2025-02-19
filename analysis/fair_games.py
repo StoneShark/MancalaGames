@@ -176,8 +176,10 @@ def play_them_all():
     for game, fplayer, tplayer, gname in game_players_gen:
         logger.info(game.info.name)
         game_res = play_game.play_games(game, fplayer, tplayer,
-                                        config.nbr_runs, config.save_logs,
-                                        ft.partial(score_game, gname))
+                                        config.nbr_runs,
+                                        save_logs=config.save_logs,
+                                        move_limit=config.max_moves,
+                                        result_func=ft.partial(score_game, gname))
         logger.info(game_res)
 
         eval_game(gname, config.nbr_runs)

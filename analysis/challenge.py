@@ -23,7 +23,9 @@ for game, fplayer, tplayer, gname in game_players_gen:
     logger.info('False %s', fplayer if fplayer else 'Random')
 
     gstats = play_game.play_games(game, fplayer, tplayer,
-                                  config.nbr_runs, config.save_logs)
+                                  config.nbr_runs,
+                                  save_logs=config.save_logs,
+                                  move_limit=config.max_moves)
     logger.info(gstats)
 
     win_pct = gstats.wins[True] / gstats.total

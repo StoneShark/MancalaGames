@@ -34,7 +34,6 @@ class GameResult(enum.Enum):
 
     WIN = gi.WinCond.WIN.value
     TIE = gi.WinCond.TIE.value
-    ENDLESS = gi.WinCond.ENDLESS.value
 
     MAX_TURNS = enum.auto()
     LOOPED = enum.auto()
@@ -144,7 +143,7 @@ class FindLoops:
 # %% play the game
 
 
-def make_one_move(game, move, save_logs=False):
+def make_one_move(game, move):
     """
     Make a move for the next player.
 
@@ -155,13 +154,6 @@ def make_one_move(game, move, save_logs=False):
 
     move : gi.MoveTpl or int
 
-    save_logs : bool
-        True if the game_logger should be used for this game.
-        Records the start turn of the game.
-        The game_logger is disabled while the AiPlayers are
-        selecting a move, the logger state will be returned
-        to this value afterward.
-
     Returns
     -------
     (result, winner) : tuple(GameResult, bool/None)
@@ -170,7 +162,7 @@ def make_one_move(game, move, save_logs=False):
     """
 
     cond = game.move(move)
-    if cond in (gi.WinCond.WIN, gi.WinCond.TIE, gi.WinCond.ENDLESS):
+    if cond in (gi.WinCond.WIN, gi.WinCond.TIE):
         return GameResult(cond.value), game.turn
 
     if cond in (gi.WinCond.ROUND_WIN, gi.WinCond.ROUND_TIE):
@@ -184,7 +176,7 @@ def make_one_move(game, move, save_logs=False):
     return None, game.turn
 
 
-def play_one_game(game, fplayer, tplayer, save_logs=False):
+def play_one_game(game, fplayer, tplayer, save_logs=False, move_limit=0):
     """Play one game between the two players, returning the results.
     If either/both is None, use random choice moves.
     Otherwise use the player.
@@ -207,6 +199,10 @@ def play_one_game(game, fplayer, tplayer, save_logs=False):
         selecting a move, the logger state will be returned
         to this value afterward.
 
+    move_limit : int (optional)
+        Number of turns to limit each game to. Games which
+        exceed this are tallied as MAX_TURNS
+
     Returns
     -------
     (result, winner) : tuple(GameResult, bool/None)
@@ -218,11 +214,12 @@ def play_one_game(game, fplayer, tplayer, save_logs=False):
                       dupl_states=game.cts.holes * 2)
     game_logger.game_log.turn(0, 'Start Game', game)
 
-    move_limit = 500
-    if game.info.rounds:
-        move_limit *= 4
-    if game.info.capt_rturn or game.info.sow_own_store:
-        move_limit *= 2
+    if not move_limit:
+        move_limit = 500
+        if game.info.rounds:
+            move_limit *= 4
+        if game.info.capt_rturn or game.info.sow_own_store:
+            move_limit *= 2
 
     for _ in range(move_limit):
 
@@ -239,7 +236,7 @@ def play_one_game(game, fplayer, tplayer, save_logs=False):
             assert moves, "Game didn't end right."
             move = random.choice(moves)
 
-        cond, winner = make_one_move(game, move, save_logs)
+        cond, winner = make_one_move(game, move)
         if cond:
             return cond, winner
 
@@ -249,8 +246,8 @@ def play_one_game(game, fplayer, tplayer, save_logs=False):
     return GameResult.MAX_TURNS, None
 
 
-def play_games(game, fplayer, tplayer, nbr_runs, save_logs,
-               result_func=None):
+def play_games(game, fplayer, tplayer, nbr_runs,
+               *, save_logs=False, move_limit=0, result_func=None):
     """Play a nbr_runs games between two players. Half will be
     started by False and half by True.
 
@@ -275,6 +272,10 @@ def play_games(game, fplayer, tplayer, nbr_runs, save_logs,
         Only one game will be played per second (to avoid
         filename conflicts in the game logger).
 
+    move_limit : int (optional)
+        Number of turns to limit each game to. Games which
+        exceed this are tallied as MAX_TURNS
+
     result_func : function, optional
                   prototype: result_func(starter, result, winner)
         starter: bool - player that started the game
@@ -296,13 +297,16 @@ def play_games(game, fplayer, tplayer, nbr_runs, save_logs,
     if save_logs:
         game_logger.game_log.active = True
         game_logger.game_log.level = game_logger.game_log.DETAIL
+    else:
+        game_logger.game_log.active = False
 
     for cnt in tqdm.tqdm(range(nbr_runs)):
 
         game.new_game()
         starter = game.starter = game.turn = bool(cnt < nbr_runs // 2)
 
-        result, winner = play_one_game(game, fplayer, tplayer, save_logs)
+        result, winner = play_one_game(game, fplayer, tplayer,
+                                       save_logs=save_logs, move_limit=move_limit)
         if save_logs:
             game_logger.game_log.save(
                 'Simulate Game.\n'
@@ -346,7 +350,7 @@ def get_win_percent(game, player1, player2, nbr_runs):
          win or tie).
     """
 
-    gstats = play_games(game, player1, player2, nbr_runs, False)
+    gstats = play_games(game, player1, player2, nbr_runs, save_logs=False)
     if gstats.stats['MAX_TURNS'] > nbr_runs // 2:
         logger.info("Many MAX_TURNS games %d", gstats.stats['MAX_TURNS'])
 

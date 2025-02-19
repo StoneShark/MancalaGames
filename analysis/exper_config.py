@@ -87,6 +87,14 @@ def define_parser():
                         help="""Select the number of games to simulate.
                         Default: %(default)s""")
 
+    parser.add_argument('--max_moves', action='store',
+                        default=0, type=int,
+                        help="""Select the maximum number of
+                        moves to make per game.  If 0, value is computed
+                        as 500, then x2 if repeat turn possible,
+                        then x4 if played in rounds.
+                        Default: %(default)s.""")
+
     parser.add_argument('--save_logs', action='store_true',
                         help="""Save the game logs. Only one game maybe
                         selected and nbr_games must be < 50.
