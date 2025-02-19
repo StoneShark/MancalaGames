@@ -444,23 +444,23 @@ class TestParamDict:
 
     @pytest.mark.parametrize(
         'columns',
-        ["tab	option	text	order	vtype	ui_default	row	col",
-         "tab	option	text	order	vtype	cspecui_default	row	col",
-         "tab	option	text	order	vtype	ui_default	row",
+        ["tab,option,text,order,vtype,ui_default,row,col",
+         "tab,option,text,order,vtype,cspecui_default,row,col",
+         "tab,option,text,order,vtype,ui_default,row",
          ])
     def test_bad_cols(self, mocker, tmp_path, columns):
 
-        params = os.path.join(tmp_path,'game_params.txt')
+        params = os.path.join(tmp_path,'game_params.csv')
         with open(params, 'w', encoding='utf-8') as file:
             print(columns, file=file)
 
-        descs = os.path.join(tmp_path,'game_param_descs.txt')
+        descs = os.path.join(tmp_path,'game_param_descs.csv')
         with open(descs, 'w', encoding='utf-8') as file:
             print("""
                 """, file=file)
 
         def test_files(fname):
-            if fname == 'game_params.txt':
+            if fname == 'game_params.csv':
                 return params
 
             if fname == 'game_param_descs.txt':
@@ -477,12 +477,12 @@ class TestParamDict:
 
     def test_dupl_param(self, mocker, tmp_path):
 
-        params = os.path.join(tmp_path,'game_params.txt')
+        params = os.path.join(tmp_path,'game_params.csv')
         with open(params, 'w', encoding='utf-8') as file:
-            print("""tab	option	text	cspec	order	vtype	ui_default	row	col
-Capture	evens	Basic Capture		0	label	0	0	0
-skip	evens	Capture Evens	game_info _	114	bool	True	1	0
-Capture	evens	Capture Max	game_info _	104	int	0	2	0
+            print("""tab,option,text,cspec,order,vtype,ui_default,row,col
+Capture,evens,Basic Capture,,0,label,0,0,0
+skip,evens,Capture Evens,game_info _,114,bool,True,1,0
+Capture,evens,Capture Max,game_info _,104,int,0,2,0
                 """, file=file)
 
         descs = os.path.join(tmp_path,'game_param_descs.txt')
@@ -491,7 +491,7 @@ Capture	evens	Capture Max	game_info _	104	int	0	2	0
                 """, file=file)
 
         def test_files(fname):
-            if fname == 'game_params.txt':
+            if fname == 'game_params.csv':
                 return params
 
             if fname == 'game_param_descs.txt':
@@ -508,10 +508,10 @@ Capture	evens	Capture Max	game_info _	104	int	0	2	0
 
     def test_bad_int_param(self, mocker, tmp_path):
 
-        params = os.path.join(tmp_path,'game_params.txt')
+        params = os.path.join(tmp_path,'game_params.csv')
         with open(params, 'w', encoding='utf-8') as file:
-            print("""tab	option	text	cspec	order	vtype	ui_default	row	col
-Capture	evens	Basic Capture		0	label	0	0	notint
+            print("""tab,option,text,cspec,order,vtype,ui_default,row,col
+Capture,evens,Basic Capture,,0,label,0,0,notint
 
                 """, file=file)
 
@@ -521,7 +521,7 @@ Capture	evens	Basic Capture		0	label	0	0	notint
                 """, file=file)
 
         def test_files(fname):
-            if fname == 'game_params.txt':
+            if fname == 'game_params.csv':
                 return params
 
             if fname == 'game_param_descs.txt':
@@ -547,8 +547,8 @@ Capture	evens	Basic Capture		0	label	0	0	notint
         oget_path = man_path.get_path
 
         def test_files(fname):
-            if fname == 'game_params.txt':
-                return oget_path('game_params.txt')
+            if fname == 'game_params.csv':
+                return oget_path('game_params.csv')
 
             if fname == 'game_param_descs.txt':
                 return descs

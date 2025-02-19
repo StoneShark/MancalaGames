@@ -346,9 +346,9 @@ class ParamData(dict):
         """Read the game parameters file.
         static method because used outside mancala_games."""
 
-        with open(man_path.get_path('game_params.txt'), 'r',
-                  encoding='us-ascii') as file:
-            reader = csv.reader(file, delimiter='\t')
+        with open(man_path.get_path('game_params.csv'), 'r',
+                  encoding='utf-8') as file:
+            reader = csv.reader(file)
             data = list(reader)
 
         fields = data[0]

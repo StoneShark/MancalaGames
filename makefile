@@ -70,7 +70,7 @@ HELPFILES += docs\\Diffusion_rules.pdf
 
 DATAFILES = GameProps/*.txt $(HELPFILES) logs/README.txt
 
-HELPINPUTS = src\\game_params.txt 
+HELPINPUTS = src\\game_params.csv
 HELPINPUTS += src\\game_param_descs.txt
 HELPINPUTS += src\\man_config.py
 HELPINPUTS += src\\game_classes.py 
@@ -95,9 +95,9 @@ CONTEXTS += tools\\context.py
 # uses pandas which we don't want to use for main programs
 # exe can't be built with pandas
 
-params: src\\game_params.txt
+params: src\\game_params.csv
 
-src\\game_params.txt: src\\game_params.xlsx tools\\context.py tools\\convert_game_params.py
+src\\game_params.csv: src\\game_params.xlsx tools\\context.py tools\\convert_game_params.py
 	python tools/convert_game_params.py
 
 
@@ -135,17 +135,17 @@ $(GENEDHELPS): $(GAMES) $(HELPINPUTS) docs\\context.py
 ui_tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py
 	python test/ui_button_ops.py
 
-unit_tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py src\\game_params.txt
+unit_tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py src\\game_params.csv
 	-coverage run -m pytest -m unittest
 	coverage html
 
 
-integ_tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py src\\game_params.txt
+integ_tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py src\\game_params.csv
 	-coverage run -m pytest -m integtest
 	coverage html
 
 
-tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py src\\game_params.txt
+tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py src\\game_params.csv
 	-coverage run -m pytest
 	coverage html
 
@@ -193,14 +193,14 @@ player_tests: test\\context.py
 vpath %.cov .\\cov
 vpath %.py .\\test
 
-%.cov: test\\context.py src\\game_params.txt $(subst .cov,.py,$@) 
+%.cov: test\\context.py src\\game_params.csv $(subst .cov,.py,$@) 
 	coverage run -m pytest test\\$(subst .cov,.py,$@)
 	coverage json
 	python test\\check_unit_cov.py $(subst .cov,,$@) > cov\\$@
 	type cov\\$@
 
 .PHONY: %.test
-%.test: test\\context.py src\\game_params.txt $(subst .test,.py,$@)
+%.test: test\\context.py src\\game_params.csv $(subst .test,.py,$@)
 	coverage run -m pytest test\\$(subst .test,.py,$@)
 	coverage html
 
@@ -284,7 +284,7 @@ spotless: clean
 	-rmdir /S /Q MancalaGames
 	-del $(GENEDHELPS)
 	-del $(CONTEXTS)
-	-del src\\game_params.txt
+	-del src\\game_params.csv
 
 # exe
 #
@@ -305,7 +305,7 @@ MancalaGames/mancala_games.exe: $(SOURCES) $(DATAFILES) $(HELPFILES) mancala_gam
 	copy GameProps\\* MancalaGames\\GameProps
 	mkdir MancalaGames\\logs
 	copy logs\\README.txt MancalaGames\\logs
-	copy src\\game_params.txt MancalaGames
+	copy src\\game_params.csv MancalaGames
 	copy src\\game_param_descs.txt MancalaGames
 	copy mancala.ini MancalaGames
 	-rmdir /S /Q build
