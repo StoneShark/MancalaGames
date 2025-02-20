@@ -137,6 +137,11 @@ class GameConfig:
         if not self.filename.endswith(ALL_PARAMS):
             self._del_defaults()
 
+        if ckey.ABOUT in self.game_config[ckey.GAME_INFO]:
+            # remove all trailing whitespace, but add 1 newline
+            text = self.game_config[ckey.GAME_INFO][ckey.ABOUT]
+            self.game_config[ckey.GAME_INFO][ckey.ABOUT] = text.rstrip() + '\n'
+
         with open(self.filename, 'w', encoding='utf-8') as file:
             json.dump(self.game_config, file, indent=3)
 
