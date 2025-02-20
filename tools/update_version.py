@@ -14,7 +14,10 @@ date = datetime.datetime.now().ctime()
 
 repo = git.Repo(os.getcwd())
 branch = repo.active_branch.name
-version = repo.git.describe('--tag')
+
+# version = repo.git.describe('--tag')
+
+version = '1.7.0'
 
 
 with open('src/version.py', 'r', encoding='utf-8') as file:
