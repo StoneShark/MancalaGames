@@ -17,8 +17,6 @@ branch = repo.active_branch.name
 
 # version = repo.git.describe('--tag')
 
-version = '1.7.0'
-
 
 with open('src/version.py', 'r', encoding='utf-8') as file:
     lines = file.readlines()
@@ -28,8 +26,8 @@ for idx, line in enumerate(lines[:]):
     if 'DATETIME =' in line:
         lines[idx] = f"DATETIME = '{date}'\n"
 
-    elif 'VERSION =' in line:
-        lines[idx] = f"VERSION = '{version}'\n"
+    # elif 'VERSION =' in line:
+    #     lines[idx] = f"VERSION = '{version}'\n"
 
     elif 'BRANCH =' in line:
         lines[idx] = f"BRANCH = '{branch}'\n"
