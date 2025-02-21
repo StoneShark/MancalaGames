@@ -228,8 +228,11 @@ class SameSide(mancala.Mancala):
 
     def __init__(self, game_consts, game_info):
 
-        # override mlength value in the game_info
+        # force no_sides to True to allow UI to activate holes on both sides
+        # set MLENGTH to 3 (game info didn't do it when it was created)
+        object.__setattr__(game_info, ckey.NO_SIDES, True)
         object.__setattr__(game_info, ckey.MLENGTH, 3)
+
         super().__init__(game_consts, game_info)
 
         self.fix_incr_deco(BoardSideIncr)
@@ -354,8 +357,11 @@ class Ohojichi(SameSide):
         # pylint: disable=super-init-not-called
         # pylint: disable=duplicate-code
 
-        # override mlength value in the game_info
+        # force no_sides to True to allow UI to activate holes on both sides
+        # set MLENGTH to 3 (game info didn't do it when it was created)
+        object.__setattr__(game_info, ckey.NO_SIDES, True)
         object.__setattr__(game_info, ckey.MLENGTH, 3)
+
         mancala.Mancala.__init__(self, game_consts, game_info)
 
         self.deco.ender = diffusion.ClearSideEndGame(self)

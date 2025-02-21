@@ -1,7 +1,7 @@
 {
    "game_info": {
       "name": "Enkeshui",
-      "about": "A multi-lap, counter-clockwise sow. Bulls can be made on either side when sowing to 4; if the preceding hole has 3 seeds it is also made a bull. Cross-capture and pick own on capture.\n\nVariations:\n- 8, 10 or 12 board size\n- start patterns: CLIPPEDTRIPLES with 3 start seeds",
+      "about": "A multi-lap, counter-clockwise sow. Bulls can be made on either side when sowing to 4.  Two bulls are made if the final two seeds sow holes to 3 and 4 seeds in either order. Cross-capture and pick own on capture.\n\nVariations:\n- 8, 10 or 12 board size\n- start patterns: CLIPPEDTRIPLES with 3 start seeds",
       "capsamedir": true,
       "child_cvt": 4,
       "child_type": 5,

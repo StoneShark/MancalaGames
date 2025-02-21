@@ -521,7 +521,7 @@ Use a <a href="game_params.html#goal">GOAL</a> of RND_SEED_COUNT where the winne
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p28.
 <h3 id="Enkeshui">Enkeshui</h3>
-<p>A multi-lap, counter-clockwise sow. Bulls can be made on either side when sowing to 4; if the preceding hole has 3 seeds it is also made a bull. Cross-capture and pick own on capture.
+<p>A multi-lap, counter-clockwise sow. Bulls can be made on either side when sowing to 4.  Two bulls are made if the final two seeds sow holes to 3 and 4 seeds in either order. Cross-capture and pick own on capture.
 <p>Variations:
 <ul><li class="helptext">
 8, 10 or 12 board size
@@ -883,11 +883,10 @@ Instead of a minimum move of 2, singletons may start moves if all holes are empt
     <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
     <p class="param"><a href="game_params.html#capsamedir">Capture in Sow Direction</a>: Yes</p>
     <p class="param"><a href="game_params.html#capt_type">Capture Type</a>: NEXT</p>
-    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 1</p>
     <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
+    <p class="param"><a href="game_params.html#mustshare">Must Share</a>: Yes</p>
   </div>
   <div class="column2">
-    <p class="param"><a href="game_params.html#mustshare">Must Share</a>: Yes</p>
     <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OPP_SIDE</p>
     <p class="param"><a href="game_params.html#pickextra">On Capture, Take More Rule</a>: PICKFINAL</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
@@ -1560,6 +1559,7 @@ see <a href="about_games.html#Lam Waladach">Lam Waladach</a>
 <p>Captures continue while holes are alternately empty and occupied in the player's sow direction. If a capture leaves 4 or fewer seeds on the board, they are taken by the final capturer.
 <p>Played in <a href="game_params.html#rounds">ROUNDS</a>. Each round ends when the current player does not have any playable holes. Round setup is via the Empty Hole Method of <a href="game_params.html#round_fill">ROUND_FILL</a> using the OUTSIDE_FILL approach which the user may choose to override (UCHOOSE).  After the next round setup unfilled holes are out of play. The players alternate starting rounds.
 <p>The game is over when either player cannot fill a single hole.
+<p>Touch Screen mode will show the right click grids, but after the first move, the grid and left and right mouse buttons will all sow in the direction set on the first turn.
 <p>Variations:
 <ul><li class="helptext">
 <a href="game_params.html#sow_rule">SOW_RULE</a> of SOW_CAPT_ALL instead of OWN_SOW_CAPT_ALL
