@@ -716,13 +716,13 @@ class MancalaGames(tk.Frame):
         self.param_changed = False
 
 
-    def _test(self):
+    def _test(self, positive=True):
         """Try to build the game params and game,
         trap any exceptions, report to user."""
 
         self.param_changed |= \
             any(field.edit_modified() for field in self.tktexts.values())
-        if self.game and not self.param_changed:
+        if self.game and not self.param_changed and not positive:
             return
 
         self._update_title()
@@ -736,6 +736,13 @@ class MancalaGames(tk.Frame):
             tk.messagebox.showerror('Parameter Error', message)
 
             self.game = None
+            return
+
+        if positive:
+            tk.messagebox.showinfo(
+                'Game Config',
+                'No errors detected in the game configuration.')
+
 
 
     def _load(self):
@@ -749,7 +756,7 @@ class MancalaGames(tk.Frame):
             return
 
         self._fill_tk_from_config()
-        self._test()
+        self._test(False)
         self.config.edited = False
 
         self._update_title()
@@ -808,7 +815,7 @@ class MancalaGames(tk.Frame):
         If quitting is set, wait_window returned because we are
         quiting, so don't try to reactivate."""
 
-        self._test()
+        self._test(False)
         if not self.game:
             return
 

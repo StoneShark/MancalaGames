@@ -256,20 +256,35 @@ def add_territory_rules(rules):
 
     rules.add_rule(
         'terr_gs_not',
-        rule=lambda ginfo: (ginfo.goal == gi.Goal.TERRITORY and
-                            ginfo.grandslam == gi.GrandSlam.NOT_LEGAL),
+        rule=lambda ginfo: (ginfo.goal == gi.Goal.TERRITORY
+                            and ginfo.grandslam == gi.GrandSlam.NOT_LEGAL),
         msg='Territory goal and GRANDLAM=Not Legal are currently incompatible',
         excp=NotImplementedError)
         # territory requires move triples, GS allowables doesn't support
 
     rules.add_rule(
         'terr_half_rounds',
-        rule=lambda ginfo: (ginfo.goal == gi.Goal.TERRITORY and
-                            ginfo.rounds == gi.Rounds.HALF_SEEDS),
+        rule=lambda ginfo: (ginfo.goal == gi.Goal.TERRITORY
+                            and ginfo.rounds == gi.Rounds.HALF_SEEDS),
         msg='Territory goal is incompatible with ROUNDS.HALF_SEEDS',
         excp=gi.GameInfoError)
         # half seeds would lead to endless territory games
         # most seeds must be moved out of play for territory games
+
+    rules.add_rule(
+        'terr_gparam_high',
+        both_objs=True,
+        rule=lambda ginfo, nbr_holes: (
+            ginfo.goal == gi.Goal.TERRITORY
+            and ginfo.unclaimed == gi.EndGameSeeds.DONT_SCORE
+            and ((ginfo.rounds == gi.Rounds.END_S_SEEDS
+                  and ginfo.goal_param > (nbr_holes * 2) - 1)
+                 or (ginfo.rounds == gi.Rounds.END_2S_SEEDS
+                     and ginfo.goal_param > (nbr_holes * 2) - 2))),
+        msg='Territory goal param is too high for ROUNDS of DONT_SCORE, '
+            'a game winner is unlikely.',
+        excp=gi.GameInfoError)
+
 
 
 def add_block_and_divert_rules(rules):
