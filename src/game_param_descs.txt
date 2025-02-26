@@ -284,11 +284,25 @@ The overall goal of the game. Defines how a player wins.
 
   + DEPRIVE games cannot be played in ROUNDS or use children. Additionally, the following options are incompatible with DEPRIVE games: MOVEUNLOCK, MUSTPASS and MUSTSHARE.
 
-- TERRITORY: claim ownership of holes. Each round the ownership of holes is decided by the number of seeds captured in the previous round. In a TERRITORY game without rounds, the winner is the player that gained the most territory during play. 
+- TERRITORY: claim ownership of holes by collecting more seeds than your opponent. Claiming ownership of goal_param holes wins the game.
 
-  + TERRITORY games require STORES and that goal_param be set to a value between the number of holes and two times the number of holes.
+  + Territory games are generally played in rounds. A winner is declared for each round based on the condition set in ROUNDS.
 
-  + TERRITORY games are incompatible with NO_SIDES, START_PATTERN, GRANDSLAM of NOT_LEGAL, ALLOW_RULE of OPP_OR_EMPTY.
+  + After each round, the ownership of holes is decided by the number of seeds captured in the previous round. The winner's collected seeds are used to fill as many holes as they can with NBR_START seeds, first on their own side of the board and then their opponent's side.  Next, if they have more than half the seeds required to fill another hole, ownership of one more hole is allocated to them. The remaining holes are allocated to the round loser. 
+
+  + This ownership of holes only applies to the next round played; ownership of holes varies with each round played. Hole ownership may be reclaimed or lost each round.
+
+  + The Ownership Arrows Display option may be used to show hole ownership with long thin arrows in each hole. The arrows point up for the top player and down for the bottom player. If facing players is set, the arrows point towards the hole owner.
+
+  + A move maybe started from any hole owned by a player, no matter the side of the board--with any restrictions based on game rules. Captures are determined by CAPT_SIDE and hole ownership--not by side of the board. For example, if a player may only capture from their opponent's holes (per game rules), but their opponent owns a hole on their side of the board; its seeds may be captured by that player.
+
+  + In territory games, all holes are available for play each round, though the ALLOW_RULE or MUSTSHARE may limit which holes may be played on any given turn.
+
+  + In a TERRITORY game without rounds, the winner is not declared until one player has enough seeds to claim goal_param holes.
+
+  + TERRITORY games require STORES and that GOAL_PARAM be set to a value between the number of holes and two times the number of holes. 
+
+  + TERRITORY games are incompatible with NO_SIDES, START_PATTERN, GRANDSLAM of NOT_LEGAL, ALLOW_RULE of OPP_OR_EMPTY. Territory games may only use a ROUND_FILL of NOT_APPLICABLE or UCHOWN.
 
 - CLEAR: clear seeds from your own holes.
 
