@@ -144,7 +144,9 @@ def deco_end_move(game):
 
     ender = _add_end_game_winner(game)
 
-    if not game.info.mustpass:
+    if game.info.mustpass:
+        ender = emd.EndTurnPassPass(game, ender)
+    else:
         ender = emd.EndTurnNoMoves(game, ender)
 
     if game.info.mustshare:

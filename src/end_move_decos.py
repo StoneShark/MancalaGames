@@ -195,6 +195,37 @@ class EndTurnNoMoves(EndTurnIf):
         return self.decorator.game_ended(repeat_turn, ended)
 
 
+class EndTurnPassPass(EndTurnIf):
+    """End game if both players must pass.
+
+    Pass move processing doesn't use the deco chains,
+    so we need to catch it as soon as both players
+    do not have moves.
+
+    This can happen in split sow games, with a min move of 1,
+    where a move pushed one seed across the side of the board;
+    and possibly other situations. See allowables.DontUndoMoveOne"""
+
+    def game_ended(self, repeat_turn, ended=False):
+
+        if ended:
+            return self.decorator.game_ended(repeat_turn, ended)
+
+        if any(self.game.get_allowable_holes()):
+            return self.decorator.game_ended(repeat_turn, False)
+
+        self.game.turn = not self.game.turn
+        no_next_moves = not any(self.game.get_allowable_holes())
+        self.game.turn = not self.game.turn
+
+        if no_next_moves:
+            msg = "No moves for either player; game ended."
+            game_log.add(msg, game_log.INFO)
+            return self.decorator.game_ended(repeat_turn, True)
+
+        return self.decorator.game_ended(repeat_turn, False)
+
+
 class EndTurnMustShare(EndTurnIf):
     """With MUSTSHARE, the game is over if the next player to
     move needs to make seeds available to an opponent and cannot.

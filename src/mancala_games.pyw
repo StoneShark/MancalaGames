@@ -744,7 +744,6 @@ class MancalaGames(tk.Frame):
                 'No errors detected in the game configuration.')
 
 
-
     def _load(self):
         """Load params from file.
         Translate the json string. Convert non-primitive types.

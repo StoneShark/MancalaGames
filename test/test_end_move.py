@@ -153,6 +153,15 @@ class TestEndMove:
                      'rounds': gi.Rounds.END_2S_SEEDS,
                      'goal_param': 2,   # need two holes to continue
                      },
+
+        'pp_game': {'evens': True,
+                    'stores': True,
+                    'sow_direct': gi.Direct.SPLIT,
+                    'udir_holes': [1],
+                    'mustpass': True,
+                    'unclaimed': gi.EndGameSeeds.DONT_SCORE,
+                     },
+
     }
 
 
@@ -492,6 +501,23 @@ class TestEndMove:
                  utils.build_board([0, 0, 0],
                                    [0, 0, 0]), [5, 9], DONT_CARE),
 
+                ('pp_normal', 'pp_game', False, False,
+                 utils.build_board([2, 2, 2],
+                                   [2, 2, 2]), [0, 0], False, None,
+                 utils.build_board([2, 2, 2],
+                                   [2, 2, 2]), [0, 0], False),
+
+                ('pp_ended', 'pp_game', True, False,
+                 utils.build_board([2, 2, 2],
+                                   [2, 2, 2]), [0, 0], False, WinCond.TIE,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [0, 0], DONT_CARE),
+
+                ('pp_p1none', 'pp_game', False, False,
+                 utils.build_board([2, 2, 2],
+                                   [0, 0, 0]), [0, 0], False, None,
+                 utils.build_board([2, 2, 2],
+                                   [0, 0, 0]), [0, 0], DONT_CARE),
             ]
     @pytest.mark.filterwarnings("ignore")
     # @pytest.mark.usefixtures("logger")
@@ -519,11 +545,67 @@ class TestEndMove:
         assert game.store == estore
         if eturn != DONT_CARE:
             assert winner == eturn
-        assert not game.test_pass()
+        if 'pp' not in case:
+            assert not game.test_pass()
 
 
+    PPCASES = [
+
+                ('pp_none_twin', 'pp_game', False, False,
+                 utils.build_board([0, 0, 0],
+                                   [1, 0, 0]), [4, 6], False, WinCond.WIN,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [4, 6], True),
+
+                ('pp_none_fwin', 'pp_game', False, False,
+                 utils.build_board([0, 1, 1],
+                                   [1, 1, 0]), [6, 4], True, WinCond.WIN,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [6, 4], False),
+
+                ('pp_none_tie', 'pp_game', False, False,
+                 utils.build_board([0, 1, 1],
+                                   [1, 1, 0]), [4, 4], False, WinCond.TIE,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [4, 4], DONT_CARE),
+
+            ]
+    @pytest.mark.filterwarnings("ignore")
+    # @pytest.mark.usefixtures("logger")
     @pytest.mark.parametrize(
-        'game', ['game'], indirect=['game'])
+        'case, game, ended, repeat, board, store, turn,'
+        ' eres, eboard, estore, eturn',
+        PPCASES,
+        indirect=['game'],
+        ids=[f'{case[0]}_idx_{idx}' for idx, case in enumerate(PPCASES)])
+    def test_game_ended_pp(self, mocker, case, game, ended,
+                           repeat, board, store, turn,
+                           eres, eboard, estore, eturn):
+        """Test the cases were there are no moves for either player,
+        force it by patching get_allowable_holes.
+        Creating this condition would require doing moves to setup
+        DontUndoMoveOne to prevent a move."""
+
+        mobj = mocker.patch('mancala.Mancala.get_allowable_holes')
+        mobj.return_value = []
+
+        game.board = board
+        game.store = store
+        game.turn = turn
+        # print(game)
+        # print(game.deco.ender)
+        cond, winner = game.deco.ender.game_ended(repeat_turn=repeat,
+                                                  ended=ended)
+        # print('after:', game, sep='\n')
+        # print(cond, winner)
+        assert cond == eres
+        assert game.board == eboard
+        assert game.store == estore
+        if eturn != DONT_CARE:
+            assert winner == eturn
+
+
+    @pytest.mark.parametrize('game', ['game'], indirect=['game'])
     def test_str(self, game):
         """Printing the claimer is unique to enders."""
         assert 'ClaimSeeds' in str(game.deco.ender)
