@@ -89,7 +89,7 @@ def int_validate(value):
 # %%  game params UI
 
 
-class MancalaGames(tk.Frame):
+class MancalaGames(ttk.Frame):
     """Main interface to select game parameters, save & load games,
     and play Mancala games."""
 
@@ -122,6 +122,7 @@ class MancalaGames(tk.Frame):
         warnings.showwarning = self._warning
         warnings.simplefilter('always', UserWarning)
 
+        self._style()
         self._create_menus()
         self._add_commands_ui()
         self._add_tabs()
@@ -200,6 +201,25 @@ class MancalaGames(tk.Frame):
         self.master.title((self.config.filename or WTITLE)
                           + ('*' if self.config.edited else ''))
 
+    @staticmethod
+    def _style():
+        """Define the global styles."""
+
+        style = ttk.Style()
+        style.theme_use('default')
+        style.configure('.', background='#f0f0f0', padding=4)
+        style.map('.',
+                  background=[('disabled', '#f0f0f0')],
+                  foreground=[('disabled', 'grey40')])
+
+        style.configure('Title.TLabel', background='grey60', anchor='center')
+        style.map('Title.TLabel',
+                  background=[('disabled', 'grey60')],
+                  foreground=[('disabled', 'grey40')])
+
+        style.configure('TNotebook.Tab', background='grey60')
+        style.map('TNotebook.Tab', expand=[('selected', [4, 4, 4, 0])])
+
 
     def _create_menus(self):
         """Create the game control menus."""
@@ -240,17 +260,16 @@ class MancalaGames(tk.Frame):
     def _add_commands_ui(self):
         """Add buttons for commands."""
 
-        self.but_frame = tk.Frame(self.master, padx=3, pady=3,
-                                  borderwidth=3)
+        self.but_frame = ttk.Frame(self.master, borderwidth=3)
         self.but_frame.pack(side=tk.BOTTOM, expand=True, fill=tk.BOTH)
 
-        tk.Button(self.but_frame, text='Test', command=self._test,
+        ttk.Button(self.but_frame, text='Test', command=self._test,
                   ).pack(side=tk.LEFT, expand=True, fill=tk.X)
-        tk.Button(self.but_frame, text='Load', command=self._load
+        ttk.Button(self.but_frame, text='Load', command=self._load
                   ).pack(side=tk.LEFT, expand=True, fill=tk.X)
-        tk.Button(self.but_frame, text='Save', command=self._save
+        ttk.Button(self.but_frame, text='Save', command=self._save
                   ).pack(side=tk.LEFT, expand=True, fill=tk.X)
-        tk.Button(self.but_frame, text='Play', command=self._play
+        ttk.Button(self.but_frame, text='Play', command=self._play
                   ).pack(side=tk.LEFT, expand=True, fill=tk.X)
 
 
@@ -273,7 +292,7 @@ class MancalaGames(tk.Frame):
     def _create_desc_pane(self):
         """Build the label desc pane."""
 
-        dframe = tk.LabelFrame(self, text='Param Description',
+        dframe = ttk.LabelFrame(self, text='Param Description',
                                labelanchor='nw')
         dframe.pack(side=tk.BOTTOM, expand=True, fill=tk.BOTH)
 
@@ -421,15 +440,15 @@ class MancalaGames(tk.Frame):
             widgets[idx].destroy()
 
         for idx in range(prev_holes + 1, holes + 1):
-            tk.Checkbutton(self.udir_frame, text=str(idx),
-                           variable=self.tkvars[ckey.UDIR_HOLES][idx - 1]
-                           ).pack(side=tk.LEFT)
+            ttk.Checkbutton(self.udir_frame, text=str(idx),
+                            variable=self.tkvars[ckey.UDIR_HOLES][idx - 1]
+                            ).pack(side=tk.LEFT)
 
 
     def _make_text_entry(self, frame, param):
         """Make a text box entry with scroll bar."""
 
-        tframe = tk.LabelFrame(frame, text=param.text, labelanchor='nw')
+        tframe = ttk.LabelFrame(frame, text=param.text, labelanchor='nw')
         tframe.grid(row=param.row, column=param.col, columnspan=4,
                     sticky='nsew')
 
@@ -451,17 +470,17 @@ class MancalaGames(tk.Frame):
 
         length = 5 if param.vtype == pc.INT_TYPE else 30
 
-        lbl = tk.Label(frame, text=param.text)
+        lbl = ttk.Label(frame, text=param.text)
         lbl.grid(row=param.row, column=param.col, sticky=tk.E)
 
         if param.vtype == pc.INT_TYPE:
-            ent = tk.Entry(frame, width=length,
-                           textvariable=self.tkvars[param.option],
-                           validate=tk.ALL,
-                           validatecommand=(INT_VALID_CMD, '%P'))
+            ent = ttk.Entry(frame, width=length,
+                            textvariable=self.tkvars[param.option],
+                            validate=tk.ALL,
+                            validatecommand=(INT_VALID_CMD, '%P'))
         else:
-            ent = tk.Entry(frame, width=length,
-                           textvariable=self.tkvars[param.option])
+            ent = ttk.Entry(frame, width=length,
+                            textvariable=self.tkvars[param.option])
 
         ent.grid(row=param.row, column=param.col + 1, sticky=tk.W)
 
@@ -472,10 +491,10 @@ class MancalaGames(tk.Frame):
     def _make_checkbox(self, frame, param):
         """Make a labeled checkbox."""
 
-        lbl = tk.Label(frame, text=param.text)
+        lbl = ttk.Label(frame, text=param.text)
         lbl.grid(row=param.row, column=param.col, sticky=tk.E)
 
-        box = tk.Checkbutton(frame, variable=self.tkvars[param.option])
+        box = ttk.Checkbutton(frame, variable=self.tkvars[param.option])
         box.grid(row=param.row, column=param.col + 1, sticky=tk.W)
 
         lbl.bind('<Enter>', ft.partial(self._update_desc, param.option))
@@ -485,11 +504,11 @@ class MancalaGames(tk.Frame):
     def _make_checkbox_list(self, frame, param):
         """Make a list of checkboxes."""
 
-        lbl = tk.Label(frame, text=param.text)
+        lbl = ttk.Label(frame, text=param.text)
         lbl.grid(row=param.row, column=param.col, sticky=tk.E)
 
         boxes = self._get_boxes_config(param)
-        boxes_fr = tk.Frame(frame)
+        boxes_fr = ttk.Frame(frame)
         if param.option == ckey.UDIR_HOLES:
             boxes_fr.grid(row=param.row, column=param.col + 1,
                           columnspan=3, sticky=tk.W)
@@ -502,9 +521,9 @@ class MancalaGames(tk.Frame):
 
         add_in = 1 if param.option == ckey.CAPT_ON else 0
         for nbr in range(boxes):
-            tk.Checkbutton(boxes_fr, text=str(nbr + add_in),
-                           variable=self.tkvars[param.option][nbr]
-                           ).pack(side=tk.LEFT)
+            ttk.Checkbutton(boxes_fr, text=str(nbr + add_in),
+                            variable=self.tkvars[param.option][nbr]
+                            ).pack(side=tk.LEFT)
 
         lbl.bind('<Enter>', ft.partial(self._update_desc, param.option))
         boxes_fr.bind('<Enter>', ft.partial(self._update_desc, param.option))
@@ -513,22 +532,22 @@ class MancalaGames(tk.Frame):
     def _make_entry_list(self, frame, param):
         """Make a list of entries."""
 
-        lbl = tk.Label(frame, text=param.text)
+        lbl = ttk.Label(frame, text=param.text)
         lbl.grid(row=param.row, column=param.col, sticky=tk.E)
 
         boxes = self._get_boxes_config(param)
-        eframe = tk.Frame(frame)
+        eframe = ttk.Frame(frame)
         eframe.grid(row=param.row, column=param.col, sticky=tk.W)
 
         if param.option == ckey.UDIR_HOLES:
             self.udir_frame = eframe
 
         for nbr in range(boxes):
-            tk.Entry(eframe, width=5,
-                     textvariable=self.tkvars[param.option][nbr],
-                     validate=tk.ALL,
-                     validatecommand=(INT_VALID_CMD, '%P')
-                     ).pack(side=tk.LEFT)
+            ttk.Entry(eframe, width=5,
+                      textvariable=self.tkvars[param.option][nbr],
+                      validate=tk.ALL,
+                      validatecommand=(INT_VALID_CMD, '%P')
+                      ).pack(side=tk.LEFT)
 
         eframe.grid(row=param.row, column=param.col + 1, sticky=tk.W)
 
@@ -541,10 +560,10 @@ class MancalaGames(tk.Frame):
 
         values = list(pc.STRING_DICTS[param.vtype].str_dict.keys())
 
-        lbl = tk.Label(frame, text=param.text)
+        lbl = ttk.Label(frame, text=param.text)
         lbl.grid(row=param.row, column=param.col,sticky=tk.E)
 
-        opmenu = tk.OptionMenu(frame, self.tkvars[param.option], *values)
+        opmenu = ttk.OptionMenu(frame, self.tkvars[param.option], *values)
         opmenu.config(width=2 + max(len(str(val)) for val in values))
         opmenu.grid(row=param.row, column=param.col + 1, sticky=tk.W)
 
@@ -556,11 +575,10 @@ class MancalaGames(tk.Frame):
         """Make label row spanning two columns."""
         _ = self
 
-        lbl = tk.Label(frame, text=param.text, bg='darkgrey')
+        lbl = ttk.Label(frame, text=param.text, style='Title.TLabel')
         lbl.grid(row=param.row, column=param.col, columnspan=2,
                  padx=4, sticky='ew')
-
-        # lbl.bind('<Enter>', ft.partial(self._update_desc, param.option))
+        lbl.configure(anchor='center')  # anchor in style is being ignored
 
 
     def _make_ui_param(self, frame, param):
@@ -779,7 +797,7 @@ class MancalaGames(tk.Frame):
 
         for child in frame.winfo_children():
 
-            if isinstance(child, (tk.Frame, tk.LabelFrame)):
+            if isinstance(child, (ttk.Frame, ttk.LabelFrame)):
                 self._set_frame_active(child, new_state)
 
             elif isinstance(child, tk.Scrollbar):
