@@ -921,11 +921,7 @@ class MancalaUI(tk.Frame):
 
 
     def _ai_move(self):
-        """If it's the AI's turn, do a move. AI is top player.
-
-        We recheck that it is the AI's turn, because user events
-        are still somehow getting queued and the human may have
-        moved for the AI."""
+        """If it's the AI's turn, do a move. AI is top player."""
 
         if self.vars.ai_active.get() and self.game.get_turn():
 
