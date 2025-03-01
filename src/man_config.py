@@ -378,15 +378,16 @@ class ParamData(dict):
 
 INI_FILENAME = 'mancala.ini'
 
-# don't define  default for difficulty, if present it overrides game files
+# don't define a default for difficulty, if present it overrides game files
 
 DEFAULTS = {
     'button_size': '100',
 
     'system_color': 'SystemButtonFace',
+    'inactive_color': 'grey60',
     'turn_color': 'LightBlue2',
     'turn_dark_color': 'LightBlue4',
-    'inactive_color': 'grey60',
+    'ai_color': 'LightBlue2',
 
     'rclick_color': 'grey',
     'grid_color': 'red',
@@ -414,8 +415,8 @@ DEFAULTS = {
 
 DEFAULT = 'default'
 DIFFICULTY = 'difficulty'
-COLORS = ['system_color', 'turn_color', 'turn_dark_color', 'inactive_color',
-          'rclick_color', 'grid_color']
+COLORS = ['system_color', 'turn_color', 'turn_dark_color', 'ai_color',
+          'inactive_color', 'rclick_color', 'grid_color']
 
 VALID_DENSITY = {'12', '25', '50', '75'}
 VALID_DELAY = {'0', '1', '2'}
@@ -428,7 +429,7 @@ VALID_LOG_LEVEL = {'move', 'import', 'step', 'info', 'detail'}
 class ConfigData:
     """Read/create configuration data."""
 
-    def __init__(self, tk_root=None):
+    def __init__(self, tk_root=None, name=None):
         # pylint: disable=bare-except
 
         pathname = man_path.get_path(INI_FILENAME, no_error=True)
@@ -438,7 +439,7 @@ class ConfigData:
 
         self._config = configparser.ConfigParser()
         try:
-            self._config.read(pathname)
+            self._config.read(pathname, encoding='utf-8')
         except:
             self.create_ini_file()
 
@@ -448,10 +449,14 @@ class ConfigData:
         self.validate('ai_delay', VALID_DELAY)
         self.validate('log_level', VALID_LOG_LEVEL)
 
-        if (DIFFICULTY in self._config[DEFAULT]
-                and self._config[DEFAULT][DIFFICULTY] not in VALID_DIFFICULTY):
-            print('Deleting invalid difficulty in mancala.ini file.')
-            del self._config[DEFAULT][DIFFICULTY]
+        for section in self._config.sections():
+            if (DIFFICULTY in self._config[section]
+                    and self._config[section][DIFFICULTY]
+                        not in VALID_DIFFICULTY):
+                print('Deleting invalid difficulty in mancala.ini file.')
+                del self._config[section][DIFFICULTY]
+
+        self.load_game_specific(name)
 
 
     def __getitem__(self, key):
@@ -470,17 +475,18 @@ class ConfigData:
             print("Tk app not provided, colors not tested")
             return
 
-        for color in COLORS:
+        for section in self._config.sections():
+            for key, value in self._config[section].items():
 
-            if color in self._config[DEFAULT]:
-                color_string = self._config[DEFAULT][color]
+                if key not in COLORS:
+                    continue
 
                 try:
-                    tk_root.winfo_rgb(color_string)
+                    tk_root.winfo_rgb(value)
 
                 except tk.TclError:
-                    print(f"{color} value invalid, using default.")
-                    del self._config[DEFAULT][color]
+                    print(f"{section} {key} value invalid, using default.")
+                    del self._config[section][key]
 
 
     def validate(self, key, valid_values):
@@ -490,11 +496,29 @@ class ConfigData:
         Do not check difficulty because it's absence is
         treated differently than the default."""
 
-        value = self._config[DEFAULT].get(key, DEFAULTS[key])
-        if value not in valid_values:
-            print(f'Revert invalid {key} in mancala.ini file to default.')
-            print('Values:', valid_values)
-            self._config[DEFAULT][key] = DEFAULTS[key]
+        for section in self._config.sections():
+            value = self._config[section].get(key, DEFAULTS[key])
+            if value not in valid_values:
+                print(f'Revert invalid {key} in mancala.ini file to default.')
+                print('Values:', valid_values)
+                self._config[section][key] = DEFAULTS[key]
+
+
+    def load_game_specific(self, name):
+        """If there is a game specific section, bubble
+        those options up to the default section.
+        The rest of the software only uses the default
+        section."""
+
+        if not name:
+            return
+
+        name = name.replace(' ', '_')
+        if name not in self._config.sections():
+            return
+
+        for key, value in self._config[name].items():
+            self._config[DEFAULT][key] = value
 
 
     @staticmethod
@@ -515,6 +539,7 @@ class ConfigData:
         Make an attempt to put the ini file at the project root."""
 
         fullpath = self._get_filename()
+        print(f"Creating ini file: {fullpath}")
 
         self._config = configparser.ConfigParser()
         self._config[DEFAULT] = DEFAULTS
@@ -567,7 +592,7 @@ class ConfigData:
 
 CONFIG = None
 
-def read_ini_file(tk_root=None):
+def read_ini_file(tk_root=None, name=None):
     """Read the ini file.
     MancalaUI cannot do it directly or we would get
     circular imports.
@@ -576,4 +601,4 @@ def read_ini_file(tk_root=None):
     # pylint: disable=global-statement
 
     global CONFIG
-    CONFIG = ConfigData(tk_root)
+    CONFIG = ConfigData(tk_root, name)

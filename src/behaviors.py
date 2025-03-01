@@ -324,7 +324,7 @@ class PlayButtonBehavior(BehaviorIf):
         else:
             self.btn['state'] = tk.DISABLED
             if bstate.is_look_active():
-                self.btn['background'] = man_config.CONFIG['turn_color']
+                self.btn['background'] = man_config.CONFIG['ai_color']
 
             elif bstate == BtnState.PLAY_DISABLE:
                 self.btn['background'] = man_config.CONFIG['turn_dark_color']

@@ -33,7 +33,7 @@ from game_logger import game_log
 
 # %%   constants
 
-AI_DELAY = [0, 1000, 4000]
+AI_DELAY = [5, 1000, 4000]
 
 NO_TALLY_OP = 0
 VIS_TALLY_OP = 1
@@ -136,7 +136,7 @@ class MancalaUI(tk.Frame):
             self.master = tk.Toplevel(root_ui)
         else:
             self.master = tk.Tk()
-        man_config.read_ini_file(self.master)
+        man_config.read_ini_file(self.master, self.info.name)
 
         self.master.title(self.info.name)
         self.master.option_add('*tearOff', False)
@@ -167,7 +167,7 @@ class MancalaUI(tk.Frame):
 
         self._new_game()
         self._refresh()
-        self._ai_move()
+        self._schedule_ai()
 
 
     def _add_statuses(self):
@@ -328,7 +328,7 @@ class MancalaUI(tk.Frame):
         aimenu.add_checkbutton(label='AI Player',
                                variable=self.vars.ai_active,
                                onvalue=True, offvalue=False,
-                               command=self._ai_move)
+                               command=self._schedule_ai)
 
         aimenu.add_separator()
         aimenu.add_radiobutton(label='No AI Delay',
@@ -560,7 +560,7 @@ class MancalaUI(tk.Frame):
 
         if player_hole and allows[aidx]:
 
-            if ai_turn and true_hole:
+            if ai_turn and (true_hole or all_holes):
                 btnstate = behaviors.BtnState.LOOK_ACTIVE
 
             else:
@@ -797,8 +797,7 @@ class MancalaUI(tk.Frame):
         self._refresh()
         game_log.turn(game.mcount, "Swap Sides (pie rule)", game)
 
-        if self.vars.ai_active.get() and self.game.get_turn():
-            self._schedule_ai()
+        self._schedule_ai()
 
 
     def _end_round(self):
@@ -892,7 +891,6 @@ class MancalaUI(tk.Frame):
         self._refresh()
 
         if win_cond and win_cond != gi.WinCond.REPEAT_TURN:
-            # self._save_file()   # for testing auto save the logs
             self._win_message_popup(win_cond)
             self._new_game(win_cond=win_cond, new_round_ok=True)
             return
@@ -907,26 +905,27 @@ class MancalaUI(tk.Frame):
             tk.messagebox.showinfo(title='Pass Move', message=message,
                                    parent=self)
 
-            self._refresh()
             self._schedule_ai()
 
 
     def _schedule_ai(self):
         """Do AI move or schedule the AI turn (if the AI is enabled
-        and it's the AI's turn)"""
+        and it's the AI's turn)."""
 
         if self.vars.ai_active.get() and self.game.get_turn():
+            self._refresh()
             self._cancel_pending_afters()
             sel_delay = self.vars.ai_delay.get()
 
-            if sel_delay:
-                self.after(AI_DELAY[sel_delay], self._ai_move)
-            else:
-                self._ai_move()
+            self.after(AI_DELAY[sel_delay], self._ai_move)
 
 
     def _ai_move(self):
-        """If it's the AI's turn, do a move. AI is top player."""
+        """If it's the AI's turn, do a move. AI is top player.
+
+        We recheck that it is the AI's turn, because user events
+        are still somehow getting queued and the human may have
+        moved for the AI."""
 
         if self.vars.ai_active.get() and self.game.get_turn():
 

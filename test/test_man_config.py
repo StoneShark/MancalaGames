@@ -659,7 +659,7 @@ class TestConfig:
         mpath.return_value = path
 
         config = man_config.ConfigData()
-        print(list(config._config['default'].items()))
+        # print(list(config._config['default'].items()))
 
         # good values
         assert config['button_size'] == '20'
@@ -818,3 +818,26 @@ class TestConfig:
             man_config.DEFAULTS['turn_dark_color']
         assert config['inactive_color'] == \
             man_config.DEFAULTS['inactive_color']
+
+
+    def test_game_overrides(self, mocker, tmp_path):
+
+        path = os.path.join(tmp_path, 'mancala.ini')
+        with open(path, 'w', encoding='utf-8') as file:
+            print("""[default]
+                  button_size = 20
+                  grid_density = 25
+                  [my_game]
+                  button_size=40""", file=file)
+
+        # man_path finds the file where we just put it
+        mpath = mocker.patch.object(man_path, 'get_path')
+        mpath.return_value = path
+
+        config = man_config.ConfigData(None, 'diff game')
+        assert config['button_size'] == '20'
+        assert config['grid_density'] == '25'
+
+        config = man_config.ConfigData(None, 'my game')
+        assert config['button_size'] == '40'
+        assert config['grid_density'] == '25'
