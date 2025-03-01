@@ -635,7 +635,7 @@ def test_click(cname):
         print("Board doesn't match:",
               f"expected {eboard}",
               f"actual   {game.board}", sep='\n')
-        return False
+        assert False
 
 
 def debug_click(cname):
