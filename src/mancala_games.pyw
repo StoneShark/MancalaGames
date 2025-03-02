@@ -215,7 +215,7 @@ class MancalaGames(ttk.Frame):
         style.configure('Title.TLabel', background='grey60', anchor='center')
         style.map('Title.TLabel',
                   background=[('disabled', 'grey60')],
-                  foreground=[('disabled', 'grey40')])
+                  foreground=[('disabled', 'black')])
 
         style.configure('TNotebook.Tab', background='grey60')
         style.map('TNotebook.Tab', expand=[('selected', [4, 4, 4, 0])])
