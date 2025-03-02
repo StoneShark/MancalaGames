@@ -15,6 +15,7 @@
       "mustshare": true,
       "capt_side": 1,
       "rounds": 2,
+      "round_starter": 0,
       "skip_start": true,
       "sow_direct": 1,
       "sow_rule": 7,

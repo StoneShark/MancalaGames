@@ -7,9 +7,8 @@
    "game_info": {
       "name": "Obridjie",
       "about": "Sow multi-lap counter-clockwise.  All holes sown to 4 are taken by the hole owner.\nCapture on 4s.\nGoal: capture at least half of the seeds.\n\n",
-      "capt_on": [
-         4
-      ],
+      "capt_on": [ 4 ],
+      "capt_side": 0,
       "mlaps": 1,
       "sow_direct": 1,
       "sow_rule": 3,

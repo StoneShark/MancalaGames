@@ -8,6 +8,7 @@
       "name": "Meusu\u00ebb",
       "about": "Multilap sow, counter-clockwise. If the final seed of a lap ends in a hole with seeds, draw those seeds and continue sowing. If the final seeds of a lap ends in an empty hole, the turn is over.\n\nIf the final seed of a lap makes 4 seeds in a hole on either side of the board, capture those seeds. Then, on capture, continue sowing with seeds in the next hole (after the captured hole).\n\nWhen down to the last seeds 8 seeds (at the start of a lap), seeds sown on the opponent's side are captured by the opponent. If the last seed sown would do a normal capture, the sower takes those seeds, including the last seed sown.\n\nGoal: capture more than half of the seeds.",
       "capt_on": [ 4 ],
+      "capt_side": 0,
       "mlaps": 1,
       "sow_direct": 1,
       "sow_rule": 10,

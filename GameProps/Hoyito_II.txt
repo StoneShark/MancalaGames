@@ -16,6 +16,7 @@
       "pickextra": 3,
       "round_fill": 1,
       "rounds": 2,
+      "round_starter": 0,
       "sow_direct": 1,
       "stores": true
    },

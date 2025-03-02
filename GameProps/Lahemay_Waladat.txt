@@ -6,13 +6,17 @@
    },
    "game_info": {
       "name": "Lahemay Waladat",
-      "about": "Sow counter-clockwise in multiple laps. Continue lapping until the last seed falls into an empty hole or makes a hole containing 3 seeds. If the last seed of a lap makes 3 seeds, capture those seeds and continue the lap sowing with the seeds in the next hole. If there are no seeds in the next hole, the turn is over.\n\nA round ends when one player cannot move. Seeds left on the board are allocated to the player that performed the last move. For the next round, holes are allocated to each player based on how many seeds they collected in the previous round.\n\nThe game is over when one player has control of 11 holes.\n",
-      "capt_on": [ 3 ],
+      "about": "Sow counter-clockwise in multiple laps. Continue lapping until the last seed falls into an empty hole or makes a hole containing 3 seeds. If the last seed of a lap makes 3 seeds, capture those seeds and continue the lap sowing with the seeds in the next hole. If there are no seeds in the next hole, the turn is over.\n\nA round ends when one player cannot move. Seeds left on the board are allocated to the player that performed the last move. For the next round, holes are allocated to each player based on how many seeds they collected in the previous round.\n\nThe game is over when one player has control of 10 holes.\n",
+      "capt_on": [
+         3
+      ],
       "goal": 2,
       "goal_param": 10,
       "mlaps": 1,
-      "rounds": 2,
+      "capt_side": 0,
       "round_fill": 8,
+      "round_starter": 0,
+      "rounds": 2,
       "sow_direct": 1,
       "sow_rule": 8,
       "stores": true,
@@ -20,7 +24,12 @@
    },
    "player": {
       "ai_params": {
-         "mm_depth": [ 1, 2, 3, 5 ]
+         "mm_depth": [
+            1,
+            2,
+            3,
+            5
+         ]
       },
       "scorer": {
          "stores_m": 4,

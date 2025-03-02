@@ -13,6 +13,7 @@
       "mlaps": 1,
       "capt_side": 1,
       "rounds": 2,
+      "round_starter": 0,
       "sow_direct": 1,
       "stores": true,
       "xcpickown": 1

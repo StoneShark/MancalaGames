@@ -6,8 +6,9 @@
    },
    "game_info": {
       "name": "Enlightenment",
-      "about": "Move from any hole on the board. Split sow. You may not undo an opponents move of one seed across the sides of the board.\nSeeds from all holes sown to 2 or 4 are removed from play.\nThe goal is to clear all of your own seeds.\n",
+      "about": "Move from any hole on the board. Split sow. You may not undo an opponents move of one seed across the sides of the board.\n\nSeeds from all holes sown to 2 or 4 are removed from play.\n\nThe goal is to clear all of your own seeds.\n",
       "capt_on": [2, 4],
+      "capt_side": 0,
       "goal": 3,
       "no_sides": true,
       "sow_direct": 0,

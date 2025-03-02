@@ -8,6 +8,7 @@
       "name": "Ot-tjin",
       "about": "A multi-lap mancala with a clockwise sow.  Capture on 3s on either side of the board.\n\nVariations:\n- played with start seeds of 2 to 5 with the capture-on value equaling the number of start seeds",
       "capt_on": [3],
+      "capt_side": 0,
       "mlaps": 1,
       "sow_direct": -1,
       "stores": true

@@ -10,6 +10,7 @@
       "blocks": true,
       "capsamedir": true,
       "capt_on": [4],
+      "capt_side": 0,
       "capt_type": 2,
       "mlaps": 2,
       "rounds": 2,

@@ -8,6 +8,7 @@
       "name": "No Sides Child",
       "about": "Both players may move in either direction from any hole; single-lap and counter-clockwise. Player's store is to their right. Children are created on 4s. Capture on 2s.",
       "capt_on": [2],
+      "capt_side": 0,
       "child_cvt": 4,
       "child_type": 1,
       "no_sides": true,

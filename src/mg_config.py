@@ -88,18 +88,40 @@ class GameConfig:
 
 
     def _del_defaults(self):
-        """Delete most tags that have the default value."""
+        """Delete most tags that have the default value.
+        The help generator only lists the values kept in the file
+        (it doesn't build the games), so some defaults are kept.
+
+        Do the inclusion tests before we delete any keys.
+        Game config can be written even if it is inconsistent or
+        there are errors."""
+
+        capt_keys = [ckey.CAPSAMEDIR, ckey.CAPT_MAX, ckey.CAPT_MIN,
+                     ckey.CAPT_ON, ckey.CAPT_TYPE, ckey.EVENS]
+        capts_config = any(self.game_config[ckey.GAME_INFO][key]
+                           for key in capt_keys)
+
+        rounds_config = self.game_config[ckey.GAME_INFO][ckey.ROUNDS]
 
         for param in self._params.values():
 
-            if param.option not in (ckey.GAME_CLASS,
-                                    ckey.HOLES, ckey.NBR_START,
-                                    ckey.NAME, ckey.ABOUT, ckey.SOW_DIRECT):
+            if param.option == ckey.CAPT_SIDE and capts_config:
+                # if captures, keep capt_side
+                continue
 
-                man_config.del_default_config_tag(self.game_config,
-                                                  param.vtype,
-                                                  param.cspec,
-                                                  param.option)
+            if param.option == ckey.ROUND_STARTER and rounds_config:
+                # if played in rounds, keep round_starter
+                continue
+
+            if param.option in (ckey.GAME_CLASS,
+                                ckey.HOLES, ckey.NBR_START,
+                                ckey.NAME, ckey.ABOUT, ckey.SOW_DIRECT):
+                continue
+
+            man_config.del_default_config_tag(self.game_config,
+                                              param.vtype,
+                                              param.cspec,
+                                              param.option)
 
     def save(self, askfile=False):
         """Save the game configuration to a file.

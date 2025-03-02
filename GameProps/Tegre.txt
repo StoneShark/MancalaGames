@@ -13,6 +13,7 @@
       "capt_side": 1,
       "round_fill": 2,
       "rounds": 2,
+      "round_starter": 0,
       "sow_direct": 1,
       "sow_rule": 8,
       "stores": true,

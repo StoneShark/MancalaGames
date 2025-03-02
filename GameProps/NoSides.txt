@@ -11,7 +11,8 @@
       "stores": true,
       "sow_direct": 1,
       "skip_start": true,
-      "capt_on": [2]
+      "capt_on": [2],
+      "capt_side": 0
    },
    "player": {
       "scorer": {

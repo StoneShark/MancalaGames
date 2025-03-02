@@ -9,6 +9,7 @@
       "about": "Sow counter-clockwise in multiple laps. If a lap ends in an occupied hole, capture any seeds across a gap of one empty hole. Then, continue sowing even if no capture.\n\nGoal: capture more seeds than your opponent.\n",
       "capsamedir": true,
       "capt_type": 2,
+      "capt_side": 0,
       "evens": true,
       "mlaps": 1,
       "sow_direct": 1,

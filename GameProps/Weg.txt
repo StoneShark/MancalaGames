@@ -15,6 +15,7 @@
       "mlaps": 1,
       "mustpass": true,
       "rounds": 2,
+      "round_starter": 0,
       "sow_direct": 1,
       "stores": true
    },
