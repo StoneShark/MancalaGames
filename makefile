@@ -1,6 +1,9 @@
 
 all: clean pylint context params tests docs exe
 
+all_no_exe: clean pylint context params tests docs
+
+
 # do in this order so that html coverage dir is output from tests
 final: spotless long_tests all
 

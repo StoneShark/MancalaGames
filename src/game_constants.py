@@ -20,8 +20,6 @@ import dataclasses as dc
 MAX_HOLES = 14
 MIN_HOLES = 2
 
-MAX_SEEDS = 12
-
 
 class GameConstsError(Exception):
     """Error in GameConsts."""
@@ -53,9 +51,8 @@ class GameConsts:
         if self.holes < MIN_HOLES or self.holes > MAX_HOLES:
             raise GameConstsError(
                 f'Holes out of range [{MIN_HOLES}..{MAX_HOLES}] inclusive.')
-        if self.nbr_start <= 0 or self.nbr_start > MAX_SEEDS:
-            raise GameConstsError(
-                f'Nbr_start out of range [1..{MAX_SEEDS}] inclusive.')
+        if self.nbr_start <= 0:
+            raise GameConstsError('Nbr_start must be greater than zero.')
 
         object.__setattr__(self, 'dbl_holes', self.holes * 2)
         object.__setattr__(self, 'half_holes', self.holes // 2)

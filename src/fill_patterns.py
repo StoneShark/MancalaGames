@@ -223,8 +223,8 @@ class RandomPattern(StartPatternIf):
 
 
     @staticmethod
-    def nbr_seeds(holes, nbr_start):
-        return (holes * 10) + (nbr_start * 2)
+    def nbr_seeds(_, nbr_start):
+        return nbr_start
 
 
     @staticmethod

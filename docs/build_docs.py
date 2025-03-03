@@ -295,6 +295,7 @@ add interesting complications to the basic rules.
  in this case, called walda's.
 
 <p>Good introductions to multilap sowing are provided by
+<a href="#Je ki n je">Je ki n je</a>,
 <a href="#Endodoi">Endodoi</a> and
 <a href="#Ayoayo">Ayoayo</a>.
 
@@ -338,6 +339,38 @@ can be used to determine if a particular set of rules has a different
 name than you expect.
 """
 
+
+def add_useful(game_dict):
+    """Add some very useful tags if they apply
+    with the default value."""
+
+    if ckey.CAPT_SIDE not in game_dict[ckey.GAME_INFO]:
+
+        capt_keys = [ckey.CAPSAMEDIR, ckey.CAPT_MAX, ckey.CAPT_MIN,
+                     ckey.CAPT_ON, ckey.CAPT_TYPE, ckey.EVENS]
+
+        capt_config = any(game_dict[ckey.GAME_INFO].get(key, False)
+                          for key in capt_keys)
+
+        if capt_config:
+            game_dict[ckey.GAME_INFO][ckey.CAPT_SIDE] = \
+                man_config.get_construct_default(gi.CaptSide,
+                                                 'game_info _',
+                                                 'capt_side')
+            print('Adding capt_side for '
+                  + game_dict[ckey.GAME_INFO][ckey.NAME])
+
+    if (ckey.ROUND_STARTER not in game_dict[ckey.GAME_INFO]
+            and game_dict[ckey.GAME_INFO].get(ckey.ROUNDS, False)):
+
+            game_dict[ckey.GAME_INFO][ckey.ROUND_STARTER] = \
+                man_config.get_construct_default(gi.RoundStarter,
+                                                 'game_info _',
+                                                 'round_starter')
+            print('Adding round_starter for '
+                  + game_dict[ckey.GAME_INFO][ckey.NAME])
+
+
 def game_prop_text(game_dict):
     """Collect text string for the key game properties in the
     config dict."""
@@ -353,13 +386,17 @@ def game_prop_text(game_dict):
     if (ckey.GAME_CLASS in game_dict
             and game_dict[ckey.GAME_CLASS] != 'Mancala'):
         game_class  = game_dict[ckey.GAME_CLASS]
-        ptxt += [f'Game class:  {game_class}']
+        ptxt += ['<a href="game_params.html#game_class">Game class</a>:  '
+                 + f'{game_class}']
 
     if ckey.HELP_FILE in game_dict[ckey.GAME_INFO]:
         help_file  = game_dict[ckey.GAME_INFO][ckey.HELP_FILE]
         ptxt += [f'Help File:  <a href="{help_file}">{help_file}</a>']
 
-    for param, value in game_dict[ckey.GAME_INFO].items():
+    add_useful(game_dict)
+
+    for param, value in sorted(game_dict[ckey.GAME_INFO].items(),
+                               key=lambda pair: pair[0]):
 
         if param in (ckey.NAME, ckey.ABOUT, ckey.GOAL, ckey.HELP_FILE):
             continue
@@ -496,7 +533,7 @@ is included after the parameter sections.
 
 
 def write_defaults(param, ofile):
-    """Write the Constructio and UI defaults for parameters
+    """Write the Construction and UI defaults for parameters
     that have them."""
 
     if ckey.GAME_CONSTANTS in param.cspec:

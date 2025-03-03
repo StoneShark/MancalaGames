@@ -411,7 +411,7 @@ This condition is enforced by only activating holes in the UI which will make se
 The game name which may have spaces. Used for the window title and the filename (with spaces replaced with underscores).
 
 <param nbr_start>
-The number of seeds in each hole at the start of a game when START_PATTERN is ALL_EQUAL. Other sow patterns use this as the number of seeds for some holes in the associated patterns.
+The number of seeds in each hole at the start of a game when START_PATTERN is ALL_EQUAL. For the RANDOM start pattern, this is the total number of seeds to be placed. Other sow patterns use this as the number of seeds for some holes in the associated patterns.
 
 <param no_sides>
 Moves maybe made from any hole, independent of the side of the board. Moves need to specify side, position and directions.  
@@ -631,7 +631,7 @@ Allows specifying non-all-equal start patterns. The following patterns are suppo
 
 - TWOEMPTY: all but the rightmost two holes for each player are filled with is nbr_seeds.
 
-- RANDOM: the total seeds are computed as (10 * holes) + (2 * nbr_start). The seeds are randomly distributed into all holes.
+- RANDOM: Nbr_start is the total number of seeds placed. The seeds are randomly distributed into all holes.
 
 <param stores>
 True when stores are present on the game board. For games with GOAL of DEPRIVE or CLEAR, stores can be used to show whose turn it is (seed counts will not be sown).

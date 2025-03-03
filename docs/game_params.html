@@ -109,7 +109,7 @@ is included after the parameter sections.
 <p class="pdesc">Required Parameter
 <p class="pdesc">UI Tab: Game
 
-<p>The number of seeds in each hole at the start of a game when <a href="game_params.html#start_pattern">START_PATTERN</a> is ALL_EQUAL. Other sow patterns use this as the number of seeds for some holes in the associated patterns.
+<p>The number of seeds in each hole at the start of a game when <a href="game_params.html#start_pattern">START_PATTERN</a> is ALL_EQUAL. For the RANDOM start pattern, this is the total number of seeds to be placed. Other sow patterns use this as the number of seeds for some holes in the associated patterns.
 <h2 id="tab_Dynamics">Dynamics Tab</h2>
 <h4 id="goal"> Game Goal </h4>
 <p class="pdesc">Location in Config Files: game_info : goal
@@ -200,7 +200,7 @@ is included after the parameter sections.
 <li class="helptext">
 <b class="enum">TWOEMPTY</b>: all but the rightmost two holes for each player are filled with is nbr_seeds.
 <li class="helptext">
-<b class="enum">RANDOM</b>: the total seeds are computed as (10 * holes) + (2 * nbr_start). The seeds are randomly distributed into all holes.
+<b class="enum">RANDOM</b>: Nbr_start is the total number of seeds placed. The seeds are randomly distributed into all holes.
 </ol>
 <h4 id="prescribed"> Prescribed Opening Move </h4>
 <p class="pdesc">Location in Config Files: game_info : prescribed

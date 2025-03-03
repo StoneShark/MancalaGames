@@ -122,10 +122,10 @@ class TestRandom:
 
 
     @pytest.mark.parametrize('game, etot',
-                             [((2, 4), 28),
-                              ((2, 8), 36),
-                              ((6, 4), 68),
-                              ((6, 12), 84),
+                             [((2, 28), 28),
+                              ((2, 36), 36),
+                              ((6, 68), 68),
+                              ((6, 12), 12),
                               ], indirect=['game'])
     def test_totals(self, game, etot):
 
@@ -134,9 +134,9 @@ class TestRandom:
 
     @pytest.mark.no_seed
     @pytest.mark.parametrize('game',
-                             [(2, 4),
-                              (2, 8),
-                              (6, 4),
+                             [(2, 28),
+                              (2, 36),
+                              (6, 68),
                               (6, 12),
                               ], indirect=['game'])
     def test_patterns(self, game):

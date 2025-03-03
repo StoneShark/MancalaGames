@@ -21,21 +21,20 @@ TEST_COVERS = ['src\\game_constants.py']
 # %%  test_game_consts
 
 
-def test_hole_range_one():
+def test_hole_range():
     with pytest.raises(gc.GameConstsError):
-        gc.GameConsts(0, 5)
+        gc.GameConsts(holes=0, nbr_start=5)
 
-def test_hole_range_two():
     with pytest.raises(gc.GameConstsError):
-        gc.GameConsts(13, 5)
+        gc.GameConsts(holes=15, nbr_start=5)
 
-def test_nbr_start_range_one():
+def test_nbr_start_min():
     with pytest.raises(gc.GameConstsError):
-        gc.GameConsts(5, 0)
+        gc.GameConsts(holes=5, nbr_start=0)
 
-def test_start_range_two():
     with pytest.raises(gc.GameConstsError):
-        gc.GameConsts(5, 15)
+        gc.GameConsts(holes=5, nbr_start=-1)
+
 
 def test_odd_holes():
 

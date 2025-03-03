@@ -2,7 +2,7 @@
    "game_class": "Mancala",
    "game_constants": {
       "holes": 6,
-      "nbr_start": 4
+      "nbr_start": 70
    },
    "game_info": {
       "name": "Mangala I",
