@@ -243,6 +243,7 @@ STRING_DICTS = {
          'Alts with 1': gi.StartPattern.ALTS_WITH_1,
          'Clipped Triples': gi.StartPattern.CLIPPEDTRIPLES,
          'Two Empty': gi.StartPattern.TWOEMPTY,
-         'Random': gi.StartPattern.RANDOM}),
+         'Random': gi.StartPattern.RANDOM,
+         'Alts Split Right': gi.StartPattern.ALTS_SPLIT}),
 
 }

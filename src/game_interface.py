@@ -279,6 +279,7 @@ class StartPattern(enum.IntEnum):
     CLIPPEDTRIPLES = 4
     TWOEMPTY = 5
     RANDOM = 6
+    ALTS_SPLIT = 7
 
 
 @enum.unique

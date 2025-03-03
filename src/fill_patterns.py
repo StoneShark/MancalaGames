@@ -158,6 +158,42 @@ class AltsWithOnePattern(StartPatternIf):
             game.board = StartPatternIf._rev_board(game)
 
 
+class AltsThenSplitPattern(StartPatternIf):
+    """Alternates then split pattern: alternating 0 and nbr_start,
+    but then one-third of the non-starters rightmost hole's seeds
+    are moved directly across the board to the starter (their
+    leftmost hole)."""
+
+    @staticmethod
+    def size_ok(holes):
+        return not holes % 2
+    err_msg = 'Alternates Then Split requires an even number of holes per side'
+
+
+    @staticmethod
+    def nbr_seeds(holes, nbr_start):
+        return holes * nbr_start
+
+
+    @staticmethod
+    def fill_seeds(game):
+
+        holes = game.cts.holes
+        dholes = game.cts.dbl_holes
+        nstart = game.cts.nbr_start
+
+        game.board = [0] * dholes
+        for loc in range(1, dholes, 2):
+            game.board[loc] = nstart
+
+        move_seeds = nstart // 4
+        game.board[holes] += move_seeds
+        game.board[holes - 1] -= move_seeds
+
+        if not game.turn:
+            game.board = StartPatternIf._rev_board(game)
+
+
 class ClippedTriplesPattern(StartPatternIf):
     """Clipped triples pattern (tapata): repeating 0 nbr_start nbr_start"""
 
@@ -259,3 +295,4 @@ PCLASSES[gi.StartPattern.ALTS_WITH_1] = AltsWithOnePattern
 PCLASSES[gi.StartPattern.CLIPPEDTRIPLES] = ClippedTriplesPattern
 PCLASSES[gi.StartPattern.TWOEMPTY] = TwoEmptyPattern
 PCLASSES[gi.StartPattern.RANDOM] = RandomPattern
+PCLASSES[gi.StartPattern.ALTS_SPLIT] = AltsThenSplitPattern

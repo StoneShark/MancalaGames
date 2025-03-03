@@ -617,6 +617,7 @@ Special sow rules add additional behavior or restrictions to the sowing phase:
 When selected, the first seed is sown into (i.e., left in) the start hole.
 
 <param start_pattern>
+
 Allows specifying non-all-equal start patterns. The following patterns are supported:
 
 - ALL_EQUAL: all holes start with the same number of seeds.
@@ -632,6 +633,8 @@ Allows specifying non-all-equal start patterns. The following patterns are suppo
 - TWOEMPTY: all but the rightmost two holes for each player are filled with is nbr_seeds.
 
 - RANDOM: Nbr_start is the total number of seeds placed. The seeds are randomly distributed into all holes.
+
+- ALTS_SPLIT: Like alternates but the seeds are reduced in the rightmost hole of the non-starter. One quarter of the seeds from the non-starters rightmost hole are moved across the board into the empty hole of the starting player.
 
 <param stores>
 True when stores are present on the game board. For games with GOAL of DEPRIVE or CLEAR, stores can be used to show whose turn it is (seed counts will not be sown).

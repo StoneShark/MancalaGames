@@ -103,6 +103,8 @@ def test_rules():
     assert fp.RandomPattern.size_ok(2)
     assert fp.RandomPattern.size_ok(3)
 
+    assert fp.AltsThenSplitPattern.size_ok(2)
+    assert not fp.AltsThenSplitPattern.size_ok(3)
 
 
 class TestRandom:
