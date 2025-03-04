@@ -1,0 +1,31 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 6,
+      "nbr_start": 8
+   },
+   "game_info": {
+      "name": "Sadeqa II",
+      "about": "A territory game that uses both stores and wegs (children). The start pattern is ALTS_SPLIT. Sow is multi-lap, counter-clockwise.\n\nWegs are made when a final seed sows a hole to 4 seeds in your opponent's territory.\n\nCaptures are on the final seed being sown into an opponent's weg. The sown seed and one more (if there is one) are captured to your store. Repeat turn on capture.\n\nA round when the current play does not have any moves. A game ends when one player controls at least 10 holes.",
+      "capt_rturn": true,
+      "child_cvt": 4,
+      "child_type": 4,
+      "goal": 2,
+      "goal_param": 10,
+      "mlaps": 1,
+      "mustpass": true,
+      "round_starter": 0,
+      "rounds": 2,
+      "sow_direct": 1,
+      "start_pattern": 7,
+      "stores": true
+   },
+   "player": {
+      "ai_params": {},
+      "scorer": {
+         "stores_m": 4,
+         "child_cnt_m": 1
+      }
+   },
+   "rules": "Russ, Laurence. Mancala Games. 1984. p50."
+}

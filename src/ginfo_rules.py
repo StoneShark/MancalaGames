@@ -152,11 +152,23 @@ def add_pattern_rules(rules):
             excp=gi.GameInfoError)
 
     rules.add_rule(
-        'pattern_no_rounds',
-        rule=lambda ginfo: ginfo.start_pattern and ginfo.rounds,
-        msg='START_PATTERN and ROUNDS are incompatible',
+        'pattern_bad_fills',
+        rule=lambda ginfo: (ginfo.start_pattern
+                            and ginfo.round_fill
+                                    not in (gi.RoundFill.NOT_APPLICABLE,
+                                            gi.RoundFill.UCHOWN)),
+        msg='START_PATTERN is incompatible for the selected ROUND_FILL',
         excp=gi.GameInfoError)
 
+    rules.add_rule(
+        'pattern_bad_rgoals',
+        rule=lambda ginfo: (ginfo.start_pattern
+                            and ginfo.rounds
+                            and ginfo.goal not in
+                                    round_tally.RoundTally.GOALS
+                                    | {gi.Goal.TERRITORY}),
+        msg='START_PATTERN is incompatible for ROUNDS with selected GOAL',
+        excp=gi.GameInfoError)
 
 def add_elim_seeds_goal_rules(rules):
     """Add rules for the game eliminating our own or opponents seeds."""
@@ -247,12 +259,11 @@ def add_territory_rules(rules):
         warn=True)
 
     rules.add_rule(
-        'terr_pattern_incomp',
-        rule=lambda ginfo: (ginfo.goal == gi.Goal.TERRITORY
-                            and ginfo.start_pattern),
-        msg='Territory goal is incompatible with START_PATTERN',
+        'uchown_terr_only',
+        rule=lambda ginfo: (ginfo.goal != gi.Goal.TERRITORY
+                            and ginfo.round_fill == gi.RoundFill.UCHOWN),
+        msg='Round Fill UCHOWN is only supported for Territory goal',
         excp=gi.GameInfoError)
-        # depending on pattern one player might not end up with seeds
 
     rules.add_rule(
         'terr_gs_not',

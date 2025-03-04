@@ -302,7 +302,7 @@ The overall goal of the game. Defines how a player wins.
 
   + TERRITORY games require STORES and that GOAL_PARAM be set to a value between the number of holes and two times the number of holes. 
 
-  + TERRITORY games are incompatible with NO_SIDES, START_PATTERN, GRANDSLAM of NOT_LEGAL, ALLOW_RULE of OPP_OR_EMPTY. Territory games may only use a ROUND_FILL of NOT_APPLICABLE or UCHOWN.
+  + TERRITORY games are incompatible with NO_SIDES, GRANDSLAM of NOT_LEGAL, ALLOW_RULE of OPP_OR_EMPTY. Territory games may only use a ROUND_FILL of NOT_APPLICABLE or UCHOWN.
 
 - CLEAR: clear seeds from your own holes.
 
@@ -479,7 +479,9 @@ Several round fill mechanisms use the same general approach called the Empty Hol
 
 The seeds each player accumulated in the previous round are distributed into holes with exactly the same number in each (NBR_START seeds). The winner will fill all their holes and put any remaining seeds into their own store. The loser will fill as many holes as they can with nbr_start seeds and put any remaining seeds (fewer than nbr_start) into their own store.
 
-LEFT_FILE, RIGHT_FILL and OUTSIDE_FILL define which holes that the loser must fill. UCHOOSE allows the loser to choose which holes have seeds.
+LEFT_FILL, RIGHT_FILL and OUTSIDE_FILL define which holes that the loser must fill. UCHOOSE allows the loser to choose which holes have seeds.
+
+START_PATTERN is only supported round_fill of NOT_APPLICABLE and UCHOWN.
 
 - NOT_APPLICABLE: round fill doesn't need to be specified: either the game not played in rounds (CLEAR & DEPRIVE games included) or game goal is TERRITORY without UCHOWN (see below, all holes filled).
 
@@ -489,15 +491,15 @@ LEFT_FILE, RIGHT_FILL and OUTSIDE_FILL define which holes that the loser must fi
 
 - OUTSIDE_FILL: fill the round loser's holes from the outside ends toward the middle with nbr_start seeds each. Leftmost, rightmost, 2nd leftmost, 2nd rightmost, etc. until the seeds are used up.
 
-- EVEN_FILL: fill all holes (both sides) with the same number of seeds; determined by dividing the loser?s seeds by the number of holes per side. If that is not playable based on the minimum number of seeds required for a move (MIN_MOVE); extra seeds are put in each player?s leftmost hole. Any extra seeds are put in each player's store.
+- EVEN_FILL: fill all holes (both sides) with the same number of seeds; determined by dividing the loser's seeds by the number of holes per side. If that is not playable based on the minimum number of seeds required for a move (MIN_MOVE); extra seeds are put in each player's leftmost hole. Any extra seeds are put in each player's store.
 
 - SHORTEN: the number of holes that the round loser can fill with NBR_START seeds are fill on both sides, other holes are left empty. Holes are filled opposite each other. If BLOCKS is selected, the board is shortened to the number of holes filled (empty holes are blocked and out of play). If the game uses children, they will not be created if the board size is reduced to 3 or less.
 
 - UCHOOSE: allow user to choose which holes have seeds (are not blocked) when ROUNDS and BLOCKS are used.
 
-- UMOVE: allow the loser to choose where seeds are placed. At least one seed must be placed in each hole and the game must be playable (at least one hole has MIN_MOVE seeds), remaining seeds are placed in the store. The winner's layout is the same layout but reflected.
+- UMOVE: allow the loser to choose where seeds are placed. At least one seed must be placed in each hole and the game must be playable (at least one hole has MIN_MOVE seeds), remaining seeds are placed in the store. The winner's layout is the same layout but reflected and their extra seeds are placed in their store.
 
-- UCHOWN: The only round fill supported for territory games. The winner may choose which holes they control.
+- UCHOWN: The only round fill supported for territory games and only territory games. The winner may choose which holes they control.
 
 <param round_starter>
 Defines which player starts 2nd and subsequent rounds:
@@ -622,19 +624,35 @@ Allows specifying non-all-equal start patterns. The following patterns are suppo
 
 - ALL_EQUAL: all holes start with the same number of seeds.
 
-- GAMACHA: starting from the third hold (from start player's left) place nbr_seeds in every other hole, the first move is prescribed move the center hole's seeds to the other side (this is done automatically).
+- GAMACHA: starting from the third hold (from start player's left) place nbr_seeds in every other hole, then the center hole's seeds are moved to the other side of the board. If the board has an even number of seeds, a near center hole is choosen to move.
 
-- ALTERNATES: every other hole is filled with nbr_seeds, no seeds end up opposite each other. If a player has fewer seeds than their opponent, then they start.
+  + The gamacha fill pattern is only supported for boards with 3 or more holes per side. The total seeds in plays is (holes - 1) x nbr_start. 
 
-- ALTS_WITH_1: like Alternates except the starter's 2nd from right hole with nbr_seeds is replaced with one seed.
+- ALTERNATES: every other hole is filled with nbr_seeds, no seeds end up opposite each other. If a player has fewer seeds than their opponent, then they start. 
 
-- CLIPPEDTRIPLES: pattern of 0 S S (where S is nbr_seeds) is used to fill the holes; if a full cycle of 3 cannot be placed, the holes are left empty. The True and False sides are the same from the player's perspective, e.g., they will look reversed when viewed from one side of the game board.
+  + The total number of seeds in play is holes x nbr_start.
+
+- ALTS_WITH_1: like Alternates except the starter's 2nd from right hole with nbr_seeds is replaced with one seed. 
+
+  + The alts_with_1 fill pattern is only supported for boards with 3 or more holes per side. The total seeds in play is (holes - 1) x nbr_start + 1. 
+
+- CLIPPEDTRIPLES: pattern of 0 S S (where S is nbr_seeds) is used to fill the holes on one side of the board; if a full cycle of 3 cannot be placed, the holes are left empty. The True and False sides are the same from the player's perspective, e.g., they will look reversed when viewed from one side of the game board.
+
+  + The clippedtriples fill pattern is only supported for boards 3 or more holes per side. The total seeds in plays is floor(holes / 3) x nbr_start x 4. 
 
 - TWOEMPTY: all but the rightmost two holes for each player are filled with is nbr_seeds.
 
-- RANDOM: Nbr_start is the total number of seeds placed. The seeds are randomly distributed into all holes.
+  + The twoempty fill pattern is only supported for boards with 4 or more holes per side. The total seeds in play is 2 x (holes - 2) x nbr_start. 
 
-- ALTS_SPLIT: Like alternates but the seeds are reduced in the rightmost hole of the non-starter. One quarter of the seeds from the non-starters rightmost hole are moved across the board into the empty hole of the starting player.
+- RANDOM: The seeds are randomly distributed into the holes; some holes may end up empty. Nbr_start is the total number of seeds in play. 
+
+- ALTS_SPLIT: Like alternates but the seeds are reduced in the rightmost hole of the non-starter. One quarter of the seeds from the non-starter's rightmost hole are moved across the board into the empty hole of the starting player.
+
+  + The alts_split fill pattern is only supported for boards with an even number of holes per side. The total seeds in play is holes x nbr_start. 
+
+In the formulas above holes is the game constant HOLES and nbr_start is the game constant NBR_START.
+
+When a game is played in ROUNDS, start_pattern is only supported for round tally (RND_*) and territory GOAL games and only for ROUND_FILL of NOT_APPLICABLE and UCHOWN.
 
 <param stores>
 True when stores are present on the game board. For games with GOAL of DEPRIVE or CLEAR, stores can be used to show whose turn it is (seed counts will not be sown).

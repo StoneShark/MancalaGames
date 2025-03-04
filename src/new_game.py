@@ -201,7 +201,7 @@ class NewRound(NewGameIf):
 class TerritoryNewRound(NewGameIf):
     """If the game is over, call chained decorator.
     Otherwise, start a new round, compute the holes owned by false;
-    initialize the board, store and properties; and
+    call the deco chain to init the board; and then
     assign the owners."""
 
     def new_game(self, win_cond=None, new_round_ok=False):
@@ -213,11 +213,14 @@ class TerritoryNewRound(NewGameIf):
             return True
 
         winner, wholes = self.game.deco.ender.compute_win_holes()
-        set_round_starter(self.game)
 
-        self.game.store = [0, 0]
-        self.game.board = [self.game.cts.nbr_start] * self.game.cts.dbl_holes
-        self.game.init_bprops()
+        set_round_starter(self.game)
+        saved_starter = self.game.starter
+        saved_turn = self.game.turn
+
+        new_round = self.decorator.new_game(None, True)
+        self.game.starter = saved_starter
+        self.game.turn = saved_turn
 
         loc = self.game.cts.holes if winner else 0
         direct = 1
@@ -226,7 +229,7 @@ class TerritoryNewRound(NewGameIf):
             self.game.owner[loc] = winner if cnt < wholes else not winner
             loc = (loc + direct) % self.game.cts.dbl_holes
 
-        return False
+        return new_round   #  False   # TODO should this always be false or new_round
 
 
 class NewRoundEven(NewGameIf):
@@ -318,9 +321,9 @@ def deco_new_game(game):
     new_game = NewGame(game)
 
     if game.info.start_pattern:
-        return NewGamePattern(game,
-                              PCLASSES[game.info.start_pattern],
-                              new_game)
+        new_game = NewGamePattern(game,
+                                  PCLASSES[game.info.start_pattern],
+                                  new_game)
 
     if game.info.rounds:
         if game.info.goal == gi.Goal.TERRITORY:

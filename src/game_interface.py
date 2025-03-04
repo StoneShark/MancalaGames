@@ -508,6 +508,15 @@ class GameInterface(abc.ABC):
         Return: WinCond"""
 
     @abc.abstractmethod
+    def is_new_round_playable(self):
+        """Determine if the new round is not playable.
+        Territory games with start_patterns or allow_rule
+        might not be playable for the first player.
+
+        Force a new game, if it is not.
+        Return: if playable return True else False"""
+
+    @abc.abstractmethod
     def move(self, move):
         """Select seeds from hole (move) and sow per game rules.
         move:  one of:

@@ -138,7 +138,7 @@ is included after the parameter sections.
 <p class="helptext"> In territory games, all holes are available for play each round, though the <a href="game_params.html#allow_rule">ALLOW_RULE</a> or <a href="game_params.html#mustshare">MUSTSHARE</a> may limit which holes may be played on any given turn.
 <p class="helptext"> In a TERRITORY game without rounds, the winner is not declared until one player has enough seeds to claim goal_param holes.
 <p class="helptext"> TERRITORY games require <a href="game_params.html#stores">STORES</a> and that <a href="game_params.html#goal_param">GOAL_PARAM</a> be set to a value between the number of holes and two times the number of holes. 
-<p class="helptext"> TERRITORY games are incompatible with <a href="game_params.html#no_sides">NO_SIDES</a>, <a href="game_params.html#start_pattern">START_PATTERN</a>, <a href="game_params.html#grandslam">GRANDSLAM</a> of NOT_LEGAL, <a href="game_params.html#allow_rule">ALLOW_RULE</a> of OPP_OR_EMPTY. Territory games may only use a <a href="game_params.html#round_fill">ROUND_FILL</a> of NOT_APPLICABLE or UCHOWN.
+<p class="helptext"> TERRITORY games are incompatible with <a href="game_params.html#no_sides">NO_SIDES</a>, <a href="game_params.html#grandslam">GRANDSLAM</a> of NOT_LEGAL, <a href="game_params.html#allow_rule">ALLOW_RULE</a> of OPP_OR_EMPTY. Territory games may only use a <a href="game_params.html#round_fill">ROUND_FILL</a> of NOT_APPLICABLE or UCHOWN.
 <li class="helptext">
 <b class="enum">CLEAR</b>: clear seeds from your own holes.
 <p class="helptext"> Moves must always be possible so <a href="game_params.html#min_move">MIN_MOVE</a> must be 1 and <a href="game_params.html#allow_rule">ALLOW_RULE</a> single_all_to_zero may not be used.
@@ -190,20 +190,28 @@ is included after the parameter sections.
 <ol start=0><li class="helptext">
 <b class="enum">ALL_EQUAL</b>: all holes start with the same number of seeds.
 <li class="helptext">
-<b class="enum">GAMACHA</b>: starting from the third hold (from start player's left) place nbr_seeds in every other hole, the first move is prescribed move the center hole's seeds to the other side (this is done automatically).
+<b class="enum">GAMACHA</b>: starting from the third hold (from start player's left) place nbr_seeds in every other hole, then the center hole's seeds are moved to the other side of the board. If the board has an even number of seeds, a near center hole is choosen to move.
+<p class="helptext"> The gamacha fill pattern is only supported for boards with 3 or more holes per side. The total seeds in plays is (holes - 1) x nbr_start. 
 <li class="helptext">
-<b class="enum">ALTERNATES</b>: every other hole is filled with nbr_seeds, no seeds end up opposite each other. If a player has fewer seeds than their opponent, then they start.
+<b class="enum">ALTERNATES</b>: every other hole is filled with nbr_seeds, no seeds end up opposite each other. If a player has fewer seeds than their opponent, then they start. 
+<p class="helptext"> The total number of seeds in play is holes x nbr_start.
 <li class="helptext">
-<b class="enum">ALTS_WITH_1</b>: like Alternates except the starter's 2nd from right hole with nbr_seeds is replaced with one seed.
+<b class="enum">ALTS_WITH_1</b>: like Alternates except the starter's 2nd from right hole with nbr_seeds is replaced with one seed. 
+<p class="helptext"> The alts_with_1 fill pattern is only supported for boards with 3 or more holes per side. The total seeds in play is (holes - 1) x nbr_start + 1. 
 <li class="helptext">
-<b class="enum">CLIPPEDTRIPLES</b>: pattern of 0 S S (where S is nbr_seeds) is used to fill the holes; if a full cycle of 3 cannot be placed, the holes are left empty. The True and False sides are the same from the player's perspective, e.g., they will look reversed when viewed from one side of the game board.
+<b class="enum">CLIPPEDTRIPLES</b>: pattern of 0 S S (where S is nbr_seeds) is used to fill the holes on one side of the board; if a full cycle of 3 cannot be placed, the holes are left empty. The True and False sides are the same from the player's perspective, e.g., they will look reversed when viewed from one side of the game board.
+<p class="helptext"> The clippedtriples fill pattern is only supported for boards 3 or more holes per side. The total seeds in plays is floor(holes / 3) x nbr_start x 4. 
 <li class="helptext">
 <b class="enum">TWOEMPTY</b>: all but the rightmost two holes for each player are filled with is nbr_seeds.
+<p class="helptext"> The twoempty fill pattern is only supported for boards with 4 or more holes per side. The total seeds in play is 2 x (holes - 2) x nbr_start. 
 <li class="helptext">
-<b class="enum">RANDOM</b>: Nbr_start is the total number of seeds placed. The seeds are randomly distributed into all holes.
+<b class="enum">RANDOM</b>: The seeds are randomly distributed into the holes; some holes may end up empty. Nbr_start is the total number of seeds in play. 
 <li class="helptext">
-<b class="enum">ALTS_SPLIT</b>: Like alternates but the seeds are reduced in the rightmost hole of the non-starter. One quarter of the seeds from the non-starters rightmost hole are moved across the board into the empty hole of the starting player.
+<b class="enum">ALTS_SPLIT</b>: Like alternates but the seeds are reduced in the rightmost hole of the non-starter. One quarter of the seeds from the non-starter's rightmost hole are moved across the board into the empty hole of the starting player.
+<p class="helptext"> The alts_split fill pattern is only supported for boards with an even number of holes per side. The total seeds in play is holes x nbr_start. 
 </ol>
+<p>In the formulas above holes is the game constant <a href="game_params.html#holes">HOLES</a> and nbr_start is the game constant <a href="game_params.html#nbr_start">NBR_START</a>.
+<p>When a game is played in <a href="game_params.html#rounds">ROUNDS</a>, start_pattern is only supported for round tally (RND_*) and territory <a href="game_params.html#goal">GOAL</a> games and only for <a href="game_params.html#round_fill">ROUND_FILL</a> of NOT_APPLICABLE and UCHOWN.
 <h4 id="prescribed"> Prescribed Opening Move </h4>
 <p class="pdesc">Location in Config Files: game_info : prescribed
 <p id="SowPrescribed" class="pdesc">Type: <a href="param_types.html#SowPrescribed"> SowPrescribed </a>
@@ -359,7 +367,8 @@ is included after the parameter sections.
 <p>The round fill method determines which holes are filled and how many seeds they are filled with when setting up for a new round.
 <p>Several round fill mechanisms use the same general approach called the Empty Hole Method. The loser of the previous round will end up with empty holes. These holes are not playable if <a href="game_params.html#blocks">BLOCKS</a> are used; otherwise, they are playable. This method is not used for RND_* <a href="game_params.html#goal">GOAL</a> games.
 <p>The seeds each player accumulated in the previous round are distributed into holes with exactly the same number in each (<a href="game_params.html#nbr_start">NBR_START</a> seeds). The winner will fill all their holes and put any remaining seeds into their own store. The loser will fill as many holes as they can with nbr_start seeds and put any remaining seeds (fewer than nbr_start) into their own store.
-<p>LEFT_FILE, RIGHT_FILL and OUTSIDE_FILL define which holes that the loser must fill. UCHOOSE allows the loser to choose which holes have seeds.
+<p>LEFT_FILL, RIGHT_FILL and OUTSIDE_FILL define which holes that the loser must fill. UCHOOSE allows the loser to choose which holes have seeds.
+<p><a href="game_params.html#start_pattern">START_PATTERN</a> is only supported round_fill of NOT_APPLICABLE and UCHOWN.
 <ol start=0><li class="helptext">
 <b class="enum">NOT_APPLICABLE</b>: round fill doesn't need to be specified: either the game not played in rounds (CLEAR & DEPRIVE games included) or game goal is TERRITORY without UCHOWN (see below, all holes filled).
 <li class="helptext">
@@ -369,15 +378,15 @@ is included after the parameter sections.
 <li class="helptext">
 <b class="enum">OUTSIDE_FILL</b>: fill the round loser's holes from the outside ends toward the middle with nbr_start seeds each. Leftmost, rightmost, 2nd leftmost, 2nd rightmost, etc. until the seeds are used up.
 <li class="helptext">
-<b class="enum">EVEN_FILL</b>: fill all holes (both sides) with the same number of seeds; determined by dividing the loser?s seeds by the number of holes per side. If that is not playable based on the minimum number of seeds required for a move (<a href="game_params.html#min_move">MIN_MOVE</a>); extra seeds are put in each player?s leftmost hole. Any extra seeds are put in each player's store.
+<b class="enum">EVEN_FILL</b>: fill all holes (both sides) with the same number of seeds; determined by dividing the loser's seeds by the number of holes per side. If that is not playable based on the minimum number of seeds required for a move (<a href="game_params.html#min_move">MIN_MOVE</a>); extra seeds are put in each player's leftmost hole. Any extra seeds are put in each player's store.
 <li class="helptext">
 <b class="enum">SHORTEN</b>: the number of holes that the round loser can fill with <a href="game_params.html#nbr_start">NBR_START</a> seeds are fill on both sides, other holes are left empty. Holes are filled opposite each other. If <a href="game_params.html#blocks">BLOCKS</a> is selected, the board is shortened to the number of holes filled (empty holes are blocked and out of play). If the game uses children, they will not be created if the board size is reduced to 3 or less.
 <li class="helptext">
 <b class="enum">UCHOOSE</b>: allow user to choose which holes have seeds (are not blocked) when <a href="game_params.html#rounds">ROUNDS</a> and <a href="game_params.html#blocks">BLOCKS</a> are used.
 <li class="helptext">
-<b class="enum">UMOVE</b>: allow the loser to choose where seeds are placed. At least one seed must be placed in each hole and the game must be playable (at least one hole has <a href="game_params.html#min_move">MIN_MOVE</a> seeds), remaining seeds are placed in the store. The winner's layout is the same layout but reflected.
+<b class="enum">UMOVE</b>: allow the loser to choose where seeds are placed. At least one seed must be placed in each hole and the game must be playable (at least one hole has <a href="game_params.html#min_move">MIN_MOVE</a> seeds), remaining seeds are placed in the store. The winner's layout is the same layout but reflected and their extra seeds are placed in their store.
 <li class="helptext">
-<b class="enum">UCHOWN</b>: The only round fill supported for territory games. The winner may choose which holes they control.
+<b class="enum">UCHOWN</b>: The only round fill supported for territory games and only territory games. The winner may choose which holes they control.
 </ol>
 <h4 id="blocks"> Blocks </h4>
 <p class="pdesc">Location in Config Files: game_info : blocks

@@ -424,6 +424,24 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         return cond
 
 
+    def is_new_round_playable(self):
+        """Determine if the new round is not playable.
+        Territory games with specific start_patterns or allow_rules
+        might not be playable for the first player.
+
+        Force a new game, if it is not."""
+
+        if (self.info.goal == gi.Goal.TERRITORY
+                and not any(self.get_allowable_holes())):
+
+            game_log.add('New round not playable by starter.',
+                         game_log.IMPORT)
+            self.turn = not self.turn  # winner
+            self.new_game(win_cond=gi.WinCond.WIN, new_round_ok=False)
+            return False
+        return True
+
+
     def rtally_param_func(self):
         """If we created a round tallier, return the
         func that get the param values."""

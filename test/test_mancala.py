@@ -1233,13 +1233,6 @@ class TestMove:
 
 class TestLogMove:
 
-    @pytest.fixture()
-    def logger(self):
-        """activate the logger for the test, but deactivate it after"""
-        game_logger.game_log.active = True
-        yield
-        game_logger.game_log.active = False
-
     @pytest.fixture
     def game(self):
 
@@ -1312,3 +1305,41 @@ class TestLogMove:
         game._log_turn(False, 1, None)
 
         mlog.assert_not_called()
+
+
+class TestBadNewRound:
+
+    @pytest.fixture
+    def game(self):
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=4)
+        game_info = gi.GameInfo(goal=gi.Goal.TERRITORY,
+                                goal_param=8,
+                                rounds=gi.Rounds.NO_MOVES,
+                                start_pattern=gi.StartPattern.TWOEMPTY,
+                                evens=True,
+                                stores=True,
+                                multicapt=-1,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        return mancala.Mancala(game_consts, game_info)
+
+
+    # @pytest.mark.usefixtures("logger")
+    def test_good(self, game):
+
+        assert game.is_new_round_playable()
+
+
+    def test_bad(self, game):
+        """The game would have ended on the previous turn
+        but it tests the condition."""
+
+        game.board = [0, 0, 0, 0, 1, 1, 0, 0]
+        game.store = [5, 9]
+        game.starter = True
+        game.turn = True
+
+        game.move(gi.MoveTpl(0, 3, None))
+
+        assert not game.is_new_round_playable()

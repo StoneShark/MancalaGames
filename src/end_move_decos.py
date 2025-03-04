@@ -45,6 +45,11 @@ class EndTurnIf(deco_chain_if.DecoChainIf):
         self.sclaimer = sclaimer
         self.win_seeds = self.compute_win_seeds()
 
+        # for games with rounds but not an even fill,
+        # compute the win holes based on an equalized seeds per hole
+        self.equalized = (self.game.info.start_pattern
+                          != gi.StartPattern.ALL_EQUAL)
+
 
     def __str__(self):
         """A recursive func to print the whole decorator chain."""
@@ -80,8 +85,6 @@ class EndTurnIf(deco_chain_if.DecoChainIf):
         This is used by the new_game deco."""
 
         game = self.game
-        nbr_start = game.cts.nbr_start
-
         seeds = game.store.copy()
         for loc in range(game.cts.dbl_holes):
             if game.child[loc] is True:
@@ -94,7 +97,12 @@ class EndTurnIf(deco_chain_if.DecoChainIf):
             return True, game.cts.holes
 
         greater = seeds[True] > seeds[False]
-        greater_holes = (seeds[greater] + nbr_start // 2) // nbr_start
+        if self.equalized:
+            alloc_count = game.cts.total_seeds / game.cts.dbl_holes
+            greater_holes = round(seeds[greater] / alloc_count)
+        else:
+            nbr_start = game.cts.nbr_start
+            greater_holes = (seeds[greater] + nbr_start // 2) // nbr_start
 
         game_log.add(f"{greater} holes = {greater_holes}", game_log.IMPORT)
         return greater, greater_holes
