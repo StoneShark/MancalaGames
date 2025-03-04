@@ -647,6 +647,7 @@ class MancalaUI(tk.Frame):
 
     def _new_game(self, win_cond=None, new_round_ok=False):
         """Start a new game and refresh the board."""
+        # pylint: disable=too-complex
 
         self._cancel_pending_afters()
 
@@ -663,22 +664,20 @@ class MancalaUI(tk.Frame):
                 if self.set_game_mode(buttons.Behavior.MOVESEEDS):
                     return
 
-        else:
+        elif not self.game.is_new_round_playable():
+            self._not_playable_new_round()
 
-            if not self.game.is_new_round_playable():
-                self._not_playable_new_round()
+        elif self.info.round_fill == gi.RoundFill.UCHOOSE:
+            if self.set_game_mode(buttons.Behavior.RNDCHOOSE):
+                return
 
-            elif self.info.round_fill == gi.RoundFill.UCHOOSE:
-                if self.set_game_mode(buttons.Behavior.RNDCHOOSE):
-                    return
+        elif self.info.round_fill == gi.RoundFill.UMOVE:
+            if self.set_game_mode(buttons.Behavior.RNDMOVE):
+                return
 
-            elif self.info.round_fill == gi.RoundFill.UMOVE:
-                if self.set_game_mode(buttons.Behavior.RNDMOVE):
-                    return
-
-            elif self.info.round_fill == gi.RoundFill.UCHOWN:
-                if self.set_game_mode(buttons.Behavior.RNDCHOWN):
-                    return
+        elif self.info.round_fill == gi.RoundFill.UCHOWN:
+            if self.set_game_mode(buttons.Behavior.RNDCHOWN):
+                return
 
         self._start_it()
 
