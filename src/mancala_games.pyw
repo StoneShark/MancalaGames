@@ -563,7 +563,9 @@ class MancalaGames(ttk.Frame):
         lbl = ttk.Label(frame, text=param.text)
         lbl.grid(row=param.row, column=param.col,sticky=tk.E)
 
-        opmenu = ttk.OptionMenu(frame, self.tkvars[param.option], *values)
+        opmenu = ttk.OptionMenu(frame, self.tkvars[param.option],
+                                self.tkvars[param.option].get(),
+                                *values)
         opmenu.config(width=2 + max(len(str(val)) for val in values))
         opmenu.grid(row=param.row, column=param.col + 1, sticky=tk.W)
 
