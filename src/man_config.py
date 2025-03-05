@@ -60,7 +60,7 @@ PARAM = re.compile('^<param ([a-z0-9_]+)>')
 
 REMOVE_TAGS = [re.compile(r'<a[^>]+>'),
                re.compile(r'</a>'),
-               re.compile(r'<img[^>]+>\n'),
+               re.compile(r'(  \+ )?<img[^>]+>\n'),
                ]
 
 # %% read config files
