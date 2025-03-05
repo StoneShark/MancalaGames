@@ -628,21 +628,31 @@ Allows specifying non-all-equal start patterns. The following patterns are suppo
 
   + The gamacha fill pattern is only supported for boards with 3 or more holes per side. The total seeds in plays is (holes - 1) x nbr_start. 
 
+  + <img src="figs/gamacha_patt.jpg" alt="Gamacha Pattern" class="helpfig">
+
 - ALTERNATES: every other hole is filled with nbr_seeds, no seeds end up opposite each other. If a player has fewer seeds than their opponent, then they start. 
 
   + The total number of seeds in play is holes x nbr_start.
+
+  + <img src="figs/alternates_patt.jpg" alt="Alternates Pattern" class="helpfig">
 
 - ALTS_WITH_1: like Alternates except the starter's 2nd from right hole with nbr_seeds is replaced with one seed. 
 
   + The alts_with_1 fill pattern is only supported for boards with 3 or more holes per side. The total seeds in play is (holes - 1) x nbr_start + 1. 
 
-- CLIPPEDTRIPLES: pattern of 0 S S (where S is nbr_seeds) is used to fill the holes on one side of the board; if a full cycle of 3 cannot be placed, the holes are left empty. The True and False sides are the same from the player's perspective, e.g., they will look reversed when viewed from one side of the game board.
+  + <img src="figs/alts_1_patt.jpg" alt="Alternates with 1 Pattern" class="helpfig">
+
+- CLIPPEDTRIPLES: pattern of 0 n n (where n is nbr_seeds) is used to fill the holes on one side of the board; if a full cycle of 3 cannot be placed, the holes are left empty. The True and False sides are the same from the player's perspective, e.g., they will look reversed when viewed from one side of the game board.
 
   + The clippedtriples fill pattern is only supported for boards 3 or more holes per side. The total seeds in plays is floor(holes / 3) x nbr_start x 4. 
+
+  + <img src="figs/clipped_triples_patt.jpg" alt="Clipped Triples Pattern" class="helpfig">
 
 - TWOEMPTY: all but the rightmost two holes for each player are filled with is nbr_seeds.
 
   + The twoempty fill pattern is only supported for boards with 4 or more holes per side. The total seeds in play is 2 x (holes - 2) x nbr_start. 
+
+  + <img src="figs/twoempty_patt.jpg" alt="Two Empty Pattern" class="helpfig">
 
 - RANDOM: The seeds are randomly distributed into the holes; some holes may end up empty. Nbr_start is the total number of seeds in play. 
 
@@ -650,7 +660,9 @@ Allows specifying non-all-equal start patterns. The following patterns are suppo
 
   + The alts_split fill pattern is only supported for boards with an even number of holes per side. The total seeds in play is holes x nbr_start. 
 
-In the formulas above holes is the game constant HOLES and nbr_start is the game constant NBR_START.
+  + <img src="figs/alts_split_patt.jpg" alt="Clipped Triples Pattern" class="helpfig">
+
+In the formulas above holes (n in figures) is the game constant HOLES and nbr_start is the game constant NBR_START.
 
 When a game is played in ROUNDS, start_pattern is only supported for round tally (RND_*) and territory GOAL games and only for ROUND_FILL of NOT_APPLICABLE and UCHOWN.
 

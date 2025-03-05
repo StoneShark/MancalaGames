@@ -1,19 +1,16 @@
 # -*- coding: utf-8 -*-
-"""Handles the configuration files for mancala games:
+"""Handles the configuration files for mancala games and mancala ui:
 
-Read a specified game configuration file and return
-the game class, game constants, game info, and
-player dictionary.
+Read a specified game configuration file and return the game class,
+game constants, game info, and player dictionary.
 
-Utilities to get default values and retrieve or set
-game configuration value via the 'cspec' from
-the game_params file.
+Utilities to get default values and retrieve or set game configuration
+value via the 'cspec' from the game_params file.
 
-Read the parameters data files game_params and
-game_param_descs, return a dictionary of
-    param_name: Param
+Read the parameters data files game_params and game_param_descs,
+return a dictionary of  param_name: Param  (mancala games only).
 
-Reads (or creates) the ini for UI options.
+Reads (or creates) the ini for UI options (mancala ui only).
 
 Created on Tue Jul 18 12:16:20 2023
 @author: Ann"""
@@ -62,7 +59,9 @@ SKIP_TAB = 'skip'
 PARAM = re.compile('^<param ([a-z0-9_]+)>')
 
 REMOVE_TAGS = [re.compile(r'<a[^>]+>'),
-               re.compile(r'</a>')]
+               re.compile(r'</a>'),
+               re.compile(r'<img[^>]+>\n'),
+               ]
 
 # %% read config files
 

@@ -302,6 +302,8 @@ MancalaGames/mancala_games.exe: $(SOURCES) $(DATAFILES) $(HELPFILES) mancala_gam
 	pyinstaller mancala_games.spec --distpath .
 	mkdir MancalaGames\\help
 	cp $(HELPFILES) MancalaGames\\help
+	mkdir MancalaGames\\help\\figs
+	copy docs\\figs\\*.jpg MancalaGames\\help\\figs
 	copy docs\\styles.css MancalaGames\\help
 	copy docs\\dist_readme.txt MancalaGames\\README.txt
 	mkdir MancalaGames\\GameProps
