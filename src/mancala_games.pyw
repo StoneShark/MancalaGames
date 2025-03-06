@@ -129,7 +129,25 @@ class MancalaGames(ttk.Frame):
         self._create_desc_pane()
         self._make_tkvars()
         self._make_ui_elements()
-        self._reset()
+        self._reset(check_save=False)
+
+
+    def _check_save_cancel(self):
+        """Check to see if a save is needed, if so then do
+        or not at user choice.
+        If cancel, then return False"""
+
+        self.config.edited |= \
+            any(field.edit_modified() for field in self.tktexts.values())
+
+        if self.config.edited:
+            self.config.init_fname(self.tkvars[ckey.NAME].get())
+            self._make_config_from_tk()
+
+        if self.config.check_save_cancel():
+            return True
+
+        return False
 
 
     def _check_destroy(self):
@@ -143,12 +161,7 @@ class MancalaGames(ttk.Frame):
         Remove the traces from the tk variables.
         Call destroy on self."""
 
-        self.config.edited |= \
-            any(field.edit_modified() for field in self.tktexts.values())
-        if self.config.edited:
-            self.config.init_fname(self.tkvars[ckey.NAME].get())
-            self._make_config_from_tk()
-        if self.config.check_save_cancel():
+        if self._check_save_cancel():
             return
 
         self.quitting = True
@@ -769,9 +782,7 @@ class MancalaGames(ttk.Frame):
         Translate the json string. Convert non-primitive types.
         Build game_consts and game_info."""
 
-        self.config.edited |= \
-            any(field.edit_modified() for field in self.tktexts.values())
-        if not self.config.load():
+        if self._check_save_cancel():
             return
 
         self._fill_tk_from_config()
@@ -857,11 +868,15 @@ class MancalaGames(ttk.Frame):
         self._update_title()
 
 
-    def _reset(self):
+    def _reset(self, check_save=True):
         """Reset to ui_defaults; clear loaded config dictionary.
 
         Call this at initialization to fill the text boxes which don't
         have preinitialized variables."""
+        # pylint: disable=too-complex
+
+        if check_save and self._check_save_cancel():
+            return
 
         for param in self.params.values():
 
@@ -895,6 +910,10 @@ class MancalaGames(ttk.Frame):
 
     def _reset_const(self):
         """Reset to defaults; clear loaded config dictionary."""
+        # pylint: disable=too-complex
+
+        if self._check_save_cancel():
+            return
 
         for param in self.params.values():
 
