@@ -433,20 +433,11 @@ def add_child_rules(rules):
     # NOT_LEGAL is now supported, others are not
 
     rules.add_rule(
-        'weg_territory',
-        rule=lambda ginfo: (ginfo.child_type == gi.ChildType.WEG
-                            and ginfo.goal != gi.Goal.TERRITORY),
-        msg='Weg children are only supported for TERRITORY games',
-        excp=gi.GameInfoError)
-
-    rules.add_rule(
-        'ch_rule_opp_incom',
-        rule=lambda ginfo: (ginfo.child_type in (gi.ChildType.BULL,
-                                                 gi.ChildType.QUR,
-                                                 gi.ChildType.WEG)
-                            and ginfo.child_rule in (gi.ChildRule.OPP_ONLY,
-                                                     gi.ChildRule.OWN_ONLY)),
-        msg='CHILD_RULE: OPP/OWN_ONLY is incompatible with selected CHILD_TYPE',
+        'ch_rule_own_incom',
+        rule=lambda ginfo: (ginfo.goal != gi.Goal.TERRITORY
+                            and ginfo.child_rule in (gi.ChildRule.OPP_OWNER_ONLY,
+                                                     gi.ChildRule.OWN_OWNER_ONLY)),
+        msg='CHILD_RULE: *_OWNER_ONLY requires territory GOAL',
         excp=gi.GameInfoError)
 
     rules.add_rule(

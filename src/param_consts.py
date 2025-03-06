@@ -105,14 +105,17 @@ STRING_DICTS = {
          'Opposite Ends plus all own inner': gi.ChildLocs.INV_ENDS_PLUS_MID,
          'Any end holes plus next two inner': gi.ChildLocs.ENDS_PLUS_ONE_OPP,
          'No own rightmost': gi.ChildLocs.NO_OWN_RIGHT,
-         'No opposite righmost': gi.ChildLocs.NO_OPP_RIGHT,
+         'No opposite rightmost': gi.ChildLocs.NO_OPP_RIGHT,
+         'No opposite leftmost': gi.ChildLocs.NO_OPP_LEFT,
+         'Not Symetrically Opposite': gi.ChildLocs.NOT_SYM_OPP,
+         'Not Facing': gi.ChildLocs.NOT_FACING,
          }),
 
     'ChildType': lookup_dicts(
         gi.ChildType,
         {'No Children': gi.ChildType.NOCHILD,
          'Normal': gi.ChildType.NORMAL,
-         'One Child (tuzdek)': gi.ChildType.ONE_CHILD,
+         'One Child': gi.ChildType.ONE_CHILD,
          'Weg / Daughter': gi.ChildType.WEG,
          'Bull': gi.ChildType.BULL,
          'Qur': gi.ChildType.QUR}),
@@ -120,9 +123,12 @@ STRING_DICTS = {
     'ChildRule': lookup_dicts(
         gi.ChildRule,
         {'No additional restrictions': gi.ChildRule.NONE,
-         'Opposite Side/Territory Only': gi.ChildRule.OPP_ONLY,
-         'Own Side/Territory Only': gi.ChildRule.OWN_ONLY,
-         'Not 1st Opposite with 1': gi.ChildRule.NOT_1ST_OPP}),
+         'Opposite Side Only': gi.ChildRule.OPP_SIDE_ONLY,
+         'Own Side Only': gi.ChildRule.OWN_SIDE_ONLY,
+         'Not 1st Opposite with 1': gi.ChildRule.NOT_1ST_OPP,
+         'Opposite Territory Only': gi.ChildRule.OPP_OWNER_ONLY,
+         'Own Territory Only': gi.ChildRule.OWN_OWNER_ONLY,
+         }),
 
     'CrossCaptOwn': lookup_dicts(
         gi.CrossCaptOwn,

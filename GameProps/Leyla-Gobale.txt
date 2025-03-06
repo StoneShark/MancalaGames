@@ -11,6 +11,7 @@
       "sow_direct": -1,
       "child_cvt": 3,
       "child_type": 6,
+      "child_rule": 2,
       "crosscapt": true,
       "capt_side": 1,
       "xcpickown": 1

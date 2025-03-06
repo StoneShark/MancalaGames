@@ -10,6 +10,7 @@
       "capt_rturn": true,
       "child_cvt": 4,
       "child_type": 4,
+      "child_rule": 4,
       "goal": 2,
       "goal_param": 10,
       "mlaps": 1,

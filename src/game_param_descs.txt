@@ -172,31 +172,49 @@ The center hole (c) is replicated for larger boards.
 
   + TB T N T TB
 
-- NO_OWN_RIGHT: children may not be made in your own rightmost hole. 
+- NO_OWN_RIGHT: children may not be made in your own rightmost hole. Direction is from the prespective of the player making the child.
 
   + B TB TB TB TB
 
   + TB TB TB TB T
 
-- NO_OPP_RIGHT: children may not be made in the opposite rightmost hole.
+- NO_OPP_RIGHT: children may not be made in the opposite rightmost hole. Direction is from the prespective of the player making the child.
 
   + TB TB TB TB T
 
   + B TB TB TB TB
+
+- NO_OPP_LEFT: children may not be made in the opposite leftmost hole. Direction is from the prespective of the player making the child.
+
+  + T TB TB TB TB
+
+  + TB TB TB TB B
+
+- NOT_SYM_OPP:  Children must not be symmetrically opposite each other. NO_OPP_LEFT is also applied. For example, in a 9 hole per side game with holes numbered as follows, children may not be in the same numbered holes:
+
+  + 9 8 7 6 5 4 3 2 1
+
+  + 1 2 3 4 5 6 7 8 9 
+
+- NOT_FACING: Children must not directly opposite eachother. NO_OPP_RIGHT is also applied. 
 
 <param child_rule>
-Additional child creation requirements may be set. These are in addition to location restrictions specified by CHILD_LOCS.
+Additional child creation requirements may be set. These are in addition to location restrictions specified by CHILD_LOCS. If the CHILD_TYPE allows making more than one child, the child_rule is applied to hole in which the final seed was sown; the second hole does not need to meet the criteria.
 
 - NONE: no additional restrictions.
 
-- OPP_ONLY: Only make children on the opposite side of the board. Incompatible with BULL, QUR, and WEG child types.
+- OPP_SIDE_ONLY: Only make children on the opposite side of the board.
 
-- OWN_ONLY: Only make children on your own side of the board. Incompatible with BULL, QUR, and WEG child types.
+- OWN_SIDE_ONLY: Only make children on your own side of the board.
 
 - NOT_1ST_OPP: Don't make a child in the first hole on the opponent's side/territory with one seed.
 
+- OPP_OWNER_ONLY: Only make children in your opponents holes. Valid only for territory GOAL games. 
+
+- OWN_OWNER_ONLY: Only make children in your own holes. Valid only for territory GOAL games. 
+
 <param child_type>
-Games with children allow players to claim holes. These child holes are an extension of the stores and seeds in them count towards a win. Making a child stops any multilap sowing, moves cannot start from children, and they cannot be captured (except for special rules associated with WEGs).
+Games with children allow players to claim holes. These child holes are an extension of the stores and seeds in them count towards a win. Making a child stops any multilap sowing, moves cannot start from children, and they cannot be captured (except for special rules associated with WEGs). Children may be created as allowed by both CHILD_LOCS and CHILD_RULE. 
 
 - NOCHILD: children are not used.
 
@@ -206,19 +224,13 @@ Games with children allow players to claim holes. These child holes are an exten
 
 - ONE_CHILD: only one child allowed per player.
 
-  + Children must not be symmetrically opposite each other. For example, in a 9 hole per side game with holes numbered as follows, children may not be in the same numbered holes:
+  + Used to create tuzdik style children along with CHILD_RULE of OPP_ONLY and CHILD_LOCS of NOT_SYM_OPP.
 
-  + 9 8 7 6 5 4 3 2 1
-
-  + 1 2 3 4 5 6 7 8 9 
-
-  + Used to create tuzdek style children along with CHILD_RULE of OPP_ONLY.
-
-- WEG: children may be created in holes owned by the opponent. Ending a sow in an opponent's weg captures the seed just sown and one more (if there is one); generally, the player gets to play again (per CAPT_RTURN). WEGs are supported for TERRITORY games only (hole ownership required).
+- WEG: Ending a sow in an opponent's weg captures the seed just sown and one more (if there is one); generally, the player gets to play again (per CAPT_RTURN). WEGs are generally used in territory games with CHILD_RULE of OPP_OWNER_ONLY.
 
 - BULL: create one bull if final seed sows to CHILD_CVT, create two bulls if the final two seeds are sown to CHILD_CVT-1 and CHILD_CVT (in either order).
 
-- QUR: when a seed is sown into an empty hole on the player's side of the board and the opposite hole contains CHILD_CVT, create children in both holes: final seed location and opposite.
+- QUR: when a seed is sown into an empty hole and the opposite hole contains CHILD_CVT, create children in both holes: final seed location and opposite. Generally used with SOW_RULE of OWN_SIDE_ONLY.
 
 <param crosscapt>
 If the last sown seed is put in an empty hole, seeds on the opposite side of the board are captured. The capture of those seeds can be limited by CAPT_MAX, CAPT_MIN, CAPT_ON, EVENS, MOVEUNLOCK, OPPSIDECAPT. For example, crosscapt with evens will only capture when there are an even number of seeds in the opposite hole.

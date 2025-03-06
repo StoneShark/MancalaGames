@@ -525,8 +525,8 @@ class TestTuzdek:
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(child_cvt=3,
                                 child_type=gi.ChildType.ONE_CHILD,
-                                child_rule=gi.ChildRule.OPP_ONLY,
-                                child_locs=gi.ChildLocs.NO_OPP_RIGHT,
+                                child_rule=gi.ChildRule.OPP_SIDE_ONLY,
+                                child_locs=gi.ChildLocs.NOT_SYM_OPP,
                                 sow_direct=gi.Direct.CW,
                                 stores=True,
                                 capt_on=[3],
@@ -539,10 +539,10 @@ class TestTuzdek:
     @pytest.mark.parametrize('loc, turn, eowner',
                              [(0, False, None),
                               (3, False, None),
-                              (4, False, None),
-                              (7, False, False),
-                              (0, True, None),
-                              (3, True, True),
+                              (4, False, False),
+                              (7, False, None),
+                              (0, True, True),
+                              (3, True, None),
                               (4, True, None),
                               (7, True, None),
                               ])
@@ -620,6 +620,7 @@ class TestWeg:
                                 goal_param=8,
                                 child_cvt=3,
                                 child_type=gi.ChildType.WEG,
+                                child_rule=gi.ChildRule.OPP_OWNER_ONLY,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
@@ -1299,7 +1300,7 @@ class TestOppChild:
         game_consts = gc.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(child_type=gi.ChildType.NORMAL,
                                 child_cvt=3,
-                                child_rule=gi.ChildRule.OPP_ONLY,
+                                child_rule=gi.ChildRule.OPP_SIDE_ONLY,
                                 evens=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)

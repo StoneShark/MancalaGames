@@ -67,7 +67,7 @@ class TestOppChild:
         game_consts = gc.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(child_type=gi.ChildType.NORMAL,
                                 child_cvt=3,
-                                child_rule=gi.ChildRule.OPP_ONLY,
+                                child_rule=gi.ChildRule.OPP_SIDE_ONLY,
                                 evens=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
@@ -93,7 +93,7 @@ class TestOwnChild:
         game_consts = gc.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(child_type=gi.ChildType.NORMAL,
                                 child_cvt=3,
-                                child_rule=gi.ChildRule.OWN_ONLY,
+                                child_rule=gi.ChildRule.OWN_SIDE_ONLY,
                                 evens=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
@@ -233,7 +233,7 @@ class TestChildLocs:
         cases += [(f'epoo5-True-{loc}', 'epoo5', True, loc, epoo5T[loc])
                      for loc in range(5, 10)]
 
-        # NO_OWN_RIGHT and NO_OPP_RIGHT are tested with OneChild below
+        # NO_OPP_LEFT and NO_OPP_RIGHT are tested with OneChild below
 
         return cases
 
@@ -377,7 +377,7 @@ class TestOneChild:
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(child_cvt=3,
                                 child_type=gi.ChildType.ONE_CHILD,
-                                child_locs=gi.ChildLocs.NO_OPP_RIGHT,
+                                child_locs=gi.ChildLocs.NOT_SYM_OPP,
                                 sow_direct=gi.Direct.CCW,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
@@ -388,9 +388,9 @@ class TestOneChild:
     @pytest.mark.parametrize('loc', range(8))
     @pytest.mark.parametrize('turn', [False, True])
     @pytest.mark.parametrize('clocs, evals',
-         [[ gi.ChildLocs.NO_OWN_RIGHT,
-           [[T, T, T, F, T, T, T, T],   # False locations allowed
-            [T, T, T, T, T, T, T, F]]],   # True locations allowed
+         [[ gi.ChildLocs.NO_OPP_LEFT,
+           [[T, T, T, T, T, T, T, F],   # False locations allowed
+            [T, T, T, F, T, T, T, T]]],   # True locations allowed
 
           [gi.ChildLocs.NO_OPP_RIGHT,
            [[T, T, T, T, F, T, T, T],
@@ -399,7 +399,7 @@ class TestOneChild:
           [gi.ChildLocs.NO_ENDS,
            [[F, T, T, F, F, T, T, F],
             [F, T, T, F, F, T, T, F]]],
-          ], ids=['no_opp_right', 'no_opp_left', 'no_ends'])
+          ], ids=['no_opp_left', 'no_opp_right', 'no_ends'])
     def test_disallowed(self, loc, turn, clocs, evals):
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
@@ -484,8 +484,8 @@ class TestTuzdek:
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(child_cvt=3,
                                 child_type=gi.ChildType.ONE_CHILD,
-                                child_rule=gi.ChildRule.OPP_ONLY,
-                                child_locs=gi.ChildLocs.NO_OPP_RIGHT,
+                                child_rule=gi.ChildRule.OPP_SIDE_ONLY,
+                                child_locs=gi.ChildLocs.NOT_SYM_OPP,
                                 sow_direct=gi.Direct.CW,
 								stores=True,
                                 capt_on=[3],
@@ -498,10 +498,10 @@ class TestTuzdek:
     @pytest.mark.parametrize('loc, turn, emake',
                              [(0, False, False),
                               (3, False, False),
-                              (4, False, False),
-                              (7, False, True),
-                              (0, True, False),
-                              (3, True, True),
+                              (4, False, True),
+                              (7, False, False),
+                              (0, True, True),
+                              (3, True, False),
                               (4, True, False),
                               (7, True, False),
                               ])
@@ -561,6 +561,7 @@ class TestQur:
         game_consts = gc.GameConsts(nbr_start=2, holes=4)
         game_info = gi.GameInfo(child_cvt=3,
                                 child_type=gi.ChildType.QUR,
+                                child_rule=gi.ChildRule.OWN_SIDE_ONLY,
                                 crosscapt=True,
                                 xcpickown=1,
                                 nbr_holes=game_consts.holes,
@@ -613,10 +614,11 @@ class TestWeg:
     def game(self):
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(stores=True,
-                                goal=2,
+                                goal=gi.Goal.TERRITORY,
                                 goal_param=8,
                                 child_cvt=3,
                                 child_type=gi.ChildType.WEG,
+                                child_rule=gi.ChildRule.OPP_OWNER_ONLY,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 

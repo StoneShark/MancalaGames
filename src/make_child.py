@@ -44,18 +44,6 @@ class BaseChild(MakeChildIf):
                 and self.game.board[loc] == self.game.info.child_cvt)
 
 
-class WegChild(MakeChildIf):
-    """Make a weg if base child and opponent is owner."""
-
-    def test(self, mdata):
-
-        loc = mdata.capt_loc
-        if self.decorator.test(mdata):
-            return self.game.owner[loc] is (not self.game.turn)
-
-        return False
-
-
 class BullChild(MakeChildIf):
     """One or two children can be made:
 
@@ -89,38 +77,21 @@ class BullChild(MakeChildIf):
 
 
 class OneChild(MakeChildIf):
-    """Each player can only have one child and player's
-    children must not be symmetric to eachother. For example,
-    in a 9 hole per side game:
-          8 7 6 5 4 3 2 1 0
-          0 1 2 3 4 5 6 7 8
-    children may not be in the same numbered holes.
-    To create Tuzdek add child_rule=opp_only."""
+    """Each player can only have one child."""
 
     def test(self, mdata):
         game = self.game
         loc = mdata.capt_loc
 
-        if (game.child[loc] is None
+        return (game.child[loc] is None
                 and game.board[loc] == game.info.child_cvt
                 and not any(game.child[tloc] is game.turn
-                            for tloc in range(game.cts.dbl_holes))):
-
-            holes = game.cts.holes
-            symmetric = (loc + holes) if loc < holes else (loc - holes)
-
-            if game.child[symmetric] is None:
-                return True
-
-            game_log.add(f"OneChild prevented child in symmetric hole @ {loc}.",
-                         game_log.IMPORT)
-
-        return False
+                            for tloc in range(game.cts.dbl_holes)))
 
 
 class QurChild(MakeChildIf):
-    """Make a qur when sowing into empty hole on own side of
-    board and opposite side of board has CHILD_CVT seeds."""
+    """Make a qur when sowing into empty hole
+    and opposite side of board has CHILD_CVT seeds."""
 
     def test(self, mdata):
 
@@ -128,8 +99,7 @@ class QurChild(MakeChildIf):
         loc = mdata.capt_loc
         cross = game.cts.cross_from_loc(loc)
 
-        return (game.cts.my_side(game.turn, loc)
-                and game.board[loc] == 1
+        return (game.board[loc] == 1
                 and game.child[loc] is None
                 and game.board[cross] == game.info.child_cvt)
 
@@ -151,7 +121,7 @@ class ChildLocOk(MakeChildIf):
     FALSE = tuple([False])
     TRUE = tuple([True])
 
-    # T row  first (top) but reversed; F row second
+    # T row  first (top) but reversed from board array; F row second
     PATTERN = {
 
         gi.ChildLocs.ENDS_ONLY:
@@ -170,13 +140,17 @@ class ChildLocOk(MakeChildIf):
             [[BOTH, FALSE, None, FALSE, BOTH],
              [BOTH, TRUE, None, TRUE, BOTH]],
 
-        gi.ChildLocs.NO_OWN_RIGHT:                 # was OneChild CCW
+        gi.ChildLocs.NO_OWN_RIGHT:
             [[FALSE, BOTH, BOTH, BOTH, BOTH],
              [BOTH, BOTH, BOTH, BOTH, TRUE]],
 
-        gi.ChildLocs.NO_OPP_RIGHT:                 # was OneCild CW
+        gi.ChildLocs.NO_OPP_RIGHT:
             [[BOTH, BOTH, BOTH, BOTH, TRUE],
              [FALSE, BOTH, BOTH, BOTH, BOTH]],
+
+        gi.ChildLocs.NO_OPP_LEFT:
+            [[TRUE, BOTH, BOTH, BOTH, BOTH],
+             [BOTH, BOTH, BOTH, BOTH, FALSE]],
 
         }
 
@@ -184,7 +158,7 @@ class ChildLocOk(MakeChildIf):
               3: [0, 2, 4, 5, 7, 9],
               4: [0, 1, 3, 4, 5, 6, 8, 9]}
 
-    def __init__(self, game, decorator):
+    def __init__(self, game, decorator, pattern):
         """pattern: select the pattern from PATTERN and adjust
         it so that it is the same order as the a board. Though
         it will always still be 10 elements long.
@@ -197,11 +171,11 @@ class ChildLocOk(MakeChildIf):
 
         super().__init__(game, decorator)
 
-        if game.info.child_locs not in self.PATTERN:
+        if pattern not in self.PATTERN:
             raise NotImplementedError(
                 f"ChildLocs {game.info.child_locs} not implemented.")
 
-        plist = self.PATTERN[game.info.child_locs]
+        plist = self.PATTERN[pattern]
         self.pattern = plist[1] + plist[0][::-1]
 
         holes = game.cts.holes
@@ -224,6 +198,43 @@ class ChildLocOk(MakeChildIf):
         return False
 
 
+class NotSymOpp(MakeChildIf):
+    """Children must not be symmetric to eachother. For example,
+    in a 9 hole per side game:
+          8 7 6 5 4 3 2 1 0
+          0 1 2 3 4 5 6 7 8
+    children may not be in the same numbered holes."""
+
+    def test(self, mdata):
+
+        loc = mdata.capt_loc
+        holes = self.game.cts.holes
+        symmetric = (loc + holes) if loc < holes else (loc - holes)
+
+        if self.game.child[symmetric] is None:
+            return self.decorator.test(mdata)
+
+        game_log.add(f"NotSymOpp prevented child in symmetric hole @ {loc}.",
+                     game_log.IMPORT)
+        return False
+
+
+class NotFacing(MakeChildIf):
+    """Children must not be opposite the board from eachother."""
+
+    def test(self, mdata):
+
+        loc = mdata.capt_loc
+        cross = self.game.cts.cross_from_loc(loc)
+
+        if self.game.child[cross] is None:
+            return self.decorator.test(mdata)
+
+        game_log.add(f"NoFacing prevented child in facing hole @ {loc}.",
+                     game_log.IMPORT)
+        return False
+
+
 class OppSideChild(MakeChildIf):
     """Require opposite side of the board"""
 
@@ -241,6 +252,27 @@ class OwnSideChild(MakeChildIf):
     def test(self, mdata):
 
         if self.game.cts.my_side(self.game.turn, mdata.capt_loc):
+            return self.decorator.test(mdata)
+
+        return False
+
+class OppOwnerChild(MakeChildIf):
+    """Require opposite owner of the board"""
+
+    def test(self, mdata):
+
+        if self.game.owner[mdata.capt_loc] is (not self.game.turn):
+            return self.decorator.test(mdata)
+
+        return False
+
+
+class OwnOwnerChild(MakeChildIf):
+    """Require own owner of the board"""
+
+    def test(self, mdata):
+
+        if self.game.owner[mdata.capt_loc] is self.game.turn:
             return self.decorator.test(mdata)
 
         return False
@@ -279,16 +311,14 @@ def _add_child_type(game, deco):
     if game.info.child_type == gi.ChildType.BULL:
         deco = BullChild(game, deco)
 
-    elif game.info.child_type == gi.ChildType.WEG:
-        deco = WegChild(game, deco)
-
     elif game.info.child_type == gi.ChildType.ONE_CHILD:
         deco = OneChild(game, deco)
 
     elif game.info.child_type == gi.ChildType.QUR:
         deco = QurChild(game, deco)
 
-    elif game.info.child_type != gi.ChildType.NORMAL:
+    elif game.info.child_type not in (gi.ChildType.NORMAL,
+                                      gi.ChildType.WEG):
         raise NotImplementedError(
             f"ChildType {game.info.child_type} not implemented.")
 
@@ -298,22 +328,38 @@ def _add_child_type(game, deco):
 def _add_child_wrappers(game, deco):
     """Add any child wrappers include handling the child rules."""
 
-    if game.info.child_rule == gi.ChildRule.OPP_ONLY:
+    if game.info.child_rule == gi.ChildRule.OPP_SIDE_ONLY:
         deco = OppSideChild(game, deco)
 
-    elif game.info.child_rule == gi.ChildRule.OWN_ONLY:
+    elif game.info.child_rule == gi.ChildRule.OWN_SIDE_ONLY:
         deco = OwnSideChild(game, deco)
 
     elif game.info.child_rule == gi.ChildRule.NOT_1ST_OPP:
         deco = OppSideChild(game, deco)
         deco = NotWithOne(game, deco)
 
+    elif (game.info.goal == gi.Goal.TERRITORY
+              and game.info.child_rule == gi.ChildRule.OPP_OWNER_ONLY):
+        deco = OppOwnerChild(game, deco)
+
+    elif (game.info.goal == gi.Goal.TERRITORY
+              and game.info.child_rule == gi.ChildRule.OWN_OWNER_ONLY):
+        deco = OwnOwnerChild(game, deco)
+
     elif game.info.child_rule != gi.ChildRule.NONE:
         raise NotImplementedError(
             f"ChildRule {game.info.child_rule} not implemented.")
 
-    if game.info.child_locs:
-        deco = ChildLocOk(game, deco)
+    if game.info.child_locs == gi.ChildLocs.NOT_SYM_OPP:
+        deco = ChildLocOk(game, deco, gi.ChildLocs.NO_OPP_LEFT)
+        deco = NotSymOpp(game, deco)
+
+    elif game.info.child_locs == gi.ChildLocs.NOT_FACING:
+        deco = ChildLocOk(game, deco, gi.ChildLocs.NO_OPP_RIGHT)
+        deco = NotFacing(game, deco)
+
+    elif game.info.child_locs:
+        deco = ChildLocOk(game, deco, game.info.child_locs)
 
     return deco
 

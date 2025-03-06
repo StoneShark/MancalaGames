@@ -667,11 +667,12 @@ Another value for <a href="game_params.html#round_fill">ROUND_FILL</a>
     <p class="param"><a href="game_params.html#goal">Goal</a>: TERRITORY</p>
     <p class="param"><a href="game_params.html#capt_rturn">Repeat Turn on Capture</a>: Yes</p>
     <p class="param"><a href="game_params.html#child_cvt">Child Convert Count</a>: 4</p>
+    <p class="param"><a href="game_params.html#child_rule">Child Restrictions</a>: OPP_OWNER_ONLY</p>
     <p class="param"><a href="game_params.html#child_type">Type of Children</a>: WEG</p>
     <p class="param"><a href="game_params.html#goal_param">Goal Parameter</a>: 10</p>
-    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
   </div>
   <div class="column2">
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
     <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
     <p class="param"><a href="game_params.html#prescribed">Prescribed Opening Move</a>: PLUS1MINUS1</p>
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
@@ -995,7 +996,7 @@ Require must share (<a href="game_params.html#mustshare">MUSTSHARE</a>) because 
     <p class="param">Start seeds:  4</p>
     <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
     <p class="param"><a href="game_params.html#child_cvt">Child Convert Count</a>: 4</p>
-    <p class="param"><a href="game_params.html#child_rule">Child Restrictions</a>: OPP_ONLY</p>
+    <p class="param"><a href="game_params.html#child_rule">Child Restrictions</a>: OPP_SIDE_ONLY</p>
   </div>
   <div class="column2">
     <p class="param"><a href="game_params.html#child_type">Type of Children</a>: NORMAL</p>
@@ -1176,9 +1177,10 @@ played in rounds with UMOVE style RoundFill
     <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
     <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OPP_SIDE</p>
     <p class="param"><a href="game_params.html#child_cvt">Child Convert Count</a>: 3</p>
-    <p class="param"><a href="game_params.html#child_type">Type of Children</a>: QUR</p>
+    <p class="param"><a href="game_params.html#child_rule">Child Restrictions</a>: OWN_SIDE_ONLY</p>
   </div>
   <div class="column2">
+    <p class="param"><a href="game_params.html#child_type">Type of Children</a>: QUR</p>
     <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CW</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
@@ -1825,11 +1827,12 @@ See <a href="about_games.html#Longbeu-a-cha">Longbeu-a-cha</a>, <a href="about_g
     <p class="param"><a href="game_params.html#goal">Goal</a>: TERRITORY</p>
     <p class="param"><a href="game_params.html#capt_rturn">Repeat Turn on Capture</a>: Yes</p>
     <p class="param"><a href="game_params.html#child_cvt">Child Convert Count</a>: 4</p>
+    <p class="param"><a href="game_params.html#child_rule">Child Restrictions</a>: OPP_OWNER_ONLY</p>
     <p class="param"><a href="game_params.html#child_type">Type of Children</a>: WEG</p>
     <p class="param"><a href="game_params.html#goal_param">Goal Parameter</a>: 10</p>
-    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
   </div>
   <div class="column2">
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
     <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
     <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
@@ -1995,13 +1998,53 @@ see Sedeqa
   </div>
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p30.
+<h3 id="Toguz Kumalak">Toguz Kumalak</h3>
+<p>A single-lap, clockwise-sow mancala. One seed is left in the start hole when sowing; unless there is only one seed, then it is moved forward one hole.
+<p>Capture on evens.
+<p>If the final seed of a sow brings a hole to three seeds, a tuzdik is made (child) with the following restrictions: 
+<ul><li class="helptext">
+Only one tuzdik may be made per player.
+<li class="helptext">
+Must be in the left 8 holes on the opposite side of the board (left as viewed by the player making the child).
+<li class="helptext">
+Tuzdiks cannot be symetrically opposite eachother. Specifically, tuzdiks may not be made in the same numbered holes:
+<p class="helptext"> 9 8 7 6 5 4 3 2 1
+<p class="helptext"> 1 2 3 4 5 6 7 8 9
+</ul>
+<p><a href="about_games.html#Toguz Kumalak">Toguz Kumalak</a> (nine pebbles) is also known as Toguz Korgool (nine dung balls). This is intended to be the rules used by the World Nomad Games.
+<p>Variations:
+<ul><li class="helptext">
+<a href="about_games.html#Toguz Xorgol">Toguz Xorgol</a> is very similar.
+<li class="helptext">
+played on smaller boards where the number of seeds per hole is the same as the number holes per side.
+</ul>
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  9</p>
+    <p class="param">Start seeds:  9</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OPP_SIDE</p>
+    <p class="param"><a href="game_params.html#child_cvt">Child Convert Count</a>: 3</p>
+    <p class="param"><a href="game_params.html#child_locs">Child Locations</a>: NOT_SYM_OPP</p>
+    <p class="param"><a href="game_params.html#child_rule">Child Restrictions</a>: OPP_SIDE_ONLY</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#child_type">Type of Children</a>: ONE_CHILD</p>
+    <p class="param"><a href="game_params.html#evens">Capture Evens</a>: Yes</p>
+    <p class="param"><a href="game_params.html#move_one">Move One Seed</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CW</p>
+    <p class="param"><a href="game_params.html#sow_start">Sow Start Hole</a>: Yes</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: <a href="https://www.iggamecenter.com/en/rules/toguzkumalak" target="_blank">https://www.iggamecenter.com/en/rules/toguzkumalak</a> <a href="https://worldnomadgames.com/media/images/2018/04/05/27-toguz-korgool-rules-en.pdf" target="_blank">https://worldnomadgames.com/media/images/2018/04/05/27-toguz-korgool-rules-en.pdf</a> <a href="https://mancala.fandom.com/wiki/Toguz_Kumalak" target="_blank">https://mancala.fandom.com/wiki/Toguz_Kumalak</a>
 <h3 id="Toguz Xorgol">Toguz Xorgol</h3>
 <p>A single-lap, clockwise-sow mancala. One seed is left in the start hole when sowing; unless there is only one seed, then it is moved' forward one hole.
 <p>Capture on evens that are greater than or equal to 4.
-<p>If the final seed of a sow brings a hole to three seeds, a tuzdek is made (child). A tuzdek cannot be made on rightmost hole on the opponent's side--this would be the last hole before sowing would continue back to your own side of the board. Tuzdeks cannot be symmetrically opposite to each other (see <a href="game_params.html#child_type">CHILD_TYPE</a>).
+<p>If the final seed of a sow brings a hole to three seeds, a tuzdek is made (child). A tuzdek cannot be made on rightmost hole on the opponent's side--this would be the last hole before sowing would continue back to your own side of the board. Tuzdeks cannot be directly opposite eachother.
 <p>Variation:
 <ul><li class="helptext">
-<a href="https://en.wikipedia.org/wiki/Toguz_korgol" target="_blank">https://en.wikipedia.org/wiki/Toguz_korgol</a> describes a game in which seeds are sown counter-clockwise and the prohibited holes follow the <a href="game_params.html#child_locs">CHILD_LOCS</a> NO_OPP_RIGHT pattern). Also, the minimum capture option is removed; holes sown to 2 may also be captured.
+<a href="about_games.html#Toguz Kumalak">Toguz Kumalak</a> is very similar.
 </ul>
 <div class="cols_row">
   <div class="column2">
@@ -2011,8 +2054,8 @@ see Sedeqa
     <p class="param"><a href="game_params.html#capt_min">Capture Min</a>: 4</p>
     <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OPP_SIDE</p>
     <p class="param"><a href="game_params.html#child_cvt">Child Convert Count</a>: 3</p>
-    <p class="param"><a href="game_params.html#child_locs">Child Locations</a>: NO_OWN_RIGHT</p>
-    <p class="param"><a href="game_params.html#child_rule">Child Restrictions</a>: OPP_ONLY</p>
+    <p class="param"><a href="game_params.html#child_locs">Child Locations</a>: NOT_FACING</p>
+    <p class="param"><a href="game_params.html#child_rule">Child Restrictions</a>: OPP_SIDE_ONLY</p>
   </div>
   <div class="column2">
     <p class="param"><a href="game_params.html#child_type">Type of Children</a>: ONE_CHILD</p>
@@ -2158,6 +2201,7 @@ no repeat turn on capture
     <p class="param"><a href="game_params.html#goal">Goal</a>: TERRITORY</p>
     <p class="param"><a href="game_params.html#capt_rturn">Repeat Turn on Capture</a>: Yes</p>
     <p class="param"><a href="game_params.html#child_cvt">Child Convert Count</a>: 4</p>
+    <p class="param"><a href="game_params.html#child_rule">Child Restrictions</a>: OPP_OWNER_ONLY</p>
     <p class="param"><a href="game_params.html#child_type">Type of Children</a>: WEG</p>
     <p class="param"><a href="game_params.html#goal_param">Goal Parameter</a>: 10</p>
   </div>
@@ -2275,6 +2319,7 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Tap-Urdy">Tap-Urdy</a></p>
     <p class="param"><a href="#Tapata">Tapata</a></p>
     <p class="param"><a href="#Tegre">Tegre</a></p>
+    <p class="param"><a href="#Toguz Kumalak">Toguz Kumalak</a></p>
     <p class="param"><a href="#Toguz Xorgol">Toguz Xorgol</a></p>
     <p class="param"><a href="#Urim">Urim</a></p>
     <p class="param"><a href="#Vai Lun Thlan">Vai Lun Thlan</a></p>

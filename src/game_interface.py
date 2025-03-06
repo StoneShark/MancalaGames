@@ -92,6 +92,9 @@ class ChildLocs(enum.IntEnum):
     ENDS_PLUS_ONE_OPP = 4
     NO_OWN_RIGHT = 5
     NO_OPP_RIGHT = 6
+    NO_OPP_LEFT = 7
+    NOT_SYM_OPP = 8
+    NOT_FACING = 9
 
 
 @enum.unique
@@ -99,10 +102,11 @@ class ChildRule(enum.IntEnum):
     """Defines additional child restrictions."""
 
     NONE = 0
-    OPP_ONLY = 1
-    OWN_ONLY = 2
+    OPP_SIDE_ONLY = 1
+    OWN_SIDE_ONLY = 2
     NOT_1ST_OPP = 3
-
+    OPP_OWNER_ONLY = 4
+    OWN_OWNER_ONLY = 5
 
 
 @enum.unique

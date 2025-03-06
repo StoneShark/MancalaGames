@@ -556,7 +556,7 @@ is included after the parameter sections.
 <p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Sow
 
-<p>Games with children allow players to claim holes. These child holes are an extension of the stores and seeds in them count towards a win. Making a child stops any multilap sowing, moves cannot start from children, and they cannot be captured (except for special rules associated with WEGs).
+<p>Games with children allow players to claim holes. These child holes are an extension of the stores and seeds in them count towards a win. Making a child stops any multilap sowing, moves cannot start from children, and they cannot be captured (except for special rules associated with WEGs). Children may be created as allowed by both <a href="game_params.html#child_locs">CHILD_LOCS</a> and <a href="game_params.html#child_rule">CHILD_RULE</a>. 
 <ol start=0><li class="helptext">
 <b class="enum">NOCHILD</b>: children are not used.
 <li class="helptext">
@@ -565,16 +565,13 @@ is included after the parameter sections.
 <b class="enum">RESERVED</b>: unused value
 <li class="helptext">
 <b class="enum">ONE_CHILD</b>: only one child allowed per player.
-<p class="helptext"> Children must not be symmetrically opposite each other. For example, in a 9 hole per side game with holes numbered as follows, children may not be in the same numbered holes:
-<p class="helptext"> 9 8 7 6 5 4 3 2 1
-<p class="helptext"> 1 2 3 4 5 6 7 8 9 
-<p class="helptext"> Used to create tuzdek style children along with <a href="game_params.html#child_rule">CHILD_RULE</a> of OPP_ONLY.
+<p class="helptext"> Used to create tuzdik style children along with <a href="game_params.html#child_rule">CHILD_RULE</a> of OPP_ONLY and <a href="game_params.html#child_locs">CHILD_LOCS</a> of NOT_SYM_OPP.
 <li class="helptext">
-<b class="enum">WEG</b>: children may be created in holes owned by the opponent. Ending a sow in an opponent's weg captures the seed just sown and one more (if there is one); generally, the player gets to play again (per <a href="game_params.html#capt_rturn">CAPT_RTURN</a>). WEGs are supported for TERRITORY games only (hole ownership required).
+<b class="enum">WEG</b>: Ending a sow in an opponent's weg captures the seed just sown and one more (if there is one); generally, the player gets to play again (per <a href="game_params.html#capt_rturn">CAPT_RTURN</a>). WEGs are generally used in territory games with <a href="game_params.html#child_rule">CHILD_RULE</a> of OPP_OWNER_ONLY.
 <li class="helptext">
 <b class="enum">BULL</b>: create one bull if final seed sows to <a href="game_params.html#child_cvt">CHILD_CVT</a>, create two bulls if the final two seeds are sown to CHILD_CVT-1 and <a href="game_params.html#child_cvt">CHILD_CVT</a> (in either order).
 <li class="helptext">
-<b class="enum">QUR</b>: when a seed is sown into an empty hole on the player's side of the board and the opposite hole contains <a href="game_params.html#child_cvt">CHILD_CVT</a>, create children in both holes: final seed location and opposite.
+<b class="enum">QUR</b>: when a seed is sown into an empty hole and the opposite hole contains <a href="game_params.html#child_cvt">CHILD_CVT</a>, create children in both holes: final seed location and opposite. Generally used with <a href="game_params.html#sow_rule">SOW_RULE</a> of OWN_SIDE_ONLY.
 </ol>
 <h4 id="child_cvt"> Child Convert Count </h4>
 <p class="pdesc">Location in Config Files: game_info : child_cvt
@@ -589,15 +586,19 @@ is included after the parameter sections.
 <p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Sow
 
-<p>Additional child creation requirements may be set. These are in addition to location restrictions specified by <a href="game_params.html#child_locs">CHILD_LOCS</a>.
+<p>Additional child creation requirements may be set. These are in addition to location restrictions specified by <a href="game_params.html#child_locs">CHILD_LOCS</a>. If the <a href="game_params.html#child_type">CHILD_TYPE</a> allows making more than one child, the child_rule is applied to hole in which the final seed was sown; the second hole does not need to meet the criteria.
 <ol start=0><li class="helptext">
 <b class="enum">NONE</b>: no additional restrictions.
 <li class="helptext">
-<b class="enum">OPP_ONLY</b>: Only make children on the opposite side of the board. Incompatible with BULL, QUR, and WEG child types.
+<b class="enum">OPP_SIDE_ONLY</b>: Only make children on the opposite side of the board.
 <li class="helptext">
-<b class="enum">OWN_ONLY</b>: Only make children on your own side of the board. Incompatible with BULL, QUR, and WEG child types.
+<b class="enum">OWN_SIDE_ONLY</b>: Only make children on your own side of the board.
 <li class="helptext">
 <b class="enum">NOT_1ST_OPP</b>: Don't make a child in the first hole on the opponent's side/territory with one seed.
+<li class="helptext">
+<b class="enum">OPP_OWNER_ONLY</b>: Only make children in your opponents holes. Valid only for territory <a href="game_params.html#goal">GOAL</a> games. 
+<li class="helptext">
+<b class="enum">OWN_OWNER_ONLY</b>: Only make children in your own holes. Valid only for territory <a href="game_params.html#goal">GOAL</a> games. 
 </ol>
 <h4 id="child_locs"> Child Locations </h4>
 <p class="pdesc">Location in Config Files: game_info : child_locs
@@ -631,13 +632,23 @@ is included after the parameter sections.
 <p class="helptext"> TB B N B TB
 <p class="helptext"> TB T N T TB
 <li class="helptext">
-<b class="enum">NO_OWN_RIGHT</b>: children may not be made in your own rightmost hole. 
+<b class="enum">NO_OWN_RIGHT</b>: children may not be made in your own rightmost hole. Direction is from the prespective of the player making the child.
 <p class="helptext"> B TB TB TB TB
 <p class="helptext"> TB TB TB TB T
 <li class="helptext">
-<b class="enum">NO_OPP_RIGHT</b>: children may not be made in the opposite rightmost hole.
+<b class="enum">NO_OPP_RIGHT</b>: children may not be made in the opposite rightmost hole. Direction is from the prespective of the player making the child.
 <p class="helptext"> TB TB TB TB T
 <p class="helptext"> B TB TB TB TB
+<li class="helptext">
+<b class="enum">NO_OPP_LEFT</b>: children may not be made in the opposite leftmost hole. Direction is from the prespective of the player making the child.
+<p class="helptext"> T TB TB TB TB
+<p class="helptext"> TB TB TB TB B
+<li class="helptext">
+<b class="enum">NOT_SYM_OPP</b>:  Children must not be symmetrically opposite each other. NO_OPP_LEFT is also applied. For example, in a 9 hole per side game with holes numbered as follows, children may not be in the same numbered holes:
+<p class="helptext"> 9 8 7 6 5 4 3 2 1
+<p class="helptext"> 1 2 3 4 5 6 7 8 9 
+<li class="helptext">
+<b class="enum">NOT_FACING</b>: Children must not directly opposite eachother. NO_OPP_RIGHT is also applied. 
 </ol>
 <h2 id="tab_Capture">Capture Tab</h2>
 <h4 id="evens"> Capture Evens </h4>
