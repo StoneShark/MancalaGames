@@ -59,12 +59,8 @@ class GameConfig:
         Set the working dir to the selected dir.
         json.JSONDecodeError is dervied from ValueError.
 
-        Return False if the user cancels or there
-        is an error in file. Return True if the file
-        was successfully loaded."""
-
-        if self.check_save_cancel():
-            return False
+        Return False if there is an error in file.
+        Return True if the file was successfully loaded."""
 
         filename = tkfile.askopenfilename(parent=self._master,
                                           title='Load Parameters',
