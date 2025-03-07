@@ -195,6 +195,7 @@ class ChildLocOk(MakeChildIf):
         if bool(ok_players) and self.game.turn in ok_players:
             return self.decorator.test(mdata)
 
+        # game_log.add(f"Bad child loc @ {test_loc}.", game_log.IMPORT)
         return False
 
 
@@ -230,7 +231,7 @@ class NotFacing(MakeChildIf):
         if self.game.child[cross] is None:
             return self.decorator.test(mdata)
 
-        game_log.add(f"NoFacing prevented child in facing hole @ {loc}.",
+        game_log.add(f"NotFacing prevented child in facing hole @ {loc}.",
                      game_log.IMPORT)
         return False
 
