@@ -785,6 +785,9 @@ class MancalaGames(ttk.Frame):
         if self._check_save_cancel():
             return
 
+        if not self.config.load():
+            return
+
         self._fill_tk_from_config()
         self._test(False)
         self.config.edited = False
