@@ -1568,6 +1568,21 @@ class TestWinHoles:
         game = mancala.Mancala(game_consts, game_info)
         return game
 
+    @pytest.fixture
+    def pat_game(self):
+        """fewer seeds will use self.equalize,
+        start seeds doubled so same test cases can be used"""
+
+        game_consts = gc.GameConsts(nbr_start=6, holes=2)
+        game_info = gi.GameInfo(capt_on=[2],
+                                stores=True,
+                                start_pattern=gi.StartPattern.ALTERNATES,
+                                nbr_holes=game_consts.holes,
+                                rules=ginfo_rules.RuleDict())
+
+        game = mancala.Mancala(game_consts, game_info)
+        return game
+
     WH_CASES = [((0, 0, 0, 0), [6, 6], (N, N, N, N), True, 2),
                 ((0, 0, 0, 0), [3, 3], (N, N, N, N), True, 2),
                 ((0, 0, 0, 0), [9, 3], (N, N, N, N), False, 3),
@@ -1577,11 +1592,16 @@ class TestWinHoles:
                 ((0, 1, 1, 0), [3, 7], (N, T, F, N), True, 3),
                 ]
 
+    @pytest.mark.parametrize('game_fixt', ['game', 'pat_game'])
     @pytest.mark.parametrize('board, store, child, fill_start, holes',
                              WH_CASES,
                              ids=[f'case_{cnbr}'
                                   for cnbr in range(len(WH_CASES))])
-    def test_win_holes(self, game, board, store, child, fill_start, holes):
+    def test_win_holes(self, request, game_fixt,
+                       board, store, child, fill_start, holes):
+
+        game = request.getfixturevalue(game_fixt)
+        assert game.deco.ender.equalized == (game_fixt == 'pat_game')
 
         game.board = board
         game.store = store

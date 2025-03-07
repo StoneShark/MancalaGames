@@ -135,7 +135,7 @@ class MancalaGames(ttk.Frame):
     def _check_save_cancel(self):
         """Check to see if a save is needed, if so then do
         or not at user choice.
-        If cancel, then return False"""
+        If cancel, then return True."""
 
         self.config.edited |= \
             any(field.edit_modified() for field in self.tktexts.values())

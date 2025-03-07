@@ -142,6 +142,104 @@ class TestNotWithOne:
         assert game.deco.make_child.test(mdata) == etest
 
 
+class TestOppOwner:
+
+    @pytest.mark.parametrize('turn, hole, seeds, etest',
+                             [
+                                 # basic test for owner
+                                 (False, 1, 3, False),
+                                 (False, 2, 3, True),
+                                 (False, 3, 3, False),
+                                 (False, 4, 3, True),
+
+                                 (True, 1, 3, True),
+                                 (True, 2, 3, False),
+                                 (True, 3, 3, True),
+                                 (True, 4, 3, False),
+
+                                  # wrong number of seeds
+                                 (True, 1, 2, True),
+                                 (False, 2, 2, True),
+
+                                 # already a child
+                                 (True, 0, 3, False),
+                                 (False, 5, 3, False),
+                              ])
+    def test_opp_owner(self, turn, hole, seeds, etest):
+
+        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_info = gi.GameInfo(goal=gi.Goal.TERRITORY,
+                                goal_param=6,
+                                stores=True,
+                                child_type=gi.ChildType.NORMAL,
+                                child_cvt=3,
+                                child_rule=gi.ChildRule.OPP_OWNER_ONLY,
+                                evens=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+        game.owner = [F, F, T, F, T, T]
+        game.child = [F, N, N, N, N, T]
+
+        mdata = mancala.MoveData(game, None)
+        mdata.direct = game.info.sow_direct
+        mdata.board = tuple(game.board)
+
+        game.turn = turn
+        mdata.capt_loc = hole
+        mdata.seeds = seeds
+        assert game.deco.make_child.test(mdata) == etest
+
+
+class TestOwnOwner:
+
+    @pytest.mark.parametrize('turn, hole, seeds, etest',
+                             [
+                                 # basic test for owner
+                                 (True, 1, 3, False),
+                                 (True, 2, 3, True),
+                                 (True, 3, 3, False),
+                                 (True, 4, 3, True),
+
+                                 (False, 1, 3, True),
+                                 (False, 2, 3, False),
+                                 (False, 3, 3, True),
+                                 (False, 4, 3, False),
+
+                                  # wrong number of seeds
+                                 (False, 1, 2, True),
+                                 (True, 2, 2, True),
+
+                                 # already a child
+                                 (False, 0, 3, False),
+                                 (True, 5, 3, False),
+                              ])
+    def test_opp_owner(self, turn, hole, seeds, etest):
+
+        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_info = gi.GameInfo(goal=gi.Goal.TERRITORY,
+                                goal_param=6,
+                                stores=True,
+                                child_type=gi.ChildType.NORMAL,
+                                child_cvt=3,
+                                child_rule=gi.ChildRule.OWN_OWNER_ONLY,
+                                evens=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+        game.owner = [F, F, T, F, T, T]
+        game.child = [F, N, N, N, N, T]
+
+        mdata = mancala.MoveData(game, None)
+        mdata.direct = game.info.sow_direct
+        mdata.board = tuple(game.board)
+
+        game.turn = turn
+        mdata.capt_loc = hole
+        mdata.seeds = seeds
+        assert game.deco.make_child.test(mdata) == etest
+
+
 class TestChildLocs:
 
     @pytest.fixture
@@ -257,6 +355,52 @@ class TestChildLocs:
         mdata.capt_loc = loc
 
         assert game.deco.make_child.test(mdata) == echild
+
+
+class TestNotFacing:
+
+    @pytest.mark.parametrize('turn, hole, opp_child, etest',
+                             [
+                                 # basic test for loc, w & wo children
+                                 (True, 1, 4, False),
+                                 (True, 2, N, True),
+
+                                 (False, 0, N, True),
+                                 (False, 3, 4, False),
+
+                                 # not opp right
+                                 (False, 3, N, False),
+                                 (True, 0, N, False),
+
+                                 # already a child
+                                 (False, 0, 0, False),
+                                 (True, 5, 5, False),
+                              ])
+    def test_facing(self, turn, hole, opp_child, etest):
+
+        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_info = gi.GameInfo(goal=gi.Goal.TERRITORY,
+                                goal_param=6,
+                                stores=True,
+                                child_type=gi.ChildType.NORMAL,
+                                child_cvt=3,
+                                child_locs=gi.ChildLocs.NOT_FACING,
+                                evens=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+        if opp_child is not None:
+            game.child[opp_child] = True
+        print(game)
+        print(game.deco.make_child)
+
+        mdata = mancala.MoveData(game, None)
+        mdata.direct = game.info.sow_direct
+        mdata.board = tuple(game.board)
+
+        game.turn = turn
+        mdata.capt_loc = hole
+        assert game.deco.make_child.test(mdata) == etest
 
 
 
