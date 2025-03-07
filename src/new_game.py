@@ -218,7 +218,7 @@ class TerritoryNewRound(NewGameIf):
         saved_starter = self.game.starter
         saved_turn = self.game.turn
 
-        new_round = self.decorator.new_game(None, True)
+        self.decorator.new_game(None, True)
         self.game.starter = saved_starter
         self.game.turn = saved_turn
 
@@ -229,7 +229,7 @@ class TerritoryNewRound(NewGameIf):
             self.game.owner[loc] = winner if cnt < wholes else not winner
             loc = (loc + direct) % self.game.cts.dbl_holes
 
-        return new_round
+        return False
 
 class NewRoundEven(NewGameIf):
     """Evenly distribute the seeds based on the losers seeds.
