@@ -1,0 +1,34 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 7,
+      "nbr_start": 4
+   },
+   "game_info": {
+      "name": "OnlyChild",
+      "about": "User chooses sow direction.\n\nEach player may only make one child by sowing one their own, interior holes to 4 seeds. Children cannot be created in either end hole.\n\nCross capture on opponents side of the board but only if 4 or fewer seeds and not until you have a child to move the seeds into.\n\nThe game ends when either cannot move. Seeds remaining in play do not score.\n\nGoal: collect more than half the seeds.\n",
+      "capt_max": 4,
+      "child_cvt": 4,
+      "child_rule": 2,
+      "child_type": 3,
+      "child_locs": 2,
+      "crosscapt": true,
+      "capt_side": 1,
+      "sow_direct": 0,
+      "udir_holes": [ 0, 1, 2, 3, 4, 5, 6 ],
+      "unclaimed": 1
+   },
+   "player": {
+      "algorithm": "montecarlo_ts",
+      "ai_params": {
+      	 "mcts_bias": [ 200, 200, 200, 300 ], 
+         "mcts_nodes": [ 100, 700, 1000, 1200 ],
+         "mcts_pouts": [ 1, 1, 2, 2 ],
+         "mm_depth": [ 1, 5, 7, 9 ]
+      },
+      "scorer": {
+         "stores_m": 4,
+         "child_cnt_m": 16
+      }
+   }
+}
