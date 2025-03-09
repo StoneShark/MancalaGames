@@ -10,7 +10,7 @@ Three computer players are provided: Negamaxer can only be used in games with al
 There are 3 ways to startup Mancala Games:
 
 1. **mancala_games.pyw** - allows adjustment of all parameters, does some error checking, game configurations can be loaded, saved and played.
-1. **play_mancala.pyw** - opens a window showing all games that are preconfigured, shows a tool tip of the About description for each game and allows it to be launched.
+1. **play_mancala.pyw** - allows any preconfigure game to be selected and play. Filter options control which game appear in the game list. Game parameters may not edited.
 1. **play.py** - allows starting a preconfigured game from a command line or via short cut.
 
 Game configurations are stored in plain-text, json-string formatted files. They may be edited directly. Parameters with default values need not be included.
