@@ -57,6 +57,9 @@ MODULES += same_side.py
 MODULES += sower.py
 MODULES += sower_decos.py
 MODULES += sower_mlap_decos.py
+MODULES += ui_utils.py
+MODULES += version.py
+
 
 SOURCES = src/*.py src/*.pyw
 GAMES = GameProps/*.txt

@@ -23,7 +23,6 @@ import traceback
 import tkinter as tk
 from tkinter import ttk
 import warnings
-import webbrowser
 
 import ai_player
 import cfg_keys as ckey
@@ -31,10 +30,9 @@ import game_constants as gc
 import game_interface as gi
 import mancala_ui
 import man_config
-import man_path
 import mg_config
 import param_consts as pc
-import version
+import ui_utils
 
 from game_classes import GAME_CLASSES
 
@@ -56,11 +54,6 @@ SKIP_TAB = 'skip'
 
 WTITLE = 'Mancala Options'
 
-
-OPTIONS = 0
-PARAMS = 1
-GAMES = 2
-ABOUT = 4
 
 
 # %% helper funcs
@@ -122,7 +115,7 @@ class MancalaGames(ttk.Frame):
         warnings.showwarning = self._warning
         warnings.simplefilter('always', UserWarning)
 
-        self._style()
+        ui_utils.setup_styles()
         self._create_menus()
         self._add_commands_ui()
         self._add_tabs()
@@ -190,48 +183,12 @@ class MancalaGames(ttk.Frame):
         tk.messagebox.showwarning('Parameter Warning', message)
 
 
-    def _help(self, what=OPTIONS):
-        """Have the os pop open the help file in a browser."""
-
-        if what == OPTIONS:
-            webbrowser.open(man_path.get_path('mancala_help.html'))
-
-        elif what == PARAMS:
-            webbrowser.open(man_path.get_path('game_params.html'))
-
-        elif what == GAMES:
-            webbrowser.open(man_path.get_path('about_games.html'))
-
-        elif what == ABOUT:
-            mancala_ui.quiet_dialog(self, 'About Manacala Games',
-                                    version.RELEASE_TEXT)
-
-
     def _update_title(self):
         """Update the window title with the filename and
         edited status."""
 
         self.master.title((self.config.filename or WTITLE)
                           + ('*' if self.config.edited else ''))
-
-    @staticmethod
-    def _style():
-        """Define the global styles."""
-
-        style = ttk.Style()
-        style.theme_use('default')
-        style.configure('.', background='#f0f0f0', padding=4)
-        style.map('.',
-                  background=[('disabled', '#f0f0f0')],
-                  foreground=[('disabled', 'grey40')])
-
-        style.configure('Title.TLabel', background='grey60', anchor='center')
-        style.map('Title.TLabel',
-                  background=[('disabled', 'grey60')],
-                  foreground=[('disabled', 'black')])
-
-        style.configure('TNotebook.Tab', background='grey60')
-        style.map('TNotebook.Tab', expand=[('selected', [4, 4, 4, 0])])
 
 
     def _create_menus(self):
@@ -257,17 +214,7 @@ class MancalaGames(ttk.Frame):
         mguimenu.add_command(label='Set Defaults', command=self._reset_const)
         self.menubar.add_cascade(label='Controls', menu=mguimenu)
 
-        helpmenu = tk.Menu(self.menubar)
-        helpmenu.add_command(label='Help...',
-                             command=ft.partial(self._help, OPTIONS))
-        helpmenu.add_command(label='Parameters...',
-                             command=ft.partial(self._help, PARAMS))
-        helpmenu.add_command(label='Games...',
-                             command=ft.partial(self._help, GAMES))
-        helpmenu.add_separator()
-        helpmenu.add_command(label='About...',
-                             command=ft.partial(self._help, ABOUT))
-        self.menubar.add_cascade(label='Help', menu=helpmenu)
+        ui_utils.add_help_menu(self.menubar, self)
 
 
     def _add_commands_ui(self):

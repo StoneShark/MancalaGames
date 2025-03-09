@@ -12,6 +12,7 @@
   <a href="#game_play">Game Play</a>
   <a href="#starting">Starting Games</a>
   <a href="#manwindow">Mancala UI</a>
+  <a href="#playwindow">Play Mancala - Game Chooser</a>
   <a href="#opwindow">Mancala Options UI</a>
   <a href="#aiplayer">AI Player</a>
   <a href="#pregames">Preconfigured Games</a>
@@ -29,7 +30,7 @@
 Games may be played with two players or one player and an
 <a href="#aiplayer">AI player</a>.
 
-<p>This engine supports games with two ranks of 2 to 12 holes per side.
+<p>This engine supports games with two ranks of 2 to 14 holes per side.
 Game stores to the left and right of holes are optional.
 
 <h2 id="game_play">Game Play</h2>
@@ -63,7 +64,7 @@ Players alternate turns performing these steps for each turn:
 		<li class="over">The player moves seeds from
 		prescribed holes to a store, walda, or child.
 		Prescription of holes is parametrically controlled via the
-		<a href="#opwindow">Mancala Options UI</a>.
+		game configuration.
 		<li class="over">Some games support multiple captures.
 		</ol>
 	<li class="over">Determine if there was a winner or other special
@@ -82,10 +83,11 @@ window&mdash;see <a href="#opwindow">Mancala Options UI</a> (mancala_games.exe).
 Game property files can be defined, loaded, edited and saved.
 Games can be played with the currently define parameters.
 <br><br>
-<li><b>play_mancala</b>: a game that can be started via a double click on
-the game link (play_mancala.exe). A popup is provided which allows selection
-of any game in the GameProps directory. A tool tip is used to show
-the About string of each game.
+<li><b>play_mancala</b>:
+allows selecting any of the preconfigured games to play.
+The game list is provided and the game overview can be displayed. The game list can
+be reduced by selecting some high level game properties.
+See <a href="#playwindow">Play Mancala</a> (play_mancala.exe).
 <br><br>
 <li><b>play</b>: a command line interface to directly start a game given
 a mancala configuration file. Usage to play Wari (for example):
@@ -301,6 +303,28 @@ popit up in the system browser.
 <p><b>About...</b>: Popup the about text, this display any text
 that was included in the About pane of the Mancala Options window.
 
+<h2 id="playwindow">Play Mancala - Game Chooser</h2>
+
+<p>Play Mancala allows playing any of the provided game configurations.
+Adjusting parameters is not supported.
+
+<p>Selecting a game from the Game List will show it's overview. When a game
+is selected, the Play button will startup the <a href="#manwindow">Mancala UI</a>
+to allow playing the game.
+
+<p>The list of games shown can be filtered by common game
+features: board size, game goal, rounds, sow type, child type, and capture type.
+Each filter category divides all games into groups; each checkbox is one
+group in that category. Choosing None will clear all the options in the category
+and the games.  Choosing All will set all the options in the category
+and show all the games not filtered by another category.
+
+<p>Game log entries are collected according to the Log menu settings in the Mancala UI.
+Live Log is not supported unless play_mancala.exe was started from a console
+window. Logs may be saved  at the end of each game.
+
+<p>Warning the main Play Manacala window is left active while the game is
+being played. Starting a second game is not recommended.
 
 <h2 id="opwindow">Mancala Options UI</h2>
 

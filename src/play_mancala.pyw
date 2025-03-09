@@ -4,12 +4,11 @@
 Created on Thu Mar 23 08:10:28 2023
 @author: Ann"""
 
-import functools as ft
+import abc
 import os
 import textwrap
 import tkinter as tk
 from tkinter import ttk
-import webbrowser
 
 import cfg_keys as ckey
 import game_constants as gc
@@ -17,7 +16,8 @@ import game_interface as gi
 import man_config
 import man_path
 import mancala_ui
-import version
+import ui_utils
+
 
 from game_classes import GAME_CLASSES
 
@@ -33,16 +33,14 @@ EXFILE = '_all_params.txt'
 # this must not be in any of the enumerations
 NOT_FILTERED = -2
 
-OPTIONS = 0
-PARAMS = 1
-GAMES = 2
-ABOUT = 4
+SMALL = 6
+LARGER = 7
+LARGEST = 9
 
-
-SIZES = {'Small (< 6)': lambda holes: holes < 6,
-         'Medium (== 6)': lambda holes: holes == 6,
-         'Larger (7 - 8)': lambda holes: 7 <= holes <= 8,
-         'Largest (>= 9)': lambda holes: holes >= 9}
+SIZES = {'Small (< 6)': lambda holes: holes < SMALL,
+         'Medium (== 6)': lambda holes: holes == SMALL,
+         'Larger (7 - 8)': lambda holes: LARGER <= holes < LARGEST,
+         'Largest (>= 9)': lambda holes: holes >= LARGEST}
 
 
 CAPTS = {'No Capture': lambda ginfo: not any([ginfo.get(ckey.CAPT_MAX, 0),
@@ -76,41 +74,50 @@ class Counter:
         return self.nbr
 
     def reset(self):
+        """Reset the count."""
         self.nbr = 0
 
 
 # %% frame classes
 
+class BaseFilter(ttk.Frame, abc.ABC):
+    """A filter category.  Checkboxes are created for each
+    name, value pair return from the parents items method.
 
-class EnumFilter(ttk.Frame):
-    """A filter category based on enum values."""
+    A dictionary of the tkvariables for the checkboxes is
+    created. The keys will be either the value or the name
+    based on value_keys."""
 
-    def __init__(self, parent, label, enum):
+    def __init__(self, parent, filt_obj, label, value_keys):
 
         super().__init__(parent, borderwidth=3)
         self.parent = parent
+        self.filt_obj = filt_obj
 
         row = Counter()
 
-        ttk.Label(self, text=label).grid(row=row.count,
-                                         column=0, columnspan=2)
+        ttk.Label(self, text=label, style='Title.TLabel').grid(
+            row=row.count, column=0, columnspan=2, sticky='ew')
 
         self.filt_var = {}
-        for enum_val in enum:
-            self.filt_var[enum_val.value] = tk.BooleanVar(self, value=1)
-            ttk.Checkbutton(self, text=enum_val.name,
-                            variable=self.filt_var[enum_val.value],
-                            command=parent.update_list
+        for name, value in self.items():
+
+            key = value if value_keys else name
+            self.filt_var[key] = tk.BooleanVar(self, value=1)
+
+            ttk.Checkbutton(self, text=name,
+                            variable=self.filt_var[key],
+                            command=filt_obj.update_list
                             ).grid(row=row.count, column=0, columnspan=2,
                                    sticky='ew')
 
         rnbr = row.count
         ttk.Button(self, text='All',
                    command=self.not_filtered
-                   ).grid(row=rnbr, column=0)
+                   ).grid(row=rnbr, column=0, padx=3, pady=3)
         ttk.Button(self, text='None',
                    command=self.all_filtered
-                   ).grid(row=rnbr, column=1)
+                   ).grid(row=rnbr, column=1, padx=3, pady=3)
 
 
     def not_filtered(self):
@@ -118,7 +125,7 @@ class EnumFilter(ttk.Frame):
 
         for var in self.filt_var.values():
             var.set(1)
-        self.parent.update_list()
+        self.filt_obj.update_list()
 
 
     def all_filtered(self):
@@ -126,7 +133,33 @@ class EnumFilter(ttk.Frame):
 
         for var in self.filt_var.values():
             var.set(0)
-        self.parent.update_list()
+        self.filt_obj.update_list()
+
+
+    @abc.abstractmethod
+    def items(self):
+        """Return name, value pairs for each filter category.
+        Value can be what ever show will use to decide if a
+        game should be included.
+
+        If value is not immutable, be sure to create with
+        value_keys of False."""
+
+
+class EnumFilter(BaseFilter):
+    """A filter category based on enum values."""
+
+    def __init__(self, parent, filt_obj, label, enum):
+
+        self.enum = enum
+        super().__init__(parent, filt_obj, label, value_keys=True)
+
+
+    def items(self):
+        """Return the this name and value pairs for this filter"""
+
+        for evalue in self.enum:
+            yield evalue.name, evalue.value
 
 
     def show(self, value):
@@ -138,52 +171,19 @@ class EnumFilter(ttk.Frame):
         return self.filt_var[value].get()
 
 
-class DictFilter(ttk.Frame):
+class DictFilter(BaseFilter):
     """A filter category based on a dictionary of rule_name: test"""
 
-    def __init__(self, parent, label, filt_dict):
+    def __init__(self, parent, filt_obj, label, filt_dict):
 
-        super().__init__(parent, borderwidth=3)
-        self.parent = parent
         self.filt_dict = filt_dict
-
-        row = Counter()
-
-        ttk.Label(self, text=label).grid(row=row.count,
-                                         column=0, columnspan=2)
-
-        self.filt_var = {}
-        for fname in filt_dict.keys():
-            self.filt_var[fname] = tk.BooleanVar(self, value=1)
-            ttk.Checkbutton(self, text=fname,
-                            variable=self.filt_var[fname],
-                            command=parent.update_list
-                            ).grid(row=row.count, column=0, columnspan=2,
-                                   sticky='ew')
-
-        rnbr = row.count
-        ttk.Button(self, text='All',
-                   command=self.not_filtered
-                   ).grid(row=rnbr, column=0)
-        ttk.Button(self, text='None',
-                   command=self.all_filtered
-                   ).grid(row=rnbr, column=1)
+        super().__init__(parent, filt_obj, label, value_keys=False)
 
 
-    def not_filtered(self):
-        """Set all of the filter variables."""
+    def items(self):
+        """Return the this name and value pairs for this filter"""
 
-        for var in self.filt_var.values():
-            var.set(1)
-        self.parent.update_list()
-
-
-    def all_filtered(self):
-        """Clear all of the filter variables."""
-
-        for var in self.filt_var.values():
-            var.set(0)
-        self.parent.update_list()
+        return self.filt_dict.items()
 
 
     def show(self, value):
@@ -192,9 +192,9 @@ class DictFilter(ttk.Frame):
 
         value: value of the associated parameter to test"""
 
-        return any([test_func(value)
+        return any(test_func(value)
                    for test_name, test_func in self.filt_dict.items()
-                   if self.filt_var[test_name].get()])
+                   if self.filt_var[test_name].get())
 
 
 class GameFilters(ttk.Frame):
@@ -202,44 +202,73 @@ class GameFilters(ttk.Frame):
 
     def __init__(self, parent):
 
-        super().__init__(parent)
+        super().__init__(parent, padding=3)
         self.parent = parent
         self.pack()
 
         col = Counter()
 
-        self.size_filter = DictFilter(self, 'Board Size', SIZES)
-        self.size_filter.grid(row=0, column=col.count,
-                              stick='ns')
+        filt_frame = ttk.Labelframe(self,
+                                    text='Filters', labelanchor='nw',
+                                    padding=3)
+        filt_frame.grid(row=0, column=col.count, sticky=tk.NSEW)
+        fcol = Counter()
 
-        self.goal_filter = EnumFilter(self, 'Goal', gi.Goal)
-        self.goal_filter.grid(row=0, column=col.count,
-                              stick='ns')
+        self.size_filter = DictFilter(filt_frame, self, 'Board Size', SIZES)
+        self.size_filter.grid(row=0, column=fcol.count,
+                              sticky='ns')
 
-        self.rnd_filter = EnumFilter(self, 'Rounds', gi.Rounds)
-        self.rnd_filter.grid(row=0, column=col.count,
-                              stick='ns')
+        self.goal_filter = EnumFilter(filt_frame, self, 'Goal', gi.Goal)
+        self.goal_filter.grid(row=0, column=fcol.count,
+                              sticky='ns')
 
-        self.laps_filter = EnumFilter(self, 'Sow Type', gi.LapSower)
-        self.laps_filter.grid(row=0, column=col.count,
-                              stick='ns')
+        self.rnd_filter = EnumFilter(filt_frame, self, 'Rounds', gi.Rounds)
+        self.rnd_filter.grid(row=0, column=fcol.count,
+                              sticky='ns')
 
-        self.child_filter = EnumFilter(self, 'Child Type', gi.ChildType)
-        self.child_filter.grid(row=0, column=col.count,
-                              stick='ns')
+        self.laps_filter = EnumFilter(filt_frame, self, 'Sow Type', gi.LapSower)
+        self.laps_filter.grid(row=0, column=fcol.count,
+                              sticky='ns')
 
-        self.capt_filter = DictFilter(self, 'Capture Types', CAPTS)
-        self.capt_filter.grid(row=0, column=col.count,
-                              stick='ns')
+        self.child_filter = EnumFilter(filt_frame, self, 'Child Type', gi.ChildType)
+        self.child_filter.grid(row=0, column=fcol.count,
+                              sticky='ns')
+
+        self.capt_filter = DictFilter(filt_frame, self, 'Capture Types', CAPTS)
+        self.capt_filter.grid(row=0, column=fcol.count,
+                              sticky='ns')
+
+        filt_frame.columnconfigure(tk.ALL, weight=1)
 
         cmd_col = col.count
         ttk.Button(self, text='Play',
-                   command=parent.play_game).grid(
+                   command=parent.play_game,
+                   style='Play.TButton').grid(
                        row=0, column=cmd_col, sticky='ns')
 
         self.columnconfigure(tk.ALL, weight=1)
 
 
+    def not_filtered(self):
+        """Clear all of the filters."""
+
+        self.size_filter.not_filtered()
+        self.laps_filter.not_filtered()
+        self.goal_filter.not_filtered()
+        self.rnd_filter.not_filtered()
+        self.child_filter.not_filtered()
+        self.capt_filter.not_filtered()
+
+
+    def all_filtered(self):
+        """Set all of the filters."""
+
+        self.size_filter.all_filtered()
+        self.laps_filter.all_filtered()
+        self.goal_filter.all_filtered()
+        self.rnd_filter.all_filtered()
+        self.child_filter.all_filtered()
+        self.capt_filter.all_filtered()
 
     def show_game(self, game_dict):
         """Test if the game should be shown based on the filter
@@ -257,29 +286,28 @@ class GameFilters(ttk.Frame):
 
 
     def update_list(self):
-        """Update the parent list of filtered games."""
+        """Update the parent's list of filtered games."""
 
         self.parent.filter_games()
 
 
-class SelectList(ttk.Frame):
+class SelectList(ttk.Labelframe):
     """Scrollable tree list for list of filtered games.
     Selecting one tells the parent it was selected."""
 
     def __init__(self, parent):
 
-        super().__init__(parent)
+        super().__init__(parent, text='Game List', labelanchor='nw',
+                         padding=3)
         self.parent = parent
 
-        self.game_list = ttk.Treeview(self,
-                                      show='tree',
-                                      selectmode='browse')
+        self.game_list = ttk.Treeview(self, show='tree', selectmode='browse')
 
         scroll = ttk.Scrollbar(self,
                                orient='vertical',
                                command=self.game_list.yview)
         self.game_list.configure(yscrollcommand=scroll.set)
-        scroll.pack(side=tk.RIGHT, fill=tk.Y)
+        scroll.pack(side=tk.RIGHT, expand=tk.TRUE, fill=tk.Y)
 
         self.game_list.pack(side=tk.LEFT, expand=tk.TRUE, fill=tk.BOTH)
 
@@ -313,14 +341,13 @@ class SelectList(ttk.Frame):
             self.game_list.insert('', tk.END, iid=name, text=name)
 
 
-
-
-class AboutPane(ttk.Frame):
-    """A pane for the game help text (called the 'about' text)"""
+class AboutPane(ttk.Labelframe):
+    """A pane for the game help text (called the 'about' text)."""
 
     def __init__(self, parent):
 
-        super().__init__(parent)
+        super().__init__(parent, text='Game Overview', labelanchor='nw',
+                         padding=3)
 
         self.text_box = tk.Text(self)
 
@@ -328,10 +355,10 @@ class AboutPane(ttk.Frame):
                                orient='vertical',
                                command=self.text_box.yview)
         self.text_box.configure(yscrollcommand=scroll.set)
-        self.text_box.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
+        self.text_box.pack(side=tk.LEFT, expand=tk.TRUE, fill=tk.BOTH)
 
         scroll.config(command=self.text_box.yview)
-        scroll.pack(side=tk.RIGHT, fill=tk.Y)
+        scroll.pack(side=tk.RIGHT, expand=tk.TRUE, fill=tk.Y)
 
 
     def clear_text(self):
@@ -343,12 +370,46 @@ class AboutPane(ttk.Frame):
 
 
     def set_text(self, text):
-        """Insert the text in the box"""
+        """Set the text in the box"""
 
         self.text_box.configure(state=tk.NORMAL)
         self.text_box.delete('1.0', tk.END)
         self.text_box.insert('1.0', text)
         self.text_box.configure(state=tk.DISABLED)
+
+
+    @staticmethod
+    def format_para(text):
+        """Format a paragraph for the description."""
+
+        paragraphs = text.split('\n')
+        out_text = ''
+        for para in paragraphs:
+            fpara = textwrap.fill(para, 65) + '\n'
+            out_text += fpara
+
+        return ''.join(out_text)
+
+
+    def describe_game(self, game_dict):
+        """Build a description of the game for the text window.
+        Use the about text and any extra keys (not the standard
+        game config keys)."""
+
+        dtext = ''
+        if (ckey.GAME_INFO in game_dict
+                and ckey.ABOUT in game_dict[ckey.GAME_INFO]):
+
+            dtext = self.format_para(game_dict[ckey.GAME_INFO][ckey.ABOUT])
+
+        for key, text in game_dict.items():
+            if key not in [ckey.GAME_CLASS, ckey.GAME_CONSTANTS,
+                           ckey.GAME_INFO, ckey.PLAYER]:
+
+                dtext += '\n'
+                dtext += self.format_para(key.title() + ':  ' + text)
+
+        self.set_text(dtext)
 
 
 class GameChooser(ttk.Frame):
@@ -362,10 +423,12 @@ class GameChooser(ttk.Frame):
         self.selected = None
 
         self.load_game_files()
+        ui_utils.setup_styles()
 
-        self.master.title('Mancala Game Chooser')
+        self.master.title('Play Mancala - Game Chooser')
         super().__init__(self.master)
-        self.pack()
+        self.master.resizable(False, True)
+        self.pack(expand=tk.TRUE, fill=tk.BOTH)
 
         self.game_filter = GameFilters(self)
         self.game_filter.grid(row=0, column=0, columnspan=2, sticky='ew')
@@ -374,13 +437,12 @@ class GameChooser(ttk.Frame):
         self.select_list.grid(row=1, column=0, sticky='ns')
 
         self.about_text = AboutPane(self)
-        self.about_text.grid(row=1, column=1, stick=tk.NSEW)
+        self.about_text.grid(row=1, column=1, sticky=tk.NSEW)
 
         self.rowconfigure(1, weight=1)
         self.columnconfigure(tk.ALL, weight=1)
 
         self.select_list.fill_glist(self.all_games.keys())
-        self.style()
         self.create_menus()
 
 
@@ -400,55 +462,26 @@ class GameChooser(ttk.Frame):
             self.all_games[game_name] = game_dict
 
 
-    @staticmethod
-    def style():
-        """Define the global styles."""
-
-        # style = ttk.Style()
-        # style.theme_use('default')
-        # style.configure('.', background='#f0f0f0')
-        # style.map('.',
-        #           background=[('disabled', '#f0f0f0')],
-        #           foreground=[('disabled', 'grey40')])
-        # style.configure('TButton', padding=5)
-
-
     def create_menus(self):
         """Create the game control menus."""
 
         self.master.option_add('*tearOff', False)
 
-        self.menubar = tk.Menu(self.master)
-        self.master.config(menu=self.menubar)
+        menubar = tk.Menu(self.master)
+        self.master.config(menu=menubar)
 
-        helpmenu = tk.Menu(self.menubar)
-        helpmenu.add_command(label='Help...',
-                             command=ft.partial(self.show_help, OPTIONS))
-        helpmenu.add_command(label='Parameters...',
-                             command=ft.partial(self.show_help, PARAMS))
-        helpmenu.add_command(label='Games...',
-                             command=ft.partial(self.show_help, GAMES))
-        helpmenu.add_separator()
-        helpmenu.add_command(label='About...',
-                             command=ft.partial(self.show_help, ABOUT))
-        self.menubar.add_cascade(label='Help', menu=helpmenu)
+        playmenu = tk.Menu(menubar)
+        playmenu.add_command(label='Play...', command=self.play_game)
+        menubar.add_cascade(label='Play', menu=playmenu)
 
+        filtmenu = tk.Menu(menubar)
+        filtmenu.add_command(label='No Filters',
+                             command=self.game_filter.not_filtered)
+        filtmenu.add_command(label='All Filtered',
+                             command=self.game_filter.all_filtered)
+        menubar.add_cascade(label='Filters', menu=filtmenu)
 
-    def show_help(self, what=OPTIONS):
-        """Have the os pop open the help file in a browser."""
-
-        if what == OPTIONS:
-            webbrowser.open(man_path.get_path('mancala_help.html'))
-
-        elif what == PARAMS:
-            webbrowser.open(man_path.get_path('game_params.html'))
-
-        elif what == GAMES:
-            webbrowser.open(man_path.get_path('about_games.html'))
-
-        elif what == ABOUT:
-            mancala_ui.quiet_dialog(self, 'About Manacala Games',
-                                    version.RELEASE_TEXT)
+        ui_utils.add_help_menu(menubar, self)
 
 
     def select_game(self, game_name):
@@ -456,21 +489,7 @@ class GameChooser(ttk.Frame):
         put it's help into the about_pane"""
 
         game_dict = self.all_games[game_name]
-
-        about_str = ''
-        if (ckey.GAME_INFO in game_dict
-                and ckey.ABOUT in game_dict[ckey.GAME_INFO]):
-
-            about_str = game_dict[ckey.GAME_INFO][ckey.ABOUT]
-
-            paragraphs = about_str.split('\n')
-            out_text = ''
-            for para in paragraphs:
-                fpara = textwrap.fill(para, 65) + '\n'
-                out_text += fpara
-            about_str = ''.join(out_text)
-
-        self.about_text.set_text(about_str)
+        self.about_text.describe_game(game_dict)
         self.selected = game_name
 
 

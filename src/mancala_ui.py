@@ -27,6 +27,7 @@ import man_config
 import man_path
 import round_tally
 import version
+import ui_utils
 
 from game_logger import game_log
 
@@ -41,30 +42,6 @@ RET_TALLY_OP = 2
 
 
 # %%
-
-def quiet_dialog(parent, title, text):
-    """Popup a quiet dialog message.
-    This is used in mancala_ui.py and mancala_games.pyw,
-    so not in the class"""
-
-    xpos = parent.winfo_rootx() + 100
-    ypos = parent.winfo_rooty() + 50
-
-    top = tk.Toplevel(parent)
-    top.resizable(False, False)
-    top.lift(aboveThis=parent)
-    top.title(title)
-    top.wm_geometry(f'+{xpos}+{ypos}')
-    top.minsize(200, 100)
-    top.grab_set()
-
-    frame = tk.Frame(top, borderwidth=10)
-    frame.pack(side='top', expand=True)
-
-    tk.Label(frame, anchor='nw', justify='left', text=text
-             ).pack(side='top')
-    tk.Button(frame, text='Ok', command=top.destroy).pack(side='bottom')
-
 
 class TkVars:
     """Collect the tk status variables here and one stray."""
@@ -513,7 +490,7 @@ class MancalaUI(tk.Frame):
               and self._try_help_file(self.info.help_file))
              or self._try_help_file('about_games.html', self.info.name)
              or self._try_help_file('mancala_help.html')
-             or quiet_dialog(self, 'Help', 'Help not found.'))
+             or ui_utils.quiet_dialog(self, 'Help', 'Help not found.'))
 
 
     def _about(self):
@@ -530,7 +507,7 @@ class MancalaUI(tk.Frame):
 
         out_text += version.RELEASE_TEXT
 
-        quiet_dialog(self, 'About', ''.join(out_text))
+        ui_utils.quiet_dialog(self, 'About', ''.join(out_text))
 
 
     def _save_file(self):
