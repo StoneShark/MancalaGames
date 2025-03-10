@@ -13,35 +13,95 @@ import man_path
 import version
 
 
+MY_BLUE = '#00008b'
+DK_BLUE = '#00006b'
+LT_BLUE = '#8080cb'
+
+WHITE = '#ffffff'
+BLACK = '#000000'
+
+BGROUND = '#f0f0f0'
+DK_BGROUND = '#e8e8e8'
+
+ARROW = 'grey20'
+DIS_FG = 'grey40'
+UNSEL_TAB = 'grey60'
+LABEL = 'grey70'
+BTN_HLIGHT = 'grey80'
+
+
 def setup_styles(root):
-    """Define the global styles."""
+    """Define the global styles used for MancalaGames (mancala_games)
+    and GameChooser (play_mancala).
+
+    Using clam because it supports more options than default.
+    This is 'styling' both tk and ttk widgets."""
 
     style = ttk.Style()
-    style.theme_use('default')
-    style.configure('.', background='#f0f0f0', padding=4)
+    style.theme_use('clam')
+
+    style.configure('.', background=BGROUND)
     style.map('.',
-              background=[('disabled', '#f0f0f0')],
-              foreground=[('disabled', 'grey40')])
+              background=[('disabled', BGROUND)],
+              foreground=[('disabled', DIS_FG)])
 
-    style.configure('Title.TLabel', background='grey80', anchor='center')
-    style.map('Title.TLabel',
-              background=[('disabled', 'grey80')],
-              foreground=[('disabled', 'black')])
+    style.map('TButton', background=[('active',  BTN_HLIGHT)])
 
-    style.configure('Play.TButton', background='grey40', anchor='center',
-                    borderwidth=5, foreground="#f0f0f0",
+    style.configure('Filt.TButton', width=-9, padding=1)
+
+    style.configure('Play.TButton',
+                    background=MY_BLUE,
+                    foreground=WHITE,
+                    borderwidth=5,
                     font=('bold', 12))
+    style.map('Play.TButton', background=[('active',  DK_BLUE)])
 
-    style.configure('TNotebook.Tab', background='grey60')
-    style.map('TNotebook.Tab', expand=[('selected', [4, 4, 4, 0])])
+    # clam theme shows an x in the boxes, this fills them in
+    style.map('TCheckbutton',
+               indicatorbackground=[('selected', '!disabled', MY_BLUE),
+                                    ('selected', 'disabled',  LT_BLUE)],
+               indicatorforeground=[('selected', '!disabled', MY_BLUE),
+                                    ('selected', 'disabled',  LT_BLUE)])
+
+    style.configure('TEntry',
+                    padding=2,
+                    selectbackground=MY_BLUE,
+                    selectforeground=WHITE)
+    style.map('TEntry', bordercolor=[('focus', MY_BLUE)])
+
+    style.configure('Title.TLabel', background=LABEL, anchor='center')
+    style.map('Title.TLabel',
+              background=[('disabled', LABEL)],
+              foreground=[('disabled', BLACK)])
+
+    # for ttk.OptionMenu
+    style.configure('TMenubutton', padding=1, arrowcolor=ARROW)
+    style.map('TMenubutton', arrowcolor=[('disabled', DIS_FG)])
+
+    style.configure('TNotebook', background=DK_BGROUND, padding=4)
+    style.map('TNotebook.Tab',
+              expand=[('selected', [0, 4, 4, 0])],
+              background=[('selected', BGROUND),
+                          ('!selected', UNSEL_TAB)])
+
+    style.configure('TScrollbar',
+                    arrowcolor=ARROW,
+                    lightcolor=WHITE,
+                    darkcolor='grey20',
+                    bordercolor='grey50',
+                    troughcolor='grey80')
 
     style.map('Treeview',
-              background=[('selected', '#00008b')],
-              foreground=[('selected', '#ffffff')])
+              background=[('selected', MY_BLUE)],
+              foreground=[('selected', WHITE)])
 
-    # set the colors for the only tk object, the text box
-    root.option_add("*selectForeground", "#ffffff")
-    root.option_add("*selectBackground", "#00008b")
+    # set the colors for the text box
+    root.option_add("*selectForeground", WHITE)
+    root.option_add("*selectBackground", MY_BLUE)
+
+    # set the color for menu and optionmenu highlighting
+    root.option_add("*activeForeground", WHITE)
+    root.option_add("*activeBackground", MY_BLUE)
 
 
 def quiet_dialog(parent, title, text):

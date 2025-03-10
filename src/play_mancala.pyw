@@ -42,6 +42,17 @@ SIZES = {'Small (< 6)': lambda holes: holes < SMALL,
          'Larger (7 - 8)': lambda holes: LARGER <= holes < LARGEST,
          'Largest (>= 9)': lambda holes: holes >= LARGEST}
 
+GOALS = {'Max Seeds': lambda goal: goal == gi.Goal.MAX_SEEDS,
+         'Territory': lambda goal: goal == gi.Goal.TERRITORY,
+         'Clear Own': lambda goal: goal == gi.Goal.CLEAR,
+         'Deprive Opponent': lambda goal: goal == gi.Goal.DEPRIVE,
+         'Round Tally': lambda goal: goal in (gi.Goal.RND_SEED_COUNT,
+                                              gi.Goal.RND_EXTRA_SEEDS,
+                                              gi.Goal.RND_POINTS,
+                                              gi.Goal.RND_WIN_COUNT)}
+
+ROUNDS = {'No Rounds': lambda rounds: not rounds,
+          'Rounds': lambda rounds: rounds}
 
 CAPTS = {'No Capture': lambda ginfo: not any([ginfo.get(ckey.CAPT_MAX, 0),
                                               ginfo.get(ckey.CAPT_MIN, 0),
@@ -50,9 +61,9 @@ CAPTS = {'No Capture': lambda ginfo: not any([ginfo.get(ckey.CAPT_MAX, 0),
                                               ginfo.get(ckey.CROSSCAPT, 0),
                                               ginfo.get(ckey.CAPT_TYPE, 0)]),
          'Basic Capture': lambda ginfo: (any([ginfo.get(ckey.CAPT_MAX, 0),
-                                      ginfo.get(ckey.CAPT_MIN, 0),
-                                      ginfo.get(ckey.CAPT_ON, 0),
-                                      ginfo.get(ckey.EVENS, 0)])
+                                              ginfo.get(ckey.CAPT_MIN, 0),
+                                              ginfo.get(ckey.CAPT_ON, 0),
+                                              ginfo.get(ckey.EVENS, 0)])
                                  and not any([ginfo.get(ckey.CROSSCAPT, 0),
                                               ginfo.get(ckey.CAPT_TYPE, 0)])),
          'Cross Capture': lambda ginfo: ginfo.get(ckey.CROSSCAPT, 0),
@@ -96,8 +107,9 @@ class BaseFilter(ttk.Frame, abc.ABC):
 
         row = Counter()
 
-        ttk.Label(self, text=label, style='Title.TLabel').grid(
-            row=row.count, column=0, columnspan=2, sticky='ew')
+        lbl = ttk.Label(self, text=label, style='Title.TLabel')
+        lbl.grid(row=row.count, column=0, columnspan=2, sticky='ew')
+        lbl.configure(anchor='center')  # anchor in style is ignored
 
         self.filt_var = {}
         for name, value in self.items():
@@ -113,10 +125,12 @@ class BaseFilter(ttk.Frame, abc.ABC):
 
         rnbr = row.count
         ttk.Button(self, text='All',
-                   command=self.not_filtered
+                   command=self.not_filtered,
+                   style='Filt.TButton'
                    ).grid(row=rnbr, column=0, padx=3, pady=3)
         ttk.Button(self, text='None',
-                   command=self.all_filtered
+                   command=self.all_filtered,
+                   style='Filt.TButton'
                    ).grid(row=rnbr, column=1, padx=3, pady=3)
 
 
@@ -181,7 +195,7 @@ class DictFilter(BaseFilter):
 
 
     def items(self):
-        """Return the this name and value pairs for this filter"""
+        """Return the name and value pairs for this filter"""
 
         return self.filt_dict.items()
 
@@ -215,28 +229,22 @@ class GameFilters(ttk.Frame):
         fcol = Counter()
 
         self.size_filter = DictFilter(filt_frame, self, 'Board Size', SIZES)
-        self.size_filter.grid(row=0, column=fcol.count,
-                              sticky='ns')
+        self.size_filter.grid(row=0, column=fcol.count, sticky='ns')
 
-        self.goal_filter = EnumFilter(filt_frame, self, 'Goal', gi.Goal)
-        self.goal_filter.grid(row=0, column=fcol.count,
-                              sticky='ns')
+        self.goal_filter = DictFilter(filt_frame, self, 'Goal', GOALS)
+        self.goal_filter.grid(row=0, column=fcol.count, sticky='ns')
 
-        self.rnd_filter = EnumFilter(filt_frame, self, 'Rounds', gi.Rounds)
-        self.rnd_filter.grid(row=0, column=fcol.count,
-                              sticky='ns')
+        self.rnd_filter = DictFilter(filt_frame, self, 'Rounds', ROUNDS)
+        self.rnd_filter.grid(row=0, column=fcol.count, sticky='ns')
 
-        self.laps_filter = EnumFilter(filt_frame, self, 'Sow Type', gi.LapSower)
-        self.laps_filter.grid(row=0, column=fcol.count,
-                              sticky='ns')
+        self.laps_filter = EnumFilter(filt_frame, self, 'Lap Type', gi.LapSower)
+        self.laps_filter.grid(row=0, column=fcol.count, sticky='ns')
 
         self.child_filter = EnumFilter(filt_frame, self, 'Child Type', gi.ChildType)
-        self.child_filter.grid(row=0, column=fcol.count,
-                              sticky='ns')
+        self.child_filter.grid(row=0, column=fcol.count, sticky='ns')
 
         self.capt_filter = DictFilter(filt_frame, self, 'Capture Types', CAPTS)
-        self.capt_filter.grid(row=0, column=fcol.count,
-                              sticky='ns')
+        self.capt_filter.grid(row=0, column=fcol.count, sticky='ns')
 
         filt_frame.columnconfigure(tk.ALL, weight=1)
 
@@ -269,6 +277,7 @@ class GameFilters(ttk.Frame):
         self.rnd_filter.all_filtered()
         self.child_filter.all_filtered()
         self.capt_filter.all_filtered()
+
 
     def show_game(self, game_dict):
         """Test if the game should be shown based on the filter
@@ -423,7 +432,7 @@ class GameChooser(ttk.Frame):
         self.selected = None
 
         self.load_game_files()
-        ui_utils.setup_styles()
+        ui_utils.setup_styles(master)
 
         self.master.title('Play Mancala - Game Chooser')
         super().__init__(self.master)

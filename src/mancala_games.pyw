@@ -115,7 +115,7 @@ class MancalaGames(ttk.Frame):
         warnings.showwarning = self._warning
         warnings.simplefilter('always', UserWarning)
 
-        ui_utils.setup_styles()
+        ui_utils.setup_styles(master)
         self._create_menus()
         self._add_commands_ui()
         self._add_tabs()
@@ -527,7 +527,7 @@ class MancalaGames(ttk.Frame):
                                 self.tkvars[param.option].get(),
                                 *values)
         opmenu.config(width=2 + max(len(str(val)) for val in values))
-        opmenu.grid(row=param.row, column=param.col + 1, sticky=tk.W)
+        opmenu.grid(row=param.row, column=param.col + 1, pady=2, sticky=tk.W)
 
         lbl.bind('<Enter>', ft.partial(self._update_desc, param.option))
         opmenu.bind('<Enter>', ft.partial(self._update_desc, param.option))
@@ -539,8 +539,8 @@ class MancalaGames(ttk.Frame):
 
         lbl = ttk.Label(frame, text=param.text, style='Title.TLabel')
         lbl.grid(row=param.row, column=param.col, columnspan=2,
-                 padx=4, sticky='ew')
-        lbl.configure(anchor='center')  # anchor in style is being ignored
+                 padx=4, pady=2, sticky='ew')
+        lbl.configure(anchor='center')  # anchor in style is ignored
 
 
     def _make_ui_param(self, frame, param):
