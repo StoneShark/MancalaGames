@@ -1,13 +1,11 @@
 body.narrow {
 	max-width: 600px;
 	margin: 0 auto;
-	float: none;
-	font-family: "Times New Roman", Times, serif;
+	font-family: "Georgia", Times, serif;
 }
 body.wide {
 	margin: 0 auto;
-	float: none;
-	font-family: "Times New Roman", Times, serif;
+	font-family: "Georgia", Times, serif;
 }
 
 
