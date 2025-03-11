@@ -13,43 +13,58 @@ import man_config
 # from game_logger import game_log
 
 
-class Owners:
+class Owners(bhv.BehaviorGlobal):
     """Global data to store and manage ownership counts.
 
-    This is not intended to be instatiated or used outside this file."""
+    This data is shared between each of the behavior objects
+    created for the board (holes and stores).
 
-    active = False
-    deviat = [0, 0]
+    Only one global instance is created."""
 
-    _game_ui = None
-    _top_dev = None
-    _btm_dev = None
+    def __init__(self):
+
+        super().__init__()
+        self.active = False
+        self.deviat = [0, 0]
+
+        self._top_dev = None
+        self._btm_dev = None
 
 
-    @staticmethod
-    def empty():
+    def empty(self):
         """clear the owner deviations"""
-        Owners.deviat = [0, 0]
+        self.deviat = [0, 0]
+
+        if self._btm_dev and self._top_dev:
+            self._btm_dev.config(text=f'{self.deviat[0]:3}')
+            self._top_dev.config(text=f'{self.deviat[1]:3}')
 
 
-    @staticmethod
-    def change_owner(owner):
+    def destroy_ui(self):
+        """Don't keep local copies of ui elements that are
+        destroyed."""
+
+        super().destroy_ui()
+        self._top_dev = None
+        self._btm_dev = None
+
+
+    def change_owner(self, owner):
         """The ownership of one hole has toggled, update the
         counts."""
 
-        Owners.deviat[owner] += 1
-        Owners.deviat[not owner] -= 1
+        self.deviat[owner] += 1
+        self.deviat[not owner] -= 1
 
-        Owners._btm_dev.config(text=f'{Owners.deviat[0]:3}')
-        Owners._top_dev.config(text=f'{Owners.deviat[1]:3}')
+        self._btm_dev.config(text=f'{self.deviat[0]:3}')
+        self._top_dev.config(text=f'{self.deviat[1]:3}')
 
 
-    @staticmethod
-    def fill_it(game_ui):
+    def fill_it(self, game_ui):
         """Fill the right status frame with controls."""
 
-        Owners.active = True
-        Owners._game_ui = game_ui
+        self.active = True
+        self.game_ui = game_ui
         frame = game_ui.rframe
 
         text = "Click any hole to toggle it's ownerhsip.\n" \
@@ -62,45 +77,20 @@ class Owners:
         status.pack(side='top', expand=True, fill='x')
 
         tk.Label(status, text='Top').pack(side=tk.LEFT)
-        Owners._top_dev = tk.Label(status, text='   0')
-        Owners._top_dev.pack(side=tk.LEFT)
+        self._top_dev = tk.Label(status, text='   0')
+        self._top_dev.pack(side=tk.LEFT)
         tk.Label(status, text='Bottom').pack(side=tk.LEFT)
-        Owners._btm_dev = tk.Label(status, text='  0')
-        Owners._btm_dev.pack(side=tk.LEFT)
+        self._btm_dev = tk.Label(status, text='  0')
+        self._btm_dev.pack(side=tk.LEFT)
 
-        tk.Button(frame, text='Done', command=Owners.done
+        tk.Button(frame, text='Done', command=self.done
                   ).pack(side='bottom')
 
 
-    @staticmethod
-    def destroy_ui():
-        """Remove the children we created in rframe.
-        Clear local access to them."""
-
-        for child in Owners._game_ui.rframe.winfo_children():
-            child.destroy()
-        Owners._btn_dev = None
-        Owners._top_dev = None
+OWNERS = Owners()
 
 
-    @staticmethod
-    def done():
-        """Go back to game play mode."""
-
-        if Owners.active and Owners._game_ui.set_gameplay_mode():
-            Owners.destroy_ui()
-
-
-    @staticmethod
-    def cleanup():
-        """Abandoning the game mode, cleanup."""
-
-        if Owners.active:
-            Owners.active = False
-            Owners.empty()
-            Owners.destroy_ui()
-
-
+# %% behaviors
 class SelectOwnedHoles(bhv.BehaviorIf):
     """A class which allows the winner to select the
     holes they own on the loser side."""
@@ -138,14 +128,14 @@ class SelectOwnedHoles(bhv.BehaviorIf):
         game_ui.toggle_facing()
         game_ui.game.turn = loser
 
-        Owners.fill_it(game_ui)
+        OWNERS.fill_it(game_ui)
         return True
 
 
     @classmethod
     def leave_mode(cls, game_ui):
 
-        if Owners.deviat != [0, 0]:
+        if OWNERS.deviat != [0, 0]:
             tk.messagebox.showerror(
                 title='Game Mode',
                 message=textwrap.fill(textwrap.dedent("""\
@@ -169,7 +159,7 @@ class SelectOwnedHoles(bhv.BehaviorIf):
         self.btn.props.owner = game.owner[loc]
         self.refresh()
 
-        Owners.change_owner(game.owner[loc])
+        OWNERS.change_owner(game.owner[loc])
 
 
     def do_right_click(self):

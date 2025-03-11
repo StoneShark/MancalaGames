@@ -67,8 +67,8 @@ def ask_mode_change(old_behavior, new_behavior, game_ui):
 def force_mode_change():
     """Do any cleanup because the mode change will be forced."""
 
-    bhv_hold.Hold.cleanup()
-    bhv_owners.Owners.cleanup()
+    bhv_hold.HOLD.cleanup()
+    bhv_owners.OWNERS.cleanup()
 
 
 # %%  Button Classes
@@ -225,8 +225,8 @@ class HoleButton(tk.Canvas):
         self.config(cursor='')
         self.frame.config(cursor='')
         self.behavior = BEHAVIOR_CLASS[behavior].button(self)
-        bhv_hold.Hold.empty()
-        bhv_owners.Owners.empty()
+        bhv_hold.HOLD.empty()
+        bhv_owners.OWNERS.empty()
 
 
     def set_props(self, props, bstate):

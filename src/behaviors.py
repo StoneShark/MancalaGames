@@ -64,7 +64,50 @@ class BtnState(enum.Enum):
                         BtnState.LACT_CCW_ONLY}
 
 
-# %% interface
+# %% interfaces
+
+
+class BehaviorGlobal(abc.ABC):
+    """The base class for the behavior global data classes.
+    These are the interfaces used in here and in buttons."""
+
+    def __init__(self):
+        """self.game_ui is filled in when the menu i rframe is
+        filled in the child classes; it is not available
+        when behavior globals are created."""
+
+        self.game_ui = None
+        self.active = False
+
+
+    @abc.abstractmethod
+    def empty(self):
+        """Remove any values from the global"""
+
+
+    def destroy_ui(self):
+        """Remove the children we created in rframe.
+        Clear local access to them."""
+
+        for child in self.game_ui.rframe.winfo_children():
+            child.destroy()
+
+
+    def done(self):
+        """Go back to game play mode."""
+
+        if self.active and self.game_ui.set_gameplay_mode():
+            self.destroy_ui()
+
+
+    def cleanup(self):
+        """Abandoning the game mode, cleanup."""
+
+        if self.active:
+            self.active = False
+            self.empty()
+            self.destroy_ui()
+
 
 class BehaviorIf(abc.ABC):
     """Button behavior interface.
@@ -83,7 +126,7 @@ class BehaviorIf(abc.ABC):
         change, do so. Return True if the mode change is
         ok, False otherwise.
 
-        class method because this is called before the object
+        Class method because this is called before the object
         is instantiated."""
 
 
@@ -92,7 +135,9 @@ class BehaviorIf(abc.ABC):
         """Is it ok to leave the mode (presumably to go back to GAMEPLAY).
         Assume it is unless this is overridden.
 
-        class method to access any class scope vars set in ask_mode_change."""
+        Class scope method because it is called where only the
+        class mode index is known (no actual behavior objects are
+        are available)."""
         _ = game_ui
         return True
 

@@ -5,7 +5,6 @@ Hold global data.
 Created on Sun Aug 13 10:06:37 2023
 @author: Ann"""
 
-# pylint: disable=duplicate-code
 
 import tkinter as tk
 import textwrap
@@ -17,62 +16,69 @@ from game_logger import game_log
 
 # %%  global data for movers
 
-class Hold:
+class Hold(bhv.BehaviorGlobal):
     """Global data to store and manage the seed holding data.
 
-    This is not intended to be instatiated or used outside this file."""
+    This data is shared between each of the behavior objects
+    created for the board (holes and stores).
 
-    active = False
-    nbr = 0
-    owner = None
+    Only one global instance is created."""
 
-    _game_ui = None
-    _label = None
+    def __init__(self):
+
+        super().__init__()
+        self.nbr = 0
+        self.owner = None
+        self._label = None
 
 
-    @staticmethod
-    def set_hold(nbr, owner):
+    def set_hold(self, nbr, owner):
         """Set the hold data and update the UI label"""
-        Hold.nbr = nbr
-        Hold.owner = owner
-        Hold._label.config(text=f'Seeds: {Hold.nbr}\nRow: {Hold.owner}')
+        self.nbr = nbr
+        self.owner = owner
+        self._label.config(text=f'Seeds: {self.nbr}\nRow: {self.owner}')
 
 
-    @staticmethod
-    def empty():
+    def empty(self):
         """Remove seeds and owner."""
-        Hold.nbr = 0
-        Hold.owner = None
-        if Hold._label:
-            Hold._label.config(text=f'Seeds: {Hold.nbr}\nRow: na')
+        self.nbr = 0
+        self.owner = None
+        if self._label:
+            self._label.config(text=f'Seeds: {self.nbr}\nRow: na')
 
 
-    @staticmethod
-    def query_nbr_seeds(owner, max_seeds):
+    def destroy_ui(self):
+        """Don't keep local copies of ui elements that are
+        destroyed."""
+
+        super().destroy_ui()
+        self._label = None
+
+
+    def query_nbr_seeds(self, owner, max_seeds):
         """Get the number of seeds from the user.
         Store them in the hold, but the board is not updated."""
 
         if max_seeds == 1:
-            Hold.set_hold(Hold.nbr + 1, owner)
+            self.set_hold(self.nbr + 1, owner)
             return 1
 
         nbr = tk.simpledialog.askinteger(
             'Pickup Seeds',
             f'How many seeds to pick up (1 .. {max_seeds})?')
         if not nbr or nbr <= 0 or nbr > max_seeds:
-            Hold._game_ui.bell()
+            self.game_ui.bell()
             return 0
 
-        Hold.set_hold(Hold.nbr + nbr, owner)
+        self.set_hold(self.nbr + nbr, owner)
         return nbr
 
 
-    @staticmethod
-    def hold_menu(game_ui, message=None):
+    def hold_menu(self, game_ui, message=None):
         """Fill the right status frame with controls."""
 
-        Hold.active = True
-        Hold._game_ui = game_ui
+        self.active = True
+        self.game_ui = game_ui
         frame = game_ui.rframe
 
         text = 'Right click to pick seeds up.\n' + \
@@ -83,47 +89,18 @@ class Hold:
         tk.Label(frame, anchor='nw', justify='left', text=text
                  ).pack(side='top', expand=True, fill='both')
 
-        text = f'Seeds: {Hold.nbr}\nRow: {Hold.owner}'
-        Hold._label = tk.Label(frame, anchor='nw', justify='left', text=text)
-        Hold._label.pack(side='top', expand=True, fill='both')
-        tk.Button(frame, text='Done', command=Hold.done
+        text = f'Seeds: {self.nbr}\nRow: {self.owner}'
+        self._label = tk.Label(frame, anchor='nw', justify='left', text=text)
+        self._label.pack(side='top', expand=True, fill='both')
+        tk.Button(frame, text='Done', command=self.done
                   ).pack(side='bottom')
 
 
-    @staticmethod
-    def destroy_ui():
-        """Remove the children we created in rframe.
-        Clear local access to them."""
-
-        for child in Hold._game_ui.rframe.winfo_children():
-            child.destroy()
-        Hold._label = None
-
-
-    @staticmethod
-    def done():
-        """Go back to game play mode."""
-
-        if Hold.active and Hold._game_ui.set_gameplay_mode():
-            Hold.destroy_ui()
-
-
-    @staticmethod
-    def cleanup():
-        """Abandoning the game mode, cleanup."""
-
-        if Hold.active:
-            Hold.active = False
-            Hold.empty()
-            Hold.destroy_ui()
-
-
-    @staticmethod
-    def warn_not_empty(game_ui):
+    def warn_not_empty(self, game_ui):
         """If the hold is not empty warn the user and return True,
         otherwise return False."""
 
-        if Hold.nbr:
+        if self.nbr:
             tk.messagebox.showerror(
                 title='Game Mode',
                 message='Hold is not empty; '
@@ -133,6 +110,8 @@ class Hold:
 
         return False
 
+
+HOLD = Hold()
 
 # %% button behaviors
 
@@ -159,7 +138,7 @@ class RndChooseButtonBehavior(bhv.BehaviorIf):
         if ans != bhv.YES_STR:
             return False
 
-        Hold.hold_menu(game_ui,
+        HOLD.hold_menu(game_ui,
                        textwrap.fill(textwrap.dedent("""\
                            Move seeds out of holes you wish to block
                            and into other holes."""), width=bhv.FILL_HINTS))
@@ -175,7 +154,7 @@ class RndChooseButtonBehavior(bhv.BehaviorIf):
     @classmethod
     def leave_mode(cls, game_ui):
 
-        if Hold.warn_not_empty(game_ui):
+        if HOLD.warn_not_empty(game_ui):
             return False
 
         # revert to the round starter that was saved
@@ -191,19 +170,19 @@ class RndChooseButtonBehavior(bhv.BehaviorIf):
             3. the seeds are being dropped on the wrong side of the board
                from which they were picked up."""
 
-        if not Hold.nbr or self.btn.props.seeds or Hold.owner != self.btn.row:
+        if not HOLD.nbr or self.btn.props.seeds or HOLD.owner != self.btn.row:
             self.btn.bell()
             return
 
         game = self.btn.game_ui.game
-        game.board[self.btn.loc] = Hold.nbr
+        game.board[self.btn.loc] = HOLD.nbr
         game.blocked[self.btn.loc] = False
 
         self.btn.props.blocked = False
-        self.btn.props.seeds = Hold.nbr
+        self.btn.props.seeds = HOLD.nbr
         self.refresh()
 
-        Hold.empty()
+        HOLD.empty()
         self.btn.frame.config(cursor='')
 
 
@@ -212,11 +191,11 @@ class RndChooseButtonBehavior(bhv.BehaviorIf):
         unless we are already holding seeds
         or there are not any seeds to pick up."""
 
-        if Hold.nbr or not self.btn.props.seeds:
+        if HOLD.nbr or not self.btn.props.seeds:
             self.btn.bell()
             return
 
-        Hold.set_hold(self.btn.props.seeds, self.btn.row)
+        HOLD.set_hold(self.btn.props.seeds, self.btn.row)
 
         game = self.btn.game_ui.game
         game.board[self.btn.loc] = 0
@@ -273,7 +252,7 @@ class RndMoveSeedsButtonBehavior(bhv.BehaviorIf):
         if ans != bhv.YES_STR:
             return False
 
-        Hold.hold_menu(game_ui,
+        HOLD.hold_menu(game_ui,
                        textwrap.fill(textwrap.dedent("""\
                            Each hole must contain at least one seed and
                            at least one hole must be playable."""),
@@ -293,7 +272,7 @@ class RndMoveSeedsButtonBehavior(bhv.BehaviorIf):
         holes = game.cts.holes
         dbl_holes = game.cts.dbl_holes
 
-        if Hold.warn_not_empty(game_ui):
+        if HOLD.warn_not_empty(game_ui):
             return False
 
         if cls.loser:
@@ -332,17 +311,17 @@ class RndMoveSeedsButtonBehavior(bhv.BehaviorIf):
             2. the seeds are being dropped on the wrong side of the board
                from which they were picked up."""
 
-        if not Hold.nbr or Hold.owner != self.btn.row:
+        if not HOLD.nbr or HOLD.owner != self.btn.row:
             self.btn.bell()
             return
 
         game = self.btn.game_ui.game
-        seeds = game.board[self.btn.loc] + Hold.nbr
+        seeds = game.board[self.btn.loc] + HOLD.nbr
         self.btn.props.seeds = seeds
         game.board[self.btn.loc] = seeds
         self.refresh()
 
-        Hold.empty()
+        HOLD.empty()
         self.btn.game_ui.config(cursor='')
 
 
@@ -358,12 +337,12 @@ class RndMoveSeedsButtonBehavior(bhv.BehaviorIf):
         game = self.btn.game_ui.game
         if (game.turn == self.btn.row
                 or self.btn.props.seeds <= 1
-                or Hold.owner not in (None, self.btn.row)):
+                or HOLD.owner not in (None, self.btn.row)):
             self.btn.bell()
             return
 
         max_seeds = self.btn.props.seeds - 1
-        seeds = Hold.query_nbr_seeds(self.btn.row, max_seeds)
+        seeds = HOLD.query_nbr_seeds(self.btn.row, max_seeds)
 
         if seeds:
             seeds = game.board[self.btn.loc] - seeds
@@ -409,7 +388,7 @@ class MoveSeedsButtonBehavior(bhv.BehaviorIf):
             return False
 
         cls.saved_state = game_ui.game.state
-        Hold.hold_menu(game_ui,
+        HOLD.hold_menu(game_ui,
                        textwrap.fill(textwrap.dedent("""\
                            Rearrange the seeds on your side of the board;
                            no seeds may be put into the store.
@@ -421,7 +400,7 @@ class MoveSeedsButtonBehavior(bhv.BehaviorIf):
     @classmethod
     def leave_mode(cls, game_ui):
 
-        if Hold.warn_not_empty(game_ui):
+        if HOLD.warn_not_empty(game_ui):
             return False
 
         game = game_ui.game
@@ -454,18 +433,18 @@ class MoveSeedsButtonBehavior(bhv.BehaviorIf):
             2. the seeds are being dropped on the wrong side of the board
                from which they were picked up."""
 
-        if not Hold.nbr or Hold.owner != self.btn.row:
+        if not HOLD.nbr or HOLD.owner != self.btn.row:
             self.btn.bell()
             return
 
         game = self.btn.game_ui.game
-        seeds = game.board[self.btn.loc] + Hold.nbr
+        seeds = game.board[self.btn.loc] + HOLD.nbr
 
         game.board[self.btn.loc] = seeds
         self.btn.props.seeds = seeds
         self.refresh()
 
-        Hold.empty()
+        HOLD.empty()
         self.btn.frame.config(cursor='')
 
 
@@ -473,12 +452,12 @@ class MoveSeedsButtonBehavior(bhv.BehaviorIf):
         """Pick up some or all of the seeds."""
 
         if (not self.btn.props.seeds
-                or Hold.owner not in (None, self.btn.row)):
+                or HOLD.owner not in (None, self.btn.row)):
             self.btn.bell()
             return
 
         max_seeds = self.btn.props.seeds
-        seeds = Hold.query_nbr_seeds(self.btn.row, max_seeds)
+        seeds = HOLD.query_nbr_seeds(self.btn.row, max_seeds)
 
         if seeds:
             game = self.btn.game_ui.game
@@ -519,17 +498,17 @@ class RndMoveStoreBehavior(bhv.StoreBehaviorIf):
     def do_left_click(self):
         """Drop all picked up seeds."""
 
-        if not Hold.nbr and Hold.owner == self.str.owner:
+        if not HOLD.nbr and HOLD.owner == self.str.owner:
             self.str.bell()
             return
 
         game = self.str.game_ui.game
-        seeds = game.store[self.str.owner] + Hold.nbr
+        seeds = game.store[self.str.owner] + HOLD.nbr
         self.set_store(seeds, True)
         game.store[self.str.owner] = seeds
 
         self.str.game_ui.config(cursor='')
-        Hold.empty()
+        HOLD.empty()
 
 
     def do_right_click(self):
@@ -540,10 +519,10 @@ class RndMoveStoreBehavior(bhv.StoreBehaviorIf):
         seeds = game.store[self.str.owner]
 
         if (game.turn == self.str.owner
-                and Hold.query_nbr_seeds(not self.str.owner, seeds)):
+                and HOLD.query_nbr_seeds(not self.str.owner, seeds)):
 
             game = self.str.game_ui.game
-            seeds -= Hold.nbr
+            seeds -= HOLD.nbr
             self.set_store(seeds, True)
             game.store[self.str.owner] = seeds
 
