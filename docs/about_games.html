@@ -105,6 +105,50 @@ name than you expect.
   </div>
 </div>
 <p>Rules: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p63.
+<h3 id="Adi">Adi</h3>
+<p>A multi-lap mancala played in rounds. The goal is to claim ownership of at least 10 holes. Each player initially owns the holes on their side of the board. Owners of holes are updated at the start of each round based on the number of seeds captured in the previous round.
+<p>Captures are on 4s on the final sown seed by the sower (regardless of hole owner). The seeds of any hole sown to 4 are captured by the hole's owner (regardless of sower).
+<p>A player must pass if they have no moves. If neither player has moves, the game is over.
+<p>Variations:
+<ul><li class="helptext">
+common board sizes: 6, 7 or 12
+<li class="helptext">
+change number of holes required for win (<a href="game_params.html#goal_param">GOAL_PARAM</a>)
+<li class="helptext">
+don't allow passing (<a href="game_params.html#mustpass">MUSTPASS</a>)
+<li class="helptext">
+<a href="game_params.html#prescribed">PRESCRIBED</a> opening PLUS1MINUS1
+<li class="helptext">
+repeat turn on capture (<a href="game_params.html#capt_rturn">CAPT_RTURN</a>)
+<li class="helptext">
+only sower captures during sowing (<a href="game_params.html#sow_rule">SOW_RULE</a>: SOW_CAPT_ALL)
+<li class="helptext">
+when 8 seeds or fewer, the round starter takes them (<a href="game_params.html#pickextra">PICKEXTRA</a>: PICK2NLASTSEEDS)
+<li class="helptext">
+see <a href="about_games.html#Lam Waladach">Lam Waladach</a>
+</ul>
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: TERRITORY</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 4</p>
+    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: BOTH</p>
+    <p class="param"><a href="game_params.html#goal_param">Goal Parameter</a>: 10</p>
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
+    <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#pickextra">On Capture, Take More Rule</a>: PICKLASTSEEDS</p>
+    <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: UCHOWN</p>
+    <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: LOSER</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: OWN_SOW_CAPT_ALL</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p54.
 <h3 id="Adji-boto">Adji-boto</h3>
 <p>Sow single-lap, CCW. Leave one seed in the move start hole. The minimum move is 2 seeds. Captures may not be made on the first move by either player.
 <p>Each of the first 10 moves must start from a different hole. This is accomplished by using the unlock mechanism, moving from a hole unlocks it. Until all of a player's holes are unlocked, moves may only start from locked holes.
@@ -179,6 +223,27 @@ name than you expect.
   </div>
 </div>
 <p>Rules: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p88.
+<h3 id="Alemungula">Alemungula</h3>
+<p>Split sow, center hole may sown in either direction. A single seed moved across the board sides may not be moved back on the next turn.
+<p>Capture on opponent's side on 2s and 4s.
+<p>Goal: capture more than half the seeds.
+<p>Variation: <a href="about_games.html#Cow">Cow</a> has similar moves but with a minimum move of 2.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  5</p>
+    <p class="param">Start seeds:  5</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 2 4</p>
+    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OPP_SIDE</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: -1</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: SPLIT</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#udir_holes">User Chooses Direction</a>: 2</p>
+  </div>
+</div>
+<p>Rules: <a href="https://mancala.fandom.com/wiki/Alemungula" target="_blank">https://mancala.fandom.com/wiki/Alemungula</a>
 <h3 id="Andot">Andot</h3>
 <p>Split sow. Make children on 4 on opposite-side ends and four middle holes on own side.
 <p>Cannot move a singleton that has been moved across the side of the board back to where it was the previous turn.
@@ -347,6 +412,12 @@ For the center hole, the mouse button used to start the move selects the sow dir
 <p>Two seeds are required for a move. A player must pass, if they have no moves.
 <p>Captures are on 2s and 4s on the opponent's side with multiple captures occurring in the preceding holes. Specifically, the capture direction is the reverse of the sow direction used for the move.
 <p>The games ends when one player has more than half the seeds or when neither player can move.
+<p>Variations:
+<ul><li class="helptext">
+ <a href="about_games.html#Goat">Goat</a> uses the same rules on a smaller board, making it an easier game.
+<li class="helptext">
+<a href="about_games.html#Alemungula">Alemungula</a> uses the same rules but has a minimum move of 1, making it a bit more challenging.
+</ul>
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  5</p>
@@ -2265,9 +2336,11 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
 <div class="cols_row">
   <div class="column3">
     <p class="param"><a href="#Achochodi">Achochodi</a></p>
+    <p class="param"><a href="#Adi">Adi</a></p>
     <p class="param"><a href="#Adji Kui I">Adji Kui I</a></p>
     <p class="param"><a href="#Adji Kui II">Adji Kui II</a></p>
     <p class="param"><a href="#Adji-boto">Adji-boto</a></p>
+    <p class="param"><a href="#Alemungula">Alemungula</a></p>
     <p class="param"><a href="#Andot">Andot</a></p>
     <p class="param"><a href="#Ayoayo">Ayoayo</a></p>
     <p class="param"><a href="#Bao (Kenyan)">Bao (Kenyan)</a></p>
@@ -2292,9 +2365,9 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Gelech">Gelech</a></p>
     <p class="param"><a href="#Giuthi">Giuthi</a></p>
     <p class="param"><a href="#Goat">Goat</a></p>
-    <p class="param"><a href="#Halusa">Halusa</a></p>
   </div>
   <div class="column3">
+    <p class="param"><a href="#Halusa">Halusa</a></p>
     <p class="param"><a href="#Hoyito I">Hoyito I</a></p>
     <p class="param"><a href="#Hoyito II">Hoyito II</a></p>
     <p class="param"><a href="#Huroy">Huroy</a></p>
