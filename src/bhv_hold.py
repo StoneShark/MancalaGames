@@ -343,14 +343,7 @@ class RndMoveSeedsButtonBehavior(bhv.BehaviorIf):
 
         max_seeds = self.btn.props.seeds - 1
         seeds = HOLD.query_nbr_seeds(self.btn.row, max_seeds)
-
-        if seeds:
-            seeds = game.board[self.btn.loc] - seeds
-            self.btn.props.seeds = seeds
-            game.board[self.btn.loc] = seeds
-            self.refresh()
-
-            self.btn.game_ui.config(cursor='circle')
+        self.remove_seeds(seeds)
 
 
     def refresh(self, bstate=bhv.BtnState.ACTIVE):

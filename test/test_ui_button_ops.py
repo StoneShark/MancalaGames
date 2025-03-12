@@ -171,7 +171,7 @@ def prolog(game_opt, setup, ui_opt):
     game_ui = make_ui(game, ui_opt)
 
     setup_game(game, setup)
-    game_ui._refresh()
+    game_ui.refresh()
     game_ui.master.update()
 
     return game_ui, game

@@ -14,6 +14,7 @@ import tkinter as tk
 import behaviors
 import bhv_hold
 import bhv_owners
+import bhv_bsetup
 import game_interface as gi
 import man_config
 
@@ -29,6 +30,7 @@ class Behavior(enum.IntEnum):
     RNDMOVE = 2
     MOVESEEDS = 3
     RNDCHOWN = 4
+    SETUP = 5
 
 
 BTuples = collections.namedtuple('BTuples', ['button', 'store'])
@@ -48,6 +50,9 @@ BEHAVIOR_CLASS = (BTuples(behaviors.PlayButtonBehavior,
 
                   BTuples(bhv_owners.SelectOwnedHoles,
                           behaviors.NoStoreBehavior),
+
+                  BTuples(bhv_bsetup.SetupButtonBehavior,
+                          bhv_bsetup.SetupStoreBehavior),
                   )
 
 
@@ -69,6 +74,8 @@ def force_mode_change():
 
     bhv_hold.HOLD.cleanup()
     bhv_owners.OWNERS.cleanup()
+    bhv_bsetup.SETUPHOLD.cleanup()
+
 
 
 # %%  Button Classes

@@ -195,8 +195,7 @@ class ManDeco:
     Decos are not told about a new game or round
     being started.
 
-    Only the inhibitor deco is told to re-initialized on
-    new game."""
+    Deco are not told to re-initialized on new game."""
 
     def __init__(self, game):
 
@@ -422,6 +421,22 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
                                                     ended=True)
         self.turn = winner
         return cond
+
+
+    def swap_sides(self):
+        """Swap the board sides. This would implement a pie rule if
+        mcount and turn are also swapped, but it's also used by
+        board setup."""
+
+        holes = self.cts.holes
+        dholes = self.cts.dbl_holes
+
+        self.board = self.board[holes:dholes] + self.board[0:holes]
+        self.child = self.child[holes:dholes] + self.child[0:holes]
+        self.blocked = self.blocked[holes:dholes] + self.blocked[0:holes]
+        self.unlocked = self.unlocked[holes:dholes] + self.unlocked[0:holes]
+        self.owner = self.owner[holes:dholes] + self.owner[0:holes]
+        self.store = list(reversed(self.store))
 
 
     def is_new_round_playable(self):

@@ -91,6 +91,7 @@ OWNERS = Owners()
 
 
 # %% behaviors
+
 class SelectOwnedHoles(bhv.BehaviorIf):
     """A class which allows the winner to select the
     holes they own on the loser side."""

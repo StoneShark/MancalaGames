@@ -83,6 +83,43 @@ class TkVars:
         self.ai_filter = tk.BooleanVar(man_ui.master, True)
 
 
+class GameSetup:
+    """Manage a game setup.
+    Support entering game setup mode and keep the setup
+    so that we can return to it."""
+
+    def __init__(self, game_ui):
+
+        self.game_ui = game_ui
+        self.state = None
+
+
+    def setup_game(self):
+        """Attempt to enter setup mode."""
+
+        self.game_ui.set_game_mode(buttons.Behavior.SETUP)
+
+
+    def save_setup(self):
+        """Save the game setup."""
+
+        self.state = self.game_ui.game.state
+
+
+    def reset_setup(self):
+        """Reset to a previous board setup."""
+
+        if self.state:
+            self.game_ui.game.state = self.state
+            self.game_ui.refresh()
+            return
+
+        tk.messagebox.showerror(
+            title='Board Setup',
+            message='There has been no previous board setup.',
+            parent=self.game_ui)
+
+
 # %%  mancala ui
 
 class MancalaUI(tk.Frame):
@@ -101,13 +138,13 @@ class MancalaUI(tk.Frame):
             raise TypeError('Missing mancala_ui.GameInterface in game.')
 
         self.game = game
+        self.info = self.game.info
         self.mode = buttons.Behavior.GAMEPLAY
         self.player = ai_player.AiPlayer(self.game, player_dict)
+        self.setup = GameSetup(self)
 
         game_log.new()
         game_log.turn(0, 'Start Game', game)
-
-        self.info = self.game.info
 
         if root_ui:
             self.master = tk.Toplevel(root_ui)
@@ -142,7 +179,7 @@ class MancalaUI(tk.Frame):
             self.tally_frame.forget()
 
         self._new_game()
-        self._refresh()
+        self.refresh()
         self._schedule_ai()
 
 
@@ -287,6 +324,7 @@ class MancalaUI(tk.Frame):
 
     def _create_menus(self):
         """Create the game control menus."""
+        # pylint: disable=too-many-statements
 
         menubar = tk.Menu(self.master)
         self.master.config(menu=menubar)
@@ -298,6 +336,11 @@ class MancalaUI(tk.Frame):
         gamemenu.add_separator()
         gamemenu.add_command(label='End Round', command=self._end_round)
         gamemenu.add_command(label='End Game', command=self._end_game)
+        gamemenu.add_separator()
+        gamemenu.add_command(label='Setup Game',
+                             command=self.setup.setup_game)
+        gamemenu.add_command(label='Reset to Setup',
+                             command=self.setup.reset_setup)
         menubar.add_cascade(label='Game', menu=gamemenu)
 
         aimenu = tk.Menu(menubar)
@@ -384,7 +427,7 @@ class MancalaUI(tk.Frame):
         showmenu.add_checkbutton(label='Touch Screen',
                                  variable=self.vars.touch_screen,
                                  onvalue=True, offvalue=False,
-                                 command=self._refresh)
+                                 command=self.refresh)
         showmenu.add_checkbutton(label='Facing Players',
                                  variable=self.vars.facing_players,
                                  onvalue=True, offvalue=False,
@@ -392,7 +435,7 @@ class MancalaUI(tk.Frame):
         showmenu.add_checkbutton(label='Ownership Arrows',
                                  variable=self.vars.owner_arrows,
                                  onvalue=True, offvalue=False,
-                                 command=self._refresh)
+                                 command=self.refresh)
         menubar.add_cascade(label='Display', menu=showmenu)
 
         helpmenu = tk.Menu(menubar)
@@ -460,7 +503,7 @@ class MancalaUI(tk.Frame):
         for pos in range(self.game.cts.holes):
             self.disp[0][pos].event_generate("<Configure>",
                                              width=width, height=height)
-        self._refresh()
+        self.refresh()
 
 
     @staticmethod
@@ -564,7 +607,7 @@ class MancalaUI(tk.Frame):
         return btnstate
 
 
-    def _refresh(self):
+    def refresh(self):
         """Make UI match mancala game."""
 
         turn = self.game.get_turn()
@@ -614,7 +657,7 @@ class MancalaUI(tk.Frame):
     def _not_playable_new_round(self):
         """The new round is not playable by the starter."""
 
-        self._refresh()
+        self.refresh()
         tk.messagebox.showerror(
             title="New Round Not Playable",
             message="The new round resulted in a unplayable game. " \
@@ -632,7 +675,7 @@ class MancalaUI(tk.Frame):
         self.player.clear_history()
         self.set_game_mode(buttons.Behavior.GAMEPLAY, force=True)
 
-        self._refresh()
+        self.refresh()
         if new_game:
             self._param_tally()
 
@@ -685,10 +728,11 @@ class MancalaUI(tk.Frame):
         for button_row in self.disp:
             for btn in button_row:
                 btn.set_behavior(mode)
-        self.stores[0].set_behavior(mode)
-        self.stores[1].set_behavior(mode)
+        if self.stores:
+            self.stores[0].set_behavior(mode)
+            self.stores[1].set_behavior(mode)
 
-        self._refresh()
+        self.refresh()
         if mode == buttons.Behavior.GAMEPLAY:
             self._start_it()
             self._toggle_tally(vis_op=RET_TALLY_OP)
@@ -776,15 +820,12 @@ class MancalaUI(tk.Frame):
             return
 
         game.mcount += 1
-        holes = game.cts.holes
-        dholes = game.cts.dbl_holes
-        game.board =  game.board[holes:dholes] + game.board[0:holes]
-        game.store = list(reversed(game.store))
         game.turn = not game.turn
+        game.swap_sides()
 
         self.player.clear_history()
 
-        self._refresh()
+        self.refresh()
         game_log.turn(game.mcount, "Swap Sides (pie rule)", game)
 
         self._schedule_ai()
@@ -814,7 +855,7 @@ class MancalaUI(tk.Frame):
             wtext += ' ' + win_cond.name
         game_log.turn(self.game.mcount, wtext, self.game)
 
-        self._refresh()
+        self.refresh()
         self._win_message_popup(win_cond)
         self._new_game(win_cond=win_cond, new_round_ok=True)
 
@@ -847,7 +888,7 @@ class MancalaUI(tk.Frame):
             wtext += ' ' + win_cond.name
         game_log.turn(self.game.mcount, wtext, self.game)
 
-        self._refresh()
+        self.refresh()
         self._win_message_popup(win_cond)
         self._new_game()
 
@@ -878,7 +919,7 @@ class MancalaUI(tk.Frame):
         win_cond = self.game.move(move)
 
         self._log_turn(last_turn)
-        self._refresh()
+        self.refresh()
 
         if win_cond and win_cond != gi.WinCond.REPEAT_TURN:
             self._win_message_popup(win_cond)
@@ -903,7 +944,7 @@ class MancalaUI(tk.Frame):
         and it's the AI's turn)."""
 
         if self.vars.ai_active.get() and self.game.get_turn():
-            self._refresh()
+            self.refresh()
             self._cancel_pending_afters()
             sel_delay = self.vars.ai_delay.get()
 

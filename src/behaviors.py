@@ -157,6 +157,21 @@ class BehaviorIf(abc.ABC):
         """Do the right click action"""
 
 
+    def remove_seeds(self, seeds):
+        """Remove seeds from the HoleButton and set the cursor
+        to a circle."""
+
+        game = self.btn.game_ui.game
+
+        if seeds:
+            seeds = game.board[self.btn.loc] - seeds
+            game.board[self.btn.loc] = seeds
+            self.btn.props.seeds = seeds
+            self.refresh()
+
+            self.btn.game_ui.config(cursor='circle')
+
+
     def orient_text(self):
         """Orient the text according to the display option and
         rotate_text."""
@@ -188,7 +203,7 @@ class BehaviorIf(abc.ABC):
 
     def refresh_nonplay(self, bstate, bg_color=None):
         """Make the UI match the behavior and game data for the non-play
-        behaviors."""
+        behaviors (except setup board)."""
 
         if bstate == BtnState.DISABLE:
             self.btn['background'] = man_config.CONFIG['system_color']
@@ -212,50 +227,6 @@ class BehaviorIf(abc.ABC):
             self.btn.itemconfig(self.btn.rclick_id, state='normal')
         else:
             self.btn.itemconfig(self.btn.rclick_id, state='hidden')
-
-
-class StoreBehaviorIf(abc.ABC):
-    """Store behavior interface."""
-
-    def __init__(self, store):
-        self.str = store
-
-    @abc.abstractmethod
-    def set_store(self, seeds, highlight):
-        """Set text, props and states of the store."""
-
-    @abc.abstractmethod
-    def do_left_click(self):
-        """Do the left click action."""
-
-    @abc.abstractmethod
-    def do_right_click(self):
-        """Do the right click action"""
-
-
-# %%  Play mode behavior
-
-class PlayButtonBehavior(BehaviorIf):
-    """The button behavior during game play."""
-
-    @classmethod
-    def ask_mode_change(cls, game_ui):
-        """leave_mode of the previous behavior prevents
-        leaving if conditions are not good. Here we always
-        find with entering GAMEPLAY ok."""
-
-        return True
-
-
-    def do_left_click(self):
-        """Tell parent to move."""
-        self.btn.game_ui.move(self.btn.left_move)
-
-
-    def do_right_click(self):
-        """Move for the right click -- unless the hole is udirect
-        this is the same as a left click"""
-        self.btn.game_ui.move(self.btn.right_move)
 
 
     def _get_child_pointer(self):
@@ -380,11 +351,61 @@ class PlayButtonBehavior(BehaviorIf):
         self._update_grids(bstate)
 
 
-    def refresh(self, bstate=BtnState.ACTIVE):
-        """Set text and ui props."""
+    def refresh_play(self, bstate):
+        """Do the play mode refresh which is also used by the Setup Board"""
 
         self._set_btn_text()
         self._set_btn_ui_props(bstate)
+
+
+class StoreBehaviorIf(abc.ABC):
+    """Store behavior interface."""
+
+    def __init__(self, store):
+        self.str = store
+
+    @abc.abstractmethod
+    def set_store(self, seeds, highlight):
+        """Set text, props and states of the store."""
+
+    @abc.abstractmethod
+    def do_left_click(self):
+        """Do the left click action."""
+
+    @abc.abstractmethod
+    def do_right_click(self):
+        """Do the right click action"""
+
+
+# %%  Play mode behavior
+
+class PlayButtonBehavior(BehaviorIf):
+    """The button behavior during game play."""
+
+    @classmethod
+    def ask_mode_change(cls, game_ui):
+        """leave_mode of the previous behavior prevents
+        leaving if conditions are not good. Here we always
+        find with entering GAMEPLAY ok."""
+
+        return True
+
+
+    def do_left_click(self):
+        """Tell parent to move."""
+        self.btn.game_ui.move(self.btn.left_move)
+
+
+    def do_right_click(self):
+        """Move for the right click -- unless the hole is udirect
+        this is the same as a left click"""
+        self.btn.game_ui.move(self.btn.right_move)
+
+
+    def refresh(self, bstate=BtnState.ACTIVE):
+        """Set text and ui props."""
+
+        self.refresh_play(bstate)
 
 
 # %% no interaction store behavior
