@@ -390,7 +390,7 @@ class SowOppCaptsLast(SowMethodIf):
 # %% precature decorators
 
 # captures occur after prescribed openings, (i.e. don't occur if
-# there was a prescribed opeing) and before the rest of the sower
+# there was a prescribed opening) and before the rest of the sower
 
 # choosing not to set captured --
 #   no repeat turn; Mancala doesn't need to print as changes logged below
@@ -497,6 +497,7 @@ class SowBasicFirst(SowPrescribedIf):
 
     def do_prescribed(self, mdata):
         self.sower.sow_seeds(mdata)
+
 
 class SowOneOpp(SowPrescribedIf):
     """The last seed must be on the opponents side of the board
