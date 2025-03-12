@@ -13,6 +13,8 @@ import man_path
 import version
 
 
+# %% common styles
+
 MY_BLUE = '#00008b'
 DK_BLUE = '#00006b'
 LT_BLUE = '#8080cb'
@@ -104,6 +106,8 @@ def setup_styles(root):
     root.option_add("*activeBackground", MY_BLUE)
 
 
+# %% quiet dialog
+
 def quiet_dialog(parent, title, text):
     """Popup a quiet dialog message.
 
@@ -127,6 +131,8 @@ def quiet_dialog(parent, title, text):
              ).pack(side='top')
     tk.Button(frame, text='Ok', command=top.destroy).pack(side='bottom')
 
+
+# %% common help menu
 
 def add_help_menu(menubar, master):
     """Add the help menu bar."""
@@ -164,3 +170,23 @@ def show_release(parent):
     """Show the Release text."""
 
     quiet_dialog(parent, 'About Manacala Games', version.RELEASE_TEXT)
+
+
+# %% Counter
+
+class Counter:
+    """A counter that increments every time the count is retrieved.
+    Useful for puting UI elements in sequential rows or columns."""
+
+    def __init__(self):
+        self.nbr = -1
+
+    @property
+    def count(self):
+        """increment round and return it"""
+        self.nbr += 1
+        return self.nbr
+
+    def reset(self):
+        """Reset the count."""
+        self.nbr = -1

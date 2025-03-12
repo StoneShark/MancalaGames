@@ -70,24 +70,6 @@ CAPTS = {'No Capture': lambda ginfo: not any([ginfo.get(ckey.CAPT_MAX, 0),
          'Other Capt Type': lambda ginfo: ginfo.get(ckey.CAPT_TYPE, 0)}
 
 
-# %% helper classes
-
-class Counter:
-    """A counter that increments every time the count is retrieved"""
-
-    def __init__(self):
-        self.nbr = -1
-
-    @property
-    def count(self):
-        """increment round and return it"""
-        self.nbr += 1
-        return self.nbr
-
-    def reset(self):
-        """Reset the count."""
-        self.nbr = 0
-
 
 # %% frame classes
 
@@ -105,7 +87,7 @@ class BaseFilter(ttk.Frame, abc.ABC):
         self.parent = parent
         self.filt_obj = filt_obj
 
-        row = Counter()
+        row = ui_utils.Counter()
 
         lbl = ttk.Label(self, text=label, style='Title.TLabel')
         lbl.grid(row=row.count, column=0, columnspan=2, sticky='ew')
@@ -220,13 +202,13 @@ class GameFilters(ttk.Frame):
         self.parent = parent
         self.pack()
 
-        col = Counter()
+        col = ui_utils.Counter()
 
         filt_frame = ttk.Labelframe(self,
                                     text='Filters', labelanchor='nw',
                                     padding=3)
         filt_frame.grid(row=0, column=col.count, sticky=tk.NSEW)
-        fcol = Counter()
+        fcol = ui_utils.Counter()
 
         self.size_filter = DictFilter(filt_frame, self, 'Board Size', SIZES)
         self.size_filter.grid(row=0, column=fcol.count, sticky='ns')
