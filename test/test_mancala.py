@@ -1343,3 +1343,87 @@ class TestBadNewRound:
         game.move(gi.MoveTpl(0, 3, None))
 
         assert not game.is_new_round_playable()
+
+
+class TestSwap:
+
+    @pytest.mark.parametrize('size', [4, 5])
+    def test_swap_terr(self, size):
+        # test board, owner, children, & stores
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=size)
+        game_info = gi.GameInfo(goal=gi.Goal.TERRITORY,
+                                goal_param=8,
+                                child_type = gi.ChildType.NORMAL,
+                                child_cvt=4,
+                                evens=True,
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+
+        dbl_size = size * 2
+        game.board = list(range(dbl_size))
+        game.owner[0] = True
+        game.owner[dbl_size - 1] = False
+        game.child[size] = True
+        game.child[size - 1] = False
+        game.store = [4, 6]
+
+        print(game)
+        game.swap_sides()
+        print(game)
+
+        if size == 4:
+            assert game.board == [4, 5, 6, 7, 0, 1, 2, 3]
+            assert game.store == [6, 4]
+            assert game.owner == [T, T, T, F, T, F, F, F]
+            assert game.child == [T, N, N, N, N, N, N, F]
+
+        elif size == 5:
+            assert game.board == [5, 6, 7, 8, 9, 0, 1, 2, 3, 4]
+            assert game.store == [6, 4]
+            assert game.owner == [T, T, T, T, F, T, F, F, F, F]
+            assert game.child == [T, N, N, N, N, N, N, N, N, F]
+
+
+    @pytest.mark.parametrize('size', [4, 5])
+    def test_swap_locks(self, size):
+        # test board, stores, locks and blocks
+
+        game_consts = gc.GameConsts(nbr_start=4, holes=size)
+        game_info = gi.GameInfo(goal=gi.Goal.MAX_SEEDS,
+                                rounds=gi.Rounds.NO_MOVES,
+                                blocks=True,
+                                moveunlock=True,
+                                evens=True,
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+
+        dbl_size = size * 2
+        game.board = list(range(dbl_size))
+        game.unlocked[0] = True
+        game.unlocked[dbl_size - 1] = True
+        game.blocked[size] = True
+        game.blocked[size - 1] = True
+        game.store = [4, 6]
+
+        # print(game)
+        game.swap_sides()
+        # print(game)
+
+        if size == 4:
+            assert game.board == [4, 5, 6, 7, 0, 1, 2, 3]
+            assert game.store == [6, 4]
+            assert game.unlocked == [F, F, F, T, T, F, F, F]
+            assert game.blocked == [T, F, F, F, F, F, F, T]
+
+        elif size == 5:
+            assert game.board == [5, 6, 7, 8, 9, 0, 1, 2, 3, 4]
+            assert game.store == [6, 4]
+            assert game.unlocked == [F, F, F, F, T, T, F, F, F, F]
+            assert game.blocked == [T, F, F, F, F, F, F, F, F, T]

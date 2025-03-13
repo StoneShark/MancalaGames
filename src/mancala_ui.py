@@ -626,13 +626,8 @@ class MancalaUI(tk.Frame):
 
             for pos in range(self.game.cts.holes):
 
-                if self.mode != buttons.Behavior.GAMEPLAY:
-                    if player:
-                        btnstate = behaviors.BtnState.ACTIVE
-                    else:
-                        btnstate = behaviors.BtnState.DISABLE
-
-                else:
+                if self.mode in (buttons.Behavior.GAMEPLAY,
+                                 buttons.Behavior.SETUP):
                     aidx = pos
                     loc = self.game.cts.xlate_pos_loc(row, pos)
                     if self.game.info.mlength == 3:
@@ -640,6 +635,12 @@ class MancalaUI(tk.Frame):
 
                     btnstate = self._button_state(allows, ai_turn,
                                                   loc, aidx)
+
+                elif player:
+                    btnstate = behaviors.BtnState.ACTIVE
+                else:
+                    btnstate = behaviors.BtnState.DISABLE
+
 
                 self.disp[row][pos].set_props(
                     self.game.get_hole_props(row, pos),
@@ -650,7 +651,7 @@ class MancalaUI(tk.Frame):
         """Do the last steps in starting a new game:
         log the start and check for ai's turn."""
         game_log.new()
-        game_log.turn(0, 'Start Game', self.game)
+        game_log.turn(self.game.mcount, 'Start Game', self.game)
         self._schedule_ai()
 
 

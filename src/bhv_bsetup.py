@@ -43,6 +43,8 @@ import game_interface as gi
 import man_config
 import ui_utils
 
+from game_logger import game_log
+
 
 class SetupHold(bhv_hold.Hold):
     """Global data to store and manage the seed holding data.
@@ -150,14 +152,14 @@ class SetupHold(bhv_hold.Hold):
         """Set the starter to True and do board refresh."""
 
         self.game_ui.game.starter = self.game_ui.game.turn = True
-        self.game_ui.refresh()
+        self.refresh_game()
 
 
     def set_starter_false(self):
         """Set the starter to False and do board refresh."""
 
         self.game_ui.game.starter = self.game_ui.game.turn = False
-        self.game_ui.refresh()
+        self.refresh_game()
 
 
     def clear_to_stores(self):
@@ -178,15 +180,7 @@ class SetupHold(bhv_hold.Hold):
         for i, _ in enumerate(board):
             board[i] = 0
 
-        self.game_ui.refresh()
-
-        # the UI has games in which the stores are visible but always
-        # have 0 in them (used to show whose turn it is)
-        ui_stores = self.game_ui.stores
-        if ui_stores:
-            # stores are in game_ui.stores by row
-            ui_stores[0].set_store(store[1], None)
-            ui_stores[1].set_store(store[0], None)
+        self.refresh_game()
 
 
     def init_setup(self):
@@ -196,7 +190,7 @@ class SetupHold(bhv_hold.Hold):
         self.game_ui.game.new_game()
         self.game_ui.game.inhibitor.set_off()
         self.game_ui.game.mcount = 2
-        self.game_ui.refresh()
+        self.refresh_game()
 
 
     def rotate_board(self):
@@ -204,7 +198,25 @@ class SetupHold(bhv_hold.Hold):
         AI can only play True."""
 
         self.game_ui.game.swap_sides()
+        self.refresh_game()
+
+
+    def refresh_game(self):
+        """After refreshing the game with the UI, make certain
+        the stores and their seeds are visible.
+
+        The UI has games in which the stores are visible but always
+        have 0 in them (used to show whose turn it is)."""
+
         self.game_ui.refresh()
+
+        store = self.game_ui.game.store
+        ui_stores = self.game_ui.stores
+        if ui_stores:
+            # stores are in game_ui.stores by row
+            ui_stores[0].set_store(store[1], None)
+            ui_stores[1].set_store(store[0], None)
+
 
 
 SETUPHOLD = SetupHold()
@@ -268,6 +280,7 @@ class SetupButtonBehavior(bhv.BehaviorIf):
             return False
 
         game_ui.setup.save_setup()
+        game_log.add('\n*** Game Setup Complete', game_log.MOVE)
         return True
 
 
@@ -328,8 +341,10 @@ class SetupButtonBehavior(bhv.BehaviorIf):
             return
 
         seeds = SETUPHOLD.query_nbr_seeds(None, self.btn.props.seeds)
-        self.remove_seeds(seeds)
-        self.btn.game_ui.config(cursor='circle')
+
+        if seeds:
+            self.remove_seeds(seeds)
+            self.btn.game_ui.config(cursor='circle')
 
 
     @staticmethod
@@ -365,7 +380,7 @@ class SetupButtonBehavior(bhv.BehaviorIf):
             self.saved_state = bhv.BtnState.DISABLE
         else:
             self.saved_state = bhv.BtnState.ACTIVE
-        self.refresh()
+        self.refresh(self.saved_state)
 
 
     def block_toggle(self):
@@ -416,8 +431,8 @@ class SetupButtonBehavior(bhv.BehaviorIf):
 
 
     def refresh(self, bstate=None):
-        """Refresh the button as in play mode
-        but then override the state to normal."""
+        """Refresh the button as in play mode but then override
+        the state to normal (so it can be clicked)."""
 
         if bstate is None:
             if self.saved_state is None:
@@ -427,7 +442,6 @@ class SetupButtonBehavior(bhv.BehaviorIf):
         self.saved_state = bstate
 
         self.refresh_play(bstate)
-
         self.btn['state'] = tk.NORMAL
 
 

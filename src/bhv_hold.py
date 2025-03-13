@@ -343,7 +343,9 @@ class RndMoveSeedsButtonBehavior(bhv.BehaviorIf):
 
         max_seeds = self.btn.props.seeds - 1
         seeds = HOLD.query_nbr_seeds(self.btn.row, max_seeds)
-        self.remove_seeds(seeds)
+
+        if seeds:
+            self.remove_seeds(seeds)
 
 
     def refresh(self, bstate=bhv.BtnState.ACTIVE):
