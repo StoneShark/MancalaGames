@@ -1,0 +1,60 @@
+Sub MancalaPropsUsed()
+'
+' MancalaPropsUsed Macro
+' convert the props_used.csv file into a workable xlsx
+' for filtering and broswing game props
+
+' set some extra titles
+    Range("A1").Value = "Game"
+    Range("BA1").Value = "Filter1"
+    Range("BB1").Value = "Filter2"
+' set column widths
+    Columns("B:BB").ColumnWidth = 3.43
+    Columns("A:A").ColumnWidth = 20
+    Columns("AU:AU").ColumnWidth = 13
+    Columns("I:I").ColumnWidth = 8
+    Columns("AZ:AZ").ColumnWidth = 15
+' center these columns
+    Range("E:F,I:J,Q:R,Y:AD,AM:AO,AR:AR,AT:AT,AU:AU,AW:AW,AX:AX").Select
+    With Selection
+        .HorizontalAlignment = xlCenter
+        .VerticalAlignment = xlBottom
+        .WrapText = False
+        .Orientation = 0
+        .AddIndent = False
+        .IndentLevel = 0
+        .ShrinkToFit = False
+        .ReadingOrder = xlContext
+        .MergeCells = False
+    End With
+' reset the title row
+    Rows("1:1").Select
+    With Selection
+        .HorizontalAlignment = xlCenter
+        .VerticalAlignment = xlTop
+        .WrapText = False
+        .Orientation = 90
+        .AddIndent = False
+        .IndentLevel = 0
+        .ShrinkToFit = False
+        .ReadingOrder = xlContext
+        .MergeCells = False
+    End With
+    Range("A1").Select
+    With Selection
+        .HorizontalAlignment = xlCenter
+        .VerticalAlignment = xlCenter
+        .Orientation = 0
+    End With
+' set auto filter
+    Columns("A:BB").Select
+    Selection.AutoFilter
+' set freeze panes
+    Range("B2").Select
+    ActiveWindow.FreezePanes = True
+' save doc as xlsx
+    ChDir "D:\Activity_Data\Mancala_github\MancalaGames\docs"
+    ActiveWorkbook.SaveAs Filename:= _
+        "D:\Activity_Data\Mancala_github\MancalaGames\docs\props_used.xlsx", _
+        FileFormat:=xlOpenXMLWorkbook, CreateBackup:=False
+End Sub

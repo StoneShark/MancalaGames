@@ -782,11 +782,11 @@ def get_dc_field_names(dc_cls):
 def write_game_xref(filename):
     """Create the game / parameter cross reference table."""
 
-    gconsts = ['holes', 'nbr_start']
+    gconsts = [ckey.HOLES, ckey.NBR_START]
     ginfos = sorted(get_dc_field_names(gi.GameInfo))
-    for dontcare in ['name', 'help_file', 'about', 'udirect']:
+    for dontcare in [ckey.NAME, ckey.HELP_FILE, ckey.ABOUT, ckey.UDIRECT]:
         ginfos.remove(dontcare)
-    xref_params = gconsts + ginfos
+    xref_params = gconsts + ginfos + [ckey.GAME_CLASS]
 
     with open(filename, 'w', encoding='utf-8') as ofile:
 
@@ -797,7 +797,7 @@ def write_game_xref(filename):
             if gfile[-4:] != TXTPART or gfile == EXFILE:
                 continue
             game_dict = man_config.read_game_config(GPROP_PATH + gfile)
-            _, consts, info, _ = game_dict
+            gclass, consts, info, _ = game_dict
 
             print(f'{gfile[:-4]},', end='', file=ofile)
 
@@ -808,15 +808,18 @@ def write_game_xref(filename):
                 if param in gconsts:
                     vstr = str(getattr(consts, param))
 
-                elif param in ('capt_on', 'udir_holes'):
+                elif param in (ckey.CAPT_ON, ckey.UDIR_HOLES):
                     vstr = ' '.join(str(val) for val in getattr(info, param))
 
                 elif param in ginfos:
                     pval = getattr(info, param)
                     if pval is True:
                         vstr = 'x'
-                    elif param == 'sow_direct' or pval not in (0, False):
+                    elif param == ckey.SOW_DIRECT or pval not in (0, False):
                         vstr = str(getattr(info, param))
+
+                elif param == ckey.GAME_CLASS:
+                    vstr = gclass
 
                 pvals += [vstr]
 
