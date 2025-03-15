@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""A UI that brings up a list of games in the GameProps directory
+"""A UI that brings up a list of games in the GameProps directory.
 
 Created on Thu Mar 23 08:10:28 2023
 @author: Ann"""
@@ -75,7 +75,7 @@ CAPTS = {'No Capture': lambda ginfo: not any([ginfo.get(ckey.CAPT_MAX, 0),
 
 class BaseFilter(ttk.Frame, abc.ABC):
     """A filter category.  Checkboxes are created for each
-    name, value pair return from the parents items method.
+    name, value pair return from the parent's items method.
 
     A dictionary of the tkvariables for the checkboxes is
     created. The keys will be either the value or the name
@@ -134,28 +134,29 @@ class BaseFilter(ttk.Frame, abc.ABC):
 
     @abc.abstractmethod
     def items(self):
-        """Return name, value pairs for each filter category.
-        Value can be what ever show will use to decide if a
-        game should be included.
+        """Return name, value pairs for each filter option.
+        Name is shown on the UI for the filter option.
+        Value can be what ever the show method will use to
+        decide if a game should be included.
 
         If value is not immutable, be sure to create with
         value_keys of False."""
 
 
-class EnumFilter(BaseFilter):
-    """A filter category based on enum values."""
+class VListFilter(BaseFilter):
+    """A filter category based on a list of values."""
 
-    def __init__(self, parent, filt_obj, label, enum):
+    def __init__(self, parent, filt_obj, label, val_list):
 
-        self.enum = enum
+        self.val_list = val_list
         super().__init__(parent, filt_obj, label, value_keys=True)
 
 
     def items(self):
         """Return the this name and value pairs for this filter"""
 
-        for evalue in self.enum:
-            yield evalue.name, evalue.value
+        for evalue in self.val_list:
+            yield evalue, evalue
 
 
     def show(self, value):
@@ -165,6 +166,16 @@ class EnumFilter(BaseFilter):
         value: the enum value to test (an int)"""
 
         return self.filt_var[value].get()
+
+
+class EnumFilter(VListFilter):
+    """A filter category based on enum values."""
+
+    def items(self):
+        """Return the name and value pairs for this filter"""
+
+        for evalue in self.val_list:
+            yield evalue.name, evalue.value
 
 
 class DictFilter(BaseFilter):
@@ -194,7 +205,10 @@ class DictFilter(BaseFilter):
 
 
 class GameFilters(ttk.Frame):
-    """A pane to collect all the game filters and the PLAY button."""
+    """A pane to collect all the game filters and the PLAY button.
+
+    XXXX create 6 column frames so that the filters can be packed
+    closer together--when a second row of filters is added."""
 
     def __init__(self, parent):
 
@@ -228,6 +242,13 @@ class GameFilters(ttk.Frame):
         self.capt_filter = DictFilter(filt_frame, self, 'Capture Types', CAPTS)
         self.capt_filter.grid(row=0, column=fcol.count, sticky='ns')
 
+        # this does not break the game list into useful groups
+        # leave as example VListFilter
+        # fcol.reset()
+        # self.class_filter = VListFilter(filt_frame, self, 'Game Class',
+        #                                list(GAME_CLASSES.keys()))
+        # self.class_filter.grid(row=1, column=fcol.count, sticky='ns')
+
         filt_frame.columnconfigure(tk.ALL, weight=1)
 
         cmd_col = col.count
@@ -242,6 +263,7 @@ class GameFilters(ttk.Frame):
     def not_filtered(self):
         """Clear all of the filters."""
 
+        # self.class_filter.not_filtered()
         self.size_filter.not_filtered()
         self.laps_filter.not_filtered()
         self.goal_filter.not_filtered()
@@ -253,6 +275,7 @@ class GameFilters(ttk.Frame):
     def all_filtered(self):
         """Set all of the filters."""
 
+        # self.class_filter.all_filtered()
         self.size_filter.all_filtered()
         self.laps_filter.all_filtered()
         self.goal_filter.all_filtered()
@@ -265,9 +288,11 @@ class GameFilters(ttk.Frame):
         """Test if the game should be shown based on the filter
         settings and the game_dict"""
 
+
         gcts = game_dict[ckey.GAME_CONSTANTS]
         ginfo = game_dict[ckey.GAME_INFO]
-        return all([self.size_filter.show(gcts[ckey.HOLES]),
+        return all([# self.class_filter.show(game_dict[ckey.GAME_CLASS]),
+                    self.size_filter.show(gcts[ckey.HOLES]),
                     self.laps_filter.show(ginfo.get(ckey.MLAPS, 0)),
                     self.goal_filter.show(ginfo.get(ckey.GOAL, 0)),
                     self.rnd_filter.show(ginfo.get(ckey.ROUNDS, 0)),
@@ -303,9 +328,10 @@ class SelectList(ttk.Labelframe):
         self.game_list.pack(side=tk.LEFT, expand=tk.TRUE, fill=tk.BOTH)
 
         self.game_list.bind('<<TreeviewSelect>>', self.select_game)
+        self.game_list.bind('<Double-Button-1>', self.play_game)
 
 
-    def select_game(self, _):
+    def select_game(self, _=None):
         """The user has selected a game, tell the parent
         it was selected."""
 
@@ -314,6 +340,13 @@ class SelectList(ttk.Labelframe):
         if game_name:
             game_name = game_name[0]
             self.parent.select_game(game_name)
+
+
+    def play_game(self, _=None):
+        """Play the game."""
+
+        self.select_game()
+        self.parent.play_game()
 
 
     def clear_glist(self):
@@ -492,6 +525,7 @@ class GameChooser(ttk.Frame):
         self.select_list.fill_glist([name
                                      for name, gdict in self.all_games.items()
                                      if self.game_filter.show_game(gdict)])
+
 
     def play_game(self):
         """Build the constants and info. Create the game and play it."""
