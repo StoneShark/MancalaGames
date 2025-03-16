@@ -113,50 +113,60 @@ class ChildLocOk(MakeChildIf):
     Each side of the board is broken up into 5 parts:
          0 1 [3 .. holes-4] holes-2 holes-1
 
-    The PATTERN describes which players may have children
+    The pattern_dict describes which players may have children
     in each part.
     """
 
-    BOTH = (False, True)
-    FALSE = tuple([False])
-    TRUE = tuple([True])
+    @classmethod
+    @property
+    def pattern_dict(cls):
+        """T row  first (top) but reversed from board array; F row second"""
 
-    # T row  first (top) but reversed from board array; F row second
-    PATTERN = {
+        both = (False, True)
+        false = (False,)
+        true = (True,)
 
-        gi.ChildLocs.ENDS_ONLY:
-            [[BOTH, None, None, None, BOTH],
-             [BOTH, None, None, None, BOTH]],
+        return {
 
-        gi.ChildLocs.NO_ENDS:
-            [[None, BOTH, BOTH, BOTH, None],
-             [None, BOTH, BOTH, BOTH, None]],
+            gi.ChildLocs.ENDS_ONLY:
+                [[both, None, None, None, both],
+                 [both, None, None, None, both]],
 
-        gi.ChildLocs.INV_ENDS_PLUS_MID:
-            [[FALSE, TRUE, TRUE, TRUE, FALSE],
-             [TRUE, FALSE, FALSE, FALSE, TRUE]],
+            gi.ChildLocs.NO_ENDS:
+                [[None, both, both, both, None],
+                 [None, both, both, both, None]],
 
-        gi.ChildLocs.ENDS_PLUS_ONE_OPP:
-            [[BOTH, FALSE, None, FALSE, BOTH],
-             [BOTH, TRUE, None, TRUE, BOTH]],
+            gi.ChildLocs.INV_ENDS_PLUS_MID:
+                [[false, true, true, true, false],
+                 [true, false, false, false, true]],
 
-        gi.ChildLocs.NO_OWN_RIGHT:
-            [[FALSE, BOTH, BOTH, BOTH, BOTH],
-             [BOTH, BOTH, BOTH, BOTH, TRUE]],
+            gi.ChildLocs.ENDS_PLUS_ONE_OPP:
+                [[both, false, None, false, both],
+                 [both, true, None, true, both]],
 
-        gi.ChildLocs.NO_OPP_RIGHT:
-            [[BOTH, BOTH, BOTH, BOTH, TRUE],
-             [FALSE, BOTH, BOTH, BOTH, BOTH]],
+            gi.ChildLocs.NO_OWN_RIGHT:
+                [[false, both, both, both, both],
+                 [both, both, both, both, true]],
 
-        gi.ChildLocs.NO_OPP_LEFT:
-            [[TRUE, BOTH, BOTH, BOTH, BOTH],
-             [BOTH, BOTH, BOTH, BOTH, FALSE]],
+            gi.ChildLocs.NO_OPP_RIGHT:
+                [[both, both, both, both, true],
+                 [false, both, both, both, both]],
 
-        }
+            gi.ChildLocs.NO_OPP_LEFT:
+                [[true, both, both, both, both],
+                 [both, both, both, both, false]],
 
-    BTRANS = {2: [0, 4, 5, 9],
-              3: [0, 2, 4, 5, 7, 9],
-              4: [0, 1, 3, 4, 5, 6, 8, 9]}
+            }
+
+    @classmethod
+    @property
+    def btrans(cls):
+        """How to translate the pattern for shorter boards"""
+
+        return {2: [0, 4, 5, 9],
+                3: [0, 2, 4, 5, 7, 9],
+                4: [0, 1, 3, 4, 5, 6, 8, 9]}
+
 
     def __init__(self, game, decorator, pattern):
         """pattern: select the pattern from PATTERN and adjust
@@ -171,16 +181,16 @@ class ChildLocOk(MakeChildIf):
 
         super().__init__(game, decorator)
 
-        if pattern not in self.PATTERN:
+        if pattern not in self.pattern_dict:
             raise NotImplementedError(
                 f"ChildLocs {game.info.child_locs} not implemented.")
 
-        plist = self.PATTERN[pattern]
+        plist = self.pattern_dict[pattern]
         self.pattern = plist[1] + plist[0][::-1]
 
         holes = game.cts.holes
-        if holes in ChildLocOk.BTRANS:
-            self.loc_trans = ChildLocOk.BTRANS[holes]
+        if holes in ChildLocOk.btrans:
+            self.loc_trans = ChildLocOk.btrans[holes]
 
         else:
             half = [0, 1] + [2] * (holes - 4) + [3, 4]

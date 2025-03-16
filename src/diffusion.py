@@ -238,8 +238,6 @@ class Diffusion(DiffusionV2):
         two_cycle.patch_ew_cts_ops(game_consts)
         super().__init__(game_consts, game_info)
 
-        #  TODO self.deco.ender = two_cycle.EastWestClearEndGame(self)
-
 
     def win_message(self, win_cond):
         """Return a window title and message string.
