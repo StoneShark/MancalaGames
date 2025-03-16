@@ -58,6 +58,7 @@ MODULES += same_side.py
 MODULES += sower.py
 MODULES += sower_decos.py
 MODULES += sower_mlap_decos.py
+MODULES += two_cycle.py
 MODULES += ui_utils.py
 MODULES += version.py
 
@@ -241,6 +242,7 @@ UNIT_TESTS += test_patterns.cov
 UNIT_TESTS += test_round_tally.cov
 UNIT_TESTS += test_same_side.cov
 UNIT_TESTS += test_sower.cov
+UNIT_TESTS += test_two_cycle.cov
 
 cov_unit_tests: $(UNIT_TESTS)
 	grep -h src cov\\*.cov

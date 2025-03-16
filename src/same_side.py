@@ -14,11 +14,11 @@ import dataclasses as dc
 import textwrap
 
 import cfg_keys as ckey
-import diffusion
 import incrementer
 import game_interface as gi
 import ginfo_rules
 import mancala
+import two_cycle
 
 from game_logger import game_log
 
@@ -128,7 +128,7 @@ def build_ew_rules():
     rules.add_rule(
         'oho_side_both',
         rule=lambda ginfo: ginfo.capt_side != gi.CaptSide.BOTH,
-        msg="Ohojichi requires that CAPT_SIDE be BOTH",
+        msg='Ohojichi requires that CAPT_SIDE be BOTH',
         excp=gi.GameInfoError)
 
     rules.add_rule(
@@ -136,7 +136,7 @@ def build_ew_rules():
         both_objs=True,
         rule=lambda ginfo, holes: (ginfo.sow_direct == gi.Direct.SPLIT
                                    and len(ginfo.udir_holes) != holes),
-        msg="Ohojichi requires that all holes be UDIR for SPLIT SOW",
+        msg='Ohojichi requires that all holes be UDIR for SPLIT SOW',
         excp=gi.GameInfoError)
 
     rules.add_rule(
@@ -144,7 +144,7 @@ def build_ew_rules():
         both_objs=True,
         rule=lambda ginfo, holes: (len(ginfo.udir_holes) > 0
                                    and len(ginfo.udir_holes) != holes),
-        msg="Ohojichi requires that all holes be UDIR or none of them",
+        msg='Ohojichi requires that all holes be UDIR or none of them',
         excp=gi.GameInfoError)
 
 
@@ -153,61 +153,6 @@ def build_ew_rules():
     rules |= ss_rules
 
     return rules
-
-
-# %% deco additions
-
-class BoardSideIncr(incrementer.IncrementerIf):
-    """Increment that keeps seeds only on your own side
-    of the board: TOP/BOTTOM
-    This is a replacement for the Increment (the base incr class).
-
-    This incrementer is dependent on TURN, which is ok
-    because the incrementer will always be used on the same side
-    as the current turn.   That is, never a need to increment
-    through opponents holes, because sows and captures only
-    occur on our side of the board."""
-
-    def incr(self, loc, direct, _=incrementer.NOSKIPSTART):
-        """Do an increment."""
-
-        loc = (loc + direct) % self.game.cts.holes
-        if self.game.turn:
-            loc += self.game.cts.holes
-
-        return loc
-
-
-class EastWestIncr(incrementer.IncrementerIf):
-    """Increment that keeps seeds only on your own side
-    of the board: EAST/WEST
-    This is a replacement for the Increment (the base incr class)."""
-
-    def __init__(self, game, decorator=None):
-
-        super().__init__(game, decorator)
-
-        dbl_holes = game.cts.dbl_holes
-        half = game.cts.holes // 2
-        half_3x = half * 3
-
-        self.ccw_map = list(range(1, dbl_holes)) + [0]
-        self.ccw_map[half - 1] = half_3x
-        self.ccw_map[half_3x - 1] = half
-
-        self.cw_map = [11] + list(range(dbl_holes - 1))
-        self.cw_map[half] = half_3x - 1
-        self.cw_map[half_3x] = half - 1
-
-
-    def incr(self, loc, direct, _=incrementer.NOSKIPSTART):
-        """Do an increment. Do the direction check at play-time
-        to support UDIR sow."""
-
-        if direct == gi.Direct.CCW:
-            return self.ccw_map[loc]
-
-        return self.cw_map[loc]
 
 
 # %% SameSide game class
@@ -224,7 +169,13 @@ class SameSide(mancala.Mancala):
     """Sow only on your side of the board, deposit capture in
     opponents holes."""
 
-    rules = build_rules()
+    @classmethod
+    @property
+    def rules(cls):
+        """The rules for the class but don't build them unless we
+        need them."""
+        return build_rules()
+
 
     def __init__(self, game_consts, game_info):
 
@@ -235,27 +186,11 @@ class SameSide(mancala.Mancala):
 
         super().__init__(game_consts, game_info)
 
-        self.fix_incr_deco(BoardSideIncr)
+        self.deco.replace_deco('incr', incrementer.Increment,
+                               two_cycle.NorthSouthIncr(self))
 
-         # when true the next turn must empty the store (move seeds to op hole)
+        # when true the next turn must empty the store (move seeds to op hole)
         self.empty_store = False
-
-
-    def fix_incr_deco(self, new_class):
-        """Replace the Increment deco with BoardSideIncr.
-        Increment is always at the bottom of the deco chain."""
-
-        incr = self.deco.incr
-        if isinstance(incr, incrementer.Increment):
-            self.deco.incr = new_class(self)
-            return
-
-        while (incr.decorator
-               and not isinstance(incr.decorator, incrementer.Increment)):
-            incr = incr.decorator
-        assert incr.decorator, "Didn't find Increment in deco chain."
-
-        incr.decorator = new_class(self)
 
 
     @property
@@ -350,29 +285,32 @@ class Ohojichi(SameSide):
     These build on calls to the mancala.Mancala methods
     not the SameSide method, SameSide does the wrong things."""
 
-    rules = build_ew_rules()
+    @classmethod
+    @property
+    def rules(cls):
+        """The rules for the class but don't build them unless we
+        need them."""
+        return build_ew_rules()
+
 
     def __init__(self, game_consts, game_info):
-        # pylint: disable=non-parent-init-called
-        # pylint: disable=super-init-not-called
-        # pylint: disable=duplicate-code
 
-        # force no_sides to True to allow UI to activate holes on both sides
-        # set MLENGTH to 3 (game info didn't do it when it was created)
-        object.__setattr__(game_info, ckey.NO_SIDES, True)
-        object.__setattr__(game_info, ckey.MLENGTH, 3)
+        two_cycle.patch_ew_cts_ops(game_consts)
+        super().__init__(game_consts, game_info)
 
-        mancala.Mancala.__init__(self, game_consts, game_info)
+        self.deco.replace_deco('incr', two_cycle.NorthSouthIncr,
+                               two_cycle.EastWestIncr(self))
 
-        self.deco.ender = diffusion.ClearSideEndGame(self)
-        self.fix_incr_deco(EastWestIncr)
         self.empty_store = False
 
+
         holes = self.cts.holes
+        dbl_holes = self.cts.dbl_holes
         half = holes // 2
-        self.true_holes = tuple([True] * half
-                                + [False] * holes
-                                + [True] * half)
+        half_x3 = half * 3
+        self.false_side = [loc in range(half, half_x3)
+                           for loc in range(dbl_holes)]
+        self.true_side =  [not val for val in self.false_side]
 
 
     def get_allowable_holes(self):
@@ -381,13 +319,13 @@ class Ohojichi(SameSide):
 
         if self.empty_store:
             if self.turn:
-                allows = [not val for val in self.true_holes]
+                allows = self.false_side
             else:
-                allows = list(self.true_holes)
+                allows = self.true_side
 
         else:
             pallow = mancala.Mancala.get_allowable_holes(self)
             allows = [allow and (self.turn == thole)
-                      for thole, allow in zip(self.true_holes, pallow)]
+                      for thole, allow in zip(self.true_side, pallow)]
 
         return allows

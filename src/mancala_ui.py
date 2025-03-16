@@ -568,7 +568,7 @@ class MancalaUI(tk.Frame):
 
         turn = self.game.turn
         owner = self.game.owner[loc]
-        true_hole = self.game.true_holes[loc]
+        true_hole = self.game.cts.board_side(loc)
         all_holes = self.info.no_sides
 
         player_hole = (owner == turn

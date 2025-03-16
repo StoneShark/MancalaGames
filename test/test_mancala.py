@@ -32,6 +32,7 @@ from context import game_constants as gc
 from context import game_interface as gi
 from context import game_logger
 from context import ginfo_rules
+from context import incrementer
 from context import mancala
 
 from game_interface import AllowRule
@@ -425,6 +426,81 @@ class TestManDeco:
         dstr = str(game.deco)
         for field, value in vars(game.deco).items():
             assert field in dstr
+
+
+    def test_replace_deco_1(self):
+        """Test replacing the head of the chain."""
+
+        game_consts = gc.GameConsts(nbr_start=2, holes=5)
+        game_info = gi.GameInfo(capt_on=[2],
+                                stores=True,
+                                goal=3,
+                                skip_start=True,
+                                capt_side=gi.CaptSide.OWN_SIDE,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        # confirm expected structure of deco chain
+        assert isinstance(game.deco.incr,
+                          incrementer.IncPastStart), 'Test conditions changed'
+        assert isinstance(game.deco.incr.decorator,
+                          incrementer.Increment), 'Test conditions changed'
+
+        game.deco.replace_deco('incr', incrementer.IncPastStart,
+                               incrementer.IncPastBlocks(game))
+
+        assert isinstance(game.deco.incr, incrementer.IncPastBlocks)
+        assert isinstance(game.deco.incr.decorator, incrementer.Increment)
+
+
+    @pytest.fixture
+    def bad_game(self):
+        """Bad config but no rules are checked."""
+
+        game_consts = gc.GameConsts(nbr_start=2, holes=5)
+        game_info = gi.GameInfo(capt_on=[2],
+                                stores=True,
+                                goal=3,
+                                skip_start=True,
+                                blocks=True,            # this is not valid
+                                capt_side=gi.CaptSide.OWN_SIDE,
+                                nbr_holes=game_consts.holes,
+                                rules=ginfo_rules.RuleDict())  # empty rule dict
+        game = mancala.Mancala(game_consts, game_info)
+        return game
+
+
+    def test_replace_deco_2(self, bad_game):
+        """Test replacing the end of the deco chain."""
+
+        # confirm expected structure of deco chain
+        assert isinstance(bad_game.deco.incr,
+                          incrementer.IncPastBlocks), 'Test conditions changed'
+        assert isinstance(bad_game.deco.incr.decorator,
+                          incrementer.IncPastStart), 'Test conditions changed'
+        assert isinstance(bad_game.deco.incr.decorator.decorator,
+                          incrementer.Increment), 'Test conditions changed'
+
+        bad_game.deco.replace_deco('incr', incrementer.Increment,
+                               incrementer.IncPastBlocks(bad_game))
+
+        assert isinstance(bad_game.deco.incr, incrementer.IncPastBlocks)
+        assert isinstance(bad_game.deco.incr.decorator, incrementer.IncPastStart)
+        assert isinstance(bad_game.deco.incr.decorator.decorator,
+                          incrementer.IncPastBlocks)
+
+
+    def test_bad_deco_replace(self, mocker, bad_game):
+        """Patch the deco chain to only a IncPastBlocks,
+        but then try to replace Incrementer. It should fail."""
+
+        bad_game.deco.incr = incrementer.IncPastBlocks(None)
+
+        with pytest.raises(AssertionError):
+            bad_game.deco.replace_deco('incr', incrementer.Increment,
+                                   incrementer.IncPastBlocks(bad_game))
+
 
 
 @pytest.mark.filterwarnings("ignore")

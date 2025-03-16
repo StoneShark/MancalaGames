@@ -1718,7 +1718,7 @@ class TestCaptMlap:
 
     ]
 
-    @pytest.mark.usefixtures('logger')
+    # @pytest.mark.usefixtures('logger')
     @pytest.mark.parametrize('game_fixt, start_pos, turn, board, ' \
                              'eloc, eboard, estore',
                              CASES, ids=[f"{case[0]}-case{idx}"

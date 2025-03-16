@@ -222,6 +222,29 @@ class ManDeco:
         return rval
 
 
+    def replace_deco(self, deco_name, old_class, new_deco):
+        """Replace old_class with the new_deco (deco instance)
+        in the deco_name chain.
+
+        This is used in game classes derived from Mancala."""
+
+        deco = getattr(self, deco_name)
+
+        # replacing the head of the deco chain
+        if isinstance(deco, old_class):
+            new_deco.decorator = deco.decorator
+            setattr(self, deco_name, new_deco)
+            return
+
+        while (deco.decorator
+               and not isinstance(deco.decorator, old_class)):
+            deco = deco.decorator
+        assert deco.decorator, f"Didn't find ({old_class}) in deco chain."
+
+        new_deco.decorator = deco.decorator
+        deco.decorator = new_deco
+
+
 class Mancala(ai_interface.AiGameIf, gi.GameInterface):
     """Implement the dynamics of a wide variety of mancala games.
     Details of the game are defined in the game_constants and
@@ -245,7 +268,13 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
     turn = bottom/False,  top/True"""
     # pylint: disable=too-many-public-methods
 
-    rules = ginfo_rules.build_rules()
+    @classmethod
+    @property
+    def rules(cls):
+        """The rules for the class but don't build them unless we
+        need them."""
+        return ginfo_rules.build_rules()
+
 
     def __init__(self, game_consts, game_info):
 
@@ -263,8 +292,6 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
         self.cts = game_consts
         self.info = game_info
-        self.true_holes = tuple([False] * self.cts.holes
-                                + [True] * self.cts.holes)
 
         self.board = [self.cts.nbr_start] * self.cts.dbl_holes
         self.store = [0, 0]

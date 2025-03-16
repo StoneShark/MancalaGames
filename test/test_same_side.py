@@ -11,8 +11,6 @@ pytestmark = pytest.mark.unittest
 
 from context import game_constants as gc
 from context import game_interface as gi
-from context import ginfo_rules
-from context import incrementer
 from context import mancala
 from context import same_side
 
@@ -76,7 +74,6 @@ class TestGameState:
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
                                 goal=3,
-                                no_sides=True,
                                 capt_side=gi.CaptSide.OWN_SIDE,
                                 nbr_holes=game_consts.holes,
                                 rules=same_side.SameSide.rules)
@@ -121,118 +118,6 @@ class TestGameState:
         assert game.turn is False
         assert game.empty_store is True
 
-
-class TestBoardSideIncr:
-    """Test for BoardSideIncr and fix_incr_deco."""
-
-    @pytest.fixture
-    def game(self):
-
-        game_consts = gc.GameConsts(nbr_start=2, holes=5)
-        game_info = gi.GameInfo(capt_on=[2],
-                                stores=True,
-                                goal=3,
-                                no_sides=True,
-                                skip_start=True,
-                                capt_side=gi.CaptSide.OWN_SIDE,
-                                nbr_holes=game_consts.holes,
-                                rules=same_side.SameSide.rules)
-
-        game = same_side.SameSide(game_consts, game_info)
-        game.turn = False
-        return game
-
-    def test_bsincr(self, game):
-
-        incr = same_side.BoardSideIncr(game)
-
-        assert incr.incr(0, gi.Direct.CW) == 4
-        assert incr.incr(1, gi.Direct.CW) == 0
-        assert incr.incr(2, gi.Direct.CW) == 1
-        assert incr.incr(3, gi.Direct.CW) == 2
-        assert incr.incr(4, gi.Direct.CW) == 3
-        assert incr.incr(5, gi.Direct.CW) == 4   # an invalid input, but ok
-
-        assert incr.incr(0, gi.Direct.CCW) == 1
-        assert incr.incr(1, gi.Direct.CCW) == 2
-        assert incr.incr(2, gi.Direct.CCW) == 3
-        assert incr.incr(3, gi.Direct.CCW) == 4
-        assert incr.incr(4, gi.Direct.CCW) == 0
-        assert incr.incr(5, gi.Direct.CCW) == 1 # an invalid input, but ok
-
-        game.turn = True
-        assert incr.incr(5, gi.Direct.CW) == 9
-        assert incr.incr(6, gi.Direct.CW) == 5
-        assert incr.incr(7, gi.Direct.CW) == 6
-        assert incr.incr(8, gi.Direct.CW) == 7
-        assert incr.incr(9, gi.Direct.CW) == 8
-        assert incr.incr(1, gi.Direct.CW) == 5   # an invalid input, but ok
-
-        assert incr.incr(5, gi.Direct.CCW) == 6
-        assert incr.incr(6, gi.Direct.CCW) == 7
-        assert incr.incr(7, gi.Direct.CCW) == 8
-        assert incr.incr(8, gi.Direct.CCW) == 9
-        assert incr.incr(9, gi.Direct.CCW) == 5
-        assert incr.incr(3, gi.Direct.CCW) == 9 # an invalid input, but ok
-
-
-    def test_deco_1(self, game):
-        """A 'fragile' test--if mancala incr deco chain is changed
-        this test will likely fail.
-        But it exercises the while loop in fix_incr_deco.
-        All other game fixtures, test the single incrementer."""
-
-        assert isinstance(game.deco.incr, incrementer.IncPastStart)
-        assert isinstance(game.deco.incr.decorator, same_side.BoardSideIncr)
-
-
-    def test_deco_2(self):
-        """Another fragile test, use an invalid game (don't check rules)
-        to create a deco chain of length 2."""
-
-        game_consts = gc.GameConsts(nbr_start=2, holes=5)
-        game_info = gi.GameInfo(capt_on=[2],
-                                stores=True,
-                                goal=3,
-                                no_sides=True,
-                                skip_start=True,
-                                blocks=True,            # this is not valid
-                                capt_side=gi.CaptSide.OWN_SIDE,
-                                nbr_holes=game_consts.holes,
-                                rules=ginfo_rules.RuleDict())  # empty rule dict
-
-        game = same_side.SameSide(game_consts, game_info)
-
-        assert isinstance(game.deco.incr, incrementer.IncPastBlocks)
-        assert isinstance(game.deco.incr.decorator, incrementer.IncPastStart)
-        assert isinstance(game.deco.incr.decorator.decorator,
-                          same_side.BoardSideIncr)
-
-
-    def test_bad_deco(self, mocker):
-        """Patch the deco chain creator to make only a BoardSideIncr.
-        Which is fine deco, but when fix_incr_deco is called
-        it will not find incrementer.Increment.
-        The assert will fail!"""
-
-        mobj = mocker.patch('incrementer.deco_incrementer')
-
-        # bad param but we wont cause it to be used
-        mobj.return_value = same_side.BoardSideIncr(None)
-
-        game_consts = gc.GameConsts(nbr_start=2, holes=5)
-        game_info = gi.GameInfo(capt_on=[2],
-                                stores=True,
-                                goal=3,
-                                no_sides=True,
-                                skip_start=True,
-                                blocks=True,            # this is not valid
-                                capt_side=gi.CaptSide.OWN_SIDE,
-                                nbr_holes=game_consts.holes,
-                                rules=ginfo_rules.RuleDict())  # empty rule dict
-
-        with pytest.raises(AssertionError):
-            same_side.SameSide(game_consts, game_info)
 
 
 class TestSameSide:
@@ -415,7 +300,6 @@ class TestOhojichi:
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
                                 goal=3,
-                                no_sides=True,
                                 skip_start=True,
                                 capt_side=gi.CaptSide.BOTH,
                                 nbr_holes=game_consts.holes,
@@ -424,43 +308,6 @@ class TestOhojichi:
         game = same_side.Ohojichi(game_consts, game_info)
         game.turn = False
         return game
-
-    def test_ewincr(self, game):
-        """Incrementer is not dependent on turn"""
-
-        incr = same_side.EastWestIncr(game)
-
-        # CW, west side
-        assert incr.incr(0, gi.Direct.CW) == 11
-        assert incr.incr(1, gi.Direct.CW) == 0
-        assert incr.incr(2, gi.Direct.CW) == 1
-        assert incr.incr(9, gi.Direct.CW) == 2
-        assert incr.incr(10, gi.Direct.CW) == 9
-        assert incr.incr(11, gi.Direct.CW) == 10
-
-        # CW, east side
-        assert incr.incr(3, gi.Direct.CW) == 8
-        assert incr.incr(4, gi.Direct.CW) == 3
-        assert incr.incr(5, gi.Direct.CW) == 4
-        assert incr.incr(6, gi.Direct.CW) == 5
-        assert incr.incr(7, gi.Direct.CW) == 6
-        assert incr.incr(8, gi.Direct.CW) == 7
-
-        # CCW, west side
-        assert incr.incr(0, gi.Direct.CCW) == 1
-        assert incr.incr(1, gi.Direct.CCW) == 2
-        assert incr.incr(2, gi.Direct.CCW) == 9
-        assert incr.incr(9, gi.Direct.CCW) == 10
-        assert incr.incr(10, gi.Direct.CCW) == 11
-        assert incr.incr(11, gi.Direct.CCW) == 0
-
-        # CCW, east side
-        assert incr.incr(3, gi.Direct.CCW) == 4
-        assert incr.incr(4, gi.Direct.CCW) == 5
-        assert incr.incr(5, gi.Direct.CCW) == 6
-        assert incr.incr(6, gi.Direct.CCW) == 7
-        assert incr.incr(7, gi.Direct.CCW) == 8
-        assert incr.incr(8, gi.Direct.CCW) == 3
 
 
     def test_allow(self, game, mocker):

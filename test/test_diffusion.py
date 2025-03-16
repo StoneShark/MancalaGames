@@ -14,6 +14,7 @@ from context import game_constants as gc
 from context import game_interface as gi
 from context import diffusion
 from context import mancala
+from context import two_cycle
 
 # %%
 
@@ -59,14 +60,12 @@ class TestDiffusion:
     def test_deco_overrides(self, diff):
 
         assert isinstance(diff.deco.sower, diffusion.DiffusionSower)
-        assert isinstance(diff.deco.ender, diffusion.ClearSideEndGame)
         assert isinstance(diff.deco.quitter, emd.QuitToTie)
 
 
     def test_deco_v2_overrides(self, diff_v2):
 
         assert isinstance(diff_v2.deco.sower, diffusion.DiffusionSower)
-        assert not isinstance(diff_v2.deco.ender, diffusion.ClearSideEndGame)
         assert isinstance(diff_v2.deco.quitter, emd.QuitToTie)
 
 

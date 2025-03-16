@@ -1,0 +1,28 @@
+{
+   "game_class": "North/South Cycles",
+   "game_constants": {
+      "holes": 7,
+      "nbr_start": 4
+   },
+   "game_info": {
+      "name": "NS_Kalah",
+      "about": "Sow counter-clockwise but only on your own side of the board and into your own store.\n\nCross-capture on single seed, leave the capturing seed.\n\nGoal: most seeds\n\nKalah but with a little twist that seeds are only sown on your own side of the board. You must capture in order to gain extra seeds for the win. The board is bigger too.\n",
+      "crosscapt": true,
+      "sow_direct": 1,
+      "sow_own_store": true,
+      "stores": true
+   },
+   "player": {
+      "scorer": {
+         "stores_m": 4,
+         "empties_m": 2,
+         "repeat_turn": 20
+      },
+      "ai_params": {
+          "mm_depth": [1, 5, 7, 9],
+          "mcts_bias": [300, 300, 200, 200],
+          "mcts_nodes": [100, 500, 1000, 1200],
+          "mcts_pouts": [1, 2, 2, 2]
+      }
+   }
+}

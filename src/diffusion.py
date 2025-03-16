@@ -8,11 +8,11 @@ Created on Sat Nov  2 15:39:39 2024
 
 import textwrap
 
-import end_move_decos as emd
 import game_interface as gi
 import ginfo_rules
 import mancala
 import sower_decos as sowd
+import two_cycle
 
 
 FIVE = 5
@@ -199,36 +199,6 @@ class DiffusionSower(sowd.SowMethodIf):
         mdata.capt_loc = loc
 
 
-class ClearSideEndGame(emd.EndTurnIf):
-    """Win by giving away all seeds or your left/right side of the board."""
-
-    def __init__(self, game, decorator=None, claimer=None):
-
-        super().__init__(game, decorator, claimer)
-        self.win_seeds = -1  # override this value
-
-        total = game.cts.dbl_holes
-        half = game.cts.holes // 2
-        self.holes = [list(range(half, total - half)),
-                      list(range(half)) + list(range(half * 3, total))]
-
-    def game_ended(self, repeat_turn, ended=False):
-        """Check for end game."""
-        _, _ = repeat_turn, ended
-
-        my_seeds = sum(self.game.board[loc]
-                       for loc in self.holes[self.game.turn])
-        if not my_seeds:
-            return gi.WinCond.WIN, self.game.turn
-
-        opp_seeds = sum(self.game.board[loc]
-                        for loc in self.holes[not self.game.turn])
-        if not opp_seeds:
-            return gi.WinCond.WIN, not self.game.turn
-
-        return None, self.game.turn
-
-
 # %% Diffusion game classes
 
 
@@ -237,7 +207,13 @@ class DiffusionV2(mancala.Mancala):
     Game rules: Copyright (c) January 2006 by Mark Steere
     Version 2: win by top/bottom"""
 
-    rules = build_rules()
+    @classmethod
+    @property
+    def rules(cls):
+        """The rules for the class but don't build them unless we
+        need them."""
+        return build_rules()
+
 
     def __init__(self, game_consts, game_info):
 
@@ -259,16 +235,10 @@ class Diffusion(DiffusionV2):
 
     def __init__(self, game_consts, game_info):
 
+        two_cycle.patch_ew_cts_ops(game_consts)
         super().__init__(game_consts, game_info)
 
-        self.deco.ender = ClearSideEndGame(self)
-
-        holes = self.cts.holes
-        half = holes // 2
-        self.true_holes = tuple([True] * half
-                                + [False] * holes
-                                + [True] * half)
-
+        #  TODO self.deco.ender = two_cycle.EastWestClearEndGame(self)
 
 
     def win_message(self, win_cond):

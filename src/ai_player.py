@@ -191,18 +191,19 @@ class AiPlayer(ai_interface.AiPlayerIf):
                      self._score_diff_empties)]
 
         if self.game.info.goal == gi.Goal.TERRITORY:
-            who_list = 'owner'
+            # pylint: disable=unnecessary-lambda-assignment
+            who_func = lambda loc: self.game.owner[loc]
         else:
-            who_list = 'true_holes'
+            who_func = self.game.cts.board_side
 
         for param, cnt_func, diff_func in scorers:
             if getattr(self.sc_params, param):
 
-                # if true_holes[0] if True, it's an EAST/WEST game
-                if self.game.info.no_sides and not self.game.true_holes[0]:
+                # if board_side(0) is True, it's an EAST/WEST game
+                if self.game.info.no_sides and not self.game.cts.board_side(0):
                     self.scorers += [cnt_func]
                 else:
-                    self.scorers += [ft.partial(diff_func, who_list)]
+                    self.scorers += [ft.partial(diff_func, who_func)]
 
 
     def clear_history(self):
@@ -286,17 +287,18 @@ class AiPlayer(ai_interface.AiPlayerIf):
         return (child_f - child_t) * self.sc_params.child_cnt_m
 
 
-    def _score_diff_evens(self, who_list, _):
+    def _score_diff_evens(self, who_func, _):
         """Score evens on each side of the board.
         If capturing on evens, having evens prevents captures."""
 
         even_t = even_f = 0
-        for loc, who in enumerate(getattr(self.game, who_list)):
+        for loc in range(self.game.cts.dbl_holes):
 
             if (self.game.child[loc] is None
                     and self.game.board[loc]
                     and not self.game.board[loc] % 2):
 
+                who = who_func(loc)
                 if who is True:
                     even_t += 1
                 elif who is False:
@@ -319,14 +321,15 @@ class AiPlayer(ai_interface.AiPlayerIf):
         return even_cnt * self.sc_params.evens_m * tmult
 
 
-    def _score_diff_seeds(self, who_list, _):
+    def _score_diff_seeds(self, who_func, _):
         """Score the seeds on each side of the board.
         Sometimes hoarding seeds is a good strategy."""
 
         sum_t = sum_f = 0
-        for loc, who in enumerate(getattr(self.game, who_list)):
+        for loc in range(self.game.cts.dbl_holes):
             if self.game.child[loc] is None:
 
+                who = who_func(loc)
                 if who is True:
                     sum_t += self.game.board[loc]
                 elif who is False:
@@ -346,14 +349,15 @@ class AiPlayer(ai_interface.AiPlayerIf):
         return seeds_sum * self.sc_params.seeds_m * tmult
 
 
-    def _score_diff_empties(self, who_list, _):
+    def _score_diff_empties(self, who_func, _):
         """Score the number of empties on each side of the board.
         Without empties, cross captures cannot occur."""
 
         empty_t = empty_f = 0
-        for loc, who in enumerate(getattr(self.game, who_list)):
+        for loc in range(self.game.cts.dbl_holes):
             if self.game.child[loc] is None and not self.game.board[loc]:
 
+                who = who_func(loc)
                 if who is True:
                     empty_t += 1
                 elif who is False:

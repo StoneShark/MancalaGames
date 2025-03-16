@@ -530,7 +530,7 @@ def add_capture_rules(rules):
         'xcapt_multi_same',
         rule=lambda ginfo: (ginfo.crosscapt and ginfo.multicapt
                             and not ginfo.capsamedir),
-        msg="CROSSCAPT with MULTICAPT without CAPSAMEDIR"
+        msg="CROSSCAPT with MULTICAPT without CAPSAMEDIR "
             "is the same as just CROSSCAPT.",
         warn=True)
         # capturing the opp dir (as usual) wont capture because

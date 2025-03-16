@@ -172,8 +172,8 @@ class HoleButton(tk.Canvas):
         if self.props.owner in {False, True}:
             return self.props.owner
 
-        if game.true_holes[0] is True:
-            return game.true_holes[self.loc]
+        if game.cts.board_side(0):
+            return game.board_side(self.loc)
 
         return not self.row
 
@@ -182,8 +182,8 @@ class HoleButton(tk.Canvas):
         """Determine if the text should be rotated for facing
         players. Facing players is not supported for no_sides
         games because both players can play from all holes.
-        If true_holes is set for hole 0 (usually a False hole)
-        then use the true_holes value. Otherwise check by row
+        If board side is True for hole 0 (usually a False hole)
+        then use the board_side value. Otherwise check by row
         and/or owner."""
 
         game = self.game_ui.game
@@ -191,8 +191,8 @@ class HoleButton(tk.Canvas):
                 or game.info.no_sides):
             return False
 
-        if game.true_holes[0] is True:
-            return game.true_holes[self.loc]
+        if game.cts.board_side(0):
+            return game.cts.board_side(self.loc)
 
         top = not self.row
         owner = self.props.owner
