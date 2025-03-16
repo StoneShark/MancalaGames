@@ -269,6 +269,10 @@ The name of the Game Class. One of:
 
 Mancala: allows setting all parameters though some combinations are limited.
 
+NorthSouthCycle: a two-cycle game class in which each player only sows on their own side of the board. If NO_SIDES is configured, either player may sow on either side of the board, but the seeds will remain on that side of the board. Players may effect eachother play with CROSSCAPT, PICKEXTRA, Qur CHILD_TYPE, etc. Weg children are only supported for no_sides games. Prohibited options include: GOAL of Territory; MUSTSHARE; some SOW_RULE; some CHILD_RULE; and visit opposite side for capture (VISIT_OPP).
+
+EastWestCycle: a two-cycle game class in which player's control east and west sides of the board, and seeds are sown in those cycles. Without specialized extension, this class appears to only support race type games, e.g. who can clear their holes faster. Their is little or no player interaction supported.
+
 Diffusion: has unique sow method and win conditions. Players control the east/west sides of the board. The game is basically preconfigured, only the board size can be changed to any even size. Game goal must be CLEAR.
 
 DiffusionV2: like Diffusion but players control the typical north/south sides of the board.

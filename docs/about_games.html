@@ -1570,6 +1570,25 @@ unless all the player's holes contain 2, then only the rightmost hole maybe play
     <p class="param"><a href="game_params.html#udir_holes">User Chooses Direction</a>: 0 1 2 3 4 5 6</p>
   </div>
 </div>
+<h3 id="NS_Kalah">NS_Kalah</h3>
+<p>Sow counter-clockwise but only on your own side of the board and into your own store.
+<p>Cross-capture on single seed, leave the capturing seed.
+<p>Goal: most seeds
+<p><a href="about_games.html#Kalah">Kalah</a> but with a little twist that seeds are only sown on your own side of the board. You must capture in order to gain extra seeds for the win. The board is bigger too.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  7</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#game_class">Game class</a>:  North/South Cycles</p>
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_own_store">Sow Own Store</a>: Yes</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
 <h3 id="NumNum">NumNum</h3>
 <p>A multi-lap mancala played in rounds. The goal is to claim ownership of at least 10 holes. Each player initially owns the holes on their side of the board. Owners of holes are updated at the start of each round based on the number of seeds captured in the previous round.
 <p>Captures are on 4s on the final sown seed by the sower (regardless of hole owner). The seeds of any hole sown to 4 are captured by the hole's owner (regardless of sower).
@@ -2390,15 +2409,16 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Mbothe">Mbothe</a></p>
     <p class="param"><a href="#Meusuëb">Meusuëb</a></p>
     <p class="param"><a href="#Motiq">Motiq</a></p>
+    <p class="param"><a href="#NS_Kalah">NS_Kalah</a></p>
     <p class="param"><a href="#NamNam">NamNam</a></p>
     <p class="param"><a href="#Nambayi">Nambayi</a></p>
     <p class="param"><a href="#Ndoto">Ndoto</a></p>
     <p class="param"><a href="#No Sides Child">No Sides Child</a></p>
     <p class="param"><a href="#NoCapt">NoCapt</a></p>
     <p class="param"><a href="#NoSides">NoSides</a></p>
-    <p class="param"><a href="#NumNum">NumNum</a></p>
   </div>
   <div class="column3">
+    <p class="param"><a href="#NumNum">NumNum</a></p>
     <p class="param"><a href="#Obridjie">Obridjie</a></p>
     <p class="param"><a href="#Ohojichi">Ohojichi</a></p>
     <p class="param"><a href="#Olinda">Olinda</a></p>
