@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Ot-tjin",
-      "about": "A multi-lap mancala with a clockwise sow.  Capture on 3s on either side of the board.\n\nVariations:\n- played with start seeds of 2 to 5 with the capture-on value equaling the number of start seeds",
+      "about": "A multi-lap mancala with a clockwise sow.  Capture on 3s on either side of the board.\n\nVariations:\n\n- board size of 9\n\n- played with start seeds of 2 to 5 with the capture-on value equaling the number of start seeds\n\n- counter-clockwise sow direction (Mancala World suggests sowing clockwise is wrong)",
       "capt_on": [3],
       "capt_side": 0,
       "mlaps": 1,
@@ -27,5 +27,6 @@
          "stores_m": 4
       }
    },
-   "rules": "Russ, Laurence. Mancala Games. 1984. p64."
+   "rules": "Russ, Laurence. Mancala Games. 1984. p64.",
+   "reference": "Mancala World: https://mancala.fandom.com/wiki/Aw-li_On-nam_Ot-tjin"
 }

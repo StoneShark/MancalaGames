@@ -109,6 +109,7 @@ STRING_DICTS = {
          'No opposite leftmost': gi.ChildLocs.NO_OPP_LEFT,
          'Not Symetrically Opposite': gi.ChildLocs.NOT_SYM_OPP,
          'Not Facing': gi.ChildLocs.NOT_FACING,
+         'Ends plus all opposite': gi.ChildLocs.ENDS_PLUS_ALL_OPP,
          }),
 
     'ChildType': lookup_dicts(
@@ -250,6 +251,8 @@ STRING_DICTS = {
          'Clipped Triples': gi.StartPattern.CLIPPEDTRIPLES,
          'Two Empty': gi.StartPattern.TWOEMPTY,
          'Random': gi.StartPattern.RANDOM,
-         'Alts Split Right': gi.StartPattern.ALTS_SPLIT}),
+         'Alts Split Right': gi.StartPattern.ALTS_SPLIT,
+         'Equal plus one in Right': gi.StartPattern.RIGHTMOST_PLUS_ONE,
+         }),
 
 }

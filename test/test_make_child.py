@@ -273,6 +273,8 @@ class TestChildLocs:
         'epoo4': (4, {'child_locs': gi.ChildLocs.ENDS_PLUS_ONE_OPP}),
         'epoo5': (5, {'child_locs': gi.ChildLocs.ENDS_PLUS_ONE_OPP}),
 
+        'eopp5': (5, {'child_locs': gi.ChildLocs.ENDS_PLUS_ALL_OPP}),
+
         }
 
     @staticmethod
@@ -330,6 +332,13 @@ class TestChildLocs:
                      for loc in range(5)]
         cases += [(f'epoo5-True-{loc}', 'epoo5', True, loc, epoo5T[loc])
                      for loc in range(5, 10)]
+
+        eopp5F = [T, F, F, F, T, T, T, T, T, T]
+        eopp5T = [T, T, T, T, T, T, F, F, F, T]
+        cases += [(f'eopp5-False-{loc}', 'eopp5', False, loc, eopp5F[loc])
+                  for loc in range(10)]
+        cases += [(f'eopp5-True-{loc}', 'eopp5', True, loc, eopp5T[loc])
+                  for loc in range(10)]
 
         # NO_OPP_LEFT and NO_OPP_RIGHT are tested with OneChild below
 

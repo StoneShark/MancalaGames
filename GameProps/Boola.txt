@@ -1,0 +1,26 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 12,
+      "nbr_start": 3
+   },
+   "game_info": {
+      "name": "Boola",
+      "about": "Multilap counter-clockwise sow, but only from holes that reach the opponents side of the board or reach an empty hole on your own side.\n\nCross capture on opposite side only.\n\nGoal: deprive opponent of seeds\n",
+      "allow_rule": 1,
+      "crosscapt": true,
+      "goal": 1,
+      "mlaps": 1,
+      "capt_side": 1,
+      "sow_direct": 1,
+      "start_pattern": 4
+   },
+   "player": {
+      "ai_params": {},
+      "scorer": {
+         "seeds_m": 1,
+         "empties_m": -4
+      }
+   },
+   "rules": "https://mancala.fandom.com/wiki/Boola"
+}

@@ -6,7 +6,7 @@ Created on Thu Oct 12 07:34:54 2023
 """
 
 import collections
-
+import pandas as pd
 import pytest
 pytestmark = pytest.mark.unittest
 
@@ -36,25 +36,30 @@ def read_test_cases():
 
     global CASES
 
-    with open('test/fill_patterns.csv', 'r', encoding='utf-8') as file:
-        lines = file.readlines()
-    lines[0] = lines[0][1:]
+    cases_df = pd.read_excel('test/fill_patterns.xlsx')
 
-    field_names = lines[0].strip().split(',')[:5]
+    field_names = cases_df.columns[:5]
     Case = collections.namedtuple('Case', field_names)
 
     CASES = []
-    for lcnt in range(1, len(lines), 2):
+    first = True
+    for _, row in cases_df.iterrows():
 
-        line_one = lines[lcnt].strip().split(',')
-        line_two = lines[lcnt + 1].strip().split(',')
+        if first:
+            pattern = int(row.pattern)
+            holes = int(row.holes)
+            starter = bool(row.starter)
+            seeds = int(row.seeds)
 
-        board = utils.build_board([cval(val)
-                                   for val in line_one[4:4 + int(line_one[1])]],
-                                  [cval(val)
-                                   for val in line_two[4:4 + int(line_one[1])]])
+            row1 = [int(row.iloc[i]) for i in range(4, 4 + holes)]
 
-        CASES += [Case(*([cval(val) for val in line_one[0:4]]), board)]
+        else:
+            row2 = [int(row.iloc[i]) for i in range(4, 4 + holes)]
+
+            board = utils.build_board(row1, row2)
+            CASES += [Case(pattern, holes, starter, seeds, board)]
+
+        first = not first
 
 
 read_test_cases()

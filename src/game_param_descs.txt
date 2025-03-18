@@ -134,7 +134,13 @@ Defines the number of seeds required to make a child.
 <param child_locs>
 Locations where children can be made by each player. Child locations are further limited by CHILD_RULE.
 
-The notes designate players as: T - top player, B - bottom player. N - neither player. For shorter boards, the pattern is generated using assignments (a b c d e) as:
+Some pattern are specified below with 5 designators per side as:
+a b c d e
+These are applied as: a is used for the first hole (left most), b the second, d the second last, and e the last (rightmost), c is replicated for all interior holes.
+
+The allowable children are designated by: T - top player, B - bottom player. N - neither player.
+
+For shorter boards, the pattern is generated using assignments (a b c d e) as:
 
 board length 2: a e
 
@@ -142,7 +148,9 @@ board length 3: a c e
 
 board length 4: a b d e
 
-The center hole (c) is replicated for larger boards. 
+For boards longer than 5, the middle specifier is duplicated as needed:
+
+board length >= 5: a b c c c ... c d e
 
 - ANYWHERE: children may be made anywhere.
 
@@ -197,6 +205,11 @@ The center hole (c) is replicated for larger boards.
   + 1 2 3 4 5 6 7 8 9 
 
 - NOT_FACING: Children must not directly opposite eachother. NO_OPP_RIGHT is also applied. 
+
+- ENDS_PLUS_ALL_OPP: Children may be made in any end hole, but only your opponents interior holes.
+
+  + TB B B B TB
+  + TB T T T TB
 
 <param child_rule>
 Additional child creation requirements may be set. These are in addition to location restrictions specified by CHILD_LOCS. If the CHILD_TYPE allows making more than one child, the child_rule is applied to hole in which the final seed was sown; the second hole does not need to meet the criteria.
@@ -638,7 +651,7 @@ When selected, the first seed is sown into (i.e., left in) the start hole.
 
 Allows specifying non-all-equal start patterns. The following patterns are supported:
 
-- ALL_EQUAL: all holes start with the same number of seeds.
+- ALL_EQUAL: all holes start with the same number of seeds. The total seeds in play is nbr_start x holes x 2.
 
 - GAMACHA: starting from the third hold (from start player's left) place nbr_seeds in every other hole, then the center hole's seeds are moved to the other side of the board. If the board has an even number of seeds, a near center hole is choosen to move.
 
@@ -677,6 +690,8 @@ Allows specifying non-all-equal start patterns. The following patterns are suppo
   + The alts_split fill pattern is only supported for boards with an even number of holes per side. The total seeds in play is holes x nbr_start. 
 
   + <img src="figs/alts_split_patt.jpg" alt="Clipped Triples Pattern" class="helpfig">
+
+- RIGHTMOST_PLUS_ONE: as in ALL_EQUAL but one extra seed is added to each player's rightmost hole. The total seeds in play is nbr_start x holes x 2 + 2.
 
 In the formulas above holes (n in figures) is the game constant HOLES and nbr_start is the game constant NBR_START.
 

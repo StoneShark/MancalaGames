@@ -1,0 +1,29 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 12,
+      "nbr_start": 4
+   },
+   "game_info": {
+      "name": "Anywoli",
+      "about": "Sow counter-clockwise in multiple laps, hole owner picks seeds from any hole sown to 4. If the last seed of a sow makes 4, the final hole is captured by the sower.\n\nIf a player does not have a move, they must pass.\n\nWhen a player captures the second last group of 4 seeds; they also take the last four seeds.\n\nGoal: capture the most seeds.\n",
+      "capt_on": [ 4 ],
+      "capt_rturn": true,
+      "mlaps": 1,
+      "mustpass": true,
+      "capt_side": 0,
+      "pickextra": 3,
+      "sow_direct": 1,
+      "sow_rule": 3,
+      "stores": true
+   },
+   "player": {
+      "ai_params": {},
+      "scorer": {
+         "stores_m": 8,
+         "evens_m": -1
+      }
+   },
+   "rules": "https://mancala.fandom.com/wiki/Anywoli",
+   "deviation": "There is no lottery for last the four seeds."
+}

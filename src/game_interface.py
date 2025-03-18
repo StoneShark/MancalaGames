@@ -95,6 +95,7 @@ class ChildLocs(enum.IntEnum):
     NO_OPP_LEFT = 7
     NOT_SYM_OPP = 8
     NOT_FACING = 9
+    ENDS_PLUS_ALL_OPP = 10
 
 
 @enum.unique
@@ -284,6 +285,7 @@ class StartPattern(enum.IntEnum):
     TWOEMPTY = 5
     RANDOM = 6
     ALTS_SPLIT = 7
+    RIGHTMOST_PLUS_ONE = 8
 
 
 @enum.unique

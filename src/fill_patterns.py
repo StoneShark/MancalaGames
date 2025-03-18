@@ -284,6 +284,28 @@ class RandomPattern(StartPatternIf):
         game.board = values
 
 
+class RightmostPlusOne(StartPatternIf):
+    """Fill equally with start seeds but then put one more into
+    into each player's rightmost hole."""
+
+    @staticmethod
+    def size_ok(holes):
+        return True
+    err_msg = 'RightmostPlusOne is always good'
+
+
+    @staticmethod
+    def nbr_seeds(holes, nbr_start):
+        return nbr_start * holes * 2 + 2
+
+
+    @staticmethod
+    def fill_seeds(game):
+
+        nstart = game.cts.nbr_start
+        holes = game.cts.holes
+        game.board = ([nstart] * (holes - 1) + [nstart + 1]) * 2
+
 
 # %% Pattern Classes variable
 
@@ -296,3 +318,4 @@ PCLASSES[gi.StartPattern.CLIPPEDTRIPLES] = ClippedTriplesPattern
 PCLASSES[gi.StartPattern.TWOEMPTY] = TwoEmptyPattern
 PCLASSES[gi.StartPattern.RANDOM] = RandomPattern
 PCLASSES[gi.StartPattern.ALTS_SPLIT] = AltsThenSplitPattern
+PCLASSES[gi.StartPattern.RIGHTMOST_PLUS_ONE] = RightmostPlusOne

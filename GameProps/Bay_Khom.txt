@@ -1,0 +1,27 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 5,
+      "nbr_start": 4
+   },
+   "game_info": {
+      "name": "Bay Khom",
+      "about": "Player chooses sow direction, multiple lap from next hole after last seed of lap.\n\nCapture 2 out; if have pattern of empty then occupied the do multiple captures as long as pattern continues.\n\nGoal: capture more than half the seeds.\n",
+      "capsamedir": true,
+      "capt_type": 2,
+      "mlaps": 2,
+      "multicapt": -1,
+      "capt_side": 0,
+      "sow_direct": 1,
+      "start_pattern": 8,
+      "stores": true,
+      "udir_holes": [ 0, 1, 2, 3, 4 ]
+   },
+   "player": {
+      "ai_params": {},
+      "scorer": {
+         "stores_m": 8
+      }
+   },
+   "rules": "https://mancala.fandom.com/wiki/Bay_Khom"
+}

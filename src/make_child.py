@@ -156,6 +156,10 @@ class ChildLocOk(MakeChildIf):
                 [[true, both, both, both, both],
                  [both, both, both, both, false]],
 
+            gi.ChildLocs.ENDS_PLUS_ALL_OPP:
+                [[both, false, false, false, both],
+                 [both, true, true, true, both]]
+
             }
 
     @classmethod
@@ -293,7 +297,8 @@ class NotWithOne(MakeChildIf):
     """Don't make a child if sowing started with one seed.
 
     When paired with OppSideChild, prevents a single seed
-    creating a child in opponent's first hole."""
+    creating a child in opponent's first hole, BUT also
+    requires opposite children only!"""
 
     def test(self, mdata):
 

@@ -1,0 +1,24 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 3,
+      "nbr_start": 6
+   },
+   "game_info": {
+      "name": "Bakuk",
+      "about": "Single lap mancala, sow counter-clockwise.\n\nCapture on 2s and 4s. Do multiple captures of immediately preceding holes also with 2 or 4 seeds (multiple capture stops before hole not with 2 or 4 seeds).\n\nGoal: capture more than half of the seeds.\n",
+      "capt_on": [ 2, 4 ],
+      "multicapt": -1,
+      "capt_side": 0,
+      "sow_direct": 1,
+      "stores": true
+   },
+   "player": {
+      "ai_params": {},
+      "scorer": {
+         "stores_m": 8,
+         "evens_m": -1
+      }
+   },
+   "rules": "https://mancala.fandom.com/wiki/Bakuk"
+}

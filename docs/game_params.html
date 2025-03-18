@@ -190,7 +190,7 @@ is included after the parameter sections.
 
 <p>Allows specifying non-all-equal start patterns. The following patterns are supported:
 <ol start=0><li class="helptext">
-<b class="enum">ALL_EQUAL</b>: all holes start with the same number of seeds.
+<b class="enum">ALL_EQUAL</b>: all holes start with the same number of seeds. The total seeds in play is nbr_start x holes x 2.
 <li class="helptext">
 <b class="enum">GAMACHA</b>: starting from the third hold (from start player's left) place nbr_seeds in every other hole, then the center hole's seeds are moved to the other side of the board. If the board has an even number of seeds, a near center hole is choosen to move.
 <p class="helptext"> The gamacha fill pattern is only supported for boards with 3 or more holes per side. The total seeds in plays is (holes - 1) x nbr_start. 
@@ -217,6 +217,8 @@ is included after the parameter sections.
 <b class="enum">ALTS_SPLIT</b>: Like alternates but the seeds are reduced in the rightmost hole of the non-starter. One quarter of the seeds from the non-starter's rightmost hole are moved across the board into the empty hole of the starting player.
 <p class="helptext"> The alts_split fill pattern is only supported for boards with an even number of holes per side. The total seeds in play is holes x nbr_start. 
 <p class="helptext"> <img src="figs/alts_split_patt.jpg" alt="Clipped Triples Pattern" class="helpfig">
+<li class="helptext">
+<b class="enum">RIGHTMOST_PLUS_ONE</b>: as in ALL_EQUAL but one extra seed is added to each player's rightmost hole. The total seeds in play is nbr_start x holes x 2 + 2.
 </ol>
 <p>In the formulas above holes (n in figures) is the game constant <a href="game_params.html#holes">HOLES</a> and nbr_start is the game constant <a href="game_params.html#nbr_start">NBR_START</a>.
 <p>When a game is played in <a href="game_params.html#rounds">ROUNDS</a>, start_pattern is only supported for round tally (RND_*) and territory <a href="game_params.html#goal">GOAL</a> games and only for <a href="game_params.html#round_fill">ROUND_FILL</a> of NOT_APPLICABLE and UCHOWN.
@@ -609,11 +611,16 @@ is included after the parameter sections.
 <p class="pdesc">UI Tab: Sow
 
 <p>Locations where children can be made by each player. Child locations are further limited by <a href="game_params.html#child_rule">CHILD_RULE</a>.
-<p>The notes designate players as: T - top player, B - bottom player. N - neither player. For shorter boards, the pattern is generated using assignments (a b c d e) as:
+<p>Some pattern are specified below with 5 designators per side as:
+<p>a b c d e
+<p>These are applied as: a is used for the first hole (left most), b the second, d the second last, and e the last (rightmost), c is replicated for all interior holes.
+<p>The allowable children are designated by: T - top player, B - bottom player. N - neither player.
+<p>For shorter boards, the pattern is generated using assignments (a b c d e) as:
 <p>board length 2: a e
 <p>board length 3: a c e
 <p>board length 4: a b d e
-<p>The center hole (c) is replicated for larger boards. 
+<p>For boards longer than 5, the middle specifier is duplicated as needed:
+<p>board length >= 5: a b c c c ... c d e
 <ol start=0><li class="helptext">
 <b class="enum">ANYWHERE</b>: children may be made anywhere.
 <li class="helptext">
@@ -651,6 +658,10 @@ is included after the parameter sections.
 <p class="helptext"> 1 2 3 4 5 6 7 8 9 
 <li class="helptext">
 <b class="enum">NOT_FACING</b>: Children must not directly opposite eachother. NO_OPP_RIGHT is also applied. 
+<li class="helptext">
+<b class="enum">ENDS_PLUS_ALL_OPP</b>: Children may be made in any end hole, but only your opponents interior holes.
+<p class="helptext"> TB B B B TB
+<p class="helptext"> TB T T T TB
 </ol>
 <h2 id="tab_Capture">Capture Tab</h2>
 <h4 id="evens"> Capture Evens </h4>
