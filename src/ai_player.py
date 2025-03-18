@@ -443,8 +443,8 @@ def player_dict_rules():
         'scorer_vals',
         rule=lambda pdict: ((ckey.ALGORITHM not in pdict
                              or (ckey.ALGORITHM in pdict
-                                 and ckey.ALGORITHM in {'minimaxer',
-                                                        'negamaxer'}))
+                                 and pdict[ckey.ALGORITHM] in {'minimaxer',
+                                                               'negamaxer'}))
                              and ckey.SCORER in pdict
                              and not sum(pdict[ckey.SCORER].values())),
         msg='At least one scorer value should be non-zero '
