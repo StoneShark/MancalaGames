@@ -936,6 +936,7 @@ class MancalaUI(tk.Frame):
             message = f'{player} player has no moves and must pass.'
             tk.messagebox.showinfo(title='Pass Move', message=message,
                                    parent=self)
+            self.refresh()
 
             self._schedule_ai()
 
