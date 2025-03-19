@@ -27,7 +27,7 @@ import warnings
 
 import ai_player
 import cfg_keys as ckey
-import game_constants as gc
+import game_constants as gconsts
 import game_interface as gi
 import mancala_ui
 import man_config
@@ -43,7 +43,7 @@ from game_classes import GAME_CLASSES
 # how many variables to make for lists
 # if the option for a 'list[int]' isn't here, 4 variables will be made
 MAKE_LVARS = {ckey.CAPT_ON: 6,
-              ckey.UDIR_HOLES: gc.MAX_HOLES + 1}
+              ckey.UDIR_HOLES: gconsts.MAX_HOLES + 1}
 
 DESC_WIDTH = 60
 DASH_BULLET = '- '
@@ -391,7 +391,7 @@ class MancalaGames(ttk.Frame):
 
         holes = stoi(self.tkvars[ckey.HOLES].get())
 
-        if holes > gc.MAX_HOLES:
+        if holes > gconsts.MAX_HOLES:
             print('value too big.')
             return
 
@@ -688,7 +688,8 @@ class MancalaGames(ttk.Frame):
         game_class = self.config.game_config[ckey.GAME_CLASS]
         gclass = GAME_CLASSES[game_class]
 
-        consts = gc.GameConsts(**self.config.game_config[ckey.GAME_CONSTANTS])
+        consts = gconsts.GameConsts(
+            **self.config.game_config[ckey.GAME_CONSTANTS])
         info = gi.GameInfo(nbr_holes=consts.holes,
                            rules=gclass.rules,
                            **self.config.game_config[ckey.GAME_INFO])
@@ -712,7 +713,7 @@ class MancalaGames(ttk.Frame):
         try:
             self._prepare_game()
 
-        except (gc.GameConstsError, gi.GameInfoError, NotImplementedError
+        except (gconsts.GameConstsError, gi.GameInfoError, NotImplementedError
                 ) as error:
             message = error.__class__.__name__ + ':  ' + str(error)
             tk.messagebox.showerror('Parameter Error', message)
