@@ -10,7 +10,7 @@ pytestmark = pytest.mark.unittest
 import utils
 
 from context import end_move_decos as emd
-from context import game_constants as gc
+from context import game_constants as gconsts
 from context import game_interface as gi
 from context import diffusion
 from context import mancala
@@ -34,7 +34,7 @@ class TestDiffusion:
     @pytest.fixture
     def diff(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
         game_info = gi.GameInfo(goal=gi.Goal.CLEAR,
                                 no_sides=True,
                                 stores=True,
@@ -47,7 +47,7 @@ class TestDiffusion:
     @pytest.fixture
     def diff_v2(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
         game_info = gi.GameInfo(goal=gi.Goal.CLEAR,
                                 no_sides=True,
                                 stores=True,

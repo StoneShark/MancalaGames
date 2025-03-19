@@ -13,7 +13,7 @@ pytestmark = pytest.mark.comptest
 
 
 from context import game_interface as gi
-from context import game_constants as gc
+from context import game_constants as gconsts
 from context import mancala
 
 
@@ -365,7 +365,7 @@ def test_sower(conf_name, state_name, turn, move,
     """Use do_sow from Mancala class. It uses the starter, get_direction,
     and sower."""
 
-    game_consts = gc.GameConsts(nbr_start=2, holes=HOLES)
+    game_consts = gconsts.GameConsts(nbr_start=2, holes=HOLES)
     game_info = gi.GameInfo(**GAMECONF[conf_name],
                             nbr_holes=game_consts.holes,
                             rules=mancala.Mancala.rules)
@@ -428,7 +428,7 @@ def test_inhibit_sower(request,
     if request.node.name in BAD_INHIBITOR_TESTS:
         return
 
-    game_consts = gc.GameConsts(nbr_start=2, holes=HOLES)
+    game_consts = gconsts.GameConsts(nbr_start=2, holes=HOLES)
     try:
         game_info = gi.GameInfo(**GAMECONF[conf_name],
                                 nocaptmoves=1,

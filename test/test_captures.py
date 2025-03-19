@@ -12,7 +12,7 @@ pytestmark = pytest.mark.unittest
 import utils
 
 from context import capturer
-from context import game_constants as gc
+from context import game_constants as gconsts
 from context import game_interface as gi
 from context import make_child
 from context import mancala
@@ -166,7 +166,7 @@ read_test_cases()
 
 @pytest.mark.filterwarnings("ignore")
 def test_no_capturer():
-    game_consts = gc.GameConsts(nbr_start=3, holes=4)
+    game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
     game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                             rules=mancala.Mancala.rules)
     game = mancala.Mancala(game_consts, game_info)
@@ -182,7 +182,7 @@ def test_no_capturer():
 class TestNoCaptures:
 
     def test_no_capture(self):
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(nocaptmoves=1,
                                 stores=True,
                                 evens=True,
@@ -227,7 +227,7 @@ class TestCaptTable:
         child_rule = gi.ChildRule.OPPS_ONLY_NOT_1ST \
             if case.oppside else gi.ChildRule.NONE
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(stores=True,
                                 capt_on=case.capt_on,
                                 capsamedir=case.capsamedir,
@@ -319,7 +319,7 @@ class TestCaptTable:
         child_rule = gi.ChildRule.OPPS_ONLY_NOT_1ST \
             if case.oppside else gi.ChildRule.NONE
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(mlaps=gi.LapSower.LAPPER,  # change to make_game
                                 stores=True,
                                 capt_on=case.capt_on,
@@ -372,7 +372,7 @@ class TestCaptTable:
                           gi.GrandSlam.LEAVE_RIGHT])
 def test_no_gs(gstype):
 
-    game_consts = gc.GameConsts(nbr_start=3, holes=2)
+    game_consts = gconsts.GameConsts(nbr_start=3, holes=2)
     game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                             stores=True,
                             capt_on=[1],
@@ -400,7 +400,7 @@ class TestWalda:
 
     @pytest.fixture
     def game(self):
-        game_consts = gc.GameConsts(nbr_start=3, holes=5)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=5)
         game_info = gi.GameInfo(child_cvt=4,
                                 child_type=gi.ChildType.NORMAL,
                                 child_locs=gi.ChildLocs.ENDS_PLUS_ONE_OPP,
@@ -526,7 +526,7 @@ class TestTuzdek:
 
     @pytest.fixture
     def game(self):
-        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(child_cvt=3,
                                 child_type=gi.ChildType.ONE_CHILD,
                                 child_rule=gi.ChildRule.OPP_SIDE_ONLY,
@@ -618,7 +618,7 @@ class TestWeg:
 
     @pytest.fixture
     def game(self):
-        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(stores=True,
                                 goal=2,
                                 goal_param=8,
@@ -699,7 +699,7 @@ class TestBull:
 
     @pytest.fixture
     def game(self):
-        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(child_cvt=4,
                                 child_type=gi.ChildType.BULL,
                                 nbr_holes=game_consts.holes,
@@ -796,7 +796,7 @@ class TestQur:
 
     @pytest.fixture
     def game(self):
-        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
         game_info = gi.GameInfo(child_cvt=3,
                                 child_type=gi.ChildType.QUR,
                                 crosscapt=True,
@@ -865,7 +865,7 @@ class TestRepeatTurn:
 
     @pytest.fixture
     def game(self):
-        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(capt_rturn=True,
                                 stores=True,
                                 capt_on=[3],
@@ -898,7 +898,7 @@ class TestCaptCrossVisited:
 
     @pytest.fixture
     def game(self):
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(crosscapt=True,
                                 xc_sown=True,
                                 stores=True,
@@ -956,7 +956,7 @@ class TestCaptTwoOut:
                                   for f in range(len(test_cases))])
     def test_capts(self, board, turn, loc, eboard, options):
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(stores=True,
                                 pickextra=gi.CaptExtraPick.PICKCROSS,
                                 mlaps=True,
@@ -998,7 +998,7 @@ class TestPickCross:
                                   for f in range(len(test_cases))])
     def test_capts(self, board, turn, loc, eboard, options):
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(stores=True,
                                 pickextra=gi.CaptExtraPick.PICKCROSS,
                                 **options,
@@ -1024,7 +1024,7 @@ class TestPickCross:
         """capts from true side, pick from false side in data;
         lock false side there should be no picks."""
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(stores=True,
                                 pickextra=gi.CaptExtraPick.PICKCROSS,
                                 **options,
@@ -1052,7 +1052,7 @@ class TestPickCross:
         """capts from true side, pick from false side in data;
         false side are children there should be no picks."""
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(stores=True,
                                 pickextra=gi.CaptExtraPick.PICKCROSS,
                                 **options,
@@ -1074,7 +1074,7 @@ class TestPickCross:
 
     def test_no_capt(self):
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(stores=True,
                                 pickextra=gi.CaptExtraPick.PICKCROSS,
                                 evens=True,
@@ -1109,7 +1109,7 @@ class TestPickFinal:
                                   for f in range(len(test_cases))])
     def test_capts(self, board, turn, caploc, eres, eboard):
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
         game_info = gi.GameInfo(stores=True,
                                 capt_side=1,
                                 capt_on=[2],
@@ -1148,7 +1148,7 @@ class TestPickTwos:
                                   for f in range(len(test_cases))])
     def test_capts(self, board, turn, caploc, eres, eboard):
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
         game_info = gi.GameInfo(stores=True,
                                 crosscapt=True,
                                 capt_on=[2],
@@ -1215,7 +1215,7 @@ class TestPickLastSeeds:
     def test_capts(self, board, store, child, turn, picker,
                    eres, eboard, estore):
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=2)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=2)
         game_info = gi.GameInfo(stores=True,
                                 capt_on=[4],
                                 sow_rule=gi.SowRule.OWN_SOW_CAPT_ALL,
@@ -1245,7 +1245,7 @@ class TestNoChildren:
 
     def test_opp_child(self):
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(stores=True,
                                 evens=True,
                                 nbr_holes=game_consts.holes,
@@ -1267,7 +1267,7 @@ class TestChildInhibitor:
 
     def test_inhibited(self):
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(prescribed=gi.SowPrescribed.ARNGE_LIMIT,
                                 child_type=gi.ChildType.NORMAL,
                                 child_cvt=3,
@@ -1301,7 +1301,7 @@ class TestOppChild:
 
     def test_opp_child(self):
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(child_type=gi.ChildType.NORMAL,
                                 child_cvt=3,
                                 child_rule=gi.ChildRule.OPP_SIDE_ONLY,
@@ -1335,7 +1335,7 @@ class TestNotWithOne:
                               (True, 2, 2, True),])
     def test_opp_child(self, turn, hole, seeds, etest):
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(child_type=gi.ChildType.NORMAL,
                                 child_cvt=3,
                                 child_rule=gi.ChildRule.OPPS_ONLY_NOT_1ST,
@@ -1359,7 +1359,7 @@ class TestBadEnums:
 
     def test_bad_cross_capt(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[4],
                                 stores=True,
                                 nbr_holes=game_consts.holes,
@@ -1374,7 +1374,7 @@ class TestBadEnums:
 
     def test_bad_capt_type(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[4],
                                 stores=True,
                                 nbr_holes=game_consts.holes,
@@ -1388,7 +1388,7 @@ class TestBadEnums:
 
     def test_bad_grand_slam(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[4],
                                 stores=True,
                                 nbr_holes=game_consts.holes,
@@ -1402,7 +1402,7 @@ class TestBadEnums:
 
     def test_bad_child_type(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[4],
                                 stores=True,
                                 nbr_holes=game_consts.holes,
@@ -1417,7 +1417,7 @@ class TestBadEnums:
     def test_bad_child_type_decos(self):
         """Two decos should raise the error, check both"""
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[4],
                                 stores=True,
                                 nbr_holes=game_consts.holes,
@@ -1435,7 +1435,7 @@ class TestBadEnums:
 
     def test_bad_child_rule(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[4],
                                 stores=True,
                                 nbr_holes=game_consts.holes,
@@ -1451,7 +1451,7 @@ class TestBadEnums:
 
     def test_bad_pick_extra(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(stores=True,
                                 capt_on=[4],
                                 sow_rule=gi.SowRule.OWN_SOW_CAPT_ALL,

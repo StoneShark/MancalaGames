@@ -13,7 +13,7 @@ pytestmark = pytest.mark.unittest
 import utils
 
 from context import fill_patterns as fp
-from context import game_constants as gc
+from context import game_constants as gconsts
 from context import game_interface as gi
 from context import mancala
 
@@ -71,7 +71,7 @@ def case(request):
 
 def test_fill_patterns(case):
 
-    game_consts = gc.GameConsts(nbr_start=4, holes=case.holes)
+    game_consts = gconsts.GameConsts(nbr_start=4, holes=case.holes)
     game_info = gi.GameInfo(start_pattern=case.pattern,
                             capt_on=[2],
                             stores=True,
@@ -118,7 +118,7 @@ class TestRandom:
     def game(self, request):
 
         (holes, start) = request.param
-        game_consts = gc.GameConsts(nbr_start=start, holes=holes)
+        game_consts = gconsts.GameConsts(nbr_start=start, holes=holes)
         game_info = gi.GameInfo(start_pattern=gi.StartPattern.RANDOM,
                                 evens=True,
                                 stores=True,

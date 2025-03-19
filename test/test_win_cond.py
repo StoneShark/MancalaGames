@@ -11,7 +11,7 @@ pytestmark = pytest.mark.integtest
 
 import utils
 
-from context import game_constants as gc
+from context import game_constants as gconsts
 from context import game_interface as gi
 from context import mancala
 
@@ -33,7 +33,7 @@ class TestPassWConds:
 
     @pytest.fixture
     def pass_game(self):
-        game_consts=gc.GameConsts(nbr_start=2, holes=3)
+        game_consts=gconsts.GameConsts(nbr_start=2, holes=3)
         game_info=gi.GameInfo(nbr_holes=game_consts.holes,
                                 sow_direct=Direct.CCW,
                                 mustpass=True,

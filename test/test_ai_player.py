@@ -13,7 +13,7 @@ import utils
 from context import ai_interface
 from context import ai_player
 from context import cfg_keys as ckey
-from context import game_constants as gc
+from context import game_constants as gconsts
 from context import game_interface as gi
 from context import mancala
 from context import minimax
@@ -56,7 +56,7 @@ class TestConstruction:
     @pytest.fixture
     def game(self):
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
                                 nbr_holes=game_consts.holes,
@@ -191,7 +191,7 @@ class TestScorers:
     @pytest.fixture
     def game(self):
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
                                 nbr_holes=game_consts.holes,
@@ -209,7 +209,7 @@ class TestScorers:
     @pytest.fixture
     def nsgame(self):
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
                                 no_sides=True,
@@ -227,7 +227,7 @@ class TestScorers:
     @pytest.fixture
     def tgame(self):
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
                                 goal=gi.Goal.TERRITORY,
@@ -247,7 +247,7 @@ class TestScorers:
     @pytest.fixture
     def ogame(self):
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
                                 goal=gi.Goal.CLEAR,
@@ -624,7 +624,7 @@ class TestAiIf:
         with pytest.raises(ValueError):
             Talg(None, None)
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
                                 nbr_holes=game_consts.holes,

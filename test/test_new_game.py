@@ -8,7 +8,7 @@ pytestmark = pytest.mark.unittest
 
 import utils
 
-from context import game_constants as gc
+from context import game_constants as gconsts
 from context import game_interface as gi
 from context import mancala
 
@@ -30,7 +30,7 @@ def test_patterns():
     """test_patterns.py does most of the testing,
     here create a game that uses new_game and a start pattern"""
 
-    game_consts = gc.GameConsts(nbr_start=4, holes=4)
+    game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
     game_info = gi.GameInfo(start_pattern=2,
                             capt_on=[2],
                             stores=True,
@@ -53,7 +53,7 @@ class TestNewGame:
     def game(self):
         """generic simple game"""
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on = [2],
                                 stores=True,
@@ -67,7 +67,7 @@ class TestNewGame:
     def rgame(self):
         """game with rounds"""
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on = [2],
                                 rounds=gi.Rounds.NO_MOVES,
@@ -84,7 +84,7 @@ class TestNewGame:
     def nb_rgame(self):
         """game rounds but no blocks"""
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on = [2],
                                 rounds=gi.Rounds.NO_MOVES,
@@ -100,7 +100,7 @@ class TestNewGame:
     def nbmm_rgame(self):
         """game rounds but no blocks"""
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on = [2],
                                 min_move=2,
@@ -462,7 +462,7 @@ class TestNewGame:
         to 3 or fewer; if it starts <= 3 then the inhibitor is
         never set."""
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=nbr_holes)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=nbr_holes)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on = [2],
                                 rounds=gi.Rounds.NO_MOVES,
@@ -493,7 +493,7 @@ class TestRoundTally:
     @pytest.fixture
     def game(self):
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(capt_on = [2],
                                 stores=True,
                                 goal=Goal.RND_WIN_COUNT,
@@ -575,7 +575,7 @@ class TestTerritory:
     @pytest.fixture
     def game(self):
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(capt_on = [2],
                                 stores=True,
                                 goal_param=5,
@@ -618,7 +618,7 @@ class TestBadEnums:
 
     def test_bad_round_fill(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[4],
                                 stores=True,
                                 nbr_holes=game_consts.holes,
@@ -632,7 +632,7 @@ class TestBadEnums:
 
     def test_bad_round_starter(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[4],
                                 stores=True,
                                 nbr_holes=game_consts.holes,

@@ -14,7 +14,7 @@ pytestmark = pytest.mark.comptest
 
 
 from context import game_interface as gi
-from context import game_constants as gc
+from context import game_constants as gconsts
 from context import mancala
 
 
@@ -158,7 +158,7 @@ def test_capturer(logger, conf_name, state_name, turn, capt_loc,
                   eloc, eboard, estore, echild, ecchg, ecapt):    # expected values
     """Run the capturer."""
 
-    game_consts = gc.GameConsts(nbr_start=2, holes=HOLES)
+    game_consts = gconsts.GameConsts(nbr_start=2, holes=HOLES)
     game_info = gi.GameInfo(**GAMECONF[conf_name],
                             nbr_holes=game_consts.holes,
                             rules=mancala.Mancala.rules)

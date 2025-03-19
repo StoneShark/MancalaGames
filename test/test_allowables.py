@@ -12,7 +12,7 @@ pytestmark = pytest.mark.unittest
 
 import utils
 
-from context import game_constants as gc
+from context import game_constants as gconsts
 from context import game_interface as gi
 from context import mancala
 
@@ -95,7 +95,7 @@ class TestAllowables:
     def test_allowables(self, turn, board, blocked, child,
                         mustshare, min_move, eresult, request):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[2],
                                 min_move=min_move,
                                 mustshare=mustshare,
@@ -125,7 +125,7 @@ class TestAllowables:
         the 3 (of 6) elements from the results against the expected
         results."""
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[2],
                                 goal=2,
                                 goal_param=6,
@@ -205,7 +205,7 @@ class TestAllowables:
     def test_nograndslam(self, turn, board, child, mustshare, min_move,
                          eresult):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on=[2],
                                 min_move=min_move,
@@ -226,7 +226,7 @@ class TestAllowables:
 
 
     def test_mlap_allowables(self):
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 crosscapt=True,
                                 grandslam=GrandSlam.NOT_LEGAL,
@@ -247,7 +247,7 @@ class TestAllowables:
 
     def test_sown_n_capt(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[1, 2],
                                 multicapt=-1,
                                 mustshare=True,
@@ -268,7 +268,7 @@ class TestMemoize:
     @pytest.fixture
     def game(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 stores=True,
                                 capt_on=[2],
@@ -347,7 +347,7 @@ class TestNoSidesAllow:
         TEST_DATA)
     def test_allowables(self, turn, board, blocked, child, min_move, eresult):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[2],
                                 no_sides=True,
                                 stores=True,
@@ -375,7 +375,7 @@ class TestOppEmpty:
         ])
     def test_allowables(self, board, turn, eresult):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[2],
                                 allow_rule=AllowRule.OPP_OR_EMPTY,
                                 stores=True,
@@ -426,7 +426,7 @@ class TestSingleToEmpty:
         ids=[f'case_{cnt}' for cnt in range(len(TEST_STE_DATA))])
     def test_allowables(self, direct, board, turn, eresult):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
         game_info = gi.GameInfo(capt_on=[2],
                                 sow_direct=direct,
                                 allow_rule=AllowRule.SINGLE_TO_ZERO,
@@ -460,7 +460,7 @@ class TestOnlyIfAll:
         ids=[f'case_{cnt}' for cnt in range(5)])
     def test_1_allowables(self, board, turn, eresult):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
         game_info = gi.GameInfo(capt_on=[2],
                                 allow_rule=AllowRule.SINGLE_ONLY_ALL,
                                 stores=True,
@@ -499,7 +499,7 @@ class TestOnlyIfAllToZero:
         ids=[f'case_{cnt}' for cnt in range(7)])
     def test_1_allowables(self, board, turn, eresult):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
         game_info = gi.GameInfo(capt_on=[2],
                                 allow_rule=AllowRule.SINGLE_ALL_TO_ZERO,
                                 stores=True,
@@ -530,7 +530,7 @@ class TestOnlyIfAllToZero:
         ids=[f'case_{cnt}' for cnt in range(5)])
     def test_2_allowables(self, board, turn, eresult):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
         game_info = gi.GameInfo(capt_on=[2],
                                 allow_rule=AllowRule.TWO_ONLY_ALL,
                                 stores=True,
@@ -571,7 +571,7 @@ class TestTwosRight:
         ids=[f'case_{cnt}' for cnt in range(8)])
     def test_two_right(self, board, turn, eresult):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
         game_info = gi.GameInfo(capt_on=[2],
                                 allow_rule=AllowRule.TWO_ONLY_ALL_RIGHT,
                                 stores=True,
@@ -618,7 +618,7 @@ class TestOwnerAllowables:
         ids=[f'case_{cnt}' for cnt in range(3)])
     def test_allowables(self, turn, board, owners, eresult):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[4],
                                 stores=True,
                                 goal=Goal.TERRITORY,
@@ -668,7 +668,7 @@ class TestOnlyRightTwo:
         ids=[f'case_{cnt}' for cnt in range(8)])
     def test_r2_allowables(self, board, blocks, move_nbr, turn, eresult):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
         game_info = gi.GameInfo(capt_on=[2],
                                 allow_rule=AllowRule.FIRST_TURN_ONLY_RIGHT_TWO,
                                 stores=True,
@@ -705,7 +705,7 @@ class TestOnlyRightTwo:
         ids=[f'case_{cnt}' for cnt in range(6)])
     def test_r2a2_allowables(self, board, blocks, move_nbr, turn, eresult):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
         game_info = gi.GameInfo(capt_on=[2],
                                 allow_rule=AllowRule.RIGHT_2_1ST_THEN_ALL_TWO,
                                 stores=True,
@@ -733,7 +733,7 @@ class TestMoveAllFirst:
 
     @pytest.fixture
     def game(self):
-        game_consts = gc.GameConsts(nbr_start=4, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
                                 allow_rule=AllowRule.MOVE_ALL_HOLES_FIRST,
@@ -782,7 +782,7 @@ class TestMoveAllFirst:
 
     @pytest.fixture
     def fgame(self):
-        game_consts = gc.GameConsts(nbr_start=4, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
                                 goal=gi.Goal.TERRITORY,
@@ -869,7 +869,7 @@ class TestNotXFrom1:
 
     @pytest.fixture
     def game(self):
-        game_consts = gc.GameConsts(nbr_start=4, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
                                 allow_rule=AllowRule.NOT_XFROM_1S,
@@ -922,7 +922,7 @@ class TestDontUndoMoveOne:
     def game(self, request):
 
         game_props = TestDontUndoMoveOne.GAME_CFG[request.param]
-        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(capt_on=[5],
                                 stores=True,
                                 **(game_props),
@@ -1093,7 +1093,7 @@ class TestMustShareUDir:
         ids=[f'case_{cnt}' for cnt in range(len(TEST_ALLOW_DATA))])
     def test_allowables(self, game_state, game_dict, eresult, request):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(stores=True,
                                 evens=True,
                                 mustshare=True,
@@ -1115,7 +1115,7 @@ class TestBadEnums:
 
     def test_bad_allow_rule(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[4],
                                 stores=True,
                                 nbr_holes=game_consts.holes,

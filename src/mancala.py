@@ -20,7 +20,7 @@ import capturer
 import cfg_keys as ckey
 import drawer
 import end_move
-import game_constants as gc
+import game_constants as gconsts
 import game_interface as gi
 import game_str
 import get_direction
@@ -278,7 +278,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
     def __init__(self, game_consts, game_info):
 
-        if not isinstance(game_consts, gc.GameConsts):
+        if not isinstance(game_consts, gconsts.GameConsts):
             raise TypeError(
                 'game_consts not built on game_constants.GameConsts.')
         if not isinstance(game_info, gi.GameInfo):

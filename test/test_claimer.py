@@ -12,7 +12,7 @@ pytestmark = pytest.mark.unittest
 
 
 from context import claimer
-from context import game_constants as gc
+from context import game_constants as gconsts
 from context import game_interface as gi
 from context import mancala
 
@@ -268,7 +268,7 @@ def test_claimer(conf_name, state_name, sclaimer,
     for the claimer. Note the claimer might/might not be
     used anywhere in the game."""
 
-    game_consts = gc.GameConsts(nbr_start=2, holes=4)
+    game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
     game_info = gi.GameInfo(**GAMECONF[conf_name],
                             nbr_holes=game_consts.holes,
                             rules=mancala.Mancala.rules)
@@ -315,7 +315,7 @@ def test_collector(conf_name, last_mover, unfed):
     """Test the combinations of last_mover and unfed/turn to make
     certain that the right collector is used."""
 
-    game_consts = gc.GameConsts(nbr_start=2, holes=4)
+    game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
     game_info = gi.GameInfo(**GAMECONF[conf_name],
                             nbr_holes=game_consts.holes,
                             rules=mancala.Mancala.rules)
@@ -340,7 +340,7 @@ def test_unkn_collector():
     """Test the unknown collector error.
     Can't be reached in the GameInfo contructor."""
 
-    game_consts = gc.GameConsts(nbr_start=2, holes=4)
+    game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
     game_info = gi.GameInfo(evens=True,
                             stores=True,
                             nbr_holes=game_consts.holes,

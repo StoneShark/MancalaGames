@@ -28,7 +28,7 @@ import re
 import pytest
 pytestmark = pytest.mark.unittest
 
-from context import game_constants as gc
+from context import game_constants as gconsts
 from context import game_interface as gi
 from context import game_logger
 from context import ginfo_rules
@@ -117,7 +117,7 @@ class TestGameState:
         """Game that has access to all of the state data.
         Turn off game_info rule checking by providing empty dict!"""
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=2)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=2)
         game_info = gi.GameInfo(capt_on = [2],
                                 blocks=True,
                                 rounds=gi.Rounds.HALF_SEEDS,
@@ -268,7 +268,7 @@ class TestRtally:
     def game(self, request):
         """a game of each goal type"""
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=2)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=2)
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
                                 goal=request.param,
@@ -292,7 +292,7 @@ class TestRtally:
     def esgame(self, request):
         """extra seeds game goal"""
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=2)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=2)
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
                                 goal=gi.Goal.RND_EXTRA_SEEDS,
@@ -342,7 +342,7 @@ class TestMoveData:
     def game(self):
         """basic game"""
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=2)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=2)
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
                                 nbr_holes=game_consts.holes,
@@ -397,7 +397,7 @@ class TestManDeco:
     def game(self):
         """basic game"""
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=2)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=2)
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
                                 nbr_holes=game_consts.holes,
@@ -431,7 +431,7 @@ class TestManDeco:
     def test_replace_deco_1(self):
         """Test replacing the head of the chain."""
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=5)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=5)
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
                                 goal=3,
@@ -458,7 +458,7 @@ class TestManDeco:
     def bad_game(self):
         """Bad config but no rules are checked."""
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=5)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=5)
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
                                 goal=3,
@@ -520,24 +520,24 @@ class TestConstruction:
             mancala.Mancala(None, None)
 
         with pytest.raises(TypeError):
-            mancala.Mancala(gc.GameConsts(3, 5), None)
+            mancala.Mancala(gconsts.GameConsts(3, 5), None)
 
         with pytest.raises(TypeError):
             mancala.Mancala(None, min_game_if)
 
         with pytest.raises(TypeError):
-            mancala.Mancala(gc.GameConsts(3, 5), min_game_if, 5)
+            mancala.Mancala(gconsts.GameConsts(3, 5), min_game_if, 5)
 
     def test_min_params(self, min_game_if):
 
-        mancala.Mancala(gc.GameConsts(3, 5), min_game_if)
+        mancala.Mancala(gconsts.GameConsts(3, 5), min_game_if)
 
 
     def test_start_pat(self):
         """All start patterns are tested with new_game.
         Here confirming that the proper changes were made once."""
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
         game_info = gi.GameInfo(capt_on=[2],
                                 start_pattern=gi.StartPattern.ALTERNATES,
                                 stores=True,
@@ -555,7 +555,7 @@ class TestBasicIfs:
     @pytest.fixture
     def game(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=6)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=6)
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
                                 nbr_holes=game_consts.holes,
@@ -591,7 +591,7 @@ class TestDelegates:
     @pytest.fixture
     def game(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=6)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=6)
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
                                 nbr_holes=game_consts.holes,
@@ -826,7 +826,7 @@ class TestDelegates:
     @pytest.fixture
     def rtgame(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=6)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=6)
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
                                 goal=gi.Goal.RND_SEED_COUNT,
@@ -882,7 +882,7 @@ class TestBProp:
                              ])
     def test_init_bprop(self, goal, moveunlock, allow_rule, eunlock, eowner):
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=2)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=2)
         game_info = gi.GameInfo(goal=goal,
                                 goal_param=3 if goal == Goal.TERRITORY else 0,
                                 evens=True,
@@ -912,7 +912,7 @@ class TestBProp:
                              ])
     def test_ibprop_bad(self, goal, moveunlock, allow_rule):
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=2)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=2)
 
         with pytest.raises(gi.GameInfoError) as error:
             gi.GameInfo(goal=goal,
@@ -932,7 +932,7 @@ class TestWinMessage:
     @pytest.fixture
     def maxgame(self):
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(goal=Goal.MAX_SEEDS,
                                 capt_on = [2],
                                 stores=True,
@@ -944,7 +944,7 @@ class TestWinMessage:
 
     @pytest.fixture
     def depgame(self):
-        game_consts = gc.GameConsts(nbr_start=3, holes=6)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=6)
         game_info = gi.GameInfo(goal=Goal.DEPRIVE,
                                 capt_on=[4],
                                 nbr_holes=game_consts.holes,
@@ -954,7 +954,7 @@ class TestWinMessage:
 
     @pytest.fixture
     def tergame(self):
-        game_consts = gc.GameConsts(nbr_start=3, holes=6)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=6)
         game_info = gi.GameInfo(goal=Goal.TERRITORY,
                                 stores=True,
                                 rounds=gi.Rounds.NO_MOVES,
@@ -1066,7 +1066,7 @@ class TestHoleProp:
     @pytest.fixture
     def game(self):
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(capt_on = [2],
                                 stores=True,
                                 nbr_holes=game_consts.holes,
@@ -1108,7 +1108,7 @@ class TestMove:
     @pytest.fixture
     def game(self):
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=2)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=2)
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
                                 nbr_holes=game_consts.holes,
@@ -1312,7 +1312,7 @@ class TestLogMove:
     @pytest.fixture
     def game(self):
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=2)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=2)
         game_info = gi.GameInfo(capt_on = [2],
                                 stores=True,
                                 nbr_holes=game_consts.holes,
@@ -1388,7 +1388,7 @@ class TestBadNewRound:
     @pytest.fixture
     def game(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
         game_info = gi.GameInfo(goal=gi.Goal.TERRITORY,
                                 goal_param=8,
                                 rounds=gi.Rounds.NO_MOVES,
@@ -1427,7 +1427,7 @@ class TestSwap:
     def test_swap_terr(self, size):
         # test board, owner, children, & stores
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=size)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=size)
         game_info = gi.GameInfo(goal=gi.Goal.TERRITORY,
                                 goal_param=8,
                                 child_type = gi.ChildType.NORMAL,
@@ -1468,7 +1468,7 @@ class TestSwap:
     def test_swap_locks(self, size):
         # test board, stores, locks and blocks
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=size)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=size)
         game_info = gi.GameInfo(goal=gi.Goal.MAX_SEEDS,
                                 rounds=gi.Rounds.NO_MOVES,
                                 blocks=True,

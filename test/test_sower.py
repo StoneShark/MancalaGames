@@ -13,7 +13,7 @@ pytestmark = pytest.mark.unittest
 import utils
 
 from context import game_interface as gi
-from context import game_constants as gc
+from context import game_constants as gconsts
 from context import mancala
 from context import sower
 from context import sower_decos as sowd
@@ -61,7 +61,7 @@ class TestSower:
     @pytest.fixture
     def game(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(capt_on=[2],
                                 child_type=ChildType.NORMAL,
                                 child_cvt=4,
@@ -125,7 +125,7 @@ class TestSower:
     @pytest.fixture
     def esgame(self):
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on = [2],
                                 stores=True,
@@ -285,7 +285,7 @@ class TestSower:
                              skip_cases)
     def test_skip_opp_n(self, board, spos, eboard, ecloc):
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
         game_info = gi.GameInfo(stores=True,
                                 evens=True,
                                 sow_rule=SowRule.NO_SOW_OPP_NS,
@@ -496,7 +496,7 @@ class TestSower:
     def nogame(self):
         """not opp for conversion."""
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(capt_on=[2],
                                 child_type=ChildType.NORMAL,
                                 child_cvt=4,
@@ -532,7 +532,7 @@ class TestSower:
     @pytest.fixture
     def maxgame(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
                                 sow_rule=7,
@@ -579,7 +579,7 @@ class TestSower:
     # @pytest.mark.usefixtures("logger")
     def test_no_sow_child(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
                                 child_type = gi.ChildType.NORMAL,
@@ -611,7 +611,7 @@ class TestMlap:
     @pytest.fixture
     def game(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(crosscapt=True,
                                 mlaps=LapSower.LAPPER,
                                 sow_direct=Direct.CW,
@@ -623,7 +623,7 @@ class TestMlap:
     @pytest.fixture
     def nlgame(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(evens=True,
                                 mlaps=LapSower.LAPPER_NEXT,
                                 sow_direct=Direct.CCW,
@@ -635,7 +635,7 @@ class TestMlap:
     @pytest.fixture
     def evgame(self):
         """capt on even # seeds, should stop sowing to capt"""
-        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(evens=True,
                                 mlaps=LapSower.LAPPER,
                                 sow_direct=Direct.CCW,
@@ -647,7 +647,7 @@ class TestMlap:
     @pytest.fixture
     def xcevgame(self):
         """cross capt but only even # seeds, do not stop on evens"""
-        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(crosscapt=True,
                                 evens=True,
                                 mlaps=LapSower.LAPPER,
@@ -660,7 +660,7 @@ class TestMlap:
     @pytest.fixture
     def moppgame(self):
         """match opposite capture -- should stop mlapping"""
-        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(stores=True,
                                 mlaps=LapSower.LAPPER,
                                 sow_direct=Direct.CCW,
@@ -773,7 +773,7 @@ class TestMlap:
         But it doesn't stop for the capture because they are inhibited
         on the first turn."""
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(stores=True,
                                 mlaps=LapSower.LAPPER,
                                 sow_direct=Direct.CCW,
@@ -804,7 +804,7 @@ class TestMlap:
     @pytest.fixture
     def opgame(self):
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(capt_on=[1],
                                 mlaps=gi.LapSower.LAPPER,
                                 sow_rule=gi.SowRule.CHANGE_DIR_LAP,
@@ -849,7 +849,7 @@ class TestGetSingle:
 
         mlaps = LapSower.LAPPER if lapper else LapSower.OFF
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
                                 mlaps=mlaps,
@@ -859,7 +859,7 @@ class TestGetSingle:
         assert isinstance(game.deco.sower.get_single_sower(),
                           sowd.SowSeeds)
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
                                 sow_own_store=True,
@@ -870,7 +870,7 @@ class TestGetSingle:
         assert isinstance(game.deco.sower.get_single_sower(),
                           sowd.SowSeedsNStore)
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
                                 sow_rule=SowRule.OWN_SOW_CAPT_ALL,
@@ -881,7 +881,7 @@ class TestGetSingle:
         assert isinstance(game.deco.sower.get_single_sower(),
                           sowd.SowCaptOwned)
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
         game_info = gi.GameInfo(goal=Goal.DEPRIVE,
                                 blocks=True,
                                 goal_param=2,
@@ -902,7 +902,7 @@ class TestGetSingle:
 
         if lapper:
             # test one with visit opp
-            game_consts = gc.GameConsts(nbr_start=4, holes=4)
+            game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
             game_info = gi.GameInfo(evens=True,
                                     stores=True,
                                     mlaps=mlaps,
@@ -923,7 +923,7 @@ class TestVMlap:
     @pytest.fixture
     def game(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(sow_direct=Direct.CW,
                                 stores=True,
                                 sow_own_store=True,
@@ -990,7 +990,7 @@ class TestBlckDivertSower:
     @pytest.fixture
     def game(self):
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(sow_direct=Direct.CW,
                                 goal=Goal.DEPRIVE,
                                 sow_rule=SowRule.SOW_BLKD_DIV,
@@ -1004,7 +1004,7 @@ class TestBlckDivertSower:
     @pytest.fixture
     def game_nr(self):
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(sow_direct=Direct.CW,
                                 goal=Goal.DEPRIVE,
                                 sow_rule=SowRule.SOW_BLKD_DIV_NR,
@@ -1118,7 +1118,7 @@ class TestBlckDivertSower:
     @pytest.fixture
     def mlgame(self):
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(sow_direct=Direct.CW,
                                 sow_rule=SowRule.SOW_BLKD_DIV,
                                 goal=Goal.DEPRIVE,
@@ -1134,7 +1134,7 @@ class TestBlckDivertSower:
     @pytest.fixture
     def mlgame_nr(self):
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(sow_direct=Direct.CW,
                                 sow_rule=SowRule.SOW_BLKD_DIV_NR,
                                 goal=Goal.DEPRIVE,
@@ -1202,7 +1202,7 @@ class TestSowCaptOwned:
     @pytest.fixture
     def game(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(evens=True,
                                 sow_rule=SowRule.OWN_SOW_CAPT_ALL,
                                 sow_direct=Direct.CCW,
@@ -1241,7 +1241,7 @@ class TestSowCaptOwned:
     @pytest.fixture
     def game2(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(evens=True,
                                 sow_rule=SowRule.OWN_SOW_CAPT_ALL,
                                 goal=Goal.TERRITORY,
@@ -1273,7 +1273,7 @@ class TestSowCaptOwned:
     @pytest.fixture
     def game_ss(self, request):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
                                 sow_rule=SowRule.SOW_CAPT_ALL,
@@ -1369,7 +1369,7 @@ class TestSowCaptOwned:
     @pytest.fixture
     def game2_ss(self, request):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
                                 sow_rule=SowRule.SOW_CAPT_ALL,
@@ -1429,7 +1429,7 @@ class TestPrescribed:
     @pytest.fixture
     def game(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
                                 nbr_holes=game_consts.holes,
@@ -1506,7 +1506,7 @@ class TestPrescribed:
 
         msower = mocker.patch('sower_decos.SowSeeds.sow_seeds')
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
                                 prescribed=SowPrescribed.BASIC_SOWER,
@@ -1530,7 +1530,7 @@ class TestPrescribed:
 
         msower = mocker.patch('sower_mlap_decos.SowMlapSeeds.sow_seeds')
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
         game_info = gi.GameInfo(evens=True,
                                 mlaps=True,
                                 stores=True,
@@ -1553,7 +1553,7 @@ class TestPrescribed:
     @pytest.fixture
     def game_1opp(self):
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
                                 prescribed=SowPrescribed.SOW1OPP,
@@ -1583,7 +1583,7 @@ class TestPrescribed:
     @pytest.fixture
     def game_p1m1(self):
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
                                 prescribed=SowPrescribed.PLUS1MINUS1,
@@ -1611,7 +1611,7 @@ class TestCaptMlap:
     @pytest.fixture
     def ccgame(self):
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
         game_info = gi.GameInfo(crosscapt=True,
                                 stores=True,
                                 sow_direct=Direct.CW,
@@ -1624,7 +1624,7 @@ class TestCaptMlap:
     @pytest.fixture
     def evgame(self):
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
                                 sow_direct=Direct.CCW,
@@ -1638,7 +1638,7 @@ class TestCaptMlap:
     @pytest.fixture
     def c1game(self):
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
         game_info = gi.GameInfo(capt_on=[1],
                                 stores=True,
                                 sow_direct=Direct.CCW,
@@ -1652,7 +1652,7 @@ class TestCaptMlap:
     @pytest.fixture
     def gapgame(self):
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
         game_info = gi.GameInfo(capt_type=gi.CaptType.TWO_OUT,
                                 capsamedir=True,
                                 stores=True,
@@ -1666,7 +1666,7 @@ class TestCaptMlap:
     @pytest.fixture
     def nextgame(self):
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
         game_info = gi.GameInfo(capt_type=gi.CaptType.NEXT,
                                 capsamedir=True,
                                 stores=True,
@@ -1751,7 +1751,7 @@ class TestSCapt:
     @pytest.fixture
     def c1game(self):
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
                                 sow_direct=Direct.CW,
@@ -1764,7 +1764,7 @@ class TestSCapt:
     @pytest.fixture
     def a1game(self):
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
                                 sow_direct=Direct.CCW,
@@ -1777,7 +1777,7 @@ class TestSCapt:
     @pytest.fixture
     def d1game(self):
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
                                 sow_direct=Direct.CCW,
@@ -1840,7 +1840,7 @@ class TestCaptOppOwnLast:
     @pytest.fixture
     def game(self):
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
                                 sow_direct=Direct.CCW,
@@ -1906,7 +1906,7 @@ class TestBadEnums:
 
     def test_bad_sow_rule(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[4],
                                 stores=True,
                                 nbr_holes=game_consts.holes,
@@ -1920,7 +1920,7 @@ class TestBadEnums:
 
     def test_bad_mlaps(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[4],
                                 stores=True,
                                 nbr_holes=game_consts.holes,
@@ -1934,7 +1934,7 @@ class TestBadEnums:
 
     def test_bad_prescribed(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[4],
                                 stores=True,
                                 nbr_holes=game_consts.holes,
@@ -1951,7 +1951,7 @@ class TestBadEnums:
 
     def test_bad_presowcapt(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[4],
                                 stores=True,
                                 nbr_holes=game_consts.holes,

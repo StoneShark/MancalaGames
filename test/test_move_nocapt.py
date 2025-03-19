@@ -22,7 +22,7 @@ pytestmark = pytest.mark.integtest
 import utils
 
 from context import game_interface as gi
-from context import game_constants as gc
+from context import game_constants as gconsts
 from context import mancala
 
 from game_interface import WinCond
@@ -37,7 +37,7 @@ class TestCCWSowing:
 
     @pytest.fixture
     def ccw_game(self):
-        game_consts = gc.GameConsts(nbr_start=4, holes=6)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=6)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 sow_direct=Direct.CCW,
                                 rules=mancala.Mancala.rules)
@@ -110,7 +110,7 @@ class TestCWSowing:
     def cw_game(self):
         """Game that does little but is CW."""
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=6)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=6)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 sow_direct=Direct.CW,
                                 rules=mancala.Mancala.rules)
@@ -182,7 +182,7 @@ class TestCCWSowingStore:
     def ccw_game(self):
         """Game that does little but is CCW."""
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=6)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=6)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 stores=True,
                                 sow_direct=Direct.CCW,
@@ -271,7 +271,7 @@ class TestCWSowingStore:
     def cw_game(self):
         """Game that does little but is CW."""
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=6)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=6)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 stores=True,
                                 sow_direct=Direct.CW,
@@ -338,7 +338,7 @@ class TestStartHole:
     def ccw_game(self):
         """Game that does little but is CCW."""
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=6)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=6)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 min_move=2,
                                 sow_start=True,
@@ -351,7 +351,7 @@ class TestStartHole:
     def cw_game(self):
         """Game that does little but is CW."""
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=6)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=6)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 min_move=2,
                                 sow_start=True,
@@ -414,7 +414,7 @@ class TestSkipStart:
     def ccw_game(self):
         """Game that does little but is CCW."""
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=6)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=6)
 
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 skip_start=True,
@@ -427,7 +427,7 @@ class TestSkipStart:
     def cw_game(self):
         """Game that does little but is CW."""
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=6)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=6)
 
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 skip_start=True,
@@ -483,7 +483,7 @@ class TestSpSowingNoU:
     @pytest.fixture
     def sgame_even(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
 
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 sow_direct=Direct.SPLIT,
@@ -494,7 +494,7 @@ class TestSpSowingNoU:
     @pytest.fixture
     def sgame_odd(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 udir_holes=[1],
                                 sow_direct=Direct.SPLIT,
@@ -540,7 +540,7 @@ class TestUdirAll:
     @pytest.fixture
     def uagame(self):
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 udir_holes=[0, 1, 2, 3],
                                 sow_direct=Direct.SPLIT,
@@ -587,7 +587,7 @@ class TestBlocks_ito_Sow:
     def bgame(self):
         """Game that does little but is CCW."""
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
 
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 blocks=True,
@@ -617,7 +617,7 @@ class TestMoveunlock_ito_Sow:
     def mugame(self):
         """Game that does little but is CCW."""
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
 
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 moveunlock=True,
@@ -646,7 +646,7 @@ class TestMLAPS_ito_Sow:
     def game(self):
         """Game that does little but is CCW."""
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
 
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 mlaps=LapSower.LAPPER,
@@ -669,7 +669,7 @@ class TestMLAPS_ito_Sow:
 
     def test_mlaps_lapy(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=6)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=6)
 
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 mlaps=LapSower.LAPPER,
@@ -695,7 +695,7 @@ class TestPASS_ito_Sow:
     def game(self):
         """Game that does little but is CCW."""
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
 
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 mlaps=LapSower.LAPPER,

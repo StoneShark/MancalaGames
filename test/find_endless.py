@@ -8,7 +8,7 @@ Created on Thu Jul 20 13:05:05 2023
 import itertools as it
 
 from context import game_interface as gi
-from context import game_constants as gc
+from context import game_constants as gconsts
 from context import mancala
 
 from game_interface import WinCond
@@ -20,7 +20,7 @@ HOLES = 4
 
 def build_game():
 
-    # game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+    # game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
     # game_info = gi.GameInfo(mlaps=LapSower.LAPPER,
     #                         crosscapt=True,
     #                         mustshare=True,
@@ -28,7 +28,7 @@ def build_game():
     #                         rules=mancala.Mancala.rules)
 
 
-    game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+    game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
     game_info = gi.GameInfo(sow_direct=Direct.CW,
                             goal=Goal.DEPRIVE,
                             sow_blkd_div=True,

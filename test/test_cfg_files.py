@@ -16,7 +16,7 @@ import os
 
 import pytest
 
-from context import game_constants as gc
+from context import game_constants as gconsts
 
 # this file contains integration tests
 # report warnings as test failures
@@ -63,5 +63,5 @@ def test_no_status(request, filename):
 
 def test_bad_file():
 
-    with pytest.raises(gc.GameConstsError):
+    with pytest.raises(gconsts.GameConstsError):
         man_config.read_game_config(PATH + BAD_CFG)

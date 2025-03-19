@@ -11,7 +11,7 @@ pytestmark = pytest.mark.unittest
 
 import utils
 
-from context import game_constants as gc
+from context import game_constants as gconsts
 from context import game_interface as gi
 from context import mancala
 
@@ -29,7 +29,7 @@ class TestGameStr:
     @pytest.fixture
     def game(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=6)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=6)
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
                                 nbr_holes=game_consts.holes,
@@ -57,7 +57,7 @@ class TestGameStr:
     @pytest.fixture
     def bmgame(self):
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(mustpass=True,
                                 stores=True,
                                 blocks=True,
@@ -92,7 +92,7 @@ class TestGameStr:
     @pytest.fixture
     def cgame(self):
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 mustpass=True,
                                 stores=True,
@@ -126,7 +126,7 @@ class TestGameStr:
     def cterr_game(self):
         """an odd game goal_param has two differnt purposes."""
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 mustpass=True,
                                 stores=True,

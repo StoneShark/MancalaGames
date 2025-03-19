@@ -12,7 +12,7 @@ import utils
 
 from context import end_move
 from context import end_move_decos as emd
-from context import game_constants as gc
+from context import game_constants as gconsts
 from context import game_interface as gi
 from context import ginfo_rules
 from context import mancala
@@ -50,7 +50,7 @@ class TestEndMove:
 
         game_props = TestEndMove.GAME_PROPS[request.param]
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
         if request.param == 'no_win_game':
             object.__setattr__(game_consts, 'win_count',
                                game_consts.total_seeds)
@@ -613,7 +613,7 @@ class TestEndMove:
 
     def test_bad_ucl(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[4],
                                 stores=True,
                                 nbr_holes=game_consts.holes,
@@ -734,7 +734,7 @@ class TestEndChildren:
 
         game_props = TestEndChildren.GAME_PROPS[request.param]
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(**game_props,
                                 nbr_holes=game_consts.holes,
                                 rules=ginfo_rules.RuleDict())
@@ -815,7 +815,7 @@ class TestEndDeprive:
 
     @pytest.fixture
     def game(self):
-        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(goal=Goal.DEPRIVE,
                                 capt_on=[4],
                                 min_move=2,
@@ -892,7 +892,7 @@ class TestEndClear:
 
     @pytest.fixture
     def game(self):
-        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(goal=Goal.CLEAR,
                                 capt_on=[4],
                                 nbr_holes=game_consts.holes,
@@ -960,7 +960,7 @@ class TestEndWaldas:
 
     @pytest.fixture
     def game(self):
-        game_consts = gc.GameConsts(nbr_start=4, holes=6)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=6)
         game_info = gi.GameInfo(child_cvt=4,
                                 child_type=ChildType.NORMAL,
                                 child_locs=gi.ChildLocs.ENDS_PLUS_ONE_OPP,
@@ -1086,7 +1086,7 @@ class TestNoSides:
 
     @pytest.fixture
     def game(self):
-        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(no_sides=True,
                                 stores=True,
                                 capt_on=[3],
@@ -1109,7 +1109,7 @@ class TestQuitter:
 
         game_props = TestQuitter.GAME_PROPS[request.param]
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
         if request.param == 'no_win_game':
             object.__setattr__(game_consts, 'win_count',
                                game_consts.total_seeds)
@@ -1351,7 +1351,7 @@ class TestTerritory:
     @pytest.fixture
     def rgame(self):
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(capt_on = [1],
                                 stores=True,
                                 goal_param=5,
@@ -1368,7 +1368,7 @@ class TestTerritory:
     @pytest.fixture
     def game(self):
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(capt_on = [1],
                                 stores=True,
                                 goal_param=5,
@@ -1530,7 +1530,7 @@ class TestTerritory:
         """Use the mustshare so the deco chain decides the game is
         over."""
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
                                 goal_param=6,
@@ -1559,7 +1559,7 @@ class TestWinHoles:
     def game(self):
         """basic game"""
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=2)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=2)
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
                                 nbr_holes=game_consts.holes,
@@ -1573,7 +1573,7 @@ class TestWinHoles:
         """fewer seeds will use self.equalize,
         start seeds doubled so same test cases can be used"""
 
-        game_consts = gc.GameConsts(nbr_start=6, holes=2)
+        game_consts = gconsts.GameConsts(nbr_start=6, holes=2)
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
                                 start_pattern=gi.StartPattern.ALTERNATES,
@@ -1618,7 +1618,7 @@ class TestRoundTally:
     def game(self):
         """round tally game"""
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=2)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=2)
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
                                 goal=gi.Goal.RND_POINTS,

@@ -9,7 +9,7 @@ pytestmark = pytest.mark.unittest
 
 import utils
 
-from context import game_constants as gc
+from context import game_constants as gconsts
 from context import game_interface as gi
 from context import make_child
 from context import mancala
@@ -35,7 +35,7 @@ class TestChildInhibitor:
 
     def test_inhibited(self):
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(prescribed=gi.SowPrescribed.ARNGE_LIMIT,
                                 child_type=gi.ChildType.NORMAL,
                                 child_cvt=3,
@@ -68,7 +68,7 @@ class TestOppChild:
 
     def test_opp_child(self):
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(child_type=gi.ChildType.NORMAL,
                                 child_cvt=3,
                                 child_rule=gi.ChildRule.OPP_SIDE_ONLY,
@@ -94,7 +94,7 @@ class TestOwnChild:
 
     def test_opp_child(self):
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(child_type=gi.ChildType.NORMAL,
                                 child_cvt=3,
                                 child_rule=gi.ChildRule.OWN_SIDE_ONLY,
@@ -130,7 +130,7 @@ class TestOppNotWithOne:
                               ])
     def test_opp_child(self, turn, hole, seeds, etest):
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(child_type=gi.ChildType.NORMAL,
                                 child_cvt=3,
                                 child_rule=gi.ChildRule.OPPS_ONLY_NOT_1ST,
@@ -163,7 +163,7 @@ class TestNotWithOne:
     @pytest.mark.parametrize('turn, direct, seeds, expect', cases)
     def test_opp_child(self, turn, direct, seeds, expect):
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(child_type=gi.ChildType.NORMAL,
                                 child_cvt=3,
                                 child_rule=gi.ChildRule.NOT_1ST_OPP,
@@ -211,7 +211,7 @@ class TestOppOwner:
                               ])
     def test_opp_owner(self, turn, hole, seeds, etest):
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(goal=gi.Goal.TERRITORY,
                                 goal_param=6,
                                 stores=True,
@@ -260,7 +260,7 @@ class TestOwnOwner:
                               ])
     def test_opp_owner(self, turn, hole, seeds, etest):
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(goal=gi.Goal.TERRITORY,
                                 goal_param=6,
                                 stores=True,
@@ -292,7 +292,7 @@ class TestChildLocs:
         BaseChild should always return True"""
 
         (holes, options) = TestChildLocs.GAME_OPTS[request.param]
-        game_consts = gc.GameConsts(nbr_start=3, holes=holes)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=holes)
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
                                 child_type=gi.ChildType.NORMAL,
@@ -431,7 +431,7 @@ class TestNotFacing:
                               ])
     def test_facing(self, turn, hole, opp_child, etest):
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(goal=gi.Goal.TERRITORY,
                                 goal_param=6,
                                 stores=True,
@@ -463,7 +463,7 @@ class TestNoChildren:
 
     def test_opp_child(self):
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
                                 nbr_holes=game_consts.holes,
@@ -484,7 +484,7 @@ class TestBaseChild:
 
     @pytest.fixture
     def game(self):
-        game_consts = gc.GameConsts(nbr_start=3, holes=5)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=5)
         game_info = gi.GameInfo(capt_on=[4],
                                 child_type=gi.ChildType.NORMAL,
                                 child_cvt=4,
@@ -500,7 +500,7 @@ class TestBull:
 
     @pytest.fixture
     def game(self):
-        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(child_cvt=4,
                                 child_type=gi.ChildType.BULL,
                                 nbr_holes=game_consts.holes,
@@ -571,7 +571,7 @@ class TestOneChild:
 
     @pytest.fixture
     def game(self):
-        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(child_cvt=3,
                                 child_type=gi.ChildType.ONE_CHILD,
                                 child_locs=gi.ChildLocs.NOT_SYM_OPP,
@@ -599,7 +599,7 @@ class TestOneChild:
           ], ids=['no_opp_left', 'no_opp_right', 'no_ends'])
     def test_disallowed(self, loc, turn, clocs, evals):
 
-        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(child_cvt=3,
                                 child_type=gi.ChildType.ONE_CHILD,
                                 child_locs=clocs,
@@ -678,7 +678,7 @@ class TestTuzdek:
 
     @pytest.fixture
     def game(self):
-        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(child_cvt=3,
                                 child_type=gi.ChildType.ONE_CHILD,
                                 child_rule=gi.ChildRule.OPP_SIDE_ONLY,
@@ -755,7 +755,7 @@ class TestQur:
 
     @pytest.fixture
     def game(self):
-        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
         game_info = gi.GameInfo(child_cvt=3,
                                 child_type=gi.ChildType.QUR,
                                 child_rule=gi.ChildRule.OWN_SIDE_ONLY,
@@ -809,7 +809,7 @@ class TestWeg:
 
     @pytest.fixture
     def game(self):
-        game_consts = gc.GameConsts(nbr_start=3, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(stores=True,
                                 goal=gi.Goal.TERRITORY,
                                 goal_param=8,
@@ -868,7 +868,7 @@ class TestBadEnums:
     def test_bad_child_type_decos(self):
         """Two decos should raise the error, check both"""
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[4],
                                 stores=True,
                                 nbr_holes=game_consts.holes,
@@ -883,7 +883,7 @@ class TestBadEnums:
 
     def test_bad_child_rule(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[4],
                                 stores=True,
                                 nbr_holes=game_consts.holes,
@@ -899,7 +899,7 @@ class TestBadEnums:
 
     def test_bad_child_locs(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[4],
                                 stores=True,
                                 nbr_holes=game_consts.holes,

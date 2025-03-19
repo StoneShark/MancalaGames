@@ -9,7 +9,7 @@ import dataclasses as dc
 import pytest
 pytestmark = pytest.mark.unittest
 
-from context import game_constants as gc
+from context import game_constants as gconsts
 from context import game_interface as gi
 from context import mancala
 from context import same_side
@@ -70,7 +70,7 @@ class TestGameState:
     @pytest.fixture
     def game(self):
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
                                 goal=3,
@@ -125,7 +125,7 @@ class TestSameSide:
     @pytest.fixture
     def game(self):
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
         game_info = gi.GameInfo(capt_on=[3],
                                 stores=True,
                                 goal=3,
@@ -296,7 +296,7 @@ class TestOhojichi:
     @pytest.fixture
     def game(self):
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=6)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=6)
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
                                 goal=3,

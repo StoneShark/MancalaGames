@@ -11,7 +11,7 @@ Created on Sat Mar 25 05:31:10 2023
 import pytest
 pytestmark = pytest.mark.unittest
 
-from context import game_constants as gc
+from context import game_constants as gconsts
 
 # %%
 
@@ -22,23 +22,23 @@ TEST_COVERS = ['src\\game_constants.py']
 
 
 def test_hole_range():
-    with pytest.raises(gc.GameConstsError):
-        gc.GameConsts(holes=0, nbr_start=5)
+    with pytest.raises(gconsts.GameConstsError):
+        gconsts.GameConsts(holes=0, nbr_start=5)
 
-    with pytest.raises(gc.GameConstsError):
-        gc.GameConsts(holes=15, nbr_start=5)
+    with pytest.raises(gconsts.GameConstsError):
+        gconsts.GameConsts(holes=15, nbr_start=5)
 
 def test_nbr_start_min():
-    with pytest.raises(gc.GameConstsError):
-        gc.GameConsts(holes=5, nbr_start=0)
+    with pytest.raises(gconsts.GameConstsError):
+        gconsts.GameConsts(holes=5, nbr_start=0)
 
-    with pytest.raises(gc.GameConstsError):
-        gc.GameConsts(holes=5, nbr_start=-1)
+    with pytest.raises(gconsts.GameConstsError):
+        gconsts.GameConsts(holes=5, nbr_start=-1)
 
 
 def test_odd_holes():
 
-    game_consts = gc.GameConsts(6, 5)
+    game_consts = gconsts.GameConsts(6, 5)
 
     assert game_consts.nbr_start == 6
     assert game_consts.holes == 5
@@ -65,7 +65,7 @@ def test_odd_holes():
 
 def test_even_holes():
 
-    game_consts = gc.GameConsts(3, 6)
+    game_consts = gconsts.GameConsts(3, 6)
 
     assert game_consts.nbr_start == 3
     assert game_consts.holes == 6
@@ -93,7 +93,7 @@ def test_even_holes():
 def test_print():
     # catch situation where we add to GameConsts but don't update the str
     # -1 : nbr_start and holes are both on the first line of the output
-    game_consts = gc.GameConsts(6, 2)
+    game_consts = gconsts.GameConsts(6, 2)
     assert len(str(game_consts).split('\n')) == len(vars(game_consts)) - 1
 
 
@@ -110,7 +110,7 @@ class TestCtsFuncs:
          ])
     def test_xlate_pos_loc(self, row, pos, eloc):
 
-        game_consts = gc.GameConsts(6, 5)
+        game_consts = gconsts.GameConsts(6, 5)
         assert game_consts.xlate_pos_loc(row, pos) == eloc
 
 
@@ -127,7 +127,7 @@ class TestCtsFuncs:
          ])
     def test_loc_to_left_cnt(self, loc, cnt):
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
         assert game_consts.loc_to_left_cnt(loc) == cnt
 
     @pytest.mark.parametrize(
@@ -143,7 +143,7 @@ class TestCtsFuncs:
          ])
     def test_even_cross_from_loc(self, loc, cross):
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
         assert game_consts.cross_from_loc(loc) == cross
 
     @pytest.mark.parametrize(
@@ -157,7 +157,7 @@ class TestCtsFuncs:
          ])
     def test_odd_cross_from_loc(self, loc, cross):
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
         assert game_consts.cross_from_loc(loc) == cross
 
 
@@ -170,7 +170,7 @@ class TestCtsFuncs:
                               [5, True]])
     def test_board_side(self, loc, eres):
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
         assert game_consts.board_side(loc) == eres
 
 
@@ -185,7 +185,7 @@ class TestCtsFuncs:
          ])
     def test_opp_side(self, turn, loc, eres):
 
-        game_consts = gc.GameConsts(6, 5)
+        game_consts = gconsts.GameConsts(6, 5)
         assert game_consts.opp_side(turn, loc) == eres
 
 
@@ -200,7 +200,7 @@ class TestCtsFuncs:
          ])
     def test_my_side(self, turn, loc, eres):
 
-        game_consts = gc.GameConsts(6, 5)
+        game_consts = gconsts.GameConsts(6, 5)
         assert game_consts.my_side(turn, loc) == eres
 
 
@@ -211,7 +211,7 @@ class TestCtsFuncs:
          ])
     def test_my_range(self, turn, erng):
 
-        game_consts = gc.GameConsts(6, 5)
+        game_consts = gconsts.GameConsts(6, 5)
         assert list(game_consts.get_my_range(turn)) == erng
 
 
@@ -222,7 +222,7 @@ class TestCtsFuncs:
          ])
     def test_opp_range(self, turn, erng):
 
-        game_consts = gc.GameConsts(6, 5)
+        game_consts = gconsts.GameConsts(6, 5)
         assert list(game_consts.get_opp_range(turn)) == erng
 
 
@@ -233,7 +233,7 @@ class TestCtsFuncs:
          ])
     def test_ranges(self, turn, erngs):
 
-        game_consts = gc.GameConsts(6, 5)
+        game_consts = gconsts.GameConsts(6, 5)
         ranges = game_consts.get_ranges(turn)
         assert list(ranges[0]) == erngs[0]
         assert list(ranges[1]) == erngs[1]

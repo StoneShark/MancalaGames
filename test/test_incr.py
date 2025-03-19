@@ -16,7 +16,7 @@ pytestmark = pytest.mark.unittest
 import utils
 
 from context import game_interface as gi
-from context import game_constants as gc
+from context import game_constants as gconsts
 from context import incrementer as incr
 from context import mancala
 
@@ -44,7 +44,7 @@ class TestIncr:
     @pytest.fixture
     def game(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
 
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
@@ -174,7 +174,7 @@ class TestIncr:
         """Test the incrementer inc'ing past a start hole
         surrounded by blocked holes."""
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
 
         game_info = gi.GameInfo(name='my name',
                                 capt_on=[2],

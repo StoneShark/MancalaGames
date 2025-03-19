@@ -10,7 +10,7 @@ pytestmark = pytest.mark.unittest
 
 import utils
 
-from context import game_constants as gc
+from context import game_constants as gconsts
 from context import game_interface as gi
 from context import mancala
 
@@ -64,7 +64,7 @@ class TestGetMove:
     def test_basic_moves(self, turn, board, blocked, child,
                     mustshare, mustpass, min_move, eresult):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on=[2],
                                 min_move=min_move,
@@ -116,7 +116,7 @@ class TestGetMove:
         blocked, child, mustshare, min_move are all handled by
         allowables, don't bother with further testing."""
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[2],
                                 mustpass=mustpass,
                                 udir_holes=udir,
@@ -151,7 +151,7 @@ class TestNoSidesMoves:
     def test_get_moves(self, turn, board, min_move, eresult):
         """eresult is a set so the order doesn't matter"""
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[2],
                                 no_sides=True,
                                 stores=True,
@@ -189,7 +189,7 @@ class TestTerrMoves:
     def test_get_moves(self, turn, board, min_move, eresult):
         """eresult is a set so the order doesn't matter"""
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
                                 goal=Goal.TERRITORY,
@@ -213,7 +213,7 @@ class TestAltDirMoves:
     def test_get_moves(self, turn, sides):
         """Get moves is called before mcount is incremented."""
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=2)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=2)
         game_info = gi.GameInfo(capt_on=[2],
                                 min_move=2,
                                 sow_direct=Direct.PLAYALTDIR,

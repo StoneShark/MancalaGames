@@ -11,7 +11,7 @@ pytestmark = pytest.mark.unittest
 import utils
 
 from context import game_interface as gi
-from context import game_constants as gc
+from context import game_constants as gconsts
 from context import mancala
 
 from game_interface import Direct
@@ -46,7 +46,7 @@ class TestSowStarter:
                         )
     def test_no_start_loc(self, sow_start, unlock, pos, turn, eloc, eseeds):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(capt_on = [2],
                                 sow_start = sow_start,
                                 moveunlock = unlock,
@@ -78,7 +78,7 @@ class TestSowStarter:
                         )
     def test_start_loc(self, sow_start, unlock, pos, turn, eloc, eseeds):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(min_move = 2,
                                 capt_on = [2],
                                 sow_start = sow_start,
@@ -111,7 +111,7 @@ class TestSowStarter:
                         )
     def test_udir(self, sow_start, unlock, pos, turn, eloc, eseeds):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(capt_on = [2],
                                 udir_holes=[1],
                                 sow_direct=Direct.SPLIT,
@@ -148,7 +148,7 @@ class TestSowStarter:
                         )
     def test_no_sides(self, sow_start, unlock, pos, turn, eloc, eseeds):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(capt_on = [2],
                                 udir_holes=[1],
                                 sow_direct=Direct.SPLIT,
@@ -180,7 +180,7 @@ class TestSowStarter:
                         )
     def test_move_one(self, pos, turn, eloc, eseeds, esowed):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=HOLES)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(capt_on = [2],
                                 udir_holes=[1],
                                 sow_direct=Direct.SPLIT,

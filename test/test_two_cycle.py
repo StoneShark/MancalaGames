@@ -11,7 +11,7 @@ import pytest
 pytestmark = pytest.mark.unittest
 
 from context import cfg_keys as ckey
-from context import game_constants as gc
+from context import game_constants as gconsts
 from context import game_interface as gi
 from context import ginfo_rules
 from context import incrementer
@@ -40,7 +40,7 @@ class TestNorthSouthIncr:
     @pytest.fixture
     def game(self):
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=5)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=5)
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
                                 goal=3,
@@ -94,7 +94,7 @@ class TestSowStore:
     @pytest.fixture
     def game(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
                                 sow_own_store=True,
@@ -173,7 +173,7 @@ class TestEastWestIncr:
     @pytest.fixture
     def game(self):
 
-        game_consts = gc.GameConsts(nbr_start=2, holes=6)
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=6)
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
                                 goal=3,
@@ -254,7 +254,7 @@ class TestEWClearEnder:
     @pytest.fixture
     def game(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=4)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
         game_info = gi.GameInfo(goal=gi.Goal.CLEAR,
                                 capt_on=[4],
                                 nbr_holes=game_consts.holes,

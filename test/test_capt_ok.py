@@ -14,7 +14,7 @@ import pytest
 pytestmark = pytest.mark.unittest
 
 from context import capt_ok
-from context import game_constants as gc
+from context import game_constants as gconsts
 from context import game_interface as gi
 from context import mancala
 
@@ -41,7 +41,7 @@ class TestSingleClasses:
     @pytest.fixture
     def game(self):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=2)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=2)
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
                                 nbr_holes=game_consts.holes,
@@ -294,7 +294,7 @@ class TestCaptOk:
 
         def _make_game (turn, seeds, child, unlocked, game_options):
 
-            game_consts = gc.GameConsts(nbr_start=4, holes=2)
+            game_consts = gconsts.GameConsts(nbr_start=4, holes=2)
             game_info = gi.GameInfo(sow_own_store=True,
                                     stores=True,
                                     **game_options,

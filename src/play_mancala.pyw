@@ -11,7 +11,7 @@ import tkinter as tk
 from tkinter import ttk
 
 import cfg_keys as ckey
-import game_constants as gc
+import game_constants as gconsts
 import game_interface as gi
 import man_config
 import man_path
@@ -539,7 +539,7 @@ class GameChooser(ttk.Frame):
             if ckey.GAME_CLASS in game_dict else 'Mancala'
         game_class = GAME_CLASSES[class_name]
 
-        game_consts = gc.GameConsts(**game_dict[ckey.GAME_CONSTANTS])
+        game_consts = gconsts.GameConsts(**game_dict[ckey.GAME_CONSTANTS])
 
         game_info = gi.GameInfo(**game_dict[ckey.GAME_INFO],
                                 nbr_holes=game_consts.holes,

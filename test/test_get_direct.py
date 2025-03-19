@@ -8,7 +8,7 @@ import itertools as it
 import pytest
 pytestmark = pytest.mark.unittest
 
-from context import game_constants as gc
+from context import game_constants as gconsts
 from context import game_interface as gi
 from context import mancala
 
@@ -74,7 +74,7 @@ class TestGetDirection:
         if direct == Direct.SPLIT and holes == 3:
             udir_holes = [1]
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=holes)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=holes)
         game_info = gi.GameInfo(capt_on=[2],
                                 sow_direct=direct,
                                 udir_holes=udir_holes,
@@ -113,7 +113,7 @@ class TestGetDirection:
                              ids= [f'case_{cnbr}' for cnbr in range(13)])
     def test_not_middle(self, holes, start, direct, udir_holes, exp_dir):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=holes)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=holes)
         game_info = gi.GameInfo(capt_on=[2],
                                 sow_direct=direct,
                                 udir_holes=udir_holes,
@@ -149,7 +149,7 @@ class TestGetDirection:
                              ids= [f'case_{cnbr}' for cnbr in range(13)])
     def test_no_sides(self, holes, start, direct, udir_holes, exp_dir):
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=holes)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=holes)
         game_info = gi.GameInfo(capt_on=[2],
                                 no_sides=True,
                                 stores=True,
@@ -193,7 +193,7 @@ class TestGetDirection:
         Test both MoveTpl lengths.
         The starting play does not matter, but test it."""
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[2],
                                 sow_direct=Direct.PLAYALTDIR,
                                 no_sides=len(moves[0]) == 3,
@@ -238,7 +238,7 @@ class TestGetDirection:
         """test that the directions are collected again when
         mcount is reset to 1."""
 
-        game_consts = gc.GameConsts(nbr_start=4, holes=3)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[2],
                                 sow_direct=Direct.PLAYALTDIR,
                                 no_sides=len(moves[0]) == 3,

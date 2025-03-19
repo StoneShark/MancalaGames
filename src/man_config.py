@@ -26,7 +26,7 @@ from tkinter import font
 
 import ai_player
 import cfg_keys as ckey
-import game_constants as gc
+import game_constants as gconsts
 import game_interface as gi
 import man_path
 import param_consts as pc
@@ -101,7 +101,7 @@ def read_game_config(filename):
     game_class = game_dict[ckey.GAME_CLASS] \
         if ckey.GAME_CLASS in game_dict else 'Mancala'
 
-    game_consts = gc.GameConsts(**game_dict[ckey.GAME_CONSTANTS])
+    game_consts = gconsts.GameConsts(**game_dict[ckey.GAME_CONSTANTS])
     info_dict = game_dict[ckey.GAME_INFO]
 
     gclass = GAME_CLASSES[game_class]
