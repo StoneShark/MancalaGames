@@ -143,6 +143,7 @@ class MancalaUI(tk.Frame):
         self.mode = buttons.Behavior.GAMEPLAY
         self.player = ai_player.AiPlayer(self.game, player_dict)
         self.setup = GameSetup(self)
+        self.movers = 0
 
         game_log.new()
         game_log.turn(0, 'Start Game', game)
@@ -653,6 +654,7 @@ class MancalaUI(tk.Frame):
         log the start and check for ai's turn."""
         game_log.new()
         game_log.turn(self.game.mcount, 'Start Game', self.game)
+        self.movers = 0
         self._schedule_ai()
 
 
@@ -814,8 +816,9 @@ class MancalaUI(tk.Frame):
         MCTS. This does seem extreme but the AI turn and node tree
         have already been started correcting them seems error prone."""
 
+        print(self.movers)
         game = self.game
-        if game.mcount != 2:
+        if self.movers != 1:
             tk.messagebox.showerror(
                 title="Swap Not Allowed",
                 message="Swapping sides is only allowed by a " \
@@ -824,6 +827,7 @@ class MancalaUI(tk.Frame):
                 parent=self)
             return
 
+        self.movers += 1
         game.mcount += 1
         game.turn = not game.turn
         game.swap_sides()
@@ -922,6 +926,9 @@ class MancalaUI(tk.Frame):
 
         last_turn = self.game.get_turn()
         win_cond = self.game.move(move)
+
+        if last_turn != self.game.get_turn():
+            self.movers += 1
 
         self._log_turn(last_turn)
         self.refresh()
