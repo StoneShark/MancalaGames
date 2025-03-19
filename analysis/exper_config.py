@@ -78,9 +78,12 @@ def define_parser():
         epilog=PLAYER_CONFIG_MSG)
 
     parser.add_argument('--game', action='append',
-                        choices=[ALL] + INDEX, required=True,
+                        choices=[ALL] + INDEX,
                         help="""Select the games to simulate. Use multiple
                         options to select multiple games.""")
+
+    parser.add_argument('--file', action='store',
+                        help="""Select a game file run. Only 1.""")
 
     parser.add_argument('--nbr_runs', action='store',
                         default=10, type=int,
@@ -133,7 +136,19 @@ def process_command_line():
         parser.print_help()
         sys.exit()
 
-    if not cargs.game or cargs.game == [ALL]:
+    if cargs.file and cargs.game:
+        print("Don't use --file and --game together.")
+        sys.exit()
+
+    if not cargs.file and not cargs.game:
+        print("No game specified use --file or --game.")
+        sys.exit()
+
+    if cargs.file:
+        gname, _ = os.path.splitext(os.path.basename(cargs.file))
+        cargs.game = [gname]
+
+    elif not cargs.game or cargs.game == [ALL]:
         cargs.game = INDEX
 
     if cargs.save_logs and (len(cargs.game) > 1 or cargs.nbr_runs > 50):
@@ -233,6 +248,15 @@ def build_player(game, pdict, arg_list):
 def game_n_players_gen(cargs):
     """for each game specified on the command line,
     generate the game and players."""
+
+    if cargs.file:
+        game, pdict = man_config.make_game(cargs.file)
+
+        tplayer = build_player(game, pdict, cargs.tplayer)
+        fplayer = build_player(game, pdict, cargs.fplayer)
+
+        yield game, fplayer, tplayer, cargs.game[0]
+        return
 
     for gname in cargs.game:
 
