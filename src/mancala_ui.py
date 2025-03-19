@@ -13,6 +13,7 @@ Created on Thu Mar  2 14:38:17 2023
 import textwrap
 import traceback
 import tkinter as tk
+from tkinter import messagebox
 import webbrowser
 
 import ai_player
@@ -662,7 +663,8 @@ class MancalaUI(tk.Frame):
         tk.messagebox.showerror(
             title="New Round Not Playable",
             message="The new round resulted in a unplayable game. " \
-                "New game started.")
+                "New game started.",
+            parent=self)
 
 
     def _new_game(self, win_cond=None, new_round_ok=False):
@@ -813,11 +815,13 @@ class MancalaUI(tk.Frame):
         have already been started correcting them seems error prone."""
 
         game = self.game
-        if game.mcount != 1:
+        if game.mcount != 2:
             tk.messagebox.showerror(
                 title="Swap Not Allowed",
                 message="Swapping sides is only allowed by a " \
-                    "human player after the first move.")
+                    "human player after the first move. " \
+                    "It counts as a move.",
+                parent=self)
             return
 
         game.mcount += 1
