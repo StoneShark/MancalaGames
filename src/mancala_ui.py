@@ -13,6 +13,8 @@ Created on Thu Mar  2 14:38:17 2023
 import textwrap
 import traceback
 import tkinter as tk
+#  pylint: disable=unused-import
+#  this is not always loaded along with tkinter
 from tkinter import messagebox
 import webbrowser
 

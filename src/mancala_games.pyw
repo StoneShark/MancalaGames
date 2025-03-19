@@ -21,6 +21,8 @@ import functools as ft
 import textwrap
 import traceback
 import tkinter as tk
+#  pylint: disable=unused-import
+#  this is not always loaded along with tkinter
 from tkinter import messagebox
 from tkinter import ttk
 import warnings
