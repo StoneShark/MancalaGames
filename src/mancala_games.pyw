@@ -204,6 +204,7 @@ class MancalaGames(ttk.Frame):
         gamemenu.add_command(label='Save', command=self._save)
         gamemenu.add_command(label='Save As...',
                              command=ft.partial(self._save, True))
+        gamemenu.add_command(label='Revert', command=self._revert)
         gamemenu.add_separator()
         gamemenu.add_command(label='Play', command=self._play)
         gamemenu.add_command(label='Test', command=self._test)
@@ -735,6 +736,12 @@ class MancalaGames(ttk.Frame):
         if not self.config.load():
             return
 
+        self._load_update()
+
+
+    def _load_update(self):
+        """Update the UI with the loaded game."""
+
         self._fill_tk_from_config()
         self._test(False)
         self.config.edited = False
@@ -753,6 +760,16 @@ class MancalaGames(ttk.Frame):
         self._update_title()
         for field in self.tktexts.values():
             field.edit_modified(False)
+
+
+    def _revert(self):
+        """Revert changes to a previously loaded game."""
+
+        self.config.edited |= \
+            any(field.edit_modified() for field in self.tktexts.values())
+
+        if self.config.revert():
+            self._load_update()
 
 
     def _set_frame_active(self, frame, new_state):

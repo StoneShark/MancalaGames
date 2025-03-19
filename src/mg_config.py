@@ -71,8 +71,14 @@ class GameConfig:
         self._dir, self.filename = os.path.split(filename)
         os.chdir(self._dir)
 
+        return self._load_file()
+
+
+    def _load_file(self):
+        """Load from the saved filename."""
+
         try:
-            self.loaded_config = man_config.read_game(filename)
+            self.loaded_config = man_config.read_game(self.filename)
         except ValueError as error:
             tk.messagebox.showerror('JSON File Error', error,
                                     parent=self._master)
@@ -183,5 +189,25 @@ class GameConfig:
 
             if do_it is True:
                 self.save()
+
+        return False
+
+
+    def revert(self):
+        """If the file is known and the data edited,
+        then reload from the file."""
+
+        if self.edited and self._known:
+
+            message = f'Revert changes to {self.filename}?'
+            do_it = tk.messagebox.askyesno(title='Revert Changes',
+                                           message=message,
+                                           parent=self._master)
+            if do_it:
+                self._load_file()
+                return True
+
+        else:
+            self._master.bell()
 
         return False
