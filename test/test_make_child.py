@@ -23,6 +23,10 @@ T = True
 F = False
 N = None
 
+CW = gi.Direct.CW
+CCW = gi.Direct.CCW
+
+
 # %% test wrappers
 
 
@@ -112,21 +116,24 @@ class TestOwnChild:
         assert game.deco.make_child.test(mdata)
 
 
-class TestNotWithOne:
+class TestOppNotWithOne:
 
     @pytest.mark.parametrize('turn, hole, seeds, etest',
                              [(False, 3, 1, False),
                               (False, 3, 2, True),
                               (False, 4, 2, True),
+                              (False, 1, 2, False),   # not opp side
                               (True, 0, 1, False),
                               (True, 0, 2, True),
-                              (True, 2, 2, True),])
+                              (True, 2, 2, True),
+                              (True, 4, 2, False),    # not opp side
+                              ])
     def test_opp_child(self, turn, hole, seeds, etest):
 
         game_consts = gc.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(child_type=gi.ChildType.NORMAL,
                                 child_cvt=3,
-                                child_rule=gi.ChildRule.NOT_1ST_OPP,
+                                child_rule=gi.ChildRule.OPPS_ONLY_NOT_1ST,
                                 evens=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
@@ -140,6 +147,43 @@ class TestNotWithOne:
         mdata.capt_loc = hole
         mdata.seeds = seeds
         assert game.deco.make_child.test(mdata) == etest
+
+
+class TestNotWithOne:
+
+    cases = [(False, CCW, 1, [T, T, T, F, T, T]),
+             (True,  CCW, 1, [F, T, T, T, T, T]),
+             (False,  CW, 1, [T, T, T, T, T, F]),
+             (True,   CW, 1, [T, T, F, T, T, T]),
+             ] + \
+            [(turn, direct, 2, [T, T, T, T, T, T])
+             for turn in [False, True]
+             for direct in [CW, CCW]]
+
+    @pytest.mark.parametrize('turn, direct, seeds, expect', cases)
+    def test_opp_child(self, turn, direct, seeds, expect):
+
+        game_consts = gc.GameConsts(nbr_start=3, holes=3)
+        game_info = gi.GameInfo(child_type=gi.ChildType.NORMAL,
+                                child_cvt=3,
+                                child_rule=gi.ChildRule.NOT_1ST_OPP,
+                                evens=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = turn
+
+        actual = []
+        for hole in range(game.cts.dbl_holes):
+            mdata = mancala.MoveData(game, None)
+            mdata.direct = direct
+            mdata.board = tuple(game.board)
+            mdata.capt_loc = hole
+            mdata.seeds = seeds
+
+            actual += [game.deco.make_child.test(mdata)]
+
+        assert actual == expect
 
 
 class TestOppOwner:

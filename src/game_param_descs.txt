@@ -220,11 +220,13 @@ Additional child creation requirements may be set. These are in addition to loca
 
 - OWN_SIDE_ONLY: Only make children on your own side of the board.
 
-- NOT_1ST_OPP: Don't make a child in the first hole on the opponent's side/territory with one seed.
+- OPPS_ONLY_NOT_1ST: OPP_SIDE_ONLY and don't make a child in the first hole on the opponent's side with one seed.
 
 - OPP_OWNER_ONLY: Only make children in your opponents holes. Valid only for territory GOAL games. 
 
 - OWN_OWNER_ONLY: Only make children in your own holes. Valid only for territory GOAL games. 
+
+- NOT_1ST_OPP: Don't make a child in the first hole on the opponent's side with one seed. Not supported for territory games or games which employ blocks.
 
 <param child_type>
 Games with children allow players to claim holes. These child holes are an extension of the stores and seeds in them count towards a win. Making a child stops any multilap sowing, moves cannot start from children, and they cannot be captured (except for special rules associated with WEGs). Children may be created as allowed by both CHILD_LOCS and CHILD_RULE. 

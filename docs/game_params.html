@@ -598,11 +598,13 @@ is included after the parameter sections.
 <li class="helptext">
 <b class="enum">OWN_SIDE_ONLY</b>: Only make children on your own side of the board.
 <li class="helptext">
-<b class="enum">NOT_1ST_OPP</b>: Don't make a child in the first hole on the opponent's side/territory with one seed.
+<b class="enum">OPPS_ONLY_NOT_1ST</b>: OPP_SIDE_ONLY and don't make a child in the first hole on the opponent's side with one seed.
 <li class="helptext">
 <b class="enum">OPP_OWNER_ONLY</b>: Only make children in your opponents holes. Valid only for territory <a href="game_params.html#goal">GOAL</a> games. 
 <li class="helptext">
 <b class="enum">OWN_OWNER_ONLY</b>: Only make children in your own holes. Valid only for territory <a href="game_params.html#goal">GOAL</a> games. 
+<li class="helptext">
+<b class="enum">NOT_1ST_OPP</b>: Don't make a child in the first hole on the opponent's side with one seed. Not supported for territory games or games which employ blocks.
 </ol>
 <h4 id="child_locs"> Child Locations </h4>
 <p class="pdesc">Location in Config Files: game_info : child_locs

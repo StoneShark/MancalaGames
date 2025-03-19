@@ -79,9 +79,9 @@ def ns2_build_rules(gclass_name):
     rules.add_rule(
         'ns2_child_rules',
         rule=lambda ginfo: ginfo.child_rule in (gi.ChildRule.OPP_SIDE_ONLY,
-                                                gi.ChildRule.NOT_1ST_OPP,
-                                                gi.ChildRule.OWN_OWNER_ONLY)
-                                                ,
+                                                gi.ChildRule.OPPS_ONLY_NOT_1ST,
+                                                gi.ChildRule.OWN_OWNER_ONLY,
+                                                gi.ChildRule.NOT_1ST_OPP),
         msg=f'{gclass_name} incompatible with Child Rule',
         excp=gi.GameInfoError)
         # child test is always on side of the board with sown seed

@@ -105,9 +105,10 @@ class ChildRule(enum.IntEnum):
     NONE = 0
     OPP_SIDE_ONLY = 1
     OWN_SIDE_ONLY = 2
-    NOT_1ST_OPP = 3
+    OPPS_ONLY_NOT_1ST = 3
     OPP_OWNER_ONLY = 4
     OWN_OWNER_ONLY = 5
+    NOT_1ST_OPP = 6
 
 
 @enum.unique

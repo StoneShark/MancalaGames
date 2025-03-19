@@ -308,6 +308,36 @@ class NotWithOne(MakeChildIf):
         return False
 
 
+class Not1stOppWithOne(MakeChildIf):
+    """Don't make a child if sowing started with one seed
+    and crossing the edge of the board."""
+
+    def __init__(self, game, decorator=None):
+
+        super().__init__(game, decorator)
+
+        self.firsts = {gi.Direct.CW:
+                           [self.game.cts.dbl_holes - 1,
+                            self.game.cts.holes - 1],
+
+                       gi.Direct.CCW:
+                           [self.game.cts.holes, 0]}
+
+
+    def test(self, mdata):
+        """If there's more than one seed we wont prevent
+        the child, call the chain. Otherwise, check loc against
+        firsts based on direction and turn."""
+
+        if mdata.seeds > 1:
+            return self.decorator.test(mdata)
+
+        if mdata.capt_loc == self.firsts[mdata.direct][self.game.turn]:
+            return False
+
+        return self.decorator.test(mdata)
+
+
 class NotInhibited(MakeChildIf):
     """Enforce the no_child inhibitor."""
 
@@ -341,8 +371,8 @@ def _add_child_type(game, deco):
     return deco
 
 
-def _add_child_wrappers(game, deco):
-    """Add any child wrappers include handling the child rules."""
+def _add_child_rule_wrapper(game, deco):
+    """Add any wrappers for the child rule."""
 
     if game.info.child_rule == gi.ChildRule.OPP_SIDE_ONLY:
         deco = OppSideChild(game, deco)
@@ -351,6 +381,9 @@ def _add_child_wrappers(game, deco):
         deco = OwnSideChild(game, deco)
 
     elif game.info.child_rule == gi.ChildRule.NOT_1ST_OPP:
+        deco = Not1stOppWithOne(game, deco)
+
+    elif game.info.child_rule == gi.ChildRule.OPPS_ONLY_NOT_1ST:
         deco = OppSideChild(game, deco)
         deco = NotWithOne(game, deco)
 
@@ -365,6 +398,14 @@ def _add_child_wrappers(game, deco):
     elif game.info.child_rule != gi.ChildRule.NONE:
         raise NotImplementedError(
             f"ChildRule {game.info.child_rule} not implemented.")
+
+    return deco
+
+
+def _add_child_wrappers(game, deco):
+    """Add any child wrappers include handling the child rules."""
+
+    deco = _add_child_rule_wrapper(game, deco)
 
     if game.info.child_locs == gi.ChildLocs.NOT_SYM_OPP:
         deco = ChildLocOk(game, deco, gi.ChildLocs.NO_OPP_LEFT)

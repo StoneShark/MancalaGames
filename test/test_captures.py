@@ -222,8 +222,10 @@ class TestCaptTable:
         activate because mdata.seeds is set to 3.
         If is actually tested with test_no_singles."""
 
-        child_type = gi.ChildType.NORMAL if case.child_cvt else gi.ChildType.NOCHILD
-        child_rule = gi.ChildRule.NOT_1ST_OPP if case.oppside else gi.ChildRule.NONE
+        child_type = gi.ChildType.NORMAL \
+            if case.child_cvt else gi.ChildType.NOCHILD
+        child_rule = gi.ChildRule.OPPS_ONLY_NOT_1ST \
+            if case.oppside else gi.ChildRule.NONE
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(stores=True,
@@ -312,8 +314,10 @@ class TestCaptTable:
                                   for case in CASES if case.capt_type == gi.CaptType.NEXT])
     def test_mlap_capt_next(self, case):
 
-        child_type = gi.ChildType.NORMAL if case.child_cvt else gi.ChildType.NOCHILD
-        child_rule = gi.ChildRule.NOT_1ST_OPP if case.oppside else gi.ChildRule.NONE
+        child_type = gi.ChildType.NORMAL \
+            if case.child_cvt else gi.ChildType.NOCHILD
+        child_rule = gi.ChildRule.OPPS_ONLY_NOT_1ST \
+            if case.oppside else gi.ChildRule.NONE
 
         game_consts = gc.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(mlaps=gi.LapSower.LAPPER,  # change to make_game
@@ -1334,7 +1338,7 @@ class TestNotWithOne:
         game_consts = gc.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(child_type=gi.ChildType.NORMAL,
                                 child_cvt=3,
-                                child_rule=gi.ChildRule.NOT_1ST_OPP,
+                                child_rule=gi.ChildRule.OPPS_ONLY_NOT_1ST,
                                 evens=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)

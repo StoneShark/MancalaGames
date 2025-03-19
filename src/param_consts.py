@@ -126,9 +126,10 @@ STRING_DICTS = {
         {'No additional restrictions': gi.ChildRule.NONE,
          'Opposite Side Only': gi.ChildRule.OPP_SIDE_ONLY,
          'Own Side Only': gi.ChildRule.OWN_SIDE_ONLY,
-         'Not 1st Opposite with 1': gi.ChildRule.NOT_1ST_OPP,
+         'Opp Only and not 1st w/One': gi.ChildRule.OPPS_ONLY_NOT_1ST,
          'Opposite Territory Only': gi.ChildRule.OPP_OWNER_ONLY,
          'Own Territory Only': gi.ChildRule.OWN_OWNER_ONLY,
+         'Not 1st Opposite with 1': gi.ChildRule.NOT_1ST_OPP,
          }),
 
     'CrossCaptOwn': lookup_dicts(

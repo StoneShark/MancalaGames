@@ -447,6 +447,17 @@ def add_child_rules(rules):
         msg='Sow rule NO_OPP_CHILD requires children',
         excp=gi.GameInfoError)
 
+    rules.add_rule(
+        'not1st_static',
+        rule=lambda ginfo: (ginfo.child_rule == gi.ChildRule.NOT_1ST_OPP
+                            and (ginfo.blocks
+                                 or ginfo.goal == gi.Goal.TERRITORY)),
+        msg='ChildRule NOT_1ST_OPP not supported with blocks or territory games',
+        excp=NotImplementedError)
+        # code assumes 1st's are specific holes
+        # complexity of 'current' 1st opposite hole is not implemented
+        # for reference: sow own store does have this complexity
+
 
 def add_no_sides_rules(rules):
     """Add the no_sides rules."""

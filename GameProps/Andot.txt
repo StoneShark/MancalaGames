@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Andot",
-      "about": "Split sow. Make children on 4 on opposite-side ends and four middle holes on own side.\n\nCannot move a singleton that has been moved across the side of the board back to where it was the previous turn.\nCycling games can be ended with the End Game menu command, unclaimed seeds will not score.\nGoal: collect more than half of the seeds in child holes.\n\nVariations:\n\n- child type of weg (Russ p50)\n\n- Allow making children in opposite end holes but prohibit making children in end hole with one seed (CHILD_LOCS ENDS_PLUS_ALL_OPP, CHILD_RULE of NOT_1ST_OPP, Mancala World)",
+      "about": "Split sow. Make children on 4 on opposite-side ends and four middle holes on own side.\n\nCannot move a singleton that has been moved across the side of the board back to where it was the previous turn.\nCycling games can be ended with the End Game menu command, unclaimed seeds will not score.\nGoal: collect more than half of the seeds in child holes.\n\nVariations:\n\n- child type of weg (Russ p50)\n\n- Allow making children in opposite end holes but prohibit making children in opposite end hole with one seed (CHILD_LOCS of ENDS_PLUS_ALL_OPP, CHILD_RULE of NOT_1ST_OPP, Mancala World)",
       "child_cvt": 4,
       "child_type": 1,
       "child_locs": 3,
@@ -24,6 +24,5 @@
       }
    },
    "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p134.",
-   "reference": "Mancala World: https://mancala.fandom.com/wiki/Andot",
-   "deviation": "for Mancala World variation: NOT_1ST_OPP assumes opposite side children only, ENDS_PLUS_ALL_OPP and NOT_1ST_OPP becomes opposite only."
+   "reference": "Mancala World: https://mancala.fandom.com/wiki/Andot"
 }

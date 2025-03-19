@@ -65,7 +65,7 @@ class TestSower:
         game_info = gi.GameInfo(capt_on=[2],
                                 child_type=ChildType.NORMAL,
                                 child_cvt=4,
-                                child_rule=ChildRule.NOT_1ST_OPP,
+                                child_rule=ChildRule.OPPS_ONLY_NOT_1ST,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
