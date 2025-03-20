@@ -56,17 +56,20 @@ class SetupHold(bhv_hold.Hold):
         - there are implementations of those operations
 
     This data is shared between each of the behavior objects
-    created for the board (holes and stores).
+    created for the board (1 each holes and stores).
 
     Only one global instance is created."""
 
     def __init__(self):
 
         super().__init__()
+
         self._label = False
+        self._oop_btn = None
+        self.out_of_play = 0
 
 
-    def set_hold(self, nbr, _):
+    def set_hold(self, nbr, _=None):
         """Set the hold data and update the UI label"""
         self.nbr = nbr
         self._label.config(text=f'Seeds held: {self.nbr}')
@@ -111,6 +114,7 @@ class SetupHold(bhv_hold.Hold):
                     width=bhv.FILL_HINTS)
         text += '\n\n'
         text += "Left click to drop seeds any seeds held."
+        text += '\n'
 
         tk.Label(frame, anchor='nw', justify='left', text=text
                  ).pack(side='top', expand=True, fill='both')
@@ -141,6 +145,19 @@ class SetupHold(bhv_hold.Hold):
         tk.Button(tframe, text="Clear to Stores",
                   command=self.clear_to_stores).grid(
                       row=row, column=ccnt.count, padx=2, pady=2, sticky='ew')
+
+        if game_ui.game.info.goal in (gi.Goal.CLEAR, gi.Goal.DEPRIVE):
+
+            self.out_of_play = sum(self.game_ui.game.store)
+            self.game_ui.game.store[0] = self.out_of_play
+            self.game_ui.game.store[1] = 0
+
+            self._oop_btn = tk.Button(tframe,
+                                     text=f"Off board: {self.out_of_play}",
+                                     command=self.add_seeds)
+            self._oop_btn.grid(
+                row=row, column=ccnt.count, padx=2, pady=2, sticky='ew')
+            self._oop_btn.bind('<Button-3>', self.sub_seeds)
 
         tframe.pack(side='top')
 
@@ -210,13 +227,45 @@ class SetupHold(bhv_hold.Hold):
 
         self.game_ui.refresh()
 
-        store = self.game_ui.game.store
+        game = self.game_ui.game
+        store = game.store
         ui_stores = self.game_ui.stores
-        if ui_stores:
+
+        if (ui_stores and
+                game.info.goal not in (gi.Goal.CLEAR, gi.Goal.DEPRIVE)):
+
             # stores are in game_ui.stores by row
             ui_stores[0].set_store(store[1], None)
             ui_stores[1].set_store(store[0], None)
 
+
+    def add_seeds(self):
+        """Add any held seeds to the out-of-play button/container."""
+
+        if not self.nbr:
+            self.game_ui.bell()
+            return
+
+        self.game_ui.game.store[0] += self.nbr
+        self.set_hold(0)
+        self.out_of_play = self.game_ui.game.store[0]
+        self._oop_btn['text']=f"Off board: {self.out_of_play}"
+        self.game_ui.config(cursor='')
+
+
+    def sub_seeds(self, _=None):
+        """Pickup seeds from the out-of-play button/container."""
+
+        if not self.out_of_play:
+            self.game_ui.bell()
+            return
+
+        seeds = self.query_nbr_seeds(None, self.out_of_play)
+        if seeds:
+            self.game_ui.game.store[0] -= seeds
+            self.out_of_play = self.game_ui.game.store[0]
+            self._oop_btn['text']=f"Off board: {self.out_of_play}"
+            self.game_ui.config(cursor='circle')
 
 
 SETUPHOLD = SetupHold()
@@ -295,7 +344,7 @@ class SetupButtonBehavior(bhv.BehaviorIf):
         seeds = game.board[self.btn.loc] + SETUPHOLD.nbr
         self.btn.props.seeds = seeds
         game.board[self.btn.loc] = seeds
-        self.refresh()
+        SETUPHOLD.refresh_game()
 
         SETUPHOLD.empty()
         self.btn.game_ui.config(cursor='')
@@ -365,7 +414,7 @@ class SetupButtonBehavior(bhv.BehaviorIf):
         loc = self.btn.loc
         game.child[loc] = self.cycle(game.child[loc])
         self.btn.props.ch_owner = game.child[loc]
-        self.refresh()
+        SETUPHOLD.refresh_game()
 
 
     def owner_toggle(self):
@@ -398,7 +447,7 @@ class SetupButtonBehavior(bhv.BehaviorIf):
 
         game.blocked[loc] = not game.blocked[loc]
         self.btn.props.blocked = game.blocked[loc]
-        self.refresh()
+        SETUPHOLD.refresh_game()
 
 
     def lock_toggle(self):
@@ -408,7 +457,7 @@ class SetupButtonBehavior(bhv.BehaviorIf):
         loc = self.btn.loc
         game.unlocked[loc] = not game.unlocked[loc]
         self.btn.props.unlocked = game.unlocked[loc]
-        self.refresh()
+        SETUPHOLD.refresh_game()
 
 
     def do_right_click(self):
@@ -428,6 +477,7 @@ class SetupButtonBehavior(bhv.BehaviorIf):
 
         else:
             self.pickup()
+            SETUPHOLD.refresh_game()
 
 
     def refresh(self, bstate=None):
@@ -465,13 +515,15 @@ class SetupStoreBehavior(bhv.StoreBehaviorIf):
 
 
     def do_left_click(self):
-        """Drop all picked up seeds."""
+        """Drop all picked up seeds, but not for clear
+        or deprive games."""
 
-        if not SETUPHOLD.nbr:
+        game = self.str.game_ui.game
+        if (not SETUPHOLD.nbr
+                or game.info.goal in (gi.Goal.CLEAR, gi.Goal.DEPRIVE)):
             self.str.bell()
             return
 
-        game = self.str.game_ui.game
         seeds = game.store[self.str.owner] + SETUPHOLD.nbr
         self.set_store(seeds, game.turn == self.str.owner)
         game.store[self.str.owner] = seeds
@@ -486,7 +538,9 @@ class SetupStoreBehavior(bhv.StoreBehaviorIf):
 
         game = self.str.game_ui.game
 
-        if not game.store[self.str.owner]:
+        # no seeds to pick up
+        if (not game.store[self.str.owner]
+                or game.info.goal in (gi.Goal.CLEAR, gi.Goal.DEPRIVE)):
             self.str.bell()
             return
 

@@ -199,14 +199,21 @@ All seeds must be left in play.
 they are disallowed from capturing or making children
 until their opponent has does one of those.
 
+<h4>Seed Movement for New Round</h4>
+<p>When the <a href="game_params.html#round_fill">ROUND_FILL</a>
+parameter is set to UCHOWN, the owner of holes on the loser side
+may be changed. The number of holes owned by each player must
+reflect the game state to exit the mode.
+
 <h3>Menus</h3>
 
 <h4 id="gamemenu">Game</h4>
 <p><b>New</b>: Start a new game. An in-progress game is not tallied.
-<p><b>Swap Sides</b>: After the first move of a game, a player may swap sides, that is,
+<p><b>Swap Sides</b>: After the first player finishes thier turn in a game,
+the second player may swap sides, that is,
 execute a Pie Rule. This is a common way to deal with games that favor the
-start player. Only some Mancala games offer an advantage to the start player, but this
-option is always availble. The AI player will never choose to swap sides.
+starting player. Only some Mancala games offer an advantage to the start player,
+but this option is always availble. The AI player will never choose to swap sides.
 <p><b>End Round</b>: End the current round. This can be used to end and score a
 round, but not end the game. Use this if there are seeds cycling on the board.
 <p><b>End Game</b>: End the current game and tally the game.
@@ -224,6 +231,32 @@ the handling of seeds not in chilren or stores:
 An extra seed goes to the player with fewer seeds.
 Hole owner is only honored when the game ends due to the normal conditions.</li>
 </ul>
+<p><b>Setup Board</b>: Enter a game setup mode. The board maybe reconfigured as desired.
+The coloring of the board is as though the game is being played, but all buttons maybe
+clicked to pick up or drop seeds.
+Touch screen grids are only shown as they would be in game play.
+<p>Right click on a board hole or store does pickup of seeds,
+possibly via a menu option (depending on game configuration).
+The cursor is changed to circle if there are any held seeds
+and the number of held seeds is shown in the control box.
+Left click drops any held seeds.
+If there are children, locks, blocks or owners configured, these may also be changed
+from the right click menu.
+Children are cycled through bottom, top and none.
+Locks, blocks and owners are toggled.
+<p>For games with goals DEPRIVE or CLEAR, there is a button in the control pain which
+collects seeds that are out of play.
+Right click picks seeds up from the out-of-play container.
+Left click drops any held seeds into the out-of-play container.
+<p>No game rules are checked when in setup mode.
+Exiting setup mode requires that there be a move for the player to move.
+
+<p><b>Reset to Setup</b>: On exiting setup mode the game state is saved,
+this command allows returning to that state.
+Suppose, for example, that a puzzle is setup; after trying to solve the puzzle,
+this command can be used to return the setup state.
+
+
 <h4>AI</h4>
 <p><b>AI Player</b>: Enable or disable the ai player.
 The AI Player plays the top row; you play the bottom row.
@@ -496,7 +529,7 @@ The JSON parser attempts to provide useful information about any errors found.
     <ol>
     <li><b class="inhead">game_class</b>:
     A single value is required&mdash;the
-    name of python game class.  Currently only Mancala exists.
+    name of python game class.
     <li><b class="inhead">game_constants</b>:
     The value is a JSON string with two required
     key-value pairs: holes and nbr_start.
@@ -514,6 +547,8 @@ The JSON parser attempts to provide useful information about any errors found.
 <p>Other top level elements may be included as notes or documentation.
 The same tag-value format required of JSON must be used.
 For example, most files have a "rules" tag with a value describing where the rules came from.
+This is not the only source of rules for the game,
+but are the rules the game was implemented to.
 <p>There is game property file "_all_params.txt" that shows where all
 game parameters should be placed.
 When defining new game files, parameters only need to be specified if the
