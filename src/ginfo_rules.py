@@ -30,6 +30,8 @@ DIFF_LEVELS = 4
 MAX_MIN_MOVES = 5
 MAX_MINIMAX_DEPTH = 15
 
+PRINT_MSG = 'print msg'
+
 
 # %% rule classes
 
@@ -41,7 +43,9 @@ class ParamRule:
           an message is printed if the name is reused
     rule: a function or lambda that takes 1 or 2 params
           should return True if there is an error
-    warn: if True, genearte a warning, else an exception
+    warn: if PRINT_MSG, will print a message to console (too early to
+          be put into a game log)
+          if True, genearte a warning, else an exception
     excp: if generating an exception, generate this exception
     both_objs: if True, call with obj1 and obj2, otherwise only obj1"""
 
@@ -58,7 +62,9 @@ class ParamRule:
         error = self.rule(obj1, obj2) if self.both_objs else self.rule(obj1)
         if error:
             msg = self.msg + f' ({self.name}).'
-            if self.warn:
+            if self.warn == PRINT_MSG:
+                print('\n*** Gentle Warning:  ', msg)
+            elif self.warn:
                 warnings.warn(msg)
             else:
                 raise self.excp(msg)
@@ -896,7 +902,7 @@ def build_rules():
         'mmg1_mustshare',
         rule=lambda ginfo: ginfo.min_move > 1 and ginfo.mustshare,
         msg='Shared seeds from MUSTSHARE might not be playable with min_move > 1',
-        warn=True)
+        warn=PRINT_MSG)
 
     man_rules.add_rule(
         'unfed_mustshare',
