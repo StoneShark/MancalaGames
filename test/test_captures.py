@@ -35,12 +35,15 @@ CHILD = 5
 LOCKS = 9
 STORE = 13
 INDIV = 15
-CAPT_ON = 19   # needed to translate str to list
+CAPT_ON = 19   # needed to translate to list
+MCAPT = 20
 EBOARD = 33
 ECHILD = 37
 ESTORE = 41
 RESULT = 43
 END = 44
+
+FALSE_DEFAULTS = (18, 22, 23, 30, 31, 32)
 
 SKEEP = slice(0, END)
 SBOARD = slice(BOARD, CHILD)
@@ -52,6 +55,7 @@ SEBOARD = slice(EBOARD, ECHILD)
 SECHILD = slice(ECHILD, ESTORE)
 SESTORE = slice(ESTORE, RESULT)
 
+
 CONVERT_DICT = {'N': None,
                 'T': True,
                 'TRUE': True,
@@ -59,7 +63,6 @@ CONVERT_DICT = {'N': None,
                 'F': False,
                 'FALSE': False,
                 'False': False,
-                '': 0,
 
                 'CCW': gi.Direct.CCW,
                 'CW': gi.Direct.CW,
@@ -77,86 +80,146 @@ CONVERT_DICT = {'N': None,
                 'NEXT': gi.CaptType.NEXT,
                 'TWOOUT': gi.CaptType.TWO_OUT,
                 'MOPP': gi.CaptType.MATCH_OPP,
-
                 }
 
-FIELD_NAMES = {}
-CASES= []
+
+def bool_none(val):
+    """Boolean with default of None"""
+
+    if val in CONVERT_DICT:
+        return CONVERT_DICT[val]
+
+    if pd.isna(val):
+        return None
+    return bool(val)
+
+
+def bool_true(val):
+    """Boolean with default of True"""
+
+    if val in CONVERT_DICT:
+        return CONVERT_DICT[val]
+
+    if pd.isna(val):
+        return True
+    return bool(val)
+
+
+def bool_false(val):
+    """Boolean with default of False"""
+
+    if val in CONVERT_DICT:
+        return CONVERT_DICT[val]
+
+    if pd.isna(val):
+        return False
+    return bool(val)
+
+
+def int_none(val):
+    """interger with default of None"""
+
+    if pd.isna(val):
+        return None
+    return int(val)
+
 
 def convert(val, col, line):
 
     if col == CASE:
-        return val
+        return str(val)
+
+    if (SBOARD.start <= col < SBOARD.stop
+            or SEBOARD.start <= col < SEBOARD.stop):
+        return int(val)
+
+    if (SCHILD.start <= col < SCHILD.stop
+            or SECHILD.start <= col < SECHILD.stop):
+        return bool_none(val)
+
+    if SLOCKS.start <= col < SLOCKS.stop:
+        return bool_true(val)
+
+    if (SSTORE.start <= col < SSTORE.stop
+            or SESTORE.start <= col < SESTORE.stop):
+        return int_none(val)
 
     if col == CAPT_ON:
         capts = []
-        if val:
+        if isinstance(val, str):
             for ival in val.split(' '):
                 if ival.isdigit():
                     capts += [int(ival)]
                 else:
                     raise ValueError(f"Non-integer found for capt {line}.")
+        elif (isinstance(val, int)
+                  or (isinstance(val, float) and pd.notna(val))):
+            capts = [int(val)]
         return capts
-
-    if (SCHILD.start <= col < SCHILD.stop
-        or SECHILD.start <= col < SECHILD.stop) and not val:
-        return None
-
-    if SLOCKS.start <= col < SLOCKS.stop and not val:
-        return True
 
     if val in CONVERT_DICT:
         return CONVERT_DICT[val]
 
-    if val.replace('.0', '').isdigit() :
-        return int(val.replace('.0', ''))
+    if val in FALSE_DEFAULTS:
+        return bool_false(val)
 
-    if val.isdigit() or (val[0] == '-' and val[1:].isdigit()):
+    # we should ints or unspecified enums left
+    if pd.isna(val):
+        return 0
+
+    if isinstance(val, int):
+        return val
+
+    if isinstance(val, float):
         return int(val)
 
-    raise ValueError(f"Unknown value type at col/line {col}/{line}: {val}")
+    if isinstance(val, str):
+        if val.replace('.0', '').isdigit() :
+            return int(val.replace('.0', ''))
+
+        if val.isdigit() or (val[0] == '-' and val[1:].isdigit()):
+            return int(val)
+
+    raise ValueError(f"Unknown value type at line/col {line}/{col}: {val}")
+
 
 
 def read_test_cases():
 
     global FIELD_NAMES, CASES
 
-    tfile = 'test/capture_test_data.csv'
-    tc_dframe = pd.read_excel('test/capture_test_data.xlsx',
-                              header=None)
-    with open(tfile, 'w', newline='', encoding='utf-8') as file:
-        tc_dframe.to_csv(file, header=False, index=False)
-
-
-    with open(tfile, 'r', encoding='utf-8') as file:
-        lines = file.readlines()
-    lines[0] = lines[0][1:]
-
-    field_names = lines[2].split(',')
-    FIELD_NAMES = [fname for fname in field_names[:-1] if fname]
-
-    Case = collections.namedtuple('Case', FIELD_NAMES)
+    cases_df = pd.read_excel('test/capture_test_data.xlsx', header=None)
 
     CASES = []
-    for lcnt in range(4, len(lines), 2):
+    for idx, row in cases_df.iterrows():
 
-        line_one = [convert(val, col, lcnt + 1)
-                    for col, val in enumerate(lines[lcnt].split(',')[SKEEP])]
-        line_two = [convert(val, col, lcnt + 2)
-                    for col, val in enumerate(lines[lcnt + 1].split(',')[SKEEP])]
+        if idx in [0, 1, 3]:
+            continue
 
-        board = utils.build_board(line_one[SBOARD], line_two[SBOARD])
-        child = utils.build_board(line_one[SCHILD], line_two[SCHILD])
-        locks = utils.build_board(line_one[SLOCKS], line_two[SLOCKS])
-        store = line_one[SSTORE]
+        elif idx == 2:
+            FIELD_NAMES = [fname for fname in row if pd.notna(fname)]
+            Case = collections.namedtuple('Case', FIELD_NAMES)
 
-        eboard = utils.build_board(line_one[SEBOARD], line_two[SEBOARD])
-        echild = utils.build_board(line_one[SECHILD], line_two[SECHILD])
-        estore = line_one[SESTORE]
+        elif not idx % 2:
+            line_one = [convert(val, col, idx)
+                        for col, val in enumerate(row[SKEEP])]
 
-        CASES += [Case(line_one[CASE], board, child, locks, store,
-                       *(line_one[SINDIV]),
-                       eboard, echild, estore, line_one[RESULT])]
+        else:
+            line_two = [convert(val, col, idx)
+                        for col, val in enumerate(row[SKEEP])]
+
+            board = utils.build_board(line_one[SBOARD], line_two[SBOARD])
+            child = utils.build_board(line_one[SCHILD], line_two[SCHILD])
+            locks = utils.build_board(line_one[SLOCKS], line_two[SLOCKS])
+            store = line_one[SSTORE]
+
+            eboard = utils.build_board(line_one[SEBOARD], line_two[SEBOARD])
+            echild = utils.build_board(line_one[SECHILD], line_two[SECHILD])
+            estore = line_one[SESTORE]
+
+            CASES += [Case(line_one[CASE], board, child, locks, store,
+                           *(line_one[SINDIV]),
+                           eboard, echild, estore, line_one[RESULT])]
 
 
 read_test_cases()
