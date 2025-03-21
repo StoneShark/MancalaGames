@@ -1590,6 +1590,30 @@ unless all the player's holes contain 2, then only the rightmost hole maybe play
   </div>
 </div>
 <p>Rules: <a href="https://mancala.fandom.com/wiki/Micro-Wari" target="_blank">https://mancala.fandom.com/wiki/Micro-Wari</a>
+<h3 id="Modiar">Modiar</h3>
+<p>Sow counter-clockwise from own side hole with more than 1 seed. The first seed of a goes into the start hole. If opponent has no seeds you must share (though this might or might not give them a valid move). Grand slam moves are not allowed.
+<p>Multiple capture on 2s, 4s and 6s.
+<p>Goal: collect more than half the seeds.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  3</p>
+    <p class="param">Start seeds:  7</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 2 4 6</p>
+    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: BOTH</p>
+    <p class="param"><a href="game_params.html#grandslam">Grand Slam</a>: NOT_LEGAL</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 2</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: -1</p>
+    <p class="param"><a href="game_params.html#mustshare">Must Share</a>: Yes</p>
+    <p class="param"><a href="game_params.html#nocaptmoves">Nbr Start Moves w/o Capture</a>: 1</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_start">Sow Start Hole</a>: Yes</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: <a href="https://mancala.fandom.com/wiki/Modiar" target="_blank">https://mancala.fandom.com/wiki/Modiar</a>
 <h3 id="Motiq">Motiq</h3>
 <p>Sow counter-clockwise in multiple laps. Continue lapping until the last seed falls into an empty hole or makes a hole containing 4 seeds. If the last seed of a lap makes 4 seeds, capture those seeds and continue the lap sowing with the seeds in the next hole. If there are no seeds in the next hole, the turn is over.
 <p>A round ends when one player cannot move. Seeds left on the board are allocated to the player that performed the last move. For the next round, holes are allocated to each player based on how many seeds they collected in the previous round.
@@ -2578,15 +2602,16 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Mbothe">Mbothe</a></p>
     <p class="param"><a href="#Meusuëb">Meusuëb</a></p>
     <p class="param"><a href="#Micro-Wari">Micro-Wari</a></p>
+    <p class="param"><a href="#Modiar">Modiar</a></p>
     <p class="param"><a href="#Motiq">Motiq</a></p>
     <p class="param"><a href="#NS_Kalah">NS_Kalah</a></p>
     <p class="param"><a href="#NamNam">NamNam</a></p>
     <p class="param"><a href="#Nambayi">Nambayi</a></p>
     <p class="param"><a href="#Ndoto">Ndoto</a></p>
     <p class="param"><a href="#No Sides Child">No Sides Child</a></p>
-    <p class="param"><a href="#NoCapt">NoCapt</a></p>
   </div>
   <div class="column3">
+    <p class="param"><a href="#NoCapt">NoCapt</a></p>
     <p class="param"><a href="#NoSides">NoSides</a></p>
     <p class="param"><a href="#NumNum">NumNum</a></p>
     <p class="param"><a href="#Obridjie">Obridjie</a></p>
