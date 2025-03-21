@@ -230,7 +230,8 @@ class SowCaptOwned(SowMethodIf):
             self.captor = lambda loc, turn: turn
 
             if self.game.info.capt_side in (gi.CaptSide.OWN_SIDE,
-                                            gi.CaptSide.OWN_CONT):
+                                            gi.CaptSide.OWN_CONT,
+                                            gi.CaptSide.OWN_TERR):
 
                 if game.info.goal == gi.Goal.TERRITORY:
                     self.conds += [lambda scnt, loc, turn:
@@ -240,7 +241,8 @@ class SowCaptOwned(SowMethodIf):
                                        turn == game.cts.board_side(loc)]
 
             elif self.game.info.capt_side in (gi.CaptSide.OPP_SIDE,
-                                              gi.CaptSide.OPP_CONT):
+                                              gi.CaptSide.OPP_CONT,
+                                              gi.CaptSide.OPP_TERR):
 
                 if game.info.goal == gi.Goal.TERRITORY:
                     self.conds += [lambda scnt, loc, turn:
