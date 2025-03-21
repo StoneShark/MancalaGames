@@ -788,7 +788,7 @@ is included after the parameter sections.
 <p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Capture
 
-<p>Limits which side of the board captures maybe done on:
+<p>Limits where captures maybe made:
 <ol start=0><li class="helptext">
 <b class="enum">BOTH</b>: no limitations
 <li class="helptext">
@@ -799,6 +799,10 @@ is included after the parameter sections.
 <b class="enum">OPP_CONT</b>: a multi-capture must begin on the opposite side of the board but may continue onto your own side. Requires <a href="game_params.html#multicapt">MULTICAPT</a>.
 <li class="helptext">
 <b class="enum">OWN_CONT</b>: a multi-capture must begin on your own side of the board and may continue onto your opponent's side. Requires multicapt.
+<li class="helptext">
+<b class="enum">OPP_TERR</b>: capture from opponent's holes only (territory <a href="game_params.html#goal">GOAL</a> games only).
+<li class="helptext">
+<b class="enum">OWN_TERR</b>: capture from own holes only (territory goal games only).
 </ol>
 <h4 id="nosinglecapt"> No Single Seed Capture </h4>
 <p class="pdesc">Location in Config Files: game_info : nosinglecapt

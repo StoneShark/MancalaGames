@@ -88,7 +88,7 @@ Either SOWRULE of OWN_SOW_CAPT_ALL or SOW_SOW_CAPT_ALL includes the basic captur
 Repeat turn if there was a capture. Making children is not a capture.
 
 <param capt_side>
-Limits which side of the board captures maybe done on:
+Limits where captures maybe made:
 
 - BOTH: no limitations
 
@@ -99,6 +99,10 @@ Limits which side of the board captures maybe done on:
 - OPP_CONT: a multi-capture must begin on the opposite side of the board but may continue onto your own side. Requires MULTICAPT.
 
 - OWN_CONT: a multi-capture must begin on your own side of the board and may continue onto your opponent's side. Requires multicapt.
+
+- OPP_TERR: capture from opponent's holes only (territory GOAL games only).
+
+- OWN_TERR: capture from own holes only (territory goal games only).
 
 <param capt_type>
 Capture type.

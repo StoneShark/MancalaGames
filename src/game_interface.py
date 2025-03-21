@@ -68,6 +68,8 @@ class CaptSide(enum.IntEnum):
     OWN_SIDE = 2
     OPP_CONT = 3    # opp side but continue onto own side
     OWN_CONT = 4    # own side but continue onto opp side
+    OPP_TERR = 5
+    OWN_TERR = 6
 
 
 @enum.unique

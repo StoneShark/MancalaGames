@@ -251,6 +251,24 @@ def add_territory_rules(rules):
         # XXXX could initial ownship be changed so that no_sides makes sense
 
     rules.add_rule(
+        'terr_capt_side',
+        rule=lambda ginfo: (ginfo.goal == gi.Goal.TERRITORY
+                            and ginfo.capt_side in (gi.CaptSide.OPP_SIDE,
+                                                    gi.CaptSide.OWN_SIDE,
+                                                    gi.CaptSide.OPP_CONT,
+                                                    gi.CaptSide.OWN_CONT)),
+        msg='CAPT_SIDE based on board location is odd for Territory games',
+        warn=True)
+
+    rules.add_rule(
+        'capt_terr',
+        rule=lambda ginfo: (ginfo.goal != gi.Goal.TERRITORY
+                            and ginfo.capt_side in (gi.CaptSide.OPP_TERR,
+                                                    gi.CaptSide.OWN_TERR)),
+        msg='CAPT_SIDE based on hole ownership is only valid for Territory games',
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
         'terr_no_rfill',
         rule=lambda ginfo: (ginfo.goal == gi.Goal.TERRITORY
                             and ginfo.round_fill not in (gi.RoundFill.NOT_APPLICABLE,

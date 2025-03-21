@@ -57,7 +57,7 @@ class CaptEvens(CaptOkIf):
     """Capture on Evens that are > 0."""
 
     def capture_ok(self, mdata,  loc):
-        """Return Fales if capture from loc is not ok,
+        """Return False if capture from loc is not ok,
         otherwise delegate."""
 
         if self.game.board[loc] % 2:
@@ -69,7 +69,7 @@ class CaptMax(CaptOkIf):
     """Capture on values <= capt_max."""
 
     def capture_ok(self, mdata,  loc):
-        """Return Fales if capture from loc is not ok,
+        """Return False if capture from loc is not ok,
         otherwise delegate."""
 
         if self.game.board[loc] > self.game.info.capt_max:
@@ -81,7 +81,7 @@ class CaptMin(CaptOkIf):
     """Capture on values >= capt_min."""
 
     def capture_ok(self, mdata,  loc):
-        """Return Fales if capture from loc is not ok,
+        """Return False if capture from loc is not ok,
         otherwise delegate."""
 
         if self.game.board[loc] < self.game.info.capt_min:
@@ -110,12 +110,18 @@ class CaptSideOk(CaptOkIf):
             self.side_ok = lambda mdata, turn, loc: \
                 game.cts.opp_side(turn, mdata.capt_loc)
 
+        elif game.info.capt_side == gi.CaptSide.OPP_TERR:
+            self.side_ok = lambda _, turn, loc: game.owner[loc] == (not turn)
+
+        elif game.info.capt_side == gi.CaptSide.OWN_TERR:
+            self.side_ok = lambda _, turn, loc: game.owner[loc] == turn
+
         else:
             raise NotImplementedError(
                 f"CaptSide {game.info.capt_side} is not implemented")
 
     def capture_ok(self, mdata, loc):
-        """Return Fales if capture from loc is not ok,
+        """Return False if capture from loc is not ok,
         otherwise delegate."""
 
         if not self.side_ok(mdata, self.game.turn, loc):
@@ -128,7 +134,7 @@ class CaptUnlocked(CaptOkIf):
     """Can't capture from locked holes."""
 
     def capture_ok(self, mdata,  loc):
-        """Return Fales if capture from loc is not ok,
+        """Return False if capture from loc is not ok,
         otherwise delegate."""
 
         if not self.game.unlocked[loc]:
@@ -144,7 +150,7 @@ class CaptNeedSeedsNotChild(CaptOkIf):
     Blocked holes will have zero seeds."""
 
     def capture_ok(self, mdata,  loc):
-        """Return Fales if capture from loc is not ok,
+        """Return False if capture from loc is not ok,
         otherwise delegate."""
 
         if not self.game.board[loc] or self.game.child[loc] is not None:

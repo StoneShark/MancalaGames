@@ -10,6 +10,7 @@ Created on Thu Sep 21 10:41:35 2023
 
 import collections
 
+import pandas
 import pytest
 pytestmark = pytest.mark.unittest
 
@@ -94,46 +95,46 @@ class TestSingleClasses:
         assert cok.capture_ok(None, loc) == eok
 
 
-    @pytest.mark.parametrize('cside, turn, loc, sloc, eok',
-                             [(1, False, 0, N, False),
-                              (1, False, 1, N, False),
-                              (1, False, 2, N, True),
-                              (1, False, 3, N, True),
-                              (1, True, 0, N, True),
-                              (1, True, 1, N, True),
-                              (1, True, 2, N, False),
-                              (1, True, 3, N, False),
+    SIDE_CASES = [(1, False, 0, N, False),
+                  (1, False, 1, N, False),
+                  (1, False, 2, N, True),
+                  (1, False, 3, N, True),
+                  (1, True, 0, N, True),
+                  (1, True, 1, N, True),
+                  (1, True, 2, N, False),
+                  (1, True, 3, N, False),
 
-                              (2, False, 0, N, True),
-                              (2, False, 1, N, True),
-                              (2, False, 2, N, False),
-                              (2, False, 3, N, False),
-                              (2, True, 0, N, False),
-                              (2, True, 1, N, False),
-                              (2, True, 2, N, True),
-                              (2, True, 3, N, True),
+                  (2, False, 0, N, True),
+                  (2, False, 1, N, True),
+                  (2, False, 2, N, False),
+                  (2, False, 3, N, False),
+                  (2, True, 0, N, False),
+                  (2, True, 1, N, False),
+                  (2, True, 2, N, True),
+                  (2, True, 3, N, True),
 
-                              #   OPP_CONT
-                              (3, False, 0, 0, False),
-                              (3, False, 1, 2, True),
-                              (3, False, 2, 0, False),
-                              (3, False, 3, 2, True),
-                              (3, True, 0, 0, True),
-                              (3, True, 1, 2, False),
-                              (3, True, 2, 0, True),
-                              (3, True, 3, 2, False),
+                  #   OPP_CONT
+                  (3, False, 0, 0, False),
+                  (3, False, 1, 2, True),
+                  (3, False, 2, 0, False),
+                  (3, False, 3, 2, True),
+                  (3, True, 0, 0, True),
+                  (3, True, 1, 2, False),
+                  (3, True, 2, 0, True),
+                  (3, True, 3, 2, False),
 
-                              #   OWN_CONT
-                              (4, False, 0, 0, True),
-                              (4, False, 1, 2, False),
-                              (4, False, 2, 0, True),
-                              (4, False, 3, 2, False),
-                              (4, True, 0, 0, False),
-                              (4, True, 1, 2, True),
-                              (4, True, 2, 0, False),
-                              (4, True, 3, 2, True),
+                  #   OWN_CONT
+                  (4, False, 0, 0, True),
+                  (4, False, 1, 2, False),
+                  (4, False, 2, 0, True),
+                  (4, False, 3, 2, False),
+                  (4, True, 0, 0, False),
+                  (4, True, 1, 2, True),
+                  (4, True, 2, 0, False),
+                  (4, True, 3, 2, True),
+                ]
 
-                              ])
+    @pytest.mark.parametrize('cside, turn, loc, sloc, eok', SIDE_CASES)
     def test_sideok(self, game, mdata, cside, turn, loc, sloc, eok):
 
         game.turn = turn
@@ -141,6 +142,40 @@ class TestSingleClasses:
         cok = capt_ok.CaptSideOk(game, capt_ok.CaptTrue(game))
 
         mdata.capt_loc = sloc
+        assert cok.capture_ok(mdata, loc) == eok
+
+
+    TERR_CASES =  [(gi.CaptSide.OPP_TERR, False, 0, False),
+                   (gi.CaptSide.OPP_TERR, False, 1, True),
+                   (gi.CaptSide.OPP_TERR, False, 2, False),
+                   (gi.CaptSide.OPP_TERR, False, 3, True),
+
+                   (gi.CaptSide.OPP_TERR, True, 0, True),
+                   (gi.CaptSide.OPP_TERR, True, 1, False),
+                   (gi.CaptSide.OPP_TERR, True, 2, True),
+                   (gi.CaptSide.OPP_TERR, True, 3, False),
+
+                   (gi.CaptSide.OWN_TERR, False, 0, True),
+                   (gi.CaptSide.OWN_TERR, False, 1, False),
+                   (gi.CaptSide.OWN_TERR, False, 2, True),
+                   (gi.CaptSide.OWN_TERR, False, 3, False),
+
+                   (gi.CaptSide.OWN_TERR, True, 0, False),
+                   (gi.CaptSide.OWN_TERR, True, 1, True),
+                   (gi.CaptSide.OWN_TERR, True, 2, False),
+                   (gi.CaptSide.OWN_TERR, True, 3, True),
+                   ]
+
+    @pytest.mark.parametrize('cside, turn, loc, eok', TERR_CASES)
+    def test_sideok_terr(self, game, mdata, cside, turn, loc, eok):
+
+        game.turn = turn
+        object.__setattr__(game.info, 'capt_side', cside)
+        cok = capt_ok.CaptSideOk(game, capt_ok.CaptTrue(game))
+
+        game.owner = [F, T, F, T]
+        mdata.capt_loc = None   # don't care
+
         assert cok.capture_ok(mdata, loc) == eok
 
 
@@ -225,41 +260,21 @@ class TestSingleClasses:
 # %%  test cases and methods
 
 
-CONVERT_DICT = {'None': None,
-                'TRUE': True,
-                'FALSE': False,
-                '': 0,
-                }
-
-def convert(val, col, line):
-
-    if val in CONVERT_DICT:
-        return CONVERT_DICT[val]
-
-    if all(d in '0123456789' for d in val):
-        return int(val)
-
-    if not val:
-        return 0
-
-    raise ValueError(f"Unknown value type at line:col {line}/{col}: _{val}_")
-
-
 def read_test_cases():
 
     global FIELD_NAMES, CASES
 
-    with open('test/capt_ok_test_cases.csv', 'r', encoding='utf-8') as file:
-        lines = file.readlines()
-    lines[0] = lines[0][1:]
-
-    FIELD_NAMES = lines[0].strip().split(',')
+    cases_df = pandas.read_excel('test/capt_ok_test_cases.xlsx')
+    FIELD_NAMES = cases_df.columns
     Case = collections.namedtuple('Case', FIELD_NAMES)
 
     CASES = []
-    for lcnt, line in enumerate(lines[3:]):
-        CASES += [Case(*(convert(val, col + 1, lcnt + 4)
-                       for col, val in enumerate(line.strip().split(','))))]
+    for _, row in cases_df.iterrows():
+
+        if row.child not in (True, False):
+            row.child = None
+
+        CASES += [Case(*row)]
 
 
 read_test_cases()

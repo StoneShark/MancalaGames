@@ -88,7 +88,9 @@ STRING_DICTS = {
          'Opposite': gi.CaptSide.OPP_SIDE,
          'Own': gi.CaptSide.OWN_SIDE,
          'First Opp, then either': gi.CaptSide.OPP_CONT,
-         'First Own, then either': gi.CaptSide.OWN_CONT}),
+         'First Own, then either': gi.CaptSide.OWN_CONT,
+         "Opponent's Territory": gi.CaptSide.OPP_TERR,
+         'Own Territory': gi.CaptSide.OWN_TERR}),
 
     'CaptType': lookup_dicts(
         gi.CaptType,

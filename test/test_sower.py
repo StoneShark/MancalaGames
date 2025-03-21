@@ -1383,13 +1383,13 @@ class TestSowCaptOwned:
         return mancala.Mancala(game_consts, game_info)
 
     TSSCASES = [
-        (CaptSide.OPP_SIDE,
+        (CaptSide.OPP_TERR,
          1, utils.build_board([2, 3, 3],
                               [0, 3, 3]),
          4, utils.build_board([2, 4, 0],
                               [0, 0, 4]), [4, 0]),
 
-        (CaptSide.OWN_SIDE,
+        (CaptSide.OWN_TERR,
          1, utils.build_board([2, 3, 3],
                               [0, 3, 3]),
          2, utils.build_board([3, 0, 4],
