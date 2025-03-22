@@ -30,5 +30,6 @@
          "stores_m": 4,
          "child_cnt_m": 16
       }
-   }
+   },
+   "rules": "Ann Davies, 2025"
 }

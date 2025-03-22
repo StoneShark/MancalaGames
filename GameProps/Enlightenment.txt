@@ -29,5 +29,6 @@
          "seeds_m": -12,
          "empties_m": 2
       }
-   }
+   },
+   "rules": "Ann Davies, 2025"
 }

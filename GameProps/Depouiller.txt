@@ -29,5 +29,6 @@
          "mcts_pouts": [ 2, 3, 3, 3 ],
          "mm_depth": [ 1, 5, 7, 11 ]
       }
-   }
+   },
+   "rules": "Ann Davies, 2025"
 }
