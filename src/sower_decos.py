@@ -467,12 +467,18 @@ class SowPrescribedIf(SowMethodIf):
 
     def __init__(self, game, count, decorator=None):
 
+        if not decorator:
+            raise gi.GameInfoError(
+                "Prescribed sower's must have follow on decorators")
+
         super().__init__(game, decorator)
         self.dispose = count
+
 
     @abc.abstractmethod
     def do_prescribed(self, mdata):
         """Do the prescribed opening moves."""
+
 
     def sow_seeds(self, mdata):
         """If the decorator has expired, call the child sower."""
@@ -482,12 +488,20 @@ class SowPrescribedIf(SowMethodIf):
         else:
             self.do_prescribed(mdata)
 
-    def get_single_sower(self):    # pragma: no coverage
-        """ginfo rules should prevent this from being called.
-        don't try to force do_prescribed into valid sower rules
-        (until we want it :)"""
-        raise NotImplementedError(
-            "SowPrescribedIf doesn't know how to get single sower")
+
+    def get_single_sower(self):
+        """Get the non-prescribed single sower. Skip past
+        the self and get the single sower of the next
+        deco--there must be one because that's how prescribed
+        sowers work.
+
+        This is not what the allowables test wants  (for
+        do_sow simulation), it should  not use it. Rules
+        should prevent it.
+
+        BearOff uses this to wrap the single sower."""
+
+        return self.decorator.get_single_sower()
 
 
 class SowBasicFirst(SowPrescribedIf):
@@ -496,6 +510,7 @@ class SowBasicFirst(SowPrescribedIf):
     def __init__(self, game, count, decorator=None):
         super().__init__(game, count, decorator)
         self.sower = SowSeeds(game)
+
 
     def do_prescribed(self, mdata):
         self.sower.sow_seeds(mdata)
