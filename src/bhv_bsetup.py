@@ -142,11 +142,13 @@ class SetupHold(bhv_hold.Hold):
         tk.Button(tframe, text="Initial Setup",
                   command=self.init_setup).grid(
                       row=row, column=ccnt.count, padx=2, pady=2, sticky='ew')
-        tk.Button(tframe, text="Clear to Stores",
-                  command=self.clear_to_stores).grid(
-                      row=row, column=ccnt.count, padx=2, pady=2, sticky='ew')
 
         if game_ui.game.info.goal in (gi.Goal.CLEAR, gi.Goal.DEPRIVE):
+
+            tk.Button(tframe, text="Clear Board",
+                      command=self.clear_board).grid(
+                          row=row, column=ccnt.count,
+                          padx=2, pady=2, sticky='ew')
 
             self.out_of_play = sum(self.game_ui.game.store)
             self.game_ui.game.store[0] = self.out_of_play
@@ -158,6 +160,13 @@ class SetupHold(bhv_hold.Hold):
             self._oop_btn.grid(
                 row=row, column=ccnt.count, padx=2, pady=2, sticky='ew')
             self._oop_btn.bind('<Button-3>', self.sub_seeds)
+
+        else:
+            tk.Button(tframe, text="Clear to Stores",
+                      command=self.clear_to_stores).grid(
+                          row=row, column=ccnt.count,
+                          padx=2, pady=2, sticky='ew')
+
 
         tframe.pack(side='top')
 
@@ -176,6 +185,21 @@ class SetupHold(bhv_hold.Hold):
         """Set the starter to False and do board refresh."""
 
         self.game_ui.game.starter = self.game_ui.game.turn = False
+        self.refresh_game()
+
+
+    def clear_board(self):
+        """Move the seeds off the board and do board refresh."""
+
+        game = self.game_ui.game
+        self.out_of_play = game.cts.total_seeds
+        game.store[0] = self.out_of_play
+        game.store[1] = 0
+        self._oop_btn['text']=f"Off board: {self.out_of_play}"
+
+        for i, _ in enumerate(game.board):
+            game.board[i] = 0
+
         self.refresh_game()
 
 
@@ -297,7 +321,7 @@ class SetupButtonBehavior(bhv.BehaviorIf):
                         move count will be reset to 2
                         (no prescribed openings will occur),
                         and knowledge gained by AI player
-                        is not cleared.""")
+                        is not cleared and it is deactivated.""")
 
         do_it = tk.messagebox.askokcancel(
             title='Board Setup',
@@ -310,6 +334,7 @@ class SetupButtonBehavior(bhv.BehaviorIf):
         SETUPHOLD.hold_menu(game_ui)
         game_ui.game.inhibitor.set_off()
         game_ui.game.mcount = 2
+        game_ui.vars.ai_active.set(False)
 
         return True
 
