@@ -204,7 +204,7 @@ class StopCaptureSeeds(LapContinuerIf):
 class StopCaptureSimul(LapContinuerIf):
     """A wrapper: stop based on simulated capture.
     Use this instead of StopCaptureSeeds when capt_ok
-    or StopSingleSeeds are enough to stop for capture."""
+    or StopSingleSeeds are not enough to stop for capture."""
 
     def do_another_lap(self, mdata):
 
