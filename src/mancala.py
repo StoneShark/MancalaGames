@@ -241,6 +241,29 @@ class ManDeco:
             deco = deco.decorator
         assert deco.decorator, f"Didn't find ({old_class}) in deco chain."
 
+        new_deco.decorator = deco.decorator.decorator
+        deco.decorator = new_deco
+
+
+    def insert_deco(self, deco_name, post_class, new_deco):
+        """insert the new_deco before the deco of type post_class
+         in the deco_name chain.
+
+        This is used in game classes derived from Mancala."""
+
+        deco = getattr(self, deco_name)
+
+        # inserting new head of the deco chain
+        if isinstance(deco, post_class):
+            new_deco.decorator = deco
+            setattr(self, deco_name, new_deco)
+            return
+
+        while (deco.decorator
+               and not isinstance(deco.decorator, post_class)):
+            deco = deco.decorator
+        assert deco.decorator, f"Didn't find ({post_class}) in deco chain."
+
         new_deco.decorator = deco.decorator
         deco.decorator = new_deco
 

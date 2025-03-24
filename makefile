@@ -13,6 +13,7 @@ MODULES += ai_player.py
 MODULES += allowables.py
 MODULES += aspect_frame.py
 MODULES += behaviors.py
+MODULES += bear_off.py
 MODULES += bhv_bsetup.py
 MODULES += bhv_hold.py
 MODULES += bhv_owners.py
