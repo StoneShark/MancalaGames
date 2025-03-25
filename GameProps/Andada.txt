@@ -1,12 +1,12 @@
 {
    "game_class": "BearOff",
    "game_constants": {
-      "holes": 12,
+      "holes": 15,
       "nbr_start": 3
    },
    "game_info": {
       "name": "Andada",
-      "about": "Clipped triple start pattern.\nSow counter-clockwise in multiple laps.\n\nWhen all holes singletons or empty, seeds reaching the end of the board are removed from play.\n\nWhen final seed ends on own side of board, any opposite are removed from play.\n\nWinner: last person with a seed on the board (a deprive game).\n\nVariation:\n- board size any multiple of 3\n- sow clockwise\n",
+      "about": "Clipped triple start pattern. Sow counter-clockwise in multiple laps.\n\nWhen final the seed of a sow ends in an empty hole on your own side of board, any opposite seeds are removed from play (cross capture).\n\nWhen all holes are singletons or empty, sowing changes to a bear off method, that is, all seeds reaching the end of the board are removed from play. Once this method is activated in a game, sowing does not return to normal.\n\nWinner: the last player with one seed on the board (a deprive game).\n\nVariation:\n- board size any multiple of 3 (often a very large board)\n- sow clockwise\n",
       "crosscapt": true,
       "goal": 1,
       "mlaps": 1,
@@ -17,7 +17,8 @@
    "player": {
       "ai_params": {},
       "scorer": {
-         "seeds_m": 16
+         "seeds_m": 16,
+         "easy_rand": 20
       }
    },
    "rules": "https://mancala.fandom.com/wiki/Andada"

@@ -30,7 +30,7 @@
 Games may be played with two players or one player and an
 <a href="#aiplayer">AI player</a>.
 
-<p>This engine supports games with two ranks of 2 to 14 holes per side.
+<p>This engine supports games with two ranks of 2 to 15 holes per side.
 Game stores to the left and right of holes are optional.
 
 <h2 id="game_play">Game Play</h2>
@@ -352,9 +352,11 @@ group in that category. Choosing None will clear all the options in the category
 and the games.  Choosing All will set all the options in the category
 and show all the games not filtered by another category.
 
-<p>Game log entries are collected according to the Log menu settings in the Mancala UI.
-Live Log is not supported unless play_mancala.exe was started from a console
-window. Logs may be saved  at the end of each game.
+<p>Game log entries are collected according to the Log menu settings in the Mancala UI,
+but Live Log is not supported when the Mancala UI is started from play_mancala.exe.
+Logs may be saved during or at the end of each game.
+If play_mancala.py is run directly via the pyton from a console
+window, Live Log is supported.
 
 <p>Warning the main Play Manacala window is left active while the game is
 being played. Starting a second game is not recommended.

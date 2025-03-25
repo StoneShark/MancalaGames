@@ -184,13 +184,12 @@ player_tests: test\\context.py
 #  this rule cleans all previous coverage data and runs the one
 #  file from test. It reports the coverage of the files that
 #  are expected to be covered (via TEST_COVERS in the test file).
-#
-# TODO this isn't running after a "make clean"
 
 vpath %.cov .\\cov
 vpath %.py .\\test
 
 %.cov: test\\context.py src\\game_params.csv $(subst .cov,.py,$@) 
+	-mkdir cov
 	coverage run -m pytest test\\$(subst .cov,.py,$@)
 	coverage json
 	python test\\check_unit_cov.py $(subst .cov,,$@) > cov\\$@
@@ -204,6 +203,7 @@ vpath %.py .\\test
 
 UNIT_TESTS += test_ai_player.cov
 UNIT_TESTS += test_allowables.cov
+UNIT_TESTS += test_bear_off.cov
 UNIT_TESTS += test_capt_ok.cov
 UNIT_TESTS += test_captures.cov
 UNIT_TESTS += test_claimer.cov
@@ -235,7 +235,6 @@ UNIT_TESTS += test_two_cycle.cov
 
 cov_unit_tests: $(UNIT_TESTS)
 	grep -h src cov\\*.cov
-
 
 
 

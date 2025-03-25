@@ -469,7 +469,7 @@ class SowPrescribedIf(SowMethodIf):
 
         if not decorator:
             raise gi.GameInfoError(
-                "Prescribed sower's must have follow on decorators")
+                "Prescribed sowers must have follow-on decorators")
 
         super().__init__(game, decorator)
         self.dispose = count

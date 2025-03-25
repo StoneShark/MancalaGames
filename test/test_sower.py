@@ -1606,6 +1606,21 @@ class TestPrescribed:
         assert game_p1m1.board == eboard
 
 
+    def test_bad_construct(self, game):
+        """Decorator must be provided."""
+
+        with pytest.raises(gi.GameInfoError):
+            sowd.SowBasicFirst(game, 5)
+
+
+    def test_get_single(self, game_1opp):
+        """single sower return the non-prescribed single sower."""
+
+        assert isinstance(game_1opp.deco.sower, sowd.SowPrescribedIf)
+        assert isinstance(game_1opp.deco.sower.get_single_sower(),
+                          sowd.SowSeeds)
+
+
 class TestCaptMlap:
 
     @pytest.fixture

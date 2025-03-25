@@ -58,7 +58,9 @@ def build_rules():
 # %% deco replacements
 
 class BearOffSow(sower_decos.SowMethodIf):
-    """Sow seeds off the board when leaving our own side."""
+    """Sow seeds off the board when leaving our own side.
+    Put them into our own store in case this is a MAX_SEEDS
+    game."""
 
     def sow_seeds(self, mdata):
         """Sow seeds."""
@@ -76,7 +78,7 @@ class BearOffSow(sower_decos.SowMethodIf):
                                            mdata.cont_sow_loc)
 
             if self.game.cts.opp_side(self.game.turn, loc):
-                self.game.store[not self.game.turn] += rem_seeds
+                self.game.store[self.game.turn] += rem_seeds
                 mdata.capt_loc = ploc
                 mdata.captured = True
                 return
@@ -87,28 +89,40 @@ class BearOffSow(sower_decos.SowMethodIf):
 
 
 class NoSeedsEnder(end_move_decos.EndTurnIf):
-    """If we are past the normal_sow and the current player
-    has no seeds, the opponent has won. Don't need to wait
+    """Ender when current player has no seeds for
+    clear and deprive games.
+
+    If we are past the normal_sow and the current player
+    has no seeds, the game is over. Don't need to wait
     for opponents sow because they cannot be forced to give
     us seeds."""
+
+    def __init__(self, game, decorator=None):
+
+        super().__init__(game, decorator)
+
+        self.win_op = False
+        if game.info.goal == gi.Goal.DEPRIVE:
+            self.win_op = lambda turn: not turn
+        elif game.info.goal == gi.Goal.CLEAR:
+            self.win_op = lambda turn: turn
+
 
     def game_ended(self, repeat_turn, ended=False):
 
         if (ended
+            or not self.win_op
             or self.game.normal_sow
             or any(self.game.board[loc]
                    for loc in self.game.cts.get_my_range(self.game.turn))):
 
             return self.decorator.game_ended(repeat_turn, ended)
 
-        return gi.WinCond.WIN, not self.game.turn
+        return gi.WinCond.WIN, self.win_op(self.game.turn)
 
 
 # %% BearOff game class
 
-
-# TODO update the makefile
-# TODO return board size to 12
 
 @dc.dataclass(frozen=True, kw_only=True)
 class BearOffState(mancala.GameState):

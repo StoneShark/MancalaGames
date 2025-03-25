@@ -28,6 +28,7 @@ import re
 import pytest
 pytestmark = pytest.mark.unittest
 
+from context import capt_ok
 from context import game_constants as gconsts
 from context import game_interface as gi
 from context import game_logger
@@ -482,13 +483,20 @@ class TestManDeco:
         assert isinstance(bad_game.deco.incr.decorator.decorator,
                           incrementer.Increment), 'Test conditions changed'
 
+        # true is not a valid decorator, but we want to assure that it
+        # is replaced correctly
+        new_incr = incrementer.IncPastBlocks(bad_game, True)
+        assert new_incr.decorator
+
         bad_game.deco.replace_deco('incr', incrementer.Increment,
-                               incrementer.IncPastBlocks(bad_game))
+                                   new_incr)
 
         assert isinstance(bad_game.deco.incr, incrementer.IncPastBlocks)
-        assert isinstance(bad_game.deco.incr.decorator, incrementer.IncPastStart)
+        assert isinstance(bad_game.deco.incr.decorator,
+                          incrementer.IncPastStart)
         assert isinstance(bad_game.deco.incr.decorator.decorator,
                           incrementer.IncPastBlocks)
+        assert not new_incr.decorator
 
 
     def test_bad_deco_replace(self, mocker, bad_game):
@@ -501,6 +509,80 @@ class TestManDeco:
             bad_game.deco.replace_deco('incr', incrementer.Increment,
                                    incrementer.IncPastBlocks(bad_game))
 
+    def test_insert_deco_1(self):
+        """Test inserting at the head of the chain."""
+
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=5)
+        game_info = gi.GameInfo(capt_on=[2],
+                                stores=True,
+                                goal=3,
+                                skip_start=True,
+                                capt_side=gi.CaptSide.OWN_SIDE,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        # confirm expected structure of deco chain
+        assert isinstance(game.deco.incr,
+                          incrementer.IncPastStart), 'Test conditions changed'
+        assert isinstance(game.deco.incr.decorator,
+                          incrementer.Increment), 'Test conditions changed'
+
+        game.deco.insert_deco('incr', incrementer.IncPastStart,
+                               incrementer.IncPastBlocks(game))
+
+        assert isinstance(game.deco.incr, incrementer.IncPastBlocks)
+        assert isinstance(game.deco.incr.decorator, incrementer.IncPastStart)
+
+
+    def test_insert_deco_2(self):
+        """Test inserting not at the head of the chain."""
+
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=5)
+        game_info = gi.GameInfo(capt_on=[2],
+                                stores=True,
+                                goal=3,
+                                skip_start=True,
+                                capt_side=gi.CaptSide.OWN_SIDE,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+        capt_ok_deco = game.deco.capt_ok
+
+        # confirm expected structure of deco chain
+        assert isinstance(capt_ok_deco,
+                          capt_ok.CaptNeedSeedsNotChild), 'Test conditions changed'
+        assert isinstance(capt_ok_deco.decorator,
+                          capt_ok.CaptSideOk), 'Test conditions changed'
+        assert isinstance(capt_ok_deco.decorator.decorator,
+                          capt_ok.CaptOn), 'Test conditions changed'
+        assert isinstance(capt_ok_deco.decorator.decorator.decorator,
+                          capt_ok.CaptTrue), 'Test conditions changed'
+
+        game.deco.insert_deco('capt_ok', capt_ok.CaptOn,
+                               capt_ok.CaptEvens(game))
+
+        assert isinstance(capt_ok_deco,
+                          capt_ok.CaptNeedSeedsNotChild)
+        assert isinstance(capt_ok_deco.decorator,
+                          capt_ok.CaptSideOk)
+        assert isinstance(capt_ok_deco.decorator.decorator,
+                          capt_ok.CaptEvens)
+        assert isinstance(capt_ok_deco.decorator.decorator.decorator,
+                          capt_ok.CaptOn)
+        assert isinstance(capt_ok_deco.decorator.decorator.decorator.decorator,
+                          capt_ok.CaptTrue)
+
+
+    def test_bad_deco_insert(self, mocker, bad_game):
+        """Patch the deco chain to only a IncPastBlocks,
+        but then try to replace Incrementer. It should fail."""
+
+        bad_game.deco.incr = incrementer.IncPastBlocks(None)
+
+        with pytest.raises(AssertionError):
+            bad_game.deco.insert_deco('incr', incrementer.Increment,
+                                      incrementer.IncPastBlocks(bad_game))
 
 
 @pytest.mark.filterwarnings("ignore")
