@@ -157,6 +157,10 @@ def sub_links(para):
 
         pre, tword, post = sep_punct(word)
 
+        if pre == '<nolink>':
+            w_links += [tword + post]
+            continue
+
         # check for multiword games
         mwgames = [sep_punct(' '.join(word_list[idx:idx + 2])),
                    sep_punct(' '.join(word_list[idx:idx + 3]))]
@@ -285,7 +289,7 @@ Descriptions are provided in the sections below.
 are good places to start.
 <a href="#Kalah">Kalah</a> is a simple cross capture game.
 
-<p><a href="#Bechi">Erherhe</a>,
+<p><a href="#Erherhe">Erherhe</a>,
 <a href="#Cow">Cow</a> and
 <a href="#Qelat">Qelat</a>
 add interesting complications to the basic rules.
@@ -450,7 +454,7 @@ def write_games_help(filename):
                 del game_dict[ckey.GAME_INFO]
                 del game_dict[ckey.PLAYER]
 
-            print(f'<h3 id="{gname}">', gname, '</h3>',
+            print(f'<h3 id="{gname}" class="game_desc">', gname, '</h3>',
                   sep='', file=ofile)
             games += [gname]
 
@@ -606,8 +610,10 @@ def write_params_help(filename):
                       file=ofile)
                 print(file=ofile)
 
-                if param.vtype == 'Direct':
+                if param.option == ckey.SOW_DIRECT:
                     write_para(param.description, ofile, -1)
+                elif param.option == ckey.GAME_CLASS:
+                    write_para(param.description, ofile)
                 else:
                     write_para(param.description, ofile, 0)
 
