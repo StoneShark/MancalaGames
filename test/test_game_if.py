@@ -225,7 +225,9 @@ class TestRuleDict:
         assert 'replaced' in data
 
 
-    def test_game_info_rule_test(self):
+    def test_game_info_rule_test(self, capsys):
+
+        # TOOD would be better if these didn't rely mancala.rules
 
         # sow_own_needs_store
         with pytest.raises(gi.GameInfoError):
@@ -241,6 +243,16 @@ class TestRuleDict:
 
         assert len(record) == 1
         assert 'No capture mechanism provided' in record[0].message.args[0]
+
+        gi.GameInfo(nbr_holes=6,
+                    evens=True,
+                    stores=True,
+                    min_move=2,
+                    mustshare=True,
+                    rules=ginfo_rules.build_rules())
+        data = capsys.readouterr().out
+        assert 'Gentle Warning' in data
+        assert 'mmg1_mustshare' in data
 
 
 class TestCfgKeys:
