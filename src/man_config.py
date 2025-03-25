@@ -61,6 +61,12 @@ PARAM = re.compile('^<param ([a-z0-9_]+)>')
 REMOVE_TAGS = [re.compile(r'<a[^>]+>'),
                re.compile(r'</a>'),
                re.compile(r'(  \+ )?<img[^>]+>\n'),
+               re.compile(r'<b[^>]+>'),
+               re.compile(r'</b>'),
+
+               # not html but used to disable the auto linker
+               re.compile(r'<nolink>'),
+
                ]
 
 # %% read config files

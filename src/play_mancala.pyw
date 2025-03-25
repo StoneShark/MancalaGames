@@ -409,7 +409,12 @@ class AboutPane(ttk.Labelframe):
         paragraphs = text.split('\n')
         out_text = ''
         for para in paragraphs:
-            fpara = textwrap.fill(para, 65) + '\n'
+
+            fpara = para
+            for tag in man_config.REMOVE_TAGS:
+                fpara, _ = tag.subn('', fpara, count=5)
+
+            fpara = textwrap.fill(fpara, 65) + '\n'
             out_text += fpara
 
         return ''.join(out_text)

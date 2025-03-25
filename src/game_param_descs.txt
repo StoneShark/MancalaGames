@@ -286,19 +286,61 @@ Used only for minimax & negamax players.
 <param game_class>
 The name of the Game Class. One of:
 
-Mancala: allows setting all parameters though some combinations are limited.
+- <b class="inhead">Mancala</b>
 
-NorthSouthCycle: a two-cycle game class in which each player only sows on their own side of the board. If NO_SIDES is configured, either player may sow on either side of the board, but the seeds will remain on that side of the board. Players may effect eachother play with CROSSCAPT, PICKEXTRA, Qur CHILD_TYPE, etc. Weg children are only supported for no_sides games. Prohibited options include: GOAL of Territory; MUSTSHARE; some SOW_RULE; some CHILD_RULE; and visit opposite side for capture (VISIT_OPP).
+  + Allows setting all parameters.
 
-EastWestCycle: a two-cycle game class in which player's control east and west sides of the board, and seeds are sown in those cycles. Without specialized extension, this class appears to only support race type games, e.g. who can clear their holes faster. Their is little or no player interaction supported.
+  + Some combinations of parameters are not implemented (NotImplementedError generated) or prohibited (GameInfoError reported). Other combinations are not recommended and either generate an actual warning (UserWarning) or a 'gentle warning' (a print to the console--if there is one).
 
-Diffusion: has unique sow method and win conditions. Players control the east/west sides of the board. The game is basically preconfigured, only the board size can be changed to any even size. Game goal must be CLEAR.
+  + Most preconfigured games use this class.
 
-DiffusionV2: like Diffusion but players control the typical north/south sides of the board.
+- <b class="inhead">NorthSouthCycle</b>
 
-SameSide: a game class in which seeds are only sown on the player's own side of the board. If a capture is made, the capturer chooses one of their opponent's holes to put the seeds into. All seeds go into exactly one hole. Sow direction is unconstrained Capture mechanisms must be limited to one side of the board: basic captures, next, and two out. The game goal must be CLEAR.
+  + A two-cycle game class in which each player only sows on their own side of the board. If NO_SIDES is configured, either player may sow on either side of the board, but the seeds will remain on that side of the board.
 
-Ohojichi: like SameSide but the board is divided east/west instead of north/south. Most parameter restrictions from SameSide apply to Ohojichi. For Ohojichi, if UDIR_HOLES is used, all holes must be UDIR; capture side must be BOTH.
+  + Players may effect eachother's play with CROSSCAPT, PICKEXTRA, Qur CHILD_TYPE, and others. 
+
+  + Weg children are only supported for no_sides games. Prohibited options include: GOAL of Territory; MUSTSHARE; some SOW_RULE; some CHILD_RULE; and visit opposite side for capture (VISIT_OPP).
+
+  + NS_Kalah is a preconfigured game using this class.
+
+- <b class="inhead">EastWestCycle</b>
+
+  + A two-cycle game class in which player's control east and west sides of the board, and seeds are sown in those cycles.
+
+  + Without specialized extension of this game class, it appears to only support race type games, e.g. who can clear their holes faster. Their is little or no player interaction supported.
+
+- <b class="inhead">BearOff</b>
+
+  + A game class that does Backgammon-like bear off board clearing after the game reaches a state where only singletons are left. When a sow reaches the player's end of the board, any remaining seeds in hand are removed from play (actually moved to their store).
+
+  + This is intendend for clear and deprive games, though this is not enforced. It turns the end game into a race to see which player accomplishes the goal first.
+
+  + The transition from normal sow to bear-off sowing is made on the first move when all of the seeds on the board are singletons (i.e., all holes <=1 seeds). Games may ended via an outright win before this condition is achieved.
+
+  + Even if a future moves starts with > 1 seeds in a hole, the normal sow is not resumed.
+
+  + Andada is a preconfigured game usinging this class.
+
+- Diffusion (also a game)
+
+  + A game class with has a unique sow method and win condition. Players control the east/west sides of the board.
+  
+  + The game is basically preconfigured, only the board size can be changed to any even size. Game goal must be CLEAR.
+
+- DiffusionV2 (also a game)
+
+  + Like <nolink>Diffusion but players control the typical north/south sides of the board.
+
+- SameSide  (also a game)
+
+  + A game class in which seeds are only sown on the player's own side of the board. If a capture is made, the capturer chooses one of their opponent's holes to put the seeds into. All seeds go into exactly one hole.
+
+  +  The game goal must be CLEAR. Sow direction is unconstrained. Capture mechanisms must be limited to one side of the board: basic captures, next, and two out.
+
+- Ohojichi  (also a game)
+
+  + A <nolink>SameSide game but the board is divided east/west instead of north/south. Most parameter restrictions from <nolink>SameSide apply to <nolink>Ohojichi. For <nolink>Ohojichi, if UDIR_HOLES is used, all holes must be UDIR; capture side must be BOTH.
 
 <param goal>
 The overall goal of the game. Defines how a player wins.

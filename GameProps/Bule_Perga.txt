@@ -10,7 +10,6 @@
       "capt_on": [ 4 ],
       "mlaps": 2,
       "capt_side": 0,
-      "round_fill": 6,
       "sow_direct": 1,
       "sow_rule": 3,
       "stores": true
