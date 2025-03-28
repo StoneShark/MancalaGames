@@ -11,6 +11,7 @@ from tkinter import ttk
 
 import man_path
 import version
+from game_logger import game_log
 
 
 # %% common styles
@@ -106,23 +107,40 @@ def setup_styles(root):
     root.option_add("*activeBackground", MY_BLUE)
 
 
-# %% quiet dialog
+# %% popup dialogs
+
+
+def setup_top(parent, title, high=False):
+    """Create a TopLevel, position it, and do common configurations.
+
+    If high, place near top of window. Otherwise, place near the
+    bottom so that board is visible."""
+
+    width = parent.winfo_width()
+    height = parent.winfo_height()
+    xpos = parent.winfo_rootx() + width // 2 - 100
+    if high:
+        ypos = parent.winfo_rooty() + 50
+    else:
+        ypos = parent.winfo_rooty() + height - 20
+
+    top = tk.Toplevel(parent)
+    top.resizable(False, False)
+    top.lift(aboveThis=parent)
+    top.grab_set()
+    top.wm_geometry(f'+{xpos}+{ypos}')
+    top.minsize(200, 100)
+    top.title(title)
+
+    return top
+
 
 def quiet_dialog(parent, title, text):
     """Popup a quiet dialog message.
 
     The messagebox methods all make a warning tone."""
 
-    xpos = parent.winfo_rootx() + 100
-    ypos = parent.winfo_rooty() + 50
-
-    top = tk.Toplevel(parent)
-    top.resizable(False, False)
-    top.lift(aboveThis=parent)
-    top.title(title)
-    top.wm_geometry(f'+{xpos}+{ypos}')
-    top.minsize(200, 100)
-    top.grab_set()
+    top = setup_top(parent, title, high=True)
 
     frame = tk.Frame(top, borderwidth=10)
     frame.pack(side='top', expand=True)
@@ -130,6 +148,54 @@ def quiet_dialog(parent, title, text):
     tk.Label(frame, anchor='nw', justify='left', text=text
              ).pack(side='top')
     tk.Button(frame, text='Ok', command=top.destroy).pack(side='bottom')
+    top.wait_window()
+
+
+def win_popup(parent, title, message):
+    """Popup the win window with a game dump option."""
+
+    parent.bell()
+    top = setup_top(parent, title)
+
+    frame = tk.Frame(top, borderwidth=10)
+    frame.pack(side='top', fill='both', expand=True)
+
+    tk.Label(frame, text=message).pack(side='top')
+
+    bframe = tk.Frame(top, borderwidth=20)
+    bframe.pack(side='bottom', fill='both', expand=True)
+    tk.Button(bframe, text='Dump Game', command=game_log.dump, width=12
+              ).pack(side='left')
+    tk.Button(bframe, text='Save Game', command=parent.save_file, width=12
+              ).pack(side='left')
+    tk.Button(bframe, text='Ok', command=top.destroy, width=12
+              ).pack(side='right')
+    top.wait_window()
+
+
+def pass_popup(parent, title, message):
+    """Popup the win window with a game dump option."""
+
+    parent.bell()
+    top = setup_top(parent, title)
+
+    frame = tk.Frame(top, borderwidth=10)
+    frame.pack(side='top', fill='both', expand=True)
+
+    tk.Label(frame, text=message).pack(side='top')
+
+    bframe = tk.Frame(top, borderwidth=20)
+    bframe.pack(side='bottom', fill='both', expand=True)
+
+    tk.Button(bframe, text='End Round',
+              command=lambda: (top.destroy(), parent.end_round()), width=12
+              ).pack(side='left')
+    tk.Button(bframe, text='End Game',
+              command=lambda: (top.destroy(), parent.end_game()), width=12
+              ).pack(side='left')
+    tk.Button(bframe, text='Ok', command=top.destroy, width=12
+              ).pack(side='right')
+    top.wait_window()
 
 
 # %% common help menu

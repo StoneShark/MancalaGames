@@ -338,8 +338,8 @@ class MancalaUI(tk.Frame):
         gamemenu.add_separator()
         gamemenu.add_command(label='Swap Sides', command=self._pie_rule)
         gamemenu.add_separator()
-        gamemenu.add_command(label='End Round', command=self._end_round)
-        gamemenu.add_command(label='End Game', command=self._end_game)
+        gamemenu.add_command(label='End Round', command=self.end_round)
+        gamemenu.add_command(label='End Game', command=self.end_game)
         gamemenu.add_separator()
         gamemenu.add_command(label='Setup Game',
                              command=self.setup.setup_game)
@@ -380,7 +380,7 @@ class MancalaUI(tk.Frame):
         logmenu = tk.Menu(menubar)
         logmenu.add_command(label='Show Prev', command=game_log.prev)
         logmenu.add_command(label='Show Log', command=game_log.dump)
-        logmenu.add_command(label='Save Log', command=self._save_file)
+        logmenu.add_command(label='Save Log', command=self.save_file)
         logmenu.add_separator()
 
         logmenu.add_radiobutton(
@@ -556,7 +556,7 @@ class MancalaUI(tk.Frame):
         ui_utils.quiet_dialog(self, 'About', ''.join(out_text))
 
 
-    def _save_file(self):
+    def save_file(self):
         """Save the game log to the file, provide a string that
         describes the game."""
         game_log.save(self.game.params_str())
@@ -757,36 +757,6 @@ class MancalaUI(tk.Frame):
         return self.set_game_mode(buttons.Behavior.GAMEPLAY)
 
 
-    def _win_popup(self, title, message):
-        """Popup the win window with a game dump option."""
-
-        self.bell()
-
-        xpos = self.winfo_rootx() + 100
-        ypos = self.winfo_rooty() + 50
-
-        top = tk.Toplevel(self)
-        top.resizable(False, False)
-        top.grab_set()
-        top.title(title)
-        top.wm_geometry(f'+{xpos}+{ypos}')
-
-        frame = tk.Frame(top, borderwidth=10)
-        frame.pack(side='top', fill='both', expand=True)
-
-        tk.Label(frame, text=message).pack(side='top')
-
-        bframe = tk.Frame(top, borderwidth=20)
-        bframe.pack(side='bottom', fill='both', expand=True)
-        tk.Button(bframe, text='Dump Game', command=game_log.dump,
-                  width=12).pack(side='left')
-        tk.Button(bframe, text='Save Game', command=self._save_file,
-                  width=12).pack(side='left')
-        tk.Button(bframe, text='Ok', command=top.destroy,
-                  width=12).pack(side='right')
-        top.wait_window()
-
-
     def _param_tally(self):
         """If playing a game with a param tally, updat the UI"""
 
@@ -803,7 +773,7 @@ class MancalaUI(tk.Frame):
             self.tally.tally_game(self.game.get_turn(), win_cond)
             self._param_tally()
 
-            self._win_popup(*self.game.win_message(win_cond))
+            ui_utils.win_popup(self, *self.game.win_message(win_cond))
 
 
     def _pie_rule(self):
@@ -842,11 +812,11 @@ class MancalaUI(tk.Frame):
         self._schedule_ai()
 
 
-    def _end_round(self):
+    def end_round(self):
         """End the round. Report result to user."""
 
         if not self.game.info.rounds or self.mode != buttons.Behavior.GAMEPLAY:
-            self._end_game()
+            self.end_game()
             return
 
         message = 'Are you sure you wish to end the round?'
@@ -871,7 +841,7 @@ class MancalaUI(tk.Frame):
         self._new_game(win_cond=win_cond, new_round_ok=True)
 
 
-    def _end_game(self):
+    def end_game(self):
         """End the game. Report result to user."""
 
         if self.mode != buttons.Behavior.GAMEPLAY:
@@ -922,6 +892,7 @@ class MancalaUI(tk.Frame):
             game_log.add(self.player.get_move_desc(), game_log.MOVE)
 
 
+
     def move(self, move):
         """Tell game to move, refresh the UI, and
         handle any win conditions."""
@@ -947,10 +918,9 @@ class MancalaUI(tk.Frame):
 
             player = 'Bottom' if self.game.get_turn() else 'Top'
             message = f'{player} player has no moves and must pass.'
-            tk.messagebox.showinfo(title='Pass Move', message=message,
-                                   parent=self)
-            self.refresh()
+            ui_utils.pass_popup(self, 'Must Pass', message)
 
+            self.refresh()
             self._schedule_ai()
 
 
