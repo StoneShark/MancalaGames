@@ -57,6 +57,7 @@ class GameState(ai_interface.StateIf):
     store: tuple
     mcount: int
     _turn: bool
+    rturn_cnt: int
 
     unlocked: tuple = None
     blocked: tuple = None
@@ -319,6 +320,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         self.board = [self.cts.nbr_start] * self.cts.dbl_holes
         self.store = [0, 0]
         self.mcount = 0
+        self.rturn_cnt = 0
         self.turn = random.choice([False, True])
         self.starter = self.turn
         self.last_mdata = None
@@ -354,7 +356,8 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         state_dict = {'board': tuple(self.board),
                       '_turn': self.turn,
                       'store': tuple(self.store),
-                      'mcount': self.mcount}
+                      'mcount': self.mcount,
+                      'rturn_cnt': self.rturn_cnt}
 
         if (self.info.moveunlock
                 or self.info.allow_rule == gi.AllowRule.MOVE_ALL_HOLES_FIRST):
@@ -386,6 +389,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         self.store = list(value.store)
         self.turn = value.turn
         self.mcount = value.mcount
+        self.rturn_cnt = value.rturn_cnt
 
         if value.child:
             self.child = list(value.child)
@@ -409,6 +413,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         dbl_holes = self.cts.dbl_holes
 
         self.mcount = 0
+        self.rturn_cnt = 0
 
         if self.info.allow_rule == gi.AllowRule.MOVE_ALL_HOLES_FIRST:
             locks = False

@@ -850,11 +850,18 @@ is included after the parameter sections.
 <p>Holes in the game start each game and round locked. Captures may not be made from locked holes. Starting a sow from a hole unlocks it allowing future captures.
 <h4 id="capt_rturn"> Repeat Turn on Capture </h4>
 <p class="pdesc">Location in Config Files: game_info : capt_rturn
-<p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
-<p class="pdesc">Default value: False
+<p id="CaptRTurn" class="pdesc">Type: <a href="param_types.html#CaptRTurn"> CaptRTurn </a>
+<p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Capture
 
-<p>Repeat turn if there was a capture. Making children is not a capture.
+<p>Controls repeat turn on captures. Making children is not a capture.
+<ol start=0><li class="helptext">
+<b class="enum">NO_REPEAT</b>: no repeat turn on capture.
+<li class="helptext">
+<b class="enum">ALWAYS</b>: always repeat turn if there is a capture.
+<li class="helptext">
+<b class="enum">ONCE</b>: only do a repeat turn on the first capture. Only two possible moves are allowed.
+</ol>
 <h4 id="pickextra"> On Capture, Take More Rule </h4>
 <p class="pdesc">Location in Config Files: game_info : pickextra
 <p id="CaptExtraPick" class="pdesc">Type: <a href="param_types.html#CaptExtraPick"> CaptExtraPick </a>

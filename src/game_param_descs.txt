@@ -85,7 +85,13 @@ MLAP LAPPER sowing will stop sowing on a final seed that would capture based on 
 Either SOWRULE of OWN_SOW_CAPT_ALL or SOW_SOW_CAPT_ALL includes the basic capture mechanisms.
 
 <param capt_rturn>
-Repeat turn if there was a capture. Making children is not a capture.
+Controls repeat turn on captures. Making children is not a capture.
+
+- NO_REPEAT: no repeat turn on capture.
+
+- ALWAYS: always repeat turn if there is a capture.
+
+- ONCE: only do a repeat turn on the first capture. Only two possible moves are allowed.
 
 <param capt_side>
 Limits where captures maybe made:

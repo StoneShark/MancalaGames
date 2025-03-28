@@ -19,7 +19,7 @@ Capture,capt_side,Capture side,game_info _,130,CaptSide,BOTH,5,2
 Capture,nosinglecapt,No Single Seed Capture,game_info _,129,bool,False,6,2
 Capture,moveunlock,Move Unlock for Capture,game_info _,123,bool,False,7,2
 Capture,cdyno_lbl,Capture Dynamics,,0,label,0,8,2
-Capture,capt_rturn,Repeat Turn on Capture,game_info _,108,bool,False,9,2
+Capture,capt_rturn,Repeat Turn on Capture,game_info _,108,CaptRTurn,NO_REPEAT,9,2
 Capture,pickextra,"On Capture, Take More Rule",game_info _,131,CaptExtraPick,NONE,10,2
 Dynamics,goal,Game Goal,game_info _,115,Goal,MAX_SEEDS,0,0
 Dynamics,goal_param,Goal Parameter,game_info _,116,int,0,1,0

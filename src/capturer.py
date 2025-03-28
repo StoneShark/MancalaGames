@@ -714,13 +714,42 @@ class NotInhibited(CaptMethodIf):
 
 
 class RepeatTurn(CaptMethodIf):
-    """Convert mdata.captured to REPEAT_TURN."""
+    """Convert mdata.captured to REPEAT_TURN based on
+    configuration of capt_rturn.
+
+    The rturn_cnt is maintained in the parent game because it
+    must be part of the game state (decos should not have
+    game state)."""
+
+    def __init__(self, game, decorator=None):
+
+        super().__init__(game, decorator)
+
+        self.count_test = lambda self: True
+        if game.info.capt_rturn == gi.CaptRTurn.ONCE:
+            self.count_test = self.only_once
+
+
+    def only_once(self):
+        """Only do one repeat turn."""
+
+        return self.game.rturn_cnt < 1
+
 
     def do_captures(self, mdata):
         self.decorator.do_captures(mdata)
+
         if mdata.captured:
-            game_log.add('Capture repeat turn', game_log.INFO)
-            mdata.captured = gi.WinCond.REPEAT_TURN
+            if self.count_test():
+                game_log.add(f'Capture repeat turn (rcnt={self.game.rturn_cnt})',
+                             game_log.INFO)
+                mdata.captured = gi.WinCond.REPEAT_TURN
+            else:
+                game_log.add('Second repeat turn prevented', game_log.INFO)
+            self.game.rturn_cnt += 1
+
+        else:
+            self.game.rturn_cnt = 0
 
 
 # %% build deco chains

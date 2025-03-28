@@ -82,6 +82,12 @@ STRING_DICTS = {
          "Pick last seeds <= 2x nbr_start": gi.CaptExtraPick.PICK2XLASTSEEDS,
          "Pick Final Hole": gi.CaptExtraPick.PICKFINAL}),
 
+    'CaptRTurn': lookup_dicts(
+        gi.CaptRTurn,
+        {"No Repeat": gi.CaptRTurn.NO_REPEAT,
+         "One Repeat": gi.CaptRTurn.ONCE,
+         "Unlimited": gi.CaptRTurn.ALWAYS}),
+
     'CaptSide': lookup_dicts(
         gi.CaptSide,
         {'BOTH': gi.CaptSide.BOTH,

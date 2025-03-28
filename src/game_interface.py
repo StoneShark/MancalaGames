@@ -60,6 +60,15 @@ class CaptExtraPick(enum.IntEnum):
 
 
 @enum.unique
+class CaptRTurn(enum.IntEnum):
+    """Repeat turns allowed."""
+
+    NO_REPEAT = 0
+    ALWAYS = 1        # be consistent with True settings
+    ONCE = 2
+
+
+@enum.unique
 class CaptSide(enum.IntEnum):
     """The sides that captures may be done on."""
 
@@ -377,7 +386,7 @@ class GameInfo:
 
     multicapt: int = 0
     grandslam: int = GrandSlam.LEGAL
-    capt_rturn: bool = False
+    capt_rturn: CaptRTurn = CaptRTurn.NO_REPEAT
 
     # list of seed counts to capture on (after sow)
     capt_on: list[int] = dc.field(default_factory=list)

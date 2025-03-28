@@ -244,6 +244,33 @@ see <a href="about_games.html#Lam Waladach">Lam Waladach</a>
   </div>
 </div>
 <p>Rules: <a href="https://mancala.fandom.com/wiki/Alemungula" target="_blank">https://mancala.fandom.com/wiki/Alemungula</a>
+<h3 id="Ali Guli Mane" class="game_desc">Ali Guli Mane</h3>
+<p>Sow counter-clockwise in multilap-next manner. Player must pass if they cannot move.
+<p>Capture two out, e.g. across gap. If capture, pick any seeds across the board from the capture and move again (repeat turn). Only one repeat turn is allowed, even if there is a second capture a second repeat turn is not allowed.
+<p>Played in rounds. Each round ends when there are no moves for either player. Any holes that the loser cannot fill with 5 seeds are out of play for the round. The round starter alternates. Unclaimed seeds at the end of a round are collected by the hole owner.
+<p>The game ends when one player cannot fill one hole for a new round.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  7</p>
+    <p class="param">Start seeds:  5</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#blocks">Blocks</a>: Yes</p>
+    <p class="param"><a href="game_params.html#capsamedir">Capture in Sow Direction</a>: Yes</p>
+    <p class="param"><a href="game_params.html#capt_rturn">Repeat Turn on Capture</a>: ONCE</p>
+    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: BOTH</p>
+    <p class="param"><a href="game_params.html#capt_type">Capture Type</a>: TWO_OUT</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER_NEXT</p>
+    <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
+    <p class="param"><a href="game_params.html#pickextra">On Capture, Take More Rule</a>: PICKCROSS</p>
+    <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: mancala.fandom.com/wiki/Ali_Guli_Mane
 <h3 id="Andada" class="game_desc">Andada</h3>
 <p>Clipped triple start pattern. Sow counter-clockwise in multiple laps.
 <p>When final the seed of a sow ends in an empty hole on your own side of board, any opposite seeds are removed from play (cross capture).
@@ -310,7 +337,7 @@ Allow making children in opposite end holes but prohibit making children in oppo
     <p class="param">Start seeds:  4</p>
     <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
     <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 4</p>
-    <p class="param"><a href="game_params.html#capt_rturn">Repeat Turn on Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#capt_rturn">Repeat Turn on Capture</a>: ALWAYS</p>
     <p class="param"><a href="game_params.html#capt_side">Capture side</a>: BOTH</p>
     <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
   </div>
@@ -903,7 +930,7 @@ Another value for <a href="game_params.html#round_fill">ROUND_FILL</a>
     <p class="param">Holes per side:  6</p>
     <p class="param">Start seeds:  4</p>
     <p class="param"><a href="game_params.html#goal">Goal</a>: TERRITORY</p>
-    <p class="param"><a href="game_params.html#capt_rturn">Repeat Turn on Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#capt_rturn">Repeat Turn on Capture</a>: ALWAYS</p>
     <p class="param"><a href="game_params.html#child_cvt">Child Convert Count</a>: 4</p>
     <p class="param"><a href="game_params.html#child_rule">Child Restrictions</a>: OPP_OWNER_ONLY</p>
     <p class="param"><a href="game_params.html#child_type">Type of Children</a>: WEG</p>
@@ -1087,7 +1114,7 @@ Instead of a minimum move of 2, singletons may start moves if all holes are empt
     <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
     <p class="param"><a href="game_params.html#blocks">Blocks</a>: Yes</p>
     <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 4</p>
-    <p class="param"><a href="game_params.html#capt_rturn">Repeat Turn on Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#capt_rturn">Repeat Turn on Capture</a>: ALWAYS</p>
     <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OPP_SIDE</p>
     <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
   </div>
@@ -1381,7 +1408,7 @@ unless all of the player's holes contain 2, then any hole maybe played.
     <p class="param">Start seeds:  3</p>
     <p class="param"><a href="game_params.html#goal">Goal</a>: TERRITORY</p>
     <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 4</p>
-    <p class="param"><a href="game_params.html#capt_rturn">Repeat Turn on Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#capt_rturn">Repeat Turn on Capture</a>: ALWAYS</p>
     <p class="param"><a href="game_params.html#capt_side">Capture side</a>: BOTH</p>
     <p class="param"><a href="game_params.html#goal_param">Goal Parameter</a>: 9</p>
     <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
@@ -1564,7 +1591,7 @@ unless all the player's holes contain 2, then only the rightmost hole maybe play
     <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
     <p class="param"><a href="game_params.html#allow_rule">Special Move Restrictions</a>: TWO_ONLY_ALL_RIGHT</p>
     <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 2</p>
-    <p class="param"><a href="game_params.html#capt_rturn">Repeat Turn on Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#capt_rturn">Repeat Turn on Capture</a>: ALWAYS</p>
     <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OPP_SIDE</p>
     <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
   </div>
@@ -2157,7 +2184,7 @@ See <a href="about_games.html#Longbeu-a-cha">Longbeu-a-cha</a>, <a href="about_g
     <p class="param">Holes per side:  6</p>
     <p class="param">Start seeds:  8</p>
     <p class="param"><a href="game_params.html#goal">Goal</a>: TERRITORY</p>
-    <p class="param"><a href="game_params.html#capt_rturn">Repeat Turn on Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#capt_rturn">Repeat Turn on Capture</a>: ALWAYS</p>
     <p class="param"><a href="game_params.html#child_cvt">Child Convert Count</a>: 4</p>
     <p class="param"><a href="game_params.html#child_rule">Child Restrictions</a>: OPP_OWNER_ONLY</p>
     <p class="param"><a href="game_params.html#child_type">Type of Children</a>: WEG</p>
@@ -2533,7 +2560,7 @@ no repeat turn on capture
     <p class="param">Holes per side:  6</p>
     <p class="param">Start seeds:  4</p>
     <p class="param"><a href="game_params.html#goal">Goal</a>: TERRITORY</p>
-    <p class="param"><a href="game_params.html#capt_rturn">Repeat Turn on Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#capt_rturn">Repeat Turn on Capture</a>: ALWAYS</p>
     <p class="param"><a href="game_params.html#child_cvt">Child Convert Count</a>: 4</p>
     <p class="param"><a href="game_params.html#child_rule">Child Restrictions</a>: OPP_OWNER_ONLY</p>
     <p class="param"><a href="game_params.html#child_type">Type of Children</a>: WEG</p>
@@ -2579,6 +2606,7 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Adji Kui II">Adji Kui II</a></p>
     <p class="param"><a href="#Adji-boto">Adji-boto</a></p>
     <p class="param"><a href="#Alemungula">Alemungula</a></p>
+    <p class="param"><a href="#Ali Guli Mane">Ali Guli Mane</a></p>
     <p class="param"><a href="#Andada">Andada</a></p>
     <p class="param"><a href="#Andot">Andot</a></p>
     <p class="param"><a href="#Anywoli">Anywoli</a></p>
@@ -2641,9 +2669,9 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#NamNam">NamNam</a></p>
     <p class="param"><a href="#Nambayi">Nambayi</a></p>
     <p class="param"><a href="#Ndoto">Ndoto</a></p>
+    <p class="param"><a href="#No Sides Child">No Sides Child</a></p>
   </div>
   <div class="column3">
-    <p class="param"><a href="#No Sides Child">No Sides Child</a></p>
     <p class="param"><a href="#NoCapt">NoCapt</a></p>
     <p class="param"><a href="#NoSides">NoSides</a></p>
     <p class="param"><a href="#NumNum">NumNum</a></p>
