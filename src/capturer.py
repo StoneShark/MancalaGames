@@ -725,7 +725,7 @@ class RepeatTurn(CaptMethodIf):
 
         super().__init__(game, decorator)
 
-        self.count_test = lambda self: True
+        self.count_test = lambda: True
         if game.info.capt_rturn == gi.CaptRTurn.ONCE:
             self.count_test = self.only_once
 

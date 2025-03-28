@@ -57,7 +57,7 @@ class GameState(ai_interface.StateIf):
     store: tuple
     mcount: int
     _turn: bool
-    rturn_cnt: int
+    rturn_cnt: int = 0
 
     unlocked: tuple = None
     blocked: tuple = None
