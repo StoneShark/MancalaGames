@@ -1,0 +1,27 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 6,
+      "nbr_start": 4
+   },
+   "game_info": {
+      "name": "Djenon Aboure",
+      "about": "Sow counter-clockwise in multiple laps. Singletons may not be moved. Multilap sowing stops for captures and on single seed.\n\nCapture on 2s and 4s on either side of the board.\n\nThe game ends  when a player doesn't have a move on their turn. Any seeds left on the board go to hole owner's.\n",
+      "capt_on": [ 2, 4 ],
+      "min_move": 2,
+      "mlaps": 1,
+      "multicapt": -1,
+      "capt_side": 0,
+      "sow_direct": 1,
+      "stores": true
+   },
+   "player": {
+      "ai_params": {},
+      "scorer": {
+         "stores_m": 8,
+         "evens_m": -1,
+         "easy_rand": 20
+      }
+   },
+   "rules": "https://mancala.fandom.com/wiki/Djenon_Aboure"
+}

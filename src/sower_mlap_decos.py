@@ -22,7 +22,6 @@ import sower_decos as sowd
 
 from game_logger import game_log
 
-
 # %% constants
 
 MAX_LAPS = 50
@@ -40,7 +39,8 @@ class LapContinuerIf(deco_chain_if.DecoChainIf):
 
 class LapContinue(LapContinuerIf):
     """A base lap continuer, always continue.
-    Wrappers test for other stop conditions."""
+    Wrappers t
+est for other stop conditions."""
 
     def do_another_lap(self, mdata):
         """Determine if we are done sowing."""
@@ -240,6 +240,19 @@ class MustVisitOpp(LapContinuerIf):
                          or self.game.cts.opp_side(self.game.turn,
                                                    mdata.capt_loc))):
             game_log.add("First mlap didn't reach opp")
+            return False
+
+        return self.decorator.do_another_lap(mdata)
+
+
+class StopNotN(LapContinuerIf):
+    """A wrapper: Stop if the number of seeds in the final sown hole
+    does not equal sow_param seeds."""
+
+    def do_another_lap(self, mdata):
+
+        if self.game.board[mdata.capt_loc] != self.game.info.sow_param:
+            game_log.add(f"Stop mlap not {self.game.info.sow_param} seeds")
             return False
 
         return self.decorator.do_another_lap(mdata)

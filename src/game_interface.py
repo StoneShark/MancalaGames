@@ -283,6 +283,7 @@ class SowRule(enum.IntEnum):
     LAP_CAPT = 8
     NO_OPP_CHILD = 9
     OPP_GETS_OWN_LAST = 10
+    CONT_LAP_ON = 11
 
 
 @enum.unique

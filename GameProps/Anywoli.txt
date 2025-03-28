@@ -6,9 +6,9 @@
    },
    "game_info": {
       "name": "Anywoli",
-      "about": "Sow counter-clockwise in multiple laps, hole owner picks seeds from any hole sown to 4. If the last seed of a sow makes 4, the final hole is captured by the sower.\n\nIf a player does not have a move, they must pass.\n\nWhen a player captures the second last group of 4 seeds; they also take the last four seeds.\n\nGoal: capture the most seeds.\n",
+      "about": "Sow counter-clockwise in multiple laps, hole owner picks seeds from any hole sown to 4. If the last seed of a sow makes 4, the final hole is captured by the sower.\n\nIf a player does not have a move, they must pass.\n\nWhen a player captures the second last group of 4 seeds; they also take the last four seeds.\n\nGoal: capture the most seeds.\n\nVaritations:\n\n- 7 holes (Mancala World: Yit Nuri)\n\n- 13 holes and 2 seeds per hole (Mancala World: Yit Jani)\n",
       "capt_on": [ 4 ],
-      "capt_rturn": true,
+      "capt_rturn": 1,
       "mlaps": 1,
       "mustpass": true,
       "capt_side": 0,
@@ -25,5 +25,6 @@
       }
    },
    "rules": "https://mancala.fandom.com/wiki/Anywoli",
-   "deviation": "There is no lottery for last the four seeds."
+   "deviation": "There is no lottery for last the four seeds.",
+   "references": "https://mancala.fandom.com/wiki/Yit_Jani \n https://mancala.fandom.com/wiki/Yit_Nuri"
 }

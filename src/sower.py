@@ -59,7 +59,8 @@ def _add_base_sower(game):
             sower = sowd.SowOppCaptsLast(game, sower)
 
         elif game.info.sow_rule in (gi.SowRule.CHANGE_DIR_LAP,
-                                    gi.SowRule.LAP_CAPT):
+                                    gi.SowRule.LAP_CAPT,
+                                    gi.SowRule.CONT_LAP_ON):
             pass    # pick a base sower below
 
         else:
@@ -155,6 +156,9 @@ def _build_lap_cont(game):
 
     if game.info.visit_opp:
         lap_cont = msowd.MustVisitOpp(game, lap_cont)
+
+    if game.info.sow_rule == gi.SowRule.CONT_LAP_ON:
+        lap_cont = msowd.StopNotN(game, lap_cont)
 
     if game.info.sow_own_store:
         lap_cont = msowd.StopRepeatTurn(game, lap_cont)

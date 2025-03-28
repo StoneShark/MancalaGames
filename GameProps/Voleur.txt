@@ -1,0 +1,23 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 6,
+      "nbr_start": 4
+   },
+   "game_info": {
+      "name": "Voleur",
+      "about": "Sow counter-clockwise in a single lap, always capture the seeds from the final hole sown.\n\nGoal: collect the most seeds.\n\nVariation: capture on evens",
+      "capt_min": 1,
+      "capt_side": 0,
+      "sow_direct": 1,
+      "stores": true
+   },
+   "player": {
+      "ai_params": {},
+      "scorer": {
+         "stores_m": 8
+      }
+   },
+   "rules": "https://mancala.fandom.com/wiki/Voleur",
+   "note": "CAPT_MIN set to 1 to avoid the 'no capture mechanism' warning"
+}

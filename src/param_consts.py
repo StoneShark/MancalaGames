@@ -248,7 +248,9 @@ STRING_DICTS = {
          "Never sow holes above sow_param": gi.SowRule.MAX_SOW,
          "Do captures on each lap": gi.SowRule.LAP_CAPT,
          "Do not sow opponents children": gi.SowRule.NO_OPP_CHILD,
-         "Lap Capt Then Opp takes Own (< sow_param)": gi.SowRule.OPP_GETS_OWN_LAST,
+         "Lap Capt Then Opp takes Own (< sow_param)":
+             gi.SowRule.OPP_GETS_OWN_LAST,
+         "Continue lap sow only on sow_param seeds": gi.SowRule.CONT_LAP_ON,
          }),
 
     'StartPattern': lookup_dicts(

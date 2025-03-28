@@ -698,6 +698,8 @@ Special sow rules add additional behavior or restrictions to the sowing phase:
 
 - OPP_GETS_OWN_LAST: Use LAP_CAPT sow rule until there are only sow_param seeds left. Then when down to the last seeds (sow_param or less at the start of a lap): seeds sown on the opponent's side are captured by the opponent. If the last seed would do a normal capture, the sower takes those seeds, including the last seed sown.
 
+- CONT_LAP_ON: Only continue multilap sowing when a hole is sown to sow_param seeds.
+
 <param sow_start>
 When selected, the first seed is sown into (i.e., left in) the start hole.
 

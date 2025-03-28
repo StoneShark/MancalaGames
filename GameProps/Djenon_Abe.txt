@@ -1,0 +1,28 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 6,
+      "nbr_start": 4
+   },
+   "game_info": {
+      "name": "Djenon Abe",
+      "about": "Sow counter-clockwise in multiple laps. Multilap sowing stops for captures and on single seed. If an opponent does not have any seeds, the current player must make seeds available if they can.\n\nCapture on 2s and 4s on either side of the board.\n\nThe game ends when a player can't share seeds or when one player doesn't have a move on their turn. Any seeds left on the board are divvied between the two players.\n",
+      "capt_on": [ 2, 4 ],
+      "mlaps": 1,
+      "multicapt": -1,
+      "mustshare": true,
+      "capt_side": 0,
+      "sow_direct": 1,
+      "stores": true,
+      "unclaimed": 4
+   },
+   "player": {
+      "ai_params": {},
+      "scorer": {
+         "stores_m": 8,
+         "evens_m": -1,
+         "easy_rand": 20
+      }
+   },
+   "rules": "https://mancala.fandom.com/wiki/Djenon_Abe"
+}
