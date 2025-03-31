@@ -178,7 +178,7 @@ class SowClosed(SowMethodIf):
         loc = mdata.capt_loc
 
         if (loc not in self.no_close
-                and self.game.board[loc] == self.game.info.goal_param
+                and self.game.board[loc] == self.game.info.sow_param
                 and self.game.cts.opp_side(self.game.turn, loc)
                 and not self.game.inhibitor.stop_me_capt(self.game.turn)):
 

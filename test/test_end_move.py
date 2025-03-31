@@ -818,71 +818,123 @@ class TestEndDeprive:
         game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(goal=Goal.DEPRIVE,
                                 capt_on=[4],
+                                allow_rule=gi.AllowRule.NOT_XFROM_1S,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+    @pytest.fixture
+    def mm2game(self):
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(goal=Goal.DEPRIVE,
+                                capt_on=[4],
                                 min_move=2,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
 
+
     CASES = [
         # 0: Will be true's turn, but they have no moves
+        #     game rturn: current player has another move
         (False, utils.build_board([0, 0, 0],
                                   [0, 3, 0]),
-         WinCond.WIN, False),
+         (WinCond.WIN, False), (WinCond.WIN, False),
+         (None, None)),
+
         # 1:  Will be false's turn, but they have no moves
+        #     game rturn: current player has another move
         (True, utils.build_board([0, 3, 0],
                                  [0, 0, 0]),
-         WinCond.WIN, True),
+         (WinCond.WIN, True), (WinCond.WIN, True),
+         (None, None)),
 
-        # 2: Will be true's turn and they have no moves
-        # both have seeds -> a TIE
-        (False, utils.build_board([0, 1, 0],
-                                  [0, 1, 0]),
-         WinCond.TIE, False),
-
-        # 4: Will be false's turn and they have no moves
-        # both have seeds -> a TIE
-        (False, utils.build_board([0, 1, 0],
-                                  [0, 1, 0]),
-         WinCond.TIE, False),
-
-        # 4: False gave away all seeds but not their turn
+        # 2: False gave away all seeds
+        #     game: F loses no seeds, mm2: T has a move
+        #     game rturn: F has no seeds for repeat turn, T wins
         (False, utils.build_board([0, 3, 0],
                                   [0, 0, 0]),
-         None, False),
-        # 5: True gave away all seeds but not their turn
+         (WinCond.WIN, True), (None, None),
+         (WinCond.WIN, True)),
+
+        # 3: True gave away all seeds
+        #     game: T loses no seeds, mm2: F has a move
         (True, utils.build_board([0, 0, 0],
                                  [0, 3, 0]),
-         None, True),
+         (WinCond.WIN, False), (None, None),
+         (WinCond.WIN, False)),
 
-        # 6: False gave away all seeds but true has seeds
+        # 4: False gave away all seeds
+        #   game: F has no seeds, mm2: T can't move; F was the last mover
+        #   game rturn: F has no seeds for repeat turn, T wins
         (False, utils.build_board([0, 1, 0],
                                   [0, 0, 0]),
-         WinCond.WIN, True),
-        # 7: True gave away all seeds but false has seeds
+         (WinCond.WIN, True), (WinCond.WIN, False),
+         (WinCond.WIN, True)),
+
+        # 5: True gave away all seeds
+        #   game: T has no seeds, mm2: F can't move; T was the last mover
         (True, utils.build_board([0, 0, 0],
                                  [0, 1, 0]),
-         WinCond.WIN, False),
+         (WinCond.WIN, False), (WinCond.WIN, True),
+         (WinCond.WIN, False)),
 
-        #8: game continues
+        # 6: game continues
         (True, utils.build_board([0, 3, 0],
                                  [0, 3, 0]),
-         None, None),
+         (None, None), (None, None), (None, None)),
 
-        #9: game continues
+        # 7: game continues
         (False, utils.build_board([0, 3, 0],
                                   [0, 3, 0]),
-         None, None),
+         (None, None), (None, None), (None, None)),
 
-    ]
+        # 8: Will be true's turn and they have no moves
+        #     both: next player no moves
+        #     game: opp immobilized  mm2: last mover (current player) wins
+        #     game rturn: F does not have a move for repeat turn
+        (False, utils.build_board([0, 1, 0],
+                                  [0, 1, 0]),
+         (WinCond.WIN, False), (WinCond.WIN, False),
+         (WinCond.WIN, True)),
 
-    @pytest.mark.parametrize('turn, board, econd, ewinner',
-                             CASES)
-    def test_end_game(self, game, turn, board, econd, ewinner):
+        # 9: Will be false's turn and they have no moves
+        #     both: next player no moves
+        #     game: opp immobilized  mm2: last mover (current player) wins
+        (True, utils.build_board([0, 1, 0],
+                                 [0, 1, 0]),
+         (WinCond.WIN, True), (WinCond.WIN, True),
+         (WinCond.WIN, False)),
+        ]
+
+    @pytest.mark.parametrize('game_fixt, repeat_turn',
+                             [('game', True),
+                              ('game', False),
+                              ('mm2game', False)])
+    @pytest.mark.parametrize('turn, board, eresg, eresmm2, eresg_rturn',
+                             CASES,
+                             ids=['case{idx}' for idx, _ in enumerate(CASES)])
+    def test_end_game(self, request,
+                      game_fixt, repeat_turn,
+                      turn, board,
+                      eresg, eresmm2, eresg_rturn):
+
+        game = request.getfixturevalue(game_fixt)
+        if repeat_turn:
+            econd, ewinner = eresg_rturn
+        else:
+            if game_fixt == 'game':
+                econd, ewinner = eresg
+            else:
+                econd, ewinner = eresmm2
+
         game.board = board
         game.turn = turn
 
-        cond, winner = game.deco.ender.game_ended(False, False)
+        cond, winner = game.deco.ender.game_ended(repeat_turn=repeat_turn,
+                                                  ended=False)
         assert cond == econd
         if ewinner is not None:
             assert winner == ewinner

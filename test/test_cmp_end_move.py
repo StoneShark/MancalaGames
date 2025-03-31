@@ -583,7 +583,7 @@ END_CASES = {
         [make_state(board=(0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 0),
                     store=(17, 0),   # seeds out of play
                     turn=False),
-         None, DONT_CARE],
+         gi.WinCond.WIN, True],
 
         # 2: False has no seeds, True captured them
         [make_state(board=(0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 0),
@@ -604,7 +604,7 @@ END_CASES = {
         [make_state(board=(0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 0),
                     store=(13, 0),   # seeds out of play
                     turn=False),
-         None, DONT_CARE],
+         gi.WinCond.WIN, True],
 
         # 3: False has no seeds, True captured them
         [make_state(board=(0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 0),

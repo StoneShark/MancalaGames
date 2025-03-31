@@ -28,6 +28,19 @@ import round_tally
 
 # %% build decorator chains
 
+
+def _build_deprive_ender(game):
+    """Create a deprive game ender."""
+
+    if game.info.min_move == 1:
+        # player wo seeds looses
+        ender = emd.DepriveNoSeedsEndGame(game)
+        return emd.EndTurnNoMoves(game, ender)
+
+    # last mover wins
+    return emd.DepriveLastMoveEndGame(game)
+
+
 def _add_end_game_winner(game):
     """Start the deco chain by adding the EndGameWinner.
     Select a claimer based on how the unclaimed seeds
@@ -137,7 +150,7 @@ def deco_end_move(game):
     """Return a chain of move enders."""
 
     if game.info.goal == gi.Goal.DEPRIVE:
-        return emd.DepriveSeedsEndGame(game)
+        return _build_deprive_ender(game)
 
     if game.info.goal == gi.Goal.CLEAR:
         return emd.ClearSeedsEndGame(game)

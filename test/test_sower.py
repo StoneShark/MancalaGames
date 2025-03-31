@@ -669,6 +669,20 @@ class TestMlap:
                                 rules=mancala.Mancala.rules)
         return mancala.Mancala(game_consts, game_info)
 
+    @pytest.fixture
+    def game3(self):
+        """continue lapping on 6"""
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
+        game_info = gi.GameInfo(stores=True,
+                                mlaps=LapSower.LAPPER,
+                                sow_direct=Direct.CCW,
+                                sow_rule=gi.SowRule.CONT_LAP_ON,
+                                sow_param=6,
+                                capt_on=[1],
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        return mancala.Mancala(game_consts, game_info)
+
     MLCASES = [
         # 0: no lapping
         ('game',
@@ -738,8 +752,20 @@ class TestMlap:
          3, utils.build_board([1, 0, 2],
                               [2, 0, 2])),
 
+        # 8: sow two laps
+        ('game3',
+         2, utils.build_board([1, 5, 3],
+                              [0, 3, 2]),
+         4, utils.build_board([2, 1, 5],
+                              [1, 4, 1])),
+        # 9: no laps
+        ('game3',
+         2, utils.build_board([1, 4, 3],
+                              [0, 3, 3]),
+         5, utils.build_board([2, 5, 4],
+                              [0, 3, 0])),
     ]
-    # @pytest.mark.usefixtures("logger")
+    @pytest.mark.usefixtures("logger")
     @pytest.mark.parametrize('game_fixt, start_pos, board, eloc, eboard',
                              MLCASES)
     def test_mlap_sower(self, request, game_fixt,
@@ -749,13 +775,14 @@ class TestMlap:
 
         game.board = board
         game.turn = False
-        # print(game.deco.sower)
+        print(game)
+        print(game.deco.sower)
 
         mdata = MoveData(game, start_pos)
         mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(start_pos)
         mdata.direct = game.info.sow_direct
         game.deco.sower.sow_seeds(mdata)
-        # print(mdata)
+        print(mdata)
 
         assert mdata.capt_loc == eloc
         assert game.board == eboard
@@ -884,7 +911,7 @@ class TestGetSingle:
         game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
         game_info = gi.GameInfo(goal=Goal.DEPRIVE,
                                 blocks=True,
-                                goal_param=2,
+                                sow_param=2,
                                 sow_rule=SowRule.SOW_BLKD_DIV,
                                 mlaps=mlaps,
                                 nbr_holes=game_consts.holes,
@@ -995,7 +1022,7 @@ class TestBlckDivertSower:
                                 goal=Goal.DEPRIVE,
                                 sow_rule=SowRule.SOW_BLKD_DIV,
                                 blocks=True,
-                                goal_param=3,
+                                sow_param=3,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
@@ -1009,7 +1036,7 @@ class TestBlckDivertSower:
                                 goal=Goal.DEPRIVE,
                                 sow_rule=SowRule.SOW_BLKD_DIV_NR,
                                 blocks=True,
-                                goal_param=3,
+                                sow_param=3,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
@@ -1124,7 +1151,7 @@ class TestBlckDivertSower:
                                 goal=Goal.DEPRIVE,
                                 blocks=True,
                                 mlaps=LapSower.LAPPER,
-                                goal_param=3,
+                                sow_param=3,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
@@ -1140,7 +1167,7 @@ class TestBlckDivertSower:
                                 goal=Goal.DEPRIVE,
                                 blocks=True,
                                 mlaps=LapSower.LAPPER,
-                                goal_param=3,
+                                sow_param=3,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 

@@ -384,43 +384,55 @@ class ChildNoStoresEnder(EndTurnIf):
         return end_cond, winner
 
 
-class DepriveSeedsEndGame(EndTurnIf):
-    """Determine if a deprive game is over.
-    If the opp doesn't have a move, the game IS over.
-    Base TIE versus WIN on who has seeds, thus separating
-    having seeds and having a move.
+class DepriveNoSeedsEndGame(EndTurnIf):
+    """Determine if a deprive game is over based on who has seeds.
 
-    If opponent does not have seeds, current player WINS.
+    If the previous decos decided the game has ended, return the winner.
 
-    If opponent cannot move and both players have seeds, TIE.
+    If the current player has given away all of their seeds,
+    they loose (unless the other player has no moves).
 
-    If oppenent cannot move but current player does not have seeds,
-    the opponents WINS because they have forced the current player
-    to give away all their seeds.
-
-    This is not to be used with children."""
+    This is not to be used with children, because the presence
+    of children is not checked."""
 
     def game_ended(self, repeat_turn, ended=False):
         """Check for end game."""
 
-        cts = self.game.cts
+        if ended:
+            if repeat_turn:
+                return gi.WinCond.WIN, not self.game.turn
 
-        op_seeds = sum(self.game.board[loc]
-                       for loc in cts.get_opp_range(self.game.turn))
-        if not op_seeds:
             return gi.WinCond.WIN, self.game.turn
 
-        self.game.turn = not self.game.turn
-        no_opp_moves = not any(self.game.get_allowable_holes())
-        self.game.turn = not self.game.turn
-        if no_opp_moves:
-            my_seeds = sum(self.game.board[loc]
-                           for loc in cts.get_my_range(self.game.turn))
-
-            if my_seeds:
-                return gi.WinCond.TIE, self.game.turn
-
+        my_seeds = sum(self.game.board[loc]
+                       for loc in self.game.cts.get_my_range(self.game.turn))
+        if not my_seeds:
             return gi.WinCond.WIN, not self.game.turn
+
+        return None, self.game.turn
+
+
+class DepriveLastMoveEndGame(EndTurnIf):
+    """Determine if a deprive game is over based on who moved last.
+
+    If the opponent does not have a move, then the current player
+    has won.
+
+    This is not to be used with children, because the presence
+    of children is not checked."""
+
+    def game_ended(self, repeat_turn, ended=False):
+        """Check for end game."""
+
+        self.game.turn = not self.game.turn
+        ended = not any(self.game.get_allowable_holes())
+        self.game.turn = not self.game.turn
+
+        if ended:
+            game_log.add("No moves for next player; last move won.",
+                         game_log.INFO)
+
+            return gi.WinCond.WIN, self.game.turn
 
         return None, self.game.turn
 

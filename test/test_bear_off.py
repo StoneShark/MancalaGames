@@ -206,8 +206,7 @@ class TestGameExtensions:
 
     END_CASES += [
         # False cleared their seeds (both normal_sow and not)
-        #    normal sow, not over; need to see what True does
-        ['dgame', [0, 0, 0, 1, 2, 0], True, False, False, None, False],
+        ['dgame', [0, 0, 0, 1, 2, 0], True, False, False, WIN, True],
         ['dgame', [0, 0, 0, 1, 2, 0], False, False, False, WIN, True],
 
         # True has no seeds to play  (both normal_sow and not)

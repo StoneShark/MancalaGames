@@ -176,6 +176,20 @@ def add_pattern_rules(rules):
         msg='START_PATTERN is incompatible for ROUNDS with selected GOAL',
         excp=gi.GameInfoError)
 
+    rules.add_rule(
+        'deprive_mmgr1_rturn',
+        rule=lambda ginfo: (ginfo.goal == gi.Goal.DEPRIVE
+                            and ginfo.min_move > 1
+                            and (ginfo.capt_rturn or ginfo.sow_own_store)),
+        msg='DEPRIVE games with min_move > 1 cannot use repeat turn',
+        excp=gi.GameInfoError)
+        # min_move > 1 for DEPRIVE => last mover wins
+        # but what if there is a repeat turn?
+        #    F moves, giving away all seeds,
+        #    they were the last mover (F win?), but can't move again (T win?)
+        # who should win?  just don't allow it
+
+
 def add_elim_seeds_goal_rules(rules):
     """Add rules for the game eliminating our own or opponents seeds."""
 
@@ -321,7 +335,6 @@ def add_territory_rules(rules):
         excp=gi.GameInfoError)
 
 
-
 def add_block_and_divert_rules(rules):
     """sow_blkd_div is implemented primarily by the sower and the
     capturer is not used (capt mechanisms not supported). Add rules
@@ -329,7 +342,6 @@ def add_block_and_divert_rules(rules):
 
     This concept was originally part of Deka which was a DEPRIVE
     goal, not requiring that here."""
-
 
     def divert_and(flag_name):
         """Return a function that the divert option and the specified
@@ -351,8 +363,8 @@ def add_block_and_divert_rules(rules):
     rules.add_rule(
         'bdiv_need_gparam',
         rule=lambda ginfo: (sow_blkd_div(ginfo)
-                            and not ginfo.goal_param),
-        msg='SOW_BLKD_DIV(_NR) requires GOAL_PARAM for closing holes',
+                            and not ginfo.sow_param),
+        msg='SOW_BLKD_DIV(_NR) requires SOW_PARAM for closing holes',
         excp=gi.GameInfoError)
 
     rules.add_rule(
@@ -368,15 +380,6 @@ def add_block_and_divert_rules(rules):
                             and ginfo.goal != gi.Goal.DEPRIVE),
         msg='SOW_BLKD_DIV(_NR) requires a goal of DEPRIVE',
         excp=gi.GameInfoError)
-
-    rules.add_rule(
-        'bdiv_min_move_one',
-        rule=lambda ginfo: (sow_blkd_div(ginfo)
-                            and ginfo.min_move != 1),
-        msg='SOW_BLKD_DIV(_NR) requires a minimum move of 1',
-        excp=gi.GameInfoError)
-    # can't deprive opp of seeds, if they can't move them all
-
 
     capt_flags = ['capsamedir', 'capt_max', 'capt_min', 'capt_type',
                   'capt_on', 'capt_rturn', 'crosscapt',
@@ -594,13 +597,6 @@ def add_capture_rules(rules):
         msg="CAPT_TYPE and CROSSCAPT are incompatible",
         warn=True)
 
-    # rules.add_rule(
-    #     'capt2_gs_legal',
-    #     rule=lambda ginfo: (ginfo.capt_type == gi.CaptType.TWO_OUT
-    #                         and ginfo.grandslam != gi.GrandSlam.LEGAL),
-    #     msg="CAPTTWOOUT requires that GRANDSLAM be LEGAL",
-    #     excp=gi.GameInfoError)
-
     rules.add_rule(
         'lcapt_no_ctype',
         rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.LAP_CAPT
@@ -698,7 +694,6 @@ def add_capture_rules(rules):
                             and ginfo.capt_type == gi.CaptType.TWO_OUT),
         msg='Capture TWO_OUT cannot be used with CAPT_SIDE other than BOTH',
         excp=gi.GameInfoError)
-
 
 
 # %% the base ruleset

@@ -421,21 +421,7 @@ class TestDeka1:
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [17, 0]
-        assert cond is None
-        gstate.cond = cond
-
-    def test_move_30(self, gstate):
-        game = gstate.game
-        cond = game.move(2)
-        assert game.turn is True
-        assert game.board == [0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 1, 3]
-        assert game.blocked == [T, F, F, T, F, F, F, T, F, F, F, F]
-        assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
-        assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.store == [17, 0]
         assert cond.name == "WIN"
-        gstate.cond = cond
 
 
 @pytest.mark.incremental

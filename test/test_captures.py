@@ -927,9 +927,9 @@ class TestRepeatTurn:
     """Test repeat turn due to capt_rturn."""
 
     @pytest.fixture
-    def game(self):
+    def gamea(self):
         game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
-        game_info = gi.GameInfo(capt_rturn=True,
+        game_info = gi.GameInfo(capt_rturn=gi.CaptRTurn.ALWAYS,
                                 stores=True,
                                 capt_on=[3],
                                 nbr_holes=game_consts.holes,
@@ -937,22 +937,54 @@ class TestRepeatTurn:
 
         return mancala.Mancala(game_consts, game_info)
 
-    def test_repeat_turn(self, game):
 
-        game.turn = True
-        game.board = utils.build_board([2, 2, 3, 0],
-                                       [2, 1, 0, 3])
-        mdata = mancala.MoveData(game, None)
-        mdata.direct = gi.Direct.CCW
-        mdata.capt_loc = 5
-        game.deco.capturer.do_captures(mdata)
-        assert mdata.captured == gi.WinCond.REPEAT_TURN
+    def test_repeat_turn_always(self, gamea):
 
-        mdata = mancala.MoveData(game, None)
+        gamea.turn = True
+        gamea.board = utils.build_board([2, 2, 3, 3],
+                                        [2, 1, 0, 3])
+
+        for cloc in range(3, 6):
+            mdata = mancala.MoveData(gamea, None)
+            mdata.direct = gi.Direct.CCW
+            mdata.capt_loc = cloc
+            gamea.deco.capturer.do_captures(mdata)
+            assert mdata.captured == gi.WinCond.REPEAT_TURN
+
+        mdata = mancala.MoveData(gamea, None)
         mdata.direct = gi.Direct.CCW
         mdata.capt_loc = 1
-        game.deco.capturer.do_captures(mdata)
+        gamea.deco.capturer.do_captures(mdata)
         assert mdata.captured != gi.WinCond.REPEAT_TURN
+
+
+    @pytest.fixture
+    def game1(self):
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
+        game_info = gi.GameInfo(capt_rturn=gi.CaptRTurn.ONCE,
+                                stores=True,
+                                capt_on=[3],
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+
+    def test_repeat_turn_once(self, game1):
+
+        game1.turn = True
+        game1.board = utils.build_board([2, 2, 3, 3],
+                                        [2, 1, 0, 3])
+
+        for cloc, repeat in [(3, True), (4, False), (5, False)]:
+            mdata = mancala.MoveData(game1, None)
+            mdata.direct = gi.Direct.CCW
+            mdata.capt_loc = cloc
+            game1.deco.capturer.do_captures(mdata)
+            if repeat:
+                assert mdata.captured == gi.WinCond.REPEAT_TURN
+            else:
+                assert mdata.captured != gi.WinCond.REPEAT_TURN
 
 
 class TestCaptCrossVisited:

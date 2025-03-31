@@ -359,9 +359,11 @@ The overall goal of the game. Defines how a player wins.
 
   + In MAX_SEEDS/ROUNDS games the player only controls the holes on their side of the board, while, in TERRITORY games a player may control holes on either side of the board.
 
-- DEPRIVE: eliminate all your opponent's seeds.
+- DEPRIVE: eliminate all your opponent's seeds or if the minimum move is greater than one prevent your opponent from moving.
 
-  + If a player has no seeds at the start of their turn, they lose. If a player has no moves at the start of their turn, then the game outcome is decided by who has seeds: If both players have seeds, the game ends in a tie. If the current player has seeds, but the previous player does not, then the current player wins because they forced the previous player to give away all their seeds.
+  + MIN_MOVE equal to 1: If a player has no seeds at the start of their turn, they lose. If the current player doesn't have any seeds at the end of their turn, they loose.
+  
+  + MIN_MOVE greater than 1: If you opponent has no valid moves, you win. That is, the last player to move wins. Repeat turn either via sow_own_store or capt_rturn is prohibited.
 
   + GRANDSLAM must be legal for DEPRIVE games.
 
@@ -403,8 +405,6 @@ The overall goal of the game. Defines how a player wins.
 
 <param goal_param>
 GOAL of Territory: defines the number of holes needed for a win. The number of holes for each player are computed by rounding the number of seeds collected divided by the number of start seeds per hole.
-
-Goal of Deprive and Blocked Divert Sower: defines the number of seeds needed to close/block holes (sow_blkd_div).
 
 Goal of Max Seeds and ROUNDS: defines the minimum number of holes each player must have to continue the game. The player with fewer seeds must have enough seeds to fill goal_param holes each with start_seeds to continue playing.  There is no rounding of seed counts as in territory games.
 
@@ -647,6 +647,8 @@ Sow seeds into your own store when passing it. Do not sow into your opponent's s
 <param sow_param>
 A general parameter for sowing. Usage is based on other sow options:
 
+Sow rule of SOW_BLKD_DIV or SOW_BLKD_DIV_NR: defines the number of seeds needed to close/block holes.
+
 Sow rule of MAX_SOW: maximum number of seeds a hole may contain
 
 Sow rule of NO_SOW_OPP_NS: don't sow opposite holes with sow_param seeds
@@ -658,7 +660,7 @@ Special sow rules add additional behavior or restrictions to the sowing phase:
 
 - NONE: there is no special sowing rule.
 
-- SOW_BLKD_DIV: If the final seed of an individual sow lands on the opposite side of the board and brings the contents of that hole to goal_param seeds, the hole is closed (blocked). In single lap games, the hole's seeds are removed from play. In multilap games, the seeds are used to continue sowing.
+- SOW_BLKD_DIV: If the final seed of an individual sow lands on the opposite side of the board and brings the contents of that hole to sow_param seeds, the hole is closed (blocked). In single lap games, the hole's seeds are removed from play. In multilap games, the seeds are used to continue sowing.
 
   + When sowing, blocked holes on your own side of the board are skipped and blocked holes on opponent's side are diverted out of play or captured.
 
