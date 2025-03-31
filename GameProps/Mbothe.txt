@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Mbothe",
-      "about": "Counter-clockwise sow, multi-lap sow. After the first move, subsequent moves may only be played from holes:\n- that do not contain 2 seeds,\n- unless all the player's holes contain 2, then only the rightmost hole maybe played.\nWhen sowing, skip opponent's holes with two seeds (except first move). Cross-capture from opponents side of board but only if it contains 2 seeds; on capture repeat turn.",
+      "about": "Counter-clockwise sow, multi-lap sow. After the first move, subsequent moves may only be played from holes:\n- that do not contain 2 seeds,\n- unless all the player's holes contain 2, then only the rightmost hole maybe played.\n\nWhen sowing, skip opponent's holes with two seeds (except first move). Cross-capture from opponents side of board but only if it contains 2 seeds; on capture repeat turn.",
       "allow_rule": 6,
       "capt_on": [2],
       "capt_rturn": true,

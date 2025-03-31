@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Waurie",
-      "about": "Sow direction is counter-clockwise, sow into own store, but no other capture. Extra turn when last sown seed in the store.\nGoal: clear your own holes.",
+      "about": "Sow direction is counter-clockwise, sow into own store, but no other capture. Extra turn when last sown seed in the store.\n\nGoal: clear your own holes.",
       "goal": 3,
       "skip_start": true,
       "sow_direct": 1,

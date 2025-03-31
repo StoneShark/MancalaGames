@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "SowOpDirs",
-      "about": "The first player picks their sow direction for the game. The second player will sow in the opposite direction for the game.\nCapture on either side on evens. Players must pass if they have no moves.",
+      "about": "The first player picks their sow direction for the game. The second player will sow in the opposite direction for the game.\n\nCapture on either side on evens. Players must pass if they have no moves.",
       "capt_side": 0,
       "evens": true,
       "mustpass": true,

@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Vai Lun Thlan",
-      "about": "A single-lap mancala, sow direction is clockwise, capture on 1s. A player must pass, if they don't have a move. Goal: collect more seeds than your opponent.",
+      "about": "A single-lap mancala, sow direction is clockwise, capture on 1s.\n\nA player must pass, if they don't have a move.\n\nGoal: collect more seeds than your opponent.",
       "capt_on": [1],
       "capt_side": 0,
       "multicapt": -1,

@@ -1,0 +1,23 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 2,
+      "nbr_start": 7
+   },
+   "game_info": {
+      "name": "Tihbat",
+      "about": "Sow counter-clockwise.\n\nCapture on evens that are less than 9.\n\nGoal: capture more than half the seeds.\n",
+      "capt_max": 8,
+      "evens": true,
+      "capt_side": 0,
+      "sow_direct": 1,
+      "stores": true
+   },
+   "player": {
+      "ai_params": {},
+      "scorer": {
+         "stores_m": 8
+      }
+   },
+   "rules": "https://mancala.fandom.com/wiki/Tihbat"
+}

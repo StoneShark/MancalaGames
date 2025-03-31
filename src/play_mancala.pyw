@@ -5,6 +5,8 @@ Created on Thu Mar 23 08:10:28 2023
 @author: Ann"""
 
 import abc
+import enum
+import itertools as it
 import os
 import textwrap
 import tkinter as tk
@@ -29,6 +31,11 @@ PATH = man_path.get_path(DIR) + '/'
 
 TXTPART = '.txt'
 EXFILE = '_all_params.txt'
+MANCALA = 'Mancala'
+
+COLON = ':'
+DESC_WIDTH = 65
+COL_WIDTH = 30
 
 # this must not be in any of the enumerations
 NOT_FILTERED = -2
@@ -36,6 +43,8 @@ NOT_FILTERED = -2
 SMALL = 6
 LARGER = 7
 LARGEST = 9
+
+PSTRING = man_config.get_param_sdict()
 
 SIZES = {'Small (< 6)': lambda holes: holes < SMALL,
          'Medium (== 6)': lambda holes: holes == SMALL,
@@ -403,21 +412,69 @@ class AboutPane(ttk.Labelframe):
 
 
     @staticmethod
+    def game_prop_text(game_dict):
+        """Collect text strings for the game properties in the
+        config dict. Return a list of strings that can be formatted
+        in two columns. Do not inlcude new lines."""
+
+        holes = game_dict[ckey.GAME_CONSTANTS][ckey.HOLES]
+        start = game_dict[ckey.GAME_CONSTANTS][ckey.NBR_START]
+        goal = game_dict[ckey.GAME_INFO].get(ckey.GOAL, gi.Goal.MAX_SEEDS)
+
+        ptxt = [f'Holes per side:  {holes}',
+                f'Start seeds:  {start}',
+                f'Goal: {goal.name}']
+
+        if (ckey.GAME_CLASS in game_dict
+                and game_dict[ckey.GAME_CLASS] != MANCALA):
+            game_class  = game_dict[ckey.GAME_CLASS]
+            ptxt += [f'Game Class: {game_class}']
+
+        if ckey.HELP_FILE in game_dict[ckey.GAME_INFO]:
+            help_file  = game_dict[ckey.GAME_INFO][ckey.HELP_FILE]
+            ptxt += [f'Help File:  {help_file}']
+
+        for param, value in sorted(game_dict[ckey.GAME_INFO].items(),
+                                   key=lambda pair: pair[0]):
+
+            if param in (ckey.NAME, ckey.ABOUT, ckey.GOAL, ckey.HELP_FILE):
+                continue
+
+            if param in (ckey.CAPT_ON, ckey.UDIR_HOLES):
+                vstr = ' '.join(str(val) for val in value)
+
+            elif value is True:
+                vstr = 'Yes'
+
+            elif isinstance(value, enum.Enum):
+                vstr = value.name
+
+            else:
+                vstr = str(value)
+
+            lines = textwrap.fill(f'{PSTRING[param]}: {vstr}', COL_WIDTH)
+            ptxt += [line.strip() for line in lines.split('\n')]
+
+        return ptxt
+
+
+    @staticmethod
     def format_para(text):
         """Format a paragraph for the description."""
 
         paragraphs = text.split('\n')
-        out_text = ''
+        out_text = []
         for para in paragraphs:
 
             fpara = para
             for tag in man_config.REMOVE_TAGS:
                 fpara, _ = tag.subn('', fpara, count=5)
 
-            fpara = textwrap.fill(fpara, 65) + '\n'
-            out_text += fpara
+            out_text += [textwrap.fill(fpara, DESC_WIDTH)]
 
-        return ''.join(out_text)
+        if not out_text[-1]:
+            out_text.pop()
+        return '\n'.join(out_text)
 
 
     def describe_game(self, game_dict):
@@ -430,7 +487,20 @@ class AboutPane(ttk.Labelframe):
                 and ckey.ABOUT in game_dict[ckey.GAME_INFO]):
 
             dtext = self.format_para(game_dict[ckey.GAME_INFO][ckey.ABOUT])
+        dtext += '\n'
 
+        ptext = self.game_prop_text(game_dict)
+        items = len(ptext)
+        col1, rem = divmod(items, 2)
+        if rem:
+            col1 += 1
+        if ptext[col1 - 1][-1] == COLON:
+            col1 += 1
+        for c1text, c2text in it.zip_longest(ptext[:col1], ptext[col1:],
+                                             fillvalue=''):
+            dtext += f"\n{c1text:{COL_WIDTH}}    {c2text:{COL_WIDTH}}"
+
+        dtext += '\n'
         for key, text in game_dict.items():
             if key not in [ckey.GAME_CLASS, ckey.GAME_CONSTANTS,
                            ckey.GAME_INFO, ckey.PLAYER]:

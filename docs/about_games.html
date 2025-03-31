@@ -726,7 +726,7 @@ passing disallowed - a player with no moves at the start of their turn loses.
 <p>Note: <a href="game_params.html#goal_param">GOAL_PARAM</a> set to 4 to limit game length
 <h3 id="Deka" class="game_desc">Deka</h3>
 <p>The goal is to deprive the opponent of seeds. Sow counter-clockwise with multiple laps (LAPPER). After the first turn, holes are closed on opponent's side when the final seed of a lap brings the seeds in a hole to 3. Sowing then continues with those 3 seeds. Each player's rightmost hole may not be closed. In subsequent sowing of closed holes (blocked), own holes are skipped but seeds for opponent's holes are taken out of play.
-<p>The <nolink>Deka board is not a 2-rank board, but hole assignment yields itself to moving the middle end holes to the respective player's side thus making it a 2 rank board.
+<p>The <nolink>Deka board is not a 2-rank board, but hole assignment yields itself to moving the middle end holes to the respective player's right side thus making it a 2 rank board.
 <p>Variations:
 <ul><li class="helptext">
 6 to 8 holes per side
@@ -741,12 +741,12 @@ allow closing of rightmost holes (<a href="game_params.html#sow_rule">SOW_RULE</
     <p class="param">Start seeds:  2</p>
     <p class="param"><a href="game_params.html#goal">Goal</a>: DEPRIVE</p>
     <p class="param"><a href="game_params.html#blocks">Blocks</a>: Yes</p>
-    <p class="param"><a href="game_params.html#goal_param">Goal Parameter</a>: 3</p>
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
   </div>
   <div class="column2">
-    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
     <p class="param"><a href="game_params.html#nocaptmoves">Nbr Start Moves w/o Capture</a>: 1</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_param">Sow Parameter</a>: 3</p>
     <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: SOW_BLKD_DIV_NR</p>
   </div>
 </div>
@@ -847,6 +847,25 @@ allow closing of rightmost holes (<a href="game_params.html#sow_rule">SOW_RULE</
   </div>
 </div>
 <p>Rules: <a href="https://mancala.fandom.com/wiki/Djenon_Aboure" target="_blank">https://mancala.fandom.com/wiki/Djenon_Aboure</a>
+<h3 id="Embeli" class="game_desc">Embeli</h3>
+<p>The goal is to deprive the opponent of seeds. Sow counter-clockwise with multiple laps (LAPPER). Holes are closed on opponent's side when the final seed of a lap brings the seeds in a hole to 4. Sowing then continues with those 4 seeds. Each player's rightmost hole may not be closed (their nti). In subsequent sowing of closed holes (blocked), own holes are skipped but seeds for opponent's holes are taken out of play.
+<p>The <nolink>Embeli board is not a 2-rank board, but hole assignment yields itself to moving the middle end holes (nti) to the respective player's right side thus making it a 2 rank board.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  11</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: DEPRIVE</p>
+    <p class="param"><a href="game_params.html#blocks">Blocks</a>: Yes</p>
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 2</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_param">Sow Parameter</a>: 4</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: SOW_BLKD_DIV_NR</p>
+  </div>
+</div>
+<p>Rules: <a href="https://mancala.fandom.com/wiki/Embeli" target="_blank">https://mancala.fandom.com/wiki/Embeli</a>
 <h3 id="Endodoi" class="game_desc">Endodoi</h3>
 <p>A multi-lap mancala, sow direction counter-clockwise, cross-capture when end in own hole with one seed. Pick own seed on capture. Games end when a player has no valid move.
 <p>Variations:
@@ -1510,7 +1529,6 @@ unless all of the player's holes contain 2, then any hole maybe played.
 <ul><li class="helptext">
 2, 4, 6 or 8 holes per side
 </ul>
-<p><a href="https://mancala.fandom.com/wiki/Leb_Bbut_Ahbochen" target="_blank">https://mancala.fandom.com/wiki/Leb_Bbut_Ahbochen</a>
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  10</p>
@@ -1530,6 +1548,7 @@ unless all of the player's holes contain 2, then any hole maybe played.
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
   </div>
 </div>
+<p>Rules: <a href="https://mancala.fandom.com/wiki/Leb_Bbut_Ahbochen" target="_blank">https://mancala.fandom.com/wiki/Leb_Bbut_Ahbochen</a>
 <h3 id="Leyla-Gobale" class="game_desc">Leyla-Gobale</h3>
 <p>Sow clockwise.  Cross capture, opposite side only. Qurs are created in pairs on both sides of the board when a seed is sown into an empty hole on the player's side of the board and the opposite hole contains three seeds (no capture is made).
 <p>Variations:
@@ -1601,7 +1620,7 @@ See <a href="about_games.html#Olinda">Olinda</a>, <a href="about_games.html#Pall
 <p>Sow is counter-clockwise in multiple laps. 
 <p>Captures are not allowed on each player's first move. Captures are on evens from the final hole sown and one hole before it.
 <p>The game ends when one player has collected half the seeds or if the current player cannot move. In the latter case, the unclaimed seeds on the board do not score.
-<p>Goal: collect more than half of the seeds or the most seeds. 
+<p>Goal: collect more than half of the seeds or the most seeds.
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  6</p>
@@ -1813,11 +1832,11 @@ unless all the player's holes contain 2, then only the rightmost hole maybe play
     <p class="param">Start seeds:  3</p>
     <p class="param"><a href="game_params.html#goal">Goal</a>: DEPRIVE</p>
     <p class="param"><a href="game_params.html#blocks">Blocks</a>: Yes</p>
-    <p class="param"><a href="game_params.html#goal_param">Goal Parameter</a>: 4</p>
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
   </div>
   <div class="column2">
-    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_param">Sow Parameter</a>: 4</p>
     <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: SOW_BLKD_DIV</p>
   </div>
 </div>
@@ -2333,6 +2352,33 @@ See <a href="about_games.html#Longbeu-a-cha">Longbeu-a-cha</a>, <a href="about_g
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
   </div>
 </div>
+<h3 id="Sàn Yáo" class="game_desc">Sàn Yáo</h3>
+<p>Sow multilap next hole counter-clockwise.
+<p>Capture two out (or across the gap) from the final seed sown (into an empty hole followed by an empty hole). Multiple captures are done as long as there is an empty hole-filled hole pattern.
+<p>Played in rounds. A round ends when there are no moves. Use the End Round command if seeds are cycling--though seeds go to hole owners.
+<p>The game is won when the loser cannot fill even one hole.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  5</p>
+    <p class="param">Start seeds:  5</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: TERRITORY</p>
+    <p class="param"><a href="game_params.html#capsamedir">Capture in Sow Direction</a>: Yes</p>
+    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: BOTH</p>
+    <p class="param"><a href="game_params.html#capt_type">Capture Type</a>: TWO_OUT</p>
+    <p class="param"><a href="game_params.html#goal_param">Goal Parameter</a>: 10</p>
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER_NEXT</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: -1</p>
+    <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
+    <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: WINNER</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: <a href="https://mancala.fandom.com/wiki/S%C3%A0n_Y%C3%A1o" target="_blank">https://mancala.fandom.com/wiki/S%C3%A0n_Y%C3%A1o</a>
+<p>Deviation: Hole filling rounding rules are applied, loser must have 2 or fewer seeds.
 <h3 id="Sokusowó" class="game_desc">Sokusowó</h3>
 <p>Sow counter-clockwise in multiple-laps.
 <p>Capture 1 seed on the start of each lap. No other capture mechanism is used.
@@ -2355,6 +2401,12 @@ See <a href="about_games.html#Longbeu-a-cha">Longbeu-a-cha</a>, <a href="about_g
 <h3 id="Songo" class="game_desc">Songo</h3>
 <p>A single-lap mancala, sow direction is clockwise; skip start hole if sowing cycles the board. A sow which cycles the board, will skip the hole that the move started from. If your opponent has no seeds, you must make seeds available to them (if you can).
 <p>Captures are on 2s and 4s on opponent's side (final seed sown makes either 2 or 4).  As long as there is an unbroken group of holes containing 2 or 4 seeds immediately preceding the final hole sown, the holes are also captured.
+<p>Variations:
+<ul><li class="helptext">
+<nolink>Songo Douala: Eight start seeds. Captures on 3s added. Grand Slam rule of NOT_LEGAL or NO_CAPT. (Mancala World)
+<li class="helptext">
+<nolink>Songo Ewondo: Sowing from player's leftmost hole has restrictions (not supported by Mancala Games). Captures on 3s added. No capture from opponents first hole (not supported). Multiple captures but only if the sow did not start with a multiple of seven seeds, then single hole capture (not supported). Grand Slam rule of NO_CAPT. (Mancala World)
+</ul>
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  7</p>
@@ -2372,6 +2424,8 @@ See <a href="about_games.html#Longbeu-a-cha">Longbeu-a-cha</a>, <a href="about_g
   </div>
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p19.
+<p>References: <a href="https://mancala.fandom.com/wiki/Songo_Douala" target="_blank">https://mancala.fandom.com/wiki/Songo_Douala</a>  
+ <a href="https://mancala.fandom.com/wiki/Songo_Ewondo" target="_blank">https://mancala.fandom.com/wiki/Songo_Ewondo</a>
 <h3 id="SowOpDirs" class="game_desc">SowOpDirs</h3>
 <p>The first player picks their sow direction for the game. The second player will sow in the opposite direction for the game.
 <p>Capture on either side on evens. Players must pass if they have no moves.
@@ -2467,6 +2521,25 @@ see Sedeqa
   </div>
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p30.
+<h3 id="Tihbat" class="game_desc">Tihbat</h3>
+<p>Sow counter-clockwise.
+<p>Capture on evens that are less than 9.
+<p>Goal: capture more than half the seeds.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  2</p>
+    <p class="param">Start seeds:  7</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#capt_max">Capture Max</a>: 8</p>
+    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: BOTH</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#evens">Capture Evens</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: <a href="https://mancala.fandom.com/wiki/Tihbat" target="_blank">https://mancala.fandom.com/wiki/Tihbat</a>
 <h3 id="Toguz Kumalak" class="game_desc">Toguz Kumalak</h3>
 <p>A single-lap, counter-clockwise sow mancala. One seed is left in the start hole when sowing; unless there is only one seed, then it is moved forward one hole.
 <p>Capture on evens.
@@ -2567,7 +2640,9 @@ played on smaller boards where the number of seeds per hole is the same as the n
 <p>Rules: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p55.
 <p>Deviation: Per the rules: after the first capture on 2 or 3 subsequent captures (multicapt) are made on 2, 3 or 4 seed holes. Mancala Games only supports the capture mechanism being the same for the first and multiple captures.
 <h3 id="Vai Lun Thlan" class="game_desc">Vai Lun Thlan</h3>
-<p>A single-lap mancala, sow direction is clockwise, capture on 1s. A player must pass, if they don't have a move. Goal: collect more seeds than your opponent.
+<p>A single-lap mancala, sow direction is clockwise, capture on 1s.
+<p>A player must pass, if they don't have a move.
+<p>Goal: collect more seeds than your opponent.
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  6</p>
@@ -2673,7 +2748,9 @@ leave one seed in the start hole (<a href="game_params.html#sow_start">SOW_START
 </div>
 <p>Rules: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p16.
 <h3 id="Weg" class="game_desc">Weg</h3>
-<p>A territory game that uses both stores and wegs (children); capturing 10 holes wins. Sow is counter-clockwise and multi-lap. Wegs are made when a final seed sows a hole to 4 seeds in your opponent's territory. Captures are on the final seed being sown into an opponent's weg. The sown seed and one more (if there is one) are captured to your store. Repeat turn on capture (but not after making a weg). Played in rounds with start player alternating.
+<p>A territory game that uses both stores and wegs (children); capturing 10 holes wins. Sow is counter-clockwise and multi-lap. Wegs are made when a final seed sows a hole to 4 seeds in your opponent's territory.
+<p>Captures are on the final seed being sown into an opponent's weg. The sown seed and one more (if there is one) are captured to your store. Repeat turn on capture (but not after making a weg).
+<p>Played in rounds with start player alternating.
 <p>Variations:
 <ul><li class="helptext">
 2x6 with 3 start seeds
@@ -2759,6 +2836,7 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Djenon Abe">Djenon Abe</a></p>
     <p class="param"><a href="#Djenon Aboure">Djenon Aboure</a></p>
     <p class="param"><a href="#Dépouiller">Dépouiller</a></p>
+    <p class="param"><a href="#Embeli">Embeli</a></p>
     <p class="param"><a href="#En Dodoi">En Dodoi</a></p>
     <p class="param"><a href="#Endodoi">Endodoi</a></p>
     <p class="param"><a href="#Enkeshui">Enkeshui</a></p>
@@ -2801,9 +2879,9 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#NS_Kalah">NS_Kalah</a></p>
     <p class="param"><a href="#NamNam">NamNam</a></p>
     <p class="param"><a href="#Nambayi">Nambayi</a></p>
+    <p class="param"><a href="#Ndoto">Ndoto</a></p>
   </div>
   <div class="column3">
-    <p class="param"><a href="#Ndoto">Ndoto</a></p>
     <p class="param"><a href="#No Sides Child">No Sides Child</a></p>
     <p class="param"><a href="#NoCapt">NoCapt</a></p>
     <p class="param"><a href="#NoSides">NoSides</a></p>
@@ -2824,9 +2902,11 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Sokusowó">Sokusowó</a></p>
     <p class="param"><a href="#Songo">Songo</a></p>
     <p class="param"><a href="#SowOpDirs">SowOpDirs</a></p>
+    <p class="param"><a href="#Sàn Yáo">Sàn Yáo</a></p>
     <p class="param"><a href="#Tap-Urdy">Tap-Urdy</a></p>
     <p class="param"><a href="#Tapata">Tapata</a></p>
     <p class="param"><a href="#Tegre">Tegre</a></p>
+    <p class="param"><a href="#Tihbat">Tihbat</a></p>
     <p class="param"><a href="#Toguz Kumalak">Toguz Kumalak</a></p>
     <p class="param"><a href="#Toguz Xorgol">Toguz Xorgol</a></p>
     <p class="param"><a href="#Urim">Urim</a></p>

@@ -363,7 +363,7 @@ The overall goal of the game. Defines how a player wins.
 
   + MIN_MOVE equal to 1: If a player has no seeds at the start of their turn, they lose. If the current player doesn't have any seeds at the end of their turn, they loose.
   
-  + MIN_MOVE greater than 1: If you opponent has no valid moves, you win. That is, the last player to move wins. Repeat turn either via sow_own_store or capt_rturn is prohibited.
+  + MIN_MOVE greater than 1: If your opponent has no valid moves, you win. That is, the last player to move wins. Repeat turn either via sow_own_store or capt_rturn, is prohibited.
 
   + GRANDSLAM must be legal for DEPRIVE games.
 
