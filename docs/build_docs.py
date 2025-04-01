@@ -405,8 +405,14 @@ def game_prop_text(game_dict):
         if param in (ckey.NAME, ckey.ABOUT, ckey.GOAL, ckey.HELP_FILE):
             continue
 
-        if param in (ckey.CAPT_ON, ckey.UDIR_HOLES):
+        if param == ckey.CAPT_ON:
             vstr = ' '.join(str(val) for val in value)
+
+        elif param == ckey.UDIR_HOLES:
+            if len(value) == holes:
+                vstr = 'all'
+            else:
+                vstr = ' '.join(str(val) for val in value)
 
         elif value is True:
             vstr = 'Yes'
