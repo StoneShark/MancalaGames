@@ -95,12 +95,12 @@ class MancalaGames(ttk.Frame):
         self.tkvars = {}
         self.tktexts = {}
         self.udir_frame = None
-        self.param_changed = False
         self.tabs = {}
         self.but_frame = None
         self.desc = None
         self.prev_option = None
         self.menubar = None
+        self.bind_ids = None
         self.quitting = False
 
         self.params = man_config.ParamData()
@@ -120,6 +120,7 @@ class MancalaGames(ttk.Frame):
 
         ui_utils.setup_styles(master)
         self._create_menus()
+        self._key_bindings()
         self._add_commands_ui()
         self._add_tabs()
         self._create_desc_pane()
@@ -195,7 +196,7 @@ class MancalaGames(ttk.Frame):
 
 
     def _create_menus(self):
-        """Create the game control menus."""
+        """Create the game control menus"""
 
         self.master.option_add('*tearOff', False)
 
@@ -203,22 +204,47 @@ class MancalaGames(ttk.Frame):
         self.master.config(menu=self.menubar)
 
         gamemenu = tk.Menu(self.menubar)
-        gamemenu.add_command(label='Load...', command=self._load)
-        gamemenu.add_command(label='Save', command=self._save)
+        gamemenu.add_command(label='Load...', command=self._load,
+                             accelerator='Ctrl-l')
+        gamemenu.add_command(label='Save', command=self._save,
+                             accelerator='Ctrl-s')
         gamemenu.add_command(label='Save As...',
-                             command=ft.partial(self._save, True))
+                             command=ft.partial(self._save, askfile=True))
         gamemenu.add_command(label='Revert', command=self._revert)
         gamemenu.add_separator()
-        gamemenu.add_command(label='Play', command=self._play)
-        gamemenu.add_command(label='Test', command=self._test)
+        gamemenu.add_command(label='Play', command=self._play,
+                             accelerator='Ctrl-p')
+        gamemenu.add_command(label='Test', command=self._test,
+                             accelerator='Ctrl-t')
         self.menubar.add_cascade(label='Game', menu=gamemenu)
 
         mguimenu = tk.Menu(self.menubar)
         mguimenu.add_command(label='Set UI Defaults', command=self._reset)
-        mguimenu.add_command(label='Set Defaults', command=self._reset_const)
+        mguimenu.add_command(label='Set Defaults', command=self._reset_const,
+                             accelerator='Ctrl-n')
         self.menubar.add_cascade(label='Controls', menu=mguimenu)
 
         ui_utils.add_help_menu(self.menubar, self)
+
+
+    def _key_bindings(self, active=True):
+        """Bind or unbind the keys."""
+
+        bindings = [('<Control-l>', self._load),
+                    ('<Control-s>', self._save),
+                    ('<Control-p>', self._play),
+                    ('<Control-t>', self._test),
+                    ('<Control-n>', self._reset_const),
+                    ]
+
+        if active:
+            self.bind_ids = [self.master.bind(key_seq, op)
+                             for key_seq, op in bindings]
+
+        elif self.bind_ids:
+            for(key_seq, _), bid in zip(bindings, self.bind_ids):
+                self.master.unbind(key_seq, bid)
+            self.bind_ids = None
 
 
     def _add_commands_ui(self):
@@ -378,7 +404,6 @@ class MancalaGames(ttk.Frame):
         """Called-back whenever any tkvar is changed."""
 
         _ = (index, mode)
-        self.param_changed = True
         self.config.edited = True
         self._update_title()
 
@@ -698,16 +723,16 @@ class MancalaGames(ttk.Frame):
 
         self.game = gclass(consts, info)
         ai_player.AiPlayer(self.game, self.config.game_config[ckey.PLAYER])
-        self.param_changed = False
+        self.config.edited = False
 
 
-    def _test(self, positive=True):
+    def _test(self, _=None, *, positive=True):
         """Try to build the game params and game,
         trap any exceptions, report to user."""
 
-        self.param_changed |= \
+        self.config.edited |= \
             any(field.edit_modified() for field in self.tktexts.values())
-        if self.game and not self.param_changed and not positive:
+        if self.game and not self.config.edited and not positive:
             return
 
         self._update_title()
@@ -729,7 +754,7 @@ class MancalaGames(ttk.Frame):
                 'No errors detected in the game configuration.')
 
 
-    def _load(self):
+    def _load(self, _=None):
         """Load params from file.
         Translate the json string. Convert non-primitive types.
         Build game_consts and game_info."""
@@ -747,7 +772,7 @@ class MancalaGames(ttk.Frame):
         """Update the UI with the loaded game."""
 
         self._fill_tk_from_config()
-        self._test(False)
+        self._test(positive=False)
         self.config.edited = False
 
         self._update_title()
@@ -755,7 +780,7 @@ class MancalaGames(ttk.Frame):
             field.edit_modified(False)
 
 
-    def _save(self, askfile=False):
+    def _save(self, _=None, *, askfile=False):
         """Save params to file."""
 
         self.config.init_fname(self.tkvars[ckey.NAME].get())
@@ -796,7 +821,7 @@ class MancalaGames(ttk.Frame):
 
 
     def _set_active(self, activate):
-        """Activate or deactivate main window wingets."""
+        """Activate or deactivate main window widgets."""
 
         new_state = tk.NORMAL if activate else tk.DISABLED
 
@@ -807,8 +832,10 @@ class MancalaGames(ttk.Frame):
         self.menubar.entryconfig('Game', state=new_state)
         self.menubar.entryconfig('Controls', state=new_state)
 
+        self._key_bindings(activate)
 
-    def _play(self):
+
+    def _play(self, _=None):
         """Create and play the game. deactivate param ui and block
         while the game is being played. reactivate when the game
         is exited.
@@ -816,7 +843,7 @@ class MancalaGames(ttk.Frame):
         If quitting is set, wait_window returned because we are
         quiting, so don't try to reactivate."""
 
-        self._test(False)
+        self._test(positive=False)
         if not self.game:
             return
 
@@ -879,7 +906,7 @@ class MancalaGames(ttk.Frame):
         self._reset_edited()
 
 
-    def _reset_const(self):
+    def _reset_const(self, _=None):
         """Reset to defaults; clear loaded config dictionary."""
         # pylint: disable=too-complex
 
