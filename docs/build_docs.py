@@ -810,6 +810,7 @@ def write_game_xref(filename):
                 continue
             game_dict = man_config.read_game_config(GPROP_PATH + gfile)
             gclass, consts, info, _ = game_dict
+            holes = getattr(consts, ckey.HOLES)
 
             print(f'{gfile[:-4]},', end='', file=ofile)
 
@@ -817,21 +818,29 @@ def write_game_xref(filename):
             for param in xref_params:
                 vstr = ''
 
-                if param in gconsts:
-                    vstr = str(getattr(consts, param))
+                if param == ckey.GAME_CLASS:
+                    vstr = gclass
 
-                elif param in (ckey.CAPT_ON, ckey.UDIR_HOLES):
-                    vstr = ' '.join(str(val) for val in getattr(info, param))
+                elif param in gconsts:
+                    vstr = str(getattr(consts, param))
 
                 elif param in ginfos:
                     pval = getattr(info, param)
-                    if pval is True:
-                        vstr = 'x'
-                    elif param == ckey.SOW_DIRECT or pval not in (0, False):
-                        vstr = str(getattr(info, param))
 
-                elif param == ckey.GAME_CLASS:
-                    vstr = gclass
+                    if param == ckey.CAPT_ON:
+                        vstr = ' '.join(str(val) for val in pval)
+
+                    elif param == ckey.UDIR_HOLES:
+                        if len(pval) == holes:
+                            vstr = 'all'
+                        else:
+                            vstr = ' '.join(str(val) for val in pval)
+
+                    else:
+                        if pval is True:
+                            vstr = 'x'
+                        elif param == ckey.SOW_DIRECT or pval not in (0, False):
+                            vstr = str(pval)
 
                 pvals += [vstr]
 
