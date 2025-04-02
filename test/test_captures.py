@@ -371,10 +371,13 @@ class TestCaptTable:
         assert game.child == case.children
 
 
+    # @pytest.mark.usefixtures("logger")
     @pytest.mark.parametrize('case',
-                             [case for case in CASES if case.capt_type == gi.CaptType.NEXT],
+                             [case for case in CASES
+                              if case.capt_type == gi.CaptType.NEXT],
                              ids=['case_' + case.case
-                                  for case in CASES if case.capt_type == gi.CaptType.NEXT])
+                                  for case in CASES
+                                  if case.capt_type == gi.CaptType.NEXT])
     def test_mlap_capt_next(self, case):
 
         child_type = gi.ChildType.NORMAL \
@@ -417,8 +420,13 @@ class TestCaptTable:
         mdata.capt_loc = case.loc
         mdata.board = tuple(case.board)  # not quite right, but ok
         mdata.seeds = 3
+        # print('params', game.params_str(), sep='\n')
+        # print('capturer', game.deco.capturer, sep='\n')
+        # print('capt_ok', game.deco.capt_ok, sep='\n')
+        # print(game)
 
         game.deco.capturer.do_captures(mdata)
+        # print(game)
         assert sum(game.store) + sum(game.board) == game.cts.total_seeds
 
         assert (mdata.captured | mdata.capt_changed) == case.erval
@@ -1030,18 +1038,21 @@ class TestCaptCrossVisited:
 
 class TestCaptTwoOut:
 
-    # actual captures are all on True side, picks on false side
     test_cases = [
 
-        ([3, 3, 3, 4, 0, 2], False, 3, [0, 3, 3, 4, 0, 0], {'capsamedir': True,
-                                                            'capt_type': gi.CaptType.TWO_OUT}),
+        ([3, 3, 3, 4, 0, 2], False, 3, [0, 3, 3, 4, 0, 0],
+         {'capsamedir': True,
+          'capt_type': gi.CaptType.TWO_OUT}),
 
-        ([3, 3, 3, 4, 0, 2], False, 3, [0, 3, 3, 4, 0, 0], {'capsamedir': True,
-                                                            'capt_type': gi.CaptType.TWO_OUT,
-                                                            'multicapt': -1}),
-        ([0, 3, 0, 4, 0, 2], False, 3, [0] * 6, {'capsamedir': True,
-                                                 'capt_type': gi.CaptType.TWO_OUT,
-                                                 'multicapt': -1}),
+        ([3, 3, 3, 4, 0, 2], False, 3, [0, 3, 3, 4, 0, 0],
+         {'capsamedir': True,
+          'capt_type': gi.CaptType.TWO_OUT,
+          'multicapt': -1}),
+
+        ([0, 3, 0, 4, 0, 2], False, 3, [0] * 6,
+         {'capsamedir': True,
+          'capt_type': gi.CaptType.TWO_OUT,
+          'multicapt': -1}),
 
         ]
 
@@ -1064,7 +1075,9 @@ class TestCaptTwoOut:
         mdata = mancala.MoveData(game, None)
         mdata.direct = game.info.sow_direct
         mdata.capt_loc = loc
+        # print(game)
         game.deco.capturer.do_captures(mdata)
+        # print(game)
 
         assert mdata.captured
         assert game.board == eboard
@@ -1075,7 +1088,9 @@ class TestPickCross:
     # actual captures are all on True side, picks on false side
     test_cases = [
         ([3, 3, 3, 2, 2, 2], True, 4, [3, 0, 3, 2, 0, 2], {'evens': True}),
-        ([3, 3, 3, 2, 2, 2], True, 4, [3, 0, 3, 0, 0, 2], {'evens': True,
+
+        # pick is across from final capt loc
+        ([3, 3, 3, 2, 2, 2], True, 4, [3, 3, 0, 0, 0, 2], {'evens': True,
                                                            'multicapt': -1}),
 
         pytest.param(
@@ -1105,7 +1120,9 @@ class TestPickCross:
         mdata = mancala.MoveData(game, None)
         mdata.direct = game.info.sow_direct
         mdata.capt_loc = loc
+        # print(game)
         game.deco.capturer.do_captures(mdata)
+        # print(game)
 
         assert mdata.captured
         assert game.board == eboard
@@ -1222,7 +1239,7 @@ class TestPickFinal:
         mdata.direct = game.info.sow_direct
         mdata.capt_loc = caploc
         game.deco.capturer.do_captures(mdata)
-        print(game)
+        # print(game)
 
         assert mdata.captured == eres
         assert game.board == eboard

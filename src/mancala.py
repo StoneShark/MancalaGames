@@ -132,8 +132,9 @@ class MoveData:
     cont_sow_loc   property fills          in/update
     lap_nbr                                used
     capt_loc                               output       in/update
-    capt_change                                         filled
-    captured                                            filled
+    capt_next                                           fill/working
+    capt_change                                         fill
+    captured                                            fill
 
     note 1: board is used to determine if a grand slam is possible
     e.g. there must be seeds on oppside before the turn
@@ -142,10 +143,16 @@ class MoveData:
 
     note 3: the original start location"""
 
-    def __init__(self, game, move):
+    def __init__(self, game=None, move=None):
+        """Parameters are optional to make copy.copy work;
+        they really are required."""
 
-        self.player = game.turn
-        self.board = tuple(game.board)   # pre-move state
+        if game:
+            self.player = game.turn
+            self.board = tuple(game.board)   # pre-move state
+        else:
+            self.player = None
+            self.board = None
         self.move = move
         self.direct = None   # an intentionally invalid direction
         self.seeds = 0
@@ -153,6 +160,7 @@ class MoveData:
         self.cont_sow_loc = 0   # use by the sower (updated for lap sows)
         self.lap_nbr = 0
         self.capt_loc = 0
+        self.capt_next = 0      # used for multiple captures
 
         self.capt_changed = False    # capt changed state but didn't capture
         self.captured = False       # there was an actual capture
@@ -168,6 +176,7 @@ class MoveData:
         string += f"  cont_sow_loc={self.cont_sow_loc}\n"
         string += f"  lap_nbr={self.lap_nbr}\n"
         string += f"  capt_loc={self.capt_loc}\n"
+        string += f"  capt_next={self.capt_next}\n"
         string += f"  capt_changed={self.capt_changed}\n"
         string += f"  captured={self.captured}\n"
         string += f"  end_msg={self.end_msg}"

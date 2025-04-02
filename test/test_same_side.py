@@ -214,6 +214,7 @@ class TestSameSide:
 
         game.board = [0, 1, 2, 3, 4, 5, 6, 7]
         mdata = mancala.MoveData(game, 0)
+        mdata.direct = gi.Direct.CCW
         mdata.capt_loc = 3
 
         game.capture_seeds(mdata)

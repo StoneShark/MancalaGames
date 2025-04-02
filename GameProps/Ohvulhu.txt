@@ -26,7 +26,7 @@
       },
       "scorer": {
          "stores_m": 16,
-         "empties": 2,
+         "empties_m": 2,
          "repeat_turn": 40,
          "easy_rand": 20
       }

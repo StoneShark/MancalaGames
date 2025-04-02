@@ -211,15 +211,14 @@ class StopCaptureSimul(LapContinuerIf):
         if not self.game.inhibitor.stop_me_capt(self.game.turn):
 
             saved_state = self.game.state
-            saved_mdata = copy.copy(mdata)
+            working_mdata = copy.copy(mdata)
             game_log.set_simulate()
 
-            self.game.capture_seeds(mdata)
-            captured = mdata.captured
+            self.game.capture_seeds(working_mdata)
+            captured = working_mdata.captured
 
             game_log.clear_simulate()
             self.game.state = saved_state
-            mdata = saved_mdata
 
             if captured:
                 game_log.add('MLap stop for simul capture')
