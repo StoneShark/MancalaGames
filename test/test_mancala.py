@@ -355,6 +355,12 @@ class TestMoveData:
 
     def test_construct(self, game):
 
+        # this call is needed for copy of MoveData to work
+        mdata = mancala.MoveData()
+        assert not mdata.player
+        assert not mdata.board
+        assert not mdata.move
+
         mdata = mancala.MoveData(game, 5)
 
         assert mdata.board == tuple(game.board)

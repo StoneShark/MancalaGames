@@ -340,11 +340,11 @@ class TestCaptTable:
         mdata.capt_loc = case.loc
         mdata.board = tuple(case.board)  # not quite right, but ok
         mdata.seeds = 3
-        print(game.deco.capturer)
-        print(game)
+        # print(game.deco.capturer)
+        # print(game)
 
         game.deco.capturer.do_captures(mdata)
-        print(game)
+        # print(game)
         assert sum(game.store) + sum(game.board) == game.cts.total_seeds
 
         # TODO rework the test cases to test these individually
@@ -997,7 +997,10 @@ class TestRepeatTurn:
 
 class TestCaptCrossVisited:
     """Only testing the result of do_captures because,
-    CaptCrossVisited doesn't actually do the capturing."""
+    CaptCrossVisited doesn't actually do the capturing.
+
+    Also, tests that CaptMultiple properly wraps
+    CaptCrossVisited (REPEAT_TURN returned)."""
 
     @pytest.fixture
     def game(self):
@@ -1005,6 +1008,8 @@ class TestCaptCrossVisited:
         game_info = gi.GameInfo(crosscapt=True,
                                 xc_sown=True,
                                 stores=True,
+                                multicapt=-1,
+                                capsamedir=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
@@ -1075,6 +1080,7 @@ class TestCaptTwoOut:
         mdata = mancala.MoveData(game, None)
         mdata.direct = game.info.sow_direct
         mdata.capt_loc = loc
+        # print(game.deco.capturer)
         # print(game)
         game.deco.capturer.do_captures(mdata)
         # print(game)
@@ -1089,8 +1095,7 @@ class TestPickCross:
     test_cases = [
         ([3, 3, 3, 2, 2, 2], True, 4, [3, 0, 3, 2, 0, 2], {'evens': True}),
 
-        # pick is across from final capt loc
-        ([3, 3, 3, 2, 2, 2], True, 4, [3, 3, 0, 0, 0, 2], {'evens': True,
+        ([3, 3, 3, 2, 2, 2], True, 4, [3, 0, 3, 0, 0, 2], {'evens': True,
                                                            'multicapt': -1}),
 
         pytest.param(
@@ -1122,6 +1127,7 @@ class TestPickCross:
         mdata.capt_loc = loc
         # print(game)
         game.deco.capturer.do_captures(mdata)
+        # print(mdata)
         # print(game)
 
         assert mdata.captured

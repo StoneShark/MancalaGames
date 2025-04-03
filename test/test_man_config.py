@@ -474,6 +474,9 @@ class TestParamDict:
         with pytest.raises(ValueError):
             man_config.ParamData()
 
+        with pytest.raises(ValueError):
+            man_config.get_param_sdict()
+
 
     def test_dupl_param(self, mocker, tmp_path):
 
@@ -504,6 +507,9 @@ Capture,evens,Capture Max,game_info _,104,int,0,2,0
 
         with pytest.raises(ValueError):
             man_config.ParamData()
+
+        with pytest.raises(ValueError):
+            man_config.get_param_sdict()
 
 
     def test_bad_int_param(self, mocker, tmp_path):
@@ -559,6 +565,16 @@ Capture,evens,Basic Capture,,0,label,0,0,notint
 
         with pytest.raises(ValueError):
             man_config.ParamData()
+
+
+    def test_strings_dict(self):
+
+        param_dict = man_config.get_param_sdict()
+        assert len(param_dict) > 50
+        assert ckey.NBR_START in param_dict
+        assert ckey.SOW_DIRECT in param_dict
+        assert ckey.UNCLAIMED in param_dict
+
 
 
 # %%  test config data

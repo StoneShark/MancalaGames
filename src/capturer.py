@@ -51,7 +51,7 @@ class CaptNone(CaptMethodIf):
 
 # %%  base capture decos
 
-class CaptSingle(CaptMethodIf):
+class CaptBasic(CaptMethodIf):
     """Capture on selected values, e.g. on basic capture
     via capt_ok deco."""
 
@@ -300,20 +300,21 @@ class CaptMultiple(CaptMethodIf):
 
     The maximum captures are set by the value of multicapt:
         -1: unlimited captures as long as other conditions are met
-        0 or 1: do one capture
+        0: this deco not included
         n: the maximum number of captures to do
 
     mdata.captured is reset each iteration to see if there is another
     capture, before returning it is set True if there were any
-    captures."""
+    captures.
+
+    The returned mdata.capt_loc is the capt_loc return by the first
+    call to the capturer."""
 
     def __init__(self, game, decorator=None):
 
         super().__init__(game, decorator)
 
         self.max_capt = game.info.multicapt
-        if not self.max_capt:
-            self.max_capt = 1
 
 
     def do_captures(self, mdata, capt_first=True):
@@ -326,15 +327,20 @@ class CaptMultiple(CaptMethodIf):
         while True:
 
             self.decorator.do_captures(mdata, capt_first)
+            if capt_first:
+                capt_loc = mdata.capt_loc
             cont_capt -= 1
-            if not mdata.captured or not cont_capt:
+
+            if not cont_capt or mdata.captured is False:
                 mdata.captured = captured
+                mdata.capt_loc = capt_loc
+                break
+            if mdata.captured is gi.WinCond.REPEAT_TURN:
                 mdata.capt_loc = capt_loc
                 break
 
             capt_first = False
             captured = True
-            capt_loc = mdata.capt_loc
             mdata.captured = False
             mdata.capt_loc = mdata.capt_next
 
@@ -878,7 +884,7 @@ def deco_capturer(game):
 
     elif (game.info.evens or game.info.capt_on
           or game.info.capt_max or game.info.capt_min):
-        capturer = CaptSingle(game)
+        capturer = CaptBasic(game)
 
     else:
         capturer = CaptNone(game)
