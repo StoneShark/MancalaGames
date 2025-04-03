@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """All the string keys from the configuration files.
 
+When adding a parameter be sure to include it in the
+appropriate tuple below.
+
 Created on Tue Jul 25 07:43:16 2023
 @author: Ann"""
 
@@ -79,3 +82,75 @@ UNCLAIMED = 'unclaimed'
 VISIT_OPP = 'visit_opp'
 XC_SOWN = 'xc_sown'
 XCPICKOWN = 'xcpickown'
+
+
+GCONST_PARAMS = (HOLES,
+                 NBR_START)
+
+# these are the parameters that actually effect game play
+# the description parameters are not included
+GINFO_PARAMS =  (ALLOW_RULE,
+                 BLOCKS,
+                 CAPSAMEDIR,
+                 CAPT_MAX,
+                 CAPT_MIN,
+                 CAPT_ON,
+                 CAPT_RTURN,
+                 CAPT_SIDE,
+                 CAPT_TYPE,
+                 CHILD_CVT,
+                 CHILD_LOCS,
+                 CHILD_RULE,
+                 CHILD_TYPE,
+                 CROSSCAPT,
+                 EVENS,
+                 GOAL,
+                 GOAL_PARAM,
+                 GRANDSLAM,
+                 MIN_MOVE,
+                 MLAPS,
+                 MOVE_ONE,
+                 MOVEUNLOCK,
+                 MULTICAPT,
+                 MUSTPASS,
+                 MUSTSHARE,
+                 NO_SIDES,
+                 NOCAPTMOVES,
+                 NOSINGLECAPT,
+                 PICKEXTRA,
+                 PRESCRIBED,
+                 PRESOWCAPT,
+                 ROUND_FILL,
+                 ROUND_STARTER,
+                 ROUNDS,
+                 SKIP_START,
+                 SOW_DIRECT,
+                 SOW_OWN_STORE,
+                 SOW_PARAM,
+                 SOW_RULE,
+                 SOW_START,
+                 START_PATTERN,
+                 STORES,
+                 UDIR_HOLES,
+                 UNCLAIMED,
+                 VISIT_OPP,
+                 XC_SOWN,
+                 XCPICKOWN,
+                 )
+
+# the parameters that configure the AI player
+PLAYER_PARAMS = (ALGORITHM,
+                 DIFFICULTY,
+                 AI_ACTIVE,
+                 MCTS_BIAS,
+                 MCTS_NODES,
+                 MCTS_POUTS,
+                 MM_DEPTH,
+                 STORES_M,
+                 ACCESS_M,
+                 SEEDS_M,
+                 EMPTIES_M,
+                 CHILD_CNT_M,
+                 EVENS_M,
+                 EASY_RAND,
+                )

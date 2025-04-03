@@ -115,6 +115,7 @@ class GameSetup:
         if self.state:
             self.game_ui.game.state = self.state
             self.game_ui.refresh()
+            self.game_ui.start_it()
             return
 
         tk.messagebox.showerror(
@@ -651,7 +652,7 @@ class MancalaUI(tk.Frame):
                     btnstate)
 
 
-    def _start_it(self):
+    def start_it(self):
         """Do the last steps in starting a new game:
         log the start and check for ai's turn."""
         game_log.new()
@@ -705,7 +706,7 @@ class MancalaUI(tk.Frame):
             if self.set_game_mode(buttons.Behavior.RNDCHOWN):
                 return
 
-        self._start_it()
+        self.start_it()
 
 
     def set_game_mode(self, mode, force=False):
@@ -741,7 +742,7 @@ class MancalaUI(tk.Frame):
 
         self.refresh()
         if mode == buttons.Behavior.GAMEPLAY:
-            self._start_it()
+            self.start_it()
             self._toggle_tally(vis_op=RET_TALLY_OP)
         else:
             self._toggle_tally(vis_op=VIS_TALLY_OP)

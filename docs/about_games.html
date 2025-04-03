@@ -1601,27 +1601,14 @@ played in rounds with UMOVE style RoundFill
 <p>See Also: <a href="https://mancala.fandom.com/wiki/Layli_Goobalay_(short_board)" target="_blank">https://mancala.fandom.com/wiki/Layli_Goobalay_(short_board)</a> and <a href="https://mancala.fandom.com/wiki/Layli_Goobalay_(long_board)" target="_blank">https://mancala.fandom.com/wiki/Layli_Goobalay_(long_board)</a>  Valdez (p140) describes a very similar game with CW sow and round fill is UMOVE but not reflected instead opposites have the same seed counts.
 <h3 id="Longbeu-a-cha" class="game_desc">Longbeu-a-cha</h3>
 <p>Sow counter-clockwise via the multi-lap next-hole method (<a href="game_params.html#mlaps">MLAPS</a> of LAPPER_NEXT).
-<p>While either player is sowing, both players capture all holes sown to 4 on their side of the board.
 <p>When the hole from which a new lap should start is empty, capture any seeds in the hole following the empty hole. That is, captures are made when the hole after the hole in which the final seed of a lap was sown, is empty and there are seeds in the hole 'two out' from the last sown seed.
 <p>Captures continue while holes are alternately empty and occupied in the counter-clockwise direction.
-<p>Unlike <a href="about_games.html#Pallam Kuzhi">Pallam Kuzhi</a>, this game is not played in rounds.
-<p>Variations:
-<ul><li class="helptext">
-<a href="game_params.html#sow_rule">SOW_RULE</a> of SOW_CAPT_ALL instead of OWN_SOW_CAPT_ALL
-<li class="helptext">
-Single lap sow without a SOW_CAPT_ALL rule (Mancala World)
-<li class="helptext">
-Mancala world also describes a similar game, Pachgarhwa which does not use a SOW_CAPT_ALL rule, but does sow in multiple laps by the next hole method.
-<li class="helptext">
-See <a href="about_games.html#Olinda">Olinda</a>, <a href="about_games.html#Pallam Kuzhi">Pallam Kuzhi</a>, and <a href="about_games.html#Pandi">Pandi</a>.
-</ul>
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  5</p>
     <p class="param">Start seeds:  5</p>
     <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
     <p class="param"><a href="game_params.html#capsamedir">Capture in Sow Direction</a>: Yes</p>
-    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 4</p>
     <p class="param"><a href="game_params.html#capt_side">Capture side</a>: BOTH</p>
     <p class="param"><a href="game_params.html#capt_type">Capture Type</a>: TWO_OUT</p>
   </div>
@@ -1629,13 +1616,10 @@ See <a href="about_games.html#Olinda">Olinda</a>, <a href="about_games.html#Pall
     <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER_NEXT</p>
     <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: -1</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
-    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: OWN_SOW_CAPT_ALL</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
   </div>
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p60.
-<p>References: Mancala world: <a href="https://mancala.fandom.com/wiki/Longbeu-a-cha" target="_blank">https://mancala.fandom.com/wiki/Longbeu-a-cha</a> 
- <a href="https://mancala.fandom.com/wiki/Pachgarhwa" target="_blank">https://mancala.fandom.com/wiki/Pachgarhwa</a>
 <h3 id="Mandoli" class="game_desc">Mandoli</h3>
 <p>Sow is counter-clockwise in multiple laps. 
 <p>Captures are not allowed on each player's first move. Captures are on evens from the final hole sown and one hole before it.
@@ -2115,7 +2099,7 @@ pass when no move (<a href="game_params.html#mustpass">MUSTPASS</a>, <a href="ab
 <li class="helptext">
 Other options for <a href="game_params.html#round_starter">ROUND_STARTER</a> and <a href="game_params.html#round_fill">ROUND_FILL</a>.
 <li class="helptext">
-See <a href="about_games.html#Longbeu-a-cha">Longbeu-a-cha</a>, <a href="about_games.html#Pallam Kuzhi">Pallam Kuzhi</a>, and <a href="about_games.html#Pandi">Pandi</a>.
+See <a href="about_games.html#Pallam Kuzhi">Pallam Kuzhi</a> and <a href="about_games.html#Pandi">Pandi</a>.
 </ul>
 <div class="cols_row">
   <div class="column2">
@@ -2238,7 +2222,7 @@ add must pass
 <li class="helptext">
 Other options for <a href="game_params.html#round_starter">ROUND_STARTER</a> and <a href="game_params.html#round_fill">ROUND_FILL</a>.
 <li class="helptext">
-See <a href="about_games.html#Longbeu-a-cha">Longbeu-a-cha</a>, <a href="about_games.html#Olinda">Olinda</a> and <a href="about_games.html#Pandi">Pandi</a>.
+See <a href="about_games.html#Olinda">Olinda</a> and <a href="about_games.html#Pandi">Pandi</a>.
 </ul>
 <div class="cols_row">
   <div class="column2">
@@ -2275,7 +2259,7 @@ See <a href="about_games.html#Longbeu-a-cha">Longbeu-a-cha</a>, <a href="about_g
 <li class="helptext">
 Other options for <a href="game_params.html#round_starter">ROUND_STARTER</a> and <a href="game_params.html#round_fill">ROUND_FILL</a>.
 <li class="helptext">
-See <a href="about_games.html#Longbeu-a-cha">Longbeu-a-cha</a>, <a href="about_games.html#Olinda">Olinda</a>, and <a href="about_games.html#Pallam Kuzhi">Pallam Kuzhi</a>.
+See <a href="about_games.html#Olinda">Olinda</a> and <a href="about_games.html#Pallam Kuzhi">Pallam Kuzhi</a>.
 </ul>
 <div class="cols_row">
   <div class="column2">

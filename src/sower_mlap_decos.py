@@ -39,8 +39,7 @@ class LapContinuerIf(deco_chain_if.DecoChainIf):
 
 class LapContinue(LapContinuerIf):
     """A base lap continuer, always continue.
-    Wrappers t
-est for other stop conditions."""
+    Wrappers test for other stop conditions."""
 
     def do_another_lap(self, mdata):
         """Determine if we are done sowing."""

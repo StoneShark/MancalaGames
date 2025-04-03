@@ -783,10 +783,12 @@ is included after the parameter sections.
 <p class="helptext"> When not lap sowing, basic capture rules are applied and capture side is checked on the hole from which the seeds will be captured. 
 <p class="helptext"> When multiple lap sowing, the basic capture rules define when the multilap sowing will end. When the final seed of a lap meets the basic capture criteria, multilap sowing ends and the seeds in the next hole (defined by <a href="game_params.html#capsamedir">CAPSAMEDIR</a> setting) are captured.
 <li class="helptext">
-<b class="enum">TWO_OUT</b>: Basic capture rules and capture side are ignored. There are three flavors of capture two out:
-<p class="helptext"> Single lap game: capture if the sow ends in occupied hole, then an empty hole, followed by an occupied hole the contents of this are hole captured.
-<p class="helptext"> Multi lap game but single capture: capture when the last hole sown is followed by an empty hole which is then followed by an occupied hole.
-<p class="helptext"> Multi lap game with multiple captures: capture when the last hole sown is followed by an empty hole which is then followed by an occupied hole. Continue captures while the pattern of empty hole followed by an occupied hole continues. <a href="game_params.html#capsamedir">CAPSAMEDIR</a> must be true. 
+<b class="enum">TWO_OUT</b>: Capture two holes out from the final hole sown but only if the intervening hole is empty. This is sometimes called capturing across the gap. 
+<p class="helptext"> <a href="game_params.html#capsamedir">CAPSAMEDIR</a> must be true. Basic capture rules and capture side are ignored. 
+<p class="helptext"> When not lap sowing, the final hole sown must be occupied for capture two out (i.e. contains two or more seeds after sowing).
+<p class="helptext"> Multilap sowing does not stop to check for two out captures on each lap*. For LAPPER sow, captures are checked after the final seed ends lands in an empty hole. For LAPPER_NEXT sow, captures captures are checked when there are no seeds in the hole after the final seed sown.  
+<p class="helptext"> *The <a href="game_params.html#sow_rule">SOW_RULE</a> LAP_CAPT is supported for TWO_OUT captures with LAPPER sow.
+<p class="helptext"> If multiple captures are configured, captures continue while the pattern of empty hole followed by an occupied hole repeats. 
 <li class="helptext">
 <b class="enum">MATCH_OPP</b>: capture when the number of seeds in the final hole sown match the opposite-side hole. Multiple captures maybe made in either direction. Multilap sowing does stop for captures.
 </ol>
