@@ -35,6 +35,12 @@ Created on Tue Mar 11 09:02:11 2025
 
 
 import tkinter as tk
+#  these are not always loaded along with tkinter
+#  pylint: disable=unused-import
+from tkinter import messagebox
+#  pylint: disable=unused-import
+from tkinter import simpledialog
+
 import textwrap
 
 import behaviors as bhv

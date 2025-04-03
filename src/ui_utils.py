@@ -7,6 +7,11 @@ Created on Sun Mar  9 07:04:43 2025
 import functools as ft
 import webbrowser
 import tkinter as tk
+#  these are not always loaded along with tkinter
+#  pylint: disable=unused-import
+from tkinter import messagebox
+#  pylint: disable=unused-import
+from tkinter import simpledialog
 from tkinter import ttk
 
 import man_path

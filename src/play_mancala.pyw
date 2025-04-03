@@ -10,6 +10,11 @@ import itertools as it
 import os
 import textwrap
 import tkinter as tk
+#  these are not always loaded along with tkinter
+#  pylint: disable=unused-import
+from tkinter import messagebox
+#  pylint: disable=unused-import
+from tkinter import simpledialog
 from tkinter import ttk
 
 import cfg_keys as ckey

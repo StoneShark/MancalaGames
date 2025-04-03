@@ -7,6 +7,11 @@ Created on Sun Aug 13 10:06:37 2023
 
 
 import tkinter as tk
+#  these are not always loaded along with tkinter
+#  pylint: disable=unused-import
+from tkinter import messagebox
+#  pylint: disable=unused-import
+from tkinter import simpledialog
 import textwrap
 
 import behaviors as bhv

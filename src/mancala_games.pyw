@@ -21,9 +21,11 @@ import functools as ft
 import textwrap
 import traceback
 import tkinter as tk
+#  these are not always loaded along with tkinter
 #  pylint: disable=unused-import
-#  this is not always loaded along with tkinter
 from tkinter import messagebox
+#  pylint: disable=unused-import
+from tkinter import simpledialog
 from tkinter import ttk
 import warnings
 
