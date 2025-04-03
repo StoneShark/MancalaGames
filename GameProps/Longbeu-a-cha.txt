@@ -6,15 +6,13 @@
    },
    "game_info": {
       "name": "Longbeu-a-cha",
-      "about": "Sow counter-clockwise via the multi-lap next-hole method (MLAPS of LAPPER_NEXT).\n\nWhile either player is sowing, both players capture all holes sown to 4 on their side of the board.\n\nWhen the hole from which a new lap should start is empty, capture any seeds in the hole following the empty hole. That is, captures are made when the hole after the hole in which the final seed of a lap was sown, is empty and there are seeds in the hole 'two out' from the last sown seed.\n\nCaptures continue while holes are alternately empty and occupied in the counter-clockwise direction.\n\nUnlike Pallam Kuzhi, this game is not played in rounds.\n\nVariations:\n- SOW_RULE of SOW_CAPT_ALL instead of OWN_SOW_CAPT_ALL\n\n- Single lap sow without a SOW_CAPT_ALL rule (Mancala World)\n\n- Mancala world also describes a similar game, Pachgarhwa which does not use a SOW_CAPT_ALL rule, but does sow in multiple laps by the next hole method.\n\n- See Olinda, Pallam Kuzhi, and Pandi.\n",
+      "about": "Sow counter-clockwise via the multi-lap next-hole method (MLAPS of LAPPER_NEXT).\n\nWhen the hole from which a new lap should start is empty, capture any seeds in the hole following the empty hole. That is, captures are made when the hole after the hole in which the final seed of a lap was sown, is empty and there are seeds in the hole 'two out' from the last sown seed.\n\nCaptures continue while holes are alternately empty and occupied in the counter-clockwise direction.\n",
       "capsamedir": true,
       "capt_type": 2,
-      "capt_on": [ 4 ],
       "mlaps": 2,
       "multicapt": -1,
       "capt_side": 0,
       "sow_direct": 1,
-      "sow_rule": 3,
       "stores": true
    },
    "player": {
@@ -25,6 +23,5 @@
          "stores_m": 4
       }
    },
-   "rules": "Russ, Laurence. Mancala Games. 1984. p60.",
-   "references": "Mancala world: https://mancala.fandom.com/wiki/Longbeu-a-cha \n https://mancala.fandom.com/wiki/Pachgarhwa"
+   "rules": "Russ, Laurence. Mancala Games. 1984. p60."
 }
