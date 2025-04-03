@@ -6,10 +6,10 @@ Created on Thu Feb 13 07:34:32 2025
 
 import textwrap
 
-VERSION = '1.8.2'
+VERSION = '1.8.3'
 
 # these are auto filled when the exe is built
-DATETIME = 'Fri Mar 21 14:49:11 2025'
+DATETIME = 'Thu Apr  3 14:23:32 2025'
 BRANCH = 'main'
 
 RELEASE_TEXT = textwrap.dedent(f"""\
