@@ -269,11 +269,12 @@ class ParamData(dict):
     """A dictionary of the parameter data. Keys are the 'option'
     column (parameter name); values are Param dataclass objects."""
 
-    def __init__(self, del_tags=True):
+    def __init__(self, del_tags=True, no_descs=False):
 
         super().__init__()
         self._read_params_table()
-        self._read_param_descriptions(del_tags)
+        if not no_descs:
+            self._read_param_descriptions(del_tags)
 
 
     def _read_param_descriptions(self, del_tags):
@@ -379,34 +380,6 @@ class ParamData(dict):
             rec[UI_DEFAULT_IDX] = self.convert_default(rec[UI_DEFAULT_IDX])
             self[opt_name] = Param(*rec)
 
-
-def get_param_sdict():
-    """Read the game parameters file and return a dictionary of
-    description strings."""
-
-    with open(man_path.get_path('game_params.csv'), 'r',
-              encoding='utf-8') as file:
-        reader = csv.reader(file)
-        data = list(reader)
-
-    fields = data[0]
-    if not all(fname == pfield.name
-               for fname, pfield in zip(fields, dc.fields(Param))):
-        raise ValueError("game_params columns are not as expected")
-
-    pstrings = {}
-    for rec in data[1:]:
-        if rec[TAB_IDX] == SKIP_TAB:
-            continue
-
-        opt_name = rec[OPTION_IDX]
-        if opt_name in pstrings:
-            msg = f"Duplicate option in game_params {opt_name}."
-            raise ValueError(msg)
-
-        pstrings[opt_name] = rec[STR_IDX]
-
-    return pstrings
 
 
 # %% read and process config ini

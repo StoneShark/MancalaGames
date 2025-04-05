@@ -5,6 +5,7 @@ Created on Thu Mar 23 08:10:28 2023
 @author: Ann"""
 
 import abc
+import dataclasses as dc
 import enum
 import itertools as it
 import os
@@ -17,6 +18,7 @@ from tkinter import messagebox
 from tkinter import simpledialog
 from tkinter import ttk
 
+import ai_player
 import cfg_keys as ckey
 import game_constants as gconsts
 import game_interface as gi
@@ -49,10 +51,13 @@ SMALL = 6
 LARGER = 7
 LARGEST = 9
 
-PSTRING = man_config.get_param_sdict()
+PARAMS = man_config.ParamData(del_tags=False, no_descs=True)
+
+GCLASS = {'Mancala': lambda gclass: gclass == MANCALA,
+          'Other': lambda gclass: gclass != MANCALA}
 
 SIZES = {'Small (< 6)': lambda holes: holes < SMALL,
-         'Medium (== 6)': lambda holes: holes == SMALL,
+         'Medium (6)': lambda holes: holes == SMALL,
          'Larger (7 - 8)': lambda holes: LARGER <= holes < LARGEST,
          'Largest (>= 9)': lambda holes: holes >= LARGEST}
 
@@ -84,6 +89,53 @@ CAPTS = {'No Capture': lambda ginfo: not any([ginfo.get(ckey.CAPT_MAX, 0),
          'Other Capt Type': lambda ginfo: ginfo.get(ckey.CAPT_TYPE, 0)}
 
 
+SOWRS = {'None': lambda sow_rule: not sow_rule,
+         'Sow Closed': lambda sow_rule: sow_rule in (
+             gi.SowRule.SOW_BLKD_DIV,
+             gi.SowRule.SOW_BLKD_DIV_NR),
+         'Take Sowing': lambda sow_rule: sow_rule in (
+             gi.SowRule.SOW_CAPT_ALL,
+             gi.SowRule.OWN_SOW_CAPT_ALL),
+         'Capture on Laps': lambda sow_rule: sow_rule in (
+             gi.SowRule.LAP_CAPT,
+             gi.SowRule.OPP_GETS_OWN_LAST),
+         'Other': lambda sow_rule: sow_rule not in (
+             gi.SowRule.NONE,
+             gi.SowRule.SOW_BLKD_DIV,
+             gi.SowRule.SOW_BLKD_DIV_NR,
+             gi.SowRule.SOW_CAPT_ALL,
+             gi.SowRule.OWN_SOW_CAPT_ALL,
+             gi.SowRule.LAP_CAPT,
+             gi.SowRule.OPP_GETS_OWN_LAST),
+
+        }
+
+SOWDIR = {'CW': lambda ginfo: ginfo.get(ckey.SOW_DIRECT, 1) == -1,
+          'CCW': lambda ginfo: ginfo.get(ckey.SOW_DIRECT, 1) == 1,
+          'SPLIT': lambda ginfo: not ginfo.get(ckey.SOW_DIRECT, 1),
+          'Players Alt Dir': lambda ginfo: ginfo.get(ckey.SOW_DIRECT, 1) == 2,
+          'User Chooses': lambda ginfo: len(ginfo.get(ckey.UDIR_HOLES, [])) > 1}
+
+
+# features do not break the game list up into non-overlapping sets
+#  need show all to not filter anything
+FEATS = {'Show All': lambda _: True,
+         'Start Pattern': lambda ginfo: ginfo.get(ckey.START_PATTERN, 0),
+         'Prescribed Open': lambda ginfo: ginfo.get(ckey.PRESCRIBED, 0),
+         'Move Restrictions': lambda ginfo: ginfo.get(ckey.ALLOW_RULE, 0),
+         'Must Pass': lambda ginfo: ginfo.get(ckey.MUSTPASS, 0),
+         'Must Share': lambda ginfo: ginfo.get(ckey.MUSTSHARE, 0),
+         'Pre-sow Capture': lambda ginfo: ginfo.get(ckey.PRESOWCAPT, 0),
+         'Repeat Turn': lambda ginfo: any([ginfo.get(ckey.CAPT_RTURN, 0),
+                                           ginfo.get(ckey.SOW_OWN_STORE, 0),
+                                           ginfo.get(ckey.XC_SOWN, 0)]),
+         'Grand Slam': lambda ginfo: ginfo.get(ckey.GRANDSLAM, 0),
+         'No Sides': lambda ginfo: ginfo.get(ckey.NO_SIDES, 0),
+         'Multiple Capt': lambda ginfo: ginfo.get(ckey.MULTICAPT, 0),
+         'Take More': lambda ginfo: ginfo.get(ckey.PICKEXTRA, 0),
+         }
+
+
 
 # %% frame classes
 
@@ -95,11 +147,13 @@ class BaseFilter(ttk.Frame, abc.ABC):
     created. The keys will be either the value or the name
     based on value_keys."""
 
-    def __init__(self, parent, filt_obj, label, value_keys):
+    def __init__(self, parent, filt_obj, label, param_key, value_keys):
+        # pylint: disable=too-many-arguments
 
         super().__init__(parent, borderwidth=3)
         self.parent = parent
         self.filt_obj = filt_obj
+        self.param_key = param_key
 
         row = ui_utils.Counter()
 
@@ -146,6 +200,26 @@ class BaseFilter(ttk.Frame, abc.ABC):
         self.filt_obj.update_list()
 
 
+    def param(self, game_dict):
+        """Get the value from the game_dict.
+        If param_key is in the PARAMS structure, use that data to
+        get the value or its default.
+        Otherwise, the param_key is a top level element in the
+        game_dict."""
+
+        if self.param_key in PARAMS:
+            value = man_config.get_config_value(
+                        game_dict,
+                        PARAMS[self.param_key].cspec,
+                        self.param_key,
+                        PARAMS[self.param_key].vtype)
+
+        else:
+            value = game_dict[self.param_key]
+
+        return value
+
+
     @abc.abstractmethod
     def items(self):
         """Return name, value pairs for each filter option.
@@ -160,10 +234,11 @@ class BaseFilter(ttk.Frame, abc.ABC):
 class VListFilter(BaseFilter):
     """A filter category based on a list of values."""
 
-    def __init__(self, parent, filt_obj, label, val_list):
+    def __init__(self, parent, filt_obj, label, val_list, param_key):
+        # pylint: disable=too-many-arguments
 
         self.val_list = val_list
-        super().__init__(parent, filt_obj, label, value_keys=True)
+        super().__init__(parent, filt_obj, label, param_key, value_keys=True)
 
 
     def items(self):
@@ -173,12 +248,13 @@ class VListFilter(BaseFilter):
             yield evalue, evalue
 
 
-    def show(self, value):
+    def show(self, game_dict):
         """Determine if the game associated with value
         should be shown.
 
         value: the enum value to test (an int)"""
 
+        value = self.param(game_dict)
         return self.filt_var[value].get()
 
 
@@ -195,10 +271,11 @@ class EnumFilter(VListFilter):
 class DictFilter(BaseFilter):
     """A filter category based on a dictionary of rule_name: test"""
 
-    def __init__(self, parent, filt_obj, label, filt_dict):
+    def __init__(self, parent, filt_obj, label, filt_dict, param_key):
+        # pylint: disable=too-many-arguments
 
         self.filt_dict = filt_dict
-        super().__init__(parent, filt_obj, label, value_keys=False)
+        super().__init__(parent, filt_obj, label, param_key, value_keys=False)
 
 
     def items(self):
@@ -207,22 +284,59 @@ class DictFilter(BaseFilter):
         return self.filt_dict.items()
 
 
-    def show(self, value):
+    def show(self, game_dict):
         """Determine if a the game associated with value
         should be shown.
 
         value: value of the associated parameter to test"""
 
+        value = self.param(game_dict)
         return any(test_func(value)
                    for test_name, test_func in self.filt_dict.items()
                    if self.filt_var[test_name].get())
 
 
-class GameFilters(ttk.Frame):
-    """A pane to collect all the game filters and the PLAY button.
+@dc.dataclass
+class FilterDesc:
+    """Description of filters."""
 
-    XXXX create 6 column frames so that the filters can be packed
-    closer together--when a second row of filters is added."""
+    title: str
+    fclass: type
+    value_keys: object
+    param_key: str
+    col: int
+
+
+MAX_COLUMNS = 7
+fcol = ui_utils.Counter()  # count: increments; value: no increment
+
+# can't build the tk objects yet
+FILTERS = [
+    FilterDesc('Game Class', DictFilter, GCLASS, ckey.GAME_CLASS, fcol.count),
+    FilterDesc('Board Size', DictFilter, SIZES, ckey.HOLES, fcol.value),
+
+    FilterDesc('Goal', DictFilter, GOALS, ckey.GOAL, fcol.count),
+    FilterDesc('Rounds', DictFilter, ROUNDS, ckey.ROUNDS, fcol.value),
+
+    FilterDesc('Lap Type', EnumFilter, gi.LapSower, ckey.MLAPS, fcol.count),
+    FilterDesc('Sow Rule', DictFilter, SOWRS, ckey.SOW_RULE, fcol.value),
+
+    FilterDesc('Child Type', EnumFilter, gi.ChildType,
+               ckey.CHILD_TYPE, fcol.count),
+
+    FilterDesc('Sow Direct', DictFilter, SOWDIR, ckey.GAME_INFO, fcol.count),
+    FilterDesc('Capture Types', DictFilter, CAPTS, ckey.GAME_INFO, fcol.value),
+
+    FilterDesc('Features (any)', DictFilter, FEATS, ckey.GAME_INFO, fcol.count),
+
+    ]
+
+assert fcol.value < MAX_COLUMNS, F"Too many filter columns used {MAX_COLUMNS}."
+del fcol
+
+
+class GameFilters(ttk.Frame):
+    """A pane to collect all the game filters and the PLAY button."""
 
     def __init__(self, parent):
 
@@ -230,89 +344,55 @@ class GameFilters(ttk.Frame):
         self.parent = parent
         self.pack()
 
-        col = ui_utils.Counter()
-
         filt_frame = ttk.Labelframe(self,
                                     text='Filters', labelanchor='nw',
                                     padding=3)
-        filt_frame.grid(row=0, column=col.count, sticky=tk.NSEW)
-        fcol = ui_utils.Counter()
+        filt_frame.grid(row=0, column=0, sticky=tk.NSEW)
 
-        self.size_filter = DictFilter(filt_frame, self, 'Board Size', SIZES)
-        self.size_filter.grid(row=0, column=fcol.count, sticky='ns')
+        cframes = [None] * MAX_COLUMNS
+        for idx in range(MAX_COLUMNS):
+            cframes[idx] = ttk.Frame(filt_frame)
+            cframes[idx].grid(row=0, column=idx, sticky='ns')
 
-        self.goal_filter = DictFilter(filt_frame, self, 'Goal', GOALS)
-        self.goal_filter.grid(row=0, column=fcol.count, sticky='ns')
+        self.filters = [None] * len(FILTERS)
+        for idx, fdesc in enumerate(FILTERS):
 
-        self.rnd_filter = DictFilter(filt_frame, self, 'Rounds', ROUNDS)
-        self.rnd_filter.grid(row=0, column=fcol.count, sticky='ns')
-
-        self.laps_filter = EnumFilter(filt_frame, self, 'Lap Type', gi.LapSower)
-        self.laps_filter.grid(row=0, column=fcol.count, sticky='ns')
-
-        self.child_filter = EnumFilter(filt_frame, self, 'Child Type', gi.ChildType)
-        self.child_filter.grid(row=0, column=fcol.count, sticky='ns')
-
-        self.capt_filter = DictFilter(filt_frame, self, 'Capture Types', CAPTS)
-        self.capt_filter.grid(row=0, column=fcol.count, sticky='ns')
-
-        # this does not break the game list into useful groups
-        # leave as example VListFilter
-        # fcol.reset()
-        # self.class_filter = VListFilter(filt_frame, self, 'Game Class',
-        #                                list(GAME_CLASSES.keys()))
-        # self.class_filter.grid(row=1, column=fcol.count, sticky='ns')
+            self.filters[idx] = fdesc.fclass(cframes[fdesc.col],
+                                             self,
+                                             fdesc.title,
+                                             fdesc.value_keys,
+                                             fdesc.param_key)
+            self.filters[idx].pack(side=tk.TOP, fill=tk.Y, expand=True)
 
         filt_frame.columnconfigure(tk.ALL, weight=1)
 
-        cmd_col = col.count
         ttk.Button(self, text='Play',
                    command=parent.play_game,
                    style='Play.TButton').grid(
-                       row=0, column=cmd_col, sticky='ns')
+                       row=0, column=1, sticky='ns')
 
         self.columnconfigure(tk.ALL, weight=1)
 
 
-    def not_filtered(self):
+    def not_filtered(self, _=None):
         """Clear all of the filters."""
 
-        # self.class_filter.not_filtered()
-        self.size_filter.not_filtered()
-        self.laps_filter.not_filtered()
-        self.goal_filter.not_filtered()
-        self.rnd_filter.not_filtered()
-        self.child_filter.not_filtered()
-        self.capt_filter.not_filtered()
+        for filt in self.filters:
+            filt.not_filtered()
 
 
-    def all_filtered(self):
+    def all_filtered(self, _=None):
         """Set all of the filters."""
 
-        # self.class_filter.all_filtered()
-        self.size_filter.all_filtered()
-        self.laps_filter.all_filtered()
-        self.goal_filter.all_filtered()
-        self.rnd_filter.all_filtered()
-        self.child_filter.all_filtered()
-        self.capt_filter.all_filtered()
+        for filt in self.filters:
+            filt.all_filtered()
 
 
     def show_game(self, game_dict):
         """Test if the game should be shown based on the filter
         settings and the game_dict"""
 
-
-        gcts = game_dict[ckey.GAME_CONSTANTS]
-        ginfo = game_dict[ckey.GAME_INFO]
-        return all([# self.class_filter.show(game_dict[ckey.GAME_CLASS]),
-                    self.size_filter.show(gcts[ckey.HOLES]),
-                    self.laps_filter.show(ginfo.get(ckey.MLAPS, 0)),
-                    self.goal_filter.show(ginfo.get(ckey.GOAL, 0)),
-                    self.rnd_filter.show(ginfo.get(ckey.ROUNDS, 0)),
-                    self.child_filter.show(ginfo.get(ckey.CHILD_TYPE, 0)),
-                    self.capt_filter.show(ginfo),
-                    ])
+        return all(filt.show(game_dict) for filt in self.filters)
 
 
     def update_list(self):
@@ -328,10 +408,11 @@ class SelectList(ttk.Labelframe):
     def __init__(self, parent):
 
         super().__init__(parent, text='Game List', labelanchor='nw',
-                         padding=3)
+                         padding=4)
         self.parent = parent
 
-        self.game_list = ttk.Treeview(self, show='tree', selectmode='browse')
+        self.game_list = ttk.Treeview(self, show='tree', selectmode='browse',
+                                      height=20)
 
         scroll = ttk.Scrollbar(self,
                                orient='vertical',
@@ -379,13 +460,62 @@ class SelectList(ttk.Labelframe):
             self.game_list.insert('', tk.END, iid=name, text=name)
 
 
+    def jump_to_first(self, _):
+        """Select and view first element of the treeview."""
+
+        first = self.game_list.get_children()[0]
+        if self.game_list.focus() != first:
+            self.game_list.selection_set(first)
+            self.game_list.focus(first)
+            self.game_list.see(first)
+
+
+    def jump_to_last(self, _):
+        """Select and view last element of the treeview."""
+
+        last = self.game_list.get_children()[-1]
+        if self.game_list.focus() != last:
+            self.game_list.selection_set(last)
+            self.game_list.focus(last)
+            self.game_list.see(last)
+
+
+    def key_pressed(self, event):
+        """If a key with a keysym of length 1 is pressed,
+        select the next element that starts with that key,
+        wrapping the search. If no elements start with that
+        key; don't change the selection."""
+
+        if len(event.keysym) > 1:
+            return
+        key = event.keysym[0].lower()
+
+        children = self.game_list.get_children()
+        count = len(children)
+        current = self.game_list.focus()
+        if current:
+            start = children.index(current)
+            search = it.chain(range(start + 1, count), range(start))
+        else:
+            search = range(count)
+
+        for cidx in search:
+            child = children[cidx]
+
+            if child[0].lower() == key:
+                self.game_list.selection_set(child)
+                self.game_list.focus(child)
+                self.game_list.see(child)
+                return
+
+
 class AboutPane(ttk.Labelframe):
     """A pane for the game help text (called the 'about' text)."""
 
     def __init__(self, parent):
 
         super().__init__(parent, text='Game Overview', labelanchor='nw',
-                         padding=3)
+                         padding=4)
 
         self.text_box = tk.Text(self)
 
@@ -394,6 +524,7 @@ class AboutPane(ttk.Labelframe):
                                command=self.text_box.yview)
         self.text_box.configure(yscrollcommand=scroll.set)
         self.text_box.pack(side=tk.LEFT, expand=tk.TRUE, fill=tk.BOTH)
+        self.text_box.configure(state=tk.DISABLED)
 
         scroll.config(command=self.text_box.yview)
         scroll.pack(side=tk.RIGHT, expand=tk.TRUE, fill=tk.Y)
@@ -463,7 +594,7 @@ class AboutPane(ttk.Labelframe):
             else:
                 vstr = str(value)
 
-            lines = textwrap.fill(f'{PSTRING[param]}: {vstr}', COL_WIDTH)
+            lines = textwrap.fill(f'{PARAMS[param].text}: {vstr}', COL_WIDTH)
             ptxt += [line.strip() for line in lines.split('\n')]
 
         return ptxt
@@ -536,7 +667,7 @@ class GameChooser(ttk.Frame):
         ui_utils.setup_styles(master)
 
         self.master.title('Play Mancala - Game Chooser')
-        super().__init__(self.master)
+        super().__init__(self.master, padding=3)
         self.master.resizable(False, True)
         self.pack(expand=tk.TRUE, fill=tk.BOTH)
 
@@ -581,17 +712,27 @@ class GameChooser(ttk.Frame):
         self.master.config(menu=menubar)
 
         playmenu = tk.Menu(menubar)
-        playmenu.add_command(label='Play...', command=self.play_game)
+        playmenu.add_command(label='Play...', command=self.play_game,
+                             accelerator='Ctrl-p')
         menubar.add_cascade(label='Play', menu=playmenu)
 
         filtmenu = tk.Menu(menubar)
         filtmenu.add_command(label='No Filters',
-                             command=self.game_filter.not_filtered)
+                             command=self.game_filter.not_filtered,
+                             accelerator='Ctrl-n')
         filtmenu.add_command(label='All Filtered',
-                             command=self.game_filter.all_filtered)
+                             command=self.game_filter.all_filtered,
+                             accelerator='Ctrl-a')
         menubar.add_cascade(label='Filters', menu=filtmenu)
 
         ui_utils.add_help_menu(menubar, self)
+
+        self.master.bind('<Control-a>', self.game_filter.all_filtered)
+        self.master.bind('<Control-n>', self.game_filter.not_filtered)
+        self.master.bind('<Control-p>', self.play_game)
+        self.master.bind('<Home>', self.select_list.jump_to_first)
+        self.master.bind('<End>', self.select_list.jump_to_last)
+        self.master.bind('<Key>', self.select_list.key_pressed)
 
 
     def select_game(self, game_name):
@@ -613,7 +754,7 @@ class GameChooser(ttk.Frame):
                                      if self.game_filter.show_game(gdict)])
 
 
-    def play_game(self):
+    def play_game(self, _=None):
         """Build the constants and info. Create the game and play it."""
 
         if not self.selected:

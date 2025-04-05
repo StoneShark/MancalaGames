@@ -1686,6 +1686,30 @@ played in rounds with UMOVE style RoundFill
   </div>
 </div>
 <p>Rules: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p47.
+<h3 id="Mangala IV" class="game_desc">Mangala IV</h3>
+<p>Start is random placement of 98 seeds.
+<p>Sow in multiple laps, counter-clockwise. Lap sowing stops for capture of 2s and 4s.  A player without a valid move must pass.
+<p>Capture on 2s or 4s with final seed; capture preceeding holes in unbroken line of 2s and 4s.
+<p>Goal: capture the most seeds.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  7</p>
+    <p class="param">Start seeds:  98</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 2 4</p>
+    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: BOTH</p>
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: -1</p>
+    <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#start_pattern">Start Pattern</a>: RANDOM</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: <a href="https://mancala.fandom.com/wiki/Mangala_IV" target="_blank">https://mancala.fandom.com/wiki/Mangala_IV</a>
+<p>Note: Rule interpretation might not be exact.
 <h3 id="Mbangbi" class="game_desc">Mbangbi</h3>
 <p>A single-lap mancala in which each player chooses the sow direction on each move. Left-mouse sows clockwise and right-mouse button sows counter-clockwise. Moves may only be started from holes with 2 or more seeds.  If a player does not have a move, they must pass until they do have a move or the game ends.
 <p>Captures are on 2s and 4s from the opponent's side (final seed sown makes either 2 or 4).  As long as there is an unbroken group of holes containing 2 or 4 seeds immediately preceding the final hole sown, these holes are also captured.
@@ -2127,8 +2151,8 @@ See <a href="about_games.html#Pallam Kuzhi">Pallam Kuzhi</a> and <a href="about_
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p61.
 <p>Deviation: PICKLASTSEEDS was added to end games more reliably.
 <h3 id="OnlyChild" class="game_desc">OnlyChild</h3>
-<p>User chooses sow direction.
-<p>Each player may only make one child by sowing one their own, interior holes to 4 seeds. Children cannot be created in either end hole.
+<p>User chooses sow direction for the middle and end holes; the other holes sow towards the closest edge of the board (split sow).
+<p>Each player may only make one child by sowing one of their own, interior holes to 4 seeds. Children cannot be created in either end hole.
 <p>Cross capture on opponents side of the board but only if 4 or fewer seeds and not until you have a child to move the seeds into.
 <p>The game ends when either cannot move. Seeds remaining in play do not score.
 <p>Goal: collect more than half the seeds.
@@ -2147,7 +2171,7 @@ See <a href="about_games.html#Pallam Kuzhi">Pallam Kuzhi</a> and <a href="about_
     <p class="param"><a href="game_params.html#child_type">Type of Children</a>: ONE_CHILD</p>
     <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: SPLIT</p>
-    <p class="param"><a href="game_params.html#udir_holes">User Chooses Direction</a>: all</p>
+    <p class="param"><a href="game_params.html#udir_holes">User Chooses Direction</a>: 0 3 6</p>
     <p class="param"><a href="game_params.html#unclaimed">End Game Seeds</a>: DONT_SCORE</p>
   </div>
 </div>
@@ -2916,6 +2940,7 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Mandoli">Mandoli</a></p>
     <p class="param"><a href="#Mangala I">Mangala I</a></p>
     <p class="param"><a href="#Mangala II">Mangala II</a></p>
+    <p class="param"><a href="#Mangala IV">Mangala IV</a></p>
     <p class="param"><a href="#Mbangbi">Mbangbi</a></p>
     <p class="param"><a href="#Mbothe">Mbothe</a></p>
     <p class="param"><a href="#Meusuëb">Meusuëb</a></p>
@@ -2927,9 +2952,9 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Nambayi">Nambayi</a></p>
     <p class="param"><a href="#Ndoto">Ndoto</a></p>
     <p class="param"><a href="#No Sides Child">No Sides Child</a></p>
-    <p class="param"><a href="#NoCapt">NoCapt</a></p>
   </div>
   <div class="column3">
+    <p class="param"><a href="#NoCapt">NoCapt</a></p>
     <p class="param"><a href="#NoSides">NoSides</a></p>
     <p class="param"><a href="#NumNum">NumNum</a></p>
     <p class="param"><a href="#Obridjie">Obridjie</a></p>

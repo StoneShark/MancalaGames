@@ -1,0 +1,27 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 7,
+      "nbr_start": 98
+   },
+   "game_info": {
+      "name": "Mangala IV",
+      "about": "Start is random placement of 98 seeds.\n\nSow in multiple laps, counter-clockwise. Lap sowing stops for capture of 2s and 4s.  A player without a valid move must pass.\n\nCapture on 2s or 4s with final seed; capture preceeding holes in unbroken line of 2s and 4s.\n\nGoal: capture the most seeds.\n",
+      "capt_on": [ 2, 4 ],
+      "mlaps": 1,
+      "multicapt": -1,
+      "mustpass": true,
+      "capt_side": 0,
+      "sow_direct": 1,
+      "start_pattern": 6,
+      "stores": true
+   },
+   "player": {
+      "ai_params": {},
+      "scorer": {
+         "stores_m": 8
+      }
+   },
+   "rules": "https://mancala.fandom.com/wiki/Mangala_IV",
+   "note": "Rule interpretation might not be exact."
+}

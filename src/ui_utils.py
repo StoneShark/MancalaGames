@@ -258,6 +258,11 @@ class Counter:
         self.nbr += 1
         return self.nbr
 
+    @property
+    def value(self):
+        """Return the count w/o incrementing."""
+        return self.nbr
+
     def reset(self):
         """Reset the count."""
         self.nbr = -1
