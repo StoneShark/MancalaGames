@@ -250,19 +250,15 @@ class Counter:
     Useful for puting UI elements in sequential rows or columns."""
 
     def __init__(self):
-        self.nbr = -1
+        self.value = -1
 
     @property
     def count(self):
         """increment round and return it"""
-        self.nbr += 1
-        return self.nbr
+        self.value += 1
+        return self.value
 
-    @property
-    def value(self):
-        """Return the count w/o incrementing."""
-        return self.nbr
 
     def reset(self):
         """Reset the count."""
-        self.nbr = -1
+        self.value = -1
