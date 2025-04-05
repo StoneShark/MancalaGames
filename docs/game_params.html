@@ -177,13 +177,17 @@ is included after the parameter sections.
 <p class="helptext"> Moves must always be possible so <a href="game_params.html#min_move">MIN_MOVE</a> must be 1 and <a href="game_params.html#allow_rule">ALLOW_RULE</a> single_all_to_zero may not be used.
 <p class="helptext"> <a href="game_params.html#grandslam">GRANDSLAM</a> must be legal for CLEAR games. CLEAR games cannot be played in <a href="game_params.html#rounds">ROUNDS</a> or use children. Additionally, the following options are incompatible with CLEAR games: <a href="game_params.html#moveunlock">MOVEUNLOCK</a>, <a href="game_params.html#mustpass">MUSTPASS</a> and <a href="game_params.html#mustshare">MUSTSHARE</a>.
 <li class="helptext">
-<b class="enum">RND_WIN_COUNT</b>: win goal_param rounds. <a href="game_params.html#round_fill">ROUND_FILL</a> is not used; each round is setup as the start of the game.
+<b class="enum">RND_WIN_COUNT_MAX</b>: win goal_param rounds of MAX_SEEDS games. <a href="game_params.html#round_fill">ROUND_FILL</a> is not used; each round is setup as the start of the game.
 <li class="helptext">
 <b class="enum">RND_SEED_COUNT</b>: collect goal_param seeds across several rounds. <a href="game_params.html#round_fill">ROUND_FILL</a> is not used; each round is setup as the start of the game.
 <li class="helptext">
 <b class="enum">RND_EXTRA_SEEDS</b>: collect goal_param extra seeds (winner - loser seeds). <a href="game_params.html#round_fill">ROUND_FILL</a> is not used; each round is setup as the start of the game.
 <li class="helptext">
 <b class="enum">RND_POINTS</b>: score goal_param points. WIN is 1 point. WIN and skunk (> 3/4 of total seeds) is 2 points. <a href="game_params.html#round_fill">ROUND_FILL</a> is not used; each round is setup as the start of the game.
+<li class="helptext">
+<b class="enum">RND_WIN_COUNT_CLR</b>: win goal_param rounds of CLEAR games. <a href="game_params.html#round_fill">ROUND_FILL</a> is not used; each round is setup as the start of the game.
+<li class="helptext">
+<b class="enum">RND_WIN_COUNT_DEP</b>: win goal_param rounds of DEPRIVE games. <a href="game_params.html#round_fill">ROUND_FILL</a> is not used; each round is setup as the start of the game.
 </ol>
 <h4 id="goal_param"> Goal Parameter </h4>
 <p class="pdesc">Location in Config Files: game_info : goal_param
@@ -575,6 +579,8 @@ is included after the parameter sections.
 <b class="enum">OPP_GETS_OWN_LAST</b>: Use LAP_CAPT sow rule until there are only sow_param seeds left. Then when down to the last seeds (sow_param or less at the start of a lap): seeds sown on the opponent's side are captured by the opponent. If the last seed would do a normal capture, the sower takes those seeds, including the last seed sown.
 <li class="helptext">
 <b class="enum">CONT_LAP_ON</b>: Only continue multilap sowing when a hole is sown to sow_param seeds.
+<li class="helptext">
+<b class="enum">CONT_LAP_GREQ</b>: Only continue multilap sowing when a hole is sown to sow_param or more seeds.
 </ol>
 <h4 id="sow_param"> Sow Parameter </h4>
 <p class="pdesc">Location in Config Files: game_info : sow_param

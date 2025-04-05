@@ -553,10 +553,12 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
                   " by eliminating their opponent's seeds.",
                   " by claiming more holes.",
                   " by clearing all their seeds.",
-                  f" by winning {win_param} or more rounds.",
+                  f" by winning {win_param} rounds.",
                   f" by collecting {win_param} or more total seeds.",
                   f" by collecting at least {win_param} more seeds than opponent.",
-                  f" by earning {win_param} or more points.")
+                  f" by earning {win_param} or more points.",
+                  f" by winning {win_param} rounds.",
+                  f" by winning {win_param} rounds.")
 
         rnd_reason = ("not used",
                       " by collecting at least half the seeds.",
@@ -587,7 +589,8 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             message += f'{player} won {rtext}{rnd_reason[self.info.rounds]}'
 
         elif win_cond in [gi.WinCond.TIE, gi.WinCond.ROUND_TIE]:
-            if self.info.goal == gi.Goal.DEPRIVE:
+            if self.info.goal in (gi.Goal.DEPRIVE,
+                                  gi.Goal.RND_WIN_COUNT_DEP):
                 message += 'Both players ended with seeds; consider it a tie.'
             elif self.info.goal == gi.Goal.TERRITORY:
                 message += 'Each player controls half the holes (a tie).'

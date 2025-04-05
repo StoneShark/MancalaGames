@@ -15,12 +15,16 @@ class RoundTally:
     # pylint: disable=too-many-instance-attributes
 
     # Create a RoundTally for these game goals
-    GOALS = {gi.Goal.RND_WIN_COUNT,
+    GOALS = {gi.Goal.RND_WIN_COUNT_MAX,
              gi.Goal.RND_SEED_COUNT,
              gi.Goal.RND_EXTRA_SEEDS,
-             gi.Goal.RND_POINTS}
+             gi.Goal.RND_POINTS,
+             gi.Goal.RND_WIN_COUNT_CLR,
+             gi.Goal.RND_WIN_COUNT_DEP}
 
-    PSTR = {gi.Goal.RND_WIN_COUNT: "Round Wins",
+    PSTR = {gi.Goal.RND_WIN_COUNT_MAX: "Round Wins",
+            gi.Goal.RND_WIN_COUNT_CLR: "Round Wins",
+            gi.Goal.RND_WIN_COUNT_DEP: "Round Wins",
             gi.Goal.RND_SEED_COUNT: "Total Seeds",
             gi.Goal.RND_EXTRA_SEEDS: "Extra Seeds",
             gi.Goal.RND_POINTS: "Round Points"}
@@ -38,7 +42,9 @@ class RoundTally:
         self.required_win = req_win
 
         intro = "Game, not round, ended "
-        if goal == gi.Goal.RND_WIN_COUNT:
+        if goal in (gi.Goal.RND_WIN_COUNT_MAX,
+                    gi.Goal.RND_WIN_COUNT_CLR,
+                    gi.Goal.RND_WIN_COUNT_DEP):
             self.parameter = lambda player: self.round_wins[player]
             self.msg = intro + f"({req_win} rounds won)."
 

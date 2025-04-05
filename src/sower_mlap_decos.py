@@ -256,6 +256,19 @@ class StopNotN(LapContinuerIf):
         return self.decorator.do_another_lap(mdata)
 
 
+class StopLessN(LapContinuerIf):
+    """A wrapper: Stop if the number of seeds in the final sown hole
+    is less than sow_param seeds."""
+
+    def do_another_lap(self, mdata):
+
+        if self.game.board[mdata.capt_loc] < self.game.info.sow_param:
+            game_log.add(f"Stop mlap < {self.game.info.sow_param} seeds")
+            return False
+
+        return self.decorator.do_another_lap(mdata)
+
+
 class StopRepeatTurn(LapContinuerIf):
     """A wrapper: stop if we know it's a repeat turn.
     This must be at the top so we don't try to use

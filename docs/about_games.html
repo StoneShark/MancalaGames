@@ -1081,7 +1081,7 @@ Allow moves from holes across from singles (<a href="about_games.html#Huroy">Hur
   <div class="column2">
     <p class="param">Holes per side:  6</p>
     <p class="param">Start seeds:  4</p>
-    <p class="param"><a href="game_params.html#goal">Goal</a>: RND_WIN_COUNT</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: RND_WIN_COUNT_MAX</p>
     <p class="param"><a href="game_params.html#allow_rule">Special Move Restrictions</a>: NOT_XFROM_1S</p>
     <p class="param"><a href="game_params.html#goal_param">Goal Parameter</a>: 10</p>
     <p class="param"><a href="game_params.html#presowcapt">Pre Sow Capture</a>: ALL_SINGLE_XCAPT</p>
@@ -1231,6 +1231,27 @@ Instead of a minimum move of 2, singletons may start moves if all holes are empt
   </div>
 </div>
 <p>Rules: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p100.
+<h3 id="Hufesay" class="game_desc">Hufesay</h3>
+<p>Multilap, counter-clockwise sow. A player must pass if they do not have a move.
+<p>Cross capture on opponents side of the board. Leave the seed that effected the capture.
+<p>Goal: Collect more than half of the seeds.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OPP_SIDE</p>
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#unclaimed">End Game Seeds</a>: DONT_SCORE</p>
+  </div>
+</div>
+<p>Rules: <a href="https://mancala.fandom.com/wiki/Hufesay" target="_blank">https://mancala.fandom.com/wiki/Hufesay</a>
 <h3 id="Huroy" class="game_desc">Huroy</h3>
 <p>Sow in the direction of your choice.
 <p>Before each sow, if any holes on your side of the board have 1s, capture any seeds across from them. Then sow as normal. No other capture is provided.
@@ -1244,7 +1265,7 @@ Instead of a minimum move of 2, singletons may start moves if all holes are empt
   <div class="column2">
     <p class="param">Holes per side:  6</p>
     <p class="param">Start seeds:  4</p>
-    <p class="param"><a href="game_params.html#goal">Goal</a>: RND_WIN_COUNT</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: RND_WIN_COUNT_MAX</p>
     <p class="param"><a href="game_params.html#goal_param">Goal Parameter</a>: 10</p>
     <p class="param"><a href="game_params.html#presowcapt">Pre Sow Capture</a>: ALL_SINGLE_XCAPT</p>
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
@@ -1603,6 +1624,10 @@ played in rounds with UMOVE style RoundFill
 <p>Sow counter-clockwise via the multi-lap next-hole method (<a href="game_params.html#mlaps">MLAPS</a> of LAPPER_NEXT).
 <p>When the hole from which a new lap should start is empty, capture any seeds in the hole following the empty hole. That is, captures are made when the hole after the hole in which the final seed of a lap was sown, is empty and there are seeds in the hole 'two out' from the last sown seed.
 <p>Captures continue while holes are alternately empty and occupied in the counter-clockwise direction.
+<p>Variation:
+<ul><li class="helptext">
+Walak-pussa played on a board with 7 holes per side and 4 seeds in each hole at the start.
+</ul>
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  5</p>
@@ -1965,6 +1990,32 @@ unless all the player's holes contain 2, then only the rightmost hole maybe play
     <p class="param"><a href="game_params.html#udir_holes">User Chooses Direction</a>: all</p>
   </div>
 </div>
+<h3 id="Nsa Isong" class="game_desc">Nsa Isong</h3>
+<p>A territory game.
+<p>Sow in multiple-laps clockwise. Any holes sown to 4 seeds are captured by the hole owner.
+<p>If the final seed of a sow yields 4 seeds in a hole, the sower captures them. Capture may occur on either side of the board
+<p>Played in rounds. A round ends when there are 4 seeds on the board; the last capturer (also mover) captures those 4 seeds. Hole ownership is reallocated each round based on the number of holes each player can fill with their collected seeds. The round starter alternates.
+<p>Goal: control at least 10 of the holes.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: TERRITORY</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 4</p>
+    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: BOTH</p>
+    <p class="param"><a href="game_params.html#goal_param">Goal Parameter</a>: 10</p>
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#pickextra">On Capture, Take More Rule</a>: PICKLASTSEEDS</p>
+    <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: END_2S_SEEDS</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CW</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: OWN_SOW_CAPT_ALL</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: <a href="https://mancala.fandom.com/wiki/Nsa_Ilong" target="_blank">https://mancala.fandom.com/wiki/Nsa_Ilong</a>
 <h3 id="NS_Kalah" class="game_desc">NS_Kalah</h3>
 <p>Sow counter-clockwise but only on your own side of the board and into your own store.
 <p>Cross-capture on single seed, leave the capturing seed.
@@ -2150,6 +2201,28 @@ See <a href="about_games.html#Pallam Kuzhi">Pallam Kuzhi</a> and <a href="about_
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p61.
 <p>Deviation: PICKLASTSEEDS was added to end games more reliably.
+<h3 id="Olowuka" class="game_desc">Olowuka</h3>
+<p>Multilap sow, but only if final hole contains four or more seeds. Counter-clockwise.
+<p>Capture on 2s and 3s on opponent's side. Grand Slam is permitted but the leftmost hole (from sower perspective) is not captured.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 2 3</p>
+    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OPP_SIDE</p>
+    <p class="param"><a href="game_params.html#grandslam">Grand Slam</a>: LEAVE_LEFT</p>
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: -1</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_param">Sow Parameter</a>: 4</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: CONT_LAP_GREQ</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: <a href="https://mancala.fandom.com/wiki/Olowuka" target="_blank">https://mancala.fandom.com/wiki/Olowuka</a>
 <h3 id="OnlyChild" class="game_desc">OnlyChild</h3>
 <p>User chooses sow direction for the middle and end holes; the other holes sow towards the closest edge of the board (split sow).
 <p>Each player may only make one child by sowing one of their own, interior holes to 4 seeds. Children cannot be created in either end hole.
@@ -2913,9 +2986,9 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Enlightenment">Enlightenment</a></p>
     <p class="param"><a href="#Erherhe">Erherhe</a></p>
     <p class="param"><a href="#Eson Xorgol">Eson Xorgol</a></p>
+    <p class="param"><a href="#Gabata">Gabata</a></p>
   </div>
   <div class="column3">
-    <p class="param"><a href="#Gabata">Gabata</a></p>
     <p class="param"><a href="#Gamacha">Gamacha</a></p>
     <p class="param"><a href="#Gelech">Gelech</a></p>
     <p class="param"><a href="#Giuthi">Giuthi</a></p>
@@ -2923,6 +2996,7 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Halusa">Halusa</a></p>
     <p class="param"><a href="#Hoyito I">Hoyito I</a></p>
     <p class="param"><a href="#Hoyito II">Hoyito II</a></p>
+    <p class="param"><a href="#Hufesay">Hufesay</a></p>
     <p class="param"><a href="#Huroy">Huroy</a></p>
     <p class="param"><a href="#J'Odu">J'Odu</a></p>
     <p class="param"><a href="#Je ki n je">Je ki n je</a></p>
@@ -2952,15 +3026,17 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Nambayi">Nambayi</a></p>
     <p class="param"><a href="#Ndoto">Ndoto</a></p>
     <p class="param"><a href="#No Sides Child">No Sides Child</a></p>
+    <p class="param"><a href="#NoCapt">NoCapt</a></p>
   </div>
   <div class="column3">
-    <p class="param"><a href="#NoCapt">NoCapt</a></p>
     <p class="param"><a href="#NoSides">NoSides</a></p>
+    <p class="param"><a href="#Nsa Isong">Nsa Isong</a></p>
     <p class="param"><a href="#NumNum">NumNum</a></p>
     <p class="param"><a href="#Obridjie">Obridjie</a></p>
     <p class="param"><a href="#Ohojichi">Ohojichi</a></p>
     <p class="param"><a href="#Ohvulhu">Ohvulhu</a></p>
     <p class="param"><a href="#Olinda">Olinda</a></p>
+    <p class="param"><a href="#Olowuka">Olowuka</a></p>
     <p class="param"><a href="#OnlyChild">OnlyChild</a></p>
     <p class="param"><a href="#Ot-tjin">Ot-tjin</a></p>
     <p class="param"><a href="#Oware">Oware</a></p>

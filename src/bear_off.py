@@ -102,9 +102,11 @@ class NoSeedsEnder(end_move_decos.EndTurnIf):
         super().__init__(game, decorator)
 
         self.win_op = False
-        if game.info.goal == gi.Goal.DEPRIVE:
+        if game.info.goal in (gi.Goal.DEPRIVE,
+                              gi.Goal.RND_WIN_COUNT_DEP):
             self.win_op = lambda turn: not turn
-        elif game.info.goal == gi.Goal.CLEAR:
+        elif game.info.goal in (gi.Goal.CLEAR,
+                                gi.Goal.RND_WIN_COUNT_CLR):
             self.win_op = lambda turn: turn
 
 

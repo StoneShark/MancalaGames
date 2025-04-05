@@ -683,6 +683,20 @@ class TestMlap:
                                 rules=mancala.Mancala.rules)
         return mancala.Mancala(game_consts, game_info)
 
+    @pytest.fixture
+    def game4(self):
+        """continue lapping when greter or equal to 6"""
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
+        game_info = gi.GameInfo(stores=True,
+                                mlaps=LapSower.LAPPER,
+                                sow_direct=Direct.CCW,
+                                sow_rule=gi.SowRule.CONT_LAP_GREQ,
+                                sow_param=6,
+                                capt_on=[1],
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        return mancala.Mancala(game_consts, game_info)
+
     MLCASES = [
         # 0: no lapping
         ('game',
@@ -764,6 +778,28 @@ class TestMlap:
                               [0, 3, 3]),
          5, utils.build_board([2, 5, 4],
                               [0, 3, 0])),
+
+        # 10: sow laps equal 6
+        ('game4',
+         2, utils.build_board([1, 5, 3],
+                              [0, 3, 2]),
+         4, utils.build_board([2, 1, 5],
+                              [1, 4, 1])),
+
+        # 11: sow laps greater than
+        ('game4',
+         2, utils.build_board([0, 6, 0],
+                              [0, 0, 2]),
+         5, utils.build_board([2, 1, 2],
+                              [1, 1, 1])),
+
+        # 12: no laps
+        ('game4',
+         2, utils.build_board([1, 4, 3],
+                              [0, 3, 3]),
+         5, utils.build_board([2, 5, 4],
+                              [0, 3, 0])),
+
     ]
     @pytest.mark.usefixtures("logger")
     @pytest.mark.parametrize('game_fixt, start_pos, board, eloc, eboard',
@@ -1954,7 +1990,7 @@ class TestBadEnums:
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
-        object.__setattr__(game_info, 'sow_rule', 12)
+        object.__setattr__(game_info, 'sow_rule', 15)
 
         with pytest.raises(NotImplementedError):
             mancala.Mancala(game_consts, game_info)
@@ -1968,7 +2004,7 @@ class TestBadEnums:
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
-        object.__setattr__(game_info, 'mlaps', 12)
+        object.__setattr__(game_info, 'mlaps', 15)
 
         with pytest.raises(NotImplementedError):
             mancala.Mancala(game_consts, game_info)
@@ -1986,7 +2022,7 @@ class TestBadEnums:
         object.__setattr__(game_info, 'prescribed', SowPrescribed.ARNGE_LIMIT)
         mancala.Mancala(game_consts, game_info)
 
-        object.__setattr__(game_info, 'prescribed', 12)
+        object.__setattr__(game_info, 'prescribed', 15)
         with pytest.raises(NotImplementedError):
             mancala.Mancala(game_consts, game_info)
 
@@ -1999,7 +2035,7 @@ class TestBadEnums:
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
-        object.__setattr__(game_info, 'presowcapt', 12)
+        object.__setattr__(game_info, 'presowcapt', 15)
 
         with pytest.raises(NotImplementedError):
             mancala.Mancala(game_consts, game_info)

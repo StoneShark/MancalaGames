@@ -149,7 +149,10 @@ class SetupHold(bhv_hold.Hold):
                   command=self.init_setup).grid(
                       row=row, column=ccnt.count, padx=2, pady=2, sticky='ew')
 
-        if game_ui.game.info.goal in (gi.Goal.CLEAR, gi.Goal.DEPRIVE):
+        if game_ui.game.info.goal in (gi.Goal.CLEAR,
+                                      gi.Goal.DEPRIVE,
+                                      gi.Goal.RND_WIN_COUNT_CLR,
+                                      gi.Goal.RND_WIN_COUNT_DEP):
 
             tk.Button(tframe, text="Clear Board",
                       command=self.clear_board).grid(

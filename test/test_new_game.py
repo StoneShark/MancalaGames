@@ -496,7 +496,7 @@ class TestRoundTally:
         game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(capt_on = [2],
                                 stores=True,
-                                goal=Goal.RND_WIN_COUNT,
+                                goal=Goal.RND_WIN_COUNT_MAX,
                                 rounds=gi.Rounds.NO_MOVES,
                                 goal_param=5,
                                 nbr_holes=game_consts.holes,

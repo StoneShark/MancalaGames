@@ -32,7 +32,7 @@ N = None
 class TestRoundTally:
 
     @pytest.mark.parametrize('goal, idx',
-                             [(gi.Goal.RND_WIN_COUNT, 0),
+                             [(gi.Goal.RND_WIN_COUNT_MAX, 0),
                               (gi.Goal.RND_SEED_COUNT, 1),
                               (gi.Goal.RND_EXTRA_SEEDS, 2),
                               (gi.Goal.RND_POINTS, 3)])
@@ -62,7 +62,7 @@ class TestRoundTally:
 
     def test_state(self):
 
-        rtally = round_tally.RoundTally(gi.Goal.RND_WIN_COUNT, 12, 24)
+        rtally = round_tally.RoundTally(gi.Goal.RND_WIN_COUNT_MAX, 12, 24)
 
         assert rtally.state == ((0, 0), (0, 0), (0, 0), (0, 0))
 
@@ -106,7 +106,7 @@ class TestRoundTally:
         ]
 
     @pytest.mark.parametrize('goal',
-                             [gi.Goal.RND_WIN_COUNT,
+                             [gi.Goal.RND_WIN_COUNT_MAX,
                               gi.Goal.RND_SEED_COUNT,
                               gi.Goal.RND_EXTRA_SEEDS,
                               gi.Goal.RND_POINTS
@@ -125,8 +125,8 @@ class TestRoundTally:
 
     WIN_CASES = [
         # for these test cases all but the specified cond would result in a win
-        (gi.Goal.RND_WIN_COUNT, ((3, 0), (9, 9), (9, 9), (9, 9)), (None, None)),
-        (gi.Goal.RND_WIN_COUNT, ((0, 3), (9, 9), (9, 9), (9, 9)), (None, None)),
+        (gi.Goal.RND_WIN_COUNT_MAX, ((3, 0), (9, 9), (9, 9), (9, 9)), (None, None)),
+        (gi.Goal.RND_WIN_COUNT_MAX, ((0, 3), (9, 9), (9, 9), (9, 9)), (None, None)),
         (gi.Goal.RND_SEED_COUNT, ((9, 9), (3, 0), (9, 9), (9, 9)), (None, None)),
         (gi.Goal.RND_SEED_COUNT, ((9, 9), (0, 3), (9, 9), (9, 9)), (None, None)),
         (gi.Goal.RND_EXTRA_SEEDS, ((9, 9), (9, 9), (3, 0), (9, 9)), (None, None)),
@@ -135,10 +135,10 @@ class TestRoundTally:
         (gi.Goal.RND_POINTS, ((9, 9), (9, 9), (9, 9), (0, 3)), (None, None)),
 
         # for these test cases only the specified cond will result in the expected cond
-        (gi.Goal.RND_WIN_COUNT, ((8, 8), (4, 4), (4, 4), (4, 4)), (gi.WinCond.TIE, None)),
-        (gi.Goal.RND_WIN_COUNT, ((8, 6), (4, 4), (4, 4), (4, 4)), (gi.WinCond.WIN, False)),
-        (gi.Goal.RND_WIN_COUNT, ((6, 8), (4, 4), (4, 4), (4, 4)), (gi.WinCond.WIN, True)),
-        (gi.Goal.RND_WIN_COUNT, ((12, 10), (4, 4), (4, 4), (4, 4)), (gi.WinCond.WIN, False)),
+        (gi.Goal.RND_WIN_COUNT_MAX, ((8, 8), (4, 4), (4, 4), (4, 4)), (gi.WinCond.TIE, None)),
+        (gi.Goal.RND_WIN_COUNT_MAX, ((8, 6), (4, 4), (4, 4), (4, 4)), (gi.WinCond.WIN, False)),
+        (gi.Goal.RND_WIN_COUNT_MAX, ((6, 8), (4, 4), (4, 4), (4, 4)), (gi.WinCond.WIN, True)),
+        (gi.Goal.RND_WIN_COUNT_MAX, ((12, 10), (4, 4), (4, 4), (4, 4)), (gi.WinCond.WIN, False)),
 
         (gi.Goal.RND_SEED_COUNT, ((4, 4), (8, 8), (4, 4), (4, 4)), (gi.WinCond.TIE, None)),
         (gi.Goal.RND_SEED_COUNT, ((4, 4), (8, 6), (4, 4), (4, 4)), (gi.WinCond.WIN, False)),
@@ -165,9 +165,9 @@ class TestRoundTally:
 
 
     END_CASES = [
-        (gi.Goal.RND_WIN_COUNT, ((7, 7), (0, 4), (0, 4), (0, 4)), (gi.WinCond.TIE, None)),
-        (gi.Goal.RND_WIN_COUNT, ((7, 6), (4, 4), (4, 4), (4, 4)), (gi.WinCond.WIN, False)),
-        (gi.Goal.RND_WIN_COUNT, ((6, 7), (4, 4), (4, 4), (4, 4)), (gi.WinCond.WIN, True)),
+        (gi.Goal.RND_WIN_COUNT_MAX, ((7, 7), (0, 4), (0, 4), (0, 4)), (gi.WinCond.TIE, None)),
+        (gi.Goal.RND_WIN_COUNT_MAX, ((7, 6), (4, 4), (4, 4), (4, 4)), (gi.WinCond.WIN, False)),
+        (gi.Goal.RND_WIN_COUNT_MAX, ((6, 7), (4, 4), (4, 4), (4, 4)), (gi.WinCond.WIN, True)),
 
         (gi.Goal.RND_SEED_COUNT, ((4, 0), (7, 7), (0, 4), (0, 4)), (gi.WinCond.TIE, None)),
         (gi.Goal.RND_SEED_COUNT, ((4, 4), (7, 6), (4, 4), (4, 4)), (gi.WinCond.WIN, False)),

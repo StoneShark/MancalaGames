@@ -475,7 +475,9 @@ def player_dict_rules():
     rules.add_rule(
         'stores_scorer_inv',
         rule=lambda pdict, ginfo: (ginfo.goal in (gi.Goal.CLEAR,
-                                                  gi.Goal.DEPRIVE)
+                                                  gi.Goal.DEPRIVE,
+                                                  gi.Goal.RND_WIN_COUNT_CLR,
+                                                  gi.Goal.RND_WIN_COUNT_DEP)
                                    and ckey.SCORER in pdict
                                    and ckey.STORES_M in pdict[ckey.SCORER]
                                    and pdict[ckey.SCORER][ckey.STORES_M]),

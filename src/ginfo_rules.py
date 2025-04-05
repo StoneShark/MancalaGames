@@ -176,9 +176,63 @@ def add_pattern_rules(rules):
         msg='START_PATTERN is incompatible for ROUNDS with selected GOAL',
         excp=gi.GameInfoError)
 
+
+def add_elim_seeds_goal_rules(rules):
+    """Add rules for the game eliminating our own or opponents seeds."""
+
+    def _dep_clr_and(flag_name):
+        """Return a function that tests that goal is divert
+        and the specified flag, based only on a ginfo parameter."""
+
+        def _dep_clr_and(ginfo):
+            return (ginfo.goal in (gi.Goal.DEPRIVE,
+                                   gi.Goal.CLEAR,
+                                   gi.Goal.RND_WIN_COUNT_CLR,
+                                   gi.Goal.RND_WIN_COUNT_DEP)
+                    and getattr(ginfo, flag_name))
+
+        return _dep_clr_and
+
+    rules.add_rule(
+        'elseed_gs_legal',
+        rule=lambda ginfo: (ginfo.goal in (gi.Goal.DEPRIVE,
+                                           gi.Goal.CLEAR,
+                                           gi.Goal.RND_WIN_COUNT_CLR,
+                                           gi.Goal.RND_WIN_COUNT_DEP)
+                            and ginfo.grandslam != gi.GrandSlam.LEGAL),
+        msg='CLEAR & DEPRIVE games require that GRANDSLAM be Legal',
+        excp=gi.GameInfoError)
+
+    bad_flags = ['child_cvt', 'child_rule', 'child_type',
+                 'moveunlock', 'mustshare', 'mustpass']
+    for flag in bad_flags:
+        rules.add_rule(
+            f'elseed_bad_{flag}',
+            rule=_dep_clr_and(flag),
+            msg=f'CLEAR & DEPRIVE games cannot be used with {flag.upper()}',
+            excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'elseed_no_moves',
+        rule=lambda ginfo: (ginfo.goal in (gi.Goal.RND_WIN_COUNT_CLR,
+                                           gi.Goal.RND_WIN_COUNT_DEP)
+                            and ginfo.rounds != gi.Rounds.NO_MOVES),
+        msg="Goals RND_WIN_COUNT_CLR and RND_WIN_COUNT_DEP" \
+            "require ROUNDS to be NO_MOVES",
+            excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'clear_no_min_move',
+        rule=lambda ginfo: (ginfo.goal in (gi.Goal.CLEAR,
+                                           gi.Goal.RND_WIN_COUNT_CLR)
+                            and ginfo.min_move != 1),
+        msg='CLEAR games require that MIN_MOVE be 1',
+        excp=gi.GameInfoError)
+
     rules.add_rule(
         'deprive_mmgr1_rturn',
-        rule=lambda ginfo: (ginfo.goal == gi.Goal.DEPRIVE
+        rule=lambda ginfo: (ginfo.goal in (gi.Goal.DEPRIVE,
+                                           gi.Goal.RND_WIN_COUNT_DEP)
                             and ginfo.min_move > 1
                             and (ginfo.capt_rturn or ginfo.sow_own_store)),
         msg='DEPRIVE games with min_move > 1 cannot use repeat turn',
@@ -189,57 +243,13 @@ def add_pattern_rules(rules):
         #    they were the last mover (F win?), but can't move again (T win?)
         # who should win?  just don't allow it
 
-
-def add_elim_seeds_goal_rules(rules):
-    """Add rules for the game eliminating our own or opponents seeds."""
-
-    def dep_clr_and(flag_name):
-        """Return a function that tests that goal is divert
-        and the specified flag, based only on a ginfo parameter."""
-
-        def _dep_clr_and(ginfo):
-            return (ginfo.goal in (gi.Goal.DEPRIVE, gi.Goal.CLEAR)
-                    and getattr(ginfo, flag_name))
-
-        return _dep_clr_and
-
-    rules.add_rule(
-        'elseed_gs_legal',
-        rule=lambda ginfo: (ginfo.goal in (gi.Goal.DEPRIVE, gi.Goal.CLEAR)
-                            and ginfo.grandslam != gi.GrandSlam.LEGAL),
-        msg='CLEAR & DEPRIVE games require that GRANDSLAM be Legal',
-        excp=gi.GameInfoError)
-
-    bad_flags = ['child_cvt', 'child_rule', 'child_type',
-                 'moveunlock', 'mustshare', 'mustpass',
-                 'rounds', 'round_starter', 'round_fill']
-    for flag in bad_flags:
-        rules.add_rule(
-            f'elseed_bad_{flag}',
-            rule=dep_clr_and(flag),
-            msg=f'CLEAR & DEPRIVE games cannot be used with {flag.upper()}',
-            excp=gi.GameInfoError)
-
-    rules.add_rule(
-        'clear_no_min_move',
-        rule=lambda ginfo: (ginfo.goal == gi.Goal.CLEAR
-                            and ginfo.min_move != 1),
-        msg='CLEAR games require that MIN_MOVE be 1',
-        excp=gi.GameInfoError)
-
     rules.add_rule(
         'clear_no_1all_zero',
         rule=lambda ginfo: (
-            ginfo.goal == gi.Goal.CLEAR
+            ginfo.goal in (gi.Goal.CLEAR, gi.Goal.RND_WIN_COUNT_CLR)
             and ginfo.allow_rule == gi.AllowRule.SINGLE_ALL_TO_ZERO),
         msg='CLEAR games prohibits ALLOW_RULE SINGLE_ALL_TO_ZERO',
         excp=gi.GameInfoError)
-
-    rules.add_rule(
-        'clear_nogparam',
-        rule=lambda ginfo: ginfo.goal == gi.Goal.CLEAR and ginfo.goal_param,
-        msg='GOAL_PARAM is not used for CLEAR games',
-        warn=True)
 
     return rules
 
@@ -375,10 +385,11 @@ def add_block_and_divert_rules(rules):
         excp=gi.GameInfoError)
 
     rules.add_rule(
-        'bdiv_min_req_dep_goal',
+        'bdiv_req_dep_goal',
         rule=lambda ginfo: (sow_blkd_div(ginfo)
-                            and ginfo.goal != gi.Goal.DEPRIVE),
-        msg='SOW_BLKD_DIV(_NR) requires a goal of DEPRIVE',
+                            and ginfo.goal not in (gi.Goal.DEPRIVE,
+                                                   gi.Goal.RND_WIN_COUNT_DEP)),
+        msg='SOW_BLKD_DIV(_NR) requires a DEPRIVE goal',
         excp=gi.GameInfoError)
 
     capt_flags = ['capsamedir', 'capt_max', 'capt_min', 'capt_type',
@@ -443,12 +454,6 @@ def add_child_rules(rules):
         'child_cvt_need_type',
         rule=lambda ginfo: not ginfo.child_type and ginfo.child_cvt,
         msg='CHILD_CVT requires a CHILD_TYPE != NOCHILD',
-        excp=gi.GameInfoError)
-
-    rules.add_rule(
-        'child_not_deprive',
-        rule=lambda ginfo: ginfo.child_cvt and ginfo.goal == gi.Goal.DEPRIVE,
-        msg='Children cannot be used with a game goal of DEPRIVE',
         excp=gi.GameInfoError)
 
     rules.add_rule(

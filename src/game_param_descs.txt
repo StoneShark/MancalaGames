@@ -399,13 +399,17 @@ The overall goal of the game. Defines how a player wins.
 
   + GRANDSLAM must be legal for CLEAR games. CLEAR games cannot be played in ROUNDS or use children. Additionally, the following options are incompatible with CLEAR games: MOVEUNLOCK, MUSTPASS and MUSTSHARE.
 
-- RND_WIN_COUNT: win goal_param rounds. ROUND_FILL is not used; each round is setup as the start of the game.
+- RND_WIN_COUNT_MAX: win goal_param rounds of MAX_SEEDS games. ROUND_FILL is not used; each round is setup as the start of the game.
 
 - RND_SEED_COUNT: collect goal_param seeds across several rounds. ROUND_FILL is not used; each round is setup as the start of the game.
 
 - RND_EXTRA_SEEDS: collect goal_param extra seeds (winner - loser seeds). ROUND_FILL is not used; each round is setup as the start of the game.
 
 - RND_POINTS: score goal_param points. WIN is 1 point. WIN and skunk (> 3/4 of total seeds) is 2 points. ROUND_FILL is not used; each round is setup as the start of the game.
+
+- RND_WIN_COUNT_CLR: win goal_param rounds of CLEAR games. ROUND_FILL is not used; each round is setup as the start of the game.
+
+- RND_WIN_COUNT_DEP: win goal_param rounds of DEPRIVE games. ROUND_FILL is not used; each round is setup as the start of the game.
 
 <param goal_param>
 GOAL of Territory: defines the number of holes needed for a win. The number of holes for each player are computed by rounding the number of seeds collected divided by the number of start seeds per hole.
@@ -705,6 +709,8 @@ Special sow rules add additional behavior or restrictions to the sowing phase:
 - OPP_GETS_OWN_LAST: Use LAP_CAPT sow rule until there are only sow_param seeds left. Then when down to the last seeds (sow_param or less at the start of a lap): seeds sown on the opponent's side are captured by the opponent. If the last seed would do a normal capture, the sower takes those seeds, including the last seed sown.
 
 - CONT_LAP_ON: Only continue multilap sowing when a hole is sown to sow_param seeds.
+
+- CONT_LAP_GREQ: Only continue multilap sowing when a hole is sown to sow_param or more seeds.
 
 <param sow_start>
 When selected, the first seed is sown into (i.e., left in) the start hole.

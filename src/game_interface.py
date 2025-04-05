@@ -183,10 +183,12 @@ class Goal(enum.IntEnum):
     DEPRIVE = 1
     TERRITORY = 2
     CLEAR = 3
-    RND_WIN_COUNT = 4
+    RND_WIN_COUNT_MAX = 4
     RND_SEED_COUNT = 5
     RND_EXTRA_SEEDS = 6
     RND_POINTS = 7
+    RND_WIN_COUNT_CLR = 8
+    RND_WIN_COUNT_DEP = 9
 
 
 @enum.unique
@@ -284,6 +286,7 @@ class SowRule(enum.IntEnum):
     NO_OPP_CHILD = 9
     OPP_GETS_OWN_LAST = 10
     CONT_LAP_ON = 11
+    CONT_LAP_GREQ = 12
 
 
 @enum.unique

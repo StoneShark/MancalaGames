@@ -167,13 +167,15 @@ STRING_DICTS = {
     'Goal': lookup_dicts(
         gi.Goal,
         {'Max Seeds': gi.Goal.MAX_SEEDS,
+         'Clear Own': gi.Goal.CLEAR,
          'Deprive Opponent': gi.Goal.DEPRIVE,
          'Territory': gi.Goal.TERRITORY,
-         'Clear Own': gi.Goal.CLEAR,
-         'Win Rounds': gi.Goal.RND_WIN_COUNT,
          'Collect total seeds': gi.Goal.RND_SEED_COUNT,
          'Collect extra seeds': gi.Goal.RND_EXTRA_SEEDS,
          'Score Points': gi.Goal.RND_POINTS,
+         'Win Rounds (max seeds)': gi.Goal.RND_WIN_COUNT_MAX,
+         'Win Rounds (clear)': gi.Goal.RND_WIN_COUNT_CLR,
+         'Win Rounds (deprive)': gi.Goal.RND_WIN_COUNT_DEP,
          }),
 
     'GrandSlam': lookup_dicts(
@@ -247,10 +249,11 @@ STRING_DICTS = {
          "Change Direction each Lap": gi.SowRule.CHANGE_DIR_LAP,
          "Never sow holes above sow_param": gi.SowRule.MAX_SOW,
          "Do captures on each lap": gi.SowRule.LAP_CAPT,
-         "Do not sow opponents children": gi.SowRule.NO_OPP_CHILD,
          "Lap Capt Then Opp takes Own (< sow_param)":
              gi.SowRule.OPP_GETS_OWN_LAST,
+         "Do not sow opponents children": gi.SowRule.NO_OPP_CHILD,
          "Continue lap sow only on sow_param seeds": gi.SowRule.CONT_LAP_ON,
+         "Continue lap sow when >= sow_param seeds": gi.SowRule.CONT_LAP_GREQ,
          }),
 
     'StartPattern': lookup_dicts(

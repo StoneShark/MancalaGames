@@ -18,7 +18,6 @@ from tkinter import messagebox
 from tkinter import simpledialog
 from tkinter import ttk
 
-import ai_player
 import cfg_keys as ckey
 import game_constants as gconsts
 import game_interface as gi
@@ -68,7 +67,9 @@ GOALS = {'Max Seeds': lambda goal: goal == gi.Goal.MAX_SEEDS,
          'Round Tally': lambda goal: goal in (gi.Goal.RND_SEED_COUNT,
                                               gi.Goal.RND_EXTRA_SEEDS,
                                               gi.Goal.RND_POINTS,
-                                              gi.Goal.RND_WIN_COUNT)}
+                                              gi.Goal.RND_WIN_COUNT_MAX,
+                                              gi.Goal.RND_WIN_COUNT_CLR,
+                                              gi.Goal.RND_WIN_COUNT_DEP)}
 
 ROUNDS = {'No Rounds': lambda rounds: not rounds,
           'Rounds': lambda rounds: rounds}

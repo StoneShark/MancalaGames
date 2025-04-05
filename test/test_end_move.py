@@ -12,6 +12,7 @@ import utils
 
 from context import end_move
 from context import end_move_decos as emd
+from context import end_move_rounds as emr
 from context import game_constants as gconsts
 from context import game_interface as gi
 from context import ginfo_rules
@@ -825,6 +826,21 @@ class TestEndDeprive:
         return mancala.Mancala(game_consts, game_info)
 
     @pytest.fixture
+    def rndgame(self):
+        """Outcomes should be exactly the sames as for game.
+        Round ender is tested elsewhere."""
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(goal=Goal.RND_WIN_COUNT_DEP,
+                                goal_param=1,
+                                capt_on=[4],
+                                rounds=gi.Rounds.NO_MOVES,
+                                allow_rule=gi.AllowRule.NOT_XFROM_1S,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+    @pytest.fixture
     def mm2game(self):
         game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(goal=Goal.DEPRIVE,
@@ -912,10 +928,11 @@ class TestEndDeprive:
     @pytest.mark.parametrize('game_fixt, repeat_turn',
                              [('game', True),
                               ('game', False),
+                              ('rndgame', False),
                               ('mm2game', False)])
     @pytest.mark.parametrize('turn, board, eresg, eresmm2, eresg_rturn',
                              CASES,
-                             ids=['case{idx}' for idx, _ in enumerate(CASES)])
+                             ids=[f'case{idx}' for idx, _ in enumerate(CASES)])
     def test_end_game(self, request,
                       game_fixt, repeat_turn,
                       turn, board,
@@ -925,7 +942,7 @@ class TestEndDeprive:
         if repeat_turn:
             econd, ewinner = eresg_rturn
         else:
-            if game_fixt == 'game':
+            if game_fixt in ('game', 'rndgame'):
                 econd, ewinner = eresg
             else:
                 econd, ewinner = eresmm2
@@ -940,12 +957,35 @@ class TestEndDeprive:
             assert winner == ewinner
 
 
+    def test_rnd_end_game(self, game, rndgame):
+        """was the tallier added to the deco chain."""
+
+        assert not isinstance(game.deco.ender,
+                              emr.RoundTallyWinner)
+
+        assert isinstance(rndgame.deco.ender,
+                          emr.RoundTallyWinner)
+
+
 class TestEndClear:
 
     @pytest.fixture
     def game(self):
         game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(goal=Goal.CLEAR,
+                                capt_on=[4],
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+
+    @pytest.fixture
+    def rndgame(self):
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(goal=Goal.RND_WIN_COUNT_CLR,
+                                goal_param=1,
+                                rounds=gi.Rounds.NO_MOVES,
                                 capt_on=[4],
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
@@ -995,9 +1035,13 @@ class TestEndClear:
 
     ]
 
+    @pytest.mark.parametrize('game_fixt', ['game', 'rndgame'])
     @pytest.mark.parametrize('turn, board, econd, ewinner',
                              CASES)
-    def test_end_game(self, game, turn, board, econd, ewinner):
+    def test_end_game(self, request, game_fixt, turn, board, econd, ewinner):
+
+        game = request.getfixturevalue(game_fixt)
+
         game.board = board
         game.turn = turn
 
@@ -1006,6 +1050,15 @@ class TestEndClear:
         if ewinner is not None:
             assert winner == ewinner
 
+
+    def test_rnd_end_game(self, game, rndgame):
+        """was the tallier added to the deco chain."""
+
+        assert not isinstance(game.deco.ender,
+                              emr.RoundTallyWinner)
+
+        assert isinstance(rndgame.deco.ender,
+                          emr.RoundTallyWinner)
 
 
 class TestEndWaldas:

@@ -1,0 +1,26 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 6,
+      "nbr_start": 4
+   },
+   "game_info": {
+      "name": "Hufesay",
+      "about": "Multilap, counter-clockwise sow. A player must pass if they do not have a move.\n\nCross capture on opponents side of the board. Leave the seed that effected the capture.\n\nGoal: Collect more than half of the seeds.\n",
+      "crosscapt": true,
+      "mlaps": 1,
+      "mustpass": true,
+      "capt_side": 1,
+      "sow_direct": 1,
+      "stores": true,
+      "unclaimed": 1
+   },
+   "player": {
+      "ai_params": {},
+      "scorer": {
+         "stores_m": 8,
+         "empties_m": 1
+      }
+   },
+   "rules": "https://mancala.fandom.com/wiki/Hufesay"
+}

@@ -32,7 +32,8 @@ def build_rules():
 
     rules.add_rule(
         'ss_goal_clear',
-        rule=lambda ginfo: not ginfo.goal == gi.Goal.CLEAR,
+        rule=lambda ginfo: not ginfo.goal in (gi.Goal.CLEAR,
+                                              gi.Goal.RND_WIN_COUNT_CLR),
         msg='SameSide requires CLEAR goal',
         excp=gi.GameInfoError)
         # CLEAR includes many base mancala rules:

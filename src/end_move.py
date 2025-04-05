@@ -35,10 +35,28 @@ def _build_deprive_ender(game):
     if game.info.min_move == 1:
         # player wo seeds looses
         ender = emd.DepriveNoSeedsEndGame(game)
-        return emd.EndTurnNoMoves(game, ender)
+        ender = emd.EndTurnNoMoves(game, ender)
+    else:
+        # last mover wins
+        ender = emd.DepriveLastMoveEndGame(game)
 
-    # last mover wins
-    return emd.DepriveLastMoveEndGame(game)
+    if game.info.goal == gi.Goal.RND_WIN_COUNT_DEP:
+        sclaimer = claimer.ClaimSeeds(game)
+        ender = _add_round_ender(game, ender, sclaimer)
+
+    return ender
+
+
+def _build_clear_ender(game):
+    """Create a clear game ender."""
+
+    ender = emd.ClearSeedsEndGame(game)
+
+    if game.info.goal == gi.Goal.RND_WIN_COUNT_CLR:
+        sclaimer = claimer.ClaimSeeds(game)
+        ender = _add_round_ender(game, ender, sclaimer)
+
+    return ender
 
 
 def _add_end_game_winner(game):
@@ -149,11 +167,13 @@ def _add_round_ender(game, ender, sclaimer):
 def deco_end_move(game):
     """Return a chain of move enders."""
 
-    if game.info.goal == gi.Goal.DEPRIVE:
+    if game.info.goal in (gi.Goal.DEPRIVE,
+                          gi.Goal.RND_WIN_COUNT_DEP):
         return _build_deprive_ender(game)
 
-    if game.info.goal == gi.Goal.CLEAR:
-        return emd.ClearSeedsEndGame(game)
+    if game.info.goal in (gi.Goal.CLEAR,
+                          gi.Goal.RND_WIN_COUNT_CLR):
+        return _build_clear_ender(game)
 
     ender = _add_end_game_winner(game)
 
@@ -190,7 +210,10 @@ def deco_quitter(game):
     Do something that seems fair. Assume that seeds in play could
     belong to either player."""
 
-    if game.info.goal in (gi.Goal.CLEAR, gi.Goal.DEPRIVE):
+    if game.info.goal in (gi.Goal.CLEAR,
+                          gi.Goal.DEPRIVE,
+                          gi.Goal.RND_WIN_COUNT_DEP,
+                          gi.Goal.RND_WIN_COUNT_CLR):
         quitter = emd.QuitToTie(game)
 
     elif game.info.stores or game.info.child_cvt:
