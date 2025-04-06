@@ -61,6 +61,8 @@ they do not control how the ender deco chain is built
   rnd_req_seeds is req_seeds in RoundWinner, number of seeds required by
   either player to start a new round (otherwise a new game is started)
 
+If these preliminary tests fail, the ender tests below will also
+likely fail.
 """
 
 Config = collections.namedtuple('Config',
@@ -604,13 +606,13 @@ END_CASES = {
         [make_state(board=(0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 0),
                     store=(13, 0),   # seeds out of play
                     turn=False),
-         gi.WinCond.WIN, True],
+         gi.WinCond.ROUND_WIN, True],
 
         # 3: False has no seeds, True captured them
         [make_state(board=(0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 0),
                     store=(13, 0),
                     turn=True),
-         gi.WinCond.WIN, True],
+         gi.WinCond.ROUND_WIN, True],
 
         ],  # end Depouiller
 

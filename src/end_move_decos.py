@@ -120,12 +120,15 @@ class EndTurnIf(deco_chain_if.DecoChainIf):
         outright win (or round win). A player collecting more
         that win_seeds wins.
 
-        DEPRIVE games do not use this value, so -1."""
+        CLEAR and DEPRIVE games (round tally or not) do not
+        use this value, so -1."""
 
         game_goal = self.game.info.goal
         win_seeds = -1
 
-        if self.game.info.rounds == gi.Rounds.NO_MOVES:
+        if (self.game.info.rounds == gi.Rounds.NO_MOVES
+                and self.game.info.goal not in (gi.Goal.RND_WIN_COUNT_DEP,
+                                                gi.Goal.RND_WIN_COUNT_CLR)):
             win_seeds = self.game.cts.total_seeds - 1
 
         elif game_goal == gi.Goal.TERRITORY:
