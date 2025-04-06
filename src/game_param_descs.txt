@@ -355,6 +355,8 @@ The name of the Game Class. One of:
 <param goal>
 The overall goal of the game. Defines how a player wins.
 
+Goals that start with RND_ are 'round tally games'. Multiple games are played and the overall winner is determined by the tally type (see the options below).
+
 - MAX_SEEDS: The goal is to collect the maximum number of seeds.
 
   + If the game is not played in rounds, the game will end when one player has more than half of the total seeds.
@@ -369,9 +371,11 @@ The overall goal of the game. Defines how a player wins.
   
   + MIN_MOVE greater than 1: If your opponent has no valid moves, you win. That is, the last player to move wins. Repeat turn either via sow_own_store or capt_rturn, is prohibited.
 
-  + GRANDSLAM must be legal for DEPRIVE games.
+  + GRANDSLAM must be legal for deprive games.
+  
+  + Deprive games can be played in tallied rounds--no other support for rounds is provided. Use a goal of RND_WIN_COUNT_DEP. ROUNDS must be NO_MOVES, ROUND_FILL is ignored, and goal_param should be set to the number of round wins required for a game win. For example, a "best of 7 games" would have goal_param of 4.
 
-  + DEPRIVE games cannot be played in ROUNDS or use children. Additionally, the following options are incompatible with DEPRIVE games: MOVEUNLOCK, MUSTPASS and MUSTSHARE.
+  + Deprive games cannot use children and the following options are prohibited: MOVEUNLOCK, MUSTPASS and MUSTSHARE. 
 
 - TERRITORY: claim ownership of holes by collecting more seeds than your opponent. Claiming ownership of goal_param holes wins the game.
 
@@ -387,17 +391,21 @@ The overall goal of the game. Defines how a player wins.
 
   + In territory games, all holes are available for play each round, though the ALLOW_RULE or MUSTSHARE may limit which holes may be played on any given turn.
 
-  + In a TERRITORY game without rounds, the winner is not declared until one player has enough seeds to claim goal_param holes.
+  + In a territory game without rounds, the winner is not declared until one player has enough seeds to claim goal_param holes.
 
-  + TERRITORY games require STORES and that GOAL_PARAM be set to a value between the number of holes and two times the number of holes. 
+  + Territory games require STORES and that GOAL_PARAM be set to a value between the number of holes and two times the number of holes. 
 
-  + TERRITORY games are incompatible with NO_SIDES, GRANDSLAM of NOT_LEGAL, ALLOW_RULE of OPP_OR_EMPTY. Territory games may only use a ROUND_FILL of NOT_APPLICABLE or UCHOWN.
+  + Territory games are incompatible with NO_SIDES, GRANDSLAM of NOT_LEGAL, ALLOW_RULE of OPP_OR_EMPTY. Territory games may only use a ROUND_FILL of NOT_APPLICABLE or UCHOWN.
 
 - CLEAR: clear seeds from your own holes.
 
   + Moves must always be possible so MIN_MOVE must be 1 and ALLOW_RULE single_all_to_zero may not be used.
 
-  + GRANDSLAM must be legal for CLEAR games. CLEAR games cannot be played in ROUNDS or use children. Additionally, the following options are incompatible with CLEAR games: MOVEUNLOCK, MUSTPASS and MUSTSHARE.
+  + GRANDSLAM must be legal for clear games.
+  
+  + Clear games can be played in tallied rounds--no other support for rounds is provided. Use a goal of RND_WIN_COUNT_CLR. ROUNDS must be NO_MOVES, ROUND_FILL is ignored, and goal_param should be set to the number of round wins required for a game win.
+  
+  + Clear games cannot use children and the following options are prohibited: MOVEUNLOCK, MUSTPASS and MUSTSHARE.
 
 - RND_WIN_COUNT_MAX: win goal_param rounds of MAX_SEEDS games. ROUND_FILL is not used; each round is setup as the start of the game.
 
