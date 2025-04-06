@@ -108,6 +108,7 @@ class MancalaGames(ttk.Frame):
         self.params = man_config.ParamData()
         self.config = mg_config.GameConfig(self.master, self.params)
         self.game = None
+        self.ai_player = None
 
         super().__init__(self.master)
         self.master.title(WTITLE)
@@ -724,7 +725,8 @@ class MancalaGames(ttk.Frame):
                            **self.config.game_config[ckey.GAME_INFO])
 
         self.game = gclass(consts, info)
-        ai_player.AiPlayer(self.game, self.config.game_config[ckey.PLAYER])
+        self.ai_player = ai_player.AiPlayer(self.game,
+                                            self.config.game_config[ckey.PLAYER])
 
 
     def _test(self, _=None, *, positive=True):
@@ -850,7 +852,8 @@ class MancalaGames(ttk.Frame):
 
         game_ui = mancala_ui.MancalaUI(self.game,
                                        self.config.game_config[ckey.PLAYER],
-                                       self.master)
+                                       player=self.ai_player,
+                                       root_ui=self.master)
         self._set_active(False)
         game_ui.wait_window()
 

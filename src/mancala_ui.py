@@ -129,14 +129,22 @@ class GameSetup:
 class MancalaUI(tk.Frame):
     """A manacala UI."""
 
-    def __init__(self, game, player_dict, root_ui=None):
+    def __init__(self, game, player_dict, *, player=None, root_ui=None):
         """Create the UI for a mancala game.
 
-        game: class built on GameInterface -  provide the mechanics of
+        game: class built on GameInterface - provide the mechanics of
         the game w/o any UI
 
-        player_dict: player element from game config file; a dictionary
-        of parameters to configure the ai player"""
+        player_dict: the player element from game config file;
+        a dictionary of parameters to configure the ai player
+
+        player (optional): a prebuilt ai player.
+        Building the player checks the rules and MancalaGames
+        pre-tests the configuration; building the player
+        twice generated duplicated errors.
+
+        root_ui (optional): if this is started as part of another
+        application provide the tk root."""
 
         if not isinstance(game, gi.GameInterface):
             raise TypeError('Missing mancala_ui.GameInterface in game.')
@@ -144,7 +152,8 @@ class MancalaUI(tk.Frame):
         self.game = game
         self.info = self.game.info
         self.mode = buttons.Behavior.GAMEPLAY
-        self.player = ai_player.AiPlayer(self.game, player_dict)
+        self.player = player if player else \
+                          ai_player.AiPlayer(self.game, player_dict)
         self.setup = GameSetup(self)
         self.movers = 0
 
