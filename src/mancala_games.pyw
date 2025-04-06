@@ -725,7 +725,6 @@ class MancalaGames(ttk.Frame):
 
         self.game = gclass(consts, info)
         ai_player.AiPlayer(self.game, self.config.game_config[ckey.PLAYER])
-        self.config.edited = False
 
 
     def _test(self, _=None, *, positive=True):
