@@ -75,6 +75,14 @@ class GameString(StringIf):
         super().__init__(game)
         self.hole_str = hole_str
 
+        # the board is always printed in this order,
+        # don't use game.cts.true/false ranges because they may
+        # have been patched for different cycles
+        self.false_range = range(0, game.cts.holes)
+        self.true_range = range(game.cts.dbl_holes - 1,
+                                game.cts.holes - 1, -1)
+
+
     def __str__(self):
 
         return repr(self) + '\n' + str(self.hole_str)
@@ -84,8 +92,7 @@ class GameString(StringIf):
 
         string = ''
 
-        for side, side_range in enumerate([self.game.cts.true_range,
-                                           self.game.cts.false_range]):
+        for side, side_range in enumerate([self.true_range, self.false_range]):
             for loc in side_range:
 
                 if self.game.blocked[loc]:
