@@ -546,7 +546,7 @@ class MancalaUI(tk.Frame):
               and self._try_help_file(self.info.help_file))
              or self._try_help_file('about_games.html', self.info.name)
              or self._try_help_file('mancala_help.html')
-             or ui_utils.quiet_dialog(self, 'Help', 'Help not found.'))
+             or ui_utils.QuietDialog(self, 'Help', 'Help not found.'))
 
 
     def _about(self):
@@ -563,7 +563,7 @@ class MancalaUI(tk.Frame):
 
         out_text += version.RELEASE_TEXT
 
-        ui_utils.quiet_dialog(self, 'About', ''.join(out_text))
+        ui_utils.QuietDialog(self, 'About', ''.join(out_text))
 
 
     def save_file(self):
@@ -786,7 +786,7 @@ class MancalaUI(tk.Frame):
             self.tally.tally_game(self.game.get_turn(), win_cond)
             self._param_tally()
 
-            ui_utils.win_popup(self, *self.game.win_message(win_cond))
+            ui_utils.WinPopup(self, *self.game.win_message(win_cond))
 
 
     def _pie_rule(self):
@@ -931,7 +931,7 @@ class MancalaUI(tk.Frame):
 
             player = 'Bottom' if self.game.get_turn() else 'Top'
             message = f'{player} player has no moves and must pass.'
-            ui_utils.pass_popup(self, 'Must Pass', message)
+            ui_utils.PassPopup(self, 'Must Pass', message)
 
             self.refresh()
             self._schedule_ai()

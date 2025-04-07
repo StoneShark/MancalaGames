@@ -18,6 +18,7 @@ from tkinter import messagebox
 from tkinter import simpledialog
 from tkinter import ttk
 
+import ai_player
 import cfg_keys as ckey
 import game_constants as gconsts
 import game_interface as gi
@@ -42,9 +43,6 @@ MANCALA = 'Mancala'
 COLON = ':'
 DESC_WIDTH = 65
 COL_WIDTH = 30
-
-# this must not be in any of the enumerations
-NOT_FILTERED = -2
 
 SMALL = 6
 LARGER = 7
@@ -71,8 +69,6 @@ GOALS = {'Max Seeds': lambda goal: goal == gi.Goal.MAX_SEEDS,
                                               gi.Goal.RND_WIN_COUNT_CLR,
                                               gi.Goal.RND_WIN_COUNT_DEP)}
 
-ROUNDS = {'No Rounds': lambda rounds: not rounds,
-          'Rounds': lambda rounds: rounds}
 
 CAPTS = {'No Capture': lambda ginfo: not any([ginfo.get(ckey.CAPT_MAX, 0),
                                               ginfo.get(ckey.CAPT_MIN, 0),
@@ -118,10 +114,7 @@ SOWDIR = {'CW': lambda ginfo: ginfo.get(ckey.SOW_DIRECT, 1) == -1,
           'User Chooses': lambda ginfo: len(ginfo.get(ckey.UDIR_HOLES, [])) > 1}
 
 
-# features do not break the game list up into non-overlapping sets
-#  need show all to not filter anything
-FEATS = {'Show All': lambda _: True,
-         'Start Pattern': lambda ginfo: ginfo.get(ckey.START_PATTERN, 0),
+FEATS = {'Start Pattern': lambda ginfo: ginfo.get(ckey.START_PATTERN, 0),
          'Prescribed Open': lambda ginfo: ginfo.get(ckey.PRESCRIBED, 0),
          'Move Restrictions': lambda ginfo: ginfo.get(ckey.ALLOW_RULE, 0),
          'Must Pass': lambda ginfo: ginfo.get(ckey.MUSTPASS, 0),
@@ -134,6 +127,7 @@ FEATS = {'Show All': lambda _: True,
          'No Sides': lambda ginfo: ginfo.get(ckey.NO_SIDES, 0),
          'Multiple Capt': lambda ginfo: ginfo.get(ckey.MULTICAPT, 0),
          'Take More': lambda ginfo: ginfo.get(ckey.PICKEXTRA, 0),
+         'Rounds': lambda ginfo: ginfo.get(ckey.ROUNDS, 0),
          }
 
 
@@ -162,17 +156,7 @@ class BaseFilter(ttk.Frame, abc.ABC):
         lbl.grid(row=row.count, column=0, columnspan=2, sticky='ew')
         lbl.configure(anchor='center')  # anchor in style is ignored
 
-        self.filt_var = {}
-        for name, value in self.items():
-
-            key = value if value_keys else name
-            self.filt_var[key] = tk.BooleanVar(self, value=1)
-
-            ttk.Checkbutton(self, text=name,
-                            variable=self.filt_var[key],
-                            command=filt_obj.update_list
-                            ).grid(row=row.count, column=0, columnspan=2,
-                                   sticky='ew')
+        self.filt_var = self.build_filters(filt_obj, row, value_keys)
 
         rnbr = row.count
         ttk.Button(self, text='All',
@@ -183,6 +167,28 @@ class BaseFilter(ttk.Frame, abc.ABC):
                    command=self.all_filtered,
                    style='Filt.TButton'
                    ).grid(row=rnbr, column=1, padx=3, pady=3)
+
+
+
+    def build_filters(self, filt_obj, row, value_keys):
+        """Build the filter checkboxes and their variables.
+        Seperate so that it can speciallized by derived classes.
+
+        filter_var must have set and get methods."""
+
+        filt_var = {}
+
+        for name, value in self.items():
+
+            key = value if value_keys else name
+            filt_var[key] = tk.BooleanVar(self, value=1)
+
+            ttk.Checkbutton(self, text=name,
+                            variable=filt_var[key],
+                            command=filt_obj.update_list
+                            ).grid(row=row.count, column=0, columnspan=2,
+                                   sticky='ew')
+        return filt_var
 
 
     def not_filtered(self):
@@ -286,15 +292,62 @@ class DictFilter(BaseFilter):
 
 
     def show(self, game_dict):
-        """Determine if a the game associated with value
-        should be shown.
-
-        value: value of the associated parameter to test"""
+        """Determine if the game associated should be shown."""
 
         value = self.param(game_dict)
         return any(test_func(value)
                    for test_name, test_func in self.filt_dict.items()
                    if self.filt_var[test_name].get())
+
+
+class FeatureFilter(DictFilter):
+    """Build a feature filter.
+
+    These do not break the game list into non-overlapping sets.
+    """
+
+    def build_filters(self, filt_obj, row, _):
+        """Build the tristate checkbuttons for
+        the filter dictionary
+
+        The TriStateCheckbuttons maintain their
+        own state and have the same interfaces used for
+        tk variables (get and set) so we don't need tk variables.
+
+        value_keys is ignored, it must be False."""
+
+        filt_var = {}
+
+        for name in self.filt_dict.keys():
+
+            filt_var[name] = \
+                ui_utils.TriStateCheckbutton(self,
+                                             text=name,
+                                             update_cmd=filt_obj.update_list)
+            filt_var[name].grid(row=row.count, column=0, columnspan=2,
+                                sticky='ew')
+
+        return filt_var
+
+
+    def show(self, game_dict):
+        """Determine if the game associated with value
+        should be shown.
+
+        value: value of the associated parameter to test"""
+
+        for test_name, test_func in self.filt_dict.items():
+
+            filt_val = self.filt_var[test_name].get()
+
+            if filt_val is None:
+                # don't care condition
+                continue
+
+            if filt_val != bool(test_func(self.param(game_dict))):
+                return False
+
+        return True
 
 
 @dc.dataclass
@@ -317,7 +370,8 @@ FILTERS = [
     FilterDesc('Board Size', DictFilter, SIZES, ckey.HOLES, fcol.value),
 
     FilterDesc('Goal', DictFilter, GOALS, ckey.GOAL, fcol.count),
-    FilterDesc('Rounds', DictFilter, ROUNDS, ckey.ROUNDS, fcol.value),
+    FilterDesc('AI Player', VListFilter, list(ai_player.ALGORITHM_DICT.keys()),
+               ckey.ALGORITHM, fcol.value),
 
     FilterDesc('Lap Type', EnumFilter, gi.LapSower, ckey.MLAPS, fcol.count),
     FilterDesc('Sow Rule', DictFilter, SOWRS, ckey.SOW_RULE, fcol.value),
@@ -328,7 +382,8 @@ FILTERS = [
     FilterDesc('Sow Direct', DictFilter, SOWDIR, ckey.GAME_INFO, fcol.count),
     FilterDesc('Capture Types', DictFilter, CAPTS, ckey.GAME_INFO, fcol.value),
 
-    FilterDesc('Features (any)', DictFilter, FEATS, ckey.GAME_INFO, fcol.count),
+    FilterDesc('Features (all match)', FeatureFilter, FEATS,
+               ckey.GAME_INFO, fcol.count),
 
     ]
 
@@ -427,6 +482,15 @@ class SelectList(ttk.Labelframe):
         self.game_list.bind('<Double-Button-1>', self.play_game)
 
 
+    def set_title(self, count=0):
+        """Put the game count into the label frame text."""
+
+        if count:
+            self['text'] = f"Game List ({count})"
+        else:
+            self['text'] = "Game List"
+
+
     def select_game(self, _=None):
         """The user has selected a game, tell the parent
         it was selected."""
@@ -456,9 +520,17 @@ class SelectList(ttk.Labelframe):
         """Put the games in the treeview"""
 
         self.clear_glist()
-
+        self.set_title(len(games))
         for name in games:
             self.game_list.insert('', tk.END, iid=name, text=name)
+
+
+    def select(self, gname):
+        """Select the game in the treeview."""
+
+        self.game_list.selection_set(gname)
+        self.game_list.focus(gname)
+        self.game_list.see(gname)
 
 
     def jump_to_first(self, _):
@@ -466,9 +538,7 @@ class SelectList(ttk.Labelframe):
 
         first = self.game_list.get_children()[0]
         if self.game_list.focus() != first:
-            self.game_list.selection_set(first)
-            self.game_list.focus(first)
-            self.game_list.see(first)
+            self.select(first)
 
 
     def jump_to_last(self, _):
@@ -476,9 +546,7 @@ class SelectList(ttk.Labelframe):
 
         last = self.game_list.get_children()[-1]
         if self.game_list.focus() != last:
-            self.game_list.selection_set(last)
-            self.game_list.focus(last)
-            self.game_list.see(last)
+            self.select(last)
 
 
     def key_pressed(self, event):
@@ -504,9 +572,7 @@ class SelectList(ttk.Labelframe):
             child = children[cidx]
 
             if child[0].lower() == key:
-                self.game_list.selection_set(child)
-                self.game_list.focus(child)
-                self.game_list.see(child)
+                self.select(child)
                 return
 
 
@@ -718,18 +784,18 @@ class GameChooser(ttk.Frame):
         menubar.add_cascade(label='Play', menu=playmenu)
 
         filtmenu = tk.Menu(menubar)
-        filtmenu.add_command(label='No Filters',
+        filtmenu.add_command(label='Show All',
                              command=self.game_filter.not_filtered,
-                             accelerator='Ctrl-n')
-        filtmenu.add_command(label='All Filtered',
-                             command=self.game_filter.all_filtered,
                              accelerator='Ctrl-a')
+        filtmenu.add_command(label='Clear All',
+                             command=self.game_filter.all_filtered,
+                             accelerator='Ctrl-c')
         menubar.add_cascade(label='Filters', menu=filtmenu)
 
         ui_utils.add_help_menu(menubar, self)
 
-        self.master.bind('<Control-a>', self.game_filter.all_filtered)
-        self.master.bind('<Control-n>', self.game_filter.not_filtered)
+        self.master.bind('<Control-c>', self.game_filter.all_filtered)
+        self.master.bind('<Control-a>', self.game_filter.not_filtered)
         self.master.bind('<Control-p>', self.play_game)
         self.master.bind('<Home>', self.select_list.jump_to_first)
         self.master.bind('<End>', self.select_list.jump_to_last)
@@ -749,10 +815,16 @@ class GameChooser(ttk.Frame):
         """Update the games in select_list to reflect the current
         filter settings."""
 
-        self.about_text.clear_text()
-        self.select_list.fill_glist([name
-                                     for name, gdict in self.all_games.items()
-                                     if self.game_filter.show_game(gdict)])
+        games = [name
+                 for name, gdict in self.all_games.items()
+                 if self.game_filter.show_game(gdict)]
+        self.select_list.fill_glist(games)
+
+        if self.selected in games:
+            self.select_list.select(self.selected)
+        else:
+            self.about_text.clear_text()
+            self.selected = ''
 
 
     def play_game(self, _=None):

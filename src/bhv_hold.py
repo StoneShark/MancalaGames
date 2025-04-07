@@ -17,6 +17,7 @@ import textwrap
 import behaviors as bhv
 import man_config
 from game_logger import game_log
+import ui_utils
 
 
 # %%  global data for movers
@@ -68,13 +69,7 @@ class Hold(bhv.BehaviorGlobal):
             self.set_hold(self.nbr + 1, owner)
             return 1
 
-        nbr = tk.simpledialog.askinteger(
-            'Pickup Seeds',
-            f'How many seeds to pick up (1 .. {max_seeds})?')
-        if not nbr or nbr <= 0 or nbr > max_seeds:
-            self.game_ui.bell()
-            return 0
-
+        nbr = ui_utils.get_nbr_seeds(self.game_ui, max_seeds)
         self.set_hold(self.nbr + nbr, owner)
         return nbr
 

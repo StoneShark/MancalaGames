@@ -71,6 +71,17 @@ def setup_styles(root):
                indicatorforeground=[('selected', '!disabled', MY_BLUE),
                                     ('selected', 'disabled',  LT_BLUE)])
 
+    #  on: filled    off:  open as above    don't care: x
+    style.map('TriState.TCheckbutton',
+                indicatorbackground=[('selected', '!alternate', MY_BLUE),  # on
+                                     ('selected', 'alternate', WHITE),  # dc
+                                     ('!selected', WHITE)   # off
+                                    ],
+                indicatorforeground=[('selected', '!alternate', MY_BLUE),
+                                     ('alternate', MY_BLUE),
+                                     ('!selected', WHITE)
+                                    ])
+
     style.configure('TEntry',
                     padding=2,
                     selectbackground=MY_BLUE,
@@ -112,95 +123,265 @@ def setup_styles(root):
     root.option_add("*activeBackground", MY_BLUE)
 
 
+# %%  tri-state checkbox
+
+
+class TriStateCheckbutton(ttk.Checkbutton):
+    """A checkbox that cycles through three states: False, None, True.
+    """
+
+    def __init__(self, master, text, update_cmd=None):
+
+        super().__init__(master, text=text, command=self.cycle,
+                         style='TriState.TCheckbutton')
+        self.update_cmd = update_cmd
+        self.value = None
+        self.update()
+
+
+    def update(self):
+        """Update the widget state for our value."""
+
+        if self.value is False:
+            self.state(['!selected'])
+
+        elif self.value is None:
+            self.state(['selected', 'alternate'])
+
+        else:   # True
+            self.state(['selected', '!alternate'])
+
+
+    def set(self, value):
+        """Set the value (just like we were a tk variable).
+        value needs to translated to be one of
+        False, True, None"""
+
+        # we mean zero, not falsy
+        # pylint: disable=compare-to-zero
+        if value == 0:
+            self.value = False
+
+        elif value == 1:
+            # want to show all, so set don't care
+            self.value = None
+
+        else:
+            self.value = value
+        self.update()
+
+
+    def get(self):
+        """Get the value (just like we were a tk variable)"""
+
+        return self.value
+
+
+    def cycle(self):
+        """Cycle the checkbox state."""
+
+        if self.value is False:
+            self.value = None
+
+        elif self.value is None:
+            self.value = True
+
+        else:
+            self.value = False
+        self.update()
+
+        if self.update_cmd:
+            self.update_cmd()
+
+
 # %% popup dialogs
 
 
-def setup_top(parent, title, high=False):
-    """Create a TopLevel, position it, and do common configurations.
+class QuietDialog(tk.simpledialog.Dialog):
+    """A simple modal quiet dialog box."""
 
-    If high, place near top of window. Otherwise, place near the
-    bottom so that board is visible."""
+    def __init__(self, master, title, message):
 
-    width = parent.winfo_width()
-    height = parent.winfo_height()
-    xpos = parent.winfo_rootx() + width // 2 - 100
-    if high:
-        ypos = parent.winfo_rooty() + 50
-    else:
-        ypos = parent.winfo_rooty() + height - 20
-
-    top = tk.Toplevel(parent)
-    top.resizable(False, False)
-    top.lift(aboveThis=parent)
-    top.grab_set()
-    top.wm_geometry(f'+{xpos}+{ypos}')
-    top.minsize(200, 100)
-    top.title(title)
-
-    return top
+        self.msg = message
+        super().__init__(master, title)
 
 
-def quiet_dialog(parent, title, text):
-    """Popup a quiet dialog message.
+    def body(self, master):
+        """Put the message in a label in the master."""
 
-    The messagebox methods all make a warning tone."""
-
-    top = setup_top(parent, title, high=True)
-
-    frame = tk.Frame(top, borderwidth=10)
-    frame.pack(side='top', expand=True)
-
-    tk.Label(frame, anchor='nw', justify='left', text=text
-             ).pack(side='top')
-    tk.Button(frame, text='Ok', command=top.destroy).pack(side='bottom')
-    top.wait_window()
+        label = tk.Label(master, anchor='nw', justify='left', text=self.msg)
+        label.pack(side='top')
+        return label
 
 
-def win_popup(parent, title, message):
+    def buttonbox(self):
+        """Create an ok button and bind the return key."""
+
+        box = tk.Frame(self)
+        box.pack()
+
+        tk.Button(box, text="OK", width=10,
+                  command=self.ok, default=tk.ACTIVE
+                  ).pack(side=tk.LEFT, padx=5, pady=5)
+        self.bind("<Return>", self.ok)
+
+
+class WinPopup(tk.simpledialog.Dialog):
     """Popup the win window with a game dump option."""
 
-    parent.bell()
-    top = setup_top(parent, title)
+    def __init__(self, master, title, message):
 
-    frame = tk.Frame(top, borderwidth=10)
-    frame.pack(side='top', fill='both', expand=True)
-
-    tk.Label(frame, text=message).pack(side='top')
-
-    bframe = tk.Frame(top, borderwidth=20)
-    bframe.pack(side='bottom', fill='both', expand=True)
-    tk.Button(bframe, text='Dump Game', command=game_log.dump, width=12
-              ).pack(side='left')
-    tk.Button(bframe, text='Save Game', command=parent.save_file, width=12
-              ).pack(side='left')
-    tk.Button(bframe, text='Ok', command=top.destroy, width=12
-              ).pack(side='right')
-    top.wait_window()
+        self.mancala_ui = master
+        self.msg = message
+        super().__init__(master, title)
 
 
-def pass_popup(parent, title, message):
-    """Popup the win window with a game dump option."""
+    def body(self, master):
+        """Put the message in a label in the master and ring the bell."""
 
-    parent.bell()
-    top = setup_top(parent, title)
+        master.bell()
+        label = tk.Label(master, anchor='nw', justify='left', text=self.msg)
+        label.pack(side='top')
+        return label
 
-    frame = tk.Frame(top, borderwidth=10)
-    frame.pack(side='top', fill='both', expand=True)
 
-    tk.Label(frame, text=message).pack(side='top')
+    def buttonbox(self):
+        """Create Dump Game, Save Game, and Ok buttons.
+        Bind return to Ok."""
 
-    bframe = tk.Frame(top, borderwidth=20)
-    bframe.pack(side='bottom', fill='both', expand=True)
+        bframe = tk.Frame(self, borderwidth=20)
+        bframe.pack(side='bottom', fill='both', expand=True)
 
-    tk.Button(bframe, text='End Round',
-              command=lambda: (top.destroy(), parent.end_round()), width=12
-              ).pack(side='left')
-    tk.Button(bframe, text='End Game',
-              command=lambda: (top.destroy(), parent.end_game()), width=12
-              ).pack(side='left')
-    tk.Button(bframe, text='Ok', command=top.destroy, width=12
-              ).pack(side='right')
-    top.wait_window()
+        tk.Button(bframe, text='Dump Game', width=12,
+                  command=game_log.dump).pack(side='left')
+        tk.Button(bframe, text='Save Game', width=12,
+                  command=self.mancala_ui.save_file).pack(side='left')
+        tk.Button(bframe, text='Ok', width=12,
+                  command=self.ok, default=tk.ACTIVE).pack(side='right')
+
+        self.bind("<Return>", self.ok)
+
+
+class PassPopup(tk.simpledialog.Dialog):
+    """A popup for the pass dialog which also provides
+    End Round and Game buttons. Need because if the AI doesn't
+    make a turn available the user doesn't regain control."""
+
+    def __init__(self, master, title, message):
+
+        self.msg = message
+        self.mancala_ui = master
+        super().__init__(master, title)
+
+
+    def body(self, master):
+        """Put the message in a label in the master and ring the bell."""
+
+        master.bell()
+        label = tk.Label(master, anchor='nw', justify='left', text=self.msg)
+        label.pack(side='top')
+        return label
+
+
+    def buttonbox(self):
+        """Create Dump Game, Save Game, and Ok buttons.
+        Bind return to Ok."""
+
+        bframe = tk.Frame(self, borderwidth=20)
+        bframe.pack(side='bottom', fill='both', expand=True)
+
+        tk.Button(bframe, text='End Round', width=12,
+                  command=lambda: (self.ok(), self.mancala_ui.end_round())
+                  ).pack(side='left')
+        tk.Button(bframe, text='End Game', width=12,
+                  command=lambda: (self.ok(), self.mancala_ui.end_game())
+                  ).pack(side='left')
+        tk.Button(bframe, text='Ok', command=self.ok, width=12,
+                  default=tk.ACTIVE
+                  ).pack(side='right')
+
+        self.bind("<Return>", self.ok)
+
+
+class GetSeedsPopup(tk.simpledialog.Dialog):
+    """A popup to get a number of seeds to pick up."""
+
+    def __init__(self, master, title, max_seeds):
+
+        self.mancala_ui = master
+        self.value = 0
+        self.max_seeds = max_seeds
+        super().__init__(master, title)
+
+
+    def body(self, master):
+        """Create an entry box that will validate as integer."""
+
+        self.entry = ttk.Entry(master)
+        self.entry.pack(side='top')
+        return self.entry
+
+
+    def buttonbox(self):
+        """Create Dump Game, Save Game, and Ok buttons.
+        Bind return to Ok."""
+
+        bframe = tk.Frame(self, borderwidth=20)
+        bframe.pack(side='bottom', fill='both', expand=True)
+
+        for nbr in range(10):
+            row = 3 - (nbr + 2) // 3
+            col = (nbr - 1) % 3 if nbr else 0
+
+            tk.Button(bframe, text=str(nbr), width=3,
+                      command=ft.partial(self.digit, nbr)
+                      ).grid(row=row, column=col, stick='ew')
+
+        tk.Button(bframe, text='Bsp', command=self.backspace,
+                  ).grid(row=3, column=1, stick='ew')
+
+        tk.Button(bframe, text='Ok', command=self.ok
+                  ).grid(row=3, column=2, stick='ew')
+
+        bframe.grid_rowconfigure('all', weight=1)
+        bframe.grid_columnconfigure('all', weight=1)
+
+        self.bind("<Return>", self.ok)
+
+
+    def apply(self):
+        """Get the value from the entry box and validate it."""
+        try:
+            self.value = int(self.entry.get())
+        except ValueError:
+            self.value = 0
+            self.bell()
+            return
+
+        if not 0 < self.value <= self.max_seeds:
+            self.value = 0
+            self.bell()
+
+        return
+
+
+    def digit(self, nbr, _=None):
+        """Enter a digit into the entry widget."""
+
+        self.entry.insert(tk.END, nbr)
+
+
+    def backspace(self, _=None):
+        """Backspace one character."""
+
+        self.entry.delete(self.entry.index(tk.END) - 1)
+
+
+def get_nbr_seeds(master, max_seeds):
+    """Wrap the GetSeedsPopup so we can return the value entered."""
+
+    obj = GetSeedsPopup(master, 'Number Seeds', max_seeds)
+    return obj.value
 
 
 # %% common help menu
@@ -240,14 +421,14 @@ def show_game_help():
 def show_release(parent):
     """Show the Release text."""
 
-    quiet_dialog(parent, 'About Manacala Games', version.RELEASE_TEXT)
+    QuietDialog(parent, 'About Manacala Games', version.RELEASE_TEXT)
 
 
 # %% Counter
 
 class Counter:
     """A counter that increments every time the count is retrieved.
-    Useful for puting UI elements in sequential rows or columns."""
+    Useful for putting UI elements in sequential rows or columns."""
 
     def __init__(self):
         self.value = -1
