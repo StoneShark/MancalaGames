@@ -341,25 +341,87 @@ that was included in the About pane of the Mancala Options window.
 <p>Play Mancala allows playing any of the provided game configurations.
 Adjusting parameters is not supported.
 
-<p>Selecting a game from the Game List will show it's overview. When a game
-is selected, the Play button will startup the <a href="#manwindow">Mancala UI</a>
+<p>Selecting a game from the Game List will show it's overview
+and configured parameters.
+When a game is selected,
+the Play button will startup the <a href="#manwindow">Mancala UI</a>
 to allow playing the game.
 
-<p>The list of games shown can be filtered by common game
-features: board size, game goal, rounds, sow type, child type, and capture type.
-Each filter category divides all games into groups; each checkbox is one
-group in that category. Choosing None will clear all the options in the category
-and the games.  Choosing All will set all the options in the category
-and show all the games not filtered by another category.
+<p>The Game List can be navigated with home, end, page up and down, up and down arrow,
+and hitting a keyboard key will cycle through the games in the list that start
+with that letter.
+
+<p>The list of games shown can be filtered based on game configuration
+parameters. There are two types of filter categories: filters that divide the game list into
+non-overlapping sets and feature filters.
+A game must be selected by all filter categories to be included in the list.
+The filter types are described in seperate sections below.
 
 <p>Game log entries are collected according to the Log menu settings in the Mancala UI,
 but Live Log is not supported when the Mancala UI is started from play_mancala.exe.
 Logs may be saved during or at the end of each game.
-If play_mancala.py is run directly via the pyton from a console
+If play_mancala.py is run directly via the python command from a console
 window, Live Log is supported.
 
-<p>Warning the main Play Manacala window is left active while the game is
-being played. Starting a second game is not recommended.
+<p>Warning: the main Play Manacala window is left active while the game is
+being played. Starting a second game is not recommended (there are a small number
+of global variables).
+
+<h3>Non-overlapping Filters</h3>
+<p>The non-overlapping sets filters include:
+<ul><li>Game <a href="game_params.html#game_class">Class</a>
+<li>Board Size (<a href="game_params.html#holes">holes</a> per side)
+<li>Game <a href="game_params.html#goal">Goal</a>
+<li>AI <a href="game_params.html#algorithm">Algorithm</a> Configured
+<li><a href="game_params.html#mlaps">Lap type</a>
+<li>Special <a href="game_params.html#sow_rule">Sow Rule</a> (in groups)
+<li><a href="game_params.html#child_type">Child Type</a>
+<li>Sow Direction (baseed on both <a href="game_params.html#sow_direct">sow_direct</a>
+and <a href="game_params.html#udir_holes">udir_holes</a>)
+<li>Capture Type, groups are defined using:
+<ul><li>No Capture (none of the groups below but they may have a
+<a href="game_params.html#presowcapt">pre-sow capture</a>,
+children, or
+<a href="game_params.html#sow_own_store">sow own store</a> configured)
+<li>Basic capture:
+<a href="game_params.html#capt_max">maximum</a>,
+<a href="game_params.html#capt_min">minimum</a>,
+<a href="game_params.html#capt_on">capture on values</a>, or
+<a href="game_params.html#evens">evens</a>
+without either of the next two properties
+<li><a href="game_params.html#crosscapt">Cross capture</a>
+<li>Other Capture Type: <a href="game_params.html#capt_type">capt_type</a>
+is not NONE
+</ul></ul>
+Each checkbox within these filter categories
+determines if games with that property are shown.
+A game with any filled checkbox will be included in the game list.
+Choosing All will set all the options in the category
+and show all the games not filtered by another category.
+Choosing None will clear all the options in the filter category
+and the games.
+
+<h3>Feature Filters</H3>
+<p>The features filters do not break the game list into non-overlapping sets.
+Each checkbox within these features describes a property of the game defined by
+one or more parameter settings. These checkboxes have three states,
+clicking on the property cycles the selection:
+<ul><li>Filled: only show games with the property.
+<li>Unfilled: only show games without the property.
+<li>X: don't filter on the property, show games regardless of the setting for this
+property (somes this is called a "don't care" setting).
+</ul>
+
+<p>For the feature categories, only games that match all properties are shown.
+Experiment with the features and review the parameter lists to see what
+each feature filter includes.
+
+<p>The All button sets the properties to "don't care" (so all games will be included)
+and the None button clears all the properties (so only games with all of the
+listed features turned off will be shown).
+Setting all of the features to selected (filled) will clear the game list
+(no game includes all of the features, in fact, must share and must pass are
+prohibited together).
 
 <h2 id="opwindow">Mancala Options UI</h2>
 
