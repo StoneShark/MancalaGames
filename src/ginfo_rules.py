@@ -176,6 +176,19 @@ def add_pattern_rules(rules):
         msg='START_PATTERN is incompatible for ROUNDS with selected GOAL',
         excp=gi.GameInfoError)
 
+    rules.add_rule(
+        'move_rmost_mlength',
+        rule=lambda ginfo: (ginfo.start_pattern ==
+                                gi.StartPattern.MOVE_RIGHTMOST
+                            and ginfo.mlength > 1),
+        msg='START_PATTERN of MOVE_RIGHTMOST is incompatible with ' \
+            'territory GOAL, SPLIT sow, user directed sow direction, ' \
+            'and NO_SIDES (mlength > 1)',
+        excp=gi.GameInfoError)
+        # would need to define what the sow direction should be if split sow
+        # no_sides without split sow could be supported but not supporting
+        # makes code the simpler (uncondition move type)
+
 
 def add_elim_seeds_goal_rules(rules):
     """Add rules for the game eliminating our own or opponents seeds."""

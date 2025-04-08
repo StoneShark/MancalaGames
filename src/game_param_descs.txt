@@ -741,9 +741,9 @@ Allows specifying non-all-equal start patterns. The following patterns are suppo
 
   + <img src="figs/alternates_patt.jpg" alt="Alternates Pattern" class="helpfig">
 
-- ALTS_WITH_1: like Alternates except the starter's 2nd from right hole with nbr_seeds is replaced with one seed. 
+- ALTS_WITH_1: filled like alternates then two changes are made. First, the seeds of non-starter's second filled hole from the right are reduced to one seed. Second, for even board sizes, the second occupied hole from the right on the starter's side is emptied. Both of these are described from the starter's perspective.
 
-  + The alts_with_1 fill pattern is only supported for boards with 3 or more holes per side. The total seeds in play is (holes - 1) x nbr_start + 1. 
+  + The alts_with_1 fill pattern is only supported for boards with 3 or more holes per side. The total seeds in play is (holes - 1) x nbr_start + 1 if holes is odd and (holes - 2) x nbr_start + 1 if holes is even. 
 
   + <img src="figs/alts_1_patt.jpg" alt="Alternates with 1 Pattern" class="helpfig">
 
@@ -768,6 +768,8 @@ Allows specifying non-all-equal start patterns. The following patterns are suppo
   + <img src="figs/alts_split_patt.jpg" alt="Clipped Triples Pattern" class="helpfig">
 
 - RIGHTMOST_PLUS_ONE: as in ALL_EQUAL but one extra seed is added to each player's rightmost hole. The total seeds in play is nbr_start x holes x 2 + 2.
+
+- MOVE_RIGHTMOST: use when the first move of the game must be from the starter's rightmost hole. This start pattern will perform the opening move automatically, including any capture or seed removal that should occur.
 
 In the formulas above holes (n in figures) is the game constant HOLES and nbr_start is the game constant NBR_START.
 

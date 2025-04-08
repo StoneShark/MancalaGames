@@ -2432,29 +2432,40 @@ See <a href="about_games.html#Olinda">Olinda</a> and <a href="about_games.html#P
 </div>
 <p>Rules: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p94.
 <h3 id="Sadeqa" class="game_desc">Sadeqa</h3>
-<p>Counter-clockwise multi-lap sow. The goal is to deprive the opponent of seeds. Moves must end in an empty hole or reach the opponent's side of the board. Seeds are taken out of play via cross-capture. 
-<p>Variations: ALTERNATES start pattern
+<p>Counter-clockwise, multi-lap sow. The goal is to deprive the opponent of seeds. Moves must end in an empty hole or reach the opponent's side of the board. Seeds are taken out of play via cross-capture.
+<p>Played in tallied rounds, the first player to win 5 rounds wins the game. The previous round loser starts each game and their opponent is given the board side with one seed.
+<p>Variation: ALTERNATES start pattern
 <div class="cols_row">
   <div class="column2">
-    <p class="param">Holes per side:  12</p>
+    <p class="param">Holes per side:  10</p>
     <p class="param">Start seeds:  4</p>
-    <p class="param"><a href="game_params.html#goal">Goal</a>: DEPRIVE</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: RND_WIN_COUNT_DEP</p>
     <p class="param"><a href="game_params.html#allow_rule">Special Move Restrictions</a>: OPP_OR_EMPTY</p>
     <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OPP_SIDE</p>
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#goal_param">Goal Parameter</a>: 5</p>
   </div>
   <div class="column2">
-    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
     <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
+    <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: LOSER</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
     <p class="param"><a href="game_params.html#start_pattern">Start Pattern</a>: ALTS_WITH_1</p>
   </div>
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p33.
+<p>Deviation: Round tally goal is used so that the round loser can start each new game. In play without rounds, the starter always alternates.
 <h3 id="Sadeqa II" class="game_desc">Sadeqa II</h3>
 <p>A territory game that uses both stores and wegs (children). The start pattern is ALTS_SPLIT. Sow is multi-lap, counter-clockwise.
 <p>Wegs are made when a final seed sows a hole to 4 seeds in your opponent's territory.
 <p>Captures are on the final seed being sown into an opponent's weg. The sown seed and one more (if there is one) are captured to your store. Repeat turn on capture.
-<p>A round when the current play does not have any moves. A game ends when one player controls at least 10 holes.
+<p>A round ends when the current player does not have any moves. A game ends when one player controls at least 10 holes.
+<p>Variations:
+<ul><li class="helptext">
+start pattern of ALL_EQUAL (4 seeds each)
+<li class="helptext">
+board size 10 holes per side
+</ul>
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  6</p>
@@ -2477,6 +2488,45 @@ See <a href="about_games.html#Olinda">Olinda</a> and <a href="about_games.html#P
   </div>
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p50.
+<h3 id="Sadeqa III" class="game_desc">Sadeqa III</h3>
+<p>Counter-clockwise, multi-lap sow.
+<p>Cross capture seeds on opponent's side.
+<p>The game is over when a player doesn't have a move on their turn or when one player collects more than half of the seeds. The last mover takes any seeds left on the board.
+<p>Goal: collect more than half the seeds.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  8</p>
+    <p class="param">Start seeds:  6</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OPP_SIDE</p>
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#unclaimed">End Game Seeds</a>: LAST_MOVER</p>
+  </div>
+</div>
+<p>Rules: <a href="https://mancala.fandom.com/wiki/Sadeqa_III" target="_blank">https://mancala.fandom.com/wiki/Sadeqa_III</a>
+<h3 id="Sadeqa IV" class="game_desc">Sadeqa IV</h3>
+<p>Sow counter-clockwise in multiple laps. The opening move must be from the starter's rightmost hole and is done automatically.
+<p>Crosss capture from either side of the board (seeds are removed from play, the capturer doesn't matter).
+<p>Goal: deprive your opponent of seeds.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  3</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: DEPRIVE</p>
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#start_pattern">Start Pattern</a>: MOVE_RIGHTMOST</p>
+  </div>
+</div>
+<p>Rules: <a href="https://mancala.fandom.com/wiki/Sadeqa_II" target="_blank">https://mancala.fandom.com/wiki/Sadeqa_II</a>
 <h3 id="SameSide" class="game_desc">SameSide</h3>
 <p>Sow counter-clockwise but only on your own side of the board.
 <p>Multiple capture on evens but place captured seeds in opponents hole of your choice.
@@ -2992,9 +3042,9 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Erherhe">Erherhe</a></p>
     <p class="param"><a href="#Eson Xorgol">Eson Xorgol</a></p>
     <p class="param"><a href="#Gabata">Gabata</a></p>
+    <p class="param"><a href="#Gamacha">Gamacha</a></p>
   </div>
   <div class="column3">
-    <p class="param"><a href="#Gamacha">Gamacha</a></p>
     <p class="param"><a href="#Gelech">Gelech</a></p>
     <p class="param"><a href="#Giuthi">Giuthi</a></p>
     <p class="param"><a href="#Goat">Goat</a></p>
@@ -3032,10 +3082,10 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Ndoto">Ndoto</a></p>
     <p class="param"><a href="#No Sides Child">No Sides Child</a></p>
     <p class="param"><a href="#NoCapt">NoCapt</a></p>
-  </div>
-  <div class="column3">
     <p class="param"><a href="#NoSides">NoSides</a></p>
     <p class="param"><a href="#Nsa Isong">Nsa Isong</a></p>
+  </div>
+  <div class="column3">
     <p class="param"><a href="#NumNum">NumNum</a></p>
     <p class="param"><a href="#Obridjie">Obridjie</a></p>
     <p class="param"><a href="#Ohojichi">Ohojichi</a></p>
@@ -3051,6 +3101,8 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Rio Kadalis">Rio Kadalis</a></p>
     <p class="param"><a href="#Sadeqa">Sadeqa</a></p>
     <p class="param"><a href="#Sadeqa II">Sadeqa II</a></p>
+    <p class="param"><a href="#Sadeqa III">Sadeqa III</a></p>
+    <p class="param"><a href="#Sadeqa IV">Sadeqa IV</a></p>
     <p class="param"><a href="#SameSide">SameSide</a></p>
     <p class="param"><a href="#Sokusowó">Sokusowó</a></p>
     <p class="param"><a href="#Songo">Songo</a></p>

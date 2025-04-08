@@ -716,6 +716,7 @@ class AboutPane(ttk.Labelframe):
 
                 dtext += '\n'
                 dtext += self.format_para(key.title() + ':  ' + text)
+                dtext += '\n'
 
         self.set_text(dtext)
 

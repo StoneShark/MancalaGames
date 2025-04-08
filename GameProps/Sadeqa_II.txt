@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Sadeqa II",
-      "about": "A territory game that uses both stores and wegs (children). The start pattern is ALTS_SPLIT. Sow is multi-lap, counter-clockwise.\n\nWegs are made when a final seed sows a hole to 4 seeds in your opponent's territory.\n\nCaptures are on the final seed being sown into an opponent's weg. The sown seed and one more (if there is one) are captured to your store. Repeat turn on capture.\n\nA round when the current play does not have any moves. A game ends when one player controls at least 10 holes.",
+      "about": "A territory game that uses both stores and wegs (children). The start pattern is ALTS_SPLIT. Sow is multi-lap, counter-clockwise.\n\nWegs are made when a final seed sows a hole to 4 seeds in your opponent's territory.\n\nCaptures are on the final seed being sown into an opponent's weg. The sown seed and one more (if there is one) are captured to your store. Repeat turn on capture.\n\nA round ends when the current player does not have any moves. A game ends when one player controls at least 10 holes.\n\nVariations:\n\n- start pattern of ALL_EQUAL (4 seeds each)\n- board size 10 holes per side",
       "capt_rturn": true,
       "child_cvt": 4,
       "child_type": 4,

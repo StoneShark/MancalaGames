@@ -18,7 +18,6 @@ used in the game (nbr_seeds).
 The new_game decorator chain (NewGamePattern) calls the
 fill_seeds method.
 
-
 The patterns are available in a global variable in the
 same order as gi.StartPattern.
 
@@ -130,8 +129,17 @@ class AlternatesPattern(StartPatternIf):
 
 
 class AltsWithOnePattern(StartPatternIf):
-    """Alternates with One pattern: alternating 0 and nbr_start, with second
-    nbr_start on starter side as 1."""
+    """Alternates with One pattern: alternating 0 and nbr_start
+    with two changes:
+
+        1. the second from right nbr_start hole on non-starter
+           side is reduced to 1
+        2. if there are an even number of holes per side,
+           remove seeds from the second from right hole
+           with nbr_start seeds on the starter side.
+
+    This yields board with 5 and 6 seeds having the same number
+    of total seeds. The non-starter has 1 extra seed."""
 
     @staticmethod
     def size_ok(holes):
@@ -141,7 +149,8 @@ class AltsWithOnePattern(StartPatternIf):
 
     @staticmethod
     def nbr_seeds(holes, nbr_start):
-        return (holes - 1) * nbr_start + 1
+        not_filled = 2 - holes % 2
+        return (holes - not_filled) * nbr_start + 1
 
 
     @staticmethod
@@ -153,8 +162,11 @@ class AltsWithOnePattern(StartPatternIf):
 
         second = game.cts.holes + 3 - game.cts.holes % 2
         game.board[second] = 1
+        if not game.cts.holes % 2:
+            second = game.cts.holes - 3
+            game.board[second] = 0
 
-        if not game.turn:
+        if game.turn:
             game.board = StartPatternIf._rev_board(game)
 
 
@@ -307,6 +319,34 @@ class RightmostPlusOne(StartPatternIf):
         game.board = ([nstart] * (holes - 1) + [nstart + 1]) * 2
 
 
+
+class MoveRightmost(StartPatternIf):
+    """Require first move from rightmost hole, not exactly a start
+    pattern, but certainly not a prescribed opening.
+
+    Not supported for mlength 2 or 3 games."""
+
+    @staticmethod
+    def size_ok(holes):
+        return True
+    err_msg = 'MoveRightmost is always good'
+
+
+    @staticmethod
+    def nbr_seeds(holes, nbr_start):
+        return nbr_start * holes * 2
+
+
+    @staticmethod
+    def fill_seeds(game):
+        """Do the move.  The move result is ignored, it would
+        be a very boring game if the required opening move
+        resulted in a WIN."""
+
+        move_pos = 0 if game.turn else game.cts.holes - 1
+        game.move(move_pos)
+
+
 # %% Pattern Classes variable
 
 PCLASSES = [None] * len(gi.StartPattern)
@@ -319,3 +359,4 @@ PCLASSES[gi.StartPattern.TWOEMPTY] = TwoEmptyPattern
 PCLASSES[gi.StartPattern.RANDOM] = RandomPattern
 PCLASSES[gi.StartPattern.ALTS_SPLIT] = AltsThenSplitPattern
 PCLASSES[gi.StartPattern.RIGHTMOST_PLUS_ONE] = RightmostPlusOne
+PCLASSES[gi.StartPattern.MOVE_RIGHTMOST] = MoveRightmost

@@ -1,31 +1,32 @@
 {
    "game_class": "Mancala",
    "game_constants": {
-      "nbr_start": 4,
-      "holes": 12
+      "holes": 10,
+      "nbr_start": 4
    },
    "game_info": {
       "name": "Sadeqa",
-      "about": "Counter-clockwise multi-lap sow. The goal is to deprive the opponent of seeds. Moves must end in an empty hole or reach the opponent's side of the board. Seeds are taken out of play via cross-capture. \n\nVariations: ALTERNATES start pattern",
-      "crosscapt": true,
-      "goal": 1,
-      "mlaps": 1,
+      "about": "Counter-clockwise, multi-lap sow. The goal is to deprive the opponent of seeds. Moves must end in an empty hole or reach the opponent's side of the board. Seeds are taken out of play via cross-capture.\n\nPlayed in tallied rounds, the first player to win 5 rounds wins the game. The previous round loser starts each game and their opponent is given the board side with one seed.\n\nVariation: ALTERNATES start pattern\n",
       "allow_rule": 1,
+      "crosscapt": true,
+      "goal": 9,
+      "goal_param": 5,
+      "mlaps": 1,
       "capt_side": 1,
+      "round_starter": 1,
+      "rounds": 2,
       "sow_direct": 1,
       "start_pattern": 3
    },
    "player": {
-      "scorer": {
-         "access_m": 0,
-         "empties_m": -2,
-         "evens_m": 0,
-         "seeds_m": 4,
-         "easy_rand": 0
-      },
       "ai_params": {
-         "mm_depth": [2, 2, 5, 7]
+         "mm_depth": [ 2, 2, 5, 7 ]
+      },
+      "scorer": {
+         "seeds_m": 4,
+         "empties_m": -2
       }
    },
-   "rules": "Russ, Laurence. Mancala Games. 1984. p33."
+   "rules": "Russ, Laurence. Mancala Games. 1984. p33.",
+   "deviation": "Round tally goal is used so that the round loser can start each new game. In play without rounds, the starter always alternates."
 }

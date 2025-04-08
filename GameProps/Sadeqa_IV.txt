@@ -1,0 +1,23 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 6,
+      "nbr_start": 3
+   },
+   "game_info": {
+      "name": "Sadeqa IV",
+      "about": "Sow counter-clockwise in multiple laps. The opening move must be from the starter's rightmost hole and is done automatically.\n\nCrosss capture from either side of the board (seeds are removed from play, the capturer doesn't matter).\n\nGoal: deprive your opponent of seeds.\n",
+      "crosscapt": true,
+      "goal": 1,
+      "mlaps": 1,
+      "sow_direct": 1,
+      "start_pattern": 9
+   },
+   "player": {
+      "ai_params": {},
+      "scorer": {
+         "seeds_m": 8
+      }
+   },
+   "rules": "https://mancala.fandom.com/wiki/Sadeqa_II"
+}
