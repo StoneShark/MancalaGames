@@ -17,6 +17,127 @@ import man_path
 ALL_PARAMS = '_all_params.txt'
 
 
+class GameDictEncoder(json.JSONEncoder):
+    """A JSON Encoder that puts small lists and tuples on single lines.
+
+    Adapted from code originally written by Jannis Mainczyk
+    (https://gist.github.com/jannismain)."""
+
+    CONTAINER_TYPES = (list, tuple, dict)
+    MAX_WIDTH = 65
+    MAX_ITEMS = 15
+
+    # pylint: disable=arguments-renamed
+    # its either going to whine about renaming the arg (o) or
+    # that o doesn't form to snake_case naming!?
+
+    def __init__(self, *args, **kwargs):
+
+        if kwargs.get("indent") is None:
+            kwargs["indent"] = 4
+
+        super().__init__(*args, **kwargs)
+        self.indentation_level = 0
+
+    def iterencode(self, obj, _one_shot=False):
+        """Required to also work with `json.dump`."""
+
+        return self.encode(obj)
+
+    def encode(self, obj):
+        """Encode JSON object obj with respect to single line lists."""
+
+        if isinstance(obj, (list, tuple)):
+            return self._encode_list(obj)
+
+        if isinstance(obj, dict):
+            return self._encode_dict(obj)
+
+        return json.dumps(
+            obj,
+            skipkeys=self.skipkeys,
+            ensure_ascii=self.ensure_ascii,
+            check_circular=self.check_circular,
+            allow_nan=self.allow_nan,
+            sort_keys=self.sort_keys,
+            indent=self.indent,
+            separators=(self.item_separator, self.key_separator),
+            default=self.default if hasattr(self, "default") else None,
+        )
+
+    def _encode_list(self, obj):
+
+        if self._put_on_single_line(obj):
+            return "[ " + ", ".join(self.encode(elem) for elem in obj) + " ]"
+
+        self.indentation_level += 1
+        output = [self.indent_str + self.encode(elem) for elem in obj]
+        self.indentation_level -= 1
+
+        return "[\n" + ",\n".join(output) + "\n" + self.indent_str + "]"
+
+    def _encode_dict(self, obj):
+        """Encode a dictionary object.
+        This is needed to call self.encode for values in
+        the dictionaries."""
+
+        if not obj:
+            return "{}"
+
+        # ensure keys are converted to strings
+        obj = {str(k) if k is not None else "null": v for k, v in obj.items()}
+
+        if self.sort_keys:
+            obj = dict(sorted(obj.items(), key=lambda x: x[0]))
+
+        # never put dicts on one line (well maybe game_constants??)
+        # if self._put_on_single_line(obj):
+        #     return ("{ "
+        #             + ", ".join(f"{json.dumps(k)}: {self.encode(elem)}"
+        #                         for k, elem in obj.items())
+        #             + " }")
+
+        self.indentation_level += 1
+        output = [f"{self.indent_str}{json.dumps(k)}: {self.encode(v)}"
+                  for k, v in obj.items()]
+        self.indentation_level -= 1
+
+        return "{\n" + ",\n".join(output) + "\n" + self.indent_str + "}"
+
+    def _put_on_single_line(self, obj):
+        """Determine if obj can be put on a single line."""
+
+        return (self._primitives_only(obj)
+                and len(obj) <= self.MAX_ITEMS
+                and len(str(obj)) <= self.MAX_WIDTH)
+
+    def _primitives_only(self, obj):
+        """Determine if the object only contains primitive objects."""
+
+        if isinstance(obj, (list, tuple)):
+            return not any(isinstance(elem, self.CONTAINER_TYPES)
+                           for elem in obj)
+
+        if isinstance(obj, dict):
+            return not any(isinstance(elem, self.CONTAINER_TYPES)
+                            for elem in obj.values())
+
+        return False
+
+    @property
+    def indent_str(self):
+        """Return an indent string or int."""
+
+        if isinstance(self.indent, int):
+            return ' ' * (self.indentation_level * self.indent)
+
+        if isinstance(self.indent, str):
+            return self.indentation_level * self.indent
+
+        raise ValueError("indent must either be of type int or str "
+                          + f"(is: {type(self.indent)})")
+
+
 class GameConfig:
     """Encapsulate the file handling and game config dictionaries."""
 
@@ -167,7 +288,8 @@ class GameConfig:
             self.game_config[ckey.GAME_INFO][ckey.ABOUT] = text.rstrip() + '\n'
 
         with open(self.filename, 'w', encoding='utf-8') as file:
-            json.dump(self.game_config, file, indent=3)
+            json.dump(self.game_config, file, indent=3,
+                      cls=GameDictEncoder)
 
         self.edited = False
         self._known = True
