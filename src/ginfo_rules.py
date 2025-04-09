@@ -14,6 +14,8 @@ Mancala can add, change or delete rules.
 Created on Mon Aug 21 06:54:24 2023
 @author: Ann"""
 
+# pylint: disable=too-many-lines
+
 import collections
 import dataclasses as dc
 import warnings
