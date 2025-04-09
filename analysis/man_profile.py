@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-"""
+"""Do timing experiments.
+
+Don't call this module profile, it causes import issues.
+
 Created on Mon Aug  7 06:18:19 2023
 @author: Ann"""
 
@@ -7,9 +10,11 @@ import argparse
 import cProfile
 import os
 import sys
+import timeit
 
 import exper_config
-import play_game               # used indirectly in profile command
+from game_logger import game_log
+import play_game     # used indirectly in profile command, needs to be globals
 
 
 # %% constants
@@ -26,8 +31,21 @@ SORT_OPTS = ['calls', 'cumulative', 'cumtime', 'file', 'filename',
 
 ACTIONS = {'pick_move': 'tplayer.pick_move()',
            'allows': 'game.get_allowable_holes()',
-           'play_game': 'play_game.play_one_game(game, fplayer, tplayer)',
+           'play_game': 'game.new_game() ; ' \
+                        'play_game.play_one_game(game, fplayer, tplayer)',
            }
+
+PROFILE = 'profile'
+TIMEIT = 'timeit'
+
+TIMERS = [PROFILE, TIMEIT]
+
+
+PARAMS = 'g'
+DECOS = 'd'
+AICONFIG = 'p'
+
+REPORTS = PARAMS + DECOS + AICONFIG
 
 
 # %%  command line proc
@@ -63,6 +81,11 @@ def define_parser():
                         help="""Select the action to profile.
                         Default: %(default)s""")
 
+    parser.add_argument('--timer', action='store',
+                        choices=TIMERS, default=PROFILE,
+                        help="""Choose a timer operation.
+                        Default: %(default)s""")
+
     parser.add_argument('--raw', action='store',
                         default=None,
                         help="""File for Stats data. Default: None""")
@@ -70,7 +93,22 @@ def define_parser():
     parser.add_argument('--sort', action='store',
                         choices=SORT_OPTS,
                         default='cumtime',
-                        help="""Sort option. Default: %(default)s""")
+                        help="""Sort option (only applies to
+                        --timer profile). Default: %(default)s""")
+
+    parser.add_argument('--nbr_runs', action='store',
+                        default=10, type=int,
+                        help="""Select the number of actions to perform
+                        (only applies to --timer timeit).
+                        Default: %(default)s""")
+
+    parser.add_argument('--report', action='store',
+                        default='',
+                        help="""Include details about the test
+                        configuration:
+                            g--game param string;
+                            d--deco chain print; and
+                            p--ai player configurations.""")
 
     return parser
 
@@ -121,9 +159,10 @@ def process_command_line():
     check_game(cargs)
     check_action(cargs)
 
-    print('Command line:')
+    print('\nCommand line:')
     for var, val in vars(cargs).items():
         print(f"   {var}:   {val}")
+    print()
 
     return cargs
 
@@ -135,6 +174,30 @@ if __name__ == '__main__':
     cargs = process_command_line()
     game, fplayer, tplayer, _ = next(exper_config.game_n_players_gen(cargs))
 
-    cProfile.run(ACTIONS[cargs.action],
-                 filename=cargs.raw,
-                 sort=cargs.sort)
+    game_log.active = False
+
+    if cargs.timer == PROFILE:
+        cProfile.run(ACTIONS[cargs.action],
+                     filename=cargs.raw,
+                     sort=cargs.sort)
+
+    elif cargs.timer == TIMEIT:
+
+        result = timeit.timeit(ACTIONS[cargs.action],
+                               number=cargs.nbr_runs,
+                               globals=globals())
+
+        per_exe = result / cargs.nbr_runs
+        print(f'Run time (x{cargs.nbr_runs}):',
+              f'    {result:10.6} seconds   total ',
+              f'    {per_exe:10.6} per execution.', sep='\n')
+
+
+    print()
+    if PARAMS in cargs.report:
+        print(game.params_str(), '\n')
+    if DECOS in cargs.report:
+        print(game.deco)
+    if AICONFIG in cargs.report:
+        print(fplayer)
+        print(tplayer)
