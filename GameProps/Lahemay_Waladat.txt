@@ -23,6 +23,7 @@
       "unclaimed": 2
    },
    "player": {
+      "algorithm": "negamaxer",
       "ai_params": {
          "mm_depth": [
             1,

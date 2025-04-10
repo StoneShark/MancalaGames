@@ -25,6 +25,7 @@
          "easy_rand": 20,
          "repeat_turn": 0
       },
+      "algorithm": "negamaxer",
       "ai_params": {
           "mm_depth": [1, 1, 3, 5]
       }

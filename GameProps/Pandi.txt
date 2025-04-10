@@ -22,6 +22,7 @@
       "stores": true
    },
    "player": {
+      "algorithm": "negamaxer",
       "ai_params": {
          "mm_depth": [1, 1, 3, 7]
       },

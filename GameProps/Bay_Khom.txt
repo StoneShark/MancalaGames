@@ -18,7 +18,10 @@
       "udir_holes": [ 0, 1, 2, 3, 4 ]
    },
    "player": {
-      "ai_params": {},
+      "algorithm": "negamaxer",
+      "ai_params": {
+         "mm_depth": [ 1, 3, 5, 7 ]
+      },
       "scorer": {
          "stores_m": 8
       }

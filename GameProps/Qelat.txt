@@ -26,6 +26,7 @@
          "evens_m": 0,
          "easy_rand": 4
       },
+      "algorithm": "negamaxer",
       "ai_params": {
          "mm_depth": [1, 2, 3, 5]
       }

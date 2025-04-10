@@ -19,6 +19,7 @@
       "start_pattern": 3
    },
    "player": {
+      "algorithm": "negamaxer",
       "ai_params": {
          "mm_depth": [ 2, 2, 5, 7 ]
       },

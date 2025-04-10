@@ -23,6 +23,7 @@
          "seeds_m": 4,
          "easy_rand": 2
       },
+      "algorithm": "negamaxer",
       "ai_params": {
          "mm_depth": [2, 2, 5, 7]
       }

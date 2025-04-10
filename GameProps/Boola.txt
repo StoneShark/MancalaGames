@@ -16,7 +16,10 @@
       "start_pattern": 4
    },
    "player": {
-      "ai_params": {},
+      "algorithm": "negamaxer",
+      "ai_params": {
+         "mm_depth": [ 1, 3, 5, 7 ]
+      },
       "scorer": {
          "seeds_m": 1,
          "empties_m": -4

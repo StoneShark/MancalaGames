@@ -27,6 +27,7 @@
          "seeds_m": 0,
          "stores_m": 4
       },
+      "algorithm": "negamaxer",
       "ai_params": {
          "mm_depth": [1, 3, 5, 7]
       }
