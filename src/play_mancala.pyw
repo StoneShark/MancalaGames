@@ -798,6 +798,7 @@ class GameChooser(ttk.Frame):
         self.master.bind('<Control-c>', self.game_filter.all_filtered)
         self.master.bind('<Control-a>', self.game_filter.not_filtered)
         self.master.bind('<Control-p>', self.play_game)
+        self.master.bind('<Return>', self.play_game)
         self.master.bind('<Home>', self.select_list.jump_to_first)
         self.master.bind('<End>', self.select_list.jump_to_last)
         self.master.bind('<Key>', self.select_list.key_pressed)

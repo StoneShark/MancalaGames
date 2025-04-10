@@ -801,7 +801,6 @@ class MancalaUI(tk.Frame):
         MCTS. This does seem extreme but the AI turn and node tree
         have already been started correcting them seems error prone."""
 
-        print(self.movers)
         game = self.game
         if self.movers != 1:
             tk.messagebox.showerror(
@@ -922,30 +921,30 @@ class MancalaUI(tk.Frame):
         if win_cond and win_cond != gi.WinCond.REPEAT_TURN:
             self._win_message_popup(win_cond)
             self._new_game(win_cond=win_cond, new_round_ok=True)
-            return
+            return win_cond
 
-        if self.vars.ai_active.get() and self.game.get_turn():
-            self._schedule_ai()
-
-        elif self.info.mustpass and self.game.test_pass():
-
+        if self.info.mustpass and self.game.test_pass():
             player = 'Bottom' if self.game.get_turn() else 'Top'
             message = f'{player} player has no moves and must pass.'
             ui_utils.PassPopup(self, 'Must Pass', message)
 
-            self.refresh()
-            self._schedule_ai()
+        self._schedule_ai()
+        return win_cond
 
 
     def _schedule_ai(self):
-        """Do AI move or schedule the AI turn (if the AI is enabled
-        and it's the AI's turn)."""
+        """Do AI move or schedule the AI turn (only in GAMEPLAY mode,
+        and if the AI is enabled and it's the AI's turn)."""
 
-        if self.vars.ai_active.get() and self.game.get_turn():
+        if (self.mode == buttons.Behavior.GAMEPLAY
+                and self.vars.ai_active.get()
+                and self.game.get_turn()):
+
             self.refresh()
             self._cancel_pending_afters()
             sel_delay = self.vars.ai_delay.get()
 
+            self.master.config(cursor='wait')
             self.after(AI_DELAY[sel_delay], self._ai_move)
 
 
@@ -954,12 +953,13 @@ class MancalaUI(tk.Frame):
 
         if self.vars.ai_active.get() and self.game.get_turn():
 
+            self.master.config(cursor='wait')
             if not self.vars.log_ai.get():
                 game_log.set_ai_mode()
 
             move = self.player.pick_move()
             game_log.clear_ai_mode()
-            self.move(move)
+            cond = self.move(move)
 
             if (self.game.info.sow_direct == gi.Direct.PLAYALTDIR
                 and self.game.mcount == 1):
@@ -968,3 +968,6 @@ class MancalaUI(tk.Frame):
                 tk.messagebox.showinfo(title='Player Direction',
                                        message=message,
                                        parent=self)
+
+            if cond != gi.WinCond.REPEAT_TURN:
+                self.master.config(cursor='')
