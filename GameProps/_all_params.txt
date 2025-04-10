@@ -13,8 +13,8 @@
       "capt_max": 0,
       "capt_min": 0,
       "capt_type": 0,
-      "capt_on": [],
-      "capt_rturn": false,
+      "capt_on": [  ],
+      "capt_rturn": 0,
       "child_cvt": 0,
       "child_rule": 0,
       "child_type": 0,
@@ -50,7 +50,7 @@
       "sow_param": 0,
       "start_pattern": 0,
       "stores": false,
-      "udir_holes": [],
+      "udir_holes": [  ],
       "unclaimed": 0,
       "visit_opp": false,
       "xc_sown": false,
@@ -61,30 +61,10 @@
       "ai_active": false,
       "difficulty": 1,
       "ai_params": {
-         "mcts_bias": [
-            300,
-            200,
-            100,
-            100
-         ],
-         "mcts_nodes": [
-            100,
-            300,
-            500,
-            800
-         ],
-         "mcts_pouts": [
-            1,
-            1,
-            1,
-            1
-         ],
-         "mm_depth": [
-            1,
-            1,
-            3,
-            5
-         ]
+         "mcts_bias": [ 300, 200, 100, 100 ],
+         "mcts_nodes": [ 100, 300, 500, 800 ],
+         "mcts_pouts": [ 1, 1, 1, 1 ],
+         "mm_depth": [ 1, 1, 3, 5 ]
       },
       "scorer": {
          "stores_m": 0,
