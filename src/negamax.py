@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Minimaxer for ai player.
+"""Negamaxer for ai player.
 
 Created on Mon Feb 13 15:03:50 2023
 @author: Ann"""
@@ -29,7 +29,9 @@ class MoveScore:
 
 
 class NegaMaxer(ai_interface.AiAlgorithmIf):
-    """A class to enable minimax to pick_moves."""
+    """A class to enable negamax to pick_moves.
+    Like minimax, but requires that player's alternate turns
+    (no repeat turns)."""
 
     def __init__(self, game, player):
 
@@ -50,8 +52,7 @@ class NegaMaxer(ai_interface.AiAlgorithmIf):
         ASSUMES alternating turns"""
 
         moves = self.game.get_moves()
-        assert moves, 'Minimaxer called when no moves available.'
-
+        assert moves, 'Negamaxer called when no moves available.'
 
         best_moves = []
         best_score = MIN_INT
