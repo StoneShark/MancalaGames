@@ -347,14 +347,28 @@ class CaptMultiple(CaptMethodIf):
 
 class CaptOppDir(CaptMethodIf):
     """Capture in the opposite direction.  For multiple captures
-    and next or two out."""
+    and next or two out.
+    Recall mdata.direct is always one of CW or CCW.
+
+    If we can precompute the direction, do so.
+    Otherwise, compute it on every move"""
+
+    def __init__(self, game, decorator=None):
+
+        super().__init__(game, decorator)
+
+        self.opp_dir = 0
+        if game.info.sow_direct in (gi.Direct.CW, gi.Direct.CCW):
+            self.opp_dir = game.info.sow_direct.opp_dir()
+
 
     def do_captures(self, mdata, capt_first=True):
         """Change direction then use the deco chain."""
-        mdata.direct = mdata.direct.opp_dir()
+        direct = mdata.direct
+        mdata.direct = self.opp_dir or mdata.direct.opp_dir()
         self.decorator.do_captures(mdata, capt_first)
 
-        mdata.direct = mdata.direct.opp_dir()
+        mdata.direct = direct
 
 
 # %%  grand slam decos

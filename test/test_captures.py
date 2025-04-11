@@ -279,7 +279,7 @@ class TestNoCaptures:
 class TestCaptTable:
 
     @staticmethod
-    def make_game(case):
+    def make_game(case, split):
         """nosingleseed capt is always true, the first time
         throught the table (test_capturer) it will never
         activate because mdata.seeds is set to 3.
@@ -289,9 +289,11 @@ class TestCaptTable:
             if case.child_cvt else gi.ChildType.NOCHILD
         child_rule = gi.ChildRule.OPPS_ONLY_NOT_1ST \
             if case.oppside else gi.ChildRule.NONE
+        sow_direct = gi.Direct.SPLIT if split else case.direct
 
         game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(stores=True,
+                                sow_direct=sow_direct,
                                 capt_on=case.capt_on,
                                 capsamedir=case.capsamedir,
                                 child_cvt=case.child_cvt,
@@ -331,7 +333,7 @@ class TestCaptTable:
     # @pytest.mark.usefixtures("logger")
     def test_capturer(self, case):
 
-        game = self.make_game(case)
+        game = self.make_game(case, split=False)
         assert sum(game.store) + sum(game.board) == game.cts.total_seeds, \
             f"Game setup error: board={sum(game.board)} stores={sum(game.store)}"
 
@@ -356,7 +358,7 @@ class TestCaptTable:
 
     def test_no_singles(self, case):
 
-        game = self.make_game(case)
+        game = self.make_game(case, split=True)
 
         mdata = mancala.MoveData(game, None)
         mdata.direct = case.direct
