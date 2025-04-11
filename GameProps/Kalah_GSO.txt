@@ -5,8 +5,8 @@
       "nbr_start": 4
    },
    "game_info": {
-      "name": "XCaptSowOwn",
-      "about": "A single-sow mancala, sow own store, cross capture and pick own. Repeat turn if sow ends in your own store. On grand slam, the opposing player gets your remaining seeds.",
+      "name": "Kalah GSO",
+      "about": "A single-sow mancala, sow own store, cross capture and pick own. Repeat turn if sow ends in your own store.\n\nOn Grand Slam, the Opposing player gets your remaining seeds.\n\nGoal: colled more than half of the seeds.",
       "crosscapt": true,
       "grandslam": 3,
       "capt_side": 1,
@@ -17,7 +17,6 @@
    },
    "player": {
       "algorithm": "minimaxer",
-      "ai_active": true,
       "scorer": {
          "stores_m": 8,
          "access_m": 4,
@@ -32,5 +31,6 @@
          "mm_depth": [1, 5, 8, 12]
       }
    },
-   "rules": "Ramanujan & Selman. Trade-Offs in Sampling-Based Adversarial Planning. AAAI 2011.\nCollecting opp seeds if you have no move is partially implemented via grandslam.OPP_GETS_REMAIN."
+   "rules": "https://en.wikipedia.org/wiki/Kalah with the Grand Slam Opp gets set."
+
 }

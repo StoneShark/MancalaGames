@@ -129,7 +129,7 @@ CONFIG_CASES = {
     'Wari': Config(6*4),  # mustshare
     'Weg': Config(6*4*2 - 1, 0, 11),
 
-    'XCaptSowOwn': Config(6*4),
+    'Kalah_GSO': Config(6*4),
 }
 
 

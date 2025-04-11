@@ -1360,6 +1360,27 @@ Require must share (<a href="game_params.html#mustshare">MUSTSHARE</a>) because 
   </div>
 </div>
 <p>Rules: <a href="https://en.wikipedia.org/wiki/Kalah" target="_blank">https://en.wikipedia.org/wiki/Kalah</a>
+<h3 id="Kalah GSO" class="game_desc">Kalah GSO</h3>
+<p>A single-sow mancala, sow own store, cross capture and pick own. Repeat turn if sow ends in your own store.
+<p>On Grand Slam, the Opposing player gets your remaining seeds.
+<p>Goal: colled more than half of the seeds.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OPP_SIDE</p>
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#grandslam">Grand Slam</a>: OPP_GETS_REMAIN</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_own_store">Sow Own Store</a>: Yes</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#xcpickown">Own Seed on Xcapture</a>: PICK_ON_CAPT</p>
+  </div>
+</div>
+<p>Rules: <a href="https://en.wikipedia.org/wiki/Kalah" target="_blank">https://en.wikipedia.org/wiki/Kalah</a> with the Grand Slam Opp gets set.
 <h3 id="Kale" class="game_desc">Kale</h3>
 <p>Sow counter-clockwise. If your opponent has no seeds, you must make some available, if you can.
 <p>Capture on 2s and 3s. The first capture must be on the opponent's side of the board, but a multi-capture chain may continue onto your own side of the board. A grand slam does not capture--the seeds are left on the  board.
@@ -2980,26 +3001,6 @@ no repeat turn on capture
   </div>
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p48 details p46.
-<h3 id="XCaptSowOwn" class="game_desc">XCaptSowOwn</h3>
-<p>A single-sow mancala, sow own store, cross capture and pick own. Repeat turn if sow ends in your own store. On grand slam, the opposing player gets your remaining seeds.
-<div class="cols_row">
-  <div class="column2">
-    <p class="param">Holes per side:  6</p>
-    <p class="param">Start seeds:  4</p>
-    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
-    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OPP_SIDE</p>
-    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
-    <p class="param"><a href="game_params.html#grandslam">Grand Slam</a>: OPP_GETS_REMAIN</p>
-  </div>
-  <div class="column2">
-    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
-    <p class="param"><a href="game_params.html#sow_own_store">Sow Own Store</a>: Yes</p>
-    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
-    <p class="param"><a href="game_params.html#xcpickown">Own Seed on Xcapture</a>: PICK_ON_CAPT</p>
-  </div>
-</div>
-<p>Rules: Ramanujan & Selman. Trade-Offs in Sampling-Based Adversarial Planning. AAAI 2011.
-Collecting opp seeds if you have no move is partially implemented via grandslam.OPP_GETS_REMAIN.
 <br><br><br>
 <h2 id="index">Game Index</h2>
 <div class="cols_row">
@@ -3056,6 +3057,7 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#J'Odu">J'Odu</a></p>
     <p class="param"><a href="#Je ki n je">Je ki n je</a></p>
     <p class="param"><a href="#Kalah">Kalah</a></p>
+    <p class="param"><a href="#Kalah GSO">Kalah GSO</a></p>
     <p class="param"><a href="#Kale">Kale</a></p>
     <p class="param"><a href="#Krur">Krur</a></p>
     <p class="param"><a href="#Lagerung">Lagerung</a></p>
@@ -3083,9 +3085,9 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#No Sides Child">No Sides Child</a></p>
     <p class="param"><a href="#NoCapt">NoCapt</a></p>
     <p class="param"><a href="#NoSides">NoSides</a></p>
-    <p class="param"><a href="#Nsa Isong">Nsa Isong</a></p>
   </div>
   <div class="column3">
+    <p class="param"><a href="#Nsa Isong">Nsa Isong</a></p>
     <p class="param"><a href="#NumNum">NumNum</a></p>
     <p class="param"><a href="#Obridjie">Obridjie</a></p>
     <p class="param"><a href="#Ohojichi">Ohojichi</a></p>
@@ -3121,7 +3123,6 @@ Collecting opp seeds if you have no move is partially implemented via grandslam.
     <p class="param"><a href="#Wari">Wari</a></p>
     <p class="param"><a href="#Waurie">Waurie</a></p>
     <p class="param"><a href="#Weg">Weg</a></p>
-    <p class="param"><a href="#XCaptSowOwn">XCaptSowOwn</a></p>
   </div>
 </div>
 <p />

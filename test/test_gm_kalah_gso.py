@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Test the xcaptsowown game.
+"""Test the Kalah_GSO game.
 Tests sow stores and cross capture with pick own.
 
 Created on Thu Aug 17 06:42:25 2023
@@ -26,7 +26,7 @@ def gstate():
     """This fixture will maintain state between tests in the
     same class but will be reconstructed for each class."""
 
-    game, _ = man_config.make_game('./GameProps/XCaptSowOwn.txt')
+    game, _ = man_config.make_game('./GameProps/Kalah_GSO.txt')
     gstate = GameTestData(game)
     return gstate
 
