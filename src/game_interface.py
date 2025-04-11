@@ -485,9 +485,7 @@ class MoveTpl(tuple):
     def set_dir(self, direct):
         """Return a new MoveTpl with a new direction."""
 
-        tmove = list(self)
-        tmove[-1] = direct
-        return MoveTpl(*tmove)
+        return MoveTpl(*self[:-1], direct)
 
 
 # %%  game interface abstract base class -- the UI requires these
