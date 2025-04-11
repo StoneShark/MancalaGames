@@ -9,6 +9,7 @@ Created on Mon Aug  7 06:18:19 2023
 import argparse
 import cProfile
 import os
+import random
 import sys
 import timeit
 
@@ -33,6 +34,7 @@ ACTIONS = {'pick_move': 'tplayer.pick_move()',
            'allows': 'game.get_allowable_holes()',
            'play_game': 'game.new_game() ; ' \
                         'play_game.play_one_game(game, fplayer, tplayer)',
+           'random_move': 'game.move(random.choice(game.get_moves()))'
            }
 
 PROFILE = 'profile'
@@ -144,6 +146,12 @@ def check_action(cargs):
             print("Using as_config for tplayer "
                   "(cannot be random for pick_move).")
         return
+
+    if cargs.action == 'random_move':
+        if cargs.nbr_runs > 10:
+            print("Random moves are made sequentially. "
+                  f"The game might end before {cargs.nbr_runs} "
+                  "moves (crash).")
 
 
 def process_command_line():
