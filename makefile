@@ -5,7 +5,7 @@ all_no_exe: clean pylint context params tests docs
 
 
 # do in this order so that html coverage dir is output from tests
-final: spotless long_tests all
+final: spotless context params long_tests all
 
 
 MODULES = ai_interface.py
@@ -165,11 +165,11 @@ game_tests: test\\context.py
 
 # a target to run the stress tests with higher iterations
 .PHONY: strest_tests	
-stress_tests: test\\context.py
+stress_tests: test\\context.py params
 	pytest test\\test_z_simul_game.py --nbr_runs 500
 	
 .PHONY: player_tests
-player_tests: test\\context.py
+player_tests: test\\context.py params
 	-pytest test\\test_z_simul_players.py --run_slow 
 
 

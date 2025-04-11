@@ -9,8 +9,8 @@ import textwrap
 VERSION = '1.8.3'
 
 # these are auto filled when the exe is built
-DATETIME = 'Thu Apr  3 14:54:10 2025'
-BRANCH = 'main'
+DATETIME = 'Fri Apr 11 14:12:06 2025'
+BRANCH = 'develop'
 
 RELEASE_TEXT = textwrap.dedent(f"""\
                 Mancala Games
