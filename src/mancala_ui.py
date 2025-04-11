@@ -923,10 +923,13 @@ class MancalaUI(tk.Frame):
             self._new_game(win_cond=win_cond, new_round_ok=True)
             return win_cond
 
-        if self.info.mustpass and self.game.test_pass():
+        if (not (self.vars.ai_active.get() and self.game.get_turn())
+                and self.info.mustpass and self.game.test_pass()):
+
             player = 'Bottom' if self.game.get_turn() else 'Top'
             message = f'{player} player has no moves and must pass.'
             ui_utils.PassPopup(self, 'Must Pass', message)
+            self.refresh()     # test pass updates game state
 
         self._schedule_ai()
         return win_cond
