@@ -136,16 +136,6 @@ CONFIG_CASES = {
 class TestEnderConfig:
     """check the parameters of the ender"""
 
-    @pytest.fixture
-    def econfig(self, request):
-        """Use with indirect to look up the expected configuration
-        from the game config file name."""
-        key = request.param[:-4]
-        if key in CONFIG_CASES:
-            return CONFIG_CASES[key]
-
-        return None
-
 
     @staticmethod
     def find_ender_deco(game, dclass):
@@ -160,16 +150,12 @@ class TestEnderConfig:
 
 
     @pytest.mark.parametrize('game_pdict, econfig',
-                             zip(FILES, FILES),
-                             ids=[f[:-4] for f in FILES],
-                             indirect=True)
+                             zip([key + '.txt' for key in CONFIG_CASES.keys()],
+                                 CONFIG_CASES.values()),
+                             indirect=['game_pdict'])
     def test_game_const(self, game_pdict, econfig):
         """Test that the game and ender are configured/constructed
-        as expected. If file wasn't translated to a Config
-        named tuple skip the test for (econfig)."""
-
-        if econfig is None:
-            pytest.skip('No econfig')
+        as expected."""
 
         game, _ = game_pdict
 
@@ -821,9 +807,6 @@ def make_cases():
 
                 yield pytest.param(config_file, test_case,
                                    id=f"{gname}-case{idx}-{cname}-{wname}")
-        else:
-            yield pytest.param(config_file, None,
-                               id=f"{gname}")
 
 
 class TestEndGames:
