@@ -379,10 +379,7 @@ of global variables).
 <li>Sow Direction (baseed on both <a href="game_params.html#sow_direct">sow_direct</a>
 and <a href="game_params.html#udir_holes">udir_holes</a>)
 <li>Capture Type, groups are defined using:
-<ul><li>No Capture (none of the groups below but they may have a
-<a href="game_params.html#presowcapt">pre-sow capture</a>,
-children, or
-<a href="game_params.html#sow_own_store">sow own store</a> configured)
+<ul>
 <li>Basic capture:
 <a href="game_params.html#capt_max">maximum</a>,
 <a href="game_params.html#capt_min">minimum</a>,
@@ -390,9 +387,12 @@ children, or
 <a href="game_params.html#evens">evens</a>
 without either of the next two properties
 <li><a href="game_params.html#crosscapt">Cross capture</a>
-<li>Other Capture Type: <a href="game_params.html#capt_type">capt_type</a>
+<li>Capture Type set: <a href="game_params.html#capt_type">capt_type</a>
 is not NONE
-</ul></ul>
+<li>Other (none of the groups above but they have
+<a href="game_params.html#presowcapt">pre-sow capture</a>,
+<a href="game_params.html#child_type">children</a>, or
+<a href="game_params.html#sow_own_store">sow own store</a> configured)</ul></ul>
 Each checkbox within these filter categories
 determines if games with that property are shown.
 A game with any filled checkbox will be included in the game list.
