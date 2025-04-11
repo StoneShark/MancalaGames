@@ -9,7 +9,6 @@
       "about": "Sow is counter-clockwise in multiple laps. \n\nCaptures are not allowed on each player's first move. Captures are on evens from the final hole sown and one hole before it.\n\nThe game ends when one player has collected half the seeds or if the current player cannot move. In the latter case, the unclaimed seeds on the board do not score.\n\nGoal: collect more than half of the seeds or the most seeds.",
       "capt_side": 0,
       "evens": true,
-      "goal_param": 1,
       "mlaps": 1,
       "multicapt": 2,
       "nocaptmoves": 2,
