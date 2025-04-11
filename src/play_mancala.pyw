@@ -70,20 +70,20 @@ GOALS = {'Max Seeds': lambda goal: goal == gi.Goal.MAX_SEEDS,
                                               gi.Goal.RND_WIN_COUNT_DEP)}
 
 
-CAPTS = {'No Capture': lambda ginfo: not any([ginfo.get(ckey.CAPT_MAX, 0),
-                                              ginfo.get(ckey.CAPT_MIN, 0),
-                                              ginfo.get(ckey.CAPT_ON, 0),
-                                              ginfo.get(ckey.EVENS, 0),
-                                              ginfo.get(ckey.CROSSCAPT, 0),
-                                              ginfo.get(ckey.CAPT_TYPE, 0)]),
-         'Basic Capture': lambda ginfo: (any([ginfo.get(ckey.CAPT_MAX, 0),
+CAPTS = {'Basic Capture': lambda ginfo: (any([ginfo.get(ckey.CAPT_MAX, 0),
                                               ginfo.get(ckey.CAPT_MIN, 0),
                                               ginfo.get(ckey.CAPT_ON, 0),
                                               ginfo.get(ckey.EVENS, 0)])
                                  and not any([ginfo.get(ckey.CROSSCAPT, 0),
                                               ginfo.get(ckey.CAPT_TYPE, 0)])),
          'Cross Capture': lambda ginfo: ginfo.get(ckey.CROSSCAPT, 0),
-         'Other Capt Type': lambda ginfo: ginfo.get(ckey.CAPT_TYPE, 0)}
+         'Capt Type Set': lambda ginfo: ginfo.get(ckey.CAPT_TYPE, 0),
+         'Other': lambda ginfo: not any([ginfo.get(ckey.CAPT_MAX, 0),
+                                         ginfo.get(ckey.CAPT_MIN, 0),
+                                         ginfo.get(ckey.CAPT_ON, 0),
+                                         ginfo.get(ckey.EVENS, 0),
+                                         ginfo.get(ckey.CROSSCAPT, 0),
+                                         ginfo.get(ckey.CAPT_TYPE, 0)]),}
 
 
 SOWRS = {'None': lambda sow_rule: not sow_rule,
