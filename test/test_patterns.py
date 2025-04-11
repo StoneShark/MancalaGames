@@ -156,3 +156,41 @@ class TestRandom:
 
             assert sum(game.board) == game.cts.total_seeds
             assert all(s >= 0 for s in game.board)
+
+
+
+class TestMoveRightmost:
+
+    def test_simple_game(case):
+
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
+        game_info = gi.GameInfo(start_pattern=gi.StartPattern.MOVE_RIGHTMOST,
+                                capt_on=[2],
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = True
+        game.new_game()
+
+        assert game.board == [2, 2, 2, 0, 3, 3, 2, 2]
+
+
+    def test_mlaps_game(case):
+
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
+        game_info = gi.GameInfo(start_pattern=gi.StartPattern.MOVE_RIGHTMOST,
+                                sow_direct=gi.Direct.CW,
+                                mlaps=gi.LapSower.LAPPER,
+                                crosscapt=True,
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = False
+        game.new_game()
+
+        assert game.board == [3, 0, 3, 1, 0, 3, 0, 3]
+        assert game.store == [3, 0]
