@@ -9,6 +9,7 @@ import dataclasses as dc
 import enum
 import itertools as it
 import os
+import random
 import textwrap
 import tkinter as tk
 #  these are not always loaded along with tkinter
@@ -729,6 +730,7 @@ class GameChooser(ttk.Frame):
 
         self.master = master
         self.all_games = None
+        self.games = None
         self.selected = None
 
         self.load_game_files()
@@ -782,6 +784,10 @@ class GameChooser(ttk.Frame):
         playmenu = tk.Menu(menubar)
         playmenu.add_command(label='Play...', command=self.play_game,
                              accelerator='Ctrl-p')
+        playmenu.add_separator()
+        playmenu.add_command(label='Random', command=self.select_random,
+                             accelerator='Ctrl-r')
+
         menubar.add_cascade(label='Play', menu=playmenu)
 
         filtmenu = tk.Menu(menubar)
@@ -798,6 +804,7 @@ class GameChooser(ttk.Frame):
         self.master.bind('<Control-c>', self.game_filter.all_filtered)
         self.master.bind('<Control-a>', self.game_filter.not_filtered)
         self.master.bind('<Control-p>', self.play_game)
+        self.master.bind('<Control-r>', self.select_random)
         self.master.bind('<Return>', self.play_game)
         self.master.bind('<Home>', self.select_list.jump_to_first)
         self.master.bind('<End>', self.select_list.jump_to_last)
@@ -813,16 +820,26 @@ class GameChooser(ttk.Frame):
         self.selected = game_name
 
 
+    def select_random(self, _=None):
+        """Select a random game from the list of games in
+        the game tree. Just select it, the user determine
+        if they want to play it first."""
+
+        random_game = random.choice(self.games)
+        self.select_list.select(random_game)
+        self.select_game(random_game)
+
+
     def filter_games(self):
         """Update the games in select_list to reflect the current
         filter settings."""
 
-        games = [name
-                 for name, gdict in self.all_games.items()
-                 if self.game_filter.show_game(gdict)]
-        self.select_list.fill_glist(games)
+        self.games = [name
+                      for name, gdict in self.all_games.items()
+                      if self.game_filter.show_game(gdict)]
+        self.select_list.fill_glist(self.games)
 
-        if self.selected in games:
+        if self.selected in self.games:
             self.select_list.select(self.selected)
         else:
             self.about_text.clear_text()
