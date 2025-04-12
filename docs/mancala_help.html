@@ -13,7 +13,7 @@
   <a href="#starting">Starting Games</a>
   <a href="#manwindow">Mancala UI</a>
   <a href="#playwindow">Play Mancala - Game Chooser</a>
-  <a href="#opwindow">Mancala Options UI</a>
+  <a href="#opwindow">Mancala Games Editor</a>
   <a href="#aiplayer">AI Player</a>
   <a href="#pregames">Preconfigured Games</a>
   <a href="#fileformat">Game File Format</a>
@@ -78,16 +78,16 @@ Players alternate turns performing these steps for each turn:
 Game play is always via the <a href="#manwindow">Mancala UI</a>.
 
 <ol>
-<li><b>mancala_games</b>: Pops up the full parameter selection
-window&mdash;see <a href="#opwindow">Mancala Options UI</a> (mancala_games.exe).
-Game property files can be defined, loaded, edited and saved.
-Games can be played with the currently define parameters.
-<br><br>
 <li><b>play_mancala</b>:
 allows selecting any of the preconfigured games to play.
 The game list is provided and the game overview can be displayed. The game list can
 be reduced by selecting some high level game properties.
 See <a href="#playwindow">Play Mancala</a> (play_mancala.exe).
+<br><br>
+<li><b>mancala_games</b>: Pops up the game editor&mdash;see
+<a href="#opwindow">Mancala Games Editor</a> (mancala_games.exe).
+Game property files can be defined, loaded, edited and saved.
+Games can be played with the currently define parameters.
 <br><br>
 <li><b>play</b>: a command line interface to directly start a game given
 a mancala configuration file. Usage to play Wari (for example):
@@ -244,12 +244,12 @@ If there are children, locks, blocks or owners configured, these may also be cha
 from the right click menu.
 Children are cycled through bottom, top and none.
 Locks, blocks and owners are toggled.
-<p>For games with goals DEPRIVE or CLEAR, there is a button in the control pain which
+<p>For games with goals DEPRIVE or CLEAR, there is a button in the control panel which
 collects seeds that are out of play.
 Right click picks seeds up from the out-of-play container.
 Left click drops any held seeds into the out-of-play container.
 <p>No game rules are checked when in setup mode.
-Exiting setup mode requires that there be a move for the player to move.
+Exiting setup mode requires that there be a valid move for the player to move.
 
 <p><b>Reset to Setup</b>: On exiting setup mode the game state is saved,
 this command allows returning to that state.
@@ -333,8 +333,8 @@ shown to show hole ownership in TERRITORY goal games.
 <h4>Help</h4>
 <p><b>Help...</b>: If there is a help file for the game,
 popit up in the system browser.
-<p><b>About...</b>: Popup the about text, this display any text
-that was included in the About pane of the Mancala Options window.
+<p><b>About...</b>: Popup the about text, this displays any text
+that was included in the About pane of the Mancala Games Editor window.
 
 <h2 id="playwindow">Play Mancala - Game Chooser</h2>
 
@@ -423,16 +423,19 @@ Setting all of the features to selected (filled) will clear the game list
 (no game includes all of the features, in fact, must share and must pass are
 prohibited together).
 
-<h2 id="opwindow">Mancala Options UI</h2>
+<h2 id="opwindow">Mancala Games Editor</h2>
 
-<p>The Mancala Options user interface allows selecting
-values for the game options. It is started via the mancala_games python file
-or executable.
-Some options are incompatible with each other, errors and inconsistencies
-are caught during parameter test.
-Some combinations are simply not yet supported (or may never be supported).
+<p>Mancala Games allows editing all game options and rules.
+It is started via the mancala_games python file or executable.
 
-After selecting the desired options the Command Buttons are used
+<p>While all options can be set via Mancala Games,
+Some combinations of parameters are not implemented (NotImplementedError generated)
+or prohibited (GameInfoError reported).
+Other combinations are not recommended and either generate
+an actual warning (UserWarning) or
+a 'gentle warning' (a print to the console--if there is one).
+
+<p>After selecting the desired options the Command Buttons are used
 to test, load, save, and launch the game.
 
 <h3>Command Buttons</h3>
@@ -542,7 +545,7 @@ multipliers are applied to determine the state's score.
 For example, the number of empty holes each player has is
 numerical property. The available properties are predetermined,
 but the multipliers are selectable parameters defined in the game configuration
-or adjusted with via <a href="#opwindow">Mancala Options UI</a>.
+or adjusted with via <a href="#opwindow">Mancala Games Editor</a>.
 The parameters are described in
 <a href="game_params.html#tab_Player">Mancala Parameters</a>
 page under Player Tab.
@@ -586,7 +589,7 @@ for an overview of all preconfigured games.
 
 <h2 id="fileformat">Game Definition File Format</h2>
 Each game is described in a parameter file that is a JSON string.
-These are text files that can be loaded, changed and saved with the Mancala Options UI.
+These are text files that can be loaded, changed and saved with the Mancala Games Editor.
 They may also be edited with any text editor.
 The JSON parser attempts to provide useful information about any errors found.
 <p>There are four required top level elements:
