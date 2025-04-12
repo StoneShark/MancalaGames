@@ -598,17 +598,28 @@ class AboutPane(ttk.Labelframe):
         scroll.pack(side=tk.RIGHT, expand=tk.TRUE, fill=tk.Y)
 
 
+    def set_title(self, name=''):
+        """Put the game count into the label frame text."""
+
+        if name:
+            self['text'] = f"Game Overview — {name}"
+        else:
+            self['text'] = "Game Overview"
+
+
     def clear_text(self):
         """Clear the text in the box."""
 
         self.text_box.configure(state=tk.NORMAL)
         self.text_box.delete('1.0', tk.END)
         self.text_box.configure(state=tk.DISABLED)
+        self.set_title()
 
 
-    def set_text(self, text):
+    def set_text(self, name, text):
         """Set the text in the box"""
 
+        self.set_title(name)
         self.text_box.configure(state=tk.NORMAL)
         self.text_box.delete('1.0', tk.END)
         self.text_box.insert('1.0', text)
@@ -687,7 +698,7 @@ class AboutPane(ttk.Labelframe):
         return '\n'.join(out_text)
 
 
-    def describe_game(self, game_dict):
+    def describe_game(self, game_name, game_dict):
         """Build a description of the game for the text window.
         Use the about text and any extra keys (not the standard
         game config keys)."""
@@ -719,12 +730,27 @@ class AboutPane(ttk.Labelframe):
                 dtext += self.format_para(key.title() + ':  ' + text)
                 dtext += '\n'
 
-        self.set_text(dtext)
+        self.set_text(game_name, dtext)
 
 
 class GameChooser(ttk.Frame):
     """Main UI frame for new play_mancala.
-    Includes filter, game list, and about panes."""
+    Includes filter, game list, and about panes.
+
+    all_games: dictionary of game name: game dictionary
+
+    games: list of currently filtered game names
+
+    selected: the currently selected game name
+
+    game_filter: filter panel and play button. Filter panel
+    contains filters and contains a test for filter given
+    a game dictionary.
+
+    select_list: tree view of selectable games
+
+    about_text: pane for show selected game description
+    """
 
     def __init__(self, master):
 
@@ -772,6 +798,8 @@ class GameChooser(ttk.Frame):
             game_name = game_dict[ckey.GAME_INFO][ckey.NAME]
             self.all_games[game_name] = game_dict
 
+        self.games = list(self.all_games.keys())
+
 
     def create_menus(self):
         """Create the game control menus."""
@@ -816,7 +844,7 @@ class GameChooser(ttk.Frame):
         put it's help into the about_pane"""
 
         game_dict = self.all_games[game_name]
-        self.about_text.describe_game(game_dict)
+        self.about_text.describe_game(game_name, game_dict)
         self.selected = game_name
 
 
