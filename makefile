@@ -11,6 +11,7 @@ final: spotless context params long_tests all
 MODULES = ai_interface.py
 MODULES += ai_player.py
 MODULES += allowables.py
+MODULES += animator.py
 MODULES += aspect_frame.py
 MODULES += behaviors.py
 MODULES += bear_off.py

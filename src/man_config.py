@@ -413,6 +413,7 @@ DEFAULTS = {
     'touch_screen': 'no',
     'facing_players': 'no',
     'ownership_arrows': 'no',
+    'ani_state': '0',
 
     'ai_active': 'no',
     'ai_delay': '1',

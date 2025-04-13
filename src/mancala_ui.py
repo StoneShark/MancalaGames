@@ -6,7 +6,7 @@ game play.
 
 Created on Thu Mar  2 14:38:17 2023
 @author: Ann"""
-
+# pylint: disable=too-many-lines
 
 # %% imports
 
@@ -19,6 +19,7 @@ from tkinter import messagebox
 import webbrowser
 
 import ai_player
+import animator
 import aspect_frame
 import cfg_keys as ckey
 import behaviors
@@ -84,6 +85,9 @@ class TkVars:
         self.ai_delay = tk.IntVar(
             man_ui.master, min(man_config.CONFIG.get_int('ai_delay', 1), 2))
         self.ai_filter = tk.BooleanVar(man_ui.master, True)
+
+        ani_state = min(man_config.CONFIG.get_int('ani_state', 1), 2)
+        self.ani_state = tk.IntVar(man_ui.master, ani_state)
 
 
 class GameSetup:
@@ -156,6 +160,8 @@ class MancalaUI(tk.Frame):
                           ai_player.AiPlayer(self.game, player_dict)
         self.setup = GameSetup(self)
         self.movers = 0
+        self.wcond = None   #  used between the movers and epilogs
+        self.saved_move = None
 
         game_log.new()
         game_log.turn(0, 'Start Game', game)
@@ -193,8 +199,10 @@ class MancalaUI(tk.Frame):
             self.tally_frame.forget()
 
         self._new_game()
+        if animator.ENABLED:
+            animator.make_animator(self)
         self.refresh()
-        self._schedule_ai()
+        self.schedule_ai()
 
 
     def _add_statuses(self):
@@ -361,7 +369,7 @@ class MancalaUI(tk.Frame):
         aimenu.add_checkbutton(label='AI Player',
                                variable=self.vars.ai_active,
                                onvalue=True, offvalue=False,
-                               command=self._schedule_ai)
+                               command=self.schedule_ai)
 
         aimenu.add_separator()
         aimenu.add_radiobutton(label='No AI Delay',
@@ -450,6 +458,24 @@ class MancalaUI(tk.Frame):
                                  variable=self.vars.owner_arrows,
                                  onvalue=True, offvalue=False,
                                  command=self.refresh)
+        showmenu.add_separator()
+        showmenu.add_radiobutton(label='Animation Off',
+                                 variable=self.vars.ani_state,
+                                 value=0,
+                                 command=self._set_ani_state)
+        showmenu.add_radiobutton(label='Anim Speed Slow',
+                                 variable=self.vars.ani_state,
+                                 value=3,
+                                 command=self._set_ani_state)
+        showmenu.add_radiobutton(label='Anim Speed Medium',
+                                 variable=self.vars.ani_state,
+                                 value=2,
+                                 command=self._set_ani_state)
+        showmenu.add_radiobutton(label='Anim Speed Fast',
+                                 variable=self.vars.ani_state,
+                                 value=1,
+                                 command=self._set_ani_state)
+
         menubar.add_cascade(label='Display', menu=showmenu)
 
         helpmenu = tk.Menu(menubar)
@@ -468,6 +494,7 @@ class MancalaUI(tk.Frame):
     def _cancel_pending_afters(self):
         """Cancel any pending after methods."""
 
+        print("cancel pending afters")
         for after_id in self.tk.eval('after info').split():
             self.after_cancel(after_id)
 
@@ -518,6 +545,17 @@ class MancalaUI(tk.Frame):
             self.disp[0][pos].event_generate("<Configure>",
                                              width=width, height=height)
         self.refresh()
+
+
+    def _set_ani_state(self):
+        """Set the animation state and speed."""
+
+        ani_state = self.vars.ani_state.get()
+
+        if ani_state:
+            animator.animator.set_speed(ani_state)
+        else:
+            animator.animator.active = False
 
 
     @staticmethod
@@ -621,9 +659,15 @@ class MancalaUI(tk.Frame):
         return btnstate
 
 
-    def refresh(self):
+    def refresh(self, ani_ok=False):
         """Make UI match mancala game."""
 
+        if ani_ok and animator.ENABLED:
+            # TODO disable ui here
+            animator.animator.do_animation()
+            return
+
+        # TODO enable ui here (if it was inactive)
         turn = self.game.get_turn()
         allows = self.game.get_allowable_holes()
         turn_row = int(not turn)
@@ -670,7 +714,7 @@ class MancalaUI(tk.Frame):
         game_log.new()
         game_log.turn(self.game.mcount, 'Start Game', self.game)
         self.movers = 0
-        self._schedule_ai()
+        self.schedule_ai()
 
 
     def _not_playable_new_round(self):
@@ -821,7 +865,7 @@ class MancalaUI(tk.Frame):
         self.refresh()
         game_log.turn(game.mcount, "Swap Sides (pie rule)", game)
 
-        self._schedule_ai()
+        self.schedule_ai()
 
 
     def end_round(self):
@@ -904,24 +948,34 @@ class MancalaUI(tk.Frame):
             game_log.add(self.player.get_move_desc(), game_log.MOVE)
 
 
-
     def move(self, move):
         """Tell game to move, refresh the UI, and
         handle any win conditions."""
 
+        self.saved_move = move
         last_turn = self.game.get_turn()
-        win_cond = self.game.move(move)
+        self.wcond = self.game.move(move)
 
         if last_turn != self.game.get_turn():
             self.movers += 1
 
         self._log_turn(last_turn)
-        self.refresh()
 
-        if win_cond and win_cond != gi.WinCond.REPEAT_TURN:
-            self._win_message_popup(win_cond)
-            self._new_game(win_cond=win_cond, new_round_ok=True)
-            return win_cond
+        if animator.animator.active:
+            animator.animator.queue_callback(self.move_epilog)
+            self.refresh(ani_ok=True)
+        else:
+            self.refresh()
+            self.move_epilog()
+
+
+    def move_epilog(self):
+        """The part of the move operation to do after the
+        animation sequence completes."""
+
+        if self.wcond and self.wcond != gi.WinCond.REPEAT_TURN:
+            self._win_message_popup(self.wcond)
+            self._new_game(win_cond=self.wcond, new_round_ok=True)
 
         if (not (self.vars.ai_active.get() and self.game.get_turn())
                 and self.info.mustpass and self.game.test_pass()):
@@ -931,19 +985,19 @@ class MancalaUI(tk.Frame):
             ui_utils.PassPopup(self, 'Must Pass', message)
             self.refresh()     # test pass updates game state
 
-        self._schedule_ai()
-        return win_cond
+        self.schedule_ai()
 
 
-    def _schedule_ai(self):
+    def schedule_ai(self):
         """Do AI move or schedule the AI turn (only in GAMEPLAY mode,
         and if the AI is enabled and it's the AI's turn)."""
+
+        self.refresh()
 
         if (self.mode == buttons.Behavior.GAMEPLAY
                 and self.vars.ai_active.get()
                 and self.game.get_turn()):
 
-            self.refresh()
             self._cancel_pending_afters()
             sel_delay = self.vars.ai_delay.get()
 
@@ -957,20 +1011,39 @@ class MancalaUI(tk.Frame):
         if self.vars.ai_active.get() and self.game.get_turn():
 
             self.master.config(cursor='wait')
+
             if not self.vars.log_ai.get():
                 game_log.set_ai_mode()
+            animator.animator.active = False
 
-            move = self.player.pick_move()
+            self.saved_move = self.player.pick_move()
             game_log.clear_ai_mode()
-            cond = self.move(move)
+            if self.vars.ani_state.get():
+                animator.animator.active = True
 
-            if (self.game.info.sow_direct == gi.Direct.PLAYALTDIR
-                and self.game.mcount == 1):
+            self.move(self.saved_move)
 
-                message = 'Player direction is ' + move[-1].opp_dir().name
-                tk.messagebox.showinfo(title='Player Direction',
-                                       message=message,
-                                       parent=self)
+            # TODO seems there could be a race condition
+            # the refresh was already started by move
+            # if it finishes before this  queued -- will it happen?
+            if animator.animator.active:
+                animator.animator.queue_callback(self._ai_move_epilog)
+            else:
+                self._ai_move_epilog()
 
-            if cond != gi.WinCond.REPEAT_TURN:
-                self.master.config(cursor='')
+
+    def _ai_move_epilog(self):
+        """The part of the move operation to do after the
+        animation sequence completes."""
+
+        if (self.game.info.sow_direct == gi.Direct.PLAYALTDIR
+            and self.game.mcount == 1):
+
+            message = 'Player direction is ' \
+                + self.saved_move[-1].opp_dir().name
+            tk.messagebox.showinfo(title='Player Direction',
+                                   message=message,
+                                   parent=self)
+
+        if self.wcond != gi.WinCond.REPEAT_TURN:
+            self.master.config(cursor='')

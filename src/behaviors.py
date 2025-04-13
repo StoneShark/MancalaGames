@@ -333,6 +333,9 @@ class BehaviorIf(abc.ABC):
         else:
             self.btn['relief'] = 'raised'
 
+        if bstate is None:
+            return
+
         if bstate.is_active():
             self.btn['background'] = man_config.CONFIG['turn_color']
             self.btn['state'] = tk.NORMAL

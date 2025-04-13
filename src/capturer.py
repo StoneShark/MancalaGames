@@ -59,8 +59,9 @@ class CaptBasic(CaptMethodIf):
 
         if self.game.deco.capt_ok.capture_ok(mdata, mdata.capt_loc):
 
-            self.game.store[self.game.turn] += self.game.board[mdata.capt_loc]
+            seeds = self.game.board[mdata.capt_loc]
             self.game.board[mdata.capt_loc] = 0
+            self.game.store[self.game.turn] += seeds
 
             mdata.captured = True
             mdata.capt_next = self.game.deco.incr.incr(mdata.capt_loc,
@@ -80,8 +81,9 @@ class CaptCross(CaptMethodIf):
              or (not capt_first and not self.game.board[mdata.capt_loc]))
                 and self.game.deco.capt_ok.capture_ok(mdata, cross)):
 
-            self.game.store[self.game.turn] += self.game.board[cross]
+            seeds = self.game.board[cross]
             self.game.board[cross] = 0
+            self.game.store[self.game.turn] += seeds
 
             mdata.captured = True
             mdata.capt_next = self.game.deco.incr.incr(mdata.capt_loc,
@@ -113,8 +115,9 @@ class CaptNext(CaptMethodIf):
         if (self.seed_cond(mdata, capt_first, loc, loc_next)
                 and self.game.board[loc_next]):
 
-            self.game.store[self.game.turn] += self.game.board[loc_next]
+            seeds = self.game.board[loc_next]
             self.game.board[loc_next] = 0
+            self.game.store[self.game.turn] += seeds
 
             mdata.captured = True
             mdata.capt_next = loc_next
@@ -158,8 +161,9 @@ class CaptTwoOut(CaptMethodIf):
                 and self.game.child[loc_p2] is None
                 and self.game.unlocked[loc_p2]):
 
-            self.game.store[self.game.turn] += self.game.board[loc_p2]
+            seeds = self.game.board[loc_p2]
             self.game.board[loc_p2] = 0
+            self.game.store[self.game.turn] += seeds
 
             mdata.captured = True
             mdata.capt_loc = loc_p2
@@ -188,10 +192,13 @@ class CaptMatchOpp(CaptMethodIf):
         cross = self.game.cts.cross_from_loc(mdata.capt_loc)
 
         if self.test_match_opp(loc, cross):
-            self.game.store[self.game.turn] += self.game.board[loc]
-            self.game.store[self.game.turn] += self.game.board[cross]
+            seeds = self.game.board[loc]
             self.game.board[loc] = 0
+            self.game.store[self.game.turn] += seeds
+
+            seeds = self.game.board[cross]
             self.game.board[cross] = 0
+            self.game.store[self.game.turn] += seeds
 
             mdata.captured = True
             mdata.capt_next = self.game.deco.incr.incr(mdata.capt_loc,
@@ -251,8 +258,8 @@ class CaptCrossPickOwnOnCapt(CaptMethodIf):
                 and self.game.child[mdata.capt_loc] is None
                 and self.game.unlocked[mdata.capt_loc]):
 
-            self.game.store[self.game.turn] += 1
             self.game.board[mdata.capt_loc] = 0
+            self.game.store[self.game.turn] += 1
 
 
 class CaptCrossPickOwn(CaptMethodIf):
@@ -287,8 +294,8 @@ class CaptCrossPickOwn(CaptMethodIf):
                 and self.game.child[mdata.capt_loc] is None
                 and self.game.unlocked[mdata.capt_loc]):
 
-            self.game.store[self.game.turn] += 1
             self.game.board[mdata.capt_loc] = 0
+            self.game.store[self.game.turn] += 1
             mdata.capt_changed = True
             game_log.add('Capturer (picked own w/o)', game_log.INFO)
 
@@ -411,6 +418,9 @@ class GSKeep(GrandSlamCapt):
     """A grand slam does not capture left/right.
     Left/right is from the perspective of the player who just sowed."""
 
+    # TODO it would be better if the seeds were not removed and put back
+    # TODO change this so that it is the right/leftmost hole with seeds
+
     def __init__(self, game, grandslam, decorator=None):
 
         super().__init__(game, decorator)
@@ -430,8 +440,8 @@ class GSKeep(GrandSlamCapt):
             if seeds:
                 game_log.add('GRANDSLAM: keep', game_log.IMPORT)
 
-                self.game.board[save_loc] = seeds
                 self.game.store[turn] -= seeds
+                self.game.board[save_loc] = seeds
 
                 # did we capture anything other than the keep hole?
                 mdata.captured = saved_state != self.game.state
@@ -447,8 +457,9 @@ class GSOppGets(GrandSlamCapt):
             game_log.add('GRANDSLAM: opp gets', game_log.IMPORT)
             opp_turn = not self.game.turn
             for tloc in self.game.cts.get_my_range(self.game.turn):
-                self.game.store[opp_turn] += self.game.board[tloc]
+                seeds = self.game.board[tloc]
                 self.game.board[tloc] = 0
+                self.game.store[opp_turn] += seeds
 
 
 # %%  child decorators

@@ -15,6 +15,7 @@ import random
 
 import ai_interface
 import allowables
+import animator
 import capt_ok
 import capturer
 import cfg_keys as ckey
@@ -351,6 +352,91 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
     def __str__(self):
         """Ascii print of board for game logs."""
         return self.deco.gstr.get_string()
+
+
+    @property
+    def board(self):
+        """Hide the actual board in this property. It might be
+        a simple list or animator list.
+        _board should not be accessed except by the property methods."""
+        return self._board
+
+    @board.setter
+    def board(self, value):
+
+        if animator.ENABLED:
+            self._board = animator.AniList('board', value)
+
+        else:
+            self._board = value
+
+
+    @property
+    def store(self):
+        """Hide the actual store in this property. It might be
+        a simple list or animator list.
+        _store should not be accessed except by the property methods."""
+        return self._store
+
+    @store.setter
+    def store(self, value):
+
+        if animator.ENABLED:
+            self._store = animator.AniList('store', value)
+
+        else:
+            self._store = value
+
+
+    @property
+    def unlocked(self):
+        """Hide the actual store in this property. It might be
+        a simple list or animator list.
+        _unlocked should not be accessed except by the property methods."""
+        return self._unlocked
+
+    @unlocked.setter
+    def unlocked(self, value):
+
+        if animator.ENABLED:
+            self._unlocked = animator.AniList('unlocked', value)
+
+        else:
+            self._unlocked = value
+
+
+    @property
+    def blocked(self):
+        """Hide the actual store in this property. It might be
+        a simple list or animator list.
+        _blocked should not be accessed except by the property methods."""
+        return self._blocked
+
+    @blocked.setter
+    def blocked(self, value):
+
+        if animator.ENABLED:
+            self._blocked = animator.AniList('blocked', value)
+
+        else:
+            self._blocked = value
+
+
+    @property
+    def child(self):
+        """Hide the actual store in this property. It might be
+        a simple list or animator list.
+        _child should not be accessed except by the property methods."""
+        return self._child
+
+    @child.setter
+    def child(self, value):
+
+        if animator.ENABLED:
+            self._child = animator.AniList('child', value)
+
+        else:
+            self._child = value
 
 
     @property
