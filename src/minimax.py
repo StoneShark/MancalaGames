@@ -51,10 +51,6 @@ class MiniMaxer(ai_interface.AiAlgorithmIf):
         moves = self.game.get_moves()
         assert moves, 'Minimaxer called when no moves available.'
 
-        if len(moves) == 1:
-            self.last_scores = f'Negamaxer m{moves[0]} only.'
-            return moves[0]
-
         max_player = self.player.is_max_player()
         comparer = op.gt if max_player else op.lt
 
