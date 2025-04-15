@@ -1,17 +1,19 @@
 # -*- coding: utf-8 -*-
 """Configuration for a pytest run:
 
-1. command line option nbr_runs: tests marked stress_test
+1. disable the animator
+
+2. command line option nbr_runs: tests marked stress_test
    are run this many times. Also, make the number of runs
    available as a fixture named nbr_runs
 
-2. command line option run_slow: to run tests marked slow
+3. command line option run_slow: to run tests marked slow
 
-3. incremental tests:  classes where each method
+4. incremental tests:  classes where each method
    is a test step, mark incremental. Only the failed
    step will generate a report.
 
-4. global fixtures:
+5. global fixtures:
 
         logger and logger_sim - to support debugging
 
@@ -30,8 +32,13 @@ import time
 
 import pytest
 
+from context import animator
 from context import game_logger
 from context import man_config
+
+
+# don't let the animator put it's hooks into the Mancala state variables
+animator.ENABLED = False
 
 
 def pytest_addoption(parser):

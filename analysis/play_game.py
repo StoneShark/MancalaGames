@@ -14,13 +14,18 @@ import time
 
 import tqdm
 
+from context import animator
 from context import game_interface as gi
 from context import game_logger
 
 
-# %%  get the logger
+# %%  house keeping
 
+# get the logger
 logger = logging.getLogger(__name__)
+
+# completely disable the animator
+animator.ENABLED = False
 
 
 # %%  constants
