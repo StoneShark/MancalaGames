@@ -17,6 +17,7 @@ import bhv_owners
 import bhv_bsetup
 import game_interface as gi
 import man_config
+import ui_utils
 
 
 # %% top level behavior interfaces for mancala_ui
@@ -229,8 +230,8 @@ class HoleButton(tk.Canvas):
     def set_behavior(self, behavior):
         """Set the behavior of the button."""
 
-        self.config(cursor='')
-        self.frame.config(cursor='')
+        self.config(cursor=ui_utils.NORMAL)
+        self.frame.config(cursor=ui_utils.NORMAL)
         self.behavior = BEHAVIOR_CLASS[behavior].button(self)
         bhv_hold.HOLD.empty()
         bhv_owners.OWNERS.empty()
@@ -328,8 +329,8 @@ class StoreButton(tk.Canvas):
 
     def set_behavior(self, behavior):
         """Set the behavior of the store."""
-        self.config(cursor='')
-        self.game_ui.config(cursor='')
+        self.config(cursor=ui_utils.NORMAL)
+        self.game_ui.config(cursor=ui_utils.NORMAL)
         self.behavior = BEHAVIOR_CLASS[behavior].store(self)
 
 

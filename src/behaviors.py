@@ -12,6 +12,7 @@ import enum
 import tkinter as tk
 
 import man_config
+import ui_utils
 
 # %%  constants
 
@@ -169,7 +170,7 @@ class BehaviorIf(abc.ABC):
             self.btn.props.seeds = seeds
             self.refresh()
 
-            self.btn.game_ui.config(cursor='circle')
+            self.btn.game_ui.config(cursor=ui_utils.HOLD_SEEDS)
 
 
     def orient_text(self):

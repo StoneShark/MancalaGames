@@ -283,7 +283,7 @@ class SetupHold(bhv_hold.Hold):
         self.set_hold(0)
         self.out_of_play = self.game_ui.game.store[0]
         self._oop_btn['text']=f"Off board: {self.out_of_play}"
-        self.game_ui.config(cursor='')
+        self.game_ui.config(cursor=ui_utils.NORMAL)
 
 
     def sub_seeds(self, _=None):
@@ -298,7 +298,7 @@ class SetupHold(bhv_hold.Hold):
             self.game_ui.game.store[0] -= seeds
             self.out_of_play = self.game_ui.game.store[0]
             self._oop_btn['text']=f"Off board: {self.out_of_play}"
-            self.game_ui.config(cursor='circle')
+            self.game_ui.config(cursor=ui_utils.HOLD_SEEDS)
 
 
 SETUPHOLD = SetupHold()
@@ -381,7 +381,7 @@ class SetupButtonBehavior(bhv.BehaviorIf):
         SETUPHOLD.refresh_game()
 
         SETUPHOLD.empty()
-        self.btn.game_ui.config(cursor='')
+        self.btn.game_ui.config(cursor=ui_utils.NORMAL)
 
 
     def do_popup_menu(self):
@@ -427,7 +427,7 @@ class SetupButtonBehavior(bhv.BehaviorIf):
 
         if seeds:
             self.remove_seeds(seeds)
-            self.btn.game_ui.config(cursor='circle')
+            self.btn.game_ui.config(cursor=ui_utils.HOLD_SEEDS)
 
 
     @staticmethod
@@ -562,7 +562,7 @@ class SetupStoreBehavior(bhv.StoreBehaviorIf):
         self.set_store(seeds, game.turn == self.str.owner)
         game.store[self.str.owner] = seeds
 
-        self.str.game_ui.config(cursor='')
+        self.str.game_ui.config(cursor=ui_utils.NORMAL)
         SETUPHOLD.empty()
 
 
@@ -587,4 +587,4 @@ class SetupStoreBehavior(bhv.StoreBehaviorIf):
             self.set_store(seeds, game.turn == self.str.owner)
             game.store[self.str.owner] = seeds
 
-            self.str.game_ui.config(cursor='circle')
+            self.str.game_ui.config(cursor=ui_utils.HOLD_SEEDS)

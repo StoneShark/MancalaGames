@@ -19,6 +19,17 @@ import version
 from game_logger import game_log
 
 
+# %% cursors
+
+# wait is specific to Windows
+# hand2 is portable but in windows it is mapped to a native cursor
+
+NORMAL = ''
+AI_BUSY = 'wait'
+ANI_ACTIVE = 'hand2'
+HOLD_SEEDS = 'circle'
+
+
 # %% common styles
 
 MY_BLUE = '#00008b'

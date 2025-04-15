@@ -183,7 +183,7 @@ class RndChooseButtonBehavior(bhv.BehaviorIf):
         self.refresh()
 
         HOLD.empty()
-        self.btn.frame.config(cursor='')
+        self.btn.frame.config(cursor=ui_utils.NORMAL)
 
 
     def do_right_click(self):
@@ -205,7 +205,7 @@ class RndChooseButtonBehavior(bhv.BehaviorIf):
         self.btn.props.seeds = 0
         self.refresh()
 
-        self.btn.frame.config(cursor='circle')
+        self.btn.frame.config(cursor=ui_utils.HOLD_SEEDS)
 
 
     def refresh(self, bstate=bhv.BtnState.ACTIVE):
@@ -322,7 +322,7 @@ class RndMoveSeedsButtonBehavior(bhv.BehaviorIf):
         self.refresh()
 
         HOLD.empty()
-        self.btn.game_ui.config(cursor='')
+        self.btn.game_ui.config(cursor=ui_utils.NORMAL)
 
 
     def do_right_click(self):
@@ -440,7 +440,7 @@ class MoveSeedsButtonBehavior(bhv.BehaviorIf):
         self.refresh()
 
         HOLD.empty()
-        self.btn.frame.config(cursor='')
+        self.btn.frame.config(cursor=ui_utils.NORMAL)
 
 
     def do_right_click(self):
@@ -462,7 +462,7 @@ class MoveSeedsButtonBehavior(bhv.BehaviorIf):
             self.btn.props.seeds = seeds
             self.refresh()
 
-            self.btn.frame.config(cursor='circle')
+            self.btn.frame.config(cursor=ui_utils.HOLD_SEEDS)
 
 
     def refresh(self, bstate=bhv.BtnState.ACTIVE):
@@ -502,7 +502,7 @@ class RndMoveStoreBehavior(bhv.StoreBehaviorIf):
         self.set_store(seeds, True)
         game.store[self.str.owner] = seeds
 
-        self.str.game_ui.config(cursor='')
+        self.str.game_ui.config(cursor=ui_utils.NORMAL)
         HOLD.empty()
 
 
@@ -521,4 +521,4 @@ class RndMoveStoreBehavior(bhv.StoreBehaviorIf):
             self.set_store(seeds, True)
             game.store[self.str.owner] = seeds
 
-            self.str.game_ui.config(cursor='circle')
+            self.str.game_ui.config(cursor=ui_utils.HOLD_SEEDS)
