@@ -20,6 +20,7 @@ from tkinter import simpledialog
 from tkinter import ttk
 
 import ai_player
+import animator
 import cfg_keys as ckey
 import game_constants as gconsts
 import game_interface as gi
@@ -781,6 +782,8 @@ class GameChooser(ttk.Frame):
 
         self.select_list.fill_glist(self.all_games.keys())
         self.create_menus()
+
+        man_config.check_disable_animator()
 
 
     def load_game_files(self):

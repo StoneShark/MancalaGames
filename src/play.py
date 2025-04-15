@@ -46,6 +46,8 @@ def get_gamename():
 
 if __name__ == '__main__':
 
+    man_config.check_disable_animator()
+
     gamename = get_gamename()
     filename = find_file(gamename)
 

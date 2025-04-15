@@ -131,6 +131,8 @@ class MancalaGames(ttk.Frame):
         self._make_ui_elements()
         self._reset(check_save=False)
 
+        man_config.check_disable_animator()
+
 
     def _check_save_cancel(self):
         """Check to see if a save is needed, if so then do
