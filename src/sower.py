@@ -11,7 +11,7 @@ contents and determined the number of seeds to sow.
 Created on Fri Apr  7 15:57:47 2023
 @author: Ann"""
 
-
+import animator
 import game_interface as gi
 import sower_decos as sowd
 import sower_mlap_decos as msowd
@@ -129,6 +129,26 @@ def _add_capt_stop_lap_cont(game, lap_cont):
     return lap_cont
 
 
+def _add_lap_decos(game, lap_cont):
+    """Add any lap continuer wrapper decorators."""
+
+    if game.info.visit_opp:
+        lap_cont = msowd.MustVisitOpp(game, lap_cont)
+
+    if game.info.sow_rule == gi.SowRule.CONT_LAP_ON:
+        lap_cont = msowd.StopNotN(game, lap_cont)
+    elif game.info.sow_rule == gi.SowRule.CONT_LAP_GREQ:
+        lap_cont =msowd.StopLessN(game, lap_cont)
+
+    if game.info.sow_own_store:
+        lap_cont = msowd.StopRepeatTurn(game, lap_cont)
+
+    if animator.ENABLED:
+        lap_cont = msowd.AnimateLapStart(game, lap_cont)
+
+    return lap_cont
+
+
 def _build_lap_cont(game):
     """Choose a base lap continuer, then add any wrappers."""
 
@@ -155,16 +175,7 @@ def _build_lap_cont(game):
         raise NotImplementedError(
                     f"LapSower {game.info.mlaps} not implemented.")
 
-    if game.info.visit_opp:
-        lap_cont = msowd.MustVisitOpp(game, lap_cont)
-
-    if game.info.sow_rule == gi.SowRule.CONT_LAP_ON:
-        lap_cont = msowd.StopNotN(game, lap_cont)
-    elif game.info.sow_rule == gi.SowRule.CONT_LAP_GREQ:
-        lap_cont =msowd.StopLessN(game, lap_cont)
-
-    if game.info.sow_own_store:
-        lap_cont = msowd.StopRepeatTurn(game, lap_cont)
+    lap_cont = _add_lap_decos(game, lap_cont)
 
     return lap_cont
 

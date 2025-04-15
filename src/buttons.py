@@ -105,6 +105,7 @@ class HoleButton(tk.Canvas):
         self.right_move = right_move
         self.props = None
         self.behavior = behaviors.PlayButtonBehavior(self)
+        self.active = True       # don't process clicks when False
         self.last_event = 0   # last event.serial
 
         btn_size = man_config.CONFIG.get_int('button_size')
@@ -243,6 +244,16 @@ class HoleButton(tk.Canvas):
         self.behavior.refresh(bstate)
 
 
+    def flash(self):
+        """Flash the button:  call 2x to return to normal."""
+
+        fore = self.itemcget(self.text_id, 'fill')
+        back = self['background']
+
+        self.itemconfig(self.text_id, fill=back)
+        self['background'] = fore
+
+
     def left_click(self, event):
         """Pass along left_click call.
         If the button is in the top row and facing players is set,
@@ -252,7 +263,7 @@ class HoleButton(tk.Canvas):
         from the click--this seems to happen when using right click
         grid in non-play modes. Only process unique events."""
 
-        if self['state'] == tk.DISABLED or event.serial == self.last_event:
+        if not self.active or event.serial == self.last_event:
             return
         self.last_event = event.serial
 
@@ -271,7 +282,7 @@ class HoleButton(tk.Canvas):
         from the click--this seems to happen when using right click
         grid in non-play modes. Only process unique events."""
 
-        if self['state'] == tk.DISABLED or event.serial == self.last_event:
+        if not self.active or event.serial == self.last_event:
             return
         self.last_event = event.serial
 
@@ -289,6 +300,7 @@ class StoreButton(tk.Canvas):
 
         self.game_ui = game_ui
         self.owner = owner
+        self.active = True       # don't process clicks when False
         self.behavior = behaviors.NoStoreBehavior(self)
 
         btn_size = man_config.CONFIG.get_int('button_size')
@@ -341,9 +353,17 @@ class StoreButton(tk.Canvas):
 
     def left_click(self, _=None):
         """pass along left_click call."""
+
+        if not self.active:
+            return
+
         self.behavior.do_left_click()
 
 
     def right_click(self, _=None):
         """pass along right_click call."""
+
+        if not self.active:
+            return
+
         self.behavior.do_right_click()

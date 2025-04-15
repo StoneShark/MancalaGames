@@ -57,7 +57,7 @@ PARAM_TABS = ('Game', 'Dynamics', 'Sow', 'Capture', 'Player')
 
 SKIP_TAB = 'skip'
 
-WTITLE = 'Mancala Options'
+WTITLE = 'Mancala Game Editor'
 
 
 

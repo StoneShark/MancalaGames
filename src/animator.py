@@ -2,21 +2,43 @@
 """Capture changes in state to the mancala class and replay
 them as an animation.
 
+Three animation actions are supported:
+
+    - state variable update
+    - message
+    - call back
+
+Mechanics:
+
+Hooks are put into the Mancala class state variables that
+get animated, see AniList. Each update to one of these
+state variables gets recorded in Animator.queue.
+
+When the first animation action is recorded (add to an
+empty queue), the game state is recorded to facilitate
+playback of the queue.
+
+In MancalaUI.refresh the animator is started, if refresh
+was called where an animation is expected: after a move
+and after the ai moves.
+
 Created on Sun Apr 13 05:25:44 2025
 @author: Ann"""
 
-# %% imports
 
+# %% imports
 
 import abc
 import collections
 
 import game_interface as gi
+import ui_utils
 
 
 # %% constants
 
 STORE = 'store'
+BOARD = 'board'
 DELAYS = [200, 600, 1000]
 
 
@@ -40,7 +62,24 @@ def make_animator(game_ui):
 
     # pylint: disable=global-statement
     global animator
-    animator = Animator(game_ui)
+
+    if ENABLED:
+        animator = Animator(game_ui)
+
+
+def active():
+    """Determine if the animator is currently active.
+    A global function in case the animator was not built."""
+
+    return ENABLED and animator and animator.active
+
+
+def set_active(new_state):
+    """Set the animator state.
+    A global function in case the animator was not built."""
+
+    if ENABLED and animator:
+        animator.active = new_state
 
 
 # %% support classes
@@ -62,6 +101,14 @@ class AniList:
     def __str__(self):
 
         return f"AniList({self.attrib}, {self.values})"
+
+
+    def __reversed__(self):
+        """Return the array in the reversed order.
+        The property will convert this back into an AniList on
+        assignment"""
+
+        return reversed(self.values)
 
 
     def __getitem__(self, key):
@@ -122,6 +169,24 @@ class AniAction(abc.ABC):
         """Execture the action"""
 
 
+class Flash(AniAction):
+    """Do a flash of the specified hole. Use this 2x."""
+
+    def __init__(self, row, pos):
+
+        self.row = row
+        self.pos = pos
+
+    def __str__(self):
+
+        return f"Flash({self.row}, {self.pos})"
+
+
+    def do_it(self, game_ui, ani_state):
+
+        game_ui.disp[self.row][self.pos].flash()
+
+
 class SetStateVar(AniAction):
     """An animation step, that can be captured and executed later"""
 
@@ -141,7 +206,6 @@ class SetStateVar(AniAction):
         """Execute the action."""
 
         if self.attrib == STORE:
-
             store_ui = game_ui.stores[not self.idx]
             store_ui.set_store(self.value, game_ui.game.turn == bool(self.idx))
             ani_state.store[self.idx] = self.value
@@ -150,12 +214,12 @@ class SetStateVar(AniAction):
             ani_state.setvalue(self.attrib, self.idx, self.value)
 
             hprop = gi.HoleProps(seeds=ani_state.board[self.idx],
-                                  unlocked=ani_state.unlocked[self.idx],
-                                  blocked=ani_state.blocked[self.idx],
-                                  ch_owner=ani_state.child[self.idx],
-                                  # not animated
-                                  owner=game_ui.game.owner[self.idx]
-                                 )
+                                 unlocked=ani_state.unlocked[self.idx],
+                                 blocked=ani_state.blocked[self.idx],
+                                 ch_owner=ani_state.child[self.idx],
+                                 # not animated
+                                 owner=game_ui.game.owner[self.idx]
+                                )
 
             row = not game_ui.game.cts.board_side(self.idx)
             pos = game_ui.game.cts.xlate_pos_loc(row, self.idx)
@@ -216,23 +280,21 @@ class Animator:
         self._active = ENABLED
 
         self.ani_state = None
-        self.running = False
 
 
     @property
     def active(self):
-        """The active property.
-        Want special actions to occur when setting false."""
+        """The active property."""
         return self._active
 
 
     @active.setter
     def active(self, value):
-        """If turning off animation, clear the queue."""
+        """Set active to value."""
 
-        if not value:
-            self.queue.clear()
+
         self._active = value
+
 
 
     def set_speed(self, speed):
@@ -240,6 +302,12 @@ class Animator:
 
         self.active = True
         self.delay = DELAYS[speed - 1]
+
+
+    def clear_queue(self):
+        """Clear the animation queue."""
+
+        self.queue.clear()
 
 
     def add(self, anie):
@@ -253,29 +321,59 @@ class Animator:
         self.queue.append(anie)
 
 
-    def change(self, attrib, idx, value):
-        """Record a change in state that should be animated.
-        If we are active, have been given the game_ui, and
-        are in normal game play mode."""
+    def flash(self, turn, *, move=None, loc=None):
+        """Record a button flash action, if active."""
 
-        if self._active and self.game_ui and not self.game_ui.mode:
+        if self._active:
+
+            if move is not None:
+                if isinstance(move, int):
+                    row, pos = not turn, move
+                elif len(move) == 2:
+                    row, pos = not turn, move[0]
+                elif len(move) == 3:
+                    row, pos = move[0], move[1]
+
+            elif loc < self.game_ui.game.cts.holes:
+                row, pos = loc < self.game_ui.game.cts.holes, loc
+            else:
+                row, pos = (loc < self.game_ui.game.cts.holes,
+                            self.game_ui.game.cts.dbl_holes - loc - 1)
+
+            self.add(Flash(row, pos))
+            self.add(Flash(row, pos))
+
+
+    def change(self, attrib, idx, value):
+        """Record a change in state that should be animated,
+        if active."""
+
+
+        if self._active:
+
+            if ((attrib == STORE and not self.game_ui.stores)
+                    or (attrib == BOARD and self.game_ui.game.blocked[idx])):
+                # don't animate things we can't see
+                #   - store updates when they are not on the UI
+                #   - seeds removed from a blocked hole (already an X)
+                return
+
             self.add(SetStateVar(attrib, idx, value))
 
 
     def message(self, message):
-        """Record a message in the animation sequence.
-        If we are active, have been given the game_ui, and
-        are in normal game play mode."""
+        """Record a message in the animation sequence,
+        if active."""
 
-        if self._active and self.game_ui and not self.game_ui.mode:
+        if self._active:
             self.add(Message(message))
 
 
     def queue_callback(self, func):
         """Put a function callback event into the animation
-        queue."""
+        queue, if active."""
 
-        if self._active and self.game_ui and not self.game_ui.mode:
+        if self._active:
             self.add(ScheduleCallback(func))
 
 
@@ -286,7 +384,7 @@ class Animator:
         if not self.queue:
             return
 
-        self.running = True
+        self.game_ui.config(cursor=ui_utils.ANI_ACTIVE)
         anie = self.queue.popleft()
         anie.do_it(self.game_ui, self.ani_state)
 
@@ -294,6 +392,6 @@ class Animator:
             self.game_ui.after(self.delay, self.do_animation)
 
         else:
-            self.running = False
             self.ani_state = None
+            self.game_ui.config(cursor=ui_utils.NORMAL)
             self.game_ui.after(self.delay, self.game_ui.refresh)

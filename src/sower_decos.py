@@ -182,8 +182,9 @@ class SowClosed(SowMethodIf):
                 and self.game.cts.opp_side(self.game.turn, loc)
                 and not self.game.inhibitor.stop_me_capt(self.game.turn)):
 
-            self.game.store[0] += self.game.board[loc]
+            seeds = self.game.board[loc]
             self.game.board[loc] = 0
+            self.game.store[0] += seeds
             self.game.blocked[loc] = True
 
 
@@ -272,8 +273,9 @@ class SowCaptOwned(SowMethodIf):
 
                 captor = self.captor(loc, self.game.turn)
                 game_log.step(f'Capture from {loc} by {captor}')
-                self.game.store[captor] += self.game.board[loc]
+                seeds = self.game.board[loc]
                 self.game.board[loc] = 0
+                self.game.store[captor] += seeds
 
         mdata.capt_loc = loc
 
@@ -422,8 +424,9 @@ class SCaptCrossOnOne(SowMethodIf):
             and self.game.board[cross]
             and self.game.child[cross] is None):
 
-            self.game.store[self.game.turn] += self.game.board[cross]
+            seeds = self.game.board[cross]
             self.game.board[cross] = 0
+            self.game.store[self.game.turn] += seeds
 
             game_log.step(f'Presow Capt Cross at {mdata.cont_sow_loc}',
                           self.game, game_log.DETAIL)
@@ -445,8 +448,9 @@ class SCaptCrossSingles(SowMethodIf):
                 and self.game.board[cross]
                 and self.game.child[cross] is None):
 
-                self.game.store[self.game.turn] += self.game.board[cross]
+                seeds = self.game.board[cross]
                 self.game.board[cross] = 0
+                self.game.store[self.game.turn] += seeds
                 log += [cross]
 
         if log:

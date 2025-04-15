@@ -27,6 +27,7 @@ Created on Fri Apr  7 07:43:19 2023
 
 import abc
 
+import animator
 import claimer
 import deco_chain_if
 import game_interface as gi
@@ -598,3 +599,14 @@ class QuitToTie(EndTurnIf):
     def game_ended(self, repeat_turn, ended=False):
         """Determine if the game ended."""
         return gi.WinCond.TIE, self.game.turn
+
+
+class AnimateEndMove(EndTurnIf):
+    """Turn off the animator while the seeds are being
+    claimed/taken/divvied. MancalaUI.move will return it
+    to the proper setting."""
+
+    def game_ended(self, repeat_turn, ended=False):
+
+        animator.set_active(False)
+        return self.decorator.game_ended(repeat_turn, ended)

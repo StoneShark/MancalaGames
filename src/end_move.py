@@ -19,6 +19,7 @@ Created on Fri Apr  7 07:43:19 2023
 
 import warnings
 
+import animator
 import claimer
 import end_move_decos as emd
 import end_move_rounds as emr
@@ -164,16 +165,9 @@ def _add_round_ender(game, ender, sclaimer):
     return ender
 
 
-def deco_end_move(game):
-    """Return a chain of move enders."""
-
-    if game.info.goal in (gi.Goal.DEPRIVE,
-                          gi.Goal.RND_WIN_COUNT_DEP):
-        return _build_deprive_ender(game)
-
-    if game.info.goal in (gi.Goal.CLEAR,
-                          gi.Goal.RND_WIN_COUNT_CLR):
-        return _build_clear_ender(game)
+def _build_ender(game):
+    """Build the ender for non clear and deprive
+    games."""
 
     ender = _add_end_game_winner(game)
 
@@ -199,6 +193,26 @@ def deco_end_move(game):
 
     if game.info.child_type and not game.info.stores:
         ender = emd.ChildNoStoresEnder(game, ender)
+
+    return ender
+
+
+def deco_end_move(game):
+    """Return a chain of move enders."""
+
+    if game.info.goal in (gi.Goal.DEPRIVE,
+                          gi.Goal.RND_WIN_COUNT_DEP):
+        ender = _build_deprive_ender(game)
+
+    elif game.info.goal in (gi.Goal.CLEAR,
+                          gi.Goal.RND_WIN_COUNT_CLR):
+        ender = _build_clear_ender(game)
+
+    else:
+        ender = _build_ender(game)
+
+    if animator.ENABLED:
+        ender = emd.AnimateEndMove(game, ender)
 
     return ender
 
@@ -242,6 +256,9 @@ def deco_quitter(game):
             quitter = emr.QuitRoundTally(game,
                                          quitter,
                                          sclaimer=claimer.ChildClaimSeeds(game))
+
+        if animator.ENABLED:
+            quitter = emd.AnimateEndMove(game, quitter)
 
     else:
         warnings.warn("Quitter configuration defaulting to QuitToTie")

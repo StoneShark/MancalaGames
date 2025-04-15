@@ -16,6 +16,7 @@ Created on Fri Apr  7 15:57:47 2023
 import abc
 import copy
 
+import animator
 import deco_chain_if
 import game_interface as gi
 import sower_decos as sowd
@@ -280,6 +281,19 @@ class StopRepeatTurn(LapContinuerIf):
             game_log.add('MLap stop for for repeat turn')
             return False
         return self.decorator.do_another_lap(mdata)
+
+
+class AnimateLapStart(LapContinuerIf):
+    """A wrapper: do an animation to simulate a new lap start."""
+
+    def do_another_lap(self, mdata):
+
+        cont = self.decorator.do_another_lap(mdata)
+
+        if cont and animator.active():
+            animator.animator.flash(self.game.turn, loc=mdata.capt_loc)
+
+        return cont
 
 
 # %% operations for each end of lap

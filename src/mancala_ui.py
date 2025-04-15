@@ -170,6 +170,7 @@ class MancalaUI(tk.Frame):
             self.master = tk.Toplevel(root_ui)
         else:
             self.master = tk.Tk()
+            ui_utils.setup_styles(self.master)
         man_config.read_ini_file(self.master, self.info.name)
 
         self.master.title(self.info.name)
@@ -198,12 +199,11 @@ class MancalaUI(tk.Frame):
         if not tally:
             self.tally_frame.forget()
 
+        animator.make_animator(self)
         self._new_game()
-        if animator.ENABLED:
-            animator.make_animator(self)
         self.refresh()
         self.schedule_ai()
-
+        self._set_ani_state()
 
     def _add_statuses(self):
         """Add status and info panes. Make them each 50% of the display."""
@@ -458,23 +458,25 @@ class MancalaUI(tk.Frame):
                                  variable=self.vars.owner_arrows,
                                  onvalue=True, offvalue=False,
                                  command=self.refresh)
-        showmenu.add_separator()
-        showmenu.add_radiobutton(label='Animation Off',
-                                 variable=self.vars.ani_state,
-                                 value=0,
-                                 command=self._set_ani_state)
-        showmenu.add_radiobutton(label='Anim Speed Slow',
-                                 variable=self.vars.ani_state,
-                                 value=3,
-                                 command=self._set_ani_state)
-        showmenu.add_radiobutton(label='Anim Speed Medium',
-                                 variable=self.vars.ani_state,
-                                 value=2,
-                                 command=self._set_ani_state)
-        showmenu.add_radiobutton(label='Anim Speed Fast',
-                                 variable=self.vars.ani_state,
-                                 value=1,
-                                 command=self._set_ani_state)
+
+        if animator.ENABLED:
+            showmenu.add_separator()
+            showmenu.add_radiobutton(label='Animation Off',
+                                     variable=self.vars.ani_state,
+                                     value=0,
+                                     command=self._set_ani_state)
+            showmenu.add_radiobutton(label='Anim Speed Fast',
+                                     variable=self.vars.ani_state,
+                                     value=1,
+                                     command=self._set_ani_state)
+            showmenu.add_radiobutton(label='Anim Speed Medium',
+                                     variable=self.vars.ani_state,
+                                     value=2,
+                                     command=self._set_ani_state)
+            showmenu.add_radiobutton(label='Anim Speed Slow',
+                                     variable=self.vars.ani_state,
+                                     value=3,
+                                     command=self._set_ani_state)
 
         menubar.add_cascade(label='Display', menu=showmenu)
 
@@ -494,8 +496,9 @@ class MancalaUI(tk.Frame):
     def _cancel_pending_afters(self):
         """Cancel any pending after methods."""
 
-        print("cancel pending afters")
-        for after_id in self.tk.eval('after info').split():
+        afters = self.tk.eval('after info')
+        # print(f"cancel pending afters: {afters or 'None'}")
+        for after_id in afters.split():
             self.after_cancel(after_id)
 
 
@@ -550,12 +553,14 @@ class MancalaUI(tk.Frame):
     def _set_ani_state(self):
         """Set the animation state and speed."""
 
-        ani_state = self.vars.ani_state.get()
+        if animator.ENABLED and animator.animator:
 
-        if ani_state:
-            animator.animator.set_speed(ani_state)
-        else:
-            animator.animator.active = False
+            ani_state = self.vars.ani_state.get()
+
+            if ani_state:
+                animator.animator.set_speed(ani_state)
+            else:
+                animator.set_active(False)
 
 
     @staticmethod
@@ -659,15 +664,35 @@ class MancalaUI(tk.Frame):
         return btnstate
 
 
-    def refresh(self, ani_ok=False):
+    def _set_ui_active(self, active, frame=None):
+        """Activate or deactivate the Hole and Store Buttons,
+        recursing through frames.
+
+        Not using the tk state for Hole & Store Buttons, because
+        it's overridden on every refresh."""
+
+        if not frame:
+            frame = self
+
+        for child in frame.winfo_children():
+
+            if isinstance(child, tk.Frame):
+                self._set_ui_active(active, child)
+
+            elif isinstance(child, (buttons.HoleButton,
+                                    buttons.StoreButton)):
+                child.active = active
+
+
+    def refresh(self, *, ani_ok=False):
         """Make UI match mancala game."""
 
-        if ani_ok and animator.ENABLED:
-            # TODO disable ui here
+        if ani_ok and animator.active():
+            self._set_ui_active(active=False)
             animator.animator.do_animation()
             return
 
-        # TODO enable ui here (if it was inactive)
+        self._set_ui_active(True)
         turn = self.game.get_turn()
         allows = self.game.get_allowable_holes()
         turn_row = int(not turn)
@@ -714,6 +739,7 @@ class MancalaUI(tk.Frame):
         game_log.new()
         game_log.turn(self.game.mcount, 'Start Game', self.game)
         self.movers = 0
+        self._set_ani_state()
         self.schedule_ai()
 
 
@@ -733,6 +759,8 @@ class MancalaUI(tk.Frame):
         # pylint: disable=too-complex
 
         self._cancel_pending_afters()
+        self.master.config(cursor=ui_utils.NORMAL)
+        animator.set_active(False)
 
         new_game = self.game.new_game(win_cond=win_cond,
                                       new_round_ok=new_round_ok)
@@ -858,7 +886,9 @@ class MancalaUI(tk.Frame):
         self.movers += 1
         game.mcount += 1
         game.turn = not game.turn
+        animator.set_active(False)
         game.swap_sides()
+        self._set_ani_state()
 
         self.player.clear_history()
 
@@ -882,6 +912,7 @@ class MancalaUI(tk.Frame):
         if not do_it:
             return
 
+        animator.set_active(False)
         win_cond = self.game.end_round()
 
         wtext = 'Round Ended '
@@ -915,6 +946,7 @@ class MancalaUI(tk.Frame):
         if not do_it:
             return
 
+        animator.set_active(False)
         win_cond = self.game.end_game()
 
         wtext = 'Game Ended '
@@ -954,19 +986,24 @@ class MancalaUI(tk.Frame):
 
         self.saved_move = move
         last_turn = self.game.get_turn()
+        if animator.active():
+            animator.animator.flash(last_turn, move=move)
+
         self.wcond = self.game.move(move)
+        self._set_ani_state()   # ender turns off animator
 
         if last_turn != self.game.get_turn():
             self.movers += 1
 
         self._log_turn(last_turn)
 
-        if animator.animator.active:
+        if animator.active():
             animator.animator.queue_callback(self.move_epilog)
             self.refresh(ani_ok=True)
         else:
             self.refresh()
             self.move_epilog()
+
 
 
     def move_epilog(self):
@@ -1001,33 +1038,32 @@ class MancalaUI(tk.Frame):
             self._cancel_pending_afters()
             sel_delay = self.vars.ai_delay.get()
 
-            self.master.config(cursor='wait')
+            self.master.config(cursor=ui_utils.AI_BUSY)
             self.after(AI_DELAY[sel_delay], self._ai_move)
 
 
     def _ai_move(self):
         """If it's the AI's turn, do a move. AI is top player."""
 
-        if self.vars.ai_active.get() and self.game.get_turn():
+        if (self.mode == buttons.Behavior.GAMEPLAY
+                and self.vars.ai_active.get()
+                and self.game.get_turn()):
 
-            self.master.config(cursor='wait')
+            self.master.config(cursor=ui_utils.AI_BUSY)
 
             if not self.vars.log_ai.get():
                 game_log.set_ai_mode()
-            animator.animator.active = False
+            animator.set_active(False)
 
             self.saved_move = self.player.pick_move()
             game_log.clear_ai_mode()
-            if self.vars.ani_state.get():
-                animator.animator.active = True
+            self._set_ani_state()
 
             self.move(self.saved_move)
 
-            # TODO seems there could be a race condition
-            # the refresh was already started by move
-            # if it finishes before this  queued -- will it happen?
-            if animator.animator.active:
+            if animator.active():
                 animator.animator.queue_callback(self._ai_move_epilog)
+                self.refresh(ani_ok=True)
             else:
                 self._ai_move_epilog()
 
@@ -1046,4 +1082,4 @@ class MancalaUI(tk.Frame):
                                    parent=self)
 
         if self.wcond != gi.WinCond.REPEAT_TURN:
-            self.master.config(cursor='')
+            self.master.config(cursor=ui_utils.NORMAL)
