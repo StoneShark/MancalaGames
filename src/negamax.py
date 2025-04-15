@@ -54,6 +54,10 @@ class NegaMaxer(ai_interface.AiAlgorithmIf):
         moves = self.game.get_moves()
         assert moves, 'Negamaxer called when no moves available.'
 
+        if len(moves) == 1:
+            self.last_scores = f'Negamaxer m{moves[0]} only.'
+            return moves[0]
+
         best_moves = []
         best_score = MIN_INT
         last_scores = ''
