@@ -374,14 +374,15 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
     @property
     def store(self):
         """Hide the actual store in this property. It might be
-        a simple list or animator list.
+        a simple list or animator list.  Use the animator list
+        if we want to animate the assignments.
         _store should not be accessed except by the property methods."""
         return self._store
 
     @store.setter
     def store(self, value):
 
-        if animator.ENABLED:
+        if animator.ENABLED and self.info.stores:
             self._store = animator.AniList('store', value)
 
         else:
@@ -391,14 +392,18 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
     @property
     def unlocked(self):
         """Hide the actual store in this property. It might be
-        a simple list or animator list.
+        a simple list or animator list.  Use the animator list
+        if we want to animate the assignments.
         _unlocked should not be accessed except by the property methods."""
         return self._unlocked
 
     @unlocked.setter
     def unlocked(self, value):
 
-        if animator.ENABLED:
+        if (animator.ENABLED
+                and (self.info.moveunlock
+                     or self.info.allow_rule ==
+                               gi.AllowRule.MOVE_ALL_HOLES_FIRST)):
             self._unlocked = animator.AniList('unlocked', value)
 
         else:
@@ -408,14 +413,15 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
     @property
     def blocked(self):
         """Hide the actual store in this property. It might be
-        a simple list or animator list.
+        a simple list or animator list.  Use the animator list
+        if we want to animate the assignments.
         _blocked should not be accessed except by the property methods."""
         return self._blocked
 
     @blocked.setter
     def blocked(self, value):
 
-        if animator.ENABLED:
+        if animator.ENABLED and self.info.blocks:
             self._blocked = animator.AniList('blocked', value)
 
         else:
@@ -425,14 +431,15 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
     @property
     def child(self):
         """Hide the actual store in this property. It might be
-        a simple list or animator list.
+        a simple list or animator list. Use the animator list
+        if we want to animate the assignments.
         _child should not be accessed except by the property methods."""
         return self._child
 
     @child.setter
     def child(self, value):
 
-        if animator.ENABLED:
+        if animator.ENABLED and self.info.child_type:
             self._child = animator.AniList('child', value)
 
         else:

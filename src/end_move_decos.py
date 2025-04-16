@@ -603,10 +603,9 @@ class QuitToTie(EndTurnIf):
 
 class AnimateEndMove(EndTurnIf):
     """Turn off the animator while the seeds are being
-    claimed/taken/divvied. MancalaUI.move will return it
-    to the proper setting."""
+    claimed/taken/divvied."""
 
     def game_ended(self, repeat_turn, ended=False):
 
-        animator.set_active(False)
-        return self.decorator.game_ended(repeat_turn, ended)
+        with animator.one_step():
+            return self.decorator.game_ended(repeat_turn, ended)

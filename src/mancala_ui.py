@@ -104,7 +104,8 @@ class GameSetup:
     def setup_game(self):
         """Attempt to enter setup mode."""
 
-        self.game_ui.set_game_mode(buttons.Behavior.SETUP)
+        if self.game_ui.set_game_mode(buttons.Behavior.SETUP):
+            animator.set_active(False)
 
 
     def save_setup(self):
@@ -204,6 +205,7 @@ class MancalaUI(tk.Frame):
         self.refresh()
         self.schedule_ai()
         self._set_ani_state()
+
 
     def _add_statuses(self):
         """Add status and info panes. Make them each 50% of the display."""
@@ -485,6 +487,9 @@ class MancalaUI(tk.Frame):
         helpmenu.add_command(label='About...', command=self._about)
         menubar.add_cascade(label='Help', menu=helpmenu)
 
+        self.master.bind("<Key-greater>", self._inc_ani_speed)
+        self.master.bind("<Key-less>", self._dec_ani_speed)
+
 
     def ui_loop(self):
         """Call the mainloop UI - everything happens because of user input.
@@ -506,6 +511,7 @@ class MancalaUI(tk.Frame):
         """window was closed."""
 
         self._cancel_pending_afters()
+        animator.reset()
 
 
     def _toggle_tally(self, vis_op=NO_TALLY_OP):
@@ -550,6 +556,22 @@ class MancalaUI(tk.Frame):
         self.refresh()
 
 
+    @staticmethod
+    def _inc_ani_speed(_=None):
+        """Increase animation speed."""
+
+        animator.animator.delay = max(50, animator.animator.delay - 50)
+        print("Ani Delay=", animator.animator.delay)
+
+
+    @staticmethod
+    def _dec_ani_speed(_=None):
+        """Decrease animation speed."""
+
+        animator.animator.delay += 50
+        print("Ani Delay=", animator.animator.delay)
+
+
     def _set_ani_state(self):
         """Set the animation state and speed."""
 
@@ -558,7 +580,11 @@ class MancalaUI(tk.Frame):
             ani_state = self.vars.ani_state.get()
 
             if ani_state:
-                animator.animator.set_speed(ani_state)
+                animator.set_active(True)
+                if animator.active():
+                    animator.animator.set_speed(ani_state)
+                    print("Ani state delay ", animator.animator.delay)
+
             else:
                 animator.set_active(False)
 
@@ -684,6 +710,17 @@ class MancalaUI(tk.Frame):
                 child.active = active
 
 
+    def show_seeds_in_stores(self):
+        """Return True if the stores should be updated with a
+        seed count, False otherwise."""
+
+        return (self.stores
+                and not self.info.goal in (gi.Goal.DEPRIVE,
+                                           gi.Goal.CLEAR,
+                                           gi.Goal.RND_WIN_COUNT_DEP,
+                                           gi.Goal.RND_WIN_COUNT_CLR))
+
+
     def refresh(self, *, ani_ok=False):
         """Make UI match mancala game."""
 
@@ -701,13 +738,10 @@ class MancalaUI(tk.Frame):
 
             player = row == turn_row
             if self.info.stores:
-                if self.info.goal in (gi.Goal.DEPRIVE,
-                                      gi.Goal.CLEAR,
-                                      gi.Goal.RND_WIN_COUNT_DEP,
-                                      gi.Goal.RND_WIN_COUNT_CLR):
-                    seeds = 0
-                else:
+                if self.show_seeds_in_stores():
                     seeds = self.game.store[not row]
+                else:
+                    seeds = 0
                 self.stores[row].set_store(seeds, player)
 
             for pos in range(self.game.cts.holes):
@@ -836,10 +870,13 @@ class MancalaUI(tk.Frame):
     def set_gameplay_mode(self):
         """The behaviors file cannot import btn_behaviors
         (circular deps), but the behavior objects have a
-        pointer to the game_ui object so we'll set_gameplay_move
+        pointer to the game_ui object so we'll mode
         for them here"""
 
-        return self.set_game_mode(buttons.Behavior.GAMEPLAY)
+        if self.set_game_mode(buttons.Behavior.GAMEPLAY):
+            self._set_ani_state()
+            return True
+        return False
 
 
     def _param_tally(self):
@@ -990,7 +1027,6 @@ class MancalaUI(tk.Frame):
             animator.animator.flash(last_turn, move=move)
 
         self.wcond = self.game.move(move)
-        self._set_ani_state()   # ender turns off animator
 
         if last_turn != self.game.get_turn():
             self.movers += 1
@@ -1063,7 +1099,10 @@ class MancalaUI(tk.Frame):
 
             if animator.active():
                 animator.animator.queue_callback(self._ai_move_epilog)
-                self.refresh(ani_ok=True)
+                # this was put here because the epilog wasn't being
+                # called, but it appears to interfere with the refresh
+                # started by the move. the flashes don't show
+                # self.refresh(ani_ok=True)
             else:
                 self._ai_move_epilog()
 

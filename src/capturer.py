@@ -12,6 +12,7 @@ Created on Fri Apr  7 08:52:03 2023
 
 import abc
 
+import animator
 import deco_chain_if
 import game_interface as gi
 
@@ -681,6 +682,30 @@ class PickLastSeeds(CaptMethodIf):
         nbr_start = game.cts.nbr_start
         self.seeds = nbr_start if turn_takes else 2 * nbr_start
 
+        if animator.ENABLED:
+            self.move_seeds = self.move_seeds_anim
+        else:
+            self.move_seeds = self.move_seeds_base
+
+
+    def move_seeds_base(self, taker):
+        """Move the seeds to the stores.
+        Allow this to be wrapped when the animator is enabled."""
+
+        game = self.game
+        for loc in range(game.cts.dbl_holes):
+            if game.child[loc] is None and game.unlocked[loc]:
+                game.store[taker] += game.board[loc]
+                game.board[loc] = 0
+
+
+    def move_seeds_anim(self, taker):
+        """When the animator is ENABLED, collect all of the
+        changes into one animation step."""
+
+        with animator.one_step():
+            self.move_seeds_base(taker)
+
 
     def do_captures(self, mdata, capt_first=True):
 
@@ -693,12 +718,9 @@ class PickLastSeeds(CaptMethodIf):
                         and game.unlocked[loc])
 
         if  0 < seeds <= self.seeds:
-            taker = game.turn if self.turn_takes else game.starter
 
-            for loc in range(game.cts.dbl_holes):
-                if game.child[loc] is None and game.unlocked[loc]:
-                    game.store[taker] += game.board[loc]
-                    game.board[loc] = 0
+            taker = game.turn if self.turn_takes else game.starter
+            self.move_seeds(taker)
 
             msg = f'Seeds left <= {self.seeds}, {taker} collected them.'
             game_log.add(msg, game_log.INFO)

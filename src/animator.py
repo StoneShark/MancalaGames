@@ -30,6 +30,7 @@ Created on Sun Apr 13 05:25:44 2025
 
 import abc
 import collections
+import contextlib
 
 import game_interface as gi
 import ui_utils
@@ -67,6 +68,18 @@ def make_animator(game_ui):
         animator = Animator(game_ui)
 
 
+def reset():
+    """Re-init the animator to be None.
+    Do this on destroy of MancalaUI so remnants of a
+    previous game do not exsist."""
+
+    # pylint: disable=global-statement
+    global animator
+
+    if ENABLED:
+        animator = None
+
+
 def active():
     """Determine if the animator is currently active.
     A global function in case the animator was not built."""
@@ -80,6 +93,28 @@ def set_active(new_state):
 
     if ENABLED and animator:
         animator.active = new_state
+
+
+@contextlib.contextmanager
+def one_step():
+    """Collect multiple changes into one step.
+    This deactivates the animator and then updates the
+    game in one step to the current game state
+    when the context is exited."""
+
+    if ENABLED and animator:
+
+        saved_state = animator.active
+        animator.active = False
+
+        try:
+            yield
+        finally:
+            animator.active = saved_state
+            animator.update_game()
+
+    else:
+        yield
 
 
 # %% support classes
@@ -169,6 +204,32 @@ class AniAction(abc.ABC):
         """Execture the action"""
 
 
+    @staticmethod
+    def update_store(game_ui, ani_state, turn):
+        """Make the store match the animation state."""
+
+        game_ui.stores[not turn].set_store(ani_state.store[turn],
+                                           game_ui.game.turn == bool(turn))
+
+
+    @staticmethod
+    def update_button(game_ui, ani_state, loc):
+        """Make the button match the animation state."""
+
+        hprop = gi.HoleProps(seeds=ani_state.board[loc],
+                             unlocked=ani_state.unlocked[loc],
+                             blocked=ani_state.blocked[loc],
+                             ch_owner=ani_state.child[loc],
+                             # not animated
+                             owner=game_ui.game.owner[loc]
+                            )
+
+        row = int(loc < game_ui.game.cts.holes)
+        pos = game_ui.game.cts.xlate_pos_loc(row, loc)
+        game_ui.disp[row][pos].set_props(hprop, None)
+
+
+
 class Flash(AniAction):
     """Do a flash of the specified hole. Use this 2x."""
 
@@ -206,24 +267,46 @@ class SetStateVar(AniAction):
         """Execute the action."""
 
         if self.attrib == STORE:
-            store_ui = game_ui.stores[not self.idx]
-            store_ui.set_store(self.value, game_ui.game.turn == bool(self.idx))
             ani_state.store[self.idx] = self.value
+            self.update_store(game_ui, ani_state, self.idx)
 
         else:
             ani_state.setvalue(self.attrib, self.idx, self.value)
+            self.update_button(game_ui, ani_state, self.idx)
 
-            hprop = gi.HoleProps(seeds=ani_state.board[self.idx],
-                                 unlocked=ani_state.unlocked[self.idx],
-                                 blocked=ani_state.blocked[self.idx],
-                                 ch_owner=ani_state.child[self.idx],
-                                 # not animated
-                                 owner=game_ui.game.owner[self.idx]
-                                )
 
-            row = not game_ui.game.cts.board_side(self.idx)
-            pos = game_ui.game.cts.xlate_pos_loc(row, self.idx)
-            game_ui.disp[row][pos].set_props(hprop, None)
+class NewGameState(AniAction):
+    """There were multiple changes to the state catch them all
+    and update as one animation step.
+
+    Not doing a 'refresh' because we need to keep ani_state
+    up-to-date and we don't want any button colors changing."""
+
+    def __init__(self, new_ani_state):
+
+        self.astate = new_ani_state
+
+
+    def __str__(self):
+
+        return f"NewGameState({self.astate})"
+
+
+    def do_it(self, game_ui, ani_state):
+        """Execute the action."""
+
+        ani_state.store = self.astate.store
+        ani_state.board = self.astate.board
+        ani_state.unlocked = self.astate.unlocked
+        ani_state.blocked = self.astate.blocked
+        ani_state.child = self.astate.child
+
+        if game_ui.show_seeds_in_stores():
+            for turn in (False, True):
+                self.update_store(game_ui, ani_state, turn)
+
+        for loc in range(game_ui.game.cts.dbl_holes):
+            self.update_button(game_ui, ani_state, loc)
 
 
 class Message(AniAction):
@@ -263,6 +346,7 @@ class ScheduleCallback(AniAction):
 
         self.func()
 
+
 # %% the main animator class
 
 class Animator:
@@ -275,33 +359,18 @@ class Animator:
 
         self.game_ui = game_ui
         self.queue = collections.deque()
-        self.delay = 250
+        self.delay = DELAYS[0]
 
-        self._active = ENABLED
+        self.active = ENABLED
 
         self.ani_state = None
 
 
-    @property
-    def active(self):
-        """The active property."""
-        return self._active
-
-
-    @active.setter
-    def active(self, value):
-        """Set active to value."""
-
-
-        self._active = value
-
-
-
-    def set_speed(self, speed):
+    def set_speed(self, delay):
         """Set the delay associated with the speed 1 fast ..3 slow"""
 
         self.active = True
-        self.delay = DELAYS[speed - 1]
+        self.delay = DELAYS[delay - 1]
 
 
     def clear_queue(self):
@@ -324,7 +393,7 @@ class Animator:
     def flash(self, turn, *, move=None, loc=None):
         """Record a button flash action, if active."""
 
-        if self._active:
+        if self.active:
 
             if move is not None:
                 if isinstance(move, int):
@@ -348,10 +417,9 @@ class Animator:
         """Record a change in state that should be animated,
         if active."""
 
+        if self.active:
 
-        if self._active:
-
-            if ((attrib == STORE and not self.game_ui.stores)
+            if ((attrib == STORE and not self.game_ui.show_seeds_in_stores())
                     or (attrib == BOARD and self.game_ui.game.blocked[idx])):
                 # don't animate things we can't see
                 #   - store updates when they are not on the UI
@@ -361,11 +429,19 @@ class Animator:
             self.add(SetStateVar(attrib, idx, value))
 
 
+    def update_game(self):
+        """Do multiple updates to the game as one animation
+        step."""
+
+        if self.active:
+            self.add(NewGameState(AniGameState(self.game_ui.game)))
+
+
     def message(self, message):
         """Record a message in the animation sequence,
         if active."""
 
-        if self._active:
+        if self.active:
             self.add(Message(message))
 
 
@@ -373,7 +449,7 @@ class Animator:
         """Put a function callback event into the animation
         queue, if active."""
 
-        if self._active:
+        if self.active:
             self.add(ScheduleCallback(func))
 
 
@@ -386,6 +462,7 @@ class Animator:
 
         self.game_ui.config(cursor=ui_utils.ANI_ACTIVE)
         anie = self.queue.popleft()
+        # print(anie)
         anie.do_it(self.game_ui, self.ani_state)
 
         if self.queue:
