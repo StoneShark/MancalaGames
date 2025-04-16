@@ -26,7 +26,7 @@ import ui_utils
 class Behavior(enum.IntEnum):
     """Enum for the button behaviors."""
 
-    GAMEPLAY = 0     # the animator is only active when mode is 0
+    GAMEPLAY = 0
     RNDCHOOSE = 1
     RNDMOVE = 2
     MOVESEEDS = 3
