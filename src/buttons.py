@@ -263,7 +263,9 @@ class HoleButton(tk.Canvas):
         from the click--this seems to happen when using right click
         grid in non-play modes. Only process unique events."""
 
-        if not self.active or event.serial == self.last_event:
+        if (not self.active
+                or self['state'] == tk.DISABLED
+                or event.serial == self.last_event):
             return
         self.last_event = event.serial
 
@@ -282,7 +284,9 @@ class HoleButton(tk.Canvas):
         from the click--this seems to happen when using right click
         grid in non-play modes. Only process unique events."""
 
-        if not self.active or event.serial == self.last_event:
+        if (not self.active
+                or self['state'] == tk.DISABLED
+                or event.serial == self.last_event):
             return
         self.last_event = event.serial
 
