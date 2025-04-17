@@ -210,15 +210,11 @@ class StopCaptureSimul(LapContinuerIf):
 
         if not self.game.inhibitor.stop_me_capt(self.game.turn):
 
-            saved_state = self.game.state
-            working_mdata = copy.copy(mdata)
-            game_log.set_simulate()
+            with self.game.save_restore_state():
+                working_mdata = copy.copy(mdata)
 
-            self.game.capture_seeds(working_mdata)
-            captured = working_mdata.captured
-
-            game_log.clear_simulate()
-            self.game.state = saved_state
+                self.game.capture_seeds(working_mdata)
+                captured = working_mdata.captured
 
             if captured:
                 game_log.add('MLap stop for simul capture')
@@ -284,11 +280,14 @@ class StopRepeatTurn(LapContinuerIf):
 
 
 class AnimateLapStart(LapContinuerIf):
-    """A wrapper: do an animation to simulate a new lap start."""
+    """A wrapper: do an animation to simulate a new lap start,
+    but don't do any other animation in the do_another_lap
+    test."""
 
     def do_another_lap(self, mdata):
 
-        cont = self.decorator.do_another_lap(mdata)
+        with animator.animate_off():
+            cont = self.decorator.do_another_lap(mdata)
 
         if cont and animator.active():
             animator.animator.flash(self.game.turn, loc=mdata.capt_loc)

@@ -9,6 +9,7 @@ index/variable naming conventions.
 Created on Sun Mar 19 09:58:36 2023
 @author: Ann"""
 
+import contextlib
 import dataclasses as dc
 import pprint
 import random
@@ -391,7 +392,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
     @property
     def unlocked(self):
-        """Hide the actual store in this property. It might be
+        """Hide the actual unlocked list in this property. It might be
         a simple list or animator list.  Use the animator list
         if we want to animate the assignments.
         _unlocked should not be accessed except by the property methods."""
@@ -412,7 +413,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
     @property
     def blocked(self):
-        """Hide the actual store in this property. It might be
+        """Hide the actual blocked list in this property. It might be
         a simple list or animator list.  Use the animator list
         if we want to animate the assignments.
         _blocked should not be accessed except by the property methods."""
@@ -430,7 +431,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
     @property
     def child(self):
-        """Hide the actual store in this property. It might be
+        """Hide the actual child list in this property. It might be
         a simple list or animator list. Use the animator list
         if we want to animate the assignments.
         _child should not be accessed except by the property methods."""
@@ -506,6 +507,17 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
         if value.rstate:
             self.rtally.state = value.rstate
+
+
+    @contextlib.contextmanager
+    def save_restore_state(self):
+        """A context manager that saves and restores state"""
+
+        saved_state = self.state
+        game_log.set_simulate()
+        yield
+        game_log.clear_simulate()
+        self.state = saved_state
 
 
     def init_bprops(self):

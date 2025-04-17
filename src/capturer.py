@@ -381,6 +381,13 @@ class CaptOppDir(CaptMethodIf):
 
 # %%  grand slam decos
 
+
+# TODO fix animator for GrandSlam test and actual captures
+# it would be best if the test didn't record the animation
+# events and the captures (if any) occurred in the GS classes
+# do this without duplicating work (return the state from is_grandslam?)
+# do this so that the animator checks aren't done at play time
+
 class GrandSlamCapt(CaptMethodIf):
     """Grand Slam capturer and tester.
     This class is still abstract."""
@@ -419,8 +426,7 @@ class GSKeep(GrandSlamCapt):
     """A grand slam does not capture left/right.
     Left/right is from the perspective of the player who just sowed."""
 
-    # TODO it would be better if the seeds were not removed and put back
-    # TODO change this so that it is the right/leftmost hole with seeds
+    # TODO change GSKeep so that it is the right/leftmost hole with seeds
 
     def __init__(self, game, grandslam, decorator=None):
 

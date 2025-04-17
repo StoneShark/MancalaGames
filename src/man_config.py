@@ -415,8 +415,9 @@ DEFAULTS = {
     'facing_players': 'no',
     'ownership_arrows': 'no',
 
-    'ani_state': '0',
     'disable_animator': 'no',
+    'ani_active': 'yes',
+    'ani_delay': '250',
 
     'ai_active': 'no',
     'ai_delay': '1',
@@ -434,7 +435,6 @@ COLORS = ['system_color', 'turn_color', 'turn_dark_color', 'ai_color',
 VALID_DENSITY = {'12', '25', '50', '75'}
 VALID_DELAY = {'0', '1', '2'}
 VALID_DIFFICULTY = {'0', '1', '2', '3'}
-VALID_ANI_STATE = {'0', '1', '2', '3'}
 
 # intentionally not including the "too much detail" levels
 VALID_LOG_LEVEL = {'move', 'import', 'step', 'info', 'detail'}
@@ -462,7 +462,6 @@ class ConfigData:
         self.validate('grid_density', VALID_DENSITY)
         self.validate('ai_delay', VALID_DELAY)
         self.validate('log_level', VALID_LOG_LEVEL)
-        self.validate('ani_state', VALID_ANI_STATE)
 
         for section in self._config.sections():
             if (DIFFICULTY in self._config[section]

@@ -602,8 +602,9 @@ class QuitToTie(EndTurnIf):
 
 
 class AnimateEndMove(EndTurnIf):
-    """Turn off the animator while the seeds are being
-    claimed/taken/divvied."""
+    """Animate end move as a single animation step.
+    The taker and divvier look odd picking seeds up one
+    hole at a time."""
 
     def game_ended(self, repeat_turn, ended=False):
 

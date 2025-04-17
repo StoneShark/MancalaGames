@@ -86,8 +86,9 @@ class TkVars:
             man_ui.master, min(man_config.CONFIG.get_int('ai_delay', 1), 2))
         self.ai_filter = tk.BooleanVar(man_ui.master, True)
 
-        ani_state = min(man_config.CONFIG.get_int('ani_state', 1), 2)
-        self.ani_state = tk.IntVar(man_ui.master, ani_state)
+        ani_active = man_config.CONFIG.get_bool('ani_active')
+        self.ani_active = tk.BooleanVar(man_ui.master, ani_active)
+
 
 
 class GameSetup:
@@ -105,7 +106,7 @@ class GameSetup:
         """Attempt to enter setup mode."""
 
         if self.game_ui.set_game_mode(buttons.Behavior.SETUP):
-            animator.set_active(False)
+            animator.set_active(False, clear_queue=True)
 
 
     def save_setup(self):
@@ -201,10 +202,12 @@ class MancalaUI(tk.Frame):
             self.tally_frame.forget()
 
         animator.make_animator(self)
+        self._reset_ani_state()
+        self._reset_ani_delay()
+
         self._new_game()
         self.refresh()
         self.schedule_ai()
-        self._set_ani_state()
 
 
     def _add_statuses(self):
@@ -463,22 +466,25 @@ class MancalaUI(tk.Frame):
 
         if animator.ENABLED:
             showmenu.add_separator()
-            showmenu.add_radiobutton(label='Animation Off',
-                                     variable=self.vars.ani_state,
-                                     value=0,
-                                     command=self._set_ani_state)
-            showmenu.add_radiobutton(label='Anim Speed Fast',
-                                     variable=self.vars.ani_state,
-                                     value=1,
-                                     command=self._set_ani_state)
-            showmenu.add_radiobutton(label='Anim Speed Medium',
-                                     variable=self.vars.ani_state,
-                                     value=2,
-                                     command=self._set_ani_state)
-            showmenu.add_radiobutton(label='Anim Speed Slow',
-                                     variable=self.vars.ani_state,
-                                     value=3,
-                                     command=self._set_ani_state)
+            showmenu.add_checkbutton(label='Animation Active',
+                                     variable=self.vars.ani_active,
+                                     onvalue=True, offvalue=False,
+                                     command=self._reset_ani_state,
+                                     accelerator='Ctrl-a')
+            showmenu.add_command(label='Anim Speed Medium',
+                                 command=self._reset_ani_delay,
+                                 accelerator='=')
+            showmenu.add_command(label='Anim Speed Faster',
+                                 command=self._inc_ani_speed,
+                                 accelerator='>')
+            showmenu.add_command(label='Anim Speed Slower',
+                                 command=self._dec_ani_speed,
+                                 accelerator='<')
+
+            self.master.bind("<Control-a>", self._toggle_ani_active)
+            self.master.bind("<Key-equal>", self._reset_ani_delay)
+            self.master.bind("<Key-greater>", self._inc_ani_speed)
+            self.master.bind("<Key-less>", self._dec_ani_speed)
 
         menubar.add_cascade(label='Display', menu=showmenu)
 
@@ -487,8 +493,6 @@ class MancalaUI(tk.Frame):
         helpmenu.add_command(label='About...', command=self._about)
         menubar.add_cascade(label='Help', menu=helpmenu)
 
-        self.master.bind("<Key-greater>", self._inc_ani_speed)
-        self.master.bind("<Key-less>", self._dec_ani_speed)
 
 
     def ui_loop(self):
@@ -557,36 +561,48 @@ class MancalaUI(tk.Frame):
 
 
     @staticmethod
-    def _inc_ani_speed(_=None):
-        """Increase animation speed."""
+    def _reset_ani_delay(_=None):
+        """Set config'ed or nominal animator speed."""
 
-        animator.animator.delay = max(50, animator.animator.delay - 50)
-        print("Ani Delay=", animator.animator.delay)
+        if animator.animator:
+            delay = man_config.CONFIG.get_int('ani_delay', 350)
+            animator.set_delay(delay)
+
+            print("Ani Delay=", animator.animator.delay)
+
+
+    @staticmethod
+    def _inc_ani_speed(_=None):
+        """Increase animation speed by reducing the delay between
+        steps."""
+
+        if animator.animator:
+            animator.set_delay(max(50, animator.animator.delay - 50))
+            print("Ani Delay=", animator.animator.delay)
 
 
     @staticmethod
     def _dec_ani_speed(_=None):
         """Decrease animation speed."""
 
-        animator.animator.delay += 50
-        print("Ani Delay=", animator.animator.delay)
+        if animator.animator:
+            animator.set_delay(animator.animator.delay + 50)
+            print("Ani Delay=", animator.animator.delay)
 
 
-    def _set_ani_state(self):
-        """Set the animation state and speed."""
+    def _toggle_ani_active(self, _=None):
+        """Toggle the animation state (active or not active).
+        Used by the key board binding."""
 
-        if animator.ENABLED and animator.animator:
+        ani_active = not self.vars.ani_active.get()
+        self.vars.ani_active.set(ani_active)
+        animator.set_active(ani_active)
 
-            ani_state = self.vars.ani_state.get()
 
-            if ani_state:
-                animator.set_active(True)
-                if animator.active():
-                    animator.animator.set_speed(ani_state)
-                    print("Ani state delay ", animator.animator.delay)
+    def _reset_ani_state(self):
+        """Reset the animation state to agree with the tk var."""
 
-            else:
-                animator.set_active(False)
+        animator.set_active(self.vars.ani_active.get())
 
 
     @staticmethod
@@ -773,7 +789,7 @@ class MancalaUI(tk.Frame):
         game_log.new()
         game_log.turn(self.game.mcount, 'Start Game', self.game)
         self.movers = 0
-        self._set_ani_state()
+        self._reset_ani_state()
         self.schedule_ai()
 
 
@@ -794,7 +810,7 @@ class MancalaUI(tk.Frame):
 
         self._cancel_pending_afters()
         self.master.config(cursor=ui_utils.NORMAL)
-        animator.set_active(False)
+        animator.set_active(False, clear_queue=True)
 
         new_game = self.game.new_game(win_cond=win_cond,
                                       new_round_ok=new_round_ok)
@@ -874,7 +890,7 @@ class MancalaUI(tk.Frame):
         for them here"""
 
         if self.set_game_mode(buttons.Behavior.GAMEPLAY):
-            self._set_ani_state()
+            self._reset_ani_state()
             return True
         return False
 
@@ -923,9 +939,8 @@ class MancalaUI(tk.Frame):
         self.movers += 1
         game.mcount += 1
         game.turn = not game.turn
-        animator.set_active(False)
-        game.swap_sides()
-        self._set_ani_state()
+        with animator.animate_off():
+            game.swap_sides()
 
         self.player.clear_history()
 
@@ -949,7 +964,7 @@ class MancalaUI(tk.Frame):
         if not do_it:
             return
 
-        animator.set_active(False)
+        animator.set_active(False, clear_queue=True)
         win_cond = self.game.end_round()
 
         wtext = 'Round Ended '
@@ -983,7 +998,7 @@ class MancalaUI(tk.Frame):
         if not do_it:
             return
 
-        animator.set_active(False)
+        animator.set_active(False, clear_queue=True)
         win_cond = self.game.end_game()
 
         wtext = 'Game Ended '
@@ -1089,11 +1104,11 @@ class MancalaUI(tk.Frame):
 
             if not self.vars.log_ai.get():
                 game_log.set_ai_mode()
-            animator.set_active(False)
 
-            self.saved_move = self.player.pick_move()
+            with animator.animate_off():
+                self.saved_move = self.player.pick_move()
+
             game_log.clear_ai_mode()
-            self._set_ani_state()
 
             self.move(self.saved_move)
 

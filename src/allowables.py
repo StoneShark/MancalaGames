@@ -20,6 +20,7 @@ Created on Sat Apr  8 09:15:30 2023
 
 import abc
 
+import animator
 import deco_chain_if
 import game_interface as gi
 
@@ -574,6 +575,17 @@ class MemoizeAllowable(AllowableIf):
         return rval
 
 
+class DontAnimateAllowable(AllowableIf):
+    """Do not want to animate any changes by the allowable
+    deco chain. They all restore the game state to the
+    pre-chain state."""
+
+    def get_allowable_holes(self):
+
+        with animator.animate_off():
+            return self.decorator.get_allowable_holes()
+
+
 # %% build deco chain
 
 
@@ -649,5 +661,8 @@ def deco_allowable(game):
             or game.info.allow_rule == gi.AllowRule.OPP_OR_EMPTY
             or game.info.grandslam == gi.GrandSlam.NOT_LEGAL):
         allowable = MemoizeAllowable(game, allowable)
+
+    if animator.ENABLED:
+        allowable = DontAnimateAllowable(game, allowable)
 
     return allowable
