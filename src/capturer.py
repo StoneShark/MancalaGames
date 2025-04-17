@@ -7,6 +7,8 @@ was modified.
 Created on Fri Apr  7 08:52:03 2023
 @author: Ann"""
 
+# pylint: disable=too-many-lines
+
 
 # %% imports
 
@@ -381,77 +383,123 @@ class CaptOppDir(CaptMethodIf):
 
 # %%  grand slam decos
 
-
-# TODO fix animator for GrandSlam test and actual captures
-# it would be best if the test didn't record the animation
-# events and the captures (if any) occurred in the GS classes
-# do this without duplicating work (return the state from is_grandslam?)
-# do this so that the animator checks aren't done at play time
-
 class GrandSlamCapt(CaptMethodIf):
-    """Grand Slam capturer and tester.
-    This class is still abstract."""
+    """Grand Slam capturer and tester. This class is still abstract."""
 
-    def is_grandslam(self, mdata, capt_first=True):
-        """Return True if the capture was a grandslam"""
+    def __init__(self, game, decorator=None):
 
-        # XXXX the test for start/end seeds could exclude children
+        super().__init__(game, decorator)
 
-        opp_rng = self.game.cts.get_opp_range(self.game.turn)
-        start_seeds = any(mdata.board[tloc] for tloc in opp_rng)
+        if animator.ENABLED:
+            self.simul_capture = self.simul_capt_anim
+        else:
+            self.simul_capture = self.simul_capt_base
 
-        self.decorator.do_captures(mdata, capt_first)
 
-        if start_seeds and mdata.captured:
-            return not any(self.game.board[tloc] for tloc in opp_rng)
+    def simul_capt_base(self, opp_rng, mdata, capt_first=True):
+        """Do the capture simulation. Use this directly
+        if the animator is disabled.
+
+        Return True if the opponent does not have any seeds
+        after the capture, False otherwise (not grand slam)."""
+
+        with self.game.save_restore_state():
+            self.decorator.do_captures(mdata, capt_first)
+
+            if mdata.captured:
+                return not any(self.game.board[tloc] for tloc in opp_rng)
 
         return False
 
 
+    def simul_capt_anim(self, opp_rng, mdata, capt_first=True):
+        """Wrap the capture simulation in an animate_off,
+        never want to animate this capture (animator is not
+        ENABLED)."""
+
+        with animator.animate_off():
+            return self.simul_capt_base(opp_rng, mdata, capt_first)
+
+
+    def is_grandslam(self, mdata, capt_first=True):
+        """Use the capture change to see if a grandslam would
+        occur. Do this without capturing any animation events and
+        with the state restored (that is, no change to the game).
+
+        If there was not a grand slam, do the capture deco
+        again but this time allow animation captures and
+        state changes. Yes, this is duplicate work, but it works
+        with the animator hooks.
+
+        The caller needs to process what happens when a
+        grand slam did occur, possibly including re-doing the
+        captures that resulted in the grand slam.
+
+        Return True if there was a grandslam."""
+
+        gslam = False
+        opp_rng = self.game.cts.get_opp_range(self.game.turn)
+        start_seeds = any(mdata.board[tloc] for tloc in opp_rng)
+
+        if start_seeds:
+            gslam = self.simul_capture(opp_rng, mdata, capt_first)
+
+        if not gslam:
+            self.decorator.do_captures(mdata, capt_first)
+
+        return gslam
+
+
 class GSNone(GrandSlamCapt):
-    """A grand slam does not capture, reset the game state."""
+    """A grand slam does not capture, we are done."""
 
     def do_captures(self, mdata, capt_first=True):
 
-        saved_state = self.game.state
-
         if self.is_grandslam(mdata, capt_first):
             game_log.add('GRANDSLAM: no capture', game_log.IMPORT)
-            self.game.state = saved_state
-            mdata.capt_changed = False
-            mdata.captured = False
 
 
 class GSKeep(GrandSlamCapt):
     """A grand slam does not capture left/right.
     Left/right is from the perspective of the player who just sowed."""
 
-    # TODO change GSKeep so that it is the right/leftmost hole with seeds
-
     def __init__(self, game, grandslam, decorator=None):
 
         super().__init__(game, decorator)
+
+        # index is current player, left or right is from their perspective
+
         if grandslam == gi.GrandSlam.LEAVE_LEFT:
-            self.keep = (game.cts.dbl_holes - 1, game.cts.holes - 1)
+            self.rparam = ((game.cts.dbl_holes - 1, game.cts.holes - 1, -1),
+                           (game.cts.holes - 1, -1, -1))
         else:
-            self.keep = (game.cts.holes, 0)
+            self.rparam = ((game.cts.holes, game.cts.dbl_holes - 1, 1),
+                           (0, game.cts.holes, 1))
+
 
     def do_captures(self, mdata, capt_first=True):
 
-        saved_state = self.game.state
         if self.is_grandslam(mdata, capt_first):
 
+            game_log.add('GRANDSLAM: keep', game_log.IMPORT)
             turn = self.game.turn
-            save_loc = self.keep[turn]
-            seeds = saved_state.board[save_loc]
-            if seeds:
-                game_log.add('GRANDSLAM: keep', game_log.IMPORT)
+            start, end, incr = self.rparam[turn]
 
-                self.game.store[turn] -= seeds
-                self.game.board[save_loc] = seeds
+            # find left- or right- most hole with seeds
+            for loc in range(start, end, incr):
+                if self.game.board[loc]:
+                    break
 
-                # did we capture anything other than the keep hole?
-                mdata.captured = saved_state != self.game.state
+            # skip that hole and collect the rest of the seeds
+            for loc in range(loc + incr, end, incr):
+
+                seeds = self.game.board[loc]
+                if seeds:
+                    self.game.board[loc] = 0
+                    self.game.store[turn] += seeds
+
+                    # only set if we actually capture seeds
+                    mdata.captured = True
 
 
 class GSOppGets(GrandSlamCapt):
@@ -462,11 +510,17 @@ class GSOppGets(GrandSlamCapt):
         if self.is_grandslam(mdata, capt_first):
 
             game_log.add('GRANDSLAM: opp gets', game_log.IMPORT)
+            # must redo the capture that lead to the grand slam
+            self.decorator.do_captures(mdata, capt_first)
+
+            # now moves own seeds to opp's store
             opp_turn = not self.game.turn
-            for tloc in self.game.cts.get_my_range(self.game.turn):
-                seeds = self.game.board[tloc]
-                self.game.board[tloc] = 0
-                self.game.store[opp_turn] += seeds
+            for loc in self.game.cts.get_my_range(self.game.turn):
+
+                seeds = self.game.board[loc]
+                if seeds:
+                    self.game.board[loc] = 0
+                    self.game.store[opp_turn] += seeds
 
 
 # %%  child decorators
