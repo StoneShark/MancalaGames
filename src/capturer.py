@@ -451,12 +451,14 @@ class GrandSlamCapt(CaptMethodIf):
 
 
 class GSNone(GrandSlamCapt):
-    """A grand slam does not capture, we are done."""
+    """A grand slam does not capture, reset mdata."""
 
     def do_captures(self, mdata, capt_first=True):
 
         if self.is_grandslam(mdata, capt_first):
             game_log.add('GRANDSLAM: no capture', game_log.IMPORT)
+            mdata.capt_changed = False
+            mdata.captured = False
 
 
 class GSKeep(GrandSlamCapt):
@@ -473,7 +475,7 @@ class GSKeep(GrandSlamCapt):
             self.rparam = ((game.cts.dbl_holes - 1, game.cts.holes - 1, -1),
                            (game.cts.holes - 1, -1, -1))
         else:
-            self.rparam = ((game.cts.holes, game.cts.dbl_holes - 1, 1),
+            self.rparam = ((game.cts.holes, game.cts.dbl_holes, 1),
                            (0, game.cts.holes, 1))
 
 
@@ -482,6 +484,7 @@ class GSKeep(GrandSlamCapt):
         if self.is_grandslam(mdata, capt_first):
 
             game_log.add('GRANDSLAM: keep', game_log.IMPORT)
+            mdata.captured = False
             turn = self.game.turn
             start, end, incr = self.rparam[turn]
 
