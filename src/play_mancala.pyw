@@ -797,8 +797,12 @@ class GameChooser(ttk.Frame):
                 continue
 
             game_dict = man_config.read_game(PATH + file)
-
             game_name = game_dict[ckey.GAME_INFO][ckey.NAME]
+
+            if game_name in self.all_games:
+                print(f'Skipping duplicate game name {game_name} from {file}.')
+                continue
+
             self.all_games[game_name] = game_dict
 
         self.games = list(self.all_games.keys())
