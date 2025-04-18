@@ -3,7 +3,6 @@
    "game_constants": {
       "holes": 6,
       "nbr_start": 2
-
    },
    "game_info": {
       "name": "Deka",

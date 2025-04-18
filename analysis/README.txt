@@ -25,6 +25,8 @@ vary_param.py     Vary's one parameter through a range of values.
                   the range for the parameter are provided.
                   see the command line option (via --help) for details.
 
+man_profile.py    Can be used to profile or time options of a game.
+
 
 Support modules:
 

@@ -16,7 +16,7 @@
       "algorithm": "montecarlo_ts",
       "ai_params": {
          "mcts_bias": [300, 200, 200, 200],
-         "mcts_nodes": [300, 500, 700, 800],
+         "mcts_nodes": [300, 700, 800, 1000],
          "mcts_pouts": [1, 1, 2, 2]
       }
    },

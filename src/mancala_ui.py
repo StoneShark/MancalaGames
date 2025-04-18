@@ -471,7 +471,7 @@ class MancalaUI(tk.Frame):
                                      onvalue=True, offvalue=False,
                                      command=self._reset_ani_state,
                                      accelerator='Ctrl-a')
-            showmenu.add_command(label='Anim Speed Medium',
+            showmenu.add_command(label='Anim Speed Reset',
                                  command=self._reset_ani_delay,
                                  accelerator='=')
             showmenu.add_command(label='Anim Speed Faster',

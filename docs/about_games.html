@@ -857,7 +857,10 @@ allow closing of rightmost holes (<a href="game_params.html#sow_rule">SOW_RULE</
 </div>
 <p>Rules: <a href="https://mancala.fandom.com/wiki/Djenon_Aboure" target="_blank">https://mancala.fandom.com/wiki/Djenon_Aboure</a>
 <h3 id="Embeli" class="game_desc">Embeli</h3>
-<p>The goal is to deprive the opponent of seeds. Sow counter-clockwise with multiple laps (LAPPER). Holes are closed on opponent's side when the final seed of a lap brings the seeds in a hole to 4. Sowing then continues with those 4 seeds. Each player's rightmost hole may not be closed (their nti). In subsequent sowing of closed holes (blocked), own holes are skipped but seeds for opponent's holes are taken out of play.
+<p>The goal is to immobilize your opponent, that is, reduce them to only singletons or no seeds at all.
+<p>Sow counter-clockwise with multiple laps (LAPPER). Singletons cannot be moved.
+<p>Holes are closed on opponent's side when the final seed of a lap brings the seeds in a hole to 4. Sowing then continues with those 4 seeds. Each player's rightmost hole may not be closed (their nti).
+<p>In subsequent sowing of closed holes (blocked), own holes are skipped but seeds for opponent's holes are taken out of play.
 <p>The <nolink>Embeli board is not a 2-rank board, but hole assignment yields itself to moving the middle end holes (nti) to the respective player's right side thus making it a 2 rank board.
 <div class="cols_row">
   <div class="column2">
@@ -2126,8 +2129,8 @@ see <a href="about_games.html#Lam Waladach">Lam Waladach</a>
 <p>Rules: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p21.
 <p>Deviation: Game ends a soon as a player has half the seeds.
 <h3 id="Ohojichi" class="game_desc">Ohojichi</h3>
-<p>Sow counter-clockwise but only on your own side of the board. The board is divided vertically into East and West players. When active the AI plays East.
-<p>Multiple capture on 4s but place captured seeds in opponents hole of your choice.
+<p>Sow counter-clockwise but only on your own side of the board. The board is divided vertically into East and West players. When active, the AI plays East.
+<p>Multiple capture on 4s and place captured seeds in opponents hole of your choice.
 <p>A move has the typical draw, sow and check capture phases. If there is a capture, another user input is accepted to identify where the capture seeds should be put. The indicator for this is subtle: your store will still show your turn and your opponent's holes will be highlighted for input.
 <p>When the AI player does a capture, the AI delay is done between move/capture and seed placement; wait for the AI to finish the turn before starting your turn.
 <p>In this game, the number of captured seeds will always be a multiple of 4.
@@ -2948,6 +2951,29 @@ leave one seed in the start hole (<a href="game_params.html#sow_start">SOW_START
   </div>
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p14.
+<h3 id="Wari GSO" class="game_desc">Wari GSO</h3>
+<p>A single-lap mancala, sow direction is counter-clockwise. A sow which cycles the board, will skip the hole that the move started from. If your opponent has no seeds, you must make seeds available to them (if you can).
+<p>Captures are on 2s and 3s from the opponent's side (final seed sown makes either 2 or 3).  As long as there is a an unbroken group of holes containing 2 or 3 seeds immediately preceding the final hole sown, these holes are also captured.
+<p>On Grand Slam, the Opposing player gets your remaining seeds.
+<p>Goal: colled more than half of the seeds.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 2 3</p>
+    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OPP_SIDE</p>
+    <p class="param"><a href="game_params.html#grandslam">Grand Slam</a>: OPP_GETS_REMAIN</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: -1</p>
+    <p class="param"><a href="game_params.html#mustshare">Must Share</a>: Yes</p>
+    <p class="param"><a href="game_params.html#skip_start">Skip Start on Cycle</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p14.
 <h3 id="Waurie" class="game_desc">Waurie</h3>
 <p>Sow direction is counter-clockwise, sow into own store, but no other capture. Extra turn when last sown seed in the store.
 <p>Goal: clear your own holes.
@@ -3120,6 +3146,7 @@ no repeat turn on capture
     <p class="param"><a href="#Valah">Valah</a></p>
     <p class="param"><a href="#Voleur">Voleur</a></p>
     <p class="param"><a href="#Wari">Wari</a></p>
+    <p class="param"><a href="#Wari GSO">Wari GSO</a></p>
     <p class="param"><a href="#Waurie">Waurie</a></p>
     <p class="param"><a href="#Weg">Weg</a></p>
   </div>

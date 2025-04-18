@@ -17,6 +17,7 @@
   <a href="#aiplayer">AI Player</a>
   <a href="#pregames">Preconfigured Games</a>
   <a href="#fileformat">Game File Format</a>
+  <a href="#anagames">Analysis of Games</a>
 <h3>Other Help Files</h3>
   <a href="about_games.html">Mancala Game Configurations</a>
   <a href="game_params.html">Parameters</a>
@@ -34,7 +35,7 @@ Games may be played with two players or one player and an
 Game stores to the left and right of holes are optional.
 
 <h2 id="game_play">Game Play</h2>
-<p>Game play proceeds in the following steps:
+<p>Game play generally proceeds in the following steps:
 
 <ol type="I">
 <li class="over">Initialize game (or round).
@@ -48,27 +49,32 @@ Players alternate turns performing these steps for each turn:
 		<ol type='1'>
 		<li class="over">Current player removes the seeds from one hole
 		on their side of the board.
-		Depending on the game, only some of the players holes are available for
+		Depending on the game, only some of the player's holes are available for
 		play.
 		<li class="over">Those seeds are sown into new holes one at a time:
 		clockwise or counter-clockwise.
 		Sow direction depends on game parameters, and is occationally
 		under user control.
 		<li class="over">Optionally, for multi-lap games,
-		the seeds in the final hole sown are picked up sowing continues.
+		the seeds in the final hole sown, are picked up and sowing continues.
 		<li class="over">Optionally, for store sowing games,
-		a seed maybe sown into the players store when it is being passed.
+		a seed maybe sown into the player's store when it is being passed.
 		</ol>
 	<li class="over">Capture Phase:
 		<ol type="1">
 		<li class="over">The player moves seeds from
-		prescribed holes to a store, walda, or child.
-		Prescription of holes is parametrically controlled via the
-		game configuration.
+		the capture holes to a store, walda or child.
+		Holes where seeds are captured are defined by game rules, possibilities include:
+		<ul><li>where the final seed landed
+		<li>across the board from the final seed sown
+		<li>after the final hole sown
+		<li>two out or across a gap from the final hole sown
+		</ul>
 		<li class="over">Some games support multiple captures.
+		Game rules specify which direction these capture occur in.
 		</ol>
-	<li class="over">Determine if there was a winner or other special
-	conditions (such as a required pass).
+	<li class="over">Determine if there is a winner or other special
+	conditions&mdash;such as a required pass or repeat turn.
 	</ol>
 <li class="over">Check for end game conditions: win, loss, tie or end of round.
 </ol>
@@ -79,10 +85,11 @@ Game play is always via the <a href="#manwindow">Mancala UI</a>.
 
 <ol>
 <li><b>play_mancala</b>:
-allows selecting any of the preconfigured games to play.
-The game list is provided and the game overview can be displayed. The game list can
+allows selecting any of the 100+ preconfigured games to play.
+The game list is provided and the game overview is displayed. The game list can
 be reduced by selecting some high level game properties.
 See <a href="#playwindow">Play Mancala</a> (play_mancala.exe).
+Control-r selects a random game.
 <br><br>
 <li><b>mancala_games</b>: Pops up the game editor&mdash;see
 <a href="#opwindow">Mancala Games Editor</a> (mancala_games.exe).
@@ -96,6 +103,14 @@ a mancala configuration file. Usage to play Wari (for example):
 </pre>This method can be used to create a shortcut to startup your favorite game.
 
 </ol>
+
+<p>Each of these can also be started directly from the python source
+(in the src directory).
+Some operating systems support a double click to start the file.
+Other would require a command such as:
+<pre>
+	python play_mancala.pyw
+</pre>
 
 <h2 id="manwindow">Mancala UI</h2>
 
@@ -233,14 +248,14 @@ Hole owner is only honored when the game ends due to the normal conditions.</li>
 </ul>
 <p><b>Setup Board</b>: Enter a game setup mode. The board maybe reconfigured as desired.
 The coloring of the board is as though the game is being played, but all buttons maybe
-clicked to pick up or drop seeds.
+clicked to adjust game conditions.
 Touch screen grids are only shown as they would be in game play.
-<p>Right click on a board hole or store does pickup of seeds,
+<p>Right clicking on a board hole or store does pickup of seeds,
 possibly via a menu option (depending on game configuration).
 The cursor is changed to circle if there are any held seeds
 and the number of held seeds is shown in the control box.
 Left click drops any held seeds.
-If there are children, locks, blocks or owners configured, these may also be changed
+<p>If there are children, locks, blocks or owners configured, these may also be changed
 from the right click menu.
 Children are cycled through bottom, top and none.
 Locks, blocks and owners are toggled.
@@ -251,10 +266,10 @@ Left click drops any held seeds into the out-of-play container.
 <p>No game rules are checked when in setup mode.
 Exiting setup mode requires that there be a valid move for the player to move.
 
-<p><b>Reset to Setup</b>: On exiting setup mode the game state is saved,
-this command allows returning to that state.
+<p><b>Reset to Setup</b>: On exiting setup mode, the game state is saved,
+this command allows returning to that saved state.
 Suppose, for example, that a puzzle is setup; after trying to solve the puzzle,
-this command can be used to return the setup state.
+this command can be used to return the initial state.
 
 
 <h4>AI</h4>
@@ -329,6 +344,33 @@ and a right click will sow clockwise for the player closest to the menu bar.
 <p><b>Ownership Arrows</b>: Show the hole ownership arrows.
 Colors are used to identify the current players holes, but arrows can also be
 shown to show hole ownership in TERRITORY goal games.
+
+<h5>Animations (on Display menu)</h5>
+
+<p>Moves can be animated or sequenced to show the steps takens.
+Each step is occurs sequentially with a small delay between each.
+The delay can be adjusted to control the speed of the animations.
+
+<p>The animator can be completely disabled by setting disable_animator to yes
+in the mancala.ini file.
+
+<p>The animation controls will only appear if disable_animator is set to no
+in the mancala.ini file.
+
+<p><b>Animation Active</b>: Enable or disable the animations.
+Control-a will also toggle animation active.
+
+<p><b>Anim Speed Reset</b>: Reset the animation delay to either a configured value
+from the mancala.ini file or (if not set there) the default delay.
+The speed can be reset by typing =.
+
+<p><b>Anim Speed Faster</b>: Increase the speed of the animation steps.
+The delay is decreased by 50 ms to a minimum of 50ms.
+The speed can be in increased by typing >.
+
+<p><b>Anim Speed Slower</b>: Decrease the speed of the animation steps.
+The delay is increased creased by 50 ms.
+The speed can be decreased by typing <.
 
 <h4>Help</h4>
 <p><b>Help...</b>: If there is a help file for the game,
@@ -489,11 +531,11 @@ There is a trade off the greater the search depth, the longer it takes to
 select the next move.
 
 <h3>Negamaxer</h3>
-<p>The negamaxer algorithm is a slight optimization of the minimaxer
-algorithm. It can only be used for games without repeat turns.
+<p>The negamaxer algorithm is an optimization of the minimaxer
+algorithm. It can only be used for games with strictly alternating turns
+(no repeat turns or 2nd turn phase).
 <p>The optimization takes advantage of the alternating turns and is able
 to simplify the math.
-This optimization is not significant or even noticable by a human player.
 
 <h3>Monte Carlo Tree Search</h3>
 <p>The Monte Carlo tree search (MCTS) algorithm uses random game play to determine
@@ -622,6 +664,24 @@ When defining new game files, parameters only need to be specified if the
 value is not the default value.
 <p>See <a href="game_params.html">Game Parameters</a> for a detailed
 description of every game parameter.
+<h2 id="anagames">Analysis of Games</h2>
+<p>Several scripts are provided to analyze mancala games:
+<ul>
+<li><b>challange.py</b>: two player configurations can play multple games.
+Logs may be collected. A win percentage is reported for the top player.
+<li><b>fair_games.py</b>: Uses hypothesis testing to determine if games are likely fair.
+Considers both false against true and game starter against non-starter.
+<li><b>optimize.py</b>: searches for improve AI configuration parameters.
+<li><b>vary_param.py</b>: another tool to support selection of AI configuration
+parameters. One parameter is varied through a range of values and games are
+played to determine which is stronger.
+<li><b>man_profile.py</b>: a software timing and analysis tool for mancala games.
+Several predefined actions may be profiled or timed: AI player picking a move,
+computing allowable moves, play a game, and random moves.
+</ul>
+<p>A common player configuration approach and a script to play games
+without a UI is provided.
+<p>Use the --help option for details on any of the scripts.
 <footer>
 <table>
     <tr>
