@@ -397,8 +397,7 @@ class GrandSlamCapt(CaptMethodIf):
 
 
     def is_grandslam(self, mdata, capt_first=True):
-        """Use the capture change to see if a grandslam would
-        occur.
+        """Use the capture deco to see if a grandslam occurs.
 
         A rollback point is set and the current game state is
         collected before the rest of the capture chain is executed.
