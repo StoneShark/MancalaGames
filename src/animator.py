@@ -107,6 +107,27 @@ def set_delay(new_delay):
         animator.delay = new_delay
 
 
+def set_rollback():
+    """Set the rollback point."""
+
+    if ENABLED and animator and animator.active:
+        animator.set_rollback()
+
+
+def clear_rollback():
+    """Clear the rollback point."""
+
+    if ENABLED and animator and animator.active:
+        animator.clear_rollback()
+
+
+def do_rollback():
+    """Do the rollback removing the queued events."""
+
+    if ENABLED and animator and animator.active:
+        animator.do_rollback()
+
+
 @contextlib.contextmanager
 def one_step():
     """Collect multiple changes into one step.
@@ -252,7 +273,14 @@ class AniGameState:
 # %%  animation actions
 
 class AniAction(abc.ABC):
-    """Animation action base class."""
+    """Animation action base class.
+
+    Data is collected in the derived class __init__ so that the
+    action can be simulated later. Each class type records it's
+    own data.
+
+    At a later time, the do_it operation will be called to effect
+    the action on the ani_state provided."""
 
     @abc.abstractmethod
     def do_it(self, game_ui, ani_state):
@@ -407,11 +435,8 @@ class ScheduleCallback(AniAction):
 class Animator:
     """The animator class.
 
-    Collects a queue of state changes and replays them
-    one at a time when do_animation is called.
-
-    queue: a dequeue of pending animation events.
-    append at right, pop from left.
+    Collects a queue of state changes/animator action
+    and replays them one at a time in do_animation.
 
     active: are the animation activated. Don't collect
     animation events when this is off. Best to set
@@ -421,25 +446,33 @@ class Animator:
     animation events. Best to set with the global
     function 'animator.set_delay'
 
-    ani_state: the current state of the replaying
+    _queue: a dequeue of pending animation events.
+    append at right, pop from left.
+
+    _ani_state: the current state of the replaying
     animations, reflects what the current game state is
     for the state variables that are animated.
+
+    _rollback_pt: a point to which the animator queue
+    can be rolled backed, eliminating elements queued
+    since the rollback point was set.
     """
 
     def __init__(self, game_ui):
 
-        self.game_ui = game_ui
-
-        self.queue = collections.deque()
         self.active = ENABLED
         self.delay = DEFAULT_DELAY
-        self.ani_state = None
+
+        self._game_ui = game_ui
+        self._queue = collections.deque()
+        self._ani_state = None
+        self._rollback_pt = None
 
 
     def clear_queue(self):
         """Clear the animation queue."""
 
-        self.queue.clear()
+        self._queue.clear()
 
 
     def add(self, anie):
@@ -447,10 +480,10 @@ class Animator:
         If we haven't yet captured the starting game state,
         capture it"""
 
-        if not self.ani_state:
-            self.ani_state = AniGameState(self.game_ui.game)
+        if not self._ani_state:
+            self._ani_state = AniGameState(self._game_ui.game)
 
-        self.queue.append(anie)
+        self._queue.append(anie)
 
 
     def flash(self, turn, *, move=None, loc=None):
@@ -466,11 +499,11 @@ class Animator:
                 elif len(move) == 3:
                     row, pos = move[0], move[1]
 
-            elif loc < self.game_ui.game.cts.holes:
-                row, pos = loc < self.game_ui.game.cts.holes, loc
+            elif loc < self._game_ui.game.cts.holes:
+                row, pos = loc < self._game_ui.game.cts.holes, loc
             else:
-                row, pos = (loc < self.game_ui.game.cts.holes,
-                            self.game_ui.game.cts.dbl_holes - loc - 1)
+                row, pos = (loc < self._game_ui.game.cts.holes,
+                            self._game_ui.game.cts.dbl_holes - loc - 1)
 
             self.add(Flash(row, pos))
             self.add(Flash(row, pos))
@@ -482,8 +515,8 @@ class Animator:
 
         if self.active:
 
-            if ((attrib == STORE and not self.game_ui.show_seeds_in_stores())
-                    or (attrib == BOARD and self.game_ui.game.blocked[idx])):
+            if ((attrib == STORE and not self._game_ui.show_seeds_in_stores())
+                    or (attrib == BOARD and self._game_ui.game.blocked[idx])):
                 # don't animate things we can't see
                 #   - store updates when they are not on the UI
                 #   - seeds removed from a blocked hole (already an X)
@@ -508,7 +541,7 @@ class Animator:
         step."""
 
         if self.active:
-            self.add(NewGameState(AniGameState(self.game_ui.game)))
+            self.add(NewGameState(AniGameState(self._game_ui.game)))
 
 
     def message(self, message):
@@ -527,31 +560,60 @@ class Animator:
             self.add(ScheduleCallback(func))
 
 
+    def set_rollback(self):
+        """Set the rollback point to the current length
+        of the animation queue."""
+
+        self._rollback_pt = len(self._queue)
+
+
+    def clear_rollback(self):
+        """Clear the rollback point."""
+
+        self._rollback_pt = None
+
+
+    def do_rollback(self):
+        """Remove any animation events that were queued after
+        the rollback point was set."""
+
+        if self._rollback_pt is None:
+            print("do_rollback called without calling set_rollback.")
+            return
+
+        for _ in range(self._rollback_pt, len(self._queue)):
+            self._queue.pop()
+        self._rollback_pt = None
+
+
     def do_animation(self):
         """Do an event from the queue and if there is more to
         do schedule it."""
 
-        if not self.queue:
+        # cancel any pending rollbakc point
+        self._rollback_pt = None
+
+        if not self._queue:
             return
 
         if self.active:
-            self.game_ui.config(cursor=ui_utils.ANI_ACTIVE)
-            anie = self.queue.popleft()
+            self._game_ui.config(cursor=ui_utils.ANI_ACTIVE)
+            anie = self._queue.popleft()
             # print(anie)    # for debugging
-            anie.do_it(self.game_ui, self.ani_state)
+            anie.do_it(self._game_ui, self._ani_state)
 
-            if self.queue:
-                self.game_ui.after(self.delay, self.do_animation)
+            if self._queue:
+                self._game_ui.after(self.delay, self.do_animation)
 
             else:
                 # do refresh to hide any errors in collecting ani actions
-                self.ani_state = None
-                self.game_ui.config(cursor=ui_utils.NORMAL)
-                self.game_ui.after(self.delay, self.game_ui.refresh)
+                self._ani_state = None
+                self._game_ui.config(cursor=ui_utils.NORMAL)
+                self._game_ui.after(self.delay, self._game_ui.refresh)
 
         else:
             # an active playback was stopped
-            self.ani_state = None
-            self.queue.clear()
-            self.game_ui.config(cursor=ui_utils.NORMAL)
-            self.game_ui.refresh()
+            self._ani_state = None
+            self._queue.clear()
+            self._game_ui.config(cursor=ui_utils.NORMAL)
+            self._game_ui.refresh()

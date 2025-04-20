@@ -384,92 +384,91 @@ class CaptOppDir(CaptMethodIf):
 # %%  grand slam decos
 
 class GrandSlamCapt(CaptMethodIf):
-    """Grand Slam capturer and tester. This class is still abstract."""
+    """Grand Slam capturer and tester. This class is still abstract.
+
+    The grand slam decos introduce some overhead even if the
+    animator is disabled."""
+
 
     def __init__(self, game, decorator=None):
 
         super().__init__(game, decorator)
-
-        if animator.ENABLED:
-            self.simul_capture = self.simul_capt_anim
-        else:
-            self.simul_capture = self.simul_capt_base
-
-
-    def simul_capt_base(self, opp_rng, mdata, capt_first=True):
-        """Do the capture simulation. Use this directly
-        if the animator is disabled.
-
-        Return True if the opponent does not have any seeds
-        after the capture, False otherwise (not grand slam)."""
-
-        with self.game.save_restore_state():
-            self.decorator.do_captures(mdata, capt_first)
-
-            if mdata.captured:
-                return not any(self.game.board[tloc] for tloc in opp_rng)
-
-        return False
-
-
-    def simul_capt_anim(self, opp_rng, mdata, capt_first=True):
-        """Wrap the capture simulation in an animate_off,
-        never want to animate this capture (animator is not
-        ENABLED)."""
-
-        with animator.animate_off():
-            return self.simul_capt_base(opp_rng, mdata, capt_first)
+        self._saved_state = None
 
 
     def is_grandslam(self, mdata, capt_first=True):
         """Use the capture change to see if a grandslam would
-        occur. Do this without capturing any animation events and
-        with the state restored (that is, no change to the game).
+        occur.
 
-        If there was not a grand slam, do the capture deco
-        again but this time allow animation captures and
-        state changes. Yes, this is duplicate work, but it works
-        with the animator hooks.
+        A rollback point is set and the current game state is
+        collected before the rest of the capture chain is executed.
+        These are cleared if there was no grand slam.
 
         The caller needs to process what happens when a
-        grand slam did occur, possibly including re-doing the
-        captures that resulted in the grand slam.
+        grand slam does occur. This might include:
+            - calling do_rollback and resetting the game state
+            to undo the first capture chain
+            - redoing only the appropriate captures
+            - adjust the values of mdata.captured and
+            mdata.capt_changed
 
         Return True if there was a grandslam."""
 
+        animator.set_rollback()
+        self._saved_state = None
         gslam = False
         opp_rng = self.game.cts.get_opp_range(self.game.turn)
         start_seeds = any(mdata.board[tloc] for tloc in opp_rng)
 
         if start_seeds:
-            gslam = self.simul_capture(opp_rng, mdata, capt_first)
+            self._saved_state = self.game.state
+            self.decorator.do_captures(mdata, capt_first)
+
+            if mdata.captured:
+                gslam = not any(self.game.board[tloc] for tloc in opp_rng)
 
         if not gslam:
-            self.decorator.do_captures(mdata, capt_first)
+            animator.clear_rollback()
+            self._saved_state = None
 
         return gslam
 
 
 class GSNone(GrandSlamCapt):
-    """A grand slam does not capture, reset mdata."""
+    """A grand slam does not capture, roll back the animator,
+    and reset the state, and mdata."""
 
     def do_captures(self, mdata, capt_first=True):
 
         if self.is_grandslam(mdata, capt_first):
             game_log.add('GRANDSLAM: no capture', game_log.IMPORT)
+            animator.do_rollback()
+            self.game.state = self._saved_state
+            self._saved_state = None
+
             mdata.capt_changed = False
             mdata.captured = False
 
 
 class GSKeep(GrandSlamCapt):
-    """A grand slam does not capture left/right.
-    Left/right is from the perspective of the player who just sowed."""
+    """A grand slam does not capture left/rightmost hole that
+    has seeds.
+
+    Left/right is from the perspective of the player who just sowed.
+
+    If there was a grandslam, rollback the animator chain and state,
+    here we will redo some of the captures leaving the required hole
+    uncaptured. Only leave mdata.captured set, if there actually was
+    a capture."""
 
     def __init__(self, game, grandslam, decorator=None):
+        """Precompute the start, stop and increment for the range
+        to find the left/rightmost hole to keep.
+
+        Index of the tuple is current player, left or right is
+        from their perspective"""
 
         super().__init__(game, decorator)
-
-        # index is current player, left or right is from their perspective
 
         if grandslam == gi.GrandSlam.LEAVE_LEFT:
             self.rparam = ((game.cts.dbl_holes - 1, game.cts.holes - 1, -1),
@@ -484,6 +483,9 @@ class GSKeep(GrandSlamCapt):
         if self.is_grandslam(mdata, capt_first):
 
             game_log.add('GRANDSLAM: keep', game_log.IMPORT)
+            animator.do_rollback()
+            self.game.state = self._saved_state
+            self._saved_state = None
             mdata.captured = False
             turn = self.game.turn
             start, end, incr = self.rparam[turn]
@@ -506,15 +508,15 @@ class GSKeep(GrandSlamCapt):
 
 
 class GSOppGets(GrandSlamCapt):
-    """On a grand slam your seeds are collect by your opponent."""
+    """On a grand slam your seeds are collect by your opponent.
+
+    Captures done by is_grandslam are always kept."""
 
     def do_captures(self, mdata, capt_first=True):
 
         if self.is_grandslam(mdata, capt_first):
 
             game_log.add('GRANDSLAM: opp gets', game_log.IMPORT)
-            # must redo the capture that lead to the grand slam
-            self.decorator.do_captures(mdata, capt_first)
 
             # now moves own seeds to opp's store
             opp_turn = not self.game.turn
@@ -524,6 +526,10 @@ class GSOppGets(GrandSlamCapt):
                 if seeds:
                     self.game.board[loc] = 0
                     self.game.store[opp_turn] += seeds
+
+            # don't need the rollback or the saved state
+            animator.clear_rollback()
+            self._saved_state = None
 
 
 # %%  child decorators
