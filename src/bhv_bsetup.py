@@ -96,6 +96,48 @@ class SetupHold(bhv_hold.Hold):
         self._label = None
 
 
+    def add_collect_button(self, game_ui, tframe, rcnt, ccnt):
+        """Choose and build a collection option to move seeds
+        together for easier setup:
+            - off board out-of-play for clear and deprive games
+            - clear to stores for other games with visible stores
+            - move to leftmost for other games"""
+
+        if game_ui.game.info.goal in (gi.Goal.CLEAR,
+                                      gi.Goal.DEPRIVE,
+                                      gi.Goal.RND_WIN_COUNT_CLR,
+                                      gi.Goal.RND_WIN_COUNT_DEP):
+
+            tk.Button(tframe, text="Clear Board",
+                      command=self.clear_board).grid(
+                          row=rcnt.value, column=ccnt.count,
+                          padx=2, pady=2, sticky='ew')
+
+            self.out_of_play = sum(self.game_ui.game.store)
+            self.game_ui.game.store[0] = self.out_of_play
+            self.game_ui.game.store[1] = 0
+
+            self._oop_btn = tk.Button(tframe,
+                                     text=f"Off board: {self.out_of_play}",
+                                     command=self.add_seeds)
+            self._oop_btn.grid(
+                row=rcnt.value, column=ccnt.count,
+                padx=2, pady=2, sticky='ew')
+            self._oop_btn.bind('<Button-3>', self.sub_seeds)
+
+        elif game_ui.stores:
+            tk.Button(tframe, text="Clear to Stores",
+                      command=self.clear_to_stores).grid(
+                          row=rcnt.value, column=ccnt.count,
+                          padx=2, pady=2, sticky='ew')
+
+        else:
+            tk.Button(tframe, text="Move to Left",
+                      command=self.move_to_left).grid(
+                          row=rcnt.value, column=ccnt.count,
+                          padx=2, pady=2, sticky='ew')
+
+
     def hold_menu(self, game_ui, _=None):
         """Fill the right status frame with controls."""
 
@@ -143,39 +185,13 @@ class SetupHold(bhv_hold.Hold):
         tk.Button(tframe, text="Rotate Board",
                   command=self.rotate_board).grid(
                       row=row, column=ccnt.count, padx=2, pady=2, sticky='ew')
-        row = rcnt.count
         ccnt.reset()
         tk.Button(tframe, text="Initial Setup",
                   command=self.init_setup).grid(
-                      row=row, column=ccnt.count, padx=2, pady=2, sticky='ew')
+                      row=rcnt.count, column=ccnt.count,
+                      padx=2, pady=2, sticky='ew')
 
-        if game_ui.game.info.goal in (gi.Goal.CLEAR,
-                                      gi.Goal.DEPRIVE,
-                                      gi.Goal.RND_WIN_COUNT_CLR,
-                                      gi.Goal.RND_WIN_COUNT_DEP):
-
-            tk.Button(tframe, text="Clear Board",
-                      command=self.clear_board).grid(
-                          row=row, column=ccnt.count,
-                          padx=2, pady=2, sticky='ew')
-
-            self.out_of_play = sum(self.game_ui.game.store)
-            self.game_ui.game.store[0] = self.out_of_play
-            self.game_ui.game.store[1] = 0
-
-            self._oop_btn = tk.Button(tframe,
-                                     text=f"Off board: {self.out_of_play}",
-                                     command=self.add_seeds)
-            self._oop_btn.grid(
-                row=row, column=ccnt.count, padx=2, pady=2, sticky='ew')
-            self._oop_btn.bind('<Button-3>', self.sub_seeds)
-
-        else:
-            tk.Button(tframe, text="Clear to Stores",
-                      command=self.clear_to_stores).grid(
-                          row=row, column=ccnt.count,
-                          padx=2, pady=2, sticky='ew')
-
+        self.add_collect_button(game_ui, tframe, rcnt, ccnt)
 
         tframe.pack(side='top')
 
@@ -216,10 +232,6 @@ class SetupHold(bhv_hold.Hold):
         """Move the seeds to the stores and do board refresh.
         Don't do anything if the stores aren't on the UI."""
 
-        if not self.game_ui.stores:
-            self.game_ui.bell()
-            return
-
         quot, rem = divmod(self.game_ui.game.cts.total_seeds , 2)
 
         store = self.game_ui.game.store
@@ -229,6 +241,24 @@ class SetupHold(bhv_hold.Hold):
         board = self.game_ui.game.board
         for i, _ in enumerate(board):
             board[i] = 0
+
+        self.refresh_game()
+
+
+    def move_to_left(self):
+        """Move the seeds to each player's leftmost hole.
+        Use for games where stores are not visible and captured
+        seeds are moved to player's children."""
+
+        holes = self.game_ui.game.cts.holes
+        board = self.game_ui.game.board
+        for loc in range(1, holes):
+            board[0] += board[loc]
+            board[loc] = 0
+
+        for loc in range(holes + 1, self.game_ui.game.cts.dbl_holes):
+            board[holes] += board[loc]
+            board[loc] = 0
 
         self.refresh_game()
 
