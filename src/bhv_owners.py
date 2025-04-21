@@ -110,7 +110,7 @@ class SelectOwnedHoles(bhv.BehaviorIf):
             # no mixed hole sides, would be nothing to do
             return False
 
-        ans = tk.messagebox.askquestion(
+        ans = tk.messagebox.askyesno(
             title='Change Ownership',
             message=textwrap.fill(textwrap.dedent("""\
                   The winner may choose which holes on the opposite
@@ -120,7 +120,7 @@ class SelectOwnedHoles(bhv.BehaviorIf):
                   width=bhv.FILL_POPUP),
             parent=game_ui)
 
-        if ans != bhv.YES_STR:
+        if not ans:
             return False
 
         cls.starter = game_ui.game.turn

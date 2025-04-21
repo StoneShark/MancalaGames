@@ -126,7 +126,7 @@ class RndChooseButtonBehavior(bhv.BehaviorIf):
         if not any(game_ui.game.blocked):
             return False
 
-        ans = tk.messagebox.askquestion(
+        ans = tk.messagebox.askyesno(
             title='Move seeds',
             message=textwrap.fill(textwrap.dedent("""\
                 A new round is begining, so you may
@@ -135,7 +135,7 @@ class RndChooseButtonBehavior(bhv.BehaviorIf):
                 rearrange the blocks?"""), width=bhv.FILL_POPUP),
                     parent=game_ui)
 
-        if ans != bhv.YES_STR:
+        if not ans:
             return False
 
         HOLD.hold_menu(game_ui,
@@ -237,7 +237,7 @@ class RndMoveSeedsButtonBehavior(bhv.BehaviorIf):
         through this function and the leave_mode function can
         undo the local changes."""
 
-        ans = tk.messagebox.askquestion(
+        ans = tk.messagebox.askyesno(
             title='Move seeds',
             message=textwrap.fill(textwrap.dedent("""\
                   The loser may
@@ -249,7 +249,7 @@ class RndMoveSeedsButtonBehavior(bhv.BehaviorIf):
                   width=bhv.FILL_POPUP),
             parent=game_ui)
 
-        if ans != bhv.YES_STR:
+        if not ans:
             return False
 
         HOLD.hold_menu(game_ui,
@@ -368,7 +368,7 @@ class MoveSeedsButtonBehavior(bhv.BehaviorIf):
     @classmethod
     def ask_mode_change(cls, game_ui):
 
-        ans = tk.messagebox.askquestion(
+        ans = tk.messagebox.askyesno(
             title='Move seeds',
             message=textwrap.fill(textwrap.dedent("""\
                   At the start of this game you may rearrange seeds on
@@ -378,7 +378,7 @@ class MoveSeedsButtonBehavior(bhv.BehaviorIf):
                   seeds?"""), width=bhv.FILL_POPUP),
             parent=game_ui)
 
-        if ans != bhv.YES_STR:
+        if not ans:
             game_ui.game.inhibitor.set_on(game_ui.game.turn)
             return False
 
