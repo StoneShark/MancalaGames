@@ -21,11 +21,6 @@ import functools as ft
 import textwrap
 import traceback
 import tkinter as tk
-#  these are not always loaded along with tkinter
-#  pylint: disable=unused-import
-from tkinter import messagebox
-#  pylint: disable=unused-import
-from tkinter import simpledialog
 from tkinter import ttk
 import warnings
 
@@ -118,7 +113,7 @@ class MancalaGames(ttk.Frame):
         self.pack()
 
         self.master.report_callback_exception = self._exception_callback
-        warnings.showwarning = self._warning
+        warnings.showwarning = ft.partial(self._warning, self)
         warnings.simplefilter('always', UserWarning)
 
         ui_utils.setup_styles(master)
@@ -186,10 +181,10 @@ class MancalaGames(ttk.Frame):
 
 
     @staticmethod
-    def _warning(message, *_):
+    def _warning(parent, message, *_):
         """Notify user of warnings during parameter test."""
 
-        tk.messagebox.showwarning('Parameter Warning', message)
+        ui_utils.showwarning(parent, 'Parameter Warning', str(message))
 
 
     def _update_title(self):
@@ -748,13 +743,14 @@ class MancalaGames(ttk.Frame):
         except (gconsts.GameConstsError, gi.GameInfoError, NotImplementedError
                 ) as error:
             message = error.__class__.__name__ + ':  ' + str(error)
-            tk.messagebox.showerror('Parameter Error', message)
+            ui_utils.showerror(self, 'Parameter Error', message)
 
             self.game = None
             return
 
         if positive:
-            tk.messagebox.showinfo(
+            ui_utils.showinfo(
+                self,
                 'Game Config',
                 'No errors detected in the game configuration.')
 

@@ -6,10 +6,10 @@ Created on Thu Jan 30 13:31:34 2025
 """
 
 import tkinter as tk
-import textwrap
 
 import behaviors as bhv
 import man_config
+import ui_utils
 # from game_logger import game_log
 
 
@@ -110,15 +110,13 @@ class SelectOwnedHoles(bhv.BehaviorIf):
             # no mixed hole sides, would be nothing to do
             return False
 
-        ans = tk.messagebox.askyesno(
-            title='Change Ownership',
-            message=textwrap.fill(textwrap.dedent("""\
-                  The winner may choose which holes on the opposite
-                  side that they would like to own. The number of
-                  holes owned by each player may not be changed.
-                  Do you wish to change any hole ownership?"""),
-                  width=bhv.FILL_POPUP),
-            parent=game_ui)
+        message = """The winner may choose which holes on the opposite
+                     side that they would like to own. The number of
+                     holes owned by each player may not be changed.
+                     Do you wish to change any hole ownership?"""
+        ans = ui_utils.ask_popup(game_ui,
+                                 'Change Ownership', message,
+                                 ui_utils.YESNO)
 
         if not ans:
             return False
@@ -137,11 +135,8 @@ class SelectOwnedHoles(bhv.BehaviorIf):
     def leave_mode(cls, game_ui):
 
         if OWNERS.deviat != [0, 0]:
-            tk.messagebox.showerror(
-                title='Game Mode',
-                message=textwrap.fill(textwrap.dedent("""\
-                    Hole ownership numbers are not zeros."""), width=40),
-                parent=game_ui)
+            message = 'Hole ownership numbers are not zeros.'
+            ui_utils.showerror(game_ui, 'Game Mode', message)
             return False
 
         game_ui.game.turn = cls.starter

@@ -7,11 +7,6 @@ Created on Sun Aug 13 10:06:37 2023
 
 
 import tkinter as tk
-#  these are not always loaded along with tkinter
-#  pylint: disable=unused-import
-from tkinter import messagebox
-#  pylint: disable=unused-import
-from tkinter import simpledialog
 import textwrap
 
 import behaviors as bhv
@@ -101,11 +96,9 @@ class Hold(bhv.BehaviorGlobal):
         otherwise return False."""
 
         if self.nbr:
-            tk.messagebox.showerror(
-                title='Game Mode',
-                message='Hold is not empty; '
-                'place seeds before returning to game mode.',
-                parent=game_ui)
+            message = """Hold is not empty;
+                         place seeds before returning to game mode."""
+            ui_utils.showerror(game_ui, 'Game Mode', message)
             return True
 
         return False
@@ -126,15 +119,12 @@ class RndChooseButtonBehavior(bhv.BehaviorIf):
         if not any(game_ui.game.blocked):
             return False
 
-        ans = tk.messagebox.askyesno(
-            title='Move seeds',
-            message=textwrap.fill(textwrap.dedent("""\
-                A new round is begining, so you may
-                change the blocked holes on the loser's of the
-                board. Do you wish to
-                rearrange the blocks?"""), width=bhv.FILL_POPUP),
-                    parent=game_ui)
-
+        message = """A new round is begining, so you may
+                     change the blocked holes on the loser's of the
+                     board. Do you wish to rearrange the blocks?"""
+        ans = ui_utils.ask_popup(game_ui,
+                                 'Move seeds', message,
+                                 ui_utils.YESNO)
         if not ans:
             return False
 
@@ -237,17 +227,15 @@ class RndMoveSeedsButtonBehavior(bhv.BehaviorIf):
         through this function and the leave_mode function can
         undo the local changes."""
 
-        ans = tk.messagebox.askyesno(
-            title='Move seeds',
-            message=textwrap.fill(textwrap.dedent("""\
-                  The loser may
-                  arrange the playable seeds with the restrictions that each
-                  hole contain at least one seed and one hole is playable.
-                  Seeds maybe added or removed from the store.
-                  The winner's seeds will be arranged the same way.
-                  Do you wish to rearrange the seeds?"""),
-                  width=bhv.FILL_POPUP),
-            parent=game_ui)
+        message = """The loser may arrange the playable seeds
+                     with the restrictions that each hole contain
+                     at least one seed and one hole is playable.
+                     Seeds maybe added or removed from the store.
+                     The winner's seeds will be arranged the same way.
+                     Do you wish to rearrange the seeds?"""
+        ans = ui_utils.ask_popup(game_ui,
+                                 'Move seeds', message,
+                                 ui_utils.YESNO)
 
         if not ans:
             return False
@@ -284,13 +272,10 @@ class RndMoveSeedsButtonBehavior(bhv.BehaviorIf):
 
         if not any(seeds >= game.info.min_move
                    for seeds in game.board[loser_slice]):
-            tk.messagebox.showerror(
-                title='Game Mode',
-                message=textwrap.fill(textwrap.dedent(f"""\
-                    None of the holes have min_moves seeds
-                    ({game.info.min_move}); thus the game is not playable.
-                    Move more seeds back from store."""), width=40),
-                parent=game_ui)
+            message = f"""None of the holes have min_moves seeds
+                        ({game.info.min_move}); thus the game is not playable.
+                        Move more seeds back from store."""
+            ui_utils.showerror(game_ui, 'Game Mode', message)
             return False
 
         start_seeds = sum(game.board[winner_slice])
@@ -368,15 +353,13 @@ class MoveSeedsButtonBehavior(bhv.BehaviorIf):
     @classmethod
     def ask_mode_change(cls, game_ui):
 
-        ans = tk.messagebox.askyesno(
-            title='Move seeds',
-            message=textwrap.fill(textwrap.dedent("""\
-                  At the start of this game you may rearrange seeds on
-                  your side of the board. Your opponents seeds will be
-                  arranged the same. Rearranging seeds counts as your
-                  first move. Do you wish to move any
-                  seeds?"""), width=bhv.FILL_POPUP),
-            parent=game_ui)
+        message = """At the start of this game you may rearrange seeds on
+                     your side of the board. Your opponents seeds will be
+                     arranged the same. Rearranging seeds counts as your
+                     first move. Do you wish to move any
+                     seeds?"""
+        ans = ui_utils.ask_popup(game_ui, 'Move seeds', message,
+                                 ui_utils.YESNO)
 
         if not ans:
             game_ui.game.inhibitor.set_on(game_ui.game.turn)

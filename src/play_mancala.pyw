@@ -12,15 +12,9 @@ import os
 import random
 import textwrap
 import tkinter as tk
-#  these are not always loaded along with tkinter
-#  pylint: disable=unused-import
-from tkinter import messagebox
-#  pylint: disable=unused-import
-from tkinter import simpledialog
 from tkinter import ttk
 
 import ai_player
-import animator
 import cfg_keys as ckey
 import game_constants as gconsts
 import game_interface as gi

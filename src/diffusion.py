@@ -6,7 +6,6 @@ Game rules: Copyright (c) January 2006 by Mark Steere
 Created on Sat Nov  2 15:39:39 2024
 @author: Ann"""
 
-import textwrap
 
 import game_interface as gi
 import ginfo_rules
@@ -50,9 +49,8 @@ def build_rules():
     rules.add_rule(
         'store_for_turn',
         rule=lambda ginfo: not ginfo.stores,
-        msg=textwrap.dedent("""\
-                            In Diffusion, make stores visible to
-                            identify the current player."""),
+        msg="""In Diffusion, make stores visible to
+               identify the current player.""",
         warn=True)
 
     rules.add_rule(
@@ -83,17 +81,16 @@ def build_rules():
     rules.add_rule(
         'no_rounds',
         rule=lambda ginfo: any(getattr(ginfo, flag) for flag in round_flags),
-        msg="""Diffusion is incompatible with rounds: """ \
-            + ', '.join(round_flags),
+        msg="""Diffusion is incompatible with rounds:
+            """ + ', '.join(round_flags),
         excp=gi.GameInfoError)
 
     rules.add_rule(
         'sow_ccw',
         rule=lambda ginfo: ginfo.sow_direct != gi.Direct.CCW,
-        msg=textwrap.dedent("""\
-                            Diffusion always sows from most CW hole
-                            around start hole in the CCW direction
-                            (sow_direct must be CCW)"""),
+        msg="""Diffusion always sows from most CW hole
+               around start hole in the CCW direction
+               (sow_direct must be CCW)""",
         excp=gi.GameInfoError)
 
     sow_flags = ['mlaps', 'move_one', 'moveunlock', 'mustpass', 'mustshare',
@@ -102,27 +99,24 @@ def build_rules():
     rules.add_rule(
         'no_sow_changes',
         rule=lambda ginfo: any(getattr(ginfo, flag) for flag in sow_flags),
-        msg=textwrap.fill("""Diffusion is incompatible with special sow \
-                          methods: """ + ', '.join(sow_flags),
-                          width=50),
+        msg="""Diffusion is incompatible with special sow
+                methods: """ + ', '.join(sow_flags),
         excp=gi.GameInfoError)
 
     rules.add_rule(
         'no_sow_own',
         rule=lambda ginfo: ginfo.sow_own_store,
-        msg=textwrap.dedent("""\
-                            Diffusion is incompatible with sow_own_store,
-                            2 seeds are automatically sown into the stores
-                            when indicated. There is no repeat turn"""),
+        msg="""Diffusion is incompatible with sow_own_store,
+               2 seeds are automatically sown into the stores
+               when indicated. There is no repeat turn""",
         excp=gi.GameInfoError)
 
     child_flags = ['child_cvt', 'child_rule', 'child_type']
     rules.add_rule(
         'no_children',
         rule=lambda ginfo: any(getattr(ginfo, flag) for flag in child_flags),
-        msg=textwrap.fill("""Diffusion is incompatible with children: """ \
-                          + ', '.join(child_flags),
-                          width=50),
+        msg="""Diffusion is incompatible with children:
+                """ + ', '.join(child_flags),
         excp=gi.GameInfoError)
 
     capt_flags = ['capsamedir', 'capt_max', 'capt_min', 'capt_type',
@@ -132,11 +126,10 @@ def build_rules():
     rules.add_rule(
         'no_capt_mech',
         rule=lambda ginfo: any(getattr(ginfo, flag) for flag in capt_flags),
-        msg=textwrap.dedent("""\
-                            Diffusion moves seeds out of play by limiting
-                            seeds per hole to 5 and sowing 2 into the stores,
-                            all other capture mechanisms are prohibited: """ \
-                          + ', '.join(capt_flags)),
+        msg="""Diffusion moves seeds out of play by limiting
+               seeds per hole to 5 and sowing 2 into the stores,
+               all other capture mechanisms are prohibited:
+               """  + ', '.join(capt_flags),
         excp=gi.GameInfoError)
 
     return rules

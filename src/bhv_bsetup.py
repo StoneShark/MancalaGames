@@ -35,12 +35,6 @@ Created on Tue Mar 11 09:02:11 2025
 
 
 import tkinter as tk
-#  these are not always loaded along with tkinter
-#  pylint: disable=unused-import
-from tkinter import messagebox
-#  pylint: disable=unused-import
-from tkinter import simpledialog
-
 import textwrap
 
 import behaviors as bhv
@@ -353,20 +347,16 @@ class SetupButtonBehavior(bhv.BehaviorIf):
     def ask_mode_change(cls, game_ui):
         """Setup was requested always allow."""
 
-        message = "Do you wish to enter board setup mode?\n\n" \
-                   + textwrap.dedent("""\
-                        The current game will not be tallied,
-                        the inhibitor will be turned off,
-                        move count will be reset to 2
-                        (no prescribed openings will occur),
-                        and knowledge gained by AI player
-                        is not cleared and it is deactivated.""")
-
-        do_it = tk.messagebox.askokcancel(
-            title='Board Setup',
-            message=message,
-            parent=game_ui)
-
+        messages = ["Do you wish to enter board setup mode?",
+                   """The current game will not be tallied,
+                      the inhibitor will be turned off,
+                      move count will be reset to 2
+                      (no prescribed openings will occur),
+                      and knowledge gained by AI player
+                      is not cleared and it is deactivated."""]
+        do_it = ui_utils.ask_popup(game_ui,
+                                   'Board Setup', messages,
+                                   ui_utils.OKCANCEL)
         if not do_it:
             return False
 
@@ -386,10 +376,8 @@ class SetupButtonBehavior(bhv.BehaviorIf):
             return False
 
         if not any(game_ui.game.get_allowable_holes()):
-            tk.messagebox.showerror(
-                title='Game Mode',
-                message='The game is not playable.',
-                parent=game_ui)
+            ui_utils.showerror(game_ui,
+                               'Game Mode', 'The game is not playable.')
             return False
 
         game_ui.setup.save_setup()
@@ -503,10 +491,10 @@ class SetupButtonBehavior(bhv.BehaviorIf):
         loc = self.btn.loc
 
         if game.board[loc]:
-            tk.messagebox.showerror(
-                title='Block',
-                message='Remove the seeds from the hole before blocking it.',
-                parent=self.btn.game_ui)
+            ui_utils.showerror(
+                self.btn.game_ui,
+                'Block',
+                'Remove the seeds from the hole before blocking it.')
             return
 
         game.blocked[loc] = not game.blocked[loc]

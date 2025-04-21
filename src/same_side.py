@@ -11,7 +11,6 @@ Created on Sun Dec  1 07:10:20 2024
 # %% imports
 
 import dataclasses as dc
-import textwrap
 
 import cfg_keys as ckey
 import incrementer
@@ -92,11 +91,10 @@ def build_rules():
     rules.add_rule(
         'ss_no_capt_rturn',
         rule=lambda ginfo: ginfo.capt_rturn,
-        msg=textwrap.dedent("""\
-                            Do not set capt_rturn in SameSide games.
-                            Repeat turn on capt is forced to support
-                            selecting the opponent's hole for the
-                            captured seeds."""),
+        msg="""Do not set capt_rturn in SameSide games.
+               Repeat turn on capt is forced to support
+               selecting the opponent's hole for the
+               captured seeds.""",
         excp=gi.GameInfoError)
 
     rules.add_rule(

@@ -13,9 +13,6 @@ Created on Thu Mar  2 14:38:17 2023
 import textwrap
 import traceback
 import tkinter as tk
-#  pylint: disable=unused-import
-#  this is not always loaded along with tkinter
-from tkinter import messagebox
 import webbrowser
 
 import ai_player
@@ -124,10 +121,9 @@ class GameSetup:
             self.game_ui.start_it()
             return
 
-        tk.messagebox.showerror(
-            title='Board Setup',
-            message='There has been no previous board setup.',
-            parent=self.game_ui)
+        ui_utils.showerror(self.game_ui,
+                           'Board Setup',
+                           'There has been no previous board setup.')
 
 
 # %%  mancala ui
@@ -797,11 +793,11 @@ class MancalaUI(tk.Frame):
         """The new round is not playable by the starter."""
 
         self.refresh()
-        tk.messagebox.showerror(
-            title="New Round Not Playable",
-            message="The new round resulted in a unplayable game. " \
-                "New game started.",
-            parent=self)
+        ui_utils.showerror(
+            self,
+            "New Round Not Playable",
+           """The new round resulted in a unplayable game. 
+           New game started.""")
 
 
     def _new_game(self, win_cond=None, new_round_ok=False):
@@ -928,12 +924,10 @@ class MancalaUI(tk.Frame):
 
         game = self.game
         if self.movers != 1:
-            tk.messagebox.showerror(
-                title="Swap Not Allowed",
-                message="Swapping sides is only allowed by a " \
-                    "human player after the first move. " \
-                    "It counts as a move.",
-                parent=self)
+            ui_utils.showerror(self, "Swap Not Allowed",
+                               """Swapping sides is only allowed by a
+                               human player after the first move. 
+                               It counts as a move.""")
             return
 
         self.movers += 1
@@ -958,9 +952,8 @@ class MancalaUI(tk.Frame):
             return
 
         message = 'Are you sure you wish to end the round?'
-        do_it = tk.messagebox.askokcancel(title='End Round',
-                                          message=message,
-                                          parent=self)
+        do_it = ui_utils.ask_popup(self,'End Round', message,
+                                   ui_utils.OKCANCEL)
         if not do_it:
             return
 
@@ -985,16 +978,15 @@ class MancalaUI(tk.Frame):
 
         if self.mode != buttons.Behavior.GAMEPLAY:
             message = 'End game during setup will force New Game. Continue?'
-            do_it = tk.messagebox.askokcancel(title='End Game',
-                                              message=message,
-                                              parent=self)
+            do_it = ui_utils.ask_popup(self, 'End Game', message,
+                                       ui_utils.OKCANCEL)
             if do_it:
                 self._new_game()
             return
 
         message = 'Are you sure you wish to end the game?'
-        do_it = tk.messagebox.askokcancel(title='End Game', message=message,
-                                          parent=self)
+        do_it = ui_utils.ask_popup(self, 'End Game', message,
+                                   ui_utils.OKCANCEL)
         if not do_it:
             return
 
@@ -1054,7 +1046,6 @@ class MancalaUI(tk.Frame):
         else:
             self.refresh()
             self.move_epilog()
-
 
 
     def move_epilog(self):
@@ -1131,9 +1122,7 @@ class MancalaUI(tk.Frame):
 
             message = 'Player direction is ' \
                 + self.saved_move[-1].opp_dir().name
-            tk.messagebox.showinfo(title='Player Direction',
-                                   message=message,
-                                   parent=self)
+            ui_utils.showinfo(self, 'Player Direction', message)
 
         if self.wcond != gi.WinCond.REPEAT_TURN:
             self.master.config(cursor=ui_utils.NORMAL)

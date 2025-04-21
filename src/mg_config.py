@@ -6,12 +6,12 @@ Created on Tue Jan 28 11:07:30 2025
 
 import json
 import os.path
-import tkinter as tk
 import tkinter.filedialog as tkfile
 
 import cfg_keys as ckey
 import man_config
 import man_path
+import ui_utils
 
 
 ALL_PARAMS = '_all_params.txt'
@@ -201,8 +201,7 @@ class GameConfig:
         try:
             self.loaded_config = man_config.read_game(self.filename)
         except ValueError as error:
-            tk.messagebox.showerror('JSON File Error', error,
-                                    parent=self._master)
+            ui_utils.showerror(self._master, 'JSON File Error', error)
             return False
 
         self.edited = False
@@ -303,9 +302,9 @@ class GameConfig:
 
         if self.edited:
             message = f'Save changes to {self.filename}?'
-            do_it = tk.messagebox.askyesnocancel(title='Save Changes',
-                                                 message=message,
-                                                 parent=self._master)
+            do_it = ui_utils.ask_popup(self._master,
+                                       'Save Changes', message,
+                                       ui_utils.YESNOCANCEL)
             if do_it is None:
                 return True
 
@@ -322,9 +321,9 @@ class GameConfig:
         if self.edited and self._known:
 
             message = f'Revert changes to {self.filename}?'
-            do_it = tk.messagebox.askyesno(title='Revert Changes',
-                                           message=message,
-                                           parent=self._master)
+            do_it = ui_utils.ask_popup(self._master,
+                                       'Revert Changes', message,
+                                       ui_utils.YESNO)
             if do_it:
                 self._load_file()
                 return True
