@@ -467,6 +467,7 @@ class Animator:
         self._queue = collections.deque()
         self._ani_state = None
         self._rollback_pt = None
+        self._pending_after = False
 
 
     def clear_queue(self):
@@ -586,34 +587,39 @@ class Animator:
         self._rollback_pt = None
 
 
-    def do_animation(self):
+    def do_animation(self, first=True):
         """Do an event from the queue and if there is more to
         do schedule it."""
 
-        # cancel any pending rollbakc point
+        # cancel any pending rollback point
         self._rollback_pt = None
 
-        if not self._queue:
+        if first and self._pending_after:
+            # don't start a second series of afters
             return
 
-        if self.active:
+        if self.active and self._queue:
             self._game_ui.config(cursor=ui_utils.ANI_ACTIVE)
             anie = self._queue.popleft()
             # print(anie)    # for debugging
             anie.do_it(self._game_ui, self._ani_state)
 
             if self._queue:
-                self._game_ui.after(self.delay, self.do_animation)
+                self._pending_after = True
+                self._game_ui.after(self.delay,
+                                    lambda: self.do_animation(False))
 
             else:
                 # do refresh to hide any errors in collecting ani actions
                 self._ani_state = None
+                self._pending_after = False
                 self._game_ui.config(cursor=ui_utils.NORMAL)
                 self._game_ui.after(self.delay, self._game_ui.refresh)
 
         else:
             # an active playback was stopped
             self._ani_state = None
+            self._pending_after = False
             self._queue.clear()
             self._game_ui.config(cursor=ui_utils.NORMAL)
             self._game_ui.refresh()

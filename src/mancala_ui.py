@@ -1030,7 +1030,7 @@ class MancalaUI(tk.Frame):
 
         self.saved_move = move
         last_turn = self.game.get_turn()
-        if animator.active():
+        if animator.active() and move != gi.PASS_TOKEN:
             animator.animator.flash(last_turn, move=move)
 
         self.wcond = self.game.move(move)
@@ -1105,10 +1105,7 @@ class MancalaUI(tk.Frame):
 
             if animator.active():
                 animator.animator.queue_callback(self._ai_move_epilog)
-                # this was put here because the epilog wasn't being
-                # called, but it appears to interfere with the refresh
-                # started by the move. the flashes don't show
-                # self.refresh(ani_ok=True)
+                self.refresh(ani_ok=True)
             else:
                 self._ai_move_epilog()
 
