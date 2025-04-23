@@ -398,6 +398,7 @@ class GrandSlamCapt(CaptMethodIf):
 
     def is_grandslam(self, mdata, capt_first=True):
         """Use the capture deco to see if a grandslam occurs.
+        Always do the capture chain.
 
         A rollback point is set and the current game state is
         collected before the rest of the capture chain is executed.
@@ -419,12 +420,11 @@ class GrandSlamCapt(CaptMethodIf):
         opp_rng = self.game.cts.get_opp_range(self.game.turn)
         start_seeds = any(mdata.board[tloc] for tloc in opp_rng)
 
-        if start_seeds:
-            self._saved_state = self.game.state
-            self.decorator.do_captures(mdata, capt_first)
+        self._saved_state = self.game.state
+        self.decorator.do_captures(mdata, capt_first)
 
-            if mdata.captured:
-                gslam = not any(self.game.board[tloc] for tloc in opp_rng)
+        if start_seeds and mdata.captured:
+            gslam = not any(self.game.board[tloc] for tloc in opp_rng)
 
         if not gslam:
             animator.clear_rollback()
