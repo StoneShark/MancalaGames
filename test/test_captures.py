@@ -11,6 +11,7 @@ pytestmark = pytest.mark.unittest
 
 import utils
 
+from context import animator
 from context import capturer
 from context import game_constants as gconsts
 from context import game_interface as gi
@@ -1585,6 +1586,71 @@ class TestBadEnums:
 
         with pytest.raises(NotImplementedError):
             mancala.Mancala(game_consts, game_info)
+
+
+class TestAnimator:
+
+    @pytest.mark.animator
+    def test_animator(self, mocker):
+
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(stores=True,
+                                evens=True,
+                                pickextra=gi.CaptExtraPick.PICK2XLASTSEEDS,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        assert animator.ENABLED
+        animator.make_animator(None)   # no game_ui, make sure it's not used
+        animator.set_active(True)
+
+        mocker.patch('animator.animator.change')
+        mobj = mocker.patch('animator.one_step')
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = False
+        game.board = [0, 1, 2, 1, 1, 0]
+        game.store = [3, 4]
+
+        mdata = move_data.MoveData(game, 0)
+        mdata.direct = gi.Direct.CCW
+        mdata.seeds = 2
+        mdata.capt_loc = 2
+        game.deco.capturer.do_captures(mdata)
+
+        assert game.board.copy() == [0, 0, 0, 0, 0, 0]
+        assert game.store.copy() == [8, 4]
+
+        mobj.assert_called_once()
+
+
+    def test_no_animator(self, mocker):
+
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(stores=True,
+                                evens=True,
+                                pickextra=gi.CaptExtraPick.PICK2XLASTSEEDS,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        assert not animator.ENABLED
+        mobj = mocker.patch('animator.one_step')
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = False
+        game.board = [0, 1, 2, 1, 1, 0]
+        game.store = [3, 4]
+
+        mdata = move_data.MoveData(game, 0)
+        mdata.direct = gi.Direct.CCW
+        mdata.seeds = 2
+        mdata.capt_loc = 2
+        game.deco.capturer.do_captures(mdata)
+
+        assert game.board == [0, 0, 0, 0, 0, 0]
+        assert game.store == [8, 4]
+
+        assert len(mobj.mock_calls) == 0
 
 
 # %%

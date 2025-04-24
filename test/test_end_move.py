@@ -10,6 +10,7 @@ pytestmark = pytest.mark.unittest
 
 import utils
 
+from context import animator
 from context import end_move
 from context import end_move_decos as emd
 from context import end_move_rounds as emr
@@ -1916,3 +1917,41 @@ class TestRoundTally:
 
         assert cond == econd
         assert winner == ewinner
+
+
+class TestAnimator:
+
+    @pytest.mark.animator
+    def test_animator(self, mocker):
+
+        mobj = mocker.patch('animator.one_step')
+
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(stores=True,
+                                evens=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        assert animator.ENABLED
+        game = mancala.Mancala(game_consts, game_info)
+
+        assert isinstance(game.deco.ender, emd.AnimateEndMove)
+        assert isinstance(game.deco.quitter, emd.AnimateEndMove)
+
+        cond, winner = game.deco.ender.game_ended(False, True)
+        mobj.assert_called_once()
+
+
+    def test_no_animator(self, mocker):
+
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(stores=True,
+                                evens=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        assert not animator.ENABLED
+        game = mancala.Mancala(game_consts, game_info)
+
+        assert not isinstance(game.deco.ender, emd.AnimateEndMove)
+        assert not isinstance(game.deco.quitter, emd.AnimateEndMove)

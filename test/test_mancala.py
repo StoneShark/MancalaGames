@@ -28,6 +28,7 @@ import re
 import pytest
 pytestmark = pytest.mark.unittest
 
+from context import animator
 from context import capt_ok
 from context import game_constants as gconsts
 from context import game_interface as gi
@@ -262,6 +263,21 @@ class TestGameState:
 
         state.set_mcount_from(game)
         assert state.mcount == 20
+
+
+    def test_state_context(self, game):
+
+        saved_state = game.state
+
+        with game.save_restore_state():
+
+            game.board = [1, 2, 3, 4]
+            game.store = None
+            game.unlocked = [F, T, F, F]
+            game.blocked = [F, F, T, F]
+            game.child = [N, N, N, N]
+
+        assert game.state == saved_state
 
 
 class TestRtally:
@@ -1592,3 +1608,90 @@ class TestSwap:
             assert game.store == [6, 4]
             assert game.unlocked == [F, F, F, F, T, T, F, F, F, F]
             assert game.blocked == [T, F, F, F, F, F, F, F, F, T]
+
+
+class TestAnimatorHooks:
+
+    @pytest.mark.animator
+    def test_ahooks(self):
+
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
+        game_info = gi.GameInfo(goal=gi.Goal.MAX_SEEDS,
+                                rounds=gi.Rounds.NO_MOVES,
+                                blocks=True,
+                                child_type=gi.ChildType.NORMAL,
+                                child_cvt=4,
+                                moveunlock=True,
+                                evens=True,
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        assert isinstance(game.board, animator.AniList)
+        assert isinstance(game.store, animator.AniList)
+        assert isinstance(game.unlocked, animator.AniList)
+        assert isinstance(game.blocked, animator.AniList)
+        assert isinstance(game.child, animator.AniList)
+
+
+    @pytest.mark.animator
+    def test_ahooks_mixed_1(self):
+
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
+        game_info = gi.GameInfo(goal=gi.Goal.MAX_SEEDS,
+                                rounds=gi.Rounds.NO_MOVES,
+                                blocks=True,
+                                moveunlock=True,
+                                evens=True,
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        assert isinstance(game.board, animator.AniList)
+        assert isinstance(game.store, animator.AniList)
+        assert isinstance(game.unlocked, animator.AniList)
+        assert isinstance(game.blocked, animator.AniList)
+        assert isinstance(game.child, list)
+
+    @pytest.mark.animator
+    def test_ahooks_mixed_2(self):
+
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
+        game_info = gi.GameInfo(goal=gi.Goal.MAX_SEEDS,
+                                child_type=gi.ChildType.NORMAL,
+                                child_cvt=4,
+                                evens=True,
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        assert isinstance(game.board, animator.AniList)
+        assert isinstance(game.store, animator.AniList)
+        assert isinstance(game.unlocked, list)
+        assert isinstance(game.blocked, list)
+        assert isinstance(game.child, animator.AniList)
+
+
+    def test_no_ahooks(self):
+
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
+        game_info = gi.GameInfo(goal=gi.Goal.MAX_SEEDS,
+                                rounds=gi.Rounds.NO_MOVES,
+                                blocks=True,
+                                child_type=gi.ChildType.NORMAL,
+                                child_cvt=4,
+                                moveunlock=True,
+                                evens=True,
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        assert isinstance(game.board, list)
+        assert isinstance(game.store, list)
+        assert isinstance(game.unlocked, list)
+        assert isinstance(game.blocked, list)
+        assert isinstance(game.child, list)

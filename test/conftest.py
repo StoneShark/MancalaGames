@@ -20,6 +20,9 @@
         random_seed - make most tests run predictably,
         use no_seed mark to disable
 
+        no_animator - disable the animator unless it
+        is requested with animator mark
+
         game_pdict - only report the failure to load a
         game configuration file once per test session
 
@@ -35,10 +38,6 @@ import pytest
 from context import animator
 from context import game_logger
 from context import man_config
-
-
-# don't let the animator put it's hooks into the Mancala state variables
-animator.ENABLED = False
 
 
 def pytest_addoption(parser):
@@ -151,6 +150,18 @@ def random_seed(request):
         return
 
     random.seed(10)
+
+
+@pytest.fixture(autouse=True)
+def no_animator(request):
+    """Disable the animator unless it is requested
+            @pytest.mark.animator"""
+
+    if 'animator' in request.keywords:
+        animator.ENABLED = True
+        return
+
+    animator.ENABLED = False
 
 
 @pytest.fixture

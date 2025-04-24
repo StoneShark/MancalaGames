@@ -12,6 +12,8 @@ pytestmark = pytest.mark.unittest
 
 import utils
 
+from context import allowables
+from context import animator
 from context import game_constants as gconsts
 from context import game_interface as gi
 from context import mancala
@@ -1118,3 +1120,42 @@ class TestBadEnums:
 
         with pytest.raises(NotImplementedError):
             mancala.Mancala(game_consts, game_info)
+
+
+
+class TestAnimator:
+
+    @pytest.mark.animator
+    def test_animator(self, mocker):
+
+        mobj = mocker.patch('animator.animate_off')
+
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(stores=True,
+                                evens=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        assert animator.ENABLED
+        game = mancala.Mancala(game_consts, game_info)
+
+        assert isinstance(game.deco.allow,
+                          allowables.DontAnimateAllowable)
+
+        game.deco.allow.get_allowable_holes()
+        mobj.assert_called_once()
+
+
+    def test_no_animator(self, mocker):
+
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(stores=True,
+                                evens=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        assert not animator.ENABLED
+        game = mancala.Mancala(game_consts, game_info)
+
+        assert not isinstance(game.deco.allow,
+                              allowables.DontAnimateAllowable)

@@ -12,6 +12,7 @@ import tkinter as tk
 import pytest
 pytestmark = pytest.mark.unittest
 
+from context import animator
 from context import cfg_keys as ckey
 from context import man_config
 from context import man_path
@@ -853,3 +854,45 @@ class TestConfig:
         config = man_config.ConfigData(None, 'my game')
         assert config['button_size'] == '40'
         assert config['grid_density'] == '25'
+
+
+@pytest.mark.animator
+class TestPreloadCfg:
+
+    @pytest.mark.parametrize('contents, eres',
+                             [("""[default]
+                                   button_size = 80
+                                   """, True),
+                              ("""[default]
+                                   disable_animator = no
+                                   """, True),
+                              ("""[default]
+                                  disable_animator = yes
+                                  """, False),
+                             ], ids=['case0', 'case1', 'case2'])
+    def test_dis_animator(self, mocker, tmp_path, contents, eres):
+
+        path = os.path.join(tmp_path, 'mancala.ini')
+        with open(path, 'w', encoding='utf-8') as file:
+            print(contents, file=file)
+
+        # man_path finds the file where we just put it
+        mpath = mocker.patch.object(man_path, 'get_path')
+        mpath.return_value = path
+
+        man_config.check_disable_animator()
+        assert animator.ENABLED == eres
+
+
+    def test_dis_ani_no_file(self, mocker, tmp_path):
+
+        # man_path doesn't find the file
+        mpath = mocker.patch.object(man_path, 'get_path')
+        mpath.return_value = None
+
+        # patch this so we don't overwrite the proper ini file
+        mdata = mocker.patch.object(man_config.ConfigData, '_get_filename')
+        mdata.return_value = os.path.join(tmp_path, 'mancala.ini')
+
+        man_config.check_disable_animator()
+        assert animator.ENABLED

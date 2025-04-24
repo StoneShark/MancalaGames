@@ -10,8 +10,10 @@ Created on Tue Jul 18 17:31:59 2023
 import pytest
 pytestmark = pytest.mark.unittest
 
+import tkinter as tk
 import utils
 
+from context import animator
 from context import game_interface as gi
 from context import game_constants as gconsts
 from context import mancala
@@ -2039,3 +2041,97 @@ class TestBadEnums:
 
         with pytest.raises(NotImplementedError):
             mancala.Mancala(game_consts, game_info)
+
+
+class TestAnimator:
+
+    @pytest.mark.animator
+    def test_animator(self, mocker):
+        """Do the animator test, but patch animator.animator.change
+        and animator.animator.flash so that it does not try to
+        use the game_ui (which was not provided).
+
+        Check sow result board and number of expected new laps
+        (after the first)."""
+
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(stores=True,
+                                evens=True,
+                                mlaps=gi.LapSower.LAPPER,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        assert animator.ENABLED
+        animator.make_animator(None)   # no game_ui, make sure it's not used
+        animator.set_active(True)
+
+        mocker.patch('animator.animator.change')
+        mobj = mocker.patch('animator.animator.flash')
+
+        game = mancala.Mancala(game_consts, game_info)
+
+        assert isinstance(game.deco.sower, msowd.SowMlapSeeds)
+        assert isinstance(game.deco.sower.lap_cont, msowd.AnimateLapStart)
+
+        mdata = move_data.MoveData(game, 1)
+        mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(1)
+        mdata.direct = game.info.sow_direct
+        game.deco.sower.sow_seeds(mdata)
+
+        # copy the board to get only the list
+        assert game.board.copy() == [0, 1, 4, 1, 3, 3]
+
+        # initial sow, then two laps
+        assert len(mobj.mock_calls) == 2
+
+
+    @pytest.mark.animator
+    def test_inact_animator(self, mocker):
+        """Do the animator test again but with the animator
+        inactive. result the same, but no flash calls"""
+
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(stores=True,
+                                evens=True,
+                                mlaps=gi.LapSower.LAPPER,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        assert animator.ENABLED
+        animator.make_animator(None)
+        animator.set_active(False)
+
+        mocker.patch('animator.animator.change')
+        mobj = mocker.patch('animator.animator.flash')
+
+        game = mancala.Mancala(game_consts, game_info)
+
+        assert isinstance(game.deco.sower, msowd.SowMlapSeeds)
+        assert isinstance(game.deco.sower.lap_cont, msowd.AnimateLapStart)
+
+        mdata = move_data.MoveData(game, 1)
+        mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(1)
+        mdata.direct = game.info.sow_direct
+        game.deco.sower.sow_seeds(mdata)
+
+        # copy the board to get only the list
+        assert game.board.copy() == [0, 1, 4, 1, 3, 3]
+
+        # no animation of laps
+        assert len(mobj.mock_calls) == 0
+
+
+    def test_no_animator(self, mocker):
+
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(stores=True,
+                                evens=True,
+                                mlaps=gi.LapSower.LAPPER,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        assert not animator.ENABLED
+        game = mancala.Mancala(game_consts, game_info)
+
+        assert isinstance(game.deco.sower, msowd.SowMlapSeeds)
+        assert not isinstance(game.deco.sower.lap_cont, msowd.AnimateLapStart)

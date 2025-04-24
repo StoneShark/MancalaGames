@@ -490,7 +490,9 @@ class GSKeep(GrandSlamCapt):
             start, end, incr = self.rparam[turn]
 
             # find left- or right- most hole with seeds
-            for loc in range(start, end, incr):
+            # this loop will always find seeds because a
+            # grand slam requires that there be seeds to start
+            for loc in range(start, end, incr):   # pragma: no coverage
                 if self.game.board[loc]:
                     break
 
