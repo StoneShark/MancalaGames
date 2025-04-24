@@ -51,6 +51,7 @@ MODULES += mg_config.py
 MODULES += minimax.py
 MODULES += montecarlo_ts.py
 MODULES += negamax.py
+MODULES += move_data.py
 MODULES += new_game.py
 MODULES += param_consts.py
 MODULES += play_mancala.pyw

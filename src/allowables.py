@@ -132,11 +132,11 @@ class DontUndoMoveOne(AllowableIf):
     def get_allowable_holes(self):
 
         allow = self.decorator.get_allowable_holes()
-        lmdata = self.game.last_mdata
-        if not lmdata:
+        mdata = self.game.mdata
+        if not mdata:
             return allow
 
-        capt_loc = lmdata.capt_loc
+        capt_loc = mdata.capt_loc
         if capt_loc == gi.WinCond.REPEAT_TURN:
             return allow
 
@@ -144,9 +144,9 @@ class DontUndoMoveOne(AllowableIf):
         if not allow[aidx]:
             return allow
 
-        if (lmdata.seeds == 1
+        if (mdata.seeds == 1
                 and self.game.board[capt_loc] == 1
-                and any(set([lmdata.sow_loc, capt_loc]) == test_set
+                and any(set([mdata.sow_loc, capt_loc]) == test_set
                         for test_set in self.end_sets)):
 
             game_log.add(f"Preventing undo @ {aidx}.")

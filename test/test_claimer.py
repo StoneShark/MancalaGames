@@ -15,6 +15,7 @@ from context import claimer
 from context import game_constants as gconsts
 from context import game_interface as gi
 from context import mancala
+from context import move_data
 
 import utils
 
@@ -279,8 +280,8 @@ def test_claimer(conf_name, state_name, sclaimer,
 
     # make_state sets the game.turn to False
     # it can be overridden in the state, so don't make mdata until state is set
-    # last_mdata.turn is used in TakeAllUnclaimed
-    game.last_mdata = mancala.MoveData(game, None)
+    # mdata.turn is used in TakeAllUnclaimed
+    game.mdata = move_data.MoveData(game, None)
 
     # print(GAMECONF[conf_name])
     # print(game)
@@ -325,8 +326,8 @@ def test_collector(conf_name, last_mover, unfed):
     game.state = gstate
     game.turn = unfed
 
-    game.last_mdata = mancala.MoveData(game, None)
-    game.last_mdata.last_mover = last_mover
+    game.mdata = move_data.MoveData(game, None)
+    game.mdata.last_mover = last_mover
 
     sclaimer = claimer.TakeAllUnclaimed(game)
 

@@ -15,6 +15,7 @@ import utils
 from context import game_interface as gi
 from context import game_constants as gconsts
 from context import mancala
+from context import move_data
 from context import sower
 from context import sower_decos as sowd
 from context import sower_mlap_decos as msowd
@@ -29,7 +30,6 @@ from game_interface import PreSowCapt
 from game_interface import SowPrescribed
 from game_interface import SowRule
 from game_interface import WinCond
-from mancala import MoveData
 
 # %%
 
@@ -112,7 +112,7 @@ class TestSower:
         game.board = board
         game.turn = turn
 
-        mdata = MoveData(game, start_pos)
+        mdata = move_data.MoveData(game, start_pos)
         mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(start_pos)
         mdata.direct = direct
         base_sower.sow_seeds(mdata)
@@ -263,7 +263,7 @@ class TestSower:
         game.board = board
         game.turn = turn
 
-        mdata = MoveData(game, start_pos)
+        mdata = move_data.MoveData(game, start_pos)
         mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(start_pos)
         mdata.direct = direct
         store_sower.sow_seeds(mdata)
@@ -297,7 +297,7 @@ class TestSower:
         game.board = board
         game.store[0] = game.cts.total_seeds - sum(board)
 
-        mdata = MoveData(game, spos)
+        mdata = move_data.MoveData(game, spos)
         mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(spos)
         mdata.direct = game.info.sow_direct
         game.deco.sower.sow_seeds(mdata)
@@ -321,7 +321,7 @@ class TestSower:
     def test_simple_lap(self, game, end_loc, board, eresult):
 
         game.board = board
-        mdata = MoveData(game, None)
+        mdata = move_data.MoveData(game, None)
         mdata.capt_loc = end_loc
 
         lap_cont = msowd.StopSingleSeed(game, msowd.LapContinue(game))
@@ -344,7 +344,7 @@ class TestSower:
     def test_next_lap(self, game, end_loc, board, eresult, cloc):
 
         game.board = board
-        mdata = MoveData(game, None)
+        mdata = move_data.MoveData(game, None)
         mdata.direct = Direct.CCW
         mdata.cont_sow_loc = 3
         mdata.capt_loc = end_loc
@@ -423,7 +423,7 @@ class TestSower:
         game.board = board
         game.child = child
 
-        mdata = MoveData(game, None)
+        mdata = move_data.MoveData(game, None)
         mdata.capt_loc = end_loc
         mdata.seeds = sown_seeds
 
@@ -516,7 +516,7 @@ class TestSower:
         nogame.board = board
         nogame.child = child
 
-        mdata = MoveData(nogame, None)
+        mdata = move_data.MoveData(nogame, None)
         mdata.capt_loc = end_loc
         mdata.seeds = sown_seeds
 
@@ -566,7 +566,7 @@ class TestSower:
         maxgame.board = list(board)
         maxgame.turn = turn
 
-        mdata = MoveData(maxgame, start_pos)
+        mdata = move_data.MoveData(maxgame, start_pos)
         mdata.sow_loc, mdata.seeds = maxgame.deco.drawer.draw(start_pos)
         mdata.direct = direct
         maxgame.deco.sower.sow_seeds(mdata)
@@ -595,7 +595,7 @@ class TestSower:
         # print(game)
 
         sow_pos = 1
-        mdata = MoveData(game, sow_pos)
+        mdata = move_data.MoveData(game, sow_pos)
         mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(sow_pos)
         mdata.direct = gi.Direct.CCW
         game.deco.sower.sow_seeds(mdata)
@@ -814,7 +814,7 @@ class TestMlap:
         print(game)
         print(game.deco.sower)
 
-        mdata = MoveData(game, start_pos)
+        mdata = move_data.MoveData(game, start_pos)
         mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(start_pos)
         mdata.direct = game.info.sow_direct
         game.deco.sower.sow_seeds(mdata)
@@ -852,7 +852,7 @@ class TestMlap:
         game.turn = False
         # print(game.deco.sower)
 
-        mdata = MoveData(game, start_pos)
+        mdata = move_data.MoveData(game, start_pos)
         mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(start_pos)
         mdata.direct = game.info.sow_direct
         game.deco.sower.sow_seeds(mdata)
@@ -895,7 +895,7 @@ class TestMlap:
 
         opgame.turn = turn
         move = gi.MoveTpl(spos, sdirect)
-        mdata = MoveData(opgame, move)
+        mdata = move_data.MoveData(opgame, move)
         mdata.sow_loc, mdata.seeds = opgame.deco.drawer.draw(move)
         mdata.direct = sdirect
         opgame.deco.sower.sow_seeds(mdata)
@@ -1038,7 +1038,7 @@ class TestVMlap:
         game.board = board
         game.turn = False
 
-        mdata = MoveData(game, start_pos)
+        mdata = move_data.MoveData(game, start_pos)
         mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(start_pos)
         mdata.direct = Direct.CW
         game.deco.sower.sow_seeds(mdata)
@@ -1167,7 +1167,7 @@ class TestBlckDivertSower:
         game.blocked = block
         game.turn = turn
 
-        mdata = MoveData(game, spos)
+        mdata = move_data.MoveData(game, spos)
         mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(spos)
         mdata.direct = game.info.sow_direct
         game.deco.sower.sow_seeds(mdata)
@@ -1244,7 +1244,7 @@ class TestBlckDivertSower:
         mlgame.blocked = block
         mlgame.turn = turn
 
-        mdata = MoveData(mlgame, spos)
+        mdata = move_data.MoveData(mlgame, spos)
         mdata.sow_loc, mdata.seeds = mlgame.deco.drawer.draw(spos)
         mdata.direct = mlgame.info.sow_direct
         mlgame.deco.sower.sow_seeds(mdata)
@@ -1291,7 +1291,7 @@ class TestSowCaptOwned:
         game.board = board
         game.turn = False
 
-        mdata = MoveData(game, start_pos)
+        mdata = move_data.MoveData(game, start_pos)
         mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(start_pos)
         mdata.direct = game.info.sow_direct
         game.deco.sower.sow_seeds(mdata)
@@ -1322,7 +1322,7 @@ class TestSowCaptOwned:
         game2.turn = False
 
         move = gi.MoveTpl(not game2.turn, 1, None)
-        mdata = MoveData(game2, move)
+        mdata = move_data.MoveData(game2, move)
         mdata.sow_loc, mdata.seeds = game2.deco.drawer.draw(move)
         mdata.direct = game2.info.sow_direct
         game2.deco.sower.sow_seeds(mdata)
@@ -1418,7 +1418,7 @@ class TestSowCaptOwned:
         game_ss.turn = False
         # print(game_ss)
 
-        mdata = MoveData(game_ss, start_pos)
+        mdata = move_data.MoveData(game_ss, start_pos)
         mdata.sow_loc, mdata.seeds = game_ss.deco.drawer.draw(start_pos)
         mdata.direct = game_ss.info.sow_direct
         game_ss.deco.sower.sow_seeds(mdata)
@@ -1475,7 +1475,7 @@ class TestSowCaptOwned:
         game2_ss.turn = False
 
         move = gi.MoveTpl(not game2_ss.turn, 1, None)
-        mdata = MoveData(game2_ss, move)
+        mdata = move_data.MoveData(game2_ss, move)
         mdata.sow_loc, mdata.seeds = game2_ss.deco.drawer.draw(move)
         mdata.direct = game2_ss.info.sow_direct
         game2_ss.deco.sower.sow_seeds(mdata)
@@ -1509,7 +1509,7 @@ class TestPrescribed:
         swr = sowd.SowOneOpp(game, 2, swr)
 
         move = 1
-        mdata = MoveData(game, move)
+        mdata = move_data.MoveData(game, move)
         mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(move)
         mdata.direct = game.info.sow_direct
 
@@ -1539,7 +1539,7 @@ class TestPrescribed:
         msower.reset_mock()
 
         move = 1
-        mdata = MoveData(game, move)
+        mdata = move_data.MoveData(game, move)
         mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(move)
         mdata.direct = game.info.sow_direct
 
@@ -1578,7 +1578,7 @@ class TestPrescribed:
         game = mancala.Mancala(game_consts, game_info)
 
         move = 1
-        mdata = MoveData(game, move)
+        mdata = move_data.MoveData(game, move)
         mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(move)
         mdata.direct = game.info.sow_direct
 
@@ -1603,7 +1603,7 @@ class TestPrescribed:
         game = mancala.Mancala(game_consts, game_info)
 
         move = 1
-        mdata = MoveData(game, move)
+        mdata = move_data.MoveData(game, move)
         mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(move)
         mdata.direct = game.info.sow_direct
 
@@ -1812,7 +1812,7 @@ class TestCaptMlap:
         print(game)
         print(start_pos)
 
-        mdata = MoveData(game, start_pos)
+        mdata = move_data.MoveData(game, start_pos)
         mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(start_pos)
         mdata.direct = game.info.sow_direct
         game.deco.sower.sow_seeds(mdata)
@@ -1902,7 +1902,7 @@ class TestSCapt:
         # print(game)
         # print(start_pos)
 
-        mdata = MoveData(game, start_pos)
+        mdata = move_data.MoveData(game, start_pos)
         mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(start_pos)
         mdata.direct = game.info.sow_direct
         game.deco.sower.sow_seeds(mdata)
@@ -1967,7 +1967,7 @@ class TestCaptOppOwnLast:
         # print(game)
         # print(start_pos)
 
-        mdata = MoveData(game, start_pos)
+        mdata = move_data.MoveData(game, start_pos)
         mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(start_pos)
         mdata.direct = game.info.sow_direct
         game.deco.sower.sow_seeds(mdata)

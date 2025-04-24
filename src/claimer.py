@@ -165,7 +165,7 @@ class TakeAllUnclaimed(ClaimSeedsIf):
         super().__init__(game)
 
         if game.info.unclaimed == gi.EndGameSeeds.LAST_MOVER:
-            self.collector = lambda tgame: tgame.last_mdata.player
+            self.collector = lambda tgame: tgame.mdata.player
 
         elif game.info.unclaimed == gi.EndGameSeeds.UNFED_PLAYER:
             # make certain turn is set properly before call

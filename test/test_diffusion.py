@@ -14,6 +14,7 @@ from context import game_constants as gconsts
 from context import game_interface as gi
 from context import diffusion
 from context import mancala
+from context import move_data
 from context import two_cycle
 
 # %%
@@ -199,7 +200,7 @@ class TestDiffusion:
         # print(diff)
         move = gi.MoveTpl(row, pos, None)
 
-        mdata = mancala.MoveData(diff, move)
+        mdata = move_data.MoveData(diff, move)
         mdata.sow_loc, mdata.seeds = diff.deco.drawer.draw(move)
         diff.deco.sower.sow_seeds(mdata)
 

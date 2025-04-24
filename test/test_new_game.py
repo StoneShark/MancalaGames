@@ -11,6 +11,7 @@ import utils
 from context import game_constants as gconsts
 from context import game_interface as gi
 from context import mancala
+from context import move_data
 
 from game_interface import ChildType
 from game_interface import Goal
@@ -185,8 +186,8 @@ class TestNewGame:
         else:
             rgame.store = [8, 4]
         rgame.turn = winner
-        rgame.last_mdata = mancala.MoveData(rgame, 2)
-        rgame.last_mdata.player = last_player
+        rgame.mdata = move_data.MoveData(rgame, 2)
+        rgame.mdata.player = last_player
 
         assert not rgame.new_game(win_cond=WinCond.ROUND_WIN,
                                   new_round_ok=True)
@@ -561,8 +562,8 @@ class TestRoundTally:
         object.__setattr__(game.info, 'round_starter', start_rule)
         game.starter = starter
         game.turn = winner
-        game.last_mdata = mancala.MoveData(game, 4)
-        game.last_mdata.player = last
+        game.mdata = move_data.MoveData(game, 4)
+        game.mdata.player = last
 
         game.new_game(cond, new_round_ok=True)
 

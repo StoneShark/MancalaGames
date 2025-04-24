@@ -31,7 +31,7 @@ def set_round_starter(game):
         game.turn = not game.turn
 
     elif start_rule == gi.RoundStarter.LAST_MOVER:
-        game.turn = game.last_mdata.player
+        game.turn = game.mdata.player
 
     game.starter = game.turn
 

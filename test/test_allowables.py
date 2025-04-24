@@ -1002,7 +1002,7 @@ class TestDontUndoMoveOne:
         game.turn = turn
         print(game)
         game.move(move)
-        # print(game.last_mdata)
+        # print(game.mdata)
 
         assert game.get_allowable_holes() == eresult
 
@@ -1021,7 +1021,7 @@ class TestDontUndoMoveOne:
         allowables = game.get_allowable_holes()
         assert allowables == [T, T, T]
 
-        game.last_mdata.capt_loc = gi.WinCond.REPEAT_TURN
+        game.mdata.capt_loc = gi.WinCond.REPEAT_TURN
 
         assert game.get_allowable_holes() == allowables
 

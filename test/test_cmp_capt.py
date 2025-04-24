@@ -16,6 +16,7 @@ pytestmark = pytest.mark.comptest
 from context import game_interface as gi
 from context import game_constants as gconsts
 from context import mancala
+from context import move_data
 
 
 # %% consts
@@ -180,7 +181,7 @@ def test_capturer(logger, conf_name, state_name, turn, capt_loc,
     # print(game)
     # print('capt_loc:', capt_loc)
 
-    mdata = mancala.MoveData(game, None)   # move isn't used in capturer
+    mdata = move_data.MoveData(game, None)   # move isn't used in capturer
     mdata.direct = game.info.sow_direct
     mdata.seeds = 4                        # make an input??
     mdata.capt_loc = capt_loc

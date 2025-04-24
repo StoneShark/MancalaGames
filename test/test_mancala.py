@@ -35,6 +35,7 @@ from context import game_logger
 from context import ginfo_rules
 from context import incrementer
 from context import mancala
+from context import move_data
 
 from game_interface import AllowRule
 from game_interface import ChildType
@@ -45,7 +46,7 @@ from game_interface import WinCond
 
 # %%
 
-TEST_COVERS = ['src\\mancala.py']
+TEST_COVERS = ['src\\mancala.py', 'src\\move_data.py']
 
 # %% constants
 
@@ -356,12 +357,12 @@ class TestMoveData:
     def test_construct(self, game):
 
         # this call is needed for copy of MoveData to work
-        mdata = mancala.MoveData()
+        mdata = move_data.MoveData()
         assert not mdata.player
         assert not mdata.board
         assert not mdata.move
 
-        mdata = mancala.MoveData(game, 5)
+        mdata = move_data.MoveData(game, 5)
 
         assert mdata.board == tuple(game.board)
         assert mdata.player == game.turn
@@ -376,7 +377,7 @@ class TestMoveData:
 
     def test_sow_loc_prop(self, game):
 
-        mdata = mancala.MoveData(game, 5)
+        mdata = move_data.MoveData(game, 5)
 
         # construction settings
         assert mdata.sow_loc == 0
@@ -818,7 +819,7 @@ class TestDelegates:
         """capt not called"""
 
         msow = mocker.patch.object(game, 'do_sow')
-        mdata = mancala.MoveData(game, 5)
+        mdata = move_data.MoveData(game, 5)
         mdata.capt_loc = gi.WinCond.REPEAT_TURN
         msow.return_value = mdata
 
@@ -843,7 +844,7 @@ class TestDelegates:
         mgdir.assert_called_once_with(5, 'first')
         msower.assert_called_once()
 
-        assert isinstance(mdata, mancala.MoveData)
+        assert isinstance(mdata, move_data.MoveData)
         assert mdata.board == tuple(game.board)
         assert mdata.move == 5
         assert mdata.sow_loc == 'first'
@@ -873,7 +874,7 @@ class TestDelegates:
         mgdir.assert_called_once_with(5, 'first')
         msingle.sow_seeds.assert_called_once()
 
-        assert isinstance(mdata, mancala.MoveData)
+        assert isinstance(mdata, move_data.MoveData)
         assert mdata.board == tuple(game.board)
         assert mdata.move == 5
         assert mdata.sow_loc == 'first'
@@ -885,7 +886,7 @@ class TestDelegates:
     @pytest.mark.parametrize('changed', [True, False])
     def test_dlg_capture_seeds(self, capsys, game, mocker, capted, changed):
 
-        mdata = mancala.MoveData(game, 4)
+        mdata = move_data.MoveData(game, 4)
         mdata.capt_loc = 6
         mdata.captured = capted
         mdata.capt_changed = changed
@@ -1136,10 +1137,10 @@ class TestWinMessage:
         use it."""
 
         if message is None or message:
-            maxgame.last_mdata = mancala.MoveData(maxgame, None)
+            maxgame.mdata = move_data.MoveData(maxgame, None)
 
         if message:
-            maxgame.last_mdata.end_msg = message
+            maxgame.mdata.end_msg = message
 
         _, wmess = maxgame.win_message(None)
 
@@ -1266,10 +1267,10 @@ class TestMove:
     def test__move_basic (self, mocker, game):
         """basic flow, no winner"""
 
-        game.last_mdata = None
+        game.mdata = None
 
         msow = mocker.patch.object(game, 'do_sow')
-        mdata = mancala.MoveData(game, 1)
+        mdata = move_data.MoveData(game, 1)
         mdata.sow_loc = 123
         msow.return_value = mdata
 
@@ -1280,7 +1281,7 @@ class TestMove:
 
         assert game._move(1) is None
 
-        assert game.last_mdata.sow_loc == 123
+        assert game.mdata.sow_loc == 123
         msow.assert_called_once_with(1)
         mcapt.assert_called_once_with(mdata)
         mwin.assert_called_once()
@@ -1291,7 +1292,7 @@ class TestMove:
         """do sow determines repeat turn, no winner"""
 
         msow = mocker.patch.object(game, 'do_sow')
-        mdata = mancala.MoveData(game, 1)
+        mdata = move_data.MoveData(game, 1)
         mdata.capt_loc = gi.WinCond.REPEAT_TURN
         msow.return_value = mdata
 
@@ -1310,7 +1311,7 @@ class TestMove:
         """do sow determines repeat turn and the game is won"""
 
         msow = mocker.patch.object(game, 'do_sow')
-        mdata = mancala.MoveData(game, 1)
+        mdata = move_data.MoveData(game, 1)
         mdata.capt_loc = gi.WinCond.REPEAT_TURN
         msow.return_value = mdata
 
@@ -1330,7 +1331,7 @@ class TestMove:
         """do sow determines endless sow"""
 
         msow = mocker.patch.object(game, 'do_sow')
-        mdata = mancala.MoveData(game, 1)
+        mdata = move_data.MoveData(game, 1)
         mdata.capt_loc = gi.WinCond.ENDLESS
         msow.return_value = mdata
 
@@ -1354,7 +1355,7 @@ class TestMove:
         """capture_seeds determines repeat turn, no winner"""
 
         msow = mocker.patch.object(game, 'do_sow')
-        mdata = mancala.MoveData(game, 1)
+        mdata = move_data.MoveData(game, 1)
         mdata.capt_loc = 3
         msow.return_value = mdata
 
@@ -1376,7 +1377,7 @@ class TestMove:
         """capture_seeds determines repeat turn and the game is won"""
 
         msow = mocker.patch.object(game, 'do_sow')
-        mdata = mancala.MoveData(game, 1)
+        mdata = move_data.MoveData(game, 1)
         mdata.capt_loc = 3
         msow.return_value = mdata
 
@@ -1450,8 +1451,8 @@ class TestLogMove:
 
         assert game_logger.game_log.active
 
-        game.last_mdata = mancala.MoveData(game, 2)
-        game.last_mdata.direct = gi.Direct.CCW
+        game.mdata = move_data.MoveData(game, 2)
+        game.mdata.direct = gi.Direct.CCW
 
         mlog = mocker.patch.object(game_logger.game_log, 'turn')
         game._log_turn(True, move, None)

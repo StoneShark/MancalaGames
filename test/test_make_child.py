@@ -13,6 +13,7 @@ from context import game_constants as gconsts
 from context import game_interface as gi
 from context import make_child
 from context import mancala
+from context import move_data
 
 
 # %% constants
@@ -48,7 +49,7 @@ class TestChildInhibitor:
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
 
-        mdata = mancala.MoveData(game, None)
+        mdata = move_data.MoveData(game, None)
         mdata.direct = game.info.sow_direct
         mdata.capt_loc = 3
         mdata.board = tuple(game.board)
@@ -77,7 +78,7 @@ class TestOppChild:
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
 
-        mdata = mancala.MoveData(game, None)
+        mdata = move_data.MoveData(game, None)
         mdata.direct = game.info.sow_direct
         mdata.board = tuple(game.board)
         mdata.seeds = 2
@@ -103,7 +104,7 @@ class TestOwnChild:
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
 
-        mdata = mancala.MoveData(game, None)
+        mdata = move_data.MoveData(game, None)
         mdata.direct = game.info.sow_direct
         mdata.board = tuple(game.board)
         mdata.seeds = 2
@@ -139,7 +140,7 @@ class TestOppNotWithOne:
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
 
-        mdata = mancala.MoveData(game, None)
+        mdata = move_data.MoveData(game, None)
         mdata.direct = game.info.sow_direct
         mdata.board = tuple(game.board)
 
@@ -175,7 +176,7 @@ class TestNotWithOne:
 
         actual = []
         for hole in range(game.cts.dbl_holes):
-            mdata = mancala.MoveData(game, None)
+            mdata = move_data.MoveData(game, None)
             mdata.direct = direct
             mdata.board = tuple(game.board)
             mdata.capt_loc = hole
@@ -225,7 +226,7 @@ class TestOppOwner:
         game.owner = [F, F, T, F, T, T]
         game.child = [F, N, N, N, N, T]
 
-        mdata = mancala.MoveData(game, None)
+        mdata = move_data.MoveData(game, None)
         mdata.direct = game.info.sow_direct
         mdata.board = tuple(game.board)
 
@@ -274,7 +275,7 @@ class TestOwnOwner:
         game.owner = [F, F, T, F, T, T]
         game.child = [F, N, N, N, N, T]
 
-        mdata = mancala.MoveData(game, None)
+        mdata = move_data.MoveData(game, None)
         mdata.direct = game.info.sow_direct
         mdata.board = tuple(game.board)
 
@@ -402,7 +403,7 @@ class TestChildLocs:
         # print(game.deco.make_child.decorator.pattern)
         # print(game.deco.make_child.decorator.loc_trans)
 
-        mdata = mancala.MoveData(game, None)
+        mdata = move_data.MoveData(game, None)
         mdata.direct = game.info.sow_direct
         mdata.board = tuple(game.board)
         mdata.capt_loc = loc
@@ -447,7 +448,7 @@ class TestNotFacing:
         print(game)
         print(game.deco.make_child)
 
-        mdata = mancala.MoveData(game, None)
+        mdata = move_data.MoveData(game, None)
         mdata.direct = game.info.sow_direct
         mdata.board = tuple(game.board)
 
@@ -470,7 +471,7 @@ class TestNoChildren:
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
 
-        mdata = mancala.MoveData(game, None)
+        mdata = move_data.MoveData(game, None)
         mdata.direct = game.info.sow_direct
         mdata.board = tuple(game.board)
 
@@ -529,7 +530,7 @@ class TestBull:
         existing bulls."""
 
         game.turn = turn
-        mdata = mancala.MoveData(game, None)
+        mdata = move_data.MoveData(game, None)
         mdata.direct = game.info.sow_direct
         mdata.capt_loc = loc
         mdata.board = tuple(game.board)
@@ -556,7 +557,7 @@ class TestBull:
         game.child[0] = False
         game.child[7] = True
 
-        mdata = mancala.MoveData(game, None)
+        mdata = move_data.MoveData(game, None)
         mdata.direct = game.info.sow_direct
         mdata.capt_loc = loc
         mdata.board = tuple(game.board)
@@ -611,7 +612,7 @@ class TestOneChild:
 
         game.turn = turn
         game.board[loc] = 3
-        mdata = mancala.MoveData(game, None)
+        mdata = move_data.MoveData(game, None)
         mdata.direct = gi.Direct.CCW
         mdata.capt_loc = loc
         mdata.board = tuple(game.board)
@@ -644,7 +645,7 @@ class TestOneChild:
 
         game.turn = turn
         game.child = board
-        mdata = mancala.MoveData(game, None)
+        mdata = move_data.MoveData(game, None)
         mdata.direct = gi.Direct.CCW
         mdata.capt_loc = loc
         mdata.board = tuple(game.board)
@@ -665,7 +666,7 @@ class TestOneChild:
         # print(game)
         # print(loc)
 
-        mdata = mancala.MoveData(game, None)
+        mdata = move_data.MoveData(game, None)
         mdata.direct = gi.Direct.CCW
         mdata.capt_loc = loc
         mdata.board = tuple(game.board)
@@ -706,7 +707,7 @@ class TestTuzdek:
 
         game.turn = turn
 
-        mdata = mancala.MoveData(game, None)
+        mdata = move_data.MoveData(game, None)
         mdata.direct = gi.Direct.CCW
         mdata.capt_loc = loc
         mdata.board = tuple(game.board)
@@ -724,7 +725,7 @@ class TestTuzdek:
         game.turn = turn
         game.child = utils.build_board([None, None, False, None],
                                        [None, True, None, None])
-        mdata = mancala.MoveData(game, None)
+        mdata = move_data.MoveData(game, None)
         mdata.direct = gi.Direct.CCW
         mdata.capt_loc = loc
         mdata.board = tuple(game.board)
@@ -742,7 +743,7 @@ class TestTuzdek:
         game.turn = turn
         game.child[child] = True
 
-        mdata = mancala.MoveData(game, None)
+        mdata = move_data.MoveData(game, None)
         mdata.direct = gi.Direct.CCW
         mdata.capt_loc = loc
         mdata.board = tuple(game.board)
@@ -796,7 +797,7 @@ class TestQur:
         loc = game.cts.xlate_pos_loc(not turn, pos)
         cross = game.cts.cross_from_loc(loc)
 
-        mdata = mancala.MoveData(game, None)
+        mdata = move_data.MoveData(game, None)
         mdata.direct = game.info.sow_direct
         mdata.capt_loc = loc
         mdata.board = tuple(game.board)
@@ -854,7 +855,7 @@ class TestWeg:
         eweg - should weg/child be created"""
 
         game.turn = turn
-        mdata = mancala.MoveData(game, None)
+        mdata = move_data.MoveData(game, None)
         mdata.direct = game.info.sow_direct
         mdata.capt_loc = loc
         mdata.board = tuple(game.board)

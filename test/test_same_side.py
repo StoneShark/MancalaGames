@@ -12,6 +12,7 @@ pytestmark = pytest.mark.unittest
 from context import game_constants as gconsts
 from context import game_interface as gi
 from context import mancala
+from context import move_data
 from context import same_side
 
 
@@ -200,7 +201,7 @@ class TestSameSide:
 
         mobj = mocker.patch('mancala.Mancala.capture_seeds')
 
-        mdata = mancala.MoveData(game, 2)
+        mdata = move_data.MoveData(game, 2)
         mdata.capt_loc = 3
 
         game.capture_seeds(mdata)
@@ -213,7 +214,7 @@ class TestSameSide:
         """Do a single capture, confirm post proc was done."""
 
         game.board = [0, 1, 2, 3, 4, 5, 6, 7]
-        mdata = mancala.MoveData(game, 0)
+        mdata = move_data.MoveData(game, 0)
         mdata.direct = gi.Direct.CCW
         mdata.capt_loc = 3
 
