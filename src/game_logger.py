@@ -6,6 +6,7 @@ Created on Fri Aug 11 15:01:16 2023
 @author: Ann"""
 
 import collections
+import contextlib
 import datetime
 import enum
 import sys
@@ -259,6 +260,17 @@ class GameLog:
             if not self._sim_count:
                 self._state = LogMode.ACTIVE
                 self.add('*** SIMULATE STOPPED', self.SIMUL)
+
+
+    @contextlib.contextmanager
+    def simulate(self):
+        """Simulate context ."""
+
+        self.set_simulate()
+        try:
+            yield
+        finally:
+            self.clear_simulate()
 
 
     def set_ai_mode(self):

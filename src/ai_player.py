@@ -405,9 +405,8 @@ class AiPlayer(ai_interface.AiPlayerIf):
             for turn in (True, False):
 
                 self.game.turn = turn
-                game_log.set_simulate()
-                mdata = self.game.do_sow(pos)
-                game_log.clear_simulate()
+                with game_log.simulate():
+                    mdata = self.game.do_sow(pos)
 
                 if self.game.cts.opp_side(self.game.turn, mdata.capt_loc):
                     access[turn] |= set([mdata.capt_loc])
