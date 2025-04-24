@@ -67,7 +67,7 @@ class GameState(ai_interface.StateIf):
     owner: tuple = None
 
     istate: tuple = None
-    rstate: tuple = None
+    rtally_state: tuple = None
 
     @property
     def turn(self):
@@ -330,6 +330,10 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
         self.board = [self.cts.nbr_start] * self.cts.dbl_holes
         self.store = [0, 0]
+        self.unlocked = []
+        self.blocked = []
+        self.child = []
+        self.owner = []
         self.mcount = 0
         self.rturn_cnt = 0
         self.turn = random.choice([False, True])
@@ -451,36 +455,38 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
     def state(self):
         """Return an immutable copy of the state variables,
         these must be able to completely return the game
-        state to a previous position.
-        Always return stores, because they may be used
-        even if not displayed (e.g. Deka).
-        If the lists aren't used don't include them."""
+        state to a previous position."""
 
-        state_dict = {'board': tuple(self.board),
-                      '_turn': self.turn,
-                      'store': tuple(self.store),
-                      'mcount': self.mcount,
-                      'rturn_cnt': self.rturn_cnt}
-
+        unlocked = None
         if (self.info.moveunlock
                 or self.info.allow_rule == gi.AllowRule.MOVE_ALL_HOLES_FIRST):
-            state_dict |= {'unlocked': tuple(self.unlocked)}
+            unlocked = tuple(self.unlocked)
 
+        blocked = None
         if self.info.blocks:
-            state_dict |= {'blocked': tuple(self.blocked)}
+            blocked = tuple(self.blocked)
 
+        child = None
         if self.info.child_cvt:
-            state_dict |= {'child': tuple(self.child)}
+            child = tuple(self.child)
 
+        owner = None
         if self.info.goal == gi.Goal.TERRITORY:
-            state_dict |= {'owner': tuple(self.owner)}
+            owner = tuple(self.owner)
 
-        state_dict |= {'istate': self.inhibitor.get_state()}
-
-        if self.rtally:
-            state_dict |= {'rstate': self.rtally.state}
-
-        return GameState(**state_dict)
+        return GameState(
+            board=tuple(self.board),
+            _turn=self.turn,
+            store=tuple(self.store),
+            mcount=self.mcount,
+            rturn_cnt=self.rturn_cnt,
+            unlocked=unlocked,
+            blocked=blocked,
+            child=child,
+            owner=owner,
+            istate=self.inhibitor.get_state(),
+            rtally_state=self.rtally.state if self.rtally else None,
+            )
 
 
     @state.setter
@@ -505,8 +511,8 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
         self.inhibitor.set_state(value.istate)
 
-        if value.rstate:
-            self.rtally.state = value.rstate
+        if value.rtally_state:
+            self.rtally.state = value.rtally_state
 
 
     @contextlib.contextmanager
@@ -515,9 +521,12 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
         saved_state = self.state
         game_log.set_simulate()
-        yield
-        game_log.clear_simulate()
-        self.state = saved_state
+
+        try:
+            yield
+        finally:
+            game_log.clear_simulate()
+            self.state = saved_state
 
 
     def init_bprops(self):

@@ -308,26 +308,26 @@ class TestRtally:
     def test_state_getter(self, esgame):
 
         assert esgame.rtally
-        assert esgame.state.rstate == ((0, 0), (0, 0), (0, 0), (0, 0))
+        assert esgame.state.rtally_state == ((0, 0), (0, 0), (0, 0), (0, 0))
 
         esgame.rtally.round_wins = [0, 3]
         esgame.rtally.seeds = [1, 4]
         esgame.rtally.diff_sums = [1, 5]
         esgame.rtally.score = [9, 2]
 
-        assert esgame.state.rstate == ((0, 3), (1, 4), (1, 5), (9, 2))
+        assert esgame.state.rtally_state == ((0, 3), (1, 4), (1, 5), (9, 2))
 
 
     def test_state_setter(self, esgame):
 
         assert esgame.rtally
-        assert esgame.state.rstate == ((0, 0), (0, 0), (0, 0), (0, 0))
+        assert esgame.state.rtally_state == ((0, 0), (0, 0), (0, 0), (0, 0))
 
         state = mancala.GameState(board=(1, 2, 3, 4),
                                   store=(10, 20),
                                   _turn=False,
                                   mcount=5,
-                                  rstate=((0, 3), (1, 4), (1, 5), (9, 2)))
+                                  rtally_state=((0, 3), (1, 4), (1, 5), (9, 2)))
 
         esgame.state = state
 
