@@ -422,6 +422,25 @@ class TestGameLog:
         assert len(glog._log_records) == 2
 
 
+    def test_ctxt_simulate(self, glog):
+
+        glog.add('test line one', glog.MOVE)
+        assert len(glog._log_records) == 1
+
+        with glog.simulate():
+            assert glog._state == game_logger.LogMode.SIMULATE
+
+            # not added, logged as SIMUL but log level is MOVE
+            glog.add('test line two', glog.MOVE)
+            assert len(glog._log_records) == 1
+
+        assert glog._state == game_logger.LogMode.ACTIVE
+
+        # now logged with MOVE
+        glog.add('test line two', glog.MOVE)
+        assert len(glog._log_records) == 2
+
+
     def test_nested_simulates(self, glog):
 
         assert glog._state == game_logger.LogMode.ACTIVE
