@@ -1924,6 +1924,11 @@ class TestAnimator:
     @pytest.mark.animator
     def test_animator(self, mocker):
 
+        assert animator.ENABLED
+        animator.make_animator(None)
+        animator.set_active(True)
+
+        mocker.patch('animator.animator.change')
         mobj = mocker.patch('animator.one_step')
 
         game_consts = gconsts.GameConsts(nbr_start=2, holes=3)

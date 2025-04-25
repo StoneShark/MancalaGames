@@ -164,6 +164,26 @@ def no_animator(request):
     animator.ENABLED = False
 
 
+@pytest.fixture(autouse=True, scope='class')
+def no_animator_class(request):
+    """Disable the animator unless it is requested
+            @pytest.mark.animator
+
+    The class scope fixtures that build game objects for
+    the incremental tests, e.g. test_gm_bechi gstate, will
+    not use the function scope no_animator fixture, due to the
+    scope mismatch.
+
+    Generally, this isn't a problem unless a test is run on
+    it's own: pytest test/test_gm_bechi.py"""
+
+    if 'animator' in request.keywords:
+        animator.ENABLED = True
+        return
+
+    animator.ENABLED = False
+
+
 @pytest.fixture
 def game_pdict(request):
     """Parametrize with game config file(s).
