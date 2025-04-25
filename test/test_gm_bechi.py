@@ -283,7 +283,7 @@ class TestBechiGame44:
     def test_round_1_move_18(self, gstate):
         game = gstate.game
         cond = game.move(2)
-        assert game.turn is False
+        assert game.mdata.winner is False     # manual change
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, True, True, True, True, True]
@@ -891,7 +891,7 @@ class TestBechiGame44:
     def test_round_3_move_21(self, gstate):
         game = gstate.game
         cond = game.move(1)
-        assert game.turn is True
+        assert game.mdata.winner is True     # manual change
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, True, True, True, True, True]
@@ -994,7 +994,7 @@ class TestBechiGame44:
     def test_round_4_move_7(self, gstate):
         game = gstate.game
         cond = game.move(2)
-        assert game.turn is True
+        assert game.mdata.winner is True     # manual change
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [False, True, True, False, False, False, False, False]
         assert game.unlocked == [True, False, False, True, True, True, True, True]
@@ -1111,7 +1111,7 @@ class TestBechiGame44:
         Game ends without seeds on the board."""
         game = gstate.game
         cond = game.move(2)
-        assert game.turn is True
+        assert game.mdata.winner is True     # manual change
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [False, True, True, False, False, False, False, False]
         assert game.unlocked == [True, False, False, True, True, True, True, True]
@@ -1544,7 +1544,7 @@ class TestBechi38:
     def test_round_1_move_32(self, gstate):
         game = gstate.game
         cond = game.move(3)
-        assert game.turn is False
+        assert game.mdata.winner is False     # manual change
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, True, True, True, True, True]
@@ -1763,7 +1763,7 @@ class TestBechi38:
     def test_round_2_move_16(self, gstate):
         game = gstate.game
         cond = game.move(1)
-        assert game.turn is False
+        assert game.mdata.winner is False     # manual change
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [True, True, True, True, False, False, False, True]
@@ -1917,7 +1917,7 @@ class TestBechi38:
     def test_round_3_move_11(self, gstate):
         game = gstate.game
         cond = game.move(1)
-        assert game.turn is False
+        assert game.mdata.winner is False     # manual change
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [True, True, True, True, False, False, False, True]
@@ -2110,7 +2110,7 @@ class TestBechi38:
     def test_round_4_move_14(self, gstate):
         game = gstate.game
         cond = game.move(2)
-        assert game.turn is False
+        assert game.mdata.winner is False     # manual change
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [True, True, True, True, False, False, False, True]

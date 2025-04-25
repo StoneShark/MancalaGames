@@ -110,17 +110,19 @@ class NoSeedsEnder(end_move_decos.EndTurnIf):
             self.win_op = lambda turn: turn
 
 
-    def game_ended(self, repeat_turn, ended=False):
+    def game_ended(self, mdata):
 
-        if (ended
+        if (mdata.ended
             or not self.win_op
             or self.game.normal_sow
             or any(self.game.board[loc]
                    for loc in self.game.cts.get_my_range(self.game.turn))):
 
-            return self.decorator.game_ended(repeat_turn, ended)
+            self.decorator.game_ended(mdata)
 
-        return gi.WinCond.WIN, self.win_op(self.game.turn)
+        else:
+            mdata.win_cond = gi.WinCond.WIN
+            mdata.winner = self.win_op(self.game.turn)
 
 
 # %% BearOff game class

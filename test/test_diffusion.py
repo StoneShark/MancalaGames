@@ -17,6 +17,8 @@ from context import mancala
 from context import move_data
 from context import two_cycle
 
+import utils
+
 # %%
 
 TEST_COVERS = ['src\\diffusion.py']
@@ -119,10 +121,11 @@ class TestDiffusion:
         diff.board = board
         diff.turn = turn
 
-        cond, winner = diff.deco.ender.game_ended(False, False)
-        assert cond == econd
-        if ewinner is not None:
-            assert winner == ewinner
+        mdata = utils.make_ender_mdata(diff, False, False)
+        diff.deco.ender.game_ended(mdata)
+
+        assert mdata.win_cond == econd
+        assert mdata.winner == ewinner
 
 
     # these boards do not need to be valid game board
@@ -212,20 +215,20 @@ class TestDiffusion:
 
     def test_win_message_v1(self, diff):
 
-        diff.turn = True
+        diff.mdata = utils.make_win_mdata(diff, gi.WinCond.WIN, True)
         _, message = diff.win_message(gi.WinCond.WIN)
         assert 'Left' in message
 
-        diff.turn = False
+        diff.mdata = utils.make_win_mdata(diff, gi.WinCond.WIN, False)
         _, message = diff.win_message(gi.WinCond.WIN)
         assert 'Right' in message
 
     def test_win_message_v2(self, diff_v2):
 
-        diff_v2.turn = True
+        diff_v2.mdata = utils.make_win_mdata(diff_v2, gi.WinCond.WIN, True)
         _, message = diff_v2.win_message(gi.WinCond.WIN)
         assert 'Top' in message
 
-        diff_v2.turn = False
+        diff_v2.mdata = utils.make_win_mdata(diff_v2, gi.WinCond.WIN, False)
         _, message = diff_v2.win_message(gi.WinCond.WIN)
         assert 'Bottom' in message

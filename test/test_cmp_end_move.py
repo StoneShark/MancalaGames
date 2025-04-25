@@ -24,6 +24,7 @@ from context import end_move_rounds as emr
 from context import game_interface as gi
 from context import mancala
 
+import utils
 
 pytestmark = [pytest.mark.integtest]
 
@@ -203,7 +204,7 @@ END_CASES = {
         # 0:
         [make_state(board=(1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0),
                     store=(23, 23)),
-         None, DONT_CARE],
+         None, None],
         # 1:
         [make_state(board=(0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0),
                     store=(25, 22)),
@@ -217,13 +218,13 @@ END_CASES = {
         [make_state(board=(0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0),
                     store=(24, 23),
                     turn=True),
-         gi.WinCond.TIE, DONT_CARE],
+         gi.WinCond.TIE, None],
 
         # 4: next player can't share, game ended
         [make_state(board=(0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0),
                     store=(24, 23),
                     turn=False),
-         gi.WinCond.TIE, DONT_CARE],
+         gi.WinCond.TIE, None],
 
         # 5: False has no move, True win
         [make_state(board=(0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0),
@@ -248,14 +249,14 @@ END_CASES = {
         [make_state(board=(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0),
                     store=(23, 23),
                     turn=False),
-         None, DONT_CARE],
+         None, None],
 
         # 9: removing NoOutcomeChange changed the result
         # was TIE which is ultimate outcome (but not for another move)
         [make_state(board=(0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0),
                     store=(24, 23),
                     turn=True),
-         None, DONT_CARE],
+         None, None],
 
         # 10: removing NoOutcomeChange changed the result
         # was TIE which is WRONG
@@ -263,7 +264,7 @@ END_CASES = {
         [make_state(board=(0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0),
                     store=(23, 24),
                     turn=True),
-         None, DONT_CARE],
+         None, None],
 
     ],  # end Ayoayo
 
@@ -272,7 +273,7 @@ END_CASES = {
         # 0: not over
         [make_state(board=(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0),
                     store=(15, 15)),
-         None, DONT_CARE],
+         None, None],
         # 1: F max seed win
         [make_state(board=(0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0),
                     store=(17, 14)),
@@ -285,13 +286,13 @@ END_CASES = {
         # 3: Tie game - no moves
         [make_state(board=(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
                     store=(8, 8)),
-         gi.WinCond.TIE, DONT_CARE],
+         gi.WinCond.TIE, None],
 
         # 4: true moved, False has a move but NoOutcomeChange gets seed and ties
         [make_state(board=(0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0),
                     store=(15, 16),
                     turn=True),
-         gi.WinCond.TIE, DONT_CARE],
+         gi.WinCond.TIE, None],
 
         # 5:  true moved, false has no move, True collects seed
         [make_state(board=(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0),
@@ -325,21 +326,21 @@ END_CASES = {
                     store=(0, 0),
                     child=(N, N, N, N, N, N, N, N, N, N, N, N, N, N),
                     istate=(F, F, F, F)),
-         None, DONT_CARE],
+         None, None],
 
         # 1: four seeds still in play
         [make_state(board=(0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0),
                     store=(0, 52),
                     child=(N, N, N, N, N, N, N, N, N, N, N, N, N, N),
                     istate=(F, F, F, F)),
-         None, DONT_CARE],
+         None, None],
 
         # 2: four seeds still in play
         [make_state(board=(0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0),
                     store=(52, 0),
                     child=(N, N, N, N, N, N, N, N, N, N, N, N, N, N),
                     istate=(F, F, F, F)),
-         None, DONT_CARE],
+         None, None],
 
         # 3: true collected all seeds, no children
         [make_state(board=(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
@@ -374,14 +375,14 @@ END_CASES = {
                     store=(28, 28),
                     child=(N, N, N, N, N, N, N, N, N, N, N, N, N, N),
                     istate=(F, F, F, F)),
-         gi.WinCond.ROUND_TIE, DONT_CARE],
+         gi.WinCond.ROUND_TIE, None],
 
         # 8: tie in children
         [make_state(board=(14, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 14),
                     store=(0, 0),
                     child=(T, F, N, N, N, N, N, N, N, N, N, N, T, F),
                     istate=(F, F, F, F)),
-         gi.WinCond.ROUND_TIE, DONT_CARE],
+         gi.WinCond.ROUND_TIE, None],
 
         # 9: T has most seeds in children, but no moves on next turn
         # F has enough seeds to fill a few holes
@@ -423,7 +424,7 @@ END_CASES = {
                     child=
                           (N, N, N, T, N, N, N, N, N, N, N, N, N, N),
                     istate=(F, F, F, F)),
-         None, DONT_CARE],
+         None, None],
 
     ],  # end Bao_Tanzanian
 
@@ -433,12 +434,12 @@ END_CASES = {
         [make_state(board=(6, 6, 6, 6, 6, 6, 6, 6),
                     store=(0, 0),
                     unlocked=(F, F, F, F, F, F, F, F)),  # is not used in the ender
-         None, DONT_CARE],
+         None, None],
 
         # 1: tie game
         [make_state(board=(0, 0, 0, 0, 0, 0, 0, 0),
                     store=(24, 24)),
-         gi.WinCond.ROUND_TIE, DONT_CARE],
+         gi.WinCond.ROUND_TIE, None],
 
         # 2: T all seeds, ClearWinner ends
         [make_state(board=(0, 0, 0, 0, 0, 0, 0, 0),
@@ -466,13 +467,13 @@ END_CASES = {
         [make_state(board=(0, 0, 2, 0, 0, 1, 0, 0),
                     store=(6, 39),
                     turn=True),
-         None, DONT_CARE],
+         None, None],
 
         # 7: playable by False but not True, True would pass
         [make_state(board=(0, 0, 2, 0, 0, 1, 0, 0),
                     store=(39, 6),
                     turn=False),
-         None, DONT_CARE],
+         None, None],
 
     ],  # end Bechi
 
@@ -481,17 +482,17 @@ END_CASES = {
         # 0: start game
         [make_state(board=(5, 5, 5, 5, 5, 5, 5, 5, 5, 5),
                     store=(0, 0)),
-         None, DONT_CARE],
+         None, None],
 
         # 1: no moves, TIE
         [make_state(board=(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
                     store=(25, 25)),
-         gi.WinCond.TIE, DONT_CARE],
+         gi.WinCond.TIE, None],
 
          # 2: no win
          [make_state(board=(0, 2, 2, 0, 0, 0, 0, 2, 2, 0),
                      store=(25, 17)),
-          None, DONT_CARE],
+          None, None],
 
          # 3: WIN by F
          [make_state(board=(0, 2, 2, 0, 0, 0, 0, 2, 2, 0),
@@ -511,12 +512,12 @@ END_CASES = {
         # 0: start game
         [make_state(board=(7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7),
                     store=(0, 0)),
-         None, DONT_CARE],
+         None, None],
 
         # 1: TIE game, no moves
         [make_state(board=(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
                     store=(49, 49)),
-         gi.WinCond.ROUND_TIE, DONT_CARE],
+         gi.WinCond.ROUND_TIE, None],
 
         # 2: T all seeds, ClearWinner ends, RoundWinner leaves
         [make_state(board=(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
@@ -549,13 +550,13 @@ END_CASES = {
         [make_state(board=(2, 2, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
                     store=(45, 39),
                     turn=True),
-         None, DONT_CARE],
+         None, None],
 
         # 8: playable by False but not True, True would pass
         [make_state(board=(2, 2, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
                     store=(39, 45),
                     turn=False),
-         None, DONT_CARE],
+         None, None],
 
         ],   # end Dakon
 
@@ -565,7 +566,7 @@ END_CASES = {
         [make_state(board=(2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2),
                     store=(0, 0),
                     blocked=(F, F, F, F, F, F, F, F, F, F, F, F)), # not used in ender
-         None, DONT_CARE],
+         None, None],
 
         # 1: False gave away their seeds, but it will be True's turn
         [make_state(board=(0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 0),
@@ -586,7 +587,7 @@ END_CASES = {
         # 0: start game
         [make_state(board=(2, 2, 2, 2, 2, 2, 2, 2, 2, 2),
                     store=(0, 0)),
-         None, DONT_CARE],
+         None, None],
 
         # 1: False gave away their seeds, but it will be True's turn
         [make_state(board=(0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 0),
@@ -607,13 +608,13 @@ END_CASES = {
         # 0: start game
         [make_state(board=(4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4),
                     store=(0, 0)),
-         None, DONT_CARE],
+         None, None],
 
         # 1: False has no moves, TIE after collecting seeds
         [make_state(board=(0, 0, 0, 0, 0, 0, 0, 4, 0, 3, 4, 0),
                     store=(24, 13),
                     turn=True),
-         gi.WinCond.TIE, DONT_CARE],
+         gi.WinCond.TIE, None],
 
         # 2: True has no moves, False wins by collecting own seeds
         [make_state(board=(0, 4, 0, 3, 4, 0, 0, 0, 0, 0, 0, 0),
@@ -627,7 +628,7 @@ END_CASES = {
         [make_state(board=(0, 0, 0, 0, 0, 0, 0, 4, 0, 3, 4, 0),
                     store=(24, 13),
                     turn=False),
-         gi.WinCond.TIE, DONT_CARE, REPEAT_TURN, False],
+         gi.WinCond.TIE, None, REPEAT_TURN, False],
 
         # 4: True sowed final seed into their own store,
         #    False wins by collecting own seeds
@@ -644,13 +645,13 @@ END_CASES = {
         [make_state(board=(4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4),
                     store=(0, 0),
                     child=[N, N, N, N, N, N, N, N, N, N, N, N]),
-         None, DONT_CARE],
+         None, None],
 
         # 1: not enough seeds for win
         [make_state(board=(20, 4, 2, 2, 2, 2, 2, 2, 2, 0, 5, 5),
                     store=(0, 0),
                     child=[T, T, N, N, N, N, N, N, N, N, F, F]),
-         None, DONT_CARE],
+         None, None],
 
         # 2: just enough seeds for win
         [make_state(board=(20, 5, 2, 2, 2, 2, 2, 2, 2, 0, 4, 5),
@@ -689,13 +690,13 @@ END_CASES = {
         [make_state(board=(4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4),
                     store=(0, 0),
                     child=[N, N, N, N, N, N, N, N, N, N, N, N]),
-         gi.WinCond.TIE, DONT_CARE, False, ENDED],
+         gi.WinCond.TIE, None, False, ENDED],
 
         # 8: Not playable, TIE
         [make_state(board=(20, 4, 0, 0, 0, 0, 0, 0, 0, 0, 4, 20),
                     store=(0, 0),
                     child=[T, T, N, N, N, N, N, N, N, N, F, F]),
-         gi.WinCond.TIE, DONT_CARE],
+         gi.WinCond.TIE, None],
 
         # 9: Not playable, but ClearWinner detects F win
         [make_state(board=(20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 20),
@@ -719,14 +720,14 @@ END_CASES = {
                     store=(0, 0),
                     child=[N, N, N, N, N, N, N, N, N, N, N, N],
                     owner=[F, F, F, F, F, F, T, T, T, T, T, T]),
-         None, DONT_CARE],
+         None, None],
 
         # 1: end a new game (not the quitter)
         [make_state(board=(4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4),
                     store=(0, 0),
                     child=[N, N, N, N, N, N, N, N, N, N, N, N],
                     owner=[F, F, F, F, F, F, T, T, T, T, T, T]),
-         gi.WinCond.TIE, DONT_CARE, False, ENDED],
+         gi.WinCond.TIE, None, False, ENDED],
 
         # 2: clear winner
         [make_state(board=(0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
@@ -782,7 +783,7 @@ END_CASES = {
                     store=(24, 24),
                     child=[F, F, F, N, N, N, T, N, T, N, T, N],
                     owner=[T, T, T, T, F, F, F, F, F, F, F, F]),
-         gi.WinCond.ROUND_TIE, DONT_CARE],
+         gi.WinCond.ROUND_TIE, None],
 
     ] # end Weg
 }
@@ -803,7 +804,7 @@ def make_cases():
                 cond = test_case[1]
                 winner = test_case[2]
                 cname = cond.name if cond else "None"
-                wname = winner if winner > DONT_CARE else "DC"
+                wname = winner
 
                 yield pytest.param(config_file, test_case,
                                    id=f"{gname}-case{idx}-{cname}-{wname}")
@@ -843,10 +844,9 @@ class TestEndGames:
         assert sum(game.store) + sum(game.board) == game.cts.total_seeds, \
             "Test Config Error: seed count wrong"
 
-        cond, winner = game.deco.ender.game_ended(repeat_turn=repeat_turn,
-                                                  ended=ended)
+        mdata = utils.make_ender_mdata(game, repeat_turn, ended)
+        game.deco.ender.game_ended(mdata)
         # print(game)
 
-        assert cond == econd
-        if ewinner != DONT_CARE:
-            assert winner == ewinner
+        assert mdata.win_cond == econd
+        assert mdata.winner == ewinner

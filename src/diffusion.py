@@ -239,7 +239,7 @@ class Diffusion(DiffusionV2):
         this is only called for win."""
 
         title = 'Game Over'
-        player = 'Left' if self.turn else 'Right'
+        player = 'Left' if self.mdata.winner else 'Right'
         message = f'{player} won by giving away all their seeds.'
 
         return title, message

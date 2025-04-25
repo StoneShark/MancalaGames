@@ -683,7 +683,7 @@ class TestNumNum:
     def test_round_1_move_64(self, gstate):
         game = gstate.game
         cond = game.move((1, 2, CCW))
-        assert game.turn is False
+        assert game.mdata.winner is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.owner == [F, F, F, F, F, F, T, T, T, T, T, T]
         assert game.store == [28, 20]
@@ -1279,7 +1279,7 @@ class TestNumNum:
     def test_round_3_move_29(self, gstate):
         game = gstate.game
         cond = game.move((1, 4, CCW))
-        assert game.turn is False
+        assert game.mdata.winner is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.owner == [F, F, F, F, F, F, T, T, T, T, T, T]
         assert game.store == [28, 20]
@@ -1627,7 +1627,7 @@ class TestNumNum:
     def test_round_4_move_34(self, gstate):
         game = gstate.game
         cond = game.move((1, 3, CCW))
-        assert game.turn is False
+        assert game.mdata.winner is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.owner == [F, F, F, F, F, F, F, T, T, T, T, T]
         assert game.store == [32, 16]
@@ -1955,7 +1955,7 @@ class TestNumNum:
     def test_round_5_move_32(self, gstate):
         game = gstate.game
         cond = game.move((1, 3, CCW))
-        assert game.turn is False
+        assert game.mdata.winner is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.owner == [F, F, F, F, F, F, F, F, T, T, T, T]
         assert game.store == [36, 12]
@@ -2303,7 +2303,7 @@ class TestNumNum:
     def test_round_6_move_34(self, gstate):
         game = gstate.game
         cond = game.move((1, 0, CCW))
-        assert game.turn is False
+        assert game.mdata.winner is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.owner == [F, F, F, F, F, F, F, F, F, T, T, T]
         assert game.store == [44, 4]

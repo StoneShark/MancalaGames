@@ -50,8 +50,9 @@ class TestPassWConds:
         pass_game.store=[3, 4]
         pass_game.turn=True
 
-        assert not pass_game.win_conditions()
-        assert pass_game.turn
+        mdata = utils.make_ender_mdata(pass_game, False, False)
+        assert not pass_game.win_conditions(mdata)
+        assert mdata.winner is None
         assert pass_game.board == utils.build_board([0, 2, 1],
                                                     [0, 2, 0])
         assert pass_game.store == [3, 4]
@@ -68,8 +69,9 @@ class TestPassWConds:
         pass_game.store=[3, 4]
         pass_game.turn=True
 
-        assert not pass_game.win_conditions()
-        assert pass_game.turn
+        mdata = utils.make_ender_mdata(pass_game, False, False)
+        assert not pass_game.win_conditions(mdata)
+        assert mdata.winner is None
         assert pass_game.board == utils.build_board([2, 2, 1],
                                                     [0, 0, 0])
         assert pass_game.store == [3, 4]
@@ -86,8 +88,9 @@ class TestPassWConds:
         pass_game.store=[3, 4]
         pass_game.turn=False
 
-        assert not pass_game.win_conditions()
-        assert not pass_game.turn
+        mdata = utils.make_ender_mdata(pass_game, False, False)
+        assert not pass_game.win_conditions(mdata)
+        assert mdata.winner is None
         assert pass_game.board == utils.build_board([0, 0, 0],
                                                     [2, 2, 1])
         assert pass_game.store == [3, 4]
@@ -101,8 +104,9 @@ class TestPassWConds:
         pass_game.store=[4, 8]
         pass_game.turn=True
 
-        assert pass_game.win_conditions() == WinCond.WIN
-        assert pass_game.turn
+        mdata = utils.make_ender_mdata(pass_game, False, False)
+        assert pass_game.win_conditions(mdata) == WinCond.WIN
+        assert mdata.winner
         assert pass_game.board == utils.build_board([0, 0, 0],
                                                     [0, 0, 0])
         assert pass_game.store == [4, 8]
@@ -113,8 +117,9 @@ class TestPassWConds:
         pass_game.store=[4, 8]
         pass_game.turn=False
 
-        assert pass_game.win_conditions() == WinCond.WIN
-        assert pass_game.turn
+        mdata = utils.make_ender_mdata(pass_game, False, False)
+        assert pass_game.win_conditions(mdata) == WinCond.WIN
+        assert mdata.winner
         assert pass_game.board == utils.build_board([0, 0, 0],
                                                     [0, 0, 0])
         assert pass_game.store == [4, 8]

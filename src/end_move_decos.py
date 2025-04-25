@@ -64,15 +64,19 @@ class EndTurnIf(deco_chain_if.DecoChainIf):
         return my_str
 
     @abc.abstractmethod
-    def game_ended(self, repeat_turn, ended=False):
-        """Return the end condition and winner.
+    def game_ended(self, mdata):
+        """Determine the end condition and winner;
+        store in mdata.
+
         End condition will be one of None, WIN, TIE,
         ROUND_WIN and ROUND_TIE. The other values of
         WinCond are not generated here.
 
-        If ended is truthy but not True and the game
+        if mdata.ended is truthy but not True and the game
         is played in rounds, end the round but not the
-        game; unless ending the round also ends the game."""
+        game; unless ending the round also ends the game.
+
+        There is no return value!"""
 
 
     def compute_win_holes(self):
@@ -157,7 +161,7 @@ class EndTurnIf(deco_chain_if.DecoChainIf):
 
         if (seeds[False] == self.win_seeds
                 and seeds[False] == seeds[True]):
-            return gi.WinCond.TIE, self.game.turn
+            return gi.WinCond.TIE, None
 
         return None, self.game.turn
 
@@ -171,40 +175,43 @@ class ClearWinner(EndTurnIf):
     def __str__(self):
         return super().__str__() + f'\n   win_seeds: {self.win_seeds}'
 
-    def game_ended(self, repeat_turn, ended=False):
+    def game_ended(self, mdata):
 
-        if ended:
-            return self.decorator.game_ended(repeat_turn, ended)
+        if mdata.ended:
+            self.decorator.game_ended(mdata)
 
-        cond, winner = self.has_seeds_for_win(self.sclaimer.claim_seeds())
-        if cond:
-            return cond, winner
+        else:
+            cond, winner = self.has_seeds_for_win(self.sclaimer.claim_seeds())
+            if cond:
+                mdata.win_cond = cond
+                mdata.winner = winner
 
-        return self.decorator.game_ended(repeat_turn, False)
+            else:
+                self.decorator.game_ended(mdata)
 
 
 class EndTurnNoMoves(EndTurnIf):
     """No Pass, end game if there are no moves for the next player
     OR on repeat turn, the current player has no moves."""
 
-    def game_ended(self, repeat_turn, ended=False):
+    def game_ended(self, mdata):
 
-        if ended:
-            return self.decorator.game_ended(repeat_turn, ended)
+        if mdata.ended:
+            return self.decorator.game_ended(mdata)
 
-        if repeat_turn:
-            ended = not any(self.game.get_allowable_holes())
+        if mdata.repeat_turn:
+            mdata.ended = not any(self.game.get_allowable_holes())
             msg = "No moves for repeat turn; game ended."
         else:
             self.game.turn = not self.game.turn
-            ended = not any(self.game.get_allowable_holes())
+            mdata.ended = not any(self.game.get_allowable_holes())
             self.game.turn = not self.game.turn
             msg = "No moves for next player; game ended."
 
-        if ended:
+        if mdata.ended:
             game_log.add(msg, game_log.INFO)
 
-        return self.decorator.game_ended(repeat_turn, ended)
+        return self.decorator.game_ended(mdata)
 
 
 class EndTurnPassPass(EndTurnIf):
@@ -218,13 +225,13 @@ class EndTurnPassPass(EndTurnIf):
     where a move pushed one seed across the side of the board;
     and possibly other situations. See allowables.DontUndoMoveOne"""
 
-    def game_ended(self, repeat_turn, ended=False):
+    def game_ended(self, mdata):
 
-        if ended:
-            return self.decorator.game_ended(repeat_turn, ended)
+        if mdata.ended:
+            return self.decorator.game_ended(mdata)
 
         if any(self.game.get_allowable_holes()):
-            return self.decorator.game_ended(repeat_turn, False)
+            return self.decorator.game_ended(mdata)
 
         self.game.turn = not self.game.turn
         no_next_moves = not any(self.game.get_allowable_holes())
@@ -233,9 +240,10 @@ class EndTurnPassPass(EndTurnIf):
         if no_next_moves:
             msg = "No moves for either player; game ended."
             game_log.add(msg, game_log.INFO)
-            return self.decorator.game_ended(repeat_turn, True)
+            mdata.ended = True
+            return self.decorator.game_ended(mdata)
 
-        return self.decorator.game_ended(repeat_turn, False)
+        return self.decorator.game_ended(mdata)
 
 
 class EndTurnMustShare(EndTurnIf):
@@ -264,10 +272,10 @@ class EndTurnMustShare(EndTurnIf):
         super().__init__(game, decorator, sclaimer)
         self.owner = claimer.make_owner_func(game)
 
-    def game_ended(self, repeat_turn, ended=False):
+    def game_ended(self, mdata):
 
-        if ended:
-            return self.decorator.game_ended(repeat_turn, ended)
+        if mdata.ended:
+            return self.decorator.game_ended(mdata)
 
         opponent = not self.game.turn
         player_seeds = opp_seeds = False
@@ -281,21 +289,21 @@ class EndTurnMustShare(EndTurnIf):
                 else:
                     player_seeds = True
 
-        if repeat_turn and player_seeds and not opp_seeds:
+        if mdata.repeat_turn and player_seeds and not opp_seeds:
 
-            no_share = not any(self.game.get_allowable_holes())
+            mdata.ended = not any(self.game.get_allowable_holes())
 
-        elif not repeat_turn and not player_seeds and opp_seeds:
+        elif not mdata.repeat_turn and not player_seeds and opp_seeds:
 
             self.game.turn = not self.game.turn
-            no_share = not any(self.game.get_allowable_holes())
+            mdata.ended = not any(self.game.get_allowable_holes())
             self.game.turn = not self.game.turn
 
         else:
-            return self.decorator.game_ended(repeat_turn, False)
+            return self.decorator.game_ended(mdata)
 
-        if no_share:
-            if repeat_turn:
+        if mdata.ended:
+            if mdata.repeat_turn:
                 self.game.turn = not self.game.turn
                 self.sclaimer.claim_seeds()
                 self.game.turn = not self.game.turn
@@ -306,7 +314,7 @@ class EndTurnMustShare(EndTurnIf):
                 game_log.add("Next player can't share, game ended.",
                              game_log.INFO)
 
-        return self.decorator.game_ended(repeat_turn, no_share)
+        return self.decorator.game_ended(mdata)
 
 
 class EndTurnNotPlayable(EndTurnIf):
@@ -319,20 +327,20 @@ class EndTurnNotPlayable(EndTurnIf):
 
     This ends most territory games and rounds."""
 
-    def game_ended(self, repeat_turn, ended=False):
+    def game_ended(self, mdata):
 
-        if ended:
-            return self.decorator.game_ended(repeat_turn, ended)
+        if mdata.ended:
+            return self.decorator.game_ended(mdata)
 
-        ended = not any(self.game.board[loc] >= self.game.info.min_move
-                        and self.game.child[loc] is None
-                        for loc in range(self.game.cts.dbl_holes))
+        mdata.ended = not any(self.game.board[loc] >= self.game.info.min_move
+                              and self.game.child[loc] is None
+                              for loc in range(self.game.cts.dbl_holes))
 
-        if ended:
+        if mdata.ended:
             game_log.add("No moves available, round/game ended.",
                          game_log.IMPORT)
 
-        return self.decorator.game_ended(repeat_turn, ended)
+        return self.decorator.game_ended(mdata)
 
 
 class ChildNoStoresEnder(EndTurnIf):
@@ -353,10 +361,10 @@ class ChildNoStoresEnder(EndTurnIf):
 
         return child_locs
 
-    def game_ended(self, repeat_turn, ended=False):
+    def game_ended(self, mdata):
         """Children but no stores end move wrapper."""
 
-        end_cond, winner = self.decorator.game_ended(repeat_turn, ended)
+        self.decorator.game_ended(mdata)
 
         if any(self.game.store):
             child_locs = self._find_child_stores(self.game)
@@ -385,8 +393,6 @@ class ChildNoStoresEnder(EndTurnIf):
             self.game.store = [0, 0]
             game_log.step('Moved store seeds to children', self.game)
 
-        return end_cond, winner
-
 
 class DepriveNoSeedsEndGame(EndTurnIf):
     """Determine if a deprive game is over based on who has seeds.
@@ -399,21 +405,24 @@ class DepriveNoSeedsEndGame(EndTurnIf):
     This is not to be used with children, because the presence
     of children is not checked."""
 
-    def game_ended(self, repeat_turn, ended=False):
+    def game_ended(self, mdata):
         """Check for end game."""
 
-        if ended:
-            if repeat_turn:
-                return gi.WinCond.WIN, not self.game.turn
+        if mdata.ended:
+            if mdata.repeat_turn:
+                mdata.win_cond = gi.WinCond.WIN
+                mdata.winner = not self.game.turn
+                return
 
-            return gi.WinCond.WIN, self.game.turn
+            mdata.win_cond = gi.WinCond.WIN
+            mdata.winner = self.game.turn
+            return
 
         my_seeds = sum(self.game.board[loc]
                        for loc in self.game.cts.get_my_range(self.game.turn))
         if not my_seeds:
-            return gi.WinCond.WIN, not self.game.turn
-
-        return None, self.game.turn
+            mdata.win_cond = gi.WinCond.WIN
+            mdata.winner = not self.game.turn
 
 
 class DepriveLastMoveEndGame(EndTurnIf):
@@ -425,20 +434,19 @@ class DepriveLastMoveEndGame(EndTurnIf):
     This is not to be used with children, because the presence
     of children is not checked."""
 
-    def game_ended(self, repeat_turn, ended=False):
+    def game_ended(self, mdata):
         """Check for end game."""
 
         self.game.turn = not self.game.turn
-        ended = not any(self.game.get_allowable_holes())
+        mdata.ended = not any(self.game.get_allowable_holes())
         self.game.turn = not self.game.turn
 
-        if ended:
+        if mdata.ended:
             game_log.add("No moves for next player; last move won.",
                          game_log.INFO)
 
-            return gi.WinCond.WIN, self.game.turn
-
-        return None, self.game.turn
+            mdata.win_cond = gi.WinCond.WIN
+            mdata.winner = self.game.turn
 
 
 class ClearSeedsEndGame(EndTurnIf):
@@ -446,20 +454,21 @@ class ClearSeedsEndGame(EndTurnIf):
     TIEs are not awarded--if both players end up wo seeds the win
     is awarded to the current player."""
 
-    def game_ended(self, repeat_turn, ended=False):
+    def game_ended(self, mdata):
         """Check for end game."""
 
         my_range, opp_range = self.game.cts.get_ranges(self.game.turn)
 
         my_seeds = sum(self.game.board[loc] for loc in my_range)
         if not my_seeds:
-            return gi.WinCond.WIN, self.game.turn
+            mdata.win_cond = gi.WinCond.WIN
+            mdata.winner = self.game.turn
+            return
 
         opp_seeds = sum(self.game.board[loc] for loc in opp_range)
         if not opp_seeds:
-            return gi.WinCond.WIN, not self.game.turn
-
-        return None, self.game.turn
+            mdata.win_cond = gi.WinCond.WIN
+            mdata.winner = not self.game.turn
 
 
 class NoOutcomeChange(EndTurnIf):
@@ -548,16 +557,17 @@ class NoOutcomeChange(EndTurnIf):
         return False
 
 
-    def game_ended(self, repeat_turn, ended=False):
+    def game_ended(self, mdata):
         """Determine if the game ended."""
 
-        cond, winner = self.decorator.game_ended(repeat_turn, ended)
+        self.decorator.game_ended(mdata)
 
-        if not ended and not cond and self._too_few_for_change():
-            game_log.add('Too few for change, calling deco chain again')
-            return self.decorator.game_ended(repeat_turn, True)
-
-        return cond, winner
+        if (not mdata.ended
+                and not mdata.win_cond
+                and self._too_few_for_change()):
+            game_log.add('Too few seeds for change, calling deco chain again')
+            mdata.ended = True
+            self.decorator.game_ended(mdata)
 
 
 class EndGameWinner(EndTurnIf):
@@ -570,35 +580,39 @@ class EndGameWinner(EndTurnIf):
 
     Any child deco is ignored."""
 
-    def game_ended(self, repeat_turn, ended=False):
+    def game_ended(self, mdata):
 
-        if not ended:
-            return None, self.game.turn
+        if not mdata.ended:
+            return
 
         # check for clear win condition
         seeds = self.sclaimer.claim_seeds()
         cond, winner = self.has_seeds_for_win(seeds)
 
         if cond:
-            return cond, winner
+            mdata.win_cond = cond
+            mdata.winner = winner
 
         # no clear win condition, pick player with most seeds
-        if seeds[0] > seeds[1]:
-            return gi.WinCond.WIN, False
+        elif seeds[0] > seeds[1]:
+            mdata.win_cond = gi.WinCond.WIN
+            mdata.winner = False
 
-        if seeds[0] < seeds[1]:
-            return gi.WinCond.WIN, True
+        elif seeds[0] < seeds[1]:
+            mdata.win_cond = gi.WinCond.WIN
+            mdata.winner = True
 
-        return gi.WinCond.TIE, self.game.turn
+        else:
+            mdata.win_cond = gi.WinCond.TIE
 
 
 class QuitToTie(EndTurnIf):
     """Force the game to end in a tie; don't change the board.
     Used for DEPRIVE games."""
 
-    def game_ended(self, repeat_turn, ended=False):
+    def game_ended(self, mdata):
         """Determine if the game ended."""
-        return gi.WinCond.TIE, self.game.turn
+        mdata.win_cond = gi.WinCond.TIE
 
 
 class AnimateEndMove(EndTurnIf):
@@ -606,7 +620,7 @@ class AnimateEndMove(EndTurnIf):
     The taker and divvier look odd picking seeds up one
     hole at a time."""
 
-    def game_ended(self, repeat_turn, ended=False):
+    def game_ended(self, mdata):
 
         with animator.one_step():
-            return self.decorator.game_ended(repeat_turn, ended)
+            self.decorator.game_ended(mdata)

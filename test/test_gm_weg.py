@@ -952,7 +952,7 @@ class TestWegGame1:
     def test_round_2_move_46(self, gstate):
         game = gstate.game
         cond = game.move((0, 5, None))
-        assert game.turn is True
+        assert game.mdata.winner is True     # manual change
         assert game.board == [0, 7, 0, 0, 0, 0, 0, 13, 14, 0, 0, 0]
         assert game.child == [N, T, N, N, N, N, N, T, F, N, N, N]
         assert game.owner == [F, F, F, F, F, F, F, F, T, T, T, T]
@@ -1568,7 +1568,7 @@ class TestWegGame1:
     def test_round_3_move_55(self, gstate):
         game = gstate.game
         cond = game.move((0, 3, None))
-        assert game.turn is True
+        assert game.mdata.winner is True     # manual change
         assert game.board == [0, 20, 0, 0, 0, 0, 0, 0, 0, 12, 0, 0]
         assert game.child == [N, T, N, N, N, N, N, N, N, F, N, N]
         assert game.owner == [T, F, F, F, F, F, T, T, T, T, T, T]
@@ -2182,7 +2182,7 @@ class TestWegGame1:
     def test_round_4_move_55(self, gstate):
         game = gstate.game
         cond = game.move((1, 4, None))
-        assert game.turn is False
+        assert game.mdata.winner is False     # manual change
         assert game.board == [0, 0, 0, 0, 0, 11, 0, 13, 0, 0, 0, 0]
         assert game.child == [N, N, N, N, N, T, N, F, N, N, N, N]
         assert game.owner == [T, T, F, F, F, F, T, T, T, T, T, T]
@@ -2698,7 +2698,7 @@ class TestWegGame1:
         """True captured all the seeds."""
         game = gstate.game
         cond = game.move((0, 0, None))
-        assert game.turn is True
+        assert game.mdata.winner is True     # manual change
         assert game.board == [10, 0, 21, 0, 9, 0, 0, 0, 0, 0, 0, 0]
         assert game.child == [T, N, T, N, T, N, N, N, N, N, N, N]
         assert game.owner == [F, F, F, F, F, F, F, F, F, T, T, T]
@@ -3204,7 +3204,7 @@ class TestWegSingleCapt:
         """False capture all but 2 seeds, ownership of > 10 holes."""
         game = gstate.game
         cond = game.move((1, 4, None))
-        assert game.turn is False
+        assert game.mdata.winner is False     # manual change
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 19, 0]
         assert game.child == [N, N, N, N, N, T, N, N, N, N, F, N]
         assert game.owner == [F, F, F, F, F, F, T, T, T, T, T, T]

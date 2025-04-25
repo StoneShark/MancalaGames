@@ -16,6 +16,8 @@ from context import game_interface as gi
 from context import mancala
 from context import bear_off
 
+import utils
+
 
 # %%
 
@@ -187,7 +189,7 @@ class TestGameExtensions:
     # either player may win on either turn in clear games
     END_CASES =  [   # start with a bunch of general combinations
                      # all with seeds on both sides
-                  ['game', board, nsow, rturn, ended, None, False]
+                  ['game', board, nsow, rturn, ended, None, None]
                   for board in [[2] * 6, [1] * 6, [1, 0] * 3]
                   for nsow in [False, True]
                   for rturn in [False, True]   # rturn not used, no effect
@@ -234,10 +236,11 @@ class TestGameExtensions:
         game.normal_sow = normal_sow
         # print(game)
 
-        cond, winner = game.deco.ender.game_ended(repeat_turn, ended)
-        # print(cond, winner)
-        assert cond == econd
-        assert winner == ewinner
+        mdata = utils.make_ender_mdata(game, repeat_turn, ended)
+        game.deco.ender.game_ended(mdata)
+        # print(mdata.win_cond, mdata.winner)
+        assert mdata.win_cond == econd
+        assert mdata.winner == ewinner
 
 
     # @pytest.mark.usefixtures("logger")

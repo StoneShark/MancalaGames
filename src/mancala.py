@@ -507,20 +507,24 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
     def end_round(self):
         """The player has requested that the round be ended."""
 
-        cond, winner = self.deco.ender.game_ended(repeat_turn=False,
-                                                  ended='round')
-        self.turn = winner
-        return cond
+        if not self.mdata:
+            self.mdata = move_data.MoveData(self, 0)
+
+        self.mdata.ended = 'round'
+        self.deco.ender.game_ended(self.mdata)
+        return self.mdata.win_cond
 
 
     def end_game(self):
         """Either the player has requested that the game be ended
         or an ENDLESS conditions was detected.  End the game fairly."""
 
-        cond, winner = self.deco.quitter.game_ended(repeat_turn=False,
-                                                    ended=True)
-        self.turn = winner
-        return cond
+        if not self.mdata:
+            self.mdata = move_data.MoveData(self, 0)
+
+        self.mdata.ended = True
+        self.deco.quitter.game_ended(self.mdata)
+        return self.mdata.win_cond
 
 
     def swap_sides(self):
@@ -566,17 +570,13 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         return None
 
 
-    def win_conditions(self, repeat_turn=False):
+    def win_conditions(self, mdata):
         """Check for end game.
         Return None if no victory/tie conditions are met.
         If there is a winner, set turn to that player."""
 
-        cond, winner = self.deco.ender.game_ended(repeat_turn=repeat_turn,
-                                                  ended=False)
-        if cond:
-            self.turn = winner
-            return cond
-        return None
+        self.deco.ender.game_ended(mdata)
+        return mdata.win_cond
 
 
     def win_message(self, win_cond):
@@ -614,10 +614,13 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             title = 'Round Over'
 
         message = ''
-        if self.mdata and self.mdata.end_msg:
-            message = self.mdata.end_msg
+        winner = None
+        if self.mdata:
+            winner = self.mdata.winner
+            if self.mdata.end_msg:
+                message = self.mdata.end_msg
 
-        player = 'Top' if self.turn else 'Bottom'
+        player = 'Top' if winner else 'Bottom'
         if win_cond == gi.WinCond.WIN:
             message += f'{player} won {rtext}{reason[self.info.goal]}'
 
@@ -730,7 +733,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         self.mdata = mdata   # keep this around for the win message
 
         if mdata.capt_loc == gi.WinCond.REPEAT_TURN:
-            win_cond = self.win_conditions(repeat_turn=True)
+            win_cond = self.win_conditions(mdata)
             return win_cond if win_cond else gi.WinCond.REPEAT_TURN
 
         if mdata.capt_loc == gi.WinCond.ENDLESS:
@@ -744,12 +747,12 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         self.capture_seeds(mdata)
 
         if mdata.captured == gi.WinCond.REPEAT_TURN:
-            win_cond = self.win_conditions(repeat_turn=True)
+            win_cond = self.win_conditions(mdata)
             return win_cond if win_cond else gi.WinCond.REPEAT_TURN
 
         self.inhibitor.clear_if(self, mdata)
 
-        win_cond = self.win_conditions()
+        win_cond = self.win_conditions(mdata)
         if win_cond:
             return win_cond
 

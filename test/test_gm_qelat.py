@@ -327,7 +327,7 @@ class TestQelat:
     def test_move_29(self, gstate):
         game = gstate.game
         cond = game.move(2)
-        assert game.turn is True
+        assert game.mdata.winner is True
         assert game.board == [0, 0, 0, 0, 14, 12, 2, 1, 1, 0, 0, 18]
         assert game.child == [N, N, N, N, T, T, N, N, N, N, N, F]
         assert game.store == [0, 0]

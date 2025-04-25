@@ -562,7 +562,7 @@ class TestNamNam45:
     def test_round_1_move_52(self, gstate):
         game = gstate.game
         cond = game.move((1, 3, CCW))
-        assert game.turn is False
+        assert game.mdata.winner is False     # manual change
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.owner == [F, F, F, F, F, F, T, T, T, T, T, T]
         assert game.store == [32, 16]
@@ -1070,7 +1070,7 @@ class TestNamNam45:
     def test_round_2_move_50(self, gstate):
         game = gstate.game
         cond = game.move((0, 1, CCW))
-        assert game.turn is False
+        assert game.mdata.winner is False     # manual change
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.owner == [F, F, F, F, F, F, F, F, T, T, T, T]
         assert game.store == [36, 12]
@@ -1208,7 +1208,7 @@ class TestNamNam45:
     def test_round_3_move_13(self, gstate):
         game = gstate.game
         cond = game.move((0, 0, CCW))
-        assert game.turn is False
+        assert game.mdata.winner is False     # manual change
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.owner == [F, F, F, F, F, F, F, F, F, T, T, T]
         assert game.store == [28, 20]
@@ -1504,7 +1504,7 @@ class TestNamNam45:
     def test_round_5_move_12(self, gstate):
         game = gstate.game
         cond = game.move((1, 1, CCW))
-        assert game.turn is False
+        assert game.mdata.winner is False     # manual change
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.owner == [F, F, F, F, F, F, T, T, T, T, T, T]
         assert game.store == [32, 16]
@@ -1742,7 +1742,7 @@ class TestNamNam45:
     def test_round_6_move_23(self, gstate):
         game = gstate.game
         cond = game.move((1, 0, CCW))
-        assert game.turn is False
+        assert game.mdata.winner is False     # manual change
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.owner == [F, F, F, F, F, F, F, F, T, T, T, T]
         assert game.store == [40, 8]
@@ -2130,7 +2130,7 @@ class TestNamNam49:
         True get's them"""
         game = gstate.game
         cond = game.move((0, 4, CCW))
-        assert game.turn is True
+        assert game.mdata.winner is True     # manual change
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.owner == [F, F, F, F, F, F, T, T, T, T, T, T]
         assert game.store == [16, 32]
@@ -2311,7 +2311,7 @@ class TestNamNam49:
         """False did last capture and collected last 4 seeds."""
         game = gstate.game
         cond = game.move((1, 4, CCW))
-        assert game.turn is True
+        assert game.mdata.winner is True     # manual change
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.owner == [T, T, F, F, F, F, T, T, T, T, T, T]
         assert game.store == [20, 28]
@@ -2849,7 +2849,7 @@ class TestNamNam49:
     def test_round_4_move_38(self, gstate):
         game = gstate.game
         cond = game.move((0, 5, CCW))
-        assert game.turn is True
+        assert game.mdata.winner is True     # manual change
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.owner == [F, F, F, F, F, F, T, T, T, T, T, T]
         assert game.store == [20, 28]
@@ -3265,7 +3265,7 @@ class TestNamNam49:
     def test_round_6_move_26(self, gstate):
         game = gstate.game
         cond = game.move((0, 4, CCW))
-        assert game.turn is False
+        assert game.mdata.winner is False     # manual change
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.owner == [F, F, F, F, F, F, T, T, T, T, T, T]
         assert game.store == [32, 16]
@@ -4276,7 +4276,7 @@ class TestNamNam49:
     def test_round_7_move_100(self, gstate):
         game = gstate.game
         cond = game.move((1, 3, CCW))
-        assert game.turn is False
+        assert game.mdata.winner is False     # manual change
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.owner == [F, F, F, F, F, F, F, F, T, T, T, T]
         assert game.store == [40, 8]

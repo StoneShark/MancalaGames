@@ -414,7 +414,7 @@ class TestDeka1:
     def test_move_29(self, gstate):
         game = gstate.game
         cond = game.move(5)
-        assert game.turn is True
+        assert game.mdata.winner is True     # manual change
         assert game.board == [0, 0, 0, 0, 0, 0, 1, 0, 2, 1, 0, 3]
         assert game.blocked == [T, F, F, T, F, F, F, T, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
@@ -650,7 +650,7 @@ class TestDeka2:
     def test_move_17(self, gstate):
         game = gstate.game
         cond = game.move(5)
-        assert game.turn is False
+        assert game.mdata.winner is False     # manual change
         assert game.board == [5, 0, 4, 1, 2, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [F, F, F, F, F, F, T, T, T, F, T, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]

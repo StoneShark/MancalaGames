@@ -311,7 +311,7 @@ class TestEWClearEnder:
         game.board = board
         game.turn = turn
 
-        cond, winner = game.deco.ender.game_ended(False, False)
-        assert cond == econd
-        if ewinner is not None:
-            assert winner == ewinner
+        mdata = utils.make_ender_mdata(game, False, False)
+        game.deco.ender.game_ended(mdata)
+        assert mdata.win_cond == econd
+        assert mdata.winner == ewinner

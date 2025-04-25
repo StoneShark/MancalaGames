@@ -453,7 +453,7 @@ class TestPandi:
     def test_round_1_move_32(self, gstate):
         game = gstate.game
         cond = game.move(5)
-        assert game.turn is True
+        assert game.mdata.winner is True     # manual change
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
@@ -568,7 +568,7 @@ class TestPandi:
     def test_round_2_move_8(self, gstate):
         game = gstate.game
         cond = game.move(6)
-        assert game.turn is True
+        assert game.mdata.winner is True     # manual change
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
@@ -722,7 +722,7 @@ class TestPandi:
     def test_round_3_move_11(self, gstate):
         game = gstate.game
         cond = game.move(3)
-        assert game.turn is True
+        assert game.mdata.winner is True     # manual change
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
@@ -915,7 +915,7 @@ class TestPandi:
     def test_round_4_move_14(self, gstate):
         game = gstate.game
         cond = game.move(3)
-        assert game.turn is True
+        assert game.mdata.winner is True     # manual change
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
@@ -1121,7 +1121,7 @@ class TestPandi:
     def test_round_5_move_15(self, gstate):
         game = gstate.game
         cond = game.move(6)
-        assert game.turn is False
+        assert game.mdata.winner is False     # manual change
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [F, F, F, F, F, F, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
@@ -1275,7 +1275,7 @@ class TestPandi:
     def test_round_6_move_11(self, gstate):
         game = gstate.game
         cond = game.move(5)
-        assert game.turn is False
+        assert game.mdata.winner is False     # manual change
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, T, T, T]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
@@ -1338,7 +1338,7 @@ class TestPandi:
     def test_round_7_move_4(self, gstate):
         game = gstate.game
         cond = game.move(0)
-        assert game.turn is False
+        assert game.mdata.winner is False     # manual change
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, T, T, T, T]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
@@ -1388,7 +1388,7 @@ class TestPandi:
     def test_round_8_move_3(self, gstate):
         game = gstate.game
         cond = game.move(3)
-        assert game.turn is False
+        assert game.mdata.winner is False     # manual change
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, T, T, T]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]

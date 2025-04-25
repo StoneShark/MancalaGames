@@ -40,7 +40,9 @@ class CaptMethodIf(deco_chain_if.DecoChainIf):
         for repeat turn (CAPT_RTURN)
 
         capt_next: for base captures this should be set to the location
-        to test for a possible multiple capture"""
+        to test for a possible multiple capture
+
+        repeat_turn:  set when mdata.captured is set to REPEAT_TURN"""
 
 
 # %% capture base
@@ -323,7 +325,6 @@ class CaptMultiple(CaptMethodIf):
     def __init__(self, game, decorator=None):
 
         super().__init__(game, decorator)
-
         self.max_capt = game.info.multicapt
 
 
@@ -851,6 +852,7 @@ class RepeatTurn(CaptMethodIf):
                 game_log.add(f'Capture repeat turn (rcnt={self.game.rturn_cnt})',
                              game_log.INFO)
                 mdata.captured = gi.WinCond.REPEAT_TURN
+                mdata.repeat_turn = True
             else:
                 game_log.add('Second repeat turn prevented', game_log.INFO)
             self.game.rturn_cnt += 1

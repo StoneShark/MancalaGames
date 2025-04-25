@@ -742,50 +742,52 @@ class TestDelegates:
         mobj.assert_called_once()
 
 
-    @pytest.mark.parametrize('tcase',
-                             [(True, 123),
-                              (False, 345)])
-    def test_dlg_end_round(self, game, mocker, tcase):
+    def test_nomd_end_round(self, game, mocker):
 
         mobj = mocker.patch.object(game.deco.ender, 'game_ended')
-        mobj.return_value = tcase
 
-        assert game.end_round() == tcase[0]
-        assert game.turn == tcase[1]
+        game.mdata = None
+        game.end_round()
         mobj.assert_called_once()
+        assert game.mdata.ended
 
 
-    @pytest.mark.parametrize('tcase',
-                             [(True, 123),
-                              (False, 345)])
-    def test_dlg_quitter(self, game, mocker, tcase):
+    def test_nomd_quitter(self, game, mocker):
 
         mobj = mocker.patch.object(game.deco.quitter, 'game_ended')
-        mobj.return_value = tcase
 
-        assert game.end_game() == tcase[0]
-        assert game.turn == tcase[1]
+        game.mdata = None
+        game.end_game()
         mobj.assert_called_once()
+        assert game.mdata.ended
 
 
-    @pytest.mark.parametrize('tcase',
-                             [(234, False),
-                              (345, True),
-                              (False, True)])
-    def test_dlg_winner(self, game, mocker, tcase):
-
-        game.turn = 90  # a unique value
+    def test_dlg_end_round(self, game, mocker):
 
         mobj = mocker.patch.object(game.deco.ender, 'game_ended')
-        mobj.return_value = tcase
 
-        rval = game.win_conditions()
-        if tcase[0]:
-            assert rval == tcase[0]
-            assert game.turn == tcase[1]
-        else:
-            assert rval is None
-            assert game.turn == 90
+        game.mdata = move_data.MoveData(game, 0)
+        game.end_round()
+        mobj.assert_called_once()
+        assert game.mdata.ended
+
+
+    def test_dlg_quitter(self, game, mocker):
+
+        mobj = mocker.patch.object(game.deco.quitter, 'game_ended')
+
+        game.mdata = move_data.MoveData(game, 0)
+        game.end_game()
+        mobj.assert_called_once()
+        assert game.mdata.ended
+
+
+    def test_dlg_winner(self, game, mocker):
+
+        mobj = mocker.patch.object(game.deco.ender, 'game_ended')
+
+        game.mdata = move_data.MoveData(game, 0)
+        game.win_conditions(game.mdata)
         mobj.assert_called_once()
 
 
@@ -1073,12 +1075,13 @@ class TestWinMessage:
 
     @pytest.mark.parametrize('game_fixt', ['maxgame', 'depgame', 'tergame'])
     @pytest.mark.parametrize('wcond', WinCond)
-    @pytest.mark.parametrize('turn', [False, True])
-    def test_side_messages(self, request, game_fixt, wcond, turn):
+    @pytest.mark.parametrize('winner', [False, True])
+    def test_side_messages(self, request, game_fixt, wcond, winner):
         """test which player is considered the winner and type of win."""
 
         game = request.getfixturevalue(game_fixt)
-        game.turn = turn
+        game.mdata = move_data.MoveData(game, 0)
+        game.mdata.winner = winner
 
         title, message = game.win_message(wcond)
 
@@ -1088,7 +1091,7 @@ class TestWinMessage:
             assert 'Game Over' == title
 
         if 'WIN' in wcond.name:
-            if turn:
+            if game.mdata.winner:
                 assert 'Top' in message
             else:
                 assert 'Bottom' in message
@@ -1280,7 +1283,7 @@ class TestMove:
         assert not mobj.do_sow.called
 
 
-    def test__move_basic (self, mocker, game):
+    def test_move_basic (self, mocker, game):
         """basic flow, no winner"""
 
         game.mdata = None
@@ -1304,7 +1307,7 @@ class TestMove:
         minh.assert_called_once_with(game, mdata)
 
 
-    def test__move_repeat_turn (self, mocker, game):
+    def test_move_repeat_turn (self, mocker, game):
         """do sow determines repeat turn, no winner"""
 
         msow = mocker.patch.object(game, 'do_sow')

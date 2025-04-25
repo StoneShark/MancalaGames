@@ -5,6 +5,7 @@ Created on Sat Jul 15 05:28:35 2023
 
 
 from context import mancala
+from context import move_data
 
 
 def build_board(trow, frow):
@@ -20,3 +21,21 @@ def make_state(board, store=(0, 0), turn=False, **kwargs):
                              _turn=turn,
                              mcount=25,
                              **kwargs)
+
+
+def make_ender_mdata(game, repeat_turn,  ended):
+    """Build a MoveData suitable for the ender."""
+
+    mdata = move_data.MoveData(game, 0)
+    mdata.repeat_turn = repeat_turn
+    mdata.ended = ended
+    return mdata
+
+
+def make_win_mdata(game, win_cond, winner):
+    """Build a MoveData suitable for the win_message."""
+
+    mdata = move_data.MoveData(game, 0)
+    mdata.win_cond = win_cond
+    mdata.winner = winner
+    return mdata

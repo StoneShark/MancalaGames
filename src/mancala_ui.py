@@ -796,7 +796,7 @@ class MancalaUI(tk.Frame):
         ui_utils.showerror(
             self,
             "New Round Not Playable",
-           """The new round resulted in a unplayable game. 
+           """The new round resulted in a unplayable game.
            New game started.""")
 
 
@@ -926,7 +926,7 @@ class MancalaUI(tk.Frame):
         if self.movers != 1:
             ui_utils.showerror(self, "Swap Not Allowed",
                                """Swapping sides is only allowed by a
-                               human player after the first move. 
+                               human player after the first move.
                                It counts as a move.""")
             return
 

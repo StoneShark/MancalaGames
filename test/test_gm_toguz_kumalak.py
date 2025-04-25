@@ -1694,7 +1694,7 @@ class TestToguzKumalak:
     def test_round_1_move_127(self, gstate):
         game = gstate.game
         cond = game.move(5)
-        assert game.turn is False
+        assert game.mdata.winner is False
         assert game.board == [10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]

@@ -115,6 +115,7 @@ class SowSeedsNStore(SowMethodIf):
                 loc = incr(loc, mdata.direct, mdata.cont_sow_loc)
 
         if ploc == gi.WinCond.REPEAT_TURN:
+            mdata.repeat_turn = True
             game_log.add('Sow ended in store REPEAT TURN', game_log.INFO)
 
         mdata.capt_loc = ploc

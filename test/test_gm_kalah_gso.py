@@ -595,7 +595,7 @@ class TestWin:
     def test_move_32(self, gstate):
         game = gstate.game
         cond = game.move(0)
-        assert game.turn is False
+        assert game.mdata.winner is False
         assert game.board == [0, 6, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1]
         assert game.store == [25, 11]
         assert cond.name == "WIN"

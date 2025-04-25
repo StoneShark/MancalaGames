@@ -145,7 +145,7 @@ class TestEnlightenment:
     def test_round_1_move_12(self, gstate):
         game = gstate.game
         cond = game.move((1, 4, CCW))
-        assert game.turn is False
+        assert game.mdata.winner is False
         assert game.board == [0, 0, 0, 0, 0, 1, 1, 0, 11, 1]
         assert game.store == [12, 14]
         assert cond.name == "WIN"

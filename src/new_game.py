@@ -28,7 +28,10 @@ def set_round_starter(game):
         game.turn = not game.starter
 
     elif start_rule == gi.RoundStarter.LOSER:
-        game.turn = not game.turn
+        if game.mdata and game.mdata.winner is not None:
+            game.turn = not game.mdata.winner
+        else:
+            game.turn = not game.turn
 
     elif start_rule == gi.RoundStarter.LAST_MOVER:
         game.turn = game.mdata.player

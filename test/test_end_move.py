@@ -172,7 +172,7 @@ class TestEndMove:
                  utils.build_board([0, 2, 1],
                                    [0, 2, 0]), [3, 4], True, None,
                  utils.build_board([0, 2, 1],
-                                   [0, 2, 0]), [3, 4], True),
+                                   [0, 2, 0]), [3, 4], None),
 
                 # true win on true turn, playable
                 ('1', 'game', False, False,
@@ -207,14 +207,14 @@ class TestEndMove:
                  utils.build_board([0, 0, 0],
                                    [0, 0, 0]), [6, 6], False, WinCond.TIE,
                  utils.build_board([0, 0, 0],
-                                   [0, 0, 0]), [6, 6], False),
+                                   [0, 0, 0]), [6, 6], None),
 
                 # tie on true turn, playable
                 ('6', 'game', False, False,
                  utils.build_board([0, 0, 0],
                                    [0, 0, 0]), [6, 6], True, WinCond.TIE,
                  utils.build_board([0, 0, 0],
-                                   [0, 0, 0]), [6, 6], True),
+                                   [0, 0, 0]), [6, 6], None),
 
                 # true's turn ended, false has no moves
                 ('7', 'game', False, False,
@@ -263,14 +263,14 @@ class TestEndMove:
                  utils.build_board([0, 0, 0],
                                    [0, 0, 0]), [6, 6], False, WinCond.ROUND_TIE,
                  utils.build_board([0, 0, 0],
-                                   [0, 0, 0]), [6, 6], False),
+                                   [0, 0, 0]), [6, 6], None),
 
                 # test_t_tie_win
                 ('14', 'rgame', False, False,
                  utils.build_board([0, 0, 0],
                                    [0, 0, 0]), [6, 6], True, WinCond.ROUND_TIE,
                  utils.build_board([0, 0, 0],
-                                   [0, 0, 0]), [6, 6], True),
+                                   [0, 0, 0]), [6, 6], None),
 
                 # false's turn ended, true has won, doesn't have seeds
                 ('15', 'rgame', False, False,
@@ -340,7 +340,7 @@ class TestEndMove:
                  utils.build_board([0, 0, 0],
                                    [1, 1, 0]), [4, 6], True, WinCond.TIE,
                  utils.build_board([0, 0, 0],
-                                   [0, 0, 0]), [6, 6], DONT_CARE),
+                                   [0, 0, 0]), [6, 6], None),
 
                 # true has a repeat_turn but no moves, false wins
                 ('25', 'game', False, REPEAT_TURN,
@@ -354,7 +354,7 @@ class TestEndMove:
                  utils.build_board([1, 1, 0],
                                    [0, 1, 3]), [3, 3], True, None,
                  utils.build_board([1, 1, 0],
-                                   [0, 1, 3]), [3, 3], True),
+                                   [0, 1, 3]), [3, 3], None),
 
                 # true has no moves but has a repeat turn, false can share
                 ('27', 'mmshgame', False, True,
@@ -368,14 +368,14 @@ class TestEndMove:
                  utils.build_board([5, 0, 0],
                                    [0, 0, 0]), [3, 4], True, None,
                  utils.build_board([5, 0, 0],
-                                   [0, 0, 0]), [3, 4], True),
+                                   [0, 0, 0]), [3, 4], None),
 
                 # UMOVE game
                 ('29', 'rugame', False, False,
                  utils.build_board([2, 2, 2],
                                    [2, 2, 2]), [0, 0], True, None,
                  utils.build_board([2, 2, 2],
-                                   [2, 2, 2]), [0, 0], True),
+                                   [2, 2, 2]), [0, 0], None),
 
                 #  True has just enough seeds to continue
                 ('30', 'rugame', False, False,
@@ -396,7 +396,7 @@ class TestEndMove:
                  utils.build_board([2, 2, 2],
                                    [2, 2, 2]), [0, 6], True, None,
                  utils.build_board([2, 2, 2],
-                                   [2, 2, 2]), [0, 6], True),
+                                   [2, 2, 2]), [0, 6], None),
 
                 # enough seeds to keep playing
                 ('33', 'r2game', False, False,
@@ -417,14 +417,14 @@ class TestEndMove:
                  utils.build_board([2, 0, 0],
                                    [0, 2, 0]), [4, 4], False, WinCond.TIE,
                  utils.build_board([0, 0, 0],
-                                   [0, 0, 0]), [6, 6], DONT_CARE),
+                                   [0, 0, 0]), [6, 6], None),
 
                 # F moved all but one seed to T, now Ts move
                 ('36', 'shgame', False, False,
                  utils.build_board([0, 1, 2],
                                    [1, 0, 0]), [5, 5], False, None,
                  utils.build_board([0, 1, 2],
-                                   [1, 0, 0]), [5, 5], False),
+                                   [1, 0, 0]), [5, 5], None),
 
                 # move after 36  Ts move, first move capt all F seeds,
                 #     now T repeat turn but can't share,
@@ -440,7 +440,7 @@ class TestEndMove:
                  utils.build_board([2, 1, 0],
                                    [0, 1, 3]), [2, 3], False, WinCond.TIE,
                  utils.build_board([0, 0, 0],
-                                   [0, 0, 0]), [6, 6], False),
+                                   [0, 0, 0]), [6, 6], None),
 
                 ('end_ds', 'dont_score', ENDED, False,
                  utils.build_board([2, 1, 0],
@@ -458,26 +458,26 @@ class TestEndMove:
                  utils.build_board([2, 1, 0],
                                    [0, 2, 3]), [2, 2], False, WinCond.TIE,
                  utils.build_board([0, 0, 0],
-                                   [0, 0, 0]), [6, 6], False),
+                                   [0, 0, 0]), [6, 6], None),
 
                 # RoundEndLimit tests
                 ('rnd_not_send', 'st_game', False, False,
                  utils.build_board([2, 2, 2],
                                    [2, 2, 2]), [0, 0], False, None,
                  utils.build_board([2, 2, 2],
-                                   [2, 2, 2]), [0, 0], False),
+                                   [2, 2, 2]), [0, 0], None),
 
                 ('rnd_send_3', 'st_game', False, False,
                  utils.build_board([0, 1, 1],
                                    [0, 1, 0]), [5, 4], False, None,
                  utils.build_board([0, 1, 1],
-                                   [0, 1, 0]), [5, 4], False),
+                                   [0, 1, 0]), [5, 4], None),
 
                 ('rnd_send_tie', 'st_game', False, False,
                  utils.build_board([0, 1, 0],
                                    [0, 1, 0]), [5, 5], False, WinCond.ROUND_TIE,
                  utils.build_board([0, 0, 0],
-                                   [0, 0, 0]), [6, 6], False),
+                                   [0, 0, 0]), [6, 6], None),
 
                 ('rnd_send_win', 'st_game', False, False,
                  utils.build_board([0, 1, 1],
@@ -495,7 +495,7 @@ class TestEndMove:
                  utils.build_board([2, 2, 2],
                                    [2, 2, 2]), [0, 0], False, None,
                  utils.build_board([2, 2, 2],
-                                   [2, 2, 2]), [0, 0], False),
+                                   [2, 2, 2]), [0, 0], None),
 
                 ('rnd_s2end_win', 'st2_game', False, False,
                  utils.build_board([1, 1, 1],
@@ -507,19 +507,19 @@ class TestEndMove:
                  utils.build_board([2, 2, 2],
                                    [2, 2, 2]), [0, 0], False, None,
                  utils.build_board([2, 2, 2],
-                                   [2, 2, 2]), [0, 0], False),
+                                   [2, 2, 2]), [0, 0], None),
 
                 ('pp_ended', 'pp_game', True, False,
                  utils.build_board([2, 2, 2],
                                    [2, 2, 2]), [0, 0], False, WinCond.TIE,
                  utils.build_board([0, 0, 0],
-                                   [0, 0, 0]), [0, 0], DONT_CARE),
+                                   [0, 0, 0]), [0, 0], None),
 
                 ('pp_p1none', 'pp_game', False, False,
                  utils.build_board([2, 2, 2],
                                    [0, 0, 0]), [0, 0], False, None,
                  utils.build_board([2, 2, 2],
-                                   [0, 0, 0]), [0, 0], DONT_CARE),
+                                   [0, 0, 0]), [0, 0], None),
             ]
     @pytest.mark.filterwarnings("ignore")
     # @pytest.mark.usefixtures("logger")
@@ -538,15 +538,18 @@ class TestEndMove:
         game.turn = turn
         # print(game)
         # print(game.deco.ender)
-        cond, winner = game.deco.ender.game_ended(repeat_turn=repeat,
-                                                  ended=ended)
+
+        mdata = utils.make_ender_mdata(game, repeat, ended)
+        game.deco.ender.game_ended(mdata)
+
         # print('after:', game, sep='\n')
-        # print(cond, winner)
-        assert cond == eres
+        # print(mdata.win_cond, mdata.winner)
+
+        assert mdata.win_cond == eres
         assert game.board == eboard
         assert game.store == estore
         if eturn != DONT_CARE:
-            assert winner == eturn
+            assert mdata.winner == eturn
         if 'pp' not in case:
             assert not game.test_pass()
 
@@ -596,15 +599,17 @@ class TestEndMove:
         game.turn = turn
         # print(game)
         # print(game.deco.ender)
-        cond, winner = game.deco.ender.game_ended(repeat_turn=repeat,
-                                                  ended=ended)
+
+        mdata = utils.make_ender_mdata(game, repeat, ended)
+        game.deco.ender.game_ended(mdata)
+
         # print('after:', game, sep='\n')
-        # print(cond, winner)
-        assert cond == eres
+        # print(mdata.win_cond, mdata.winner)
+        assert mdata.win_cond == eres
         assert game.board == eboard
         assert game.store == estore
         if eturn != DONT_CARE:
-            assert winner == eturn
+            assert mdata.winner == eturn
 
 
     @pytest.mark.parametrize('game', ['game'], indirect=['game'])
@@ -634,14 +639,14 @@ class TestEndMove:
          utils.make_state(board=(0, 0, 0, 0, 0, 1),
                           store=(6, 5),
                           turn=True),
-         0, [0, 0, 0, 0, 0, 0], [6, 6], T, WinCond.TIE),
+         0, [0, 0, 0, 0, 0, 0], [6, 6], N, WinCond.TIE),
 
         # capture Fs last seed, T repeat turn but can't share
         ('capt_rturn', 'unfed_player',
          utils.make_state(board=(1, 0, 0, 1, 0, 1),
                           store=(5, 4),
                           turn=True),
-         0, [0, 0, 0, 0, 0, 0], [6, 6], T, WinCond.TIE),
+         0, [0, 0, 0, 0, 0, 0], [6, 6], N, WinCond.TIE),
 
         # capture all ops, repeat turn, but can't share
         ('cr_flose', 'unfed_player',
@@ -662,7 +667,7 @@ class TestEndMove:
          utils.make_state(board=(1, 0, 0, 3, 0, 1),
                           store=(4, 3),
                           turn=True),
-         0, [0, 0, 0, 3, 0, 0], [4, 5], T, WinCond.REPEAT_TURN),
+         0, [0, 0, 0, 3, 0, 0], [4, 5], N, WinCond.REPEAT_TURN),
 
 
         # capture 0 (now tie) repeat turn, but no moves, T gets remaining and wins
@@ -683,12 +688,12 @@ class TestEndMove:
     @pytest.mark.filterwarnings("ignore")
     # @pytest.mark.usefixtures("logger")
     @pytest.mark.parametrize(
-        'case, game, state, move, eboard, estore, eturn, econd',
+        'case, game, state, move, eboard, estore, ewin, econd',
         MOVECASES,
         indirect=['game'],
         ids=[f'{case[0]}_idx_{idx}' for idx, case in enumerate(MOVECASES)])
     def test_end_w_moves(self, case, game, state, move,
-                         eboard, estore, eturn, econd):
+                         eboard, estore, ewin, econd):
         """These tests require that an actual move be made
         before end_game is called (at the end of move)."""
 
@@ -700,9 +705,9 @@ class TestEndMove:
         # print(game)
 
         assert wcond == econd
+        assert game.mdata.winner == ewin
         assert game.board == eboard
         assert game.store == estore
-        assert game.turn == eturn
 
 
 class TestEndChildren:
@@ -805,11 +810,13 @@ class TestEndChildren:
         game.store = store
         game.turn = turn
 
-        cond, winner = game.deco.ender.game_ended(False, ended)
-        assert cond == eres
+        mdata = utils.make_ender_mdata(game, False, ended)
+        game.deco.ender.game_ended(mdata)
+
+        assert mdata.win_cond == eres
         assert game.board == eboard
         assert game.store == estore
-        assert winner == eturn
+        assert mdata.winner == eturn
         assert not game.test_pass()
 
 
@@ -951,11 +958,12 @@ class TestEndDeprive:
         game.board = board
         game.turn = turn
 
-        cond, winner = game.deco.ender.game_ended(repeat_turn=repeat_turn,
-                                                  ended=False)
-        assert cond == econd
+        mdata = utils.make_ender_mdata(game, repeat_turn, False)
+        game.deco.ender.game_ended(mdata)
+
+        assert mdata.win_cond == econd
         if ewinner is not None:
-            assert winner == ewinner
+            assert mdata.winner == ewinner
 
 
     def test_rnd_end_game(self, game, rndgame):
@@ -1046,10 +1054,12 @@ class TestEndClear:
         game.board = board
         game.turn = turn
 
-        cond, winner = game.deco.ender.game_ended(False, False)
-        assert cond == econd
+        mdata = utils.make_ender_mdata(game, False, False)
+        game.deco.ender.game_ended(mdata)
+
+        assert mdata.win_cond == econd
         if ewinner is not None:
-            assert winner == ewinner
+            assert mdata.winner == ewinner
 
 
     def test_rnd_end_game(self, game, rndgame):
@@ -1132,6 +1142,8 @@ class TestEndWaldas:
 
     def test_end_game_no_walda(self, game):
 
+
+        game.mdata = utils.make_ender_mdata(game, False, False)
         cond = game.end_game()
 
         winmsg = game.win_message(cond)
@@ -1147,6 +1159,7 @@ class TestEndWaldas:
                       None, None, None, None, None, None]
         game.store = [0, 0]
 
+        game.mdata = utils.make_ender_mdata(game, False, False)
         cond = game.end_game()
         assert game.board == [0, 0, 0, 0, 0, 48, 0, 0, 0, 0, 0, 0]
 
@@ -1163,6 +1176,7 @@ class TestEndWaldas:
                       None, None, None, None, None, None]
         game.store = [0, 0]
 
+        game.mdata = utils.make_ender_mdata(game, False, False)
         cond = game.end_game()
         assert game.board == [48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
@@ -1179,6 +1193,7 @@ class TestEndWaldas:
                       None, None, None, None, None, None]
         game.store = [0, 0]
 
+        game.mdata = utils.make_ender_mdata(game, False, False)
         cond = game.end_game()
         assert game.board == [25, 0, 0, 0, 0, 23, 0, 0, 0, 0, 0, 0]
 
@@ -1274,7 +1289,7 @@ class TestQuitter:
          utils.build_board([N, N, N],
                            [N, N, N]),
          utils.build_board([0, 0, 0],
-                           [0, 0, 0]), [6, 6], True),
+                           [0, 0, 0]), [6, 6], None),
 
         # 1:  stores, no child - divvy odd, false gets extra
         ('game',
@@ -1283,7 +1298,7 @@ class TestQuitter:
          utils.build_board([N, N, N],
                            [N, N, N]),
          utils.build_board([0, 0, 0],
-                           [0, 0, 0]), [6, 6], True),
+                           [0, 0, 0]), [6, 6], None),
 
         # 2:  stores, no child - divvy even
         ('game',
@@ -1301,7 +1316,7 @@ class TestQuitter:
          utils.build_board([N, F, N],
                            [N, T, N]),
          utils.build_board([0, 2, 0],
-                           [0, 2, 0]), [4, 4], True),
+                           [0, 2, 0]), [4, 4], None),
 
         # 4:  stores, child - divvy even
         ('chgame',
@@ -1319,7 +1334,7 @@ class TestQuitter:
          utils.build_board([N, N, N],
                            [N, N, N]),
          utils.build_board([2, 2, 1],
-                           [4, 0, 3]), [0, 0], True,
+                           [4, 0, 3]), [0, 0], None,
          marks=pytest.mark.filterwarnings("ignore")),
 
         # 6:  no stores, child - divvy odd
@@ -1329,7 +1344,7 @@ class TestQuitter:
          utils.build_board([N, F, N],
                            [N, T, N]),
          utils.build_board([0, 6, 0],
-                           [0, 6, 0]), [0, 0], True),
+                           [0, 6, 0]), [0, 0], None),
 
         # 7:  no stores, child - divvy odd
         ('chnsgame',
@@ -1338,7 +1353,7 @@ class TestQuitter:
          utils.build_board([N, F, N],
                            [N, T, N]),
          utils.build_board([0, 6, 0],
-                           [0, 6, 0]), [0, 0], True),
+                           [0, 6, 0]), [0, 0], None),
 
         # 8:  no stores, child - divvy even
         ('chnsgame',
@@ -1374,7 +1389,7 @@ class TestQuitter:
          utils.build_board([N, N, N],
                            [N, N, N]),
          utils.build_board([0, 0, 0],
-                           [0, 0, 0]), [0, 0], True),
+                           [0, 0, 0]), [0, 0], None),
 
         # 12: rounds, end game returns definitive result
         ('rgame',
@@ -1383,7 +1398,7 @@ class TestQuitter:
             utils.build_board([N, F, N],
                               [N, T, N]),
             utils.build_board([0, 2, 0],
-                              [0, 2, 0]), [4, 4], True),
+                              [0, 2, 0]), [4, 4], None),
 
         # 13: rounds, end game returns definitive result
         ('rgame',
@@ -1410,7 +1425,7 @@ class TestQuitter:
          utils.build_board([N, N, N],
                            [N, N, N]),
          utils.build_board([1, 0, 0],
-                           [0, 0, 1]), [2, 8], True),
+                           [0, 0, 1]), [2, 8], None),
 
         #16
         ('tergame',
@@ -1419,7 +1434,7 @@ class TestQuitter:
          utils.build_board([N, N, N],
                            [N, N, N]),
          utils.build_board([0, 0, 0],
-                           [0, 0, 0]), [6, 6], True),
+                           [0, 0, 0]), [6, 6], None),
 
         #17
         ('tergame',
@@ -1433,23 +1448,23 @@ class TestQuitter:
     ]
     @pytest.mark.parametrize(
         'game, board, store, turn, '
-        'eres, child, eboard, estore, eturn',
+        'eres, child, eboard, estore, ewin',
         CASES,
         indirect=['game'],
         ids=[f'case_{c}' for c in range(len(CASES))])
     def test_ended(self, game, board, store, turn, child,
-                   eres, eboard, estore, eturn):
+                   eres, eboard, estore, ewin):
 
         game.board = board
         game.child = child
         game.store = store
         game.turn = turn
 
+        game.mdata = utils.make_ender_mdata(game, False, False)
         assert game.end_game() == eres
         assert game.board == eboard
         assert game.store == estore
-        if eturn is not None:
-            assert game.turn == eturn
+        assert game.mdata.winner == ewin
 
 
 class TestTerritory:
@@ -1571,7 +1586,7 @@ class TestTerritory:
 
     TERR_CASES = [
         (utils.build_board([0, 2, 1],
-                           [0, 2, 0]), [6, 7], None, False),
+                           [0, 2, 0]), [6, 7], None, None),
         (utils.build_board([0, 0, 0],
                            [0, 2, 0]), [8, 8], WinCond.ROUND_WIN, False),
         (utils.build_board([0, 0, 0],
@@ -1587,9 +1602,9 @@ class TestTerritory:
         (utils.build_board([0, 0, 0],
                            [0, 0, 0]), [18-5, 5],  WinCond.ROUND_WIN, False),
         (utils.build_board([0, 0, 0],
-                           [0, 0, 0]), [9, 9],  WinCond.ROUND_TIE, False),
+                           [0, 0, 0]), [9, 9],  WinCond.ROUND_TIE, None),
         (utils.build_board([0, 0, 0],
-                           [1, 1, 0]), [7, 9], WinCond.ROUND_TIE, False),
+                           [1, 1, 0]), [7, 9], WinCond.ROUND_TIE, None),
         ]
 
     # @pytest.mark.usefixtures("logger")
@@ -1599,10 +1614,11 @@ class TestTerritory:
         rgame.board = board
         rgame.store = store
 
-        cond, winner = rgame.deco.ender.game_ended(False, False)
+        mdata = utils.make_ender_mdata(rgame, False, False)
+        rgame.deco.ender.game_ended(mdata)
 
-        assert cond == econd
-        assert winner == ewinner
+        assert mdata.win_cond == econd
+        assert mdata.winner == ewinner
 
 
     @pytest.mark.parametrize('board, store, econd, ewinner', TERR_CASES)
@@ -1612,21 +1628,22 @@ class TestTerritory:
         game.board = board
         game.store = store
 
-        cond, winner = game.deco.ender.game_ended(False, False)
+        mdata = utils.make_ender_mdata(game, False, False)
+        game.deco.ender.game_ended(mdata)
 
         if econd == WinCond.ROUND_WIN:
-            assert cond == WinCond.WIN
+            assert mdata.win_cond == WinCond.WIN
         elif econd == WinCond.ROUND_TIE:
-            assert cond == WinCond.TIE
+            assert mdata.win_cond == WinCond.TIE
         else:
-            assert cond == econd
-        assert winner == ewinner
+            assert mdata.win_cond == econd
+        assert mdata.winner == ewinner
 
 
     @pytest.mark.parametrize(
         'board, store, econd, ewinner',
         [(utils.build_board([0, 0, 0, 0],
-                            [2, 2, 0, 2]), [10, 8], None, True),  # can share game continues
+                            [2, 2, 0, 2]), [10, 8], None, None),  # can share game continues
          (utils.build_board([0, 0, 0, 0],
                             [2, 2, 0, 0]), [10, 10], WinCond.ROUND_WIN, False),
          (utils.build_board([0, 0, 0, 0],
@@ -1653,9 +1670,11 @@ class TestTerritory:
         game.board = board
         game.store = store
 
-        cond, winner = game.deco.ender.game_ended(False, False)
-        assert cond == econd
-        assert winner == ewinner
+        mdata = utils.make_ender_mdata(game, False, False)
+        game.deco.ender.game_ended(mdata)
+
+        assert mdata.win_cond == econd
+        assert mdata.winner == ewinner
 
 
 
@@ -1738,7 +1757,7 @@ class TestRoundTally:
 
     CASES = [
         # 0: start game, not over
-        (False, [3, 3, 3, 3], [0, 0], (0, 0), None, False, (0, 0)),
+        (False, [3, 3, 3, 3], [0, 0], (0, 0), None, None, (0, 0)),
 
         # 1: round over (no moves), no points yet
         (True, [0, 0, 2, 0], [4, 6], (0, 0), WinCond.ROUND_WIN, True, (0, 1)),
@@ -1760,9 +1779,9 @@ class TestRoundTally:
         (False, [0, 0, 1, 0], [9, 2], (4, 0), WinCond.WIN, False, (6, 0)),
 
         # 9: round over (no moves), no points yet
-        (True, [0, 0, 2, 0], [6, 4], (0, 0), WinCond.ROUND_TIE, True, (0, 0)),
+        (True, [0, 0, 2, 0], [6, 4], (0, 0), WinCond.ROUND_TIE, None, (0, 0)),
         # 10: round over (no moves), points still low
-        (True, [0, 0, 2, 0], [6, 4], (0, 4), WinCond.ROUND_TIE, True, (0, 4)),
+        (True, [0, 0, 2, 0], [6, 4], (0, 4), WinCond.ROUND_TIE, None, (0, 4)),
 
         # 11: round over (no moves), points just enough
         # an odd case because the game should have ended on the last round
@@ -1787,18 +1806,20 @@ class TestRoundTally:
         game.board = board
         game.store = store
         game.rtally.state = ((0, 0), (0, 0), (0, 0), ptally)
+        # print(game.deco.ender)
 
-        cond, winner = game.deco.ender.game_ended(False, False)
+        mdata = utils.make_ender_mdata(game, False, False)
+        game.deco.ender.game_ended(mdata)
 
-        assert cond == econd
-        assert winner == ewinner
+        assert mdata.win_cond == econd
+        assert mdata.winner == ewinner
         assert game.rtally.parameter(0) == etally[0]
         assert game.rtally.parameter(1) == etally[1]
 
 
     RND_CASES = [
         # 0: start game
-        (False, [3, 3, 3, 3], [0, 0], (0, 0), WinCond.ROUND_TIE, False, (0, 0)),
+        (False, [3, 3, 3, 3], [0, 0], (0, 0), WinCond.ROUND_TIE, None, (0, 0)),
 
         # 1:  ending round
         (False, [2, 0, 2, 1], [3, 4], (0, 0), WinCond.ROUND_WIN, True, (0, 1)),
@@ -1816,7 +1837,7 @@ class TestRoundTally:
         (False, [2, 0, 2, 1], [3, 4], (4, 4), WinCond.WIN, True, (4, 5)),
 
         # 6:  ending round from even points
-        (False, [2, 1, 2, 1], [3, 3], (4, 4), WinCond.ROUND_TIE, False, (4, 4)),
+        (False, [2, 1, 2, 1], [3, 3], (4, 4), WinCond.ROUND_TIE, None, (4, 4)),
 
         # 7: round over (no moves), points just enough
         # an odd case because the game should have ended on the last round
@@ -1837,10 +1858,11 @@ class TestRoundTally:
         game.store = store
         game.rtally.state = ((0, 0), (0, 0), (0, 0), ptally)
 
-        cond, winner = game.deco.ender.game_ended(False, "round")
+        mdata = utils.make_ender_mdata(game, False, "round")
+        game.deco.ender.game_ended(mdata)
 
-        assert cond == econd
-        assert winner == ewinner
+        assert mdata.win_cond == econd
+        assert mdata.winner == ewinner
 
         assert game.rtally.parameter(0) == etally[0]
         assert game.rtally.parameter(1) == etally[1]
@@ -1848,7 +1870,7 @@ class TestRoundTally:
 
     END_CASES = [
         # 0: current game tie, result tie
-        (False, [3, 3, 3, 3], [0, 0], (0, 0), WinCond.TIE, False),
+        (False, [3, 3, 3, 3], [0, 0], (0, 0), WinCond.TIE, None),
 
         # 1: current game goes to T, T wins
         (True, [0, 0, 2, 0], [4, 6], (0, 0), WinCond.WIN, True),
@@ -1875,10 +1897,11 @@ class TestRoundTally:
         game.store = store
         game.rtally.state = ((0, 0), (0, 0), (0, 0), ptally)
 
-        cond, winner = game.deco.ender.game_ended(False, True)
+        mdata = utils.make_ender_mdata(game, False, True)
+        game.deco.ender.game_ended(mdata)
 
-        assert cond == econd
-        assert winner == ewinner
+        assert mdata.win_cond == econd
+        assert mdata.winner == ewinner
 
 
     QUIT_CASES = [
@@ -1912,11 +1935,12 @@ class TestRoundTally:
         game.rtally.state = ((0, 0), (0, 0), (0, 0), ptally)
         # print(game)
 
-        cond, winner = game.deco.quitter.game_ended(False, True)
+        mdata = utils.make_ender_mdata(game, False, True)
+        game.deco.quitter.game_ended(mdata)
         # print(game)
 
-        assert cond == econd
-        assert winner == ewinner
+        assert mdata.win_cond == econd
+        assert mdata.winner == ewinner
 
 
 class TestAnimator:
@@ -1943,7 +1967,9 @@ class TestAnimator:
         assert isinstance(game.deco.ender, emd.AnimateEndMove)
         assert isinstance(game.deco.quitter, emd.AnimateEndMove)
 
-        cond, winner = game.deco.ender.game_ended(False, True)
+        mdata = utils.make_ender_mdata(game, False, True)
+        game.deco.ender.game_ended(mdata)
+
         mobj.assert_called_once()
 
 

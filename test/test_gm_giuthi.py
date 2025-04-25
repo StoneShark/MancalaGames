@@ -1332,7 +1332,7 @@ class TestGiuthiFWin:
     def test_round_2_move_27(self, gstate):
         game = gstate.game
         cond = game.move((3, CCW))
-        assert game.turn is False
+        assert game.mdata.winner is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]

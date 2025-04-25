@@ -12,7 +12,6 @@ from game_logger import game_log
 
 # %%  enders
 
-
 class RoundWinner(emd.EndTurnIf):
     """"If the game is played in rounds where seeds collected
     are used to setup the board for a new round, let the rest
@@ -57,23 +56,23 @@ class RoundWinner(emd.EndTurnIf):
             self.req_seeds = nbr_start
             self.msg = intro + "a hole)."
 
-    def game_ended(self, repeat_turn, ended=False):
 
-        cond, player = self.decorator.game_ended(repeat_turn, ended)
-        if ended is True or not cond:
-            return cond, player
+    def game_ended(self, mdata):
+
+        ended_in = mdata.ended
+        self.decorator.game_ended(mdata)
+        if ended_in is True or not mdata.win_cond:
+            return
 
         seeds = self.sclaimer.claim_seeds()
         if seeds[True] < self.req_seeds or seeds[False] < self.req_seeds:
             game_log.add(self.msg, game_log.IMPORT)
-            return cond, player
 
-        if cond == gi.WinCond.WIN:
-            return gi.WinCond.ROUND_WIN, player
+        elif mdata.win_cond == gi.WinCond.WIN:
+            mdata.win_cond = gi.WinCond.ROUND_WIN
 
-        # if cond == gi.WinCond.TIE:
-        return gi.WinCond.ROUND_TIE, player
-
+        elif mdata.win_cond == gi.WinCond.TIE:
+            mdata.win_cond = gi.WinCond.ROUND_TIE
 
 
 class RoundTallyWinner(emd.EndTurnIf):
@@ -81,26 +80,29 @@ class RoundTallyWinner(emd.EndTurnIf):
     chain decide the outcome, then adjust for end of game or
     end of round based on the tallier."""
 
-    def game_ended(self, repeat_turn, ended=False):
+    def game_ended(self, mdata):
         """ended can be truthy, but only actually end the game
         if it exactly True; otherwise we are going to end the
         round."""
 
-        cond, player = self.decorator.game_ended(repeat_turn, ended)
-        if ended is True or not cond:
-            return cond, player
+        ended_in = mdata.ended
+        self.decorator.game_ended(mdata)
+        if ended_in is True or not mdata.win_cond:
+            return
 
         seeds = self.sclaimer.claim_seeds()
-        self.game.rtally.tally(cond, player, seeds)
+        self.game.rtally.tally(mdata.win_cond, mdata.winner, seeds)
         rcond, rplayer = self.game.rtally.win_test()
+
         if rcond in (gi.WinCond.WIN, gi.WinCond.TIE):
-            return rcond, rplayer
+            mdata.win_cond = rcond
+            mdata.winner = rplayer
 
-        if cond == gi.WinCond.WIN:
-            return gi.WinCond.ROUND_WIN, player
+        elif mdata.win_cond == gi.WinCond.WIN:
+            mdata.win_cond = gi.WinCond.ROUND_WIN
 
-        # if cond == gi.WinCond.TIE:
-        return gi.WinCond.ROUND_TIE, player
+        elif mdata.win_cond == gi.WinCond.TIE:
+            mdata.win_cond = gi.WinCond.ROUND_TIE
 
 
 
@@ -126,7 +128,7 @@ class RoundEndLimit(emd.EndTurnIf):
             self.stop_at = 2 * game.cts.nbr_start
 
 
-    def game_ended(self, repeat_turn, ended=False):
+    def game_ended(self, mdata):
 
         remaining = 0
         for loc in range(self.game.cts.dbl_holes):
@@ -136,9 +138,11 @@ class RoundEndLimit(emd.EndTurnIf):
         if remaining <= self.stop_at:
             game_log.add("Round end limit reached, ending.",
                          game_log.IMPORT)
-            return self.decorator.game_ended(repeat_turn, True)
+            mdata.ended = True
+            self.decorator.game_ended(mdata)
 
-        return self.decorator.game_ended(repeat_turn, ended)
+        else:
+            self.decorator.game_ended(mdata)
 
 
 # %%  quitter
@@ -147,10 +151,12 @@ class QuitRoundTally(emd.EndTurnIf):
     """End a round tally game. Decorator is used to end the current
     game then the tallier decides the game outcome."""
 
-    def game_ended(self, repeat_turn, ended=False):
+    def game_ended(self, mdata):
 
-        cond, player = self.decorator.game_ended(repeat_turn, ended)
+        self.decorator.game_ended(mdata)
         seeds = self.sclaimer.claim_seeds()
-        self.game.rtally.tally(cond, player, seeds)
+        self.game.rtally.tally(mdata.win_cond, mdata.winner, seeds)
 
-        return self.game.rtally.end_it()
+        cond, winner = self.game.rtally.end_it()
+        mdata.win_cond = cond
+        mdata.winner = winner

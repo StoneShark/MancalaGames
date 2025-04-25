@@ -1616,7 +1616,7 @@ class TestToguzXorgol:
     def test_round_1_move_121(self, gstate):
         game = gstate.game
         cond = game.move(8)
-        assert game.turn is True
+        assert game.mdata.winner is True
         assert game.board == [0, 2, 1, 1, 1, 0, 0, 0, 26, 0, 0, 2, 0, 0, 0, 0, 0, 29]
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]

@@ -1212,7 +1212,7 @@ class TestLamlameta:
         game = gstate.game
         cond = game.move(7)
         # assert game.mdata.board[game.mdata.sow_loc] != 2
-        assert game.turn is True
+        assert game.mdata.winner is True     # manual change
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.store == [10, 38]
@@ -1819,7 +1819,7 @@ class TestLamlameta:
         game = gstate.game
         cond = game.move(8)
         # assert game.mdata.board[game.mdata.sow_loc] != 2
-        assert game.turn is True
+        assert game.mdata.winner is True     # manual change
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [F, F, F, F, F, T, T, T, T, T, T, T, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.store == [14, 34]
@@ -2547,7 +2547,7 @@ class TestLamlameta:
         game = gstate.game
         cond = game.move(5)
         # assert game.mdata.board[game.mdata.sow_loc] != 2
-        assert game.turn is False
+        assert game.mdata.winner is False     # manual change
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [F, F, F, F, F, F, F, T, T, T, T, T, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.store == [30, 18]
@@ -4215,7 +4215,7 @@ class TestLamlameta:
         game = gstate.game
         cond = game.move(10)
         # assert game.mdata.board[game.mdata.sow_loc] != 2
-        assert game.turn is False
+        assert game.mdata.winner is False     # manual change
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, T, T, T]
         assert game.store == [32, 16]
@@ -4393,7 +4393,7 @@ class TestLamlameta:
         game = gstate.game
         cond = game.move(9)
         # assert game.mdata.board[game.mdata.sow_loc] != 2
-        assert game.turn is True
+        assert game.mdata.winner is True     # manual change
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, T, T, T, T]
         assert game.store == [8, 40]
@@ -5539,7 +5539,7 @@ class TestLamlameta:
         game = gstate.game
         cond = game.move(2)
         # assert game.mdata.board[game.mdata.sow_loc] != 2
-        assert game.turn is True
+        assert game.mdata.winner is True     # manual change
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [F, F, F, F, T, T, T, T, T, T, T, T, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.store == [20, 28]
@@ -7086,7 +7086,7 @@ class TestLamlameta:
         game = gstate.game
         cond = game.move(11)
         # assert game.mdata.board[game.mdata.sow_loc] != 2
-        assert game.turn is True
+        assert game.mdata.winner is True     # manual change
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [6, 42]
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, T, T, F, F, F, F, F, F, F, F, F, F, F, F]

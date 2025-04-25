@@ -199,7 +199,7 @@ class TestGelech:
     def test_round_1_move_18(self, gstate):
         game = gstate.game
         cond = game.move((5, CCW))
-        assert game.turn is True
+        assert game.mdata.winner is True
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [18, 30]
         assert cond.name == "ROUND_WIN"
@@ -332,7 +332,7 @@ class TestGelech:
     def test_round_2_move_14(self, gstate):
         game = gstate.game
         cond = game.move((4, CW))
-        assert game.turn is False
+        assert game.mdata.winner is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [35, 13]
         assert cond.name == "ROUND_WIN"
@@ -483,7 +483,7 @@ class TestGelech:
     def test_round_3_move_16(self, gstate):
         game = gstate.game
         cond = game.move((2, CCW))
-        assert game.turn is True
+        assert game.mdata.winner is True
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [12, 36]
         assert cond.name == "ROUND_WIN"
@@ -580,7 +580,7 @@ class TestGelech:
     def test_round_4_move_10(self, gstate):
         game = gstate.game
         cond = game.move((4, CCW))
-        assert game.turn is False
+        assert game.mdata.winner is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [33, 15]
         assert cond.name == "ROUND_WIN"
@@ -686,7 +686,7 @@ class TestGelech:
     def test_round_5_move_11(self, gstate):
         game = gstate.game
         cond = game.move((4, CCW))
-        assert game.turn is False
+        assert game.mdata.winner is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [30, 18]
         assert cond.name == "ROUND_WIN"
@@ -873,7 +873,7 @@ class TestGelech:
     def test_round_6_move_20(self, gstate):
         game = gstate.game
         cond = game.move((2, CW))
-        assert game.turn is False
+        assert game.mdata.winner is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [31, 17]
         assert cond.name == "ROUND_WIN"
@@ -1186,7 +1186,7 @@ class TestGelech:
     def test_round_7_move_34(self, gstate):
         game = gstate.game
         cond = game.move((5, CCW))
-        assert game.turn is True
+        assert game.mdata.winner is True
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [14, 34]
         assert cond.name == "ROUND_WIN"
@@ -1373,7 +1373,7 @@ class TestGelech:
     def test_round_8_move_20(self, gstate):
         game = gstate.game
         cond = game.move((0, CCW))
-        assert game.turn is False
+        assert game.mdata.winner is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [35, 13]
         assert cond.name == "ROUND_WIN"
@@ -1452,7 +1452,7 @@ class TestGelech:
     def test_round_9_move_8(self, gstate):
         game = gstate.game
         cond = game.move((4, CCW))
-        assert game.turn is True
+        assert game.mdata.winner is True
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [14, 34]
         assert cond.name == "ROUND_WIN"
@@ -1594,7 +1594,7 @@ class TestGelech:
     def test_round_10_move_15(self, gstate):
         game = gstate.game
         cond = game.move((4, CCW))
-        assert game.turn is True
+        assert game.mdata.winner is True
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [12, 36]
         assert cond.name == "ROUND_WIN"
@@ -1709,7 +1709,7 @@ class TestGelech:
     def test_round_11_move_12(self, gstate):
         game = gstate.game
         cond = game.move((5, CCW))
-        assert game.turn is True
+        assert game.mdata.winner is True
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [20, 28]
         assert cond.name == "ROUND_WIN"
@@ -1968,7 +1968,7 @@ class TestGelech:
     def test_round_12_move_28(self, gstate):
         game = gstate.game
         cond = game.move((3, CCW))
-        assert game.turn is False
+        assert game.mdata.winner is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [30, 18]
         assert cond.name == "ROUND_WIN"
@@ -2119,7 +2119,7 @@ class TestGelech:
     def test_round_13_move_16(self, gstate):
         game = gstate.game
         cond = game.move((5, CCW))
-        assert game.turn is True
+        assert game.mdata.winner is True
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [16, 32]
         assert cond.name == "ROUND_WIN"
@@ -2333,7 +2333,7 @@ class TestGelech:
     def test_round_14_move_23(self, gstate):
         game = gstate.game
         cond = game.move((1, CW))
-        assert game.turn is True
+        assert game.mdata.winner is True
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [19, 29]
         assert cond.name == "ROUND_WIN"
@@ -2439,7 +2439,7 @@ class TestGelech:
     def test_round_15_move_11(self, gstate):
         game = gstate.game
         cond = game.move((2, CCW))
-        assert game.turn is False
+        assert game.mdata.winner is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [30, 18]
         assert cond.name == "ROUND_WIN"
@@ -2608,7 +2608,7 @@ class TestGelech:
     def test_round_16_move_18(self, gstate):
         game = gstate.game
         cond = game.move((2, CCW))
-        assert game.turn is False
+        assert game.mdata.winner is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [25, 23]
         assert cond.name == "ROUND_WIN"
@@ -2930,7 +2930,7 @@ class TestGelech:
     def test_round_17_move_35(self, gstate):
         game = gstate.game
         cond = game.move((5, CW))
-        assert game.turn is False
+        assert game.mdata.winner is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [30, 18]
         assert cond.name == "ROUND_WIN"
@@ -3054,7 +3054,7 @@ class TestGelech:
     def test_round_18_move_13(self, gstate):
         game = gstate.game
         cond = game.move((1, CCW))
-        assert game.turn is True
+        assert game.mdata.winner is True
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [13, 35]
         assert cond.name == "ROUND_WIN"
@@ -3142,7 +3142,7 @@ class TestGelech:
     def test_round_19_move_9(self, gstate):
         game = gstate.game
         cond = game.move((0, CCW))
-        assert game.turn is False
+        assert game.mdata.winner is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [29, 19]
         assert cond.name == "WIN"
