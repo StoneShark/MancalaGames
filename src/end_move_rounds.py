@@ -71,7 +71,7 @@ class RoundWinner(emd.EndTurnIf):
         elif mdata.win_cond == gi.WinCond.WIN:
             mdata.win_cond = gi.WinCond.ROUND_WIN
 
-        elif mdata.win_cond == gi.WinCond.TIE:
+        else:   # if mdata.win_cond == gi.WinCond.TIE:
             mdata.win_cond = gi.WinCond.ROUND_TIE
 
 
@@ -101,7 +101,7 @@ class RoundTallyWinner(emd.EndTurnIf):
         elif mdata.win_cond == gi.WinCond.WIN:
             mdata.win_cond = gi.WinCond.ROUND_WIN
 
-        elif mdata.win_cond == gi.WinCond.TIE:
+        else:  #  if mdata.win_cond == gi.WinCond.TIE:
             mdata.win_cond = gi.WinCond.ROUND_TIE
 
 

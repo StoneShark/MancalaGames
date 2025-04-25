@@ -772,10 +772,13 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
         wtext = ''
         if win_cond in (gi.WinCond.WIN, gi.WinCond.ROUND_WIN):
-            sturn = 'Top' if self.turn else 'Bottom'
-            wtext = f'\n{win_cond.name} by {sturn}'
+            winner = 'Top' if self.mdata.winner else 'Bottom'
+            wtext = f'\n{win_cond.name} by {winner}'
+        elif win_cond in (gi.WinCond.TIE, gi.WinCond.ROUND_TIE):
+            wtext = ' \n' + win_cond.name
         elif win_cond:
             wtext = ' ' + win_cond.name
+
 
         sturn = 'Top' if move_turn else 'Bottom'
         if isinstance(move, gi.MoveTpl):

@@ -26,6 +26,7 @@ BLOCK = 'x'
 LOCK = '_'
 UP = '\u02c4'
 DN = '\u02c5'
+TOP = 'Top'
 
 OWNT = '\u2191'
 OWNF = '\u2193'
@@ -39,7 +40,7 @@ GAMECONST_RE = re.compile(r'GameConsts.nbr_start=([0-9]+), holes=([0-9]+)')
 
 MOVE_RE = re.compile(r'^([0-9]+):.*move (PASS|([0-9]+)|(\(.+\)))( )?([A-Z_]+)?')
 
-COND_LINE_RE = re.compile(r'^(ROUND_WIN|WIN|ROUND_TIE|TIE)')
+COND_LINE_RE = re.compile(r'^(ROUND_WIN|WIN|ROUND_TIE|TIE)( by (Top|Bottom))?')
 
 STORE_RE = re.compile(r'([0-9]*) ?([A-Z_]+)?$')
 BOARD_RE = re.compile(r'([0-9x]+)([ _˄˅↑↓]*) ')
@@ -229,8 +230,17 @@ def write_cond_assert(result, cond_line):
     elif cond_line:
         match = COND_LINE_RE.search(cond_line)
         assert match, "Unexpected game cond line: " + cond_line
-        rname = match.groups()[0]
+        mgroups = match.groups()
+        rname = mgroups[0]
         print_indent(2, f'assert cond.name == "{rname}"')
+
+        if TIE in rname:
+            print_indent(2, 'assert game.mdata.winner is None')
+
+        if len(mgroups) == 3 and mgroups[2]:
+            winner = mgroups[2] == TOP
+            print_indent(2, f'assert game.mdata.winner is {winner}')
+
         action = CondAction.DONE if rname in (WIN, TIE) else CondAction.RESTART
 
     else:

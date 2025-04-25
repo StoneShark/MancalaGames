@@ -38,6 +38,8 @@ from context import incrementer
 from context import mancala
 from context import move_data
 
+import utils
+
 from game_interface import AllowRule
 from game_interface import ChildType
 from game_interface import Direct
@@ -1428,14 +1430,14 @@ class TestLogMove:
 
         return mancala.Mancala(game_consts, game_info)
 
-    @pytest.mark.parametrize('turn, move_turn',
+    @pytest.mark.parametrize('winner, move_turn',
                              [(False, False),
                               (True, False),
                               (False, True),
                               (True, True),
                               ])
     @pytest.mark.parametrize('win_cond', gi.WinCond)
-    def test_log_move(self, mocker, game, turn, move_turn, win_cond,
+    def test_log_move(self, mocker, game, winner, move_turn, win_cond,
                       logger):
         """Test conditions of turn logging.
         This is pretty specific to the actual log text;
@@ -1443,7 +1445,7 @@ class TestLogMove:
 
         assert game_logger.game_log.active
 
-        game.turn = turn
+        game.mdata = utils.make_win_mdata(game, win_cond, winner)
 
         mlog = mocker.patch.object(game_logger.game_log, 'turn')
         game._log_turn(move_turn, 1, win_cond)
@@ -1457,7 +1459,7 @@ class TestLogMove:
         else:
             assert 'Bottom move' in arg_str
         if 'WIN' in arg_str:
-            if turn:
+            if winner:
                 assert 'by Top' in arg_str
             else:
                 assert 'by Bottom' in arg_str
