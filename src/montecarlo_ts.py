@@ -140,13 +140,9 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
         """Create the game node and add it to both the dict
         and node list.
 
-        state's mcount can still be set or already cleared,
-        clearing it again is ok.
-
         This must be used for all node creation to keep
         self.game_nodes[id].node_id == id."""
 
-        state.clear_mcount()
         node = GameNode(state, self.next_id,
                         leaf=leaf, reward=reward, moves=moves)
 
@@ -213,10 +209,9 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
             assert self.my_turn_id == self.game.get_turn(), \
                 "MCTS can only be used by one player"
 
-        game_state = self.game.state
+        game_state = self.game.board_state
         if game_state in self.node_dict:
             start_node = self.node_dict[game_state]
-            start_node.state.set_mcount_from(self.game)
         else:
             start_node = self.add_node(game_state, moves=self.game.get_moves())
 
@@ -267,7 +262,7 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
                     node.reward -= 1
                     game_log.add_ai(
                         "Found Loop in expand:\n"
-                        + f"Reducing reward of {node.node_id};"
+                        + f"Reducing reward of {node.node_id}; "
                         + f"now reward= {node.reward}", game_log.INFO)
                     continue
 
@@ -291,26 +286,24 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
         assert moves, "No moves in pnode in _expand."
         move = random.choice(moves)
 
-        saved_state = self.game.state
+        with self.game.save_restore_state():
 
-        # XXXX mcount is likely too low, see ai_player rule mcts_move_nbrs
-        self.game.state = pnode.state.set_mcount_from(self.game)
+            self.game.state = pnode.state
 
-        cond = self.game.move(move)
-        new_state = self.game.state.clear_mcount()
+            cond = self.game.move(move)
+            new_state = self.game.board_state
+            if new_state in self.node_dict:
+                node = self.node_dict[new_state]
 
-        if new_state in self.node_dict:
-            node = self.node_dict[new_state]
+            elif cond and cond.is_ended():
+                reward = 1 if new_state.turn == self.my_turn_id else 0
+                node = self.add_node(new_state, leaf=True, reward=reward)
 
-        elif cond and cond.is_ended():
-            reward = 1 if new_state.turn == self.my_turn_id else 0
-            node = self.add_node(new_state, leaf=True, reward=reward)
+            else:
+                node = self.add_node(new_state, moves=self.game.get_moves())
 
-        else:
-            node = self.add_node(new_state, moves=self.game.get_moves())
+            pnode.add_child_state(move, node)
 
-        pnode.add_child_state(move, node)
-        self.game.state = saved_state
         return node
 
 
@@ -339,30 +332,29 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
         """Simulate a random game from node,
         return the winner (if there was one) and reward."""
 
-        saved_state = self.game.state
+        with self.game.save_restore_state():
 
-        # XXXX mcount is likely too low, see ai_player rule mcts_move_nbrs
-        self.game.state = tree_node.state.set_mcount_from(self.game)
+            self.game.state = tree_node.state
 
-        for _ in range(MAX_TURNS):
+            for _ in range(MAX_TURNS):
 
-            moves = self.game.get_moves()
-            assert moves, "No moves in _one_playout."
+                moves = self.game.get_moves()
+                assert moves, "No moves in _one_playout."
 
-            move = random.choice(moves)
-            cond = self.game.move(move)
+                move = random.choice(moves)
+                cond = self.game.move(move)
 
-            if cond and cond.is_ended():
-                break
+                if cond and cond.is_ended():
+                    break
 
-        else:
-            cond = None
+            else:
+                cond = None
 
-        reward = 0
-        if cond and cond.is_win() and self.game.get_turn() == self.my_turn_id:
-            reward = 1
+            reward = 0
+            if (cond and cond.is_win()
+                    and self.game.get_winner() == self.my_turn_id):
+                reward = 1
 
-        self.game.state = saved_state
         return reward
 
 

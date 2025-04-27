@@ -210,6 +210,14 @@ class SameSide(mancala.Mancala):
         self.empty_store = state.empty_store
 
 
+    @property
+    def board_state(self):
+        """Return the equivalent board state."""
+
+        return SSGameState(empty_store=self.empty_store,
+                           **(dc.asdict(super().board_state)))
+
+
     def new_game(self, win_cond=None, new_round_ok=False):
 
         super().new_game(win_cond, new_round_ok)

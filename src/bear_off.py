@@ -177,6 +177,14 @@ class BearOff(mancala.Mancala):
         self.normal_sow = state.normal_sow
 
 
+    @property
+    def board_state(self):
+        """Return the equivalent board state."""
+
+        return BearOffState(normal_sow=self.normal_sow,
+                            **(dc.asdict(super().board_state)))
+
+
     def new_game(self, win_cond=None, new_round_ok=False):
         """Reset sow to normal and rebuild the deco chain,
         then call the parent to do a new_game."""

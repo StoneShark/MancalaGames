@@ -96,6 +96,9 @@ def define_get_game(depth):
         def get_turn(self):
             return self.turn
 
+        def get_winner(self):
+            return self.turn
+
 
     class SmallPlayer(ai_interface.AiPlayerIf):
 

@@ -234,7 +234,7 @@ class AiPlayer(ai_interface.AiPlayerIf):
         return None if not scored."""
 
         if end_cond in (gi.WinCond.ROUND_WIN, gi.WinCond.WIN):
-            return -1000 if self.game.turn else 1000
+            return -1000 if self.game.get_winner() else 1000
 
         if end_cond in (gi.WinCond.ROUND_TIE, gi.WinCond.TIE):
             return -5 if self.game.turn else 5
@@ -422,6 +422,32 @@ class AiPlayer(ai_interface.AiPlayerIf):
 DIFF_LEVELS = 4
 MAX_MINIMAX_DEPTH = 15
 
+def negamax_no_repeat_turn(ginfo):
+    """Return True if this game cannot be played with the negamaxer."""
+
+    return (ginfo.sow_own_store
+                or ginfo.capt_rturn
+                or ginfo.xc_sown)
+
+
+def mcts_no_hidden_state(ginfo):
+    """Return true if this game cannot be played with MCTS."""
+
+    return (ginfo.prescribed
+                or ginfo.nocaptmoves
+                or ginfo.allow_rule in (gi.AllowRule.FIRST_TURN_ONLY_RIGHT_TWO,
+                                        gi.AllowRule.RIGHT_2_1ST_THEN_ALL_TWO)
+                or ginfo.unclaimed == gi.EndGameSeeds.LAST_MOVER
+                or ginfo.capt_rturn > gi.CaptRTurn.ALWAYS
+                or ginfo.sow_direct == gi.Direct.PLAYALTDIR
+                or ginfo.round_fill == gi.RoundFill.SHORTEN
+                or (ginfo.min_move == 1   # DontUndoMove
+                        and ginfo.sow_direct == gi.Direct.SPLIT
+                        and 0 not in ginfo.udir_holes
+                        and len(ginfo.udir_holes) <= 1
+                        # nbr holes isn't available, guess
+                        ))
+
 
 def player_dict_rules():
     """Create the rules to check the consistency of the player dict.
@@ -446,8 +472,8 @@ def player_dict_rules():
                                                                'negamaxer'}))
                              and ckey.SCORER in pdict
                              and not sum(pdict[ckey.SCORER].values())),
-        msg='At least one scorer value should be non-zero '
-            'to prevent random play for Minimaxer or Negamaxer',
+        msg="""At least one scorer value should be non-zero
+            to prevent random play for Minimaxer or Negamaxer""",
         warn=True)
 
     rules.add_rule(
@@ -456,8 +482,8 @@ def player_dict_rules():
                             and any(len(values) != DIFF_LEVELS
                                     for values in
                                         pdict[ckey.AI_PARAMS].values())),
-        msg=f'Exactly {DIFF_LEVELS} param values are expected '
-            'for each ai parameter',
+        msg=f"""Exactly {DIFF_LEVELS} param values are expected
+            for each ai parameter""",
         excp=gi.GameInfoError)
 
     rules.add_rule(
@@ -511,8 +537,8 @@ def player_dict_rules():
                                    and ckey.ACCESS_M in pdict[ckey.SCORER]
                                    and pdict[ckey.SCORER][ckey.ACCESS_M]),
         both_objs=True,
-        msg='Scorer ACCESS_M multiplier is incompatible with'
-        'NO_SIDES and TERRITORY',
+        msg="""Scorer ACCESS_M multiplier is incompatible with
+            NO_SIDES and TERRITORY""",
         excp=gi.GameInfoError)
 
     rules.add_rule(
@@ -534,37 +560,35 @@ def player_dict_rules():
                                    and ckey.REPEAT_TURN in pdict[ckey.SCORER]
                                    and pdict[ckey.SCORER][ckey.REPEAT_TURN]),
         both_objs=True,
-        msg="Repeat turn scorer not supported without repeat turns "
-            "(SOW_OWN_STORE | CAPT_RTURN | XC_SOWN)",
+        msg="""Repeat turn scorer not supported without repeat turns
+            (SOW_OWN_STORE | CAPT_RTURN | XC_SOWN)""",
         excp=gi.GameInfoError)
 
     rules.add_rule(
         'nmax_no_repeat',
-        rule=lambda pdict, ginfo: ((ginfo.sow_own_store
-                                    or ginfo.capt_rturn
-                                    or ginfo.xc_sown)
-                                   and ckey.ALGORITHM in pdict
-                                   and pdict[ckey.ALGORITHM] == NEGAMAXER),
+        rule=lambda pdict, ginfo: (negamax_no_repeat_turn(ginfo)
+                                       and ckey.ALGORITHM in pdict
+                                       and pdict[ckey.ALGORITHM] == NEGAMAXER),
         both_objs=True,
-        msg="NegaMax not compatible with repeat turns "
-            "(SOW_OWN_STORE | CAPT_RTURN | XC_SOWN)",
+        msg="""NegaMax not compatible with repeat turns
+            (SOW_OWN_STORE | CAPT_RTURN | XC_SOWN)""",
         excp=gi.GameInfoError)
 
-    # rules.add_rule(
-    #     'mcts_move_nbrs',
-    #     rule=lambda pdict, ginfo: ((ginfo.prescribed
-    #                                 or ginfo.nocaptmoves
-    #                                 or ginfo.allow_rule in
-    #                                     {gi.AllowRule.FIRST_TURN_ONLY_RIGHT_TWO,
-    #                                      gi.AllowRule.RIGHT_2_1ST_THEN_ALL_TWO}
-    #                                 )
-    #                                and ckey.ALGORITHM in pdict
-    #                                and pdict[ckey.ALGORITHM] == MCTS),
-    #     both_objs=True,
-    #     msg="Monte Carlo Tree Search might not work well with options that "
-    #         "vary behavior with move number (prescribed openings, allow "
-    #         "rules that only apply to some moves, no first move captures).",
-    #     warn=True)
-    #     # this might really only be an issue after the first move
+
+    rules.add_rule(
+        'mcts_no_hidden_state',
+        rule=lambda pdict, ginfo: (mcts_no_hidden_state(ginfo)
+                                       and ckey.ALGORITHM in pdict
+                                       and pdict[ckey.ALGORITHM] == MCTS),
+        both_objs=True,
+        msg="""Monte Carlo Tree Search cannot be used with games that
+            depend on hidden game state data. It can only be used
+            with games that rely only visible information""",
+        excp=gi.GameInfoError)
+        # only want to use the base board_state in node dictionary
+        # so anything that uses game.mdata directly (not passed as parameter),
+        # game.mcount, game.rturn_cnt, or game.inhibitor are excluded
+        # mostly a choice to keep the node dictionary smaller
+        # and not deal with the mess that was mcount for more state data
 
     return rules

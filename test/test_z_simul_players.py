@@ -94,11 +94,16 @@ def test_one_game(game_pdict, algo):
         player = ai_player.AiPlayer(game, pdict)
     except gi.GameInfoError as error:
 
-        if algo == 'negamaxer' and any([game.info.sow_own_store,
-                                        game.info.capt_rturn,
-                                        game.info.xc_sown]):
+        if (algo == 'negamaxer'
+                and ai_player.negamax_no_repeat_turn(game.info)):
             # negamaxer cannot be used with games that do not alternate turns
             pytest.skip("negamaxer requires alternate turns")
+
+        elif (algo == 'montecarlo_ts'
+                  and ai_player.mcts_no_hidden_state(game.info)):
+            # mcts assumes no hidden state data (see function and rule)
+            pytest.skip("montecarlo_ts assumes no hidden state data")
+
         else:
             emsg = error.__class__.__name__ + ':  ' + str(error)
             msg = "\nAI config conflict:\n" + emsg

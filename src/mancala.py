@@ -58,7 +58,7 @@ class GameState(ai_interface.StateIf):
 
     board: tuple
     store: tuple
-    mcount: int
+    mcount: int = 0
     _turn: bool
     rturn_cnt: int = 0
 
@@ -69,6 +69,7 @@ class GameState(ai_interface.StateIf):
 
     istate: tuple = None
     rtally_state: tuple = None
+    mdata_state: tuple = None
 
     @property
     def turn(self):
@@ -102,21 +103,6 @@ class GameState(ai_interface.StateIf):
             if not side:
                 string += '\n'
         return string
-
-    def clear_mcount(self):
-        """Clear the move count from the game states used
-        as dictionary keys in the node_dict of MonteCarloTS
-
-        The move count should be accurate for the GameNode.state"""
-
-        object.__setattr__(self, 'mcount', 0)
-        return self
-
-    def set_mcount_from(self, game):
-        """Set the move number to match that in the game."""
-
-        object.__setattr__(self, 'mcount', game.mcount)
-        return self
 
 
 class ManDeco:
@@ -408,6 +394,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             owner=owner,
             istate=self.inhibitor.get_state(),
             rtally_state=self.rtally.state if self.rtally else None,
+            mdata_state=self.mdata.state if self.mdata else None,
             )
 
 
@@ -436,6 +423,14 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         if value.rtally_state:
             self.rtally.state = value.rtally_state
 
+        if value.mdata_state:
+            if not self.mdata:
+                self.mdata = move_data.MoveData()
+            self.mdata.state = value.mdata_state
+
+        else:
+            self.mdata = None
+
 
     @contextlib.contextmanager
     def save_restore_state(self):
@@ -449,6 +444,52 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         finally:
             game_log.clear_simulate()
             self.state = saved_state
+
+
+    @property
+    def board_state(self):
+        """Return an immutable copy of the board state variables,
+        but only those that unique identify the board position.
+        Do not include any dynamic move information.
+
+        This state is smaller and suitable for use in detecting
+        repeating game situations. It must not be used to restore
+        state information in games that require the hidden state
+        information. This includes games that use game.mdata directly
+        (not passed as parameter), mcount, rturn_cnt,
+        or an inhibitor other than InhibitorNone.
+
+        See limitations on monte carlo tree search game rule
+        in ai_player.py: mcts_no_hidden_state.
+        This is also used in allowables.MemoizeAllowable and the
+        'loop' detector in the analysis scripts."""
+
+        unlocked = None
+        if (self.info.moveunlock
+                or self.info.allow_rule == gi.AllowRule.MOVE_ALL_HOLES_FIRST):
+            unlocked = tuple(self.unlocked)
+
+        blocked = None
+        if self.info.blocks:
+            blocked = tuple(self.blocked)
+
+        child = None
+        if self.info.child_cvt:
+            child = tuple(self.child)
+
+        owner = None
+        if self.info.goal == gi.Goal.TERRITORY:
+            owner = tuple(self.owner)
+
+        return GameState(
+            board=tuple(self.board),
+            _turn=self.turn,
+            store=tuple(self.store),
+            unlocked=unlocked,
+            blocked=blocked,
+            child=child,
+            owner=owner,
+            )
 
 
     def init_bprops(self):
@@ -829,6 +870,14 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
     def get_turn(self):
         """Return current turn."""
         return self.turn
+
+
+    def get_winner(self):
+        """Return the game winner."""
+
+        if self.mdata:
+            return self.mdata.winner
+        return None
 
 
     def get_allowable_holes(self):

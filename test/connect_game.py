@@ -6,6 +6,7 @@ Created on Fri Jul 19 09:52:07 2024
 @author: Ann"""
 
 import enum
+import contextlib
 import dataclasses as dc
 
 from context import ai_interface
@@ -41,12 +42,6 @@ class ConnectState(ai_interface.StateIf):
 
     def __str__(self):
         return ''.join(str(b) for b in self.board) + '  ' + str(self._turn)
-
-    def clear_mcount(self):
-        return self
-
-    def set_mcount_from(self, _):
-        return self
 
 
 # %% the game
@@ -98,7 +93,25 @@ class ConnectFour(ai_interface.AiGameIf):
         self.board = list(state.board)
         self.turn = state.turn
 
+    @property
+    def board_state(self):
+        return ConnectState(board=tuple(self.board), _turn=self.turn)
+
+    @contextlib.contextmanager
+    def save_restore_state(self):
+        """A context manager that saves and restores state"""
+
+        saved_state = self.state
+
+        try:
+            yield
+        finally:
+            self.state = saved_state
+
     def get_turn(self):
+        return self.turn
+
+    def get_winner(self):
         return self.turn
 
     def get_moves(self):

@@ -124,11 +124,9 @@ class FindLoops:
 
     def game_state_loop(self, game):
         """The queue only gets unique states.
-        Clear the move count, because they wont match in
-        future comparisons. For most games, they don't
-        matter after the first move."""
+        Use the board state which contains no dynamic move data."""
 
-        gstate = game.state.clear_mcount()
+        gstate = game.board_state
 
         if gstate in self.game_states:
             self.dupl_cnt += 1
@@ -168,17 +166,17 @@ def make_one_move(game, move):
 
     cond = game.move(move)
     if cond in (gi.WinCond.WIN, gi.WinCond.TIE):
-        return GameResult(cond.value), game.turn
+        return GameResult(cond.value), game.mdata.winner
 
     if cond in (gi.WinCond.ROUND_WIN, gi.WinCond.ROUND_TIE):
         if game.new_game(cond, new_round_ok=True):
-            return GameResult(cond.value), game.turn
+            return GameResult(cond.value), game.mdata.winner
         game_logger.game_log.turn(0, 'Start Game', game)
 
     if game.info.mustpass:
         game.test_pass()
 
-    return None, game.turn
+    return None, None
 
 
 def play_one_game(game, fplayer, tplayer,

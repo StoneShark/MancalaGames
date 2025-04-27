@@ -267,6 +267,8 @@ class TestScorers:
 
     def test_score_endgame(self, game, player):
 
+        game.mdata = utils.make_win_mdata(game, WinCond.WIN, False)
+
         assert player.difficulty == 1
         assert game.turn == False
         assert player.is_max_player()
@@ -276,6 +278,8 @@ class TestScorers:
         assert player.score(WinCond.ENDLESS) == 0
 
         game.turn = True
+        game.mdata = utils.make_win_mdata(game, WinCond.WIN, True)
+
         assert not player.is_max_player()
         assert player.score(WinCond.WIN) == -1000
         assert player.score(WinCond.TIE) == -5

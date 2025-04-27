@@ -547,12 +547,19 @@ class NotXfromOnes(AllowableIf):
 
 
 class MemoizeAllowable(AllowableIf):
-    """Allowables are checked in several places--move/end_move,
-    test_pass and get_allowables--for each move.  If the game
-    state hasn't changed return the same value (history of one).
-    Getting game state is not trivial but less work than
-    resimulating moves, only add this to the chain if there
-    are deco's that do simulation."""
+    """Memoize the allowable resut:  Allowables are checked in
+    several places--move/end_move, test_pass and get_allowables
+    --for each move.
+
+    If the game state hasn't changed return the same value
+    (history of one). Getting game state is not trivial but
+    less work than resimulating moves, only add this to the
+    chain if there are deco's that do simulation.
+
+    Only board_state is used, so none of the allowable decos
+    below this one, may use any non-visible state data
+    (including the global game.mdata; it's fine if it's
+    created and passed around)."""
 
     def __init__(self, game, decorator=None):
 
@@ -563,13 +570,13 @@ class MemoizeAllowable(AllowableIf):
     def get_allowable_holes(self):
 
         if self.saved_state:
-            cur_state = self.game.state
+            cur_state = self.game.board_state
 
             if cur_state == self.saved_state:
                 return self.return_val
 
         rval = self.decorator.get_allowable_holes()
-        self.saved_state = self.game.state
+        self.saved_state = self.game.board_state
         self.return_val = rval
 
         return rval

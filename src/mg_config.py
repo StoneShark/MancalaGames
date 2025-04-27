@@ -318,17 +318,12 @@ class GameConfig:
         """If the file is known and the data edited,
         then reload from the file."""
 
-        if self.edited and self._known:
-
-            message = f'Revert changes to {self.filename}?'
-            do_it = ui_utils.ask_popup(self._master,
-                                       'Revert Changes', message,
-                                       ui_utils.YESNO)
-            if do_it:
-                self._load_file()
-                return True
-
-        else:
-            self._master.bell()
+        message = f'Revert changes to {self.filename}?'
+        do_it = ui_utils.ask_popup(self._master,
+                                   'Revert Changes', message,
+                                   ui_utils.YESNO)
+        if do_it:
+            self._load_file()
+            return True
 
         return False
