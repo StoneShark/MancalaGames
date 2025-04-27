@@ -252,6 +252,7 @@ class TestMonteCarloTS:
             algo._setup()
 
 
+    # @pytest.mark.usefixtures("logger")
     @pytest.mark.parametrize('force_dupl', [False, True])
     def test_expand(self, game, algo, force_dupl):
         """two game continuing cases:
@@ -284,6 +285,7 @@ class TestMonteCarloTS:
         assert len(algo.game_nodes) == 2
 
 
+    @pytest.mark.usefixtures("logger")
     def test_expand_ended(self, game, algo):
         """elif case: expanded node ends the game.
         Create a node that will result in picking a winning move."""
@@ -300,6 +302,7 @@ class TestMonteCarloTS:
             [0, 1, 2, 3])
 
         node = algo._expand(start_node)
+        print(node)
 
         assert game.state == saved_state     # game state not changed
         assert start_node.childs[3] == node   # random picks the last child

@@ -571,12 +571,9 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
 
     def win_conditions(self, mdata):
-        """Check for end game.
-        Return None if no victory/tie conditions are met.
-        If there is a winner, set turn to that player."""
+        """Check for end game."""
 
         self.deco.ender.game_ended(mdata)
-        return mdata.win_cond
 
 
     def win_message(self, win_cond):
@@ -717,50 +714,52 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         Call do_sow for steps 2 to 4
         5. capture seeds
         6. if either player won or a tie occured, return that condition
-        7. swap the turn and return None (game continues)
+        7. swap the turn
 
         On the assert, sum the stores even if they are not 'in play'
-        (e.g. for Deka)."""
+        (e.g. for Deka).
+
+        Return the created mdata."""
+
         self.mcount += 1
         assert sum(self.store) + sum(self.board) == self.cts.total_seeds, \
             'seed count error before move'
 
         if move == gi.PASS_TOKEN:
             self.turn = not self.turn
-            return None
+            return move_data.MoveData.pass_move(not self.turn)
 
         mdata = self.do_sow(move)
-        self.mdata = mdata   # keep this around for the win message
+        self.mdata = mdata
 
-        if mdata.capt_loc == gi.WinCond.REPEAT_TURN:
-            win_cond = self.win_conditions(mdata)
-            return win_cond if win_cond else gi.WinCond.REPEAT_TURN
+        if not mdata.repeat_turn:
 
-        if mdata.capt_loc == gi.WinCond.ENDLESS:
-            cond = self.end_game()
-            mdata.end_msg = \
-                'Game ended due to detecting endless sow condition.\n'
-            game_log.add(f'MLAP game ENDLESS, called end_game {cond}.',
-                         game_log.IMPORT)
-            return cond
+            if mdata.capt_loc == gi.WinCond.ENDLESS:
+                mdata.win_cond = self.end_game()
+                mdata.end_msg = \
+                    'Game ended due to detecting endless sow condition.\n'
+                game_log.add(
+                    f'MLAP game ENDLESS, called end_game {mdata.win_cond}.',
+                    game_log.IMPORT)
+                return mdata
 
-        self.capture_seeds(mdata)
+            self.capture_seeds(mdata)
+            if not mdata.repeat_turn:
+                self.inhibitor.clear_if(self, mdata)
 
-        if mdata.captured == gi.WinCond.REPEAT_TURN:
-            win_cond = self.win_conditions(mdata)
-            return win_cond if win_cond else gi.WinCond.REPEAT_TURN
+        self.win_conditions(mdata)
+        if mdata.win_cond:
+            return mdata
 
-        self.inhibitor.clear_if(self, mdata)
-
-        win_cond = self.win_conditions(mdata)
-        if win_cond:
-            return win_cond
+        if mdata.repeat_turn:
+            mdata.win_cond = gi.WinCond.REPEAT_TURN
+            return mdata
 
         self.turn = not self.turn
-        return None
+        return mdata
 
 
-    def _log_turn(self, move_turn, move, win_cond):
+    def _log_turn(self, mdata):
         """Add to the play log and move history for the move.
 
         Rebuild the move with the direction computed be get_direction,
@@ -771,20 +770,21 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             return
 
         wtext = ''
-        if win_cond in (gi.WinCond.WIN, gi.WinCond.ROUND_WIN):
-            winner = 'Top' if self.mdata.winner else 'Bottom'
-            wtext = f'\n{win_cond.name} by {winner}'
-        elif win_cond in (gi.WinCond.TIE, gi.WinCond.ROUND_TIE):
-            wtext = ' \n' + win_cond.name
-        elif win_cond:
-            wtext = ' ' + win_cond.name
+        if mdata.win_cond in (gi.WinCond.WIN, gi.WinCond.ROUND_WIN):
+            winner = 'Top' if mdata.winner else 'Bottom'
+            wtext = f'\n{mdata.win_cond.name} by {winner}'
+        elif mdata.win_cond in (gi.WinCond.TIE, gi.WinCond.ROUND_TIE):
+            wtext = ' \n' + mdata.win_cond.name
+        elif mdata.win_cond:
+            wtext = ' ' + mdata.win_cond.name
 
-
-        sturn = 'Top' if move_turn else 'Bottom'
-        if isinstance(move, gi.MoveTpl):
-            move = move.set_dir(self.mdata.direct)
-
+        sturn = 'Top' if mdata.player else 'Bottom'
+        if isinstance(mdata.move, gi.MoveTpl):
+            move = mdata.move.set_dir(mdata.direct)
+        else:
+            move = mdata.move
         move_desc = f'{sturn} move {move}{wtext}'
+
         game_log.turn(self.mcount, move_desc, self)
 
 
@@ -793,10 +793,9 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         (move has several returns this wraps them all),
         log the turn here."""
 
-        cur_turn = self.turn
-        wcond = self._move(move)
-        self._log_turn(cur_turn, move, wcond)
-        return wcond
+        mdata = self._move(move)
+        self._log_turn(mdata)
+        return mdata.win_cond
 
 
     def test_pass(self):
@@ -809,7 +808,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         if self.info.mustpass and not any(self.get_allowable_holes()):
             self.mcount += 1
             self.turn = not self.turn
-            self._log_turn(not self.turn, 'PASS', None)
+            self._log_turn(move_data.MoveData.pass_move(not self.turn))
             return True
         return False
 

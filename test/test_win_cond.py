@@ -51,7 +51,8 @@ class TestPassWConds:
         pass_game.turn=True
 
         mdata = utils.make_ender_mdata(pass_game, False, False)
-        assert not pass_game.win_conditions(mdata)
+        pass_game.win_conditions(mdata)
+        assert not mdata.win_cond
         assert mdata.winner is None
         assert pass_game.board == utils.build_board([0, 2, 1],
                                                     [0, 2, 0])
@@ -70,7 +71,8 @@ class TestPassWConds:
         pass_game.turn=True
 
         mdata = utils.make_ender_mdata(pass_game, False, False)
-        assert not pass_game.win_conditions(mdata)
+        pass_game.win_conditions(mdata)
+        assert not mdata.win_cond
         assert mdata.winner is None
         assert pass_game.board == utils.build_board([2, 2, 1],
                                                     [0, 0, 0])
@@ -89,7 +91,8 @@ class TestPassWConds:
         pass_game.turn=False
 
         mdata = utils.make_ender_mdata(pass_game, False, False)
-        assert not pass_game.win_conditions(mdata)
+        pass_game.win_conditions(mdata)
+        assert not mdata.win_cond
         assert mdata.winner is None
         assert pass_game.board == utils.build_board([0, 0, 0],
                                                     [2, 2, 1])
@@ -105,7 +108,8 @@ class TestPassWConds:
         pass_game.turn=True
 
         mdata = utils.make_ender_mdata(pass_game, False, False)
-        assert pass_game.win_conditions(mdata) == WinCond.WIN
+        pass_game.win_conditions(mdata)
+        assert mdata.win_cond == WinCond.WIN
         assert mdata.winner
         assert pass_game.board == utils.build_board([0, 0, 0],
                                                     [0, 0, 0])
@@ -118,7 +122,8 @@ class TestPassWConds:
         pass_game.turn=False
 
         mdata = utils.make_ender_mdata(pass_game, False, False)
-        assert pass_game.win_conditions(mdata) == WinCond.WIN
+        pass_game.win_conditions(mdata)
+        assert mdata.win_cond == WinCond.WIN
         assert mdata.winner
         assert pass_game.board == utils.build_board([0, 0, 0],
                                                     [0, 0, 0])

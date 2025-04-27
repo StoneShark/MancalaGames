@@ -7,7 +7,7 @@ Created on Wed Apr 23 12:19:33 2025
 
 class MoveData:
     """A place to collect premove and move data.
-    This is so the sower and capture can share some data.
+    This is so the decos can share data.
 
                    from       from
     Field          Starter    Get Direct   Sower        Capturer       Ender
@@ -86,6 +86,26 @@ class MoveData:
         string += f"  win_cond={self.win_cond}\n"
         string += f"  winner={self.winner}"
         return string
+
+
+    @classmethod
+    def pass_move(cls, turn):
+        """Create a pass move data for turn,
+        suitable for log_turn."""
+        pass_data = cls()
+        pass_data.player = turn
+        pass_data.move = 'PASS'
+        return pass_data
+
+
+    @classmethod
+    def make_move(cls, turn, move):
+        """Create a skeleton move data for turn,
+        suitable for log_turn."""
+        move_data = cls()
+        move_data.player = turn
+        move_data.move = move
+        return move_data
 
 
     @property

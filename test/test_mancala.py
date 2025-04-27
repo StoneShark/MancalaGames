@@ -47,6 +47,7 @@ from game_interface import Goal
 from game_interface import RoundFill
 from game_interface import WinCond
 
+
 # %%
 
 TEST_COVERS = ['src\\mancala.py', 'src\\move_data.py']
@@ -415,6 +416,51 @@ class TestMoveData:
         assert mdata.sow_loc == 3
         assert mdata._sow_loc == 3
         assert mdata.cont_sow_loc == 1
+
+
+    def test_pass_move(self, game):
+
+        mdata = move_data.MoveData.pass_move(True)
+        assert not mdata.board
+        assert mdata.player
+        assert mdata.move == 'PASS'
+
+
+    def test_make_move(self, game):
+
+        mdata = move_data.MoveData.make_move(True, 12)
+        assert not mdata.board
+        assert mdata.player
+        assert mdata.move == 12
+
+
+    def test_state(self, game):
+
+        mdata = move_data.MoveData(game, 22)
+
+        mstate = mdata.state
+        assert isinstance(mstate, tuple)
+        assert len(mstate) == 17
+        assert mstate[2] == 22
+
+        mdata.state = tuple(idx for idx in range(17))
+        assert mdata.player == 0
+        assert mdata.board == 1
+        assert mdata.move == 2
+        assert mdata.direct == 3
+        assert mdata.seeds == 4
+        assert mdata._sow_loc == 5
+        assert mdata.cont_sow_loc == 6
+        assert mdata.lap_nbr == 7
+        assert mdata.capt_loc == 8
+        assert mdata.capt_next == 9
+        assert mdata.capt_changed == 10
+        assert mdata.captured == 11
+        assert mdata.repeat_turn == 12
+        assert mdata.end_msg == 13
+        assert mdata.ended == 14
+        assert mdata.win_cond == 15
+        assert mdata.winner == 16
 
 
 class TestManDeco:
@@ -1232,15 +1278,18 @@ class TestMove:
 
         game.turn = True
 
+        mdata = move_data.MoveData(game, 1)
+        mdata.win_cond = 123
+
         m_move = mocker.patch.object(game, '_move')
-        m_move.return_value = 123
+        m_move.return_value = mdata
+
         mlog = mocker.patch.object(game, '_log_turn')
 
         assert game.move(1) == 123
 
         m_move.assert_called_once()
-        mlog.assert_called_once_with(True, 1, 123)
-
+        mlog.assert_called_once()
 
 
     @pytest.mark.parametrize(
@@ -1285,65 +1334,70 @@ class TestMove:
         assert not mobj.do_sow.called
 
 
-    def test_move_basic (self, mocker, game):
+    def test__move_basic (self, mocker, game):
         """basic flow, no winner"""
 
-        game.mdata = None
-
-        msow = mocker.patch.object(game, 'do_sow')
         mdata = move_data.MoveData(game, 1)
         mdata.sow_loc = 123
+
+        msow = mocker.patch.object(game, 'do_sow')
         msow.return_value = mdata
 
         mcapt = mocker.patch.object(game, 'capture_seeds')
         mwin = mocker.patch.object(game, 'win_conditions')
-        mwin.return_value = False
         minh = mocker.patch.object(game.inhibitor, 'clear_if')
 
-        assert game._move(1) is None
+        mdata = game._move(1)
+        assert not mdata.win_cond
+        assert mdata.sow_loc == 123
 
-        assert game.mdata.sow_loc == 123
         msow.assert_called_once_with(1)
         mcapt.assert_called_once_with(mdata)
-        mwin.assert_called_once()
+        mwin.assert_called_once_with(mdata)
         minh.assert_called_once_with(game, mdata)
 
 
-    def test_move_repeat_turn (self, mocker, game):
+    def test__move_repeat_turn (self, mocker, game):
         """do sow determines repeat turn, no winner"""
 
-        msow = mocker.patch.object(game, 'do_sow')
         mdata = move_data.MoveData(game, 1)
         mdata.capt_loc = gi.WinCond.REPEAT_TURN
+        mdata.repeat_turn = True
+
+        msow = mocker.patch.object(game, 'do_sow')
         msow.return_value = mdata
 
         mcapt = mocker.patch.object(game, 'capture_seeds')
         mwin = mocker.patch.object(game, 'win_conditions')
-        mwin.return_value = None
 
-        assert game._move(1) is gi.WinCond.REPEAT_TURN
+        mdata = game._move(1)
+        assert mdata.capt_loc is gi.WinCond.REPEAT_TURN
 
         msow.assert_called_once_with(1)
-        mwin.assert_called_once()
+        mwin.assert_called_once_with(mdata)
         assert not mcapt.capture_seeds.called
 
 
     def test__move_repeat_win (self, mocker, game):
         """do sow determines repeat turn and the game is won"""
 
-        msow = mocker.patch.object(game, 'do_sow')
         mdata = move_data.MoveData(game, 1)
         mdata.capt_loc = gi.WinCond.REPEAT_TURN
+        mdata.repeat_turn = True
+
+        msow = mocker.patch.object(game, 'do_sow')
         msow.return_value = mdata
 
         mcapt = mocker.patch.object(game, 'capture_seeds')
         mwin = mocker.patch.object(game, 'win_conditions')
-        mwin.return_value = gi.WinCond.WIN
+        mwin.side_effect = lambda _ : setattr(mdata, 'win_cond',
+                                              gi.WinCond.WIN)
 
-        assert game._move(1) is gi.WinCond.WIN
+        mdata = game._move(1)
+        assert mdata.win_cond is gi.WinCond.WIN
 
         msow.assert_called_once_with(1)
-        mwin.assert_called_once()
+        mwin.assert_called_once_with(mdata)
         assert not mcapt.capture_seeds.called
         assert not mdata.end_msg
 
@@ -1351,55 +1405,62 @@ class TestMove:
     def test__move_endless (self, mocker, game):
         """do sow determines endless sow"""
 
-        msow = mocker.patch.object(game, 'do_sow')
         mdata = move_data.MoveData(game, 1)
         mdata.capt_loc = gi.WinCond.ENDLESS
+
+        msow = mocker.patch.object(game, 'do_sow')
         msow.return_value = mdata
 
         mcapt = mocker.patch.object(game, 'capture_seeds')
         mwin = mocker.patch.object(game, 'win_conditions')
-        mwin.return_value = gi.WinCond.WIN
         mend = mocker.patch.object(game, 'end_game')
         mend.return_value = gi.WinCond.TIE
 
-        assert game._move(1) is gi.WinCond.TIE
+        mdata = game._move(1)
+        assert mdata.win_cond is gi.WinCond.TIE
 
         msow.assert_called_once_with(1)
         mend.assert_called_once()
         assert mdata.end_msg
 
-        assert not mwin.win_conditions.called
         assert not mcapt.capture_seeds.called
+        assert not mwin.win_conditions.called
 
 
     def test__move_c_repeat_turn (self, mocker, game):
         """capture_seeds determines repeat turn, no winner"""
 
-        msow = mocker.patch.object(game, 'do_sow')
         mdata = move_data.MoveData(game, 1)
         mdata.capt_loc = 3
+
+        msow = mocker.patch.object(game, 'do_sow')
         msow.return_value = mdata
 
         mcapt = mocker.patch.object(game, 'capture_seeds')
-        mcapt.side_effect = lambda _ : setattr(mdata, 'captured',
-                                               gi.WinCond.REPEAT_TURN)
+        mcapt.side_effect = lambda _ : (
+            setattr(mdata, 'captured', gi.WinCond.REPEAT_TURN),
+            setattr(mdata, 'repeat_turn', True))
 
         mwin = mocker.patch.object(game, 'win_conditions')
         mwin.return_value = None
 
-        assert game._move(1) is gi.WinCond.REPEAT_TURN
+        mdata = game._move(1)
+        assert mdata.win_cond is gi.WinCond.REPEAT_TURN
+        assert mdata.captured is gi.WinCond.REPEAT_TURN
+        assert mdata.repeat_turn
 
         msow.assert_called_once_with(1)
-        mwin.assert_called_once()
         mcapt.assert_called_once()
+        mwin.assert_called_once()
 
 
     def test__move_c_repeat_win (self, mocker, game):
         """capture_seeds determines repeat turn and the game is won"""
 
-        msow = mocker.patch.object(game, 'do_sow')
         mdata = move_data.MoveData(game, 1)
         mdata.capt_loc = 3
+
+        msow = mocker.patch.object(game, 'do_sow')
         msow.return_value = mdata
 
         mcapt = mocker.patch.object(game, 'capture_seeds')
@@ -1407,14 +1468,15 @@ class TestMove:
                                                gi.WinCond.REPEAT_TURN)
 
         mwin = mocker.patch.object(game, 'win_conditions')
-        mwin.return_value = gi.WinCond.WIN
+        mwin.side_effect = lambda _ : setattr(mdata, 'win_cond',
+                                              gi.WinCond.WIN)
 
-        assert game._move(1) is gi.WinCond.WIN
+        mdata = game._move(1)
+        assert mdata.win_cond is gi.WinCond.WIN
 
         msow.assert_called_once_with(1)
         mwin.assert_called_once()
         mcapt.assert_called_once()
-
 
 
 class TestLogMove:
@@ -1445,10 +1507,13 @@ class TestLogMove:
 
         assert game_logger.game_log.active
 
-        game.mdata = utils.make_win_mdata(game, win_cond, winner)
+        mdata = utils.make_win_mdata(game, win_cond, winner)
+        mdata.player = move_turn
+        mdata.move = 1
+        mdata.win_cond = win_cond
 
         mlog = mocker.patch.object(game_logger.game_log, 'turn')
-        game._log_turn(move_turn, 1, win_cond)
+        game._log_turn(mdata)
 
         arg_str = mlog.call_args.args[1]
 
@@ -1472,11 +1537,13 @@ class TestLogMove:
 
         assert game_logger.game_log.active
 
-        game.mdata = move_data.MoveData(game, 2)
-        game.mdata.direct = gi.Direct.CCW
+        mdata = move_data.MoveData(game, move)
+        mdata.direct = gi.Direct.CCW
+        mdata.player = True
+        mdata.win_cond = None
 
         mlog = mocker.patch.object(game_logger.game_log, 'turn')
-        game._log_turn(True, move, None)
+        game._log_turn(mdata)
 
         arg_str = mlog.call_args.args[1]
         assert '(2, CCW)' in arg_str
@@ -1488,7 +1555,7 @@ class TestLogMove:
         assert not game_logger.game_log.active
 
         mlog = mocker.patch.object(game_logger.game_log, 'turn')
-        game._log_turn(False, 1, None)
+        game._log_turn(move_data.MoveData())
 
         mlog.assert_not_called()
 

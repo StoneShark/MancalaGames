@@ -17,6 +17,7 @@ import incrementer
 import game_interface as gi
 import ginfo_rules
 import mancala
+import move_data
 import two_cycle
 
 from game_logger import game_log
@@ -249,6 +250,7 @@ class SameSide(mancala.Mancala):
         if mdata.captured:
             game_log.add("Repeat turn, select seed location")
             mdata.captured = gi.WinCond.REPEAT_TURN
+            mdata.repeat_turn = True
             self.empty_store = True
 
 
@@ -268,8 +270,8 @@ class SameSide(mancala.Mancala):
             self.store[self.turn] = 0
             self.empty_store = False
 
-            self._log_turn(cur_turn, move, None)
             self.turn = not self.turn
+            self._log_turn(move_data.MoveData.make_move(cur_turn, move))
             return None
 
         return super().move(move)

@@ -242,6 +242,7 @@ class CaptCrossVisited(CaptMethodIf):
             return
 
         mdata.captured = gi.WinCond.REPEAT_TURN
+        mdata.repeat_turn = True
         game_log.add('XCVisit Repeat Turn', game_log.INFO)
 
 
