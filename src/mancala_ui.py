@@ -489,6 +489,21 @@ class MancalaUI(tk.Frame):
         helpmenu.add_command(label='About...', command=self._about)
         menubar.add_cascade(label='Help', menu=helpmenu)
 
+        if man_config.CONFIG.get_bool('debug_menu'):
+
+            debugmenu = tk.Menu(menubar)
+            debugmenu.add_command(label='Print Params',
+                                  command=lambda: print(self.game.params_str()))
+            debugmenu.add_command(label='Print Decos',
+                                  command=lambda: print(self.game.deco))
+            debugmenu.add_command(label='Print Inhibitor',
+                                  command=lambda: print(self.game.inhibitor))
+            debugmenu.add_command(label='Print mdata',
+                                  command=lambda: print(self.game.mdata))
+            showmenu.add_separator()
+            debugmenu.add_command(label='Print AI Player',
+                                  command=lambda: print(self.player))
+            menubar.add_cascade(label='Debug', menu=debugmenu)
 
 
     def ui_loop(self):
@@ -907,7 +922,11 @@ class MancalaUI(tk.Frame):
             self.tally.tally_game(self.game.get_turn(), win_cond)
             self._param_tally()
 
-            ui_utils.WinPopup(self, *self.game.win_message(win_cond))
+            title, message = self.game.win_message(win_cond)
+            message = message.split('\n')
+            message = message[0] if len(message) == 1 else message
+
+            ui_utils.WinPopup(self, title, message)
 
 
     def _pie_rule(self):

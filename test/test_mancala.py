@@ -418,10 +418,10 @@ class TestMoveData:
 
         mstate = mdata.state
         assert isinstance(mstate, tuple)
-        assert len(mstate) == 17
+        assert len(mstate) == 18
         assert mstate[2] == 22
 
-        mdata.state = tuple(idx for idx in range(17))
+        mdata.state = tuple(idx for idx in range(18))
         assert mdata.player == 0
         assert mdata.board == 1
         assert mdata.move == 2
@@ -436,9 +436,10 @@ class TestMoveData:
         assert mdata.captured == 11
         assert mdata.repeat_turn == 12
         assert mdata.end_msg == 13
-        assert mdata.ended == 14
-        assert mdata.win_cond == 15
-        assert mdata.winner == 16
+        assert mdata.fmsg == 14
+        assert mdata.ended == 15
+        assert mdata.win_cond == 16
+        assert mdata.winner == 17
 
 
 class TestManDeco:
@@ -1132,7 +1133,7 @@ class TestWinMessage:
             return
 
         if 'ENDLESS' in wcond.name:
-            assert 'No winner' in message
+            # win_message no longer supports because the game is ended
             return
 
         assert 'Unexpected' in message
@@ -1145,6 +1146,8 @@ class TestWinMessage:
 
         game = request.getfixturevalue(game_fixt)
         game.turn = False
+        game.mdata = move_data.MoveData(game, 0)
+        game.mdata.winner = True
 
         title, message = game.win_message(wcond)
 
@@ -1180,6 +1183,9 @@ class TestWinMessage:
     def test_last_move_win(self, maxgame, message):
         """If there was an end message in the last move,
         use it."""
+
+        maxgame.mdata = move_data.MoveData(maxgame, 0)
+        maxgame.mdata.winner = True
 
         if message is None or message:
             maxgame.mdata = move_data.MoveData(maxgame, None)

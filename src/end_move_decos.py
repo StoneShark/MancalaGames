@@ -290,11 +290,9 @@ class EndTurnMustShare(EndTurnIf):
                     player_seeds = True
 
         if mdata.repeat_turn and player_seeds and not opp_seeds:
-
             mdata.ended = not any(self.game.get_allowable_holes())
 
         elif not mdata.repeat_turn and not player_seeds and opp_seeds:
-
             self.game.turn = not self.game.turn
             mdata.ended = not any(self.game.get_allowable_holes())
             self.game.turn = not self.game.turn
@@ -307,12 +305,13 @@ class EndTurnMustShare(EndTurnIf):
                 self.game.turn = not self.game.turn
                 self.sclaimer.claim_seeds()
                 self.game.turn = not self.game.turn
-                game_log.add("Player can't share on repeat turn, game ended.",
-                             game_log.INFO)
+                mdata.end_msg = \
+                    "Player can't share on repeat turn, _thing_ ended."
+                game_log.add(mdata.end_msg, game_log.INFO)
             else:
                 self.sclaimer.claim_seeds()
-                game_log.add("Next player can't share, game ended.",
-                             game_log.INFO)
+                mdata.end_msg = "Next player can't share, _thing_ ended."
+                game_log.add(mdata.end_msg, game_log.INFO)
 
         return self.decorator.game_ended(mdata)
 
@@ -337,8 +336,8 @@ class EndTurnNotPlayable(EndTurnIf):
                               for loc in range(self.game.cts.dbl_holes))
 
         if mdata.ended:
-            game_log.add("No moves available, round/game ended.",
-                         game_log.IMPORT)
+            mdata.end_msg = "No moves available, _thing_ ended."
+            game_log.add(mdata.end_msg, game_log.IMPORT)
 
         return self.decorator.game_ended(mdata)
 
@@ -423,6 +422,8 @@ class DepriveNoSeedsEndGame(EndTurnIf):
         if not my_seeds:
             mdata.win_cond = gi.WinCond.WIN
             mdata.winner = not self.game.turn
+            mdata.end_msg = "_Winner_ won _thing_ by eliminating _loser_'s seeds."
+            mdata.fmsg = True
 
 
 class DepriveLastMoveEndGame(EndTurnIf):
@@ -442,11 +443,13 @@ class DepriveLastMoveEndGame(EndTurnIf):
         self.game.turn = not self.game.turn
 
         if mdata.ended:
-            game_log.add("No moves for next player; last move won.",
-                         game_log.INFO)
+            mdata.end_msg = "No moves for next player; last mover won."
+            game_log.add(mdata.end_msg, game_log.INFO)
 
             mdata.win_cond = gi.WinCond.WIN
             mdata.winner = self.game.turn
+            mdata.end_msg = "_Winner_ won _thing_ by immobilizing _loser_."
+            mdata.fmsg = True
 
 
 class ClearSeedsEndGame(EndTurnIf):
@@ -549,9 +552,6 @@ class NoOutcomeChange(EndTurnIf):
                 return False
 
         if 0 < remaining < self.min_needed:
-            game_log.add(
-                f'Too few seeds for outcome change (< {self.min_needed}).',
-                game_log.IMPORT)
             return True
 
         return False
@@ -565,7 +565,9 @@ class NoOutcomeChange(EndTurnIf):
         if (not mdata.ended
                 and not mdata.win_cond
                 and self._too_few_for_change()):
-            game_log.add('Too few seeds for change, calling deco chain again')
+            mdata.end_msg = 'Too few seeds for outcome change ' \
+                + f'(< {self.min_needed}), _thing_ ended.'
+            game_log.add(mdata.end_msg)
             mdata.ended = True
             self.decorator.game_ended(mdata)
 

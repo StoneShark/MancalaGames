@@ -307,7 +307,6 @@ class PassPopup(tksimpledialog.Dialog):
     def body(self, master):
         """Put the message in a label in the master and ring the bell."""
 
-        master.bell()
         label = tk.Label(master, text=self.msg,
                          anchor='nw', justify=tk.LEFT, padx=5, pady=5)
         label.pack(side=tk.TOP)

@@ -25,11 +25,13 @@ class MoveData:
     capt_change                                         fill
     captured                                            fill
 
-    end_msg
     repeat_turn                                         fill           fill
     ended                                                              fill
     win_cond
     winner                                                             fill
+
+    end_msg                                                            fill
+    fmsg                                                               fill
 
     note 1: board is used to determine if a grand slam is possible
     e.g. there must be seeds on oppside before the turn
@@ -62,6 +64,8 @@ class MoveData:
         self.repeat_turn = False
 
         self.end_msg = None
+        self.fmsg = False      # end_msg is all that needs to be said
+
         self.ended = False
         self.win_cond = None
         self.winner = None

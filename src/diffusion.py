@@ -240,6 +240,6 @@ class Diffusion(DiffusionV2):
 
         title = 'Game Over'
         player = 'Left' if self.mdata.winner else 'Right'
-        message = f'{player} won by giving away all their seeds.'
+        message = f'{player} won by clearing all their seeds.'
 
         return title, message

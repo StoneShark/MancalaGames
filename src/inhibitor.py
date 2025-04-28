@@ -60,6 +60,9 @@ class InhibitorIf(abc.ABC):
 class InhibitorNone(InhibitorIf):
     """Base inhibitor inhibits nothing."""
 
+    def __str__(self):
+        return 'InhibitorNone()'
+
     def new_game(self):
         pass
 

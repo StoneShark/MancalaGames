@@ -636,7 +636,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
         rnd_reason = ("not used",
                       " by collecting at least half the seeds.",
-                      ". Round ended because there are no moves.",
+                      ".",
                       ". Round ended because there were <= "
                           + f"{self.cts.nbr_start} seeds left",
                       ". Round ended because There were <= "
@@ -644,26 +644,35 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
                       )
 
         rtext = 'the game'
-        gtext = 'Game'
         title = 'Game Over'
         if win_cond in (gi.WinCond.ROUND_WIN, gi.WinCond.ROUND_TIE):
             rtext = 'the round'
-            gtext = 'The round'
             title = 'Round Over'
 
         message = ''
-        winner = None
         if self.mdata:
-            winner = self.mdata.winner
+            win = self.mdata.winner
+            winner, loser = ('Top', 'Bottom') if win else ('Bottom', 'Top')
             if self.mdata.end_msg:
                 message = self.mdata.end_msg
+                message = message.replace('_Winner_', winner)
+                message = message.replace('_Loser_', loser)
+                message = message.replace('_Thing_', rtext.title())
+                message = message.replace('_winner_', winner)
+                message = message.replace('_loser_', loser)
+                message = message.replace('_thing_', rtext)
 
-        player = 'Top' if winner else 'Bottom'
+            if self.mdata.fmsg:
+                return title, message
+
+        if message:
+            message += '\n'
+
         if win_cond == gi.WinCond.WIN:
-            message += f'{player} won {rtext}{reason[self.info.goal]}'
+            message += f'{winner.title()} won {rtext}{reason[self.info.goal]}'
 
         elif win_cond == gi.WinCond.ROUND_WIN:
-            message += f'{player} won {rtext}{rnd_reason[self.info.rounds]}'
+            message += f'{winner.title()} won {rtext}{rnd_reason[self.info.rounds]}'
 
         elif win_cond in [gi.WinCond.TIE, gi.WinCond.ROUND_TIE]:
             if self.info.goal in (gi.Goal.DEPRIVE,
@@ -672,13 +681,10 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             elif self.info.goal == gi.Goal.TERRITORY:
                 message += 'Each player controls half the holes (a tie).'
             else:
-                message += f'{gtext} ended in a tie.'
-
-        elif win_cond == gi.WinCond.ENDLESS:
-            message += 'Game stuck in a loop. No winner.'
+                message += f'{rtext.title()} ended in a tie.'
 
         else:
-            message += f'Unexpected end condition {win_cond}.'
+            message += f'Unexpected end condition {win_cond and win_cond.name}.'
 
         return title, message
 

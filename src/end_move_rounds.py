@@ -66,6 +66,7 @@ class RoundWinner(emd.EndTurnIf):
 
         seeds = self.sclaimer.claim_seeds()
         if seeds[True] < self.req_seeds or seeds[False] < self.req_seeds:
+            mdata.end_msg = self.msg
             game_log.add(self.msg, game_log.IMPORT)
 
         elif mdata.win_cond == gi.WinCond.WIN:
@@ -136,8 +137,8 @@ class RoundEndLimit(emd.EndTurnIf):
                 remaining += self.game.board[loc]
 
         if remaining <= self.stop_at:
-            game_log.add("Round end limit reached, ending.",
-                         game_log.IMPORT)
+            mdata.end_msg = "Round end limit reached, ending."
+            game_log.add(mdata.end_msg, game_log.IMPORT)
             mdata.ended = True
             self.decorator.game_ended(mdata)
 
