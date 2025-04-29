@@ -346,8 +346,11 @@ class EndTurnNotPlayable(EndTurnIf):
                               for loc in range(self.game.cts.dbl_holes))
 
         if mdata.ended:
-            mdata.end_msg = "No moves available, _thing_ ended."
-            game_log.add(mdata.end_msg, game_log.IMPORT)
+            msg =  "No moves available, _thing_ ended."
+            game_log.add(msg, game_log.IMPORT)
+
+            if not mdata.end_msg:
+                mdata.end_msg = msg
 
         return self.decorator.game_ended(mdata)
 

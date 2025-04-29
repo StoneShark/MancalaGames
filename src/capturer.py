@@ -796,7 +796,7 @@ class PickLastSeeds(CaptMethodIf):
 
             msg = f"{self.seeds} or fewer seeds left, " \
                   + f"{gi.PLAYER_NAMES[taker]} collected them."
-            self.end_msg = msg
+            mdata.end_msg = msg
             game_log.add(msg, game_log.INFO)
             mdata.capt_changed = True
 
