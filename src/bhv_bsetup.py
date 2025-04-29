@@ -168,22 +168,39 @@ class SetupHold(bhv_hold.Hold):
         tframe = tk.Frame(frame)
         rcnt = ui_utils.Counter()
         ccnt = ui_utils.Counter()
-        row = rcnt.count
 
-        tk.Button(tframe, text="Top's Turn",
-                  command=self.set_starter_true).grid(
-                      row=row, column=ccnt.count, padx=2, pady=2, sticky='ew')
-        tk.Button(tframe, text="Bottom's Turn",
-                  command=self.set_starter_false).grid(
-                      row=row, column=ccnt.count, padx=2, pady=2, sticky='ew')
-        tk.Button(tframe, text="Rotate Board",
-                  command=self.rotate_board).grid(
-                      row=row, column=ccnt.count, padx=2, pady=2, sticky='ew')
-        ccnt.reset()
-        tk.Button(tframe, text="Initial Setup",
-                  command=self.init_setup).grid(
+        tk.Button(tframe, text="Swap Turn",
+                  command=self.swap_starter).grid(
                       row=rcnt.count, column=ccnt.count,
                       padx=2, pady=2, sticky='ew')
+        tk.Button(tframe, text="Rotate Board",
+                  command=self.rotate_board).grid(
+                      row=rcnt.value, column=ccnt.count,
+                      padx=2, pady=2, sticky='ew')
+        tk.Button(tframe, text="Initial Setup",
+                  command=self.init_setup).grid(
+                      row=rcnt.value, column=ccnt.count,
+                      padx=2, pady=2, sticky='ew')
+
+        ccnt.reset()
+        rcnt.count
+        ginfo = self.game_ui.game.info
+        if ginfo.child_type:
+            tk.Button(tframe, text="Clear Child",
+                      command=self.clear_child).grid(
+                          row=rcnt.value, column=ccnt.count,
+                          padx=2, pady=2, sticky='ew')
+        if (ginfo.moveunlock
+                or ginfo.allow_rule == gi.AllowRule.MOVE_ALL_HOLES_FIRST):
+            tk.Button(tframe, text="Clear Locks",
+                      command=self.clear_locks).grid(
+                          row=rcnt.value, column=ccnt.count,
+                          padx=2, pady=2, sticky='ew')
+        if ginfo.blocks:
+            tk.Button(tframe, text="Clear Blocks",
+                      command=self.clear_blocks).grid(
+                          row=rcnt.value, column=ccnt.count,
+                          padx=2, pady=2, sticky='ew')
 
         self.add_collect_button(game_ui, tframe, rcnt, ccnt)
 
@@ -193,17 +210,11 @@ class SetupHold(bhv_hold.Hold):
                   ).pack(side='bottom', padx=2, pady=2)
 
 
-    def set_starter_true(self):
-        """Set the starter to True and do board refresh."""
+    def swap_starter(self):
+        """Swap the starter and do board refresh."""
 
-        self.game_ui.game.starter = self.game_ui.game.turn = True
-        self.refresh_game()
-
-
-    def set_starter_false(self):
-        """Set the starter to False and do board refresh."""
-
-        self.game_ui.game.starter = self.game_ui.game.turn = False
+        new_turn = not self.game_ui.game.turn
+        self.game_ui.game.starter = self.game_ui.game.turn = new_turn
         self.refresh_game()
 
 
@@ -235,6 +246,39 @@ class SetupHold(bhv_hold.Hold):
         board = self.game_ui.game.board
         for i, _ in enumerate(board):
             board[i] = 0
+
+        self.refresh_game()
+
+
+    def clear_child(self):
+        """Clear the child settings and do board refresh."""
+
+        game = self.game_ui.game
+
+        for i, _ in enumerate(game.board):
+            game.child[i] = None
+
+        self.refresh_game()
+
+
+    def clear_blocks(self):
+        """Clear the blocked setting and do board refresh."""
+
+        game = self.game_ui.game
+
+        for i, _ in enumerate(game.board):
+            game.blocked[i] = False
+
+        self.refresh_game()
+
+
+    def clear_locks(self):
+        """Clear the unlocked values and do board refresh."""
+
+        game = self.game_ui.game
+
+        for i, _ in enumerate(game.board):
+            game.unlocked[i] = True
 
         self.refresh_game()
 
