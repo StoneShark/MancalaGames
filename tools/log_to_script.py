@@ -26,7 +26,7 @@ BLOCK = 'x'
 LOCK = '_'
 UP = '\u02c4'
 DN = '\u02c5'
-TOP = 'Top'
+TOP = 'North'
 
 OWNT = '\u2191'
 OWNF = '\u2193'
@@ -40,7 +40,7 @@ GAMECONST_RE = re.compile(r'GameConsts.nbr_start=([0-9]+), holes=([0-9]+)')
 
 MOVE_RE = re.compile(r'^([0-9]+):.*move (PASS|([0-9]+)|(\(.+\)))( )?([A-Z_]+)?')
 
-COND_LINE_RE = re.compile(r'^(ROUND_WIN|WIN|ROUND_TIE|TIE)( by (Top|Bottom))?')
+COND_LINE_RE = re.compile(r'^(ROUND_WIN|WIN|ROUND_TIE|TIE)( by (North|South))?')
 
 STORE_RE = re.compile(r'([0-9]*) ?([A-Z_]+)?$')
 BOARD_RE = re.compile(r'([0-9x]+)([ _˄˅↑↓]*) ')

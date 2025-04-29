@@ -986,7 +986,7 @@ class MancalaUI(tk.Frame):
 
         wtext = 'Round Ended '
         if win_cond in (gi.WinCond.WIN, gi.WinCond.ROUND_WIN):
-            sturn = 'Top' if self.game.get_turn() else 'Bottom'
+            sturn = self.game.turn_name()
             wtext += f'\n{win_cond.name} by {sturn}'
         elif win_cond:
             wtext += ' ' + win_cond.name
@@ -1019,7 +1019,7 @@ class MancalaUI(tk.Frame):
 
         wtext = 'Game Ended '
         if win_cond in (gi.WinCond.WIN, gi.WinCond.ROUND_WIN):
-            sturn = 'Top' if self.game.get_turn() else 'Bottom'
+            sturn = self.game.turn_name()
             wtext += f'\n{win_cond.name} by {sturn}'
         elif win_cond:
             wtext += ' ' + win_cond.name
@@ -1083,7 +1083,7 @@ class MancalaUI(tk.Frame):
         if (not (self.vars.ai_active.get() and self.game.get_turn())
                 and self.info.mustpass and self.game.test_pass()):
 
-            player = 'Bottom' if self.game.get_turn() else 'Top'
+            player = self.game.turn_name()
             message = f'{player} player has no moves and must pass.'
             ui_utils.PassPopup(self, 'Must Pass', message)
             self.refresh()     # test pass updates game state

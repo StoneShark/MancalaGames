@@ -1119,14 +1119,14 @@ class TestWinMessage:
 
         if 'WIN' in wcond.name:
             if game.mdata.winner:
-                assert 'Top' in message
+                assert gi.PLAYER_NAMES[True] in message
             else:
-                assert 'Bottom' in message
+                assert gi.PLAYER_NAMES[False] in message
             assert 'won' in message
             return
         else:
-            assert 'Top' not in message
-            assert 'Bottom' not in message
+            assert gi.PLAYER_NAMES[True] not in message
+            assert gi.PLAYER_NAMES[False] not in message
 
         if 'TIE' in wcond.name:
             assert 'tie' in message
@@ -1502,14 +1502,14 @@ class TestLogMove:
         assert win_cond.name in arg_str
         assert 'move 1' in arg_str
         if move_turn:
-            assert 'Top move' in arg_str
+            assert gi.PLAYER_NAMES[True] + ' move' in arg_str
         else:
-            assert 'Bottom move' in arg_str
+            assert gi.PLAYER_NAMES[False] + ' move' in arg_str
         if 'WIN' in arg_str:
             if winner:
-                assert 'by Top' in arg_str
+                assert 'by ' + gi.PLAYER_NAMES[True] in arg_str
             else:
-                assert 'by Bottom' in arg_str
+                assert 'by ' + gi.PLAYER_NAMES[False] in arg_str
 
 
     @pytest.mark.parametrize('move', [gi.MoveTpl(2, None),

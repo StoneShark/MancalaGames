@@ -152,7 +152,7 @@ Some pattern are specified below with 5 designators per side as:
 a b c d e
 These are applied as: a is used for the first hole (left most), b the second, d the second last, and e the last (rightmost), c is replicated for all interior holes.
 
-The allowable children are designated by: T - top player, B - bottom player. N - neither player.
+The allowable children are designated by: T - top/north player, B - bottom/south player. N - neither player.
 
 For shorter boards, the pattern is generated using assignments (a b c d e) as:
 
@@ -385,7 +385,7 @@ Goals that start with RND_ are 'round tally games'. Multiple games are played an
 
   + This ownership of holes only applies to the next round played; ownership of holes varies with each round played. Hole ownership may be reclaimed or lost each round.
 
-  + The Ownership Arrows Display option may be used to show hole ownership with long thin arrows in each hole. The arrows point up for the top player and down for the bottom player. If facing players is set, the arrows point towards the hole owner.
+  + The Ownership Arrows Display option may be used to show hole ownership with long thin arrows in each hole. The arrows point up for the top/north player and down for the bottom/south player. If facing players is set, the arrows point towards the hole owner.
 
   + A move maybe started from any hole owned by a player, no matter the side of the board--with any restrictions based on game rules. Captures are determined by CAPT_SIDE and hole ownership--not by side of the board. For example, if a player may only capture from their opponent's holes (per game rules), but their opponent owns a hole on their side of the board; its seeds may be captured by that player.
 

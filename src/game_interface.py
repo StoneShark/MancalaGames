@@ -23,6 +23,9 @@ import cfg_keys as ckey
 
 PASS_TOKEN = 0xffff
 
+PLAYER_NAMES = ['South', 'North']
+
+
 # %%  error, enums and dataclasses
 
 

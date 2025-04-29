@@ -69,9 +69,11 @@ class GameTally:
             tk.Label(frame, text=f'{param_name} Tally:', anchor=tk.W
                      ).grid(row=6, column=0, columnspan=2)
 
-            tk.Label(frame, text='Top:').grid(row=7, column=0)
+            tk.Label(frame, text=gi.PLAYER_NAMES[True] + ':'
+                     ).grid(row=7, column=0)
             tk.Label(frame, textvariable=self.param_tstr).grid(row=7, column=1)
-            tk.Label(frame, text='Bottom:').grid(row=7, column=2)
+            tk.Label(frame, text=gi.PLAYER_NAMES[False] + ':'
+                     ).grid(row=7, column=2)
             tk.Label(frame, textvariable=self.param_fstr).grid(row=7, column=3)
             tk.Label(frame, text=f'   Required: {required}').grid(row=7, column=4)
 

@@ -76,10 +76,10 @@ class Owners(bhv.BehaviorGlobal):
         status = tk.Frame(frame)
         status.pack(side='top', expand=True, fill='x')
 
-        tk.Label(status, text='Top').pack(side=tk.LEFT)
+        tk.Label(status, text=game_ui.game.pname(True)).pack(side=tk.LEFT)
         self._top_dev = tk.Label(status, text='   0')
         self._top_dev.pack(side=tk.LEFT)
-        tk.Label(status, text='Bottom').pack(side=tk.LEFT)
+        tk.Label(status, text=game_ui.game.pname(False)).pack(side=tk.LEFT)
         self._btm_dev = tk.Label(status, text='  0')
         self._btm_dev.pack(side=tk.LEFT)
 

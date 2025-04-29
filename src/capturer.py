@@ -794,7 +794,9 @@ class PickLastSeeds(CaptMethodIf):
             taker = game.turn if self.turn_takes else game.starter
             self.move_seeds(taker)
 
-            msg = f'Seeds left <= {self.seeds}, {taker} collected them.'
+            msg = f"{self.seeds} or fewer seeds left, " \
+                  + f"{gi.PLAYER_NAMES[taker]} collected them."
+            self.end_msg = msg
             game_log.add(msg, game_log.INFO)
             mdata.capt_changed = True
 

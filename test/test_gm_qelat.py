@@ -9,6 +9,8 @@ import pytest
 pytestmark = [pytest.mark.integtest]
 
 from context import man_config
+from context import game_interface as gi
+
 
 N = None
 T = True
@@ -336,4 +338,4 @@ class TestQelat:
 
         winmsg = game.win_message(cond)
         assert 'Game Over' in winmsg[0]
-        assert 'Top' in winmsg[1]
+        assert gi.PLAYER_NAMES[True] in winmsg[1]

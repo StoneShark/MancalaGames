@@ -649,7 +649,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         message = ''
         if self.mdata:
             win = self.mdata.winner
-            winner, loser = ('Top', 'Bottom') if win else ('Bottom', 'Top')
+            winner, loser = reversed(gi.PLAYER_NAMES) if win else gi.PLAYER_NAMES
             if self.mdata.end_msg:
                 message = self.mdata.end_msg
                 message = message.replace('_Winner_', winner)
@@ -815,14 +815,14 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
         wtext = ''
         if mdata.win_cond in (gi.WinCond.WIN, gi.WinCond.ROUND_WIN):
-            winner = 'Top' if mdata.winner else 'Bottom'
+            winner = self.pname(mdata.winner)
             wtext = f'\n{mdata.win_cond.name} by {winner}'
         elif mdata.win_cond in (gi.WinCond.TIE, gi.WinCond.ROUND_TIE):
             wtext = ' \n' + mdata.win_cond.name
         elif mdata.win_cond:
             wtext = ' ' + mdata.win_cond.name
 
-        sturn = 'Top' if mdata.player else 'Bottom'
+        sturn = self.pname(mdata.player)
         if isinstance(mdata.move, gi.MoveTpl):
             move = mdata.move.set_dir(mdata.direct)
         else:
@@ -891,3 +891,15 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
     def get_moves(self):
         """Return the list of allowable moves."""
         return self.deco.moves.get_moves()
+
+
+    def pname(self, player):
+        """Return the player name."""
+
+        return gi.PLAYER_NAMES[player]
+
+
+    def turn_name(self):
+        """Return the name of the current player."""
+
+        return gi.PLAYER_NAMES[self.turn]

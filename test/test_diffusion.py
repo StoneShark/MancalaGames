@@ -227,8 +227,8 @@ class TestDiffusion:
 
         diff_v2.mdata = utils.make_win_mdata(diff_v2, gi.WinCond.WIN, True)
         _, message = diff_v2.win_message(gi.WinCond.WIN)
-        assert 'Top' in message
+        assert gi.PLAYER_NAMES[True] in message
 
         diff_v2.mdata = utils.make_win_mdata(diff_v2, gi.WinCond.WIN, False)
         _, message = diff_v2.win_message(gi.WinCond.WIN)
-        assert 'Bottom' in message
+        assert gi.PLAYER_NAMES[False] in message

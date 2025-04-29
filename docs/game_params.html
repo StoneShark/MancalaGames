@@ -168,7 +168,7 @@ is included after the parameter sections.
 <p class="helptext"> Territory games are generally played in rounds. A winner is declared for each round based on the condition set in <a href="game_params.html#rounds">ROUNDS</a>.
 <p class="helptext"> After each round, the ownership of holes is decided by the number of seeds captured in the previous round. The winner's collected seeds are used to fill as many holes as they can with <a href="game_params.html#nbr_start">NBR_START</a> seeds, first on their own side of the board and then their opponent's side.  Next, if they have more than half the seeds required to fill another hole, ownership of one more hole is allocated to them. The remaining holes are allocated to the round loser. 
 <p class="helptext"> This ownership of holes only applies to the next round played; ownership of holes varies with each round played. Hole ownership may be reclaimed or lost each round.
-<p class="helptext"> The Ownership Arrows Display option may be used to show hole ownership with long thin arrows in each hole. The arrows point up for the top player and down for the bottom player. If facing players is set, the arrows point towards the hole owner.
+<p class="helptext"> The Ownership Arrows Display option may be used to show hole ownership with long thin arrows in each hole. The arrows point up for the top/north player and down for the bottom/south player. If facing players is set, the arrows point towards the hole owner.
 <p class="helptext"> A move maybe started from any hole owned by a player, no matter the side of the board--with any restrictions based on game rules. Captures are determined by <a href="game_params.html#capt_side">CAPT_SIDE</a> and hole ownership--not by side of the board. For example, if a player may only capture from their opponent's holes (per game rules), but their opponent owns a hole on their side of the board; its seeds may be captured by that player.
 <p class="helptext"> In territory games, all holes are available for play each round, though the <a href="game_params.html#allow_rule">ALLOW_RULE</a> or <a href="game_params.html#mustshare">MUSTSHARE</a> may limit which holes may be played on any given turn.
 <p class="helptext"> In a territory game without rounds, the winner is not declared until one player has enough seeds to claim goal_param holes.
@@ -661,7 +661,7 @@ is included after the parameter sections.
 <p>Some pattern are specified below with 5 designators per side as:
 <p>a b c d e
 <p>These are applied as: a is used for the first hole (left most), b the second, d the second last, and e the last (rightmost), c is replicated for all interior holes.
-<p>The allowable children are designated by: T - top player, B - bottom player. N - neither player.
+<p>The allowable children are designated by: T - top/north player, B - bottom/south player. N - neither player.
 <p>For shorter boards, the pattern is generated using assignments (a b c d e) as:
 <p>board length 2: a e
 <p>board length 3: a c e

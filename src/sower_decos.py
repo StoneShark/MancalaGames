@@ -386,7 +386,8 @@ class SowOppCaptsLast(SowMethodIf):
                 mdata.captured = True
 
         if opp_took:
-            game_log.add(f'{not self.game.turn} takes own {opp_took}.',
+            game_log.add(gi.PLAYER_NAMES[not self.game.turn] \
+                         + f' takes own {opp_took}.',
                          game_log.DETAIL)
 
         mdata.capt_loc = loc

@@ -1165,7 +1165,7 @@ class TestEndWaldas:
 
         winmsg = game.win_message(cond)
         assert 'Game Over' in winmsg[0]
-        assert 'Top' in winmsg[1]
+        assert gi.PLAYER_NAMES[True] in winmsg[1]
 
 
     def test_end_game_f_walda(self, game):
@@ -1182,7 +1182,7 @@ class TestEndWaldas:
 
         winmsg = game.win_message(cond)
         assert 'Game Over' in winmsg[0]
-        assert 'Bottom' in winmsg[1]
+        assert gi.PLAYER_NAMES[False] in winmsg[1]
 
 
     def test_end_game_both_walda(self, game):
@@ -1199,7 +1199,7 @@ class TestEndWaldas:
 
         winmsg = game.win_message(cond)
         assert 'Game Over' in winmsg[0]
-        assert 'Top' in winmsg[1]
+        assert gi.PLAYER_NAMES[True] in winmsg[1]
 
 
 

@@ -141,9 +141,9 @@ both the left and right buttons sow in the defined direction.
 Clockwise (CW) and counter-clockwise (CCW) apply to all holes.
 
 <p>If SOW_DIRECT is set to SPLIT sow, the left half of the holes sow to the player's left
-(CW for the bottom player and CCW for the top player) and
+(CW for the south player and CCW for the north player) and
 the right half of holes sow to the player's right
-(CCW for the bottom player and CW for the top player).
+(CCW for the north player and CW for the south player).
 If there is an odd number of holes per side, the center hole will follow the SOW_DIRECT
 unless it is designated a user directed hole (see below).
 
@@ -257,7 +257,7 @@ and the number of held seeds is shown in the control box.
 Left click drops any held seeds.
 <p>If there are children, locks, blocks or owners configured, these may also be changed
 from the right click menu.
-Children are cycled through bottom, top and none.
+Children are cycled through north, south and none.
 Locks, blocks and owners are toggled.
 <p>For games with goals DEPRIVE or CLEAR, there is a button in the control panel which
 collects seeds that are out of play.
@@ -274,7 +274,7 @@ this command can be used to return the initial state.
 
 <h4>AI</h4>
 <p><b>AI Player</b>: Enable or disable the ai player.
-The AI Player plays the top row; you play the bottom row.
+The AI Player plays the top/north row; you play the bottom/south row.
 <p>The delay sets an artificial delay between moves (for UI update), but the
 actual AI move may still take some based on the difficulty setting.
 More specifically, the look ahead distance.

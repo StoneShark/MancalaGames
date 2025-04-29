@@ -7,7 +7,7 @@ Created on Thu Aug 17 15:23:34 2023
 import pytest
 pytestmark = pytest.mark.integtest
 
-
+from context import game_interface as gi
 from context import man_config
 from context import mancala
 
@@ -295,7 +295,7 @@ class TestFalseWin:
 
         winmsg = game.win_message(cond)
         assert 'Game Over' in winmsg[0]
-        assert 'Bottom' in winmsg[1]
+        assert gi.PLAYER_NAMES[False] in winmsg[1]
 
 
 @pytest.mark.incremental
@@ -426,7 +426,7 @@ class TestTrueWin:
 
         winmsg = game.win_message(cond)
         assert 'Game Over' in winmsg[0]
-        assert 'Top' in winmsg[1]
+        assert gi.PLAYER_NAMES[True] in winmsg[1]
 
 
 @pytest.mark.incremental
@@ -684,7 +684,7 @@ class TestGSLegal:
 
         winmsg = game.win_message(cond)
         assert 'Game Over' in winmsg[0]
-        assert 'Bottom' in winmsg[1]
+        assert gi.PLAYER_NAMES[False] in winmsg[1]
 
 
 @pytest.mark.incremental
@@ -885,7 +885,7 @@ class TestGSNotLegal:
 
         winmsg = game.win_message(cond)
         assert 'Game Over' in winmsg[0]
-        assert 'Top' in winmsg[1]
+        assert gi.PLAYER_NAMES[True] in winmsg[1]
 
 
 @pytest.mark.incremental
@@ -1843,7 +1843,7 @@ class TestGSLeftLeft:
 
         winmsg = game.win_message(cond)
         assert 'Game Over' in winmsg[0]
-        assert 'Top' in winmsg[1]
+        assert gi.PLAYER_NAMES[True] in winmsg[1]
 
 
 @pytest.mark.incremental
@@ -2246,4 +2246,4 @@ class TestGSLeaveRight:
 
         winmsg = game.win_message(cond)
         assert 'Game Over' in winmsg[0]
-        assert 'Top' in winmsg[1]
+        assert gi.PLAYER_NAMES[True] in winmsg[1]

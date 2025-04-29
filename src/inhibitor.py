@@ -231,7 +231,8 @@ class InhibitorBoth(InhibitorIf):
         self._turn = turn
         self._captures = True
         self._children = True
-        game_log.add(f'Inhibiting children and captures for {turn}.',
+        game_log.add("Inhibiting children and captures for " \
+                     + gi.PLAYER_NAMES[turn] + ".",
                      game_log.IMPORT)
 
     def set_off(self):
