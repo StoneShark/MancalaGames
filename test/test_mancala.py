@@ -1107,7 +1107,7 @@ class TestWinMessage:
         """test which player is considered the winner and type of win."""
 
         game = request.getfixturevalue(game_fixt)
-        game.mdata = move_data.MoveData(game, 0)
+        game.mdata = move_data.MoveData(game)
         game.mdata.winner = winner
 
         title, message = game.win_message(wcond)
@@ -1146,10 +1146,11 @@ class TestWinMessage:
 
         game = request.getfixturevalue(game_fixt)
         game.turn = False
-        game.mdata = move_data.MoveData(game, 0)
+        game.mdata = move_data.MoveData(game)
         game.mdata.winner = True
 
         title, message = game.win_message(wcond)
+        print(title, message)
 
         if wcond.name == 'WIN':
             if 'max' in game_fixt:
@@ -1163,10 +1164,7 @@ class TestWinMessage:
         if wcond.name == 'ROUND_WIN':
             if 'max' in game_fixt:
                 assert 'half' in message
-            elif 'ter' in game_fixt:
-                assert 'no moves' in message
             return
-
 
         if 'TIE' in wcond.name:
             if 'max' in game_fixt:

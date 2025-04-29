@@ -717,8 +717,8 @@ class TestMlap:
          4, utils.build_board([1, 3, 1],
                               [0, 1, 0]),
          WinCond.ENDLESS,
-         utils.build_board([2, 1, 0],
-                           [0, 0, 1])),
+         utils.build_board([0, 1, 0],
+                           [1, 0, 1])),
 
         # 3
         ('nlgame',
@@ -803,7 +803,7 @@ class TestMlap:
                               [0, 3, 0])),
 
     ]
-    @pytest.mark.usefixtures("logger")
+    # @pytest.mark.usefixtures("logger")
     @pytest.mark.parametrize('game_fixt, start_pos, board, eloc, eboard',
                              MLCASES)
     def test_mlap_sower(self, request, game_fixt,
@@ -813,14 +813,14 @@ class TestMlap:
 
         game.board = board
         game.turn = False
-        print(game)
-        print(game.deco.sower)
+        # print(game)
+        # print(game.deco.sower)
 
         mdata = move_data.MoveData(game, start_pos)
         mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(start_pos)
         mdata.direct = game.info.sow_direct
         game.deco.sower.sow_seeds(mdata)
-        print(mdata)
+        # print(mdata)
 
         assert mdata.capt_loc == eloc
         assert game.board == eboard

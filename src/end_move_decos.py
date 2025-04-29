@@ -132,8 +132,17 @@ class EndTurnIf(deco_chain_if.DecoChainIf):
         win_seeds = -1
 
         if (self.game.info.rounds == gi.Rounds.NO_MOVES
-                and self.game.info.goal not in (gi.Goal.RND_WIN_COUNT_DEP,
-                                                gi.Goal.RND_WIN_COUNT_CLR)):
+                and game_goal == gi.Goal.MAX_SEEDS
+                and not self.game.info.start_pattern):
+
+            min_needed = self.game.cts.nbr_start
+            if self.game.info.goal_param:
+                min_needed *= self.game.info.goal_param
+            win_seeds = self.game.cts.total_seeds - min_needed
+
+        elif (self.game.info.rounds == gi.Rounds.NO_MOVES
+                and game_goal not in (gi.Goal.RND_WIN_COUNT_DEP,
+                                      gi.Goal.RND_WIN_COUNT_CLR)):
             win_seeds = self.game.cts.total_seeds - 1
 
         elif game_goal == gi.Goal.TERRITORY:
@@ -201,14 +210,15 @@ class EndTurnNoMoves(EndTurnIf):
 
         if mdata.repeat_turn:
             mdata.ended = not any(self.game.get_allowable_holes())
-            msg = "No moves for repeat turn; game ended."
+            msg = "No moves for repeat turn; _thing_ ended."
         else:
             self.game.turn = not self.game.turn
             mdata.ended = not any(self.game.get_allowable_holes())
             self.game.turn = not self.game.turn
-            msg = "No moves for next player; game ended."
+            msg = "No moves for next player; _thing_ ended."
 
         if mdata.ended:
+            mdata.end_msg = msg
             game_log.add(msg, game_log.INFO)
 
         return self.decorator.game_ended(mdata)

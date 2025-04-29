@@ -494,15 +494,20 @@ class MancalaUI(tk.Frame):
             debugmenu = tk.Menu(menubar)
             debugmenu.add_command(label='Print Params',
                                   command=lambda: print(self.game.params_str()))
+            debugmenu.add_command(label='Print Consts',
+                                  command=lambda: print(self.game.cts))
             debugmenu.add_command(label='Print Decos',
                                   command=lambda: print(self.game.deco))
             debugmenu.add_command(label='Print Inhibitor',
                                   command=lambda: print(self.game.inhibitor))
             debugmenu.add_command(label='Print mdata',
                                   command=lambda: print(self.game.mdata))
-            showmenu.add_separator()
+            debugmenu.add_separator()
             debugmenu.add_command(label='Print AI Player',
                                   command=lambda: print(self.player))
+            debugmenu.add_separator()
+            debugmenu.add_command(label='Swap Sides',
+                                  command=lambda: self._pie_rule(force=True))
             menubar.add_cascade(label='Debug', menu=debugmenu)
 
 
@@ -929,7 +934,7 @@ class MancalaUI(tk.Frame):
             ui_utils.WinPopup(self, title, message)
 
 
-    def _pie_rule(self):
+    def _pie_rule(self, force=False):
         """Allow a human player to swap sides after the first
         move, aka 'Pie Rule'.
         Only allowed on the first move of the game.
@@ -942,7 +947,7 @@ class MancalaUI(tk.Frame):
         have already been started correcting them seems error prone."""
 
         game = self.game
-        if self.movers != 1:
+        if not force and self.movers != 1:
             ui_utils.showerror(self, "Swap Not Allowed",
                                """Swapping sides is only allowed by a
                                human player after the first move.

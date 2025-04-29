@@ -25,7 +25,7 @@ from game_logger import game_log
 
 # %% constants
 
-MAX_LAPS = 50
+MAX_LAPS = 75
 
 
 # %%  lap continue testers

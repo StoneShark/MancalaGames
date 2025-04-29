@@ -107,7 +107,7 @@ SOWDIR = {'CW': lambda ginfo: ginfo.get(ckey.SOW_DIRECT, 1) == -1,
           'CCW': lambda ginfo: ginfo.get(ckey.SOW_DIRECT, 1) == 1,
           'SPLIT': lambda ginfo: not ginfo.get(ckey.SOW_DIRECT, 1),
           'Players Alt Dir': lambda ginfo: ginfo.get(ckey.SOW_DIRECT, 1) == 2,
-          'User Chooses': lambda ginfo: len(ginfo.get(ckey.UDIR_HOLES, [])) > 1}
+          'User Chooses': lambda ginfo: len(ginfo.get(ckey.UDIR_HOLES, [])) >= 1}
 
 
 FEATS = {'Start Pattern': lambda ginfo: ginfo.get(ckey.START_PATTERN, 0),

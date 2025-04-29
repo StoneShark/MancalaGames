@@ -64,7 +64,7 @@ class MoveData:
         self.repeat_turn = False
 
         self.end_msg = None
-        self.fmsg = False      # end_msg is all that needs to be said
+        self.fmsg = False      # end_msg is all that needs to be said (full msg)
 
         self.ended = False
         self.win_cond = None
@@ -86,6 +86,7 @@ class MoveData:
         string += f"  captured={self.captured}\n"
         string += f"  repeat_turn={self.repeat_turn}\n"
         string += f"  end_msg={self.end_msg}\n"
+        string += f"  fmsg={self.fmsg}\n"
         string += f"  ended={self.ended}\n"
         string += f"  win_cond={self.win_cond}\n"
         string += f"  winner={self.winner}"

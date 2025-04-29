@@ -548,21 +548,18 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
     def end_round(self):
         """The player has requested that the round be ended."""
 
-        if not self.mdata:
-            self.mdata = move_data.MoveData(self, 0)
-
+        self.mdata = move_data.MoveData(self)
         self.mdata.ended = 'round'
         self.deco.ender.game_ended(self.mdata)
         return self.mdata.win_cond
 
 
-    def end_game(self):
+    def end_game(self, user=True):
         """Either the player has requested that the game be ended
         or an ENDLESS conditions was detected.  End the game fairly."""
 
-        if not self.mdata:
-            self.mdata = move_data.MoveData(self, 0)
-
+        if user:
+            self.mdata = move_data.MoveData(self)
         self.mdata.ended = True
         self.deco.quitter.game_ended(self.mdata)
         return self.mdata.win_cond
@@ -669,10 +666,10 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             message += '\n'
 
         if win_cond == gi.WinCond.WIN:
-            message += f'{winner.title()} won {rtext}{reason[self.info.goal]}'
+            message += f'{winner} won {rtext}{reason[self.info.goal]}'
 
         elif win_cond == gi.WinCond.ROUND_WIN:
-            message += f'{winner.title()} won {rtext}{rnd_reason[self.info.rounds]}'
+            message += f'{winner} won {rtext}{rnd_reason[self.info.rounds]}'
 
         elif win_cond in [gi.WinCond.TIE, gi.WinCond.ROUND_TIE]:
             if self.info.goal in (gi.Goal.DEPRIVE,
@@ -782,7 +779,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         if not mdata.repeat_turn:
 
             if mdata.capt_loc == gi.WinCond.ENDLESS:
-                mdata.win_cond = self.end_game()
+                mdata.win_cond = self.end_game(user=False)
                 mdata.end_msg = \
                     'Game ended due to detecting endless sow condition.\n'
                 game_log.add(

@@ -73,12 +73,12 @@ Config = collections.namedtuple('Config',
 CONFIG_CASES = {
     'Ayoayo': Config(24),       # mustshare no NoOutcomeChange
     'Bao_Kenyan': Config(16, 2),
-    'Bao_Tanzanian': Config(55, 2, 4),  # child but capt also
-    'Bechi': Config(4*6*2 - 1, 0, 6),  # NoOutcomeChange dupl EndGameNotPlayable  (NOC dupl EGNP)
-    'Bosh': Config(5*4*2 - 1, 2, 4),
+    'Bao_Tanzanian': Config(52, 2, 4),  # child but capt also
+    'Bechi': Config(42, 0, 6),  # NoOutcomeChange dupl EndGameNotPlayable  (NOC dupl EGNP)
+    'Bosh': Config(36, 2, 4),
     'Cow': Config(5*5),   # NOC dupl EGNP
     'Dabuda': Config(10*4, 2),
-    'Dakon': Config(7*7*2 - 1, 0, 7*4),
+    'Dakon': Config(70, 0, 7*4),
     'Deka': Config(-1),   # DEPRIVE games no win_seeds, rounds or NoOutcomeChange
     'Depouiller': Config(-1),   # DEPRIVE
 
@@ -92,14 +92,14 @@ CONFIG_CASES = {
     'Eson_Xorgol': Config(5*9, 3),
     'Gabata': Config(4*6*2 - 1, 0, 11),   # only children
     'Gamacha': Config(-1),
-    'Giuthi': Config(8*6*2 - 1, 0, 9),  # NOC dupl EGNP; UMOVE: 1 seed in 7 holes, 2 in 1 hole
+    'Giuthi': Config(90, 0, 9),  # NOC dupl EGNP; UMOVE: 1 seed in 7 holes, 2 in 1 hole
     'Goat': Config(3*3),
     'J_Odu': Config(8*4, 2),
     'Kalah': Config(6*4),
 
-    'Lagerung': Config(7*7*2 - 1, 0, 7*4),
-    'Lami': Config(10*2*2 - 1, 2, 2),
-    'Lamlameta': Config(12*2*2 - 1, 2, 2*4),
+    'Lagerung': Config(70, 0, 7*4),
+    'Lami': Config(38, 2, 2),
+    'Lamlameta': Config(40, 2, 2*4),
     'Lam_Waladach': Config(6*3*2 - 1, 0, 11),  # pick2xlastseeds no NoOutcomeChange
     'Leyla-Gobale': Config(8*4, 2),
     'Longbeu-a-cha': Config(5*5, 2),
@@ -113,11 +113,11 @@ CONFIG_CASES = {
     'NoSides': Config(5*2, 2),
     'NoSidesChild': Config(7*2, 2),
     'NumNum': Config(6*4*2 - 1, 0, 11),  # picklastseeds no NoOutcomeChange
-    'Olinda': Config(7*4*2 - 1, 0, 4),   # picklastseeds no NoOutcomeChange
+    'Olinda': Config(52, 0, 4),   # picklastseeds no NoOutcomeChange
     'Ot-tjin': Config(10*3, 3),
     'Oware': Config(6*4),   # mustshare
-    'Pallam_Kuzhi': Config(7*4*2 - 1, 2, 4),
-    'Pandi': Config(7*5*2 - 1, 2, 5),
+    'Pallam_Kuzhi': Config(52, 2, 4),
+    'Pandi': Config(65, 2, 5),
 
     'Qelat': Config(6*4),  # WALDA seeds in play or waldas, don't need NoOutcomeChange
     'Sadeqa': Config(-1),
@@ -422,7 +422,7 @@ END_CASES = {
         [make_state(board=(0, 0, 0, 20, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0),
                     store=(0, 35),
                     child=
-                          (N, N, N, T, N, N, N, N, N, N, N, N, N, N),
+                          (N, N, N, F, N, N, N, N, N, N, N, N, N, N),
                     istate=(F, F, F, F)),
          None, None],
 
