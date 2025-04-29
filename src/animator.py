@@ -137,13 +137,15 @@ def one_step():
 
     if ENABLED and animator:
         saved_state = animator.active
+        bstate = animator.game_ui.game.board_state
         animator.active = False
 
         try:
             yield
         finally:
             animator.active = saved_state
-            animator.update_game()
+            if animator.game_ui.game.board_state != bstate:
+                animator.update_game()
 
     else:
         yield
@@ -463,7 +465,7 @@ class Animator:
         self.active = ENABLED
         self.delay = DEFAULT_DELAY
 
-        self._game_ui = game_ui
+        self.game_ui = game_ui
         self._queue = collections.deque()
         self._ani_state = None
         self._rollback_pt = None
@@ -482,7 +484,7 @@ class Animator:
         capture it"""
 
         if not self._ani_state:
-            self._ani_state = AniGameState(self._game_ui.game)
+            self._ani_state = AniGameState(self.game_ui.game)
 
         self._queue.append(anie)
 
@@ -500,11 +502,11 @@ class Animator:
                 elif len(move) == 3:
                     row, pos = move[0], move[1]
 
-            elif loc < self._game_ui.game.cts.holes:
-                row, pos = loc < self._game_ui.game.cts.holes, loc
+            elif loc < self.game_ui.game.cts.holes:
+                row, pos = loc < self.game_ui.game.cts.holes, loc
             else:
-                row, pos = (loc < self._game_ui.game.cts.holes,
-                            self._game_ui.game.cts.dbl_holes - loc - 1)
+                row, pos = (loc < self.game_ui.game.cts.holes,
+                            self.game_ui.game.cts.dbl_holes - loc - 1)
 
             self.add(Flash(row, pos))
             self.add(Flash(row, pos))
@@ -516,8 +518,8 @@ class Animator:
 
         if self.active:
 
-            if ((attrib == STORE and not self._game_ui.show_seeds_in_stores())
-                    or (attrib == BOARD and self._game_ui.game.blocked[idx])):
+            if ((attrib == STORE and not self.game_ui.show_seeds_in_stores())
+                    or (attrib == BOARD and self.game_ui.game.blocked[idx])):
                 # don't animate things we can't see
                 #   - store updates when they are not on the UI
                 #   - seeds removed from a blocked hole (already an X)
@@ -542,7 +544,7 @@ class Animator:
         step."""
 
         if self.active:
-            self.add(NewGameState(AniGameState(self._game_ui.game)))
+            self.add(NewGameState(AniGameState(self.game_ui.game)))
 
 
     def message(self, message):
@@ -599,27 +601,31 @@ class Animator:
             return
 
         if self.active and self._queue:
-            self._game_ui.config(cursor=ui_utils.ANI_ACTIVE)
+            self.game_ui.config(cursor=ui_utils.ANI_ACTIVE)
             anie = self._queue.popleft()
             # print(anie)    # for debugging
-            anie.do_it(self._game_ui, self._ani_state)
+            anie.do_it(self.game_ui, self._ani_state)
 
             if self._queue:
                 self._pending_after = True
-                self._game_ui.after(self.delay,
+
+                delay = self.delay
+                if isinstance(self._queue[0], NewGameState):
+                    delay *= 2
+                self.game_ui.after(delay,
                                     lambda: self.do_animation(False))
 
             else:
                 # do refresh to hide any errors in collecting ani actions
                 self._ani_state = None
                 self._pending_after = False
-                self._game_ui.config(cursor=ui_utils.NORMAL)
-                self._game_ui.after(self.delay, self._game_ui.refresh)
+                self.game_ui.config(cursor=ui_utils.NORMAL)
+                self.game_ui.after(self.delay, self.game_ui.refresh)
 
         else:
             # an active playback was stopped
             self._ani_state = None
             self._pending_after = False
             self._queue.clear()
-            self._game_ui.config(cursor=ui_utils.NORMAL)
-            self._game_ui.refresh()
+            self.game_ui.config(cursor=ui_utils.NORMAL)
+            self.game_ui.refresh()
