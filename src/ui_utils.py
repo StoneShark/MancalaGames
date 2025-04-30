@@ -429,7 +429,7 @@ WARN = 2
 ERROR = 3
 
 class MessageDialog(tksimpledialog.Dialog):
-    """."""
+    """Basic message dialog with standard responses."""
 
     # pylint: disable=too-many-arguments
     def __init__(self, master, title, message, buttons, icon=None):

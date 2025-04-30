@@ -1087,7 +1087,7 @@ class MancalaUI(tk.Frame):
         if (not (self.vars.ai_active.get() and self.game.get_turn())
                 and self.info.mustpass and self.game.test_pass()):
 
-            player = self.game.turn_name()
+            player = gi.PLAYER_NAMES[not self.game.get_turn()]
             message = f'{player} player has no moves and must pass.'
             ui_utils.PassPopup(self, 'Must Pass', message)
             self.refresh()     # test pass updates game state
