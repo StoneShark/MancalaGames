@@ -108,6 +108,18 @@ class TestEndMove:
                    'stores': True,
                   },
 
+        'rnmgame': {'rounds': gi.Rounds.NO_MOVES,
+                   'goal_param': 2,   # need two holes to continue (new round)
+                   'evens': True,
+                   'stores': True,
+                  },
+
+        'rnm2game': {'rounds': gi.Rounds.NO_MOVES,
+                   'goal_param': 0,
+                   'evens': True,
+                   'stores': True,
+                  },
+
         'cogame': {'capt_on': [6],
                    'stores': True,
                   },
@@ -412,6 +424,34 @@ class TestEndMove:
                  utils.build_board([2, 1, 0],
                                    [0, 1, 2]), [0, 10], True),
 
+                # goal_param with MAX_SEEDS & rounds, e.g. don't need all
+                ('32_nm', 'rnmgame', False, False,
+                 utils.build_board([2, 2, 2],
+                                   [2, 2, 2]), [0, 6], True, None,
+                 utils.build_board([2, 2, 2],
+                                   [2, 2, 2]), [0, 6], None),
+
+                # enough seeds to keep playing
+                ('33_nm', 'rnmgame', False, False,
+                 utils.build_board([2, 2, 0],
+                                   [0, 2, 2]), [0, 10], False, WinCond.ROUND_WIN,
+                 utils.build_board([2, 2, 0],
+                                   [0, 2, 2]), [0, 10], True),
+
+                # not enough seeds to keep playing
+                ('34_nm', 'rnmgame', False, False,
+                 utils.build_board([2, 1, 0],
+                                   [0, 1, 2]), [0, 10], False, WinCond.WIN,
+                 utils.build_board([2, 1, 0],
+                                   [0, 1, 2]), [0, 10], True),
+
+                # not enough seeds to keep playing
+                ('34_nm_2', 'rnm2game', False, False,
+                 utils.build_board([0, 1, 0],
+                                   [0, 1, 0]), [0, 14], False, WinCond.WIN,
+                 utils.build_board([0, 1, 0],
+                                   [0, 1, 0]), [0, 14], True),
+
                 # capt_on = 6, can't capt more
                 ('35', 'cogame', False, False,
                  utils.build_board([2, 0, 0],
@@ -520,6 +560,7 @@ class TestEndMove:
                                    [0, 0, 0]), [0, 0], False, None,
                  utils.build_board([2, 2, 2],
                                    [0, 0, 0]), [0, 0], None),
+
             ]
     @pytest.mark.filterwarnings("ignore")
     # @pytest.mark.usefixtures("logger")

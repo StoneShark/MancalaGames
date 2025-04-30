@@ -134,7 +134,8 @@ class EndTurnIf(deco_chain_if.DecoChainIf):
         if (self.game.info.rounds == gi.Rounds.NO_MOVES
                 and game_goal == gi.Goal.MAX_SEEDS
                 and not self.game.info.start_pattern):
-
+            # force max seeds/rounds/no moves round to end
+            # as soon as one player can outright win the game
             min_needed = self.game.cts.nbr_start
             if self.game.info.goal_param:
                 min_needed *= self.game.info.goal_param

@@ -305,7 +305,7 @@ class PassPopup(tksimpledialog.Dialog):
 
 
     def body(self, master):
-        """Put the message in a label in the master and ring the bell."""
+        """Put the message in a label in the master."""
 
         label = tk.Label(master, text=self.msg,
                          anchor='nw', justify=tk.LEFT, padx=5, pady=5)
@@ -444,11 +444,7 @@ class MessageDialog(tksimpledialog.Dialog):
 
 
     def body(self, master):
-        """Put the message in a label in the master and ring the bell."""
-
-        # master.bell()
-
-        # TODO put the icon in the body
+        """Put the message in a label in the master."""
 
         label = tk.Label(master, text=self.msg,
                          anchor='nw', justify=tk.LEFT, padx=5, pady=5)

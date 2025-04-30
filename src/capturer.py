@@ -791,6 +791,8 @@ class PickLastSeeds(CaptMethodIf):
 
         if  0 < seeds <= self.seeds:
 
+            game_log.step(f'Capture before pick from {mdata.capt_loc}',
+                          self.game)
             taker = game.turn if self.turn_takes else game.starter
             self.move_seeds(taker)
 

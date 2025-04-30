@@ -409,6 +409,9 @@ class PlayButtonBehavior(BehaviorIf):
     def refresh(self, bstate=BtnState.ACTIVE):
         """Set text and ui props."""
 
+        # TODO hiding a bug in which numbers end up no-move background color
+        self.btn.itemconfig(self.btn.text_id, fill='black')
+
         self.refresh_play(bstate)
 
 

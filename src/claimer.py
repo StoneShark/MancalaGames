@@ -130,7 +130,8 @@ class TakeOwnSeeds(ClaimSeedsIf):
         seeds[False] += self.game.store[False]
         seeds[True] += self.game.store[True]
 
-        game_log.step('Collected seeds', self.game)
+        if seeds != self.game.store:
+            game_log.step('Collected seeds', self.game)
         return seeds
 
 
@@ -153,7 +154,8 @@ class TakeOnlyChildNStores(ClaimSeedsIf):
             else:
                 self.game.board[loc] = 0
 
-        game_log.step('Take seeds', self.game)
+        if seeds != self.game.store:
+            game_log.step('Take seeds', self.game)
         return seeds
 
 
@@ -195,7 +197,8 @@ class TakeAllUnclaimed(ClaimSeedsIf):
         seeds[False] += self.game.store[False]
         seeds[True] += self.game.store[True]
 
-        game_log.step(f'Take all seeds by {collector}', self.game)
+        if seeds != self.game.store:
+            game_log.step(f'Take all seeds by {collector}', self.game)
         return seeds
 
 

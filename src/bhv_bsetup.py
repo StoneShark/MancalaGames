@@ -183,7 +183,7 @@ class SetupHold(bhv_hold.Hold):
                       padx=2, pady=2, sticky='ew')
 
         ccnt.reset()
-        rcnt.count
+        rcnt.count   # pylint: disable=pointless-statement
         ginfo = self.game_ui.game.info
         if ginfo.child_type:
             tk.Button(tframe, text="Clear Child",

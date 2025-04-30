@@ -508,6 +508,10 @@ class MancalaUI(tk.Frame):
             debugmenu.add_separator()
             debugmenu.add_command(label='Swap Sides',
                                   command=lambda: self._pie_rule(force=True))
+            debugmenu.add_command(label='Toggle Anim Print',
+                                  command=lambda: setattr(animator,
+                                                          'print_steps',
+                                                          not animator.print_steps))
             menubar.add_cascade(label='Debug', menu=debugmenu)
 
 

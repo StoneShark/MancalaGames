@@ -149,8 +149,11 @@ def _add_must_share_ender(game, ender):
 def _add_round_ender(game, ender, sclaimer):
     """Add the round ender."""
 
-    if game.info.rounds in (gi.Rounds.END_S_SEEDS,
-                            gi.Rounds.END_2S_SEEDS):
+    if (game.info.rounds in (gi.Rounds.END_S_SEEDS,
+                             gi.Rounds.END_2S_SEEDS)
+            and game.info.pickextra not in (gi.CaptExtraPick.PICKLASTSEEDS,
+                                            gi.CaptExtraPick.PICK2XLASTSEEDS)):
+        # only need RoundEndLimit when a picker is not doing the same work
         ender = emr.RoundEndLimit(game, ender)
 
     # the claimer here decides if game or round ends; after we know it ended

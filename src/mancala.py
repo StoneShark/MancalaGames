@@ -617,6 +617,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
     def win_message(self, win_cond):
         """Return a game appropriate win message based on WinCond.
         Return a window title and message string."""
+        # pylint: disable=too-complex
 
         win_param = self.info.goal_param
 
@@ -634,10 +635,8 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         rnd_reason = ("not used",
                       " by collecting at least half the seeds.",
                       ".",
-                      ". Round ended because there were <= "
-                          + f"{self.cts.nbr_start} seeds left",
-                      ". Round ended because There were <= "
-                          + f"{2 * self.cts.nbr_start} seeds left",
+                      ".",
+                      ".",
                       )
 
         rtext = 'the game'
@@ -815,14 +814,14 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
         wtext = ''
         if mdata.win_cond in (gi.WinCond.WIN, gi.WinCond.ROUND_WIN):
-            winner = self.pname(mdata.winner)
+            winner = gi.PLAYER_NAMES[mdata.winner]
             wtext = f'\n{mdata.win_cond.name} by {winner}'
         elif mdata.win_cond in (gi.WinCond.TIE, gi.WinCond.ROUND_TIE):
             wtext = ' \n' + mdata.win_cond.name
         elif mdata.win_cond:
             wtext = ' ' + mdata.win_cond.name
 
-        sturn = self.pname(mdata.player)
+        sturn = gi.PLAYER_NAMES[mdata.player]
         if isinstance(mdata.move, gi.MoveTpl):
             move = mdata.move.set_dir(mdata.direct)
         else:
@@ -891,12 +890,6 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
     def get_moves(self):
         """Return the list of allowable moves."""
         return self.deco.moves.get_moves()
-
-
-    def pname(self, player):
-        """Return the player name."""
-
-        return gi.PLAYER_NAMES[player]
 
 
     def turn_name(self):

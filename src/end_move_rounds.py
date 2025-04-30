@@ -48,7 +48,7 @@ class RoundWinner(emd.EndTurnIf):
             self.msg = intro + "a playable side)."
 
         elif game.info.goal_param > 0:
-            # max seeds games do not round seeds
+            # max seeds games do not round seed counts
             self.req_seeds = game.info.goal_param * nbr_start
             self.msg = intro + f"at least {goal_param} holes)."
 
@@ -137,7 +137,8 @@ class RoundEndLimit(emd.EndTurnIf):
                 remaining += self.game.board[loc]
 
         if remaining <= self.stop_at:
-            mdata.end_msg = "Round end limit reached, ending."
+            mdata.end_msg = f"Round limit ({self.stop_at}) or fewer seeds " \
+                            + " remaining, _thing_ ended."
             game_log.add(mdata.end_msg, game_log.IMPORT)
             mdata.ended = True
             self.decorator.game_ended(mdata)

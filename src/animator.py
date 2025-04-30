@@ -60,6 +60,9 @@ ENABLED = True
 # pylint:  disable=invalid-name
 animator = None
 
+# pylint:  disable=invalid-name
+print_steps = False
+
 def make_animator(game_ui):
     """Make the animator class."""
 
@@ -603,7 +606,8 @@ class Animator:
         if self.active and self._queue:
             self.game_ui.config(cursor=ui_utils.ANI_ACTIVE)
             anie = self._queue.popleft()
-            # print(anie)    # for debugging
+            if print_steps:
+                print(anie)    # for debugging
             anie.do_it(self.game_ui, self._ani_state)
 
             if self._queue:
