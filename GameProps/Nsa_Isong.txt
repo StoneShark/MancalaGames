@@ -14,7 +14,7 @@
       "capt_side": 0,
       "pickextra": 3,
       "round_starter": 0,
-      "rounds": 4,
+      "rounds": 3,
       "sow_direct": -1,
       "sow_rule": 3,
       "stores": true
@@ -29,5 +29,5 @@
          "evens_m": -2
       }
    },
-   "rules": "https://mancala.fandom.com/wiki/Nsa_Ilong"
+   "rules": "https://mancala.fandom.com/wiki/Nsa_Isong"
 }

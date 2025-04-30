@@ -1010,4 +1010,17 @@ def build_rules():
         msg='RoundFill SHORTEN without BLOCKS, yields an odd game dynamic',
         warn=True)
 
+    man_rules.add_rule(
+        'pick_rend_agree',
+        rule=lambda ginfo: (
+            ginfo.rounds in (gi.Rounds.END_S_SEEDS,
+                             gi.Rounds.END_2S_SEEDS)
+            and ginfo.pickextra in (gi.CaptExtraPick.PICKLASTSEEDS,
+                                    gi.CaptExtraPick.PICK2XLASTSEEDS)
+            and ginfo.rounds != ginfo.pickextra),
+        msg="""Pick extra and round end condition must agree
+            on number of seeds (seeds or 2x seeds)""",
+        excp=gi.GameInfoError)
+        # if the picker is included, the round ender is not; so they must agree
+
     return man_rules

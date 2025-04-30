@@ -57,8 +57,8 @@ class CaptExtraPick(enum.IntEnum):
     NONE = 0
     PICKCROSS = 1
     PICKTWOS = 2
-    PICKLASTSEEDS = 3
-    PICK2XLASTSEEDS = 4
+    PICKLASTSEEDS = 3      # must match ROUNDS.END_S_SEEDS (or fix pick_rend_agree)
+    PICK2XLASTSEEDS = 4   # must match ROUNDS.END_2S_SEEDS
     PICKFINAL = 5
 
 
