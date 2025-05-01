@@ -41,24 +41,21 @@ class RoundTally:
         self.skunk_seeds = (total_seeds * 3) // 4
         self.required_win = req_win
 
-        intro = "Game, not round, ended "
+        self.goal = goal
+
         if goal in (gi.Goal.RND_WIN_COUNT_MAX,
                     gi.Goal.RND_WIN_COUNT_CLR,
                     gi.Goal.RND_WIN_COUNT_DEP):
             self.parameter = lambda player: self.round_wins[player]
-            self.msg = intro + f"({req_win} rounds won)."
 
         elif goal == gi.Goal.RND_SEED_COUNT:
             self.parameter = lambda player: self.seeds[player]
-            self.msg = intro + f"({req_win} seeds won)."
 
         elif goal == gi.Goal.RND_EXTRA_SEEDS:
             self.parameter = lambda player: self.diff_sums[player]
-            self.msg = intro + f"({req_win} extra seeds collected)."
 
         elif goal == gi.Goal.RND_POINTS:
             self.parameter = lambda player: self.score[player]
-            self.msg = intro + f"({req_win} points won)."
 
         else:
             raise gi.GameInfoError("RoundTally with inappropriate game goal.")
@@ -103,31 +100,52 @@ class RoundTally:
         self.score = [0, 0]
 
 
-    def tally(self, win_cond, winner, seeds):
+    def tally(self, mdata, seeds):
         """Tally the outcome of the game.
         Games are tallied before WIN/TIE are possibly translated
         to ROUND_WIN/ROUND_TIE."""
 
-        if win_cond is gi.WinCond.WIN:
-            self.round_wins[winner] += 1
+        extra = 0
+        points = 0
+
+        if mdata.win_cond is gi.WinCond.WIN:
+            self.round_wins[mdata.winner] += 1
             self.seeds[0] += seeds[0]
             self.seeds[1] += seeds[1]
 
             if seeds[0] > seeds[1]:
-                self.diff_sums[0] += seeds[0] - seeds[1]
+                extra = seeds[0] - seeds[1]
+                self.diff_sums[0] += extra
                 self.score[0] += 1
             elif seeds[1] > seeds[0]:
-                self.diff_sums[1] += seeds[1] - seeds[0]
+                extra = seeds[1] - seeds[0]
+                self.diff_sums[1] += extra
                 self.score[1] += 1
+                points = 1
 
             if seeds[0] >= self.skunk_seeds:
                 self.score[0] += 1
+                points += 1
             elif seeds[1] >= self.skunk_seeds:
                 self.score[1] += 1
+                points += 1
 
-        if win_cond is gi.WinCond.TIE:
+        if mdata.win_cond is gi.WinCond.TIE:
             self.seeds[0] += seeds[0]
             self.seeds[1] += seeds[1]
+
+        if self.goal == gi.Goal.RND_EXTRA_SEEDS and extra:
+            mdata.end_msg += '\n' if mdata.end_msg else ''
+            mdata.end_msg += f"_winner_ collected {extra} extra seeds."
+
+        elif self.goal == gi.Goal.RND_POINTS and points:
+            if points == 1:
+                mdata.end_msg += '\n' if mdata.end_msg else ''
+                mdata.end_msg += f"_winner_ earned {points} point."
+            else:
+                mdata.end_msg += '\n' if mdata.end_msg else ''
+                mdata.end_msg += f"_winner_ earned {points} " \
+                    + f"points due to skunk (>= {self.skunk_seeds})."
 
         game_log.add(str(self), game_log.DETAIL)
 
@@ -138,7 +156,6 @@ class RoundTally:
 
         if (self.parameter(False) == self.required_win
                 and self.parameter(True) == self.required_win):
-            game_log.add(self.msg, game_log.IMPORT)
             return gi.WinCond.TIE, None
 
         ok_win = [self.parameter(player) >= self.required_win

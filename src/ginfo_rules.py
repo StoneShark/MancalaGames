@@ -701,6 +701,13 @@ def add_capture_rules(rules):
         # locks are rarely used
 
     rules.add_rule(
+        'pcm_multi',
+        rule=lambda ginfo: (ginfo.pickextra == gi.CaptExtraPick.PICKCROSSMULT
+                            and not ginfo.multicapt),
+        msg='PICKCROSSMULT does nothing without MULICAPT',
+        excp=gi.GameInfoError)
+
+    rules.add_rule(
         'scont_mcapt',
         rule=lambda ginfo: (ginfo.capt_side in (gi.CaptSide.OWN_CONT,
                                                 gi.CaptSide.OPP_CONT)

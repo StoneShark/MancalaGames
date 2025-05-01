@@ -250,7 +250,7 @@ is included after the parameter sections.
 <p class="helptext"> The twoempty fill pattern is only supported for boards with 4 or more holes per side. The total seeds in play is 2 x (holes - 2) x nbr_start. 
 <p class="helptext"> <img src="figs/twoempty_patt.jpg" alt="Two Empty Pattern" class="helpfig">
 <li class="helptext">
-<b class="enum">RANDOM</b>: The seeds are randomly distributed into the holes; some holes may end up empty. Nbr_start is the total number of seeds in play. 
+<b class="enum">RANDOM</b>: The seeds are randomly distributed into the holes with a minimum of two seeds per hole. Nbr_start is the total number of seeds in play. When this start pattern is used, the Swap Sides (pie rule) is allowed on both of the first two moves of the game.
 <li class="helptext">
 <b class="enum">ALTS_SPLIT</b>: Like alternates but the seeds are reduced in the rightmost hole of the non-starter. One quarter of the seeds from the non-starter's rightmost hole are moved across the board into the empty hole of the starting player.
 <p class="helptext"> The alts_split fill pattern is only supported for boards with an even number of holes per side. The total seeds in play is holes x nbr_start. 
@@ -897,7 +897,9 @@ is included after the parameter sections.
 <li class="helptext">
 <b class="enum">PICK2XLASTSEEDS</b>: If there are twice the number of start seeds or fewer, the round starter picks them. This rule is applied at the end of each turn, even if there is not a capture because the sow phase may have reduced the seed count.
 <li class="helptext">
-<b class="enum">PICKFINAL</b>: Take the seeds from the final hole sown. These seeds are not taken if the hole is locked or a child. This option is useful for capture next and two out.
+<b class="enum">PICKFINAL</b>: If there was a capture, take the seeds from the final hole sown. These seeds are not taken if the hole is locked or a child. This option is useful for capture next and two out.
+<li class="helptext">
+<b class="enum">PICKCROSSMULT</b>: On multiple captures, take the seeds across from each hole captured.
 </ol>
 <p>In terms of <a href="game_params.html#grandslam">GRANDSLAM</a>, these picks are considered captures.
 <h2 id="tab_Player">Player Tab</h2>

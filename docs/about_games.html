@@ -1440,6 +1440,66 @@ played in rounds and loser puts last 1-3 seeds into occupied holes but must resu
 </div>
 <p>Rules: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p132.
 <p>Reference: <a href="https://mancala.fandom.com/wiki/Krur" target="_blank">https://mancala.fandom.com/wiki/Krur</a>
+<h3 id="L'ab al-Akil" class="game_desc">L'ab al-Akil</h3>
+<p>Initial position is 72 seeds placed randomly. A human player may choose to swap sides on either of the first two moves of the game; the AI will not swap.
+<p>Sow is counter-clockwise in multiple-laps. Multilap sowing ends when the final seed ends in an empty hole or for capturing. If your opponent does not have any seeds you must share seeds if you can.
+<p>Multiple captures on 2s and 4s from either row. For each hole captured, take any seeds from the hole across the board.
+<p>Played in rounds. A round ends either when the outcome cannot change or when there are cycling seeds on the board (use the menu command End Round).
+<p>The game ends when one player has accumulated a sum of 60 seeds more than their opponent in a series of games.  Each game a player is award a number of seeds (winner seeds - loser seeds), this sum must exceed 60 for the win.
+<p>Variation: L'ab Ghashim uses an all equal initial setup.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  72</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: RND_EXTRA_SEEDS</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 2 4</p>
+    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: BOTH</p>
+    <p class="param"><a href="game_params.html#goal_param">Goal Parameter</a>: 60</p>
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
+    <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: -1</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#mustshare">Must Share</a>: Yes</p>
+    <p class="param"><a href="game_params.html#pickextra">On Capture, Take More Rule</a>: PICKCROSSMULT</p>
+    <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#start_pattern">Start Pattern</a>: RANDOM</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: <a href="https://mancala.fandom.com/wiki/L%27ab_al-Akil" target="_blank">https://mancala.fandom.com/wiki/L%27ab_al-Akil</a>
+<p>Deviation 1: the starting player's arrangement of seeds is simulated with a random placement of seeds.
+<p>Deviation 2: the "must share" opyion might be an interpretation of the rules: the player with seeds makes one available to their opponent. This might also not involve using a turn to share the seed.
+<h3 id="L'ab Ghashim" class="game_desc">L'ab Ghashim</h3>
+<p>Sow is counter-clockwise in multiple-laps. Multilap sowing ends when the final seed ends in an empty hole or for capturing. If your opponent does not have any seeds you must share seeds if you can.
+<p>Multiple captures on 2s and 4s from either row. For each hole captured, take any seeds from the hole across the board.
+<p>Played in rounds. A round ends either when the outcome cannot change or when there are cycling seeds on the board (use the menu command End Round).
+<p>The game ends when one player has accumulated a sum of 60 seeds more than their opponent in a series of games.  Each game a player is award a number of seeds (winner seeds - loser seeds), this sum must exceed 60 for the win.
+<p>Variation: L'ab al-Akil uses a random initial setup.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  6</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: RND_EXTRA_SEEDS</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 2 4</p>
+    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: BOTH</p>
+    <p class="param"><a href="game_params.html#goal_param">Goal Parameter</a>: 60</p>
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
+    <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: -1</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#mustshare">Must Share</a>: Yes</p>
+    <p class="param"><a href="game_params.html#pickextra">On Capture, Take More Rule</a>: PICKCROSSMULT</p>
+    <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: <a href="https://mancala.fandom.com/wiki/L%27ab_al-Ghashim" target="_blank">https://mancala.fandom.com/wiki/L%27ab_al-Ghashim</a>
+<p>Deviation 1: the initial position is entirely fixed to all equal. The game rules suggest a subset of the total seeds are placed by the first player.
+<p>Deviation 2: the "must share" option might be an interpretation of the rules: the player with seeds makes one available to their opponent. This might also not involve using a turn to share the seed.
 <h3 id="Lagerung" class="game_desc">Lagerung</h3>
 <p>A multi-lap mancala played in rounds. Sow direction is clockwise and sow into one's own store. To sow one's own store a move must either start with enough seeds to sow all of the opponent's holes (and more) or chain laps to reach one's own store.
 <p>If the final seed lands in your store, play again. If the final seed lands on your side of the board, move it to your store (always_pick) and perform a cross-capture (if there are any seeds on the opposite side).
@@ -1703,7 +1763,7 @@ Walak-pussa played on a board with 7 holes per side and 4 seeds in each hole at 
 <p>Rules: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p19.
 <p>Deviation: Per the rules: the game does not end until there are no moves. This is not implemented as there is no reason to continue playing once a winner is determined; the win cannot be undone; it's just moving seeds.
 <h3 id="Mangala I" class="game_desc">Mangala I</h3>
-<p>The initial board is setup with a random allocation of the 70 seeds in each hole.
+<p>The initial board is setup with a random allocation of the 70 seeds in each hole.  A human player may choose to swap sides on either of the first two moves of the game; the AI will not swap.
 <p>Sow counter-clockwise in multiple laps.
 <p>Capture when the final seed of a lap sow makes the two holes opposite each other have the same number of seeds. Capture seeds from both holes.
 <p>The game is over when one player does not have any seeds or one player has collected at least half the seeds. The seeds left on the board do not score. The winner is the player with the most seeds.
@@ -1744,7 +1804,7 @@ Walak-pussa played on a board with 7 holes per side and 4 seeds in each hole at 
 </div>
 <p>Rules: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p47.
 <h3 id="Mangala IV" class="game_desc">Mangala IV</h3>
-<p>Start is random placement of 98 seeds.
+<p>Start is random placement of 98 seeds.  A human player may choose to swap sides on either of the first two moves of the game; the AI will not swap.
 <p>Sow in multiple laps, counter-clockwise. Lap sowing stops for capture of 2s and 4s.  A player without a valid move must pass.
 <p>Capture on 2s or 4s with final seed; capture preceeding holes in unbroken line of 2s and 4s.
 <p>Goal: capture the most seeds.
@@ -3073,9 +3133,9 @@ no repeat turn on capture
     <p class="param"><a href="#Eson Xorgol">Eson Xorgol</a></p>
     <p class="param"><a href="#Gabata">Gabata</a></p>
     <p class="param"><a href="#Gamacha">Gamacha</a></p>
+    <p class="param"><a href="#Gelech">Gelech</a></p>
   </div>
   <div class="column3">
-    <p class="param"><a href="#Gelech">Gelech</a></p>
     <p class="param"><a href="#Giuthi">Giuthi</a></p>
     <p class="param"><a href="#Goat">Goat</a></p>
     <p class="param"><a href="#Halusa">Halusa</a></p>
@@ -3089,6 +3149,8 @@ no repeat turn on capture
     <p class="param"><a href="#Kalah GSO">Kalah GSO</a></p>
     <p class="param"><a href="#Kale">Kale</a></p>
     <p class="param"><a href="#Krur">Krur</a></p>
+    <p class="param"><a href="#L'ab Ghashim">L'ab Ghashim</a></p>
+    <p class="param"><a href="#L'ab al-Akil">L'ab al-Akil</a></p>
     <p class="param"><a href="#Lagerung">Lagerung</a></p>
     <p class="param"><a href="#Lahemay Waladat">Lahemay Waladat</a></p>
     <p class="param"><a href="#Lam Waladach">Lam Waladach</a></p>

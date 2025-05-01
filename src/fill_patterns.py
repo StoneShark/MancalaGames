@@ -262,7 +262,9 @@ class TwoEmptyPattern(StartPatternIf):
 
 
 class RandomPattern(StartPatternIf):
-    """Fill with random seeds."""
+    """Fill with random seeds but at least two in each hole,
+    if there are more than enough seeds to put 2 per hole.
+    Otherwise, minimum is 0."""
 
     @staticmethod
     def size_ok(holes):
@@ -278,12 +280,15 @@ class RandomPattern(StartPatternIf):
     @staticmethod
     def fill_seeds(game):
 
-        total = game.cts.total_seeds
         dbl_holes = game.cts.dbl_holes
+        total = game.cts.total_seeds
+
+        min_seeds = 0 if total < 2 * dbl_holes else 2
+        rnd_seeds = total - (min_seeds * dbl_holes)
 
         rnumbers = sorted([0, 1] + [random.random()
                                     for _ in range(dbl_holes)])
-        values = [int(total * (b - a) + 0.4)
+        values = [min_seeds + int(rnd_seeds * (b - a) + 0.4)
                   for a, b in it.pairwise(rnumbers)]
 
         error = total - sum(values)

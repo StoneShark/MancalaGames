@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Mangala IV",
-      "about": "Start is random placement of 98 seeds.\n\nSow in multiple laps, counter-clockwise. Lap sowing stops for capture of 2s and 4s.  A player without a valid move must pass.\n\nCapture on 2s or 4s with final seed; capture preceeding holes in unbroken line of 2s and 4s.\n\nGoal: capture the most seeds.\n",
+      "about": "Start is random placement of 98 seeds.  A human player may choose to swap sides on either of the first two moves of the game; the AI will not swap.\n\nSow in multiple laps, counter-clockwise. Lap sowing stops for capture of 2s and 4s.  A player without a valid move must pass.\n\nCapture on 2s or 4s with final seed; capture preceeding holes in unbroken line of 2s and 4s.\n\nGoal: capture the most seeds.\n",
       "capt_on": [ 2, 4 ],
       "mlaps": 1,
       "multicapt": -1,

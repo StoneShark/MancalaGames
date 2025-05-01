@@ -32,6 +32,7 @@ class MoveData:
 
     end_msg                                                            fill
     fmsg                                                               fill
+    user_end
 
     note 1: board is used to determine if a grand slam is possible
     e.g. there must be seeds on oppside before the turn
@@ -63,12 +64,13 @@ class MoveData:
         self.captured = False       # there was an actual capture
         self.repeat_turn = False
 
-        self.end_msg = None
+        self.end_msg = ''
         self.fmsg = False      # end_msg is all that needs to be said (full msg)
 
         self.ended = False
         self.win_cond = None
         self.winner = None
+        self.user_end = False   # when the user used the End Game command
 
 
     def __str__(self):
@@ -90,6 +92,7 @@ class MoveData:
         string += f"  ended={self.ended}\n"
         string += f"  win_cond={self.win_cond}\n"
         string += f"  winner={self.winner}"
+        string += f"  user_end={self.user_end}"
         return string
 
 

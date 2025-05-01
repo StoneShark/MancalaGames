@@ -20,7 +20,7 @@
       "algorithm": "montecarlo_ts",
       "ai_params": {
          "mcts_bias": [ 200, 200, 300, 300 ],
-         "mcts_nodes": [ 30, 500, 800, 1000 ],
+         "mcts_nodes": [ 30, 800, 1200, 1600 ],
          "mcts_pouts": [ 2, 3, 3, 3 ],
          "mm_depth": [ 1, 5, 7, 11 ]
       },

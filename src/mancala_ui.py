@@ -941,7 +941,14 @@ class MancalaUI(tk.Frame):
     def _pie_rule(self, force=False):
         """Allow a human player to swap sides after the first
         move, aka 'Pie Rule'.
-        Only allowed on the first move of the game.
+
+        Only allowed on
+            1. either of the first two moves for random start pattern
+            2. the second move of the game by a human player
+
+        Force is used in the debugging menu to always allow a
+        swap.
+
         This is often used to nutralize the unfair advantage
         that starter of some games has.  Not all mancala games
         have an advantage for the starter, but allow it for all.
@@ -950,14 +957,21 @@ class MancalaUI(tk.Frame):
         MCTS. This does seem extreme but the AI turn and node tree
         have already been started correcting them seems error prone."""
 
-        game = self.game
-        if not force and self.movers != 1:
+        if self.info.start_pattern == gi.StartPattern.RANDOM:
+            allowed = self.movers < 2
+        else:
+            allowed = self.movers == 1
+
+        if not force and not allowed:
             ui_utils.showerror(self, "Swap Not Allowed",
                                """Swapping sides is only allowed by a
-                               human player after the first move.
+                               human player after the first move or for
+                               either of the first two moves of a game
+                               started with a RANDOM start pattern.
                                It counts as a move.""")
             return
 
+        game = self.game
         self.movers += 1
         game.mcount += 1
         game.turn = not game.turn

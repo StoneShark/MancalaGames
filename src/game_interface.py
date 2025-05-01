@@ -60,6 +60,7 @@ class CaptExtraPick(enum.IntEnum):
     PICKLASTSEEDS = 3      # must match ROUNDS.END_S_SEEDS (or fix pick_rend_agree)
     PICK2XLASTSEEDS = 4   # must match ROUNDS.END_2S_SEEDS
     PICKFINAL = 5
+    PICKCROSSMULT = 6
 
 
 @enum.unique

@@ -92,7 +92,7 @@ class RoundTallyWinner(emd.EndTurnIf):
             return
 
         seeds = self.sclaimer.claim_seeds()
-        self.game.rtally.tally(mdata.win_cond, mdata.winner, seeds)
+        self.game.rtally.tally(mdata, seeds)
         rcond, rplayer = self.game.rtally.win_test()
 
         if rcond in (gi.WinCond.WIN, gi.WinCond.TIE):
@@ -157,7 +157,7 @@ class QuitRoundTally(emd.EndTurnIf):
 
         self.decorator.game_ended(mdata)
         seeds = self.sclaimer.claim_seeds()
-        self.game.rtally.tally(mdata.win_cond, mdata.winner, seeds)
+        self.game.rtally.tally(mdata, seeds)
 
         cond, winner = self.game.rtally.end_it()
         mdata.win_cond = cond

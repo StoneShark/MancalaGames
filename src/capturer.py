@@ -971,7 +971,8 @@ def _add_capt_type_deco(game):
 def _add_capt_pick_deco(game, capturer):
     """Add any extra pickers."""
 
-    if game.info.pickextra == gi.CaptExtraPick.NONE:
+    if game.info.pickextra in (gi.CaptExtraPick.NONE,
+                               gi.CaptExtraPick.PICKCROSSMULT):
         pass
 
     elif game.info.pickextra == gi.CaptExtraPick.PICKCROSS:
@@ -1015,6 +1016,9 @@ def deco_capturer(game):
 
     # add decorators to the base capturer
     if game.info.multicapt:
+        if game.info.pickextra == gi.CaptExtraPick.PICKCROSSMULT:
+            capturer = PickCross(game, capturer)
+
         capturer = CaptMultiple(game, capturer)
 
     if not game.info.capsamedir:

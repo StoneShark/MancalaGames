@@ -224,11 +224,20 @@ reflect the game state to exit the mode.
 
 <h4 id="gamemenu">Game</h4>
 <p><b>New</b>: Start a new game. An in-progress game is not tallied.
-<p><b>Swap Sides</b>: After the first player finishes thier turn in a game,
-the second player may swap sides, that is,
-execute a Pie Rule. This is a common way to deal with games that favor the
-starting player. Only some Mancala games offer an advantage to the start player,
+<p><b>Swap Sides</b>: A player may swap sides of the board, that is,
+execute a Pie Rule, under two conditions:
+<ol>
+<li>After the first player finishes their turn in a game,
+the second player may swap sides (when the start_pattern is not random).
+<li>When the
+<a href="game_params.html#start_pattern">START_PATTERN</a>
+is random, on either of the first two turns of the game.
+</ol>
+<p>This is a common way to deal with games that favor the
+starting player. Only some Mancala games offer an advantage to the starting player,
 but this option is always availble. The AI player will never choose to swap sides.
+<p>Swapping sides counts as a move, in terms of any move count parameters
+(prescribed sow, no capture move count, etc.).
 <p><b>End Round</b>: End the current round. This can be used to end and score a
 round, but not end the game. Use this if there are seeds cycling on the board.
 <p><b>End Game</b>: End the current game and tally the game.
