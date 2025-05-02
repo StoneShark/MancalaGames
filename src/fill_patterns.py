@@ -287,7 +287,7 @@ class RandomPattern(StartPatternIf):
         rnd_seeds = total - (min_seeds * dbl_holes)
 
         rnumbers = sorted([0, 1] + [random.random()
-                                    for _ in range(dbl_holes)])
+                                    for _ in range(dbl_holes - 1)])
         values = [min_seeds + int(rnd_seeds * (b - a) + 0.4)
                   for a, b in it.pairwise(rnumbers)]
 

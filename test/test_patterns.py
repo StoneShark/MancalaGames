@@ -154,6 +154,7 @@ class TestRandom:
         for _ in range(50):
             fp.PCLASSES[game.info.start_pattern].fill_seeds(game)
 
+            assert len(game.board) == game.cts.dbl_holes
             assert sum(game.board) == game.cts.total_seeds
             assert all(s >= 0 for s in game.board)
 

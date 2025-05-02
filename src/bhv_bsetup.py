@@ -123,6 +123,9 @@ class SetupHold(bhv_hold.Hold):
 
 
     def add_sow_dir_if(self, game_ui, tframe, rcnt, ccnt):
+        """If the game is PLAYALTDIR add the direction setting
+        button. This also, forces the player directions to be
+        set."""
 
         if game_ui.game.info.sow_direct == gi.Direct.PLAYALTDIR:
 
