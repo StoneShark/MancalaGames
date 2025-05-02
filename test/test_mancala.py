@@ -246,6 +246,25 @@ class TestGameState:
         assert game.inhibitor._children == istate
 
 
+    @pytest.mark.parametrize('pre', [None, move_data.MoveData(None, 8)])
+    @pytest.mark.parametrize('mdata', [None, move_data.MoveData(None, 12)])
+    def test_mdata_state(self, game, pre, mdata):
+
+        game.mdata = pre
+        state = game.state
+        if mdata:
+            object.__setattr__(state, 'mdata_state', mdata.state)
+        else:
+            object.__setattr__(state, 'mdata_state', None)
+
+        game.state = state
+
+        if mdata:
+            assert game.mdata.move == 12
+        else:
+            assert not game.mdata
+
+
     def test_state_context(self, game):
 
         saved_state = game.state
@@ -259,6 +278,64 @@ class TestGameState:
             game.child = [N, N, N, N]
 
         assert game.state == saved_state
+
+
+    @pytest.mark.parametrize(
+        'board, store, turn, unlocked, blocked, child, owner, istate',
+        ST_CASES)
+    def test_board_state(self, game, board, store, turn,
+                         unlocked, blocked, child, owner, istate):
+        """Use the same test cases as state tests.
+        ignore istate because it is not in board_state"""
+
+        game.board = board
+        game.store = store
+        game.turn = turn
+
+        # give these bad values, they shouldn't be in board_state
+        game.mcount = 7
+        game.rturn_cnt = 11
+        game.rtally = 13
+        game.inhibitor = 17
+        game.mdata = 19
+
+        if unlocked:
+            game.unlocked = unlocked
+        else:
+            object.__setattr__(game.info, 'moveunlock', False)
+        if blocked:
+            game.blocked = list(blocked)
+        else:
+            object.__setattr__(game.info, 'blocks', False)
+        if child:
+            game.child = list(child)
+        else:
+            object.__setattr__(game.info, 'child_cvt', 0)
+            object.__setattr__(game.info, 'child_type', ChildType.NOCHILD)
+        if owner:
+            game.owner = list(owner)
+        else:
+            # this will only effect capturing the state
+            object.__setattr__(game.info, 'goal', gi.Goal.MAX_SEEDS)
+
+        state = game.board_state
+
+        assert state.board == board
+        assert state.store == store
+        assert state._turn == turn
+        assert state.unlocked == unlocked
+        assert state.blocked == blocked
+        assert state.child == child
+        if owner:
+            assert state.owner == owner
+        else:
+            assert not state.owner
+
+        assert not state.mcount
+        assert not state.rturn_cnt
+        assert not state.rtally_state
+        assert not state.istate
+        assert not state.mdata_state
 
 
 class TestRtally:
@@ -418,10 +495,10 @@ class TestMoveData:
 
         mstate = mdata.state
         assert isinstance(mstate, tuple)
-        assert len(mstate) == 18
+        assert len(mstate) == 19
         assert mstate[2] == 22
 
-        mdata.state = tuple(idx for idx in range(18))
+        mdata.state = tuple(idx for idx in range(19))
         assert mdata.player == 0
         assert mdata.board == 1
         assert mdata.move == 2
@@ -440,6 +517,7 @@ class TestMoveData:
         assert mdata.ended == 15
         assert mdata.win_cond == 16
         assert mdata.winner == 17
+        assert mdata.user_end == 18
 
 
 class TestManDeco:
@@ -704,8 +782,10 @@ class TestBasicIfs:
 
         game.turn = False
         assert not game.get_turn()
+        assert game.turn_name() == 'South'
         game.turn = True
         assert game.get_turn()
+        assert game.turn_name() == 'North'
 
 
     def test_param_str(self, game):
@@ -713,6 +793,19 @@ class TestBasicIfs:
         doesn't complain"""
 
         game.params_str()
+
+
+    @pytest.mark.parametrize('mdata, winner', [(move_data.MoveData(), False),
+                                               (move_data.MoveData(), True),
+                                               (move_data.MoveData(), None),
+                                               (None, None)])
+    def test_get_winner(self, game, mdata, winner):
+
+        game.mdata = mdata
+        if mdata:
+            game.mdata.winner = winner
+
+        assert game.get_winner() == winner
 
 
 class TestDelegates:
@@ -779,14 +872,17 @@ class TestDelegates:
         assert game.mdata.ended
 
 
-    def test_nomd_quitter(self, game, mocker):
+    def test_user_quitter(self, game, mocker):
 
         mobj = mocker.patch.object(game.deco.quitter, 'game_ended')
 
-        game.mdata = None
-        game.end_game()
+        game.mdata = 25
+        game.end_game(user=True)
+
         mobj.assert_called_once()
+        assert game.mdata != 25
         assert game.mdata.ended
+        assert game.mdata.user_end
 
 
     def test_dlg_end_round(self, game, mocker):
@@ -803,10 +899,14 @@ class TestDelegates:
 
         mobj = mocker.patch.object(game.deco.quitter, 'game_ended')
 
-        game.mdata = move_data.MoveData(game, 0)
-        game.end_game()
+        mdata = move_data.MoveData(game, 0)
+        game.mdata = mdata
+        game.end_game(user=False)
+
         mobj.assert_called_once()
+        assert game.mdata is mdata
         assert game.mdata.ended
+        assert not game.mdata.user_end
 
 
     def test_dlg_winner(self, game, mocker):
@@ -1100,6 +1200,21 @@ class TestWinMessage:
         return mancala.Mancala(game_consts, game_info)
 
 
+
+    @pytest.mark.parametrize('user_end', [False, True])
+    @pytest.mark.parametrize('goal', Goal)
+    @pytest.mark.parametrize('win_cond', WinCond)
+    def test_win_reason(self, maxgame, win_cond, goal, user_end):
+        """Exercise every combination of the dependent variables."""
+
+        object.__setattr__(maxgame.info, 'goal', goal)
+        maxgame.mdata = move_data.MoveData(maxgame)
+        maxgame.mdata.user_end = user_end
+        maxgame.mdata.winner = True
+
+        assert maxgame.win_reason_str(win_cond)
+
+
     @pytest.mark.parametrize('game_fixt', ['maxgame', 'depgame', 'tergame'])
     @pytest.mark.parametrize('wcond', WinCond)
     @pytest.mark.parametrize('winner', [False, True])
@@ -1163,7 +1278,7 @@ class TestWinMessage:
 
         if wcond.name == 'ROUND_WIN':
             if 'max' in game_fixt:
-                assert 'half' in message
+                assert 'more seeds' in message
             return
 
         if 'TIE' in wcond.name:
@@ -1175,28 +1290,41 @@ class TestWinMessage:
                 assert 'half' in message
 
 
-    @pytest.mark.parametrize('message', [False,  # no last move
-                                         None,  # last move,  but no message
-                                         'a message'])
-    def test_last_move_win(self, maxgame, message):
-        """If there was an end message in the last move,
-        use it."""
+    @pytest.mark.parametrize('msg, fmsg', [(None, False),
+                                           ('message 1', False),
+                                           ('message 1', True)])
+    def test_deco_win_msg(self, maxgame, msg, fmsg):
 
         maxgame.mdata = move_data.MoveData(maxgame, 0)
         maxgame.mdata.winner = True
 
-        if message is None or message:
-            maxgame.mdata = move_data.MoveData(maxgame, None)
-
-        if message:
-            maxgame.mdata.end_msg = message
+        if msg:
+            maxgame.mdata.end_msg = msg
+        maxgame.mdata.fmsg = fmsg
 
         _, wmess = maxgame.win_message(None)
 
-        if message:
-            assert message in wmess
+        if msg and fmsg:
+            assert msg == wmess
+        elif msg:
+            assert len(msg) < len(wmess)
         else:
             assert 'Unexpected' in wmess
+
+
+    def test_msg_subs(self, maxgame):
+
+        maxgame.mdata = move_data.MoveData(maxgame, 0)
+        maxgame.mdata.winner = True
+        maxgame.mdata.end_msg = '_winner_ _loser_ _Thing_'
+
+        _, wmess = maxgame.win_message(None)
+        assert '_winner_' not in wmess
+        assert '_loser_' not in wmess
+        assert '_thing_' not in wmess
+
+        # The capt'ed but not game
+        assert 'North South The game' in wmess
 
 
 class TestHoleProp:

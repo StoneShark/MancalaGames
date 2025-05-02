@@ -581,6 +581,7 @@ class TestEndMove:
         # print(game.deco.ender)
 
         mdata = utils.make_ender_mdata(game, repeat, ended)
+        mdata.end_msg = 'first part'
         game.deco.ender.game_ended(mdata)
 
         # print('after:', game, sep='\n')

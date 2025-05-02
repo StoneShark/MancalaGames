@@ -1360,6 +1360,37 @@ class TestPickLastSeeds:
         assert game.store == estore
 
 
+class TestPickCrossMult:
+
+    @pytest.fixture
+    def game(self):
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
+        game_info = gi.GameInfo(stores=True,
+                                evens=True,
+                                multicapt=-1,
+                                pickextra=gi.CaptExtraPick.PICKCROSSMULT,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+    # @pytest.mark.usefixtures("logger")
+    def test_pcm(self, game):
+
+        game.board = [0, 2, 1, 1, 3, 3, 1, 4]
+        game.store = [7, 10]
+        game.turn = True
+
+        assert 'PickCross' in str(game.deco.capturer)
+        # print(game)
+        game.move(0)
+
+        assert game.mdata.captured == True
+        assert game.board == [1, 3, 0, 0, 0, 0, 1, 0]
+        assert game.store == [7, 20]
+
+
+
 # %% make_child only tests
 
 

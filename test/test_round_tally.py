@@ -14,7 +14,7 @@ pytestmark = pytest.mark.unittest
 
 from context import game_interface as gi
 from context import round_tally
-
+from context import move_data
 
 # %%
 
@@ -45,7 +45,6 @@ class TestRoundTally:
         assert rtally.parameter(0) == values[idx][0]
         assert rtally.parameter(1) == values[idx][1]
 
-        assert rtally.msg
         assert rtally.required_win == 24
         assert rtally.skunk_seeds == 36
 
@@ -118,7 +117,10 @@ class TestRoundTally:
         rtally = round_tally.RoundTally(goal, 12, 24)
         assert rtally.skunk_seeds == 18
 
-        rtally.tally(cond, winner, seeds)
+        mdata = move_data.MoveData()
+        mdata.win_cond = cond
+        mdata.winner = winner
+        rtally.tally(mdata, seeds)
 
         assert rtally.state == estate
 

@@ -621,17 +621,16 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         by decos or tallier. We don't always know the value of these
         tags when those messages are accumulated."""
 
-        message = ''
         win = self.mdata.winner
         winner, loser = reversed(gi.PLAYER_NAMES) if win else gi.PLAYER_NAMES
-        if self.mdata.end_msg:
-            message = self.mdata.end_msg
-            message = message.replace('_Winner_', winner)
-            message = message.replace('_Loser_', loser)
-            message = message.replace('_Thing_', rtext.title())
-            message = message.replace('_winner_', winner)
-            message = message.replace('_loser_', loser)
-            message = message.replace('_thing_', rtext)
+
+        message = self.mdata.end_msg
+        message = message.replace('_Winner_', winner)
+        message = message.replace('_Loser_', loser)
+        message = message.replace('_Thing_', rtext.capitalize())
+        message = message.replace('_winner_', winner)
+        message = message.replace('_loser_', loser)
+        message = message.replace('_thing_', rtext)
 
         return message
 
@@ -705,7 +704,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             title = 'Round Over'
 
         message = ''
-        if self.mdata:
+        if self.mdata.end_msg:
             message = self.win_msg_subs(rtext)
             if self.mdata.fmsg:
                 return title, message

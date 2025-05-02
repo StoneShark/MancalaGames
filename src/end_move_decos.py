@@ -211,12 +211,14 @@ class EndTurnNoMoves(EndTurnIf):
 
         if mdata.repeat_turn:
             mdata.ended = not any(self.game.get_allowable_holes())
-            msg = "No moves for repeat turn; _thing_ ended."
+            player = gi.PLAYER_NAMES[self.game.turn]
+            msg = f"No moves for {player}'s repeat turn; _thing_ ended."
         else:
             self.game.turn = not self.game.turn
+            player = gi.PLAYER_NAMES[self.game.turn]
             mdata.ended = not any(self.game.get_allowable_holes())
             self.game.turn = not self.game.turn
-            msg = "No moves for next player; _thing_ ended."
+            msg = f"{player} had no moves; _thing_ ended."
 
         if mdata.ended:
             mdata.end_msg = msg
@@ -249,8 +251,8 @@ class EndTurnPassPass(EndTurnIf):
         self.game.turn = not self.game.turn
 
         if no_next_moves:
-            msg = "No moves for either player; game ended."
-            game_log.add(msg, game_log.INFO)
+            mdata.end_msg = "No moves for either player; game ended."
+            game_log.add(mdata.end_msg, game_log.INFO)
             mdata.ended = True
             return self.decorator.game_ended(mdata)
 
@@ -314,15 +316,17 @@ class EndTurnMustShare(EndTurnIf):
         if mdata.ended:
             if mdata.repeat_turn:
                 self.game.turn = not self.game.turn
+                player = gi.PLAYER_NAMES[self.game.turn]
                 self.sclaimer.claim_seeds()
                 self.game.turn = not self.game.turn
-                mdata.end_msg = \
-                    "Player can't share on repeat turn, _thing_ ended."
-                game_log.add(mdata.end_msg, game_log.INFO)
+                msg = f"{player} can't share on repeat turn; _thing_ ended."
             else:
                 self.sclaimer.claim_seeds()
-                mdata.end_msg = "Next player can't share, _thing_ ended."
-                game_log.add(mdata.end_msg, game_log.INFO)
+                player = gi.PLAYER_NAMES[not self.game.turn]
+                msg = f"{player} can't share; _thing_ ended."
+
+            game_log.add(msg, game_log.INFO)
+            mdata.end_msg = msg
 
         return self.decorator.game_ended(mdata)
 
@@ -347,7 +351,7 @@ class EndTurnNotPlayable(EndTurnIf):
                               for loc in range(self.game.cts.dbl_holes))
 
         if mdata.ended:
-            msg =  "No moves available, _thing_ ended."
+            msg =  "No moves available for either player; _thing_ ended."
             game_log.add(msg, game_log.IMPORT)
 
             if not mdata.end_msg:
@@ -457,8 +461,8 @@ class DepriveLastMoveEndGame(EndTurnIf):
         self.game.turn = not self.game.turn
 
         if mdata.ended:
-            mdata.end_msg = "No moves for next player; last mover won."
-            game_log.add(mdata.end_msg, game_log.INFO)
+            game_log.add("No moves for next player; last mover won.",
+                         game_log.INFO)
 
             mdata.win_cond = gi.WinCond.WIN
             mdata.winner = self.game.turn

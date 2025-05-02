@@ -23,6 +23,10 @@ from fill_patterns import PCLASSES
 def set_round_starter(game):
     """Set the starter of the next round based on the game flag."""
 
+    # make turn equal to legacy value (when it was winner)
+    if game.mdata and game.mdata.winner is not None:
+        game.turn = game.mdata.winner
+
     start_rule = game.info.round_starter
     if start_rule == gi.RoundStarter.ALTERNATE or game.turn is None:
         game.turn = not game.starter
@@ -37,7 +41,6 @@ def set_round_starter(game):
         game.turn = game.mdata.player
 
     game.starter = game.turn
-
 
 # %%  NewGame interace
 

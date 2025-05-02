@@ -12,6 +12,7 @@ from context import game_constants as gconsts
 from context import game_interface as gi
 from context import mancala
 from context import move_data
+from context import new_game
 
 from game_interface import ChildType
 from game_interface import Goal
@@ -45,7 +46,6 @@ def test_patterns():
 
     # check for override of __str__
     assert 'AlternatesPattern' in str(game.deco.new_game)
-
 
 
 class TestNewGame:
@@ -170,6 +170,12 @@ class TestNewGame:
          (RoundStarter.WINNER, True, True, True),
          (RoundStarter.LAST_MOVER, True, False, False),
          (RoundStarter.LAST_MOVER, True, True, True),
+
+         # turn is set True if no winner
+         (RoundStarter.ALTERNATE, True, None, False),
+         (RoundStarter.LOSER, False, None, False),
+         (RoundStarter.WINNER, True, None, True),
+         (RoundStarter.LAST_MOVER, True, None, False),
           ])
     def test_rounds_start(self, rgame, last_player,
                           start_method, starter, winner, estarter):
@@ -185,9 +191,10 @@ class TestNewGame:
             rgame.store = [4, 8]
         else:
             rgame.store = [8, 4]
-        rgame.turn = winner
+        rgame.turn = winner if winner is not None else True
         rgame.mdata = move_data.MoveData(rgame, 2)
         rgame.mdata.player = last_player
+        rgame.mdata.winner = winner
 
         assert not rgame.new_game(win_cond=WinCond.ROUND_WIN,
                                   new_round_ok=True)

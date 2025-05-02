@@ -91,7 +91,7 @@ class MoveData:
         string += f"  fmsg={self.fmsg}\n"
         string += f"  ended={self.ended}\n"
         string += f"  win_cond={self.win_cond}\n"
-        string += f"  winner={self.winner}"
+        string += f"  winner={self.winner}\n"
         string += f"  user_end={self.user_end}"
         return string
 

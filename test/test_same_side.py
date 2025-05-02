@@ -86,6 +86,11 @@ class TestGameState:
 
     def test_get_state(self, game):
 
+        state = game.board_state
+        assert state.board == (2, 2, 2, 2, 2, 2)
+        assert state.store == (0, 0)
+        assert state.empty_store is False
+
         state = game.state
         assert state.board == (2, 2, 2, 2, 2, 2)
         assert state.store == (0, 0)
