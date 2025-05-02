@@ -1,5 +1,5 @@
 
-
 * text=auto
 
-*.bash eol-lf
+# bash scripts don't run in cygwin with crlf line endings!
+*.bash eol=lf
