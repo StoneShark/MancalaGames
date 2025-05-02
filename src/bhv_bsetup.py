@@ -19,14 +19,12 @@ There are some game states items that are maybe not handled
 the best, but more UI options would be required:
 
     - mcount is reset to 2
-        + sow opp dirs will reaquire sow directions
-          on the first move
         + current prescribed openings only apply to
           the first turn
 
     - the inhibitor is always turned off
 
-    - the ai player history is not cleared
+    - the ai player history is cleared
 
     - something else not anticipated :)
 
@@ -40,10 +38,40 @@ import textwrap
 import behaviors as bhv
 import bhv_hold
 import game_interface as gi
+import get_direction
 import man_config
 import ui_utils
 
 from game_logger import game_log
+
+
+class PlayAltDirControl:
+    """A class to  manage the player direction for
+    PLAYALTDIR games.
+    If the player directions have not been set, just pick
+    some."""
+
+    def __init__(self, game):
+
+        deco = game.deco.get_dir
+        while deco and not isinstance(deco, get_direction.PlayAltDir):
+            deco = deco.decorator
+
+        assert deco, "PlayAltDir is missing"
+
+        self._deco = deco
+        if not self._deco.player_dirs[0]:
+            self._deco.player_dirs = [gi.Direct.CW, gi.Direct.CCW]
+
+    def swap_dirs(self):
+        """Swap the player directions."""
+
+        self._deco.player_dirs = list(reversed(self._deco.player_dirs))
+
+    @property
+    def north_dir_text(self):
+        """Return the button text with the north direction."""
+        return "Swap North Sow Dir: " + self._deco.player_dirs[1].name
 
 
 class SetupHold(bhv_hold.Hold):
@@ -65,8 +93,12 @@ class SetupHold(bhv_hold.Hold):
         super().__init__()
 
         self._label = False
+
         self._oop_btn = None
         self.out_of_play = 0
+
+        self._altd_btn = None
+        self.alt_dir_ctrl = None
 
 
     def set_hold(self, nbr, _=None):
@@ -88,6 +120,24 @@ class SetupHold(bhv_hold.Hold):
 
         super().destroy_ui()
         self._label = None
+
+
+    def add_sow_dir_if(self, game_ui, tframe, rcnt, ccnt):
+
+        if game_ui.game.info.sow_direct == gi.Direct.PLAYALTDIR:
+
+            self.alt_dir_ctrl = PlayAltDirControl(game_ui.game)
+
+            self._altd_btn = tk.Button(
+                tframe,
+                text=self.alt_dir_ctrl.north_dir_text,
+                command=self.swap_sow_dir)
+            self._altd_btn.grid(row=rcnt.value, column=ccnt.count,
+                                columnspan=2,
+                                padx=2, pady=2, sticky='ew')
+
+            # force increment of count for spaned button
+            ccnt.count # pylint: disable=pointless-statement
 
 
     def add_collect_button(self, game_ui, tframe, rcnt, ccnt):
@@ -184,6 +234,9 @@ class SetupHold(bhv_hold.Hold):
 
         ccnt.reset()
         rcnt.count   # pylint: disable=pointless-statement
+
+        self.add_sow_dir_if(game_ui, tframe, rcnt, ccnt)
+
         ginfo = self.game_ui.game.info
         if ginfo.child_type:
             tk.Button(tframe, text="Clear Child",
@@ -216,6 +269,13 @@ class SetupHold(bhv_hold.Hold):
         new_turn = not self.game_ui.game.turn
         self.game_ui.game.starter = self.game_ui.game.turn = new_turn
         self.refresh_game()
+
+
+    def swap_sow_dir(self):
+        """For play alt dir games, swap the sow directions."""
+
+        self.alt_dir_ctrl.swap_dirs()
+        self._altd_btn['text'] = self.alt_dir_ctrl.north_dir_text
 
 
     def clear_board(self):
@@ -308,6 +368,7 @@ class SetupHold(bhv_hold.Hold):
         self.game_ui.game.new_game()
         self.game_ui.game.inhibitor.set_off()
         self.game_ui.game.mcount = 2
+        self.game_ui.player.clear_history()
         self.refresh_game()
 
 
@@ -394,10 +455,9 @@ class SetupButtonBehavior(bhv.BehaviorIf):
         messages = ["Do you wish to enter board setup mode?",
                    """The current game will not be tallied,
                       the inhibitor will be turned off,
-                      move count will be reset to 2
-                      (no prescribed openings will occur),
-                      and knowledge gained by AI player
-                      is not cleared and it is deactivated."""]
+                      no prescribed openings will occur,
+                      and knowledge gained by the AI player
+                      is cleared, and it is deactivated."""]
         do_it = ui_utils.ask_popup(game_ui,
                                    'Board Setup', messages,
                                    ui_utils.OKCANCEL)
