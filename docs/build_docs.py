@@ -15,6 +15,7 @@ Created on Wed Nov 22 18:38:01 2023
 import csv
 import dataclasses as dc
 import enum
+import locale
 import os
 import re
 
@@ -32,8 +33,14 @@ TXTPART = '.txt'
 EXFILE = '_all_params.txt'
 
 
-# %% fill global tables
 
+
+# %%  fix utf-8 sort order
+
+locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
+
+
+# %% fill global tables
 
 PARAMS = man_config.ParamData(del_tags=False)
 
@@ -78,7 +85,7 @@ FOOTER = """\
     <tr>
     <td>GPL-3.0 license</td>
     <td></td>
-    <td style="text-align:right">&copy; 2024, Ann Davies</td>
+    <td style="text-align:right">&copy; 2024-2025, Ann Davies</td>
     </tr>
 </table>
 </footer>
@@ -440,7 +447,7 @@ def write_games_help(filename):
         write_html_header(ofile, "Mancala Game Configurations", GAME_NAV)
         print(GAME_INTRO, file=ofile)
 
-        for file in os.listdir(GPROP_PATH):
+        for file in sorted(os.listdir(GPROP_PATH), key=str.lower):
 
             if file[-4:] != TXTPART or file == EXFILE:
                 continue
@@ -473,7 +480,7 @@ def write_games_help(filename):
         print('<br><br><br>', file=ofile)
         print('<h2 id="index">Game Index</h2>', file=ofile)
         gindex = [f'<a href="#{gname}">' + gname + '</a>'
-                  for gname in sorted(games)]
+                  for gname in sorted(games, key=locale.strxfrm)]
         write_columns(ofile, gindex, 3)
 
         write_html_footer(ofile)
