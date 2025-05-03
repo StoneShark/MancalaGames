@@ -291,7 +291,7 @@ exe: MancalaGames/mancala_games.exe makefile
 
 MancalaGames/mancala_games.exe: $(SOURCES) $(DATAFILES) $(HELPFILES) mancala_games.spec
 	-rmdir /S /Q MancalaGames
-	git stash push mancala.ini -m "save mancala.ini"
+	-git stash push mancala.ini -m "save mancala.ini"
 	python tools\\update_version.py
 	pyinstaller mancala_games.spec --distpath .
 	mkdir MancalaGames\\help
