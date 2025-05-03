@@ -10,7 +10,7 @@ Created on Thu Mar  2 14:38:17 2023
 
 # %% imports
 
-import textwrap
+import functools as ft
 import traceback
 import tkinter as tk
 import webbrowser
@@ -27,7 +27,6 @@ import game_tally as gt
 import man_config
 import man_path
 import round_tally
-import version
 import ui_utils
 
 from game_logger import game_log
@@ -486,7 +485,9 @@ class MancalaUI(tk.Frame):
 
         helpmenu = tk.Menu(menubar)
         helpmenu.add_command(label='Help...', command=self._help)
-        helpmenu.add_command(label='About...', command=self._about)
+        helpmenu.add_command(label='About Game...', command=self._about)
+        helpmenu.add_command(label='About...',
+                             command=ft.partial(ui_utils.show_release, self))
         menubar.add_cascade(label='Help', menu=helpmenu)
 
         if man_config.CONFIG.get_bool('debug_menu'):
@@ -657,18 +658,12 @@ class MancalaUI(tk.Frame):
     def _about(self):
         """Popup the about window."""
 
-        atext = self.info.about
-        if not atext or (isinstance(atext, str) and not atext.strip()):
-            atext = 'Mancala Game Player'
+        # TODO remove any html tags from the text
 
-        paragraphs = atext.split('\n')
-        out_text = self.info.name + ':\n'
-        for para in paragraphs:
-            out_text += textwrap.fill(para, 70) + '\n'
-
-        out_text += version.RELEASE_TEXT
-
-        ui_utils.QuietDialog(self, 'About', ''.join(out_text))
+        paragraphs = [para
+                      for para in self.info.about.split('\n')
+                      if para.strip()]
+        ui_utils.QuietDialog(self, f'About {self.info.name}', paragraphs)
 
 
     def save_file(self):

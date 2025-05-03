@@ -223,9 +223,12 @@ def format_message(message):
 class QuietDialog(tksimpledialog.Dialog):
     """A simple modal quiet dialog box."""
 
-    def __init__(self, master, title, message):
+    def __init__(self, master, title, message, fixed_form=False):
 
-        self.msg = format_message(message)
+        if fixed_form:
+            self.msg = message
+        else:
+            self.msg = format_message(message)
         super().__init__(master, title)
 
 
@@ -557,7 +560,8 @@ def show_game_help():
 def show_release(parent):
     """Show the Release text."""
 
-    QuietDialog(parent, 'About Manacala Games', version.RELEASE_TEXT)
+    QuietDialog(parent, 'About Manacala Games', version.RELEASE_TEXT,
+                fixed_form=True)
 
 
 # %% Counter

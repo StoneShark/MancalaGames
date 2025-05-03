@@ -1,11 +1,7 @@
 
-all: clean pylint context params tests docs exe
+all: clean context params docs pylint tests
 
-all_no_exe: clean pylint context params tests docs
-
-
-# do in this order so that html coverage dir is output from tests
-final: spotless context params long_tests all
+final: spotless context params docs pylint all_tests exe
 
 
 MODULES = ai_interface.py
@@ -311,7 +307,7 @@ MancalaGames/mancala_games.exe: $(SOURCES) $(DATAFILES) $(HELPFILES) mancala_gam
 	copy src\\game_params.csv MancalaGames
 	copy src\\game_param_descs.txt MancalaGames
 	copy mancala.ini MancalaGames
-	git stash pop
+	-git stash pop
 	-rmdir /S /Q build
 	tar -czf MancalaGames.tgz MancalaGames
 
