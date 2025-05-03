@@ -761,7 +761,7 @@ Allows specifying non-all-equal start patterns. The following patterns are suppo
 
   + <img src="figs/twoempty_patt.jpg" alt="Two Empty Pattern" class="helpfig">
 
-- RANDOM: The seeds are randomly distributed into the holes with a minimum of two seeds per hole. Nbr_start is the total number of seeds in play. When this start pattern is used, the Swap Sides (pie rule) is allowed on both of the first two moves of the game.
+- RANDOM: The seeds are randomly distributed into the holes. If more than two seeds per hole are configured, a minimum of two seeds are put into each hole. Nbr_start is the total number of seeds in play. When this start pattern is used, the Swap Sides (pie rule) is allowed on both of the first two moves of the game.
 
 - ALTS_SPLIT: Like alternates but the seeds are reduced in the rightmost hole of the non-starter. One quarter of the seeds from the non-starter's rightmost hole are moved across the board into the empty hole of the starting player.
 
