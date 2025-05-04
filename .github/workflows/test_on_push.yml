@@ -31,4 +31,5 @@ jobs:
         pylint --rcfile .pylintrc --fail-under 9.6 --recursive yes src
     - name: Test with pytest
       run: |
+        python tools/make_context.py
         coverage run --branch -m pytest --run_slow --nbr_runs 500
