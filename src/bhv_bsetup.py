@@ -139,8 +139,7 @@ class SetupHold(bhv_hold.Hold):
                                 columnspan=2,
                                 padx=2, pady=2, sticky='ew')
 
-            # force increment of count for spaned button
-            ccnt.count # pylint: disable=pointless-statement
+            ccnt.increment()
 
 
     def add_collect_button(self, game_ui, tframe, rcnt, ccnt):
@@ -236,7 +235,7 @@ class SetupHold(bhv_hold.Hold):
                       padx=2, pady=2, sticky='ew')
 
         ccnt.reset()
-        rcnt.count   # pylint: disable=pointless-statement
+        rcnt.increment()
 
         self.add_sow_dir_if(game_ui, tframe, rcnt, ccnt)
 

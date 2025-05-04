@@ -46,7 +46,6 @@ class GameNode:
 
     def __init__(self, state, node_id,
                  *, leaf=False, reward=0, moves=()):
-        # pylint: disable=too-many-arguements
 
         self.state = state
         self.node_id = node_id

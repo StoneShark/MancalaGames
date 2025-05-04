@@ -39,6 +39,10 @@ from game_classes import GAME_CLASSES
 
 # %%  Constants
 
+# given a real value after we have tk root
+INT_VALID_CMD = None
+
+
 # how many variables to make for lists
 # if the option for a 'list[int]' isn't here, 4 variables will be made
 MAKE_LVARS = {ckey.CAPT_ON: 6,

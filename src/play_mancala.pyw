@@ -139,7 +139,6 @@ class BaseFilter(ttk.Frame, abc.ABC):
     based on value_keys."""
 
     def __init__(self, parent, filt_obj, label, param_key, value_keys):
-        # pylint: disable=too-many-arguments
 
         super().__init__(parent, borderwidth=3)
         self.parent = parent
@@ -237,7 +236,6 @@ class VListFilter(BaseFilter):
     """A filter category based on a list of values."""
 
     def __init__(self, parent, filt_obj, label, val_list, param_key):
-        # pylint: disable=too-many-arguments
 
         self.val_list = val_list
         super().__init__(parent, filt_obj, label, param_key, value_keys=True)
@@ -274,7 +272,6 @@ class DictFilter(BaseFilter):
     """A filter category based on a dictionary of rule_name: test"""
 
     def __init__(self, parent, filt_obj, label, filt_dict, param_key):
-        # pylint: disable=too-many-arguments
 
         self.filt_dict = filt_dict
         super().__init__(parent, filt_obj, label, param_key, value_keys=False)

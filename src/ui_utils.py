@@ -164,8 +164,8 @@ class TriStateCheckbutton(ttk.Checkbutton):
         value needs to translated to be one of
         False, True, None"""
 
+        # pylint: disable=use-implicit-booleaness-not-comparison-to-zero
         # we mean zero, not falsy
-        # pylint: disable=compare-to-zero
         if value == 0:
             self.value = False
 
@@ -432,9 +432,7 @@ ERROR = 3
 class MessageDialog(tksimpledialog.Dialog):
     """Basic message dialog with standard responses."""
 
-    # pylint: disable=too-many-arguments
     def __init__(self, master, title, message, buttons, icon=None):
-        # pylint: disable=too-many-positional-arguements
 
         self.msg = format_message(message)
         self.master = master
@@ -584,3 +582,9 @@ class Counter:
     def reset(self):
         """Reset the count."""
         self.value = -1
+
+
+    def increment(self):
+        """Increment the value w/o using it."""
+
+        self.value += 1

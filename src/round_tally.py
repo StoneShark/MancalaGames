@@ -12,7 +12,6 @@ from game_logger import game_log
 class RoundTally:
     """Class to collect game data across multiple rounds.
     Collect them all even though we only use one at a time."""
-    # pylint: disable=too-many-instance-attributes
 
     # Create a RoundTally for these game goals
     GOALS = {gi.Goal.RND_WIN_COUNT_MAX,

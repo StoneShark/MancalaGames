@@ -612,7 +612,6 @@ def read_ini_file(tk_root=None, name=None):
     circular imports.
     tk_root is required to test the color values,
     if it is not provided the colors are not tested."""
-    # pylint: disable=global-statement
 
     global CONFIG
     CONFIG = ConfigData(tk_root, name)

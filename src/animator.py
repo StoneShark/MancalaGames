@@ -59,14 +59,11 @@ ENABLED = True
 
 # pylint:  disable=invalid-name
 animator = None
-
-# pylint:  disable=invalid-name
 print_steps = False
 
 def make_animator(game_ui):
     """Make the animator class."""
 
-    # pylint: disable=global-statement
     global animator
 
     if ENABLED:
@@ -78,7 +75,6 @@ def reset():
     Do this on destroy of MancalaUI so remnants of a
     previous game do not exsist."""
 
-    # pylint: disable=global-statement
     global animator
 
     if ENABLED:

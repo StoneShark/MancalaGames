@@ -22,13 +22,22 @@ load-plugins=pylint.extensions.bad_builtin,
 		pylint.extensions.set_membership,
 		pylint.extensions.typing,
 
+enable=use-implicit-booleaness-not-comparison-to-zero
 
 disable=consider-using-assignment-expr,
 	consider-using-namedtuple-or-dataclass,
 	too-few-public-methods,
 	too-many-instance-attributes,
-	too-many-ancestors
+	too-many-ancestors,
+	global-statement
 
+[DESIGN]
+
+# Maximum number of arguments for function / method.
+max-args=6
+
+# Maximum number of positional arguments for function / method.
+max-positional-arguments=6
 
 [MAGIC-VALUE]
 

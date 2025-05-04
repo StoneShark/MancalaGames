@@ -95,8 +95,6 @@ class HoleButton(tk.Canvas):
         If the left move is different than the right, create
         a rectangle on the canvas to support touch screen mode
         (e.g. no right clicks)."""
-        # pylint: disable=too-many-arguments
-        # pylint: disable=too-many-positional-arguments
 
         self.frame = pframe
         self.game_ui = game_ui
