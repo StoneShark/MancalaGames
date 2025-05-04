@@ -30,4 +30,4 @@ jobs:
     - name: Test with pytest
       run: |
         python tools/make_context.py
-        coverage run --branch -m pytest --run_slow
+        coverage run --branch -m pytest
