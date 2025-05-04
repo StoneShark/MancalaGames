@@ -496,6 +496,7 @@ class Animator:
         """Record a button flash action, if active."""
 
         if self.active:
+            row, pos = None, None
 
             if move is not None:
                 if isinstance(move, int):

@@ -434,6 +434,7 @@ class MessageDialog(tksimpledialog.Dialog):
 
     # pylint: disable=too-many-arguments
     def __init__(self, master, title, message, buttons, icon=None):
+        # pylint: disable=too-many-positional-arguements
 
         self.msg = format_message(message)
         self.master = master

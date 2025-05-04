@@ -165,7 +165,6 @@ class BaseFilter(ttk.Frame, abc.ABC):
                    ).grid(row=rnbr, column=1, padx=3, pady=3)
 
 
-
     def build_filters(self, filt_obj, row, value_keys):
         """Build the filter checkboxes and their variables.
         Seperate so that it can speciallized by derived classes.

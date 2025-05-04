@@ -140,6 +140,9 @@ class GameDictEncoder(json.JSONEncoder):
 
 class GameConfig:
     """Encapsulate the file handling and game config dictionaries."""
+    # pylint: disable=unsubsriptable-object
+    # want to initilize the vars to None
+    # it's a coding error if they are used before set
 
     def __init__(self, master, params):
 
@@ -152,7 +155,7 @@ class GameConfig:
         self.filename = None
         self.edited = False           # is there an edit that hasn't been saved
         self.loaded_config = None     # keep for persistent comment entries
-        self.game_config = None       # constructed config for playing
+        self.game_config = None      # constructed config for playing
 
 
     def reset(self):
