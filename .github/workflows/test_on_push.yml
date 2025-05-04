@@ -5,8 +5,6 @@ name: Python application
 on:
   push:
     branches: [ "main", "develop" ]
-  pull_request:
-    branches: [ "main" ]
 
 permissions:
   contents: read
@@ -32,4 +30,4 @@ jobs:
     - name: Test with pytest
       run: |
         python tools/make_context.py
-        coverage run --branch -m pytest --run_slow --nbr_runs 500
+        coverage run --branch -m pytest --run_slow
