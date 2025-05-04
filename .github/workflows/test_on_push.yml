@@ -25,7 +25,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        python -m pip install dev_requirements.txt
+        pip install -r dev_requirements.txt
     - name: Linter
       run: |
         pylint --rcfile .pylintrc --fail-under 9.6 --recursive yes csp_solver
