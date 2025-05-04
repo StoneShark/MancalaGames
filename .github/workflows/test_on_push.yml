@@ -1,0 +1,33 @@
+# Run all of the tests on the main and develop branches on any push
+
+name: Python application
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.12"
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r dev_requirements.txt
+    - name: Linter
+      run: |
+        pylint --rcfile .pylintrc --fail-under 9.6 --recursive yes src
+    - name: Test with pytest
+      run: |
+        python tools/make_context.py
+        coverage run --branch -m pytest
