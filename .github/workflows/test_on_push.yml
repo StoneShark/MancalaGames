@@ -28,7 +28,7 @@ jobs:
         pip install -r dev_requirements.txt
     - name: Linter
       run: |
-        pylint --rcfile .pylintrc --fail-under 9.6 --recursive yes csp_solver
+        pylint --rcfile .pylintrc --fail-under 9.6 --recursive yes src
     - name: Test with pytest
       run: |
         coverage run --branch -m pytest --run_slow --nbr_runs 500
