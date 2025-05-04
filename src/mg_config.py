@@ -140,7 +140,7 @@ class GameDictEncoder(json.JSONEncoder):
 
 class GameConfig:
     """Encapsulate the file handling and game config dictionaries."""
-    # pylint: disable=unsubsriptable-object
+    # pylint: disable=unsubscriptable-object
     # want to initilize the vars to None
     # it's a coding error if they are used before set
 
