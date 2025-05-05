@@ -142,12 +142,12 @@ unit_tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py src\\game_params.csv
 
 
 integ_tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py src\\game_params.csv
-	-coverage run -m pytest -m integtest
+	-coverage run -m pytest -m integtest --sim_fails
 	coverage html
 
 
 tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py src\\game_params.csv
-	-coverage run -m pytest
+	-coverage run -m pytest --sim_fails
 	coverage html
 
 long_tests: stress_tests player_tests cov_unit_tests
@@ -164,7 +164,7 @@ game_tests: test\\context.py
 # a target to run the stress tests with higher iterations
 .PHONY: strest_tests	
 stress_tests: test\\context.py params
-	pytest test\\test_z_simul_game.py --nbr_runs 500
+	pytest test\\test_z_simul_game.py --nbr_runs 500 --sim_fails
 	
 .PHONY: player_tests
 player_tests: test\\context.py params
@@ -195,7 +195,7 @@ vpath %.py .\\test
 
 .PHONY: %.test
 %.test: test\\context.py src\\game_params.csv $(subst .test,.py,$@)
-	coverage run -m pytest test\\$(subst .test,.py,$@)
+	coverage run -m pytest test\\$(subst .test,.py,$@) --sim_fails
 	coverage html
 
 

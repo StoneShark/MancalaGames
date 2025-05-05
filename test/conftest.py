@@ -43,6 +43,7 @@ from context import man_config
 def pytest_addoption(parser):
     parser.addoption("--nbr_runs", action="store", default="10")
     parser.addoption("--run_slow", action="store_true", default=False)
+    parser.addoption("--sim_fails", action="store_true", default=False)
 
 
 def pytest_collection_modifyitems(config, items):
