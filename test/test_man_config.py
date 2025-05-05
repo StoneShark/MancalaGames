@@ -26,6 +26,26 @@ from game_interface import Direct
 TEST_COVERS = ['src\\man_config.py']
 
 
+# %%
+
+class TestRemoveTags:
+
+    CASES = [('<a alkjsdf;lskfj>', ''),
+             ('</a>', ''),
+             ('<img alksjf;aslk lkj;laskjdfalksdf>\n', ''),
+             ('<b a;lksjdflakjsfdals>', ''),
+             ('</b>', ''),
+             ('<nolink>', ''),
+             ('<b class=aald>BOLD WORDS</b>', 'BOLD WORDS'),
+             ('<nolink>word', 'word'),
+             ('<a', '<a'),
+             ]
+
+    @pytest.mark.parametrize('text, eresult', CASES)
+    def test_remove_tags(self, text, eresult):
+
+        assert man_config.remove_tags(text) == eresult
+
 
 # %%  test game config files
 

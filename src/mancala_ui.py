@@ -658,9 +658,7 @@ class MancalaUI(tk.Frame):
     def _about(self):
         """Popup the about window."""
 
-        # TODO remove any html tags from the text
-
-        paragraphs = [para
+        paragraphs = [man_config.remove_tags(para)
                       for para in self.info.about.split('\n')
                       if para.strip()]
         ui_utils.QuietDialog(self, f'About {self.info.name}', paragraphs)

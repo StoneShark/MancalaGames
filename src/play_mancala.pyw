@@ -37,7 +37,7 @@ EXFILE = '_all_params.txt'
 MANCALA = 'Mancala'
 
 COLON = ':'
-DESC_WIDTH = 65
+DESC_WIDTH = 72
 COL_WIDTH = 30
 
 SMALL = 6
@@ -677,12 +677,8 @@ class AboutPane(ttk.Labelframe):
         paragraphs = text.split('\n')
         out_text = []
         for para in paragraphs:
-
-            fpara = para
-            for tag in man_config.REMOVE_TAGS:
-                fpara, _ = tag.subn('', fpara, count=5)
-
-            out_text += [textwrap.fill(fpara, DESC_WIDTH)]
+            out_text += [textwrap.fill(man_config.remove_tags(para),
+                                       DESC_WIDTH)]
 
         if not out_text[-1]:
             out_text.pop()

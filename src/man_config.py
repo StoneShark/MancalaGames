@@ -59,6 +59,9 @@ SKIP_TAB = 'skip'
 
 PARAM = re.compile('^<param ([a-z0-9_]+)>')
 
+
+# %% remove html tags
+
 REMOVE_TAGS = [re.compile(r'<a[^>]+>'),
                re.compile(r'</a>'),
                re.compile(r'(  \+ )?<img[^>]+>\n'),
@@ -69,6 +72,15 @@ REMOVE_TAGS = [re.compile(r'<a[^>]+>'),
                re.compile(r'<nolink>'),
 
                ]
+
+def remove_tags(text):
+    """Remove the tags from text."""
+
+    for tag in REMOVE_TAGS:
+        text, _ = tag.subn('', text, count=5)
+
+    return text
+
 
 # %% read config files
 
@@ -309,10 +321,7 @@ class ParamData(dict):
                     raise ValueError(msg)
 
             elif del_tags:
-                tline = line
-                for tag in REMOVE_TAGS:
-                    tline, _ = tag.subn('', tline, count=5)
-                text += tline
+                text += remove_tags(line)
 
             else:
                 text += line
