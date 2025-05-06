@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""A UI that brings up a list of games in the GameProps directory.
+"""A UI that allows play of any of the games in the GameProps directory.
 
 Created on Thu Mar 23 08:10:28 2023
 @author: Ann"""
@@ -888,9 +888,7 @@ class GameChooser(ttk.Frame):
         player_dict = game_dict[ckey.PLAYER]
 
         game = game_class(game_consts, game_info)
-        game_ui = mancala_ui.MancalaUI(game, player_dict,
-                                       root_ui=self.master)
-        game_ui.mainloop()
+        mancala_ui.MancalaUI(game, player_dict, root_ui=self.master)
 
 
 # %%
