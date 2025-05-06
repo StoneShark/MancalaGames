@@ -39,7 +39,6 @@ import behaviors as bhv
 import bhv_hold
 import game_interface as gi
 import get_direction
-import man_config
 import ui_utils
 
 from game_logger import game_log
@@ -664,12 +663,7 @@ class SetupStoreBehavior(bhv.StoreBehaviorIf):
 
         self.str['state'] = tk.NORMAL
         self.str['text'] = str(seeds)
-
-        if highlight is not None:
-            if highlight:
-                self.str['background'] = man_config.CONFIG['turn_color']
-            else:
-                self.str['background'] = man_config.CONFIG['system_color']
+        self.str.update_color(highlight)
 
 
     def do_left_click(self):

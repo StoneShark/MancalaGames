@@ -833,8 +833,8 @@ class TestConfig:
         with open(path, 'w', encoding='utf-8') as file:
             print("""[default]
                   system_color = SystemButtonFace
-                  turn_color = #303030
-                  turn_dark_color = not_a_color
+                  north_act_color = #303030
+                  north_not_color = not_a_color
                   inactive_color = #1234567890
                   """, file=file)
 
@@ -845,10 +845,10 @@ class TestConfig:
         config = man_config.ConfigData(tk_root)
 
         assert config['system_color'] == 'SystemButtonFace'
-        assert config['turn_color'] == '#303030'
+        assert config['north_act_color'] == '#303030'
 
-        assert config['turn_dark_color'] == \
-            man_config.DEFAULTS['turn_dark_color']
+        assert config['north_not_color'] == \
+            man_config.DEFAULTS['north_not_color']
         assert config['inactive_color'] == \
             man_config.DEFAULTS['inactive_color']
 

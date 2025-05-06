@@ -210,7 +210,13 @@ class BehaviorIf(abc.ABC):
             self.btn['background'] = man_config.CONFIG['system_color']
             self.btn['state'] = tk.DISABLED
         else:
-            self.btn['background'] = bg_color or man_config.CONFIG['turn_color']
+            if not bg_color:
+                if self.btn.color_side():
+                    bg_color = man_config.CONFIG['north_act_color']
+                else:
+                    bg_color = man_config.CONFIG['south_act_color']
+
+            self.btn['background'] = bg_color
             self.btn['state'] = tk.NORMAL
 
         if self.btn.props.blocked:
@@ -337,17 +343,24 @@ class BehaviorIf(abc.ABC):
         if bstate is None:
             return
 
+        if self.btn.color_side():
+            act_color = man_config.CONFIG['north_act_color']
+            not_color = man_config.CONFIG['north_not_color']
+        else:
+            act_color = man_config.CONFIG['south_act_color']
+            not_color = man_config.CONFIG['south_not_color']
+
         if bstate.is_active():
-            self.btn['background'] = man_config.CONFIG['turn_color']
+            self.btn['background'] = act_color
             self.btn['state'] = tk.NORMAL
 
         else:
             self.btn['state'] = tk.DISABLED
             if bstate.is_look_active():
-                self.btn['background'] = man_config.CONFIG['ai_color']
+                self.btn['background'] = act_color
 
             elif bstate == BtnState.PLAY_DISABLE:
-                self.btn['background'] = man_config.CONFIG['turn_dark_color']
+                self.btn['background'] = not_color
 
             else:
                 self.btn['background'] = man_config.CONFIG['inactive_color']
@@ -431,10 +444,7 @@ class NoStoreBehavior(StoreBehaviorIf):
         else:
             self.str['text'] = ''
 
-        if highlight:
-            self.str['background'] = man_config.CONFIG['turn_color']
-        else:
-            self.str['background'] = man_config.CONFIG['system_color']
+        self.str.update_color(highlight)
 
 
     def do_left_click(self):

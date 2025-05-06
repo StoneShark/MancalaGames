@@ -401,11 +401,12 @@ INI_FILENAME = 'mancala.ini'
 DEFAULTS = {
     'button_size': '100',
 
-    'system_color': 'SystemButtonFace',
-    'inactive_color': 'grey60',
-    'turn_color': 'LightBlue2',
-    'turn_dark_color': 'LightBlue4',
-    'ai_color': 'LightBlue2',
+    'system_color': '#f0f0f0',
+    'inactive_color': '#999999',
+    'north_act_color': '#b2dfee',
+    'north_not_color': '#68838b',
+    'south_act_color': '#b2dfee',
+    'south_not_color': '#68838b',
 
     'rclick_color': 'grey',
     'grid_color': 'red',
@@ -438,8 +439,11 @@ DEFAULTS = {
 DEFAULT = 'default'
 DIFFICULTY = 'difficulty'
 DIS_ANIMAT = 'disable_animator'
-COLORS = ['system_color', 'turn_color', 'turn_dark_color', 'ai_color',
-          'inactive_color', 'rclick_color', 'grid_color']
+COLORS = ['system_color', 'inactive_color',
+          'north_act_color', 'north_not_color',
+          'south_act_color', 'south_not_color',
+          'rclick_color', 'grid_color',
+          'choose_color', 'seed_color', 'move_color']
 
 VALID_DENSITY = {'12', '25', '50', '75'}
 VALID_DELAY = {'0', '1', '2'}
@@ -460,7 +464,8 @@ class ConfigData:
             self.create_ini_file()
             return
 
-        self._config = configparser.ConfigParser()
+        self._config = configparser.ConfigParser(
+            interpolation=configparser.ExtendedInterpolation())
         try:
             self._config.read(pathname, encoding='utf-8')
         except:

@@ -174,7 +174,24 @@ class HoleButton(tk.Canvas):
             return self.props.owner
 
         if game.cts.board_side(0):
-            return game.board_side(self.loc)
+            return game.cts.board_side(self.loc)
+
+        return not self.row
+
+
+    def color_side(self):
+        """Return the which side color to use."""
+
+        game = self.game_ui.game
+
+        if game.info.no_sides:
+            return game.turn
+
+        if self.props.owner in {False, True}:
+            return self.props.owner
+
+        if game.cts.board_side(0):
+            return game.cts.board_side(self.loc)
 
         return not self.row
 
@@ -340,6 +357,21 @@ class StoreButton(tk.Canvas):
         """Keep the text widget in the center of the canvas)."""
 
         self.coords(self.text_id, event.width//2, event.height//2)
+
+
+    def update_color(self, highlight):
+        """Update the background color to the turn color."""
+
+        if highlight is not None:
+            if highlight:
+                if self.owner:
+                    color = man_config.CONFIG['north_act_color']
+                else:
+                    color = man_config.CONFIG['south_act_color']
+            else:
+                color = man_config.CONFIG['system_color']
+
+            self['background'] = color
 
 
     def set_behavior(self, behavior):
