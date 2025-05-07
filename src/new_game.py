@@ -335,7 +335,7 @@ class SeedCountCheck(NewGameIf):
         store = self.game.store
         board = self.game.board
 
-        assert (all(cnt >= 0 for cnt in store + board)
+        assert (all(cnt >= 0 for cnt in board + store)
                 and sum(store) + sum(board) == self.game.cts.total_seeds
                 ), f"seed count error in new_game\n{store}\n{board}"
 

@@ -813,7 +813,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         Return the created mdata."""
 
         self.mcount += 1
-        assert (all(cnt >= 0 for cnt in self.store + self.board)
+        assert (all(cnt >= 0 for cnt in self.board + self.store)
                 and sum(self.store) + sum(self.board) == self.cts.total_seeds
                 ), f"seed count error before move\n{self.store}\n{self.board}"
 

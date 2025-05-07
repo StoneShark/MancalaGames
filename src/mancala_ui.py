@@ -501,8 +501,19 @@ class MancalaUI(tk.Frame):
                                   command=lambda: print(self.game.params_str()))
             debugmenu.add_command(label='Print Consts',
                                   command=lambda: print(self.game.cts))
-            debugmenu.add_command(label='Print Decos',
+
+            pmenu = tk.Menu(menubar)
+            pmenu.add_command(label='Print All',
                                   command=lambda: print(self.game.deco))
+            pmenu.add_separator()
+            for vname, value in vars(self.game.deco).items():
+                name = vname.title()
+                pmenu.add_command(label=f"Print {name}",
+                                  command=ft.partial(print,
+                                                     '\n' + name + ':\n',
+                                                     value))
+            debugmenu.add_cascade(label='Print Decos', menu=pmenu)
+
             debugmenu.add_command(label='Print Inhibitor',
                                   command=lambda: print(self.game.inhibitor))
             debugmenu.add_command(label='Print mdata',
