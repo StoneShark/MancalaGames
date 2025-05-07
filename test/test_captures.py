@@ -961,6 +961,7 @@ class TestRepeatTurn:
             mdata.direct = gi.Direct.CCW
             mdata.capt_loc = cloc
             gamea.deco.capturer.do_captures(mdata)
+            gamea.rturn_cnt += 1  # this is done at the end of move
             assert mdata.captured == gi.WinCond.REPEAT_TURN
 
         mdata = move_data.MoveData(gamea, None)
@@ -993,10 +994,33 @@ class TestRepeatTurn:
             mdata.direct = gi.Direct.CCW
             mdata.capt_loc = cloc
             game1.deco.capturer.do_captures(mdata)
+            game1.rturn_cnt += 1  # this is done at the end of move
             if repeat:
                 assert mdata.captured == gi.WinCond.REPEAT_TURN
             else:
                 assert mdata.captured != gi.WinCond.REPEAT_TURN
+
+
+    def test_rturn_once_move(self, game1):
+        """Test with full move."""
+
+        game1.turn = True
+        game1.board = utils.build_board([2, 2, 3, 3],
+                                        [2, 2, 3, 5])
+        game1.store = [2, 0]
+
+        for move, repeat in [(3, True), (2, False)]:
+
+            game1.move(move)
+
+            if repeat:
+                assert game1.mdata.captured == gi.WinCond.REPEAT_TURN
+                assert game1.turn
+            else:
+                assert game1.mdata.captured != gi.WinCond.REPEAT_TURN
+                assert game1.mdata.captured
+                assert not game1.turn
+
 
 
 class TestCaptCrossVisited:

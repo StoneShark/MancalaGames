@@ -218,7 +218,7 @@ UNIT_TESTS += test_get_moves.cov
 UNIT_TESTS += test_incr.cov
 UNIT_TESTS += test_inhibitor.cov
 UNIT_TESTS += test_make_child.cov
-UNIT_TESTS += test_man_config.cov
+# test_man_config is last because it sometimes fails to load tkinter
 UNIT_TESTS += test_mancala.cov
 UNIT_TESTS += test_minimax.cov
 UNIT_TESTS += test_montecarlo_ts.cov
@@ -230,6 +230,7 @@ UNIT_TESTS += test_round_tally.cov
 UNIT_TESTS += test_same_side.cov
 UNIT_TESTS += test_sower.cov
 UNIT_TESTS += test_two_cycle.cov
+UNIT_TESTS += test_man_config.cov
 
 cov_unit_tests: $(UNIT_TESTS)
 	grep -h src cov\\*.cov

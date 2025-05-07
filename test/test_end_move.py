@@ -176,6 +176,12 @@ class TestEndMove:
                     'unclaimed': gi.EndGameSeeds.DONT_SCORE,
                      },
 
+        'ef_game': {'evens': True,
+                    'stores': True,
+                    'rounds': gi.Rounds.NO_MOVES,
+                    'round_fill': gi.RoundFill.EVEN_FILL,
+                    'min_move': 2}
+
     }
 
 
@@ -561,18 +567,36 @@ class TestEndMove:
                  utils.build_board([2, 2, 2],
                                    [0, 0, 0]), [0, 0], None),
 
+                ('case_ef_1', 'ef_game', False, False,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [3, 9], False, WinCond.ROUND_WIN,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [3, 9], True),
+
+                ('case_ef_2', 'ef_game', False, False,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [2, 10], False, WinCond.ROUND_WIN,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [2, 10], True),
+
+                ('case_ef_3', 'ef_game', False, False,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [1, 11], False, WinCond.WIN,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [1, 11], True),
+
             ]
     @pytest.mark.filterwarnings("ignore")
     # @pytest.mark.usefixtures("logger")
     @pytest.mark.parametrize(
         'case, game, ended, repeat, board, store, turn,'
-        ' eres, eboard, estore, eturn',
+        ' eres, eboard, estore, ewinner',
         WINCASES,
         indirect=['game'],
         ids=[f'{case[0]}_idx_{idx}' for idx, case in enumerate(WINCASES)])
     def test_game_ended(self, case, game, ended,
                         repeat, board, store, turn,
-                        eres, eboard, estore, eturn):
+                        eres, eboard, estore, ewinner):
 
         game.board = board
         game.store = store
@@ -590,8 +614,8 @@ class TestEndMove:
         assert mdata.win_cond == eres
         assert game.board == eboard
         assert game.store == estore
-        if eturn != DONT_CARE:
-            assert mdata.winner == eturn
+        if ewinner != DONT_CARE:
+            assert mdata.winner == ewinner
         if 'pp' not in case:
             assert not game.test_pass()
 

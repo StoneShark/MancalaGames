@@ -813,8 +813,9 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         Return the created mdata."""
 
         self.mcount += 1
-        assert sum(self.store) + sum(self.board) == self.cts.total_seeds, \
-            'seed count error before move'
+        assert (all(cnt >= 0 for cnt in self.store + self.board)
+                and sum(self.store) + sum(self.board) == self.cts.total_seeds
+                ), f"seed count error before move\n{self.store}\n{self.board}"
 
         if move == gi.PASS_TOKEN:
             self.turn = not self.turn
@@ -843,6 +844,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             return mdata
 
         if mdata.repeat_turn:
+            self.rturn_cnt += 1
             mdata.win_cond = gi.WinCond.REPEAT_TURN
             return mdata
 

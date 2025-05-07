@@ -65,13 +65,13 @@ def test_one_game(request, game_pdict):
 
     game, _ = game_pdict
 
-    nbr_games = 500
+    nbr_moves = 500
     if game.info.rounds:
-        nbr_games *= 4
+        nbr_moves *= 4
     if game.info.capt_rturn or game.info.sow_own_store:
-        nbr_games *= 2
+        nbr_moves *= 2
 
-    for _ in range(nbr_games):
+    for _ in range(nbr_moves):
         moves = game.get_moves()
         if not moves:
             pytest.fail("Game didn't end right.")

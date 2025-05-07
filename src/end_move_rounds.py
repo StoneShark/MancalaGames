@@ -30,7 +30,7 @@ class RoundWinner(emd.EndTurnIf):
         the game.
 
         msg: message to log if either player has fewer
-        than win_seeds"""
+        than req_seeds"""
 
         super().__init__(game, decorator, sclaimer)
 
@@ -44,17 +44,26 @@ class RoundWinner(emd.EndTurnIf):
             self.msg = intro + f"at least {req_holes} holes)."
 
         elif game.info.round_fill == gi.RoundFill.UMOVE:
+            # uses even_fill so must be before it (to require more seeds)
             self.req_seeds = game.cts.holes + game.info.min_move - 1
             self.msg = intro + "a playable side)."
 
+        elif game.info.round_fill == gi.RoundFill.EVEN_FILL:
+            self.req_seeds = game.info.min_move
+            self.msg = intro + "a playable side)."
+
         elif game.info.goal_param > 0:
-            # max seeds games do not round seed counts
+            # max seeds games do not round seed counts (like territory games)
             self.req_seeds = game.info.goal_param * nbr_start
             self.msg = intro + f"at least {goal_param} holes)."
 
         else:
             self.req_seeds = nbr_start
             self.msg = intro + "a hole)."
+
+
+    def __str__(self):
+        return super().__str__() + f'\n   req_seeds: {self.req_seeds}'
 
 
     def game_ended(self, mdata):

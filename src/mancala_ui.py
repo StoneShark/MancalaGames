@@ -40,6 +40,10 @@ NO_TALLY_OP = 0
 VIS_TALLY_OP = 1
 RET_TALLY_OP = 2
 
+RTURN_QUERY = 10
+RTURN_QFREQ = 5
+
+ROUND = 'round'
 
 # %%
 
@@ -1097,7 +1101,7 @@ class MancalaUI(tk.Frame):
             player = gi.PLAYER_NAMES[not self.game.get_turn()]
             message = f'{player} has no moves and must pass.'
             ui_utils.PassPopup(self, 'Must Pass', message)
-            self.refresh()     # test pass updates game state
+            self.refresh()     # test_pass updates game state
 
         self.schedule_ai()
 
@@ -1156,5 +1160,29 @@ class MancalaUI(tk.Frame):
                 + self.saved_move[-1].opp_dir().name
             ui_utils.showinfo(self, 'Player Direction', message)
 
-        if self.wcond != gi.WinCond.REPEAT_TURN:
+        if self.wcond == gi.WinCond.REPEAT_TURN:
+            self._ask_stop_repeating()
+        else:
             self.master.config(cursor=ui_utils.NORMAL)
+
+
+    def _ask_stop_repeating(self):
+        """Catch an ai repeat turning for too long."""
+
+        if (self.game.rturn_cnt >= RTURN_QUERY
+                and not self.game.rturn_cnt % RTURN_QFREQ):
+            thing = ROUND if self.game.info.rounds else 'game'
+            message = [f"""The AI has played {self.game.rturn_cnt}
+                           repeated turns. Would you like to end
+                           the {thing}?""",
+                       f"""You will be asked again in {RTURN_QFREQ}
+                           turns."""]
+            do_it = ui_utils.ask_popup(self, 'AI Repeating Turns',
+                                       message, ui_utils.YESNO)
+            if do_it:
+                if thing == ROUND:
+                    self.end_round()
+                else:
+                    self.end_game()
+
+                self.master.config(cursor=ui_utils.NORMAL)

@@ -563,14 +563,13 @@ class TestRoundTally:
                              ])
     def test_new_starter(self, game, cond,
                          start_rule, starter, winner, last, estarter):
-        """we don't know who started the game, so the
-        starter for ROUND_WIN and WIN are always the same"""
 
         object.__setattr__(game.info, 'round_starter', start_rule)
         game.starter = starter
-        game.turn = winner
+        game.turn = not winner
         game.mdata = move_data.MoveData(game, 4)
         game.mdata.player = last
+        game.mdata.winner = winner
 
         game.new_game(cond, new_round_ok=True)
 

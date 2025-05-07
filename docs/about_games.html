@@ -1110,7 +1110,7 @@ Allow moves from holes across from singles (<a href="about_games.html#Huroy">Hur
 <p>Rules: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p30.
 <h3 id="Giuthi" class="game_desc">Giuthi</h3>
 <p>A multilap mancala in which the current player chooses the sow direction for the first lap; subsequent laps alternate sow direction. Moves may only start from holes with 2 or more seeds; if a player cannot move they must pass.
-<p>Cross-capture from opponent's side, but only if seeds have been sown on the opposite side of the board on the current turn. On capture, pick own seed. Multiple captures may be done in same direction as the final lap sowed.
+<p>Cross-capture from opponent's side, but only if seeds have been sown on the opposite side of the board on the current turn. On capture, pick own seed. Multiple captures may be done in the same direction that the final lap was sown.
 <p>If a player ends a turn on their side of the board in an empty hole but without having sown the opposite side, they get another move.
 <p>The round ends if neither player can move. The loser of each round can rearrange the seeds on their side of the board with the restriction that each hole must contain at least one seed and that they have a valid move. Before the round is started the same pattern will be reflected on the winner's side.
 <p>The game ends when either player does not have enough seeds to fill their side of the board with a valid move (i.e. one hole with <a href="game_params.html#min_move">MIN_MOVE</a> seeds and others with at least one seed).
@@ -1150,7 +1150,8 @@ Instead of a minimum move of 2, singletons may start moves if all holes are empt
   </div>
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p37.
-<p>Deviation: Game doesn't end until <= 4 seeds for loser, but in rearrangement rules, all holes must contain a seed. Also, the winner's side is setup reversed of loser's side, so both players must have enough seeds for a valid move. Therefore, the game will end when there are not enough seeds for the loser to fill their side of the board with a valid move.
+<p>Deviation 1: There is a contraction in the rules: rounds continue until one player is reduced to 4 or fewer seeds (bottom p39) but on game setup each hole must contain one seed and be playable (9 seeds) (middle p39). The game ends on fewer than 9 seeds.
+<p>Deviation 2: Choosing to shorten the board is not supported in Mancala Games. <a href="game_params.html#round_fill">ROUND_FILL</a> of SHORTEN is not a user choice.
 <h3 id="Goat" class="game_desc">Goat</h3>
 <p>A single-lap mancala with SPLIT <a href="game_params.html#sow_direct">SOW_DIRECT</a>. Minimum move is 2 seeds. Multiple capture on opponents side on 2s. A player must pass, if they have no moves. A simplified version of <a href="about_games.html#Cow">Cow</a>.
 <div class="cols_row">

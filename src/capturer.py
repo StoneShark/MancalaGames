@@ -828,11 +828,7 @@ class NotInhibited(CaptMethodIf):
 
 class RepeatTurn(CaptMethodIf):
     """Convert mdata.captured to REPEAT_TURN based on
-    configuration of capt_rturn.
-
-    The rturn_cnt is maintained in the parent game because it
-    must be part of the game state (decos should not have
-    game state)."""
+    configuration of capt_rturn."""
 
     def __init__(self, game, decorator=None):
 
@@ -860,10 +856,6 @@ class RepeatTurn(CaptMethodIf):
                 mdata.repeat_turn = True
             else:
                 game_log.add('Second repeat turn prevented', game_log.INFO)
-            self.game.rturn_cnt += 1
-
-        else:
-            self.game.rturn_cnt = 0
 
 
 # %% build deco chains

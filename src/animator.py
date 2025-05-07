@@ -229,6 +229,17 @@ class AniList:
         return item in self.values
 
 
+    def __add__(self, other):
+        """Return a list of the values of both objects."""
+
+        if isinstance(other, AniList):
+            ovals = other.values
+        else:
+            ovals = other
+
+        return self.values + ovals
+
+
     def copy(self):
         """If the 'list' is being copied, it is likely
         for a purpose other than animation.

@@ -131,9 +131,12 @@ def add_creation_rules(rules):
 
     rules.add_rule(
         'high_min_moves',
-        rule=lambda ginfo: ginfo.min_move not in range(1, MAX_MIN_MOVES + 1),
-        msg=f'Min_move seems wrong  (1<= convention <= {MAX_MIN_MOVES})',
+        both_objs=True,
+        rule=lambda ginfo, holes: not 1 <= ginfo.min_move <= min(holes, MAX_MIN_MOVES),
+        msg=f'Min_move seems wrong (1<= convention <= min(holes, {MAX_MIN_MOVES}))',
         excp=gi.GameInfoError)
+        # First, convenstion. Second, the even fill round ender
+        # assumes that min move is <= holes
 
 
 def add_pattern_rules(rules):
