@@ -542,7 +542,7 @@ class MancalaUI(tk.Frame):
         """Cancel any pending after methods."""
 
         afters = self.tk.eval('after info')
-        # print(f"cancel pending afters: {afters or 'None'}")
+        print(f"cancel pending afters: {afters or 'None'}")   # TODO recomment debug
         for after_id in afters.split():
             self.after_cancel(after_id)
 
@@ -1182,12 +1182,16 @@ class MancalaUI(tk.Frame):
 
         if (self.game.rturn_cnt >= RTURN_QUERY
                 and not self.game.rturn_cnt % RTURN_QFREQ):
+
+            self._cancel_pending_afters()
+
             thing = ROUND if self.game.info.rounds else 'game'
             message = [f"""The AI has played {self.game.rturn_cnt}
                            repeated turns. Would you like to end
                            the {thing}?""",
                        f"""You will be asked again in {RTURN_QFREQ}
                            turns."""]
+            self._cancel_pending_afters()
             do_it = ui_utils.ask_popup(self, 'AI Repeating Turns',
                                        message, ui_utils.YESNO)
             if do_it:
@@ -1197,3 +1201,6 @@ class MancalaUI(tk.Frame):
                     self.end_game()
 
                 self.master.config(cursor=ui_utils.NORMAL)
+
+            else:
+                self.schedule_ai()
