@@ -220,13 +220,15 @@ class AiPlayer(ai_interface.AiPlayerIf):
     def score(self, end_cond):
         """Statically evaluate the playing position in terms of the bottom
         player (i.e. False).
-        end_cond is the result of the last move."""
+        end_cond is the result of the last move.
+        Always score the boards or the AI makes stupid moves once it
+        knows it lost."""
 
         sval = self._score_endgame(end_cond)
-        if sval is not None:
-            return sval
+        if sval is None:
+            sval = 0
 
-        return sum(scorer(end_cond) for scorer in self.scorers)
+        return sval + sum(scorer(end_cond) for scorer in self.scorers)
 
 
     def _score_endgame(self, end_cond):
@@ -239,9 +241,6 @@ class AiPlayer(ai_interface.AiPlayerIf):
         if end_cond in (gi.WinCond.ROUND_TIE, gi.WinCond.TIE):
             return -5 if self.game.turn else 5
 
-        if end_cond == gi.WinCond.ENDLESS:
-            return 0
-
         return None
 
 
@@ -253,6 +252,7 @@ class AiPlayer(ai_interface.AiPlayerIf):
             return mult * self.sc_params.repeat_turn
 
         return 0
+
 
     def _score_stores(self, _):
         """Score the stores and children."""
