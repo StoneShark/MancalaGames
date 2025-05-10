@@ -187,9 +187,11 @@ class TestEastWestIncr:
         return game
 
 
-    def test_ewincr(self, game):
+    @pytest.mark.parametrize('direct', gi.Direct)
+    def test_ewincr(self, game, direct):
+        """incrementing is independent of the direction set in the game."""
 
-        object.__setattr__(game.info, ckey.SOW_DIRECT, gi.Direct.CW)
+        object.__setattr__(game.info, ckey.SOW_DIRECT, direct)
         incr = two_cycle.EastWestIncr(game)
 
         # CW, west side
@@ -208,9 +210,6 @@ class TestEastWestIncr:
         assert incr.incr(7, gi.Direct.CW) == 6
         assert incr.incr(8, gi.Direct.CW) == 7
 
-        object.__setattr__(game.info, ckey.SOW_DIRECT, gi.Direct.CCW)
-        incr = two_cycle.EastWestIncr(game)
-
         # CCW, west side
         assert incr.incr(0, gi.Direct.CCW) == 1
         assert incr.incr(1, gi.Direct.CCW) == 2
@@ -226,27 +225,6 @@ class TestEastWestIncr:
         assert incr.incr(6, gi.Direct.CCW) == 7
         assert incr.incr(7, gi.Direct.CCW) == 8
         assert incr.incr(8, gi.Direct.CCW) == 3
-
-
-    def test_not_impl_rule(self):
-        """test that there a rule to prevent"""
-
-        with pytest.raises(NotImplementedError):
-            gi.GameInfo(capt_on=[2],
-                        stores=True,
-                        sow_direct=gi.Direct.SPLIT,
-                        goal=3,
-                        nbr_holes=6,
-                        rules=two_cycle.EastWestCycle.rules)
-
-
-    def test_not_impl_deco(self, game):
-        """Test that the class catches the error."""
-
-        object.__setattr__(game.info, ckey.SOW_DIRECT, gi.Direct.SPLIT)
-
-        with pytest.raises(NotImplementedError):
-            two_cycle.EastWestIncr(game)
 
 
 class TestEWClearEnder:

@@ -312,7 +312,6 @@ class Ohojichi(SameSide):
 
         self.empty_store = False
 
-
         holes = self.cts.holes
         dbl_holes = self.cts.dbl_holes
         half = holes // 2

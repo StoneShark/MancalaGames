@@ -16,6 +16,7 @@ import ginfo_rules
 import minimax
 import montecarlo_ts as mcts
 import negamax
+import same_side
 
 from game_logger import game_log
 
@@ -75,7 +76,7 @@ class AiPlayer(ai_interface.AiPlayerIf):
     def __init__(self, game, player_dict):
 
         super().__init__(game, player_dict)
-        player_dict_rules().test(player_dict, game.info)
+        player_dict_rules().test(player_dict, game)
 
         if ckey.ALGORITHM in player_dict:
             self.set_algorithm(player_dict[ckey.ALGORITHM])
@@ -422,17 +423,20 @@ class AiPlayer(ai_interface.AiPlayerIf):
 DIFF_LEVELS = 4
 MAX_MINIMAX_DEPTH = 15
 
-def negamax_no_repeat_turn(ginfo):
+def negamax_no_repeat_turn(game):
     """Return True if this game cannot be played with the negamaxer."""
 
+    ginfo = game.info
     return (ginfo.sow_own_store
                 or ginfo.capt_rturn
-                or ginfo.xc_sown)
+                or ginfo.xc_sown
+                or isinstance(game, same_side.Ohojichi))
 
 
-def mcts_no_hidden_state(ginfo):
+def mcts_no_hidden_state(game):
     """Return true if this game cannot be played with MCTS."""
 
+    ginfo = game.info
     return (ginfo.prescribed
                 or ginfo.nocaptmoves
                 or ginfo.allow_rule in (gi.AllowRule.FIRST_TURN_ONLY_RIGHT_TWO,
@@ -451,7 +455,7 @@ def mcts_no_hidden_state(ginfo):
 
 def player_dict_rules():
     """Create the rules to check the consistency of the player dict.
-    pdict will always be passed, game.info is the second optional
+    pdict will always be passed, game is the second optional
     object."""
 
     rules = ginfo_rules.RuleDict()
@@ -488,8 +492,8 @@ def player_dict_rules():
 
     rules.add_rule(
         'stores_scorer',
-        rule=lambda pdict, ginfo: (not ginfo.stores
-                                   and not ginfo.child_cvt
+        rule=lambda pdict, game: (not game.info.stores
+                                   and not game.info.child_cvt
                                    and ckey.SCORER in pdict
                                    and ckey.STORES_M in pdict[ckey.SCORER]
                                    and pdict[ckey.SCORER][ckey.STORES_M]),
@@ -499,10 +503,11 @@ def player_dict_rules():
 
     rules.add_rule(
         'stores_scorer_inv',
-        rule=lambda pdict, ginfo: (ginfo.goal in (gi.Goal.CLEAR,
-                                                  gi.Goal.DEPRIVE,
-                                                  gi.Goal.RND_WIN_COUNT_CLR,
-                                                  gi.Goal.RND_WIN_COUNT_DEP)
+        rule=lambda pdict, game: (game.info.goal in (
+                                      gi.Goal.CLEAR,
+                                      gi.Goal.DEPRIVE,
+                                      gi.Goal.RND_WIN_COUNT_CLR,
+                                      gi.Goal.RND_WIN_COUNT_DEP)
                                    and ckey.SCORER in pdict
                                    and ckey.STORES_M in pdict[ckey.SCORER]
                                    and pdict[ckey.SCORER][ckey.STORES_M]),
@@ -512,7 +517,7 @@ def player_dict_rules():
 
     rules.add_rule(
         'mlaps_access_prohibit',
-        rule=lambda pdict, ginfo: (ginfo.mlaps
+        rule=lambda pdict, game: (game.info.mlaps
                                    and ckey.SCORER in pdict
                                    and ckey.ACCESS_M in pdict[ckey.SCORER]
                                    and pdict[ckey.SCORER][ckey.ACCESS_M]),
@@ -522,7 +527,7 @@ def player_dict_rules():
 
     rules.add_rule(
         'udirect_access_prohibit',
-        rule=lambda pdict, ginfo: (ginfo.udirect
+        rule=lambda pdict, game: (game.info.udirect
                                    and ckey.SCORER in pdict
                                    and ckey.ACCESS_M in pdict[ckey.SCORER]
                                    and pdict[ckey.SCORER][ckey.ACCESS_M]),
@@ -532,7 +537,7 @@ def player_dict_rules():
 
     rules.add_rule(
         'no_side_access',
-        rule=lambda pdict, ginfo: (ginfo.mlength == 3
+        rule=lambda pdict, game: (game.info.mlength == 3
                                    and ckey.SCORER in pdict
                                    and ckey.ACCESS_M in pdict[ckey.SCORER]
                                    and pdict[ckey.SCORER][ckey.ACCESS_M]),
@@ -543,7 +548,7 @@ def player_dict_rules():
 
     rules.add_rule(
         'child_scorer',
-        rule=lambda pdict, ginfo: (not ginfo.child_cvt
+        rule=lambda pdict, game: (not game.info.child_cvt
                                    and ckey.SCORER in pdict
                                    and ckey.CHILD_CNT_M in pdict[ckey.SCORER]
                                    and pdict[ckey.SCORER][ckey.CHILD_CNT_M]),
@@ -553,9 +558,9 @@ def player_dict_rules():
 
     rules.add_rule(
         'no_repeat_scorer',
-        rule=lambda pdict, ginfo: (not (ginfo.sow_own_store
-                                        or ginfo.capt_rturn
-                                        or ginfo.xc_sown)
+        rule=lambda pdict, game: (not (game.info.sow_own_store
+                                        or game.info.capt_rturn
+                                        or game.info.xc_sown)
                                    and ckey.SCORER in pdict
                                    and ckey.REPEAT_TURN in pdict[ckey.SCORER]
                                    and pdict[ckey.SCORER][ckey.REPEAT_TURN]),
@@ -566,18 +571,18 @@ def player_dict_rules():
 
     rules.add_rule(
         'nmax_no_repeat',
-        rule=lambda pdict, ginfo: (negamax_no_repeat_turn(ginfo)
+        rule=lambda pdict, game: (negamax_no_repeat_turn(game)
                                        and ckey.ALGORITHM in pdict
                                        and pdict[ckey.ALGORITHM] == NEGAMAXER),
         both_objs=True,
-        msg="""NegaMax not compatible with repeat turns
-            (SOW_OWN_STORE | CAPT_RTURN | XC_SOWN)""",
+        msg="""NegaMaxer is not compatible with repeat turns
+            (SOW_OWN_STORE | CAPT_RTURN | XC_SOWN | Ohojichi)""",
         excp=gi.GameInfoError)
 
 
     rules.add_rule(
         'mcts_no_hidden_state',
-        rule=lambda pdict, ginfo: (mcts_no_hidden_state(ginfo)
+        rule=lambda pdict, game: (mcts_no_hidden_state(game)
                                        and ckey.ALGORITHM in pdict
                                        and pdict[ckey.ALGORITHM] == MCTS),
         both_objs=True,

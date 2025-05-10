@@ -198,6 +198,12 @@ vpath %.py .\\test
 	coverage run -m pytest test\\$(subst .test,.py,$@) --sim_fails
 	coverage html
 
+# do a stress test of one game:   make Wari.stress
+# does both Wari and Wari GSO
+PHONY: %.stress
+%.stress: test\\context.py src\\game_params.csv $(subst .stre,.py,$@)
+	pytest -k $(subst .stress,,$@) test\\test_z_simul_game.py --sim_fails --nbr_runs 1000
+
 
 UNIT_TESTS += test_ai_player.cov
 UNIT_TESTS += test_allowables.cov
