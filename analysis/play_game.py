@@ -180,7 +180,7 @@ def make_one_move(game, move):
 
 
 def play_one_game(game, fplayer, tplayer,
-                  *, save_logs=False, move_limit=0, end_all=False):
+                  *, show_log=False, move_limit=0, end_all=False):
     """Play one game between the two players, returning the results.
     If either/both is None, use random choice moves.
     Otherwise use the player.
@@ -196,7 +196,7 @@ def play_one_game(game, fplayer, tplayer,
     tplayer : AiPlayer
         The configuration to use for the True player.
 
-    save_logs : bool
+    show_log : bool
         True if the game_logger should be used for this game.
         Records the start turn of the game.
         The game_logger is disabled while the AiPlayers are
@@ -233,11 +233,11 @@ def play_one_game(game, fplayer, tplayer,
         if game.turn and tplayer:
             game_logger.game_log.active = False
             move = tplayer.pick_move()
-            game_logger.game_log.active = save_logs
+            game_logger.game_log.active = show_log
         elif not game.turn and fplayer:
             game_logger.game_log.active = False
             move = fplayer.pick_move()
-            game_logger.game_log.active = save_logs
+            game_logger.game_log.active = show_log
         else:
             moves = game.get_moves()
             assert moves, "Game didn't end right."
@@ -261,7 +261,8 @@ def play_one_game(game, fplayer, tplayer,
 
 
 def play_games(game, fplayer, tplayer, nbr_runs, *,
-               save_logs=False, move_limit=0, end_all=False, result_func=None):
+               save_logs=False, show_log=False,
+               move_limit=0, end_all=False, result_func=None):
     """Play a nbr_runs games between two players. Half will be
     started by False and half by True.
 
@@ -285,6 +286,9 @@ def play_games(game, fplayer, tplayer, nbr_runs, *,
         and the game configuration.
         Only one game will be played per second (to avoid
         filename conflicts in the game logger).
+
+    show_log : bool
+        If True, the game logger is set to DETAIL.
 
     move_limit : int (optional)
         Number of turns to limit each game to. Games which
@@ -311,7 +315,7 @@ def play_games(game, fplayer, tplayer, nbr_runs, *,
 
     game_results = GameStats()
 
-    if save_logs:
+    if save_logs | show_log:
         game_logger.game_log.active = True
         game_logger.game_log.level = game_logger.game_log.DETAIL
     else:
@@ -323,7 +327,7 @@ def play_games(game, fplayer, tplayer, nbr_runs, *,
         starter = game.starter = game.turn = bool(cnt < nbr_runs // 2)
 
         result, winner = play_one_game(game, fplayer, tplayer,
-                                       save_logs=save_logs,
+                                       show_log=save_logs | show_log,
                                        move_limit=move_limit,
                                        end_all=end_all)
         if save_logs:
