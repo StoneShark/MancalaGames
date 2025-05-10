@@ -281,9 +281,9 @@ class HoleButton(tk.Canvas):
 
         if (not self.active
                 or self['state'] == tk.DISABLED
-                or event.serial == self.last_event):
+                or event.time == self.last_event):
             return
-        self.last_event = event.serial
+        self.last_event = event.time
 
         if self.rotate_text():
             self.behavior.do_right_click()
@@ -302,9 +302,9 @@ class HoleButton(tk.Canvas):
 
         if (not self.active
                 or self['state'] == tk.DISABLED
-                or event.serial == self.last_event):
+                or event.time == self.last_event):
             return
-        self.last_event = event.serial
+        self.last_event = event.time
 
         if self.rotate_text():
             self.behavior.do_left_click()
