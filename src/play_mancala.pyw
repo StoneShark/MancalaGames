@@ -541,6 +541,30 @@ class SelectList(ttk.Labelframe):
             self.select(last)
 
 
+    def jump_up(self, _):
+        """Move up item in the treeview."""
+
+        current = self.game_list.focus()
+        if not current:
+            return
+
+        children = self.game_list.get_children()
+        prev_idx = max(children.index(current) - 1, 0)
+        self.select(children[prev_idx])
+
+
+    def jump_down(self, _):
+        """Move down one item in the treeview."""
+
+        current = self.game_list.focus()
+        if not current:
+            return
+
+        children = self.game_list.get_children()
+        next_idx = min(children.index(current) + 1, len(children) - 1)
+        self.select(children[next_idx])
+
+
     def key_pressed(self, event):
         """If a key with a keysym of length 1 is pressed,
         select the next element that starts with that key,
@@ -829,6 +853,8 @@ class GameChooser(ttk.Frame):
         self.master.bind('<Return>', self.play_game)
         self.master.bind('<Home>', self.select_list.jump_to_first)
         self.master.bind('<End>', self.select_list.jump_to_last)
+        self.master.bind('<Up>', self.select_list.jump_up)
+        self.master.bind('<Down>', self.select_list.jump_down)
         self.master.bind('<Key>', self.select_list.key_pressed)
 
 
