@@ -506,7 +506,8 @@ class MancalaUI(tk.Frame):
             pmenu.add_command(label='Print All',
                                   command=lambda: print(self.game.deco))
             pmenu.add_separator()
-            for vname, value in vars(self.game.deco).items():
+            for vname, value in sorted(vars(self.game.deco).items(),
+                                       key=lambda pair: pair[0]):
                 name = vname.title()
                 pmenu.add_command(label=f"Print {name}",
                                   command=ft.partial(print,
@@ -542,7 +543,7 @@ class MancalaUI(tk.Frame):
         """Cancel any pending after methods."""
 
         afters = self.tk.eval('after info')
-        print(f"cancel pending afters: {afters or 'None'}")   # TODO recomment debug
+        # print(f"cancel pending afters: {afters or 'None'}")
         for after_id in afters.split():
             self.after_cancel(after_id)
 
@@ -1158,6 +1159,9 @@ class MancalaUI(tk.Frame):
                 self.refresh(ani_ok=True)
             else:
                 self._ai_move_epilog()
+
+        else:
+            self.master.config(cursor=ui_utils.NORMAL)
 
 
     def _ai_move_epilog(self):
