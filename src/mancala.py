@@ -849,6 +849,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             return mdata
 
         self.turn = not self.turn
+        self.rturn_cnt = 0
         return mdata
 
 
