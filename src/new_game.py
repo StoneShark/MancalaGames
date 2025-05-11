@@ -42,6 +42,7 @@ def set_round_starter(game):
 
     game.starter = game.turn
 
+
 # %%  NewGame interace
 
 class NewGameIf(deco_chain_if.DecoChainIf):
@@ -49,7 +50,7 @@ class NewGameIf(deco_chain_if.DecoChainIf):
 
     @abc.abstractmethod
     def new_game(self, win_cond=None, new_round_ok=False):
-        """collect seeds when game ended.
+        """Start a new game.
 
         Return False if a new round was started.
         True if a new game was started."""

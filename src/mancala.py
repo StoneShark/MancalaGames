@@ -256,10 +256,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
                                                  self.cts.total_seeds)
 
         self.deco = ManDeco(self)
-        self.init_bprops()
-
-        if game_info.start_pattern:
-            self.deco.new_game.new_game(None, False)
+        self.deco.new_game.new_game(None, False)
 
 
     def __str__(self):

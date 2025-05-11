@@ -1663,6 +1663,8 @@ class TestAnimator:
         mobj = mocker.patch('animator.one_step')
 
         game = mancala.Mancala(game_consts, game_info)
+
+        game.starter = False
         game.turn = False
         game.board = [0, 1, 2, 1, 1, 0]
         game.store = [3, 4]
@@ -1692,6 +1694,7 @@ class TestAnimator:
         mobj = mocker.patch('animator.one_step')
 
         game = mancala.Mancala(game_consts, game_info)
+        game.starter = False
         game.turn = False
         game.board = [0, 1, 2, 1, 1, 0]
         game.store = [3, 4]

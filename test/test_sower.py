@@ -591,6 +591,7 @@ class TestSower:
                                 rules=mancala.Mancala.rules)
 
         game =  mancala.Mancala(game_consts, game_info)
+        game.turn = False
 
         game.board = [0, 5, 2, 2, 2, 2]
         game.child = [T, N, T, F, T, N]
@@ -2103,6 +2104,7 @@ class TestAnimator:
         mobj = mocker.patch('animator.animator.flash')
 
         game = mancala.Mancala(game_consts, game_info)
+        game.turn = False
 
         assert isinstance(game.deco.sower, msowd.SowMlapSeeds)
         assert isinstance(game.deco.sower.lap_cont, msowd.AnimateLapStart)
@@ -2139,6 +2141,7 @@ class TestAnimator:
         mobj = mocker.patch('animator.animator.flash')
 
         game = mancala.Mancala(game_consts, game_info)
+        game.turn = False
 
         assert isinstance(game.deco.sower, msowd.SowMlapSeeds)
         assert isinstance(game.deco.sower.lap_cont, msowd.AnimateLapStart)
