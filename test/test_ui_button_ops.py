@@ -134,7 +134,14 @@ class Action:
     click: str
     on_tgrid: bool = False
 
+
+# make certain every event happens at a different time
+time_simul = 1000
+
 def gen_event_fnc(game_ui, action):
+
+    global time_simul
+    time_simul += 1
 
     btn = get_button(game_ui, action.loc)
 
@@ -142,9 +149,10 @@ def gen_event_fnc(game_ui, action):
         x, y, *_ = btn.coords(btn.rclick_id)
         return ft.partial(btn.event_generate,
                           action.click,
-                          x=x + 5, y=y + 5)
+                          x=x + 5, y=y + 5,
+                          time=time_simul)
 
-    return ft.partial(btn.event_generate, action.click)
+    return ft.partial(btn.event_generate, action.click, time=time_simul)
 
 
 @dc.dataclass
