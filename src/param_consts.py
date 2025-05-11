@@ -119,6 +119,7 @@ STRING_DICTS = {
          'Not Symetrically Opposite': gi.ChildLocs.NOT_SYM_OPP,
          'Not Facing': gi.ChildLocs.NOT_FACING,
          'Ends plus all opposite': gi.ChildLocs.ENDS_PLUS_ALL_OPP,
+         "Fixed: 1 child in right hole": gi.ChildLocs.FIXED_ONE_RIGHT,
          }),
 
     'ChildType': lookup_dicts(
@@ -253,6 +254,7 @@ STRING_DICTS = {
          "Lap Capt Then Opp takes Own (< sow_param)":
              gi.SowRule.OPP_GETS_OWN_LAST,
          "Do not sow opponents children": gi.SowRule.NO_OPP_CHILD,
+         "Don't sow opp children unless final seed": gi.SowRule.OPP_CHILD_ONLY1,
          "Continue lap sow only on sow_param seeds": gi.SowRule.CONT_LAP_ON,
          "Continue lap sow when >= sow_param seeds": gi.SowRule.CONT_LAP_GREQ,
          }),

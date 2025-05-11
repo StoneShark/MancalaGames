@@ -185,7 +185,7 @@ def _build_ender(game):
     ender = emd.EndTurnNotPlayable(game, ender)
     ender = _add_no_change(game, ender)
 
-    if game.info.child_cvt:
+    if game.info.child_type:
         sclaimer = claimer.ChildClaimSeeds(game)
     else:
         sclaimer = claimer.ClaimSeeds(game)
@@ -233,7 +233,7 @@ def deco_quitter(game):
                           gi.Goal.RND_WIN_COUNT_CLR):
         quitter = emd.QuitToTie(game)
 
-    elif game.info.stores or game.info.child_cvt:
+    elif game.info.stores or game.info.child_type:
 
         if game.info.unclaimed == gi.EndGameSeeds.DONT_SCORE:
             sclaimer = claimer.TakeOnlyChildNStores(game)
@@ -248,7 +248,7 @@ def deco_quitter(game):
         elif game.info.stores:
             sclaimer = claimer.DivvySeedsStores(game)
 
-        else:  # if game.info.child_cvt:
+        else:  # if game.info.child_type:
             sclaimer = claimer.DivvySeedsChildOnly(game)
 
         quitter = emd.EndGameWinner(game, sclaimer=sclaimer)

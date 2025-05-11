@@ -34,6 +34,7 @@ def _add_blkd_divert_sower(game):
 def _add_base_sower(game):
     """Choose the base sower."""
     # pylint: disable=too-complex
+    # pylint: disable=too-many-branches
 
     sower = None
     if game.info.sow_rule:
@@ -53,6 +54,9 @@ def _add_base_sower(game):
 
         elif game.info.sow_rule == gi.SowRule.NO_OPP_CHILD:
             sower = sowd.SowSkipOppChild(game)
+
+        elif game.info.sow_rule == gi.SowRule.OPP_CHILD_ONLY1:
+            sower = sowd.SowSkipOppChildUnlessFinal(game)
 
         elif game.info.sow_rule == gi.SowRule.OPP_GETS_OWN_LAST:
             sower = sowd.SowSeeds(game)

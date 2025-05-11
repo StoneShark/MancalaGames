@@ -225,6 +225,8 @@ board length >= 5: a b c c c ... c d e
   + TB B B B TB
   + TB T T T TB
 
+- FIXED_ONE_RIGHT: At the game start, each player has a child in their own rightmost hole. Additional children may not be created.
+
 <param child_rule>
 Additional child creation requirements may be set. These are in addition to location restrictions specified by CHILD_LOCS. If the CHILD_TYPE allows making more than one child, the child_rule is applied to hole in which the final seed was sown; the second hole does not need to meet the criteria.
 
@@ -721,6 +723,8 @@ Special sow rules add additional behavior or restrictions to the sowing phase:
 - CONT_LAP_ON: Only continue multilap sowing when a hole is sown to sow_param seeds.
 
 - CONT_LAP_GREQ: Only continue multilap sowing when a hole is sown to sow_param or more seeds.
+
+- OPP_CHILD_ONLY1: Do not sow opponent's children unless it is with the final seed of a sow.
 
 <param sow_start>
 When selected, the first seed is sown into (i.e., left in) the start hole.

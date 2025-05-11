@@ -621,6 +621,33 @@ class TestTerritory:
         assert game.owner == eowners
 
 
+class TestFixedChildren:
+
+    @pytest.fixture
+    def game(self):
+
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=3)
+        game_info = gi.GameInfo(stores=True,
+                                child_type=gi.ChildType.WEG,
+                                child_locs=gi.ChildLocs.FIXED_ONE_RIGHT,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = False
+        return game
+
+
+    def test_new_game(self, game):
+
+        game.child = [None] * 3 * 2
+        game.new_game(WinCond.WIN, new_round_ok=False)
+
+        assert game.child[2] is False
+        assert game.child[5] is True
+
+
+
 class TestBadEnums:
 
     def test_bad_round_fill(self):
@@ -632,7 +659,7 @@ class TestBadEnums:
                                 rules=mancala.Mancala.rules)
 
         object.__setattr__(game_info, 'rounds', gi.Rounds.HALF_SEEDS)
-        object.__setattr__(game_info, 'round_fill', 12)
+        object.__setattr__(game_info, 'round_fill', 25)
 
         with pytest.raises(NotImplementedError):
             mancala.Mancala(game_consts, game_info)
@@ -646,7 +673,7 @@ class TestBadEnums:
                                 rules=mancala.Mancala.rules)
 
         object.__setattr__(game_info, 'rounds', True)
-        object.__setattr__(game_info, 'round_starter', 12)
+        object.__setattr__(game_info, 'round_starter', 25)
 
         with pytest.raises(NotImplementedError):
             mancala.Mancala(game_consts, game_info)

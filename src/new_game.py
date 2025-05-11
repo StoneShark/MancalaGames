@@ -325,6 +325,17 @@ class NewRoundTally(NewGameIf):
         return False
 
 
+class NewFixedChildren(NewGameIf):
+    """Currently only support fixed children in rightmost hole."""
+
+    def new_game(self, win_cond=None, new_round_ok=False):
+
+        self.decorator.new_game(win_cond, new_round_ok)
+
+        self.game.child[self.game.cts.holes - 1] = False
+        self.game.child[self.game.cts.dbl_holes - 1] = True
+
+
 class SeedCountCheck(NewGameIf):
     """Check to make certain that the board is setup acceptably."""
 
@@ -353,6 +364,9 @@ def deco_new_game(game):
         new_game = NewGamePattern(game,
                                   PCLASSES[game.info.start_pattern],
                                   new_game)
+
+    if game.info.child_locs == gi.ChildLocs.FIXED_ONE_RIGHT:
+        new_game = NewFixedChildren(game, new_game)
 
     if game.info.rounds:
         if game.info.goal == gi.Goal.TERRITORY:

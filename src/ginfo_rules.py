@@ -340,6 +340,14 @@ def add_territory_rules(rules):
         # territory requires move triples, GS allowables doesn't support
 
     rules.add_rule(
+        'terr_no_fchild',
+        rule=lambda ginfo: (ginfo.goal == gi.Goal.TERRITORY
+                            and ginfo.child_locs == gi.ChildLocs.FIXED_ONE_RIGHT),
+        msg='Territory goal and fixed children in incompatible',
+        excp=NotImplementedError)
+        # player might not own the child hole
+
+    rules.add_rule(
         'terr_half_rounds',
         rule=lambda ginfo: (ginfo.goal == gi.Goal.TERRITORY
                             and ginfo.rounds == gi.Rounds.HALF_SEEDS),
@@ -455,8 +463,7 @@ def add_child_rules(rules):
     rules.add_rule(
         'next_ml_nochild',
         rule=lambda ginfo: (ginfo.mlaps == gi.LapSower.LAPPER_NEXT
-                            and (ginfo.child_type != gi.ChildType.NOCHILD
-                                 or ginfo.child_cvt)),
+                            and ginfo.child_type),
         msg='MLAPS of LAPPER_NEXT is not supported with CHILD',
         excp=NotImplementedError)
         # StopOnChild would need to change and ChildLapCont would
@@ -464,9 +471,21 @@ def add_child_rules(rules):
 
     rules.add_rule(
         'child_need_cvt',
-        rule=lambda ginfo: ginfo.child_type and not ginfo.child_cvt,
+        rule=lambda ginfo: (ginfo.child_type
+                            and ginfo.child_locs
+                                    != gi.ChildLocs.FIXED_ONE_RIGHT
+                            and not ginfo.child_cvt),
         msg='Selected child type requires CHILD_CVT',
         excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'dont_need_cvt',
+        rule=lambda ginfo: (ginfo.child_type
+                            and ginfo.child_locs
+                                    == gi.ChildLocs.FIXED_ONE_RIGHT
+                            and ginfo.child_cvt),
+        msg='CHILD_CVT is ignored with Child Locs of FIXED_ONE_RIGHT',
+        warn=True)
 
     rules.add_rule(
         'child_cvt_need_type',
@@ -476,7 +495,7 @@ def add_child_rules(rules):
 
     rules.add_rule(
         'child_no_gs',
-        rule=lambda ginfo: (ginfo.child_cvt
+        rule=lambda ginfo: (ginfo.child_type
                             and ginfo.grandslam != gi.GrandSlam.LEGAL),
         msg='Children requires that GRANDSLAM be Legal',
         excp=NotImplementedError)

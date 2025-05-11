@@ -111,6 +111,7 @@ class ChildLocs(enum.IntEnum):
     NOT_SYM_OPP = 8
     NOT_FACING = 9
     ENDS_PLUS_ALL_OPP = 10
+    FIXED_ONE_RIGHT = 11
 
 
 @enum.unique
@@ -291,6 +292,7 @@ class SowRule(enum.IntEnum):
     OPP_GETS_OWN_LAST = 10
     CONT_LAP_ON = 11
     CONT_LAP_GREQ = 12
+    OPP_CHILD_ONLY1 = 13
 
 
 @enum.unique

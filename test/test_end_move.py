@@ -1686,6 +1686,8 @@ class TestTerritory:
         assert mdata.win_cond == econd
         assert mdata.winner == ewinner
 
+        assert 'req_seeds' in str(rgame.deco.ender)
+
 
     @pytest.mark.parametrize('board, store, econd, ewinner', TERR_CASES)
     def test_no_rounds_territory(self, game, board, store, econd, ewinner):

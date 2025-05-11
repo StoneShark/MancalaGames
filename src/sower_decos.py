@@ -351,6 +351,27 @@ class SowSkipOppChild(SowMethodIf):
         mdata.capt_loc = loc
 
 
+class SowSkipOppChildUnlessFinal(SowMethodIf):
+    """Skip sowing opponents children until the final seed."""
+
+    def sow_seeds(self, mdata):
+        """Sow seeds."""
+
+        incr = self.game.deco.incr.incr
+        loc = mdata.cont_sow_loc
+        for rem_seeds in range(mdata.seeds, 0, -1):
+
+            loc = incr(loc, mdata.direct, mdata.cont_sow_loc)
+
+            if rem_seeds > 1:
+                while self.game.child[loc] == (not self.game.turn):
+                    loc = incr(loc, mdata.direct, mdata.cont_sow_loc)
+
+            self.game.board[loc] += 1
+
+        mdata.capt_loc = loc
+
+
 class SowOppCaptsLast(SowMethodIf):
     """A sower that wraps another sower until we are down to
     the last few seeds.

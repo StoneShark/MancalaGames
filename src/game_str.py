@@ -127,7 +127,7 @@ def deco_get_string(game):
             or game.info.allow_rule == gi.AllowRule.MOVE_ALL_HOLES_FIRST):
         hole_deco = HoleMarker(game, LOCK, 'unlocked', hole_deco)
 
-    if game.info.child_cvt:
+    if game.info.child_type:
         hole_deco = HoleMarker(game, CHILD, 'child', hole_deco)
 
     return GameString(game, hole_deco)

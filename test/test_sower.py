@@ -607,6 +607,40 @@ class TestSower:
         assert mdata.capt_loc == 5
 
 
+    @pytest.mark.parametrize('turn, move, eboard',
+                             [(False, 1, [0, 0, 4, 3, 3, 0]),
+                              (False, 2, [1, 3, 0, 3, 2, 1]),
+                              (False, 3, [1, 3, 3, 0, 2, 1]),
+                              ])
+    # @pytest.mark.usefixtures("logger")
+    def test_opp_child_1(self, turn, move, eboard):
+
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
+        game_info = gi.GameInfo(evens=True,
+                                stores=True,
+                                child_type = gi.ChildType.NORMAL,
+                                child_cvt = 6,
+                                sow_rule=gi.SowRule.OPP_CHILD_ONLY1,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game =  mancala.Mancala(game_consts, game_info)
+
+        # sowing from children and wrong side but that's not checked here
+
+        game.board = [0, 3, 3, 2, 2, 0]
+        game.child = [T, N, F, F, T, N]
+        game.turn = turn
+        # print(game)
+
+        mdata = move_data.MoveData(game, move)
+        mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(move)
+        mdata.direct = gi.Direct.CCW
+        game.deco.sower.sow_seeds(mdata)
+        # print(game)
+
+        assert game.board == eboard
+
 
 class TestMlap:
 

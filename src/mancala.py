@@ -375,7 +375,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             blocked = tuple(self.blocked)
 
         child = None
-        if self.info.child_cvt:
+        if self.info.child_type:
             child = tuple(self.child)
 
         owner = None
@@ -474,7 +474,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             blocked = tuple(self.blocked)
 
         child = None
-        if self.info.child_cvt:
+        if self.info.child_type:
             child = tuple(self.child)
 
         owner = None
