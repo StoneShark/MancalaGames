@@ -275,6 +275,7 @@ STRING_DICTS = {
          'Alts Split Right': gi.StartPattern.ALTS_SPLIT,
          'Equal plus one in Right': gi.StartPattern.RIGHTMOST_PLUS_ONE,
          'Move Rightmost Hole': gi.StartPattern.MOVE_RIGHTMOST,
+         'Random Move': gi.StartPattern.MOVE_RANDOM,
          }),
 
 }

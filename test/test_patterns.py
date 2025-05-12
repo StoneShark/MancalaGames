@@ -6,6 +6,7 @@ Created on Thu Oct 12 07:34:54 2023
 """
 
 import collections
+
 import pandas as pd
 import pytest
 pytestmark = pytest.mark.unittest
@@ -112,7 +113,7 @@ def test_rules():
     assert not fp.AltsThenSplitPattern.size_ok(3)
 
 
-class TestRandom:
+class TestRandomFill:
 
     @pytest.fixture
     def game(self, request):
@@ -195,3 +196,52 @@ class TestMoveRightmost:
 
         assert game.board == [3, 0, 3, 1, 0, 3, 0, 3]
         assert game.store == [3, 0]
+
+
+class TestRandomMove:
+
+    @pytest.fixture
+    def game(self):
+
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=6)
+        game_info = gi.GameInfo(start_pattern=gi.StartPattern.MOVE_RANDOM,
+                                evens=True,
+                                stores=True,
+                                sow_own_store=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+
+    @pytest.mark.no_seed
+    def test_patterns(self, game):
+        """Fill the game pattern a bunch of times."""
+
+        for _ in range(100):
+
+            game.new_game()
+
+            store = game.store
+            board = game.board
+
+            assert len(board) == 12
+            assert all(cnt >= 0 for cnt in board + store)
+            assert sum(store) + sum(board) == game.cts.total_seeds
+            assert not all(board[loc] == 6 for loc in range(12))
+
+
+    def test_repeat_turn(self, mocker, game):
+        """Force a repeat turn by mocking random.choice.
+        It should be ignored and the turn changed to the non-starter."""
+
+        mrand = mocker.patch('random.choice')
+        mrand.return_value = 2
+
+        game.starter = True       # need False to start the next game
+
+        game.new_game()
+
+        assert game.mdata
+        assert game.mdata.repeat_turn == True
+        assert game.turn != game.starter

@@ -785,6 +785,8 @@ Allows specifying non-all-equal start patterns. The following patterns are suppo
 
 - MOVE_RIGHTMOST: use when the first move of the game must be from the starter's rightmost hole. This start pattern will perform the opening move automatically, including any capture or seed removal that should occur.
 
+- MOVE_RANDOM: a random move is selected and executed. After the move the turn always changes to the next player; repeat turn is not honored on this opening random move. This can be used to neutralize the advantage a game starter might have.
+
 In the formulas above holes (n in figures) is the game constant HOLES and nbr_start is the game constant NBR_START.
 
 When a game is played in ROUNDS, start_pattern is only supported for round tally (RND_*) and territory GOAL games and only for ROUND_FILL of NOT_APPLICABLE and UCHOWN.

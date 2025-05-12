@@ -259,6 +259,8 @@ is included after the parameter sections.
 <b class="enum">RIGHTMOST_PLUS_ONE</b>: as in ALL_EQUAL but one extra seed is added to each player's rightmost hole. The total seeds in play is nbr_start x holes x 2 + 2.
 <li class="helptext">
 <b class="enum">MOVE_RIGHTMOST</b>: use when the first move of the game must be from the starter's rightmost hole. This start pattern will perform the opening move automatically, including any capture or seed removal that should occur.
+<li class="helptext">
+<b class="enum">MOVE_RANDOM</b>: a random move is selected and executed. After the move the turn always changes to the next player; repeat turn is not honored on this opening random move. This can be used to neutralize the advantage a game starter might have.
 </ol>
 <p>In the formulas above holes (n in figures) is the game constant <a href="game_params.html#holes">HOLES</a> and nbr_start is the game constant <a href="game_params.html#nbr_start">NBR_START</a>.
 <p>When a game is played in <a href="game_params.html#rounds">ROUNDS</a>, start_pattern is only supported for round tally (RND_*) and territory <a href="game_params.html#goal">GOAL</a> games and only for <a href="game_params.html#round_fill">ROUND_FILL</a> of NOT_APPLICABLE and UCHOWN.

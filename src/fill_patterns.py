@@ -324,7 +324,6 @@ class RightmostPlusOne(StartPatternIf):
         game.board = ([nstart] * (holes - 1) + [nstart + 1]) * 2
 
 
-
 class MoveRightmost(StartPatternIf):
     """Require first move from rightmost hole, not exactly a start
     pattern, but certainly not a prescribed opening.
@@ -352,6 +351,32 @@ class MoveRightmost(StartPatternIf):
         game.move(move_pos)
 
 
+class MoveRandom(StartPatternIf):
+    """Make a random opening move."""
+
+    @staticmethod
+    def size_ok(holes):
+        return True
+    err_msg = 'MoveRandom is always good'
+
+
+    @staticmethod
+    def nbr_seeds(holes, nbr_start):
+        return nbr_start * holes * 2
+
+
+    @staticmethod
+    def fill_seeds(game):
+        """Do a random move.  The move result is ignored.
+        If the turn is the same as the starter, swap it.
+        No repeat turn on an opening move."""
+
+        game.move(random.choice(game.get_moves()))
+
+        if game.turn == game.starter:
+            game.turn = not game.turn
+
+
 # %% Pattern Classes variable
 
 PCLASSES = [None] * len(gi.StartPattern)
@@ -365,3 +390,4 @@ PCLASSES[gi.StartPattern.RANDOM] = RandomPattern
 PCLASSES[gi.StartPattern.ALTS_SPLIT] = AltsThenSplitPattern
 PCLASSES[gi.StartPattern.RIGHTMOST_PLUS_ONE] = RightmostPlusOne
 PCLASSES[gi.StartPattern.MOVE_RIGHTMOST] = MoveRightmost
+PCLASSES[gi.StartPattern.MOVE_RANDOM] = MoveRandom

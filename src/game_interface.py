@@ -313,6 +313,7 @@ class StartPattern(enum.IntEnum):
     ALTS_SPLIT = 7
     RIGHTMOST_PLUS_ONE = 8
     MOVE_RIGHTMOST = 9
+    MOVE_RANDOM = 10
 
 
 @enum.unique
