@@ -153,7 +153,6 @@ class ContIfXCapt(LapContinuerIf):
         return cont
 
 
-
 class ContIfBasicCapt(LapContinuerIf):
     """A wrapper: Attempt a basic capture.
 
@@ -163,7 +162,7 @@ class ContIfBasicCapt(LapContinuerIf):
 
     Need to use capt_ok to test for the capture, because
     the previous sowing might have already set mdata.captured
-    via OPP_GETS_OWN_LAST."""
+    via LAP_CAPT_OPP_GETS."""
 
     def do_another_lap(self, mdata):
 
@@ -184,6 +183,33 @@ class StopOnChild(LapContinuerIf):
         if self.game.child[mdata.capt_loc] is not None:
             game_log.add('MLap stop in child')
             return False
+        return self.decorator.do_another_lap(mdata)
+
+
+class ContWithCaptSeeds(LapContinuerIf):
+    """A wrapper: check if there is a capture.
+    If did a capture, continue lap with the seeds captured
+    along with the seeds from the last hole sown.
+
+    mdata.captured must be left set to whether a capture
+    has occured during the sow. If it was previously set,
+    it must stay set, even if we don't do a capture now."""
+
+    def do_another_lap(self, mdata):
+
+        saved = mdata.captured
+        mdata.captured = False              # temp clear for test
+
+        with animator.one_step():
+            self.game.capture_seeds(mdata)
+
+            if mdata.captured:
+                self.game.board[mdata.capt_loc] += self.game.store[self.game.turn]
+                self.game.store[self.game.turn] = 0
+                game_log.add('MLap continues with captured seeds.')
+                return True
+
+        mdata.captured |= saved
         return self.decorator.do_another_lap(mdata)
 
 
@@ -211,14 +237,15 @@ class StopCaptureSimul(LapContinuerIf):
         if not self.game.inhibitor.stop_me_capt(self.game.turn):
 
             with self.game.save_restore_state():
-                working_mdata = copy.copy(mdata)
+                with animator.animate_off():
+                    working_mdata = copy.copy(mdata)
 
-                self.game.capture_seeds(working_mdata)
-                captured = working_mdata.captured
+                    self.game.capture_seeds(working_mdata)
+                    captured = working_mdata.captured
 
-            if captured:
-                game_log.add('MLap stop for simul capture')
-                return False
+                if captured:
+                    game_log.add('MLap stop for simul capture')
+                    return False
         return self.decorator.do_another_lap(mdata)
 
 
@@ -286,8 +313,7 @@ class AnimateLapStart(LapContinuerIf):
 
     def do_another_lap(self, mdata):
 
-        with animator.animate_off():
-            cont = self.decorator.do_another_lap(mdata)
+        cont = self.decorator.do_another_lap(mdata)
 
         if cont and animator.active():
             animator.animator.flash(self.game.turn, loc=mdata.capt_loc)

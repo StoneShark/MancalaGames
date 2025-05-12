@@ -830,6 +830,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
                 game_log.add(
                     f'MLAP game ENDLESS, called end_game {mdata.win_cond}.',
                     game_log.IMPORT)
+                mdata.ended = gi.WinCond.ENDLESS
                 return mdata
 
             self.capture_seeds(mdata)

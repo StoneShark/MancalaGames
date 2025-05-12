@@ -48,6 +48,7 @@ class AllowRule(enum.IntEnum):
     RIGHT_2_1ST_THEN_ALL_TWO = 8
     MOVE_ALL_HOLES_FIRST = 9
     NOT_XFROM_1S = 10
+    OCCUPIED = 11
 
 
 @enum.unique
@@ -93,6 +94,7 @@ class CaptType(enum.IntEnum):
     NEXT = 1
     TWO_OUT = 2
     MATCH_OPP = 3
+    SINGLETONS = 4
 
 
 @enum.unique
@@ -289,10 +291,11 @@ class SowRule(enum.IntEnum):
     MAX_SOW = 7
     LAP_CAPT = 8
     NO_OPP_CHILD = 9
-    OPP_GETS_OWN_LAST = 10
+    LAP_CAPT_OPP_GETS = 10
     CONT_LAP_ON = 11
     CONT_LAP_GREQ = 12
     OPP_CHILD_ONLY1 = 13
+    LAP_CAPT_SEEDS = 14
 
 
 @enum.unique

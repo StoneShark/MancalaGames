@@ -47,6 +47,8 @@ Allow rules limit the holes from which moves may start. Disallowed holes are not
 
 - NOT_XFROM_1S: moves may not start from holes with a singleton opposite it.
 
+- OCCUPIED: The final seed of the sow must end in an occupied hole.
+
 <param blocks>
 Blocks remove holes from play and are shown on the UI with an X.
 
@@ -134,6 +136,8 @@ Capture type.
   + If multiple captures are configured, captures continue while the pattern of empty hole followed by an occupied hole repeats. 
 
 - MATCH_OPP: capture when the number of seeds in the final hole sown match the opposite-side hole. Multiple captures maybe made in either direction. Multilap sowing does stop for captures.
+
+- SINGLETONS: capture all singletons.
 
 <param child_cnt_m>
 The multiplier for the child scorer. The child scorer counts the number children each player has.
@@ -478,7 +482,7 @@ Determines if seeds from more than the initial start hole are picked up and sown
 
   + A SOW_RULE of CHANGE_DIR_LAP changes the direction of sowing after each lap. SOW_BLKD_DIV(_NR) is not supported for LAPPER_NEXT.
 
-Multilap games may get stuck in seemingly endless sowing loops. If more than 50 laps are sown, the computer will end the game using the same mechanism as the menu command <a href="mancala_help.html#gamemenu">End Game</a> based on GOAL and UNCLAIMED. 
+Multilap games may get stuck in seemingly endless sowing loops. If more than 75 laps are sown, the computer will end the game using the same mechanism as the menu command <a href="mancala_help.html#gamemenu">End Game</a> based on GOAL and UNCLAIMED. 
 
 <param mm_depth>
 The depth that the minimaxer or negamaxer will search the game tree from the current node. One value for each difficulty.
@@ -718,13 +722,15 @@ Special sow rules add additional behavior or restrictions to the sowing phase:
 
 - NO_OPP_CHILD: do not sow into your opponent's children.
 
-- OPP_GETS_OWN_LAST: Use LAP_CAPT sow rule until there are only sow_param seeds left. Then when down to the last seeds (sow_param or less at the start of a lap): seeds sown on the opponent's side are captured by the opponent. If the last seed would do a normal capture, the sower takes those seeds, including the last seed sown.
+- LAP_CAPT_OPP_GETS: Use LAP_CAPT sow rule until there are only sow_param seeds left. Then when down to the last seeds (sow_param or less at the start of a lap): seeds sown on the opponent's side are captured by the opponent. If the last seed would do a normal capture, the sower takes those seeds, including the last seed sown.
 
 - CONT_LAP_ON: Only continue multilap sowing when a hole is sown to sow_param seeds.
 
 - CONT_LAP_GREQ: Only continue multilap sowing when a hole is sown to sow_param or more seeds.
 
 - OPP_CHILD_ONLY1: Do not sow opponent's children unless it is with the final seed of a sow.
+
+- LAP_CAPT_SEEDS: Check for capture on each lap. If a capture occured, continue sowing with captured seeds and seeds in final hole sown. If no capture occured, continue if more than one seed is in the final hole. Not compatible with basic captures. Behaves badly with most capt_types unless other options are used to prevent endless sows.
 
 <param sow_start>
 When selected, the first seed is sown into (i.e., left in) the start hole.

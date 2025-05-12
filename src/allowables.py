@@ -180,6 +180,29 @@ class OppOrEmptyEnd(AllowableIf):
         return allow
 
 
+class Occupied(AllowableIf):
+    """Can only play from holes that end in an occupied hole."""
+
+    def get_allowable_holes(self):
+
+        allow = self.decorator.get_allowable_holes()
+        saved_state = self.game.state
+
+        for pos in range(self.game.cts.holes):
+            if not allow[pos]:
+                continue
+
+            mdata = self.game.sim_single_sow(pos)
+            if self.game.board[mdata.capt_loc] == 1:
+
+                game_log.add(f'Occupied: prevented {pos}', game_log.DETAIL)
+                allow[pos] = False
+
+            self.game.state = saved_state
+
+        return allow
+
+
 class SingleToZero(AllowableIf):
     """Can only move holes with single seeds to the next hole
     if it empty.
@@ -599,6 +622,7 @@ class DontAnimateAllowable(AllowableIf):
 def deco_allow_rule(game, allowable):
     """Add the allow rule decos."""
     # pylint: disable=too-complex
+    # pylint: disable=too-many-branches
 
     if game.info.allow_rule == gi.AllowRule.NONE:
         pass
@@ -635,6 +659,9 @@ def deco_allow_rule(game, allowable):
     elif game.info.allow_rule == gi.AllowRule.NOT_XFROM_1S:
         allowable = NotXfromOnes(game, allowable)
 
+    elif game.info.allow_rule == gi.AllowRule.OCCUPIED:
+        allowable = Occupied(game, allowable)
+
     else:
         raise NotImplementedError(
                 f"AllowRule {game.info.allow_rule} not implemented.")
@@ -665,6 +692,7 @@ def deco_allowable(game):
         allowable = DontUndoMoveOne(game, allowable)
 
     if (game.info.mustshare
+            or game.info.allow_rule == gi.AllowRule.OCCUPIED
             or game.info.allow_rule == gi.AllowRule.OPP_OR_EMPTY
             or game.info.grandslam == gi.GrandSlam.NOT_LEGAL):
         allowable = MemoizeAllowable(game, allowable)

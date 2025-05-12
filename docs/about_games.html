@@ -1714,6 +1714,31 @@ played in rounds with UMOVE style RoundFill
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p44.
 <p>Deviation: Seeds are not moved between the newly created qur holes as there would be no impact on play.
 <p>See Also: <a href="https://mancala.fandom.com/wiki/Layli_Goobalay_(short_board)" target="_blank">https://mancala.fandom.com/wiki/Layli_Goobalay_(short_board)</a> and <a href="https://mancala.fandom.com/wiki/Layli_Goobalay_(long_board)" target="_blank">https://mancala.fandom.com/wiki/Layli_Goobalay_(long_board)</a>  Valdez (p140) describes a very similar game with CW sow and round fill is UMOVE but not reflected instead opposites have the same seed counts.
+<h3 id="long night game" class="game_desc">long night game</h3>
+<p>Sow in multiple laps counter-clocks. Moves may only start from holes that reach an occupied hole on the first lap.
+<p>A player must pass if they do not have a move.
+<p>After sowing, capture all singletons.
+<p>The game ends when there are no legal moves. Seeds left on the board are not counted.
+<p>Goal: capture the most seeds.
+<p><a href="about_games.html#long night game">long night game</a> was invented by the Austrian Matthias Liszt in August 2006.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  4</p>
+    <p class="param">Start seeds:  5</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#allow_rule">Special Move Restrictions</a>: OCCUPIED</p>
+    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: BOTH</p>
+    <p class="param"><a href="game_params.html#capt_type">Capture Type</a>: SINGLETONS</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
+    <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#unclaimed">End Game Seeds</a>: DONT_SCORE</p>
+  </div>
+</div>
+<p>Rules: <a href="https://mancala.fandom.com/wiki/Long_night_game" target="_blank">https://mancala.fandom.com/wiki/Long_night_game</a>
 <h3 id="Longbeu-a-cha" class="game_desc">Longbeu-a-cha</h3>
 <p>Sow counter-clockwise via the multi-lap next-hole method (<a href="game_params.html#mlaps">MLAPS</a> of LAPPER_NEXT).
 <p>When the hole from which a new lap should start is empty, capture any seeds in the hole following the empty hole. That is, captures are made when the hole after the hole in which the final seed of a lap was sown, is empty and there are seeds in the hole 'two out' from the last sown seed.
@@ -1897,7 +1922,7 @@ unless all the player's holes contain 2, then only the rightmost hole maybe play
   <div class="column2">
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
     <p class="param"><a href="game_params.html#sow_param">Sow Parameter</a>: 8</p>
-    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: OPP_GETS_OWN_LAST</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: LAP_CAPT_OPP_GETS</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
   </div>
 </div>
@@ -1921,6 +1946,27 @@ unless all the player's holes contain 2, then only the rightmost hole maybe play
   </div>
 </div>
 <p>Rules: <a href="https://mancala.fandom.com/wiki/Micro-Wari" target="_blank">https://mancala.fandom.com/wiki/Micro-Wari</a>
+<h3 id="mikro tsoro" class="game_desc">mikro tsoro</h3>
+<p>A deprive game with separate north & south cycles.
+<p>Sow only on your own side of the board in multiple laps. If there are seeds across from a seed sown into an empty hole, gather those and the final sown seed and continue sowing.
+<p>Goal: move all of your opponents seeds to your side of the board. 
+<p><a href="about_games.html#mikro tsoro">mikro tsoro</a> was invented by the Austrian Matthias Liszt in August 2007.
+<p><a href="https://mancala.fandom.com/wiki/Mikro_tsoro" target="_blank">https://mancala.fandom.com/wiki/Mikro_tsoro</a>
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  5</p>
+    <p class="param">Start seeds:  2</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: DEPRIVE</p>
+    <p class="param"><a href="game_params.html#game_class">Game class</a>:  North/South Cycles</p>
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: LAP_CAPT_SEEDS</p>
+  </div>
+</div>
+<p>Rules: <a href="https://mancala.fandom.com/wiki/Mikro_tsoro" target="_blank">https://mancala.fandom.com/wiki/Mikro_tsoro</a>
 <h3 id="Modiar" class="game_desc">Modiar</h3>
 <p>Sow counter-clockwise from own side hole with more than 1 seed. The first seed of a goes into the start hole. If opponent has no seeds you must share (though this might or might not give them a valid move). Grand slam moves are not allowed.
 <p>Multiple capture on 2s, 4s and 6s.
@@ -3161,9 +3207,9 @@ no repeat turn on capture
     <p class="param"><a href="#Gabata">Gabata</a></p>
     <p class="param"><a href="#Gamacha">Gamacha</a></p>
     <p class="param"><a href="#Gelech">Gelech</a></p>
+    <p class="param"><a href="#Giuthi">Giuthi</a></p>
   </div>
   <div class="column3">
-    <p class="param"><a href="#Giuthi">Giuthi</a></p>
     <p class="param"><a href="#Goat">Goat</a></p>
     <p class="param"><a href="#Halusa">Halusa</a></p>
     <p class="param"><a href="#Hoyito I">Hoyito I</a></p>
@@ -3185,6 +3231,7 @@ no repeat turn on capture
     <p class="param"><a href="#Lamlameta">Lamlameta</a></p>
     <p class="param"><a href="#Leb Bbut Ahbochen">Leb Bbut Ahbochen</a></p>
     <p class="param"><a href="#Leyla-Gobale">Leyla-Gobale</a></p>
+    <p class="param"><a href="#long night game">long night game</a></p>
     <p class="param"><a href="#Longbeu-a-cha">Longbeu-a-cha</a></p>
     <p class="param"><a href="#Mandoli">Mandoli</a></p>
     <p class="param"><a href="#Mangala I">Mangala I</a></p>
@@ -3194,6 +3241,7 @@ no repeat turn on capture
     <p class="param"><a href="#Mbothe">Mbothe</a></p>
     <p class="param"><a href="#Meusuëb">Meusuëb</a></p>
     <p class="param"><a href="#Micro-Wari">Micro-Wari</a></p>
+    <p class="param"><a href="#mikro tsoro">mikro tsoro</a></p>
     <p class="param"><a href="#Modiar">Modiar</a></p>
     <p class="param"><a href="#Motiq">Motiq</a></p>
     <p class="param"><a href="#Nambayi">Nambayi</a></p>

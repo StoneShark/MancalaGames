@@ -58,12 +58,13 @@ def _add_base_sower(game):
         elif game.info.sow_rule == gi.SowRule.OPP_CHILD_ONLY1:
             sower = sowd.SowSkipOppChildUnlessFinal(game)
 
-        elif game.info.sow_rule == gi.SowRule.OPP_GETS_OWN_LAST:
+        elif game.info.sow_rule == gi.SowRule.LAP_CAPT_OPP_GETS:
             sower = sowd.SowSeeds(game)
             sower = sowd.SowOppCaptsLast(game, sower)
 
         elif game.info.sow_rule in (gi.SowRule.CHANGE_DIR_LAP,
                                     gi.SowRule.LAP_CAPT,
+                                    gi.SowRule.LAP_CAPT_SEEDS,
                                     gi.SowRule.CONT_LAP_ON,
                                     gi.SowRule.CONT_LAP_GREQ):
             pass    # pick a base sower below
@@ -112,7 +113,7 @@ def _add_capt_stop_lap_cont(game, lap_cont):
                       game.info.capt_min])
 
     if game.info.sow_rule in (gi.SowRule.LAP_CAPT,
-                              gi.SowRule.OPP_GETS_OWN_LAST):
+                              gi.SowRule.LAP_CAPT_OPP_GETS):
 
         if game.info.crosscapt:
             lap_cont = msowd.ContIfXCapt(game, lap_cont)
@@ -123,6 +124,9 @@ def _add_capt_stop_lap_cont(game, lap_cont):
 
         else:   # if basic_capt:
             lap_cont = msowd.ContIfBasicCapt(game, lap_cont)
+
+    elif game.info.sow_rule == gi.SowRule.LAP_CAPT_SEEDS:
+        lap_cont = msowd.ContWithCaptSeeds(game, lap_cont)
 
     elif game.info.capt_type == gi.CaptType.MATCH_OPP:
         lap_cont = msowd.StopCaptureSimul(game, lap_cont)

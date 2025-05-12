@@ -1,0 +1,23 @@
+{
+   "game_class": "North/South Cycles",
+   "game_constants": {
+      "holes": 5,
+      "nbr_start": 2
+   },
+   "game_info": {
+      "name": "mikro tsoro",
+      "about": "A deprive game with separate north & south cycles.\n\nSow only on your own side of the board in multiple laps. If there are seeds across from a seed sown into an empty hole, gather those and the final sown seed and continue sowing.\n\nGoal: move all of your opponents seeds to your side of the board. \n\nmikro tsoro was invented by the Austrian Matthias Liszt in August 2007.\n\nhttps://mancala.fandom.com/wiki/Mikro_tsoro\n",
+      "crosscapt": true,
+      "goal": 1,
+      "mlaps": 1,
+      "sow_direct": 1,
+      "sow_rule": 14
+   },
+   "player": {
+      "ai_params": {},
+      "scorer": {
+         "seeds_m": 8
+      }
+   },
+   "rules": "https://mancala.fandom.com/wiki/Mikro_tsoro"
+}

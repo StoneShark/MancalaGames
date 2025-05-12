@@ -367,7 +367,7 @@ def add_territory_rules(rules):
                  or (ginfo.rounds == gi.Rounds.END_2S_SEEDS
                      and ginfo.goal_param > (nbr_holes * 2) - 2))),
         msg='Territory goal param is too high for ROUNDS of DONT_SCORE, '
-            'a game winner is unlikely.',
+            'a game winner is unlikely',
         excp=gi.GameInfoError)
 
 
@@ -543,7 +543,7 @@ def add_no_sides_rules(rules):
     rules.add_rule(
         'no_sides_need_stores',
         rule=lambda ginfo: ginfo.no_sides and not ginfo.stores,
-        msg='NO_SIDES requires STORES.',
+        msg='NO_SIDES requires STORES',
         excp=gi.GameInfoError)
 
     bad_flags = ['grandslam', 'mustpass', 'mustshare', 'capt_side',
@@ -586,8 +586,8 @@ def add_capture_rules(rules):
                                      ginfo.capt_min,
                                      ginfo.capt_on,
                                      ginfo.presowcapt])),
-        msg="The game has captures configured but there is no place " +
-            "to put captured seeds. Suggest stores or children be used.",
+        msg="""The game has captures configured but there is no place
+            to put captured seeds. Suggest stores or children be used""",
         warn=True)
 
     rules.add_rule(
@@ -610,8 +610,8 @@ def add_capture_rules(rules):
         'xcapt_multi_same',
         rule=lambda ginfo: (ginfo.crosscapt and ginfo.multicapt
                             and not ginfo.capsamedir),
-        msg="CROSSCAPT with MULTICAPT without CAPSAMEDIR "
-            "is the same as just CROSSCAPT.",
+        msg="""CROSSCAPT with MULTICAPT without CAPSAMEDIR
+            is the same as just CROSSCAPT""",
         warn=True)
         # capturing the opp dir (as usual) wont capture because
         # the preceeding holes were just sown, that is, not empty
@@ -629,8 +629,8 @@ def add_capture_rules(rules):
         'capt2out_needs_samedir',
         rule=lambda ginfo: (ginfo.capt_type == gi.CaptType.TWO_OUT
                             and not ginfo.capsamedir),
-        msg='Capture type TWO_OUT requires CAPSAMEDIR because '
-            'the preceeding holes were just sown (not empty)',
+        msg="""Capture type TWO_OUT requires CAPSAMEDIR because
+            the preceeding holes were just sown (not empty)""",
         excp=gi.GameInfoError)
 
     rules.add_rule(
@@ -645,21 +645,43 @@ def add_capture_rules(rules):
                             and ginfo.capt_type not in (gi.CaptType.NONE,
                                                         gi.CaptType.TWO_OUT,
                                                         gi.CaptType.NEXT)),
-        msg='LAP_CAPT is only supported for basic captures, '
-            'cross capture, capt two out, and capt next.',
+        msg="""LAP_CAPT is only supported for basic captures,
+            cross capture, capt two out, and capt next""",
         excp=NotImplementedError)
         # currently only MATCH_OPP is not supported
 
     rules.add_rule(
         'ogol_no_ctype',
-        rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.OPP_GETS_OWN_LAST
+        rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.LAP_CAPT_OPP_GETS
                             and ginfo.capt_type not in (gi.CaptType.NONE,
                                                         gi.CaptType.TWO_OUT,
                                                         gi.CaptType.NEXT)),
-        msg='OPP_GETS_OWN_LAST is only supported for basic captures, '
-            'cross capture, capt two out, and capt next.',
+        msg="""LAP_CAPT_OPP_GETS is only supported for basic captures,
+            cross capture, capt two out, and capt next""",
         excp=NotImplementedError)
         # see lcapt_no_ctype
+
+    rules.add_rule(
+        'lcs_useful',
+        rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.LAP_CAPT_SEEDS
+                            and not (ginfo.capt_type or ginfo.crosscapt)),
+        msg="""LAP_CAPT_SEEDS is only supported when seeds are
+            captured from holes in addition to final hole sown""",
+        excp=gi.GameInfoError)
+        # don't lap_capt_seeds if we are not capturing seeds from some
+        # place other than the end hole, it does nothing useful
+
+    rules.add_rule(
+        'lcs_ctype_warn',
+        rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.LAP_CAPT_SEEDS
+                            and ginfo.capt_type
+                            and ginfo.capt_type != gi.CaptType.MATCH_OPP),
+        msg="""LAP_CAPT_SEEDS with selected capture type will generally
+            end result in an ENDLESS sow""",
+        warn=True)
+        # start pattern, prescribed sow, or other option could prevent this
+        # making an actual warning because the gentle warning might be lost
+        # above the endless sow log
 
     rules.add_rule(
         'sca_gs_not',
@@ -683,23 +705,23 @@ def add_capture_rules(rules):
                                      ginfo.capt_on,
                                      ginfo.evens])
                             and ginfo.pickextra == gi.CaptExtraPick.PICKCROSS),
-        msg="A constrainted CROSSCAPT with PICKEXTRA=PICKCROSS will ' \
-            'ingnore constraint.",
+        msg="""A constrainted CROSSCAPT with PICKEXTRA=PICKCROSS will
+            ingnore constraint""",
         excp=gi.GameInfoError)
 
     rules.add_rule(
         'xpick_pickcross',
         rule=lambda ginfo: (ginfo.crosscapt
                             and ginfo.pickextra == gi.CaptExtraPick.PICKCROSS),
-        msg="PICKEXTRA=PICKCROSS with CROSSCAPT is redundant.",
+        msg="PICKEXTRA=PICKCROSS with CROSSCAPT is redundant",
         warn=True)
 
     rules.add_rule(
         'moveall_no_locks',
         rule=lambda ginfo: (ginfo.allow_rule == gi.AllowRule.MOVE_ALL_HOLES_FIRST
                             and ginfo.moveunlock),
-        msg='Do not set MOVEUNLOCK with MOVE_ALL_HOLES_FIRST. ' \
-            'Locks are automatically used to limit first moves but not captures',
+        msg="""Do not set MOVEUNLOCK with MOVE_ALL_HOLES_FIRST.
+            Locks are automatically used to limit first moves but not captures""",
         excp=gi.GameInfoError)
         # we do not want CaptUnlocked added to the capt_ok deco
         # which causes captures to be limited by locks
@@ -743,6 +765,14 @@ def add_capture_rules(rules):
                             and ginfo.capt_type == gi.CaptType.TWO_OUT),
         msg='Capture TWO_OUT cannot be used with CAPT_SIDE other than BOTH',
         excp=gi.GameInfoError)
+
+    rules.add_rule(
+        'singles_no_mult',
+        rule=lambda ginfo: (ginfo.capt_type == gi.CaptType.SINGLETONS
+                            and ginfo.multicapt),
+        msg='Multiple captures with capture SINGLETONS is not supported',
+        excp=gi.GameInfoError)
+
 
 
 # %% the base ruleset
@@ -829,17 +859,20 @@ def build_rules():
 
     man_rules.add_rule(
         'lcapt_no_lnext',
-        rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.LAP_CAPT
+        rule=lambda ginfo: (ginfo.sow_rule in (gi.SowRule.LAP_CAPT,
+                                               gi.SowRule.LAP_CAPT_OPP_GETS,
+                                               gi.SowRule.LAP_CAPT_SEEDS)
                             and ginfo.mlaps == gi.LapSower.LAPPER_NEXT),
-        msg='LAP_CAPT is not supported with LAPPER_NEXT',
+        msg="""SOW_RULE LAP_CAPT and variants are not supported
+            with LAPPER_NEXT""",
         excp=NotImplementedError)
         # would need to carefully decide how it would work
 
     man_rules.add_rule(
         'ogol_no_lnext',
-        rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.OPP_GETS_OWN_LAST
+        rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.LAP_CAPT_OPP_GETS
                             and ginfo.mlaps == gi.LapSower.LAPPER_NEXT),
-        msg='OPP_GETS_OWN_LAST is not supported with LAPPER_NEXT',
+        msg='LAP_CAPT_OPP_GETS is not supported with LAPPER_NEXT',
         excp=NotImplementedError)
 
     man_rules.add_rule(
@@ -851,7 +884,7 @@ def build_rules():
                                  gi.SowPrescribed.SOW1OPP,
                                  gi.SowPrescribed.PLUS1MINUS1)
                             ),
-        msg='SOW_OWN_STORE is ignored for the selected first prescribed sow.',
+        msg='SOW_OWN_STORE is ignored for the selected first prescribed sow',
         warn=True)
 
     man_rules.add_rule(
@@ -887,7 +920,8 @@ def build_rules():
         rule=lambda ginfo, holes: (ginfo.rounds
                                    and ginfo.goal == gi.Goal.MAX_SEEDS
                                    and ginfo.goal_param > holes),
-        msg='Minimum holes needed to play another round must be less the holes per side',
+        msg="""Minimum holes needed to play another round must be
+            less the holes per side""",
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
@@ -901,7 +935,8 @@ def build_rules():
         'rnd_goals_gp1',
         rule=lambda ginfo: (ginfo.goal in round_tally.RoundTally.GOALS
                             and ginfo.goal_param <= 0),
-        msg='RND_* goal requires GOAL_PARAM be greater than 0 to define win condition',
+        msg="""RND_* goal requires GOAL_PARAM be greater than 0 to
+            define win condition""",
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
@@ -921,8 +956,8 @@ def build_rules():
         'xc_draw1_sowstart',
         rule=lambda ginfo: (ginfo.presowcapt == gi.PreSowCapt.DRAW_1_XCAPT
                             and ginfo.sow_start),
-        msg='DRAW_1_XCAPT with SOW_START will capture when start hole ' \
-            'has 2 seeds (1 is drawn)',
+        msg="""DRAW_1_XCAPT with SOW_START will capture when start hole
+            has 2 seeds (1 is drawn)""",
         warn=True)
 
     man_rules.add_rule(
@@ -1009,8 +1044,8 @@ def build_rules():
         rule=lambda ginfo, holes: (ginfo.sow_direct == gi.Direct.SPLIT
                                    and holes % 2
                                    and holes // 2 not in ginfo.udir_holes),
-        msg='SPLIT with odd number of holes, '
-            'but center hole not listed in udir_holes',
+        msg="""SPLIT with odd number of holes,
+            but center hole not listed in udir_holes""",
         excp=gi.GameInfoError)
 
     man_rules.add_rule(

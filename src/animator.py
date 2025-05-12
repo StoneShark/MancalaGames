@@ -407,6 +407,9 @@ class NewGameState(AniAction):
 class Message(AniAction):
     """Generate a message in the animation sequence."""
 
+    # XXXX these are not used or supported
+    # add support when they are used
+
     def __init__(self, message):
 
         self.message = message
@@ -420,7 +423,6 @@ class Message(AniAction):
     def do_it(self, game_ui, ani_state):
         """Execute the action."""
 
-        # TODO put the message some place!
 
 
 class ScheduleCallback(AniAction):
@@ -622,8 +624,8 @@ class Animator:
                 self._pending_after = True
 
                 delay = self.delay
-                if isinstance(self._queue[0], NewGameState):
-                    delay *= 2
+                if isinstance(anie, NewGameState):
+                    delay = int(delay * 1.5)
                 self.game_ui.after(delay,
                                     lambda: self.do_animation(False))
 

@@ -86,12 +86,18 @@ SOWRS = {'None': lambda sow_rule: not sow_rule,
          'Sow Closed': lambda sow_rule: sow_rule in (
              gi.SowRule.SOW_BLKD_DIV,
              gi.SowRule.SOW_BLKD_DIV_NR),
-         'Take Sowing': lambda sow_rule: sow_rule in (
+         'Take when Sowing': lambda sow_rule: sow_rule in (
              gi.SowRule.SOW_CAPT_ALL,
              gi.SowRule.OWN_SOW_CAPT_ALL),
          'Capture on Laps': lambda sow_rule: sow_rule in (
              gi.SowRule.LAP_CAPT,
-             gi.SowRule.OPP_GETS_OWN_LAST),
+             gi.SowRule.LAP_CAPT_OPP_GETS,
+             gi.SowRule.LAP_CAPT_SEEDS),
+         'Skip some holes': lambda sow_rule: sow_rule in (
+             gi.SowRule.NO_SOW_OPP_NS,
+             gi.SowRule.MAX_SOW,
+             gi.SowRule.NO_OPP_CHILD,
+             gi.SowRule.OPP_CHILD_ONLY1),
          'Other': lambda sow_rule: sow_rule not in (
              gi.SowRule.NONE,
              gi.SowRule.SOW_BLKD_DIV,
@@ -99,8 +105,12 @@ SOWRS = {'None': lambda sow_rule: not sow_rule,
              gi.SowRule.SOW_CAPT_ALL,
              gi.SowRule.OWN_SOW_CAPT_ALL,
              gi.SowRule.LAP_CAPT,
-             gi.SowRule.OPP_GETS_OWN_LAST),
-
+             gi.SowRule.LAP_CAPT_OPP_GETS,
+             gi.SowRule.LAP_CAPT_SEEDS,
+             gi.SowRule.NO_SOW_OPP_NS,
+             gi.SowRule.MAX_SOW,
+             gi.SowRule.NO_OPP_CHILD,
+             gi.SowRule.OPP_CHILD_ONLY1),
         }
 
 SOWDIR = {'CW': lambda ginfo: ginfo.get(ckey.SOW_DIRECT, 1) == -1,

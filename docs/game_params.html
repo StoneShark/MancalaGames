@@ -318,6 +318,8 @@ is included after the parameter sections.
 <b class="enum">MOVE_ALL_HOLES_FIRST</b>: a move must be initiated from each hole once before a second move may be made from any hole.  This option is incompatible with <a href="game_params.html#moveunlock">MOVEUNLOCK</a>, <a href="game_params.html#capt_type">CAPT_TYPE</a> of TWO_OUT, and any <a href="game_params.html#pickextra">PICKEXTRA</a>.
 <li class="helptext">
 <b class="enum">NOT_XFROM_1S</b>: moves may not start from holes with a singleton opposite it.
+<li class="helptext">
+<b class="enum">OCCUPIED</b>: The final seed of the sow must end in an occupied hole.
 </ol>
 <h4 id="stores"> Stores </h4>
 <p class="pdesc">Location in Config Files: game_info : stores
@@ -464,7 +466,7 @@ is included after the parameter sections.
 <b class="enum">LAPPER_NEXT</b>: For lapper_next sowing, the number of seeds in the last sown hole of lap does not matter. Instead, if the hole after the last sown hole has any seeds, those seeds are used to continue sowing the next lap. Sowing continues until the hole after the lap's final seed is empty. There are games with other conditions for ending a multilap sow such as making a capture or making a child.
 <p class="helptext"> A <a href="game_params.html#sow_rule">SOW_RULE</a> of CHANGE_DIR_LAP changes the direction of sowing after each lap. SOW_BLKD_DIV(_NR) is not supported for LAPPER_NEXT.
 </ol>
-<p>Multilap games may get stuck in seemingly endless sowing loops. If more than 50 laps are sown, the computer will end the game using the same mechanism as the menu command <a href="mancala_help.html#gamemenu">End Game</a> based on <a href="game_params.html#goal">GOAL</a> and <a href="game_params.html#unclaimed">UNCLAIMED</a>. 
+<p>Multilap games may get stuck in seemingly endless sowing loops. If more than 75 laps are sown, the computer will end the game using the same mechanism as the menu command <a href="mancala_help.html#gamemenu">End Game</a> based on <a href="game_params.html#goal">GOAL</a> and <a href="game_params.html#unclaimed">UNCLAIMED</a>. 
 <h4 id="sow_direct"> Sow Direction </h4>
 <p class="pdesc">Location in Config Files: game_info : sow_direct
 <p id="Direct" class="pdesc">Type: <a href="param_types.html#Direct"> Direct </a>
@@ -582,13 +584,15 @@ is included after the parameter sections.
 <li class="helptext">
 <b class="enum">NO_OPP_CHILD</b>: do not sow into your opponent's children.
 <li class="helptext">
-<b class="enum">OPP_GETS_OWN_LAST</b>: Use LAP_CAPT sow rule until there are only sow_param seeds left. Then when down to the last seeds (sow_param or less at the start of a lap): seeds sown on the opponent's side are captured by the opponent. If the last seed would do a normal capture, the sower takes those seeds, including the last seed sown.
+<b class="enum">LAP_CAPT_OPP_GETS</b>: Use LAP_CAPT sow rule until there are only sow_param seeds left. Then when down to the last seeds (sow_param or less at the start of a lap): seeds sown on the opponent's side are captured by the opponent. If the last seed would do a normal capture, the sower takes those seeds, including the last seed sown.
 <li class="helptext">
 <b class="enum">CONT_LAP_ON</b>: Only continue multilap sowing when a hole is sown to sow_param seeds.
 <li class="helptext">
 <b class="enum">CONT_LAP_GREQ</b>: Only continue multilap sowing when a hole is sown to sow_param or more seeds.
 <li class="helptext">
 <b class="enum">OPP_CHILD_ONLY1</b>: Do not sow opponent's children unless it is with the final seed of a sow.
+<li class="helptext">
+<b class="enum">LAP_CAPT_SEEDS</b>: Check for capture on each lap. If a capture occured, continue sowing with captured seeds and seeds in final hole sown. If no capture occured, continue if more than one seed is in the final hole. Not compatible with basic captures. Behaves badly with most capt_types unless other options are used to prevent endless sows.
 </ol>
 <h4 id="sow_param"> Sow Parameter </h4>
 <p class="pdesc">Location in Config Files: game_info : sow_param
@@ -807,6 +811,8 @@ is included after the parameter sections.
 <p class="helptext"> If multiple captures are configured, captures continue while the pattern of empty hole followed by an occupied hole repeats. 
 <li class="helptext">
 <b class="enum">MATCH_OPP</b>: capture when the number of seeds in the final hole sown match the opposite-side hole. Multiple captures maybe made in either direction. Multilap sowing does stop for captures.
+<li class="helptext">
+<b class="enum">SINGLETONS</b>: capture all singletons.
 </ol>
 <h4 id="multicapt"> Multiple Captures </h4>
 <p class="pdesc">Location in Config Files: game_info : multicapt

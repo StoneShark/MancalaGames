@@ -806,7 +806,6 @@ class MancalaUI(tk.Frame):
                 else:
                     btnstate = behaviors.BtnState.DISABLE
 
-
                 self.disp[row][pos].set_props(
                     self.game.get_hole_props(row, pos),
                     btnstate)
@@ -1092,11 +1091,17 @@ class MancalaUI(tk.Frame):
         self._log_turn(last_turn)
 
         if animator.active():
-            animator.animator.queue_callback(self.move_epilog)
-            self.refresh(ani_ok=True)
-        else:
-            self.refresh()
-            self.move_epilog()
+            if (self.game.mdata
+                    and self.game.mdata.ended == gi.WinCond.ENDLESS):
+                animator.animator.clear_queue()
+
+            else:
+                animator.animator.queue_callback(self.move_epilog)
+                self.refresh(ani_ok=True)
+                return
+
+        self.refresh()
+        self.move_epilog()
 
 
     def move_epilog(self):

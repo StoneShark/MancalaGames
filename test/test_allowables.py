@@ -391,6 +391,31 @@ class TestOppEmpty:
         assert game.deco.allow.get_allowable_holes() == eresult
 
 
+class TestOccupied:
+
+    @pytest.mark.parametrize(
+        'board, turn, eresult',
+        [([1, 2, 0, 0, 1, 0], False, [T, F, F]),
+         ([3, 1, 0, 1, 0, 1], True, [T, F, F]),
+
+        ([4] * 6,  True, [T, T, T]),
+        ])
+    def test_allowables(self, board, turn, eresult):
+
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(capt_on=[2],
+                                allow_rule=AllowRule.OCCUPIED,
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = turn
+        game.board = board
+
+        assert game.deco.allow.get_allowable_holes() == eresult
+
+
 class TestSingleToEmpty:
 
     TEST_STE_DATA = \

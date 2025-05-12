@@ -82,6 +82,7 @@ CONVERT_DICT = {'N': None,
                 'NEXT': gi.CaptType.NEXT,
                 'TWOOUT': gi.CaptType.TWO_OUT,
                 'MOPP': gi.CaptType.MATCH_OPP,
+                'SINGLES': gi.CaptType.SINGLETONS,
                 }
 
 
@@ -227,7 +228,7 @@ def read_test_cases():
 read_test_cases()
 
 
-# %%  test capturers
+# %%  test capture via table
 
 @pytest.mark.filterwarnings("ignore")
 def test_no_capturer():
@@ -471,6 +472,9 @@ def test_no_gs(gstype):
     assert game.store == [5, 4]
 
 
+
+# %% children
+
 class TestWalda:
 
     @pytest.fixture
@@ -593,8 +597,6 @@ class TestWalda:
         assert game.board[loc] == 3
         assert game.board[wloc] == 3
         assert game.child[loc] == None
-
-
 
 
 class TestTuzdek:
@@ -769,7 +771,6 @@ class TestWeg:
             assert tuple(game.board) == mdata.board
 
 
-
 class TestBull:
 
     @pytest.fixture
@@ -935,6 +936,9 @@ class TestQur:
             assert tuple(game.board) == mdata.board
 
 
+
+# %% capt wrappers and non-capt table tests
+
 class TestRepeatTurn:
     """Test repeat turn due to capt_rturn."""
 
@@ -1022,7 +1026,6 @@ class TestRepeatTurn:
                 assert not game1.turn
 
 
-
 class TestCaptCrossVisited:
     """Only testing the result of do_captures because,
     CaptCrossVisited doesn't actually do the capturing.
@@ -1066,7 +1069,6 @@ class TestCaptCrossVisited:
 
         game.deco.capturer.do_captures(mdata)
         assert mdata.captured == eresult
-
 
 
 class TestCaptTwoOut:
@@ -1116,6 +1118,8 @@ class TestCaptTwoOut:
         assert mdata.captured
         assert game.board == eboard
 
+
+# %% pickers
 
 class TestPickCross:
 
@@ -1473,7 +1477,6 @@ class TestChildInhibitor:
         assert game.deco.make_child.test(mdata)
 
 
-
 class TestOppChild:
 
     def test_opp_child(self):
@@ -1498,7 +1501,6 @@ class TestOppChild:
 
         mdata.capt_loc = 2
         assert game.deco.make_child.test(mdata)
-
 
 
 class TestNotWithOne:
@@ -1531,6 +1533,7 @@ class TestNotWithOne:
         assert game.deco.make_child.test(mdata) == etest
 
 
+# %% bad enums
 
 class TestBadEnums:
 
@@ -1642,6 +1645,8 @@ class TestBadEnums:
         with pytest.raises(NotImplementedError):
             mancala.Mancala(game_consts, game_info)
 
+
+# %% animator
 
 class TestAnimator:
 

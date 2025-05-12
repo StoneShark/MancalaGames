@@ -210,6 +210,22 @@ class CaptMatchOpp(CaptMethodIf):
                                                        mdata.direct)
 
 
+class CaptSingles(CaptMethodIf):
+    """Capture all singles."""
+
+    def do_captures(self, mdata, capt_first=True):
+
+        for loc in range(self.game.cts.dbl_holes):
+            if (self.game.board[loc] == 1
+                    and self.game.child[loc] is None
+                    and self.game.unlocked[loc]):
+
+                seeds = self.game.board[loc]
+                self.game.board[loc] = 0
+                self.game.store[self.game.turn] += seeds
+                mdata.captured = True
+
+
 # %% cross capt decos
 
 class CaptCrossVisited(CaptMethodIf):
@@ -803,7 +819,6 @@ class PickLastSeeds(CaptMethodIf):
             mdata.capt_changed = True
 
 
-
 # %% top level wrappers
 
 
@@ -952,6 +967,9 @@ def _add_capt_type_deco(game):
 
     elif game.info.capt_type == gi.CaptType.MATCH_OPP:
         capturer = CaptMatchOpp(game)
+
+    elif game.info.capt_type == gi.CaptType.SINGLETONS:
+        capturer = CaptSingles(game)
 
     else:
         raise NotImplementedError(

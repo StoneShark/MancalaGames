@@ -47,16 +47,14 @@ def ns2_build_rules(gclass_name):
     rules.add_rule(
         'ns2_no_sowrule',
         rule=lambda ginfo: ginfo.sow_rule in (
-            gi.SowRule.SOW_BLKD_DIV,         # does not use the incr, so will fail
-            gi.SowRule.SOW_BLKD_DIV_NR,      # does not use the incr, so will fail
-            gi.SowRule.OWN_SOW_CAPT_ALL,
-            gi.SowRule.SOW_CAPT_ALL,
+            # do not use the incr, so will fail
+            gi.SowRule.SOW_BLKD_DIV,
+            gi.SowRule.SOW_BLKD_DIV_NR,
+            # not sowing op side
             gi.SowRule.NO_SOW_OPP_NS,
-            gi.SowRule.CHANGE_DIR_LAP,
-            # gi.SowRule.MAX_SOW,     allow?
-            # gi.SowRule.LAP_CAPT,    allow?
-            # gi.SowRule.NO_OPP_CHILD,  opponent's qurs could be made on our side
-            gi.SowRule.OPP_GETS_OWN_LAST
+            gi.SowRule.NO_OPP_CHILD,
+            gi.SowRule.LAP_CAPT_OPP_GETS,
+            gi.SowRule.OPP_CHILD_ONLY1,
             ),
         msg=f'{gclass_name} incompatible with selected SOW_RULE',
         excp=gi.GameInfoError)
@@ -113,16 +111,14 @@ def ew2_build_rules():
     rules.add_rule(
         'es2_no_sowrule',
         rule=lambda ginfo: ginfo.sow_rule in (
-            gi.SowRule.SOW_BLKD_DIV,         # does not use the incr, so will fail
-            gi.SowRule.SOW_BLKD_DIV_NR,      # does not use the incr, so will fail
-            gi.SowRule.OWN_SOW_CAPT_ALL,
-            gi.SowRule.SOW_CAPT_ALL,
+            # do not use the incr, so will fail
+            gi.SowRule.SOW_BLKD_DIV,
+            gi.SowRule.SOW_BLKD_DIV_NR,
+            # not sowing op side
             gi.SowRule.NO_SOW_OPP_NS,
-            gi.SowRule.CHANGE_DIR_LAP,
-            # gi.SowRule.MAX_SOW,     allow?
-            # gi.SowRule.LAP_CAPT,    allow?
             gi.SowRule.NO_OPP_CHILD,
-            gi.SowRule.OPP_GETS_OWN_LAST
+            gi.SowRule.LAP_CAPT_OPP_GETS,
+            gi.SowRule.OPP_CHILD_ONLY1,
             ),
         msg='EastWestCycle incompatible with selected SOW_RULE',
         excp=gi.GameInfoError)

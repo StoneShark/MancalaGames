@@ -1,0 +1,26 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 4,
+      "nbr_start": 5
+   },
+   "game_info": {
+      "name": "long night game",
+      "about": "Sow in multiple laps counter-clocks. Moves may only start from holes that reach an occupied hole on the first lap.\n\nA player must pass if they do not have a move.\n\nAfter sowing, capture all singletons.\n\nThe game ends when there are no legal moves. Seeds left on the board are not counted.\n\nGoal: capture the most seeds.\n\nlong night game was invented by the Austrian Matthias Liszt in August 2006.\n",
+      "allow_rule": 11,
+      "capt_type": 4,
+      "mlaps": 1,
+      "mustpass": true,
+      "capt_side": 0,
+      "sow_direct": 1,
+      "stores": true,
+      "unclaimed": 1
+   },
+   "player": {
+      "ai_params": {},
+      "scorer": {
+         "stores_m": 16
+      }
+   },
+   "rules": "https://mancala.fandom.com/wiki/Long_night_game"
+}
