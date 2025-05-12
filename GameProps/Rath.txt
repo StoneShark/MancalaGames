@@ -1,0 +1,25 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 8,
+      "nbr_start": 4
+   },
+   "game_info": {
+      "name": "Rath",
+      "about": "At the start of play, each player has one child--a rath--in their rightmost hole. Additional children may not be created.\n\nSow counter-clockwise in multiple laps. Turns may not start from your rath and must start with at least 2 seeds. If a player does not have a valid move on their turn, they must pass until they do have a valid move.\n\nSow into your own rath, but not your opponent's unless it is the final seed of the sow. If the final seed of a sow ends in your opponents rath, move that seed plus one more (if there is one) to your own rath. No other capture mechanism is provided.\n\nGoal: collect more than half of the seeds in your own rath.\n\nVariation:\n\n- played on boards from 7 to 13 holes per side.\n",
+      "child_type": 4,
+      "child_locs": 11,
+      "min_move": 2,
+      "mlaps": 1,
+      "mustpass": true,
+      "sow_direct": 1,
+      "sow_rule": 13
+   },
+   "player": {
+      "ai_params": {},
+      "scorer": {
+         "stores_m": 8
+      }
+   },
+   "rules": "https://mancala.fandom.com/wiki/Rath"
+}
