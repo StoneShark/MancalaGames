@@ -155,7 +155,8 @@ STRING_DICTS = {
         {'Clockwise': gi.Direct.CW,
          'Counter-clockwise': gi.Direct.CCW,
          'Split': gi.Direct.SPLIT,
-         'Players Alternate': gi.Direct.PLAYALTDIR}),
+         'Players Alternate': gi.Direct.PLAYALTDIR,
+         'Odd Seeds-CCW Even-CW': gi.Direct.EVEN_ODD_DIR}),
 
     'EndGameSeeds': lookup_dicts(
         gi.EndGameSeeds,

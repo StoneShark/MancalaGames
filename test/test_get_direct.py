@@ -8,6 +8,7 @@ import itertools as it
 import pytest
 pytestmark = pytest.mark.unittest
 
+import utils
 from context import game_constants as gconsts
 from context import game_interface as gi
 from context import mancala
@@ -19,6 +20,11 @@ from game_interface import Direct
 
 TEST_COVERS = ['src\\get_direction.py']
 
+CW = Direct.CW
+CCW = Direct.CCW
+
+
+# %%
 
 class TestGetDirection:
 
@@ -87,7 +93,8 @@ class TestGetDirection:
         if direct == Direct.SPLIT and holes == 3:
             move = (game_consts.loc_to_left_cnt(start), None)
 
-        assert game.deco.get_dir.get_direction(move, start) == exp_dir
+        mdata = utils.make_get_dir_mdata(game, move, start)
+        assert game.deco.get_dir.get_direction(mdata) == exp_dir
 
 
     @pytest.mark.filterwarnings("ignore")
@@ -123,7 +130,9 @@ class TestGetDirection:
         game = mancala.Mancala(game_consts, game_info)
 
         move = (game_consts.loc_to_left_cnt(start), None)
-        assert game.deco.get_dir.get_direction(move, start) == exp_dir
+        mdata = utils.make_get_dir_mdata(game, move, start)
+
+        assert game.deco.get_dir.get_direction(mdata) == exp_dir
 
 
     @pytest.mark.filterwarnings("ignore")
@@ -160,7 +169,9 @@ class TestGetDirection:
         game = mancala.Mancala(game_consts, game_info)
 
         move = (start < holes, game_consts.loc_to_left_cnt(start), None)
-        assert game.deco.get_dir.get_direction(move, start) == exp_dir
+        mdata = utils.make_get_dir_mdata(game, move, start)
+
+        assert game.deco.get_dir.get_direction(mdata) == exp_dir
 
 
     @pytest.mark.parametrize('turn', [True, False])
@@ -208,7 +219,8 @@ class TestGetDirection:
             game.mcount = move_nbr + 1
             game.turn = not game.turn
 
-            assert game.deco.get_dir.get_direction(move, 1) == edir
+            mdata = utils.make_get_dir_mdata(game, move, 1)
+            assert game.deco.get_dir.get_direction(mdata) == edir
 
 
 
@@ -253,4 +265,27 @@ class TestGetDirection:
             game.mcount = (move_nbr % 4) + 1
             game.turn = not game.turn
 
-            assert game.deco.get_dir.get_direction(move, 1) == edir
+            mdata = utils.make_get_dir_mdata(game, move, 1)
+            assert game.deco.get_dir.get_direction(mdata) == edir
+
+
+    @pytest.mark.parametrize('turn', [False, True])
+    def test_even_odd_dirs(self, turn):
+
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(capt_on=[2],
+                                sow_direct=Direct.EVEN_ODD_DIR,
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = turn
+        game.board = [2, 3, 4, 4, 3, 2]
+        edir = [CW, CCW, CW, CW, CCW, CW]
+
+        for move, sow_loc in zip(range(3),
+                                 range(3, 6) if turn else range(3)):
+
+            mdata = utils.make_get_dir_mdata(game, move, sow_loc)
+            assert game.deco.get_dir.get_direction(mdata) == edir[sow_loc]

@@ -482,6 +482,8 @@ is included after the parameter sections.
 <b class="enum">CCW</b>: counter-clockwise
 <li class="helptext">
 <b class="enum">PLAYALTDIR</b>: on the first move of the game, the first player chooses their sow direction using the <a href="game_params.html#udir_holes">UDIR_HOLES</a> method (by mouse button). The second player will sow their moves in the opposite direction. Once the first player makes their first move, both player's sow directions are set for the duration of the game no matter which button is used. All <a href="game_params.html#udir_holes">UDIR_HOLES</a> will apply to the game configuration.
+<li class="helptext">
+<b class="enum">EVEN_ODD_DIR</b>: holes with even seeds sow clockwise and holes with odd seeds sow counter-clockwise.
 </ol>
 <p>Both mouse buttons will start a move no matter the sow direction. If the hole is marked as <a href="game_params.html#udir_holes">UDIR_HOLES</a>, the button selects sow direction. On the other hand, if the hole is not marked as <a href="game_params.html#udir_holes">UDIR_HOLES</a>, either button will sow in the prescribed direction. This can be a useful mechanism to remind yourself that on SPLIT sow, the left holes go CW by using the left button and the right holes go CCW by using the right button.
 <p>When PLAYALTDIR is not selected, any hole can be set as <a href="game_params.html#udir_holes">UDIR_HOLES</a> to allow the user to override the sow_direct setting.

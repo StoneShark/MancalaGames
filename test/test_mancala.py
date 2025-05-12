@@ -986,7 +986,7 @@ class TestDelegates:
         mdata = game.do_sow(5, False)
 
         mstart.assert_called_once_with(5)
-        mgdir.assert_called_once_with(5, 'first')
+        mgdir.assert_called_once()
         msower.assert_called_once()
 
         assert isinstance(mdata, move_data.MoveData)
@@ -1016,7 +1016,7 @@ class TestDelegates:
         mdata = game.do_sow(5, True)
 
         mstart.assert_called_once_with(5)
-        mgdir.assert_called_once_with(5, 'first')
+        mgdir.assert_called_once()
         msingle.sow_seeds.assert_called_once()
 
         assert isinstance(mdata, move_data.MoveData)

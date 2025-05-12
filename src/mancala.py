@@ -744,7 +744,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
         mdata = move_data.MoveData(self, move)
         mdata.sow_loc, mdata.seeds = self.deco.drawer.draw(move)
-        mdata.direct = self.deco.get_dir.get_direction(move, mdata.sow_loc)
+        mdata.direct = self.deco.get_dir.get_direction(mdata)
 
         if single:
             single_sower = self.deco.sower.get_single_sower()

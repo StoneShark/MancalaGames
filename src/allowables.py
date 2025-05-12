@@ -23,6 +23,7 @@ import abc
 import animator
 import deco_chain_if
 import game_interface as gi
+import move_data
 
 from game_logger import game_log
 
@@ -221,7 +222,9 @@ class SingleToZero(AllowableIf):
         holes = self.tholes if self.game.turn else self.fholes
         for idx, loc in holes:
 
-            direct = self.game.deco.get_dir.get_direction(loc, loc)
+            mdata = move_data.MoveData(self.game, loc)
+            mdata.sow_loc = loc
+            direct = self.game.deco.get_dir.get_direction(mdata)
             nloc = self.game.deco.incr.incr(loc, direct)
 
             if (allow[idx]

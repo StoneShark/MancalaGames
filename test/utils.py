@@ -23,6 +23,15 @@ def make_state(board, store=(0, 0), turn=False, **kwargs):
                              **kwargs)
 
 
+def make_get_dir_mdata(game, move, sow_loc):
+    """Build move_data suitable for get_direction.
+    Needs board, move, sow_loc"""
+
+    mdata = move_data.MoveData(game, move)
+    mdata.sow_loc = sow_loc
+    return mdata
+
+
 def make_ender_mdata(game, repeat_turn,  ended):
     """Build a MoveData suitable for the ender."""
 

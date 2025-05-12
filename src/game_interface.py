@@ -159,6 +159,7 @@ class Direct(enum.IntEnum):
 
     SPLIT = 0
     PLAYALTDIR = 2
+    EVEN_ODD_DIR = 3
 
     def opp_dir(self):
         """Return the opposite direction of self."""

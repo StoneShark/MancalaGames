@@ -661,6 +661,8 @@ Direction of sow:
 
 - PLAYALTDIR: on the first move of the game, the first player chooses their sow direction using the UDIR_HOLES method (by mouse button). The second player will sow their moves in the opposite direction. Once the first player makes their first move, both player's sow directions are set for the duration of the game no matter which button is used. All UDIR_HOLES will apply to the game configuration.
 
+- EVEN_ODD_DIR: holes with even seeds sow clockwise and holes with odd seeds sow counter-clockwise.
+
 Both mouse buttons will start a move no matter the sow direction. If the hole is marked as UDIR_HOLES, the button selects sow direction. On the other hand, if the hole is not marked as UDIR_HOLES, either button will sow in the prescribed direction. This can be a useful mechanism to remind yourself that on SPLIT sow, the left holes go CW by using the left button and the right holes go CCW by using the right button.
 
 When PLAYALTDIR is not selected, any hole can be set as UDIR_HOLES to allow the user to override the sow_direct setting.
