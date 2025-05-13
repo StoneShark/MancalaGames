@@ -6,16 +6,18 @@
    },
    "game_info": {
       "name": "SameSide",
-      "about": "Sow counter-clockwise but only on your own side of the board.\n\nMultiple capture on evens but place captured seeds in opponents hole of your choice.\n\nA move has the typical draw, sow and check capture phases. If there is a capture, another user input is accepted to identify where the capture seeds should be put. The indicator for this is subtle: your store will still show your turn and your opponent's holes will be highlighted for input.\n\nWhen the AI player does a capture, the AI delay is done between move/capture and seed placement; wait for the AI to finish the turn before starting your turn.\n\nIn this game, the number of captured seeds will always be even.\n\nGoal: clear your own side of the board.",
-      "capt_side": 2,
+      "about": "Sow counter-clockwise but only on your own side of the board.\n\nMultiple capture on evens but place captured seeds in opponents hole of your choice.\n\nA move has the typical draw, sow and check capture phases. If there is a capture, another user input is accepted to identify where the capture seeds should be put. The indicator for this is subtle: your store will still show your turn and your opponent's holes will be highlighted for input and shown in your color.\n\nThe game is played in tallied rounds. Win a round by clearing your own side of the board. Win the game with 3 round wins (best of 5).\n",
       "evens": true,
-      "goal": 3,
+      "goal": 8,
+      "goal_param": 3,
       "multicapt": -1,
+      "capt_side": 2,
+      "round_starter": 0,
+      "rounds": 2,
       "sow_direct": 1,
       "stores": true
    },
    "player": {
-      "algorithm": "minimaxer",
       "ai_params": {
          "mm_depth": [ 1, 3, 5, 7 ]
       },

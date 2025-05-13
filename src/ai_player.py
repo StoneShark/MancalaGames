@@ -430,7 +430,7 @@ def negamax_no_repeat_turn(game):
     return (ginfo.sow_own_store
                 or ginfo.capt_rturn
                 or ginfo.xc_sown
-                or isinstance(game, same_side.Ohojichi))
+                or isinstance(game, (same_side.SameSide, same_side.Ohojichi)))
 
 
 def mcts_no_hidden_state(game):
@@ -576,7 +576,7 @@ def player_dict_rules():
                                        and pdict[ckey.ALGORITHM] == NEGAMAXER),
         both_objs=True,
         msg="""NegaMaxer is not compatible with repeat turns
-            (SOW_OWN_STORE | CAPT_RTURN | XC_SOWN | Ohojichi)""",
+            (SOW_OWN_STORE | CAPT_RTURN | XC_SOWN | SameSide | Ohojichi)""",
         excp=gi.GameInfoError)
 
 

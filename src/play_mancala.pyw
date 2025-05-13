@@ -552,11 +552,11 @@ class SelectList(ttk.Labelframe):
             self.select(last)
 
 
-    def jump_up(self, _):
+    def jump_up(self, event):
         """Move up item in the treeview."""
 
         current = self.game_list.focus()
-        if not current:
+        if event.widget is self.game_list or not current:
             return
 
         children = self.game_list.get_children()
@@ -564,11 +564,11 @@ class SelectList(ttk.Labelframe):
         self.select(children[prev_idx])
 
 
-    def jump_down(self, _):
+    def jump_down(self, event):
         """Move down one item in the treeview."""
 
         current = self.game_list.focus()
-        if not current:
+        if event.widget is self.game_list or not current:
             return
 
         children = self.game_list.get_children()
