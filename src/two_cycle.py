@@ -99,28 +99,12 @@ def ew2_build_rules():
     """Build the rules for EastWestCycle."""
 
     rules = ns2_build_rules('EastWestCycle')
-    del rules['ns2_no_sowrule']
 
     rules.add_rule(
         'ew2_even_holes',
         both_objs=True,
         rule=lambda _, nbr_holes: nbr_holes % 2,
         msg='EastWestCycle requires an even number of holes',
-        excp=gi.GameInfoError)
-
-    rules.add_rule(
-        'es2_no_sowrule',
-        rule=lambda ginfo: ginfo.sow_rule in (
-            # do not use the incr, so will fail
-            gi.SowRule.SOW_BLKD_DIV,
-            gi.SowRule.SOW_BLKD_DIV_NR,
-            # not sowing op side
-            gi.SowRule.NO_SOW_OPP_NS,
-            gi.SowRule.NO_OPP_CHILD,
-            gi.SowRule.LAP_CAPT_OPP_GETS,
-            gi.SowRule.OPP_CHILD_ONLY1,
-            ),
-        msg='EastWestCycle incompatible with selected SOW_RULE',
         excp=gi.GameInfoError)
 
     # add in the mancala rules
