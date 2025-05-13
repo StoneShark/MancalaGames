@@ -25,6 +25,7 @@ import game_interface as gi
 import game_logger
 import game_tally as gt
 import man_config
+import man_history
 import man_path
 import round_tally
 import ui_utils
@@ -88,7 +89,6 @@ class TkVars:
 
         ani_active = man_config.CONFIG.get_bool('ani_active')
         self.ani_active = tk.BooleanVar(man_ui.master, ani_active)
-
 
 
 class GameSetup:
@@ -180,6 +180,8 @@ class MancalaUI(tk.Frame):
         super().__init__(self.master)
         self.master.report_callback_exception = self._exception_callback
 
+        hsize = man_config.CONFIG.get_int('history_size')
+        self.history = man_history.HistoryManager(hsize)
         self.vars = TkVars(self, player_dict)
         self._set_difficulty()
 
@@ -363,11 +365,19 @@ class MancalaUI(tk.Frame):
         gamemenu.add_command(label='End Round', command=self.end_round)
         gamemenu.add_command(label='End Game', command=self.end_game)
         gamemenu.add_separator()
+        gamemenu.add_command(label='Undo Move', command=self._undo,
+                             accelerator='Ctrl-z')
+        gamemenu.add_command(label='Redo Move', command=self._redo,
+                             accelerator='Ctrl-Shift-z')
+        gamemenu.add_separator()
         gamemenu.add_command(label='Setup Game',
                              command=self.setup.setup_game)
         gamemenu.add_command(label='Reset to Setup',
                              command=self.setup.reset_setup)
         menubar.add_cascade(label='Game', menu=gamemenu)
+
+        self.master.bind("<Control-z>", self._undo)
+        self.master.bind("<Control-Z>", self._redo)
 
         aimenu = tk.Menu(menubar)
         aimenu.add_checkbutton(label='AI Player',
@@ -522,6 +532,8 @@ class MancalaUI(tk.Frame):
             debugmenu.add_separator()
             debugmenu.add_command(label='Print AI Player',
                                   command=lambda: print(self.player))
+            debugmenu.add_command(label='Print History',
+                                  command=lambda: print(self.history))
             debugmenu.add_separator()
             debugmenu.add_command(label='Swap Sides',
                                   command=lambda: self._pie_rule(force=True))
@@ -817,6 +829,7 @@ class MancalaUI(tk.Frame):
         game_log.new()
         game_log.turn(self.game.mcount, 'Start Game', self.game)
         self.movers = 0
+        self.history.record(self.game)
         self._reset_ani_state()
         self.schedule_ai()
 
@@ -840,6 +853,7 @@ class MancalaUI(tk.Frame):
         self.master.config(cursor=ui_utils.NORMAL)
         animator.set_active(False, clear_queue=True)
 
+        self.history.clear()
         new_game = self.game.new_game(win_cond=win_cond,
                                       new_round_ok=new_round_ok)
         self.player.clear_history()
@@ -1120,6 +1134,7 @@ class MancalaUI(tk.Frame):
             ui_utils.PassPopup(self, 'Must Pass', message)
             self.refresh()     # test_pass updates game state
 
+        self.history.record(self.game)
         self.schedule_ai()
 
 
@@ -1153,7 +1168,8 @@ class MancalaUI(tk.Frame):
                 game_log.set_ai_mode()
 
             with animator.animate_off():
-                self.saved_move = self.player.pick_move()
+                with self.history.off():
+                    self.saved_move = self.player.pick_move()
 
             game_log.clear_ai_mode()
 
@@ -1213,3 +1229,25 @@ class MancalaUI(tk.Frame):
 
             else:
                 self.schedule_ai()
+
+
+    def _undo(self, _):
+        """Return to the previous state."""
+
+        state = self.history.undo()
+        if state:
+            self.game.state = state
+            self.refresh()
+        else:
+            self.bell()
+
+
+    def _redo(self, _):
+        """Return to an undone state state."""
+
+        state = self.history.redo()
+        if state:
+            self.game.state = state
+            self.refresh()
+        else:
+            self.bell()

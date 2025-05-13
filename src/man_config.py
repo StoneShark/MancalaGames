@@ -429,6 +429,8 @@ DEFAULTS = {
     'ani_active': 'yes',
     'ani_delay': '250',
 
+    'history_size': '5',
+
     'ai_active': 'no',
     'ai_delay': '1',
 

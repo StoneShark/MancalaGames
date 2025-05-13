@@ -39,6 +39,7 @@ MODULES += incrementer.py
 MODULES += inhibitor.py
 MODULES += make_child.py
 MODULES += man_config.py
+MODULES += man_history.py
 MODULES += man_path.py
 MODULES += mancala_games.pyw
 MODULES += mancala_ui.py
