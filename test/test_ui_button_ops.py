@@ -192,7 +192,7 @@ def epilog(game_ui):
     Do final update because it seems to need it."""
 
     game_ui.master.after(200, game_ui.master.destroy)
-    game_ui.ui_loop()
+    game_ui.master.mainloop()
     game_ui.master.update()
 
 

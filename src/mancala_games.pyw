@@ -240,15 +240,7 @@ class MancalaGames(ttk.Frame):
                     ('<Control-t>', self._test),
                     ('<Control-n>', self._reset_const),
                     ]
-
-        if active:
-            self.bind_ids = [self.master.bind(key_seq, op)
-                             for key_seq, op in bindings]
-
-        elif self.bind_ids:
-            for(key_seq, _), bid in zip(bindings, self.bind_ids):
-                self.master.unbind(key_seq, bid)
-            self.bind_ids = None
+        ui_utils.key_bindings(self, bindings, active)
 
 
     def _add_commands_ui(self):

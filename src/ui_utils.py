@@ -285,7 +285,7 @@ class WinPopup(tksimpledialog.Dialog):
         tk.Button(bframe, text='Dump Game', width=12,
                   command=game_log.dump).pack(side=tk.LEFT)
         tk.Button(bframe, text='Save Game', width=12,
-                  command=self.mancala_ui.save_file).pack(side=tk.LEFT)
+                  command=self.mancala_ui.save_log).pack(side=tk.LEFT)
         tk.Button(bframe, text='Ok', width=12,
                   command=self.ok, default=tk.ACTIVE).pack(side='right')
 
@@ -563,6 +563,26 @@ def show_release(parent):
                 fixed_form=True)
 
 
+# %% key bindings
+
+def key_bindings(window, bindings, active):
+    """Do or undo key bindings.
+
+    window: the main ui app frame which must have
+    master and bind_ids attributes.
+
+    bindings: key sequence, command pairs"""
+
+    if active:
+        window.bind_ids = [window.master.bind(key_seq, op)
+                           for key_seq, op in bindings]
+
+    elif window.bind_ids:
+        for(key_seq, _), bid in zip(bindings, window.bind_ids):
+            window.master.unbind(key_seq, bid)
+        window.bind_ids = None
+
+
 # %% Counter
 
 class Counter:
@@ -578,11 +598,9 @@ class Counter:
         self.value += 1
         return self.value
 
-
     def reset(self):
         """Reset the count."""
         self.value = -1
-
 
     def increment(self):
         """Increment the value w/o using it."""

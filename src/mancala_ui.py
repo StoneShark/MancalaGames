@@ -45,6 +45,7 @@ RTURN_QUERY = 10
 RTURN_QFREQ = 5
 
 ROUND = 'round'
+DEBUG = 'debug'
 
 # %%
 
@@ -186,7 +187,10 @@ class MancalaUI(tk.Frame):
         self._set_difficulty()
 
         self.pack(expand=True, fill=tk.BOTH)
+
+        self._menubar = None
         self._create_menus()
+        self._key_bindings(active=True)
 
         self.tally = None
         self.rframe = None
@@ -351,13 +355,16 @@ class MancalaUI(tk.Frame):
 
 
     def _create_menus(self):
-        """Create the game control menus."""
+        """Create the game control menus.
+
+        Do keybinds that should be disabled during animations
+        in _key_bindings."""
         # pylint: disable=too-many-statements
 
-        menubar = tk.Menu(self.master)
-        self.master.config(menu=menubar)
+        self._menubar = tk.Menu(self.master)
+        self.master.config(menu=self._menubar)
 
-        gamemenu = tk.Menu(menubar)
+        gamemenu = tk.Menu(self._menubar, name='game')
         gamemenu.add_command(label='New', command=self._new_game)
         gamemenu.add_separator()
         gamemenu.add_command(label='Swap Sides', command=self._pie_rule)
@@ -374,12 +381,9 @@ class MancalaUI(tk.Frame):
                              command=self.setup.setup_game)
         gamemenu.add_command(label='Reset to Setup',
                              command=self.setup.reset_setup)
-        menubar.add_cascade(label='Game', menu=gamemenu)
+        self._menubar.add_cascade(label='Game', menu=gamemenu)
 
-        self.master.bind("<Control-z>", self._undo)
-        self.master.bind("<Control-Z>", self._redo)
-
-        aimenu = tk.Menu(menubar)
+        aimenu = tk.Menu(self._menubar, name='player')
         aimenu.add_checkbutton(label='AI Player',
                                variable=self.vars.ai_active,
                                onvalue=True, offvalue=False,
@@ -407,12 +411,12 @@ class MancalaUI(tk.Frame):
                                value=3, variable=self.vars.difficulty,
                                command=self._set_difficulty)
 
-        menubar.add_cascade(label='AI', menu=aimenu)
+        self._menubar.add_cascade(label='AI', menu=aimenu)
 
-        logmenu = tk.Menu(menubar)
+        logmenu = tk.Menu(self._menubar, name='log')
         logmenu.add_command(label='Show Prev', command=game_log.prev)
         logmenu.add_command(label='Show Log', command=game_log.dump)
-        logmenu.add_command(label='Save Log', command=self.save_file)
+        logmenu.add_command(label='Save Log', command=self.save_log)
         logmenu.add_separator()
 
         logmenu.add_radiobutton(
@@ -452,9 +456,9 @@ class MancalaUI(tk.Frame):
                                 variable=self.vars.ai_filter,
                                 onvalue=True, offvalue=False,)
 
-        menubar.add_cascade(label='Log', menu=logmenu)
+        self._menubar.add_cascade(label='Log', menu=logmenu)
 
-        showmenu = tk.Menu(menubar)
+        showmenu = tk.Menu(self._menubar, name='display')
         showmenu.add_checkbutton(label='Show Tally',
                                  variable=self.vars.show_tally,
                                  onvalue=True, offvalue=False,
@@ -473,7 +477,10 @@ class MancalaUI(tk.Frame):
                                  onvalue=True, offvalue=False,
                                  command=self.refresh)
 
+        self._menubar.add_cascade(label='Display', menu=showmenu)
+
         if animator.ENABLED:
+            showmenu = tk.Menu(self._menubar, name='animator')
             showmenu.add_separator()
             showmenu.add_checkbutton(label='Animation Active',
                                      variable=self.vars.ani_active,
@@ -490,29 +497,30 @@ class MancalaUI(tk.Frame):
                                  command=self._dec_ani_speed,
                                  accelerator='<')
 
+            # these are always active when the animator is ENABLED
             self.master.bind("<Control-a>", self._toggle_ani_active)
             self.master.bind("<Key-equal>", self._reset_ani_delay)
             self.master.bind("<Key-greater>", self._inc_ani_speed)
             self.master.bind("<Key-less>", self._dec_ani_speed)
 
-        menubar.add_cascade(label='Display', menu=showmenu)
+            self._menubar.add_cascade(label='Animator', menu=showmenu)
 
-        helpmenu = tk.Menu(menubar)
+        helpmenu = tk.Menu(self._menubar, name='name')
         helpmenu.add_command(label='Help...', command=self._help)
         helpmenu.add_command(label='About Game...', command=self._about)
         helpmenu.add_command(label='About...',
                              command=ft.partial(ui_utils.show_release, self))
-        menubar.add_cascade(label='Help', menu=helpmenu)
+        self._menubar.add_cascade(label='Help', menu=helpmenu)
 
         if man_config.CONFIG.get_bool('debug_menu'):
 
-            debugmenu = tk.Menu(menubar)
+            debugmenu = tk.Menu(self._menubar, name=DEBUG)
             debugmenu.add_command(label='Print Params',
                                   command=lambda: print(self.game.params_str()))
             debugmenu.add_command(label='Print Consts',
                                   command=lambda: print(self.game.cts))
 
-            pmenu = tk.Menu(menubar)
+            pmenu = tk.Menu(self._menubar)
             pmenu.add_command(label='Print All',
                                   command=lambda: print(self.game.deco))
             pmenu.add_separator()
@@ -541,14 +549,33 @@ class MancalaUI(tk.Frame):
                                   command=lambda: setattr(animator,
                                                           'print_steps',
                                                           not animator.print_steps))
-            menubar.add_cascade(label='Debug', menu=debugmenu)
+            self._menubar.add_cascade(label='Debug', menu=debugmenu)
 
 
-    def ui_loop(self):
-        """Call the mainloop UI - everything happens because of user input.
-        This does not return until the window is killed."""
+    def _menubar_state(self, active=True):
+        """Activate or deactivate the menus.
+        The animator menu is left active."""
 
-        self.master.mainloop()
+        state = tk.NORMAL if active else tk.DISABLED
+
+        self._menubar.entryconfig('Game', state=state)
+        self._menubar.entryconfig('AI', state=state)
+        self._menubar.entryconfig('Log', state=state)
+        self._menubar.entryconfig('Display', state=state)
+        self._menubar.entryconfig('Help', state=state)
+
+        if DEBUG in self._menubar.children:
+            self._menubar.entryconfig('Debug', state=state)
+
+
+    def _key_bindings(self, active=True):
+        """Bind or unbind the keys that should not be active
+        while the animations are running."""
+
+        bindings = [('<Control-z>', self._undo),
+                    ('<Control-Z>', self._redo),
+                    ]
+        ui_utils.key_bindings(self, bindings, active)
 
 
     def _cancel_pending_afters(self):
@@ -692,7 +719,7 @@ class MancalaUI(tk.Frame):
         ui_utils.QuietDialog(self, f'About {self.info.name}', paragraphs)
 
 
-    def save_file(self):
+    def save_log(self):
         """Save the game log to the file, provide a string that
         describes the game."""
         game_log.save(self.game.params_str())
@@ -749,12 +776,16 @@ class MancalaUI(tk.Frame):
 
     def _set_ui_active(self, active, frame=None):
         """Activate or deactivate the Hole and Store Buttons,
-        recursing through frames.
+        recursing through frames. Also, on the first call,
+        activate/deactivate the key bindings and menus
+        (animation controls are always active).
 
         Not using the tk state for Hole & Store Buttons, because
         it's overridden on every refresh."""
 
         if not frame:
+            self._key_bindings(active)
+            self._menubar_state(active)
             frame = self
 
         for child in frame.winfo_children():
