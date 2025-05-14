@@ -162,6 +162,7 @@ class MancalaUI(tk.Frame):
                           ai_player.AiPlayer(self.game, player_dict)
         self.setup = GameSetup(self)
         self.movers = 0
+        self._swap_ok = True
         self.wcond = None   #  used between the movers and epilogs
         self.saved_move = None
 
@@ -367,7 +368,7 @@ class MancalaUI(tk.Frame):
         gamemenu = tk.Menu(self._menubar, name='game')
         gamemenu.add_command(label='New', command=self._new_game)
         gamemenu.add_separator()
-        gamemenu.add_command(label='Swap Sides', command=self._pie_rule)
+        gamemenu.add_command(label='Swap Sides', command=self._swap_sides)
         gamemenu.add_separator()
         gamemenu.add_command(label='End Round', command=self.end_round)
         gamemenu.add_command(label='End Game', command=self.end_game)
@@ -544,7 +545,7 @@ class MancalaUI(tk.Frame):
                                   command=lambda: print(self.history))
             debugmenu.add_separator()
             debugmenu.add_command(label='Swap Sides',
-                                  command=lambda: self._pie_rule(force=True))
+                                  command=lambda: self._swap_sides(force=True))
             debugmenu.add_command(label='Toggle Anim Print',
                                   command=lambda: setattr(animator,
                                                           'print_steps',
@@ -885,9 +886,10 @@ class MancalaUI(tk.Frame):
         animator.set_active(False, clear_queue=True)
 
         self.history.clear()
+        self.player.clear_history()
+        self._swap_ok = True
         new_game = self.game.new_game(win_cond=win_cond,
                                       new_round_ok=new_round_ok)
-        self.player.clear_history()
         self.set_game_mode(buttons.Behavior.GAMEPLAY, force=True)
 
         self.refresh()
@@ -991,13 +993,9 @@ class MancalaUI(tk.Frame):
             ui_utils.WinPopup(self, title, message)
 
 
-    def _pie_rule(self, force=False):
-        """Allow a human player to swap sides after the first
+    def _swap_sides(self, force=False):
+        """Allow a player to swap sides after the first
         move, aka 'Pie Rule'.
-
-        Only allowed on
-            1. either of the first two moves for random start pattern
-            2. the second move of the game by a human player
 
         Force is used in the debugging menu to always allow a
         swap.
@@ -1010,20 +1008,23 @@ class MancalaUI(tk.Frame):
         MCTS. This does seem extreme but the AI turn and node tree
         have already been started correcting them seems error prone."""
 
-        if self.info.start_pattern == gi.StartPattern.RANDOM:
-            allowed = self.movers < 2
+        if self.info.start_pattern in (gi.StartPattern.RANDOM,
+                                       gi.StartPattern.MOVE_RANDOM):
+            allowed = self.movers < 2 and self._swap_ok
         else:
             allowed = self.movers == 1
 
         if not force and not allowed:
             ui_utils.showerror(self, "Swap Not Allowed",
-                               """Swapping sides is only allowed by a
-                               human player after the first move or for
-                               either of the first two moves of a game
-                               started with a RANDOM start pattern.
-                               It counts as a move.""")
+                ["Swapping sides is only allowed:",
+                 """1. Before or after the first move for games
+                 using RANDOM and MOVE_RANDOM start patterns.""",
+                 "2. After the first move for other games.",
+                 """A swap counts as a move.
+                 Only one swap is allowed per game."""])
             return
 
+        self._swap_ok = False
         game = self.game
         self.movers += 1
         game.mcount += 1
