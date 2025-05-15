@@ -473,6 +473,8 @@ class ConfigData:
         except:
             self.create_ini_file()
 
+        self.load_game_specific(name)
+
         # bools, ints and fonts are interpreted in their get_ funcs
         self._check_colors(tk_root)
         self.validate('grid_density', VALID_DENSITY)
@@ -485,8 +487,6 @@ class ConfigData:
                         not in VALID_DIFFICULTY):
                 print('Deleting invalid difficulty in mancala.ini file.')
                 del self._config[section][DIFFICULTY]
-
-        self.load_game_specific(name)
 
 
     def __getitem__(self, key):
