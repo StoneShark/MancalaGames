@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Kale",
-      "about": "Sow counter-clockwise. If your opponent has no seeds, you must make some available, if you can.\n\nCapture on 2s and 3s. The first capture must be on the opponent's side of the board, but a multi-capture chain may continue onto your own side of the board. A grand slam does not capture--the seeds are left on the  board.\n\nThe game ends when seeds cannot be shared with a player without seeds. The remaining seeds on the board go that the player (the unfed one). Games caught in cycles can be ended by the menu command End Game, in this case, unclaimed seeds go to the hole owners.\n\nGoal: capture at least half of the seeds.\n",
+      "about": "Sow counter-clockwise. If your opponent has no seeds, you must make some available, if you can.\n\nCapture on 2s and 3s. The first capture must be on the opponent's side of the board, but a multi-capture chain may continue onto your own side of the board. A grand slam does not capture--the seeds are left on the  board.\n\nThe game ends when seeds cannot be shared with a player without seeds. The remaining seeds on the board go that the player (the unfed one). Games caught in cycles can be ended by the End Game menu command, in this case, unclaimed seeds go to the hole owners.\n\nGoal: capture at least half of the seeds.\n",
       "capt_on": [ 2, 3 ],
       "grandslam": 2,
       "multicapt": -1,

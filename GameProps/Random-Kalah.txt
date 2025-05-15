@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Random-Kalah",
-      "about": "Kalah but with seeds placed randomly at the start. A minimum of 2 seeds are placed in each hole.\n\nEither player may Swap Sides (Game menu command) at the start of their first turn but only one swap may be done per game.\n\nPlayed in rounds. Best of 7 wins game.\n",
+      "about": "Kalah but with seeds placed randomly at the start. A minimum of 2 seeds are placed in each hole.\n\nEither player may Swap Sides (Move menu command) at the start of their first turn but only one swap may be done per game.\n\nPlayed in rounds. Best of 7 wins game.\n",
       "crosscapt": true,
       "goal": 4,
       "goal_param": 4,

@@ -370,15 +370,8 @@ class MancalaUI(tk.Frame):
         gamemenu = tk.Menu(self._menubar, name='game')
         gamemenu.add_command(label='New', command=self._new_game)
         gamemenu.add_separator()
-        gamemenu.add_command(label='Swap Sides', command=self._swap_sides)
-        gamemenu.add_separator()
         gamemenu.add_command(label='End Round', command=self.end_round)
         gamemenu.add_command(label='End Game', command=self.end_game)
-        gamemenu.add_separator()
-        gamemenu.add_command(label='Undo Move', command=self._undo,
-                             accelerator='Ctrl-z')
-        gamemenu.add_command(label='Redo Move', command=self._redo,
-                             accelerator='Ctrl-Shift-z')
         gamemenu.add_separator()
         gamemenu.add_command(label='Setup Game',
                              command=self.setup.setup_game)
@@ -386,12 +379,20 @@ class MancalaUI(tk.Frame):
                              command=self.setup.reset_setup)
         self._menubar.add_cascade(label='Game', menu=gamemenu)
 
+        movemenu = tk.Menu(self._menubar, name='move')
+        movemenu.add_command(label='Undo Move', command=self._undo,
+                             accelerator='Ctrl-z')
+        movemenu.add_command(label='Redo Move', command=self._redo,
+                             accelerator='Ctrl-Shift-z')
+        movemenu.add_separator()
+        movemenu.add_command(label='Swap Sides', command=self._swap_sides)
+        self._menubar.add_cascade(label='Move', menu=movemenu)
+
         aimenu = tk.Menu(self._menubar, name='player')
-        aimenu.add_checkbutton(label='AI Player',
+        aimenu.add_checkbutton(label='AI Player Active',
                                variable=self.vars.ai_active,
                                onvalue=True, offvalue=False,
                                command=self.schedule_ai)
-
         aimenu.add_separator()
         aimenu.add_radiobutton(label='No AI Delay',
                                variable=self.vars.ai_delay, value=0)
@@ -399,7 +400,6 @@ class MancalaUI(tk.Frame):
                                variable=self.vars.ai_delay, value=1)
         aimenu.add_radiobutton(label='Long AI Delay',
                                variable=self.vars.ai_delay, value=2)
-
         aimenu.add_separator()
         aimenu.add_radiobutton(label='Easy',
                                value=0, variable=self.vars.difficulty,
@@ -413,15 +413,62 @@ class MancalaUI(tk.Frame):
         aimenu.add_radiobutton(label='Expert',
                                value=3, variable=self.vars.difficulty,
                                command=self._set_difficulty)
+        self._menubar.add_cascade(label='Player', menu=aimenu)
 
-        self._menubar.add_cascade(label='AI', menu=aimenu)
+        showmenu = tk.Menu(self._menubar, name='display')
+        showmenu.add_checkbutton(label='Show Tally Pane',
+                                 variable=self.vars.show_tally,
+                                 onvalue=True, offvalue=False,
+                                 command=self._toggle_tally)
+        showmenu.add_separator()
+        showmenu.add_checkbutton(label='Touch Screen',
+                                 variable=self.vars.touch_screen,
+                                 onvalue=True, offvalue=False,
+                                 command=self.refresh)
+        showmenu.add_checkbutton(label='Facing Players',
+                                 variable=self.vars.facing_players,
+                                 onvalue=True, offvalue=False,
+                                 command=self.toggle_facing)
+        showmenu.add_checkbutton(label='Ownership Arrows',
+                                 variable=self.vars.owner_arrows,
+                                 onvalue=True, offvalue=False,
+                                 command=self.refresh)
+        self._menubar.add_cascade(label='Display', menu=showmenu)
+
+        if animator.ENABLED:
+            animenu = tk.Menu(self._menubar, name='animator')
+            animenu.add_checkbutton(label='Animation Active',
+                                     variable=self.vars.ani_active,
+                                     onvalue=True, offvalue=False,
+                                     command=self._reset_ani_state,
+                                     accelerator='Ctrl-a')
+            animenu.add_separator()
+            animenu.add_command(label='Anim Speed Reset',
+                                 command=self._reset_ani_delay,
+                                 accelerator='=')
+            animenu.add_command(label='Anim Speed Faster',
+                                 command=self._inc_ani_speed,
+                                 accelerator='>')
+            animenu.add_command(label='Anim Speed Slower',
+                                 command=self._dec_ani_speed,
+                                 accelerator='<')
+            # these are always active when the animator is ENABLED
+            self.master.bind("<Control-a>", self._toggle_ani_active)
+            self.master.bind("<Key-equal>", self._reset_ani_delay)
+            self.master.bind("<Key-greater>", self._inc_ani_speed)
+            self.master.bind("<Key-less>", self._dec_ani_speed)
+            self._menubar.add_cascade(label='Animator', menu=animenu)
 
         logmenu = tk.Menu(self._menubar, name='log')
+        logmenu.add_checkbutton(
+            label='Live Log',
+            onvalue=True, offvalue=False,
+            variable=self.vars.live_log,
+            command=lambda: setattr(game_log, 'live', self.vars.live_log.get()))
         logmenu.add_command(label='Show Prev', command=game_log.prev)
         logmenu.add_command(label='Show Log', command=game_log.dump)
-        logmenu.add_command(label='Save Log', command=self.save_log)
+        logmenu.add_command(label='Save Log ...', command=self.save_log)
         logmenu.add_separator()
-
         logmenu.add_radiobutton(
             label='Moves',
             value=game_log.MOVE, variable=self.vars.log_level,
@@ -442,71 +489,14 @@ class MancalaUI(tk.Frame):
             label='Detail',
             value=game_log.DETAIL, variable=self.vars.log_level,
             command=self._set_log_level)
-        logmenu.add_radiobutton(
-            label='Simulated Moves',
-            value=game_log.SIMUL, variable=self.vars.log_level,
-            command=self._set_log_level)
         logmenu.add_separator()
-        logmenu.add_checkbutton(
-            label='Live Log',
-            onvalue=True, offvalue=False,
-            variable=self.vars.live_log,
-            command=lambda: setattr(game_log, 'live', self.vars.live_log.get()))
-        logmenu.add_checkbutton(label='Log AI Analysis',
-                                variable=self.vars.log_ai,
-                                onvalue=True, offvalue=False)
         logmenu.add_checkbutton(label='Filter AI Scores',
                                 variable=self.vars.ai_filter,
                                 onvalue=True, offvalue=False,)
-
+        logmenu.add_checkbutton(label='Log AI Analysis',
+                                variable=self.vars.log_ai,
+                                onvalue=True, offvalue=False)
         self._menubar.add_cascade(label='Log', menu=logmenu)
-
-        showmenu = tk.Menu(self._menubar, name='display')
-        showmenu.add_checkbutton(label='Show Tally',
-                                 variable=self.vars.show_tally,
-                                 onvalue=True, offvalue=False,
-                                 command=self._toggle_tally)
-        showmenu.add_separator()
-        showmenu.add_checkbutton(label='Touch Screen',
-                                 variable=self.vars.touch_screen,
-                                 onvalue=True, offvalue=False,
-                                 command=self.refresh)
-        showmenu.add_checkbutton(label='Facing Players',
-                                 variable=self.vars.facing_players,
-                                 onvalue=True, offvalue=False,
-                                 command=self.toggle_facing)
-        showmenu.add_checkbutton(label='Ownership Arrows',
-                                 variable=self.vars.owner_arrows,
-                                 onvalue=True, offvalue=False,
-                                 command=self.refresh)
-
-        self._menubar.add_cascade(label='Display', menu=showmenu)
-
-        if animator.ENABLED:
-            showmenu = tk.Menu(self._menubar, name='animator')
-            showmenu.add_separator()
-            showmenu.add_checkbutton(label='Animation Active',
-                                     variable=self.vars.ani_active,
-                                     onvalue=True, offvalue=False,
-                                     command=self._reset_ani_state,
-                                     accelerator='Ctrl-a')
-            showmenu.add_command(label='Anim Speed Reset',
-                                 command=self._reset_ani_delay,
-                                 accelerator='=')
-            showmenu.add_command(label='Anim Speed Faster',
-                                 command=self._inc_ani_speed,
-                                 accelerator='>')
-            showmenu.add_command(label='Anim Speed Slower',
-                                 command=self._dec_ani_speed,
-                                 accelerator='<')
-
-            # these are always active when the animator is ENABLED
-            self.master.bind("<Control-a>", self._toggle_ani_active)
-            self.master.bind("<Key-equal>", self._reset_ani_delay)
-            self.master.bind("<Key-greater>", self._inc_ani_speed)
-            self.master.bind("<Key-less>", self._dec_ani_speed)
-
-            self._menubar.add_cascade(label='Animator', menu=showmenu)
 
         helpmenu = tk.Menu(self._menubar, name='name')
         helpmenu.add_command(label='Help...', command=self._help)
@@ -562,9 +552,10 @@ class MancalaUI(tk.Frame):
         state = tk.NORMAL if active else tk.DISABLED
 
         self._menubar.entryconfig('Game', state=state)
-        self._menubar.entryconfig('AI', state=state)
-        self._menubar.entryconfig('Log', state=state)
+        self._menubar.entryconfig('Move', state=state)
+        self._menubar.entryconfig('Player', state=state)
         self._menubar.entryconfig('Display', state=state)
+        self._menubar.entryconfig('Log', state=state)
         self._menubar.entryconfig('Help', state=state)
 
         if DEBUG in self._menubar.children:
