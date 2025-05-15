@@ -222,6 +222,7 @@ UNIT_TESTS += test_game_str.cov
 UNIT_TESTS += test_gconsts.cov
 UNIT_TESTS += test_get_direct.cov
 UNIT_TESTS += test_get_moves.cov
+UNIT_TESTS += test_history.cov
 UNIT_TESTS += test_incr.cov
 UNIT_TESTS += test_inhibitor.cov
 UNIT_TESTS += test_make_child.cov

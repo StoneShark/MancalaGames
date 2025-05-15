@@ -117,6 +117,10 @@ class TestGameState:
         assert re.fullmatch(ere_one, gstrs[1])
         assert re.fullmatch(ere_two, gstrs[2])
 
+        one = state.str_one()
+        assert str(state.board) in one
+        assert str(state.store) in one
+
 
     @pytest.fixture
     def game(self):
@@ -277,6 +281,35 @@ class TestGameState:
             game.blocked = [F, F, T, F]
             game.child = [N, N, N, N]
 
+        assert game.state == saved_state
+
+
+    def test_state_context2(self, game):
+        """Test all 3 standard block/loop exits.
+        saved_state is used from caller context."""
+
+        def do_the_loop(game):
+
+            for i in range(4):
+                assert game.state == saved_state
+
+                with game.restore_state(saved_state):
+
+                    game.board = [1, 2, 3, 4]
+                    game.store = None
+                    game.unlocked = [F, T, F, F]
+                    if i == 1:
+                        continue
+                    if i == 2:
+                        break
+                    if i == 3:
+                        return
+                    game.blocked = [F, F, T, F]
+                    game.child = [N, N, N, N]
+
+
+        saved_state = game.state
+        do_the_loop(game)
         assert game.state == saved_state
 
 

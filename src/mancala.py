@@ -105,6 +105,14 @@ class GameState(ai_interface.StateIf):
         return string
 
 
+    def str_one(self):
+        """Return a one line summary of the state"""
+
+        string = f'    {self.mcount:3} {self.turn:3} '
+        string += f'{str(self.store):8} {self.board}'
+        return string
+
+
 class ManDeco:
     """Collect the decorator chains into one variable,
     build them all together.
@@ -431,7 +439,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
     @contextlib.contextmanager
     def save_restore_state(self):
-        """A context manager that saves and restores state"""
+        """A context manager that saves and restores state."""
 
         saved_state = self.state
         game_log.set_simulate()
@@ -441,6 +449,22 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         finally:
             game_log.clear_simulate()
             self.state = saved_state
+
+
+    @contextlib.contextmanager
+    def restore_state(self, state):
+        """Use this when you've saved the state, but might want
+        to restore it serveral times. For example,in a loop:
+
+            saved = game.state
+            for thing in things:
+                with self.game.restore_state(saved):
+                    <code block>
+
+        All exits from code block will restore the state."""
+
+        yield
+        self.state = state
 
 
     @property

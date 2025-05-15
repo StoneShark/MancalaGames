@@ -24,6 +24,7 @@ import buttons
 import game_interface as gi
 import game_logger
 import game_tally as gt
+import mancala
 import man_config
 import man_history
 import man_path
@@ -183,7 +184,8 @@ class MancalaUI(tk.Frame):
         self.master.report_callback_exception = self._exception_callback
 
         hsize = man_config.CONFIG.get_int('history_size')
-        self.history = man_history.HistoryManager(hsize)
+        self.history = man_history.HistoryManager(hsize,
+                                                  mancala.GameState.str_one)
         self.vars = TkVars(self, player_dict)
         self._set_difficulty()
 
@@ -861,7 +863,7 @@ class MancalaUI(tk.Frame):
         game_log.new()
         game_log.turn(self.game.mcount, 'Start Game', self.game)
         self.movers = 0
-        self.history.record(self.game)
+        self.history.record(self.game.state)
         self._reset_ani_state()
         self.schedule_ai()
 
@@ -1166,7 +1168,7 @@ class MancalaUI(tk.Frame):
             ui_utils.PassPopup(self, 'Must Pass', message)
             self.refresh()     # test_pass updates game state
 
-        self.history.record(self.game)
+        self.history.record(self.game.state)
         self.schedule_ai()
 
 
@@ -1199,9 +1201,8 @@ class MancalaUI(tk.Frame):
             if not self.vars.log_ai.get():
                 game_log.set_ai_mode()
 
-            with animator.animate_off():
-                with self.history.off():
-                    self.saved_move = self.player.pick_move()
+            with animator.animate_off(), self.history.off():
+                self.saved_move = self.player.pick_move()
 
             game_log.clear_ai_mode()
 
@@ -1263,7 +1264,7 @@ class MancalaUI(tk.Frame):
                 self.schedule_ai()
 
 
-    def _undo(self, _):
+    def _undo(self, _=None):
         """Return to the previous state."""
 
         state = self.history.undo()
@@ -1274,7 +1275,7 @@ class MancalaUI(tk.Frame):
             self.bell()
 
 
-    def _redo(self, _):
+    def _redo(self, _=None):
         """Return to an undone state state."""
 
         state = self.history.redo()

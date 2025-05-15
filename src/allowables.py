@@ -510,7 +510,6 @@ class NoGrandSlam(AllowableIf):
 
         for pos, loc in enumerate(my_rng):
             if not allow[pos]:
-                self.game.state = saved_state
                 continue
 
             self.game.sim_sow_capt(pos)

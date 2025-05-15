@@ -9,11 +9,24 @@ import contextlib
 
 class HistoryManager:
     """Record a series of game state histories.
-    Allowing undoing and redoing moves."""
+    Allowing undoing and redoing moves.
 
-    def __init__(self, nbr_states):
+    size: number of states saved
+
+    history: the deque for saved states. The currect state is on
+    the left.
+
+    rotated: count of states 'undone' or 'rotated' to the right
+    end of the queue. The number of steps that can be 'redone'
+    and to pop (from the right) if a new state is recorded.
+
+    active: ingore and record calls while active is false. """
+
+    def __init__(self, nbr_states, print_func=str):
 
         self.size = nbr_states
+        self.print_func = print_func
+
         self.history = collections.deque([], nbr_states)
         self.rotated = 0
         self.active = True
@@ -23,9 +36,7 @@ class HistoryManager:
 
         string = f'\nHistoryManager({self.size})\n'
         string += f'    rotated: {self.rotated}\n'
-        for state in self.history:
-            string += f'    {state.mcount:3} {state.turn:3} '
-            string += f'{str(state.store):8} {state.board}\n'
+        string += '\n'.join(self.print_func(state) for state in self.history)
 
         return string
 
@@ -33,11 +44,12 @@ class HistoryManager:
     def clear(self):
         """Clear the game history."""
 
+        self.rotated = 0
         self.history.clear()
 
 
-    def record(self, game):
-        """Record the game state in the history.
+    def record(self, state):
+        """Record the state in the history.
         Pop any states rotated to the back of the queue."""
 
         if not self.active:
@@ -47,14 +59,14 @@ class HistoryManager:
             self.history.pop()
         self.rotated = 0
 
-        self.history.appendleft(game.state)
+        self.history.appendleft(state)
 
 
     def undo(self):
         """Return the previous game state."""
 
         hsteps = len(self.history)
-        if hsteps <= 1 or self.rotated >= hsteps:
+        if hsteps <= 1 or self.rotated >= hsteps - 1:
             return None
 
         self.rotated += 1
