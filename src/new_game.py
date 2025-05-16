@@ -361,13 +361,13 @@ def deco_new_game(game):
 
     new_game = NewGame(game)
 
+    if game.info.child_locs == gi.ChildLocs.FIXED_ONE_RIGHT:
+        new_game = NewFixedChildren(game, new_game)
+
     if game.info.start_pattern:
         new_game = NewGamePattern(game,
                                   PCLASSES[game.info.start_pattern],
                                   new_game)
-
-    if game.info.child_locs == gi.ChildLocs.FIXED_ONE_RIGHT:
-        new_game = NewFixedChildren(game, new_game)
 
     if game.info.rounds:
         if game.info.goal == gi.Goal.TERRITORY:

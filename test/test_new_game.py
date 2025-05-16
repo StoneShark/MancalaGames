@@ -647,6 +647,36 @@ class TestFixedChildren:
         assert game.child[5] is True
 
 
+    def test_move_child(self):
+        """Exposing a bug:  The deco chain was built in the wrong
+        order: pattern applied before children were made so a
+        MOVE_RANDOM could occur from a child.
+
+        There's 50% chance that the random move will be from the
+        child due to the allow rule. Do a buch of setups.
+        Failed consistently before fix."""
+
+        for _ in range(25):
+            game_consts = gconsts.GameConsts(nbr_start=3, holes=3)
+            game_info = gi.GameInfo(stores=True,
+                                    child_type=gi.ChildType.WEG,
+                                    child_locs=gi.ChildLocs.FIXED_ONE_RIGHT,
+                                    start_pattern=gi.StartPattern.MOVE_RANDOM,
+                                    allow_rule=
+                                        gi.AllowRule.FIRST_TURN_ONLY_RIGHT_TWO,
+                                    nbr_holes=game_consts.holes,
+                                    rules=mancala.Mancala.rules)
+
+            game = mancala.Mancala(game_consts, game_info)
+            # new game is now always called in game creation
+
+            assert game.child[2] is False
+            assert game.child[5] is True
+            assert game.board[2]
+            assert game.board[5]
+
+
+
 
 class TestBadEnums:
 
