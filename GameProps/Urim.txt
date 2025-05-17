@@ -20,7 +20,9 @@
       "sow_direct": 1,
       "sow_rule": 7,
       "sow_param": 17,
-      "stores": true
+      "stores": true,
+      "unclaimed": 2, 
+      "quitter": 0
    },
    "player": {
       "algorithm": "negamaxer",

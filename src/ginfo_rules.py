@@ -991,6 +991,13 @@ def build_rules():
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
+        'unfed_quitter',
+        rule=lambda ginfo: ginfo.quitter == gi.EndGameSeeds.UNFED_PLAYER,
+        msg="""EndGameSeeds UNFED_PLAYER should not be used as a QUITTER
+            (DONT_SCORE will be used)""",
+        warn=True)
+
+    man_rules.add_rule(
         'p1m1_conflict',
         rule=lambda ginfo: (ginfo.prescribed == gi.SowPrescribed.PLUS1MINUS1
                             and (ginfo.sow_start or ginfo.move_one)),

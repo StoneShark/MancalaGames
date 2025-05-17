@@ -14,7 +14,9 @@
       "child_type": 1,
       "mustpass": true,
       "skip_start": true,
-      "sow_direct": 0
+      "sow_direct": 0,
+      "unclaimed": 1,
+      "quitter": 1
    },
    "player": {
       "scorer": {

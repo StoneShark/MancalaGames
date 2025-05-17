@@ -12,7 +12,8 @@
       "capt_side": 2,
       "sow_direct": 1,
       "stores": true,
-      "unclaimed": 3
+      "unclaimed": 3,
+      "quitter": 0
    },
    "player": {
       "algorithm": "negamaxer",

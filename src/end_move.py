@@ -35,8 +35,8 @@ def _build_deprive_ender(game):
 
     if game.info.min_move == 1:
         # player wo seeds looses
-        ender = emd.DepriveNoSeedsEndGame(game)
-        ender = emd.EndTurnNoMoves(game, ender)
+        ender = emd.EndTurnNoMoves(game)
+        ender = emd.DepriveNoSeedsEndGame(game, ender)
     else:
         # last mover wins
         ender = emd.DepriveLastMoveEndGame(game)
@@ -221,11 +221,15 @@ def deco_end_move(game):
 
 
 def deco_quitter(game):
-    """Return a quitter. Used when either the user ended game or
+    """Return a quitter. Used when either the user qiot game or
     the game reached an ENDLESS condition.
 
     Do something that seems fair. Assume that seeds in play could
     belong to either player."""
+    # pylint: disable=too-complex
+
+    sclaimer = None
+    quitter = None
 
     if game.info.goal in (gi.Goal.CLEAR,
                           gi.Goal.DEPRIVE,
@@ -233,38 +237,38 @@ def deco_quitter(game):
                           gi.Goal.RND_WIN_COUNT_CLR):
         quitter = emd.QuitToTie(game)
 
-    elif game.info.stores or game.info.child_type:
+    elif game.info.quitter == gi.EndGameSeeds.HOLE_OWNER:
+        sclaimer = claimer.TakeOwnSeeds(game)
 
-        if game.info.unclaimed == gi.EndGameSeeds.DONT_SCORE:
-            sclaimer = claimer.TakeOnlyChildNStores(game)
+    elif game.info.quitter in (gi.EndGameSeeds.DONT_SCORE,
+                               gi.EndGameSeeds.UNFED_PLAYER):
+        sclaimer = claimer.TakeOnlyChildNStores(game)
 
-        elif game.info.unclaimed == gi.EndGameSeeds.LAST_MOVER:
-            sclaimer = claimer.TakeAllUnclaimed(game)
+    elif game.info.quitter == gi.EndGameSeeds.LAST_MOVER:
+        sclaimer = claimer.TakeAllUnclaimed(game)
 
-        elif game.info.unclaimed == gi.EndGameSeeds.UNFED_PLAYER:
-            # seeds go to hole owners
-            sclaimer = claimer.TakeOwnSeeds(game)
-
-        elif game.info.stores:
+    elif game.info.quitter == gi.EndGameSeeds.DIVVIED:
+        if game.info.stores:
             sclaimer = claimer.DivvySeedsStores(game)
 
-        else:  # if game.info.child_type:
+        elif game.info.child_type:
             sclaimer = claimer.DivvySeedsChildOnly(game)
 
+        else:
+            warnings.warn("Quitter configuration defaulting to QuitToTie")
+            quitter = emd.QuitToTie(game)
+
+    if not quitter:
         quitter = emd.EndGameWinner(game, sclaimer=sclaimer)
 
-        if game.info.goal in round_tally.RoundTally.GOALS:
-            # ChildClaimSeeds will work for both children games and not
-            # the divvier on EndGameWinner did the divvying work
-            quitter = emr.QuitRoundTally(game,
-                                         quitter,
-                                         sclaimer=claimer.ChildClaimSeeds(game))
+    if game.info.goal in round_tally.RoundTally.GOALS:
+        # ChildClaimSeeds will work for both children games and not
+        # the divvier on EndGameWinner did the divvying work
+        quitter = emr.QuitRoundTally(game,
+                                     quitter,
+                                     sclaimer=claimer.ChildClaimSeeds(game))
 
-        if animator.ENABLED:
-            quitter = emd.AnimateEndMove(game, quitter)
-
-    else:
-        warnings.warn("Quitter configuration defaulting to QuitToTie")
-        quitter = emd.QuitToTie(game)
+    if animator.ENABLED:
+        quitter = emd.AnimateEndMove(game, quitter)
 
     return quitter

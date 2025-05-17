@@ -298,10 +298,11 @@ class PassPopup(tksimpledialog.Dialog):
     End Round and Game buttons. Need because if the AI doesn't
     make a turn available the user doesn't regain control."""
 
-    def __init__(self, master, title, message):
+    def __init__(self, master, title, message, quit_round):
 
         self.msg = format_message(message)
         self.mancala_ui = master
+        self.quit_round = quit_round
         super().__init__(master, title)
 
 
@@ -315,18 +316,24 @@ class PassPopup(tksimpledialog.Dialog):
 
 
     def buttonbox(self):
-        """Create Dump Game, Save Game, and Ok buttons.
-        Bind return to Ok."""
+        """Add end round and quit game buttons.
+        Bind return to Ok and escape to Cancel."""
 
         bframe = tk.Frame(self, borderwidth=20)
         bframe.pack()
 
-        tk.Button(bframe, text='End Round', width=12,
-                  command=lambda: (self.ok(), self.mancala_ui.end_round())
-                  ).pack(side=tk.LEFT)
-        tk.Button(bframe, text='End Game', width=12,
-                  command=lambda: (self.ok(), self.mancala_ui.end_game())
-                  ).pack(side=tk.LEFT)
+        if self.quit_round:
+            tk.Button(bframe, text='End Round', width=12,
+                      command=lambda: (self.ok(),
+                                       self.mancala_ui.end_game(quitter=True,
+                                                                game=False))
+                      ).pack(side=tk.LEFT)
+        else:
+            tk.Button(bframe, text='End Game', width=12,
+                      command=lambda: (self.ok(),
+                                       self.mancala_ui.end_game(quitter=True,
+                                                                game=True))
+                      ).pack(side=tk.LEFT)
         tk.Button(bframe, text='Ok', command=self.ok, width=12,
                   default=tk.ACTIVE
                   ).pack(side='right')

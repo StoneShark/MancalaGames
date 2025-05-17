@@ -166,7 +166,7 @@ class TestSameSide:
         game.empty_store = True
 
         mobj = mocker.patch('mancala.Mancala.end_game')
-        game.end_game()
+        game.end_game(quitter=True, user=False)
         mobj.assert_called_once()
         assert game.empty_store is False
 

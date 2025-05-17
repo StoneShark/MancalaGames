@@ -809,7 +809,8 @@ Note: all holes respond to both mouse buttons, but if the hole is not in udir_ho
 Games with any hole set to user chooses direction must have GRANDSLAM be LEGAL and only ALLOW_RULE s that do not depend on sow direction are supported.
 
 <param unclaimed>
-Defines how to score any unclaimed seeds when a game has ended, i.e., seeds that are not in children or in stores. This is not used if the game has a clear winner, e.g., one player has collected more than half the seeds for a MAX_SEEDS game. This parameter effects the menu command <a href="mancala_help.html#gamemenu">End Game</a> works.
+Defines how to score any unclaimed seeds when a game has ended, i.e., seeds that are not in children or in stores. This is not used if the game has a clear winner, e.g., one player has collected more than half the seeds for a MAX_SEEDS game. 
+For games that do not have a goal of CLEAR or DEPRIVE, this parameter defines how the <a href="mancala_help.html#gamemenu">Concede Round and Concede Game</a> menu commands work.
 
 - HOLE_OWNER: unclaimed seeds go to the hole owner.
 
@@ -817,9 +818,17 @@ Defines how to score any unclaimed seeds when a game has ended, i.e., seeds that
 
 - LAST_MOVER: unclaimed seeds go the player that moved last.
 
-- UNFED_PLAYER: only valid for MUSTSHARE games. If the game ended without one player being able to share seeds, the seeds go to the player without seeds (the unfed player). If the menu command End Game is used to end the game, the seeds go to the hole owners.
+- UNFED_PLAYER: only valid for MUSTSHARE games. If the game ended without one player being able to share seeds, the seeds go to the player without seeds (the unfed player). 
+
+  + If a Concede/End Round/Game menu command is used to end the game, the unclaimed seeds are not scored, unless there is a QUITTER configured to do something else for End Round/Game. 
 
 - DIVVIED: the seeds are divided between the two players (an extra seed goes to the player with fewer seeds).
+
+<param quitter>
+
+Defines how to score any unclaimed seeds when a player end the round or game using an <a href="mancala_help.html#gamemenu">End Round or End Game</a> menu command.
+
+The allowable values are the same as for UNCLAIMED (EndGameSeeds). <no_enum_error>
 
 <param visit_opp>
 Requires MLAPS. If the first 'lap' does not reach the opponent's side of the board, the sowing ends after the first lap. 

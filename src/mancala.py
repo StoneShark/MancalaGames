@@ -8,6 +8,7 @@ index/variable naming conventions.
 
 Created on Sun Mar 19 09:58:36 2023
 @author: Ann"""
+# pylint: disable=too-many-lines
 
 import contextlib
 import dataclasses as dc
@@ -22,6 +23,7 @@ import capturer
 import cfg_keys as ckey
 import drawer
 import end_move
+import end_move_decos as emd
 import game_constants as gconsts
 import game_interface as gi
 import game_str
@@ -566,26 +568,56 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         return self.deco.new_game.new_game(win_cond, new_round_ok)
 
 
-    def end_round(self):
-        """The player has requested that the round be ended."""
+    def end_game(self, *, quitter, user, game=True):
+        """Either the player has requested that the game
+        or round be ended or an ENDLESS conditions was detected.
+        Use the appropriate ender/quitter to end the game."""
 
-        self.mdata = move_data.MoveData(self)
-        self.mdata.ended = 'round'
-        self.deco.ender.game_ended(self.mdata)
-        return self.mdata.win_cond
-
-
-    def end_game(self, user=True):
-        """Either the player has requested that the game be ended
-        or an ENDLESS conditions was detected.  End the game fairly."""
-
-        if user:
+        if user or not game:
             self.mdata = move_data.MoveData(self)
             self.mdata.user_end = True
+        self.mdata.ended = True if game else 'round'
 
-        self.mdata.ended = True
-        self.deco.quitter.game_ended(self.mdata)
+        if quitter:
+            self.deco.quitter.game_ended(self.mdata)
+        else:
+            self.deco.ender.game_ended(self.mdata)
+
         return self.mdata.win_cond
+
+
+    def end_message(self, rtext, quitter):
+        """Choose a suitable warning message before ending a game.
+        Tell the user in general terms what will happen."""
+
+        if quitter:
+            deco = self.deco.quitter
+            while deco and not isinstance(deco, emd.QuitToTie):
+                deco = deco.decorator
+            if deco:
+                return f'The {rtext} will end in a tie.'
+
+        which = 'quitter' if quitter else 'unclaimed'
+        method = getattr(self.info, which)
+
+        message = 'Unclaimed seeds will '
+        if method == gi.EndGameSeeds.HOLE_OWNER:
+            message += 'go to the hole owners'
+
+        elif method == gi.EndGameSeeds.DONT_SCORE:
+            message += 'not score for either player'
+
+        elif method == gi.EndGameSeeds.LAST_MOVER:
+            message += f'go to {gi.PLAYER_NAMES[self.mdata.player]}'
+
+        elif method == gi.EndGameSeeds.UNFED_PLAYER:
+            message += f'go to {gi.PLAYER_NAMES[not self.mdata.player]}'
+
+        elif method == gi.EndGameSeeds.DIVVIED:
+            message += """be divvied between the players (an odd seed will
+                      go to player with fewer seeds)"""
+
+        return message + '.'
 
 
     def swap_sides(self):
@@ -848,7 +880,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         if not mdata.repeat_turn:
 
             if mdata.capt_loc == gi.WinCond.ENDLESS:
-                mdata.win_cond = self.end_game(user=False)
+                mdata.win_cond = self.end_game(quitter=True, user=False)
                 mdata.end_msg = \
                     'Game ended due to detecting endless sow condition.\n'
                 game_log.add(

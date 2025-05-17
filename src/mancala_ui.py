@@ -369,10 +369,26 @@ class MancalaUI(tk.Frame):
 
         gamemenu = tk.Menu(self._menubar, name='game')
         gamemenu.add_command(label='New', command=self._new_game)
+
         gamemenu.add_separator()
-        gamemenu.add_command(label='End Round', command=self.end_round)
-        gamemenu.add_command(label='End Game', command=self.end_game)
+        concede = self.game.info.unclaimed != self.game.info.quitter
+        gamemenu.add_command(
+            label='Concede Round',
+            command=ft.partial(self.end_game, quitter=False, game=False),
+            state=tk.NORMAL if self.game.info.rounds and concede else tk.DISABLED)
+        gamemenu.add_command(
+            label='Concede Game',
+            command=ft.partial(self.end_game, quitter=False, game=True),
+            state=tk.NORMAL if concede else tk.DISABLED)
+        gamemenu.add_command(
+            label='End Round (quit)',
+            command=ft.partial(self.end_game, quitter=True, game=False),
+            state=tk.NORMAL if self.game.info.rounds else tk.DISABLED)
+        gamemenu.add_command(
+            label='End Game (quit)',
+            command=ft.partial(self.end_game, quitter=True, game=True))
         gamemenu.add_separator()
+
         gamemenu.add_command(label='Setup Game',
                              command=self.setup.setup_game)
         gamemenu.add_command(label='Reset to Setup',
@@ -1033,56 +1049,33 @@ class MancalaUI(tk.Frame):
         self.schedule_ai()
 
 
-    def end_round(self):
-        """End the round. Report result to user."""
-
-        if not self.game.info.rounds or self.mode != buttons.Behavior.GAMEPLAY:
-            self.end_game()
-            return
-
-        message = 'Are you sure you wish to end the round?'
-        do_it = ui_utils.ask_popup(self,'End Round', message,
-                                   ui_utils.OKCANCEL)
-        if not do_it:
-            return
-
-        animator.set_active(False, clear_queue=True)
-        win_cond = self.game.end_round()
-
-        wtext = 'Round Ended '
-        if win_cond in (gi.WinCond.WIN, gi.WinCond.ROUND_WIN):
-            sturn = self.game.turn_name()
-            wtext += f'\n{win_cond.name} by {sturn}'
-        elif win_cond:
-            wtext += ' ' + win_cond.name
-        game_log.turn(self.game.mcount, wtext, self.game)
-
-        self.refresh()
-        self._win_message_popup(win_cond)
-        self._new_game(win_cond=win_cond, new_round_ok=True)
-
-
-    def end_game(self):
+    def end_game(self, *, game, quitter):
         """End the game. Report result to user."""
 
+        thing = 'Game' if game else 'Round'
+        request = 'End' if quitter else 'Concede'
+        wtitle = request + ' ' + thing
+
         if self.mode != buttons.Behavior.GAMEPLAY:
-            message = 'End game during setup will force New Game. Continue?'
-            do_it = ui_utils.ask_popup(self, 'End Game', message,
+            message = wtitle + ' during setup will force New Game. Continue?'
+            do_it = ui_utils.ask_popup(self, wtitle, message,
                                        ui_utils.OKCANCEL)
             if do_it:
                 self._new_game()
             return
 
-        message = 'Are you sure you wish to end the game?'
-        do_it = ui_utils.ask_popup(self, 'End Game', message,
+        message = [self.game.end_message(thing, quitter),
+                   f'Are you sure you wish to end the {thing}?']
+        do_it = ui_utils.ask_popup(self, wtitle, message,
                                    ui_utils.OKCANCEL)
         if not do_it:
             return
 
         animator.set_active(False, clear_queue=True)
-        win_cond = self.game.end_game()
+        win_cond = self.game.end_game(quitter=quitter, user=True, game=game)
 
-        wtext = 'Game Ended '
+        # TODO this isn't needed unless it's used by the log translator
+        wtext = thing + ' Ended '
         if win_cond in (gi.WinCond.WIN, gi.WinCond.ROUND_WIN):
             sturn = self.game.turn_name()
             wtext += f'\n{win_cond.name} by {sturn}'
@@ -1156,7 +1149,8 @@ class MancalaUI(tk.Frame):
 
             player = gi.PLAYER_NAMES[not self.game.get_turn()]
             message = f'{player} has no moves and must pass.'
-            ui_utils.PassPopup(self, 'Must Pass', message)
+            quit_round = bool(self.game.info.rounds)
+            ui_utils.PassPopup(self, 'Must Pass', message, quit_round)
             self.refresh()     # test_pass updates game state
 
         self.history.record(self.game.state)
@@ -1244,11 +1238,7 @@ class MancalaUI(tk.Frame):
             do_it = ui_utils.ask_popup(self, 'AI Repeating Turns',
                                        message, ui_utils.YESNO)
             if do_it:
-                if thing == ROUND:
-                    self.end_round()
-                else:
-                    self.end_game()
-
+                self.end_game(game=self.game.info.rounds, quitter=True)
                 self.master.config(cursor=ui_utils.NORMAL)
 
             else:

@@ -197,11 +197,12 @@ class TestGameExtensions:
     # either player may win on either turn in clear games
     END_CASES =  [   # start with a bunch of general combinations
                      # all with seeds on both sides
-                  ['game', board, nsow, rturn, ended, None, None]
+                  ['game', board, nsow, rturn, ended,
+                   gi.WinCond.TIE if ended else None, None]
                   for board in [[2] * 6, [1] * 6, [1, 0] * 3]
                   for nsow in [False, True]
                   for rturn in [False, True]   # rturn not used, no effect
-                  for ended in [False, True]   # ended not used, no effect
+                  for ended in [False, True]
                   ]
 
     END_CASES += [

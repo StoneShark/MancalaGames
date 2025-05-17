@@ -900,7 +900,7 @@ class TestDelegates:
         mobj = mocker.patch.object(game.deco.ender, 'game_ended')
 
         game.mdata = None
-        game.end_round()
+        game.end_game(quitter=False, user=True, game=False)
         mobj.assert_called_once()
         assert game.mdata.ended
 
@@ -910,7 +910,7 @@ class TestDelegates:
         mobj = mocker.patch.object(game.deco.quitter, 'game_ended')
 
         game.mdata = 25
-        game.end_game(user=True)
+        game.end_game(quitter=True, user=True)
 
         mobj.assert_called_once()
         assert game.mdata != 25
@@ -923,7 +923,7 @@ class TestDelegates:
         mobj = mocker.patch.object(game.deco.ender, 'game_ended')
 
         game.mdata = move_data.MoveData(game, 0)
-        game.end_round()
+        game.end_game(quitter=False, user=True, game=False)
         mobj.assert_called_once()
         assert game.mdata.ended
 
@@ -934,7 +934,7 @@ class TestDelegates:
 
         mdata = move_data.MoveData(game, 0)
         game.mdata = mdata
-        game.end_game(user=False)
+        game.end_game(quitter=True, user=False)
 
         mobj.assert_called_once()
         assert game.mdata is mdata

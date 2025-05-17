@@ -209,7 +209,9 @@ class EndTurnNoMoves(EndTurnIf):
     def game_ended(self, mdata):
 
         if mdata.ended:
-            return self.decorator.game_ended(mdata)
+            if self.decorator:
+                self.decorator.game_ended(mdata)
+            return
 
         if mdata.repeat_turn:
             mdata.ended = not any(self.game.get_allowable_holes())
@@ -226,7 +228,8 @@ class EndTurnNoMoves(EndTurnIf):
             mdata.end_msg = msg
             game_log.add(msg, game_log.INFO)
 
-        return self.decorator.game_ended(mdata)
+        if self.decorator:
+            self.decorator.game_ended(mdata)
 
 
 class EndTurnPassPass(EndTurnIf):
@@ -416,7 +419,10 @@ class ChildNoStoresEnder(EndTurnIf):
 class DepriveNoSeedsEndGame(EndTurnIf):
     """Determine if a deprive game is over based on who has seeds.
 
-    If the previous decos decided the game has ended, return the winner.
+    If ended on entry is True, end in a TIE.
+
+    Other call the deco chains, if it decides the game has ended,
+    return the winner.
 
     If the current player has given away all of their seeds,
     they loose (unless the other player has no moves).
@@ -426,6 +432,12 @@ class DepriveNoSeedsEndGame(EndTurnIf):
 
     def game_ended(self, mdata):
         """Check for end game."""
+
+        if mdata.ended:
+            mdata.win_cond = gi.WinCond.TIE
+            return
+
+        self.decorator.game_ended(mdata)
 
         if mdata.ended:
             if mdata.repeat_turn:
@@ -458,6 +470,10 @@ class DepriveLastMoveEndGame(EndTurnIf):
     def game_ended(self, mdata):
         """Check for end game."""
 
+        if mdata.ended:
+            mdata.win_cond = gi.WinCond.TIE
+            return
+
         self.game.turn = not self.game.turn
         mdata.ended = not any(self.game.get_allowable_holes())
         self.game.turn = not self.game.turn
@@ -479,6 +495,10 @@ class ClearSeedsEndGame(EndTurnIf):
 
     def game_ended(self, mdata):
         """Check for end game."""
+
+        if mdata.ended:
+            mdata.win_cond = gi.WinCond.TIE
+            return
 
         my_range, opp_range = self.game.cts.get_ranges(self.game.turn)
 

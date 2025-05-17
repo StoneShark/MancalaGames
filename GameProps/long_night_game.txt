@@ -14,7 +14,8 @@
       "capt_side": 0,
       "sow_direct": 1,
       "stores": true,
-      "unclaimed": 1
+      "unclaimed": 1,
+      "quitter": 1
    },
    "player": {
       "ai_params": {},

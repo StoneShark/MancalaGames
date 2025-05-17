@@ -16,7 +16,8 @@
       "capt_side": 1,
       "sow_direct": 0,
       "udir_holes": [ 0, 3, 6 ],
-      "unclaimed": 1
+      "unclaimed": 1,
+      "quitter": 1
    },
    "player": {
       "algorithm": "montecarlo_ts",

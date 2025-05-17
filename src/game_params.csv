@@ -6,8 +6,8 @@ Capture,capt_min,Capture Min,game_info _,105,int,0,3,0
 Capture,capt_on,Capture On Values,game_info _,107,list[bool],[],4,0
 Capture,xc_lbl,Cross Capture,,0,label,0,5,0
 Capture,crosscapt,Cross-Capture,game_info _,113,bool,False,6,0
-Capture,xcpickown,Own Seed on Xcapture,game_info _,150,CrossCaptOwn,LEAVE,7,0
-Capture,xc_sown,Must sow opp for xcapt,game_info _,149,bool,False,8,0
+Capture,xcpickown,Own Seed on Xcapture,game_info _,151,CrossCaptOwn,LEAVE,7,0
+Capture,xc_sown,Must sow opp for xcapt,game_info _,150,bool,False,8,0
 Capture,ocapt_lbl,Other Captures,,0,label,0 ,9,0
 Capture,capt_type,Capture Type,game_info _,106,CaptType,NONE,10,0
 Capture,mcapt_lbl,Multiple Captures,,0,label,0,0,2
@@ -23,24 +23,25 @@ Capture,capt_rturn,Repeat Turn on Capture,game_info _,108,CaptRTurn,NO_REPEAT,9,
 Capture,pickextra,"On Capture, Take More Rule",game_info _,131,CaptExtraPick,NONE,10,2
 Dynamics,goal,Game Goal,game_info _,115,Goal,MAX_SEEDS,0,0
 Dynamics,goal_param,Goal Parameter,game_info _,116,int,0,1,0
-Dynamics,unclaimed,End Game Seeds,game_info _,147,EndGameSeeds,HOLE_OWNER,2,0
-Dynamics,setup_lbl,Initial Setup,,0,label,0,3,0
-Dynamics,start_pattern,Start Pattern,game_info _,143,StartPattern,ALL_EQUAL,4,0
-Dynamics,prescribed,Prescribed Opening Move,game_info _,132,SowPrescribed,NONE,5,0
+Dynamics,unclaimed,Unclaimed Seeds at End,game_info _,147,EndGameSeeds,HOLE_OWNER,2,0
+Dynamics,quitter,Quit Game Seeds,game_info _,148,EndGameSeeds,DIVVIED,3,0
+Dynamics,setup_lbl,Initial Setup,,0,label,0,4,0
+Dynamics,start_pattern,Start Pattern,game_info _,143,StartPattern,ALL_EQUAL,5,0
+Dynamics,prescribed,Prescribed Opening Move,game_info _,132,SowPrescribed,NONE,6,0
 Dynamics,draw_lbl,Draw Parameters,,0,label,0,7,0
 Dynamics,min_move,Minimum Seeds for Move,game_info _,119,int,1,8,0
 Dynamics,allow_rule,Special Move Restrictions,game_info _,101,AllowRule,NONE,9,0
 Dynamics,stores,Stores,game_info _,144,bool,True,0,2
 Dynamics,no_sides,No Sides,game_info _,127,bool,False,1,2
-Dynamics,mdyno_lbl,Move Dynamics,,0,label,0,3,2
-Dynamics,mustpass,Must Pass,game_info _,125,bool,False,4,2
-Dynamics,mustshare,Must Share,game_info _,126,bool,False,5,2
-Dynamics,grandslam,Grand Slam,game_info _,117,GrandSlam,LEGAL,6,2
-Dynamics,rnd_lbl,Rounds Parameters,,0,label,0,7,2
-Dynamics,rounds,Rounds,game_info _,136,Rounds,NO_ROUNDS,8,2
-Dynamics,round_starter,Round Starter,game_info _,135,RoundStarter,ALTERNATE,9,2
-Dynamics,round_fill,Round Fill Method,game_info _,134,RoundFill,NOT_APPLICABLE,10,2
-Dynamics,blocks,Blocks,game_info _,102,bool,False,11,2
+Dynamics,mdyno_lbl,Move Dynamics,,0,label,0,2,2
+Dynamics,mustpass,Must Pass,game_info _,125,bool,False,3,2
+Dynamics,mustshare,Must Share,game_info _,126,bool,False,4,2
+Dynamics,grandslam,Grand Slam,game_info _,117,GrandSlam,LEGAL,5,2
+Dynamics,rnd_lbl,Rounds Parameters,,0,label,0,6,2
+Dynamics,rounds,Rounds,game_info _,136,Rounds,NO_ROUNDS,7,2
+Dynamics,round_starter,Round Starter,game_info _,135,RoundStarter,ALTERNATE,8,2
+Dynamics,round_fill,Round Fill Method,game_info _,134,RoundFill,NOT_APPLICABLE,9,2
+Dynamics,blocks,Blocks,game_info _,102,bool,False,10,2
 Game,game_class,Game Class,game_class,1,GameClasses,Mancala,0,0
 Game,holes,Holes per Side,game_constants _,2,int,3,2,0
 Game,help_file,Help File,game_info _,118,str,mancala_help.html,3,0
@@ -73,7 +74,7 @@ Sow,sow_start,Sow Start Hole,game_info _,141,bool,False,4,0
 Sow,skip_start,Skip Start on Cycle,game_info _,137,bool,False,5,0
 Sow,sow_own_store,Sow Own Store,game_info _,139,bool,False,6,0
 Sow,move_one,Move One Seed,game_info _,122,bool,False,7,0
-Sow,visit_opp,Visit Opp for Mlaps,game_info _,148,bool,False,8,0
+Sow,visit_opp,Visit Opp for Mlaps,game_info _,149,bool,False,8,0
 Sow,presowcapt,Pre Sow Capture,game_info _,133,PreSowCapt,NONE,9,0
 Sow,sow_rule,Special Sow Rules,game_info _,140,SowRule,NONE,10,0
 Sow,sow_param,Sow Parameter,game_info _,142,int,0,11,0

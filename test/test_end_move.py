@@ -1210,7 +1210,7 @@ class TestEndWaldas:
 
 
         game.mdata = utils.make_ender_mdata(game, False, False)
-        cond = game.end_game()
+        cond = game.end_game(quitter=True, user=False)
 
         winmsg = game.win_message(cond)
         assert 'Game Over' in winmsg[0]
@@ -1226,7 +1226,7 @@ class TestEndWaldas:
         game.store = [0, 0]
 
         game.mdata = utils.make_ender_mdata(game, False, False)
-        cond = game.end_game()
+        cond = game.end_game(quitter=True, user=False)
         assert game.board == [0, 0, 0, 0, 0, 48, 0, 0, 0, 0, 0, 0]
 
         winmsg = game.win_message(cond)
@@ -1243,7 +1243,7 @@ class TestEndWaldas:
         game.store = [0, 0]
 
         game.mdata = utils.make_ender_mdata(game, False, False)
-        cond = game.end_game()
+        cond = game.end_game(quitter=True, user=False)
         assert game.board == [48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
         winmsg = game.win_message(cond)
@@ -1260,7 +1260,7 @@ class TestEndWaldas:
         game.store = [0, 0]
 
         game.mdata = utils.make_ender_mdata(game, False, False)
-        cond = game.end_game()
+        cond = game.end_game(quitter=True, user=False)
         assert game.board == [25, 0, 0, 0, 0, 23, 0, 0, 0, 0, 0, 0]
 
         winmsg = game.win_message(cond)
@@ -1527,7 +1527,7 @@ class TestQuitter:
         game.turn = turn
 
         game.mdata = utils.make_ender_mdata(game, False, False)
-        assert game.end_game() == eres
+        assert game.end_game(quitter=True, user=False) == eres
         assert game.board == eboard
         assert game.store == estore
         assert game.mdata.winner == ewin
@@ -2032,6 +2032,9 @@ class TestAnimator:
         assert animator.ENABLED
         game = mancala.Mancala(game_consts, game_info)
 
+        # print(game.deco.ender)
+        # print(game.deco.quitter)
+
         assert isinstance(game.deco.ender, emd.AnimateEndMove)
         assert isinstance(game.deco.quitter, emd.AnimateEndMove)
 
@@ -2051,6 +2054,9 @@ class TestAnimator:
 
         assert not animator.ENABLED
         game = mancala.Mancala(game_consts, game_info)
+
+        # print(game.deco.ender)
+        # print(game.deco.quitter)
 
         assert not isinstance(game.deco.ender, emd.AnimateEndMove)
         assert not isinstance(game.deco.quitter, emd.AnimateEndMove)

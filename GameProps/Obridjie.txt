@@ -13,7 +13,8 @@
       "sow_direct": 1,
       "sow_rule": 3,
       "stores": true,
-      "unclaimed": 1
+      "unclaimed": 1,
+      "quitter": 1
    },
    "player": {
       "algorithm": "negamaxer",

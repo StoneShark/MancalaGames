@@ -358,6 +358,7 @@ class GameInfo:
     start_pattern: StartPattern = StartPattern.ALL_EQUAL
     prescribed: SowPrescribed = SowPrescribed.NONE
     unclaimed: EndGameSeeds = EndGameSeeds.HOLE_OWNER
+    quitter: EndGameSeeds = EndGameSeeds.DIVVIED
 
     # **** allowable moves
     min_move: int = 1
@@ -529,12 +530,7 @@ class GameInterface(abc.ABC):
         is created."""
 
     @abc.abstractmethod
-    def end_round(self):
-        """User requested to end the round.
-        Return: WinCond"""
-
-    @abc.abstractmethod
-    def end_game(self):
+    def end_game(self, *, quitter, user, game=True):
         """User requested to end the game or the game ended in an
         ENDLESS looping condition.
         Return: WinCond"""

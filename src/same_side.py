@@ -209,9 +209,9 @@ class SameSide(mancala.Mancala):
         self.empty_store = False
 
 
-    def end_game(self, user=True):
+    def end_game(self, *, quitter, user, game=True):
         """call end game and clear the store"""
-        cond = super().end_game(user)
+        cond = super().end_game(quitter=quitter, user=user, game=game)
         self.empty_store = False
         return cond
 

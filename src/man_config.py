@@ -62,14 +62,19 @@ PARAM = re.compile('^<param ([a-z0-9_]+)>')
 
 # %% remove html tags
 
+# some invented tags
+NOLINK = '<nolink>'                    # don't auto link the next word
+NO_ENUM_ERROR = '<no_enum_error>'      # don't check for inclusion of enums
+
+
 REMOVE_TAGS = [re.compile(r'<a[^>]+>'),
                re.compile(r'</a>'),
                re.compile(r'(  \+ )?<img[^>]+>\n'),
                re.compile(r'<b[^>]+>'),
                re.compile(r'</b>'),
 
-               # not html but used to disable the auto linker
-               re.compile(r'<nolink>'),
+               re.compile(NOLINK),
+               re.compile(NO_ENUM_ERROR),
 
                ]
 
