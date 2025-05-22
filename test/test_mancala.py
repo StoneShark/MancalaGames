@@ -30,6 +30,9 @@ pytestmark = pytest.mark.unittest
 
 from context import animator
 from context import capt_ok
+from context import claimer
+from context import end_move_decos as emd
+from context import end_move_rounds as emr
 from context import game_constants as gconsts
 from context import game_interface as gi
 from context import game_logger
@@ -1358,6 +1361,79 @@ class TestWinMessage:
 
         # The capt'ed but not game
         assert 'North South The game' in wmess
+
+
+class TestEndMessage:
+
+
+    @pytest.fixture
+    def game(self):
+
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(goal=Goal.MAX_SEEDS,
+                                capt_on = [2],
+                                stores=True,
+                                rounds=gi.Rounds.HALF_SEEDS,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+
+    @pytest.mark.parametrize('quitter', [False, True])
+    def test_bad_message(self, mocker, game, quitter):
+        """test bad config enum and force skip of deco chain test"""
+
+        config = 25
+        if quitter:
+            object.__setattr__(game.info, 'quitter', config)
+        else:
+            object.__setattr__(game.info, 'unclaimed', config)
+        game.deco.quitter = None
+        game.mdata = move_data.MoveData(game, 2)
+
+        msg = game.end_message('rtext', quitter)
+        # this is the bad message used in the next text,
+        # if this fails test_end_message likely needs to change too
+        assert msg == 'Unclaimed seeds will .'
+
+
+    @pytest.mark.parametrize('quitter', [False, True])
+    @pytest.mark.parametrize('config', gi.EndGameSeeds)
+    def test_end_message(self, mocker, game, quitter, config):
+        """only testing that all combinations return a string
+        force skip of deco chain test"""
+
+        if quitter:
+            object.__setattr__(game.info, 'quitter', config)
+        else:
+            object.__setattr__(game.info, 'unclaimed', config)
+        game.deco.quitter = None
+        game.mdata = move_data.MoveData(game, 2)
+
+        msg = game.end_message('rtext', quitter)
+        assert msg != 'Unclaimed seeds will .'
+
+
+    @pytest.mark.parametrize('quitter', [False, True])
+    def test_deco_message(self, mocker, game, quitter):
+        """Create a deco chain with QuitToTie second."""
+
+        object.__setattr__(game.info, 'quitter', gi.EndGameSeeds.HOLE_OWNER)
+        object.__setattr__(game.info, 'unclaimed', gi.EndGameSeeds.HOLE_OWNER)
+
+        game.deco.ender = None
+
+        quitter = emd.QuitToTie(game)
+        quitter = emr.QuitRoundTally(game,
+                                     quitter,
+                                     sclaimer=claimer.ChildClaimSeeds(game))
+        game.deco.quitter = quitter
+
+        if quitter:
+            assert 'tie' in game.end_message('rtext', quitter)
+        else:
+            assert 'tie' not in game.end_message('rtext', quitter)
 
 
 class TestHoleProp:

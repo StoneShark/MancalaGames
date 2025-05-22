@@ -208,7 +208,7 @@ def deco_end_move(game):
         ender = _build_deprive_ender(game)
 
     elif game.info.goal in (gi.Goal.CLEAR,
-                          gi.Goal.RND_WIN_COUNT_CLR):
+                            gi.Goal.RND_WIN_COUNT_CLR):
         ender = _build_clear_ender(game)
 
     else:
@@ -257,6 +257,10 @@ def deco_quitter(game):
         else:
             warnings.warn("Quitter configuration defaulting to QuitToTie")
             quitter = emd.QuitToTie(game)
+
+    else:
+        raise NotImplementedError(
+                f"Quitter {game.info.unclaimed} not implemented.")
 
     if not quitter:
         quitter = emd.EndGameWinner(game, sclaimer=sclaimer)

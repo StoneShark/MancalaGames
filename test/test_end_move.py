@@ -11,6 +11,7 @@ pytestmark = pytest.mark.unittest
 import utils
 
 from context import animator
+from context import claimer
 from context import end_move
 from context import end_move_decos as emd
 from context import end_move_rounds as emr
@@ -1041,6 +1042,44 @@ class TestEndDeprive:
         assert isinstance(rndgame.deco.ender,
                           emr.RoundTallyWinner)
 
+    def test_forced_end_seeds(self, game):
+
+        mdata = utils.make_ender_mdata(game, False, True)
+        assert mdata.ended
+
+        game.deco.ender.game_ended(mdata)
+
+        assert mdata.ended
+        assert not mdata.winner
+        assert mdata.win_cond == gi.WinCond.TIE
+
+
+    def test_forced_end_err(self, game):
+        """Should not get to the EndTurnNoMoves deco,
+        but if we do it doesn't change anything."""
+
+        print(game.deco.ender)
+
+        mdata = utils.make_ender_mdata(game, False, True)
+        assert mdata.ended
+
+        game.deco.ender.decorator.game_ended(mdata)
+
+        assert mdata.ended
+        assert not mdata.winner
+        assert not mdata.win_cond
+
+
+    def test_forced_end_mover(self, mm2game):
+
+        mdata = utils.make_ender_mdata(mm2game, False, True)
+        assert mdata.ended
+
+        mm2game.deco.ender.game_ended(mdata)
+
+        assert mdata.ended
+        assert not mdata.winner
+        assert mdata.win_cond == gi.WinCond.TIE
 
 class TestEndClear:
 
@@ -1136,6 +1175,18 @@ class TestEndClear:
 
         assert isinstance(rndgame.deco.ender,
                           emr.RoundTallyWinner)
+
+
+    def test_forced_end(self, game):
+
+        mdata = utils.make_ender_mdata(game, False, True)
+        assert mdata.ended
+
+        game.deco.ender.game_ended(mdata)
+
+        assert mdata.ended
+        assert not mdata.winner
+        assert mdata.win_cond == gi.WinCond.TIE
 
 
 class TestEndWaldas:
@@ -1290,6 +1341,59 @@ class TestNoSides:
 
 
 class TestQuitter:
+
+    @pytest.mark.filterwarnings("ignore")
+    @pytest.mark.parametrize('quitter, stores, child, eclaimer',
+                             # child and stores are dont' care
+                             [(gi.EndGameSeeds.HOLE_OWNER, True, True,
+                               claimer.TakeOwnSeeds),
+                              (gi.EndGameSeeds.DONT_SCORE, True, True,
+                               claimer.TakeOnlyChildNStores),
+                              (gi.EndGameSeeds.UNFED_PLAYER, True, True,
+                               claimer.TakeOnlyChildNStores),
+                              (gi.EndGameSeeds.LAST_MOVER, True, True,
+                               claimer.TakeAllUnclaimed),
+
+                              # child and stores are used
+                              (gi.EndGameSeeds.DIVVIED, False, False, None),
+                              (gi.EndGameSeeds.DIVVIED, False, True,
+                               claimer.DivvySeedsChildOnly),
+                              (gi.EndGameSeeds.DIVVIED, True, False,
+                               claimer.DivvySeedsStores),
+                              (gi.EndGameSeeds.DIVVIED, True, True,
+                               claimer.DivvySeedsStores),
+                              ])
+    def test_claimer_selection(self, quitter, stores, child, eclaimer):
+
+        if child:
+            type = gi.ChildType.NORMAL
+            cvt = 3
+        else:
+            type =  gi.ChildType.NOCHILD
+            cvt = 0
+
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(evens=True,
+                                stores=stores,
+                                child_type=type,
+                                child_cvt=cvt,
+                                mustshare=True,
+                                unclaimed=gi.EndGameSeeds.UNFED_PLAYER,
+                                quitter=quitter,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+
+        quit_deco = end_move.deco_quitter(game)
+        print(quit_deco)
+
+        if not stores and not child:
+            assert isinstance(quit_deco, emd.QuitToTie)
+        else:
+            assert isinstance(quit_deco, emd.EndGameWinner)
+            assert isinstance(quit_deco.sclaimer, eclaimer)
+
 
     @pytest.fixture
     def game(self, request):
@@ -1533,6 +1637,21 @@ class TestQuitter:
         assert game.mdata.winner == ewin
 
 
+    def test_bad_quitter(self):
+
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(capt_on=[4],
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        mancala.Mancala(game_consts, game_info)
+
+        object.__setattr__(game_info, 'quitter', 12)
+        with pytest.raises(NotImplementedError):
+            mancala.Mancala(game_consts, game_info)
+
+
 class TestTerritory:
 
     @pytest.fixture
@@ -1743,7 +1862,6 @@ class TestTerritory:
 
         assert mdata.win_cond == econd
         assert mdata.winner == ewinner
-
 
 
 class TestWinHoles:
