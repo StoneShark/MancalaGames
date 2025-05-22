@@ -55,15 +55,16 @@ SIZES = {'Small (< 6)': lambda holes: holes < SMALL,
          'Largest (>= 9)': lambda holes: holes >= LARGEST}
 
 GOALS = {'Max Seeds': lambda goal: goal == gi.Goal.MAX_SEEDS,
+         'Max Seeds Tally': lambda goal: goal in (gi.Goal.RND_SEED_COUNT,
+                                                  gi.Goal.RND_EXTRA_SEEDS,
+                                                  gi.Goal.RND_POINTS,
+                                                  gi.Goal.RND_WIN_COUNT_MAX),
+         'Clear Own': lambda goal: goal in (gi.Goal.CLEAR,
+                                            gi.Goal.RND_WIN_COUNT_CLR),
+         'Deprive Opponent': lambda goal: goal in (gi.Goal.DEPRIVE,
+                                                   gi.Goal.RND_WIN_COUNT_DEP),
          'Territory': lambda goal: goal == gi.Goal.TERRITORY,
-         'Clear Own': lambda goal: goal == gi.Goal.CLEAR,
-         'Deprive Opponent': lambda goal: goal == gi.Goal.DEPRIVE,
-         'Round Tally': lambda goal: goal in (gi.Goal.RND_SEED_COUNT,
-                                              gi.Goal.RND_EXTRA_SEEDS,
-                                              gi.Goal.RND_POINTS,
-                                              gi.Goal.RND_WIN_COUNT_MAX,
-                                              gi.Goal.RND_WIN_COUNT_CLR,
-                                              gi.Goal.RND_WIN_COUNT_DEP)}
+        }
 
 
 CAPTS = {'Basic Capture': lambda ginfo: (any([ginfo.get(ckey.CAPT_MAX, 0),
@@ -135,8 +136,14 @@ FEATS = {'Start Pattern': lambda ginfo: ginfo.get(ckey.START_PATTERN, 0),
          'Multiple Capt': lambda ginfo: ginfo.get(ckey.MULTICAPT, 0),
          'Take More': lambda ginfo: ginfo.get(ckey.PICKEXTRA, 0),
          'Rounds': lambda ginfo: ginfo.get(ckey.ROUNDS, 0),
+         'Round Tally': lambda ginfo: ginfo.get(ckey.GOAL, 0) in (
+                                         gi.Goal.RND_SEED_COUNT,
+                                         gi.Goal.RND_EXTRA_SEEDS,
+                                         gi.Goal.RND_POINTS,
+                                         gi.Goal.RND_WIN_COUNT_MAX,
+                                         gi.Goal.RND_WIN_COUNT_CLR,
+                                         gi.Goal.RND_WIN_COUNT_DEP),
          }
-
 
 
 # %% frame classes
