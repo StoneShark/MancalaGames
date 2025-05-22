@@ -21,6 +21,7 @@ import game_interface as gi
 import man_config
 import man_path
 import mancala_ui
+import round_tally
 import ui_utils
 
 
@@ -136,13 +137,8 @@ FEATS = {'Start Pattern': lambda ginfo: ginfo.get(ckey.START_PATTERN, 0),
          'Multiple Capt': lambda ginfo: ginfo.get(ckey.MULTICAPT, 0),
          'Take More': lambda ginfo: ginfo.get(ckey.PICKEXTRA, 0),
          'Rounds': lambda ginfo: ginfo.get(ckey.ROUNDS, 0),
-         'Round Tally': lambda ginfo: ginfo.get(ckey.GOAL, 0) in (
-                                         gi.Goal.RND_SEED_COUNT,
-                                         gi.Goal.RND_EXTRA_SEEDS,
-                                         gi.Goal.RND_POINTS,
-                                         gi.Goal.RND_WIN_COUNT_MAX,
-                                         gi.Goal.RND_WIN_COUNT_CLR,
-                                         gi.Goal.RND_WIN_COUNT_DEP),
+         'Round Tally': lambda ginfo: ginfo.get(ckey.GOAL, 0) in \
+                                         round_tally.RoundTally.GOALS,
          }
 
 
