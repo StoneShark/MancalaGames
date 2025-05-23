@@ -219,10 +219,9 @@ class EndTurnNoMoves(EndTurnIf):
             player = gi.PLAYER_NAMES[self.game.turn]
             msg = f"No moves for {player}'s repeat turn; _thing_ ended."
         else:
-            self.game.turn = not self.game.turn
-            player = gi.PLAYER_NAMES[self.game.turn]
-            mdata.ended = not any(self.game.get_allowable_holes())
-            self.game.turn = not self.game.turn
+            with self.game.opp_turn():
+                player = gi.PLAYER_NAMES[self.game.turn]
+                mdata.ended = not any(self.game.get_allowable_holes())
             msg = f"{player} had no moves; _thing_ ended."
 
         if mdata.ended:
@@ -252,9 +251,8 @@ class EndTurnPassPass(EndTurnIf):
         if any(self.game.get_allowable_holes()):
             return self.decorator.game_ended(mdata)
 
-        self.game.turn = not self.game.turn
-        no_next_moves = not any(self.game.get_allowable_holes())
-        self.game.turn = not self.game.turn
+        with self.game.opp_turn():
+            no_next_moves = not any(self.game.get_allowable_holes())
 
         if no_next_moves:
             mdata.end_msg = "No moves for either player; game ended."
@@ -312,19 +310,17 @@ class EndTurnMustShare(EndTurnIf):
             mdata.ended = not any(self.game.get_allowable_holes())
 
         elif not mdata.repeat_turn and not player_seeds and opp_seeds:
-            self.game.turn = not self.game.turn
-            mdata.ended = not any(self.game.get_allowable_holes())
-            self.game.turn = not self.game.turn
+            with self.game.opp_turn():
+                mdata.ended = not any(self.game.get_allowable_holes())
 
         else:
             return self.decorator.game_ended(mdata)
 
         if mdata.ended:
             if mdata.repeat_turn:
-                self.game.turn = not self.game.turn
-                player = gi.PLAYER_NAMES[self.game.turn]
-                self.sclaimer.claim_seeds()
-                self.game.turn = not self.game.turn
+                with self.game.opp_turn():
+                    player = gi.PLAYER_NAMES[self.game.turn]
+                    self.sclaimer.claim_seeds()
                 msg = f"{player} can't share on repeat turn; _thing_ ended."
             else:
                 self.sclaimer.claim_seeds()
@@ -441,13 +437,9 @@ class DepriveNoSeedsEndGame(EndTurnIf):
         self.decorator.game_ended(mdata)
 
         if mdata.ended:
-            if mdata.repeat_turn:
-                mdata.win_cond = gi.WinCond.WIN
-                mdata.winner = not self.game.turn
-                return
-
             mdata.win_cond = gi.WinCond.WIN
-            mdata.winner = self.game.turn
+            turn = self.game.turn
+            mdata.winner = not turn if mdata.repeat_turn else turn
             return
 
         my_seeds = sum(self.game.board[loc]
@@ -476,9 +468,8 @@ class DepriveLastMoveEndGame(EndTurnIf):
             mdata.win_cond = gi.WinCond.TIE
             return
 
-        self.game.turn = not self.game.turn
-        mdata.ended = not any(self.game.get_allowable_holes())
-        self.game.turn = not self.game.turn
+        with self.game.opp_turn():
+            mdata.ended = not any(self.game.get_allowable_holes())
 
         if mdata.ended:
             game_log.add("No moves for next player; last mover won.",

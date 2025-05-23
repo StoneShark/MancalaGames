@@ -170,8 +170,8 @@ class OppOrEmptyEnd(AllowableIf):
             if not allow[pos] or self.game.board[pos] > self.game.cts.holes:
                 continue
 
-            mdata = self.game.sim_single_sow(pos)
-            self.game.state = saved_state
+            with self.game.restore_state(saved_state):
+                mdata = self.game.sim_single_sow(pos)
 
             end_loc = mdata.capt_loc
             if end_loc in my_rng and self.game.board[end_loc]:
@@ -193,13 +193,12 @@ class Occupied(AllowableIf):
             if not allow[pos]:
                 continue
 
-            mdata = self.game.sim_single_sow(pos)
-            if self.game.board[mdata.capt_loc] == 1:
+            with self.game.restore_state(saved_state):
+                mdata = self.game.sim_single_sow(pos)
+                if self.game.board[mdata.capt_loc] == 1:
 
-                game_log.add(f'Occupied: prevented {pos}', game_log.DETAIL)
-                allow[pos] = False
-
-            self.game.state = saved_state
+                    game_log.add(f'Occupied: prevented {pos}', game_log.DETAIL)
+                    allow[pos] = False
 
         return allow
 
@@ -385,15 +384,14 @@ class MustShare(AllowableIf):
             if not allow[idx]:
                 continue
 
-            row = int(loc < self.game.cts.holes)
-            pos = self.game.cts.xlate_pos_loc(row, loc)
-            self.game.sim_sow_capt(self.make_move(row, pos))
+            with self.game.restore_state(saved_state):
+                row = int(loc < self.game.cts.holes)
+                pos = self.game.cts.xlate_pos_loc(row, loc)
+                self.game.sim_sow_capt(self.make_move(row, pos))
 
-            if not self.opp_has_seeds(opponent):
-                game_log.add(f'MUSTSHARE: prevented {loc}', game_log.DETAIL)
-                allow[idx] = False
-
-            self.game.state = saved_state
+                if not self.opp_has_seeds(opponent):
+                    game_log.add(f'MUSTSHARE: prevented {loc}', game_log.DETAIL)
+                    allow[idx] = False
 
         return allow
 
@@ -424,6 +422,7 @@ class MustShareUdir(MustShare):
             self.owner = game.cts.board_side
 
 
+
     def get_allowable_holes(self):
         """Return allowable moves."""
 
@@ -448,14 +447,13 @@ class MustShareUdir(MustShare):
                 pos_allow = [True, True]
                 for pidx, direct in enumerate([gi.Direct.CW, gi.Direct.CCW]):
 
-                    move = self.make_move(row, pos, direct)
-                    self.game.sim_sow_capt(move)
-                    if not self.opp_has_seeds(opponent):
-                        game_log.add(f'MUSTSHARE: prevented {loc} {direct.name}',
-                                     game_log.DETAIL)
-                        pos_allow[pidx] = False
-
-                    self.game.state = saved_state
+                    with self.game.restore_state(saved_state):
+                        move = self.make_move(row, pos, direct)
+                        self.game.sim_sow_capt(move)
+                        if not self.opp_has_seeds(opponent):
+                            game_log.add(f'MUSTSHARE: prevented {loc} {direct.name}',
+                                         game_log.DETAIL)
+                            pos_allow[pidx] = False
 
                 if not pos_allow[0] and not pos_allow[1]:
                     allow[idx] = False
@@ -463,13 +461,12 @@ class MustShareUdir(MustShare):
                     allow[idx] = pos_allow
 
             else:
-                self.game.sim_sow_capt(self.make_move(row, pos, None))
+                with self.game.restore_state(saved_state):
+                    self.game.sim_sow_capt(self.make_move(row, pos, None))
 
-                if not self.opp_has_seeds(opponent):
-                    game_log.add(f'MUSTSHARE: prevented {loc}', game_log.DETAIL)
-                    allow[idx] = False
-
-                self.game.state = saved_state
+                    if not self.opp_has_seeds(opponent):
+                        game_log.add(f'MUSTSHARE: prevented {loc}', game_log.DETAIL)
+                        allow[idx] = False
 
         return allow
 
@@ -512,13 +509,13 @@ class NoGrandSlam(AllowableIf):
             if not allow[pos]:
                 continue
 
-            self.game.sim_sow_capt(pos)
+            with self.game.restore_state(saved_state):
 
-            if self.no_seeds(opp_rng):
-                allow[pos] = False
-                game_log.add(f'GRANDSLAM: prevented {loc}', game_log.IMPORT)
+                self.game.sim_sow_capt(pos)
 
-            self.game.state = saved_state
+                if self.no_seeds(opp_rng):
+                    allow[pos] = False
+                    game_log.add(f'GRANDSLAM: prevented {loc}', game_log.IMPORT)
 
         return allow
 

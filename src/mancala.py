@@ -461,7 +461,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
             saved = game.state
             for thing in things:
-                with self.game.restore_state(saved):
+                with game.restore_state(saved):
                     <code block>
 
         All exits from code block will restore the state."""
@@ -973,6 +973,19 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
                             blocked=self.blocked[loc],
                             ch_owner=self.child[loc],
                             owner=self.owner[loc])
+
+
+    @contextlib.contextmanager
+    def opp_turn(self):
+        """Do an operation for the opposite turn, return
+        turn to the correct turn afterward."""
+
+        saved = self.turn
+        self.turn = not self.turn
+        try:
+            yield
+        finally:
+            self.turn = saved
 
 
     def get_turn(self):

@@ -1986,3 +1986,31 @@ class TestAnimatorHooks:
         assert isinstance(game.unlocked, list)
         assert isinstance(game.blocked, list)
         assert isinstance(game.child, list)
+
+
+class TestOppTurn:
+
+    @pytest.fixture
+    def game(self):
+
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=6)
+        game_info = gi.GameInfo(goal=gi.Goal.TERRITORY,
+                                goal_param=8,
+                                child_type = gi.ChildType.NORMAL,
+                                child_cvt=4,
+                                evens=True,
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        return mancala.Mancala(game_consts, game_info)
+
+
+    @pytest.mark.parametrize('turn', [False, True])
+    def test_normal(self, game, turn):
+
+        game.turn = turn
+
+        with game.opp_turn():
+            game.turn = 12
+
+        assert game.turn == turn

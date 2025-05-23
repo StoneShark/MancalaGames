@@ -1075,7 +1075,6 @@ class MancalaUI(tk.Frame):
         animator.set_active(False, clear_queue=True)
         win_cond = self.game.end_game(quitter=quitter, user=True, game=game)
 
-        # TODO this isn't needed unless it's used by the log translator
         wtext = thing + ' Ended '
         if win_cond in (gi.WinCond.WIN, gi.WinCond.ROUND_WIN):
             sturn = self.game.turn_name()
