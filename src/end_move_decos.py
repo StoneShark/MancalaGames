@@ -30,6 +30,7 @@ import abc
 import animator
 import claimer
 import deco_chain_if
+import format_msg as fmt
 import game_interface as gi
 
 from game_logger import game_log
@@ -464,6 +465,7 @@ class DepriveLastMoveEndGame(EndTurnIf):
     If the opponent does not have a move, then the current player
     has won.
 
+    Repeat turn is not supported.
     This is not to be used with children, because the presence
     of children is not checked."""
 
@@ -490,8 +492,8 @@ class DepriveLastMoveEndGame(EndTurnIf):
 
 class ClearSeedsEndGame(EndTurnIf):
     """Win by giving away all your seeds.
-    TIEs are not awarded--if both players end up wo seeds the win
-    is awarded to the current player."""
+    If both players end up without seeds, the win is awarded to
+    the current player."""
 
     def game_ended(self, mdata):
         """Check for end game."""
@@ -605,9 +607,9 @@ class NoOutcomeChange(EndTurnIf):
         if (not mdata.ended
                 and not mdata.win_cond
                 and self._too_few_for_change()):
-            mdata.end_msg = 'Too few seeds for outcome change ' \
-                + f'(< {self.min_needed}), _thing_ ended.'
-            game_log.add(mdata.end_msg)
+            mdata.end_msg = f"""Too few seeds for outcome change
+                            (< {self.min_needed}), _thing_ ended."""
+            game_log.add(fmt.fmsg(mdata.end_msg))
             mdata.ended = True
             self.decorator.game_ended(mdata)
 

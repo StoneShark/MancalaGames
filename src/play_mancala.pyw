@@ -41,6 +41,7 @@ COLON = ':'
 DESC_WIDTH = 72
 COL_WIDTH = 30
 
+TINY = 4
 SMALL = 6
 LARGER = 7
 LARGEST = 9
@@ -50,7 +51,8 @@ PARAMS = man_config.ParamData(del_tags=False, no_descs=True)
 GCLASS = {'Mancala': lambda gclass: gclass == MANCALA,
           'Other': lambda gclass: gclass != MANCALA}
 
-SIZES = {'Small (< 6)': lambda holes: holes < SMALL,
+SIZES = {'Tiny (< 4)': lambda holes: holes < TINY,
+         'Small (4 - 5)': lambda holes: TINY <= holes < SMALL,
          'Medium (6)': lambda holes: holes == SMALL,
          'Larger (7 - 8)': lambda holes: LARGER <= holes < LARGEST,
          'Largest (>= 9)': lambda holes: holes >= LARGEST}
@@ -81,7 +83,8 @@ CAPTS = {'Basic Capture': lambda ginfo: (any([ginfo.get(ckey.CAPT_MAX, 0),
                                          ginfo.get(ckey.CAPT_ON, 0),
                                          ginfo.get(ckey.EVENS, 0),
                                          ginfo.get(ckey.CROSSCAPT, 0),
-                                         ginfo.get(ckey.CAPT_TYPE, 0)]),}
+                                         ginfo.get(ckey.CAPT_TYPE, 0)]),
+         }
 
 
 SOWRS = {'None': lambda sow_rule: not sow_rule,
@@ -123,7 +126,8 @@ SOWDIR = {'CW': lambda ginfo: ginfo.get(ckey.SOW_DIRECT, 1) == -1,
           'User Chooses': lambda ginfo: len(ginfo.get(ckey.UDIR_HOLES, [])) >= 1}
 
 
-FEATS = {'Start Pattern': lambda ginfo: ginfo.get(ckey.START_PATTERN, 0),
+FEATS = {'No Sides': lambda ginfo: ginfo.get(ckey.NO_SIDES, 0),
+         'Start Pattern': lambda ginfo: ginfo.get(ckey.START_PATTERN, 0),
          'Prescribed Open': lambda ginfo: ginfo.get(ckey.PRESCRIBED, 0),
          'Move Restrictions': lambda ginfo: ginfo.get(ckey.ALLOW_RULE, 0),
          'Must Pass': lambda ginfo: ginfo.get(ckey.MUSTPASS, 0),
@@ -133,7 +137,6 @@ FEATS = {'Start Pattern': lambda ginfo: ginfo.get(ckey.START_PATTERN, 0),
                                            ginfo.get(ckey.SOW_OWN_STORE, 0),
                                            ginfo.get(ckey.XC_SOWN, 0)]),
          'Grand Slam': lambda ginfo: ginfo.get(ckey.GRANDSLAM, 0),
-         'No Sides': lambda ginfo: ginfo.get(ckey.NO_SIDES, 0),
          'Multiple Capt': lambda ginfo: ginfo.get(ckey.MULTICAPT, 0),
          'Take More': lambda ginfo: ginfo.get(ckey.PICKEXTRA, 0),
          'Rounds': lambda ginfo: ginfo.get(ckey.ROUNDS, 0),

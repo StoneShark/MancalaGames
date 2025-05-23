@@ -16,6 +16,7 @@ import abc
 
 import animator
 import deco_chain_if
+import format_msg as fmt
 import game_interface as gi
 
 from game_logger import game_log
@@ -812,10 +813,10 @@ class PickLastSeeds(CaptMethodIf):
             taker = game.turn if self.turn_takes else game.starter
             self.move_seeds(taker)
 
-            msg = f"{self.seeds} or fewer seeds left, " \
-                  + f"{gi.PLAYER_NAMES[taker]} collected them."
+            msg = f"""{self.seeds} or fewer seeds left,
+                   {gi.PLAYER_NAMES[taker]} collected them."""
             mdata.end_msg = msg
-            game_log.add(msg, game_log.INFO)
+            game_log.add(fmt.fmsg(msg), game_log.INFO)
             mdata.capt_changed = True
 
 

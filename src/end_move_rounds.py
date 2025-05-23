@@ -5,6 +5,7 @@ Created on Sun Nov 10 07:12:36 2024
 @author: Ann"""
 
 import end_move_decos as emd
+import format_msg as fmt
 import game_interface as gi
 
 from game_logger import game_log
@@ -146,9 +147,9 @@ class RoundEndLimit(emd.EndTurnIf):
                 remaining += self.game.board[loc]
 
         if remaining <= self.stop_at:
-            mdata.end_msg = f"Round limit ({self.stop_at}) or fewer seeds " \
-                            + " remaining, _thing_ ended."
-            game_log.add(mdata.end_msg, game_log.IMPORT)
+            mdata.end_msg = f"""Round limit ({self.stop_at}) or fewer seeds
+                            remaining, _thing_ ended."""
+            game_log.add(fmt.fmsg(mdata.end_msg), game_log.IMPORT)
             mdata.ended = True
             self.decorator.game_ended(mdata)
 

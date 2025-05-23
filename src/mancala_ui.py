@@ -21,6 +21,7 @@ import aspect_frame
 import cfg_keys as ckey
 import behaviors
 import buttons
+import format_msg as fmt
 import game_interface as gi
 import game_logger
 import game_tally as gt
@@ -996,7 +997,7 @@ class MancalaUI(tk.Frame):
             self._param_tally()
 
             title, message = self.game.win_message(win_cond)
-            message = message.split('\n')
+            message = message.split(fmt.LINE_SEP)
             message = message[0] if len(message) == 1 else message
 
             ui_utils.WinPopup(self, title, message)

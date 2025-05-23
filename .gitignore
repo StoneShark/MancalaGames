@@ -4,7 +4,6 @@
 .coverage
 __pycache__
 dist
-dabbles_old
 .pylint_report
 coverage.json
 logs
@@ -14,5 +13,5 @@ analysis/data
 analysis/pdicts
 context.py
 GamePropsNoRelease
-src/run_*
+tools/run_*
 docs/props_used.xlsx

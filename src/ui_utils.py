@@ -5,13 +5,12 @@ Created on Sun Mar  9 07:04:43 2025
 @author: Ann"""
 
 import functools as ft
-import re
-import textwrap
 import tkinter as tk
 import tkinter.simpledialog as tksimpledialog
 from tkinter import ttk
 import webbrowser
 
+import format_msg as fmt
 import man_path
 import version
 from game_logger import game_log
@@ -203,22 +202,6 @@ class TriStateCheckbutton(ttk.Checkbutton):
 
 # %% popup dialogs
 
-RECOMP = re.compile('\n *')
-TEXTFILL = textwrap.TextWrapper(width=50)
-
-def format_message(message):
-    """Format any message for a popup.
-    message may be a string or list of strings
-
-    If a string, format it.
-    Otherwise, format each individual string as a paragraph.
-    Join them together with two blank lines."""
-
-    if isinstance(message, list):
-        return '\n\n'.join(TEXTFILL.fill(RECOMP.sub(' ', m))
-                           for m in message)
-    return TEXTFILL.fill(RECOMP.sub(' ', message))
-
 
 class QuietDialog(tksimpledialog.Dialog):
     """A simple modal quiet dialog box."""
@@ -228,7 +211,7 @@ class QuietDialog(tksimpledialog.Dialog):
         if fixed_form:
             self.msg = message
         else:
-            self.msg = format_message(message)
+            self.msg = fmt.fmsg(message)
         super().__init__(master, title)
 
 
@@ -261,7 +244,7 @@ class WinPopup(tksimpledialog.Dialog):
     def __init__(self, master, title, message):
 
         self.mancala_ui = master
-        self.msg = format_message(message)
+        self.msg = fmt.fmsg(message)
         super().__init__(master, title)
 
 
@@ -300,7 +283,7 @@ class PassPopup(tksimpledialog.Dialog):
 
     def __init__(self, master, title, message, quit_round):
 
-        self.msg = format_message(message)
+        self.msg = fmt.fmsg(message)
         self.mancala_ui = master
         self.quit_round = quit_round
         super().__init__(master, title)
@@ -424,7 +407,6 @@ def get_nbr_seeds(master, max_seeds):
     return obj.value
 
 
-
 # values for buttons
 OK = 1               # just sayin'
 OKCANCEL = 2        # confirm user wants to do requested action
@@ -441,7 +423,7 @@ class MessageDialog(tksimpledialog.Dialog):
 
     def __init__(self, master, title, message, buttons, icon=None):
 
-        self.msg = format_message(message)
+        self.msg = fmt.fmsg(message)
         self.master = master
         self.buttons = buttons
         self.icon = icon

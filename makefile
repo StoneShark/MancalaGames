@@ -4,65 +4,6 @@ all: clean context params docs pylint tests
 final: spotless context params docs pylint all_tests exe
 
 
-MODULES = ai_interface.py
-MODULES += ai_player.py
-MODULES += allowables.py
-MODULES += animator.py
-MODULES += aspect_frame.py
-MODULES += behaviors.py
-MODULES += bear_off.py
-MODULES += bhv_bsetup.py
-MODULES += bhv_hold.py
-MODULES += bhv_owners.py
-MODULES += buttons.py
-MODULES += capt_ok.py
-MODULES += capturer.py
-MODULES += cfg_keys.py
-MODULES += claimer.py
-MODULES += deco_chain_if.py
-MODULES += diffusion.py
-MODULES += drawer.py
-MODULES += end_move.py
-MODULES += end_move_decos.py
-MODULES += end_move_rounds.py
-MODULES += fill_patterns.py
-MODULES += game_classes.py
-MODULES += game_constants.py
-MODULES += game_interface.py
-MODULES += game_logger.py
-MODULES += game_str.py
-MODULES += game_tally.py
-MODULES += get_direction.py
-MODULES += get_moves.py
-MODULES += ginfo_rules.py
-MODULES += incrementer.py
-MODULES += inhibitor.py
-MODULES += make_child.py
-MODULES += man_config.py
-MODULES += man_history.py
-MODULES += man_path.py
-MODULES += mancala_games.pyw
-MODULES += mancala_ui.py
-MODULES += mancala.py
-MODULES += mg_config.py
-MODULES += minimax.py
-MODULES += montecarlo_ts.py
-MODULES += negamax.py
-MODULES += move_data.py
-MODULES += new_game.py
-MODULES += param_consts.py
-MODULES += play_mancala.pyw
-MODULES += play.py
-MODULES += round_tally.py
-MODULES += same_side.py
-MODULES += sower.py
-MODULES += sower_decos.py
-MODULES += sower_mlap_decos.py
-MODULES += two_cycle.py
-MODULES += ui_utils.py
-MODULES += version.py
-
-
 SOURCES = src/*.py src/*.pyw
 GAMES = GameProps/*.txt
 TESTS = test/*.py
@@ -253,7 +194,7 @@ pylint: $(SOURCES) .pylint_report makefile
 
 .pylint_report: $(SOURCES) .pylintrc makefile
 	-del .pylint_report
-	-cd src && pylint --output ..\\.pylint_report --rcfile ..\\.pylintrc $(MODULES)
+	-pylint --output .pylint_report --rcfile .pylintrc --recursive yes src
 	type .pylint_report
 
 

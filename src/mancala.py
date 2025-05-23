@@ -24,6 +24,7 @@ import cfg_keys as ckey
 import drawer
 import end_move
 import end_move_decos as emd
+import format_msg as fmt
 import game_constants as gconsts
 import game_interface as gi
 import game_str
@@ -762,7 +763,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             if self.mdata.fmsg:
                 return title, message
 
-        message += '\n' if message else ''
+        message += fmt.LINE_SEP if message else ''
 
         if win_cond in (gi.WinCond.WIN, gi.WinCond.ROUND_WIN):
             message += gi.PLAYER_NAMES[int(self.mdata.winner)]
@@ -782,7 +783,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         else:
             message += f'Unexpected end condition {win_cond and win_cond.name}.'
 
-        game_log.add(message, game_log.IMPORT)
+        game_log.add(fmt.fmsg(message), game_log.IMPORT)
         return title, message
 
 

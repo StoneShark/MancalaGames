@@ -35,5 +35,5 @@
          "repeat_turn": 15
       }
    },
-   "rules": "Ann Davies, 2005."
+   "rules": "Ann Davies, 2025."
 }
