@@ -1,5 +1,7 @@
 # -*- mode: python ; coding: utf-8 -*-
 
+options = [('O', None, "OPTION")]
+
 block_cipher = None
 
 ##  plays 
@@ -9,7 +11,7 @@ play_a = Analysis(
     pathex=[],
     binaries=[],
     datas=[],
-    hiddenimports=['tkinter.messagebox', 'tkinter.simpledialog'],
+    hiddenimports=['tkinter.simpledialog'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -18,6 +20,7 @@ play_a = Analysis(
     win_private_assemblies=False,
     cipher=block_cipher,
     noarchive=False,
+    optimize=1,
 )
 play_pyz = PYZ(play_a.pure, play_a.zipped_data, cipher=block_cipher)
 
@@ -29,7 +32,7 @@ play_exe = EXE(
     name='play',
     debug=False,
     bootloader_ignore_signals=False,
-    strip=False,
+    strip=True,
     upx=True,
     console=True,
     disable_windowed_traceback=False,
@@ -47,7 +50,7 @@ play_man_a = Analysis(
     pathex=[],
     binaries=[],
     datas=[],
-    hiddenimports=['tkinter.messagebox', 'tkinter.simpledialog'],
+    hiddenimports=['tkinter.simpledialog'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -56,6 +59,7 @@ play_man_a = Analysis(
     win_private_assemblies=False,
     cipher=block_cipher,
     noarchive=False,
+    optimize=1,
 )
 play_man_pyz = PYZ(play_man_a.pure, play_man_a.zipped_data, cipher=block_cipher)
 
@@ -67,7 +71,7 @@ play_man_exe = EXE(
     name='play_mancala',
     debug=False,
     bootloader_ignore_signals=False,
-    strip=False,
+    strip=True,
     upx=True,
     console=False,
     disable_windowed_traceback=False,
@@ -85,7 +89,7 @@ man_games_a = Analysis(
     pathex=[],
     binaries=[],
     datas=[],
-    hiddenimports=['tkinter.messagebox', 'tkinter.simpledialog'],
+    hiddenimports=['tkinter.simpledialog'],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -94,6 +98,7 @@ man_games_a = Analysis(
     win_private_assemblies=False,
     cipher=block_cipher,
     noarchive=False,
+    optimize=1,
 )
 man_games_pyz = PYZ(man_games_a.pure, man_games_a.zipped_data, cipher=block_cipher)
 
@@ -105,7 +110,7 @@ man_games_exe = EXE(
     name='mancala_games',
     debug=False,
     bootloader_ignore_signals=False,
-    strip=False,
+    strip=True,
     upx=True,
     console=True,
     disable_windowed_traceback=False,
