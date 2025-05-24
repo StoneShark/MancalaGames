@@ -86,7 +86,7 @@ Detailed descriptions of the behavior of each value are in the
 <table>
 <tr><th style="width:10%">Value</th><th style="width:40%">Id</th><th style="width:40%">UI string</th></tr>
 <tr><td>0</td><td>NONE<td>No special rule</td></tr>
-<tr><td>1</td><td>OPP_OR_EMPTY<td>End Empty or Opp Side</td></tr>
+<tr><td>1</td><td>OPP_OR_EMPTY<td>End Empty or Opp Side (1st lap)</td></tr>
 <tr><td>2</td><td>SINGLE_TO_ZERO<td>Singles to Empties</td></tr>
 <tr><td>3</td><td>SINGLE_ONLY_ALL<td>Singles only when all single</td></tr>
 <tr><td>4</td><td>SINGLE_ALL_TO_ZERO<td>Singles when all & to Empty</td></tr>
@@ -96,6 +96,7 @@ Detailed descriptions of the behavior of each value are in the
 <tr><td>8</td><td>RIGHT_2_1ST_THEN_ALL_TWO<td>Right 2 1st, then twos only if all 2s</td></tr>
 <tr><td>9</td><td>MOVE_ALL_HOLES_FIRST<td>Move from all holes once first</td></tr>
 <tr><td>10</td><td>NOT_XFROM_1S<td>Not across from 1s</td></tr>
+<tr><td>11</td><td>OCCUPIED<td>End in Occupied hole (1st lap)</td></tr>
 </table>
 <h4 id="CaptRTurn">CaptRTurn (<a href="game_params.html#capt_rturn">usage</a>)</h4>
 <table>
@@ -122,6 +123,7 @@ Detailed descriptions of the behavior of each value are in the
 <tr><td>1</td><td>NEXT<td>Next Hole</td></tr>
 <tr><td>2</td><td>TWO_OUT<td>Two Out (across gap)</td></tr>
 <tr><td>3</td><td>MATCH_OPP<td>Match Opposite Side</td></tr>
+<tr><td>4</td><td>SINGLETONS<td>All Singletons</td></tr>
 </table>
 <h4 id="ChildLocs">ChildLocs (<a href="game_params.html#child_locs">usage</a>)</h4>
 <table>
@@ -137,6 +139,7 @@ Detailed descriptions of the behavior of each value are in the
 <tr><td>8</td><td>NOT_SYM_OPP<td>Not Symetrically Opposite</td></tr>
 <tr><td>9</td><td>NOT_FACING<td>Not Facing</td></tr>
 <tr><td>10</td><td>ENDS_PLUS_ALL_OPP<td>Ends plus all opposite</td></tr>
+<tr><td>11</td><td>FIXED_ONE_RIGHT<td>Fixed: 1 child in right hole</td></tr>
 </table>
 <h4 id="ChildRule">ChildRule (<a href="game_params.html#child_rule">usage</a>)</h4>
 <table>
@@ -219,6 +222,15 @@ Detailed descriptions of the behavior of each value are in the
 <tr><td>2</td><td>ALL_SINGLE_XCAPT<td>Capture across from all 1s</td></tr>
 <tr><td>3</td><td>DRAW_1_XCAPT<td>Cross capture when drawing 1</td></tr>
 </table>
+<h4 id="EndGameSeeds">EndGameSeeds (<a href="game_params.html#quitter">usage</a>)</h4>
+<table>
+<tr><th style="width:10%">Value</th><th style="width:40%">Id</th><th style="width:40%">UI string</th></tr>
+<tr><td>0</td><td>HOLE_OWNER<td>Hole Owner</td></tr>
+<tr><td>1</td><td>DONT_SCORE<td>Not Scored</td></tr>
+<tr><td>2</td><td>LAST_MOVER<td>Last Mover</td></tr>
+<tr><td>3</td><td>UNFED_PLAYER<td>Unfed Player</td></tr>
+<tr><td>4</td><td>DIVVIED<td>Divvied Equally</td></tr>
+</table>
 <h4 id="RoundFill">RoundFill (<a href="game_params.html#round_fill">usage</a>)</h4>
 <table>
 <tr><th style="width:10%">Value</th><th style="width:40%">Id</th><th style="width:40%">UI string</th></tr>
@@ -256,6 +268,7 @@ Detailed descriptions of the behavior of each value are in the
 <tr><td>1</td><td>CCW<td>Counter-clockwise</td></tr>
 <tr><td>0</td><td>SPLIT<td>Split</td></tr>
 <tr><td>2</td><td>PLAYALTDIR<td>Players Alternate</td></tr>
+<tr><td>3</td><td>EVEN_ODD_DIR<td>Odd Seeds-CCW Even-CW</td></tr>
 </table>
 <h4 id="SowRule">SowRule (<a href="game_params.html#sow_rule">usage</a>)</h4>
 <table>
@@ -268,11 +281,13 @@ Detailed descriptions of the behavior of each value are in the
 <tr><td>5</td><td>NO_SOW_OPP_NS<td>Don't sow Opp holes w/sow_param seeds</td></tr>
 <tr><td>6</td><td>CHANGE_DIR_LAP<td>Change Direction each Lap</td></tr>
 <tr><td>7</td><td>MAX_SOW<td>Never sow holes above sow_param</td></tr>
-<tr><td>8</td><td>LAP_CAPT<td>Do captures on each lap</td></tr>
+<tr><td>8</td><td>LAP_CAPT<td>Do captures on each lap (lap_capt)</td></tr>
 <tr><td>9</td><td>NO_OPP_CHILD<td>Do not sow opponents children</td></tr>
-<tr><td>10</td><td>OPP_GETS_OWN_LAST<td>Lap Capt Then Opp takes Own (< sow_param)</td></tr>
+<tr><td>10</td><td>LAP_CAPT_OPP_GETS<td>Lap Capt Then Opp takes Own (< sow_param)</td></tr>
 <tr><td>11</td><td>CONT_LAP_ON<td>Continue lap sow only on sow_param seeds</td></tr>
 <tr><td>12</td><td>CONT_LAP_GREQ<td>Continue lap sow when >= sow_param seeds</td></tr>
+<tr><td>13</td><td>OPP_CHILD_ONLY1<td>Don't sow opp children unless final seed</td></tr>
+<tr><td>14</td><td>LAP_CAPT_SEEDS<td>Lap Capt, sow with capt'ed seeds</td></tr>
 </table>
 <h4 id="StartPattern">StartPattern (<a href="game_params.html#start_pattern">usage</a>)</h4>
 <table>
@@ -287,6 +302,7 @@ Detailed descriptions of the behavior of each value are in the
 <tr><td>7</td><td>ALTS_SPLIT<td>Alts Split Right</td></tr>
 <tr><td>8</td><td>RIGHTMOST_PLUS_ONE<td>Equal plus one in Right</td></tr>
 <tr><td>9</td><td>MOVE_RIGHTMOST<td>Move Rightmost Hole</td></tr>
+<tr><td>10</td><td>MOVE_RANDOM<td>Random Move</td></tr>
 </table>
 <h4 id="EndGameSeeds">EndGameSeeds (<a href="game_params.html#unclaimed">usage</a>)</h4>
 <table>

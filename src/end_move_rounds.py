@@ -5,6 +5,7 @@ Created on Sun Nov 10 07:12:36 2024
 @author: Ann"""
 
 import end_move_decos as emd
+import format_msg as fmt
 import game_interface as gi
 
 from game_logger import game_log
@@ -30,7 +31,7 @@ class RoundWinner(emd.EndTurnIf):
         the game.
 
         msg: message to log if either player has fewer
-        than win_seeds"""
+        than req_seeds"""
 
         super().__init__(game, decorator, sclaimer)
 
@@ -44,17 +45,26 @@ class RoundWinner(emd.EndTurnIf):
             self.msg = intro + f"at least {req_holes} holes)."
 
         elif game.info.round_fill == gi.RoundFill.UMOVE:
+            # uses even_fill so must be before it (to require more seeds)
             self.req_seeds = game.cts.holes + game.info.min_move - 1
             self.msg = intro + "a playable side)."
 
+        elif game.info.round_fill == gi.RoundFill.EVEN_FILL:
+            self.req_seeds = game.info.min_move
+            self.msg = intro + "a playable side)."
+
         elif game.info.goal_param > 0:
-            # max seeds games do not round seed counts
+            # max seeds games do not round seed counts (like territory games)
             self.req_seeds = game.info.goal_param * nbr_start
             self.msg = intro + f"at least {goal_param} holes)."
 
         else:
             self.req_seeds = nbr_start
             self.msg = intro + "a hole)."
+
+
+    def __str__(self):
+        return super().__str__() + f'\n   req_seeds: {self.req_seeds}'
 
 
     def game_ended(self, mdata):
@@ -137,9 +147,9 @@ class RoundEndLimit(emd.EndTurnIf):
                 remaining += self.game.board[loc]
 
         if remaining <= self.stop_at:
-            mdata.end_msg = f"Round limit ({self.stop_at}) or fewer seeds " \
-                            + " remaining, _thing_ ended."
-            game_log.add(mdata.end_msg, game_log.IMPORT)
+            mdata.end_msg = f"""Round limit ({self.stop_at}) or fewer seeds
+                            remaining, _thing_ ended."""
+            game_log.add(fmt.fmsg(mdata.end_msg), game_log.IMPORT)
             mdata.ended = True
             self.decorator.game_ended(mdata)
 

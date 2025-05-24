@@ -12,7 +12,8 @@
       "child_locs": 3,
       "mustpass": true,
       "sow_direct": 0,
-      "unclaimed": 1
+      "unclaimed": 1,
+      "quitter": 1
    },
    "player": {
       "algorithm": "negamaxer",

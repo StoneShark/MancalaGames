@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""A UI that brings up a list of games in the GameProps directory.
+"""A UI that allows play of any of the games in the GameProps directory.
 
 Created on Thu Mar 23 08:10:28 2023
 @author: Ann"""
@@ -21,6 +21,7 @@ import game_interface as gi
 import man_config
 import man_path
 import mancala_ui
+import round_tally
 import ui_utils
 
 
@@ -37,9 +38,10 @@ EXFILE = '_all_params.txt'
 MANCALA = 'Mancala'
 
 COLON = ':'
-DESC_WIDTH = 65
+DESC_WIDTH = 72
 COL_WIDTH = 30
 
+TINY = 4
 SMALL = 6
 LARGER = 7
 LARGEST = 9
@@ -49,21 +51,23 @@ PARAMS = man_config.ParamData(del_tags=False, no_descs=True)
 GCLASS = {'Mancala': lambda gclass: gclass == MANCALA,
           'Other': lambda gclass: gclass != MANCALA}
 
-SIZES = {'Small (< 6)': lambda holes: holes < SMALL,
+SIZES = {'Tiny (< 4)': lambda holes: holes < TINY,
+         'Small (4 - 5)': lambda holes: TINY <= holes < SMALL,
          'Medium (6)': lambda holes: holes == SMALL,
          'Larger (7 - 8)': lambda holes: LARGER <= holes < LARGEST,
          'Largest (>= 9)': lambda holes: holes >= LARGEST}
 
 GOALS = {'Max Seeds': lambda goal: goal == gi.Goal.MAX_SEEDS,
+         'Max Seeds Tally': lambda goal: goal in (gi.Goal.RND_SEED_COUNT,
+                                                  gi.Goal.RND_EXTRA_SEEDS,
+                                                  gi.Goal.RND_POINTS,
+                                                  gi.Goal.RND_WIN_COUNT_MAX),
+         'Clear Own': lambda goal: goal in (gi.Goal.CLEAR,
+                                            gi.Goal.RND_WIN_COUNT_CLR),
+         'Deprive Opponent': lambda goal: goal in (gi.Goal.DEPRIVE,
+                                                   gi.Goal.RND_WIN_COUNT_DEP),
          'Territory': lambda goal: goal == gi.Goal.TERRITORY,
-         'Clear Own': lambda goal: goal == gi.Goal.CLEAR,
-         'Deprive Opponent': lambda goal: goal == gi.Goal.DEPRIVE,
-         'Round Tally': lambda goal: goal in (gi.Goal.RND_SEED_COUNT,
-                                              gi.Goal.RND_EXTRA_SEEDS,
-                                              gi.Goal.RND_POINTS,
-                                              gi.Goal.RND_WIN_COUNT_MAX,
-                                              gi.Goal.RND_WIN_COUNT_CLR,
-                                              gi.Goal.RND_WIN_COUNT_DEP)}
+        }
 
 
 CAPTS = {'Basic Capture': lambda ginfo: (any([ginfo.get(ckey.CAPT_MAX, 0),
@@ -79,19 +83,26 @@ CAPTS = {'Basic Capture': lambda ginfo: (any([ginfo.get(ckey.CAPT_MAX, 0),
                                          ginfo.get(ckey.CAPT_ON, 0),
                                          ginfo.get(ckey.EVENS, 0),
                                          ginfo.get(ckey.CROSSCAPT, 0),
-                                         ginfo.get(ckey.CAPT_TYPE, 0)]),}
+                                         ginfo.get(ckey.CAPT_TYPE, 0)]),
+         }
 
 
 SOWRS = {'None': lambda sow_rule: not sow_rule,
          'Sow Closed': lambda sow_rule: sow_rule in (
              gi.SowRule.SOW_BLKD_DIV,
              gi.SowRule.SOW_BLKD_DIV_NR),
-         'Take Sowing': lambda sow_rule: sow_rule in (
+         'Take when Sowing': lambda sow_rule: sow_rule in (
              gi.SowRule.SOW_CAPT_ALL,
              gi.SowRule.OWN_SOW_CAPT_ALL),
          'Capture on Laps': lambda sow_rule: sow_rule in (
              gi.SowRule.LAP_CAPT,
-             gi.SowRule.OPP_GETS_OWN_LAST),
+             gi.SowRule.LAP_CAPT_OPP_GETS,
+             gi.SowRule.LAP_CAPT_SEEDS),
+         'Skip some holes': lambda sow_rule: sow_rule in (
+             gi.SowRule.NO_SOW_OPP_NS,
+             gi.SowRule.MAX_SOW,
+             gi.SowRule.NO_OPP_CHILD,
+             gi.SowRule.OPP_CHILD_ONLY1),
          'Other': lambda sow_rule: sow_rule not in (
              gi.SowRule.NONE,
              gi.SowRule.SOW_BLKD_DIV,
@@ -99,18 +110,24 @@ SOWRS = {'None': lambda sow_rule: not sow_rule,
              gi.SowRule.SOW_CAPT_ALL,
              gi.SowRule.OWN_SOW_CAPT_ALL,
              gi.SowRule.LAP_CAPT,
-             gi.SowRule.OPP_GETS_OWN_LAST),
-
+             gi.SowRule.LAP_CAPT_OPP_GETS,
+             gi.SowRule.LAP_CAPT_SEEDS,
+             gi.SowRule.NO_SOW_OPP_NS,
+             gi.SowRule.MAX_SOW,
+             gi.SowRule.NO_OPP_CHILD,
+             gi.SowRule.OPP_CHILD_ONLY1),
         }
 
 SOWDIR = {'CW': lambda ginfo: ginfo.get(ckey.SOW_DIRECT, 1) == -1,
           'CCW': lambda ginfo: ginfo.get(ckey.SOW_DIRECT, 1) == 1,
           'SPLIT': lambda ginfo: not ginfo.get(ckey.SOW_DIRECT, 1),
           'Players Alt Dir': lambda ginfo: ginfo.get(ckey.SOW_DIRECT, 1) == 2,
+          'Even Odd Dir': lambda ginfo: ginfo.get(ckey.SOW_DIRECT, 1) == 3,
           'User Chooses': lambda ginfo: len(ginfo.get(ckey.UDIR_HOLES, [])) >= 1}
 
 
-FEATS = {'Start Pattern': lambda ginfo: ginfo.get(ckey.START_PATTERN, 0),
+FEATS = {'No Sides': lambda ginfo: ginfo.get(ckey.NO_SIDES, 0),
+         'Start Pattern': lambda ginfo: ginfo.get(ckey.START_PATTERN, 0),
          'Prescribed Open': lambda ginfo: ginfo.get(ckey.PRESCRIBED, 0),
          'Move Restrictions': lambda ginfo: ginfo.get(ckey.ALLOW_RULE, 0),
          'Must Pass': lambda ginfo: ginfo.get(ckey.MUSTPASS, 0),
@@ -120,12 +137,12 @@ FEATS = {'Start Pattern': lambda ginfo: ginfo.get(ckey.START_PATTERN, 0),
                                            ginfo.get(ckey.SOW_OWN_STORE, 0),
                                            ginfo.get(ckey.XC_SOWN, 0)]),
          'Grand Slam': lambda ginfo: ginfo.get(ckey.GRANDSLAM, 0),
-         'No Sides': lambda ginfo: ginfo.get(ckey.NO_SIDES, 0),
          'Multiple Capt': lambda ginfo: ginfo.get(ckey.MULTICAPT, 0),
          'Take More': lambda ginfo: ginfo.get(ckey.PICKEXTRA, 0),
          'Rounds': lambda ginfo: ginfo.get(ckey.ROUNDS, 0),
+         'Round Tally': lambda ginfo: ginfo.get(ckey.GOAL, 0) in \
+                                         round_tally.RoundTally.GOALS,
          }
-
 
 
 # %% frame classes
@@ -139,7 +156,6 @@ class BaseFilter(ttk.Frame, abc.ABC):
     based on value_keys."""
 
     def __init__(self, parent, filt_obj, label, param_key, value_keys):
-        # pylint: disable=too-many-arguments
 
         super().__init__(parent, borderwidth=3)
         self.parent = parent
@@ -163,7 +179,6 @@ class BaseFilter(ttk.Frame, abc.ABC):
                    command=self.all_filtered,
                    style='Filt.TButton'
                    ).grid(row=rnbr, column=1, padx=3, pady=3)
-
 
 
     def build_filters(self, filt_obj, row, value_keys):
@@ -238,7 +253,6 @@ class VListFilter(BaseFilter):
     """A filter category based on a list of values."""
 
     def __init__(self, parent, filt_obj, label, val_list, param_key):
-        # pylint: disable=too-many-arguments
 
         self.val_list = val_list
         super().__init__(parent, filt_obj, label, param_key, value_keys=True)
@@ -275,7 +289,6 @@ class DictFilter(BaseFilter):
     """A filter category based on a dictionary of rule_name: test"""
 
     def __init__(self, parent, filt_obj, label, filt_dict, param_key):
-        # pylint: disable=too-many-arguments
 
         self.filt_dict = filt_dict
         super().__init__(parent, filt_obj, label, param_key, value_keys=False)
@@ -545,6 +558,30 @@ class SelectList(ttk.Labelframe):
             self.select(last)
 
 
+    def jump_up(self, event):
+        """Move up item in the treeview."""
+
+        current = self.game_list.focus()
+        if event.widget is self.game_list or not current:
+            return
+
+        children = self.game_list.get_children()
+        prev_idx = max(children.index(current) - 1, 0)
+        self.select(children[prev_idx])
+
+
+    def jump_down(self, event):
+        """Move down one item in the treeview."""
+
+        current = self.game_list.focus()
+        if event.widget is self.game_list or not current:
+            return
+
+        children = self.game_list.get_children()
+        next_idx = min(children.index(current) + 1, len(children) - 1)
+        self.select(children[next_idx])
+
+
     def key_pressed(self, event):
         """If a key with a keysym of length 1 is pressed,
         select the next element that starts with that key,
@@ -681,12 +718,8 @@ class AboutPane(ttk.Labelframe):
         paragraphs = text.split('\n')
         out_text = []
         for para in paragraphs:
-
-            fpara = para
-            for tag in man_config.REMOVE_TAGS:
-                fpara, _ = tag.subn('', fpara, count=5)
-
-            out_text += [textwrap.fill(fpara, DESC_WIDTH)]
+            out_text += [textwrap.fill(man_config.remove_tags(para),
+                                       DESC_WIDTH)]
 
         if not out_text[-1]:
             out_text.pop()
@@ -837,6 +870,8 @@ class GameChooser(ttk.Frame):
         self.master.bind('<Return>', self.play_game)
         self.master.bind('<Home>', self.select_list.jump_to_first)
         self.master.bind('<End>', self.select_list.jump_to_last)
+        self.master.bind('<Up>', self.select_list.jump_up)
+        self.master.bind('<Down>', self.select_list.jump_down)
         self.master.bind('<Key>', self.select_list.key_pressed)
 
 
@@ -896,9 +931,7 @@ class GameChooser(ttk.Frame):
         player_dict = game_dict[ckey.PLAYER]
 
         game = game_class(game_consts, game_info)
-        game_ui = mancala_ui.MancalaUI(game, player_dict,
-                                       root_ui=self.master)
-        game_ui.mainloop()
+        mancala_ui.MancalaUI(game, player_dict, root_ui=self.master)
 
 
 # %%

@@ -30,6 +30,9 @@ pytestmark = pytest.mark.unittest
 
 from context import animator
 from context import capt_ok
+from context import claimer
+from context import end_move_decos as emd
+from context import end_move_rounds as emr
 from context import game_constants as gconsts
 from context import game_interface as gi
 from context import game_logger
@@ -116,6 +119,10 @@ class TestGameState:
         gstrs = str(state).split('\n')
         assert re.fullmatch(ere_one, gstrs[1])
         assert re.fullmatch(ere_two, gstrs[2])
+
+        one = state.str_one()
+        assert str(state.board) in one
+        assert str(state.store) in one
 
 
     @pytest.fixture
@@ -277,6 +284,35 @@ class TestGameState:
             game.blocked = [F, F, T, F]
             game.child = [N, N, N, N]
 
+        assert game.state == saved_state
+
+
+    def test_state_context2(self, game):
+        """Test all 3 standard block/loop exits.
+        saved_state is used from caller context."""
+
+        def do_the_loop(game):
+
+            for i in range(4):
+                assert game.state == saved_state
+
+                with game.restore_state(saved_state):
+
+                    game.board = [1, 2, 3, 4]
+                    game.store = None
+                    game.unlocked = [F, T, F, F]
+                    if i == 1:
+                        continue
+                    if i == 2:
+                        break
+                    if i == 3:
+                        return
+                    game.blocked = [F, F, T, F]
+                    game.child = [N, N, N, N]
+
+
+        saved_state = game.state
+        do_the_loop(game)
         assert game.state == saved_state
 
 
@@ -867,7 +903,7 @@ class TestDelegates:
         mobj = mocker.patch.object(game.deco.ender, 'game_ended')
 
         game.mdata = None
-        game.end_round()
+        game.end_game(quitter=False, user=True, game=False)
         mobj.assert_called_once()
         assert game.mdata.ended
 
@@ -877,7 +913,7 @@ class TestDelegates:
         mobj = mocker.patch.object(game.deco.quitter, 'game_ended')
 
         game.mdata = 25
-        game.end_game(user=True)
+        game.end_game(quitter=True, user=True)
 
         mobj.assert_called_once()
         assert game.mdata != 25
@@ -890,7 +926,7 @@ class TestDelegates:
         mobj = mocker.patch.object(game.deco.ender, 'game_ended')
 
         game.mdata = move_data.MoveData(game, 0)
-        game.end_round()
+        game.end_game(quitter=False, user=True, game=False)
         mobj.assert_called_once()
         assert game.mdata.ended
 
@@ -901,7 +937,7 @@ class TestDelegates:
 
         mdata = move_data.MoveData(game, 0)
         game.mdata = mdata
-        game.end_game(user=False)
+        game.end_game(quitter=True, user=False)
 
         mobj.assert_called_once()
         assert game.mdata is mdata
@@ -986,7 +1022,7 @@ class TestDelegates:
         mdata = game.do_sow(5, False)
 
         mstart.assert_called_once_with(5)
-        mgdir.assert_called_once_with(5, 'first')
+        mgdir.assert_called_once()
         msower.assert_called_once()
 
         assert isinstance(mdata, move_data.MoveData)
@@ -1016,7 +1052,7 @@ class TestDelegates:
         mdata = game.do_sow(5, True)
 
         mstart.assert_called_once_with(5)
-        mgdir.assert_called_once_with(5, 'first')
+        mgdir.assert_called_once()
         msingle.sow_seeds.assert_called_once()
 
         assert isinstance(mdata, move_data.MoveData)
@@ -1325,6 +1361,79 @@ class TestWinMessage:
 
         # The capt'ed but not game
         assert 'North South The game' in wmess
+
+
+class TestEndMessage:
+
+
+    @pytest.fixture
+    def game(self):
+
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(goal=Goal.MAX_SEEDS,
+                                capt_on = [2],
+                                stores=True,
+                                rounds=gi.Rounds.HALF_SEEDS,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+
+    @pytest.mark.parametrize('quitter', [False, True])
+    def test_bad_message(self, mocker, game, quitter):
+        """test bad config enum and force skip of deco chain test"""
+
+        config = 25
+        if quitter:
+            object.__setattr__(game.info, 'quitter', config)
+        else:
+            object.__setattr__(game.info, 'unclaimed', config)
+        game.deco.quitter = None
+        game.mdata = move_data.MoveData(game, 2)
+
+        msg = game.end_message('rtext', quitter)
+        # this is the bad message used in the next text,
+        # if this fails test_end_message likely needs to change too
+        assert msg == 'Unclaimed seeds will .'
+
+
+    @pytest.mark.parametrize('quitter', [False, True])
+    @pytest.mark.parametrize('config', gi.EndGameSeeds)
+    def test_end_message(self, mocker, game, quitter, config):
+        """only testing that all combinations return a string
+        force skip of deco chain test"""
+
+        if quitter:
+            object.__setattr__(game.info, 'quitter', config)
+        else:
+            object.__setattr__(game.info, 'unclaimed', config)
+        game.deco.quitter = None
+        game.mdata = move_data.MoveData(game, 2)
+
+        msg = game.end_message('rtext', quitter)
+        assert msg != 'Unclaimed seeds will .'
+
+
+    @pytest.mark.parametrize('quitter', [False, True])
+    def test_deco_message(self, mocker, game, quitter):
+        """Create a deco chain with QuitToTie second."""
+
+        object.__setattr__(game.info, 'quitter', gi.EndGameSeeds.HOLE_OWNER)
+        object.__setattr__(game.info, 'unclaimed', gi.EndGameSeeds.HOLE_OWNER)
+
+        game.deco.ender = None
+
+        quitter = emd.QuitToTie(game)
+        quitter = emr.QuitRoundTally(game,
+                                     quitter,
+                                     sclaimer=claimer.ChildClaimSeeds(game))
+        game.deco.quitter = quitter
+
+        if quitter:
+            assert 'tie' in game.end_message('rtext', quitter)
+        else:
+            assert 'tie' not in game.end_message('rtext', quitter)
 
 
 class TestHoleProp:
@@ -1877,3 +1986,31 @@ class TestAnimatorHooks:
         assert isinstance(game.unlocked, list)
         assert isinstance(game.blocked, list)
         assert isinstance(game.child, list)
+
+
+class TestOppTurn:
+
+    @pytest.fixture
+    def game(self):
+
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=6)
+        game_info = gi.GameInfo(goal=gi.Goal.TERRITORY,
+                                goal_param=8,
+                                child_type = gi.ChildType.NORMAL,
+                                child_cvt=4,
+                                evens=True,
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        return mancala.Mancala(game_consts, game_info)
+
+
+    @pytest.mark.parametrize('turn', [False, True])
+    def test_normal(self, game, turn):
+
+        game.turn = turn
+
+        with game.opp_turn():
+            game.turn = 12
+
+        assert game.turn == turn

@@ -10,7 +10,6 @@ Created on Tue Jul 18 17:31:59 2023
 import pytest
 pytestmark = pytest.mark.unittest
 
-import tkinter as tk
 import utils
 
 from context import animator
@@ -591,6 +590,7 @@ class TestSower:
                                 rules=mancala.Mancala.rules)
 
         game =  mancala.Mancala(game_consts, game_info)
+        game.turn = False
 
         game.board = [0, 5, 2, 2, 2, 2]
         game.child = [T, N, T, F, T, N]
@@ -606,6 +606,40 @@ class TestSower:
         assert game.board == [0, 1, 2, 4, 2, 4]
         assert mdata.capt_loc == 5
 
+
+    @pytest.mark.parametrize('turn, move, eboard',
+                             [(False, 1, [0, 0, 4, 3, 3, 0]),
+                              (False, 2, [1, 3, 0, 3, 2, 1]),
+                              (False, 3, [1, 3, 3, 0, 2, 1]),
+                              ])
+    # @pytest.mark.usefixtures("logger")
+    def test_opp_child_1(self, turn, move, eboard):
+
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
+        game_info = gi.GameInfo(evens=True,
+                                stores=True,
+                                child_type = gi.ChildType.NORMAL,
+                                child_cvt = 6,
+                                sow_rule=gi.SowRule.OPP_CHILD_ONLY1,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game =  mancala.Mancala(game_consts, game_info)
+
+        # sowing from children and wrong side but that's not checked here
+
+        game.board = [0, 3, 3, 2, 2, 0]
+        game.child = [T, N, F, F, T, N]
+        game.turn = turn
+        # print(game)
+
+        mdata = move_data.MoveData(game, move)
+        mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(move)
+        mdata.direct = gi.Direct.CCW
+        game.deco.sower.sow_seeds(mdata)
+        # print(game)
+
+        assert game.board == eboard
 
 
 class TestMlap:
@@ -1757,6 +1791,18 @@ class TestCaptMlap:
                                 rules=mancala.Mancala.rules)
         return mancala.Mancala(game_consts, game_info)
 
+    @pytest.fixture
+    def lcsgame(self):
+
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
+        game_info = gi.GameInfo(crosscapt=True,
+                                stores=True,
+                                sow_direct=Direct.CCW,
+                                mlaps=LapSower.LAPPER,
+                                sow_rule=SowRule.LAP_CAPT_SEEDS,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        return mancala.Mancala(game_consts, game_info)
 
     CASES = [
         ('ccgame', 0, F, [2, 2, 2, 2, 2, 2, 2, 2],
@@ -1796,6 +1842,10 @@ class TestCaptMlap:
         ('gapgame', 1, F, [3, 1, 2, 0, 1, 1, 1, 0],
          7, [3, 0, 0, 1, 1, 0, 2, 1], [1, 0]),
 
+        # 10: continue > 1, continue w xcapt, and stop on 1 w no capt
+        ('lcsgame', 0, F, [2, 2, 2, 2, 2, 2, 2, 2],
+         5, [1, 6, 0, 1, 1, 1, 5, 1], [0, 0])
+
     ]
 
     # @pytest.mark.usefixtures('logger')
@@ -1810,16 +1860,16 @@ class TestCaptMlap:
         game = request.getfixturevalue(game_fixt)
         game.board = board
         game.turn = turn
-        print(game.deco.sower)
-        print(game)
-        print(start_pos)
+        # print(game.deco.sower)
+        # print(game)
+        # print(start_pos)
 
         mdata = move_data.MoveData(game, start_pos)
         mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(start_pos)
         mdata.direct = game.info.sow_direct
         game.deco.sower.sow_seeds(mdata)
 
-        print(game)
+        # print(game)
 
         assert mdata.capt_loc == eloc
         assert game.board == eboard
@@ -1925,7 +1975,7 @@ class TestCaptOppOwnLast:
                                 stores=True,
                                 sow_direct=Direct.CCW,
                                 mlaps=LapSower.LAPPER,
-                                sow_rule=SowRule.OPP_GETS_OWN_LAST,
+                                sow_rule=SowRule.LAP_CAPT_OPP_GETS,
                                 sow_param=6,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
@@ -2069,6 +2119,7 @@ class TestAnimator:
         mobj = mocker.patch('animator.animator.flash')
 
         game = mancala.Mancala(game_consts, game_info)
+        game.turn = False
 
         assert isinstance(game.deco.sower, msowd.SowMlapSeeds)
         assert isinstance(game.deco.sower.lap_cont, msowd.AnimateLapStart)
@@ -2105,6 +2156,7 @@ class TestAnimator:
         mobj = mocker.patch('animator.animator.flash')
 
         game = mancala.Mancala(game_consts, game_info)
+        game.turn = False
 
         assert isinstance(game.deco.sower, msowd.SowMlapSeeds)
         assert isinstance(game.deco.sower.lap_cont, msowd.AnimateLapStart)

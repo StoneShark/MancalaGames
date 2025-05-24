@@ -23,6 +23,7 @@ import abc
 import animator
 import deco_chain_if
 import game_interface as gi
+import move_data
 
 from game_logger import game_log
 
@@ -169,13 +170,35 @@ class OppOrEmptyEnd(AllowableIf):
             if not allow[pos] or self.game.board[pos] > self.game.cts.holes:
                 continue
 
-            mdata = self.game.sim_single_sow(pos)
-            self.game.state = saved_state
+            with self.game.restore_state(saved_state):
+                mdata = self.game.sim_single_sow(pos)
 
             end_loc = mdata.capt_loc
             if end_loc in my_rng and self.game.board[end_loc]:
                 game_log.add(f'OppOrEmpty: prevented {pos}', game_log.DETAIL)
                 allow[pos] = False
+
+        return allow
+
+
+class Occupied(AllowableIf):
+    """Can only play from holes that end in an occupied hole."""
+
+    def get_allowable_holes(self):
+
+        allow = self.decorator.get_allowable_holes()
+        saved_state = self.game.state
+
+        for pos in range(self.game.cts.holes):
+            if not allow[pos]:
+                continue
+
+            with self.game.restore_state(saved_state):
+                mdata = self.game.sim_single_sow(pos)
+                if self.game.board[mdata.capt_loc] == 1:
+
+                    game_log.add(f'Occupied: prevented {pos}', game_log.DETAIL)
+                    allow[pos] = False
 
         return allow
 
@@ -198,7 +221,9 @@ class SingleToZero(AllowableIf):
         holes = self.tholes if self.game.turn else self.fholes
         for idx, loc in holes:
 
-            direct = self.game.deco.get_dir.get_direction(loc, loc)
+            mdata = move_data.MoveData(self.game, loc)
+            mdata.sow_loc = loc
+            direct = self.game.deco.get_dir.get_direction(mdata)
             nloc = self.game.deco.incr.incr(loc, direct)
 
             if (allow[idx]
@@ -359,15 +384,14 @@ class MustShare(AllowableIf):
             if not allow[idx]:
                 continue
 
-            row = int(loc < self.game.cts.holes)
-            pos = self.game.cts.xlate_pos_loc(row, loc)
-            self.game.sim_sow_capt(self.make_move(row, pos))
+            with self.game.restore_state(saved_state):
+                row = int(loc < self.game.cts.holes)
+                pos = self.game.cts.xlate_pos_loc(row, loc)
+                self.game.sim_sow_capt(self.make_move(row, pos))
 
-            if not self.opp_has_seeds(opponent):
-                game_log.add(f'MUSTSHARE: prevented {loc}', game_log.DETAIL)
-                allow[idx] = False
-
-            self.game.state = saved_state
+                if not self.opp_has_seeds(opponent):
+                    game_log.add(f'MUSTSHARE: prevented {loc}', game_log.DETAIL)
+                    allow[idx] = False
 
         return allow
 
@@ -398,6 +422,7 @@ class MustShareUdir(MustShare):
             self.owner = game.cts.board_side
 
 
+
     def get_allowable_holes(self):
         """Return allowable moves."""
 
@@ -422,14 +447,13 @@ class MustShareUdir(MustShare):
                 pos_allow = [True, True]
                 for pidx, direct in enumerate([gi.Direct.CW, gi.Direct.CCW]):
 
-                    move = self.make_move(row, pos, direct)
-                    self.game.sim_sow_capt(move)
-                    if not self.opp_has_seeds(opponent):
-                        game_log.add(f'MUSTSHARE: prevented {loc} {direct.name}',
-                                     game_log.DETAIL)
-                        pos_allow[pidx] = False
-
-                    self.game.state = saved_state
+                    with self.game.restore_state(saved_state):
+                        move = self.make_move(row, pos, direct)
+                        self.game.sim_sow_capt(move)
+                        if not self.opp_has_seeds(opponent):
+                            game_log.add(f'MUSTSHARE: prevented {loc} {direct.name}',
+                                         game_log.DETAIL)
+                            pos_allow[pidx] = False
 
                 if not pos_allow[0] and not pos_allow[1]:
                     allow[idx] = False
@@ -437,13 +461,12 @@ class MustShareUdir(MustShare):
                     allow[idx] = pos_allow
 
             else:
-                self.game.sim_sow_capt(self.make_move(row, pos, None))
+                with self.game.restore_state(saved_state):
+                    self.game.sim_sow_capt(self.make_move(row, pos, None))
 
-                if not self.opp_has_seeds(opponent):
-                    game_log.add(f'MUSTSHARE: prevented {loc}', game_log.DETAIL)
-                    allow[idx] = False
-
-                self.game.state = saved_state
+                    if not self.opp_has_seeds(opponent):
+                        game_log.add(f'MUSTSHARE: prevented {loc}', game_log.DETAIL)
+                        allow[idx] = False
 
         return allow
 
@@ -484,16 +507,15 @@ class NoGrandSlam(AllowableIf):
 
         for pos, loc in enumerate(my_rng):
             if not allow[pos]:
-                self.game.state = saved_state
                 continue
 
-            self.game.sim_sow_capt(pos)
+            with self.game.restore_state(saved_state):
 
-            if self.no_seeds(opp_rng):
-                allow[pos] = False
-                game_log.add(f'GRANDSLAM: prevented {loc}', game_log.IMPORT)
+                self.game.sim_sow_capt(pos)
 
-            self.game.state = saved_state
+                if self.no_seeds(opp_rng):
+                    allow[pos] = False
+                    game_log.add(f'GRANDSLAM: prevented {loc}', game_log.IMPORT)
 
         return allow
 
@@ -599,6 +621,7 @@ class DontAnimateAllowable(AllowableIf):
 def deco_allow_rule(game, allowable):
     """Add the allow rule decos."""
     # pylint: disable=too-complex
+    # pylint: disable=too-many-branches
 
     if game.info.allow_rule == gi.AllowRule.NONE:
         pass
@@ -635,6 +658,9 @@ def deco_allow_rule(game, allowable):
     elif game.info.allow_rule == gi.AllowRule.NOT_XFROM_1S:
         allowable = NotXfromOnes(game, allowable)
 
+    elif game.info.allow_rule == gi.AllowRule.OCCUPIED:
+        allowable = Occupied(game, allowable)
+
     else:
         raise NotImplementedError(
                 f"AllowRule {game.info.allow_rule} not implemented.")
@@ -665,6 +691,7 @@ def deco_allowable(game):
         allowable = DontUndoMoveOne(game, allowable)
 
     if (game.info.mustshare
+            or game.info.allow_rule == gi.AllowRule.OCCUPIED
             or game.info.allow_rule == gi.AllowRule.OPP_OR_EMPTY
             or game.info.grandslam == gi.GrandSlam.NOT_LEGAL):
         allowable = MemoizeAllowable(game, allowable)

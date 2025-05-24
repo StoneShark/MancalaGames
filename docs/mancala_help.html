@@ -224,37 +224,41 @@ reflect the game state to exit the mode.
 
 <h4 id="gamemenu">Game</h4>
 <p><b>New</b>: Start a new game. An in-progress game is not tallied.
-<p><b>Swap Sides</b>: A player may swap sides of the board, that is,
-execute a Pie Rule, under two conditions:
-<ol>
-<li>After the first player finishes their turn in a game,
-the second player may swap sides (when the start_pattern is not random).
-<li>When the
-<a href="game_params.html#start_pattern">START_PATTERN</a>
-is random, on either of the first two turns of the game.
-</ol>
-<p>This is a common way to deal with games that favor the
-starting player. Only some Mancala games offer an advantage to the starting player,
-but this option is always availble. The AI player will never choose to swap sides.
-<p>Swapping sides counts as a move, in terms of any move count parameters
-(prescribed sow, no capture move count, etc.).
-<p><b>End Round</b>: End the current round. This can be used to end and score a
-round, but not end the game. Use this if there are seeds cycling on the board.
-<p><b>End Game</b>: End the current game and tally the game.
-Use this if there are seeds cycling on the board.
-For clear and deprive goal games,
-the game will be ended in a tie.
-If the game involves stores or children, the
+
+<p><b>Concede Round</b>: Concede the current round.
+Suggested use is when there is a clear winner to skip a tedious end game.
+The round will be scored, not game.
+For clear and deprive goal games, the round will be ended in a tie.
+For most other games, the
 <a href="game_params.html#unclaimed">UNCLAIMED</a> parameter specifies
-the handling of seeds not in chilren or stores:
-<ul>
-<li>DONT_SCORE: not scored for either player</li>
-<li>LAST_MOVE: scored for the last player to move</li>
-<li>UNFED_PLAYER: hole owner</li>
-<li>DIVVIED or HOLE_OWNER: the seeds are divided between the two players.
-An extra seed goes to the player with fewer seeds.
-Hole owner is only honored when the game ends due to the normal conditions.</li>
-</ul>
+the handling of seeds not in chilren or stores.
+
+<p>This option is not available if the game is not played in rounds
+or if UNCLAIMED and QUITTER have the same value.
+
+<p><b>Concede Game</b>: End the current game and tally the game.
+For clear and deprive goal games, the round will be ended in a tie.
+For most other games, the
+<a href="game_params.html#unclaimed">UNCLAIMED</a> parameter specifies
+the handling of seeds not in chilren or stores.
+<p>This option is not available if UNCLAIMED and QUITTER have the same value.
+
+<p><b>End Round</b>: End the current round.
+Suggested use is when there are seeds cycling on the board.
+The round will be scored, not game.
+For clear and deprive goal games, the round will be ended in a tie.
+For most other games, the
+<a href="game_params.html#quitter">QUITTER</a> parameter specifies
+the handling of seeds not in chilren or stores.
+<p>This option is not avaliable if the game is not played in rounds.
+
+<p><b>End Game</b>: End and tally the current game.
+Suggested use is when there are seeds cycling on the board.
+For clear and deprive goal games, the game will be ended in a tie.
+For most other games, the
+<a href="game_params.html#quitter">QUITTER</a> parameter specifies
+the handling of seeds not in chilren or stores.
+
 <p><b>Setup Board</b>: Enter a game setup mode. The board maybe reconfigured as desired.
 The coloring of the board is as though the game is being played, but all buttons maybe
 clicked to adjust game conditions.
@@ -280,9 +284,30 @@ this command allows returning to that saved state.
 Suppose, for example, that a puzzle is setup; after trying to solve the puzzle,
 this command can be used to return the initial state.
 
+<h4>Move</h4>
+<p><b>Undo Move</b>: Undo a previous move. Multiple moves may undone and redone.
+Control-z undoes a move.
+<p>The length of the undo history can be set in the mancala.ini file via 'history_size'.
+<p><b>Redo Move</b>: Redo an undone move. Multiple moves may undone and redone.
+Control-Shift-Z redoes a move.
+<p><b>Swap Sides</b>: A player may swap sides of the board, that is,
+execute a Pie Rule, under two conditions:
+<ol>
+<li>When the
+<a href="game_params.html#start_pattern">START_PATTERN</a>
+is random or move_random, either player may choose to swap sides
+before their first turn but only one swap may be done per game.
+<li>After the first player finishes their turn in a game,
+the second player may swap sides, for other games.
+</ol>
+<p>This is a common way to deal with games that favor the
+starting player. Only some Mancala games offer an advantage to the starting player,
+but this option is always availble. The AI player will never choose to swap sides.
+<p>Swapping sides counts as a move, in terms of any move count parameters
+(prescribed sow, no capture move count, etc.).
 
-<h4>AI</h4>
-<p><b>AI Player</b>: Enable or disable the ai player.
+<h4>Player</h4>
+<p><b>AI Player Active</b>: Enable or disable the ai player.
 The AI Player plays the top/north row; you play the bottom/south row.
 <p>The delay sets an artificial delay between moves (for UI update), but the
 actual AI move may still take some based on the difficulty setting.
@@ -309,38 +334,9 @@ Look ahead is typically 3 moves.
 <p><b>Expert</b>: Set the AI difficulty to hard.
 The 'Access (d>1) Mult will be included in the scorer.
 
-<h4>Log</h4>
-<p><b>Show Prev</b>: If the game was started from a console window,
-this will show a test description of the previous board layout
-(if there was one).
-<p><b>Show Log</b>: If the game was started from a console window,
-show a log of the game moves.
-<p><b>Save Log</b>: Saves the log to the logs directory with a
-date and time stamp.
-
-<p>The current <b class="inhead">Log Level</b> controls what is added to the game log,
-each log level includes the items from the level above it:
-<ol>
-<li><b>Moves</b>: Records each move and a description for ai moves.
-<li><b>Important</b>: Records important actions or prohibitions
-which describe behavior that might appear as incorrect, but are part of the game rules.
-<li><b>Steps</b>: Adds a description of each game step to the log.
-<li><b>Information</b>: Adds game progress information to the log.
-These items are generally apparent to the players, but this creates a record.
-<li><b>Detail/All</b>: Includes very detailed information in the game log,
-e.g. individual sowing substeps in multilap games.
-</ol>
-
-<p>Three additional <b class="inhead">Log Controls</b> are provided:
-<p><b>Live Log</b>: The log is printed to the console as it is collected.
-Some information may give away the AI Players intenteded moves.
-<p><b>Log AI Analysis</b>: Turn on logging for the AI Player's analysis of moves.
-This can become quite verbose as the AI player considers each possible move and response.
-<p><b>Filter AI Scores</b>: Don't show the scores that the AI uses to pick moves.
-On by default, not supported from ini file.
 
 <h4>Display</h4>
-<p><b>Show Tally</b>: Show or hide the tally frame.
+<p><b>Show Tally Pane</b>: Show or hide the tally frame.
 <p><b>Touch Screen</b>: Enable or disable touch screen mode. Touch screen mode
 facilitates user selected sow direction without requiring a two-button mouse.
 A rectangle is dithered onto any user directed buttons for the right click.
@@ -354,7 +350,7 @@ and a right click will sow clockwise for the player closest to the menu bar.
 Colors are used to identify the current players holes, but arrows can also be
 shown to show hole ownership in TERRITORY goal games.
 
-<h5>Animations (on Display menu)</h5>
+<h4>Animator</h4>
 
 <p>Moves can be animated or sequenced to show the steps takens.
 Each step is occurs sequentially with a small delay between each.
@@ -381,11 +377,40 @@ The speed can be in increased by typing >.
 The delay is increased creased by 50 ms.
 The speed can be decreased by typing <.
 
+<h4>Log</h4>
+<p><b>Live Log</b>: The log is printed to the console as it is collected.
+Some information may give away the AI Players intenteded moves.
+<p><b>Show Prev</b>: If the game was started from a console window,
+this will show a test description of the previous board layout
+(if there was one).
+<p><b>Show Log</b>: If the game was started from a console window,
+show a log of the game moves.
+<p><b>Save Log...</b>: Saves the log to the logs directory with a
+date and time stamp.
+<p>The current <b class="inhead">Log Level</b> controls what is added to the game log,
+each log level includes the items from the level above it:
+<ol>
+<li><b>Moves</b>: Records each move and a description for ai moves.
+<li><b>Important</b>: Records important actions or prohibitions
+which describe behavior that might appear as incorrect, but are part of the game rules.
+<li><b>Steps</b>: Adds a description of each game step to the log.
+<li><b>Information</b>: Adds game progress information to the log.
+These items are generally apparent to the players, but this creates a record.
+<li><b>Detail</b>: Includes very detailed information in the game log,
+e.g. individual sowing substeps in multilap games.
+</ol>
+<p><b>Filter AI Scores</b>: Don't show the scores that the AI uses to pick moves.
+On by default, not supported from ini file.
+<p><b>Log AI Analysis</b>: Turn on logging for the AI Player's analysis of moves.
+This can become quite verbose as the AI player considers each possible move and response.
+
 <h4>Help</h4>
-<p><b>Help...</b>: If there is a help file for the game,
-popit up in the system browser.
-<p><b>About...</b>: Popup the about text, this displays any text
+<p><b>Help...</b>: Open the game descriptions help file.
+Tag (hash id) might be ignored (depends on your operating system configuration);
+use the Game Index to find the game's help section.
+<p><b>About Game...</b>: Popup the game about description, this displays any text
 that was included in the About pane of the Mancala Games Editor window.
+<p><b>About...</b>: Popup the about copyright and version information.
 
 <h2 id="playwindow">Play Mancala - Game Chooser</h2>
 
@@ -427,7 +452,7 @@ of global variables).
 <li><a href="game_params.html#mlaps">Lap type</a>
 <li>Special <a href="game_params.html#sow_rule">Sow Rule</a> (in groups)
 <li><a href="game_params.html#child_type">Child Type</a>
-<li>Sow Direction (baseed on both <a href="game_params.html#sow_direct">sow_direct</a>
+<li>Sow Direction (based on both <a href="game_params.html#sow_direct">sow_direct</a>
 and <a href="game_params.html#udir_holes">udir_holes</a>)
 <li>Capture Type, groups are defined using:
 <ul>
@@ -696,7 +721,7 @@ without a UI is provided.
     <tr>
     <td>GPL-3.0 license</td>
     <td></td>
-    <td style="text-align:right">&copy; 2024, Ann Davies</td>
+    <td style="text-align:right">&copy; 2024-2025, Ann Davies</td>
     </tr>
 </table>
 </footer>

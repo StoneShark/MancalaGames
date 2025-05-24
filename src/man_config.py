@@ -59,16 +59,33 @@ SKIP_TAB = 'skip'
 
 PARAM = re.compile('^<param ([a-z0-9_]+)>')
 
+
+# %% remove html tags
+
+# some invented tags
+NOLINK = '<nolink>'                    # don't auto link the next word
+NO_ENUM_ERROR = '<no_enum_error>'      # don't check for inclusion of enums
+
+
 REMOVE_TAGS = [re.compile(r'<a[^>]+>'),
                re.compile(r'</a>'),
                re.compile(r'(  \+ )?<img[^>]+>\n'),
                re.compile(r'<b[^>]+>'),
                re.compile(r'</b>'),
 
-               # not html but used to disable the auto linker
-               re.compile(r'<nolink>'),
+               re.compile(NOLINK),
+               re.compile(NO_ENUM_ERROR),
 
                ]
+
+def remove_tags(text):
+    """Remove the tags from text."""
+
+    for tag in REMOVE_TAGS:
+        text, _ = tag.subn('', text, count=5)
+
+    return text
+
 
 # %% read config files
 
@@ -309,10 +326,7 @@ class ParamData(dict):
                     raise ValueError(msg)
 
             elif del_tags:
-                tline = line
-                for tag in REMOVE_TAGS:
-                    tline, _ = tag.subn('', tline, count=5)
-                text += tline
+                text += remove_tags(line)
 
             else:
                 text += line
@@ -331,6 +345,9 @@ class ParamData(dict):
                         'false': False,
                         }
         value = value.strip()
+
+        if not value:
+            return ""
 
         if (key := value.lower()) in convert_dict:
             return convert_dict[key]
@@ -392,11 +409,12 @@ INI_FILENAME = 'mancala.ini'
 DEFAULTS = {
     'button_size': '100',
 
-    'system_color': 'SystemButtonFace',
-    'inactive_color': 'grey60',
-    'turn_color': 'LightBlue2',
-    'turn_dark_color': 'LightBlue4',
-    'ai_color': 'LightBlue2',
+    'system_color': '#f0f0f0',
+    'inactive_color': '#999999',
+    'north_act_color': '#b2dfee',
+    'north_not_color': '#68838b',
+    'south_act_color': '#b2dfee',
+    'south_not_color': '#68838b',
 
     'rclick_color': 'grey',
     'grid_color': 'red',
@@ -419,6 +437,8 @@ DEFAULTS = {
     'ani_active': 'yes',
     'ani_delay': '250',
 
+    'history_size': '5',
+
     'ai_active': 'no',
     'ai_delay': '1',
 
@@ -429,8 +449,11 @@ DEFAULTS = {
 DEFAULT = 'default'
 DIFFICULTY = 'difficulty'
 DIS_ANIMAT = 'disable_animator'
-COLORS = ['system_color', 'turn_color', 'turn_dark_color', 'ai_color',
-          'inactive_color', 'rclick_color', 'grid_color']
+COLORS = ['system_color', 'inactive_color',
+          'north_act_color', 'north_not_color',
+          'south_act_color', 'south_not_color',
+          'rclick_color', 'grid_color',
+          'choose_color', 'seed_color', 'move_color']
 
 VALID_DENSITY = {'12', '25', '50', '75'}
 VALID_DELAY = {'0', '1', '2'}
@@ -451,11 +474,14 @@ class ConfigData:
             self.create_ini_file()
             return
 
-        self._config = configparser.ConfigParser()
+        self._config = configparser.ConfigParser(
+            interpolation=configparser.ExtendedInterpolation())
         try:
             self._config.read(pathname, encoding='utf-8')
         except:
             self.create_ini_file()
+
+        self.load_game_specific(name)
 
         # bools, ints and fonts are interpreted in their get_ funcs
         self._check_colors(tk_root)
@@ -469,8 +495,6 @@ class ConfigData:
                         not in VALID_DIFFICULTY):
                 print('Deleting invalid difficulty in mancala.ini file.')
                 del self._config[section][DIFFICULTY]
-
-        self.load_game_specific(name)
 
 
     def __getitem__(self, key):
@@ -612,7 +636,6 @@ def read_ini_file(tk_root=None, name=None):
     circular imports.
     tk_root is required to test the color values,
     if it is not provided the colors are not tested."""
-    # pylint: disable=global-statement
 
     global CONFIG
     CONFIG = ConfigData(tk_root, name)

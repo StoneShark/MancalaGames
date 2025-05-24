@@ -152,7 +152,7 @@ class GameConfig:
         self.filename = None
         self.edited = False           # is there an edit that hasn't been saved
         self.loaded_config = None     # keep for persistent comment entries
-        self.game_config = None       # constructed config for playing
+        self.game_config = {}      # constructed config for playing
 
 
     def reset(self):

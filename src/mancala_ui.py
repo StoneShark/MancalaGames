@@ -21,10 +21,13 @@ import aspect_frame
 import cfg_keys as ckey
 import behaviors
 import buttons
+import format_msg as fmt
 import game_interface as gi
 import game_logger
 import game_tally as gt
+import mancala
 import man_config
+import man_history
 import man_path
 import round_tally
 import ui_utils
@@ -40,6 +43,11 @@ NO_TALLY_OP = 0
 VIS_TALLY_OP = 1
 RET_TALLY_OP = 2
 
+RTURN_QUERY = 10
+RTURN_QFREQ = 5
+
+ROUND = 'round'
+DEBUG = 'debug'
 
 # %%
 
@@ -84,7 +92,6 @@ class TkVars:
 
         ani_active = man_config.CONFIG.get_bool('ani_active')
         self.ani_active = tk.BooleanVar(man_ui.master, ani_active)
-
 
 
 class GameSetup:
@@ -157,6 +164,7 @@ class MancalaUI(tk.Frame):
                           ai_player.AiPlayer(self.game, player_dict)
         self.setup = GameSetup(self)
         self.movers = 0
+        self._swap_ok = True
         self.wcond = None   #  used between the movers and epilogs
         self.saved_move = None
 
@@ -176,11 +184,17 @@ class MancalaUI(tk.Frame):
         super().__init__(self.master)
         self.master.report_callback_exception = self._exception_callback
 
+        hsize = man_config.CONFIG.get_int('history_size')
+        self.history = man_history.HistoryManager(hsize,
+                                                  mancala.GameState.str_one)
         self.vars = TkVars(self, player_dict)
         self._set_difficulty()
 
         self.pack(expand=True, fill=tk.BOTH)
+
+        self._menubar = None
         self._create_menus()
+        self._key_bindings(active=True)
 
         self.tally = None
         self.rframe = None
@@ -345,32 +359,57 @@ class MancalaUI(tk.Frame):
 
 
     def _create_menus(self):
-        """Create the game control menus."""
+        """Create the game control menus.
+
+        Do keybinds that should be disabled during animations
+        in _key_bindings."""
         # pylint: disable=too-many-statements
 
-        menubar = tk.Menu(self.master)
-        self.master.config(menu=menubar)
+        self._menubar = tk.Menu(self.master)
+        self.master.config(menu=self._menubar)
 
-        gamemenu = tk.Menu(menubar)
+        gamemenu = tk.Menu(self._menubar, name='game')
         gamemenu.add_command(label='New', command=self._new_game)
+
         gamemenu.add_separator()
-        gamemenu.add_command(label='Swap Sides', command=self._pie_rule)
+        concede = self.game.info.unclaimed != self.game.info.quitter
+        gamemenu.add_command(
+            label='Concede Round',
+            command=ft.partial(self.end_game, quitter=False, game=False),
+            state=tk.NORMAL if self.game.info.rounds and concede else tk.DISABLED)
+        gamemenu.add_command(
+            label='Concede Game',
+            command=ft.partial(self.end_game, quitter=False, game=True),
+            state=tk.NORMAL if concede else tk.DISABLED)
+        gamemenu.add_command(
+            label='End Round (quit)',
+            command=ft.partial(self.end_game, quitter=True, game=False),
+            state=tk.NORMAL if self.game.info.rounds else tk.DISABLED)
+        gamemenu.add_command(
+            label='End Game (quit)',
+            command=ft.partial(self.end_game, quitter=True, game=True))
         gamemenu.add_separator()
-        gamemenu.add_command(label='End Round', command=self.end_round)
-        gamemenu.add_command(label='End Game', command=self.end_game)
-        gamemenu.add_separator()
+
         gamemenu.add_command(label='Setup Game',
                              command=self.setup.setup_game)
         gamemenu.add_command(label='Reset to Setup',
                              command=self.setup.reset_setup)
-        menubar.add_cascade(label='Game', menu=gamemenu)
+        self._menubar.add_cascade(label='Game', menu=gamemenu)
 
-        aimenu = tk.Menu(menubar)
-        aimenu.add_checkbutton(label='AI Player',
+        movemenu = tk.Menu(self._menubar, name='move')
+        movemenu.add_command(label='Undo Move', command=self._undo,
+                             accelerator='Ctrl-z')
+        movemenu.add_command(label='Redo Move', command=self._redo,
+                             accelerator='Ctrl-Shift-z')
+        movemenu.add_separator()
+        movemenu.add_command(label='Swap Sides', command=self._swap_sides)
+        self._menubar.add_cascade(label='Move', menu=movemenu)
+
+        aimenu = tk.Menu(self._menubar, name='player')
+        aimenu.add_checkbutton(label='AI Player Active',
                                variable=self.vars.ai_active,
                                onvalue=True, offvalue=False,
                                command=self.schedule_ai)
-
         aimenu.add_separator()
         aimenu.add_radiobutton(label='No AI Delay',
                                variable=self.vars.ai_delay, value=0)
@@ -378,7 +417,6 @@ class MancalaUI(tk.Frame):
                                variable=self.vars.ai_delay, value=1)
         aimenu.add_radiobutton(label='Long AI Delay',
                                variable=self.vars.ai_delay, value=2)
-
         aimenu.add_separator()
         aimenu.add_radiobutton(label='Easy',
                                value=0, variable=self.vars.difficulty,
@@ -392,15 +430,62 @@ class MancalaUI(tk.Frame):
         aimenu.add_radiobutton(label='Expert',
                                value=3, variable=self.vars.difficulty,
                                command=self._set_difficulty)
+        self._menubar.add_cascade(label='Player', menu=aimenu)
 
-        menubar.add_cascade(label='AI', menu=aimenu)
+        showmenu = tk.Menu(self._menubar, name='display')
+        showmenu.add_checkbutton(label='Show Tally Pane',
+                                 variable=self.vars.show_tally,
+                                 onvalue=True, offvalue=False,
+                                 command=self._toggle_tally)
+        showmenu.add_separator()
+        showmenu.add_checkbutton(label='Touch Screen',
+                                 variable=self.vars.touch_screen,
+                                 onvalue=True, offvalue=False,
+                                 command=self.refresh)
+        showmenu.add_checkbutton(label='Facing Players',
+                                 variable=self.vars.facing_players,
+                                 onvalue=True, offvalue=False,
+                                 command=self.toggle_facing)
+        showmenu.add_checkbutton(label='Ownership Arrows',
+                                 variable=self.vars.owner_arrows,
+                                 onvalue=True, offvalue=False,
+                                 command=self.refresh)
+        self._menubar.add_cascade(label='Display', menu=showmenu)
 
-        logmenu = tk.Menu(menubar)
+        if animator.ENABLED:
+            animenu = tk.Menu(self._menubar, name='animator')
+            animenu.add_checkbutton(label='Animation Active',
+                                     variable=self.vars.ani_active,
+                                     onvalue=True, offvalue=False,
+                                     command=self._reset_ani_state,
+                                     accelerator='Ctrl-a')
+            animenu.add_separator()
+            animenu.add_command(label='Anim Speed Reset',
+                                 command=self._reset_ani_delay,
+                                 accelerator='=')
+            animenu.add_command(label='Anim Speed Faster',
+                                 command=self._inc_ani_speed,
+                                 accelerator='>')
+            animenu.add_command(label='Anim Speed Slower',
+                                 command=self._dec_ani_speed,
+                                 accelerator='<')
+            # these are always active when the animator is ENABLED
+            self.master.bind("<Control-a>", self._toggle_ani_active)
+            self.master.bind("<Key-equal>", self._reset_ani_delay)
+            self.master.bind("<Key-greater>", self._inc_ani_speed)
+            self.master.bind("<Key-less>", self._dec_ani_speed)
+            self._menubar.add_cascade(label='Animator', menu=animenu)
+
+        logmenu = tk.Menu(self._menubar, name='log')
+        logmenu.add_checkbutton(
+            label='Live Log',
+            onvalue=True, offvalue=False,
+            variable=self.vars.live_log,
+            command=lambda: setattr(game_log, 'live', self.vars.live_log.get()))
         logmenu.add_command(label='Show Prev', command=game_log.prev)
         logmenu.add_command(label='Show Log', command=game_log.dump)
-        logmenu.add_command(label='Save Log', command=self.save_file)
+        logmenu.add_command(label='Save Log ...', command=self.save_log)
         logmenu.add_separator()
-
         logmenu.add_radiobutton(
             label='Moves',
             value=game_log.MOVE, variable=self.vars.log_level,
@@ -421,84 +506,43 @@ class MancalaUI(tk.Frame):
             label='Detail',
             value=game_log.DETAIL, variable=self.vars.log_level,
             command=self._set_log_level)
-        logmenu.add_radiobutton(
-            label='Simulated Moves',
-            value=game_log.SIMUL, variable=self.vars.log_level,
-            command=self._set_log_level)
         logmenu.add_separator()
-        logmenu.add_checkbutton(
-            label='Live Log',
-            onvalue=True, offvalue=False,
-            variable=self.vars.live_log,
-            command=lambda: setattr(game_log, 'live', self.vars.live_log.get()))
-        logmenu.add_checkbutton(label='Log AI Analysis',
-                                variable=self.vars.log_ai,
-                                onvalue=True, offvalue=False)
         logmenu.add_checkbutton(label='Filter AI Scores',
                                 variable=self.vars.ai_filter,
                                 onvalue=True, offvalue=False,)
+        logmenu.add_checkbutton(label='Log AI Analysis',
+                                variable=self.vars.log_ai,
+                                onvalue=True, offvalue=False)
+        self._menubar.add_cascade(label='Log', menu=logmenu)
 
-        menubar.add_cascade(label='Log', menu=logmenu)
-
-        showmenu = tk.Menu(menubar)
-        showmenu.add_checkbutton(label='Show Tally',
-                                 variable=self.vars.show_tally,
-                                 onvalue=True, offvalue=False,
-                                 command=self._toggle_tally)
-        showmenu.add_separator()
-        showmenu.add_checkbutton(label='Touch Screen',
-                                 variable=self.vars.touch_screen,
-                                 onvalue=True, offvalue=False,
-                                 command=self.refresh)
-        showmenu.add_checkbutton(label='Facing Players',
-                                 variable=self.vars.facing_players,
-                                 onvalue=True, offvalue=False,
-                                 command=self.toggle_facing)
-        showmenu.add_checkbutton(label='Ownership Arrows',
-                                 variable=self.vars.owner_arrows,
-                                 onvalue=True, offvalue=False,
-                                 command=self.refresh)
-
-        if animator.ENABLED:
-            showmenu.add_separator()
-            showmenu.add_checkbutton(label='Animation Active',
-                                     variable=self.vars.ani_active,
-                                     onvalue=True, offvalue=False,
-                                     command=self._reset_ani_state,
-                                     accelerator='Ctrl-a')
-            showmenu.add_command(label='Anim Speed Reset',
-                                 command=self._reset_ani_delay,
-                                 accelerator='=')
-            showmenu.add_command(label='Anim Speed Faster',
-                                 command=self._inc_ani_speed,
-                                 accelerator='>')
-            showmenu.add_command(label='Anim Speed Slower',
-                                 command=self._dec_ani_speed,
-                                 accelerator='<')
-
-            self.master.bind("<Control-a>", self._toggle_ani_active)
-            self.master.bind("<Key-equal>", self._reset_ani_delay)
-            self.master.bind("<Key-greater>", self._inc_ani_speed)
-            self.master.bind("<Key-less>", self._dec_ani_speed)
-
-        menubar.add_cascade(label='Display', menu=showmenu)
-
-        helpmenu = tk.Menu(menubar)
+        helpmenu = tk.Menu(self._menubar, name='name')
         helpmenu.add_command(label='Help...', command=self._help)
         helpmenu.add_command(label='About Game...', command=self._about)
         helpmenu.add_command(label='About...',
                              command=ft.partial(ui_utils.show_release, self))
-        menubar.add_cascade(label='Help', menu=helpmenu)
+        self._menubar.add_cascade(label='Help', menu=helpmenu)
 
         if man_config.CONFIG.get_bool('debug_menu'):
 
-            debugmenu = tk.Menu(menubar)
+            debugmenu = tk.Menu(self._menubar, name=DEBUG)
             debugmenu.add_command(label='Print Params',
                                   command=lambda: print(self.game.params_str()))
             debugmenu.add_command(label='Print Consts',
                                   command=lambda: print(self.game.cts))
-            debugmenu.add_command(label='Print Decos',
+
+            pmenu = tk.Menu(self._menubar)
+            pmenu.add_command(label='Print All',
                                   command=lambda: print(self.game.deco))
+            pmenu.add_separator()
+            for vname, value in sorted(vars(self.game.deco).items(),
+                                       key=lambda pair: pair[0]):
+                name = vname.title()
+                pmenu.add_command(label=f"Print {name}",
+                                  command=ft.partial(print,
+                                                     '\n' + name + ':\n',
+                                                     value))
+            debugmenu.add_cascade(label='Print Decos', menu=pmenu)
+
             debugmenu.add_command(label='Print Inhibitor',
                                   command=lambda: print(self.game.inhibitor))
             debugmenu.add_command(label='Print mdata',
@@ -506,21 +550,43 @@ class MancalaUI(tk.Frame):
             debugmenu.add_separator()
             debugmenu.add_command(label='Print AI Player',
                                   command=lambda: print(self.player))
+            debugmenu.add_command(label='Print History',
+                                  command=lambda: print(self.history))
             debugmenu.add_separator()
             debugmenu.add_command(label='Swap Sides',
-                                  command=lambda: self._pie_rule(force=True))
+                                  command=lambda: self._swap_sides(force=True))
             debugmenu.add_command(label='Toggle Anim Print',
                                   command=lambda: setattr(animator,
                                                           'print_steps',
                                                           not animator.print_steps))
-            menubar.add_cascade(label='Debug', menu=debugmenu)
+            self._menubar.add_cascade(label='Debug', menu=debugmenu)
 
 
-    def ui_loop(self):
-        """Call the mainloop UI - everything happens because of user input.
-        This does not return until the window is killed."""
+    def _menubar_state(self, active=True):
+        """Activate or deactivate the menus.
+        The animator menu is left active."""
 
-        self.master.mainloop()
+        state = tk.NORMAL if active else tk.DISABLED
+
+        self._menubar.entryconfig('Game', state=state)
+        self._menubar.entryconfig('Move', state=state)
+        self._menubar.entryconfig('Player', state=state)
+        self._menubar.entryconfig('Display', state=state)
+        self._menubar.entryconfig('Log', state=state)
+        self._menubar.entryconfig('Help', state=state)
+
+        if DEBUG in self._menubar.children:
+            self._menubar.entryconfig('Debug', state=state)
+
+
+    def _key_bindings(self, active=True):
+        """Bind or unbind the keys that should not be active
+        while the animations are running."""
+
+        bindings = [('<Control-z>', self._undo),
+                    ('<Control-Z>', self._redo),
+                    ]
+        ui_utils.key_bindings(self, bindings, active)
 
 
     def _cancel_pending_afters(self):
@@ -658,15 +724,13 @@ class MancalaUI(tk.Frame):
     def _about(self):
         """Popup the about window."""
 
-        # TODO remove any html tags from the text
-
-        paragraphs = [para
+        paragraphs = [man_config.remove_tags(para)
                       for para in self.info.about.split('\n')
                       if para.strip()]
         ui_utils.QuietDialog(self, f'About {self.info.name}', paragraphs)
 
 
-    def save_file(self):
+    def save_log(self):
         """Save the game log to the file, provide a string that
         describes the game."""
         game_log.save(self.game.params_str())
@@ -723,12 +787,16 @@ class MancalaUI(tk.Frame):
 
     def _set_ui_active(self, active, frame=None):
         """Activate or deactivate the Hole and Store Buttons,
-        recursing through frames.
+        recursing through frames. Also, on the first call,
+        activate/deactivate the key bindings and menus
+        (animation controls are always active).
 
         Not using the tk state for Hole & Store Buttons, because
         it's overridden on every refresh."""
 
         if not frame:
+            self._key_bindings(active)
+            self._menubar_state(active)
             frame = self
 
         for child in frame.winfo_children():
@@ -792,7 +860,6 @@ class MancalaUI(tk.Frame):
                 else:
                     btnstate = behaviors.BtnState.DISABLE
 
-
                 self.disp[row][pos].set_props(
                     self.game.get_hole_props(row, pos),
                     btnstate)
@@ -804,6 +871,7 @@ class MancalaUI(tk.Frame):
         game_log.new()
         game_log.turn(self.game.mcount, 'Start Game', self.game)
         self.movers = 0
+        self.history.record(self.game.state)
         self._reset_ani_state()
         self.schedule_ai()
 
@@ -827,9 +895,11 @@ class MancalaUI(tk.Frame):
         self.master.config(cursor=ui_utils.NORMAL)
         animator.set_active(False, clear_queue=True)
 
+        self.history.clear()
+        self.player.clear_history()
+        self._swap_ok = True
         new_game = self.game.new_game(win_cond=win_cond,
                                       new_round_ok=new_round_ok)
-        self.player.clear_history()
         self.set_game_mode(buttons.Behavior.GAMEPLAY, force=True)
 
         self.refresh()
@@ -927,19 +997,15 @@ class MancalaUI(tk.Frame):
             self._param_tally()
 
             title, message = self.game.win_message(win_cond)
-            message = message.split('\n')
+            message = message.split(fmt.LINE_SEP)
             message = message[0] if len(message) == 1 else message
 
             ui_utils.WinPopup(self, title, message)
 
 
-    def _pie_rule(self, force=False):
-        """Allow a human player to swap sides after the first
+    def _swap_sides(self, force=False):
+        """Allow a player to swap sides after the first
         move, aka 'Pie Rule'.
-
-        Only allowed on
-            1. either of the first two moves for random start pattern
-            2. the second move of the game by a human player
 
         Force is used in the debugging menu to always allow a
         swap.
@@ -952,20 +1018,23 @@ class MancalaUI(tk.Frame):
         MCTS. This does seem extreme but the AI turn and node tree
         have already been started correcting them seems error prone."""
 
-        if self.info.start_pattern == gi.StartPattern.RANDOM:
-            allowed = self.movers < 2
+        if self.info.start_pattern in (gi.StartPattern.RANDOM,
+                                       gi.StartPattern.MOVE_RANDOM):
+            allowed = self.movers < 2 and self._swap_ok
         else:
             allowed = self.movers == 1
 
         if not force and not allowed:
             ui_utils.showerror(self, "Swap Not Allowed",
-                               """Swapping sides is only allowed by a
-                               human player after the first move or for
-                               either of the first two moves of a game
-                               started with a RANDOM start pattern.
-                               It counts as a move.""")
+                ["Swapping sides is only allowed:",
+                 """1. Before or after the first move for games
+                 using RANDOM and MOVE_RANDOM start patterns.""",
+                 "2. After the first move for other games.",
+                 """A swap counts as a move.
+                 Only one swap is allowed per game."""])
             return
 
+        self._swap_ok = False
         game = self.game
         self.movers += 1
         game.mcount += 1
@@ -981,56 +1050,32 @@ class MancalaUI(tk.Frame):
         self.schedule_ai()
 
 
-    def end_round(self):
-        """End the round. Report result to user."""
-
-        if not self.game.info.rounds or self.mode != buttons.Behavior.GAMEPLAY:
-            self.end_game()
-            return
-
-        message = 'Are you sure you wish to end the round?'
-        do_it = ui_utils.ask_popup(self,'End Round', message,
-                                   ui_utils.OKCANCEL)
-        if not do_it:
-            return
-
-        animator.set_active(False, clear_queue=True)
-        win_cond = self.game.end_round()
-
-        wtext = 'Round Ended '
-        if win_cond in (gi.WinCond.WIN, gi.WinCond.ROUND_WIN):
-            sturn = self.game.turn_name()
-            wtext += f'\n{win_cond.name} by {sturn}'
-        elif win_cond:
-            wtext += ' ' + win_cond.name
-        game_log.turn(self.game.mcount, wtext, self.game)
-
-        self.refresh()
-        self._win_message_popup(win_cond)
-        self._new_game(win_cond=win_cond, new_round_ok=True)
-
-
-    def end_game(self):
+    def end_game(self, *, game, quitter):
         """End the game. Report result to user."""
 
+        thing = 'Game' if game else 'Round'
+        request = 'End' if quitter else 'Concede'
+        wtitle = request + ' ' + thing
+
         if self.mode != buttons.Behavior.GAMEPLAY:
-            message = 'End game during setup will force New Game. Continue?'
-            do_it = ui_utils.ask_popup(self, 'End Game', message,
+            message = wtitle + ' during setup will force New Game. Continue?'
+            do_it = ui_utils.ask_popup(self, wtitle, message,
                                        ui_utils.OKCANCEL)
             if do_it:
                 self._new_game()
             return
 
-        message = 'Are you sure you wish to end the game?'
-        do_it = ui_utils.ask_popup(self, 'End Game', message,
+        message = [self.game.end_message(thing, quitter),
+                   f'Are you sure you wish to end the {thing}?']
+        do_it = ui_utils.ask_popup(self, wtitle, message,
                                    ui_utils.OKCANCEL)
         if not do_it:
             return
 
         animator.set_active(False, clear_queue=True)
-        win_cond = self.game.end_game()
+        win_cond = self.game.end_game(quitter=quitter, user=True, game=game)
 
-        wtext = 'Game Ended '
+        wtext = thing + ' Ended '
         if win_cond in (gi.WinCond.WIN, gi.WinCond.ROUND_WIN):
             sturn = self.game.turn_name()
             wtext += f'\n{win_cond.name} by {sturn}'
@@ -1078,11 +1123,17 @@ class MancalaUI(tk.Frame):
         self._log_turn(last_turn)
 
         if animator.active():
-            animator.animator.queue_callback(self.move_epilog)
-            self.refresh(ani_ok=True)
-        else:
-            self.refresh()
-            self.move_epilog()
+            if (self.game.mdata
+                    and self.game.mdata.ended == gi.WinCond.ENDLESS):
+                animator.animator.clear_queue()
+
+            else:
+                animator.animator.queue_callback(self.move_epilog)
+                self.refresh(ani_ok=True)
+                return
+
+        self.refresh()
+        self.move_epilog()
 
 
     def move_epilog(self):
@@ -1098,9 +1149,11 @@ class MancalaUI(tk.Frame):
 
             player = gi.PLAYER_NAMES[not self.game.get_turn()]
             message = f'{player} has no moves and must pass.'
-            ui_utils.PassPopup(self, 'Must Pass', message)
-            self.refresh()     # test pass updates game state
+            quit_round = bool(self.game.info.rounds)
+            ui_utils.PassPopup(self, 'Must Pass', message, quit_round)
+            self.refresh()     # test_pass updates game state
 
+        self.history.record(self.game.state)
         self.schedule_ai()
 
 
@@ -1133,7 +1186,7 @@ class MancalaUI(tk.Frame):
             if not self.vars.log_ai.get():
                 game_log.set_ai_mode()
 
-            with animator.animate_off():
+            with animator.animate_off(), self.history.off():
                 self.saved_move = self.player.pick_move()
 
             game_log.clear_ai_mode()
@@ -1145,6 +1198,9 @@ class MancalaUI(tk.Frame):
                 self.refresh(ani_ok=True)
             else:
                 self._ai_move_epilog()
+
+        else:
+            self.master.config(cursor=ui_utils.NORMAL)
 
 
     def _ai_move_epilog(self):
@@ -1158,5 +1214,54 @@ class MancalaUI(tk.Frame):
                 + self.saved_move[-1].opp_dir().name
             ui_utils.showinfo(self, 'Player Direction', message)
 
-        if self.wcond != gi.WinCond.REPEAT_TURN:
+        if self.wcond == gi.WinCond.REPEAT_TURN:
+            self._ask_stop_repeating()
+        else:
             self.master.config(cursor=ui_utils.NORMAL)
+
+
+    def _ask_stop_repeating(self):
+        """Catch an ai repeat turning for too long."""
+
+        if (self.game.rturn_cnt >= RTURN_QUERY
+                and not self.game.rturn_cnt % RTURN_QFREQ):
+
+            self._cancel_pending_afters()
+
+            thing = ROUND if self.game.info.rounds else 'game'
+            message = [f"""The AI has played {self.game.rturn_cnt}
+                           repeated turns. Would you like to end
+                           the {thing}?""",
+                       f"""You will be asked again in {RTURN_QFREQ}
+                           turns."""]
+            self._cancel_pending_afters()
+            do_it = ui_utils.ask_popup(self, 'AI Repeating Turns',
+                                       message, ui_utils.YESNO)
+            if do_it:
+                self.end_game(game=self.game.info.rounds, quitter=True)
+                self.master.config(cursor=ui_utils.NORMAL)
+
+            else:
+                self.schedule_ai()
+
+
+    def _undo(self, _=None):
+        """Return to the previous state."""
+
+        state = self.history.undo()
+        if state:
+            self.game.state = state
+            self.refresh()
+        else:
+            self.bell()
+
+
+    def _redo(self, _=None):
+        """Return to an undone state state."""
+
+        state = self.history.redo()
+        if state:
+            self.game.state = state
+            self.refresh()
+        else:
+            self.bell()

@@ -11,6 +11,7 @@ pytestmark = pytest.mark.unittest
 import utils
 
 from context import animator
+from context import claimer
 from context import end_move
 from context import end_move_decos as emd
 from context import end_move_rounds as emr
@@ -175,6 +176,12 @@ class TestEndMove:
                     'mustpass': True,
                     'unclaimed': gi.EndGameSeeds.DONT_SCORE,
                      },
+
+        'ef_game': {'evens': True,
+                    'stores': True,
+                    'rounds': gi.Rounds.NO_MOVES,
+                    'round_fill': gi.RoundFill.EVEN_FILL,
+                    'min_move': 2}
 
     }
 
@@ -561,18 +568,36 @@ class TestEndMove:
                  utils.build_board([2, 2, 2],
                                    [0, 0, 0]), [0, 0], None),
 
+                ('case_ef_1', 'ef_game', False, False,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [3, 9], False, WinCond.ROUND_WIN,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [3, 9], True),
+
+                ('case_ef_2', 'ef_game', False, False,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [2, 10], False, WinCond.ROUND_WIN,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [2, 10], True),
+
+                ('case_ef_3', 'ef_game', False, False,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [1, 11], False, WinCond.WIN,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [1, 11], True),
+
             ]
     @pytest.mark.filterwarnings("ignore")
     # @pytest.mark.usefixtures("logger")
     @pytest.mark.parametrize(
         'case, game, ended, repeat, board, store, turn,'
-        ' eres, eboard, estore, eturn',
+        ' eres, eboard, estore, ewinner',
         WINCASES,
         indirect=['game'],
         ids=[f'{case[0]}_idx_{idx}' for idx, case in enumerate(WINCASES)])
     def test_game_ended(self, case, game, ended,
                         repeat, board, store, turn,
-                        eres, eboard, estore, eturn):
+                        eres, eboard, estore, ewinner):
 
         game.board = board
         game.store = store
@@ -590,8 +615,8 @@ class TestEndMove:
         assert mdata.win_cond == eres
         assert game.board == eboard
         assert game.store == estore
-        if eturn != DONT_CARE:
-            assert mdata.winner == eturn
+        if ewinner != DONT_CARE:
+            assert mdata.winner == ewinner
         if 'pp' not in case:
             assert not game.test_pass()
 
@@ -907,30 +932,26 @@ class TestEndDeprive:
         #     game rturn: current player has another move
         (False, utils.build_board([0, 0, 0],
                                   [0, 3, 0]),
-         (WinCond.WIN, False), (WinCond.WIN, False),
-         (None, None)),
+         (WinCond.WIN, False), (WinCond.WIN, False), (WinCond.WIN, False)),
 
         # 1:  Will be false's turn, but they have no moves
         #     game rturn: current player has another move
         (True, utils.build_board([0, 3, 0],
                                  [0, 0, 0]),
-         (WinCond.WIN, True), (WinCond.WIN, True),
-         (None, None)),
+         (WinCond.WIN, True), (WinCond.WIN, True), (WinCond.WIN, True)),
 
         # 2: False gave away all seeds
         #     game: F loses no seeds, mm2: T has a move
         #     game rturn: F has no seeds for repeat turn, T wins
         (False, utils.build_board([0, 3, 0],
                                   [0, 0, 0]),
-         (WinCond.WIN, True), (None, None),
-         (WinCond.WIN, True)),
+         (WinCond.WIN, True), (WinCond.WIN, True), (WinCond.WIN, True)),
 
         # 3: True gave away all seeds
         #     game: T loses no seeds, mm2: F has a move
         (True, utils.build_board([0, 0, 0],
                                  [0, 3, 0]),
-         (WinCond.WIN, False), (None, None),
-         (WinCond.WIN, False)),
+         (WinCond.WIN, False), (WinCond.WIN, False), (WinCond.WIN, False)),
 
         # 4: False gave away all seeds
         #   game: F has no seeds, mm2: T can't move; F was the last mover
@@ -963,8 +984,7 @@ class TestEndDeprive:
         #     game rturn: F does not have a move for repeat turn
         (False, utils.build_board([0, 1, 0],
                                   [0, 1, 0]),
-         (WinCond.WIN, False), (WinCond.WIN, False),
-         (WinCond.WIN, True)),
+         (WinCond.WIN, False), (WinCond.WIN, False), (WinCond.WIN, True)),
 
         # 9: Will be false's turn and they have no moves
         #     both: next player no moves
@@ -975,6 +995,7 @@ class TestEndDeprive:
          (WinCond.WIN, False)),
         ]
 
+    @pytest.mark.usefixtures("logger")
     @pytest.mark.parametrize('game_fixt, repeat_turn',
                              [('game', True),
                               ('game', False),
@@ -991,18 +1012,20 @@ class TestEndDeprive:
         game = request.getfixturevalue(game_fixt)
         if repeat_turn:
             econd, ewinner = eresg_rturn
+        elif game_fixt in ('game', 'rndgame'):
+            econd, ewinner = eresg
         else:
-            if game_fixt in ('game', 'rndgame'):
-                econd, ewinner = eresg
-            else:
-                econd, ewinner = eresmm2
+            econd, ewinner = eresmm2
 
         game.board = board
         game.turn = turn
+        print(game)
+        print("exp:", econd, ewinner)
 
         mdata = utils.make_ender_mdata(game, repeat_turn, False)
         game.deco.ender.game_ended(mdata)
 
+        print("res:", mdata.win_cond, mdata.winner)
         assert mdata.win_cond == econd
         if ewinner is not None:
             assert mdata.winner == ewinner
@@ -1017,6 +1040,44 @@ class TestEndDeprive:
         assert isinstance(rndgame.deco.ender,
                           emr.RoundTallyWinner)
 
+    def test_forced_end_seeds(self, game):
+
+        mdata = utils.make_ender_mdata(game, False, True)
+        assert mdata.ended
+
+        game.deco.ender.game_ended(mdata)
+
+        assert mdata.ended
+        assert not mdata.winner
+        assert mdata.win_cond == gi.WinCond.TIE
+
+
+    def test_forced_end_err(self, game):
+        """Should not get to the EndTurnNoMoves deco,
+        but if we do it doesn't change anything."""
+
+        print(game.deco.ender)
+
+        mdata = utils.make_ender_mdata(game, False, True)
+        assert mdata.ended
+
+        game.deco.ender.decorator.game_ended(mdata)
+
+        assert mdata.ended
+        assert not mdata.winner
+        assert not mdata.win_cond
+
+
+    def test_forced_end_mover(self, mm2game):
+
+        mdata = utils.make_ender_mdata(mm2game, False, True)
+        assert mdata.ended
+
+        mm2game.deco.ender.game_ended(mdata)
+
+        assert mdata.ended
+        assert not mdata.winner
+        assert mdata.win_cond == gi.WinCond.TIE
 
 class TestEndClear:
 
@@ -1114,6 +1175,18 @@ class TestEndClear:
                           emr.RoundTallyWinner)
 
 
+    def test_forced_end(self, game):
+
+        mdata = utils.make_ender_mdata(game, False, True)
+        assert mdata.ended
+
+        game.deco.ender.game_ended(mdata)
+
+        assert mdata.ended
+        assert not mdata.winner
+        assert mdata.win_cond == gi.WinCond.TIE
+
+
 class TestEndWaldas:
 
     @pytest.fixture
@@ -1186,7 +1259,7 @@ class TestEndWaldas:
 
 
         game.mdata = utils.make_ender_mdata(game, False, False)
-        cond = game.end_game()
+        cond = game.end_game(quitter=True, user=False)
 
         winmsg = game.win_message(cond)
         assert 'Game Over' in winmsg[0]
@@ -1202,7 +1275,7 @@ class TestEndWaldas:
         game.store = [0, 0]
 
         game.mdata = utils.make_ender_mdata(game, False, False)
-        cond = game.end_game()
+        cond = game.end_game(quitter=True, user=False)
         assert game.board == [0, 0, 0, 0, 0, 48, 0, 0, 0, 0, 0, 0]
 
         winmsg = game.win_message(cond)
@@ -1219,7 +1292,7 @@ class TestEndWaldas:
         game.store = [0, 0]
 
         game.mdata = utils.make_ender_mdata(game, False, False)
-        cond = game.end_game()
+        cond = game.end_game(quitter=True, user=False)
         assert game.board == [48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
         winmsg = game.win_message(cond)
@@ -1236,7 +1309,7 @@ class TestEndWaldas:
         game.store = [0, 0]
 
         game.mdata = utils.make_ender_mdata(game, False, False)
-        cond = game.end_game()
+        cond = game.end_game(quitter=True, user=False)
         assert game.board == [25, 0, 0, 0, 0, 23, 0, 0, 0, 0, 0, 0]
 
         winmsg = game.win_message(cond)
@@ -1266,6 +1339,59 @@ class TestNoSides:
 
 
 class TestQuitter:
+
+    @pytest.mark.filterwarnings("ignore")
+    @pytest.mark.parametrize('quitter, stores, child, eclaimer',
+                             # child and stores are dont' care
+                             [(gi.EndGameSeeds.HOLE_OWNER, True, True,
+                               claimer.TakeOwnSeeds),
+                              (gi.EndGameSeeds.DONT_SCORE, True, True,
+                               claimer.TakeOnlyChildNStores),
+                              (gi.EndGameSeeds.UNFED_PLAYER, True, True,
+                               claimer.TakeOnlyChildNStores),
+                              (gi.EndGameSeeds.LAST_MOVER, True, True,
+                               claimer.TakeAllUnclaimed),
+
+                              # child and stores are used
+                              (gi.EndGameSeeds.DIVVIED, False, False, None),
+                              (gi.EndGameSeeds.DIVVIED, False, True,
+                               claimer.DivvySeedsChildOnly),
+                              (gi.EndGameSeeds.DIVVIED, True, False,
+                               claimer.DivvySeedsStores),
+                              (gi.EndGameSeeds.DIVVIED, True, True,
+                               claimer.DivvySeedsStores),
+                              ])
+    def test_claimer_selection(self, quitter, stores, child, eclaimer):
+
+        if child:
+            type = gi.ChildType.NORMAL
+            cvt = 3
+        else:
+            type =  gi.ChildType.NOCHILD
+            cvt = 0
+
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(evens=True,
+                                stores=stores,
+                                child_type=type,
+                                child_cvt=cvt,
+                                mustshare=True,
+                                unclaimed=gi.EndGameSeeds.UNFED_PLAYER,
+                                quitter=quitter,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+
+        quit_deco = end_move.deco_quitter(game)
+        print(quit_deco)
+
+        if not stores and not child:
+            assert isinstance(quit_deco, emd.QuitToTie)
+        else:
+            assert isinstance(quit_deco, emd.EndGameWinner)
+            assert isinstance(quit_deco.sclaimer, eclaimer)
+
 
     @pytest.fixture
     def game(self, request):
@@ -1503,10 +1629,25 @@ class TestQuitter:
         game.turn = turn
 
         game.mdata = utils.make_ender_mdata(game, False, False)
-        assert game.end_game() == eres
+        assert game.end_game(quitter=True, user=False) == eres
         assert game.board == eboard
         assert game.store == estore
         assert game.mdata.winner == ewin
+
+
+    def test_bad_quitter(self):
+
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(capt_on=[4],
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        mancala.Mancala(game_consts, game_info)
+
+        object.__setattr__(game_info, 'quitter', 12)
+        with pytest.raises(NotImplementedError):
+            mancala.Mancala(game_consts, game_info)
 
 
 class TestTerritory:
@@ -1662,6 +1803,8 @@ class TestTerritory:
         assert mdata.win_cond == econd
         assert mdata.winner == ewinner
 
+        assert 'req_seeds' in str(rgame.deco.ender)
+
 
     @pytest.mark.parametrize('board, store, econd, ewinner', TERR_CASES)
     def test_no_rounds_territory(self, game, board, store, econd, ewinner):
@@ -1717,7 +1860,6 @@ class TestTerritory:
 
         assert mdata.win_cond == econd
         assert mdata.winner == ewinner
-
 
 
 class TestWinHoles:
@@ -2006,6 +2148,9 @@ class TestAnimator:
         assert animator.ENABLED
         game = mancala.Mancala(game_consts, game_info)
 
+        # print(game.deco.ender)
+        # print(game.deco.quitter)
+
         assert isinstance(game.deco.ender, emd.AnimateEndMove)
         assert isinstance(game.deco.quitter, emd.AnimateEndMove)
 
@@ -2025,6 +2170,9 @@ class TestAnimator:
 
         assert not animator.ENABLED
         game = mancala.Mancala(game_consts, game_info)
+
+        # print(game.deco.ender)
+        # print(game.deco.quitter)
 
         assert not isinstance(game.deco.ender, emd.AnimateEndMove)
         assert not isinstance(game.deco.quitter, emd.AnimateEndMove)

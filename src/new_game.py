@@ -42,6 +42,7 @@ def set_round_starter(game):
 
     game.starter = game.turn
 
+
 # %%  NewGame interace
 
 class NewGameIf(deco_chain_if.DecoChainIf):
@@ -49,7 +50,7 @@ class NewGameIf(deco_chain_if.DecoChainIf):
 
     @abc.abstractmethod
     def new_game(self, win_cond=None, new_round_ok=False):
-        """collect seeds when game ended.
+        """Start a new game.
 
         Return False if a new round was started.
         True if a new game was started."""
@@ -237,13 +238,21 @@ class TerritoryNewRound(NewGameIf):
 
         return False
 
+
 class NewRoundEven(NewGameIf):
     """Evenly distribute the seeds based on the losers seeds.
     Leave the two sides of the board symetrical.
 
     If none of the holes have sufficient seeds for a minimum move,
     move the number of extra seeds that the loser has into leftmost
-    holes for valid moves, adjusting the store appropriately."""
+    holes for valid moves, adjusting the store appropriately.
+
+    Ginfo rule assures that min_move is <= the number of holes
+    (rule: high_min_moves).
+
+    Ender assures that there are sufficient seeds for UMOVE rules of
+    1 see per hole and one playable hole and EVEN_FILL of one playable
+    hole (see RoundWinner)."""
 
     def new_game(self, win_cond=None, new_round_ok=False):
         """Adjust the game outcome."""
@@ -253,7 +262,7 @@ class NewRoundEven(NewGameIf):
             self.decorator.new_game(win_cond, new_round_ok)
             return True
 
-        winner = self.game.turn
+        winner = self.game.mdata.winner if self.game.mdata else self.game.turn
         set_round_starter(self.game)
         self.game.init_bprops()
 
@@ -263,11 +272,14 @@ class NewRoundEven(NewGameIf):
         loser_seeds = self.game.store[not winner] + \
             sum(self.game.board[loc] for loc in cts.get_my_range(not winner))
 
-        seeds_per_hole = (loser_seeds - min_move) // (cts.holes - 1)
-        seeds_per_side = seeds_per_hole * cts.holes
+        seeds_per_hole, l_store = divmod(loser_seeds, cts.holes)
+        if seeds_per_hole < min_move and not l_store:
+            seeds_per_hole -= 1
+            l_store += cts.holes
 
-        l_store = loser_seeds - seeds_per_side
+        seeds_per_side = seeds_per_hole * cts.holes
         w_store = cts.total_seeds - loser_seeds - seeds_per_side
+
         if winner:
             self.game.store = [l_store, w_store]
         else:
@@ -276,17 +288,13 @@ class NewRoundEven(NewGameIf):
 
         if seeds_per_hole < min_move:
 
-            loser_extra = self.game.store[not winner]
-            self.game.board[0] += loser_extra
-            self.game.board[cts.holes] += loser_extra
+            self.game.board[0] += l_store
+            self.game.board[cts.holes] += l_store
 
-            self.game.store[0] -= loser_extra
-            self.game.store[1] -= loser_extra
+            self.game.store[0] -= l_store
+            self.game.store[1] -= l_store
 
             game_log.add('Adjusted seeds for minimum move.', game_log.IMPORT)
-            assert sum(self.game.store) + sum(self.game.board) \
-                == self.game.cts.total_seeds, \
-                    'seed count error in new_game, adj for min move'
 
         return False
 
@@ -303,7 +311,7 @@ class NewRoundTally(NewGameIf):
         turn info, then call set_round_starter"""
 
         starter = self.game.starter
-        winner = self.game.turn
+        winner = self.game.mdata.winner if self.game.mdata else self.game.turn
         self.decorator.new_game(win_cond, new_round_ok)
 
         self.game.starter = starter
@@ -318,12 +326,43 @@ class NewRoundTally(NewGameIf):
         return False
 
 
+class NewFixedChildren(NewGameIf):
+    """Currently only support fixed children in rightmost hole."""
+
+    def new_game(self, win_cond=None, new_round_ok=False):
+
+        self.decorator.new_game(win_cond, new_round_ok)
+
+        self.game.child[self.game.cts.holes - 1] = False
+        self.game.child[self.game.cts.dbl_holes - 1] = True
+
+
+class SeedCountCheck(NewGameIf):
+    """Check to make certain that the board is setup acceptably."""
+
+    def new_game(self, win_cond=None, new_round_ok=False):
+
+        new_round = self.decorator.new_game(win_cond, new_round_ok)
+
+        store = self.game.store
+        board = self.game.board
+
+        assert (all(cnt >= 0 for cnt in board + store)
+                and sum(store) + sum(board) == self.game.cts.total_seeds
+                ), f"seed count error in new_game\n{store}\n{board}"
+
+        return new_round
+
+
 # %%
 
 def deco_new_game(game):
     """Create the new_game chain."""
 
     new_game = NewGame(game)
+
+    if game.info.child_locs == gi.ChildLocs.FIXED_ONE_RIGHT:
+        new_game = NewFixedChildren(game, new_game)
 
     if game.info.start_pattern:
         new_game = NewGamePattern(game,
@@ -351,5 +390,8 @@ def deco_new_game(game):
                                            gi.RoundStarter.LAST_MOVER):
             raise NotImplementedError(
                     f"RoundStarter {game.info.round_starter} not implemented.")
+
+    if __debug__:    # pragma: no coverage
+        new_game = SeedCountCheck(game, new_game)
 
     return new_game

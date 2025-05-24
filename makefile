@@ -4,64 +4,6 @@ all: clean context params docs pylint tests
 final: spotless context params docs pylint all_tests exe
 
 
-MODULES = ai_interface.py
-MODULES += ai_player.py
-MODULES += allowables.py
-MODULES += animator.py
-MODULES += aspect_frame.py
-MODULES += behaviors.py
-MODULES += bear_off.py
-MODULES += bhv_bsetup.py
-MODULES += bhv_hold.py
-MODULES += bhv_owners.py
-MODULES += buttons.py
-MODULES += capt_ok.py
-MODULES += capturer.py
-MODULES += cfg_keys.py
-MODULES += claimer.py
-MODULES += deco_chain_if.py
-MODULES += diffusion.py
-MODULES += drawer.py
-MODULES += end_move.py
-MODULES += end_move_decos.py
-MODULES += end_move_rounds.py
-MODULES += fill_patterns.py
-MODULES += game_classes.py
-MODULES += game_constants.py
-MODULES += game_interface.py
-MODULES += game_logger.py
-MODULES += game_str.py
-MODULES += game_tally.py
-MODULES += get_direction.py
-MODULES += get_moves.py
-MODULES += ginfo_rules.py
-MODULES += incrementer.py
-MODULES += inhibitor.py
-MODULES += make_child.py
-MODULES += man_config.py
-MODULES += man_path.py
-MODULES += mancala_games.pyw
-MODULES += mancala_ui.py
-MODULES += mancala.py
-MODULES += mg_config.py
-MODULES += minimax.py
-MODULES += montecarlo_ts.py
-MODULES += negamax.py
-MODULES += move_data.py
-MODULES += new_game.py
-MODULES += param_consts.py
-MODULES += play_mancala.pyw
-MODULES += play.py
-MODULES += round_tally.py
-MODULES += same_side.py
-MODULES += sower.py
-MODULES += sower_decos.py
-MODULES += sower_mlap_decos.py
-MODULES += two_cycle.py
-MODULES += ui_utils.py
-MODULES += version.py
-
-
 SOURCES = src/*.py src/*.pyw
 GAMES = GameProps/*.txt
 TESTS = test/*.py
@@ -142,12 +84,12 @@ unit_tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py src\\game_params.csv
 
 
 integ_tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py src\\game_params.csv
-	-coverage run -m pytest -m integtest
+	-coverage run -m pytest -m integtest --sim_fails
 	coverage html
 
 
 tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py src\\game_params.csv
-	-coverage run -m pytest
+	-coverage run -m pytest --sim_fails
 	coverage html
 
 long_tests: stress_tests player_tests cov_unit_tests
@@ -164,7 +106,7 @@ game_tests: test\\context.py
 # a target to run the stress tests with higher iterations
 .PHONY: strest_tests	
 stress_tests: test\\context.py params
-	pytest test\\test_z_simul_game.py --nbr_runs 500
+	pytest test\\test_z_simul_game.py --nbr_runs 500 --sim_fails
 	
 .PHONY: player_tests
 player_tests: test\\context.py params
@@ -195,8 +137,14 @@ vpath %.py .\\test
 
 .PHONY: %.test
 %.test: test\\context.py src\\game_params.csv $(subst .test,.py,$@)
-	coverage run -m pytest test\\$(subst .test,.py,$@)
+	coverage run -m pytest test\\$(subst .test,.py,$@) --sim_fails
 	coverage html
+
+# do a stress test of one game:   make Wari.stress
+# does both Wari and Wari GSO
+PHONY: %.stress
+%.stress: test\\context.py src\\game_params.csv $(subst .stre,.py,$@)
+	pytest -k $(subst .stress,,$@) test\\test_z_simul_game.py --sim_fails --nbr_runs 1000
 
 
 UNIT_TESTS += test_ai_player.cov
@@ -215,10 +163,11 @@ UNIT_TESTS += test_game_str.cov
 UNIT_TESTS += test_gconsts.cov
 UNIT_TESTS += test_get_direct.cov
 UNIT_TESTS += test_get_moves.cov
+UNIT_TESTS += test_history.cov
 UNIT_TESTS += test_incr.cov
 UNIT_TESTS += test_inhibitor.cov
 UNIT_TESTS += test_make_child.cov
-UNIT_TESTS += test_man_config.cov
+# test_man_config is last because it sometimes fails to load tkinter
 UNIT_TESTS += test_mancala.cov
 UNIT_TESTS += test_minimax.cov
 UNIT_TESTS += test_montecarlo_ts.cov
@@ -230,6 +179,7 @@ UNIT_TESTS += test_round_tally.cov
 UNIT_TESTS += test_same_side.cov
 UNIT_TESTS += test_sower.cov
 UNIT_TESTS += test_two_cycle.cov
+UNIT_TESTS += test_man_config.cov
 
 cov_unit_tests: $(UNIT_TESTS)
 	grep -h src cov\\*.cov
@@ -244,7 +194,7 @@ pylint: $(SOURCES) .pylint_report makefile
 
 .pylint_report: $(SOURCES) .pylintrc makefile
 	-del .pylint_report
-	-cd src && pylint --output ..\\.pylint_report --rcfile ..\\.pylintrc $(MODULES)
+	-pylint --output .pylint_report --rcfile .pylintrc --recursive yes src
 	type .pylint_report
 
 

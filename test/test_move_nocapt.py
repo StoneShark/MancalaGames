@@ -24,6 +24,7 @@ import utils
 from context import game_interface as gi
 from context import game_constants as gconsts
 from context import mancala
+from context import move_data
 
 from game_interface import WinCond
 from game_interface import Direct
@@ -509,13 +510,19 @@ class TestSpSowingNoU:
         for pos, exp_dir in enumerate([Direct.CW, Direct.CW,
                                        Direct.CCW, Direct.CCW]):
             loc = sgame_even.cts.xlate_pos_loc(not sgame_even.turn, pos)
-            assert sgame_even.deco.get_dir.get_direction(pos, loc) == exp_dir
+            mdata = move_data.MoveData()
+            mdata.move = pos
+            mdata.sow_loc = loc
+            assert sgame_even.deco.get_dir.get_direction(mdata) == exp_dir
 
         sgame_even.turn = True
         for pos, exp_dir in enumerate([Direct.CCW, Direct.CCW,
                                        Direct.CW, Direct.CW]):
             loc = sgame_even.cts.xlate_pos_loc(not sgame_even.turn, pos)
-            assert sgame_even.deco.get_dir.get_direction(pos, loc) == exp_dir
+            mdata = move_data.MoveData()
+            mdata.move = pos
+            mdata.sow_loc = loc
+            assert sgame_even.deco.get_dir.get_direction(mdata) == exp_dir
 
     def test_split_dirs_odd(self, sgame_odd):
         """Cannot have odd holes w/o specifying what happens to them now.
@@ -524,13 +531,19 @@ class TestSpSowingNoU:
         sgame_odd.turn = False
         for pos, exp_dir in enumerate([Direct.CW, Direct.CCW, Direct.CCW]):
             loc = sgame_odd.cts.xlate_pos_loc(not sgame_odd.turn, pos)
-            ans = sgame_odd.deco.get_dir.get_direction((pos, Direct.CCW), loc)
+            mdata = move_data.MoveData()
+            mdata.move = (pos, Direct.CCW)
+            mdata.sow_loc = loc
+            ans = sgame_odd.deco.get_dir.get_direction(mdata)
             assert ans == exp_dir
 
         sgame_odd.turn = True
         for pos, exp_dir in enumerate([Direct.CCW, Direct.CW, Direct.CW]):
             loc = sgame_odd.cts.xlate_pos_loc(not sgame_odd.turn, pos)
-            ans = sgame_odd.deco.get_dir.get_direction((pos, Direct.CW), loc)
+            mdata = move_data.MoveData()
+            mdata.move = (pos, Direct.CW)
+            mdata.sow_loc = loc
+            ans = sgame_odd.deco.get_dir.get_direction(mdata)
             assert ans == exp_dir
 
 

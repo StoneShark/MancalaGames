@@ -8,6 +8,7 @@ index/variable naming conventions.
 
 Created on Sun Mar 19 09:58:36 2023
 @author: Ann"""
+# pylint: disable=too-many-lines
 
 import contextlib
 import dataclasses as dc
@@ -22,6 +23,8 @@ import capturer
 import cfg_keys as ckey
 import drawer
 import end_move
+import end_move_decos as emd
+import format_msg as fmt
 import game_constants as gconsts
 import game_interface as gi
 import game_str
@@ -102,6 +105,14 @@ class GameState(ai_interface.StateIf):
                       if self.store[loc] else ''
             if not side:
                 string += '\n'
+        return string
+
+
+    def str_one(self):
+        """Return a one line summary of the state"""
+
+        string = f'    {self.mcount:3} {self.turn:3} '
+        string += f'{str(self.store):8} {self.board}'
         return string
 
 
@@ -256,10 +267,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
                                                  self.cts.total_seeds)
 
         self.deco = ManDeco(self)
-        self.init_bprops()
-
-        if game_info.start_pattern:
-            self.deco.new_game.new_game(None, False)
+        self.deco.new_game.new_game(None, False)
 
 
     def __str__(self):
@@ -375,7 +383,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             blocked = tuple(self.blocked)
 
         child = None
-        if self.info.child_cvt:
+        if self.info.child_type:
             child = tuple(self.child)
 
         owner = None
@@ -434,7 +442,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
     @contextlib.contextmanager
     def save_restore_state(self):
-        """A context manager that saves and restores state"""
+        """A context manager that saves and restores state."""
 
         saved_state = self.state
         game_log.set_simulate()
@@ -444,6 +452,22 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         finally:
             game_log.clear_simulate()
             self.state = saved_state
+
+
+    @contextlib.contextmanager
+    def restore_state(self, state):
+        """Use this when you've saved the state, but might want
+        to restore it serveral times. For example,in a loop:
+
+            saved = game.state
+            for thing in things:
+                with game.restore_state(saved):
+                    <code block>
+
+        All exits from code block will restore the state."""
+
+        yield
+        self.state = state
 
 
     @property
@@ -474,7 +498,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             blocked = tuple(self.blocked)
 
         child = None
-        if self.info.child_cvt:
+        if self.info.child_type:
             child = tuple(self.child)
 
         owner = None
@@ -545,26 +569,56 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         return self.deco.new_game.new_game(win_cond, new_round_ok)
 
 
-    def end_round(self):
-        """The player has requested that the round be ended."""
+    def end_game(self, *, quitter, user, game=True):
+        """Either the player has requested that the game
+        or round be ended or an ENDLESS conditions was detected.
+        Use the appropriate ender/quitter to end the game."""
 
-        self.mdata = move_data.MoveData(self)
-        self.mdata.ended = 'round'
-        self.deco.ender.game_ended(self.mdata)
-        return self.mdata.win_cond
-
-
-    def end_game(self, user=True):
-        """Either the player has requested that the game be ended
-        or an ENDLESS conditions was detected.  End the game fairly."""
-
-        if user:
+        if user or not game:
             self.mdata = move_data.MoveData(self)
             self.mdata.user_end = True
+        self.mdata.ended = True if game else 'round'
 
-        self.mdata.ended = True
-        self.deco.quitter.game_ended(self.mdata)
+        if quitter:
+            self.deco.quitter.game_ended(self.mdata)
+        else:
+            self.deco.ender.game_ended(self.mdata)
+
         return self.mdata.win_cond
+
+
+    def end_message(self, rtext, quitter):
+        """Choose a suitable warning message before ending a game.
+        Tell the user in general terms what will happen."""
+
+        if quitter:
+            deco = self.deco.quitter
+            while deco and not isinstance(deco, emd.QuitToTie):
+                deco = deco.decorator
+            if deco:
+                return f'The {rtext} will end in a tie.'
+
+        which = 'quitter' if quitter else 'unclaimed'
+        method = getattr(self.info, which)
+
+        message = 'Unclaimed seeds will '
+        if method == gi.EndGameSeeds.HOLE_OWNER:
+            message += 'go to the hole owners'
+
+        elif method == gi.EndGameSeeds.DONT_SCORE:
+            message += 'not score for either player'
+
+        elif method == gi.EndGameSeeds.LAST_MOVER:
+            message += f'go to {gi.PLAYER_NAMES[self.mdata.player]}'
+
+        elif method == gi.EndGameSeeds.UNFED_PLAYER:
+            message += f'go to {gi.PLAYER_NAMES[not self.mdata.player]}'
+
+        elif method == gi.EndGameSeeds.DIVVIED:
+            message += """be divvied between the players (an odd seed will
+                      go to player with fewer seeds)"""
+
+        return message + '.'
 
 
     def swap_sides(self):
@@ -653,12 +707,12 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             case [gi.WinCond.WIN, gi.Goal.MAX_SEEDS, _]:
                 reason = " by collecting the most seeds!"
 
-            case [gi.WinCond.WIN, gi.Goal.DEPRIVE, _]:
-                loser = gi.PLAYER_NAMES[int(self.mdata.winner)]
-                reason = f" by eliminating {loser}'s seeds."
-
             case [gi.WinCond.WIN, gi.Goal.TERRITORY, _]:
                 reason = " by claiming more holes."
+
+            case [gi.WinCond.WIN, gi.Goal.DEPRIVE, _]:
+                loser = gi.PLAYER_NAMES[int(not self.mdata.winner)]
+                reason = f" by eliminating {loser}'s seeds."
 
             case [gi.WinCond.WIN, gi.Goal.CLEAR, _]:
                 reason = " by clearing all their seeds."
@@ -709,7 +763,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             if self.mdata.fmsg:
                 return title, message
 
-        message += '\n' if message else ''
+        message += fmt.LINE_SEP if message else ''
 
         if win_cond in (gi.WinCond.WIN, gi.WinCond.ROUND_WIN):
             message += gi.PLAYER_NAMES[int(self.mdata.winner)]
@@ -729,7 +783,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         else:
             message += f'Unexpected end condition {win_cond and win_cond.name}.'
 
-        game_log.add(message, game_log.IMPORT)
+        game_log.add(fmt.fmsg(message), game_log.IMPORT)
         return title, message
 
 
@@ -747,7 +801,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
         mdata = move_data.MoveData(self, move)
         mdata.sow_loc, mdata.seeds = self.deco.drawer.draw(move)
-        mdata.direct = self.deco.get_dir.get_direction(move, mdata.sow_loc)
+        mdata.direct = self.deco.get_dir.get_direction(mdata)
 
         if single:
             single_sower = self.deco.sower.get_single_sower()
@@ -813,8 +867,9 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         Return the created mdata."""
 
         self.mcount += 1
-        assert sum(self.store) + sum(self.board) == self.cts.total_seeds, \
-            'seed count error before move'
+        assert (all(cnt >= 0 for cnt in self.board + self.store)
+                and sum(self.store) + sum(self.board) == self.cts.total_seeds
+                ), f"seed count error before move\n{self.store}\n{self.board}"
 
         if move == gi.PASS_TOKEN:
             self.turn = not self.turn
@@ -826,12 +881,13 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         if not mdata.repeat_turn:
 
             if mdata.capt_loc == gi.WinCond.ENDLESS:
-                mdata.win_cond = self.end_game(user=False)
+                mdata.win_cond = self.end_game(quitter=True, user=False)
                 mdata.end_msg = \
                     'Game ended due to detecting endless sow condition.\n'
                 game_log.add(
                     f'MLAP game ENDLESS, called end_game {mdata.win_cond}.',
                     game_log.IMPORT)
+                mdata.ended = gi.WinCond.ENDLESS
                 return mdata
 
             self.capture_seeds(mdata)
@@ -843,10 +899,12 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             return mdata
 
         if mdata.repeat_turn:
+            self.rturn_cnt += 1
             mdata.win_cond = gi.WinCond.REPEAT_TURN
             return mdata
 
         self.turn = not self.turn
+        self.rturn_cnt = 0
         return mdata
 
 
@@ -915,6 +973,19 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
                             blocked=self.blocked[loc],
                             ch_owner=self.child[loc],
                             owner=self.owner[loc])
+
+
+    @contextlib.contextmanager
+    def opp_turn(self):
+        """Do an operation for the opposite turn, return
+        turn to the correct turn afterward."""
+
+        saved = self.turn
+        self.turn = not self.turn
+        try:
+            yield
+        finally:
+            self.turn = saved
 
 
     def get_turn(self):

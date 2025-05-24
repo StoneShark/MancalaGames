@@ -5,13 +5,12 @@ Created on Sun Mar  9 07:04:43 2025
 @author: Ann"""
 
 import functools as ft
-import re
-import textwrap
 import tkinter as tk
 import tkinter.simpledialog as tksimpledialog
 from tkinter import ttk
 import webbrowser
 
+import format_msg as fmt
 import man_path
 import version
 from game_logger import game_log
@@ -164,8 +163,8 @@ class TriStateCheckbutton(ttk.Checkbutton):
         value needs to translated to be one of
         False, True, None"""
 
+        # pylint: disable=use-implicit-booleaness-not-comparison-to-zero
         # we mean zero, not falsy
-        # pylint: disable=compare-to-zero
         if value == 0:
             self.value = False
 
@@ -203,22 +202,6 @@ class TriStateCheckbutton(ttk.Checkbutton):
 
 # %% popup dialogs
 
-RECOMP = re.compile('\n *')
-TEXTFILL = textwrap.TextWrapper(width=50)
-
-def format_message(message):
-    """Format any message for a popup.
-    message may be a string or list of strings
-
-    If a string, format it.
-    Otherwise, format each individual string as a paragraph.
-    Join them together with two blank lines."""
-
-    if isinstance(message, list):
-        return '\n\n'.join(TEXTFILL.fill(RECOMP.sub(' ', m))
-                           for m in message)
-    return TEXTFILL.fill(RECOMP.sub(' ', message))
-
 
 class QuietDialog(tksimpledialog.Dialog):
     """A simple modal quiet dialog box."""
@@ -228,7 +211,7 @@ class QuietDialog(tksimpledialog.Dialog):
         if fixed_form:
             self.msg = message
         else:
-            self.msg = format_message(message)
+            self.msg = fmt.fmsg(message)
         super().__init__(master, title)
 
 
@@ -261,7 +244,7 @@ class WinPopup(tksimpledialog.Dialog):
     def __init__(self, master, title, message):
 
         self.mancala_ui = master
-        self.msg = format_message(message)
+        self.msg = fmt.fmsg(message)
         super().__init__(master, title)
 
 
@@ -285,7 +268,7 @@ class WinPopup(tksimpledialog.Dialog):
         tk.Button(bframe, text='Dump Game', width=12,
                   command=game_log.dump).pack(side=tk.LEFT)
         tk.Button(bframe, text='Save Game', width=12,
-                  command=self.mancala_ui.save_file).pack(side=tk.LEFT)
+                  command=self.mancala_ui.save_log).pack(side=tk.LEFT)
         tk.Button(bframe, text='Ok', width=12,
                   command=self.ok, default=tk.ACTIVE).pack(side='right')
 
@@ -298,10 +281,11 @@ class PassPopup(tksimpledialog.Dialog):
     End Round and Game buttons. Need because if the AI doesn't
     make a turn available the user doesn't regain control."""
 
-    def __init__(self, master, title, message):
+    def __init__(self, master, title, message, quit_round):
 
-        self.msg = format_message(message)
+        self.msg = fmt.fmsg(message)
         self.mancala_ui = master
+        self.quit_round = quit_round
         super().__init__(master, title)
 
 
@@ -315,18 +299,24 @@ class PassPopup(tksimpledialog.Dialog):
 
 
     def buttonbox(self):
-        """Create Dump Game, Save Game, and Ok buttons.
-        Bind return to Ok."""
+        """Add end round and quit game buttons.
+        Bind return to Ok and escape to Cancel."""
 
         bframe = tk.Frame(self, borderwidth=20)
         bframe.pack()
 
-        tk.Button(bframe, text='End Round', width=12,
-                  command=lambda: (self.ok(), self.mancala_ui.end_round())
-                  ).pack(side=tk.LEFT)
-        tk.Button(bframe, text='End Game', width=12,
-                  command=lambda: (self.ok(), self.mancala_ui.end_game())
-                  ).pack(side=tk.LEFT)
+        if self.quit_round:
+            tk.Button(bframe, text='End Round', width=12,
+                      command=lambda: (self.ok(),
+                                       self.mancala_ui.end_game(quitter=True,
+                                                                game=False))
+                      ).pack(side=tk.LEFT)
+        else:
+            tk.Button(bframe, text='End Game', width=12,
+                      command=lambda: (self.ok(),
+                                       self.mancala_ui.end_game(quitter=True,
+                                                                game=True))
+                      ).pack(side=tk.LEFT)
         tk.Button(bframe, text='Ok', command=self.ok, width=12,
                   default=tk.ACTIVE
                   ).pack(side='right')
@@ -417,7 +407,6 @@ def get_nbr_seeds(master, max_seeds):
     return obj.value
 
 
-
 # values for buttons
 OK = 1               # just sayin'
 OKCANCEL = 2        # confirm user wants to do requested action
@@ -432,10 +421,9 @@ ERROR = 3
 class MessageDialog(tksimpledialog.Dialog):
     """Basic message dialog with standard responses."""
 
-    # pylint: disable=too-many-arguments
     def __init__(self, master, title, message, buttons, icon=None):
 
-        self.msg = format_message(message)
+        self.msg = fmt.fmsg(message)
         self.master = master
         self.buttons = buttons
         self.icon = icon
@@ -564,6 +552,26 @@ def show_release(parent):
                 fixed_form=True)
 
 
+# %% key bindings
+
+def key_bindings(window, bindings, active):
+    """Do or undo key bindings.
+
+    window: the main ui app frame which must have
+    master and bind_ids attributes.
+
+    bindings: key sequence, command pairs"""
+
+    if active:
+        window.bind_ids = [window.master.bind(key_seq, op)
+                           for key_seq, op in bindings]
+
+    elif window.bind_ids:
+        for(key_seq, _), bid in zip(bindings, window.bind_ids):
+            window.master.unbind(key_seq, bid)
+        window.bind_ids = None
+
+
 # %% Counter
 
 class Counter:
@@ -579,7 +587,11 @@ class Counter:
         self.value += 1
         return self.value
 
-
     def reset(self):
         """Reset the count."""
         self.value = -1
+
+    def increment(self):
+        """Increment the value w/o using it."""
+
+        self.value += 1

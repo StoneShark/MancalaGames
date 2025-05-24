@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Achochodi",
-      "about": "Sow counter-clockwise. If you draw a single seed, capture the contents of the hole opposite. If you draw enough seeds to cycle the board, skip sowing the start hole. If your opponent does not have any seeds, you must make some available, if possible.\n\nMultiple capture on 2s and 3s. You must start your capture on your opponent's side of the board, but the capture chain may continue onto your own side of the board.\nA cycling game can be ended by the End Game menu command; unclaimed seeds will go to the last player that moved.\n\nGoal: capture more than half of the seeds.\n",
+      "about": "Sow counter-clockwise. If you draw a single seed, capture the contents of the hole opposite. If you draw enough seeds to cycle the board, skip sowing the start hole. If your opponent does not have any seeds, you must make some available, if possible.\n\nMultiple capture on 2s and 3s. You must start your capture on your opponent's side of the board, but the capture chain may continue onto your own side of the board.\n\nA cycling game can be ended by the End Game menu command; unclaimed seeds will go to the hole owners.\n\nGoal: capture more than half of the seeds.\n",
       "capt_on": [ 2, 3 ],
       "multicapt": -1,
       "mustshare": true,
@@ -15,7 +15,8 @@
       "skip_start": true,
       "sow_direct": 1,
       "stores": true,
-      "unclaimed": 2
+      "unclaimed": 2,
+      "quitter": 0
    },
    "player": {
       "algorithm": "negamaxer",

@@ -16,6 +16,7 @@ import abc
 
 import animator
 import deco_chain_if
+import format_msg as fmt
 import game_interface as gi
 
 from game_logger import game_log
@@ -208,6 +209,22 @@ class CaptMatchOpp(CaptMethodIf):
             mdata.captured = True
             mdata.capt_next = self.game.deco.incr.incr(mdata.capt_loc,
                                                        mdata.direct)
+
+
+class CaptSingles(CaptMethodIf):
+    """Capture all singles."""
+
+    def do_captures(self, mdata, capt_first=True):
+
+        for loc in range(self.game.cts.dbl_holes):
+            if (self.game.board[loc] == 1
+                    and self.game.child[loc] is None
+                    and self.game.unlocked[loc]):
+
+                seeds = self.game.board[loc]
+                self.game.board[loc] = 0
+                self.game.store[self.game.turn] += seeds
+                mdata.captured = True
 
 
 # %% cross capt decos
@@ -796,12 +813,11 @@ class PickLastSeeds(CaptMethodIf):
             taker = game.turn if self.turn_takes else game.starter
             self.move_seeds(taker)
 
-            msg = f"{self.seeds} or fewer seeds left, " \
-                  + f"{gi.PLAYER_NAMES[taker]} collected them."
+            msg = f"""{self.seeds} or fewer seeds left,
+                   {gi.PLAYER_NAMES[taker]} collected them."""
             mdata.end_msg = msg
-            game_log.add(msg, game_log.INFO)
+            game_log.add(fmt.fmsg(msg), game_log.INFO)
             mdata.capt_changed = True
-
 
 
 # %% top level wrappers
@@ -828,11 +844,7 @@ class NotInhibited(CaptMethodIf):
 
 class RepeatTurn(CaptMethodIf):
     """Convert mdata.captured to REPEAT_TURN based on
-    configuration of capt_rturn.
-
-    The rturn_cnt is maintained in the parent game because it
-    must be part of the game state (decos should not have
-    game state)."""
+    configuration of capt_rturn."""
 
     def __init__(self, game, decorator=None):
 
@@ -860,10 +872,6 @@ class RepeatTurn(CaptMethodIf):
                 mdata.repeat_turn = True
             else:
                 game_log.add('Second repeat turn prevented', game_log.INFO)
-            self.game.rturn_cnt += 1
-
-        else:
-            self.game.rturn_cnt = 0
 
 
 # %% build deco chains
@@ -960,6 +968,9 @@ def _add_capt_type_deco(game):
 
     elif game.info.capt_type == gi.CaptType.MATCH_OPP:
         capturer = CaptMatchOpp(game)
+
+    elif game.info.capt_type == gi.CaptType.SINGLETONS:
+        capturer = CaptSingles(game)
 
     else:
         raise NotImplementedError(

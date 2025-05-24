@@ -30,6 +30,7 @@ import abc
 import animator
 import claimer
 import deco_chain_if
+import format_msg as fmt
 import game_interface as gi
 
 from game_logger import game_log
@@ -133,9 +134,11 @@ class EndTurnIf(deco_chain_if.DecoChainIf):
 
         if (self.game.info.rounds == gi.Rounds.NO_MOVES
                 and game_goal == gi.Goal.MAX_SEEDS
-                and not self.game.info.start_pattern):
+                and not self.game.info.start_pattern
+                and self.game.info.round_fill != gi.RoundFill.UMOVE):
             # force max seeds/rounds/no moves round to end
             # as soon as one player can outright win the game
+            # as in one hole cannot be filled with nbr_start seeds
             min_needed = self.game.cts.nbr_start
             if self.game.info.goal_param:
                 min_needed *= self.game.info.goal_param
@@ -207,24 +210,24 @@ class EndTurnNoMoves(EndTurnIf):
     def game_ended(self, mdata):
 
         if mdata.ended:
-            return self.decorator.game_ended(mdata)
+            if self.decorator:
+                self.decorator.game_ended(mdata)
+            return
 
         if mdata.repeat_turn:
             mdata.ended = not any(self.game.get_allowable_holes())
-            player = gi.PLAYER_NAMES[self.game.turn]
-            msg = f"No moves for {player}'s repeat turn; _thing_ ended."
+            msg = "No moves for _loser_'s repeat turn; _thing_ ended."
         else:
-            self.game.turn = not self.game.turn
-            player = gi.PLAYER_NAMES[self.game.turn]
-            mdata.ended = not any(self.game.get_allowable_holes())
-            self.game.turn = not self.game.turn
-            msg = f"{player} had no moves; _thing_ ended."
+            with self.game.opp_turn():
+                mdata.ended = not any(self.game.get_allowable_holes())
+            msg = "_Loser_ had no moves; _thing_ ended."
 
         if mdata.ended:
             mdata.end_msg = msg
             game_log.add(msg, game_log.INFO)
 
-        return self.decorator.game_ended(mdata)
+        if self.decorator:
+            self.decorator.game_ended(mdata)
 
 
 class EndTurnPassPass(EndTurnIf):
@@ -246,9 +249,8 @@ class EndTurnPassPass(EndTurnIf):
         if any(self.game.get_allowable_holes()):
             return self.decorator.game_ended(mdata)
 
-        self.game.turn = not self.game.turn
-        no_next_moves = not any(self.game.get_allowable_holes())
-        self.game.turn = not self.game.turn
+        with self.game.opp_turn():
+            no_next_moves = not any(self.game.get_allowable_holes())
 
         if no_next_moves:
             mdata.end_msg = "No moves for either player; game ended."
@@ -306,19 +308,17 @@ class EndTurnMustShare(EndTurnIf):
             mdata.ended = not any(self.game.get_allowable_holes())
 
         elif not mdata.repeat_turn and not player_seeds and opp_seeds:
-            self.game.turn = not self.game.turn
-            mdata.ended = not any(self.game.get_allowable_holes())
-            self.game.turn = not self.game.turn
+            with self.game.opp_turn():
+                mdata.ended = not any(self.game.get_allowable_holes())
 
         else:
             return self.decorator.game_ended(mdata)
 
         if mdata.ended:
             if mdata.repeat_turn:
-                self.game.turn = not self.game.turn
-                player = gi.PLAYER_NAMES[self.game.turn]
-                self.sclaimer.claim_seeds()
-                self.game.turn = not self.game.turn
+                with self.game.opp_turn():
+                    player = gi.PLAYER_NAMES[self.game.turn]
+                    self.sclaimer.claim_seeds()
                 msg = f"{player} can't share on repeat turn; _thing_ ended."
             else:
                 self.sclaimer.claim_seeds()
@@ -414,10 +414,16 @@ class ChildNoStoresEnder(EndTurnIf):
 class DepriveNoSeedsEndGame(EndTurnIf):
     """Determine if a deprive game is over based on who has seeds.
 
-    If the previous decos decided the game has ended, return the winner.
+    Both player's had seeds at the start of the turn.
+    If ended on entry is True, end in a TIE.
 
-    If the current player has given away all of their seeds,
-    they loose (unless the other player has no moves).
+    If the opponent does not have seeds, then the current player
+    won (even if they do not have seeds or it's a repeat turn).
+    Otherwise, if the current player does not have seeds, then the
+    opponent won.
+
+    Otherwise, call the deco chain (allow rules are supported),
+    to see who wins based on having/not having moves.
 
     This is not to be used with children, because the presence
     of children is not checked."""
@@ -426,39 +432,69 @@ class DepriveNoSeedsEndGame(EndTurnIf):
         """Check for end game."""
 
         if mdata.ended:
-            if mdata.repeat_turn:
-                mdata.win_cond = gi.WinCond.WIN
-                mdata.winner = not self.game.turn
-                return
-
-            mdata.win_cond = gi.WinCond.WIN
-            mdata.winner = self.game.turn
+            mdata.win_cond = gi.WinCond.TIE
             return
 
-        my_seeds = sum(self.game.board[loc]
-                       for loc in self.game.cts.get_my_range(self.game.turn))
-        if not my_seeds:
+        test_range = self.game.cts.get_opp_range(self.game.turn)
+        no_seeds = not any(self.game.board[loc] for loc in test_range)
+        if no_seeds:
+            mdata.win_cond = gi.WinCond.WIN
+            mdata.winner = self.game.turn
+            mdata.end_msg = """_Winner_ won _thing_ by eliminating
+                            _loser_'s seeds."""
+            mdata.fmsg = True
+            return
+
+        test_range = self.game.cts.get_my_range(self.game.turn)
+        no_seeds = not any(self.game.board[loc] for loc in test_range)
+        if no_seeds:
             mdata.win_cond = gi.WinCond.WIN
             mdata.winner = not self.game.turn
-            mdata.end_msg = "_Winner_ won _thing_ by eliminating _loser_'s seeds."
+            if mdata.captured:
+                mdata.end_msg = """_Loser_'s capture eliminated their own
+                                seeds, but left _winner_ with seeds.
+                                \n_Winner_ won the _thing_."""
+            else:
+                mdata.end_msg = """_Winner_ won _thing_ because _loser_
+                                gave away all their seeds."""
+            mdata.fmsg = True
+            return
+
+        self.decorator.game_ended(mdata)
+        if mdata.ended:
+            mdata.win_cond = gi.WinCond.WIN
+            turn = self.game.turn
+            mdata.winner = not turn if mdata.repeat_turn else turn
+            mdata.end_msg += fmt.LINE_SEP if mdata.end_msg else ''
+            mdata.end_msg += "_Winner_ won _thing_ by immobilizing _loser_."
             mdata.fmsg = True
 
 
 class DepriveLastMoveEndGame(EndTurnIf):
     """Determine if a deprive game is over based on who moved last.
 
+    Both player's had seeds at the start of the turn.
+    If ended on entry is True, end in a TIE.
+
     If the opponent does not have a move, then the current player
     has won.
 
+    Otherwise call the deco chain to see if there's another reason
+    to end the game (e.g. no seeds).
+
+    Repeat turn is not supported (see rule deprive_mmgr1_rturn).
     This is not to be used with children, because the presence
     of children is not checked."""
 
     def game_ended(self, mdata):
         """Check for end game."""
 
-        self.game.turn = not self.game.turn
-        mdata.ended = not any(self.game.get_allowable_holes())
-        self.game.turn = not self.game.turn
+        if mdata.ended:
+            mdata.win_cond = gi.WinCond.TIE
+            return
+
+        with self.game.opp_turn():
+            mdata.ended = not any(self.game.get_allowable_holes())
 
         if mdata.ended:
             game_log.add("No moves for next player; last mover won.",
@@ -468,15 +504,25 @@ class DepriveLastMoveEndGame(EndTurnIf):
             mdata.winner = self.game.turn
             mdata.end_msg = "_Winner_ won _thing_ by immobilizing _loser_."
             mdata.fmsg = True
+            return
+
+        self.decorator.game_ended(mdata)
+        if mdata.ended:
+            # override winner to last mover
+            mdata.winner = mdata.player
 
 
 class ClearSeedsEndGame(EndTurnIf):
     """Win by giving away all your seeds.
-    TIEs are not awarded--if both players end up wo seeds the win
-    is awarded to the current player."""
+    If both players end up without seeds, the win is awarded to
+    the current player."""
 
     def game_ended(self, mdata):
         """Check for end game."""
+
+        if mdata.ended:
+            mdata.win_cond = gi.WinCond.TIE
+            return
 
         my_range, opp_range = self.game.cts.get_ranges(self.game.turn)
 
@@ -490,6 +536,9 @@ class ClearSeedsEndGame(EndTurnIf):
         if not opp_seeds:
             mdata.win_cond = gi.WinCond.WIN
             mdata.winner = not self.game.turn
+            mdata.end_msg = """_Winner_ won _thing_ because _loser_
+                            removed their own seeds."""
+            mdata.fmsg = True
 
 
 class NoOutcomeChange(EndTurnIf):
@@ -583,9 +632,9 @@ class NoOutcomeChange(EndTurnIf):
         if (not mdata.ended
                 and not mdata.win_cond
                 and self._too_few_for_change()):
-            mdata.end_msg = 'Too few seeds for outcome change ' \
-                + f'(< {self.min_needed}), _thing_ ended.'
-            game_log.add(mdata.end_msg)
+            mdata.end_msg = f"""Too few seeds for outcome change
+                            (< {self.min_needed}), _thing_ ended."""
+            game_log.add(fmt.fmsg(mdata.end_msg))
             mdata.ended = True
             self.decorator.game_ended(mdata)
 

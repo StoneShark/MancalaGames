@@ -2,6 +2,10 @@
 """SameSide a game class in which sowing for each
 player is all done on the same side of the board.
 
+Captured seeds are place in an opponent's hole.
+
+The game goal must be CLEAR (or the round tally version).
+
 SameSide:  Top only sows the top row. Bottom only sows the bottom row.
 Ohojichi: West only west. East only east.
 
@@ -37,33 +41,14 @@ def build_rules():
         msg='SameSide requires CLEAR goal',
         excp=gi.GameInfoError)
         # CLEAR includes many base mancala rules:
-        #  GS legal, many options prohibited
-
-    rules.add_rule(
-        'ss_no_spatter',
-        rule=lambda ginfo: ginfo.start_pattern,
-        msg="""SameSide is incompatible with start patterns.""",
-        excp=gi.GameInfoError)
-        # they all seem odd for the game concept
-
-    rules.add_rule(
-        'ss_no_arule',
-        rule=lambda ginfo: ginfo.allow_rule,
-        msg="""SameSide is incompatible with special allow rules.""",
-        excp=gi.GameInfoError)
-        # they all seem odd for the game concept
+        #  GS legal, children, many options prohibited
 
     rules.add_rule(
         'ss_no_sow_own',
         rule=lambda ginfo: ginfo.sow_own_store,
         msg="""SameSide incompatible with SOW_OWN_STORE""",
-        excp=gi.GameInfoError)
-
-    rules.add_rule(
-        'ss_no_presowcapt',
-        rule=lambda ginfo: ginfo.presowcapt,
-        msg="""SameSide incompatible with PRESOWCAPT""",
-        excp=gi.GameInfoError)
+        excp=NotImplementedError)
+        # The test for when to sow into store requires sowing on both sides
 
     rules.add_rule(
         'ss_no_sowrule',
@@ -224,9 +209,9 @@ class SameSide(mancala.Mancala):
         self.empty_store = False
 
 
-    def end_game(self, user=True):
+    def end_game(self, *, quitter, user, game=True):
         """call end game and clear the store"""
-        cond = super().end_game(user)
+        cond = super().end_game(quitter=quitter, user=user, game=game)
         self.empty_store = False
         return cond
 
@@ -311,7 +296,6 @@ class Ohojichi(SameSide):
                                two_cycle.EastWestIncr(self))
 
         self.empty_store = False
-
 
         holes = self.cts.holes
         dbl_holes = self.cts.dbl_holes

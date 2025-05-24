@@ -47,16 +47,14 @@ def ns2_build_rules(gclass_name):
     rules.add_rule(
         'ns2_no_sowrule',
         rule=lambda ginfo: ginfo.sow_rule in (
-            gi.SowRule.SOW_BLKD_DIV,         # does not use the incr, so will fail
-            gi.SowRule.SOW_BLKD_DIV_NR,      # does not use the incr, so will fail
-            gi.SowRule.OWN_SOW_CAPT_ALL,
-            gi.SowRule.SOW_CAPT_ALL,
+            # do not use the incr, so will fail
+            gi.SowRule.SOW_BLKD_DIV,
+            gi.SowRule.SOW_BLKD_DIV_NR,
+            # not sowing op side
             gi.SowRule.NO_SOW_OPP_NS,
-            gi.SowRule.CHANGE_DIR_LAP,
-            # gi.SowRule.MAX_SOW,     allow?
-            # gi.SowRule.LAP_CAPT,    allow?
-            # gi.SowRule.NO_OPP_CHILD,  opponent's qurs could be made on our side
-            gi.SowRule.OPP_GETS_OWN_LAST
+            gi.SowRule.NO_OPP_CHILD,
+            gi.SowRule.LAP_CAPT_OPP_GETS,
+            gi.SowRule.OPP_CHILD_ONLY1,
             ),
         msg=f'{gclass_name} incompatible with selected SOW_RULE',
         excp=gi.GameInfoError)
@@ -101,37 +99,12 @@ def ew2_build_rules():
     """Build the rules for EastWestCycle."""
 
     rules = ns2_build_rules('EastWestCycle')
-    del rules['ns2_no_sowrule']
 
     rules.add_rule(
         'ew2_even_holes',
         both_objs=True,
         rule=lambda _, nbr_holes: nbr_holes % 2,
         msg='EastWestCycle requires an even number of holes',
-        excp=gi.GameInfoError)
-
-    rules.add_rule(
-        'ew2_only_cw_ccw',
-        rule=lambda ginfo: ginfo.sow_direct not in (gi.Direct.CW,
-                                                    gi.Direct.CCW),
-        msg='EastWestCycle only supports CW and CCW sow directions',
-        excp=NotImplementedError)
-
-    rules.add_rule(
-        'es2__no_sowrule',
-        rule=lambda ginfo: ginfo.sow_rule in (
-            gi.SowRule.SOW_BLKD_DIV,         # does not use the incr, so will fail
-            gi.SowRule.SOW_BLKD_DIV_NR,      # does not use the incr, so will fail
-            gi.SowRule.OWN_SOW_CAPT_ALL,
-            gi.SowRule.SOW_CAPT_ALL,
-            gi.SowRule.NO_SOW_OPP_NS,
-            gi.SowRule.CHANGE_DIR_LAP,
-            # gi.SowRule.MAX_SOW,     allow?
-            # gi.SowRule.LAP_CAPT,    allow?
-            gi.SowRule.NO_OPP_CHILD,
-            gi.SowRule.OPP_GETS_OWN_LAST
-            ),
-        msg='EastWestCycle incompatible with selected SOW_RULE',
         excp=gi.GameInfoError)
 
     # add in the mancala rules
@@ -201,25 +174,23 @@ class EastWestIncr(incrementer.IncrementerIf):
         half = game.cts.holes // 2
         half_3x = half * 3
 
-        if game.info.sow_direct == gi.Direct.CCW:
-            self.map_loc = list(range(1, dbl_holes)) + [0]
-            self.map_loc[half - 1] = half_3x
-            self.map_loc[half_3x - 1] = half
+        self.ccw_map = list(range(1, dbl_holes)) + [0]
+        self.ccw_map[half - 1] = half_3x
+        self.ccw_map[half_3x - 1] = half
 
-        elif game.info.sow_direct == gi.Direct.CW:
-            self.map_loc = [dbl_holes - 1] + list(range(dbl_holes - 1))
-            self.map_loc[half] = half_3x - 1
-            self.map_loc[half_3x] = half - 1
-
-        else:
-            raise NotImplementedError('EastWestIncr: sow direction not supported')
+        self.cw_map = [dbl_holes - 1] + list(range(dbl_holes - 1))
+        self.cw_map[half] = half_3x - 1
+        self.cw_map[half_3x] = half - 1
 
 
     def incr(self, loc, direct, _=incrementer.NOSKIPSTART):
-        """Do an increment. Do the direction check at play-time
-        to support UDIR sow."""
+        """Do an increment. Need to be able to increment in
+        both directions to support capture in either direction."""
 
-        return self.map_loc[loc]
+        if direct == gi.Direct.CCW:
+            return self.ccw_map[loc]
+
+        return self.cw_map[loc]
 
 
 # %% support function

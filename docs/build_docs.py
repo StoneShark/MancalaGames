@@ -34,7 +34,6 @@ EXFILE = '_all_params.txt'
 
 
 
-
 # %%  fix utf-8 sort order
 
 locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
@@ -164,7 +163,7 @@ def sub_links(para):
 
         pre, tword, post = sep_punct(word)
 
-        if pre == '<nolink>':
+        if pre == man_config.NOLINK:
             w_links += [tword + post]
             continue
 
@@ -774,13 +773,16 @@ def write_types_file(filename):
                   '<th style="width:40%">Id</th>'
                   '<th style="width:40%">UI string</th></tr>',
                   file=ofile)
+
+            check = man_config.NO_ENUM_ERROR not in PARAMS[pname].description
+
             for e_val in ename:
                 print('<tr><td>', e_val.value,
                       '</td><td>', e_val.name,
                       '<td>', strings[e_val], '</td></tr>',
                       sep='', file=ofile)
 
-                if e_val.name not in PARAMS[pname].description:
+                if check and e_val.name not in PARAMS[pname].description:
                     print('  Doc Error:',
                           f'{e_val.name} is not in {pname} description.')
 
@@ -846,7 +848,8 @@ def write_game_xref(filename):
                     else:
                         if pval is True:
                             vstr = 'x'
-                        elif param == ckey.SOW_DIRECT or pval not in (0, False):
+                        elif (param in (ckey.QUITTER, ckey.SOW_DIRECT)
+                                  or pval not in (0, False)):
                             vstr = str(pval)
 
                 pvals += [vstr]

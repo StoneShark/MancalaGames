@@ -5,6 +5,7 @@ that do not use hole ownership to setup for new rounds.
 Created on Sun Nov 10 13:52:08 2024
 @author: Ann"""
 
+import format_msg as fmt
 import game_interface as gi
 from game_logger import game_log
 
@@ -12,7 +13,6 @@ from game_logger import game_log
 class RoundTally:
     """Class to collect game data across multiple rounds.
     Collect them all even though we only use one at a time."""
-    # pylint: disable=too-many-instance-attributes
 
     # Create a RoundTally for these game goals
     GOALS = {gi.Goal.RND_WIN_COUNT_MAX,
@@ -135,17 +135,17 @@ class RoundTally:
             self.seeds[1] += seeds[1]
 
         if self.goal == gi.Goal.RND_EXTRA_SEEDS and extra:
-            mdata.end_msg += '\n' if mdata.end_msg else ''
+            mdata.end_msg += fmt.LINE_SEP if mdata.end_msg else ''
             mdata.end_msg += f"_winner_ collected {extra} extra seeds."
 
         elif self.goal == gi.Goal.RND_POINTS and points:
             if points == 1:
-                mdata.end_msg += '\n' if mdata.end_msg else ''
+                mdata.end_msg += fmt.LINE_SEP if mdata.end_msg else ''
                 mdata.end_msg += f"_winner_ earned {points} point."
             else:
-                mdata.end_msg += '\n' if mdata.end_msg else ''
-                mdata.end_msg += f"_winner_ earned {points} " \
-                    + f"points due to skunk (>= {self.skunk_seeds})."
+                mdata.end_msg += fmt.LINE_SEP if mdata.end_msg else ''
+                mdata.end_msg += f"""_winner_ earned {points} points
+                                  due to skunk (>= {self.skunk_seeds})."""
 
         game_log.add(str(self), game_log.DETAIL)
 

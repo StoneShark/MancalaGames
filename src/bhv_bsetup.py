@@ -39,7 +39,6 @@ import behaviors as bhv
 import bhv_hold
 import game_interface as gi
 import get_direction
-import man_config
 import ui_utils
 
 from game_logger import game_log
@@ -139,8 +138,7 @@ class SetupHold(bhv_hold.Hold):
                                 columnspan=2,
                                 padx=2, pady=2, sticky='ew')
 
-            # force increment of count for spaned button
-            ccnt.count # pylint: disable=pointless-statement
+            ccnt.increment()
 
 
     def add_collect_button(self, game_ui, tframe, rcnt, ccnt):
@@ -236,7 +234,7 @@ class SetupHold(bhv_hold.Hold):
                       padx=2, pady=2, sticky='ew')
 
         ccnt.reset()
-        rcnt.count   # pylint: disable=pointless-statement
+        rcnt.increment()
 
         self.add_sow_dir_if(game_ui, tframe, rcnt, ccnt)
 
@@ -665,12 +663,7 @@ class SetupStoreBehavior(bhv.StoreBehaviorIf):
 
         self.str['state'] = tk.NORMAL
         self.str['text'] = str(seeds)
-
-        if highlight is not None:
-            if highlight:
-                self.str['background'] = man_config.CONFIG['turn_color']
-            else:
-                self.str['background'] = man_config.CONFIG['system_color']
+        self.str.update_color(highlight)
 
 
     def do_left_click(self):

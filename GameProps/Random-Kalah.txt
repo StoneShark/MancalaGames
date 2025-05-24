@@ -1,0 +1,39 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 6,
+      "nbr_start": 48
+   },
+   "game_info": {
+      "name": "Random-Kalah",
+      "about": "Kalah but with seeds placed randomly at the start. A minimum of 2 seeds are placed in each hole.\n\nEither player may Swap Sides (Move menu command) at the start of their first turn but only one swap may be done per game.\n\nPlayed in rounds. Best of 7 wins game.\n",
+      "crosscapt": true,
+      "goal": 4,
+      "goal_param": 4,
+      "capt_side": 1,
+      "round_starter": 0,
+      "rounds": 1,
+      "sow_direct": 1,
+      "sow_own_store": true,
+      "start_pattern": 6,
+      "stores": true,
+      "xcpickown": 1
+   },
+   "player": {
+      "algorithm": "montecarlo_ts",
+      "difficulty": 2,
+      "ai_params": {
+         "mcts_bias": [ 300, 300, 300, 300 ],
+         "mcts_nodes": [ 100, 800, 1500, 2000 ],
+         "mcts_pouts": [ 1, 2, 2, 2 ],
+         "mm_depth": [ 1, 3, 5, 7 ]
+      },
+      "scorer": {
+         "stores_m": 6,
+         "seeds_m": 1,
+         "empties_m": -3,
+         "repeat_turn": 15
+      }
+   },
+   "rules": "Ann Davies, 2025."
+}

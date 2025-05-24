@@ -14,7 +14,8 @@
       "capt_side": 1,
       "skip_start": true,
       "sow_direct": 1,
-      "stores": true
+      "stores": true,
+      "quitter": 0
    },
    "player": {
       "scorer": {

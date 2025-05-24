@@ -424,7 +424,8 @@ def _add_child_wrappers(game, deco):
 def deco_child(game):
     """Generate the make_child deco chain."""
 
-    if game.info.child_type == gi.ChildType.NOCHILD:
+    if (not game.info.child_type
+            or game.info.child_locs == gi.ChildLocs.FIXED_ONE_RIGHT):
         return NoChildren(game)
 
     deco = BaseChild(game)

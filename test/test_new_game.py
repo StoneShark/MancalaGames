@@ -563,14 +563,13 @@ class TestRoundTally:
                              ])
     def test_new_starter(self, game, cond,
                          start_rule, starter, winner, last, estarter):
-        """we don't know who started the game, so the
-        starter for ROUND_WIN and WIN are always the same"""
 
         object.__setattr__(game.info, 'round_starter', start_rule)
         game.starter = starter
-        game.turn = winner
+        game.turn = not winner
         game.mdata = move_data.MoveData(game, 4)
         game.mdata.player = last
+        game.mdata.winner = winner
 
         game.new_game(cond, new_round_ok=True)
 
@@ -622,6 +621,63 @@ class TestTerritory:
         assert game.owner == eowners
 
 
+class TestFixedChildren:
+
+    @pytest.fixture
+    def game(self):
+
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=3)
+        game_info = gi.GameInfo(stores=True,
+                                child_type=gi.ChildType.WEG,
+                                child_locs=gi.ChildLocs.FIXED_ONE_RIGHT,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = False
+        return game
+
+
+    def test_new_game(self, game):
+
+        game.child = [None] * 3 * 2
+        game.new_game(WinCond.WIN, new_round_ok=False)
+
+        assert game.child[2] is False
+        assert game.child[5] is True
+
+
+    def test_move_child(self):
+        """Exposing a bug:  The deco chain was built in the wrong
+        order: pattern applied before children were made so a
+        MOVE_RANDOM could occur from a child.
+
+        There's 50% chance that the random move will be from the
+        child due to the allow rule. Do a buch of setups.
+        Failed consistently before fix."""
+
+        for _ in range(25):
+            game_consts = gconsts.GameConsts(nbr_start=3, holes=3)
+            game_info = gi.GameInfo(stores=True,
+                                    child_type=gi.ChildType.WEG,
+                                    child_locs=gi.ChildLocs.FIXED_ONE_RIGHT,
+                                    start_pattern=gi.StartPattern.MOVE_RANDOM,
+                                    allow_rule=
+                                        gi.AllowRule.FIRST_TURN_ONLY_RIGHT_TWO,
+                                    nbr_holes=game_consts.holes,
+                                    rules=mancala.Mancala.rules)
+
+            game = mancala.Mancala(game_consts, game_info)
+            # new game is now always called in game creation
+
+            assert game.child[2] is False
+            assert game.child[5] is True
+            assert game.board[2]
+            assert game.board[5]
+
+
+
+
 class TestBadEnums:
 
     def test_bad_round_fill(self):
@@ -633,7 +689,7 @@ class TestBadEnums:
                                 rules=mancala.Mancala.rules)
 
         object.__setattr__(game_info, 'rounds', gi.Rounds.HALF_SEEDS)
-        object.__setattr__(game_info, 'round_fill', 12)
+        object.__setattr__(game_info, 'round_fill', 25)
 
         with pytest.raises(NotImplementedError):
             mancala.Mancala(game_consts, game_info)
@@ -647,7 +703,7 @@ class TestBadEnums:
                                 rules=mancala.Mancala.rules)
 
         object.__setattr__(game_info, 'rounds', True)
-        object.__setattr__(game_info, 'round_starter', 12)
+        object.__setattr__(game_info, 'round_starter', 25)
 
         with pytest.raises(NotImplementedError):
             mancala.Mancala(game_consts, game_info)

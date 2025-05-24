@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "En Dodoi",
-      "about": "A multi-lap mancala, sow direction counter-clockwise, cross-capture when end in own hole with one seed. Pick own seed on capture. \n\nPlayed in rounds. Each round ends when the current player does not have a valid move.\n\nThe goal is to be the first to collect 100 total seeds. The Game Tally, available to be displayed via the Display menu, shows progress toward that goal.\n\nVariation:\n- Not played in rounds (Endodoi).",
+      "about": "A multi-lap mancala, sow direction counter-clockwise, cross-capture when end in own hole with one seed. Pick own seed on capture. \n\nPlayed in rounds. Each round ends when the current player does not have a valid move. Unclaimed seeds go to the last player to move.\n\nThe goal is to be the first to collect 100 total seeds. The Game Tally, available to be displayed via the Display menu, shows progress toward that goal.\n\nVariation:\n- Not played in rounds (Endodoi).",
       "crosscapt": true,
       "goal": 5,
       "goal_param": 100,
@@ -16,6 +16,7 @@
       "round_starter": 0,
       "sow_direct": 1,
       "stores": true,
+      "unclaimed": 2,
       "xcpickown": 1
    },
    "player": {

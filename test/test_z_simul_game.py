@@ -65,13 +65,13 @@ def test_one_game(request, game_pdict):
 
     game, _ = game_pdict
 
-    nbr_games = 500
+    nbr_moves = 500
     if game.info.rounds:
-        nbr_games *= 4
+        nbr_moves *= 4
     if game.info.capt_rturn or game.info.sow_own_store:
-        nbr_games *= 2
+        nbr_moves *= 2
 
-    for _ in range(nbr_games):
+    for _ in range(nbr_moves):
         moves = game.get_moves()
         if not moves:
             pytest.fail("Game didn't end right.")
@@ -104,7 +104,7 @@ def known_game_fails(request):
 
 @pytest.mark.usefixtures('known_game_fails')
 @pytest.mark.parametrize('game_pdict', FILES, indirect=True)
-def test_game_stats(request, game_pdict, nbr_runs):
+def test_game_stats(pytestconfig, request, game_pdict, nbr_runs):
 
     def report_bad(maxed, total):
         print(f'Bad endings for {game.info.name:12}: loop_max= {maxed:4}  ',
@@ -116,6 +116,10 @@ def test_game_stats(request, game_pdict, nbr_runs):
 
     if maxed:
         atexit.register(report_bad, maxed, nbr_runs)
+
+    # don't record test failures when running on github
+    if not pytestconfig.getoption('--sim_fails'):
+        return
 
     if game.info.mlaps:
         thresh = 0.50

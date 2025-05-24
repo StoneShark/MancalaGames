@@ -47,6 +47,8 @@ Allow rules limit the holes from which moves may start. Disallowed holes are not
 
 - NOT_XFROM_1S: moves may not start from holes with a singleton opposite it.
 
+- OCCUPIED: The final seed of the sow must end in an occupied hole.
+
 <param blocks>
 Blocks remove holes from play and are shown on the UI with an X.
 
@@ -134,6 +136,8 @@ Capture type.
   + If multiple captures are configured, captures continue while the pattern of empty hole followed by an occupied hole repeats. 
 
 - MATCH_OPP: capture when the number of seeds in the final hole sown match the opposite-side hole. Multiple captures maybe made in either direction. Multilap sowing does stop for captures.
+
+- SINGLETONS: capture all singletons.
 
 <param child_cnt_m>
 The multiplier for the child scorer. The child scorer counts the number children each player has.
@@ -224,6 +228,8 @@ board length >= 5: a b c c c ... c d e
 
   + TB B B B TB
   + TB T T T TB
+
+- FIXED_ONE_RIGHT: At the game start, each player has a child in their own rightmost hole. Additional children may not be created.
 
 <param child_rule>
 Additional child creation requirements may be set. These are in addition to location restrictions specified by CHILD_LOCS. If the CHILD_TYPE allows making more than one child, the child_rule is applied to hole in which the final seed was sown; the second hole does not need to meet the criteria.
@@ -399,7 +405,7 @@ Goals that start with RND_ are 'round tally games'. Multiple games are played an
 
 - CLEAR: clear seeds from your own holes.
 
-  + Moves must always be possible so MIN_MOVE must be 1 and ALLOW_RULE single_all_to_zero may not be used.
+  + If a player has seeds, moves must always be possible so MIN_MOVE must be 1 and ALLOW_RULE of single_to_zero, single_all_to_zero, not_xfrom_1s and occupied may not be used.
 
   + GRANDSLAM must be legal for clear games.
   
@@ -444,7 +450,7 @@ A grandslam is when your opponent has seeds at the start of your turn, and you c
 Grandslam must be legal to use UDIR_HOLES.
 
 <param help_file>
-An html help file describing the game (mancala_help.html is the main help file).
+A secondary help file providing additional game details over the 'About' text. It is included as a link in the Mancala Game Configurations html file.
 
 <param holes>
 Number of holes on each side of the board.
@@ -476,7 +482,7 @@ Determines if seeds from more than the initial start hole are picked up and sown
 
   + A SOW_RULE of CHANGE_DIR_LAP changes the direction of sowing after each lap. SOW_BLKD_DIV(_NR) is not supported for LAPPER_NEXT.
 
-Multilap games may get stuck in seemingly endless sowing loops. If more than 50 laps are sown, the computer will end the game using the same mechanism as the menu command <a href="mancala_help.html#gamemenu">End Game</a> based on GOAL and UNCLAIMED. 
+Multilap games may get stuck in seemingly endless sowing loops. If more than 75 laps are sown, the computer will end the game using the same mechanism as the menu command <a href="mancala_help.html#gamemenu">End Game</a> based on GOAL and UNCLAIMED. 
 
 <param mm_depth>
 The depth that the minimaxer or negamaxer will search the game tree from the current node. One value for each difficulty.
@@ -655,6 +661,8 @@ Direction of sow:
 
 - PLAYALTDIR: on the first move of the game, the first player chooses their sow direction using the UDIR_HOLES method (by mouse button). The second player will sow their moves in the opposite direction. Once the first player makes their first move, both player's sow directions are set for the duration of the game no matter which button is used. All UDIR_HOLES will apply to the game configuration.
 
+- EVEN_ODD_DIR: holes with even seeds sow clockwise and holes with odd seeds sow counter-clockwise.
+
 Both mouse buttons will start a move no matter the sow direction. If the hole is marked as UDIR_HOLES, the button selects sow direction. On the other hand, if the hole is not marked as UDIR_HOLES, either button will sow in the prescribed direction. This can be a useful mechanism to remind yourself that on SPLIT sow, the left holes go CW by using the left button and the right holes go CCW by using the right button.
 
 When PLAYALTDIR is not selected, any hole can be set as UDIR_HOLES to allow the user to override the sow_direct setting.
@@ -716,11 +724,15 @@ Special sow rules add additional behavior or restrictions to the sowing phase:
 
 - NO_OPP_CHILD: do not sow into your opponent's children.
 
-- OPP_GETS_OWN_LAST: Use LAP_CAPT sow rule until there are only sow_param seeds left. Then when down to the last seeds (sow_param or less at the start of a lap): seeds sown on the opponent's side are captured by the opponent. If the last seed would do a normal capture, the sower takes those seeds, including the last seed sown.
+- LAP_CAPT_OPP_GETS: Use LAP_CAPT sow rule until there are only sow_param seeds left. Then when down to the last seeds (sow_param or less at the start of a lap): seeds sown on the opponent's side are captured by the opponent. If the last seed would do a normal capture, the sower takes those seeds, including the last seed sown.
 
 - CONT_LAP_ON: Only continue multilap sowing when a hole is sown to sow_param seeds.
 
 - CONT_LAP_GREQ: Only continue multilap sowing when a hole is sown to sow_param or more seeds.
+
+- OPP_CHILD_ONLY1: Do not sow opponent's children unless it is with the final seed of a sow.
+
+- LAP_CAPT_SEEDS: Check for capture on each lap. If a capture occured, continue sowing with captured seeds and seeds in final hole sown. If no capture occured, continue if more than one seed is in the final hole. Not compatible with basic captures. Behaves badly with most capt_types unless other options are used to prevent endless sows.
 
 <param sow_start>
 When selected, the first seed is sown into (i.e., left in) the start hole.
@@ -773,6 +785,8 @@ Allows specifying non-all-equal start patterns. The following patterns are suppo
 
 - MOVE_RIGHTMOST: use when the first move of the game must be from the starter's rightmost hole. This start pattern will perform the opening move automatically, including any capture or seed removal that should occur.
 
+- MOVE_RANDOM: a random move is selected and executed. After the move the turn always changes to the next player; repeat turn is not honored on this opening random move. This can be used to neutralize the advantage a game starter might have.
+
 In the formulas above holes (n in figures) is the game constant HOLES and nbr_start is the game constant NBR_START.
 
 When a game is played in ROUNDS, start_pattern is only supported for round tally (RND_*) and territory GOAL games and only for ROUND_FILL of NOT_APPLICABLE and UCHOWN.
@@ -795,7 +809,8 @@ Note: all holes respond to both mouse buttons, but if the hole is not in udir_ho
 Games with any hole set to user chooses direction must have GRANDSLAM be LEGAL and only ALLOW_RULE s that do not depend on sow direction are supported.
 
 <param unclaimed>
-Defines how to score any unclaimed seeds when a game has ended, i.e., seeds that are not in children or in stores. This is not used if the game has a clear winner, e.g., one player has collected more than half the seeds for a MAX_SEEDS game. This parameter effects the menu command <a href="mancala_help.html#gamemenu">End Game</a> works.
+Defines how to score any unclaimed seeds when a game has ended, i.e., seeds that are not in children or in stores. This is not used if the game has a clear winner, e.g., one player has collected more than half the seeds for a MAX_SEEDS game. 
+For games that do not have a goal of CLEAR or DEPRIVE, this parameter defines how the <a href="mancala_help.html#gamemenu">Concede Round and Concede Game</a> menu commands work.
 
 - HOLE_OWNER: unclaimed seeds go to the hole owner.
 
@@ -803,9 +818,17 @@ Defines how to score any unclaimed seeds when a game has ended, i.e., seeds that
 
 - LAST_MOVER: unclaimed seeds go the player that moved last.
 
-- UNFED_PLAYER: only valid for MUSTSHARE games. If the game ended without one player being able to share seeds, the seeds go to the player without seeds (the unfed player). If the menu command End Game is used to end the game, the seeds go to the hole owners.
+- UNFED_PLAYER: only valid for MUSTSHARE games. If the game ended without one player being able to share seeds, the seeds go to the player without seeds (the unfed player). 
+
+  + If a Concede/End Round/Game menu command is used to end the game, the unclaimed seeds are not scored, unless there is a QUITTER configured to do something else for End Round/Game. 
 
 - DIVVIED: the seeds are divided between the two players (an extra seed goes to the player with fewer seeds).
+
+<param quitter>
+
+Defines how to score any unclaimed seeds when a player end the round or game using an <a href="mancala_help.html#gamemenu">End Round or End Game</a> menu command.
+
+The allowable values are the same as for UNCLAIMED (EndGameSeeds). <no_enum_error>
 
 <param visit_opp>
 Requires MLAPS. If the first 'lap' does not reach the opponent's side of the board, the sowing ends after the first lap. 

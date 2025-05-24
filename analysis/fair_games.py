@@ -177,7 +177,6 @@ def play_them_all():
         logger.info(game.info.name)
         game_res = play_game.play_games(game, fplayer, tplayer,
                                         config.nbr_runs,
-                                        save_logs=config.save_logs,
                                         move_limit=config.max_moves,
                                         end_all=config.end_all,
                                         result_func=ft.partial(score_game, gname))

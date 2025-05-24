@@ -58,7 +58,8 @@ STRING_DICTS = {
     'AllowRule': lookup_dicts(
         gi.AllowRule,
         {'No special rule': gi.AllowRule.NONE,
-         'End Empty or Opp Side': gi.AllowRule.OPP_OR_EMPTY,
+         'End in Occupied hole (1st lap)': gi.AllowRule.OCCUPIED,
+         'End Empty or Opp Side (1st lap)': gi.AllowRule.OPP_OR_EMPTY,
          'Singles to Empties': gi.AllowRule.SINGLE_TO_ZERO,
          'Singles only when all single': gi.AllowRule.SINGLE_ONLY_ALL,
          'Singles when all & to Empty': gi.AllowRule.SINGLE_ALL_TO_ZERO,
@@ -104,7 +105,8 @@ STRING_DICTS = {
         {'None': gi.CaptType.NONE,
          'Next Hole': gi.CaptType.NEXT,
          'Two Out (across gap)': gi.CaptType.TWO_OUT,
-         'Match Opposite Side': gi.CaptType.MATCH_OPP}),
+         'Match Opposite Side': gi.CaptType.MATCH_OPP,
+         'All Singletons': gi.CaptType.SINGLETONS}),
 
     'ChildLocs': lookup_dicts(
         gi.ChildLocs,
@@ -119,6 +121,7 @@ STRING_DICTS = {
          'Not Symetrically Opposite': gi.ChildLocs.NOT_SYM_OPP,
          'Not Facing': gi.ChildLocs.NOT_FACING,
          'Ends plus all opposite': gi.ChildLocs.ENDS_PLUS_ALL_OPP,
+         "Fixed: 1 child in right hole": gi.ChildLocs.FIXED_ONE_RIGHT,
          }),
 
     'ChildType': lookup_dicts(
@@ -152,7 +155,8 @@ STRING_DICTS = {
         {'Clockwise': gi.Direct.CW,
          'Counter-clockwise': gi.Direct.CCW,
          'Split': gi.Direct.SPLIT,
-         'Players Alternate': gi.Direct.PLAYALTDIR}),
+         'Players Alternate': gi.Direct.PLAYALTDIR,
+         'Odd Seeds-CCW Even-CW': gi.Direct.EVEN_ODD_DIR}),
 
     'EndGameSeeds': lookup_dicts(
         gi.EndGameSeeds,
@@ -249,10 +253,12 @@ STRING_DICTS = {
          "Don't sow Opp holes w/sow_param seeds": gi.SowRule.NO_SOW_OPP_NS,
          "Change Direction each Lap": gi.SowRule.CHANGE_DIR_LAP,
          "Never sow holes above sow_param": gi.SowRule.MAX_SOW,
-         "Do captures on each lap": gi.SowRule.LAP_CAPT,
+         "Do captures on each lap (lap_capt)": gi.SowRule.LAP_CAPT,
+         "Lap Capt, sow with capt'ed seeds": gi.SowRule.LAP_CAPT_SEEDS,
          "Lap Capt Then Opp takes Own (< sow_param)":
-             gi.SowRule.OPP_GETS_OWN_LAST,
+             gi.SowRule.LAP_CAPT_OPP_GETS,
          "Do not sow opponents children": gi.SowRule.NO_OPP_CHILD,
+         "Don't sow opp children unless final seed": gi.SowRule.OPP_CHILD_ONLY1,
          "Continue lap sow only on sow_param seeds": gi.SowRule.CONT_LAP_ON,
          "Continue lap sow when >= sow_param seeds": gi.SowRule.CONT_LAP_GREQ,
          }),
@@ -269,6 +275,7 @@ STRING_DICTS = {
          'Alts Split Right': gi.StartPattern.ALTS_SPLIT,
          'Equal plus one in Right': gi.StartPattern.RIGHTMOST_PLUS_ONE,
          'Move Rightmost Hole': gi.StartPattern.MOVE_RIGHTMOST,
+         'Random Move': gi.StartPattern.MOVE_RANDOM,
          }),
 
 }

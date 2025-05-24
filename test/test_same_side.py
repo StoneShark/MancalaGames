@@ -166,7 +166,7 @@ class TestSameSide:
         game.empty_store = True
 
         mobj = mocker.patch('mancala.Mancala.end_game')
-        game.end_game()
+        game.end_game(quitter=True, user=False)
         mobj.assert_called_once()
         assert game.empty_store is False
 
@@ -305,6 +305,7 @@ class TestOhojichi:
 
         game_consts = gconsts.GameConsts(nbr_start=2, holes=6)
         game_info = gi.GameInfo(capt_on=[2],
+                                multicapt=-1,
                                 stores=True,
                                 goal=3,
                                 skip_start=True,
@@ -349,3 +350,31 @@ class TestOhojichi:
         result = game.get_allowable_holes()
         assert result == [T, T, T, F, F, F, F, F, F, T, T, T]
                 # west holes for T move
+
+    MCASES = [
+
+        # capture direction
+        ([1, 1, 2, 3, 3, 2, 2, 2, 2, 2, 2, 2], [0, 0], (0, 0, None), True, False,
+         [0, 0, 2, 3, 3, 2, 2, 2, 2, 2, 2, 0], [0, 4], gi.WinCond.REPEAT_TURN, True),
+
+        ]
+
+    # @pytest.mark.usefixtures("logger")
+    @pytest.mark.parametrize(
+        'board, store, move, turn, mtype, eboard, estore, ewcond, eturn',
+        MCASES)
+    def test_move(self, game, mocker,
+                  board, store, move, turn, mtype,
+                  eboard, estore, ewcond, eturn):
+
+        game.board = board
+        game.store = store
+        game.turn = turn
+        game.empty_store = mtype
+        # print(game)
+
+        wcond = game.move(move)
+        assert wcond == ewcond
+        assert game.board == eboard
+        assert game.store == estore
+        assert game.turn == eturn

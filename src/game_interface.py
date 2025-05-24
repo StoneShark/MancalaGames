@@ -48,6 +48,7 @@ class AllowRule(enum.IntEnum):
     RIGHT_2_1ST_THEN_ALL_TWO = 8
     MOVE_ALL_HOLES_FIRST = 9
     NOT_XFROM_1S = 10
+    OCCUPIED = 11
 
 
 @enum.unique
@@ -93,6 +94,7 @@ class CaptType(enum.IntEnum):
     NEXT = 1
     TWO_OUT = 2
     MATCH_OPP = 3
+    SINGLETONS = 4
 
 
 @enum.unique
@@ -111,6 +113,7 @@ class ChildLocs(enum.IntEnum):
     NOT_SYM_OPP = 8
     NOT_FACING = 9
     ENDS_PLUS_ALL_OPP = 10
+    FIXED_ONE_RIGHT = 11
 
 
 @enum.unique
@@ -156,6 +159,7 @@ class Direct(enum.IntEnum):
 
     SPLIT = 0
     PLAYALTDIR = 2
+    EVEN_ODD_DIR = 3
 
     def opp_dir(self):
         """Return the opposite direction of self."""
@@ -288,9 +292,11 @@ class SowRule(enum.IntEnum):
     MAX_SOW = 7
     LAP_CAPT = 8
     NO_OPP_CHILD = 9
-    OPP_GETS_OWN_LAST = 10
+    LAP_CAPT_OPP_GETS = 10
     CONT_LAP_ON = 11
     CONT_LAP_GREQ = 12
+    OPP_CHILD_ONLY1 = 13
+    LAP_CAPT_SEEDS = 14
 
 
 @enum.unique
@@ -307,6 +313,7 @@ class StartPattern(enum.IntEnum):
     ALTS_SPLIT = 7
     RIGHTMOST_PLUS_ONE = 8
     MOVE_RIGHTMOST = 9
+    MOVE_RANDOM = 10
 
 
 @enum.unique
@@ -351,6 +358,7 @@ class GameInfo:
     start_pattern: StartPattern = StartPattern.ALL_EQUAL
     prescribed: SowPrescribed = SowPrescribed.NONE
     unclaimed: EndGameSeeds = EndGameSeeds.HOLE_OWNER
+    quitter: EndGameSeeds = EndGameSeeds.DIVVIED
 
     # **** allowable moves
     min_move: int = 1
@@ -522,12 +530,7 @@ class GameInterface(abc.ABC):
         is created."""
 
     @abc.abstractmethod
-    def end_round(self):
-        """User requested to end the round.
-        Return: WinCond"""
-
-    @abc.abstractmethod
-    def end_game(self):
+    def end_game(self, *, quitter, user, game=True):
         """User requested to end the game or the game ended in an
         ENDLESS looping condition.
         Return: WinCond"""

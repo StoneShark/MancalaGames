@@ -1,0 +1,9 @@
+pylint
+coverage
+pytest
+pytest-cov
+pytest-mock
+pandas
+openpyxl
+pyinstaller
+GitPython

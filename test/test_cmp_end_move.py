@@ -92,7 +92,7 @@ CONFIG_CASES = {
     'Eson_Xorgol': Config(5*9, 3),
     'Gabata': Config(4*6*2 - 1, 0, 11),   # only children
     'Gamacha': Config(-1),
-    'Giuthi': Config(90, 0, 9),  # NOC dupl EGNP; UMOVE: 1 seed in 7 holes, 2 in 1 hole
+    'Giuthi': Config(95, 0, 9),  # NOC dupl EGNP; UMOVE: 1 seed in 7 holes, 2 in 1 hole
     'Goat': Config(3*3),
     'J_Odu': Config(8*4, 2),
     'Kalah': Config(6*4),

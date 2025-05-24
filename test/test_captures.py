@@ -82,6 +82,7 @@ CONVERT_DICT = {'N': None,
                 'NEXT': gi.CaptType.NEXT,
                 'TWOOUT': gi.CaptType.TWO_OUT,
                 'MOPP': gi.CaptType.MATCH_OPP,
+                'SINGLES': gi.CaptType.SINGLETONS,
                 }
 
 
@@ -227,7 +228,7 @@ def read_test_cases():
 read_test_cases()
 
 
-# %%  test capturers
+# %%  test capture via table
 
 @pytest.mark.filterwarnings("ignore")
 def test_no_capturer():
@@ -471,6 +472,9 @@ def test_no_gs(gstype):
     assert game.store == [5, 4]
 
 
+
+# %% children
+
 class TestWalda:
 
     @pytest.fixture
@@ -593,8 +597,6 @@ class TestWalda:
         assert game.board[loc] == 3
         assert game.board[wloc] == 3
         assert game.child[loc] == None
-
-
 
 
 class TestTuzdek:
@@ -769,7 +771,6 @@ class TestWeg:
             assert tuple(game.board) == mdata.board
 
 
-
 class TestBull:
 
     @pytest.fixture
@@ -935,6 +936,9 @@ class TestQur:
             assert tuple(game.board) == mdata.board
 
 
+
+# %% capt wrappers and non-capt table tests
+
 class TestRepeatTurn:
     """Test repeat turn due to capt_rturn."""
 
@@ -961,6 +965,7 @@ class TestRepeatTurn:
             mdata.direct = gi.Direct.CCW
             mdata.capt_loc = cloc
             gamea.deco.capturer.do_captures(mdata)
+            gamea.rturn_cnt += 1  # this is done at the end of move
             assert mdata.captured == gi.WinCond.REPEAT_TURN
 
         mdata = move_data.MoveData(gamea, None)
@@ -993,10 +998,32 @@ class TestRepeatTurn:
             mdata.direct = gi.Direct.CCW
             mdata.capt_loc = cloc
             game1.deco.capturer.do_captures(mdata)
+            game1.rturn_cnt += 1  # this is done at the end of move
             if repeat:
                 assert mdata.captured == gi.WinCond.REPEAT_TURN
             else:
                 assert mdata.captured != gi.WinCond.REPEAT_TURN
+
+
+    def test_rturn_once_move(self, game1):
+        """Test with full move."""
+
+        game1.turn = True
+        game1.board = utils.build_board([2, 2, 3, 3],
+                                        [2, 2, 3, 5])
+        game1.store = [2, 0]
+
+        for move, repeat in [(3, True), (2, False)]:
+
+            game1.move(move)
+
+            if repeat:
+                assert game1.mdata.captured == gi.WinCond.REPEAT_TURN
+                assert game1.turn
+            else:
+                assert game1.mdata.captured != gi.WinCond.REPEAT_TURN
+                assert game1.mdata.captured
+                assert not game1.turn
 
 
 class TestCaptCrossVisited:
@@ -1042,7 +1069,6 @@ class TestCaptCrossVisited:
 
         game.deco.capturer.do_captures(mdata)
         assert mdata.captured == eresult
-
 
 
 class TestCaptTwoOut:
@@ -1092,6 +1118,8 @@ class TestCaptTwoOut:
         assert mdata.captured
         assert game.board == eboard
 
+
+# %% pickers
 
 class TestPickCross:
 
@@ -1449,7 +1477,6 @@ class TestChildInhibitor:
         assert game.deco.make_child.test(mdata)
 
 
-
 class TestOppChild:
 
     def test_opp_child(self):
@@ -1474,7 +1501,6 @@ class TestOppChild:
 
         mdata.capt_loc = 2
         assert game.deco.make_child.test(mdata)
-
 
 
 class TestNotWithOne:
@@ -1507,6 +1533,7 @@ class TestNotWithOne:
         assert game.deco.make_child.test(mdata) == etest
 
 
+# %% bad enums
 
 class TestBadEnums:
 
@@ -1619,6 +1646,8 @@ class TestBadEnums:
             mancala.Mancala(game_consts, game_info)
 
 
+# %% animator
+
 class TestAnimator:
 
     @pytest.mark.animator
@@ -1639,6 +1668,8 @@ class TestAnimator:
         mobj = mocker.patch('animator.one_step')
 
         game = mancala.Mancala(game_consts, game_info)
+
+        game.starter = False
         game.turn = False
         game.board = [0, 1, 2, 1, 1, 0]
         game.store = [3, 4]
@@ -1668,6 +1699,7 @@ class TestAnimator:
         mobj = mocker.patch('animator.one_step')
 
         game = mancala.Mancala(game_consts, game_info)
+        game.starter = False
         game.turn = False
         game.board = [0, 1, 2, 1, 1, 0]
         game.store = [3, 4]

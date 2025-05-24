@@ -11,10 +11,13 @@ import ana_logger
 import exper_config
 import play_game
 
+from context import game_logger
 
 logger = logging.getLogger()
-game_players_gen, config = exper_config.get_configuration()
+game_players_gen, config = exper_config.get_configuration(log_options=True)
 
+
+game_logger.game_log.live = config.live_log
 
 for game, fplayer, tplayer, gname in game_players_gen:
 
@@ -25,6 +28,7 @@ for game, fplayer, tplayer, gname in game_players_gen:
     gstats = play_game.play_games(game, fplayer, tplayer,
                                   config.nbr_runs,
                                   save_logs=config.save_logs,
+                                  show_log=config.live_log,
                                   end_all=config.end_all,
                                   move_limit=config.max_moves)
     logger.info(gstats)

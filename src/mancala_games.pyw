@@ -39,6 +39,10 @@ from game_classes import GAME_CLASSES
 
 # %%  Constants
 
+# given a real value after we have tk root
+INT_VALID_CMD = None
+
+
 # how many variables to make for lists
 # if the option for a 'list[int]' isn't here, 4 variables will be made
 MAKE_LVARS = {ckey.CAPT_ON: 6,
@@ -209,7 +213,8 @@ class MancalaGames(ttk.Frame):
         gamemenu.add_command(label='Save', command=self._save,
                              accelerator='Ctrl-s')
         gamemenu.add_command(label='Save As...',
-                             command=ft.partial(self._save, askfile=True))
+                             command=ft.partial(self._save, askfile=True),
+                             accelerator='Ctrl-Shift-s')
         gamemenu.add_command(label='Revert', command=self._revert)
         gamemenu.add_separator()
         gamemenu.add_command(label='Play', command=self._play,
@@ -232,19 +237,12 @@ class MancalaGames(ttk.Frame):
 
         bindings = [('<Control-l>', self._load),
                     ('<Control-s>', self._save),
+                    ('<Control-S>', ft.partial(self._save, askfile=True)),
                     ('<Control-p>', self._play),
                     ('<Control-t>', self._test),
                     ('<Control-n>', self._reset_const),
                     ]
-
-        if active:
-            self.bind_ids = [self.master.bind(key_seq, op)
-                             for key_seq, op in bindings]
-
-        elif self.bind_ids:
-            for(key_seq, _), bid in zip(bindings, self.bind_ids):
-                self.master.unbind(key_seq, bid)
-            self.bind_ids = None
+        ui_utils.key_bindings(self, bindings, active)
 
 
     def _add_commands_ui(self):
@@ -396,6 +394,9 @@ class MancalaGames(ttk.Frame):
                                                          value,
                                                          name=param.option)
 
+            else:
+                raise TypeError(f"Unexpected parameter type {param.vtype}.")
+
         # don't add the traces until all the variables are made
         self._add_watchers()
 
@@ -406,10 +407,10 @@ class MancalaGames(ttk.Frame):
         _ = (index, mode)
         self.config.edited = True
         self._update_title()
+        self.game = None
 
         if var == ckey.HOLES:
             self._resize_udirs()
-
 
     def _resize_udirs(self):
         """Change the number of the checkboxes on the screen.

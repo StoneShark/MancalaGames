@@ -70,7 +70,7 @@ where:
 # %% command line proc
 
 
-def define_parser():
+def define_parser(log_options=False):
     """Define the command line arguements."""
 
     parser = argparse.ArgumentParser(
@@ -103,11 +103,17 @@ def define_parser():
                         no LOOPED or MAX_TURNS will be reported.
                         If these were to be reported, call game.end_game.""")
 
-    parser.add_argument('--save_logs', action='store_true',
-                        help="""Save the game logs. Only one game maybe
-                        selected and nbr_games must be < 50.
-                        Games will be slowed to 1 per second.
-                        Default: %(default)s""")
+    if log_options:
+        parser.add_argument('--save_logs', action='store_true',
+                            help="""Save the game logs. Only one game maybe
+                            selected and nbr_games must be < 50.
+                            Games will be slowed to 1 per second.
+                            Default: %(default)s""")
+
+        parser.add_argument('--live_log', action='store_true',
+                            help="""Show the game log on the console.
+                            Any nbr_games is allowed and games are not slowed.
+                            Default: %(default)s""")
 
     parser.add_argument('--output', action='store',
                         default=None,
@@ -126,10 +132,10 @@ def define_parser():
     return parser
 
 
-def process_command_line():
+def process_command_line(log_options=False):
     """Process the command line and look for some basic errors."""
 
-    parser = define_parser()
+    parser = define_parser(log_options)
     try:
         cargs = parser.parse_args()
     except argparse.ArgumentError:
@@ -268,7 +274,7 @@ def game_n_players_gen(cargs):
         yield game, fplayer, tplayer, gname
 
 
-def get_configuration():
+def get_configuration(log_options=False):
     """Process the command line and return:
         a generator of tuples: game player1 player2 and
         a namespace with the rest of the configuration
@@ -276,5 +282,5 @@ def get_configuration():
     The root logger is configured so that output maybe
     started here."""
 
-    cargs = process_command_line()
+    cargs = process_command_line(log_options)
     return game_n_players_gen(cargs), cargs

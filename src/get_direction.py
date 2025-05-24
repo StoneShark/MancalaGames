@@ -17,7 +17,7 @@ class GetDirIf(deco_chain_if.DecoChainIf):
     """Determine the direction to sow the seeds."""
 
     @abc.abstractmethod
-    def get_direction(self, move, loc):
+    def get_direction(self, mdata):
         """Return: Direct - but always CCW or CW"""
 
 
@@ -31,7 +31,7 @@ class ConstDir(GetDirIf):
         super().__init__(game, decorator)
         self.const = game.info.sow_direct
 
-    def get_direction(self, _1, _2):
+    def get_direction(self, _):
         return self.const
 
 
@@ -54,24 +54,24 @@ class SplitDir(GetDirIf):
         self.direction += [None] if rem else []
         self.direction += [gi.Direct.CCW] * half_holes
 
-    def get_direction(self, _, loc):
-        return self.direction[loc]
+    def get_direction(self, mdata):
+        return self.direction[mdata.sow_loc]
 
 
 class UdirDir(GetDirIf):
     """The hole is a udir. Move is a tuple (pos, direct).
     The UI/user picked the direction, just return it."""
 
-    def get_direction(self, move, _):
-        return move[1]
+    def get_direction(self, mdata):
+        return mdata.move[1]
 
 
 class UdirTripleDir(GetDirIf):
     """The hole is user choice. Move is a tuple (row, pos, direct).
     The UI/user picked the direction, just return it."""
 
-    def get_direction(self, move, _):
-        return move[2]
+    def get_direction(self, mdata):
+        return mdata.move[2]
 
 
 class UdirOtherDir(GetDirIf):
@@ -83,13 +83,13 @@ class UdirOtherDir(GetDirIf):
         super().__init__(game, decorator)
         self.udir_getter = udir_getter
 
-    def get_direction(self, move, loc):
+    def get_direction(self, mdata):
 
-        left_cnt = self.game.cts.loc_to_left_cnt(loc)
+        left_cnt = self.game.cts.loc_to_left_cnt(mdata.sow_loc)
         if left_cnt in self.game.info.udir_holes:
-            return self.udir_getter.get_direction(move, loc)
+            return self.udir_getter.get_direction(mdata)
 
-        return self.decorator.get_direction(move, loc)
+        return self.decorator.get_direction(mdata)
 
 
 class PlayAltDir(GetDirIf):
@@ -101,15 +101,25 @@ class PlayAltDir(GetDirIf):
         super().__init__(game, decorator)
         self.player_dirs = [None, None]
 
-    def get_direction(self, move, loc):
+    def get_direction(self, mdata):
 
         turn = self.game.turn
         if self.game.mcount == 1:
-            direct = self.decorator.get_direction(move, loc)
+            direct = self.decorator.get_direction(mdata)
             self.player_dirs[turn] = direct
             self.player_dirs[not turn] = direct.opp_dir()
 
         return self.player_dirs[turn]
+
+
+class EvenOddDir(GetDirIf):
+    """Holes with an odd number of seeds sow CCW, and CW otherwise."""
+
+    def get_direction(self, mdata):
+
+        seeds = mdata.board[mdata.sow_loc]
+        return gi.Direct.CCW if seeds % 2 else gi.Direct.CW
+
 
 
 # %%  build deco
@@ -117,6 +127,7 @@ class PlayAltDir(GetDirIf):
 def deco_dir_getter(game):
     """Create the dir_getter chain."""
 
+    udir_getter = None
     if game.info.udirect:
         if game.info.mlength == 3:
             udir_getter = UdirTripleDir(game)
@@ -131,6 +142,8 @@ def deco_dir_getter(game):
 
     if game.info.sow_direct is gi.Direct.SPLIT:
         dir_getter = SplitDir(game)
+    elif game.info.sow_direct is gi.Direct.EVEN_ODD_DIR:
+        dir_getter = EvenOddDir(game)
     else:
         dir_getter = ConstDir(game)
 
