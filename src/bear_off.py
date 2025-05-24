@@ -23,7 +23,6 @@ Created on Sat Nov  2 15:39:39 2024
 @author: Ann"""
 
 import dataclasses as dc
-import end_move_decos
 import game_interface as gi
 import mancala
 import sower_decos
@@ -88,43 +87,6 @@ class BearOffSow(sower_decos.SowMethodIf):
         mdata.capt_loc = loc
 
 
-class NoSeedsEnder(end_move_decos.EndTurnIf):
-    """Ender when current player has no seeds for
-    clear and deprive games.
-
-    If we are past the normal_sow and the current player
-    has no seeds, the game is over. Don't need to wait
-    for opponents sow because they cannot be forced to give
-    us seeds."""
-
-    def __init__(self, game, decorator=None):
-
-        super().__init__(game, decorator)
-
-        self.win_op = False
-        if game.info.goal in (gi.Goal.DEPRIVE,
-                              gi.Goal.RND_WIN_COUNT_DEP):
-            self.win_op = lambda turn: not turn
-        elif game.info.goal in (gi.Goal.CLEAR,
-                                gi.Goal.RND_WIN_COUNT_CLR):
-            self.win_op = lambda turn: turn
-
-
-    def game_ended(self, mdata):
-
-        if (mdata.ended
-            or not self.win_op
-            or self.game.normal_sow
-            or any(self.game.board[loc]
-                   for loc in self.game.cts.get_my_range(self.game.turn))):
-
-            self.decorator.game_ended(mdata)
-
-        else:
-            mdata.win_cond = gi.WinCond.WIN
-            mdata.winner = self.win_op(self.game.turn)
-
-
 # %% BearOff game class
 
 
@@ -152,7 +114,6 @@ class BearOff(mancala.Mancala):
         super().__init__(game_consts, game_info)
 
         self.normal_sow = True
-        self.deco.ender = NoSeedsEnder(self, self.deco.ender)
 
         base_sow_class = type(self.deco.sower.get_single_sower())
         self.deco.insert_deco('sower',

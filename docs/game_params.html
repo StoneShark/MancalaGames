@@ -176,7 +176,7 @@ is included after the parameter sections.
 <p class="helptext"> Territory games are incompatible with <a href="game_params.html#no_sides">NO_SIDES</a>, <a href="game_params.html#grandslam">GRANDSLAM</a> of NOT_LEGAL, <a href="game_params.html#allow_rule">ALLOW_RULE</a> of OPP_OR_EMPTY. Territory games may only use a <a href="game_params.html#round_fill">ROUND_FILL</a> of NOT_APPLICABLE or UCHOWN.
 <li class="helptext">
 <b class="enum">CLEAR</b>: clear seeds from your own holes.
-<p class="helptext"> Moves must always be possible so <a href="game_params.html#min_move">MIN_MOVE</a> must be 1 and <a href="game_params.html#allow_rule">ALLOW_RULE</a> single_all_to_zero may not be used.
+<p class="helptext"> If a player has seeds, moves must always be possible so <a href="game_params.html#min_move">MIN_MOVE</a> must be 1 and <a href="game_params.html#allow_rule">ALLOW_RULE</a> of single_to_zero, single_all_to_zero, not_xfrom_1s and occupied may not be used.
 <p class="helptext"> <a href="game_params.html#grandslam">GRANDSLAM</a> must be legal for clear games.
 <p class="helptext"> Clear games can be played in tallied rounds--no other support for rounds is provided. Use a goal of RND_WIN_COUNT_CLR. <a href="game_params.html#rounds">ROUNDS</a> must be NO_MOVES, <a href="game_params.html#round_fill">ROUND_FILL</a> is ignored, and goal_param should be set to the number of round wins required for a game win.
 <p class="helptext"> Clear games cannot use children and the following options are prohibited: <a href="game_params.html#moveunlock">MOVEUNLOCK</a>, <a href="game_params.html#mustpass">MUSTPASS</a> and <a href="game_params.html#mustshare">MUSTSHARE</a>.

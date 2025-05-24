@@ -405,7 +405,7 @@ Goals that start with RND_ are 'round tally games'. Multiple games are played an
 
 - CLEAR: clear seeds from your own holes.
 
-  + Moves must always be possible so MIN_MOVE must be 1 and ALLOW_RULE single_all_to_zero may not be used.
+  + If a player has seeds, moves must always be possible so MIN_MOVE must be 1 and ALLOW_RULE of single_to_zero, single_all_to_zero, not_xfrom_1s and occupied may not be used.
 
   + GRANDSLAM must be legal for clear games.
   

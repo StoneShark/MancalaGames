@@ -707,12 +707,12 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             case [gi.WinCond.WIN, gi.Goal.MAX_SEEDS, _]:
                 reason = " by collecting the most seeds!"
 
+            case [gi.WinCond.WIN, gi.Goal.TERRITORY, _]:
+                reason = " by claiming more holes."
+
             case [gi.WinCond.WIN, gi.Goal.DEPRIVE, _]:
                 loser = gi.PLAYER_NAMES[int(not self.mdata.winner)]
                 reason = f" by eliminating {loser}'s seeds."
-
-            case [gi.WinCond.WIN, gi.Goal.TERRITORY, _]:
-                reason = " by claiming more holes."
 
             case [gi.WinCond.WIN, gi.Goal.CLEAR, _]:
                 reason = " by clearing all their seeds."

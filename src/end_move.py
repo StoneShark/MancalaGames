@@ -33,13 +33,11 @@ import round_tally
 def _build_deprive_ender(game):
     """Create a deprive game ender."""
 
-    if game.info.min_move == 1:
-        # player wo seeds looses
-        ender = emd.EndTurnNoMoves(game)
-        ender = emd.DepriveNoSeedsEndGame(game, ender)
-    else:
-        # last mover wins
-        ender = emd.DepriveLastMoveEndGame(game)
+    ender = emd.EndTurnNoMoves(game)
+    ender = emd.DepriveNoSeedsEndGame(game, ender)
+
+    if game.info.min_move > 1:
+        ender = emd.DepriveLastMoveEndGame(game, ender)
 
     if game.info.goal == gi.Goal.RND_WIN_COUNT_DEP:
         sclaimer = claimer.ClaimSeeds(game)

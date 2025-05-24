@@ -221,7 +221,7 @@ def add_elim_seeds_goal_rules(rules):
         msg='CLEAR & DEPRIVE games require that GRANDSLAM be Legal',
         excp=gi.GameInfoError)
 
-    bad_flags = ['child_cvt', 'child_rule', 'child_type',
+    bad_flags = ['child_type', 'child_cvt', 'child_rule',
                  'moveunlock', 'mustshare', 'mustpass']
     for flag in bad_flags:
         rules.add_rule(
@@ -231,21 +231,21 @@ def add_elim_seeds_goal_rules(rules):
             excp=gi.GameInfoError)
 
     rules.add_rule(
+        'elseed_no_rounds',
+        rule=lambda ginfo: (ginfo.goal in (gi.Goal.CLEAR, gi.Goal.DEPRIVE)
+                            and ginfo.rounds),
+        msg="""Goals CLEAR and DEPRIVE cannot be played in rounds.
+            Consider the Round Tally goals""",
+            excp=gi.GameInfoError)
+
+    rules.add_rule(
         'elseed_no_moves',
         rule=lambda ginfo: (ginfo.goal in (gi.Goal.RND_WIN_COUNT_CLR,
                                            gi.Goal.RND_WIN_COUNT_DEP)
                             and ginfo.rounds != gi.Rounds.NO_MOVES),
-        msg="Goals RND_WIN_COUNT_CLR and RND_WIN_COUNT_DEP" \
-            "require ROUNDS to be NO_MOVES",
+        msg="""Goals RND_WIN_COUNT_CLR and RND_WIN_COUNT_DEP
+            require ROUNDS to be NO_MOVES""",
             excp=gi.GameInfoError)
-
-    rules.add_rule(
-        'clear_no_min_move',
-        rule=lambda ginfo: (ginfo.goal in (gi.Goal.CLEAR,
-                                           gi.Goal.RND_WIN_COUNT_CLR)
-                            and ginfo.min_move != 1),
-        msg='CLEAR games require that MIN_MOVE be 1',
-        excp=gi.GameInfoError)
 
     rules.add_rule(
         'deprive_mmgr1_rturn',
@@ -262,12 +262,26 @@ def add_elim_seeds_goal_rules(rules):
         # who should win?  just don't allow it
 
     rules.add_rule(
-        'clear_no_1all_zero',
+        'clear_no_min_move',
+        rule=lambda ginfo: (ginfo.goal in (gi.Goal.CLEAR,
+                                           gi.Goal.RND_WIN_COUNT_CLR)
+                            and ginfo.min_move != 1),
+        msg='CLEAR games require that MIN_MOVE be 1',
+        excp=gi.GameInfoError)
+        # clear game, if there are seeds they must be playable
+
+    rules.add_rule(
+        'clear_no_prevent',
         rule=lambda ginfo: (
             ginfo.goal in (gi.Goal.CLEAR, gi.Goal.RND_WIN_COUNT_CLR)
-            and ginfo.allow_rule == gi.AllowRule.SINGLE_ALL_TO_ZERO),
-        msg='CLEAR games prohibits ALLOW_RULE SINGLE_ALL_TO_ZERO',
+            and ginfo.allow_rule in (gi.AllowRule.SINGLE_TO_ZERO,
+                                     gi.AllowRule.SINGLE_ALL_TO_ZERO,
+                                     gi.AllowRule.NOT_XFROM_1S,
+                                     gi.AllowRule.OCCUPIED)),
+        msg="""CLEAR games prohibit the selected allow rule.
+            If a player has seeds, they must be able to play""",
         excp=gi.GameInfoError)
+        # clear game, if there are seeds they must be playable
 
     return rules
 
