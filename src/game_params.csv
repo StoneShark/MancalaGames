@@ -44,7 +44,7 @@ Dynamics,round_fill,Round Fill Method,game_info _,134,RoundFill,NOT_APPLICABLE,9
 Dynamics,blocks,Blocks,game_info _,102,bool,False,10,2
 Game,game_class,Game Class,game_class,1,GameClasses,Mancala,0,0
 Game,holes,Holes per Side,game_constants _,2,int,3,2,0
-Game,help_file,Help File,game_info _,118,str,mancala_help.html,3,0
+Game,help_file,Help File,game_info _,118,str,,3,0
 Game,about,About,game_info _,5,multi_str,"Sow counter-clockwise.
 Capture on evens. ",4,0
 Game,name,Game Name,game_info _,4,str,Mancala,0,2

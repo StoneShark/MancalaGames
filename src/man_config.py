@@ -346,6 +346,9 @@ class ParamData(dict):
                         }
         value = value.strip()
 
+        if not value:
+            return ""
+
         if (key := value.lower()) in convert_dict:
             return convert_dict[key]
 

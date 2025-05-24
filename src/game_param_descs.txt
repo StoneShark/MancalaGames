@@ -450,7 +450,7 @@ A grandslam is when your opponent has seeds at the start of your turn, and you c
 Grandslam must be legal to use UDIR_HOLES.
 
 <param help_file>
-An html help file describing the game (mancala_help.html is the main help file).
+A secondary help file providing additional game details over the 'About' text. It is included as a link in the Mancala Game Configurations html file.
 
 <param holes>
 Number of holes on each side of the board.
