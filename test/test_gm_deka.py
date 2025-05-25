@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
-"""
+"""Test deka games.
+
+TestDeka1 was manually modified when Deka was changed
+to an Immobilize goal.  See last two moves.
+
 Created on Thu Aug 17 15:23:34 2023
 @author: Ann"""
 
@@ -411,11 +415,30 @@ class TestDeka1:
         assert cond is None
         gstate.cond = cond
 
-    def test_move_29(self, gstate):
+    def test_move_29a(self, gstate):
+        """Change of Deka to immobilize game, continues the game
+        at this point: False gave away their seeds, but True has
+        moves--so they must move."""
+
         game = gstate.game
         cond = game.move(5)
-        assert game.mdata.winner is True     # manual change
+        assert game.turn is True
         assert game.board == [0, 0, 0, 0, 0, 0, 1, 0, 2, 1, 0, 3]
+        assert game.blocked == [T, F, F, T, F, F, F, T, F, F, F, F]
+        assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
+        assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
+        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
+        assert game.store == [17, 0]
+        assert cond is None
+
+    def test_move_29b(self, gstate):
+        """Force end game here, by moving for True, but don't give False
+        seeds."""
+
+        game = gstate.game
+        cond = game.move(2)
+        assert game.mdata.winner is True
+        assert game.board == [0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 1, 3]
         assert game.blocked == [T, F, F, T, F, F, F, T, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]

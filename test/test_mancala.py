@@ -137,7 +137,7 @@ class TestGameState:
                                 round_fill=RoundFill.SHORTEN,  # game will use child inhibitor
                                 child_type=ChildType.NORMAL,
                                 child_cvt=2,
-                                goal=gi.Goal.TERRITORY,
+                                goal=Goal.TERRITORY,
                                 moveunlock=True,
                                 nbr_holes = game_consts.holes,
                                 rules=ginfo_rules.RuleDict())
@@ -407,7 +407,7 @@ class TestRtally:
         game_consts = gconsts.GameConsts(nbr_start=4, holes=2)
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
-                                goal=gi.Goal.RND_EXTRA_SEEDS,
+                                goal=Goal.RND_EXTRA_SEEDS,
                                 rounds=gi.Rounds.NO_MOVES,
                                 nbr_holes=game_consts.holes,
                                 rules=ginfo_rules.RuleDict())
@@ -599,7 +599,7 @@ class TestManDeco:
         game_consts = gconsts.GameConsts(nbr_start=2, holes=5)
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
-                                goal=3,
+                                goal=Goal.CLEAR,
                                 skip_start=True,
                                 capt_side=gi.CaptSide.OWN_SIDE,
                                 nbr_holes=game_consts.holes,
@@ -626,7 +626,7 @@ class TestManDeco:
         game_consts = gconsts.GameConsts(nbr_start=2, holes=5)
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
-                                goal=3,
+                                goal=Goal.CLEAR,
                                 skip_start=True,
                                 blocks=True,            # this is not valid
                                 capt_side=gi.CaptSide.OWN_SIDE,
@@ -679,7 +679,7 @@ class TestManDeco:
         game_consts = gconsts.GameConsts(nbr_start=2, holes=5)
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
-                                goal=3,
+                                goal=Goal.CLEAR,
                                 skip_start=True,
                                 capt_side=gi.CaptSide.OWN_SIDE,
                                 nbr_holes=game_consts.holes,
@@ -705,7 +705,7 @@ class TestManDeco:
         game_consts = gconsts.GameConsts(nbr_start=2, holes=5)
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
-                                goal=3,
+                                goal=Goal.CLEAR,
                                 skip_start=True,
                                 capt_side=gi.CaptSide.OWN_SIDE,
                                 nbr_holes=game_consts.holes,
@@ -1099,7 +1099,7 @@ class TestDelegates:
         game_consts = gconsts.GameConsts(nbr_start=4, holes=6)
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
-                                goal=gi.Goal.RND_SEED_COUNT,
+                                goal=Goal.RND_SEED_COUNT,
                                 goal_param=40,
                                 rounds=gi.Rounds.NO_MOVES,
                                 nbr_holes=game_consts.holes,
@@ -1153,7 +1153,7 @@ class TestBProp:
     def test_init_bprop(self, goal, moveunlock, allow_rule, eunlock, eowner):
 
         game_consts = gconsts.GameConsts(nbr_start=2, holes=2)
-        game_info = gi.GameInfo(goal=goal,
+        game_info = gi.GameInfo(goal=Goal(goal),
                                 goal_param=3 if goal == Goal.TERRITORY else 0,
                                 evens=True,
                                 stores=True,
@@ -1185,7 +1185,7 @@ class TestBProp:
         game_consts = gconsts.GameConsts(nbr_start=2, holes=2)
 
         with pytest.raises(gi.GameInfoError) as error:
-            gi.GameInfo(goal=goal,
+            gi.GameInfo(goal=Goal(goal),
                         goal_param=3 if goal == Goal.TERRITORY else 0,
                         evens=True,
                         stores=True,
@@ -1785,7 +1785,7 @@ class TestBadNewRound:
     def game(self):
 
         game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
-        game_info = gi.GameInfo(goal=gi.Goal.TERRITORY,
+        game_info = gi.GameInfo(goal=Goal.TERRITORY,
                                 goal_param=8,
                                 rounds=gi.Rounds.NO_MOVES,
                                 start_pattern=gi.StartPattern.TWOEMPTY,
@@ -1824,7 +1824,7 @@ class TestSwap:
         # test board, owner, children, & stores
 
         game_consts = gconsts.GameConsts(nbr_start=4, holes=size)
-        game_info = gi.GameInfo(goal=gi.Goal.TERRITORY,
+        game_info = gi.GameInfo(goal=Goal.TERRITORY,
                                 goal_param=8,
                                 child_type = gi.ChildType.NORMAL,
                                 child_cvt=4,
@@ -1865,7 +1865,7 @@ class TestSwap:
         # test board, stores, locks and blocks
 
         game_consts = gconsts.GameConsts(nbr_start=4, holes=size)
-        game_info = gi.GameInfo(goal=gi.Goal.MAX_SEEDS,
+        game_info = gi.GameInfo(goal=Goal.MAX_SEEDS,
                                 rounds=gi.Rounds.NO_MOVES,
                                 blocks=True,
                                 moveunlock=True,
@@ -1907,7 +1907,7 @@ class TestAnimatorHooks:
     def test_ahooks(self):
 
         game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
-        game_info = gi.GameInfo(goal=gi.Goal.MAX_SEEDS,
+        game_info = gi.GameInfo(goal=Goal.MAX_SEEDS,
                                 rounds=gi.Rounds.NO_MOVES,
                                 blocks=True,
                                 child_type=gi.ChildType.NORMAL,
@@ -1930,7 +1930,7 @@ class TestAnimatorHooks:
     def test_ahooks_mixed_1(self):
 
         game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
-        game_info = gi.GameInfo(goal=gi.Goal.MAX_SEEDS,
+        game_info = gi.GameInfo(goal=Goal.MAX_SEEDS,
                                 rounds=gi.Rounds.NO_MOVES,
                                 blocks=True,
                                 moveunlock=True,
@@ -1950,7 +1950,7 @@ class TestAnimatorHooks:
     def test_ahooks_mixed_2(self):
 
         game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
-        game_info = gi.GameInfo(goal=gi.Goal.MAX_SEEDS,
+        game_info = gi.GameInfo(goal=Goal.MAX_SEEDS,
                                 child_type=gi.ChildType.NORMAL,
                                 child_cvt=4,
                                 evens=True,
@@ -1969,7 +1969,7 @@ class TestAnimatorHooks:
     def test_no_ahooks(self):
 
         game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
-        game_info = gi.GameInfo(goal=gi.Goal.MAX_SEEDS,
+        game_info = gi.GameInfo(goal=Goal.MAX_SEEDS,
                                 rounds=gi.Rounds.NO_MOVES,
                                 blocks=True,
                                 child_type=gi.ChildType.NORMAL,
@@ -1994,7 +1994,7 @@ class TestOppTurn:
     def game(self):
 
         game_consts = gconsts.GameConsts(nbr_start=4, holes=6)
-        game_info = gi.GameInfo(goal=gi.Goal.TERRITORY,
+        game_info = gi.GameInfo(goal=Goal.TERRITORY,
                                 goal_param=8,
                                 child_type = gi.ChildType.NORMAL,
                                 child_cvt=4,

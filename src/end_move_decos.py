@@ -126,11 +126,14 @@ class EndTurnIf(deco_chain_if.DecoChainIf):
         outright win (or round win). A player collecting more
         that win_seeds wins.
 
-        CLEAR and DEPRIVE games (round tally or not) do not
-        use this value, so -1."""
+        Eliminate games (round tally or not) do not use this
+        value, so -1."""
 
         game_goal = self.game.info.goal
         win_seeds = -1
+
+        if self.game.info.goal.eliminate():
+            return win_seeds
 
         if (self.game.info.rounds == gi.Rounds.NO_MOVES
                 and game_goal == gi.Goal.MAX_SEEDS
@@ -144,9 +147,7 @@ class EndTurnIf(deco_chain_if.DecoChainIf):
                 min_needed *= self.game.info.goal_param
             win_seeds = self.game.cts.total_seeds - min_needed
 
-        elif (self.game.info.rounds == gi.Rounds.NO_MOVES
-                and game_goal not in (gi.Goal.RND_WIN_COUNT_DEP,
-                                      gi.Goal.RND_WIN_COUNT_CLR)):
+        elif self.game.info.rounds == gi.Rounds.NO_MOVES:
             win_seeds = self.game.cts.total_seeds - 1
 
         elif game_goal == gi.Goal.TERRITORY:
@@ -411,7 +412,7 @@ class ChildNoStoresEnder(EndTurnIf):
             game_log.step('Moved store seeds to children', self.game)
 
 
-class DepriveNoSeedsEndGame(EndTurnIf):
+class DepriveEndGame(EndTurnIf):
     """Determine if a deprive game is over based on who has seeds.
 
     Both player's had seeds at the start of the turn.
@@ -466,21 +467,19 @@ class DepriveNoSeedsEndGame(EndTurnIf):
             turn = self.game.turn
             mdata.winner = not turn if mdata.repeat_turn else turn
             mdata.end_msg += fmt.LINE_SEP if mdata.end_msg else ''
-            mdata.end_msg += "_Winner_ won _thing_ by immobilizing _loser_."
+            mdata.end_msg += "_Winner_ won _thing_ because _loser_ cannot move."
             mdata.fmsg = True
 
 
-class DepriveLastMoveEndGame(EndTurnIf):
-    """Determine if a deprive game is over based on who moved last.
+class ImmobilizeEndGame(EndTurnIf):
+    """Determine if a immobilize game is over based on who moved last.
 
     Both player's had seeds at the start of the turn.
     If ended on entry is True, end in a TIE. This is only possible
     when a user ends the game.
 
     If the opponent does not have a move, then the current player
-    has won.
-
-    Repeat turn is not supported (see rule deprive_mmgr1_rturn)."""
+    has won."""
 
     def game_ended(self, mdata):
         """Check for end game."""

@@ -697,7 +697,7 @@ class TestWeg:
     def game(self):
         game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(stores=True,
-                                goal=2,
+                                goal=gi.Goal.TERRITORY,
                                 goal_param=8,
                                 child_cvt=3,
                                 child_type=gi.ChildType.WEG,

@@ -590,12 +590,12 @@ remove multiple capture
 <h3 id="Boola" class="game_desc">Boola</h3>
 <p>Multilap counter-clockwise sow, but only from holes that reach the opponents side of the board or reach an empty hole on your own side.
 <p>Cross capture on opposite side only.
-<p>Goal: deprive opponent of seeds
+<p>Goal: immobilize opponent by eliminating their seeds.
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  12</p>
     <p class="param">Start seeds:  3</p>
-    <p class="param"><a href="game_params.html#goal">Goal</a>: DEPRIVE</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: IMMOBILIZE</p>
     <p class="param"><a href="game_params.html#allow_rule">Special Move Restrictions</a>: OPP_OR_EMPTY</p>
     <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OPP_SIDE</p>
   </div>
@@ -801,7 +801,10 @@ a second capture mechanism in which a seed sown into an empty hole on the oppone
 <p>Note: <a href="game_params.html#goal_param">GOAL_PARAM</a> set to 4 to limit game length
 <p>Lagniappe: Donkers et al. provide an opening move sequence (opening move plus 24 repeat turns) in which the starter can win the game (not just a round), without the opponent ever playing.  "Donkers, Joroen.  Voogt, Alex de.  Uiterwijk, Jos.  Human versus Machine Problem-Solving: Winning Openings in <nolink>Dakon". Retrieved from <a href="https://www.academia.edu/" target="_blank">https://www.academia.edu/</a>
 <h3 id="Deka" class="game_desc">Deka</h3>
-<p>The goal is to deprive the opponent of seeds. Sow counter-clockwise with multiple laps (LAPPER). After the first turn, holes are closed on opponent's side when the final seed of a lap brings the seeds in a hole to 3. Sowing then continues with those 3 seeds. Each player's rightmost hole may not be closed. In subsequent sowing of closed holes (blocked), own holes are skipped but seeds for opponent's holes are taken out of play.
+<p>The goal is to leave the opponent without seeds for their turn.
+<p>Sow counter-clockwise with multiple laps (LAPPER).
+<p>After the first turn, holes are closed on opponent's side when the final seed of a lap brings the seeds in a hole to 3. Sowing then continues with those 3 seeds. Each player's rightmost hole may not be closed.
+<p>In subsequent sowing of closed holes (blocked), own holes are skipped but seeds for opponent's holes are taken out of play.
 <p>The <nolink>Deka board is not a 2-rank board, but hole assignment yields itself to moving the middle end holes to the respective player's right side thus making it a 2 rank board.
 <p>Variations:
 <ul><li class="helptext">
@@ -815,7 +818,7 @@ allow closing of rightmost holes (<a href="game_params.html#sow_rule">SOW_RULE</
   <div class="column2">
     <p class="param">Holes per side:  6</p>
     <p class="param">Start seeds:  2</p>
-    <p class="param"><a href="game_params.html#goal">Goal</a>: DEPRIVE</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: IMMOBILIZE</p>
     <p class="param"><a href="game_params.html#blocks">Blocks</a>: Yes</p>
     <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
   </div>
@@ -938,7 +941,7 @@ allow closing of rightmost holes (<a href="game_params.html#sow_rule">SOW_RULE</
   <div class="column2">
     <p class="param">Holes per side:  11</p>
     <p class="param">Start seeds:  4</p>
-    <p class="param"><a href="game_params.html#goal">Goal</a>: DEPRIVE</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: IMMOBILIZE</p>
     <p class="param"><a href="game_params.html#blocks">Blocks</a>: Yes</p>
     <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 2</p>
   </div>
@@ -2024,7 +2027,7 @@ unless all the player's holes contain 2, then only the rightmost hole maybe play
 <p>Rules: <a href="https://mancala.fandom.com/wiki/Micro-Wari" target="_blank">https://mancala.fandom.com/wiki/Micro-Wari</a>
 <h3 id="mikro tsoro" class="game_desc">mikro tsoro</h3>
 <p>A deprive game with separate north & south cycles.
-<p>Sow only on your own side of the board in multiple laps. If there are seeds across from a seed sown into an empty hole, gather those and the final sown seed and continue sowing.
+<p>Sow only on your own side of the board in multiple laps. If the final seed of a lap falls into an empty hole and there are seeds across from it, gather those and the final sown seed and continue sowing.
 <p>Goal: move all of your opponents seeds to your side of the board. 
 <p><a href="about_games.html#mikro tsoro">mikro tsoro</a> was invented by the Austrian Matthias Liszt in August 2007.
 <div class="cols_row">
@@ -2092,12 +2095,14 @@ unless all the player's holes contain 2, then only the rightmost hole maybe play
 <p>Note 1: <a href="game_params.html#goal_param">GOAL_PARAM</a> set to 11 to limit game length
 <p>Note 2: Valdez describes <a href="about_games.html#Lahemay Waladat">Lahemay Waladat</a> which is a very similar game.
 <h3 id="Nambayi" class="game_desc">Nambayi</h3>
-<p>A multilap Mancala. The goal is to deprive the opponent of seeds. Holes are closed on opponent side on 4s, sowing continues with those seeds. In subsequent sowing of closed holes, own holes are skipped but seeds for opponent's holes are taken out of play.
+<p>A multilap Mancala, sow is counter-clockwise.
+<p>The goal is to leave the opponent without seeds for their turn.
+<p>Holes are closed on opponent side on 4s, sowing continues with those seeds. In subsequent sowing of closed holes, own holes are skipped but seeds for opponent's holes are taken out of play.
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  8</p>
     <p class="param">Start seeds:  3</p>
-    <p class="param"><a href="game_params.html#goal">Goal</a>: DEPRIVE</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: IMMOBILIZE</p>
     <p class="param"><a href="game_params.html#blocks">Blocks</a>: Yes</p>
     <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
   </div>

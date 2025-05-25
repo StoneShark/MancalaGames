@@ -813,11 +813,7 @@ class MancalaUI(tk.Frame):
         """Return True if the stores should be updated with a
         seed count, False otherwise."""
 
-        return (self.stores
-                and not self.info.goal in (gi.Goal.DEPRIVE,
-                                           gi.Goal.CLEAR,
-                                           gi.Goal.RND_WIN_COUNT_DEP,
-                                           gi.Goal.RND_WIN_COUNT_CLR))
+        return self.stores and not self.info.goal.eliminate()
 
 
     def refresh(self, *, ani_ok=False):

@@ -195,28 +195,21 @@ def add_pattern_rules(rules):
         # makes code the simpler (uncondition move type)
 
 
-def add_elim_seeds_goal_rules(rules):
+def add_eliminate_goal_rules(rules):
     """Add rules for the game eliminating our own or opponents seeds."""
 
-    def _dep_clr_and(flag_name):
+    def _elimnate_and(flag_name):
         """Return a function that tests that goal is divert
         and the specified flag, based only on a ginfo parameter."""
 
-        def _dep_clr_and(ginfo):
-            return (ginfo.goal in (gi.Goal.DEPRIVE,
-                                   gi.Goal.CLEAR,
-                                   gi.Goal.RND_WIN_COUNT_CLR,
-                                   gi.Goal.RND_WIN_COUNT_DEP)
-                    and getattr(ginfo, flag_name))
+        def _elimnate_and(ginfo):
+            return (ginfo.goal.eliminate() and getattr(ginfo, flag_name))
 
-        return _dep_clr_and
+        return _elimnate_and
 
     rules.add_rule(
         'elseed_gs_legal',
-        rule=lambda ginfo: (ginfo.goal in (gi.Goal.DEPRIVE,
-                                           gi.Goal.CLEAR,
-                                           gi.Goal.RND_WIN_COUNT_CLR,
-                                           gi.Goal.RND_WIN_COUNT_DEP)
+        rule=lambda ginfo: (ginfo.goal.eliminate()
                             and ginfo.grandslam != gi.GrandSlam.LEGAL),
         msg='CLEAR & DEPRIVE games require that GRANDSLAM be Legal',
         excp=gi.GameInfoError)
@@ -226,42 +219,38 @@ def add_elim_seeds_goal_rules(rules):
     for flag in bad_flags:
         rules.add_rule(
             f'elseed_bad_{flag}',
-            rule=_dep_clr_and(flag),
+            rule=_elimnate_and(flag),
             msg=f'CLEAR & DEPRIVE games cannot be used with {flag.upper()}',
             excp=gi.GameInfoError)
 
     rules.add_rule(
         'elseed_no_rounds',
-        rule=lambda ginfo: (ginfo.goal in (gi.Goal.CLEAR, gi.Goal.DEPRIVE)
+        rule=lambda ginfo: (ginfo.goal in (gi.Goal.CLEAR,
+                                           gi.Goal.DEPRIVE,
+                                           gi.Goal.IMMOBILIZE)
                             and ginfo.rounds),
-        msg="""Goals CLEAR and DEPRIVE cannot be played in rounds.
+        msg="""Goals CLEAR, DEPRIVE and IMMOBILIZE cannot be played in rounds.
             Consider the Round Tally goals""",
             excp=gi.GameInfoError)
 
     rules.add_rule(
         'elseed_no_moves',
         rule=lambda ginfo: (ginfo.goal in (gi.Goal.RND_WIN_COUNT_CLR,
-                                           gi.Goal.RND_WIN_COUNT_DEP)
+                                           gi.Goal.RND_WIN_COUNT_DEP,
+                                           gi.Goal.RND_WIN_COUNT_IMB)
                             and ginfo.rounds != gi.Rounds.NO_MOVES),
-        msg="""Goals RND_WIN_COUNT_CLR and RND_WIN_COUNT_DEP
+        msg="""Round tally games for CLEAR, DEPRIVE and IMMOBILIZE
             require ROUNDS to be NO_MOVES""",
             excp=gi.GameInfoError)
 
     rules.add_rule(
-        'deprive_mmgr1_rturn',
-        rule=lambda ginfo: (ginfo.goal in (gi.Goal.DEPRIVE,
-                                           gi.Goal.RND_WIN_COUNT_DEP)
-                            and ginfo.min_move > 1
-                            and (ginfo.capt_rturn
-                                 or ginfo.sow_own_store
-                                 or ginfo.xc_sown)),
-        msg='DEPRIVE games with min_move > 1 cannot use repeat turn',
+        'immob_no_rturn',
+        rule=lambda ginfo: (ginfo.goal in (gi.Goal.IMMOBILIZE,
+                                           gi.Goal.RND_WIN_COUNT_IMB)
+                            and ginfo.repeat_turn),
+        msg='Immobilize cannot use repeat turn',
         excp=gi.GameInfoError)
-        # min_move > 1 for DEPRIVE => last mover wins
-        # but what if there is a repeat turn?
-        #    F moves, giving away all seeds,
-        #    they were the last mover (F win?), but can't move again (T win?)
-        # who should win?  just don't allow it
+        # repeat turn in immobilize game -- could immobilize self
 
     rules.add_rule(
         'clear_no_min_move',
@@ -276,10 +265,7 @@ def add_elim_seeds_goal_rules(rules):
         'clear_no_prevent',
         rule=lambda ginfo: (
             ginfo.goal in (gi.Goal.CLEAR, gi.Goal.RND_WIN_COUNT_CLR)
-            and ginfo.allow_rule in (gi.AllowRule.SINGLE_TO_ZERO,
-                                     gi.AllowRule.SINGLE_ALL_TO_ZERO,
-                                     gi.AllowRule.NOT_XFROM_1S,
-                                     gi.AllowRule.OCCUPIED)),
+            and ginfo.allow_rule.no_moves()),
         msg="""CLEAR games prohibit the selected allow rule.
             If a player has seeds, they must be able to play""",
         excp=gi.GameInfoError)
@@ -390,10 +376,7 @@ def add_territory_rules(rules):
 def add_block_and_divert_rules(rules):
     """sow_blkd_div is implemented primarily by the sower and the
     capturer is not used (capt mechanisms not supported). Add rules
-    to ensure the right corresponding flags are used (or not used).
-
-    This concept was originally part of Deka which was a DEPRIVE
-    goal, not requiring that here."""
+    to ensure the right corresponding flags are used (or not used)."""
 
     def divert_and(flag_name):
         """Return a function that the divert option and the specified
@@ -427,11 +410,13 @@ def add_block_and_divert_rules(rules):
         excp=gi.GameInfoError)
 
     rules.add_rule(
-        'bdiv_req_dep_goal',
+        'bdiv_req_goal',
         rule=lambda ginfo: (sow_blkd_div(ginfo)
                             and ginfo.goal not in (gi.Goal.DEPRIVE,
-                                                   gi.Goal.RND_WIN_COUNT_DEP)),
-        msg='SOW_BLKD_DIV(_NR) requires a DEPRIVE goal',
+                                                   gi.Goal.IMMOBILIZE,
+                                                   gi.Goal.RND_WIN_COUNT_DEP,
+                                                   gi.Goal.RND_WIN_COUNT_IMB)),
+        msg='SOW_BLKD_DIV(_NR) requires a DEPRIVE or IMMOBILIZE goal',
         excp=gi.GameInfoError)
 
     capt_flags = ['capsamedir', 'capt_max', 'capt_min', 'capt_type',
@@ -801,7 +786,7 @@ def build_rules():
 
     add_creation_rules(man_rules)
     add_pattern_rules(man_rules)
-    add_elim_seeds_goal_rules(man_rules)
+    add_eliminate_goal_rules(man_rules)
     add_territory_rules(man_rules)
     add_block_and_divert_rules(man_rules)
     add_child_rules(man_rules)

@@ -81,7 +81,7 @@ class TestGameState:
         game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
-                                goal=3,
+                                goal=gi.Goal.CLEAR,
                                 capt_side=gi.CaptSide.OWN_SIDE,
                                 nbr_holes=game_consts.holes,
                                 rules=bear_off.BearOff.rules)

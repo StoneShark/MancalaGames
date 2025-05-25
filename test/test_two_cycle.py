@@ -43,7 +43,7 @@ class TestNorthSouthIncr:
         game_consts = gconsts.GameConsts(nbr_start=2, holes=5)
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
-                                goal=3,
+                                goal=gi.Goal.CLEAR,
                                 skip_start=True,
                                 capt_side=gi.CaptSide.OWN_SIDE,
                                 nbr_holes=game_consts.holes,
@@ -98,7 +98,7 @@ class TestSowStore:
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
                                 sow_own_store=True,
-                                goal=3,
+                                goal=gi.Goal.CLEAR,
                                 capt_side=gi.CaptSide.OWN_SIDE,
                                 udir_holes=[0, 1, 2],
                                 nbr_holes=game_consts.holes,
@@ -176,7 +176,7 @@ class TestEastWestIncr:
         game_consts = gconsts.GameConsts(nbr_start=2, holes=6)
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
-                                goal=3,
+                                goal=gi.Goal.CLEAR,
                                 skip_start=True,
                                 capt_side=gi.CaptSide.BOTH,
                                 nbr_holes=game_consts.holes,

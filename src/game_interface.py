@@ -50,6 +50,14 @@ class AllowRule(enum.IntEnum):
     NOT_XFROM_1S = 10
     OCCUPIED = 11
 
+    def no_moves(self):
+        """Return True if the allow rule could prevent all moves
+        even when a player has seeds."""
+
+        return self in {AllowRule.SINGLE_TO_ZERO,
+                        AllowRule.SINGLE_ALL_TO_ZERO,
+                        AllowRule.NOT_XFROM_1S,
+                        AllowRule.OCCUPIED}
 
 @enum.unique
 class CaptExtraPick(enum.IntEnum):
@@ -197,7 +205,18 @@ class Goal(enum.IntEnum):
     RND_POINTS = 7
     RND_WIN_COUNT_CLR = 8
     RND_WIN_COUNT_DEP = 9
+    IMMOBILIZE = 10
+    RND_WIN_COUNT_IMB = 11
 
+    def eliminate(self):
+        """Return True if goal involves eliminating seeds or moves."""
+
+        return self in {Goal.DEPRIVE,
+                        Goal.CLEAR,
+                        Goal.IMMOBILIZE,
+                        Goal.RND_WIN_COUNT_CLR,
+                        Goal.RND_WIN_COUNT_DEP,
+                        Goal.RND_WIN_COUNT_IMB}
 
 @enum.unique
 class GrandSlam(enum.IntEnum):
@@ -456,6 +475,15 @@ class GameInfo:
 
                 return field.default
         return None
+
+
+    @property
+    def repeat_turn(self):
+        """Return True if the game options allow repeat turns."""
+
+        return (self.capt_rturn
+                or self.sow_own_store
+                or self.xc_sown)
 
 
 @dc.dataclass(kw_only=True)

@@ -710,12 +710,16 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             case [gi.WinCond.WIN, gi.Goal.TERRITORY, _]:
                 reason = " by claiming more holes."
 
+            case [gi.WinCond.WIN, gi.Goal.CLEAR, _]:
+                reason = " by clearing all their seeds."
+
             case [gi.WinCond.WIN, gi.Goal.DEPRIVE, _]:
                 loser = gi.PLAYER_NAMES[int(not self.mdata.winner)]
                 reason = f" by eliminating {loser}'s seeds."
 
-            case [gi.WinCond.WIN, gi.Goal.CLEAR, _]:
-                reason = " by clearing all their seeds."
+            case [gi.WinCond.WIN, gi.Goal.IMMOBILIZE, _]:
+                loser = gi.PLAYER_NAMES[int(not self.mdata.winner)]
+                reason = f" by immobilizing {loser}."
 
             case [gi.WinCond.WIN, gi.Goal.RND_SEED_COUNT, True]:
                 reason = " by collecting more seeds."
@@ -741,7 +745,8 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
             case ([gi.WinCond.WIN, gi.Goal.RND_WIN_COUNT_MAX, False] |
                   [gi.WinCond.WIN, gi.Goal.RND_WIN_COUNT_CLR, False] |
-                  [gi.WinCond.WIN, gi.Goal.RND_WIN_COUNT_DEP, False]):
+                  [gi.WinCond.WIN, gi.Goal.RND_WIN_COUNT_DEP, False] |
+                  [gi.WinCond.WIN, gi.Goal.RND_WIN_COUNT_IMB, False]):
                 reason = f" by winning {win_param} rounds."
 
         return reason
@@ -770,10 +775,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             message += ' won ' + rtext + self.win_reason_str(win_cond)
 
         elif win_cond in (gi.WinCond.TIE, gi.WinCond.ROUND_TIE):
-            if self.info.goal in (gi.Goal.DEPRIVE,
-                                  gi.Goal.CLEAR,
-                                  gi.Goal.RND_WIN_COUNT_DEP,
-                                  gi.Goal.RND_WIN_COUNT_CLR):
+            if self.info.goal.eliminate():
                 message += 'Both players ended with seeds; consider it a tie.'
             elif self.info.goal == gi.Goal.TERRITORY:
                 message += 'Each player controls half the holes (a tie).'

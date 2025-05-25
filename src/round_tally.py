@@ -20,11 +20,13 @@ class RoundTally:
              gi.Goal.RND_EXTRA_SEEDS,
              gi.Goal.RND_POINTS,
              gi.Goal.RND_WIN_COUNT_CLR,
-             gi.Goal.RND_WIN_COUNT_DEP}
+             gi.Goal.RND_WIN_COUNT_DEP,
+             gi.Goal.RND_WIN_COUNT_IMB}
 
     PSTR = {gi.Goal.RND_WIN_COUNT_MAX: "Round Wins",
             gi.Goal.RND_WIN_COUNT_CLR: "Round Wins",
             gi.Goal.RND_WIN_COUNT_DEP: "Round Wins",
+            gi.Goal.RND_WIN_COUNT_IMB: "Round Wins",
             gi.Goal.RND_SEED_COUNT: "Total Seeds",
             gi.Goal.RND_EXTRA_SEEDS: "Extra Seeds",
             gi.Goal.RND_POINTS: "Round Points"}
@@ -45,7 +47,8 @@ class RoundTally:
 
         if goal in (gi.Goal.RND_WIN_COUNT_MAX,
                     gi.Goal.RND_WIN_COUNT_CLR,
-                    gi.Goal.RND_WIN_COUNT_DEP):
+                    gi.Goal.RND_WIN_COUNT_DEP,
+                    gi.Goal.RND_WIN_COUNT_IMB):
             self.parameter = lambda player: self.round_wins[player]
 
         elif goal == gi.Goal.RND_SEED_COUNT:

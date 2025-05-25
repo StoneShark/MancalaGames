@@ -66,6 +66,8 @@ GOALS = {'Max Seeds': lambda goal: goal == gi.Goal.MAX_SEEDS,
                                             gi.Goal.RND_WIN_COUNT_CLR),
          'Deprive Opponent': lambda goal: goal in (gi.Goal.DEPRIVE,
                                                    gi.Goal.RND_WIN_COUNT_DEP),
+         'Immoblize Opp': lambda goal: goal in (gi.Goal.IMMOBILIZE,
+                                                   gi.Goal.RND_WIN_COUNT_IMB),
          'Territory': lambda goal: goal == gi.Goal.TERRITORY,
         }
 

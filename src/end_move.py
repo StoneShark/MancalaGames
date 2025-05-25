@@ -29,30 +29,29 @@ import round_tally
 
 # %% build decorator chains
 
-def _build_deprive_ender(game):
-    """Create a deprive game ender."""
 
-    if game.info.min_move == 1:
-        # player wo seeds loses, game ends when either player has 0 seeds
+def _build_eliminate_ended(game):
+    """Build the ender for eliminate games."""
+
+    if game.info.goal in (gi.Goal.CLEAR,
+                          gi.Goal.RND_WIN_COUNT_CLR):
+        ender = emd.ClearSeedsEndGame(game)
+
+    elif game.info.goal in (gi.Goal.DEPRIVE,
+                            gi.Goal.RND_WIN_COUNT_DEP):
         ender = emd.EndTurnNoMoves(game)
-        ender = emd.DepriveNoSeedsEndGame(game, ender)
+        ender = emd.DepriveEndGame(game, ender)
+
+    elif game.info.goal in (gi.Goal.IMMOBILIZE,
+                            gi.Goal.RND_WIN_COUNT_IMB):
+        ender = emd.ImmobilizeEndGame(game)
+
     else:
-        # last mover wins
-        ender = emd.DepriveLastMoveEndGame(game)
+        raise ValueError("Unknown eliminate goal")
 
-    if game.info.goal == gi.Goal.RND_WIN_COUNT_DEP:
-        sclaimer = claimer.ClaimSeeds(game)
-        ender = _add_round_ender(game, ender, sclaimer)
-
-    return ender
-
-
-def _build_clear_ender(game):
-    """Create a clear game ender."""
-
-    ender = emd.ClearSeedsEndGame(game)
-
-    if game.info.goal == gi.Goal.RND_WIN_COUNT_CLR:
+    if game.info.goal in (gi.Goal.RND_WIN_COUNT_CLR,
+                          gi.Goal.RND_WIN_COUNT_DEP,
+                          gi.Goal.RND_WIN_COUNT_IMB):
         sclaimer = claimer.ClaimSeeds(game)
         ender = _add_round_ender(game, ender, sclaimer)
 
@@ -168,8 +167,7 @@ def _add_round_ender(game, ender, sclaimer):
 
 
 def _build_ender(game):
-    """Build the ender for non clear and deprive
-    games."""
+    """Build the ender for non eliminate games."""
 
     ender = _add_end_game_winner(game)
 
@@ -202,13 +200,8 @@ def _build_ender(game):
 def deco_end_move(game):
     """Return a chain of move enders."""
 
-    if game.info.goal in (gi.Goal.DEPRIVE,
-                          gi.Goal.RND_WIN_COUNT_DEP):
-        ender = _build_deprive_ender(game)
-
-    elif game.info.goal in (gi.Goal.CLEAR,
-                            gi.Goal.RND_WIN_COUNT_CLR):
-        ender = _build_clear_ender(game)
+    if game.info.goal.eliminate():
+        ender = _build_eliminate_ended(game)
 
     else:
         ender = _build_ender(game)
@@ -230,10 +223,7 @@ def deco_quitter(game):
     sclaimer = None
     quitter = None
 
-    if game.info.goal in (gi.Goal.CLEAR,
-                          gi.Goal.DEPRIVE,
-                          gi.Goal.RND_WIN_COUNT_DEP,
-                          gi.Goal.RND_WIN_COUNT_CLR):
+    if game.info.goal.eliminate():
         quitter = emd.QuitToTie(game)
 
     elif game.info.quitter == gi.EndGameSeeds.HOLE_OWNER:

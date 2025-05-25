@@ -79,8 +79,8 @@ CONFIG_CASES = {
     'Cow': Config(5*5),   # NOC dupl EGNP
     'Dabuda': Config(10*4, 2),
     'Dakon': Config(70, 0, 7*4),
-    'Deka': Config(-1),   # DEPRIVE games no win_seeds, rounds or NoOutcomeChange
-    'Depouiller': Config(-1),   # DEPRIVE
+    'Deka': Config(-1),   # IMMOBILIZE no win_seeds, rounds or NoOutcomeChange
+    'Depouiller': Config(-1),   # DEPRIVE no win_seeds
 
     'Diffusion': Config(-1),  # Diffusion class
     'DiffusionV2': Config(-1),  # DiffusionV2 class
@@ -560,7 +560,7 @@ END_CASES = {
 
         ],   # end Dakon
 
-    'Deka': [    # deprive game
+    'Deka': [    # immobilize game
         #                  1  2  3  4  5  6\/6  5  4  3  2  1
         # 0: start game
         [make_state(board=(2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2),
@@ -568,11 +568,11 @@ END_CASES = {
                     blocked=(F, F, F, F, F, F, F, F, F, F, F, F)), # not used in ender
          None, None],
 
-        # 1: False gave away their seeds, but it will be True's turn
+        # 1: False gave away their seeds, but it will be True's turn, they have moves
         [make_state(board=(0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 0),
                     store=(17, 0),   # seeds out of play
                     turn=False),
-         gi.WinCond.WIN, True],
+         None, None],
 
         # 2: False has no seeds, True captured them
         [make_state(board=(0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 0),

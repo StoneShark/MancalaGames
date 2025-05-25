@@ -79,7 +79,7 @@ def make_game(game_opt):
     game_consts = gconsts.GameConsts(nbr_start=START, holes=HOLES)
     game_info = gi.GameInfo(stores=True,
                             evens=True,
-                            goal=game_opt.goal,
+                            goal=gi.Goal(game_opt.goal),
                             goal_param=game_opt.goal_param,
                             sow_direct=game_opt.sow_dir,
                             no_sides=game_opt.no_sides,
@@ -208,7 +208,7 @@ GAME_OPTS = {
                           udir_holes=ALL_HOLES),
 
     'terr':  GameOpts(sow_dir=gi.Direct.SPLIT,
-                      goal=2,
+                      goal=gi.Goal.TERRITORY,
                       goal_param=8,
                       udir_holes=ALL_HOLES),
 }

@@ -144,14 +144,11 @@ class SetupHold(bhv_hold.Hold):
     def add_collect_button(self, game_ui, tframe, rcnt, ccnt):
         """Choose and build a collection option to move seeds
         together for easier setup:
-            - off board out-of-play for clear and deprive games
+            - off board out-of-play for eliminate games
             - clear to stores for other games with visible stores
             - move to leftmost for other games"""
 
-        if game_ui.game.info.goal in (gi.Goal.CLEAR,
-                                      gi.Goal.DEPRIVE,
-                                      gi.Goal.RND_WIN_COUNT_CLR,
-                                      gi.Goal.RND_WIN_COUNT_DEP):
+        if game_ui.game.info.goal.eliminate():
 
             tk.Button(tframe, text="Clear Board",
                       command=self.clear_board).grid(
@@ -394,8 +391,7 @@ class SetupHold(bhv_hold.Hold):
         store = game.store
         ui_stores = self.game_ui.stores
 
-        if (ui_stores and
-                game.info.goal not in (gi.Goal.CLEAR, gi.Goal.DEPRIVE)):
+        if ui_stores and not game.info.goal.eliminate():
 
             # stores are in game_ui.stores by row
             ui_stores[0].set_store(store[1], None)
@@ -667,12 +663,10 @@ class SetupStoreBehavior(bhv.StoreBehaviorIf):
 
 
     def do_left_click(self):
-        """Drop all picked up seeds, but not for clear
-        or deprive games."""
+        """Drop all picked up seeds, but not for eliminate games."""
 
         game = self.str.game_ui.game
-        if (not SETUPHOLD.nbr
-                or game.info.goal in (gi.Goal.CLEAR, gi.Goal.DEPRIVE)):
+        if not SETUPHOLD.nbr or game.info.goal.eliminate():
             self.str.bell()
             return
 
@@ -691,8 +685,7 @@ class SetupStoreBehavior(bhv.StoreBehaviorIf):
         game = self.str.game_ui.game
 
         # no seeds to pick up
-        if (not game.store[self.str.owner]
-                or game.info.goal in (gi.Goal.CLEAR, gi.Goal.DEPRIVE)):
+        if not game.store[self.str.owner] or game.info.goal.eliminate():
             self.str.bell()
             return
 

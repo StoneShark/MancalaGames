@@ -37,6 +37,12 @@ TEST_COVERS = ['src\\cfg_keys.py',
 
 class TestEnumsClasses:
 
+    def test_allow(self):
+
+        assert gi.AllowRule.OCCUPIED.no_moves()
+        assert not gi.AllowRule.TWO_ONLY_ALL.no_moves()
+
+
     def test_direct_op(self):
 
         # these integer values are required
@@ -52,6 +58,12 @@ class TestEnumsClasses:
 
         with pytest.raises(gi.GameInfoError):
             Direct.PLAYALTDIR.opp_dir()
+
+
+    def test_goal(self):
+
+        assert Goal.DEPRIVE.eliminate()
+        assert not Goal.TERRITORY.eliminate()
 
 
     def test_win(self):
@@ -189,8 +201,21 @@ class TestConstruction:
         assert ginfo.mlength == 3
         assert ginfo.udirect
         assert len(ginfo.udir_holes) == 6
+        assert not ginfo.repeat_turn
 
+        ginfo = gi.GameInfo(capt_on=[2],
+                            capt_rturn=True,
+                            nbr_holes=6,
+                            stores=True,
+                            rules=rules)
+        assert ginfo.repeat_turn
 
+        ginfo = gi.GameInfo(capt_on=[2],
+                            sow_own_store=True,
+                            nbr_holes=6,
+                            stores=True,
+                            rules=rules)
+        assert ginfo.repeat_turn
 
 
 class TestRuleDict:

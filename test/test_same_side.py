@@ -74,7 +74,7 @@ class TestGameState:
         game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
-                                goal=3,
+                                goal=gi.Goal.CLEAR,
                                 capt_side=gi.CaptSide.OWN_SIDE,
                                 nbr_holes=game_consts.holes,
                                 rules=same_side.SameSide.rules)
@@ -134,7 +134,7 @@ class TestSameSide:
         game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
         game_info = gi.GameInfo(capt_on=[3],
                                 stores=True,
-                                goal=3,
+                                goal=gi.Goal.CLEAR,
                                 no_sides=True,
                                 capt_side=gi.CaptSide.OWN_SIDE,
                                 nbr_holes=game_consts.holes,
@@ -307,7 +307,7 @@ class TestOhojichi:
         game_info = gi.GameInfo(capt_on=[2],
                                 multicapt=-1,
                                 stores=True,
-                                goal=3,
+                                goal=gi.Goal.CLEAR,
                                 skip_start=True,
                                 capt_side=gi.CaptSide.BOTH,
                                 nbr_holes=game_consts.holes,

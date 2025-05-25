@@ -181,6 +181,8 @@ STRING_DICTS = {
          'Win Rounds (max seeds)': gi.Goal.RND_WIN_COUNT_MAX,
          'Win Rounds (clear)': gi.Goal.RND_WIN_COUNT_CLR,
          'Win Rounds (deprive)': gi.Goal.RND_WIN_COUNT_DEP,
+         'Immobilize Opponent': gi.Goal.IMMOBILIZE,
+         'Win Rounds (immobilize)': gi.Goal.RND_WIN_COUNT_IMB,
          }),
 
     'GrandSlam': lookup_dicts(

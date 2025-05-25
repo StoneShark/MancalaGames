@@ -887,7 +887,7 @@ class TestEndChildren:
         assert not game.test_pass()
 
 
-class TestEndDeprive:
+class TestEndDepImmob:
 
     @pytest.fixture
     def game(self):
@@ -918,7 +918,7 @@ class TestEndDeprive:
     @pytest.fixture
     def mm2game(self):
         game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
-        game_info = gi.GameInfo(goal=Goal.DEPRIVE,
+        game_info = gi.GameInfo(goal=Goal.IMMOBILIZE,
                                 capt_on=[4],
                                 min_move=2,
                                 nbr_holes=game_consts.holes,
@@ -1094,6 +1094,7 @@ class TestEndDeprive:
         assert not mdata.winner
         assert mdata.win_cond == gi.WinCond.TIE
 
+
 class TestEndClear:
 
     @pytest.fixture
@@ -1200,6 +1201,22 @@ class TestEndClear:
         assert mdata.ended
         assert not mdata.winner
         assert mdata.win_cond == gi.WinCond.TIE
+
+
+    def test_bad_eliminate(self):
+        """Force a bad enum value after creating a good game."""
+
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(goal=Goal.CLEAR,
+                                capt_on=[4],
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        object.__setattr__(game.info, 'goal', 55)
+
+        with pytest.raises(ValueError):
+            end_move._build_eliminate_ended(game)
 
 
 class TestEndWaldas:

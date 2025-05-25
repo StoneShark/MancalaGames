@@ -129,7 +129,7 @@ class TestAllowables:
 
         game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[2],
-                                goal=2,
+                                goal=Goal.TERRITORY,
                                 goal_param=6,
                                 stores=True,
                                 min_move=min_move,
@@ -812,7 +812,7 @@ class TestMoveAllFirst:
         game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
-                                goal=gi.Goal.TERRITORY,
+                                goal=Goal.TERRITORY,
                                 goal_param=6,
                                 rounds=gi.Rounds.NO_MOVES,
                                 allow_rule=AllowRule.MOVE_ALL_HOLES_FIRST,
@@ -1079,28 +1079,28 @@ class TestMustShareUDir:
 
         [utils.make_state(board=(4, 4, 4, 4, 4, 4)),
          {'udir_holes': [1],
-          'goal': gi.Goal.TERRITORY,
+          'goal': Goal.TERRITORY,
           'goal_param': 5,
           'sow_direct': gi.Direct.SPLIT},
          [T, T, T, F, F, F]],
 
         [utils.make_state(board=(2, 4, 4, 0, 0, 0)),  # 0 not udir & no share
          {'udir_holes': [1],
-          'goal': gi.Goal.TERRITORY,
+          'goal': Goal.TERRITORY,
           'goal_param': 5,
           'sow_direct': gi.Direct.CCW},
          [F, T, T, F, F, F]],
 
         [utils.make_state(board=(0, 1, 1, 0, 0, 0)),  # swap 2 from T to F, T
          {'udir_holes': [0, 1, 2],
-          'goal': gi.Goal.TERRITORY,
+          'goal': Goal.TERRITORY,
           'goal_param': 5,
           'sow_direct': gi.Direct.SPLIT},
          [F, F, [F, T], F, F, F]],
 
         [utils.make_state(board=(0, 2, 1, 0, 0, 0)),  # leave center True
          {'udir_holes': [1],
-          'goal': gi.Goal.TERRITORY,
+          'goal': Goal.TERRITORY,
           'goal_param': 5,
           'sow_direct': gi.Direct.SPLIT},
          [F, T, T, F, F, F]],
