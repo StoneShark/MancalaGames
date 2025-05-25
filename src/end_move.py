@@ -29,15 +29,16 @@ import round_tally
 
 # %% build decorator chains
 
-
 def _build_deprive_ender(game):
     """Create a deprive game ender."""
 
-    ender = emd.EndTurnNoMoves(game)
-    ender = emd.DepriveNoSeedsEndGame(game, ender)
-
-    if game.info.min_move > 1:
-        ender = emd.DepriveLastMoveEndGame(game, ender)
+    if game.info.min_move == 1:
+        # player wo seeds loses, game ends when either player has 0 seeds
+        ender = emd.EndTurnNoMoves(game)
+        ender = emd.DepriveNoSeedsEndGame(game, ender)
+    else:
+        # last mover wins
+        ender = emd.DepriveLastMoveEndGame(game)
 
     if game.info.goal == gi.Goal.RND_WIN_COUNT_DEP:
         sclaimer = claimer.ClaimSeeds(game)

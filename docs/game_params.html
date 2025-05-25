@@ -158,8 +158,8 @@ is included after the parameter sections.
 <p class="helptext"> In MAX_SEEDS/ROUNDS games the player only controls the holes on their side of the board, while, in TERRITORY games a player may control holes on either side of the board.
 <li class="helptext">
 <b class="enum">DEPRIVE</b>: eliminate all your opponent's seeds or if the minimum move is greater than one prevent your opponent from moving.
-<p class="helptext"> <a href="game_params.html#min_move">MIN_MOVE</a> equal to 1: If a player has no seeds at the start of their turn, they lose. If the current player doesn't have any seeds at the end of their turn, they loose.
-<p class="helptext"> <a href="game_params.html#min_move">MIN_MOVE</a> greater than 1: If your opponent has no valid moves, you win. That is, the last player to move wins. Repeat turn either via sow_own_store or capt_rturn, is prohibited.
+<p class="helptext"> <a href="game_params.html#min_move">MIN_MOVE</a> equal to 1: If a player has no seeds at the start of their turn, they lose. If the current player doesn't have any seeds at the end of their turn, they lose.
+<p class="helptext"> <nolink>MIN_MOVE greater than 1: If your opponent has no valid moves, you win. That is, the last player to move wins. Repeat turns are prohibited.
 <p class="helptext"> <a href="game_params.html#grandslam">GRANDSLAM</a> must be legal for deprive games.
 <p class="helptext"> Deprive games can be played in tallied rounds--no other support for rounds is provided. Use a goal of RND_WIN_COUNT_DEP. <a href="game_params.html#rounds">ROUNDS</a> must be NO_MOVES, <a href="game_params.html#round_fill">ROUND_FILL</a> is ignored, and goal_param should be set to the number of round wins required for a game win. For example, a "best of 7 games" would have goal_param of 4.
 <p class="helptext"> Deprive games cannot use children and the following options are prohibited: <a href="game_params.html#moveunlock">MOVEUNLOCK</a>, <a href="game_params.html#mustpass">MUSTPASS</a> and <a href="game_params.html#mustshare">MUSTSHARE</a>. 

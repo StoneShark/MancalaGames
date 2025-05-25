@@ -945,28 +945,26 @@ class TestEndDeprive:
         #     game rturn: F has no seeds for repeat turn, T wins
         (False, utils.build_board([0, 3, 0],
                                   [0, 0, 0]),
-         (WinCond.WIN, True), (WinCond.WIN, True), (WinCond.WIN, True)),
+         (WinCond.WIN, True), (None, None), (WinCond.WIN, True)),
 
         # 3: True gave away all seeds
         #     game: T loses no seeds, mm2: F has a move
         (True, utils.build_board([0, 0, 0],
                                  [0, 3, 0]),
-         (WinCond.WIN, False), (WinCond.WIN, False), (WinCond.WIN, False)),
+         (WinCond.WIN, False), (None, None), (WinCond.WIN, False)),
 
         # 4: False gave away all seeds
         #   game: F has no seeds, mm2: T can't move; F was the last mover
         #   game rturn: F has no seeds for repeat turn, T wins
         (False, utils.build_board([0, 1, 0],
                                   [0, 0, 0]),
-         (WinCond.WIN, True), (WinCond.WIN, False),
-         (WinCond.WIN, True)),
+         (WinCond.WIN, True), (WinCond.WIN, False), (WinCond.WIN, True)),
 
         # 5: True gave away all seeds
         #   game: T has no seeds, mm2: F can't move; T was the last mover
         (True, utils.build_board([0, 0, 0],
                                  [0, 1, 0]),
-         (WinCond.WIN, False), (WinCond.WIN, True),
-         (WinCond.WIN, False)),
+         (WinCond.WIN, False), (WinCond.WIN, True), (WinCond.WIN, False)),
 
         # 6: game continues
         (True, utils.build_board([0, 3, 0],
@@ -991,11 +989,26 @@ class TestEndDeprive:
         #     game: opp immobilized  mm2: last mover (current player) wins
         (True, utils.build_board([0, 1, 0],
                                  [0, 1, 0]),
-         (WinCond.WIN, True), (WinCond.WIN, True),
-         (WinCond.WIN, False)),
+         (WinCond.WIN, True), (WinCond.WIN, True), (WinCond.WIN, False)),
+
+        # 10:
+        (False, utils.build_board([0, 1, 0],
+                                  [0, 2, 0]),
+         (None, None), (WinCond.WIN, False), (WinCond.WIN, True)),
+
+        # 11:
+        (False, utils.build_board([0, 2, 0],
+                                  [0, 1, 0]),
+         (WinCond.WIN, False), (None, None), (None, None)),
+
+        # 12:
+        (True, utils.build_board([0, 2, 0],
+                                 [1, 0, 0]),
+         (None, None), (WinCond.WIN, True), (None, None)),
+
         ]
 
-    @pytest.mark.usefixtures("logger")
+    # @pytest.mark.usefixtures("logger")
     @pytest.mark.parametrize('game_fixt, repeat_turn',
                              [('game', True),
                               ('game', False),
@@ -1019,13 +1032,15 @@ class TestEndDeprive:
 
         game.board = board
         game.turn = turn
-        print(game)
-        print("exp:", econd, ewinner)
+        # print(game)
+        # print("exp:", econd, ewinner)
 
         mdata = utils.make_ender_mdata(game, repeat_turn, False)
+        mdata.captured = True if turn else False
         game.deco.ender.game_ended(mdata)
 
-        print("res:", mdata.win_cond, mdata.winner)
+        # print("res:", mdata.win_cond, mdata.winner)
+        # print(mdata)
         assert mdata.win_cond == econd
         if ewinner is not None:
             assert mdata.winner == ewinner

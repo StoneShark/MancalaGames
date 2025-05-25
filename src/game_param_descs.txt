@@ -373,9 +373,9 @@ Goals that start with RND_ are 'round tally games'. Multiple games are played an
 
 - DEPRIVE: eliminate all your opponent's seeds or if the minimum move is greater than one prevent your opponent from moving.
 
-  + MIN_MOVE equal to 1: If a player has no seeds at the start of their turn, they lose. If the current player doesn't have any seeds at the end of their turn, they loose.
+  + MIN_MOVE equal to 1: If a player has no seeds at the start of their turn, they lose. If the current player doesn't have any seeds at the end of their turn, they lose.
   
-  + MIN_MOVE greater than 1: If your opponent has no valid moves, you win. That is, the last player to move wins. Repeat turn either via sow_own_store or capt_rturn, is prohibited.
+  + <nolink>MIN_MOVE greater than 1: If your opponent has no valid moves, you win. That is, the last player to move wins. Repeat turns are prohibited.
 
   + GRANDSLAM must be legal for deprive games.
   

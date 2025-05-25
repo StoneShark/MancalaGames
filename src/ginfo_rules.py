@@ -252,7 +252,9 @@ def add_elim_seeds_goal_rules(rules):
         rule=lambda ginfo: (ginfo.goal in (gi.Goal.DEPRIVE,
                                            gi.Goal.RND_WIN_COUNT_DEP)
                             and ginfo.min_move > 1
-                            and (ginfo.capt_rturn or ginfo.sow_own_store)),
+                            and (ginfo.capt_rturn
+                                 or ginfo.sow_own_store
+                                 or ginfo.xc_sown)),
         msg='DEPRIVE games with min_move > 1 cannot use repeat turn',
         excp=gi.GameInfoError)
         # min_move > 1 for DEPRIVE => last mover wins

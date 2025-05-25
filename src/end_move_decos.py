@@ -436,8 +436,8 @@ class DepriveNoSeedsEndGame(EndTurnIf):
             return
 
         test_range = self.game.cts.get_opp_range(self.game.turn)
-        no_seeds = not any(self.game.board[loc] for loc in test_range)
-        if no_seeds:
+        mdata.ended = not any(self.game.board[loc] for loc in test_range)
+        if mdata.ended:
             mdata.win_cond = gi.WinCond.WIN
             mdata.winner = self.game.turn
             mdata.end_msg = """_Winner_ won _thing_ by eliminating
@@ -446,8 +446,8 @@ class DepriveNoSeedsEndGame(EndTurnIf):
             return
 
         test_range = self.game.cts.get_my_range(self.game.turn)
-        no_seeds = not any(self.game.board[loc] for loc in test_range)
-        if no_seeds:
+        mdata.ended = not any(self.game.board[loc] for loc in test_range)
+        if mdata.ended:
             mdata.win_cond = gi.WinCond.WIN
             mdata.winner = not self.game.turn
             if mdata.captured:
@@ -474,17 +474,13 @@ class DepriveLastMoveEndGame(EndTurnIf):
     """Determine if a deprive game is over based on who moved last.
 
     Both player's had seeds at the start of the turn.
-    If ended on entry is True, end in a TIE.
+    If ended on entry is True, end in a TIE. This is only possible
+    when a user ends the game.
 
     If the opponent does not have a move, then the current player
     has won.
 
-    Otherwise call the deco chain to see if there's another reason
-    to end the game (e.g. no seeds).
-
-    Repeat turn is not supported (see rule deprive_mmgr1_rturn).
-    This is not to be used with children, because the presence
-    of children is not checked."""
+    Repeat turn is not supported (see rule deprive_mmgr1_rturn)."""
 
     def game_ended(self, mdata):
         """Check for end game."""
@@ -497,19 +493,13 @@ class DepriveLastMoveEndGame(EndTurnIf):
             mdata.ended = not any(self.game.get_allowable_holes())
 
         if mdata.ended:
-            game_log.add("No moves for next player; last mover won.",
-                         game_log.INFO)
 
             mdata.win_cond = gi.WinCond.WIN
             mdata.winner = self.game.turn
-            mdata.end_msg = "_Winner_ won _thing_ by immobilizing _loser_."
+            mdata.end_msg = """_Loser_ had no valid moves.
+                             \n\n_Winner_ won _thing_ by immobilizing _loser_."""
             mdata.fmsg = True
-            return
-
-        self.decorator.game_ended(mdata)
-        if mdata.ended:
-            # override winner to last mover
-            mdata.winner = mdata.player
+            game_log.add(fmt.fmsg(mdata.end_msg), game_log.INFO)
 
 
 class ClearSeedsEndGame(EndTurnIf):
