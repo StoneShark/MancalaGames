@@ -12,8 +12,8 @@ import same_side
 import two_cycle
 
 GAME_CLASSES = {'Mancala': mancala.Mancala,
-                'North/South Cycles': two_cycle.NorthSouthCycle,
-                'East/West Cycles': two_cycle.EastWestCycle,
+                'NorthSouthCycles': two_cycle.NorthSouthCycle,
+                'EastWestCycles': two_cycle.EastWestCycle,
                 'Diffusion': diffusion.Diffusion,
                 'DiffusionV2': diffusion.DiffusionV2,
                 'SameSide': same_side.SameSide,
