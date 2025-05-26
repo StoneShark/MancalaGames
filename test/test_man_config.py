@@ -814,8 +814,12 @@ class TestConfig:
         with open(path, 'w', encoding='utf-8') as file:
             print(f"""[default]
                   font_family = {family}
-                  size = {size}
-                  weight = {weight}
+                  font_size = {size}
+                  font_weight = {weight}
+
+                  ani_font_family = {family}
+                  ani_font_size = {size}
+                  ani_font_weight = {weight}
                   """, file=file)
 
         # man_path finds the file where we just put it
@@ -825,6 +829,7 @@ class TestConfig:
         config = man_config.ConfigData(tk_root)
 
         assert isinstance(config.get_font(), tk.font.Font)
+        assert isinstance(config.get_ani_font(), tk.font.Font)
 
 
     def test_colors(self, mocker, tmp_path, tk_root):

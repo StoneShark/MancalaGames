@@ -1686,6 +1686,48 @@ class TestAnimator:
         mobj.assert_called_once()
 
 
+    @pytest.mark.animator
+    # @pytest.mark.usefixtures("logger")
+    @pytest.mark.parametrize('gstype',
+                             [gi.GrandSlam.NO_CAPT,
+                              gi.GrandSlam.OPP_GETS_REMAIN,
+                              gi.GrandSlam.LEAVE_LEFT,
+                              gi.GrandSlam.LEAVE_RIGHT])
+    def test_grandslam(self, mocker, gstype):
+
+        assert animator.ENABLED
+        animator.make_animator(None)   # no game_ui, make sure it's not used
+        animator.set_active(True)
+
+        mocker.patch('animator.one_step')
+        mocker.patch('animator.animator.change')
+        mobj = mocker.patch('animator.animator.message')
+
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=3)
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+                                stores=True,
+                                capt_on=[1, 2],
+                                multicapt=-1,
+                                grandslam=gstype,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+        game.board = [3, 2, 3, 0, 0, 1]
+        game.store = [3, 6]
+        game.turn = False
+
+        # print(game.deco.capturer)
+
+        game.move(2)
+        # print(game)
+        # print(game.mdata)
+
+        if gstype == gi.GrandSlam.NO_CAPT:
+            assert not game.mdata.captured
+        else:
+            assert game.mdata.captured
+        mobj.assert_called_once()
+
+
     def test_no_animator(self, mocker):
 
         game_consts = gconsts.GameConsts(nbr_start=2, holes=3)

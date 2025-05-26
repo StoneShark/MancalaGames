@@ -160,6 +160,9 @@ class EndTurnIf(deco_chain_if.DecoChainIf):
             half, rem = divmod(self.game.cts.total_seeds, 2)
             win_seeds = half + rem
 
+        else:
+            raise gi.GameInfoError("Don't know how to compute seeds for win.")
+
         return win_seeds
 
 

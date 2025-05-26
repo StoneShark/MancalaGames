@@ -11,6 +11,7 @@ import dataclasses as dc
 import pytest
 pytestmark = pytest.mark.unittest
 
+from context import animator
 from context import game_constants as gconsts
 from context import game_interface as gi
 from context import mancala
@@ -331,3 +332,36 @@ class TestGameExtensions:
 
         assert game.board == eboard
         assert game.store == estore
+
+
+
+class TestAnimator:
+
+    @pytest.mark.animator
+    def test_animator(self, mocker):
+
+        assert animator.ENABLED
+        animator.make_animator(None)   # no game_ui, make sure it's not used
+        animator.set_active(True)
+
+        mocker.patch('animator.one_step')
+        mocker.patch('animator.animator.change')
+        mobj = mocker.patch('animator.animator.message')
+
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(capt_on=[3],
+                                stores=True,
+                                goal=gi.Goal.CLEAR,
+                                nbr_holes=game_consts.holes,
+                                rules=bear_off.BearOff.rules)
+
+        game = bear_off.BearOff(game_consts, game_info)
+
+        game.turn = False
+        game.board = [1, 0, 1, 0, 0, 1]
+        game.store[0] = game.cts.total_seeds - sum(game.board)
+        # print(game)
+
+        game.move(0)
+
+        mobj.assert_called_once()

@@ -533,7 +533,7 @@ class Animator:
         self._pending_after = False
 
         self.msg_mult = 6
-        self.font = tkfont.Font(font=("garamond", "22", "bold"))
+        self.font = None   # tkfont.Font(font=("garamond", "22", "bold"))
         self.bg_color = "#e0ffe0"
 
 

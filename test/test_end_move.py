@@ -5,6 +5,8 @@ Created on Fri Sep 15 03:57:49 2023
 
 # %% imports
 
+import enum
+
 import pytest
 pytestmark = pytest.mark.unittest
 
@@ -775,6 +777,28 @@ class TestEndMove:
         assert game.mdata.winner == ewin
         assert game.board == eboard
         assert game.store == estore
+
+
+    def test_bad_win_seeds(self):
+
+        class BadGoal(enum.IntEnum):
+
+            BAD = 25
+
+            def eliminate(self):
+                return False
+
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(capt_on=[4],
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+
+        object.__setattr__(game.info, 'goal', BadGoal.BAD)
+        with pytest.raises(gi.GameInfoError):
+            end_move._build_ender(game)
 
 
 class TestEndChildren:

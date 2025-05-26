@@ -9,6 +9,7 @@ pytestmark = pytest.mark.unittest
 
 import utils
 
+from context import animator
 from context import game_constants as gconsts
 from context import game_interface as gi
 from context import make_child
@@ -912,3 +913,69 @@ class TestBadEnums:
 
         with pytest.raises(NotImplementedError):
             mancala.Mancala(game_consts, game_info)
+
+
+
+class TestAnimator:
+
+    @pytest.mark.animator
+    # @pytest.mark.usefixtures("logger")
+    @pytest.mark.parametrize('loctype, board, child, emake',
+         [
+             # child not made due to bad location, message
+             (gi.ChildLocs.NOT_SYM_OPP, [3, 3, 1, 2, 3, 3], [T, N, N, N, N, N], False),
+             (gi.ChildLocs.NOT_FACING,  [3, 3, 3, 3, 3, 2], [T, N, N, N, N, N], False),
+             (gi.ChildLocs.NO_ENDS,     [3, 3, 3, 3, 3, 2], [N, N, N, N, N, N], False),
+
+             # child not made due to wrong count, no message
+             (gi.ChildLocs.NOT_SYM_OPP, [3, 3, 1, 1, 3, 3], [T, N, N, N, N, N], None),
+             (gi.ChildLocs.NOT_FACING,  [3, 3, 3, 3, 3, 1], [T, N, N, N, N, N], None),
+             (gi.ChildLocs.NO_ENDS,     [3, 3, 3, 3, 3, 1], [N, N, N, N, N, N], None),
+
+             # child made, no message
+             (gi.ChildLocs.NOT_SYM_OPP, [3, 3, 1, 2, 3, 3], [N, N, N, N, N, N], True),
+             (gi.ChildLocs.NOT_FACING,  [3, 3, 3, 3, 3, 2], [N, N, N, N, N, N], True),
+             (gi.ChildLocs.NO_ENDS,     [3, 3, 2, 3, 2, 2], [N, N, N, N, N, N], True),
+             ])
+    def test_grandslam(self, mocker, loctype, board, child, emake):
+
+        assert animator.ENABLED
+        animator.make_animator(None)   # no game_ui, make sure it's not used
+        animator.set_active(True)
+
+        mocker.patch('animator.one_step')
+        mocker.patch('animator.animator.change')
+        mobj = mocker.patch('animator.animator.message')
+
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=3)
+        game_info = gi.GameInfo(stores=True,
+                                evens=True,
+                                child_type=gi.ChildType.NORMAL,
+                                child_cvt=3,
+                                child_locs=loctype,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.board = board
+        game.child = child
+        game.store = [3*3*2 - sum(board), 0]
+        game.turn = False
+
+        # print(game.deco.make_child)
+
+        game.move(2)
+        # print(game)
+        # print(game.mdata)
+
+        if emake is True:
+            assert game.mdata.capt_changed
+            mobj.assert_not_called()
+
+        elif emake is None:
+            assert not game.mdata.capt_changed
+            mobj.assert_not_called()
+
+        else:
+            assert not game.mdata.capt_changed
+            mobj.assert_called_once()
