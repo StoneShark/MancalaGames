@@ -71,7 +71,6 @@ GOALS = {'Max Seeds': lambda goal: goal == gi.Goal.MAX_SEEDS,
          'Territory': lambda goal: goal == gi.Goal.TERRITORY,
         }
 
-
 CAPTS = {'Basic Capture': lambda ginfo: (any([ginfo.get(ckey.CAPT_MAX, 0),
                                               ginfo.get(ckey.CAPT_MIN, 0),
                                               ginfo.get(ckey.CAPT_ON, 0),
@@ -87,7 +86,6 @@ CAPTS = {'Basic Capture': lambda ginfo: (any([ginfo.get(ckey.CAPT_MAX, 0),
                                          ginfo.get(ckey.CROSSCAPT, 0),
                                          ginfo.get(ckey.CAPT_TYPE, 0)]),
          }
-
 
 SOWRS = {'None': lambda sow_rule: not sow_rule,
          'Sow Closed': lambda sow_rule: sow_rule in (
@@ -126,7 +124,6 @@ SOWDIR = {'CW': lambda ginfo: ginfo.get(ckey.SOW_DIRECT, 1) == -1,
           'Players Alt Dir': lambda ginfo: ginfo.get(ckey.SOW_DIRECT, 1) == 2,
           'Even Odd Dir': lambda ginfo: ginfo.get(ckey.SOW_DIRECT, 1) == 3,
           'User Chooses': lambda ginfo: len(ginfo.get(ckey.UDIR_HOLES, [])) >= 1}
-
 
 FEATS = {'No Sides': lambda ginfo: ginfo.get(ckey.NO_SIDES, 0),
          'Start Pattern': lambda ginfo: ginfo.get(ckey.START_PATTERN, 0),
@@ -314,8 +311,7 @@ class DictFilter(BaseFilter):
 class FeatureFilter(DictFilter):
     """Build a feature filter.
 
-    These do not break the game list into non-overlapping sets.
-    """
+    These do not break the game list into non-overlapping sets."""
 
     def build_filters(self, filt_obj, row, _):
         """Build the tristate checkbuttons for

@@ -23,6 +23,8 @@ Created on Sat Nov  2 15:39:39 2024
 @author: Ann"""
 
 import dataclasses as dc
+
+import animator
 import game_interface as gi
 import mancala
 import sower_decos
@@ -155,8 +157,10 @@ class BearOff(mancala.Mancala):
 
 
     def move(self, move):
-        """Change the base sower if conditions are right,
-        then call the parent to move."""
+        """Call the parent to move
+        then change the base sower if conditions are right ."""
+
+        result =  super().move(move)
 
         if (self.normal_sow
                 and not any(self.board[loc] > 1
@@ -165,4 +169,7 @@ class BearOff(mancala.Mancala):
             self.normal_sow = False
             game_log.add("Swapping to BearOff sower.", game_log.IMPORT)
 
-        return super().move(move)
+            if animator.active():
+                animator.animator.message("Swapping to BearOff Sower")
+
+        return result

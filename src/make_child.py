@@ -5,12 +5,21 @@ Used in
     - the sower to stop mlap sowing (for games using mlap)
     - the capturer to decide make children
 
+The ChildLoc deco's generate animation messages
+when they cannot create a child (conditions are not
+obvious when playing).
+
+Sower only animates when we do not stop lap sowing to make a
+child; therefore only one of the sower deco & capture deco
+will generate an animation event.
+
 Created on Sat Jun 29 14:21:46 2024
 @author: Ann"""
 
 import abc
 import deco_chain_if
 
+import animator
 import game_interface as gi
 from game_logger import game_log
 
@@ -209,6 +218,10 @@ class ChildLocOk(MakeChildIf):
         if bool(ok_players) and self.game.turn in ok_players:
             return self.decorator.test(mdata)
 
+        if animator.active():
+            if self.decorator.test(mdata):
+                animator.animator.message("Child Location Disallowed")
+
         # game_log.add(f"Bad child loc @ {test_loc}.", game_log.IMPORT)
         return False
 
@@ -229,6 +242,10 @@ class NotSymOpp(MakeChildIf):
         if self.game.child[symmetric] is None:
             return self.decorator.test(mdata)
 
+        if animator.active():
+            if self.decorator.test(mdata):
+                animator.animator.message("Symmetric Opposite Child")
+
         game_log.add(f"NotSymOpp prevented child in symmetric hole @ {loc}.",
                      game_log.IMPORT)
         return False
@@ -244,6 +261,10 @@ class NotFacing(MakeChildIf):
 
         if self.game.child[cross] is None:
             return self.decorator.test(mdata)
+
+        if animator.active():
+            if self.decorator.test(mdata):
+                animator.animator.message("Facing Child")
 
         game_log.add(f"NotFacing prevented child in facing hole @ {loc}.",
                      game_log.IMPORT)

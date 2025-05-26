@@ -33,6 +33,9 @@ import abc
 import collections
 import contextlib
 # import inspect      # used in debug code (might be commented out)
+import tkinter as tk
+import tkinter.font as tkfont
+
 
 import game_interface as gi
 import ui_utils
@@ -104,6 +107,24 @@ def set_delay(new_delay):
 
     if ENABLED and animator:
         animator.delay = new_delay
+
+
+def configure(*, font=None, msg_mult=None, bg_color=None):
+    """Configure the animator settings.
+    Can't import man_config directly here, so main class
+    must configure the animator."""
+
+    if not animator:
+        return
+
+    if font:
+        animator.font = font
+
+    if msg_mult:
+        animator.msg_mult = msg_mult
+
+    if bg_color:
+        animator.bg_color = bg_color
 
 
 def set_rollback():
@@ -405,14 +426,18 @@ class NewGameState(AniAction):
 
 
 class Message(AniAction):
-    """Generate a message in the animation sequence."""
+    """Generate a message in the animation sequence.
+    Two actions are needed: the do_it creates and popups
+    the message.  Later the close can be scheduled via a
+    ScheduleCallback to destroy the window."""
 
-    # XXXX these are not used or supported
-    # add support when they are used
-
-    def __init__(self, message):
+    def __init__(self, message, font, bg_color):
 
         self.message = message
+        self.font = font
+        self.bg_color = bg_color
+
+        self.tipwindow = None
 
 
     def __str__(self):
@@ -422,6 +447,30 @@ class Message(AniAction):
 
     def do_it(self, game_ui, ani_state):
         """Execute the action."""
+
+        self.tipwindow = tk.Toplevel(game_ui)
+        self.tipwindow.wm_overrideredirect(1)
+
+        xoffset = self.font.measure(self.message) // 2
+        yoffset = self.font.metrics('linespace') // 2
+
+        xpos = game_ui.winfo_rootx() + game_ui.winfo_width() // 2  - xoffset
+        ypos = game_ui.winfo_rooty() + game_ui.winfo_height() // 2 - yoffset
+        self.tipwindow.wm_geometry(f'+{xpos}+{ypos}')
+
+        label = tk.Label(self.tipwindow, text=self.message, justify=tk.CENTER,
+                         background=self.bg_color,
+                         font=self.font)
+        label.pack()
+
+
+    def close(self):
+        """Close the tip window."""
+
+        save_tip = self.tipwindow
+        self.tipwindow = None
+        if save_tip:
+            save_tip.destroy()
 
 
 
@@ -482,6 +531,10 @@ class Animator:
         self._ani_state = None
         self._rollback_pt = None
         self._pending_after = False
+
+        self.msg_mult = 6
+        self.font = tkfont.Font(font=("garamond", "22", "bold"))
+        self.bg_color = "#e0ffe0"
 
 
     def clear_queue(self):
@@ -561,11 +614,12 @@ class Animator:
 
 
     def message(self, message):
-        """Record a message in the animation sequence,
-        if active."""
+        """Record a message in the animation sequence, if active."""
 
         if self.active:
-            self.add(Message(message))
+            anie_msg = Message(message, self.font, self.bg_color)
+            self.add(anie_msg)
+            self.add(ScheduleCallback(anie_msg.close))
 
 
     def queue_callback(self, func):
@@ -602,6 +656,19 @@ class Animator:
         self._rollback_pt = None
 
 
+    def _adjust_delay(self, anie):
+        """Lengthen the delay after some animation classes."""
+
+        delay = self.delay
+        if isinstance(anie, NewGameState):
+            delay = int(delay * 1.5)
+
+        elif isinstance(anie, Message):
+            delay = int(delay * self.msg_mult)
+
+        return delay
+
+
     def do_animation(self, first=True):
         """Do an event from the queue and if there is more to
         do schedule it."""
@@ -622,12 +689,8 @@ class Animator:
 
             if self._queue:
                 self._pending_after = True
-
-                delay = self.delay
-                if isinstance(anie, NewGameState):
-                    delay = int(delay * 1.5)
-                self.game_ui.after(delay,
-                                    lambda: self.do_animation(False))
+                self.game_ui.after(self._adjust_delay(anie),
+                                   lambda: self.do_animation(False))
 
             else:
                 # do refresh to hide any errors in collecting ani actions

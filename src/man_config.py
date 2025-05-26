@@ -22,7 +22,7 @@ import json
 import re
 import os
 import tkinter as tk
-from tkinter import font
+import tkinter.font as tkfont
 
 import ai_player
 import animator
@@ -424,9 +424,9 @@ DEFAULTS = {
     'seed_color': 'goldenrod',
     'move_color': 'sandy brown',
 
-    'font_family' : 'Helvetica',
-    'font_size' : '14',
-    'font_weight' : 'bold',
+    'font_family': 'Helvetica',
+    'font_size': '14',
+    'font_weight': 'bold',
 
     'show_tally': 'no',
     'touch_screen': 'no',
@@ -436,6 +436,11 @@ DEFAULTS = {
     'disable_animator': 'no',
     'ani_active': 'yes',
     'ani_delay': '250',
+    'ani_msg_mult': '6',
+    'ani_font_family': 'Helvetica',
+    'ani_font_size': '14',
+    'ani_font_weight': 'bold',
+    'ani_background': '#e0ffe0',
 
     'history_size': '5',
 
@@ -453,7 +458,8 @@ COLORS = ['system_color', 'inactive_color',
           'north_act_color', 'north_not_color',
           'south_act_color', 'south_not_color',
           'rclick_color', 'grid_color',
-          'choose_color', 'seed_color', 'move_color']
+          'choose_color', 'seed_color', 'move_color',
+          'ani_background']
 
 VALID_DENSITY = {'12', '25', '50', '75'}
 VALID_DELAY = {'0', '1', '2'}
@@ -624,8 +630,18 @@ class ConfigData:
         ftuple = (self['font_family'],
                   self.get_int('font_size'),
                   self['font_weight'])
-        return font.Font(font=ftuple)
+        return tkfont.Font(font=ftuple)
 
+
+    def get_ani_font(self):
+        """Attempt to get a font from the config.
+        If it is missing return the default.
+        If it invalid, 'font.Font' will pick the best match."""
+
+        ftuple = (self['ani_font_family'],
+                  self.get_int('ani_font_size'),
+                  self['ani_font_weight'])
+        return tkfont.Font(font=ftuple)
 
 
 CONFIG = None

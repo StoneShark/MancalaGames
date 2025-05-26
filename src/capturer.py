@@ -460,7 +460,11 @@ class GSNone(GrandSlamCapt):
 
         if self.is_grandslam(mdata, capt_first):
             game_log.add('GRANDSLAM: no capture', game_log.IMPORT)
+
             animator.do_rollback()
+            if animator.active():
+                animator.animator.message("Grand Slam Did Not Capture")
+
             self.game.state = self._saved_state
             self._saved_state = None
 
@@ -491,9 +495,11 @@ class GSKeep(GrandSlamCapt):
         if grandslam == gi.GrandSlam.LEAVE_LEFT:
             self.rparam = ((game.cts.dbl_holes - 1, game.cts.holes - 1, -1),
                            (game.cts.holes - 1, -1, -1))
+            self.rtext = 'Leftmost'
         else:
             self.rparam = ((game.cts.holes, game.cts.dbl_holes, 1),
                            (0, game.cts.holes, 1))
+            self.rtext = 'Rightmost'
 
 
     def do_captures(self, mdata, capt_first=True):
@@ -501,7 +507,11 @@ class GSKeep(GrandSlamCapt):
         if self.is_grandslam(mdata, capt_first):
 
             game_log.add('GRANDSLAM: keep', game_log.IMPORT)
+
             animator.do_rollback()
+            if animator.active():
+                animator.animator.message(f"Grand Slam, Keeping {self.rtext}")
+
             self.game.state = self._saved_state
             self._saved_state = None
             mdata.captured = False
@@ -527,6 +537,7 @@ class GSKeep(GrandSlamCapt):
                     mdata.captured = True
 
 
+
 class GSOppGets(GrandSlamCapt):
     """On a grand slam your seeds are collect by your opponent.
 
@@ -537,6 +548,9 @@ class GSOppGets(GrandSlamCapt):
         if self.is_grandslam(mdata, capt_first):
 
             game_log.add('GRANDSLAM: opp gets', game_log.IMPORT)
+            if animator.active():
+                animator.animator.message(
+                    "Grand Slam, Opponent Gets Your Seeds")
 
             # now moves own seeds to opp's store
             opp_turn = not self.game.turn
@@ -549,6 +563,7 @@ class GSOppGets(GrandSlamCapt):
 
             # don't need the rollback or the saved state
             animator.clear_rollback()
+
             self._saved_state = None
 
 

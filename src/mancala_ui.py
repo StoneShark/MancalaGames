@@ -211,6 +211,9 @@ class MancalaUI(tk.Frame):
             self.tally_frame.forget()
 
         animator.make_animator(self)
+        animator.configure(font=man_config.CONFIG.get_ani_font(),
+                           msg_mult=man_config.CONFIG.get_int('ani_msg_mult'),
+                           bg_color=man_config.CONFIG['ani_background'])
         self._reset_ani_state()
         self._reset_ani_delay()
 
