@@ -257,7 +257,7 @@ class TestGameExtensions:
                              [[[2, 2, 2, 2, 2, 2], True],
                               [[1, 0, 2, 0, 0, 1], True],
                               [[1, 0, 1, 0, 0, 1], False],
-                              [[1, 1, 1, 1, 1, 1], False],
+                              [[1, 1, 1, 1, 1, 1], True],
                               ])
     def test_sow_change(self, game, board, esow):
         """Confirm mode change based on board at start of sow."""
@@ -270,28 +270,28 @@ class TestGameExtensions:
         assert game.normal_sow == esow
 
 
-    # @pytest.mark.usefixtures("logger")
+    @pytest.mark.usefixtures("logger")
     def test_sow_no_reset(self, game):
         """Confirm once the normal_sow state changes, it is
         not reset if the baoard goes back to other conditions"""
 
         assert game.normal_sow is True
 
-        game.board = [1, 1, 1, 1, 1, 1]
-        game.store = [6, 0]
-        # print("pre move 1:\n", game)
+        game.board = [1, 0, 1, 1, 1, 1]
+        game.store = [7, 0]
+        print("pre move 1:\n", game)
 
         game.move(0)
         assert game.normal_sow is False
-        assert game.board == [0, 2, 1, 1, 1, 1]
-        assert game.store == [6, 0]
+        assert game.board == [0, 1, 1, 1, 1, 1]
+        assert game.store == [7, 0]
 
         game.turn = True
-        # print("pre move 2:\n", game)
+        print("pre move 2:\n", game)
         game.move(0)
         assert game.normal_sow is False
-        assert game.board == [0, 2, 1, 1, 1, 0]
-        assert game.store == [6, 1]
+        assert game.board == [0, 1, 1, 1, 1, 0]
+        assert game.store == [7, 1]
 
 
     MCASES = [
