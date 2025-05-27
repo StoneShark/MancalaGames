@@ -34,7 +34,6 @@ import collections
 import contextlib
 # import inspect      # used in debug code (might be commented out)
 import tkinter as tk
-import tkinter.font as tkfont
 
 
 import game_interface as gi
