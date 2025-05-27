@@ -676,13 +676,13 @@ def add_capture_rules(rules):
         'lcs_ctype_warn',
         rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.LAP_CAPT_SEEDS
                             and ginfo.capt_type
-                            and ginfo.capt_type != gi.CaptType.MATCH_OPP),
+                            and ginfo.capt_type in (gi.CaptType.NEXT,
+                                                    gi.CaptType.SINGLETONS)),
         msg="""LAP_CAPT_SEEDS with selected capture type will generally
-            end result in an ENDLESS sow""",
+            end result in an ENDLESS sows. Suggest turning on Disallow
+            Endless Sow. Using a start pattern, prescribed sow, or other
+            option could prevent this.""",
         warn=True)
-        # start pattern, prescribed sow, or other option could prevent this
-        # making an actual warning because the gentle warning might be lost
-        # above the endless sow log
 
     rules.add_rule(
         'sca_gs_not',
@@ -701,13 +701,10 @@ def add_capture_rules(rules):
     rules.add_rule(
         'xc_const_pickextra',
         rule=lambda ginfo: (ginfo.crosscapt
-                            and any([ginfo.capt_max,
-                                     ginfo.capt_min,
-                                     ginfo.capt_on,
-                                     ginfo.evens])
+                            and ginfo.basic_capt
                             and ginfo.pickextra == gi.CaptExtraPick.PICKCROSS),
         msg="""A constrainted CROSSCAPT with PICKEXTRA=PICKCROSS will
-            ingnore constraint""",
+            ingnore the constraint""",
         excp=gi.GameInfoError)
 
     rules.add_rule(

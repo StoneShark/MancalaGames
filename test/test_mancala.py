@@ -28,6 +28,7 @@ import re
 import pytest
 pytestmark = pytest.mark.unittest
 
+from context import allowables
 from context import animator
 from context import capt_ok
 from context import claimer
@@ -919,6 +920,17 @@ class TestDelegates:
         assert game.mdata != 25
         assert game.mdata.ended
         assert game.mdata.user_end
+
+
+    @pytest.mark.parametrize('value', [False, True])
+    def test_dlg_disallow_endless(self, game, value, mocker):
+
+        mobj = mocker.patch.object(allowables, 'deco_allowable')
+
+        game.disallow_endless(value)
+
+        print(mobj.calls)
+        mobj.assert_called_once_with(game, no_endless=value)
 
 
     def test_dlg_end_round(self, game, mocker):

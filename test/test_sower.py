@@ -1084,6 +1084,43 @@ class TestVMlap:
         assert game.store == estore
 
 
+class TestStopNoOppSeeds:
+
+    @pytest.fixture
+    def game(self):
+
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(sow_direct=Direct.CW,
+                                goal=Goal.DEPRIVE,
+                                crosscapt=True,
+                                mlaps=gi.LapSower.LAPPER,
+                                sow_rule=gi.SowRule.LAP_CAPT,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        return mancala.Mancala(game_consts, game_info)
+
+    CASES = [
+        [[2, 2, 2, 2, 2, 2], True],       # capture, continue
+        [[2, 2, 2, 0, 0, 0], False],      # no opp seeds, stop
+        [[2, 1, 2, 1, 0, 0], False],      # 1 & no capt, stop
+        ]
+
+    @pytest.mark.usefixtures("logger")
+    @pytest.mark.parametrize('board, eres', CASES)
+    def test_stop_no_opp_seeds(self, game, board, eres):
+
+        game.board = board
+        game.turn = False
+        lap_cont = game.deco.sower.lap_cont
+
+        mdata = move_data.MoveData(game, 0)
+        mdata.capt_loc = 1
+
+        assert 'StopNoOppSeeds' in str(lap_cont)
+        assert lap_cont.do_another_lap(mdata) == eres
+
+
+
 class TestBlckDivertSower:
 
     @pytest.fixture

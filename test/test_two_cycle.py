@@ -10,12 +10,11 @@ Created on Thu Mar 13 18:20:19 2025
 import pytest
 pytestmark = pytest.mark.unittest
 
+from context import allowables
 from context import cfg_keys as ckey
 from context import game_constants as gconsts
 from context import game_interface as gi
-from context import ginfo_rules
-from context import incrementer
-from context import mancala
+from context import man_config
 from context import two_cycle
 import utils
 
@@ -228,6 +227,9 @@ class TestEastWestIncr:
 
 
 class TestEWClearEnder:
+    """The specific ender is no longer needed.
+    The normal CLEAR, DEPRIVE and IMMOBILIZE will all work.
+    Keeping the test anyway."""
 
     @pytest.fixture
     def game(self):
@@ -293,3 +295,71 @@ class TestEWClearEnder:
         game.deco.ender.game_ended(mdata)
         assert mdata.win_cond == econd
         assert mdata.winner == ewinner
+
+
+class TestEWAllowable:
+
+    @pytest.fixture
+    def game(self):
+
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
+        game_info = gi.GameInfo(goal=gi.Goal.DEPRIVE,
+                                capt_on=[4],
+                                min_move=2,
+                                nbr_holes=game_consts.holes,
+                                rules=two_cycle.EastWestCycle.rules)
+
+        return two_cycle.EastWestCycle(game_consts, game_info)
+
+
+    @pytest.mark.parametrize(
+        'board, turn, eresult',
+        [([4] * 8,  False, [F, F, T, T, T, T, F, F]),
+         ([4] * 8,  True, [T, T, F, F, F, F, T, T]),
+         ([1, 2, 3, 0, 0, 1, 2, 3], False, [F, F, T, F, F, F, F, F]),
+         ([1, 2, 3, 0, 0, 1, 2, 3], True,  [F, T, F, F, F, F, T, T]),
+        ])
+    def test_allowables(self, game, board, turn, eresult):
+
+        game.turn = turn
+        game.board = board
+
+        assert game.deco.allow.get_allowable_holes() == eresult
+
+
+class TestDisallowEndless:
+
+    @pytest.fixture
+    def game(self):
+
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
+        game_info = gi.GameInfo(goal=gi.Goal.CLEAR,
+                                mlaps=gi.LapSower.LAPPER,
+                                crosscapt=True,
+                                nbr_holes=game_consts.holes,
+                                rules=two_cycle.EastWestCycle.rules)
+
+        return two_cycle.EastWestCycle(game_consts, game_info)
+
+
+    @pytest.mark.parametrize('value', [False, True])
+    def test_dlg_disallow_endless(self, game, value, mocker):
+
+        dallow = mocker.patch.object(allowables, 'deco_allowable')
+        rep_deco = mocker.patch.object(game.deco, 'replace_deco')
+
+        game.disallow_endless(value)
+
+        dallow.assert_called_once_with(game, no_endless=value)
+        rep_deco.assert_called_once()
+
+
+    def test_disallow_endless(self, game):
+
+        # assert not man_config.CONFIG.get_bool('no_endless'), \
+        #     "Test Cond Error: no_endless is set"
+
+        assert 'NoEndlessSows' not in str(game.deco.allow)
+
+        game.disallow_endless(True)
+        assert 'NoEndlessSows' in str(game.deco.allow)

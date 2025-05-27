@@ -14,6 +14,7 @@ import utils
 
 from context import allowables
 from context import animator
+from context import game_classes
 from context import game_constants as gconsts
 from context import game_interface as gi
 from context import mancala
@@ -1128,6 +1129,58 @@ class TestMustShareUDir:
         quot, rem = divmod(seeds, 2)
         game.store = [quot, quot + rem]
 
+        assert game.deco.allow.get_allowable_holes() == eresult
+
+
+@pytest.mark.filterwarnings("ignore")
+class TestNoEndlessSows:
+
+    TEST_ALLOW_DATA = [
+        # case_0: loc 7: endless sow, loc 9: < min_move
+        ['NorthSouthCycle',
+         (5, 4),
+         {"crosscapt": True,
+          "goal": gi.Goal.DEPRIVE,
+          "mlaps": gi.LapSower.LAPPER,
+          "sow_direct": gi.Direct.CCW,
+          "sow_rule": gi.SowRule.LAP_CAPT_SEEDS,
+          "min_move": 2,
+          },
+         utils.make_state(board=(1, 0, 5, 1, 3, 3, 0, 2, 4, 1),
+                          turn=True),
+         [F, T, F, F, T]],
+
+        # case_1: no capture mechanism, loc 3 is endless sow
+        ['Mancala',
+         (5, 10),
+         {"stores": True,
+          "no_sides": True,
+          "mlaps": gi.LapSower.LAPPER_NEXT,
+          "sow_direct": gi.Direct.CCW,
+          },
+         utils.make_state(board=(3, 0, 26, 2, 11, 2, 27, 2, 27, 0),
+                          turn=True),
+         [T, F, T, F, T, T, T, T, T, F]],
+        ]
+
+    @pytest.mark.parametrize(
+        'gclass, gconst, gdict, gstate, eresult',
+        TEST_ALLOW_DATA,
+        ids=[f'case_{cnt}' for cnt in range(len(TEST_ALLOW_DATA))])
+    def test_allowables(self, gclass, gconst, gdict, gstate, eresult):
+
+        game_consts = gconsts.GameConsts(holes=gconst[0], nbr_start=gconst[1])
+        game_info = gi.GameInfo(**gdict,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game_class = game_classes.GAME_CLASSES[gclass]
+        game = game_class(game_consts, game_info)
+        game.state = gstate
+        game.store = [game.cts.total_seeds - sum(game.board), 0]
+        game.disallow_endless(True)
+
+        assert 'NoEndlessSows' in str(game.deco.allow)
         assert game.deco.allow.get_allowable_holes() == eresult
 
 

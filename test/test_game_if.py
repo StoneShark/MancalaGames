@@ -143,6 +143,7 @@ class TestConstruction:
                             stores=True,
                             capt_on=[2],
                             rules=rules)
+        assert ginfo.basic_capt
 
         # test derived params
         ginfo = gi.GameInfo(capt_on=[2],
@@ -190,7 +191,7 @@ class TestConstruction:
         assert ginfo.mlength == 2
         assert ginfo.udirect
 
-        ginfo = gi.GameInfo(capt_on=[2],
+        ginfo = gi.GameInfo(crosscapt=True,
                             goal=Goal.TERRITORY,
                             goal_param=10,
                             stores=True,
@@ -202,6 +203,7 @@ class TestConstruction:
         assert ginfo.udirect
         assert len(ginfo.udir_holes) == 6
         assert not ginfo.repeat_turn
+        assert not ginfo.basic_capt
 
         ginfo = gi.GameInfo(capt_on=[2],
                             capt_rturn=True,

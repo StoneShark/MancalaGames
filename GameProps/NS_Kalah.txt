@@ -1,5 +1,5 @@
 {
-   "game_class": "NorthSouthCycles",
+   "game_class": "NorthSouthCycle",
    "game_constants": {
       "holes": 7,
       "nbr_start": 4

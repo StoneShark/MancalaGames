@@ -479,11 +479,23 @@ class GameInfo:
 
     @property
     def repeat_turn(self):
-        """Return True if the game options allow repeat turns."""
+        """Return True if the game options allow repeat turns.
+
+        Note that game classes SameSide and Ohojichi also use
+        repeat turn, but that can't be tested here."""
 
         return (self.capt_rturn
                 or self.sow_own_store
                 or self.xc_sown)
+
+    @property
+    def basic_capt(self):
+        """Return True if the game includes a basic capture."""
+
+        return any([self.evens,
+                    self.capt_on,
+                    self.capt_max,
+                    self.capt_min])
 
 
 @dc.dataclass(kw_only=True)

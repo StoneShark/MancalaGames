@@ -123,7 +123,7 @@ SOWDIR = {'CW': lambda ginfo: ginfo.get(ckey.SOW_DIRECT, 1) == -1,
           'SPLIT': lambda ginfo: not ginfo.get(ckey.SOW_DIRECT, 1),
           'Players Alt Dir': lambda ginfo: ginfo.get(ckey.SOW_DIRECT, 1) == 2,
           'Even Odd Dir': lambda ginfo: ginfo.get(ckey.SOW_DIRECT, 1) == 3,
-          'User Chooses': lambda ginfo: len(ginfo.get(ckey.UDIR_HOLES, [])) >= 1}
+          }
 
 FEATS = {'No Sides': lambda ginfo: ginfo.get(ckey.NO_SIDES, 0),
          'Start Pattern': lambda ginfo: ginfo.get(ckey.START_PATTERN, 0),
@@ -131,6 +131,7 @@ FEATS = {'No Sides': lambda ginfo: ginfo.get(ckey.NO_SIDES, 0),
          'Move Restrictions': lambda ginfo: ginfo.get(ckey.ALLOW_RULE, 0),
          'Must Pass': lambda ginfo: ginfo.get(ckey.MUSTPASS, 0),
          'Must Share': lambda ginfo: ginfo.get(ckey.MUSTSHARE, 0),
+         'User Sow Direct': lambda ginfo: len(ginfo.get(ckey.UDIR_HOLES, [])) >= 1,
          'Pre-sow Capture': lambda ginfo: ginfo.get(ckey.PRESOWCAPT, 0),
          'Repeat Turn': lambda ginfo: any([ginfo.get(ckey.CAPT_RTURN, 0),
                                            ginfo.get(ckey.SOW_OWN_STORE, 0),

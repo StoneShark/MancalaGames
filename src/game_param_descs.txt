@@ -728,6 +728,8 @@ Special sow rules add additional behavior or restrictions to the sowing phase:
   
   + If the CAPT_TYPE is NEXT or TWO_OUT and the last seed of a lap ends in an occupied hole, do a possible capture. Then, continue lap sowing even if there is no capture.
 
+  + For all LAP_CAPT rules, if stores are not configured, sowing will be stopped when the opponent does not have seeds.
+  
 - NO_OPP_CHILD: do not sow into your opponent's children.
 
 - LAP_CAPT_OPP_GETS: Use LAP_CAPT sow rule until there are only sow_param seeds left. Then when down to the last seeds (sow_param or less at the start of a lap): seeds sown on the opponent's side are captured by the opponent. If the last seed would do a normal capture, the sower takes those seeds, including the last seed sown.
@@ -738,7 +740,11 @@ Special sow rules add additional behavior or restrictions to the sowing phase:
 
 - OPP_CHILD_ONLY1: Do not sow opponent's children unless it is with the final seed of a sow.
 
-- LAP_CAPT_SEEDS: Check for capture on each lap. If a capture occured, continue sowing with captured seeds and seeds in final hole sown. If no capture occured, continue if more than one seed is in the final hole. Not compatible with basic captures. Behaves badly with most capt_types unless other options are used to prevent endless sows.
+- LAP_CAPT_SEEDS: Check for capture on each lap. If a capture occured, continue sowing with captured seeds and seeds in final hole sown. If no capture occured, continue if more than one seed is in the final hole.
+
+  + For all LAP_CAPT rules, if stores are not configured, sowing will be stopped when the opponent does not have seeds.
+
+  + Not compatible with basic captures. Behaves badly with most capt_types unless other options are used to prevent endless sows. Turn on Disallow Endless Sows via the Game menu for experimentation.
 
 <param sow_start>
 When selected, the first seed is sown into (i.e., left in) the start hole.

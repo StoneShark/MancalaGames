@@ -68,6 +68,24 @@ class AllowableIf(deco_chain_if.DecoChainIf):
         return fholes, tholes
 
 
+    def get_maker_owner(self, owners):
+        """Get the move maker and owner functions."""
+
+        def get_owner_move(row, pos):
+            return gi.MoveTpl(row, pos, None)
+
+        def get_move(_, pos):
+            return pos
+
+        def get_owner_owner(loc):
+            return self.game.owner[loc]
+
+        if owners:
+            return get_owner_move, get_owner_owner
+
+        return get_move, self.game.cts.board_side
+
+
     @abc.abstractmethod
     def get_allowable_holes(self):
         """Return boolean array of plyable/allowable of length holes."""
@@ -329,7 +347,6 @@ class OnlyRightTwo(AllowableIf):
         return allow
 
 
-
 class MustShare(AllowableIf):
     """If opponent has moves, return delegated get_allowable;
     Otherwise, filter out allowables that do not provide seeds
@@ -338,24 +355,9 @@ class MustShare(AllowableIf):
 
     def __init__(self, game, owners, decorator=None):
 
-        def get_owner_move(row, pos):
-            return gi.MoveTpl(row, pos, None)
-
-        def get_move(_, pos):
-            return pos
-
-        def get_owner_owner(loc):
-            return game.owner[loc]
-
         super().__init__(game, decorator)
         self.fholes, self.tholes = self.get_holes_idx()
-
-        if owners:
-            self.make_move = get_owner_move
-            self.owner = get_owner_owner
-        else:
-            self.make_move = get_move
-            self.owner = game.cts.board_side
+        self.make_move, self.owner = self.get_maker_owner(owners)
 
 
     def opp_has_seeds(self, opponent):
@@ -420,7 +422,6 @@ class MustShareUdir(MustShare):
             self.owner = get_owner_owner
         else:
             self.owner = game.cts.board_side
-
 
 
     def get_allowable_holes(self):
@@ -568,6 +569,42 @@ class NotXfromOnes(AllowableIf):
                 for (ones, allow) in zip(ones, allowable)]
 
 
+class NoEndlessSows(AllowableIf):
+    """Do not allow sowing from holes that will result in
+    ENDLESS sows."""
+
+    def __init__(self, game, decorator=None):
+
+        super().__init__(game, decorator)
+        self.fholes, self.tholes = self.get_holes_idx()
+        self.make_move, self.owner = \
+            self.get_maker_owner(self.game.info.mlength == 3)
+
+
+    def get_allowable_holes(self):
+
+        allow = self.decorator.get_allowable_holes()
+        saved_state = self.game.state
+        holes = self.tholes if self.game.turn else self.fholes
+
+        for idx, loc in holes:
+            if not allow[idx]:
+                continue
+
+            row = int(loc < self.game.cts.holes)
+            pos = self.game.cts.xlate_pos_loc(row, loc)
+
+            with game_log.simulate(), self.game.restore_state(saved_state):
+                mdata = self.game.do_sow(self.make_move(row, pos))
+
+            if mdata.capt_loc == gi.WinCond.ENDLESS:
+                allow[pos] = False
+                game_log.add(f'ENDLESS: prevented @ {loc}',
+                             game_log.IMPORT)
+
+        return allow
+
+
 class MemoizeAllowable(AllowableIf):
     """Memoize the allowable resut:  Allowables are checked in
     several places--move/end_move, test_pass and get_allowables
@@ -668,32 +705,43 @@ def deco_allow_rule(game, allowable):
     return allowable
 
 
-def deco_allowable(game):
-    """Build the allowable deco."""
+def deco_allowable(game, no_endless=False):
+    """Build the allowable deco.
+
+    If no_endless is True, include the NoEndlessSows deco."""
+
+    memoize = False
 
     if game.info.mlength == 3:
         allowable = AllowableTriples(game)
     else:
         allowable = Allowable(game)
 
+    if (no_endless
+            and game.info.mlaps
+            and not game.info.udirect):
+        memoize = True
+        allowable = NoEndlessSows(game, allowable)
+
     allowable = deco_allow_rule(game, allowable)
 
     if game.info.mustshare:
+        memoize = True
         if game.info.udirect:
             allowable = MustShareUdir(game, allowable)
         else:
             allowable = MustShare(game, game.info.mlength == 3, allowable)
 
     if game.info.grandslam == gi.GrandSlam.NOT_LEGAL:
+        memoize = True
         allowable = NoGrandSlam(game, allowable)
 
     if DontUndoMoveOne.include(game):
         allowable = DontUndoMoveOne(game, allowable)
 
-    if (game.info.mustshare
+    if (memoize
             or game.info.allow_rule == gi.AllowRule.OCCUPIED
-            or game.info.allow_rule == gi.AllowRule.OPP_OR_EMPTY
-            or game.info.grandslam == gi.GrandSlam.NOT_LEGAL):
+            or game.info.allow_rule == gi.AllowRule.OPP_OR_EMPTY):
         allowable = MemoizeAllowable(game, allowable)
 
     if animator.ENABLED:

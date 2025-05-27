@@ -39,6 +39,8 @@ from game_logger import game_log
 
 AI_DELAY = [5, 1000, 4000]
 
+ANI_STEP = 25
+
 NO_TALLY_OP = 0
 VIS_TALLY_OP = 1
 RET_TALLY_OP = 2
@@ -48,6 +50,7 @@ RTURN_QFREQ = 5
 
 ROUND = 'round'
 DEBUG = 'debug'
+ALL = 'all'
 
 # %%
 
@@ -55,6 +58,9 @@ class TkVars:
     """Collect the tk status variables here and one stray."""
 
     def __init__(self, man_ui, player_dict):
+
+        self.no_endless = tk.BooleanVar(
+            man_ui.master, man_config.CONFIG.get_bool('no_endless'))
 
         # must be visible for construction
         self.show_tally = tk.BooleanVar(man_ui.master, True)
@@ -217,6 +223,7 @@ class MancalaUI(tk.Frame):
         self._reset_ani_state()
         self._reset_ani_delay()
 
+        self._no_endless_sows()
         self._new_game()
         self.refresh()
         self.schedule_ai()
@@ -391,8 +398,17 @@ class MancalaUI(tk.Frame):
         gamemenu.add_command(
             label='End Game (quit)',
             command=ft.partial(self.end_game, quitter=True, game=True))
-        gamemenu.add_separator()
 
+        gamemenu.add_separator()
+        enable_no_endless = self.game.info.mlaps and not self.game.info.udirect
+        gamemenu.add_checkbutton(
+            label='Disallow Endless Sows',
+            variable=self.vars.no_endless,
+            onvalue=True, offvalue=False,
+            command=self._no_endless_sows,
+            state=tk.NORMAL if enable_no_endless else tk.DISABLED)
+
+        gamemenu.add_separator()
         gamemenu.add_command(label='Setup Game',
                              command=self.setup.setup_game)
         gamemenu.add_command(label='Reset to Setup',
@@ -535,15 +551,12 @@ class MancalaUI(tk.Frame):
 
             pmenu = tk.Menu(self._menubar)
             pmenu.add_command(label='Print All',
-                                  command=lambda: print(self.game.deco))
+                                  command=ft.partial(self._print_deco, ALL))
             pmenu.add_separator()
-            for vname, value in sorted(vars(self.game.deco).items(),
-                                       key=lambda pair: pair[0]):
+            for vname in sorted(vars(self.game.deco).keys()):
                 name = vname.title()
                 pmenu.add_command(label=f"Print {name}",
-                                  command=ft.partial(print,
-                                                     '\n' + name + ':\n',
-                                                     value))
+                                  command=ft.partial(self._print_deco, vname))
             debugmenu.add_cascade(label='Print Decos', menu=pmenu)
 
             debugmenu.add_command(label='Print Inhibitor',
@@ -667,7 +680,7 @@ class MancalaUI(tk.Frame):
         steps."""
 
         if animator.animator:
-            animator.set_delay(max(50, animator.animator.delay - 50))
+            animator.set_delay(max(ANI_STEP, animator.animator.delay - ANI_STEP))
             print("Ani Delay=", animator.animator.delay)
 
 
@@ -676,7 +689,7 @@ class MancalaUI(tk.Frame):
         """Decrease animation speed."""
 
         if animator.animator:
-            animator.set_delay(animator.animator.delay + 50)
+            animator.set_delay(animator.animator.delay + ANI_STEP)
             print("Ani Delay=", animator.animator.delay)
 
 
@@ -1000,6 +1013,25 @@ class MancalaUI(tk.Frame):
             message = message[0] if len(message) == 1 else message
 
             ui_utils.WinPopup(self, title, message)
+
+
+    def _print_deco(self, deco):
+        """Print the decoration with name."""
+
+        if deco == ALL:
+            print(self.game.deco)
+        else:
+            print(f'\n{deco.title()}:\n')
+            print(getattr(self.game.deco, deco))
+
+
+    def _no_endless_sows(self):
+        """Rebuild the allowable deco with or without the
+        deco to prevent moves from holes that would be endless
+        sows."""
+
+        self.game.disallow_endless(self.vars.no_endless.get())
+        self.refresh()
 
 
     def _swap_sides(self, force=False):

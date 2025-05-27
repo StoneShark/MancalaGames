@@ -103,14 +103,13 @@ def _add_pre_sow_capt(game, sower):
 
 def _add_capt_stop_lap_cont(game, lap_cont):
     """Add the stop on 1 and then, one of the lap capture
-    lap-continuer or a stop on capture decos."""
+    lap-continuer or a stop on capture decos.
+
+    LAP_CONT rules without stores always include a
+    StopNoOppSeeds to prevent an endless sow preventing a
+    win condition."""
 
     lap_cont = msowd.StopSingleSeed(game, lap_cont)
-
-    basic_capt = any([game.info.evens,
-                      game.info.capt_on,
-                      game.info.capt_max,
-                      game.info.capt_min])
 
     if game.info.sow_rule in (gi.SowRule.LAP_CAPT,
                               gi.SowRule.LAP_CAPT_OPP_GETS):
@@ -131,8 +130,14 @@ def _add_capt_stop_lap_cont(game, lap_cont):
     elif game.info.capt_type == gi.CaptType.MATCH_OPP:
         lap_cont = msowd.StopCaptureSimul(game, lap_cont)
 
-    elif basic_capt and not game.info.crosscapt:
+    elif game.info.basic_capt and not game.info.crosscapt:
         lap_cont = msowd.StopCaptureSeeds(game, lap_cont)
+
+    if (not game.info.stores
+            and game.info.sow_rule in (gi.SowRule.LAP_CAPT,
+                                       gi.SowRule.LAP_CAPT_OPP_GETS,
+                                       gi.SowRule.LAP_CAPT_SEEDS)):
+        lap_cont = msowd.StopNoOppSeeds(game, lap_cont)
 
     return lap_cont
 

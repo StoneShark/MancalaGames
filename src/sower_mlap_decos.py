@@ -293,6 +293,23 @@ class StopLessN(LapContinuerIf):
         return self.decorator.do_another_lap(mdata)
 
 
+class StopNoOppSeeds(LapContinuerIf):
+    """A wrapper to stop MLAP sowing when the opponent does
+    not have any seeds.
+
+    Automatically included for any LAP_CAPT sow rule without
+    stores."""
+
+    def do_another_lap(self, mdata):
+
+        opp_range = self.game.cts.get_opp_range(self.game.turn)
+        if not any(self.game.board[loc]for loc in opp_range):
+            game_log.add('MLap stopped, opp has no seeds.')
+            return False
+
+        return self.decorator.do_another_lap(mdata)
+
+
 class StopRepeatTurn(LapContinuerIf):
     """A wrapper: stop if we know it's a repeat turn.
     This must be at the top so we don't try to use

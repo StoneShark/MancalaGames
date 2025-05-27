@@ -407,6 +407,7 @@ INI_FILENAME = 'mancala.ini'
 # don't define a default for difficulty, if present it overrides game files
 
 DEFAULTS = {
+
     'button_size': '100',
 
     'system_color': '#f0f0f0',
@@ -427,6 +428,8 @@ DEFAULTS = {
     'font_family': 'Helvetica',
     'font_size': '14',
     'font_weight': 'bold',
+
+    'no_endless': 'no',
 
     'show_tally': 'no',
     'touch_screen': 'no',

@@ -15,6 +15,7 @@ Created on Sun Dec  1 07:10:20 2024
 
 # %% imports
 
+import allowables
 import cfg_keys as ckey
 import incrementer
 import game_interface as gi
@@ -193,6 +194,17 @@ class EastWestIncr(incrementer.IncrementerIf):
         return self.cw_map[loc]
 
 
+class EastWestAllowable(allowables.AllowableIf):
+    """Base allowable for east/west games."""
+
+    def get_allowable_holes(self):
+
+        my_range = self.game.cts.get_my_range(self.game.turn)
+
+        return [loc in my_range and self.allow_move(loc)
+                for loc in range(self.game.cts.dbl_holes)]
+
+
 # %% support function
 
 
@@ -202,9 +214,9 @@ def patch_ew_cts_ops(cts):
     replaced.
 
     Separate function because there is no real advantange of
-    east-west games to be built on EastWestCycle (other than
-    this one method). Especially, if there is another game
-    class that provides more specialization
+    east-west games to be built on EastWestCycle.
+    Especially, if there is another game class
+    that provides more specialization
     (eg. Diffusion -> DiffusionV2 and  Ohojochi -> SameSide)."""
 
     holes = cts.holes
@@ -270,3 +282,16 @@ class EastWestCycle(mancala.Mancala):
 
         self.deco.replace_deco('incr', incrementer.Increment,
                                EastWestIncr(self))
+
+        self.deco.replace_deco('allow', allowables.AllowableTriples,
+                               EastWestAllowable(self))
+
+
+    def disallow_endless(self, disallow):
+        """Rebuild the allowable deco chain with or without
+        the prohibition for endless sows.
+        Then patch for east west sowing."""
+
+        super().disallow_endless(disallow)
+        self.deco.replace_deco('allow', allowables.AllowableTriples,
+                               EastWestAllowable(self))

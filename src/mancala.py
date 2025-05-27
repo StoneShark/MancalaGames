@@ -1008,6 +1008,13 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         return self.deco.allow.get_allowable_holes()
 
 
+    def disallow_endless(self, disallow):
+        """Rebuild the allowable deco chain with or without
+        the prohibition for endless sows."""
+
+        self.deco.allow = allowables.deco_allowable(self, no_endless=disallow)
+
+
     def get_moves(self):
         """Return the list of allowable moves."""
         return self.deco.moves.get_moves()
