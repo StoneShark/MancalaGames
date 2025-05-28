@@ -201,7 +201,7 @@ class GameConfig:
         try:
             self.loaded_config = man_config.read_game(self.filename)
         except ValueError as error:
-            ui_utils.showerror(self._master, 'JSON File Error', error)
+            ui_utils.showerror(self._master, 'JSON File Error', str(error))
             return False
 
         self.edited = False
