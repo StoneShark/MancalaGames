@@ -169,7 +169,6 @@ class MancalaUI(tk.Frame):
         self.player = player if player else \
                           ai_player.AiPlayer(self.game, player_dict)
         self.setup = GameSetup(self)
-        self.movers = 0
         self._swap_ok = True
         self.wcond = None   #  used between the movers and epilogs
         self.saved_move = None
@@ -548,7 +547,6 @@ class MancalaUI(tk.Frame):
                                   command=lambda: print(self.game.params_str()))
             debugmenu.add_command(label='Print Consts',
                                   command=lambda: print(self.game.cts))
-
             pmenu = tk.Menu(self._menubar)
             pmenu.add_command(label='Print All',
                                   command=ft.partial(self._print_deco, ALL))
@@ -558,9 +556,12 @@ class MancalaUI(tk.Frame):
                 pmenu.add_command(label=f"Print {name}",
                                   command=ft.partial(self._print_deco, vname))
             debugmenu.add_cascade(label='Print Decos', menu=pmenu)
-
+            debugmenu.add_command(label='Print State',
+                                  command=lambda: print(self.game.state))
             debugmenu.add_command(label='Print Inhibitor',
                                   command=lambda: print(self.game.inhibitor))
+            debugmenu.add_command(label='Print Round Tally',
+                                  command=lambda: print(self.game.rtally))
             debugmenu.add_command(label='Print mdata',
                                   command=lambda: print(self.game.mdata))
             debugmenu.add_separator()
@@ -882,7 +883,6 @@ class MancalaUI(tk.Frame):
         log the start and check for ai's turn."""
         game_log.new()
         game_log.turn(self.game.mcount, 'Start Game', self.game)
-        self.movers = 0
         self.history.record(self.game.state)
         self._reset_ani_state()
         self.schedule_ai()
@@ -1049,11 +1049,12 @@ class MancalaUI(tk.Frame):
         MCTS. This does seem extreme but the AI turn and node tree
         have already been started correcting them seems error prone."""
 
+        game = self.game
         if self.info.start_pattern in (gi.StartPattern.RANDOM,
                                        gi.StartPattern.MOVE_RANDOM):
-            allowed = self.movers < 2 and self._swap_ok
+            allowed = game.movers < 2 and self._swap_ok
         else:
-            allowed = self.movers == 1
+            allowed = game.movers == 1
 
         if not force and not allowed:
             ui_utils.showerror(self, "Swap Not Allowed",
@@ -1066,8 +1067,9 @@ class MancalaUI(tk.Frame):
             return
 
         self._swap_ok = False
-        game = self.game
-        self.movers += 1
+        # do these here, so that it counts as a turn
+        # not in Mancala because swap_sides is used for other purposes
+        game.movers += 1
         game.mcount += 1
         game.turn = not game.turn
         with animator.animate_off():
@@ -1127,7 +1129,7 @@ class MancalaUI(tk.Frame):
         game_log.add(f'Changing difficulty {diff}', game_log.INFO)
 
 
-    def _log_turn(self, last_turn):
+    def _log_ai_desc(self, last_turn):
         """Add the ai description to the game log (Mancala doesn't
         know if the ai is playing)."""
 
@@ -1147,11 +1149,7 @@ class MancalaUI(tk.Frame):
             animator.animator.flash(last_turn, move=move)
 
         self.wcond = self.game.move(move)
-
-        if last_turn != self.game.get_turn():
-            self.movers += 1
-
-        self._log_turn(last_turn)
+        self._log_ai_desc(last_turn)
 
         if animator.active():
             if (self.game.mdata
@@ -1283,6 +1281,7 @@ class MancalaUI(tk.Frame):
         if state:
             self.game.state = state
             self.refresh()
+            game_log.add('Move undone:\n' + str(state), game_log.IMPORT)
         else:
             self.bell()
 
@@ -1294,5 +1293,6 @@ class MancalaUI(tk.Frame):
         if state:
             self.game.state = state
             self.refresh()
+            game_log.add('Move redone:\n' + str(state), game_log.IMPORT)
         else:
             self.bell()

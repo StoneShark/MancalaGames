@@ -72,6 +72,8 @@ STRING_DICTS = {
          'Move from all holes once first':
              gi.AllowRule.MOVE_ALL_HOLES_FIRST,
          'Not across from 1s': gi.AllowRule.NOT_XFROM_1S,
+         'Right Half 1st Moves': gi.AllowRule.RIGHT_HALF_FIRSTS,
+         'Right Half 1sts; Opp or Empty': gi.AllowRule.RIGHT_HALF_1ST_OPE,
          }),
 
     'CaptExtraPick': lookup_dicts(

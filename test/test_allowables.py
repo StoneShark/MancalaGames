@@ -1184,6 +1184,55 @@ class TestNoEndlessSows:
         assert game.deco.allow.get_allowable_holes() == eresult
 
 
+class TestRightHalf:
+
+    TEST_ALLOW_DATA = [
+        [2, gi.AllowRule.RIGHT_HALF_FIRSTS, [F, T]],
+        [5, gi.AllowRule.RIGHT_HALF_FIRSTS, [F, F, F, T, T]],
+        [6, gi.AllowRule.RIGHT_HALF_FIRSTS, [F, F, F, T, T, T]],
+
+        [2, gi.AllowRule.RIGHT_HALF_1ST_OPE, [F, T]],
+        [5, gi.AllowRule.RIGHT_HALF_1ST_OPE, [F, F, F, T, T]],
+        [6, gi.AllowRule.RIGHT_HALF_1ST_OPE, [F, F, F, T, T, T]],
+
+        ]
+
+    @pytest.mark.parametrize(
+        'holes, arule, eresult',
+        TEST_ALLOW_DATA,
+        ids=[f'case_{cnt}' for cnt in range(len(TEST_ALLOW_DATA))])
+    def test_allowables(self, holes, arule, eresult):
+
+        game_consts = gconsts.GameConsts(holes=holes, nbr_start=4)
+        game_info = gi.GameInfo(stores=True,
+                                sow_own_store=True,
+                                evens=True,
+                                allow_rule=arule,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+
+        game.turn = False
+        assert 'RightHalfFirsts' in str(game.deco.allow)
+        assert game.deco.allow.get_allowable_holes() == eresult
+
+        game.turn = not game.turn
+        game.movers += 1
+        assert game.deco.allow.get_allowable_holes() == eresult[::-1]
+
+        game.turn = not game.turn
+        game.movers += 1
+
+        if arule == gi.AllowRule.RIGHT_HALF_1ST_OPE:
+            fcount = max(0, holes - 4)
+            opp_or_empty = [F] * fcount + [T] * (holes - fcount)
+            assert game.deco.allow.get_allowable_holes() == opp_or_empty
+
+        else:
+            assert all(game.deco.allow.get_allowable_holes())
+
+
 class TestBadEnums:
 
     def test_bad_allow_rule(self):
@@ -1194,7 +1243,7 @@ class TestBadEnums:
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
-        object.__setattr__(game_info, 'allow_rule', 12)
+        object.__setattr__(game_info, 'allow_rule', 22)
 
         with pytest.raises(NotImplementedError):
             mancala.Mancala(game_consts, game_info)

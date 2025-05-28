@@ -62,6 +62,7 @@ class GameState(ai_interface.StateIf):
     board: tuple
     store: tuple
     mcount: int = 0
+    movers: int = 0
     _turn: bool
     rturn_cnt: int = 0
 
@@ -83,7 +84,9 @@ class GameState(ai_interface.StateIf):
         dbl_holes = len(self.board)
         holes = dbl_holes // 2
 
-        string = f'Move number: {self.mcount}\n'
+        string = f'Move number: {self.mcount}  '
+        string += f'Movers: {self.movers}  '
+        string += f'Repeat count: {self.rturn_cnt}\n'
         for side, side_range in enumerate([range(dbl_holes - 1, holes - 1, -1),
                                            range(holes)]):
             for loc in side_range:
@@ -395,6 +398,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             _turn=self.turn,
             store=tuple(self.store),
             mcount=self.mcount,
+            movers=self.movers,
             rturn_cnt=self.rturn_cnt,
             unlocked=unlocked,
             blocked=blocked,
@@ -415,6 +419,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         self.store = list(value.store)
         self.turn = value.turn
         self.mcount = value.mcount
+        self.movers = value.movers
         self.rturn_cnt = value.rturn_cnt
 
         if value.child:
@@ -480,13 +485,13 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         repeating game situations. It must not be used to restore
         state information in games that require the hidden state
         information. This includes games that use game.mdata directly
-        (not passed as parameter), mcount, rturn_cnt,
+        (not passed as parameter), mcount, movers, rturn_cnt,
         or an inhibitor other than InhibitorNone.
 
         See limitations on monte carlo tree search game rule
         in ai_player.py: mcts_no_hidden_state.
-        This is also used in allowables.MemoizeAllowable and the
-        'loop' detector in the analysis scripts."""
+        This is also used in the 'loop' detector in the analysis
+        scripts."""
 
         unlocked = None
         if (self.info.moveunlock
@@ -523,6 +528,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         dbl_holes = self.cts.dbl_holes
 
         self.mcount = 0
+        self.movers = 0
         self.rturn_cnt = 0
 
         if self.info.allow_rule == gi.AllowRule.MOVE_ALL_HOLES_FIRST:
@@ -944,8 +950,12 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         (move has several returns this wraps them all),
         log the turn here."""
 
+        last_turn = self.turn
         mdata = self._move(move)
         self._log_turn(mdata)
+
+        if last_turn != self.turn:
+            self.movers += 1
         return mdata.win_cond
 
 

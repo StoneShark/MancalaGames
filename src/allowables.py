@@ -569,6 +569,41 @@ class NotXfromOnes(AllowableIf):
                 for (ones, allow) in zip(ones, allowable)]
 
 
+class RightHalfFirsts(AllowableIf):
+    """For each player's first move, only move from the right
+    half of the board.
+
+    If the supplied decorator is OppOrEmptyEnd, it will be skipped
+    for the first two moves."""
+
+    def __init__(self, game, decorator=None):
+
+        super().__init__(game, decorator)
+
+        half = game.cts.half_holes
+        middle = [False] if game.cts.holes % 2 else []
+        self.fkeep = [False] * half + middle + [True] * half
+        self.tkeep = [True] * half + middle + [False] * half
+
+        if isinstance(decorator, OppOrEmptyEnd):
+            self.firsts = decorator.decorator
+        else:
+            self.firsts = decorator
+
+
+    def get_allowable_holes(self):
+
+        if self.game.movers < 2:
+            game_log.add(f"RightFirst: {self.game.movers}", game_log.IMPORT)
+            allowable = self.firsts.get_allowable_holes()
+
+            pkeep = self.tkeep if self.game.turn else self.fkeep
+            return [keep and allow
+                    for (keep, allow) in zip(pkeep, allowable)]
+
+        return self.decorator.get_allowable_holes()
+
+
 class NoEndlessSows(AllowableIf):
     """Do not allow sowing from holes that will result in
     ENDLESS sows."""
@@ -613,12 +648,7 @@ class MemoizeAllowable(AllowableIf):
     If the game state hasn't changed return the same value
     (history of one). Getting game state is not trivial but
     less work than resimulating moves, only add this to the
-    chain if there are deco's that do simulation.
-
-    Only board_state is used, so none of the allowable decos
-    below this one, may use any non-visible state data
-    (including the global game.mdata; it's fine if it's
-    created and passed around)."""
+    chain if there are deco's that do simulation."""
 
     def __init__(self, game, decorator=None):
 
@@ -629,13 +659,13 @@ class MemoizeAllowable(AllowableIf):
     def get_allowable_holes(self):
 
         if self.saved_state:
-            cur_state = self.game.board_state
+            cur_state = self.game.state
 
             if cur_state == self.saved_state:
                 return self.return_val
 
         rval = self.decorator.get_allowable_holes()
-        self.saved_state = self.game.board_state
+        self.saved_state = self.game.state
         self.return_val = rval
 
         return rval
@@ -698,6 +728,13 @@ def deco_allow_rule(game, allowable):
     elif game.info.allow_rule == gi.AllowRule.OCCUPIED:
         allowable = Occupied(game, allowable)
 
+    elif game.info.allow_rule == gi.AllowRule.RIGHT_HALF_FIRSTS:
+        allowable = RightHalfFirsts(game, allowable)
+
+    elif game.info.allow_rule == gi.AllowRule.RIGHT_HALF_1ST_OPE:
+        allowable = OppOrEmptyEnd(game, allowable)
+        allowable = RightHalfFirsts(game, allowable)
+
     else:
         raise NotImplementedError(
                 f"AllowRule {game.info.allow_rule} not implemented.")
@@ -741,7 +778,8 @@ def deco_allowable(game, no_endless=False):
 
     if (memoize
             or game.info.allow_rule == gi.AllowRule.OCCUPIED
-            or game.info.allow_rule == gi.AllowRule.OPP_OR_EMPTY):
+            or game.info.allow_rule == gi.AllowRule.OPP_OR_EMPTY
+            or game.info.allow_rule == gi.AllowRule.RIGHT_HALF_1ST_OPE):
         allowable = MemoizeAllowable(game, allowable)
 
     if animator.ENABLED:

@@ -219,7 +219,7 @@ def _add_prescribed_sower(game, sower):
     """Add the prescribed sowers to the deco chain."""
 
     if game.info.prescribed == gi.SowPrescribed.SOW1OPP:
-        sower = sowd.SowOneOpp(game, 1, sower)
+        sower = sowd.SowOneOpp(game, 2, sower)
 
     elif game.info.prescribed == gi.SowPrescribed.PLUS1MINUS1:
         sower = sowd.SowPlus1Minus1Capt(game, 1, sower)

@@ -49,6 +49,8 @@ class AllowRule(enum.IntEnum):
     MOVE_ALL_HOLES_FIRST = 9
     NOT_XFROM_1S = 10
     OCCUPIED = 11
+    RIGHT_HALF_FIRSTS = 12
+    RIGHT_HALF_1ST_OPE = 13
 
     def no_moves(self):
         """Return True if the allow rule could prevent all moves

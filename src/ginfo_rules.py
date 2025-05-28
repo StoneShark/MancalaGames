@@ -663,7 +663,26 @@ def add_capture_rules(rules):
         # see lcapt_no_ctype
 
     rules.add_rule(
-        'lcs_useful',
+        'lcs_presow_capt',
+        rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.LAP_CAPT_SEEDS
+                            and ginfo.presowcapt),
+        msg="LAP_CAPT_SEEDS with PRESOWCAPT isn't supported",
+        excp=NotImplementedError)
+        # presow capture could be supported, but ContWithCaptSeeds
+        # would need to only move the newly captured seeds into play
+        # it currently moves all captured seeds into play
+
+    rules.add_rule(
+        'lcs_stores',
+        rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.LAP_CAPT_SEEDS
+                            and ginfo.stores),
+        msg="""LAP_CAPT_SEEDS with STORES isn't supported""",
+        excp=NotImplementedError)
+        # any seeds put into the stores are moved back into play
+        # on the next capture and lap
+
+    rules.add_rule(
+        'lcs_collect',
         rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.LAP_CAPT_SEEDS
                             and not (ginfo.capt_type or ginfo.crosscapt)),
         msg="""LAP_CAPT_SEEDS is only supported when seeds are
@@ -797,17 +816,20 @@ def build_rules():
                                 {gi.AllowRule.TWO_ONLY_ALL_RIGHT,
                                  gi.AllowRule.FIRST_TURN_ONLY_RIGHT_TWO,
                                  gi.AllowRule.RIGHT_2_1ST_THEN_ALL_TWO,
-                                 gi.AllowRule.NOT_XFROM_1S}),
+                                 gi.AllowRule.NOT_XFROM_1S,
+                                 gi.AllowRule.RIGHT_HALF_FIRSTS,
+                                 gi.AllowRule.RIGHT_HALF_1ST_OPE}),
         msg='Selected allow rule not supported for MLENGTH 3 games',
         excp=gi.GameInfoError)
 
     man_rules.add_rule(
         'opp_empty_no_tuples',
-        rule=lambda ginfo: (ginfo.allow_rule == gi.AllowRule.OPP_OR_EMPTY
+        rule=lambda ginfo: (ginfo.allow_rule in (gi.AllowRule.OPP_OR_EMPTY,
+                                                  gi.AllowRule.RIGHT_HALF_1ST_OPE)
                             and ginfo.mlength > 1),
         msg='MLENGTH > 1 not supported with OPP_OR_EMPTY',
         excp=gi.GameInfoError)
-        # UDIRECT: partials hole activation not supported
+        # UDIRECT: could be supported but it isn't implemented
         # TERRITORY: what does it mean if the hole is already opp?
 
     man_rules.add_rule(
@@ -818,6 +840,8 @@ def build_rules():
         excp=gi.GameInfoError)
         # don't know how to get the single_sower from a prescribed sow,
         # the don't have to follow a prescribed (pun intended) sow structure
+        # RIGHT_HALF_1ST_OPE can use prescribed sow because it doesn't
+        # overlap with use of OPP_OR_EMPTY
 
     man_rules.add_rule(
         'sow_own_needs_stores',
@@ -884,6 +908,14 @@ def build_rules():
                             ),
         msg='SOW_OWN_STORE is ignored for the selected first prescribed sow',
         warn=True)
+
+    man_rules.add_rule(
+        'sow1opp_rturn',
+        rule=lambda ginfo: (ginfo.prescribed == gi.SowPrescribed.SOW1OPP
+                            and ginfo.repeat_turn),
+        msg='Prescribed sow of SOW1OPP is not support with repeat turns',
+        warn=gi.GameInfoError)
+        # SOW1OPP is used for 2 turns but the prescribed sower uses mcount
 
     man_rules.add_rule(
         'visit_opp_req_mlap',
@@ -1028,7 +1060,7 @@ def build_rules():
 
     man_rules.add_rule(
         'udir_bad_allowrule',
-        rule=lambda ginfo: (ginfo.allow_rule not in  (
+        rule=lambda ginfo: (ginfo.allow_rule not in  {
                                   gi.AllowRule.NONE,
                                   gi.AllowRule.SINGLE_ONLY_ALL,
                                   gi.AllowRule.TWO_ONLY_ALL,
@@ -1036,7 +1068,8 @@ def build_rules():
                                   gi.AllowRule.FIRST_TURN_ONLY_RIGHT_TWO,
                                   gi.AllowRule.RIGHT_2_1ST_THEN_ALL_TWO,
                                   gi.AllowRule.MOVE_ALL_HOLES_FIRST,
-                                  gi.AllowRule.NOT_XFROM_1S)
+                                  gi.AllowRule.NOT_XFROM_1S,
+                                  gi.AllowRule.RIGHT_HALF_FIRSTS}
                              and ginfo.udirect),
         msg='UDIR_HOLES and ALLOW_RULE are incompatible',
         excp=NotImplementedError)

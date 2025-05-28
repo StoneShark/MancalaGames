@@ -49,6 +49,10 @@ Allow rules limit the holes from which moves may start. Disallowed holes are not
 
 - OCCUPIED: The final seed of the sow must end in an occupied hole.
 
+- RIGHT_HALF_FIRSTS: For the opening moves for each player, only allow a move from the right side of board. If the baord size is odd, moves may not be made from the center hole.
+
+- RIGHT_HALF_1ST_OPE: For the opening moves for each player, only allow a move from the right side of board. For subsequent moves, OPP_OR_EMPTY is applied.
+
 <param blocks>
 Blocks remove holes from play and are shown on the UI with an X.
 
@@ -561,7 +565,7 @@ The first sow of the game maybe defined by a specific rule. Prescribed openings 
 
 - MLAPS_SOWER: the first sow follows basic rules of multi-lap sowing (LAPPER). Other sow parameters will be enacted afterward. 
 
-- SOW1OPP: at least one seed must be sown on the opponents side of the board which is accomplished by sowing as normal until the final seed, then any remaining holes on the player's side are skipped and the last seed is sown in the opponents first hole (based on current sow direction).
+- SOW1OPP: at least one seed must be sown on the opponents side of the board which is accomplished by sowing as normal until the final seed, then any remaining holes on the player's side are skipped and the last seed is sown in the opponents first hole (based on current sow direction). This prescribed opening is used for the first two moves of a game.
 
 - PLUS1MINUS1: proceed from the selected hole by moving one seed from the next hole into the following hole, next skip that hole and repeat moving seed forward. After cycling the board, capture across from the opening hole. 
 

@@ -1832,11 +1832,12 @@ class TestCaptMlap:
     def lcsgame(self):
 
         game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
-        game_info = gi.GameInfo(crosscapt=True,
-                                stores=True,
+        game_info = gi.GameInfo(goal=gi.Goal.DEPRIVE,
+                                crosscapt=True,
                                 sow_direct=Direct.CCW,
                                 mlaps=LapSower.LAPPER,
                                 sow_rule=SowRule.LAP_CAPT_SEEDS,
+                                quitter=gi.EndGameSeeds.DONT_SCORE,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
         return mancala.Mancala(game_consts, game_info)

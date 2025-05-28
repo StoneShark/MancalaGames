@@ -293,7 +293,7 @@ is included after the parameter sections.
 <li class="helptext">
 <b class="enum">MLAPS_SOWER</b>: the first sow follows basic rules of multi-lap sowing (LAPPER). Other sow parameters will be enacted afterward. 
 <li class="helptext">
-<b class="enum">SOW1OPP</b>: at least one seed must be sown on the opponents side of the board which is accomplished by sowing as normal until the final seed, then any remaining holes on the player's side are skipped and the last seed is sown in the opponents first hole (based on current sow direction).
+<b class="enum">SOW1OPP</b>: at least one seed must be sown on the opponents side of the board which is accomplished by sowing as normal until the final seed, then any remaining holes on the player's side are skipped and the last seed is sown in the opponents first hole (based on current sow direction). This prescribed opening is used for the first two moves of a game.
 <li class="helptext">
 <b class="enum">PLUS1MINUS1</b>: proceed from the selected hole by moving one seed from the next hole into the following hole, next skip that hole and repeat moving seed forward. After cycling the board, capture across from the opening hole. 
 <li class="helptext">
@@ -337,6 +337,10 @@ is included after the parameter sections.
 <b class="enum">NOT_XFROM_1S</b>: moves may not start from holes with a singleton opposite it.
 <li class="helptext">
 <b class="enum">OCCUPIED</b>: The final seed of the sow must end in an occupied hole.
+<li class="helptext">
+<b class="enum">RIGHT_HALF_FIRSTS</b>: For the opening moves for each player, only allow a move from the right side of board. If the baord size is odd, moves may not be made from the center hole.
+<li class="helptext">
+<b class="enum">RIGHT_HALF_1ST_OPE</b>: For the opening moves for each player, only allow a move from the right side of board. For subsequent moves, OPP_OR_EMPTY is applied.
 </ol>
 <h4 id="stores"> Stores </h4>
 <p class="pdesc">Location in Config Files: game_info : stores
