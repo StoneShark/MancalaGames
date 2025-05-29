@@ -175,6 +175,9 @@ def play_them_all():
 
     for game, fplayer, tplayer, gname in game_players_gen:
         logger.info(game.info.name)
+        logger.info(f'False {str(fplayer)}')
+        logger.info(f'True {str(tplayer)}')
+
         game_res = play_game.play_games(game, fplayer, tplayer,
                                         config.nbr_runs,
                                         move_limit=config.max_moves,

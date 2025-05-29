@@ -142,6 +142,10 @@ def process_command_line(log_options=False):
         parser.print_help()
         sys.exit()
 
+    if not log_options:
+        cargs.save_logs = False
+        cargs.live_log = False
+
     if cargs.file and cargs.game:
         print("Don't use --file and --game together.")
         sys.exit()
