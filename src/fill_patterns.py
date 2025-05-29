@@ -43,6 +43,13 @@ class StartPatternIf(abc.ABC):
         """Return True if the pattern can be used
         with holes per side."""
 
+    @classmethod
+    @property
+    @abc.abstractmethod
+    def err_msg(cls):
+        """The error message if size is not ok."""
+
+
     @staticmethod
     @abc.abstractmethod
     def nbr_seeds(holes, nbr_start):
@@ -71,7 +78,11 @@ class GamachaPattern(StartPatternIf):
     @staticmethod
     def size_ok(holes):
         return holes >= 3
-    err_msg = 'Gamacha Pattern requires at least 3 holes'
+
+    @classmethod
+    @property
+    def err_msg(cls):
+        return 'Gamacha Pattern requires at least 3 holes'
 
     @staticmethod
     def nbr_seeds(holes, nbr_start):
@@ -109,7 +120,11 @@ class AlternatesPattern(StartPatternIf):
     @staticmethod
     def size_ok(holes):
         return True
-    err_msg = 'Alternates Pattern is always good'
+
+    @classmethod
+    @property
+    def err_msg(cls):
+        return 'Alternates Pattern is always good'
 
 
     @staticmethod
@@ -144,7 +159,11 @@ class AltsWithOnePattern(StartPatternIf):
     @staticmethod
     def size_ok(holes):
         return holes >= 3
-    err_msg = 'Alternates w/ 1 requires at least 3 holes'
+
+    @classmethod
+    @property
+    def err_msg(cls):
+        return 'Alternates w/ 1 requires at least 3 holes'
 
 
     @staticmethod
@@ -179,7 +198,12 @@ class AltsThenSplitPattern(StartPatternIf):
     @staticmethod
     def size_ok(holes):
         return not holes % 2
-    err_msg = 'Alternates Then Split requires an even number of holes per side'
+
+
+    @classmethod
+    @property
+    def err_msg(cls):
+        return 'Alternates Then Split requires an even number of holes per side'
 
 
     @staticmethod
@@ -212,7 +236,12 @@ class ClippedTriplesPattern(StartPatternIf):
     @staticmethod
     def size_ok(holes):
         return holes >= 3
-    err_msg = 'Clipped Tripples Pattern requires at least 3 holes'
+
+
+    @classmethod
+    @property
+    def err_msg(cls):
+        return 'Clipped Tripples Pattern requires at least 3 holes'
 
 
     @staticmethod
@@ -240,7 +269,12 @@ class TwoEmptyPattern(StartPatternIf):
     @staticmethod
     def size_ok(holes):
         return holes >= FOUR
-    err_msg = 'TwoEmpty Pattern requires at least 4 holes'
+
+
+    @classmethod
+    @property
+    def err_msg(cls):
+        return 'TwoEmpty Pattern requires at least 4 holes'
 
 
     @staticmethod
@@ -261,6 +295,67 @@ class TwoEmptyPattern(StartPatternIf):
         game.board[holes:dbl_holes] = game.board[:holes]
 
 
+class NoRepeatSowOwn(StartPatternIf):
+    """If the game were to be a sow_own_store game, adjust
+    the seeds so that there is no repeat turn on the opening move.
+    An adjustment is not always done.
+
+    Note that the opening player's move may give the opponent a
+    repeat turn."""
+
+    @staticmethod
+    def size_ok(holes):
+        """Return True if the pattern can be used
+        with holes per side."""
+        return holes > 2
+
+
+    @classmethod
+    @property
+    def err_msg(cls):
+        return 'NoRepeatSowOwn requires at least 3 holes per side'
+
+
+    @staticmethod
+    def nbr_seeds(holes, nbr_start):
+        """Return the total number of seeds."""
+        return nbr_start * holes * 2
+
+    @staticmethod
+    def fill_seeds(game):
+        """Put the seeds into the board and adjust for start player."""
+
+        holes = game.cts.holes
+        dholes = game.cts.dbl_holes
+        nbr_start = game.cts.nbr_start
+
+        if nbr_start <= 2:
+            p1_hole = holes - nbr_start
+            m1_hole = max(0, p1_hole - 2)
+
+        elif nbr_start <= holes:
+            p1_hole = holes - nbr_start
+            m1_hole = holes + 2 - nbr_start
+
+        else:
+            sstore = nbr_start % (dholes + 1)
+            p1_hole = holes - sstore
+            if not 0 <= p1_hole < holes:
+                return
+
+            m1_hole = holes + 2 - sstore
+            if m1_hole >= holes:
+                for tpos in range(holes):
+                    if not (tpos == p1_hole
+                            or tpos + (nbr_start - 1) % (dholes + 1) == holes):
+                        break
+                m1_hole = tpos
+
+        game.board[m1_hole] -= 1
+        game.board[p1_hole] += 1
+        game.board[holes:dholes] = game.board[:holes]
+
+
 class RandomPattern(StartPatternIf):
     """Fill with random seeds but at least two in each hole,
     if there are more than enough seeds to put 2 per hole.
@@ -269,7 +364,12 @@ class RandomPattern(StartPatternIf):
     @staticmethod
     def size_ok(holes):
         return True
-    err_msg = 'RandomPattern is always good'
+
+
+    @classmethod
+    @property
+    def err_msg(cls):
+        return 'RandomPattern is always good'
 
 
     @staticmethod
@@ -308,7 +408,12 @@ class RightmostPlusOne(StartPatternIf):
     @staticmethod
     def size_ok(holes):
         return True
-    err_msg = 'RightmostPlusOne is always good'
+
+
+    @classmethod
+    @property
+    def err_msg(cls):
+        return 'RightmostPlusOne is always good'
 
 
     @staticmethod
@@ -333,7 +438,12 @@ class MoveRightmost(StartPatternIf):
     @staticmethod
     def size_ok(holes):
         return True
-    err_msg = 'MoveRightmost is always good'
+
+
+    @classmethod
+    @property
+    def err_msg(cls):
+        return 'MoveRightmost is always good'
 
 
     @staticmethod
@@ -357,7 +467,12 @@ class MoveRandom(StartPatternIf):
     @staticmethod
     def size_ok(holes):
         return True
-    err_msg = 'MoveRandom is always good'
+
+
+    @classmethod
+    @property
+    def err_msg(cls):
+        return 'MoveRandom is always good'
 
 
     @staticmethod
@@ -391,3 +506,4 @@ PCLASSES[gi.StartPattern.ALTS_SPLIT] = AltsThenSplitPattern
 PCLASSES[gi.StartPattern.RIGHTMOST_PLUS_ONE] = RightmostPlusOne
 PCLASSES[gi.StartPattern.MOVE_RIGHTMOST] = MoveRightmost
 PCLASSES[gi.StartPattern.MOVE_RANDOM] = MoveRandom
+PCLASSES[gi.StartPattern.NO_REPEAT_SOW_OWN] = NoRepeatSowOwn

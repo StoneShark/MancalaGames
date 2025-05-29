@@ -245,3 +245,40 @@ class TestRandomMove:
         assert game.mdata
         assert game.mdata.repeat_turn == True
         assert game.turn != game.starter
+
+
+
+class TestNoRepeat:
+
+
+    def test_bad_size(self):
+
+        with pytest.raises(gi.GameInfoError):
+            gi.GameInfo(start_pattern=gi.StartPattern.NO_REPEAT_SOW_OWN,
+                        evens=True,
+                        stores=True,
+                        sow_own_store=True,
+                        nbr_holes=2,
+                        rules=mancala.Mancala.rules)
+
+    # tested them all but don't need these 200+ tests in the test suite
+    # @pytest.mark.parametrize('holes', range(3, gconsts.MAX_HOLES))
+    # @pytest.mark.parametrize('seeds', range(1, 21))
+
+    @pytest.mark.parametrize('holes', [3, 5, 6, 7, gconsts.MAX_HOLES])
+    @pytest.mark.parametrize('seeds', [1, 2, 3, 4, 5, 8, 10, 20])
+    def test_no_repeat(self, holes, seeds):
+
+        game_consts = gconsts.GameConsts(holes=holes, nbr_start=seeds)
+        game_info = gi.GameInfo(start_pattern=gi.StartPattern.NO_REPEAT_SOW_OWN,
+                                evens=True,
+                                stores=True,
+                                sow_own_store=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        for pos in range(holes):
+            with game.save_restore_state():
+                mdata = game.do_sow(pos)
+                assert mdata.capt_loc != gi.WinCond.REPEAT_TURN

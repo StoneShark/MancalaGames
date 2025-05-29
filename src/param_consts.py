@@ -275,11 +275,12 @@ STRING_DICTS = {
          'Alts with 1': gi.StartPattern.ALTS_WITH_1,
          'Clipped Triples': gi.StartPattern.CLIPPEDTRIPLES,
          'Two Empty': gi.StartPattern.TWOEMPTY,
-         'Random': gi.StartPattern.RANDOM,
          'Alts Split Right': gi.StartPattern.ALTS_SPLIT,
          'Equal plus one in Right': gi.StartPattern.RIGHTMOST_PLUS_ONE,
-         'Move Rightmost Hole': gi.StartPattern.MOVE_RIGHTMOST,
+         'No Repeat Sow Own': gi.StartPattern.NO_REPEAT_SOW_OWN,
+         'Random': gi.StartPattern.RANDOM,
          'Random Move': gi.StartPattern.MOVE_RANDOM,
+         'Move Rightmost Hole': gi.StartPattern.MOVE_RIGHTMOST,
          }),
 
 }

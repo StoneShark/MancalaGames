@@ -129,7 +129,7 @@ Capture type.
 
 - TWO_OUT: Capture two holes out from the final hole sown but only if the intervening hole is empty. This is sometimes called capturing across the gap. 
 
-  + CAPSAMEDIR must be true. Basic capture rules and capture side are ignored. 
+  + CAPSAMEDIR must be true. Basic capture rules and capture side are ignored (if a "capture while sowing" SOW_RULE is selected, these are applied to sowing). 
 
   + When not lap sowing, the final hole sown must be occupied for capture two out (i.e. contains two or more seeds after sowing).
   
@@ -802,6 +802,14 @@ Allows specifying non-all-equal start patterns. The following patterns are suppo
 - MOVE_RIGHTMOST: use when the first move of the game must be from the starter's rightmost hole. This start pattern will perform the opening move automatically, including any capture or seed removal that should occur.
 
 - MOVE_RANDOM: a random move is selected and executed. After the move the turn always changes to the next player; repeat turn is not honored on this opening random move. This can be used to neutralize the advantage a game starter might have.
+
+- NO_REPEAT_SOW_OWN: a sow pattern that assures that the starter does not have a move that will result in a repeat turn as if the game had SOW_OWN_STORE configured (it is not required).  
+
+  + Both sides of the board are setup the same, so the second player will only have a repeat turn if the starter's opening move gave them one.
+
+  + In broad strokes, an extra seed is placed in the hole whose sow would have landed in the store; this seed is taken from a hole such that sowing from it will reach one past the store. The actual computations vary based on board size and number of start seeds but the resulting start pattern will not allow a repeat turn for the starter.
+
+  + The seed placement is not adjusted if there is no repeat turn possible with an ALL_EQUAL pattern.
 
 In the formulas above holes (n in figures) is the game constant HOLES and nbr_start is the game constant NBR_START.
 

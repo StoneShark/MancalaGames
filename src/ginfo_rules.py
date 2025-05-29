@@ -916,6 +916,7 @@ def build_rules():
         msg='Prescribed sow of SOW1OPP is not support with repeat turns',
         warn=gi.GameInfoError)
         # SOW1OPP is used for 2 turns but the prescribed sower uses mcount
+        # repeat turns would exhaust it on the first mover
 
     man_rules.add_rule(
         'visit_opp_req_mlap',
