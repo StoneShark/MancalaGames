@@ -882,7 +882,7 @@ class MancalaUI(tk.Frame):
         """Do the last steps in starting a new game:
         log the start and check for ai's turn."""
         game_log.new()
-        game_log.turn(self.game.mcount, 'Start Game', self.game)
+        game_log.turn(0, 'Start Game', self.game)
         self.history.record(self.game.state)
         self._reset_ani_state()
         self.schedule_ai()
@@ -1237,7 +1237,7 @@ class MancalaUI(tk.Frame):
         animation sequence completes."""
 
         if (self.game.info.sow_direct == gi.Direct.PLAYALTDIR
-            and self.game.mcount == 1):
+            and self.game.mcount == 2):
 
             message = 'Player direction is ' \
                 + self.saved_move[-1].opp_dir().name

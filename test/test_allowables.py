@@ -709,7 +709,7 @@ class TestOnlyRightTwo:
         game.turn = turn
         game.board = board
         game.blocked = blocks
-        game.mcount = move_nbr
+        game.movers = move_nbr
 
         assert game.deco.allow.get_allowable_holes() == eresult
 
@@ -746,7 +746,7 @@ class TestOnlyRightTwo:
         game.turn = turn
         game.board = board
         game.blocked = blocks
-        game.mcount = move_nbr
+        game.movers = move_nbr
 
         assert game.deco.allow.get_allowable_holes() == eresult
 

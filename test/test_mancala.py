@@ -368,7 +368,8 @@ class TestGameState:
         else:
             assert not state.owner
 
-        assert not state.mcount
+        assert state.mcount == 1
+        assert not state.movers
         assert not state.rturn_cnt
         assert not state.rtally_state
         assert not state.istate
@@ -982,10 +983,10 @@ class TestDelegates:
         assert game.test_pass() == erval
 
         if erval:
-            assert game.mcount == 1
+            assert game.mcount == 2
             assert game.turn
         else:
-            assert game.mcount == 0
+            assert game.mcount == 1
             assert not game.turn
 
 
@@ -1176,7 +1177,7 @@ class TestBProp:
                                 rules=mancala.Mancala.rules)
         game =  mancala.Mancala(game_consts, game_info)
 
-        assert game.mcount == 0
+        assert game.mcount == 1
         assert game.board == [2, 2, 2, 2]
         assert game.child == [N, N, N, N]
         assert game.blocked == [F, F, F, F]

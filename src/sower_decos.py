@@ -502,6 +502,15 @@ class SowPrescribedIf(SowMethodIf):
         self.dispose = count
 
 
+    def __str__(self):
+
+        my_str = '\n   '.join([repr(self),
+                               'dispose:  ' + str(self.dispose)])
+        if self.decorator:
+            return my_str + '\n' + str(self.decorator)
+        return my_str  # pragma: no coverage
+
+
     @abc.abstractmethod
     def do_prescribed(self, mdata):
         """Do the prescribed opening moves."""
@@ -513,6 +522,7 @@ class SowPrescribedIf(SowMethodIf):
         if self.game.mcount > self.dispose:
             self.decorator.sow_seeds(mdata)
         else:
+            game_log.add(f"Prescribed sower used: {self.__class__.__name__}")
             self.do_prescribed(mdata)
 
 
@@ -531,7 +541,20 @@ class SowPrescribedIf(SowMethodIf):
         return self.decorator.get_single_sower()
 
 
-class SowBasicFirst(SowPrescribedIf):
+class SowPresSowerMixin:
+    """A mixin to print the sower deco used for the
+    prescribed sow."""
+
+    def __str__(self):
+
+        my_str = '\n   '.join([repr(self),
+                               'sower:  ' + str(self.sower)])
+        if self.decorator:
+            return my_str + '\n' + str(self.decorator)
+        return my_str  # pragma: no coverage
+
+
+class SowBasicFirst(SowPresSowerMixin, SowPrescribedIf):
     """Use the default basic sower for the first sows."""
 
     def __init__(self, game, count, decorator=None):

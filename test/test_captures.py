@@ -264,14 +264,14 @@ class TestNoCaptures:
         mdata.seeds = 2
 
         game.turn = True
-        assert game.mcount == 0
+        assert game.movers == 0
         game.inhibitor.clear_if(game, mdata)
         assert game.inhibitor.stop_me_capt(game.turn)
 
         game.deco.capturer.do_captures(mdata)
         assert not mdata.captured
 
-        game.mcount = 2
+        game.movers = 1
         game.inhibitor.clear_if(game, mdata)
         assert not game.inhibitor.stop_me_capt(game.turn)
 

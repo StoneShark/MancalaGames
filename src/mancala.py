@@ -61,7 +61,7 @@ class GameState(ai_interface.StateIf):
 
     board: tuple
     store: tuple
-    mcount: int = 0
+    mcount: int = 1
     movers: int = 0
     _turn: bool
     rturn_cnt: int = 0
@@ -256,10 +256,11 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         self.blocked = []
         self.child = []
         self.owner = []
-        self.mcount = 0
-        self.rturn_cnt = 0
+        self.mcount = 1      # count of moves
+        self.movers = 0      # count of players that have moved
+        self.rturn_cnt = 0    # repeat turns for one move
         self.turn = random.choice([False, True])
-        self.starter = self.turn
+        self.starter = self.turn    # starter of current round
         self.mdata = None
         self.inhibitor = inhibitor.make_inhibitor(self)
 
@@ -527,7 +528,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         holes = self.cts.holes
         dbl_holes = self.cts.dbl_holes
 
-        self.mcount = 0
+        self.mcount = 1
         self.movers = 0
         self.rturn_cnt = 0
 
@@ -874,13 +875,14 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
         Return the created mdata."""
 
-        self.mcount += 1
         assert (all(cnt >= 0 for cnt in self.board + self.store)
                 and sum(self.store) + sum(self.board) == self.cts.total_seeds
                 ), f"seed count error before move\n{self.store}\n{self.board}"
 
         if move == gi.PASS_TOKEN:
             self.turn = not self.turn
+            self.mcount += 1
+            self.movers += 1
             return move_data.MoveData.pass_move(not self.turn)
 
         mdata = self.do_sow(move)
@@ -901,6 +903,11 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             self.capture_seeds(mdata)
             if not mdata.repeat_turn:
                 self.inhibitor.clear_if(self, mdata)
+
+        # inc these here so that they are right for any calls to allow deco's
+        self.mcount += 1
+        if not mdata.repeat_turn:
+            self.movers += 1
 
         self.win_conditions(mdata)
         if mdata.win_cond:
@@ -942,7 +949,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             move = mdata.move
         move_desc = f'{sturn} move {move}{wtext}'
 
-        game_log.turn(self.mcount, move_desc, self)
+        game_log.turn(self.mcount - 1, move_desc, self)
 
 
     def move(self, move):
@@ -950,12 +957,8 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         (move has several returns this wraps them all),
         log the turn here."""
 
-        last_turn = self.turn
         mdata = self._move(move)
         self._log_turn(mdata)
-
-        if last_turn != self.turn:
-            self.movers += 1
         return mdata.win_cond
 
 
@@ -968,6 +971,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
         if self.info.mustpass and not any(self.get_allowable_holes()):
             self.mcount += 1
+            self.movers += 1
             self.turn = not self.turn
             self._log_turn(move_data.MoveData.pass_move(not self.turn))
             return True

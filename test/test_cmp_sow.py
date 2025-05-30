@@ -170,7 +170,7 @@ GAMECONF = {'basic':
 START = {'start':
              mancala.GameState(board=(2, 2, 2, 2, 2, 2, 2, 2, 2, 2),
                                store=(0, 0),
-                               mcount=1,    # mcount is inc'ed at top of move
+                               mcount=1,    # mcount is init'ed to 1
                                _turn=False,
                                blocked=(F, F, F, F, F, F, F, F, F, F),
                                child=(N, N, N, N, N, N, N, N, N, N)),
@@ -350,13 +350,13 @@ CIDS = [f'{case[0]}-{case[1]}-{case[2]}-idx{idx}' for idx, case in enumerate(CAS
 BAD_INHIBITOR_TESTS = [
 
     # cannot have blocked holes on the first move of a deprive game
-    'test_inhibit_sower[sbd_udir-st_blocks-False-idx16-1]',
+    'test_inhibit_sower[sbd_udir-st_blocks-False-idx16-0]',
     ]
 
 
 # %% test_sower
 
-@pytest.mark.usefixtures('logger')
+# @pytest.mark.usefixtures('logger')
 @pytest.mark.parametrize('conf_name, state_name, turn, move,'
                          'eloc, eboard, estore, eblocks',
                          CASES, ids=CIDS)
@@ -383,9 +383,9 @@ def test_sower(conf_name, state_name, turn, move,
     assert not game.info.child_type or (game.info.child_type and start_state.child), \
         "Test error: game.info.child_type inconsistent with start_state"
 
-    print(GAMECONF[conf_name])
-    print(game)
-    print('move:', move)
+    # print(GAMECONF[conf_name])
+    # print(game)
+    # print('move:', move)
     mdata = game.do_sow(move)
 
     # check the expected changes
@@ -414,12 +414,12 @@ def test_sower(conf_name, state_name, turn, move,
 
 
 # @pytest.mark.usefixtures('logger')
-@pytest.mark.parametrize('mcount', (1, 2))
+@pytest.mark.parametrize('movers', (0, 1))
 @pytest.mark.parametrize('conf_name, state_name, turn, move,'
                          'eloc, eboard, estore, eblocks',
                          CASES, ids=CIDS)
 def test_inhibit_sower(request,
-                       mcount, conf_name, state_name, turn, move,
+                       movers, conf_name, state_name, turn, move,
                        eloc, eboard, estore, eblocks):    # expected values
     """Use the same test cases for both first and second move of the game,
     but set nocaptmoves for all. If there's error in building game_info,
@@ -449,18 +449,16 @@ def test_inhibit_sower(request,
 
     game.turn = turn
 
-    # clear_if is called at end of move, but we want to simulate
-    # it being called for the previous turn
-    game.mcount = mcount - 1
+    game.movers = movers
     game.inhibitor.clear_if(game, None)  # mdata isn't used in this inhibitor
-    game.mcount = mcount
+    game.movers = movers + 1
 
     # confirm inhibitor config
-    assert game.inhibitor.stop_me_capt(turn) == (not bool(mcount - 1))
+    assert game.inhibitor.stop_me_capt(turn) == (not bool(movers))
 
     game.do_sow(move)
 
-    if mcount == 1 or estore == NSTR:
+    if movers == 0 or estore == NSTR:
         # blocks & stores should be unchanged
         if game.info.blocks:
             assert tuple(game.blocked) == start_state.blocked

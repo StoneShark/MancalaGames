@@ -225,19 +225,19 @@ class TestAltDirMoves:
         game = mancala.Mancala(game_consts, game_info)
         game.turn = turn
 
-        game.mcount = 0
+        game.movers = 0
         moves = game.deco.moves.get_moves()
         assert len(moves) == 8 if sides else 4
         assert all(tpl[-1] is not None for tpl in moves)
         assert not sum(tpl[-1] for tpl in moves)   # same number of CW and CCW
 
-        game.mcount = 1
+        game.movers = 1
         moves = game.deco.moves.get_moves()
         assert len(moves) == 4 if sides else 2
         assert all(tpl[-1] is None for tpl in moves)
 
         # no moves available
         game.board = [1, 1, 1, 1]
-        game.mcount = 0
+        game.movers = 0
         moves = game.deco.moves.get_moves()
         assert not len(moves)

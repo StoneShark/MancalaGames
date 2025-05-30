@@ -451,7 +451,7 @@ class SowMlapSeeds(MlapSowerIf):
 # %% prescribed mlap sower
 
 
-class SowMlapsFirst(sowd.SowPrescribedIf):
+class SowMlapsFirst(sowd.SowPresSowerMixin, sowd.SowPrescribedIf):
     """Use the default mlap sower for the first sows."""
 
     def __init__(self, game, count, decorator=None):
@@ -459,6 +459,7 @@ class SowMlapsFirst(sowd.SowPrescribedIf):
         sower = sowd.SowSeeds(game)
         lap_cont = StopSingleSeed(game, LapContinue(game))
         self.sower = SowMlapSeeds(game, sower, lap_cont, NoOp(game))
+
 
     def do_prescribed(self, mdata):
         self.sower.sow_seeds(mdata)

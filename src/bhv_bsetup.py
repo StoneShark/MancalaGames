@@ -366,6 +366,7 @@ class SetupHold(bhv_hold.Hold):
         self.game_ui.game.new_game()
         self.game_ui.game.inhibitor.set_off()
         self.game_ui.game.mcount = 2
+        self.game_ui.game.movers = 2
         self.game_ui.player.clear_history()
         self.refresh_game()
 
@@ -464,6 +465,7 @@ class SetupButtonBehavior(bhv.BehaviorIf):
         SETUPHOLD.hold_menu(game_ui)
         game_ui.game.inhibitor.set_off()
         game_ui.game.mcount = 2
+        game_ui.game.movers = 2
         game_ui.vars.ai_active.set(False)
 
         return True

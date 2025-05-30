@@ -320,14 +320,14 @@ class AllTwoRightmost(AllowableIf):
 
 
 class OnlyRightTwo(AllowableIf):
-    """On the first turn (called before mcount's first increment),
-    can only move from the rightmost two allowable holes."""
+    """On the first turn, can only move from the rightmost
+    two allowable holes."""
 
     def get_allowable_holes(self):
         """Return allowable moves."""
 
         allow = self.decorator.get_allowable_holes()
-        if self.game.mcount:
+        if self.game.movers:
             return allow
 
         if self.game.turn:
@@ -642,7 +642,8 @@ class NoEndlessSows(AllowableIf):
 
 class MemoizeAllowable(AllowableIf):
     """Memoize the allowable resut:  Allowables are checked in
-    several places--move/end_move, test_pass and get_allowables
+    several places--move/end_move, test_pass, get_allowables,
+    and (if ai is playing) get_moves.
     --for each move.
 
     If the game state hasn't changed return the same value
@@ -662,6 +663,7 @@ class MemoizeAllowable(AllowableIf):
             cur_state = self.game.state
 
             if cur_state == self.saved_state:
+                # game_log.add("resuing allowable result", game_log.DETAIL)
                 return self.return_val
 
         rval = self.decorator.get_allowable_holes()

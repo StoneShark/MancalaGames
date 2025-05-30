@@ -115,7 +115,7 @@ class InhibitorCaptN(InhibitorIf):
 
     def clear_if(self, game, mdata):
         logit = self._captures
-        if game.mcount >= self._expire:
+        if game.movers >= self._expire:
             self._captures = False
             if logit:
                 game_log.add('Inhibit captures expired.', game_log.IMPORT)

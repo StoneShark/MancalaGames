@@ -37,7 +37,7 @@ class GameStub:
     def __init__(self):
 
         self.info = InfoStub()
-        self.mcount = 0
+        self.movers = 0
 
 # %%
 
@@ -152,7 +152,7 @@ def test_capt_n():
     assert inhibit.stop_me_capt(False)
 
     # test clear_if for move 0
-    game.mcount = 0
+    game.movers = 0
     inhibit.clear_if(game, mdata)
     assert not inhibit.stop_me_child(True)
     assert not inhibit.stop_me_child(False)
@@ -161,7 +161,7 @@ def test_capt_n():
     assert inhibit.get_state()
 
     # test clear_if for move 1
-    game.mcount = 1
+    game.movers = 1
     inhibit.clear_if(game, mdata)
     assert not inhibit.stop_me_child(True)
     assert not inhibit.stop_me_child(False)
@@ -170,7 +170,7 @@ def test_capt_n():
     assert not inhibit.get_state()
 
     # test clear_if for move 2
-    game.mcount = 2
+    game.movers = 2
     inhibit.clear_if(game, mdata)
     assert not inhibit.stop_me_child(True)
     assert not inhibit.stop_me_child(False)
