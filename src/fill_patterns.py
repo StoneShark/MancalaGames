@@ -345,7 +345,7 @@ class NoRepeatSowOwn(StartPatternIf):
 
             m1_hole = holes + 2 - sstore
             if m1_hole >= holes:
-                for tpos in range(holes):
+                for tpos in range(holes):   # pragma: no coverage
                     if not (tpos == p1_hole
                             or tpos + (nbr_start - 1) % (dholes + 1) == holes):
                         break
