@@ -141,7 +141,7 @@ class TestGameState:
                                 goal=Goal.TERRITORY,
                                 moveunlock=True,
                                 nbr_holes = game_consts.holes,
-                                rules=ginfo_rules.RuleDict())
+                                rules=lambda ginfo, holes: True)
 
         game = mancala.Mancala(game_consts, game_info)
         return game
@@ -388,7 +388,7 @@ class TestRtally:
                                 goal=request.param,
                                 rounds=gi.Rounds.NO_MOVES,
                                 nbr_holes=game_consts.holes,
-                                rules=ginfo_rules.RuleDict())
+                                rules=lambda ginfo, holes: True)
 
         game = mancala.Mancala(game_consts, game_info)
         return game
@@ -412,7 +412,7 @@ class TestRtally:
                                 goal=Goal.RND_EXTRA_SEEDS,
                                 rounds=gi.Rounds.NO_MOVES,
                                 nbr_holes=game_consts.holes,
-                                rules=ginfo_rules.RuleDict())
+                                rules=lambda ginfo, holes: True)
 
         game = mancala.Mancala(game_consts, game_info)
         return game
@@ -460,7 +460,7 @@ class TestMoveData:
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
                                 nbr_holes=game_consts.holes,
-                                rules=ginfo_rules.RuleDict())
+                                rules=lambda ginfo, holes: True)
 
         game = mancala.Mancala(game_consts, game_info)
         return game
@@ -568,7 +568,7 @@ class TestManDeco:
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
                                 nbr_holes=game_consts.holes,
-                                rules=ginfo_rules.RuleDict())
+                                rules=lambda ginfo, holes: True)
 
         game = mancala.Mancala(game_consts, game_info)
         return game
@@ -633,7 +633,7 @@ class TestManDeco:
                                 blocks=True,            # this is not valid
                                 capt_side=gi.CaptSide.OWN_SIDE,
                                 nbr_holes=game_consts.holes,
-                                rules=ginfo_rules.RuleDict())  # empty rule dict
+                                rules=lambda ginfo, holes: True)  # empty rule dict
         game = mancala.Mancala(game_consts, game_info)
         return game
 

@@ -26,26 +26,26 @@ import sower_decos
 
 # %% North south rules
 
-def ns2_build_rules(gclass_name):
-    """Build the rules for NorthSouthCycle."""
+def test_ns2_rules(gclass_name, ginfo, holes, skip=None):
+    """Test rules for NorthSouthCycle."""
 
-    rules = ginfo_rules.RuleDict()
+    tester = ginfo_rules.RuleTester(ginfo, holes, skip)
 
-    rules.add_rule(
+    tester.test_rule(
         'ns2_not_territory',
         rule=lambda ginfo: ginfo.goal == gi.Goal.TERRITORY,
         msg=f'{gclass_name} incompatible with Territory GOAL',
         excp=gi.GameInfoError)
         # ownership of holes is fixed to board side
 
-    rules.add_rule(
+    tester.test_rule(
         'ns2_no_mshare',
         rule=lambda ginfo: ginfo.mustshare,
         msg=f'{gclass_name} incompatible with MUSTSHARE',
         excp=gi.GameInfoError)
         # can't sow opponents holes
 
-    rules.add_rule(
+    tester.test_rule(
         'ns2_no_sowrule',
         rule=lambda ginfo: ginfo.sow_rule in (
             # do not use the incr, so will fail
@@ -60,13 +60,13 @@ def ns2_build_rules(gclass_name):
         msg=f'{gclass_name} incompatible with selected SOW_RULE',
         excp=gi.GameInfoError)
 
-    rules.add_rule(
+    tester.test_rule(
         'ns2_no_vis_opp',
         rule=lambda ginfo: ginfo.visit_opp,
         msg=f'{gclass_name} incompatible with VISIT_OPP',
         excp=gi.GameInfoError)
 
-    rules.add_rule(
+    tester.test_rule(
         'ns2_noside_wegs',
         rule=lambda ginfo: (ginfo.child_type == gi.ChildType.WEG
                             and not ginfo.no_sides),
@@ -75,7 +75,7 @@ def ns2_build_rules(gclass_name):
         excp=gi.GameInfoError)
         # cannot create children on opponents side, so opp will never sow
 
-    rules.add_rule(
+    tester.test_rule(
         'ns2_child_rules',
         rule=lambda ginfo: ginfo.child_rule in (gi.ChildRule.OPP_SIDE_ONLY,
                                                 gi.ChildRule.OPPS_ONLY_NOT_1ST,
@@ -86,33 +86,25 @@ def ns2_build_rules(gclass_name):
         # child test is always on side of the board with sown seed
         # Qurs can still be made opposite
 
-    # add in the mancala rules
-    man_rules = ginfo_rules.build_rules()
-    rules |= man_rules
-
-    # we are not sowing opp side, cap in either dir is fine
-    del man_rules['xcapt_multi_same']
-
-    return rules
+    skip_set = skip if skip else set()
+    skip_set |= {'xcapt_multi_same'}
+    mancala.Mancala.rules(ginfo, holes, skip=skip_set)
 
 
-def ew2_build_rules():
-    """Build the rules for EastWestCycle."""
+def test_ew2_rules(ginfo, holes, skip=None):
+    """Test the rules for EastWestCycle."""
 
-    rules = ns2_build_rules('EastWestCycle')
+    tester = ginfo_rules.RuleTester(ginfo, holes, skip)
 
-    rules.add_rule(
+    tester.test_rule(
         'ew2_even_holes',
         both_objs=True,
         rule=lambda _, nbr_holes: nbr_holes % 2,
         msg='EastWestCycle requires an even number of holes',
         excp=gi.GameInfoError)
 
-    # add in the mancala rules
-    man_rules = ginfo_rules.build_rules()
-    rules |= man_rules
+    test_ns2_rules('EastWestCycles', ginfo, holes, skip)
 
-    return rules
 
 
 # %% deco additions
@@ -240,11 +232,10 @@ class NorthSouthCycle(mancala.Mancala):
     side of the board."""
 
     @classmethod
-    @property
-    def rules(cls):
+    def rules(cls, ginfo, holes, skip=None):
         """The rules for the class but don't build them unless we
         need them."""
-        return ns2_build_rules('NorthSouthCycle')
+        test_ns2_rules('NorthSouthCycle', ginfo, holes, skip)
 
 
     def __init__(self, game_consts, game_info):
@@ -266,11 +257,9 @@ class EastWestCycle(mancala.Mancala):
     with this class. Player's actions cannot effect eachother."""
 
     @classmethod
-    @property
-    def rules(cls):
-        """The rules for the class but don't build them unless we
-        need them."""
-        return ew2_build_rules()
+    def rules(cls, ginfo, holes, skip=None):
+        """Test the game class rules before the game class is created."""
+        test_ew2_rules(ginfo, holes, skip)
 
 
     def __init__(self, game_consts, game_info):

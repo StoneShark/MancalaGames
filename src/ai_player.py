@@ -76,7 +76,7 @@ class AiPlayer(ai_interface.AiPlayerIf):
     def __init__(self, game, player_dict):
 
         super().__init__(game, player_dict)
-        player_dict_rules().test(player_dict, game)
+        test_player_rules(player_dict, game)
 
         if ckey.ALGORITHM in player_dict:
             self.set_algorithm(player_dict[ckey.ALGORITHM])
@@ -453,14 +453,14 @@ def mcts_no_hidden_state(game):
                         ))
 
 
-def player_dict_rules():
+def test_player_rules(pdict, game):
     """Create the rules to check the consistency of the player dict.
     pdict will always be passed, game is the second optional
     object."""
 
-    rules = ginfo_rules.RuleDict()
+    tester = ginfo_rules.RuleTester(pdict, game)
 
-    rules.add_rule(
+    tester.test_rule(
         'def_diff',
         rule=lambda pdict: (ckey.DIFFICULTY in pdict
                             and pdict[ckey.DIFFICULTY]
@@ -468,7 +468,7 @@ def player_dict_rules():
         msg='Difficulty not 0, 1, 2 or 3',
         excp=gi.GameInfoError)
 
-    rules.add_rule(
+    tester.test_rule(
         'scorer_vals',
         rule=lambda pdict: ((ckey.ALGORITHM not in pdict
                              or (ckey.ALGORITHM in pdict
@@ -480,7 +480,7 @@ def player_dict_rules():
             to prevent random play for Minimaxer or Negamaxer""",
         warn=True)
 
-    rules.add_rule(
+    tester.test_rule(
         'params_four_diff',
         rule=lambda pdict: (ckey.AI_PARAMS in pdict
                             and any(len(values) != DIFF_LEVELS
@@ -490,7 +490,7 @@ def player_dict_rules():
             for each ai parameter""",
         excp=gi.GameInfoError)
 
-    rules.add_rule(
+    tester.test_rule(
         'stores_scorer',
         rule=lambda pdict, game: (not game.info.stores
                                    and not game.info.child_type
@@ -501,7 +501,7 @@ def player_dict_rules():
         msg='Stores scorer is not supported without stores or children.',
         excp=gi.GameInfoError)
 
-    rules.add_rule(
+    tester.test_rule(
         'stores_scorer_inv',
         rule=lambda pdict, game: (game.info.goal.eliminate()
                                    and ckey.SCORER in pdict
@@ -512,7 +512,7 @@ def player_dict_rules():
             CLEAR, DEPRIVE or IMMOBILIZE games.""",
         excp=gi.GameInfoError)
 
-    rules.add_rule(
+    tester.test_rule(
         'mlaps_access_prohibit',
         rule=lambda pdict, game: (game.info.mlaps
                                    and ckey.SCORER in pdict
@@ -522,7 +522,7 @@ def player_dict_rules():
         msg='Access scorer not supported for multilap games',
         excp=gi.GameInfoError)
 
-    rules.add_rule(
+    tester.test_rule(
         'udirect_access_prohibit',
         rule=lambda pdict, game: (game.info.udirect
                                    and ckey.SCORER in pdict
@@ -532,7 +532,7 @@ def player_dict_rules():
         msg='Access scorer not supported with UDIR_HOLES',
         excp=gi.GameInfoError)
 
-    rules.add_rule(
+    tester.test_rule(
         'no_side_access',
         rule=lambda pdict, game: (game.info.mlength == 3
                                    and ckey.SCORER in pdict
@@ -543,7 +543,7 @@ def player_dict_rules():
             NO_SIDES and TERRITORY""",
         excp=gi.GameInfoError)
 
-    rules.add_rule(
+    tester.test_rule(
         'child_scorer',
         rule=lambda pdict, game: (not game.info.child_type
                                    and ckey.SCORER in pdict
@@ -553,7 +553,7 @@ def player_dict_rules():
         msg='Child count scorer not supported without CHILD',
         excp=gi.GameInfoError)
 
-    rules.add_rule(
+    tester.test_rule(
         'no_repeat_scorer',
         rule=lambda pdict, game: (not (game.info.sow_own_store
                                         or game.info.capt_rturn
@@ -566,7 +566,7 @@ def player_dict_rules():
             (SOW_OWN_STORE | CAPT_RTURN | XC_SOWN)""",
         excp=gi.GameInfoError)
 
-    rules.add_rule(
+    tester.test_rule(
         'nmax_no_repeat',
         rule=lambda pdict, game: (negamax_no_repeat_turn(game)
                                        and ckey.ALGORITHM in pdict
@@ -577,7 +577,7 @@ def player_dict_rules():
         excp=gi.GameInfoError)
 
 
-    rules.add_rule(
+    tester.test_rule(
         'mcts_no_hidden_state',
         rule=lambda pdict, game: (mcts_no_hidden_state(game)
                                        and ckey.ALGORITHM in pdict
@@ -592,5 +592,3 @@ def player_dict_rules():
         # game.mcount, game.rturn_cnt, or game.inhibitor are excluded
         # mostly a choice to keep the node dictionary smaller
         # and not deal with the mess that was mcount for more state data
-
-    return rules

@@ -18,74 +18,74 @@ FIVE = 5
 
 # %% build rules for Diffusion
 
-def build_rules():
-    """Build the rules for Diffusion.
+def test_rules(ginfo, holes, skip=None):
+    """Test rules for Diffusion.
     Not much is allowed:
         - change board size, but it must be even
-    """
+    Mancala rules are not tested."""
 
-    rules = ginfo_rules.RuleDict()
+    tester = ginfo_rules.RuleTester(ginfo, holes, skip)
 
-    rules.add_rule(
+    tester.test_rule(
         'even_holes',
         both_objs=True,
         rule=lambda _, nbr_holes: nbr_holes % 2,
         msg='Diffusion requires an even number of holes',
         excp=gi.GameInfoError)
 
-    rules.add_rule(
+    tester.test_rule(
         'no_sides',
         rule=lambda ginfo: not ginfo.no_sides,
         msg='Diffusion requires no_sides be true',
         excp=gi.GameInfoError)
         # either player may move from any hole
 
-    rules.add_rule(
+    tester.test_rule(
         'goal_clear',
         rule=lambda ginfo: not ginfo.goal == gi.Goal.CLEAR,
         msg='Diffusion requires clear goal',
         excp=gi.GameInfoError)
 
-    rules.add_rule(
+    tester.test_rule(
         'store_for_turn',
         rule=lambda ginfo: not ginfo.stores,
         msg="""In Diffusion, make stores visible to
                identify the current player.""",
         warn=True)
 
-    rules.add_rule(
+    tester.test_rule(
         'goal_param',
         rule=lambda ginfo: ginfo.goal_param,
         msg='GOAL_PARAM is not used with Diffusion',
         warn=True)
 
-    rules.add_rule(
+    tester.test_rule(
         'gs_legal',
         rule=lambda ginfo: ginfo.grandslam,
         msg='Grandslam must be legal with Diffusion',
         excp=gi.GameInfoError)
 
-    rules.add_rule(
+    tester.test_rule(
         'no_allow_rule',
         rule=lambda ginfo: ginfo.allow_rule,
         msg="""Diffusion is incompatible with special allow rules""",
         excp=gi.GameInfoError)
 
-    rules.add_rule(
+    tester.test_rule(
         'min_move_1',
         rule=lambda ginfo: ginfo.min_move != 1,
         msg="""Diffusion requires that min_move be 1""",
         excp=gi.GameInfoError)
 
     round_flags = ['blocks', 'rounds', 'round_fill', 'round_starter']
-    rules.add_rule(
+    tester.test_rule(
         'no_rounds',
         rule=lambda ginfo: any(getattr(ginfo, flag) for flag in round_flags),
         msg="""Diffusion is incompatible with rounds:
             """ + ', '.join(round_flags),
         excp=gi.GameInfoError)
 
-    rules.add_rule(
+    tester.test_rule(
         'sow_ccw',
         rule=lambda ginfo: ginfo.sow_direct != gi.Direct.CCW,
         msg="""Diffusion always sows from most CW hole
@@ -96,14 +96,14 @@ def build_rules():
     sow_flags = ['mlaps', 'move_one', 'moveunlock', 'mustpass', 'mustshare',
                  'prescribed', 'skip_start', 'sow_rule', 'sow_start',
                  'start_pattern', 'udir_holes', 'visit_opp', 'xc_sown']
-    rules.add_rule(
+    tester.test_rule(
         'no_sow_changes',
         rule=lambda ginfo: any(getattr(ginfo, flag) for flag in sow_flags),
         msg="""Diffusion is incompatible with special sow
                 methods: """ + ', '.join(sow_flags),
         excp=gi.GameInfoError)
 
-    rules.add_rule(
+    tester.test_rule(
         'no_sow_own',
         rule=lambda ginfo: ginfo.sow_own_store,
         msg="""Diffusion is incompatible with sow_own_store,
@@ -112,7 +112,7 @@ def build_rules():
         excp=gi.GameInfoError)
 
     child_flags = ['child_cvt', 'child_rule', 'child_type']
-    rules.add_rule(
+    tester.test_rule(
         'no_children',
         rule=lambda ginfo: any(getattr(ginfo, flag) for flag in child_flags),
         msg="""Diffusion is incompatible with children:
@@ -123,7 +123,7 @@ def build_rules():
                   'capt_on', 'capt_rturn', 'crosscapt',
                   'evens', 'grandslam', 'multicapt', 'nocaptmoves',
                   'nosinglecapt', 'capt_side', 'pickextra', 'xcpickown']
-    rules.add_rule(
+    tester.test_rule(
         'no_capt_mech',
         rule=lambda ginfo: any(getattr(ginfo, flag) for flag in capt_flags),
         msg="""Diffusion moves seeds out of play by limiting
@@ -132,7 +132,6 @@ def build_rules():
                """  + ', '.join(capt_flags),
         excp=gi.GameInfoError)
 
-    return rules
 
 
 # %% deco replacements
@@ -201,11 +200,9 @@ class DiffusionV2(mancala.Mancala):
     Version 2: win by top/bottom"""
 
     @classmethod
-    @property
-    def rules(cls):
-        """The rules for the class but don't build them unless we
-        need them."""
-        return build_rules()
+    def rules(cls, ginfo, holes, skip=None):
+        """Test rules for Diffusion."""
+        test_rules(ginfo, holes, skip)
 
 
     def __init__(self, game_consts, game_info):

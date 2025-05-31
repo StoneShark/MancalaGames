@@ -26,6 +26,7 @@ import dataclasses as dc
 
 import animator
 import game_interface as gi
+import ginfo_rules
 import mancala
 import sower_decos
 
@@ -34,26 +35,25 @@ from game_logger import game_log
 
 # %% add to the rules
 
-def build_rules():
-    """Build the rules for BearOff game class.
-    """
+def test_rules(ginfo, holes, skip=None):
+    """Test the rules for BearOff game class."""
 
-    rules = mancala.Mancala.rules
+    mancala.Mancala.rules(ginfo, holes, skip=skip)
 
-    rules.add_rule(
+    tester = ginfo_rules.RuleTester(ginfo, holes, skip)
+
+    tester.test_rule(
         'bo_no_sides',
         rule=lambda ginfo: ginfo.no_sides,
         msg='BearOff is not supported for NO_SIDES',
         excp=NotImplementedError)
         # where would the bear off be done
 
-    rules.add_rule(
+    tester.test_rule(
         'bo_min_move_g1',
         rule=lambda ginfo: ginfo.min_move != 1,
         msg='BearOff requires that MIN_MOVE be 1',
         excp=gi.GameInfoError)
-
-    return rules
 
 
 # %% deco replacements
@@ -103,12 +103,11 @@ class BearOff(mancala.Mancala):
     """Sow per game configuration until there are only singltons
     on the board, then switch to using the BearOff sower."""
 
+
     @classmethod
-    @property
-    def rules(cls):
-        """The rules for the class but don't build them unless we
-        need them."""
-        return build_rules()
+    def rules(cls, ginfo, holes, skip=None):
+        """Test the game class rules before the game class is created."""
+        test_rules(ginfo, holes, skip)
 
 
     def __init__(self, game_consts, game_info):

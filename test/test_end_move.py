@@ -838,7 +838,7 @@ class TestEndChildren:
         game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(**game_props,
                                 nbr_holes=game_consts.holes,
-                                rules=ginfo_rules.RuleDict())
+                                rules=lambda ginfo, holes: True)
 
         return mancala.Mancala(game_consts, game_info)
 
@@ -1931,7 +1931,7 @@ class TestWinHoles:
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
                                 nbr_holes=game_consts.holes,
-                                rules=ginfo_rules.RuleDict())
+                                rules=lambda ginfo, holes: True)
 
         game = mancala.Mancala(game_consts, game_info)
         return game
@@ -1946,7 +1946,7 @@ class TestWinHoles:
                                 stores=True,
                                 start_pattern=gi.StartPattern.ALTERNATES,
                                 nbr_holes=game_consts.holes,
-                                rules=ginfo_rules.RuleDict())
+                                rules=lambda ginfo, holes: True)
 
         game = mancala.Mancala(game_consts, game_info)
         return game
@@ -2075,7 +2075,7 @@ class TestRoundTally:
                                 goal_param=5,
                                 rounds=gi.Rounds.NO_MOVES,
                                 nbr_holes=game_consts.holes,
-                                rules=ginfo_rules.RuleDict())
+                                rules=lambda ginfo, holes: True)
 
         game = mancala.Mancala(game_consts, game_info)
         return game

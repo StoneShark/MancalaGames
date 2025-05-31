@@ -226,11 +226,10 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
     # pylint: disable=too-many-public-methods
 
     @classmethod
-    @property
-    def rules(cls):
-        """The rules for the class but don't build them unless we
-        need them."""
-        return ginfo_rules.build_rules()
+    def rules(cls, ginfo, holes, skip=None):
+        """Test the rules. This is run before the game class
+        is created."""
+        ginfo_rules.test_rules(ginfo, holes, skip)
 
 
     def __init__(self, game_consts, game_info):

@@ -29,12 +29,12 @@ from game_logger import game_log
 
 # %% rules
 
-def build_rules():
+def test_ns_rules(ginfo, holes, skip):
     """Build the rules for SameSide."""
 
-    rules = ginfo_rules.RuleDict()
+    tester = ginfo_rules.RuleTester(ginfo, holes, skip)
 
-    rules.add_rule(
+    tester.test_rule(
         'ss_goal_clear',
         rule=lambda ginfo: not ginfo.goal in (gi.Goal.CLEAR,
                                               gi.Goal.RND_WIN_COUNT_CLR),
@@ -43,38 +43,38 @@ def build_rules():
         # CLEAR includes many base mancala rules:
         #  GS legal, children, many options prohibited
 
-    rules.add_rule(
+    tester.test_rule(
         'ss_no_sow_own',
         rule=lambda ginfo: ginfo.sow_own_store,
         msg="""SameSide incompatible with SOW_OWN_STORE""",
         excp=NotImplementedError)
         # The test for when to sow into store requires sowing on both sides
 
-    rules.add_rule(
+    tester.test_rule(
         'ss_no_sowrule',
         rule=lambda ginfo: ginfo.sow_rule,
         msg="""SameSide incompatible with SOW_RULE""",
         excp=gi.GameInfoError)
 
-    rules.add_rule(
+    tester.test_rule(
         'ss_no_xcapt',
         rule=lambda ginfo: ginfo.crosscapt,
         msg="""SameSide incompatible with CROSSCAPT""",
         excp=gi.GameInfoError)
 
-    rules.add_rule(
+    tester.test_rule(
         'ss_side_own',
         rule=lambda ginfo: ginfo.capt_side != gi.CaptSide.OWN_SIDE,
         msg="""SameSide requires that CAPT_SIDE be OWN_SIDE""",
         excp=gi.GameInfoError)
 
-    rules.add_rule(
+    tester.test_rule(
         'ss_no_moveunlock',
         rule=lambda ginfo: ginfo.moveunlock,
         msg="""SameSide is incompatible with MOVEUNLOCK""",
         excp=gi.GameInfoError)
 
-    rules.add_rule(
+    tester.test_rule(
         'ss_no_capt_rturn',
         rule=lambda ginfo: ginfo.capt_rturn,
         msg="""Do not set capt_rturn in SameSide games.
@@ -83,40 +83,37 @@ def build_rules():
                captured seeds.""",
         excp=gi.GameInfoError)
 
-    rules.add_rule(
+    tester.test_rule(
         'ss_no_pick',
         rule=lambda ginfo: ginfo.pickextra,
         msg="""SameSide is incompatible with PICKEXTRA""",
         excp=gi.GameInfoError)
 
-    # add in the mancala rules, delete those we don't want
-    man_rules = ginfo_rules.build_rules()
-    del man_rules['no_sides_bad_capt_side']
-    rules |= man_rules
-
-    return rules
+    skip_set = skip if skip else set()
+    skip_set |= {'no_sides_bad_capt_side'}
+    mancala.Mancala.rules(ginfo, holes, skip=skip_set)
 
 
-def build_ew_rules():
+def test_ew_rules(ginfo, holes, skip=None):
     """Build the rules for SameSide.
     We want the more specific rules first."""
 
-    rules = ginfo_rules.RuleDict()
+    tester = ginfo_rules.RuleTester(ginfo, holes, skip)
 
-    rules.add_rule(
+    tester.test_rule(
         'oho_even',
         both_objs=True,
         rule=lambda _, holes: holes % 2,
         msg='Ohojichi requires an even number of holes per side',
         excp=gi.GameInfoError)
 
-    rules.add_rule(
+    tester.test_rule(
         'oho_side_both',
         rule=lambda ginfo: ginfo.capt_side != gi.CaptSide.BOTH,
         msg='Ohojichi requires that CAPT_SIDE be BOTH',
         excp=gi.GameInfoError)
 
-    rules.add_rule(
+    tester.test_rule(
         'oho_splt_udir_all',
         both_objs=True,
         rule=lambda ginfo, holes: (ginfo.sow_direct == gi.Direct.SPLIT
@@ -124,7 +121,7 @@ def build_ew_rules():
         msg='Ohojichi requires that all holes be UDIR for SPLIT SOW',
         excp=gi.GameInfoError)
 
-    rules.add_rule(
+    tester.test_rule(
         'oho_udir_all',
         both_objs=True,
         rule=lambda ginfo, holes: (len(ginfo.udir_holes) > 0
@@ -133,11 +130,9 @@ def build_ew_rules():
         excp=gi.GameInfoError)
 
 
-    ss_rules = build_rules()
-    del ss_rules['ss_side_own']
-    rules |= ss_rules
-
-    return rules
+    skip_set = skip if skip else set()
+    skip_set |= {'ss_side_own'}
+    test_ns_rules(ginfo, holes, skip=skip_set)
 
 
 # %% SameSide game class
@@ -155,11 +150,9 @@ class SameSide(mancala.Mancala):
     opponents holes."""
 
     @classmethod
-    @property
-    def rules(cls):
-        """The rules for the class but don't build them unless we
-        need them."""
-        return build_rules()
+    def rules(cls, ginfo, holes, skip=None):
+        """Test rules for the class."""
+        test_ns_rules(ginfo, holes, skip)
 
 
     def __init__(self, game_consts, game_info):
@@ -280,11 +273,9 @@ class Ohojichi(SameSide):
     not the SameSide method, SameSide does the wrong things."""
 
     @classmethod
-    @property
-    def rules(cls):
-        """The rules for the class but don't build them unless we
-        need them."""
-        return build_ew_rules()
+    def rules(cls, ginfo, holes, skip=None):
+        """Test rules for Diffusion."""
+        test_ew_rules(ginfo, holes, skip)
 
 
     def __init__(self, game_consts, game_info):

@@ -457,7 +457,7 @@ class GameInfo:
             mlength = 2
         object.__setattr__(self, ckey.MLENGTH, mlength)
 
-        rules.test(self, nbr_holes)
+        rules(self, nbr_holes)
 
 
     @classmethod
