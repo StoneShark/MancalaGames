@@ -605,11 +605,15 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             if deco:
                 return f'The {rtext} will end in a tie.'
 
-        which = 'quitter' if quitter else 'unclaimed'
-        method = getattr(self.info, which)
+        param = 'quitter' if quitter else 'unclaimed'
+        method = getattr(self.info, param)
+
+        deco_name = 'quitter' if quitter else 'ender'
+        concede = isinstance(getattr(self.deco, deco_name), emd.ConcedeMixin)
 
         message = 'Unclaimed seeds will '
-        if method == gi.EndGameSeeds.HOLE_OWNER:
+        if ((not quitter and concede)         # generalization but good now
+                or method == gi.EndGameSeeds.HOLE_OWNER):
             message += 'go to the hole owners'
 
         elif method == gi.EndGameSeeds.DONT_SCORE:
@@ -717,16 +721,26 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             case [gi.WinCond.WIN, gi.Goal.TERRITORY, _]:
                 reason = " by claiming more holes."
 
-            case [gi.WinCond.WIN, gi.Goal.CLEAR, _]:
+            case [gi.WinCond.WIN, gi.Goal.CLEAR, False]:
                 reason = " by clearing all their seeds."
 
-            case [gi.WinCond.WIN, gi.Goal.DEPRIVE, _]:
+            case ([gi.WinCond.ROUND_WIN, gi.Goal.CLEAR, True] |
+                  [gi.WinCond.WIN, gi.Goal.CLEAR, True]):
+                reason = " because they had fewer seeds."
+
+            case [gi.WinCond.WIN, gi.Goal.DEPRIVE, False]:
                 loser = gi.PLAYER_NAMES[int(not self.mdata.winner)]
                 reason = f" by eliminating {loser}'s seeds."
 
-            case [gi.WinCond.WIN, gi.Goal.IMMOBILIZE, _]:
+            case [gi.WinCond.WIN, gi.Goal.IMMOBILIZE, False]:
                 loser = gi.PLAYER_NAMES[int(not self.mdata.winner)]
                 reason = f" by immobilizing {loser}."
+
+            case ([gi.WinCond.WIN, gi.Goal.DEPRIVE, True] |
+                  [gi.WinCond.ROUND_WIN, gi.Goal.DEPRIVE, True] |
+                  [gi.WinCond.WIN, gi.Goal.IMMOBILIZE, True] |
+                  [gi.WinCond.ROUND_WIN, gi.Goal.IMMOBILIZE, True]):
+                reason = " because they had more seeds."
 
             case [gi.WinCond.WIN, gi.Goal.RND_SEED_COUNT, True]:
                 reason = " by collecting more seeds."

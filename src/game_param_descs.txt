@@ -833,8 +833,9 @@ Note: all holes respond to both mouse buttons, but if the hole is not in udir_ho
 Games with any hole set to user chooses direction must have GRANDSLAM be LEGAL and only ALLOW_RULE s that do not depend on sow direction are supported.
 
 <param unclaimed>
-Defines how to score any unclaimed seeds when a game has ended, i.e., seeds that are not in children or in stores. This is not used if the game has a clear winner, e.g., one player has collected more than half the seeds for a MAX_SEEDS game. 
-For games that do not have a goal of CLEAR or DEPRIVE, this parameter defines how the <a href="mancala_help.html#gamemenu">Concede Round and Concede Game</a> menu commands work.
+Defines how to score any unclaimed seeds when a game has ended. Unclaimed seeds are those not in children or stores when a game ends without a clear winner: no outcome change possible, current player cannot share, etc. 
+
+This parameter is not used for clear, unclaimed or immobilize games. For other games, this parameter defines how the <a href="mancala_help.html#gamemenu">Concede Round and Concede Game</a> menu commands work. 
 
 - HOLE_OWNER: unclaimed seeds go to the hole owner.
 
@@ -850,7 +851,9 @@ For games that do not have a goal of CLEAR or DEPRIVE, this parameter defines ho
 
 <param quitter>
 
-Defines how to score any unclaimed seeds when a player end the round or game using an <a href="mancala_help.html#gamemenu">End Round or End Game</a> menu command.
+Defines how to score any unclaimed seeds when a player ends the round or game using an <a href="mancala_help.html#gamemenu">End Round or End Game</a> menu command. 
+
+This parameter is not used for clear, deprive or immobilize games.
 
 The allowable values are the same as for UNCLAIMED (EndGameSeeds). <no_enum_error>
 

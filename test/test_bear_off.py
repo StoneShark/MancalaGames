@@ -194,64 +194,6 @@ class TestGameExtensions:
         mobj.assert_called_once()
         assert game.normal_sow is True
 
-    # all tests are on False's turn
-    # either player may win on either turn in clear games
-    END_CASES =  [   # start with a bunch of general combinations
-                     # all with seeds on both sides
-                  ['game', board, nsow, rturn, ended,
-                   gi.WinCond.TIE if ended else None, None]
-                  for board in [[2] * 6, [1] * 6, [1, 0] * 3]
-                  for nsow in [False, True]
-                  for rturn in [False, True]   # rturn not used, no effect
-                  for ended in [False, True]
-                  ]
-
-    END_CASES += [
-        # False cleared their seeds (both normal_sow and not)
-        ['game', [0, 0, 0, 1, 2, 0], True, False, False, WIN, False],
-        ['game', [0, 0, 0, 1, 2, 0], False, False, False, WIN, False],
-
-        # True's seeds cleared  (both normal_sow and not)
-        ['game', [1, 2, 0, 0, 0, 0], True, False, False, WIN, True],
-        ['game', [1, 2, 0, 0, 0, 0], False, False, False, WIN, True],
-        ]
-
-    END_CASES += [
-        # False cleared their seeds (both normal_sow and not)
-        ['dgame', [0, 0, 0, 1, 2, 0], True, False, False, WIN, True],
-        ['dgame', [0, 0, 0, 1, 2, 0], False, False, False, WIN, True],
-
-        # True has no seeds to play  (both normal_sow and not)
-        ['dgame', [1, 2, 0, 0, 0, 0], True, False, False, WIN, False],
-        ['dgame', [1, 2, 0, 0, 0, 0], False, False, False, WIN, False],
-        ]
-
-    END_CASES += [
-        # does not use the BearOff ender
-        ['mgame', [0, 0, 2, 0, 2, 0], True, False, False, WIN, False],
-
-        ]
-
-    @pytest.mark.parametrize('game_fixt, '
-                             'board, normal_sow, repeat_turn, ended, '
-                             'econd, ewinner',
-                             END_CASES)
-    def test_ender(self, request, game_fixt,
-                   board, normal_sow, repeat_turn, ended,
-                   econd, ewinner):
-
-        game = request.getfixturevalue(game_fixt)
-        game.board = board
-        game.store[0] = game.cts.total_seeds - sum(board)
-        game.normal_sow = normal_sow
-        # print(game)
-
-        mdata = utils.make_ender_mdata(game, repeat_turn, ended)
-        game.deco.ender.game_ended(mdata)
-        # print(mdata.win_cond, mdata.winner)
-        assert mdata.win_cond == econd
-        assert mdata.winner == ewinner
-
 
     # @pytest.mark.usefixtures("logger")
     @pytest.mark.parametrize('board, esow',

@@ -227,9 +227,14 @@ reflect the game state to exit the mode.
 
 <p><b>Concede Round</b>: Concede the current round.
 Suggested use is when there is a clear winner to skip a tedious end game.
-The round will be scored, not game.
-For clear and deprive goal games, the round will be ended in a tie.
-For most other games, the
+The round will be scored and a check for end game will be done.
+
+<p>Conceding a clear, deprive and immobilize game awards the win based on
+seeds held by each player.
+Clear games are awarded to the player with fewer seeds.
+Deprive and immobilize games are award to the player with more seeds.
+
+<p>For other games, the
 <a href="game_params.html#unclaimed">UNCLAIMED</a> parameter specifies
 the handling of seeds not in chilren or stores.
 
@@ -237,24 +242,29 @@ the handling of seeds not in chilren or stores.
 or if UNCLAIMED and QUITTER have the same value.
 
 <p><b>Concede Game</b>: End the current game and tally the game.
-For clear and deprive goal games, the round will be ended in a tie.
-For most other games, the
+
+<p>Conceding a clear, deprive and immobilize game awards the win based on
+seeds held by each player.
+Clear games are awarded to the player with fewer seeds.
+Deprive and immobilize games are award to the player with more seeds.
+
+<p>For other games, the
 <a href="game_params.html#unclaimed">UNCLAIMED</a> parameter specifies
 the handling of seeds not in chilren or stores.
 <p>This option is not available if UNCLAIMED and QUITTER have the same value.
 
 <p><b>End Round</b>: End the current round.
 Suggested use is when there are seeds cycling on the board.
-The round will be scored, not game.
-For clear and deprive goal games, the round will be ended in a tie.
-For most other games, the
+The round will be scored and a check for end game will be done.
+For clear, deprive and immobilize goal games, the round will be ended in a tie.
+For other games, the
 <a href="game_params.html#quitter">QUITTER</a> parameter specifies
 the handling of seeds not in chilren or stores.
 <p>This option is not avaliable if the game is not played in rounds.
 
 <p><b>End Game</b>: End and tally the current game.
 Suggested use is when there are seeds cycling on the board.
-For clear and deprive goal games, the game will be ended in a tie.
+For clear, deprive and immobilize goal games, the game will be ended in a tie.
 For most other games, the
 <a href="game_params.html#quitter">QUITTER</a> parameter specifies
 the handling of seeds not in chilren or stores.

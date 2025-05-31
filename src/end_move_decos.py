@@ -183,6 +183,24 @@ class EndTurnIf(deco_chain_if.DecoChainIf):
         return None, self.game.turn
 
 
+class ConcedeMixin:
+    """A mixin for decorators that have different behavior for
+    a normal end_move and a user directed conceded game.
+
+    The parent class must set the conceder."""
+
+    conceder = None
+
+    def __str__(self):
+
+        my_str = '\n   '.join([repr(self),
+                               'conceder:  ' + str(self.conceder)])
+
+        if self.decorator:
+            return my_str + '\n' + str(self.decorator)
+        return my_str
+
+
 # %%
 
 class ClearWinner(EndTurnIf):
@@ -415,11 +433,31 @@ class ChildNoStoresEnder(EndTurnIf):
             game_log.step('Moved store seeds to children', self.game)
 
 
-class DepriveEndGame(EndTurnIf):
+class ConcedeDepImm(EndTurnIf):
+    """Award the win to the player with more seeds."""
+
+    def game_ended(self, mdata):
+
+        seeds = self.sclaimer.claim_seeds()
+        print("concdeDemImm", seeds)
+
+        if seeds[0] > seeds[1]:
+            mdata.win_cond = gi.WinCond.WIN
+            mdata.winner = False
+
+        elif seeds[0] < seeds[1]:
+            mdata.win_cond = gi.WinCond.WIN
+            mdata.winner = True
+
+        else:
+            mdata.win_cond = gi.WinCond.TIE
+
+
+class DepriveEndGame(ConcedeMixin, EndTurnIf):
     """Determine if a deprive game is over based on who has seeds.
 
     Both player's had seeds at the start of the turn.
-    If ended on entry is True, end in a TIE.
+    If ended is true on entry call the conceder.
 
     If the opponent does not have seeds, then the current player
     won (even if they do not have seeds or it's a repeat turn).
@@ -432,11 +470,16 @@ class DepriveEndGame(EndTurnIf):
     This is not to be used with children, because the presence
     of children is not checked."""
 
+    def __init__(self, game, decorator=None, sclaimer=None):
+
+        super().__init__(game, decorator, sclaimer)
+        self.conceder = ConcedeDepImm(game, None, claimer.ClaimOwnSeeds(game))
+
     def game_ended(self, mdata):
         """Check for end game."""
 
         if mdata.ended:
-            mdata.win_cond = gi.WinCond.TIE
+            self.conceder.game_ended(mdata)
             return
 
         test_range = self.game.cts.get_opp_range(self.game.turn)
@@ -474,21 +517,26 @@ class DepriveEndGame(EndTurnIf):
             mdata.fmsg = True
 
 
-class ImmobilizeEndGame(EndTurnIf):
+class ImmobilizeEndGame(ConcedeMixin, EndTurnIf):
     """Determine if a immobilize game is over based on who moved last.
 
     Both player's had seeds at the start of the turn.
-    If ended on entry is True, end in a TIE. This is only possible
-    when a user ends the game.
+    If ended is true on entry call the conceder.
 
     If the opponent does not have a move, then the current player
     has won."""
+
+    def __init__(self, game, decorator=None, sclaimer=None):
+
+        super().__init__(game, decorator, sclaimer)
+        self.conceder = ConcedeDepImm(game, None, claimer.ClaimOwnSeeds(game))
+
 
     def game_ended(self, mdata):
         """Check for end game."""
 
         if mdata.ended:
-            mdata.win_cond = gi.WinCond.TIE
+            self.conceder.game_ended(mdata)
             return
 
         with self.game.opp_turn():
@@ -504,16 +552,45 @@ class ImmobilizeEndGame(EndTurnIf):
             game_log.add(fmt.fmsg(mdata.end_msg), game_log.INFO)
 
 
-class ClearSeedsEndGame(EndTurnIf):
+class ConcedeClear(EndTurnIf):
+    """Award the win to the player with fewer seeds."""
+
+    def game_ended(self, mdata):
+
+        seeds = self.sclaimer.claim_seeds()
+
+        if seeds[0] < seeds[1]:
+            mdata.win_cond = gi.WinCond.WIN
+            mdata.winner = False
+
+        elif seeds[0] > seeds[1]:
+            mdata.win_cond = gi.WinCond.WIN
+            mdata.winner = True
+
+        else:
+            mdata.win_cond = gi.WinCond.TIE
+
+
+class ClearSeedsEndGame(ConcedeMixin, EndTurnIf):
     """Win by giving away all your seeds.
+
     If both players end up without seeds, the win is awarded to
-    the current player."""
+    the current player.
+
+    Both player's had seeds at the start of the turn.
+    If ended is true on entry call the conceder."""
+
+    def __init__(self, game, decorator=None, sclaimer=None):
+
+        super().__init__(game, decorator, sclaimer)
+        self.conceder = ConcedeClear(game, None, claimer.ClaimOwnSeeds(game))
+
 
     def game_ended(self, mdata):
         """Check for end game."""
 
         if mdata.ended:
-            mdata.win_cond = gi.WinCond.TIE
+            self.conceder.game_ended(mdata)
             return
 
         my_range, opp_range = self.game.cts.get_ranges(self.game.turn)

@@ -45,6 +45,9 @@ DONT_CARE = None
 REPEAT_TURN = True
 ENDED = True
 
+WIN = gi.WinCond.WIN
+TIE = gi.WinCond.TIE
+
 
 # %%
 
@@ -1973,6 +1976,88 @@ class TestWinHoles:
         game.child = child
 
         assert game.deco.ender.compute_win_holes() == (fill_start, holes)
+
+
+class TestConceders:
+
+    @pytest.fixture
+    def cgame(self):
+
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(capt_on=[3],
+                                stores=True,
+                                goal=gi.Goal.CLEAR,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = False
+        return game
+
+    @pytest.fixture
+    def dgame(self):
+
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(capt_on=[3],
+                                stores=True,
+                                goal=gi.Goal.DEPRIVE,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = False
+        return game
+
+
+    @pytest.fixture
+    def igame(self):
+
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(capt_on=[3],
+                                stores=True,
+                                goal=gi.Goal.IMMOBILIZE,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = False
+        return game
+
+
+    # all tests are on False's turn
+    # either player may win on either turn in eliminate games
+
+    END_CASES = [[game, board, TIE, None]
+                 for game in ['cgame', 'dgame', 'igame']
+                 for board in [[2] * 6, [1] * 6]]
+
+    END_CASES += [[game, [1, 1, 1, 0, 1, 0], WIN, False]
+                  for game in ['dgame', 'igame']]
+    END_CASES += [[game, [0, 1, 0, 1, 1, 1], WIN, True]
+                  for game in ['dgame', 'igame']]
+
+    END_CASES += [['cgame', [0, 1, 0, 1, 1, 1], WIN, False],
+                  ['cgame', [1, 1, 1, 0, 1, 0], WIN, True]]
+
+    @pytest.mark.parametrize('game_fixt, board, econd, ewinner',
+                             END_CASES)
+    def test_conceder(self, request, game_fixt, board, econd, ewinner):
+
+        game = request.getfixturevalue(game_fixt)
+        game.board = board
+        quot, rem = divmod(game.cts.total_seeds - sum(board), 2)
+        game.store[0] = quot + (0 if ewinner else rem)
+        game.store[1] = quot + (rem if ewinner else 0)
+
+        assert 'conceder' in str(game.deco.ender)
+        # print(game)
+
+        mdata = utils.make_ender_mdata(game, False, True)
+        game.deco.ender.game_ended(mdata)
+        # print(mdata.win_cond, mdata.winner)
+
+        assert mdata.win_cond == econd
+        assert mdata.winner == ewinner
 
 
 class TestRoundTally:

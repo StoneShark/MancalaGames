@@ -213,8 +213,8 @@ is included after the parameter sections.
 <p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Dynamics
 
-<p>Defines how to score any unclaimed seeds when a game has ended, i.e., seeds that are not in children or in stores. This is not used if the game has a clear winner, e.g., one player has collected more than half the seeds for a MAX_SEEDS game. 
-<p>For games that do not have a goal of CLEAR or DEPRIVE, this parameter defines how the <a href="mancala_help.html#gamemenu">Concede Round and Concede Game</a> menu commands work.
+<p>Defines how to score any unclaimed seeds when a game has ended. Unclaimed seeds are those not in children or stores when a game ends without a clear winner: no outcome change possible, current player cannot share, etc. 
+<p>This parameter is not used for clear, unclaimed or immobilize games. For other games, this parameter defines how the <a href="mancala_help.html#gamemenu">Concede Round and Concede Game</a> menu commands work. 
 <ol start=0><li class="helptext">
 <b class="enum">HOLE_OWNER</b>: unclaimed seeds go to the hole owner.
 <li class="helptext">
@@ -233,7 +233,8 @@ is included after the parameter sections.
 <p class="pdesc">Default value: 4
 <p class="pdesc">UI Tab: Dynamics
 
-<p>Defines how to score any unclaimed seeds when a player end the round or game using an <a href="mancala_help.html#gamemenu">End Round or End Game</a> menu command.
+<p>Defines how to score any unclaimed seeds when a player ends the round or game using an <a href="mancala_help.html#gamemenu">End Round or End Game</a> menu command. 
+<p>This parameter is not used for clear, deprive or immobilize games.
 <p>The allowable values are the same as for <a href="game_params.html#unclaimed">UNCLAIMED</a> (EndGameSeeds). <no_enum_error>
 <h4 id="start_pattern"> Start Pattern </h4>
 <p class="pdesc">Location in Config Files: game_info : start_pattern

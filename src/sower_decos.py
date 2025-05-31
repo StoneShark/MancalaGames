@@ -545,6 +545,8 @@ class SowPresSowerMixin:
     """A mixin to print the sower deco used for the
     prescribed sow."""
 
+    sower = None
+
     def __str__(self):
 
         my_str = '\n   '.join([repr(self),
