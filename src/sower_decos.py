@@ -14,6 +14,7 @@ Created on Fri Apr  7 15:57:47 2023
 
 import abc
 
+import animator
 import deco_chain_if
 import game_interface as gi
 
@@ -414,7 +415,7 @@ class SowOppCaptsLast(SowMethodIf):
         mdata.capt_loc = loc
 
 
-# %% precature decorators
+# %% presow capture decorators
 
 # captures occur after prescribed openings, (i.e. don't occur if
 # there was a prescribed opening) and before the rest of the sower
@@ -453,6 +454,9 @@ class SCaptCrossOnOne(SowMethodIf):
 
             game_log.step(f'Presow Capt Cross at {mdata.cont_sow_loc}',
                           self.game, game_log.DETAIL)
+            if animator.active():
+                animator.animator.message(
+                    f"Pre-Sow Captures across from {mdata.cont_sow_loc}")
 
         self.decorator.sow_seeds(mdata)
 
@@ -467,7 +471,7 @@ class SCaptCrossSingles(SowMethodIf):
         for loc in self.game.cts.get_my_range(self.game.turn):
             cross = self.game.cts.cross_from_loc(loc)
 
-            if (self.game.board[loc] == 1
+            if (mdata.board[loc] == 1
                 and self.game.board[cross]
                 and self.game.child[cross] is None):
 
@@ -479,6 +483,12 @@ class SCaptCrossSingles(SowMethodIf):
         if log:
             game_log.step(f'Presow Capt Cross all 1s from {log}',
                           self.game, game_log.DETAIL)
+            if animator.active():
+                holes = self.game.cts.holes
+                dholes = self.game.cts.dbl_holes
+                where = ' '.join(str(loc + 1 if loc < holes else dholes - loc)
+                                 for loc in log)
+                animator.animator.message(f"Pre-Sow Captures across from {where}")
 
         self.decorator.sow_seeds(mdata)
 

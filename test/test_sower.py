@@ -2181,7 +2181,7 @@ class TestBadEnums:
 class TestAnimator:
 
     @pytest.mark.animator
-    def test_animator(self, mocker):
+    def test_animator_flash(self, mocker):
         """Do the animator test, but patch animator.animator.change
         and animator.animator.flash so that it does not try to
         use the game_ui (which was not provided).
@@ -2219,6 +2219,54 @@ class TestAnimator:
 
         # initial sow, then two laps
         assert len(mobj.mock_calls) == 2
+
+
+    @pytest.mark.animator
+    # @pytest.mark.usefixtures('logger')
+    @pytest.mark.parametrize('presow', [gi.PreSowCapt.DRAW_1_XCAPT,
+                                        gi.PreSowCapt.ALL_SINGLE_XCAPT])
+    def test_animator_presow(self, mocker, presow):
+        """Do the animator test, but patch animator.animator.change
+        and animator.animator.flash so that it does not try to
+        use the game_ui (which was not provided).
+
+        Check sow result board and number of expected new laps
+        (after the first)."""
+
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(stores=True,
+                                presowcapt=presow,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        assert animator.ENABLED
+        animator.make_animator(None)   # no game_ui, make sure it's not used
+        animator.set_active(True)
+        assert animator.active()
+
+        mocker.patch('animator.animator.change')
+        mocker.patch('animator.animator.flash')
+        mobj = mocker.patch('animator.animator.message')
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = False
+        game.board = [1, 1, 2, 3, 2, 1]
+        # print(game)
+
+        mdata = move_data.MoveData(game, 1)
+        mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(1)
+        mdata.direct = game.info.sow_direct
+        game.deco.sower.sow_seeds(mdata)
+        # print(game)
+        # print(mdata)
+
+        # copy the board to get only the list
+        if presow == gi.PreSowCapt.ALL_SINGLE_XCAPT:
+            assert game.board.copy() == [1, 0, 3, 3, 0, 0]
+        else:
+            assert game.board.copy() == [1, 0, 3, 3, 0, 1]
+
+        assert len(mobj.mock_calls) == 1
 
 
     @pytest.mark.animator
