@@ -19,7 +19,6 @@ from context import end_move_decos as emd
 from context import end_move_rounds as emr
 from context import game_constants as gconsts
 from context import game_interface as gi
-from context import ginfo_rules
 from context import mancala
 
 from game_interface import ChildType
@@ -2266,6 +2265,108 @@ class TestRoundTally:
 
         assert mdata.win_cond == econd
         assert mdata.winner == ewinner
+
+
+
+    MSG_CASES = [
+        # 0: round over, no points yet
+        (gi.Goal.RND_WIN_COUNT_IMB,
+         True, [0, 0, 2, 0], [4, 6], (0, 0), WinCond.ROUND_WIN, True, (0, 1)),
+
+        # 1: round over, points still low
+        (gi.Goal.RND_WIN_COUNT_IMB,
+         True, [0, 0, 2, 0], [4, 6], (0, 3), WinCond.ROUND_WIN, True, (0, 4)),
+
+        # 2: round over, points just enough
+        (gi.Goal.RND_WIN_COUNT_IMB,
+         True, [0, 0, 2, 0], [4, 6], (0, 4), WinCond.WIN, True, (0, 5)),
+
+
+        # 3: round over (no moves), no points yet
+        (gi.Goal.RND_POINTS,
+         True, [0, 0, 2, 0], [4, 6], (0, 0), WinCond.ROUND_WIN, True, (0, 1)),
+
+        # 4: round over (no moves), points still low
+        (gi.Goal.RND_POINTS,
+         True, [0, 0, 2, 0], [4, 6], (0, 3), WinCond.ROUND_WIN, True, (0, 4)),
+
+        # 5: round over (no moves), points just enough
+        (gi.Goal.RND_POINTS,
+         True, [0, 0, 2, 0], [4, 6], (0, 4), WinCond.WIN, True, (0, 5)),
+
+        # 6: round over, skunk so win
+        (gi.Goal.RND_POINTS,
+         False, [0, 0, 1, 0], [9, 2], (3, 0), WinCond.WIN, False, (5, 0)),
+
+
+        # 7: round over, no points yet
+        (gi.Goal.RND_SEED_COUNT,
+         True, [0, 0, 2, 0], [4, 6], (0, 0), WinCond.ROUND_WIN, True, (4, 8)),
+
+
+        # 8: round over, seeds still low
+        (gi.Goal.RND_EXTRA_SEEDS,
+         True, [0, 0, 2, 0], [4, 6], (0, 0), WinCond.ROUND_WIN, True, (0, 4)),
+
+        # 9: round over, some accumulated
+        (gi.Goal.RND_EXTRA_SEEDS,
+         True, [0, 0, 2, 0], [4, 6], (0, 4), WinCond.ROUND_WIN, True, (0, 8)),
+
+        # 10: round over
+        (gi.Goal.RND_EXTRA_SEEDS,
+         True, [0, 0, 2, 0], [2, 8], (0, 8), WinCond.WIN, True, (0, 16)),
+        ]
+
+    @pytest.mark.parametrize('goal, turn, board, store, rtally, '
+                             'econd, ewinner, etally',
+                              MSG_CASES,
+                              ids=[f"case_{idx}_{case[0].name}"
+                                   for idx, case in enumerate(MSG_CASES)])
+    def test_messages(self, goal, turn, board, store, rtally,
+                      etally, econd, ewinner):
+
+        gparam = 16 if 'SEED' in goal.name else 5
+
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=2)
+        game_info = gi.GameInfo(evens=True,
+                                stores=True,
+                                goal=goal,
+                                goal_param=gparam,
+                                rounds=gi.Rounds.NO_MOVES,
+                                nbr_holes=game_consts.holes,
+                                rules=lambda ginfo, holes: True)
+
+        game = mancala.Mancala(game_consts, game_info)
+
+        game.turn = turn
+        game.board = board
+        game.store = store
+        game.rtally.state = (rtally, rtally, rtally, rtally)
+        print(game.deco.ender)
+        print(game)
+
+        mdata = utils.make_ender_mdata(game, False, False)
+        game.deco.ender.game_ended(mdata)
+        print(mdata)
+        print(game.rtally)
+
+        assert mdata.win_cond == econd
+        assert mdata.winner == ewinner
+        assert game.rtally.parameter(0) == etally[0]
+        assert game.rtally.parameter(1) == etally[1]
+
+        if not etally[1]:
+            pass
+
+        elif etally[1] < game.info.goal_param:
+            assert str(etally[1]) in mdata.end_msg
+            assert str(game.info.goal_param) in mdata.end_msg
+            assert 'towards' in mdata.end_msg
+
+        elif etally[1] >= game.info.goal_param:
+            assert str(etally[1]) not in mdata.end_msg
+            assert str(game.info.goal_param) not in mdata.end_msg
+            assert 'towards' not in mdata.end_msg
 
 
 class TestAnimator:

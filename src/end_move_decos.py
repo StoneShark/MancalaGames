@@ -238,11 +238,13 @@ class EndTurnNoMoves(EndTurnIf):
 
         if mdata.repeat_turn:
             mdata.ended = not any(self.game.get_allowable_holes())
-            msg = "No moves for _loser_'s repeat turn; _thing_ ended."
+            player = gi.PLAYER_NAMES[self.game.turn]
+            msg = f"No moves for {player}'s repeat turn; _thing_ ended."
         else:
             with self.game.opp_turn():
                 mdata.ended = not any(self.game.get_allowable_holes())
-            msg = "_Loser_ had no moves; _thing_ ended."
+            player = gi.PLAYER_NAMES[not self.game.turn]
+            msg = f"{player} had no moves; _thing_ ended."
 
         if mdata.ended:
             mdata.end_msg = msg

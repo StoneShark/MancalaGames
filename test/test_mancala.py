@@ -41,6 +41,7 @@ from context import ginfo_rules
 from context import incrementer
 from context import mancala
 from context import move_data
+from context import round_tally
 
 import utils
 
@@ -1257,6 +1258,11 @@ class TestWinMessage:
         """Exercise every combination of the dependent variables."""
 
         object.__setattr__(maxgame.info, 'goal', goal)
+        if goal in round_tally.RoundTally.GOALS:
+            maxgame.rtally = round_tally.RoundTally(maxgame.info.goal,
+                                                    5,
+                                                    maxgame.cts.total_seeds)
+
         maxgame.mdata = move_data.MoveData(maxgame)
         maxgame.mdata.user_end = user_end
         maxgame.mdata.winner = True

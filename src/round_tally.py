@@ -5,7 +5,6 @@ that do not use hole ownership to setup for new rounds.
 Created on Sun Nov 10 13:52:08 2024
 @author: Ann"""
 
-import format_msg as fmt
 import game_interface as gi
 from game_logger import game_log
 
@@ -44,6 +43,10 @@ class RoundTally:
         self.required_win = req_win
 
         self.goal = goal
+
+        # values accumulated on last end game
+        self.extra = 0
+        self.points = 0
 
         if goal in (gi.Goal.RND_WIN_COUNT_MAX,
                     gi.Goal.RND_WIN_COUNT_CLR,
@@ -108,8 +111,9 @@ class RoundTally:
         Games are tallied before WIN/TIE are possibly translated
         to ROUND_WIN/ROUND_TIE."""
 
-        extra = 0
-        points = 0
+        # make these available for the round end message
+        self.extra = 0
+        self.points = 0
 
         if mdata.win_cond is gi.WinCond.WIN:
             self.round_wins[mdata.winner] += 1
@@ -117,38 +121,25 @@ class RoundTally:
             self.seeds[1] += seeds[1]
 
             if seeds[0] > seeds[1]:
-                extra = seeds[0] - seeds[1]
-                self.diff_sums[0] += extra
+                self.extra = seeds[0] - seeds[1]
+                self.diff_sums[0] += self.extra
                 self.score[0] += 1
             elif seeds[1] > seeds[0]:
-                extra = seeds[1] - seeds[0]
-                self.diff_sums[1] += extra
+                self.extra = seeds[1] - seeds[0]
+                self.diff_sums[1] += self.extra
                 self.score[1] += 1
-                points = 1
+                self.points = 1
 
             if seeds[0] >= self.skunk_seeds:
                 self.score[0] += 1
-                points += 1
+                self.points += 1
             elif seeds[1] >= self.skunk_seeds:
                 self.score[1] += 1
-                points += 1
-
+                self.points += 1
         if mdata.win_cond is gi.WinCond.TIE:
             self.seeds[0] += seeds[0]
             self.seeds[1] += seeds[1]
 
-        if self.goal == gi.Goal.RND_EXTRA_SEEDS and extra:
-            mdata.end_msg += fmt.LINE_SEP if mdata.end_msg else ''
-            mdata.end_msg += f"_winner_ collected {extra} extra seeds."
-
-        elif self.goal == gi.Goal.RND_POINTS and points:
-            if points == 1:
-                mdata.end_msg += fmt.LINE_SEP if mdata.end_msg else ''
-                mdata.end_msg += f"_winner_ earned {points} point."
-            else:
-                mdata.end_msg += fmt.LINE_SEP if mdata.end_msg else ''
-                mdata.end_msg += f"""_winner_ earned {points} points
-                                  due to skunk (>= {self.skunk_seeds})."""
 
         game_log.add(str(self), game_log.DETAIL)
 

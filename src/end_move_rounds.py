@@ -91,6 +91,54 @@ class RoundTallyWinner(emd.EndTurnIf):
     chain decide the outcome, then adjust for end of game or
     end of round based on the tallier."""
 
+
+    def tally_prog_msg(self, mdata, win):
+        """Add progress toward win to the end message"""
+
+        rtally = self.game.rtally
+
+        msg = ''
+        earned = rtally.parameter(mdata.winner)
+        needed = rtally.required_win
+        plr = '' if earned == 1 else 's'
+
+        match [self.game.info.goal, win]:
+
+            case ([gi.Goal.RND_WIN_COUNT_MAX, False] |
+                  [gi.Goal.RND_WIN_COUNT_CLR, False] |
+                  [gi.Goal.RND_WIN_COUNT_DEP, False] |
+                  [gi.Goal.RND_WIN_COUNT_IMB, False]):
+                msg += f"""_Winner_ has {earned} round win{plr}"""
+
+            case [gi.Goal.RND_SEED_COUNT, False]:
+                msg += f"""_Winner_ has {earned} seed{plr}"""
+
+            case [gi.Goal.RND_EXTRA_SEEDS, _]:
+
+                msg += f"_Winner_ collected {rtally.extra} extra seeds"
+                if not win and rtally.extra < earned:
+                    msg += f" and has accumulated {earned}"
+
+            case [gi.Goal.RND_POINTS, _]:
+
+                if rtally.points == 1:
+                    msg += fmt.LINE_SEP if mdata.end_msg else ''
+                    msg += f"_Winner_ earned {rtally.points} point"
+                else:
+                    msg += f"""_Winner_ earned {rtally.points} points
+                            due to skunk (>= {rtally.skunk_seeds})"""
+                if not win and rtally.points < earned:
+                    msg += f" and has {earned}"
+
+        if msg:
+            if win:
+                msg += '.'
+            else:
+                msg += f" towards {needed} needed."
+            mdata.end_msg += fmt.LINE_SEP if mdata.end_msg else ''
+            mdata.end_msg += msg
+
+
     def game_ended(self, mdata):
         """ended can be truthy, but only actually end the game
         if it exactly True; otherwise we are going to end the
@@ -109,12 +157,15 @@ class RoundTallyWinner(emd.EndTurnIf):
             mdata.win_cond = rcond
             mdata.winner = rplayer
 
+            if rcond == gi.WinCond.WIN:
+                self.tally_prog_msg(mdata, win=True)
+
         elif mdata.win_cond == gi.WinCond.WIN:
             mdata.win_cond = gi.WinCond.ROUND_WIN
+            self.tally_prog_msg(mdata, win=False)
 
         else:  #  if mdata.win_cond == gi.WinCond.TIE:
             mdata.win_cond = gi.WinCond.ROUND_TIE
-
 
 
 class RoundEndLimit(emd.EndTurnIf):

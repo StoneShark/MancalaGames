@@ -701,13 +701,14 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
     def win_reason_str(self, win_cond):
         """Create the win reason string based on win_cond, game goal,
-        and user ended game.
-
-        Clear and deprive games ended by the user always end in TIEs,
-        so they will never be here."""
+        and user ended game."""
 
         reason = '.'
         win_param = self.info.goal_param
+        win_req = f"({win_param} required)"
+        win_value = 0
+        if self.rtally:
+            win_value = self.rtally.parameter(self.mdata.winner)
 
         match [win_cond, self.info.goal, self.mdata.user_end]:
 
@@ -745,29 +746,32 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
                 reason = " by collecting more seeds."
 
             case [gi.WinCond.WIN, gi.Goal.RND_SEED_COUNT, False]:
-                reason = f" by collecting {win_param} or more total seeds."
+                reason = f" by collecting {win_value} total seeds {win_req}."
 
             case [gi.WinCond.WIN, gi.Goal.RND_EXTRA_SEEDS, True]:
                 reason = " by accumulating more extra seeds per game."
 
             case [gi.WinCond.WIN, gi.Goal.RND_EXTRA_SEEDS, False]:
-                reason = f" by accumulating at least {win_param} " \
-                        + "extra seeds per game."
+                reason = f" by accumulating {win_value} " \
+                        + f"extra seeds per game {win_req}."
 
             case [gi.WinCond.WIN, gi.Goal.RND_POINTS, True]:
                 reason = " by scoring more points."
 
             case [gi.WinCond.WIN, gi.Goal.RND_POINTS, False]:
-                reason = f" by earning at least {win_param} points."
+                reason = f" by earning {win_value} points {win_req}."
 
-            case [gi.WinCond.WIN, gi.Goal.RND_WIN_COUNT_MAX, True]:
+            case ([gi.WinCond.WIN, gi.Goal.RND_WIN_COUNT_MAX, True] |
+                  [gi.WinCond.WIN, gi.Goal.RND_WIN_COUNT_CLR, True] |
+                  [gi.WinCond.WIN, gi.Goal.RND_WIN_COUNT_DEP, True] |
+                  [gi.WinCond.WIN, gi.Goal.RND_WIN_COUNT_IMB, True]):
                 reason = " by winning more rounds."
 
             case ([gi.WinCond.WIN, gi.Goal.RND_WIN_COUNT_MAX, False] |
                   [gi.WinCond.WIN, gi.Goal.RND_WIN_COUNT_CLR, False] |
                   [gi.WinCond.WIN, gi.Goal.RND_WIN_COUNT_DEP, False] |
                   [gi.WinCond.WIN, gi.Goal.RND_WIN_COUNT_IMB, False]):
-                reason = f" by winning {win_param} rounds."
+                reason = f" by winning {win_value} rounds."
 
         return reason
 
@@ -795,7 +799,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             message += ' won ' + rtext + self.win_reason_str(win_cond)
 
         elif win_cond in (gi.WinCond.TIE, gi.WinCond.ROUND_TIE):
-            if self.info.goal.eliminate():
+            if self.info.goal.eliminate() and not self.mdata.user_end:
                 message += 'Both players ended with seeds; consider it a tie.'
             elif self.info.goal == gi.Goal.TERRITORY:
                 message += 'Each player controls half the holes (a tie).'
