@@ -84,11 +84,7 @@ class NewGamePattern(NewGameIf):
     def __str__(self):
         """A recursive func to print the whole decorator chain."""
 
-        my_str = repr(self) + '\n   ' + str(self.pattern)
-
-        if self.decorator:
-            return my_str + '\n' + str(self.decorator)
-        return my_str          # pragma: no coverage
+        return self.str_deco_detail(str(self.pattern))
 
 
     def new_game(self, new_round=False):

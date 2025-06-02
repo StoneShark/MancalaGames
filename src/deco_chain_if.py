@@ -22,10 +22,22 @@ class DecoChainIf(abc.ABC):
         self.game = game
         self.decorator = decorator
 
+
     def __str__(self):
         """A recursive func to print the whole decorator chain."""
 
         my_str = repr(self)
         if self.decorator:
             return my_str + '\n' + str(self.decorator)
+        return my_str
+
+
+    def str_deco_detail(self, details):
+        """Use this in derived __str__ methods that add details
+        to the deco repr."""
+
+        my_str = '\n'.join([repr(self), '   ' + details])
+
+        if self.decorator:
+            my_str += '\n' + str(self.decorator)
         return my_str

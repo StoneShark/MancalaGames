@@ -56,13 +56,10 @@ class EndTurnIf(deco_chain_if.DecoChainIf):
     def __str__(self):
         """A recursive func to print the whole decorator chain."""
 
-        my_str = repr(self)
         if self.sclaimer:
-            my_str += '\n   ' + repr(self.sclaimer)
+            return self.str_deco_detail(repr(self.sclaimer))
+        return super().__str__()
 
-        if self.decorator:
-            return my_str + '\n' + str(self.decorator)
-        return my_str
 
     @abc.abstractmethod
     def game_ended(self, mdata):
@@ -193,12 +190,8 @@ class ConcedeMixin:
 
     def __str__(self):
 
-        my_str = '\n   '.join([repr(self),
-                               'conceder:  ' + str(self.conceder)])
+        return self.str_deco_detail('conceder:  ' + str(self.conceder))
 
-        if self.decorator:
-            return my_str + '\n' + str(self.decorator)
-        return my_str
 
 
 # %%
@@ -208,7 +201,9 @@ class ClearWinner(EndTurnIf):
     There must be decorators in the chain below this."""
 
     def __str__(self):
-        return super().__str__() + f'\n   win_seeds: {self.win_seeds}'
+        return self.str_deco_detail(repr(self.sclaimer) + '\n   '
+                                    + f'win_seeds: {self.win_seeds}')
+
 
     def game_ended(self, mdata):
 
@@ -631,7 +626,7 @@ class NoOutcomeChange(EndTurnIf):
 
 
     def __str__(self):
-        return super().__str__() + f'\n   min_needed: {self.min_needed}'
+        return self.str_deco_detail(f'\n   min_needed: {self.min_needed}')
 
 
     @staticmethod

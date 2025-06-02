@@ -64,7 +64,8 @@ class RoundWinner(emd.EndTurnIf):
 
 
     def __str__(self):
-        return super().__str__() + f'\n   req_seeds: {self.req_seeds}'
+        return self.str_deco_detail(repr(self.sclaimer) + '\n   '
+                                    + f'req_seeds: {self.req_seeds}')
 
 
     def game_ended(self, mdata):

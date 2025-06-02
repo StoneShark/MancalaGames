@@ -401,13 +401,10 @@ class MlapSowerIf(sowd.SowMethodIf):
     def __str__(self):
         """Added lap continuer and end lap op to the string."""
 
-        my_str = '\n   '.join([repr(self),
-                               'lap cont:  ' + str(self.lap_cont),
-                               'end l op:  ' + str(self.end_lap_op)])
+        return self.str_deco_detail(
+            '\n   '.join(['lap cont:  ' + str(self.lap_cont),
+                          'end l op:  ' + str(self.end_lap_op)]))
 
-        if self.decorator:
-            return my_str + '\n' + str(self.decorator)
-        return my_str  # pragma: no coverage
 
     def get_single_sower(self):
         """Return the first non-lap sower in the deco chain."""

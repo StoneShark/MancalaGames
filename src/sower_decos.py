@@ -514,11 +514,7 @@ class SowPrescribedIf(SowMethodIf):
 
     def __str__(self):
 
-        my_str = '\n   '.join([repr(self),
-                               'dispose:  ' + str(self.dispose)])
-        if self.decorator:
-            return my_str + '\n' + str(self.decorator)
-        return my_str  # pragma: no coverage
+        return self.str_deco_detail('dispose:  ' + str(self.dispose))
 
 
     @abc.abstractmethod
@@ -559,11 +555,7 @@ class SowPresSowerMixin:
 
     def __str__(self):
 
-        my_str = '\n   '.join([repr(self),
-                               'sower:  ' + str(self.sower)])
-        if self.decorator:
-            return my_str + '\n' + str(self.decorator)
-        return my_str  # pragma: no coverage
+        return self.str_deco_detail('sower:  ' + str(self.sower))
 
 
 class SowBasicFirst(SowPresSowerMixin, SowPrescribedIf):
