@@ -71,6 +71,11 @@ GAMECONF = {
          'child_cvt': 4,
          'mustshare': True,
          'unclaimed': gi.EndGameSeeds.UNFED_PLAYER},
+
+    'deprive':
+        {'goal': gi.Goal.DEPRIVE,
+         'crosscapt': True,
+         }
         }
 
 
@@ -127,6 +132,16 @@ STATE = {'start':
                              store=(1, 4),
                              turn=True),
 
+        'fmore_turn':
+            utils.make_state(board=(1, 1, 0, 3, 1, 0, 0, 0),
+                             store=(5, 5),
+                             turn=False),
+
+        'fmore_tturn':
+            utils.make_state(board=(1, 1, 0, 3, 1, 0, 0, 0),
+                             store=(5, 5),
+                             turn=True),
+
          }
 
 
@@ -156,6 +171,14 @@ CASES = [
 
     ('territory', 'owners', 'ClaimOwnSeeds',
      [9, 7], NO_CHANGE, NO_CHANGE, F),
+
+
+    # Claim board
+    ('deprive', 'fmore_turn', 'ClaimBoardSeeds',
+     [5, 1], NO_CHANGE, NO_CHANGE, F),
+
+    ('deprive', 'fmore_tturn', 'ClaimBoardSeeds',
+     [5, 1], NO_CHANGE, NO_CHANGE, F),
 
 
     # TakeOwnSeeds - take seeds by owner (side or owner), don't move child seeds

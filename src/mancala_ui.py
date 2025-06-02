@@ -1084,7 +1084,16 @@ class MancalaUI(tk.Frame):
 
 
     def end_game(self, *, game, quitter):
-        """End the game. Report result to user."""
+        """End the round or game. Report result to user.
+        Then start a new game or round.
+
+        game     if true end the game, otherwise, try to end the
+                 round, which might end up ending the game
+
+        quitter  True if the user requested an end/quit,
+                 False if they requested a concede.
+                 concede uses the ender/unclaimed and quit
+                 uses the quitter"""
 
         thing = 'Game' if game else 'Round'
         request = 'End' if quitter else 'Concede'
@@ -1118,7 +1127,9 @@ class MancalaUI(tk.Frame):
 
         self.refresh()
         self._win_message_popup(win_cond)
-        self._new_game()
+
+        nr_ok = not win_cond.is_game_over()
+        self._new_game(win_cond=win_cond, new_round_ok=nr_ok)
 
 
     def _set_difficulty(self):

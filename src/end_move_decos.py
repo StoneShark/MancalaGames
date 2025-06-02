@@ -475,7 +475,8 @@ class DepriveEndGame(ConcedeMixin, EndTurnIf):
     def __init__(self, game, decorator=None, sclaimer=None):
 
         super().__init__(game, decorator, sclaimer)
-        self.conceder = ConcedeDepImm(game, None, claimer.ClaimOwnSeeds(game))
+        self.conceder = ConcedeDepImm(game, None,
+                                      claimer.ClaimBoardSeeds(game))
 
     def game_ended(self, mdata):
         """Check for end game."""
@@ -531,7 +532,8 @@ class ImmobilizeEndGame(ConcedeMixin, EndTurnIf):
     def __init__(self, game, decorator=None, sclaimer=None):
 
         super().__init__(game, decorator, sclaimer)
-        self.conceder = ConcedeDepImm(game, None, claimer.ClaimOwnSeeds(game))
+        self.conceder = ConcedeDepImm(game, None,
+                                      claimer.ClaimBoardSeeds(game))
 
 
     def game_ended(self, mdata):
@@ -585,7 +587,8 @@ class ClearSeedsEndGame(ConcedeMixin, EndTurnIf):
     def __init__(self, game, decorator=None, sclaimer=None):
 
         super().__init__(game, decorator, sclaimer)
-        self.conceder = ConcedeClear(game, None, claimer.ClaimOwnSeeds(game))
+        self.conceder = ConcedeClear(game, None,
+                                     claimer.ClaimBoardSeeds(game))
 
 
     def game_ended(self, mdata):

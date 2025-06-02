@@ -103,6 +103,28 @@ class ClaimOwnSeeds(ClaimSeedsIf):
         return seeds
 
 
+class ClaimBoardSeeds(ClaimSeedsIf):
+    """Claim only the seeds on the board for each player.
+    Use get ranges in case the ranges were set different than
+    the two sides.  Don't move any seeds.
+
+    Intendend for conceding eliminate goal games (e.g. clear).
+    Not suitable for territory games or games with children."""
+
+    def claim_seeds(self):
+        seeds = [0, 0]
+
+        frange, trange = self.game.cts.get_ranges(False)
+
+        for loc in frange:
+            seeds[False] += self.game.board[loc]
+
+        for loc in trange:
+            seeds[True] += self.game.board[loc]
+
+        return seeds
+
+
 class TakeOwnSeeds(ClaimSeedsIf):
     """The game has ended, move the unowned seeds (non-child)
     to the stores.  Count all of the owned seeds."""

@@ -52,7 +52,7 @@ def _build_eliminate_ended(game):
     if game.info.goal in (gi.Goal.RND_WIN_COUNT_CLR,
                           gi.Goal.RND_WIN_COUNT_DEP,
                           gi.Goal.RND_WIN_COUNT_IMB):
-        sclaimer = claimer.ClaimSeeds(game)
+        sclaimer = claimer.ClaimBoardSeeds(game)
         ender = _add_round_ender(game, ender, sclaimer)
 
     return ender
