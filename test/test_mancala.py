@@ -1357,7 +1357,8 @@ class TestWinMessage:
             maxgame.mdata.end_msg = msg
         maxgame.mdata.fmsg = fmsg
 
-        _, wmess = maxgame.win_message(None)
+        # use a bad WinCond to skip win and tie cases
+        _, wmess = maxgame.win_message(gi.WinCond.REPEAT_TURN)
 
         if msg and fmsg:
             assert msg == wmess
@@ -1373,7 +1374,8 @@ class TestWinMessage:
         maxgame.mdata.winner = True
         maxgame.mdata.end_msg = '_winner_ _loser_ _Thing_'
 
-        _, wmess = maxgame.win_message(None)
+        # use a bad WinCond to skip win and tie cases
+        _, wmess = maxgame.win_message(gi.WinCond.REPEAT_TURN)
         assert '_winner_' not in wmess
         assert '_loser_' not in wmess
         assert '_thing_' not in wmess

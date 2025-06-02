@@ -80,6 +80,21 @@ class TestEnumsClasses:
         assert not WinCond.TIE.is_win()
         assert not WinCond.ENDLESS.is_win()
 
+        assert WinCond.TIE.is_tie()
+        assert WinCond.ROUND_TIE.is_tie()
+        assert not WinCond.WIN.is_tie()
+        assert not WinCond.ENDLESS.is_tie()
+
+        assert WinCond.TIE.is_game_over()
+        assert WinCond.WIN.is_game_over()
+        assert not WinCond.ROUND_WIN.is_game_over()
+        assert not WinCond.ROUND_TIE.is_game_over()
+
+        assert not WinCond.TIE.is_round_over()
+        assert not WinCond.WIN.is_round_over()
+        assert WinCond.ROUND_WIN.is_round_over()
+        assert WinCond.ROUND_TIE.is_round_over()
+
 
     def test_move_tuple(self):
 

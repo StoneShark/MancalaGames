@@ -153,7 +153,7 @@ class RoundTallyWinner(emd.EndTurnIf):
         self.game.rtally.tally(mdata, seeds)
         rcond, rplayer = self.game.rtally.win_test()
 
-        if rcond in (gi.WinCond.WIN, gi.WinCond.TIE):
+        if rcond and rcond.is_game_over():
             mdata.win_cond = rcond
             mdata.winner = rplayer
 

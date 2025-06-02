@@ -353,12 +353,24 @@ class WinCond(enum.Enum):
     REPEAT_TURN = enum.auto()   # must be truthy
 
     def is_ended(self):
-        """Has the game ended."""
+        """Has the game ended?"""
         return self is not WinCond.REPEAT_TURN
 
     def is_win(self):
-        """Did the game or round end winner."""
+        """Did the game or round end with win?"""
         return self in (WinCond.WIN, WinCond.ROUND_WIN)
+
+    def is_tie(self):
+        """Did the game or round end in a tie?"""
+        return self in (WinCond.TIE, WinCond.ROUND_TIE)
+
+    def is_game_over(self):
+        """Is the game over (not a round)?"""
+        return self in (WinCond.WIN, WinCond.TIE)
+
+    def is_round_over(self):
+        """Is the game over (not a round)?"""
+        return self in (WinCond.ROUND_WIN, WinCond.ROUND_TIE)
 
 
 @dc.dataclass(frozen=True, kw_only=True)

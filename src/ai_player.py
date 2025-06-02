@@ -236,10 +236,10 @@ class AiPlayer(ai_interface.AiPlayerIf):
         """Score the end game conditions.
         return None if not scored."""
 
-        if end_cond in (gi.WinCond.ROUND_WIN, gi.WinCond.WIN):
+        if end_cond and end_cond.is_win():
             return -1000 if self.game.get_winner() else 1000
 
-        if end_cond in (gi.WinCond.ROUND_TIE, gi.WinCond.TIE):
+        if end_cond and end_cond.is_tie():
             return -5 if self.game.turn else 5
 
         return None

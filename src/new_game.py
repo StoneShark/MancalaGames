@@ -178,8 +178,7 @@ class NewRound(NewGameIf):
         Return False if it a new round was started.
         True if a new game was started."""
 
-        if (not new_round_ok
-                or win_cond in (gi.WinCond.WIN, gi.WinCond.TIE)):
+        if (not new_round_ok or (win_cond and win_cond.is_game_over())):
             self.decorator.new_game(win_cond, new_round_ok)
             return True
 
@@ -214,8 +213,7 @@ class TerritoryNewRound(NewGameIf):
     def new_game(self, win_cond=None, new_round_ok=False):
         """Adjust the game outcome."""
 
-        if (not new_round_ok
-                or win_cond in (gi.WinCond.WIN, gi.WinCond.TIE)):
+        if (not new_round_ok or (win_cond and win_cond.is_game_over())):
             self.decorator.new_game(win_cond, new_round_ok)
             return True
 
@@ -257,8 +255,7 @@ class NewRoundEven(NewGameIf):
     def new_game(self, win_cond=None, new_round_ok=False):
         """Adjust the game outcome."""
 
-        if (not new_round_ok
-            or win_cond in (gi.WinCond.WIN, gi.WinCond.TIE)):
+        if (not new_round_ok or (win_cond and win_cond.is_game_over())):
             self.decorator.new_game(win_cond, new_round_ok)
             return True
 
@@ -318,8 +315,7 @@ class NewRoundTally(NewGameIf):
         self.game.turn = winner
         set_round_starter(self.game)
 
-        if (not new_round_ok
-            or win_cond in (gi.WinCond.WIN, gi.WinCond.TIE)):
+        if (not new_round_ok or (win_cond and win_cond.is_game_over())):
             self.game.rtally.clear()
             return True
 

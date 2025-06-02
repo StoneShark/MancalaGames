@@ -1109,7 +1109,7 @@ class MancalaUI(tk.Frame):
         win_cond = self.game.end_game(quitter=quitter, user=True, game=game)
 
         wtext = thing + ' Ended '
-        if win_cond in (gi.WinCond.WIN, gi.WinCond.ROUND_WIN):
+        if win_cond and win_cond.is_win():
             sturn = self.game.turn_name()
             wtext += f'\n{win_cond.name} by {sturn}'
         elif win_cond:
@@ -1169,7 +1169,7 @@ class MancalaUI(tk.Frame):
         """The part of the move operation to do after the
         animation sequence completes."""
 
-        if self.wcond and self.wcond != gi.WinCond.REPEAT_TURN:
+        if self.wcond and self.wcond.is_ended():
             self._win_message_popup(self.wcond)
             self._new_game(win_cond=self.wcond, new_round_ok=True)
 

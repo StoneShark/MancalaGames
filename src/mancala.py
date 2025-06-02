@@ -782,7 +782,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
         rtext = 'the game'
         title = 'Game Over'
-        if win_cond in (gi.WinCond.ROUND_WIN, gi.WinCond.ROUND_TIE):
+        if win_cond.is_round_over():
             rtext = 'the round'
             title = 'Round Over'
 
@@ -794,11 +794,11 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
 
         message += fmt.LINE_SEP if message else ''
 
-        if win_cond in (gi.WinCond.WIN, gi.WinCond.ROUND_WIN):
+        if win_cond.is_win():
             message += gi.PLAYER_NAMES[int(self.mdata.winner)]
             message += ' won ' + rtext + self.win_reason_str(win_cond)
 
-        elif win_cond in (gi.WinCond.TIE, gi.WinCond.ROUND_TIE):
+        elif win_cond.is_tie():
             if self.info.goal.eliminate() and not self.mdata.user_end:
                 message += 'Both players ended with seeds; consider it a tie.'
             elif self.info.goal == gi.Goal.TERRITORY:
@@ -951,10 +951,10 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             return
 
         wtext = ''
-        if mdata.win_cond in (gi.WinCond.WIN, gi.WinCond.ROUND_WIN):
+        if mdata.win_cond and mdata.win_cond.is_win():
             winner = gi.PLAYER_NAMES[mdata.winner]
             wtext = f'\n{mdata.win_cond.name} by {winner}'
-        elif mdata.win_cond in (gi.WinCond.TIE, gi.WinCond.ROUND_TIE):
+        elif mdata.win_cond and mdata.win_cond.is_tie():
             wtext = ' \n' + mdata.win_cond.name
         elif mdata.win_cond:
             wtext = ' ' + mdata.win_cond.name
