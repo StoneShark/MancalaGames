@@ -48,6 +48,7 @@ class RuleTester:
         self.skip_rules = skip if skip else set()
         self.tested = set()
 
+
     def test_rule(self, name, *, rule, msg,
                   warn=False, excp=None, both_objs=False):
         """Test an individual rule.
@@ -201,11 +202,13 @@ def test_eliminate_goal_rules(tester):
 
         return _elimnate_and
 
+
     tester.test_rule(
         'elseed_gs_legal',
         rule=lambda ginfo: (ginfo.goal.eliminate()
                             and ginfo.grandslam != gi.GrandSlam.LEGAL),
-        msg='CLEAR & DEPRIVE games require that GRANDSLAM be Legal',
+        msg="""CLEAR, DEPRIVE and IMMOBILIZE games require
+        that GRANDSLAM be Legal""",
         excp=gi.GameInfoError)
 
     bad_flags = ['child_type', 'child_cvt', 'child_rule',
@@ -214,7 +217,8 @@ def test_eliminate_goal_rules(tester):
         tester.test_rule(
             f'elseed_bad_{flag}',
             rule=_elimnate_and(flag),
-            msg=f'CLEAR & DEPRIVE games cannot be used with {flag.upper()}',
+            msg=f"""CLEAR, DEPRIVE and IMMOBILIZE games cannot be used
+                  with {flag.upper()}""",
             excp=gi.GameInfoError)
 
     tester.test_rule(
@@ -223,8 +227,8 @@ def test_eliminate_goal_rules(tester):
                                            gi.Goal.DEPRIVE,
                                            gi.Goal.IMMOBILIZE)
                             and ginfo.rounds),
-        msg="""Goals CLEAR, DEPRIVE and IMMOBILIZE cannot be played in rounds.
-            Consider the Round Tally goals""",
+        msg="""Goals CLEAR, DEPRIVE and IMMOBILIZE cannot be played in rounds
+            that are not the Round Tally goals""",
             excp=gi.GameInfoError)
 
     tester.test_rule(
