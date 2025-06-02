@@ -77,12 +77,11 @@ def test_one_game(request, game_pdict):
             pytest.fail("Game didn't end right.")
 
         cond = game.move(random.choice(moves))
-        if cond in (WinCond.WIN, WinCond.TIE):
+        if cond and cond.is_game_over():
             return
 
-        if (cond in (WinCond.ROUND_WIN, WinCond.ROUND_TIE)
-                and game.new_game(cond, new_round_ok=True)):
-            return
+        if cond and cond.is_round_over():
+            game.new_game(new_round=True)
 
         if game.info.mustpass:
             game.test_pass()

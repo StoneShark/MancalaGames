@@ -306,7 +306,7 @@ class TestGelech:
 
     def test_round_2_setup(self, gstate):
         game = gstate.game
-        game.new_game(gstate.cond, new_round_ok=True)
+        game.new_game(new_round=True)
         assert game.turn is False
         assert game.board == [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
         assert game.store == [0, 0]
@@ -512,7 +512,7 @@ class TestGelech:
 
     def test_round_3_setup(self, gstate):
         game = gstate.game
-        game.new_game(gstate.cond, new_round_ok=True)
+        game.new_game(new_round=True)
         assert game.turn is True
         assert game.board == [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
         assert game.store == [0, 0]
@@ -772,7 +772,7 @@ class TestGelech:
 
     def test_round_4_setup(self, gstate):
         game = gstate.game
-        game.new_game(gstate.cond, new_round_ok=True)
+        game.new_game(new_round=True)
         assert game.turn is False
         assert game.board == [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
         assert game.store == [0, 0]
@@ -1104,7 +1104,7 @@ class TestGelech:
 
     def test_round_5_setup(self, gstate):
         game = gstate.game
-        game.new_game(gstate.cond, new_round_ok=True)
+        game.new_game(new_round=True)
         assert game.turn is True
         assert game.board == [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
         assert game.store == [0, 0]
@@ -1310,7 +1310,7 @@ class TestGelech:
 
     def test_round_6_setup(self, gstate):
         game = gstate.game
-        game.new_game(gstate.cond, new_round_ok=True)
+        game.new_game(new_round=True)
         assert game.turn is False
         assert game.board == [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
         assert game.store == [0, 0]
@@ -1516,7 +1516,7 @@ class TestGelech:
 
     def test_round_7_setup(self, gstate):
         game = gstate.game
-        game.new_game(gstate.cond, new_round_ok=True)
+        game.new_game(new_round=True)
         assert game.turn is True
         assert game.board == [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
         assert game.store == [0, 0]
@@ -1704,7 +1704,7 @@ class TestGelech:
 
     def test_round_8_setup(self, gstate):
         game = gstate.game
-        game.new_game(gstate.cond, new_round_ok=True)
+        game.new_game(new_round=True)
         assert game.turn is False
         assert game.board == [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
         assert game.store == [0, 0]
@@ -2207,7 +2207,7 @@ class TestGelech:
 
     def test_round_9_setup(self, gstate):
         game = gstate.game
-        game.new_game(gstate.cond, new_round_ok=True)
+        game.new_game(new_round=True)
         assert game.turn is True
         assert game.board == [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
         assert game.store == [0, 0]
@@ -2503,7 +2503,7 @@ class TestGelech:
 
     def test_round_10_setup(self, gstate):
         game = gstate.game
-        game.new_game(gstate.cond, new_round_ok=True)
+        game.new_game(new_round=True)
         assert game.turn is False
         assert game.board == [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
         assert game.store == [0, 0]
@@ -2763,7 +2763,7 @@ class TestGelech:
 
     def test_round_11_setup(self, gstate):
         game = gstate.game
-        game.new_game(gstate.cond, new_round_ok=True)
+        game.new_game(new_round=True)
         assert game.turn is True
         assert game.board == [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
         assert game.store == [0, 0]
@@ -2951,7 +2951,7 @@ class TestGelech:
 
     def test_round_12_setup(self, gstate):
         game = gstate.game
-        game.new_game(gstate.cond, new_round_ok=True)
+        game.new_game(new_round=True)
         assert game.turn is False
         assert game.board == [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
         assert game.store == [0, 0]
@@ -3139,7 +3139,7 @@ class TestGelech:
 
     def test_round_13_setup(self, gstate):
         game = gstate.game
-        game.new_game(gstate.cond, new_round_ok=True)
+        game.new_game(new_round=True)
         assert game.turn is True
         assert game.board == [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
         assert game.store == [0, 0]
@@ -3300,7 +3300,7 @@ class TestGelech:
 
     def test_round_14_setup(self, gstate):
         game = gstate.game
-        game.new_game(gstate.cond, new_round_ok=True)
+        game.new_game(new_round=True)
         assert game.turn is False
         assert game.board == [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
         assert game.store == [0, 0]

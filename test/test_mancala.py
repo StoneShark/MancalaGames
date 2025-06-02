@@ -895,9 +895,8 @@ class TestDelegates:
     def test_dlg_new_game(self, game, mocker):
 
         mobj = mocker.patch.object(game.deco.new_game, 'new_game')
-        mobj.return_value = 123
 
-        assert game.new_game() == 123
+        game.new_game()
         mobj.assert_called_once()
 
 

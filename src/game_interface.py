@@ -578,11 +578,8 @@ class GameInterface(abc.ABC):
         it can't be only left or right click playable."""
 
     @abc.abstractmethod
-    def new_game(self, win_cond=None, new_round_ok=False):
-        """Reset the game to new state or
-        if new_round_ok is set, check to start a new round.
-        Return True if a new game is created, False if a new round
-        is created."""
+    def new_game(self, new_round=False):
+        """Create a new game or new round based on new_round ok."""
 
     @abc.abstractmethod
     def end_game(self, *, quitter, user, game=True):

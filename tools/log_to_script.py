@@ -281,7 +281,7 @@ def gen_test_code(lines):
             print()
             print_indent(1, f'def test_round_{round_no}_setup(self, gstate):')
             print_indent(2, 'game = gstate.game')
-            print_indent(2, 'game.new_game(gstate.cond, new_round_ok=True)')
+            print_indent(2, 'game.new_game(new_round=True)')
             find_first_move(line_iter)
             cond_line, true_line, false_line = get_board_lines(line_iter)
             write_test_board(holes, true_line, false_line)

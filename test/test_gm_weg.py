@@ -443,7 +443,7 @@ class TestWegGame1:
         """False has 33 seeds, gets ownership of 8 holes,
         holes are opposite False's left."""
         game = gstate.game
-        game.new_game(gstate.cond, new_round_ok=True)
+        game.new_game(new_round=True)
         assert game.turn is True
         assert game.board == [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
@@ -964,7 +964,7 @@ class TestWegGame1:
         """True won with 28 seeds,  takes ownership of 7 holes,
         holes are opposite True's right."""
         game = gstate.game
-        game.new_game(gstate.cond, new_round_ok=True)
+        game.new_game(new_round=True)
         assert game.turn is False
         assert game.board == [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
@@ -1578,7 +1578,7 @@ class TestWegGame1:
 
     def test_round_4_setup(self, gstate):
         game = gstate.game
-        game.new_game(gstate.cond, new_round_ok=True)
+        game.new_game(new_round=True)
         assert game.turn is True
         assert game.board == [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
@@ -2192,7 +2192,7 @@ class TestWegGame1:
 
     def test_round_5_setup(self, gstate):
         game = gstate.game
-        game.new_game(gstate.cond, new_round_ok=True)
+        game.new_game(new_round=True)
         assert game.turn is False
         assert game.board == [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]

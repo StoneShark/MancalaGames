@@ -147,12 +147,12 @@ class BearOff(mancala.Mancala):
                             **(dc.asdict(super().board_state)))
 
 
-    def new_game(self, win_cond=None, new_round_ok=False):
+    def new_game(self, new_round=False):
         """Reset sow to normal and rebuild the deco chain,
         then call the parent to do a new_game."""
 
         self.normal_sow = True
-        super().new_game(win_cond, new_round_ok)
+        super().new_game(new_round)
 
 
     def move(self, move):

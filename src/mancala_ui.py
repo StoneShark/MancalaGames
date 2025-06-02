@@ -899,7 +899,7 @@ class MancalaUI(tk.Frame):
            New game started.""")
 
 
-    def _new_game(self, win_cond=None, new_round_ok=False):
+    def _new_game(self, new_round=False):
         """Start a new game and refresh the board."""
         # pylint: disable=too-complex
 
@@ -910,12 +910,11 @@ class MancalaUI(tk.Frame):
         self.history.clear()
         self.player.clear_history()
         self._swap_ok = True
-        new_game = self.game.new_game(win_cond=win_cond,
-                                      new_round_ok=new_round_ok)
+        self.game.new_game(new_round)
         self.set_game_mode(buttons.Behavior.GAMEPLAY, force=True)
 
         self.refresh()
-        if new_game:
+        if not new_round:
             self._param_tally()
 
             if self.info.prescribed == gi.SowPrescribed.ARNGE_LIMIT:
@@ -1127,9 +1126,7 @@ class MancalaUI(tk.Frame):
 
         self.refresh()
         self._win_message_popup(win_cond)
-
-        nr_ok = not win_cond.is_game_over()
-        self._new_game(win_cond=win_cond, new_round_ok=nr_ok)
+        self._new_game(not win_cond.is_game_over())
 
 
     def _set_difficulty(self):
@@ -1182,7 +1179,7 @@ class MancalaUI(tk.Frame):
 
         if self.wcond and self.wcond.is_ended():
             self._win_message_popup(self.wcond)
-            self._new_game(win_cond=self.wcond, new_round_ok=True)
+            self._new_game(new_round=True)
 
         if (not (self.vars.ai_active.get() and self.game.get_turn())
                 and self.info.mustpass and self.game.test_pass()):

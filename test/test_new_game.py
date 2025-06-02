@@ -123,7 +123,7 @@ class TestNewGame:
                                        [0, 0, 1])
         game.store = [7, 3]
 
-        assert game.new_game()
+        game.new_game()
         assert game.board == [2] * 6
         assert game.store == [0, 0]
         assert game.turn in [False, True]   # random
@@ -148,7 +148,7 @@ class TestNewGame:
                                         [0, 0, 0])
         rgame.store = [8, 4]
 
-        assert rgame.new_game()
+        rgame.new_game()
         assert rgame.board == [2] * 6
         assert rgame.store == [0, 0]
         assert rgame.turn in [False, True]   # random
@@ -196,8 +196,7 @@ class TestNewGame:
         rgame.mdata.player = last_player
         rgame.mdata.winner = winner
 
-        assert not rgame.new_game(win_cond=WinCond.ROUND_WIN,
-                                  new_round_ok=True)
+        rgame.new_game(new_round=True)
 
         if start_method == RoundStarter.LAST_MOVER:
             assert rgame.turn == last_player
@@ -295,8 +294,7 @@ class TestNewGame:
         winner = store[0] < store[1]
         rgame.turn = winner
 
-        assert not rgame.new_game(win_cond=WinCond.ROUND_WIN,
-                                  new_round_ok=True)
+        rgame.new_game(new_round=True)
 
         # no loss of seeds
         assert sum(rgame.store) + sum(rgame.board) == rgame.cts.total_seeds
@@ -340,8 +338,7 @@ class TestNewGame:
         winner = store[0] < store[1]
         nb_rgame.turn = winner
 
-        assert not nb_rgame.new_game(win_cond=WinCond.ROUND_WIN,
-                                     new_round_ok=True)
+        nb_rgame.new_game(new_round=True)
 
         # no loss of seeds
         assert (sum(nb_rgame.store) + sum(nb_rgame.board)
@@ -400,8 +397,7 @@ class TestNewGame:
         winner = store[0] < store[1]
         game.turn = winner
 
-        assert not game.new_game(win_cond=WinCond.ROUND_WIN,
-                                 new_round_ok=True)
+        game.new_game(new_round=True)
         # print(game)
 
         # positive seeds and no loss of seeds
@@ -447,8 +443,7 @@ class TestNewGame:
         winner = store[0] < store[1]
         game.turn = winner
 
-        assert not game.new_game(win_cond=WinCond.ROUND_WIN,
-                                 new_round_ok=True)
+        game.new_game(new_round=True)
 
         if round_fill == RoundFill.UMOVE:
             assert game.store == estore_move
@@ -490,8 +485,7 @@ class TestNewGame:
         game.store = [fseeds, game.cts.total_seeds - fseeds]
         assert not game.inhibitor._children
 
-        assert not game.new_game(win_cond=WinCond.ROUND_WIN,
-                                 new_round_ok=True)
+        game.new_game(new_round=True)
 
         assert game.inhibitor._children == einhibit
 
@@ -528,7 +522,7 @@ class TestRoundTally:
         game.board = list(board)
         game.store = (12, 12)
 
-        game.new_game(cond, new_round_ok=True)
+        game.new_game(new_round=cond.is_round_over())
 
         assert game.board == [3, 3, 3, 3, 3, 3, 3, 3]
         assert game.store == [0, 0]
@@ -571,7 +565,7 @@ class TestRoundTally:
         game.mdata.player = last
         game.mdata.winner = winner
 
-        game.new_game(cond, new_round_ok=True)
+        game.new_game(new_round=cond.is_round_over())
 
         assert game.starter == estarter
         assert game.turn == estarter
@@ -615,9 +609,7 @@ class TestTerritory:
 
         game.board = [0] * game.cts.dbl_holes
         game.store = [fseeds, game.cts.total_seeds - fseeds]
-
-        cond = WinCond.WIN if win else WinCond.ROUND_WIN
-        game.new_game(cond, new_round_ok=True)
+        game.new_game(new_round=not win)
         assert game.owner == eowners
 
 
@@ -641,7 +633,7 @@ class TestFixedChildren:
     def test_new_game(self, game):
 
         game.child = [None] * 3 * 2
-        game.new_game(WinCond.WIN, new_round_ok=False)
+        game.new_game()
 
         assert game.child[2] is False
         assert game.child[5] is True

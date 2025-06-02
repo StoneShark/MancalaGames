@@ -49,11 +49,8 @@ class NewGameIf(deco_chain_if.DecoChainIf):
     """New Game Interface."""
 
     @abc.abstractmethod
-    def new_game(self, win_cond=None, new_round_ok=False):
-        """Start a new game.
-
-        Return False if a new round was started.
-        True if a new game was started."""
+    def new_game(self, new_round=False):
+        """Start a new game."""
 
 
 # %% base new game
@@ -61,8 +58,9 @@ class NewGameIf(deco_chain_if.DecoChainIf):
 class NewGame(NewGameIf):
     """Default new game reset all variables."""
 
-    def new_game(self, _1=None, _2=False):
+    def new_game(self, new_round=None):
         """Reset the game to new state and alternate start player."""
+        _ = new_round
 
         self.game.store = [0, 0]
         self.game.board = [self.game.cts.nbr_start] * self.game.cts.dbl_holes
@@ -70,7 +68,6 @@ class NewGame(NewGameIf):
 
         self.game.turn = not self.game.starter
         self.game.starter = self.game.turn
-        return True
 
 
 # %%  decorators
@@ -83,6 +80,7 @@ class NewGamePattern(NewGameIf):
         super().__init__(game, decorator)
         self.pattern = pattern
 
+
     def __str__(self):
         """A recursive func to print the whole decorator chain."""
 
@@ -92,13 +90,12 @@ class NewGamePattern(NewGameIf):
             return my_str + '\n' + str(self.decorator)
         return my_str          # pragma: no coverage
 
-    def new_game(self, win_cond=None, new_round_ok=False):
+
+    def new_game(self, new_round=False):
         """Reset the game to new state and choose random start player."""
 
-        self.decorator.new_game(win_cond, new_round_ok)
+        self.decorator.new_game(new_round)
         self.pattern.fill_seeds(self.game)
-
-        return True
 
 
 class NewRound(NewGameIf):
@@ -166,21 +163,18 @@ class NewRound(NewGameIf):
         return fill
 
 
-    def new_game(self, win_cond=None, new_round_ok=False):
+    def new_game(self, new_round=False):
         """Create a new round if allowed.
         Use pre-determine pattern to distribute the seeds for the
         next round.
 
         If the board size is 4 or move and the fill method is SHORTEN,
         stop making children if the playable board size
-        is reduced to 3 or less.
+        is reduced to 3 or less."""
 
-        Return False if it a new round was started.
-        True if a new game was started."""
-
-        if (not new_round_ok or (win_cond and win_cond.is_game_over())):
-            self.decorator.new_game(win_cond, new_round_ok)
-            return True
+        if not new_round:
+            self.decorator.new_game(new_round)
+            return
 
         nbr_start = self.game.cts.nbr_start
         blocks = self.game.info.blocks
@@ -201,7 +195,6 @@ class NewRound(NewGameIf):
                     self.game.board[loc] = 0
                     if blocks:
                         self.game.blocked[loc] = True
-        return False
 
 
 class TerritoryNewRound(NewGameIf):
@@ -210,12 +203,12 @@ class TerritoryNewRound(NewGameIf):
     call the deco chain to init the board; and then
     assign the owners."""
 
-    def new_game(self, win_cond=None, new_round_ok=False):
+    def new_game(self, new_round=False):
         """Adjust the game outcome."""
 
-        if (not new_round_ok or (win_cond and win_cond.is_game_over())):
-            self.decorator.new_game(win_cond, new_round_ok)
-            return True
+        if not new_round:
+            self.decorator.new_game(new_round)
+            return
 
         winner, wholes = self.game.deco.ender.compute_win_holes()
 
@@ -223,7 +216,7 @@ class TerritoryNewRound(NewGameIf):
         saved_starter = self.game.starter
         saved_turn = self.game.turn
 
-        self.decorator.new_game(None, True)
+        self.decorator.new_game(new_round=True)
         self.game.starter = saved_starter
         self.game.turn = saved_turn
 
@@ -233,8 +226,6 @@ class TerritoryNewRound(NewGameIf):
         for cnt in range(self.game.cts.dbl_holes):
             self.game.owner[loc] = winner if cnt < wholes else not winner
             loc = (loc + direct) % self.game.cts.dbl_holes
-
-        return False
 
 
 class NewRoundEven(NewGameIf):
@@ -252,12 +243,12 @@ class NewRoundEven(NewGameIf):
     1 see per hole and one playable hole and EVEN_FILL of one playable
     hole (see RoundWinner)."""
 
-    def new_game(self, win_cond=None, new_round_ok=False):
+    def new_game(self, new_round=False):
         """Adjust the game outcome."""
 
-        if (not new_round_ok or (win_cond and win_cond.is_game_over())):
-            self.decorator.new_game(win_cond, new_round_ok)
-            return True
+        if not new_round:
+            self.decorator.new_game(new_round)
+            return
 
         winner = self.game.mdata.winner if self.game.mdata else self.game.turn
         set_round_starter(self.game)
@@ -293,14 +284,12 @@ class NewRoundEven(NewGameIf):
 
             game_log.add('Adjusted seeds for minimum move.', game_log.IMPORT)
 
-        return False
-
 
 class NewRoundTally(NewGameIf):
     """New game for tally games. If starting a new game (not round)
     clear the round tallies."""
 
-    def new_game(self, win_cond=None, new_round_ok=False):
+    def new_game(self, new_round=False):
         """Adjust the game outcome.
 
         NewGame alternates starters, we want to follow the
@@ -309,25 +298,22 @@ class NewRoundTally(NewGameIf):
 
         starter = self.game.starter
         winner = self.game.mdata.winner if self.game.mdata else self.game.turn
-        self.decorator.new_game(win_cond, new_round_ok)
+        self.decorator.new_game(new_round)
 
         self.game.starter = starter
         self.game.turn = winner
         set_round_starter(self.game)
 
-        if (not new_round_ok or (win_cond and win_cond.is_game_over())):
+        if not new_round:
             self.game.rtally.clear()
-            return True
-
-        return False
 
 
 class NewFixedChildren(NewGameIf):
     """Currently only support fixed children in rightmost hole."""
 
-    def new_game(self, win_cond=None, new_round_ok=False):
+    def new_game(self, new_round=False):
 
-        self.decorator.new_game(win_cond, new_round_ok)
+        self.decorator.new_game(new_round)
 
         self.game.child[self.game.cts.holes - 1] = False
         self.game.child[self.game.cts.dbl_holes - 1] = True
@@ -336,9 +322,9 @@ class NewFixedChildren(NewGameIf):
 class SeedCountCheck(NewGameIf):
     """Check to make certain that the board is setup acceptably."""
 
-    def new_game(self, win_cond=None, new_round_ok=False):
+    def new_game(self, new_round=False):
 
-        new_round = self.decorator.new_game(win_cond, new_round_ok)
+        new_round = self.decorator.new_game(new_round)
 
         store = self.game.store
         board = self.game.board
@@ -346,8 +332,6 @@ class SeedCountCheck(NewGameIf):
         assert (all(cnt >= 0 for cnt in board + store)
                 and sum(store) + sum(board) == self.game.cts.total_seeds
                 ), f"seed count error in new_game\n{store}\n{board}"
-
-        return new_round
 
 
 # %%

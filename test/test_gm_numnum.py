@@ -692,7 +692,7 @@ class TestNumNum:
 
     def test_round_2_setup(self, gstate):
         game = gstate.game
-        game.new_game(gstate.cond, new_round_ok=True)
+        game.new_game(new_round=True)
         assert game.turn is True
         assert game.board == [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
         assert game.owner == [F, F, F, F, F, F, F, T, T, T, T, T]
@@ -990,7 +990,7 @@ class TestNumNum:
 
     def test_round_3_setup(self, gstate):
         game = gstate.game
-        game.new_game(gstate.cond, new_round_ok=True)
+        game.new_game(new_round=True)
         assert game.turn is False
         assert game.board == [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
         assert game.owner == [F, F, F, F, F, F, T, T, T, T, T, T]
@@ -1288,7 +1288,7 @@ class TestNumNum:
 
     def test_round_4_setup(self, gstate):
         game = gstate.game
-        game.new_game(gstate.cond, new_round_ok=True)
+        game.new_game(new_round=True)
         assert game.turn is True
         assert game.board == [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
         assert game.owner == [F, F, F, F, F, F, F, T, T, T, T, T]
@@ -1636,7 +1636,7 @@ class TestNumNum:
 
     def test_round_5_setup(self, gstate):
         game = gstate.game
-        game.new_game(gstate.cond, new_round_ok=True)
+        game.new_game(new_round=True)
         assert game.turn is True
         assert game.board == [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
         assert game.owner == [F, F, F, F, F, F, F, F, T, T, T, T]
@@ -1964,7 +1964,7 @@ class TestNumNum:
 
     def test_round_6_setup(self, gstate):
         game = gstate.game
-        game.new_game(gstate.cond, new_round_ok=True)
+        game.new_game(new_round=True)
         assert game.turn is True
         assert game.board == [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
         assert game.owner == [F, F, F, F, F, F, F, F, F, T, T, T]

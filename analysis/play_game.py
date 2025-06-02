@@ -165,12 +165,11 @@ def make_one_move(game, move):
     """
 
     cond = game.move(move)
-    if cond in (gi.WinCond.WIN, gi.WinCond.TIE):
+    if cond and cond.is_game_over():
         return GameResult(cond.value), game.mdata.winner
 
-    if cond in (gi.WinCond.ROUND_WIN, gi.WinCond.ROUND_TIE):
-        if game.new_game(cond, new_round_ok=True):
-            return GameResult(cond.value), game.mdata.winner
+    if cond and cond.is_round_over():
+        game.new_game(new_round=True)
         game_logger.game_log.turn(0, 'Start Game', game)
 
     if game.info.mustpass:

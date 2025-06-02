@@ -45,8 +45,6 @@ from context import cfg_keys as ckey
 from context import game_interface as gi
 from context import game_logger
 
-from game_interface import WinCond
-
 # limit the length of these tests, exceeding TESTLIMIT is a test failure
 
 NBR_MOVES = 50
@@ -120,8 +118,7 @@ def test_one_game(game_pdict, algo):
             move = player.pick_move()
 
         cond = game.move(move)
-        if cond in (WinCond.WIN, WinCond.TIE,
-                    WinCond.ROUND_WIN, WinCond.ROUND_TIE):
+        if cond and cond.is_ended():
             return
 
         if game.info.mustpass:

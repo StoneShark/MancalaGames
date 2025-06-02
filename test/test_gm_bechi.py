@@ -295,7 +295,7 @@ class TestBechiGame44:
 
     def test_round_2_setup(self, gstate):
         game = gstate.game
-        game.new_game(gstate.cond, new_round_ok=True)
+        game.new_game(new_round=True)
         assert game.turn is True
         assert game.board == [6, 6, 6, 6, 6, 0, 6, 6]
         assert game.blocked == [False, False, False, False, False, True, False, False]
@@ -619,7 +619,7 @@ class TestBechiGame44:
     def test_round_3_setup(self, gstate):
         """setup after tie, all holes in play"""
         game = gstate.game
-        game.new_game(gstate.cond, new_round_ok=True)
+        game.new_game(new_round=True)
         assert game.turn is False
         assert game.board == [6, 6, 6, 6, 6, 6, 6, 6]
         assert game.blocked == [False, False, False, False, False, False, False, False]
@@ -903,7 +903,7 @@ class TestBechiGame44:
 
     def test_round_4_setup(self, gstate):
         game = gstate.game
-        game.new_game(gstate.cond, new_round_ok=True)
+        game.new_game(new_round=True)
         assert game.turn is True
         assert game.board == [6, 0, 0, 6, 6, 6, 6, 6]
         assert game.blocked == [False, True, True, False, False, False, False, False]
@@ -1006,7 +1006,7 @@ class TestBechiGame44:
 
     def test_round_5_setup(self, gstate):
         game = gstate.game
-        game.new_game(gstate.cond, new_round_ok=True)
+        game.new_game(new_round=True)
         assert game.turn is False
         assert game.board == [6, 0, 0, 6, 6, 6, 6, 6]
         assert game.blocked == [False, True, True, False, False, False, False, False]
@@ -1556,7 +1556,7 @@ class TestBechi38:
 
     def test_round_2_setup(self, gstate):
         game = gstate.game
-        game.new_game(gstate.cond, new_round_ok=True)
+        game.new_game(new_round=True)
         assert game.turn is True
         assert game.board == [6, 6, 6, 6, 0, 0, 0, 6]
         assert game.blocked == [False, False, False, False, True, True, True, False]
@@ -1775,7 +1775,7 @@ class TestBechi38:
 
     def test_round_3_setup(self, gstate):
         game = gstate.game
-        game.new_game(gstate.cond, new_round_ok=True)
+        game.new_game(new_round=True)
         assert game.turn is False
         assert game.board == [6, 6, 6, 6, 0, 0, 0, 6]
         assert game.blocked == [False, False, False, False, True, True, True, False]
@@ -1929,7 +1929,7 @@ class TestBechi38:
 
     def test_round_4_setup(self, gstate):
         game = gstate.game
-        game.new_game(gstate.cond, new_round_ok=True)
+        game.new_game(new_round=True)
         assert game.turn is True
         assert game.board == [6, 6, 6, 6, 0, 0, 0, 6]
         assert game.blocked == [False, False, False, False, True, True, True, False]

@@ -196,9 +196,9 @@ class SameSide(mancala.Mancala):
                            **(dc.asdict(super().board_state)))
 
 
-    def new_game(self, win_cond=None, new_round_ok=False):
+    def new_game(self, new_round=False):
 
-        super().new_game(win_cond, new_round_ok)
+        super().new_game(new_round)
         self.empty_store = False
 
 

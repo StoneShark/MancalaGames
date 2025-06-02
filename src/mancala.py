@@ -270,7 +270,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
                                                  self.cts.total_seeds)
 
         self.deco = ManDeco(self)
-        self.deco.new_game.new_game(None, False)
+        self.deco.new_game.new_game()
 
 
     def __str__(self):
@@ -568,11 +568,10 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
         return strings
 
 
-    def new_game(self, win_cond=None, new_round_ok=False):
-        """Delegate to the new_game decorators.
-        Return False if it a new round was started.
-        True if a new game was started."""
-        return self.deco.new_game.new_game(win_cond, new_round_ok)
+    def new_game(self, new_round=False):
+        """Delegate to the new_game decorators"""
+
+        self.deco.new_game.new_game(new_round)
 
 
     def end_game(self, *, quitter, user, game=True):
@@ -660,7 +659,7 @@ class Mancala(ai_interface.AiGameIf, gi.GameInterface):
             game_log.add('New round not playable by starter.',
                          game_log.IMPORT)
             self.turn = not self.turn  # winner
-            self.new_game(win_cond=gi.WinCond.WIN, new_round_ok=False)
+            self.new_game()
             return False
         return True
 

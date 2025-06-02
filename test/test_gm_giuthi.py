@@ -617,7 +617,7 @@ class TestGiuthiTWin:
 
     def test_round_2_setup(self, gstate):
         game = gstate.game
-        game.new_game(gstate.cond, new_round_ok=True)
+        game.new_game(new_round=True)
         assert game.turn is True
         assert game.board == [2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1]
         assert game.store == [0, 78]
@@ -1090,7 +1090,7 @@ class TestGiuthiFWin:
 
     def test_round_2_setup(self, gstate):
         game = gstate.game
-        game.new_game(gstate.cond, new_round_ok=True)
+        game.new_game(new_round=True)
         assert game.turn is False
         assert game.board == [4, 1, 1, 1, 1, 1, 1, 1, 4, 1, 1, 1, 1, 1, 1, 1]
         assert game.store == [74, 0]
