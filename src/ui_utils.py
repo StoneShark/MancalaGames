@@ -218,6 +218,7 @@ class QuietDialog(tksimpledialog.Dialog):
     def body(self, master):
         """Put the message in a label in the master."""
 
+        self.resizable(False, False)
         label = tk.Label(master, text=self.msg,
                          anchor='nw', justify=tk.LEFT, padx=5, pady=5)
         label.pack(side=tk.TOP)
@@ -251,6 +252,7 @@ class WinPopup(tksimpledialog.Dialog):
     def body(self, master):
         """Put the message in a label in the master and ring the bell."""
 
+        self.resizable(False, False)
         master.bell()
         label = tk.Label(master, text=self.msg,
                          anchor='nw', justify=tk.LEFT, padx=5, pady=5)
@@ -292,6 +294,7 @@ class PassPopup(tksimpledialog.Dialog):
     def body(self, master):
         """Put the message in a label in the master."""
 
+        self.resizable(False, False)
         label = tk.Label(master, text=self.msg,
                          anchor='nw', justify=tk.LEFT, padx=5, pady=5)
         label.pack(side=tk.TOP)
@@ -328,19 +331,23 @@ class PassPopup(tksimpledialog.Dialog):
 class GetSeedsPopup(tksimpledialog.Dialog):
     """A popup to get a number of seeds to pick up."""
 
-    def __init__(self, master, title, max_seeds):
+    def __init__(self, master, title, max_seeds, font):
 
         self.mancala_ui = master
         self.value = 0
         self.max_seeds = max_seeds
+        self.font = font
+
         super().__init__(master, title)
 
 
     def body(self, master):
         """Create an entry box that will validate as integer."""
 
-        self.entry = ttk.Entry(master)
-        self.entry.pack(side=tk.TOP)
+        self.resizable(False, False)
+        self.entry = ttk.Entry(master, font=self.font)
+        self.entry.pack(side=tk.TOP, expand=True, fill=tk.Y)
+
         return self.entry
 
 
@@ -349,21 +356,37 @@ class GetSeedsPopup(tksimpledialog.Dialog):
         Bind return to Ok."""
 
         bframe = tk.Frame(self, borderwidth=20)
-        bframe.pack()
+        bframe.pack(expand=True, fill=tk.BOTH)
+
+
+        tk.Button(bframe, text='All', command=self.pick_all,
+                  font=self.font,
+                  ).grid(row=0, column=0, stick='nsew')
+
+        tk.Button(bframe, text='One', command=self.pick_one,
+                  font=self.font,
+                  ).grid(row=0, column=1, stick='nsew')
+
+        tk.Button(bframe, text='',
+                  font=self.font,
+                  ).grid(row=0, column=2, stick='nsew')
 
         for nbr in range(10):
-            row = 3 - (nbr + 2) // 3
+            row = 3 - (nbr + 2) // 3 + 1
             col = (nbr - 1) % 3 if nbr else 0
 
             tk.Button(bframe, text=str(nbr), width=3,
+                      font=self.font,
                       command=ft.partial(self.digit, nbr)
-                      ).grid(row=row, column=col, stick='ew')
+                      ).grid(row=row, column=col, stick='nsew')
 
         tk.Button(bframe, text='Bsp', command=self.backspace,
-                  ).grid(row=3, column=1, stick='ew')
+                  font=self.font,
+                  ).grid(row=4, column=1, stick='nsew')
 
-        tk.Button(bframe, text='Ok', command=self.ok
-                  ).grid(row=3, column=2, stick='ew')
+        tk.Button(bframe, text='Ok', command=self.ok,
+                  font=self.font,
+                  ).grid(row=4, column=2, stick='nsew')
 
         bframe.grid_rowconfigure('all', weight=1)
         bframe.grid_columnconfigure('all', weight=1)
@@ -385,8 +408,6 @@ class GetSeedsPopup(tksimpledialog.Dialog):
             self.value = 0
             self.bell()
 
-        return
-
 
     def digit(self, nbr, _=None):
         """Enter a digit into the entry widget."""
@@ -400,10 +421,26 @@ class GetSeedsPopup(tksimpledialog.Dialog):
         self.entry.delete(self.entry.index(tk.END) - 1)
 
 
-def get_nbr_seeds(master, max_seeds):
+    def pick_all(self):
+        """Pick all the seeds and return."""
+
+        self.entry.delete('1', tk.END)
+        self.entry.insert('1', str(self.max_seeds))
+        self.ok()
+
+
+    def pick_one(self):
+        """Pick one seed and return."""
+
+        self.entry.delete('1', tk.END)
+        self.entry.insert('1', '1')
+        self.ok()
+
+
+def get_nbr_seeds(master, max_seeds, font):
     """Wrap the GetSeedsPopup so we can return the value entered."""
 
-    obj = GetSeedsPopup(master, 'Number Seeds', max_seeds)
+    obj = GetSeedsPopup(master, 'Number Seeds', max_seeds, font)
     return obj.value
 
 
@@ -438,6 +475,7 @@ class MessageDialog(tksimpledialog.Dialog):
         label = tk.Label(master, text=self.msg,
                          anchor='nw', justify=tk.LEFT, padx=5, pady=5)
         label.pack(side=tk.TOP)
+        self.resizable(False, False)
         return label
 
 

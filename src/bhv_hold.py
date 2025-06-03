@@ -64,7 +64,9 @@ class Hold(bhv.BehaviorGlobal):
             self.set_hold(self.nbr + 1, owner)
             return 1
 
-        nbr = ui_utils.get_nbr_seeds(self.game_ui, max_seeds)
+        nbr = ui_utils.get_nbr_seeds(self.game_ui, max_seeds,
+                            font=(man_config.CONFIG['font_family'],
+                                  man_config.CONFIG['pickup_font_size']))
         self.set_hold(self.nbr + nbr, owner)
         return nbr
 

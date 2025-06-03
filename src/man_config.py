@@ -428,6 +428,7 @@ DEFAULTS = {
     'font_family': 'Helvetica',
     'font_size': '14',
     'font_weight': 'bold',
+    'pickup_font_size': '8',
 
     'no_endless': 'no',
 
