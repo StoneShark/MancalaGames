@@ -466,8 +466,12 @@ def write_games_help(filename):
                 del game_dict[ckey.GAME_INFO]
                 del game_dict[ckey.PLAYER]
                 del game_dict[ckey.FILENAME]
+
+                # TODO describe the variations
                 if ckey.VARI_PARAMS in game_dict:
-                    del game_dict[ckey.VARI_PARAMS]   # TODO describe the variations
+                    del game_dict[ckey.VARI_PARAMS]
+                if ckey.VARIATIONS in game_dict:
+                    del game_dict[ckey.VARIATIONS]
 
             print(f'<h3 id="{gname}" class="game_desc">', gname, '</h3>',
                   sep='', file=ofile)

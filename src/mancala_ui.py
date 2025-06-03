@@ -161,6 +161,7 @@ class MancalaUI(tk.Frame):
 
         root_ui (optional): if this is started as part of another
         application provide the tk root."""
+        # pylint: disable=too-many-statements
 
         if not isinstance(game, gi.GameInterface):
             raise TypeError('Missing mancala_ui.GameInterface in game.')
@@ -383,7 +384,7 @@ class MancalaUI(tk.Frame):
         gamemenu.add_command(label='New', command=self._new_game)
 
         from_file = hasattr(self.game, ckey.FILENAME)
-        gamemenu.add_command(label='Reconfigure', command=self._reconfigure,
+        gamemenu.add_command(label='Variations', command=self._reconfigure,
                              state=tk.NORMAL if from_file else tk.DISABLED )
 
         gamemenu.add_separator()

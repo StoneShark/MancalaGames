@@ -9,6 +9,7 @@ Created on Tue Jun  3 04:35:08 2025
 
 import tkinter as tk
 import tkinter.simpledialog as tksimpledialog
+from tkinter import ttk
 
 import ai_player
 import cfg_keys as ckey
@@ -25,7 +26,8 @@ def reconfig_game(game_ui, game_file):
 
     game_config = man_config.read_game(game_file)
 
-    if ckey.VARI_PARAMS not in game_config:
+    if (ckey.VARI_PARAMS not in game_config
+            and ckey.VARIATIONS not in game_config):
         ui_utils.showerror(game_ui, "No Variations",
                            """There are not any preconfigured variation
                            in the game configuration file.""")
@@ -56,12 +58,18 @@ class AdjustPopup(param_mixin.ParamMixin, tksimpledialog.Dialog):
         self.master = master
 
         self.game_config = game_config
-        self.vari_dict = game_config[ckey.VARI_PARAMS]
+        self.vari_params = game_config.get(ckey.VARI_PARAMS, {})
+        self.variations = game_config.get(ckey.VARIATIONS, {})
 
         self.params = man_config.ParamData()
         self.do_it = False
 
-        for vname in self.vari_dict.keys():
+        if self.variations:
+            keys = list(self.variations.keys())
+            self.tkvars[ckey.VARIATIONS] = tk.StringVar(self.master,
+                                                        keys[0],
+                                                        name='variations')
+        for vname in self.vari_params.keys():
             param = self.params[vname]
             self.make_tkvar(param)
             self.copy_config_to_tk(param, game_config)
@@ -75,7 +83,18 @@ class AdjustPopup(param_mixin.ParamMixin, tksimpledialog.Dialog):
         self.resizable(False, False)
         rcnt = ui_utils.Counter()
 
-        for vname, pdata in self.vari_dict.items():
+        if self.variations:
+            lbl = ttk.Label(master, text='Varations')
+            lbl.grid(row=0, column=0,sticky=tk.E)
+
+            keys = list(self.variations.keys())
+            opmenu = ttk.OptionMenu(master, self.tkvars[ckey.VARIATIONS],
+                                    keys[0], *keys)
+            opmenu.config(width=2 + max(len(str(val)) for val in keys))
+            opmenu.grid(row=0, column=1, pady=2, sticky=tk.W)
+            rcnt.increment()
+
+        for vname, pdata in self.vari_params.items():
             param = self.params[vname]
             param.row = rcnt.count
             param.col = 0
@@ -100,7 +119,19 @@ class AdjustPopup(param_mixin.ParamMixin, tksimpledialog.Dialog):
     def apply(self):
         """Copy the tk variables values into the game config."""
 
-        for vname in self.vari_dict.keys():
+        # TODO address variations parameter overlap with vari_params
+        #  for now assume that the params set in the name variations
+        #  are distinct from the vari_params
+
+        if self.variations:
+            vari_name = self.tkvars[ckey.VARIATIONS].get()
+            for vname, value in self.variations[vari_name].items():
+
+                param = self.params[vname]
+                man_config.set_config_value(
+                    self.game_config, param.cspec, param.option, value)
+
+        for vname in self.vari_params.keys():
             param = self.params[vname]
             self.copy_tk_to_config(param, self.game_config)
 

@@ -752,7 +752,7 @@ class AboutPane(ttk.Labelframe):
         for key, text in game_dict.items():
             if key not in [ckey.GAME_CLASS, ckey.GAME_CONSTANTS,
                            ckey.GAME_INFO, ckey.PLAYER, ckey.FILENAME,
-                           ckey.VARI_PARAMS]:
+                           ckey.VARI_PARAMS, ckey.VARIATIONS]:
 
                 dtext += '\n'
                 dtext += self.format_para(key.title() + ':  ' + text)
