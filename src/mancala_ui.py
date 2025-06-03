@@ -31,6 +31,7 @@ import man_history
 import man_path
 import round_tally
 import ui_utils
+import variations
 
 from game_logger import game_log
 
@@ -51,6 +52,7 @@ RTURN_QFREQ = 5
 ROUND = 'round'
 DEBUG = 'debug'
 ALL = 'all'
+
 
 # %%
 
@@ -177,16 +179,16 @@ class MancalaUI(tk.Frame):
         game_log.turn(0, 'Start Game', game)
 
         if root_ui:
+            self.root = root_ui
             self.master = tk.Toplevel(root_ui)
         else:
-            self.master = tk.Tk()
-            ui_utils.setup_styles(self.master)
+            self.root = tk.Tk()
+            self.master = self.root
+            ui_utils.setup_styles(self.root)
         man_config.read_ini_file(self.master, self.info.name)
-
+        super().__init__(self.master)
         self.master.title(self.info.name)
         self.master.option_add('*tearOff', False)
-
-        super().__init__(self.master)
         self.master.report_callback_exception = self._exception_callback
 
         hsize = man_config.CONFIG.get_int('history_size')
@@ -379,6 +381,10 @@ class MancalaUI(tk.Frame):
 
         gamemenu = tk.Menu(self._menubar, name='game')
         gamemenu.add_command(label='New', command=self._new_game)
+
+        from_file = hasattr(self.game, ckey.FILENAME)
+        gamemenu.add_command(label='Reconfigure', command=self._reconfigure,
+                             state=tk.NORMAL if from_file else tk.DISABLED )
 
         gamemenu.add_separator()
         concede = self.game.info.unclaimed != self.game.info.quitter
@@ -736,6 +742,30 @@ class MancalaUI(tk.Frame):
              or self._try_help_file('about_games.html', self.info.name)
              or self._try_help_file('mancala_help.html')
              or ui_utils.QuietDialog(self, 'Help', 'Help not found.'))
+
+
+    def _reconfigure(self):
+        """Do popup to ask for reconfiguration and then
+        posibly rebuild self.
+
+        Do not call this if the game was not loaded from a file.
+        The filename attribute will not exist, it's added silently
+        by the game loader in man_config (hence the getattr below)."""
+
+        rval = variations.reconfig_game(self, getattr(self.game, ckey.FILENAME))
+        if not rval:
+            return
+
+        new_game, pdict, player = rval
+
+        if self.root is self.master:
+            self.root.destroy()
+            self.root = None
+        else:
+            self.master.destroy()
+        del self.game
+
+        MancalaUI(new_game, pdict, player=player, root_ui=self.root)
 
 
     def _about(self):

@@ -465,6 +465,9 @@ def write_games_help(filename):
                 del game_dict[ckey.GAME_CONSTANTS]
                 del game_dict[ckey.GAME_INFO]
                 del game_dict[ckey.PLAYER]
+                del game_dict[ckey.FILENAME]
+                if ckey.VARI_PARAMS in game_dict:
+                    del game_dict[ckey.VARI_PARAMS]   # TODO describe the variations
 
             print(f'<h3 id="{gname}" class="game_desc">', gname, '</h3>',
                   sep='', file=ofile)
@@ -817,9 +820,11 @@ def write_game_xref(filename):
         for gfile in os.listdir(GPROP_PATH):
             if gfile[-4:] != TXTPART or gfile == EXFILE:
                 continue
-            game_dict = man_config.read_game_config(GPROP_PATH + gfile)
-            gclass, consts, info, _ = game_dict
-            holes = getattr(consts, ckey.HOLES)
+
+            game, _ = man_config.make_game(GPROP_PATH + gfile)
+            gclass = game.__class__.__name__
+            consts = game.cts
+            info = game.info
 
             print(f'{gfile[:-4]},', end='', file=ofile)
 
@@ -840,7 +845,7 @@ def write_game_xref(filename):
                         vstr = ' '.join(str(val) for val in pval)
 
                     elif param == ckey.UDIR_HOLES:
-                        if len(pval) == holes:
+                        if len(pval) == consts.holes:
                             vstr = 'all'
                         else:
                             vstr = ' '.join(str(val) for val in pval)

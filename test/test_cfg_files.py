@@ -64,4 +64,4 @@ def test_no_status(request, filename):
 def test_bad_file():
 
     with pytest.raises(gconsts.GameConstsError):
-        man_config.read_game_config(PATH + BAD_CFG)
+        man_config.make_game(PATH + BAD_CFG)

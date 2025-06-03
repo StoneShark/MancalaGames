@@ -53,9 +53,7 @@ class TestBasicConstruction:
 
     @pytest.fixture
     def config_file1(self, tmp_path):
-        """confirm non-default game class and conversion of enums.
-        can't use read_game_config because it needs the game
-        class to be in GAMES_CLASSES."""
+        """confirm non-default game class and conversion of enums."""
 
         filename = os.path.join(tmp_path,'config.txt')
         with open(filename, 'w', encoding='utf-8') as file:
@@ -112,12 +110,10 @@ class TestBasicConstruction:
     @pytest.mark.filterwarnings("ignore")
     def test_basic_file(self, config_file2):
 
-        config = man_config.read_game_config(config_file2)
-        gclass, gconsts, ginfo, pdict = config
+        config = man_config.read_game(config_file2)
 
-        assert gclass == 'Mancala'
-        assert gconsts.holes == 6
-        assert gconsts.nbr_start == 4
+        assert config[ckey.GAME_CONSTANTS][ckey.HOLES] == 6
+        assert config[ckey.GAME_CONSTANTS][ckey.NBR_START] == 4
 
 
     @pytest.fixture
@@ -131,10 +127,11 @@ class TestBasicConstruction:
                           "nbr_start": 4
                        },
                        "game_info": {
+                          "sow_direct": 1
                        },
                        "player": {
                            "mm_depth": [1, 1, 3, 5]
-                        }
+                       }
                      }
                 """, file=file)
         return filename
@@ -142,15 +139,13 @@ class TestBasicConstruction:
     @pytest.mark.filterwarnings("ignore")
     def test_no_dir(self, config_file3):
 
-        config = man_config.read_game_config(config_file3)
-        gclass, gconsts, ginfo, pdict = config
+        config = man_config.read_game(config_file3)
 
-        assert gclass == 'Mancala'
-        assert gconsts.holes == 6
-        assert gconsts.nbr_start == 4
-        assert isinstance(ginfo.sow_direct, Direct)
-        assert ginfo.sow_direct == Direct.CCW
-        assert 'mm_depth' in pdict
+        assert config[ckey.GAME_CONSTANTS][ckey.HOLES] == 6
+        assert config[ckey.GAME_CONSTANTS][ckey.NBR_START] == 4
+        assert isinstance(config[ckey.GAME_INFO][ckey.SOW_DIRECT], Direct)
+        assert config[ckey.GAME_INFO][ckey.SOW_DIRECT] == Direct.CCW
+        assert 'mm_depth' in config[ckey.PLAYER]
 
 
     @pytest.fixture
@@ -216,7 +211,7 @@ class TestRejectFile:
 
         ffixt = request.getfixturevalue(file.__name__)
         with pytest.raises(ValueError):
-            man_config.read_game_config(ffixt)
+            man_config.read_game(ffixt)
 
 
 class TestGc:

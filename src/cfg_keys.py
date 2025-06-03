@@ -32,6 +32,7 @@ EASY_RAND = 'easy_rand'
 EMPTIES_M = 'empties_m'
 EVENS = 'evens'
 EVENS_M = 'evens_m'
+FILENAME = 'filename'
 GAME_CLASS = 'game_class'
 GAME_CONSTANTS = 'game_constants'
 GAME_INFO = 'game_info'
@@ -80,6 +81,7 @@ STORES_M = 'stores_m'
 UDIR_HOLES = 'udir_holes'
 UDIRECT = 'udirect'
 UNCLAIMED = 'unclaimed'
+VARI_PARAMS = 'vari_params'
 VISIT_OPP = 'visit_opp'
 XC_SOWN = 'xc_sown'
 XCPICKOWN = 'xcpickown'
@@ -121,6 +123,7 @@ GINFO_PARAMS =  (ALLOW_RULE,
                  PICKEXTRA,
                  PRESCRIBED,
                  PRESOWCAPT,
+                 QUITTER,
                  ROUND_FILL,
                  ROUND_STARTER,
                  ROUNDS,

@@ -114,36 +114,40 @@ def read_game(filename):
             ftype = type(fdesc.default)
             info_dict[fdesc.name] = ftype(info_dict[fdesc.name])
 
+    game_dict[ckey.FILENAME] = filename
+
     return game_dict
 
 
-def read_game_config(filename):
-    """Read a mancala configuration file and return
-    the game class, constants, info and player_dict."""
+def game_from_config(game_dict):
+    """Return a game and player dictionary from a
+    game configuration dictionary."""
 
-    game_dict = read_game(filename)
     game_class = game_dict[ckey.GAME_CLASS] \
         if ckey.GAME_CLASS in game_dict else 'Mancala'
 
     game_consts = gconsts.GameConsts(**game_dict[ckey.GAME_CONSTANTS])
     info_dict = game_dict[ckey.GAME_INFO]
 
-    gclass = GAME_CLASSES[game_class]
+    game_class = GAME_CLASSES[game_class]
     game_info = gi.GameInfo(**info_dict,
                             nbr_holes=game_consts.holes,
-                            rules=gclass.rules)
+                            rules=game_class.rules)
 
-    return game_class, game_consts, game_info, game_dict[ckey.PLAYER]
+    return game_class(game_consts, game_info), game_dict[ckey.PLAYER]
 
 
 def make_game(filename):
     """Return a constructed game from the configuration
     and the player dictionary."""
 
-    class_name, consts, info, player_dict = read_game_config(filename)
+    game_dict = read_game(filename)
+    game, player_dict = game_from_config(game_dict)
 
-    gclass = GAME_CLASSES[class_name]
-    return gclass(consts, info), player_dict
+    # the game doesn't need to know that we add this
+    game.filename = filename
+
+    return game, player_dict
 
 
 # %% access config data and defaults

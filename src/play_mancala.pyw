@@ -751,11 +751,14 @@ class AboutPane(ttk.Labelframe):
         dtext += '\n'
         for key, text in game_dict.items():
             if key not in [ckey.GAME_CLASS, ckey.GAME_CONSTANTS,
-                           ckey.GAME_INFO, ckey.PLAYER]:
+                           ckey.GAME_INFO, ckey.PLAYER, ckey.FILENAME,
+                           ckey.VARI_PARAMS]:
 
                 dtext += '\n'
                 dtext += self.format_para(key.title() + ':  ' + text)
                 dtext += '\n'
+
+                # TODO describe the varaitions  VARI_PARAMS
 
         self.set_text(game_name, dtext)
 
@@ -930,6 +933,8 @@ class GameChooser(ttk.Frame):
         player_dict = game_dict[ckey.PLAYER]
 
         game = game_class(game_consts, game_info)
+        game.filename = game_dict[ckey.FILENAME]
+
         mancala_ui.MancalaUI(game, player_dict, root_ui=self.master)
 
 

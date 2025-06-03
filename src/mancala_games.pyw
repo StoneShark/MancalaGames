@@ -32,21 +32,13 @@ import mancala_ui
 import man_config
 import mg_config
 import param_consts as pc
+import param_mixin
 import ui_utils
 
 from game_classes import GAME_CLASSES
 
 
 # %%  Constants
-
-# given a real value after we have tk root
-INT_VALID_CMD = None
-
-
-# how many variables to make for lists
-# if the option for a 'list[int]' isn't here, 4 variables will be made
-MAKE_LVARS = {ckey.CAPT_ON: 6,
-              ckey.UDIR_HOLES: gconsts.MAX_HOLES + 1}
 
 DESC_WIDTH = 60
 DASH_BULLET = '- '
@@ -60,33 +52,10 @@ WTITLE = 'Mancala Game Editor'
 
 
 
-# %% helper funcs
-
-MINUS = '-'
-
-
-def stoi(sval):
-    """make, a possibly empty, string a valid int."""
-
-    return int(sval) if sval else 0
-
-
-def int_validate(value):
-    """Only allow empty values, or decimals."""
-
-    if not value or value == MINUS:
-        return True
-
-    if ((value[0] != MINUS and not value.isdecimal())
-            or (value[0] == MINUS and not value[1:].isdecimal())):
-        return False
-    return True
-
-
 # %%  game params UI
 
 
-class MancalaGames(ttk.Frame):
+class MancalaGames(param_mixin.ParamMixin, ttk.Frame):
     """Main interface to select game parameters, save & load games,
     and play Mancala games."""
 
@@ -295,7 +264,7 @@ class MancalaGames(ttk.Frame):
         self.desc.pack(expand=True, fill=tk.BOTH)
 
 
-    def _update_desc(self, option, _):
+    def update_desc(self, option, _):
         """We've enter a new widget, update desc text.
         Don't let the user edit the description."""
 
@@ -323,24 +292,6 @@ class MancalaGames(ttk.Frame):
         self.desc.config(state=tk.DISABLED)
 
 
-    def _get_boxes_config(self, param):
-        """Return the number items for the list for name."""
-
-        if param.option == ckey.UDIR_HOLES:
-            boxes = self.params[ckey.HOLES].ui_default
-
-        elif param.option in MAKE_LVARS:
-            boxes = MAKE_LVARS[param.option]
-
-        elif param.vtype == pc.ILIST_TYPE:
-            boxes = 4
-
-        else:
-            raise ValueError(f"Don't know list length for {param.option}.")
-
-        return boxes
-
-
     def _add_watchers(self):
         """Add the watchers to all the tk variables."""
 
@@ -353,49 +304,13 @@ class MancalaGames(ttk.Frame):
 
 
     def _make_tkvars(self):
-        """Create the tk variables described by the parameters file.
-
-        multi strs - do not use tkvars and must be handled differently
-        int vars - must use a string var and must be converted
-        lists - are filled with a simple default here,
-                _reset will give it any actual default
-        blist - use MAKE_LVARS (want to make all of the udir_hole vars now"""
+        """Create the tk variables described by the parameters file."""
 
         for param in self.params.values():
             if param.vtype in (pc.MSTR_TYPE, pc.LABEL_TYPE):
                 continue
 
-            if param.vtype in (pc.STR_TYPE, pc.INT_TYPE):
-                self.tkvars[param.option] = tk.StringVar(self.master,
-                                                         param.ui_default,
-                                                         name=param.option)
-            elif param.vtype == pc.BOOL_TYPE:
-                self.tkvars[param.option] = tk.BooleanVar(self.master,
-                                                          param.ui_default,
-                                                          name=param.option)
-            elif param.vtype == pc.BLIST_TYPE:
-                boxes = MAKE_LVARS[param.option]
-                self.tkvars[param.option] = \
-                    [tk.BooleanVar(self.master, False,
-                                   name=f'{param.option}_{i}')
-                     for i in range(boxes)]
-
-            elif param.vtype == pc.ILIST_TYPE:
-                boxes = self._get_boxes_config(param)
-                self.tkvars[param.option] = \
-                    [tk.StringVar(self.master, 0,
-                                  name=f'{param.option}_{i}')
-                     for i in range(boxes)]
-
-            elif param.vtype in pc.STRING_DICTS:
-                _, inv_dict, enum_dict = pc.STRING_DICTS[param.vtype]
-                value = inv_dict[enum_dict[param.ui_default]]
-                self.tkvars[param.option] = tk.StringVar(self.master,
-                                                         value,
-                                                         name=param.option)
-
-            else:
-                raise TypeError(f"Unexpected parameter type {param.vtype}.")
+            self.make_tkvar(param)
 
         # don't add the traces until all the variables are made
         self._add_watchers()
@@ -412,12 +327,13 @@ class MancalaGames(ttk.Frame):
         if var == ckey.HOLES:
             self._resize_udirs()
 
+
     def _resize_udirs(self):
         """Change the number of the checkboxes on the screen.
         All the variables were built with the tkvars.
         Destroy any extra widgets or make any required new ones."""
 
-        holes = stoi(self.tkvars[ckey.HOLES].get())
+        holes = param_mixin.stoi(self.tkvars[ckey.HOLES].get())
 
         if holes > gconsts.MAX_HOLES:
             print('value too big.')
@@ -435,169 +351,6 @@ class MancalaGames(ttk.Frame):
                             ).pack(side=tk.LEFT)
 
 
-    def _make_text_entry(self, frame, param):
-        """Make a text box entry with scroll bar."""
-
-        tframe = ttk.LabelFrame(frame, text=param.text, labelanchor='nw')
-        tframe.grid(row=param.row, column=param.col, columnspan=4,
-                    sticky='nsew')
-
-        text_box = tk.Text(tframe, width=50, height=12)
-        self.tktexts[param.option] = text_box
-
-        scroll = tk.Scrollbar(tframe)
-        text_box.configure(yscrollcommand=scroll.set)
-        text_box.pack(side=tk.LEFT, expand=True, fill='both')
-
-        scroll.config(command=text_box.yview)
-        scroll.pack(side=tk.RIGHT, fill=tk.Y)
-
-        tframe.bind('<Enter>', ft.partial(self._update_desc, param.option))
-
-
-    def _make_entry(self, frame, param):
-        """Make a single line string entry."""
-
-        length = 5 if param.vtype == pc.INT_TYPE else 30
-
-        lbl = ttk.Label(frame, text=param.text)
-        lbl.grid(row=param.row, column=param.col, sticky=tk.E)
-
-        if param.vtype == pc.INT_TYPE:
-            ent = ttk.Entry(frame, width=length,
-                            textvariable=self.tkvars[param.option],
-                            validate=tk.ALL,
-                            validatecommand=(INT_VALID_CMD, '%P'))
-        else:
-            ent = ttk.Entry(frame, width=length,
-                            textvariable=self.tkvars[param.option])
-
-        ent.grid(row=param.row, column=param.col + 1, sticky=tk.W)
-
-        lbl.bind('<Enter>', ft.partial(self._update_desc, param.option))
-        ent.bind('<Enter>', ft.partial(self._update_desc, param.option))
-
-
-    def _make_checkbox(self, frame, param):
-        """Make a labeled checkbox."""
-
-        lbl = ttk.Label(frame, text=param.text)
-        lbl.grid(row=param.row, column=param.col, sticky=tk.E)
-
-        box = ttk.Checkbutton(frame, variable=self.tkvars[param.option])
-        box.grid(row=param.row, column=param.col + 1, sticky=tk.W)
-
-        lbl.bind('<Enter>', ft.partial(self._update_desc, param.option))
-        box.bind('<Enter>', ft.partial(self._update_desc, param.option))
-
-
-    def _make_checkbox_list(self, frame, param):
-        """Make a list of checkboxes."""
-
-        lbl = ttk.Label(frame, text=param.text)
-        lbl.grid(row=param.row, column=param.col, sticky=tk.E)
-
-        boxes = self._get_boxes_config(param)
-        boxes_fr = ttk.Frame(frame)
-        if param.option == ckey.UDIR_HOLES:
-            boxes_fr.grid(row=param.row, column=param.col + 1,
-                          columnspan=3, sticky=tk.W)
-        else:
-            boxes_fr.grid(row=param.row, column=param.col + 1,
-                          sticky=tk.W)
-
-        if param.option == ckey.UDIR_HOLES:
-            self.udir_frame = boxes_fr
-
-        add_in = 1 if param.option == ckey.CAPT_ON else 0
-        for nbr in range(boxes):
-            ttk.Checkbutton(boxes_fr, text=str(nbr + add_in),
-                            variable=self.tkvars[param.option][nbr]
-                            ).pack(side=tk.LEFT)
-
-        lbl.bind('<Enter>', ft.partial(self._update_desc, param.option))
-        boxes_fr.bind('<Enter>', ft.partial(self._update_desc, param.option))
-
-
-    def _make_entry_list(self, frame, param):
-        """Make a list of entries."""
-
-        lbl = ttk.Label(frame, text=param.text)
-        lbl.grid(row=param.row, column=param.col, sticky=tk.E)
-
-        boxes = self._get_boxes_config(param)
-        eframe = ttk.Frame(frame)
-        eframe.grid(row=param.row, column=param.col, sticky=tk.W)
-
-        if param.option == ckey.UDIR_HOLES:
-            self.udir_frame = eframe
-
-        for nbr in range(boxes):
-            ttk.Entry(eframe, width=5,
-                      textvariable=self.tkvars[param.option][nbr],
-                      validate=tk.ALL,
-                      validatecommand=(INT_VALID_CMD, '%P')
-                      ).pack(side=tk.LEFT)
-
-        eframe.grid(row=param.row, column=param.col + 1, sticky=tk.W)
-
-        lbl.bind('<Enter>', ft.partial(self._update_desc, param.option))
-        eframe.bind('<Enter>', ft.partial(self._update_desc, param.option))
-
-
-    def _make_option_list(self, frame, param):
-        """Make an option list corresponding to the enum type."""
-
-        values = list(pc.STRING_DICTS[param.vtype].str_dict.keys())
-
-        lbl = ttk.Label(frame, text=param.text)
-        lbl.grid(row=param.row, column=param.col,sticky=tk.E)
-
-        opmenu = ttk.OptionMenu(frame, self.tkvars[param.option],
-                                self.tkvars[param.option].get(),
-                                *values)
-        opmenu.config(width=2 + max(len(str(val)) for val in values))
-        opmenu.grid(row=param.row, column=param.col + 1, pady=2, sticky=tk.W)
-
-        lbl.bind('<Enter>', ft.partial(self._update_desc, param.option))
-        opmenu.bind('<Enter>', ft.partial(self._update_desc, param.option))
-
-
-    def _make_label_row(self, frame, param):
-        """Make label row spanning two columns."""
-        _ = self
-
-        lbl = ttk.Label(frame, text=param.text, style='Title.TLabel')
-        lbl.grid(row=param.row, column=param.col, columnspan=2,
-                 padx=4, pady=2, sticky='ew')
-        lbl.configure(anchor='center')  # anchor in style is ignored
-
-
-    def _make_ui_param(self, frame, param):
-        """Make the ui elements for a single parameter."""
-
-        if param.vtype == pc.MSTR_TYPE:
-            self._make_text_entry(frame, param)
-
-        elif param.vtype in (pc.STR_TYPE, pc.INT_TYPE):
-            self._make_entry(frame, param)
-
-        elif param.vtype == pc.BOOL_TYPE:
-            self._make_checkbox(frame, param)
-
-        elif param.vtype == pc.BLIST_TYPE:
-            self._make_checkbox_list(frame, param)
-
-        elif param.vtype == pc.ILIST_TYPE:
-            self._make_entry_list(frame, param)
-
-        elif param.vtype in pc.STRING_DICTS:
-            self._make_option_list(frame, param)
-
-        elif param.vtype == pc.LABEL_TYPE:
-            self._make_label_row(frame, param)
-
-
     def _make_ui_elements(self):
         """Make the UI elements corresponding to the parameter table.
         Make them in order to set 'tab' (selection) order is nice.
@@ -609,32 +362,11 @@ class MancalaGames(ttk.Frame):
                 key=lambda p: (p.col, p.row))
 
             for param in tab_params:
-                self._make_ui_param(tab, param)
+                self.make_ui_param(tab, param)
 
         for tab in self.tabs.values():
             tab.grid_rowconfigure('all', weight=1)
             tab.grid_columnconfigure('all', weight=1)
-
-
-    def _fill_tk_list(self, param, value):
-        """Set the values of a list of tkvariables."""
-
-        if not isinstance(value, list):
-            raise ValueError(
-                f"Don't know how to fill {param.option} from {value}.")
-
-        if param.vtype == pc.BLIST_TYPE:
-            for var in self.tkvars[param.option]:
-                var.set(False)
-            sub_out = 1 if param.option == ckey.CAPT_ON else 0
-            for val in value:
-                self.tkvars[param.option][val - sub_out].set(True)
-
-        else:
-            for var in self.tkvars[param.option]:
-                var.set('0')
-            for idx, val in enumerate(value):
-                self.tkvars[param.option][idx].set(str(val))
 
 
     def _fill_tk_from_config(self):
@@ -642,26 +374,7 @@ class MancalaGames(ttk.Frame):
         dict."""
 
         for param in self.params.values():
-            value = man_config.get_config_value(
-                self.config.loaded_config,
-                param.cspec, param.option, param.vtype)
-
-            if param.vtype == pc.MSTR_TYPE:
-                self.tktexts[param.option].delete('1.0', tk.END)
-                self.tktexts[param.option].insert('1.0', value)
-
-            elif param.vtype in (pc.STR_TYPE, pc.BOOL_TYPE, pc.INT_TYPE):
-                self.tkvars[param.option].set(value)
-
-            elif param.vtype == pc.BLIST_TYPE:
-                self._fill_tk_list(param, value)
-
-            elif param.vtype == pc.ILIST_TYPE:
-                self._fill_tk_list(param, value)
-
-            elif param.vtype in pc.STRING_DICTS:
-                inv_dict = pc.STRING_DICTS[param.vtype].int_dict
-                self.tkvars[param.option].set(inv_dict[value])
+            self.copy_config_to_tk(param, self.config.loaded_config)
 
 
     def _make_config_from_tk(self):
@@ -675,35 +388,7 @@ class MancalaGames(ttk.Frame):
             if param.vtype == pc.LABEL_TYPE:
                 continue
 
-            if param.vtype == pc.MSTR_TYPE:
-                value = self.tktexts[param.option].get('1.0', tk.END)
-
-            elif param.vtype in (pc.STR_TYPE, pc.BOOL_TYPE):
-                value = self.tkvars[param.option].get()
-
-            elif param.vtype == pc.INT_TYPE:
-                value = stoi(self.tkvars[param.option].get())
-
-            elif param.vtype == pc.BLIST_TYPE:
-                holes = len(self.tkvars[param.option])
-                if param.option == ckey.UDIR_HOLES:
-                    holes = stoi(self.tkvars[ckey.HOLES].get())
-
-                add_in = 1 if param.option == ckey.CAPT_ON else 0
-                value = [nbr + add_in
-                         for nbr, var in enumerate(self.tkvars[param.option])
-                         if var.get() and nbr < holes]
-
-            elif param.vtype == pc.ILIST_TYPE:
-                value = [int(var.get()) for var in self.tkvars[param.option]]
-
-            elif param.vtype in pc.STRING_DICTS:
-                str_dict = pc.STRING_DICTS[param.vtype].str_dict
-                value = self.tkvars[param.option].get()
-                value = str_dict[value]
-
-            man_config.set_config_value(
-                self.config.game_config, param.cspec, param.option, value)
+            self. copy_tk_to_config(param, self.config.game_config)
 
 
     def _prepare_game(self):
@@ -713,6 +398,12 @@ class MancalaGames(ttk.Frame):
         exceptions/warnings might be raised."""
 
         self._make_config_from_tk()
+
+        # TODO test use make_game_from_config
+        # self.game, _ = man_config.game_from_config(self.config.game_config)
+        # self.ai_player = ai_player.AiPlayer(self.game,
+        #                                     self.config.game_config[ckey.PLAYER])
+
         game_class = self.config.game_config[ckey.GAME_CLASS]
         gclass = GAME_CLASSES[game_class]
 
@@ -898,7 +589,7 @@ class MancalaGames(ttk.Frame):
                 default = param.ui_default
                 if (default
                         and isinstance(default, list)
-                        and len(default) == self._get_boxes_config(param)):
+                        and len(default) == self.get_boxes_config(param)):
 
                     for var, val in zip(self.tkvars[param.option], default):
                         var.set(val)
@@ -937,7 +628,7 @@ class MancalaGames(ttk.Frame):
             elif param.vtype == pc.ILIST_TYPE:
                 if (default
                         and isinstance(default, list)
-                        and len(default) == self._get_boxes_config(param)):
+                        and len(default) == self.get_boxes_config(param)):
 
                     for var, val in zip(self.tkvars[param.option], default):
                         var.set(val)
@@ -953,7 +644,7 @@ class MancalaGames(ttk.Frame):
 if __name__ == '__main__':
 
     ROOT = tk.Tk()
-    INT_VALID_CMD = ROOT.register(int_validate)
+    param_mixin.register_int_validate(ROOT)
 
     man_games = MancalaGames(ROOT)
     man_games.mainloop()

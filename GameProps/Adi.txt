@@ -21,6 +21,15 @@
       "sow_rule": 3,
       "stores": true
    },
+   "vari_params": {
+      "holes": [6, 7, 12],
+      "goal_param": true,
+      "mustpass": true,
+      "prescribed": [0, 4],
+      "capt_rturn": true,
+      "sow_rule": [3, 4],
+      "pickextra": [0, 4]
+   },
    "player": {
       "algorithm": "negamaxer",
       "ai_params": {

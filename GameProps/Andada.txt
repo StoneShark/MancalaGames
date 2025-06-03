@@ -14,6 +14,10 @@
       "sow_direct": 1,
       "start_pattern": 4
    },
+   "vari_params": {
+      "holes": [6, 9, 12, 15, 18, 24],
+      "sow_direct": [-1, 1]
+   },
    "player": {
       "algorithm": "negamaxer",
       "ai_params": {
