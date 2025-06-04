@@ -31,7 +31,7 @@ import man_history
 import man_path
 import round_tally
 import ui_utils
-import variations
+import variants
 
 from game_logger import game_log
 
@@ -173,6 +173,7 @@ class MancalaUI(tk.Frame):
                           ai_player.AiPlayer(self.game, player_dict)
         self.setup = GameSetup(self)
         self._swap_ok = True
+        self._varier = None       # used when variations are selected
         self.wcond = None   #  used between the movers and epilogs
         self.saved_move = None
 
@@ -383,10 +384,6 @@ class MancalaUI(tk.Frame):
         gamemenu = tk.Menu(self._menubar, name='game')
         gamemenu.add_command(label='New', command=self._new_game)
 
-        from_file = hasattr(self.game, ckey.FILENAME)
-        gamemenu.add_command(label='Variations', command=self._reconfigure,
-                             state=tk.NORMAL if from_file else tk.DISABLED )
-
         gamemenu.add_separator()
         concede = self.game.info.unclaimed != self.game.info.quitter
         gamemenu.add_command(
@@ -413,6 +410,19 @@ class MancalaUI(tk.Frame):
             onvalue=True, offvalue=False,
             command=self._no_endless_sows,
             state=tk.NORMAL if enable_no_endless else tk.DISABLED)
+
+        gamemenu.add_separator()
+        from_file = hasattr(self.game, ckey.FILENAME)
+
+        gamemenu.add_command(label='Config Variant...',
+                             command=self._reconfigure,
+                             state=tk.NORMAL if from_file else tk.DISABLED )
+        gamemenu.add_command(label='Variant Settings...',
+                             command=self._var_settings,
+                             state=tk.NORMAL if from_file else tk.DISABLED )
+        gamemenu.add_command(label='Revert Variant...',
+                             command=self._revert_variant,
+                             state=tk.NORMAL if from_file else tk.DISABLED )
 
         gamemenu.add_separator()
         gamemenu.add_command(label='Setup Game',
@@ -745,6 +755,21 @@ class MancalaUI(tk.Frame):
              or ui_utils.QuietDialog(self, 'Help', 'Help not found.'))
 
 
+    def _rebuild(self, new_game, pdict, player):
+        """Destory and rebuild the game"""
+
+        if self.root is self.master:
+            self.root.destroy()
+            self.root = None
+        else:
+            self.master.destroy()
+        del self.game
+        if animator.animator:
+            del animator.animator
+
+        MancalaUI(new_game, pdict, player=player, root_ui=self.root)
+
+
     def _reconfigure(self):
         """Do popup to ask for reconfiguration and then
         posibly rebuild self.
@@ -753,20 +778,41 @@ class MancalaUI(tk.Frame):
         The filename attribute will not exist, it's added silently
         by the game loader in man_config (hence the getattr below)."""
 
-        rval = variations.reconfig_game(self, getattr(self.game, ckey.FILENAME))
-        if not rval:
+        if not self._varier:
+            self._varier = variants.GameVariations(
+                                self, getattr(self.game, ckey.FILENAME))
+
+        with animator.animate_off():
+            rval = self._varier.reconfigure()
+            if not rval:
+                return
+
+        self._rebuild(*rval)
+
+
+    def _revert_variant(self):
+        """Revert to the game configuration."""
+
+        title = 'Revert Variant'
+        message = 'Are you sure you wish to revert to the main variant?'
+        do_it = ui_utils.ask_popup(self, title, message, ui_utils.OKCANCEL)
+        if not do_it:
             return
 
-        new_game, pdict, player = rval
+        if not self._varier:
+            self._varier = variants.GameVariations(
+                                self, getattr(self.game, ckey.FILENAME))
 
-        if self.root is self.master:
-            self.root.destroy()
-            self.root = None
-        else:
-            self.master.destroy()
-        del self.game
+        self._rebuild(*self._varier.rebuild())
 
-        MancalaUI(new_game, pdict, player=player, root_ui=self.root)
+
+    def _var_settings(self):
+        """Popup the variation settings."""
+
+        if not self._varier:
+            self._varier = variants.GameVariations(
+                                self, getattr(self.game, ckey.FILENAME))
+        self._varier.settings()
 
 
     def _about(self):

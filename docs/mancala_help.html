@@ -275,6 +275,16 @@ This option is only supported for games played in
 <a href="game_params.html#mlaps">multiple-laps</a>
 that do not have <a href="game_params.html#udir_holes">user directed</a> sow directions.
 
+<p><b>Config Variant...</b>: choose new values for the variant parameters.
+There are two kinds of variants available name variants and individual parameters
+that can be changed. Changing the variant resets all tally parameters.
+
+<p><b>Variant Settings...</b>: show a popup with the current settings for all
+parameters that make up the variants.
+
+<p><b>Revert Variant...</b>: revert the game configuration to the default variant;
+the game first loaded by MancalaUI.
+
 <p><b>Setup Board</b>: Enter a game setup mode. The board maybe reconfigured as desired.
 The coloring of the board is as though the game is being played, but all buttons maybe
 clicked to adjust game conditions.
@@ -703,9 +713,35 @@ The JSON parser attempts to provide useful information about any errors found.
     should operate for the game.
     See <a href="mancala_help.html#aiplayer">AI Player</a> for more details.
     </ol>
-<p>Other top level elements may be included as notes or documentation.
+<p>There are two optional top level elements that describe in-game selectable
+variations. These are available from the Game menu.
+These must be edited directly into the configuration file via a text editor.
+
+<p>Variants allow grouping parameter changes together, e.g., holes and start seeds
+should change together in specific ways. Vari_params allows limiting individual parameter
+to specific values or changing to any value associated with its type.
+
+	<ol>
+	<li><b class="inhead">variants</b>: the value is a JSON string that contains
+	a list of pairs of variation_name and param_dicts. The variation name can be
+	any valid JSON tag.
+	<p>The param_dicts is a JSON string of	parameter name and value pairs.
+	These values will always be applied to the base game configuration as specified
+	in the file (not those currently being played).
+	<p>The first option provided should name the default as in the game
+	configuration file and have an empty JSON string { }.
+	<li><b class="inhead">vari_params</b>: the value is a JSON string of
+	parameter and options. The options should be either a list of options
+	or somthing other than a list.
+	If options is a list, it must include the option selected by the
+	main game configuration.
+	When the value is not a list, the defined type of the parameter will be
+	used to allow selection of any valid value.
+	</ol>
+	<p>Other top level elements may be included as notes or documentation.
 The same tag-value format required of JSON must be used.
-For example, most files have a "rules" tag with a value describing where the rules came from.
+For example, most files have a "rules" tag with a value describing
+where rules referenced for the implementation.
 This is not the only source of rules for the game,
 but are the rules the game was implemented to.
 <p>There is game property file "_all_params.txt" that shows where all

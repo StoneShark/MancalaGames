@@ -16,13 +16,14 @@ import os
 
 import pytest
 
-from context import game_constants as gconsts
-
 # this file contains integration tests
 # report warnings as test failures
 pytestmark = [pytest.mark.integtest, pytest.mark.filterwarnings("error")]
 
+
 from context import ai_player
+from context import cfg_keys as ckey
+from context import game_constants as gconsts
 from context import man_config
 
 
@@ -34,6 +35,7 @@ BAD_CFG = '_all_params.txt'
 if BAD_CFG in FILES:
     FILES.remove(BAD_CFG)
 
+PARAM_DICT = man_config.ParamData(no_descs=True)
 
 
 @pytest.mark.parametrize('game_pdict', FILES, indirect=True)
@@ -44,9 +46,9 @@ def test_config_files(game_pdict):
 
 
 @pytest.mark.parametrize('filename', FILES)
-def test_no_status(request, filename):
-    """Fail if any game files have a tag of status,
-    this is mean for development and testing not release.
+def test_nonrule_checks(request, filename):
+    """Check for errors that are not tested by the build
+    rules.
 
     The config.cache checks against the keys created by
     the global fixture game_pdict, in an attempt to only
@@ -58,7 +60,62 @@ def test_no_status(request, filename):
         pytest.xfail("Game cfg error (again)")
 
     game_dict = man_config.read_game(PATH + filename)
-    assert "status" not in game_dict
+
+    # status is used for indevelopment files, not releases
+    assert "status" not in game_dict.keys()
+    assert "Status" not in game_dict.keys()
+
+
+    vparams = game_dict.get(ckey.VARI_PARAMS, {})
+    for key, value in vparams.items():
+        # don't comment this print; it's the only way to find an error
+        print(f"VARI_PARAM check {key}")
+
+        # all vari_params keys are game options
+        assert key in PARAM_DICT
+
+        # lists only contain integers
+        if isinstance(value, list):
+            assert all(isinstance(val, int) for val in value)
+
+            # the non-variant option is in the list
+            if key == ckey.GAME_CLASS:
+                assert game_dict[ckey.GAME_CLASS] in value
+
+            elif key in game_dict[ckey.GAME_CONSTANTS]:
+                assert game_dict[ckey.GAME_CONSTANTS][key] in value
+
+            elif key in game_dict[ckey.GAME_INFO]:
+                assert game_dict[ckey.GAME_INFO][key] in value
+
+            else:
+                # this is an assumption of the default value
+                # pretty sure all params whose default is not
+                # zero are always included in the config file
+                assert 0 in value
+
+
+    if ckey.VARIANTS in game_dict:
+        variants = game_dict[ckey.VARIANTS]
+
+        # one for the default and one more or why have it?
+        assert len(variants) >= 2
+
+        # first item has an empty dictionary
+        vlist = list(variants.items())
+        assert isinstance(vlist[0][1], dict)
+        assert vlist[0][1] == {}
+
+        # all spec'ed parameters are game options
+        for key, vdict in variants.items():
+            # don't comment this print; it's the only way to find an error
+            print(f"VARIANT check {key}")
+            assert isinstance(vdict, dict)
+
+            for pos, (param, value) in enumerate(vdict.items()):
+
+                # all parameters keys are game options
+                assert param in PARAM_DICT
 
 
 def test_bad_file():

@@ -9,6 +9,7 @@ Created on Tue Jun  3 06:31:43 2025
 
 # %% import
 
+import enum
 import functools as ft
 import tkinter as tk
 from tkinter import ttk
@@ -101,7 +102,7 @@ class ParamMixin:
         return boxes
 
 
-    def make_tkvar(self, param):
+    def make_tkvar(self, param, config_dict=None):
         """Create a tk variable for param.
 
         multi strs - do not use tkvars and must be handled differently
@@ -110,19 +111,30 @@ class ParamMixin:
                 _reset will give it any actual default
         blist - use MAKE_LVARS (want to make all of the udir_hole vars now"""
 
+        if config_dict:
+            value = man_config.get_config_value(
+                        self.game_config,
+                        param.cspec, param.option, param.vtype)
+
+        else:
+            value = param.ui_default
 
         if param.vtype in (pc.STR_TYPE, pc.INT_TYPE):
             self.tkvars[param.option] = tk.StringVar(self.master,
-                                                     param.ui_default,
+                                                     str(value),
                                                      name=param.option)
         elif param.vtype == pc.BOOL_TYPE:
             self.tkvars[param.option] = tk.BooleanVar(self.master,
-                                                      param.ui_default,
+                                                      bool(value),
                                                       name=param.option)
         elif param.vtype == pc.BLIST_TYPE:
+
+            # TODO use value for BLIST_TYPE and ILIST_TYPE (after translate)
+
             boxes = MAKE_LVARS[param.option]
             self.tkvars[param.option] = \
-                [tk.BooleanVar(self.master, False,
+                [tk.BooleanVar(self.master,
+                               i in value,
                                name=f'{param.option}_{i}')
                  for i in range(boxes)]
 
@@ -135,9 +147,12 @@ class ParamMixin:
 
         elif param.vtype in pc.STRING_DICTS:
             _, inv_dict, enum_dict = pc.STRING_DICTS[param.vtype]
-            value = inv_dict[enum_dict[param.ui_default]]
+            if isinstance(value, enum.Enum):
+                vstr = inv_dict[value]
+            else:
+                vstr = inv_dict[enum_dict[value]]
             self.tkvars[param.option] = tk.StringVar(self.master,
-                                                     value,
+                                                     vstr,
                                                      name=param.option)
 
         else:

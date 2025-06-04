@@ -3,6 +3,7 @@
 Created on Fri Jul 21 10:24:10 2023
 @author: Ann"""
 
+import contextlib
 import copy
 import os
 import random
@@ -14,6 +15,8 @@ pytestmark = pytest.mark.unittest
 
 from context import animator
 from context import cfg_keys as ckey
+from context import game_constants as gconsts
+from context import game_interface as gi
 from context import man_config
 from context import man_path
 from context import mancala
@@ -50,6 +53,13 @@ class TestRemoveTags:
 # %%  test game config files
 
 class TestBasicConstruction:
+
+
+    def test_convert_from_file(self):
+        """A test to cover the call when the param is not in game_info"""
+
+        assert man_config.convert_from_file('holes', 3) == 3
+
 
     @pytest.fixture
     def config_file1(self, tmp_path):
@@ -438,6 +448,70 @@ class TestResetDefs:
                                           'player ai_params',
                                           'junk')
         assert gd_copy == game_dict
+
+
+
+def no_err(value):
+    return contextlib.nullcontext(value)
+
+class TestGetGameValue:
+
+    @pytest.fixture
+    def game(self):
+
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=2)
+        game_info = gi.GameInfo(capt_on = [2],
+                                blocks=True,
+                                goal=gi.Goal.TERRITORY,
+                                child_type=gi.ChildType.NORMAL,
+                                child_cvt=3,
+                                moveunlock=True,
+                                nbr_holes = game_consts.holes,
+                                rules=lambda ginfo, holes: True)
+
+        game = mancala.Mancala(game_consts, game_info)
+        return game
+
+
+    CASES = [('game_class', '_', str, no_err('Mancala')),
+             ('game_class', 'game_class', str, no_err('Mancala')),
+
+             ('nbr_start', 'game_constants _', int, no_err(4)),
+             ('holes', 'game_constants _', int, no_err(2)),
+
+             ('capt_on', 'game_info _', list, no_err([2])),
+             ('goal', 'game_info _', gi.Goal, no_err(gi.Goal.TERRITORY)),
+             ('child_type', 'game_info _', gi.ChildType, no_err(gi.ChildType.NORMAL)),
+
+             ('info', '_', gi.GameInfo, no_err(None)),  # don't test the value
+
+             ('ai_params', 'player _', int, pytest.raises(TypeError)),
+             ('missing', 'game_info junk', int, pytest.raises(ValueError)),
+
+             # loop not entered
+             ('info', '', gi.GameInfo,  pytest.raises(ValueError)),
+
+             # the loop should exit by normal means, then an error is gen'ed
+             # child_cvt is patched in the lookup dict below
+             ('missing', 'game_info child_cvt', gi.GameInfo,
+              pytest.raises(ValueError)),
+             ]
+
+    @pytest.mark.parametrize('option, cspec, etype, expected', CASES)
+    def test_param(self, game, option, cspec, etype, expected):
+        """confirm deletion of construction default but not
+        ui defaults."""
+
+        # add this in for the final test case:  'game_info child_cvt'
+        man_config.SPEC_TO_ATTRIBS |= {'child_cvt': 'child_cvt'}
+
+        with expected as evalue:
+
+            value = man_config.get_game_value(game, cspec, option)
+            assert isinstance(value, etype)
+
+            if evalue is not None:
+                assert value == evalue
 
 
 # %%  test reading params

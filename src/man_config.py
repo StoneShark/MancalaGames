@@ -40,7 +40,7 @@ from game_classes import GAME_CLASSES
 # %%  constants
 
 MAX_LINES = 150
-MAX_CHARS = 3000
+MAX_CHARS = 4000
 
 NO_CONVERT = [ckey.NAME, ckey.ABOUT, ckey.HELP_FILE,
               ckey.UDIR_HOLES, ckey.CAPT_ON]
@@ -58,6 +58,8 @@ ELIST_STR = '[]'
 SKIP_TAB = 'skip'
 
 PARAM = re.compile('^<param ([a-z0-9_]+)>')
+
+GINFO_TYPES = {fdesc.name: fdesc.type for fdesc in dc.fields(gi.GameInfo)}
 
 
 # %% remove html tags
@@ -89,6 +91,21 @@ def remove_tags(text):
 
 # %% read config files
 
+def convert_from_file(field, value):
+    """Convert configuration values to types corresponding to
+    the GameInfo fields. Variations might call this with
+    fields that are not in game info."""
+
+    if field in NO_CONVERT:
+        return value
+
+    ftype = GINFO_TYPES.get(field, False)
+    if ftype:
+        return ftype(value)
+
+    return value
+
+
 def read_game(filename):
     """Read a mancala configuration returning the
     game dictionary.  The main UI uses this to load tk widgets,
@@ -109,10 +126,8 @@ def read_game(filename):
     game_dict = json.loads(text)
 
     info_dict = game_dict[ckey.GAME_INFO]
-    for fdesc in dc.fields(gi.GameInfo):
-        if fdesc.name in info_dict and fdesc.name not in NO_CONVERT:
-            ftype = type(fdesc.default)
-            info_dict[fdesc.name] = ftype(info_dict[fdesc.name])
+    for key in info_dict.keys():
+        info_dict[key] = convert_from_file(key, info_dict[key])
 
     game_dict[ckey.FILENAME] = filename
 
@@ -148,6 +163,7 @@ def make_game(filename):
     game.filename = filename
 
     return game, player_dict
+
 
 
 # %% access config data and defaults
@@ -257,6 +273,39 @@ def del_default_config_tag(game_config, vtype, cspec, option):
             vdict = vdict[tag]
         else:
             return
+
+
+SPEC_TO_ATTRIBS = {
+    'game_info': 'info',
+    'game_constants': 'cts',
+    'game_class': 'game_class'}
+
+
+def get_game_value(game, cspec, option):
+    """Use the cspec to lookup and return the value
+    in nested objects."""
+
+    # game_class isn't an object, get directly from game
+    if option == ckey.GAME_CLASS:
+        return game.__class__.__name__
+
+    if cspec[:6] == ckey.PLAYER:
+        # player parameters are not in the game
+        raise TypeError("get_game_value does not support player attributes")
+
+    obj = game
+    for tag in cspec.split(SP):
+
+        if tag == OPT_TAG:
+            return getattr(obj, option)
+
+        if tag in SPEC_TO_ATTRIBS:
+            obj = getattr(obj, SPEC_TO_ATTRIBS[tag])
+        else:
+            break
+
+    raise ValueError(f"Could not find value for {cspec} {option}")
+
 
 
 # %% parameters files

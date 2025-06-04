@@ -144,6 +144,25 @@ FEATS = {'No Sides': lambda ginfo: ginfo.get(ckey.NO_SIDES, 0),
                                          round_tally.RoundTally.GOALS,
          }
 
+GNOTES = {'Variants': lambda gdict: (gdict.get(ckey.VARI_PARAMS, 0)
+                                     or gdict.get(ckey.VARIANTS, 0)),
+          'Deviations': lambda gdict: any('deviat' in key.lower()
+                                          for key in gdict.keys()),
+          'Notes': lambda gdict: (any('note' in key.lower()
+                                      for key in gdict.keys())
+                                  or 'lagniappe' in gdict.keys()
+                                  or 'reference' in gdict.keys()
+                                  or 'question' in gdict.keys()),
+          'Rules Russ': lambda gdict: 'Russ' in gdict.get('rules', ''),
+          'Rules Valdez': lambda gdict: 'Valdez' in gdict.get('rules', ''),
+          'Rules Man World': lambda gdict: 'mancala.fandom' in gdict.get('rules', ''),
+          'Rules Davies': lambda gdict: 'Davies' in gdict.get('rules', ''),
+          'Rules Other': lambda gdict: ('Russ' not in gdict.get('rules', '')
+                                        and 'Valdez' not in gdict.get('rules', '')
+                                        and 'mancala.fandom' not in gdict.get('rules', '')
+                                        and 'Davies' not in gdict.get('rules', ''))
+
+          }
 
 # %% frame classes
 
@@ -232,8 +251,11 @@ class BaseFilter(ttk.Frame, abc.ABC):
                         self.param_key,
                         PARAMS[self.param_key].vtype)
 
-        else:
+        elif self.param_key is not True:
             value = game_dict[self.param_key]
+
+        else:
+            value = game_dict
 
         return value
 
@@ -384,11 +406,12 @@ FILTERS = [
     FilterDesc('Lap Type', EnumFilter, gi.LapSower, ckey.MLAPS, fcol.count),
     FilterDesc('Sow Rule', DictFilter, SOWRS, ckey.SOW_RULE, fcol.value),
 
-    FilterDesc('Child Type', EnumFilter, gi.ChildType,
-               ckey.CHILD_TYPE, fcol.count),
-
     FilterDesc('Sow Direct', DictFilter, SOWDIR, ckey.GAME_INFO, fcol.count),
-    FilterDesc('Capture Types', DictFilter, CAPTS, ckey.GAME_INFO, fcol.value),
+    FilterDesc('Child Type', EnumFilter, gi.ChildType,
+               ckey.CHILD_TYPE, fcol.value),
+
+    FilterDesc('Capture Types', DictFilter, CAPTS, ckey.GAME_INFO, fcol.count),
+    FilterDesc('Configuration', FeatureFilter, GNOTES, True, fcol.value),
 
     FilterDesc('Features (all match)', FeatureFilter, FEATS,
                ckey.GAME_INFO, fcol.count),
@@ -752,7 +775,7 @@ class AboutPane(ttk.Labelframe):
         for key, text in game_dict.items():
             if key not in [ckey.GAME_CLASS, ckey.GAME_CONSTANTS,
                            ckey.GAME_INFO, ckey.PLAYER, ckey.FILENAME,
-                           ckey.VARI_PARAMS, ckey.VARIATIONS]:
+                           ckey.VARI_PARAMS, ckey.VARIANTS]:
 
                 dtext += '\n'
                 dtext += self.format_para(key.title() + ':  ' + text)

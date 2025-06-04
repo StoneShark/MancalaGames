@@ -436,7 +436,7 @@ class GameInfo:
     pickextra: CaptExtraPick = CaptExtraPick.NONE
 
     multicapt: int = 0
-    grandslam: int = GrandSlam.LEGAL
+    grandslam: GrandSlam = GrandSlam.LEGAL
     capt_rturn: CaptRTurn = CaptRTurn.NO_REPEAT
 
     # list of seed counts to capture on (after sow)
