@@ -15,6 +15,10 @@
       "sow_direct": 1,
       "start_pattern": 1
    },
+   "vari_params": {
+      "start_pattern": "include",
+      "allow_rule": "include"
+   },
    "player": {
       "scorer": {
          "access_m": 0,

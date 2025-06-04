@@ -24,6 +24,9 @@
       "unclaimed": 2, 
       "quitter": 0
    },
+   "vari_params": {
+      "goal_param": "include"
+   },
    "player": {
       "algorithm": "negamaxer",
       "ai_params": {

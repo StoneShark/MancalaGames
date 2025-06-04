@@ -19,6 +19,9 @@
       "stores": true,
       "xcpickown": 1
    },
+   "vari_params": {
+      "goal_param": "include"
+   },
    "player": {
       "algorithm": "montecarlo_ts",
       "difficulty": 2,

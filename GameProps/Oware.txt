@@ -17,6 +17,12 @@
       "stores": true,
       "quitter": 0
    },
+   "vari_params": {
+      "capt_on": "include",
+      "grandslam": "include",
+      "mustshare": "include",
+      "mustpass": "include"
+   },
    "player": {
       "scorer": {
          "stores_m": 4,

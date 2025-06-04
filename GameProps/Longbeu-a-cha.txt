@@ -15,6 +15,13 @@
       "sow_direct": 1,
       "stores": true
    },
+   "variants": {
+      "Base Game": { },
+      "Walak-pussa": {
+         "holes": 7,
+         "nbr_start": 4
+      }
+   },
    "player": {
       "algorithm": "negamaxer",
       "ai_params": {

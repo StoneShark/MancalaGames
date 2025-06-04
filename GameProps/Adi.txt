@@ -23,12 +23,12 @@
    },
    "vari_params": {
       "holes": [6, 7, 12],
-      "goal_param": true,
-      "mustpass": true,
-      "prescribed": [0, 4],
-      "capt_rturn": true,
+      "goal_param": "include",
+      "mustpass": "include",
+      "prescribed": [0, 3, 4],
+      "capt_rturn": "include",
       "sow_rule": [3, 4],
-      "pickextra": [0, 4]
+      "pickextra": [0, 3]
    },
    "player": {
       "algorithm": "negamaxer",

@@ -16,6 +16,10 @@
       "sow_direct": 1,
       "start_pattern": 4
    },
+   "vari_params": {
+      "start_pattern": "include",
+      "allow_rule": "include"
+   },
    "player": {
       "ai_params": {
          "mm_depth": [ 1, 3, 5, 7 ]

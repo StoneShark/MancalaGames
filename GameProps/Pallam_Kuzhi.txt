@@ -20,6 +20,12 @@
       "sow_rule": 3,
       "stores": true
    },
+   "vari_params": {
+      "nbr_start": [4, 6],
+      "sow_rule": [3, 4],
+      "round_starter": "include",
+      "round_fill": "include"
+   },
    "player": {
       "algorithm": "minimaxer",
       "difficulty": 1,

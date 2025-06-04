@@ -17,6 +17,9 @@
       "udir_holes": [ 0, 1, 2, 3, 4, 5 ],
       "unclaimed": 2
    },
+   "vari_params": {
+      "goal_param": "include"
+   },
    "player": {
       "algorithm": "negamaxer",
       "ai_params": {

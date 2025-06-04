@@ -14,6 +14,9 @@
       "sow_direct": 1,
       "stores": true
    },
+   "vari_params": {
+      "allow_rule": [4, 3]
+   },
    "player": {
       "algorithm": "negamaxer",
       "ai_params": {

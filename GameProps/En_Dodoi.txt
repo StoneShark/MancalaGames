@@ -19,6 +19,10 @@
       "unclaimed": 2,
       "xcpickown": 1
    },
+   "vari_params": {
+      "holes": [6, 7, 8, 9, 10],
+      "goal_param": "include"
+   },
    "player": {
       "algorithm": "negamaxer",
       "ai_params": {

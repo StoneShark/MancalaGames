@@ -21,6 +21,9 @@
       "sow_direct": 1,
       "stores": true
    },
+   "vari_params": {
+      "goal_param": "include"
+   },
    "player": {
       "ai_params": {},
       "scorer": {

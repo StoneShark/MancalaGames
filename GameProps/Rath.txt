@@ -15,6 +15,9 @@
       "sow_direct": 1,
       "sow_rule": 13
    },
+   "vari_params": {
+      "holes": [7, 8, 9, 10, 11, 12, 13]
+   },
    "player": {
       "ai_params": {},
       "scorer": {

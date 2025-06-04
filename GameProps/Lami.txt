@@ -40,5 +40,5 @@
          "repeat_turn": 0
       }
    },
-   "Rules": "Russ, Laurence. Mancala Games. 1984. p36."
+   "rules": "Russ, Laurence. Mancala Games. 1984. p36."
 }

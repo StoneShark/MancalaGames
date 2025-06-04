@@ -25,6 +25,9 @@
       "sow_param": 2,
       "stores": true
    },
+   "vari_params": {
+      "goal_param": "include"
+   },
    "player": {
       "algorithm": "negamaxer",
       "ai_params": {

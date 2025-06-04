@@ -20,6 +20,9 @@
       "stores": true,
       "xcpickown": 2
    },
+   "vari_params": {
+      "goal_param": "include"
+   },
    "player": {
       "scorer": {
          "stores_m": 4,

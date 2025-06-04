@@ -21,6 +21,9 @@
       "start_pattern": 6,
       "stores": true
    },
+   "vari_params": {
+      "goal_param": "include"
+   },
    "player": {
       "ai_params": {},
       "scorer": {

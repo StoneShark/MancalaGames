@@ -20,6 +20,10 @@
       "sow_direct": 1,
       "stores": true
    },
+   "vari_params": {
+      "round_starter": "include",
+      "rounds": "include"
+   },
    "player": {
       "scorer": {
          "stores_m": 4,

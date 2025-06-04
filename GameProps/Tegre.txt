@@ -19,6 +19,9 @@
       "stores": true,
       "unclaimed": 2
    },
+   "vari_params": {
+      "goal_param": "include"
+   },
    "player": {
       "algorithm": "negamaxer",
       "ai_params": {

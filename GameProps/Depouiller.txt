@@ -16,6 +16,9 @@
       "rounds": 2,
       "sow_direct": 1
    },
+   "vari_params": {
+      "goal_param": "include"
+   },
    "player": {
       "algorithm": "montecarlo_ts",
       "ai_params": {

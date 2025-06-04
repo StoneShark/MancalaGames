@@ -14,6 +14,9 @@
       "stores": true,
       "xcpickown": 1
    },
+   "vari_params": {
+      "holes": [6, 7, 8, 9, 10]
+   },
    "player": {
       "scorer": {
          "stores_m": 4,

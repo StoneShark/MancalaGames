@@ -23,5 +23,5 @@
          "stores_m": 8
       }
    },
-   "Rules": "https://mancala.fandom.com/wiki/Alemungula"
+   "rules": "https://mancala.fandom.com/wiki/Alemungula"
 }

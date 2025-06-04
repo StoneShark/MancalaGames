@@ -24,5 +24,5 @@
          "stores_m": 4
       }
    },
-   "Rules": "Russ, Laurence. Mancala Games. 1984. p66."
+   "rules": "Russ, Laurence. Mancala Games. 1984. p66."
 }

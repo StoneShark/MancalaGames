@@ -20,6 +20,12 @@
       "stores": true,
       "xcpickown": 1
    },
+   "vari_params": {
+      "holes": [6, 7, 8, 9, 10],
+      "sow_direct": [-1, 1],
+      "goal_param": "include",
+      "mustpass": "include"
+   },
    "player": {
       "ai_params": {
          "mm_depth": [ 1, 1, 5, 7 ]

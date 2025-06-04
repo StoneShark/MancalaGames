@@ -21,6 +21,14 @@
       "start_pattern": 7,
       "stores": true
    },
+   "vari_params": {
+      "holes": [ 6, 7, 8, 9, 10 ],
+      "nbr_start": [ 4, 6, 8 ],
+      "goal_param": "include",
+      "start_pattern": [ 0, 7 ],
+      "round_starter": "include",
+      "round_fill": "include"
+   },
    "player": {
       "ai_params": {},
       "scorer": {

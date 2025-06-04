@@ -18,6 +18,10 @@
       "sow_direct": 1,
       "start_pattern": 3
    },
+   "vari_params": {
+      "start_pattern": [ 2, 3 ],
+      "goal_param": "include"
+   },
    "player": {
       "algorithm": "negamaxer",
       "ai_params": {

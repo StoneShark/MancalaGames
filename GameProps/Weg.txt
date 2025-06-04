@@ -20,6 +20,26 @@
       "sow_direct": 1,
       "stores": true
    },
+   "variants": {
+      "Base Game": { },
+      "4 holes & 2 start": {
+         "holes": 4,
+         "nbr_start": 2
+      },
+      "6 holes & 3 start": {
+         "holes": 6,
+         "nbr_start": 3
+      },
+      "10 holes & 4 start": {
+         "holes": 10,
+         "nbr_start": 4
+      }
+   },
+   "vari_params": {
+      "goal_param": "include",
+      "rounds": [ 0, 2 ],
+      "capt_rturn": "include"
+   },
    "player": {
       "algorithm": "minimaxer",
       "ai_params": {

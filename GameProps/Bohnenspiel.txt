@@ -14,6 +14,17 @@
       "stores": true,
       "unclaimed": 2
    },
+   "variants": {
+      "As Config'ed": {},
+      "Rounds": { 
+         "goal": 7,
+         "rounds": 2
+       }
+    },
+    "vari_params": {
+       "goal_param": "include",
+       "multicapt": "include"
+    },             
    "player": {
       "algorithm": "negamaxer",
       "ai_params": {

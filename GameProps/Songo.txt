@@ -15,7 +15,13 @@
       "sow_direct": -1,
       "stores": true
    },
-   "player": {
+   "vari_params": {
+      "nbr_start": [ 5, 6, 7, 8 ],
+      "capt_on": "include",
+      "grandslam": [ 0, 1, 2 ],
+      "multicapt": [ -1, 0 ]
+    },
+    "player": {
       "scorer": {
          "stores_m": 4,
          "access_m": 2,
