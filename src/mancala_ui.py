@@ -1256,7 +1256,7 @@ class MancalaUI(tk.Frame):
 
         if self.wcond and self.wcond.is_ended():
             self._win_message_popup(self.wcond)
-            self._new_game(new_round=True)
+            self._new_game(not self.wcond.is_game_over())
 
         if (not (self.vars.ai_active.get() and self.game.get_turn())
                 and self.info.mustpass and self.game.test_pass()):
