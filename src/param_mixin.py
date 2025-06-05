@@ -73,12 +73,12 @@ class ParamMixin:
     udir_frame = {}
 
 
-    def update_desc(self, *args):
+    def update_desc(self, option, event=None):
         """A method to update a possible description box.
         It does nothing by default"""
 
 
-    def get_boxes_config(self, param, game_config=None):
+    def _get_boxes_config(self, param, game_config=None):
         """Return the number items for the list for name."""
 
         if param.option == ckey.UDIR_HOLES:
@@ -111,10 +111,10 @@ class ParamMixin:
         if param.option == ckey.UDIR_HOLES:
             return gconsts.MAX_HOLES + 1
 
-        return self.get_boxes_config(param, game_config)
+        return self._get_boxes_config(param, game_config)
 
 
-    def make_tkvar(self, param, config_dict=None):
+    def pm_make_tkvar(self, param, config_dict=None):
         """Create a tk variable for param."""
 
         if config_dict:
@@ -223,7 +223,7 @@ class ParamMixin:
         lbl = ttk.Label(frame, text=param.text)
         lbl.grid(row=param.row, column=param.col, sticky=tk.E)
 
-        boxes = self.get_boxes_config(param, game_config)
+        boxes = self._get_boxes_config(param, game_config)
         boxes_fr = ttk.Frame(frame)
         if param.option == ckey.UDIR_HOLES:
             boxes_fr.grid(row=param.row, column=param.col + 1,
@@ -251,7 +251,7 @@ class ParamMixin:
         lbl = ttk.Label(frame, text=param.text)
         lbl.grid(row=param.row, column=param.col, sticky=tk.E)
 
-        boxes = self.get_boxes_config(param)
+        boxes = self._get_boxes_config(param)
         eframe = ttk.Frame(frame)
         eframe.grid(row=param.row, column=param.col, sticky=tk.W)
 
@@ -310,7 +310,7 @@ class ParamMixin:
         lbl.configure(anchor='center')  # anchor in style is ignored
 
 
-    def make_ui_param(self, frame, param, limits=None, game_config=None):
+    def pm_make_ui_param(self, frame, param, limits=None, game_config=None):
         """Make the ui elements for a single parameter."""
 
         if param.vtype == pc.MSTR_TYPE:
@@ -359,7 +359,7 @@ class ParamMixin:
                 self.tkvars[param.option][idx].set(str(val))
 
 
-    def copy_config_to_tk(self, param, game_config):
+    def pm_copy_config_to_tk(self, param, game_config):
         """Set the tk variable from the game_config dict."""
 
         value = man_config.get_config_value(
@@ -384,7 +384,7 @@ class ParamMixin:
             self.tkvars[param.option].set(inv_dict[value])
 
 
-    def copy_tk_to_config(self, param, game_config):
+    def pm_copy_tk_to_config(self, param, game_config):
         """Get the values from a tkvar and set it into
         the a game_config dict."""
 
@@ -419,7 +419,7 @@ class ParamMixin:
             game_config, param.cspec, param.option, value)
 
 
-    def resize_udirs(self):
+    def pm_resize_udirs(self):
         """Change the number of the checkboxes on the screen.
         All the variables were built with the tkvars.
         Destroy any extra widgets or make any required new ones."""
@@ -442,7 +442,7 @@ class ParamMixin:
                             ).pack(side=tk.LEFT)
 
 
-    def reset_ui_default(self, param):
+    def pm_reset_ui_default(self, param):
         """Reset the tk variables to the user interface defaults"""
 
         if param.vtype == pc.MSTR_TYPE:
@@ -462,7 +462,7 @@ class ParamMixin:
             default = param.ui_default
             if (default
                     and isinstance(default, list)
-                    and len(default) == self.get_boxes_config(param)):
+                    and len(default) == self._get_boxes_config(param)):
 
                 for var, val in zip(self.tkvars[param.option], default):
                     var.set(val)
@@ -471,7 +471,7 @@ class ParamMixin:
             self.tkvars[param.option].set(param.ui_default)
 
 
-    def reset_const_default(self, param):
+    def pm_reset_const_default(self, param):
         """Reset the parameter to the construction default."""
 
         default = man_config.get_construct_default(
@@ -493,7 +493,7 @@ class ParamMixin:
         elif param.vtype == pc.ILIST_TYPE:
             if (default
                     and isinstance(default, list)
-                    and len(default) == self.get_boxes_config(param)):
+                    and len(default) == self._get_boxes_config(param)):
 
                 for var, val in zip(self.tkvars[param.option], default):
                     var.set(val)

@@ -144,23 +144,25 @@ FEATS = {'No Sides': lambda ginfo: ginfo.get(ckey.NO_SIDES, 0),
                                          round_tally.RoundTally.GOALS,
          }
 
-GNOTES = {'Variants': lambda gdict: (gdict.get(ckey.VARI_PARAMS, 0)
+# pylint: disable=magic-value-comparison
+GNOTES = {
+    'Variants': lambda gdict: (gdict.get(ckey.VARI_PARAMS, 0)
                                      or gdict.get(ckey.VARIANTS, 0)),
-          'Deviations': lambda gdict: any('deviat' in key.lower()
-                                          for key in gdict.keys()),
-          'Notes': lambda gdict: (any('note' in key.lower()
-                                      for key in gdict.keys())
-                                  or 'lagniappe' in gdict.keys()
-                                  or 'reference' in gdict.keys()
-                                  or 'question' in gdict.keys()),
-          'Rules Russ': lambda gdict: 'Russ' in gdict.get('rules', ''),
-          'Rules Valdez': lambda gdict: 'Valdez' in gdict.get('rules', ''),
-          'Rules Man World': lambda gdict: 'mancala.fandom' in gdict.get('rules', ''),
-          'Rules Davies': lambda gdict: 'Davies' in gdict.get('rules', ''),
-          'Rules Other': lambda gdict: ('Russ' not in gdict.get('rules', '')
-                                        and 'Valdez' not in gdict.get('rules', '')
-                                        and 'mancala.fandom' not in gdict.get('rules', '')
-                                        and 'Davies' not in gdict.get('rules', ''))
+    'Deviations': lambda gdict: any('deviat' in key.lower()
+                                    for key in gdict.keys()),
+    'Notes': lambda gdict: (any('note' in key.lower()
+                                for key in gdict.keys())
+                            or 'lagniappe' in gdict.keys()
+                            or 'reference' in gdict.keys()
+                            or 'question' in gdict.keys()),
+    'Rules Russ': lambda gdict: 'Russ' in gdict.get('rules', ''),
+    'Rules Valdez': lambda gdict: 'Valdez' in gdict.get('rules', ''),
+    'Rules Man World': lambda gdict: 'mancala.fandom' in gdict.get('rules', ''),
+    'Rules Davies': lambda gdict: 'Davies' in gdict.get('rules', ''),
+    'Rules Other': lambda gdict: ('Russ' not in gdict.get('rules', '')
+                                  and 'Valdez' not in gdict.get('rules', '')
+                                  and 'mancala.fandom' not in gdict.get('rules', '')
+                                  and 'Davies' not in gdict.get('rules', ''))
 
           }
 

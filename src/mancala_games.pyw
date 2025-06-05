@@ -261,9 +261,10 @@ class MancalaGames(param_mixin.ParamMixin, ttk.Frame):
         self.desc.pack(expand=True, fill=tk.BOTH)
 
 
-    def update_desc(self, option, _):
+    def update_desc(self, option, event=None):
         """We've enter a new widget, update desc text.
         Don't let the user edit the description."""
+        _ = event
 
         if self.prev_option == option:
             return
@@ -307,7 +308,7 @@ class MancalaGames(param_mixin.ParamMixin, ttk.Frame):
             if param.vtype in (pc.MSTR_TYPE, pc.LABEL_TYPE):
                 continue
 
-            self.make_tkvar(param)
+            self.pm_make_tkvar(param)
 
         # don't add the traces until all the variables are made
         self._add_watchers()
@@ -322,7 +323,7 @@ class MancalaGames(param_mixin.ParamMixin, ttk.Frame):
         self.game = None
 
         if var == ckey.HOLES:
-            self.resize_udirs()
+            self.pm_resize_udirs()
 
 
     def _make_ui_elements(self):
@@ -336,7 +337,7 @@ class MancalaGames(param_mixin.ParamMixin, ttk.Frame):
                 key=lambda p: (p.col, p.row))
 
             for param in tab_params:
-                self.make_ui_param(tab, param)
+                self.pm_make_ui_param(tab, param)
 
         for tab in self.tabs.values():
             tab.grid_rowconfigure('all', weight=1)
@@ -348,7 +349,7 @@ class MancalaGames(param_mixin.ParamMixin, ttk.Frame):
         dict."""
 
         for param in self.params.values():
-            self.copy_config_to_tk(param, self.config.loaded_config)
+            self.pm_copy_config_to_tk(param, self.config.loaded_config)
 
 
     def _make_config_from_tk(self):
@@ -362,7 +363,7 @@ class MancalaGames(param_mixin.ParamMixin, ttk.Frame):
             if param.vtype == pc.LABEL_TYPE:
                 continue
 
-            self. copy_tk_to_config(param, self.config.game_config)
+            self.pm_copy_tk_to_config(param, self.config.game_config)
 
 
     def _prepare_game(self):
@@ -525,26 +526,24 @@ class MancalaGames(param_mixin.ParamMixin, ttk.Frame):
 
         Call this at initialization to fill the text boxes which don't
         have preinitialized variables."""
-        # pylint: disable=too-complex
 
         if check_save and self._check_save_cancel():
             return
 
         for param in self.params.values():
-            self.reset_ui_default(param)
+            self.pm_reset_ui_default(param)
 
         self._reset_edited()
 
 
     def _reset_const(self, _=None):
         """Reset to defaults; clear loaded config dictionary."""
-        # pylint: disable=too-complex
 
         if self._check_save_cancel():
             return
 
         for param in self.params.values():
-            self.reset_const_default(param)
+            self.pm_reset_const_default(param)
 
         self._reset_edited()
 

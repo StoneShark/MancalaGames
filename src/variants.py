@@ -141,8 +141,8 @@ class AdjustPopup(param_mixin.ParamMixin, tksimpledialog.Dialog):
                                                         name='varaints')
         for vname in self.vari_params.keys():
             param = self.params[vname]
-            self.make_tkvar(param, self.game_config)
-            self.copy_config_to_tk(param, self.game_config)
+            self.pm_make_tkvar(param, self.game_config)
+            self.pm_copy_config_to_tk(param, self.game_config)
 
         super().__init__(master, title)
 
@@ -169,7 +169,7 @@ class AdjustPopup(param_mixin.ParamMixin, tksimpledialog.Dialog):
             param.row = rcnt.count
             param.col = 0
             lims = pdata if isinstance(pdata, list) else None
-            self.make_ui_param(master, param, lims, self.game_config)
+            self.pm_make_ui_param(master, param, lims, self.game_config)
 
 
     def buttonbox(self):
@@ -206,7 +206,7 @@ class AdjustPopup(param_mixin.ParamMixin, tksimpledialog.Dialog):
 
         for vname in self.vari_params.keys():
             param = self.params[vname]
-            self.copy_tk_to_config(param, self.game_config)
+            self.pm_copy_tk_to_config(param, self.game_config)
 
             # value = man_config.get_config_value(
             #             self.game_config,

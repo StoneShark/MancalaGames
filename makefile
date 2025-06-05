@@ -194,7 +194,7 @@ pylint: $(SOURCES) .pylint_report makefile
 
 .pylint_report: $(SOURCES) .pylintrc makefile
 	-del .pylint_report
-	-pylint --output .pylint_report --rcfile .pylintrc --recursive yes src
+	-pylint --output .pylint_report --rcfile .pylintrc src/*py src/*pyw
 	type .pylint_report
 
 
