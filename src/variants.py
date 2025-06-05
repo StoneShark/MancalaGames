@@ -38,26 +38,26 @@ class GameVariations:
         self.ptable = man_config.ParamData(no_descs=True)
 
         self.vari_params = self.game_config.get(ckey.VARI_PARAMS, {})
-        self.variations = self.game_config.get(ckey.VARIANTS, {})
+        self.variants = self.game_config.get(ckey.VARIANTS, {})
 
         # collect the list of all params that can be changed
         params = set(self.vari_params.keys())
         options = set()
-        if self.variations:
-            for vdict in self.variations.values():
+        if self.variants:
+            for vdict in self.variants.values():
                 options |= set(vdict.keys())
 
         if params & options:
-            print("vari_params and variations have overlapping parameters"
-                  "vari_params settings will override variations")
+            print("VARI_PARAMS and VARIANTS have overlapping parameters"
+                  "VARI_PARAMS settings will override VARIATIONS")
         self.my_params = params | options
 
 
     def rebuild(self):
         """Rebuild the game based on game_config."""
 
-        parts = man_config.game_from_config(self.game_config)
-        new_game, player_dict = parts
+        new_game = man_config.game_from_config(self.game_config)
+        player_dict = self.game_config[ckey.PLAYER]
         player = ai_player.AiPlayer(new_game, player_dict)
 
         new_game.filename = self.game_file
@@ -116,7 +116,11 @@ class GameVariations:
 
 
 class AdjustPopup(param_mixin.ParamMixin, tksimpledialog.Dialog):
-    """an adjustment popup but, um, this isn't a 'simple' dialog"""
+    """Do a popup to allow adjustment of the parameters in the
+    GameVariations (parameter vari).
+
+    The param mixin does most of the work, so the simple dialog
+    template works fine."""
 
     def __init__(self, master, title, vari):
 
@@ -125,16 +129,16 @@ class AdjustPopup(param_mixin.ParamMixin, tksimpledialog.Dialog):
         self.vari = vari
         self.game_config = vari.game_config
         self.vari_params = vari.vari_params
-        self.variations = vari.variations
-
+        self.variants = vari.variants
         self.params = vari.ptable
+
         self.do_it = False
 
-        if self.variations:
-            keys = list(self.variations.keys())
+        if self.variants:
+            keys = list(self.variants.keys())
             self.tkvars[ckey.VARIANTS] = tk.StringVar(self.master,
                                                         keys[0],
-                                                        name='variations')
+                                                        name='varaints')
         for vname in self.vari_params.keys():
             param = self.params[vname]
             self.make_tkvar(param, self.game_config)
@@ -149,11 +153,11 @@ class AdjustPopup(param_mixin.ParamMixin, tksimpledialog.Dialog):
         self.resizable(False, False)
         rcnt = ui_utils.Counter()
 
-        if self.variations:
-            lbl = ttk.Label(master, text='Varations')
+        if self.variants:
+            lbl = ttk.Label(master, text='Variant Sets')
             lbl.grid(row=0, column=0,sticky=tk.E)
 
-            keys = list(self.variations.keys())
+            keys = list(self.variants.keys())
             opmenu = ttk.OptionMenu(master, self.tkvars[ckey.VARIANTS],
                                     keys[0], *keys)
             opmenu.config(width=2 + max(len(str(val)) for val in keys))
@@ -165,7 +169,7 @@ class AdjustPopup(param_mixin.ParamMixin, tksimpledialog.Dialog):
             param.row = rcnt.count
             param.col = 0
             lims = pdata if isinstance(pdata, list) else None
-            self.make_ui_param(master, param, limits=lims)
+            self.make_ui_param(master, param, lims, self.game_config)
 
 
     def buttonbox(self):
@@ -191,9 +195,9 @@ class AdjustPopup(param_mixin.ParamMixin, tksimpledialog.Dialog):
 
         self.do_it = True
 
-        if self.variations:
+        if self.variants:
             vari_name = self.tkvars[ckey.VARIANTS].get()
-            for vname, value in self.variations[vari_name].items():
+            for vname, value in self.variants[vari_name].items():
 
                 param = self.params[vname]
                 man_config.set_config_value(

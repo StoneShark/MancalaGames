@@ -20,6 +20,9 @@
       "xcpickown": 1
    },
    "vari_params": {
+      "holes": "include",
+      "nbr_start": "include",
+      "xcpickown": "include",
       "goal_param": "include"
    },
    "player": {

@@ -7,6 +7,8 @@ elsewhere.
 Created on Tue Jun  3 06:31:43 2025
 @author: Ann"""
 
+# pylint: disable=too-many-nested-blocks
+
 # %% import
 
 import enum
@@ -19,17 +21,11 @@ import game_constants as gconsts
 import man_config
 import param_consts as pc
 
-# %% constants
 
+# %% constants
 
 # given a real value after we have tk root
 INT_VALID_CMD = None
-
-
-# how many variables to make for lists
-# if the option for a 'list[int]' isn't here, 4 variables will be made
-MAKE_LVARS = {ckey.CAPT_ON: 6,
-              ckey.UDIR_HOLES: gconsts.MAX_HOLES + 1}
 
 MINUS = '-'
 
@@ -65,9 +61,7 @@ def register_int_validate(root):
     INT_VALID_CMD = root.register(int_validate)
 
 
-
 # %%  ParamHelperMixin
-
 
 class ParamMixin:
     """A mixin to handle the UI elements for game parameters."""
@@ -84,14 +78,21 @@ class ParamMixin:
         It does nothing by default"""
 
 
-    def get_boxes_config(self, param):
+    def get_boxes_config(self, param, game_config=None):
         """Return the number items for the list for name."""
 
         if param.option == ckey.UDIR_HOLES:
-            boxes = self.params[ckey.HOLES].ui_default
+            holes_param = self.params[ckey.HOLES]
+            if game_config:
+                boxes = man_config.get_config_value(game_config,
+                                                    holes_param.cspec,
+                                                    holes_param.option,
+                                                    holes_param.vtype)
+            else:
+                boxes = holes_param.ui_default
 
-        elif param.option in MAKE_LVARS:
-            boxes = MAKE_LVARS[param.option]
+        elif param.option == ckey.CAPT_ON:
+            boxes = 6
 
         elif param.vtype == pc.ILIST_TYPE:
             boxes = 4
@@ -102,14 +103,19 @@ class ParamMixin:
         return boxes
 
 
-    def make_tkvar(self, param, config_dict=None):
-        """Create a tk variable for param.
+    def _get_boxes_vars(self, param, game_config=None):
+        """Get the number of variables to make for int or check boxes.
+        UDIR_HOLES might change size so make all of the possible variables
+        now."""
 
-        multi strs - do not use tkvars and must be handled differently
-        int vars - must use a string var and must be converted
-        lists - are filled with a simple default here,
-                _reset will give it any actual default
-        blist - use MAKE_LVARS (want to make all of the udir_hole vars now"""
+        if param.option == ckey.UDIR_HOLES:
+            return gconsts.MAX_HOLES + 1
+
+        return self.get_boxes_config(param, game_config)
+
+
+    def make_tkvar(self, param, config_dict=None):
+        """Create a tk variable for param."""
 
         if config_dict:
             value = man_config.get_config_value(
@@ -128,20 +134,16 @@ class ParamMixin:
                                                       bool(value),
                                                       name=param.option)
         elif param.vtype == pc.BLIST_TYPE:
-
-            # TODO use value for BLIST_TYPE and ILIST_TYPE (after translate)
-
-            boxes = MAKE_LVARS[param.option]
+            boxes = self._get_boxes_vars(param, config_dict)
             self.tkvars[param.option] = \
-                [tk.BooleanVar(self.master,
-                               i in value,
+                [tk.BooleanVar(self.master, i in value,
                                name=f'{param.option}_{i}')
                  for i in range(boxes)]
 
         elif param.vtype == pc.ILIST_TYPE:
-            boxes = self.get_boxes_config(param)
+            boxes = self._get_boxes_vars(param, config_dict)
             self.tkvars[param.option] = \
-                [tk.StringVar(self.master, 0,
+                [tk.StringVar(self.master, i in value,
                               name=f'{param.option}_{i}')
                  for i in range(boxes)]
 
@@ -215,13 +217,13 @@ class ParamMixin:
         box.bind('<Enter>', ft.partial(self.update_desc, param.option))
 
 
-    def _make_checkbox_list(self, frame, param):
+    def _make_checkbox_list(self, frame, param, game_config):
         """Make a list of checkboxes."""
 
         lbl = ttk.Label(frame, text=param.text)
         lbl.grid(row=param.row, column=param.col, sticky=tk.E)
 
-        boxes = self.get_boxes_config(param)
+        boxes = self.get_boxes_config(param, game_config)
         boxes_fr = ttk.Frame(frame)
         if param.option == ckey.UDIR_HOLES:
             boxes_fr.grid(row=param.row, column=param.col + 1,
@@ -308,7 +310,7 @@ class ParamMixin:
         lbl.configure(anchor='center')  # anchor in style is ignored
 
 
-    def make_ui_param(self, frame, param, limits=None):
+    def make_ui_param(self, frame, param, limits=None, game_config=None):
         """Make the ui elements for a single parameter."""
 
         if param.vtype == pc.MSTR_TYPE:
@@ -324,7 +326,7 @@ class ParamMixin:
             self._make_checkbox(frame, param)
 
         elif param.vtype == pc.BLIST_TYPE:
-            self._make_checkbox_list(frame, param)
+            self._make_checkbox_list(frame, param, game_config)
 
         elif param.vtype == pc.ILIST_TYPE:
             self._make_entry_list(frame, param)
@@ -415,3 +417,86 @@ class ParamMixin:
 
         man_config.set_config_value(
             game_config, param.cspec, param.option, value)
+
+
+    def resize_udirs(self):
+        """Change the number of the checkboxes on the screen.
+        All the variables were built with the tkvars.
+        Destroy any extra widgets or make any required new ones."""
+
+        holes = stoi(self.tkvars[ckey.HOLES].get())
+
+        if holes > gconsts.MAX_HOLES:
+            print('value too big.')
+            return
+
+        widgets = self.udir_frame.winfo_children()
+        prev_holes = len(widgets)
+
+        for idx in range(holes, prev_holes):
+            widgets[idx].destroy()
+
+        for idx in range(prev_holes + 1, holes + 1):
+            ttk.Checkbutton(self.udir_frame, text=str(idx),
+                            variable=self.tkvars[ckey.UDIR_HOLES][idx - 1]
+                            ).pack(side=tk.LEFT)
+
+
+    def reset_ui_default(self, param):
+        """Reset the tk variables to the user interface defaults"""
+
+        if param.vtype == pc.MSTR_TYPE:
+            self.tktexts[param.option].delete('1.0', tk.END)
+            self.tktexts[param.option].insert('1.0', param.ui_default)
+
+        elif param.vtype in pc.STRING_DICTS:
+            _, inv_dict, enum_dict = pc.STRING_DICTS[param.vtype]
+            value = inv_dict[enum_dict[param.ui_default]]
+            self.tkvars[param.option].set(value)
+
+        elif param.vtype == pc.BLIST_TYPE:
+            for var in self.tkvars[param.option]:
+                var.set(False)
+
+        elif param.vtype == pc.ILIST_TYPE:
+            default = param.ui_default
+            if (default
+                    and isinstance(default, list)
+                    and len(default) == self.get_boxes_config(param)):
+
+                for var, val in zip(self.tkvars[param.option], default):
+                    var.set(val)
+
+        elif param.vtype != pc.LABEL_TYPE:
+            self.tkvars[param.option].set(param.ui_default)
+
+
+    def reset_const_default(self, param):
+        """Reset the parameter to the construction default."""
+
+        default = man_config.get_construct_default(
+                    param.vtype, param.cspec, param.option)
+
+        if param.vtype == pc.MSTR_TYPE:
+            self.tktexts[param.option].delete('1.0', tk.END)
+            self.tktexts[param.option].insert('1.0', default)
+
+        elif param.vtype in pc.STRING_DICTS:
+            inv_dict = pc.STRING_DICTS[param.vtype][1]
+            value = inv_dict[default]
+            self.tkvars[param.option].set(value)
+
+        elif param.vtype == pc.BLIST_TYPE:
+            for var in self.tkvars[param.option]:
+                var.set(False)
+
+        elif param.vtype == pc.ILIST_TYPE:
+            if (default
+                    and isinstance(default, list)
+                    and len(default) == self.get_boxes_config(param)):
+
+                for var, val in zip(self.tkvars[param.option], default):
+                    var.set(val)
+
+        elif param.vtype != pc.LABEL_TYPE:
+            self.tkvars[param.option].set(default)

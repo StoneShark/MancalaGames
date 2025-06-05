@@ -135,8 +135,7 @@ def read_game(filename):
 
 
 def game_from_config(game_dict):
-    """Return a game and player dictionary from a
-    game configuration dictionary."""
+    """Return a game from a game configuration dictionary."""
 
     game_class = game_dict[ckey.GAME_CLASS] \
         if ckey.GAME_CLASS in game_dict else 'Mancala'
@@ -149,7 +148,7 @@ def game_from_config(game_dict):
                             nbr_holes=game_consts.holes,
                             rules=game_class.rules)
 
-    return game_class(game_consts, game_info), game_dict[ckey.PLAYER]
+    return game_class(game_consts, game_info)
 
 
 def make_game(filename):
@@ -157,13 +156,12 @@ def make_game(filename):
     and the player dictionary."""
 
     game_dict = read_game(filename)
-    game, player_dict = game_from_config(game_dict)
+    game = game_from_config(game_dict)
 
     # the game doesn't need to know that we add this
     game.filename = filename
 
-    return game, player_dict
-
+    return game, game_dict[ckey.PLAYER]
 
 
 # %% access config data and defaults

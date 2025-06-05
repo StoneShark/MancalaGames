@@ -25,5 +25,13 @@
           "mcts_pouts": [1, 2, 2, 2]
       }
    },
+   "vari_params": {
+      "holes": "include",
+      "nbr_start": "include",
+      "start_pattern": [ 0, 6, 11 ],
+      "sow_direct": [ 1, 3 ],
+      "grandslam": [ 0, 3 ],
+      "xcpickown": "include"
+   },
    "rules": "Ann Davies, 2025."
 }

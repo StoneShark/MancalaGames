@@ -690,26 +690,6 @@ For the center hole, the mouse button used to start the move selects the sow dir
   </div>
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p21.
-<h3 id="Cross-Kalah" class="game_desc">Cross-Kalah</h3>
-<p>A <a href="about_games.html#Kalah">Kalah</a> variant in which the sow direction direction varies by the number of seeds in the hole: If odd seeds, sow counter-clockwise. If even seeds, sow clockwise.
-<p>All other rules match <a href="about_games.html#Kalah">Kalah</a>.
-<p>Inveted by William Daniel Troyka in 2001.
-<div class="cols_row">
-  <div class="column2">
-    <p class="param">Holes per side:  6</p>
-    <p class="param">Start seeds:  4</p>
-    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
-    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OPP_SIDE</p>
-    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
-  </div>
-  <div class="column2">
-    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: EVEN_ODD_DIR</p>
-    <p class="param"><a href="game_params.html#sow_own_store">Sow Own Store</a>: Yes</p>
-    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
-    <p class="param"><a href="game_params.html#xcpickown">Own Seed on Xcapture</a>: PICK_ON_CAPT</p>
-  </div>
-</div>
-<p>Rules: <a href="https://en.wikipedia.org/wiki/Cross-Kalah" target="_blank">https://en.wikipedia.org/wiki/Cross-Kalah</a>
 <h3 id="Cross-Wari" class="game_desc">Cross-Wari</h3>
 <p>A single-lap mancala, sow direction is determined by the number of seeds in the hole.  Even seeds are sown clockwise. Odd seeds are sown counter-clockwise. A sow which cycles the board, will skip the hole that the move started from. If your opponent has no seeds, you must make seeds available to them (if you can).
 <p>Captures are on 2s and 3s from the opponent's side (final seed sown makes either 2 or 3).  As long as there is a an unbroken group of holes containing 2 or 3 seeds immediately preceding the final hole sown, these holes are also captured.
@@ -1368,8 +1348,13 @@ Instead of a minimum move of 2, singletons may start moves if all holes are empt
 </div>
 <p>Rules: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p28.
 <h3 id="J'Odu" class="game_desc">J'Odu</h3>
-<p>Sow clockwise, multi-lap sow. Cross capture opposite-side but only up to 3 seeds, picking own on capture.
-<p>Variations: board size and start seeds.
+<p>Sow counter-clockwise, multi-lap sow. Cross capture opposite-side but only up to 3 seeds, picking own on capture.
+<p>Variations:
+<ul><li class="helptext">
+board size and start seeds
+<li class="helptext">
+remove limit on cross captures (<a href="game_params.html#capt_max">CAPT_MAX</a> of 0).
+</ul>
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  8</p>
@@ -1386,7 +1371,7 @@ Instead of a minimum move of 2, singletons may start moves if all holes are empt
     <p class="param"><a href="game_params.html#xcpickown">Own Seed on Xcapture</a>: PICK_ON_CAPT</p>
   </div>
 </div>
-<p>Rules: Russ, Laurence. Mancala Games. 1984. p35. with some assumptions.
+<p>Rules: Russ, Laurence. Mancala Games. 1984. p35.
 <h3 id="Je ki n je" class="game_desc">Je ki n je</h3>
 <p>Multilap sow in either direction from your own holes (<a href="game_params.html#udir_holes">UDIR_HOLES</a>). Multilap sowing ends when there is a single seed in the final hole. 
 <p>When multilap sow ends on your opponent's side of the board, capture the final seed sown and the seeds in the next hole in the choosen sow direction, even if it is on your side of the board.
@@ -1421,11 +1406,23 @@ skip start hole when sowing more than 12 seeds (<a href="game_params.html#skip_s
 <p>If the last seed ends in an empty hole on the player's own side of the board, capture any seeds from the opposite hole (<a href="game_params.html#crosscapt">CROSSCAPT</a>). When performing a capture, take the final single seed sown as well. Pick your own seed only when opponents seeds are captured.
 <p>If a player's sow ends in their own store, they take another turn (repeat turn).
 <p>If a player has no seeds at the start of their turn, the game is over: the opponent collects the remainder of their seeds and the winner is determined based on final seed count. This includes a prescribed repeat turn, if a player sows their last seed into their store, seeds are collected, and an outcome is determined.
-<p>Variation:
+<p>Variations:
 <ul><li class="helptext">
+Vary the number of holes and start seeds
+<li class="helptext">
+Start game with a random placement of seeds (<a href="game_params.html#start_pattern">START_PATTERN</a> of RANDOM). <a href="game_params.html#nbr_start">NBR_START</a> should be the total number of seeds to be placed. Note that with a random opening, a swap sides (pie rule) may be done on either of the two opening moves (only one swap side per game). <a href="about_games.html#Random-Kalah">Random-Kalah</a> is a preconfigured game played in tallied rounds to equalize results of the random opening. 
+<li class="helptext">
+Start the game with the seeds placed so that the first player cannot  get a repeat turn and the second player will only be able to get a repeat turn, if the first player made that possible (<a href="game_params.html#start_pattern">START_PATTERN</a> of NO_REPEAT_SOW_OWN).
+<li class="helptext">
+If all of your opponents seeds are in one hole and you capture them, your opponent gets all of your seeds for the game tally (<a href="game_params.html#grandslam">GRANDSLAM</a> of OPP_GET_REMAINING).
+<li class="helptext">
+Sow holes with an even number of seeds clockwise and odd an number of seeds counter-clockwise (<a href="game_params.html#sow_direct">SOW_DIRECT</a> of EVEN_ODD_DIR). This was first proposed by William Daniel Troyka in 2001 as Cross-Kalah.
+<li class="helptext">
 Use always_pick for <a href="game_params.html#xcpickown">XCPICKOWN</a> (Valdez, p10).
 <li class="helptext">
 Require must share (<a href="game_params.html#mustshare">MUSTSHARE</a>) because it removes the seed hoarding strategy.
+<li class="helptext">
+The game <a href="about_games.html#NS_Kalah">NS_Kalah</a> limits sowing to each player's own side of the board with other minor changes.
 </ul>
 <div class="cols_row">
   <div class="column2">
@@ -1443,27 +1440,7 @@ Require must share (<a href="game_params.html#mustshare">MUSTSHARE</a>) because 
   </div>
 </div>
 <p>Rules: <a href="https://en.wikipedia.org/wiki/Kalah" target="_blank">https://en.wikipedia.org/wiki/Kalah</a>
-<h3 id="Kalah GSO" class="game_desc">Kalah GSO</h3>
-<p>A single-sow mancala, sow own store, cross capture and pick own. Repeat turn if sow ends in your own store.
-<p>On Grand Slam, the Opposing player gets your remaining seeds.
-<p>Goal: colled more than half of the seeds.
-<div class="cols_row">
-  <div class="column2">
-    <p class="param">Holes per side:  6</p>
-    <p class="param">Start seeds:  4</p>
-    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
-    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OPP_SIDE</p>
-    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
-    <p class="param"><a href="game_params.html#grandslam">Grand Slam</a>: OPP_GETS_REMAIN</p>
-  </div>
-  <div class="column2">
-    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
-    <p class="param"><a href="game_params.html#sow_own_store">Sow Own Store</a>: Yes</p>
-    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
-    <p class="param"><a href="game_params.html#xcpickown">Own Seed on Xcapture</a>: PICK_ON_CAPT</p>
-  </div>
-</div>
-<p>Rules: <a href="https://en.wikipedia.org/wiki/Kalah" target="_blank">https://en.wikipedia.org/wiki/Kalah</a> with the Grand Slam Opp gets set.
+<p>Reference: <a href="https://mancala.fandom.com/wiki/Cross-Kalah" target="_blank">https://mancala.fandom.com/wiki/Cross-Kalah</a>
 <h3 id="Kale" class="game_desc">Kale</h3>
 <p>Sow counter-clockwise. If your opponent has no seeds, you must make some available, if you can.
 <p>Capture on 2s and 3s. The first capture must be on the opponent's side of the board, but a multi-capture chain may continue onto your own side of the board. A grand slam does not capture--the seeds are left on the  board.
@@ -2450,6 +2427,14 @@ See <a href="about_games.html#Pallam Kuzhi">Pallam Kuzhi</a> and <a href="about_
 <p>Cross capture on opponents side of the board but only if 4 or fewer seeds and not until you have a child to move the seeds into.
 <p>The game ends when either cannot move. Seeds remaining in play do not score.
 <p>Goal: collect more than half the seeds.
+<p>Variations:
+<ul><li class="helptext">
+allowable child locations
+<li class="helptext">
+which hole the player may select the sow direction
+<li class="helptext">
+capture limit
+</ul>
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  7</p>
@@ -2470,7 +2455,7 @@ See <a href="about_games.html#Pallam Kuzhi">Pallam Kuzhi</a> and <a href="about_
     <p class="param"><a href="game_params.html#unclaimed">Unclaimed Seeds at End</a>: DONT_SCORE</p>
   </div>
 </div>
-<p>Rules: Ann Davies, 2025
+<p>Rules: Ann Davies, 2025.
 <h3 id="Ot-tjin" class="game_desc">Ot-tjin</h3>
 <p>A multi-lap mancala with a clockwise sow.  Capture on 3s on either side of the board.
 <p>Variations:
@@ -3287,7 +3272,6 @@ no repeat turn on capture
     <p class="param"><a href="#Bosh">Bosh</a></p>
     <p class="param"><a href="#Bule Perga">Bule Perga</a></p>
     <p class="param"><a href="#Cow">Cow</a></p>
-    <p class="param"><a href="#Cross-Kalah">Cross-Kalah</a></p>
     <p class="param"><a href="#Cross-Wari">Cross-Wari</a></p>
     <p class="param"><a href="#Dabuda">Dabuda</a></p>
     <p class="param"><a href="#Dakon">Dakon</a></p>
@@ -3319,7 +3303,6 @@ no repeat turn on capture
     <p class="param"><a href="#Je ki n je">Je ki n je</a></p>
     <p class="param"><a href="#J'Odu">J'Odu</a></p>
     <p class="param"><a href="#Kalah">Kalah</a></p>
-    <p class="param"><a href="#Kalah GSO">Kalah GSO</a></p>
     <p class="param"><a href="#Kale">Kale</a></p>
     <p class="param"><a href="#Krur">Krur</a></p>
     <p class="param"><a href="#L'ab al-Akil">L'ab al-Akil</a></p>

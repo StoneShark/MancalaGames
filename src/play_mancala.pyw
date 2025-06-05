@@ -781,8 +781,6 @@ class AboutPane(ttk.Labelframe):
                 dtext += self.format_para(key.title() + ':  ' + text)
                 dtext += '\n'
 
-                # TODO describe the varaitions  VARI_PARAMS
-
         self.set_text(game_name, dtext)
 
 

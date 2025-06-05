@@ -10,6 +10,8 @@ import pytest
 pytestmark = pytest.mark.integtest
 
 
+from context import cfg_keys as ckey
+from context import game_interface as gi
 from context import man_config
 
 
@@ -26,7 +28,9 @@ def gstate():
     """This fixture will maintain state between tests in the
     same class but will be reconstructed for each class."""
 
-    game, _ = man_config.make_game('./GameProps/Kalah_GSO.txt')
+    game_dict = man_config.read_game('./GameProps/Kalah.txt')
+    game_dict[ckey.GAME_INFO][ckey.GRANDSLAM] = gi.GrandSlam.OPP_GETS_REMAIN
+    game = man_config.game_from_config(game_dict)
     gstate = GameTestData(game)
     return gstate
 

@@ -35,8 +35,6 @@ import param_consts as pc
 import param_mixin
 import ui_utils
 
-from game_classes import GAME_CLASSES
-
 
 # %%  Constants
 
@@ -49,7 +47,6 @@ PARAM_TABS = ('Game', 'Dynamics', 'Sow', 'Capture', 'Player')
 SKIP_TAB = 'skip'
 
 WTITLE = 'Mancala Game Editor'
-
 
 
 # %%  game params UI
@@ -325,30 +322,7 @@ class MancalaGames(param_mixin.ParamMixin, ttk.Frame):
         self.game = None
 
         if var == ckey.HOLES:
-            self._resize_udirs()
-
-
-    def _resize_udirs(self):
-        """Change the number of the checkboxes on the screen.
-        All the variables were built with the tkvars.
-        Destroy any extra widgets or make any required new ones."""
-
-        holes = param_mixin.stoi(self.tkvars[ckey.HOLES].get())
-
-        if holes > gconsts.MAX_HOLES:
-            print('value too big.')
-            return
-
-        widgets = self.udir_frame.winfo_children()
-        prev_holes = len(widgets)
-
-        for idx in range(holes, prev_holes):
-            widgets[idx].destroy()
-
-        for idx in range(prev_holes + 1, holes + 1):
-            ttk.Checkbutton(self.udir_frame, text=str(idx),
-                            variable=self.tkvars[ckey.UDIR_HOLES][idx - 1]
-                            ).pack(side=tk.LEFT)
+            self.resize_udirs()
 
 
     def _make_ui_elements(self):
@@ -399,21 +373,7 @@ class MancalaGames(param_mixin.ParamMixin, ttk.Frame):
 
         self._make_config_from_tk()
 
-        # TODO test use make_game_from_config
-        # self.game, _ = man_config.game_from_config(self.config.game_config)
-        # self.ai_player = ai_player.AiPlayer(self.game,
-        #                                     self.config.game_config[ckey.PLAYER])
-
-        game_class = self.config.game_config[ckey.GAME_CLASS]
-        gclass = GAME_CLASSES[game_class]
-
-        consts = gconsts.GameConsts(
-            **self.config.game_config[ckey.GAME_CONSTANTS])
-        info = gi.GameInfo(nbr_holes=consts.holes,
-                           rules=gclass.rules,
-                           **self.config.game_config[ckey.GAME_INFO])
-
-        self.game = gclass(consts, info)
+        self.game = man_config.game_from_config(self.config.game_config)
         self.ai_player = ai_player.AiPlayer(self.game,
                                             self.config.game_config[ckey.PLAYER])
 
@@ -571,31 +531,7 @@ class MancalaGames(param_mixin.ParamMixin, ttk.Frame):
             return
 
         for param in self.params.values():
-
-            if param.vtype == pc.MSTR_TYPE:
-                self.tktexts[param.option].delete('1.0', tk.END)
-                self.tktexts[param.option].insert('1.0', param.ui_default)
-
-            elif param.vtype in pc.STRING_DICTS:
-                _, inv_dict, enum_dict = pc.STRING_DICTS[param.vtype]
-                value = inv_dict[enum_dict[param.ui_default]]
-                self.tkvars[param.option].set(value)
-
-            elif param.vtype == pc.BLIST_TYPE:
-                for var in self.tkvars[param.option]:
-                    var.set(False)
-
-            elif param.vtype == pc.ILIST_TYPE:
-                default = param.ui_default
-                if (default
-                        and isinstance(default, list)
-                        and len(default) == self.get_boxes_config(param)):
-
-                    for var, val in zip(self.tkvars[param.option], default):
-                        var.set(val)
-
-            elif param.vtype != pc.LABEL_TYPE:
-                self.tkvars[param.option].set(param.ui_default)
+            self.reset_ui_default(param)
 
         self._reset_edited()
 
@@ -608,33 +544,7 @@ class MancalaGames(param_mixin.ParamMixin, ttk.Frame):
             return
 
         for param in self.params.values():
-
-            default = man_config.get_construct_default(
-                        param.vtype, param.cspec, param.option)
-
-            if param.vtype == pc.MSTR_TYPE:
-                self.tktexts[param.option].delete('1.0', tk.END)
-                self.tktexts[param.option].insert('1.0', default)
-
-            elif param.vtype in pc.STRING_DICTS:
-                inv_dict = pc.STRING_DICTS[param.vtype][1]
-                value = inv_dict[default]
-                self.tkvars[param.option].set(value)
-
-            elif param.vtype == pc.BLIST_TYPE:
-                for var in self.tkvars[param.option]:
-                    var.set(False)
-
-            elif param.vtype == pc.ILIST_TYPE:
-                if (default
-                        and isinstance(default, list)
-                        and len(default) == self.get_boxes_config(param)):
-
-                    for var, val in zip(self.tkvars[param.option], default):
-                        var.set(val)
-
-            elif param.vtype != pc.LABEL_TYPE:
-                self.tkvars[param.option].set(default)
+            self.reset_const_default(param)
 
         self._reset_edited()
 

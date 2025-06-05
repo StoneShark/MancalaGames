@@ -67,7 +67,7 @@ class GameDictEncoder(json.JSONEncoder):
 
     def _encode_list(self, obj):
 
-        if self._put_on_single_line(obj):
+        if self._fits_on_single_line(obj):
             return "[ " + ", ".join(self.encode(elem) for elem in obj) + " ]"
 
         self.indentation_level += 1
@@ -90,12 +90,11 @@ class GameDictEncoder(json.JSONEncoder):
         if self.sort_keys:
             obj = dict(sorted(obj.items(), key=lambda x: x[0]))
 
-        # never put dicts on one line (well maybe game_constants??)
-        # if self._put_on_single_line(obj):
-        #     return ("{ "
-        #             + ", ".join(f"{json.dumps(k)}: {self.encode(elem)}"
-        #                         for k, elem in obj.items())
-        #             + " }")
+        if len(obj) <= 1:
+            return ("{ "
+                    + ", ".join(f"{json.dumps(k)}: {self.encode(elem)}"
+                                for k, elem in obj.items())
+                    + " }")
 
         self.indentation_level += 1
         output = [f"{self.indent_str}{json.dumps(k)}: {self.encode(v)}"
@@ -104,7 +103,7 @@ class GameDictEncoder(json.JSONEncoder):
 
         return "{\n" + ",\n".join(output) + "\n" + self.indent_str + "}"
 
-    def _put_on_single_line(self, obj):
+    def _fits_on_single_line(self, obj):
         """Determine if obj can be put on a single line."""
 
         return (self._primitives_only(obj)
@@ -216,7 +215,11 @@ class GameConfig:
 
         Do the inclusion tests before we delete any keys.
         Game config can be written even if it is inconsistent or
-        there are errors."""
+        there are errors.
+
+        Always delete the filename key (if its there)."""
+
+        self.game_config.pop(ckey.FILENAME, None)
 
         capt_keys = [ckey.CAPSAMEDIR, ckey.CAPT_MAX, ckey.CAPT_MIN,
                      ckey.CAPT_ON, ckey.CAPT_TYPE, ckey.EVENS]
