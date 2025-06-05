@@ -18,6 +18,7 @@ from tkinter import ttk
 
 import cfg_keys as ckey
 import game_constants as gconsts
+import game_interface as gi
 import man_config
 import param_consts as pc
 
@@ -59,6 +60,36 @@ def register_int_validate(root):
     global INT_VALID_CMD
 
     INT_VALID_CMD = root.register(int_validate)
+
+
+def goal_param_desc(game_config):
+    """Get a descriptive string to use for the label
+    on the goal param."""
+
+    rounds = game_config[ckey.GAME_INFO].get('rounds', 0)
+    if not rounds:
+        return None
+
+    goal = game_config[ckey.GAME_INFO].get('goal', 0)
+    if goal == gi.Goal.MAX_SEEDS:
+        desc = "Goal: Opp Can't Fill Holes"
+
+    elif goal == gi.Goal.TERRITORY:
+        desc = "Goal: Owned Holes"
+
+    elif goal.rnd_win_count():
+        desc = "Goal: Round Wins"
+
+    elif goal == gi.Goal.RND_POINTS:
+        desc = "Goal: Points Needed"
+
+    elif goal == gi.Goal.RND_SEED_COUNT:
+        desc = "Goal: Total Seeds"
+
+    elif goal == gi.Goal.RND_EXTRA_SEEDS:
+        desc = "Goal: Extra Seeds"
+
+    return desc
 
 
 # %%  ParamHelperMixin
@@ -181,12 +212,17 @@ class ParamMixin:
         tframe.bind('<Enter>', ft.partial(self.update_desc, param.option))
 
 
-    def _make_entry(self, frame, param):
+    def _make_entry(self, frame, param, game_config=None):
         """Make a single line string entry."""
 
         length = 5 if param.vtype == pc.INT_TYPE else 30
 
-        lbl = ttk.Label(frame, text=param.text)
+        text = param.text
+        if game_config and param.option == ckey.GOAL_PARAM:
+            gp_text = goal_param_desc(game_config)
+            text = gp_text if gp_text else text
+
+        lbl = ttk.Label(frame, text=text)
         lbl.grid(row=param.row, column=param.col, sticky=tk.E)
 
         if param.vtype == pc.INT_TYPE:
@@ -320,7 +356,7 @@ class ParamMixin:
             self._make_option_list(frame, param, limits)
 
         elif param.vtype in (pc.STR_TYPE, pc.INT_TYPE):
-            self._make_entry(frame, param)
+            self._make_entry(frame, param, game_config)
 
         elif param.vtype == pc.BOOL_TYPE:
             self._make_checkbox(frame, param)

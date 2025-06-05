@@ -220,6 +220,16 @@ class Goal(enum.IntEnum):
                         Goal.RND_WIN_COUNT_DEP,
                         Goal.RND_WIN_COUNT_IMB}
 
+    def rnd_win_count(self):
+        """Return True if goal involves winning a number of
+        simple rounds."""
+
+        return self in {Goal.RND_WIN_COUNT_MAX,
+                        Goal.RND_WIN_COUNT_CLR,
+                        Goal.RND_WIN_COUNT_DEP,
+                        Goal.RND_WIN_COUNT_IMB}
+
+
 @enum.unique
 class GrandSlam(enum.IntEnum):
     """Possible options for dealing with a grand slam (capturing
