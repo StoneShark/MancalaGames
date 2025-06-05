@@ -64,13 +64,18 @@ def register_int_validate(root):
 
 def goal_param_desc(game_config):
     """Get a descriptive string to use for the label
-    on the goal param."""
+    on the goal param.
+
+    This might get the label wrong if the goal can be
+    changed in the variations; it will be right for
+    the base game configuration."""
 
     rounds = game_config[ckey.GAME_INFO].get('rounds', 0)
     if not rounds:
         return None
 
     goal = game_config[ckey.GAME_INFO].get('goal', 0)
+    desc = None
     if goal == gi.Goal.MAX_SEEDS:
         desc = "Goal: Opp Can't Fill Holes"
 
@@ -436,7 +441,10 @@ class ParamMixin:
         elif param.vtype == pc.BLIST_TYPE:
             holes = len(self.tkvars[param.option])
             if param.option == ckey.UDIR_HOLES:
-                holes = stoi(self.tkvars[ckey.HOLES].get())
+                if ckey.HOLES in self.tkvars:
+                    holes = stoi(self.tkvars[ckey.HOLES].get())
+                else:
+                    holes = game_config[ckey.GAME_CONSTANTS][ckey.HOLES]
 
             add_in = 1 if param.option == ckey.CAPT_ON else 0
             value = [nbr + add_in

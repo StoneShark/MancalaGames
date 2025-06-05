@@ -7,6 +7,7 @@ Created on Tue Jun  3 04:35:08 2025
 
 # %% imports
 
+import dataclasses as dc
 import tkinter as tk
 import tkinter.simpledialog as tksimpledialog
 from tkinter import ttk
@@ -51,6 +52,22 @@ class GameVariations:
             print("VARI_PARAMS and VARIANTS have overlapping parameters"
                   "VARI_PARAMS settings will override VARIATIONS")
         self.my_params = params | options
+
+
+    def _update_config(self):
+        """Make the config read from the file match the current
+        game.  Cannot assume that all keys that have been changed
+        are in the game configuration."""
+
+        # not used because we don't know what variant to set
+
+        for param in ckey.GCONST_PARAMS:
+            value = getattr(self.game_ui.game.cts, param)
+            self.game_config[ckey.GAME_CONSTANTS][param] = value
+
+        for fdesc in dc.fields(gi.GameInfo):
+            value = getattr(self.game_ui.game.info, fdesc.name)
+            self.game_config[ckey.GAME_INFO][fdesc.name] = value
 
 
     def rebuild(self):
