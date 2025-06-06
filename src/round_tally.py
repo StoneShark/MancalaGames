@@ -5,7 +5,7 @@ that do not use hole ownership to setup for new rounds.
 Created on Sun Nov 10 13:52:08 2024
 @author: Ann"""
 
-import game_interface as gi
+import game_info as gi
 from game_logger import game_log
 
 

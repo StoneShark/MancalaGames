@@ -31,7 +31,7 @@ import animator
 import claimer
 import deco_chain_if
 import format_msg as fmt
-import game_interface as gi
+import game_info as gi
 
 from game_logger import game_log
 
@@ -626,7 +626,7 @@ class NoOutcomeChange(EndTurnIf):
 
 
     def __str__(self):
-        return self.str_deco_detail(f'\n   min_needed: {self.min_needed}')
+        return self.str_deco_detail(f'min_needed: {self.min_needed}')
 
 
     @staticmethod

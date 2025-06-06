@@ -20,7 +20,7 @@ import abc
 import deco_chain_if
 
 import animator
-import game_interface as gi
+import game_info as gi
 from game_logger import game_log
 
 

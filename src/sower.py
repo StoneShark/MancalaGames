@@ -12,7 +12,7 @@ Created on Fri Apr  7 15:57:47 2023
 @author: Ann"""
 
 import animator
-import game_interface as gi
+import game_info as gi
 import sower_decos as sowd
 import sower_mlap_decos as msowd
 

@@ -42,7 +42,7 @@ import pytest
 
 from context import ai_player
 from context import cfg_keys as ckey
-from context import game_interface as gi
+from context import game_info as gi
 from context import game_logger
 
 # limit the length of these tests, exceeding TESTLIMIT is a test failure

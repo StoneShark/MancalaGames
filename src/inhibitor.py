@@ -8,7 +8,7 @@ Created on Mon Nov 20 16:12:06 2023
 
 import abc
 
-import game_interface as gi
+import game_info as gi
 
 from game_logger import game_log
 

@@ -36,7 +36,7 @@ import contextlib
 import tkinter as tk
 
 
-import game_interface as gi
+import game_info as gi
 import ui_utils
 
 

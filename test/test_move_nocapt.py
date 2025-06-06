@@ -21,14 +21,14 @@ pytestmark = pytest.mark.integtest
 
 import utils
 
-from context import game_interface as gi
+from context import game_info as gi
 from context import game_constants as gconsts
 from context import mancala
 from context import move_data
 
-from game_interface import WinCond
-from game_interface import Direct
-from game_interface import LapSower
+from game_info import WinCond
+from game_info import Direct
+from game_info import LapSower
 
 
 # %%

@@ -16,7 +16,7 @@ Created on Fri Apr  7 08:52:03 2023
 import abc
 
 import deco_chain_if
-import game_interface as gi
+import game_info as gi
 
 
 # %%  capture ok

@@ -35,7 +35,7 @@ from context import claimer
 from context import end_move_decos as emd
 from context import end_move_rounds as emr
 from context import game_constants as gconsts
-from context import game_interface as gi
+from context import game_info as gi
 from context import game_logger
 from context import incrementer
 from context import mancala
@@ -44,11 +44,11 @@ from context import round_tally
 
 import utils
 
-from game_interface import AllowRule
-from game_interface import ChildType
-from game_interface import Goal
-from game_interface import RoundFill
-from game_interface import WinCond
+from game_info import AllowRule
+from game_info import ChildType
+from game_info import Goal
+from game_info import RoundFill
+from game_info import WinCond
 
 
 # %%

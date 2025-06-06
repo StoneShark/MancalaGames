@@ -11,7 +11,7 @@ Created on Mon Apr 10 10:08:40 2023
 import abc
 
 import deco_chain_if
-import game_interface as gi
+import game_info as gi
 
 
 # %%  mover  interface

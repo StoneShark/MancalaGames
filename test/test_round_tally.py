@@ -12,7 +12,7 @@ Created on Mon Nov 11 10:53:31 2024
 import pytest
 pytestmark = pytest.mark.unittest
 
-from context import game_interface as gi
+from context import game_info as gi
 from context import round_tally
 from context import move_data
 

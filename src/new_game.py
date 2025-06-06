@@ -11,7 +11,7 @@ import abc
 
 import claimer
 import deco_chain_if
-import game_interface as gi
+import game_info as gi
 import round_tally
 
 from game_logger import game_log

@@ -16,14 +16,14 @@ from context import allowables
 from context import animator
 from context import game_classes
 from context import game_constants as gconsts
-from context import game_interface as gi
+from context import game_info as gi
 from context import mancala
 
-from game_interface import AllowRule
-from game_interface import Direct
-from game_interface import Goal
-from game_interface import GrandSlam
-from game_interface import LapSower
+from game_info import AllowRule
+from game_info import Direct
+from game_info import Goal
+from game_info import GrandSlam
+from game_info import LapSower
 
 # %%
 

@@ -9,7 +9,7 @@ import pytest
 pytestmark = pytest.mark.unittest
 
 from context import inhibitor
-from context import game_interface as gi
+from context import game_info as gi
 
 
 # %%

@@ -14,7 +14,7 @@ pytestmark = pytest.mark.unittest
 
 from context import game_tally
 
-from game_interface import WinCond
+from game_info import WinCond
 
 
 # %%

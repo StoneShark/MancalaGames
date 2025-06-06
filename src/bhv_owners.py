@@ -8,7 +8,7 @@ Created on Thu Jan 30 13:31:34 2025
 import tkinter as tk
 
 import behaviors as bhv
-import game_interface as gi
+import game_info as gi
 import man_config
 import ui_utils
 # from game_logger import game_log

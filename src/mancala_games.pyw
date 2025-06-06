@@ -27,7 +27,7 @@ import warnings
 import ai_player
 import cfg_keys as ckey
 import game_constants as gconsts
-import game_interface as gi
+import game_info as gi
 import mancala_ui
 import man_config
 import mg_config

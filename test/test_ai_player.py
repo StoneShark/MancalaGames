@@ -14,14 +14,14 @@ from context import ai_interface
 from context import ai_player
 from context import cfg_keys as ckey
 from context import game_constants as gconsts
-from context import game_interface as gi
+from context import game_info as gi
 from context import mancala
 from context import minimax
 from context import montecarlo_ts
 from context import same_side
 
-from game_interface import ChildType
-from game_interface import WinCond
+from game_info import ChildType
+from game_info import WinCond
 
 
 TEST_COVERS = ['src\\ai_player.py',

@@ -13,7 +13,7 @@ pytestmark = pytest.mark.unittest
 import utils
 
 from context import animator
-from context import game_interface as gi
+from context import game_info as gi
 from context import game_constants as gconsts
 from context import mancala
 from context import move_data
@@ -21,16 +21,16 @@ from context import sower
 from context import sower_decos as sowd
 from context import sower_mlap_decos as msowd
 
-from game_interface import CaptSide
-from game_interface import ChildType
-from game_interface import ChildRule
-from game_interface import Direct
-from game_interface import Goal
-from game_interface import LapSower
-from game_interface import PreSowCapt
-from game_interface import SowPrescribed
-from game_interface import SowRule
-from game_interface import WinCond
+from game_info import CaptSide
+from game_info import ChildType
+from game_info import ChildRule
+from game_info import Direct
+from game_info import Goal
+from game_info import LapSower
+from game_info import PreSowCapt
+from game_info import SowPrescribed
+from game_info import SowRule
+from game_info import WinCond
 
 # %%
 

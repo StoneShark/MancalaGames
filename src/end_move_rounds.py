@@ -6,7 +6,7 @@ Created on Sun Nov 10 07:12:36 2024
 
 import end_move_decos as emd
 import format_msg as fmt
-import game_interface as gi
+import game_info as gi
 
 from game_logger import game_log
 

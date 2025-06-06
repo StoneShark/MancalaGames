@@ -13,7 +13,7 @@ import itertools as it
 import os
 
 from context import cfg_keys as ckey
-from context import game_interface as gi
+from context import game_info as gi
 from context import man_config
 from context import man_path
 

@@ -18,7 +18,7 @@ import dataclasses as dc
 
 import cfg_keys as ckey
 import incrementer
-import game_interface as gi
+import game_info as gi
 import mancala
 import move_data
 import rule_tester

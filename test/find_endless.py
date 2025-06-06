@@ -7,14 +7,14 @@ Created on Thu Jul 20 13:05:05 2023
 
 import itertools as it
 
-from context import game_interface as gi
+from context import game_info as gi
 from context import game_constants as gconsts
 from context import mancala
 
-from game_interface import WinCond
-from game_interface import Direct
-from game_interface import Goal
-from game_interface import LapSower
+from game_info import WinCond
+from game_info import Direct
+from game_info import Goal
+from game_info import LapSower
 
 HOLES = 4
 

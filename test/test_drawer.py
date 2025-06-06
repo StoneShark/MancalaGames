@@ -10,11 +10,11 @@ pytestmark = pytest.mark.unittest
 
 import utils
 
-from context import game_interface as gi
+from context import game_info as gi
 from context import game_constants as gconsts
 from context import mancala
 
-from game_interface import Direct
+from game_info import Direct
 
 
 # %%

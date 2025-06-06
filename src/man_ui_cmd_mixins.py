@@ -16,7 +16,7 @@ import webbrowser
 import animator
 import buttons
 import cfg_keys as ckey
-import game_interface as gi
+import game_info as gi
 import man_config
 import man_path
 import ui_utils

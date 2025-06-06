@@ -7,7 +7,7 @@ The objects do need to be instantiated because there's
 no data.
 
 Start patterns differ from prescribed openings (see
-sower.SowPrescribedIf and game_interface.SowPrescirbed)
+sower.SowPrescribedIf and game_info.SowPrescirbed)
 in that start patterns do not require any user input
 and may simply be executed.
 
@@ -28,7 +28,7 @@ import abc
 import itertools as it
 import random
 
-import game_interface as gi
+import game_info as gi
 
 
 FOUR = 4

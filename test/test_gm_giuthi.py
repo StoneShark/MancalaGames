@@ -7,7 +7,7 @@ Created on Thu Jul 11 17:56:04 2024
 import pytest
 pytestmark = pytest.mark.integtest
 
-from context import game_interface as gi
+from context import game_info as gi
 from context import man_config
 
 

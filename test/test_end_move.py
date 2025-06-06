@@ -18,13 +18,13 @@ from context import end_move
 from context import end_move_decos as emd
 from context import end_move_rounds as emr
 from context import game_constants as gconsts
-from context import game_interface as gi
+from context import game_info as gi
 from context import mancala
 
-from game_interface import ChildType
-from game_interface import Direct
-from game_interface import Goal
-from game_interface import WinCond
+from game_info import ChildType
+from game_info import Direct
+from game_info import Goal
+from game_info import WinCond
 
 
 # %%

@@ -12,7 +12,7 @@ import abc
 import animator
 import deco_chain_if
 import format_msg as fmt
-import game_interface as gi
+import game_info as gi
 
 from game_logger import game_log
 

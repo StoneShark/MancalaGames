@@ -15,7 +15,7 @@ from tkinter import ttk
 import ai_player
 import cfg_keys as ckey
 import game_constants as gconsts
-import game_interface as gi
+import game_info as gi
 import man_config
 import param_mixin
 import param_consts as pc

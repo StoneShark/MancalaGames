@@ -6,7 +6,7 @@ Created on Fri Apr  7 08:52:03 2023
 
 
 import capt_decos
-import game_interface as gi
+import game_info as gi
 
 
 def _add_cross_capt_deco(game):

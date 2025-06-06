@@ -8,7 +8,7 @@ Created on Sun Nov 12 20:33:14 2023
 
 import tkinter as tk
 
-import game_interface as gi
+import game_info as gi
 
 
 class GameTally:

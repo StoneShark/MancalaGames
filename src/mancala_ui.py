@@ -20,7 +20,7 @@ import cfg_keys as ckey
 import behaviors
 import buttons
 import format_msg as fmt
-import game_interface as gi
+import game_info as gi
 import game_logger
 import game_tally as gt
 import mancala

@@ -22,7 +22,7 @@ import re
 from context import ai_player
 from context import cfg_keys as ckey
 from context import game_classes
-from context import game_interface as gi
+from context import game_info as gi
 from context import man_config
 from context import mancala_games
 from context import param_consts as pc
@@ -772,7 +772,7 @@ def write_types_file(filename):
             try:
                 ename = getattr(gi, tname)
             except AttributeError:
-                print('  ', tname, 'not in game_interface')
+                print('  ', tname, 'not in game_info')
                 continue
 
             print('<table>', file=ofile)

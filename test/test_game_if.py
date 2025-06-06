@@ -17,19 +17,19 @@ pytestmark = [pytest.mark.unittest, pytest.mark.filterwarnings("error")]
 
 
 from context import cfg_keys as ckey
-from context import game_interface as gi
+from context import game_info as gi
 from context import ginfo_rules
 
-from game_interface import Direct
-from game_interface import Goal
-from game_interface import WinCond
+from game_info import Direct
+from game_info import Goal
+from game_info import WinCond
 
 
 
 # %%
 
 TEST_COVERS = ['src\\cfg_keys.py',
-               'src\\game_interface.py',
+               'src\\game_info.py',
                'src\\ginfo_rules.py']
 
 

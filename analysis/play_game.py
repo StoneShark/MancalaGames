@@ -15,7 +15,7 @@ import time
 import tqdm
 
 from context import animator
-from context import game_interface as gi
+from context import game_info as gi
 from context import game_logger
 
 
@@ -35,7 +35,7 @@ BOOL_STR = ['f', 't']
 
 class GameResult(enum.Enum):
     """Game results.  Use the same values as the
-    game_interface WinCond for the values that overlap."""
+    game_info WinCond for the values that overlap."""
 
     WIN = gi.WinCond.WIN.value
     TIE = gi.WinCond.TIE.value

@@ -18,7 +18,7 @@ import copy
 
 import animator
 import deco_chain_if
-import game_interface as gi
+import game_info as gi
 import sower_decos as sowd
 
 from game_logger import game_log

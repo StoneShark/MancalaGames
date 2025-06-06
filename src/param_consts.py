@@ -9,7 +9,7 @@ Created on Fri Oct 27 16:54:51 2023
 
 import collections
 
-import game_interface as gi
+import game_info as gi
 
 from ai_player import ALGORITHM_DICT
 from game_classes import GAME_CLASSES

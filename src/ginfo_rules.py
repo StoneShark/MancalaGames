@@ -4,7 +4,7 @@
 Created on Mon Aug 21 06:54:24 2023
 @author: Ann"""
 
-import game_interface as gi
+import game_info as gi
 import round_tally
 import rule_tester
 

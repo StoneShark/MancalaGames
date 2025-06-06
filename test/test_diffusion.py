@@ -11,7 +11,7 @@ import utils
 
 from context import end_move_decos as emd
 from context import game_constants as gconsts
-from context import game_interface as gi
+from context import game_info as gi
 from context import diffusion
 from context import mancala
 from context import move_data

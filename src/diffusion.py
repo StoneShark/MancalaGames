@@ -7,7 +7,7 @@ Created on Sat Nov  2 15:39:39 2024
 @author: Ann"""
 
 
-import game_interface as gi
+import game_info as gi
 import mancala
 import rule_tester
 import sower_decos as sowd

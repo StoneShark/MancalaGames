@@ -13,7 +13,7 @@ import abc
 
 import deco_chain_if
 
-import game_interface as gi
+import game_info as gi
 
 # %%  sow interface
 

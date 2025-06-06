@@ -11,7 +11,7 @@ import random
 
 import ai_interface
 import cfg_keys as ckey
-import game_interface as gi
+import game_info as gi
 import minimax
 import montecarlo_ts as mcts
 import negamax

@@ -28,7 +28,7 @@ import ai_player
 import animator
 import cfg_keys as ckey
 import game_constants as gconsts
-import game_interface as gi
+import game_info as gi
 import man_path
 import param_consts as pc
 

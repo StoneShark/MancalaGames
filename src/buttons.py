@@ -15,7 +15,7 @@ import behaviors
 import bhv_hold
 import bhv_owners
 import bhv_bsetup
-import game_interface as gi
+import game_info as gi
 import man_config
 import ui_utils
 

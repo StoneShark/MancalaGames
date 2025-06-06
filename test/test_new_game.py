@@ -9,16 +9,16 @@ pytestmark = pytest.mark.unittest
 import utils
 
 from context import game_constants as gconsts
-from context import game_interface as gi
+from context import game_info as gi
 from context import mancala
 from context import move_data
 from context import new_game
 
-from game_interface import ChildType
-from game_interface import Goal
-from game_interface import RoundFill
-from game_interface import RoundStarter
-from game_interface import WinCond
+from game_info import ChildType
+from game_info import Goal
+from game_info import RoundFill
+from game_info import RoundStarter
+from game_info import WinCond
 
 
 TEST_COVERS = ['src\\new_game.py']

@@ -18,7 +18,7 @@ Created on Sun Dec  1 07:10:20 2024
 import allowables
 import cfg_keys as ckey
 import incrementer
-import game_interface as gi
+import game_info as gi
 import mancala
 import rule_tester
 import sower_decos

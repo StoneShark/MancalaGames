@@ -23,7 +23,7 @@ import animator
 import claimer
 import end_move_decos as emd
 import end_move_rounds as emr
-import game_interface as gi
+import game_info as gi
 import round_tally
 
 

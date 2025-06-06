@@ -21,7 +21,7 @@ import pytest
 
 from context import end_move_decos as emd
 from context import end_move_rounds as emr
-from context import game_interface as gi
+from context import game_info as gi
 from context import mancala
 
 import utils

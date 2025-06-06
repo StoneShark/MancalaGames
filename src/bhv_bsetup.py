@@ -37,7 +37,7 @@ import textwrap
 
 import behaviors as bhv
 import bhv_hold
-import game_interface as gi
+import game_info as gi
 import get_direction
 import ui_utils
 

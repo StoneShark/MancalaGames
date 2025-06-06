@@ -15,7 +15,7 @@ import utils
 
 from context import fill_patterns as fp
 from context import game_constants as gconsts
-from context import game_interface as gi
+from context import game_info as gi
 from context import mancala
 
 

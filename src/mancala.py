@@ -23,7 +23,7 @@ import cfg_keys as ckey
 import drawer
 import end_move
 import game_constants as gconsts
-import game_interface as gi
+import game_info as gi
 import game_str
 import get_direction
 import get_moves

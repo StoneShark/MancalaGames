@@ -8,7 +8,7 @@ Created on Thu Aug 10 04:26:30 2023
 import abc
 
 import deco_chain_if
-import game_interface as gi
+import game_info as gi
 
 
 # %% interface
