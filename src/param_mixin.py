@@ -103,6 +103,11 @@ class ParamMixin:
     """A mixin to handle the UI elements for game parameters."""
 
 
+    def update_desc(self, option, event=None):
+        """A method to update a possible description box.
+        It does nothing by default"""
+
+
     def _get_boxes_config(self, param, game_config=None):
         """Return the number items for the list for name."""
 
