@@ -19,9 +19,9 @@ import dataclasses as dc
 import cfg_keys as ckey
 import incrementer
 import game_interface as gi
-import ginfo_rules
 import mancala
 import move_data
+import rule_tester
 import two_cycle
 
 from game_logger import game_log
@@ -32,7 +32,7 @@ from game_logger import game_log
 def test_ns_rules(ginfo, holes, skip):
     """Build the rules for SameSide."""
 
-    tester = ginfo_rules.RuleTester(ginfo, holes, skip)
+    tester = rule_tester.RuleTester(ginfo, holes, skip)
 
     tester.test_rule(
         'ss_goal_clear',
@@ -98,7 +98,7 @@ def test_ew_rules(ginfo, holes, skip=None):
     """Build the rules for SameSide.
     We want the more specific rules first."""
 
-    tester = ginfo_rules.RuleTester(ginfo, holes, skip)
+    tester = rule_tester.RuleTester(ginfo, holes, skip)
 
     tester.test_rule(
         'oho_even',

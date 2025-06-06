@@ -119,9 +119,9 @@ def make_ui(game, ui_opt):
 
     game_ui = mancala_ui.MancalaUI(game, {})
 
-    game_ui.vars.facing_players.set(ui_opt.facing_players)
-    game_ui.vars.touch_screen.set(ui_opt.touch_screen)
-    game_ui.vars.owner_arrows.set(ui_opt.owner_arrows)
+    game_ui.tkvars.facing_players.set(ui_opt.facing_players)
+    game_ui.tkvars.touch_screen.set(ui_opt.touch_screen)
+    game_ui.tkvars.owner_arrows.set(ui_opt.owner_arrows)
 
     return game_ui
 

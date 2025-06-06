@@ -19,8 +19,8 @@ import allowables
 import cfg_keys as ckey
 import incrementer
 import game_interface as gi
-import ginfo_rules
 import mancala
+import rule_tester
 import sower_decos
 
 
@@ -29,7 +29,7 @@ import sower_decos
 def test_ns2_rules(gclass_name, ginfo, holes, skip=None):
     """Test rules for NorthSouthCycle."""
 
-    tester = ginfo_rules.RuleTester(ginfo, holes, skip)
+    tester = rule_tester.RuleTester(ginfo, holes, skip)
 
     tester.test_rule(
         'ns2_not_territory',
@@ -94,7 +94,7 @@ def test_ns2_rules(gclass_name, ginfo, holes, skip=None):
 def test_ew2_rules(ginfo, holes, skip=None):
     """Test the rules for EastWestCycle."""
 
-    tester = ginfo_rules.RuleTester(ginfo, holes, skip)
+    tester = rule_tester.RuleTester(ginfo, holes, skip)
 
     tester.test_rule(
         'ew2_even_holes',

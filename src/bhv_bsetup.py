@@ -466,7 +466,7 @@ class SetupButtonBehavior(bhv.BehaviorIf):
         game_ui.game.inhibitor.set_off()
         game_ui.game.mcount = 2
         game_ui.game.movers = 2
-        game_ui.vars.ai_active.set(False)
+        game_ui.tkvars.ai_active.set(False)
 
         return True
 
@@ -483,7 +483,7 @@ class SetupButtonBehavior(bhv.BehaviorIf):
                                'Game Mode', 'The game is not playable.')
             return False
 
-        game_ui.setup.save_setup()
+        game_ui.setup_save()
         game_log.add('\n*** Game Setup Complete', game_log.MOVE)
         return True
 

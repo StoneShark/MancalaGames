@@ -50,7 +50,7 @@ class GameVariations:
 
         if params & options:
             print("VARI_PARAMS and VARIANTS have overlapping parameters"
-                  "VARI_PARAMS settings will override VARIATIONS")
+                  "VARI_PARAMS settings will override VARIANTS")
         self.my_params = params | options
 
 
@@ -148,6 +148,7 @@ class AdjustPopup(param_mixin.ParamMixin, tksimpledialog.Dialog):
         self.vari_params = vari.vari_params
         self.variants = vari.variants
         self.params = vari.ptable
+        self.tkvars = {}
 
         self.do_it = False
 

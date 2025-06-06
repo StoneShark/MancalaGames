@@ -348,7 +348,6 @@ class MoveSeedsButtonBehavior(bhv.BehaviorIf):
     If the player doesn't change anything, they are disallowed
     from capturing or making children until the opponent does
     one of those.
-    The decos are not in the GameInterface--deal with it!
 
     This is used for SowPrescribed.ARNGE_LIMIT (Bao)."""
 

@@ -1,28 +1,14 @@
 # -*- coding: utf-8 -*-
-"""A class to enforce rules on the values in GameInfo.
-
-Each game class should have a 'rules' variable that is
-a RuleDict to enforce reasonable values for the
-game_info data.  The RuleDict is class scope so that
-GameInfo can get the rules in it's construction before
-the actual game class is instantiated.
-
-This allows the default set of rules for the Mancala
-class to be defined below. Then classes derived from
-Mancala can add, change or delete rules.
+"""The rules that check GameInfo.
 
 Created on Mon Aug 21 06:54:24 2023
 @author: Ann"""
 
-# pylint: disable=too-many-lines
-
-import warnings
-
 import game_interface as gi
 import round_tally
+import rule_tester
 
 from fill_patterns import PCLASSES
-
 
 # %% constants
 
@@ -30,102 +16,29 @@ DIFF_LEVELS = 4
 MAX_MIN_MOVES = 5
 MAX_MINIMAX_DEPTH = 15
 
-PRINT_MSG = 'print msg'
-
-
-# %% rule tester
-
-class RuleTester:
-    """Test the rules on the given obj1 and obj2.
-
-    skip_rules: a set of rule names to skip while testing."""
-
-    def __init__(self, obj1, obj2, skip=None):
-
-        self.obj1 = obj1
-        self.obj2 = obj2
-
-        self.skip_rules = skip if skip else set()
-        self.tested = set()
-
-
-    def test_rule(self, name, *, rule, msg,
-                  warn=False, excp=None, both_objs=False):
-        """Test an individual rule.
-
-        name: name of the rule
-              if a duplicate rule name is used and error is printed.
-
-        rule: a function or lambda that takes 1 or 2 params
-              should return True if there is an error
-
-        warn: if PRINT_MSG, will print a message to console (too early to
-              be put into a game log)
-              if True, genearte a warning, else an exception
-
-        excp: if generating an exception, generate this exception
-
-        both_objs: if True, call with obj1 and obj2, otherwise only obj1"""
-        # pylint: disable=too-many-arguments
-
-        if name in self.skip_rules:
-            return
-
-        # these are programming errors so don't use popup
-        if name in self.tested:
-            print(f'Duplicate rule name: {name}')
-        self.tested |= {name}
-
-        if not warn and not excp:
-            print(f'{name} has no effect (missing warn or excp)')
-
-        if warn and excp:
-            print(f'{name} has two actions (both warn or excp)')
-
-        if rule(self.obj1, self.obj2) if both_objs else rule(self.obj1):
-            msg = msg + f' ({name}).'
-            if warn == PRINT_MSG:
-                print('\n*** Gentle Warning:  ', msg)
-            elif warn:
-                warnings.warn(msg)
-            else:
-                raise excp(msg)
-
-
-# %%
-
-def sow_blkd_div(ginfo):
-    """Test if either of the sow_blkd_div rules."""
-    return (ginfo.sow_rule in
-            (gi.SowRule.SOW_BLKD_DIV, gi.SowRule.SOW_BLKD_DIV_NR))
-
 
 # %% grouped rules
 
 def test_creation_rules(tester):
     """Basic rules to make sure that everything that should exist does."""
 
-    tester.test_rule(
-        'invalid_holes',
+    tester.test_rule('invalid_holes',
         both_objs=True,
         rule=lambda ginfo, holes: (not holes or not isinstance(holes, int)),
         msg='Holes must > 0',
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'missing_name',
+    tester.test_rule('missing_name',
         rule=lambda ginfo: not ginfo.name,
         msg='Mising Name',
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'sow_dir_type',
+    tester.test_rule('sow_dir_type',
         rule=lambda ginfo: not isinstance(ginfo.sow_direct, gi.Direct),
         msg='SOW_DIRECT not valid type, expected gi.Direct',
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'high_min_moves',
+    tester.test_rule('high_min_moves',
         both_objs=True,
         rule=lambda ginfo, holes: not 1 <= ginfo.min_move <= min(holes, MAX_MIN_MOVES),
         msg=f'Min_move seems wrong (1<= convention <= min(holes, {MAX_MIN_MOVES}))',
@@ -150,15 +63,13 @@ def test_pattern_rules(tester):
         if not pat:
             continue
 
-        tester.test_rule(
-            f'pattern_{idx}_req_size',
+        tester.test_rule(f'pattern_{idx}_req_size',
             both_objs=True,
             rule=test_pattern(idx, pat),
             msg=pat.err_msg,
             excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'pattern_bad_fills',
+    tester.test_rule('pattern_bad_fills',
         rule=lambda ginfo: (ginfo.start_pattern
                             and ginfo.round_fill
                                     not in (gi.RoundFill.NOT_APPLICABLE,
@@ -166,8 +77,7 @@ def test_pattern_rules(tester):
         msg='START_PATTERN is incompatible for the selected ROUND_FILL',
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'pattern_bad_rgoals',
+    tester.test_rule('pattern_bad_rgoals',
         rule=lambda ginfo: (ginfo.start_pattern
                             and ginfo.rounds
                             and ginfo.goal not in
@@ -176,8 +86,7 @@ def test_pattern_rules(tester):
         msg='START_PATTERN is incompatible for ROUNDS with selected GOAL',
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'move_rmost_mlength',
+    tester.test_rule('move_rmost_mlength',
         rule=lambda ginfo: (ginfo.start_pattern ==
                                 gi.StartPattern.MOVE_RIGHTMOST
                             and ginfo.mlength > 1),
@@ -203,8 +112,7 @@ def test_eliminate_goal_rules(tester):
         return _elimnate_and
 
 
-    tester.test_rule(
-        'elseed_gs_legal',
+    tester.test_rule('elseed_gs_legal',
         rule=lambda ginfo: (ginfo.goal.eliminate()
                             and ginfo.grandslam != gi.GrandSlam.LEGAL),
         msg="""CLEAR, DEPRIVE and IMMOBILIZE games require
@@ -214,15 +122,13 @@ def test_eliminate_goal_rules(tester):
     bad_flags = ['child_type', 'child_cvt', 'child_rule',
                  'moveunlock', 'mustshare', 'mustpass']
     for flag in bad_flags:
-        tester.test_rule(
-            f'elseed_bad_{flag}',
+        tester.test_rule(f'elseed_bad_{flag}',
             rule=_elimnate_and(flag),
             msg=f"""CLEAR, DEPRIVE and IMMOBILIZE games cannot be used
                   with {flag.upper()}""",
             excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'elseed_no_rounds',
+    tester.test_rule('elseed_no_rounds',
         rule=lambda ginfo: (ginfo.goal in (gi.Goal.CLEAR,
                                            gi.Goal.DEPRIVE,
                                            gi.Goal.IMMOBILIZE)
@@ -231,8 +137,7 @@ def test_eliminate_goal_rules(tester):
             that are not the Round Tally goals""",
             excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'elseed_no_moves',
+    tester.test_rule('elseed_no_moves',
         rule=lambda ginfo: (ginfo.goal in (gi.Goal.RND_WIN_COUNT_CLR,
                                            gi.Goal.RND_WIN_COUNT_DEP,
                                            gi.Goal.RND_WIN_COUNT_IMB)
@@ -241,8 +146,7 @@ def test_eliminate_goal_rules(tester):
             require ROUNDS to be NO_MOVES""",
             excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'immob_no_rturn',
+    tester.test_rule('immob_no_rturn',
         rule=lambda ginfo: (ginfo.goal in (gi.Goal.IMMOBILIZE,
                                            gi.Goal.RND_WIN_COUNT_IMB)
                             and ginfo.repeat_turn),
@@ -250,8 +154,7 @@ def test_eliminate_goal_rules(tester):
         excp=gi.GameInfoError)
         # repeat turn in immobilize game -- could immobilize self
 
-    tester.test_rule(
-        'clear_no_min_move',
+    tester.test_rule('clear_no_min_move',
         rule=lambda ginfo: (ginfo.goal in (gi.Goal.CLEAR,
                                            gi.Goal.RND_WIN_COUNT_CLR)
                             and ginfo.min_move != 1),
@@ -259,8 +162,7 @@ def test_eliminate_goal_rules(tester):
         excp=gi.GameInfoError)
         # clear game, if there are seeds they must be playable
 
-    tester.test_rule(
-        'clear_no_prevent',
+    tester.test_rule('clear_no_prevent',
         rule=lambda ginfo: (
             ginfo.goal in (gi.Goal.CLEAR, gi.Goal.RND_WIN_COUNT_CLR)
             and ginfo.allow_rule.no_moves()),
@@ -273,8 +175,7 @@ def test_eliminate_goal_rules(tester):
 def test_territory_rules(tester):
     """Add the rules for games with a goal of territory."""
 
-    tester.test_rule(
-        'terr_goal_param',
+    tester.test_rule('terr_goal_param',
         both_objs=True,
         rule=lambda ginfo, holes: (ginfo.goal == gi.Goal.TERRITORY
                                    and (ginfo.goal_param <= holes
@@ -282,22 +183,19 @@ def test_territory_rules(tester):
         msg='Territory Goal requires GOAL_PARAM between holes and 2 * holes',
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'terr_need_stores',
+    tester.test_rule('terr_need_stores',
         rule=lambda ginfo: (ginfo.goal == gi.Goal.TERRITORY
                             and not ginfo.stores),
         msg='Territory goal requires stores',
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'terr_no_sides_incomp',
+    tester.test_rule('terr_no_sides_incomp',
         rule=lambda ginfo: ginfo.goal == gi.Goal.TERRITORY and ginfo.no_sides,
         msg='Territory goal is incompatible with NO_SIDES',
         excp=gi.GameInfoError)
-        # XXXX could initial ownship be changed so that no_sides makes sense
+        # could initial ownship be changed so that no_sides makes sense
 
-    tester.test_rule(
-        'terr_capt_side',
+    tester.test_rule('terr_capt_side',
         rule=lambda ginfo: (ginfo.goal == gi.Goal.TERRITORY
                             and ginfo.capt_side in (gi.CaptSide.OPP_SIDE,
                                                     gi.CaptSide.OWN_SIDE,
@@ -306,47 +204,41 @@ def test_territory_rules(tester):
         msg='CAPT_SIDE based on board location is odd for Territory games',
         warn=True)
 
-    tester.test_rule(
-        'capt_terr',
+    tester.test_rule('capt_terr',
         rule=lambda ginfo: (ginfo.goal != gi.Goal.TERRITORY
                             and ginfo.capt_side in (gi.CaptSide.OPP_TERR,
                                                     gi.CaptSide.OWN_TERR)),
         msg='CAPT_SIDE based on hole ownership is only valid for Territory games',
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'terr_no_rfill',
+    tester.test_rule('terr_no_rfill',
         rule=lambda ginfo: (ginfo.goal == gi.Goal.TERRITORY
                             and ginfo.round_fill not in (gi.RoundFill.NOT_APPLICABLE,
                                                          gi.RoundFill.UCHOWN)),
         msg='Round Fill is ignored for Territory goal',
         warn=True)
 
-    tester.test_rule(
-        'uchown_terr_only',
+    tester.test_rule('uchown_terr_only',
         rule=lambda ginfo: (ginfo.goal != gi.Goal.TERRITORY
                             and ginfo.round_fill == gi.RoundFill.UCHOWN),
         msg='Round Fill UCHOWN is only supported for Territory goal',
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'terr_gs_not',
+    tester.test_rule('terr_gs_not',
         rule=lambda ginfo: (ginfo.goal == gi.Goal.TERRITORY
                             and ginfo.grandslam == gi.GrandSlam.NOT_LEGAL),
         msg='Territory goal and GRANDLAM=Not Legal are currently incompatible',
         excp=NotImplementedError)
         # territory requires move triples, GS allowables doesn't support
 
-    tester.test_rule(
-        'terr_no_fchild',
+    tester.test_rule('terr_no_fchild',
         rule=lambda ginfo: (ginfo.goal == gi.Goal.TERRITORY
                             and ginfo.child_locs == gi.ChildLocs.FIXED_ONE_RIGHT),
         msg='Territory goal and fixed children in incompatible',
         excp=NotImplementedError)
         # player might not own the child hole
 
-    tester.test_rule(
-        'terr_half_rounds',
+    tester.test_rule('terr_half_rounds',
         rule=lambda ginfo: (ginfo.goal == gi.Goal.TERRITORY
                             and ginfo.rounds == gi.Rounds.HALF_SEEDS),
         msg='Territory goal is incompatible with ROUNDS.HALF_SEEDS',
@@ -354,8 +246,7 @@ def test_territory_rules(tester):
         # half seeds would lead to endless territory games
         # most seeds must be moved out of play for territory games
 
-    tester.test_rule(
-        'terr_gparam_high',
+    tester.test_rule('terr_gparam_high',
         both_objs=True,
         rule=lambda ginfo, nbr_holes: (
             ginfo.goal == gi.Goal.TERRITORY
@@ -367,6 +258,12 @@ def test_territory_rules(tester):
         msg='Territory goal param is too high for ROUNDS of DONT_SCORE, '
             'a game winner is unlikely',
         excp=gi.GameInfoError)
+
+
+def sow_blkd_div(ginfo):
+    """Test if either of the sow_blkd_div rules."""
+    return (ginfo.sow_rule in
+            (gi.SowRule.SOW_BLKD_DIV, gi.SowRule.SOW_BLKD_DIV_NR))
 
 
 def test_block_and_divert_rules(tester):
@@ -384,29 +281,25 @@ def test_block_and_divert_rules(tester):
 
         return _divert_and
 
-    tester.test_rule(
-        'next_ml_no_bdiv',
+    tester.test_rule('next_ml_no_bdiv',
         rule=lambda ginfo: (ginfo.mlaps == gi.LapSower.LAPPER_NEXT
                             and sow_blkd_div(ginfo)),
         msg='MLAPS of LAPPER_NEXT is not supported with SOW_BLKD_DIV(_NR)',
         excp=NotImplementedError)
 
-    tester.test_rule(
-        'bdiv_need_gparam',
+    tester.test_rule('bdiv_need_gparam',
         rule=lambda ginfo: (sow_blkd_div(ginfo)
                             and not ginfo.sow_param),
         msg='SOW_BLKD_DIV(_NR) requires SOW_PARAM for closing holes',
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'bdiv_need_blocks',
+    tester.test_rule('bdiv_need_blocks',
         rule=lambda ginfo: (sow_blkd_div(ginfo)
                             and not ginfo.blocks),
         msg='SOW_BLKD_DIV(_NR) requires BLOCKS for closing holes',
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'bdiv_req_goal',
+    tester.test_rule('bdiv_req_goal',
         rule=lambda ginfo: (sow_blkd_div(ginfo)
                             and ginfo.goal not in (gi.Goal.DEPRIVE,
                                                    gi.Goal.IMMOBILIZE,
@@ -420,15 +313,13 @@ def test_block_and_divert_rules(tester):
                   'evens', 'multicapt',
                   'nosinglecapt', 'capt_side', 'pickextra', 'xcpickown']
     for flag in capt_flags:
-        tester.test_rule(
-            f'bdiv_nocapt_{flag}',
+        tester.test_rule(f'bdiv_nocapt_{flag}',
             rule=divert_and(flag),
             msg='SOW_BLKD_DIV(_NR) closes holes to remove seeds from play, '
                 f'no other capture mechanisms are allowed [{flag.upper()}]',
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'bdiv_no_capt_on',
+    tester.test_rule('bdiv_no_capt_on',
         rule=lambda ginfo: (sow_blkd_div(ginfo)
                             and any(ginfo.capt_on)),
         msg='SOW_BLKD_DIV(_NR) closes holes to remove seeds from play, ' + \
@@ -437,16 +328,14 @@ def test_block_and_divert_rules(tester):
 
     bad_flags = ['allow_rule', 'sow_start']
     for flag in bad_flags:
-        tester.test_rule(
-            f'bdiv_bad_{flag}',
+        tester.test_rule(f'bdiv_bad_{flag}',
             rule=divert_and(flag),
             msg=f'sow_blkd_div is incompatible with {flag.upper()}',
             excp=gi.GameInfoError)
 
     bad_flags = ['skip_start', 'visit_opp']
     for flag in bad_flags:
-        tester.test_rule(
-            f'bdiv_not_{flag}',
+        tester.test_rule(f'bdiv_not_{flag}',
             rule=divert_and(flag),
             msg=f'sow_blkd_div is not supported with {flag.upper()}',
             excp=NotImplementedError)
@@ -457,8 +346,7 @@ def test_block_and_divert_rules(tester):
 def test_child_rules(tester):
     """Add rules specific to having children."""
 
-    tester.test_rule(
-        'next_ml_nochild',
+    tester.test_rule('next_ml_nochild',
         rule=lambda ginfo: (ginfo.mlaps == gi.LapSower.LAPPER_NEXT
                             and ginfo.child_type),
         msg='MLAPS of LAPPER_NEXT is not supported with CHILD',
@@ -466,8 +354,7 @@ def test_child_rules(tester):
         # StopOnChild would need to change and ChildLapCont would
         # need to be integrated into the lap continuer chain
 
-    tester.test_rule(
-        'child_need_cvt',
+    tester.test_rule('child_need_cvt',
         rule=lambda ginfo: (ginfo.child_type
                             and ginfo.child_locs
                                     != gi.ChildLocs.FIXED_ONE_RIGHT
@@ -475,8 +362,7 @@ def test_child_rules(tester):
         msg='Selected child type requires CHILD_CVT',
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'dont_need_cvt',
+    tester.test_rule('dont_need_cvt',
         rule=lambda ginfo: (ginfo.child_type
                             and ginfo.child_locs
                                     == gi.ChildLocs.FIXED_ONE_RIGHT
@@ -484,37 +370,32 @@ def test_child_rules(tester):
         msg='CHILD_CVT is ignored with Child Locs of FIXED_ONE_RIGHT',
         warn=True)
 
-    tester.test_rule(
-        'child_cvt_need_type',
+    tester.test_rule('child_cvt_need_type',
         rule=lambda ginfo: not ginfo.child_type and ginfo.child_cvt,
         msg='CHILD_CVT requires a CHILD_TYPE != NOCHILD',
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'child_no_gs',
+    tester.test_rule('child_no_gs',
         rule=lambda ginfo: (ginfo.child_type
                             and ginfo.grandslam != gi.GrandSlam.LEGAL),
         msg='Children requires that GRANDSLAM be Legal',
         excp=NotImplementedError)
     # NOT_LEGAL is now supported, others are not
 
-    tester.test_rule(
-        'ch_rule_own_incom',
+    tester.test_rule('ch_rule_own_incom',
         rule=lambda ginfo: (ginfo.goal != gi.Goal.TERRITORY
                             and ginfo.child_rule in (gi.ChildRule.OPP_OWNER_ONLY,
                                                      gi.ChildRule.OWN_OWNER_ONLY)),
         msg='CHILD_RULE: *_OWNER_ONLY requires territory GOAL',
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'no_opp_child_req',
+    tester.test_rule('no_opp_child_req',
         rule=lambda ginfo: (not ginfo.child_type
                             and ginfo.sow_rule == gi.SowRule.NO_OPP_CHILD),
         msg='Sow rule NO_OPP_CHILD requires children',
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'not1st_static',
+    tester.test_rule('not1st_static',
         rule=lambda ginfo: (ginfo.child_rule == gi.ChildRule.NOT_1ST_OPP
                             and (ginfo.blocks
                                  or ginfo.goal == gi.Goal.TERRITORY)),
@@ -537,8 +418,7 @@ def test_no_sides_rules(tester):
 
         return _no_sides_and
 
-    tester.test_rule(
-        'no_sides_need_stores',
+    tester.test_rule('no_sides_need_stores',
         rule=lambda ginfo: ginfo.no_sides and not ginfo.stores,
         msg='NO_SIDES requires STORES',
         excp=gi.GameInfoError)
@@ -547,8 +427,7 @@ def test_no_sides_rules(tester):
                  'rounds', 'round_starter', 'round_fill',
                  'visit_opp']
     for flag in bad_flags:
-        tester.test_rule(
-            f'no_sides_bad_{flag}',
+        tester.test_rule(f'no_sides_bad_{flag}',
             rule=no_sides_and(flag),
             msg=f'NO_SIDES cannot be used with {flag.upper()}',
             excp=gi.GameInfoError)
@@ -557,8 +436,7 @@ def test_no_sides_rules(tester):
 def test_capture_rules(tester):
     """Most of the capture rules are added here."""
 
-    tester.test_rule(
-        'warn_no_capt',
+    tester.test_rule('warn_no_capt',
         rule=lambda ginfo: not any([sow_blkd_div(ginfo),
                                     ginfo.child_type,
                                     ginfo.capt_type,
@@ -572,8 +450,7 @@ def test_capture_rules(tester):
         msg='No capture mechanism provided',
         warn=True)
 
-    tester.test_rule(
-        'capt_no_place',
+    tester.test_rule('capt_no_place',
         rule=lambda ginfo: (ginfo.goal in (gi.Goal.MAX_SEEDS, gi.Goal.TERRITORY)
                             and not (ginfo.stores or ginfo.child_type)
                             and any([ginfo.capt_type,
@@ -587,8 +464,7 @@ def test_capture_rules(tester):
             to put captured seeds. Suggest stores or children be used""",
         warn=True)
 
-    tester.test_rule(
-        'capt_conflict',
+    tester.test_rule('capt_conflict',
         rule=lambda ginfo: any(
             [(ginfo.capt_min and ginfo.capt_max
                   and ginfo.capt_min > ginfo.capt_max),
@@ -603,8 +479,7 @@ def test_capture_rules(tester):
         warn=True)
         # this doesn't catch all conflicts :(
 
-    tester.test_rule(
-        'xcapt_multi_same',
+    tester.test_rule('xcapt_multi_same',
         rule=lambda ginfo: (ginfo.crosscapt and ginfo.multicapt
                             and not ginfo.capsamedir),
         msg="""CROSSCAPT with MULTICAPT without CAPSAMEDIR
@@ -613,8 +488,7 @@ def test_capture_rules(tester):
         # capturing the opp dir (as usual) wont capture because
         # the preceeding holes were just sown, that is, not empty
 
-    tester.test_rule(
-        'warn_capsamedir_multicapt',
+    tester.test_rule('warn_capsamedir_multicapt',
         rule=lambda ginfo: (ginfo.capt_type != gi.CaptType.TWO_OUT
                             and ginfo.capt_type != gi.CaptType.NEXT
                             and ginfo.capsamedir
@@ -622,22 +496,19 @@ def test_capture_rules(tester):
         msg="CAPSAMEDIR without MULTICAPT has no effect",
         warn=True)
 
-    tester.test_rule(
-        'capt2out_needs_samedir',
+    tester.test_rule('capt2out_needs_samedir',
         rule=lambda ginfo: (ginfo.capt_type == gi.CaptType.TWO_OUT
                             and not ginfo.capsamedir),
         msg="""Capture type TWO_OUT requires CAPSAMEDIR because
             the preceeding holes were just sown (not empty)""",
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'capttype_xcross_incomp',
+    tester.test_rule('capttype_xcross_incomp',
         rule=lambda ginfo: ginfo.capt_type and ginfo.crosscapt,
         msg="CAPT_TYPE and CROSSCAPT are incompatible",
         warn=True)
 
-    tester.test_rule(
-        'lcapt_no_ctype',
+    tester.test_rule('lcapt_no_ctype',
         rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.LAP_CAPT
                             and ginfo.capt_type not in (gi.CaptType.NONE,
                                                         gi.CaptType.TWO_OUT,
@@ -647,8 +518,7 @@ def test_capture_rules(tester):
         excp=NotImplementedError)
         # currently only MATCH_OPP is not supported
 
-    tester.test_rule(
-        'ogol_no_ctype',
+    tester.test_rule('ogol_no_ctype',
         rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.LAP_CAPT_OPP_GETS
                             and ginfo.capt_type not in (gi.CaptType.NONE,
                                                         gi.CaptType.TWO_OUT,
@@ -658,8 +528,7 @@ def test_capture_rules(tester):
         excp=NotImplementedError)
         # see lcapt_no_ctype
 
-    tester.test_rule(
-        'lcs_presow_capt',
+    tester.test_rule('lcs_presow_capt',
         rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.LAP_CAPT_SEEDS
                             and ginfo.presowcapt),
         msg="LAP_CAPT_SEEDS with PRESOWCAPT isn't supported",
@@ -668,8 +537,7 @@ def test_capture_rules(tester):
         # would need to only move the newly captured seeds into play
         # it currently moves all captured seeds into play
 
-    tester.test_rule(
-        'lcs_stores',
+    tester.test_rule('lcs_stores',
         rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.LAP_CAPT_SEEDS
                             and ginfo.stores),
         msg="""LAP_CAPT_SEEDS with STORES isn't supported""",
@@ -677,8 +545,7 @@ def test_capture_rules(tester):
         # any seeds put into the stores are moved back into play
         # on the next capture and lap
 
-    tester.test_rule(
-        'lcs_collect',
+    tester.test_rule('lcs_collect',
         rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.LAP_CAPT_SEEDS
                             and not (ginfo.capt_type or ginfo.crosscapt)),
         msg="""LAP_CAPT_SEEDS is only supported when seeds are
@@ -687,8 +554,7 @@ def test_capture_rules(tester):
         # don't lap_capt_seeds if we are not capturing seeds from some
         # place other than the end hole, it does nothing useful
 
-    tester.test_rule(
-        'lcs_ctype_warn',
+    tester.test_rule('lcs_ctype_warn',
         rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.LAP_CAPT_SEEDS
                             and ginfo.capt_type
                             and ginfo.capt_type in (gi.CaptType.NEXT,
@@ -699,22 +565,19 @@ def test_capture_rules(tester):
             option could prevent this.""",
         warn=True)
 
-    tester.test_rule(
-        'sca_gs_not',
+    tester.test_rule('sca_gs_not',
         rule=lambda ginfo: (ginfo.sow_rule in (gi.SowRule.OWN_SOW_CAPT_ALL,
                                                gi.SowRule.SOW_CAPT_ALL)
                             and ginfo.grandslam != gi.GrandSlam.LEGAL),
         msg='(OWN_)SOW_CAPT_ALL requires that GRANDLAM be LEGAL',
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'xpick_requires_cross',
+    tester.test_rule('xpick_requires_cross',
         rule=lambda ginfo: ginfo.xcpickown and not ginfo.crosscapt,
         msg="XCPICKOWN without CROSSCAPT doesn't do anything",
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'xc_const_pickextra',
+    tester.test_rule('xc_const_pickextra',
         rule=lambda ginfo: (ginfo.crosscapt
                             and ginfo.basic_capt
                             and ginfo.pickextra == gi.CaptExtraPick.PICKCROSS),
@@ -722,15 +585,13 @@ def test_capture_rules(tester):
             ingnore the constraint""",
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'xpick_pickcross',
+    tester.test_rule('xpick_pickcross',
         rule=lambda ginfo: (ginfo.crosscapt
                             and ginfo.pickextra == gi.CaptExtraPick.PICKCROSS),
         msg="PICKEXTRA=PICKCROSS with CROSSCAPT is redundant",
         warn=True)
 
-    tester.test_rule(
-        'moveall_no_locks',
+    tester.test_rule('moveall_no_locks',
         rule=lambda ginfo: (ginfo.allow_rule == gi.AllowRule.MOVE_ALL_HOLES_FIRST
                             and ginfo.moveunlock),
         msg="""Do not set MOVEUNLOCK with MOVE_ALL_HOLES_FIRST.
@@ -739,16 +600,14 @@ def test_capture_rules(tester):
         # we do not want CaptUnlocked added to the capt_ok deco
         # which causes captures to be limited by locks
 
-    tester.test_rule(
-        'moveall_no_capttype',
+    tester.test_rule('moveall_no_capttype',
         rule=lambda ginfo: (ginfo.allow_rule == gi.AllowRule.MOVE_ALL_HOLES_FIRST
                             and ginfo.capt_type == gi.CaptType.TWO_OUT),
         msg='MOVE_ALL_HOLES_FIRST is incompatible with CAPT_TYPE TWO_OUT',
         excp=gi.GameInfoError)
         # decos do not use capt_ok, but checks the locks directly
 
-    tester.test_rule(
-        'moveall_no_picker',
+    tester.test_rule('moveall_no_picker',
         rule=lambda ginfo: (ginfo.allow_rule == gi.AllowRule.MOVE_ALL_HOLES_FIRST
                             and (ginfo.xcpickown or ginfo.pickextra)),
         msg='MOVE_ALL_HOLES_FIRST is incompatible with all pickers',
@@ -757,35 +616,30 @@ def test_capture_rules(tester):
         # an alternate approach could be to not check any locks on pickers
         # locks are rarely used
 
-    tester.test_rule(
-        'pcm_multi',
+    tester.test_rule('pcm_multi',
         rule=lambda ginfo: (ginfo.pickextra == gi.CaptExtraPick.PICKCROSSMULT
                             and not ginfo.multicapt),
         msg='PICKCROSSMULT does nothing without MULICAPT',
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'scont_mcapt',
+    tester.test_rule('scont_mcapt',
         rule=lambda ginfo: (ginfo.capt_side in (gi.CaptSide.OWN_CONT,
                                                 gi.CaptSide.OPP_CONT)
                             and not ginfo.multicapt),
         msg='CAPT_SIDE *_CONT requires multicapt',
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'capt2out_cside',
+    tester.test_rule('capt2out_cside',
         rule=lambda ginfo: (ginfo.capt_side
                             and ginfo.capt_type == gi.CaptType.TWO_OUT),
         msg='Capture TWO_OUT cannot be used with CAPT_SIDE other than BOTH',
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'singles_no_mult',
+    tester.test_rule('singles_no_mult',
         rule=lambda ginfo: (ginfo.capt_type == gi.CaptType.SINGLETONS
                             and ginfo.multicapt),
         msg='Multiple captures with capture SINGLETONS is not supported',
         excp=gi.GameInfoError)
-
 
 
 # %% the base ruleset
@@ -794,7 +648,7 @@ def test_rules(ginfo, holes, skip=None):
     """Build the default Mancala rules.
     These can be deleted or modified by derived classes."""
 
-    tester = RuleTester(ginfo, holes, skip)
+    tester = rule_tester.RuleTester(ginfo, holes, skip)
 
     test_creation_rules(tester)
     test_pattern_rules(tester)
@@ -805,8 +659,7 @@ def test_rules(ginfo, holes, skip=None):
     test_no_sides_rules(tester)
     test_capture_rules(tester)
 
-    tester.test_rule(
-        'allowrule_mlen3',
+    tester.test_rule('allowrule_mlen3',
         rule=lambda ginfo: (ginfo.mlength == 3
                             and ginfo.allow_rule in
                                 {gi.AllowRule.TWO_ONLY_ALL_RIGHT,
@@ -818,8 +671,7 @@ def test_rules(ginfo, holes, skip=None):
         msg='Selected allow rule not supported for MLENGTH 3 games',
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'opp_empty_no_tuples',
+    tester.test_rule('opp_empty_no_tuples',
         rule=lambda ginfo: (ginfo.allow_rule in (gi.AllowRule.OPP_OR_EMPTY,
                                                   gi.AllowRule.RIGHT_HALF_1ST_OPE)
                             and ginfo.mlength > 1),
@@ -828,8 +680,7 @@ def test_rules(ginfo, holes, skip=None):
         # UDIRECT: could be supported but it isn't implemented
         # TERRITORY: what does it mean if the hole is already opp?
 
-    tester.test_rule(
-        'no_pres_opp_empty',
+    tester.test_rule('no_pres_opp_empty',
         rule=lambda ginfo: (ginfo.prescribed != gi.SowPrescribed.NONE
                             and ginfo.allow_rule == gi.AllowRule.OPP_OR_EMPTY),
         msg='Prescribed moves not supported with OPP_OR_EMPTY',
@@ -839,20 +690,17 @@ def test_rules(ginfo, holes, skip=None):
         # RIGHT_HALF_1ST_OPE can use prescribed sow because it doesn't
         # overlap with use of OPP_OR_EMPTY
 
-    tester.test_rule(
-        'sow_own_needs_stores',
+    tester.test_rule('sow_own_needs_stores',
         rule=lambda ginfo: ginfo.sow_own_store and not ginfo.stores,
         msg='SOW_OWN_STORE requires STORES',
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'sow_own_nocapt',
+    tester.test_rule('sow_own_nocapt',
         rule=lambda ginfo: ginfo.sow_own_store and ginfo.nocaptmoves,
         msg='SOW_OWN_STORE cannot be used with NOCAPTMOVES',
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'sow_own_not_rules',
+    tester.test_rule('sow_own_not_rules',
         rule=lambda ginfo: (ginfo.sow_own_store
                             and ginfo.sow_rule in
                                 (gi.SowRule.OWN_SOW_CAPT_ALL,
@@ -861,22 +709,19 @@ def test_rules(ginfo, holes, skip=None):
         msg='SOW_OWN_STORE is not supported with the selected sow rule',
         excp=NotImplementedError)
 
-    tester.test_rule(
-        'no_opp_n_sparam',
+    tester.test_rule('no_opp_n_sparam',
         rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.NO_SOW_OPP_NS
                             and not ginfo.sow_param),
         msg='NO_SOW_OPP_NS requires sow_param',
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'max_sow_param',
+    tester.test_rule('max_sow_param',
         rule=lambda ginfo: (not ginfo.sow_param
                             and ginfo.sow_rule == gi.SowRule.MAX_SOW),
         msg='Sow rule MAX_SOW requires that sow_param be greater than 0',
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'lcapt_no_lnext',
+    tester.test_rule('lcapt_no_lnext',
         rule=lambda ginfo: (ginfo.sow_rule in (gi.SowRule.LAP_CAPT,
                                                gi.SowRule.LAP_CAPT_OPP_GETS,
                                                gi.SowRule.LAP_CAPT_SEEDS)
@@ -886,15 +731,13 @@ def test_rules(ginfo, holes, skip=None):
         excp=NotImplementedError)
         # would need to carefully decide how it would work
 
-    tester.test_rule(
-        'ogol_no_lnext',
+    tester.test_rule('ogol_no_lnext',
         rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.LAP_CAPT_OPP_GETS
                             and ginfo.mlaps == gi.LapSower.LAPPER_NEXT),
         msg='LAP_CAPT_OPP_GETS is not supported with LAPPER_NEXT',
         excp=NotImplementedError)
 
-    tester.test_rule(
-        'sow_own_prescribed',
+    tester.test_rule('sow_own_prescribed',
         rule=lambda ginfo: (ginfo.sow_own_store
                             and ginfo.prescribed in
                                 (gi.SowPrescribed.BASIC_SOWER,
@@ -905,8 +748,7 @@ def test_rules(ginfo, holes, skip=None):
         msg='SOW_OWN_STORE is ignored for the selected first prescribed sow',
         warn=True)
 
-    tester.test_rule(
-        'sow1opp_rturn',
+    tester.test_rule('sow1opp_rturn',
         rule=lambda ginfo: (ginfo.prescribed == gi.SowPrescribed.SOW1OPP
                             and ginfo.repeat_turn),
         msg='Prescribed sow of SOW1OPP is not support with repeat turns',
@@ -914,35 +756,30 @@ def test_rules(ginfo, holes, skip=None):
         # SOW1OPP is used for 2 turns but the prescribed sower uses mcount
         # repeat turns would exhaust it on the first mover
 
-    tester.test_rule(
-        'visit_opp_req_mlap',
+    tester.test_rule('visit_opp_req_mlap',
         rule=lambda ginfo: ginfo.visit_opp and ginfo.mlaps == gi.LapSower.OFF,
         msg='VISIT_OPP requires MLAPS',
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'sow_start_skip_incomp',
+    tester.test_rule('sow_start_skip_incomp',
         rule=lambda ginfo: ginfo.sow_start and ginfo.skip_start,
         msg='SOW_START and SKIP_START do not make sense together',
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'blocks_wo_rounds',
+    tester.test_rule('blocks_wo_rounds',
         rule=lambda ginfo: (ginfo.blocks
                             and not sow_blkd_div(ginfo)
                             and not ginfo.rounds),
         msg='BLOCKS without ROUNDS or SOW_BLKD_DIV(_NR) does nothing',
         warn=True)
 
-    tester.test_rule(
-        'rstarter_wo_rounds',
+    tester.test_rule('rstarter_wo_rounds',
         rule=lambda ginfo: not ginfo.rounds
             and ginfo.round_starter != gi.RoundStarter.ALTERNATE,
         msg='ROUND_STARTER requires ROUNDS',
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'mx_round_limit',
+    tester.test_rule('mx_round_limit',
         both_objs=True,
         rule=lambda ginfo, holes: (ginfo.rounds
                                    and ginfo.goal == gi.Goal.MAX_SEEDS
@@ -951,52 +788,45 @@ def test_rules(ginfo, holes, skip=None):
             less the holes per side""",
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'rnd_goals_rounds',
+    tester.test_rule('rnd_goals_rounds',
         rule=lambda ginfo: (ginfo.goal in round_tally.RoundTally.GOALS
                             and not ginfo.rounds),
         msg='RND_* goal requires game be played in rounds',
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'rnd_goals_gp1',
+    tester.test_rule('rnd_goals_gp1',
         rule=lambda ginfo: (ginfo.goal in round_tally.RoundTally.GOALS
                             and ginfo.goal_param <= 0),
         msg="""RND_* goal requires GOAL_PARAM be greater than 0 to
             define win condition""",
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'rnd_goals_no_fill',
+    tester.test_rule('rnd_goals_no_fill',
         rule=lambda ginfo: (ginfo.goal in round_tally.RoundTally.GOALS
                             and ginfo.round_fill),
         msg='RND_* goal does not use round_fill',
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'move_one_start',
+    tester.test_rule('move_one_start',
         rule=lambda ginfo: ginfo.move_one and not ginfo.sow_start,
         msg='MOVE_ONE requires SOW_START',
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'xc_draw1_sowstart',
+    tester.test_rule('xc_draw1_sowstart',
         rule=lambda ginfo: (ginfo.presowcapt == gi.PreSowCapt.DRAW_1_XCAPT
                             and ginfo.sow_start),
         msg="""DRAW_1_XCAPT with SOW_START will capture when start hole
             has 2 seeds (1 is drawn)""",
         warn=True)
 
-    tester.test_rule(
-        'presowcapt_locks',
+    tester.test_rule('presowcapt_locks',
         rule=lambda ginfo: ginfo.presowcapt and ginfo.moveunlock,
         msg='PRESOWRULEs are not supported with MOVEUNLOCK',
         excp=gi.GameInfoError)
         # locks have two purposes: don't capt from locks and moveall first
         # see no need to make these compatible with presowcapt
 
-    tester.test_rule(
-        'needs_moves',
+    tester.test_rule('needs_moves',
         rule=lambda ginfo: (ginfo.min_move == 1
                             and ginfo.sow_start
                             and not ginfo.move_one),
@@ -1004,50 +834,43 @@ def test_rules(ginfo, holes, skip=None):
         excp=gi.GameInfoError)
         # pick-up a seed, sow it back into the same hole -> no change of state
 
-    tester.test_rule(
-        'mmg1_mustshare',
+    tester.test_rule('mmg1_mustshare',
         rule=lambda ginfo: ginfo.min_move > 1 and ginfo.mustshare,
         msg='Shared seeds from MUSTSHARE might not be playable with min_move > 1',
-        warn=PRINT_MSG)
+        warn=rule_tester.PRINT_MSG)
 
-    tester.test_rule(
-        'unfed_mustshare',
+    tester.test_rule('unfed_mustshare',
         rule=lambda ginfo: (ginfo.unclaimed == gi.EndGameSeeds.UNFED_PLAYER
                             and not ginfo.mustshare),
         msg='EndGameSeeds UNFED_PLAYER cannot be used without MUSTSHARE',
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'unfed_quitter',
+    tester.test_rule('unfed_quitter',
         rule=lambda ginfo: ginfo.quitter == gi.EndGameSeeds.UNFED_PLAYER,
         msg="""EndGameSeeds UNFED_PLAYER should not be used as a QUITTER
             (DONT_SCORE will be used)""",
         warn=True)
 
-    tester.test_rule(
-        'p1m1_conflict',
+    tester.test_rule('p1m1_conflict',
         rule=lambda ginfo: (ginfo.prescribed == gi.SowPrescribed.PLUS1MINUS1
                             and (ginfo.sow_start or ginfo.move_one)),
         msg='PLUS1MINUS1 is incompatible with SOW_START and/or MOVE_ONE',
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'too_many_udir',
+    tester.test_rule('too_many_udir',
         both_objs=True,
         rule=lambda ginfo, holes: len(ginfo.udir_holes) > holes,
         msg='Too many udir_holes specified',
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'udir_oo_range',
+    tester.test_rule('udir_oo_range',
         both_objs=True,
         rule=lambda ginfo, holes: any(udir < 0 or udir >= holes
                                       for udir in ginfo.udir_holes),
         msg='Udir_holes value out of range 0..nbr_holes-1',
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'udir_gs_not',
+    tester.test_rule('udir_gs_not',
         rule=lambda ginfo: (ginfo.udirect and
                             ginfo.grandslam == gi.GrandSlam.NOT_LEGAL),
         msg='UDIR_HOLES and GRANDLAM=Not Legal are incompatible',
@@ -1055,8 +878,7 @@ def test_rules(ginfo, holes, skip=None):
         # no games use these two features together,
         # implement when there's a use
 
-    tester.test_rule(
-        'udir_bad_allowrule',
+    tester.test_rule('udir_bad_allowrule',
         rule=lambda ginfo: (ginfo.allow_rule not in  {
                                   gi.AllowRule.NONE,
                                   gi.AllowRule.SINGLE_ONLY_ALL,
@@ -1073,8 +895,7 @@ def test_rules(ginfo, holes, skip=None):
         # allow rules which do not depend on sow direction are fine
         # listing those so new allow rules are excluded with code changes
 
-    tester.test_rule(
-        'odd_split_udir',
+    tester.test_rule('odd_split_udir',
         both_objs=True,
         rule=lambda ginfo, holes: (ginfo.sow_direct == gi.Direct.SPLIT
                                    and holes % 2
@@ -1083,8 +904,7 @@ def test_rules(ginfo, holes, skip=None):
             but center hole not listed in udir_holes""",
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        'sdir_split',
+    tester.test_rule('sdir_split',
         both_objs=True,
         rule=lambda ginfo, holes: (ginfo.udirect
                                    and len(ginfo.udir_holes) != holes
@@ -1092,8 +912,7 @@ def test_rules(ginfo, holes, skip=None):
         msg= 'Odd choice of sow direction when udir_holes != nbr_holes',
         warn=True)
 
-    tester.test_rule(
-        'gs_not_legal_no_tuple',
+    tester.test_rule('gs_not_legal_no_tuple',
         rule=lambda ginfo: (ginfo.mlength > 1 and
                             ginfo.grandslam == gi.GrandSlam.NOT_LEGAL),
         msg='MLENGTH > 1 and GRANDLAM = Not Legal is not supported',
@@ -1102,15 +921,13 @@ def test_rules(ginfo, holes, skip=None):
         # UDIRECT: partials hole activation not supported
         # TERRITORY: partial side ownership is not implemented
 
-    tester.test_rule(
-        'short_no_blocks',
+    tester.test_rule('short_no_blocks',
         rule=lambda ginfo: (ginfo.round_fill == gi.RoundFill.SHORTEN
                             and not ginfo.blocks),
         msg='RoundFill SHORTEN without BLOCKS, yields an odd game dynamic',
         warn=True)
 
-    tester.test_rule(
-        'pick_rend_agree',
+    tester.test_rule('pick_rend_agree',
         rule=lambda ginfo: (
             ginfo.rounds in (gi.Rounds.END_S_SEEDS,
                              gi.Rounds.END_2S_SEEDS)

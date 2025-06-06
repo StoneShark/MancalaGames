@@ -8,8 +8,8 @@ Created on Sat Nov  2 15:39:39 2024
 
 
 import game_interface as gi
-import ginfo_rules
 import mancala
+import rule_tester
 import sower_decos as sowd
 import two_cycle
 
@@ -24,7 +24,7 @@ def test_rules(ginfo, holes, skip=None):
         - change board size, but it must be even
     Mancala rules are not tested."""
 
-    tester = ginfo_rules.RuleTester(ginfo, holes, skip)
+    tester = rule_tester.RuleTester(ginfo, holes, skip)
 
     tester.test_rule(
         'even_holes',

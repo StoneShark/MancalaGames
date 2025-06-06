@@ -187,7 +187,7 @@ class BehaviorIf(abc.ABC):
         """Show the owner ship arrow if enabled by the display option."""
 
         otext = ''
-        if self.btn.game_ui.vars.owner_arrows.get():
+        if self.btn.game_ui.tkvars.owner_arrows.get():
             if self.btn.rotate_text():
                 if self.btn.props.owner is True:
                     otext += DN_ARROW
@@ -230,7 +230,7 @@ class BehaviorIf(abc.ABC):
         self.orient_text()
 
         if (self.btn.non_play_grid
-                and self.btn.game_ui.vars.touch_screen.get()):
+                and self.btn.game_ui.tkvars.touch_screen.get()):
             self.btn.itemconfig(self.btn.rclick_id, state='normal')
         else:
             self.btn.itemconfig(self.btn.rclick_id, state='hidden')
@@ -301,7 +301,7 @@ class BehaviorIf(abc.ABC):
                 self.btn.bind('<Button-1>', self.btn.left_click)
                 self.btn.unbind('<Button-3>')
 
-            if self.btn.game_ui.vars.touch_screen.get():
+            if self.btn.game_ui.tkvars.touch_screen.get():
                 self.btn.itemconfig(self.btn.rclick_id, state='normal')
             else:
                 self.btn.itemconfig(self.btn.rclick_id, state='hidden')
@@ -326,7 +326,7 @@ class BehaviorIf(abc.ABC):
             self.btn.bind('<Button-1>', self.btn.left_click)
             self.btn.bind('<Button-3>', self.btn.right_click)
 
-            if self.btn.game_ui.vars.touch_screen.get():
+            if self.btn.game_ui.tkvars.touch_screen.get():
                 self.btn.itemconfig(self.btn.rclick_id, state='normal')
             else:
                 self.btn.itemconfig(self.btn.rclick_id, state='hidden')

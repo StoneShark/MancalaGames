@@ -26,8 +26,8 @@ import dataclasses as dc
 
 import animator
 import game_interface as gi
-import ginfo_rules
 import mancala
+import rule_tester
 import sower_decos
 
 from game_logger import game_log
@@ -40,7 +40,7 @@ def test_rules(ginfo, holes, skip=None):
 
     mancala.Mancala.rules(ginfo, holes, skip=skip)
 
-    tester = ginfo_rules.RuleTester(ginfo, holes, skip)
+    tester = rule_tester.RuleTester(ginfo, holes, skip)
 
     tester.test_rule(
         'bo_no_sides',

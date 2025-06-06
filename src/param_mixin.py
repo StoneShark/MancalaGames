@@ -102,17 +102,6 @@ def goal_param_desc(game_config):
 class ParamMixin:
     """A mixin to handle the UI elements for game parameters."""
 
-    master = None
-    tkvars = {}
-    tktexts = {}
-    params = {}
-    udir_frame = {}
-
-
-    def update_desc(self, option, event=None):
-        """A method to update a possible description box.
-        It does nothing by default"""
-
 
     def _get_boxes_config(self, param, game_config=None):
         """Return the number items for the list for name."""

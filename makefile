@@ -176,6 +176,7 @@ UNIT_TESTS += test_negamax.cov
 UNIT_TESTS += test_new_game.cov
 UNIT_TESTS += test_patterns.cov
 UNIT_TESTS += test_round_tally.cov
+UNIT_TESTS += test_rule_tester.cov
 UNIT_TESTS += test_same_side.cov
 UNIT_TESTS += test_sower.cov
 UNIT_TESTS += test_two_cycle.cov

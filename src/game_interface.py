@@ -12,7 +12,6 @@ Created on Thu Mar  9 08:38:28 2023
 
 # %% imports
 
-import abc
 import dataclasses as dc
 import enum
 
@@ -563,78 +562,3 @@ class MoveTpl(tuple):
         """Return a new MoveTpl with a new direction."""
 
         return MoveTpl(*self[:-1], direct)
-
-
-# %%  game interface abstract base class -- the UI requires these
-
-class GameInterface(abc.ABC):
-    """A mixin of interfaces required by the UI for a mancala game.
-    The mancala_ui calls these.
-
-    There are also direct read/assignments to Mancala attributes."""
-
-    @abc.abstractmethod
-    def get_hole_props(self, row, pos):
-        """Used to get the properties of the specified hole,
-        used for refresh of UI.
-        row: int - 0 top row, 1 bottom row (opposite of player)
-        pos:  int -  range 0..nbr_holes//2
-        Return: HoleProps"""
-
-    @abc.abstractmethod
-    def get_allowable_holes(self):
-        """Return: a list of positions that can be played by
-        the current player. Each hole is either playable or not,
-        it can't be only left or right click playable."""
-
-    @abc.abstractmethod
-    def new_game(self, new_round=False):
-        """Create a new game or new round based on new_round ok."""
-
-    @abc.abstractmethod
-    def end_game(self, *, quitter, user, game=True):
-        """User requested to end the game or the game ended in an
-        ENDLESS looping condition.
-        Return: WinCond"""
-
-    @abc.abstractmethod
-    def is_new_round_playable(self):
-        """Determine if the new round is not playable.
-        Territory games with start_patterns or allow_rule
-        might not be playable for the first player.
-
-        Force a new game, if it is not.
-        Return: if playable return True else False"""
-
-    @abc.abstractmethod
-    def move(self, move):
-        """Select seeds from hole (move) and sow per game rules.
-        move:  one of:
-            int -  range 0..holes (pos)
-            pair - pos, direction for user choose holes
-            tuple - row, pos, direct for moves from either side
-        All steps of a move are performed, including determining
-        if the game is over.
-        Return: None or WinCond"""
-
-    @abc.abstractmethod
-    def test_pass(self):
-        """If no valid moves, swap turn and return True.
-        Can't put this in game move or it will break the minimaxer.
-        Return: True current player must pass"""
-
-    @abc.abstractmethod
-    def win_message(self, win_cond):
-        """Return a game appropriate win message based on WinCond.
-        Return a window title and message string."""
-
-    @abc.abstractmethod
-    def rtally_param_func(self):
-        """If there is a rount tally return a function
-        that returns the true and false tallies for the
-        parameter"""
-
-    @abc.abstractmethod
-    def params_str(self):
-        """Return a string describing the parameters of the game.
-        Used in saved game_logs."""

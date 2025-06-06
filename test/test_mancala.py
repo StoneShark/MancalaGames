@@ -37,7 +37,6 @@ from context import end_move_rounds as emr
 from context import game_constants as gconsts
 from context import game_interface as gi
 from context import game_logger
-from context import ginfo_rules
 from context import incrementer
 from context import mancala
 from context import move_data
@@ -47,7 +46,6 @@ import utils
 
 from game_interface import AllowRule
 from game_interface import ChildType
-from game_interface import Direct
 from game_interface import Goal
 from game_interface import RoundFill
 from game_interface import WinCond
@@ -1266,7 +1264,7 @@ class TestWinMessage:
         maxgame.mdata.user_end = user_end
         maxgame.mdata.winner = True
 
-        assert maxgame.win_reason_str(win_cond)
+        assert maxgame._win_reason_str(win_cond)
 
 
     @pytest.mark.parametrize('game_fixt', ['maxgame', 'depgame', 'tergame'])

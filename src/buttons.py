@@ -133,7 +133,8 @@ class HoleButton(tk.Canvas):
                 outline='', fill=color, stipple=density)
             self.tag_bind(self.rclick_id, '<Button-1>', self.right_click)
 
-            if not self.split_grids or not self.game_ui.vars.touch_screen.get():
+            if (not self.split_grids
+                    or not self.game_ui.tkvars.touch_screen.get()):
                 self.itemconfig(self.rclick_id, state='hidden')
 
         # show grids and filter cw/ccw sow based on allowable
@@ -205,7 +206,7 @@ class HoleButton(tk.Canvas):
         and/or owner."""
 
         game = self.game_ui.game
-        if (not self.game_ui.vars.facing_players.get()
+        if (not self.game_ui.tkvars.facing_players.get()
                 or game.info.no_sides):
             return False
 
@@ -345,7 +346,7 @@ class StoreButton(tk.Canvas):
         if key == TEXT:
             self.itemconfig(self.text_id, text=value)
 
-            if self.game_ui.vars.facing_players.get() and self.owner:
+            if self.game_ui.tkvars.facing_players.get() and self.owner:
                 self.itemconfig(self.text_id, angle=180)
             else:
                 self.itemconfig(self.text_id, angle=0)

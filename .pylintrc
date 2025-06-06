@@ -31,6 +31,12 @@ disable=consider-using-assignment-expr,
 	too-many-ancestors,
 	global-statement
 
+[TYPECHECK]
+
+# relying on the not checking Mixin members 
+# uncomment to turn on
+#ignored-checks-for-mixins=
+
 [DESIGN]
 
 # Maximum number of arguments for function / method.

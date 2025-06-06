@@ -6,14 +6,12 @@ game play.
 
 Created on Thu Mar  2 14:38:17 2023
 @author: Ann"""
-# pylint: disable=too-many-lines
 
 # %% imports
 
 import functools as ft
 import traceback
 import tkinter as tk
-import webbrowser
 
 import ai_player
 import animator
@@ -28,10 +26,9 @@ import game_tally as gt
 import mancala
 import man_config
 import man_history
-import man_path
+import man_ui_cmd_mixins as ui_cmds
 import round_tally
 import ui_utils
-import variants
 
 from game_logger import game_log
 
@@ -40,18 +37,10 @@ from game_logger import game_log
 
 AI_DELAY = [5, 1000, 4000]
 
-ANI_STEP = 25
-
-NO_TALLY_OP = 0
-VIS_TALLY_OP = 1
-RET_TALLY_OP = 2
-
 RTURN_QUERY = 10
 RTURN_QFREQ = 5
 
 ROUND = 'round'
-DEBUG = 'debug'
-ALL = 'all'
 
 
 # %%
@@ -102,54 +91,24 @@ class TkVars:
         self.ani_active = tk.BooleanVar(man_ui.master, ani_active)
 
 
-class GameSetup:
-    """Manage a game setup.
-    Support entering game setup mode and keep the setup
-    so that we can return to it."""
-
-    def __init__(self, game_ui):
-
-        self.game_ui = game_ui
-        self.state = None
-
-
-    def setup_game(self):
-        """Attempt to enter setup mode."""
-
-        if self.game_ui.set_game_mode(buttons.Behavior.SETUP):
-            animator.set_active(False, clear_queue=True)
-
-
-    def save_setup(self):
-        """Save the game setup."""
-
-        self.state = self.game_ui.game.state
-
-
-    def reset_setup(self):
-        """Reset to a previous board setup."""
-
-        if self.state:
-            self.game_ui.game.state = self.state
-            self.game_ui.refresh()
-            self.game_ui.start_it()
-            return
-
-        ui_utils.showerror(self.game_ui,
-                           'Board Setup',
-                           'There has been no previous board setup.')
-
-
 # %%  mancala ui
 
-class MancalaUI(tk.Frame):
+class MancalaUI(ui_cmds.VariCmdsMixin,
+                ui_cmds.SetupCmdsMixin,
+                ui_cmds.MoveCmdsMixin,
+                ui_cmds.AiCtrlCmdsMixin,
+                ui_cmds.ShowCmdsMixin,
+                ui_cmds.AniCommandsMixin,
+                ui_cmds.GLogCmdsMixin,
+                ui_cmds.DebugCmdsMixin,
+                ui_cmds.HelpMenuCmdsMixin,
+                tk.Frame):
     """A manacala UI."""
 
     def __init__(self, game, player_dict, *, player=None, root_ui=None):
         """Create the UI for a mancala game.
 
-        game: class built on GameInterface - provide the mechanics of
-        the game w/o any UI
+        game: class to provide the mechanics of the game w/o any UI
 
         player_dict: the player element from game config file;
         a dictionary of parameters to configure the ai player
@@ -163,17 +122,12 @@ class MancalaUI(tk.Frame):
         application provide the tk root."""
         # pylint: disable=too-many-statements
 
-        if not isinstance(game, gi.GameInterface):
-            raise TypeError('Missing mancala_ui.GameInterface in game.')
-
         self.game = game
         self.info = self.game.info
         self.mode = buttons.Behavior.GAMEPLAY
         self.player = player if player else \
                           ai_player.AiPlayer(self.game, player_dict)
-        self.setup = GameSetup(self)
-        self._swap_ok = True
-        self._varier = None       # used when variations are selected
+        self.swap_ok = True
         self.wcond = None   #  used between the movers and epilogs
         self.saved_move = None
 
@@ -196,8 +150,8 @@ class MancalaUI(tk.Frame):
         hsize = man_config.CONFIG.get_int('history_size')
         self.history = man_history.HistoryManager(hsize,
                                                   mancala.GameState.str_one)
-        self.vars = TkVars(self, player_dict)
-        self._set_difficulty()
+        self.tkvars = TkVars(self, player_dict)
+        self.ai_set_difficulty()
 
         self.pack(expand=True, fill=tk.BOTH)
 
@@ -215,7 +169,7 @@ class MancalaUI(tk.Frame):
         self._add_board()
 
         tally = man_config.CONFIG.get_bool('show_tally')
-        self.vars.show_tally.set(tally)
+        self.tkvars.show_tally.set(tally)
         if not tally:
             self.tally_frame.forget()
 
@@ -223,8 +177,8 @@ class MancalaUI(tk.Frame):
         animator.configure(font=man_config.CONFIG.get_ani_font(),
                            msg_mult=man_config.CONFIG.get_int('ani_msg_mult'),
                            bg_color=man_config.CONFIG['ani_background'])
-        self._reset_ani_state()
-        self._reset_ani_delay()
+        self.ani_reset_state()
+        self.ani_reset_delay()
 
         self._no_endless_sows()
         self._new_game()
@@ -365,18 +319,11 @@ class MancalaUI(tk.Frame):
         traceback.print_exception(args[0], args[1], args[2])
 
 
-    def _set_log_level(self):
-        """Set the game log level"""
-
-        game_log.level = self.vars.log_level.get()
-
-
     def _create_menus(self):
         """Create the game control menus.
 
         Do keybinds that should be disabled during animations
         in _key_bindings."""
-        # pylint: disable=too-many-statements
 
         self._menubar = tk.Menu(self.master)
         self.master.config(menu=self._menubar)
@@ -386,10 +333,11 @@ class MancalaUI(tk.Frame):
 
         gamemenu.add_separator()
         concede = self.game.info.unclaimed != self.game.info.quitter
+        crounds = self.game.info.rounds and concede
         gamemenu.add_command(
             label='Concede Round',
             command=ft.partial(self.end_game, quitter=False, game=False),
-            state=tk.NORMAL if self.game.info.rounds and concede else tk.DISABLED)
+            state=tk.NORMAL if crounds else tk.DISABLED)
         gamemenu.add_command(
             label='Concede Game',
             command=ft.partial(self.end_game, quitter=False, game=True),
@@ -406,194 +354,22 @@ class MancalaUI(tk.Frame):
         enable_no_endless = self.game.info.mlaps and not self.game.info.udirect
         gamemenu.add_checkbutton(
             label='Disallow Endless Sows',
-            variable=self.vars.no_endless,
+            variable=self.tkvars.no_endless,
             onvalue=True, offvalue=False,
             command=self._no_endless_sows,
             state=tk.NORMAL if enable_no_endless else tk.DISABLED)
 
-        gamemenu.add_separator()
-        from_file = hasattr(self.game, ckey.FILENAME)
-
-        gamemenu.add_command(label='Config Variant...',
-                             command=self._reconfigure,
-                             state=tk.NORMAL if from_file else tk.DISABLED )
-        gamemenu.add_command(label='Variant Settings...',
-                             command=self._var_settings,
-                             state=tk.NORMAL if from_file else tk.DISABLED )
-        gamemenu.add_command(label='Revert Variant...',
-                             command=self._revert_variant,
-                             state=tk.NORMAL if from_file else tk.DISABLED )
-
-        gamemenu.add_separator()
-        gamemenu.add_command(label='Setup Game',
-                             command=self.setup.setup_game)
-        gamemenu.add_command(label='Reset to Setup',
-                             command=self.setup.reset_setup)
+        self.vari_add_menu_cmds(gamemenu)
+        self.setup_add_menu_cmds(gamemenu)
         self._menubar.add_cascade(label='Game', menu=gamemenu)
 
-        movemenu = tk.Menu(self._menubar, name='move')
-        movemenu.add_command(label='Undo Move', command=self._undo,
-                             accelerator='Ctrl-z')
-        movemenu.add_command(label='Redo Move', command=self._redo,
-                             accelerator='Ctrl-Shift-z')
-        movemenu.add_separator()
-        movemenu.add_command(label='Swap Sides', command=self._swap_sides)
-        self._menubar.add_cascade(label='Move', menu=movemenu)
-
-        aimenu = tk.Menu(self._menubar, name='player')
-        aimenu.add_checkbutton(label='AI Player Active',
-                               variable=self.vars.ai_active,
-                               onvalue=True, offvalue=False,
-                               command=self.schedule_ai)
-        aimenu.add_separator()
-        aimenu.add_radiobutton(label='No AI Delay',
-                               variable=self.vars.ai_delay, value=0)
-        aimenu.add_radiobutton(label='Short AI Delay',
-                               variable=self.vars.ai_delay, value=1)
-        aimenu.add_radiobutton(label='Long AI Delay',
-                               variable=self.vars.ai_delay, value=2)
-        aimenu.add_separator()
-        aimenu.add_radiobutton(label='Easy',
-                               value=0, variable=self.vars.difficulty,
-                               command=self._set_difficulty)
-        aimenu.add_radiobutton(label='Normal',
-                               value=1, variable=self.vars.difficulty,
-                               command=self._set_difficulty)
-        aimenu.add_radiobutton(label='Hard',
-                               value=2, variable=self.vars.difficulty,
-                               command=self._set_difficulty)
-        aimenu.add_radiobutton(label='Expert',
-                               value=3, variable=self.vars.difficulty,
-                               command=self._set_difficulty)
-        self._menubar.add_cascade(label='Player', menu=aimenu)
-
-        showmenu = tk.Menu(self._menubar, name='display')
-        showmenu.add_checkbutton(label='Show Tally Pane',
-                                 variable=self.vars.show_tally,
-                                 onvalue=True, offvalue=False,
-                                 command=self._toggle_tally)
-        showmenu.add_separator()
-        showmenu.add_checkbutton(label='Touch Screen',
-                                 variable=self.vars.touch_screen,
-                                 onvalue=True, offvalue=False,
-                                 command=self.refresh)
-        showmenu.add_checkbutton(label='Facing Players',
-                                 variable=self.vars.facing_players,
-                                 onvalue=True, offvalue=False,
-                                 command=self.toggle_facing)
-        showmenu.add_checkbutton(label='Ownership Arrows',
-                                 variable=self.vars.owner_arrows,
-                                 onvalue=True, offvalue=False,
-                                 command=self.refresh)
-        self._menubar.add_cascade(label='Display', menu=showmenu)
-
-        if animator.ENABLED:
-            animenu = tk.Menu(self._menubar, name='animator')
-            animenu.add_checkbutton(label='Animation Active',
-                                     variable=self.vars.ani_active,
-                                     onvalue=True, offvalue=False,
-                                     command=self._reset_ani_state,
-                                     accelerator='Ctrl-a')
-            animenu.add_separator()
-            animenu.add_command(label='Anim Speed Reset',
-                                 command=self._reset_ani_delay,
-                                 accelerator='=')
-            animenu.add_command(label='Anim Speed Faster',
-                                 command=self._inc_ani_speed,
-                                 accelerator='>')
-            animenu.add_command(label='Anim Speed Slower',
-                                 command=self._dec_ani_speed,
-                                 accelerator='<')
-            # these are always active when the animator is ENABLED
-            self.master.bind("<Control-a>", self._toggle_ani_active)
-            self.master.bind("<Key-equal>", self._reset_ani_delay)
-            self.master.bind("<Key-greater>", self._inc_ani_speed)
-            self.master.bind("<Key-less>", self._dec_ani_speed)
-            self._menubar.add_cascade(label='Animator', menu=animenu)
-
-        logmenu = tk.Menu(self._menubar, name='log')
-        logmenu.add_checkbutton(
-            label='Live Log',
-            onvalue=True, offvalue=False,
-            variable=self.vars.live_log,
-            command=lambda: setattr(game_log, 'live', self.vars.live_log.get()))
-        logmenu.add_command(label='Show Prev', command=game_log.prev)
-        logmenu.add_command(label='Show Log', command=game_log.dump)
-        logmenu.add_command(label='Save Log ...', command=self.save_log)
-        logmenu.add_separator()
-        logmenu.add_radiobutton(
-            label='Moves',
-            value=game_log.MOVE, variable=self.vars.log_level,
-            command=self._set_log_level)
-        logmenu.add_radiobutton(
-            label='Important',
-            value=game_log.IMPORT, variable=self.vars.log_level,
-            command=self._set_log_level)
-        logmenu.add_radiobutton(
-            label='Steps',
-            value=game_log.STEP, variable=self.vars.log_level,
-            command=self._set_log_level)
-        logmenu.add_radiobutton(
-            label='Information',
-            value=game_log.INFO, variable=self.vars.log_level,
-            command=self._set_log_level)
-        logmenu.add_radiobutton(
-            label='Detail',
-            value=game_log.DETAIL, variable=self.vars.log_level,
-            command=self._set_log_level)
-        logmenu.add_separator()
-        logmenu.add_checkbutton(label='Filter AI Scores',
-                                variable=self.vars.ai_filter,
-                                onvalue=True, offvalue=False,)
-        logmenu.add_checkbutton(label='Log AI Analysis',
-                                variable=self.vars.log_ai,
-                                onvalue=True, offvalue=False)
-        self._menubar.add_cascade(label='Log', menu=logmenu)
-
-        helpmenu = tk.Menu(self._menubar, name='name')
-        helpmenu.add_command(label='Help...', command=self._help)
-        helpmenu.add_command(label='About Game...', command=self._about)
-        helpmenu.add_command(label='About...',
-                             command=ft.partial(ui_utils.show_release, self))
-        self._menubar.add_cascade(label='Help', menu=helpmenu)
-
-        if man_config.CONFIG.get_bool('debug_menu'):
-
-            debugmenu = tk.Menu(self._menubar, name=DEBUG)
-            debugmenu.add_command(label='Print Params',
-                                  command=lambda: print(self.game.params_str()))
-            debugmenu.add_command(label='Print Consts',
-                                  command=lambda: print(self.game.cts))
-            pmenu = tk.Menu(self._menubar)
-            pmenu.add_command(label='Print All',
-                                  command=ft.partial(self._print_deco, ALL))
-            pmenu.add_separator()
-            for vname in sorted(vars(self.game.deco).keys()):
-                name = vname.title()
-                pmenu.add_command(label=f"Print {name}",
-                                  command=ft.partial(self._print_deco, vname))
-            debugmenu.add_cascade(label='Print Decos', menu=pmenu)
-            debugmenu.add_command(label='Print State',
-                                  command=lambda: print(self.game.state))
-            debugmenu.add_command(label='Print Inhibitor',
-                                  command=lambda: print(self.game.inhibitor))
-            debugmenu.add_command(label='Print Round Tally',
-                                  command=lambda: print(self.game.rtally))
-            debugmenu.add_command(label='Print mdata',
-                                  command=lambda: print(self.game.mdata))
-            debugmenu.add_separator()
-            debugmenu.add_command(label='Print AI Player',
-                                  command=lambda: print(self.player))
-            debugmenu.add_command(label='Print History',
-                                  command=lambda: print(self.history))
-            debugmenu.add_separator()
-            debugmenu.add_command(label='Swap Sides',
-                                  command=lambda: self._swap_sides(force=True))
-            debugmenu.add_command(label='Toggle Anim Print',
-                                  command=lambda: setattr(animator,
-                                                          'print_steps',
-                                                          not animator.print_steps))
-            self._menubar.add_cascade(label='Debug', menu=debugmenu)
+        self.move_add_menu(self._menubar)
+        self.ai_add_menu(self._menubar)
+        self.show_add_menu(self._menubar)
+        self.ani_add_menu(self._menubar)
+        self.glog_add_menu(self._menubar)
+        self.help_add_menu(self._menubar)
+        self.dbg_add_menu(self._menubar)
 
 
     def _menubar_state(self, active=True):
@@ -609,7 +385,7 @@ class MancalaUI(tk.Frame):
         self._menubar.entryconfig('Log', state=state)
         self._menubar.entryconfig('Help', state=state)
 
-        if DEBUG in self._menubar.children:
+        if ui_cmds.DEBUG in self._menubar.children:
             self._menubar.entryconfig('Debug', state=state)
 
 
@@ -617,8 +393,8 @@ class MancalaUI(tk.Frame):
         """Bind or unbind the keys that should not be active
         while the animations are running."""
 
-        bindings = [('<Control-z>', self._undo),
-                    ('<Control-Z>', self._redo),
+        bindings = [('<Control-z>', self.move_undo),
+                    ('<Control-Z>', self.move_redo),
                     ]
         ui_utils.key_bindings(self, bindings, active)
 
@@ -639,124 +415,9 @@ class MancalaUI(tk.Frame):
         animator.reset()
 
 
-    def _toggle_tally(self, vis_op=NO_TALLY_OP):
-        """Adjust tally frame visibility."""
-
-        if vis_op == VIS_TALLY_OP:
-            # force tally to be visible (status pane is needed)
-            self.tally_frame.pack(side=tk.TOP, expand=True, fill=tk.X)
-            self.vars.tally_was_off = not self.vars.show_tally.get()
-            self.vars.show_tally.set(True)
-
-        elif vis_op == RET_TALLY_OP and self.vars.tally_was_off:
-            # return tally to the state it was before VIS_TALLY_OP called
-            self.tally_frame.forget()
-            self.vars.show_tally.set(False)
-            self.vars.tally_was_off = False
-
-        elif self.mode == buttons.Behavior.GAMEPLAY:
-            # only allow user toggle when in GAMEPLAY state
-            if self.vars.show_tally.get():
-                self.tally_frame.pack(side=tk.TOP, expand=True, fill=tk.X)
-            else:
-                self.tally_frame.forget()
-
-        else:
-            self.bell()
-            self.vars.show_tally.set(True)
-
-
-    def toggle_facing(self):
-        """Players are facing eachother. Force a configure event,
-        it orients and sizes the dithering (for touch screen mode)
-        and then refresh to rotate the text."""
-
-        # all hole buttons are the same size
-        width = self.disp[0][0].winfo_width()
-        height = self.disp[0][0].winfo_height()
-
-        for pos in range(self.game.cts.holes):
-            self.disp[0][pos].event_generate("<Configure>",
-                                             width=width, height=height)
-        self.refresh()
-
-
-    @staticmethod
-    def _reset_ani_delay(_=None):
-        """Set config'ed or nominal animator speed."""
-
-        if animator.animator:
-            delay = man_config.CONFIG.get_int('ani_delay', 350)
-            animator.set_delay(delay)
-
-            print("Ani Delay=", animator.animator.delay)
-
-
-    @staticmethod
-    def _inc_ani_speed(_=None):
-        """Increase animation speed by reducing the delay between
-        steps."""
-
-        if animator.animator:
-            animator.set_delay(max(ANI_STEP, animator.animator.delay - ANI_STEP))
-            print("Ani Delay=", animator.animator.delay)
-
-
-    @staticmethod
-    def _dec_ani_speed(_=None):
-        """Decrease animation speed."""
-
-        if animator.animator:
-            animator.set_delay(animator.animator.delay + ANI_STEP)
-            print("Ani Delay=", animator.animator.delay)
-
-
-    def _toggle_ani_active(self, _=None):
-        """Toggle the animation state (active or not active).
-        Used by the key board binding."""
-
-        ani_active = not self.vars.ani_active.get()
-        self.vars.ani_active.set(ani_active)
-        animator.set_active(ani_active)
-
-
-    def _reset_ani_state(self):
-        """Reset the animation state to agree with the tk var."""
-
-        animator.set_active(self.vars.ani_active.get())
-
-
-    @staticmethod
-    def _try_help_file(filename, tag=None):
-        """Attempt to pop open the help file.
-        Return True if it no problems detected."""
-
-        pathname = man_path.get_path(filename, no_error=True)
-        if pathname:
-            if tag:
-                pathname += '#' + tag.replace(' ', '%20')
-
-            webbrowser.open('file:///' + pathname)
-            return True
-
-        return False
-
-
-    def _help(self):
-        """If the game has a help file, open it.
-        If not, try to open the about_games at the specified game name.
-        If that doesn't work, try the default help file.
-        If that doesn't work, pop up a "no help" message."""
-
-        _ = ((self.info.help_file
-              and self._try_help_file(self.info.help_file))
-             or self._try_help_file('about_games.html', self.info.name)
-             or self._try_help_file('mancala_help.html')
-             or ui_utils.QuietDialog(self, 'Help', 'Help not found.'))
-
-
-    def _rebuild(self, new_game, pdict, player):
-        """Destory and rebuild the game"""
+    def rebuild(self, new_game, pdict, player):
+        """Destory and rebuild the game. This is used by the
+        VariCmdsMixin--it must be here for the scope of MancalaUI."""
 
         if self.root is self.master:
             self.root.destroy()
@@ -768,66 +429,6 @@ class MancalaUI(tk.Frame):
             del animator.animator
 
         MancalaUI(new_game, pdict, player=player, root_ui=self.root)
-
-
-    def _reconfigure(self):
-        """Do popup to ask for reconfiguration and then
-        posibly rebuild self.
-
-        Do not call this if the game was not loaded from a file.
-        The filename attribute will not exist, it's added silently
-        by the game loader in man_config (hence the getattr below)."""
-
-        if not self._varier:
-            self._varier = variants.GameVariations(
-                                self, getattr(self.game, ckey.FILENAME))
-
-        with animator.animate_off():
-            rval = self._varier.reconfigure()
-            if not rval:
-                return
-
-        self._rebuild(*rval)
-
-
-    def _revert_variant(self):
-        """Revert to the game configuration."""
-
-        title = 'Revert Variant'
-        message = 'Are you sure you wish to revert to the main variant?'
-        do_it = ui_utils.ask_popup(self, title, message, ui_utils.OKCANCEL)
-        if not do_it:
-            return
-
-        if not self._varier:
-            self._varier = variants.GameVariations(
-                                self, getattr(self.game, ckey.FILENAME))
-
-        self._rebuild(*self._varier.rebuild())
-
-
-    def _var_settings(self):
-        """Popup the variation settings."""
-
-        if not self._varier:
-            self._varier = variants.GameVariations(
-                                self, getattr(self.game, ckey.FILENAME))
-        self._varier.settings()
-
-
-    def _about(self):
-        """Popup the about window."""
-
-        paragraphs = [man_config.remove_tags(para)
-                      for para in self.info.about.split('\n')
-                      if para.strip()]
-        ui_utils.QuietDialog(self, f'About {self.info.name}', paragraphs)
-
-
-    def save_log(self):
-        """Save the game log to the file, provide a string that
-        describes the game."""
-        game_log.save(self.game.params_str())
 
 
     def _button_state(self, allows, ai_turn, loc, aidx):
@@ -922,7 +523,7 @@ class MancalaUI(tk.Frame):
         turn = self.game.get_turn()
         allows = self.game.get_allowable_holes()
         turn_row = int(not turn)
-        ai_turn = self.vars.ai_active.get() and turn
+        ai_turn = self.tkvars.ai_active.get() and turn
         for row in range(2):
 
             player = row == turn_row
@@ -961,7 +562,7 @@ class MancalaUI(tk.Frame):
         game_log.new()
         game_log.turn(0, 'Start Game', self.game)
         self.history.record(self.game.state)
-        self._reset_ani_state()
+        self.ani_reset_state()
         self.schedule_ai()
 
 
@@ -986,7 +587,7 @@ class MancalaUI(tk.Frame):
 
         self.history.clear()
         self.player.clear_history()
-        self._swap_ok = True
+        self.swap_ok = True
         self.game.new_game(new_round)
         self.set_game_mode(buttons.Behavior.GAMEPLAY, force=True)
 
@@ -1050,9 +651,9 @@ class MancalaUI(tk.Frame):
         self.refresh()
         if mode == buttons.Behavior.GAMEPLAY:
             self.start_it()
-            self._toggle_tally(vis_op=RET_TALLY_OP)
+            self.show_toggle_tally(vis_op=ui_cmds.RET_TALLY_OP)
         else:
-            self._toggle_tally(vis_op=VIS_TALLY_OP)
+            self.show_toggle_tally(vis_op=ui_cmds.VIS_TALLY_OP)
         return True
 
 
@@ -1063,7 +664,7 @@ class MancalaUI(tk.Frame):
         for them here"""
 
         if self.set_game_mode(buttons.Behavior.GAMEPLAY):
-            self._reset_ani_state()
+            self.ani_reset_state()
             return True
         return False
 
@@ -1091,72 +692,13 @@ class MancalaUI(tk.Frame):
             ui_utils.WinPopup(self, title, message)
 
 
-    def _print_deco(self, deco):
-        """Print the decoration with name."""
-
-        if deco == ALL:
-            print(self.game.deco)
-        else:
-            print(f'\n{deco.title()}:\n')
-            print(getattr(self.game.deco, deco))
-
-
     def _no_endless_sows(self):
         """Rebuild the allowable deco with or without the
         deco to prevent moves from holes that would be endless
         sows."""
 
-        self.game.disallow_endless(self.vars.no_endless.get())
+        self.game.disallow_endless(self.tkvars.no_endless.get())
         self.refresh()
-
-
-    def _swap_sides(self, force=False):
-        """Allow a player to swap sides after the first
-        move, aka 'Pie Rule'.
-
-        Force is used in the debugging menu to always allow a
-        swap.
-
-        This is often used to nutralize the unfair advantage
-        that starter of some games has.  Not all mancala games
-        have an advantage for the starter, but allow it for all.
-
-        The AI history is cleared which currently only applies to
-        MCTS. This does seem extreme but the AI turn and node tree
-        have already been started correcting them seems error prone."""
-
-        game = self.game
-        if self.info.start_pattern in (gi.StartPattern.RANDOM,
-                                       gi.StartPattern.MOVE_RANDOM):
-            allowed = game.movers < 2 and self._swap_ok
-        else:
-            allowed = game.movers == 1
-
-        if not force and not allowed:
-            ui_utils.showerror(self, "Swap Not Allowed",
-                ["Swapping sides is only allowed:",
-                 """1. Before or after the first move for games
-                 using RANDOM and MOVE_RANDOM start patterns.""",
-                 "2. After the first move for other games.",
-                 """A swap counts as a move.
-                 Only one swap is allowed per game."""])
-            return
-
-        self._swap_ok = False
-        # do these here, so that it counts as a turn
-        # not in Mancala because swap_sides is used for other purposes
-        game.movers += 1
-        game.mcount += 1
-        game.turn = not game.turn
-        with animator.animate_off():
-            game.swap_sides()
-
-        self.player.clear_history()
-
-        self.refresh()
-        game_log.turn(game.mcount, "Swap Sides (pie rule)", game)
-
-        self.schedule_ai()
 
 
     def end_game(self, *, game, quitter):
@@ -1206,21 +748,13 @@ class MancalaUI(tk.Frame):
         self._new_game(not win_cond.is_game_over())
 
 
-    def _set_difficulty(self):
-        """Set the difficulty for the ai player."""
-
-        diff = self.vars.difficulty.get()
-        self.player.difficulty = diff
-        game_log.add(f'Changing difficulty {diff}', game_log.INFO)
-
-
     def _log_ai_desc(self, last_turn):
         """Add the ai description to the game log (Mancala doesn't
         know if the ai is playing)."""
 
         if (last_turn
-                and self.vars.ai_active.get()
-                and not self.vars.ai_filter.get()):
+                and self.tkvars.ai_active.get()
+                and not self.tkvars.ai_filter.get()):
             game_log.add(self.player.get_move_desc(), game_log.MOVE)
 
 
@@ -1258,7 +792,7 @@ class MancalaUI(tk.Frame):
             self._win_message_popup(self.wcond)
             self._new_game(not self.wcond.is_game_over())
 
-        if (not (self.vars.ai_active.get() and self.game.get_turn())
+        if (not (self.tkvars.ai_active.get() and self.game.get_turn())
                 and self.info.mustpass and self.game.test_pass()):
 
             player = gi.PLAYER_NAMES[not self.game.get_turn()]
@@ -1278,11 +812,11 @@ class MancalaUI(tk.Frame):
         self.refresh()
 
         if (self.mode == buttons.Behavior.GAMEPLAY
-                and self.vars.ai_active.get()
+                and self.tkvars.ai_active.get()
                 and self.game.get_turn()):
 
             self._cancel_pending_afters()
-            sel_delay = self.vars.ai_delay.get()
+            sel_delay = self.tkvars.ai_delay.get()
 
             self.master.config(cursor=ui_utils.AI_BUSY)
             self.after(AI_DELAY[sel_delay], self._ai_move)
@@ -1292,12 +826,12 @@ class MancalaUI(tk.Frame):
         """If it's the AI's turn, do a move. AI is top player."""
 
         if (self.mode == buttons.Behavior.GAMEPLAY
-                and self.vars.ai_active.get()
+                and self.tkvars.ai_active.get()
                 and self.game.get_turn()):
 
             self.master.config(cursor=ui_utils.AI_BUSY)
 
-            if not self.vars.log_ai.get():
+            if not self.tkvars.log_ai.get():
                 game_log.set_ai_mode()
 
             with animator.animate_off(), self.history.off():
@@ -1357,27 +891,3 @@ class MancalaUI(tk.Frame):
 
             else:
                 self.schedule_ai()
-
-
-    def _undo(self, _=None):
-        """Return to the previous state."""
-
-        state = self.history.undo()
-        if state:
-            self.game.state = state
-            self.refresh()
-            game_log.add('Move undone:\n' + str(state), game_log.IMPORT)
-        else:
-            self.bell()
-
-
-    def _redo(self, _=None):
-        """Return to an undone state state."""
-
-        state = self.history.redo()
-        if state:
-            self.game.state = state
-            self.refresh()
-            game_log.add('Move redone:\n' + str(state), game_log.IMPORT)
-        else:
-            self.bell()

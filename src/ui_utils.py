@@ -270,7 +270,7 @@ class WinPopup(tksimpledialog.Dialog):
         tk.Button(bframe, text='Dump Game', width=12,
                   command=game_log.dump).pack(side=tk.LEFT)
         tk.Button(bframe, text='Save Game', width=12,
-                  command=self.mancala_ui.save_log).pack(side=tk.LEFT)
+                  command=self.mancala_ui.glog_save_log).pack(side=tk.LEFT)
         tk.Button(bframe, text='Ok', width=12,
                   command=self.ok, default=tk.ACTIVE).pack(side='right')
 

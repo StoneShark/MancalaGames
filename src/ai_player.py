@@ -12,10 +12,10 @@ import random
 import ai_interface
 import cfg_keys as ckey
 import game_interface as gi
-import ginfo_rules
 import minimax
 import montecarlo_ts as mcts
 import negamax
+import rule_tester
 import same_side
 
 from game_logger import game_log
@@ -458,7 +458,7 @@ def test_player_rules(pdict, game):
     pdict will always be passed, game is the second optional
     object."""
 
-    tester = ginfo_rules.RuleTester(pdict, game)
+    tester = rule_tester.RuleTester(pdict, game)
 
     tester.test_rule(
         'def_diff',
