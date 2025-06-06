@@ -40,5 +40,4 @@ def fmsg(message, wide=False):
 
     if wide:
         return WIDEFILL.fill(RECOMP.sub(' ', message))
-    else:
-        return TEXTFILL.fill(RECOMP.sub(' ', message))
+    return TEXTFILL.fill(RECOMP.sub(' ', message))
