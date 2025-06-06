@@ -651,4 +651,5 @@ class HelpMenuCmdsMixin:
         paragraphs = [man_config.remove_tags(para)
                       for para in self.info.about.split('\n')
                       if para.strip()]
-        ui_utils.QuietDialog(self, f'About {self.info.name}', paragraphs)
+        ui_utils.QuietDialog(self, f'About {self.info.name}', paragraphs,
+                             wide=True)

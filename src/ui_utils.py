@@ -206,12 +206,13 @@ class TriStateCheckbutton(ttk.Checkbutton):
 class QuietDialog(tksimpledialog.Dialog):
     """A simple modal quiet dialog box."""
 
-    def __init__(self, master, title, message, fixed_form=False):
+    def __init__(self, master, title, message,
+                 *, fixed_form=False, wide=False):
 
         if fixed_form:
             self.msg = message
         else:
-            self.msg = fmt.fmsg(message)
+            self.msg = fmt.fmsg(message, wide)
         super().__init__(master, title)
 
 

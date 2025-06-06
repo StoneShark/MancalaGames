@@ -13,8 +13,9 @@ LINE_SEP = '\n\n'
 
 RECOMP = re.compile('\n *')
 TEXTFILL = textwrap.TextWrapper(width=50)
+WIDEFILL = textwrap.TextWrapper(width=75)
 
-def fmsg(message):
+def fmsg(message, wide=False):
     """Format a message.
 
     message may be a string or list of strings
@@ -31,6 +32,13 @@ def fmsg(message):
     Join them together with two blank lines."""
 
     if isinstance(message, list):
-        return LINE_SEP.join(TEXTFILL.fill(RECOMP.sub(' ', m))
-                             for m in message)
-    return TEXTFILL.fill(RECOMP.sub(' ', message))
+        if wide:
+            new_text = [WIDEFILL.fill(RECOMP.sub(' ', m)) for m in message]
+        else:
+            new_text = [TEXTFILL.fill(RECOMP.sub(' ', m)) for m in message]
+        return LINE_SEP.join(new_text)
+
+    if wide:
+        return WIDEFILL.fill(RECOMP.sub(' ', message))
+    else:
+        return TEXTFILL.fill(RECOMP.sub(' ', message))
