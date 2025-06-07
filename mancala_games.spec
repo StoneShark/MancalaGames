@@ -7,7 +7,7 @@ block_cipher = None
 ##  plays 
 
 play_a = Analysis(
-    ['src/play.py'],
+    ['src/play.pyw'],
     pathex=[],
     binaries=[],
     datas=[],
@@ -34,7 +34,7 @@ play_exe = EXE(
     bootloader_ignore_signals=False,
     strip=True,
     upx=True,
-    console=True,
+    console=False,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
