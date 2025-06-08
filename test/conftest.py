@@ -44,6 +44,7 @@ def pytest_addoption(parser):
     parser.addoption("--nbr_runs", action="store", default="10")
     parser.addoption("--run_slow", action="store_true", default=False)
     parser.addoption("--sim_fails", action="store_true", default=False)
+    parser.addoption("--ui_tests", action="store_true", default=False)
 
 
 def pytest_collection_modifyitems(config, items):
@@ -52,6 +53,12 @@ def pytest_collection_modifyitems(config, items):
         skipper = pytest.mark.skip(reason="Only run when --run_slow is given")
         for item in items:
             if "slow" in item.keywords:
+                item.add_marker(skipper)
+
+    if not config.getoption("--ui_tests"):
+        skipper = pytest.mark.skip(reason="Only run when --ui_tests is given")
+        for item in items:
+            if "ui_test" in item.keywords:
                 item.add_marker(skipper)
 
 

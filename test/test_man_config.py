@@ -872,6 +872,7 @@ class TestConfig:
         root.update()
 
 
+    @pytest.mark.ui_test
     @pytest.mark.parametrize('family, size, weight',
                               [('', '', ''),
                               ('Serif', '', ''),
@@ -901,6 +902,7 @@ class TestConfig:
         assert isinstance(config.get_ani_font(), tk.font.Font)
 
 
+    @pytest.mark.ui_test
     def test_colors(self, mocker, tmp_path, tk_root):
 
         path = os.path.join(tmp_path, 'mancala.ini')

@@ -355,7 +355,7 @@ TGRID_CASES = {
 
     }
 
-
+@pytest.mark.ui_test
 @pytest.mark.parametrize('casename', TGRID_CASES.keys())
 def test_render(casename):
     """Test if the button is drawn as expected with the
@@ -628,6 +628,7 @@ CLICK_CASES = {
     }
 
 
+@pytest.mark.ui_test
 @pytest.mark.parametrize('cname', CLICK_CASES.keys())
 def test_click(cname):
 

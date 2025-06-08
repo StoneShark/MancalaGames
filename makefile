@@ -79,17 +79,17 @@ $(GENEDHELPS): $(GAMES) $(HELPINPUTS) docs\\context.py
 #  tests
 
 unit_tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py src\\game_params.csv
-	-coverage run -m pytest -m unittest
+	-coverage run -m pytest -m unittest --ui_tests
 	coverage html
 
 
 integ_tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py src\\game_params.csv
-	-coverage run -m pytest -m integtest --sim_fails
+	-coverage run -m pytest -m integtest --sim_fails --ui_tests
 	coverage html
 
 
 tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py src\\game_params.csv
-	-coverage run -m pytest --sim_fails
+	-coverage run -m pytest --sim_fails --ui_tests
 	coverage html
 
 long_tests: stress_tests player_tests cov_unit_tests
@@ -137,7 +137,7 @@ vpath %.py .\\test
 
 .PHONY: %.test
 %.test: test\\context.py src\\game_params.csv $(subst .test,.py,$@)
-	coverage run -m pytest test\\$(subst .test,.py,$@) --sim_fails
+	coverage run -m pytest test\\$(subst .test,.py,$@) --sim_fails --ui_tests
 	coverage html
 
 # do a stress test of one game:   make Wari.stress
