@@ -5,8 +5,8 @@ play_mancala.exe        Allows selection of any preconfigured game (GameProps) f
                         games based on their rules. There is an option to select a random
                         game from the filter list.
 
-mancala_games.exe       Starts the mancala games editor. 
-                        Load, edit and save game config files.
+man_games_editor.exe    Starts the mancala games editor. 
+                        Load, edit and save game configuration files.
                         Play any game configuration.
                         Always runs from a command window to support live log display.
 
@@ -27,7 +27,7 @@ GameProps               The configuration files for the pre-configured games.
                         Edit or rename these as you like or create a parallel directory
                         with your favorites and own games. 
                         
-                        mancala_games starts in this directory when loading an initial 
+                        man_game_editor starts in this directory when loading an initial 
                         game; it does look in the current and parent directories for the 
                         GameProps (a few other places are checked too: docs, help, src).
 

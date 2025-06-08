@@ -9,7 +9,7 @@ Three computer players are provided: Negamaxer can only be used in games with al
 
 There are 3 ways to startup Mancala Games:
 
-1. **mancala_games.pyw** - allows adjustment of all parameters, does some error checking, game configurations can be loaded, saved and played.
+1. **man_games_editor.pyw** - allows adjustment of all parameters, does some error checking, game configurations can be loaded, saved, edited and played.
 1. **play_mancala.pyw** - allows any preconfigure game to be selected and play. Filter options control which game appear in the game list. Game parameters may not edited.
 1. **play.py** - allows starting a preconfigured game from a command line or via short cut.
 
@@ -44,7 +44,7 @@ Game play is broken up into small steps and each step is implemented as a decora
 ## Compatibility ##
 Mancala games can be run under Windows 10 & 11. Only standard python 3.12 (including Tk) is required so running from the source files is likely supported in other operating systems.
 
-Development of Mancala Games uses many specialized tools: The MancalaGames UI parameter definition table is in Excel. GNU-WIN32 make, grep and core utilities are used to script the build and test processes. Pytest is the test framework (Excel files are used to create test cases which are converted to CSV files by Pandas for actual test code). Some tests require python 3.12. Pyinstaller is used to create standalone executables. Documentation diagrams were created in LibreOffice Draw with pdf versions saved.
+Development of Mancala Games uses many specialized tools: The MancalaGames UI parameter definition table is in Excel. GNU-WIN32 make, grep and core utilities are used to script the build and test processes. Pytest is the test framework (Excel files are used to create test cases which are converted to CSV files by Pandas for actual test code). Pyinstaller is used to create standalone executables. Documentation diagrams were created in LibreOffice Draw with pdf versions saved.
 
 
 [^1]: Speed isn't an issue for moves by human players but the computer players simulate very many moves to choose one. One profiling experiment noted nearly a second deciding to return a constant (for direction); the decorator chain resolved it to basically zero.
