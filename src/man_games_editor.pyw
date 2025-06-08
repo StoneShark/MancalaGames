@@ -52,7 +52,7 @@ WTITLE = 'Mancala Game Editor'
 # %%  game params UI
 
 
-class MancalaGames(param_mixin.ParamMixin, ttk.Frame):
+class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
     """Main interface to select game parameters, save & load games,
     and play Mancala games."""
 
@@ -555,5 +555,5 @@ if __name__ == '__main__':
     ROOT = tk.Tk()
     param_mixin.register_int_validate(ROOT)
 
-    man_games = MancalaGames(ROOT)
+    man_games = MancalaGamesEditor(ROOT)
     man_games.mainloop()

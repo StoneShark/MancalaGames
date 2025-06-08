@@ -82,10 +82,10 @@ play_man_exe = EXE(
 )
 
 
-## mancala_games
+## man_games_editor
 
 man_games_a = Analysis(
-    ['src/mancala_games.pyw'],
+    ['src/man_games_editor.pyw'],
     pathex=[],
     binaries=[],
     datas=[],
@@ -107,7 +107,7 @@ man_games_exe = EXE(
     man_games_a.scripts,
     [],
     exclude_binaries=True,
-    name='mancala_games',
+    name='man_games_editor',
     debug=False,
     bootloader_ignore_signals=False,
     strip=True,

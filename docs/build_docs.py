@@ -24,7 +24,7 @@ from context import cfg_keys as ckey
 from context import game_classes
 from context import game_info as gi
 from context import man_config
-from context import mancala_games
+from context import man_games_editor
 from context import param_consts as pc
 
 
@@ -593,8 +593,8 @@ def write_params_help(filename):
     """Create the game_params help file."""
 
     tab_set = set(r.tab for r in PARAMS.values())
-    extra_tabs = tab_set - set(mancala_games.PARAM_TABS)
-    tabs = mancala_games.PARAM_TABS + tuple(extra_tabs)
+    extra_tabs = tab_set - set(man_games_editor.PARAM_TABS)
+    tabs = man_games_editor.PARAM_TABS + tuple(extra_tabs)
 
     with open(filename, 'w', encoding='utf-8') as ofile:
         write_html_header(ofile, "Mancala Game Parameters", PARAM_NAV)
