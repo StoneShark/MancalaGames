@@ -64,15 +64,11 @@ def _add_child_deco(game, capturer):
     only one child handler: bull/weg/waldas/tuzdek/children"""
 
     if game.info.child_type == gi.ChildType.NOCHILD:
-        pass
+        return capturer
 
-    elif game.info.child_type in (gi.ChildType.NORMAL,
-                                  gi.ChildType.ONE_CHILD):
-
-        if game.info.stores:
-            capturer = capt_decos.MakeChild(game, capturer)
-        else:
-            capturer = capt_decos.CaptureToChild(game, capturer)
+    if game.info.child_type in (gi.ChildType.NORMAL,
+                                gi.ChildType.ONE_CHILD):
+        capturer = capt_decos.MakeChild(game, capturer)
 
     elif game.info.child_type == gi.ChildType.WEG:
         capturer = capt_decos.MakeWegCapture(game, capturer)
@@ -141,10 +137,9 @@ def _add_capt_pick_deco(game, capturer):
     return capturer
 
 
-def deco_capturer(game):
-    """Build capture chain and return it."""
+def _add_base_capturer(game):
+    """Select the base capturer."""
 
-    # choose a base capturer
     if game.info.crosscapt:
         capturer = _add_cross_capt_deco(game)
 
@@ -157,6 +152,14 @@ def deco_capturer(game):
 
     else:
         capturer = capt_decos.CaptNone(game)
+
+    return capturer
+
+
+def deco_capturer(game):
+    """Build capture chain and return it."""
+
+    capturer = _add_base_capturer(game)
 
     # add decorators to the base capturer
     if game.info.multicapt:
@@ -172,6 +175,9 @@ def deco_capturer(game):
     capturer = _add_child_deco(game, capturer)
     capturer = _add_capt_pick_deco(game, capturer)
     capturer = _add_grand_slam_deco(game, capturer)
+
+    if game.info.child_type and not game.info.stores:
+        capturer = capt_decos.CaptureToChild(game, capturer)
 
     if game.info.nosinglecapt:
         capturer = capt_decos.NoSingleSeedCapt(game, capturer)

@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Krur",
-      "about": "Sow counter-clockwise in multiple laps but skip opponents children.\n\nChildren are made on the opposite side on 4s. The only capture mechanism is to collect seeds in your own children.\n\nGoal: collect at least half the seeds in your own children.\n\nVariants:\n- played in rounds with blocks\n- played in rounds and loser puts last 1-3 seeds into occupied holes but must result in an even number of seeds, thus one extra seed might not be placed (not supported by Mancala Games; Mancala World)\n",
+      "about": "Sow counter-clockwise in multiple laps but skip opponents children.\n\nChildren are made on the opposite side on 4s. The only capture mechanism is to collect seeds in your own children.\n\nGoal: collect at least half the seeds in your own children.\n\nVariants:\n\n- played in rounds with blocks\n\n- played in rounds and loser puts last 1-3 seeds into occupied holes but must result in an even number of seeds, thus one extra seed might not be placed (Mancala World; not supported by Mancala Games)\n",
       "child_cvt": 4,
       "child_rule": 1,
       "child_type": 1,
@@ -16,14 +16,22 @@
    },
    "player": {
       "algorithm": "negamaxer",
-      "ai_params": {
-         "mm_depth": [ 1, 3, 5, 7 ]
-      },
+      "ai_params": { "mm_depth": [ 1, 3, 5, 7 ] },
       "scorer": {
          "stores_m": 4,
          "easy_rand": 10
       }
    },
+   "variants": {
+      "Base Game": { },
+      "Rounds & Blocks": {
+         "rounds": 2,
+         "blocks": true,
+         "round_starter": 0,
+         "round_fill": 1
+      }
+   },
+   "vari_params": { "goal_param": "all" },
    "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p132.",
    "reference": "https://mancala.fandom.com/wiki/Krur"
 }

@@ -59,7 +59,7 @@ class GameVariations:
         game.  Cannot assume that all keys that have been changed
         are in the game configuration."""
 
-        # not used because we don't know what variant to set
+        # XXXX not used because we don't know what variant to set
 
         for param in ckey.GCONST_PARAMS:
             value = getattr(self.game_ui.game.cts, param)
@@ -108,18 +108,29 @@ class GameVariations:
         """Popup a window with all the parameters settings that can be
         changed via variations."""
 
-        text = ""
+        text = ''
         for key in self.my_params:
             param = self.ptable[key]
             value = man_config.get_game_value(self.game_ui.game,
                                               param.cspec, key)
 
-            goal = self.game_ui.game.info.goal
-            if key == ckey.GOAL_PARAM and goal in round_tally.RoundTally.PSTR:
-                text += round_tally.RoundTally.PSTR[goal]
-                text += ' (' + key + '):    '
-            else:
-                text += f"{param.text}:    "
+            # XXXX can't use this until we are updating the config w/variations
+            #title = param_mixin.goal_param_desc(self.game_config)
+
+            title = param.text
+            if key == ckey.GOAL_PARAM:
+                goal = self.game_ui.game.info.goal
+                rounds = self.game_ui.game.info.rounds
+                blocks = self.game_ui.game.info.blocks
+
+                rtally = round_tally.RoundTally.PSTR.get(goal, False)
+                if rtally:
+                    title = f'Goal: {rtally}'
+
+                elif goal == gi.Goal.MAX_SEEDS and rounds and blocks:
+                    title = "Goal: Opp Can't Fill Holes"
+
+            text += f'{title}:    '
 
             if param.vtype in pc.STRING_DICTS:
                 text += pc.STRING_DICTS[param.vtype].int_dict[value]

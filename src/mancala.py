@@ -567,6 +567,23 @@ class Mancala(ai_interface.AiGameIf,
         return strings
 
 
+    def find_child_stores(self):
+        """Find and return a child for each side, if one exists.
+        Used in games with children but without stores."""
+
+        child_locs = [None, None]
+
+        for loc in range(self.cts.dbl_holes):
+            parent = self.child[loc]
+            if parent is not None and child_locs[parent] is None:
+                child_locs[parent] = loc
+
+                if child_locs[0] is not None and child_locs[1] is not None:
+                    return child_locs
+
+        return child_locs
+
+
     def new_game(self, new_round=False):
         """Delegate to the new_game decorators"""
 

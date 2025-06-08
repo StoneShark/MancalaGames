@@ -819,9 +819,18 @@ def test_rules(ginfo, holes, skip=None):
             has 2 seeds (1 is drawn)""",
         warn=True)
 
+    tester.test_rule('presowcap_stores',
+        rule=lambda ginfo: ginfo.presowcapt and not ginfo.stores,
+        msg="""PRESOWCAPT without stores is not supported""",
+        excp=NotImplementedError)
+        # how exactly would this work?
+        # do we capture if we are going to make a child in the capturer?
+        # rounds with blocks (e.g. some seeds are out of play for round),
+        # adds more complications
+
     tester.test_rule('presowcapt_locks',
         rule=lambda ginfo: ginfo.presowcapt and ginfo.moveunlock,
-        msg='PRESOWRULEs are not supported with MOVEUNLOCK',
+        msg='PRESOWCAPTs are not supported with MOVEUNLOCK',
         excp=gi.GameInfoError)
         # locks have two purposes: don't capt from locks and moveall first
         # see no need to make these compatible with presowcapt

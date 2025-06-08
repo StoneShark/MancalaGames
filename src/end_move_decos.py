@@ -382,52 +382,44 @@ class EndTurnNotPlayable(EndTurnIf):
 class ChildNoStoresEnder(EndTurnIf):
     """The rest of the deco chain may collect seeds into
     the stores (if the game has ended). Move any seeds
-    from the stores into available children."""
-
-    @staticmethod
-    def _find_child_stores(game):
-        """Find and return a child for each side, if one exists."""
-
-        child_locs = [-1, -1]
-        for side in (False, True):
-            for child in range(game.cts.dbl_holes):
-                if game.child[child] == side:
-                    child_locs[int(side)] = child
-                    break
-
-        return child_locs
+    from the stores into available children.  If there
+    were seeds out of play, leave them out of play."""
 
     def game_ended(self, mdata):
         """Children but no stores end move wrapper."""
 
+        ostore = self.game.store.copy()
+
         self.decorator.game_ended(mdata)
 
-        if any(self.game.store):
-            child_locs = self._find_child_stores(self.game)
+        if not any(self.game.store) or ostore == self.game.store:
+            return
 
-            if all(loc >= 0 for loc in child_locs):
-                self.game.board[child_locs[0]] += self.game.store[0]
-                self.game.board[child_locs[1]] += self.game.store[1]
+        child_locs = self.game.find_child_stores()
 
-            elif child_locs[0] >= 0:
-                self.game.board[child_locs[0]] += sum(self.game.store)
-                game_log.add('Only False has child, gets all store seeds.',
-                             game_log.INFO)
+        if all(loc is not None for loc in child_locs):
+            self.game.board[child_locs[0]] += self.game.store[0] - ostore[0]
+            self.game.board[child_locs[1]] += self.game.store[1] - ostore[1]
 
-            elif child_locs[1] >= 0:
-                self.game.board[child_locs[1]] += sum(self.game.store)
-                game_log.add('Only True has child, gets all store seeds.',
-                             game_log.INFO)
+        elif child_locs[0] is not None:
+            self.game.board[child_locs[0]] += sum(self.game.store) - ostore[0]
+            game_log.add('Only False has child, gets all store seeds.',
+                         game_log.INFO)
 
-            else:
-                # game ended w/o child, move seeds from stores onto board
-                self.game.board[0] += self.game.store[False]
-                self.game.board[-1] += self.game.store[True]
-                game_log.add('No children, but put seeds on board.',
-                             game_log.INFO)
+        elif child_locs[1] is not None:
+            self.game.board[child_locs[1]] += sum(self.game.store) - sum(ostore)
+            game_log.add('Only True has child, gets all store seeds.',
+                         game_log.INFO)
 
-            self.game.store = [0, 0]
-            game_log.step('Moved store seeds to children', self.game)
+        else:
+            # game ended w/o child, move seeds from stores onto board
+            self.game.board[0] += self.game.store[0] - ostore[0]
+            self.game.board[-1] += self.game.store[1] - ostore[1]
+            game_log.add('No children, but put seeds on board.',
+                         game_log.INFO)
+
+        self.game.store = ostore
+        game_log.step('Moved store seeds to children', self.game)
 
 
 class ConcedeDepImm(EndTurnIf):

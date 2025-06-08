@@ -582,31 +582,33 @@ class CaptureToChild(CaptMethodIf):
     """Used when we have no stores, but collect captures into
     children.
 
+    Any seeds in the store before the captures need to stay
+    there, e.g., seeds out play for games played in rounds.
+
+    If we don't have children and we are not going to make any
+    return. The make child is a duplicate check, but it prevents
+    the extra work of saving and restoring game and mdata state
+    if we shouldn't have captured.
+
     If we have a chilren, use the rest of the deco chain to see
     if captures are made, then move any captured seeds to the
     children."""
 
     def do_captures(self, mdata, capt_first=True):
 
-        loc = mdata.capt_loc
-        if self.game.deco.make_child.test(mdata):
-            self.game.child[loc] = self.game.turn
-            mdata.capt_changed = True
+        turn = self.game.turn
+        orig_seeds = self.game.store[turn]
+        child_loc = self.game.find_child_stores()[turn]
+
+        if child_loc is None and not self.game.deco.make_child.test(mdata):
             return
 
-        have_child = False
-        for child in range(self.game.cts.dbl_holes):
-            if self.game.child[child] == self.game.turn:
-                have_child = True
-                break
+        self.decorator.do_captures(mdata, capt_first)
 
-        if have_child:
-            self.decorator.do_captures(mdata, capt_first)
-            if mdata.captured:
-                self.game.board[child] += self.game.store[self.game.turn]
-                self.game.store[self.game.turn] = 0
-
-        assert not sum(self.game.store)
+        if mdata.captured:
+            capt_seeds = self.game.store[turn] - orig_seeds
+            self.game.store[turn] -= capt_seeds
+            self.game.board[child_loc] += capt_seeds
 
 
 class MakeWegCapture(CaptMethodIf):

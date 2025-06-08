@@ -65,6 +65,9 @@ class TestEnumsClasses:
         assert Goal.DEPRIVE.eliminate()
         assert not Goal.TERRITORY.eliminate()
 
+        assert not Goal.DEPRIVE.rnd_win_count()
+        assert Goal.RND_WIN_COUNT_DEP
+
 
     def test_win(self):
 

@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Wari",
-      "about": "A single-lap mancala, sow direction is counter-clockwise. A sow which cycles the board, will skip the hole that the move started from. If your opponent has no seeds, you must make seeds available to them (if you can).\n\nCaptures are on 2s and 3s from the opponent's side (final seed sown makes either 2 or 3).  As long as there is a an unbroken group of holes containing 2 or 3 seeds immediately preceding the final hole sown, these holes are also captured.\n\nVariations:\n\n- board sizes from 5 - 12 holes per side\n- number of start seeds per hole, as many as 10\n- captures on various numbers of seeds\n- a single seed may not be used for capture, NOSINGLECAPT \n- capturing all of your opponent's seeds results in them taking your remaining seeds, GRANDSLAM of OPP_GETS_REMAIN\n- leave one seed in the start hole (SOW_START)",
+      "about": "A single-lap mancala, sow direction is counter-clockwise. A sow which cycles the board, will skip the hole that the move started from. If your opponent has no seeds, you must make seeds available to them (if you can).\n\nCaptures are on 2s and 3s from the opponent's side (final seed sown makes either 2 or 3).  As long as there is a an unbroken group of holes containing 2 or 3 seeds immediately preceding the final hole sown, these holes are also captured.\n\nVariations:\n\n- board sizes from 5 - 12 holes per side\n- number of start seeds per hole, as many as 10\n- captures on various numbers of seeds\n- a single seed may not be used for capture, NOSINGLECAPT \n- any GRANDSLAM rule",
       "capt_on": [2, 3],
       "multicapt": -1,
       "mustshare": true,
@@ -18,10 +18,10 @@
    "vari_params": {
       "holes": [ 5, 6, 7, 8, 9, 10, 11, 12 ],
       "nbr_start": [ 2, 3, 4, 5, 6, 7, 8, 9, 10 ],
-      "capt_on": "include",
-      "nosinglecapt": "include",
-      "grandslam": [ 0, 3 ],
-      "sow_start": "include"
+      "capt_on": "all",
+      "nosinglecapt": "all",
+      "grandslam": "all",
+      "sow_start": "all"
    },
    "player": {
       "scorer": {

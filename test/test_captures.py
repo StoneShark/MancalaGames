@@ -874,7 +874,8 @@ class TestQur:
     @pytest.fixture
     def game(self):
         game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
-        game_info = gi.GameInfo(child_cvt=3,
+        game_info = gi.GameInfo(stores=True,
+                                child_cvt=3,
                                 child_type=gi.ChildType.QUR,
                                 crosscapt=True,
                                 xcpickown=1,
@@ -936,6 +937,102 @@ class TestQur:
             assert tuple(game.store) == saved_store
             assert tuple(game.board) == mdata.board
 
+
+class TestCaptureToChild:
+    """Test CaptureToChild with all child types and with a picker"""
+
+    CASES = [[case[0], ctype] + case[1:]
+             for ctype in [gi.ChildType.NORMAL,
+                           gi.ChildType.ONE_CHILD,
+                           gi.ChildType.WEG,
+                           gi.ChildType.BULL]
+             for case in
+                [['capt_wo_child',
+                  (3, 0, 4, 4, 4, 3), (N, N, N, N, N, N), (0, 0),
+                  (3, 0, 4, 4, 4, 3), (N, N, N, N, N, N)],
+
+                ['make_child',
+                 (3, 3, 1, 4, 3, 3), (N, N, N, N, N, N), (1, 0),
+                 (3, 3, 1, 4, 3, 3), (N, N, N, N, F, N)],
+
+                # capture with child; stores zeros (2 children)
+                ['capt_w_child_0s',
+                 (3, 0, 4, 4, 4, 3), (N, N, N, F, N, F), (0, 0),
+                 (3, 0, 4, 8, 0, 3), (N, N, N, F, N, F)],
+
+                # capture with child; stores not zeros
+                ['capt_w_child',
+                 (0, 0, 4, 4, 4, 3), (N, N, N, N, N, F), (1, 2),
+                 (0, 0, 4, 4, 0, 7), (N, N, N, N, N, F)],
+                ]
+            ]
+
+    CASES += [['q_capt_wo_child', gi.ChildType.QUR,
+                  (3, 0, 4, 4, 4, 3), (N, N, N, N, N, N), (0, 0),
+                  (3, 0, 4, 4, 4, 3), (N, N, N, N, N, N)],
+
+                ['q_make_child', gi.ChildType.QUR,
+                 (3, 3, 3, 4, 1, 3), (N, N, N, N, N, N), (1, 0),    # diff case
+                 (3, 3, 3, 4, 1, 3), (N, F, N, N, F, N)],
+
+                # capture with child; stores zeros (2 children)
+                ['q_capt_w_child_0s', gi.ChildType.QUR,
+                 (3, 0, 4, 4, 4, 3), (N, N, N, F, N, F), (0, 0),
+                 (3, 0, 4, 8, 0, 3), (N, N, N, F, N, F)],
+
+                # capture with child; stores not zeros
+                ['q_capt_w_child', gi.ChildType.QUR,
+                 (0, 0, 4, 4, 4, 3), (N, N, N, N, N, F), (1, 2),
+                 (0, 0, 4, 4, 0, 7), (N, N, N, N, N, F)],
+            ]
+
+    # some cases with picks
+    CASES += [# capture with child; stores not zeros
+                ['capt_pick_w_child', gi.ChildType.WEG,
+                 (0, 2, 4, 2, 4, 3), (N, N, N, N, N, F), (1, 2),
+                 (0, 2, 4, 0, 0, 9), (N, N, N, N, N, F)],
+
+                # capture with child
+                ['q_capt_pick_w_child_0s', gi.ChildType.QUR,
+                 (0, 0, 2,  4, 4, 2), (N, N, N, F, N, N), (2, 4),
+                 (0, 0, 2, 10, 0, 0), (N, N, N, F, N, N)],
+                ]
+
+    @pytest.mark.parametrize('ctype, board, child, store, eboard, echild',
+                             [case[1:] for case in CASES],
+                             ids=[f'{case[1].name}-{case[0]}' for case in CASES])
+    def test_child_type(self, ctype, board, child, store, eboard, echild):
+
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=3)
+        game_info = gi.GameInfo(evens=True,
+                                child_type=ctype,
+                                child_cvt=3,
+                                pickextra=gi.CaptExtraPick.PICKTWOS,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        assert 'CaptureToChild' in str(game.deco.capturer)
+
+        game.turn = False
+        game.board = list(board)
+        game.store = list(store)
+        game.child = list(child)
+        # print(game)
+
+        loc = 4
+        mdata = move_data.MoveData(game, None)
+        mdata.direct = game.info.sow_direct
+        mdata.capt_loc = loc
+        mdata.board = tuple(game.board)
+        mdata.seeds = game.board[loc]
+
+        game.deco.capturer.do_captures(mdata)
+        # print(game)
+
+        assert game.store == list(store)
+        assert game.board == list(eboard)
+        assert game.child == list(echild)
 
 
 # %% capt wrappers and non-capt table tests

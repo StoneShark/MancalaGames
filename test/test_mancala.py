@@ -2012,11 +2012,7 @@ class TestOppTurn:
     def game(self):
 
         game_consts = gconsts.GameConsts(nbr_start=4, holes=6)
-        game_info = gi.GameInfo(goal=Goal.TERRITORY,
-                                goal_param=8,
-                                child_type = gi.ChildType.NORMAL,
-                                child_cvt=4,
-                                evens=True,
+        game_info = gi.GameInfo(evens=True,
                                 stores=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
@@ -2032,3 +2028,32 @@ class TestOppTurn:
             game.turn = 12
 
         assert game.turn == turn
+
+
+class TestFindChildStores:
+
+    @pytest.fixture
+    def game(self):
+
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(child_type = gi.ChildType.NORMAL,
+                                child_cvt=4,
+                                evens=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        return mancala.Mancala(game_consts, game_info)
+
+
+    CASES = [((N, N, N, N, N, N), (None, None)),
+             ((F, F, N, N, N, N), (0, None)),
+             ((N, N, N, N, T, T), (None, 4)),
+             ((N, N, N, F, T, T), (3, 4)),
+             ((T, T, T, F, F, F), (3, 0)),
+             ]
+
+
+    @pytest.mark.parametrize('child, elocs', CASES)
+    def test_find_child_stores(self, game, child, elocs):
+
+        game.child = list(child)
+        assert game.find_child_stores() == list(elocs)

@@ -1245,7 +1245,7 @@ class TestEndClear:
             end_move._build_eliminate_ended(game)
 
 
-class TestEndWaldas:
+class TestChildNoStores:
 
     @pytest.fixture
     def game(self):
@@ -1262,36 +1262,36 @@ class TestEndWaldas:
 
         return mancala.Mancala(game_consts, game_info)
 
-    WALDA_CASES = [(True,
-                 [0, 0, 0, 0, 10, 12, 2, 1, 1, 0, 4, 18],
-                 [None, None, None, None, True, True,
-                  None, None, None, None, None, False],
-                 [0, 0, 0, 0, 18, 12, 0, 0, 0, 0, 0, 18]),
-                (True,
-                 [0, 0, 0, 0, 10, 12, 2, 1, 1, 0, 4, 18],
-                 [None, None, None, None, True, True,
-                  None, None, None, None, None, None],
-                 [0, 0, 0, 0, 36, 12, 0, 0, 0, 0, 0, 0]),
-                (False,
-                 [2, 1, 1, 0, 4, 40, 0, 0, 0, 0, 0, 0],
-                 [None, None, None, None, None, None,
-                  None, None, None, None, None, False],
-                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 48]),
-                (False,
-                 [2, 1, 1, 0, 4, 40, 0, 0, 0, 0, 0, 0],
-                 [None, None, None, None, None, None,
-                  None, None, None, None, None, None],
-                 [48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
-                (True,
-                  [0, 0, 0, 0, 18, 12, 0, 0, 0, 0, 0, 18],
-                  [None, None, None, None, True, True,
-                   None, None, None, None, None, False],
-                  [0, 0, 0, 0, 18, 12, 0, 0, 0, 0, 0, 18],
-                  ),
-                ]
+    CASES = [(True,
+             [0, 0, 0, 0, 10, 12, 2, 1, 1, 0, 4, 18],
+             [None, None, None, None, True, True,
+              None, None, None, None, None, False],
+             [0, 0, 0, 0, 18, 12, 0, 0, 0, 0, 0, 18]),
+            (True,
+             [0, 0, 0, 0, 10, 12, 2, 1, 1, 0, 4, 18],
+             [None, None, None, None, True, True,
+              None, None, None, None, None, None],
+             [0, 0, 0, 0, 36, 12, 0, 0, 0, 0, 0, 0]),
+            (False,
+             [2, 1, 1, 0, 4, 40, 0, 0, 0, 0, 0, 0],
+             [None, None, None, None, None, None,
+              None, None, None, None, None, False],
+             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 48]),
+            (False,
+             [2, 1, 1, 0, 4, 40, 0, 0, 0, 0, 0, 0],
+             [None, None, None, None, None, None,
+              None, None, None, None, None, None],
+             [48, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]),
+            (True,
+              [0, 0, 0, 0, 18, 12, 0, 0, 0, 0, 0, 18],
+              [None, None, None, None, True, True,
+               None, None, None, None, None, False],
+              [0, 0, 0, 0, 18, 12, 0, 0, 0, 0, 0, 18],
+              ),
+            ]
 
     @pytest.mark.parametrize('turn, board, child, eboard',
-                             WALDA_CASES,
+                             CASES,
                              ids=[f'case_{c}' for c in range(5)])
     def test_no_pass(self, game, turn, board, child, eboard):
 
@@ -1313,7 +1313,7 @@ class TestEndWaldas:
         assert game.board == eboard
 
 
-    def test_end_game_no_walda(self, game):
+    def test_end_game_no_child(self, game):
 
 
         game.mdata = utils.make_ender_mdata(game, False, False)
@@ -1324,13 +1324,13 @@ class TestEndWaldas:
         assert 'tie' in winmsg[1]
 
 
-    def test_end_game_t_walda(self, game):
+    def test_end_game_t_child(self, game):
 
         game.turn = False
         game.board = [8, 0, 2, 1, 8, 6, 4, 0, 8, 8, 2, 1]
         game.child = [None, None, None, None, None, True,
                       None, None, None, None, None, None]
-        game.store = [0, 0]
+        game.store = [1, 2]
 
         game.mdata = utils.make_ender_mdata(game, False, False)
         cond = game.end_game(quitter=True, user=False)
@@ -1339,15 +1339,16 @@ class TestEndWaldas:
         winmsg = game.win_message(cond)
         assert 'Game Over' in winmsg[0]
         assert gi.PLAYER_NAMES[True] in winmsg[1]
+        assert game.store == [1, 2]
 
 
-    def test_end_game_f_walda(self, game):
+    def test_end_game_f_child(self, game):
 
         game.turn = False
         game.board = [8, 0, 2, 1, 8, 6, 4, 0, 8, 8, 2, 1]
         game.child = [False, None, None, None, None, None,
                       None, None, None, None, None, None]
-        game.store = [0, 0]
+        game.store = [1, 2]
 
         game.mdata = utils.make_ender_mdata(game, False, False)
         cond = game.end_game(quitter=True, user=False)
@@ -1356,15 +1357,16 @@ class TestEndWaldas:
         winmsg = game.win_message(cond)
         assert 'Game Over' in winmsg[0]
         assert gi.PLAYER_NAMES[False] in winmsg[1]
+        assert game.store == [1, 2]
 
 
-    def test_end_game_both_walda(self, game):
+    def test_end_game_both_child(self, game):
 
         game.turn = False
         game.board = [8, 0, 2, 1, 8, 6, 4, 0, 8, 8, 2, 1]
         game.child = [True, None, None, None, None, False,
                       None, None, None, None, None, None]
-        game.store = [0, 0]
+        game.store = [1, 2]
 
         game.mdata = utils.make_ender_mdata(game, False, False)
         cond = game.end_game(quitter=True, user=False)
@@ -1373,6 +1375,7 @@ class TestEndWaldas:
         winmsg = game.win_message(cond)
         assert 'Game Over' in winmsg[0]
         assert gi.PLAYER_NAMES[True] in winmsg[1]
+        assert game.store == [1, 2]
 
 
 
