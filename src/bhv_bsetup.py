@@ -520,7 +520,8 @@ class SetupButtonBehavior(bhv.BehaviorIf):
 
         menubar = tk.Menu(game_ui)
         menubar.add_command(label='Pickup Seeds', command=self.pickup)
-        if ginfo.child_type:
+        if ginfo.child_cvt:
+            # only include if more children can be made (cvt not type)
             menubar.add_command(label='Child Cycle', command=self.child_cycle)
         if ginfo.goal == gi.Goal.TERRITORY:
             menubar.add_command(label='Owner Toggle', command=self.owner_toggle)
