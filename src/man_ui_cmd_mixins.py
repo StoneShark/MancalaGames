@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
-"""Classes that make up the thin venier between the mancala_ui
-and the support objects.
+"""Mixin classes that make up the thin venier between the
+mancala_ui and the support objects grouped by functionality.
+
+Each makes either a few commands to be put on another
+menu (*CmdsMixin) or makes a full menu (MenuMixin).
 
 These mixin are NOT independent of MancalaUI and are not intended
 to be reusable with other classes. They break the functionality
@@ -115,7 +118,7 @@ class VariCmdsMixin:
 # %%  setup
 
 class SetupCmdsMixin:
-    """The setup menu and commands.
+    """The setup menu commands.
     Prefix for public methods is 'setup'."""
 
     _setup_state = None
@@ -160,7 +163,7 @@ class SetupCmdsMixin:
 
 # %%   Move mixin
 
-class MoveCmdsMixin:
+class MoveMenuMixin:
     """The move menu and commands.
     Prefix for public methods is 'move'."""
 
@@ -252,7 +255,7 @@ class MoveCmdsMixin:
 
 # %% ai control
 
-class AiCtrlCmdsMixin:
+class AiCtrlMenuMixin:
     """The ai player menu and commands.
     Prefix for public methods is 'ai'."""
 
@@ -302,7 +305,7 @@ VIS_TALLY_OP = 1
 RET_TALLY_OP = 2
 
 
-class ShowCmdsMixin:
+class ShowMenuMixin:
     """The display menu and commands.
     Prefix for public methods is 'show'."""
 
@@ -377,7 +380,7 @@ class ShowCmdsMixin:
 ANI_STEP = 25
 
 
-class AniCommandsMixin:
+class AniMenuMixin:
     """The animator menu and commands.
     Prefix for public methods is 'ani'."""
 
@@ -472,7 +475,7 @@ class AniCommandsMixin:
 
 # %%  game log
 
-class GLogCmdsMixin:
+class GLogMenuMixin:
     """The game log menu and commands.
     Prefix for public methods is 'glog'."""
 
@@ -538,7 +541,7 @@ DEBUG = 'debug'
 ALL = 'all'
 
 
-class DebugCmdsMixin:
+class DebugMenuMixin:
     """The debug menu and commands.
     Prefix for public methods is 'dbg'."""
 
@@ -601,7 +604,7 @@ class DebugCmdsMixin:
 
 # %% help
 
-class HelpMenuCmdsMixin:
+class HelpMenuMixin:
     """The help menu and commands.
     Prefix for public methods is 'help'."""
 

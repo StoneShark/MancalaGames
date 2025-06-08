@@ -95,13 +95,13 @@ class TkVars:
 
 class MancalaUI(ui_cmds.VariCmdsMixin,
                 ui_cmds.SetupCmdsMixin,
-                ui_cmds.MoveCmdsMixin,
-                ui_cmds.AiCtrlCmdsMixin,
-                ui_cmds.ShowCmdsMixin,
-                ui_cmds.AniCommandsMixin,
-                ui_cmds.GLogCmdsMixin,
-                ui_cmds.DebugCmdsMixin,
-                ui_cmds.HelpMenuCmdsMixin,
+                ui_cmds.MoveMenuMixin,
+                ui_cmds.AiCtrlMenuMixin,
+                ui_cmds.ShowMenuMixin,
+                ui_cmds.AniMenuMixin,
+                ui_cmds.GLogMenuMixin,
+                ui_cmds.DebugMenuMixin,
+                ui_cmds.HelpMenuMixin,
                 tk.Frame):
     """A manacala UI."""
 
