@@ -16,10 +16,16 @@
       "capt_side": 1,
       "xcpickown": 1
    },
+   "variants": {
+      "Base Games": { },
+      "Rounds": {
+         "rounds": 2,
+         "round_fill": 7
+      }
+   },
    "vari_params": {
       "holes": [6, 7, 8, 9, 10, 11, 12],
-      "mlaps": [0, 1],
-      "round_fill": "include"
+      "mlaps": [0, 1]
    },
    "player": {
       "scorer": {

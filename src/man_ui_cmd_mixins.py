@@ -38,6 +38,7 @@ class VariCmdsMixin:
 
     def vari_add_menu_cmds(self, menu):
         """Add the variant menu commands."""
+        self._varier = None
 
         from_file = self._test_vari_avail()
 
@@ -83,11 +84,12 @@ class VariCmdsMixin:
                                 self, getattr(self.game, ckey.FILENAME))
 
         with animator.animate_off():
-            rval = self._varier.reconfigure()
-            if not rval:
+            game_objs = self._varier.reconfigure()
+            if not game_objs:
                 return
 
-        self.rebuild(*rval)
+        self._varier = None
+        self.rebuild(*game_objs)
 
 
     def _revert_variant(self):
@@ -103,7 +105,9 @@ class VariCmdsMixin:
             self._varier = variants.GameVariations(
                                 self, getattr(self.game, ckey.FILENAME))
 
-        self.rebuild(*self._varier.rebuild())
+        game_objs = self._varier.rebuild()
+        self._varier = None
+        self.rebuild(*game_objs)
 
 
     def _var_settings(self):
@@ -126,6 +130,8 @@ class SetupCmdsMixin:
 
     def setup_add_menu_cmds(self, menubar):
         """Add the setup commands."""
+
+        self._setup_state = None
 
         menubar.add_separator()
         menubar.add_command(label='Setup Game',
