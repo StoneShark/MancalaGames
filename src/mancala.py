@@ -772,6 +772,9 @@ class Mancala(ai_interface.AiGameIf,
 
         self.win_conditions(mdata)
         if mdata.win_cond:
+            # make turn correct -- MCTS needs a valid game state
+            if not mdata.repeat_turn:
+                self.turn = not self.turn
             return mdata
 
         if mdata.repeat_turn:

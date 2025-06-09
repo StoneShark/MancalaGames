@@ -287,12 +287,12 @@ class TestFalseWin:
     def test_move_28(self, gstate):
         game = gstate.game
         cond = game.move(4)
-        assert game.mdata.winner is False     # manual change
+        assert game.turn is True
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [40, 8]
         assert cond.name == "WIN"
         gstate.cond = cond
-
+        assert game.mdata.winner is False     # manual change
         winmsg = game.win_message(cond)
         assert 'Game Over' in winmsg[0]
         assert gi.PLAYER_NAMES[False] in winmsg[1]
@@ -418,12 +418,12 @@ class TestTrueWin:
     def test_move_13(self, gstate):
         game = gstate.game
         cond = game.move(5)
-        assert game.mdata.winner is True     # manual change
+        assert game.turn is True
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [4, 44]
         assert cond.name == "WIN"
         gstate.cond = cond
-
+        assert game.mdata.winner is True     # manual change
         winmsg = game.win_message(cond)
         assert 'Game Over' in winmsg[0]
         assert gi.PLAYER_NAMES[True] in winmsg[1]
@@ -676,12 +676,13 @@ class TestGSLegal:
         """a win by grand slam"""
         game = gstate.game
         cond = game.move(3)
-        assert game.mdata.winner is False     # manual change
+        assert game.turn is True
         assert game.board == [0, 0, 0, 0, 4, 2, 0, 0, 0, 0, 0, 0]
         assert game.store == [29, 13]
         assert cond.name == "WIN"
         gstate.cond = cond
 
+        assert game.mdata.winner is False     # manual change
         winmsg = game.win_message(cond)
         assert 'Game Over' in winmsg[0]
         assert gi.PLAYER_NAMES[False] in winmsg[1]
@@ -877,12 +878,13 @@ class TestGSNotLegal:
     def test_move_19(self, gstate):
         game = gstate.game
         cond = game.move(0)
-        assert game.mdata.winner is True     # manual change
+        assert game.turn is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [1, 47]
         assert cond.name == "WIN"
         gstate.cond = cond
 
+        assert game.mdata.winner is True     # manual change
         winmsg = game.win_message(cond)
         assert 'Game Over' in winmsg[0]
         assert gi.PLAYER_NAMES[True] in winmsg[1]
@@ -1282,10 +1284,11 @@ class TestGSNoCapt:
     def test_move_42(self, gstate):
         game = gstate.game
         cond = game.move(0)
-        assert game.mdata.winner is False     # manual change
+        assert game.turn is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [25, 23]
         assert cond.name == "WIN"
+        assert game.mdata.winner is False     # manual change
         gstate.cond = cond
 
 
@@ -1626,10 +1629,11 @@ class TestGSOppGet:
         """GRANDSLAM: opp gets"""
         game = gstate.game
         cond = game.move(3)
-        assert game.turn is False
+        assert game.turn is True
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [24, 24]
         assert cond.name == "TIE"
+        assert game.mdata.winner is None
         gstate.cond = cond
 
 
@@ -1835,12 +1839,13 @@ class TestGSLeftLeft:
     def test_move_21(self, gstate):
         game = gstate.game
         cond = game.move(5)
-        assert game.mdata.winner is True     # manual change
+        assert game.turn is True
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [1, 47]
         assert cond.name == "WIN"
         gstate.cond = cond
 
+        assert game.mdata.winner is True     # manual change
         winmsg = game.win_message(cond)
         assert 'Game Over' in winmsg[0]
         assert gi.PLAYER_NAMES[True] in winmsg[1]
@@ -2238,12 +2243,13 @@ class TestGSLeaveRight:
     def test_move_42(self, gstate):
         game = gstate.game
         cond = game.move(0)
-        assert game.mdata.winner is True     # manual change
+        assert game.turn is False
         assert game.board == [0, 4, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0]
         assert game.store == [16, 25]
         assert cond.name == "WIN"
         gstate.cond = cond
 
+        assert game.mdata.winner is True     # manual change
         winmsg = game.win_message(cond)
         assert 'Game Over' in winmsg[0]
         assert gi.PLAYER_NAMES[True] in winmsg[1]

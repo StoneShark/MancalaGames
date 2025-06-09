@@ -606,7 +606,8 @@ class TestBechiGame44:
     def test_round_2_move_24(self, gstate):
         game = gstate.game
         cond = game.move(0)
-        assert game.turn is False
+        assert game.turn is True             # manual changes
+        assert game.mdata.winner is None
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [False, False, False, False, False, True, False, False]
         assert game.unlocked == [True, True, True, True, True, False, True, True]

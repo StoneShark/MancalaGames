@@ -14,10 +14,8 @@ pytestmark = pytest.mark.unittest
 from context import animator
 from context import game_constants as gconsts
 from context import game_info as gi
-from context import mancala
 from context import bear_off
 
-import utils
 
 
 # %%
@@ -269,8 +267,7 @@ class TestGameExtensions:
         cond = game.move(move)
 
         assert cond == econd
-        if ewin is not None:
-            assert game.turn == ewin
+        assert game.mdata.winner == ewin
 
         assert game.board == eboard
         assert game.store == estore

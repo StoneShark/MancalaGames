@@ -971,7 +971,7 @@ class TestUrim:
     def test_round_1_move_104(self, gstate):
         game = gstate.game
         cond = game.move(5)
-        assert game.turn is False
+        assert game.turn is True
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [7, 41]
         assert cond.name == "ROUND_WIN"
@@ -1826,7 +1826,7 @@ class TestUrim:
     def test_round_2_move_94(self, gstate):
         game = gstate.game
         cond = game.move(0)
-        assert game.turn is True
+        assert game.turn is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [29, 19]
         assert cond.name == "ROUND_WIN"
@@ -3436,7 +3436,7 @@ class TestUrim:
     def test_round_3_move_178(self, gstate):
         game = gstate.game
         cond = game.move(5)
-        assert game.turn is False
+        assert game.turn is True
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [21, 27]
         assert cond.name == "ROUND_WIN"
@@ -4353,7 +4353,7 @@ class TestUrim:
     def test_round_4_move_101(self, gstate):
         game = gstate.game
         cond = game.move(5)
-        assert game.turn is False
+        assert game.turn is True
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [20, 28]
         assert cond.name == "ROUND_WIN"
@@ -5819,7 +5819,7 @@ class TestUrim:
     def test_round_5_move_162(self, gstate):
         game = gstate.game
         cond = game.move(5)
-        assert game.turn is False
+        assert game.turn is True
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [29, 19]
         assert cond.name == "ROUND_WIN"
@@ -6457,7 +6457,7 @@ class TestUrim:
     def test_round_6_move_70(self, gstate):
         game = gstate.game
         cond = game.move(0)
-        assert game.turn is True
+        assert game.turn is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [23, 25]
         assert cond.name == "ROUND_WIN"
@@ -7428,7 +7428,7 @@ class TestUrim:
     def test_round_7_move_107(self, gstate):
         game = gstate.game
         cond = game.move(0)
-        assert game.turn is True
+        assert game.turn is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [16, 32]
         assert cond.name == "ROUND_WIN"
@@ -8183,7 +8183,7 @@ class TestUrim:
     def test_round_8_move_83(self, gstate):
         game = gstate.game
         cond = game.move(5)
-        assert game.turn is False
+        assert game.turn is True
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [8, 40]
         assert cond.name == "ROUND_WIN"
@@ -9595,7 +9595,7 @@ class TestUrim:
     def test_round_9_move_156(self, gstate):
         game = gstate.game
         cond = game.move(5)
-        assert game.turn is False
+        assert game.turn is True
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [22, 26]
         assert cond.name == "ROUND_WIN"
@@ -11043,7 +11043,7 @@ class TestUrim:
     def test_round_10_move_160(self, gstate):
         game = gstate.game
         cond = game.move(0)
-        assert game.turn is True
+        assert game.turn is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [28, 20]
         assert cond.name == "ROUND_WIN"
@@ -11780,7 +11780,7 @@ class TestUrim:
     def test_round_11_move_81(self, gstate):
         game = gstate.game
         cond = game.move(0)
-        assert game.turn is True
+        assert game.turn is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [15, 33]
         assert cond.name == "WIN"

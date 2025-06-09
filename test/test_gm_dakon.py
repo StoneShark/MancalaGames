@@ -499,6 +499,7 @@ class TestDakon:
     def test_round_1_move_46(self, gstate):
         game = gstate.game
         cond = game.move(6)
+        assert game.mdata.repeat_turn
         assert game.turn is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F]
@@ -1517,6 +1518,7 @@ class TestDakon:
     def test_round_3_move_54(self, gstate):
         game = gstate.game
         cond = game.move(6)
+        assert game.mdata.repeat_turn
         assert game.turn is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [T, T, F, F, F, F, F, F, F, F, F, F, F, F]
@@ -1846,7 +1848,7 @@ class TestDakon:
     def test_round_4_move_32(self, gstate):
         game = gstate.game
         cond = game.move(4)
-        assert game.turn is True
+        assert game.turn is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.store == [69, 29]
@@ -2295,6 +2297,7 @@ class TestDakon:
     def test_round_5_move_44(self, gstate):
         game = gstate.game
         cond = game.move(0)
+        assert game.mdata.repeat_turn
         assert game.turn is True
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [F, F, F, F, F, F, F, T, T, T, F, F, F, F]
@@ -2834,6 +2837,7 @@ class TestDakon:
     def test_round_6_move_53(self, gstate):
         game = gstate.game
         cond = game.move(6)
+        assert game.mdata.repeat_turn
         assert game.turn is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [F, F, F, F, F, F, F, T, F, F, F, F, F, F]
@@ -3253,6 +3257,7 @@ class TestDakon:
     def test_round_7_move_41(self, gstate):
         game = gstate.game
         cond = game.move(6)
+        assert game.mdata.repeat_turn
         assert game.turn is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [T, T, F, F, F, F, F, F, F, F, F, F, F, F]
@@ -3750,6 +3755,7 @@ class TestDakon:
         gstate.cond = cond
 
     def test_round_8_move_49(self, gstate):
+        """Tests no swap of turn on on repeat turn & end game."""
         game = gstate.game
         cond = game.move(0)
         assert game.turn is True
@@ -4091,6 +4097,7 @@ class TestDakon:
     def test_round_9_move_33(self, gstate):
         game = gstate.game
         cond = game.move(6)
+        assert game.mdata.repeat_turn
         assert game.turn is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [F, F, F, F, F, F, F, T, T, T, F, F, F, F]
@@ -4450,6 +4457,7 @@ class TestDakon:
     def test_round_10_move_35(self, gstate):
         game = gstate.game
         cond = game.move(6)
+        assert game.mdata.repeat_turn
         assert game.turn is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [T, T, F, F, F, F, F, F, F, F, F, F, F, F]
@@ -4949,6 +4957,7 @@ class TestDakon:
     def test_round_11_move_49(self, gstate):
         game = gstate.game
         cond = game.move(6)
+        assert game.mdata.repeat_turn
         assert game.turn is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [F, F, F, F, F, F, F, T, T, T, F, F, F, F]
@@ -5737,6 +5746,7 @@ class TestDakon:
     def test_round_13_move_41(self, gstate):
         game = gstate.game
         cond = game.move(0)
+        assert game.mdata.repeat_turn
         assert game.turn is True
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [T, F, F, F, F, F, F, F, F, F, F, F, F, F]
@@ -6126,6 +6136,7 @@ class TestDakon:
     def test_round_14_move_38(self, gstate):
         game = gstate.game
         cond = game.move(0)
+        assert game.mdata.repeat_turn
         assert game.turn is True
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [F, F, F, F, F, F, F, T, T, T, F, F, F, F]
@@ -6615,6 +6626,7 @@ class TestDakon:
     def test_round_15_move_48(self, gstate):
         game = gstate.game
         cond = game.move(6)
+        assert game.mdata.repeat_turn
         assert game.turn is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [F, F, F, F, F, F, F, T, T, T, F, F, F, F]
@@ -7164,6 +7176,7 @@ class TestDakon:
     def test_round_16_move_54(self, gstate):
         game = gstate.game
         cond = game.move(6)
+        assert game.mdata.repeat_turn
         assert game.turn is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [F, F, F, F, F, F, F, T, T, F, F, F, F, F]
@@ -7663,6 +7676,7 @@ class TestDakon:
     def test_round_17_move_49(self, gstate):
         game = gstate.game
         cond = game.move(6)
+        assert game.mdata.repeat_turn
         assert game.turn is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [F, F, F, F, F, F, F, T, F, F, F, F, F, F]
@@ -8162,6 +8176,7 @@ class TestDakon:
     def test_round_18_move_49(self, gstate):
         game = gstate.game
         cond = game.move(6)
+        assert game.mdata.repeat_turn
         assert game.turn is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [F, F, F, F, F, F, F, T, T, F, F, F, F, F]
@@ -8561,6 +8576,7 @@ class TestDakon:
     def test_round_19_move_39(self, gstate):
         game = gstate.game
         cond = game.move(0)
+        assert game.mdata.repeat_turn
         assert game.turn is True
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [T, T, F, F, F, F, F, F, F, F, F, F, F, F]
@@ -9010,6 +9026,7 @@ class TestDakon:
     def test_round_20_move_44(self, gstate):
         game = gstate.game
         cond = game.move(6)
+        assert game.mdata.repeat_turn
         assert game.turn is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [F, F, F, F, F, F, F, T, F, F, F, F, F, F]
@@ -9559,6 +9576,7 @@ class TestDakon:
     def test_round_21_move_54(self, gstate):
         game = gstate.game
         cond = game.move(6)
+        assert game.mdata.repeat_turn
         assert game.turn is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [T, F, F, F, F, F, F, F, F, F, F, F, F, F]
@@ -10028,6 +10046,7 @@ class TestDakon:
     def test_round_22_move_46(self, gstate):
         game = gstate.game
         cond = game.move(0)
+        assert game.mdata.repeat_turn
         assert game.turn is True
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [T, T, T, F, F, F, F, F, F, F, F, F, F, F]
@@ -10597,6 +10616,7 @@ class TestDakon:
     def test_round_23_move_56(self, gstate):
         game = gstate.game
         cond = game.move(6)
+        assert game.mdata.repeat_turn
         assert game.turn is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [F, F, F, F, F, F, F, T, F, F, F, F, F, F]
@@ -11345,6 +11365,7 @@ class TestDakon:
     def test_round_25_move_29(self, gstate):
         game = gstate.game
         cond = game.move(5)
+        assert game.mdata.repeat_turn
         assert game.turn is False
         assert game.board == [0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 1]
         assert game.blocked == [F, F, F, F, F, F, F, T, T, F, F, F, F, F]

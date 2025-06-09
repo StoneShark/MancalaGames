@@ -130,7 +130,7 @@ vpath %.py .\\test
 
 %.cov: test\\context.py src\\game_params.csv $(subst .cov,.py,$@) 
 	-mkdir cov
-	coverage run -m pytest test\\$(subst .cov,.py,$@)
+	coverage run -m pytest test\\$(subst .cov,.py,$@) --ui_tests
 	coverage json
 	python test\\check_unit_cov.py $(subst .cov,,$@) > cov\\$@
 	type cov\\$@

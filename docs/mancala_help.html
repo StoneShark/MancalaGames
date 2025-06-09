@@ -91,7 +91,7 @@ be reduced by selecting some high level game properties.
 See <a href="#playwindow">Play Mancala</a> (play_mancala.exe).
 Control-r selects a random game.
 <br><br>
-<li><b>mancala_games</b>: Pops up the game editor&mdash;see
+<li><b>man_games_editor</b>: Pops up the game editor&mdash;see
 <a href="#opwindow">Mancala Games Editor</a> (man_games_editor.exe).
 Game property files can be defined, loaded, edited and saved.
 Games can be played with the currently define parameters.
@@ -312,7 +312,8 @@ this command can be used to return the initial state.
 
 <h4>Move</h4>
 <p><b>Undo Move</b>: Undo a previous move. Multiple moves may undone and redone.
-Control-z undoes a move.
+Control-z undoes a move. The AI player is not scheduled to move after an undo or redo.
+If you want the AI to move on it's turn deactivate and reactivate the AI player.
 <p>The length of the undo history can be set in the mancala.ini file via 'history_size'.
 <p><b>Redo Move</b>: Redo an undone move. Multiple moves may undone and redone.
 Control-Shift-Z redoes a move.

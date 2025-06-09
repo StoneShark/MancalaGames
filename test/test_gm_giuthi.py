@@ -613,6 +613,7 @@ class TestGiuthiTWin:
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [9, 87]
         assert cond.name == "ROUND_WIN"
+        assert game.mdata.winner == True
         gstate.cond = cond
 
     def test_round_2_setup(self, gstate):
@@ -733,7 +734,7 @@ class TestGiuthiTWin:
     def test_round_2_move_13(self, gstate):
         game = gstate.game
         cond = game.move((2, CCW))
-        assert game.turn is True
+        assert game.turn is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
@@ -741,6 +742,7 @@ class TestGiuthiTWin:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [6, 90]
         assert cond.name == "WIN"
+        assert game.mdata.winner is True
         gstate.cond = cond
 
 
@@ -1086,6 +1088,7 @@ class TestGiuthiFWin:
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [85, 11]
         assert cond.name == "ROUND_WIN"
+        assert game.mdata.winner == False
         gstate.cond = cond
 
     def test_round_2_setup(self, gstate):
@@ -1332,7 +1335,8 @@ class TestGiuthiFWin:
     def test_round_2_move_27(self, gstate):
         game = gstate.game
         cond = game.move((3, CCW))
-        assert game.mdata.winner is False
+        assert game.mdata.repeat_turn
+        assert game.turn is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
@@ -1340,4 +1344,5 @@ class TestGiuthiFWin:
         assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [89, 7]
         assert cond.name == "WIN"
+        assert game.mdata.winner is False
         gstate.cond = cond

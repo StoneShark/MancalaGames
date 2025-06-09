@@ -300,10 +300,11 @@ class TestTie:
     def test_move_29(self, gstate):
         game = gstate.game
         cond = game.move(1)
-        assert game.turn is True
+        assert game.turn is False
         assert game.board == [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         assert game.store == [24, 24]
         assert cond.name == "TIE"
+        assert game.mdata.winner is None
         gstate.cond = cond
 
 
@@ -599,8 +600,10 @@ class TestWin:
     def test_move_32(self, gstate):
         game = gstate.game
         cond = game.move(0)
-        assert game.mdata.winner is False
+        assert game.mdata.capt_loc == gi.WinCond.REPEAT_TURN
+        assert game.turn is False
         assert game.board == [0, 6, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1]
         assert game.store == [25, 11]
         assert cond.name == "WIN"
+        assert game.mdata.winner is False
         gstate.cond = cond
