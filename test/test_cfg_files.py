@@ -24,7 +24,9 @@ pytestmark = [pytest.mark.integtest, pytest.mark.filterwarnings("error")]
 from context import ai_player
 from context import cfg_keys as ckey
 from context import game_constants as gconsts
+from context import game_info as gi
 from context import man_config
+from context import round_tally
 
 
 PATH = './GameProps/'
@@ -94,6 +96,15 @@ def test_nonrule_checks(request, filename):
                 # zero are always included in the config file
                 assert 0 in value
 
+    # if goal_param would be useful, check to see that it's included
+    # this isn't really required but would be nice
+    if vparams:
+        goal = game_dict[ckey.GAME_INFO].get(ckey.GOAL, gi.Goal.MAX_SEEDS)
+        rounds = game_dict[ckey.GAME_INFO].get(ckey.ROUNDS, 0)
+
+        if ((rounds and goal in (gi.Goal.MAX_SEEDS, gi.Goal.TERRITORY))
+            or goal in round_tally.RoundTally.GOALS):
+            assert ckey.GOAL_PARAM in vparams
 
     if ckey.VARIANTS in game_dict:
         variants = game_dict[ckey.VARIANTS]
@@ -112,7 +123,7 @@ def test_nonrule_checks(request, filename):
             print(f"VARIANT check {key}")
             assert isinstance(vdict, dict)
 
-            for pos, (param, value) in enumerate(vdict.items()):
+            for param, value in vdict.items():
 
                 # all parameters keys are game options
                 assert param in PARAM_DICT

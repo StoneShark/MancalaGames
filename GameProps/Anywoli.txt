@@ -18,11 +18,12 @@
       "stores": true
    },
    "variants": {
-   	"As Config'ed": { },
-   	"Yit_Nuri": { "holes": 7 },
-   	"Yit_Jani": { "holes": 13,
-   	              "nbr_start": 2
-   	              }
+       "As Config'ed": { },
+       "Yit_Nuri": { "holes": 7 },
+       "Yit_Jani": { 
+                     "holes": 13,
+                     "nbr_start": 2
+                   }
    },
    "player": {
       "ai_params": {},

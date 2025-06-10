@@ -22,7 +22,8 @@
    },
    "vari_params": {
       "round_starter": "include",
-      "rounds": "include"
+      "rounds": "include",
+      "goal_param": "include"
    },
    "player": {
       "scorer": {

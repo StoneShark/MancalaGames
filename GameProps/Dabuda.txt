@@ -15,6 +15,11 @@
       "stores": true,
       "xcpickown": 1
    },
+   "vari_params": {
+      "holes": [6, 7, 8, 9, 10],
+      "xcpickown": "include",
+      "allow_rule": [0, 1]
+   },
    "player": {
       "scorer": {
          "access_m": 0,
@@ -25,11 +30,6 @@
          "repeat_turn": 0,
          "seeds_m": 0,
          "stores_m": 4
-      },
-      "vari_params": {
-         "holes": [6, 7, 8, 9, 10],
-         "xcpickown": "include",
-         "allow_rule": [0, 1]
       },
       "algorithm": "negamaxer",
       "ai_params": {

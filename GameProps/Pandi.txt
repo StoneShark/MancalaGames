@@ -24,7 +24,8 @@
    "vari_params": {
       "sow_rule": [3, 4],
       "round_starter": "include",
-      "round_fill": "include"
+      "round_fill": "include",
+      "goal_param": "include"
    },
    "player": {
       "algorithm": "negamaxer",

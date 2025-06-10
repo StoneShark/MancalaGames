@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Ohvulhu",
-      "about": "Sow counter-clockwise in multiple laps including ones own store. Repeat turn when sow ends in own store.\n\nCross capture on final seed sown to own side of the board.\n\nPlayed in rounds. A round ends a player does not have a move on their turn.\n\nVariations:\n\n- simultaneous opening move (not supported by Mancala Games).\n- clockwise sow direction.\n- 6, 7, 8 or 10 holes per side with the number of start seeds equalling the number of holes per side.\n- pass when no move (MUSTPASS, Dakon).\n",
+      "about": "Sow counter-clockwise in multiple laps including ones own store. Repeat turn when sow ends in own store.\n \nCross capture on final seed sown to own side of the board.\n\nPlayed in rounds. A round ends a player does not have a move on their turn.\n\nVariations:\n\n- simultaneous opening move (not supported by Mancala Games)\n\n- clockwise sow direction\n\n- 6, 7, 8 or 10 holes per side with the number of start seeds equalling the number of holes per side\n\n- pass when no move (MUSTPASS, Dakon)\n",
       "blocks": true,
       "crosscapt": true,
       "goal_param": 4,
@@ -20,22 +20,38 @@
       "stores": true,
       "xcpickown": 1
    },
-   "vari_params": {
-      "holes": [6, 7, 8, 9, 10],
-      "sow_direct": [-1, 1],
-      "goal_param": "include",
-      "mustpass": "include"
-   },
    "player": {
-      "ai_params": {
-         "mm_depth": [ 1, 1, 5, 7 ]
-      },
+      "ai_params": { "mm_depth": [ 1, 1, 5, 7 ] },
       "scorer": {
          "stores_m": 16,
          "empties_m": 2,
          "repeat_turn": 40,
          "easy_rand": 20
       }
+   },
+   "variants": {
+      "Base Game (8s)": {},
+      "6 holes & seeds": {
+         "holes": 6,
+         "nbr_start": 6
+      },
+      "7 holes & seeds": {
+         "holes": 7,
+         "nbr_start": 7
+      },
+      "9 holes & seeds": {
+         "holes": 9,
+         "nbr_start": 9
+      },
+      "10 holes & seeds": {
+         "holes": 10,
+         "nbr_start": 10
+      }
+   },
+   "vari_params": {
+      "sow_direct": [ -1, 1 ],
+      "goal_param": "include",
+      "mustpass": "include"
    },
    "rules": "https://mancala.fandom.com/wiki/Ohvalhu",
    "note": "GOAL_PARAM set to 4 to limit game length"

@@ -12,6 +12,7 @@ Created on Thu Mar  2 14:38:17 2023
 import functools as ft
 import traceback
 import tkinter as tk
+import warnings
 
 import ai_player
 import animator
@@ -141,6 +142,9 @@ class MancalaUI(ui_cmds.VariCmdsMixin,
             self.root = tk.Tk()
             self.master = self.root
             ui_utils.setup_styles(self.root)
+            warnings.showwarning = ft.partial(self.vari_show_error, self)
+            warnings.simplefilter('always', UserWarning)
+
         man_config.read_ini_file(self.master, self.info.name)
         super().__init__(self.master)
         self.master.title(self.info.name)

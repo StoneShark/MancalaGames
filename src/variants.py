@@ -8,9 +8,11 @@ Created on Tue Jun  3 04:35:08 2025
 # %% imports
 
 import dataclasses as dc
+import enum
 import tkinter as tk
 import tkinter.simpledialog as tksimpledialog
 from tkinter import ttk
+import warnings
 
 import ai_player
 import cfg_keys as ckey
@@ -23,18 +25,27 @@ import round_tally
 import ui_utils
 
 
+class GameVariantError(Exception):
+    """Error in GameInfo."""
+
+
 class GameVariations:
     """Collect the data used for game variations."""
 
     def __init__(self, game_ui, game_file):
 
+        self.failed = True
         self.game_ui = game_ui
         self.game_file = game_file
         self.game_config = man_config.read_game(game_file)
 
-        if (ckey.VARI_PARAMS not in self.game_config
-                and ckey.VARIANTS not in self.game_config):
-            raise TypeError("Cannot create GameVariations without variations.")
+        try:
+            test_variation_config(self.game_config)
+
+        except GameVariantError as error:
+            message = error.__class__.__name__ + ':  ' + str(error)
+            ui_utils.showerror(self.game_ui, 'Variations Error', message)
+            return
 
         self.ptable = man_config.ParamData(no_descs=True)
 
@@ -49,9 +60,11 @@ class GameVariations:
                 options |= set(vdict.keys())
 
         if params & options:
-            print("VARI_PARAMS and VARIANTS have overlapping parameters"
-                  "VARI_PARAMS settings will override VARIANTS")
+            warnings.warn("VARI_PARAMS and VARIANTS have overlapping parameters. "
+                          "VARI_PARAMS settings will override VARIANTS")
         self.my_params = params | options
+
+        self.failed = False
 
 
     def _update_config(self):
@@ -249,3 +262,104 @@ class AdjustPopup(param_mixin.ParamMixin, tksimpledialog.Dialog):
 
         self.do_it = True
         self.cancel()
+
+
+# %% variant tests
+
+def test_include_goal_param(game_dict, vparams):
+    """Test to see if it would be a good idea to include goal_param"""
+
+    if not vparams:
+        return
+
+    goal = game_dict[ckey.GAME_INFO].get(ckey.GOAL, gi.Goal.MAX_SEEDS)
+    rounds = game_dict[ckey.GAME_INFO].get(ckey.ROUNDS, 0)
+
+    if (((rounds and goal in (gi.Goal.MAX_SEEDS, gi.Goal.TERRITORY))
+             or goal in round_tally.RoundTally.GOALS)
+            and ckey.GOAL_PARAM not in vparams):
+        msg="GOAL_PARAM might be useful in VARI_PARAM."
+        warnings.warn(msg)
+
+
+def test_vari_params(game_dict, vparams):
+    """Test the VARI_PARAMS section."""
+
+    for key, vlist in vparams.items():
+
+        if key not in ckey.CONFIG_PARAMS:
+            msg=f"{key} in VARI_PARAM is not a valid game parameter."
+            raise GameVariantError(msg)
+
+        if isinstance(vlist, list):
+            if not all(isinstance(val, int) for val in vlist):
+                msg=f"{key} value list contains non-integers."
+                raise GameVariantError(msg)
+
+            if (key == ckey.GAME_CLASS
+                    and game_dict[ckey.GAME_CLASS] not in vlist):
+                msg="Configured GAME_CLASS not in VARI_PARAMS value list."
+                raise GameVariantError(msg)
+
+            if (key in game_dict[ckey.GAME_CONSTANTS]
+                    and game_dict[ckey.GAME_CONSTANTS][key] not in vlist):
+                msg=f"Configured {key.upper()} not in VARI_PARAMS value list."
+                raise GameVariantError(msg)
+
+            if key in game_dict[ckey.GAME_INFO]:
+
+                cval = game_dict[ckey.GAME_INFO][key]
+                if isinstance(cval, enum.Enum):
+                    cval = cval.value
+
+                if cval not in vlist:
+                    msg=f"Configured {key.upper()} not in VARI_PARAMS value list."
+                    raise GameVariantError(msg)
+
+    test_include_goal_param(game_dict, vparams)
+
+
+def test_variants_param(_, variants):
+    """Test the variants section."""
+
+    if not variants:
+        return
+
+    if len(variants) < 2:
+        msg="""Game variants aren't useful if there aren't 2 or more.
+            Is the base game variant missing?"""
+        raise GameVariantError(msg)
+
+    # first item has an empty dictionary
+    vlist = list(variants.items())
+    if not (isinstance(vlist[0][1], dict) and vlist[0][1] == {}):
+        msg="""The first variant should be for the base game
+            and have a value of empty dictionary"""
+        raise GameVariantError(msg)
+
+    for key, vdict in variants.items():
+
+        if not isinstance(vdict, dict):
+            msg = f"Variant value for {key} is not a dict."
+            raise GameVariantError(msg)
+
+        for param in vdict.keys():
+
+            if param not in ckey.CONFIG_PARAMS:
+                msg=f"{param} in VARIANT[{key}] is not a valid game parameter."
+                raise GameVariantError(msg)
+
+
+def test_variation_config(game_dict):
+    """Test the consistency of the variation configuration
+    in the game dictionary.
+
+    Using the tester overly complicates this code because the tests
+    are inside loops."""
+
+    if not (ckey.VARI_PARAMS in game_dict or ckey.VARIANTS not in game_dict):
+        msg="Cannot create GameVariations without variations."
+        raise GameVariantError(msg)
+
+    test_vari_params(game_dict, game_dict.get(ckey.VARI_PARAMS, {}))
+    test_variants_param(game_dict, game_dict.get(ckey.VARIANTS, {}))

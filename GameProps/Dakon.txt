@@ -22,18 +22,19 @@
       "xcpickown": 1
    },
    "variants": {
-   	"As Config'ed (7s)": {},
-   	"6 holes & seeds": {"holes": 6,
-   	                    "nbr_start": 6},
-   	"8 holes & seeds": {"holes": 8,
-   	                    "nbr_start": 8},
-   	"9 holes & seeds": {"holes": 9,
-   	                    "nbr_start": 9},
-   	"10 holes & seeds": {"holes": 10,
-   	                     "nbr_start": 10}
+       "As Config'ed (7s)": {},
+       "6 holes & seeds": {"holes": 6,
+                           "nbr_start": 6},
+       "8 holes & seeds": {"holes": 8,
+                           "nbr_start": 8},
+       "9 holes & seeds": {"holes": 9,
+                           "nbr_start": 9},
+       "10 holes & seeds": {"holes": 10,
+                            "nbr_start": 10}
    },
    "vari_params": {
-      "mustpass": "include"
+      "mustpass": "include",
+      "goal_param": "include"
    },
    "player": {
       "ai_params": {

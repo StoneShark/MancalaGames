@@ -30,7 +30,8 @@
       "start_pattern": "include",
       "mustpass": "include",
       "min_move": [1, 2],
-      "allow_rule": [0, 3]
+      "allow_rule": [0, 3],
+      "goal_param": "include"
    },
    "player": {
       "algorithm": "minimaxer",

@@ -15,6 +15,11 @@
       "sow_param": 3,
       "sow_rule": 2
    },
+   "vari_params": {
+      "holes": [6, 7, 8],
+      "nbr_start": [2, 3, 4],
+      "sow_rule": [1, 2]
+   },
    "player": {
       "scorer": {
          "access_m": 0,
@@ -22,11 +27,6 @@
          "empties_m": -4,
          "evens_m": 0,
          "easy_rand": 0
-      },
-      "vari_params": {
-         "holes": [6, 7, 8],
-         "nbr_start": [2, 3, 4],
-         "sow_rule": [1, 2]
       },
       "algorithm": "negamaxer",
       "ai_params": {

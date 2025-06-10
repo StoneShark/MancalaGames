@@ -6,7 +6,7 @@ Created on Thu Feb 13 07:34:32 2025
 
 import textwrap
 
-VERSION = '1.8.6'
+VERSION = '1.8.7'
 
 # these are auto filled when the exe is built
 DATETIME = 'Sun May 25 11:01:50 2025'

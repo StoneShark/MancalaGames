@@ -14,13 +14,13 @@
       "stores": true
    },
    "variants": {
-   	"Base Game (3s)": { },
-   	"2 seeds & capt on": {"nbr_start": 2,
-   	                      "capt_on": [ 2 ]},
-   	"4 seeds & capt on": {"nbr_start": 4,
-   	                      "capt_on": [ 4 ]},
-   	"5 seeds & capt on": {"nbr_start": 5,
-   	                      "capt_on": [ 5 ]}
+       "Base Game (3s)": { },
+       "2 seeds & capt on": {"nbr_start": 2,
+                             "capt_on": [ 2 ]},
+       "4 seeds & capt on": {"nbr_start": 4,
+                             "capt_on": [ 4 ]},
+       "5 seeds & capt on": {"nbr_start": 5,
+                             "capt_on": [ 5 ]}
    },
    "vari_params": {
       "holes": [9, 10],

@@ -143,6 +143,10 @@ GINFO_PARAMS =  (ALLOW_RULE,
                  XCPICKOWN,
                  )
 
+# these are the keys allowed in variants
+CONFIG_PARAMS = set(GCONST_PARAMS) | set(GINFO_PARAMS)
+
+
 # the parameters that configure the AI player
 PLAYER_PARAMS = (ALGORITHM,
                  DIFFICULTY,

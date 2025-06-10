@@ -690,6 +690,26 @@ For the center hole, the mouse button used to start the move selects the sow dir
   </div>
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p21.
+<h3 id="Cross-Kalah" class="game_desc">Cross-Kalah</h3>
+<p>A <a href="about_games.html#Kalah">Kalah</a> variant in which the sow direction direction varies by the number of seeds in the hole: If odd seeds, sow counter-clockwise. If even seeds, sow clockwise.
+<p>All other rules match <a href="about_games.html#Kalah">Kalah</a>.
+<p>Inveted by William Daniel Troyka in 2001.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OPP_SIDE</p>
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: EVEN_ODD_DIR</p>
+    <p class="param"><a href="game_params.html#sow_own_store">Sow Own Store</a>: Yes</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#xcpickown">Own Seed on Xcapture</a>: PICK_ON_CAPT</p>
+  </div>
+</div>
+<p>Rules: <a href="https://en.wikipedia.org/wiki/Cross-Kalah" target="_blank">https://en.wikipedia.org/wiki/Cross-Kalah</a>
 <h3 id="Cross-Wari" class="game_desc">Cross-Wari</h3>
 <p>A single-lap mancala, sow direction is determined by the number of seeds in the hole.  Even seeds are sown clockwise. Odd seeds are sown counter-clockwise. A sow which cycles the board, will skip the hole that the move started from. If your opponent has no seeds, you must make seeds available to them (if you can).
 <p>Captures are on 2s and 3s from the opponent's side (final seed sown makes either 2 or 3).  As long as there is a an unbroken group of holes containing 2 or 3 seeds immediately preceding the final hole sown, these holes are also captured.
@@ -1380,7 +1400,7 @@ remove limit on cross captures (<a href="game_params.html#capt_max">CAPT_MAX</a>
 <ul><li class="helptext">
 single lap sow
 <li class="helptext">
-skip start hole when sowing more than 12 seeds (<a href="game_params.html#skip_start">SKIP_START</a>)
+skip start hole when sowing more than 12 seeds (<a href="game_params.html#skip_start">SKIP_START</a>, Mancala Games does not support a limit to the number of seeds)
 </ul>
 <div class="cols_row">
   <div class="column2">
@@ -1416,7 +1436,7 @@ Start the game with the seeds placed so that the first player cannot  get a repe
 <li class="helptext">
 If all of your opponents seeds are in one hole and you capture them, your opponent gets all of your seeds for the game tally (<a href="game_params.html#grandslam">GRANDSLAM</a> of OPP_GET_REMAINING).
 <li class="helptext">
-Sow holes with an even number of seeds clockwise and odd an number of seeds counter-clockwise (<a href="game_params.html#sow_direct">SOW_DIRECT</a> of EVEN_ODD_DIR). This was first proposed by William Daniel Troyka in 2001 as Cross-Kalah.
+Sow holes with an even number of seeds clockwise and odd an number of seeds counter-clockwise (<a href="game_params.html#sow_direct">SOW_DIRECT</a> of EVEN_ODD_DIR). This was first proposed by William Daniel Troyka in 2001 as <a href="about_games.html#Cross-Kalah">Cross-Kalah</a>.
 <li class="helptext">
 Use always_pick for <a href="game_params.html#xcpickown">XCPICKOWN</a> (Valdez, p10).
 <li class="helptext">
@@ -2323,17 +2343,18 @@ see <a href="about_games.html#Lam Waladach">Lam Waladach</a>
 <p>Rules: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p85.
 <h3 id="Ohvulhu" class="game_desc">Ohvulhu</h3>
 <p>Sow counter-clockwise in multiple laps including ones own store. Repeat turn when sow ends in own store.
+<p> 
 <p>Cross capture on final seed sown to own side of the board.
 <p>Played in rounds. A round ends a player does not have a move on their turn.
 <p>Variations:
 <ul><li class="helptext">
-simultaneous opening move (not supported by Mancala Games).
+simultaneous opening move (not supported by Mancala Games)
 <li class="helptext">
-clockwise sow direction.
+clockwise sow direction
 <li class="helptext">
-6, 7, 8 or 10 holes per side with the number of start seeds equalling the number of holes per side.
+6, 7, 8 or 10 holes per side with the number of start seeds equalling the number of holes per side
 <li class="helptext">
-pass when no move (<a href="game_params.html#mustpass">MUSTPASS</a>, <a href="about_games.html#Dakon">Dakon</a>).
+pass when no move (<a href="game_params.html#mustpass">MUSTPASS</a>, <a href="about_games.html#Dakon">Dakon</a>)
 </ul>
 <div class="cols_row">
   <div class="column2">
@@ -3270,6 +3291,7 @@ no repeat turn on capture
     <p class="param"><a href="#Bosh">Bosh</a></p>
     <p class="param"><a href="#Bule Perga">Bule Perga</a></p>
     <p class="param"><a href="#Cow">Cow</a></p>
+    <p class="param"><a href="#Cross-Kalah">Cross-Kalah</a></p>
     <p class="param"><a href="#Cross-Wari">Cross-Wari</a></p>
     <p class="param"><a href="#Dabuda">Dabuda</a></p>
     <p class="param"><a href="#Dakon">Dakon</a></p>
@@ -3287,9 +3309,9 @@ no repeat turn on capture
     <p class="param"><a href="#Erherhe">Erherhe</a></p>
     <p class="param"><a href="#Eson Xorgol">Eson Xorgol</a></p>
     <p class="param"><a href="#Gabata">Gabata</a></p>
-    <p class="param"><a href="#Gamacha">Gamacha</a></p>
   </div>
   <div class="column3">
+    <p class="param"><a href="#Gamacha">Gamacha</a></p>
     <p class="param"><a href="#Gelech">Gelech</a></p>
     <p class="param"><a href="#Giuthi">Giuthi</a></p>
     <p class="param"><a href="#Goat">Goat</a></p>
@@ -3330,9 +3352,9 @@ no repeat turn on capture
     <p class="param"><a href="#Ndoto">Ndoto</a></p>
     <p class="param"><a href="#No Sides Child">No Sides Child</a></p>
     <p class="param"><a href="#NoCapt">NoCapt</a></p>
-    <p class="param"><a href="#NoSides">NoSides</a></p>
   </div>
   <div class="column3">
+    <p class="param"><a href="#NoSides">NoSides</a></p>
     <p class="param"><a href="#NS_Kalah">NS_Kalah</a></p>
     <p class="param"><a href="#Nsa Isong">Nsa Isong</a></p>
     <p class="param"><a href="#NumNum">NumNum</a></p>

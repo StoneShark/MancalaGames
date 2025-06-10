@@ -19,7 +19,8 @@
       "stores": true
    },
    "vari_params": {
-      "nbr_start": [ 3, 4 ]
+      "nbr_start": [ 3, 4 ],
+      "goal_param": "include"
    },
    "player": {
       "algorithm": "minimaxer",

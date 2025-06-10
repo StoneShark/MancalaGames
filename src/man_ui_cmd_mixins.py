@@ -36,6 +36,13 @@ class VariCmdsMixin:
 
     _varier = None
 
+    @staticmethod
+    def vari_show_error(parent, message, *_):
+        """Notify user of warnings during parameter test."""
+
+        ui_utils.showwarning(parent, 'Varations Warning', str(message))
+
+
     def vari_add_menu_cmds(self, menu):
         """Add the variant menu commands."""
         self._varier = None
@@ -82,6 +89,9 @@ class VariCmdsMixin:
         if not self._varier:
             self._varier = variants.GameVariations(
                                 self, getattr(self.game, ckey.FILENAME))
+            if self._varier.failed:
+                self._varier = None
+                return
 
         with animator.animate_off():
             game_objs = self._varier.reconfigure()
@@ -104,6 +114,9 @@ class VariCmdsMixin:
         if not self._varier:
             self._varier = variants.GameVariations(
                                 self, getattr(self.game, ckey.FILENAME))
+            if self._varier.failed:
+                self._varier = None
+                return
 
         game_objs = self._varier.rebuild()
         self._varier = None
@@ -116,6 +129,10 @@ class VariCmdsMixin:
         if not self._varier:
             self._varier = variants.GameVariations(
                                 self, getattr(self.game, ckey.FILENAME))
+            if self._varier.failed:
+                self._varier = None
+                return
+
         self._varier.settings()
 
 

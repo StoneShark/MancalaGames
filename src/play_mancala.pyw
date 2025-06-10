@@ -159,10 +159,11 @@ GNOTES = {
     'Rules Valdez': lambda gdict: 'Valdez' in gdict.get('rules', ''),
     'Rules Man World': lambda gdict: 'mancala.fandom' in gdict.get('rules', ''),
     'Rules Davies': lambda gdict: 'Davies' in gdict.get('rules', ''),
-    'Rules Other': lambda gdict: ('Russ' not in gdict.get('rules', '')
-                                  and 'Valdez' not in gdict.get('rules', '')
-                                  and 'mancala.fandom' not in gdict.get('rules', '')
-                                  and 'Davies' not in gdict.get('rules', ''))
+    'Rules Other': lambda gdict: ('Mohr' in gdict.get('rules', '')
+                                  or ('Russ' not in gdict.get('rules', '')
+                                      and 'Valdez' not in gdict.get('rules', '')
+                                      and 'mancala.fandom' not in gdict.get('rules', '')
+                                      and 'Davies' not in gdict.get('rules', '')))
 
           }
 
