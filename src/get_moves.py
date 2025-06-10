@@ -126,7 +126,7 @@ class AltDirMoves(MovesIf):
 
         moves = self.decorator.get_moves()
 
-        if not self.game.movers or gi.PASS_TOKEN in moves:
+        if self.game.mcount == 1 or gi.PASS_TOKEN in moves:
             return moves
 
         new_moves = set()
