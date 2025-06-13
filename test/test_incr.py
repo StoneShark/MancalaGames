@@ -194,3 +194,17 @@ class TestIncr:
                                          [F, T, F, F])
 
         assert game.deco.incr.incr(2, Direct.CW, start=0) == 5
+
+
+    def test_map_incr(self, game):
+
+        mapi = incr.MapIncrement(game)
+
+        assert 'cw' in str(mapi)
+        assert 'ccw' in str(mapi)
+
+        assert len(mapi.ccw_map) == game.cts.dbl_holes
+        assert len(mapi.cw_map) == game.cts.dbl_holes
+
+        assert mapi.incr(4, Direct.CW) == 2
+        assert mapi.incr(3, Direct.CCW) == 5

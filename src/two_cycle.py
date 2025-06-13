@@ -154,7 +154,7 @@ class NorthSouthSowSeedsNStore(sower_decos.SowSeedsNStore):
                           gi.Direct.CW: [cw_store, cw_store]}
 
 
-class EastWestIncr(incrementer.IncrementerIf):
+class EastWestIncr(incrementer.MapIncrement):
     """Increment that keeps seeds only on your own side
     of the board: EAST/WEST
     This is a replacement for the Increment (the base incr class)."""
@@ -174,16 +174,6 @@ class EastWestIncr(incrementer.IncrementerIf):
         self.cw_map = [dbl_holes - 1] + list(range(dbl_holes - 1))
         self.cw_map[half] = half_3x - 1
         self.cw_map[half_3x] = half - 1
-
-
-    def incr(self, loc, direct, _=incrementer.NOSKIPSTART):
-        """Do an increment. Need to be able to increment in
-        both directions to support capture in either direction."""
-
-        if direct == gi.Direct.CCW:
-            return self.ccw_map[loc]
-
-        return self.cw_map[loc]
 
 
 class EastWestAllowable(allowables.AllowableIf):

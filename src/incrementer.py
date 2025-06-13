@@ -23,6 +23,8 @@ Created on Fri Apr  7 11:21:07 2023
 import abc
 
 import deco_chain_if
+import game_info as gi
+
 
 # %% constants
 
@@ -50,6 +52,36 @@ class Increment(IncrementerIf):
         """Do an increment."""
 
         return (loc + direct) % self.game.cts.dbl_holes
+
+
+class MapIncrement(IncrementerIf):
+    """An incrementer based on mapping.
+
+    The attributes ccw_map and cw_map should be changed
+    to make this useful."""
+
+
+    def __init__(self, game, decorator=None):
+
+        super().__init__(game, decorator)
+
+        dholes = game.cts.dbl_holes
+        self.ccw_map = [(loc + 2) % dholes for loc in range(dholes)]
+        self.cw_map = [(loc - 2) % dholes for loc in range(dholes)]
+
+
+    def __str__(self):
+        return self.str_deco_detail('cw:  ' + str(self.cw_map)
+                                    + '\n   ccw:  ' + str(self.ccw_map))
+
+
+    def incr(self, loc, direct, _=NOSKIPSTART):
+        """Do an increment."""
+
+        if direct == gi.Direct.CCW:
+            return self.ccw_map[loc]
+
+        return self.cw_map[loc]
 
 
 # %% decorators

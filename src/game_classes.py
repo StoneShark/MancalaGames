@@ -10,6 +10,7 @@ import diffusion
 import mancala
 import same_side
 import two_cycle
+import zigzag
 
 GAME_CLASSES = {'Mancala': mancala.Mancala,
                 'NorthSouthCycle': two_cycle.NorthSouthCycle,
@@ -18,4 +19,5 @@ GAME_CLASSES = {'Mancala': mancala.Mancala,
                 'DiffusionV2': diffusion.DiffusionV2,
                 'SameSide': same_side.SameSide,
                 'Ohojichi': same_side.Ohojichi,
-                'BearOff': bear_off.BearOff}
+                'BearOff': bear_off.BearOff,
+                'ZigZag': zigzag.ZigZag}
