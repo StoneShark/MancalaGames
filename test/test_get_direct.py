@@ -71,6 +71,14 @@ class TestGetDirection:
                               (4, 6, Direct.SPLIT, Direct.CCW),
                               (4, 7, Direct.SPLIT, Direct.CCW),
 
+                              (4, 0, Direct.TOCENTER, Direct.CCW),
+                              (4, 1, Direct.TOCENTER, Direct.CCW),
+                              (4, 2, Direct.TOCENTER, Direct.CW),
+                              (4, 3, Direct.TOCENTER, Direct.CW),
+                              (4, 4, Direct.TOCENTER, Direct.CCW),
+                              (4, 5, Direct.TOCENTER, Direct.CCW),
+                              (4, 6, Direct.TOCENTER, Direct.CW),
+                              (4, 7, Direct.TOCENTER, Direct.CW),
                               ])
     def test_common(self, holes, start, direct, exp_dir):
         """Stuff None in for udir moves, it should only be

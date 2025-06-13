@@ -157,6 +157,7 @@ STRING_DICTS = {
         {'Clockwise': gi.Direct.CW,
          'Counter-clockwise': gi.Direct.CCW,
          'Split': gi.Direct.SPLIT,
+         'To Center Line': gi.Direct.TOCENTER,
          'Players Alternate': gi.Direct.PLAYALTDIR,
          'Odd Seeds-CCW Even-CW': gi.Direct.EVEN_ODD_DIR}),
 

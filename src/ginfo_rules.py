@@ -90,13 +90,12 @@ def test_pattern_rules(tester):
         rule=lambda ginfo: (ginfo.start_pattern ==
                                 gi.StartPattern.MOVE_RIGHTMOST
                             and ginfo.mlength > 1),
-        msg='START_PATTERN of MOVE_RIGHTMOST is incompatible with ' \
-            'territory GOAL, SPLIT sow, user directed sow direction, ' \
-            'and NO_SIDES (mlength > 1)',
+        msg="""START_PATTERN of MOVE_RIGHTMOST is incompatible with
+            territory GOAL, NO_SIDES, or user directed sow direction
+            (mlength > 1)""",
         excp=gi.GameInfoError)
-        # would need to define what the sow direction should be if split sow
-        # no_sides without split sow could be supported but not supporting
-        # makes code the simpler (uncondition move type)
+        # territory - rightmost hole might not belong to starter
+        # no way to choose direction for generated move
 
 
 def test_eliminate_goal_rules(tester):
@@ -906,10 +905,11 @@ def test_rules(ginfo, holes, skip=None):
 
     tester.test_rule('odd_split_udir',
         both_objs=True,
-        rule=lambda ginfo, holes: (ginfo.sow_direct == gi.Direct.SPLIT
+        rule=lambda ginfo, holes: (ginfo.sow_direct in (gi.Direct.SPLIT,
+                                                        gi.Direct.TOCENTER)
                                    and holes % 2
                                    and holes // 2 not in ginfo.udir_holes),
-        msg="""SPLIT with odd number of holes,
+        msg="""SPLIT or TOCENTER with odd number of holes,
             but center hole not listed in udir_holes""",
         excp=gi.GameInfoError)
 
@@ -917,7 +917,9 @@ def test_rules(ginfo, holes, skip=None):
         both_objs=True,
         rule=lambda ginfo, holes: (ginfo.udirect
                                    and len(ginfo.udir_holes) != holes
-                                   and ginfo.sow_direct != gi.Direct.SPLIT),
+                                   and ginfo.sow_direct
+                                           not in (gi.Direct.SPLIT,
+                                                   gi.Direct.TOCENTER)),
         msg= 'Odd choice of sow direction when udir_holes != nbr_holes',
         warn=True)
 

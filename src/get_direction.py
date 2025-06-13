@@ -36,7 +36,8 @@ class ConstDir(GetDirIf):
 
 
 class SplitDir(GetDirIf):
-    """Precompute the diretions for all locations,
+    """Sow towards the outer edge of the board.
+    Precompute the diretions for all locations,
     then lookup and return at game time.
 
     This shouldn't be called for the center hole
@@ -53,6 +54,30 @@ class SplitDir(GetDirIf):
         self.direction += [gi.Direct.CW] * half_holes
         self.direction += [None] if rem else []
         self.direction += [gi.Direct.CCW] * half_holes
+
+    def get_direction(self, mdata):
+        return self.direction[mdata.sow_loc]
+
+
+class CenterLineDir(GetDirIf):
+    """Sow towards the center line of the board.
+    Precompute the diretions for all locations,
+    then lookup and return at game time.
+
+    This shouldn't be called for the center hole
+    when the board size is odd, None will be returned."""
+
+    def __init__(self, game, decorator=None):
+
+        super().__init__(game, decorator)
+        holes = game.cts.holes
+        half_holes, rem = divmod(holes, 2)
+        self.direction = [gi.Direct.CCW] * half_holes
+        self.direction += [None] if rem else []
+        self.direction += [gi.Direct.CW] * half_holes
+        self.direction += [gi.Direct.CCW] * half_holes
+        self.direction += [None] if rem else []
+        self.direction += [gi.Direct.CW] * half_holes
 
     def get_direction(self, mdata):
         return self.direction[mdata.sow_loc]
@@ -142,6 +167,8 @@ def deco_dir_getter(game):
 
     if game.info.sow_direct is gi.Direct.SPLIT:
         dir_getter = SplitDir(game)
+    elif game.info.sow_direct is gi.Direct.TOCENTER:
+        dir_getter = CenterLineDir(game)
     elif game.info.sow_direct is gi.Direct.EVEN_ODD_DIR:
         dir_getter = EvenOddDir(game)
     else:
