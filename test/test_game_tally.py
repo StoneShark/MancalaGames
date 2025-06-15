@@ -19,7 +19,7 @@ from game_info import WinCond
 
 # %%
 
-TEST_COVERS = ['src\\gtally.py']
+TEST_COVERS = ['src\\game_tally.py']
 
 
 

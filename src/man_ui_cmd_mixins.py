@@ -9,6 +9,9 @@ These mixin are NOT independent of MancalaUI and are not intended
 to be reusable with other classes. They break the functionality
 of the MancalaUI into some managable pieces.
 
+Any data declared in these routines is class scope data!
+Re-init it when the menu is made.
+
 Created on Wed Jun  4 15:45:37 2025
 @author: Ann"""
 

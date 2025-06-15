@@ -16,19 +16,17 @@ from context import game_info as gi
 from context import zigzag
 
 
-# %%
+# %% constants
 
 TEST_COVERS = ['src\\zigzag.py']
 
-# %% constants
 
 T = True
 F = False
 N = None
 
-CW = gi.Direct.CW
-CCW = gi.Direct.CCW
 
+# %% tests
 
 class TestZigZag:
     """Test for ZigZag."""
@@ -61,6 +59,7 @@ class TestZigZag:
     @pytest.mark.parametrize('seeds, holes, pos, turn, eloc, eboard',
                              CASES)
     def test_via_sow(self, seeds, holes, pos, turn, eloc, eboard):
+        """exercise get_dir and incr deco by doing a sow operation"""
 
         udir = [holes // 2] if holes % 2 else []
 
@@ -84,3 +83,78 @@ class TestZigZag:
 
         assert mdata.capt_loc == eloc
         assert game.board == eboard
+
+
+    @pytest.fixture
+    def game(self):
+
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
+        game_info = gi.GameInfo(stores=True,
+                                mlaps=gi.LapSower.LAPPER,
+                                sow_direct=gi.Direct.TOCENTER,
+                                crosscapt=True,
+                                nbr_holes=game_consts.holes,
+                                rules=zigzag.ZigZag.rules)
+
+        return zigzag.ZigZag(game_consts, game_info)
+
+
+    def test_allow_deco_const(self, game):
+        """Test the presence of dont undo and the operation of
+        disallow_endless wrapper."""
+
+        astr = str(game.deco.allow)
+        assert 'zigzag.DontUndoMoveOne' in astr
+        assert 'NoEndlessSows' not in astr
+
+        game.disallow_endless(True)
+
+        astr = str(game.deco.allow)
+        assert 'zigzag.DontUndoMoveOne' in astr
+        assert 'NoEndlessSows' in astr
+
+
+    def test_odd_board_size(self):
+        """DontUndoMoveOne is not included in games that use udir,
+        udir is required for games with an odd # holes per side"""
+
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=5)
+        game_info = gi.GameInfo(stores=True,
+                                mlaps=gi.LapSower.LAPPER,
+                                sow_direct=gi.Direct.TOCENTER,
+                                udir_holes=[2],
+                                crosscapt=True,
+                                nbr_holes=game_consts.holes,
+                                rules=zigzag.ZigZag.rules)
+
+        game = zigzag.ZigZag(game_consts, game_info)
+        astr = str(game.deco.allow)
+        assert 'DontUndoMoveOne' not in astr
+
+
+    ACASES = [
+        # first hole is empty from mlap sowing
+        ([3, 3, 3, 3, 3, 3, 3, 3], F, 1, [F, T, T, T]),
+
+        # don't allow undo of in 3
+        ([4, 1, 0, 5, 1, 0, 0, 2], F, 1, [T, F, F, T]),
+
+        # move of 1 that does a capture so single can be moved back
+        ([4, 1, 5, 0, 1, 0, 0, 2], F, 1, [T, F, T, T]),
+
+        ]
+
+    # @pytest.mark.usefixtures("logger")
+    @pytest.mark.parametrize('board, turn, pos, eresult', ACASES)
+    def test_allow_results(self, game, board, turn, pos, eresult):
+        """Use move for setup so that mdata is completely filled."""
+
+        # print(game.deco.allow)
+        game.turn = turn
+        game.board = board
+        game.store = [game.cts.total_seeds - sum(game.board), 0]
+
+        game.move(pos)
+        # print(game.mdata)
+
+        assert game.deco.allow.get_allowable_holes() == eresult

@@ -66,7 +66,9 @@ def _add_base_sower(game):
                                     gi.SowRule.LAP_CAPT,
                                     gi.SowRule.LAP_CAPT_SEEDS,
                                     gi.SowRule.CONT_LAP_ON,
-                                    gi.SowRule.CONT_LAP_GREQ):
+                                    gi.SowRule.CONT_LAP_GREQ,
+                                    gi.SowRule.CONT_LAP_OPP,
+                                    gi.SowRule.CONT_LAP_OWN):
             pass    # pick a base sower below
 
         else:
@@ -150,8 +152,13 @@ def _add_lap_decos(game, lap_cont):
 
     if game.info.sow_rule == gi.SowRule.CONT_LAP_ON:
         lap_cont = msowd.StopNotN(game, lap_cont)
+
     elif game.info.sow_rule == gi.SowRule.CONT_LAP_GREQ:
-        lap_cont =msowd.StopLessN(game, lap_cont)
+        lap_cont = msowd.StopLessN(game, lap_cont)
+
+    elif game.info.sow_rule in (gi.SowRule.CONT_LAP_OWN,
+                                gi.SowRule.CONT_LAP_OPP):
+        lap_cont = msowd.StopSide(game, lap_cont)
 
     if game.info.sow_own_store:
         lap_cont = msowd.StopRepeatTurn(game, lap_cont)

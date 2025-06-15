@@ -16,6 +16,7 @@ HELPFILES += docs\\game_xref.html
 HELPFILES += docs\\param_types.html
 HELPFILES += docs\\dist_readme.txt
 HELPFILES += docs\\Diffusion_rules.pdf
+HELPFILES += docs\\ZigZagHelp.pdf
 
 DATAFILES = GameProps/*.txt $(HELPFILES) logs/README.txt
 
@@ -125,15 +126,15 @@ player_tests: test\\context.py params
 #  file from test. It reports the coverage of the files that
 #  are expected to be covered (via TEST_COVERS in the test file).
 
-vpath %.cov .\\cov
+vpath %.cov .\\test\\cov
 vpath %.py .\\test
 
 %.cov: test\\context.py src\\game_params.csv $(subst .cov,.py,$@) 
-	-mkdir cov
+	@-mkdir test\\cov
 	coverage run -m pytest test\\$(subst .cov,.py,$@) --ui_tests
 	coverage json
-	python test\\check_unit_cov.py $(subst .cov,,$@) > cov\\$@
-	type cov\\$@
+	python test\\check_unit_cov.py $(subst .cov,,$@) > test\\cov\\$@
+	type test\\cov\\$@
 
 .PHONY: %.test
 %.test: test\\context.py src\\game_params.csv $(subst .test,.py,$@)
@@ -141,50 +142,16 @@ vpath %.py .\\test
 	coverage html
 
 # do a stress test of one game:   make Wari.stress
-# does both Wari and Wari GSO
 PHONY: %.stress
 %.stress: test\\context.py src\\game_params.csv $(subst .stre,.py,$@)
-	pytest -k $(subst .stress,,$@) test\\test_z_simul_game.py --sim_fails --nbr_runs 1000
+	pytest -k $(subst .stress,,$@) test\\test_zz_simul_game.py --sim_fails --nbr_runs 1000
 
 
-UNIT_TESTS += test_ai_player.cov
-UNIT_TESTS += test_allowables.cov
-UNIT_TESTS += test_bear_off.cov
-UNIT_TESTS += test_capt_ok.cov
-UNIT_TESTS += test_captures.cov
-UNIT_TESTS += test_claimer.cov
-UNIT_TESTS += test_diffusion.cov
-UNIT_TESTS += test_drawer.cov
-UNIT_TESTS += test_end_move.cov
-UNIT_TESTS += test_game_info.cov
-UNIT_TESTS += test_game_logger.cov
-UNIT_TESTS += test_game_str.cov
-# UNIT_TESTS += test_game_tally.cov     doesn't report coverage, likely tk not covered
-UNIT_TESTS += test_gconsts.cov
-UNIT_TESTS += test_get_direct.cov
-UNIT_TESTS += test_get_moves.cov
-UNIT_TESTS += test_history.cov
-UNIT_TESTS += test_incr.cov
-UNIT_TESTS += test_inhibitor.cov
-UNIT_TESTS += test_make_child.cov
-# test_man_config is last because it sometimes fails to load tkinter
-UNIT_TESTS += test_mancala.cov
-UNIT_TESTS += test_minimax.cov
-UNIT_TESTS += test_montecarlo_ts.cov
-UNIT_TESTS += test_mpath.cov
-UNIT_TESTS += test_negamax.cov
-UNIT_TESTS += test_new_game.cov
-UNIT_TESTS += test_patterns.cov
-UNIT_TESTS += test_round_tally.cov
-UNIT_TESTS += test_rule_tester.cov
-UNIT_TESTS += test_same_side.cov
-UNIT_TESTS += test_sower.cov
-UNIT_TESTS += test_two_cycle.cov
-UNIT_TESTS += test_man_config.cov
+UNIT_TESTS := $(subst .py,.cov,$(shell cd test && grep -l pytest.mark.unittest *py))
 
 cov_unit_tests: $(UNIT_TESTS)
-	grep -h src cov\\*.cov
-
+	grep -h " src" test\\cov\\*.cov
+	-grep -h "TEST_COVERS" test\\cov\\*.cov
 
 
 #  pylint
@@ -223,7 +190,7 @@ clean:
 	-del coverage.json
 	-del src\\.coverage
 	-del test\\context.py
-	-del cov\\*.cov
+	-del test\\cov\\*.cov
 	-del MancalaGames.tgz
 	
 .PHONY : spotless

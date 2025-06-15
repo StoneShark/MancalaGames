@@ -293,6 +293,36 @@ class StopLessN(LapContinuerIf):
         return self.decorator.do_another_lap(mdata)
 
 
+class StopSide(LapContinuerIf):
+    """A wrapper: Stop mlap'ing based on side of the board."""
+
+    def __init__(self, game, decorator=None):
+
+        super().__init__(game, decorator)
+
+        if game.info.sow_rule == gi.SowRule.CONT_LAP_OWN:
+            self.test_func = self.game.cts.opp_side
+            self.side = 'opposite'
+        else:
+            self.test_func = self.game.cts.my_side
+            self.side = 'own'
+
+
+    def __str__(self):
+        """A recursive func to print the whole decorator chain."""
+
+        return self.str_deco_detail(f'Stop side: {self.side}')
+
+
+    def do_another_lap(self, mdata):
+
+        if self.test_func(self.game.turn, mdata.capt_loc):
+            game_log.add(f"Stop when last hole is on {self.side} side.")
+            return False
+
+        return self.decorator.do_another_lap(mdata)
+
+
 class StopNoOppSeeds(LapContinuerIf):
     """A wrapper to stop MLAP sowing when the opponent does
     not have any seeds.

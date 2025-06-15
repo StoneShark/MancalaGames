@@ -432,6 +432,23 @@ def test_no_sides_rules(tester):
             excp=gi.GameInfoError)
 
 
+def test_sower_rules(tester):
+    """Test the sower rules."""
+
+    tester.test_rule('srule_lapper',
+        rule=lambda ginfo: (ginfo.sow_rule in (gi.SowRule.CHANGE_DIR_LAP,
+                                               gi.SowRule.CONT_LAP_GREQ,
+                                               gi.SowRule.CONT_LAP_ON,
+                                               gi.SowRule.CONT_LAP_OPP,
+                                               gi.SowRule.CONT_LAP_OWN,
+                                               gi.SowRule.LAP_CAPT,
+                                               gi.SowRule.LAP_CAPT_OPP_GETS,
+                                               gi.SowRule.LAP_CAPT_SEEDS)
+                            and not ginfo.mlaps),
+        msg="""Selected sow rule requires multi-lap sowing""",
+        excp=gi.GameInfoError)
+
+
 def test_capture_rules(tester):
     """Most of the capture rules are added here."""
 
@@ -656,6 +673,7 @@ def test_rules(ginfo, holes, skip=None):
     test_block_and_divert_rules(tester)
     test_child_rules(tester)
     test_no_sides_rules(tester)
+    test_sower_rules(tester)
     test_capture_rules(tester)
 
     tester.test_rule('allowrule_mlen3',

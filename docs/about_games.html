@@ -1786,7 +1786,7 @@ played in rounds with UMOVE style RoundFill
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p44.
 <p>Deviation: Seeds are not moved between the newly created qur holes as there would be no impact on play.
-<p>See Also: <a href="https://mancala.fandom.com/wiki/Layli_Goobalay_(short_board)" target="_blank">https://mancala.fandom.com/wiki/Layli_Goobalay_(short_board)</a> and <a href="https://mancala.fandom.com/wiki/Layli_Goobalay_(long_board)" target="_blank">https://mancala.fandom.com/wiki/Layli_Goobalay_(long_board)</a>  Valdez (p140) describes a very similar game with CW sow and round fill is UMOVE but not reflected instead opposites have the same seed counts.
+<p>References: <a href="https://mancala.fandom.com/wiki/Layli_Goobalay_(short_board)" target="_blank">https://mancala.fandom.com/wiki/Layli_Goobalay_(short_board)</a> and <a href="https://mancala.fandom.com/wiki/Layli_Goobalay_(long_board)" target="_blank">https://mancala.fandom.com/wiki/Layli_Goobalay_(long_board)</a>  Valdez (p140) describes a very similar game with CW sow and round fill is UMOVE but not reflected instead opposites have the same seed counts.
 <h3 id="long night game" class="game_desc">long night game</h3>
 <p>Sow in multiple laps counter-clocks. Moves may only start from holes that reach an occupied hole on the first lap.
 <p>A player must pass if they do not have a move.
@@ -3264,6 +3264,38 @@ no repeat turn on capture
   </div>
 </div>
 <p>Rules: Russ, Laurence. Mancala Games. 1984. p48 details p46.
+<h3 id="ZigZag" class="game_desc">ZigZag</h3>
+<p>A semi-multi-lap mancala.
+<p>Sow in a zigzag, back-and-forth across the board, towards the center-line of the board. At either end, sow directly across the board. Continue in multiple laps as long as the last seed of a lap lands on your own side of the board. See help for details and examples.
+<p>A move of a single seed across the center-line of the board that does not capture may not be moved back on the very next move.
+<p>Cross capture on own side of the board--final seed ends in empty hole on opponents side of the board--collect your own seeds. Leave the seed effecting the capture.
+<p>Goal: capture the most seeds.
+<p>Invented by Clark D. Rodeffer and Amanda J.L. Rodeffer.
+<p>Variations:
+<ul><li class="helptext">
+any even number of holes
+<li class="helptext">
+any odd number of holes
+</ul>
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  5</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#game_class">Game class</a>:  ZigZag</p>
+    <p class="param">Help File:  <a href="ZigZagHelp.pdf">ZigZagHelp.pdf</a></p>
+    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OWN_SIDE</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: TOCENTER</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: CONT_LAP_OWN</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p>Rules: Richard's PBeM  <a href="http://www.gamerz.net/pbmserv/zigzag.html" target="_blank">http://www.gamerz.net/pbmserv/zigzag.html</a>
+<p>Lagniappe: Mancala World, <a href="https://mancala.fandom.com/wiki/Zig_Zag," target="_blank">https://mancala.fandom.com/wiki/Zig_Zag,</a> provides some details on tournaments that have included this game.
 <br><br><br>
 <h2 id="index">Game Index</h2>
 <div class="cols_row">
@@ -3309,9 +3341,9 @@ no repeat turn on capture
     <p class="param"><a href="#Erherhe">Erherhe</a></p>
     <p class="param"><a href="#Eson Xorgol">Eson Xorgol</a></p>
     <p class="param"><a href="#Gabata">Gabata</a></p>
+    <p class="param"><a href="#Gamacha">Gamacha</a></p>
   </div>
   <div class="column3">
-    <p class="param"><a href="#Gamacha">Gamacha</a></p>
     <p class="param"><a href="#Gelech">Gelech</a></p>
     <p class="param"><a href="#Giuthi">Giuthi</a></p>
     <p class="param"><a href="#Goat">Goat</a></p>
@@ -3352,10 +3384,10 @@ no repeat turn on capture
     <p class="param"><a href="#Ndoto">Ndoto</a></p>
     <p class="param"><a href="#No Sides Child">No Sides Child</a></p>
     <p class="param"><a href="#NoCapt">NoCapt</a></p>
-  </div>
-  <div class="column3">
     <p class="param"><a href="#NoSides">NoSides</a></p>
     <p class="param"><a href="#NS_Kalah">NS_Kalah</a></p>
+  </div>
+  <div class="column3">
     <p class="param"><a href="#Nsa Isong">Nsa Isong</a></p>
     <p class="param"><a href="#NumNum">NumNum</a></p>
     <p class="param"><a href="#Obridjie">Obridjie</a></p>
@@ -3394,6 +3426,7 @@ no repeat turn on capture
     <p class="param"><a href="#Wari">Wari</a></p>
     <p class="param"><a href="#Waurie">Waurie</a></p>
     <p class="param"><a href="#Weg">Weg</a></p>
+    <p class="param"><a href="#ZigZag">ZigZag</a></p>
   </div>
 </div>
 <p />

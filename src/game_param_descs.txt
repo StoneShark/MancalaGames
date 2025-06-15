@@ -328,17 +328,19 @@ The name of the Game Class. One of:
 
   + A two-cycle game class in which player's control east and west sides of the board, and seeds are sown in those cycles.
 
-  + Without specialized extension of this game class, it appears to only support race type games, e.g. who can clear their holes faster. Their is little or no player interaction supported.
+  + Without specialized extension of this game class, it appears to only support race type games, e.g. who can clear their holes faster. Their is little or no player interaction supported in the Mancala Games engine.
 
 - <b class="inhead">BearOff</b>
 
-  + A game class that does Backgammon-like bear off board clearing after the game reaches a state where only singletons are left. When a sow reaches the player's end of the board, any remaining seeds in hand are removed from play (actually moved to their store).
+  + A flexible game class that does Backgammon-like bear off board clearing after the game reaches a state where only singletons are left. When a sow reaches the player's end of the board, any remaining seeds in hand are removed from play (actually moved to their store).
 
   + This is intendend for clear and deprive games, though this is not enforced. It turns the end game into a race to see which player accomplishes the goal first.
 
   + The transition from normal sow to bear-off sowing is made on the first move when all of the seeds on the board are singletons (i.e., all holes <=1 seeds). Games may ended via an outright win before this condition is achieved.
 
   + Even if a future moves starts with > 1 seeds in a hole, the normal sow is not resumed.
+  
+  + NO_SIDES is not supported and MIN_MOVE must be 1.  There are no other limitations unique to the BearOff game class.
 
   + Andada is a preconfigured game usinging this class.
 
@@ -360,7 +362,17 @@ The name of the Game Class. One of:
 
 - Ohojichi  (also a game)
 
-  + A <nolink>SameSide game but the board is divided east/west instead of north/south. Most parameter restrictions from <nolink>SameSide apply to <nolink>Ohojichi. For <nolink>Ohojichi, if UDIR_HOLES is used, all holes must be UDIR; capture side must be BOTH.
+  + A <nolink>SameSide game but the board is divided east/west instead of north/south.
+  
+  + Most parameter restrictions from <nolink>SameSide apply to <nolink>Ohojichi. For <nolink>Ohojichi, if UDIR_HOLES is used, all holes must be UDIR; capture side must be BOTH.
+
+- <nolink><b class="inhead">ZigZag</b>
+
+  + A flexible game class with a unique zigzag sowing pattern. See ZigZag game help for the creators of the pattern.
+  
+  + The sowing is done in a zigzag fashion: Sowing is done towards the center line of the board. The first hole sown is one hole towards the center and on the opposite side of the board, when the end of the board is reached sow directly across from the last hole. The sow pattern cycles through each hole of the board before visiting a hole a second time.
+  
+  + SOW_DIRECT must be TOCENTER. If the size of the board is odd, the center hole must be in the User Chooses Direction list. There are no other limitations unique to the <nolink>ZigZag game class.
 
 <param goal>
 The overall goal of the game. Defines how a player wins.
@@ -673,6 +685,8 @@ Direction of sow:
 
 - EVEN_ODD_DIR: holes with even seeds sow clockwise and holes with odd seeds sow counter-clockwise.
 
+- TOCENTER: sow towards the horizontal center line of the board based on hole location. This sows in the opposite direction used by SPLIT.
+
 Both mouse buttons will start a move no matter the sow direction. If the hole is marked as UDIR_HOLES, the button selects sow direction. On the other hand, if the hole is not marked as UDIR_HOLES, either button will sow in the prescribed direction. This can be a useful mechanism to remind yourself that on SPLIT sow, the left holes go CW by using the left button and the right holes go CCW by using the right button.
 
 When PLAYALTDIR is not selected, any hole can be set as UDIR_HOLES to allow the user to override the sow_direct setting.
@@ -749,6 +763,10 @@ Special sow rules add additional behavior or restrictions to the sowing phase:
   + For all LAP_CAPT rules, if stores are not configured, sowing will be stopped when the opponent does not have seeds.
 
   + Not compatible with basic captures. Behaves badly with most capt_types unless other options are used to prevent endless sows. Turn on Disallow Endless Sows via the Game menu for experimentation.
+  
+- CONT_LAP_OWN: continue lap sowing when a lap sow ends on your own side of the board; stop if ending on your opponent's side.
+
+- CONT_LAP_OPP: continue lap sowing when a lap sow ends on your opponent's side of the board; stop if ending on your own side.
 
 <param sow_start>
 When selected, the first seed is sown into (i.e., left in) the start hole.

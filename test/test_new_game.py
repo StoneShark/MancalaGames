@@ -11,8 +11,8 @@ import utils
 from context import game_constants as gconsts
 from context import game_info as gi
 from context import mancala
+from context import man_deco
 from context import move_data
-from context import new_game
 
 from game_info import ChildType
 from game_info import Goal
@@ -140,7 +140,7 @@ class TestNewGame:
         Test for both NewRound and NewRoundEven"""
 
         object.__setattr__(rgame.info, 'round_fill', round_fill)
-        rgame.deco = mancala.ManDeco(rgame)
+        rgame.deco = man_deco.ManDeco(rgame)
 
         rgame.unlocked = [False, True, True] * 2
         rgame.blocked = [True, False, True] * 2
@@ -281,7 +281,7 @@ class TestNewGame:
         pattern doesn't really matter."""
 
         object.__setattr__(rgame.info, 'round_fill', round_fill)
-        rgame.deco = mancala.ManDeco(rgame)
+        rgame.deco = man_deco.ManDeco(rgame)
 
         # choose some random board setup
         rgame.unlocked = [False, True, True] * 2
@@ -328,7 +328,7 @@ class TestNewGame:
     def test_no_blocks(self, nb_rgame, round_fill, store, estore):
 
         object.__setattr__(nb_rgame.info, 'round_fill', round_fill)
-        nb_rgame.deco = mancala.ManDeco(nb_rgame)
+        nb_rgame.deco = man_deco.ManDeco(nb_rgame)
 
         nb_rgame.blocked = [True, False, True] * 2
         nb_rgame.board = utils.build_board([0, 0, 0],
@@ -387,7 +387,7 @@ class TestNewGame:
 
         game = request.getfixturevalue(game_fixt)
         object.__setattr__(game.info, 'round_fill', RoundFill.EVEN_FILL)
-        game.deco = mancala.ManDeco(game)
+        game.deco = man_deco.ManDeco(game)
 
         game.blocked = [True, False, True] * 2
         game.board = utils.build_board([0, 0, 0],
@@ -433,7 +433,7 @@ class TestNewGame:
 
         game = request.getfixturevalue(game_fixt)
         object.__setattr__(game.info, 'round_fill', round_fill)
-        game.deco = mancala.ManDeco(game)
+        game.deco = man_deco.ManDeco(game)
 
         game.blocked = [True, False, True] * 2
         game.board = utils.build_board([0, 0, 0],

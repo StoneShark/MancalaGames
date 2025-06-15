@@ -328,6 +328,8 @@ class SowRule(enum.IntEnum):
     CONT_LAP_GREQ = 12
     OPP_CHILD_ONLY1 = 13
     LAP_CAPT_SEEDS = 14
+    CONT_LAP_OWN = 15
+    CONT_LAP_OPP = 16
 
 
 @enum.unique

@@ -17,25 +17,15 @@ import random
 import ai_interface
 import allowables
 import animator
-import capt_ok
-import capturer
 import cfg_keys as ckey
-import drawer
-import end_move
 import game_constants as gconsts
 import game_info as gi
-import game_str
-import get_direction
-import get_moves
 import ginfo_rules
 import inhibitor
-import incrementer
-import make_child
+import man_deco
 import man_end_msgs_mixin
 import move_data
-import new_game
 import round_tally
-import sower
 
 from fill_patterns import PCLASSES
 from game_logger import game_log
@@ -117,89 +107,6 @@ class GameState(ai_interface.StateIf):
         return string
 
 
-class ManDeco:
-    """Collect the decorator chains into one variable,
-    build them all together.
-
-    Decorator chains can save data unique to the game
-    on startup/creation, but they should not store
-    state data that would be changed during the game.
-    Decos are not told about a new game or round
-    being started.
-
-    Deco are not told to re-initialized on new game."""
-
-    def __init__(self, game):
-
-        self.new_game = new_game.deco_new_game(game)
-        self.allow = allowables.deco_allowable(game)
-        self.moves = get_moves.deco_moves(game)
-        self.incr = incrementer.deco_incrementer(game)
-        self.drawer = drawer.deco_drawer(game)
-        self.get_dir = get_direction.deco_dir_getter(game)
-        self.sower = sower.deco_sower(game)
-        self.ender = end_move.deco_end_move(game)
-        self.quitter = end_move.deco_quitter(game)
-        self.capt_ok = capt_ok.deco_capt_ok(game)
-        self.capturer = capturer.deco_capturer(game)
-        self.gstr = game_str.deco_get_string(game)
-        self.make_child = make_child.deco_child(game)
-
-
-    def __str__(self):
-
-        rval = ''
-        for dname, dobj in vars(self).items():
-            rval += f'{dname}:\n' + str(dobj) + '\n\n'
-        return rval
-
-
-    def replace_deco(self, deco_name, old_class, new_deco):
-        """Replace old_class with the new_deco (deco instance)
-        in the deco_name chain.
-
-        This is used in game classes derived from Mancala."""
-
-        deco = getattr(self, deco_name)
-
-        # replacing the head of the deco chain
-        if isinstance(deco, old_class):
-            new_deco.decorator = deco.decorator
-            setattr(self, deco_name, new_deco)
-            return
-
-        while (deco.decorator
-               and not isinstance(deco.decorator, old_class)):
-            deco = deco.decorator
-        assert deco.decorator, f"Didn't find ({old_class}) in deco chain."
-
-        new_deco.decorator = deco.decorator.decorator
-        deco.decorator = new_deco
-
-
-    def insert_deco(self, deco_name, post_class, new_deco):
-        """insert the new_deco before the deco of type post_class
-         in the deco_name chain.
-
-        This is used in game classes derived from Mancala."""
-
-        deco = getattr(self, deco_name)
-
-        # inserting new head of the deco chain
-        if isinstance(deco, post_class):
-            new_deco.decorator = deco
-            setattr(self, deco_name, new_deco)
-            return
-
-        while (deco.decorator
-               and not isinstance(deco.decorator, post_class)):
-            deco = deco.decorator
-        assert deco.decorator, f"Didn't find ({post_class}) in deco chain."
-
-        new_deco.decorator = deco.decorator
-        deco.decorator = new_deco
-
-
 class Mancala(ai_interface.AiGameIf,
               man_end_msgs_mixin.ManMsgsMixin):
     """Implement the dynamics of a wide variety of mancala games.
@@ -268,7 +175,7 @@ class Mancala(ai_interface.AiGameIf,
                                                  self.info.goal_param,
                                                  self.cts.total_seeds)
 
-        self.deco = ManDeco(self)
+        self.deco = man_deco.ManDeco(self)
         self.deco.new_game.new_game()
 
 

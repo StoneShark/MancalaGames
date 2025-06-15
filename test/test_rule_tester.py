@@ -14,7 +14,7 @@ pytestmark = [pytest.mark.unittest, pytest.mark.filterwarnings("error")]
 from context import rule_tester
 
 
-TEST_COVERS = ['src\\rule_tester']
+TEST_COVERS = ['src\\rule_tester.py']
 
 class TestRuleTester:
 

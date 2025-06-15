@@ -266,6 +266,8 @@ STRING_DICTS = {
          "Don't sow opp children unless final seed": gi.SowRule.OPP_CHILD_ONLY1,
          "Continue lap sow only on sow_param seeds": gi.SowRule.CONT_LAP_ON,
          "Continue lap sow when >= sow_param seeds": gi.SowRule.CONT_LAP_GREQ,
+         "Continue lap only from opposite side": gi.SowRule.CONT_LAP_OPP,
+         "Continue lap only from own side": gi.SowRule.CONT_LAP_OWN,
          }),
 
     'StartPattern': lookup_dicts(

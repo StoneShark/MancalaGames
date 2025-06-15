@@ -2117,6 +2117,65 @@ class TestCaptOppOwnLast:
 
 
 
+class TestStopSide:
+
+    @pytest.mark.parametrize('sow_rule', (gi.SowRule.CONT_LAP_OWN,
+                                          gi.SowRule.CONT_LAP_OPP))
+    def test_construct(self, sow_rule):
+
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
+        game_info = gi.GameInfo(capt_on=[1],
+                                mlaps=gi.LapSower.LAPPER,
+                                sow_rule=sow_rule,
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        test_str = str(game.deco.sower)
+        assert 'StopSide' in test_str
+
+        if 'OWN' in sow_rule.name:
+            assert 'opposite' in test_str
+            assert 'own' not in test_str
+        else:
+            assert 'opposite' not in test_str
+            assert 'own' in test_str
+
+    CASES = [(gi.SowRule.CONT_LAP_OWN, F, 1, T),
+             (gi.SowRule.CONT_LAP_OWN, F, 5, F),
+             (gi.SowRule.CONT_LAP_OWN, T, 1, F),
+             (gi.SowRule.CONT_LAP_OWN, T, 5, T),
+
+             (gi.SowRule.CONT_LAP_OPP, F, 2, F),
+             (gi.SowRule.CONT_LAP_OPP, F, 6, T),
+             (gi.SowRule.CONT_LAP_OPP, T, 2, T),
+             (gi.SowRule.CONT_LAP_OPP, T, 6, F),
+             ]
+
+    @pytest.mark.parametrize('sow_rule, turn, loc, eret', CASES)
+    def test_continue(self, sow_rule, turn, loc, eret):
+
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
+        game_info = gi.GameInfo(capt_on=[1],
+                                mlaps=gi.LapSower.LAPPER,
+                                sow_rule=sow_rule,
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = turn
+
+        stopper = game.deco.sower.lap_cont
+        assert isinstance(stopper, msowd.StopSide)
+
+        mdata = move_data.MoveData(game, 0)
+        mdata.capt_loc = loc
+
+        assert stopper.do_another_lap(mdata) is eret
+
+
+
 class TestBadEnums:
 
     def test_bad_sow_rule(self):
@@ -2127,7 +2186,7 @@ class TestBadEnums:
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
-        object.__setattr__(game_info, 'sow_rule', 15)
+        object.__setattr__(game_info, 'sow_rule', 25)
 
         with pytest.raises(NotImplementedError):
             mancala.Mancala(game_consts, game_info)
@@ -2141,7 +2200,7 @@ class TestBadEnums:
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
-        object.__setattr__(game_info, 'mlaps', 15)
+        object.__setattr__(game_info, 'mlaps', 25)
 
         with pytest.raises(NotImplementedError):
             mancala.Mancala(game_consts, game_info)
@@ -2159,7 +2218,7 @@ class TestBadEnums:
         object.__setattr__(game_info, 'prescribed', SowPrescribed.ARNGE_LIMIT)
         mancala.Mancala(game_consts, game_info)
 
-        object.__setattr__(game_info, 'prescribed', 15)
+        object.__setattr__(game_info, 'prescribed', 25)
         with pytest.raises(NotImplementedError):
             mancala.Mancala(game_consts, game_info)
 
@@ -2172,7 +2231,7 @@ class TestBadEnums:
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
-        object.__setattr__(game_info, 'presowcapt', 15)
+        object.__setattr__(game_info, 'presowcapt', 25)
 
         with pytest.raises(NotImplementedError):
             mancala.Mancala(game_consts, game_info)

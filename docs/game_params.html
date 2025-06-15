@@ -83,13 +83,14 @@ is included after the parameter sections.
 <li class="helptext">
 <b class="inhead">EastWestCycle</b>
 <p class="helptext"> A two-cycle game class in which player's control east and west sides of the board, and seeds are sown in those cycles.
-<p class="helptext"> Without specialized extension of this game class, it appears to only support race type games, e.g. who can clear their holes faster. Their is little or no player interaction supported.
+<p class="helptext"> Without specialized extension of this game class, it appears to only support race type games, e.g. who can clear their holes faster. Their is little or no player interaction supported in the Mancala Games engine.
 <li class="helptext">
 <b class="inhead">BearOff</b>
-<p class="helptext"> A game class that does Backgammon-like bear off board clearing after the game reaches a state where only singletons are left. When a sow reaches the player's end of the board, any remaining seeds in hand are removed from play (actually moved to their store).
+<p class="helptext"> A flexible game class that does Backgammon-like bear off board clearing after the game reaches a state where only singletons are left. When a sow reaches the player's end of the board, any remaining seeds in hand are removed from play (actually moved to their store).
 <p class="helptext"> This is intendend for clear and deprive games, though this is not enforced. It turns the end game into a race to see which player accomplishes the goal first.
 <p class="helptext"> The transition from normal sow to bear-off sowing is made on the first move when all of the seeds on the board are singletons (i.e., all holes <=1 seeds). Games may ended via an outright win before this condition is achieved.
 <p class="helptext"> Even if a future moves starts with > 1 seeds in a hole, the normal sow is not resumed.
+<p class="helptext"> <a href="game_params.html#no_sides">NO_SIDES</a> is not supported and <a href="game_params.html#min_move">MIN_MOVE</a> must be 1.  There are no other limitations unique to the BearOff game class.
 <p class="helptext"> <a href="about_games.html#Andada">Andada</a> is a preconfigured game usinging this class.
 <li class="helptext">
 <a href="about_games.html#Diffusion">Diffusion</a> (also a game)
@@ -104,7 +105,13 @@ is included after the parameter sections.
 <p class="helptext">  The game goal must be CLEAR. Sow direction is unconstrained. Capture mechanisms must be limited to one side of the board: basic captures, next, and two out.
 <li class="helptext">
 <a href="about_games.html#Ohojichi">Ohojichi</a>  (also a game)
-<p class="helptext"> A <nolink>SameSide game but the board is divided east/west instead of north/south. Most parameter restrictions from <nolink>SameSide apply to <nolink>Ohojichi. For <nolink>Ohojichi, if <a href="game_params.html#udir_holes">UDIR_HOLES</a> is used, all holes must be UDIR; capture side must be BOTH.
+<p class="helptext"> A <nolink>SameSide game but the board is divided east/west instead of north/south.
+<p class="helptext"> Most parameter restrictions from <nolink>SameSide apply to <nolink>Ohojichi. For <nolink>Ohojichi, if <a href="game_params.html#udir_holes">UDIR_HOLES</a> is used, all holes must be UDIR; capture side must be BOTH.
+<li class="helptext">
+<nolink><b class="inhead">ZigZag</b>
+<p class="helptext"> A flexible game class with a unique zigzag sowing pattern. See <a href="about_games.html#ZigZag">ZigZag</a> game help for the creators of the pattern.
+<p class="helptext"> The sowing is done in a zigzag fashion: Sowing is done towards the center line of the board. The first hole sown is one hole towards the center and on the opposite side of the board, when the end of the board is reached sow directly across from the last hole. The sow pattern cycles through each hole of the board before visiting a hole a second time.
+<p class="helptext"> <a href="game_params.html#sow_direct">SOW_DIRECT</a> must be TOCENTER. If the size of the board is odd, the center hole must be in the User Chooses Direction list. There are no other limitations unique to the <nolink>ZigZag game class.
 </ul>
 <h4 id="holes"> Holes per Side </h4>
 <p class="pdesc">Location in Config Files: game_constants : holes
@@ -511,6 +518,8 @@ is included after the parameter sections.
 <b class="enum">PLAYALTDIR</b>: on the first move of the game, the first player chooses their sow direction using the <a href="game_params.html#udir_holes">UDIR_HOLES</a> method (by mouse button). The second player will sow their moves in the opposite direction. Once the first player makes their first move, both player's sow directions are set for the duration of the game no matter which button is used. All <a href="game_params.html#udir_holes">UDIR_HOLES</a> will apply to the game configuration.
 <li class="helptext">
 <b class="enum">EVEN_ODD_DIR</b>: holes with even seeds sow clockwise and holes with odd seeds sow counter-clockwise.
+<li class="helptext">
+<b class="enum">TOCENTER</b>: sow towards the horizontal center line of the board based on hole location. This sows in the opposite direction used by SPLIT.
 </ol>
 <p>Both mouse buttons will start a move no matter the sow direction. If the hole is marked as <a href="game_params.html#udir_holes">UDIR_HOLES</a>, the button selects sow direction. On the other hand, if the hole is not marked as <a href="game_params.html#udir_holes">UDIR_HOLES</a>, either button will sow in the prescribed direction. This can be a useful mechanism to remind yourself that on SPLIT sow, the left holes go CW by using the left button and the right holes go CCW by using the right button.
 <p>When PLAYALTDIR is not selected, any hole can be set as <a href="game_params.html#udir_holes">UDIR_HOLES</a> to allow the user to override the sow_direct setting.
@@ -625,6 +634,10 @@ is included after the parameter sections.
 <b class="enum">LAP_CAPT_SEEDS</b>: Check for capture on each lap. If a capture occured, continue sowing with captured seeds and seeds in final hole sown. If no capture occured, continue if more than one seed is in the final hole.
 <p class="helptext"> For all LAP_CAPT rules, if stores are not configured, sowing will be stopped when the opponent does not have seeds.
 <p class="helptext"> Not compatible with basic captures. Behaves badly with most capt_types unless other options are used to prevent endless sows. Turn on Disallow Endless Sows via the Game menu for experimentation.
+<li class="helptext">
+<b class="enum">CONT_LAP_OWN</b>: continue lap sowing when a lap sow ends on your own side of the board; stop if ending on your opponent's side.
+<li class="helptext">
+<b class="enum">CONT_LAP_OPP</b>: continue lap sowing when a lap sow ends on your opponent's side of the board; stop if ending on your own side.
 </ol>
 <h4 id="sow_param"> Sow Parameter </h4>
 <p class="pdesc">Location in Config Files: game_info : sow_param

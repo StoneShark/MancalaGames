@@ -128,14 +128,19 @@ class DontUndoMoveOne(AllowableIf):
     def __init__(self, game, decorator=None):
 
         super().__init__(game, decorator)
-        self.end_sets = [set([0, game.cts.dbl_holes - 1]),
-                         set([game.cts.holes - 1, game.cts.holes])]
+        self.cross_sets = [{0, game.cts.dbl_holes - 1},
+                           {game.cts.holes - 1, game.cts.holes}]
 
         if game.info.mlength == 3:
             self.aidx = lambda cloc: cloc
         else:
             self.aidx = lambda cloc: cloc if cloc < game.cts.holes \
                                           else game.cts.dbl_holes - cloc - 1
+
+    def __str__(self):
+
+        return self.str_deco_detail(f'pairs: {self.cross_sets}')
+
 
     @staticmethod
     def include(game):
@@ -166,7 +171,7 @@ class DontUndoMoveOne(AllowableIf):
         if (mdata.seeds == 1
                 and self.game.board[capt_loc] == 1
                 and any(set([mdata.sow_loc, capt_loc]) == test_set
-                        for test_set in self.end_sets)):
+                        for test_set in self.cross_sets)):
 
             game_log.add(f"Preventing undo @ {aidx}.")
             allow[aidx] = False

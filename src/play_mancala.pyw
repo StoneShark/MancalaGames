@@ -121,6 +121,8 @@ SOWRS = {'None': lambda sow_rule: not sow_rule,
 SOWDIR = {'CW': lambda ginfo: ginfo.get(ckey.SOW_DIRECT, 1) == -1,
           'CCW': lambda ginfo: ginfo.get(ckey.SOW_DIRECT, 1) == 1,
           'SPLIT': lambda ginfo: not ginfo.get(ckey.SOW_DIRECT, 1),
+          'Toward Center': lambda ginfo: ginfo.get(ckey.SOW_DIRECT, 1) == \
+              gi.Direct.TOCENTER,
           'Players Alt Dir': lambda ginfo: ginfo.get(ckey.SOW_DIRECT, 1) == 2,
           'Even Odd Dir': lambda ginfo: ginfo.get(ckey.SOW_DIRECT, 1) == 3,
           }

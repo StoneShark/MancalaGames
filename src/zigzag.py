@@ -4,6 +4,7 @@
 Created on Thu Jun 12 05:27:58 2025
 @author: Ann"""
 
+import allowables
 import game_info as gi
 import get_direction
 import incrementer
@@ -123,6 +124,38 @@ class ZigZagIncr(incrementer.MapIncrement):
         return cycle
 
 
+class DontUndoMoveOne(allowables.DontUndoMoveOne):
+    """Don't allow moving a singleton back across the board side
+    in the immediate next move unless it captured.
+
+    Inheriting from the main DontUndoMoveOne because with the
+    appropriate cross_sets and an initial filter we can re-use
+    most of the work that it does.
+
+    cross_sets: sets that are the start & end points for
+                moves that should not be undone."""
+
+    def __init__(self, game, decorator=None):
+
+        super().__init__(game, decorator)
+
+        holes = game.cts.holes
+        half = game.cts.half_holes
+
+        self.cross_sets = [{half - 1, holes + half - 1},
+                           {half, holes + half}]
+
+
+    def get_allowable_holes(self):
+
+        mdata = self.game.mdata
+        if not mdata or mdata.captured:
+            return self.decorator.get_allowable_holes()
+
+        return super().get_allowable_holes()
+
+
+
 # %% ZigZag game class
 
 class ZigZag(mancala.Mancala):
@@ -144,3 +177,33 @@ class ZigZag(mancala.Mancala):
         self.deco.replace_deco('incr',
                                incrementer.Increment,
                                ZigZagIncr(self))
+
+        self._add_dont_undo_deco()
+
+
+    def _add_dont_undo_deco(self):
+        """Add the DoneUndoMoveOne deco if
+              - min_move is 1 and
+              - there are not any udirect holes and
+              - there are an even number of holes per side.
+
+        Put is right after the optional decos DontAnimateAllowable
+        and MemoizeAllowable."""
+
+        if (self.info.min_move == 1
+                and not self.info.udirect
+                and not self.cts.holes % 1):
+
+            self.deco.append_deco('allow',
+                                  (allowables.DontAnimateAllowable,
+                                   allowables.MemoizeAllowable),
+                                  DontUndoMoveOne(self))
+
+
+    def disallow_endless(self, disallow):
+        """Rebuild the allowable deco with or without the
+        deco to prevent moves from holes that would be endless
+        sows.  Then patch it again."""
+
+        super().disallow_endless(disallow)
+        self._add_dont_undo_deco()
