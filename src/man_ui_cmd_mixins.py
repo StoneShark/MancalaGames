@@ -243,7 +243,8 @@ class MoveMenuMixin:
 
         The AI history is cleared which currently only applies to
         MCTS. This does seem extreme but the AI turn and node tree
-        have already been started correcting them seems error prone."""
+        have already been started and are dependent on the player
+        they are playing; correcting them seems error prone."""
 
         game = self.game
         if self.info.start_pattern in (gi.StartPattern.RANDOM,
@@ -264,18 +265,18 @@ class MoveMenuMixin:
 
         self.swap_ok = False
         # do these here, so that it counts as a turn
-        # not in Mancala because swap_sides is used for other purposes
+        # not in Mancala because swap_sides is used there for other purposes
         game.movers += 1
         game.mcount += 1
         game.turn = not game.turn
+
         with animator.animate_off():
             game.swap_sides()
+        self.history.record(self.game.state)
 
         self.player.clear_history()
-
         self.refresh()
         game_log.turn(game.mcount, "Swap Sides (pie rule)", game)
-
         self.schedule_ai()
 
 
