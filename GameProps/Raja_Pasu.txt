@@ -1,0 +1,27 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 7,
+      "nbr_start": 7
+   },
+   "game_info": {
+      "name": "Raja Pasu",
+      "about": "Sow counter-clockwise in lapper next fashion. Hole owners capture all holes sown to 4 seeds.\n\nWhen the lap sowing ends, capture any seeds across the gap from the empty hole that stopped the lap sowing.\n\nPlay in rounds. A round ends when one player does not have any moves. Unclaimed seeds go to the hole owner (that the player with seeds, gets them). The player with the most seeds is the winner of the round.\n\nSetup for each round involves filling as many holes as a player can with 7 seeds. Extra seeds are placed in the player's store. Any empty holes are out of play for the round (blocked). The winner of the previous round, starts the new round.\n\nThe game ends when one player cannot fill a single hole with 7 seeds.\n",
+      "blocks": true,
+      "capt_dir": 1,
+      "capt_type": 2,
+      "capt_on": [ 4 ],
+      "mlaps": 2,
+      "capt_side": 0,
+      "round_starter": 3,
+      "rounds": 2,
+      "sow_direct": 1,
+      "sow_rule": 3,
+      "stores": true
+   },
+   "player": {
+      "ai_params": {},
+      "scorer": { "stores_m": 8 }
+   },
+   "rules": "https://mancala.fandom.com/wiki/Raja_Pasu"
+}

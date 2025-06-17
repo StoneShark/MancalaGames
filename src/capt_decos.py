@@ -398,12 +398,20 @@ class CaptOppDir(CaptMethodIf):
 class CaptBothDir(CaptMethodIf):
     """Capture in both directions from the initial capt_loc.
 
-    Supported for basic captures, capt next, and match"""
+    Supported for basic captures, capt next, and match.
+
+    If the capt_loc (end of sow) should be captured (that is,
+    not capt type of next), set the capt_first flag.
+
+    This is used in do_captures, first, to prevent multiple
+    captures if the first call down the deco chain didn't
+    capture and, second, to adjust the counts and indecies
+    before and after the second call down the deco chain."""
 
     def __init__(self, game, decorator=None):
 
         super().__init__(game, decorator)
-        self.increment = game.info.capt_type != gi.CaptType.NEXT
+        self.capt_first = game.info.capt_type != gi.CaptType.NEXT
 
 
     def do_captures(self, mdata, capt_first=True):
@@ -413,20 +421,24 @@ class CaptBothDir(CaptMethodIf):
         capt_loc = mdata.capt_loc
 
         self.decorator.do_captures(mdata, capt_first)
+        captured = mdata.captured
 
-        if mdata.captured:
+        if self.capt_first and not captured:
+            return
+
+        mdata.direct = direct.opp_dir()
+        if self.capt_first:
             self.decorator.max_capt -= 1
-            mdata.direct = direct.opp_dir()
-            if self.increment:
-                mdata.capt_loc = self.game.deco.incr.incr(capt_loc,
-                                                          mdata.direct)
+            mdata.capt_loc = self.game.deco.incr.incr(capt_loc,
+                                                      mdata.direct)
 
-            self.decorator.do_captures(mdata, False)
+        self.decorator.do_captures(mdata, False)
+        if self.capt_first:
             self.decorator.max_capt += 1
-            mdata.captured = True
 
         mdata.direct = direct
         mdata.capt_loc = capt_loc
+        mdata.captured |= captured
 
 
 # %%  grand slam decos

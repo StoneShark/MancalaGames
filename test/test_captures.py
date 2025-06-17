@@ -350,10 +350,10 @@ class TestCaptTable:
         mdata.board = tuple(case.board)  # not quite right, but ok
         mdata.seeds = 3
         # print(game.deco.capturer)
-        # print(game)
+        print(game)
 
         game.deco.capturer.do_captures(mdata)
-        # print(game)
+        print(game)
         assert sum(game.store) + sum(game.board) == game.cts.total_seeds
 
         # TODO rework the test cases to test these individually

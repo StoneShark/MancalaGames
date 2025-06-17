@@ -528,7 +528,7 @@ An int to describe possible multicaptures:
 
  -1: After the initial capture, continue capturing as long as the capture conditions are met. This multiple capture may happen in the sow direction (unsown holes); in the opposite direction (sown holes); or in both directions  as selected with CAPT_DIR.
 
- 1 .. holes: if <nolink>CAPT_DIR is SOW or OPP_SOW, capture at most the specified number of holes that meet the capture conditions. If <nolink>CAPT_DIR is both, the initial hole may be captured and then one less than the setting in each direction.
+ 1 .. holes: if <nolink>CAPT_DIR is SOW or OPP_SOW, capture at most the specified number of holes that meet the capture conditions. If <nolink>CAPT_DIR is BOTH, the number of seeds captured depends also on the capture mechanism: If the capture type is NEXT, there will be the multicapt number of captures in each direction. Otherwise, if the initial hole is captured, then one less than the multicapt is captured in each direction.
 
 See individual capture mechanism for any unique requirements.
 

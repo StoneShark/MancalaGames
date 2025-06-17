@@ -1,0 +1,31 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 6,
+      "nbr_start": 4
+   },
+   "game_info": {
+      "name": "Qelat II",
+      "about": "Multilap sow, create wegs on 4s.\n\nNo additional capture mechanism is included.\n\nGoal: collect the most seeds.\n\nVariations:\n\n- Don't include stores.  This only has an impact with weg children, in that you cannot capture from your opponent's children until you have your own.\n\n- Multipla or single lap\n\n- Any child type\n\n- Any child rules that do not require a territory goal\n\n- Any child locations that are not fixed\n",
+      "child_cvt": 4,
+      "child_type": 4,
+      "mlaps": 1,
+      "sow_direct": 1,
+      "stores": true
+   },
+   "player": {
+      "ai_params": {},
+      "scorer": {
+         "stores_m": 8,
+         "child_cnt_m": 4
+      }
+   },
+   "vari_params": {
+      "stores": "include",
+      "mlaps": [ 0, 1 ],
+      "child_type": "all",
+      "child_rule": [ 0, 1, 2, 3, 6 ],
+      "child_locs": [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
+   },
+   "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p138."
+}
