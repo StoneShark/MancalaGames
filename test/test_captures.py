@@ -84,6 +84,9 @@ CONVERT_DICT = {'N': None,
                 'TWOOUT': gi.CaptType.TWO_OUT,
                 'MOPP': gi.CaptType.MATCH_OPP,
                 'SINGLES': gi.CaptType.SINGLETONS,
+
+                'SOW': gi.CaptDir.SOW,
+                'BOTH': gi.CaptDir.BOTH,
                 }
 
 
@@ -299,7 +302,7 @@ class TestCaptTable:
         game_info = gi.GameInfo(stores=True,
                                 sow_direct=sow_direct,
                                 capt_on=case.capt_on,
-                                capsamedir=case.capsamedir,
+                                capt_dir=case.capt_dir,
                                 child_cvt=case.child_cvt,
                                 child_type=child_type,
                                 crosscapt=case.xcapt,
@@ -395,7 +398,7 @@ class TestCaptTable:
         game_info = gi.GameInfo(mlaps=gi.LapSower.LAPPER,  # change to make_game
                                 stores=True,
                                 capt_on=case.capt_on,
-                                capsamedir=case.capsamedir,
+                                capt_dir=case.capt_dir,
                                 child_cvt=case.child_cvt,
                                 child_type=child_type,
                                 crosscapt=case.xcapt,
@@ -1138,7 +1141,7 @@ class TestCaptCrossVisited:
                                 xc_sown=True,
                                 stores=True,
                                 multicapt=-1,
-                                capsamedir=True,
+                                capt_dir=gi.CaptDir.SOW,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
@@ -1174,16 +1177,16 @@ class TestCaptTwoOut:
     test_cases = [
 
         ([3, 3, 3, 4, 0, 2], False, 3, [0, 3, 3, 4, 0, 0],
-         {'capsamedir': True,
+         {'capt_dir': gi.CaptDir.SOW,
           'capt_type': gi.CaptType.TWO_OUT}),
 
         ([3, 3, 3, 4, 0, 2], False, 3, [0, 3, 3, 4, 0, 0],
-         {'capsamedir': True,
+         {'capt_dir': gi.CaptDir.SOW,
           'capt_type': gi.CaptType.TWO_OUT,
           'multicapt': -1}),
 
         ([0, 3, 0, 4, 0, 2], False, 3, [0] * 6,
-         {'capsamedir': True,
+         {'capt_dir': gi.CaptDir.SOW,
           'capt_type': gi.CaptType.TWO_OUT,
           'multicapt': -1}),
 
@@ -1233,8 +1236,9 @@ class TestPickCross:
             marks=pytest.mark.filterwarnings("ignore")),
 
         ([3, 3, 3, 4, 4, 2], False, 4, [3, 0, 3, 4, 0, 2], {'capt_on': [4]}),
-        ([3, 3, 3, 4, 0, 2], False, 3, [0, 3, 3, 4, 0, 0], {'capsamedir': True,
-                                                            'capt_type': gi.CaptType.TWO_OUT})
+        ([3, 3, 3, 4, 0, 2], False, 3, [0, 3, 3, 4, 0, 0],
+         {'capt_dir': gi.CaptDir.SOW,
+          'capt_type': gi.CaptType.TWO_OUT}),
         ]
 
     @pytest.mark.parametrize('board, turn, loc, eboard, options',
@@ -1361,7 +1365,7 @@ class TestPickFinal:
         game_info = gi.GameInfo(stores=True,
                                 capt_side=1,
                                 capt_on=[2],
-                                capsamedir=True,
+                                capt_dir=gi.CaptDir.SOW,
                                 mlaps=gi.LapSower.LAPPER,   # loc is tested for capt
                                 capt_type=gi.CaptType.NEXT,
                                 pickextra=gi.CaptExtraPick.PICKFINAL,

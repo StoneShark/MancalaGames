@@ -8,7 +8,7 @@
       "name": "Bosh",
       "about": "Sow counter-clockwise via the multi-lap next-hole method. When the final seed sown (into an empty hole) is followed by an empty hole, capture any seeds in the following hole. Played in rounds where unfilled holes are out of play.\n\nVariation:\n- 3 seeds per hole for start.",
       "blocks": true,
-      "capsamedir": true,
+      "capt_dir": 1,
       "capt_side": 0,
       "capt_type": 2,
       "mlaps": 2,

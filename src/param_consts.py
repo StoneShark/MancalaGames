@@ -76,6 +76,13 @@ STRING_DICTS = {
          'Right Half 1sts; Opp or Empty': gi.AllowRule.RIGHT_HALF_1ST_OPE,
          }),
 
+    'CaptDir': lookup_dicts(
+        gi.CaptDir,
+        {'Opposite Sow Dir': gi.CaptDir.OPP_SOW,
+         'Sow Direction': gi.CaptDir.SOW,
+         'Both Directions': gi.CaptDir.BOTH,
+         }),
+
     'CaptExtraPick': lookup_dicts(
         gi.CaptExtraPick,
         {'No additional': gi.CaptExtraPick.NONE,
@@ -94,9 +101,9 @@ STRING_DICTS = {
 
     'CaptSide': lookup_dicts(
         gi.CaptSide,
-        {'BOTH': gi.CaptSide.BOTH,
-         'Opposite': gi.CaptSide.OPP_SIDE,
-         'Own': gi.CaptSide.OWN_SIDE,
+        {'Both Sides': gi.CaptSide.BOTH,
+         'Opposite Side': gi.CaptSide.OPP_SIDE,
+         'Own Side': gi.CaptSide.OWN_SIDE,
          'First Opp, then either': gi.CaptSide.OPP_CONT,
          'First Own, then either': gi.CaptSide.OWN_CONT,
          "Opponent's Territory": gi.CaptSide.OPP_TERR,

@@ -79,7 +79,7 @@ class CaptCross(CaptMethodIf):
         cross = self.game.cts.cross_from_loc(mdata.capt_loc)
 
         if (((capt_first and self.game.board[mdata.capt_loc] == 1)
-             or (not capt_first and not self.game.board[mdata.capt_loc]))
+                 or (not capt_first and not self.game.board[mdata.capt_loc]))
                 and self.game.deco.capt_ok.capture_ok(mdata, cross)):
 
             seeds = self.game.board[cross]
@@ -393,6 +393,40 @@ class CaptOppDir(CaptMethodIf):
         self.decorator.do_captures(mdata, capt_first)
 
         mdata.direct = direct
+
+
+class CaptBothDir(CaptMethodIf):
+    """Capture in both directions from the initial capt_loc.
+
+    Supported for basic captures, capt next, and match"""
+
+    def __init__(self, game, decorator=None):
+
+        super().__init__(game, decorator)
+        self.increment = game.info.capt_type != gi.CaptType.NEXT
+
+
+    def do_captures(self, mdata, capt_first=True):
+        """Call the deco chain in both directions."""
+
+        direct = mdata.direct
+        capt_loc = mdata.capt_loc
+
+        self.decorator.do_captures(mdata, capt_first)
+
+        if mdata.captured:
+            self.decorator.max_capt -= 1
+            mdata.direct = direct.opp_dir()
+            if self.increment:
+                mdata.capt_loc = self.game.deco.incr.incr(capt_loc,
+                                                          mdata.direct)
+
+            self.decorator.do_captures(mdata, False)
+            self.decorator.max_capt += 1
+            mdata.captured = True
+
+        mdata.direct = direct
+        mdata.capt_loc = capt_loc
 
 
 # %%  grand slam decos

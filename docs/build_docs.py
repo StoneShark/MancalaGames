@@ -356,7 +356,7 @@ def add_useful(game_dict):
 
     if ckey.CAPT_SIDE not in game_dict[ckey.GAME_INFO]:
 
-        capt_keys = [ckey.CAPSAMEDIR, ckey.CAPT_MAX, ckey.CAPT_MIN,
+        capt_keys = [ckey.CAPT_DIR, ckey.CAPT_MAX, ckey.CAPT_MIN,
                      ckey.CAPT_ON, ckey.CAPT_TYPE, ckey.EVENS]
 
         capt_config = any(game_dict[ckey.GAME_INFO].get(key, False)

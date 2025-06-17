@@ -9,7 +9,7 @@
       "about": "\n",
       "allow_rule": 0,
       "blocks": false,
-      "capsamedir": false,
+      "capt_dir": 0,
       "capt_max": 0,
       "capt_min": 0,
       "capt_type": 0,

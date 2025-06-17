@@ -60,8 +60,14 @@ When used with ROUNDS, the holes not filled from the player with fewer seeds are
 
 When used with DEPRIVE, SOW_BLCK_DIV and goal_param holes are closed (blocked and removed from play) when sown to goal_param seeds.
 
-<param capsamedir>
-Only meaningful with MULTICAPT or CAPT_TYPE of NEXT or TWO_OUT. Captures are done in the same direction as the sowing, i.e. following the final hole sown. If not set, captures are done from the holes just sown.
+<param capt_dir>
+Determines the direction of captures when there are multiple captures. CAPT_TYPE of NEXT and TWO_OUT require <nolink>CAPT_DIR be SOW. 
+
+- OPP_SOW: captures proceed in the direction opposite of the sow.
+
+- SOW: captures continue in the same direction as the sow.
+
+- BOTH: captures occur in both directions from the final hole sown.
 
 <param capt_max>
 Capture when the contents of the hole are less than or equal to capt_max. Disable with 0 value.
@@ -121,15 +127,15 @@ Capture type.
 
 - NONE: No other capture type.
 
-- NEXT: Capture from the hole after the final seed sown. Captures in may be in either direction (set via CAPSAMEDIR) and multiple captures are supported. The hole tested for the basic capture criteria differs when lap sowing or not:
+- NEXT: Capture from the hole after the final seed sown. Captures in may be in either direction (set via CAPT_DIR) and multiple captures are supported. The hole tested for the basic capture criteria differs when lap sowing or not:
 
   + When not lap sowing, basic capture rules are applied and capture side is checked on the hole from which the seeds will be captured. 
 
-  + When multiple lap sowing, the basic capture rules define when the multilap sowing will end. When the final seed of a lap meets the basic capture criteria, multilap sowing ends and the seeds in the next hole (defined by CAPSAMEDIR setting) are captured.
+  + When multiple lap sowing, the basic capture rules define when the multilap sowing will end. When the final seed of a lap meets the basic capture criteria, multilap sowing ends and the seeds in the next hole (defined by CAPT_DIR setting) are captured.
 
 - TWO_OUT: Capture two holes out from the final hole sown but only if the intervening hole is empty. This is sometimes called capturing across the gap. 
 
-  + CAPSAMEDIR must be true. Basic capture rules and capture side are ignored (if a "capture while sowing" SOW_RULE is selected, these are applied to sowing). 
+  + CAPT_DIR must be SOW. Basic capture rules and capture side are ignored (if a "capture while sowing" SOW_RULE is selected, these are applied to sowing). 
 
   + When not lap sowing, the final hole sown must be occupied for capture two out (i.e. contains two or more seeds after sowing).
   
@@ -139,7 +145,7 @@ Capture type.
 
   + If multiple captures are configured, captures continue while the pattern of empty hole followed by an occupied hole repeats. 
 
-- MATCH_OPP: capture when the number of seeds in the final hole sown match the opposite-side hole. Multiple captures maybe made in either direction. Multilap sowing does stop for captures.
+- MATCH_OPP: capture when the number of seeds in the final hole sown match the opposite-side hole. Seeds from both holes are captured. Multiple captures maybe made in either direction. Multilap sowing does stop for captures.
 
 - SINGLETONS: capture all singletons.
 
@@ -520,9 +526,9 @@ An int to describe possible multicaptures:
 
  0 no multiple captures.
 
- -1: After the initial capture, continue capturing as long as the capture conditions are met. This multiple capture may happen in the sow direction (unsown holes) or in the opposite direction (sown holes) as selected with CAPSAMEDIR.
+ -1: After the initial capture, continue capturing as long as the capture conditions are met. This multiple capture may happen in the sow direction (unsown holes); in the opposite direction (sown holes); or in both directions  as selected with CAPT_DIR.
 
- 1 .. holes: capture at most the specified number of holes that meet the capture conditions.
+ 1 .. holes: if <nolink>CAPT_DIR is SOW or OPP_SOW, capture at most the specified number of holes that meet the capture conditions. If <nolink>CAPT_DIR is both, the initial hole may be captured and then one less than the setting in each direction.
 
 See individual capture mechanism for any unique requirements.
 

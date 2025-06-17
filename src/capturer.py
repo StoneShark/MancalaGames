@@ -168,9 +168,11 @@ def deco_capturer(game):
 
         capturer = capt_decos.CaptMultiple(game, capturer)
 
-    if not game.info.capsamedir:
-        # this is used with multi capt, capt next, and capt two out
+    if game.info.capt_dir == gi.CaptDir.OPP_SOW:
         capturer = capt_decos.CaptOppDir(game, capturer)
+
+    elif game.info.capt_dir == gi.CaptDir.BOTH:
+        capturer = capt_decos.CaptBothDir(game, capturer)
 
     capturer = _add_child_deco(game, capturer)
     capturer = _add_capt_pick_deco(game, capturer)

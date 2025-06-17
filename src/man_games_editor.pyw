@@ -46,7 +46,7 @@ PARAM_TABS = ('Game', 'Dynamics', 'Sow', 'Capture', 'Player')
 
 SKIP_TAB = 'skip'
 
-WTITLE = 'Mancala Game Editor'
+WTITLE = 'Mancala Games Editor'
 
 
 # %%  game params UI

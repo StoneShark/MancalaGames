@@ -61,6 +61,15 @@ class AllowRule(enum.IntEnum):
                         AllowRule.OCCUPIED}
 
 @enum.unique
+class CaptDir(enum.IntEnum):
+    """Capture direction in relation to the sow direction."""
+
+    OPP_SOW = 0
+    SOW = 1
+    BOTH = 2
+
+
+@enum.unique
 class CaptExtraPick(enum.IntEnum):
     """Pick extra's over the captured seeds."""
 
@@ -431,8 +440,7 @@ class GameInfo:
     sow_param: int = 0
 
     # **** capture
-    capsamedir: bool = False
-
+    capt_dir: CaptDir = CaptDir.OPP_SOW
     capt_side: CaptSide = CaptSide.BOTH
     moveunlock: bool = False
     evens: bool = False

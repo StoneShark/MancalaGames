@@ -14,7 +14,7 @@ AI_PARAMS = 'ai_params'
 ALGORITHM = 'algorithm'
 ALLOW_RULE = 'allow_rule'
 BLOCKS = 'blocks'
-CAPSAMEDIR = 'capsamedir'
+CAPT_DIR = 'CAPT_DIR'
 CAPT_MAX = 'capt_max'
 CAPT_MIN = 'capt_min'
 CAPT_ON = 'capt_on'
@@ -95,7 +95,7 @@ GCONST_PARAMS = (HOLES,
 # the description parameters are not included
 GINFO_PARAMS =  (ALLOW_RULE,
                  BLOCKS,
-                 CAPSAMEDIR,
+                 CAPT_DIR,
                  CAPT_MAX,
                  CAPT_MIN,
                  CAPT_ON,

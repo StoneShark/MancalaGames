@@ -8,7 +8,7 @@
       "name": "Pandi",
       "about": "Sow counter-clockwise via the multi-lap next-hole method (MLAPS of LAPPER_NEXT).\n\nWhile either player is sowing, both players capture all holes sown to 4 on their side of the board. Specifically, the non-sower may capture seeds from holes sown to 4 on their own side of the board.\n\nWhen the hole from which a new lap should start is empty, capture any seeds in the hole following the empty hole. That is, captures are made when the hole 'one out' from the last sown seed is empty and there are seeds in the hole 'two out' from the last sown seed.\n\nIf a capture is made the seeds from hole opposite the now empty hole are also captured.\n\nPlayed in ROUNDS. Each round ends when the current player does not have any playable holes. Round setup is via the Empty Hole Method of ROUND_FILL using the LEFT_FILL approach.  After the next round setup unfilled holes are out of play. The players alternate starting each round.\n\nThe game is over when either player cannot fill a single hole.\n\nVariations:\n\n- SOW_RULE of SOW_CAPT_ALL instead of OWN_SOW_CAPT_ALL.\n- Other options for ROUND_STARTER and ROUND_FILL.\n- See Olinda and Pallam Kuzhi.",  
       "blocks": true,
-      "capsamedir": true,
+      "capt_dir": 1,
       "capt_on": [4],
       "capt_side": 0,
       "capt_type": 2,

@@ -119,7 +119,7 @@ def test_rules(ginfo, holes, skip=None):
                 """ + ', '.join(child_flags),
         excp=gi.GameInfoError)
 
-    capt_flags = ['capsamedir', 'capt_max', 'capt_min', 'capt_type',
+    capt_flags = ['capt_dir', 'capt_max', 'capt_min', 'capt_type',
                   'capt_on', 'capt_rturn', 'crosscapt',
                   'evens', 'grandslam', 'multicapt', 'nocaptmoves',
                   'nosinglecapt', 'capt_side', 'pickextra', 'xcpickown']

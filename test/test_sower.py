@@ -1852,7 +1852,7 @@ class TestCaptMlap:
 
         game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
         game_info = gi.GameInfo(capt_type=gi.CaptType.TWO_OUT,
-                                capsamedir=True,
+                                capt_dir=gi.CaptDir.SOW,
                                 stores=True,
                                 sow_direct=Direct.CCW,
                                 mlaps=LapSower.LAPPER,
@@ -1866,7 +1866,7 @@ class TestCaptMlap:
 
         game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
         game_info = gi.GameInfo(capt_type=gi.CaptType.NEXT,
-                                capsamedir=True,
+                                capt_dir=gi.CaptDir.SOW,
                                 stores=True,
                                 sow_direct=Direct.CCW,
                                 mlaps=LapSower.LAPPER,

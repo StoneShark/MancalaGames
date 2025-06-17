@@ -12,7 +12,7 @@ Capture,ocapt_lbl,Other Captures,,0,label,0 ,9,0
 Capture,capt_type,Capture Type,game_info _,106,CaptType,NONE,10,0
 Capture,mcapt_lbl,Multiple Captures,,0,label,0,0,2
 Capture,multicapt,Multiple Captures,game_info _,124,int,0,1,2
-Capture,capsamedir,Capture in Sow Direction,game_info _,103,bool,False,2,2
+Capture,capt_dir,Capture Direction,game_info _,103,CaptDir,OPP_SOW,2,2
 Capture,clim_lbl,Capture Restrictions,,0,label,0,3,2
 Capture,nocaptmoves,Nbr Start Moves w/o Capture,game_info _,128,int,0,4,2
 Capture,capt_side,Capture side,game_info _,130,CaptSide,BOTH,5,2

@@ -221,7 +221,7 @@ class GameConfig:
 
         self.game_config.pop(ckey.FILENAME, None)
 
-        capt_keys = [ckey.CAPSAMEDIR, ckey.CAPT_MAX, ckey.CAPT_MIN,
+        capt_keys = [ckey.CAPT_DIR, ckey.CAPT_MAX, ckey.CAPT_MIN,
                      ckey.CAPT_ON, ckey.CAPT_TYPE, ckey.EVENS]
         capts_config = any(self.game_config[ckey.GAME_INFO][key]
                            for key in capt_keys)

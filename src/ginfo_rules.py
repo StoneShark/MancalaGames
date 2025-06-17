@@ -307,7 +307,7 @@ def test_block_and_divert_rules(tester):
         msg='SOW_BLKD_DIV(_NR) requires a DEPRIVE or IMMOBILIZE goal',
         excp=gi.GameInfoError)
 
-    capt_flags = ['capsamedir', 'capt_max', 'capt_min', 'capt_type',
+    capt_flags = ['capt_dir', 'capt_max', 'capt_min', 'capt_type',
                   'capt_on', 'capt_rturn', 'crosscapt',
                   'evens', 'multicapt',
                   'nosinglecapt', 'capt_side', 'pickextra', 'xcpickown']
@@ -497,26 +497,35 @@ def test_capture_rules(tester):
 
     tester.test_rule('xcapt_multi_same',
         rule=lambda ginfo: (ginfo.crosscapt and ginfo.multicapt
-                            and not ginfo.capsamedir),
-        msg="""CROSSCAPT with MULTICAPT without CAPSAMEDIR
-            is the same as just CROSSCAPT""",
-        warn=True)
+                            and ginfo.capt_dir != gi.CaptDir.SOW),
+        msg="""CROSSCAPT with MULTICAPT requires CAPT_DIR
+            be SOW""",
+        excp=gi.GameInfoError)
         # capturing the opp dir (as usual) wont capture because
         # the preceeding holes were just sown, that is, not empty
 
-    tester.test_rule('warn_capsamedir_multicapt',
-        rule=lambda ginfo: (ginfo.capt_type != gi.CaptType.TWO_OUT
-                            and ginfo.capt_type != gi.CaptType.NEXT
-                            and ginfo.capsamedir
-                            and not ginfo.multicapt),
-        msg="CAPSAMEDIR without MULTICAPT has no effect",
-        warn=True)
-
     tester.test_rule('capt2out_needs_samedir',
         rule=lambda ginfo: (ginfo.capt_type == gi.CaptType.TWO_OUT
-                            and not ginfo.capsamedir),
-        msg="""Capture type TWO_OUT requires CAPSAMEDIR because
+                            and ginfo.capt_dir != gi.CaptDir.SOW),
+        msg="""Capture type TWO_OUT requires CAPT_DIR of SOW because
             the preceeding holes were just sown (not empty)""",
+        excp=gi.GameInfoError)
+
+    tester.test_rule('cdir_both_multicapt',
+        rule=lambda ginfo: (ginfo.capt_dir == gi.CaptDir.BOTH
+                            and not ginfo.multicapt),
+        msg="""CAPT_DIR of BOTH requires MULTICAPT""",
+        excp=gi.GameInfoError)
+        # CaptBothDir needs to decorate CaptMultiple
+
+    tester.test_rule('cdir_both_ctypes',
+        rule=lambda ginfo: (
+            ginfo.capt_dir == gi.CaptDir.BOTH
+            and not (ginfo.capt_type in (gi.CaptType.NEXT,
+                                         gi.CaptType.MATCH_OPP)
+                     or (ginfo.basic_capt and not ginfo.crosscapt))),
+        msg="""CAPT_DIR of BOTH is only supported for basic captures,
+            NEXT and match opposite types.""",
         excp=gi.GameInfoError)
 
     tester.test_rule('capttype_xcross_incomp',

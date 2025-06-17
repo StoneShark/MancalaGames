@@ -7,7 +7,7 @@
    "game_info": {
       "name": "Tap-Urdy",
       "about": "Sow counter-clockwise in multiple laps. If a lap ends in an occupied hole, capture any seeds across a gap of one empty hole. Then, continue sowing even if no capture.\n\nGoal: capture more seeds than your opponent.\n",
-      "capsamedir": true,
+      "capt_dir": 1,
       "capt_type": 2,
       "capt_side": 0,
       "evens": true,

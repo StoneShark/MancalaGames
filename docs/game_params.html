@@ -844,18 +844,18 @@ is included after the parameter sections.
 <ol start=0><li class="helptext">
 <b class="enum">NONE</b>: No other capture type.
 <li class="helptext">
-<b class="enum">NEXT</b>: Capture from the hole after the final seed sown. Captures in may be in either direction (set via <a href="game_params.html#capsamedir">CAPSAMEDIR</a>) and multiple captures are supported. The hole tested for the basic capture criteria differs when lap sowing or not:
+<b class="enum">NEXT</b>: Capture from the hole after the final seed sown. Captures in may be in either direction (set via <a href="game_params.html#capt_dir">CAPT_DIR</a>) and multiple captures are supported. The hole tested for the basic capture criteria differs when lap sowing or not:
 <p class="helptext"> When not lap sowing, basic capture rules are applied and capture side is checked on the hole from which the seeds will be captured. 
-<p class="helptext"> When multiple lap sowing, the basic capture rules define when the multilap sowing will end. When the final seed of a lap meets the basic capture criteria, multilap sowing ends and the seeds in the next hole (defined by <a href="game_params.html#capsamedir">CAPSAMEDIR</a> setting) are captured.
+<p class="helptext"> When multiple lap sowing, the basic capture rules define when the multilap sowing will end. When the final seed of a lap meets the basic capture criteria, multilap sowing ends and the seeds in the next hole (defined by <a href="game_params.html#capt_dir">CAPT_DIR</a> setting) are captured.
 <li class="helptext">
 <b class="enum">TWO_OUT</b>: Capture two holes out from the final hole sown but only if the intervening hole is empty. This is sometimes called capturing across the gap. 
-<p class="helptext"> <a href="game_params.html#capsamedir">CAPSAMEDIR</a> must be true. Basic capture rules and capture side are ignored (if a "capture while sowing" <a href="game_params.html#sow_rule">SOW_RULE</a> is selected, these are applied to sowing). 
+<p class="helptext"> <a href="game_params.html#capt_dir">CAPT_DIR</a> must be SOW. Basic capture rules and capture side are ignored (if a "capture while sowing" <a href="game_params.html#sow_rule">SOW_RULE</a> is selected, these are applied to sowing). 
 <p class="helptext"> When not lap sowing, the final hole sown must be occupied for capture two out (i.e. contains two or more seeds after sowing).
 <p class="helptext"> Multilap sowing does not stop to check for two out captures on each lap*. For LAPPER sow, captures are checked after the final seed ends lands in an empty hole. For LAPPER_NEXT sow, captures captures are checked when there are no seeds in the hole after the final seed sown.  
 <p class="helptext"> *The <a href="game_params.html#sow_rule">SOW_RULE</a> LAP_CAPT is supported for TWO_OUT captures with LAPPER sow.
 <p class="helptext"> If multiple captures are configured, captures continue while the pattern of empty hole followed by an occupied hole repeats. 
 <li class="helptext">
-<b class="enum">MATCH_OPP</b>: capture when the number of seeds in the final hole sown match the opposite-side hole. Multiple captures maybe made in either direction. Multilap sowing does stop for captures.
+<b class="enum">MATCH_OPP</b>: capture when the number of seeds in the final hole sown match the opposite-side hole. Seeds from both holes are captured. Multiple captures maybe made in either direction. Multilap sowing does stop for captures.
 <li class="helptext">
 <b class="enum">SINGLETONS</b>: capture all singletons.
 </ol>
@@ -867,16 +867,23 @@ is included after the parameter sections.
 
 <p>An int to describe possible multicaptures:
 <p> 0 no multiple captures.
-<p> -1: After the initial capture, continue capturing as long as the capture conditions are met. This multiple capture may happen in the sow direction (unsown holes) or in the opposite direction (sown holes) as selected with <a href="game_params.html#capsamedir">CAPSAMEDIR</a>.
-<p> 1 .. holes: capture at most the specified number of holes that meet the capture conditions.
+<p> -1: After the initial capture, continue capturing as long as the capture conditions are met. This multiple capture may happen in the sow direction (unsown holes); in the opposite direction (sown holes); or in both directions  as selected with <a href="game_params.html#capt_dir">CAPT_DIR</a>.
+<p> 1 .. holes: if <nolink>CAPT_DIR is SOW or OPP_SOW, capture at most the specified number of holes that meet the capture conditions. If <nolink>CAPT_DIR is both, the initial hole may be captured and then one less than the setting in each direction.
 <p>See individual capture mechanism for any unique requirements.
-<h4 id="capsamedir"> Capture in Sow Direction </h4>
-<p class="pdesc">Location in Config Files: game_info : capsamedir
-<p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
-<p class="pdesc">Default value: False
+<h4 id="capt_dir"> Capture Direction </h4>
+<p class="pdesc">Location in Config Files: game_info : capt_dir
+<p id="CaptDir" class="pdesc">Type: <a href="param_types.html#CaptDir"> CaptDir </a>
+<p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Capture
 
-<p>Only meaningful with <a href="game_params.html#multicapt">MULTICAPT</a> or <a href="game_params.html#capt_type">CAPT_TYPE</a> of NEXT or TWO_OUT. Captures are done in the same direction as the sowing, i.e. following the final hole sown. If not set, captures are done from the holes just sown.
+<p>Determines the direction of captures when there are multiple captures. <a href="game_params.html#capt_type">CAPT_TYPE</a> of NEXT and TWO_OUT require <nolink>CAPT_DIR be SOW. 
+<ol start=0><li class="helptext">
+<b class="enum">OPP_SOW</b>: captures proceed in the direction opposite of the sow.
+<li class="helptext">
+<b class="enum">SOW</b>: captures continue in the same direction as the sow.
+<li class="helptext">
+<b class="enum">BOTH</b>: captures occur in both directions from the final hole sown.
+</ol>
 <h4 id="nocaptmoves"> Nbr Start Moves w/o Capture </h4>
 <p class="pdesc">Location in Config Files: game_info : nocaptmoves
 <p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
@@ -1091,7 +1098,7 @@ is included after the parameter sections.
     <p class="param"><a href="#algorithm">algorithm</a></p>
     <p class="param"><a href="#allow_rule">allow_rule</a></p>
     <p class="param"><a href="#blocks">blocks</a></p>
-    <p class="param"><a href="#capsamedir">capsamedir</a></p>
+    <p class="param"><a href="#capt_dir">capt_dir</a></p>
     <p class="param"><a href="#capt_max">capt_max</a></p>
     <p class="param"><a href="#capt_min">capt_min</a></p>
     <p class="param"><a href="#capt_on">capt_on</a></p>
