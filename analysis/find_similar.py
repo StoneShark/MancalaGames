@@ -2,7 +2,7 @@
 """
 Created on Thu Apr  3 10:45:03 2025
 
-@author: Ann
+@author: Ann 
 """
 
 # %% imports
@@ -37,7 +37,7 @@ GCONSTS = ckey.GAME_CONSTANTS
 GINFO = ckey.GAME_INFO
 
 
-# %% routines
+# %% collection routines
 
 def load_game_files():
     """Get a list of the game files, read the game_dict,
@@ -132,17 +132,84 @@ def find_similar():
     return diff_dict
 
 
+# %% output routines
+
+def print_summary(ndict):
+    """Print a summary of the results."""
+
+    print("Diff  Count")
+    for nbr_diff, pairs in sorted(ndict.items(), key=lambda item: item[0]):
+        print(f"{nbr_diff:3}: {len(pairs):4}")
+
+    for d in range(1, 3):
+        print(f"Pairs differing by {d} param(s):")
+        for g1, g2 in neighs[d]:
+            print(f'   {g1:20}  {g2:20}')
+        print()
+
+def one_game(game, ndict):
+    """Print the distances of all games from the one provided."""
+
+    print(game)
+    for nbr_diff, pairs in sorted(ndict.items(), key=lambda item: item[0]):
+
+        title = f"  {nbr_diff}:"
+        for game1, game2 in pairs:
+
+            match1 = game == game1
+            match2 = game == game2
+            if not title and (match1 or match2):
+                if title:
+                    print(title)
+                    title = None
+
+            if match1:
+                print(f"     {game2}")
+            if match2:
+                print(f"     {game1}")
+
+
+def print_line(values):
+    """Print a list of values in columns."""
+
+    print("".join(f"{str(val):20}" for val in values))
+
+
+def print_option_line(gname_list, option):
+    """Prepare and print one line for option for each game."""
+
+    pvalues = [option]
+
+    for game in gname_list:
+        default = gi.GameInfo.get_default(option)
+        pvalues += [ALL_GAMES[game][GINFO].get(option, default)]
+
+    print_line(pvalues)
+
+
+def print_diff_table(neighs, gname_list):
+    """Print a table of the values that differ."""
+
+    # gname_list = sorted(gname_list)
+
+    options = set()
+    for g1, g2 in it.combinations(gname_list, 2):
+        options |= set(list_diffs(ALL_GAMES[g1], ALL_GAMES[g2]))
+
+    print_line(["Option"] + gname_list)
+
+    starters = [ckey.GAME_CLASS, ckey.HOLES, ckey.NBR_START]
+    for opt in starters:
+        if opt in options:
+            print_option_line(gname_list, opt)
+
+    for opt in sorted(options):
+        if opt not in starters:
+            print_option_line(gname_list, opt)
+
+
 # %%
 
 load_game_files()
 neighs = find_similar()
-
-print("Diff  Count")
-for nbr_diff, pairs in sorted(neighs.items(), key=lambda item: item[0]):
-    print(f"{nbr_diff:3}: {len(pairs):4}")
-
-for d in range(1, 3):
-    print(f"Pairs differing by {d} param(s):")
-    for g1, g2 in neighs[d]:
-        print(f'   {g1:20}  {g2:20}')
-    print()
+print_summary(neighs)
