@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "OnlyChild",
-      "about": "User chooses sow direction for the middle and end holes; the other holes sow towards the closest edge of the board (split sow).\n\nEach player may only make one child by sowing one of their own, interior holes to 4 seeds. Children cannot be created in either end hole.\n\nCross capture on opponents side of the board but only if 4 or fewer seeds and not until you have a child to move the seeds into.\n\nThe game ends when either cannot move. Seeds remaining in play do not score.\n\nGoal: collect more than half the seeds.\n\nVariations:\n\n- allowable child locations\n\n- which hole the player may select the sow direction\n\n- capture limit",
+      "about": "User chooses sow direction for the middle and end holes; the other holes sow towards the closest edge of the board (split sow).\n\nEach player may only make one child by sowing one of their own, interior holes to 4 seeds. Children cannot be created in either end hole.\n\nCross capture on opponents side of the board but only if 4 or fewer seeds and not until you have a child to move the seeds into.\n\nThe game ends when either cannot move. Seeds remaining in play do not score.\n\nGoal: collect more than half the seeds.\n\nVariations:\n\n- sow towards center instead of split which sows toward the outside edges\n\n- allowable child locations\n\n- which hole the player may select the sow direction\n\n- capture limit",
       "capt_max": 4,
       "child_cvt": 4,
       "child_rule": 2,
@@ -33,6 +33,7 @@
       }
    },
    "vari_params": {
+      "sow_direct": [ 0, 4 ],
       "udir_holes": "include",
       "child_locs": "include",
       "capt_max": "include"
