@@ -397,44 +397,65 @@ class CaptOppDir(CaptMethodIf):
 
 class CaptBothDir(CaptMethodIf):
     """Capture in both directions from the initial capt_loc.
+    Supported for basic captures, capt next and match."""
 
-    Supported for basic captures, capt next, and match.
-
-    If the capt_loc (end of sow) should be captured (that is,
-    not capt type of next), set the capt_first flag.
-
-    This is used in do_captures, first, to prevent multiple
-    captures if the first call down the deco chain didn't
-    capture and, second, to adjust the counts and indecies
-    before and after the second call down the deco chain."""
-
-    def __init__(self, game, decorator=None):
+    def __init__(self, game, decorator=True):
 
         super().__init__(game, decorator)
-        self.capt_first = game.info.capt_type != gi.CaptType.NEXT
+        if game.info.capt_type == gi.CaptType.NEXT:
+            self.capt_func = self.no_capt_center
+        else:
+            self.capt_func = self.capt_center
 
 
-    def do_captures(self, mdata, capt_first=True):
-        """Call the deco chain in both directions."""
+    def capt_center(self, mdata, capt_first, direct, capt_loc):
+        """Capture the initial capt_loc, then proceed in the
+        sow direction, then proceed in the opposite direction.
 
-        direct = mdata.direct
-        capt_loc = mdata.capt_loc
+        Recude the max_capt in the CaptMultiple deco and increment
+        past the already captured initial capt_loc, before the
+        second call down the deco chain.
+
+        Return if the first capture was successful."""
+
+        self.decorator.do_captures(mdata, capt_first)
+
+        if not mdata.captured:
+            return False
+
+        mdata.direct = direct.opp_dir()
+        self.decorator.max_capt -= 1
+        mdata.capt_loc = self.game.deco.incr.incr(capt_loc, mdata.direct)
+
+        self.decorator.do_captures(mdata, capt_first)
+        self.decorator.max_capt += 1
+        return True
+
+
+    def no_capt_center(self, mdata, capt_first, direct, _):
+        """Don't capture the inial capt_loc, proceed in the sow
+        direction, then in opposite direction.
+
+        Return if the first capture was successful."""
+
+        mstate = mdata.state
 
         self.decorator.do_captures(mdata, capt_first)
         captured = mdata.captured
 
-        if self.capt_first and not captured:
-            return
-
+        mdata.state = mstate
         mdata.direct = direct.opp_dir()
-        if self.capt_first:
-            self.decorator.max_capt -= 1
-            mdata.capt_loc = self.game.deco.incr.incr(capt_loc,
-                                                      mdata.direct)
-
         self.decorator.do_captures(mdata, False)
-        if self.capt_first:
-            self.decorator.max_capt += 1
+
+        return captured
+
+
+    def do_captures(self, mdata, capt_first=True):
+
+        direct = mdata.direct
+        capt_loc = mdata.capt_loc
+
+        captured = self.capt_func(mdata, capt_first, direct, capt_loc)
 
         mdata.direct = direct
         mdata.capt_loc = capt_loc

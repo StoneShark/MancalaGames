@@ -846,13 +846,14 @@ def test_rules(ginfo, holes, skip=None):
         warn=True)
 
     tester.test_rule('presowcap_stores',
-        rule=lambda ginfo: ginfo.presowcapt and not ginfo.stores,
-        msg="""PRESOWCAPT without stores is not supported""",
+        rule=lambda ginfo: (ginfo.presowcapt
+                            and not ginfo.stores and ginfo.child_type),
+        msg="""PRESOWCAPT to children is not supported
+            (not STORES and CHILD_TYPE)""",
         excp=NotImplementedError)
-        # how exactly would this work?
-        # do we capture if we are going to make a child in the capturer?
-        # rounds with blocks (e.g. some seeds are out of play for round),
-        # adds more complications
+        # logic to prevent captures before children and moving seeds
+        # out of stores back onto the board while not moving seeds
+        # that are out of play for the round is not implemented
 
     tester.test_rule('presowcapt_locks',
         rule=lambda ginfo: ginfo.presowcapt and ginfo.moveunlock,

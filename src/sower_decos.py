@@ -464,6 +464,26 @@ class SCaptCrossOnOne(SowMethodIf):
 class SCaptCrossSingles(SowMethodIf):
     """Capture across from any holes that have a singleton"""
 
+    def _messages(self, log):
+        """Create the animation message and log it."""
+
+        holes = self.game.cts.holes
+        dholes = self.game.cts.dbl_holes
+        slog = [str(loc + 1 if loc < holes else dholes - loc) for loc in log]
+
+        if len(log) > 1:
+            where = ', '.join(slog[:-1])
+            where += ' & ' + str(slog[-1])
+        else:
+            where = str(slog[0])
+
+        msg = f"Presow Captures across from 1s: {where}"
+        game_log.step(msg, self.game, game_log.DETAIL)
+
+        if animator.active():
+            animator.animator.message(msg)
+
+
     def sow_seeds(self, mdata):
 
         log = []
@@ -481,14 +501,7 @@ class SCaptCrossSingles(SowMethodIf):
                 log += [cross]
 
         if log:
-            game_log.step(f'Presow Capt Cross all 1s from {log}',
-                          self.game, game_log.DETAIL)
-            if animator.active():
-                holes = self.game.cts.holes
-                dholes = self.game.cts.dbl_holes
-                where = ' '.join(str(loc + 1 if loc < holes else dholes - loc)
-                                 for loc in log)
-                animator.animator.message(f"Pre-Sow Captures across from {where}")
+            self._messages(log)
 
         self.decorator.sow_seeds(mdata)
 

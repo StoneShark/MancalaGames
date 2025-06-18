@@ -598,7 +598,7 @@ class ClearSeedsEndGame(ConcedeMixin, EndTurnIf):
             mdata.win_cond = gi.WinCond.WIN
             mdata.winner = not self.game.turn
             mdata.end_msg = """_Winner_ won _thing_ because _loser_
-                            removed their own seeds."""
+                            removed their seeds."""
             mdata.fmsg = True
 
 
