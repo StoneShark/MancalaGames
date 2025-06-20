@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "ZigZag",
-      "about": "A semi-multi-lap mancala.\n\nSow in a zigzag, back-and-forth across the board, towards the center-line of the board. At either end, sow directly across the board. Continue in multiple laps as long as the last seed of a lap lands on your own side of the board. See help for details and examples.\n\nA move of a single seed across the center-line of the board that does not capture may not be moved back on the very next move.\n\nCross capture on own side of the board--final seed ends in empty hole on opponents side of the board--collect your own seeds. Leave the seed effecting the capture.\n\nGoal: capture the most seeds.\n\nInvented by Clark D. Rodeffer and Amanda J.L. Rodeffer.\n\nVariations:\n\n- any even number of holes\n- any odd number of holes\n",
+      "about": "A semi-multi-lap mancala.\n\nSow in a zigzag, back-and-forth across the board, towards the center-line of the board. At either end, sow directly across the board. Continue in multiple laps as long as the last seed of a lap lands on your own side of the board. See help for details and examples.\n\nA move of a single seed across the center-line of the board that does not capture may not be moved back on the very next move.\n\nCross capture on own side of the board--final seed ends in empty hole on opponents side of the board--collect your own seeds. Leave the seed effecting the capture.\n\nGoal: capture the most seeds.\n\nInvented by Clark D. Rodeffer and Amanda J.L. Rodeffer.\n\nVariations:\n\n- any even number of holes\n- any odd number of seeds\n",
       "crosscapt": true,
       "help_file": "ZigZagHelp.pdf",
       "mlaps": 1,
