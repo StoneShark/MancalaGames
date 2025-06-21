@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Je ki n je",
-      "about": "Multilap sow in either direction from your own holes (UDIR_HOLES). Multilap sowing ends when there is a single seed in the final hole. \n\nWhen multilap sow ends on your opponent's side of the board, capture the final seed sown and the seeds in the next hole in the choosen sow direction, even if it is on your side of the board.\n\nGoal: collect more seeds than your opponent.\n\nVariants:\n\n- single lap sow\n\n- skip start hole when sowing more than 12 seeds (SKIP_START, Mancala Games does not support a limit to the number of seeds)",
+      "about": "Multilap sow in either direction from your own holes (UDIR_HOLES). Multilap sowing ends when there is a single seed in the final hole. \n\nWhen multilap sow ends on your opponent's side of the board, capture the final seed sown and the seeds in the next hole in the choosen sow direction, even if it is on your side of the board.\n\nGoal: collect more seeds than your opponent.\n\nVariants:\n\n- single lap sow\n\n- skip start hole when sowing more than 12 seeds (SKIP_START)",
       "capt_dir": 1,
       "capt_type": 1,
       "mlaps": 1,

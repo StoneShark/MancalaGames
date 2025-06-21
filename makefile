@@ -107,11 +107,11 @@ game_tests: test\\context.py
 # a target to run the stress tests with higher iterations
 .PHONY: strest_tests	
 stress_tests: test\\context.py params
-	pytest test\\test_z_simul_game.py --nbr_runs 500 --sim_fails
+	pytest test\\test_zz_simul_game.py --nbr_runs 500 --sim_fails
 	
 .PHONY: player_tests
 player_tests: test\\context.py params
-	-pytest test\\test_z_simul_players.py --run_slow 
+	-pytest test\\test_zz_simul_players.py --run_slow 
 
 
 

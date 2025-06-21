@@ -83,9 +83,40 @@ class GameVariations:
             self.game_config[ckey.GAME_INFO][fdesc.name] = value
 
 
+    def _make_consistent(self):
+        """If we can adjust the size of the board for games with
+        udir holes, try to  update the udir_holes based on
+        orginal game configuration. Either set all holes to udir
+        or set just the center hole to udir."""
+
+        game = self.game_ui.game
+        if (not game.info.udirect
+                or ckey.HOLES not in self.my_params
+                or ckey.UDIR_HOLES in self.my_params):
+            return
+
+        new_holes = self.game_config[ckey.GAME_CONSTANTS][ckey.HOLES]
+        if game.cts.holes == new_holes:
+            return
+
+        nbr_old_udir = len(game.info.udir_holes)
+
+        if nbr_old_udir == game.cts.holes:
+            self.game_config[ckey.GAME_INFO][ckey.UDIR_HOLES] = \
+                list(range(new_holes))
+
+        elif nbr_old_udir == 1:
+            quot, odd = divmod(new_holes, 2)
+            self.game_config[ckey.GAME_INFO][ckey.UDIR_HOLES] = [quot + odd]
+
+        else:   # pragma: no coverage
+            assert False, "Variations tests should have precluded this."
+
+
     def rebuild(self):
         """Rebuild the game based on game_config."""
 
+        self._make_consistent()
         new_game = man_config.game_from_config(self.game_config)
         player_dict = self.game_config[ckey.PLAYER]
         player = ai_player.AiPlayer(new_game, player_dict)
@@ -319,7 +350,7 @@ def test_vari_params(game_dict, vparams):
     test_include_goal_param(game_dict, vparams)
 
 
-def test_variants_param(_, variants):
+def test_variants_param(variants):
     """Test the variants section."""
 
     if not variants:
@@ -350,16 +381,75 @@ def test_variants_param(_, variants):
                 raise GameVariantError(msg)
 
 
-def test_variation_config(game_dict):
+def test_udir_hole_changes(game_dict, var_options):
+    """Test if we know what to do if the user can change the
+    number of holes in the presence of udir_holes.
+
+    var_options is a set of all parameters in vari_param and
+    in the variant dicts."""
+
+    # game isn't udirect, nothing to be checked
+    if not game_dict[ckey.GAME_INFO].get(ckey.UDIRECT, False):
+        return
+
+    # variants don't allow board size to be changed, all good
+    if ckey.HOLES not in var_options:
+        return
+
+    if ckey.UDIR_HOLES in var_options:
+        msg = """Variations that allow changing HOLES and UDIR_HOLES are
+              are not supported."""
+        raise GameVariantError(msg)
+
+    udirs = game_dict[ckey.GAME_INFO].get(ckey.UDIR_HOLES, [])
+    nbr_udir = len(udirs)
+    holes = game_dict[ckey.GAME_CONSTANTS][ckey.HOLES]
+
+    # we'll make all holes udir holes
+    if nbr_udir == holes:
+        return
+
+    # we'll make the odd center hole udir
+    quot, odd = divmod(holes, 2)
+    if nbr_udir == 1 and odd and udirs[quot + odd]:
+        return
+
+    # we don't know what to do
+    msg = """Game has user directed holes and
+          variations allow changing the number of holes,
+          but it cannot be infered
+          how to adjust udir_holes (all holes or center)."""
+    raise GameVariantError(msg)
+
+
+def test_variation_config(game_dict, no_var_error=True):
     """Test the consistency of the variation configuration
     in the game dictionary.
 
     Using the tester overly complicates this code because the tests
-    are inside loops."""
+    are inside loops. Don't think classes derived from Mancala will
+    ever want to skip these tests."""
 
     if not (ckey.VARI_PARAMS in game_dict or ckey.VARIANTS not in game_dict):
-        msg="Cannot create GameVariations without variations."
-        raise GameVariantError(msg)
+        if no_var_error:
+            msg="Cannot create GameVariations without variations."
+            raise GameVariantError(msg)
 
-    test_vari_params(game_dict, game_dict.get(ckey.VARI_PARAMS, {}))
-    test_variants_param(game_dict, game_dict.get(ckey.VARIANTS, {}))
+        return
+
+    vari_params = game_dict.get(ckey.VARI_PARAMS, {})
+    variants = game_dict.get(ckey.VARIANTS, {})
+
+    params = set(vari_params.keys())
+    options = set()
+    if variants:
+        for vdict in variants.values():
+            options |= set(vdict.keys())
+
+    if params & options:
+        warnings.warn("VARI_PARAMS and VARIANTS have overlapping parameters. "
+                      "VARI_PARAMS settings will override VARIANTS")
+
+    test_vari_params(game_dict, vari_params)
+    test_variants_param(variants)
+    test_udir_hole_changes(game_dict, params | options)
