@@ -692,11 +692,9 @@ class Animator:
                                    lambda: self.do_animation(False))
 
             else:
-                # do refresh to hide any errors in collecting ani actions
                 self._ani_state = None
                 self._pending_after = False
                 self.game_ui.config(cursor=ui_utils.NORMAL)
-                self.game_ui.after(self.delay, self.game_ui.refresh)
 
         else:
             # an active playback was stopped

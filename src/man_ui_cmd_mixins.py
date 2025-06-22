@@ -219,13 +219,19 @@ class MoveMenuMixin:
 
 
     def move_redo(self, _=None):
-        """Return to an undone state state."""
+        """Return to an undone state state.
+        Disable the UI when the redone move ended the game."""
 
         state = self.history.redo()
         if state:
             self.game.state = state
             self.refresh()
             game_log.add('Move redone:\n' + str(state), game_log.IMPORT)
+
+            if (self.game.mdata
+                    and self.game.mdata.win_cond
+                    and self.game.mdata.win_cond.is_ended()):
+                self.set_ui_active(False, self)
         else:
             self.bell()
 

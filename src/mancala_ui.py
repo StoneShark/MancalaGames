@@ -484,7 +484,7 @@ class MancalaUI(ui_cmds.VariCmdsMixin,
         return btnstate
 
 
-    def _set_ui_active(self, active, frame=None):
+    def set_ui_active(self, active, frame=None):
         """Activate or deactivate the Hole and Store Buttons,
         recursing through frames. Also, on the first call,
         activate/deactivate the key bindings and menus
@@ -501,7 +501,7 @@ class MancalaUI(ui_cmds.VariCmdsMixin,
         for child in frame.winfo_children():
 
             if isinstance(child, tk.Frame):
-                self._set_ui_active(active, child)
+                self.set_ui_active(active, child)
 
             elif isinstance(child, (buttons.HoleButton,
                                     buttons.StoreButton)):
@@ -519,11 +519,11 @@ class MancalaUI(ui_cmds.VariCmdsMixin,
         """Make UI match mancala game."""
 
         if ani_ok and animator.active():
-            self._set_ui_active(active=False)
+            self.set_ui_active(active=False)
             animator.animator.do_animation()
             return
 
-        self._set_ui_active(True)
+        self.set_ui_active(True)
         turn = self.game.get_turn()
         allows = self.game.get_allowable_holes()
         turn_row = int(not turn)
@@ -693,7 +693,13 @@ class MancalaUI(ui_cmds.VariCmdsMixin,
             message = message.split(fmt.LINE_SEP)
             message = message[0] if len(message) == 1 else message
 
-            ui_utils.WinPopup(self, title, message)
+            start_new = ui_utils.win_popup_new_game(self, title, message)
+            if start_new:
+                self._new_game(not win_cond.is_game_over())
+            else:
+                # don't let the players do anything dangerous
+                # call with a frame so that only the buttons are disabled
+                self.set_ui_active(False, self)
 
 
     def _no_endless_sows(self):
@@ -749,7 +755,6 @@ class MancalaUI(ui_cmds.VariCmdsMixin,
 
         self.refresh()
         self._win_message_popup(win_cond)
-        self._new_game(not win_cond.is_game_over())
 
 
     def _log_ai_desc(self, last_turn):
@@ -772,6 +777,7 @@ class MancalaUI(ui_cmds.VariCmdsMixin,
             animator.animator.flash(last_turn, move=move)
 
         self.wcond = self.game.move(move)
+        self.history.record(self.game.state)
         self._log_ai_desc(last_turn)
 
         if animator.active():
@@ -780,6 +786,7 @@ class MancalaUI(ui_cmds.VariCmdsMixin,
                 animator.animator.clear_queue()
 
             else:
+                animator.animator.queue_callback(self.refresh)
                 animator.animator.queue_callback(self.move_epilog)
                 self.refresh(ani_ok=True)
                 return
@@ -794,7 +801,7 @@ class MancalaUI(ui_cmds.VariCmdsMixin,
 
         if self.wcond and self.wcond.is_ended():
             self._win_message_popup(self.wcond)
-            self._new_game(not self.wcond.is_game_over())
+            return
 
         if (not (self.tkvars.ai_active.get() and self.game.get_turn())
                 and self.info.mustpass and self.game.test_pass()):
@@ -805,7 +812,6 @@ class MancalaUI(ui_cmds.VariCmdsMixin,
             ui_utils.PassPopup(self, 'Must Pass', message, quit_round)
             self.refresh()     # test_pass updates game state
 
-        self.history.record(self.game.state)
         self.schedule_ai()
 
 

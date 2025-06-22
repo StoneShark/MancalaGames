@@ -247,6 +247,7 @@ class WinPopup(tksimpledialog.Dialog):
 
         self.mancala_ui = master
         self.msg = fmt.fmsg(message)
+        self.new_game = False
         super().__init__(master, title)
 
 
@@ -272,11 +273,26 @@ class WinPopup(tksimpledialog.Dialog):
                   command=game_log.dump).pack(side=tk.LEFT)
         tk.Button(bframe, text='Save Game', width=12,
                   command=self.mancala_ui.glog_save_log).pack(side=tk.LEFT)
-        tk.Button(bframe, text='Ok', width=12,
-                  command=self.ok, default=tk.ACTIVE).pack(side='right')
+        tk.Button(bframe, text='Wait', width=12,
+                  command=self.cancel).pack(side=tk.LEFT)
+        tk.Button(bframe, text='New Game', width=12,
+                  command=self.ok, default=tk.ACTIVE).pack(side=tk.RIGHT)
 
         self.bind("<Return>", self.ok)
         self.bind("<Escape>", self.cancel)
+
+
+    def apply(self):
+        """Start a new game."""
+        self.new_game = True
+
+
+def win_popup_new_game(master, title, message):
+    """Wrap the WinPopup so we can return if a new game was
+    requested."""
+
+    obj = WinPopup(master, title, message)
+    return obj.new_game
 
 
 class PassPopup(tksimpledialog.Dialog):
