@@ -1,0 +1,34 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 9,
+      "nbr_start": 4
+   },
+   "game_info": {
+      "name": "Centering",
+      "about": "The start pattern is clipped triples.\n\nSow towards the center of the board, except the center hole may be sown in either direction. \n\nCapture on matching the number of seeds in the hole on the opposite side of the board. Seeds from both holes are captured. Captures may be initiated from either side of the board.\n\nIf there is an initial capture, capture up to two more holes in both directions but each must also have a north-south matching number of seeds. In theory, 10 holes could be captured on a single move. The capture chain stops for each direction as soon as there are non-matching holes.\n\nPlayed in rounds. A round ends when the current player does not have any seeds or there are 4 or fewer seeds on the board.\n\nGoal: be the first to collect 100 total seeds.\n\nVariations:\n\n- different number of seeds for the win.\n\n- count only seeds in excess of your opponents seeds.",
+      "capt_dir": 2,
+      "capt_type": 3,
+      "goal": 5,
+      "goal_param": 100,
+      "multicapt": 3,
+      "capt_side": 0,
+      "round_starter": 0,
+      "rounds": 3,
+      "sow_direct": 4,
+      "start_pattern": 4,
+      "stores": true,
+      "udir_holes": [ 4 ],
+      "unclaimed": 1,
+      "quitter": 1
+   },
+   "vari_params": {
+      "goal_param": "include",
+      "goal": [ 5, 6 ]
+   },
+   "player": {
+      "ai_params": { "mm_depth": [ 1, 3, 5, 7 ] },
+      "scorer": { "stores_m": 8 }
+   },
+   "rules": "Ann Davies, 2025."
+}
