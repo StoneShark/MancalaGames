@@ -154,7 +154,7 @@ see <a href="about_games.html#Lam Waladach">Lam Waladach</a>
 <p>Sow single-lap, CCW. Leave one seed in the move start hole. The minimum move is 2 seeds. Captures may not be made on the first move by either player.
 <p>Each of the first 10 moves must start from a different hole. This is accomplished by using the unlock mechanism, moving from a hole unlocks it. Until all of a player's holes are unlocked, moves may only start from locked holes.
 <p>If a player does not have a move, they must pass.
-<p>Captures are made when the hole after the final seed sown contains 1, 3 or 5 seeds and continue as long as holes contain 1, 3, or 5 seeds. Those seeds (in the next hole) are captured, but not any from the final hole sown. These captures do not check the lock status.
+<p>Captures are made when the hole after the final seed sown contains 1, 3 or 5 seeds and continue as long as holes contain 1, 3, or 5 seeds. Those seeds (in the next hole) are captured, but not any from the final hole sown. These captures do not check the lock condition.
 <p>The game ends when one player has accumulated more than half of the seeds or when neither player can move. Unclaimed seeds go to the hole owners.
 <div class="cols_row">
   <div class="column2">
@@ -658,6 +658,42 @@ remove multiple capture
   </div>
 </div>
 <p>Rules: <a href="https://mancala.fandom.com/wiki/Bule_Perga" target="_blank">https://mancala.fandom.com/wiki/Bule_Perga</a>
+<h3 id="Centering" class="game_desc">Centering</h3>
+<p>The start pattern is clipped triples.
+<p>Sow towards the center of the board, except the center hole may be sown in either direction. 
+<p>Capture on matching the number of seeds in the hole on the opposite side of the board. Seeds from both holes are captured. Captures may be initiated from either side of the board.
+<p>If there is an initial capture, capture up to two more holes in both directions but each must also have a north-south matching number of seeds. In theory, 10 holes could be captured on a single move. The capture chain stops for each direction as soon as there are non-matching holes.
+<p>Played in rounds. A round ends when the current player does not have any seeds or there are 4 or fewer seeds on the board.
+<p>Goal: be the first to collect 100 total seeds.
+<p>Variations:
+<ul><li class="helptext">
+different number of seeds for the win.
+<li class="helptext">
+count only seeds in excess of your opponents seeds.
+</ul>
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  9</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: RND_SEED_COUNT</p>
+    <p class="param"><a href="game_params.html#capt_dir">Capture Direction</a>: BOTH</p>
+    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: BOTH</p>
+    <p class="param"><a href="game_params.html#capt_type">Capture Type</a>: MATCH_OPP</p>
+    <p class="param"><a href="game_params.html#goal_param">Goal Parameter</a>: 100</p>
+    <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: 3</p>
+    <p class="param"><a href="game_params.html#quitter">Quit Game Seeds</a>: DONT_SCORE</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: END_S_SEEDS</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: TOCENTER</p>
+    <p class="param"><a href="game_params.html#start_pattern">Start Pattern</a>: CLIPPEDTRIPLES</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#udir_holes">User Chooses Direction</a>: 4</p>
+    <p class="param"><a href="game_params.html#unclaimed">Unclaimed Seeds at End</a>: DONT_SCORE</p>
+  </div>
+</div>
+<p>Rules: Ann Davies, 2025.
 <h3 id="Cow" class="game_desc">Cow</h3>
 <p>A single-lap mancala with a SPLIT <a href="game_params.html#sow_direct">SOW_DIRECT</a>. The sow direction depends on start location:
 <ul><li class="helptext">
@@ -1404,7 +1440,7 @@ remove limit on cross captures (<a href="game_params.html#capt_max">CAPT_MAX</a>
 <ul><li class="helptext">
 single lap sow
 <li class="helptext">
-skip start hole when sowing more than 12 seeds (<a href="game_params.html#skip_start">SKIP_START</a>, Mancala Games does not support a limit to the number of seeds)
+skip start hole when sowing more than 12 seeds (<a href="game_params.html#skip_start">SKIP_START</a>)
 </ul>
 <div class="cols_row">
   <div class="column2">
@@ -2458,7 +2494,7 @@ sow towards center instead of split which sows toward the outside edges
 <li class="helptext">
 allowable child locations
 <li class="helptext">
-which hole the player may select the sow direction
+which holes the player may select the sow direction
 <li class="helptext">
 capture limit
 </ul>
@@ -3386,6 +3422,7 @@ any odd number of seeds
     <p class="param"><a href="#Boola">Boola</a></p>
     <p class="param"><a href="#Bosh">Bosh</a></p>
     <p class="param"><a href="#Bule Perga">Bule Perga</a></p>
+    <p class="param"><a href="#Centering">Centering</a></p>
     <p class="param"><a href="#Cow">Cow</a></p>
     <p class="param"><a href="#Cross-Kalah">Cross-Kalah</a></p>
     <p class="param"><a href="#Cross-Wari">Cross-Wari</a></p>
@@ -3450,9 +3487,9 @@ any odd number of seeds
     <p class="param"><a href="#NoCapt">NoCapt</a></p>
     <p class="param"><a href="#NoSides">NoSides</a></p>
     <p class="param"><a href="#NS_Kalah">NS_Kalah</a></p>
+    <p class="param"><a href="#Nsa Isong">Nsa Isong</a></p>
   </div>
   <div class="column3">
-    <p class="param"><a href="#Nsa Isong">Nsa Isong</a></p>
     <p class="param"><a href="#NumNum">NumNum</a></p>
     <p class="param"><a href="#Obridjie">Obridjie</a></p>
     <p class="param"><a href="#Ohojichi">Ohojichi</a></p>
