@@ -52,6 +52,7 @@
       "stores": false,
       "udir_holes": [  ],
       "unclaimed": 0,
+      "quitter": 4,
       "visit_opp": false,
       "xc_sown": false,
       "xcpickown": 0
