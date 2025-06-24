@@ -194,3 +194,19 @@ class TestHistory:
         assert hist.redo() == 4
         assert hist.redo() == 5
         assert not hist.redo()
+
+
+    @pytest.mark.parametrize('dos, undos, exp', [(4, 0, None),   # no undos
+                                                 (4, 3, 3),     # some undos
+                                                 (6, 3, 5)])      # full queue
+    def test_undone_end_game(self, hist, dos, undos, exp):
+
+        for i in range(dos):
+            hist.record(i)
+
+        for i in range(undos):
+            hist.undo()
+
+        rval = hist.end_game_state()
+
+        assert rval == exp

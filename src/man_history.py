@@ -95,3 +95,15 @@ class HistoryManager:
             yield
         finally:
             self.active = True
+
+
+    def end_game_state(self):
+        """If we are somewhere in the undo history, return
+        the end game state. Otherwise, return None."""
+
+        if not self.rotated:
+            return None
+
+        self.history.rotate(self.rotated)
+        self.rotated = 0
+        return self.history[0]

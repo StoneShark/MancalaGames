@@ -561,7 +561,11 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
         self.master.config(cursor=ui_utils.NORMAL)
         animator.set_active(False, clear_queue=True)
 
+        end_state = self.history.end_game_state()
+        if end_state:
+            self.game.state = end_state
         self.history.clear()
+
         self.player.clear_history()
         self.swap_ok = True
         self.game.new_game(new_round)
@@ -646,7 +650,7 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
 
 
     def _param_tally(self):
-        """If playing a game with a param tally, updat the UI"""
+        """If playing a game with a param tally, update the UI"""
 
         param_func = self.game.rtally_param_func()
         if param_func:
