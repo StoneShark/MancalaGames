@@ -25,6 +25,7 @@ HELPINPUTS += src\\game_param_descs.txt
 HELPINPUTS += src\\man_config.py
 HELPINPUTS += src\\game_classes.py 
 HELPINPUTS += src\\ai_player.py
+HELPINPUTS += src\\param_consts.py
 HELPINPUTS += docs\\build_docs.py 
 HELPINPUTS += docs\\context.py 
 

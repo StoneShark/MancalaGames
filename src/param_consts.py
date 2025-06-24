@@ -123,7 +123,7 @@ STRING_DICTS = {
          'Ends Only': gi.ChildLocs.ENDS_ONLY,
          'Not Ends': gi.ChildLocs.NO_ENDS,
          'Opposite Ends plus all own inner': gi.ChildLocs.INV_ENDS_PLUS_MID,
-         'Any end holes plus next two inner': gi.ChildLocs.ENDS_PLUS_ONE_OPP,
+         'Any end holes plus next opp inner': gi.ChildLocs.ENDS_PLUS_ONE_OPP,
          'No own rightmost': gi.ChildLocs.NO_OWN_RIGHT,
          'No opposite rightmost': gi.ChildLocs.NO_OPP_RIGHT,
          'No opposite leftmost': gi.ChildLocs.NO_OPP_LEFT,
