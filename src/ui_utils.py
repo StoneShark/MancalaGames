@@ -243,11 +243,13 @@ class QuietDialog(tksimpledialog.Dialog):
 class WinPopup(tksimpledialog.Dialog):
     """Popup the win window with a game dump option."""
 
-    def __init__(self, master, title, message):
+    def __init__(self, master, title, message, is_round):
 
         self.mancala_ui = master
         self.msg = fmt.fmsg(message)
-        self.new_game = False
+        self.is_round = is_round
+
+        self.new_game = False              # the return value
         super().__init__(master, title)
 
 
@@ -275,7 +277,9 @@ class WinPopup(tksimpledialog.Dialog):
                   command=self.mancala_ui.glog_save_log).pack(side=tk.LEFT)
         tk.Button(bframe, text='Wait', width=12,
                   command=self.cancel).pack(side=tk.LEFT)
-        tk.Button(bframe, text='New Game', width=12,
+
+        btn_lbl = 'New Round' if self.is_round else 'New Game'
+        tk.Button(bframe, text=btn_lbl, width=12,
                   command=self.ok, default=tk.ACTIVE).pack(side=tk.RIGHT)
 
         self.bind("<Return>", self.ok)
@@ -287,11 +291,11 @@ class WinPopup(tksimpledialog.Dialog):
         self.new_game = True
 
 
-def win_popup_new_game(master, title, message):
-    """Wrap the WinPopup so we can return if a new game was
+def win_popup_new_game(master, title, message, is_round):
+    """Wrap the WinPopup so we can return if a new round/game was
     requested."""
 
-    obj = WinPopup(master, title, message)
+    obj = WinPopup(master, title, message, is_round)
     return obj.new_game
 
 

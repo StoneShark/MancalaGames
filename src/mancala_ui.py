@@ -94,7 +94,8 @@ class TkVars:
 
 # %%  mancala ui
 
-class MancalaUI(ui_cmds.VariCmdsMixin,
+class MancalaUI(ui_cmds.GameCmdsMixin,
+                ui_cmds.VariCmdsMixin,
                 ui_cmds.SetupCmdsMixin,
                 ui_cmds.MoveMenuMixin,
                 ui_cmds.AiCtrlMenuMixin,
@@ -184,8 +185,8 @@ class MancalaUI(ui_cmds.VariCmdsMixin,
         self.ani_reset_state()
         self.ani_reset_delay()
 
-        self._no_endless_sows()
-        self._new_game()
+        self.no_endless_sows()
+        self.new_game()
         self.refresh()
         self.schedule_ai()
 
@@ -333,36 +334,7 @@ class MancalaUI(ui_cmds.VariCmdsMixin,
         self.master.config(menu=self._menubar)
 
         gamemenu = tk.Menu(self._menubar, name='game')
-        gamemenu.add_command(label='New', command=self._new_game)
-
-        gamemenu.add_separator()
-        concede = self.game.info.unclaimed != self.game.info.quitter
-        crounds = self.game.info.rounds and concede
-        gamemenu.add_command(
-            label='Concede Round',
-            command=ft.partial(self.end_game, quitter=False, game=False),
-            state=tk.NORMAL if crounds else tk.DISABLED)
-        gamemenu.add_command(
-            label='Concede Game',
-            command=ft.partial(self.end_game, quitter=False, game=True),
-            state=tk.NORMAL if concede else tk.DISABLED)
-        gamemenu.add_command(
-            label='End Round (quit)',
-            command=ft.partial(self.end_game, quitter=True, game=False),
-            state=tk.NORMAL if self.game.info.rounds else tk.DISABLED)
-        gamemenu.add_command(
-            label='End Game (quit)',
-            command=ft.partial(self.end_game, quitter=True, game=True))
-
-        gamemenu.add_separator()
-        enable_no_endless = self.game.info.mlaps and not self.game.info.udirect
-        gamemenu.add_checkbutton(
-            label='Disallow Endless Sows',
-            variable=self.tkvars.no_endless,
-            onvalue=True, offvalue=False,
-            command=self._no_endless_sows,
-            state=tk.NORMAL if enable_no_endless else tk.DISABLED)
-
+        self.game_add_menu_cmds(gamemenu)
         self.vari_add_menu_cmds(gamemenu)
         self.setup_add_menu_cmds(gamemenu)
         self._menubar.add_cascade(label='Game', menu=gamemenu)
@@ -581,7 +553,7 @@ class MancalaUI(ui_cmds.VariCmdsMixin,
            New game started.""")
 
 
-    def _new_game(self, new_round=False):
+    def new_game(self, new_round=False):
         """Start a new game and refresh the board."""
         # pylint: disable=too-complex
 
@@ -693,16 +665,17 @@ class MancalaUI(ui_cmds.VariCmdsMixin,
             message = message.split(fmt.LINE_SEP)
             message = message[0] if len(message) == 1 else message
 
-            start_new = ui_utils.win_popup_new_game(self, title, message)
+            start_new = ui_utils.win_popup_new_game(self, title, message,
+                                                    win_cond.is_round_over())
             if start_new:
-                self._new_game(not win_cond.is_game_over())
+                self.new_game(not win_cond.is_game_over())
             else:
                 # don't let the players do anything dangerous
                 # call with a frame so that only the buttons are disabled
                 self.set_ui_active(False, self)
 
 
-    def _no_endless_sows(self):
+    def no_endless_sows(self):
         """Rebuild the allowable deco with or without the
         deco to prevent moves from holes that would be endless
         sows."""
@@ -732,7 +705,7 @@ class MancalaUI(ui_cmds.VariCmdsMixin,
             do_it = ui_utils.ask_popup(self, wtitle, message,
                                        ui_utils.OKCANCEL)
             if do_it:
-                self._new_game()
+                self.new_game()
             return
 
         message = [self.game.end_message(thing, quitter),

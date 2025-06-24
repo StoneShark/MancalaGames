@@ -223,7 +223,13 @@ reflect the game state to exit the mode.
 <h3>Menus</h3>
 
 <h4 id="gamemenu">Game</h4>
-<p><b>New</b>: Start a new game. An in-progress game is not tallied.
+<p><b>New Round</b>: Start a new round of the current game.
+An in-progress round is not tallied.
+Use this after Wait was used to examine a round.
+<p>This command is not available if the game is not played in rounds.
+
+<p><b>New Game</b>: Start a new game. An in-progress game is not tallied.
+Use this after Wait was used to examine a round.
 
 <p><b>Concede Round</b>: Concede the current round.
 Suggested use is when there is a clear winner to skip a tedious end game.
@@ -238,7 +244,7 @@ Deprive and immobilize games are award to the player with more seeds.
 <a href="game_params.html#unclaimed">UNCLAIMED</a> parameter specifies
 the handling of seeds not in chilren or stores.
 
-<p>This option is not available if the game is not played in rounds
+<p>This command is not available if the game is not played in rounds
 or if UNCLAIMED and QUITTER have the same value.
 
 <p><b>Concede Game</b>: End the current game and tally the game.
@@ -251,7 +257,7 @@ Deprive and immobilize games are award to the player with more seeds.
 <p>For other games, the
 <a href="game_params.html#unclaimed">UNCLAIMED</a> parameter specifies
 the handling of seeds not in chilren or stores.
-<p>This option is not available if UNCLAIMED and QUITTER have the same value.
+<p>This command is not available if UNCLAIMED and QUITTER have the same value.
 
 <p><b>End Round</b>: End the current round.
 Suggested use is when there are seeds cycling on the board.
@@ -260,7 +266,7 @@ For clear, deprive and immobilize goal games, the round will be ended in a tie.
 For other games, the
 <a href="game_params.html#quitter">QUITTER</a> parameter specifies
 the handling of seeds not in chilren or stores.
-<p>This option is not avaliable if the game is not played in rounds.
+<p>This command is not avaliable if the game is not played in rounds.
 
 <p><b>End Game</b>: End and tally the current game.
 Suggested use is when there are seeds cycling on the board.
@@ -271,13 +277,17 @@ the handling of seeds not in chilren or stores.
 
 <p><b>Disallow Endless Sows</b>: Do not allows moves that would be endless
 sows. A sow is declared 'endless' at 75 laps.
-This option is only supported for games played in
+This command is only supported for games played in
 <a href="game_params.html#mlaps">multiple-laps</a>
 that do not have <a href="game_params.html#udir_holes">user directed</a> sow directions.
 
 <p><b>Config Variant...</b>: choose new values for the variant parameters.
-There are two kinds of variants available name variants and individual parameters
-that can be changed. Changing the variant resets all tally parameters.
+Changing the variants resets all tally parameters.
+There are two kinds of variants available named variants and individual parameters
+that can be changed.
+
+<p>The variant commands are not available if the game was not configured to have
+variants.
 
 <p><b>Variant Settings...</b>: show a popup with the current settings for all
 parameters that make up the variants.
@@ -317,6 +327,8 @@ If you want the AI to move on it's turn deactivate and reactivate the AI player.
 <p>The length of the undo history can be set in the mancala.ini file via 'history_size'.
 <p><b>Redo Move</b>: Redo an undone move. Multiple moves may undone and redone.
 Control-Shift-Z redoes a move.
+<p>Redoing to the end game state will disable the buttons on the board.
+
 <p><b>Swap Sides</b>: A player may swap sides of the board, that is,
 execute a Pie Rule, under two conditions:
 <ol>
@@ -395,6 +407,9 @@ Control-a will also toggle animation active.
 <p><b>Anim Speed Reset</b>: Reset the animation delay to either a configured value
 from the mancala.ini file or (if not set there) the default delay.
 The speed can be reset by typing =.
+
+<p><b>Anim Speed Fastest</b>: Set the animator speed to its fastest value.
+The speed can be set to faster by typing }.
 
 <p><b>Anim Speed Faster</b>: Increase the speed of the animation steps.
 The delay is decreased by 50 ms to a minimum of 50ms.
@@ -478,8 +493,8 @@ of global variables).
 <li>AI <a href="game_params.html#algorithm">Algorithm</a> Configured
 <li><a href="game_params.html#mlaps">Lap type</a>
 <li>Special <a href="game_params.html#sow_rule">Sow Rule</a> (in groups)
-<li><a href="game_params.html#child_type">Child Type</a>
 <li>Sow Direction (based on both <a href="game_params.html#sow_direct">sow_direct</a>
+<li><a href="game_params.html#child_type">Child Type</a>
 and <a href="game_params.html#udir_holes">udir_holes</a>)
 <li>Capture Type, groups are defined using:
 <ul>
@@ -525,6 +540,10 @@ listed features turned off will be shown).
 Setting all of the features to selected (filled) will clear the game list
 (no game includes all of the features, in fact, must share and must pass are
 prohibited together).
+
+<p>Feature filters are in two groups: Configuration and Features.
+Configuration options filter on properties of the game configuration file.
+Feature options filter on how a game plays.
 
 <h2 id="opwindow">Mancala Games Editor</h2>
 

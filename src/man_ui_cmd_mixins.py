@@ -31,6 +31,54 @@ import variants
 from game_logger import game_log
 
 
+
+# %% game
+
+class GameCmdsMixin:
+    """New, concede and end menu commands and an extra.
+    All commands are in MancalaUI"""
+
+    def game_add_menu_cmds(self, menu):
+        """Add the new, conceded and end menu commands."""
+
+        rounds = self.game.info.rounds
+        menu.add_command(label='New Round',
+                             command=ft.partial(self.new_game, new_round=True),
+                             state=tk.NORMAL if rounds else tk.DISABLED)
+        menu.add_command(label='New Game', command=self.new_game)
+
+        menu.add_separator()
+
+        concede = self.game.info.unclaimed != self.game.info.quitter
+        crounds = rounds and concede
+
+        menu.add_command(
+            label='Concede Round',
+            command=ft.partial(self.end_game, quitter=False, game=False),
+            state=tk.NORMAL if crounds else tk.DISABLED)
+        menu.add_command(
+            label='Concede Game',
+            command=ft.partial(self.end_game, quitter=False, game=True),
+            state=tk.NORMAL if concede else tk.DISABLED)
+        menu.add_command(
+            label='End Round (quit)',
+            command=ft.partial(self.end_game, quitter=True, game=False),
+            state=tk.NORMAL if self.game.info.rounds else tk.DISABLED)
+        menu.add_command(
+            label='End Game (quit)',
+            command=ft.partial(self.end_game, quitter=True, game=True))
+
+        menu.add_separator()
+
+        enable_no_endless = self.game.info.mlaps and not self.game.info.udirect
+        menu.add_checkbutton(
+            label='Disallow Endless Sows',
+            variable=self.tkvars.no_endless,
+            onvalue=True, offvalue=False,
+            command=self.no_endless_sows,
+            state=tk.NORMAL if enable_no_endless else tk.DISABLED)
+
+
 # %% variations
 
 class VariCmdsMixin:
