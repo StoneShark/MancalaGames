@@ -51,7 +51,8 @@ from game_info import WinCond
 
 # %%
 
-TEST_COVERS = ['src\\mancala.py']
+TEST_COVERS = ['src\\mancala.py',
+               'src\\man_end_msgs_mixin.py']
 
 # %% constants
 
@@ -1141,9 +1142,9 @@ class TestEndMessage:
         game.deco.ender = None
 
         quitter = emd.QuitToTie(game)
-        quitter = emr.QuitRoundTally(game,
-                                     quitter,
-                                     sclaimer=claimer.ChildClaimSeeds(game))
+        quitter = emr.RoundTallyWinner(game,
+                                       quitter,
+                                       sclaimer=claimer.ChildClaimSeeds(game))
         game.deco.quitter = quitter
 
         if quitter:

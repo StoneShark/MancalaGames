@@ -27,7 +27,7 @@ import game_info as gi
 import round_tally
 
 
-# %% build decorator chains
+# %% build ender
 
 
 def _build_eliminate_ended(game):
@@ -212,13 +212,11 @@ def deco_end_move(game):
     return ender
 
 
-def deco_quitter(game):
-    """Return a quitter. Used when either the user qiot game or
-    the game reached an ENDLESS condition.
+# %%  build quitter
 
-    Do something that seems fair. Assume that seeds in play could
-    belong to either player."""
-    # pylint: disable=too-complex
+
+def pick_base_quitter(game):
+    """Pick the base quitter."""
 
     sclaimer = None
     quitter = None
@@ -254,12 +252,26 @@ def deco_quitter(game):
     if not quitter:
         quitter = emd.EndGameWinner(game, sclaimer=sclaimer)
 
+    return quitter
+
+
+def deco_quitter(game):
+    """Return a quitter. Used when either the user quit game or
+    the game reached an ENDLESS condition. Base the quitter behavior
+    on the goal type and quitter parameter in game info."""
+
+    quitter = pick_base_quitter(game)
+
     if game.info.goal in round_tally.RoundTally.GOALS:
         # ChildClaimSeeds will work for both children games and not
         # the divvier on EndGameWinner did the divvying work
-        quitter = emr.QuitRoundTally(game,
-                                     quitter,
-                                     sclaimer=claimer.ChildClaimSeeds(game))
+        quitter = emr.RoundTallyWinner(game,
+                                       quitter,
+                                       sclaimer=claimer.ChildClaimSeeds(game))
+    elif game.info.rounds:
+        quitter = emr.RoundWinner(game,
+                                  quitter,
+                                  sclaimer=claimer.ChildClaimSeeds(game))
 
     if animator.ENABLED:
         quitter = emd.AnimateEndMove(game, quitter)

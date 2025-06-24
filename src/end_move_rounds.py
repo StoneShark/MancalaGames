@@ -147,12 +147,16 @@ class RoundTallyWinner(emd.EndTurnIf):
 
         ended_in = mdata.ended
         self.decorator.game_ended(mdata)
-        if ended_in is True or not mdata.win_cond:
+        if not mdata.win_cond:
             return
 
         seeds = self.sclaimer.claim_seeds()
         self.game.rtally.tally(mdata, seeds)
-        rcond, rplayer = self.game.rtally.win_test()
+
+        if ended_in is True:
+            rcond, rplayer = self.game.rtally.end_it()
+        else:
+            rcond, rplayer = self.game.rtally.win_test()
 
         if rcond and rcond.is_game_over():
             mdata.win_cond = rcond
@@ -207,20 +211,3 @@ class RoundEndLimit(emd.EndTurnIf):
 
         else:
             self.decorator.game_ended(mdata)
-
-
-# %%  quitter
-
-class QuitRoundTally(emd.EndTurnIf):
-    """End a round tally game. Decorator is used to end the current
-    game then the tallier decides the game outcome."""
-
-    def game_ended(self, mdata):
-
-        self.decorator.game_ended(mdata)
-        seeds = self.sclaimer.claim_seeds()
-        self.game.rtally.tally(mdata, seeds)
-
-        cond, winner = self.game.rtally.end_it()
-        mdata.win_cond = cond
-        mdata.winner = winner
