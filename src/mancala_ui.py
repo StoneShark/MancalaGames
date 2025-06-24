@@ -696,9 +696,9 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
                  concede uses the ender/unclaimed and quit
                  uses the quitter"""
 
-        thing = 'Game' if game else 'Round'
-        request = 'End' if quitter else 'Concede'
-        wtitle = request + ' ' + thing
+        thing = 'game' if game else 'round'
+        request = 'end' if quitter else 'concede'
+        wtitle = request.title() + ' ' + thing.title()
 
         if self.mode != buttons.Behavior.GAMEPLAY:
             message = wtitle + ' during setup will force New Game. Continue?'
@@ -709,7 +709,7 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
             return
 
         message = [self.game.end_message(thing, quitter),
-                   f'Are you sure you wish to end the {thing}?']
+                   f'Are you sure you wish to {request} the {thing}?']
         do_it = ui_utils.ask_popup(self, wtitle, message,
                                    ui_utils.OKCANCEL)
         if not do_it:

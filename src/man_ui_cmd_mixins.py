@@ -49,21 +49,17 @@ class GameCmdsMixin:
 
         menu.add_separator()
 
-        concede = self.game.info.unclaimed != self.game.info.quitter
-        crounds = rounds and concede
-
         menu.add_command(
             label='Concede Round',
             command=ft.partial(self.end_game, quitter=False, game=False),
-            state=tk.NORMAL if crounds else tk.DISABLED)
+            state=tk.NORMAL if rounds else tk.DISABLED)
         menu.add_command(
             label='Concede Game',
-            command=ft.partial(self.end_game, quitter=False, game=True),
-            state=tk.NORMAL if concede else tk.DISABLED)
+            command=ft.partial(self.end_game, quitter=False, game=True))
         menu.add_command(
             label='End Round (quit)',
             command=ft.partial(self.end_game, quitter=True, game=False),
-            state=tk.NORMAL if self.game.info.rounds else tk.DISABLED)
+            state=tk.NORMAL if rounds else tk.DISABLED)
         menu.add_command(
             label='End Game (quit)',
             command=ft.partial(self.end_game, quitter=True, game=True))
