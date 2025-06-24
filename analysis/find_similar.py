@@ -2,7 +2,7 @@
 """
 Created on Thu Apr  3 10:45:03 2025
 
-@author: Ann 
+@author: Ann
 """
 
 # %% imports
@@ -158,7 +158,7 @@ def one_game(game, ndict):
 
             match1 = game == game1
             match2 = game == game2
-            if not title and (match1 or match2):
+            if title and (match1 or match2):
                 if title:
                     print(title)
                     title = None
@@ -206,6 +206,29 @@ def print_diff_table(neighs, gname_list):
     for opt in sorted(options):
         if opt not in starters:
             print_option_line(gname_list, opt)
+
+
+# %%
+
+def uniquer(max_diffs, ndict):
+    """Return a list of games that do not have any other game within
+    max_diffs of it.
+
+    This is a bit flawed; for example, a unique game like Diffusion has
+    DiffusionV2 1 parameter away from it."""
+
+    games = set(ALL_GAMES.keys())
+
+    for nbr_diff, pairs in sorted(ndict.items(), key=lambda item: item[0]):
+
+        if nbr_diff > max_diffs:
+            break
+
+        for pair in pairs:
+            games -= set(pair)
+
+    return games
+
 
 
 # %%
