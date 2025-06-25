@@ -321,10 +321,14 @@ class AniAction(abc.ABC):
 
     @staticmethod
     def update_store(game_ui, ani_state, turn):
-        """Make the store match the animation state."""
+        """Make the store match the animation state.
+        UI stores are in the opposite order from game stores."""
 
-        game_ui.stores[not turn].set_store(ani_state.store[turn],
-                                           game_ui.game.turn == bool(turn))
+        row = not turn
+        mover = bool(turn if game_ui.game.mdata.repeat_turn else not turn)
+
+        game_ui.stores[row].set_store(ani_state.store[turn],
+                                      game_ui.game.turn == mover)
 
 
     @staticmethod

@@ -773,18 +773,18 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
                 animator.animator.clear_queue()
 
             else:
-                animator.animator.queue_callback(self.refresh)
                 animator.animator.queue_callback(self.move_epilog)
                 self.refresh(ani_ok=True)
                 return
 
-        self.refresh()
         self.move_epilog()
 
 
     def move_epilog(self):
         """The part of the move operation to do after the
         animation sequence completes."""
+
+        self.refresh()
 
         if self.wcond and self.wcond.is_ended():
             self._win_message_popup(self.wcond)
