@@ -573,7 +573,7 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
 
         self.refresh()
         if not new_round:
-            self._param_tally()
+            self.param_tally()
 
             if self.info.prescribed == gi.SowPrescribed.ARNGE_LIMIT:
                 if self.set_game_mode(buttons.Behavior.MOVESEEDS):
@@ -616,9 +616,19 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
         elif not buttons.ask_mode_change(self.mode, mode, self):
             return False
 
-        assert sum(self.game.store) + sum(self.game.board) == \
-            self.game.cts.total_seeds, \
-            'Seed count error on switching UI mode.'
+        mismatch = (sum(self.game.store) + sum(self.game.board) !=
+                    self.game.cts.total_seeds)
+        if mismatch:
+            if mode == buttons.Behavior.SETUP:
+                # some games remove seeds from the board in the ender
+                # if a player uses 'wait' and then tries to enter setup
+                # there can be a legitimate mis-match
+                msg = """Seeds are missing from the board;
+                      the initial board will be setup."""
+                ui_utils.showwarning(self, 'Seed Count Error', msg)
+                self.new_game()
+            else:
+                assert not mismatch, 'Seed count mismatch during UI mode change.'
 
         self.mode = mode
         for button_row in self.disp:
@@ -649,7 +659,7 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
         return False
 
 
-    def _param_tally(self):
+    def param_tally(self):
         """If playing a game with a param tally, update the UI"""
 
         param_func = self.game.rtally_param_func()
@@ -663,7 +673,7 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
 
         if win_cond:
             self.tally.tally_game(self.game.get_turn(), win_cond)
-            self._param_tally()
+            self.param_tally()
 
             title, message = self.game.win_message(win_cond)
             message = message.split(fmt.LINE_SEP)

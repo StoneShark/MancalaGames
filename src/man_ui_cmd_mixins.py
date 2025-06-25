@@ -257,6 +257,7 @@ class MoveMenuMixin:
         if state:
             self.game.state = state
             self.refresh()
+            self.param_tally()
             game_log.add('Move undone:\n' + str(state), game_log.IMPORT)
         else:
             self.bell()
@@ -270,6 +271,7 @@ class MoveMenuMixin:
         if state:
             self.game.state = state
             self.refresh()
+            self.param_tally()
             game_log.add('Move redone:\n' + str(state), game_log.IMPORT)
 
             if (self.game.mdata
