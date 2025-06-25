@@ -20,6 +20,7 @@ from context import end_move_rounds as emr
 from context import game_constants as gconsts
 from context import game_info as gi
 from context import mancala
+from context import round_tally
 
 from game_info import ChildType
 from game_info import Direct
@@ -1921,6 +1922,44 @@ class TestTerritory:
 
         assert mdata.win_cond == econd
         assert mdata.winner == ewinner
+
+
+class TestWinSeeds:
+
+    @pytest.fixture
+    def game(self):
+        """basic game"""
+
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=2)
+        game_info = gi.GameInfo(capt_on=[2],
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=lambda ginfo, holes: True)
+
+        game = mancala.Mancala(game_consts, game_info)
+        return game
+
+
+    @pytest.mark.parametrize('goal', gi.Goal)
+    @pytest.mark.parametrize('rounds', gi.Rounds)
+    @pytest.mark.parametrize('pattern', [gi.StartPattern.ALL_EQUAL,
+                                         gi.StartPattern.CLIPPEDTRIPLES])
+    def test_win_seeds(self, game, goal, rounds, pattern):
+        """This is a reasonableness test for combinations of goal,
+        rounds, and pattern/no-pattern.
+        Catch any future goals or rounds that do not compute a value.
+        No valid games should get to the exception being raised."""
+
+        if goal in round_tally.RoundTally.GOALS and not rounds:
+            return
+
+        object.__setattr__(game.info, 'goal', goal)
+        object.__setattr__(game.info, 'rounds', rounds)
+        object.__setattr__(game.info, 'pattern', pattern)
+        # don't think we care if the game is created properly for those
+
+        # any ender will have this method, just use the chain head
+        assert game.deco.ender.compute_win_seeds()
 
 
 class TestWinHoles:
