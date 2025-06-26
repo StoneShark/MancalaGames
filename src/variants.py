@@ -385,6 +385,7 @@ def test_include_goal_param(game_dict, vparams):
 
 def test_vari_params(game_dict, vparams):
     """Test the VARI_PARAMS section."""
+    # pylint: disable=too-complex
 
     for key, vlist in vparams.items():
 
