@@ -504,7 +504,7 @@ def test_variation_config(game_dict, no_var_error=True):
     are inside loops. Don't think classes derived from Mancala will
     ever want to skip these tests."""
 
-    if not (ckey.VARI_PARAMS in game_dict or ckey.VARIANTS not in game_dict):
+    if not (ckey.VARI_PARAMS in game_dict or ckey.VARIANTS in game_dict):
         if no_var_error:
             msg="Cannot create GameVariations without variations."
             raise GameVariantError(msg)
