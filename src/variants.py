@@ -392,14 +392,17 @@ def test_vari_params(game_dict, vparams):
             msg=f"{key} in VARI_PARAM is not a valid game parameter."
             raise GameVariantError(msg)
 
-        if isinstance(vlist, list):
-            if not all(isinstance(val, int) for val in vlist):
-                msg=f"{key} value list contains non-integers."
+
+        if key == ckey.GAME_CLASS:
+            if (not isinstance(vlist, list)
+                    and game_dict[ckey.GAME_CLASS] not in vlist):
+
+                msg="Configured GAME_CLASS not in VARI_PARAMS value list."
                 raise GameVariantError(msg)
 
-            if (key == ckey.GAME_CLASS
-                    and game_dict[ckey.GAME_CLASS] not in vlist):
-                msg="Configured GAME_CLASS not in VARI_PARAMS value list."
+        elif isinstance(vlist, list):
+            if not all(isinstance(val, int) for val in vlist):
+                msg=f"{key} value list contains non-integers."
                 raise GameVariantError(msg)
 
             if (key in game_dict[ckey.GAME_CONSTANTS]

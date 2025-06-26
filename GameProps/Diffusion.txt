@@ -20,6 +20,9 @@
          "mcts_pouts": [1, 1, 2, 2]
       }
    },
+   "vari_params": {
+      "game_class": [ "Diffusion", "DiffusionV2" ]
+   },
    "rules": "Copyright (c) January 2006 by Mark Steere. See pdf file for rules.",
    "Author Link": "https://marksteeregames.com/"
 }

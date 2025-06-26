@@ -144,7 +144,7 @@ GINFO_PARAMS =  (ALLOW_RULE,
                  )
 
 # these are the keys allowed in variants
-CONFIG_PARAMS = set(GCONST_PARAMS) | set(GINFO_PARAMS)
+CONFIG_PARAMS = {GAME_CLASS} | set(GCONST_PARAMS) | set(GINFO_PARAMS)
 
 
 # the parameters that configure the AI player
