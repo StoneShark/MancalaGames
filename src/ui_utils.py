@@ -10,6 +10,8 @@ import tkinter.simpledialog as tksimpledialog
 from tkinter import ttk
 import webbrowser
 
+import game_constants as gconsts
+import game_info as gi
 import format_msg as fmt
 import man_path
 import version
@@ -17,7 +19,6 @@ from game_logger import game_log
 
 
 # %% cursors
-
 
 NORMAL = ''
 AI_BUSY = 'watch'
@@ -131,7 +132,6 @@ def setup_styles(root):
 
 # %%  tri-state checkbox
 
-
 class TriStateCheckbutton(ttk.Checkbutton):
     """A checkbox that cycles through three states: False, None, True.
     """
@@ -201,7 +201,6 @@ class TriStateCheckbutton(ttk.Checkbutton):
 
 
 # %% popup dialogs
-
 
 class QuietDialog(tksimpledialog.Dialog):
     """A simple modal quiet dialog box."""
@@ -654,3 +653,39 @@ class Counter:
         """Increment the value w/o using it."""
 
         self.value += 1
+
+
+# %%   ReportError
+
+class ReportError:
+    """A context manager that traps game build errors and
+    reports them via a popup. The context can be interrogated
+    after use to see if an error was suppressed."""
+
+    def __init__(self, frame):
+
+        self.error = False
+        self.frame = frame
+
+    def __enter__(self):
+        """Required interface for a context manager."""
+
+        return None
+
+    def __exit__(self, exc_type, exc_value, _):
+        """Return True if there was no error or if it should
+        be suppressed."""
+
+        if exc_type is None:
+            return True
+
+        if exc_type in (gconsts.GameConstsError,
+                        gi.GameInfoError,
+                        NotImplementedError):
+
+            self.error = True
+            message = exc_type.__name__ + ':  ' + str(exc_value)
+            showerror(self.frame, 'Parameter Error', message)
+            return True
+
+        return False

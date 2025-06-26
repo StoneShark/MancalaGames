@@ -7,6 +7,7 @@ Created on Tue Jun  3 04:35:08 2025
 
 # %% imports
 
+import collections
 import dataclasses as dc
 import enum
 import tkinter as tk
@@ -16,7 +17,7 @@ import warnings
 
 import ai_player
 import cfg_keys as ckey
-import game_constants as gconsts
+import format_msg
 import game_info as gi
 import man_config
 import param_mixin
@@ -113,7 +114,7 @@ class GameVariations:
             assert False, "Variations tests should have precluded this."
 
 
-    def rebuild(self):
+    def rebuild_variant(self):
         """Rebuild the game based on game_config."""
 
         self._make_consistent()
@@ -128,7 +129,10 @@ class GameVariations:
 
     def reconfigure(self):
         """Reconfigure the game base on user selected variation
-        values from the var_dict."""
+        values from the var_dict.
+
+        If there was an error reread the game configuration file
+        to reset it."""
 
         title = self.game_config[ckey.GAME_INFO][ckey.NAME] + ' Variations'
 
@@ -136,13 +140,12 @@ class GameVariations:
         if not popup.do_it:
             return False
 
-        try:
-            ret_vals = self.rebuild()
+        build_context = ui_utils.ReportError(self.game_ui)
+        with build_context:
+            ret_vals = self.rebuild_variant()
 
-        except (gconsts.GameConstsError, gi.GameInfoError, NotImplementedError
-                ) as error:
-            message = error.__class__.__name__ + ':  ' + str(error)
-            ui_utils.showerror(self.game_ui, 'Parameter Error', message)
+        if build_context.error:
+            self.game_config = man_config.read_game(self.game_file)
             return False
 
         return ret_vals
@@ -296,6 +299,73 @@ class AdjustPopup(param_mixin.ParamMixin, tksimpledialog.Dialog):
 
 
 # %% variant tests
+
+
+def possible_values(vparam, variants):
+    """Create a dictionary where the keys are options that may be
+    changed and the values are sets of all possible values they
+    can take.
+
+    If the value is True (not truthy) the parameter, can take on
+    any value."""
+
+    params = collections.defaultdict(set)
+
+    for pname, pvalues in vparam.items():
+        if isinstance(pvalues, list):
+            params[pname] = set(pvalues)
+        else:
+            params[pname] = True
+
+    for vdict in variants.values():
+        for pname, pvalue in vdict.items():
+            params[pname] |= {pvalue}
+
+    return params
+
+
+def test_algo_ok(game_dict, vparam, variants):
+    """Test if the algorithm might prevent one of the options
+    from being used.
+
+    This is a heurstic test, it might have false positives and
+    true negatives (its always safe to configure the minimaxer)."""
+
+    pdict = game_dict[ckey.PLAYER]
+    if (ckey.ALGORITHM not in pdict
+        or pdict[ckey.ALGORITHM] == ai_player.MINIMAXER):
+        return
+
+    bad_opts = {ckey.SOW_OWN_STORE: {True, },
+                ckey.XC_SOWN: {True, },
+                ckey.PRESCRIBED: {gi.SowPrescribed, },
+                ckey.NOCAPTMOVES: {1, 2, 3, 4, 5, 6, },   # any value > 0 is bad
+                ckey.ALLOW_RULE: {gi.AllowRule.FIRST_TURN_ONLY_RIGHT_TWO,
+                                  gi.AllowRule.RIGHT_2_1ST_THEN_ALL_TWO},
+                ckey.UNCLAIMED: {gi.EndGameSeeds.LAST_MOVER, },
+                ckey.CAPT_RTURN: {gi.CaptRTurn.ONCE, gi.CaptRTurn.ALWAYS},
+                ckey.SOW_DIRECT: {gi.Direct.PLAYALTDIR, },
+                ckey.ROUND_FILL: {gi.RoundFill.SHORTEN, },
+                }
+
+    value_dict = possible_values(vparam, variants)
+
+    for opt, bad_values in bad_opts.items():
+
+        error = False
+        if opt in value_dict:
+            pos_values = value_dict[opt]
+
+            if pos_values is True:
+                error = True
+            else:
+                error = bad_values & pos_values
+
+        if error:
+            msg=f"""{pdict[ckey.ALGORITHM]} might preclude use of
+                {opt.upper()} in variations."""
+            warnings.warn(format_msg.fmsg(msg))
+
 
 def test_include_goal_param(game_dict, vparams):
     """Test to see if it would be a good idea to include goal_param"""
@@ -452,4 +522,7 @@ def test_variation_config(game_dict, no_var_error=True):
 
     test_vari_params(game_dict, vari_params)
     test_variants_param(variants)
-    test_udir_hole_changes(game_dict, params | options)
+
+    var_options = params | options
+    test_udir_hole_changes(game_dict, var_options)
+    test_algo_ok(game_dict, vari_params, variants)

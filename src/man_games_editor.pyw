@@ -26,8 +26,6 @@ import warnings
 
 import ai_player
 import cfg_keys as ckey
-import game_constants as gconsts
-import game_info as gi
 import mancala_ui
 import man_config
 import mg_config
@@ -390,14 +388,11 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
 
         self._update_title()
 
-        try:
+        build_context = ui_utils.ReportError(self)
+        with build_context:
             self._prepare_game()
 
-        except (gconsts.GameConstsError, gi.GameInfoError, NotImplementedError
-                ) as error:
-            message = error.__class__.__name__ + ':  ' + str(error)
-            ui_utils.showerror(self, 'Parameter Error', message)
-
+        if build_context.error:
             self.game = None
             return
 

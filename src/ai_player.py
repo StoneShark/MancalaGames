@@ -10,6 +10,7 @@ import functools as ft
 import random
 
 import ai_interface
+import allowables
 import cfg_keys as ckey
 import game_info as gi
 import minimax
@@ -27,17 +28,19 @@ from game_logger import game_log
 #   add to them in the player files
 #   use them here
 
-ALGORITHM_DICT = {'minimaxer': minimax.MiniMaxer,
-                  'negamaxer': negamax.NegaMaxer,
-                  'montecarlo_ts': mcts.MonteCarloTS}
+MINIMAXER = 'minimaxer'
+NEGAMAXER = 'negamaxer'
+MCTS = 'montecarlo_ts'
+
+ALGORITHM_DICT = {MINIMAXER: minimax.MiniMaxer,
+                  NEGAMAXER: negamax.NegaMaxer,
+                  MCTS: mcts.MonteCarloTS}
 
 AI_PARAM_DEFAULTS = {ckey.MM_DEPTH: [1, 1, 3, 5],
                      ckey.MCTS_BIAS: [300, 200, 100, 100],
                      ckey.MCTS_NODES: [100, 300, 500, 800],
                      ckey.MCTS_POUTS: [1, 1, 1, 1]}
 
-NEGAMAXER = 'negamaxer'
-MCTS = 'montecarlo_ts'
 
 # a divider for the bias so that we can store ints in the config file
 MCTS_BIAS_DIV = 1000
@@ -445,12 +448,7 @@ def mcts_no_hidden_state(game):
                 or ginfo.capt_rturn > gi.CaptRTurn.ALWAYS
                 or ginfo.sow_direct == gi.Direct.PLAYALTDIR
                 or ginfo.round_fill == gi.RoundFill.SHORTEN
-                or (ginfo.min_move == 1   # DontUndoMove
-                        and ginfo.sow_direct == gi.Direct.SPLIT
-                        and 0 not in ginfo.udir_holes
-                        and len(ginfo.udir_holes) <= 1
-                        # nbr holes isn't available, guess
-                        ))
+                or allowables.DontUndoMoveOne.include(game))
 
 
 def test_player_rules(pdict, game):

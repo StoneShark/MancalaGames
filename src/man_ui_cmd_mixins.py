@@ -19,6 +19,7 @@ import functools as ft
 import tkinter as tk
 import webbrowser
 
+import ai_player
 import animator
 import buttons
 import cfg_keys as ckey
@@ -29,7 +30,6 @@ import ui_utils
 import variants
 
 from game_logger import game_log
-
 
 
 # %% game
@@ -165,7 +165,7 @@ class VariCmdsMixin:
                 self._varier = None
                 return
 
-        game_objs = self._varier.rebuild()
+        game_objs = self._varier.rebuild_variant()
         self._varier = None
         self.rebuild(*game_objs)
 
@@ -338,14 +338,44 @@ class AiCtrlMenuMixin:
     """The ai player menu and commands.
     Prefix for public methods is 'ai'."""
 
+    _algo = None
+
     def ai_add_menu(self, menubar):
-        """Add the Player menu."""
+        """Add the Player menu.
+
+        Include the algorithm change if we can get the player dictionary
+        from a file and if there is more than one possible algo."""
 
         aimenu = tk.Menu(menubar, name='player')
         aimenu.add_checkbutton(label='AI Player Active',
                                variable=self.tkvars.ai_active,
                                onvalue=True, offvalue=False,
                                command=self.schedule_ai)
+
+        nega = not ai_player.negamax_no_repeat_turn(self.game)
+        mcts = not ai_player.mcts_no_hidden_state(self.game)
+        from_file = hasattr(self.game, ckey.FILENAME)
+        algo_change =  from_file and (nega or mcts)
+
+        self._algo = tk.StringVar(self, self._get_algo_name())
+
+        aimenu.add_separator()
+        algmenu = tk.Menu(menubar)
+        algmenu.add_radiobutton(label="Minimaxer", command=self._change_algo,
+                                variable=self._algo, value='minimaxer')
+
+        algmenu.add_radiobutton(label="Negamaxer", command=self._change_algo,
+                                variable=self._algo, value='negamaxer',
+                                state=tk.NORMAL if nega else tk.DISABLED)
+
+        algmenu.add_radiobutton(label="Monte Carlo Tree Search",
+                                command=self._change_algo,
+                                variable=self._algo, value='montecarlo_ts',
+                                state=tk.NORMAL if mcts else tk.DISABLED)
+
+        aimenu.add_cascade(label='Algorithm', menu=algmenu,
+                           state=tk.NORMAL if algo_change else tk.DISABLED)
+
         aimenu.add_separator()
         aimenu.add_radiobutton(label='No AI Delay',
                                variable=self.tkvars.ai_delay, value=0)
@@ -353,6 +383,7 @@ class AiCtrlMenuMixin:
                                variable=self.tkvars.ai_delay, value=1)
         aimenu.add_radiobutton(label='Long AI Delay',
                                variable=self.tkvars.ai_delay, value=2)
+
         aimenu.add_separator()
         aimenu.add_radiobutton(label='Easy',
                                value=0, variable=self.tkvars.difficulty,
@@ -375,6 +406,46 @@ class AiCtrlMenuMixin:
         diff = self.tkvars.difficulty.get()
         self.player.difficulty = diff
         game_log.add(f'Changing difficulty {diff}', game_log.INFO)
+
+
+    def _get_algo_name(self):
+        """Return the algorithm name"""
+
+        for name, aclass in ai_player.ALGORITHM_DICT.items():
+            if isinstance(self.player.algo, aclass):
+                return name
+
+        assert False, 'Unknown AI algorithm'
+
+
+    def _change_algo(self):
+        """Change the player algorithm.
+
+        If the game was created via variants, the algo might no longer
+        be valid; rebuild the player and catch any errors.
+
+        Start a new game to keep things tidy."""
+
+        title = 'Change Player Algorithm'
+        message = """Changing the AI player algorithm will start a new game.
+                  Do you wish to proceed?"""
+        do_it = ui_utils.ask_popup(self, title, message, ui_utils.OKCANCEL)
+        if not do_it:
+            return
+
+        game_config = man_config.read_game(self.game.filename)
+        player_dict = game_config[ckey.PLAYER]
+        player_dict[ckey.ALGORITHM] = self._algo.get()
+
+        build_context = ui_utils.ReportError(self)
+        with build_context:
+            self.player = ai_player.AiPlayer(self.game, player_dict)
+
+        if build_context.error:
+            self._algo.set(self._get_algo_name())
+            return
+
+        self.new_game()
 
 
 # %% show / display menu
