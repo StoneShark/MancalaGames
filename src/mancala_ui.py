@@ -564,6 +564,7 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
         end_state = self.history.end_game_state()
         if end_state:
             self.game.state = end_state
+            self.param_tally()
         self.history.clear()
 
         self.player.clear_history()
