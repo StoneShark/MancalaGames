@@ -118,8 +118,8 @@ def _add_capt_pick_deco(game, capturer):
     elif game.info.pickextra == gi.CaptExtraPick.PICKCROSS:
         capturer = capt_decos.PickCross(game, capturer)
 
-    elif game.info.pickextra == gi.CaptExtraPick.PICKTWOS:
-        capturer = capt_decos.PickOppTwos(game, capturer)
+    elif game.info.pickextra == gi.CaptExtraPick.PICKOPPBASIC:
+        capturer = capt_decos.PickOppBasic(game, capturer)
 
     elif game.info.pickextra == gi.CaptExtraPick.PICKLASTSEEDS:
         capturer = capt_decos.PickLastSeeds(game, capturer, turn_takes=True)

@@ -809,8 +809,9 @@ class PickCross(CaptMethodIf):
             game_log.add(f"Picking Cross at {cross}.", game_log.INFO)
 
 
-class PickOppTwos(CaptMethodIf):
-    """When there is a capture pick all 2s from opponent."""
+class PickOppBasic(CaptMethodIf):
+    """When there is a capture pick all holes that meet
+    the basic capture criteria."""
 
     def do_captures(self, mdata, capt_first=True):
 
@@ -819,15 +820,13 @@ class PickOppTwos(CaptMethodIf):
 
             msg = ''
             for loc in self.game.cts.get_opp_range(self.game.turn):
-                if (self.game.board[loc] == 2
-                        and self.game.child[loc] is None
-                        and self.game.unlocked[loc]):
+                if self.game.deco.capt_ok.capture_ok(mdata, loc):
 
                     msg += f' {loc}'
                     self.game.store[self.game.turn] += self.game.board[loc]
                     self.game.board[loc] = 0
 
-            msg = 'Pick 2s from' + msg if msg else 'Pick 2s but None'
+            msg = 'Pick Basic from' + msg if msg else 'Pick Basic but None'
             game_log.add(msg, game_log.INFO)
 
 

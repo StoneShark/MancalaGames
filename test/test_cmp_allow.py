@@ -73,8 +73,9 @@ GAMECONF = {'basic':
             'gsnot_pick2s':
                 {'capt_on': [2, 3],
                  'stores': True,
+                 'capt_side': 1,
                  'grandslam': gi.GrandSlam.NOT_LEGAL,
-                 'pickextra': gi.CaptExtraPick.PICKTWOS},
+                 'pickextra': gi.CaptExtraPick.PICKOPPBASIC},
 
             # game configs with mlength = 3
             'ter':
@@ -161,7 +162,7 @@ CASES = [('basic', 'start', [T, T, T, T, T], [T, T, T, T, T]),
          ('mshare_sowo', 'onetshare', [F, F, F, F, F], [F, F, F, F, F]),
 
          # game config can pick all opps seeds on start moves
-         ('gsnot_pick2s', 'start', [F, F, F, F, T], [T, F, F, F, F]),
+         ('gsnot_pick2s', 'start', [T, T, T, F, F], [F, F, T, T, T]),
 
          ('ter', 'start',
           [T, T, T, T, T, F, F, F, F, F],
@@ -183,7 +184,7 @@ CASES = [('basic', 'start', [T, T, T, T, T], [T, T, T, T, T]),
 
 CIDS = [f'{case[0]}-{case[1]}-idx{idx}' for idx, case in enumerate(CASES)]
 
-
+# @pytest.mark.usefixtures("logger")
 @pytest.mark.parametrize('conf_name, state_name,e_f_allow, e_t_allow',
                          CASES, ids=CIDS)
 def test_allowables(conf_name, state_name,
@@ -209,10 +210,12 @@ def test_allowables(conf_name, state_name,
 
     game.turn = False
     allowables = game.deco.allow.get_allowable_holes()
+    # print(allowables)
     assert allowables == e_f_allow
 
     game.turn = True
     allowables = game.deco.allow.get_allowable_holes()
+    # print(allowables)
     assert allowables == e_t_allow
 
     # confirm game state unchanged (don't check things that weren't set)

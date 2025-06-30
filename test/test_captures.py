@@ -965,8 +965,8 @@ class TestCaptureToChild:
 
                 # capture with child; stores not zeros
                 ['capt_w_child',
-                 (0, 0, 4, 4, 4, 3), (N, N, N, N, N, F), (1, 2),
-                 (0, 0, 4, 4, 0, 7), (N, N, N, N, N, F)],
+                 (0, 0, 4, 3, 4, 3), (N, N, N, N, N, F), (1, 3),
+                 (0, 0, 4, 3, 0, 7), (N, N, N, N, N, F)],
                 ]
             ]
 
@@ -985,8 +985,8 @@ class TestCaptureToChild:
 
                 # capture with child; stores not zeros
                 ['q_capt_w_child', gi.ChildType.QUR,
-                 (0, 0, 4, 4, 4, 3), (N, N, N, N, N, F), (1, 2),
-                 (0, 0, 4, 4, 0, 7), (N, N, N, N, N, F)],
+                 (0, 0, 4, 3, 4, 3), (N, N, N, N, N, F), (1, 3),
+                 (0, 0, 4, 3, 0, 7), (N, N, N, N, N, F)],
             ]
 
     # some cases with picks
@@ -1001,6 +1001,7 @@ class TestCaptureToChild:
                  (0, 0, 2, 10, 0, 0), (N, N, N, F, N, N)],
                 ]
 
+    # @pytest.mark.usefixtures("logger")
     @pytest.mark.parametrize('ctype, board, child, store, eboard, echild',
                              [case[1:] for case in CASES],
                              ids=[f'{case[1].name}-{case[0]}' for case in CASES])
@@ -1010,7 +1011,7 @@ class TestCaptureToChild:
         game_info = gi.GameInfo(evens=True,
                                 child_type=ctype,
                                 child_cvt=3,
-                                pickextra=gi.CaptExtraPick.PICKTWOS,
+                                pickextra=gi.CaptExtraPick.PICKOPPBASIC,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
@@ -1385,7 +1386,7 @@ class TestPickFinal:
         assert game.board == eboard
 
 
-class TestPickTwos:
+class TestPickOppBasic:
 
     test_cases = [
         ([0, 0, 1, 2, 1, 2, 3, 2], False, 2, True,  [0, 0, 1, 2, 1, 0, 3, 0]),
@@ -1404,7 +1405,7 @@ class TestPickTwos:
         game_info = gi.GameInfo(stores=True,
                                 crosscapt=True,
                                 capt_on=[2],
-                                pickextra=gi.CaptExtraPick.PICKTWOS,
+                                pickextra=gi.CaptExtraPick.PICKOPPBASIC,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)

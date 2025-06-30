@@ -43,7 +43,7 @@ GAMECONF = {'basic':
             'gsnone_pick2': {'stores': True,
                              'capt_on': [2, 3],
                              'grandslam': gi.GrandSlam.NO_CAPT,
-                             'pickextra': gi.CaptExtraPick.PICKTWOS,
+                             'pickextra': gi.CaptExtraPick.PICKOPPBASIC,
                              },
 
             'gsnone_pickend': {'stores': True,
@@ -177,9 +177,9 @@ def test_capturer(logger, conf_name, state_name, turn, capt_loc,
     assert not game.info.child_type or (game.info.child_type and start_state.child), \
         "Test error: game.info.child_type inconsistent with start_state"
 
-    # print(GAMECONF[conf_name])
-    # print(game)
-    # print('capt_loc:', capt_loc)
+    print(GAMECONF[conf_name])
+    print(game)
+    print('capt_loc:', capt_loc)
 
     mdata = move_data.MoveData(game, None)   # move isn't used in capturer
     mdata.direct = game.info.sow_direct
@@ -187,7 +187,7 @@ def test_capturer(logger, conf_name, state_name, turn, capt_loc,
     mdata.capt_loc = capt_loc
 
     game.deco.capturer.do_captures(mdata)
-    # print(game)
+    print(game)
 
     # check the expected outputs and changes
     assert mdata.capt_loc == eloc
