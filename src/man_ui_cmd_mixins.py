@@ -729,6 +729,8 @@ class DebugMenuMixin:
                                   command=lambda: print(self.player))
             debugmenu.add_command(label='Print History',
                                   command=lambda: print(self.history))
+            debugmenu.add_command(label='Force UI Active',
+                                  command=ft.partial(self.set_ui_active, True))
 
             debugmenu.add_separator()
             debugmenu.add_command(

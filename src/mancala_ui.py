@@ -348,7 +348,7 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
         self.dbg_add_menu(self._menubar)
 
 
-    def _menubar_state(self, active=True):
+    def menubar_state(self, active=True):
         """Activate or deactivate the menus.
         The animator menu is left active."""
 
@@ -361,8 +361,8 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
         self._menubar.entryconfig('Log', state=state)
         self._menubar.entryconfig('Help', state=state)
 
-        if ui_cmds.DEBUG in self._menubar.children:
-            self._menubar.entryconfig('Debug', state=state)
+        # if ui_cmds.DEBUG in self._menubar.children:
+        #     self._menubar.entryconfig('Debug', state=state)
 
 
     def _key_bindings(self, active=True):
@@ -467,7 +467,7 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
 
         if not frame:
             self._key_bindings(active)
-            self._menubar_state(active)
+            self.menubar_state(active)
             frame = self
 
         for child in frame.winfo_children():
@@ -852,6 +852,8 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
     def _ai_move_epilog(self):
         """The part of the move operation to do after the
         animation sequence completes."""
+
+        self.refresh()  # UI isn't active after AI PASS
 
         if (self.game.info.sow_direct == gi.Direct.PLAYALTDIR
             and self.game.mcount == 2):
