@@ -364,7 +364,6 @@ class CaptMultiple(CaptMethodIf):
         while True:
 
             self.decorator.do_captures(mdata, capt_first)
-            print(f"capt res @ {mdata.capt_loc} of {mdata.captured}")
             if capt_first:
                 capt_loc = mdata.capt_loc
             cont_capt -= 1
@@ -380,7 +379,6 @@ class CaptMultiple(CaptMethodIf):
             capt_first = False
             captured = True
             mdata.captured = False
-            print(f"using capt_next of {mdata.capt_next}")
             mdata.capt_loc = mdata.capt_next
 
 
