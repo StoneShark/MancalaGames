@@ -533,6 +533,16 @@ class GameInfo:
                     self.capt_min])
 
 
+    @property
+    def any_captures(self):
+        """Return True if the game includes any capture mechanism."""
+
+        return any([self.basic_capt,
+                    self.crosscapt,
+                    self.capt_type,
+                    self.child_type == ChildType.WEG])
+
+
 @dc.dataclass(kw_only=True)
 class HoleProps:
     """Dynamic properties for each hole

@@ -25,7 +25,6 @@ from game_info import Goal
 from game_info import WinCond
 
 
-
 # %%
 
 TEST_COVERS = ['src\\cfg_keys.py',
@@ -162,6 +161,7 @@ class TestConstruction:
                             capt_on=[2],
                             rules=rules)
         assert ginfo.basic_capt
+        assert ginfo.any_captures
 
         # test derived params
         ginfo = gi.GameInfo(capt_on=[2],
@@ -222,6 +222,7 @@ class TestConstruction:
         assert len(ginfo.udir_holes) == 6
         assert not ginfo.repeat_turn
         assert not ginfo.basic_capt
+        assert ginfo.any_captures
 
         ginfo = gi.GameInfo(capt_on=[2],
                             capt_rturn=True,
@@ -237,6 +238,12 @@ class TestConstruction:
                             rules=rules)
         assert ginfo.repeat_turn
 
+        ginfo = gi.GameInfo(sow_own_store=True,
+                            nbr_holes=6,
+                            stores=True,
+                            rules=rules)
+        assert ginfo.repeat_turn
+        assert not ginfo.any_captures
 
 
 

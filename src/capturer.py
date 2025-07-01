@@ -168,7 +168,10 @@ def deco_capturer(game):
 
         capturer = capt_decos.CaptMultiple(game, capturer)
 
-    if game.info.capt_dir == gi.CaptDir.OPP_SOW:
+    if (game.info.capt_dir == gi.CaptDir.OPP_SOW
+            and (game.info.multicapt
+                 or game.info.capt_type == gi.CaptType.NEXT)):
+        # opp_sow is default, don't add CaptOppDir if not needed
         capturer = capt_decos.CaptOppDir(game, capturer)
 
     elif game.info.capt_dir == gi.CaptDir.BOTH:
@@ -178,7 +181,10 @@ def deco_capturer(game):
     capturer = _add_capt_pick_deco(game, capturer)
     capturer = _add_grand_slam_deco(game, capturer)
 
-    if game.info.child_type and not game.info.stores:
+    if (game.info.child_type
+            and not game.info.stores
+            and game.info.any_captures):
+        # if there is no capture mechanism, never need to move to children
         capturer = capt_decos.CaptureToChild(game, capturer)
 
     if game.info.nosinglecapt:
