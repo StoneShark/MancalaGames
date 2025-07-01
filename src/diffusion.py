@@ -188,7 +188,7 @@ class DiffusionSower(sowd.SowMethodIf):
                     self.game.board[loc] += 1
 
         # this isn't actually used because all capts must be off
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
 
 
 # %% Diffusion game classes

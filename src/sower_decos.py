@@ -30,7 +30,7 @@ class SowMethodIf(deco_chain_if.DecoChainIf):
     @abc.abstractmethod
     def sow_seeds(self, mdata):
         """Sow seeds from mdata.cont_sow_loc.
-        Update mdata.capt_loc with the last sow location."""
+        Update mdata.capt_start with the last sow location."""
 
     def get_single_sower(self):
         """Return the first non-lap sower in the deco chain.
@@ -55,7 +55,7 @@ class SowSeeds(SowMethodIf):
                                            mdata.cont_sow_loc)
             self.game.board[loc] += 1
 
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
 
 
 # %%  more single sowers
@@ -63,7 +63,7 @@ class SowSeeds(SowMethodIf):
 class SowSeedsNStore(SowMethodIf):
     """Sow a seed into the player's own store when passing it.
 
-    If the sow ends in the store, set capt_loc to WinCond.REPEAT_TURN.
+    If the sow ends in the store, set capt_start to WinCond.REPEAT_TURN.
 
     This assumes that at least one hole is not blocked on
     each side of the board."""
@@ -119,7 +119,7 @@ class SowSeedsNStore(SowMethodIf):
             mdata.repeat_turn = True
             game_log.add('Sow ended in store REPEAT TURN', game_log.INFO)
 
-        mdata.capt_loc = ploc
+        mdata.capt_start = ploc
 
 
 class DivertSkipBlckdSower(SowMethodIf):
@@ -150,7 +150,7 @@ class DivertSkipBlckdSower(SowMethodIf):
                     self.game.store[0] += 1
                     seeds -= 1
                     if not seeds:
-                        mdata.capt_loc = loc
+                        mdata.capt_start = loc
                         return
 
                 loc = (loc + mdata.direct) % self.game.cts.dbl_holes
@@ -158,7 +158,7 @@ class DivertSkipBlckdSower(SowMethodIf):
             self.game.board[loc] += 1
             seeds -= 1
 
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
 
 
 class SowClosed(SowMethodIf):
@@ -177,7 +177,7 @@ class SowClosed(SowMethodIf):
         """Sow seeds."""
 
         self.decorator.sow_seeds(mdata)
-        loc = mdata.capt_loc
+        loc = mdata.capt_start
 
         if (loc not in self.no_close
                 and self.game.board[loc] == self.game.info.sow_param
@@ -279,7 +279,7 @@ class SowCaptOwned(SowMethodIf):
                 self.game.board[loc] = 0
                 self.game.store[captor] += seeds
 
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
 
 
 class SowSkipOppN(SowMethodIf):
@@ -306,7 +306,7 @@ class SowSkipOppN(SowMethodIf):
 
             self.game.board[loc] += 1
 
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
 
 
 class SowMaxN(SowMethodIf):
@@ -330,7 +330,7 @@ class SowMaxN(SowMethodIf):
 
             self.game.board[loc] += 1
 
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
 
 
 class SowSkipOppChild(SowMethodIf):
@@ -349,7 +349,7 @@ class SowSkipOppChild(SowMethodIf):
 
             self.game.board[loc] += 1
 
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
 
 
 class SowSkipOppChildUnlessFinal(SowMethodIf):
@@ -370,7 +370,7 @@ class SowSkipOppChildUnlessFinal(SowMethodIf):
 
             self.game.board[loc] += 1
 
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
 
 
 class SowOppCaptsLast(SowMethodIf):
@@ -412,7 +412,7 @@ class SowOppCaptsLast(SowMethodIf):
                          + f' takes own {opp_took}.',
                          game_log.DETAIL)
 
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
 
 
 # %% presow capture decorators
@@ -602,7 +602,7 @@ class SowOneOpp(SowPrescribedIf):
             loc = incrementer(loc, mdata.direct, mdata.cont_sow_loc)
         self.game.board[loc] += 1
 
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
 
 
 class SowPlus1Minus1Capt(SowPrescribedIf):
@@ -626,4 +626,4 @@ class SowPlus1Minus1Capt(SowPrescribedIf):
         cross = self.game.cts.cross_from_loc(mdata.cont_sow_loc)
         self.game.board[cross] += 1
 
-        mdata.capt_loc = cross
+        mdata.capt_start = cross

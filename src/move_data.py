@@ -15,11 +15,12 @@ class MoveData:
     board                                               note 1
     move
     direct                    fill         input        input
-    seeds          fill                    in/update     note 2
+    seeds          fill                    in/update    note 2
     _sow_loc       fill                                 note 3
     cont_sow_loc   property fills          in/update
     lap_nbr                                used
 
+    _capt_start                            output
     capt_loc                               output       in/update
     capt_next                                           fill/working
     capt_change                                         fill
@@ -54,9 +55,12 @@ class MoveData:
         self.move = move
         self.direct = None   # an intentionally invalid direction
         self.seeds = 0
+
         self._sow_loc = 0
         self.cont_sow_loc = 0   # use by the sower (updated for lap sows)
         self.lap_nbr = 0
+
+        self._capt_start = 0
         self.capt_loc = 0
         self.capt_next = 0      # used for multiple captures
 
@@ -82,6 +86,7 @@ class MoveData:
         string += f"  sow_loc={self.sow_loc}\n"
         string += f"  cont_sow_loc={self.cont_sow_loc}\n"
         string += f"  lap_nbr={self.lap_nbr}\n"
+        string += f"  capt_start={self.capt_start}\n"
         string += f"  capt_loc={self.capt_loc}\n"
         string += f"  capt_next={self.capt_next}\n"
         string += f"  capt_changed={self.capt_changed}\n"
@@ -127,6 +132,19 @@ class MoveData:
         for the capturer."""
         self._sow_loc = value
         self.cont_sow_loc = value
+
+
+    @property
+    def capt_start(self):
+        """capt_start property."""
+        return self._capt_start
+
+    @capt_start.setter
+    def capt_start(self, value):
+        """When capt_start is set -- only the sower should set!
+        Also set the capt_loc for the capturer."""
+        self._capt_start = value
+        self.capt_loc = value
 
 
     @property

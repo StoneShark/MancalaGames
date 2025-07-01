@@ -80,13 +80,13 @@ class BearOffSow(sower_decos.SowMethodIf):
 
             if self.game.cts.opp_side(self.game.turn, loc):
                 self.game.store[self.game.turn] += rem_seeds
-                mdata.capt_loc = ploc
+                mdata.capt_start = ploc
                 mdata.captured = True
                 return
 
             self.game.board[loc] += 1
 
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
 
 
 # %% BearOff game class

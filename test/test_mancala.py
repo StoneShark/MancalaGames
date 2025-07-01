@@ -711,7 +711,7 @@ class TestDelegates:
 
         msow = mocker.patch.object(game, 'do_sow')
         mdata = move_data.MoveData(game, 5)
-        mdata.capt_loc = gi.WinCond.REPEAT_TURN
+        mdata.capt_start = gi.WinCond.REPEAT_TURN
         msow.return_value = mdata
 
         mcapt = mocker.patch.object(game, 'capture_seeds')
@@ -1342,7 +1342,7 @@ class TestMove:
         """do sow determines endless sow"""
 
         mdata = move_data.MoveData(game, 1)
-        mdata.capt_loc = gi.WinCond.ENDLESS
+        mdata.capt_start = gi.WinCond.ENDLESS
 
         msow = mocker.patch.object(game, 'do_sow')
         msow.return_value = mdata

@@ -242,7 +242,7 @@ def test_no_capturer():
     game = mancala.Mancala(game_consts, game_info)
     mdata = move_data.MoveData(game, None)
     mdata.direct = gi.Direct.CCW
-    mdata.capt_loc = 5
+    mdata.capt_start = 5
     game.deco.capturer.do_captures(mdata)
     assert not mdata.captured
     assert game.board == [3] * 8
@@ -263,7 +263,7 @@ class TestNoCaptures:
 
         mdata = move_data.MoveData(game, None)
         mdata.direct = game.info.sow_direct
-        mdata.capt_loc = 3
+        mdata.capt_start = 3
         mdata.board = tuple(game.board)
         mdata.seeds = 2
 
@@ -286,7 +286,7 @@ class TestNoCaptures:
 class TestCaptTable:
 
     @staticmethod
-    def make_game(case, split):
+    def make_game(case, *, split=False, mlaps=gi.LapSower.OFF):
         """nosingleseed capt is always true, the first time
         throught the table (test_capturer) it will never
         activate because mdata.seeds is set to 3.
@@ -299,7 +299,8 @@ class TestCaptTable:
         sow_direct = gi.Direct.SPLIT if split else case.direct
 
         game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
-        game_info = gi.GameInfo(stores=True,
+        game_info = gi.GameInfo(mlaps=mlaps,
+                                stores=True,
                                 sow_direct=sow_direct,
                                 capt_on=case.capt_on,
                                 capt_dir=case.capt_dir,
@@ -331,6 +332,7 @@ class TestCaptTable:
         return game
 
 
+
     @pytest.fixture(params=CASES,
                     ids=['case_' + case.case for case in CASES])
     def case(self, request):
@@ -346,10 +348,10 @@ class TestCaptTable:
 
         mdata = move_data.MoveData(game, None)
         mdata.direct = case.direct
-        mdata.capt_loc = case.loc
+        mdata.capt_start = case.loc
         mdata.board = tuple(case.board)  # not quite right, but ok
         mdata.seeds = 3
-        # print(game.deco.capturer)
+        print(game.deco.capturer)
         print(game)
 
         game.deco.capturer.do_captures(mdata)
@@ -369,7 +371,7 @@ class TestCaptTable:
 
         mdata = move_data.MoveData(game, None)
         mdata.direct = case.direct
-        mdata.capt_loc = case.loc
+        mdata.capt_start = case.loc
         mdata.board = tuple(case.board)
         mdata.seeds = 1
 
@@ -379,63 +381,29 @@ class TestCaptTable:
         assert game.store == case.store
         assert game.child == case.children
 
+    MLAP_CASES = [case for case in CASES
+                  if (case.capt_type == gi.CaptType.NEXT
+                      and case.capt_dir != gi.CaptDir.BOTH)]
 
     # @pytest.mark.usefixtures("logger")
-    @pytest.mark.parametrize('case',
-                             [case for case in CASES
-                              if case.capt_type == gi.CaptType.NEXT],
-                             ids=['case_' + case.case
-                                  for case in CASES
-                                  if case.capt_type == gi.CaptType.NEXT])
+    @pytest.mark.parametrize('case', MLAP_CASES,
+                             ids=['case_' + case.case for case in MLAP_CASES])
     def test_mlap_capt_next(self, case):
 
-        child_type = gi.ChildType.NORMAL \
-            if case.child_cvt else gi.ChildType.NOCHILD
-        child_rule = gi.ChildRule.OPPS_ONLY_NOT_1ST \
-            if case.oppside else gi.ChildRule.NONE
-
-        game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
-        game_info = gi.GameInfo(mlaps=gi.LapSower.LAPPER,  # change to make_game
-                                stores=True,
-                                capt_on=case.capt_on,
-                                capt_dir=case.capt_dir,
-                                child_cvt=case.child_cvt,
-                                child_type=child_type,
-                                crosscapt=case.xcapt,
-                                capt_min=case.capt_min,
-                                evens=case.evens,
-                                capt_type=gi.CaptType.NEXT,
-                                grandslam=case.gslam,
-                                moveunlock=case.moveunlock,
-                                multicapt=case.multicapt,
-                                nosinglecapt=True,
-                                capt_side=case.oppside,
-                                child_rule=child_rule,
-                                skip_start=case.skip_start,
-                                xcpickown=case.xcapt_pick_own,
-                                nbr_holes=game_consts.holes,
-                                rules=mancala.Mancala.rules)
-
-        game = mancala.Mancala(game_consts, game_info)
-
-        game.turn = case.turn
-        game.board = case.board.copy()
-        game.child = case.children.copy()
-        game.unlocked = case.unlocked.copy()
-        game.store = case.store.copy()
+        game = self.make_game(case, mlaps=gi.LapSower.LAPPER)
 
         mdata = move_data.MoveData(game, None)
         mdata.direct = case.direct
-        mdata.capt_loc = case.loc
+        mdata.capt_start = case.loc
         mdata.board = tuple(case.board)  # not quite right, but ok
         mdata.seeds = 3
         # print('params', game.params_str(), sep='\n')
-        # print('capturer', game.deco.capturer, sep='\n')
+        print('capturer', game.deco.capturer, sep='\n')
         # print('capt_ok', game.deco.capt_ok, sep='\n')
-        # print(game)
+        print(game)
 
         game.deco.capturer.do_captures(mdata)
-        # print(game)
+        print(game)
         assert sum(game.store) + sum(game.board) == game.cts.total_seeds
 
         assert (mdata.captured | mdata.capt_changed) == case.erval
@@ -465,7 +433,7 @@ def test_no_gs(gstype):
 
     mdata = move_data.MoveData(game, None)
     mdata.direct = gi.Direct.CCW
-    mdata.capt_loc = 3
+    mdata.capt_start = 3
     mdata.board = (3, 2, 0, 0)
     mdata.seeds = 2
 
@@ -525,7 +493,7 @@ class TestWalda:
 
         mdata = move_data.MoveData(game, None)
         mdata.direct = gi.Direct.CCW
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
         mdata.board = tuple(game.board)
         mdata.seeds = 2
 
@@ -545,7 +513,7 @@ class TestWalda:
 
         mdata = move_data.MoveData(game, None)
         mdata.direct = gi.Direct.CCW
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
         mdata.board = tuple(game.board)
         mdata.seeds = 2
 
@@ -568,7 +536,7 @@ class TestWalda:
         loc = game.cts.xlate_pos_loc(not turn, 2)
         mdata = move_data.MoveData(game, None)
         mdata.direct = gi.Direct.CCW
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
         mdata.board = tuple(game.board)
         mdata.seeds = 2
 
@@ -592,7 +560,7 @@ class TestWalda:
         loc = game.cts.xlate_pos_loc(not turn, 2)
         mdata = move_data.MoveData(game, None)
         mdata.direct = gi.Direct.CCW
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
         mdata.board = tuple(game.board)
         mdata.seeds = 2
 
@@ -637,7 +605,7 @@ class TestTuzdek:
 
         mdata = move_data.MoveData(game, None)
         mdata.direct = gi.Direct.CCW
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
         mdata.board = tuple(game.board)
         mdata.seeds = 2
 
@@ -663,7 +631,7 @@ class TestTuzdek:
                                        [None, True, None, None])
         mdata = move_data.MoveData(game, None)
         mdata.direct = gi.Direct.CCW
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
         mdata.board = tuple(game.board)
         mdata.seeds = 2
 
@@ -685,7 +653,7 @@ class TestTuzdek:
 
         mdata = move_data.MoveData(game, None)
         mdata.direct = gi.Direct.CCW
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
         mdata.board = tuple(game.board)
         mdata.seeds = 2
 
@@ -747,7 +715,7 @@ class TestWeg:
         game.turn = turn
         mdata = move_data.MoveData(game, None)
         mdata.direct = game.info.sow_direct
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
         mdata.board = tuple(game.board)
         mdata.seeds = 2
 
@@ -810,7 +778,7 @@ class TestBull:
         game.turn = turn
         mdata = move_data.MoveData(game, None)
         mdata.direct = game.info.sow_direct
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
         mdata.board = tuple(game.board)
         mdata.seeds = 2
 
@@ -853,7 +821,7 @@ class TestBull:
 
         mdata = move_data.MoveData(game, None)
         mdata.direct = game.info.sow_direct
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
         mdata.board = tuple(game.board)
         mdata.seeds = 2
 
@@ -922,7 +890,7 @@ class TestQur:
 
         mdata = move_data.MoveData(game, None)
         mdata.direct = game.info.sow_direct
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
         mdata.board = tuple(game.board)
         mdata.seeds = 2
 
@@ -1027,7 +995,7 @@ class TestCaptureToChild:
         loc = 4
         mdata = move_data.MoveData(game, None)
         mdata.direct = game.info.sow_direct
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
         mdata.board = tuple(game.board)
         mdata.seeds = game.board[loc]
 
@@ -1065,14 +1033,14 @@ class TestRepeatTurn:
         for cloc in range(3, 6):
             mdata = move_data.MoveData(gamea, None)
             mdata.direct = gi.Direct.CCW
-            mdata.capt_loc = cloc
+            mdata.capt_start = cloc
             gamea.deco.capturer.do_captures(mdata)
             gamea.rturn_cnt += 1  # this is done at the end of move
             assert mdata.captured == gi.WinCond.REPEAT_TURN
 
         mdata = move_data.MoveData(gamea, None)
         mdata.direct = gi.Direct.CCW
-        mdata.capt_loc = 1
+        mdata.capt_start = 1
         gamea.deco.capturer.do_captures(mdata)
         assert mdata.captured != gi.WinCond.REPEAT_TURN
 
@@ -1098,7 +1066,7 @@ class TestRepeatTurn:
         for cloc, repeat in [(3, True), (4, False), (5, False)]:
             mdata = move_data.MoveData(game1, None)
             mdata.direct = gi.Direct.CCW
-            mdata.capt_loc = cloc
+            mdata.capt_start = cloc
             game1.deco.capturer.do_captures(mdata)
             game1.rturn_cnt += 1  # this is done at the end of move
             if repeat:
@@ -1164,7 +1132,7 @@ class TestCaptCrossVisited:
 
         mdata = move_data.MoveData(game, None)
         mdata.board = tuple(before_sow)
-        mdata.capt_loc = capt_loc
+        mdata.capt_start = capt_loc
         mdata.direct = game.info.sow_direct
         game.board = after_sow
         game.turn = False
@@ -1211,7 +1179,7 @@ class TestCaptTwoOut:
         game.board = board.copy()
         mdata = move_data.MoveData(game, None)
         mdata.direct = game.info.sow_direct
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
         # print(game.deco.capturer)
         # print(game)
         game.deco.capturer.do_captures(mdata)
@@ -1259,7 +1227,7 @@ class TestPickCross:
         game.board = board.copy()
         mdata = move_data.MoveData(game, None)
         mdata.direct = game.info.sow_direct
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
         # print(game)
         game.deco.capturer.do_captures(mdata)
         # print(mdata)
@@ -1289,7 +1257,7 @@ class TestPickCross:
         game.unlocked = [False] * 3 + [True] * 3  # false side locked
         mdata = move_data.MoveData(game, None)
         mdata.direct = game.info.sow_direct
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
         game.deco.capturer.do_captures(mdata)
 
         assert mdata.captured
@@ -1317,7 +1285,7 @@ class TestPickCross:
         game.child = [False] * 3 + [None] * 3  # false side children
         mdata = move_data.MoveData(game, None)
         mdata.direct = game.info.sow_direct
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
         game.deco.capturer.do_captures(mdata)
 
         assert mdata.captured
@@ -1338,7 +1306,7 @@ class TestPickCross:
         game.board = [3, 3, 3, 3, 3, 3]
         mdata = move_data.MoveData(game, None)
         mdata.direct = game.info.sow_direct
-        mdata.capt_loc = 4
+        mdata.capt_start = 4
         game.deco.capturer.do_captures(mdata)
 
         assert not mdata.captured
@@ -1378,7 +1346,7 @@ class TestPickFinal:
 
         mdata = move_data.MoveData(game, None)
         mdata.direct = game.info.sow_direct
-        mdata.capt_loc = caploc
+        mdata.capt_start = caploc
         game.deco.capturer.do_captures(mdata)
         # print(game)
 
@@ -1414,7 +1382,7 @@ class TestPickOppBasic:
 
         mdata = move_data.MoveData(game, None)
         mdata.direct = game.info.sow_direct
-        mdata.capt_loc = caploc
+        mdata.capt_start = caploc
         game.deco.capturer.do_captures(mdata)
 
         assert mdata.captured == eres
@@ -1541,7 +1509,7 @@ class TestNoChildren:
         mdata.board = tuple(game.board)
 
         game.turn = True
-        mdata.capt_loc = 1
+        mdata.capt_start = 1
         mdata.seeds = 1
         assert game.deco.make_child.test(mdata) == False
 
@@ -1566,7 +1534,7 @@ class TestChildInhibitor:
 
         mdata = move_data.MoveData(game, None)
         mdata.direct = game.info.sow_direct
-        mdata.capt_loc = 3
+        mdata.capt_start = 3
         mdata.board = tuple(game.board)
         mdata.seeds = 2
 
@@ -1599,10 +1567,10 @@ class TestOppChild:
         mdata.seeds = 2
 
         game.turn = True
-        mdata.capt_loc = 3
+        mdata.capt_start = 3
         assert not game.deco.make_child.test(mdata)
 
-        mdata.capt_loc = 2
+        mdata.capt_start = 2
         assert game.deco.make_child.test(mdata)
 
 
@@ -1631,7 +1599,7 @@ class TestNotWithOne:
         mdata.board = tuple(game.board)
 
         game.turn = turn
-        mdata.capt_loc = hole
+        mdata.capt_start = hole
         mdata.seeds = seeds
         assert game.deco.make_child.test(mdata) == etest
 
@@ -1780,7 +1748,7 @@ class TestAnimator:
         mdata = move_data.MoveData(game, 0)
         mdata.direct = gi.Direct.CCW
         mdata.seeds = 2
-        mdata.capt_loc = 2
+        mdata.capt_start = 2
         game.deco.capturer.do_captures(mdata)
 
         assert game.board.copy() == [0, 0, 0, 0, 0, 0]
@@ -1852,7 +1820,7 @@ class TestAnimator:
         mdata = move_data.MoveData(game, 0)
         mdata.direct = gi.Direct.CCW
         mdata.seeds = 2
-        mdata.capt_loc = 2
+        mdata.capt_start = 2
         game.deco.capturer.do_captures(mdata)
 
         assert game.board == [0, 0, 0, 0, 0, 0]

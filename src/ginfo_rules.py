@@ -528,6 +528,18 @@ def test_capture_rules(tester):
             NEXT and match opposite types.""",
         excp=gi.GameInfoError)
 
+    tester.test_rule('both_mlaps_next',
+        rule=lambda ginfo: (ginfo.capt_dir == gi.CaptDir.BOTH
+                            and ginfo.multicapt
+                            and ginfo.capt_type == gi.CaptType.NEXT
+                            and ginfo.mlaps),
+        msg="""CAPT_DIR of BOTH is not supported with MLAPS sowing
+            and capture type NEXT.""",
+        excp=gi.GameInfoError)
+        # the capture behavior is odd because any basic capture
+        # criteria are used to stop the mlap sowing, but wo basic
+        # capture criteria all holes would be captured
+
     tester.test_rule('capttype_xcross_incomp',
         rule=lambda ginfo: ginfo.capt_type and ginfo.crosscapt,
         msg="CAPT_TYPE and CROSSCAPT are incompatible",

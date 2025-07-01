@@ -160,17 +160,17 @@ class DontUndoMoveOne(AllowableIf):
         if not mdata:
             return allow
 
-        capt_loc = mdata.capt_loc
-        if capt_loc == gi.WinCond.REPEAT_TURN:
+        capt_start = mdata.capt_start
+        if capt_start == gi.WinCond.REPEAT_TURN:
             return allow
 
-        aidx = self.aidx(capt_loc)
+        aidx = self.aidx(capt_start)
         if not allow[aidx]:
             return allow
 
         if (mdata.seeds == 1
-                and self.game.board[capt_loc] == 1
-                and any(set([mdata.sow_loc, capt_loc]) == test_set
+                and self.game.board[capt_start] == 1
+                and any(set([mdata.sow_loc, capt_start]) == test_set
                         for test_set in self.cross_sets)):
 
             game_log.add(f"Preventing undo @ {aidx}.")
@@ -196,7 +196,7 @@ class OppOrEmptyEnd(AllowableIf):
             with self.game.restore_state(saved_state):
                 mdata = self.game.sim_single_sow(pos)
 
-            end_loc = mdata.capt_loc
+            end_loc = mdata.capt_start
             if end_loc in my_rng and self.game.board[end_loc]:
                 game_log.add(f'OppOrEmpty: prevented {pos}', game_log.DETAIL)
                 allow[pos] = False
@@ -218,7 +218,7 @@ class Occupied(AllowableIf):
 
             with self.game.restore_state(saved_state):
                 mdata = self.game.sim_single_sow(pos)
-                if self.game.board[mdata.capt_loc] == 1:
+                if self.game.board[mdata.capt_start] == 1:
 
                     game_log.add(f'Occupied: prevented {pos}', game_log.DETAIL)
                     allow[pos] = False
@@ -637,7 +637,7 @@ class NoEndlessSows(AllowableIf):
             with game_log.simulate(), self.game.restore_state(saved_state):
                 mdata = self.game.do_sow(self.make_move(row, pos))
 
-            if mdata.capt_loc == gi.WinCond.ENDLESS:
+            if mdata.capt_start == gi.WinCond.ENDLESS:
                 allow[pos] = False
                 game_log.add(f'ENDLESS: prevented @ {loc}',
                              game_log.IMPORT)

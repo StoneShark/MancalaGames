@@ -48,7 +48,7 @@ class BaseChild(MakeChildIf):
     This deco assumes that it is at the base of the chain."""
 
     def test(self, mdata):
-        loc = mdata.capt_loc
+        loc = mdata.capt_start
         return (self.game.child[loc] is None
                 and self.game.board[loc] == self.game.info.child_cvt)
 
@@ -66,7 +66,7 @@ class BullChild(MakeChildIf):
 
     def test(self, mdata):
 
-        loc = mdata.capt_loc
+        loc = mdata.capt_start
         game = self.game
 
         if game.child[loc] is not None:
@@ -90,7 +90,7 @@ class OneChild(MakeChildIf):
 
     def test(self, mdata):
         game = self.game
-        loc = mdata.capt_loc
+        loc = mdata.capt_start
 
         return (game.child[loc] is None
                 and game.board[loc] == game.info.child_cvt
@@ -105,7 +105,7 @@ class QurChild(MakeChildIf):
     def test(self, mdata):
 
         game = self.game
-        loc = mdata.capt_loc
+        loc = mdata.capt_start
         cross = game.cts.cross_from_loc(loc)
 
         return (game.board[loc] == 1
@@ -212,7 +212,7 @@ class ChildLocOk(MakeChildIf):
 
     def test(self, mdata):
 
-        test_loc = self.loc_trans[mdata.capt_loc]
+        test_loc = self.loc_trans[mdata.capt_start]
         ok_players = self.pattern[test_loc]
 
         if bool(ok_players) and self.game.turn in ok_players:
@@ -235,7 +235,7 @@ class NotSymOpp(MakeChildIf):
 
     def test(self, mdata):
 
-        loc = mdata.capt_loc
+        loc = mdata.capt_start
         holes = self.game.cts.holes
         symmetric = (loc + holes) if loc < holes else (loc - holes)
 
@@ -256,7 +256,7 @@ class NotFacing(MakeChildIf):
 
     def test(self, mdata):
 
-        loc = mdata.capt_loc
+        loc = mdata.capt_start
         cross = self.game.cts.cross_from_loc(loc)
 
         if self.game.child[cross] is None:
@@ -276,7 +276,7 @@ class OppSideChild(MakeChildIf):
 
     def test(self, mdata):
 
-        if self.game.cts.opp_side(self.game.turn, mdata.capt_loc):
+        if self.game.cts.opp_side(self.game.turn, mdata.capt_start):
             return self.decorator.test(mdata)
 
         return False
@@ -287,7 +287,7 @@ class OwnSideChild(MakeChildIf):
 
     def test(self, mdata):
 
-        if self.game.cts.my_side(self.game.turn, mdata.capt_loc):
+        if self.game.cts.my_side(self.game.turn, mdata.capt_start):
             return self.decorator.test(mdata)
 
         return False
@@ -297,7 +297,7 @@ class OppOwnerChild(MakeChildIf):
 
     def test(self, mdata):
 
-        if self.game.owner[mdata.capt_loc] is (not self.game.turn):
+        if self.game.owner[mdata.capt_start] is (not self.game.turn):
             return self.decorator.test(mdata)
 
         return False
@@ -308,7 +308,7 @@ class OwnOwnerChild(MakeChildIf):
 
     def test(self, mdata):
 
-        if self.game.owner[mdata.capt_loc] is self.game.turn:
+        if self.game.owner[mdata.capt_start] is self.game.turn:
             return self.decorator.test(mdata)
 
         return False
@@ -353,7 +353,7 @@ class Not1stOppWithOne(MakeChildIf):
         if mdata.seeds > 1:
             return self.decorator.test(mdata)
 
-        if mdata.capt_loc == self.firsts[mdata.direct][self.game.turn]:
+        if mdata.capt_start == self.firsts[mdata.direct][self.game.turn]:
             return False
 
         return self.decorator.test(mdata)

@@ -118,7 +118,7 @@ class TestSower:
         mdata.direct = direct
         base_sower.sow_seeds(mdata)
 
-        assert mdata.capt_loc == eloc
+        assert mdata.capt_start == eloc
         assert game.board == eboard
         assert game.store == [0, 0]
 
@@ -186,7 +186,7 @@ class TestSower:
         esgame.turn = turn
         mdata = esgame.do_sow(start_pos)
 
-        assert mdata.capt_loc == eloc
+        assert mdata.capt_start == eloc
         assert esgame.board == eboard
         assert esgame.store == estore
 
@@ -269,7 +269,7 @@ class TestSower:
         mdata.direct = direct
         store_sower.sow_seeds(mdata)
 
-        assert mdata.capt_loc == eloc
+        assert mdata.capt_start == eloc
         assert game.board == eboard
         assert game.store == estore
 
@@ -304,7 +304,7 @@ class TestSower:
         game.deco.sower.sow_seeds(mdata)
 
         assert game.board == eboard
-        assert mdata.capt_loc == ecloc
+        assert mdata.capt_start == ecloc
 
 
     @pytest.mark.parametrize('end_loc, board, eresult',
@@ -323,7 +323,7 @@ class TestSower:
 
         game.board = board
         mdata = move_data.MoveData(game, None)
-        mdata.capt_loc = end_loc
+        mdata.capt_start = end_loc
 
         lap_cont = msowd.StopSingleSeed(game, msowd.LapContinue(game))
         lap_cont = msowd.StopRepeatTurn(game, lap_cont)
@@ -348,14 +348,14 @@ class TestSower:
         mdata = move_data.MoveData(game, None)
         mdata.direct = Direct.CCW
         mdata.cont_sow_loc = 3
-        mdata.capt_loc = end_loc
+        mdata.capt_start = end_loc
 
         lap_cont = msowd.NextLapCont(game)
         lap_cont = msowd.StopRepeatTurn(game, lap_cont)
 
         assert lap_cont.do_another_lap(mdata) == eresult
         if cloc:
-            assert mdata.capt_loc == cloc
+            assert mdata.capt_start == cloc
 
     chi_lap_cases = [
         # 0: not on end store
@@ -425,7 +425,7 @@ class TestSower:
         game.child = child
 
         mdata = move_data.MoveData(game, None)
-        mdata.capt_loc = end_loc
+        mdata.capt_start = end_loc
         mdata.seeds = sown_seeds
 
         lap_cont = msowd.ChildLapCont(game)
@@ -518,7 +518,7 @@ class TestSower:
         nogame.child = child
 
         mdata = move_data.MoveData(nogame, None)
-        mdata.capt_loc = end_loc
+        mdata.capt_start = end_loc
         mdata.seeds = sown_seeds
 
         lap_cont = msowd.ChildLapCont(nogame)
@@ -572,7 +572,7 @@ class TestSower:
         mdata.direct = direct
         maxgame.deco.sower.sow_seeds(mdata)
 
-        assert mdata.capt_loc == eloc
+        assert mdata.capt_start == eloc
         assert maxgame.board == list(eboard)
         assert maxgame.store == [0, 0]
 
@@ -604,7 +604,7 @@ class TestSower:
         # print(game)
 
         assert game.board == [0, 1, 2, 4, 2, 4]
-        assert mdata.capt_loc == 5
+        assert mdata.capt_start == 5
 
 
     @pytest.mark.parametrize('turn, move, eboard',
@@ -856,7 +856,7 @@ class TestMlap:
         game.deco.sower.sow_seeds(mdata)
         # print(mdata)
 
-        assert mdata.capt_loc == eloc
+        assert mdata.capt_start == eloc
         assert game.board == eboard
         assert game.store == [0, 0]
 
@@ -894,7 +894,7 @@ class TestMlap:
         game.deco.sower.sow_seeds(mdata)
         # print(mdata)
 
-        assert mdata.capt_loc == 1
+        assert mdata.capt_start == 1
         assert game.board == utils.build_board([0, 1, 0],
                                                [3, 1, 2])
         assert game.store == [0, 0]
@@ -937,7 +937,7 @@ class TestMlap:
         opgame.deco.sower.sow_seeds(mdata)
 
         assert opgame.board == eboard
-        assert mdata.capt_loc == eloc
+        assert mdata.capt_start == eloc
 
 
 class TestGetSingle:
@@ -1079,7 +1079,7 @@ class TestVMlap:
         mdata.direct = Direct.CW
         game.deco.sower.sow_seeds(mdata)
 
-        assert mdata.capt_loc == eloc
+        assert mdata.capt_start == eloc
         assert game.board == eboard
         assert game.store == estore
 
@@ -1114,7 +1114,7 @@ class TestStopNoOppSeeds:
         lap_cont = game.deco.sower.lap_cont
 
         mdata = move_data.MoveData(game, 0)
-        mdata.capt_loc = 1
+        mdata.capt_start = 1
 
         assert 'StopNoOppSeeds' in str(lap_cont)
         assert lap_cont.do_another_lap(mdata) == eres
@@ -1245,7 +1245,7 @@ class TestBlckDivertSower:
         mdata.direct = game.info.sow_direct
         game.deco.sower.sow_seeds(mdata)
 
-        assert mdata.capt_loc == eloc
+        assert mdata.capt_start == eloc
         assert game.board == eboard
         assert game.store == estore
         assert game.blocked == eblock
@@ -1322,7 +1322,7 @@ class TestBlckDivertSower:
         mdata.direct = mlgame.info.sow_direct
         mlgame.deco.sower.sow_seeds(mdata)
 
-        assert mdata.capt_loc == eloc
+        assert mdata.capt_start == eloc
         assert mlgame.board == eboard
         assert mlgame.store == estore
         assert mlgame.blocked == eblock
@@ -1369,7 +1369,7 @@ class TestSowCaptOwned:
         mdata.direct = game.info.sow_direct
         game.deco.sower.sow_seeds(mdata)
 
-        assert mdata.capt_loc == eloc
+        assert mdata.capt_start == eloc
         assert game.board == eboard
         assert game.store == estore
 
@@ -1400,7 +1400,7 @@ class TestSowCaptOwned:
         mdata.direct = game2.info.sow_direct
         game2.deco.sower.sow_seeds(mdata)
 
-        assert mdata.capt_loc == 4
+        assert mdata.capt_start == 4
         assert game2.board == utils.build_board([2, 0, 0],
                                                 [0, 0, 0])
         assert game2.store == [4, 8]
@@ -1497,7 +1497,7 @@ class TestSowCaptOwned:
         game_ss.deco.sower.sow_seeds(mdata)
         # print('after', game_ss, sep='\n')
 
-        assert mdata.capt_loc == eloc
+        assert mdata.capt_start == eloc
         assert game_ss.board == eboard
         assert game_ss.store == estore
 
@@ -1554,7 +1554,7 @@ class TestSowCaptOwned:
         game2_ss.deco.sower.sow_seeds(mdata)
         # print(game2_ss)
 
-        assert mdata.capt_loc == eloc
+        assert mdata.capt_start == eloc
         assert game2_ss.board == board
         assert game2_ss.store == estore
 
@@ -1956,7 +1956,7 @@ class TestCaptMlap:
 
         # print(game)
 
-        assert mdata.capt_loc == eloc
+        assert mdata.capt_start == eloc
         assert game.board == eboard
         assert game.store == estore
 
@@ -2049,7 +2049,7 @@ class TestSCapt:
         game.deco.sower.sow_seeds(mdata)
         # print(game)
 
-        assert mdata.capt_loc == eloc
+        assert mdata.capt_start == eloc
         assert game.board == eboard
         assert game.store == estore
 
@@ -2115,7 +2115,7 @@ class TestCaptOppOwnLast:
 
         # print(game)
 
-        assert mdata.capt_loc == eloc
+        assert mdata.capt_start == eloc
         assert game.board == eboard
         assert game.store == estore
 
@@ -2174,7 +2174,7 @@ class TestStopSide:
         assert isinstance(stopper, msowd.StopSide)
 
         mdata = move_data.MoveData(game, 0)
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
 
         assert stopper.do_another_lap(mdata) is eret
 

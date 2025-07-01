@@ -56,7 +56,7 @@ class TestSingleClasses:
 
         class MData:
             def __init__(self):
-                self.capt_loc = None
+                self.capt_start = None
 
         return MData()
 
@@ -141,7 +141,7 @@ class TestSingleClasses:
         object.__setattr__(game.info, 'capt_side', cside)
         cok = capt_ok.CaptSideOk(game, capt_ok.CaptTrue(game))
 
-        mdata.capt_loc = sloc
+        mdata.capt_start = sloc
         assert cok.capture_ok(mdata, loc) == eok
 
 
@@ -174,7 +174,6 @@ class TestSingleClasses:
         cok = capt_ok.CaptSideOk(game, capt_ok.CaptTrue(game))
 
         game.owner = [F, T, F, T]
-        mdata.capt_loc = None   # don't care
 
         assert cok.capture_ok(mdata, loc) == eok
 

@@ -52,7 +52,7 @@ class TestChildInhibitor:
 
         mdata = move_data.MoveData(game, None)
         mdata.direct = game.info.sow_direct
-        mdata.capt_loc = 3
+        mdata.capt_start = 3
         mdata.board = tuple(game.board)
         mdata.seeds = 2
 
@@ -85,10 +85,10 @@ class TestOppChild:
         mdata.seeds = 2
 
         game.turn = True
-        mdata.capt_loc = 3
+        mdata.capt_start = 3
         assert not game.deco.make_child.test(mdata)
 
-        mdata.capt_loc = 2
+        mdata.capt_start = 2
         assert game.deco.make_child.test(mdata)
 
 
@@ -111,10 +111,10 @@ class TestOwnChild:
         mdata.seeds = 2
 
         game.turn = False
-        mdata.capt_loc = 3
+        mdata.capt_start = 3
         assert not game.deco.make_child.test(mdata)
 
-        mdata.capt_loc = 2
+        mdata.capt_start = 2
         assert game.deco.make_child.test(mdata)
 
 
@@ -146,7 +146,7 @@ class TestOppNotWithOne:
         mdata.board = tuple(game.board)
 
         game.turn = turn
-        mdata.capt_loc = hole
+        mdata.capt_start = hole
         mdata.seeds = seeds
         assert game.deco.make_child.test(mdata) == etest
 
@@ -180,7 +180,7 @@ class TestNotWithOne:
             mdata = move_data.MoveData(game, None)
             mdata.direct = direct
             mdata.board = tuple(game.board)
-            mdata.capt_loc = hole
+            mdata.capt_start = hole
             mdata.seeds = seeds
 
             actual += [game.deco.make_child.test(mdata)]
@@ -232,7 +232,7 @@ class TestOppOwner:
         mdata.board = tuple(game.board)
 
         game.turn = turn
-        mdata.capt_loc = hole
+        mdata.capt_start = hole
         mdata.seeds = seeds
         assert game.deco.make_child.test(mdata) == etest
 
@@ -281,7 +281,7 @@ class TestOwnOwner:
         mdata.board = tuple(game.board)
 
         game.turn = turn
-        mdata.capt_loc = hole
+        mdata.capt_start = hole
         mdata.seeds = seeds
         assert game.deco.make_child.test(mdata) == etest
 
@@ -407,7 +407,7 @@ class TestChildLocs:
         mdata = move_data.MoveData(game, None)
         mdata.direct = game.info.sow_direct
         mdata.board = tuple(game.board)
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
 
         assert game.deco.make_child.test(mdata) == echild
 
@@ -454,7 +454,7 @@ class TestNotFacing:
         mdata.board = tuple(game.board)
 
         game.turn = turn
-        mdata.capt_loc = hole
+        mdata.capt_start = hole
         assert game.deco.make_child.test(mdata) == etest
 
 
@@ -477,7 +477,7 @@ class TestNoChildren:
         mdata.board = tuple(game.board)
 
         game.turn = True
-        mdata.capt_loc = 1
+        mdata.capt_start = 1
         mdata.seeds = 1
         assert game.deco.make_child.test(mdata) == False
 
@@ -533,7 +533,7 @@ class TestBull:
         game.turn = turn
         mdata = move_data.MoveData(game, None)
         mdata.direct = game.info.sow_direct
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
         mdata.board = tuple(game.board)
         mdata.seeds = 2
 
@@ -560,7 +560,7 @@ class TestBull:
 
         mdata = move_data.MoveData(game, None)
         mdata.direct = game.info.sow_direct
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
         mdata.board = tuple(game.board)
         mdata.seeds = 2
 
@@ -615,7 +615,7 @@ class TestOneChild:
         game.board[loc] = 3
         mdata = move_data.MoveData(game, None)
         mdata.direct = gi.Direct.CCW
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
         mdata.board = tuple(game.board)
         mdata.seeds = 2
 
@@ -648,7 +648,7 @@ class TestOneChild:
         game.child = board
         mdata = move_data.MoveData(game, None)
         mdata.direct = gi.Direct.CCW
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
         mdata.board = tuple(game.board)
         mdata.seeds = 2
 
@@ -669,7 +669,7 @@ class TestOneChild:
 
         mdata = move_data.MoveData(game, None)
         mdata.direct = gi.Direct.CCW
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
         mdata.board = tuple(game.board)
         mdata.seeds = 2
 
@@ -710,7 +710,7 @@ class TestTuzdek:
 
         mdata = move_data.MoveData(game, None)
         mdata.direct = gi.Direct.CCW
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
         mdata.board = tuple(game.board)
         mdata.seeds = 2
 
@@ -728,7 +728,7 @@ class TestTuzdek:
                                        [None, True, None, None])
         mdata = move_data.MoveData(game, None)
         mdata.direct = gi.Direct.CCW
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
         mdata.board = tuple(game.board)
         mdata.seeds = 2
 
@@ -746,7 +746,7 @@ class TestTuzdek:
 
         mdata = move_data.MoveData(game, None)
         mdata.direct = gi.Direct.CCW
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
         mdata.board = tuple(game.board)
         mdata.seeds = 2
 
@@ -800,7 +800,7 @@ class TestQur:
 
         mdata = move_data.MoveData(game, None)
         mdata.direct = game.info.sow_direct
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
         mdata.board = tuple(game.board)
         mdata.seeds = 2
 
@@ -858,7 +858,7 @@ class TestWeg:
         game.turn = turn
         mdata = move_data.MoveData(game, None)
         mdata.direct = game.info.sow_direct
-        mdata.capt_loc = loc
+        mdata.capt_start = loc
         mdata.board = tuple(game.board)
         mdata.seeds = 2
 

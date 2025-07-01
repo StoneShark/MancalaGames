@@ -412,8 +412,8 @@ class AiPlayer(ai_interface.AiPlayerIf):
                 with game_log.simulate():
                     mdata = self.game.do_sow(pos)
 
-                if self.game.cts.opp_side(self.game.turn, mdata.capt_loc):
-                    access[turn] |= set([mdata.capt_loc])
+                if self.game.cts.opp_side(self.game.turn, mdata.capt_start):
+                    access[turn] |= set([mdata.capt_start])
 
                 self.game.state = saved_state
 

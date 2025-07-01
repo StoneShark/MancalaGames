@@ -104,11 +104,11 @@ class CaptSideOk(CaptOkIf):
 
         elif game.info.capt_side == gi.CaptSide.OWN_CONT:
             self.side_ok = lambda mdata, turn, loc: \
-                game.cts.my_side(turn, mdata.capt_loc)
+                game.cts.my_side(turn, mdata.capt_start)
 
         elif game.info.capt_side == gi.CaptSide.OPP_CONT:
             self.side_ok = lambda mdata, turn, loc: \
-                game.cts.opp_side(turn, mdata.capt_loc)
+                game.cts.opp_side(turn, mdata.capt_start)
 
         elif game.info.capt_side == gi.CaptSide.OPP_TERR:
             self.side_ok = lambda _, turn, loc: game.owner[loc] == (not turn)

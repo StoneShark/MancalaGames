@@ -27,6 +27,10 @@ class CaptMethodIf(deco_chain_if.DecoChainIf):
         """Do captures. capt_first should never be set when called from
         outside the capture deco chain, e.g. Mancala or Sower.
 
+        When entering the capturer, capt_start and capt_loc are the
+        same. capt_start should not be changed. capt_loc should be
+        returned as the first location captured (for the logs).
+
         Update mdata:
 
         capt_changed: there was a state change (picked, child made, etc.)
@@ -34,6 +38,9 @@ class CaptMethodIf(deco_chain_if.DecoChainIf):
 
         captured: there was an actual capture, this will be used
         for repeat turn (CAPT_RTURN)
+
+        capt_loc: the location of the first actual capture
+        e.g. capt next is not the capt_start.
 
         capt_next: for base captures this should be set to the location
         to test for a possible multiple capture
@@ -341,6 +348,12 @@ class CaptMultiple(CaptMethodIf):
         self.max_capt = game.info.multicapt
 
 
+    def __str__(self):
+        """A recursive func to print the whole decorator chain."""
+
+        return self.str_deco_detail(f"max_capt: {self.max_capt}")
+
+
     def do_captures(self, mdata, capt_first=True):
         """Capture loop"""
 
@@ -351,6 +364,7 @@ class CaptMultiple(CaptMethodIf):
         while True:
 
             self.decorator.do_captures(mdata, capt_first)
+            print(f"capt res @ {mdata.capt_loc} of {mdata.captured}")
             if capt_first:
                 capt_loc = mdata.capt_loc
             cont_capt -= 1
@@ -366,6 +380,7 @@ class CaptMultiple(CaptMethodIf):
             capt_first = False
             captured = True
             mdata.captured = False
+            print(f"using capt_next of {mdata.capt_next}")
             mdata.capt_loc = mdata.capt_next
 
 
@@ -408,7 +423,7 @@ class CaptBothDir(CaptMethodIf):
             self.capt_func = self.capt_center
 
 
-    def capt_center(self, mdata, capt_first, direct, capt_loc):
+    def capt_center(self, mdata, capt_first):
         """Capture the initial capt_loc, then proceed in the
         sow direction, then proceed in the opposite direction.
 
@@ -416,50 +431,59 @@ class CaptBothDir(CaptMethodIf):
         past the already captured initial capt_loc, before the
         second call down the deco chain.
 
+        mdata.capt_loc is set to the first location captured.
+
         Return if the first capture was successful."""
 
         self.decorator.do_captures(mdata, capt_first)
+        capt_loc = mdata.capt_loc
 
         if not mdata.captured:
             return False
 
-        mdata.direct = direct.opp_dir()
+        mdata.direct = mdata.direct.opp_dir()
         self.decorator.max_capt -= 1
-        mdata.capt_loc = self.game.deco.incr.incr(capt_loc, mdata.direct)
+        mdata.capt_loc = self.game.deco.incr.incr(mdata.capt_start, mdata.direct)
 
         self.decorator.do_captures(mdata, capt_first)
         self.decorator.max_capt += 1
+
+        mdata.capt_loc = capt_loc
         return True
 
 
-    def no_capt_center(self, mdata, capt_first, direct, _):
+    def no_capt_center(self, mdata, capt_first):
         """Don't capture the inial capt_loc, proceed in the sow
         direction, then in opposite direction.
 
+        mdata.capt_loc is set to the first location captured.
+
         Return if the first capture was successful."""
 
-        mstate = mdata.state
+        # print("before", f"direct: {mdata.direct}", f"capt_start: {mdata.capt_start}",
+        #       f"capt_loc: {mdata.capt_loc}", f"capt_next: {mdata.capt_next}", sep='\n  ')
 
         self.decorator.do_captures(mdata, capt_first)
+        capt_loc = mdata.capt_loc
         captured = mdata.captured
 
-        mdata.state = mstate
-        mdata.direct = direct.opp_dir()
-        self.decorator.do_captures(mdata, False)
+        mdata.captured = False
+        mdata.capt_loc = mdata.capt_start
+        mdata.direct = mdata.direct.opp_dir()
+        self.decorator.do_captures(mdata, capt_first)
 
+        mdata.capt_loc = capt_loc
         return captured
 
 
     def do_captures(self, mdata, capt_first=True):
+        """Call the selected capture function but save/restore
+        the direction before/after."""
 
         direct = mdata.direct
-        capt_loc = mdata.capt_loc
-
-        captured = self.capt_func(mdata, capt_first, direct, capt_loc)
-
+        rval = self.capt_func(mdata, capt_first)
+        mdata.captured |= rval
         mdata.direct = direct
-        mdata.capt_loc = capt_loc
-        mdata.captured |= captured
 
 
 # %%  grand slam decos

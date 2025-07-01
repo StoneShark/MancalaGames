@@ -78,6 +78,28 @@ class TestMoveData:
         assert mdata.cont_sow_loc == 1
 
 
+    def test_capt_start_prop(self, game):
+
+        mdata = move_data.MoveData(game, 5)
+
+        # construction settings
+        assert mdata.capt_start == 0
+        assert mdata._capt_start == 0
+        assert mdata.capt_loc == 0
+
+        # all three should change
+        mdata.capt_start = 3
+        assert mdata.capt_start == 3
+        assert mdata._capt_start == 3
+        assert mdata.capt_loc == 3
+
+        # only capt_loc should change
+        mdata.capt_loc = 1
+        assert mdata.capt_start == 3
+        assert mdata._capt_start == 3
+        assert mdata.capt_loc == 1
+
+
     def test_pass_move(self, game):
 
         mdata = move_data.MoveData.pass_move(True)
@@ -100,10 +122,10 @@ class TestMoveData:
 
         mstate = mdata.state
         assert isinstance(mstate, tuple)
-        assert len(mstate) == 19
+        assert len(mstate) == 20
         assert mstate[2] == 22
 
-        mdata.state = tuple(idx for idx in range(19))
+        mdata.state = tuple(idx for idx in range(20))
         assert mdata.player == 0
         assert mdata.board == 1
         assert mdata.move == 2
@@ -112,14 +134,15 @@ class TestMoveData:
         assert mdata._sow_loc == 5
         assert mdata.cont_sow_loc == 6
         assert mdata.lap_nbr == 7
-        assert mdata.capt_loc == 8
-        assert mdata.capt_next == 9
-        assert mdata.capt_changed == 10
-        assert mdata.captured == 11
-        assert mdata.repeat_turn == 12
-        assert mdata.end_msg == 13
-        assert mdata.fmsg == 14
-        assert mdata.ended == 15
-        assert mdata.win_cond == 16
-        assert mdata.winner == 17
-        assert mdata.user_end == 18
+        assert mdata.capt_start == 8
+        assert mdata.capt_loc == 9
+        assert mdata.capt_next == 10
+        assert mdata.capt_changed == 11
+        assert mdata.captured == 12
+        assert mdata.repeat_turn == 13
+        assert mdata.end_msg == 14
+        assert mdata.fmsg == 15
+        assert mdata.ended == 16
+        assert mdata.win_cond == 17
+        assert mdata.winner == 18
+        assert mdata.user_end == 19

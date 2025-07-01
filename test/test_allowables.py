@@ -984,19 +984,19 @@ class TestDontUndoMoveOne:
         ('include', [0, 2, 0, 1, 2, 0], T, (2, None), [F, T, F]),
         ('include', [0, 2, 0, 0, 2, 1], T, (0, None), [F, T, F]),
 
-        # don't prevent cases -- not one seed at capt_loc after move (T, F, T)
+        # don't prevent cases -- not one seed at capt_start after move (T, F, T)
         ('include', [1, 2, 0, 0, 2, 1], F, (0, None), [T, T, F]),
         ('include', [0, 2, 1, 1, 2, 0], F, (2, None), [F, T, T]),
         ('include', [0, 2, 1, 1, 2, 0], T, (2, None), [F, T, T]),
         ('include', [1, 2, 0, 0, 2, 1], T, (0, None), [T, T, F]),
 
-        # T, F, F: sow 1, capt_loc seeds != 1, sl & cl not edges
+        # T, F, F: sow 1, capt_start seeds != 1, sl & cl not edges
         ('include', [2, 1, 2, 0, 2, 2], F, (1, CCW), [T, T, F]),
-        # T, T, F: sow 1 seed, capt_loc seeds == 1, but sl & cl not edges
+        # T, T, F: sow 1 seed, capt_start seeds == 1, but sl & cl not edges
         ('include', [2, 1, 0, 0, 2, 2], F, (1, CCW), [T, T, F]),
-        # F, T, F: sow 2 seeds, capt_loc seeds == 1, sl & cl not edges
+        # F, T, F: sow 2 seeds, capt_start seeds == 1, sl & cl not edges
         ('include', [2, 2, 0, 3, 0, 0], F, (0, None), [T, T, T]),
-        # F, F, F: sow 2 seeds, capt_loc seeds > 1, sl & cl not edges
+        # F, F, F: sow 2 seeds, capt_start seeds > 1, sl & cl not edges
         ('include', [2, 2, 0, 0, 2, 2], F, (0, None), [T, T, F]),
 
         # hole not allowable to start
@@ -1039,7 +1039,7 @@ class TestDontUndoMoveOne:
                              ['include'],
                              indirect=['game'])
     def test_rturn(self, game):
-        """Force a test of capt_loc == REPEAT TURN"""
+        """Force a test of capt_start == REPEAT TURN"""
 
         game.board = [2, 2, 2, 2, 2, 2]
         game.store = [0, 0]
@@ -1049,7 +1049,7 @@ class TestDontUndoMoveOne:
         allowables = game.get_allowable_holes()
         assert allowables == [T, T, T]
 
-        game.mdata.capt_loc = gi.WinCond.REPEAT_TURN
+        game.mdata.capt_start = gi.WinCond.REPEAT_TURN
 
         assert game.get_allowable_holes() == allowables
 

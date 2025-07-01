@@ -57,9 +57,9 @@ class NextLapCont(LapContinuerIf):
     def do_another_lap(self, mdata):
         """Determine if we are done sowing."""
 
-        loc = self.game.deco.incr.incr(mdata.capt_loc, mdata.direct)
+        loc = self.game.deco.incr.incr(mdata.capt_start, mdata.direct)
         if self.game.board[loc]:
-            mdata.capt_loc = loc
+            mdata.capt_start = loc
             return True
         return False
 
@@ -71,7 +71,7 @@ class DivertBlckdLapper(LapContinuerIf):
 
     def do_another_lap(self, mdata):
         """Determine if we are done sowing."""
-        return not self.game.blocked[mdata.capt_loc]
+        return not self.game.blocked[mdata.capt_start]
 
 
 class ChildLapCont(LapContinuerIf):
@@ -99,7 +99,7 @@ class StopSingleSeed(LapContinuerIf):
 
     def do_another_lap(self, mdata):
 
-        if self.game.board[mdata.capt_loc] <= 1:
+        if self.game.board[mdata.capt_start] <= 1:
             game_log.add('MLap stop single seed')
             return False
         return self.decorator.do_another_lap(mdata)
@@ -110,16 +110,16 @@ class GapNextCapt(LapContinuerIf):
     possibly do a capture, then continue sowing from
     the current hole (capture or not).
 
-    mdata.capt_loc must be returned to the location that
+    mdata.capt_start must be returned to the location that
     it started, so the sowing continues from there."""
 
     def do_another_lap(self, mdata):
 
-        if self.game.board[mdata.capt_loc] > 1:
-            saved_loc = mdata.capt_loc
+        if self.game.board[mdata.capt_start] > 1:
+            saved_loc = mdata.capt_start
             self.game.capture_seeds(mdata)
 
-            mdata.capt_loc = saved_loc
+            mdata.capt_start = saved_loc
             return True
 
         return self.decorator.do_another_lap(mdata)
@@ -136,7 +136,7 @@ class ContIfXCapt(LapContinuerIf):
 
     def do_another_lap(self, mdata):
 
-        if self.game.board[mdata.capt_loc] != 1:
+        if self.game.board[mdata.capt_start] != 1:
             return self.decorator.do_another_lap(mdata)
 
         saved = mdata.captured
@@ -166,11 +166,11 @@ class ContIfBasicCapt(LapContinuerIf):
 
     def do_another_lap(self, mdata):
 
-        if not self.game.deco.capt_ok.capture_ok(mdata, mdata.capt_loc):
+        if not self.game.deco.capt_ok.capture_ok(mdata, mdata.capt_start):
             return self.decorator.do_another_lap(mdata)
 
         self.game.capture_seeds(mdata)
-        mdata.capt_loc = self.game.deco.incr.incr(mdata.capt_loc,
+        mdata.capt_start = self.game.deco.incr.incr(mdata.capt_start,
                                                   mdata.direct)
         return True
 
@@ -180,7 +180,7 @@ class StopOnChild(LapContinuerIf):
 
     def do_another_lap(self, mdata):
 
-        if self.game.child[mdata.capt_loc] is not None:
+        if self.game.child[mdata.capt_start] is not None:
             game_log.add('MLap stop in child')
             return False
         return self.decorator.do_another_lap(mdata)
@@ -204,7 +204,7 @@ class ContWithCaptSeeds(LapContinuerIf):
             self.game.capture_seeds(mdata)
 
             if mdata.captured:
-                self.game.board[mdata.capt_loc] += self.game.store[self.game.turn]
+                self.game.board[mdata.capt_start] += self.game.store[self.game.turn]
                 self.game.store[self.game.turn] = 0
                 game_log.add('MLap continues with captured seeds.')
                 return True
@@ -221,7 +221,7 @@ class StopCaptureSeeds(LapContinuerIf):
     def do_another_lap(self, mdata):
 
         if (not self.game.inhibitor.stop_me_capt(self.game.turn)
-                and self.game.deco.capt_ok.capture_ok(mdata, mdata.capt_loc)):
+                and self.game.deco.capt_ok.capture_ok(mdata, mdata.capt_start)):
             game_log.add('MLap stop for capture')
             return False
         return self.decorator.do_another_lap(mdata)
@@ -260,7 +260,7 @@ class MustVisitOpp(LapContinuerIf):
         if (not mdata.lap_nbr
                 and not (mdata.seeds >= self.game.cts.holes
                          or self.game.cts.opp_side(self.game.turn,
-                                                   mdata.capt_loc))):
+                                                   mdata.capt_start))):
             game_log.add("First mlap didn't reach opp")
             return False
 
@@ -273,7 +273,7 @@ class StopNotN(LapContinuerIf):
 
     def do_another_lap(self, mdata):
 
-        if self.game.board[mdata.capt_loc] != self.game.info.sow_param:
+        if self.game.board[mdata.capt_start] != self.game.info.sow_param:
             game_log.add(f"Stop mlap not {self.game.info.sow_param} seeds")
             return False
 
@@ -286,7 +286,7 @@ class StopLessN(LapContinuerIf):
 
     def do_another_lap(self, mdata):
 
-        if self.game.board[mdata.capt_loc] < self.game.info.sow_param:
+        if self.game.board[mdata.capt_start] < self.game.info.sow_param:
             game_log.add(f"Stop mlap < {self.game.info.sow_param} seeds")
             return False
 
@@ -316,7 +316,7 @@ class StopSide(LapContinuerIf):
 
     def do_another_lap(self, mdata):
 
-        if self.test_func(self.game.turn, mdata.capt_loc):
+        if self.test_func(self.game.turn, mdata.capt_start):
             game_log.add(f"Stop when last hole is on {self.side} side.")
             return False
 
@@ -347,7 +347,7 @@ class StopRepeatTurn(LapContinuerIf):
 
     def do_another_lap(self, mdata):
 
-        if mdata.capt_loc is gi.WinCond.REPEAT_TURN:
+        if mdata.capt_start is gi.WinCond.REPEAT_TURN:
             game_log.add('MLap stop for for repeat turn')
             return False
         return self.decorator.do_another_lap(mdata)
@@ -363,7 +363,7 @@ class AnimateLapStart(LapContinuerIf):
         cont = self.decorator.do_another_lap(mdata)
 
         if cont and animator.active():
-            animator.animator.flash(self.game.turn, loc=mdata.capt_loc)
+            animator.animator.flash(self.game.turn, loc=mdata.capt_start)
 
         return cont
 
@@ -402,7 +402,7 @@ class CloseOp(MlapEndOpIf):
     def do_op(self, mdata):
         # pylint:  disable=duplicate-code
 
-        loc = mdata.capt_loc
+        loc = mdata.capt_start
         if (loc not in self.no_close
                 and self.game.board[loc] == self.game.info.sow_param
                 and self.game.cts.opp_side(self.game.turn, loc)
@@ -461,7 +461,7 @@ class SowMlapSeeds(MlapSowerIf):
                           self.game, game_log.DETAIL)
 
             if self.lap_cont.do_another_lap(mdata):
-                loc = mdata.capt_loc
+                loc = mdata.capt_start
                 mdata.cont_sow_loc = loc
                 mdata.seeds = self.game.board[loc]
 
@@ -472,7 +472,7 @@ class SowMlapSeeds(MlapSowerIf):
             else:
                 return
 
-        mdata.capt_loc = gi.WinCond.ENDLESS
+        mdata.capt_start = gi.WinCond.ENDLESS
 
 
 # %% prescribed mlap sower
