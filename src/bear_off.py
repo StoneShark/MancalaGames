@@ -38,8 +38,6 @@ from game_logger import game_log
 def test_rules(ginfo, holes, skip=None):
     """Test the rules for BearOff game class."""
 
-    mancala.Mancala.rules(ginfo, holes, skip=skip)
-
     tester = rule_tester.RuleTester(ginfo, holes, skip)
 
     tester.test_rule(
@@ -54,6 +52,8 @@ def test_rules(ginfo, holes, skip=None):
         rule=lambda ginfo: ginfo.min_move != 1,
         msg='BearOff requires that MIN_MOVE be 1',
         excp=gi.GameInfoError)
+
+    mancala.Mancala.rules(ginfo, holes, skip=skip)
 
 
 # %% deco replacements
