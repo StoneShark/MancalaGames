@@ -858,6 +858,8 @@ is included after the parameter sections.
 <b class="enum">MATCH_OPP</b>: capture when the number of seeds in the final hole sown match the opposite-side hole. Seeds from both holes are captured. Multiple captures maybe made in either direction. Multilap sowing does stop for captures.
 <li class="helptext">
 <b class="enum">SINGLETONS</b>: capture all singletons.
+<li class="helptext">
+<b class="enum">CAPT_OPP_1CCW</b>: flag a capture if the final seed of a sow lands in your own rightmost hole or on your opponent's side of the board. No seeds are removed. Useful for causing a repeat turn and/or with pickextra.
 </ol>
 <h4 id="multicapt"> Multiple Captures </h4>
 <p class="pdesc">Location in Config Files: game_info : multicapt
@@ -992,7 +994,8 @@ is included after the parameter sections.
 <h4 id="mcts_bias"> MCTS Bias </h4>
 <p class="pdesc">Location in Config Files: player : ai_params : mcts_bias
 <p id="list[int]" class="pdesc">Type: <a href="param_types.html#list[int]"> list[int] </a>
-<p class="pdesc">Default value: [300, 200, 100, 100]
+<p class="pdesc">Default value: [200, 200, 300, 300]
+<p class="pdesc">UI default value: [300, 200, 100, 100]
 <p class="pdesc">UI Tab: Player
 
 <p>Bias for the Monte Carlo Tree search algorithm for each difficulty level (0-3). A larger bias encourages game tree exploration but defocuses the exploration from the best choices. This is critical in avoiding getting stuck in sub-optimal move choices.
@@ -1000,14 +1003,16 @@ is included after the parameter sections.
 <h4 id="mcts_nodes"> MCTS Nodes per Move </h4>
 <p class="pdesc">Location in Config Files: player : ai_params : mcts_nodes
 <p id="list[int]" class="pdesc">Type: <a href="param_types.html#list[int]"> list[int] </a>
-<p class="pdesc">Default value: [100, 300, 500, 800]
+<p class="pdesc">Default value: [800, 1000, 1200, 1400]
+<p class="pdesc">UI default value: [100, 300, 500, 800]
 <p class="pdesc">UI Tab: Player
 
 <p>Number of game tree expansions to perform each time we pick a new move. One value for each difficulty level (0-3).
 <h4 id="mcts_pouts"> MCTS Playouts per Node </h4>
 <p class="pdesc">Location in Config Files: player : ai_params : mcts_pouts
 <p id="list[int]" class="pdesc">Type: <a href="param_types.html#list[int]"> list[int] </a>
-<p class="pdesc">Default value: [1, 1, 1, 1]
+<p class="pdesc">Default value: [1, 1, 2, 2]
+<p class="pdesc">UI default value: [1, 1, 1, 1]
 <p class="pdesc">UI Tab: Player
 
 <p>Number of end games played out from each expanded node. One value for each difficulty level (0-3).

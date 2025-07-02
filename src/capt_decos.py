@@ -229,6 +229,29 @@ class CaptSingles(CaptMethodIf):
                 mdata.captured = True
 
 
+class CaptOpposite1CCW(CaptMethodIf):
+    """Record 'captured' if final seed ends on opposite side
+    or most counter-clockwise own hole, but don't actually take
+    any seeds.
+    This can flag the picker or a repeat turn, or other action
+    that requires a capture."""
+
+    def __init__(self, game, decorator=None):
+
+        super().__init__(game, decorator)
+
+        branges = game.cts.get_ranges(False)
+        self.capt_mark = [set(branges[1]) | {max(branges[0])},
+                          set(branges[0]) | {max(branges[1])}]
+
+    def do_captures(self, mdata, capt_first=True):
+
+        if mdata.capt_start in self.capt_mark[self.game.turn]:
+            mdata.captured = True
+            mdata.capt_loc = mdata.capt_start
+
+
+
 # %% cross capt decos
 
 class CaptCrossVisited(CaptMethodIf):

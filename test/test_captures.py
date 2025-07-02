@@ -84,6 +84,7 @@ CONVERT_DICT = {'N': None,
                 'TWOOUT': gi.CaptType.TWO_OUT,
                 'MOPP': gi.CaptType.MATCH_OPP,
                 'SINGLES': gi.CaptType.SINGLETONS,
+                'OPP1CCW': gi.CaptType.CAPT_OPP_1CCW,
 
                 'SOW': gi.CaptDir.SOW,
                 'BOTH': gi.CaptDir.BOTH,
@@ -298,6 +299,10 @@ class TestCaptTable:
             if case.oppside else gi.ChildRule.NONE
         sow_direct = gi.Direct.SPLIT if split else case.direct
 
+        pickextra = gi.CaptExtraPick.NONE
+        if case.capt_type == gi.CaptType.CAPT_OPP_1CCW:
+            pickextra = gi.CaptExtraPick.PICKOPPBASIC
+
         game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(mlaps=mlaps,
                                 stores=True,
@@ -315,6 +320,7 @@ class TestCaptTable:
                                 multicapt=case.multicapt,
                                 nosinglecapt=True,
                                 capt_side=case.oppside,
+                                pickextra=pickextra,
                                 child_rule=child_rule,
                                 skip_start=case.skip_start,
                                 xcpickown=case.xcapt_pick_own,

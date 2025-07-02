@@ -149,6 +149,8 @@ Capture type.
 
 - SINGLETONS: capture all singletons.
 
+- CAPT_OPP_1CCW: flag a capture if the final seed of a sow lands in your own rightmost hole or on your opponent's side of the board. No seeds are removed. Useful for causing a repeat turn and/or with pickextra.
+
 <param child_cnt_m>
 The multiplier for the child scorer. The child scorer counts the number children each player has.
 

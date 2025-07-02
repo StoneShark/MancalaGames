@@ -101,6 +101,9 @@ def _add_capt_type_deco(game):
     elif game.info.capt_type == gi.CaptType.SINGLETONS:
         capturer = capt_decos.CaptSingles(game)
 
+    elif game.info.capt_type == gi.CaptType.CAPT_OPP_1CCW:
+        capturer = capt_decos.CaptOpposite1CCW(game)
+
     else:
         raise NotImplementedError(
             f"CaptType {game.info.capt_type} not implemented.")

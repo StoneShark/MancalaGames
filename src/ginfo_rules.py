@@ -565,6 +565,18 @@ def test_capture_rules(tester):
         excp=NotImplementedError)
         # see lcapt_no_ctype
 
+    tester.test_rule('opp1ccw_noterr',
+        rule=lambda ginfo: (ginfo.capt_type == gi.CaptType.CAPT_OPP_1CCW
+                            and ginfo.goal == gi.Goal.TERRITORY),
+        msg="CAPT_TYPE of CAPT_OPP_1CWW is not supported for TERRITORY games",
+        excp=NotImplementedError)
+
+    tester.test_rule('opp1ccw_noblcks',
+        rule=lambda ginfo: (ginfo.capt_type == gi.CaptType.CAPT_OPP_1CCW
+                            and ginfo.blocks),
+        msg="CAPT_TYPE of CAPT_OPP_1CWW does not adjust for blocked holes",
+        warn=True)
+
     tester.test_rule('lcs_presow_capt',
         rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.LAP_CAPT_SEEDS
                             and ginfo.presowcapt),
