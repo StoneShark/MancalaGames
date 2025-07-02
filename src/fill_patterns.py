@@ -444,7 +444,7 @@ class RandomEmptiesPattern(StartPatternIf):
         for idx in range(dbl_holes):
 
             val = values[idx]
-            if val + holding < 4:
+            if val + holding < FOUR:
                 values[idx] = 0
                 holding += val
             else:
