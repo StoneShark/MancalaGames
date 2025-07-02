@@ -374,6 +374,12 @@ The name of the Game Class. One of:
   
   + Most parameter restrictions from <nolink>SameSide apply to <nolink>Ohojichi. For <nolink>Ohojichi, if UDIR_HOLES is used, all holes must be UDIR; capture side must be BOTH.
 
+- <b class="inhead">ShareOne</b>
+
+  + A game class that forces a share of one seed when your opponent does not have any seeds at the start of your turn. You may choose which hole the seed comes from but it must be a hole with at least two seeds. After sharing the one seed, the sharer gets a repeat turn.
+  
+  + The following options are prohibited: BLOCKS, MUSTSHARE, NO_SIDES and any repeat turn option. The game GOAL must not be TERRITORY.
+
 - <nolink><b class="inhead">ZigZag</b>
 
   + A flexible game class with a unique zigzag sowing pattern. See ZigZag game help for the creators of the pattern.

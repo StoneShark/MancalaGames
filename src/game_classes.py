@@ -9,6 +9,7 @@ import bear_off
 import diffusion
 import mancala
 import same_side
+import share_one
 import two_cycle
 import zigzag
 
@@ -20,4 +21,5 @@ GAME_CLASSES = {'Mancala': mancala.Mancala,
                 'SameSide': same_side.SameSide,
                 'Ohojichi': same_side.Ohojichi,
                 'BearOff': bear_off.BearOff,
+                'ShareOne': share_one.ShareOne,
                 'ZigZag': zigzag.ZigZag}

@@ -18,6 +18,7 @@ import montecarlo_ts as mcts
 import negamax
 import rule_tester
 import same_side
+import share_one
 
 from game_logger import game_log
 
@@ -433,7 +434,9 @@ def negamax_no_repeat_turn(game):
     return (ginfo.sow_own_store
                 or ginfo.capt_rturn
                 or ginfo.xc_sown
-                or isinstance(game, (same_side.SameSide, same_side.Ohojichi)))
+                or isinstance(game, (same_side.SameSide,
+                                     same_side.Ohojichi,
+                                     share_one.ShareOne)))
 
 
 def mcts_no_hidden_state(game):

@@ -108,6 +108,10 @@ is included after the parameter sections.
 <p class="helptext"> A <nolink>SameSide game but the board is divided east/west instead of north/south.
 <p class="helptext"> Most parameter restrictions from <nolink>SameSide apply to <nolink>Ohojichi. For <nolink>Ohojichi, if <a href="game_params.html#udir_holes">UDIR_HOLES</a> is used, all holes must be UDIR; capture side must be BOTH.
 <li class="helptext">
+<b class="inhead">ShareOne</b>
+<p class="helptext"> A game class that forces a share of one seed when your opponent does not have any seeds at the start of your turn. You may choose which hole the seed comes from but it must be a hole with at least two seeds. After sharing the one seed, the sharer gets a repeat turn.
+<p class="helptext"> The following options are prohibited: <a href="game_params.html#blocks">BLOCKS</a>, <a href="game_params.html#mustshare">MUSTSHARE</a>, <a href="game_params.html#no_sides">NO_SIDES</a> and any repeat turn option. The game <a href="game_params.html#goal">GOAL</a> must not be TERRITORY.
+<li class="helptext">
 <nolink><b class="inhead">ZigZag</b>
 <p class="helptext"> A flexible game class with a unique zigzag sowing pattern. See <a href="about_games.html#ZigZag">ZigZag</a> game help for the creators of the pattern.
 <p class="helptext"> The sowing is done in a zigzag fashion: Sowing is done towards the center line of the board. The first hole sown is one hole towards the center and on the opposite side of the board, when the end of the board is reached sow directly across from the last hole. The sow pattern cycles through each hole of the board before visiting a hole a second time.
