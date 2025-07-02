@@ -37,9 +37,9 @@ ALGORITHM_DICT = {MINIMAXER: minimax.MiniMaxer,
                   MCTS: mcts.MonteCarloTS}
 
 AI_PARAM_DEFAULTS = {ckey.MM_DEPTH: [1, 1, 3, 5],
-                     ckey.MCTS_BIAS: [300, 200, 100, 100],
-                     ckey.MCTS_NODES: [100, 300, 500, 800],
-                     ckey.MCTS_POUTS: [1, 1, 1, 1]}
+                     ckey.MCTS_BIAS: [200, 200, 300, 300],
+                     ckey.MCTS_NODES: [800, 1000, 1200, 1400],
+                     ckey.MCTS_POUTS: [1, 1, 2, 2]}
 
 
 # a divider for the bias so that we can store ints in the config file
