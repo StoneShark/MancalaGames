@@ -836,6 +836,8 @@ Allows specifying non-all-equal start patterns. The following patterns are suppo
   + In broad strokes, an extra seed is placed in the hole whose sow would have landed in the store; this seed is taken from a hole such that sowing from it will reach one past the store. The actual computations vary based on board size and number of start seeds but the resulting start pattern will not allow a repeat turn for the starter.
 
   + The seed placement is not adjusted if there is no repeat turn possible with an ALL_EQUAL pattern.
+  
+- RANDOM_ZEROS: The seeds are randomly distributed into the holes. Holes may have 0 or >= 4 seeds.  Nbr_start is the total number of seeds in play. When this start pattern is used, the Swap Sides (pie rule) is allowed on both of the first two moves of the game.
 
 In the formulas above holes (n in figures) is the game constant HOLES and nbr_start is the game constant NBR_START.
 

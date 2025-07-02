@@ -300,6 +300,7 @@ class MoveMenuMixin:
 
         game = self.game
         if self.info.start_pattern in (gi.StartPattern.RANDOM,
+                                       gi.StartPattern.RANDOM_ZEROS,
                                        gi.StartPattern.MOVE_RANDOM):
             allowed = game.movers < 2 and self.swap_ok
         else:
@@ -309,7 +310,7 @@ class MoveMenuMixin:
             ui_utils.showerror(self, "Swap Not Allowed",
                 ["Swapping sides is only allowed:",
                  """1. Before or after the first move for games
-                 using RANDOM and MOVE_RANDOM start patterns.""",
+                 using RANDOM, RANDOM_ZEROS and MOVE_RANDOM start patterns.""",
                  "2. After the first move for other games.",
                  """A swap counts as a move.
                  Only one swap is allowed per game."""])

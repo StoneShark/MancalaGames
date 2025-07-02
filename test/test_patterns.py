@@ -160,6 +160,58 @@ class TestRandomFill:
             assert all(s >= 0 for s in game.board)
 
 
+class TestRandomEmptiesFill:
+
+    @pytest.fixture
+    def game(self):
+
+        game_consts = gconsts.GameConsts(nbr_start=64, holes=6)
+        game_info = gi.GameInfo(start_pattern=gi.StartPattern.RANDOM_ZEROS,
+                                evens=True,
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+    CASES = [
+        [0] + [0.1] * 9 + [0],
+        [0.001, 0.2, 0.1, 0.4, 0.099, 0.001, 0.5, 0.8, 0.2, 0.0, 0.0],
+
+        [0.101, 0.922, 0.714, 0.936, 0.657, 0.489, 0.393, 0.797,
+         0.530, 0.622, 0.645],
+
+        ]
+
+    @pytest.mark.parametrize('rvalues', CASES)
+    def test_patterns(self, mocker, game, rvalues):
+        """Fill the game pattern a bunch of times, confirming
+        the total number of seeds and that they are all
+        0 or positive."""
+
+        mrand = mocker.patch('random.random')
+        mrand.side_effect = rvalues
+
+        fp.PCLASSES[game.info.start_pattern].fill_seeds(game)
+
+        assert len(game.board) == game.cts.dbl_holes
+        assert sum(game.board) == game.cts.total_seeds
+        assert all(s >= 0 for s in game.board)
+
+
+    @pytest.mark.no_seed
+    def test_many(self, game):
+        """Fill the game pattern a bunch of times, confirming
+        the total number of seeds and that they are all
+        0 or positive."""
+
+        for _ in range(50):
+            fp.PCLASSES[game.info.start_pattern].fill_seeds(game)
+
+            assert len(game.board) == game.cts.dbl_holes
+            assert sum(game.board) == game.cts.total_seeds
+            assert all(s >= 0 for s in game.board)
+
 
 class TestMoveRightmost:
 

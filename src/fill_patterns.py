@@ -386,8 +386,8 @@ class RandomPattern(StartPatternIf):
         min_seeds = 0 if total < 2 * dbl_holes else 2
         rnd_seeds = total - (min_seeds * dbl_holes)
 
-        rnumbers = sorted([0, 1] + [random.random()
-                                    for _ in range(dbl_holes - 1)])
+        rnumbers = sorted([random.random() for _ in range(dbl_holes - 1)]
+                           + [0, 1])
         values = [min_seeds + int(rnd_seeds * (b - a) + 0.4)
                   for a, b in it.pairwise(rnumbers)]
 
@@ -397,6 +397,66 @@ class RandomPattern(StartPatternIf):
 
         elif error < 0:
             values[values.index(max(values))] += error
+
+        game.board = values
+
+
+class RandomEmptiesPattern(StartPatternIf):
+    """Fill with random seeds, holes maybe empty, but
+    every filled hole must have at least 4 seeds."""
+
+    @staticmethod
+    def size_ok(holes):
+        return True
+
+
+    @classmethod
+    @property
+    def err_msg(cls):
+        return 'RandomEmptiesPattern is always good'
+
+
+    @staticmethod
+    def nbr_seeds(_, nbr_start):
+        return nbr_start
+
+
+    @staticmethod
+    def fill_seeds(game):
+
+        dbl_holes = game.cts.dbl_holes
+        total = game.cts.total_seeds
+
+        rnumbers = sorted([random.random() for _ in range(dbl_holes - 1)]
+                           + [0, 1])
+        values = [int(total * (b - a) + 0.4)
+                  for a, b in it.pairwise(rnumbers)]
+
+        error = total - sum(values)
+        if error > 0:
+            values[values.index(min(values))] += error
+        elif error < 0:
+            values[values.index(max(values))] += error
+
+        # move seeds from any holes with fewer than 4
+        # to the next hole that will be >= 4
+        holding = 0
+        for idx in range(dbl_holes):
+
+            val = values[idx]
+            if val + holding < 4:
+                values[idx] = 0
+                holding += val
+            else:
+                values[idx] = val + holding
+                holding = 0
+
+        # if we are still holding seeds find a place to put them
+        if holding:
+            for idx in range(dbl_holes):
+                if values[idx] > 0:
+                    values[idx] += holding
+                    break
 
         game.board = values
 
@@ -507,3 +567,4 @@ PCLASSES[gi.StartPattern.RIGHTMOST_PLUS_ONE] = RightmostPlusOne
 PCLASSES[gi.StartPattern.MOVE_RIGHTMOST] = MoveRightmost
 PCLASSES[gi.StartPattern.MOVE_RANDOM] = MoveRandom
 PCLASSES[gi.StartPattern.NO_REPEAT_SOW_OWN] = NoRepeatSowOwn
+PCLASSES[gi.StartPattern.RANDOM_ZEROS] = RandomEmptiesPattern

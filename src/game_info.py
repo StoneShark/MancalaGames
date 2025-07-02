@@ -358,6 +358,7 @@ class StartPattern(enum.IntEnum):
     MOVE_RIGHTMOST = 9
     MOVE_RANDOM = 10
     NO_REPEAT_SOW_OWN = 11
+    RANDOM_ZEROS = 12
 
 
 @enum.unique

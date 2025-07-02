@@ -289,6 +289,8 @@ is included after the parameter sections.
 <p class="helptext"> Both sides of the board are setup the same, so the second player will only have a repeat turn if the starter's opening move gave them one.
 <p class="helptext"> In broad strokes, an extra seed is placed in the hole whose sow would have landed in the store; this seed is taken from a hole such that sowing from it will reach one past the store. The actual computations vary based on board size and number of start seeds but the resulting start pattern will not allow a repeat turn for the starter.
 <p class="helptext"> The seed placement is not adjusted if there is no repeat turn possible with an ALL_EQUAL pattern.
+<li class="helptext">
+<b class="enum">RANDOM_ZEROS</b>: The seeds are randomly distributed into the holes. Holes may have 0 or >= 4 seeds.  Nbr_start is the total number of seeds in play. When this start pattern is used, the Swap Sides (pie rule) is allowed on both of the first two moves of the game.
 </ol>
 <p>In the formulas above holes (n in figures) is the game constant <a href="game_params.html#holes">HOLES</a> and nbr_start is the game constant <a href="game_params.html#nbr_start">NBR_START</a>.
 <p>When a game is played in <a href="game_params.html#rounds">ROUNDS</a>, start_pattern is only supported for round tally (RND_*) and territory <a href="game_params.html#goal">GOAL</a> games and only for <a href="game_params.html#round_fill">ROUND_FILL</a> of NOT_APPLICABLE and UCHOWN.

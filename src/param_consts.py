@@ -290,6 +290,7 @@ STRING_DICTS = {
          'Equal plus one in Right': gi.StartPattern.RIGHTMOST_PLUS_ONE,
          'No Repeat Sow Own': gi.StartPattern.NO_REPEAT_SOW_OWN,
          'Random': gi.StartPattern.RANDOM,
+         'Random Zeros': gi.StartPattern.RANDOM_ZEROS,
          'Random Move': gi.StartPattern.MOVE_RANDOM,
          'Move Rightmost Hole': gi.StartPattern.MOVE_RIGHTMOST,
          }),
