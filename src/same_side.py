@@ -84,6 +84,13 @@ def test_ns_rules(ginfo, holes, skip):
         excp=gi.GameInfoError)
 
     tester.test_rule(
+        'ss_no_rturn',
+        rule=lambda ginfo: ginfo.repeat_turn,
+        msg="""SameSide is incompatible with any other repeat turn option""",
+        excp=gi.GameInfoError)
+        # catch any repleat turn opts not already covered by other other rules
+
+    tester.test_rule(
         'ss_no_pick',
         rule=lambda ginfo: ginfo.pickextra,
         msg="""SameSide is incompatible with PICKEXTRA""",

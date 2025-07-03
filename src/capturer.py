@@ -47,6 +47,9 @@ def _add_grand_slam_deco(game, capturer):
     elif game.info.grandslam == gi.GrandSlam.OPP_GETS_REMAIN:
         capturer = capt_decos.GSOppGets(game, capturer)
 
+    elif game.info.grandslam == gi.GrandSlam.LEGAL_SHARE:
+        capturer = capt_decos.GSLegalShare(game, capturer)
+
     elif game.info.grandslam in (gi.GrandSlam.LEGAL,
                                  gi.GrandSlam.NOT_LEGAL):
         # grand slam rule does not need a capture deco

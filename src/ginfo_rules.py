@@ -378,10 +378,11 @@ def test_child_rules(tester):
 
     tester.test_rule('child_no_gs',
         rule=lambda ginfo: (ginfo.child_type
-                            and ginfo.grandslam != gi.GrandSlam.LEGAL),
-        msg='Children requires that GRANDSLAM be Legal',
+                            and ginfo.grandslam not in (gi.GrandSlam.LEGAL,
+                                                        gi.GrandSlam.NOT_LEGAL)),
+        msg='Children requires that GRANDSLAM be LEGAL or NOT_LEGAL',
         excp=NotImplementedError)
-    # NOT_LEGAL is now supported, others are not
+        # children are not checked in GrandSlamCapt.is_grandslam
 
     tester.test_rule('ch_rule_own_incom',
         rule=lambda ginfo: (ginfo.goal != gi.Goal.TERRITORY

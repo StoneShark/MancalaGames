@@ -431,12 +431,10 @@ def negamax_no_repeat_turn(game):
     """Return True if this game cannot be played with the negamaxer."""
 
     ginfo = game.info
-    return (ginfo.sow_own_store
-                or ginfo.capt_rturn
-                or ginfo.xc_sown
-                or isinstance(game, (same_side.SameSide,
-                                     same_side.Ohojichi,
-                                     share_one.ShareOne)))
+    return (ginfo.repeat_turn
+            or isinstance(game, (same_side.SameSide,
+                                 same_side.Ohojichi,
+                                 share_one.ShareOne)))
 
 
 def mcts_no_hidden_state(game):

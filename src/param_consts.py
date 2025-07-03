@@ -203,7 +203,8 @@ STRING_DICTS = {
          "Legal but no capture": gi.GrandSlam.NO_CAPT,
          "Legal but opp takes remaining": gi.GrandSlam.OPP_GETS_REMAIN,
          "Legal but leave leftmost": gi.GrandSlam.LEAVE_LEFT,
-         "Legal but leave rightmost": gi.GrandSlam.LEAVE_RIGHT}),
+         "Legal but leave rightmost": gi.GrandSlam.LEAVE_RIGHT,
+         "Legal but must share": gi.GrandSlam.LEGAL_SHARE}),
 
     'LapSower': lookup_dicts(
         gi.LapSower,

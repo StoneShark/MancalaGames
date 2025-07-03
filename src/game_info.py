@@ -251,6 +251,7 @@ class GrandSlam(enum.IntEnum):
     OPP_GETS_REMAIN = 3
     LEAVE_LEFT = 4
     LEAVE_RIGHT = 5
+    LEGAL_SHARE = 6
 
 
 @enum.unique
@@ -518,12 +519,13 @@ class GameInfo:
     def repeat_turn(self):
         """Return True if the game options allow repeat turns.
 
-        Note that game classes SameSide and Ohojichi also use
-        repeat turn, but that can't be tested here."""
+        Note that game classes SameSide, Ohojichi and ShareOne
+        also use repeat turn, but that can't be tested here."""
 
         return (self.capt_rturn
                 or self.sow_own_store
-                or self.xc_sown)
+                or self.xc_sown
+                or self.grandslam == GrandSlam.LEGAL_SHARE)
 
     @property
     def basic_capt(self):

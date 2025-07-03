@@ -378,7 +378,7 @@ The name of the Game Class. One of:
 
   + A game class that forces a share of one seed when your opponent does not have any seeds at the start of your turn. You may choose which hole the seed comes from but it must be a hole with at least two seeds. After sharing the one seed, the sharer gets a repeat turn.
   
-  + The following options are prohibited: BLOCKS, MUSTSHARE, NO_SIDES and any repeat turn option. The game GOAL must not be TERRITORY.
+  + The following options are prohibited: BLOCKS, MUSTSHARE, NO_SIDES, or any repeat turn option (CAPT_RTURN, SOW_OWN_STORE, XC_SOWN or GRANDSLAM of LEGAL_SHARE). The game GOAL must not be TERRITORY.
 
 - <nolink><b class="inhead">ZigZag</b>
 
@@ -482,6 +482,8 @@ A grandslam is when your opponent has seeds at the start of your turn, and you c
 - LEAVE_LEFT: the capture is performed from all but the leftmost hole from the sower perspective. This might leave your opponents without seeds or might not capture any seeds.
 
 - LEAVE_RIGHT: the capture is performed from all but the rightmost hole from the sower perspective. This might leave your opponents without seeds.
+
+- LEGAL_SHARE: the seeds are captured and the capturer must do a repeat turn. Generally, used with MUSTSHARE to force the capturer to try to share seeds.
 
 Grandslam must be legal to use UDIR_HOLES.
 

@@ -110,7 +110,7 @@ is included after the parameter sections.
 <li class="helptext">
 <b class="inhead">ShareOne</b>
 <p class="helptext"> A game class that forces a share of one seed when your opponent does not have any seeds at the start of your turn. You may choose which hole the seed comes from but it must be a hole with at least two seeds. After sharing the one seed, the sharer gets a repeat turn.
-<p class="helptext"> The following options are prohibited: <a href="game_params.html#blocks">BLOCKS</a>, <a href="game_params.html#mustshare">MUSTSHARE</a>, <a href="game_params.html#no_sides">NO_SIDES</a> and any repeat turn option. The game <a href="game_params.html#goal">GOAL</a> must not be TERRITORY.
+<p class="helptext"> The following options are prohibited: <a href="game_params.html#blocks">BLOCKS</a>, <a href="game_params.html#mustshare">MUSTSHARE</a>, <a href="game_params.html#no_sides">NO_SIDES</a>, or any repeat turn option (<a href="game_params.html#capt_rturn">CAPT_RTURN</a>, <a href="game_params.html#sow_own_store">SOW_OWN_STORE</a>, <a href="game_params.html#xc_sown">XC_SOWN</a> or <a href="game_params.html#grandslam">GRANDSLAM</a> of LEGAL_SHARE). The game <a href="game_params.html#goal">GOAL</a> must not be TERRITORY.
 <li class="helptext">
 <nolink><b class="inhead">ZigZag</b>
 <p class="helptext"> A flexible game class with a unique zigzag sowing pattern. See <a href="about_games.html#ZigZag">ZigZag</a> game help for the creators of the pattern.
@@ -410,6 +410,8 @@ is included after the parameter sections.
 <b class="enum">LEAVE_LEFT</b>: the capture is performed from all but the leftmost hole from the sower perspective. This might leave your opponents without seeds or might not capture any seeds.
 <li class="helptext">
 <b class="enum">LEAVE_RIGHT</b>: the capture is performed from all but the rightmost hole from the sower perspective. This might leave your opponents without seeds.
+<li class="helptext">
+<b class="enum">LEGAL_SHARE</b>: the seeds are captured and the capturer must do a repeat turn. Generally, used with <a href="game_params.html#mustshare">MUSTSHARE</a> to force the capturer to try to share seeds.
 </ol>
 <p>Grandslam must be legal to use <a href="game_params.html#udir_holes">UDIR_HOLES</a>.
 <h4 id="rounds"> Rounds </h4>

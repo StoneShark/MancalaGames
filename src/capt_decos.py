@@ -4,6 +4,8 @@
 Created on Fri Apr  7 08:52:03 2023
 @author: Ann"""
 
+# pylint: disable=too-many-lines
+
 
 # %% imports
 
@@ -672,6 +674,22 @@ class GSOppGets(GrandSlamCapt):
             animator.clear_rollback()
 
             self._saved_state = None
+
+
+class GSLegalShare(GrandSlamCapt):
+    """A grand slam captures as when legal, but there is a repeat
+    turn and the capturer must share or the game ends."""
+
+    def do_captures(self, mdata, capt_first=True):
+
+        if self.is_grandslam(mdata, capt_first):
+
+            game_log.add('GRANDSLAM: repeat turn', game_log.IMPORT)
+            if animator.active():
+                animator.animator.message("Grand Slam Repeat Turn")
+
+            mdata.captured = gi.WinCond.REPEAT_TURN
+            mdata.repeat_turn = True
 
 
 # %%  child decorators

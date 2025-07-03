@@ -79,6 +79,7 @@ CONVERT_DICT = {'N': None,
                 'OPP_GETS': gi.GrandSlam.OPP_GETS_REMAIN,
                 'KLEFT': gi.GrandSlam.LEAVE_LEFT,
                 'KRIGHT': gi.GrandSlam.LEAVE_RIGHT,
+                'LSHARE': gi.GrandSlam.LEGAL_SHARE,
 
                 'NEXT': gi.CaptType.NEXT,
                 'TWOOUT': gi.CaptType.TWO_OUT,
@@ -423,8 +424,10 @@ class TestCaptTable:
                           gi.GrandSlam.NO_CAPT,
                           gi.GrandSlam.OPP_GETS_REMAIN,
                           gi.GrandSlam.LEAVE_LEFT,
-                          gi.GrandSlam.LEAVE_RIGHT])
+                          gi.GrandSlam.LEAVE_RIGHT,
+                          gi.GrandSlam.LEGAL_SHARE])
 def test_no_gs(gstype):
+    """Exercise the else to is_grandslam for gs done by capturer."""
 
     game_consts = gconsts.GameConsts(nbr_start=3, holes=2)
     game_info = gi.GameInfo(nbr_holes=game_consts.holes,
@@ -449,6 +452,30 @@ def test_no_gs(gstype):
     assert game.board == [3, 0, 0, 0]
     assert game.store == [5, 4]
 
+
+
+def test_gs_lshare():
+    """Confirm repeat turn is set on legal share grand slam."""
+
+    game_consts = gconsts.GameConsts(nbr_start=3, holes=2)
+    game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+                            stores=True,
+                            evens=True,
+                            multicapt=-1,
+                            grandslam=gi.GrandSlam.LEGAL_SHARE,
+                            rules=mancala.Mancala.rules)
+    game = mancala.Mancala(game_consts, game_info)
+
+    game.board = [2, 4, 1, 0]
+    game.store = [2, 3]
+    game.turn = False
+
+    game.move(0)
+
+    assert game.mdata.captured is gi.WinCond.REPEAT_TURN
+    assert game.turn is False
+    assert game.board == [0, 5, 0, 0]
+    assert game.store == [4, 3]
 
 
 # %% children
@@ -1769,7 +1796,8 @@ class TestAnimator:
                              [gi.GrandSlam.NO_CAPT,
                               gi.GrandSlam.OPP_GETS_REMAIN,
                               gi.GrandSlam.LEAVE_LEFT,
-                              gi.GrandSlam.LEAVE_RIGHT])
+                              gi.GrandSlam.LEAVE_RIGHT,
+                              gi.GrandSlam.LEGAL_SHARE])
     def test_grandslam(self, mocker, gstype):
 
         assert animator.ENABLED
