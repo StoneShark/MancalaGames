@@ -95,7 +95,7 @@ class Neighbors:
                                      self.all_games[gname2])
             diff_dict[diffs] += [(gname1, gname2)]
 
-        return sorted(diff_dict.items(), key=lambda item: item[0])
+        return diff_dict
 
 
     @staticmethod
@@ -148,11 +148,17 @@ class Neighbors:
             ])
 
 
+    def sorted_items(self):
+        """Return the sorted items"""
+
+        return sorted(self.neighs.items(), key=lambda item: item[0])
+
+
     def print_summary(self):
         """Print a summary of the results."""
 
         print("Diff  Count")
-        for nbr_diff, pairs in self.neighs:
+        for nbr_diff, pairs in self.sorted_items():
 
             print(f"{nbr_diff:3}: {len(pairs):4}")
 
@@ -167,7 +173,7 @@ class Neighbors:
         """Print the distances of all games from the one provided."""
 
         print(game)
-        for nbr_diff, pairs in self.neighs:
+        for nbr_diff, pairs in self.sorted_items():
 
             title = f"  {nbr_diff}:"
             for game1, game2 in pairs:
@@ -235,7 +241,7 @@ class Neighbors:
 
         games = set(self.all_games.keys())
 
-        for nbr_diff, pairs in self.neighs:
+        for nbr_diff, pairs in self.sorted_items():
 
             if nbr_diff > max_diffs:
                 break
