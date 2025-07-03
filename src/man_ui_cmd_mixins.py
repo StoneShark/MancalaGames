@@ -432,6 +432,7 @@ class AiCtrlMenuMixin:
                   Do you wish to proceed?"""
         do_it = ui_utils.ask_popup(self, title, message, ui_utils.OKCANCEL)
         if not do_it:
+            self._algo.set(self._get_algo_name())
             return
 
         game_config = man_config.read_game(self.game.filename)
