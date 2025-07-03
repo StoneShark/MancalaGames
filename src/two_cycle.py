@@ -262,7 +262,7 @@ class EastWestCycle(mancala.Mancala):
         self.deco.replace_deco('incr', incrementer.Increment,
                                EastWestIncr(self))
 
-        self.deco.replace_deco('allow', allowables.AllowableTriples,
+        self.deco.replace_deco('allow', allowables.AllowableNoSidesTriples,
                                EastWestAllowable(self))
 
 
@@ -272,5 +272,5 @@ class EastWestCycle(mancala.Mancala):
         Then patch for east west sowing."""
 
         super().disallow_endless(disallow)
-        self.deco.replace_deco('allow', allowables.AllowableTriples,
+        self.deco.replace_deco('allow', allowables.AllowableNoSidesTriples,
                                EastWestAllowable(self))

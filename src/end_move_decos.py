@@ -307,11 +307,6 @@ class EndTurnMustShare(EndTurnIf):
     game.turn must be set to the player that should get
     the seeds."""
 
-    def __init__(self, game, decorator=None, sclaimer=None):
-
-        super().__init__(game, decorator, sclaimer)
-        self.owner = claimer.make_owner_func(game)
-
     def game_ended(self, mdata):
 
         if mdata.ended:
@@ -324,7 +319,7 @@ class EndTurnMustShare(EndTurnIf):
             if (self.game.board[loc] >= self.game.info.min_move
                     and self.game.child[loc] is None):
 
-                if self.owner(loc) == opponent:
+                if self.game.owner[loc] == opponent:
                     opp_seeds = True
                 else:
                     player_seeds = True

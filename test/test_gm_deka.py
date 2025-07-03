@@ -48,7 +48,6 @@ class TestDeka1:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [0, 0]
 
     def test_move_1(self, gstate):
@@ -59,7 +58,6 @@ class TestDeka1:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [0, 0]
         assert cond is None
         gstate.cond = cond
@@ -72,7 +70,6 @@ class TestDeka1:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [0, 0]
         assert cond is None
         gstate.cond = cond
@@ -85,7 +82,6 @@ class TestDeka1:
         assert game.blocked == [F, F, F, F, F, F, F, T, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [1, 0]
         assert cond is None
         gstate.cond = cond
@@ -98,7 +94,6 @@ class TestDeka1:
         assert game.blocked == [F, F, F, F, F, F, F, T, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [1, 0]
         assert cond is None
         gstate.cond = cond
@@ -111,7 +106,6 @@ class TestDeka1:
         assert game.blocked == [F, F, F, F, F, F, F, T, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [1, 0]
         assert cond is None
         gstate.cond = cond
@@ -124,7 +118,6 @@ class TestDeka1:
         assert game.blocked == [F, F, F, F, F, F, F, T, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [1, 0]
         assert cond is None
         gstate.cond = cond
@@ -137,7 +130,6 @@ class TestDeka1:
         assert game.blocked == [F, F, F, F, F, F, F, T, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [2, 0]
         assert cond is None
         gstate.cond = cond
@@ -150,7 +142,6 @@ class TestDeka1:
         assert game.blocked == [T, F, F, F, F, F, F, T, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [5, 0]
         assert cond is None
         gstate.cond = cond
@@ -163,7 +154,6 @@ class TestDeka1:
         assert game.blocked == [T, F, F, F, F, F, F, T, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [5, 0]
         assert cond is None
         gstate.cond = cond
@@ -176,7 +166,6 @@ class TestDeka1:
         assert game.blocked == [T, F, F, F, F, F, F, T, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [6, 0]
         assert cond is None
         gstate.cond = cond
@@ -189,7 +178,6 @@ class TestDeka1:
         assert game.blocked == [T, F, F, F, F, F, F, T, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [7, 0]
         assert cond is None
         gstate.cond = cond
@@ -202,7 +190,6 @@ class TestDeka1:
         assert game.blocked == [T, F, F, F, F, F, F, T, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [8, 0]
         assert cond is None
         gstate.cond = cond
@@ -215,7 +202,6 @@ class TestDeka1:
         assert game.blocked == [T, F, F, F, F, F, F, T, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [8, 0]
         assert cond is None
         gstate.cond = cond
@@ -228,7 +214,6 @@ class TestDeka1:
         assert game.blocked == [T, F, F, F, F, F, F, T, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [8, 0]
         assert cond is None
         gstate.cond = cond
@@ -241,7 +226,6 @@ class TestDeka1:
         assert game.blocked == [T, F, F, F, F, F, F, T, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [8, 0]
         assert cond is None
         gstate.cond = cond
@@ -254,7 +238,6 @@ class TestDeka1:
         assert game.blocked == [T, F, F, F, F, F, F, T, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [8, 0]
         assert cond is None
         gstate.cond = cond
@@ -267,7 +250,6 @@ class TestDeka1:
         assert game.blocked == [T, F, F, F, F, F, F, T, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [9, 0]
         assert cond is None
         gstate.cond = cond
@@ -280,7 +262,6 @@ class TestDeka1:
         assert game.blocked == [T, F, F, T, F, F, F, T, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [10, 0]
         assert cond is None
         gstate.cond = cond
@@ -293,7 +274,6 @@ class TestDeka1:
         assert game.blocked == [T, F, F, T, F, F, F, T, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [11, 0]
         assert cond is None
         gstate.cond = cond
@@ -306,7 +286,6 @@ class TestDeka1:
         assert game.blocked == [T, F, F, T, F, F, F, T, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [13, 0]
         assert cond is None
         gstate.cond = cond
@@ -319,7 +298,6 @@ class TestDeka1:
         assert game.blocked == [T, F, F, T, F, F, F, T, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [14, 0]
         assert cond is None
         gstate.cond = cond
@@ -332,7 +310,6 @@ class TestDeka1:
         assert game.blocked == [T, F, F, T, F, F, F, T, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [14, 0]
         assert cond is None
         gstate.cond = cond
@@ -345,7 +322,6 @@ class TestDeka1:
         assert game.blocked == [T, F, F, T, F, F, F, T, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [14, 0]
         assert cond is None
         gstate.cond = cond
@@ -358,7 +334,6 @@ class TestDeka1:
         assert game.blocked == [T, F, F, T, F, F, F, T, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [15, 0]
         assert cond is None
         gstate.cond = cond
@@ -371,7 +346,6 @@ class TestDeka1:
         assert game.blocked == [T, F, F, T, F, F, F, T, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [16, 0]
         assert cond is None
         gstate.cond = cond
@@ -384,7 +358,6 @@ class TestDeka1:
         assert game.blocked == [T, F, F, T, F, F, F, T, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [16, 0]
         assert cond is None
         gstate.cond = cond
@@ -397,7 +370,6 @@ class TestDeka1:
         assert game.blocked == [T, F, F, T, F, F, F, T, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [16, 0]
         assert cond is None
         gstate.cond = cond
@@ -410,7 +382,6 @@ class TestDeka1:
         assert game.blocked == [T, F, F, T, F, F, F, T, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [17, 0]
         assert cond is None
         gstate.cond = cond
@@ -427,7 +398,6 @@ class TestDeka1:
         assert game.blocked == [T, F, F, T, F, F, F, T, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [17, 0]
         assert cond is None
 
@@ -442,7 +412,6 @@ class TestDeka1:
         assert game.blocked == [T, F, F, T, F, F, F, T, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [17, 0]
         assert cond.name == "WIN"
 
@@ -459,7 +428,6 @@ class TestDeka2:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [0, 0]
 
     def test_move_1(self, gstate):
@@ -470,7 +438,6 @@ class TestDeka2:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [0, 0]
         assert cond is None
         gstate.cond = cond
@@ -483,7 +450,6 @@ class TestDeka2:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [0, 0]
         assert cond is None
         gstate.cond = cond
@@ -496,7 +462,6 @@ class TestDeka2:
         assert game.blocked == [F, F, F, F, F, F, F, T, F, F, T, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [0, 0]
         assert cond is None
         gstate.cond = cond
@@ -509,7 +474,6 @@ class TestDeka2:
         assert game.blocked == [F, F, F, F, F, F, F, T, F, F, T, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [0, 0]
         assert cond is None
         gstate.cond = cond
@@ -522,7 +486,6 @@ class TestDeka2:
         assert game.blocked == [F, F, F, F, F, F, F, T, F, F, T, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [2, 0]
         assert cond is None
         gstate.cond = cond
@@ -535,7 +498,6 @@ class TestDeka2:
         assert game.blocked == [F, F, F, F, F, F, F, T, F, F, T, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [2, 0]
         assert cond is None
         gstate.cond = cond
@@ -548,7 +510,6 @@ class TestDeka2:
         assert game.blocked == [F, F, F, F, F, F, F, T, F, F, T, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [2, 0]
         assert cond is None
         gstate.cond = cond
@@ -561,7 +522,6 @@ class TestDeka2:
         assert game.blocked == [F, F, F, F, F, F, F, T, F, F, T, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [2, 0]
         assert cond is None
         gstate.cond = cond
@@ -574,7 +534,6 @@ class TestDeka2:
         assert game.blocked == [F, F, F, F, F, F, F, T, F, F, T, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [5, 0]
         assert cond is None
         gstate.cond = cond
@@ -587,7 +546,6 @@ class TestDeka2:
         assert game.blocked == [F, F, F, F, F, F, F, T, F, F, T, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [5, 0]
         assert cond is None
         gstate.cond = cond
@@ -600,7 +558,6 @@ class TestDeka2:
         assert game.blocked == [F, F, F, F, F, F, F, T, T, F, T, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [7, 0]
         assert cond is None
         gstate.cond = cond
@@ -613,7 +570,6 @@ class TestDeka2:
         assert game.blocked == [F, F, F, F, F, F, F, T, T, F, T, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [7, 0]
         assert cond is None
         gstate.cond = cond
@@ -626,7 +582,6 @@ class TestDeka2:
         assert game.blocked == [F, F, F, F, F, F, F, T, T, F, T, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [9, 0]
         assert cond is None
         gstate.cond = cond
@@ -639,7 +594,6 @@ class TestDeka2:
         assert game.blocked == [F, F, F, F, F, F, F, T, T, F, T, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [9, 0]
         assert cond is None
         gstate.cond = cond
@@ -652,7 +606,6 @@ class TestDeka2:
         assert game.blocked == [F, F, F, F, F, F, F, T, T, F, T, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [9, 0]
         assert cond is None
         gstate.cond = cond
@@ -665,7 +618,6 @@ class TestDeka2:
         assert game.blocked == [F, F, F, F, F, F, F, T, T, F, T, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [9, 0]
         assert cond is None
         gstate.cond = cond
@@ -678,7 +630,6 @@ class TestDeka2:
         assert game.blocked == [F, F, F, F, F, F, T, T, T, F, T, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [12, 0]
         assert cond.name == "WIN"
         gstate.cond = cond

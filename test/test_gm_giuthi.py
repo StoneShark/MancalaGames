@@ -739,7 +739,6 @@ class TestGiuthiTWin:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [6, 90]
         assert cond.name == "WIN"
         assert game.mdata.winner is True
@@ -1341,7 +1340,6 @@ class TestGiuthiFWin:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [89, 7]
         assert cond.name == "WIN"
         assert game.mdata.winner is False

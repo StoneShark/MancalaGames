@@ -32,17 +32,6 @@ import game_info as gi
 from game_logger import game_log
 
 
-# %% make owner function
-
-def make_owner_func(game):
-    """Return a function to determine hole owner."""
-
-    if game.info.goal == gi.Goal.TERRITORY:
-        return lambda loc: game.owner[loc]
-
-    return game.cts.board_side
-
-
 # %% claim seeds
 
 class ClaimSeedsIf(abc.ABC):
@@ -83,10 +72,6 @@ class ClaimOwnSeeds(ClaimSeedsIf):
     """Claim seeds in stores, any owned childrens, and
     owned holes.  Don't move any."""
 
-    def __init__(self, game):
-        super().__init__(game)
-        self.get_owner = make_owner_func(game)
-
     def claim_seeds(self):
         seeds = self.game.store.copy()
 
@@ -98,7 +83,7 @@ class ClaimOwnSeeds(ClaimSeedsIf):
                 seeds[False] += self.game.board[loc]
 
             else:
-                seeds[self.get_owner(loc)] += self.game.board[loc]
+                seeds[self.game.owner[loc]] += self.game.board[loc]
 
         return seeds
 
@@ -129,9 +114,6 @@ class TakeOwnSeeds(ClaimSeedsIf):
     """The game has ended, move the unowned seeds (non-child)
     to the stores.  Count all of the owned seeds."""
 
-    def __init__(self, game):
-        super().__init__(game)
-        self.get_owner = make_owner_func(game)
 
     def claim_seeds(self):
         # seeds moved into stores, then added in later
@@ -146,7 +128,7 @@ class TakeOwnSeeds(ClaimSeedsIf):
                 seeds[False] += self.game.board[loc]
 
             else:
-                self.game.store[self.get_owner(loc)] += self.game.board[loc]
+                self.game.store[self.game.owner[loc]] += self.game.board[loc]
                 self.game.board[loc] = 0
 
         seeds[False] += self.game.store[False]

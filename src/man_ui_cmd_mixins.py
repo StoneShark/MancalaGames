@@ -481,7 +481,7 @@ class ShowMenuMixin:
         showmenu.add_checkbutton(label='Ownership Arrows',
                                  variable=self.tkvars.owner_arrows,
                                  onvalue=True, offvalue=False,
-                                 command=self.refresh)
+                                 command=self._toggle_ownership)
         menubar.add_cascade(label='Display', menu=showmenu)
 
 
@@ -525,6 +525,24 @@ class ShowMenuMixin:
             self.disp[0][pos].event_generate("<Configure>",
                                              width=width, height=height)
         self.refresh()
+
+
+    def _toggle_ownership(self):
+        """Popup a message, if we guess that ownership arrows
+        don't mean anything."""
+
+        if (self.tkvars.owner_arrows.get()
+                and self.game.info.no_sides
+                and not self.game.info.goal.eliminate()):
+
+            msg = f"""For {self.info.name},
+                   ownership arrows might not be meaningful
+                   and could be misleading; check game rules."""
+            ui_utils.QuietDialog(self, 'Ownership Arrows', msg)
+
+        self.refresh()
+
+
 
 
 # %%  animator

@@ -28,6 +28,32 @@ import move_data
 from game_logger import game_log
 
 
+# %% move maker functions
+
+def get_move_triple(row, pos, direct=None):
+    """Return a move triple."""
+    return gi.MoveTpl(row, pos, direct)
+
+
+def get_move_pair(_, pos, direct=None):
+    """Return a move pair."""
+    return gi.MoveTpl(pos, direct)
+
+
+def get_move(_1, pos, _2=None):
+    """Return a non-tuple move"""
+    return pos
+
+
+def get_maker(owners):
+    """Get the move maker function."""
+
+    if owners:
+        return get_move_triple
+
+    return get_move
+
+
 # %%  allowable moves interface
 
 class AllowableIf(deco_chain_if.DecoChainIf):
@@ -68,24 +94,6 @@ class AllowableIf(deco_chain_if.DecoChainIf):
         return fholes, tholes
 
 
-    def get_maker_owner(self, owners):
-        """Get the move maker and owner functions."""
-
-        def get_owner_move(row, pos):
-            return gi.MoveTpl(row, pos, None)
-
-        def get_move(_, pos):
-            return pos
-
-        def get_owner_owner(loc):
-            return self.game.owner[loc]
-
-        if owners:
-            return get_owner_move, get_owner_owner
-
-        return get_move, self.game.cts.board_side
-
-
     @abc.abstractmethod
     def get_allowable_holes(self):
         """Return boolean array of plyable/allowable of length holes."""
@@ -105,16 +113,28 @@ class Allowable(AllowableIf):
 
 class AllowableTriples(AllowableIf):
     """Base allowable for games in which the player can move from
-    both sides of the board, e.g. territory and no_sides.
+    any hole they own, e.g. territory.
     Return is a list of booleans the same size as the board and
     in the same order."""
 
     def get_allowable_holes(self):
         """Do allow_move for all locations"""
 
-        return [(self.game.owner[loc] is None
-                 or self.game.turn == self.game.owner[loc])
+        return [self.game.turn == self.game.owner[loc]
                 and self.allow_move(loc)
+                for loc in range(self.game.cts.dbl_holes)]
+
+
+class AllowableNoSidesTriples(AllowableIf):
+    """Base allowable for no_sides games in which the player
+    can move from any hole.
+    Return is a list of booleans the same size as the board and
+    in the same order."""
+
+    def get_allowable_holes(self):
+        """Do allow_move for all locations"""
+
+        return [self.allow_move(loc)
                 for loc in range(self.game.cts.dbl_holes)]
 
 
@@ -362,7 +382,7 @@ class MustShare(AllowableIf):
 
         super().__init__(game, decorator)
         self.fholes, self.tholes = self.get_holes_idx()
-        self.make_move, self.owner = self.get_maker_owner(owners)
+        self.make_move = get_maker(owners)
 
 
     def opp_has_seeds(self, opponent):
@@ -371,7 +391,7 @@ class MustShare(AllowableIf):
 
         return any(self.game.board[loc]
                    for loc in range(self.game.cts.dbl_holes)
-                   if (self.owner(loc) == opponent
+                   if (self.game.owner[loc] == opponent
                        and self.game.child[loc] is None))
 
 
@@ -408,25 +428,11 @@ class MustShareUdir(MustShare):
 
     def __init__(self, game, decorator=None):
 
-        def get_move_triple(row, pos, direct=None):
-            return gi.MoveTpl(row, pos, direct)
-
-        def get_move_pair(_, pos, direct=None):
-            return gi.MoveTpl(pos, direct)
-
-        def get_owner_owner(loc):
-            return game.owner[loc]
-
         super().__init__(game, False, decorator)
         self.fholes, self.tholes = self.get_holes_idx()
 
         self.make_move = [get_move_pair,
                           get_move_triple][game.info.mlength - 2]
-
-        if game.info.goal == gi.Goal.TERRITORY:
-            self.owner = get_owner_owner
-        else:
-            self.owner = game.cts.board_side
 
 
     def get_allowable_holes(self):
@@ -617,8 +623,7 @@ class NoEndlessSows(AllowableIf):
 
         super().__init__(game, decorator)
         self.fholes, self.tholes = self.get_holes_idx()
-        self.make_move, self.owner = \
-            self.get_maker_owner(self.game.info.mlength == 3)
+        self.make_move = get_maker(self.game.info.mlength == 3)
 
 
     def get_allowable_holes(self):
@@ -757,7 +762,10 @@ def deco_allowable(game, no_endless=False):
     memoize = False
 
     if game.info.mlength == 3:
-        allowable = AllowableTriples(game)
+        if game.info.goal == gi.Goal.TERRITORY:
+            allowable = AllowableTriples(game)
+        else:
+            allowable = AllowableNoSidesTriples(game)
     else:
         allowable = Allowable(game)
 

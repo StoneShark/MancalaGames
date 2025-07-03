@@ -449,7 +449,8 @@ class Mancala(ai_interface.AiGameIf,
         if self.info.goal == gi.Goal.TERRITORY:
             self.owner = [False] * holes + [True] * holes
         else:
-            self.owner = [None] * dbl_holes
+            self.owner = [self.cts.board_side(loc) for loc in range(dbl_holes)]
+
         self.inhibitor.new_game()
 
 

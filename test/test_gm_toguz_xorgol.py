@@ -50,7 +50,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [0, 0]
 
     def test_round_1_move_1(self, gstate):
@@ -61,7 +60,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [0, 10]
         assert cond is None
         gstate.cond = cond
@@ -74,7 +72,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [10, 10]
         assert cond is None
         gstate.cond = cond
@@ -87,7 +84,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [10, 10]
         assert cond is None
         gstate.cond = cond
@@ -100,7 +96,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [10, 10]
         assert cond is None
         gstate.cond = cond
@@ -113,7 +108,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [10, 22]
         assert cond is None
         gstate.cond = cond
@@ -126,7 +120,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [10, 22]
         assert cond is None
         gstate.cond = cond
@@ -139,7 +132,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [10, 22]
         assert cond is None
         gstate.cond = cond
@@ -152,7 +144,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [10, 22]
         assert cond is None
         gstate.cond = cond
@@ -165,7 +156,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [10, 36]
         assert cond is None
         gstate.cond = cond
@@ -178,7 +168,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [10, 36]
         assert cond is None
         gstate.cond = cond
@@ -191,7 +180,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [10, 36]
         assert cond is None
         gstate.cond = cond
@@ -204,7 +192,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [14, 36]
         assert cond is None
         gstate.cond = cond
@@ -217,7 +204,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [14, 36]
         assert cond is None
         gstate.cond = cond
@@ -230,7 +216,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [32, 36]
         assert cond is None
         gstate.cond = cond
@@ -243,7 +228,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [32, 36]
         assert cond is None
         gstate.cond = cond
@@ -256,7 +240,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [32, 36]
         assert cond is None
         gstate.cond = cond
@@ -269,7 +252,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [32, 36]
         assert cond is None
         gstate.cond = cond
@@ -282,7 +264,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [36, 36]
         assert cond is None
         gstate.cond = cond
@@ -295,7 +276,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [36, 44]
         assert cond is None
         gstate.cond = cond
@@ -308,7 +288,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [36, 44]
         assert cond is None
         gstate.cond = cond
@@ -321,7 +300,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [36, 44]
         assert cond is None
         gstate.cond = cond
@@ -334,7 +312,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [40, 44]
         assert cond is None
         gstate.cond = cond
@@ -347,7 +324,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [40, 44]
         assert cond is None
         gstate.cond = cond
@@ -360,7 +336,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [40, 44]
         assert cond is None
         gstate.cond = cond
@@ -373,7 +348,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [40, 50]
         assert cond is None
         gstate.cond = cond
@@ -386,7 +360,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [40, 50]
         assert cond is None
         gstate.cond = cond
@@ -399,7 +372,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [40, 56]
         assert cond is None
         gstate.cond = cond
@@ -412,7 +384,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -425,7 +396,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -438,7 +408,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -451,7 +420,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -464,7 +432,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -477,7 +444,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -490,7 +456,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -503,7 +468,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -516,7 +480,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -529,7 +492,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -542,7 +504,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -555,7 +516,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -568,7 +528,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -581,7 +540,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -594,7 +552,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -607,7 +564,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -620,7 +576,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -633,7 +588,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -646,7 +600,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -659,7 +612,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -672,7 +624,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -685,7 +636,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -698,7 +648,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -711,7 +660,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -724,7 +672,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -737,7 +684,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -750,7 +696,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -763,7 +708,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -776,7 +720,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -789,7 +732,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -802,7 +744,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -815,7 +756,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -828,7 +768,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -841,7 +780,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -854,7 +792,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -867,7 +804,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -880,7 +816,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -893,7 +828,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -906,7 +840,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -919,7 +852,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -932,7 +864,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -945,7 +876,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -958,7 +888,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -971,7 +900,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -984,7 +912,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -997,7 +924,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1010,7 +936,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1023,7 +948,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1036,7 +960,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1049,7 +972,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1062,7 +984,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1075,7 +996,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1088,7 +1008,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1101,7 +1020,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1114,7 +1032,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1127,7 +1044,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1140,7 +1056,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1153,7 +1068,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1166,7 +1080,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1179,7 +1092,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1192,7 +1104,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1205,7 +1116,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1218,7 +1128,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1231,7 +1140,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1244,7 +1152,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1257,7 +1164,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1270,7 +1176,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1283,7 +1188,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1296,7 +1200,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1309,7 +1212,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1322,7 +1224,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1335,7 +1236,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1348,7 +1248,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1361,7 +1260,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1374,7 +1272,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1387,7 +1284,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1400,7 +1296,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1413,7 +1308,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1426,7 +1320,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1439,7 +1332,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1452,7 +1344,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1465,7 +1356,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1478,7 +1368,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1491,7 +1380,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1504,7 +1392,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1517,7 +1404,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1530,7 +1416,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1543,7 +1428,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1556,7 +1440,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1569,7 +1452,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1582,7 +1464,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1595,7 +1476,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1608,7 +1488,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond is None
         gstate.cond = cond
@@ -1621,7 +1500,6 @@ class TestToguzXorgol:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, T, N, N, N, N, N, N, N, N, F]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [44, 56]
         assert cond.name == "WIN"
         gstate.cond = cond

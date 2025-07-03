@@ -47,7 +47,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [False, False, False, False, False, False, False, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 0]
 
     def test_round_1_move_1(self, gstate):
@@ -59,7 +58,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [False, False, True, False, False, False, False, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 0]
         assert cond is None
         gstate.cond = cond
@@ -73,7 +71,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [False, False, True, False, False, False, True, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 0]
         assert cond is None
         gstate.cond = cond
@@ -86,7 +83,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [False, True, True, False, False, False, True, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 0]
         assert cond is None
         gstate.cond = cond
@@ -100,7 +96,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [False, True, True, False, False, False, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 2]
         assert cond is None
         gstate.cond = cond
@@ -114,7 +109,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [False, True, True, False, False, False, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 2]
         assert cond is None
         gstate.cond = cond
@@ -127,7 +121,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [False, True, True, False, False, False, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 2]
         assert cond is None
         gstate.cond = cond
@@ -140,7 +133,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, False, False, False, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 2]
         assert cond is None
         gstate.cond = cond
@@ -154,7 +146,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, False, True, False, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 8]
         assert cond is None
         gstate.cond = cond
@@ -169,7 +160,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, True, True, False, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [14, 8]
         assert cond is None
         gstate.cond = cond
@@ -182,7 +172,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [14, 10]
         assert cond is None
         gstate.cond = cond
@@ -195,7 +184,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [22, 10]
         assert cond is None
         gstate.cond = cond
@@ -208,7 +196,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [22, 12]
         assert cond is None
         gstate.cond = cond
@@ -221,7 +208,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [22, 12]
         assert cond is None
         gstate.cond = cond
@@ -236,7 +222,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [22, 18]
         assert cond is None
         gstate.cond = cond
@@ -249,7 +234,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [22, 18]
         assert cond is None
         gstate.cond = cond
@@ -262,7 +246,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [22, 20]
         assert cond is None
         gstate.cond = cond
@@ -275,7 +258,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [24, 20]
         assert cond is None
         gstate.cond = cond
@@ -288,7 +270,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [25, 23]
         assert cond.name == "ROUND_WIN"
         gstate.cond = cond
@@ -301,7 +282,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, True, False, False]
         assert game.unlocked == [False, False, False, False, False, False, False, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [1, 5]
 
     def test_round_2_move_1(self, gstate):
@@ -312,7 +292,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, True, False, False]
         assert game.unlocked == [False, False, False, False, False, False, True, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [1, 5]
         assert cond is None
         gstate.cond = cond
@@ -325,7 +304,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, True, False, False]
         assert game.unlocked == [False, False, False, True, False, False, True, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [1, 5]
         assert cond is None
         gstate.cond = cond
@@ -338,7 +316,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, True, False, False]
         assert game.unlocked == [False, False, False, True, False, False, True, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [1, 5]
         assert cond is None
         gstate.cond = cond
@@ -351,7 +328,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, True, False, False]
         assert game.unlocked == [True, False, False, True, False, False, True, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [3, 5]
         assert cond is None
         gstate.cond = cond
@@ -364,7 +340,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, True, False, False]
         assert game.unlocked == [True, False, False, True, False, False, True, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [3, 5]
         assert cond is None
         gstate.cond = cond
@@ -377,7 +352,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, True, False, False]
         assert game.unlocked == [True, False, False, True, False, False, True, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [3, 5]
         assert cond is None
         gstate.cond = cond
@@ -390,7 +364,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, True, False, False]
         assert game.unlocked == [True, False, False, True, True, False, True, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [3, 5]
         assert cond is None
         gstate.cond = cond
@@ -403,7 +376,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, True, False, False]
         assert game.unlocked == [True, False, False, True, True, False, True, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [3, 5]
         assert cond is None
         gstate.cond = cond
@@ -416,7 +388,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, True, False, False]
         assert game.unlocked == [True, False, False, True, True, False, True, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [3, 7]
         assert cond is None
         gstate.cond = cond
@@ -429,7 +400,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, True, False, False]
         assert game.unlocked == [True, True, False, True, True, False, True, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [3, 7]
         assert cond is None
         gstate.cond = cond
@@ -442,7 +412,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, True, False, False]
         assert game.unlocked == [True, True, False, True, True, False, True, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [3, 7]
         assert cond is None
         gstate.cond = cond
@@ -455,7 +424,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, True, False, False]
         assert game.unlocked == [True, True, False, True, True, False, True, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [3, 7]
         assert cond is None
         gstate.cond = cond
@@ -468,7 +436,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, True, False, False]
         assert game.unlocked == [True, True, False, True, True, False, True, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [3, 7]
         assert cond is None
         gstate.cond = cond
@@ -481,7 +448,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, True, False, False]
         assert game.unlocked == [True, True, False, True, True, False, True, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [5, 7]
         assert cond is None
         gstate.cond = cond
@@ -494,7 +460,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, True, False, False]
         assert game.unlocked == [True, True, False, True, True, False, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [5, 13]
         assert cond is None
         gstate.cond = cond
@@ -507,7 +472,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, True, False, False]
         assert game.unlocked == [True, True, True, True, True, False, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [15, 13]
         assert cond is None
         gstate.cond = cond
@@ -520,7 +484,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, True, False, False]
         assert game.unlocked == [True, True, True, True, True, False, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [15, 13]
         assert cond is None
         gstate.cond = cond
@@ -533,7 +496,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, True, False, False]
         assert game.unlocked == [True, True, True, True, True, False, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [17, 13]
         assert cond is None
         gstate.cond = cond
@@ -546,7 +508,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, True, False, False]
         assert game.unlocked == [True, True, True, True, True, False, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [17, 23]
         assert cond is None
         gstate.cond = cond
@@ -559,7 +520,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, True, False, False]
         assert game.unlocked == [True, True, True, True, True, False, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [19, 23]
         assert cond is None
         gstate.cond = cond
@@ -572,7 +532,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, True, False, False]
         assert game.unlocked == [True, True, True, True, True, False, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [19, 23]
         assert cond is None
         gstate.cond = cond
@@ -585,7 +544,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, True, False, False]
         assert game.unlocked == [True, True, True, True, True, False, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [21, 23]
         assert cond is None
         gstate.cond = cond
@@ -598,7 +556,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, True, False, False]
         assert game.unlocked == [True, True, True, True, True, False, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [21, 23]
         assert cond is None
         gstate.cond = cond
@@ -612,7 +569,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, True, False, False]
         assert game.unlocked == [True, True, True, True, True, False, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [24, 24]
         assert cond.name == "ROUND_TIE"
         gstate.cond = cond
@@ -626,7 +582,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [False, False, False, False, False, False, False, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 0]
 
     def test_round_3_move_1(self, gstate):
@@ -637,7 +592,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [False, True, False, False, False, False, False, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 0]
         assert cond is None
         gstate.cond = cond
@@ -650,7 +604,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [False, True, False, False, False, True, False, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 0]
         assert cond is None
         gstate.cond = cond
@@ -663,7 +616,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [False, True, True, False, False, True, False, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 0]
         assert cond is None
         gstate.cond = cond
@@ -676,7 +628,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [False, True, True, False, True, True, False, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 2]
         assert cond is None
         gstate.cond = cond
@@ -689,7 +640,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [False, True, True, False, True, True, False, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 2]
         assert cond is None
         gstate.cond = cond
@@ -702,7 +652,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [False, True, True, False, True, True, False, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 2]
         assert cond is None
         gstate.cond = cond
@@ -715,7 +664,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [False, True, True, True, True, True, False, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 2]
         assert cond is None
         gstate.cond = cond
@@ -728,7 +676,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [False, True, True, True, True, True, False, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 2]
         assert cond is None
         gstate.cond = cond
@@ -741,7 +688,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, True, True, True, False, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 2]
         assert cond is None
         gstate.cond = cond
@@ -754,7 +700,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, True, True, True, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 8]
         assert cond is None
         gstate.cond = cond
@@ -767,7 +712,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, True, True, True, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [6, 8]
         assert cond is None
         gstate.cond = cond
@@ -780,7 +724,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, True, True, True, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [6, 8]
         assert cond is None
         gstate.cond = cond
@@ -793,7 +736,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, True, True, True, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [8, 8]
         assert cond is None
         gstate.cond = cond
@@ -806,7 +748,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, True, True, True, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [8, 14]
         assert cond is None
         gstate.cond = cond
@@ -819,7 +760,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, True, True, True, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [8, 14]
         assert cond is None
         gstate.cond = cond
@@ -832,7 +772,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [8, 28]
         assert cond is None
         gstate.cond = cond
@@ -845,7 +784,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [12, 28]
         assert cond is None
         gstate.cond = cond
@@ -858,7 +796,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [12, 28]
         assert cond is None
         gstate.cond = cond
@@ -871,7 +808,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [12, 28]
         assert cond is None
         gstate.cond = cond
@@ -884,7 +820,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [12, 28]
         assert cond is None
         gstate.cond = cond
@@ -897,7 +832,6 @@ class TestBechiGame44:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [16, 32]
         assert cond.name == "ROUND_WIN"
         gstate.cond = cond
@@ -910,7 +844,6 @@ class TestBechiGame44:
         assert game.blocked == [False, True, True, False, False, False, False, False]
         assert game.unlocked == [False, False, False, False, False, False, False, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [4, 8]
 
     def test_round_4_move_1(self, gstate):
@@ -921,7 +854,6 @@ class TestBechiGame44:
         assert game.blocked == [False, True, True, False, False, False, False, False]
         assert game.unlocked == [False, False, False, False, True, False, False, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [4, 8]
         assert cond is None
         gstate.cond = cond
@@ -935,7 +867,6 @@ class TestBechiGame44:
         assert game.blocked == [False, True, True, False, False, False, False, False]
         assert game.unlocked == [False, False, False, True, True, False, False, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [8, 8]
         assert cond is None
         gstate.cond = cond
@@ -948,7 +879,6 @@ class TestBechiGame44:
         assert game.blocked == [False, True, True, False, False, False, False, False]
         assert game.unlocked == [False, False, False, True, True, False, True, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [8, 8]
         assert cond is None
         gstate.cond = cond
@@ -961,7 +891,6 @@ class TestBechiGame44:
         assert game.blocked == [False, True, True, False, False, False, False, False]
         assert game.unlocked == [True, False, False, True, True, False, True, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [12, 8]
         assert cond is None
         gstate.cond = cond
@@ -974,7 +903,6 @@ class TestBechiGame44:
         assert game.blocked == [False, True, True, False, False, False, False, False]
         assert game.unlocked == [True, False, False, True, True, False, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [12, 24]
         assert cond is None
         gstate.cond = cond
@@ -987,7 +915,6 @@ class TestBechiGame44:
         assert game.blocked == [False, True, True, False, False, False, False, False]
         assert game.unlocked == [True, False, False, True, True, False, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [12, 24]
         assert cond is None
         gstate.cond = cond
@@ -1000,7 +927,6 @@ class TestBechiGame44:
         assert game.blocked == [False, True, True, False, False, False, False, False]
         assert game.unlocked == [True, False, False, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [12, 36]
         assert cond.name == "ROUND_WIN"
         gstate.cond = cond
@@ -1013,7 +939,6 @@ class TestBechiGame44:
         assert game.blocked == [False, True, True, False, False, False, False, False]
         assert game.unlocked == [False, False, False, False, False, False, False, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 12]
 
     def test_round_5_move_1(self, gstate):
@@ -1024,7 +949,6 @@ class TestBechiGame44:
         assert game.blocked == [False, True, True, False, False, False, False, False]
         assert game.unlocked == [False, False, False, True, False, False, False, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 12]
         assert cond is None
         gstate.cond = cond
@@ -1037,7 +961,6 @@ class TestBechiGame44:
         assert game.blocked == [False, True, True, False, False, False, False, False]
         assert game.unlocked == [False, False, False, True, True, False, False, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 16]
         assert cond is None
         gstate.cond = cond
@@ -1050,7 +973,6 @@ class TestBechiGame44:
         assert game.blocked == [False, True, True, False, False, False, False, False]
         assert game.unlocked == [True, False, False, True, True, False, False, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 16]
         assert cond is None
         gstate.cond = cond
@@ -1063,7 +985,6 @@ class TestBechiGame44:
         assert game.blocked == [False, True, True, False, False, False, False, False]
         assert game.unlocked == [True, False, False, True, True, False, True, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 24]
         assert cond is None
         gstate.cond = cond
@@ -1076,7 +997,6 @@ class TestBechiGame44:
         assert game.blocked == [False, True, True, False, False, False, False, False]
         assert game.unlocked == [True, False, False, True, True, False, True, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 24]
         assert cond is None
         gstate.cond = cond
@@ -1089,7 +1009,6 @@ class TestBechiGame44:
         assert game.blocked == [False, True, True, False, False, False, False, False]
         assert game.unlocked == [True, False, False, True, True, False, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 36]
         assert cond is None
         gstate.cond = cond
@@ -1102,7 +1021,6 @@ class TestBechiGame44:
         assert game.blocked == [False, True, True, False, False, False, False, False]
         assert game.unlocked == [True, False, False, True, True, False, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 36]
         assert cond is None
         gstate.cond = cond
@@ -1117,7 +1035,6 @@ class TestBechiGame44:
         assert game.blocked == [False, True, True, False, False, False, False, False]
         assert game.unlocked == [True, False, False, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 48]
         assert cond.name == "WIN"
         gstate.cond = cond
@@ -1136,7 +1053,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [False, False, False, False, False, False, False, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 0]
 
     def test_round_1_move_1(self, gstate):
@@ -1147,7 +1063,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [False, False, True, False, False, False, False, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 0]
         assert cond is None
         gstate.cond = cond
@@ -1160,7 +1075,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [False, False, True, False, False, False, True, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 0]
         assert cond is None
         gstate.cond = cond
@@ -1173,7 +1087,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, False, True, False, False, False, True, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 0]
         assert cond is None
         gstate.cond = cond
@@ -1186,7 +1099,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, False, True, False, False, False, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 4]
         assert cond is None
         gstate.cond = cond
@@ -1199,7 +1111,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, False, True, True, False, False, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 4]
         assert cond is None
         gstate.cond = cond
@@ -1212,7 +1123,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, False, True, True, False, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 4]
         assert cond is None
         gstate.cond = cond
@@ -1225,7 +1135,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, False, True, True, False, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 4]
         assert cond is None
         gstate.cond = cond
@@ -1238,7 +1147,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, False, True, True, False, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 4]
         assert cond is None
         gstate.cond = cond
@@ -1251,7 +1159,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, False, True, True, False, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 4]
         assert cond is None
         gstate.cond = cond
@@ -1264,7 +1171,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, False, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 4]
         assert cond is None
         gstate.cond = cond
@@ -1277,7 +1183,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, False, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 4]
         assert cond is None
         gstate.cond = cond
@@ -1290,7 +1195,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, False, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [0, 4]
         assert cond is None
         gstate.cond = cond
@@ -1303,7 +1207,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, False, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [2, 4]
         assert cond is None
         gstate.cond = cond
@@ -1316,7 +1219,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, False, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [2, 4]
         assert cond is None
         gstate.cond = cond
@@ -1329,7 +1231,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, False, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [4, 4]
         assert cond is None
         gstate.cond = cond
@@ -1342,7 +1243,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, False, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [4, 4]
         assert cond is None
         gstate.cond = cond
@@ -1355,7 +1255,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, False, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [14, 4]
         assert cond is None
         gstate.cond = cond
@@ -1368,7 +1267,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, False, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [14, 4]
         assert cond is None
         gstate.cond = cond
@@ -1381,7 +1279,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, False, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [16, 4]
         assert cond is None
         gstate.cond = cond
@@ -1394,7 +1291,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, False, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [16, 4]
         assert cond is None
         gstate.cond = cond
@@ -1407,7 +1303,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, False, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [18, 4]
         assert cond is None
         gstate.cond = cond
@@ -1420,7 +1315,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, False, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [18, 4]
         assert cond is None
         gstate.cond = cond
@@ -1433,7 +1327,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, False, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [20, 4]
         assert cond is None
         gstate.cond = cond
@@ -1446,7 +1339,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, False, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [20, 4]
         assert cond is None
         gstate.cond = cond
@@ -1459,7 +1351,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [30, 4]
         assert cond is None
         gstate.cond = cond
@@ -1472,7 +1363,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [30, 4]
         assert cond is None
         gstate.cond = cond
@@ -1485,7 +1375,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [34, 4]
         assert cond is None
         gstate.cond = cond
@@ -1498,7 +1387,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [34, 4]
         assert cond is None
         gstate.cond = cond
@@ -1511,7 +1399,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [34, 4]
         assert cond is None
         gstate.cond = cond
@@ -1524,7 +1411,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [34, 6]
         assert cond is None
         gstate.cond = cond
@@ -1537,7 +1423,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [34, 6]
         assert cond is None
         gstate.cond = cond
@@ -1550,7 +1435,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, False, False, False, False]
         assert game.unlocked == [True, True, True, True, True, True, True, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [37, 11]
         assert cond.name == "ROUND_WIN"
         gstate.cond = cond
@@ -1563,7 +1447,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [False, False, False, False, False, False, False, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [13, 5]
 
     def test_round_2_move_1(self, gstate):
@@ -1574,7 +1457,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [False, False, False, False, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [13, 7]
         assert cond is None
         gstate.cond = cond
@@ -1587,7 +1469,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [False, False, False, True, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [15, 7]
         assert cond is None
         gstate.cond = cond
@@ -1600,7 +1481,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [False, False, False, True, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [15, 7]
         assert cond is None
         gstate.cond = cond
@@ -1613,7 +1493,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [False, False, True, True, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [17, 7]
         assert cond is None
         gstate.cond = cond
@@ -1626,7 +1505,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [False, False, True, True, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [17, 7]
         assert cond is None
         gstate.cond = cond
@@ -1639,7 +1517,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [True, False, True, True, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [21, 7]
         assert cond is None
         gstate.cond = cond
@@ -1652,7 +1529,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [True, False, True, True, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [21, 7]
         assert cond is None
         gstate.cond = cond
@@ -1665,7 +1541,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [True, True, True, True, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [25, 7]
         assert cond is None
         gstate.cond = cond
@@ -1678,7 +1553,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [True, True, True, True, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [25, 7]
         assert cond is None
         gstate.cond = cond
@@ -1691,7 +1565,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [True, True, True, True, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [29, 7]
         assert cond is None
         gstate.cond = cond
@@ -1704,7 +1577,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [True, True, True, True, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [29, 7]
         assert cond is None
         gstate.cond = cond
@@ -1717,7 +1589,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [True, True, True, True, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [29, 7]
         assert cond is None
         gstate.cond = cond
@@ -1730,7 +1601,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [True, True, True, True, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [29, 7]
         assert cond is None
         gstate.cond = cond
@@ -1743,7 +1613,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [True, True, True, True, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [29, 7]
         assert cond is None
         gstate.cond = cond
@@ -1756,7 +1625,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [True, True, True, True, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [29, 11]
         assert cond is None
         gstate.cond = cond
@@ -1769,7 +1637,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [True, True, True, True, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [37, 11]
         assert cond.name == "ROUND_WIN"
         gstate.cond = cond
@@ -1782,7 +1649,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [False, False, False, False, False, False, False, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [13, 5]
 
     def test_round_3_move_1(self, gstate):
@@ -1793,7 +1659,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [False, True, False, False, False, False, False, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [15, 5]
         assert cond is None
         gstate.cond = cond
@@ -1806,7 +1671,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [False, True, False, False, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [15, 5]
         assert cond is None
         gstate.cond = cond
@@ -1819,7 +1683,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [False, True, True, False, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [19, 5]
         assert cond is None
         gstate.cond = cond
@@ -1832,7 +1695,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [False, True, True, False, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [19, 5]
         assert cond is None
         gstate.cond = cond
@@ -1845,7 +1707,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [True, True, True, False, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [27, 5]
         assert cond is None
         gstate.cond = cond
@@ -1858,7 +1719,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [True, True, True, False, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [27, 5]
         assert cond is None
         gstate.cond = cond
@@ -1871,7 +1731,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [True, True, True, True, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [27, 5]
         assert cond is None
         gstate.cond = cond
@@ -1884,7 +1743,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [True, True, True, True, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [27, 5]
         assert cond is None
         gstate.cond = cond
@@ -1897,7 +1755,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [True, True, True, True, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [37, 5]
         assert cond is None
         gstate.cond = cond
@@ -1910,7 +1767,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [True, True, True, True, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [37, 7]
         assert cond is None
         gstate.cond = cond
@@ -1923,7 +1779,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [True, True, True, True, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [41, 7]
         assert cond.name == "ROUND_WIN"
         gstate.cond = cond
@@ -1936,7 +1791,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [False, False, False, False, False, False, False, False]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [17, 1]
 
     def test_round_4_move_1(self, gstate):
@@ -1947,7 +1801,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [False, False, False, False, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [17, 3]
         assert cond is None
         gstate.cond = cond
@@ -1960,7 +1813,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [True, False, False, False, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [19, 3]
         assert cond is None
         gstate.cond = cond
@@ -1973,7 +1825,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [True, False, False, False, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [19, 3]
         assert cond is None
         gstate.cond = cond
@@ -1986,7 +1837,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [True, True, False, False, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [21, 3]
         assert cond is None
         gstate.cond = cond
@@ -1999,7 +1849,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [True, True, False, False, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [21, 3]
         assert cond is None
         gstate.cond = cond
@@ -2012,7 +1861,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [True, True, False, False, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [21, 3]
         assert cond is None
         gstate.cond = cond
@@ -2025,7 +1873,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [True, True, False, False, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [21, 3]
         assert cond is None
         gstate.cond = cond
@@ -2038,7 +1885,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [True, True, True, False, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [27, 3]
         assert cond is None
         gstate.cond = cond
@@ -2051,7 +1897,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [True, True, True, False, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [27, 3]
         assert cond is None
         gstate.cond = cond
@@ -2064,7 +1909,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [True, True, True, True, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [37, 3]
         assert cond is None
         gstate.cond = cond
@@ -2077,7 +1921,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [True, True, True, True, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [37, 3]
         assert cond is None
         gstate.cond = cond
@@ -2090,7 +1933,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [True, True, True, True, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [37, 3]
         assert cond is None
         gstate.cond = cond
@@ -2103,7 +1945,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [True, True, True, True, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [37, 3]
         assert cond is None
         gstate.cond = cond
@@ -2116,7 +1957,6 @@ class TestBechi38:
         assert game.blocked == [False, False, False, False, True, True, True, False]
         assert game.unlocked == [True, True, True, True, False, False, False, True]
         assert game.child == [None, None, None, None, None, None, None, None]
-        assert game.owner == [None, None, None, None, None, None, None, None]
         assert game.store == [44, 4]
         assert cond.name == "WIN"
         gstate.cond = cond

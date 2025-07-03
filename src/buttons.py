@@ -171,13 +171,7 @@ class HoleButton(tk.Canvas):
         if game.info.no_sides:
             return None
 
-        if self.props.owner in {False, True}:
-            return self.props.owner
-
-        if game.cts.board_side(0):
-            return game.cts.board_side(self.loc)
-
-        return not self.row
+        return self.props.owner
 
 
     def color_side(self):
@@ -188,13 +182,7 @@ class HoleButton(tk.Canvas):
         if game.info.no_sides:
             return game.turn
 
-        if self.props.owner in {False, True}:
-            return self.props.owner
-
-        if game.cts.board_side(0):
-            return game.cts.board_side(self.loc)
-
-        return not self.row
+        return self.props.owner
 
 
     def rotate_text(self):

@@ -839,28 +839,28 @@ class TestDelegates:
 class TestBProp:
 
 
-    @pytest.mark.parametrize('goal, moveunlock, allow_rule, eunlock, eowner',
+    @pytest.mark.parametrize('goal, moveunlock, allow_rule, eunlock',
                              [[Goal.MAX_SEEDS, False, AllowRule.NONE,
-                               [T, T, T, T], [N, N, N, N]],
+                               [T, T, T, T]],
 
                               [Goal.TERRITORY, False, AllowRule.NONE,
-                               [T, T, T, T], [F, F, T, T]],
+                               [T, T, T, T]],
 
                               [Goal.MAX_SEEDS, False, AllowRule.MOVE_ALL_HOLES_FIRST,
-                               [F, F, F, F], [N, N, N, N]],
+                               [F, F, F, F]],
 
                               [Goal.TERRITORY, False, AllowRule.MOVE_ALL_HOLES_FIRST,
-                               [F, F, F, F], [F, F, T, T]],
+                               [F, F, F, F]],
 
                               [Goal.MAX_SEEDS, True, AllowRule.NONE,
-                                [F, F, F, F], [N, N, N, N]],
+                                [F, F, F, F]],
 
                                [Goal.TERRITORY, True, AllowRule.NONE,
-                                [F, F, F, F], [F, F, T, T]],
+                                [F, F, F, F]],
 
                                # other two combos are invalid and tested below
                              ])
-    def test_init_bprop(self, goal, moveunlock, allow_rule, eunlock, eowner):
+    def test_init_bprop(self, goal, moveunlock, allow_rule, eunlock):
 
         game_consts = gconsts.GameConsts(nbr_start=2, holes=2)
         game_info = gi.GameInfo(goal=Goal(goal),
@@ -879,7 +879,7 @@ class TestBProp:
         assert game.child == [N, N, N, N]
         assert game.blocked == [F, F, F, F]
         assert game.unlocked == eunlock
-        assert game.owner == eowner
+        assert game.owner == [F, F, T, T]
 
 
     @pytest.mark.parametrize('goal, moveunlock, allow_rule',

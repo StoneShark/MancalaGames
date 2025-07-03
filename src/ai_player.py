@@ -6,7 +6,6 @@ Created on Fri Oct 13 14:40:46 2023
 @author: Ann"""
 
 import dataclasses as dc
-import functools as ft
 import random
 
 import ai_interface
@@ -195,20 +194,16 @@ class AiPlayer(ai_interface.AiPlayerIf):
                      self._score_cnt_empties,
                      self._score_diff_empties)]
 
-        if self.game.info.goal == gi.Goal.TERRITORY:
-            # pylint: disable=unnecessary-lambda-assignment
-            who_func = lambda loc: self.game.owner[loc]
-        else:
-            who_func = self.game.cts.board_side
+        # use count for no_sides games that not east west
+        use_count = self.game.info.no_sides and not self.game.cts.board_side(0)
 
         for param, cnt_func, diff_func in scorers:
             if getattr(self.sc_params, param):
 
-                # if board_side(0) is True, it's an EAST/WEST game
-                if self.game.info.no_sides and not self.game.cts.board_side(0):
+                if use_count:
                     self.scorers += [cnt_func]
                 else:
-                    self.scorers += [ft.partial(diff_func, who_func)]
+                    self.scorers += [diff_func]
 
 
     def clear_history(self):
@@ -292,7 +287,7 @@ class AiPlayer(ai_interface.AiPlayerIf):
         return (child_f - child_t) * self.sc_params.child_cnt_m
 
 
-    def _score_diff_evens(self, who_func, _):
+    def _score_diff_evens(self, _):
         """Score evens on each side of the board.
         If capturing on evens, having evens prevents captures."""
 
@@ -303,7 +298,7 @@ class AiPlayer(ai_interface.AiPlayerIf):
                     and self.game.board[loc]
                     and not self.game.board[loc] % 2):
 
-                who = who_func(loc)
+                who = self.game.owner[loc]
                 if who is True:
                     even_t += 1
                 elif who is False:
@@ -326,7 +321,7 @@ class AiPlayer(ai_interface.AiPlayerIf):
         return even_cnt * self.sc_params.evens_m * tmult
 
 
-    def _score_diff_seeds(self, who_func, _):
+    def _score_diff_seeds(self, _):
         """Score the seeds on each side of the board.
         Sometimes hoarding seeds is a good strategy."""
 
@@ -334,7 +329,7 @@ class AiPlayer(ai_interface.AiPlayerIf):
         for loc in range(self.game.cts.dbl_holes):
             if self.game.child[loc] is None:
 
-                who = who_func(loc)
+                who = self.game.owner[loc]
                 if who is True:
                     sum_t += self.game.board[loc]
                 elif who is False:
@@ -354,7 +349,7 @@ class AiPlayer(ai_interface.AiPlayerIf):
         return seeds_sum * self.sc_params.seeds_m * tmult
 
 
-    def _score_diff_empties(self, who_func, _):
+    def _score_diff_empties(self, _):
         """Score the number of empties on each side of the board.
         Without empties, cross captures cannot occur."""
 
@@ -362,7 +357,7 @@ class AiPlayer(ai_interface.AiPlayerIf):
         for loc in range(self.game.cts.dbl_holes):
             if self.game.child[loc] is None and not self.game.board[loc]:
 
-                who = who_func(loc)
+                who = self.game.owner[loc]
                 if who is True:
                     empty_t += 1
                 elif who is False:

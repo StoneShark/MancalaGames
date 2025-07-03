@@ -45,8 +45,8 @@ HOLES = 4
 START = 3
 
 ALL_HOLES = list(range(HOLES))
-NONES = [N, N, N, N, N, N, N, N]
 
+SIDES = [F, F, F, F, T, T, T, T]
 
 # %% support function
 
@@ -217,17 +217,17 @@ SETUPS = {
 
     'twos_t': SetupOpts(turn=True,
                         board=[2, 2, 2, 2, 2, 2, 2, 2],
-                        owner=NONES),
+                        owner=SIDES),
     'twos_f': SetupOpts(turn=False,
                         board=[2, 2, 2, 2, 2, 2, 2, 2],
-                        owner=NONES),
+                        owner=SIDES),
 
     'ms_1_1_2_4_f': SetupOpts(turn=False,
                               board=[1, 1, 2, 4, 0, 0, 0, 0],
-                              owner=NONES),
+                              owner=SIDES),
     'ms_1_1_2_4_t': SetupOpts(turn=True,
                               board=[0, 0, 0, 0, 1, 1, 2, 4],
-                              owner=NONES),
+                              owner=SIDES),
 
     'terr_f': SetupOpts(turn=False,
                         board=[2, 2, 2, 2, 2, 2, 2, 2],

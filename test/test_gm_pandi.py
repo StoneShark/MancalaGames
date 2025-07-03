@@ -44,7 +44,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [0, 0]
 
     def test_round_1_move_1(self, gstate):
@@ -55,7 +54,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [0, 15]
         assert cond is None
         gstate.cond = cond
@@ -68,7 +66,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [8, 15]
         assert cond is None
         gstate.cond = cond
@@ -81,7 +78,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [8, 30]
         assert cond is None
         gstate.cond = cond
@@ -94,7 +90,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [23, 30]
         assert cond is None
         gstate.cond = cond
@@ -107,7 +102,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [23, 36]
         assert cond is None
         gstate.cond = cond
@@ -120,7 +114,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [23, 36]
         assert cond is None
         gstate.cond = cond
@@ -133,7 +126,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [23, 36]
         assert cond is None
         gstate.cond = cond
@@ -146,7 +138,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [24, 40]
         assert cond is None
         gstate.cond = cond
@@ -159,7 +150,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [24, 40]
         assert cond is None
         gstate.cond = cond
@@ -172,7 +162,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [24, 40]
         assert cond is None
         gstate.cond = cond
@@ -185,7 +174,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [24, 41]
         assert cond is None
         gstate.cond = cond
@@ -198,7 +186,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [24, 41]
         assert cond is None
         gstate.cond = cond
@@ -211,7 +198,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [24, 41]
         assert cond is None
         gstate.cond = cond
@@ -224,7 +210,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [24, 41]
         assert cond is None
         gstate.cond = cond
@@ -237,7 +222,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [24, 41]
         assert cond is None
         gstate.cond = cond
@@ -250,7 +234,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [25, 41]
         assert cond is None
         gstate.cond = cond
@@ -263,7 +246,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [25, 41]
         assert cond is None
         gstate.cond = cond
@@ -276,7 +258,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [25, 41]
         assert cond is None
         gstate.cond = cond
@@ -289,7 +270,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [25, 41]
         assert cond is None
         gstate.cond = cond
@@ -302,7 +282,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [25, 41]
         assert cond is None
         gstate.cond = cond
@@ -315,7 +294,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [25, 41]
         assert cond is None
         gstate.cond = cond
@@ -328,7 +306,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [25, 41]
         assert cond is None
         gstate.cond = cond
@@ -341,7 +318,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [25, 41]
         assert cond is None
         gstate.cond = cond
@@ -354,7 +330,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [25, 41]
         assert cond is None
         gstate.cond = cond
@@ -367,7 +342,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [25, 41]
         assert cond is None
         gstate.cond = cond
@@ -380,7 +354,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [26, 41]
         assert cond is None
         gstate.cond = cond
@@ -393,7 +366,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [26, 41]
         assert cond is None
         gstate.cond = cond
@@ -406,7 +378,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [26, 41]
         assert cond is None
         gstate.cond = cond
@@ -419,7 +390,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [26, 41]
         assert cond is None
         gstate.cond = cond
@@ -432,7 +402,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [27, 41]
         assert cond is None
         gstate.cond = cond
@@ -445,7 +414,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [27, 41]
         assert cond is None
         gstate.cond = cond
@@ -458,7 +426,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [29, 41]
         assert cond.name == "ROUND_WIN"
         gstate.cond = cond
@@ -471,7 +438,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [4, 6]
 
     def test_round_2_move_1(self, gstate):
@@ -482,7 +448,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [16, 6]
         assert cond is None
         gstate.cond = cond
@@ -495,7 +460,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [16, 22]
         assert cond is None
         gstate.cond = cond
@@ -508,7 +472,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [20, 22]
         assert cond is None
         gstate.cond = cond
@@ -521,7 +484,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [24, 40]
         assert cond is None
         gstate.cond = cond
@@ -534,7 +496,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [24, 40]
         assert cond is None
         gstate.cond = cond
@@ -547,7 +508,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [24, 41]
         assert cond is None
         gstate.cond = cond
@@ -560,7 +520,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [25, 41]
         assert cond is None
         gstate.cond = cond
@@ -573,7 +532,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [25, 45]
         assert cond.name == "ROUND_WIN"
         gstate.cond = cond
@@ -586,7 +544,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [0, 10]
 
     def test_round_3_move_1(self, gstate):
@@ -597,7 +554,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [0, 22]
         assert cond is None
         gstate.cond = cond
@@ -610,7 +566,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [10, 22]
         assert cond is None
         gstate.cond = cond
@@ -623,7 +578,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [14, 32]
         assert cond is None
         gstate.cond = cond
@@ -636,7 +590,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [22, 32]
         assert cond is None
         gstate.cond = cond
@@ -649,7 +602,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [22, 37]
         assert cond is None
         gstate.cond = cond
@@ -662,7 +614,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [22, 37]
         assert cond is None
         gstate.cond = cond
@@ -675,7 +626,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [22, 37]
         assert cond is None
         gstate.cond = cond
@@ -688,7 +638,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [23, 37]
         assert cond is None
         gstate.cond = cond
@@ -701,7 +650,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [23, 39]
         assert cond is None
         gstate.cond = cond
@@ -714,7 +662,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [27, 39]
         assert cond is None
         gstate.cond = cond
@@ -727,7 +674,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [27, 43]
         assert cond.name == "ROUND_WIN"
         gstate.cond = cond
@@ -740,7 +686,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [2, 8]
 
     def test_round_4_move_1(self, gstate):
@@ -751,7 +696,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [14, 8]
         assert cond is None
         gstate.cond = cond
@@ -764,7 +708,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [14, 18]
         assert cond is None
         gstate.cond = cond
@@ -777,7 +720,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [24, 22]
         assert cond is None
         gstate.cond = cond
@@ -790,7 +732,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [24, 34]
         assert cond is None
         gstate.cond = cond
@@ -803,7 +744,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [32, 34]
         assert cond is None
         gstate.cond = cond
@@ -816,7 +756,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [32, 34]
         assert cond is None
         gstate.cond = cond
@@ -829,7 +768,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [32, 34]
         assert cond is None
         gstate.cond = cond
@@ -842,7 +780,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [32, 34]
         assert cond is None
         gstate.cond = cond
@@ -855,7 +792,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [32, 34]
         assert cond is None
         gstate.cond = cond
@@ -868,7 +804,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [32, 36]
         assert cond is None
         gstate.cond = cond
@@ -881,7 +816,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [32, 36]
         assert cond is None
         gstate.cond = cond
@@ -894,7 +828,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [32, 36]
         assert cond is None
         gstate.cond = cond
@@ -907,7 +840,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [32, 36]
         assert cond is None
         gstate.cond = cond
@@ -920,7 +852,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, T, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [32, 38]
         assert cond.name == "ROUND_WIN"
         gstate.cond = cond
@@ -933,7 +864,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [2, 3]
 
     def test_round_5_move_1(self, gstate):
@@ -944,7 +874,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [2, 11]
         assert cond is None
         gstate.cond = cond
@@ -957,7 +886,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [31, 19]
         assert cond is None
         gstate.cond = cond
@@ -970,7 +898,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [31, 19]
         assert cond is None
         gstate.cond = cond
@@ -983,7 +910,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [46, 19]
         assert cond is None
         gstate.cond = cond
@@ -996,7 +922,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [46, 20]
         assert cond is None
         gstate.cond = cond
@@ -1009,7 +934,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [48, 20]
         assert cond is None
         gstate.cond = cond
@@ -1022,7 +946,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [48, 20]
         assert cond is None
         gstate.cond = cond
@@ -1035,7 +958,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [48, 20]
         assert cond is None
         gstate.cond = cond
@@ -1048,7 +970,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [48, 20]
         assert cond is None
         gstate.cond = cond
@@ -1061,7 +982,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [48, 20]
         assert cond is None
         gstate.cond = cond
@@ -1074,7 +994,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [48, 20]
         assert cond is None
         gstate.cond = cond
@@ -1087,7 +1006,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [48, 20]
         assert cond is None
         gstate.cond = cond
@@ -1100,7 +1018,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [48, 20]
         assert cond is None
         gstate.cond = cond
@@ -1113,7 +1030,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [48, 20]
         assert cond is None
         gstate.cond = cond
@@ -1126,7 +1042,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, T, F, F, F, F, F, F, F]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [48, 22]
         assert cond.name == "ROUND_WIN"
         gstate.cond = cond
@@ -1139,7 +1054,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, T, T, T]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [13, 2]
 
     def test_round_6_move_1(self, gstate):
@@ -1150,7 +1064,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, T, T, T]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [35, 2]
         assert cond is None
         gstate.cond = cond
@@ -1163,7 +1076,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, T, T, T]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [39, 6]
         assert cond is None
         gstate.cond = cond
@@ -1176,7 +1088,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, T, T, T]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [47, 14]
         assert cond is None
         gstate.cond = cond
@@ -1189,7 +1100,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, T, T, T]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [47, 16]
         assert cond is None
         gstate.cond = cond
@@ -1202,7 +1112,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, T, T, T]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [51, 16]
         assert cond is None
         gstate.cond = cond
@@ -1215,7 +1124,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, T, T, T]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [51, 16]
         assert cond is None
         gstate.cond = cond
@@ -1228,7 +1136,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, T, T, T]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [51, 16]
         assert cond is None
         gstate.cond = cond
@@ -1241,7 +1148,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, T, T, T]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [51, 16]
         assert cond is None
         gstate.cond = cond
@@ -1254,7 +1160,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, T, T, T]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [51, 16]
         assert cond is None
         gstate.cond = cond
@@ -1267,7 +1172,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, T, T, T]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [51, 17]
         assert cond is None
         gstate.cond = cond
@@ -1280,7 +1184,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, T, T, T]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [53, 17]
         assert cond.name == "ROUND_WIN"
         gstate.cond = cond
@@ -1293,7 +1196,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, T, T, T, T]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [18, 2]
 
     def test_round_7_move_1(self, gstate):
@@ -1304,7 +1206,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, T, T, T, T]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [18, 13]
         assert cond is None
         gstate.cond = cond
@@ -1317,7 +1218,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, T, T, T, T]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [29, 13]
         assert cond is None
         gstate.cond = cond
@@ -1330,7 +1230,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, T, T, T, T]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [29, 22]
         assert cond is None
         gstate.cond = cond
@@ -1343,7 +1242,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, T, T, T, T]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [48, 22]
         assert cond.name == "ROUND_WIN"
         gstate.cond = cond
@@ -1356,7 +1254,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, T, T, T]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [13, 2]
 
     def test_round_8_move_1(self, gstate):
@@ -1367,7 +1264,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, T, T, T]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [35, 2]
         assert cond is None
         gstate.cond = cond
@@ -1380,7 +1276,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, T, T, T]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [35, 2]
         assert cond is None
         gstate.cond = cond
@@ -1393,7 +1288,6 @@ class TestPandi:
         assert game.blocked == [F, F, F, F, F, F, F, F, F, F, F, T, T, T]
         assert game.unlocked == [T, T, T, T, T, T, T, T, T, T, T, T, T, T]
         assert game.child == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
-        assert game.owner == [N, N, N, N, N, N, N, N, N, N, N, N, N, N]
         assert game.store == [68, 2]
         assert cond.name == "WIN"
         gstate.cond = cond

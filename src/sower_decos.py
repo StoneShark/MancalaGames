@@ -219,13 +219,7 @@ class SowCaptOwned(SowMethodIf):
 
         if game.info.sow_rule == gi.SowRule.OWN_SOW_CAPT_ALL:
 
-            # no added conditions, only need to determine capturer
-
-            if game.info.goal == gi.Goal.TERRITORY:
-                self.captor = lambda loc, turn: game.owner[loc]
-
-            else:
-                self.captor = lambda loc, turn: game.cts.board_side(loc)
+            self.captor = lambda loc, turn: game.owner[loc]
 
         else:  #  self.game.info.sow_rule == gi.SowRule.SOW_CAPT_ALL
 
@@ -236,23 +230,13 @@ class SowCaptOwned(SowMethodIf):
                                             gi.CaptSide.OWN_CONT,
                                             gi.CaptSide.OWN_TERR):
 
-                if game.info.goal == gi.Goal.TERRITORY:
-                    self.conds += [lambda scnt, loc, turn:
-                                       turn == game.owner[loc]]
-                else:
-                    self.conds += [lambda scnt, loc, turn:
-                                       turn == game.cts.board_side(loc)]
+                self.conds += [lambda scnt, loc, turn: turn == game.owner[loc]]
 
             elif self.game.info.capt_side in (gi.CaptSide.OPP_SIDE,
                                               gi.CaptSide.OPP_CONT,
                                               gi.CaptSide.OPP_TERR):
 
-                if game.info.goal == gi.Goal.TERRITORY:
-                    self.conds += [lambda scnt, loc, turn:
-                                       turn != game.owner[loc]]
-                else:
-                    self.conds += [lambda scnt, loc, turn:
-                                       turn != game.cts.board_side(loc)]
+                self.conds += [lambda scnt, loc, turn: turn != game.owner[loc]]
 
         # LAPPER do not pick on the last seed, it's captured instead
         if game.info.mlaps == gi.LapSower.LAPPER:
