@@ -1,0 +1,25 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 6,
+      "nbr_start": 7
+   },
+   "game_info": {
+      "name": "K\u00e2ra",
+      "about": "Sow counter-clockwise.\n\nIf the final seed lands on opponents side of the board or the player's own most counter-clockwise hole, capture all opponents holes with 2, 4 and 6 seeds.\n\nGoal: capture the most seeds.\n",
+      "capt_type": 5,
+      "capt_on": [ 2, 4, 6 ],
+      "mustpass": true,
+      "capt_side": 1,
+      "pickextra": 2,
+      "sow_direct": 1,
+      "stores": true,
+      "unclaimed": 1,
+      "quitter": 1
+   },
+   "player": {
+      "ai_params": { "mm_depth": [ 1, 3, 5, 7 ] },
+      "scorer": { "stores_m": 4 }
+   },
+   "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p148."
+}

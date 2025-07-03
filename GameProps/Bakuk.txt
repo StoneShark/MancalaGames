@@ -6,9 +6,10 @@
    },
    "game_info": {
       "name": "Bakuk",
-      "about": "Single lap mancala, sow counter-clockwise.\n\nCapture on 2s and 4s. Do multiple captures of immediately preceding holes also with 2 or 4 seeds (multiple capture stops before hole not with 2 or 4 seeds).\n\nGoal: capture more than half of the seeds.\n",
+      "about": "Single lap mancala, sow counter-clockwise.\n\nCapture on 2s and 4s. Do multiple captures of immediately preceding holes also with 2 or 4 seeds (multiple capture stops before hole not with 2 or 4 seeds).\n\nGoal: capture more than half of the seeds.\n\nVariation:\n\n- board size 3 to 6 holes per side.\n\n- end the game when a player has no seeds on their turn (no mustpass).\n\n- capture in sow direction--following holes, instead of preceeding holes.",
       "capt_on": [ 2, 4 ],
       "multicapt": -1,
+      "mustpass": true,
       "capt_side": 0,
       "sow_direct": 1,
       "stores": true
@@ -23,5 +24,10 @@
          "evens_m": -1
       }
    },
-   "rules": "https://mancala.fandom.com/wiki/Bakuk"
+   "vari_params": {
+      "holes": [ 3, 4, 5, 6 ],
+      "mustpass": "include",
+      "capt_dir": [ 0, 1 ]
+   },
+   "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p144."
 }
