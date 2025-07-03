@@ -83,7 +83,6 @@ CONFIG_CASES = {
     'Depouiller': Config(-1),   # DEPRIVE no win_seeds
 
     'Diffusion': Config(-1),  # Diffusion class
-    'DiffusionV2': Config(-1),  # DiffusionV2 class
 
     'Endodoi': Config(8*4, 2),
     'Enkeshui': Config(24, 2),   # start pattern
