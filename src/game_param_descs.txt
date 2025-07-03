@@ -358,9 +358,9 @@ The name of the Game Class. One of:
   
   + The game is basically preconfigured, only the board size can be changed to any even size. Game goal must be CLEAR.
 
-- DiffusionV2 (also a game)
+- <b class="inhead">DiffusionV2</b>
 
-  + Like <nolink>Diffusion but players control the typical north/south sides of the board.
+  + Like <nolink>Diffusion but players control the typical north/south sides of the board. Used as a game variant in the game Diffusion.
 
 - SameSide  (also a game)
 
