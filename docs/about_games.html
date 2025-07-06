@@ -116,7 +116,7 @@ common board sizes: 6, 7 or 12
 <li class="helptext">
 change number of holes required for win (<a href="game_params.html#goal_param">GOAL_PARAM</a>)
 <li class="helptext">
-don't allow passing (<a href="game_params.html#mustpass">MUSTPASS</a>)
+don't allow passing (<a href="game_params.html#mustpass">MUSTPASS</a> off)
 <li class="helptext">
 <a href="game_params.html#prescribed">PRESCRIBED</a> opening PLUS1MINUS1
 <li class="helptext">
@@ -125,6 +125,8 @@ repeat turn on capture (<a href="game_params.html#capt_rturn">CAPT_RTURN</a>)
 only sower captures during sowing (<a href="game_params.html#sow_rule">SOW_RULE</a>: SOW_CAPT_ALL)
 <li class="helptext">
 when 8 seeds or fewer, the round starter takes them (<a href="game_params.html#pickextra">PICKEXTRA</a>: PICK2NLASTSEEDS)
+<li class="helptext">
+don't use round fill (<a href="game_params.html#round_fill">ROUND_FILL</a>) of Winner Chooses Owners (UCHOWN), see <a href="about_games.html#NumNum">NumNum</a>
 <li class="helptext">
 see <a href="about_games.html#Lam Waladach">Lam Waladach</a>
 </ul>
@@ -463,26 +465,7 @@ capture in sow direction--following holes, instead of preceeding holes.
   </div>
 </div>
 <p>Rules: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p144.
-<h3 id="Bao (Kenyan)" class="game_desc">Bao (Kenyan)</h3>
-<p>Multi-lap, counter-clockwise sow. Minimum move is 2, unless all occupied holes have single seeds which may only be moved to empty holes. Cross-capture. The game ends when one player has more than half the seeds or when the current player cannot move.
-<p>Variation: Single seed can begin multilap sow (allow_rule: SINGLE_ONLY_ALL).
-<div class="cols_row">
-  <div class="column2">
-    <p class="param">Holes per side:  8</p>
-    <p class="param">Start seeds:  2</p>
-    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
-    <p class="param"><a href="game_params.html#allow_rule">Special Move Restrictions</a>: SINGLE_ALL_TO_ZERO</p>
-    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OPP_SIDE</p>
-  </div>
-  <div class="column2">
-    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
-    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
-    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
-    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
-  </div>
-</div>
-<p>Rules: Russ, Laurence. Mancala Games. 1984. p31.
-<h3 id="Bao (Tanzanian)" class="game_desc">Bao (Tanzanian)</h3>
+<h3 id="Bao" class="game_desc">Bao</h3>
 <p>The starting player may choose to rearrange the seeds on their side of the board. The opponent's side will be arranged in the same manner from their perspective. If the player chooses to rearrange the board, it counts as their opening move. If they do not so choose, they cannot make a child or capture until their opponent does either.
 <p>Sow is multi-lap in a counter-clockwise direction. Sowing the final seed of a lap to 4 on opposite side, creates a child which will collect seedd but can't be captured. A child may not be created with a single seed in a move that was initiated from the player's rightmost hole. Moves may not start from children.
 <p>Cross-capture on opponent's side. On capture, take the seed initiating the capture. Multiple captures may be made in sow direction as long as the player's side holes are empty. Seeds from child holes may not be captured.
@@ -903,7 +886,7 @@ allow closing of rightmost holes (<a href="game_params.html#sow_rule">SOW_RULE</
 <p>Rules: Ann Davies, 2025.
 <h3 id="Diffusion" class="game_desc">Diffusion</h3>
 <p>A mancala game with a unique sow pattern. Right player owns right 6 holes. Left player owns left 6 holes--AI plays this side if enabled.
-<p>Goal: clear your side of the board.
+<p>Goal: clear your own holes.
 <p>Game rules: Copyright (c) January 2006 by Mark Steere. See pdf file for rules.
 <p>Variation: In DiffusionV2, players own the typical North and South sides of the board. The Ownership Arrows display option might be useful to distinguish which is being played.
 <div class="cols_row">
@@ -2169,7 +2152,18 @@ unless all the player's holes contain 2, then only the rightmost hole maybe play
 </div>
 <p>Rules: <a href="http://www.oware.org/nam_nam.asp" target="_blank">http://www.oware.org/nam_nam.asp</a>
 <h3 id="Ndoto" class="game_desc">Ndoto</h3>
-<p>Sow multi-lap and counter-clockwise. Single seed sow may not start multilaps. Cross capture.
+<p>Sow multi-lap and counter-clockwise. Single seed sow may not start multilaps, that is, a single seeds may only be moved to empty holes.
+<p>Cross capture when single seeds ends in own hole, capture seeds from across the board. Leave the seed effecting the capture on your side of the board.
+<p>The game ends when one player has more than half the seeds or when the current player cannot move.
+<p>Goal: collect the most seeds.
+<p>Variations:
+<ul><li class="helptext">
+Minimum move of 2, unless all occupied holes have single seeds without a limit on where single seeds can be moved (<a href="game_params.html#allow_rule">ALLOW_RULE</a>: SINGLE_ONLY_ALL).
+<li class="helptext">
+Minimum move of 2, unless all occupied holes have single seeds which may only be moved to empty holes (<a href="game_params.html#allow_rule">ALLOW_RULE</a>: SINGLE_ALL_TO_ZERO). Called <nolink>Bao by Russ p31.
+<li class="helptext">
+board size choice included to make game easier.
+</ul>
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  8</p>
@@ -2295,7 +2289,7 @@ common board sizes: 6, 7 or 12
 <li class="helptext">
 change number of holes required for win (<a href="game_params.html#goal_param">GOAL_PARAM</a>)
 <li class="helptext">
-don't allow passing (<a href="game_params.html#mustpass">MUSTPASS</a>)
+don't allow passing (<a href="game_params.html#mustpass">MUSTPASS</a> off)
 <li class="helptext">
 <a href="game_params.html#prescribed">PRESCRIBED</a> opening PLUS1MINUS1
 <li class="helptext">
@@ -2304,6 +2298,8 @@ repeat turn on capture (<a href="game_params.html#capt_rturn">CAPT_RTURN</a>)
 only sower captures during sowing (<a href="game_params.html#sow_rule">SOW_RULE</a>: SOW_CAPT_ALL)
 <li class="helptext">
 when 8 seeds or fewer, the round starter takes them (<a href="game_params.html#pickextra">PICKEXTRA</a>: PICK2NLASTSEEDS)
+<li class="helptext">
+use round fill (<a href="game_params.html#round_fill">ROUND_FILL</a>) of Winner Chooses Owners (UCHOWN), see <a href="about_games.html#Adi">Adi</a>
 <li class="helptext">
 see <a href="about_games.html#Lam Waladach">Lam Waladach</a>
 </ul>
@@ -3437,8 +3433,7 @@ any odd number of seeds
     <p class="param"><a href="#Ayoayo">Ayoayo</a></p>
     <p class="param"><a href="#Ba-awa">Ba-awa</a></p>
     <p class="param"><a href="#Bakuk">Bakuk</a></p>
-    <p class="param"><a href="#Bao (Kenyan)">Bao (Kenyan)</a></p>
-    <p class="param"><a href="#Bao (Tanzanian)">Bao (Tanzanian)</a></p>
+    <p class="param"><a href="#Bao">Bao</a></p>
     <p class="param"><a href="#Bay Khom">Bay Khom</a></p>
     <p class="param"><a href="#Bechi">Bechi</a></p>
     <p class="param"><a href="#Bohnenspiel">Bohnenspiel</a></p>
@@ -3510,9 +3505,9 @@ any odd number of seeds
     <p class="param"><a href="#NoSides">NoSides</a></p>
     <p class="param"><a href="#NS_Kalah">NS_Kalah</a></p>
     <p class="param"><a href="#Nsa Isong">Nsa Isong</a></p>
-    <p class="param"><a href="#NumNum">NumNum</a></p>
   </div>
   <div class="column3">
+    <p class="param"><a href="#NumNum">NumNum</a></p>
     <p class="param"><a href="#Obridjie">Obridjie</a></p>
     <p class="param"><a href="#Ohojichi">Ohojichi</a></p>
     <p class="param"><a href="#Ohvulhu">Ohvulhu</a></p>

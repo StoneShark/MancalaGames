@@ -1,0 +1,43 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 7,
+      "nbr_start": 4
+   },
+   "game_info": {
+      "name": "Bao",
+      "about": "The starting player may choose to rearrange the seeds on their side of the board. The opponent's side will be arranged in the same manner from their perspective. If the player chooses to rearrange the board, it counts as their opening move. If they do not so choose, they cannot make a child or capture until their opponent does either.\n\nSow is multi-lap in a counter-clockwise direction. Sowing the final seed of a lap to 4 on opposite side, creates a child which will collect seedd but can't be captured. A child may not be created with a single seed in a move that was initiated from the player's rightmost hole. Moves may not start from children.\n\nCross-capture on opponent's side. On capture, take the seed initiating the capture. Multiple captures may be made in sow direction as long as the player's side holes are empty. Seeds from child holes may not be captured.\n\nPlayed in rounds. Each round ends when the current player does not have a move or there is only one seed left in play without children. The game ends when one player cannot fill a single hole.\n\nAt the start of each round, the board is resized to the number of holes that the player with fewer seeds can fill completely. If the board size is reduced to 3 or less per side, no children may be created.",
+      "blocks": true,
+      "capt_dir": 1,
+      "child_cvt": 4,
+      "child_rule": 3,
+      "child_type": 1,
+      "crosscapt": true,
+      "mlaps": 1,
+      "multicapt": -1,
+      "capt_side": 1,
+      "prescribed": 5,
+      "round_fill": 5,
+      "round_starter": 2,
+      "rounds": 2,
+      "sow_direct": 1,
+      "stores": true,
+      "visit_opp": true,
+      "xcpickown": 1
+   },
+   "player": {
+      "scorer": {
+         "stores_m": 4,
+         "access_m": 0,
+         "seeds_m": 0,
+         "empties_m": -1,
+         "child_cnt_m": 4,
+         "easy_rand": 6
+      },
+      "algorithm": "negamaxer",
+      "ai_params": {
+         "mm_depth": [1, 1, 3, 5]
+      }
+   },
+   "rules": "Russ, Laurence. Mancala Games. 1984. p43."   
+}
