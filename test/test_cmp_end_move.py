@@ -72,8 +72,7 @@ Config = collections.namedtuple('Config',
 
 CONFIG_CASES = {
     'Ayoayo': Config(24),       # mustshare no NoOutcomeChange
-    'Bao_Kenyan': Config(16, 2),
-    'Bao_Tanzanian': Config(52, 2, 4),  # child but capt also
+    'Bao': Config(52, 2, 4),  # child but capt also
     'Bechi': Config(42, 0, 6),  # NoOutcomeChange dupl EndGameNotPlayable  (NOC dupl EGNP)
     'Bosh': Config(36, 2, 4),
     'Cow': Config(5*5),   # NOC dupl EGNP
@@ -266,58 +265,59 @@ END_CASES = {
 
     ],  # end Ayoayo
 
-    'Bao_Kenyan': [
-        #                  1  2  3  4  5  6  7  8\/
-        # 0: not over
-        [make_state(board=(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0),
-                    store=(15, 15)),
-         None, None],
-        # 1: F max seed win
-        [make_state(board=(0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-                    store=(17, 14)),
-         gi.WinCond.WIN, False],
-        # 2: T max seed win
-        [make_state(board=(2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
-                    store=(5, 17)),
-         gi.WinCond.WIN, True],
+    # would be great if these could be tested as a variant of Ndoto
+    # 'Bao_Kenyan': [
+    #     #                  1  2  3  4  5  6  7  8\/
+    #     # 0: not over
+    #     [make_state(board=(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0),
+    #                 store=(15, 15)),
+    #      None, None],
+    #     # 1: F max seed win
+    #     [make_state(board=(0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+    #                 store=(17, 14)),
+    #      gi.WinCond.WIN, False],
+    #     # 2: T max seed win
+    #     [make_state(board=(2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
+    #                 store=(5, 17)),
+    #      gi.WinCond.WIN, True],
 
-        # 3: Tie game - no moves
-        [make_state(board=(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-                    store=(8, 8)),
-         gi.WinCond.TIE, None],
+    #     # 3: Tie game - no moves
+    #     [make_state(board=(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    #                 store=(8, 8)),
+    #      gi.WinCond.TIE, None],
 
-        # 4: true moved, False has a move but NoOutcomeChange gets seed and ties
-        [make_state(board=(0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0),
-                    store=(15, 16),
-                    turn=True),
-         gi.WinCond.TIE, None],
+    #     # 4: true moved, False has a move but NoOutcomeChange gets seed and ties
+    #     [make_state(board=(0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0),
+    #                 store=(15, 16),
+    #                 turn=True),
+    #      gi.WinCond.TIE, None],
 
-        # 5:  true moved, false has no move, True collects seed
-        [make_state(board=(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0),
-                    store=(15, 16),
-                    turn=True),
-         gi.WinCond.WIN, True],
+    #     # 5:  true moved, false has no move, True collects seed
+    #     [make_state(board=(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0),
+    #                 store=(15, 16),
+    #                 turn=True),
+    #      gi.WinCond.WIN, True],
 
-        # 6: end of F turn but T doesn't have a move, collect seeds F wins
-        [make_state(board=(0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0),
-                    store=(16, 15),
-                    turn=False),
-         gi.WinCond.WIN, False],
+    #     # 6: end of F turn but T doesn't have a move, collect seeds F wins
+    #     [make_state(board=(0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0),
+    #                 store=(16, 15),
+    #                 turn=False),
+    #      gi.WinCond.WIN, False],
 
-        # 7: end of T turn but F doesn't have a move, collect seeds T wins
-        [make_state(board=(0, 0, 0, 0, 0, 1, 1, 1, 4, 0, 0, 0, 0, 0, 0, 0),
-                    store=(11, 14),
-                    turn=True),
-         gi.WinCond.WIN, True],
-        # 8: even though F doesn't have a move, F still wins after collecting seeds
-        [make_state(board=(0, 0, 0, 0, 0, 1, 1, 1, 4, 0, 0, 0, 0, 0, 0, 0),
-                    store=(14, 11),
-                    turn=True),
-         gi.WinCond.WIN, False],
+    #     # 7: end of T turn but F doesn't have a move, collect seeds T wins
+    #     [make_state(board=(0, 0, 0, 0, 0, 1, 1, 1, 4, 0, 0, 0, 0, 0, 0, 0),
+    #                 store=(11, 14),
+    #                 turn=True),
+    #      gi.WinCond.WIN, True],
+    #     # 8: even though F doesn't have a move, F still wins after collecting seeds
+    #     [make_state(board=(0, 0, 0, 0, 0, 1, 1, 1, 4, 0, 0, 0, 0, 0, 0, 0),
+    #                 store=(14, 11),
+    #                 turn=True),
+    #      gi.WinCond.WIN, False],
 
-    ],  # end Bao_Kenyan
+    # ],  # end Bao_Kenyan
 
-    'Bao_Tanzanian': [
+    'Bao': [
         #                  1  2  3  4  5  6  7\/7  6  5  4  3  2  1
         # 0: start game
         [make_state(board=(4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4),
