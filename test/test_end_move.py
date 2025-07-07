@@ -1409,10 +1409,11 @@ class TestQuitter:
                                claimer.TakeOwnSeeds),
                               (gi.EndGameSeeds.DONT_SCORE, True, True,
                                claimer.TakeOnlyChildNStores),
-                              (gi.EndGameSeeds.UNFED_PLAYER, True, True,
-                               claimer.TakeOnlyChildNStores),
                               (gi.EndGameSeeds.LAST_MOVER, True, True,
                                claimer.TakeAllUnclaimed),
+
+                              (gi.EndGameSeeds.UNFED_PLAYER, True, True,
+                               claimer.DivvySeedsStores),
 
                               # child and stores are used
                               (gi.EndGameSeeds.DIVVIED, False, False, None),

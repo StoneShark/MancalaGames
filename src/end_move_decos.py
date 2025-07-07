@@ -152,16 +152,16 @@ class EndTurnIf(deco_chain_if.DecoChainIf):
             win_seeds = EndTurnIf.round_seeds_for_win(self.game.info.goal_param,
                                                       self.game.cts.nbr_start)
 
+        # this test must be after the territory test
+        elif self.game.info.rounds in (gi.Rounds.END_S_SEEDS,
+                                       gi.Rounds.END_2S_SEEDS):
+            win_seeds = self.game.cts.total_seeds - 1
+
         elif (game_goal == gi.Goal.MAX_SEEDS
               or self.game.info.rounds == gi.Rounds.HALF_SEEDS):
             # do this math in case a start_pattern leaves an odd total seeds
             half, rem = divmod(self.game.cts.total_seeds, 2)
             win_seeds = half + rem
-
-        # this test must be after the territory test
-        elif self.game.info.rounds in (gi.Rounds.END_S_SEEDS,
-                                       gi.Rounds.END_2S_SEEDS):
-            win_seeds = self.game.cts.total_seeds - 1
 
         else:
             raise gi.GameInfoError("Don't know how to compute seeds for win.")

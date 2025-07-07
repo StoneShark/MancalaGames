@@ -902,6 +902,15 @@ def test_rules(ginfo, holes, skip=None):
         msg='Shared seeds from MUSTSHARE might not be playable with min_move > 1',
         warn=rule_tester.PRINT_MSG)
 
+    tester.test_rule('rnd_score_setup',
+        rule=lambda ginfo: (ginfo.rounds
+                            and ginfo.goal not in round_tally.RoundTally.GOALS
+                            and (ginfo.unclaimed == gi.EndGameSeeds.DONT_SCORE
+                                 or ginfo.quitter == gi.EndGameSeeds.DONT_SCORE)),
+        msg="""Games which use scored seeds to set up the next round
+             cannot use DONT_SCORE""",
+        excp=gi.GameInfoError)
+
     tester.test_rule('unfed_mustshare',
         rule=lambda ginfo: (ginfo.unclaimed == gi.EndGameSeeds.UNFED_PLAYER
                             and not ginfo.mustshare),
@@ -911,7 +920,7 @@ def test_rules(ginfo, holes, skip=None):
     tester.test_rule('unfed_quitter',
         rule=lambda ginfo: ginfo.quitter == gi.EndGameSeeds.UNFED_PLAYER,
         msg="""EndGameSeeds UNFED_PLAYER should not be used as a QUITTER
-            (DONT_SCORE will be used)""",
+            (DIVVIED will be used)""",
         warn=True)
 
     tester.test_rule('p1m1_conflict',

@@ -227,14 +227,14 @@ def pick_base_quitter(game):
     elif game.info.quitter == gi.EndGameSeeds.HOLE_OWNER:
         sclaimer = claimer.TakeOwnSeeds(game)
 
-    elif game.info.quitter in (gi.EndGameSeeds.DONT_SCORE,
-                               gi.EndGameSeeds.UNFED_PLAYER):
+    elif game.info.quitter == gi.EndGameSeeds.DONT_SCORE:
         sclaimer = claimer.TakeOnlyChildNStores(game)
 
     elif game.info.quitter == gi.EndGameSeeds.LAST_MOVER:
         sclaimer = claimer.TakeAllUnclaimed(game)
 
-    elif game.info.quitter == gi.EndGameSeeds.DIVVIED:
+    elif game.info.quitter in (gi.EndGameSeeds.DIVVIED,
+                               gi.EndGameSeeds.UNFED_PLAYER):
         if game.info.stores:
             sclaimer = claimer.DivvySeedsStores(game)
 
