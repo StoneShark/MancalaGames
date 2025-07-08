@@ -678,7 +678,10 @@ class ConfigData:
         if key in self._config[DEFAULT]:
             return self._config[DEFAULT][key].lower() in {'yes', 'true'}
 
-        return DEFAULTS[key] in  {'yes', 'true'}
+        if key in DEFAULTS:
+            return DEFAULTS[key] in  {'yes', 'true'}
+
+        return False
 
 
     def get_font(self):
