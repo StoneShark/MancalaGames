@@ -7,6 +7,9 @@ game play.
 Created on Thu Mar  2 14:38:17 2023
 @author: Ann"""
 
+# pylint: disable=too-many-lines
+
+
 # %% imports
 
 import functools as ft
@@ -24,6 +27,7 @@ import format_msg as fmt
 import game_info as gi
 import game_logger
 import game_tally as gt
+import inhibitor
 import mancala
 import man_config
 import man_history
@@ -64,6 +68,10 @@ class TkVars:
             man_ui.master, man_config.CONFIG.get_bool('touch_screen'))
         self.owner_arrows = tk.BooleanVar(
             man_ui.master, man_config.CONFIG.get_bool('owner_arrows'))
+
+        # if available, must be visible for construction
+        iavail = InhibitIndicator.needed(man_ui.game.inhibitor)
+        self.show_inhibit = tk.BooleanVar(man_ui.master, iavail)
 
         self.log_ai = tk.BooleanVar(man_ui.master, False)
         game_log.live = man_config.CONFIG.get_bool('log_live')
@@ -160,10 +168,6 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
 
         self.pack(expand=True, fill=tk.BOTH)
 
-        self._menubar = None
-        self._create_menus()
-        self._key_bindings(active=True)
-
         self.tally = None
         self.rframe = None
         self._add_statuses()
@@ -171,12 +175,14 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
         self.disp = [[None] * self.game.cts.holes,
                      [None] * self.game.cts.holes]
         self.stores = None
+        self.inhibits = None
         self._add_board()
 
-        tally = man_config.CONFIG.get_bool('show_tally')
-        self.tkvars.show_tally.set(tally)
-        if not tally:
-            self.tally_frame.forget()
+        self._menubar = None
+        self._create_menus()
+        self._key_bindings(active=True)
+
+        self.show_update_after_const()
 
         animator.make_animator(self)
         animator.configure(font=man_config.CONFIG.get_ani_font(),
@@ -187,7 +193,6 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
 
         self.no_endless_sows()
         self.new_game()
-        self.refresh()
         self.schedule_ai()
 
 
@@ -196,6 +201,9 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
 
         self.tally_frame = tk.Frame(self)
         self.tally_frame.pack(side=tk.TOP, expand=True, fill=tk.X)
+
+        # create this and never hide it, to force resizing
+        tk.Frame(self.tally_frame, width=1, height=1).grid(row=1, column=0)
 
         lframe = tk.Frame(self.tally_frame, padx=5, pady=5,
                           borderwidth=3, relief=tk.RIDGE)
@@ -212,6 +220,8 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
         self.rframe = tk.Frame(self.tally_frame, padx=5, pady=5,
                                borderwidth=3, relief=tk.RIDGE)
         self.rframe.grid(row=0, column=1, sticky=tk.NSEW)
+        # create this and never hide it, to force resizing
+        tk.Frame(self.rframe, width=1, height=1).pack()
 
         self.tally_frame.grid_columnconfigure(0, weight=1, uniform="group1")
         self.tally_frame.grid_columnconfigure(1, weight=1, uniform="group1")
@@ -226,15 +236,6 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
         board_frame = tk.Frame(self, borderwidth=7, relief=tk.RAISED)
         board_frame.pack(side=tk.BOTTOM, expand=True, fill=tk.BOTH)
 
-        if self.info.stores:
-            b_frame = aspect_frame.AspectFrames(board_frame,
-                                                aratio=0.8)
-            b_frame.pad.grid(row=0, column=0, sticky="nsew")
-
-            b_store = buttons.StoreButton(b_frame.content, self, True)
-            b_store.grid(row=0, column=0, sticky="nsew")
-            b_frame.row_col_config()
-
         land_frame = aspect_frame.AspectFrames(board_frame,
                                                aratio=self.game.cts.holes / 2)
         land_frame.pad.grid(row=0, column=1, sticky="nsew")
@@ -245,20 +246,37 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
             for pos in range(self.game.cts.holes):
                 btn = self._build_button(land_frame.content, row, pos, dirs)
                 self.disp[row][pos] = btn
-                self.disp[row][pos].grid(row=row, column=pos,
-                                         sticky="nsew")
+                self.disp[row][pos].grid(row=row, column=pos, sticky="nsew")
         land_frame.row_col_config()
 
+        # add the stores and indicator widgets
+        need_inhibit = InhibitIndicator.needed(self.game.inhibitor)
+        if self.info.stores or need_inhibit:
+            left_frame = tk.Frame(board_frame)
+            left_frame.grid(row=0, column=0, sticky="nsew")
+            right_frame = tk.Frame(board_frame)
+            right_frame.grid(row=0, column=2, sticky="nsew")
+
+            # create these and never remove them to force resizing
+            tk.Frame(left_frame, width=1, height=1).grid(row=0, column=3)
+            tk.Frame(right_frame, width=1, height=1).grid(row=0, column=3)
+
         if self.info.stores:
-            a_frame = aspect_frame.AspectFrames(board_frame,
-                                                aratio=0.8)
-            a_frame.pad.grid(row=0, column=2, sticky="nsew")
+            tstore = self._build_store(left_frame, True)
+            fstore = self._build_store(right_frame, False)
+            self.stores = [tstore, fstore]
 
-            a_store = buttons.StoreButton(a_frame.content, self, False)
-            a_store.grid(row=0, column=0, sticky="nsew")
-            a_frame.row_col_config()
+        if need_inhibit:
+            tinhibit = InhibitIndicator(left_frame, True, self.game.inhibitor)
+            finhibit = InhibitIndicator(right_frame, False, self.game.inhibitor)
+            self.inhibits = [tinhibit, finhibit]
 
-            self.stores = [b_store, a_store]
+        if self.info.stores or need_inhibit:
+            left_frame.grid_rowconfigure(0, weight=1)
+            left_frame.grid_columnconfigure('all', weight=1)
+
+            right_frame.grid_rowconfigure(0, weight=1)
+            right_frame.grid_columnconfigure('all', weight=1)
 
             board_frame.grid_rowconfigure(0, weight=1)
             board_frame.grid_columnconfigure([0, 2], weight=1)
@@ -314,6 +332,21 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
             rght_move = pos
 
         return buttons.HoleButton(land_frame, self, loc, left_move, rght_move)
+
+
+    def _build_store(self, parent, side):
+        """Build a store for the board in an aspect_frame,
+        return the store object."""
+
+        frame = aspect_frame.AspectFrames(parent, aratio=0.8)
+        frame.pad.grid(row=0, column=0, sticky="nsew")
+
+        store = buttons.StoreButton(frame.content, self, side)
+        store.grid(row=0, column=0, sticky="nsew")
+
+        frame.row_col_config()
+
+        return store
 
 
     @staticmethod
@@ -497,10 +530,14 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
 
         self.set_ui_active(True)
         turn = self.game.get_turn()
+
         allows = self.game.get_allowable_holes()
         turn_row = int(not turn)
         ai_turn = self.tkvars.ai_active.get() and turn
         for row in range(2):
+
+            if self.inhibits:
+                self.inhibits[row].update()
 
             player = row == turn_row
             if self.info.stores:
@@ -533,13 +570,34 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
 
 
     def start_it(self):
-        """Do the last steps in starting a new game:
-        log the start and check for ai's turn."""
+        """Do the last steps in starting a new game: log the start,
+        reset the animator state, and check for ai's turn.
+        If the animator is active and anything is inhibited,
+        delay the inhibitor start message until the main
+        window is displayed."""
         game_log.new()
         game_log.turn(0, 'Start Game', self.game)
         self.history.record(self.game.state)
+
+        any_inhibits = (self.game.inhibitor.stop_me_capt(self.game.turn)
+                        or self.game.inhibitor.stop_me_child(self.game.turn))
         self.ani_reset_state()
-        self.schedule_ai()
+        if animator.active() and any_inhibits:
+            self.update_idletasks()
+            self.after(100, self._ani_delayed_startup)
+        else:
+            self.schedule_ai()
+
+
+    def _ani_delayed_startup(self):
+        """Delay the inhibitor message until after the main
+        window is fully rendered.  Use the animator queue to
+        do a final refresh and schedule the ai."""
+
+        self.game.inhibitor.start_ani_msg()
+        animator.animator.queue_callback(self.refresh)
+        animator.animator.queue_callback(self.schedule_ai)
+        self.refresh(ani_ok=True)
 
 
     def _not_playable_new_round(self):
@@ -891,3 +949,68 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
 
             else:
                 self.schedule_ai()
+
+
+class InhibitIndicator(tk.Frame):
+    """An indictor for the state of the inhibitor.
+    Use needed to see if this widget should be created."""
+
+    def __init__(self, parent, turn, inhibit):
+
+        super().__init__(parent)
+        self.inhibit = inhibit
+        self.turn = turn
+
+        self.capts = self.child = None
+        col = ui_utils.Counter()
+
+        if isinstance(inhibit, (inhibitor.InhibitorCaptN,
+                                inhibitor.InhibitorBoth)):
+            self.capts = tk.Label(self, text='Captures',
+                                  anchor='center')
+            self.capts.grid(row=0, column=col.count, padx=2, pady=2)
+
+        if isinstance(inhibit, (inhibitor.InhibitorChildrenOnly,
+                                inhibitor.InhibitorBoth)):
+            self.child = tk.Label(self, text='Children',
+                                  anchor='center')
+            self.child.grid(row=0, column=col.count, padx=2, pady=2)
+
+        self.grid(row=1, column=0)
+
+        self.icolor = man_config.CONFIG['inhibit_color']
+        self.ncolor = man_config.CONFIG['no_inhi_color']
+
+
+    @classmethod
+    def needed(cls, inhibit):
+        """Return True if the inhibitor indicators are useful."""
+
+        return not isinstance(inhibit, inhibitor.InhibitorNone)
+
+
+    def hide(self):
+        """Hide the frame."""
+        self.grid_remove()
+
+
+    def show(self):
+        """Show the frame"""
+        self.grid()
+
+
+    def update(self):
+        """Update the indicator backgrounds to show the state
+        of the indicators."""
+
+        if self.capts:
+            if self.inhibit.stop_me_capt(self.turn):
+                self.capts['background'] = self.icolor
+            else:
+                self.capts['background'] = self.ncolor
+
+        if self.child:
+            if self.inhibit.stop_me_child(self.turn):
+                self.child['background'] = self.icolor
+            else:
+                self.child['background'] = self.ncolor

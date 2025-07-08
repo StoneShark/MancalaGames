@@ -8,6 +8,7 @@ Created on Mon Nov 20 16:12:06 2023
 
 import abc
 
+import animator
 import game_info as gi
 
 from game_logger import game_log
@@ -19,6 +20,10 @@ class InhibitorIf(abc.ABC):
     @abc.abstractmethod
     def new_game(self):
         """Init the inhibitor for a new game (not new round)."""
+
+    def start_ani_msg(self):
+        """Show any message for the start of the game.
+        This is only called if the animator is active."""
 
     @abc.abstractmethod
     def get_state(self):
@@ -66,6 +71,9 @@ class InhibitorNone(InhibitorIf):
     def new_game(self):
         pass
 
+    def start_ani_msg(self):
+        pass
+
     def get_state(self):
         return None
 
@@ -107,6 +115,12 @@ class InhibitorCaptN(InhibitorIf):
         self._captures = True
         game_log.add('Inhibiting captures.', game_log.IMPORT)
 
+
+    def start_ani_msg(self):
+        animator.animator.message(
+            f'Captures Inhibited for {self._expire} Move'
+            + ('s' if self._expire > 1 else ''))
+
     def get_state(self):
         return self._captures
 
@@ -119,15 +133,21 @@ class InhibitorCaptN(InhibitorIf):
             self._captures = False
             if logit:
                 game_log.add('Inhibit captures expired.', game_log.IMPORT)
+                if animator.active():
+                    animator.animator.message('Inhibit Captures Expired')
 
     def set_on(self, turn):
         _ = turn
         self._captures = True
         game_log.add('Inhibiting captures.', game_log.IMPORT)
+        if animator.active():
+            animator.animator.message('Inhibiting Captures')
 
     def set_off(self):
         self._captures = False
         game_log.add('Allowing  captures.', game_log.IMPORT)
+        if animator.active():
+            animator.animator.message('Allowing captures')
 
     def set_child(self, condition):
         _ = condition
@@ -155,6 +175,10 @@ class InhibitorChildrenOnly(InhibitorIf):
         self._children = False
         game_log.add('Clearing inhibit children.', game_log.IMPORT)
 
+    def start_ani_msg(self):
+        if self._children:
+            animator.animator.message('Children Inhibited')
+
     def get_state(self):
         return self._children
 
@@ -168,15 +192,24 @@ class InhibitorChildrenOnly(InhibitorIf):
         _ = turn
         self._children = True
         game_log.add('Setting inhibit children.', game_log.IMPORT)
+        if animator.active():
+            animator.animator.message('Children Inhibited')
 
     def set_off(self):
         game_log.add('Clearing inhibit children.', game_log.IMPORT)
         self._children = False
+        if animator.active():
+            animator.animator.message('Children Allowed')
 
     def set_child(self, condition):
         self._children = condition
         game_log.add(f'Setting inhibit children {condition}.',
                      game_log.IMPORT)
+        if animator.active():
+            if condition:
+                animator.animator.message('Children Inhibited')
+            else:
+                animator.animator.message('Children Allowed')
 
     def stop_me_capt(self, turn):
         _ = turn
@@ -215,6 +248,18 @@ class InhibitorBoth(InhibitorIf):
         self._child_only = False
         game_log.add('Allowing children and captures.', game_log.IMPORT)
 
+    def start_ani_msg(self):
+        """Status of this inhibitor is changed by the new game deco--
+        this is required even though new_game disables the inhibitors."""
+
+        if self._child_only:
+            animator.animator.message('Children Prohibited')
+            return
+
+        if self._captures and self._children:
+            animator.animator.message('Children and Captures Inhibited for '
+                                      + gi.PLAYER_NAMES[self._turn])
+
     def get_state(self):
         return (self._turn, self._captures, self._children, self._child_only)
 
@@ -222,29 +267,43 @@ class InhibitorBoth(InhibitorIf):
         self._turn, self._captures, self._children, self._child_only = istate
 
     def clear_if(self, game, mdata):
+        logit = self._captures or self._children
         if self._test(game, mdata):
             self._captures = False
             self._children = False
-            game_log.add('Allowing children and captures.', game_log.IMPORT)
+            if logit:
+                game_log.add('Allowing children and captures.', game_log.IMPORT)
+                if animator.active():
+                    animator.animator.message('Allowing Children and Captures')
 
     def set_on(self, turn):
         self._turn = turn
         self._captures = True
         self._children = True
-        game_log.add("Inhibiting children and captures for " \
-                     + gi.PLAYER_NAMES[turn] + ".",
+        game_log.add('Inhibiting children and captures for ' \
+                     + gi.PLAYER_NAMES[turn] + '.',
                      game_log.IMPORT)
+        if animator.active():
+            animator.animator.message('Children and Captures Inhibited for '
+                                      + gi.PLAYER_NAMES[turn])
 
     def set_off(self):
         self._turn = None
         self._captures = False
         self._children = False
         game_log.add('Allowing children and captures.', game_log.IMPORT)
+        if animator.active():
+            animator.animator.message('Inhibitor Disabled')
 
     def set_child(self, condition):
         self._child_only = condition
         game_log.add(f'Setting inhibit children {condition} both players.',
                      game_log.IMPORT)
+        if animator.active():
+            if condition:
+                animator.animator.message('Children Inhibited')
+            else:
+                animator.animator.message('Children Allowed')
 
     def stop_me_capt(self, turn):
         return self._turn == turn and self._captures

@@ -87,10 +87,12 @@ class BehaviorGlobal(abc.ABC):
 
 
     def destroy_ui(self):
-        """Remove the children we created in rframe.
+        """Remove the children we created in rframe, leaving the
+        first one created so that the geometry manager will allow
+        shrinking the frame.
         Clear local access to them."""
 
-        for child in self.game_ui.rframe.winfo_children():
+        for child in self.game_ui.rframe.winfo_children()[1:]:
             child.destroy()
 
 

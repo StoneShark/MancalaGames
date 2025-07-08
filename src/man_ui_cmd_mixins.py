@@ -469,6 +469,14 @@ class ShowMenuMixin:
                                  variable=self.tkvars.show_tally,
                                  onvalue=True, offvalue=False,
                                  command=self.show_toggle_tally)
+        iactive = tk.NORMAL if self.inhibits else tk.DISABLED
+        showmenu.add_checkbutton(label='Show Inhibitor Status',
+                                 variable=self.tkvars.show_inhibit,
+                                 onvalue=True, offvalue=False,
+                                 command=self._toggle_inhibitor,
+                                 state=iactive)
+        showmenu.add_command(label='Min Size Window',
+                             command=self.show_min_size)
         showmenu.add_separator()
         showmenu.add_checkbutton(label='Touch Screen',
                                  variable=self.tkvars.touch_screen,
@@ -482,7 +490,30 @@ class ShowMenuMixin:
                                  variable=self.tkvars.owner_arrows,
                                  onvalue=True, offvalue=False,
                                  command=self._toggle_ownership)
+
         menubar.add_cascade(label='Display', menu=showmenu)
+
+
+    def show_update_after_const(self):
+        """Update the items that must be visible when created with
+        the appropriate visibility for the game and configuration
+        file."""
+
+        tally = man_config.CONFIG.get_bool('show_tally')
+        self.tkvars.show_tally.set(tally)
+        if not tally:
+            self.tally_frame.forget()
+
+        show_inhi = bool(self.inhibits
+                         and man_config.CONFIG.get_bool('show_inhibit'))
+        self.tkvars.show_inhibit.set(show_inhi)
+        self._toggle_inhibitor()
+
+
+    def show_min_size(self):
+        """Make the windows it's minimum size."""
+
+        self.master.minsize(0, 0)
 
 
     def show_toggle_tally(self, vis_op=NO_TALLY_OP):
@@ -499,6 +530,7 @@ class ShowMenuMixin:
             self.tally_frame.forget()
             self.tkvars.show_tally.set(False)
             self.tkvars.tally_was_off = False
+            self.show_min_size()
 
         elif self.mode == buttons.Behavior.GAMEPLAY:
             # only allow user toggle when in GAMEPLAY state
@@ -506,10 +538,12 @@ class ShowMenuMixin:
                 self.tally_frame.pack(side=tk.TOP, expand=True, fill=tk.X)
             else:
                 self.tally_frame.forget()
+                self.show_min_size()
 
         else:
             self.bell()
             self.tkvars.show_tally.set(True)
+
 
 
     def show_toggle_facing(self):
@@ -543,6 +577,17 @@ class ShowMenuMixin:
         self.refresh()
 
 
+    def _toggle_inhibitor(self):
+        """Show or hide the inhibitor frame."""
+
+        if self.inhibits:
+            if self.tkvars.show_inhibit.get():
+                self.inhibits[0].show()
+                self.inhibits[1].show()
+            else:
+                self.inhibits[0].hide()
+                self.inhibits[1].hide()
+                self.show_min_size()
 
 
 # %%  animator

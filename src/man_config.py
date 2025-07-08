@@ -468,6 +468,9 @@ DEFAULTS = {
     'south_act_color': '#b2dfee',
     'south_not_color': '#68838b',
 
+    'inhibit_color': 'red',
+    'no_inhi_color': 'green',
+
     'rclick_color': 'grey',
     'grid_color': 'red',
     'grid_density': '25',
@@ -486,7 +489,8 @@ DEFAULTS = {
     'show_tally': 'no',
     'touch_screen': 'no',
     'facing_players': 'no',
-    'ownership_arrows': 'no',
+    'owner_arrows': 'no',
+    'show_inhibit': 'yes',
 
     'disable_animator': 'no',
     'ani_active': 'yes',
@@ -514,7 +518,7 @@ COLORS = ['system_color', 'inactive_color',
           'south_act_color', 'south_not_color',
           'rclick_color', 'grid_color',
           'choose_color', 'seed_color', 'move_color',
-          'ani_background']
+          'ani_background', 'inhibit_color', 'no_inhi_color']
 
 VALID_DENSITY = {'12', '25', '50', '75'}
 VALID_DELAY = {'0', '1', '2'}
@@ -674,7 +678,7 @@ class ConfigData:
         if key in self._config[DEFAULT]:
             return self._config[DEFAULT][key].lower() in {'yes', 'true'}
 
-        return False
+        return DEFAULTS[key] in  {'yes', 'true'}
 
 
     def get_font(self):

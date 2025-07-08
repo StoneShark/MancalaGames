@@ -670,13 +670,12 @@ class Mancala(ai_interface.AiGameIf,
                 return mdata
 
             self.capture_seeds(mdata)
-            if not mdata.repeat_turn:
-                self.inhibitor.clear_if(self, mdata)
 
         # inc these here so that they are right for any calls to allow deco's
         self.mcount += 1
         if not mdata.repeat_turn:
             self.movers += 1
+            self.inhibitor.clear_if(self, mdata)
 
         self.win_conditions(mdata)
         if mdata.win_cond:
