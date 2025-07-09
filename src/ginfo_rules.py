@@ -905,8 +905,8 @@ def test_rules(ginfo, holes, skip=None):
     tester.test_rule('rnd_score_setup',
         rule=lambda ginfo: (ginfo.rounds
                             and ginfo.goal not in round_tally.RoundTally.GOALS
-                            and (ginfo.unclaimed == gi.EndGameSeeds.DONT_SCORE
-                                 or ginfo.quitter == gi.EndGameSeeds.DONT_SCORE)),
+                            and gi.EndGameSeeds.DONT_SCORE in (ginfo.unclaimed,
+                                                               ginfo.quitter)),
         msg="""Games which use scored seeds to set up the next round
              cannot use DONT_SCORE""",
         excp=gi.GameInfoError)
