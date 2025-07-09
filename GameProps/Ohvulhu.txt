@@ -30,22 +30,26 @@
       }
    },
    "variants": {
-      "Base Game (8s)": {},
-      "6 holes & seeds": {
+      "Ohvulhu": {},
+      "Ohvulhu 6": {
          "holes": 6,
-         "nbr_start": 6
+         "nbr_start": 6,
+         "goal_param": 2
       },
-      "7 holes & seeds": {
+      "Ohvulhu 7": {
          "holes": 7,
-         "nbr_start": 7
+         "nbr_start": 7,
+         "goal_param": 3
       },
-      "9 holes & seeds": {
+      "Ohvulhu 9": {
          "holes": 9,
-         "nbr_start": 9
+         "nbr_start": 9,
+         "goal_param": 4
       },
-      "10 holes & seeds": {
+      "Ohvulhu 10": {
          "holes": 10,
-         "nbr_start": 10
+         "nbr_start": 10,
+         "goal_param": 4
       }
    },
    "vari_params": {

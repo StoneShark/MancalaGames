@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Dakon",
-      "about": "A multi-lap mancala played in rounds. Sow direction is counter-clockwise, sow into one's own store. A player may move again when the final seed is sown into their store. \n\nIf a player has no seeds at the start of their turn, they must pass.\n\nCross capture from opponent's side only; pick own seed on capture. \n\nA round ends when one player has sufficient seeds for a game win (71 or more) or all seeds have been moved into the stores.  \n\nTo setup the next round, seeds from each player's store are distributed 7 per hole for as many holes as can be completely filled on the player's side of the board. The player's remaining seeds are put into the player's store. Unfilled holes are out of play for the round, but may be put back into play in subsequent rounds. The player that moved last in a round, starts the next round.\n\nThe game is over when either player cannot fill 4 holes.\n\nVariations:\n\n- played with 6 to 10 holes per side with the number of start seeds equaling number of holes.\n\n- passing disallowed--a player with no moves at the start of their turn loses (no MUSTPASS, Ohvulhu).\n\n- a second capture mechanism in which a seed sown into an empty hole on the opponent's side of the board, captures the seeds on either side of the sown hole, but only if they have the same number of seeds (not supported in Mancala Games).\n",
+      "about": "A multi-lap mancala played in rounds. Sow direction is counter-clockwise, sow into one's own store. A player may move again when the final seed is sown into their store. \n\nIf a player has no seeds at the start of their turn, they must pass.\n\nCross capture from opponent's side only; pick own seed on capture. \n\nA round ends when one player has sufficient seeds for a game win (71 or more) or all seeds have been moved into the stores.\n\nTo setup the next round, seeds from each player's store are distributed 7 per hole for as many holes as can be completely filled on the player's side of the board. The player's remaining seeds are put into the player's store. Unfilled holes are out of play for the round, but may be put back into play in subsequent rounds. The player that moved last in a round, starts the next round.\n\nThe game is over when either player cannot fill 4 holes.\n\nVariations:\n\n- played with 6 to 10 holes per side with the number of start seeds equaling number of holes.\n\n- passing disallowed--a player with no moves at the start of their turn loses (no MUSTPASS, Ohvulhu).\n\n- a second capture mechanism in which a seed sown into an empty hole on the opponent's side of the board, captures the seeds on either side of the sown hole, but only if they have the same number of seeds (not supported in Mancala Games).\n",
       "blocks": true,
       "crosscapt": true,
       "goal_param": 4,
@@ -21,31 +21,37 @@
       "stores": true,
       "xcpickown": 1
    },
-   "variants": {
-       "As Config'ed (7s)": {},
-       "6 holes & seeds": {"holes": 6,
-                           "nbr_start": 6},
-       "8 holes & seeds": {"holes": 8,
-                           "nbr_start": 8},
-       "9 holes & seeds": {"holes": 9,
-                           "nbr_start": 9},
-       "10 holes & seeds": {"holes": 10,
-                            "nbr_start": 10}
-   },
-   "vari_params": {
-      "mustpass": "include",
-      "goal_param": "include"
-   },
    "player": {
-      "ai_params": {
-         "mm_depth": [ 1, 1, 5, 7 ]
-      },
+      "ai_params": { "mm_depth": [ 1, 1, 5, 7 ] },
       "scorer": {
          "stores_m": 16,
          "empties_m": 2,
          "repeat_turn": 40,
          "easy_rand": 20
       }
+   },
+   "variants": {
+      "Dakon": {},
+      "Dakon 6": {
+         "holes": 6,
+         "nbr_start": 6
+      },
+      "Dakon 8": {
+         "holes": 8,
+         "nbr_start": 8
+      },
+      "Dakon 9": {
+         "holes": 9,
+         "nbr_start": 9
+      },
+      "Dakon 10": {
+         "holes": 10,
+         "nbr_start": 10
+      }
+   },
+   "vari_params": {
+      "mustpass": "include",
+      "goal_param": "include"
    },
    "rules": "Russ, Laurence. Mancala Games. 1984. p62.",
    "note": "GOAL_PARAM set to 4 to limit game length",

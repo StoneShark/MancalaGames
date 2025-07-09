@@ -8,7 +8,6 @@ Created on Tue Jun  3 04:35:08 2025
 # %% imports
 
 import collections
-import dataclasses as dc
 import enum
 import tkinter as tk
 import tkinter.simpledialog as tksimpledialog
@@ -25,6 +24,8 @@ import param_consts as pc
 import round_tally
 import ui_utils
 
+
+# %%  classes
 
 class GameVariantError(Exception):
     """Error in GameInfo."""
@@ -54,34 +55,13 @@ class GameVariations:
         self.variants = self.game_config.get(ckey.VARIANTS, {})
 
         # collect the list of all params that can be changed
-        params = set(self.vari_params.keys())
-        options = set()
+        options = set(self.vari_params.keys())
         if self.variants:
             for vdict in self.variants.values():
                 options |= set(vdict.keys())
 
-        if params & options:
-            warnings.warn("VARI_PARAMS and VARIANTS have overlapping parameters. "
-                          "VARI_PARAMS settings will override VARIANTS")
-        self.my_params = params | options
-
+        self.my_params = options
         self.failed = False
-
-
-    def _update_config(self):
-        """Make the config read from the file match the current
-        game.  Cannot assume that all keys that have been changed
-        are in the game configuration."""
-
-        # XXXX not used because we don't know what variant to set
-
-        for param in ckey.GCONST_PARAMS:
-            value = getattr(self.game_ui.game.cts, param)
-            self.game_config[ckey.GAME_CONSTANTS][param] = value
-
-        for fdesc in dc.fields(gi.GameInfo):
-            value = getattr(self.game_ui.game.info, fdesc.name)
-            self.game_config[ckey.GAME_INFO][fdesc.name] = value
 
 
     def _make_consistent(self):
@@ -161,9 +141,6 @@ class GameVariations:
             value = man_config.get_game_value(self.game_ui.game,
                                               param.cspec, key)
 
-            # XXXX can't use this until we are updating the config w/variations
-            #title = param_mixin.goal_param_desc(self.game_config)
-
             title = param.text
             if key == ckey.GOAL_PARAM:
                 goal = self.game_ui.game.info.goal
@@ -206,19 +183,25 @@ class AdjustPopup(param_mixin.ParamMixin, tksimpledialog.Dialog):
         self.vari_params = vari.vari_params
         self.variants = vari.variants
         self.params = vari.ptable
+        self.game_name = self.game_config[ckey.GAME_INFO][ckey.NAME]
         self.tkvars = {}
 
         self.do_it = False
 
         if self.variants:
-            keys = list(self.variants.keys())
+            gamename, vname = man_config.game_name_to_parts(
+                                                 vari.game_ui.game.info.name)
+            vname = vname if vname else gamename
+
             self.tkvars[ckey.VARIANTS] = tk.StringVar(self.master,
-                                                        keys[0],
-                                                        name='varaints')
+                                                      vname,
+                                                      name='varaints')
         for vname in self.vari_params.keys():
             param = self.params[vname]
             self.pm_make_tkvar(param, self.game_config)
             self.pm_copy_config_to_tk(param, self.game_config)
+
+        self.update_tkvars_for_game(vari.game_ui.game)
 
         super().__init__(master, title)
 
@@ -230,12 +213,13 @@ class AdjustPopup(param_mixin.ParamMixin, tksimpledialog.Dialog):
         rcnt = ui_utils.Counter()
 
         if self.variants:
-            lbl = ttk.Label(master, text='Variant Sets')
+            lbl = ttk.Label(master, text='Variant')
             lbl.grid(row=0, column=0,sticky=tk.E)
 
             keys = list(self.variants.keys())
             opmenu = ttk.OptionMenu(master, self.tkvars[ckey.VARIANTS],
-                                    keys[0], *keys)
+                                    self.tkvars[ckey.VARIANTS].get(), *keys,
+                                    command=self.update_tkvars_for_variant)
             opmenu.config(width=2 + max(len(str(val)) for val in keys))
             opmenu.grid(row=0, column=1, pady=2, sticky=tk.W)
             rcnt.increment()
@@ -259,7 +243,7 @@ class AdjustPopup(param_mixin.ParamMixin, tksimpledialog.Dialog):
                   ).pack(side=tk.LEFT, padx=5, pady=5)
 
         tk.Button(bframe, text='Revert', width=6,
-                  command=self.revert, default=tk.ACTIVE
+                  command=self.revert,
                   ).pack(side=tk.LEFT, padx=5, pady=5)
 
         tk.Button(bframe, text='Cancel', width=6, command=self.cancel
@@ -284,18 +268,55 @@ class AdjustPopup(param_mixin.ParamMixin, tksimpledialog.Dialog):
             param = self.params[vname]
             self.pm_copy_tk_to_config(param, self.game_config)
 
-            # value = man_config.get_config_value(
-            #             self.game_config,
-            #             param.cspec, param.option, param.vtype)
-            # print(vname, value)
+        self.game_config[ckey.GAME_INFO][ckey.NAME] = self.game_name
 
 
     def revert(self):
-        """Ignore the settings on the popup and revert to the game file
-        configure, which is already loaded into game config."""
+        """Reset the ui to base game config values"""
 
-        self.do_it = True
-        self.cancel()
+        if self.variants:
+            key_list = list(self.variants.keys())
+            self.tkvars[ckey.VARIANTS].set(key_list[0])
+
+        for vname in self.vari_params.keys():
+            param = self.params[vname]
+            self.pm_copy_config_to_tk(param, self.game_config)
+
+
+    def update_tkvars_for_game(self, game):
+        """Load the tk variables with the values corresponding
+        to the game.  Variant is already set."""
+
+        for vname in self.vari_params.keys():
+            param = self.params[vname]
+            value = man_config.get_game_value(game, param.cspec, vname)
+            self.pm_set_tk_var(param, value)
+
+
+    def update_tkvars_for_variant(self, _=None):
+        """When a variant is selected, update any duplicate vari_params
+        to match it.
+        If the variants dict is empty, reset to the game_config."""
+
+        vari_name = self.tkvars[ckey.VARIANTS].get()
+        if not self.variants[vari_name]:
+            self.game_name = self.game_config[ckey.GAME_INFO][ckey.NAME]
+
+            for vname in self.vari_params.keys():
+                param = self.params[vname]
+                self.pm_copy_config_to_tk(param, self.game_config)
+            return
+
+        self.game_name = man_config.qual_game_name(self.game_config, vari_name)
+        vkeys = self.vari_params.keys()
+        for vname, fvalue in self.variants[vari_name].items():
+
+            if vname not in vkeys:
+                continue
+
+            param = self.params[vname]
+            value = man_config.convert_from_file(vname, fvalue)
+            self.pm_set_tk_var(param, value)
 
 
 # %% variant tests
@@ -319,7 +340,8 @@ def possible_values(vparam, variants):
 
     for vdict in variants.values():
         for pname, pvalue in vdict.items():
-            params[pname] |= {pvalue}
+            if params[pname] is not True:
+                params[pname] |= {pvalue}
 
     return params
 
@@ -424,7 +446,7 @@ def test_vari_params(game_dict, vparams):
     test_include_goal_param(game_dict, vparams)
 
 
-def test_variants_param(variants):
+def test_variants_param(game_dict, variants):
     """Test the variants section."""
 
     if not variants:
@@ -435,8 +457,12 @@ def test_variants_param(variants):
             Is the base game variant missing?"""
         raise GameVariantError(msg)
 
-    # first item has an empty dictionary
+    # first item has game name key and an empty dictionary
     vlist = list(variants.items())
+    if vlist[0][0] != game_dict[ckey.GAME_INFO][ckey.NAME]:
+        msg="""The first variant should have the base game name"""
+        raise GameVariantError(msg)
+
     if not (isinstance(vlist[0][1], dict) and vlist[0][1] == {}):
         msg="""The first variant should be for the base game
             and have a value of empty dictionary"""
@@ -459,8 +485,8 @@ def test_udir_hole_changes(game_dict, var_options):
     """Test if we know what to do if the user can change the
     number of holes in the presence of udir_holes.
 
-    var_options is a set of all parameters in vari_param and
-    in the variant dicts."""
+    var_options is a set of all parameter names in vari_param
+    and in the variant dicts."""
 
     # game isn't udirect, nothing to be checked
     if not game_dict[ckey.GAME_INFO].get(ckey.UDIRECT, False):
@@ -514,19 +540,12 @@ def test_variation_config(game_dict, no_var_error=True):
     vari_params = game_dict.get(ckey.VARI_PARAMS, {})
     variants = game_dict.get(ckey.VARIANTS, {})
 
-    params = set(vari_params.keys())
-    options = set()
+    options = set(vari_params.keys())
     if variants:
         for vdict in variants.values():
             options |= set(vdict.keys())
 
-    if params & options:
-        warnings.warn("VARI_PARAMS and VARIANTS have overlapping parameters. "
-                      "VARI_PARAMS settings will override VARIANTS")
-
     test_vari_params(game_dict, vari_params)
-    test_variants_param(variants)
-
-    var_options = params | options
-    test_udir_hole_changes(game_dict, var_options)
+    test_variants_param(game_dict, variants)
+    test_udir_hole_changes(game_dict, options)
     test_algo_ok(game_dict, vari_params, variants)

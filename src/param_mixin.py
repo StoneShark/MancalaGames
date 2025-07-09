@@ -394,12 +394,8 @@ class ParamMixin:
                 self.tkvars[param.option][idx].set(str(val))
 
 
-    def pm_copy_config_to_tk(self, param, game_config):
-        """Set the tk variable from the game_config dict."""
-
-        value = man_config.get_config_value(
-            game_config,
-            param.cspec, param.option, param.vtype)
+    def pm_set_tk_var(self, param, value):
+        """Set a tk variable based on param and the given value."""
 
         if param.vtype == pc.MSTR_TYPE:
             self.tktexts[param.option].delete('1.0', tk.END)
@@ -417,6 +413,15 @@ class ParamMixin:
         elif param.vtype in pc.STRING_DICTS:
             inv_dict = pc.STRING_DICTS[param.vtype].int_dict
             self.tkvars[param.option].set(inv_dict[value])
+
+
+    def pm_copy_config_to_tk(self, param, game_config):
+        """Set the tk variable from the game_config dict."""
+
+        value = man_config.get_config_value(
+            game_config,
+            param.cspec, param.option, param.vtype)
+        self.pm_set_tk_var(param, value)
 
 
     def pm_copy_tk_to_config(self, param, game_config):

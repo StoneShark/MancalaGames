@@ -89,6 +89,31 @@ def remove_tags(text):
     return text
 
 
+# %%  variant game name handling
+
+def qual_game_name(game_config, vname):
+    """Create a qualified game name for variant."""
+
+    if vname:
+        return game_config[ckey.GAME_INFO][ckey.NAME] + '::' + vname
+
+    return game_config[ckey.GAME_INFO][ckey.NAME]
+
+
+def game_name_to_parts(game_qual):
+    """Break a possibly qualified game name into game and variant."""
+
+    gname_parts = game_qual.split('::')
+    parts = len(gname_parts)
+    if parts > 2:
+        msg = 'Too many parts for game selection. Use game_name::variant_name'
+        raise ValueError(msg)
+    gamename = gname_parts[0]
+    variant = gname_parts[1] if parts == 2 else None
+
+    return gamename, variant
+
+
 # %% read config files
 
 def convert_from_file(field, value):
@@ -134,8 +159,38 @@ def read_game(filename):
     return game_dict
 
 
-def game_from_config(game_dict):
+def update_config_for_variant(game_config, vari_name, param_table=None):
+    """Update the base configuration settings with those from the
+    named variant."""
+
+    if ckey.VARIANTS not in game_config:
+        name = game_config[ckey.GAME_INFO][ckey.NAME]
+        raise ValueError(f'No name variants in {name}.')
+
+    if vari_name not in game_config[ckey.VARIANTS]:
+        varis = ', '.join(list(game_config[ckey.VARIANTS].keys()))
+        msg = f'Unknown variant selection {vari_name}. Variants are: {varis}.'
+        raise ValueError(msg)
+
+    game_config[ckey.GAME_INFO][ckey.NAME] = qual_game_name(game_config,
+                                                            vari_name)
+    variant = game_config[ckey.VARIANTS][vari_name]
+
+    if not param_table:
+        param_table = ParamData(del_tags=False, no_descs=True)
+
+    for vname, fvalue in variant.items():
+
+        param = param_table[vname]
+        value = convert_from_file(vname, fvalue)
+        set_config_value(game_config, param.cspec, param.option, value)
+
+
+def game_from_config(game_dict, variant=None, param_table=None):
     """Return a game from a game configuration dictionary."""
+
+    if variant:
+        update_config_for_variant(game_dict, variant, param_table)
 
     game_class = game_dict[ckey.GAME_CLASS] \
         if ckey.GAME_CLASS in game_dict else 'Mancala'
@@ -151,12 +206,12 @@ def game_from_config(game_dict):
     return game_class(game_consts, game_info)
 
 
-def make_game(filename):
+def make_game(filename, variant=None, param_table=None):
     """Return a constructed game from the configuration
     and the player dictionary."""
 
     game_dict = read_game(filename)
-    game = game_from_config(game_dict)
+    game = game_from_config(game_dict, variant, param_table)
 
     # the game doesn't need to know that we add this
     game.filename = filename

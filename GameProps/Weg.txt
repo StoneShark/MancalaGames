@@ -21,18 +21,21 @@
       "stores": true
    },
    "variants": {
-      "Base Game": { },
-      "4 holes & 2 start": {
+      "Weg": { },
+      "Weg 4: 2": {
          "holes": 4,
-         "nbr_start": 2
+         "nbr_start": 2,
+         "goal_param": 6
       },
-      "6 holes & 3 start": {
+      "Weg 6: 3": {
          "holes": 6,
-         "nbr_start": 3
+         "nbr_start": 3,
+         "goal_param": 10
       },
-      "10 holes & 4 start": {
+      "Weg 10: 4": {
          "holes": 10,
-         "nbr_start": 4
+         "nbr_start": 4,
+         "goal_param": 16
       }
    },
    "vari_params": {

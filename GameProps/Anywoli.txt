@@ -17,20 +17,20 @@
       "sow_rule": 3,
       "stores": true
    },
-   "variants": {
-       "As Config'ed": { },
-       "Yit_Nuri": { "holes": 7 },
-       "Yit_Jani": { 
-                     "holes": 13,
-                     "nbr_start": 2
-                   }
-   },
    "player": {
       "ai_params": {},
       "scorer": {
          "stores_m": 8,
          "evens_m": -1
       }
+   },
+   "variants": {
+       "Anywoli": { },
+       "Yit_Nuri": { "holes": 7 },
+       "Yit_Jani": { 
+          "holes": 13,
+          "nbr_start": 2
+       }
    },
    "rules": "https://mancala.fandom.com/wiki/Anywoli",
    "deviation": "There is no lottery for last the four seeds.",

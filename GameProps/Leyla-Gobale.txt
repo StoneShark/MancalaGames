@@ -17,8 +17,8 @@
       "xcpickown": 1
    },
    "variants": {
-      "Base Games": { },
-      "Rounds": {
+      "Leyla-Gobale": { },
+      "Leyla-Gobale Rounds": {
          "rounds": 2,
          "round_fill": 7
       }

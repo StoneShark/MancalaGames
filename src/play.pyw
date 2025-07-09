@@ -48,10 +48,10 @@ if __name__ == '__main__':
 
     man_config.check_disable_animator()
 
-    gamename = get_gamename()
-    filename = find_file(gamename)
+    gamename, variant = man_config.game_name_to_parts(get_gamename())
 
-    game, pdict = man_config.make_game(filename)
+    filename = find_file(gamename)
+    game, pdict = man_config.make_game(filename, variant)
     print(game.info.about)
 
     game_ui = mancala_ui.MancalaUI(game, pdict)

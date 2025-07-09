@@ -16,7 +16,7 @@
       "stores": true
    },
    "variants": {
-      "Base Game": { },
+      "Longbeu-a-cha": { },
       "Walak-pussa": {
          "holes": 7,
          "nbr_start": 4

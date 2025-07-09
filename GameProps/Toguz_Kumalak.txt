@@ -18,26 +18,32 @@
       "sow_start": true,
       "stores": true
    },
-   "variants": {
-      "As Config'ed (9s)": {},
-      "5 holes & seeds": {"holes": 5,
-                          "nbr_start": 5},
-      "6 holes & seeds": {"holes": 6,
-                          "nbr_start": 6},
-      "7 holes & seeds": {"holes": 7,
-                          "nbr_start": 7},
-      "8 holes & seeds": {"holes": 8,
-                          "nbr_start": 8}
-   },
    "player": {
       "algorithm": "negamaxer",
-      "ai_params": {
-         "mm_depth": [ 1, 3, 5, 7 ]
-      },
+      "ai_params": { "mm_depth": [ 1, 3, 5, 7 ] },
       "scorer": {
          "stores_m": 8,
          "child_cnt_m": 2,
          "evens_m": 4
+      }
+   },
+   "variants": {
+      "Toguz Kumalak": { },
+      "Toguz Kumalak 5": {
+         "holes": 5,
+         "nbr_start": 5
+      },
+      "Toguz Kumalak 6": {
+         "holes": 6,
+         "nbr_start": 6
+      },
+      "Toguz Kumalak 7": {
+         "holes": 7,
+         "nbr_start": 7
+      },
+      "Toguz Kumalak 8": {
+         "holes": 8,
+         "nbr_start": 8
       }
    },
    "rules": "https://www.iggamecenter.com/en/rules/toguzkumalak https://worldnomadgames.com/media/images/2018/04/05/27-toguz-korgool-rules-en.pdf https://mancala.fandom.com/wiki/Toguz_Kumalak"

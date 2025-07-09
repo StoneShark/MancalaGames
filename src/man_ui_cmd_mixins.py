@@ -198,10 +198,8 @@ class SetupCmdsMixin:
         self._setup_state = None
 
         menubar.add_separator()
-        menubar.add_command(label='Setup Game',
-                             command=self.setup_game)
-        menubar.add_command(label='Reset to Setup',
-                             command=self.setup_reset)
+        menubar.add_command(label='Setup Game', command=self.setup_game)
+        menubar.add_command(label='Reset to Setup', command=self.setup_reset)
 
 
     def setup_game(self):

@@ -15,8 +15,8 @@
       "unclaimed": 2
    },
    "variants": {
-      "As Config'ed": {},
-      "Rounds": { 
+      "Bohnenspiel": {},
+      "Bohnenspiel Rounds": { 
          "goal": 7,
          "rounds": 2
        }

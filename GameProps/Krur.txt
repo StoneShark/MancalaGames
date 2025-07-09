@@ -23,8 +23,8 @@
       }
    },
    "variants": {
-      "Base Game": { },
-      "Rounds & Blocks": {
+      "Krur": { },
+      "Krur Rounds": {
          "rounds": 2,
          "blocks": true,
          "round_starter": 0,

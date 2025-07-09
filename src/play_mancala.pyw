@@ -4,9 +4,15 @@
 Created on Thu Mar 23 08:10:28 2023
 @author: Ann"""
 
+# pylint: disable=too-many-lines
+
+# %% imports
+
 import abc
+import copy
 import dataclasses as dc
 import enum
+import functools as ft
 import itertools as it
 import os
 import random
@@ -144,7 +150,8 @@ FEATS = {'No Sides': lambda ginfo: ginfo.get(ckey.NO_SIDES, 0),
 
 # pylint: disable=magic-value-comparison
 GNOTES = {
-    'Variants': lambda gdict: (gdict.get(ckey.VARI_PARAMS, 0)
+    'Named Variants': lambda gdict: gdict.get(ckey.VARIANTS, 0),
+    'Variations': lambda gdict: (gdict.get(ckey.VARI_PARAMS, 0)
                                      or gdict.get(ckey.VARIANTS, 0)),
     'Deviations': lambda gdict: any('deviat' in key.lower()
                                     for key in gdict.keys()),
@@ -514,6 +521,7 @@ class SelectList(ttk.Labelframe):
         self.game_list.pack(side=tk.LEFT, expand=tk.TRUE, fill=tk.BOTH)
 
         self.game_list.bind('<<TreeviewSelect>>', self.select_game)
+        self.game_list.bind('<Button-3>', self.select_variant)
         self.game_list.bind('<Double-Button-1>', self.play_game)
 
 
@@ -566,6 +574,27 @@ class SelectList(ttk.Labelframe):
         self.game_list.selection_set(gname)
         self.game_list.focus(gname)
         self.game_list.see(gname)
+
+
+    def select_variant(self, event):
+        """Allow selection of a variant to play."""
+
+        gamename = self.game_list.identify_row(event.y)
+        if not gamename:
+            return
+
+        self.game_list.selection_set(gamename)
+        vnames = self.parent.get_variant_names(gamename)
+        if not vnames:
+            return
+
+        menubar = tk.Menu(self)
+        for vname in vnames:
+            menubar.add_command(label=vname,
+                                command=ft.partial(self.parent.play_variant,
+                                                   gamename, vname))
+
+        menubar.post(event.x_root, event.y_root)
 
 
     def jump_to_first(self, _):
@@ -865,6 +894,14 @@ class GameChooser(ttk.Frame):
         self.games = list(self.all_games.keys())
 
 
+    def get_variant_names(self, gamename):
+        """Return the list variant names defined for gamename."""
+
+        game_dict = self.all_games[gamename]
+        var_dict = game_dict.get(ckey.VARIANTS, None)
+        return list(var_dict.keys()) if var_dict else None
+
+
     def create_menus(self):
         """Create the game control menus."""
 
@@ -948,6 +985,18 @@ class GameChooser(ttk.Frame):
 
         game_dict = self.all_games[self.selected]
         game = man_config.game_from_config(game_dict)
+        player_dict = game_dict[ckey.PLAYER]
+        game.filename = game_dict[ckey.FILENAME]
+        mancala_ui.MancalaUI(game, player_dict, root_ui=self.master)
+
+
+    def play_variant(self, gamename, variant):
+        """Create the game and game_ui; which allows playing it.
+        The game dictionary is modified for the variant, so do a
+        deep copy of the one in the all_games dict."""
+
+        game_dict = copy.deepcopy(self.all_games[gamename])
+        game = man_config.game_from_config(game_dict, variant, PARAMS)
         player_dict = game_dict[ckey.PLAYER]
         game.filename = game_dict[ckey.FILENAME]
         mancala_ui.MancalaUI(game, player_dict, root_ui=self.master)
