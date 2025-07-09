@@ -16,16 +16,12 @@ from tkinter import ttk
 
 import ai_player
 import cfg_keys as ckey
-import game_constants as gconsts
 import game_info as gi
 import man_config
 import man_path
 import mancala_ui
 import round_tally
 import ui_utils
-
-
-from game_classes import GAME_CLASSES
 
 
 # %% constants
@@ -169,7 +165,7 @@ GNOTES = {
 
           }
 
-# %% frame classes
+# %% GameFilters frame & classes
 
 class BaseFilter(ttk.Frame, abc.ABC):
     """A filter category.  Checkboxes are created for each
@@ -399,7 +395,8 @@ class FilterDesc:
 MAX_COLUMNS = 7
 fcol = ui_utils.Counter()  # count: increments; value: no increment
 
-# can't build the tk objects yet
+# can't build the tk objects yet, but build a table of filter groups
+# so they are easier to move around
 FILTERS = [
     FilterDesc('Game Class', DictFilter, GCLASS, ckey.GAME_CLASS, fcol.count),
     FilterDesc('Board Size', DictFilter, SIZES, ckey.HOLES, fcol.value),
@@ -492,6 +489,8 @@ class GameFilters(ttk.Frame):
 
         self.parent.filter_games()
 
+
+# %% SelectList Frame
 
 class SelectList(ttk.Labelframe):
     """Scrollable tree list for list of filtered games.
@@ -635,6 +634,7 @@ class SelectList(ttk.Labelframe):
                 self.select(child)
                 return
 
+# %% AboutPane Frame
 
 class AboutPane(ttk.Labelframe):
     """A pane for the game help text (called the 'about' text)."""
@@ -789,6 +789,8 @@ class AboutPane(ttk.Labelframe):
         self.set_text(game_name, dtext)
 
 
+# %%  GameChooser - application frame
+
 class GameChooser(ttk.Frame):
     """Main UI frame for new play_mancala.
     Includes filter, game list, and about panes.
@@ -939,33 +941,19 @@ class GameChooser(ttk.Frame):
 
 
     def play_game(self, _=None):
-        """Build the constants and info. Create the game and play it."""
+        """Create the game and game_ui; which allows playing it."""
 
         if not self.selected:
             return
 
         game_dict = self.all_games[self.selected]
-
-        class_name = game_dict[ckey.GAME_CLASS] \
-            if ckey.GAME_CLASS in game_dict else 'Mancala'
-        game_class = GAME_CLASSES[class_name]
-
-        game_consts = gconsts.GameConsts(**game_dict[ckey.GAME_CONSTANTS])
-
-        game_info = gi.GameInfo(**game_dict[ckey.GAME_INFO],
-                                nbr_holes=game_consts.holes,
-                                rules=game_class.rules)
-
+        game = man_config.game_from_config(game_dict)
         player_dict = game_dict[ckey.PLAYER]
-
-        game = game_class(game_consts, game_info)
         game.filename = game_dict[ckey.FILENAME]
-
         mancala_ui.MancalaUI(game, player_dict, root_ui=self.master)
 
 
-# %%
-
+# %% main program
 
 if __name__ == '__main__':
 
