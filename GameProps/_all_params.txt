@@ -53,18 +53,19 @@
       "udir_holes": [  ],
       "unclaimed": 0,
       "quitter": 4,
-      "visit_opp": false,
       "xc_sown": false,
-      "xcpickown": 0
+      "mlap_cont": 0,
+      "xcpickown": 0,
+      "mlap_param": 0
    },
    "player": {
       "algorithm": "minimaxer",
       "ai_active": false,
       "difficulty": 1,
       "ai_params": {
-         "mcts_bias": [ 300, 200, 100, 100 ],
-         "mcts_nodes": [ 100, 300, 500, 800 ],
-         "mcts_pouts": [ 1, 1, 1, 1 ],
+         "mcts_bias": [ 200, 200, 300, 300 ],
+         "mcts_nodes": [ 800, 1000, 1200, 1400 ],
+         "mcts_pouts": [ 1, 1, 2, 2 ],
          "mm_depth": [ 1, 1, 3, 5 ]
       },
       "scorer": {

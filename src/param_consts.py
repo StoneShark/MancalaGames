@@ -248,6 +248,16 @@ STRING_DICTS = {
          'Round Loser': gi.RoundStarter.LOSER,
          'Last Mover': gi.RoundStarter.LAST_MOVER}),
 
+    'SowLapCont': lookup_dicts(
+        gi.SowLapCont,
+        {'No Additional Reason': gi.SowLapCont.NONE,
+         'On mlap_param seeds': gi.SowLapCont.ON_PARAM,
+         'When >= mlap_param seeds': gi.SowLapCont.GREQ_PARAM,
+         'Only from opposite side': gi.SowLapCont.OPP_SIDE,
+         'Only from own side': gi.SowLapCont.OWN_SIDE,
+         'Only when opp side sown': gi.SowLapCont.VISIT_OPP,
+         }),
+
     'SowPrescribed': lookup_dicts(
         gi.SowPrescribed,
         {'None': gi.SowPrescribed.NONE,
@@ -273,10 +283,6 @@ STRING_DICTS = {
              gi.SowRule.LAP_CAPT_OPP_GETS,
          "Do not sow opponents children": gi.SowRule.NO_OPP_CHILD,
          "Don't sow opp children unless final seed": gi.SowRule.OPP_CHILD_ONLY1,
-         "Continue lap sow only on sow_param seeds": gi.SowRule.CONT_LAP_ON,
-         "Continue lap sow when >= sow_param seeds": gi.SowRule.CONT_LAP_GREQ,
-         "Continue lap only from opposite side": gi.SowRule.CONT_LAP_OPP,
-         "Continue lap only from own side": gi.SowRule.CONT_LAP_OWN,
          }),
 
     'StartPattern': lookup_dicts(

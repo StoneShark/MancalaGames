@@ -11,7 +11,7 @@
       "goal": 1,
       "mlaps": 1,
       "sow_direct": 1,
-      "sow_rule": 14
+      "sow_rule": 12
    },
    "player": {
       "ai_params": {},

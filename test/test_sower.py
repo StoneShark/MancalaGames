@@ -79,7 +79,6 @@ class TestSower:
         object.__setattr__(game.info, 'mlaps', LapSower.OFF)
         object.__setattr__(game.info, 'child_type', ChildType.NOCHILD)
         object.__setattr__(game.info, 'child_cvt', 0)
-        object.__setattr__(game.info, 'visit_opp', False)
         return sower.deco_sower(game)
 
 
@@ -257,7 +256,6 @@ class TestSower:
         object.__setattr__(game.info, 'mlaps', LapSower.OFF)
         object.__setattr__(game.info, 'child_type', ChildType.NOCHILD)
         object.__setattr__(game.info, 'child_cvt', 0)
-        object.__setattr__(game.info, 'visit_opp', False)
         object.__setattr__(game.info, 'sow_direct', direct)
         store_sower = sower.deco_sower(game)
 
@@ -712,8 +710,8 @@ class TestMlap:
         game_info = gi.GameInfo(stores=True,
                                 mlaps=LapSower.LAPPER,
                                 sow_direct=Direct.CCW,
-                                sow_rule=gi.SowRule.CONT_LAP_ON,
-                                sow_param=6,
+                                mlap_cont=gi.SowLapCont.ON_PARAM,
+                                mlap_param=6,
                                 capt_on=[1],
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
@@ -726,8 +724,8 @@ class TestMlap:
         game_info = gi.GameInfo(stores=True,
                                 mlaps=LapSower.LAPPER,
                                 sow_direct=Direct.CCW,
-                                sow_rule=gi.SowRule.CONT_LAP_GREQ,
-                                sow_param=6,
+                                mlap_cont=gi.SowLapCont.GREQ_PARAM,
+                                mlap_param=6,
                                 capt_on=[1],
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
@@ -1007,7 +1005,7 @@ class TestGetSingle:
                                     mlaps=mlaps,
                                     child_type=ChildType.NORMAL,
                                     child_cvt=3,
-                                    visit_opp=True,
+                                    mlap_cont=gi.SowLapCont.VISIT_OPP,
                                     nbr_holes=game_consts.holes,
                                     rules=mancala.Mancala.rules)
             game = mancala.Mancala(game_consts, game_info)
@@ -1016,8 +1014,6 @@ class TestGetSingle:
 
 
 class TestVMlap:
-    """Interesting that the game flags needed to match all those
-    for the sower.  Child sowing didn't work right w/o it."""
 
     @pytest.fixture
     def game(self):
@@ -1027,7 +1023,7 @@ class TestVMlap:
                                 stores=True,
                                 sow_own_store=True,
                                 mlaps=LapSower.LAPPER,
-                                visit_opp=True,
+                                mlap_cont=5,
                                 child_type=ChildType.NORMAL,
                                 child_cvt=4,
                                 nbr_holes=game_consts.holes,
@@ -1047,17 +1043,20 @@ class TestVMlap:
          WinCond.REPEAT_TURN,
          utils.build_board([2, 3, 4],
                            [3, 4, 0]), [1, 0]),
+
         # 2: visit opp -> stop for child
         (2, utils.build_board([3, 2, 3],
                               [0, 3, 3]),
          5, utils.build_board([4, 2, 3],
                               [1, 4, 0]), [0, 0]),
+
         # 3: visit opp -> lapping
         (2, utils.build_board([2, 2, 3],
                               [0, 3, 3]),
          WinCond.REPEAT_TURN,
          utils.build_board([0, 3, 4],
                            [1, 4, 0]), [1, 0]),
+
         # 4: visit opp -> no lapping
         (2, utils.build_board([0, 2, 3],
                               [0, 3, 3]),
@@ -1083,6 +1082,77 @@ class TestVMlap:
         assert game.board == eboard
         assert game.store == estore
 
+    ocases = [
+        # 0: don't sow opp children, with children that skip own side
+        [{'child_type': gi.ChildType.NORMAL,
+          'child_cvt': 3,
+          'sow_rule': 9
+          },
+         ["game.child = [N, N, T, T, T, T, N, N]"], True
+         ],
+
+        # 1: blocks
+        [{'blocks': True,
+          'rounds': gi.Rounds.NO_MOVES,
+          'capt_on': [6]
+          },
+         ["game.blocked = [F, F, T, T, T, T, F, F]"], True
+         ],
+
+        # 2: skip sowing due to max_sow
+        [{'sow_rule': gi.SowRule.MAX_SOW,
+          'sow_param': 2,
+          'capt_on': [6]
+          },
+         ["game.board = [1, 3, 2, 2, 2, 2, 1, 1]"], True
+         ],
+
+        # 3: cross capt changes opp, but no sow  (not current err)
+        [{'crosscapt': True,
+          },
+         ["game.board = [1, 2, 2, 0, 2, 2, 2, 2]"], False
+         ],
+
+        # 4: sow & cross capt, no increase on opp    (not current err)
+        [{'crosscapt': True,
+          'sow_rule': 8
+          },
+         ["game.board = [1, 3, 0, 1, 0, 1, 1, 1]"], True
+         ],
+
+         ]
+
+    @pytest.mark.usefixtures("logger")
+    @pytest.mark.parametrize('options, assigns, elaps', ocases)
+    def test_odd_cases(self, options, assigns, elaps):
+        """Exposing some errors and potential errors in visit opp test."""
+
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
+        game_info = gi.GameInfo(mlaps=gi.LapSower.LAPPER,
+                                stores=True,
+                                mlap_cont=5,
+                                **options,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        game.board = [1, 3, 0, 0, 1, 1, 1, 1]
+        game.turn = False
+        for line in assigns:
+            exec(line)
+        game.store = [game.cts.total_seeds - sum(game.board), 0]
+
+        print(game)
+        game.move(1)
+
+        print(game)
+        print(game.mdata)
+
+        if elaps:
+            assert game.mdata.lap_nbr >= 1
+        else:
+            assert not game.mdata.lap_nbr
+
 
 class TestStopNoOppSeeds:
 
@@ -1105,7 +1175,7 @@ class TestStopNoOppSeeds:
         [[2, 1, 2, 1, 0, 0], False],      # 1 & no capt, stop
         ]
 
-    @pytest.mark.usefixtures("logger")
+    # @pytest.mark.usefixtures("logger")
     @pytest.mark.parametrize('board, eres', CASES)
     def test_stop_no_opp_seeds(self, game, board, eres):
 
@@ -2123,47 +2193,47 @@ class TestCaptOppOwnLast:
 
 class TestStopSide:
 
-    @pytest.mark.parametrize('sow_rule', (gi.SowRule.CONT_LAP_OWN,
-                                          gi.SowRule.CONT_LAP_OPP))
-    def test_construct(self, sow_rule):
+    @pytest.mark.parametrize('mlap_cont', (gi.SowLapCont.OWN_SIDE,
+                                           gi.SowLapCont.OPP_SIDE))
+    def test_construct(self, mlap_cont):
 
         game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(capt_on=[1],
                                 mlaps=gi.LapSower.LAPPER,
-                                sow_rule=sow_rule,
+                                mlap_cont=mlap_cont,
                                 stores=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
 
         test_str = str(game.deco.sower)
-        assert 'StopSide' in test_str
+        assert 'StopNotSide' in test_str
 
-        if 'OWN' in sow_rule.name:
+        if 'OWN' in mlap_cont.name:
             assert 'opposite' in test_str
             assert 'own' not in test_str
         else:
             assert 'opposite' not in test_str
             assert 'own' in test_str
 
-    CASES = [(gi.SowRule.CONT_LAP_OWN, F, 1, T),
-             (gi.SowRule.CONT_LAP_OWN, F, 5, F),
-             (gi.SowRule.CONT_LAP_OWN, T, 1, F),
-             (gi.SowRule.CONT_LAP_OWN, T, 5, T),
+    CASES = [(gi.SowLapCont.OWN_SIDE, F, 1, T),
+             (gi.SowLapCont.OWN_SIDE, F, 5, F),
+             (gi.SowLapCont.OWN_SIDE, T, 1, F),
+             (gi.SowLapCont.OWN_SIDE, T, 5, T),
 
-             (gi.SowRule.CONT_LAP_OPP, F, 2, F),
-             (gi.SowRule.CONT_LAP_OPP, F, 6, T),
-             (gi.SowRule.CONT_LAP_OPP, T, 2, T),
-             (gi.SowRule.CONT_LAP_OPP, T, 6, F),
+             (gi.SowLapCont.OPP_SIDE, F, 2, F),
+             (gi.SowLapCont.OPP_SIDE, F, 6, T),
+             (gi.SowLapCont.OPP_SIDE, T, 2, T),
+             (gi.SowLapCont.OPP_SIDE, T, 6, F),
              ]
 
-    @pytest.mark.parametrize('sow_rule, turn, loc, eret', CASES)
-    def test_continue(self, sow_rule, turn, loc, eret):
+    @pytest.mark.parametrize('mlap_cont, turn, loc, eret', CASES)
+    def test_continue(self, mlap_cont, turn, loc, eret):
 
         game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
         game_info = gi.GameInfo(capt_on=[1],
                                 mlaps=gi.LapSower.LAPPER,
-                                sow_rule=sow_rule,
+                                mlap_cont=mlap_cont,
                                 stores=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
@@ -2171,7 +2241,7 @@ class TestStopSide:
         game.turn = turn
 
         stopper = game.deco.sower.lap_cont
-        assert isinstance(stopper, msowd.StopSide)
+        assert isinstance(stopper, msowd.StopNotSide)
 
         mdata = move_data.MoveData(game, 0)
         mdata.capt_start = loc

@@ -10,12 +10,12 @@
       "capt_on": [ 2, 4 ],
       "grandslam": 2,
       "mlaps": 1,
+      "mlap_cont": 1,
+      "mlap_param": 6,
       "multicapt": -1,
       "mustshare": true,
       "capt_side": 1,
       "sow_direct": 1,
-      "sow_rule": 11,
-      "sow_param": 6,
       "stores": true
    },
    "vari_params": {

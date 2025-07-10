@@ -127,7 +127,7 @@ GAMECONF = {'basic':
             'mlvisopd':  # mlap, visit opp, change dir
                 {'mlaps': gi.LapSower.LAPPER,
                  'sow_rule': gi.SowRule.CHANGE_DIR_LAP,
-                 'visit_opp': True,
+                 'mlap_cont': gi.SowLapCont.VISIT_OPP,
                  'stores': True,
                  'crosscapt': True},
 
@@ -135,7 +135,7 @@ GAMECONF = {'basic':
                 {'mlaps': gi.LapSower.LAPPER,
                  'child_type': gi.ChildType.NORMAL,
                  'child_cvt': 3,
-                 'visit_opp': True,
+                 'mlap_cont': gi.SowLapCont.VISIT_OPP,
                  'sow_own_store': True,
                  'stores': True,
                  'capt_on': [2]},

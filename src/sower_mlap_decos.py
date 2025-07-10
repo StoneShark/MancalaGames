@@ -255,12 +255,29 @@ class MustVisitOpp(LapContinuerIf):
     be started on a players side of the board, unless they have
     passed through the opponents side of the board."""
 
+    def stop_check(self, mdata):
+        """Check the stop conditions sequentially, doing as little
+        work as possible."""
+
+        # not first lap
+        if mdata.lap_nbr:
+            return False
+
+        # first lap ended on opposite side
+        if self.game.cts.opp_side(self.game.turn, mdata.capt_start):
+            return False
+
+        # there are more seeds than at the start in any hole on opp side
+        opp_range = self.game.cts.get_opp_range(self.game.turn)
+        if any(self.game.board[loc] > mdata.board[loc] for loc in opp_range):
+            return False
+
+        return True
+
+
     def do_another_lap(self, mdata):
 
-        if (not mdata.lap_nbr
-                and not (mdata.seeds >= self.game.cts.holes
-                         or self.game.cts.opp_side(self.game.turn,
-                                                   mdata.capt_start))):
+        if self.stop_check(mdata):
             game_log.add("First mlap didn't reach opp")
             return False
 
@@ -273,8 +290,8 @@ class StopNotN(LapContinuerIf):
 
     def do_another_lap(self, mdata):
 
-        if self.game.board[mdata.capt_start] != self.game.info.sow_param:
-            game_log.add(f"Stop mlap not {self.game.info.sow_param} seeds")
+        if self.game.board[mdata.capt_start] != self.game.info.mlap_param:
+            game_log.add(f"Stop mlap not {self.game.info.mlap_param} seeds")
             return False
 
         return self.decorator.do_another_lap(mdata)
@@ -286,21 +303,21 @@ class StopLessN(LapContinuerIf):
 
     def do_another_lap(self, mdata):
 
-        if self.game.board[mdata.capt_start] < self.game.info.sow_param:
-            game_log.add(f"Stop mlap < {self.game.info.sow_param} seeds")
+        if self.game.board[mdata.capt_start] < self.game.info.mlap_param:
+            game_log.add(f"Stop mlap < {self.game.info.mlap_param} seeds")
             return False
 
         return self.decorator.do_another_lap(mdata)
 
 
-class StopSide(LapContinuerIf):
+class StopNotSide(LapContinuerIf):
     """A wrapper: Stop mlap'ing based on side of the board."""
 
     def __init__(self, game, decorator=None):
 
         super().__init__(game, decorator)
 
-        if game.info.sow_rule == gi.SowRule.CONT_LAP_OWN:
+        if game.info.mlap_cont == gi.SowLapCont.OWN_SIDE:
             self.test_func = self.game.cts.opp_side
             self.side = 'opposite'
         else:

@@ -10,9 +10,9 @@
       "crosscapt": true,
       "help_file": "ZigZagHelp.pdf",
       "mlaps": 1,
+      "mlap_cont": 3,
       "capt_side": 2,
       "sow_direct": 4,
-      "sow_rule": 15,
       "stores": true
    },
    "player": {

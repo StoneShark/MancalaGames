@@ -46,6 +46,8 @@ MCTS_NODES = 'mcts_nodes'
 MCTS_POUTS = 'mcts_pouts'
 MIN_MOVE = 'min_move'
 MLAPS = 'mlaps'
+MLAP_CONT = 'mlap_cont'
+MLAP_PARAM = 'mlap_param'
 MLENGTH = 'mlength'
 MM_DEPTH = 'mm_depth'
 MOVE_ONE = 'move_one'
@@ -83,7 +85,6 @@ UDIRECT = 'udirect'
 UNCLAIMED = 'unclaimed'
 VARI_PARAMS = 'vari_params'
 VARIANTS = 'variants'
-VISIT_OPP = 'visit_opp'
 XC_SOWN = 'xc_sown'
 XCPICKOWN = 'xcpickown'
 
@@ -113,6 +114,8 @@ GINFO_PARAMS =  (ALLOW_RULE,
                  GRANDSLAM,
                  MIN_MOVE,
                  MLAPS,
+                 MLAP_CONT,
+                 MLAP_PARAM,
                  MOVE_ONE,
                  MOVEUNLOCK,
                  MULTICAPT,
@@ -138,7 +141,6 @@ GINFO_PARAMS =  (ALLOW_RULE,
                  STORES,
                  UDIR_HOLES,
                  UNCLAIMED,
-                 VISIT_OPP,
                  XC_SOWN,
                  XCPICKOWN,
                  )

@@ -10,11 +10,11 @@
       "capt_on": [ 2, 3 ],
       "grandslam": 4,
       "mlaps": 1,
+      "mlap_cont": 2,
+      "mlap_param": 4,
       "multicapt": -1,
       "capt_side": 1,
       "sow_direct": 1,
-      "sow_rule": 12,
-      "sow_param": 4,
       "stores": true
    },
    "player": {

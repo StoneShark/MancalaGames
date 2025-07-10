@@ -64,11 +64,7 @@ def _add_base_sower(game):
 
         elif game.info.sow_rule in (gi.SowRule.CHANGE_DIR_LAP,
                                     gi.SowRule.LAP_CAPT,
-                                    gi.SowRule.LAP_CAPT_SEEDS,
-                                    gi.SowRule.CONT_LAP_ON,
-                                    gi.SowRule.CONT_LAP_GREQ,
-                                    gi.SowRule.CONT_LAP_OPP,
-                                    gi.SowRule.CONT_LAP_OWN):
+                                    gi.SowRule.LAP_CAPT_SEEDS):
             pass    # pick a base sower below
 
         else:
@@ -147,18 +143,18 @@ def _add_capt_stop_lap_cont(game, lap_cont):
 def _add_lap_decos(game, lap_cont):
     """Add any lap continuer wrapper decorators."""
 
-    if game.info.visit_opp:
+    if game.info.mlap_cont == gi.SowLapCont.VISIT_OPP:
         lap_cont = msowd.MustVisitOpp(game, lap_cont)
 
-    if game.info.sow_rule == gi.SowRule.CONT_LAP_ON:
+    elif game.info.mlap_cont == gi.SowLapCont.ON_PARAM:
         lap_cont = msowd.StopNotN(game, lap_cont)
 
-    elif game.info.sow_rule == gi.SowRule.CONT_LAP_GREQ:
+    elif game.info.mlap_cont == gi.SowLapCont.GREQ_PARAM:
         lap_cont = msowd.StopLessN(game, lap_cont)
 
-    elif game.info.sow_rule in (gi.SowRule.CONT_LAP_OWN,
-                                gi.SowRule.CONT_LAP_OPP):
-        lap_cont = msowd.StopSide(game, lap_cont)
+    elif game.info.mlap_cont in (gi.SowLapCont.OWN_SIDE,
+                                 gi.SowLapCont.OPP_SIDE):
+        lap_cont = msowd.StopNotSide(game, lap_cont)
 
     if game.info.sow_own_store:
         lap_cont = msowd.StopRepeatTurn(game, lap_cont)

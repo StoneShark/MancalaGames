@@ -57,6 +57,12 @@ def test_ns_rules(ginfo, holes, skip):
         excp=gi.GameInfoError)
 
     tester.test_rule(
+        'ss_no_mlap_cont',
+        rule=lambda ginfo: ginfo.mlap_cont,
+        msg="""SameSide incompatible with MLAP_CONT""",
+        excp=gi.GameInfoError)
+
+    tester.test_rule(
         'ss_no_xcapt',
         rule=lambda ginfo: ginfo.crosscapt,
         msg="""SameSide incompatible with CROSSCAPT""",

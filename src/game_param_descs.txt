@@ -279,6 +279,7 @@ Games with children allow players to claim holes. These child holes are an exten
 
 - QUR: when a seed is sown into an empty hole and the opposite hole contains CHILD_CVT, create children in both holes: final seed location and opposite. Generally used with SOW_RULE of OWN_SIDE_ONLY.
 
+
 <param crosscapt>
 If the last sown seed is put in an empty hole, seeds on the opposite side of the board are captured. The capture of those seeds can be limited by CAPT_MAX, CAPT_MIN, CAPT_ON, EVENS, MOVEUNLOCK, OPPSIDECAPT. For example, crosscapt with evens will only capture when there are an even number of seeds in the opposite hole.
 
@@ -328,7 +329,7 @@ The name of the Game Class. One of:
 
   + Players may effect eachother's play with CROSSCAPT, PICKEXTRA, Qur CHILD_TYPE, and others. 
 
-  + Weg children are only supported for no_sides games. Prohibited options include: GOAL of Territory; MUSTSHARE; some SOW_RULE; some CHILD_RULE; and visit opposite side for capture (VISIT_OPP).
+  + Weg children are only supported for no_sides games. Prohibited options include: GOAL of Territory; MUSTSHARE; some SOW_RULE; some CHILD_RULE; and MLAP_CONT of OPP_SIDE, OWN_SIDE and VISIT_OPP are prohibited.
 
   + NS_Kalah is a preconfigured game using this class.
 
@@ -521,6 +522,27 @@ Determines if seeds from more than the initial start hole are picked up and sown
   + A SOW_RULE of CHANGE_DIR_LAP changes the direction of sowing after each lap. SOW_BLKD_DIV(_NR) is not supported for LAPPER_NEXT.
 
 Multilap games may get stuck in seemingly endless sowing loops. If more than 75 laps are sown, the computer will end the game using the same mechanism as the menu command <a href="mancala_help.html#gamemenu">End Game</a> based on GOAL and UNCLAIMED. 
+
+<param mlap_cont>
+
+An additional limit on continuing mlap sowing:
+
+- NONE: no additional reasons
+
+- ON_PARAM: continue mlaps sowing when last sown hole is mlap_param
+
+- GREQ_PARAM: continue mlaps sowing when last sown hole is greater than or equal to mlap_param
+
+- OWN_SIDE: continue mlaps sowing only from own side of the board
+
+- OPP_SIDE: continue mlaps sowing only from opposite side of the board
+
+- VISIT_OPP: continue mlaps sowing only if the opposite side of the board was sown on the first lap
+
+
+<param mlap_param>
+
+Parameter for the Lap Continue Reason.
 
 <param mm_depth>
 The depth that the minimaxer or negamaxer will search the game tree from the current node. One value for each difficulty.
@@ -730,7 +752,7 @@ Special sow rules add additional behavior or restrictions to the sowing phase:
 
   + When sowing, blocked holes on your own side of the board are skipped and blocked holes on opponent's side are diverted out of play or captured.
 
-  +  Game GOAL must be DEPRIVE and all the associated restrictions apply. NOCAPTMOVES maybe used to prevent closing holes on the initial games moves. Capture mechanisms other than closing holes are not supported. The minimum move must be 1 and thus SOW_START is incompatible.  ALLOW_RULE may not be used to limit allowable moves. SKIP_START and VISIT_OPP are not supported with SOW_BLKD_DIV. MLAPS of LAPPER_NEXT is not supported with SOW_BLKD_DIV(_NR).
+  +  Game GOAL must be DEPRIVE and all the associated restrictions apply. NOCAPTMOVES maybe used to prevent closing holes on the initial games moves. Capture mechanisms other than closing holes are not supported. The minimum move must be 1 and thus SOW_START is incompatible.  ALLOW_RULE may not be used to limit allowable moves. SKIP_START is not supported with SOW_BLKD_DIV. MLAPS of LAPPER_NEXT is not supported with SOW_BLKD_DIV(_NR).
 
 - SOW_BLKD_DIV_NR: Behaves the same as SOW_BLKD_DIV except that each player's rightmost hole cannot be closed. 
 
@@ -768,10 +790,6 @@ Special sow rules add additional behavior or restrictions to the sowing phase:
 
 - LAP_CAPT_OPP_GETS: Use LAP_CAPT sow rule until there are only sow_param seeds left. Then when down to the last seeds (sow_param or less at the start of a lap): seeds sown on the opponent's side are captured by the opponent. If the last seed would do a normal capture, the sower takes those seeds, including the last seed sown.
 
-- CONT_LAP_ON: Only continue multilap sowing when a hole is sown to sow_param seeds.
-
-- CONT_LAP_GREQ: Only continue multilap sowing when a hole is sown to sow_param or more seeds.
-
 - OPP_CHILD_ONLY1: Do not sow opponent's children unless it is with the final seed of a sow.
 
 - LAP_CAPT_SEEDS: Check for capture on each lap. If a capture occured, continue sowing with captured seeds and seeds in final hole sown. If no capture occured, continue if more than one seed is in the final hole.
@@ -780,10 +798,6 @@ Special sow rules add additional behavior or restrictions to the sowing phase:
 
   + Not compatible with basic captures. Behaves badly with most capt_types unless other options are used to prevent endless sows. Turn on Disallow Endless Sows via the Game menu for experimentation.
   
-- CONT_LAP_OWN: continue lap sowing when a lap sow ends on your own side of the board; stop if ending on your opponent's side.
-
-- CONT_LAP_OPP: continue lap sowing when a lap sow ends on your opponent's side of the board; stop if ending on your own side.
-
 <param sow_start>
 When selected, the first seed is sown into (i.e., left in) the start hole.
 
@@ -892,9 +906,6 @@ Defines how to score any unclaimed seeds when a player ends the round or game us
 This parameter is not used for clear, deprive or immobilize games.
 
 The allowable values are the same as for UNCLAIMED (EndGameSeeds). <no_enum_error>
-
-<param visit_opp>
-Requires MLAPS. If the first 'lap' does not reach the opponent's side of the board, the sowing ends after the first lap. 
 
 <param xc_sown>
 Only allow cross capture if the player has sown onto the opposite side of board. 

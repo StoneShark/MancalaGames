@@ -95,7 +95,7 @@ def test_rules(ginfo, holes, skip=None):
 
     sow_flags = ['mlaps', 'move_one', 'moveunlock', 'mustpass', 'mustshare',
                  'prescribed', 'skip_start', 'sow_rule', 'sow_start',
-                 'start_pattern', 'udir_holes', 'visit_opp', 'xc_sown']
+                 'start_pattern', 'udir_holes', 'mlap_cont', 'xc_sown']
     tester.test_rule(
         'no_sow_changes',
         rule=lambda ginfo: any(getattr(ginfo, flag) for flag in sow_flags),

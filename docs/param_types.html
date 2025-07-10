@@ -201,6 +201,16 @@ Detailed descriptions of the behavior of each value are in the
 <tr><td>5</td><td>LEAVE_RIGHT<td>Legal but leave rightmost</td></tr>
 <tr><td>6</td><td>LEGAL_SHARE<td>Legal but must share</td></tr>
 </table>
+<h4 id="SowLapCont">SowLapCont (<a href="game_params.html#mlap_cont">usage</a>)</h4>
+<table>
+<tr><th style="width:10%">Value</th><th style="width:40%">Id</th><th style="width:40%">UI string</th></tr>
+<tr><td>0</td><td>NONE<td>No Additional Reason</td></tr>
+<tr><td>1</td><td>ON_PARAM<td>On mlap_param seeds</td></tr>
+<tr><td>2</td><td>GREQ_PARAM<td>When >= mlap_param seeds</td></tr>
+<tr><td>3</td><td>OWN_SIDE<td>Only from own side</td></tr>
+<tr><td>4</td><td>OPP_SIDE<td>Only from opposite side</td></tr>
+<tr><td>5</td><td>VISIT_OPP<td>Only when opp side sown</td></tr>
+</table>
 <h4 id="LapSower">LapSower (<a href="game_params.html#mlaps">usage</a>)</h4>
 <table>
 <tr><th style="width:10%">Value</th><th style="width:40%">Id</th><th style="width:40%">UI string</th></tr>
@@ -300,12 +310,8 @@ Detailed descriptions of the behavior of each value are in the
 <tr><td>8</td><td>LAP_CAPT<td>Do captures on each lap (lap_capt)</td></tr>
 <tr><td>9</td><td>NO_OPP_CHILD<td>Do not sow opponents children</td></tr>
 <tr><td>10</td><td>LAP_CAPT_OPP_GETS<td>Lap Capt Then Opp takes Own (< sow_param)</td></tr>
-<tr><td>11</td><td>CONT_LAP_ON<td>Continue lap sow only on sow_param seeds</td></tr>
-<tr><td>12</td><td>CONT_LAP_GREQ<td>Continue lap sow when >= sow_param seeds</td></tr>
-<tr><td>13</td><td>OPP_CHILD_ONLY1<td>Don't sow opp children unless final seed</td></tr>
-<tr><td>14</td><td>LAP_CAPT_SEEDS<td>Lap Capt, sow with capt'ed seeds</td></tr>
-<tr><td>15</td><td>CONT_LAP_OWN<td>Continue lap only from own side</td></tr>
-<tr><td>16</td><td>CONT_LAP_OPP<td>Continue lap only from opposite side</td></tr>
+<tr><td>11</td><td>OPP_CHILD_ONLY1<td>Don't sow opp children unless final seed</td></tr>
+<tr><td>12</td><td>LAP_CAPT_SEEDS<td>Lap Capt, sow with capt'ed seeds</td></tr>
 </table>
 <h4 id="StartPattern">StartPattern (<a href="game_params.html#start_pattern">usage</a>)</h4>
 <table>

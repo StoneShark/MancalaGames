@@ -127,13 +127,7 @@ class DivertSkipBlckdSower(SowMethodIf):
     Skip sowing blocked holes on own side of board.
 
     Don't use the incrementer because it will skip blocks.
-    The option to select this is:  sow_rule: SOW_BLKD_DIV
-
-    XXXX  visit_opp is not currently supported because we need to
-    close the hole if we end on goal_param seeds (ie. block it).
-    This needs to occur if lapping or not.
-    This doesn't quite fit the model of the code right now but might
-    in the future."""
+    The option to select this is:  sow_rule: SOW_BLKD_DIV"""
 
     def sow_seeds(self, mdata):
         """Sow seeds."""

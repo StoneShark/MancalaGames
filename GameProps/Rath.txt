@@ -13,7 +13,7 @@
       "mlaps": 1,
       "mustpass": true,
       "sow_direct": 1,
-      "sow_rule": 13
+      "sow_rule": 11
    },
    "vari_params": {
       "holes": [7, 8, 9, 10, 11, 12, 13]

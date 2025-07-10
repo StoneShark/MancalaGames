@@ -14,6 +14,7 @@
       "child_type": 1,
       "crosscapt": true,
       "mlaps": 1,
+      "mlap_cont": 5,
       "multicapt": -1,
       "capt_side": 1,
       "prescribed": 5,
@@ -22,7 +23,6 @@
       "rounds": 2,
       "sow_direct": 1,
       "stores": true,
-      "visit_opp": true,
       "xcpickown": 1
    },
    "player": {

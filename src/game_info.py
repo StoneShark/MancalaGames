@@ -309,6 +309,18 @@ class RoundStarter(enum.IntEnum):
 
 
 @enum.unique
+class SowLapCont(enum.IntEnum):
+    """Defines when to continue lap sowing."""
+
+    NONE = 0   # no additional criteria
+    ON_PARAM = 1
+    GREQ_PARAM = 2
+    OWN_SIDE = 3
+    OPP_SIDE = 4
+    VISIT_OPP = 5
+
+
+@enum.unique
 class SowPrescribed(enum.IntEnum):
     """Define a prescribed opening."""
 
@@ -335,12 +347,8 @@ class SowRule(enum.IntEnum):
     LAP_CAPT = 8
     NO_OPP_CHILD = 9
     LAP_CAPT_OPP_GETS = 10
-    CONT_LAP_ON = 11
-    CONT_LAP_GREQ = 12
-    OPP_CHILD_ONLY1 = 13
-    LAP_CAPT_SEEDS = 14
-    CONT_LAP_OWN = 15
-    CONT_LAP_OPP = 16
+    OPP_CHILD_ONLY1 = 11        # previously was 13
+    LAP_CAPT_SEEDS = 12       # previously was 14
 
 
 @enum.unique
@@ -432,7 +440,8 @@ class GameInfo:
     sow_own_store: bool = False
     blocks: bool = False
     mlaps: LapSower = LapSower.OFF
-    visit_opp: bool = False
+    mlap_cont: SowLapCont = SowLapCont.NONE
+    mlap_param: int = 0
     child_cvt: int = 0
     child_type: ChildType = ChildType.NOCHILD
     child_rule: ChildRule = ChildRule.NONE

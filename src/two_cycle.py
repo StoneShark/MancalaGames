@@ -61,9 +61,11 @@ def test_ns2_rules(gclass_name, ginfo, holes, skip=None):
         excp=gi.GameInfoError)
 
     tester.test_rule(
-        'ns2_no_vis_opp',
-        rule=lambda ginfo: ginfo.visit_opp,
-        msg=f'{gclass_name} incompatible with VISIT_OPP',
+        'ns2_no_mlap_side',
+        rule=lambda ginfo: ginfo.mlap_cont in (gi.SowLapCont.OPP_SIDE,
+                                               gi.SowLapCont.OWN_SIDE,
+                                               gi.SowLapCont.VISIT_OPP),
+        msg=f'{gclass_name} incompatible with the selected MLAP_CONT',
         excp=gi.GameInfoError)
 
     tester.test_rule(

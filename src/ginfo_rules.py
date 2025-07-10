@@ -334,14 +334,13 @@ def test_block_and_divert_rules(tester):
             msg=f'sow_blkd_div is incompatible with {flag.upper()}',
             excp=gi.GameInfoError)
 
-    bad_flags = ['skip_start', 'visit_opp']
+    bad_flags = ['skip_start']
     for flag in bad_flags:
         tester.test_rule(f'bdiv_not_{flag}',
             rule=divert_and(flag),
             msg=f'sow_blkd_div is not supported with {flag.upper()}',
             excp=NotImplementedError)
     # sower doesn't use incrementer which implements skip_start
-    # visit_opp cuz the DivertSkipBlckdSower sower comment says so
 
 
 def test_child_rules(tester):
@@ -426,8 +425,7 @@ def test_no_sides_rules(tester):
         excp=gi.GameInfoError)
 
     bad_flags = ['grandslam', 'mustpass', 'mustshare', 'capt_side',
-                 'rounds', 'round_starter', 'round_fill',
-                 'visit_opp']
+                 'rounds', 'round_starter', 'round_fill']
     for flag in bad_flags:
         tester.test_rule(f'no_sides_bad_{flag}',
             rule=no_sides_and(flag),
@@ -440,15 +438,21 @@ def test_sower_rules(tester):
 
     tester.test_rule('srule_lapper',
         rule=lambda ginfo: (ginfo.sow_rule in (gi.SowRule.CHANGE_DIR_LAP,
-                                               gi.SowRule.CONT_LAP_GREQ,
-                                               gi.SowRule.CONT_LAP_ON,
-                                               gi.SowRule.CONT_LAP_OPP,
-                                               gi.SowRule.CONT_LAP_OWN,
                                                gi.SowRule.LAP_CAPT,
                                                gi.SowRule.LAP_CAPT_OPP_GETS,
                                                gi.SowRule.LAP_CAPT_SEEDS)
                             and not ginfo.mlaps),
         msg="""Selected sow rule requires multi-lap sowing""",
+        excp=gi.GameInfoError)
+
+    tester.test_rule('mlap_cont',
+        rule=lambda ginfo: ginfo.mlap_cont and not ginfo.mlaps,
+        msg="""Lap continue reasons requires multi-lap sowing""",
+        excp=gi.GameInfoError)
+
+    tester.test_rule('mlap_param',
+        rule=lambda ginfo: ginfo.mlap_param and not ginfo.mlap_cont,
+        msg="""MLAP_PARAM requires CONT_MLAP""",
         excp=gi.GameInfoError)
 
 
@@ -808,11 +812,6 @@ def test_rules(ginfo, holes, skip=None):
         warn=gi.GameInfoError)
         # SOW1OPP is used for 2 turns but the prescribed sower uses mcount
         # repeat turns would exhaust it on the first mover
-
-    tester.test_rule('visit_opp_req_mlap',
-        rule=lambda ginfo: ginfo.visit_opp and ginfo.mlaps == gi.LapSower.OFF,
-        msg='VISIT_OPP requires MLAPS',
-        excp=gi.GameInfoError)
 
     tester.test_rule('sow_start_skip_incomp',
         rule=lambda ginfo: ginfo.sow_start and ginfo.skip_start,

@@ -78,7 +78,7 @@ is included after the parameter sections.
 <b class="inhead">NorthSouthCycle</b>
 <p class="helptext"> A two-cycle game class in which each player only sows on their own side of the board. If <a href="game_params.html#no_sides">NO_SIDES</a> is configured, either player may sow on either side of the board, but the seeds will remain on that side of the board.
 <p class="helptext"> Players may effect eachother's play with <a href="game_params.html#crosscapt">CROSSCAPT</a>, <a href="game_params.html#pickextra">PICKEXTRA</a>, Qur <a href="game_params.html#child_type">CHILD_TYPE</a>, and others. 
-<p class="helptext"> <a href="about_games.html#Weg">Weg</a> children are only supported for no_sides games. Prohibited options include: <a href="game_params.html#goal">GOAL</a> of Territory; <a href="game_params.html#mustshare">MUSTSHARE</a>; some <a href="game_params.html#sow_rule">SOW_RULE</a>; some <a href="game_params.html#child_rule">CHILD_RULE</a>; and visit opposite side for capture (<a href="game_params.html#visit_opp">VISIT_OPP</a>).
+<p class="helptext"> <a href="about_games.html#Weg">Weg</a> children are only supported for no_sides games. Prohibited options include: <a href="game_params.html#goal">GOAL</a> of Territory; <a href="game_params.html#mustshare">MUSTSHARE</a>; some <a href="game_params.html#sow_rule">SOW_RULE</a>; some <a href="game_params.html#child_rule">CHILD_RULE</a>; and <a href="game_params.html#mlap_cont">MLAP_CONT</a> of OPP_SIDE, OWN_SIDE and VISIT_OPP are prohibited.
 <p class="helptext"> <a href="about_games.html#NS_Kalah">NS_Kalah</a> is a preconfigured game using this class.
 <li class="helptext">
 <b class="inhead">EastWestCycle</b>
@@ -569,13 +569,6 @@ is included after the parameter sections.
 <p class="pdesc">UI Tab: Sow
 
 <p>Only valid when <a href="game_params.html#sow_start">SOW_START</a> is set. Changes the <a href="game_params.html#sow_start">SOW_START</a> behavior so that if there is only one seed in the hole, it is moved in the sow direction by one hole.
-<h4 id="visit_opp"> Visit Opp for Mlaps </h4>
-<p class="pdesc">Location in Config Files: game_info : visit_opp
-<p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
-<p class="pdesc">Default value: False
-<p class="pdesc">UI Tab: Sow
-
-<p>Requires <a href="game_params.html#mlaps">MLAPS</a>. If the first 'lap' does not reach the opponent's side of the board, the sowing ends after the first lap. 
 <h4 id="presowcapt"> Pre Sow Capture </h4>
 <p class="pdesc">Location in Config Files: game_info : presowcapt
 <p id="PreSowCapt" class="pdesc">Type: <a href="param_types.html#PreSowCapt"> PreSowCapt </a>
@@ -604,7 +597,7 @@ is included after the parameter sections.
 <li class="helptext">
 <b class="enum">SOW_BLKD_DIV</b>: If the final seed of an individual sow lands on the opposite side of the board and brings the contents of that hole to sow_param seeds, the hole is closed (blocked). In single lap games, the hole's seeds are removed from play. In multilap games, the seeds are used to continue sowing.
 <p class="helptext"> When sowing, blocked holes on your own side of the board are skipped and blocked holes on opponent's side are diverted out of play or captured.
-<p class="helptext">  Game <a href="game_params.html#goal">GOAL</a> must be DEPRIVE and all the associated restrictions apply. <a href="game_params.html#nocaptmoves">NOCAPTMOVES</a> maybe used to prevent closing holes on the initial games moves. Capture mechanisms other than closing holes are not supported. The minimum move must be 1 and thus <a href="game_params.html#sow_start">SOW_START</a> is incompatible.  <a href="game_params.html#allow_rule">ALLOW_RULE</a> may not be used to limit allowable moves. <a href="game_params.html#skip_start">SKIP_START</a> and <a href="game_params.html#visit_opp">VISIT_OPP</a> are not supported with SOW_BLKD_DIV. <a href="game_params.html#mlaps">MLAPS</a> of LAPPER_NEXT is not supported with SOW_BLKD_DIV(_NR).
+<p class="helptext">  Game <a href="game_params.html#goal">GOAL</a> must be DEPRIVE and all the associated restrictions apply. <a href="game_params.html#nocaptmoves">NOCAPTMOVES</a> maybe used to prevent closing holes on the initial games moves. Capture mechanisms other than closing holes are not supported. The minimum move must be 1 and thus <a href="game_params.html#sow_start">SOW_START</a> is incompatible.  <a href="game_params.html#allow_rule">ALLOW_RULE</a> may not be used to limit allowable moves. <a href="game_params.html#skip_start">SKIP_START</a> is not supported with SOW_BLKD_DIV. <a href="game_params.html#mlaps">MLAPS</a> of LAPPER_NEXT is not supported with SOW_BLKD_DIV(_NR).
 <li class="helptext">
 <b class="enum">SOW_BLKD_DIV_NR</b>: Behaves the same as SOW_BLKD_DIV except that each player's rightmost hole cannot be closed. 
 <li class="helptext">
@@ -633,19 +626,11 @@ is included after the parameter sections.
 <li class="helptext">
 <b class="enum">LAP_CAPT_OPP_GETS</b>: Use LAP_CAPT sow rule until there are only sow_param seeds left. Then when down to the last seeds (sow_param or less at the start of a lap): seeds sown on the opponent's side are captured by the opponent. If the last seed would do a normal capture, the sower takes those seeds, including the last seed sown.
 <li class="helptext">
-<b class="enum">CONT_LAP_ON</b>: Only continue multilap sowing when a hole is sown to sow_param seeds.
-<li class="helptext">
-<b class="enum">CONT_LAP_GREQ</b>: Only continue multilap sowing when a hole is sown to sow_param or more seeds.
-<li class="helptext">
 <b class="enum">OPP_CHILD_ONLY1</b>: Do not sow opponent's children unless it is with the final seed of a sow.
 <li class="helptext">
 <b class="enum">LAP_CAPT_SEEDS</b>: Check for capture on each lap. If a capture occured, continue sowing with captured seeds and seeds in final hole sown. If no capture occured, continue if more than one seed is in the final hole.
 <p class="helptext"> For all LAP_CAPT rules, if stores are not configured, sowing will be stopped when the opponent does not have seeds.
 <p class="helptext"> Not compatible with basic captures. Behaves badly with most capt_types unless other options are used to prevent endless sows. Turn on Disallow Endless Sows via the Game menu for experimentation.
-<li class="helptext">
-<b class="enum">CONT_LAP_OWN</b>: continue lap sowing when a lap sow ends on your own side of the board; stop if ending on your opponent's side.
-<li class="helptext">
-<b class="enum">CONT_LAP_OPP</b>: continue lap sowing when a lap sow ends on your opponent's side of the board; stop if ending on your own side.
 </ol>
 <h4 id="sow_param"> Sow Parameter </h4>
 <p class="pdesc">Location in Config Files: game_info : sow_param
@@ -658,6 +643,33 @@ is included after the parameter sections.
 <p>Sow rule of MAX_SOW: maximum number of seeds a hole may contain
 <p>Sow rule of NO_SOW_OPP_NS: don't sow opposite holes with sow_param seeds
 <p>Sow rule of OPP_GETS_OWN_LAST: number of seeds to switch from straight LAP_CAPT sowing to opponent capturing seeds sown on their side of the board, unless final seed does capture
+<h4 id="mlap_cont"> Lap Continue Reason </h4>
+<p class="pdesc">Location in Config Files: game_info : mlap_cont
+<p id="SowLapCont" class="pdesc">Type: <a href="param_types.html#SowLapCont"> SowLapCont </a>
+<p class="pdesc">Default value: 0
+<p class="pdesc">UI Tab: Sow
+
+<p>An additional limit on continuing mlap sowing:
+<ol start=0><li class="helptext">
+<b class="enum">NONE</b>: no additional reasons
+<li class="helptext">
+<b class="enum">ON_PARAM</b>: continue mlaps sowing when last sown hole is mlap_param
+<li class="helptext">
+<b class="enum">GREQ_PARAM</b>: continue mlaps sowing when last sown hole is greater than or equal to mlap_param
+<li class="helptext">
+<b class="enum">OWN_SIDE</b>: continue mlaps sowing only from own side of the board
+<li class="helptext">
+<b class="enum">OPP_SIDE</b>: continue mlaps sowing only from opposite side of the board
+<li class="helptext">
+<b class="enum">VISIT_OPP</b>: continue mlaps sowing only if the opposite side of the board was sown on the first lap
+</ol>
+<h4 id="mlap_param"> Lap Continue Param </h4>
+<p class="pdesc">Location in Config Files: game_info : mlap_param
+<p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
+<p class="pdesc">Default value: 0
+<p class="pdesc">UI Tab: Sow
+
+<p>Parameter for the Lap Continue Reason.
 <h4 id="child_type"> Type of Children </h4>
 <p class="pdesc">Location in Config Files: game_info : child_type
 <p id="ChildType" class="pdesc">Type: <a href="param_types.html#ChildType"> ChildType </a>
@@ -1141,6 +1153,8 @@ is included after the parameter sections.
     <p class="param"><a href="#mcts_nodes">mcts_nodes</a></p>
     <p class="param"><a href="#mcts_pouts">mcts_pouts</a></p>
     <p class="param"><a href="#min_move">min_move</a></p>
+    <p class="param"><a href="#mlap_cont">mlap_cont</a></p>
+    <p class="param"><a href="#mlap_param">mlap_param</a></p>
     <p class="param"><a href="#mlaps">mlaps</a></p>
     <p class="param"><a href="#mm_depth">mm_depth</a></p>
     <p class="param"><a href="#move_one">move_one</a></p>
@@ -1153,10 +1167,10 @@ is included after the parameter sections.
     <p class="param"><a href="#no_sides">no_sides</a></p>
     <p class="param"><a href="#nocaptmoves">nocaptmoves</a></p>
     <p class="param"><a href="#nosinglecapt">nosinglecapt</a></p>
-    <p class="param"><a href="#pickextra">pickextra</a></p>
-    <p class="param"><a href="#prescribed">prescribed</a></p>
   </div>
   <div class="column3">
+    <p class="param"><a href="#pickextra">pickextra</a></p>
+    <p class="param"><a href="#prescribed">prescribed</a></p>
     <p class="param"><a href="#presowcapt">presowcapt</a></p>
     <p class="param"><a href="#quitter">quitter</a></p>
     <p class="param"><a href="#repeat_turn">repeat_turn</a></p>
@@ -1175,7 +1189,6 @@ is included after the parameter sections.
     <p class="param"><a href="#stores_m">stores_m</a></p>
     <p class="param"><a href="#udir_holes">udir_holes</a></p>
     <p class="param"><a href="#unclaimed">unclaimed</a></p>
-    <p class="param"><a href="#visit_opp">visit_opp</a></p>
     <p class="param"><a href="#xc_sown">xc_sown</a></p>
     <p class="param"><a href="#xcpickown">xcpickown</a></p>
   </div>
