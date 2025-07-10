@@ -330,10 +330,12 @@ def make_inhibitor(game):
 
     # Bao
     if (game.info.prescribed == gi.SowPrescribed.ARNGE_LIMIT
-            and game.info.round_fill == gi.RoundFill.SHORTEN):
+            and game.info.round_fill in (gi.RoundFill.SHORTEN,
+                                         gi.RoundFill.SHORTEN_ALL)):
         return InhibitorBoth(arnge_limit_cond)
 
-    if game.info.round_fill == gi.RoundFill.SHORTEN:
+    if game.info.round_fill in (gi.RoundFill.SHORTEN,
+                                gi.RoundFill.SHORTEN_ALL):
         return InhibitorChildrenOnly()
 
     return InhibitorNone()

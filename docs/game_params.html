@@ -474,13 +474,15 @@ is included after the parameter sections.
 <li class="helptext">
 <b class="enum">EVEN_FILL</b>: fill all holes (both sides) with the same number of seeds; determined by dividing the loser's seeds by the number of holes per side. If that is not playable based on the minimum number of seeds required for a move (<a href="game_params.html#min_move">MIN_MOVE</a>); extra seeds are put in each player's leftmost hole. Any extra seeds are put in each player's store.
 <li class="helptext">
-<b class="enum">SHORTEN</b>: the number of holes that the round loser can fill with <a href="game_params.html#nbr_start">NBR_START</a> seeds are fill on both sides, other holes are left empty. Holes are filled opposite each other. If <a href="game_params.html#blocks">BLOCKS</a> is selected, the board is shortened to the number of holes filled (empty holes are blocked and out of play). If the game uses children, they will not be created if the board size is reduced to 3 or less.
+<b class="enum">SHORTEN</b>: the number of holes that the round loser can fill with <a href="game_params.html#nbr_start">NBR_START</a> seeds are filled on both sides, other holes are left empty. Holes are filled opposite each other. If <a href="game_params.html#blocks">BLOCKS</a> is selected, the board is shortened to the number of holes filled (empty holes are blocked and out of play). If the game uses children, they will not be created if the board size is reduced to 3 or less.
 <li class="helptext">
 <b class="enum">UCHOOSE</b>: allow user to choose which holes have seeds (are not blocked) when <a href="game_params.html#rounds">ROUNDS</a> and <a href="game_params.html#blocks">BLOCKS</a> are used.
 <li class="helptext">
 <b class="enum">UMOVE</b>: allow the loser to choose where seeds are placed. At least one seed must be placed in each hole and the game must be playable (at least one hole has <a href="game_params.html#min_move">MIN_MOVE</a> seeds), remaining seeds are placed in the store. The winner's layout is the same layout but reflected and their extra seeds are placed in their store.
 <li class="helptext">
 <b class="enum">UCHOWN</b>: The only round fill supported for territory games and only territory games. The winner may choose which holes they control.
+<li class="helptext">
+<b class="enum">SHORTEN_ALL</b>: SHORTEN but all of the loser's seeds are put on the board thus one hole might not have 'nbr_start' seeds. The winner gets the same number of seeds put into play.
 </ol>
 <h4 id="blocks"> Blocks </h4>
 <p class="pdesc">Location in Config Files: game_info : blocks

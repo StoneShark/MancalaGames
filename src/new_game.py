@@ -112,7 +112,8 @@ class NewRound(NewGameIf):
         elif self.game.info.round_fill == gi.RoundFill.LEFT_FILL:
             self.fill_orders = [range(holes), range(holes, dbl_holes)]
 
-        elif self.game.info.round_fill == gi.RoundFill.SHORTEN:
+        elif self.game.info.round_fill in (gi.RoundFill.SHORTEN,
+                                           gi.RoundFill.SHORTEN_ALL):
             self.fill_orders = [range(holes),
                                 range(dbl_holes - 1, holes - 1, -1)]
 
@@ -137,26 +138,35 @@ class NewRound(NewGameIf):
         fill = [0, 0]
         seeds = self.collector.claim_seeds()
 
-        nbr_start = self.game.cts.nbr_start
-        holes = self.game.cts.holes
+        game = self.game
+        nbr_start = game.cts.nbr_start
+        holes = game.cts.holes
+        extra = 0
 
-        if self.game.info.round_fill == gi.RoundFill.SHORTEN:
+        if game.info.round_fill in (gi.RoundFill.SHORTEN,
+                                    gi.RoundFill.SHORTEN_ALL):
 
             loser = 0 if seeds[0] < seeds[1] else 1
             quot = seeds[loser] // nbr_start
             fill[0] = fill[1] = min(quot, holes)
 
-            self.game.store[0] = seeds[0] - fill[0] * nbr_start
-            self.game.store[1] = seeds[1] - fill[1] * nbr_start
+            if game.info.round_fill == gi.RoundFill.SHORTEN_ALL:
+                winner = not loser
+                game.store[loser] = 0
+                extra = seeds[loser] - fill[loser] * nbr_start
+                game.store[winner] = seeds[winner] - fill[winner] * nbr_start
+                game.store[winner] -= extra
+            else:
+                game.store[0] = seeds[0] - fill[0] * nbr_start
+                game.store[1] = seeds[1] - fill[1] * nbr_start
 
         else:
             for store in (False, True):
                 quot = seeds[store] // nbr_start
                 fill[store] = min(quot, holes)
-                self.game.store[store] = \
-                    seeds[store] - fill[store] * nbr_start
+                game.store[store] = seeds[store] - fill[store] * nbr_start
 
-        return fill
+        return fill, extra
 
 
     def new_game(self, new_round=False):
@@ -174,19 +184,24 @@ class NewRound(NewGameIf):
 
         nbr_start = self.game.cts.nbr_start
         blocks = self.game.info.blocks
-        fill = self._compute_fills()
+        fill, extra = self._compute_fills()
 
         set_round_starter(self.game)
         self.game.init_bprops()
 
         if (self.game.cts.holes > 3
-                and self.game.info.round_fill == gi.RoundFill.SHORTEN):
+                and self.game.info.round_fill in (gi.RoundFill.SHORTEN,
+                                                  gi.RoundFill.SHORTEN_ALL)):
             self.game.inhibitor.set_child(fill[0] <= 3)
 
         for store, brange in enumerate(self.fill_orders):
+            eside = extra
             for cnt, loc in enumerate(brange):
                 if cnt < fill[store]:
                     self.game.board[loc] = nbr_start
+                elif eside:
+                    self.game.board[loc] = eside
+                    eside = 0
                 else:
                     self.game.board[loc] = 0
                     if blocks:

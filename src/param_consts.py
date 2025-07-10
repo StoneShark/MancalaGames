@@ -237,6 +237,7 @@ STRING_DICTS = {
          'Outside In Fill': gi.RoundFill.OUTSIDE_FILL,
          'Even Fill': gi.RoundFill.EVEN_FILL,
          'Shorten Board': gi.RoundFill.SHORTEN,
+         'Shorten Board All': gi.RoundFill.SHORTEN_ALL,
          'Choose Blocks': gi.RoundFill.UCHOOSE,
          'Rearrange Seeds': gi.RoundFill.UMOVE,
          'Winner Chooses Owners': gi.RoundFill.UCHOWN}),

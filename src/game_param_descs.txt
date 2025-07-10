@@ -660,13 +660,15 @@ START_PATTERN is only supported round_fill of NOT_APPLICABLE and UCHOWN.
 
 - EVEN_FILL: fill all holes (both sides) with the same number of seeds; determined by dividing the loser's seeds by the number of holes per side. If that is not playable based on the minimum number of seeds required for a move (MIN_MOVE); extra seeds are put in each player's leftmost hole. Any extra seeds are put in each player's store.
 
-- SHORTEN: the number of holes that the round loser can fill with NBR_START seeds are fill on both sides, other holes are left empty. Holes are filled opposite each other. If BLOCKS is selected, the board is shortened to the number of holes filled (empty holes are blocked and out of play). If the game uses children, they will not be created if the board size is reduced to 3 or less.
+- SHORTEN: the number of holes that the round loser can fill with NBR_START seeds are filled on both sides, other holes are left empty. Holes are filled opposite each other. If BLOCKS is selected, the board is shortened to the number of holes filled (empty holes are blocked and out of play). If the game uses children, they will not be created if the board size is reduced to 3 or less.
 
 - UCHOOSE: allow user to choose which holes have seeds (are not blocked) when ROUNDS and BLOCKS are used.
 
 - UMOVE: allow the loser to choose where seeds are placed. At least one seed must be placed in each hole and the game must be playable (at least one hole has MIN_MOVE seeds), remaining seeds are placed in the store. The winner's layout is the same layout but reflected and their extra seeds are placed in their store.
 
 - UCHOWN: The only round fill supported for territory games and only territory games. The winner may choose which holes they control.
+
+- SHORTEN_ALL: SHORTEN but all of the loser's seeds are put on the board thus one hole might not have 'nbr_start' seeds. The winner gets the same number of seeds put into play.
 
 <param round_starter>
 Defines which player starts 2nd and subsequent rounds:

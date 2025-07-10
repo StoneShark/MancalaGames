@@ -471,7 +471,7 @@ capture in sow direction--following holes, instead of preceeding holes.
 <p>Sowing the final seed of a lap to 4 on opposite side, creates a child which will collect seeds but can't be captured. A child may not be created with a single seed in a move that was initiated from the player's rightmost hole. Moves may not start from children.
 <p>Cross-capture on opponent's side. On capture, take the seed initiating the capture. Multiple captures may be made in sow direction as long as the player's side holes are empty. Seeds from child holes may not be captured.
 <p>Played in rounds. Each round ends when the current player does not have a move or there is only one seed left in play without children. The game ends when one player cannot fill a single hole.
-<p>At the start of each round, the board is resized to the number of holes that the player with fewer seeds can fill completely. If the board size is reduced to 3 or less per side, no children may be created.
+<p>At the start of each round, the loser puts four seeds in each hole from the left, then any remaining seeds are put into the next hole. The winner's side is setup exactly the same, except any extra seeds they have are put into their store. The board is resized to the number of holes filled. If the board size is reduced to 3 or less per side, no children may be created.
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  7</p>
@@ -490,7 +490,7 @@ capture in sow direction--following holes, instead of preceeding holes.
     <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
     <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: -1</p>
     <p class="param"><a href="game_params.html#prescribed">Prescribed Opening Move</a>: ARNGE_LIMIT</p>
-    <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: SHORTEN</p>
+    <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: SHORTEN_ALL</p>
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: WINNER</p>
     <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
