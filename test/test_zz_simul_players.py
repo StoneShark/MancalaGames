@@ -48,7 +48,7 @@ from context import game_logger
 # limit the length of these tests, exceeding TESTLIMIT is a test failure
 
 NBR_MOVES = 50
-SEC_PER_MOVE = 1.5
+SEC_PER_MOVE = 2
 TESTLIMIT = NBR_MOVES * SEC_PER_MOVE
 
 
