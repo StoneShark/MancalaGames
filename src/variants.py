@@ -298,15 +298,19 @@ class AdjustPopup(param_mixin.ParamMixin, tksimpledialog.Dialog):
         to match it.
         If the variants dict is empty, reset to the game_config."""
 
+        # revert to the base game options
+        self.game_name = self.game_config[ckey.GAME_INFO][ckey.NAME]
+
+        for vname in self.vari_params.keys():
+            param = self.params[vname]
+            self.pm_copy_config_to_tk(param, self.game_config)
+
+        # if we've selected the base game, stop
         vari_name = self.tkvars[ckey.VARIANTS].get()
         if not self.variants[vari_name]:
-            self.game_name = self.game_config[ckey.GAME_INFO][ckey.NAME]
-
-            for vname in self.vari_params.keys():
-                param = self.params[vname]
-                self.pm_copy_config_to_tk(param, self.game_config)
             return
 
+        # configure for the selected varaint (not the base game)
         self.game_name = man_config.qual_game_name(self.game_config, vari_name)
         vkeys = self.vari_params.keys()
         for vname, fvalue in self.variants[vari_name].items():
@@ -328,20 +332,29 @@ def possible_values(vparam, variants):
     can take.
 
     If the value is True (not truthy) the parameter, can take on
-    any value."""
+    any value.
+
+    Don't collect values for any options that are do not have
+    hashable values."""
 
     params = collections.defaultdict(set)
 
     for pname, pvalues in vparam.items():
+        if pname in ckey.NOT_HASHABLE:
+            continue
+
         if isinstance(pvalues, list):
             params[pname] = set(pvalues)
+
         else:
             params[pname] = True
 
     for vdict in variants.values():
         for pname, pvalue in vdict.items():
-            if params[pname] is not True:
-                params[pname] |= {pvalue}
+            if  pname in ckey.NOT_HASHABLE or params[pname] is True:
+                continue
+
+            params[pname] |= {pvalue}
 
     return params
 
@@ -358,6 +371,7 @@ def test_algo_ok(game_dict, vparam, variants):
         or pdict[ckey.ALGORITHM] == ai_player.MINIMAXER):
         return
 
+    # cannot test params in ckey.NOT_HASHABLE
     bad_opts = {ckey.SOW_OWN_STORE: {True, },
                 ckey.XC_SOWN: {True, },
                 ckey.PRESCRIBED: {gi.SowPrescribed, },
@@ -367,7 +381,8 @@ def test_algo_ok(game_dict, vparam, variants):
                 ckey.UNCLAIMED: {gi.EndGameSeeds.LAST_MOVER, },
                 ckey.CAPT_RTURN: {gi.CaptRTurn.ONCE, gi.CaptRTurn.ALWAYS},
                 ckey.SOW_DIRECT: {gi.Direct.PLAYALTDIR, },
-                ckey.ROUND_FILL: {gi.RoundFill.SHORTEN, },
+                ckey.ROUND_FILL: {gi.RoundFill.SHORTEN,
+                                  gi.RoundFill.SHORTEN_ALL},
                 }
 
     value_dict = possible_values(vparam, variants)

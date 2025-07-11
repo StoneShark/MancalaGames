@@ -19,6 +19,10 @@
       "ai_params": { "mm_depth": [ 1, 3, 5, 7 ] },
       "scorer": { "stores_m": 4 }
    },
+   "variants": {
+      "Ndoto": { },
+      "Bao": { "allow_rule": 4 }
+   },
    "vari_params": { 
       "holes": "include",
       "allow_rule": [ 2, 3, 4 ] 

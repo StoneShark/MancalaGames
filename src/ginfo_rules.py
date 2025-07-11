@@ -996,7 +996,8 @@ def test_rules(ginfo, holes, skip=None):
         # TERRITORY: partial side ownership is not implemented
 
     tester.test_rule('short_no_blocks',
-        rule=lambda ginfo: (ginfo.round_fill == gi.RoundFill.SHORTEN
+        rule=lambda ginfo: (ginfo.round_fill in (gi.RoundFill.SHORTEN,
+                                                 gi.RoundFill.SHORTEN_ALL)
                             and not ginfo.blocks),
         msg='RoundFill SHORTEN without BLOCKS, yields an odd game dynamic',
         warn=True)

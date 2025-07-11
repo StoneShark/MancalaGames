@@ -197,7 +197,8 @@ def deco_capturer(game):
         capturer = capt_decos.NoSingleSeedCapt(game, capturer)
 
     if (game.info.prescribed == gi.SowPrescribed.ARNGE_LIMIT
-            or game.info.round_fill == gi.RoundFill.SHORTEN
+            or game.info.round_fill in (gi.RoundFill.SHORTEN,
+                                        gi.RoundFill.SHORTEN_ALL)
             or game.info.nocaptmoves):
         capturer = capt_decos.NotInhibited(game, capturer)
 

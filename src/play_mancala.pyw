@@ -132,10 +132,18 @@ SOWDIR = {'CW': lambda ginfo: ginfo.get(ckey.SOW_DIRECT, 1) == -1,
 FEATS = {'No Sides': lambda ginfo: ginfo.get(ckey.NO_SIDES, 0),
          'Start Pattern': lambda ginfo: ginfo.get(ckey.START_PATTERN, 0),
          'Prescribed Open': lambda ginfo: ginfo.get(ckey.PRESCRIBED, 0),
-         'Move Restrictions': lambda ginfo: ginfo.get(ckey.ALLOW_RULE, 0),
+         'Move Restrictions': lambda ginfo:
+             (ginfo.get(ckey.ALLOW_RULE, 0)
+              or ginfo.get(ckey.MIN_MOVE, 0) > 1),
          'Must Pass': lambda ginfo: ginfo.get(ckey.MUSTPASS, 0),
          'Must Share': lambda ginfo: ginfo.get(ckey.MUSTSHARE, 0),
-         'User Sow Direct': lambda ginfo: len(ginfo.get(ckey.UDIR_HOLES, [])) >= 1,
+         'Inhibitor': lambda ginfo:
+             (ginfo.get(ckey.NOCAPTMOVES, 0)
+              or ginfo.get(ckey.PRESCRIBED, 0) == gi.SowPrescribed.ARNGE_LIMIT
+              or ginfo.get(ckey.ROUND_FILL, 0) in (gi.RoundFill.SHORTEN,
+                                                   gi.RoundFill.SHORTEN_ALL)),
+         'User Sow Direct': lambda ginfo:
+             len(ginfo.get(ckey.UDIR_HOLES, [])) >= 1,
          'Pre-sow Capture': lambda ginfo: ginfo.get(ckey.PRESOWCAPT, 0),
          'Repeat Turn': lambda ginfo: any([ginfo.get(ckey.CAPT_RTURN, 0),
                                            ginfo.get(ckey.SOW_OWN_STORE, 0),

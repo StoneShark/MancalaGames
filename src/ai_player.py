@@ -443,7 +443,8 @@ def mcts_no_hidden_state(game):
                 or ginfo.unclaimed == gi.EndGameSeeds.LAST_MOVER
                 or ginfo.capt_rturn > gi.CaptRTurn.ALWAYS
                 or ginfo.sow_direct == gi.Direct.PLAYALTDIR
-                or ginfo.round_fill == gi.RoundFill.SHORTEN
+                or ginfo.round_fill in (gi.RoundFill.SHORTEN,
+                                        gi.RoundFill.SHORTEN)
                 or allowables.DontUndoMoveOne.include(game))
 
 

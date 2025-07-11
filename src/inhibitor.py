@@ -328,10 +328,7 @@ def make_inhibitor(game):
     if game.info.nocaptmoves:
         return InhibitorCaptN(game.info.nocaptmoves)
 
-    # Bao
-    if (game.info.prescribed == gi.SowPrescribed.ARNGE_LIMIT
-            and game.info.round_fill in (gi.RoundFill.SHORTEN,
-                                         gi.RoundFill.SHORTEN_ALL)):
+    if game.info.prescribed == gi.SowPrescribed.ARNGE_LIMIT:
         return InhibitorBoth(arnge_limit_cond)
 
     if game.info.round_fill in (gi.RoundFill.SHORTEN,

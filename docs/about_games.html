@@ -363,9 +363,9 @@ Allow making children in opposite end holes but prohibit making children in oppo
 <p>Goal: capture the most seeds.
 <p>Varitations:
 <ul><li class="helptext">
-7 holes (Mancala World: Yit Nuri)
+7 holes (Yit Nuri)
 <li class="helptext">
-13 holes and 2 seeds per hole (Mancala World: Yit Jani)
+13 holes and 2 seeds per hole (Yit Jani)
 </ul>
 <div class="cols_row">
   <div class="column2">
@@ -701,9 +701,9 @@ For the center hole, the mouse button used to start the move selects the sow dir
 <p>The games ends when one player has more than half the seeds or when neither player can move.
 <p>Variations:
 <ul><li class="helptext">
- <a href="about_games.html#Goat">Goat</a> uses the same rules on a smaller board, making it an easier game.
+ <a href="about_games.html#Goat">Goat</a> uses the same rules on a smaller board, making it an easier game. Captures are only on 2s.
 <li class="helptext">
-<a href="about_games.html#Alemungula">Alemungula</a> uses the same rules but has a minimum move of 1, making it a bit more challenging.
+<a href="about_games.html#Alemungula">Alemungula</a> uses the same rules but has a minimum move of 1, making it a bit more challenging. Passing is not allowed.
 </ul>
 <div class="cols_row">
   <div class="column2">
@@ -970,41 +970,17 @@ allow closing of rightmost holes (<a href="game_params.html#sow_rule">SOW_RULE</
   </div>
 </div>
 <p>Rules: <a href="https://mancala.fandom.com/wiki/Embeli" target="_blank">https://mancala.fandom.com/wiki/Embeli</a>
-<h3 id="En Dodoi" class="game_desc">En Dodoi</h3>
-<p>A multi-lap mancala, sow direction counter-clockwise, cross-capture when end in own hole with one seed. Pick own seed on capture. 
-<p>Played in rounds. Each round ends when the current player does not have a valid move. Unclaimed seeds go to the last player to move.
-<p>The goal is to be the first to collect 100 total seeds. The Game Tally, available to be displayed via the Display menu, shows progress toward that goal.
-<p>Variation:
-<ul><li class="helptext">
-Not played in rounds (<a href="about_games.html#Endodoi">Endodoi</a>).
-</ul>
-<div class="cols_row">
-  <div class="column2">
-    <p class="param">Holes per side:  8</p>
-    <p class="param">Start seeds:  4</p>
-    <p class="param"><a href="game_params.html#goal">Goal</a>: RND_SEED_COUNT</p>
-    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OPP_SIDE</p>
-    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
-    <p class="param"><a href="game_params.html#goal_param">Goal Parameter</a>: 100</p>
-    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
-  </div>
-  <div class="column2">
-    <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
-    <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
-    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
-    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
-    <p class="param"><a href="game_params.html#unclaimed">Unclaimed Seeds at End</a>: LAST_MOVER</p>
-    <p class="param"><a href="game_params.html#xcpickown">Own Seed on Xcapture</a>: PICK_ON_CAPT</p>
-  </div>
-</div>
-<p>Rules: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p33.
 <h3 id="Endodoi" class="game_desc">Endodoi</h3>
-<p>A multi-lap mancala, sow direction counter-clockwise, cross-capture when end in own hole with one seed. Pick own seed on capture. Games end when a player has no valid move.
+<p>A multi-lap mancala, sow direction is counter-clockwise. Cross-capture when end in own hole with one seed; pick own seed on capture. Games end when a player has no valid move. Goal: collect the most seeds.
 <p>Variations:
 <ul><li class="helptext">
 Played with 6 to 10 holes.
 <li class="helptext">
-Use a <a href="game_params.html#goal">GOAL</a> of RND_SEED_COUNT where the winner is the first to collect 100 total seeds (<a href="about_games.html#En Dodoi">En Dodoi</a>).
+Use a <a href="game_params.html#goal">GOAL</a> of RND_SEED_COUNT where the winner is the first to collect 100 total seeds.
+<li class="helptext">
+Limit captures to holes with 3 or fewer seeds (J'Odu).
+<li class="helptext">
+Limit moves to holes reach the opposite side of the board or end in empty hole (<a href="about_games.html#Dabuda">Dabuda</a>).
 </ul>
 <div class="cols_row">
   <div class="column2">
@@ -3454,7 +3430,6 @@ any odd number of seeds
     <p class="param"><a href="#Djenon Abe">Djenon Abe</a></p>
     <p class="param"><a href="#Djenon Aboure">Djenon Aboure</a></p>
     <p class="param"><a href="#Embeli">Embeli</a></p>
-    <p class="param"><a href="#En Dodoi">En Dodoi</a></p>
     <p class="param"><a href="#Endodoi">Endodoi</a></p>
     <p class="param"><a href="#Enkeshui">Enkeshui</a></p>
     <p class="param"><a href="#Enlightenment">Enlightenment</a></p>
@@ -3463,9 +3438,9 @@ any odd number of seeds
     <p class="param"><a href="#Gabata">Gabata</a></p>
     <p class="param"><a href="#Gamacha">Gamacha</a></p>
     <p class="param"><a href="#Gelech">Gelech</a></p>
+    <p class="param"><a href="#Giuthi">Giuthi</a></p>
   </div>
   <div class="column3">
-    <p class="param"><a href="#Giuthi">Giuthi</a></p>
     <p class="param"><a href="#Goat">Goat</a></p>
     <p class="param"><a href="#Halusa">Halusa</a></p>
     <p class="param"><a href="#Hoyito I">Hoyito I</a></p>
@@ -3507,9 +3482,9 @@ any odd number of seeds
     <p class="param"><a href="#NoSides">NoSides</a></p>
     <p class="param"><a href="#NS_Kalah">NS_Kalah</a></p>
     <p class="param"><a href="#Nsa Isong">Nsa Isong</a></p>
+    <p class="param"><a href="#NumNum">NumNum</a></p>
   </div>
   <div class="column3">
-    <p class="param"><a href="#NumNum">NumNum</a></p>
     <p class="param"><a href="#Obridjie">Obridjie</a></p>
     <p class="param"><a href="#Ohojichi">Ohojichi</a></p>
     <p class="param"><a href="#Ohvulhu">Ohvulhu</a></p>

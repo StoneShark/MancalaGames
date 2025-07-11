@@ -165,3 +165,12 @@ PLAYER_PARAMS = (ALGORITHM,
                  EVENS_M,
                  EASY_RAND,
                 )
+
+
+# options with values that are not hashable (not simple types)
+NOT_HASHABLE = (CAPT_ON,
+                UDIR_HOLES,
+                MCTS_BIAS,
+                MCTS_NODES,
+                MCTS_POUTS,
+                MM_DEPTH)
