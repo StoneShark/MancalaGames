@@ -25,13 +25,21 @@ class ManMsgsMixin:
             if deco:
                 return f'The {rtext} will end in a tie.'
 
-        param = 'quitter' if quitter else 'unclaimed'
-        method = getattr(self.info, param)
-
+        method = getattr(self.info, 'quitter' if quitter else 'unclaimed')
         deco_name = 'quitter' if quitter else 'ender'
+        message = ''
+
+        if method == gi.EndGameSeeds.UNFED_PLAYER:
+            # the ender was requested (unfed disallowed with quitter);
+            # use the quitter
+            method = getattr(self.info, 'quitter')
+            deco_name = 'quitter'
+            message += f"""There is no UNFED_PLAYER;
+                       End {rtext.title()} will be used:  """
+
         concede = isinstance(getattr(self.deco, deco_name), emd.ConcedeMixin)
 
-        message = 'Unclaimed seeds will '
+        message += 'Unclaimed seeds will '
         if ((not quitter and concede)         # generalization but good now
                 or method == gi.EndGameSeeds.HOLE_OWNER):
             message += 'go to the hole owners'
@@ -41,9 +49,6 @@ class ManMsgsMixin:
 
         elif method == gi.EndGameSeeds.LAST_MOVER:
             message += f'go to {gi.PLAYER_NAMES[self.mdata.player]}'
-
-        elif method == gi.EndGameSeeds.UNFED_PLAYER:
-            message += f'go to {gi.PLAYER_NAMES[not self.mdata.player]}'
 
         elif method == gi.EndGameSeeds.DIVVIED:
             message += """be divvied between the players (an odd seed will

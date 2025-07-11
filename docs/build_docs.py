@@ -467,7 +467,6 @@ def write_games_help(filename):
                 del game_dict[ckey.PLAYER]
                 del game_dict[ckey.FILENAME]
 
-                # TODO describe the variations
                 if ckey.VARI_PARAMS in game_dict:
                     del game_dict[ckey.VARI_PARAMS]
                 if ckey.VARIANTS in game_dict:
@@ -480,8 +479,8 @@ def write_games_help(filename):
             write_para(about_str, ofile)
             write_columns(ofile, prop_text, 2)
             for key, text in game_dict.items():
-                print('<p>', key.title(), ': ', sub_links(text),
-                      sep='', file=ofile)
+                text = '<b class="enum">' + key.title() + '</b>: ' + text
+                write_para(text, ofile)
 
         print('<br><br><br>', file=ofile)
         print('<h2 id="index">Game Index</h2>', file=ofile)

@@ -64,21 +64,25 @@ def _add_end_game_winner(game):
     should be scored.  Some of the claimers create
     lambda's to look the actual player later.
 
-    EndGameMustShare does the taker if can't share,
-    so this uses the default taker here."""
+    EndGameMustShare does the taker if seeds can't be shared,
+    so this uses the default taker.
+    If the ender is UNFED_PLAYER, use the configuration
+    for the quitter."""
 
-    if (game.info.no_sides
-            or game.info.unclaimed == gi.EndGameSeeds.DONT_SCORE
-            or game.info.unclaimed == gi.EndGameSeeds.UNFED_PLAYER):
+    condition = game.info.unclaimed
+    if  game.info.unclaimed == gi.EndGameSeeds.UNFED_PLAYER:
+        condition = game.info.quitter
+
+    if game.info.no_sides or condition == gi.EndGameSeeds.DONT_SCORE:
         sclaimer = claimer.TakeOnlyChildNStores(game)
 
-    elif game.info.unclaimed == gi.EndGameSeeds.HOLE_OWNER:
+    elif condition == gi.EndGameSeeds.HOLE_OWNER:
         sclaimer = claimer.TakeOwnSeeds(game)
 
-    elif game.info.unclaimed == gi.EndGameSeeds.LAST_MOVER:
+    elif condition == gi.EndGameSeeds.LAST_MOVER:
         sclaimer = claimer.TakeAllUnclaimed(game)
 
-    elif game.info.unclaimed == gi.EndGameSeeds.DIVVIED:
+    elif condition == gi.EndGameSeeds.DIVVIED:
         sclaimer = claimer.DivvySeedsStores(game)
 
     else:
@@ -233,8 +237,7 @@ def pick_base_quitter(game):
     elif game.info.quitter == gi.EndGameSeeds.LAST_MOVER:
         sclaimer = claimer.TakeAllUnclaimed(game)
 
-    elif game.info.quitter in (gi.EndGameSeeds.DIVVIED,
-                               gi.EndGameSeeds.UNFED_PLAYER):
+    elif game.info.quitter == gi.EndGameSeeds.DIVVIED:
         if game.info.stores:
             sclaimer = claimer.DivvySeedsStores(game)
 

@@ -234,7 +234,7 @@ is included after the parameter sections.
 <b class="enum">LAST_MOVER</b>: unclaimed seeds go the player that moved last.
 <li class="helptext">
 <b class="enum">UNFED_PLAYER</b>: only valid for <a href="game_params.html#mustshare">MUSTSHARE</a> games. If the game ended without one player being able to share seeds, the seeds go to the player without seeds (the unfed player). 
-<p class="helptext"> If a Concede/End Round/Game menu command is used to end the game, the unclaimed seeds are not scored, unless there is a <a href="game_params.html#quitter">QUITTER</a> configured to do something else for End Round/Game. 
+<p class="helptext"> If a Concede/End Round/Game menu command is used to end the game, the unclaimed seeds are handled with the <a href="game_params.html#quitter">QUITTER</a> configuration. 
 <li class="helptext">
 <b class="enum">DIVVIED</b>: the seeds are divided between the two players (an extra seed goes to the player with fewer seeds).
 </ol>
@@ -246,7 +246,7 @@ is included after the parameter sections.
 
 <p>Defines how to score any unclaimed seeds when a player ends the round or game using an <a href="mancala_help.html#gamemenu">End Round or End Game</a> menu command. 
 <p>This parameter is not used for clear, deprive or immobilize games.
-<p>The allowable values are the same as for <a href="game_params.html#unclaimed">UNCLAIMED</a> (EndGameSeeds). <no_enum_error>
+<p>The allowable values are the same as for <a href="game_params.html#unclaimed">UNCLAIMED</a> (EndGameSeeds) except UNFED_PLAYER is disallowed. <no_enum_error>
 <h4 id="start_pattern"> Start Pattern </h4>
 <p class="pdesc">Location in Config Files: game_info : start_pattern
 <p id="StartPattern" class="pdesc">Type: <a href="param_types.html#StartPattern"> StartPattern </a>
@@ -339,9 +339,9 @@ is included after the parameter sections.
 <li class="helptext">
 <b class="enum">SINGLE_TO_ZERO</b>: Holes with single seeds may only be played if the next hole is empty.  Not supported with <a href="game_params.html#udir_holes">UDIR_HOLES</a>.
 <li class="helptext">
-<b class="enum">SINGLE_ONLY_ALL</b>: Holes with single seeds may only be played if all holes have single seeds.
+<b class="enum">SINGLE_ONLY_ALL</b>: Holes with single seeds may only be played if all holes are empty or have single seeds.
 <li class="helptext">
-<b class="enum">SINGLE_ALL_TO_ZERO</b>: Holes with single seeds may only be played if all holes have single seeds and then only if the next hole is empty.  Not supported with <a href="game_params.html#udir_holes">UDIR_HOLES</a>.
+<b class="enum">SINGLE_ALL_TO_ZERO</b>: Holes with single seeds may only be played if all holes are empty or have single seeds and then only if the next hole is empty.  Not supported with <a href="game_params.html#udir_holes">UDIR_HOLES</a>.
 <li class="helptext">
 <b class="enum">TWO_ONLY_ALL</b>: Holes with two seeds may only be played if all holes have two seeds.
 <li class="helptext">

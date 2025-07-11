@@ -30,5 +30,5 @@
       "mlaps": [ 0, 1 ]
    },
    "rules": "Mancala World: https://mancala.fandom.com/wiki/Tchuka_Ruma",
-   "lagniappe": "Donkers et al. report that (in general terms) games with the number of start seeds within \u00b11 of the number of holes are not solvable. They present a table of 1-12 holes versus 1-10 start seeds and the maximum number of seeds that can be collected in one move. \"Donkers, Joroen.  Uiterwijk, Jos.  Voogt, Alex de.  \"Mancala game - Topics in Mathematics and Artificial Intelligence\". Retrieved from https://www.academia.edu/"
+   "lagniappe": "Donkers et al. report that (in general terms) games with the number of start seeds within \u00b11 of the number of holes are not solvable. They present a table of 1-12 holes versus 1-10 start seeds and the maximum number of seeds that can be collected in one move.\n\n\"Donkers, Joroen.  Uiterwijk, Jos.  Voogt, Alex de.  \"Mancala game - Topics in Mathematics and Artificial Intelligence\". Retrieved from https://www.academia.edu/"
 }

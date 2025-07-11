@@ -1412,8 +1412,8 @@ class TestQuitter:
                               (gi.EndGameSeeds.LAST_MOVER, True, True,
                                claimer.TakeAllUnclaimed),
 
-                              (gi.EndGameSeeds.UNFED_PLAYER, True, True,
-                               claimer.DivvySeedsStores),
+                              # (gi.EndGameSeeds.UNFED_PLAYER, True, True,
+                              #  claimer.DivvySeedsStores),
 
                               # child and stores are used
                               (gi.EndGameSeeds.DIVVIED, False, False, None),

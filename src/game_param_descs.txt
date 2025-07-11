@@ -31,9 +31,9 @@ Allow rules limit the holes from which moves may start. Disallowed holes are not
 
 - SINGLE_TO_ZERO: Holes with single seeds may only be played if the next hole is empty.  Not supported with UDIR_HOLES.
 
-- SINGLE_ONLY_ALL: Holes with single seeds may only be played if all holes have single seeds.
+- SINGLE_ONLY_ALL: Holes with single seeds may only be played if all holes are empty or have single seeds.
 
-- SINGLE_ALL_TO_ZERO: Holes with single seeds may only be played if all holes have single seeds and then only if the next hole is empty.  Not supported with UDIR_HOLES.
+- SINGLE_ALL_TO_ZERO: Holes with single seeds may only be played if all holes are empty or have single seeds and then only if the next hole is empty.  Not supported with UDIR_HOLES.
 
 - TWO_ONLY_ALL: Holes with two seeds may only be played if all holes have two seeds.
 
@@ -897,7 +897,7 @@ This parameter is not used for clear, unclaimed or immobilize games. For other g
 
 - UNFED_PLAYER: only valid for MUSTSHARE games. If the game ended without one player being able to share seeds, the seeds go to the player without seeds (the unfed player). 
 
-  + If a Concede/End Round/Game menu command is used to end the game, the unclaimed seeds are not scored, unless there is a QUITTER configured to do something else for End Round/Game. 
+  + If a Concede/End Round/Game menu command is used to end the game, the unclaimed seeds are handled with the QUITTER configuration. 
 
 - DIVVIED: the seeds are divided between the two players (an extra seed goes to the player with fewer seeds).
 
@@ -907,7 +907,7 @@ Defines how to score any unclaimed seeds when a player ends the round or game us
 
 This parameter is not used for clear, deprive or immobilize games.
 
-The allowable values are the same as for UNCLAIMED (EndGameSeeds). <no_enum_error>
+The allowable values are the same as for UNCLAIMED (EndGameSeeds) except UNFED_PLAYER is disallowed. <no_enum_error>
 
 <param xc_sown>
 Only allow cross capture if the player has sown onto the opposite side of board. 

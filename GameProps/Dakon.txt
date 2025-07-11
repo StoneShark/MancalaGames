@@ -55,5 +55,5 @@
    },
    "rules": "Russ, Laurence. Mancala Games. 1984. p62.",
    "note": "GOAL_PARAM set to 4 to limit game length",
-   "lagniappe": "Donkers et al. provide an opening move sequence (opening move plus 24 repeat turns) in which the starter can win the game (not just a round), without the opponent ever playing.  \"Donkers, Joroen.  Voogt, Alex de.  Uiterwijk, Jos.  Human versus Machine Problem-Solving: Winning Openings in <nolink>Dakon\". Retrieved from https://www.academia.edu/"
+   "lagniappe": "Donkers et al. provide an opening move sequence (opening move plus 24 repeat turns) in which the starter can win the game (not just a round), without the opponent ever playing.\n\n\"Donkers, Joroen.  Voogt, Alex de.  Uiterwijk, Jos.  Human versus Machine Problem-Solving: Winning Openings in <nolink>Dakon\". Retrieved from https://www.academia.edu/"
 }

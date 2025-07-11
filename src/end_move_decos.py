@@ -337,8 +337,8 @@ class EndTurnMustShare(EndTurnIf):
         if mdata.ended:
             if mdata.repeat_turn:
                 with self.game.opp_turn():
-                    player = gi.PLAYER_NAMES[self.game.turn]
                     self.sclaimer.claim_seeds()
+                    player = gi.PLAYER_NAMES[self.game.turn]
                 msg = f"{player} can't share on repeat turn; _thing_ ended."
             else:
                 self.sclaimer.claim_seeds()
