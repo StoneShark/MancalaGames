@@ -181,6 +181,11 @@ class TestRandomEmptiesFill:
         [0.101, 0.922, 0.714, 0.936, 0.657, 0.489, 0.393, 0.797,
          0.530, 0.622, 0.645],
 
+        # error < 0
+        [0.02710652393737345, 0.09076916608405483, 0.11674709460519095,
+         0.2243833998672179, 0.4118584098180995, 0.640342222421666,
+         0.6981872817074174, 0.7539198581760017, 0.8605283491917431,
+         0.9424585220363698, 0.9537550771416434]
         ]
 
     @pytest.mark.parametrize('rvalues', CASES)
@@ -329,6 +334,8 @@ class TestNoRepeat:
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
+        print()
+        print(game)
 
         for pos in range(holes):
             with game.save_restore_state():

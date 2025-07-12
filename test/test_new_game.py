@@ -232,7 +232,9 @@ class TestNewGame:
                  utils.build_board([False, False, False],
                                    [False, True, True]),
                  utils.build_board([True, True, False],
-                                   [False, False, False])],
+                                   [False, False, False]),
+                 utils.build_board([False, False, False],
+                                   [False, False, True])],
 
              RoundFill.RIGHT_FILL:
                  [utils.build_board([False, False, False],
@@ -242,7 +244,9 @@ class TestNewGame:
                   utils.build_board([False, False, False],
                                     [True, True, False]),
                   utils.build_board([False, True, True],
-                                    [False, False, False])],
+                                    [False, False, False]),
+                  utils.build_board([False, False, False],
+                                    [True, False, False]),],
 
             RoundFill.OUTSIDE_FILL:
                 [utils.build_board([False, False, False],
@@ -252,7 +256,9 @@ class TestNewGame:
                  utils.build_board([False, False, False],
                                    [False, True, True]),
                  utils.build_board([False, True, True],
-                                   [False, False, False])],
+                                   [False, False, False]),
+                 utils.build_board([False, False, False],
+                                   [False, True, False]),],
 
              RoundFill.SHORTEN:
                  [utils.build_board([False, False, True],
@@ -262,8 +268,22 @@ class TestNewGame:
                   utils.build_board([False, True, True],
                                     [False, True, True]),
                   utils.build_board([False, True, True],
-                                    [False, True, True])],
-         }
+                                    [False, True, True]),
+                  utils.build_board([False, False, True],
+                                    [False, False, True]),],
+
+            RoundFill.SHORTEN_ALL:
+                [utils.build_board([False, False, True],
+                                   [False, False, True]),
+                 utils.build_board([False, False, True],
+                                   [False, False, True]),
+                 utils.build_board([False, True, True],
+                                   [False, True, True]),
+                 utils.build_board([False, True, True],
+                                   [False, True, True]),
+                 utils.build_board([False, False, False],
+                                   [False, False, False])],
+                }
         return answers[pattern][case]
 
 
@@ -272,10 +292,12 @@ class TestNewGame:
         [(0, [4, 8], [0, 2]),
          (1, [8, 4], [2, 0]),
          (2, [2, 10], [0, 4]),
-         (3, [10, 2], [4, 0])])
+         (3, [10, 2], [4, 0]),
+         (4, [5, 7], [1, 1])])
     @pytest.mark.parametrize('round_fill',
                              [RoundFill.LEFT_FILL, RoundFill.RIGHT_FILL,
-                              RoundFill.OUTSIDE_FILL, RoundFill.SHORTEN])
+                              RoundFill.OUTSIDE_FILL, RoundFill.SHORTEN,
+                              RoundFill.SHORTEN_ALL])
     def test_fill_patterns(self, rgame, case, store, estore, round_fill):
         """Test basic fill patterns. For UMOVE and UCHOOSE, the fill
         pattern doesn't really matter."""
@@ -304,13 +326,24 @@ class TestNewGame:
         assert rgame.blocked == self.get_fill_pat_ans(case, round_fill)
 
         # test board and blocks
-        assert all(rgame.blocked[loc]
-                   or rgame.board[loc] == 2
-                       for loc in range(rgame.cts.dbl_holes))
+        if round_fill != RoundFill.SHORTEN_ALL and case != 4:
+            assert all(rgame.blocked[loc]
+                       or rgame.board[loc] == 2
+                           for loc in range(rgame.cts.dbl_holes))
 
         # test stores
         if round_fill == RoundFill.SHORTEN:
-            assert rgame.store == [s * 2 for s in estore]
+            if case < 4:
+                assert rgame.store == [s * 2 for s in estore]
+            else:
+                assert rgame.store == [1, 3]
+
+        elif round_fill == RoundFill.SHORTEN_ALL:
+            if case < 4:
+                assert rgame.store == [s * 2 for s in estore]
+            else:
+                assert rgame.store == [0, 2]
+
         else:
             assert rgame.store == estore
 

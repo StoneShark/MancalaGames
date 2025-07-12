@@ -8,6 +8,7 @@ Created on Sun Jun 30 08:30:23 2024
 import pytest
 pytestmark = pytest.mark.unittest
 
+from context import animator
 from context import inhibitor
 from context import game_info as gi
 
@@ -56,6 +57,8 @@ def test_none():
     assert not inhibit.stop_me_capt(True)
     assert not inhibit.stop_me_capt(False)
 
+    inhibit.start_ani_msg()
+
     inhibit.set_on(True)
     assert not inhibit.stop_me_child(True)
     assert not inhibit.stop_me_child(False)
@@ -91,96 +94,154 @@ def test_none():
     assert inhibit.get_state() is None
 
 
-def test_capt_n():
+class TestCaptN:
 
-    game = GameStub()
-    game.info.nocaptmoves = 1
-    mdata = MdataStub()
+    @pytest.fixture
+    def game(self):
+        game = GameStub()
+        game.info.nocaptmoves = 1
+        return game
 
-    inhibit = inhibitor.make_inhibitor(game)
-    assert 'InhibitorCaptN' in str(inhibit)
+    @pytest.fixture
+    def mdata(self):
+        return MdataStub()
 
-    inhibit.new_game()
-    assert not inhibit.stop_me_child(True)
-    assert not inhibit.stop_me_child(False)
-    assert inhibit.stop_me_capt(True)
-    assert inhibit.stop_me_capt(False)
 
-    inhibit.set_on(True)
-    assert not inhibit.stop_me_child(True)
-    assert not inhibit.stop_me_child(False)
-    assert inhibit.stop_me_capt(True)
-    assert inhibit.stop_me_capt(False)
+    def test_capt_n(self, game, mdata):
 
-    inhibit.set_off()
-    assert not inhibit.stop_me_child(True)
-    assert not inhibit.stop_me_child(False)
-    assert not inhibit.stop_me_capt(True)
-    assert not inhibit.stop_me_capt(False)
+        inhibit = inhibitor.make_inhibitor(game)
+        assert 'InhibitorCaptN' in str(inhibit)
 
-    inhibit.set_child(True)
-    # no change from last setting
-    assert not inhibit.stop_me_child(True)
-    assert not inhibit.stop_me_child(False)
-    assert not inhibit.stop_me_capt(True)
-    assert not inhibit.stop_me_capt(False)
+        inhibit.new_game()
+        assert not inhibit.stop_me_child(True)
+        assert not inhibit.stop_me_child(False)
+        assert inhibit.stop_me_capt(True)
+        assert inhibit.stop_me_capt(False)
 
-    inhibit.set_child(False)
-    # no change from last setting
-    assert not inhibit.stop_me_child(True)
-    assert not inhibit.stop_me_child(False)
-    assert not inhibit.stop_me_capt(True)
-    assert not inhibit.stop_me_capt(False)
+        inhibit.set_on(True)
+        assert not inhibit.stop_me_child(True)
+        assert not inhibit.stop_me_child(False)
+        assert inhibit.stop_me_capt(True)
+        assert inhibit.stop_me_capt(False)
 
-    # reset the inhibitor
-    inhibit.new_game()
-    assert inhibit.get_state()
-    inhibit.clear_if(game, mdata)
-    assert not inhibit.stop_me_child(True)
-    assert not inhibit.stop_me_child(False)
-    assert inhibit.stop_me_capt(True)
-    assert inhibit.stop_me_capt(False)
+        inhibit.set_off()
+        assert not inhibit.stop_me_child(True)
+        assert not inhibit.stop_me_child(False)
+        assert not inhibit.stop_me_capt(True)
+        assert not inhibit.stop_me_capt(False)
 
-    inhibit.set_child(True)
-    # no change from last setting
-    assert inhibit.stop_me_capt(True)
-    assert inhibit.stop_me_capt(False)
+        inhibit.set_child(True)
+        # no change from last setting
+        assert not inhibit.stop_me_child(True)
+        assert not inhibit.stop_me_child(False)
+        assert not inhibit.stop_me_capt(True)
+        assert not inhibit.stop_me_capt(False)
 
-    inhibit.set_child(False)
-    # no change from last setting
-    assert inhibit.stop_me_capt(True)
-    assert inhibit.stop_me_capt(False)
+        inhibit.set_child(False)
+        # no change from last setting
+        assert not inhibit.stop_me_child(True)
+        assert not inhibit.stop_me_child(False)
+        assert not inhibit.stop_me_capt(True)
+        assert not inhibit.stop_me_capt(False)
 
-    # test clear_if for move 0
-    game.movers = 0
-    inhibit.clear_if(game, mdata)
-    assert not inhibit.stop_me_child(True)
-    assert not inhibit.stop_me_child(False)
-    assert inhibit.stop_me_capt(True)
-    assert inhibit.stop_me_capt(False)
-    assert inhibit.get_state()
+        # reset the inhibitor
+        inhibit.new_game()
+        assert inhibit.get_state()
+        inhibit.clear_if(game, mdata)
+        assert not inhibit.stop_me_child(True)
+        assert not inhibit.stop_me_child(False)
+        assert inhibit.stop_me_capt(True)
+        assert inhibit.stop_me_capt(False)
 
-    # test clear_if for move 1
-    game.movers = 1
-    inhibit.clear_if(game, mdata)
-    assert not inhibit.stop_me_child(True)
-    assert not inhibit.stop_me_child(False)
-    assert not inhibit.stop_me_capt(True)
-    assert not inhibit.stop_me_capt(False)
-    assert not inhibit.get_state()
+        inhibit.set_child(True)
+        # no change from last setting
+        assert inhibit.stop_me_capt(True)
+        assert inhibit.stop_me_capt(False)
 
-    # test clear_if for move 2
-    game.movers = 2
-    inhibit.clear_if(game, mdata)
-    assert not inhibit.stop_me_child(True)
-    assert not inhibit.stop_me_child(False)
-    assert not inhibit.stop_me_capt(True)
-    assert not inhibit.stop_me_capt(False)
-    # TODO test that the 'expired' log entry doesn't appear again
+        inhibit.set_child(False)
+        # no change from last setting
+        assert inhibit.stop_me_capt(True)
+        assert inhibit.stop_me_capt(False)
 
-    assert not inhibit.get_state()
-    inhibit.set_state(True)
-    assert inhibit.get_state()
+        # test clear_if for move 0
+        game.movers = 0
+        inhibit.clear_if(game, mdata)
+        assert not inhibit.stop_me_child(True)
+        assert not inhibit.stop_me_child(False)
+        assert inhibit.stop_me_capt(True)
+        assert inhibit.stop_me_capt(False)
+        assert inhibit.get_state()
+
+        # test clear_if for move 1
+        game.movers = 1
+        inhibit.clear_if(game, mdata)
+        assert not inhibit.stop_me_child(True)
+        assert not inhibit.stop_me_child(False)
+        assert not inhibit.stop_me_capt(True)
+        assert not inhibit.stop_me_capt(False)
+        assert not inhibit.get_state()
+
+        # test clear_if for move 2
+        game.movers = 2
+        inhibit.clear_if(game, mdata)
+        assert not inhibit.stop_me_child(True)
+        assert not inhibit.stop_me_child(False)
+        assert not inhibit.stop_me_capt(True)
+        assert not inhibit.stop_me_capt(False)
+
+        assert not inhibit.get_state()
+        inhibit.set_state(True)
+        assert inhibit.get_state()
+
+
+    stmts = ['inhibit.start_ani_msg()',
+             'inhibit.set_on(True)',
+             'inhibit.set_off()',
+             ]
+    @pytest.mark.animator
+    @pytest.mark.parametrize('stmt', stmts)
+    def test_animator(self, mocker, game, mdata, stmt):
+        """Test the interfaces that generate a message
+        when the animator is active."""
+
+        assert animator.ENABLED
+        animator.make_animator(None)   # no game_ui, make sure it's not used
+        animator.set_active(True)
+
+        mobj = mocker.patch('animator.animator.message')
+
+        inhibit = inhibitor.make_inhibitor(game)
+        inhibit.new_game()
+
+        exec(stmt)
+
+        mobj.assert_called_once()
+
+
+    @pytest.mark.animator
+    def test_ani_clear_if(self, mocker, game, mdata):
+
+        assert animator.ENABLED
+        animator.make_animator(None)   # no game_ui, make sure it's not used
+        animator.set_active(True)
+
+        mobj = mocker.patch('animator.animator.message')
+
+        inhibit = inhibitor.make_inhibitor(game)
+        inhibit.new_game()
+
+        game.movers = 0
+        inhibit.clear_if(game, mdata)
+        mobj.assert_not_called()
+
+        game.movers = 1
+        inhibit.clear_if(game, mdata)
+        mobj.assert_called_once()
+
+        game.movers = 2
+        inhibit.clear_if(game, mdata)
+        assert len(mobj.mock_calls) == 1
+
 
 
 class TestChildOnly:
@@ -257,6 +318,50 @@ class TestChildOnly:
         assert inhibit.stop_me_child(not turn)
 
 
+    stmts = ['inhibit.set_on(True)',
+             'inhibit.set_off()',
+             'inhibit.set_child(True)',
+             'inhibit.set_child(False)',
+             ]
+    @pytest.mark.animator
+    @pytest.mark.parametrize('stmt', stmts)
+    def test_animator(self, mocker, game, mdata, stmt):
+        """Test the interfaces that generate a message
+        when the animator is active."""
+
+        assert animator.ENABLED
+        animator.make_animator(None)   # no game_ui, make sure it's not used
+        animator.set_active(True)
+
+        mobj = mocker.patch('animator.animator.message')
+
+        inhibit = inhibitor.make_inhibitor(game)
+        inhibit.new_game()
+
+        exec(stmt)
+
+        mobj.assert_called_once()
+
+
+    @pytest.mark.animator
+    def test_start_ani_msg(self, mocker, game, mdata):
+
+        assert animator.ENABLED
+        animator.make_animator(None)   # no game_ui, make sure it's not used
+        animator.set_active(True)
+
+        mobj = mocker.patch('animator.animator.message')
+
+        inhibit = inhibitor.make_inhibitor(game)
+        inhibit.new_game()
+
+        inhibit.start_ani_msg()
+        mobj.assert_not_called()
+
+        inhibit._children = True
+        inhibit.start_ani_msg()
+        mobj.assert_called_once()
+
 
 class TestBoth:
 
@@ -264,7 +369,6 @@ class TestBoth:
     def game(self):
         game = GameStub()
         game.info.prescribed = gi.SowPrescribed.ARNGE_LIMIT
-        game.info.round_fill = gi.RoundFill.SHORTEN
         return game
 
     @pytest.fixture
@@ -398,3 +502,86 @@ class TestBoth:
         assert inhibit._captures == 234
         assert inhibit._children == 345
         assert inhibit._child_only == 456
+
+
+    stmts = ['inhibit.set_on(True)',
+             'inhibit.set_off()',
+             'inhibit.set_child(True)',
+             'inhibit.set_child(False)']
+    @pytest.mark.animator
+    @pytest.mark.parametrize('stmt', stmts)
+    def test_animator(self, mocker, game, mdata, stmt):
+        """Test the interfaces that generate a message
+        when the animator is active."""
+
+        assert animator.ENABLED
+        animator.make_animator(None)   # no game_ui, make sure it's not used
+        animator.set_active(True)
+
+        mobj = mocker.patch('animator.animator.message')
+
+        inhibit = inhibitor.make_inhibitor(game)
+        inhibit.new_game()
+
+        exec(stmt)
+
+        mobj.assert_called_once()
+
+
+    conds = [(False, False, False),   # no message
+             (False, True, True),
+             (True, False, False),    # capt only not supported by I-BOTH
+             (True, True, True)]
+    @pytest.mark.animator
+    @pytest.mark.parametrize('capts, child, emsg', conds)
+    def test_start_ani_msg(self, mocker, game, mdata, capts, child, emsg):
+
+        assert animator.ENABLED
+        animator.make_animator(None)   # no game_ui, make sure it's not used
+        animator.set_active(True)
+
+        mobj = mocker.patch('animator.animator.message')
+
+        inhibit = inhibitor.make_inhibitor(game)
+        inhibit.new_game()
+
+        # don't use the interface to set, don't want messages
+        inhibit._captures = capts
+        inhibit._children = child
+        inhibit._child_only = child and not capts
+        inhibit._turn = False
+
+        inhibit.start_ani_msg()
+
+        if emsg:
+            mobj.assert_called_once()
+        else:
+            mobj.assert_not_called()
+
+
+    @pytest.mark.animator
+    def test_ani_clear_if(self, mocker, game, mdata):
+
+        assert animator.ENABLED
+        animator.make_animator(None)   # no game_ui, make sure it's not used
+        animator.set_active(True)
+
+        mobj = mocker.patch('animator.animator.message')
+
+        inhibit = inhibitor.make_inhibitor(game)
+        inhibit.new_game()
+
+        # don't use the interface to set, don't want messages
+        inhibit._captures = True
+        inhibit._children = True
+        inhibit._turn = False
+
+        inhibit.clear_if(game, mdata)
+        mobj.assert_not_called()
+
+        mdata.captured = True           # capture occured, test will turn off
+        inhibit.clear_if(game, mdata)
+        mobj.assert_called_once()
+
+        inhibit.clear_if(game, mdata)   # don't generate a 2nd message
+        assert len(mobj.mock_calls) == 1

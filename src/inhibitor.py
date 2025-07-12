@@ -104,7 +104,7 @@ class InhibitorNone(InhibitorIf):
 class InhibitorCaptN(InhibitorIf):
     """An Inhibitor that prevents captures for a number of turns."""
 
-    def __init__(self, expire=None):
+    def __init__(self, expire=1):
         self._captures = True   # game state
         self._expire = expire
 

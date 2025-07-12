@@ -345,11 +345,14 @@ class NoRepeatSowOwn(StartPatternIf):
 
             m1_hole = holes + 2 - sstore
             if m1_hole >= holes:
-                for tpos in range(holes):   # pragma: no coverage
-                    if not (tpos == p1_hole
-                            or tpos + (nbr_start - 1) % (dholes + 1) == holes):
-                        break
-                m1_hole = tpos
+                m1_hole = 0
+
+                # this isn't needed loc 0 always works
+                # for tpos in range(holes):
+                #     if not (tpos == p1_hole
+                #             or tpos + (nbr_start - 1) % (dholes + 1) == holes):
+                #         break
+                # m1_hole = tpos
 
         game.board[m1_hole] -= 1
         game.board[p1_hole] += 1
@@ -453,7 +456,8 @@ class RandomEmptiesPattern(StartPatternIf):
 
         # if we are still holding seeds find a place to put them
         if holding:
-            for idx in range(dbl_holes):
+            for idx in range(dbl_holes):     # pragma: no branch
+                # if we are here we will break for some index
                 if values[idx] > 0:
                     values[idx] += holding
                     break

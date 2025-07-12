@@ -513,6 +513,97 @@ class TestGetGameValue:
             if evalue is not None:
                 assert value == evalue
 
+class TestVariantQualNames:
+
+    @pytest.fixture
+    def game_config(self):
+
+        return {ckey.GAME_INFO: {ckey.NAME: 'my_game_name'}}
+
+
+    @pytest.mark.parametrize('variant, ename',
+                             [('', 'my_game_name'),
+                              (None, 'my_game_name'),
+                              ('my_variant', 'my_game_name::my_variant')])
+    def test_qual_game_name(self, game_config, variant, ename):
+
+        assert man_config.qual_game_name(game_config, variant) == ename
+
+
+    def test_name_to_parts(self):
+
+        gname, vname = man_config.game_name_to_parts('my_game_name')
+        assert gname == 'my_game_name'
+        assert not vname
+
+        gname, vname = man_config.game_name_to_parts('my_game_name::')
+        assert gname == 'my_game_name'
+        assert not vname
+
+        gname, vname = man_config.game_name_to_parts('my_game_name::my_variant')
+        assert gname == 'my_game_name'
+        assert vname == 'my_variant'
+
+        with pytest.raises(ValueError):
+            man_config.game_name_to_parts('gname::vname::otherstuff')
+
+
+class TestLoadVariant:
+
+    param_table = man_config.ParamData(del_tags=False, no_descs=False)
+
+    base_dict = {
+                     "game_class": "Mancala",
+                     "game_constants": {
+                        "holes": 6,
+                        "nbr_start": 4
+                     },
+                     "game_info": {
+                         "name": "base",
+                         "capt_on": [4],
+                         "sow_direct": gi.Direct.CCW,
+                         "evens": False,
+                         "stores": True
+                     },
+                     "player": {
+                         "ai_params": {
+                             "mm_depth": [1, 1, 3, 5]
+                         }
+                      }
+                }
+
+    vari_dict = base_dict | {"variants": {
+                                "base": dict(),
+                                "var1": { "capt_on": [3, 4], },
+                                }
+                            }
+
+    ecases = {'no_vars': [base_dict, 'var1'],
+              'bad_var': [vari_dict, 'bad_name']}
+
+    @pytest.mark.parametrize('game_dict, variant', ecases.values(),
+                             ids=ecases.keys())
+    def test_exceptions(self, game_dict, variant):
+
+        with pytest.raises(ValueError):
+            man_config.game_from_config(game_dict, variant)
+
+
+    cases = {'base': [vari_dict, 'base', param_table],
+             'var1': [vari_dict, 'var1', None]}
+
+    @pytest.mark.parametrize('game_dict, variant, ptable', cases.values(),
+                             ids=cases.keys())
+    def test_builds(self, game_dict, variant, ptable):
+
+        game = man_config.game_from_config(game_dict, variant, ptable)
+
+        if variant == 'base':
+            assert game.info.capt_on == [4]
+        else:
+            assert game.info.capt_on == [3, 4]
+
+
 
 # %%  test reading params
 
@@ -855,6 +946,9 @@ class TestConfig:
         assert config.get_bool('ai_active')
         assert config.get_bool('touch_screen')
         assert config.get_bool('true_value')
+
+        # default is True if missing from config
+        assert config.get_bool('ani_active')
 
 
     @pytest.fixture
