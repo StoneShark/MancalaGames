@@ -115,6 +115,7 @@ is included after the parameter sections.
 <nolink><b class="inhead">ZigZag</b>
 <p class="helptext"> A flexible game class with a unique zigzag sowing pattern. See <a href="about_games.html#ZigZag">ZigZag</a> game help for the creators of the pattern.
 <p class="helptext"> The sowing is done in a zigzag fashion: Sowing is done towards the center line of the board. The first hole sown is one hole towards the center and on the opposite side of the board, when the end of the board is reached sow directly across from the last hole. The sow pattern cycles through each hole of the board before visiting a hole a second time.
+<p class="helptext"> Games with min_move of 1, no user directed sow direction holes, and an even number of holes, will not allow a player to move a single seed that was just moved across the center of the board back across the board. This restriction only applies to the very next turn.
 <p class="helptext"> <a href="game_params.html#sow_direct">SOW_DIRECT</a> must be TOCENTER. If the size of the board is odd, the center hole must be in the User Chooses Direction list. There are no other limitations unique to the <nolink>ZigZag game class.
 </ul>
 <h4 id="holes"> Holes per Side </h4>
@@ -522,6 +523,7 @@ is included after the parameter sections.
 <b class="enum">CW</b>: clockwise
 <li class="helptext">
 <b class="enum">SPLIT</b>: left-side holes sow counter-clockwise and right-side holes sow clockwise, an odd middle hole must be set in <a href="game_params.html#udir_holes">UDIR_HOLES</a>.
+<p class="helptext"> Games with min_move of 1 and with end holes whose sow direction cannot be user selected, will not allow a player to move a single seed that was just moved across the board sides back across the board.  This restriction only applies to the very next turn.
 <li class="helptext">
 <b class="enum">CCW</b>: counter-clockwise
 <li class="helptext">
@@ -529,7 +531,7 @@ is included after the parameter sections.
 <li class="helptext">
 <b class="enum">EVEN_ODD_DIR</b>: holes with even seeds sow clockwise and holes with odd seeds sow counter-clockwise.
 <li class="helptext">
-<b class="enum">TOCENTER</b>: sow towards the horizontal center line of the board based on hole location. This sows in the opposite direction used by SPLIT.
+<b class="enum">TOCENTER</b>: sow towards the horizontal center line of the board based on hole location. This sows in the opposite directions used by SPLIT.
 </ol>
 <p>Both mouse buttons will start a move no matter the sow direction. If the hole is marked as <a href="game_params.html#udir_holes">UDIR_HOLES</a>, the button selects sow direction. On the other hand, if the hole is not marked as <a href="game_params.html#udir_holes">UDIR_HOLES</a>, either button will sow in the prescribed direction. This can be a useful mechanism to remind yourself that on SPLIT sow, the left holes go CW by using the left button and the right holes go CCW by using the right button.
 <p>When PLAYALTDIR is not selected, any hole can be set as <a href="game_params.html#udir_holes">UDIR_HOLES</a> to allow the user to override the sow_direct setting.
