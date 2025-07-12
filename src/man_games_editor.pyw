@@ -496,6 +496,13 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
         if not self.game:
             return
 
+        # if the game matches a saved file, allow variants to be used
+        if self.config.edited or not self.config.filename:
+            if hasattr(self.game, 'filename'):
+                del self.game.filename
+        else:
+            self.game.filename = self.config.filename
+
         game_ui = mancala_ui.MancalaUI(self.game,
                                        self.config.game_config[ckey.PLAYER],
                                        player=self.ai_player,

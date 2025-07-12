@@ -157,24 +157,20 @@ class ParamMixin:
 
         if param.vtype in (pc.STR_TYPE, pc.INT_TYPE):
             self.tkvars[param.option] = tk.StringVar(self.master,
-                                                     str(value),
-                                                     name=param.option)
+                                                     str(value))
         elif param.vtype == pc.BOOL_TYPE:
             self.tkvars[param.option] = tk.BooleanVar(self.master,
-                                                      bool(value),
-                                                      name=param.option)
+                                                      bool(value))
         elif param.vtype == pc.BLIST_TYPE:
             boxes = self._get_boxes_vars(param, config_dict)
             self.tkvars[param.option] = \
-                [tk.BooleanVar(self.master, i in value,
-                               name=f'{param.option}_{i}')
+                [tk.BooleanVar(self.master, i in value)
                  for i in range(boxes)]
 
         elif param.vtype == pc.ILIST_TYPE:
             boxes = self._get_boxes_vars(param, config_dict)
             self.tkvars[param.option] = \
-                [tk.StringVar(self.master, i in value,
-                              name=f'{param.option}_{i}')
+                [tk.StringVar(self.master, i in value)
                  for i in range(boxes)]
 
         elif param.vtype in pc.STRING_DICTS:
@@ -184,8 +180,7 @@ class ParamMixin:
             else:
                 vstr = inv_dict[enum_dict[value]]
             self.tkvars[param.option] = tk.StringVar(self.master,
-                                                     vstr,
-                                                     name=param.option)
+                                                     vstr)
 
         else:
             raise TypeError(f"Unexpected parameter type {param.vtype}.")
