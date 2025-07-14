@@ -32,6 +32,14 @@
    },
    "variants": {
       "Dakon": {},
+      "Dakon 4": {
+         "holes": 4,
+         "nbr_start": 4
+      },
+      "Dakon 5": {
+         "holes": 5,
+         "nbr_start": 5
+      },
       "Dakon 6": {
          "holes": 6,
          "nbr_start": 6

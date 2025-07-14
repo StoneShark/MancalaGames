@@ -232,7 +232,7 @@ class ParamMixin:
         tframe.grid(row=param.row, column=param.col, columnspan=col_span,
                     sticky='nsew')
 
-        text_box = tk.Text(tframe, width=50, height=12)
+        text_box = tk.Text(tframe, width=50, height=20)
         self.tktexts[param.option] = text_box
 
         scroll = tk.Scrollbar(tframe)
