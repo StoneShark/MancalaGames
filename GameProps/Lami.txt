@@ -6,19 +6,19 @@
    },
    "game_info": {
       "name": "Lami",
-      "about": "Counter-clockwise sow, multi-lap sow. After the first move, subsequent moves may only be played from holes:\n\n- that do not contain 2 seeds,\n- unless all of the player's holes contain 2, then any hole maybe played.\n\nWhen sowing, skip opponent's holes with two seeds (except first move).\n\nNo capture on game opening move. Cross-capture from opponents side of board but only if it contains 2 seeds; on capture pick all of opponent's holes with 2 seeds. Played in Rounds.",
+      "about": "Counter-clockwise sow, multi-lap sow. After the first move, subsequent moves may only be played from holes:\n\n- that do not contain 2 seeds,\n- unless all of the player's non-empty holes contain 2, then any hole maybe played.\n\nWhen sowing, skip opponent's holes with two seeds (except on the first move).\n\nAfter opening move, cross-capture from opponents side of board but only if it contains 2 seeds; on capture, pick all of opponent's holes with 2 seeds. \n\nPlayed in Rounds. A round ends when the current player has no moves. Holes for the next round are allocated based on how many seeds each player collected in the previous round. \n\nVariations:\n\n- board size\n\n- set a game goal to the number of holes the player with fewer seeds must be able to fill to continue the game\n",
       "allow_rule": 5,
       "blocks": true,
-      "capt_on": [2],
+      "capt_on": [ 2 ],
       "crosscapt": true,
-      "capt_side": 1,
       "mlaps": 1,
       "nocaptmoves": 1,
+      "capt_side": 1,
       "pickextra": 2,
+      "prescribed": 2,
       "round_fill": 1,
       "round_starter": 1,
       "rounds": 2,
-      "prescribed": 2,
       "sow_direct": 1,
       "sow_rule": 5,
       "sow_param": 2,
@@ -26,19 +26,11 @@
    },
    "player": {
       "algorithm": "negamaxer",
-      "ai_params": {
-         "mm_depth": [1, 1, 3, 5]
-      },
-      "scorer": {
-         "stores_m": 4,
-         "access_m": 0,
-         "seeds_m": 0,
-         "empties_m": 0,
-         "child_cnt_m": 0,
-         "evens_m": 0,
-         "easy_rand": 0,
-         "repeat_turn": 0
-      }
+      "scorer": { "stores_m": 4 }
+   },
+   "vari_params": {
+      "holes": "include",
+      "goal_param": "include"
    },
    "rules": "Russ, Laurence. Mancala Games. 1984. p36."
 }
