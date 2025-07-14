@@ -990,6 +990,19 @@ is included after the parameter sections.
 <b class="enum">PICKCROSSMULT</b>: On multiple captures, take the seeds across from each hole captured.
 </ol>
 <p>In terms of <a href="game_params.html#grandslam">GRANDSLAM</a>, these picks are considered captures.
+<h2 id="tab_Variants">Variants Tab</h2>
+<h4 id="variants"> Named Variants </h4>
+<p class="pdesc">Location in Config Files:  : variants
+<p id="TextDict" class="pdesc">Type: <a href="param_types.html#TextDict"> TextDict </a>
+<p class="pdesc">UI Tab: Variants
+
+<p>Provide a dictionary of named variants whose values are the parameters to set for that variant. The first name of the variant must match the game name and must have an empty dictionary.
+<h4 id="vari_params"> Vari Params </h4>
+<p class="pdesc">Location in Config Files:  : vari_params
+<p id="TextDict" class="pdesc">Type: <a href="param_types.html#TextDict"> TextDict </a>
+<p class="pdesc">UI Tab: Variants
+
+<p>Provide a dictionary where the keys are paramters (options) and the associated values are a list valid values for each. If all values are to be allowed any non-list type can be provided; "include" or "all" are suggested.
 <h2 id="tab_Player">Player Tab</h2>
 <h4 id="algorithm"> Algorithm </h4>
 <p class="pdesc">Location in Config Files: player : algorithm
@@ -1145,9 +1158,9 @@ is included after the parameter sections.
     <p class="param"><a href="#empties_m">empties_m</a></p>
     <p class="param"><a href="#evens">evens</a></p>
     <p class="param"><a href="#evens_m">evens_m</a></p>
+    <p class="param"><a href="#game_class">game_class</a></p>
   </div>
   <div class="column3">
-    <p class="param"><a href="#game_class">game_class</a></p>
     <p class="param"><a href="#goal">goal</a></p>
     <p class="param"><a href="#goal_param">goal_param</a></p>
     <p class="param"><a href="#grandslam">grandslam</a></p>
@@ -1171,10 +1184,10 @@ is included after the parameter sections.
     <p class="param"><a href="#no_sides">no_sides</a></p>
     <p class="param"><a href="#nocaptmoves">nocaptmoves</a></p>
     <p class="param"><a href="#nosinglecapt">nosinglecapt</a></p>
-  </div>
-  <div class="column3">
     <p class="param"><a href="#pickextra">pickextra</a></p>
     <p class="param"><a href="#prescribed">prescribed</a></p>
+  </div>
+  <div class="column3">
     <p class="param"><a href="#presowcapt">presowcapt</a></p>
     <p class="param"><a href="#quitter">quitter</a></p>
     <p class="param"><a href="#repeat_turn">repeat_turn</a></p>
@@ -1193,6 +1206,8 @@ is included after the parameter sections.
     <p class="param"><a href="#stores_m">stores_m</a></p>
     <p class="param"><a href="#udir_holes">udir_holes</a></p>
     <p class="param"><a href="#unclaimed">unclaimed</a></p>
+    <p class="param"><a href="#vari_params">vari_params</a></p>
+    <p class="param"><a href="#variants">variants</a></p>
     <p class="param"><a href="#xc_sown">xc_sown</a></p>
     <p class="param"><a href="#xcpickown">xcpickown</a></p>
   </div>

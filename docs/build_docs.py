@@ -694,6 +694,9 @@ the property is true.
 The value must be an array of 4 integers.
 These are used for the four strength properties of the AI player.
 Each corresponds to a game difficulty.
+<h4 id="TextDict">TextDict</h4>
+The value is a JSON string representation of a dictionary.
+Commas are seperators and cannot appear after terminal elements.
 """
 
 DESC_TYPES = """\
@@ -726,7 +729,8 @@ NOT_ENUMS = {'bool',
     'str',
     'Algorithm',
     'GameClasses',
-    'label'}
+    'label',
+    'TextDict'}
 
 def write_desc_types(ofile):
     """Write the sections for the description strings."""

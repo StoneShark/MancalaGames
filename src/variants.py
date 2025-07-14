@@ -553,7 +553,14 @@ def test_variation_config(game_dict, no_var_error=True):
         return
 
     vari_params = game_dict.get(ckey.VARI_PARAMS, {})
+    if not isinstance(vari_params, dict):
+        msg = "VARI PARAMS value is not a dictionary."
+        raise GameVariantError(msg)
+
     variants = game_dict.get(ckey.VARIANTS, {})
+    if not isinstance(variants, dict):
+        msg = "VARIANTS value is not a dictionary."
+        raise GameVariantError(msg)
 
     options = set(vari_params.keys())
     if variants:

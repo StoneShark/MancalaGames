@@ -23,6 +23,7 @@ BOOL_TYPE = 'bool'
 MSTR_TYPE = 'multi_str'
 BLIST_TYPE = 'list[bool]'
 ILIST_TYPE = 'list[int]'
+TEXTDICT = 'TextDict'
 
 LABEL_TYPE = 'label'   # just a label, no value or param
 

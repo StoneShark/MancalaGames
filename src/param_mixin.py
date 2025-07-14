@@ -13,6 +13,7 @@ Created on Tue Jun  3 06:31:43 2025
 
 import enum
 import functools as ft
+import json
 import tkinter as tk
 from tkinter import ttk
 
@@ -20,6 +21,7 @@ import cfg_keys as ckey
 import game_constants as gconsts
 import game_info as gi
 import man_config
+import mg_config
 import param_consts as pc
 
 
@@ -144,12 +146,49 @@ class ParamMixin:
         return self._get_boxes_config(param, game_config)
 
 
+    @staticmethod
+    def _text_dict_str(param, config_dict):
+        """Return a string representation of the param, which
+        should be missing, empty or a dictionary.
+        If it was saved as a string, return it to preserve
+        the formatting."""
+
+        if param.option not in config_dict:
+            return ''
+
+        value = config_dict.get(param.option)
+        if isinstance(value, dict):
+            value = json.dumps(value, indent=3, cls=mg_config.GameDictEncoder)
+
+        return value
+
+
+    def _str_dict(self, param, raise_excp=True):
+        """Convert the text from the window to a dictionary.
+        If raise_excp is True, raise any decoding errors;
+        otherwise, return the string representation."""
+
+        text = self.tktexts[param.option].get('1.0', tk.END).strip()
+
+        if not text:
+            return {}
+
+        try:
+            value = json.loads(text)
+        except json.decoder.JSONDecodeError as error:
+            if raise_excp:
+                raise error
+            value = text
+
+        return value
+
+
     def pm_make_tkvar(self, param, config_dict=None):
         """Create a tk variable for param."""
 
         if config_dict:
             value = man_config.get_config_value(
-                        self.game_config,
+                        config_dict,
                         param.cspec, param.option, param.vtype)
 
         else:
@@ -186,11 +225,11 @@ class ParamMixin:
             raise TypeError(f"Unexpected parameter type {param.vtype}.")
 
 
-    def _make_text_entry(self, frame, param):
+    def _make_text_entry(self, frame, param, col_span=4):
         """Make a text box entry with scroll bar."""
 
         tframe = ttk.LabelFrame(frame, text=param.text, labelanchor='nw')
-        tframe.grid(row=param.row, column=param.col, columnspan=4,
+        tframe.grid(row=param.row, column=param.col, columnspan=col_span,
                     sticky='nsew')
 
         text_box = tk.Text(tframe, width=50, height=12)
@@ -346,6 +385,9 @@ class ParamMixin:
         if param.vtype == pc.MSTR_TYPE:
             self._make_text_entry(frame, param)
 
+        elif param.vtype == pc.TEXTDICT:
+            self._make_text_entry(frame, param, col_span=2)
+
         elif param.vtype == pc.INT_TYPE and limits:
             self._make_option_list(frame, param, limits)
 
@@ -392,7 +434,7 @@ class ParamMixin:
     def pm_set_tk_var(self, param, value):
         """Set a tk variable based on param and the given value."""
 
-        if param.vtype == pc.MSTR_TYPE:
+        if param.vtype in (pc.MSTR_TYPE, pc.TEXTDICT):
             self.tktexts[param.option].delete('1.0', tk.END)
             self.tktexts[param.option].insert('1.0', value)
 
@@ -413,18 +455,29 @@ class ParamMixin:
     def pm_copy_config_to_tk(self, param, game_config):
         """Set the tk variable from the game_config dict."""
 
-        value = man_config.get_config_value(
-            game_config,
-            param.cspec, param.option, param.vtype)
+        if param.vtype == pc.TEXTDICT:
+            value = self._text_dict_str(param, game_config)
+
+        else:
+            value = man_config.get_config_value(
+                        game_config,
+                        param.cspec, param.option, param.vtype)
+
         self.pm_set_tk_var(param, value)
 
 
-    def pm_copy_tk_to_config(self, param, game_config):
+    def pm_copy_tk_to_config(self, param, game_config, *, raise_excp=True):
         """Get the values from a tkvar and set it into
-        the a game_config dict."""
+        the a game_config dict.
+        From the editor, raise_excp can be set False so that any
+        errors in variation dictionaries will be ignored and string
+        values set and saved."""
 
         if param.vtype == pc.MSTR_TYPE:
             value = self.tktexts[param.option].get('1.0', tk.END)
+
+        elif param.vtype == pc.TEXTDICT:
+            value = self._str_dict(param, raise_excp)
 
         elif param.vtype in (pc.STR_TYPE, pc.BOOL_TYPE):
             value = self.tkvars[param.option].get()
@@ -483,7 +536,7 @@ class ParamMixin:
     def pm_reset_ui_default(self, param):
         """Reset the tk variables to the user interface defaults"""
 
-        if param.vtype == pc.MSTR_TYPE:
+        if param.vtype in (pc.MSTR_TYPE, pc.TEXTDICT):
             self.tktexts[param.option].delete('1.0', tk.END)
             self.tktexts[param.option].insert('1.0', param.ui_default)
 
@@ -515,7 +568,7 @@ class ParamMixin:
         default = man_config.get_construct_default(
                     param.vtype, param.cspec, param.option)
 
-        if param.vtype == pc.MSTR_TYPE:
+        if param.vtype in (pc.MSTR_TYPE, pc.TEXTDICT):
             self.tktexts[param.option].delete('1.0', tk.END)
             self.tktexts[param.option].insert('1.0', default)
 

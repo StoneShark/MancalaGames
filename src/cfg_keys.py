@@ -148,6 +148,9 @@ GINFO_PARAMS =  (ALLOW_RULE,
 # these are the keys allowed in variants
 CONFIG_PARAMS = {GAME_CLASS} | set(GCONST_PARAMS) | set(GINFO_PARAMS)
 
+# don't save empty values for these keys
+NO_EMPTY = (VARI_PARAMS, VARIANTS)
+
 
 # the parameters that configure the AI player
 PLAYER_PARAMS = (ALGORITHM,

@@ -256,8 +256,8 @@ def get_construct_default(vtype, cspec, option):
     elif option == ckey.DIFFICULTY:
         rval = 1
 
-    elif vtype in (pc.STR_TYPE, pc.MSTR_TYPE):
-        rval = ""
+    elif vtype in (pc.STR_TYPE, pc.MSTR_TYPE, pc.TEXTDICT):
+        rval = ''
 
     elif vtype == pc.INT_TYPE:
         rval = 0

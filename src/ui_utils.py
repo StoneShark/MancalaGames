@@ -5,6 +5,7 @@ Created on Sun Mar  9 07:04:43 2025
 @author: Ann"""
 
 import functools as ft
+import json
 import tkinter as tk
 import tkinter.simpledialog as tksimpledialog
 from tkinter import ttk
@@ -681,7 +682,8 @@ class ReportError:
 
         if exc_type in (gconsts.GameConstsError,
                         gi.GameInfoError,
-                        NotImplementedError):
+                        NotImplementedError,
+                        json.decoder.JSONDecodeError):
 
             self.error = True
             message = exc_type.__name__ + ':  ' + str(exc_value)

@@ -18,7 +18,7 @@ ALL_PARAMS = '_all_params.txt'
 
 
 class GameDictEncoder(json.JSONEncoder):
-    """A JSON Encoder that puts small lists and tuples on single lines.
+    """A JSON Encoder that puts small dicts, lists and tuples on single lines.
 
     Adapted from code originally written by Jannis Mainczyk
     (https://gist.github.com/jannismain)."""
@@ -248,6 +248,27 @@ class GameConfig:
                                               param.cspec,
                                               param.option)
 
+    def _clean_up_for_save(self):
+        """Adjust the game_config dictionary for save."""
+
+        if not self.filename.endswith(ALL_PARAMS):
+            self._del_defaults()
+
+        if ckey.ABOUT in self.game_config[ckey.GAME_INFO]:
+            # remove all trailing whitespace, but add 1 newline
+            text = self.game_config[ckey.GAME_INFO][ckey.ABOUT]
+            self.game_config[ckey.GAME_INFO][ckey.ABOUT] = text.rstrip() + '\n'
+
+        for key in ckey.NO_EMPTY:
+            if key in self.game_config and not self.game_config[key]:
+                del self.game_config[key]
+
+        # delete an empty ai params dictionary
+        if ckey.AI_PARAMS in self.game_config[ckey.PLAYER]:
+            if not self.game_config[ckey.PLAYER][ckey.AI_PARAMS]:
+                del self.game_config[ckey.PLAYER][ckey.AI_PARAMS]
+
+
     def save(self, askfile=False):
         """Save the game configuration to a file.
         Preserve any tags/comments that were in a loaded config.
@@ -281,13 +302,7 @@ class GameConfig:
             self._dir, self.filename = os.path.split(filename)
             os.chdir(self._dir)
 
-        if not self.filename.endswith(ALL_PARAMS):
-            self._del_defaults()
-
-        if ckey.ABOUT in self.game_config[ckey.GAME_INFO]:
-            # remove all trailing whitespace, but add 1 newline
-            text = self.game_config[ckey.GAME_INFO][ckey.ABOUT]
-            self.game_config[ckey.GAME_INFO][ckey.ABOUT] = text.rstrip() + '\n'
+        self._clean_up_for_save()
 
         with open(self.filename, 'w', encoding='utf-8') as file:
             json.dump(self.game_config, file, indent=3,

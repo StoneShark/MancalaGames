@@ -18,6 +18,7 @@ Created on Thu Mar 30 13:43:39 2023
 # %% import
 
 import functools as ft
+import json
 import textwrap
 import traceback
 import tkinter as tk
@@ -40,7 +41,7 @@ DESC_WIDTH = 60
 DASH_BULLET = '- '
 
 # these are the expected tabs, put them in this order (add any extras)
-PARAM_TABS = ('Game', 'Dynamics', 'Sow', 'Capture', 'Player')
+PARAM_TABS = ('Game', 'Dynamics', 'Sow', 'Capture', 'Variants', 'Player')
 
 SKIP_TAB = 'skip'
 
@@ -100,6 +101,8 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
     def _check_save_cancel(self):
         """Check to see if a save is needed, if so then do
         or not at user choice.
+        Any parse errors in variant parameters are ignored,
+        the values are silently saved as strings.
         If cancel, then return True."""
 
         self.config.edited |= \
@@ -107,7 +110,7 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
 
         if self.config.edited:
             self.config.init_fname(self.tkvars[ckey.NAME].get())
-            self._make_config_from_tk()
+            self._make_config_from_tk(raise_excp=False)
 
         if self.config.check_save_cancel():
             return True
@@ -303,7 +306,7 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
         """Create the tk variables described by the parameters file."""
 
         for param in self.params.values():
-            if param.vtype in (pc.MSTR_TYPE, pc.LABEL_TYPE):
+            if param.vtype in (pc.MSTR_TYPE, pc.LABEL_TYPE, pc.TEXTDICT):
                 continue
 
             self.pm_make_tkvar(param)
@@ -350,7 +353,7 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
             self.pm_copy_config_to_tk(param, self.config.loaded_config)
 
 
-    def _make_config_from_tk(self):
+    def _make_config_from_tk(self, raise_excp=True):
         """Get the values from the tkvars and set them into
         the a game_config dict."""
 
@@ -361,7 +364,8 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
             if param.vtype == pc.LABEL_TYPE:
                 continue
 
-            self.pm_copy_tk_to_config(param, self.config.game_config)
+            self.pm_copy_tk_to_config(param, self.config.game_config,
+                                      raise_excp=raise_excp)
 
 
     def _prepare_game(self):
@@ -429,11 +433,42 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
             field.edit_modified(False)
 
 
+    def _check_variations(self):
+        """Check the variation text entries to see if they can be
+        parsed. If there is an error in either ask the user if they
+        want to save anyway."""
+
+        for key in (ckey.VARI_PARAMS, ckey.VARIANTS):
+
+            text = self.tktexts[key].get('1.0', tk.END).strip()
+            if not text:
+                continue
+
+            try:
+                json.loads(text)
+
+            except json.decoder.JSONDecodeError as error:
+                message = [f"""JSON Encode Error in {key} it cannot be
+                           converted to a proper dictionary:""",
+                           str(error),
+                           """Would you like to save the values as strings?
+                           It cannot be used, but will preserve
+                           your work."""]
+                return ui_utils.ask_popup(self,
+                                          'JSON Encode Error', message,
+                                          ui_utils.OKCANCEL)
+
+        return True
+
+
     def _save(self, _=None, *, askfile=False):
         """Save params to file."""
 
+        if not self._check_variations():
+            return
+
         self.config.init_fname(self.tkvars[ckey.NAME].get())
-        self._make_config_from_tk()
+        self._make_config_from_tk(raise_excp=False)
         self.config.save(askfile)
         self._update_title()
         for field in self.tktexts.values():

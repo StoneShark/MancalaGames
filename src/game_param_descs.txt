@@ -913,6 +913,14 @@ This parameter is not used for clear, deprive or immobilize games.
 
 The allowable values are the same as for UNCLAIMED (EndGameSeeds) except UNFED_PLAYER is disallowed. <no_enum_error>
 
+<param variants>
+
+Provide a dictionary of named variants whose values are the parameters to set for that variant. The first name of the variant must match the game name and must have an empty dictionary.
+
+<param vari_params>
+
+Provide a dictionary where the keys are paramters (options) and the associated values are a list valid values for each. If all values are to be allowed any non-list type can be provided; "include" or "all" are suggested.
+
 <param xc_sown>
 Only allow cross capture if the player has sown onto the opposite side of board. 
 
