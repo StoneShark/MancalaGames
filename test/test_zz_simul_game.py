@@ -29,7 +29,6 @@ pytestmark = pytest.mark.integtest
 
 from context import game_logger
 
-from game_info import WinCond
 
 # uncomment, if you should wish to skip this test
 # pytest.skip(reason="Random play. Heuristic eval.", allow_module_level=True)
