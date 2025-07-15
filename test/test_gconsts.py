@@ -26,7 +26,7 @@ def test_hole_range():
         gconsts.GameConsts(holes=0, nbr_start=5)
 
     with pytest.raises(gconsts.GameConstsError):
-        gconsts.GameConsts(holes=16, nbr_start=5)
+        gconsts.GameConsts(holes=25, nbr_start=5)
 
 def test_nbr_start_min():
     with pytest.raises(gconsts.GameConstsError):

@@ -14,19 +14,17 @@
       "sow_direct": 1,
       "start_pattern": 4
    },
-   "vari_params": {
-      "holes": [6, 9, 12, 15, 18, 24],
-      "sow_direct": [-1, 1]
-   },
    "player": {
       "algorithm": "negamaxer",
-      "ai_params": {
-         "mm_depth": [ 1, 3, 5, 7 ]
-      },
+      "ai_params": { "mm_depth": [ 1, 3, 5, 7 ] },
       "scorer": {
          "mx_seeds_m": 16,
          "mx_easy_rand_a": 20
       }
+   },
+   "vari_params": {
+      "holes": [ 6, 9, 12, 15, 18, 21 ],
+      "sow_direct": [ -1, 1 ]
    },
    "rules": "https://mancala.fandom.com/wiki/Andada"
 }

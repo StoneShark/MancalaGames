@@ -92,11 +92,8 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
         self._create_menus()
         self._key_bindings()
 
+        self._add_content_frames()
         self._add_commands_ui()
-        self._add_tabs()
-        self._create_desc_pane()
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(tk.ALL, weight=1)
 
         self._make_tkvars()
         self._make_ui_elements()
@@ -223,7 +220,7 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
         """Add buttons for commands."""
 
         self.but_frame = ttk.Frame(self, borderwidth=3)
-        self.but_frame.grid(row=2, column=0, sticky=tk.EW)
+        self.but_frame.grid(row=1, column=0, sticky=tk.EW)
 
         ttk.Button(self.but_frame, text='Test', command=self._test,
                   ).pack(side=tk.LEFT, expand=True, fill=tk.X)
@@ -235,15 +232,34 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
                   ).pack(side=tk.LEFT, expand=True, fill=tk.X)
 
 
-    def _add_tabs(self):
+    def _add_content_frames(self):
+        """Add the two content frames in a paned window to support
+        the user chaning their relative sizes."""
+
+        panes = ttk.PanedWindow(self, orient=tk.VERTICAL)
+        panes.grid(row=0, column=0, sticky=tk.NSEW)
+
+        frame = ttk.Frame(panes, relief=tk.SUNKEN, borderwidth=3)
+        self._add_tabs(frame)
+        panes.add(frame)
+
+        frame = ttk.Frame(panes, relief=tk.SUNKEN, borderwidth=3)
+        self._create_desc_pane(frame)
+        panes.add(frame)
+
+        self.rowconfigure(0, weight=1)
+        self.columnconfigure(tk.ALL, weight=1)
+
+
+    def _add_tabs(self, frame):
         """Determine what tabs are needed and add them."""
 
         tab_set = set(r.tab for r in self.params.values())
         extra_tabs = tab_set - set(PARAM_TABS)
         tabs = PARAM_TABS + tuple(extra_tabs)
 
-        tab_control = ttk.Notebook(self)
-        tab_control.grid(row=0, column=0, sticky=tk.NSEW)
+        tab_control = ttk.Notebook(frame)
+        tab_control.pack(expand=True, fill=tk.BOTH)
 
         for tab_name in tabs:
 
@@ -251,17 +267,15 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
             self.tabs[tab_name] = tab
             tab_control.add(tab, text=tab_name, padding=5, sticky=tk.NSEW)
 
-        tab_control.rowconfigure(tk.ALL, weight=1)
 
-
-    def _create_desc_pane(self):
+    def _create_desc_pane(self, frame):
         """Build the label desc pane."""
 
-        dframe = ttk.LabelFrame(self, text='Param Description',
+        dframe = ttk.LabelFrame(frame, text='Param Description',
                                labelanchor=tk.NW)
-        dframe.grid(row=1, column=0, sticky=tk.EW)
+        dframe.pack(expand=True, fill=tk.BOTH)
 
-        self.desc = tk.Text(dframe, width=DESC_WIDTH, height=12)
+        self.desc = tk.Text(dframe, width=DESC_WIDTH, height=8)
         scroll = tk.Scrollbar(dframe)
         self.desc.configure(yscrollcommand=scroll.set)
         self.desc.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
