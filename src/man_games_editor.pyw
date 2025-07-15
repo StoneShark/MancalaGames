@@ -37,8 +37,7 @@ import ui_utils
 
 # %%  Constants
 
-DESC_WIDTH = 60
-DASH_BULLET = '- '
+DESC_WIDTH = 72
 
 # these are the expected tabs, put them in this order (add any extras)
 PARAM_TABS = ('Game', 'Dynamics', 'Sow', 'Capture', 'Variants', 'Player')
@@ -47,6 +46,10 @@ SKIP_TAB = 'skip'
 
 WTITLE = 'Mancala Games Editor'
 
+# prefix for the tk variable names
+# names must be distinct from variants popup
+PREFIX = 'edit_'
+HOLES_VAR = PREFIX + ckey.HOLES
 
 # %%  game params UI
 
@@ -76,10 +79,10 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
 
         super().__init__(self.master)
         self.master.title(WTITLE)
-        self.master.resizable(False, False)
-        self.master.wm_geometry('+100+100')
+        self.master.resizable(False, True)
+        self.master.wm_geometry('800x700+100+100')
         self.master.protocol("WM_DELETE_WINDOW", self._check_destroy)
-        self.pack()
+        self.pack(expand=True, fill=tk.BOTH)
 
         self.master.report_callback_exception = self._exception_callback
         warnings.showwarning = ft.partial(self._warning, self)
@@ -88,9 +91,13 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
         ui_utils.setup_styles(master)
         self._create_menus()
         self._key_bindings()
+
         self._add_commands_ui()
         self._add_tabs()
         self._create_desc_pane()
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(tk.ALL, weight=1)
+
         self._make_tkvars()
         self._make_ui_elements()
         self._reset(check_save=False)
@@ -215,8 +222,8 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
     def _add_commands_ui(self):
         """Add buttons for commands."""
 
-        self.but_frame = ttk.Frame(self.master, borderwidth=3)
-        self.but_frame.pack(side=tk.BOTTOM, expand=True, fill=tk.BOTH)
+        self.but_frame = ttk.Frame(self, borderwidth=3)
+        self.but_frame.grid(row=2, column=0, sticky=tk.EW)
 
         ttk.Button(self.but_frame, text='Test', command=self._test,
                   ).pack(side=tk.LEFT, expand=True, fill=tk.X)
@@ -236,30 +243,31 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
         tabs = PARAM_TABS + tuple(extra_tabs)
 
         tab_control = ttk.Notebook(self)
+        tab_control.grid(row=0, column=0, sticky=tk.NSEW)
+
         for tab_name in tabs:
 
             tab = ttk.Frame(tab_control, padding=3)
             self.tabs[tab_name] = tab
-            tab_control.add(tab, text=tab_name, padding=5)
-        tab_control.pack(expand=1, fill=tk.BOTH)
+            tab_control.add(tab, text=tab_name, padding=5, sticky=tk.NSEW)
+
+        tab_control.rowconfigure(tk.ALL, weight=1)
 
 
     def _create_desc_pane(self):
         """Build the label desc pane."""
 
         dframe = ttk.LabelFrame(self, text='Param Description',
-                               labelanchor='nw')
-        dframe.pack(side=tk.BOTTOM, expand=True, fill=tk.BOTH)
+                               labelanchor=tk.NW)
+        dframe.grid(row=1, column=0, sticky=tk.EW)
 
         self.desc = tk.Text(dframe, width=DESC_WIDTH, height=12)
-
         scroll = tk.Scrollbar(dframe)
         self.desc.configure(yscrollcommand=scroll.set)
-        self.desc.pack(side=tk.LEFT)
+        self.desc.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
 
         scroll.config(command=self.desc.yview)
-        scroll.pack(side=tk.RIGHT, fill=tk.Y)
-        self.desc.pack(expand=True, fill=tk.BOTH)
+        scroll.pack(side=tk.RIGHT, fill=tk.BOTH)
 
 
     def update_desc(self, option, event=None):
@@ -278,8 +286,7 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
         out_text = ''
         for para in paragraphs:
             fpara = textwrap.fill(para, DESC_WIDTH) + '\n'
-            if para[:2] != DASH_BULLET:
-                fpara += '\n'
+            fpara += '\n'
             out_text += fpara
         desc = ''.join(out_text)
 
@@ -309,7 +316,7 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
             if param.vtype in (pc.MSTR_TYPE, pc.LABEL_TYPE, pc.TEXTDICT):
                 continue
 
-            self.pm_make_tkvar(param)
+            self.pm_make_tkvar(param, PREFIX)
 
         # don't add the traces until all the variables are made
         self._add_watchers()
@@ -323,7 +330,7 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
         self._update_title()
         self.game = None
 
-        if var == ckey.HOLES:
+        if var == HOLES_VAR:
             self.pm_resize_udirs()
 
 
@@ -335,14 +342,18 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
         for tname, tab in self.tabs.items():
             tab_params = sorted(
                 [p for p in self.params.values() if p.tab == tname],
-                key=lambda p: (p.col, p.row))
+                 key=lambda p: (p.col, p.row))
 
+            expand = set()
             for param in tab_params:
+                if param.vtype in (pc.MSTR_TYPE, pc.TEXTDICT):
+                    expand |= {param.row}
+
                 self.pm_make_ui_param(tab, param)
 
-        for tab in self.tabs.values():
-            tab.grid_rowconfigure('all', weight=1)
-            tab.grid_columnconfigure('all', weight=1)
+            if expand:
+                tab.grid_rowconfigure(list(expand), weight=1)
+            tab.grid_columnconfigure(tk.ALL, weight=1)
 
 
     def _fill_tk_from_config(self):

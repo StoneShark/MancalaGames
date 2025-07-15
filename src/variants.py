@@ -25,6 +25,10 @@ import round_tally
 import ui_utils
 
 
+# %% constant
+
+PREFIX = 'var_'
+
 # %%  classes
 
 class GameVariantError(Exception):
@@ -198,7 +202,7 @@ class AdjustPopup(param_mixin.ParamMixin, tksimpledialog.Dialog):
                                                       name='varaints')
         for vname in self.vari_params.keys():
             param = self.params[vname]
-            self.pm_make_tkvar(param, self.game_config)
+            self.pm_make_tkvar(param, PREFIX, self.game_config)
             self.pm_copy_config_to_tk(param, self.game_config)
 
         self.update_tkvars_for_game(vari.game_ui.game)

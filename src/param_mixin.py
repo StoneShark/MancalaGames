@@ -183,7 +183,7 @@ class ParamMixin:
         return value
 
 
-    def pm_make_tkvar(self, param, config_dict=None):
+    def pm_make_tkvar(self, param, prefix, config_dict=None):
         """Create a tk variable for param."""
 
         if config_dict:
@@ -196,20 +196,24 @@ class ParamMixin:
 
         if param.vtype in (pc.STR_TYPE, pc.INT_TYPE):
             self.tkvars[param.option] = tk.StringVar(self.master,
-                                                     str(value))
+                                                     str(value),
+                                                     name=prefix + param.option)
         elif param.vtype == pc.BOOL_TYPE:
             self.tkvars[param.option] = tk.BooleanVar(self.master,
-                                                      bool(value))
+                                                      bool(value),
+                                                      name=prefix + param.option)
         elif param.vtype == pc.BLIST_TYPE:
             boxes = self._get_boxes_vars(param, config_dict)
             self.tkvars[param.option] = \
-                [tk.BooleanVar(self.master, i in value)
+                [tk.BooleanVar(self.master, i in value,
+                               name=prefix + f'{param.option}_{i}')
                  for i in range(boxes)]
 
         elif param.vtype == pc.ILIST_TYPE:
             boxes = self._get_boxes_vars(param, config_dict)
             self.tkvars[param.option] = \
-                [tk.StringVar(self.master, i in value)
+                [tk.StringVar(self.master, i in value,
+                              name=prefix + f'{param.option}_{i}')
                  for i in range(boxes)]
 
         elif param.vtype in pc.STRING_DICTS:
@@ -219,7 +223,8 @@ class ParamMixin:
             else:
                 vstr = inv_dict[enum_dict[value]]
             self.tkvars[param.option] = tk.StringVar(self.master,
-                                                     vstr)
+                                                     vstr,
+                                                     name=prefix + param.option)
 
         else:
             raise TypeError(f"Unexpected parameter type {param.vtype}.")
@@ -228,16 +233,16 @@ class ParamMixin:
     def _make_text_entry(self, frame, param, col_span=4):
         """Make a text box entry with scroll bar."""
 
-        tframe = ttk.LabelFrame(frame, text=param.text, labelanchor='nw')
+        tframe = ttk.LabelFrame(frame, text=param.text, labelanchor=tk.NW)
         tframe.grid(row=param.row, column=param.col, columnspan=col_span,
-                    sticky='nsew')
+                    sticky=tk.NSEW)
 
         text_box = tk.Text(tframe, width=50, height=20)
         self.tktexts[param.option] = text_box
 
         scroll = tk.Scrollbar(tframe)
         text_box.configure(yscrollcommand=scroll.set)
-        text_box.pack(side=tk.LEFT, expand=True, fill='both')
+        text_box.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
 
         scroll.config(command=text_box.yview)
         scroll.pack(side=tk.RIGHT, fill=tk.Y)
@@ -375,7 +380,7 @@ class ParamMixin:
 
         lbl = ttk.Label(frame, text=param.text, style='Title.TLabel')
         lbl.grid(row=param.row, column=param.col, columnspan=2,
-                 padx=4, pady=2, sticky='ew')
+                 padx=4, pady=2, sticky=tk.EW)
         lbl.configure(anchor='center')  # anchor in style is ignored
 
 
