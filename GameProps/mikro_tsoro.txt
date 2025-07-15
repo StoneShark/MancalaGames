@@ -6,18 +6,14 @@
    },
    "game_info": {
       "name": "mikro tsoro",
-      "about": "A deprive game with separate north & south cycles.\n\nSow only on your own side of the board in multiple laps. If the final seed of a lap falls into an empty hole and there are seeds across from it, gather those and the final sown seed and continue sowing.\n\n<nolink>mikro tsoro often gets caught in endless sowing (more than 75 laps on a single turn), which ends the game in a TIE. The Game menu option Disallow Endless Sows can be used to prevent such moves (set by default for this game in the mancala.ini file). \n\nGoal: move all of your opponents seeds to your side of the board. \n\nmikro tsoro was invented by the Austrian Matthias Liszt in August 2007.\n",
+      "about": "A deprive game with separate north & south cycles.\n\nSow only on your own side of the board in multiple laps. If the final seed of a lap falls into an empty hole and there are seeds across from it, gather those and the final sown seed and continue sowing.\n\n<nolink>mikro tsoro often gets caught in endless sowing (more than 75 laps on a single turn), which ends the game in a TIE. The Game menu option Disallow Endless Sows can be used to prevent such moves (set by default for this game in the mancala.ini file). \n\nGoal: move all of your opponents seeds to your side of the board. \n\nmikro tsoro was invented by the Austrian Matthias Liszt in August 2007.\n\nVariation:\n\n- odd board sizes 5 to 15\n",
       "crosscapt": true,
       "goal": 1,
       "mlaps": 1,
       "sow_direct": 1,
       "sow_rule": 12
    },
-   "player": {
-      "ai_params": {},
-      "scorer": {
-         "seeds_m": 8
-      }
-   },
+   "player": { "scorer": { "seeds_m": 8 } },
+   "vari_params": { "holes": [ 5, 7, 9, 11, 13, 15 ] },
    "rules": "https://mancala.fandom.com/wiki/Mikro_tsoro"
 }
