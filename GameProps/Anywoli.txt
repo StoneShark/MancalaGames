@@ -20,8 +20,8 @@
    "player": {
       "ai_params": {},
       "scorer": {
-         "stores_m": 8,
-         "evens_m": -1
+         "mx_stores_m": 8,
+         "mx_evens_m": -1
       }
    },
    "variants": {

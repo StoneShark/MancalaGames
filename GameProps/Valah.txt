@@ -17,8 +17,8 @@
          "mm_depth": [ 1, 3, 5, 7 ]
       },
       "scorer": {
-         "stores_m": 4,
-         "repeat_turn": 40
+         "mx_stores_m": 4,
+         "mx_rturn_a": 40
       }
    },
    "rules": "Ann Davies, 2025"

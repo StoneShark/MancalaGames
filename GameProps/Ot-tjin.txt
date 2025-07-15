@@ -15,7 +15,7 @@
    },
    "player": {
       "ai_params": { },
-      "scorer": { "stores_m": 4 }
+      "scorer": { "mx_stores_m": 4 }
    },
    "variants": {
       "Ot-tjin": { },

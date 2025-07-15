@@ -675,21 +675,26 @@ page under Player Tab.
 <p>The multipliers are applied to a difference of each players statistic.
 For example, the number of seeds the AI player has are
 subtracted from the human players seeds and then the multiplier is
-applied:
-<p class="center">(&#931; (Human seeds) - &#931; (AI seeds)) * seeds_m
+applied
+(<a href="game_params.html#mx_seeds_m">MX_SEEDS_M</a>):
+<p class="center">(&#931; (Human seeds) - &#931; (AI seeds)) * mx_seeds_m
 <p>thus the multipler can be used to either maximize or minimize the
 statistic.
 Positive multipliers maximize it and negative multipliers will minimize it
 from the perspective of the AI player.
 <p>The multipliers set the relative importance of each factor in evaluating
 the state of the board; higher absolute values are more important.
-The UI imposes limits the range of values that
-can be selected, but any integer can be set directly in the config file.
 <p>The score for each board is the sum of the statistic difference times its multiplier:
-<p class="center">score = Easy_Error + &#931; ((Player_Stat - AI_Stat) * multiplier)
-<p>Easy_Error sets the range of a random number added to the state's score.
+<p class="center">score = easy_error + &#931; ((Player_Stat - AI_Stat) * multiplier)
+<p>Easy_error is a random number in the range
+negative <a href="game_params.html#mx_easy_rand_a">MX_EASY_RAND_A</a> to MX_EASY_RAND_A and
+only used when the game difficulty is easy. The purpose is to introduce random errors
+to make the AI player make mistakes.
 
-<p>For EVENS_M, SEEDS_M, and EMPTIES_M, the multipliers are applied
+<p>For
+<a href="game_params.html#mx_evens_m">MX_EVENS_M</a>,
+<a href="game_params.html#mx_seeds_m">MX_SEEDS_M</a>, and
+<a href="game_params.html#mx_seeds_m">MX_EMPTIES_M</a>, the multipliers are applied
 to game properties in slighly different
 ways based on the game configuration:
 <ul><li>In games with NO_SIDES, multipliers are applied to the total

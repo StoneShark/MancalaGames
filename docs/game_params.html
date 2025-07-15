@@ -1060,8 +1060,8 @@ is included after the parameter sections.
 <p class="pdesc">UI Tab: Player
 
 <p>The depth that the minimaxer or negamaxer will search the game tree from the current node. One value for each difficulty.
-<h4 id="stores_m"> Stores (captured) Multiplier </h4>
-<p class="pdesc">Location in Config Files: player : scorer : stores_m
+<h4 id="mx_stores_m"> Stores (captured) Multiplier </h4>
+<p class="pdesc">Location in Config Files: player : scorer : mx_stores_m
 <p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
 <p class="pdesc">Default value: 0
 <p class="pdesc">UI default value: 4
@@ -1070,8 +1070,8 @@ is included after the parameter sections.
 <p>The multiplier for the stores scorer. Seeds in stores and children are included.
 <p>The stores scorer may not be used in games without <a href="game_params.html#stores">STORES</a> or CHILDREN. A zero multiplier disables the stores scorer.
 <p>Used only for minimax & negamax players.
-<h4 id="access_m"> Access Multiplier </h4>
-<p class="pdesc">Location in Config Files: player : scorer : access_m
+<h4 id="mx_access_m"> Access Multiplier </h4>
+<p class="pdesc">Location in Config Files: player : scorer : mx_access_m
 <p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
 <p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Player
@@ -1079,24 +1079,24 @@ is included after the parameter sections.
 <p>The multiplier for the access scorer. The access scorer computes how many of the opponent's holes can be accessed for the given game state.
 <p>The access scorer is slow and therefore is prohibited from being used in multilap games (<a href="game_params.html#mlaps">MLAPS</a>); games with user choice of move direction (<a href="game_params.html#udir_holes">UDIR_HOLES</a>); and games where hole owners are not predefined (<a href="game_params.html#no_sides">NO_SIDES</a>). In these game configurations, the multiplier must be zero to disable the access scorer.
 <p>Used only for minimax & negamax players.
-<h4 id="seeds_m"> Seeds Multiplier </h4>
-<p class="pdesc">Location in Config Files: player : scorer : seeds_m
+<h4 id="mx_seeds_m"> Seeds Multiplier </h4>
+<p class="pdesc">Location in Config Files: player : scorer : mx_seeds_m
 <p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
 <p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Player
 
 <p>The multiplier for the seeds scorer. The seeds scorer computes how many seeds each player has on the game board that are not in children.
 <p>Used only for minimax & negamax players.
-<h4 id="empties_m"> Empties Multiplier </h4>
-<p class="pdesc">Location in Config Files: player : scorer : empties_m
+<h4 id="mx_empties_m"> Empties Multiplier </h4>
+<p class="pdesc">Location in Config Files: player : scorer : mx_empties_m
 <p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
 <p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Player
 
 <p>The multiplier for the empties scorer. The empties scorer counts the number empty holes each player has on the board.
 <p>Used only for minimax & negamax players.
-<h4 id="child_cnt_m"> Child Count Multiplier </h4>
-<p class="pdesc">Location in Config Files: player : scorer : child_cnt_m
+<h4 id="mx_child_cnt_m"> Child Count Multiplier </h4>
+<p class="pdesc">Location in Config Files: player : scorer : mx_child_cnt_m
 <p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
 <p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Player
@@ -1104,16 +1104,16 @@ is included after the parameter sections.
 <p>The multiplier for the child scorer. The child scorer counts the number children each player has.
 <p>The child scorer may only be used on games with children. If the game does not include children, the multiplier must be zero.
 <p>Used only for the minimax & negamax players.
-<h4 id="evens_m"> Evens Multiplier </h4>
-<p class="pdesc">Location in Config Files: player : scorer : evens_m
+<h4 id="mx_evens_m"> Evens Multiplier </h4>
+<p class="pdesc">Location in Config Files: player : scorer : mx_evens_m
 <p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
 <p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Player
 
 <p>The multiplier for the even scorer. The even scorer counts the number of holes with an even number of seeds. This is useful to use when the capture mechanism is evens.
 <p>Used only for minimax & negamax players.
-<h4 id="repeat_turn"> Repeat Turn Addin </h4>
-<p class="pdesc">Location in Config Files: player : scorer : repeat_turn
+<h4 id="mx_rturn_a"> Repeat Turn Addin </h4>
+<p class="pdesc">Location in Config Files: player : scorer : mx_rturn_a
 <p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
 <p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Player
@@ -1121,13 +1121,13 @@ is included after the parameter sections.
 <p>A value used to encourage or discourage repeat turns. The value is added in for the current player and subtracted off the score for the opposing playing. Use a positive value to encourage the AI player to repeat turns.
 <p>This parameter may only be used for games in which repeated turns are possible (<a href="game_params.html#sow_own_store">SOW_OWN_STORE</a>, <a href="game_params.html#capt_rturn">CAPT_RTURN</a> or <a href="game_params.html#xc_sown">XC_SOWN</a>).
 <p>Used only for minimax & negamax players.
-<h4 id="easy_rand"> Easy Random Addin </h4>
-<p class="pdesc">Location in Config Files: player : scorer : easy_rand
+<h4 id="mx_easy_rand_a"> Easy Random Addin </h4>
+<p class="pdesc">Location in Config Files: player : scorer : mx_easy_rand_a
 <p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
 <p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Player
 
-<p>If the game is being played on easy mode (game difficult of easy/0), a random value may be added to the static evaluation. This can be done to induce errors into the ai player's game play. A random value is selected between -easy_rand and +easy_rand.
+<p>If the game is being played on easy mode (game difficult of easy/0), a random value may be added to the static evaluation. This can be done to induce errors into the ai player's game play. A random value is selected between -mx_easy_rand_a and +easy_rand.
 <p>The specific value for this should be selected based on the ranges of the parameters and multipliers.
 <p>Used only for minimax & negamax players.
 <br><br><br>
@@ -1135,7 +1135,6 @@ is included after the parameter sections.
 <div class="cols_row">
   <div class="column3">
     <p class="param"><a href="#about">about</a></p>
-    <p class="param"><a href="#access_m">access_m</a></p>
     <p class="param"><a href="#ai_active">ai_active</a></p>
     <p class="param"><a href="#algorithm">algorithm</a></p>
     <p class="param"><a href="#allow_rule">allow_rule</a></p>
@@ -1147,25 +1146,21 @@ is included after the parameter sections.
     <p class="param"><a href="#capt_rturn">capt_rturn</a></p>
     <p class="param"><a href="#capt_side">capt_side</a></p>
     <p class="param"><a href="#capt_type">capt_type</a></p>
-    <p class="param"><a href="#child_cnt_m">child_cnt_m</a></p>
     <p class="param"><a href="#child_cvt">child_cvt</a></p>
     <p class="param"><a href="#child_locs">child_locs</a></p>
     <p class="param"><a href="#child_rule">child_rule</a></p>
     <p class="param"><a href="#child_type">child_type</a></p>
     <p class="param"><a href="#crosscapt">crosscapt</a></p>
     <p class="param"><a href="#difficulty">difficulty</a></p>
-    <p class="param"><a href="#easy_rand">easy_rand</a></p>
-    <p class="param"><a href="#empties_m">empties_m</a></p>
     <p class="param"><a href="#evens">evens</a></p>
-    <p class="param"><a href="#evens_m">evens_m</a></p>
     <p class="param"><a href="#game_class">game_class</a></p>
-  </div>
-  <div class="column3">
     <p class="param"><a href="#goal">goal</a></p>
     <p class="param"><a href="#goal_param">goal_param</a></p>
     <p class="param"><a href="#grandslam">grandslam</a></p>
     <p class="param"><a href="#help_file">help_file</a></p>
     <p class="param"><a href="#holes">holes</a></p>
+  </div>
+  <div class="column3">
     <p class="param"><a href="#mcts_bias">mcts_bias</a></p>
     <p class="param"><a href="#mcts_nodes">mcts_nodes</a></p>
     <p class="param"><a href="#mcts_pouts">mcts_pouts</a></p>
@@ -1179,22 +1174,28 @@ is included after the parameter sections.
     <p class="param"><a href="#multicapt">multicapt</a></p>
     <p class="param"><a href="#mustpass">mustpass</a></p>
     <p class="param"><a href="#mustshare">mustshare</a></p>
+    <p class="param"><a href="#mx_access_m">mx_access_m</a></p>
+    <p class="param"><a href="#mx_child_cnt_m">mx_child_cnt_m</a></p>
+    <p class="param"><a href="#mx_easy_rand_a">mx_easy_rand_a</a></p>
+    <p class="param"><a href="#mx_empties_m">mx_empties_m</a></p>
+    <p class="param"><a href="#mx_evens_m">mx_evens_m</a></p>
+    <p class="param"><a href="#mx_rturn_a">mx_rturn_a</a></p>
+    <p class="param"><a href="#mx_seeds_m">mx_seeds_m</a></p>
+    <p class="param"><a href="#mx_stores_m">mx_stores_m</a></p>
     <p class="param"><a href="#name">name</a></p>
     <p class="param"><a href="#nbr_start">nbr_start</a></p>
     <p class="param"><a href="#no_sides">no_sides</a></p>
     <p class="param"><a href="#nocaptmoves">nocaptmoves</a></p>
+  </div>
+  <div class="column3">
     <p class="param"><a href="#nosinglecapt">nosinglecapt</a></p>
     <p class="param"><a href="#pickextra">pickextra</a></p>
     <p class="param"><a href="#prescribed">prescribed</a></p>
-  </div>
-  <div class="column3">
     <p class="param"><a href="#presowcapt">presowcapt</a></p>
     <p class="param"><a href="#quitter">quitter</a></p>
-    <p class="param"><a href="#repeat_turn">repeat_turn</a></p>
     <p class="param"><a href="#round_fill">round_fill</a></p>
     <p class="param"><a href="#round_starter">round_starter</a></p>
     <p class="param"><a href="#rounds">rounds</a></p>
-    <p class="param"><a href="#seeds_m">seeds_m</a></p>
     <p class="param"><a href="#skip_start">skip_start</a></p>
     <p class="param"><a href="#sow_direct">sow_direct</a></p>
     <p class="param"><a href="#sow_own_store">sow_own_store</a></p>
@@ -1203,7 +1204,6 @@ is included after the parameter sections.
     <p class="param"><a href="#sow_start">sow_start</a></p>
     <p class="param"><a href="#start_pattern">start_pattern</a></p>
     <p class="param"><a href="#stores">stores</a></p>
-    <p class="param"><a href="#stores_m">stores_m</a></p>
     <p class="param"><a href="#udir_holes">udir_holes</a></p>
     <p class="param"><a href="#unclaimed">unclaimed</a></p>
     <p class="param"><a href="#vari_params">vari_params</a></p>

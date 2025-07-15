@@ -21,7 +21,7 @@
    },
    "player": {
       "ai_params": {},
-      "scorer": { "stores_m": 8 }
+      "scorer": { "mx_stores_m": 8 }
    },
    "rules": "https://mancala.fandom.com/wiki/Raja_Pasu"
 }

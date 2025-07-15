@@ -17,10 +17,10 @@
    },
    "player": {
       "scorer": {
-         "stores_m": 4,
-         "seeds_m": 1,
-         "empties_m": -1,
-         "easy_rand": 0
+         "mx_stores_m": 4,
+         "mx_seeds_m": 1,
+         "mx_empties_m": -1,
+         "mx_easy_rand_a": 0
       },
       "algorithm": "negamaxer",
       "ai_params": {

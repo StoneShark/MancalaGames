@@ -23,7 +23,7 @@
          "mm_depth": [ 1, 7, 9, 11 ]
       },
       "scorer": {
-         "seeds_m": -8
+         "mx_seeds_m": -8
       }
    },
    "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p85."

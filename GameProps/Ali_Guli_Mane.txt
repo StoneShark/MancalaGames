@@ -27,7 +27,7 @@
    "player": {
       "ai_params": {},
       "scorer": {
-         "stores_m": 8
+         "mx_stores_m": 8
       }
    },
    "rules": "https://mancala.fandom.com/wiki/Ali_Guli_Mane",

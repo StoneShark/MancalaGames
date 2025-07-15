@@ -26,7 +26,7 @@
    },
    "player": {
       "algorithm": "negamaxer",
-      "scorer": { "stores_m": 4 }
+      "scorer": { "mx_stores_m": 4 }
    },
    "vari_params": {
       "holes": "include",

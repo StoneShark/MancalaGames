@@ -23,7 +23,7 @@
          "mm_depth": [ 1, 3, 5, 7 ]
       },
       "scorer": {
-         "stores_m": 8
+         "mx_stores_m": 8
       }
    },
    "vari_params": {

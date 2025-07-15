@@ -43,13 +43,13 @@ PATH = '../GameProps/'
 BAD_CFG = '_all_params.txt'
 INDEX = [fname[:-4] for fname in os.listdir(PATH) if fname != BAD_CFG]
 
-PARAM_KEYS = [ckey.ACCESS_M,
-              ckey.CHILD_CNT_M,
-              ckey.EMPTIES_M,
-              ckey.EVENS_M,
-              ckey.SEEDS_M,
-              ckey.STORES_M,
-              ckey.REPEAT_TURN,
+PARAM_KEYS = [ckey.MX_ACCESS_M,
+              ckey.MX_CHILD_CNT_M,
+              ckey.MX_EMPTIES_M,
+              ckey.MX_EVENS_M,
+              ckey.MX_SEEDS_M,
+              ckey.MX_STORES,
+              ckey.MX_RTURN_A,
 
               ckey.MCTS_BIAS,
               ckey.MCTS_NODES,

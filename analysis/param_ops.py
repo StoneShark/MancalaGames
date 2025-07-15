@@ -68,8 +68,8 @@ def get_pnames(player, pdict):
 
     elif player.ana_algo in (Algo.MINIMAX, Algo.NEGAMAX):
         param_names = list(pdict['scorer'].keys())
-        if 'easy_rand' in param_names:
-            param_names.remove('easy_rand')
+        if 'mx_easy_rand_a' in param_names:
+            param_names.remove('mx_easy_rand_a')
 
     return param_names
 

@@ -3,7 +3,7 @@ A description of the game, typically enough to remind the player what the game o
 
 New lines can be inserted with \n.
 
-<param access_m>
+<param mx_access_m>
 The multiplier for the access scorer. The access scorer computes how many of the opponent's holes can be accessed for the given game state.
 
 The access scorer is slow and therefore is prohibited from being used in multilap games (MLAPS); games with user choice of move direction (UDIR_HOLES); and games where hole owners are not predefined (NO_SIDES). In these game configurations, the multiplier must be zero to disable the access scorer.
@@ -151,7 +151,7 @@ Capture type.
 
 - CAPT_OPP_1CCW: flag a capture if the final seed of a sow lands in your own rightmost hole or on your opponent's side of the board. No seeds are removed. Useful for causing a repeat turn and/or with pickextra.
 
-<param child_cnt_m>
+<param mx_child_cnt_m>
 The multiplier for the child scorer. The child scorer counts the number children each player has.
 
 The child scorer may only be used on games with children. If the game does not include children, the multiplier must be zero.
@@ -288,14 +288,14 @@ SOW_RULE of SOW_CAPT_ALL does not do this capture.
 <param difficulty>
 The default difficulty for the game. The difficulty can be changed at play time, even during game play, in the Mancala UI.
 
-<param easy_rand>
-If the game is being played on easy mode (game difficult of easy/0), a random value may be added to the static evaluation. This can be done to induce errors into the ai player's game play. A random value is selected between -easy_rand and +easy_rand.
+<param mx_easy_rand_a>
+If the game is being played on easy mode (game difficult of easy/0), a random value may be added to the static evaluation. This can be done to induce errors into the ai player's game play. A random value is selected between -mx_easy_rand_a and +easy_rand.
 
 The specific value for this should be selected based on the ranges of the parameters and multipliers.
 
 Used only for minimax & negamax players.
 
-<param empties_m>
+<param mx_empties_m>
 The multiplier for the empties scorer. The empties scorer counts the number empty holes each player has on the board.
 
 Used only for minimax & negamax players.
@@ -307,7 +307,7 @@ MLAPS LAPPER sowing will stop the sowing on a final seed that would capture base
 
 Either SOW_RULE of OWN_SOW_CAPT_ALL or SOW_SOW_CAPT_ALL includes the basic capture mechanisms.
 
-<param evens_m>
+<param mx_evens_m>
 The multiplier for the even scorer. The even scorer counts the number of holes with an even number of seeds. This is useful to use when the capture mechanism is evens.
 
 Used only for minimax & negamax players.
@@ -634,7 +634,7 @@ Capture type that occurs before sowing:
 
 - DRAW_1_XCAPT: When drawing 1 seed, capture any seeds on the other side of the board.
 
-<param repeat_turn>
+<param mx_rturn_a>
 A value used to encourage or discourage repeat turns. The value is added in for the current player and subtracted off the score for the opposing playing. Use a positive value to encourage the AI player to repeat turns.
 
 This parameter may only be used for games in which repeated turns are possible (SOW_OWN_STORE, CAPT_RTURN or XC_SOWN).
@@ -704,7 +704,7 @@ In the case of a round win or tie a new starter is determined via ROUND_STARTER 
 
 BLOCKS are used in many games and set between rounds based on the seed placement. TERRITORY GOAL games adjust hole ownership between rounds.
 
-<param seeds_m>
+<param mx_seeds_m>
 The multiplier for the seeds scorer. The seeds scorer computes how many seeds each player has on the game board that are not in children.
 
 Used only for minimax & negamax players.
@@ -874,7 +874,7 @@ When a game is played in ROUNDS, start_pattern is only supported for round tally
 <param stores>
 True when stores are present on the game board. For games with GOAL of DEPRIVE or CLEAR, stores can be used to show whose turn it is (seed counts will not be sown).
 
-<param stores_m>
+<param mx_stores_m>
 The multiplier for the stores scorer. Seeds in stores and children are included.
 
 The stores scorer may not be used in games without STORES or CHILDREN. A zero multiplier disables the stores scorer.

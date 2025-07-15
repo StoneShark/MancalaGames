@@ -28,8 +28,8 @@
          "mm_depth": [ 1, 5, 7, 11 ]
       },
       "scorer": {
-         "seeds_m": 2,
-         "empties_m": -1
+         "mx_seeds_m": 2,
+         "mx_empties_m": -1
       }
    },
    "rules": "Ann Davies, 2025."

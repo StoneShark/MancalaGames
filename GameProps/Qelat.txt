@@ -20,13 +20,13 @@
    },
    "player": {
       "scorer": {
-         "stores_m": 2,
-         "access_m": 0,
-         "seeds_m": 0,
-         "empties_m": 0,
-         "child_cnt_m": 4,
-         "evens_m": 0,
-         "easy_rand": 4
+         "mx_stores_m": 2,
+         "mx_access_m": 0,
+         "mx_seeds_m": 0,
+         "mx_empties_m": 0,
+         "mx_child_cnt_m": 4,
+         "mx_evens_m": 0,
+         "mx_easy_rand_a": 4
       },
       "algorithm": "negamaxer",
       "ai_params": {

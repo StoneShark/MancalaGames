@@ -28,8 +28,8 @@
          "mm_depth": [ 1, 5, 7, 9 ]
       },
       "scorer": {
-         "stores_m": 4,
-         "child_cnt_m": 16
+         "mx_stores_m": 4,
+         "mx_child_cnt_m": 16
       }
    },
    "vari_params": {

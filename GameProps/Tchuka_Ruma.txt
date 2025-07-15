@@ -18,9 +18,9 @@
       "difficulty": 0,
       "ai_params": { "mm_depth": [ 1, 3, 7, 11 ] },
       "scorer": {
-         "seeds_m": -8,
-         "repeat_turn": 50,
-         "easy_rand": 50
+         "mx_seeds_m": -8,
+         "mx_rturn_a": 50,
+         "mx_easy_rand_a": 50
       }
    },
    "vari_params": {

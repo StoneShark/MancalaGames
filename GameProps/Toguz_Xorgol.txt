@@ -23,9 +23,9 @@
       "algorithm": "negamaxer",
       "ai_params": {},
       "scorer": {
-         "stores_m": 4,
-         "child_cnt_m": 1,
-         "evens_m": 2
+         "mx_stores_m": 4,
+         "mx_child_cnt_m": 1,
+         "mx_evens_m": 2
       }
    },
    "vari_params": { "holes": "include" },

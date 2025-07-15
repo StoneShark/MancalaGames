@@ -49,17 +49,17 @@ MCTS_BIAS_DIV = 1000
 @dc.dataclass(kw_only=True)
 class ScoreParams:
     """Multipliers for the different scorers, 0 turns it off.
-    easy_rand is the +- error introduced on easy difficulty.
-    access_m if positive, is only used on Hard or Expert."""
+    mx_easy_rand_a is the +- error introduced on easy difficulty.
+    mx_access_m if positive, is only used on Hard or Expert."""
 
-    stores_m: int = 0
-    access_m: int = 0
-    seeds_m: int = 0
-    empties_m: int = 0
-    child_cnt_m: int = 0
-    evens_m: int = 0
-    easy_rand: int = 0
-    repeat_turn: int = 0
+    mx_stores_m: int = 0
+    mx_access_m: int = 0
+    mx_seeds_m: int = 0
+    mx_empties_m: int = 0
+    mx_child_cnt_m: int = 0
+    mx_evens_m: int = 0
+    mx_easy_rand_a: int = 0
+    mx_rturn_a: int = 0
 
     @classmethod
     def get_default(cls, fname):
@@ -166,31 +166,31 @@ class AiPlayer(ai_interface.AiPlayerIf):
 
         self.scorers = []
 
-        if self.sc_params.repeat_turn:
+        if self.sc_params.mx_rturn_a:
             self.scorers += [self._score_repeat_turn]
 
-        if self.sc_params.stores_m:
+        if self.sc_params.mx_stores_m:
             if self.game.info.child_type:
                 self.scorers += [self._score_child_stores]
             else:
                 self.scorers += [self._score_stores]
 
-        if self.game.info.child_type and self.sc_params.child_cnt_m:
+        if self.game.info.child_type and self.sc_params.mx_child_cnt_m:
             self.scorers += [self._score_children]
 
-        if self.sc_params.easy_rand:
+        if self.sc_params.mx_easy_rand_a:
             self.scorers += [self._score_easy]
 
-        if self.sc_params.access_m:
+        if self.sc_params.mx_access_m:
             self.scorers += [self._score_access]
 
-        scorers = [('evens_m',
+        scorers = [('mx_evens_m',
                      self._score_cnt_evens,
                      self._score_diff_evens),
-                    ('seeds_m',
+                    ('mx_seeds_m',
                      self._score_cnt_seeds,
                      self._score_diff_seeds),
-                    ('empties_m',
+                    ('mx_empties_m',
                      self._score_cnt_empties,
                      self._score_diff_empties)]
 
@@ -249,7 +249,7 @@ class AiPlayer(ai_interface.AiPlayerIf):
 
         if end_cond == gi.WinCond.REPEAT_TURN:
             mult = -1 if self.game.turn else 1
-            return mult * self.sc_params.repeat_turn
+            return mult * self.sc_params.mx_rturn_a
 
         return 0
 
@@ -260,7 +260,7 @@ class AiPlayer(ai_interface.AiPlayerIf):
         store_f = self.game.store[False]
         store_t = self.game.store[True]
 
-        return (store_f - store_t) * self.sc_params.stores_m
+        return (store_f - store_t) * self.sc_params.mx_stores_m
 
 
     def _score_child_stores(self, _):
@@ -275,7 +275,7 @@ class AiPlayer(ai_interface.AiPlayerIf):
             elif self.game.child[loc] is True:
                 store_t += self.game.board[loc]
 
-        return (store_f - store_t) * self.sc_params.stores_m
+        return (store_f - store_t) * self.sc_params.mx_stores_m
 
 
     def _score_children(self, _):
@@ -284,7 +284,7 @@ class AiPlayer(ai_interface.AiPlayerIf):
 
         child_f = self.game.child.count(False)
         child_t = self.game.child.count(True)
-        return (child_f - child_t) * self.sc_params.child_cnt_m
+        return (child_f - child_t) * self.sc_params.mx_child_cnt_m
 
 
     def _score_diff_evens(self, _):
@@ -304,7 +304,7 @@ class AiPlayer(ai_interface.AiPlayerIf):
                 elif who is False:
                     even_f += 1
 
-        return (even_f - even_t) * self.sc_params.evens_m
+        return (even_f - even_t) * self.sc_params.mx_evens_m
 
 
     def _score_cnt_evens(self, _):
@@ -318,7 +318,7 @@ class AiPlayer(ai_interface.AiPlayerIf):
                              and not self.game.board[loc] % 2)
         tmult = -1 if self.game.turn else 1
 
-        return even_cnt * self.sc_params.evens_m * tmult
+        return even_cnt * self.sc_params.mx_evens_m * tmult
 
 
     def _score_diff_seeds(self, _):
@@ -335,7 +335,7 @@ class AiPlayer(ai_interface.AiPlayerIf):
                 elif who is False:
                     sum_f += self.game.board[loc]
 
-        return (sum_f - sum_t) * self.sc_params.seeds_m
+        return (sum_f - sum_t) * self.sc_params.mx_seeds_m
 
 
     def _score_cnt_seeds(self, _):
@@ -346,7 +346,7 @@ class AiPlayer(ai_interface.AiPlayerIf):
         seeds_sum = sum(self.game.board[loc]
                         for loc in range(self.game.cts.dbl_holes)
                         if self.game.child[loc] is None)
-        return seeds_sum * self.sc_params.seeds_m * tmult
+        return seeds_sum * self.sc_params.mx_seeds_m * tmult
 
 
     def _score_diff_empties(self, _):
@@ -363,7 +363,7 @@ class AiPlayer(ai_interface.AiPlayerIf):
                 elif who is False:
                     empty_f += 1
 
-        return (empty_f - empty_t) * self.sc_params.empties_m
+        return (empty_f - empty_t) * self.sc_params.mx_empties_m
 
 
     def _score_cnt_empties(self, _):
@@ -373,7 +373,7 @@ class AiPlayer(ai_interface.AiPlayerIf):
         empties = sum(1 for loc in range(self.game.cts.dbl_holes)
                       if not self.game.board[loc])
         tmult = -1 if self.game.turn else 1
-        return empties * self.sc_params.empties_m * tmult
+        return empties * self.sc_params.mx_empties_m * tmult
 
 
     def _score_easy(self, _):
@@ -382,7 +382,7 @@ class AiPlayer(ai_interface.AiPlayerIf):
         a scoring error."""
 
         if not self._diff:
-            easy = self.sc_params.easy_rand
+            easy = self.sc_params.mx_easy_rand_a
             return random.randrange(-easy, easy)
 
         return 0
@@ -414,7 +414,7 @@ class AiPlayer(ai_interface.AiPlayerIf):
                 self.game.state = saved_state
 
         return ((len(access[False]) - len(access[True]))
-                * self.sc_params.access_m)
+                * self.sc_params.mx_access_m)
 
 
 # %%  rule dict
@@ -490,8 +490,8 @@ def test_player_rules(pdict, game):
         rule=lambda pdict, game: (not game.info.stores
                                    and not game.info.child_type
                                    and ckey.SCORER in pdict
-                                   and ckey.STORES_M in pdict[ckey.SCORER]
-                                   and pdict[ckey.SCORER][ckey.STORES_M]),
+                                   and ckey.MX_STORES in pdict[ckey.SCORER]
+                                   and pdict[ckey.SCORER][ckey.MX_STORES]),
         both_objs=True,
         msg='Stores scorer is not supported without stores or children.',
         excp=gi.GameInfoError)
@@ -500,8 +500,8 @@ def test_player_rules(pdict, game):
         'stores_scorer_inv',
         rule=lambda pdict, game: (game.info.goal.eliminate()
                                    and ckey.SCORER in pdict
-                                   and ckey.STORES_M in pdict[ckey.SCORER]
-                                   and pdict[ckey.SCORER][ckey.STORES_M]),
+                                   and ckey.MX_STORES in pdict[ckey.SCORER]
+                                   and pdict[ckey.SCORER][ckey.MX_STORES]),
         both_objs=True,
         msg="""Stores scorer is not supported for
             CLEAR, DEPRIVE or IMMOBILIZE games.""",
@@ -511,8 +511,8 @@ def test_player_rules(pdict, game):
         'mlaps_access_prohibit',
         rule=lambda pdict, game: (game.info.mlaps
                                    and ckey.SCORER in pdict
-                                   and ckey.ACCESS_M in pdict[ckey.SCORER]
-                                   and pdict[ckey.SCORER][ckey.ACCESS_M]),
+                                   and ckey.MX_ACCESS_M in pdict[ckey.SCORER]
+                                   and pdict[ckey.SCORER][ckey.MX_ACCESS_M]),
         both_objs=True,
         msg='Access scorer not supported for multilap games',
         excp=gi.GameInfoError)
@@ -521,8 +521,8 @@ def test_player_rules(pdict, game):
         'udirect_access_prohibit',
         rule=lambda pdict, game: (game.info.udirect
                                    and ckey.SCORER in pdict
-                                   and ckey.ACCESS_M in pdict[ckey.SCORER]
-                                   and pdict[ckey.SCORER][ckey.ACCESS_M]),
+                                   and ckey.MX_ACCESS_M in pdict[ckey.SCORER]
+                                   and pdict[ckey.SCORER][ckey.MX_ACCESS_M]),
         both_objs=True,
         msg='Access scorer not supported with UDIR_HOLES',
         excp=gi.GameInfoError)
@@ -531,10 +531,10 @@ def test_player_rules(pdict, game):
         'no_side_access',
         rule=lambda pdict, game: (game.info.mlength == 3
                                    and ckey.SCORER in pdict
-                                   and ckey.ACCESS_M in pdict[ckey.SCORER]
-                                   and pdict[ckey.SCORER][ckey.ACCESS_M]),
+                                   and ckey.MX_ACCESS_M in pdict[ckey.SCORER]
+                                   and pdict[ckey.SCORER][ckey.MX_ACCESS_M]),
         both_objs=True,
-        msg="""Scorer ACCESS_M multiplier is incompatible with
+        msg="""Scorer MX_ACCESS_M multiplier is incompatible with
             NO_SIDES and TERRITORY""",
         excp=gi.GameInfoError)
 
@@ -542,8 +542,8 @@ def test_player_rules(pdict, game):
         'child_scorer',
         rule=lambda pdict, game: (not game.info.child_type
                                    and ckey.SCORER in pdict
-                                   and ckey.CHILD_CNT_M in pdict[ckey.SCORER]
-                                   and pdict[ckey.SCORER][ckey.CHILD_CNT_M]),
+                                   and ckey.MX_CHILD_CNT_M in pdict[ckey.SCORER]
+                                   and pdict[ckey.SCORER][ckey.MX_CHILD_CNT_M]),
         both_objs=True,
         msg='Child count scorer not supported without CHILD',
         excp=gi.GameInfoError)
@@ -554,8 +554,8 @@ def test_player_rules(pdict, game):
                                         or game.info.capt_rturn
                                         or game.info.xc_sown)
                                    and ckey.SCORER in pdict
-                                   and ckey.REPEAT_TURN in pdict[ckey.SCORER]
-                                   and pdict[ckey.SCORER][ckey.REPEAT_TURN]),
+                                   and ckey.MX_RTURN_A in pdict[ckey.SCORER]
+                                   and pdict[ckey.SCORER][ckey.MX_RTURN_A]),
         both_objs=True,
         msg="""Repeat turn scorer not supported without repeat turns
             (SOW_OWN_STORE | CAPT_RTURN | XC_SOWN)""",

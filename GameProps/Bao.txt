@@ -29,10 +29,10 @@
       "algorithm": "negamaxer",
       "ai_params": {},
       "scorer": {
-         "stores_m": 4,
-         "empties_m": -1,
-         "child_cnt_m": 4,
-         "easy_rand": 6
+         "mx_stores_m": 4,
+         "mx_empties_m": -1,
+         "mx_child_cnt_m": 4,
+         "mx_easy_rand_a": 6
       }
    },
    "rules": "Russ, Laurence. Mancala Games. 1984. p43."

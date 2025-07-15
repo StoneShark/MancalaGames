@@ -14,9 +14,9 @@
    },
    "player": {
       "scorer": {
-         "stores_m": 4,
-         "empties_m": 2,
-         "repeat_turn": 20
+         "mx_stores_m": 4,
+         "mx_empties_m": 2,
+         "mx_rturn_a": 20
       },
       "ai_params": {
           "mm_depth": [1, 5, 7, 9],

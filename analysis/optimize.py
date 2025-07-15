@@ -52,13 +52,13 @@ INDEX = [fname[:-4] for fname in os.listdir(PATH) if fname != BAD_CFG]
 PN_TEST_VALS =  [-16, -12, -8, -4, -2, -1, 0, 1, 2, 4, 8, 12, 16]
 POS_TEST_VALS = [0, 2, 4, 8, 12, 16, 32, 56, 64]
 
-PARAMS_VALS = {ckey.ACCESS_M: PN_TEST_VALS,
-               ckey.CHILD_CNT_M: PN_TEST_VALS,
-               ckey.EMPTIES_M: PN_TEST_VALS,
-               ckey.EVENS_M: PN_TEST_VALS,
-               ckey.SEEDS_M: PN_TEST_VALS,
-               ckey.STORES_M: PN_TEST_VALS,
-               ckey.REPEAT_TURN: POS_TEST_VALS,
+PARAMS_VALS = {ckey.MX_ACCESS_M: PN_TEST_VALS,
+               ckey.MX_CHILD_CNT_M: PN_TEST_VALS,
+               ckey.MX_EMPTIES_M: PN_TEST_VALS,
+               ckey.MX_EVENS_M: PN_TEST_VALS,
+               ckey.MX_SEEDS_M: PN_TEST_VALS,
+               ckey.MX_STORES: PN_TEST_VALS,
+               ckey.MX_RTURN_A: POS_TEST_VALS,
 
                ckey.MCTS_BIAS: list(range(100, 1000, 50)),
                ckey.MCTS_NODES: list(range(100, 3000, 100)),

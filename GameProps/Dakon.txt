@@ -24,10 +24,10 @@
    "player": {
       "ai_params": { "mm_depth": [ 1, 1, 5, 7 ] },
       "scorer": {
-         "stores_m": 16,
-         "empties_m": 2,
-         "repeat_turn": 40,
-         "easy_rand": 20
+         "mx_stores_m": 16,
+         "mx_empties_m": 2,
+         "mx_rturn_a": 40,
+         "mx_easy_rand_a": 20
       }
    },
    "variants": {

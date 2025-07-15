@@ -13,7 +13,7 @@
       "sow_direct": 1,
       "sow_rule": 12
    },
-   "player": { "scorer": { "seeds_m": 8 } },
+   "player": { "scorer": { "mx_seeds_m": 8 } },
    "vari_params": { "holes": [ 5, 7, 9, 11, 13, 15 ] },
    "rules": "https://mancala.fandom.com/wiki/Mikro_tsoro"
 }

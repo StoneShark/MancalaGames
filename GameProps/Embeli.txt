@@ -19,8 +19,8 @@
       "algorithm": "negamaxer",
       "ai_params": { "mm_depth": [ 1, 3, 5, 7 ] },
       "scorer": {
-         "seeds_m": 8,
-         "empties_m": -2
+         "mx_seeds_m": 8,
+         "mx_empties_m": -2
       }
    },
    "vari_params": { "holes": [ 3, 5, 7, 9, 11, 15 ] },

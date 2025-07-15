@@ -23,9 +23,9 @@
          "mm_depth": [ 1, 3, 5, 7 ]
       },
       "scorer": {
-         "stores_m": 16,
-         "seeds_m": 2,
-         "empties_m": 1
+         "mx_stores_m": 16,
+         "mx_seeds_m": 2,
+         "mx_empties_m": 1
       }
    },
    "rules": "https://mancala.fandom.com/wiki/Olowuka"

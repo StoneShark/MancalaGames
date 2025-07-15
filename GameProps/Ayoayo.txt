@@ -18,11 +18,11 @@
    },
    "player": {
       "scorer": {
-         "stores_m": 4,
-         "access_m": 0,
-         "seeds_m": 0,
-         "empties_m": -2,
-         "easy_rand": 20
+         "mx_stores_m": 4,
+         "mx_access_m": 0,
+         "mx_seeds_m": 0,
+         "mx_empties_m": -2,
+         "mx_easy_rand_a": 20
       },
       "algorithm": "negamaxer",
       "ai_params": {

@@ -28,8 +28,8 @@
          "mm_depth": [ 1, 2, 3, 5 ]
       },
       "scorer": {
-         "stores_m": 4,
-         "easy_rand": 20
+         "mx_stores_m": 4,
+         "mx_easy_rand_a": 20
       }
    },
    "rules": "Russ, Laurence. Mancala Games. 1984. p30."

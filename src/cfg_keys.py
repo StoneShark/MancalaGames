@@ -8,7 +8,6 @@ Created on Tue Jul 25 07:43:16 2023
 @author: Ann"""
 
 ABOUT = 'about'
-ACCESS_M = 'access_m'
 AI_ACTIVE = 'ai_active'
 AI_PARAMS = 'ai_params'
 ALGORITHM = 'algorithm'
@@ -21,17 +20,13 @@ CAPT_ON = 'capt_on'
 CAPT_RTURN = 'capt_rturn'
 CAPT_SIDE = 'capt_side'
 CAPT_TYPE = 'capt_type'
-CHILD_CNT_M = 'child_cnt_m'
 CHILD_CVT = 'child_cvt'
 CHILD_LOCS = 'child_locs'
 CHILD_RULE = 'child_rule'
 CHILD_TYPE = 'child_type'
 CROSSCAPT = 'crosscapt'
 DIFFICULTY = 'difficulty'
-EASY_RAND = 'easy_rand'
-EMPTIES_M = 'empties_m'
 EVENS = 'evens'
-EVENS_M = 'evens_m'
 FILENAME = 'filename'
 GAME_CLASS = 'game_class'
 GAME_CONSTANTS = 'game_constants'
@@ -45,9 +40,9 @@ MCTS_BIAS = 'mcts_bias'
 MCTS_NODES = 'mcts_nodes'
 MCTS_POUTS = 'mcts_pouts'
 MIN_MOVE = 'min_move'
-MLAPS = 'mlaps'
 MLAP_CONT = 'mlap_cont'
 MLAP_PARAM = 'mlap_param'
+MLAPS = 'mlaps'
 MLENGTH = 'mlength'
 MM_DEPTH = 'mm_depth'
 MOVE_ONE = 'move_one'
@@ -55,6 +50,14 @@ MOVEUNLOCK = 'moveunlock'
 MULTICAPT = 'multicapt'
 MUSTPASS = 'mustpass'
 MUSTSHARE = 'mustshare'
+MX_ACCESS_M = 'mx_access_m'
+MX_CHILD_CNT_M = 'mx_child_cnt_m'
+MX_EASY_RAND_A = 'mx_easy_rand_a'
+MX_EMPTIES_M = 'mx_empties_m'
+MX_EVENS_M = 'mx_evens_m'
+MX_RTURN_A = 'mx_rturn_a'
+MX_SEEDS_M = 'mx_seeds_m'
+MX_STORES = 'mx_stores_m'
 NAME = 'name'
 NBR_START = 'nbr_start'
 NO_SIDES = 'no_sides'
@@ -65,12 +68,10 @@ PLAYER = 'player'
 PRESCRIBED = 'prescribed'
 PRESOWCAPT = 'presowcapt'
 QUITTER = 'quitter'
-REPEAT_TURN = 'repeat_turn'
 ROUND_FILL = 'round_fill'
 ROUND_STARTER = 'round_starter'
 ROUNDS = 'rounds'
 SCORER = 'scorer'
-SEEDS_M = 'seeds_m'
 SKIP_START = 'skip_start'
 SOW_DIRECT = 'sow_direct'
 SOW_OWN_STORE = 'sow_own_store'
@@ -79,7 +80,6 @@ SOW_RULE = 'sow_rule'
 SOW_START = 'sow_start'
 START_PATTERN = 'start_pattern'
 STORES = 'stores'
-STORES_M = 'stores_m'
 UDIR_HOLES = 'udir_holes'
 UDIRECT = 'udirect'
 UNCLAIMED = 'unclaimed'
@@ -160,13 +160,14 @@ PLAYER_PARAMS = (ALGORITHM,
                  MCTS_NODES,
                  MCTS_POUTS,
                  MM_DEPTH,
-                 STORES_M,
-                 ACCESS_M,
-                 SEEDS_M,
-                 EMPTIES_M,
-                 CHILD_CNT_M,
-                 EVENS_M,
-                 EASY_RAND,
+                 MX_STORES,
+                 MX_ACCESS_M,
+                 MX_SEEDS_M,
+                 MX_EMPTIES_M,
+                 MX_CHILD_CNT_M,
+                 MX_EVENS_M,
+                 MX_RTURN_A,
+                 MX_EASY_RAND_A,
                 )
 
 

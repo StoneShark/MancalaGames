@@ -23,7 +23,7 @@
    },
    "player": {
       "ai_params": {},
-      "scorer": { "stores_m": 8 }
+      "scorer": { "mx_stores_m": 8 }
    },
    "variants": {
       "Leab El-\u00e1kil": {},

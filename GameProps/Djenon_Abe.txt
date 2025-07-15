@@ -22,9 +22,9 @@
          "mm_depth": [ 1, 3, 5, 7 ]
       },
       "scorer": {
-         "stores_m": 8,
-         "evens_m": -1,
-         "easy_rand": 20
+         "mx_stores_m": 8,
+         "mx_evens_m": -1,
+         "mx_easy_rand_a": 20
       }
    },
    "rules": "https://mancala.fandom.com/wiki/Djenon_Abe"

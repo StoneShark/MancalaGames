@@ -69,36 +69,36 @@ class TestConstruction:
     def test_algorithm(self, game):
 
         pdict = {'algorithm': 'minimaxer',
-                 'scorer': {'stores_m': 8}}
+                 'scorer': {'mx_stores_m': 8}}
         player = ai_player.AiPlayer(game, pdict)
         assert isinstance(player.algo, minimax.MiniMaxer)
-        assert player.sc_params.stores_m == 8
+        assert player.sc_params.mx_stores_m == 8
         assert sum(vars(player.sc_params).values()) == 8
 
         pdict = {'algorithm': 'montecarlo_ts',
-                 'scorer': {'easy_rand': 6}}    #st
+                 'scorer': {'mx_easy_rand_a': 6}}    #st
         player = ai_player.AiPlayer(game, pdict)
         assert isinstance(player.algo, montecarlo_ts.MonteCarloTS)
-        assert player.sc_params.easy_rand == 6
+        assert player.sc_params.mx_easy_rand_a == 6
         assert sum(vars(player.sc_params).values()) == 6
 
         pdict = {'algorithm': 'montecarlo_ts',
-                 'scorer': {'stores_m': 0,
-                            'easy_rand': 6}}
+                 'scorer': {'mx_stores_m': 0,
+                            'mx_easy_rand_a': 6}}
         player = ai_player.AiPlayer(game, pdict)
         assert isinstance(player.algo, montecarlo_ts.MonteCarloTS)
-        assert player.sc_params.easy_rand == 6
+        assert player.sc_params.mx_easy_rand_a == 6
         assert sum(vars(player.sc_params).values()) == 6
 
         pdict = {'algorithm': 'minimaxer'}
         player = ai_player.AiPlayer(game, pdict)
-        assert player.sc_params.stores_m == 0
+        assert player.sc_params.mx_stores_m == 0
         assert sum(vars(player.sc_params).values()) == 0
 
-        pdict = {'scorer': {'stores_m': 8}}
+        pdict = {'scorer': {'mx_stores_m': 8}}
         player = ai_player.AiPlayer(game, pdict)
         assert isinstance(player.algo, minimax.MiniMaxer)
-        assert player.sc_params.stores_m == 8
+        assert player.sc_params.mx_stores_m == 8
         assert sum(vars(player.sc_params).values()) == 8
 
         pdict = {'algorithm': 'junky_algo'}
@@ -174,7 +174,7 @@ class TestConstruction:
     def test_str(self, game, capsys):
 
         pdict = {'algorithm': 'minimaxer',
-                 'scorer': {'stores_m': 8}}
+                 'scorer': {'mx_stores_m': 8}}
         player = ai_player.AiPlayer(game, pdict)
         print(player)
         data = capsys.readouterr().out
@@ -288,8 +288,8 @@ class TestScorers:
 
     def test_sc_end_store(self, game, player):
 
-        player.sc_params.stores_m = 0
-        player.sc_params.repeat_turn = 10
+        player.sc_params.mx_stores_m = 0
+        player.sc_params.mx_rturn_a = 10
         player.collect_scorers()
 
         assert player.score(None) == 0
@@ -301,12 +301,12 @@ class TestScorers:
 
     def test_sc_diff_evens(self, game, player):
 
-        player.sc_params.evens_m = 2
-        player.sc_params.stores_m = 0
-        player.sc_params.easy_rand = 0
+        player.sc_params.mx_evens_m = 2
+        player.sc_params.mx_stores_m = 0
+        player.sc_params.mx_easy_rand_a = 0
         player.collect_scorers()
 
-        assert player.sc_params.evens_m == 2
+        assert player.sc_params.mx_evens_m == 2
         assert sum(vars(player.sc_params).values()) == 2
 
         game.board = utils.build_board([2, 4, 0, 1],
@@ -316,12 +316,12 @@ class TestScorers:
 
     def test_sc_odiff_evens(self, ogame, oplayer):
 
-        oplayer.sc_params.evens_m = 2
-        oplayer.sc_params.stores_m = 0
-        oplayer.sc_params.easy_rand = 0
+        oplayer.sc_params.mx_evens_m = 2
+        oplayer.sc_params.mx_stores_m = 0
+        oplayer.sc_params.mx_easy_rand_a = 0
         oplayer.collect_scorers()
 
-        assert oplayer.sc_params.evens_m == 2
+        assert oplayer.sc_params.mx_evens_m == 2
         assert sum(vars(oplayer.sc_params).values()) == 2
 
         #                              Tside | Fside
@@ -332,12 +332,12 @@ class TestScorers:
 
     def test_sc_down_evens(self, tgame, tplayer):
 
-        tplayer.sc_params.evens_m = 2
-        tplayer.sc_params.stores_m = 0
-        tplayer.sc_params.easy_rand = 0
+        tplayer.sc_params.mx_evens_m = 2
+        tplayer.sc_params.mx_stores_m = 0
+        tplayer.sc_params.mx_easy_rand_a = 0
         tplayer.collect_scorers()
 
-        assert tplayer.sc_params.evens_m == 2
+        assert tplayer.sc_params.mx_evens_m == 2
         assert sum(vars(tplayer.sc_params).values()) == 2
 
         tgame.board = utils.build_board([2, 4, 0, 1],
@@ -349,12 +349,12 @@ class TestScorers:
 
     def test_sc_cnt_evens(self, nsgame, nsplayer):
 
-        nsplayer.sc_params.evens_m = 2
-        nsplayer.sc_params.stores_m = 0
-        nsplayer.sc_params.easy_rand = 0
+        nsplayer.sc_params.mx_evens_m = 2
+        nsplayer.sc_params.mx_stores_m = 0
+        nsplayer.sc_params.mx_easy_rand_a = 0
         nsplayer.collect_scorers()
 
-        assert nsplayer.sc_params.evens_m == 2
+        assert nsplayer.sc_params.mx_evens_m == 2
         assert sum(vars(nsplayer.sc_params).values()) == 2
 
         nsgame.board = utils.build_board([2, 4, 0, 1],
@@ -367,12 +367,12 @@ class TestScorers:
 
     def test_sc_diff_seeds(self, game, player):
 
-        player.sc_params.seeds_m = 3
-        player.sc_params.stores_m = 0
-        player.sc_params.easy_rand = 0
+        player.sc_params.mx_seeds_m = 3
+        player.sc_params.mx_stores_m = 0
+        player.sc_params.mx_easy_rand_a = 0
         player.collect_scorers()
 
-        assert player.sc_params.seeds_m == 3
+        assert player.sc_params.mx_seeds_m == 3
         assert sum(vars(player.sc_params).values()) == 3
 
         game.board = utils.build_board([2, 4, 0, 1],
@@ -382,12 +382,12 @@ class TestScorers:
 
     def test_sc_down_seeds(self, tgame, tplayer):
 
-        tplayer.sc_params.seeds_m = 3
-        tplayer.sc_params.stores_m = 0
-        tplayer.sc_params.easy_rand = 0
+        tplayer.sc_params.mx_seeds_m = 3
+        tplayer.sc_params.mx_stores_m = 0
+        tplayer.sc_params.mx_easy_rand_a = 0
         tplayer.collect_scorers()
 
-        assert tplayer.sc_params.seeds_m == 3
+        assert tplayer.sc_params.mx_seeds_m == 3
         assert sum(vars(tplayer.sc_params).values()) == 3
 
         tgame.board = utils.build_board([2, 4, 0, 1],
@@ -401,12 +401,12 @@ class TestScorers:
 
     def test_sc_cnt_seeds(self, nsgame, nsplayer):
 
-        nsplayer.sc_params.seeds_m = 3
-        nsplayer.sc_params.stores_m = 0
-        nsplayer.sc_params.easy_rand = 0
+        nsplayer.sc_params.mx_seeds_m = 3
+        nsplayer.sc_params.mx_stores_m = 0
+        nsplayer.sc_params.mx_easy_rand_a = 0
         nsplayer.collect_scorers()
 
-        assert nsplayer.sc_params.seeds_m == 3
+        assert nsplayer.sc_params.mx_seeds_m == 3
         assert sum(vars(nsplayer.sc_params).values()) == 3
 
         nsgame.board = utils.build_board([2, 4, 0, 1],
@@ -419,12 +419,12 @@ class TestScorers:
 
     def test_sc_diff_empties(self, game, player):
 
-        player.sc_params.empties_m =  2
-        player.sc_params.stores_m = 0
-        player.sc_params.easy_rand = 0
+        player.sc_params.mx_empties_m =  2
+        player.sc_params.mx_stores_m = 0
+        player.sc_params.mx_easy_rand_a = 0
         player.collect_scorers()
 
-        assert player.sc_params.empties_m == 2
+        assert player.sc_params.mx_empties_m == 2
         assert sum(vars(player.sc_params).values()) == 2
 
         game.board = utils.build_board([2, 4, 0, 0],
@@ -434,12 +434,12 @@ class TestScorers:
 
     def test_sc_down_empties(self, tgame, tplayer):
 
-        tplayer.sc_params.empties_m = 3
-        tplayer.sc_params.stores_m = 0
-        tplayer.sc_params.easy_rand = 0
+        tplayer.sc_params.mx_empties_m = 3
+        tplayer.sc_params.mx_stores_m = 0
+        tplayer.sc_params.mx_easy_rand_a = 0
         tplayer.collect_scorers()
 
-        assert tplayer.sc_params.empties_m == 3
+        assert tplayer.sc_params.mx_empties_m == 3
         assert sum(vars(tplayer.sc_params).values()) == 3
 
         tgame.board = utils.build_board([0, 4, 0, 0],
@@ -453,12 +453,12 @@ class TestScorers:
 
     def test_sc_cnt_empties(self, nsgame, nsplayer):
 
-        nsplayer.sc_params.empties_m =  2
-        nsplayer.sc_params.stores_m = 0
-        nsplayer.sc_params.easy_rand = 0
+        nsplayer.sc_params.mx_empties_m =  2
+        nsplayer.sc_params.mx_stores_m = 0
+        nsplayer.sc_params.mx_easy_rand_a = 0
         nsplayer.collect_scorers()
 
-        assert nsplayer.sc_params.empties_m == 2
+        assert nsplayer.sc_params.mx_empties_m == 2
         assert sum(vars(nsplayer.sc_params).values()) == 2
 
         nsgame.board = utils.build_board([2, 4, 0, 0],
@@ -471,8 +471,8 @@ class TestScorers:
 
     def test_sc_stores(self, game, player):
 
-        player.sc_params.easy_rand = 0
-        player.sc_params.stores_m = 4
+        player.sc_params.mx_easy_rand_a = 0
+        player.sc_params.mx_stores_m = 4
         player.collect_scorers()
 
         assert sum(vars(player.sc_params).values()) == 4
@@ -503,8 +503,8 @@ class TestScorers:
         object.__setattr__(game.info, 'child_type', ChildType.NORMAL)
         object.__setattr__(game.info, 'child_cvt', 4)
 
-        player.sc_params.easy_rand = 0
-        player.sc_params.stores_m = 4
+        player.sc_params.mx_easy_rand_a = 0
+        player.sc_params.mx_stores_m = 4
         player.collect_scorers()
 
         assert sum(vars(player.sc_params).values()) == 4
@@ -538,8 +538,8 @@ class TestScorers:
         object.__setattr__(game.info, 'child_type', ChildType.NORMAL)
         object.__setattr__(game.info, 'child_cvt', 4)
 
-        player.sc_params.stores_m = 0
-        player.sc_params.child_cnt_m = 15
+        player.sc_params.mx_stores_m = 0
+        player.sc_params.mx_child_cnt_m = 15
         player.collect_scorers()
 
         game.child = child
@@ -548,8 +548,8 @@ class TestScorers:
 
     def test_sc_easy(self, game, player):
 
-        player.sc_params.stores_m = 0
-        player.sc_params.easy_rand = 26
+        player.sc_params.mx_stores_m = 0
+        player.sc_params.mx_easy_rand_a = 26
         player.collect_scorers()
 
         player.difficulty = 1
@@ -561,8 +561,8 @@ class TestScorers:
 
     def test_sc_access(self, game, player):
 
-        player.sc_params.stores_m = 0
-        player.sc_params.access_m = 10
+        player.sc_params.mx_stores_m = 0
+        player.sc_params.mx_access_m = 10
         player.collect_scorers()
 
         player.difficulty = 1

@@ -32,8 +32,8 @@
    "player": {
       "ai_params": {},
       "scorer": {
-         "stores_m": 4,
-         "child_cnt_m": 1
+         "mx_stores_m": 4,
+         "mx_child_cnt_m": 1
       }
    },
    "rules": "Russ, Laurence. Mancala Games. 1984. p50."

@@ -21,11 +21,11 @@
    },
    "player": {
       "scorer": {
-         "access_m": 0,
-         "empties_m": -2,
-         "evens_m": 0,
-         "seeds_m": 4,
-         "easy_rand": 2
+         "mx_access_m": 0,
+         "mx_empties_m": -2,
+         "mx_evens_m": 0,
+         "mx_seeds_m": 4,
+         "mx_easy_rand_a": 2
       },
       "algorithm": "minimaxer",
       "ai_params": {

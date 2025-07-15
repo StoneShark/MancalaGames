@@ -20,7 +20,7 @@
    "player": {
       "ai_params": {},
       "scorer": {
-         "stores_m": 16
+         "mx_stores_m": 16
       }
    },
    "rules": "https://mancala.fandom.com/wiki/Long_night_game"

@@ -30,7 +30,7 @@
          "mcts_pouts": [ 1, 2, 2, 2 ],
          "mm_depth": [ 1, 3, 5, 7 ]
       },
-      "scorer": { "stores_m": 8 }
+      "scorer": { "mx_stores_m": 8 }
    },
    "vari_params": {
       "goal": [ 5, 6 ],

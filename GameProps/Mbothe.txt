@@ -21,7 +21,7 @@
    },
    "player": {
       "ai_params": {},
-      "scorer": { "stores_m": 4 }
+      "scorer": { "mx_stores_m": 4 }
    },
    "vari_params": { "holes": [ 2, 4, 6, 8, 10, 12, 14 ] },
    "rules": "Russ, Laurence. Mancala Games. 1984. p35.  With clarification on opening move from Wikipedia"

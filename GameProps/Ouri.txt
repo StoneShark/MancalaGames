@@ -21,7 +21,7 @@
    },
    "player": {
       "ai_params": {},
-      "scorer": { "stores_m": 8 }
+      "scorer": { "mx_stores_m": 8 }
    },
    "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p66.",
    "deviation": "According to the rules, there are three end game conditions: First, an unfed player gets the remaining seeds. Second, if a player has no legal move, the unclaimed seeds go to the last mover.  Third, cycling seeds go to hole owners.\n\nWhen would the second rule would:\n\n- If a player has seeds, they have a valid move.\n\n- If a player does not have seeds, they should have been fed; but if they couldn't be fed, they get the remaining seeds. \n\nThe second condition is not implemented."

@@ -16,8 +16,8 @@
    "player": {
       "ai_params": {},
       "scorer": {
-         "stores_m": 8,
-         "child_cnt_m": 4
+         "mx_stores_m": 8,
+         "mx_child_cnt_m": 4
       }
    },
    "vari_params": {
