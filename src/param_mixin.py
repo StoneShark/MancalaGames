@@ -127,7 +127,7 @@ class ParamMixin:
             boxes = 6
 
         elif param.vtype == pc.ILIST_TYPE:
-            boxes = 4
+            boxes = gi.DIFF_LEVELS
 
         else:
             raise ValueError(f"Don't know list length for {param.option}.")

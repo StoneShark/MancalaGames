@@ -22,12 +22,6 @@ import share_one
 from game_logger import game_log
 
 
-# XXXX ai player data should be in algo files
-# will this work:
-#   define the variables in the ai_interface
-#   add to them in the player files
-#   use them here
-
 MINIMAXER = 'minimaxer'
 NEGAMAXER = 'negamaxer'
 MCTS = 'montecarlo_ts'
@@ -36,6 +30,7 @@ ALGORITHM_DICT = {MINIMAXER: minimax.MiniMaxer,
                   NEGAMAXER: negamax.NegaMaxer,
                   MCTS: mcts.MonteCarloTS}
 
+# one for each difficulty level
 AI_PARAM_DEFAULTS = {ckey.MM_DEPTH: [1, 1, 3, 5],
                      ckey.MCTS_BIAS: [200, 200, 300, 300],
                      ckey.MCTS_NODES: [800, 1000, 1200, 1400],
@@ -419,7 +414,6 @@ class AiPlayer(ai_interface.AiPlayerIf):
 
 # %%  rule dict
 
-DIFF_LEVELS = 4
 MAX_MINIMAX_DEPTH = 15
 
 def negamax_no_repeat_turn(game):
@@ -459,7 +453,7 @@ def test_player_rules(pdict, game):
         'def_diff',
         rule=lambda pdict: (ckey.DIFFICULTY in pdict
                             and pdict[ckey.DIFFICULTY]
-                                not in range(DIFF_LEVELS)),
+                                not in range(gi.DIFF_LEVELS)),
         msg='Difficulty not 0, 1, 2 or 3',
         excp=gi.GameInfoError)
 
@@ -478,10 +472,10 @@ def test_player_rules(pdict, game):
     tester.test_rule(
         'params_four_diff',
         rule=lambda pdict: (ckey.AI_PARAMS in pdict
-                            and any(len(values) != DIFF_LEVELS
+                            and any(len(values) != gi.DIFF_LEVELS
                                     for values in
                                         pdict[ckey.AI_PARAMS].values())),
-        msg=f"""Exactly {DIFF_LEVELS} param values are expected
+        msg=f"""Exactly {gi.DIFF_LEVELS} param values are expected
             for each ai parameter""",
         excp=gi.GameInfoError)
 

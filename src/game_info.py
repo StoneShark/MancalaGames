@@ -24,6 +24,7 @@ PASS_TOKEN = 0xffff
 
 PLAYER_NAMES = ['South', 'North']
 
+DIFF_LEVELS = 4
 
 # %%  error, enums and dataclasses
 
