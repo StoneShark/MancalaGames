@@ -118,6 +118,11 @@ def setup_styles(root):
                     bordercolor='grey50',
                     troughcolor='grey80')
 
+    # the sash for the panedwindow in the editor
+    style.configure('Sash',
+                    gripcount=30,
+                    lightcolor=MY_BLUE)
+
     style.map('Treeview',
               background=[('selected', MY_BLUE)],
               foreground=[('selected', WHITE)])
