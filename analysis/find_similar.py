@@ -109,7 +109,7 @@ class Neighbors:
             dlist += [ckey.GAME_CLASS]
 
         for param in ckey.GCONST_PARAMS:
-            if gdict1[GCONSTS][param] != gdict1[GCONSTS][param]:
+            if gdict1[GCONSTS][param] != gdict2[GCONSTS][param]:
                 dlist += [param]
 
         for param in ckey.GINFO_PARAMS:
@@ -144,8 +144,14 @@ class Neighbors:
             1 if gdict1[ckey.GAME_CLASS] != gdict2[ckey.GAME_CLASS] else 0,
 
             sum(1 for param in ckey.GCONST_PARAMS
-                   if gdict1[GCONSTS][param] != gdict1[GCONSTS][param]),
+                   if gdict1[GCONSTS][param] != gdict2[GCONSTS][param]),
             ])
+
+
+    def list_diffs_names(self, game1, game2):
+        """List the differences but start with the game names"""
+
+        return self.list_diffs(self.all_games[game1], self.all_games[game2])
 
 
     def sorted_items(self):
