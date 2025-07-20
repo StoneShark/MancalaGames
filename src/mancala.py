@@ -516,10 +516,15 @@ class Mancala(ai_interface.AiGameIf,
         return self.mdata.win_cond
 
 
-    def swap_sides(self):
-        """Swap the board sides. This would implement a pie rule if
-        mcount and turn are also swapped, but it's also used by
-        board setup."""
+    def swap_sides(self, is_turn=False):
+        """Swap the board sides.
+
+        Do not change the hole owners! Possibly, something
+        should/could be done for owner when a territory game.
+
+        If this is being use as a pie rule, increment movers,
+        mcount and swap the turn.  When it is used by board
+        setup, do not do those increments."""
 
         holes = self.cts.holes
         dholes = self.cts.dbl_holes
@@ -528,8 +533,12 @@ class Mancala(ai_interface.AiGameIf,
         self.child = self.child[holes:dholes] + self.child[0:holes]
         self.blocked = self.blocked[holes:dholes] + self.blocked[0:holes]
         self.unlocked = self.unlocked[holes:dholes] + self.unlocked[0:holes]
-        self.owner = self.owner[holes:dholes] + self.owner[0:holes]
         self.store = list(reversed(self.store))
+
+        if is_turn:
+            self.movers += 1
+            self.mcount += 1
+            self.turn = not self.turn
 
 
     def is_new_round_playable(self):

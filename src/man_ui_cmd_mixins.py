@@ -315,14 +315,8 @@ class MoveMenuMixin:
             return
 
         self.swap_ok = False
-        # do these here, so that it counts as a turn
-        # not in Mancala because swap_sides is used there for other purposes
-        game.movers += 1
-        game.mcount += 1
-        game.turn = not game.turn
-
         with animator.animate_off():
-            game.swap_sides()
+            game.swap_sides(is_turn=True)
         self.history.record(self.game.state)
 
         self.player.clear_history()

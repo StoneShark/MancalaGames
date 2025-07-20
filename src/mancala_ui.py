@@ -529,7 +529,7 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
             return
 
         self.set_ui_active(True)
-        turn = self.game.get_turn()
+        turn = self.game.turn
 
         allows = self.game.get_allowable_holes()
         turn_row = int(not turn)
@@ -731,7 +731,7 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
         popup the winner dialog box."""
 
         if win_cond:
-            self.tally.tally_game(self.game.get_turn(), win_cond)
+            self.tally.tally_game(self.game.turn, win_cond)
             self.param_tally()
 
             title, message = self.game.win_message(win_cond)
@@ -818,7 +818,7 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
         handle any win conditions."""
 
         self.saved_move = move
-        last_turn = self.game.get_turn()
+        last_turn = self.game.turn
         if animator.active() and move != gi.PASS_TOKEN:
             animator.animator.flash(last_turn, move=move)
 
@@ -849,10 +849,10 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
             self._win_message_popup(self.wcond)
             return
 
-        if (not (self.tkvars.ai_active.get() and self.game.get_turn())
+        if (not (self.tkvars.ai_active.get() and self.game.turn)
                 and self.info.mustpass and self.game.test_pass()):
 
-            player = gi.PLAYER_NAMES[not self.game.get_turn()]
+            player = gi.PLAYER_NAMES[not self.game.turn]
             message = f'{player} has no moves and must pass.'
             quit_round = bool(self.game.info.rounds)
             ui_utils.PassPopup(self, 'Must Pass', message, quit_round)
@@ -869,7 +869,7 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
 
         if (self.mode == buttons.Behavior.GAMEPLAY
                 and self.tkvars.ai_active.get()
-                and self.game.get_turn()):
+                and self.game.turn):
 
             self._cancel_pending_afters()
             sel_delay = self.tkvars.ai_delay.get()
@@ -883,7 +883,7 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
 
         if (self.mode == buttons.Behavior.GAMEPLAY
                 and self.tkvars.ai_active.get()
-                and self.game.get_turn()):
+                and self.game.turn):
 
             self.master.config(cursor=ui_utils.AI_BUSY)
 
