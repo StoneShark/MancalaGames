@@ -1568,7 +1568,7 @@ class TestSwap:
         if size == 4:
             assert game.board == [4, 5, 6, 7, 0, 1, 2, 3]
             assert game.store == [6, 4]
-            # assert game.owner == [T, T, T, F, T, F, F, F]
+            assert game.owner == [T, F, F, F, T, T, T, F]    # no swap
             assert game.child == [T, N, N, N, N, N, N, F]
 
             assert game.turn
@@ -1578,7 +1578,7 @@ class TestSwap:
         elif size == 5:
             assert game.board == [5, 6, 7, 8, 9, 0, 1, 2, 3, 4]
             assert game.store == [6, 4]
-            # assert game.owner == [T, T, T, T, F, T, F, F, F, F]
+            assert game.owner == [F, F, F, F, T, F, T, T, T, T]   # swap & not
             assert game.child == [T, N, N, N, N, N, N, N, N, F]
 
             assert not game.turn

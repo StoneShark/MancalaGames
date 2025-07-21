@@ -519,12 +519,16 @@ class Mancala(ai_interface.AiGameIf,
     def swap_sides(self, is_turn=False):
         """Swap the board sides.
 
-        Do not change the hole owners! Possibly, something
-        should/could be done for owner when a territory game.
+        If this is being use as a pie rule (is_turn == True),
+        increment movers, mcount and swap the turn.  Also, do
+        not swap the owner's.
 
-        If this is being use as a pie rule, increment movers,
-        mcount and swap the turn.  When it is used by board
-        setup, do not do those increments."""
+        When it is used by board setup, do not swap turn,
+        do not do the increments. If a TERRITORY game,
+        swap owners and the not each value--this seems
+        expected/consistent with the rotate board command--
+        the player who owns all of their side of the board
+        has their store where they expect it."""
 
         holes = self.cts.holes
         dholes = self.cts.dbl_holes
@@ -539,6 +543,10 @@ class Mancala(ai_interface.AiGameIf,
             self.movers += 1
             self.mcount += 1
             self.turn = not self.turn
+
+        elif self.info.goal == gi.Goal.TERRITORY:
+            temp_own = self.owner[holes:dholes] + self.owner[0:holes]
+            self.owner = [not own for own in temp_own]
 
 
     def is_new_round_playable(self):

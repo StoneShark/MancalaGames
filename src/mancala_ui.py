@@ -611,9 +611,49 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
            New game started.""")
 
 
+    def _set_swap_ok(self, new_round):
+        """Set swap ok. Only allowed for the first round for
+        TERRITORY games and games with rounds and blocks."""
+
+        self.swap_ok = not (new_round
+                            and (self.game.info.goal == gi.Goal.TERRITORY
+                                 or (self.game.info.rounds
+                                     and self.game.info.blocks)))
+
+
+    def _mode_check_start_game(self, new_round):
+        """Check and execute mode change, return False.
+        If game is not playable, return True.
+        Otherwise, return True"""
+
+        rval = True
+        if not new_round:
+            self.param_tally()
+
+            if (self.info.prescribed == gi.SowPrescribed.ARNGE_LIMIT
+                    and self.set_game_mode(buttons.Behavior.MOVESEEDS)):
+                rval = False
+
+        elif not self.game.is_new_round_playable():
+            self._not_playable_new_round()
+
+        elif (self.info.round_fill == gi.RoundFill.UCHOOSE
+                  and self.set_game_mode(buttons.Behavior.RNDCHOOSE)):
+            rval = False
+
+        elif (self.info.round_fill == gi.RoundFill.UMOVE
+                  and self.set_game_mode(buttons.Behavior.RNDMOVE)):
+            rval = False
+
+        elif (self.info.round_fill == gi.RoundFill.UCHOWN
+                  and self.set_game_mode(buttons.Behavior.RNDCHOWN)):
+            rval = False
+
+        return rval
+
+
     def new_game(self, new_round=False):
         """Start a new game and refresh the board."""
-        # pylint: disable=too-complex
 
         self._cancel_pending_afters()
         self.master.config(cursor=ui_utils.NORMAL)
@@ -626,34 +666,13 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
         self.history.clear()
 
         self.player.clear_history()
-        self.swap_ok = True
+        self._set_swap_ok(new_round)
         self.game.new_game(new_round)
         self.set_game_mode(buttons.Behavior.GAMEPLAY, force=True)
 
         self.refresh()
-        if not new_round:
-            self.param_tally()
-
-            if self.info.prescribed == gi.SowPrescribed.ARNGE_LIMIT:
-                if self.set_game_mode(buttons.Behavior.MOVESEEDS):
-                    return
-
-        elif not self.game.is_new_round_playable():
-            self._not_playable_new_round()
-
-        elif self.info.round_fill == gi.RoundFill.UCHOOSE:
-            if self.set_game_mode(buttons.Behavior.RNDCHOOSE):
-                return
-
-        elif self.info.round_fill == gi.RoundFill.UMOVE:
-            if self.set_game_mode(buttons.Behavior.RNDMOVE):
-                return
-
-        elif self.info.round_fill == gi.RoundFill.UCHOWN:
-            if self.set_game_mode(buttons.Behavior.RNDCHOWN):
-                return
-
-        self.start_it()
+        if self._mode_check_start_game(new_round):
+            self.start_it()
 
 
     def set_game_mode(self, mode, force=False):

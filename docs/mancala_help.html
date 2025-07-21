@@ -330,14 +330,18 @@ Control-Shift-Z redoes a move.
 <p>Redoing to the end game state will disable the buttons on the board.
 
 <p><b>Swap Sides</b>: A player may swap sides of the board, that is,
-execute a Pie Rule, under two conditions:
+execute a Pie Rule, under the following conditions:
 <ol>
+<li>Once per round (see rule 3).
 <li>When the
 <a href="game_params.html#start_pattern">START_PATTERN</a>
-is random or move_random, either player may choose to swap sides
-before their first turn but only one swap may be done per game.
-<li>After the first player finishes their turn in a game,
-the second player may swap sides, for other games.
+is RANDOM or RANDOM_ZEROS, either player may choose to swap sides
+before their first turn.
+<li>For TERRITORY games and games played in rounds with blocks,
+swapping is only allowed after the first move
+of the first round of a game. It is prohibited for subsequent round starts.
+<li>For other games, the second player may swap sides
+after the first player finishes their turn.
 </ol>
 <p>This is a common way to deal with games that favor the
 starting player. Only some Mancala games offer an advantage to the starting player,
@@ -751,10 +755,10 @@ to specific values or changing to any value associated with its type.
 	a list of pairs of variation_name and param_dicts. The variation name can be
 	any valid JSON tag.
 	<p>The param_dicts is a JSON string of	parameter name and value pairs.
-	These values will always be applied to the base game configuration as specified
+	These values are applied to the base game configuration as specified
 	in the file (not those currently being played).
-	<p>The first option provided should name the default as in the game
-	configuration file and have an empty JSON string { }.
+	<p>The first option provided must be name the same as the game
+	name and have an empty JSON string { }.
 	<li><b class="inhead">vari_params</b>: the value is a JSON string of
 	parameter and options. The options should be either a list of options
 	or somthing other than a list.

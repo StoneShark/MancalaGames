@@ -287,7 +287,13 @@ class MoveMenuMixin:
         Force is used in the debugging menu to always allow a
         swap.
 
-        This is often used to nutralize the unfair advantage
+        swap_ok is init'ed to False for second and subsequent
+        rounds of TERRITORY and rounds/blocks games.
+
+        When MOVE_RANDOM, test movers against 2 because the
+        first move was done automatically.
+
+        This is often used to neutralize the unfair advantage
         that starter of some games has.  Not all mancala games
         have an advantage for the starter, but allow it for all.
 
@@ -297,21 +303,25 @@ class MoveMenuMixin:
         they are playing; correcting them seems error prone."""
 
         game = self.game
-        if self.info.start_pattern in (gi.StartPattern.RANDOM,
+        allowed = self.swap_ok
+        if game.info.start_pattern in (gi.StartPattern.RANDOM,
                                        gi.StartPattern.RANDOM_ZEROS,
                                        gi.StartPattern.MOVE_RANDOM):
-            allowed = game.movers < 2 and self.swap_ok
+            allowed &= game.movers < 2
         else:
-            allowed = game.movers == 1
+            allowed &= game.movers == 1
 
         if not force and not allowed:
             ui_utils.showerror(self, "Swap Not Allowed",
                 ["Swapping sides is only allowed:",
-                 """1. Before or after the first move for games
-                 using RANDOM, RANDOM_ZEROS and MOVE_RANDOM start patterns.""",
-                 "2. After the first move for other games.",
-                 """A swap counts as a move.
-                 Only one swap is allowed per game."""])
+                 """1. Once per round (see rule 3).""",
+                 """2. Before or after the first move for games
+                 using RANDOM or RANDOM_ZEROS start patterns.""",
+                 """3. After the first move of the opening round
+                 of TERRITORY and rounds/blocks games.
+                 It is prohibited for subsequent round starts.""",
+                 "4. After the first move for other games.",
+                 """A swap counts as a move."""])
             return
 
         self.swap_ok = False

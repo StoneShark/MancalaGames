@@ -196,6 +196,14 @@ def test_territory_rules(tester):
         excp=gi.GameInfoError)
         # could initial ownship be changed so that no_sides makes sense
 
+    tester.test_rule('terr_rand_start',
+        rule=lambda ginfo: (ginfo.goal == gi.Goal.TERRITORY
+                            and ginfo.start_pattern in (gi.StartPattern.RANDOM,
+                                                        gi.StartPattern.RANDOM_ZEROS)),
+        msg='Territory games are incompatible with RANDOM start patterns',
+        excp=gi.GameInfoError)
+        #  seeds is the total number of seeds, so the continuations tests will fail
+
     tester.test_rule('terr_capt_side',
         rule=lambda ginfo: (ginfo.goal == gi.Goal.TERRITORY
                             and ginfo.capt_side in (gi.CaptSide.OPP_SIDE,
@@ -211,6 +219,13 @@ def test_territory_rules(tester):
                                                     gi.CaptSide.OWN_TERR)),
         msg='CAPT_SIDE based on hole ownership is only valid for Territory games',
         excp=gi.GameInfoError)
+
+    tester.test_rule('terr_blocks',
+        rule=lambda ginfo: (ginfo.goal == gi.Goal.TERRITORY
+                            and ginfo.blocks),
+        msg='Territory games are incompatible with blocks',
+        excp=gi.GameInfoError)
+        #  what would blocks mean, hole ownership is allocated based on seed count
 
     tester.test_rule('terr_no_rfill',
         rule=lambda ginfo: (ginfo.goal == gi.Goal.TERRITORY
@@ -235,7 +250,7 @@ def test_territory_rules(tester):
     tester.test_rule('terr_no_fchild',
         rule=lambda ginfo: (ginfo.goal == gi.Goal.TERRITORY
                             and ginfo.child_locs == gi.ChildLocs.FIXED_ONE_RIGHT),
-        msg='Territory goal and fixed children in incompatible',
+        msg='Territory goal and fixed children are incompatible',
         excp=NotImplementedError)
         # player might not own the child hole
 
