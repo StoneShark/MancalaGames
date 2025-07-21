@@ -14,26 +14,24 @@
       "stores": true,
       "unclaimed": 2
    },
-   "variants": {
-      "Bohnenspiel": {},
-      "Bohnenspiel Rounds": { 
-         "goal": 7,
-         "rounds": 2
-       }
-    },
-    "vari_params": {
-       "goal_param": "include",
-       "multicapt": "include"
-    },             
    "player": {
       "algorithm": "negamaxer",
-      "ai_params": {
-         "mm_depth": [ 1, 3, 5, 7 ]
-      },
+      "ai_params": { "mm_depth": [ 1, 3, 5, 7 ] },
       "scorer": {
          "mx_stores_m": 8,
          "mx_evens_m": -1
       }
+   },
+   "variants": {
+      "Bohnenspiel": {},
+      "Bohnenspiel_Rounds": {
+         "goal": 7,
+         "rounds": 2
+      }
+   },
+   "vari_params": {
+      "goal_param": "include",
+      "multicapt": "include"
    },
    "rules": "https://mancala.fandom.com/wiki/Bohnenspiel"
 }

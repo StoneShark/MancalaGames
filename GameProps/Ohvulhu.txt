@@ -31,22 +31,22 @@
    },
    "variants": {
       "Ohvulhu": {},
-      "Ohvulhu 6": {
+      "Ohvulhu_6": {
          "holes": 6,
          "nbr_start": 6,
          "goal_param": 2
       },
-      "Ohvulhu 7": {
+      "Ohvulhu_7": {
          "holes": 7,
          "nbr_start": 7,
          "goal_param": 3
       },
-      "Ohvulhu 9": {
+      "Ohvulhu_9": {
          "holes": 9,
          "nbr_start": 9,
          "goal_param": 4
       },
-      "Ohvulhu 10": {
+      "Ohvulhu_10": {
          "holes": 10,
          "nbr_start": 10,
          "goal_param": 4

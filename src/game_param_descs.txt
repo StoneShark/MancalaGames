@@ -494,7 +494,7 @@ Grandslam must be legal to use UDIR_HOLES.
 A secondary help file providing additional game details over the 'About' text. It is included as a link in the Mancala Game Configurations html file.
 
 <param holes>
-Number of holes on each side of the board.
+Number of holes on each side of the board. Values of 2 to 21 are supported.
 
 <param mcts_bias>
 Bias for the Monte Carlo Tree search algorithm for each difficulty level (0-3). A larger bias encourages game tree exploration but defocuses the exploration from the best choices. This is critical in avoiding getting stuck in sub-optimal move choices.

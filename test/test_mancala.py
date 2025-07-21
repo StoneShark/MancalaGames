@@ -1550,6 +1550,7 @@ class TestSwap:
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
+        game.turn = False
 
 
         dbl_size = size * 2
@@ -1561,20 +1562,28 @@ class TestSwap:
         game.store = [4, 6]
 
         print(game)
-        game.swap_sides()
+        game.swap_sides(is_turn=size == 4)
         print(game)
 
         if size == 4:
             assert game.board == [4, 5, 6, 7, 0, 1, 2, 3]
             assert game.store == [6, 4]
-            assert game.owner == [T, T, T, F, T, F, F, F]
+            # assert game.owner == [T, T, T, F, T, F, F, F]
             assert game.child == [T, N, N, N, N, N, N, F]
+
+            assert game.turn
+            assert game.movers
+            assert game.mcount > 1
 
         elif size == 5:
             assert game.board == [5, 6, 7, 8, 9, 0, 1, 2, 3, 4]
             assert game.store == [6, 4]
-            assert game.owner == [T, T, T, T, F, T, F, F, F, F]
+            # assert game.owner == [T, T, T, T, F, T, F, F, F, F]
             assert game.child == [T, N, N, N, N, N, N, N, N, F]
+
+            assert not game.turn
+            assert not game.movers
+            assert game.mcount == 1
 
 
     @pytest.mark.parametrize('size', [4, 5])

@@ -32,27 +32,27 @@
    },
    "variants": {
       "Dakon": {},
-      "Dakon 4": {
+      "Dakon_4": {
          "holes": 4,
          "nbr_start": 4
       },
-      "Dakon 5": {
+      "Dakon_5": {
          "holes": 5,
          "nbr_start": 5
       },
-      "Dakon 6": {
+      "Dakon_6": {
          "holes": 6,
          "nbr_start": 6
       },
-      "Dakon 8": {
+      "Dakon_8": {
          "holes": 8,
          "nbr_start": 8
       },
-      "Dakon 9": {
+      "Dakon_9": {
          "holes": 9,
          "nbr_start": 9
       },
-      "Dakon 10": {
+      "Dakon_10": {
          "holes": 10,
          "nbr_start": 10
       }

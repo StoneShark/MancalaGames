@@ -23,8 +23,8 @@
       }
    },
    "variants": {
-      "Krur": { },
-      "Krur Rounds": {
+      "Krur": {},
+      "Krur_Rounds": {
          "rounds": 2,
          "blocks": true,
          "round_starter": 0,

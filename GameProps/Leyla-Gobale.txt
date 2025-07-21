@@ -6,42 +6,34 @@
    },
    "game_info": {
       "name": "Leyla-Gobale",
-      "about": "Sow clockwise.  Cross capture, opposite side only. Qurs are created in pairs on both sides of the board when a seed is sown into an empty hole on the player's side of the board and the opposite hole contains three seeds (no capture is made).\n\nVariations:\n\n- 6 or 12 board size\n- play with multilap sow\n- played in rounds with UMOVE style RoundFill",
-      "stores": true,
-      "sow_direct": -1,
+      "about": "Sow clockwise.  Cross capture, opposite side only. Qurs are created in pairs on both sides of the board when a seed is sown into an empty hole on the player's side of the board and the opposite hole contains three seeds (no capture is made).\n\nVariations:\n\n- 6 or 12 board size\n- play with multilap sow\n- played in rounds with UMOVE style RoundFill (<nolink>Leyla-Gobale::Leyla-Gobale_Rounds)\n",
       "child_cvt": 3,
-      "child_type": 6,
       "child_rule": 2,
+      "child_type": 6,
       "crosscapt": true,
       "capt_side": 1,
+      "sow_direct": -1,
+      "stores": true,
       "xcpickown": 1
    },
+   "player": {
+      "algorithm": "negamaxer",
+      "ai_params": { "mm_depth": [ 1, 3, 5, 7 ] },
+      "scorer": {
+         "mx_stores_m": 4,
+         "mx_child_cnt_m": 8
+      }
+   },
    "variants": {
-      "Leyla-Gobale": { },
-      "Leyla-Gobale Rounds": {
+      "Leyla-Gobale": {},
+      "Leyla-Gobale_Rounds": {
          "rounds": 2,
          "round_fill": 7
       }
    },
    "vari_params": {
-      "holes": [6, 7, 8, 9, 10, 11, 12],
-      "mlaps": [0, 1]
-   },
-   "player": {
-      "scorer": {
-         "mx_access_m": 0,
-         "mx_child_cnt_m": 8,
-         "mx_easy_rand_a": 0,
-         "mx_empties_m": 0,
-         "mx_evens_m": 0,
-         "mx_rturn_a": 0,
-         "mx_seeds_m": 0,
-         "mx_stores_m": 4
-      },
-      "algorithm": "negamaxer",
-      "ai_params": {
-         "mm_depth": [1, 3, 5, 7]
-      }
+      "holes": [ 6, 7, 8, 9, 10, 11, 12 ],
+      "mlaps": [ 0, 1 ]
    },
    "rules": "Russ, Laurence. Mancala Games. 1984. p44.",
    "deviation": "Seeds are not moved between the newly created qur holes as there would be no impact on play.",

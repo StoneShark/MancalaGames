@@ -438,7 +438,7 @@ def mcts_no_hidden_state(game):
                 or ginfo.capt_rturn > gi.CaptRTurn.ALWAYS
                 or ginfo.sow_direct == gi.Direct.PLAYALTDIR
                 or ginfo.round_fill in (gi.RoundFill.SHORTEN,
-                                        gi.RoundFill.SHORTEN)
+                                        gi.RoundFill.SHORTEN_ALL)
                 or allowables.DontUndoMoveOne.include(game))
 
 

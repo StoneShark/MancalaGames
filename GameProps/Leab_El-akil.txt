@@ -21,13 +21,10 @@
       "stores": true,
       "quitter": 0
    },
-   "player": {
-      "ai_params": {},
-      "scorer": { "mx_stores_m": 8 }
-   },
+   "player": { "scorer": { "mx_stores_m": 8 } },
    "variants": {
       "Leab El-\u00e1kil": {},
-      "Leab El-\u00e1kil Equal": {
+      "Leab_El-\u00e1kil_Equal": {
          "nbr_start": 6,
          "start_pattern": 0
       }

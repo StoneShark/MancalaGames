@@ -6,33 +6,38 @@
    },
    "game_info": {
       "name": "Weg",
-      "about": "A territory game that uses both stores and wegs (children); capturing 10 holes wins. Sow is counter-clockwise and multi-lap. Wegs are made when a final seed sows a hole to 4 seeds in your opponent's territory.\n\nCaptures are on the final seed being sown into an opponent's weg. The sown seed and one more (if there is one) are captured to your store. Repeat turn on capture (but not after making a weg).\n\nPlayed in rounds with start player alternating.\n\nVariations:\n- 2x6 with 3 start seeds\n- 2x10 with 4 start seeds\n- not played in rounds\n- no repeat turn on capture",
-      "capt_rturn": true,
+      "about": "A territory game that uses both stores and wegs (children); capturing 10 holes wins. Sow is counter-clockwise and multi-lap. Wegs are made when a final seed sows a hole to 4 seeds in your opponent's territory.\n\nCaptures are on the final seed being sown into an opponent's weg. The sown seed and one more (if there is one) are captured to your store. Repeat turn on capture (but not after making a weg).\n\nPlayed in rounds with start player alternating.\n\nVariations:\n- 2x6 with 3 start seeds (<nolink>Weg::Weg_6_3)\n- 2x10 with 4 start seeds  (<nolink>Weg::Weg_10_4)\n- not played in rounds\n- no repeat turn on capture\n",
+      "capt_rturn": 1,
       "child_cvt": 4,
-      "child_type": 4,
       "child_rule": 4,
+      "child_type": 4,
       "goal": 2,
       "goal_param": 10,
       "mlaps": 1,
       "mustpass": true,
-      "rounds": 2,
       "round_starter": 0,
+      "rounds": 2,
       "sow_direct": 1,
       "stores": true
    },
+   "player": { "scorer": {
+      "mx_stores_m": 4,
+      "mx_child_cnt_m": -1,
+      "mx_rturn_a": 2
+   } },
    "variants": {
-      "Weg": { },
-      "Weg 4: 2": {
+      "Weg": {},
+      "Weg_4_2": {
          "holes": 4,
          "nbr_start": 2,
          "goal_param": 6
       },
-      "Weg 6: 3": {
+      "Weg_6_3": {
          "holes": 6,
          "nbr_start": 3,
          "goal_param": 10
       },
-      "Weg 10: 4": {
+      "Weg_10_4": {
          "holes": 10,
          "nbr_start": 4,
          "goal_param": 16
@@ -43,21 +48,5 @@
       "rounds": [ 0, 2 ],
       "capt_rturn": "include"
    },
-   "player": {
-      "algorithm": "minimaxer",
-      "ai_params": {
-         "mm_depth": [1, 1, 3, 5]
-      },
-      "scorer": {
-         "mx_access_m": 0,
-         "mx_child_cnt_m": -1,
-         "mx_easy_rand_a": 0,
-         "mx_empties_m": 0,
-         "mx_evens_m": 0,
-         "mx_rturn_a": 2,
-         "mx_seeds_m": 0,
-         "mx_stores_m": 4
-      }
-   },
-   "rules": "Russ, Laurence. Mancala Games. 1984. p48 details p46."   
+   "rules": "Russ, Laurence. Mancala Games. 1984. p48 details p46."
 }

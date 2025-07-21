@@ -28,20 +28,20 @@
       }
    },
    "variants": {
-      "Toguz Kumalak": { },
-      "Toguz Kumalak 5": {
+      "Toguz Kumalak": {},
+      "Toguz_Kumalak_5": {
          "holes": 5,
          "nbr_start": 5
       },
-      "Toguz Kumalak 6": {
+      "Toguz_Kumalak_6": {
          "holes": 6,
          "nbr_start": 6
       },
-      "Toguz Kumalak 7": {
+      "Toguz_Kumalak_7": {
          "holes": 7,
          "nbr_start": 7
       },
-      "Toguz Kumalak 8": {
+      "Toguz_Kumalak_8": {
          "holes": 8,
          "nbr_start": 8
       }
