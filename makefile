@@ -9,17 +9,15 @@ GAMES = GameProps/*.txt
 TESTS = test/*.py
 GAME_TESTS = $(wildcard test/test_gm_*.py)
 
-HELPFILES = docs\\mancala_help.html
-HELPFILES += docs\\about_games.html
-HELPFILES += docs\\game_params.html
-HELPFILES += docs\\game_xref.html
-HELPFILES += docs\\param_types.html
-HELPFILES += docs\\dist_readme.txt
-HELPFILES += docs\\Diffusion_rules.pdf
-HELPFILES += docs\\ZigZagHelp.pdf
 
-DATAFILES = GameProps/*.txt $(HELPFILES) logs/README.txt
+# local imports for the non-src directories
+CONTEXTS = test\\context.py
+CONTEXTS += docs\\context.py
+CONTEXTS += analysis\\context.py
+CONTEXTS += tools\\context.py
 
+
+# inputs to the help generator 'build_docs.py'
 HELPINPUTS = src\\game_params.csv
 HELPINPUTS += src\\game_param_descs.txt
 HELPINPUTS += src\\man_config.py
@@ -29,15 +27,31 @@ HELPINPUTS += src\\param_consts.py
 HELPINPUTS += docs\\build_docs.py 
 HELPINPUTS += docs\\context.py 
 
+# outputs of 'build_docs.py'
 GENEDHELPS = docs\\about_games.html 
 GENEDHELPS += docs\\game_params.html 
 GENEDHELPS += docs\\game_xref.html 
 GENEDHELPS += docs\\param_types.html
 
-CONTEXTS = test\\context.py
-CONTEXTS += docs\\context.py
-CONTEXTS += analysis\\context.py
-CONTEXTS += tools\\context.py
+# non-generated dependencies for release exe
+REL_DOCS = docs\\mancala_help.html
+REL_DOCS += docs\\dist_readme.txt
+REL_DOCS += docs\\Diffusion_rules.pdf
+REL_DOCS += docs\\ZigZagHelp.pdf
+
+# non-src requirements for the release exe
+DATAFILES = GameProps/*.txt $(GENEDHELPS) $(REL_DOCS) logs/README.txt
+
+# files copied to the release help directory
+REL_HELPS = docs\\mancala_help.html
+REL_HELPS += docs\\about_games.html
+REL_HELPS += docs\\game_params.html
+REL_HELPS += docs\\game_xref.html
+REL_HELPS += docs\\param_types.html
+REL_HELPS += docs\\styles.css
+REL_HELPS += docs\\Diffusion_rules.pdf
+REL_HELPS += docs\\ZigZagHelp.pdf
+
 
 
 # game params
@@ -208,16 +222,15 @@ spotless: clean
 
 exe: MancalaGames/mancala_games.exe makefile
 
-MancalaGames/mancala_games.exe: $(SOURCES) $(DATAFILES) $(HELPFILES) mancala_games.spec
+MancalaGames/mancala_games.exe: $(SOURCES) $(DATAFILES) mancala_games.spec
 	-rmdir /S /Q MancalaGames
 	-git stash push mancala.ini -m "save mancala.ini"
 	python tools\\update_version.py
 	pyinstaller mancala_games.spec --distpath .
 	mkdir MancalaGames\\help
-	cp $(HELPFILES) MancalaGames\\help
+	cp $(REL_HELPS) MancalaGames\\help
 	mkdir MancalaGames\\help\\figs
 	copy docs\\figs\\*.jpg MancalaGames\\help\\figs
-	copy docs\\styles.css MancalaGames\\help
 	copy docs\\dist_readme.txt MancalaGames\\README.txt
 	mkdir MancalaGames\\GameProps
 	copy GameProps\\* MancalaGames\\GameProps
