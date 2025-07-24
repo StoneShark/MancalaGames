@@ -9,15 +9,15 @@ Three computer players are provided: Negamaxer can only be used in games with al
 
 There are 3 ways to startup Mancala Games:
 
-1. **man_games_editor.pyw** - allows adjustment of all parameters, does some error checking, game configurations can be loaded, saved, edited and played.
-1. **play_mancala.pyw** - allows any preconfigure game to be selected and play. Filter options control which game appear in the game list. Game parameters may not edited.
-1. **play.py** - allows starting a preconfigured game from a command line or via short cut.
+1. **play_mancala** - allows any preconfigured game to be selected and played. Filter options control which games appear in the game selection list. Game parameters may not edited, but some game variantions are supported.
+1. **man_games_editor** - allows adjustment of all parameters, does some error checking, game configurations can be loaded, saved, edited and played.
+1. **play** - allows starting a preconfigured game from a command line or via short cut. 
 
 Game configurations are stored in plain-text, json-string formatted files. They may be edited directly. Parameters with default values need not be included.
 
 ## Distribution Files ##
 
-To download and play Mancala Games on Windows, get the [MancalaGames.tgz](https://github.com/StoneShark/MancalaGames/blob/main/MancalaGames.tgz) file. It is a 
+To download and play Mancala Games on Windows, get the MancalaGames.tgz file from the [latest release](https://github.com/StoneShark/MancalaGames/releases). It is a 
 self contained set of executables and all required files. No installation is
 required, just expand the zip file which requires 34MB.
 
@@ -44,7 +44,7 @@ Game play is broken up into small steps and each step is implemented as a decora
 ## Compatibility ##
 Mancala games can be run under Windows 10 & 11. Only standard python 3.12 (including Tk) is required so running from the source files is likely supported in other operating systems.
 
-Development of Mancala Games uses many specialized tools: The MancalaGames UI parameter definition table is in Excel. GNU-WIN32 make, grep and core utilities are used to script the build and test processes. Pytest is the test framework (Excel files are used to create test cases which are converted to CSV files by Pandas for actual test code). Pyinstaller is used to create standalone executables. Documentation diagrams were created in LibreOffice Draw with pdf versions saved.
+Development of Mancala Games uses many specialized tools: The MancalaGames UI parameter definition table is in Excel (Libre Office Calc can open it). GNU-WIN32 make, grep and core utilities are used to script the build and test processes. Pytest is the test framework (Excel files are used to create test cases, requiring Pandas for testing). Pyinstaller is used to create standalone executables. Documentation diagrams were created in LibreOffice Draw with pdf versions saved.
 
 
 [^1]: Speed isn't an issue for moves by human players but the computer players simulate very many moves to choose one. One profiling experiment noted nearly a second deciding to return a constant (for direction); the decorator chain resolved it to basically zero.
