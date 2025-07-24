@@ -33,7 +33,7 @@ for game, fplayer, tplayer, gname in game_players_gen:
                                   move_limit=config.max_moves)
     logger.info(gstats)
 
-    win_pct = gstats.wins[True] / gstats.total
+    win_pct = (gstats.wins[True] / gstats.total) * 100
     logger.info('\n%s True win %%=%10.2f%%', gname, win_pct)
 
 ana_logger.close(logger)

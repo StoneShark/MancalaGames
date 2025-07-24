@@ -19,7 +19,9 @@
          "mm_depth": [ 1, 3, 5, 7 ]
       },
       "scorer": {
-         "mx_stores_m": 8
+         "mx_stores_m": 8,
+         "mx_seeds_m": 4,
+         "mx_evens_m": 2
       }
    },
    "rules": "https://mancala.fandom.com/wiki/Tihbat"

@@ -204,14 +204,18 @@ class Neighbors:
         print("".join(f"{str(val):20}" for val in values))
 
 
-    def print_option_line(self, gname_list, option):
+    def print_option_line(self, gname_list, option, key=None):
         """Prepare and print one line for option for each game."""
 
         pvalues = [option]
 
         for game in gname_list:
             default = gi.GameInfo.get_default(option)
-            pvalues += [self.all_games[game][GINFO].get(option, default)]
+
+            if key:
+                pvalues += [self.all_games[game][key].get(option, default)]
+            else:
+                pvalues += [self.all_games[game].get(option, default)]
 
         self.print_line(pvalues)
 
@@ -228,14 +232,17 @@ class Neighbors:
 
         self.print_line(["Option"] + gname_list)
 
-        starters = [ckey.GAME_CLASS, ckey.HOLES, ckey.NBR_START]
+        if ckey.GAME_CLASS in options:
+            self.print_option_line(gname_list, ckey.GAME_CLASS)
+
+        starters = [ckey.HOLES, ckey.NBR_START]
         for opt in starters:
             if opt in options:
-                self.print_option_line(gname_list, opt)
+                self.print_option_line(gname_list, opt, GCONSTS)
 
         for opt in sorted(options):
             if opt not in starters:
-                self.print_option_line(gname_list, opt)
+                self.print_option_line(gname_list, opt, GINFO)
 
 
     def uniquer(self, max_diffs):

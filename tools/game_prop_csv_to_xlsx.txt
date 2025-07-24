@@ -6,17 +6,17 @@ Sub MancalaPropsUsed()
 
 ' set some extra titles
     Range("A1").Value = "Game"
-    Range("BD1").Value = "Filter1"
-    Range("BE1").Value = "Filter2"
+    Range("BC1").Value = "Filter1"
+    Range("BD1").Value = "Filter2"
 ' set column widths
-    Columns("B:BB").ColumnWidth = 3.43
     Columns("A:A").ColumnWidth = 20
+    Columns("B:BB").ColumnWidth = 3.43
     Columns("I:I").ColumnWidth = 5
     Columns("AX:AX").ColumnWidth = 5
-    Columns("BC:BC").ColumnWidth = 15
-    Columns("BD:BE").ColumnWidth = 6
+    Columns("BB:BB").ColumnWidth = 15
+    Columns("BC:BD").ColumnWidth = 6
 ' center these columns
-    Range("E:F,I:J,Q:R,AA:AB,AD:AF,AH:AH,AP:AP,AR:AR,AU:AU,AW:AX,BA:BA").Select
+    Range("E:F,I:J,Q:R,AA:AB,AD:AF,AH:AH,AP:AP,AR:AR,AU:AU,AW:AX,AZ:AZ,BA:BA").Select
     With Selection
         .HorizontalAlignment = xlCenter
         .VerticalAlignment = xlBottom

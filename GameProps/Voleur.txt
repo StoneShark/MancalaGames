@@ -12,19 +12,24 @@
       "sow_direct": 1,
       "stores": true
    },
-   "vari_params": {
-      "evens": "include",
-      "capt_min": "include"
+   "variants": {
+      "Voleur": { },
+      "Evens": { 
+         "evens": true,
+         "capt_min": 0
+      }
    },
    "player": {
       "algorithm": "negamaxer",
       "ai_params": {
-         "mm_depth": [ 1, 3, 5, 7 ]
+         "mm_depth": [ 1, 5, 7, 11 ]
       },
       "scorer": {
-         "mx_stores_m": 8
+         "mx_stores_m": 8,
+         "mx_access_m": 2,
+         "mx_seeds_m": 1,
+         "mx_easy_rand_a": 20
       }
    },
-   "rules": "https://mancala.fandom.com/wiki/Voleur",
-   "note": "CAPT_MIN set to 1 to avoid the 'no capture mechanism' warning"
+   "rules": "https://mancala.fandom.com/wiki/Voleur"
 }
