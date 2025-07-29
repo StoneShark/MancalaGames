@@ -1,36 +1,31 @@
 {
    "game_class": "Mancala",
    "game_constants": {
-      "nbr_start": 4,
-      "holes": 12
+      "holes": 12,
+      "nbr_start": 4
    },
    "game_info": {
       "name": "Gamacha",
-      "about": "Counter-clockwise, multi-lap sow. Moves must end in an empty hole or reach opponents side of the board. Seeds are taken out of play via cross-capture. The goal is to deprive the opponent of seeds.\n\nVariations: Sadeqa, start pattern, allow rules",
+      "about": "Counter-clockwise, multi-lap sow. Moves must end in an empty hole or reach opponents side of the board. \n\nSeeds are taken out of play via cross-capture. \n\nThe goal is to deprive the opponent of seeds.\n\nVariations: \n\n- Sadeqa: smaller board, played in rounds for best of 9 games, uses ALTS_WITH_1 start pattern.\n\n- suggested start patterns: ALTERNATES, ALTS_WITH_1, CLIPPEDTRIPPLES or ALTS_SPLIT (GAMACHA is configured in base game).\n\n- any allow rule except MOVE_ALL_HOLES_FIRST.\n",
+      "allow_rule": 1,
       "crosscapt": true,
       "goal": 1,
       "mlaps": 1,
-      "allow_rule": 1,
       "capt_side": 1,
       "sow_direct": 1,
       "start_pattern": 1
    },
-   "vari_params": {
-      "start_pattern": "include",
-      "allow_rule": "include"
-   },
    "player": {
+      "ai_params": { "mm_depth": [ 2, 3, 5, 7 ] },
       "scorer": {
-         "mx_access_m": 0,
-         "mx_empties_m": -2,
-         "mx_evens_m": 0,
          "mx_seeds_m": 4,
+         "mx_empties_m": -2,
          "mx_easy_rand_a": 2
-      },
-      "algorithm": "minimaxer",
-      "ai_params": {
-         "mm_depth": [2, 2, 5, 7]
       }
+   },
+   "vari_params": {
+      "start_pattern": [ 0, 1, 2, 3, 4, 7 ],
+      "allow_rule": [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13 ]
    },
    "rules": "Russ, Laurence. Mancala Games. 1984. p33."
 }

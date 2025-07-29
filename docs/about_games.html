@@ -606,9 +606,15 @@ remove multiple capture
 <p><b class="enum">Rules</b>: <a href="https://mancala.fandom.com/wiki/Boola" target="_blank">https://mancala.fandom.com/wiki/Boola</a>
 <h3 id="Bosh" class="game_desc">Bosh</h3>
 <p>Sow counter-clockwise via the multi-lap next-hole method. When the final seed sown (into an empty hole) is followed by an empty hole, capture any seeds in the following hole. Played in rounds where unfilled holes are out of play.
-<p>Variation:
+<p>Variations:
 <ul><li class="helptext">
-3 seeds per hole for start.
+holes required to continue game (<a href="game_params.html#goal_param">GOAL_PARAM</a>)
+<li class="helptext">
+3 seeds per hole for start
+</ul>
+<p> 
+<ul><li class="helptext">
+not played in rounds
 </ul>
 <div class="cols_row">
   <div class="column2">
@@ -1128,8 +1134,17 @@ Another value for <a href="game_params.html#round_fill">ROUND_FILL</a>
 </div>
 <p><b class="enum">Rules</b>: Russ, Laurence. Mancala Games. 1984. p49.
 <h3 id="Gamacha" class="game_desc">Gamacha</h3>
-<p>Counter-clockwise, multi-lap sow. Moves must end in an empty hole or reach opponents side of the board. Seeds are taken out of play via cross-capture. The goal is to deprive the opponent of seeds.
-<p>Variations: <a href="about_games.html#Sadeqa">Sadeqa</a>, start pattern, allow rules
+<p>Counter-clockwise, multi-lap sow. Moves must end in an empty hole or reach opponents side of the board. 
+<p>Seeds are taken out of play via cross-capture. 
+<p>The goal is to deprive the opponent of seeds.
+<p>Variations: 
+<ul><li class="helptext">
+<a href="about_games.html#Sadeqa">Sadeqa</a>: smaller board, played in rounds for best of 9 games, uses ALTS_WITH_1 start pattern.
+<li class="helptext">
+suggested start patterns: ALTERNATES, ALTS_WITH_1, CLIPPEDTRIPPLES or ALTS_SPLIT (GAMACHA is configured in base game).
+<li class="helptext">
+any allow rule except MOVE_ALL_HOLES_FIRST.
+</ul>
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  12</p>
@@ -3325,7 +3340,6 @@ played on smaller boards where the number of seeds per hole is the same as the n
   </div>
 </div>
 <p><b class="enum">Rules</b>: <a href="https://mancala.fandom.com/wiki/Voleur" target="_blank">https://mancala.fandom.com/wiki/Voleur</a>
-<p><b class="enum">Note</b>: <a href="game_params.html#capt_min">CAPT_MIN</a> set to 1 to avoid the 'no capture mechanism' warning
 <h3 id="Wari" class="game_desc">Wari</h3>
 <p>A single-lap mancala, sow direction is counter-clockwise. A sow which cycles the board, will skip the hole that the move started from. If your opponent has no seeds, you must make seeds available to them (if you can).
 <p>Captures are on 2s and 3s from the opponent's side (final seed sown makes either 2 or 3).  As long as there is a an unbroken group of holes containing 2 or 3 seeds immediately preceding the final hole sown, these holes are also captured.
