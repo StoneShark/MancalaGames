@@ -10,8 +10,8 @@ import re
 
 
 PATH = './src/'
-PYFILE = '\\.pyw?'
-BAD_FILE_RE = ['pycache', '^run_', 'Copy']
+PYFILE = '\\.py$'
+BAD_FILE_RE = ['pycache', 'Copy']
 
 
 def get_module_names():

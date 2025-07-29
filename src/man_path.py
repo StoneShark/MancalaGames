@@ -28,3 +28,20 @@ def get_path(filename, no_error=False):
         raise FileNotFoundError(f"Can't find file {filename}.")
 
     return os.path.abspath(pathname)
+
+
+def find_gamefile(gname):
+    """Look in a few logical places for the file."""
+
+    places = [gname,
+              './ ' + gname + '.txt',
+              './GameProps/' + gname,
+              './GameProps/' + gname + '.txt',
+              '../GameProps/' + gname,
+              '../GameProps/' + gname + '.txt']
+
+    for fname in places:
+        if os.path.isfile(fname):
+            return fname
+
+    raise FileNotFoundError(f"Can't find file {gname}.")

@@ -174,7 +174,7 @@ class GameConfig:
             self.filename = game_name.replace(' ', '_') + '.txt'
 
 
-    def load(self):
+    def load(self, filename=None):
         """Load the game configuration from a file.
         Set the working dir to the selected dir.
         json.JSONDecodeError is dervied from ValueError.
@@ -182,9 +182,10 @@ class GameConfig:
         Return False if there is an error in file.
         Return True if the file was successfully loaded."""
 
-        filename = tkfile.askopenfilename(parent=self._master,
-                                          title='Load Parameters',
-                                          initialdir=self._dir)
+        if not filename:
+            filename = tkfile.askopenfilename(parent=self._master,
+                                              title='Load Parameters',
+                                              initialdir=self._dir)
         if not filename:
             return False
 

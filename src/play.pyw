@@ -1,32 +1,16 @@
 # -*- coding: utf-8 -*-
-"""Direct interface to start a mancala game given a config file.
+"""Direct interface to start a mancala game given a config file and
+possibly a variant.
 
 Created on Tue Jul 18 13:50:32 2023
 @author: Ann"""
 
 import argparse
-import os.path
 import sys
 
 import man_config
+import man_path
 import mancala_ui
-
-
-def find_file(gname):
-    """Look in a few logical places for the file."""
-
-    places = [gname,
-              './ ' + gname + '.txt',
-              './GameProps/' + gname,
-              './GameProps/' + gname + '.txt',
-              '../GameProps/' + gname,
-              '../GameProps/' + gname + '.txt']
-
-    for fname in places:
-        if os.path.isfile(fname):
-            return fname
-
-    raise ValueError(f"Can't file {gname}.")
 
 
 def get_gamename():
@@ -50,7 +34,7 @@ if __name__ == '__main__':
 
     gamename, variant = man_config.game_name_to_parts(get_gamename())
 
-    filename = find_file(gamename)
+    filename = man_path.find_gamefile(gamename)
     game, pdict = man_config.make_game(filename, variant)
     print(game.info.about)
 

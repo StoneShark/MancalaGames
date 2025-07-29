@@ -9,11 +9,9 @@ Created on Mon Jul 31 14:07:52 2023
 import pytest
 
 from context import buttons
-from context import man_games_editor
+from context import game_chooser
+from context import game_editor
 from context import mancala_ui
-from context import play_mancala
-from context import play
-
 
 def test_files_not():
 
