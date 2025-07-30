@@ -82,7 +82,7 @@ class GameDictEncoder(json.JSONEncoder):
         the dictionaries."""
 
         if not obj:
-            return "{}"
+            return "{ }"
 
         # ensure keys are converted to strings
         obj = {str(k) if k is not None else "null": v for k, v in obj.items()}
@@ -177,7 +177,6 @@ class GameConfig:
     def load(self, filename=None):
         """Load the game configuration from a file.
         Set the working dir to the selected dir.
-        json.JSONDecodeError is dervied from ValueError.
 
         Return False if there is an error in file.
         Return True if the file was successfully loaded."""
@@ -196,12 +195,17 @@ class GameConfig:
 
 
     def _load_file(self):
-        """Load from the saved filename."""
+        """Load from the saved filename inside a build_context
+        to catch and report any errors to the player.
 
-        try:
+        Return True if the load did not encounter an error,
+        False if it did."""
+
+        build_context = ui_utils.ReportError(self._master)
+        with build_context:
             self.loaded_config = man_config.read_game(self.filename)
-        except ValueError as error:
-            ui_utils.showerror(self._master, 'JSON File Error', str(error))
+
+        if build_context.error:
             return False
 
         self.edited = False

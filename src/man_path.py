@@ -33,8 +33,11 @@ def get_path(filename, no_error=False):
 def find_gamefile(gname):
     """Look in a few logical places for the file."""
 
-    places = [gname,
-              './ ' + gname + '.txt',
+    if os.path.isfile(gname):
+        return gname
+
+    places = ['./' + gname,
+              './' + gname + '.txt',
               './GameProps/' + gname,
               './GameProps/' + gname + '.txt',
               '../GameProps/' + gname,

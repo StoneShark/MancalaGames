@@ -13,7 +13,6 @@ Created on Thu Mar  2 14:38:17 2023
 # %% imports
 
 import functools as ft
-import traceback
 import tkinter as tk
 import warnings
 
@@ -157,16 +156,15 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
         man_config.read_ini_file(self.master, self.info.name)
         super().__init__(self.master)
         self.master.title(self.info.name)
-        self.master.option_add('*tearOff', False)
-        self.master.report_callback_exception = self._exception_callback
+        self.pack(expand=True, fill=tk.BOTH)
+
+        ui_utils.do_error_popups(self.root, self)
 
         hsize = man_config.CONFIG.get_int('history_size')
         self.history = man_history.HistoryManager(hsize,
                                                   mancala.GameState.str_one)
         self.tkvars = TkVars(self, player_dict)
         self.ai_set_difficulty()
-
-        self.pack(expand=True, fill=tk.BOTH)
 
         self.tally = None
         self.rframe = None
@@ -349,19 +347,13 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
         return store
 
 
-    @staticmethod
-    def _exception_callback(*args):
-        """Support debugging by printing the play_log and the traceback."""
-
-        game_log.dump()
-        traceback.print_exception(args[0], args[1], args[2])
-
-
     def _create_menus(self):
         """Create the game control menus.
 
         Do keybinds that should be disabled during animations
         in _key_bindings."""
+
+        self.master.option_add('*tearOff', False)
 
         self._menubar = tk.Menu(self.master)
         self.master.config(menu=self._menubar)
@@ -418,9 +410,13 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
 
 
     def destroy(self):
-        """window was closed."""
+        """Window was closed.
+
+        Cancel any pending afters, tell the error_popups to stop dumping
+        the game on errors, and reset the animator."""
 
         self._cancel_pending_afters()
+        ui_utils.game_ui = None
         animator.reset()
 
 

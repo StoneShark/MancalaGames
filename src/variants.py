@@ -31,10 +31,6 @@ PREFIX = 'var_'
 
 # %%  classes
 
-class GameVariantError(Exception):
-    """Error in GameInfo."""
-
-
 class GameVariations:
     """Collect the data used for game variations."""
 
@@ -44,13 +40,14 @@ class GameVariations:
         self.game_ui = game_ui
         self.game_file = game_file
         self.game_config = man_config.read_game(game_file)
+        param_mixin.register_int_validate(self.game_ui.root)
 
-        try:
+        # the 'play' main script doesn't test these
+        build_context = ui_utils.ReportError(self.game_ui)
+        with build_context:
             test_variation_config(self.game_config)
 
-        except GameVariantError as error:
-            message = error.__class__.__name__ + ':  ' + str(error)
-            ui_utils.showerror(self.game_ui, 'Variations Error', message)
+        if build_context.error:
             return
 
         self.ptable = man_config.ParamData(no_descs=True)
@@ -266,7 +263,7 @@ class AdjustPopup(param_mixin.ParamMixin, tksimpledialog.Dialog):
                 param = self.params[vname]
                 man_config.set_config_value(
                     self.game_config, param.cspec, param.option,
-                    man_config.convert_from_file(vname, value))
+                    man_config.convert_from_file('Variant Update', vname, value))
 
         for vname in self.vari_params.keys():
             param = self.params[vname]
@@ -323,7 +320,7 @@ class AdjustPopup(param_mixin.ParamMixin, tksimpledialog.Dialog):
                 continue
 
             param = self.params[vname]
-            value = man_config.convert_from_file(vname, fvalue)
+            value = man_config.convert_from_file('Variant Update', vname, fvalue)
             self.pm_set_tk_var(param, value)
 
 
@@ -432,7 +429,7 @@ def test_vari_params(game_dict, vparams):
 
         if key not in ckey.CONFIG_PARAMS:
             msg=f"{key} in VARI_PARAM is not a valid game parameter."
-            raise GameVariantError(msg)
+            raise gi.GameVariantError(msg)
 
 
         if key == ckey.GAME_CLASS:
@@ -440,17 +437,17 @@ def test_vari_params(game_dict, vparams):
                     and game_dict[ckey.GAME_CLASS] not in vlist):
 
                 msg="Configured GAME_CLASS not in VARI_PARAMS value list."
-                raise GameVariantError(msg)
+                raise gi.GameVariantError(msg)
 
         elif isinstance(vlist, list):
             if not all(isinstance(val, int) for val in vlist):
                 msg=f"{key} value list contains non-integers."
-                raise GameVariantError(msg)
+                raise gi.GameVariantError(msg)
 
             if (key in game_dict[ckey.GAME_CONSTANTS]
                     and game_dict[ckey.GAME_CONSTANTS][key] not in vlist):
                 msg=f"Configured {key.upper()} not in VARI_PARAMS value list."
-                raise GameVariantError(msg)
+                raise gi.GameVariantError(msg)
 
             if key in game_dict[ckey.GAME_INFO]:
 
@@ -460,7 +457,7 @@ def test_vari_params(game_dict, vparams):
 
                 if cval not in vlist:
                     msg=f"Configured {key.upper()} not in VARI_PARAMS value list."
-                    raise GameVariantError(msg)
+                    raise gi.GameVariantError(msg)
 
     test_include_goal_param(game_dict, vparams)
 
@@ -474,30 +471,30 @@ def test_variants_param(game_dict, variants):
     if len(variants) < 2:
         msg="""Game variants aren't useful if there aren't 2 or more.
             Is the base game variant missing?"""
-        raise GameVariantError(msg)
+        raise gi.GameVariantError(msg)
 
     # first item has game name key and an empty dictionary
     vlist = list(variants.items())
     if vlist[0][0] != game_dict[ckey.GAME_INFO][ckey.NAME]:
         msg="""The first variant should have the base game name"""
-        raise GameVariantError(msg)
+        raise gi.GameVariantError(msg)
 
     if not (isinstance(vlist[0][1], dict) and vlist[0][1] == {}):
         msg="""The first variant should be for the base game
             and have a value of empty dictionary"""
-        raise GameVariantError(msg)
+        raise gi.GameVariantError(msg)
 
     for key, vdict in variants.items():
 
         if not isinstance(vdict, dict):
             msg = f"Variant value for {key} is not a dict."
-            raise GameVariantError(msg)
+            raise gi.GameVariantError(msg)
 
         for param in vdict.keys():
 
             if param not in ckey.CONFIG_PARAMS:
                 msg=f"{param} in VARIANT[{key}] is not a valid game parameter."
-                raise GameVariantError(msg)
+                raise gi.GameVariantError(msg)
 
 
 def test_udir_hole_changes(game_dict, var_options):
@@ -518,7 +515,7 @@ def test_udir_hole_changes(game_dict, var_options):
     if ckey.UDIR_HOLES in var_options:
         msg = """Variations that allow changing HOLES and UDIR_HOLES are
               are not supported."""
-        raise GameVariantError(msg)
+        raise gi.GameVariantError(msg)
 
     udirs = game_dict[ckey.GAME_INFO].get(ckey.UDIR_HOLES, [])
     nbr_udir = len(udirs)
@@ -538,7 +535,7 @@ def test_udir_hole_changes(game_dict, var_options):
           variations allow changing the number of holes,
           but it cannot be infered
           how to adjust udir_holes (all holes or center)."""
-    raise GameVariantError(msg)
+    raise gi.GameVariantError(msg)
 
 
 def test_variation_config(game_dict, no_var_error=True):
@@ -552,19 +549,19 @@ def test_variation_config(game_dict, no_var_error=True):
     if not (ckey.VARI_PARAMS in game_dict or ckey.VARIANTS in game_dict):
         if no_var_error:
             msg="Cannot create GameVariations without variations."
-            raise GameVariantError(msg)
+            raise gi.GameVariantError(msg)
 
         return
 
     vari_params = game_dict.get(ckey.VARI_PARAMS, {})
     if not isinstance(vari_params, dict):
         msg = "VARI PARAMS value is not a dictionary."
-        raise GameVariantError(msg)
+        raise gi.GameVariantError(msg)
 
     variants = game_dict.get(ckey.VARIANTS, {})
     if not isinstance(variants, dict):
         msg = "VARIANTS value is not a dictionary."
-        raise GameVariantError(msg)
+        raise gi.GameVariantError(msg)
 
     options = set(vari_params.keys())
     if variants:

@@ -47,7 +47,7 @@ def _build_eliminate_ended(game):
         ender = emd.ImmobilizeEndGame(game)
 
     else:
-        raise ValueError("Unknown eliminate goal")
+        raise NotImplementedError(f"Unknown eliminate goal: {game.info.goal}")
 
     if game.info.goal in (gi.Goal.RND_WIN_COUNT_CLR,
                           gi.Goal.RND_WIN_COUNT_DEP,

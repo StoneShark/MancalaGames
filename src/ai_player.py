@@ -131,7 +131,8 @@ class AiPlayer(ai_interface.AiPlayerIf):
             self.algo.set_params(mcts_bias, mcts_nodes, mcts_pouts)
 
         else:
-            raise ValueError("Don't know how to set the algo difficulty.")
+            ualgo_msg = "Unknown algo type, don't know how to set difficulty."
+            raise ValueError(ualgo_msg)
 
 
     def set_algorithm(self, algo_name):
@@ -140,7 +141,7 @@ class AiPlayer(ai_interface.AiPlayerIf):
         if algo_name in ALGORITHM_DICT:
             self.algo = ALGORITHM_DICT[algo_name](self.game, self)
         else:
-            raise KeyError(f'Unknown ai player algorithm: {algo_name}.')
+            raise gi.UInputError(f'Unknown ai player algorithm: {algo_name}.')
 
 
     def pick_move(self):
@@ -455,7 +456,7 @@ def test_player_rules(pdict, game):
                             and pdict[ckey.DIFFICULTY]
                                 not in range(gi.DIFF_LEVELS)),
         msg='Difficulty not 0, 1, 2 or 3',
-        excp=gi.GameInfoError)
+        excp=gi.UInputError)
 
     tester.test_rule(
         'scorer_vals',
@@ -477,7 +478,17 @@ def test_player_rules(pdict, game):
                                         pdict[ckey.AI_PARAMS].values())),
         msg=f"""Exactly {gi.DIFF_LEVELS} param values are expected
             for each ai parameter""",
-        excp=gi.GameInfoError)
+        excp=gi.UInputError)
+
+    tester.test_rule(
+        'params_ints',
+        rule=lambda pdict: (
+            ckey.AI_PARAMS in pdict
+            and any(not isinstance(val, int)
+                    for values in pdict[ckey.AI_PARAMS].values()
+                    for val in values)),
+        msg="All ai parameters values must be integers",
+        excp=gi.UInputError)
 
     tester.test_rule(
         'stores_scorer',
@@ -488,7 +499,7 @@ def test_player_rules(pdict, game):
                                    and pdict[ckey.SCORER][ckey.MX_STORES]),
         both_objs=True,
         msg='Stores scorer is not supported without stores or children.',
-        excp=gi.GameInfoError)
+        excp=gi.UInputError)
 
     tester.test_rule(
         'stores_scorer_inv',
@@ -499,7 +510,7 @@ def test_player_rules(pdict, game):
         both_objs=True,
         msg="""Stores scorer is not supported for
             CLEAR, DEPRIVE or IMMOBILIZE games.""",
-        excp=gi.GameInfoError)
+        excp=gi.UInputError)
 
     tester.test_rule(
         'mlaps_access_prohibit',
@@ -509,7 +520,7 @@ def test_player_rules(pdict, game):
                                    and pdict[ckey.SCORER][ckey.MX_ACCESS_M]),
         both_objs=True,
         msg='Access scorer not supported for multilap games',
-        excp=gi.GameInfoError)
+        excp=gi.UInputError)
 
     tester.test_rule(
         'udirect_access_prohibit',
@@ -519,7 +530,7 @@ def test_player_rules(pdict, game):
                                    and pdict[ckey.SCORER][ckey.MX_ACCESS_M]),
         both_objs=True,
         msg='Access scorer not supported with UDIR_HOLES',
-        excp=gi.GameInfoError)
+        excp=gi.UInputError)
 
     tester.test_rule(
         'no_side_access',
@@ -530,7 +541,7 @@ def test_player_rules(pdict, game):
         both_objs=True,
         msg="""Scorer MX_ACCESS_M multiplier is incompatible with
             NO_SIDES and TERRITORY""",
-        excp=gi.GameInfoError)
+        excp=gi.UInputError)
 
     tester.test_rule(
         'child_scorer',
@@ -540,7 +551,7 @@ def test_player_rules(pdict, game):
                                    and pdict[ckey.SCORER][ckey.MX_CHILD_CNT_M]),
         both_objs=True,
         msg='Child count scorer not supported without CHILD',
-        excp=gi.GameInfoError)
+        excp=gi.UInputError)
 
     tester.test_rule(
         'no_repeat_scorer',
@@ -553,7 +564,7 @@ def test_player_rules(pdict, game):
         both_objs=True,
         msg="""Repeat turn scorer not supported without repeat turns
             (SOW_OWN_STORE | CAPT_RTURN | XC_SOWN)""",
-        excp=gi.GameInfoError)
+        excp=gi.UInputError)
 
     tester.test_rule(
         'nmax_no_repeat',
@@ -563,7 +574,7 @@ def test_player_rules(pdict, game):
         both_objs=True,
         msg="""NegaMaxer is not compatible with repeat turns
             (SOW_OWN_STORE | CAPT_RTURN | XC_SOWN | SameSide | Ohojichi)""",
-        excp=gi.GameInfoError)
+        excp=gi.UInputError)
 
 
     tester.test_rule(
@@ -575,7 +586,7 @@ def test_player_rules(pdict, game):
         msg="""Monte Carlo Tree Search cannot be used with games that
             depend on hidden game state data. It can only be used
             with games that rely only visible information""",
-        excp=gi.GameInfoError)
+        excp=gi.UInputError)
         # only want to use the base board_state in node dictionary
         # so anything that uses game.mdata directly (not passed as parameter),
         # game.mcount, game.rturn_cnt, or game.inhibitor are excluded

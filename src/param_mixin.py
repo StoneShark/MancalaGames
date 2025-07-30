@@ -22,6 +22,7 @@ import game_info as gi
 import man_config
 import mg_config
 import param_consts as pc
+import ui_utils
 
 
 # %% constants
@@ -129,7 +130,7 @@ class ParamMixin:
             boxes = gi.DIFF_LEVELS
 
         else:
-            raise ValueError(f"Don't know list length for {param.option}.")
+            raise gi.DataError(f"Don't know list length for {param.option}.")
 
         return boxes
 
@@ -226,7 +227,7 @@ class ParamMixin:
                                                      name=prefix + param.option)
 
         else:
-            raise TypeError(f"Unexpected parameter type {param.vtype}.")
+            raise gi.DataError(f"Unexpected parameter type {param.vtype}.")
 
 
     def _make_text_entry(self, frame, param, col_span=4):
@@ -418,7 +419,7 @@ class ParamMixin:
         """Set the values of a list of tkvariables."""
 
         if not isinstance(value, list):
-            raise ValueError(
+            raise gi.DataError(
                 f"Don't know how to fill {param.option} from {value}.")
 
         if param.vtype == pc.BLIST_TYPE:
@@ -515,15 +516,18 @@ class ParamMixin:
 
 
     def pm_resize_udirs(self):
-        """Change the number of the checkboxes on the screen.
+        """Change the number of the checkboxes on the screen,
+        limiting it to MAX_HOLES.
         All the variables were built with the tkvars.
         Destroy any extra widgets or make any required new ones."""
 
         holes = stoi(self.tkvars[ckey.HOLES].get())
 
         if holes > gconsts.MAX_HOLES:
-            print('value too big.')
-            return
+            self.tkvars[ckey.HOLES].set(str(gconsts.MAX_HOLES))
+            holes = gconsts.MAX_HOLES
+            message = f'Holes is limited to {gconsts.MAX_HOLES}.'
+            ui_utils.showerror(self, 'Out of Range', message)
 
         widgets = self.udir_frame.winfo_children()
         prev_holes = len(widgets)

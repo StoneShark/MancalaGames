@@ -90,7 +90,7 @@ def test_one_game(game_pdict, algo):
     # build the AiPlayer checking the rules, catch failures
     try:
         player = ai_player.AiPlayer(game, pdict)
-    except gi.GameInfoError as error:
+    except gi.UInputError as error:
 
         if (algo == 'negamaxer'
                 and ai_player.negamax_no_repeat_turn(game)):

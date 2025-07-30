@@ -29,6 +29,7 @@ import man_path
 import mancala_ui
 import round_tally
 import ui_utils
+import variants
 
 
 # %% constants
@@ -856,13 +857,14 @@ class GameChooser(ttk.Frame):
         self.games = None
         self.selected = None
 
-        self.load_game_files()
         ui_utils.setup_styles(master)
 
         self.master.title('Play Mancala - Game Chooser')
         super().__init__(self.master, padding=3)
         self.master.resizable(False, True)
         self.pack(expand=tk.TRUE, fill=tk.BOTH)
+
+        ui_utils.do_error_popups(self.master)
 
         self.game_filter = GameFilters(self)
         self.game_filter.grid(row=0, column=0, columnspan=2, sticky='ew')
@@ -876,10 +878,12 @@ class GameChooser(ttk.Frame):
         self.rowconfigure(1, weight=1)
         self.columnconfigure(tk.ALL, weight=1)
 
-        self.select_list.fill_glist(self.all_games.keys())
         self.create_menus()
 
         man_config.check_disable_animator()
+
+        self.load_game_files()
+        self.select_list.fill_glist(self.all_games.keys())
 
 
     def load_game_files(self):
@@ -892,8 +896,14 @@ class GameChooser(ttk.Frame):
             if file[-4:] != TXTPART or file == EXFILE:
                 continue
 
-            game_dict = man_config.read_game(PATH + file)
-            game_name = game_dict[ckey.GAME_INFO][ckey.NAME]
+            build_context = ui_utils.ReportError(self)
+            with build_context:
+                game_dict = man_config.read_game(PATH + file)
+                game_name = game_dict[ckey.GAME_INFO][ckey.NAME]
+
+            if build_context.error:
+                print(f"Skipping {file} due to error.")
+                continue
 
             if game_name in self.all_games:
                 print(f'Skipping duplicate game name {game_name} from {file}.')
@@ -997,6 +1007,24 @@ class GameChooser(ttk.Frame):
             self.selected = ''
 
 
+    def _build_game_steps(self, game_dict, variant=None):
+        """Do the steps to verify and build the game."""
+
+        game = man_config.game_from_config(game_dict, variant, PARAMS)
+        player_dict = game_dict[ckey.PLAYER]
+        game.filename = game_dict[ckey.FILENAME]
+        variants.test_variation_config(game_dict, no_var_error=False)
+        mancala_ui.MancalaUI(game, player_dict, root_ui=self.master)
+
+
+    def _build_game(self, game_dict, variant=None):
+        """Build the game catching any build errors.
+        If there was an error, don't need to do anything different."""
+
+        with ui_utils.ReportError(self):
+            self._build_game_steps(game_dict, variant)
+
+
     def play_game(self, _=None):
         """Create the game and game_ui; which allows playing it."""
 
@@ -1004,10 +1032,7 @@ class GameChooser(ttk.Frame):
             return
 
         game_dict = self.all_games[self.selected]
-        game = man_config.game_from_config(game_dict)
-        player_dict = game_dict[ckey.PLAYER]
-        game.filename = game_dict[ckey.FILENAME]
-        mancala_ui.MancalaUI(game, player_dict, root_ui=self.master)
+        self._build_game(game_dict)
 
 
     def play_variant(self, gamename, variant):
@@ -1016,10 +1041,7 @@ class GameChooser(ttk.Frame):
         deep copy of the one in the all_games dict."""
 
         game_dict = copy.deepcopy(self.all_games[gamename])
-        game = man_config.game_from_config(game_dict, variant, PARAMS)
-        player_dict = game_dict[ckey.PLAYER]
-        game.filename = game_dict[ckey.FILENAME]
-        mancala_ui.MancalaUI(game, player_dict, root_ui=self.master)
+        self._build_game(game_dict, variant)
 
 
     def edit_game(self, _=None):
@@ -1040,6 +1062,7 @@ class GameChooser(ttk.Frame):
         if animator.animator:
             del animator.animator
         self._key_bindings(active=False)
+        # TODO need to destory a game being played!
 
         filename = self.all_games[self.selected]['filename']
         man_games = self.editor_class(self.master, GameChooser)

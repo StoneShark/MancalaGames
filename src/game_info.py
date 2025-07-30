@@ -26,12 +26,28 @@ PLAYER_NAMES = ['South', 'North']
 
 DIFF_LEVELS = 4
 
-# %%  error, enums and dataclasses
-
+# %%  errors
 
 class GameInfoError(Exception):
-    """Error in GameInfo."""
+    """Error in game info construction or use."""
 
+class GameVariantError(Exception):
+    """Error in Game Variant configuration."""
+
+class UInputError(Exception):
+    """Generally, a user configuration file error.
+
+     A User Input Error e.g., the user provided invalid data of
+     some sort possibly in a game config file or mancala.ini.
+
+     Not likely a software error, but it could be."""
+
+class DataError(Exception):
+    """An error was found in a table that a user is not expected
+    to edit."""
+
+
+# %%  enums
 
 @enum.unique
 class AllowRule(enum.IntEnum):
@@ -406,6 +422,8 @@ class WinCond(enum.Enum):
         """Is the game over (not a round)?"""
         return self in (WinCond.ROUND_WIN, WinCond.ROUND_TIE)
 
+
+# %%   dataclasses and classes
 
 @dc.dataclass(frozen=True, kw_only=True)
 class GameInfo:

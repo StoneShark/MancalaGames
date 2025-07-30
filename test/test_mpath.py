@@ -13,7 +13,7 @@ from context import man_path
 
 TEST_COVERS = ['src\\man_path.py']
 
-class TestMPath:
+class TestGetPath:
 
     @pytest.fixture(params=['testfile.txt',
                             'sub/testfile.txt',
@@ -50,3 +50,63 @@ class TestMPath:
 
         testfile = tmp_path / 'junk.txt'
         assert man_path.get_path(testfile, no_error=True) is False
+
+
+class TestFindGameFile:
+
+    @pytest.fixture
+    def dir_tree(self, tmp_path):
+
+        cwd = os.getcwd()
+
+        dir1 = tmp_path / 'GameProps'
+        dir1.mkdir()
+        dir2 = tmp_path / 'base'
+        dir2.mkdir()
+        dir3 = tmp_path / 'base' / 'GameProps'
+        dir3.mkdir()
+
+        for gfile in ['base/Game1.txt',
+                      'GameProps/Game2.txt',
+                      'base/GameProps/Game3.txt']:
+            testfile = tmp_path / gfile
+            testfile.write_text('text')
+
+        os.chdir(dir2)
+        yield
+
+        os.chdir(cwd)
+
+
+    GAME_FILES = ['Game1', 'Game2', 'Game3',
+                  'Game1.txt', 'Game2.txt', 'Game3.txt']
+
+    @pytest.mark.parametrize('game_name', GAME_FILES)
+    def test_get_path(self, game_name, dir_tree):
+
+        print(os.listdir('.'))
+        for dpath, dirs, files in os.walk('..'):
+            for f in files:
+                print(dpath, '/', f, sep='')
+
+        assert man_path.find_gamefile(game_name)
+
+
+    def test_get_path_abs(self, tmp_path):
+        """Test calling find_game file with an absolute path."""
+
+        dir2 = tmp_path / 'base'
+        dir2.mkdir()
+        dir3 = tmp_path / 'base' / 'GameProps'
+        dir3.mkdir()
+
+        testfile = tmp_path / 'game3.txt'
+        testfile.write_text('text')
+
+        assert man_path.find_gamefile(testfile)
+
+
+    def test_error(self):
+
+        with pytest.raises(FileNotFoundError):
+            man_path.find_gamefile('junk.txt')

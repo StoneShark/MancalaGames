@@ -1242,7 +1242,7 @@ class TestEndClear:
 
         object.__setattr__(game.info, 'goal', 55)
 
-        with pytest.raises(ValueError):
+        with pytest.raises(NotImplementedError):
             end_move._build_eliminate_ended(game)
 
 

@@ -107,7 +107,7 @@ def game_name_to_parts(game_qual):
     parts = len(gname_parts)
     if parts > 2:
         msg = 'Too many parts for game selection. Use game_name::variant_name'
-        raise ValueError(msg)
+        raise gi.UInputError(msg)
     gamename = gname_parts[0]
     variant = gname_parts[1] if parts == 2 else None
 
@@ -116,17 +116,24 @@ def game_name_to_parts(game_qual):
 
 # %% read config files
 
-def convert_from_file(field, value):
+def convert_from_file(where, field, value):
     """Convert configuration values to types corresponding to
     the GameInfo fields. Variations might call this with
-    fields that are not in game info."""
+    fields that are not in game info.
+
+    If a ValueError occurs on the conversion, raise an GameInfoError
+    and suppress the ValueError (from None)."""
 
     if field in NO_CONVERT:
         return value
 
     ftype = GINFO_TYPES.get(field, False)
     if ftype:
-        return ftype(value)
+        try:
+            value = ftype(value)
+        except ValueError:
+            msg = f"""Invalid value {value} for {field.upper()} in {where}."""
+            raise gi.GameInfoError(msg) from None
 
     return value
 
@@ -146,13 +153,13 @@ def read_game(filename):
 
     text = ''.join(lines)
     if len(lines) > MAX_LINES or len(text) > MAX_CHARS:
-        raise ValueError('Input file problem.')
+        raise gi.UInputError('Input file problem.')
 
     game_dict = json.loads(text)
 
     info_dict = game_dict[ckey.GAME_INFO]
     for key in info_dict.keys():
-        info_dict[key] = convert_from_file(key, info_dict[key])
+        info_dict[key] = convert_from_file(filename, key, info_dict[key])
 
     game_dict[ckey.FILENAME] = filename
 
@@ -165,12 +172,12 @@ def update_config_for_variant(game_config, vari_name, param_table=None):
 
     if ckey.VARIANTS not in game_config:
         name = game_config[ckey.GAME_INFO][ckey.NAME]
-        raise ValueError(f'No name variants in {name}.')
+        raise gi.UInputError(f'No named variants in {name}.')
 
     if vari_name not in game_config[ckey.VARIANTS]:
         varis = ', '.join(list(game_config[ckey.VARIANTS].keys()))
         msg = f'Unknown variant selection {vari_name}. Variants are: {varis}.'
-        raise ValueError(msg)
+        raise gi.UInputError(msg)
 
     game_config[ckey.GAME_INFO][ckey.NAME] = qual_game_name(game_config,
                                                             vari_name)
@@ -182,7 +189,7 @@ def update_config_for_variant(game_config, vari_name, param_table=None):
     for vname, fvalue in variant.items():
 
         param = param_table[vname]
-        value = convert_from_file(vname, fvalue)
+        value = convert_from_file('Game Config', vname, fvalue)
         set_config_value(game_config, param.cspec, param.option, value)
 
 
@@ -357,7 +364,7 @@ def get_game_value(game, cspec, option):
         else:
             break
 
-    raise ValueError(f"Could not find value for {cspec} {option}")
+    raise gi.DataError(f"Could not find value for {cspec} {option}")
 
 
 
@@ -429,7 +436,7 @@ class ParamData(dict):
 
                 if param not in self:
                     msg = f"Description without game_params data {param}"
-                    raise ValueError(msg)
+                    raise gi.DataError(msg)
 
             elif del_tags:
                 text += remove_tags(line)
@@ -485,7 +492,7 @@ class ParamData(dict):
         fields = data[0]
         if not all(fname == pfield.name
                    for fname, pfield in zip(fields, dc.fields(Param))):
-            raise ValueError("game_params columns are not as expected")
+            raise gi.DataError("game_params columns are not as expected")
 
         for rec in data[1:]:
             if rec[TAB_IDX] == SKIP_TAB:
@@ -494,11 +501,11 @@ class ParamData(dict):
             opt_name = rec[OPTION_IDX]
             if opt_name in self:
                 msg = f"Duplicate option in game_params {opt_name}."
-                raise ValueError(msg)
+                raise gi.DataError(msg)
 
             for idx in INT_IDXS:
                 if not rec[idx].isdigit():
-                    raise ValueError("Expected int for {opt_name} col {idx}.")
+                    raise gi.DataError("Expected int for {opt_name} col {idx}.")
                 rec[idx] = int(rec[idx])
 
             rec[UI_DEFAULT_IDX] = self.convert_default(rec[UI_DEFAULT_IDX])
@@ -587,7 +594,7 @@ class ConfigData:
     """Read/create configuration data."""
 
     def __init__(self, tk_root=None, name=None):
-        # pylint: disable=bare-except
+        # pylint: disable=broad-exception-caught
 
         pathname = man_path.get_path(INI_FILENAME, no_error=True)
         if not pathname:
@@ -598,7 +605,7 @@ class ConfigData:
             interpolation=configparser.ExtendedInterpolation())
         try:
             self._config.read(pathname, encoding='utf-8')
-        except:
+        except Exception:
             self.create_ini_file()
 
         self.load_game_specific(name)
@@ -784,14 +791,14 @@ def check_disable_animator():
 
     Doing this separately allows it to be checked
     before any Mancala or MancalaUI is created."""
-    # pylint: disable=bare-except
+    # pylint: disable=broad-exception-caught
 
     pathname = man_path.get_path(INI_FILENAME, no_error=True)
     config = configparser.ConfigParser()
 
     try:
         config.read(pathname, encoding='utf-8')
-    except:
+    except Exception:
         return
 
     disable = False

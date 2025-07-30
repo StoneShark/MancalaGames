@@ -5,6 +5,7 @@ Created on Fri Jul 21 10:24:10 2023
 
 import contextlib
 import copy
+import enum
 import os
 import random
 import string
@@ -55,10 +56,35 @@ class TestRemoveTags:
 class TestBasicConstruction:
 
 
-    def test_convert_from_file(self):
-        """A test to cover the call when the param is not in game_info"""
+    def test_convert_from_file_no_convert(self):
+        """Test the no convert path"""
 
-        assert man_config.convert_from_file('holes', 3) == 3
+        val = man_config.convert_from_file('test', 'help_file', 'junk')
+
+        assert isinstance(val, str)
+        assert val == 'junk'
+
+    def test_convert_from_file_enum(self):
+        """Test the conversion to enum"""
+
+        val = man_config.convert_from_file('test', 'round_starter', 3)
+
+        assert isinstance(val, enum.Enum)
+        assert val.value == 3
+
+    def test_convert_from_file_bad(self):
+        """test the ValueError conversion to GameInfoError"""
+
+        with pytest.raises(gi.GameInfoError):
+            man_config.convert_from_file('test', 'round_starter', 'not_int')
+
+    def test_convert_from_file_not_info(self):
+        """test the field not in game_info"""
+
+        val = man_config.convert_from_file('test', 'holes', 6)
+
+        assert isinstance(val, int)
+        assert val == 6
 
 
     @pytest.fixture
@@ -199,7 +225,7 @@ class TestRejectFile:
         filename = os.path.join(tmp_path,'config.txt')
         with open(filename, 'w', encoding='utf-8') as file:
             print(''.join(random.choices(string.ascii_lowercase +
-                             string.digits, k=3000)),
+                                         string.digits, k=5000)),
                   file=file)
         return filename
 
@@ -211,7 +237,7 @@ class TestRejectFile:
         with open(filename, 'w', encoding='utf-8') as file:
             for _ in range(200):
                 print(''.join(random.choices(string.ascii_lowercase +
-                                 string.digits, k=80)),
+                                             string.digits, k=80)),
                       file=file)
         return filename
 
@@ -220,7 +246,7 @@ class TestRejectFile:
     def test_big_files(self, file, request):
 
         ffixt = request.getfixturevalue(file.__name__)
-        with pytest.raises(ValueError):
+        with pytest.raises(gi.UInputError):
             man_config.read_game(ffixt)
 
 
@@ -481,20 +507,21 @@ class TestGetGameValue:
 
              ('capt_on', 'game_info _', list, no_err([2])),
              ('goal', 'game_info _', gi.Goal, no_err(gi.Goal.TERRITORY)),
-             ('child_type', 'game_info _', gi.ChildType, no_err(gi.ChildType.NORMAL)),
+             ('child_type', 'game_info _', gi.ChildType,
+              no_err(gi.ChildType.NORMAL)),
 
              ('info', '_', gi.GameInfo, no_err(None)),  # don't test the value
 
              ('ai_params', 'player _', int, pytest.raises(TypeError)),
-             ('missing', 'game_info junk', int, pytest.raises(ValueError)),
+             ('missing', 'game_info junk', int, pytest.raises(gi.DataError)),
 
              # loop not entered
-             ('info', '', gi.GameInfo,  pytest.raises(ValueError)),
+             ('info', '', gi.GameInfo,  pytest.raises(gi.DataError)),
 
              # the loop should exit by normal means, then an error is gen'ed
              # child_cvt is patched in the lookup dict below
              ('missing', 'game_info child_cvt', gi.GameInfo,
-              pytest.raises(ValueError)),
+              pytest.raises(gi.DataError)),
              ]
 
     @pytest.mark.parametrize('option, cspec, etype, expected', CASES)
@@ -544,7 +571,7 @@ class TestVariantQualNames:
         assert gname == 'my_game_name'
         assert vname == 'my_variant'
 
-        with pytest.raises(ValueError):
+        with pytest.raises(gi.UInputError):
             man_config.game_name_to_parts('gname::vname::otherstuff')
 
 
@@ -585,7 +612,7 @@ class TestLoadVariant:
                              ids=ecases.keys())
     def test_exceptions(self, game_dict, variant):
 
-        with pytest.raises(ValueError):
+        with pytest.raises(gi.UInputError):
             man_config.game_from_config(game_dict, variant)
 
 
@@ -652,7 +679,7 @@ class TestParamDict:
         mocker.patch.object(man_path, 'get_path', test_files)
 
 
-        with pytest.raises(ValueError):
+        with pytest.raises(gi.DataError):
             man_config.ParamData()
 
 
@@ -683,7 +710,7 @@ Capture,evens,Capture Max,game_info _,104,int,0,2,0
         mocker.patch.object(man_path, 'get_path', test_files)
 
 
-        with pytest.raises(ValueError):
+        with pytest.raises(gi.DataError):
             man_config.ParamData()
 
 
@@ -713,7 +740,7 @@ Capture,evens,Basic Capture,,0,label,0,0,notint
         mocker.patch.object(man_path, 'get_path', test_files)
 
 
-        with pytest.raises(ValueError):
+        with pytest.raises(gi.DataError):
             man_config.ParamData()
 
 
@@ -738,7 +765,7 @@ Capture,evens,Basic Capture,,0,label,0,0,notint
 
         mocker.patch.object(man_path, 'get_path', test_files)
 
-        with pytest.raises(ValueError):
+        with pytest.raises(gi.DataError):
             man_config.ParamData()
 
 

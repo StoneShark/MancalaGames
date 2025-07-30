@@ -387,7 +387,10 @@ class MonteCarloTS(ai_interface.AiAlgorithmIf):
 
     def set_params(self, *args):
         """Set the algorithms parameters in this order:
-            bias, new_nodes, nbr_pouts"""
+         bias, new_nodes, nbr_pouts.
+
+         Errors are raised as TypeErrors because the rules
+         should have caught input file problems."""
 
         self.bias = BIAS
         self.new_nodes = NBR_NODES

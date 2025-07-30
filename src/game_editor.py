@@ -20,10 +20,8 @@ Created on Thu Mar 30 13:43:39 2023
 import functools as ft
 import json
 import textwrap
-import traceback
 import tkinter as tk
 from tkinter import ttk
-import warnings
 
 import ai_player
 import animator
@@ -35,6 +33,7 @@ import mg_config
 import param_consts as pc
 import param_mixin
 import ui_utils
+import variants
 
 
 # %%  Constants
@@ -87,9 +86,7 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
         self.master.protocol("WM_DELETE_WINDOW", self._check_destroy)
         self.pack(expand=True, fill=tk.BOTH)
 
-        self.master.report_callback_exception = self._exception_callback
-        warnings.showwarning = ft.partial(self._warning, self)
-        warnings.simplefilter('always', UserWarning)
+        ui_utils.do_error_popups(self.master)
 
         ui_utils.setup_styles(master)
         self._create_menus()
@@ -156,20 +153,6 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
 
         self._cleanup()
         self.master.destroy()
-
-
-    @staticmethod
-    def _exception_callback(*args):
-        """Support debugging by printing the play_log and the traceback."""
-
-        traceback.print_exception(args[0], args[1], args[2])
-
-
-    @staticmethod
-    def _warning(parent, message, *_):
-        """Notify user of warnings during parameter test."""
-
-        ui_utils.showwarning(parent, 'Parameter Warning', str(message))
 
 
     def _update_title(self):
@@ -416,6 +399,8 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
         self._make_config_from_tk()
 
         self.game = man_config.game_from_config(self.config.game_config)
+        variants.test_variation_config(self.config.game_config,
+                                       no_var_error=False)
         self.ai_player = ai_player.AiPlayer(self.game,
                                             self.config.game_config[ckey.PLAYER])
 
@@ -504,9 +489,8 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
                 message = [f"""JSON Encode Error in {key} it cannot be
                            converted to a proper dictionary:""",
                            str(error),
-                           """Would you like to save the values as strings?
-                           It cannot be used, but will preserve
-                           your work."""]
+                           """Would you like to save the values as strings?""",
+                           """It cannot be used, but will preserve your work."""]
                 return ui_utils.ask_popup(self,
                                           'JSON Encode Error', message,
                                           ui_utils.OKCANCEL)

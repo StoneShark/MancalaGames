@@ -70,7 +70,7 @@ class AiPlayerIf(abc.ABC):
         _ = player_dict
 
         if not isinstance(game, AiGameIf):
-            raise ValueError("game isn't of type AiGameIf")
+            raise TypeError("game isn't of type AiGameIf")
         self.game = game
 
     @property
@@ -108,9 +108,9 @@ class AiAlgorithmIf(abc.ABC):
     def __init__(self, game, player):
         """Save game for future use."""
         if not isinstance(game, AiGameIf):
-            raise ValueError("game isn't of type AiGameIf")
+            raise TypeError("game isn't of type AiGameIf")
         if not isinstance(player, AiPlayerIf):
-            raise ValueError("scorer isn't of type AiPlayerConfIf")
+            raise TypeError("scorer isn't of type AiPlayerConfIf")
         self.game = game
         self.player = player
 

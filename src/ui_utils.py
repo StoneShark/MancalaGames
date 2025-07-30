@@ -6,9 +6,11 @@ Created on Sun Mar  9 07:04:43 2025
 
 import functools as ft
 import json
+import traceback
 import tkinter as tk
 import tkinter.simpledialog as tksimpledialog
 from tkinter import ttk
+import warnings
 import webbrowser
 
 import game_constants as gconsts
@@ -470,6 +472,77 @@ def get_nbr_seeds(master, max_seeds, font):
     return obj.value
 
 
+class ExceptPopup(tksimpledialog.Dialog):
+    """Popup the exception window with options to
+        1. save the game log (if logsave)
+        2. copy the error data to the clip board"""
+
+    def __init__(self, root, title, message, traceback, copy_data, param_data):
+
+        self.root = root
+        self.msg = fmt.fmsg(message, wide=True)
+        self.trace = traceback
+        self.copy_data = copy_data
+        self.param_data = param_data
+
+        super().__init__(root, title)
+
+
+    def body(self, master):
+        """Put the message in a label in the master and ring the bell."""
+
+        self.resizable(False, False)
+        master.bell()
+        label = tk.Label(master, text=self.msg,
+                         anchor='nw', justify=tk.LEFT, padx=5, pady=5)
+        label.pack(side=tk.TOP)
+
+        tk.Label(master, text=self.trace, font='TkFixedFont',
+                 anchor='nw', justify=tk.LEFT, padx=5, pady=5
+                 ).pack(side=tk.TOP)
+
+        return label
+
+
+    def buttonbox(self):
+        """Create save log, copy error, and Ok buttons.
+        Bind return to Ok."""
+
+        bframe = tk.Frame(self, borderwidth=20)
+        bframe.pack()
+
+        tk.Button(bframe, text='Copy Error Data', width=12,
+                  command=self.load_clipboard
+                  ).pack(side=tk.LEFT, padx=5, pady=5)
+
+        if self.param_data:
+            tk.Button(bframe, text='Save Game Log', width=12,
+                      command=self.save_log
+                      ).pack(side=tk.LEFT, padx=5, pady=5)
+
+        tk.Button(bframe, text='Ok', width=12,
+                  command=self.ok, default=tk.ACTIVE
+                  ).pack(side=tk.RIGHT, padx=5, pady=5)
+
+        self.bind("<Return>", self.ok)
+        self.bind("<Escape>", self.cancel)
+
+
+    def save_log(self):
+        """Save the game log."""
+
+        game_log.save(self.param_data)
+
+
+    def load_clipboard(self):
+        """Put the copy data onto the clipboard."""
+
+        self.master.clipboard_clear()
+        self.master.clipboard_append(self.copy_data)
+
+
+# %%  MessageDialogs
+
 # values for buttons
 OK = 1               # just sayin'
 OKCANCEL = 2        # confirm user wants to do requested action
@@ -685,14 +758,99 @@ class ReportError:
         if exc_type is None:
             return True
 
-        if exc_type in (gconsts.GameConstsError,
+        wtitle = 'Mancala Games Error'
+        if exc_type in (NotImplementedError,
+                        gconsts.GameConstsError,
                         gi.GameInfoError,
-                        NotImplementedError,
-                        json.decoder.JSONDecodeError):
+                        gi.UInputError):
+            wtitle = 'Parameter Error'
 
-            self.error = True
-            message = exc_type.__name__ + ':  ' + str(exc_value)
-            showerror(self.frame, 'Parameter Error', message)
-            return True
+        elif exc_type == FileNotFoundError:
+            wtitle = 'File Not Found'
 
-        return False
+        elif exc_type == json.decoder.JSONDecodeError:
+            wtitle = 'JSON Format Error'
+
+        elif exc_type == gi.GameVariantError:
+            wtitle = 'Variations Error'
+
+        else:
+            # the exception should be propagated
+            return False
+
+        self.error = True
+        message = exc_type.__name__ + ':  ' + str(exc_value)
+        showerror(self.frame, wtitle, message)
+        return True
+
+
+# %% trap warnings/excpetions outside ReportError
+
+
+GITHUBLINK = 'https://github.com/StoneShark/MancalaGames/issues'
+
+# pylint:  disable=invalid-name
+app_frame = game_ui = None
+
+
+def exception_callback(*args):
+    """Support debugging by printing the play_log and the traceback."""
+
+    etype, evalue, trace, *_ = args
+    tb_lst = traceback.format_exception(etype, evalue, trace)
+
+    # dump game for unknown errors
+    if etype != gi.DataError and game_ui:
+        game_log.dump()
+
+    # output to console, though it might not be there
+    for line in tb_lst:
+        print(line, end='')
+
+    if not app_frame:
+        return
+
+    if etype == gi.DataError:
+        title = 'Data Error'
+        message = ["""A data error was detected in a file that should
+                   not be edited by players.""",
+                   f"""If you have not edited the parameter configuration
+                   files, this might be a software bug; consider reporting
+                   it at {GITHUBLINK}"""]
+
+    else:
+        title = 'Internal Error'
+        message = ["An internal error occurred.",
+                   f"""Reporting this error at {GITHUBLINK}
+                   would help improve Mancala Games.
+                   Include a screen shot of this popup and
+                   any other information you think would be valuable.""",
+                   """This error could lead to unstable behavior,
+                   you may wish to save any work and restart."""]
+
+    trace = ''.join(tb_lst)
+    copy_data = ''.join([GITHUBLINK, '\n\n'] + tb_lst)
+    param_data = game_ui.game.params_str() if game_ui else None
+
+    ExceptPopup(app_frame, title, message, trace, copy_data, param_data)
+
+
+def warning_callback(message, *_):
+    """Notify user of warnings during parameter test."""
+
+    showwarning(app_frame, 'Parameter Warning', str(message))
+
+
+def do_error_popups(root, game_ui_in=None):
+    """Save the app_frame and record the warning and exception call backs"""
+
+    global app_frame
+    global game_ui
+
+    app_frame = root
+    game_ui = game_ui_in
+
+    app_frame.report_callback_exception = exception_callback
+
+    warnings.showwarning = warning_callback
+    warnings.simplefilter('always', UserWarning)

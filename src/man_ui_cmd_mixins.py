@@ -765,50 +765,50 @@ class DebugMenuMixin:
     def dbg_add_menu(self, menubar):
         """Add the debug menu."""
 
-        if man_config.CONFIG.get_bool('debug_menu'):
+        if not man_config.CONFIG.get_bool('debug_menu'):
+            return
 
-            debugmenu = tk.Menu(menubar, name=DEBUG)
-            debugmenu.add_command(
-                label='Print Params',
-                command=lambda: print(self.game.params_str()))
-            debugmenu.add_command(label='Print Consts',
-                                  command=lambda: print(self.game.cts))
-            pmenu = tk.Menu(menubar)
-            pmenu.add_command(label='Print All',
-                                  command=ft.partial(self._print_deco, ALL))
+        debugmenu = tk.Menu(menubar, name=DEBUG)
+        debugmenu.add_command(label='Print Params',
+                              command=lambda: print(self.game.params_str()))
+        debugmenu.add_command(label='Print Consts',
+                              command=lambda: print(self.game.cts))
+        pmenu = tk.Menu(menubar)
+        pmenu.add_command(label='Print All',
+                          command=ft.partial(self._print_deco, ALL))
 
-            pmenu.add_separator()
-            for vname in sorted(vars(self.game.deco).keys()):
-                name = vname.title()
-                pmenu.add_command(label=f"Print {name}",
-                                  command=ft.partial(self._print_deco, vname))
-            debugmenu.add_cascade(label='Print Decos', menu=pmenu)
-            debugmenu.add_command(label='Print State',
-                                  command=lambda: print(self.game.state))
-            debugmenu.add_command(label='Print Inhibitor',
-                                  command=lambda: print(self.game.inhibitor))
-            debugmenu.add_command(label='Print Round Tally',
-                                  command=lambda: print(self.game.rtally))
-            debugmenu.add_command(label='Print mdata',
-                                  command=lambda: print(self.game.mdata))
-            debugmenu.add_separator()
-            debugmenu.add_command(label='Print AI Player',
-                                  command=lambda: print(self.player))
-            debugmenu.add_command(label='Print History',
-                                  command=lambda: print(self.history))
-            debugmenu.add_command(label='Force UI Active',
-                                  command=ft.partial(self.set_ui_active, True))
+        pmenu.add_separator()
+        for vname in sorted(vars(self.game.deco).keys()):
+            name = vname.title()
+            pmenu.add_command(label=f"Print {name}",
+                              command=ft.partial(self._print_deco, vname))
+        debugmenu.add_cascade(label='Print Decos', menu=pmenu)
+        debugmenu.add_command(label='Print State',
+                              command=lambda: print(self.game.state))
+        debugmenu.add_command(label='Print Inhibitor',
+                              command=lambda: print(self.game.inhibitor))
+        debugmenu.add_command(label='Print Round Tally',
+                              command=lambda: print(self.game.rtally))
+        debugmenu.add_command(label='Print mdata',
+                              command=lambda: print(self.game.mdata))
+        debugmenu.add_separator()
+        debugmenu.add_command(label='Print AI Player',
+                              command=lambda: print(self.player))
+        debugmenu.add_command(label='Print History',
+                              command=lambda: print(self.history))
+        debugmenu.add_command(label='Force UI Active',
+                              command=ft.partial(self.set_ui_active, True))
 
-            debugmenu.add_separator()
-            debugmenu.add_command(
-                label='Swap Sides',
-                command=lambda: self.move_swap_sides(force=True))
-            debugmenu.add_command(
-                label='Toggle Anim Print',
-                command=lambda: setattr(animator,
-                                        'print_steps',
-                                        not animator.print_steps))
-            menubar.add_cascade(label='Debug', menu=debugmenu)
+        debugmenu.add_separator()
+        debugmenu.add_command(
+            label='Swap Sides',
+            command=lambda: self.move_swap_sides(force=True))
+        debugmenu.add_command(
+            label='Toggle Anim Print',
+            command=lambda: setattr(animator,
+                                    'print_steps',
+                                    not animator.print_steps))
+        menubar.add_cascade(label='Debug', menu=debugmenu)
 
 
     def _print_deco(self, deco):

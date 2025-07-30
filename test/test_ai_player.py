@@ -102,7 +102,7 @@ class TestConstruction:
         assert sum(vars(player.sc_params).values()) == 8
 
         pdict = {'algorithm': 'junky_algo'}
-        with pytest.raises(KeyError):
+        with pytest.raises(gi.UInputError):
             player = ai_player.AiPlayer(game, pdict)
 
 
@@ -604,7 +604,7 @@ class TestAiIf:
                 def clear_history(self):
                     pass
 
-        with pytest.raises(ValueError):
+        with pytest.raises(TypeError):
             Tplr(None, None)
 
         class Talg(ai_interface.AiAlgorithmIf):
@@ -625,7 +625,7 @@ class TestAiIf:
             def clear_history(self):
                 pass
 
-        with pytest.raises(ValueError):
+        with pytest.raises(TypeError):
             Talg(None, None)
 
         game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
@@ -635,5 +635,5 @@ class TestAiIf:
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
 
-        with pytest.raises(ValueError):
+        with pytest.raises(TypeError):
             Talg(game, None)
