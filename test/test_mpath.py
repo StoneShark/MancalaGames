@@ -13,6 +13,18 @@ from context import man_path
 
 TEST_COVERS = ['src\\man_path.py']
 
+
+class TestGameFiles:
+
+    def test_game_files(self, mocker):
+
+        mobj = mocker.patch('os.listdir')
+        mobj.return_value = ['Game1.txt', 'Game2.txt', 'Game3.txt',
+                             '_all_params.txt', 'data.csv']
+
+        assert man_path.game_files() == ['Game1.txt', 'Game2.txt', 'Game3.txt']
+
+
 class TestGetPath:
 
     @pytest.fixture(params=['testfile.txt',
@@ -110,3 +122,8 @@ class TestFindGameFile:
 
         with pytest.raises(FileNotFoundError):
             man_path.find_gamefile('junk.txt')
+
+
+    def test_no_error(self, tmp_path):
+
+        assert man_path.find_gamefile('junk.txt', no_error=True) is False

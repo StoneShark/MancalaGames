@@ -21,12 +21,12 @@ Created on Sun Jul 23 11:29:10 2023
 @author: Ann"""
 
 import atexit
-import os
 import random
 
 import pytest
 pytestmark = pytest.mark.integtest
 
+from context import man_path
 from context import game_logger
 
 
@@ -34,12 +34,7 @@ from context import game_logger
 # pytest.skip(reason="Random play. Heuristic eval.", allow_module_level=True)
 
 
-PATH = './GameProps/'
-FILES = os.listdir(PATH)
-
-BAD_CFG = '_all_params.txt'
-if BAD_CFG in FILES:
-    FILES.remove(BAD_CFG)
+FILES = man_path.game_files()
 
 
 # games that generally fail and the reason

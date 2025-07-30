@@ -12,7 +12,6 @@ Warngings are set to be test failures.
 Created on Sun Jul 23 11:29:10 2023
 @author: Ann"""
 
-import os
 
 import pytest
 
@@ -25,17 +24,11 @@ from context import ai_player
 from context import cfg_keys as ckey
 from context import game_constants as gconsts
 from context import man_config
+from context import man_path
 from context import variants
 
 
-PATH = './GameProps/'
-FILES = os.listdir(PATH)
-
-
-BAD_CFG = '_all_params.txt'
-if BAD_CFG in FILES:
-    FILES.remove(BAD_CFG)
-
+FILES = man_path.game_files()
 PARAM_DICT = man_config.ParamData(no_descs=True)
 
 
@@ -60,7 +53,7 @@ def test_nonrule_checks(request, filename):
     if request.config.cache.get(key_name, False):
         pytest.xfail("Game cfg error (again)")
 
-    game_dict = man_config.read_game(PATH + filename)
+    game_dict = man_config.read_game(man_path.GAMEPATH + filename)
 
     # status is used for indevelopment files, not releases
     assert "status" not in game_dict.keys()
@@ -74,4 +67,4 @@ def test_nonrule_checks(request, filename):
 def test_bad_file():
 
     with pytest.raises(gconsts.GameConstsError):
-        man_config.make_game(PATH + BAD_CFG)
+        man_config.make_game(man_path.GAMEPATH + man_path.EX_GAME)

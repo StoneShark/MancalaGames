@@ -34,7 +34,6 @@ test gracefully.
 Created on Sun Jul 23 11:29:10 2023
 @author: Ann"""
 
-import os
 import random
 import time
 
@@ -44,6 +43,7 @@ from context import ai_player
 from context import cfg_keys as ckey
 from context import game_info as gi
 from context import game_logger
+from context import man_path
 
 # limit the length of these tests, exceeding TESTLIMIT is a test failure
 
@@ -51,14 +51,7 @@ NBR_MOVES = 50
 SEC_PER_MOVE = 2
 TESTLIMIT = NBR_MOVES * SEC_PER_MOVE
 
-
-PATH = './GameProps/'
-FILES = os.listdir(PATH)
-
-BAD_CFG = '_all_params.txt'
-if BAD_CFG in FILES:
-    FILES.remove(BAD_CFG)
-
+FILES = man_path.game_files()
 
 CONFIGED = 'configed'
 

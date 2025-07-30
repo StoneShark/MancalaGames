@@ -189,8 +189,6 @@ class GameConfig:
             return False
 
         self._dir, self.filename = os.path.split(filename)
-        os.chdir(self._dir)
-
         return self._load_file()
 
 
@@ -203,7 +201,8 @@ class GameConfig:
 
         build_context = ui_utils.ReportError(self._master)
         with build_context:
-            self.loaded_config = man_config.read_game(self.filename)
+            self.loaded_config = man_config.read_game(
+                                    os.path.join(self._dir, self.filename))
 
         if build_context.error:
             return False
@@ -276,8 +275,7 @@ class GameConfig:
 
     def save(self, askfile=False):
         """Save the game configuration to a file.
-        Preserve any tags/comments that were in a loaded config.
-        Set the working dir to the selected dir."""
+        Preserve any tags/comments that were in a loaded config."""
 
         if self.loaded_config:
             for tag in self.loaded_config.keys():
@@ -305,7 +303,6 @@ class GameConfig:
                 return
 
             self._dir, self.filename = os.path.split(filename)
-            os.chdir(self._dir)
 
         self._clean_up_for_save()
 

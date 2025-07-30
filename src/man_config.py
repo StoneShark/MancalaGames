@@ -196,11 +196,10 @@ def update_config_for_variant(game_config, vari_name, param_table=None):
 def game_from_config(game_dict, variant=None, param_table=None):
     """Return a game from a game configuration dictionary."""
 
-    if variant:
+    if variant and variant != game_dict[ckey.GAME_INFO][ckey.NAME]:
         update_config_for_variant(game_dict, variant, param_table)
 
-    game_class = game_dict[ckey.GAME_CLASS] \
-        if ckey.GAME_CLASS in game_dict else 'Mancala'
+    game_class = game_dict.get(ckey.GAME_CLASS, 'Mancala')
 
     game_consts = gconsts.GameConsts(**game_dict[ckey.GAME_CONSTANTS])
     info_dict = game_dict[ckey.GAME_INFO]

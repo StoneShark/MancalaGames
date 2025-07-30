@@ -14,7 +14,6 @@ import dataclasses as dc
 import enum
 import functools as ft
 import itertools as it
-import os
 import random
 import textwrap
 import tkinter as tk
@@ -23,6 +22,7 @@ from tkinter import ttk
 import ai_player
 import animator
 import cfg_keys as ckey
+import favorites
 import game_info as gi
 import man_config
 import man_path
@@ -34,14 +34,11 @@ import variants
 
 # %% constants
 
-DIR = 'GameProps'
-PATH = man_path.get_path(DIR) + '/'
-
-TXTPART = '.txt'
-EXFILE = '_all_params.txt'
+PATH = man_path.get_path('GameProps') + '/'
 MANCALA = 'Mancala'
 
 COLON = ':'
+STAR = '🟊'
 DESC_WIDTH = 72
 COL_WIDTH = 30
 
@@ -51,6 +48,8 @@ LARGER = 7
 LARGEST = 9
 
 PARAMS = man_config.ParamData(del_tags=False, no_descs=True)
+FAVS = favorites.GameFavorites()
+
 
 GCLASS = {'Mancala': lambda gclass: gclass == MANCALA,
           'Other': lambda gclass: gclass != MANCALA}
@@ -60,6 +59,7 @@ SIZES = {'Tiny (< 4)': lambda holes: holes < TINY,
          'Medium (6)': lambda holes: holes == SMALL,
          'Larger (7 - 8)': lambda holes: LARGER <= holes < LARGEST,
          'Largest (>= 9)': lambda holes: holes >= LARGEST}
+
 
 GOALS = {'Max Seeds': lambda goal: goal == gi.Goal.MAX_SEEDS,
          'Max Seeds Tally': lambda goal: goal in (gi.Goal.RND_SEED_COUNT,
@@ -181,6 +181,14 @@ GNOTES = {
                                       and 'Davies' not in gdict.get('rules', '')))
 
           }
+
+RATINGS = {STAR * 1: lambda gname: FAVS.rating(gname) == 1,
+           STAR * 2: lambda gname: FAVS.rating(gname) == 2,
+           STAR * 3: lambda gname: FAVS.rating(gname) == 3,
+           STAR * 4: lambda gname: FAVS.rating(gname) == 4,
+           STAR * 5: lambda gname: FAVS.rating(gname) >= 5,
+           'Not Rated': lambda gname: FAVS.rating(gname) == 0,
+           }
 
 # %% GameFilters frame & classes
 
@@ -416,11 +424,12 @@ fcol = ui_utils.Counter()  # count: increments; value: no increment
 # so they are easier to move around
 FILTERS = [
     FilterDesc('Game Class', DictFilter, GCLASS, ckey.GAME_CLASS, fcol.count),
-    FilterDesc('Board Size', DictFilter, SIZES, ckey.HOLES, fcol.value),
-
-    FilterDesc('Goal', DictFilter, GOALS, ckey.GOAL, fcol.count),
     FilterDesc('AI Player', VListFilter, list(ai_player.ALGORITHM_DICT.keys()),
                ckey.ALGORITHM, fcol.value),
+    FilterDesc('Ratings', DictFilter, RATINGS, ckey.NAME, fcol.value),
+
+    FilterDesc('Goal', DictFilter, GOALS, ckey.GOAL, fcol.count),
+    FilterDesc('Board Size', DictFilter, SIZES, ckey.HOLES, fcol.value),
 
     FilterDesc('Lap Type', EnumFilter, gi.LapSower, ckey.MLAPS, fcol.count),
     FilterDesc('Sow Rule', DictFilter, SOWRS, ckey.SOW_RULE, fcol.value),
@@ -531,7 +540,7 @@ class SelectList(ttk.Labelframe):
         self.game_list.pack(side=tk.LEFT, expand=tk.TRUE, fill=tk.BOTH)
 
         self.game_list.bind('<<TreeviewSelect>>', self.select_game)
-        self.game_list.bind('<Button-3>', self.select_variant)
+        self.game_list.bind('<Button-3>', self.right_click)
         self.game_list.bind('<Double-Button-1>', self.play_game)
 
 
@@ -586,24 +595,37 @@ class SelectList(ttk.Labelframe):
         self.game_list.see(gname)
 
 
-    def select_variant(self, event):
-        """Allow selection of a variant to play."""
+    def right_click(self, event):
+        """Right click on a game, do popup."""
 
         gamename = self.game_list.identify_row(event.y)
         if not gamename:
             return
 
         self.game_list.selection_set(gamename)
-        vnames = self.parent.get_variant_names(gamename)
-        if not vnames:
-            return
 
         menubar = tk.Menu(self)
-        for vname in vnames:
-            menubar.add_command(label=vname,
-                                command=ft.partial(self.parent.play_variant,
-                                                   gamename, vname))
 
+        vnames = self.parent.get_variant_names(gamename)
+        if vnames:
+
+            varimenu = tk.Menu(menubar)
+            for vname in vnames:
+                varimenu.add_command(label=vname,
+                                     command=ft.partial(self.parent.play_variant,
+                                                        gamename, vname))
+            menubar.add_cascade(label='Play Variant', menu=varimenu)
+
+        ratemenu = tk.Menu(menubar)
+        for rating in range(1, 6):
+            ratemenu.add_command(label=STAR * rating,
+                                 command=ft.partial(self.parent.set_rating,
+                                                    rating))
+        ratemenu.add_command(label='Clear',
+                             command=ft.partial(self.parent.set_rating, 0))
+        menubar.add_cascade(label='Rate Game', menu=ratemenu)
+
+        menubar.add_command(label='Edit...', command=self.parent.edit_game)
         menubar.post(event.x_root, event.y_root)
 
 
@@ -825,6 +847,11 @@ class AboutPane(ttk.Labelframe):
                 dtext += self.format_para(key.title() + ':  ' + text)
                 dtext += '\n'
 
+        rating = FAVS.rating(game_name)
+        rtext = (STAR * rating) if rating else 'None'
+        dtext += '\n'
+        dtext += 'Rating:  ' + rtext
+
         self.set_text(game_name, dtext)
 
 
@@ -891,10 +918,7 @@ class GameChooser(ttk.Frame):
         create a dictionary of game name and about text."""
 
         self.all_games = {}
-        for file in os.listdir(PATH):
-
-            if file[-4:] != TXTPART or file == EXFILE:
-                continue
+        for file in man_path.game_files():
 
             build_context = ui_utils.ReportError(self)
             with build_context:
@@ -930,16 +954,25 @@ class GameChooser(ttk.Frame):
         menubar = tk.Menu(self.master)
         self.master.config(menu=menubar)
 
-        playmenu = tk.Menu(menubar)
-        playmenu.add_command(label='Play...', command=self.play_game,
+        gamemenu = tk.Menu(menubar)
+        gamemenu.add_command(label='Play...', command=self.play_game,
                              accelerator='Ctrl-p')
-        playmenu.add_command(label='Edit...', command=self.edit_game,
+        gamemenu.add_command(label='Edit...', command=self.edit_game,
                              accelerator='Ctrl-Shft-E')
-        playmenu.add_separator()
-        playmenu.add_command(label='Random', command=self.select_random,
+
+        ratemenu = tk.Menu(menubar)
+        for rating in range(1, 6):
+            ratemenu.add_command(label=STAR * rating,
+                                 command=ft.partial(self.set_rating, rating))
+        ratemenu.add_command(label='Clear',
+                             command=ft.partial(self.set_rating, 0))
+        gamemenu.add_cascade(label='Rate Game', menu=ratemenu)
+
+        gamemenu.add_separator()
+        gamemenu.add_command(label='Random Game', command=self.select_random,
                              accelerator='Ctrl-r')
 
-        menubar.add_cascade(label='Play', menu=playmenu)
+        menubar.add_cascade(label='Game', menu=gamemenu)
 
         filtmenu = tk.Menu(menubar)
         filtmenu.add_command(label='Show All',
@@ -981,14 +1014,20 @@ class GameChooser(ttk.Frame):
         self.selected = game_name
 
 
+    def do_select(self, game_name):
+        """Select a game that might not be visible.
+        Used for select_random and select from the editor."""
+
+        self.select_list.select(game_name)
+        self.select_game(game_name)
+
+
     def select_random(self, _=None):
         """Select a random game from the list of games in
         the game tree. Just select it, the user determine
         if they want to play it first."""
 
-        random_game = random.choice(self.games)
-        self.select_list.select(random_game)
-        self.select_game(random_game)
+        self.do_select(random.choice(self.games))
 
 
     def filter_games(self):
@@ -1007,22 +1046,42 @@ class GameChooser(ttk.Frame):
             self.selected = ''
 
 
-    def _build_game_steps(self, game_dict, variant=None):
-        """Do the steps to verify and build the game."""
+    def set_rating(self, rating):
+        """Set the rating for the game and reselect it to
+        update the description."""
 
+        if not self.selected:
+            return
+
+        FAVS.rate_game(self.selected, rating)
+        self.select_game(self.selected)
+
+
+    def _build_game_steps(self, game_dict, variant=None):
+        """Do the steps to verify and build the game.
+        If successful, return the game_ui."""
+
+        variants.test_variation_config(game_dict, no_var_error=False)
         game = man_config.game_from_config(game_dict, variant, PARAMS)
         player_dict = game_dict[ckey.PLAYER]
         game.filename = game_dict[ckey.FILENAME]
-        variants.test_variation_config(game_dict, no_var_error=False)
-        mancala_ui.MancalaUI(game, player_dict, root_ui=self.master)
+        return mancala_ui.MancalaUI(game, player_dict, root_ui=self.master)
 
 
-    def _build_game(self, game_dict, variant=None):
-        """Build the game catching any build errors.
-        If there was an error, don't need to do anything different."""
+    def _build_and_play_game(self, game_dict, variant=None):
+        """Build the game catching any build errors and play it.
 
-        with ui_utils.ReportError(self):
-            self._build_game_steps(game_dict, variant)
+        If there were no errors, allow the game to be played
+        in a modal window."""
+
+        build_context = ui_utils.ReportError(self)
+        with build_context:
+            game_ui = self._build_game_steps(game_dict, variant)
+
+        if not build_context.error:
+            game_ui.wait_visibility()
+            game_ui.grab_set()
+            game_ui.wait_window()
 
 
     def play_game(self, _=None):
@@ -1032,7 +1091,7 @@ class GameChooser(ttk.Frame):
             return
 
         game_dict = self.all_games[self.selected]
-        self._build_game(game_dict)
+        self._build_and_play_game(game_dict)
 
 
     def play_variant(self, gamename, variant):
@@ -1041,7 +1100,7 @@ class GameChooser(ttk.Frame):
         deep copy of the one in the all_games dict."""
 
         game_dict = copy.deepcopy(self.all_games[gamename])
-        self._build_game(game_dict, variant)
+        self._build_and_play_game(game_dict, variant)
 
 
     def edit_game(self, _=None):
@@ -1062,7 +1121,6 @@ class GameChooser(ttk.Frame):
         if animator.animator:
             del animator.animator
         self._key_bindings(active=False)
-        # TODO need to destory a game being played!
 
         filename = self.all_games[self.selected]['filename']
         man_games = self.editor_class(self.master, GameChooser)

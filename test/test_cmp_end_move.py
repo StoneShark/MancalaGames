@@ -15,7 +15,6 @@ Created on Tue Oct 15 13:53:14 2024
 # %% imports
 
 import collections
-import os
 
 import pytest
 
@@ -23,6 +22,7 @@ from context import end_move_decos as emd
 from context import end_move_rounds as emr
 from context import game_info as gi
 from context import mancala
+from context import man_path
 
 import utils
 
@@ -31,13 +31,7 @@ pytestmark = [pytest.mark.integtest]
 
 # %% constants
 
-PATH = './GameProps/'
-FILES = os.listdir(PATH)
-
-
-BAD_CFG = '_all_params.txt'
-if BAD_CFG in FILES:
-    FILES.remove(BAD_CFG)
+FILES = man_path.game_files()
 
 
 N = None

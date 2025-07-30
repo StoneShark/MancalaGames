@@ -100,14 +100,20 @@ Games can be played with the currently define parameters.
 a mancala configuration file. Usage to play Wari (for example):
 <pre>
      play.exe Wari
-</pre>This method can be used to create a shortcut to startup your favorite game.
-
+</pre>This script can be used to create a shortcut to startup your favorite game:
+create a short-cut for play.exe, rename it to the game you want the short-cut to start,
+and edit the properties of the shortcut by adding the game name (ascii filename)
+after the target. A double-click on the shortcut will now directly start the game.
 </ol>
+
+<p>Swapping between the chooser (play_mancala) and the editor (man_game_editor) is
+supported via the Game menu for both applications or via right-click menu on a game name
+in the chooser's Game List.
 
 <p>Each of these can also be started directly from the python source
 (in the src directory).
 Some operating systems support a double click to start the file.
-Other would require a command such as:
+Others would require a command such as:
 <pre>
 	python play_mancala.pyw
 </pre>
@@ -485,21 +491,18 @@ Logs may be saved during or at the end of each game.
 If play_mancala.py is run directly via the python command from a console
 window, Live Log is supported.
 
-<p>Warning: the main Play Manacala window is left active while the game is
-being played. Starting a second game is not recommended (there are a small number
-of global variables).
-
 <h3>Non-overlapping Filters</h3>
 <p>The non-overlapping sets filters include:
-<ul><li>Game <a href="game_params.html#game_class">Class</a>
+<ul>
+<li>Game <a href="game_params.html#game_class">Class</a>
+<li>AI <a href="game_params.html#algorithm">Algorithm</a> Configured
+<li><a href="#ratings">Game Rating</a>
 <li>Board Size (<a href="game_params.html#holes">holes</a> per side)
 <li>Game <a href="game_params.html#goal">Goal</a>
-<li>AI <a href="game_params.html#algorithm">Algorithm</a> Configured
-<li><a href="game_params.html#mlaps">Lap type</a>
+<li><a href="game_params.html#mlaps">Lap Type</a>
 <li>Special <a href="game_params.html#sow_rule">Sow Rule</a> (in groups)
-<li>Sow Direction (based on both <a href="game_params.html#sow_direct">sow_direct</a>
+<li><a href="game_params.html#sow_direct">Sow Direction</a>
 <li><a href="game_params.html#child_type">Child Type</a>
-and <a href="game_params.html#udir_holes">udir_holes</a>)
 <li>Capture Type, groups are defined using:
 <ul>
 <li>Basic capture:
@@ -515,7 +518,8 @@ is not NONE
 <a href="game_params.html#presowcapt">pre-sow capture</a>,
 <a href="game_params.html#child_type">children</a>, or
 <a href="game_params.html#sow_own_store">sow own store</a> configured)</ul></ul>
-Each checkbox within these filter categories
+
+<p>Each checkbox within these filter categories
 determines if games with that property are shown.
 A game with any filled checkbox will be included in the game list.
 Choosing All will set all the options in the category
@@ -524,6 +528,12 @@ Choosing None will clear all the options in the filter category
 and the games.
 
 <h3>Feature Filters</H3>
+<p>Two groups of feature filters are included:
+<ul>
+<li>information about the game configuration (not the actual game mechanics)
+<li>interesting game features that do control game mechanics
+</ul>
+
 <p>The features filters do not break the game list into non-overlapping sets.
 Each checkbox within these features describes a property of the game defined by
 one or more parameter settings. These checkboxes have three states,
@@ -548,6 +558,21 @@ prohibited together).
 <p>Feature filters are in two groups: Configuration and Features.
 Configuration options filter on properties of the game configuration file.
 Feature options filter on how a game plays.
+
+<h3 id="ratings">Game Ratings</h3>
+
+<p>In Play Mancala, the player may set custom ratings for each game: 1 to 5 stars
+and not-rated are supported. To set a rating, right click the game name in
+play_mancala and choose the Ratings submenu, then the rating of choice.
+The rating can also be set for a selected game via the Game menu.
+
+<p>The player rating of each game is included at the end Game Overview text.
+
+<p>The ratings are not stored in the game files!
+They are stored in a favorites.csv file in the GameProps directory.
+If the favorites.csv file does not exist, no games have a rating as soon as a rating
+is set, the file will be created.
+This file must be manually copied if you upgrade Mancala Games.
 
 <h2 id="opwindow">Mancala Games Editor</h2>
 

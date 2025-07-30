@@ -233,7 +233,7 @@ MancalaGames/mancala_games.exe: $(SOURCES) $(DATAFILES) mancala_games.spec
 	copy docs\\figs\\*.jpg MancalaGames\\help\\figs
 	copy docs\\dist_readme.txt MancalaGames\\README.txt
 	mkdir MancalaGames\\GameProps
-	copy GameProps\\* MancalaGames\\GameProps
+	copy GameProps\\*.txt MancalaGames\\GameProps
 	mkdir MancalaGames\\logs
 	copy logs\\README.txt MancalaGames\\logs
 	copy src\\game_params.csv MancalaGames

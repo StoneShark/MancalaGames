@@ -477,11 +477,14 @@ class ExceptPopup(tksimpledialog.Dialog):
         1. save the game log (if logsave)
         2. copy the error data to the clip board"""
 
-    def __init__(self, root, title, message, traceback, copy_data, param_data):
+    def __init__(self, root, title, message, trace, copy_data, param_data):
+
+        # pylint: disable=too-many-arguments
+        # pylint: disable=too-many-positional-arguments
 
         self.root = root
         self.msg = fmt.fmsg(message, wide=True)
-        self.trace = traceback
+        self.trace = trace
         self.copy_data = copy_data
         self.param_data = param_data
 

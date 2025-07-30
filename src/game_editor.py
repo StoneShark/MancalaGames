@@ -636,6 +636,7 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
         if self._check_save_cancel():
             return
 
+        gamename = self.config.loaded_config[ckey.GAME_INFO][ckey.NAME]
         self._cleanup()
         self.destroy()
         if animator.animator:
@@ -643,4 +644,5 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
         self._key_bindings(active=False)
         self.master.protocol('WM_DELETE_WINDOW', '')
 
-        self.chooser_class(self.master, MancalaGamesEditor)
+        chooser = self.chooser_class(self.master, MancalaGamesEditor)
+        chooser.do_select(gamename)
