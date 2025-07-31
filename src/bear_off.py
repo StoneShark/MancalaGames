@@ -167,8 +167,6 @@ class BearOff(mancala.Mancala):
 
             self.normal_sow = False
             game_log.add("Swapping to BearOff sower.", game_log.IMPORT)
-
-            if animator.active():
-                animator.animator.message("Swapping to BearOff Sower")
+            animator.do_message("Swapping to BearOff Sower")
 
         return result

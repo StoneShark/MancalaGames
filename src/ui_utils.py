@@ -479,9 +479,6 @@ class ExceptPopup(tksimpledialog.Dialog):
 
     def __init__(self, root, title, message, trace, copy_data, param_data):
 
-        # pylint: disable=too-many-arguments
-        # pylint: disable=too-many-positional-arguments
-
         self.root = root
         self.msg = fmt.fmsg(message, wide=True)
         self.trace = trace
@@ -792,8 +789,8 @@ class ReportError:
 
 GITHUBLINK = 'https://github.com/StoneShark/MancalaGames/issues'
 
-# pylint:  disable=invalid-name
-app_frame = game_ui = None
+APP_FRAME = None
+GAME_UI = None
 
 
 def exception_callback(*args):
@@ -803,14 +800,14 @@ def exception_callback(*args):
     tb_lst = traceback.format_exception(etype, evalue, trace)
 
     # dump game for unknown errors
-    if etype != gi.DataError and game_ui:
+    if etype != gi.DataError and GAME_UI:
         game_log.dump()
 
     # output to console, though it might not be there
     for line in tb_lst:
         print(line, end='')
 
-    if not app_frame:
+    if not APP_FRAME:
         return
 
     if etype == gi.DataError:
@@ -833,27 +830,27 @@ def exception_callback(*args):
 
     trace = ''.join(tb_lst)
     copy_data = ''.join([GITHUBLINK, '\n\n'] + tb_lst)
-    param_data = game_ui.game.params_str() if game_ui else None
+    param_data = GAME_UI.game.params_str() if GAME_UI else None
 
-    ExceptPopup(app_frame, title, message, trace, copy_data, param_data)
+    ExceptPopup(APP_FRAME, title, message, trace, copy_data, param_data)
 
 
 def warning_callback(message, *_):
     """Notify user of warnings during parameter test."""
 
-    showwarning(app_frame, 'Parameter Warning', str(message))
+    showwarning(APP_FRAME, 'Parameter Warning', str(message))
 
 
 def do_error_popups(root, game_ui_in=None):
     """Save the app_frame and record the warning and exception call backs"""
 
-    global app_frame
-    global game_ui
+    global APP_FRAME
+    global GAME_UI
 
-    app_frame = root
-    game_ui = game_ui_in
+    APP_FRAME = root
+    GAME_UI = game_ui_in
 
-    app_frame.report_callback_exception = exception_callback
+    APP_FRAME.report_callback_exception = exception_callback
 
     warnings.showwarning = warning_callback
     warnings.simplefilter('always', UserWarning)

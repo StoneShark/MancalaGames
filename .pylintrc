@@ -40,10 +40,10 @@ disable=consider-using-assignment-expr,
 [DESIGN]
 
 # Maximum number of arguments for function / method.
-max-args=6
+max-args=8
 
 # Maximum number of positional arguments for function / method.
-max-positional-arguments=6
+max-positional-arguments=8
 
 [MAGIC-VALUE]
 
@@ -51,3 +51,8 @@ max-positional-arguments=6
 # Supports integers, floats, negative numbers, for empty string enter ``''``,
 # for backslash values just use one backslash e.g \n.
 valid-magic-values=0,-1,1,2,3,,__main__
+
+[FORMAT]
+
+# Maximum number of lines in a module.
+max-module-lines=2000

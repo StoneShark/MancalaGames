@@ -7,8 +7,6 @@ game play.
 Created on Thu Mar  2 14:38:17 2023
 @author: Ann"""
 
-# pylint: disable=too-many-lines
-
 
 # %% imports
 
@@ -430,8 +428,7 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
         else:
             self.master.destroy()
         del self.game
-        if animator.animator:
-            del animator.animator
+        animator.reset()
 
         MancalaUI(new_game, pdict, player=player, root_ui=self.root)
 
@@ -521,7 +518,7 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
 
         if ani_ok and animator.active():
             self.set_ui_active(active=False)
-            animator.animator.do_animation()
+            animator.do_animation()
             return
 
         self.set_ui_active(True)
@@ -591,8 +588,8 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
         do a final refresh and schedule the ai."""
 
         self.game.inhibitor.start_ani_msg()
-        animator.animator.queue_callback(self.refresh)
-        animator.animator.queue_callback(self.schedule_ai)
+        animator.queue_callback(self.refresh)
+        animator.queue_callback(self.schedule_ai)
         self.refresh(ani_ok=True)
 
 
@@ -653,7 +650,7 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
 
         self._cancel_pending_afters()
         self.master.config(cursor=ui_utils.NORMAL)
-        animator.set_active(False, clear_queue=True)
+        animator.set_active(False, reset_queue=True)
 
         end_state = self.history.end_game_state()
         if end_state:
@@ -803,7 +800,7 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
         if not do_it:
             return
 
-        animator.set_active(False, clear_queue=True)
+        animator.set_active(False, reset_queue=True)
         win_cond = self.game.end_game(quitter=quitter, user=True, game=game)
 
         wtext = thing + ' Ended '
@@ -835,7 +832,7 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
         self.saved_move = move
         last_turn = self.game.turn
         if animator.active() and move != gi.PASS_TOKEN:
-            animator.animator.flash(last_turn, move=move)
+            animator.do_flash(last_turn, move=move)
 
         self.wcond = self.game.move(move)
         self.history.record(self.game.state)
@@ -844,10 +841,10 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
         if animator.active():
             if (self.game.mdata
                     and self.game.mdata.ended == gi.WinCond.ENDLESS):
-                animator.animator.clear_queue()
+                animator.clear_queue()
 
             else:
-                animator.animator.queue_callback(self.move_epilog)
+                animator.queue_callback(self.move_epilog)
                 self.refresh(ani_ok=True)
                 return
 
@@ -913,7 +910,7 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
             self.move(self.saved_move)
 
             if animator.active():
-                animator.animator.queue_callback(self._ai_move_epilog)
+                animator.queue_callback(self._ai_move_epilog)
                 self.refresh(ani_ok=True)
             else:
                 self._ai_move_epilog()

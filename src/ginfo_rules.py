@@ -4,8 +4,6 @@
 Created on Mon Aug 21 06:54:24 2023
 @author: Ann"""
 
-# pylint: disable=too-many-lines
-
 import game_info as gi
 import round_tally
 import rule_tester

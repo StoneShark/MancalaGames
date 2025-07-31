@@ -379,8 +379,8 @@ class AnimateLapStart(LapContinuerIf):
 
         cont = self.decorator.do_another_lap(mdata)
 
-        if cont and animator.active():
-            animator.animator.flash(self.game.turn, loc=mdata.capt_start)
+        if cont:
+            animator.do_flash(self.game.turn, loc=mdata.capt_start)
 
         return cont
 

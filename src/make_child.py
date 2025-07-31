@@ -220,7 +220,7 @@ class ChildLocOk(MakeChildIf):
 
         if animator.active():
             if self.decorator.test(mdata):
-                animator.animator.message("Child Location Disallowed")
+                animator.do_message("Child Location Disallowed")
 
         # game_log.add(f"Bad child loc @ {test_loc}.", game_log.IMPORT)
         return False
@@ -244,7 +244,7 @@ class NotSymOpp(MakeChildIf):
 
         if animator.active():
             if self.decorator.test(mdata):
-                animator.animator.message("Symmetric Opposite Child")
+                animator.do_message("Symmetric Opposite Child")
 
         game_log.add(f"NotSymOpp prevented child in symmetric hole @ {loc}.",
                      game_log.IMPORT)
@@ -264,7 +264,7 @@ class NotFacing(MakeChildIf):
 
         if animator.active():
             if self.decorator.test(mdata):
-                animator.animator.message("Facing Child")
+                animator.do_message("Facing Child")
 
         game_log.add(f"NotFacing prevented child in facing hole @ {loc}.",
                      game_log.IMPORT)

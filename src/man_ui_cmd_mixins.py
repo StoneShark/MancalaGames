@@ -206,7 +206,7 @@ class SetupCmdsMixin:
         """Attempt to enter setup mode."""
 
         if self.set_game_mode(buttons.Behavior.SETUP):
-            animator.set_active(False, clear_queue=True)
+            animator.set_active(False, reset_queue=True)
 
 
     def setup_save(self):
@@ -639,20 +639,20 @@ class AniMenuMixin:
     def ani_reset_delay(_=None):
         """Set config'ed or nominal animator speed."""
 
-        if animator.animator:
+        if animator.active():
             delay = man_config.CONFIG.get_int('ani_delay', 350)
             animator.set_delay(delay)
 
-            print("Ani Delay=", animator.animator.delay)
+            print("Ani Delay=", animator.get_delay())
 
 
     @staticmethod
     def _ani_speed_fastest(_=None):
         """set animation speed to it fastest"""
 
-        if animator.animator:
+        if animator.active():
             animator.set_delay(ANI_STEP)
-            print("Ani Delay=", animator.animator.delay)
+            print("Ani Delay=", animator.get_delay())
 
 
     @staticmethod
@@ -660,19 +660,19 @@ class AniMenuMixin:
         """Increase animation speed by reducing the delay between
         steps."""
 
-        if animator.animator:
+        if animator.active():
             animator.set_delay(max(ANI_STEP,
-                                   animator.animator.delay - ANI_STEP))
-            print("Ani Delay=", animator.animator.delay)
+                                   animator.get_delay() - ANI_STEP))
+            print("Ani Delay=", animator.get_delay())
 
 
     @staticmethod
     def _ani_dec_speed(_=None):
         """Decrease animation speed."""
 
-        if animator.animator:
-            animator.set_delay(animator.animator.delay + ANI_STEP)
-            print("Ani Delay=", animator.animator.delay)
+        if animator.active():
+            animator.set_delay(animator.get_delay() + ANI_STEP)
+            print("Ani Delay=", animator.get_delay())
 
 
     def _toggle_ani_active(self, _=None):
@@ -806,8 +806,8 @@ class DebugMenuMixin:
         debugmenu.add_command(
             label='Toggle Anim Print',
             command=lambda: setattr(animator,
-                                    'print_steps',
-                                    not animator.print_steps))
+                                    'PRINT_STEPS',
+                                    not animator.PRINT_STEPS))
         menubar.add_cascade(label='Debug', menu=debugmenu)
 
 

@@ -128,7 +128,7 @@ class ShareOne(mancala.Mancala):
         if (not rval
                 and not any(self.board[loc] for loc in opp_range)
                 and animator.active()):
-            animator.animator.message("Must Share a Seed")
+            animator.do_message("Must Share a Seed")
 
         return rval
 

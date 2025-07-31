@@ -432,9 +432,8 @@ class SCaptCrossOnOne(SowMethodIf):
 
             game_log.step(f'Presow Capt Cross at {mdata.cont_sow_loc}',
                           self.game, game_log.DETAIL)
-            if animator.active():
-                animator.animator.message(
-                    f"Pre-Sow Captures across from {mdata.cont_sow_loc}")
+            animator.do_message(
+                 f"Pre-Sow Captures across from {mdata.cont_sow_loc}")
 
         self.decorator.sow_seeds(mdata)
 
@@ -458,8 +457,7 @@ class SCaptCrossSingles(SowMethodIf):
         msg = f"Presow Captures across from 1s: {where}"
         game_log.step(msg, self.game, game_log.DETAIL)
 
-        if animator.active():
-            animator.animator.message(msg)
+        animator.do_message(msg)
 
 
     def sow_seeds(self, mdata):

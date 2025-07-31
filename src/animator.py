@@ -59,17 +59,16 @@ ENABLED = True
 # Global so that the mancala.Mancala attributes can access when
 # they are AniLists
 
-# pylint:  disable=invalid-name
-animator = None
-print_steps = False
+ANIMATOR = None
+PRINT_STEPS = False
 
 def make_animator(game_ui):
     """Make the animator class."""
 
-    global animator
+    global ANIMATOR
 
     if ENABLED:
-        animator = Animator(game_ui)
+        ANIMATOR = Animator(game_ui)
 
 
 def reset():
@@ -77,35 +76,43 @@ def reset():
     Do this on destroy of MancalaUI so remnants of a
     previous game do not exsist."""
 
-    global animator
+    global ANIMATOR
 
     if ENABLED:
-        animator = None
+        ANIMATOR = None
 
 
 def active():
     """Determine if the animator is currently active.
     A global function in case the animator was not built."""
 
-    return ENABLED and animator and animator.active
+    return ENABLED and ANIMATOR and ANIMATOR.active
 
 
-def set_active(new_state, clear_queue=False):
+def set_active(new_state, reset_queue=False):
     """Set the animator state.
     A global function in case the animator was not built."""
 
-    if ENABLED and animator:
-        animator.active = new_state
-        if clear_queue:
-            animator.clear_queue()
+    if ENABLED and ANIMATOR:
+        ANIMATOR.active = new_state
+        if reset_queue:
+            ANIMATOR.clear_queue()
+
+
+def get_delay():
+    """Return the animator delay, 0 if it's not active."""
+
+    if ANIMATOR:
+        return ANIMATOR.delay
+    return 0
 
 
 def set_delay(new_delay):
     """Set the animator delay.
     A global function in case the animator was not built."""
 
-    if ENABLED and animator:
-        animator.delay = new_delay
+    if ENABLED and ANIMATOR:
+        ANIMATOR.delay = new_delay
 
 
 def configure(*, font=None, msg_mult=None, bg_color=None):
@@ -113,38 +120,73 @@ def configure(*, font=None, msg_mult=None, bg_color=None):
     Can't import man_config directly here, so main class
     must configure the animator."""
 
-    if not animator:
+    if not ANIMATOR:
         return
 
     if font:
-        animator.font = font
+        ANIMATOR.font = font
 
     if msg_mult:
-        animator.msg_mult = msg_mult
+        ANIMATOR.msg_mult = msg_mult
 
     if bg_color:
-        animator.bg_color = bg_color
+        ANIMATOR.bg_color = bg_color
 
 
 def set_rollback():
     """Set the rollback point."""
 
-    if ENABLED and animator and animator.active:
-        animator.set_rollback()
+    if ENABLED and ANIMATOR and ANIMATOR.active:
+        ANIMATOR.set_rollback()
 
 
 def clear_rollback():
     """Clear the rollback point."""
 
-    if ENABLED and animator and animator.active:
-        animator.clear_rollback()
+    if ENABLED and ANIMATOR and ANIMATOR.active:
+        ANIMATOR.clear_rollback()
 
 
 def do_rollback():
     """Do the rollback removing the queued events."""
 
-    if ENABLED and animator and animator.active:
-        animator.do_rollback()
+    if ENABLED and ANIMATOR and ANIMATOR.active:
+        ANIMATOR.do_rollback()
+
+
+def clear_queue():
+    """Call the ANIMATOR clear_queue if active."""
+
+    if active():
+        ANIMATOR.clear_queue()
+
+
+def do_animation(first=True):
+    """Call the ANIMATOR do_animation if active."""
+
+    if active():
+        ANIMATOR.do_animation(first)
+
+
+def do_flash(turn, *, move=None, loc=None):
+    """Call the ANIMATOR do_animation if active."""
+
+    if active():
+        ANIMATOR.do_flash(turn, move=move, loc=loc)
+
+
+def do_message(message):
+    """Call the ANIMATOR message if active."""
+
+    if active():
+        ANIMATOR.do_message(message)
+
+
+def queue_callback(func):
+    """Call the ANIMATOR queue_callback if active."""
+
+    if active():
+        ANIMATOR.queue_callback(func)
 
 
 @contextlib.contextmanager
@@ -154,17 +196,17 @@ def one_step():
     game in one step to the current game state
     when the context is exited."""
 
-    if ENABLED and animator:
-        saved_state = animator.active
-        bstate = animator.game_ui.game.board_state
-        animator.active = False
+    if ENABLED and ANIMATOR:
+        saved_state = ANIMATOR.active
+        bstate = ANIMATOR.game_ui.game.board_state
+        ANIMATOR.active = False
 
         try:
             yield
         finally:
-            animator.active = saved_state
-            if animator.game_ui.game.board_state != bstate:
-                animator.update_game()
+            ANIMATOR.active = saved_state
+            if ANIMATOR.game_ui.game.board_state != bstate:
+                ANIMATOR.update_game()
 
     else:
         yield
@@ -181,14 +223,14 @@ def animate_off():
     - when a part of a move is simulated and the state
     will be restored."""
 
-    if ENABLED and animator:
-        saved_state = animator.active
-        animator.active = False
+    if ENABLED and ANIMATOR:
+        saved_state = ANIMATOR.active
+        ANIMATOR.active = False
 
         try:
             yield
         finally:
-            animator.active = saved_state
+            ANIMATOR.active = saved_state
     else:
         yield
 
@@ -235,8 +277,8 @@ class AniList:
     def __setitem__(self, key, value):
 
         self.values[key] = value
-        if animator:
-            animator.change(self.attrib, key, value)
+        if ANIMATOR:
+            ANIMATOR.change(self.attrib, key, value)
 
 
     def __iter__(self):
@@ -557,7 +599,7 @@ class Animator:
         self._queue.append(anie)
 
 
-    def flash(self, turn, *, move=None, loc=None):
+    def do_flash(self, turn, *, move=None, loc=None):
         """Record a button flash action, if active."""
 
         if self.active:
@@ -616,7 +658,7 @@ class Animator:
             self.add(NewGameState(AniGameState(self.game_ui.game)))
 
 
-    def message(self, message):
+    def do_message(self, message):
         """Record a message in the animation sequence, if active."""
 
         if self.active:
@@ -686,7 +728,7 @@ class Animator:
         if self.active and self._queue:
             self.game_ui.config(cursor=ui_utils.ANI_ACTIVE)
             anie = self._queue.popleft()
-            if print_steps:
+            if PRINT_STEPS:
                 print(anie)    # for debugging
             anie.do_it(self.game_ui, self._ani_state)
 

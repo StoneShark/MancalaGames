@@ -4,9 +4,6 @@
 Created on Fri Apr  7 08:52:03 2023
 @author: Ann"""
 
-# pylint: disable=too-many-lines
-
-
 # %% imports
 
 import abc
@@ -571,8 +568,7 @@ class GSNone(GrandSlamCapt):
             game_log.add('GRANDSLAM: no capture', game_log.IMPORT)
 
             animator.do_rollback()
-            if animator.active():
-                animator.animator.message("Grand Slam Did Not Capture")
+            animator.do_message("Grand Slam Did Not Capture")
 
             self.game.state = self._saved_state
             self._saved_state = None
@@ -618,8 +614,7 @@ class GSKeep(GrandSlamCapt):
             game_log.add('GRANDSLAM: keep', game_log.IMPORT)
 
             animator.do_rollback()
-            if animator.active():
-                animator.animator.message(f"Grand Slam, Keeping {self.rtext}")
+            animator.do_message(f"Grand Slam, Keeping {self.rtext}")
 
             self.game.state = self._saved_state
             self._saved_state = None
@@ -657,9 +652,7 @@ class GSOppGets(GrandSlamCapt):
         if self.is_grandslam(mdata, capt_first):
 
             game_log.add('GRANDSLAM: opp gets', game_log.IMPORT)
-            if animator.active():
-                animator.animator.message(
-                    "Grand Slam, Opponent Gets Your Seeds")
+            animator.do_message("Grand Slam, Opponent Gets Your Seeds")
 
             # now moves own seeds to opp's store
             opp_turn = not self.game.turn
@@ -685,8 +678,7 @@ class GSLegalShare(GrandSlamCapt):
         if self.is_grandslam(mdata, capt_first):
 
             game_log.add('GRANDSLAM: repeat turn', game_log.IMPORT)
-            if animator.active():
-                animator.animator.message("Grand Slam Repeat Turn")
+            animator.do_message("Grand Slam Repeat Turn")
 
             mdata.captured = gi.WinCond.REPEAT_TURN
             mdata.repeat_turn = True

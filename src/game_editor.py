@@ -640,8 +640,7 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
 
         self._cleanup()
         self.destroy()
-        if animator.animator:
-            del animator.animator
+        animator.reset()
         self._key_bindings(active=False)
         self.master.protocol('WM_DELETE_WINDOW', '')
 

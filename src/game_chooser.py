@@ -4,8 +4,6 @@
 Created on Thu Mar 23 08:10:28 2023
 @author: Ann"""
 
-# pylint: disable=too-many-lines
-
 # %% imports
 
 import abc
@@ -1087,7 +1085,6 @@ class GameChooser(ttk.Frame):
             game_ui = self._build_game_steps(game_dict, variant)
 
         if not build_context.error:
-            game_ui.wait_visibility()
             game_ui.grab_set()
             game_ui.wait_window()
 
@@ -1126,8 +1123,7 @@ class GameChooser(ttk.Frame):
             return
 
         self.destroy()
-        if animator.animator:
-            del animator.animator
+        animator.reset()
         self._key_bindings(active=False)
 
         filename = self.all_games[self.selected]['filename']
