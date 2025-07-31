@@ -110,11 +110,12 @@ class ParamMixin:
         It does nothing by default"""
 
 
-    def _get_boxes_config(self, param, game_config=None):
+    @staticmethod
+    def _get_boxes_config(param, game_config=None):
         """Return the number items for the list for name."""
 
         if param.option == ckey.UDIR_HOLES:
-            holes_param = self.params[ckey.HOLES]
+            holes_param = man_config.PARAMS[ckey.HOLES]
             if game_config:
                 boxes = man_config.get_config_value(game_config,
                                                     holes_param.cspec,

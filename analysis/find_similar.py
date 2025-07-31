@@ -175,11 +175,14 @@ class Neighbors:
             print()
 
 
-    def one_game(self, game):
+    def one_game(self, game, max_diffs=5):
         """Print the distances of all games from the one provided."""
 
         print(game)
         for nbr_diff, pairs in self.sorted_items():
+
+            if nbr_diff > max_diffs:
+                return
 
             title = f"  {nbr_diff}:"
             for game1, game2 in pairs:
@@ -240,6 +243,7 @@ class Neighbors:
             if opt in options:
                 self.print_option_line(gname_list, opt, GCONSTS)
 
+        starters += [ckey.GAME_CLASS]
         for opt in sorted(options):
             if opt not in starters:
                 self.print_option_line(gname_list, opt, GINFO)

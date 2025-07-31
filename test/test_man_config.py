@@ -577,8 +577,6 @@ class TestVariantQualNames:
 
 class TestLoadVariant:
 
-    param_table = man_config.ParamData(del_tags=False, no_descs=False)
-
     base_dict = {
                      "game_class": "Mancala",
                      "game_constants": {
@@ -616,14 +614,15 @@ class TestLoadVariant:
             man_config.game_from_config(game_dict, variant)
 
 
-    cases = {'base': [vari_dict, 'base', param_table],
-             'var1': [vari_dict, 'var1', None]}
+    cases = {'base': [vari_dict, 'base'],
+             'var1': [vari_dict, 'var1']}
 
-    @pytest.mark.parametrize('game_dict, variant, ptable', cases.values(),
+    @pytest.mark.parametrize('game_dict, variant', cases.values(),
                              ids=cases.keys())
-    def test_builds(self, game_dict, variant, ptable):
+    def test_builds(self, game_dict, variant):
 
-        game = man_config.game_from_config(game_dict, variant, ptable)
+        man_config.read_params_data()
+        game = man_config.game_from_config(game_dict, variant)
 
         if variant == 'base':
             assert game.info.capt_on == [4]
@@ -638,16 +637,29 @@ class TestParamDict:
 
     def test_param_dict(self):
 
-        param_dict = man_config.ParamData()
-        assert len(param_dict) > 50
-        assert '</a>' not in param_dict['mlaps'].description
+        man_config.PARAMS = None
+        man_config.read_params_data()
+        assert len(man_config.PARAMS) > 50
+        assert '</a>' not in man_config.PARAMS['mlaps'].description
 
 
     def test_param_dict_tags(self):
 
-        param_dict = man_config.ParamData(del_tags=False)
-        assert len(param_dict) > 50
-        assert '</a>' in param_dict['mlaps'].description
+        man_config.PARAMS = None
+        man_config.read_params_data(need_tags=True, need_descs=True)
+        assert len(man_config.PARAMS) > 50
+        assert '</a>' in man_config.PARAMS['mlaps'].description
+
+
+    def test_param_load_descs(self):
+
+        man_config.PARAMS = None
+
+        man_config.read_params_data(need_tags=False, need_descs=False)
+        assert not man_config.PARAMS['mlaps'].description
+
+        man_config.read_params_data(need_tags=False, need_descs=True)
+        assert man_config.PARAMS['mlaps'].description
 
 
     @pytest.mark.parametrize(
@@ -680,7 +692,7 @@ class TestParamDict:
 
 
         with pytest.raises(gi.DataError):
-            man_config.ParamData()
+            man_config.ParamData(False, True)
 
 
     def test_dupl_param(self, mocker, tmp_path):
@@ -711,7 +723,7 @@ Capture,evens,Capture Max,game_info _,104,int,0,2,0
 
 
         with pytest.raises(gi.DataError):
-            man_config.ParamData()
+            man_config.ParamData(False, False)
 
 
     def test_bad_int_param(self, mocker, tmp_path):
@@ -741,7 +753,7 @@ Capture,evens,Basic Capture,,0,label,0,0,notint
 
 
         with pytest.raises(gi.DataError):
-            man_config.ParamData()
+            man_config.ParamData(True, True)
 
 
     def test_bad_desc_param(self, mocker, tmp_path):
@@ -766,18 +778,19 @@ Capture,evens,Basic Capture,,0,label,0,0,notint
         mocker.patch.object(man_path, 'get_path', test_files)
 
         with pytest.raises(gi.DataError):
-            man_config.ParamData()
+            man_config.ParamData(False, True)
 
 
     def test_no_desc(self):
 
-        param_data = man_config.ParamData(del_tags=False, no_descs=True)
-        assert len(param_data) > 50
-        assert ckey.NBR_START in param_data
-        assert ckey.SOW_DIRECT in param_data
-        assert ckey.UNCLAIMED in param_data
+        man_config.PARAMS = None
+        man_config.read_params_data(need_tags=True, need_descs=False)
+        assert len(man_config.PARAMS) > 50
+        assert ckey.NBR_START in man_config.PARAMS
+        assert ckey.SOW_DIRECT in man_config.PARAMS
+        assert ckey.UNCLAIMED in man_config.PARAMS
 
-        assert not param_data[ckey.UNCLAIMED].description
+        assert not man_config.PARAMS[ckey.UNCLAIMED].description
 
 
 

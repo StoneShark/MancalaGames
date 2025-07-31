@@ -12,8 +12,10 @@ Created on Wed Jul 30 07:35:43 2025
 
 import csv
 import os.path
+import shutil
 
 import man_path
+import ui_utils
 
 FAV_FILE = 'favorites.csv'
 
@@ -21,14 +23,44 @@ FAV_FILE = 'favorites.csv'
 class GameFavorites:
     """A class that manages game ratings."""
 
-    def __init__(self):
+    def __init__(self, master):
 
+        self.master = master
         self.favs = {}
         self.pathname = None
         self._load_file()
 
 
-    def _load_file(self):
+    def _read_favs(self):
+        """Read the data file."""
+
+        with open(self.pathname, 'r', encoding='utf-8') as file:
+            data = list(csv.reader(file))
+
+        return data
+
+
+    def _backup_favs(self):
+        """Move the favorites file to a backup file, but
+        don't overwrite an existing file (unless there are
+        already 20 backups).
+
+        Return the name of the back up file."""
+
+        for cnt in range(20):
+
+            backup = self.pathname + '.bak'
+            if cnt:
+                backup += str(cnt)
+
+            if not os.path.isfile(backup):
+                break
+
+        shutil.move(self.pathname, backup)
+        return backup
+
+
+    def _load_file_int(self):
         """Load the favorites.csv file into a dictionary.
 
         File format is:   game_name,rating"""
@@ -37,20 +69,31 @@ class GameFavorites:
         if not self.pathname:
             return
 
-        with open(self.pathname, 'r', encoding='utf-8') as file:
-            reader = csv.reader(file)
-            data = list(reader)
+        data = self._read_favs()
 
-        for line in data:
+        for nbr, line in enumerate(data):
             if len(line) != 2:
-                print(f'Skipping {line}')
-                continue
+                raise ValueError(f"Line length wrong at line {nbr + 1}:\n{line}")
 
             gname, rating = line
             try:
                 self.favs[gname] = int(rating)
             except ValueError:
-                print(f'Skipping favorite {gname}; rating not int.')
+                msg = f'Favorite {gname}; rating not integer.'
+                raise ValueError(msg) from None
+
+
+    def _load_file(self):
+
+        try:
+            self._load_file_int()
+
+        except ValueError as exp:
+            backup = self._backup_favs()
+            ui_utils.showerror(self.master, 'Corrupt favorites.csv',
+                               [f"""Corrupt favorites file found.
+                                 It was moved to {backup}""",
+                                str(exp)])
 
 
     def _save_file(self):

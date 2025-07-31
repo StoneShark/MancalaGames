@@ -32,7 +32,6 @@ from context import param_consts as pc
 GPROP_PATH = '../' + man_path.GAMEDIR + '/'
 
 
-
 # %%  fix utf-8 sort order
 
 locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
@@ -40,7 +39,8 @@ locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 
 # %% fill global tables
 
-PARAMS = man_config.ParamData(del_tags=False)
+man_config.read_params_data(need_tags=True, need_descs=True)
+
 
 def get_game_names():
     """Scan the files and get the game names."""
@@ -58,7 +58,7 @@ def get_game_names():
     return game_names
 
 GAMES = get_game_names()
-UPARAMS = {param.upper() for param in PARAMS.keys()}
+UPARAMS = {param.upper() for param in man_config.PARAMS.keys()}
 
 PUNCT = '().,?!;:'
 SEP_PUNCT_RE = re.compile('([' + PUNCT + ']*)([-a-zA-Z_0-9 ]+)([' + PUNCT + ']*)')
@@ -429,7 +429,7 @@ def game_prop_text(game_dict):
             vstr = str(value)
 
         pstr = f'<a href="game_params.html#{param}">' \
-            + PARAMS[param].text + '</a>:'
+                    + man_config.PARAMS[param].text + '</a>:'
         ptxt += [f'{pstr} {vstr}']
 
     return ptxt
@@ -590,7 +590,7 @@ def write_defaults(param, ofile):
 def write_params_help(filename):
     """Create the game_params help file."""
 
-    tab_set = set(r.tab for r in PARAMS.values())
+    tab_set = set(r.tab for r in man_config.PARAMS.values())
     extra_tabs = tab_set - set(game_editor.PARAM_TABS)
     tabs = game_editor.PARAM_TABS + tuple(extra_tabs)
 
@@ -602,7 +602,7 @@ def write_params_help(filename):
         for tab in tabs:
             print(f'<h2 id="tab_{tab}">{tab} Tab</h2>', file=ofile)
 
-            for param in PARAMS.values():
+            for param in man_config.PARAMS.values():
                 if param.tab != tab or param.vtype == pc.LABEL_TYPE:
                     continue
 
@@ -637,7 +637,7 @@ def write_params_help(filename):
         print('<br><br><br>', file=ofile)
         print('<h2 id="index">Parameter Index</h2>', file=ofile)
         pindex = [f'<a href="#{param.option}">' + param.option + '</a>'
-                  for param in sorted(PARAMS.values(),
+                  for param in sorted(man_config.PARAMS.values(),
                                       key=lambda param: param.option)
                   if param.vtype != pc.LABEL_TYPE]
         write_columns(ofile, pindex, 3)
@@ -754,7 +754,8 @@ def write_desc_types(ofile):
 def write_types_file(filename):
     """Write the types help file."""
 
-    types = [(pname, ptuple.vtype) for pname, ptuple in PARAMS.items()]
+    types = [(pname, ptuple.vtype)
+             for pname, ptuple in man_config.PARAMS.items()]
 
     with open(filename, 'w', encoding='utf-8') as ofile:
         write_html_header(ofile, "Parameters Types", TYPES_NAV)
@@ -783,7 +784,8 @@ def write_types_file(filename):
                   '<th style="width:40%">UI string</th></tr>',
                   file=ofile)
 
-            check = man_config.NO_ENUM_ERROR not in PARAMS[pname].description
+            check = man_config.NO_ENUM_ERROR not in \
+                           man_config.PARAMS[pname].description
 
             for e_val in ename:
                 print('<tr><td>', e_val.value,
@@ -791,7 +793,9 @@ def write_types_file(filename):
                       '<td>', strings[e_val], '</td></tr>',
                       sep='', file=ofile)
 
-                if check and e_val.name not in PARAMS[pname].description:
+                if (check
+                        and e_val.name not in
+                                man_config.PARAMS[pname].description):
                     print('  Doc Error:',
                           f'{e_val.name} is not in {pname} description.')
 

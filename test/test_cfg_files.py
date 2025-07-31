@@ -29,8 +29,7 @@ from context import variants
 
 
 FILES = man_path.game_files()
-PARAM_DICT = man_config.ParamData(no_descs=True)
-
+man_config.read_params_data(need_descs=False)
 
 @pytest.mark.parametrize('game_pdict', FILES, indirect=True)
 def test_config_files(game_pdict):

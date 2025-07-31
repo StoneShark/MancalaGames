@@ -47,9 +47,7 @@ SMALL = 6
 LARGER = 7
 LARGEST = 9
 
-PARAMS = man_config.ParamData(del_tags=False, no_descs=True)
-FAVS = favorites.GameFavorites()
-
+FAVS = None
 
 GCLASS = {'Mancala': lambda gclass: gclass == MANCALA,
           'Other': lambda gclass: gclass != MANCALA}
@@ -270,12 +268,12 @@ class BaseFilter(ttk.Frame, abc.ABC):
         Otherwise, the param_key is a top level element in the
         game_dict."""
 
-        if self.param_key in PARAMS:
+        if self.param_key in man_config.PARAMS:
             value = man_config.get_config_value(
                         game_dict,
-                        PARAMS[self.param_key].cspec,
+                        man_config.PARAMS[self.param_key].cspec,
                         self.param_key,
-                        PARAMS[self.param_key].vtype)
+                        man_config.PARAMS[self.param_key].vtype)
 
         elif self.param_key is not True:
             value = game_dict[self.param_key]
@@ -793,7 +791,8 @@ class AboutPane(ttk.Labelframe):
             else:
                 vstr = str(value)
 
-            lines = textwrap.fill(f'{PARAMS[param].text}: {vstr}', COL_WIDTH)
+            lines = textwrap.fill(f'{man_config.PARAMS[param].text}: {vstr}',
+                                  COL_WIDTH)
             ptxt += [line.strip() for line in lines.split('\n')]
 
         return ptxt
@@ -878,6 +877,8 @@ class GameChooser(ttk.Frame):
 
     def __init__(self, master, editor_class):
 
+        global FAVS
+
         self.master = master
         self.editor_class = editor_class
         self.all_games = None
@@ -908,6 +909,10 @@ class GameChooser(ttk.Frame):
         self.create_menus()
 
         man_config.check_disable_animator()
+
+        # load these now so that errors can be reported via the UI
+        man_config.read_params_data(need_descs=False)
+        FAVS = favorites.GameFavorites(self)
 
         self.load_game_files()
         self.select_list.fill_glist(self.all_games.keys())
@@ -1065,7 +1070,7 @@ class GameChooser(ttk.Frame):
         If successful, return the game_ui."""
 
         variants.test_variation_config(game_dict, no_var_error=False)
-        game = man_config.game_from_config(game_dict, variant, PARAMS)
+        game = man_config.game_from_config(game_dict, variant)
         player_dict = game_dict[ckey.PLAYER]
         game.filename = game_dict[ckey.FILENAME]
         return mancala_ui.MancalaUI(game, player_dict, root_ui=self.master)

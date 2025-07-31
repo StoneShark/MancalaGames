@@ -75,8 +75,8 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
         self.quitting = False
 
         param_mixin.register_int_validate(self.master)
-        self.params = man_config.ParamData()
-        self.config = mg_config.GameConfig(self.master, self.params)
+        man_config.read_params_data(need_descs=True)
+        self.config = mg_config.GameConfig(self.master)
         self.game = None
         self.ai_player = None
 
@@ -251,7 +251,7 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
     def _add_tabs(self, frame):
         """Determine what tabs are needed and add them."""
 
-        tab_set = set(r.tab for r in self.params.values())
+        tab_set = set(r.tab for r in man_config.PARAMS.values())
         extra_tabs = tab_set - set(PARAM_TABS)
         tabs = PARAM_TABS + tuple(extra_tabs)
 
@@ -290,8 +290,8 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
             return
         self.prev_option = option
 
-        text = self.params[option].text
-        desc = self.params[option].description
+        text = man_config.PARAMS[option].text
+        desc = man_config.PARAMS[option].description
 
         paragraphs = desc.split('\n')
         out_text = ''
@@ -323,7 +323,7 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
     def _make_tkvars(self):
         """Create the tk variables described by the parameters file."""
 
-        for param in self.params.values():
+        for param in man_config.PARAMS.values():
             if param.vtype in (pc.MSTR_TYPE, pc.LABEL_TYPE, pc.TEXTDICT):
                 continue
 
@@ -352,7 +352,7 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
 
         for tname, tab in self.tabs.items():
             tab_params = sorted(
-                [p for p in self.params.values() if p.tab == tname],
+                [p for p in man_config.PARAMS.values() if p.tab == tname],
                  key=lambda p: (p.col, p.row))
 
             expand = set()
@@ -371,7 +371,7 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
         """Set the tk vars (display vars) from the game_config
         dict."""
 
-        for param in self.params.values():
+        for param in man_config.PARAMS.values():
             self.pm_copy_config_to_tk(param, self.config.loaded_config)
 
 
@@ -381,7 +381,7 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
 
         self.config.game_config = {}
 
-        for param in sorted(self.params.values(), key=lambda v: v.order):
+        for param in sorted(man_config.PARAMS.values(), key=lambda v: v.order):
 
             if param.vtype == pc.LABEL_TYPE:
                 continue
@@ -604,7 +604,7 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
         if check_save and self._check_save_cancel():
             return
 
-        for param in self.params.values():
+        for param in man_config.PARAMS.values():
             self.pm_reset_ui_default(param)
 
         self._reset_edited()
@@ -616,7 +616,7 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
         if self._check_save_cancel():
             return
 
-        for param in self.params.values():
+        for param in man_config.PARAMS.values():
             self.pm_reset_const_default(param)
 
         self._reset_edited()

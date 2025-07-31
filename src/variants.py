@@ -50,7 +50,8 @@ class GameVariations:
         if build_context.error:
             return
 
-        self.ptable = man_config.ParamData(no_descs=True)
+        # load the param table if it hasn't been
+        man_config.read_params_data(need_descs=False)
 
         self.vari_params = self.game_config.get(ckey.VARI_PARAMS, {})
         self.variants = self.game_config.get(ckey.VARIANTS, {})
@@ -138,7 +139,7 @@ class GameVariations:
 
         text = ''
         for key in self.my_params:
-            param = self.ptable[key]
+            param = man_config.PARAMS[key]
             value = man_config.get_game_value(self.game_ui.game,
                                               param.cspec, key)
 
@@ -183,7 +184,6 @@ class AdjustPopup(param_mixin.ParamMixin, tksimpledialog.Dialog):
         self.game_config = vari.game_config
         self.vari_params = vari.vari_params
         self.variants = vari.variants
-        self.params = vari.ptable
         self.game_name = self.game_config[ckey.GAME_INFO][ckey.NAME]
         self.tkvars = {}
 
@@ -198,7 +198,7 @@ class AdjustPopup(param_mixin.ParamMixin, tksimpledialog.Dialog):
                                                       vname,
                                                       name='varaints')
         for vname in self.vari_params.keys():
-            param = self.params[vname]
+            param = man_config.PARAMS[vname]
             self.pm_make_tkvar(param, PREFIX, self.game_config)
             self.pm_copy_config_to_tk(param, self.game_config)
 
@@ -226,7 +226,7 @@ class AdjustPopup(param_mixin.ParamMixin, tksimpledialog.Dialog):
             rcnt.increment()
 
         for vname, pdata in self.vari_params.items():
-            param = self.params[vname]
+            param = man_config.PARAMS[vname]
             param.row = rcnt.count
             param.col = 0
             lims = pdata if isinstance(pdata, list) else None
@@ -260,13 +260,13 @@ class AdjustPopup(param_mixin.ParamMixin, tksimpledialog.Dialog):
             vari_name = self.tkvars[ckey.VARIANTS].get()
             for vname, value in self.variants[vari_name].items():
 
-                param = self.params[vname]
+                param = man_config.PARAMS[vname]
                 man_config.set_config_value(
                     self.game_config, param.cspec, param.option,
                     man_config.convert_from_file('Variant Update', vname, value))
 
         for vname in self.vari_params.keys():
-            param = self.params[vname]
+            param = man_config.PARAMS[vname]
             self.pm_copy_tk_to_config(param, self.game_config)
 
         self.game_config[ckey.GAME_INFO][ckey.NAME] = self.game_name
@@ -280,7 +280,7 @@ class AdjustPopup(param_mixin.ParamMixin, tksimpledialog.Dialog):
             self.tkvars[ckey.VARIANTS].set(key_list[0])
 
         for vname in self.vari_params.keys():
-            param = self.params[vname]
+            param = man_config.PARAMS[vname]
             self.pm_copy_config_to_tk(param, self.game_config)
 
 
@@ -289,7 +289,7 @@ class AdjustPopup(param_mixin.ParamMixin, tksimpledialog.Dialog):
         to the game.  Variant is already set."""
 
         for vname in self.vari_params.keys():
-            param = self.params[vname]
+            param = man_config.PARAMS[vname]
             value = man_config.get_game_value(game, param.cspec, vname)
             self.pm_set_tk_var(param, value)
 
@@ -303,7 +303,7 @@ class AdjustPopup(param_mixin.ParamMixin, tksimpledialog.Dialog):
         self.game_name = self.game_config[ckey.GAME_INFO][ckey.NAME]
 
         for vname in self.vari_params.keys():
-            param = self.params[vname]
+            param = man_config.PARAMS[vname]
             self.pm_copy_config_to_tk(param, self.game_config)
 
         # if we've selected the base game, stop
@@ -319,7 +319,7 @@ class AdjustPopup(param_mixin.ParamMixin, tksimpledialog.Dialog):
             if vname not in vkeys:
                 continue
 
-            param = self.params[vname]
+            param = man_config.PARAMS[vname]
             value = man_config.convert_from_file('Variant Update', vname, fvalue)
             self.pm_set_tk_var(param, value)
 

@@ -137,10 +137,9 @@ class GameDictEncoder(json.JSONEncoder):
 class GameConfig:
     """Encapsulate the file handling and game config dictionaries."""
 
-    def __init__(self, master, params):
+    def __init__(self, master):
 
         self._master = master    # parent for dialog boxes
-        self._params = params    # link to parameter dict
 
         self._dir = man_path.get_path(man_path.GAMEDIR)
         self._known = False      # what this previously loaded or saved
@@ -149,7 +148,6 @@ class GameConfig:
         self.edited = False           # is there an edit that hasn't been saved
         self.loaded_config = None     # keep for persistent comment entries
         self.game_config = {}      # constructed config for playing
-
 
 
     @property
@@ -239,7 +237,7 @@ class GameConfig:
 
         rounds_config = self.game_config[ckey.GAME_INFO][ckey.ROUNDS]
 
-        for param in self._params.values():
+        for param in man_config.PARAMS.values():
 
             if param.option == ckey.CAPT_SIDE and capts_config:
                 # if captures, keep capt_side

@@ -167,7 +167,7 @@ def read_game(filename):
     return game_dict
 
 
-def update_config_for_variant(game_config, vari_name, param_table=None):
+def update_config_for_variant(game_config, vari_name):
     """Update the base configuration settings with those from the
     named variant."""
 
@@ -184,21 +184,18 @@ def update_config_for_variant(game_config, vari_name, param_table=None):
                                                             vari_name)
     variant = game_config[ckey.VARIANTS][vari_name]
 
-    if not param_table:
-        param_table = ParamData(del_tags=False, no_descs=True)
-
     for vname, fvalue in variant.items():
 
-        param = param_table[vname]
+        param = PARAMS[vname]
         value = convert_from_file('Game Config', vname, fvalue)
         set_config_value(game_config, param.cspec, param.option, value)
 
 
-def game_from_config(game_dict, variant=None, param_table=None):
+def game_from_config(game_dict, variant=None):
     """Return a game from a game configuration dictionary."""
 
     if variant and variant != game_dict[ckey.GAME_INFO][ckey.NAME]:
-        update_config_for_variant(game_dict, variant, param_table)
+        update_config_for_variant(game_dict, variant)
 
     game_class = game_dict.get(ckey.GAME_CLASS, 'Mancala')
 
@@ -213,12 +210,12 @@ def game_from_config(game_dict, variant=None, param_table=None):
     return game_class(game_consts, game_info)
 
 
-def make_game(filename, variant=None, param_table=None):
+def make_game(filename, variant=None):
     """Return a constructed game from the configuration
     and the player dictionary."""
 
     game_dict = read_game(filename)
-    game = game_from_config(game_dict, variant, param_table)
+    game = game_from_config(game_dict, variant)
 
     # the game doesn't need to know that we add this
     game.filename = filename
@@ -400,15 +397,17 @@ class ParamData(dict):
     """A dictionary of the parameter data. Keys are the 'option'
     column (parameter name); values are Param dataclass objects."""
 
-    def __init__(self, del_tags=True, no_descs=False):
+    def __init__(self, need_tags, need_descs):
 
         super().__init__()
+        self.have_descs = need_descs
+
         self._read_params_table()
-        if not no_descs:
-            self._read_param_descriptions(del_tags)
+        if need_descs:
+            self.read_param_descriptions(not need_tags)
 
 
-    def _read_param_descriptions(self, del_tags):
+    def read_param_descriptions(self, del_tags):
         """Read the parameter descriptions file.
         static method because read_params_file is used outside
         mancala_games."""
@@ -446,6 +445,7 @@ class ParamData(dict):
 
         # add the last parameter
         self[param].description = text
+        self.have_descs = True
 
 
     @staticmethod
@@ -511,6 +511,28 @@ class ParamData(dict):
             rec[UI_DEFAULT_IDX] = self.convert_default(rec[UI_DEFAULT_IDX])
             self[opt_name] = Param(*rec)
 
+
+PARAMS = None
+
+def read_params_data(*, need_tags=False, need_descs=False):
+    """Fill the global PARAMS as appropriate for the
+    current application.
+
+    When the param descriptions are needed load them, but
+    don't bother unloading them.
+
+    If the tags were deleted, don't ever reload them
+    (only the doc generator uses them)."""
+
+    global PARAMS
+
+    if PARAMS:
+        if need_descs and not PARAMS.have_descs:
+            PARAMS.read_param_descriptions(not need_tags)
+
+        return
+
+    PARAMS = ParamData(need_tags, need_descs)
 
 
 # %% read and process config ini
