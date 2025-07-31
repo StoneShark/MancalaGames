@@ -284,8 +284,8 @@ class TestAnimator:
         animator.set_active(True)
 
         mocker.patch('animator.one_step')
-        mocker.patch('animator.animator.change')
-        mobj = mocker.patch('animator.animator.message')
+        mocker.patch('animator.ANIMATOR.change')
+        mobj = mocker.patch('animator.ANIMATOR.do_message')
 
         game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(capt_on=[3],

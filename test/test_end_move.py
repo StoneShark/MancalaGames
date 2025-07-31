@@ -2421,7 +2421,7 @@ class TestAnimator:
         animator.make_animator(None)
         animator.set_active(True)
 
-        mocker.patch('animator.animator.change')
+        mocker.patch('animator.ANIMATOR.change')
         mobj = mocker.patch('animator.one_step')
 
         game_consts = gconsts.GameConsts(nbr_start=2, holes=3)

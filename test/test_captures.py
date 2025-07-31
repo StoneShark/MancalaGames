@@ -1768,7 +1768,7 @@ class TestAnimator:
         animator.make_animator(None)   # no game_ui, make sure it's not used
         animator.set_active(True)
 
-        mocker.patch('animator.animator.change')
+        mocker.patch('animator.ANIMATOR.change')
         mobj = mocker.patch('animator.one_step')
 
         game = mancala.Mancala(game_consts, game_info)
@@ -1805,8 +1805,8 @@ class TestAnimator:
         animator.set_active(True)
 
         mocker.patch('animator.one_step')
-        mocker.patch('animator.animator.change')
-        mobj = mocker.patch('animator.animator.message')
+        mocker.patch('animator.ANIMATOR.change')
+        mobj = mocker.patch('animator.ANIMATOR.do_message')
 
         game_consts = gconsts.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,

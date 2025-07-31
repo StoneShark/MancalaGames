@@ -2315,8 +2315,8 @@ class TestAnimator:
 
     @pytest.mark.animator
     def test_animator_flash(self, mocker):
-        """Do the animator test, but patch animator.animator.change
-        and animator.animator.flash so that it does not try to
+        """Do the animator test, but patch animator.ANIMATOR.change
+        and animator.ANIMATOR.do_flash so that it does not try to
         use the game_ui (which was not provided).
 
         Check sow result board and number of expected new laps
@@ -2333,8 +2333,8 @@ class TestAnimator:
         animator.make_animator(None)   # no game_ui, make sure it's not used
         animator.set_active(True)
 
-        mocker.patch('animator.animator.change')
-        mobj = mocker.patch('animator.animator.flash')
+        mocker.patch('animator.ANIMATOR.change')
+        mobj = mocker.patch('animator.ANIMATOR.do_flash')
 
         game = mancala.Mancala(game_consts, game_info)
         game.turn = False
@@ -2359,8 +2359,8 @@ class TestAnimator:
     @pytest.mark.parametrize('presow', [gi.PreSowCapt.DRAW_1_XCAPT,
                                         gi.PreSowCapt.ALL_SINGLE_XCAPT])
     def test_animator_presow(self, mocker, presow):
-        """Do the animator test, but patch animator.animator.change
-        and animator.animator.flash so that it does not try to
+        """Do the animator test, but patch animator.ANIMATOR.change
+        and animator.ANIMATOR.do_flash so that it does not try to
         use the game_ui (which was not provided).
 
         Check sow result board and number of expected new laps
@@ -2377,9 +2377,9 @@ class TestAnimator:
         animator.set_active(True)
         assert animator.active()
 
-        mocker.patch('animator.animator.change')
-        mocker.patch('animator.animator.flash')
-        mobj = mocker.patch('animator.animator.message')
+        mocker.patch('animator.ANIMATOR.change')
+        mocker.patch('animator.ANIMATOR.do_flash')
+        mobj = mocker.patch('animator.ANIMATOR.do_message')
 
         game = mancala.Mancala(game_consts, game_info)
         game.turn = False
@@ -2418,8 +2418,8 @@ class TestAnimator:
         animator.make_animator(None)
         animator.set_active(False)
 
-        mocker.patch('animator.animator.change')
-        mobj = mocker.patch('animator.animator.flash')
+        mocker.patch('animator.ANIMATOR.change')
+        mobj = mocker.patch('animator.ANIMATOR.do_flash')
 
         game = mancala.Mancala(game_consts, game_info)
         game.turn = False

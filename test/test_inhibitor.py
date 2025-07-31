@@ -208,7 +208,7 @@ class TestCaptN:
         animator.make_animator(None)   # no game_ui, make sure it's not used
         animator.set_active(True)
 
-        mobj = mocker.patch('animator.animator.message')
+        mobj = mocker.patch('animator.ANIMATOR.do_message')
 
         inhibit = inhibitor.make_inhibitor(game)
         inhibit.new_game()
@@ -225,7 +225,7 @@ class TestCaptN:
         animator.make_animator(None)   # no game_ui, make sure it's not used
         animator.set_active(True)
 
-        mobj = mocker.patch('animator.animator.message')
+        mobj = mocker.patch('animator.ANIMATOR.do_message')
 
         inhibit = inhibitor.make_inhibitor(game)
         inhibit.new_game()
@@ -333,7 +333,7 @@ class TestChildOnly:
         animator.make_animator(None)   # no game_ui, make sure it's not used
         animator.set_active(True)
 
-        mobj = mocker.patch('animator.animator.message')
+        mobj = mocker.patch('animator.ANIMATOR.do_message')
 
         inhibit = inhibitor.make_inhibitor(game)
         inhibit.new_game()
@@ -350,7 +350,7 @@ class TestChildOnly:
         animator.make_animator(None)   # no game_ui, make sure it's not used
         animator.set_active(True)
 
-        mobj = mocker.patch('animator.animator.message')
+        mobj = mocker.patch('animator.ANIMATOR.do_message')
 
         inhibit = inhibitor.make_inhibitor(game)
         inhibit.new_game()
@@ -518,7 +518,7 @@ class TestBoth:
         animator.make_animator(None)   # no game_ui, make sure it's not used
         animator.set_active(True)
 
-        mobj = mocker.patch('animator.animator.message')
+        mobj = mocker.patch('animator.ANIMATOR.do_message')
 
         inhibit = inhibitor.make_inhibitor(game)
         inhibit.new_game()
@@ -540,7 +540,7 @@ class TestBoth:
         animator.make_animator(None)   # no game_ui, make sure it's not used
         animator.set_active(True)
 
-        mobj = mocker.patch('animator.animator.message')
+        mobj = mocker.patch('animator.ANIMATOR.do_message')
 
         inhibit = inhibitor.make_inhibitor(game)
         inhibit.new_game()
@@ -566,7 +566,7 @@ class TestBoth:
         animator.make_animator(None)   # no game_ui, make sure it's not used
         animator.set_active(True)
 
-        mobj = mocker.patch('animator.animator.message')
+        mobj = mocker.patch('animator.ANIMATOR.do_message')
 
         inhibit = inhibitor.make_inhibitor(game)
         inhibit.new_game()

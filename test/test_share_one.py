@@ -90,8 +90,8 @@ class TestSowerAnimator:
         animator.set_active(True)
 
         mocker.patch('animator.one_step')
-        mocker.patch('animator.animator.change')
-        mobj = mocker.patch('animator.animator.message')
+        mocker.patch('animator.ANIMATOR.change')
+        mobj = mocker.patch('animator.ANIMATOR.do_message')
 
         game.turn = True
         game.board = [0, 4, 4, 0, 0, 1]
