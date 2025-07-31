@@ -8,6 +8,7 @@ pytestmark = pytest.mark.integtest
 
 from context import game_info as gi
 from context import man_config
+from context import man_path
 
 
 class GameTestData:
@@ -23,7 +24,7 @@ def gstate():
     """This fixture will maintain state between tests in the
     same class but will be reconstructed for each class."""
 
-    game, _ = man_config.make_game('./GameProps/Gelech.txt')
+    game, _ = man_config.make_game(man_path.GAMEPATH + 'Gelech.txt')
     gstate = GameTestData(game)
     return gstate
 

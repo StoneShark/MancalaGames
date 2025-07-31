@@ -38,6 +38,7 @@ import pytest
 from context import animator
 from context import game_logger
 from context import man_config
+from context import man_path
 
 
 def pytest_addoption(parser):
@@ -218,7 +219,7 @@ def game_pdict(request):
         pytest.xfail("Game cfg error (again)")
 
     try:
-        game_data = man_config.make_game("./GameProps/" + cfg_filename)
+        game_data = man_config.make_game(man_path.GAMEPATH + cfg_filename)
 
     except json.decoder.JSONDecodeError:
         request.config.cache.set(key_name, True)

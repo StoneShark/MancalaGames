@@ -22,6 +22,7 @@ from context import ai_player
 from context import cfg_keys as ckey
 from context import game_logger
 from context import man_config
+from context import man_path
 from context import montecarlo_ts as mcts
 
 
@@ -499,7 +500,7 @@ class TestMCTSLoops:
                              ids=['no_loop', 'loop_12'])
     def test_tree_policy_loops(self, board, store, enodes):
 
-        game, pdict = man_config.make_game('./GameProps/Wari.txt')
+        game, pdict = man_config.make_game(man_path.GAMEPATH + 'Wari.txt')
 
         game.turn = True
         game.board = board

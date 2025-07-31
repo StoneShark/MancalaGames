@@ -71,16 +71,16 @@ class TestFindGameFile:
 
         cwd = os.getcwd()
 
-        dir1 = tmp_path / 'GameProps'
+        dir1 = tmp_path / man_path.GAMEDIR
         dir1.mkdir()
         dir2 = tmp_path / 'base'
         dir2.mkdir()
-        dir3 = tmp_path / 'base' / 'GameProps'
+        dir3 = tmp_path / 'base' / man_path.GAMEDIR
         dir3.mkdir()
 
         for gfile in ['base/Game1.txt',
-                      'GameProps/Game2.txt',
-                      'base/GameProps/Game3.txt']:
+                      man_path.GAMEDIR + '/Game2.txt',
+                      'base/' + man_path.GAMEDIR + '/Game3.txt']:
             testfile = tmp_path / gfile
             testfile.write_text('text')
 
@@ -109,7 +109,7 @@ class TestFindGameFile:
 
         dir2 = tmp_path / 'base'
         dir2.mkdir()
-        dir3 = tmp_path / 'base' / 'GameProps'
+        dir3 = tmp_path / 'base' / man_path.GAMEDIR
         dir3.mkdir()
 
         testfile = tmp_path / 'game3.txt'

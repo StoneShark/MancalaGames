@@ -94,17 +94,17 @@ $(GENEDHELPS): $(GAMES) $(HELPINPUTS) docs\\context.py
 
 #  tests
 
-unit_tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py src\\game_params.csv
+unit_tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py params
 	-coverage run -m pytest -m unittest --ui_tests
 	coverage html
 
 
-integ_tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py src\\game_params.csv
+integ_tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py params
 	-coverage run -m pytest -m integtest --sim_fails --ui_tests
 	coverage html
 
 
-tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py src\\game_params.csv
+tests: $(SOURCES) $(TESTS) $(GAMES) test\\context.py params
 	-coverage run -m pytest --sim_fails --ui_tests
 	coverage html
 
@@ -115,7 +115,7 @@ all_tests: tests long_tests
 
 # a target to run only the test_gm files
 .PHONY: game_tests
-game_tests: test\\context.py
+game_tests: test\\context.py params
 	-coverage run -m pytest $(GAME_TESTS)
 	coverage html
 
@@ -144,7 +144,7 @@ player_tests: test\\context.py params
 vpath %.cov .\\test\\cov
 vpath %.py .\\test
 
-%.cov: test\\context.py src\\game_params.csv $(subst .cov,.py,$@) 
+%.cov: test\\context.py params $(subst .cov,.py,$@) 
 	@-mkdir test\\cov
 	coverage run -m pytest test\\$(subst .cov,.py,$@) --ui_tests
 	coverage json
@@ -152,13 +152,13 @@ vpath %.py .\\test
 	type test\\cov\\$@
 
 .PHONY: %.test
-%.test: test\\context.py src\\game_params.csv $(subst .test,.py,$@)
+%.test: test\\context.py params $(subst .test,.py,$@)
 	coverage run -m pytest test\\$(subst .test,.py,$@) --sim_fails --ui_tests
 	coverage html
 
 # do a stress test of one game:   make Wari.stress
 PHONY: %.stress
-%.stress: test\\context.py src\\game_params.csv $(subst .stre,.py,$@)
+%.stress: test\\context.py params $(subst .stre,.py,$@)
 	pytest -k $(subst .stress,,$@) test\\test_zz_simul_game.py --sim_fails --nbr_runs 1000
 
 
@@ -247,9 +247,3 @@ MancalaGames/mancala_games.exe: $(SOURCES) $(DATAFILES) mancala_games.spec
 .PHONY: list
 list:
 	@grep -Eo "^[a-zA-Z0-9\\/._]+:" makefile | sed -e "s/://" | sed -e "/PHONY/d" | sort
-	
-# includes Not a target files	
-#	@$(MAKE) -pRrq | grep -Eo "^[a-zA-Z0-9\\/._]+:" | sed -e "s/://" | sed -e "/PHONY/d" | sort
-
-# doesn't work
-#	@LC_ALL=C $(MAKE) -pRrq -f $(firstword $(MAKEFILE_LIST)) : 2>/dev/null | awk -v RS= -F: '/(^|\n)# Files(\n|$$)/,/(^|\n)# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | grep -E -v -e '^[^[:alnum:]]' -e '^$@$$'

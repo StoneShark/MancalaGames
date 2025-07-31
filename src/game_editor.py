@@ -573,7 +573,7 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
             if hasattr(self.game, 'filename'):
                 del self.game.filename
         else:
-            self.game.filename = self.config.filename
+            self.game.filename = self.config.pathname
 
         game_ui = mancala_ui.MancalaUI(self.game,
                                        self.config.game_config[ckey.PLAYER],
@@ -630,13 +630,14 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
         do_it = ui_utils.ask_popup(self.master,
                                    'Swap to Game Chooser', message,
                                    ui_utils.YESNO)
-        if not do_it:
+
+        if not do_it or self._check_save_cancel():
             return
 
-        if self._check_save_cancel():
-            return
+        gamename = None
+        if self.config.loaded_config:
+            gamename = self.config.loaded_config[ckey.GAME_INFO][ckey.NAME]
 
-        gamename = self.config.loaded_config[ckey.GAME_INFO][ckey.NAME]
         self._cleanup()
         self.destroy()
         if animator.animator:
@@ -645,4 +646,5 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
         self.master.protocol('WM_DELETE_WINDOW', '')
 
         chooser = self.chooser_class(self.master, MancalaGamesEditor)
-        chooser.do_select(gamename)
+        if gamename:
+            chooser.do_select(gamename)

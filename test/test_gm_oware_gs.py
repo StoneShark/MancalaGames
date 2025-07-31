@@ -9,6 +9,7 @@ pytestmark = pytest.mark.integtest
 
 from context import game_info as gi
 from context import man_config
+from context import man_path
 from context import mancala
 
 from game_info import GrandSlam
@@ -27,7 +28,7 @@ def gstate():
     """This fixture will maintain state between tests in the
     same class but will be reconstructed for each class."""
 
-    game, _ = man_config.make_game('./GameProps/Oware.txt')
+    game, _ = man_config.make_game(man_path.GAMEPATH + 'Oware.txt')
     gstate = GameTestData(game)
     return gstate
 

@@ -41,6 +41,7 @@ from game_classes import GAME_CLASSES
 
 MAX_LINES = 150
 MAX_CHARS = 4000
+SRC_DIR = 'src'
 
 NO_CONVERT = [ckey.NAME, ckey.ABOUT, ckey.HELP_FILE,
               ckey.UDIR_HOLES, ckey.CAPT_ON]
@@ -692,7 +693,7 @@ class ConfigData:
 
         directory = os.getcwd()
         pdir, bdir = os.path.split(directory)
-        if bdir in {'GameProps', 'GamePropsNoRelease', 'src'}:
+        if bdir == SRC_DIR:
             directory = pdir
 
         return os.path.join(directory, INI_FILENAME)

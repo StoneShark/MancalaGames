@@ -25,12 +25,11 @@ from context import game_classes
 from context import game_editor
 from context import game_info as gi
 from context import man_config
+from context import man_path
 from context import param_consts as pc
 
 
-GPROP_PATH = '../GameProps/'
-TXTPART = '.txt'
-EXFILE = '_all_params.txt'
+GPROP_PATH = '../' + man_path.GAMEDIR + '/'
 
 
 
@@ -49,7 +48,7 @@ def get_game_names():
     game_names = []
     for file in os.listdir(GPROP_PATH):
 
-        if file[-4:] != TXTPART or file == EXFILE:
+        if file[-4:] != man_path.GAME_EXT or file == man_path.ALL_PARAMS:
             continue
         game_dict = man_config.read_game(GPROP_PATH + file)
 
@@ -448,7 +447,7 @@ def write_games_help(filename):
 
         for file in sorted(os.listdir(GPROP_PATH), key=str.lower):
 
-            if file[-4:] != TXTPART or file == EXFILE:
+            if file[-4:] != man_path.GAME_EXT or file == man_path.ALL_PARAMS:
                 continue
             game_dict = man_config.read_game(GPROP_PATH + file)
 
@@ -825,7 +824,7 @@ def write_game_xref(filename):
         print(','.join(xref_params), file=ofile)
 
         for gfile in os.listdir(GPROP_PATH):
-            if gfile[-4:] != TXTPART or gfile == EXFILE:
+            if gfile[-4:] != man_path.GAME_EXT or gfile == man_path.ALL_PARAMS:
                 continue
 
             game, _ = man_config.make_game(GPROP_PATH + gfile)

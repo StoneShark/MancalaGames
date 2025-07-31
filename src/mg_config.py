@@ -14,9 +14,6 @@ import man_path
 import ui_utils
 
 
-ALL_PARAMS = '_all_params.txt'
-
-
 class GameDictEncoder(json.JSONEncoder):
     """A JSON Encoder that puts small dicts, lists and tuples on single lines.
 
@@ -145,7 +142,7 @@ class GameConfig:
         self._master = master    # parent for dialog boxes
         self._params = params    # link to parameter dict
 
-        self._dir = man_path.get_path('GameProps')
+        self._dir = man_path.get_path(man_path.GAMEDIR)
         self._known = False      # what this previously loaded or saved
 
         self.filename = None
@@ -154,10 +151,21 @@ class GameConfig:
         self.game_config = {}      # constructed config for playing
 
 
+
+    @property
+    def pathname(self):
+        """Return the full pathname."""
+
+        if self.filename:
+            return os.path.join(self._dir, self.filename)
+
+        return None
+
+
     def reset(self):
         """Reset data to initial values"""
 
-        self._dir = man_path.get_path('GameProps')
+        self._dir = man_path.get_path(man_path.GAMEDIR)
         self.filename = None
         self._known = False
 
@@ -201,8 +209,7 @@ class GameConfig:
 
         build_context = ui_utils.ReportError(self._master)
         with build_context:
-            self.loaded_config = man_config.read_game(
-                                    os.path.join(self._dir, self.filename))
+            self.loaded_config = man_config.read_game(self.pathname)
 
         if build_context.error:
             return False
@@ -255,7 +262,7 @@ class GameConfig:
     def _clean_up_for_save(self):
         """Adjust the game_config dictionary for save."""
 
-        if not self.filename.endswith(ALL_PARAMS):
+        if not self.filename.endswith(man_path.ALL_PARAMS):
             self._del_defaults()
 
         if ckey.ABOUT in self.game_config[ckey.GAME_INFO]:
@@ -306,7 +313,7 @@ class GameConfig:
 
         self._clean_up_for_save()
 
-        with open(self.filename, 'w', encoding='utf-8') as file:
+        with open(self.pathname, 'w', encoding='utf-8') as file:
             json.dump(self.game_config, file, indent=3,
                       cls=GameDictEncoder)
 

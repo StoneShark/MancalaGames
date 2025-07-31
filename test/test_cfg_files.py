@@ -67,4 +67,4 @@ def test_nonrule_checks(request, filename):
 def test_bad_file():
 
     with pytest.raises(gconsts.GameConstsError):
-        man_config.make_game(man_path.GAMEPATH + man_path.EX_GAME)
+        man_config.make_game(man_path.GAMEPATH + man_path.ALL_PARAMS)

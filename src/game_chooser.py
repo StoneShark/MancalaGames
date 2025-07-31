@@ -34,7 +34,7 @@ import variants
 
 # %% constants
 
-PATH = man_path.get_path('GameProps') + '/'
+PATH = man_path.get_path(man_path.GAMEDIR) + '/'
 MANCALA = 'Mancala'
 
 COLON = ':'
@@ -187,7 +187,7 @@ RATINGS = {STAR * 1: lambda gname: FAVS.rating(gname) == 1,
            STAR * 3: lambda gname: FAVS.rating(gname) == 3,
            STAR * 4: lambda gname: FAVS.rating(gname) == 4,
            STAR * 5: lambda gname: FAVS.rating(gname) >= 5,
-           'Not Rated': lambda gname: FAVS.rating(gname) == 0,
+           'Not Rated': lambda gname: not FAVS.rating(gname),
            }
 
 # %% GameFilters frame & classes
@@ -1017,6 +1017,9 @@ class GameChooser(ttk.Frame):
     def do_select(self, game_name):
         """Select a game that might not be visible.
         Used for select_random and select from the editor."""
+
+        if game_name not in self.all_games:
+            return
 
         self.select_list.select(game_name)
         self.select_game(game_name)

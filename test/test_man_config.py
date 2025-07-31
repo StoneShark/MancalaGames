@@ -800,10 +800,8 @@ class TestConfig:
 
         mcwd = mocker.patch.object(os, 'getcwd')
         mcwd.side_effect = ['.\\',
-                            '.\\GameProps',
                             '.\\src']
 
-        assert man_config.CONFIG._get_filename() == '.\\mancala.ini'
         assert man_config.CONFIG._get_filename() == '.\\mancala.ini'
         assert man_config.CONFIG._get_filename() == '.\\mancala.ini'
 

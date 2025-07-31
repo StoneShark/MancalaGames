@@ -8,9 +8,9 @@ Created on Sat Aug 19 08:32:38 2023
 import os
 import os.path
 
-GAMEPATH = './GameProps/'
-
-EX_GAME = '_all_params.txt'
+GAMEDIR = 'GameProps'
+GAMEPATH = './' + GAMEDIR + '/'
+ALL_PARAMS = '_all_params.txt'
 GAME_EXT = '.txt'
 
 
@@ -64,4 +64,4 @@ def game_files():
 
     path = get_path(GAMEPATH)
     files = os.listdir(path)
-    return [f for f in files if f != EX_GAME and f[-4:] == GAME_EXT]
+    return [f for f in files if f != ALL_PARAMS and f[-4:] == GAME_EXT]

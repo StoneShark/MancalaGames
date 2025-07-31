@@ -16,6 +16,7 @@ import pytest
 pytestmark = pytest.mark.integtest
 
 from context import man_config
+from context import man_path
 
 T = True
 F = False
@@ -34,7 +35,7 @@ def gstate():
     """This fixture will maintain state between tests in the
     same class but will be reconstructed for each class."""
 
-    game, _ = man_config.make_game('./GameProps/Toguz_Xorgol.txt')
+    game, _ = man_config.make_game(man_path.GAMEPATH + 'Toguz_Xorgol.txt')
     gstate = GameTestData(game)
     return gstate
 
