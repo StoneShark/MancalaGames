@@ -28,7 +28,7 @@ import animator
 import game_info as gi
 import mancala
 import rule_tester
-import sower_decos
+import sower
 
 from game_logger import game_log
 
@@ -58,7 +58,7 @@ def test_rules(ginfo, holes, skip=None):
 
 # %% deco replacements
 
-class BearOffSow(sower_decos.SowMethodIf):
+class BearOffSow(sower.SowMethodIf):
     """Sow seeds off the board when leaving our own side.
     Put them into our own store in case this is a MAX_SEEDS
     game."""

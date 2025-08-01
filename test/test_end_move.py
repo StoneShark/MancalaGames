@@ -15,8 +15,6 @@ import utils
 from context import animator
 from context import claimer
 from context import end_move
-from context import end_move_decos as emd
-from context import end_move_rounds as emr
 from context import game_constants as gconsts
 from context import game_info as gi
 from context import mancala
@@ -30,9 +28,7 @@ from game_info import WinCond
 
 # %%
 
-TEST_COVERS = ['src\\end_move.py',
-               'src\\end_move_decos.py',
-               'src\\end_move_rounds.py']
+TEST_COVERS = ['src\\end_move.py']
 
 
 # %% some constants
@@ -1077,10 +1073,10 @@ class TestEndDepImmob:
         """was the tallier added to the deco chain."""
 
         assert not isinstance(game.deco.ender,
-                              emr.RoundTallyWinner)
+                              end_move.RoundTallyWinner)
 
         assert isinstance(rndgame.deco.ender,
-                          emr.RoundTallyWinner)
+                          end_move.RoundTallyWinner)
 
     def test_forced_end_seeds(self, game):
 
@@ -1212,10 +1208,10 @@ class TestEndClear:
         """was the tallier added to the deco chain."""
 
         assert not isinstance(game.deco.ender,
-                              emr.RoundTallyWinner)
+                              end_move.RoundTallyWinner)
 
         assert isinstance(rndgame.deco.ender,
-                          emr.RoundTallyWinner)
+                          end_move.RoundTallyWinner)
 
 
     def test_forced_end(self, game):
@@ -1450,9 +1446,9 @@ class TestQuitter:
         print(quit_deco)
 
         if not stores and not child:
-            assert isinstance(quit_deco, emd.QuitToTie)
+            assert isinstance(quit_deco, end_move.QuitToTie)
         else:
-            assert isinstance(quit_deco, emd.EndGameWinner)
+            assert isinstance(quit_deco, end_move.EndGameWinner)
             assert isinstance(quit_deco.sclaimer, eclaimer)
 
 
@@ -1784,7 +1780,7 @@ class TestTerritory:
             object.__setattr__(game.info, cmethod, cvalue)
 
         deco = end_move.deco_end_move(game)
-        while deco and not isinstance(deco, emd.NoOutcomeChange):
+        while deco and not isinstance(deco, end_move.NoOutcomeChange):
             deco = deco.decorator
 
         if emin_occ:
@@ -1822,7 +1818,7 @@ class TestTerritory:
         game.child = child
 
         deco = end_move.deco_end_move(game)
-        while deco and not isinstance(deco, emd.NoOutcomeChange):
+        while deco and not isinstance(deco, end_move.NoOutcomeChange):
             deco = deco.decorator
         assert deco
 
@@ -2436,8 +2432,8 @@ class TestAnimator:
         # print(game.deco.ender)
         # print(game.deco.quitter)
 
-        assert isinstance(game.deco.ender, emd.AnimateEndMove)
-        assert isinstance(game.deco.quitter, emd.AnimateEndMove)
+        assert isinstance(game.deco.ender, end_move.AnimateEndMove)
+        assert isinstance(game.deco.quitter, end_move.AnimateEndMove)
 
         mdata = utils.make_ender_mdata(game, False, True)
         game.deco.ender.game_ended(mdata)
@@ -2459,5 +2455,5 @@ class TestAnimator:
         # print(game.deco.ender)
         # print(game.deco.quitter)
 
-        assert not isinstance(game.deco.ender, emd.AnimateEndMove)
-        assert not isinstance(game.deco.quitter, emd.AnimateEndMove)
+        assert not isinstance(game.deco.ender, end_move.AnimateEndMove)
+        assert not isinstance(game.deco.quitter, end_move.AnimateEndMove)

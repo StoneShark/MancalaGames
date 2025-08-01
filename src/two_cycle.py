@@ -21,7 +21,7 @@ import incrementer
 import game_info as gi
 import mancala
 import rule_tester
-import sower_decos
+import sower
 
 
 # %% North south rules
@@ -128,7 +128,7 @@ class NorthSouthIncr(incrementer.IncrementerIf):
         return rloc
 
 
-class NorthSouthSowSeedsNStore(sower_decos.SowSeedsNStore):
+class NorthSouthSowSeedsNStore(sower.SowSeedsNStore):
     """Sow a seed into the player's own store when passing it
     for north/south two cycle games.
 
@@ -237,7 +237,7 @@ class NorthSouthCycle(mancala.Mancala):
         self.deco.replace_deco('incr', incrementer.Increment,
                                NorthSouthIncr(self))
         if self.info.sow_own_store:
-            self.deco.replace_deco('sower', sower_decos.SowSeedsNStore,
+            self.deco.replace_deco('sower', sower.SowSeedsNStore,
                                    NorthSouthSowSeedsNStore(self))
 
 

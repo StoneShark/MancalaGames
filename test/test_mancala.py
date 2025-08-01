@@ -31,8 +31,7 @@ pytestmark = pytest.mark.unittest
 from context import allowables
 from context import animator
 from context import claimer
-from context import end_move_decos as emd
-from context import end_move_rounds as emr
+from context import end_move
 from context import game_constants as gconsts
 from context import game_info as gi
 from context import game_logger
@@ -51,8 +50,7 @@ from game_info import WinCond
 
 # %%
 
-TEST_COVERS = ['src\\mancala.py',
-               'src\\man_end_msgs_mixin.py']
+TEST_COVERS = ['src\\mancala.py']
 
 # %% constants
 
@@ -1141,8 +1139,8 @@ class TestEndMessage:
 
         game.deco.ender = None
 
-        quitter = emd.QuitToTie(game)
-        quitter = emr.RoundTallyWinner(game,
+        quitter = end_move.QuitToTie(game)
+        quitter = end_move.RoundTallyWinner(game,
                                        quitter,
                                        sclaimer=claimer.ChildClaimSeeds(game))
         game.deco.quitter = quitter

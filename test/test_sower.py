@@ -18,8 +18,6 @@ from context import game_constants as gconsts
 from context import mancala
 from context import move_data
 from context import sower
-from context import sower_decos as sowd
-from context import sower_mlap_decos as msowd
 
 from game_info import CaptSide
 from game_info import ChildType
@@ -34,9 +32,7 @@ from game_info import WinCond
 
 # %%
 
-TEST_COVERS = ['src\\sower.py',
-               'src\\sower_decos.py',
-               'src\\sower_mlap_decos.py']
+TEST_COVERS = ['src\\sower.py']
 
 
 # %% consts
@@ -49,7 +45,6 @@ N = None
 
 CCW = gi.Direct.CCW
 CW = gi.Direct.CW
-
 
 
 # %%
@@ -323,8 +318,8 @@ class TestSower:
         mdata = move_data.MoveData(game, None)
         mdata.capt_start = end_loc
 
-        lap_cont = msowd.StopSingleSeed(game, msowd.LapContinue(game))
-        lap_cont = msowd.StopRepeatTurn(game, lap_cont)
+        lap_cont = sower.StopSingleSeed(game, sower.LapContinue(game))
+        lap_cont = sower.StopRepeatTurn(game, lap_cont)
 
         assert lap_cont.do_another_lap(mdata) == eresult
 
@@ -348,8 +343,8 @@ class TestSower:
         mdata.cont_sow_loc = 3
         mdata.capt_start = end_loc
 
-        lap_cont = msowd.NextLapCont(game)
-        lap_cont = msowd.StopRepeatTurn(game, lap_cont)
+        lap_cont = sower.NextLapCont(game)
+        lap_cont = sower.StopRepeatTurn(game, lap_cont)
 
         assert lap_cont.do_another_lap(mdata) == eresult
         if cloc:
@@ -426,10 +421,10 @@ class TestSower:
         mdata.capt_start = end_loc
         mdata.seeds = sown_seeds
 
-        lap_cont = msowd.ChildLapCont(game)
-        lap_cont = msowd.StopSingleSeed(game, lap_cont)
-        lap_cont = msowd.StopOnChild(game, lap_cont)
-        lap_cont = msowd.StopRepeatTurn(game, lap_cont)
+        lap_cont = sower.ChildLapCont(game)
+        lap_cont = sower.StopSingleSeed(game, lap_cont)
+        lap_cont = sower.StopOnChild(game, lap_cont)
+        lap_cont = sower.StopRepeatTurn(game, lap_cont)
 
         assert lap_cont.do_another_lap(mdata) == eresult
 
@@ -519,10 +514,10 @@ class TestSower:
         mdata.capt_start = end_loc
         mdata.seeds = sown_seeds
 
-        lap_cont = msowd.ChildLapCont(nogame)
-        lap_cont = msowd.StopSingleSeed(nogame, lap_cont)
-        lap_cont = msowd.StopOnChild(nogame, lap_cont)
-        lap_cont = msowd.StopRepeatTurn(nogame, lap_cont)
+        lap_cont = sower.ChildLapCont(nogame)
+        lap_cont = sower.StopSingleSeed(nogame, lap_cont)
+        lap_cont = sower.StopOnChild(nogame, lap_cont)
+        lap_cont = sower.StopRepeatTurn(nogame, lap_cont)
 
         assert lap_cont.do_another_lap(mdata) == eresult
 
@@ -986,7 +981,7 @@ class TestGetSingle:
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
         assert isinstance(game.deco.sower.get_single_sower(),
-                          sowd.SowSeeds)
+                          sower.SowSeeds)
 
         game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
         game_info = gi.GameInfo(evens=True,
@@ -997,7 +992,7 @@ class TestGetSingle:
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
         assert isinstance(game.deco.sower.get_single_sower(),
-                          sowd.SowSeedsNStore)
+                          sower.SowSeedsNStore)
 
         game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
         game_info = gi.GameInfo(evens=True,
@@ -1008,7 +1003,7 @@ class TestGetSingle:
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
         assert isinstance(game.deco.sower.get_single_sower(),
-                          sowd.SowCaptOwned)
+                          sower.SowCaptOwned)
 
         game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
         game_info = gi.GameInfo(goal=Goal.DEPRIVE,
@@ -1021,13 +1016,13 @@ class TestGetSingle:
         game = mancala.Mancala(game_consts, game_info)
         if lapper:
             assert isinstance(game.deco.sower.get_single_sower(),
-                              sowd.DivertSkipBlckdSower)
+                              sower.DivertSkipBlckdSower)
             # might seem like an error but single sow is used in
             # opp_or_empty, we don't care if the hole is closed or not
             # only where the sow ended
         else:
             assert isinstance(game.deco.sower.get_single_sower(),
-                              sowd.SowClosed)
+                              sower.SowClosed)
 
         if lapper:
             # test one with visit opp
@@ -1042,7 +1037,7 @@ class TestGetSingle:
                                     rules=mancala.Mancala.rules)
             game = mancala.Mancala(game_consts, game_info)
             assert isinstance(game.deco.sower.get_single_sower(),
-                              sowd.SowSeeds)
+                              sower.SowSeeds)
 
 
 class TestVMlap:
@@ -1678,11 +1673,11 @@ class TestPrescribed:
     def test_mechanic(self, game, mocker):
 
 
-        mpresc = mocker.patch('sower_decos.SowOneOpp.do_prescribed')
-        msower = mocker.patch('sower_decos.SowSeeds.sow_seeds')
+        mpresc = mocker.patch('sower.SowOneOpp.do_prescribed')
+        msower = mocker.patch('sower.SowSeeds.sow_seeds')
 
-        swr = sowd.SowSeeds(game)
-        swr = sowd.SowOneOpp(game, 2, swr)
+        swr = sower.SowSeeds(game)
+        swr = sower.SowOneOpp(game, 2, swr)
 
         deco_str = str(swr)
         assert 'dispose' in deco_str
@@ -1746,8 +1741,8 @@ class TestPrescribed:
     def test_basic_pres(self, mocker):
         """the prescribed sower is SowSeeds, confirm it's called"""
 
-        mbasic = mocker.patch('sower_decos.SowSeeds.sow_seeds')
-        mmlaps = mocker.patch('sower_mlap_decos.SowMlapSeeds.sow_seeds')
+        mbasic = mocker.patch('sower.SowSeeds.sow_seeds')
+        mmlaps = mocker.patch('sower.SowMlapSeeds.sow_seeds')
 
         game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
         game_info = gi.GameInfo(evens=True,
@@ -1791,8 +1786,8 @@ class TestPrescribed:
         """the prescribed sower is SowMlapSeeds/SowSeeds,
         confirm it's called"""
 
-        mskips = mocker.patch('sower_decos.SowSkipOppN.sow_seeds')
-        msower = mocker.patch('sower_decos.SowSeeds.sow_seeds')
+        mskips = mocker.patch('sower.SowSkipOppN.sow_seeds')
+        msower = mocker.patch('sower.SowSeeds.sow_seeds')
 
         game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
         game_info = gi.GameInfo(evens=True,
@@ -1895,15 +1890,15 @@ class TestPrescribed:
         """Decorator must be provided."""
 
         with pytest.raises(gi.GameInfoError):
-            sowd.SowBasicFirst(game, 5)
+            sower.SowBasicFirst(game, 5)
 
 
     def test_get_single(self, game_1opp):
         """single sower return the non-prescribed single sower."""
 
-        assert isinstance(game_1opp.deco.sower, sowd.SowPrescribedIf)
+        assert isinstance(game_1opp.deco.sower, sower.SowPrescribedIf)
         assert isinstance(game_1opp.deco.sower.get_single_sower(),
-                          sowd.SowSeeds)
+                          sower.SowSeeds)
 
 
 class TestCaptMlap:
@@ -2273,7 +2268,7 @@ class TestStopSide:
         game.turn = turn
 
         stopper = game.deco.sower.lap_cont
-        assert isinstance(stopper, msowd.StopNotSide)
+        assert isinstance(stopper, sower.StopNotSide)
 
         mdata = move_data.MoveData(game, 0)
         mdata.capt_start = loc
@@ -2401,8 +2396,8 @@ class TestAnimator:
         game = mancala.Mancala(game_consts, game_info)
         game.turn = False
 
-        assert isinstance(game.deco.sower, msowd.SowMlapSeeds)
-        assert isinstance(game.deco.sower.lap_cont, msowd.AnimateLapStart)
+        assert isinstance(game.deco.sower, sower.SowMlapSeeds)
+        assert isinstance(game.deco.sower.lap_cont, sower.AnimateLapStart)
 
         mdata = move_data.MoveData(game, 1)
         mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(1)
@@ -2486,8 +2481,8 @@ class TestAnimator:
         game = mancala.Mancala(game_consts, game_info)
         game.turn = False
 
-        assert isinstance(game.deco.sower, msowd.SowMlapSeeds)
-        assert isinstance(game.deco.sower.lap_cont, msowd.AnimateLapStart)
+        assert isinstance(game.deco.sower, sower.SowMlapSeeds)
+        assert isinstance(game.deco.sower.lap_cont, sower.AnimateLapStart)
 
         mdata = move_data.MoveData(game, 1)
         mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(1)
@@ -2513,5 +2508,5 @@ class TestAnimator:
         assert not animator.ENABLED
         game = mancala.Mancala(game_consts, game_info)
 
-        assert isinstance(game.deco.sower, msowd.SowMlapSeeds)
-        assert not isinstance(game.deco.sower.lap_cont, msowd.AnimateLapStart)
+        assert isinstance(game.deco.sower, sower.SowMlapSeeds)
+        assert not isinstance(game.deco.sower.lap_cont, sower.AnimateLapStart)

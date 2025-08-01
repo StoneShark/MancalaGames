@@ -9,7 +9,7 @@ pytestmark = pytest.mark.unittest
 
 import utils
 
-from context import end_move_decos as emd
+from context import end_move
 from context import game_constants as gconsts
 from context import game_info as gi
 from context import diffusion
@@ -63,13 +63,13 @@ class TestDiffusion:
     def test_deco_overrides(self, diff):
 
         assert isinstance(diff.deco.sower, diffusion.DiffusionSower)
-        assert isinstance(diff.deco.quitter, emd.QuitToTie)
+        assert isinstance(diff.deco.quitter, end_move.QuitToTie)
 
 
     def test_deco_v2_overrides(self, diff_v2):
 
         assert isinstance(diff_v2.deco.sower, diffusion.DiffusionSower)
-        assert isinstance(diff_v2.deco.quitter, emd.QuitToTie)
+        assert isinstance(diff_v2.deco.quitter, end_move.QuitToTie)
 
 
     END_CASES = [

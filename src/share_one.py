@@ -11,7 +11,7 @@ import animator
 import game_info as gi
 import mancala
 import rule_tester
-import sower_decos
+import sower
 
 from game_logger import game_log
 
@@ -69,7 +69,7 @@ def test_rules(ginfo, holes, skip):
 # %% new decos
 
 
-class ShareOneSow(sower_decos.SowMethodIf):
+class ShareOneSow(sower.SowMethodIf):
     """When the opponent does not have any seeds, the move
     is to share one seed into the opponent's left most hole.
     Then do a repeat turn to do a real move."""

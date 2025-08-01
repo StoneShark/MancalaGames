@@ -10,7 +10,7 @@ Created on Sat Nov  2 15:39:39 2024
 import game_info as gi
 import mancala
 import rule_tester
-import sower_decos as sowd
+import sower
 import two_cycle
 
 
@@ -136,7 +136,7 @@ def test_rules(ginfo, holes, skip=None):
 
 # %% deco replacements
 
-class DiffusionSower(sowd.SowMethodIf):
+class DiffusionSower(sower.SowMethodIf):
     """Sow counter-clockwise around start hole from the hole that is
     most clockwise."""
 

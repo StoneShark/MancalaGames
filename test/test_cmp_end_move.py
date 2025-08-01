@@ -18,8 +18,7 @@ import collections
 
 import pytest
 
-from context import end_move_decos as emd
-from context import end_move_rounds as emr
+from context import end_move
 from context import game_info as gi
 from context import mancala
 from context import man_path
@@ -32,7 +31,6 @@ pytestmark = [pytest.mark.integtest]
 # %% constants
 
 FILES = man_path.game_files()
-
 
 N = None
 T = True
@@ -153,14 +151,14 @@ class TestEnderConfig:
 
         assert game.deco.ender.win_seeds == econfig.win_seeds
 
-        nooutcome = self.find_ender_deco(game, emd.NoOutcomeChange)
+        nooutcome = self.find_ender_deco(game, end_move.NoOutcomeChange)
         if econfig.min_needed:
             assert nooutcome
             assert nooutcome.min_needed == econfig.min_needed
         else:
             assert not nooutcome
 
-        rnd_ender = self.find_ender_deco(game, emr.RoundWinner)
+        rnd_ender = self.find_ender_deco(game, end_move.RoundWinner)
         if econfig.rnd_req_seeds:
             assert rnd_ender
             assert rnd_ender.req_seeds == econfig.rnd_req_seeds

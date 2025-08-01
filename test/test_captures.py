@@ -22,8 +22,7 @@ from context import move_data
 
 # %% constants
 
-TEST_COVERS = ['src\\capturer.py',
-               'src\\capt_decos.py']
+TEST_COVERS = ['src\\capturer.py']
 
 T = True
 F = False
