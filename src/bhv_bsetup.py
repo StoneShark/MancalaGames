@@ -661,7 +661,11 @@ class SetupStoreBehavior(bhv.StoreBehaviorIf):
         Seeds are always visible even if they aren't during game play"""
 
         self.str['state'] = tk.NORMAL
-        self.str['text'] = str(seeds)
+        game = self.str.game_ui.game
+        if seeds and not game.info.goal.eliminate():
+            self.str['text'] = str(seeds)
+        else:
+            self.str['text'] = ''
         self.str.update_color(highlight)
 
 
@@ -687,7 +691,7 @@ class SetupStoreBehavior(bhv.StoreBehaviorIf):
 
         game = self.str.game_ui.game
 
-        # no seeds to pick up
+        # no seeds to pick up or eliminate (don't care about seeds)
         if not game.store[self.str.owner] or game.info.goal.eliminate():
             self.str.bell()
             return
