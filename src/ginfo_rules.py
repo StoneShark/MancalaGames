@@ -403,10 +403,11 @@ def test_child_rules(tester):
         msg='CHILD_RULE: *_OWNER_ONLY requires territory GOAL',
         excp=gi.GameInfoError)
 
-    tester.test_rule('no_opp_child_req',
+    tester.test_rule('no_sow_child_req',
         rule=lambda ginfo: (not ginfo.child_type
-                            and ginfo.sow_rule == gi.SowRule.NO_OPP_CHILD),
-        msg='Sow rule NO_OPP_CHILD requires children',
+                            and ginfo.sow_rule in (gi.SowRule.NO_OPP_CHILD,
+                                                   gi.SowRule.NO_CHILDREN)),
+        msg='Sow rule requires children',
         excp=gi.GameInfoError)
 
     tester.test_rule('not1st_static',

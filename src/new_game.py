@@ -345,7 +345,7 @@ class SeedCountCheck(NewGameIf):
                 ), f"seed count error in new_game\n{store}\n{board}"
 
 
-# %%
+# %%  build deco chain
 
 def deco_new_game(game):
     """Create the new_game chain."""

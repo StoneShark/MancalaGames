@@ -30,6 +30,7 @@ import man_config
 import man_history
 import man_ui_cmd_mixins as ui_cmds
 import round_tally
+import sower
 import ui_utils
 
 from game_logger import game_log
@@ -572,10 +573,13 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
         game_log.turn(0, 'Start Game', self.game)
         self.history.record(self.game.state)
 
-        any_inhibits = (self.game.inhibitor.stop_me_capt(self.game.turn)
-                        or self.game.inhibitor.stop_me_child(self.game.turn))
+        startup_msgs = (
+            self.game.inhibitor.stop_me_capt(self.game.turn)
+            or self.game.inhibitor.stop_me_child(self.game.turn)
+            or self.game.info.prescribed in (gi.SowPrescribed.SOW1OPP,
+                                             gi.SowPrescribed.PLUS1MINUS1))
         self.ani_reset_state()
-        if animator.active() and any_inhibits:
+        if animator.active() and startup_msgs:
             self.update_idletasks()
             self.after(100, self._ani_delayed_startup)
         else:
@@ -588,6 +592,7 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
         do a final refresh and schedule the ai."""
 
         self.game.inhibitor.start_ani_msg()
+        sower.start_ani_msg(self.game)
         animator.queue_callback(self.refresh)
         animator.queue_callback(self.schedule_ai)
         self.refresh(ani_ok=True)

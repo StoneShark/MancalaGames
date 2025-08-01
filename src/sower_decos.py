@@ -311,6 +311,25 @@ class SowMaxN(SowMethodIf):
         mdata.capt_start = loc
 
 
+class SowSkipChild(SowMethodIf):
+    """Skip sowing children."""
+
+    def sow_seeds(self, mdata):
+        """Sow seeds."""
+
+        incr = self.game.deco.incr.incr
+        loc = mdata.cont_sow_loc
+        for _ in range(mdata.seeds):
+
+            loc = incr(loc, mdata.direct, mdata.cont_sow_loc)
+            while self.game.child[loc] is not None:
+                loc = incr(loc, mdata.direct, mdata.cont_sow_loc)
+
+            self.game.board[loc] += 1
+
+        mdata.capt_start = loc
+
+
 class SowSkipOppChild(SowMethodIf):
     """Skip sowing opponents children."""
 

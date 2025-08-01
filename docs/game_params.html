@@ -635,6 +635,8 @@ is included after the parameter sections.
 <b class="enum">LAP_CAPT_SEEDS</b>: Check for capture on each lap. If a capture occured, continue sowing with captured seeds and seeds in final hole sown. If no capture occured, continue if more than one seed is in the final hole.
 <p class="helptext"> For all LAP_CAPT rules, if stores are not configured, sowing will be stopped when the opponent does not have seeds.
 <p class="helptext"> Not compatible with basic captures. Behaves badly with most capt_types unless other options are used to prevent endless sows. Turn on Disallow Endless Sows via the Game menu for experimentation.
+<li class="helptext">
+<b class="enum">NO_CHILDREN</b>: do not sow any children.
 </ol>
 <h4 id="sow_param"> Sow Parameter </h4>
 <p class="pdesc">Location in Config Files: game_info : sow_param
@@ -1020,7 +1022,7 @@ is included after the parameter sections.
 <p class="pdesc">Default value: 1
 <p class="pdesc">UI Tab: Player
 
-<p>The default difficulty for the game. The difficulty can be changed at play time, even during game play, in the Mancala UI.
+<p>The default difficulty for the game. Valid values are 0 for easiest and 3 for hardest. The difficulty can be changed at play time, even during game play, in the Mancala UI.
 <h4 id="ai_active"> Start Active </h4>
 <p class="pdesc">Location in Config Files: player : ai_active
 <p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>

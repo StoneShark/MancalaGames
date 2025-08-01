@@ -576,7 +576,7 @@ class TestSower:
 
 
     # @pytest.mark.usefixtures("logger")
-    def test_no_sow_child(self):
+    def test_no_sow_opp_child(self):
 
         game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(evens=True,
@@ -603,6 +603,38 @@ class TestSower:
 
         assert game.board == [0, 1, 2, 4, 2, 4]
         assert mdata.capt_start == 5
+
+
+    # @pytest.mark.usefixtures("logger")
+    def test_no_sow_child(self):
+
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
+        game_info = gi.GameInfo(evens=True,
+                                stores=True,
+                                child_type = gi.ChildType.NORMAL,
+                                child_cvt = 6,
+                                sow_rule=gi.SowRule.NO_CHILDREN,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game =  mancala.Mancala(game_consts, game_info)
+        game.turn = False
+
+        game.board = [0, 5, 2, 2, 2, 2]
+        game.child = [T, N, T, F, T, N]
+        # print(game)
+
+        sow_pos = 1
+        mdata = move_data.MoveData(game, sow_pos)
+        mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(sow_pos)
+        mdata.direct = gi.Direct.CCW
+        game.deco.sower.sow_seeds(mdata)
+        # print(game)
+        # print(mdata)
+
+        assert game.board == [0, 2, 2, 2, 2, 5]
+        assert mdata.capt_start == 5
+
 
 
     @pytest.mark.parametrize('turn, move, eboard',
@@ -2312,6 +2344,36 @@ class TestBadEnums:
 
 
 class TestAnimator:
+
+    @pytest.mark.animator
+    @pytest.mark.parametrize('presc, ecalls',
+                             [(gi.SowPrescribed.SOW1OPP, 1),
+                              (gi.SowPrescribed.PLUS1MINUS1, 1),
+                              (gi.SowPrescribed.NONE, 0),
+                              (gi.SowPrescribed.BASIC_SOWER, 0),
+                              ])
+    def test_animator_presc_message(self, mocker, presc, ecalls):
+
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(stores=True,
+                                evens=True,
+                                prescribed=presc,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        assert animator.ENABLED
+        animator.make_animator(None)   # no game_ui, make sure it's not used
+        animator.set_active(True)
+
+        mobj = mocker.patch('animator.ANIMATOR.do_message')
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = False
+
+        sower.start_ani_msg(game)
+
+        assert len(mobj.mock_calls) == ecalls
+
 
     @pytest.mark.animator
     def test_animator_flash(self, mocker):

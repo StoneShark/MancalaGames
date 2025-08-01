@@ -58,6 +58,9 @@ def _add_base_sower(game):
         elif game.info.sow_rule == gi.SowRule.OPP_CHILD_ONLY1:
             sower = sowd.SowSkipOppChildUnlessFinal(game)
 
+        elif game.info.sow_rule == gi.SowRule.NO_CHILDREN:
+            sower = sowd.SowSkipChild(game)
+
         elif game.info.sow_rule == gi.SowRule.LAP_CAPT_OPP_GETS:
             sower = sowd.SowSeeds(game)
             sower = sowd.SowOppCaptsLast(game, sower)
@@ -258,3 +261,15 @@ def deco_sower(game):
         sower = _add_prescribed_sower(game, sower)
 
     return sower
+
+
+# %% start ani message
+
+def start_ani_msg(game):
+    """Do a start message for a prescribed opening."""
+
+    if game.info.prescribed == gi.SowPrescribed.SOW1OPP:
+        animator.do_message("Prescribed Opening Sow 1 Opposite")
+
+    elif game.info.prescribed == gi.SowPrescribed.PLUS1MINUS1:
+        animator.do_message("Prescribed Opening Plus 1 Minus 1")

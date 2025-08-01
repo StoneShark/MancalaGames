@@ -367,6 +367,7 @@ class SowRule(enum.IntEnum):
     LAP_CAPT_OPP_GETS = 10
     OPP_CHILD_ONLY1 = 11        # previously was 13
     LAP_CAPT_SEEDS = 12       # previously was 14
+    NO_CHILDREN = 13
 
 
 @enum.unique

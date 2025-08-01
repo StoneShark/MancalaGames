@@ -286,7 +286,7 @@ If the last sown seed is put in an empty hole, seeds on the opposite side of the
 SOW_RULE of SOW_CAPT_ALL does not do this capture.
 
 <param difficulty>
-The default difficulty for the game. The difficulty can be changed at play time, even during game play, in the Mancala UI.
+The default difficulty for the game. Valid values are 0 for easiest and 3 for hardest. The difficulty can be changed at play time, even during game play, in the Mancala UI.
 
 <param mx_easy_rand_a>
 If the game is being played on easy mode (game difficult of easy/0), a random value may be added to the static evaluation. This can be done to induce errors into the ai player's game play. A random value is selected between -mx_easy_rand_a and +easy_rand.
@@ -803,7 +803,9 @@ Special sow rules add additional behavior or restrictions to the sowing phase:
   + For all LAP_CAPT rules, if stores are not configured, sowing will be stopped when the opponent does not have seeds.
 
   + Not compatible with basic captures. Behaves badly with most capt_types unless other options are used to prevent endless sows. Turn on Disallow Endless Sows via the Game menu for experimentation.
-  
+
+- NO_CHILDREN: do not sow any children.
+
 <param sow_start>
 When selected, the first seed is sown into (i.e., left in) the start hole.
 

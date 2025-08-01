@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Gamacha",
-      "about": "Counter-clockwise, multi-lap sow. Moves must end in an empty hole or reach opponents side of the board. \n\nSeeds are taken out of play via cross-capture. \n\nThe goal is to deprive the opponent of seeds.\n\nVariations: \n\n- Sadeqa: smaller board, played in rounds for best of 9 games, uses ALTS_WITH_1 start pattern.\n\n- suggested start patterns: ALTERNATES, ALTS_WITH_1, CLIPPEDTRIPPLES or ALTS_SPLIT (GAMACHA is configured in base game).\n\n- any allow rule except MOVE_ALL_HOLES_FIRST.\n",
+      "about": "Counter-clockwise, multi-lap sow. Moves must end in an empty hole or reach opponent's side of the board. \n\nSeeds are taken out of play via cross-capture. \n\nThe goal is to deprive the opponent of seeds.\n\nVariations: \n\n- Sadeqa: smaller board, played in rounds for best of 9 games, uses ALTS_WITH_1 start pattern.\n\n- suggested start patterns: ALTERNATES, ALTS_WITH_1, CLIPPEDTRIPPLES or ALTS_SPLIT (GAMACHA is configured in base game).\n\n- any allow rule except MOVE_ALL_HOLES_FIRST.\n\n- vary the number of holes and start seeds\n",
       "allow_rule": 1,
       "crosscapt": true,
       "goal": 1,
@@ -25,7 +25,9 @@
    },
    "vari_params": {
       "start_pattern": [ 0, 1, 2, 3, 4, 7 ],
-      "allow_rule": [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13 ]
+      "allow_rule": [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13 ],
+      "holes": "include",
+      "nbr_start": "include"
    },
    "rules": "Russ, Laurence. Mancala Games. 1984. p33."
 }

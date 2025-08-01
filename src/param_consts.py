@@ -283,7 +283,8 @@ STRING_DICTS = {
          "Lap Capt, sow with capt'ed seeds": gi.SowRule.LAP_CAPT_SEEDS,
          "Lap Capt Then Opp takes Own (< sow_param)":
              gi.SowRule.LAP_CAPT_OPP_GETS,
-         "Do not sow opponents children": gi.SowRule.NO_OPP_CHILD,
+         "Do not sow children": gi.SowRule.NO_CHILDREN,
+         "Do not sow opponent's children": gi.SowRule.NO_OPP_CHILD,
          "Don't sow opp children unless final seed": gi.SowRule.OPP_CHILD_ONLY1,
          }),
 

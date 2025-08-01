@@ -39,6 +39,7 @@ COLON = ':'
 STAR = '🟊'
 DESC_WIDTH = 72
 COL_WIDTH = 30
+FIL_COLS = 3
 
 TINY = 4
 SMALL = 6
@@ -170,11 +171,10 @@ GNOTES = {
     'Rules Valdez': lambda gdict: 'Valdez' in gdict.get('rules', ''),
     'Rules Man World': lambda gdict: 'mancala.fandom' in gdict.get('rules', ''),
     'Rules Davies': lambda gdict: 'Davies' in gdict.get('rules', ''),
-    'Rules Other': lambda gdict: ('Mohr' in gdict.get('rules', '')
-                                  or ('Russ' not in gdict.get('rules', '')
-                                      and 'Valdez' not in gdict.get('rules', '')
-                                      and 'mancala.fandom' not in gdict.get('rules', '')
-                                      and 'Davies' not in gdict.get('rules', '')))
+    'Rules Other': lambda gdict: ('Russ' not in gdict.get('rules', '')
+                                  and 'Valdez' not in gdict.get('rules', '')
+                                  and 'mancala.fandom' not in gdict.get('rules', '')
+                                  and 'Davies' not in gdict.get('rules', ''))
 
           }
 
@@ -206,7 +206,7 @@ class BaseFilter(ttk.Frame, abc.ABC):
         row = ui_utils.Counter()
 
         lbl = ttk.Label(self, text=label, style='Title.TLabel')
-        lbl.grid(row=row.count, column=0, columnspan=2, sticky='ew')
+        lbl.grid(row=row.count, column=0, columnspan=FIL_COLS, sticky='ew')
         lbl.configure(anchor='center')  # anchor in style is ignored
 
         self.filt_var = self.build_filters(filt_obj, row, value_keys)
@@ -215,11 +215,15 @@ class BaseFilter(ttk.Frame, abc.ABC):
         ttk.Button(self, text='All',
                    command=self.not_filtered,
                    style='Filt.TButton'
-                   ).grid(row=rnbr, column=0, padx=3, pady=3)
+                   ).grid(row=rnbr, column=0, padx=1, pady=1)
+        ttk.Button(self, text='Inv',
+                   command=self.invert,
+                   style='Filt.TButton'
+                   ).grid(row=rnbr, column=1, padx=1, pady=1)
         ttk.Button(self, text='None',
                    command=self.all_filtered,
                    style='Filt.TButton'
-                   ).grid(row=rnbr, column=1, padx=3, pady=3)
+                   ).grid(row=rnbr, column=2, padx=1, pady=1)
 
 
     def build_filters(self, filt_obj, row, value_keys):
@@ -238,8 +242,8 @@ class BaseFilter(ttk.Frame, abc.ABC):
             ttk.Checkbutton(self, text=name,
                             variable=filt_var[key],
                             command=filt_obj.update_list
-                            ).grid(row=row.count, column=0, columnspan=2,
-                                   sticky='ew')
+                            ).grid(row=row.count, column=0,
+                                   columnspan=FIL_COLS, sticky='ew')
         return filt_var
 
 
@@ -256,6 +260,14 @@ class BaseFilter(ttk.Frame, abc.ABC):
 
         for var in self.filt_var.values():
             var.set(0)
+        self.filt_obj.update_list()
+
+
+    def invert(self):
+        """Invert the filters."""
+
+        for var in self.filt_var.values():
+            var.set(not var.get())
         self.filt_obj.update_list()
 
 
@@ -376,7 +388,7 @@ class FeatureFilter(DictFilter):
                 ui_utils.TriStateCheckbutton(self,
                                              text=name,
                                              update_cmd=filt_obj.update_list)
-            filt_var[name].grid(row=row.count, column=0, columnspan=2,
+            filt_var[name].grid(row=row.count, column=0, columnspan=FIL_COLS,
                                 sticky='ew')
 
         return filt_var
@@ -400,6 +412,19 @@ class FeatureFilter(DictFilter):
                 return False
 
         return True
+
+
+    def invert(self):
+        """Invert the filters, but only those either True or False.
+        Don't change the 'don't cares'."""
+
+        for var in self.filt_var.values():
+            val = var.get()
+            if val is True:
+                var.set(False)
+            elif val is False:
+                var.set(True)
+        self.filt_obj.update_list()
 
 
 @dc.dataclass
@@ -437,7 +462,7 @@ FILTERS = [
     FilterDesc('Capture Types', DictFilter, CAPTS, ckey.GAME_INFO, fcol.count),
     FilterDesc('Configuration', FeatureFilter, GNOTES, True, fcol.value),
 
-    FilterDesc('Features (all match)', FeatureFilter, FEATS,
+    FilterDesc('Features', FeatureFilter, FEATS,
                ckey.GAME_INFO, fcol.count),
 
     ]
@@ -453,7 +478,7 @@ class GameFilters(ttk.Frame):
 
         super().__init__(parent, padding=3)
         self.parent = parent
-        self.pack()
+        self.pack(fill=tk.BOTH, expand=True)
 
         filt_frame = ttk.Labelframe(self,
                                     text='Filters', labelanchor='nw',
@@ -980,10 +1005,10 @@ class GameChooser(ttk.Frame):
         filtmenu = tk.Menu(menubar)
         filtmenu.add_command(label='Show All',
                              command=self.game_filter.not_filtered,
-                             accelerator='Ctrl-a')
+                             accelerator='Ctrl-Shft-A')
         filtmenu.add_command(label='Clear All',
                              command=self.game_filter.all_filtered,
-                             accelerator='Ctrl-c')
+                             accelerator='Ctrl-Shft-C')
         menubar.add_cascade(label='Filters', menu=filtmenu)
 
         ui_utils.add_help_menu(menubar, self)
@@ -993,8 +1018,8 @@ class GameChooser(ttk.Frame):
     def _key_bindings(self, active=True):
         """Bind or unbind the keys."""
 
-        bindings = [('<Control-c>', self.game_filter.all_filtered),
-                    ('<Control-a>', self.game_filter.not_filtered),
+        bindings = [('<Control-C>', self.game_filter.all_filtered),
+                    ('<Control-A>', self.game_filter.not_filtered),
                     ('<Control-p>', self.play_game),
                     ('<Control-r>', self.select_random),
                     ('<Control-E>', self.edit_game),

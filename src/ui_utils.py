@@ -65,7 +65,8 @@ def setup_styles(root):
 
     style.map('TButton', background=[('active',  BTN_HLIGHT)])
 
-    style.configure('Filt.TButton', width=-9, padding=1)
+    style.configure('Filt.TButton', width=-5, padding=0,
+                    font=('Helvetica', 8))
 
     style.configure('Play.TButton',
                     background=MY_BLUE,
@@ -173,7 +174,11 @@ class TriStateCheckbutton(ttk.Checkbutton):
 
         # pylint: disable=use-implicit-booleaness-not-comparison-to-zero
         # we mean zero, not falsy
-        if value == 0:
+
+        if isinstance(value, bool):
+            self.value = value
+
+        elif value == 0:
             self.value = False
 
         elif value == 1:
