@@ -48,6 +48,12 @@ LARGEST = 9
 
 FAVS = None
 
+#  Filter control (0x4) and both alt keys (0x20000 & 0x40000)
+#  ('Shift', 'Lock', 'Control', 'Mod1', 'Mod2', 'Mod3', 'Mod4', 'Mod5',
+#   'Button1', 'Button2', 'Button3', 'Button4', 'Button5')
+TK_KEYMOD_MASK = 0xffff0004
+
+
 GCLASS = {'Mancala': lambda gclass: gclass == MANCALA,
           'Other': lambda gclass: gclass != MANCALA}
 
@@ -698,7 +704,7 @@ class SelectList(ttk.Labelframe):
         wrapping the search. If no elements start with that
         key; don't change the selection."""
 
-        if len(event.keysym) > 1:
+        if len(event.keysym) > 1 or event.state & TK_KEYMOD_MASK:
             return
         key = event.keysym[0].lower()
 
@@ -717,6 +723,7 @@ class SelectList(ttk.Labelframe):
             if child[0].lower() == key:
                 self.select(child)
                 return
+
 
 # %% AboutPane Frame
 
