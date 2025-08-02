@@ -15,7 +15,7 @@
    },
    "player": { "scorer": { "mx_stores_m": 4 } },
    "variants": {
-      "Ot-tjin": {},
+      "Ot-tjin": { },
       "Ot-tjin_2": {
          "nbr_start": 2,
          "capt_on": [ 2 ]
@@ -32,6 +32,7 @@
    "vari_params": {
       "holes": [ 5, 7, 9, 10 ],
       "nbr_start": [ 2, 3, 4, 5 ],
+      "capt_on": "include",
       "sow_direct": [ -1, 1 ]
    },
    "rules": "Russ, Laurence. Mancala Games. 1984. p64.",
