@@ -643,8 +643,6 @@ class AniMenuMixin:
             delay = man_config.CONFIG.get_int('ani_delay', 350)
             animator.set_delay(delay)
 
-            print("Ani Delay=", animator.get_delay())
-
 
     @staticmethod
     def _ani_speed_fastest(_=None):
@@ -652,7 +650,6 @@ class AniMenuMixin:
 
         if animator.active():
             animator.set_delay(ANI_STEP)
-            print("Ani Delay=", animator.get_delay())
 
 
     @staticmethod
@@ -663,7 +660,6 @@ class AniMenuMixin:
         if animator.active():
             animator.set_delay(max(ANI_STEP,
                                    animator.get_delay() - ANI_STEP))
-            print("Ani Delay=", animator.get_delay())
 
 
     @staticmethod
@@ -672,7 +668,6 @@ class AniMenuMixin:
 
         if animator.active():
             animator.set_delay(animator.get_delay() + ANI_STEP)
-            print("Ani Delay=", animator.get_delay())
 
 
     def _toggle_ani_active(self, _=None):

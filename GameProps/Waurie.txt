@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Waurie",
-      "about": "Sow direction is counter-clockwise, sow into own store, but no other capture. Extra turn when last sown seed in the store.\n\nGoal: clear your own holes.",
+      "about": "Sow direction is counter-clockwise, sow into own store, but no other capture. Extra turn when last sown seed in the store.\n\nGoal: clear your own holes.\n",
       "goal": 3,
       "skip_start": true,
       "sow_direct": 1,
@@ -15,18 +15,16 @@
    },
    "player": {
       "algorithm": "montecarlo_ts",
-      "scorer": {
-         "mx_stores_m": 0,
-         "mx_seeds_m": 1,
-         "mx_empties_m": 4,
-         "mx_rturn_a": 50,
-         "mx_easy_rand_a": 0
-      },
       "ai_params": {
-         "mm_depth": [1, 5, 8, 12],
-         "mcts_bias": [300, 200, 200, 200],
-         "mcts_nodes": [100, 300, 400, 500],
-         "mcts_pouts": [1, 3, 3, 5]
+         "mcts_bias": [ 300, 200, 200, 200 ],
+         "mcts_nodes": [ 100, 300, 400, 500 ],
+         "mcts_pouts": [ 1, 3, 3, 5 ],
+         "mm_depth": [ 1, 5, 8, 12 ]
+      },
+      "scorer": {
+         "mx_seeds_m": -4,
+         "mx_empties_m": 2,
+         "mx_rturn_a": 50
       }
    },
    "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p16."
