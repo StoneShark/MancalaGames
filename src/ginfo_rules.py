@@ -801,6 +801,7 @@ def test_rules(ginfo, holes, skip=None):
             with LAPPER_NEXT""",
         excp=NotImplementedError)
         # would need to carefully decide how it would work
+        # StopNoOppSeeds is not currently added to LAPPER_NEXT deco chain
 
     tester.test_rule('ogol_no_lnext',
         rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.LAP_CAPT_OPP_GETS

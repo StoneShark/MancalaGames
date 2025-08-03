@@ -41,7 +41,8 @@ import variants
 DESC_WIDTH = 72
 
 # these are the expected tabs, put them in this order (add any extras)
-PARAM_TABS = ('Game', 'Dynamics', 'Sow', 'Capture', 'Variants', 'Player')
+PARAM_TABS = ('Game', 'Dynamics', 'Sow', 'Capture',
+              'Variants', 'Tags', 'Player')
 
 SKIP_TAB = 'skip'
 
@@ -471,12 +472,15 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
             field.edit_modified(False)
 
 
-    def _check_variations(self):
-        """Check the variation text entries to see if they can be
-        parsed. If there is an error in either ask the user if they
-        want to save anyway."""
+    def _check_jsons(self):
+        """Check the Text dictionary entries to see if they can be
+        parsed. If there is an error in the variation entries ask
+        the user if they want to save anyway. For the EXTRA_TOPS,
+        the user can chooser the original tag/value pairs or go
+        fix them (they will not be saved as string because it would
+        mess with too many other tools, e.g., doc generator)."""
 
-        for key in (ckey.VARI_PARAMS, ckey.VARIANTS):
+        for key in (ckey.VARI_PARAMS, ckey.VARIANTS, ckey.EXTRA_TOPS):
 
             text = self.tktexts[key].get('1.0', tk.END).strip()
             if not text:
@@ -486,14 +490,23 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
                 json.loads(text)
 
             except json.decoder.JSONDecodeError as error:
+
                 message = [f"""JSON Encode Error in {key} it cannot be
                            converted to a proper dictionary:""",
-                           str(error),
-                           """Would you like to save the values as strings?""",
-                           """It cannot be used, but will preserve your work."""]
-                return ui_utils.ask_popup(self,
-                                          'JSON Encode Error', message,
-                                          ui_utils.OKCANCEL)
+                           str(error)]
+                if key == ckey.EXTRA_TOPS:
+                    message += ["""Click Ok to preserve the original-unedited
+                                tags and values or Cancel to fix it."""]
+
+                else:
+                    message += ["""Would you like to save the values
+                                as strings?""",
+                                """It cannot be used,
+                                but will preserve your work."""]
+
+                return  ui_utils.ask_popup(self,
+                                           'JSON Encode Error', message,
+                                           ui_utils.OKCANCEL)
 
         return True
 
@@ -501,7 +514,7 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
     def _save(self, _=None, *, askfile=False):
         """Save params to file."""
 
-        if not self._check_variations():
+        if not self._check_jsons():
             return
 
         self.config.init_fname(self.tkvars[ckey.NAME].get())

@@ -198,6 +198,34 @@ class GameConfig:
         return self._load_file()
 
 
+    def _combine_tops(self):
+        """Combine the extra top levels into a dictionary."""
+
+        extra_tops = {}
+        for tlevel, value in self.loaded_config.items():
+            if tlevel not in ckey.TOP_LEVELS:
+                extra_tops[tlevel] = value
+
+        self.loaded_config[ckey.EXTRA_TOPS] = extra_tops
+
+
+    def _uncombine_tops(self):
+        """If extra_tops is a dictionary, move the values up to
+        a top level. Otherwise preserve the original tags (was a user
+        choice. Either way, remove the EXTRA_TOPS tag."""
+
+        if isinstance(self.game_config[ckey.EXTRA_TOPS], dict):
+            for tlevel, value in self.game_config[ckey.EXTRA_TOPS].items():
+                self.game_config[tlevel] = value
+
+        elif self.loaded_config:
+            for tag in self.loaded_config.keys():
+                if tag not in self.game_config:
+                    self.game_config[tag] = self.loaded_config[tag]
+
+        self.game_config.pop(ckey.EXTRA_TOPS, None)
+
+
     def _load_file(self):
         """Load from the saved filename inside a build_context
         to catch and report any errors to the player.
@@ -212,8 +240,10 @@ class GameConfig:
         if build_context.error:
             return False
 
+        self._combine_tops()
         self.edited = False
         self._known = True
+
         return True
 
 
@@ -260,6 +290,8 @@ class GameConfig:
     def _clean_up_for_save(self):
         """Adjust the game_config dictionary for save."""
 
+        self._uncombine_tops()
+
         if not self.filename.endswith(man_path.ALL_PARAMS):
             self._del_defaults()
 
@@ -281,11 +313,6 @@ class GameConfig:
     def save(self, askfile=False):
         """Save the game configuration to a file.
         Preserve any tags/comments that were in a loaded config."""
-
-        if self.loaded_config:
-            for tag in self.loaded_config.keys():
-                if tag not in self.game_config:
-                    self.game_config[tag] = self.loaded_config[tag]
 
         if not self.filename:
             game_name = 'Mancala'

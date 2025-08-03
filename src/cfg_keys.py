@@ -88,6 +88,19 @@ VARIANTS = 'variants'
 XC_SOWN = 'xc_sown'
 XCPICKOWN = 'xcpickown'
 
+# a combined dict of extra tags
+EXTRA_TOPS = 'extra_tops'
+
+
+#  Top level elements that are edited via individual parameters
+TOP_LEVELS = (GAME_CLASS,
+              GAME_CONSTANTS,
+              GAME_INFO,
+              PLAYER,
+              VARIANTS,
+              VARI_PARAMS,
+              FILENAME)
+
 
 GCONST_PARAMS = (HOLES,
                  NBR_START)

@@ -87,3 +87,4 @@ Sow,child_rule,Child Restrictions,game_info _,111,ChildRule,NONE,9,2
 Sow,child_locs,Child Locations,game_info _,112,ChildLocs,ANYWHERE,10,2
 Variants,variants,Named Variants,_,250,TextDict,,0,0
 Variants,vari_params,Vari Params,_,251,TextDict,,0,2
+Tags,extra_tops,Additional Top Level Tags,_,300,TextDict,,0,0

@@ -307,6 +307,14 @@ MLAPS LAPPER sowing will stop the sowing on a final seed that would capture base
 
 Either SOW_RULE of OWN_SOW_CAPT_ALL or SOW_SOW_CAPT_ALL includes the basic capture mechanisms.
 
+<param extra_tops>
+The <nolink>EXTRA_TOPS parameter is only used while editing, any top level tags that are not predefined are collected into a dictionary for editing. On Save, the tags are copied back to the top level.
+
+Unlike VARI_PARAMS and VARIANTS parameters, when there is a JSON parse error in <nolink>EXTRA_TAGS, a raw string cannot be saved. If there is a parser error and you choose to save anyway, the original tags will be preserved and any pending edits will be lost.
+
+Extra tags may be included in a game configuration file. The source for the game rules is often included. Other common tags are references, deviations, and notes.
+
+
 <param mx_evens_m>
 The multiplier for the even scorer. The even scorer counts the number of holes with an even number of seeds. This is useful to use when the capture mechanism is evens.
 
