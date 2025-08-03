@@ -26,6 +26,5 @@
          "mx_stores_m": 4
       }
    },
-   "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p19.",
-   "deviation": "Per the rules: the game does not end until there are no moves. This is not implemented as there is no reason to continue playing once a winner is determined; the win cannot be undone; it's just moving seeds."
+   "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p19."
 }

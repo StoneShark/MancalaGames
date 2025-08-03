@@ -27,6 +27,5 @@
          "mm_depth": [1, 1, 3, 5]
       }
    },
-   "rules": "Mohr, Merilyn Simonds. The New Games Treasury. 1993. p99.",
-   "deviation": "Game ends when one player has more than half the seeds."
+   "rules": "Mohr, Merilyn Simonds. The New Games Treasury. 1993. p99."
 }
