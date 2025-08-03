@@ -385,6 +385,12 @@ class Param:
     col: int
     description: str = dc.field(repr=False, default='')
 
+    def copy(self):
+        """Do a shallow copy of the Param."""
+
+        return Param(**{field.name: getattr(self, field.name)
+                        for field in dc.fields(self)})
+
 
 TAB_IDX = 0
 OPTION_IDX = 1

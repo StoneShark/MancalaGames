@@ -226,7 +226,7 @@ class AdjustPopup(param_mixin.ParamMixin, tksimpledialog.Dialog):
             rcnt.increment()
 
         for vname, pdata in self.vari_params.items():
-            param = man_config.PARAMS[vname]
+            param = man_config.PARAMS[vname].copy()
             param.row = rcnt.count
             param.col = 0
             lims = pdata if isinstance(pdata, list) else None

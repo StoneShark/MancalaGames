@@ -5,6 +5,7 @@ Created on Fri Jul 21 10:24:10 2023
 
 import contextlib
 import copy
+import dataclasses as dc
 import enum
 import os
 import random
@@ -660,6 +661,17 @@ class TestParamDict:
 
         man_config.read_params_data(need_tags=False, need_descs=True)
         assert man_config.PARAMS['mlaps'].description
+
+
+
+    def test_param_copy(self):
+        """Confirm copy does shallow copy."""
+
+        param = man_config.PARAMS['rounds']
+        cparam = param.copy()
+
+        for field in dc.fields(param):
+            assert getattr(cparam, field.name) is getattr(param, field.name)
 
 
     @pytest.mark.parametrize(
