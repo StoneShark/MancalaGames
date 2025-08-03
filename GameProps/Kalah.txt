@@ -42,7 +42,7 @@
          "game_class": "NorthSouthCycle",
          "xcpickown": 0
       },
-     "Random-Kalah": {
+      "Random-Kalah": {
          "nbr_start": 48,
          "goal": 4,
          "goal_param": 4,

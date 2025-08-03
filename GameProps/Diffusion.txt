@@ -19,7 +19,9 @@
          "mcts_bias": [ 300, 200, 200, 200 ],
          "mcts_nodes": [ 300, 700, 800, 1000 ]
       },
-      "scorer": { }
+      "scorer": {
+         "mx_seeds_m": -8
+      }
    },
    "vari_params": {
       "game_class": [ "Diffusion", "DiffusionV2" ]

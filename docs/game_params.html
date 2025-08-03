@@ -1005,6 +1005,15 @@ is included after the parameter sections.
 <p class="pdesc">UI Tab: Variants
 
 <p>Provide a dictionary where the keys are paramters (options) and the associated values are a list valid values for each. If all values are to be allowed any non-list type can be provided; "include" or "all" are suggested.
+<h2 id="tab_Tags">Tags Tab</h2>
+<h4 id="extra_tops"> Additional Top Level Tags </h4>
+<p class="pdesc">Location in Config Files:  : extra_tops
+<p id="TextDict" class="pdesc">Type: <a href="param_types.html#TextDict"> TextDict </a>
+<p class="pdesc">UI Tab: Tags
+
+<p>The <nolink>EXTRA_TOPS parameter is only used while editing, any top level tags that are not predefined are collected into a dictionary for editing. On Save, the tags are copied back to the top level.
+<p>Unlike <a href="game_params.html#vari_params">VARI_PARAMS</a> and <a href="game_params.html#variants">VARIANTS</a> parameters, when there is a JSON parse error in <nolink>EXTRA_TAGS, a raw string cannot be saved. If there is a parser error and you choose to save anyway, the original tags will be preserved and any pending edits will be lost.
+<p>Extra tags may be included in a game configuration file. The source for the game rules is often included. Other common tags are references, deviations, and notes.
 <h2 id="tab_Player">Player Tab</h2>
 <h4 id="algorithm"> Algorithm </h4>
 <p class="pdesc">Location in Config Files: player : algorithm
@@ -1155,14 +1164,15 @@ is included after the parameter sections.
     <p class="param"><a href="#crosscapt">crosscapt</a></p>
     <p class="param"><a href="#difficulty">difficulty</a></p>
     <p class="param"><a href="#evens">evens</a></p>
+    <p class="param"><a href="#extra_tops">extra_tops</a></p>
     <p class="param"><a href="#game_class">game_class</a></p>
     <p class="param"><a href="#goal">goal</a></p>
     <p class="param"><a href="#goal_param">goal_param</a></p>
     <p class="param"><a href="#grandslam">grandslam</a></p>
     <p class="param"><a href="#help_file">help_file</a></p>
-    <p class="param"><a href="#holes">holes</a></p>
   </div>
   <div class="column3">
+    <p class="param"><a href="#holes">holes</a></p>
     <p class="param"><a href="#mcts_bias">mcts_bias</a></p>
     <p class="param"><a href="#mcts_nodes">mcts_nodes</a></p>
     <p class="param"><a href="#mcts_pouts">mcts_pouts</a></p>
@@ -1187,9 +1197,9 @@ is included after the parameter sections.
     <p class="param"><a href="#name">name</a></p>
     <p class="param"><a href="#nbr_start">nbr_start</a></p>
     <p class="param"><a href="#no_sides">no_sides</a></p>
-    <p class="param"><a href="#nocaptmoves">nocaptmoves</a></p>
   </div>
   <div class="column3">
+    <p class="param"><a href="#nocaptmoves">nocaptmoves</a></p>
     <p class="param"><a href="#nosinglecapt">nosinglecapt</a></p>
     <p class="param"><a href="#pickextra">pickextra</a></p>
     <p class="param"><a href="#prescribed">prescribed</a></p>
