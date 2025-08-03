@@ -14,13 +14,15 @@
       "stores": true,
       "xcpickown": 1
    },
-   "player": { "scorer": {
-      "mx_stores_m": 4,
-      "mx_empties_m": -2,
-      "mx_easy_rand_a": 20
-   } },
+   "player": {
+      "scorer": {
+         "mx_stores_m": 4,
+         "mx_empties_m": -2,
+         "mx_easy_rand_a": 20
+      }
+   },
    "variants": {
-      "Endodoi": {},
+      "Endodoi": { },
       "Endodoi_Rounds": {
          "goal": 5,
          "goal_param": 100,
@@ -28,8 +30,12 @@
          "round_starter": 0,
          "unclaimed": 2
       },
-      "J'Odu": { "capt_max": 3 },
-      "Dabuda": { "allow_rule": 1 }
+      "J'Odu": {
+         "capt_max": 3
+      },
+      "Dabuda": {
+         "allow_rule": 1
+      }
    },
    "vari_params": {
       "holes": [ 3, 4, 5, 6, 7, 8, 9, 10 ],

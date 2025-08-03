@@ -20,13 +20,15 @@
       "sow_direct": 1,
       "stores": true
    },
-   "player": { "scorer": {
-      "mx_stores_m": 4,
-      "mx_child_cnt_m": -1,
-      "mx_rturn_a": 2
-   } },
+   "player": {
+      "scorer": {
+         "mx_stores_m": 4,
+         "mx_child_cnt_m": -1,
+         "mx_rturn_a": 2
+      }
+   },
    "variants": {
-      "Weg": {},
+      "Weg": { },
       "Weg_4_2": {
          "holes": 4,
          "nbr_start": 2,

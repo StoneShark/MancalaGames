@@ -6,19 +6,20 @@
    },
    "game_info": {
       "name": "Diffusion",
-      "about": "A mancala game with a unique sow pattern. Right player owns right 6 holes. Left player owns left 6 holes--AI plays this side if enabled.\n\nGoal: clear your own holes.\n\nGame rules: Copyright (c) January 2006 by Mark Steere. See pdf file for rules.\n\nVariation: In DiffusionV2, players own the typical North and South sides of the board. The Ownership Arrows display option might be useful to distinguish which is being played.\n",
-      "help_file": "Diffusion_rules.pdf",
+      "about": "A mancala game with a unique sow pattern. Right player owns right 6 holes. Left player owns left 6 holes--AI plays this side if enabled.\n\nGoal: clear your own holes.\n\nGame rules: Copyright (c) January 2006 by Mark Steere. See pdf file for rules.\n\nVariation: In DiffusionV2, players own the typical North and South sides of the board. The Owner Arrows display option might be useful to distinguish which is being played.\n",
       "goal": 3,
+      "help_file": "Diffusion_rules.pdf",
       "no_sides": true,
+      "sow_direct": 1,
       "stores": true
    },
    "player": {
       "algorithm": "montecarlo_ts",
       "ai_params": {
-         "mcts_bias": [300, 200, 200, 200],
-         "mcts_nodes": [300, 700, 800, 1000],
-         "mcts_pouts": [1, 1, 2, 2]
-      }
+         "mcts_bias": [ 300, 200, 200, 200 ],
+         "mcts_nodes": [ 300, 700, 800, 1000 ]
+      },
+      "scorer": { }
    },
    "vari_params": {
       "game_class": [ "Diffusion", "DiffusionV2" ]

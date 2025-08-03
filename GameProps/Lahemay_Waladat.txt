@@ -6,10 +6,8 @@
    },
    "game_info": {
       "name": "Lahemay Waladat",
-      "about": "Sow counter-clockwise in multiple laps. Continue lapping until the last seed falls into an empty hole or makes a hole containing 3 seeds. If the last seed of a lap makes 3 seeds, capture those seeds and continue the lap sowing with the seeds in the next hole. If there are no seeds in the next hole, the turn is over.\n\nA round ends when one player cannot move. Seeds left on the board are allocated to the player that performed the last move. For the next round, holes are allocated to each player based on how many seeds they collected in the previous round.\n\nThe game is over when one player has control of 10 holes.\n",
-      "capt_on": [
-         3
-      ],
+      "about": "Sow counter-clockwise in multiple laps. Continue lapping until the last seed falls into an empty hole or makes a hole containing 3 seeds. If the last seed of a lap makes 3 seeds, capture those seeds and continue the lap sowing with the seeds in the next hole. If there are no seeds in the next hole, the turn is over.\n\nA round ends when one player cannot move. Seeds left on the board are allocated to the player that performed the last move. For the next round, holes are allocated to each player based on how many seeds they collected in the previous round.\n\nThe game is over when one player has control of 10 holes.\n\nVariations:\n\n- Motiq captures on 4s and handles round setup differently.\n",
+      "capt_on": [ 3 ],
       "goal": 2,
       "goal_param": 10,
       "mlaps": 1,
@@ -22,26 +20,16 @@
       "stores": true,
       "unclaimed": 2
    },
-   "vari_params": {
-      "goal_param": "include"
-   },
    "player": {
       "algorithm": "negamaxer",
-      "ai_params": {
-         "mm_depth": [
-            1,
-            2,
-            3,
-            5
-         ]
-      },
+      "ai_params": { "mm_depth": [ 1, 2, 3, 5 ] },
       "scorer": {
          "mx_stores_m": 4,
          "mx_easy_rand_a": 20
       }
    },
+   "vari_params": { "goal_param": "include" },
    "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p30.",
    "deviations": "Rounding rules are applied to all territory games, no drawing of lots to choose who gets the extra hole.",
-   "note 1": "GOAL_PARAM set to 10 to limit game length",
-   "note 2": "Russ describes Motiq which is a very similar game (also predefined)."
+   "note": "GOAL_PARAM set to 10 to limit game length"
 }

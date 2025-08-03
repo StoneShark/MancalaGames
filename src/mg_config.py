@@ -87,7 +87,7 @@ class GameDictEncoder(json.JSONEncoder):
         if self.sort_keys:
             obj = dict(sorted(obj.items(), key=lambda x: x[0]))
 
-        if len(obj) <= 1:
+        if len(obj) <= 1 and not isinstance(obj, dict):
             return ("{ "
                     + ", ".join(f"{json.dumps(k)}: {self.encode(elem)}"
                                 for k, elem in obj.items())

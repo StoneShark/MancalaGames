@@ -13,7 +13,11 @@
       "sow_direct": -1,
       "stores": true
    },
-   "player": { "scorer": { "mx_stores_m": 4 } },
+   "player": {
+      "scorer": {
+         "mx_stores_m": 4
+      }
+   },
    "variants": {
       "Ot-tjin": { },
       "Ot-tjin_2": {

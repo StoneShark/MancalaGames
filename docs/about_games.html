@@ -900,17 +900,18 @@ allow closing of rightmost holes (<a href="game_params.html#sow_rule">SOW_RULE</
 <p>A mancala game with a unique sow pattern. Right player owns right 6 holes. Left player owns left 6 holes--AI plays this side if enabled.
 <p>Goal: clear your own holes.
 <p>Game rules: Copyright (c) January 2006 by Mark Steere. See pdf file for rules.
-<p>Variation: In DiffusionV2, players own the typical North and South sides of the board. The Ownership Arrows display option might be useful to distinguish which is being played.
+<p>Variation: In DiffusionV2, players own the typical North and South sides of the board. The Owner Arrows display option might be useful to distinguish which is being played.
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  6</p>
     <p class="param">Start seeds:  4</p>
     <p class="param"><a href="game_params.html#goal">Goal</a>: CLEAR</p>
     <p class="param"><a href="game_params.html#game_class">Game class</a>:  Diffusion</p>
+    <p class="param">Help File:  <a href="Diffusion_rules.pdf">Diffusion_rules.pdf</a></p>
   </div>
   <div class="column2">
-    <p class="param">Help File:  <a href="Diffusion_rules.pdf">Diffusion_rules.pdf</a></p>
     <p class="param"><a href="game_params.html#no_sides">No Sides</a>: Yes</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
   </div>
 </div>
@@ -1591,6 +1592,10 @@ played in rounds and loser puts last 1-3 seeds into occupied holes but must resu
 <p>Sow counter-clockwise in multiple laps. Continue lapping until the last seed falls into an empty hole or makes a hole containing 3 seeds. If the last seed of a lap makes 3 seeds, capture those seeds and continue the lap sowing with the seeds in the next hole. If there are no seeds in the next hole, the turn is over.
 <p>A round ends when one player cannot move. Seeds left on the board are allocated to the player that performed the last move. For the next round, holes are allocated to each player based on how many seeds they collected in the previous round.
 <p>The game is over when one player has control of 10 holes.
+<p>Variations:
+<ul><li class="helptext">
+<a href="about_games.html#Motiq">Motiq</a> captures on 4s and handles round setup differently.
+</ul>
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  6</p>
@@ -1613,8 +1618,7 @@ played in rounds and loser puts last 1-3 seeds into occupied holes but must resu
 </div>
 <p><b class="enum">Rules</b>: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p30.
 <p><b class="enum">Deviations</b>: Rounding rules are applied to all territory games, no drawing of lots to choose who gets the extra hole.
-<p><b class="enum">Note 1</b>: <a href="game_params.html#goal_param">GOAL_PARAM</a> set to 10 to limit game length
-<p><b class="enum">Note 2</b>: Russ describes <a href="about_games.html#Motiq">Motiq</a> which is a very similar game (also predefined).
+<p><b class="enum">Note</b>: <a href="game_params.html#goal_param">GOAL_PARAM</a> set to 10 to limit game length
 <h3 id="Lam Waladach" class="game_desc">Lam Waladach</h3>
 <p>A multi-lap mancala played in rounds. The goal is to claim ownership of at least 9 holes. Each player initially owns the holes on their side of the board. Owners of holes are updated at the start of each round based on the number of seeds captured in the previous round. 
 <p>The seeds of any hole sown to 4 are captured by the hole's owner (regardless of sower). Captures are on 4s on the final sown seed by the sower (regardless of hole owner). A capture results in  a repeat turn. Captures and pick 4s are allowed on the first move of the game. A player must pass if they have no moves.
@@ -2106,6 +2110,10 @@ odd board sizes 5 to 15
 <p>Sow counter-clockwise in multiple laps. Continue lapping until the last seed falls into an empty hole or makes a hole containing 4 seeds. If the last seed of a lap makes 4 seeds, capture those seeds and continue the lap sowing with the seeds in the next hole. If there are no seeds in the next hole, the turn is over.
 <p>A round ends when one player cannot move. Seeds left on the board are allocated to the player that performed the last move. For the next round, holes are allocated to each player based on how many seeds they collected in the previous round.
 <p>The game is over when one player has control of 11 holes.
+<p>Variations:
+<ul><li class="helptext">
+<a href="about_games.html#Lahemay Waladat">Lahemay Waladat</a> captures on 3s and handles round setup differently.
+</ul>
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  7</p>
@@ -2125,8 +2133,7 @@ odd board sizes 5 to 15
   </div>
 </div>
 <p><b class="enum">Rules</b>: Russ, Laurence. Mancala Games. 1984. p65.
-<p><b class="enum">Note 1</b>: <a href="game_params.html#goal_param">GOAL_PARAM</a> set to 11 to limit game length
-<p><b class="enum">Note 2</b>: Valdez describes <a href="about_games.html#Lahemay Waladat">Lahemay Waladat</a> which is a very similar game.
+<p><b class="enum">Note</b>: <a href="game_params.html#goal_param">GOAL_PARAM</a> set to 11 to limit game length
 <h3 id="Nambayi" class="game_desc">Nambayi</h3>
 <p>A multilap Mancala, sow is counter-clockwise.
 <p>The goal is to leave the opponent without seeds for their turn.
@@ -2345,7 +2352,7 @@ see <a href="about_games.html#Lam Waladach">Lam Waladach</a>
 </div>
 <p><b class="enum">Rules</b>: Russ, Laurence. Mancala Games. 1984. p54.
 <h3 id="Obridjie" class="game_desc">Obridjie</h3>
-<p>Sow multi-lap counter-clockwise.  All holes sown to 4 are taken by the hole owner until the last hole. 
+<p>Sow multi-lap counter-clockwise.  All holes sown to 4 are taken by the hole owner until the last hole.
 <p>If the last hole is sown to 4, it is captured by the sower.
 <p>Goal: capture at least half of the seeds.
 <div class="cols_row">
@@ -2441,6 +2448,8 @@ pass when no move (<a href="game_params.html#mustpass">MUSTPASS</a>, <a href="ab
 <li class="helptext">
 Other options for <a href="game_params.html#round_starter">ROUND_STARTER</a> and <a href="game_params.html#round_fill">ROUND_FILL</a>.
 <li class="helptext">
+no <a href="game_params.html#pickextra">PICKEXTRA</a> (see deviation)
+<li class="helptext">
 See <a href="about_games.html#Pallam Kuzhi">Pallam Kuzhi</a> and <a href="about_games.html#Pandi">Pandi</a>.
 </ul>
 <div class="cols_row">
@@ -2467,7 +2476,7 @@ See <a href="about_games.html#Pallam Kuzhi">Pallam Kuzhi</a> and <a href="about_
   </div>
 </div>
 <p><b class="enum">Rules</b>: Russ, Laurence. Mancala Games. 1984. p61.
-<p><b class="enum">Deviation</b>: PICKLASTSEEDS was added to end games more reliably.
+<p><b class="enum">Deviation</b>: PICKLASTSEEDS was added to end games more reliably (can be turned off via variations).
 <h3 id="Olowuka" class="game_desc">Olowuka</h3>
 <p>Multilap sow, but only if final hole contains four or more seeds. Counter-clockwise.
 <p>Capture on 2s and 3s on opponent's side. Grand Slam is permitted but the leftmost hole (from sower perspective) is not captured.
@@ -2581,7 +2590,7 @@ counter-clockwise sow direction (Mancala World suggests sowing clockwise is wron
 </div>
 <p><b class="enum">Rules</b>: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p66.
 <p><b class="enum">Deviation</b>: According to the rules, there are three end game conditions: First, an unfed player gets the remaining seeds. Second, if a player has no legal move, the unclaimed seeds go to the last mover.  Third, cycling seeds go to hole owners.
-<p>When would the second rule would:
+<p>When would the second rule apply:
 <ul><li class="helptext">
 If a player has seeds, they have a valid move.
 <li class="helptext">
@@ -2661,7 +2670,7 @@ See <a href="about_games.html#Olinda">Olinda</a> and <a href="about_games.html#P
 <p>Sow counter-clockwise via the multi-lap next-hole method (<a href="game_params.html#mlaps">MLAPS</a> of LAPPER_NEXT).
 <p>While either player is sowing, both players capture all holes sown to 4 on their side of the board. Specifically, the non-sower may capture seeds from holes sown to 4 on their own side of the board.
 <p>When the hole from which a new lap should start is empty, capture any seeds in the hole following the empty hole. That is, captures are made when the hole 'one out' from the last sown seed is empty and there are seeds in the hole 'two out' from the last sown seed.
-<p>If a capture is made the seeds from hole opposite the now empty hole are also captured.
+<p>If a capture is made, the seeds from hole opposite the now empty hole are also captured.
 <p>Played in <a href="game_params.html#rounds">ROUNDS</a>. Each round ends when the current player does not have any playable holes. Round setup is via the Empty Hole Method of <a href="game_params.html#round_fill">ROUND_FILL</a> using the LEFT_FILL approach.  After the next round setup unfilled holes are out of play. The players alternate starting each round.
 <p>The game is over when either player cannot fill a single hole.
 <p>Variations:
@@ -3144,10 +3153,9 @@ don't sow in multiple laps
     <p class="param">Start seeds:  2</p>
     <p class="param"><a href="game_params.html#goal">Goal</a>: CLEAR</p>
     <p class="param"><a href="game_params.html#game_class">Game class</a>:  NorthSouthCycle</p>
-    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: BOTH</p>
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
   </div>
   <div class="column2">
-    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
     <p class="param"><a href="game_params.html#sow_own_store">Sow Own Store</a>: Yes</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>

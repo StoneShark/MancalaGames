@@ -22,8 +22,12 @@
       "stores": true
    },
    "player": {
-      "ai_params": { "mm_depth": [ 1, 1, 3, 7 ] },
-      "scorer": { "mx_stores_m": 4 }
+      "ai_params": {
+         "mm_depth": [ 1, 1, 3, 7 ]
+      },
+      "scorer": {
+         "mx_stores_m": 4
+      }
    },
    "vari_params": {
       "sow_rule": [ 3, 4 ],

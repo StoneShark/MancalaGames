@@ -20,14 +20,18 @@
    },
    "player": {
       "algorithm": "negamaxer",
-      "ai_params": { "mm_depth": [ 1, 3, 5, 7 ] },
+      "ai_params": {
+         "mm_depth": [ 1, 3, 5, 7 ]
+      },
       "scorer": {
          "mx_stores_m": 6,
          "mx_child_cnt_m": 8,
          "mx_easy_rand_a": 10
       }
    },
-   "vari_params": { "sow_rule": [ 0, 9, 13 ] },
+   "vari_params": {
+      "sow_rule": [ 0, 9, 13 ]
+   },
    "rules": "Mohr, Merilyn Simonds. The New Games Treasury. 1993. p101.",
    "deviation": "Seeds are sown into waldas as described in  https://mancala.fandom.com/wiki/Qelat_(Beni_Amir_%26_Mensa). A variation allows not sowing children."
 }
