@@ -74,9 +74,9 @@ Sow,sow_start,Sow Start Hole,game_info _,141,bool,False,4,0
 Sow,skip_start,Skip Start on Cycle,game_info _,137,bool,False,5,0
 Sow,sow_own_store,Sow Own Store,game_info _,139,bool,False,6,0
 Sow,move_one,Move One Seed,game_info _,122,bool,False,7,0
-Sow,presowcapt,Pre Sow Capture,game_info _,133,PreSowCapt,NONE,9,0
-Sow,sow_rule,Special Sow Rules,game_info _,140,SowRule,NONE,10,0
-Sow,sow_param,Sow Parameter,game_info _,142,int,0,11,0
+Sow,presowcapt,Pre Sow Capture,game_info _,133,PreSowCapt,NONE,8,0
+Sow,sow_rule,Special Sow Rules,game_info _,140,SowRule,NONE,9,0
+Sow,sow_param,Sow Parameter,game_info _,142,int,0,10,0
 Sow,slap_lbl,Sow Lap Control,,0,label,0,3,2
 Sow,mlap_cont,Lap Continue Reason,game_info _,150,SowLapCont,NONE,4,2
 Sow,mlap_param,Lap Continue Param,game_info _,151,int,0,5,2
