@@ -1145,11 +1145,12 @@ class GameChooser(ttk.Frame):
     def edit_game(self, _=None):
         """Delete ourself and create the editor for the selected game."""
 
-        if not self.selected:
-            return
+        if self.selected:
+            quest = f'Do you wish to launch {self.selected} in the editor?'
+        else:
+            quest = 'Do you wish to switch to the Game Editor?'
 
-        message = [f'Do you wish to launch {self.selected} in the editor?',
-                   'The chooser will be closed.']
+        message = [quest,  'The chooser will be closed.']
         do_it = ui_utils.ask_popup(self.master,
                                    'Swap to Editor', message,
                                    ui_utils.YESNO)
@@ -1160,6 +1161,7 @@ class GameChooser(ttk.Frame):
         animator.reset()
         self._key_bindings(active=False)
 
-        filename = self.all_games[self.selected]['filename']
         man_games = self.editor_class(self.master, GameChooser)
-        man_games.load_game(filename)
+        if self.selected:
+            filename = self.all_games[self.selected]['filename']
+            man_games.load_game(filename)
