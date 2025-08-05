@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "J'Odu",
-      "about": "Sow counter-clockwise, multi-lap sow. Cross capture opposite-side but only up to 3 seeds, picking own on capture.\n\nVariations:\n\n- board size and start seeds\n\n- remove limit on cross captures (CAPT_MAX of 0).\n",
+      "about": "Sow counter-clockwise, multi-lap sow. Cross capture opposite-side but only up to 3 seeds, picking own on capture.\n\nGoal: collect more than half the seeds.\n\nVariations:\n\n- board size and start seeds\n\n- remove limit on cross captures; CAPT_MAX of 0 (Endodoi).\n",
       "capt_max": 3,
       "crosscapt": true,
       "mlaps": 1,
