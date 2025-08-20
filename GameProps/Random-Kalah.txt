@@ -19,12 +19,6 @@
       "stores": true,
       "xcpickown": 1
    },
-   "vari_params": {
-      "holes": "include",
-      "nbr_start": "include",
-      "xcpickown": "include",
-      "goal_param": "include"
-   },
    "player": {
       "algorithm": "montecarlo_ts",
       "difficulty": 2,
@@ -41,5 +35,11 @@
          "mx_rturn_a": 15
       }
    },
-   "rules": "Ann Davies, 2025."
+   "vari_params": {
+      "holes": "include",
+      "nbr_start": "include",
+      "xcpickown": "include",
+      "goal_param": "include"
+   },
+   "rules": "Ann Davies. 2025."
 }

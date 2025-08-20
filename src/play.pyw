@@ -5,34 +5,19 @@ possibly a variant.
 Created on Tue Jul 18 13:50:32 2023
 @author: Ann"""
 
-import argparse
-import sys
 
 import man_config
 import man_path
 import mancala_ui
 
 
-def get_gamename():
-    """Define the parser and use it."""
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument('gamename')
-
-    try:
-        cargs = parser.parse_args()
-    except argparse.ArgumentError:
-        parser.print_help()
-        sys.exit()
-
-    return cargs.gamename
-
 
 if __name__ == '__main__':
 
     man_config.check_disable_animator()
 
-    gamename, variant = man_config.game_name_to_parts(get_gamename())
+    param = man_path.get_cmd_ln_gamename()
+    gamename, variant = man_config.game_name_to_parts(param)
 
     filename = man_path.find_gamefile(gamename)
     game, pdict = man_config.make_game(filename, variant)

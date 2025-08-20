@@ -4,6 +4,7 @@ Created on Sun Aug 20 16:14:39 2023
 @author: Ann"""
 
 import os
+import sys
 
 import pytest
 pytestmark = pytest.mark.unittest
@@ -127,3 +128,32 @@ class TestFindGameFile:
     def test_no_error(self, tmp_path):
 
         assert man_path.find_gamefile('junk.txt', no_error=True) is False
+
+
+
+
+class TestCmdLine:
+
+    CASES = [[True, ['prog', 'game1'], False, 'game1'],
+             [True, ['prog'], False, None],
+             [False, ['prog', 'my_game.txt'], False, 'my_game.txt'],
+             [False, ['prog'], True, None],
+             [False, ['prog', 'game1', 'game2'], True, None],
+             ]
+
+    @pytest.mark.parametrize('opt, params, error, result', CASES)
+    def test_cmd_line(self, mocker, capsys, opt, params, error, result):
+
+        mexit = mocker.patch('sys.exit')
+        mocker.patch.object(sys, 'argv', params)
+
+        rval = man_path.get_cmd_ln_gamename(optional=opt)
+        captured = capsys.readouterr()
+
+        if error:
+            mexit.assert_called_once()
+            assert 'usage' in captured.err
+        else:
+            mexit.assert_not_called()
+            assert 'usage' not in captured.err
+            assert rval == result

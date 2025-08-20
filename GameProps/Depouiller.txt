@@ -6,18 +6,14 @@
    },
    "game_info": {
       "name": "Dépouiller",
-      "about": "A deprive game.\n\nSow direction is CCW and is single lap. Moves are permitted only from holes that reach the opponent's side of the board or end in an empty hole on your own side.\n\nIf the last seed of a sow ends in an empty hole, remove the seeds across the board from it (cross capture).  Leave the seed effecting the removal. Seeds may be removed from either side of the board. Careful play is needed, or you'll eliminate your own seeds.\n\nPlayed in tallied rounds--the setup for each round is the same but the starting player alternates. Win four rounds to win the game.\n",
+      "about": "A deprive game.\n\nSow direction is single-lap CCW. Moves are permitted only from holes that reach the opponent's side of the board or end in an empty hole on your own side.\n\nIf the last seed of a sow ends in an empty hole, remove the seeds across the board from it (cross capture).  Leave the seed effecting the removal. Seeds may be removed from either side of the board. Careful play is needed, or you'll eliminate your own seeds.\n\nPlayed in tallied rounds--the setup for each round is the same but the starting player alternates. Win four rounds to win the game.\n",
       "allow_rule": 1,
-      "capt_side": 0,
       "crosscapt": true,
       "goal": 9,
       "goal_param": 4,
       "round_starter": 0,
       "rounds": 2,
       "sow_direct": 1
-   },
-   "vari_params": {
-      "goal_param": "include"
    },
    "player": {
       "algorithm": "montecarlo_ts",
@@ -32,5 +28,8 @@
          "mx_empties_m": -1
       }
    },
-   "rules": "Ann Davies, 2025."
+   "vari_params": {
+      "goal_param": "include"
+   },
+   "rules": "Ann Davies. 2025."
 }

@@ -89,8 +89,8 @@ class GameVariations:
                 list(range(new_holes))
 
         elif nbr_old_udir == 1:
-            quot, odd = divmod(new_holes, 2)
-            self.game_config[ckey.GAME_INFO][ckey.UDIR_HOLES] = [quot + odd]
+            quot = new_holes // 2
+            self.game_config[ckey.GAME_INFO][ckey.UDIR_HOLES] = [quot]
 
         else:   # pragma: no coverage
             assert False, "Variations tests should have precluded this."
@@ -417,7 +417,7 @@ def test_include_goal_param(game_dict, vparams):
     if (((rounds and goal in (gi.Goal.MAX_SEEDS, gi.Goal.TERRITORY))
              or goal in round_tally.RoundTally.GOALS)
             and ckey.GOAL_PARAM not in vparams):
-        msg="GOAL_PARAM might be useful in VARI_PARAM."
+        msg="GOAL_PARAM might be useful in VARI_PARAMS."
         warnings.warn(msg)
 
 
@@ -428,7 +428,7 @@ def test_vari_params(game_dict, vparams):
     for key, vlist in vparams.items():
 
         if key not in ckey.CONFIG_PARAMS:
-            msg=f"{key} in VARI_PARAM is not a valid game parameter."
+            msg=f"{key} in VARI_PARAMS is not a valid game parameter."
             raise gi.GameVariantError(msg)
 
 
@@ -501,11 +501,11 @@ def test_udir_hole_changes(game_dict, var_options):
     """Test if we know what to do if the user can change the
     number of holes in the presence of udir_holes.
 
-    var_options is a set of all parameter names in vari_param
+    var_options is a set of all parameter names in VARI_PARAMS
     and in the variant dicts."""
 
     # game isn't udirect, nothing to be checked
-    if not game_dict[ckey.GAME_INFO].get(ckey.UDIRECT, False):
+    if not game_dict[ckey.GAME_INFO].get(ckey.UDIR_HOLES, False):
         return
 
     # variants don't allow board size to be changed, all good
@@ -527,7 +527,7 @@ def test_udir_hole_changes(game_dict, var_options):
 
     # we'll make the odd center hole udir
     quot, odd = divmod(holes, 2)
-    if nbr_udir == 1 and odd and udirs[quot + odd]:
+    if nbr_udir == 1 and odd and udirs == [quot]:
         return
 
     # we don't know what to do

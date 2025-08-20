@@ -5,8 +5,10 @@ directories.
 Created on Sat Aug 19 08:32:38 2023
 @author: Ann"""
 
+import argparse
 import os
 import os.path
+
 
 GAMEDIR = 'GameProps'
 GAMEPATH = './' + GAMEDIR + '/'
@@ -57,6 +59,20 @@ def find_gamefile(gname, no_error=False):
     if no_error:
         return False
     raise FileNotFoundError(f"Can't find file {gname}.")
+
+
+def get_cmd_ln_gamename(optional=False):
+    """Get a, possibly optional, game or file name from the
+    command line."""
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('gamename',
+                        nargs='?' if optional else None,
+                        default=None,
+                        help='Game or filename.')
+
+    cargs = parser.parse_args()
+    return cargs.gamename
 
 
 def game_files():
