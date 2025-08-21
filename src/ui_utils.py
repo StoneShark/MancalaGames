@@ -215,7 +215,28 @@ class TriStateCheckbutton(ttk.Checkbutton):
 
 # %% popup dialogs
 
-class QuietDialog(tksimpledialog.Dialog):
+
+class GrabberDialog(tksimpledialog.Dialog):
+    """A dialog wrapper that returns the grab_set to the
+    main window, if it was modal."""
+
+    def __init__(self, master, title):
+
+        self.master = master
+        self.grabbed = master.grab_status()
+
+        super().__init__(master, title)
+
+
+    def destroy(self):
+
+        super().destroy()
+
+        if self.grabbed:
+            self.master.grab_set()
+
+
+class QuietDialog(GrabberDialog):
     """A simple modal quiet dialog box."""
 
     def __init__(self, master, title, message,
@@ -252,7 +273,7 @@ class QuietDialog(tksimpledialog.Dialog):
         self.bind("<Escape>", self.cancel)
 
 
-class WinPopup(tksimpledialog.Dialog):
+class WinPopup(GrabberDialog):
     """Popup the win window with a game dump option."""
 
     def __init__(self, master, title, message, is_round):
@@ -311,7 +332,7 @@ def win_popup_new_game(master, title, message, is_round):
     return obj.new_game
 
 
-class PassPopup(tksimpledialog.Dialog):
+class PassPopup(GrabberDialog):
     """A popup for the pass dialog which also provides
     End Round and Game buttons. Need because if the AI doesn't
     make a turn available the user doesn't regain control."""
@@ -361,7 +382,7 @@ class PassPopup(tksimpledialog.Dialog):
         self.bind("<Escape>", self.cancel)
 
 
-class GetSeedsPopup(tksimpledialog.Dialog):
+class GetSeedsPopup(GrabberDialog):
     """A popup to get a number of seeds to pick up."""
 
     def __init__(self, master, title, max_seeds, font):
@@ -477,7 +498,7 @@ def get_nbr_seeds(master, max_seeds, font):
     return obj.value
 
 
-class ExceptPopup(tksimpledialog.Dialog):
+class ExceptPopup(GrabberDialog):
     """Popup the exception window with options to
         1. save the game log (if logsave)
         2. copy the error data to the clip board"""
@@ -559,7 +580,7 @@ INFO = 1
 WARN = 2
 ERROR = 3
 
-class MessageDialog(tksimpledialog.Dialog):
+class MessageDialog(GrabberDialog):
     """Basic message dialog with standard responses."""
 
     def __init__(self, master, title, message, buttons, icon=None):

@@ -10,7 +10,6 @@ Created on Tue Jun  3 04:35:08 2025
 import collections
 import enum
 import tkinter as tk
-import tkinter.simpledialog as tksimpledialog
 from tkinter import ttk
 import warnings
 
@@ -169,7 +168,7 @@ class GameVariations:
                              fixed_form=True)
 
 
-class AdjustPopup(param_mixin.ParamMixin, tksimpledialog.Dialog):
+class AdjustPopup(param_mixin.ParamMixin, ui_utils.GrabberDialog):
     """Do a popup to allow adjustment of the parameters in the
     GameVariations (parameter vari).
 
