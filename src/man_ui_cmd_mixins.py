@@ -26,6 +26,7 @@ import cfg_keys as ckey
 import game_info as gi
 import man_config
 import man_path
+import montecarlo_ts
 import ui_utils
 import variants
 
@@ -789,6 +790,8 @@ class DebugMenuMixin:
         debugmenu.add_separator()
         debugmenu.add_command(label='Print AI Player',
                               command=lambda: print(self.player))
+        debugmenu.add_command(label='Eval Moves',
+                              command=self._eval_moves)
         debugmenu.add_command(label='Print History',
                               command=lambda: print(self.history))
         debugmenu.add_command(label='Force UI Active',
@@ -814,6 +817,35 @@ class DebugMenuMixin:
         else:
             print(f'\n{deco.title()}:\n')
             print(getattr(self.game.deco, deco))
+
+
+    def _eval_moves(self):
+        """Use the AI player to pick a move.
+
+        Turn off the animator, history and game_log while evaluating.
+
+        MCTS can only be used with one player, must be True because
+        the AI would play True. Activating the AI player after a False
+        eval will throw an exception."""
+
+        if isinstance(self.player.algo, montecarlo_ts.MonteCarloTS):
+            if self.game.turn is False:
+                print("\nCan only eval with MCTS for North.\n")
+                return
+
+            gvals = '++'
+        else:
+            #  same for both minimaxer and negamaxer
+            gvals = '++' if self.player.is_max_player() else '--'
+
+        pname = gi.PLAYER_NAMES[self.game.turn]
+        print(f"\nEvaluating moves for {pname} ({gvals} good) ...")
+        with animator.animate_off(), self.history.off(), game_log.simulate():
+
+            move = self.player.pick_move()
+            print(self.player.get_move_desc())
+            print(f"Move picked {move}.\n")
+
 
 
 # %% help
