@@ -836,7 +836,9 @@ class DebugMenuMixin:
             gvals = '++'
         else:
             #  same for both minimaxer and negamaxer
-            gvals = '++' if self.player.is_max_player() else '--'
+            #  TODO picked move doesn't agree with this good vals print
+
+            gvals = '--' if self.player.is_max_player() else '++'
 
         pname = gi.PLAYER_NAMES[self.game.turn]
         print(f"\nEvaluating moves for {pname} ({gvals} good) ...")
