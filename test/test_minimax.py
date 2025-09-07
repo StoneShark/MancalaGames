@@ -42,13 +42,15 @@ def define_get_game(depth):
     class SmallGame(ai_interface.AiGameIf):
 
         """  small test graph     node:score
-        0:0
+
+                                                         turn   op on childs
+        0:0                                               F     max
          |
-        1:4   _         _        2:5   _          _
+        1:4   _         _        2:5   _          _       T     min
          |     |         |       |      |          |
-        3:4   4:6 _     5:2      6:3   7:1  _    8:6
+        3:4   4:6 _     5:2      6:3   7:1  _    8:6      F     max
               |    |                    |    |
-             9:8   10:9              11:0  12:3
+             9:8   10:9              11:0  12:3           T     min
         """
 
         scores = [0, 4, 5, 4, 6, 2, 3, 1, 6, 8, 9, 0, 3]
