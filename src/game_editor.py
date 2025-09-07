@@ -588,15 +588,18 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
         else:
             self.game.filename = self.config.pathname
 
-        game_ui = mancala_ui.MancalaUI(self.game,
-                                       self.config.game_config[ckey.PLAYER],
-                                       player=self.ai_player,
-                                       root_ui=self.master)
+        mancala_ui.MancalaUI(self.game,
+                             self.config.game_config[ckey.PLAYER],
+                             player=self.ai_player,
+                             root_ui=self.master,
+                             pcleanup=self.reactivate_editor)
         self._set_active(False)
-        game_ui.wait_window()
 
-        if not self.quitting:
-            self._set_active(True)
+
+    def reactivate_editor(self):
+        """Reactivate the editor controls."""
+
+        self._set_active(True)
 
 
     def _reset_edited(self):

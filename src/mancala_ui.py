@@ -113,7 +113,8 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
                 tk.Frame):
     """A manacala UI."""
 
-    def __init__(self, game, player_dict, *, player=None, root_ui=None):
+    def __init__(self, game, player_dict,
+                 *, player=None, root_ui=None, pcleanup=None):
         """Create the UI for a mancala game.
 
         game: class to provide the mechanics of the game w/o any UI
@@ -127,7 +128,13 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
         twice generated duplicated errors.
 
         root_ui (optional): if this is started as part of another
-        application provide the tk root."""
+        application provide the tk root.
+
+        pcleanup (optional): if provided, call to tell the parent
+        to cleanup on destroy.
+        It is not called if the game is reconfigured via variants,
+        but is passed on to the next MancalaUI instance.
+        This should be a parameterless function/method."""
         # pylint: disable=too-many-statements
 
         self.game = game
@@ -138,6 +145,7 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
         self.swap_ok = True
         self.wcond = None   #  used between the movers and epilogs
         self.saved_move = None
+        self.pcleanup = pcleanup
 
         game_log.new()
         game_log.turn(0, 'Start Game', game)
@@ -418,10 +426,19 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
         ui_utils.game_ui = None
         animator.reset()
 
+        if self.pcleanup:
+            self.pcleanup()
+
 
     def rebuild(self, new_game, pdict, player):
         """Destory and rebuild the game. This is used by the
-        VariCmdsMixin--it must be here for the scope of MancalaUI."""
+        VariCmdsMixin--it must be here for the scope of MancalaUI.
+
+        Do not call the parent cleanup function, but pass it on to
+        the next MancalaUI instance."""
+
+        pcleanup = self.pcleanup
+        self.pcleanup = None
 
         if self.root is self.master:
             self.root.destroy()
@@ -429,9 +446,9 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
         else:
             self.master.destroy()
         del self.game
-        animator.reset()
 
-        MancalaUI(new_game, pdict, player=player, root_ui=self.root)
+        MancalaUI(new_game, pdict,
+                  player=player, root_ui=self.root, pcleanup=pcleanup)
 
 
     def _button_state(self, allows, ai_turn, loc, aidx):
