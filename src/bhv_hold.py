@@ -122,7 +122,7 @@ class RndChooseButtonBehavior(bhv.BehaviorIf):
             return False
 
         message = """A new round is begining, so you may
-                     change the blocked holes on the loser's of the
+                     change the blocked holes on the loser's side of the
                      board. Do you wish to rearrange the blocks?"""
         ans = ui_utils.ask_popup(game_ui,
                                  'Move seeds', message,
