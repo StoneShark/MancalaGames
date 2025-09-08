@@ -6,12 +6,11 @@
    },
    "game_info": {
       "name": "Eson Xorgol",
-      "about": "Single-lap, clockwise-sow Mancala in which all holes are playable by both players. The start hole is skipped if the sowing cycles the board.\n\nIf sow ends in an occupied hole and the next hole is empty, capture the seeds in the following hole. Capture in sow direction (CW).\n\nVariations:\n\n- Do not skip sowing the start hole when cycling the board.\n",
+      "about": "Single-lap, clockwise-sow Mancala in which all holes are playable by both players. \n\nIf a sow ends in an occupied hole and the next hole is empty, capture the seeds in the following hole. \n\nGoal: collect the most seeds.\n",
       "capt_dir": 1,
       "capt_type": 2,
       "no_sides": true,
       "capt_side": 0,
-      "skip_start": true,
       "sow_direct": -1,
       "stores": true
    },
@@ -25,9 +24,6 @@
          "mx_seeds_m": 1,
          "mx_empties_m": -1
       }
-   },
-   "vari_params": {
-      "skip_start": "include"
    },
    "rules": "Russ, Laurence. Mancala Games. 1984. p24."
 }
