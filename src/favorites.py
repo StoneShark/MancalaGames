@@ -60,7 +60,7 @@ class GameFavorites:
         return backup
 
 
-    def _load_file_int(self):
+    def _load_file_work(self):
         """Load the favorites.csv file into a dictionary.
 
         File format is:   game_name,rating"""
@@ -84,11 +84,13 @@ class GameFavorites:
 
 
     def _load_file(self):
+        """Load the file catching any errors and reporing to
+        the user."""
 
         try:
-            self._load_file_int()
+            self._load_file_work()
 
-        except ValueError as exp:
+        except (ValueError, csv.Error) as exp:
             backup = self._backup_favs()
             ui_utils.showerror(self.master, 'Corrupt favorites.csv',
                                [f"""Corrupt favorites file found.
