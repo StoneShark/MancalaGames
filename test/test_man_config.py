@@ -806,7 +806,7 @@ Capture,evens,Basic Capture,,0,label,0,0,notint
 
 
 
-# %%  test config data
+# %%  test ini config data
 
 
 class TestConfig:
@@ -1001,6 +1001,35 @@ class TestConfig:
         assert config.get_bool('ani_active')
 
 
+    @pytest.mark.parametrize('cfg_data, elist',
+                              [
+                                  ('button_size = 20', []),
+                                  ("""button_size = 20
+                                   game_dirs =
+                                   """, []),
+                                  ("""game_dirs = dir1
+                                   """, ['dir1']),
+                                  ("""game_dirs = dir1, dir2
+                                   """, ['dir1', 'dir2']),
+
+                              ])
+    def test_get_game_dirs(self, mocker, tmp_path, cfg_data, elist):
+
+        path = os.path.join(tmp_path, 'mancala.ini')
+        with open(path, 'w', encoding='utf-8') as file:
+            print(f"""[default]
+                  {cfg_data}
+                  """, file=file)
+
+        # man_path finds the file where we just put it
+        mpath = mocker.patch.object(man_path, 'get_path')
+        mpath.return_value = path
+
+        config = man_config.ConfigData()
+
+        assert config.get_game_dirs() == elist
+
+
     @pytest.fixture
     def tk_root(self):
         """Create a tk app and then clean up after it.
@@ -1136,3 +1165,54 @@ class TestPreloadCfg:
 
         man_config.check_disable_animator()
         assert animator.ENABLED
+
+
+class TestGetGameFiles:
+
+    def test_get_game_files(self, mocker, tmp_path):
+
+        def stub_man_path(name, no_error=True):
+            return os.path.join(tmp_path, name)
+
+        def stub_os_listdir(path):
+
+            if 'GameProps' in path:
+                return [f'GP_{i}.txt' for i in range(5)] \
+                    + ['_all_params.txt', 'data.csv']
+
+            if 'dir1' in path:
+                return [f'game1_{i}.txt' for i in range(3)] \
+                    + ['_all_params.txt', 'data.csv']
+
+            if 'dir2' in path:
+                return [f'game2_{i}.txt' for i in range(2)]
+
+        path = os.path.join(tmp_path, 'mancala.ini')
+        with open(path, 'w', encoding='utf-8') as file:
+            print("""[default]
+                  game_dirs = dir1, dir2
+                  """, file=file)
+
+        mocker.patch.object(man_path, 'get_path', stub_man_path)
+
+        # need the ini file, it's used from the global
+        man_config.read_ini_file()
+
+        # stubs for os.listdir to fake the files
+        mocker.patch.object(os, 'listdir', stub_os_listdir)
+
+        game_list = man_config.game_files()
+        assert len(game_list) == 10
+
+        gstring = ','.join(game_list)
+
+        assert 'dir1\\game1_0.txt' in gstring
+        assert 'dir1\\game1_1.txt' in gstring
+        assert 'dir1\\game1_2.txt' in gstring
+        assert 'dir2\\game2_0.txt' in gstring
+        assert 'dir2\\game2_1.txt' in gstring
+
+        assert '_all_params.txt' not in gstring
+        assert 'data.csv' not in gstring
+
+        assert gstring.count('GP') == 5

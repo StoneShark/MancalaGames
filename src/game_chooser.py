@@ -12,6 +12,7 @@ import dataclasses as dc
 import enum
 import functools as ft
 import itertools as it
+import os.path
 import random
 import textwrap
 import tkinter as tk
@@ -53,6 +54,8 @@ FAVS = None
 #   'Button1', 'Button2', 'Button3', 'Button4', 'Button5')
 TK_KEYMOD_MASK = 0xffff0004
 
+
+# %%  filter dicts
 
 GCLASS = {'Mancala': lambda gclass: gclass == MANCALA,
           'Other': lambda gclass: gclass != MANCALA}
@@ -283,6 +286,37 @@ def build_regions():
 
 
 REGIONS = build_regions()
+
+
+def build_dir_filter():
+    """If there are additional directories specified in the ini
+    file add a filter for them."""
+
+    man_config.read_ini_file()
+    game_dirs = man_config.CONFIG.get_game_dirs()
+    if not game_dirs:
+        return None
+
+    def game_dir_func(dir_name):
+        """Return a function that tests to see if a filename
+        (full path) is has dir_name as it's lowest directory"""
+
+        def _test_dir(filename):
+
+            dname = os.path.dirname(filename)
+            base_dir = os.path.basename(dname)
+            return base_dir == dir_name
+
+        return _test_dir
+
+    dir_dict = {man_path.GAMEDIR: game_dir_func(man_path.GAMEDIR)}
+    for dname in game_dirs:
+        dir_dict |= {dname: game_dir_func(dname)}
+
+    return dir_dict
+
+
+DIR_DICT = build_dir_filter()
 
 
 # %% GameFilters frame & classes
@@ -572,6 +606,7 @@ fcol.reset()
 FILTERS += [
 
     FilterDesc('Ratings', DictFilter, RATINGS, ckey.NAME, 1, fcol.count),
+    # DIR_DICT filter, if it will be included
 
     FilterDesc('Origin', DictFilter, ORIGIN, True, 1, fcol.count),
 
@@ -586,6 +621,10 @@ FILTERS += [
                ckey.ALGORITHM, 1, fcol.count),
 
     ]
+
+if DIR_DICT:
+    FILTERS += [FilterDesc('Directory', DictFilter, DIR_DICT, ckey.FILENAME,
+                1, 0)]
 
 assert fcol.value < MAX_COLUMNS, F"Too many filter columns used {MAX_COLUMNS}."
 del fcol
@@ -1074,11 +1113,11 @@ class GameChooser(ttk.Frame):
         create a dictionary of game name and about text."""
 
         self.all_games = {}
-        for file in man_path.game_files():
+        for file in man_config.game_files():
 
             build_context = ui_utils.ReportError(self)
             with build_context:
-                game_dict = man_config.read_game(PATH + file)
+                game_dict = man_config.read_game(file)
                 game_name = game_dict[ckey.GAME_INFO][ckey.NAME]
 
             if build_context.error:
@@ -1091,6 +1130,7 @@ class GameChooser(ttk.Frame):
 
             self.all_games[game_name] = game_dict
 
+        self.all_games = dict(sorted(self.all_games.items()))
         self.games = list(self.all_games.keys())
 
 

@@ -21,6 +21,7 @@ import dataclasses as dc
 import json
 import re
 import os
+import os.path
 import tkinter as tk
 import tkinter.font as tkfont
 
@@ -63,7 +64,7 @@ PARAM = re.compile('^<param ([a-z0-9_]+)>')
 GINFO_TYPES = {fdesc.name: fdesc.type for fdesc in dc.fields(gi.GameInfo)}
 
 
-# %% remove html tags
+# %%  remove html tags
 
 # some invented tags
 NOLINK = '<nolink>'                    # don't auto link the next word
@@ -115,7 +116,7 @@ def game_name_to_parts(game_qual):
     return gamename, variant
 
 
-# %% read config files
+# %%  read game config files
 
 def convert_from_file(where, field, value):
     """Convert configuration values to types corresponding to
@@ -364,8 +365,7 @@ def get_game_value(game, cspec, option):
     raise gi.DataError(f"Could not find value for {cspec} {option}")
 
 
-
-# %% parameters files
+# %%  read parameters files
 
 
 @dc.dataclass
@@ -517,7 +517,7 @@ class ParamData(dict):
             rec[UI_DEFAULT_IDX] = self.convert_default(rec[UI_DEFAULT_IDX])
             self[opt_name] = Param(*rec)
 
-
+# global containing the parameter data
 PARAMS = None
 
 def read_params_data(*, need_tags=False, need_descs=False):
@@ -603,6 +603,7 @@ DEFAULTS = {
 DEFAULT = 'default'
 DIFFICULTY = 'difficulty'
 DIS_ANIMAT = 'disable_animator'
+GAME_DIRS = 'game_dirs'
 COLORS = ['system_color', 'inactive_color',
           'north_act_color', 'north_not_color',
           'south_act_color', 'south_not_color',
@@ -665,7 +666,6 @@ class ConfigData:
         causing __getitem__ to return default."""
 
         if tk_root is None:
-            print("Tk app not provided, colors not tested")
             return
 
         for section in self._config.sections():
@@ -796,6 +796,17 @@ class ConfigData:
         return tkfont.Font(font=ftuple)
 
 
+    def get_game_dirs(self):
+        """Return the list of game dirs in the ini file."""
+
+        if (GAME_DIRS not in self._config[DEFAULT]
+                or not self._config[DEFAULT][GAME_DIRS]):
+            return []
+
+        return [f.strip()
+                for f in self._config[DEFAULT][GAME_DIRS].split(',')]
+
+# the global containing the ini file configuration
 CONFIG = None
 
 def read_ini_file(tk_root=None, name=None):
@@ -835,3 +846,25 @@ def check_disable_animator():
 
     if disable:
         animator.ENABLED = False
+
+
+# %%  game file list with those in additional directories
+
+def game_files():
+    """Return the list of preconfigured games and any games in
+    additional directories specified in the ini file.
+
+    This return the path to the file, man_path.game_files only
+    returns the game names."""
+
+    dir_list = [man_path.GAMEDIR] + CONFIG.get_game_dirs()
+    game_list = []
+
+    for dname in dir_list:
+        path = man_path.get_path(dname)
+        files = os.listdir(path)
+        game_list += [os.path.join(path, f)
+                      for f in files
+                      if man_path.is_game_file(f)]
+
+    return game_list

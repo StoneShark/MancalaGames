@@ -75,9 +75,18 @@ def get_cmd_ln_gamename(optional=False):
     return cargs.gamename
 
 
+def is_game_file(file):
+    """Return True if the game is a game file."""
+
+    return file != ALL_PARAMS and file[-4:] == GAME_EXT
+
+
 def game_files():
-    """Return the list of preconfigured games."""
+    """Return the list of preconfigured games.
+
+    Use man_config.game_files to include games listed in game_dirs
+    in the ini file."""
 
     path = get_path(GAMEPATH)
     files = os.listdir(path)
-    return [f for f in files if f != ALL_PARAMS and f[-4:] == GAME_EXT]
+    return [f for f in files if is_game_file(f)]
