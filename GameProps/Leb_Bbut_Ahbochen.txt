@@ -6,21 +6,17 @@
    },
    "game_info": {
       "name": "Leb Bbut Ahbochen",
-      "about": "Sow counter-clockwise. If the final seed of a sow makes 6 seeds, sow another lap. If an opponent has no seeds you must make some available, if you can.\n\nCapture on opposite side on 2s and 4s. Do multiple captures as long as the holes contain 2 or 4 seeds (in reverse of sow direction).\n\nVariations:\n\n- 2, 4, 6 or 8 holes per side",
+      "about": "Sow counter-clockwise. If the final seed of a sow makes 6 seeds, sow another lap. If an opponent has no seeds you must make some available, if you can.\n\nCapture on opposite side on 2s and 4s. Do multiple captures as long as the holes contain 2 or 4 seeds (in reverse of sow direction).\n\nVariations:\n\n- 2, 4, 6 or 8 holes per side\n",
       "capt_on": [ 2, 4 ],
       "grandslam": 2,
       "mlaps": 1,
-      "mlap_cont": 1,
-      "mlap_param": 6,
       "multicapt": -1,
       "mustshare": true,
       "capt_side": 1,
       "sow_direct": 1,
-      "stores": true
-   },
-   "vari_params": {
-      "holes": [2, 4, 6, 8, 10],
-      "nbr_start": "include"
+      "stores": true,
+      "mlap_cont": 1,
+      "mlap_param": 6
    },
    "player": {
       "algorithm": "negamaxer",
@@ -31,5 +27,11 @@
          "mx_stores_m": 8
       }
    },
-   "rules": "https://mancala.fandom.com/wiki/Leb_Bbut_Ahbochen"
+   "vari_params": {
+      "holes": [ 2, 4, 6, 8, 10 ],
+      "nbr_start": "include"
+   },
+   "rules": "https://mancala.fandom.com/wiki/Leb_Bbut_Ahbochen",
+   "origin": "traditional",
+   "region": "Northern Africa"
 }

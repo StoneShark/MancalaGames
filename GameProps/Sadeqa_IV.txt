@@ -22,5 +22,7 @@
          "mx_seeds_m": 8
       }
    },
-   "rules": "https://mancala.fandom.com/wiki/Sadeqa_II"
+   "rules": "https://mancala.fandom.com/wiki/Sadeqa_II",
+   "origin": "traditional",
+   "region": "Eastern Africa"
 }

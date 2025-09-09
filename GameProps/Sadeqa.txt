@@ -18,10 +18,6 @@
       "sow_direct": 1,
       "start_pattern": 3
    },
-   "vari_params": {
-      "start_pattern": [ 2, 3 ],
-      "goal_param": "include"
-   },
    "player": {
       "algorithm": "negamaxer",
       "ai_params": {
@@ -32,6 +28,12 @@
          "mx_empties_m": -2
       }
    },
+   "vari_params": {
+      "start_pattern": [ 2, 3 ],
+      "goal_param": "include"
+   },
    "rules": "Russ, Laurence. Mancala Games. 1984. p33.",
-   "deviation": "Round tally goal is used so that the round loser can start each new game. In play without rounds, the starter always alternates."
+   "deviation": "Round tally goal is used so that the round loser can start each new game. In play without rounds, the starter always alternates.",
+   "origin": "traditional",
+   "region": "Eastern Africa"
 }

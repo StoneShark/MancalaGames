@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Urim",
-      "about": "A single-lap mancala, sow direction is counter-clockwise, capture on opponents side on 2s, 3s and 4s.\n\nA sow which cycles the board, will skip the hole that the move started from. Holes may never be sown above 17 seeds; skip such holes while sowing. If your opponent has no seeds, you must make seeds available to them (if you can).\nIf a grand slam were to occur, the seeds are left on the board, that is, they are not captured.\nA round ends when the current player cannot move or when the outcome cannot change. A cycling round can be ended by the End Round command on the Game menu, any seeds left in play go to the owners of the hole they are in.\n\nThe game ends when one player scores 10 points: 1 point for each win and another point for a skunk, i.e. collecting 36 or more seeds for the win.  The Game Tally, available to be displayed via the Display menu, shows progress toward that goal.",
+      "about": "A single-lap mancala, sow direction is counter-clockwise, capture on opponents side on 2s, 3s and 4s.\n\nA sow which cycles the board, will skip the hole that the move started from. Holes may never be sown above 17 seeds; skip such holes while sowing. If your opponent has no seeds, you must make seeds available to them (if you can).\nIf a grand slam were to occur, the seeds are left on the board, that is, they are not captured.\nA round ends when the current player cannot move or when the outcome cannot change. A cycling round can be ended by the End Round command on the Game menu, any seeds left in play go to the owners of the hole they are in.\n\nThe game ends when one player scores 10 points: 1 point for each win and another point for a skunk, i.e. collecting 36 or more seeds for the win.  The Game Tally, available to be displayed via the Display menu, shows progress toward that goal.\n",
       "capt_on": [ 2, 3, 4 ],
       "goal": 7,
       "goal_param": 10,
@@ -14,18 +14,15 @@
       "multicapt": -1,
       "mustshare": true,
       "capt_side": 1,
-      "rounds": 2,
       "round_starter": 0,
+      "rounds": 2,
       "skip_start": true,
       "sow_direct": 1,
       "sow_rule": 7,
       "sow_param": 17,
       "stores": true,
-      "unclaimed": 2, 
+      "unclaimed": 2,
       "quitter": 0
-   },
-   "vari_params": {
-      "goal_param": "include"
    },
    "player": {
       "algorithm": "negamaxer",
@@ -37,6 +34,11 @@
          "mx_easy_rand_a": 10
       }
    },
+   "vari_params": {
+      "goal_param": "include"
+   },
    "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p55.",
-   "deviation": "Per the rules: after the first capture on 2 or 3 subsequent captures (multicapt) are made on 2, 3 or 4 seed holes. Mancala Games only supports the capture mechanism being the same for the first and multiple captures."
+   "deviation": "Per the rules: after the first capture on 2 or 3 subsequent captures (multicapt) are made on 2, 3 or 4 seed holes. Mancala Games only supports the capture mechanism being the same for the first and multiple captures.",
+   "origin": "traditional",
+   "region": "Western Africa"
 }

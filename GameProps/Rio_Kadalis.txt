@@ -9,18 +9,15 @@
       "about": "Sow counter-clockwise in multiple laps. Any hole sown to 4 seeds is captured by the hole owner, except if the final seed of a lap sows a hole to 4, then the sower captures the seeds.\n\nPlayed in rounds. A round ends when a player has no valid moves on their turn. Seeds left on the board go to the hole owners. To set up for a new round each player fills as many holes as they can with 4 seeds, placing extra seeds in their store.\n\nThe games ends when one player does not have sufficient seeds to fill one hole.\n",
       "blocks": true,
       "capt_on": [ 4 ],
-      "capt_side": 0,
       "goal_param": 1,
       "mlaps": 1,
+      "capt_side": 0,
       "round_fill": 2,
-      "rounds": 2,
       "round_starter": 0,
+      "rounds": 2,
       "sow_direct": 1,
       "sow_rule": 3,
       "stores": true
-   },
-   "vari_params": {
-      "goal_param": "include"
    },
    "player": {
       "algorithm": "negamaxer",
@@ -31,5 +28,10 @@
          "mx_stores_m": 4
       }
    },
-   "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p94."
+   "vari_params": {
+      "goal_param": "include"
+   },
+   "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p94.",
+   "origin": "traditional",
+   "region": "Eastern Africa"
 }

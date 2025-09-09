@@ -9,9 +9,9 @@
       "about": "Sow counter-clockwise in multiple laps. If a lap ends in an occupied hole, capture any seeds across a gap of one empty hole. Then, continue sowing even if no capture.\n\nGoal: capture more seeds than your opponent.\n",
       "capt_dir": 1,
       "capt_type": 2,
-      "capt_side": 0,
       "evens": true,
       "mlaps": 1,
+      "capt_side": 0,
       "sow_direct": 1,
       "sow_rule": 8,
       "stores": true,
@@ -28,5 +28,7 @@
          "mx_empties_m": -1
       }
    },
-   "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p113."
+   "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p113.",
+   "origin": "traditional",
+   "region": "Central Asia"
 }

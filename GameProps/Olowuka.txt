@@ -10,12 +10,12 @@
       "capt_on": [ 2, 3 ],
       "grandslam": 4,
       "mlaps": 1,
-      "mlap_cont": 2,
-      "mlap_param": 4,
       "multicapt": -1,
       "capt_side": 1,
       "sow_direct": 1,
-      "stores": true
+      "stores": true,
+      "mlap_cont": 2,
+      "mlap_param": 4
    },
    "player": {
       "algorithm": "negamaxer",
@@ -28,5 +28,7 @@
          "mx_empties_m": 1
       }
    },
-   "rules": "https://mancala.fandom.com/wiki/Olowuka"
+   "rules": "https://mancala.fandom.com/wiki/Olowuka",
+   "origin": "traditional",
+   "region": "Western Africa"
 }

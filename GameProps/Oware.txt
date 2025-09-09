@@ -6,8 +6,8 @@
    },
    "game_info": {
       "name": "Oware",
-      "about": "A single-lap mancala, sow direction is counter-clockwise, capture on opponents side on 1s, 2s and 3s. A sow which cycles the board, will skip the hole that the move started from. If your opponent has no seeds, you must make seeds available to them (if you can).\n\nVariations:\n- remove capture on 1s\n- any Grand Slam rule\n- no must share\n- add must pass",
-      "capt_on": [1, 2, 3],
+      "about": "A single-lap mancala, sow direction is counter-clockwise, capture on opponents side on 2s and 3s. A sow which cycles the board, will skip the hole that the move started from. If your opponent has no seeds, you must make seeds available to them (if you can).\n\nGoal: capture the most seeds.\n\nVariations:\n- change the capture on values\n- any Grand Slam rule\n- no must share\n- add must pass\n",
+      "capt_on": [ 2, 3 ],
       "grandslam": 2,
       "multicapt": -1,
       "mustshare": true,
@@ -17,24 +17,24 @@
       "stores": true,
       "quitter": 0
    },
+   "player": {
+      "algorithm": "negamaxer",
+      "ai_params": {
+         "mm_depth": [ 1, 3, 5, 8 ]
+      },
+      "scorer": {
+         "mx_stores_m": 4,
+         "mx_access_m": 1,
+         "mx_easy_rand_a": 10
+      }
+   },
    "vari_params": {
       "capt_on": "include",
       "grandslam": "include",
       "mustshare": "include",
       "mustpass": "include"
    },
-   "player": {
-      "scorer": {
-         "mx_stores_m": 4,
-         "mx_access_m": 1,
-         "mx_seeds_m": 0,
-         "mx_empties_m": 0,
-         "mx_easy_rand_a": 10
-      },
-      "algorithm": "negamaxer",
-      "ai_params": {
-         "mm_depth": [1, 3, 5, 8]
-      }
-   },
-   "rules": "https://en.wikipedia.org/wiki/Oware but with capture on 1s added."
+   "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p49.",
+   "origin": "traditional",
+   "region": "Western Africa, Caribbean, Americas"
 }

@@ -27,5 +27,7 @@
          "mx_rturn_a": 50
       }
    },
-   "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p16."
+   "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p16.",
+   "origin": "traditional",
+   "region": "Caribbean"
 }

@@ -29,5 +29,7 @@
    "vari_params": {
       "start_pattern": "all"
    },
-   "rules": "https://mancala.fandom.com/wiki/Bay_Khom"
+   "rules": "https://mancala.fandom.com/wiki/Bay_Khom",
+   "origin": "traditional",
+   "region": "Southeast Asia"
 }

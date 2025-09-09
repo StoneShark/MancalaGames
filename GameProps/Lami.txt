@@ -26,11 +26,15 @@
    },
    "player": {
       "algorithm": "negamaxer",
-      "scorer": { "mx_stores_m": 4 }
+      "scorer": {
+         "mx_stores_m": 4
+      }
    },
    "vari_params": {
       "holes": "include",
       "goal_param": "include"
    },
-   "rules": "Russ, Laurence. Mancala Games. 1984. p36."
+   "rules": "Russ, Laurence. Mancala Games. 1984. p36.",
+   "origin": "traditional",
+   "region": "Eastern Africa"
 }

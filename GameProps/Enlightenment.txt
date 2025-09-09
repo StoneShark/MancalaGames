@@ -31,5 +31,7 @@
       "nbr_start": "include",
       "capt_on": "include"
    },
-   "rules": "Ann Davies. 2025."
+   "rules": "Ann Davies. 2025.",
+   "origin": "modern",
+   "region": "Americas"
 }

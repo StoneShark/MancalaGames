@@ -19,9 +19,6 @@
       "sow_direct": 1,
       "stores": true
    },
-   "vari_params": {
-      "goal_param": "include"
-   },
    "player": {
       "algorithm": "negamaxer",
       "ai_params": {
@@ -32,5 +29,10 @@
          "mx_easy_rand_a": 20
       }
    },
-   "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p88."
+   "vari_params": {
+      "goal_param": "include"
+   },
+   "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p88.",
+   "origin": "traditional",
+   "region": "Caribbean"
 }

@@ -1,7 +1,12 @@
 {
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 8,
+      "nbr_start": 4
+   },
    "game_info": {
       "name": "Enkeshui",
-      "about": "A multi-lap, counter-clockwise sow\n\nBulls are made on either side of the board when sowing to 4.  Two bulls are made if the final two seeds sow holes to 3 and 4 seeds in either order. Moves may not start from bulls and seeds in bulls may not be captured.\n\nCross-capture and pick own on capture. Multiple captures may be made as long as the holes after the final hole sown are empty.\n\nVariations:\n- 8, 10 or 12 board size\n- start patterns: CLIPPEDTRIPLES with 3 start seeds",
+      "about": "A multi-lap, counter-clockwise sow\n\nBulls are made on either side of the board when sowing to 4.  Two bulls are made if the final two seeds sow holes to 3 and 4 seeds in either order. Moves may not start from bulls and seeds in bulls may not be captured.\n\nCross-capture and pick own on capture. Multiple captures may be made as long as the holes after the final hole sown are empty.\n\nVariations:\n- 8, 10 or 12 board size\n- start patterns: CLIPPEDTRIPLES with 3 start seeds\n",
       "capt_dir": 1,
       "child_cvt": 4,
       "child_type": 5,
@@ -14,33 +19,20 @@
       "stores": true,
       "xcpickown": 1
    },
-   "vari_params": {
-      "holes": [8, 10, 12],
-      "nbr_start": [3, 4],
-      "start_pattern": [4, 5]
-   },
    "player": {
-      "scorer": {
-         "mx_access_m": 0,
-         "mx_child_cnt_m": 0,
-         "mx_easy_rand_a": 0,
-         "mx_empties_m": 0,
-         "mx_evens_m": 0,
-         "mx_rturn_a": 0,
-         "mx_seeds_m": 0,
-         "mx_stores_m": 4
-      },
-      "ai_active": false,
-      "algorithm": "minimaxer",
-      "difficulty": 1,
       "ai_params": {
-         "mm_depth": [1, 1, 3, 7]
+         "mm_depth": [ 1, 1, 3, 7 ]
+      },
+      "scorer": {
+         "mx_stores_m": 4
       }
    },
-   "game_class": "Mancala",
-   "game_constants": {
-      "holes": 8,
-      "nbr_start": 4
+   "vari_params": {
+      "holes": [ 8, 10, 12 ],
+      "nbr_start": [ 3, 4 ],
+      "start_pattern": [ 4, 5 ]
    },
-   "rules": "Russ, Laurence. Mancala Games. 1984. p42."
+   "rules": "Russ, Laurence. Mancala Games. 1984. p42.",
+   "origin": "traditional",
+   "region": "Eastern Africa"
 }

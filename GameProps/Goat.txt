@@ -29,5 +29,7 @@
          "mm_depth": [1, 1, 3, 5]
       }
    },
-   "rules": "Mohr, Merilyn Simonds. The New Games Treasury. 1993. p100."
+   "rules": "Mohr, Merilyn Simonds. The New Games Treasury. 1993. p100.",
+   "origin": "traditional",
+   "region": "Northern Africa"
 }

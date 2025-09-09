@@ -33,5 +33,7 @@
       "grandslam": [ 0, 3 ],
       "xcpickown": "include"
    },
-   "rules": "Ann Davies, 2025."
+   "rules": "Ann Davies. 2025.",
+   "origin": "modern",
+   "region": "Americas"
 }

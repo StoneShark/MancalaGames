@@ -7,6 +7,7 @@ Created on Thu Aug 17 15:23:34 2023
 import pytest
 pytestmark = pytest.mark.integtest
 
+from context import cfg_keys as ckey
 from context import game_info as gi
 from context import man_config
 from context import man_path
@@ -26,9 +27,14 @@ class GameTestData:
 @pytest.fixture(scope="class")
 def gstate():
     """This fixture will maintain state between tests in the
-    same class but will be reconstructed for each class."""
+    same class but will be reconstructed for each class.
 
-    game, _ = man_config.make_game(man_path.GAMEPATH + 'Oware.txt')
+    Oware was changed to match traditional definition, but tests
+    were written when 1 was included in the capt_on."""
+
+    game_dict = man_config.read_game(man_path.GAMEPATH + 'Oware.txt')
+    game_dict[ckey.GAME_INFO][ckey.CAPT_ON] = [1, 2, 3]
+    game = man_config.game_from_config(game_dict)
     gstate = GameTestData(game)
     return gstate
 

@@ -27,5 +27,7 @@
       "game_class": [ "Diffusion", "DiffusionV2" ]
    },
    "rules": "Copyright (c) January 2006 by Mark Steere. See pdf file for rules.",
-   "Author Link": "https://marksteeregames.com/"
+   "Author Link": "https://marksteeregames.com/index.html",
+   "origin": "modern",
+   "region": "Americas"
 }

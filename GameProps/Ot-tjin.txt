@@ -40,5 +40,7 @@
       "sow_direct": [ -1, 1 ]
    },
    "rules": "Russ, Laurence. Mancala Games. 1984. p64.",
-   "reference": "Mancala World: https://mancala.fandom.com/wiki/Aw-li_On-nam_Ot-tjin"
+   "reference": "Mancala World: https://mancala.fandom.com/wiki/Aw-li_On-nam_Ot-tjin",
+   "origin": "traditional",
+   "region": "Southeast Asia"
 }

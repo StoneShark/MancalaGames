@@ -37,5 +37,7 @@
       "goal_param": "include"
    },
    "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p77.",
-   "deviation": "Seeds are placed randomly instead of by the starting player."
+   "deviation": "Seeds are placed randomly instead of by the starting player.",
+   "origin": "traditional",
+   "region": "Northern Africa"
 }

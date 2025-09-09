@@ -38,5 +38,7 @@
       "goal": [ 5, 6 ],
       "goal_param": "include"
    },
-   "rules": "Ann Davies. 2025."
+   "rules": "Ann Davies. 2025.",
+   "origin": "modern",
+   "region": "Americas"
 }

@@ -24,5 +24,7 @@
       "nbr_start": "include"
    },
    "rules": "Richard's PBeM  http://www.gamerz.net/pbmserv/zigzag.html",
-   "lagniappe": "Mancala World, https://mancala.fandom.com/wiki/Zig_Zag, provides some details on tournaments that have included this game."
+   "lagniappe": "Mancala World, https://mancala.fandom.com/wiki/Zig_Zag, provides some details on tournaments that have included this game.",
+   "origin": "modern",
+   "region": "Americas"
 }

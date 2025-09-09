@@ -792,12 +792,22 @@ to specific values or changing to any value associated with its type.
 	When the value is not a list, the defined type of the parameter will be
 	used to allow selection of any valid value.
 	</ol>
-	<p>Other top level elements may be included as notes or documentation.
+
+<p>Other top level elements may be included as notes or documentation.
 The same tag-value format required of JSON must be used.
-For example, most files have a "rules" tag with a value describing
-where rules referenced for the implementation.
+All values must be strings.
+Most game files have the following tags:
+<ul>
+<li><b class="inhead">rules</b> describing
+where rules referenced for the implementation can be found.
 This is not the only source of rules for the game,
 but are the rules the game was implemented to.
+<li><b class="inhead">origin</b> is generally one of traditional, modern or
+example.
+<li><b class="inhead">region</b> lists regions of world that the game
+has been played for traditional games and where invented for modern games.
+</ul>
+
 <p>There is game property file "_all_params.txt" that shows where all
 game parameters should be placed.
 When defining new game files, parameters only need to be specified if the

@@ -26,5 +26,7 @@
          "mx_easy_rand_a": 20
       }
    },
-   "rules": "https://mancala.fandom.com/wiki/Djenon_Aboure"
+   "rules": "https://mancala.fandom.com/wiki/Djenon_Aboure",
+   "origin": "traditional",
+   "region": "Western Africa"
 }

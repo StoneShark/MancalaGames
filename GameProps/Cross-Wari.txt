@@ -28,5 +28,7 @@
          "mx_empties_m": -1
       }
    },
-   "rules": "https://mancala.fandom.com/wiki/Cross-Wari"
+   "rules": "https://mancala.fandom.com/wiki/Cross-Wari",
+   "origin": "modern",
+   "region": "Americas"
 }

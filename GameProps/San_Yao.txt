@@ -20,9 +20,6 @@
       "sow_direct": 1,
       "stores": true
    },
-   "vari_params": {
-      "goal_param": "include"
-   },
    "player": {
       "algorithm": "negamaxer",
       "ai_params": {
@@ -32,7 +29,12 @@
          "mx_stores_m": 8
       }
    },
+   "vari_params": {
+      "goal_param": "include"
+   },
    "rules": "https://mancala.fandom.com/wiki/S%C3%A0n_Y%C3%A1o",
    "deviation": "Hole filling rounding rules are applied, loser must have 2 or fewer seeds.",
-   "note": "GOAL_PARAM is to 8 to limit game length."
+   "note": "GOAL_PARAM is to 8 to limit game length.",
+   "origin": "traditional",
+   "region": "East Asia"
 }

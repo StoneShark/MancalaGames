@@ -24,5 +24,7 @@
          "mx_stores_m": 8
       }
    },
-   "rules": "https://mancala.fandom.com/wiki/Raja_Pasu"
+   "rules": "https://mancala.fandom.com/wiki/Raja_Pasu",
+   "origin": "traditional",
+   "region": "South Asia"
 }

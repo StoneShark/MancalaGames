@@ -25,5 +25,7 @@
          "mx_empties_m": -1
       }
    },
-   "rules": "Russ, Laurence. Mancala Games. 1984. p24."
+   "rules": "Russ, Laurence. Mancala Games. 1984. p24.",
+   "origin": "traditional",
+   "region": "Central Asia"
 }

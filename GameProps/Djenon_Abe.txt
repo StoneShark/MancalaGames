@@ -27,5 +27,7 @@
          "mx_easy_rand_a": 20
       }
    },
-   "rules": "https://mancala.fandom.com/wiki/Djenon_Abe"
+   "rules": "https://mancala.fandom.com/wiki/Djenon_Abe",
+   "origin": "traditional",
+   "region": "Western Africa"
 }

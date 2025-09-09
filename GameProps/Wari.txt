@@ -36,5 +36,7 @@
       "nosinglecapt": "all",
       "grandslam": "all"
    },
-   "rules": "Russ, Laurence. Mancala Games. 1984. p14."
+   "rules": "Russ, Laurence. Mancala Games. 1984. p14.",
+   "origin": "traditional",
+   "region": "Africa, Caribbean"
 }

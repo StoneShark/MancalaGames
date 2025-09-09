@@ -27,5 +27,7 @@
          "mx_stores_m": 8
       }
    },
-   "rules": "https://mancala.fandom.com/wiki/Modiar"
+   "rules": "https://mancala.fandom.com/wiki/Modiar",
+   "origin": "traditional",
+   "region": "Northern Africa"
 }

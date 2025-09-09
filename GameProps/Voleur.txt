@@ -6,18 +6,11 @@
    },
    "game_info": {
       "name": "Voleur",
-      "about": "Sow counter-clockwise in a single lap, always capture the seeds from the final hole sown.\n\nGoal: collect the most seeds.\n\nVariation: capture on evens",
+      "about": "Sow counter-clockwise in a single lap, always capture the seeds from the final hole sown.\n\nGoal: collect the most seeds.\n\nVariation: capture on evens\n",
       "capt_min": 1,
       "capt_side": 0,
       "sow_direct": 1,
       "stores": true
-   },
-   "variants": {
-      "Voleur": { },
-      "Evens": { 
-         "evens": true,
-         "capt_min": 0
-      }
    },
    "player": {
       "algorithm": "negamaxer",
@@ -31,5 +24,14 @@
          "mx_easy_rand_a": 20
       }
    },
-   "rules": "https://mancala.fandom.com/wiki/Voleur"
+   "variants": {
+      "Voleur": { },
+      "Evens": {
+         "evens": true,
+         "capt_min": 0
+      }
+   },
+   "rules": "https://mancala.fandom.com/wiki/Voleur",
+   "origin": "traditional",
+   "region": "Caribbean"
 }

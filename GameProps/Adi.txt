@@ -21,18 +21,7 @@
       "sow_rule": 3,
       "stores": true
    },
-   "vari_params": {
-      "holes": [6, 7, 8, 9, 10, 11, 12],
-      "goal_param": "include",
-      "mustpass": "include",
-      "prescribed": [0, 3, 4],
-      "capt_rturn": "include",
-      "sow_rule": [3, 4],
-      "pickextra": [0, 3, 4],
-      "round_fill": [0, 8]
-   },
    "player": {
-      "algorithm": "minimaxer",
       "ai_params": {
          "mm_depth": [ 1, 2, 3, 5 ]
       },
@@ -40,5 +29,17 @@
          "mx_stores_m": 4
       }
    },
-   "rules": "Russ, Laurence. Mancala Games. 1984. p54."
+   "vari_params": {
+      "holes": [ 6, 7, 8, 9, 10, 11, 12 ],
+      "goal_param": "include",
+      "mustpass": "include",
+      "prescribed": [ 0, 3, 4 ],
+      "capt_rturn": "include",
+      "sow_rule": [ 3, 4 ],
+      "pickextra": [ 0, 3, 4 ],
+      "round_fill": [ 0, 8 ]
+   },
+   "rules": "Russ, Laurence. Mancala Games. 1984. p53.",
+   "origin": "traditional",
+   "region": "Western Africa"
 }

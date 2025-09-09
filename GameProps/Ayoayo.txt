@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Ayoayo",
-      "about": "A multi-lap mancala; sow direction counter-clockwise skipping start hole on full cycle sow; cross-capture from opponents side when a sow ends in own empty hole. If your opponent has no seeds, you must make seeds available to them (if you can).\n\nThe game ends when one player captures more than half the seeds; when the current player cannot share seeds to an opponent without seeds; or when there is only one seed left on the board.",
+      "about": "A multi-lap mancala; sow direction counter-clockwise skipping start hole on full cycle sow; cross-capture from opponents side when a sow ends in own empty hole. If your opponent has no seeds, you must make seeds available to them (if you can).\n\nThe game ends when one player captures more than half the seeds; when the current player cannot share seeds to an opponent without seeds; or when there is only one seed left on the board.\n",
       "crosscapt": true,
       "mlaps": 1,
       "mustshare": true,
@@ -17,18 +17,14 @@
       "xcpickown": 1
    },
    "player": {
+      "algorithm": "negamaxer",
       "scorer": {
          "mx_stores_m": 4,
-         "mx_access_m": 0,
-         "mx_seeds_m": 0,
          "mx_empties_m": -2,
          "mx_easy_rand_a": 20
-      },
-      "algorithm": "negamaxer",
-      "ai_params": {
-         "mm_depth": [1, 1, 3, 5]
       }
    },
    "rules": "Mohr, Merilyn Simonds. The New Games Treasury. 1993. p102.",
-   "question": "Regarding skip start: skip where the move started OR where each 'lap' starts? second is implemented, because the first results in lots of 'endless' sows."
+   "origin": "traditional",
+   "region": "Western Africa"
 }

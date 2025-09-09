@@ -33,5 +33,7 @@
       "goal_param": "include",
       "multicapt": "include"
    },
-   "rules": "https://mancala.fandom.com/wiki/Bohnenspiel"
+   "rules": "https://mancala.fandom.com/wiki/Bohnenspiel",
+   "origin": "modern",
+   "region": "Europe"
 }

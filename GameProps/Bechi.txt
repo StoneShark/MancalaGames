@@ -33,5 +33,7 @@
          "mx_evens_m": 4
       }
    },
-   "rules": "Russ, Laurence. Mancala Games. 1984. p22."
+   "rules": "Russ, Laurence. Mancala Games. 1984. p22.",
+   "origin": "traditional",
+   "region": "Eastern Africa"
 }

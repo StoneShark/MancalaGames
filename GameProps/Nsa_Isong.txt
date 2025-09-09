@@ -19,9 +19,6 @@
       "sow_rule": 3,
       "stores": true
    },
-   "vari_params": {
-      "goal_param": "include"
-   },
    "player": {
       "algorithm": "negamaxer",
       "ai_params": {
@@ -32,5 +29,10 @@
          "mx_evens_m": -2
       }
    },
-   "rules": "https://mancala.fandom.com/wiki/Nsa_Isong"
+   "vari_params": {
+      "goal_param": "include"
+   },
+   "rules": "https://mancala.fandom.com/wiki/Nsa_Isong",
+   "origin": "traditional",
+   "region": "Western Africa"
 }

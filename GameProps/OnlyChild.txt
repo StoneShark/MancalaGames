@@ -38,5 +38,7 @@
       "child_locs": "include",
       "capt_max": "include"
    },
-   "rules": "Ann Davies, 2025."
+   "rules": "Ann Davies. 2025.",
+   "origin": "modern",
+   "region": "Americas"
 }

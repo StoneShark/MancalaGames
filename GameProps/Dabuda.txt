@@ -37,5 +37,7 @@
       "allow_rule": [ 0, 1 ]
    },
    "rules": "Russ, Laurence. Mancala Games. 1984. p32.",
-   "reference": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p17."
+   "reference": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p17.",
+   "origin": "traditional",
+   "region": "Eastern Africa"
 }

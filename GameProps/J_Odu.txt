@@ -31,5 +31,7 @@
       "nbr_start": [ 2, 3, 4, 5, 6, 7, 8, 9 ],
       "capt_max": "include"
    },
-   "rules": "Russ, Laurence. Mancala Games. 1984. p35."
+   "rules": "Russ, Laurence. Mancala Games. 1984. p35.",
+   "origin": "traditional",
+   "region": "Western Africa"
 }

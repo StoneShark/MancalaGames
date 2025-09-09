@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Longbeu-a-cha",
-      "about": "Sow counter-clockwise via the multi-lap next-hole method (MLAPS of LAPPER_NEXT).\n\nWhen the hole from which a new lap should start is empty, capture any seeds in the hole following the empty hole. That is, captures are made when the hole after the hole in which the final seed of a lap was sown, is empty and there are seeds in the hole 'two out' from the last sown seed.\n\nCaptures continue while holes are alternately empty and occupied in the counter-clockwise direction.\n\nVariation:\n\n- Walak-pussa played on a board with 7 holes per side and 4 seeds in each hole at the start.",
+      "about": "Sow counter-clockwise via the multi-lap next-hole method (MLAPS of LAPPER_NEXT).\n\nWhen the hole from which a new lap should start is empty, capture any seeds in the hole following the empty hole. That is, captures are made when the hole after the hole in which the final seed of a lap was sown, is empty and there are seeds in the hole 'two out' from the last sown seed.\n\nCaptures continue while holes are alternately empty and occupied in the counter-clockwise direction.\n\nVariation:\n\n- Walak-pussa played on a board with 7 holes per side and 4 seeds in each hole at the start.\n",
       "capt_dir": 1,
       "capt_type": 2,
       "mlaps": 2,
@@ -14,13 +14,6 @@
       "capt_side": 0,
       "sow_direct": 1,
       "stores": true
-   },
-   "variants": {
-      "Longbeu-a-cha": { },
-      "Walak-pussa": {
-         "holes": 7,
-         "nbr_start": 4
-      }
    },
    "player": {
       "algorithm": "negamaxer",
@@ -31,5 +24,14 @@
          "mx_stores_m": 4
       }
    },
-   "rules": "Russ, Laurence. Mancala Games. 1984. p60."
+   "variants": {
+      "Longbeu-a-cha": { },
+      "Walak-pussa": {
+         "holes": 7,
+         "nbr_start": 4
+      }
+   },
+   "rules": "Russ, Laurence. Mancala Games. 1984. p60.",
+   "origin": "traditional",
+   "region": "South Asia"
 }

@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Sokusow\u00f3",
-      "about": "Sow counter-clockwise in multiple-laps.\n\nCapture 1 seed on the start of each lap. No other capture mechanism is used.\n\nGoal: capture more than half of the seeds.",
+      "about": "Sow counter-clockwise in multiple-laps.\n\nCapture 1 seed on the start of each lap. No other capture mechanism is used.\n\nGoal: capture more than half of the seeds.\n",
       "min_move": 2,
       "mlaps": 1,
       "presowcapt": 1,
@@ -23,5 +23,7 @@
          "mx_easy_rand_a": 20
       }
    },
-   "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p26."   
+   "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p26.",
+   "origin": "traditional",
+   "region": "Eastern Africa"
 }

@@ -321,7 +321,7 @@ your opponent of seeds.
     <li><a href="#NoSides">NoSides</a>:
     Players are not limited to starting a move on their own side of the board,
     instead a player may start a move from any hole.
-    <li><a href="#NoSidesChild">NoSidesChild</a>:
+    <li><a href="#No%20Sides%20Child">NoSidesChild</a>:
     Players do not own the holes on their own side of the board;
     instead ownership is claimed (i.e. making a child)
     by sowing a hole to four seeds.

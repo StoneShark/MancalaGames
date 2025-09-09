@@ -18,14 +18,16 @@
    },
    "player": {
       "algorithm": "negamaxer",
-      "ai_params": { "mm_depth": [ 1, 3, 5, 7 ] },
+      "ai_params": {
+         "mm_depth": [ 1, 3, 5, 7 ]
+      },
       "scorer": {
          "mx_stores_m": 4,
          "mx_child_cnt_m": 8
       }
    },
    "variants": {
-      "Leyla-Gobale": {},
+      "Leyla-Gobale": { },
       "Leyla-Gobale_Rounds": {
          "rounds": 2,
          "round_fill": 7
@@ -37,5 +39,7 @@
    },
    "rules": "Russ, Laurence. Mancala Games. 1984. p44.",
    "deviation": "Seeds are not moved between the newly created qur holes as there would be no impact on play.",
+   "origin": "traditional",
+   "region": "Eastern Africa",
    "references": "https://mancala.fandom.com/wiki/Layli_Goobalay_(short_board) and https://mancala.fandom.com/wiki/Layli_Goobalay_(long_board)  Valdez (p140) describes a very similar game with CW sow and round fill is UMOVE but not reflected instead opposites have the same seed counts."
 }

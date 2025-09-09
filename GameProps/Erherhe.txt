@@ -6,38 +6,39 @@
    },
    "game_info": {
       "name": "Erherhe",
-      "about": "A single-lap mancala, sow direction is counter-clockwise, multiple capture on opponents side on 1s and 3s. A sow which cycles the board, will skip the hole that the move started from. If your opponent has no seeds, you must make seeds available to them (if you can).\n\n<nolink>Erherhe is played in rounds. A round ends when either player has more than half of the seeds. Players then collect the seeds remaining on their side of the board. To setup the next round, each player fills as many holes as they can with 4 seeds. Leftover seeds are placed in their store (3 or fewer for loser). The loser's holes that cannot be filled are out of play for the round. The previous round loser starts each new round.\n\nThe game is over when either player cannot fill two holes; that is, the winner will have collected all but 1 to 3 seeds.\n\nVariation:\n\n- Another value for ROUND_STARTER\n- Another value for ROUND_FILL",
+      "about": "A single-lap mancala, sow direction is counter-clockwise, multiple capture on opponents side on 1s and 3s. A sow which cycles the board, will skip the hole that the move started from. If your opponent has no seeds, you must make seeds available to them (if you can).\n\n<nolink>Erherhe is played in rounds. A round ends when either player has more than half of the seeds. Players then collect the seeds remaining on their side of the board. To setup the next round, each player fills as many holes as they can with 4 seeds. Leftover seeds are placed in their store (3 or fewer for loser). The loser's holes that cannot be filled are out of play for the round. The previous round loser starts each new round.\n\nThe game is over when either player cannot fill two holes; that is, the winner will have collected all but 1 to 3 seeds.\n\nVariation:\n\n- Another value for ROUND_STARTER\n- Another value for ROUND_FILL\n",
       "blocks": true,
-      "capt_on": [1, 3],
+      "capt_on": [ 1, 3 ],
       "goal_param": 2,
       "multicapt": -1,
       "mustshare": true,
       "capt_side": 1,
-      "rounds": 1,
-      "round_starter": 1,
       "round_fill": 6,
+      "round_starter": 1,
+      "rounds": 1,
       "skip_start": true,
       "sow_direct": 1,
       "stores": true
+   },
+   "player": {
+      "algorithm": "negamaxer",
+      "ai_params": {
+         "mm_depth": [ 1, 3, 5, 8 ]
+      },
+      "scorer": {
+         "mx_stores_m": 4,
+         "mx_access_m": 2,
+         "mx_seeds_m": 1,
+         "mx_easy_rand_a": 10
+      }
    },
    "vari_params": {
       "round_starter": "include",
       "rounds": "include",
       "goal_param": "include"
    },
-   "player": {
-      "scorer": {
-         "mx_stores_m": 4,
-         "mx_access_m": 2,
-         "mx_seeds_m": 1,
-         "mx_empties_m": 0,
-         "mx_easy_rand_a": 10
-      },
-      "algorithm": "negamaxer",
-      "ai_params": {
-         "mm_depth": [1, 3, 5, 8]
-      }
-   },
    "rules": "Russ, Laurence. Mancala Games. 1984.  p19.",
-   "note": "GOAL_PARAM set to 2 to limit game length"
+   "note": "GOAL_PARAM set to 2 to limit game length",
+   "origin": "traditional",
+   "region": "Africa"
 }

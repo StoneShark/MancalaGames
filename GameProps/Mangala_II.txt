@@ -12,6 +12,7 @@
       "multicapt": -1,
       "mustshare": true,
       "capt_side": 1,
+      "sow_direct": 1,
       "stores": true
    },
    "player": {
@@ -25,5 +26,7 @@
          "mx_easy_rand_a": 10
       }
    },
-   "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p47."
+   "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p47.",
+   "origin": "traditional",
+   "region": "Western Asia, Europe"
 }

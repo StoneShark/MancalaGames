@@ -26,5 +26,7 @@
       }
    },
    "rules": "https://mancala.fandom.com/wiki/Mangala_IV",
-   "note": "Rule interpretation might not be exact."
+   "note": "Rule interpretation might not be exact.",
+   "origin": "traditional",
+   "region": "Western Asia"
 }

@@ -21,5 +21,7 @@
          "mx_rturn_a": 40
       }
    },
-   "rules": "Ann Davies, 2025"
+   "rules": "Ann Davies. 2025.",
+   "origin": "modern",
+   "region": "Americas"
 }

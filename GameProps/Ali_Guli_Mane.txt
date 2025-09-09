@@ -9,27 +9,28 @@
       "about": "Sow counter-clockwise in multilap-next manner. Player must pass if they cannot move.\n\nCapture two out, e.g. across gap. If capture, pick any seeds across the board from the capture and move again (repeat turn). Only one repeat turn is allowed, even if there is a second capture a second repeat turn is not allowed.\n\nPlayed in rounds. Each round ends when there are no moves for either player. Any holes that the loser cannot fill with 5 seeds are out of play for the round. The round starter alternates. Unclaimed seeds at the end of a round are collected by the hole owner.\n\nThe game ends when one player cannot fill two holes for a new round.\n",
       "blocks": true,
       "capt_dir": 1,
-      "capt_rturn": 2,
-      "capt_side": 0,
       "capt_type": 2,
+      "capt_rturn": 2,
       "goal_param": 2,
       "mlaps": 2,
       "mustpass": true,
+      "capt_side": 0,
       "pickextra": 1,
       "round_starter": 0,
       "rounds": 2,
       "sow_direct": 1,
       "stores": true
    },
-   "vari_params": {
-      "goal_param": "include"
-   },
    "player": {
-      "ai_params": {},
       "scorer": {
          "mx_stores_m": 8
       }
    },
+   "vari_params": {
+      "goal_param": "include"
+   },
    "rules": "https://mancala.fandom.com/wiki/Ali_Guli_Mane",
-   "note": "GOAL_PARAM set to 2 to limit game length"
+   "note": "GOAL_PARAM set to 2 to limit game length",
+   "origin": "traditional",
+   "region": "South Asia"
 }

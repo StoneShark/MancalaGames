@@ -27,5 +27,6 @@
       "scorer": {
          "mx_seeds_m": -8
       }
-   }
+   },
+   "origin": "example"
 }

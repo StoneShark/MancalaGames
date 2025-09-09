@@ -24,5 +24,7 @@
          "mx_evens_m": 2
       }
    },
-   "rules": "https://mancala.fandom.com/wiki/Tihbat"
+   "rules": "https://mancala.fandom.com/wiki/Tihbat",
+   "origin": "traditional",
+   "region": "Northern Africa"
 }

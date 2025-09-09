@@ -175,16 +175,33 @@ GNOTES = {
                             or 'lagniappe' in gdict.keys()
                             or 'reference' in gdict.keys()
                             or 'question' in gdict.keys()),
-    'Rules Russ': lambda gdict: 'Russ' in gdict.get('rules', ''),
-    'Rules Valdez': lambda gdict: 'Valdez' in gdict.get('rules', ''),
-    'Rules Man World': lambda gdict: 'mancala.fandom' in gdict.get('rules', ''),
-    'Rules Davies': lambda gdict: 'Davies' in gdict.get('rules', ''),
-    'Rules Other': lambda gdict: ('Russ' not in gdict.get('rules', '')
-                                  and 'Valdez' not in gdict.get('rules', '')
-                                  and 'mancala.fandom' not in gdict.get('rules', '')
-                                  and 'Davies' not in gdict.get('rules', ''))
+    }
 
-          }
+
+# pylint: disable=magic-value-comparison
+RULES = {
+
+    'Russ': lambda gdict: 'Russ' in gdict.get('rules', ''),
+    'Valdez': lambda gdict: 'Valdez' in gdict.get('rules', ''),
+    'Man World': lambda gdict: 'mancala.fandom' in gdict.get('rules', ''),
+    'Davies': lambda gdict: 'Davies' in gdict.get('rules', ''),
+    'Other': lambda gdict: ('Russ' not in gdict.get('rules', '')
+                            and 'Valdez' not in gdict.get('rules', '')
+                            and 'mancala.fandom' not in gdict.get('rules', '')
+                            and 'Davies' not in gdict.get('rules', '')),
+
+    }
+
+# pylint: disable=magic-value-comparison
+ORIGIN = {
+        'Traditional': lambda gdict: 'traditional' in gdict.get('origin', ''),
+        'Modern': lambda gdict: 'modern' in gdict.get('origin', ''),
+        'Example': lambda gdict: 'example' in gdict.get('origin', ''),
+        'Other': lambda gdict: ('origin' in gdict
+                                and gdict['origin'] not in
+                                    ['traditional', 'modern', 'example']),
+        'Not Specified': lambda gdict: 'origin' not in gdict,
+        }
 
 RATINGS = {STAR * 1: lambda gname: FAVS.rating(gname) == 1,
            STAR * 2: lambda gname: FAVS.rating(gname) == 2,
@@ -193,6 +210,80 @@ RATINGS = {STAR * 1: lambda gname: FAVS.rating(gname) == 1,
            STAR * 5: lambda gname: FAVS.rating(gname) >= 5,
            'Not Rated': lambda gname: not FAVS.rating(gname),
            }
+
+
+# pylint: disable=magic-value-comparison
+def build_regions():
+    """Build the dictionary to test for regions.
+
+    Maps used:
+        https://www.worldatlas.com/geography/regions-of-africa.html
+        https://www.worldatlas.com/geography/what-are-the-five-regions-of-asia.html
+    """
+
+    world_regions = ['Africa', 'Eastern Africa', 'Central Africa',
+                     'Northern Africa', 'Western Africa',
+                     'Asia', 'Central Asia', 'South Asia', 'Southeast Asia',
+                     'Americas', 'Caribbean',
+                     'Europe']
+    indent = ['Eastern Africa', 'Central Africa',
+              'Northern Africa', 'Western Africa',
+              'Central Asia', 'South Asia', 'Southeast Asia',
+              'Caribbean']
+
+    def region_test_func(rname):
+        """Return a function that tests that the rname is in the
+        region key of the game dict."""
+
+        def _region_test(gdict):
+            """Do the test:
+                1. if no region specified in game dict, return False
+                2. if rname is Africa or Asia, return True for all games
+                with the word Africa or Asia in the region string
+                3. if rname is Americas, include any games that list Caribbean,
+                return True
+                4. return exact match in the region list
+
+            This allows selections such as
+                "Africa" but not "Eastern Africa"
+                "Americas" but not "Caribbean"
+            """
+
+            region =  gdict.get('region', None)
+            if region is None:
+                return False
+
+            if rname in {'Africa', 'Asia'}:
+                return rname in region
+
+            if rname == 'Americas' and 'Caribbean' in region:
+                return True
+
+            return rname in region.split(', ')
+
+        return _region_test
+
+    def other_region(gdict):
+        """True if there is a region specified but it is not in
+        world_regions."""
+
+        region = gdict.get('region', None)
+        if region is None:
+            return False
+
+        return not any(rname in region for rname in world_regions)
+
+    rdict = {('   ' + rname) if rname in indent else rname:
+             region_test_func(rname)
+             for rname in world_regions}
+    rdict |= {'Other': other_region}
+    rdict |= {'Not Specified': lambda gdict: 'region' not in gdict}
+
+    return rdict
+
+
+REGIONS = build_regions()
+
 
 # %% GameFilters frame & classes
 
@@ -373,7 +464,7 @@ class DictFilter(BaseFilter):
                    if self.filt_var[test_name].get())
 
 
-class FeatureFilter(DictFilter):
+class TriStateFilter(DictFilter):
     """Build a feature filter.
 
     These do not break the game list into non-overlapping sets."""
@@ -443,6 +534,8 @@ class FilterDesc:
     fclass: type
     value_keys: object
     param_key: str
+
+    tab: int
     col: int
 
 
@@ -452,26 +545,45 @@ fcol = ui_utils.Counter()  # count: increments; value: no increment
 # can't build the tk objects yet, but build a table of filter groups
 # so they are easier to move around
 FILTERS = [
-    FilterDesc('Game Class', DictFilter, GCLASS, ckey.GAME_CLASS, fcol.count),
-    FilterDesc('AI Player', VListFilter, list(ai_player.ALGORITHM_DICT.keys()),
-               ckey.ALGORITHM, fcol.value),
-    FilterDesc('Ratings', DictFilter, RATINGS, ckey.NAME, fcol.value),
+    FilterDesc('Game Class', DictFilter, GCLASS, ckey.GAME_CLASS,
+               0, fcol.count),
+    FilterDesc('Goal', DictFilter, GOALS, ckey.GOAL, 0, fcol.value),
 
-    FilterDesc('Goal', DictFilter, GOALS, ckey.GOAL, fcol.count),
-    FilterDesc('Board Size', DictFilter, SIZES, ckey.HOLES, fcol.value),
+    FilterDesc('Board Size', DictFilter, SIZES, ckey.HOLES, 0, fcol.count),
+    FilterDesc('Lap Type', EnumFilter, gi.LapSower, ckey.MLAPS, 0, fcol.value),
 
-    FilterDesc('Lap Type', EnumFilter, gi.LapSower, ckey.MLAPS, fcol.count),
-    FilterDesc('Sow Rule', DictFilter, SOWRS, ckey.SOW_RULE, fcol.value),
+    FilterDesc('Sow Rule', DictFilter, SOWRS, ckey.SOW_RULE, 0, fcol.count),
+    FilterDesc('Sow Direct', DictFilter, SOWDIR, ckey.GAME_INFO,
+               0, fcol.value),
 
-    FilterDesc('Sow Direct', DictFilter, SOWDIR, ckey.GAME_INFO, fcol.count),
-    FilterDesc('Child Type', EnumFilter, gi.ChildType,
-               ckey.CHILD_TYPE, fcol.value),
+    FilterDesc('Child Type', EnumFilter, gi.ChildType, ckey.CHILD_TYPE,
+               0, fcol.count),
 
-    FilterDesc('Capture Types', DictFilter, CAPTS, ckey.GAME_INFO, fcol.count),
-    FilterDesc('Configuration', FeatureFilter, GNOTES, True, fcol.value),
+    FilterDesc('Capture Types', DictFilter, CAPTS, ckey.GAME_INFO,
+               0, fcol.count),
 
-    FilterDesc('Features', FeatureFilter, FEATS,
-               ckey.GAME_INFO, fcol.count),
+    FilterDesc('Features', TriStateFilter, FEATS, ckey.GAME_INFO,
+               0, fcol.count),
+    ]
+
+assert fcol.value < MAX_COLUMNS, F"Too many filter columns used {MAX_COLUMNS}."
+fcol.reset()
+
+FILTERS += [
+
+    FilterDesc('Ratings', DictFilter, RATINGS, ckey.NAME, 1, fcol.count),
+
+    FilterDesc('Origin', DictFilter, ORIGIN, True, 1, fcol.count),
+
+    FilterDesc('Region', TriStateFilter, REGIONS, True, 1, fcol.count),
+
+    FilterDesc('Rules Source', DictFilter, RULES, True, 1, fcol.count),
+
+    FilterDesc('Configuration', TriStateFilter, GNOTES, True, 1, fcol.count),
+
+    FilterDesc('AI Player', VListFilter,
+               list(ai_player.ALGORITHM_DICT.keys()),
+               ckey.ALGORITHM, 1, fcol.count),
 
     ]
 
@@ -488,20 +600,25 @@ class GameFilters(ttk.Frame):
         self.parent = parent
         self.pack(fill=tk.BOTH, expand=True)
 
-        filt_frame = ttk.Labelframe(self,
-                                    text='Filters', labelanchor='nw',
-                                    padding=3)
+        filt_frame = ttk.Notebook(self)
         filt_frame.grid(row=0, column=0, sticky=tk.NSEW)
 
-        cframes = [None] * MAX_COLUMNS
-        for idx in range(MAX_COLUMNS):
-            cframes[idx] = ttk.Frame(filt_frame)
-            cframes[idx].grid(row=0, column=idx, sticky='ns')
+        rule_tab = ttk.Frame(filt_frame, padding=3)
+        filt_frame.add(rule_tab, text='Rules', padding=5, sticky=tk.NSEW)
+
+        info_tab = ttk.Frame(filt_frame, padding=3)
+        filt_frame.add(info_tab, text='About', padding=5, sticky=tk.NSEW)
+
+        cframes = [[None] * MAX_COLUMNS, [None] * MAX_COLUMNS]
+        for tidx, tab in enumerate([rule_tab, info_tab]):
+            for idx in range(MAX_COLUMNS):
+                cframes[tidx][idx] = ttk.Frame(tab)
+                cframes[tidx][idx].grid(row=0, column=idx, sticky='ns')
 
         self.filters = [None] * len(FILTERS)
         for idx, fdesc in enumerate(FILTERS):
 
-            self.filters[idx] = fdesc.fclass(cframes[fdesc.col],
+            self.filters[idx] = fdesc.fclass(cframes[fdesc.tab][fdesc.col],
                                              self,
                                              fdesc.title,
                                              fdesc.value_keys,
@@ -509,6 +626,8 @@ class GameFilters(ttk.Frame):
             self.filters[idx].pack(side=tk.TOP, fill=tk.Y, expand=True)
 
         filt_frame.columnconfigure(tk.ALL, weight=1)
+        rule_tab.columnconfigure(tk.ALL, weight=1)
+        info_tab.columnconfigure(tk.ALL, weight=1)
 
         ttk.Button(self, text='Play',
                    command=parent.play_game,

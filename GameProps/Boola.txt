@@ -17,12 +17,18 @@
    },
    "player": {
       "algorithm": "negamaxer",
-      "ai_params": { "mm_depth": [ 1, 3, 5, 7 ] },
+      "ai_params": {
+         "mm_depth": [ 1, 3, 5, 7 ]
+      },
       "scorer": {
          "mx_seeds_m": 1,
          "mx_empties_m": -4
       }
    },
-   "vari_params": { "holes": [ 3, 6, 9, 12 ] },
-   "rules": "https://mancala.fandom.com/wiki/Boola"
+   "vari_params": {
+      "holes": [ 3, 6, 9, 12 ]
+   },
+   "rules": "https://mancala.fandom.com/wiki/Boola",
+   "origin": "traditional",
+   "region": "Eastern Africa"
 }

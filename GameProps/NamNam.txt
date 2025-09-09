@@ -1,41 +1,35 @@
 {
    "game_class": "Mancala",
    "game_constants": {
-      "nbr_start": 4,
-      "holes": 6
+      "holes": 6,
+      "nbr_start": 4
    },
    "game_info": {
       "name": "NamNam",
-      "about": "A multi-lap mancala played in rounds. The goal is to claim ownership of at least 10 holes. Each player initially owns the holes on their side of the board. Owners of holes are updated at the start of each round based on the number of seeds captured in the previous round.\n\nCaptures are on 4s on the final sown seed by the sower (regardless of hole owner). The seeds of any hole sown to 4 are captured by the hole's owner (regardless of sower). On capture, if there are 4 or fewer seeds left on the board the capture takes them as well.\n\nIf, at the start of your turn, your opponent has no seeds; you must make seeds available to them, if you can, otherwise the game is over.",
-      "capt_on": [4],
-      "capt_side": 0,
+      "about": "A multi-lap mancala played in rounds. The goal is to claim ownership of at least 10 holes. Each player initially owns the holes on their side of the board. Owners of holes are updated at the start of each round based on the number of seeds captured in the previous round.\n\nCaptures are on 4s on the final sown seed by the sower (regardless of hole owner). The seeds of any hole sown to 4 are captured by the hole's owner (regardless of sower). On capture, if there are 4 or fewer seeds left on the board the capture takes them as well.\n\nIf, at the start of your turn, your opponent has no seeds; you must make seeds available to them, if you can, otherwise the game is over.\n",
+      "capt_on": [ 4 ],
       "goal": 2,
       "goal_param": 10,
       "mlaps": 1,
       "mustshare": true,
+      "capt_side": 0,
       "pickextra": 3,
       "round_starter": 0,
       "rounds": 2,
-      "sow_rule": 3,
       "sow_direct": 1,
+      "sow_rule": 3,
       "stores": true
+   },
+   "player": {
+      "algorithm": "negamaxer",
+      "scorer": {
+         "mx_stores_m": 4
+      }
    },
    "vari_params": {
       "goal_param": "include"
    },
-   "player": {
-      "scorer": {
-         "mx_stores_m": 4,
-         "mx_access_m": 0,
-         "mx_seeds_m": 0,
-         "mx_empties_m": 0,
-         "mx_evens_m": 0,
-         "mx_easy_rand_a": 0
-      },
-      "algorithm": "negamaxer",
-      "ai_params": {
-         "mm_depth": [1, 1, 3, 5]
-      }
-   },
-   "rules": "http://www.oware.org/nam_nam.asp"
+   "rules": "http://www.oware.org/nam_nam.asp",
+   "origin": "traditional",
+   "region": "Western Africa"
 }

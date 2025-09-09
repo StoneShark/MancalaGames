@@ -33,5 +33,7 @@
       "sow_rule": [ 0, 9, 13 ]
    },
    "rules": "Mohr, Merilyn Simonds. The New Games Treasury. 1993. p101.",
-   "deviation": "Seeds are sown into waldas as described in  https://mancala.fandom.com/wiki/Qelat_(Beni_Amir_%26_Mensa). A variation allows not sowing children."
+   "deviation": "Seeds are sown into waldas as described in  https://mancala.fandom.com/wiki/Qelat_(Beni_Amir_%26_Mensa). A variation allows not sowing children.",
+   "origin": "traditional",
+   "region": "Eastern Africa"
 }

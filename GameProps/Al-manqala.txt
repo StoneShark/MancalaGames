@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Al-manqala",
-      "about": "Sinple lap sow clockwise. If your oppenent does not have seeds you must share some, if you can.\n\nMultiple capture on 2s and 4s.\n\nIf you are unable to share seeds when your opponent has none, they collect all of your seeds.\n\nGoal: collect the most seeds.\n\nA cycling game can be ended with the End Game menu command, seeds on the board will not score.",
+      "about": "Sinple lap sow clockwise. If your oppenent does not have seeds you must share some, if you can.\n\nMultiple capture on 2s and 4s.\n\nIf you are unable to share seeds when your opponent has none, they collect all of your seeds.\n\nGoal: collect the most seeds.\n\nA cycling game can be ended with the End Game menu command, seeds on the board will not score.\n",
       "capt_on": [ 2, 4 ],
       "multicapt": -1,
       "mustshare": true,
@@ -24,5 +24,7 @@
          "mx_stores_m": 8
       }
    },
-   "rules": "https://mancala.fandom.com/wiki/Al-manqala"
+   "rules": "https://mancala.fandom.com/wiki/Al-manqala",
+   "origin": "traditional",
+   "region": "Western Asia"
 }

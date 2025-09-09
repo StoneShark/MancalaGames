@@ -30,5 +30,7 @@
          "mx_rturn_a": 15
       }
    },
-   "rules": "https://en.wikipedia.org/wiki/Cross-Kalah"
+   "rules": "https://en.wikipedia.org/wiki/Cross-Kalah",
+   "origin": "modern",
+   "region": "Americas"
 }

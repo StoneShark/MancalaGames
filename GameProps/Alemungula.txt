@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Alemungula",
-      "about": "Split sow, center hole may sown in either direction. A single seed moved across the board sides may not be moved back on the next turn.\n\nCapture on opponent's side on 2s and 4s.\n\nGoal: capture more than half the seeds.\n\nVariation: Cow has similar moves but with a minimum move of 2.",
+      "about": "Split sow, center hole may sown in either direction. A single seed moved across the board sides may not be moved back on the next turn.\n\nCapture on opponent's side on 2s and 4s.\n\nGoal: capture more than half the seeds.\n\nVariation: Cow has similar moves but with a minimum move of 2.\n",
       "capt_on": [ 2, 4 ],
       "multicapt": -1,
       "capt_side": 1,
@@ -23,5 +23,7 @@
          "mx_stores_m": 8
       }
    },
-   "rules": "https://mancala.fandom.com/wiki/Alemungula"
+   "rules": "https://mancala.fandom.com/wiki/Alemungula",
+   "origin": "traditional",
+   "region": "Western Africa"
 }

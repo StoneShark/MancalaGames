@@ -23,8 +23,12 @@
       "stores": true
    },
    "player": {
-      "ai_params": { "mm_depth": [ 1, 1, 3, 7 ] },
-      "scorer": { "mx_stores_m": 4 }
+      "ai_params": {
+         "mm_depth": [ 1, 1, 3, 7 ]
+      },
+      "scorer": {
+         "mx_stores_m": 4
+      }
    },
    "vari_params": {
       "goal_param": "include",
@@ -34,5 +38,7 @@
       "pickextra": [ 0, 3 ]
    },
    "rules": "Russ, Laurence. Mancala Games. 1984. p61.",
-   "deviation": "PICKLASTSEEDS was added to end games more reliably (can be turned off via variations)."
+   "deviation": "PICKLASTSEEDS was added to end games more reliably (can be turned off via variations).",
+   "origin": "traditional",
+   "region": "South Asia"
 }

@@ -15,16 +15,16 @@
       "stores": true
    },
    "player": {
-      "algorithm": "minimaxer",
       "ai_params": {
          "mcts_bias": [ 300, 200, 200, 200 ],
          "mcts_nodes": [ 100, 400, 600, 800 ],
-         "mcts_pouts": [ 1, 1, 2, 2 ],
          "mm_depth": [ 1, 7, 9, 11 ]
       },
       "scorer": {
          "mx_seeds_m": -8
       }
    },
-   "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p85."
+   "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p85.",
+   "origin": "traditional",
+   "region": "Western Africa"
 }

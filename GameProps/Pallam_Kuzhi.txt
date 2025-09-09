@@ -6,43 +6,36 @@
    },
    "game_info": {
       "name": "Pallam Kuzhi",
-      "about": "Sow counter-clockwise via the multi-lap next-hole method (MLAPS of LAPPER_NEXT).\n\nWhile either player is sowing, both players capture all holes sown to 4 on their side of the board. Specifically, the non-sower may capture seeds from holes sown to 4 on their own side of the board.\n\nWhen the hole from which a new lap should start is empty, capture any seeds in the hole following the empty hole. That is, captures are made when the hole after the hole in which the final seed of a lap was sown, is empty and there are seeds in the hole 'two out' from the last sown seed.\n\nPlayed in ROUNDS. Each round ends when the current player does not have any playable holes. Round setup is via the Empty Hole Method of ROUND_FILL using the OUTSIDE_FILL approach which the user may choose to override (UCHOOSE).  After the next round setup unfilled holes are out of play. The players alternate starting rounds.\n\nThe game is over when either player cannot fill a single hole.\n\nVariations:\n\n- 6 start seeds.\n- SOW_RULE of SOW_CAPT_ALL instead of OWN_SOW_CAPT_ALL.\n- Other options for ROUND_STARTER and ROUND_FILL.\n- See Olinda and Pandi.",
+      "about": "Sow counter-clockwise via the multi-lap next-hole method (MLAPS of LAPPER_NEXT).\n\nWhile either player is sowing, both players capture all holes sown to 4 on their side of the board. Specifically, the non-sower may capture seeds from holes sown to 4 on their own side of the board.\n\nWhen the hole from which a new lap should start is empty, capture any seeds in the hole following the empty hole. That is, captures are made when the hole after the hole in which the final seed of a lap was sown, is empty and there are seeds in the hole 'two out' from the last sown seed.\n\nPlayed in ROUNDS. Each round ends when the current player does not have any playable holes. Round setup is via the Empty Hole Method of ROUND_FILL using the OUTSIDE_FILL approach which the user may choose to override (UCHOOSE).  After the next round setup unfilled holes are out of play. The players alternate starting rounds.\n\nThe game is over when either player cannot fill a single hole.\n\nVariations:\n\n- 6 start seeds.\n- SOW_RULE of SOW_CAPT_ALL instead of OWN_SOW_CAPT_ALL.\n- Other options for ROUND_STARTER and ROUND_FILL.\n- See Olinda and Pandi.\n",
       "blocks": true,
       "capt_dir": 1,
-      "capt_on": [4],
-      "capt_side": 0,
       "capt_type": 2,
+      "capt_on": [ 4 ],
       "mlaps": 2,
-      "rounds": 2,
+      "capt_side": 0,
       "round_fill": 6,
       "round_starter": 0,
+      "rounds": 2,
       "sow_direct": 1,
       "sow_rule": 3,
       "stores": true
    },
+   "player": {
+      "ai_params": {
+         "mm_depth": [ 1, 1, 3, 7 ]
+      },
+      "scorer": {
+         "mx_stores_m": 4
+      }
+   },
    "vari_params": {
-      "nbr_start": [4, 6],
-      "sow_rule": [3, 4],
+      "nbr_start": [ 4, 6 ],
+      "sow_rule": [ 3, 4 ],
       "round_starter": "include",
       "round_fill": "include",
       "goal_param": "include"
    },
-   "player": {
-      "algorithm": "minimaxer",
-      "difficulty": 1,
-      "ai_params": {
-         "mm_depth": [1, 1, 3, 7]
-      },
-      "scorer": {
-         "mx_stores_m": 4,
-         "mx_access_m": 0,
-         "mx_seeds_m": 0,
-         "mx_empties_m": 0,
-         "mx_child_cnt_m": 0,
-         "mx_evens_m": 0,
-         "mx_easy_rand_a": 0,
-         "mx_rturn_a": 0
-      }
-   },
-   "rules": "Russ, Laurence. Mancala Games. 1984. p58."
+   "rules": "Russ, Laurence. Mancala Games. 1984. p58.",
+   "origin": "traditional",
+   "region": "South Asia"
 }

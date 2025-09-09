@@ -32,5 +32,7 @@
       "goal_param": "include"
    },
    "rules": "Russ, Laurence. Mancala Games. 1984. p65.",
-   "note": "GOAL_PARAM set to 11 to limit game length"
+   "note": "GOAL_PARAM set to 11 to limit game length",
+   "origin": "traditional",
+   "region": "Southeast Asia"
 }

@@ -31,5 +31,6 @@
       "ai_params": {
          "mm_depth": [1, 1, 5, 7]
       }
-   }
+   },
+   "origin": "example"
 }

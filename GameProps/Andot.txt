@@ -15,11 +15,6 @@
       "unclaimed": 1,
       "quitter": 1
    },
-   "vari_params": {
-      "child_type": [1, 4],
-      "child_locs": [3, 10],
-      "child_rule": [0, 6]
-   },
    "player": {
       "algorithm": "negamaxer",
       "ai_params": {
@@ -30,6 +25,13 @@
          "mx_child_cnt_m": 8
       }
    },
+   "vari_params": {
+      "child_type": [ 1, 4 ],
+      "child_locs": [ 3, 10 ],
+      "child_rule": [ 0, 6 ]
+   },
    "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p134.",
-   "reference": "Mancala World: https://mancala.fandom.com/wiki/Andot"
+   "reference": "Mancala World: https://mancala.fandom.com/wiki/Andot",
+   "origin": "traditional",
+   "region": "Northern Africa, Eastern Africa"
 }

@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Sadeqa III",
-      "about": "Counter-clockwise, multi-lap sow.\n\nCross capture seeds on opponent's side.\n\nThe game is over when a player doesn't have a move on their turn or when one player collects more than half of the seeds. The last mover takes any seeds left on the board.\n\nGoal: collect more than half the seeds.",
+      "about": "Counter-clockwise, multi-lap sow.\n\nCross capture seeds on opponent's side.\n\nThe game is over when a player doesn't have a move on their turn or when one player collects more than half of the seeds. The last mover takes any seeds left on the board.\n\nGoal: collect more than half the seeds.\n",
       "crosscapt": true,
       "mlaps": 1,
       "capt_side": 1,
@@ -23,5 +23,7 @@
          "mx_stores_m": 8
       }
    },
-   "rules": "https://mancala.fandom.com/wiki/Sadeqa_III"
+   "rules": "https://mancala.fandom.com/wiki/Sadeqa_III",
+   "origin": "traditional",
+   "region": "Eastern Africa"
 }

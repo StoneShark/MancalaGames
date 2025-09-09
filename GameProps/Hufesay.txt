@@ -26,5 +26,7 @@
          "mx_empties_m": 1
       }
    },
-   "rules": "https://mancala.fandom.com/wiki/Hufesay"
+   "rules": "https://mancala.fandom.com/wiki/Hufesay",
+   "origin": "traditional",
+   "region": "Eastern Africa"
 }

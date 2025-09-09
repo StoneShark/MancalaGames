@@ -22,7 +22,9 @@
       "xcpickown": 1
    },
    "player": {
-      "ai_params": { "mm_depth": [ 1, 1, 5, 7 ] },
+      "ai_params": {
+         "mm_depth": [ 1, 1, 5, 7 ]
+      },
       "scorer": {
          "mx_stores_m": 16,
          "mx_empties_m": 2,
@@ -31,7 +33,7 @@
       }
    },
    "variants": {
-      "Dakon": {},
+      "Dakon": { },
       "Dakon_4": {
          "holes": 4,
          "nbr_start": 4
@@ -63,5 +65,7 @@
    },
    "rules": "Russ, Laurence. Mancala Games. 1984. p62.",
    "note": "GOAL_PARAM set to 4 to limit game length",
+   "origin": "traditional",
+   "region": "Southeast Asia",
    "lagniappe": "Donkers et al. provide an opening move sequence (opening move plus 24 repeat turns) in which the starter can win the game (not just a round), without the opponent ever playing.\n\n\"Donkers, Joroen.  Voogt, Alex de.  Uiterwijk, Jos.  Human versus Machine Problem-Solving: Winning Openings in <nolink>Dakon\". Retrieved from https://www.academia.edu/"
 }

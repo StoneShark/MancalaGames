@@ -50,5 +50,7 @@
       "rounds": [ 0, 2 ],
       "capt_rturn": "include"
    },
-   "rules": "Russ, Laurence. Mancala Games. 1984. p48 details p46."
+   "rules": "Russ, Laurence. Mancala Games. 1984. p48 details p46.",
+   "origin": "traditional",
+   "region": "Northern Africa"
 }

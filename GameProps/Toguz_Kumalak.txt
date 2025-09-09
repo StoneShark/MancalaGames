@@ -48,5 +48,7 @@
          "nbr_start": 8
       }
    },
-   "rules": "https://www.iggamecenter.com/en/rules/toguzkumalak https://worldnomadgames.com/media/images/2018/04/05/27-toguz-korgool-rules-en.pdf https://mancala.fandom.com/wiki/Toguz_Kumalak"
+   "rules": "https://www.iggamecenter.com/en/rules/toguzkumalak https://worldnomadgames.com/media/images/2018/04/05/27-toguz-korgool-rules-en.pdf https://mancala.fandom.com/wiki/Toguz_Kumalak",
+   "origin": "traditional",
+   "region": "Central Asia, East Asia"
 }

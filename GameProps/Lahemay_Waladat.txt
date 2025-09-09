@@ -22,14 +22,20 @@
    },
    "player": {
       "algorithm": "negamaxer",
-      "ai_params": { "mm_depth": [ 1, 2, 3, 5 ] },
+      "ai_params": {
+         "mm_depth": [ 1, 2, 3, 5 ]
+      },
       "scorer": {
          "mx_stores_m": 4,
          "mx_easy_rand_a": 20
       }
    },
-   "vari_params": { "goal_param": "include" },
+   "vari_params": {
+      "goal_param": "include"
+   },
    "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p30.",
    "deviations": "Rounding rules are applied to all territory games, no drawing of lots to choose who gets the extra hole.",
-   "note": "GOAL_PARAM set to 10 to limit game length"
+   "note": "GOAL_PARAM set to 10 to limit game length",
+   "origin": "traditional",
+   "region": "Eastern Africa"
 }

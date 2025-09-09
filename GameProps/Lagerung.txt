@@ -36,6 +36,8 @@
          "mm_depth": [1, 1, 3, 5]
       }
    },
-   "rules": "Ann Davies, 2025",
-   "note": "GOAL_PARAM set to 4 to limit game length"
+   "rules": "Ann Davies. 2025.",
+   "note": "GOAL_PARAM set to 4 to limit game length",
+   "origin": "modern",
+   "region": "Americas"
 }

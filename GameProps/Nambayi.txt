@@ -6,24 +6,22 @@
    },
    "game_info": {
       "name": "Nambayi",
-      "about": "A multilap Mancala, sow is counter-clockwise.\n\nThe goal is to leave the opponent without seeds for their turn.\n\nHoles are closed on opponent side on 4s, sowing continues with those seeds. In subsequent sowing of closed holes, own holes are skipped but seeds for opponent's holes are taken out of play.",
+      "about": "A multilap Mancala, sow is counter-clockwise.\n\nThe goal is to leave the opponent without seeds for their turn.\n\nHoles are closed on opponent side on 4s, sowing continues with those seeds. In subsequent sowing of closed holes, own holes are skipped but seeds for opponent's holes are taken out of play.\n",
       "blocks": true,
       "goal": 10,
       "mlaps": 1,
       "sow_direct": 1,
-      "sow_param": 4,
-      "sow_rule": 1
+      "sow_rule": 1,
+      "sow_param": 4
    },
    "player": {
-      "algorithm": "minimaxer",
       "difficulty": 0,
       "scorer": {
-         "mx_access_m": 0,
-         "mx_empties_m": -4,
-         "mx_evens_m": 0,
          "mx_seeds_m": 1,
-         "mx_easy_rand_a": 0
+         "mx_empties_m": -4
       }
    },
-   "rules": "Russ, Laurence. Mancala Games. 1984. p41."
+   "rules": "Russ, Laurence. Mancala Games. 1984. p41.",
+   "origin": "traditional",
+   "region": "Central Africa"
 }

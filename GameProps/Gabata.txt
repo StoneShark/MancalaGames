@@ -31,5 +31,7 @@
    "vari_params": {
       "goal_param": "include"
    },
-   "rules": "Russ, Laurence. Mancala Games. 1984. p49."
+   "rules": "Russ, Laurence. Mancala Games. 1984. p49.",
+   "origin": "traditional",
+   "region": "Eastern Africa"
 }

@@ -35,5 +35,7 @@
       "round_fill": "include",
       "goal_param": "include"
    },
-   "rules": "Russ, Laurence. Mancala Games. 1984. p60."
+   "rules": "Russ, Laurence. Mancala Games. 1984. p60.",
+   "origin": "traditional",
+   "region": "South Asia"
 }

@@ -23,5 +23,7 @@
          "mx_stores_m": 4
       }
    },
-   "rules": "https://mancala.fandom.com/wiki/Bule_Perga"
+   "rules": "https://mancala.fandom.com/wiki/Bule_Perga",
+   "origin": "traditional",
+   "region": "South Asia"
 }

@@ -6,26 +6,23 @@
    },
    "game_info": {
       "name": "Vai Lun Thlan",
-      "about": "A single-lap mancala, sow direction is clockwise, capture on 1s.\n\nA player must pass, if they don't have a move.\n\nGoal: collect more seeds than your opponent.",
-      "capt_on": [1],
-      "capt_side": 0,
+      "about": "A single-lap mancala, sow direction is clockwise, capture on 1s.\n\nA player must pass, if they don't have a move.\n\nGoal: collect more seeds than your opponent.\n",
+      "capt_on": [ 1 ],
       "multicapt": -1,
       "mustpass": true,
+      "capt_side": 0,
       "sow_direct": -1,
       "stores": true
    },
    "player": {
+      "algorithm": "negamaxer",
       "scorer": {
          "mx_stores_m": 4,
-         "mx_seeds_m": 0,
          "mx_empties_m": -1,
-         "mx_evens_m": 0,
          "mx_easy_rand_a": 20
-      },
-      "algorithm": "negamaxer",
-      "ai_params": {
-         "mm_depth": [1, 1, 3, 5]
       }
    },
-   "rules": "Mohr, Merilyn Simonds. The New Games Treasury. 1993. p99."
+   "rules": "Mohr, Merilyn Simonds. The New Games Treasury. 1993. p99.",
+   "origin": "traditional",
+   "region": "South Asia"
 }

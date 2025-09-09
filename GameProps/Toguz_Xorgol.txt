@@ -21,13 +21,16 @@
    },
    "player": {
       "algorithm": "negamaxer",
-      "ai_params": {},
       "scorer": {
          "mx_stores_m": 4,
          "mx_child_cnt_m": 1,
          "mx_evens_m": 2
       }
    },
-   "vari_params": { "holes": "include" },
-   "rules": "Russ, Laurence. Mancala Games. 1984. p25."
+   "vari_params": {
+      "holes": "include"
+   },
+   "rules": "Russ, Laurence. Mancala Games. 1984. p25.",
+   "origin": "traditional",
+   "region": "Central Asia"
 }

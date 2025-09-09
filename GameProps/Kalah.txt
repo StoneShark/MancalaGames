@@ -62,5 +62,7 @@
       "xcpickown": "include"
    },
    "rules": "https://en.wikipedia.org/wiki/Kalah",
-   "reference": "https://mancala.fandom.com/wiki/Cross-Kalah"
+   "reference": "https://mancala.fandom.com/wiki/Cross-Kalah",
+   "origin": "modern",
+   "region": "Americas"
 }

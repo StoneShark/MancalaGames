@@ -15,14 +15,15 @@
       "sow_direct": 1,
       "sow_rule": 11
    },
-   "vari_params": {
-      "holes": [7, 8, 9, 10, 11, 12, 13]
-   },
    "player": {
-      "ai_params": {},
       "scorer": {
          "mx_stores_m": 8
       }
    },
-   "rules": "https://mancala.fandom.com/wiki/Rath"
+   "vari_params": {
+      "holes": [ 7, 8, 9, 10, 11, 12, 13 ]
+   },
+   "rules": "https://mancala.fandom.com/wiki/Rath",
+   "origin": "traditional",
+   "region": "Eastern Africa"
 }
