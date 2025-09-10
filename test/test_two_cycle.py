@@ -14,7 +14,6 @@ from context import allowables
 from context import cfg_keys as ckey
 from context import game_constants as gconsts
 from context import game_info as gi
-from context import man_config
 from context import two_cycle
 import utils
 
@@ -96,7 +95,7 @@ class TestSowStore:
         game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[2],
                                 stores=True,
-                                sow_own_store=True,
+                                sow_stores=gi.SowStores.OWN,
                                 goal=gi.Goal.CLEAR,
                                 capt_side=gi.CaptSide.OWN_SIDE,
                                 udir_holes=[0, 1, 2],
@@ -363,3 +362,30 @@ class TestDisallowEndless:
 
         game.disallow_endless(True)
         assert 'NoEndlessSows' in str(game.deco.allow)
+
+
+
+class TestEWRules:
+
+    def test_we_rules(self):
+
+        # confirm must share raises an error
+        with pytest.raises(gi.GameInfoError):
+            gi.GameInfo(goal=gi.Goal.MAX_SEEDS,
+                        stores=True,
+                        crosscapt=True,
+                        nbr_holes=4,
+                        mustshare=True,
+                        rules=two_cycle.EastWestCycle.rules)
+
+        # build the game info w/o error checking
+        no_err_info = gi.GameInfo(goal=gi.Goal.MAX_SEEDS,
+                                  stores=True,
+                                  crosscapt=True,
+                                  nbr_holes=4,
+                                  mustshare=True,
+                                  rules=lambda ginfo, holes: True)
+
+        # run the error checking but skip the mustshare rule
+        #  no error should be reported
+        two_cycle.EastWestCycle.rules(no_err_info, 4, {'ns2_no_mshare'})

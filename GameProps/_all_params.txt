@@ -44,7 +44,7 @@
       "rounds": 0,
       "skip_start": false,
       "sow_direct": 1,
-      "sow_own_store": false,
+      "sow_stores": 0,
       "sow_rule": 0,
       "sow_start": false,
       "sow_param": 0,

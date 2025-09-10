@@ -10,7 +10,7 @@
       "crosscapt": true,
       "capt_side": 1,
       "sow_direct": 3,
-      "sow_own_store": true,
+      "sow_stores": 1,
       "stores": true,
       "xcpickown": 1
    },

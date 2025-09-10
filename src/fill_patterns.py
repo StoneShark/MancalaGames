@@ -296,7 +296,7 @@ class TwoEmptyPattern(StartPatternIf):
 
 
 class NoRepeatSowOwn(StartPatternIf):
-    """If the game were to be a sow_own_store game, adjust
+    """If the game were to be a sow_stores game, adjust
     the seeds so that there is no repeat turn on the opening move.
     An adjustment is not always done.
 

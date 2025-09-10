@@ -68,7 +68,7 @@ GAMECONF = {'basic':
                 {'evens': True,
                  'stores': True,
                  'mustshare': True,
-                 'sow_own_store': True},
+                 'sow_stores': gi.SowStores.OWN},
 
             'gsnot_pick2s':
                 {'capt_on': [2, 3],

@@ -99,7 +99,7 @@ CONFIG_CASES = {
     'NamNam': Config(6*4*2 - 1, 0, 11),  # picklastseeds no NoOutcomeChange
 
     'Ndoto': Config(8*2, 2),
-    'NoCapt': Config(6*4),   # sow_own_store
+    'NoCapt': Config(6*4),   # sow_stores
     'NoSides': Config(5*2, 2),
     'NoSidesChild': Config(7*2, 2),
     'NumNum': Config(6*4*2 - 1, 0, 11),  # picklastseeds no NoOutcomeChange
@@ -116,7 +116,7 @@ CONFIG_CASES = {
     'Tapata': Config(-1),
     'Toguz_Xorgol': Config(9*9, 4),  # min capt = 4
     'Vai_Lun_Thlan': Config(6*5),  # capt on 1s
-    'Valah': Config(5*3),  # sow_own_store
+    'Valah': Config(5*3),  # sow_stores
     'Wari': Config(6*4),  # mustshare
     'Weg': Config(6*4*2 - 1, 0, 11),
 

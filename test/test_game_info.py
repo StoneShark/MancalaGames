@@ -232,13 +232,13 @@ class TestConstruction:
         assert ginfo.repeat_turn
 
         ginfo = gi.GameInfo(capt_on=[2],
-                            sow_own_store=True,
+                            sow_stores=gi.SowStores.OWN,
                             nbr_holes=6,
                             stores=True,
                             rules=rules)
         assert ginfo.repeat_turn
 
-        ginfo = gi.GameInfo(sow_own_store=True,
+        ginfo = gi.GameInfo(sow_stores=gi.SowStores.OWN,
                             nbr_holes=6,
                             stores=True,
                             rules=rules)

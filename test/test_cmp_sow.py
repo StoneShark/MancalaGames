@@ -136,27 +136,27 @@ GAMECONF = {'basic':
                  'child_type': gi.ChildType.NORMAL,
                  'child_cvt': 3,
                  'mlap_cont': gi.SowLapCont.VISIT_OPP,
-                 'sow_own_store': True,
+                 'sow_stores': gi.SowStores.OWN,
                  'stores': True,
                  'capt_on': [2]},
 
             's_own_rnds':
-                {"blocks": True,
-                 "crosscapt": True,
-                 "mustpass": True,
-                 "rounds": True,
-                 "sow_own_store": True,
-                 "stores": True,
+                {'blocks': True,
+                 'crosscapt': True,
+                 'mustpass': True,
+                 'rounds': True,
+                 'sow_stores': gi.SowStores.OWN,
+                 'stores': True,
                  },
 
             's_own_rnds_lap':
-                {"blocks": True,
-                 "mlaps": True,
-                 "crosscapt": True,
-                 "mustpass": True,
-                 "rounds": True,
-                 "sow_own_store": True,
-                 "stores": True,
+                {'blocks': True,
+                 'mlaps': True,
+                 'crosscapt': True,
+                 'mustpass': True,
+                 'rounds': True,
+                 'sow_stores': gi.SowStores.OWN,
+                 'stores': True,
                  },
 
             'mlaps_walda':
@@ -377,11 +377,11 @@ def test_sower(conf_name, state_name, turn, move,
 
     # check game and state consistency
     assert sum(game.store) + sum(game.board) == game.cts.total_seeds, \
-        "Test error: seed count wrong!"
+        'Test error: seed count wrong!'
     assert not game.info.blocks or (game.info.blocks and start_state.blocked), \
-        "Test error: game.info.blocks inconsistent with start_state"
+        'Test error: game.info.blocks inconsistent with start_state'
     assert not game.info.child_type or (game.info.child_type and start_state.child), \
-        "Test error: game.info.child_type inconsistent with start_state"
+        'Test error: game.info.child_type inconsistent with start_state'
 
     # print(GAMECONF[conf_name])
     # print(game)
@@ -396,7 +396,7 @@ def test_sower(conf_name, state_name, turn, move,
     else:
         assert game.store == estore
         assert tuple(game.store) != start_state.store, \
-            "Test error: use NSTR when store expected to be unchanged"
+            'Test error: use NSTR when store expected to be unchanged'
     assert game.blocked == list(eblocks)
     if start_state.unlocked:
         assert game.board[mdata.sow_loc].unlocked   # starter does this
@@ -436,7 +436,7 @@ def test_inhibit_sower(request,
                                 rules=mancala.Mancala.rules)
     except gi.GameInfoError as error:
         if 'sow_own_nocapt' in repr(error):
-            pytest.skip('nocaptmoves incomp with sow_own_store')
+            pytest.skip('nocaptmoves incomp with sow_stores')
         else:
             pytest.fail('nocaptmoves conflict for unkown reason')
     game =  mancala.Mancala(game_consts, game_info)

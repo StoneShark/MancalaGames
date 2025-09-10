@@ -9,7 +9,7 @@
       "about": "Sow counter-clockwise but only on your own side of the board and into your own store.\n\nCross-capture on single seed, leave the capturing seed.\n\nGoal: capture the most seeds.\n\nKalah but with some twists: the board size is larger, seeds are only sown on your own side of the board, the single capturing seed is not collected, and you must capture in order to gain extra seeds for the win.\n",
       "crosscapt": true,
       "sow_direct": 1,
-      "sow_own_store": true,
+      "sow_stores": 1,
       "stores": true
    },
    "player": {

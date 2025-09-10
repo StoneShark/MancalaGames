@@ -309,7 +309,7 @@ class TestCaptOk:
         def _make_game (turn, seeds, child, unlocked, game_options):
 
             game_consts = gconsts.GameConsts(nbr_start=4, holes=2)
-            game_info = gi.GameInfo(sow_own_store=True,
+            game_info = gi.GameInfo(sow_stores=gi.SowStores.OWN,
                                     stores=True,
                                     **game_options,
                                     nbr_holes=game_consts.holes,

@@ -187,7 +187,7 @@ class TestCCWSowingStore:
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 stores=True,
                                 sow_direct=Direct.CCW,
-                                sow_own_store=True,
+                                sow_stores=gi.SowStores.OWN,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)
@@ -276,7 +276,7 @@ class TestCWSowingStore:
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 stores=True,
                                 sow_direct=Direct.CW,
-                                sow_own_store=True,
+                                sow_stores=gi.SowStores.OWN,
                                 rules=mancala.Mancala.rules)
 
         return mancala.Mancala(game_consts, game_info)

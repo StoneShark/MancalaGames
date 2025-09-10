@@ -1037,7 +1037,7 @@ def _add_no_change(game, ender):
     if any([
             # single seeds may be moved into store,
             # all seeds will be moved out of play
-            ginfo.sow_own_store,
+            ginfo.sow_stores,
 
             # game ends when a player has no seeds and opp can't share
             ginfo.mustshare,
@@ -1057,7 +1057,7 @@ def _add_no_change(game, ender):
                           ginfo.capt_type,
                           ginfo.crosscapt,
                           ginfo.evens,
-                          ginfo.sow_own_store]))]):
+                          ginfo.sow_stores]))]):
         return ender
 
     min_seeds = NoOutcomeChange.min_for_change(game)

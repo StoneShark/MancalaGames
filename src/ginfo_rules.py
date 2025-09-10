@@ -479,7 +479,7 @@ def test_capture_rules(tester):
                                     ginfo.capt_type,
                                     ginfo.evens,
                                     ginfo.crosscapt,
-                                    ginfo.sow_own_store,
+                                    ginfo.sow_stores,
                                     ginfo.capt_max,
                                     ginfo.capt_min,
                                     ginfo.capt_on,
@@ -762,22 +762,22 @@ def test_rules(ginfo, holes, skip=None):
         # overlap with use of OPP_OR_EMPTY
 
     tester.test_rule('sow_own_needs_stores',
-        rule=lambda ginfo: ginfo.sow_own_store and not ginfo.stores,
-        msg='SOW_OWN_STORE requires STORES',
+        rule=lambda ginfo: ginfo.sow_stores and not ginfo.stores,
+        msg='SOW_STORES requires STORES',
         excp=gi.GameInfoError)
 
     tester.test_rule('sow_own_nocapt',
-        rule=lambda ginfo: ginfo.sow_own_store and ginfo.nocaptmoves,
-        msg='SOW_OWN_STORE cannot be used with NOCAPTMOVES',
+        rule=lambda ginfo: ginfo.sow_stores and ginfo.nocaptmoves,
+        msg='SOW_STORES cannot be used with NOCAPTMOVES',
         excp=gi.GameInfoError)
 
     tester.test_rule('sow_own_not_rules',
-        rule=lambda ginfo: (ginfo.sow_own_store
+        rule=lambda ginfo: (ginfo.sow_stores
                             and ginfo.sow_rule in
                                 (gi.SowRule.OWN_SOW_CAPT_ALL,
                                  gi.SowRule.SOW_CAPT_ALL,
                                  gi.SowRule.NO_SOW_OPP_NS)),
-        msg='SOW_OWN_STORE is not supported with the selected sow rule',
+        msg='SOW_STORES is not supported with the selected sow rule',
         excp=NotImplementedError)
 
     tester.test_rule('no_opp_n_sparam',
@@ -810,14 +810,14 @@ def test_rules(ginfo, holes, skip=None):
         excp=NotImplementedError)
 
     tester.test_rule('sow_own_prescribed',
-        rule=lambda ginfo: (ginfo.sow_own_store
+        rule=lambda ginfo: (ginfo.sow_stores
                             and ginfo.prescribed in
                                 (gi.SowPrescribed.BASIC_SOWER,
                                  gi.SowPrescribed.MLAPS_SOWER,
                                  gi.SowPrescribed.SOW1OPP,
                                  gi.SowPrescribed.PLUS1MINUS1)
                             ),
-        msg='SOW_OWN_STORE is ignored for the selected first prescribed sow',
+        msg='SOW_STORES is ignored for the selected first prescribed sow',
         warn=True)
 
     tester.test_rule('sow1opp_rturn',

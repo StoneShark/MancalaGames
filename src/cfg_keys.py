@@ -74,7 +74,7 @@ ROUNDS = 'rounds'
 SCORER = 'scorer'
 SKIP_START = 'skip_start'
 SOW_DIRECT = 'sow_direct'
-SOW_OWN_STORE = 'sow_own_store'
+SOW_STORES = 'sow_stores'
 SOW_PARAM = 'sow_param'
 SOW_RULE = 'sow_rule'
 SOW_START = 'sow_start'
@@ -146,7 +146,7 @@ GINFO_PARAMS =  (ALLOW_RULE,
                  ROUNDS,
                  SKIP_START,
                  SOW_DIRECT,
-                 SOW_OWN_STORE,
+                 SOW_STORES,
                  SOW_PARAM,
                  SOW_RULE,
                  SOW_START,

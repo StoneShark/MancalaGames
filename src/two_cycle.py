@@ -46,6 +46,14 @@ def test_ns2_rules(gclass_name, ginfo, holes, skip=None):
         # can't sow opponents holes
 
     tester.test_rule(
+        'ns2_no_sow_both',
+        rule=lambda ginfo: ginfo.sow_stores == gi.SowStores.BOTH,
+        msg=f'{gclass_name} does not support SOW_STORES BOTH',
+        excp=NotImplementedError)
+        # for NS only, need history info to know if we've sown the
+        # second store; would maybe require a whole new sower
+
+    tester.test_rule(
         'ns2_no_sowrule',
         rule=lambda ginfo: ginfo.sow_rule in (
             # do not use the incr, so will fail
@@ -105,8 +113,12 @@ def test_ew2_rules(ginfo, holes, skip=None):
         msg='EastWestCycle requires an even number of holes',
         excp=gi.GameInfoError)
 
-    test_ns2_rules('EastWestCycles', ginfo, holes, skip)
+    if skip:
+        ew_skip = skip | {'ns2_no_sow_both'}
+    else:
+        ew_skip = {'ns2_no_sow_both'}
 
+    test_ns2_rules('EastWestCycles', ginfo, holes, ew_skip)
 
 
 # %% deco additions
@@ -138,17 +150,21 @@ class NorthSouthSowSeedsNStore(sower.SowSeedsNStore):
 
     def __init__(self, game, decorator=None):
 
-        def ccw_store(ploc, loc):
+        def ccw_store(ploc, loc, turn):
             """Return True if  we've wrapped the board in a
             counter-clockwise direction."""
 
-            return ploc != gi.WinCond.REPEAT_TURN and ploc >= loc
+            if ploc != gi.WinCond.REPEAT_TURN and ploc >= loc:
+                return turn
+            return None
 
-        def cw_store(ploc, loc):
+        def cw_store(ploc, loc, turn):
             """Return True if we've wrapped the board in a
             clockwise direction."""
 
-            return ploc != gi.WinCond.REPEAT_TURN and ploc <= loc
+            if ploc != gi.WinCond.REPEAT_TURN and ploc <= loc:
+                return turn
+            return None
 
         super().__init__(game, decorator)
 
@@ -236,7 +252,7 @@ class NorthSouthCycle(mancala.Mancala):
 
         self.deco.replace_deco('incr', incrementer.Increment,
                                NorthSouthIncr(self))
-        if self.info.sow_own_store:
+        if self.info.sow_stores == gi.SowStores.OWN:
             self.deco.replace_deco('sower', sower.SowSeedsNStore,
                                    NorthSouthSowSeedsNStore(self))
 

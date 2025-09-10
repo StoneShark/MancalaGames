@@ -617,7 +617,7 @@ Rules to allow taking of more than otherwise captured or picked seeds:
 In terms of GRANDSLAM, these picks are considered captures.
 
 <param prescribed>
-The first sow of the game maybe defined by a specific rule. Prescribed openings are different than start patterns because the player may choose the sow start point. SOW_OWN_STORE and SOW_RULE are ignored during the prescribed openings.
+The first sow of the game maybe defined by a specific rule. Prescribed openings are different than start patterns because the player may choose the sow start point. SOW_STORES and SOW_RULE are ignored during the prescribed openings.
 
 - NONE: there is no prescribed opening move.
 
@@ -645,7 +645,7 @@ Capture type that occurs before sowing:
 <param mx_rturn_a>
 A value used to encourage or discourage repeat turns. The value is added in for the current player and subtracted off the score for the opposing playing. Use a positive value to encourage the AI player to repeat turns.
 
-This parameter may only be used for games in which repeated turns are possible (SOW_OWN_STORE, CAPT_RTURN or XC_SOWN).
+This parameter may only be used for games in which repeated turns are possible (SOW_STORES, CAPT_RTURN or XC_SOWN).
 
 Used only for minimax & negamax players.
 
@@ -743,8 +743,14 @@ Both mouse buttons will start a move no matter the sow direction. If the hole is
 
 When PLAYALTDIR is not selected, any hole can be set as UDIR_HOLES to allow the user to override the sow_direct setting.
 
-<param sow_own_store>
-Sow seeds into your own store when passing it. Do not sow into your opponent's store. When the final seed is sown into the store, the sower gets another turn.
+<param sow_stores>
+Determines if seeds should be sown into stores. When the final seed is sown into a store, the sower gets another turn.
+
+- NEITHER: do not sow into either store
+
+- OWN: only sow into own store, but not opponents store
+
+- BOTH: sow into both stores
 
 <param sow_param>
 A general parameter for sowing. Usage is based on other sow options:

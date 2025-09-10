@@ -16,7 +16,7 @@
       "round_starter": 0,
       "rounds": 2,
       "sow_direct": 1,
-      "sow_own_store": true,
+      "sow_stores": 1,
       "stores": true,
       "xcpickown": 1
    },

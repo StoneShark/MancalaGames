@@ -10,7 +10,7 @@
       "goal": 3,
       "skip_start": true,
       "sow_direct": 1,
-      "sow_own_store": true,
+      "sow_stores": 1,
       "stores": true
    },
    "player": {

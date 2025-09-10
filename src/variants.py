@@ -372,7 +372,7 @@ def test_algo_ok(game_dict, vparam, variants):
         return
 
     # cannot test params in ckey.NOT_HASHABLE
-    bad_opts = {ckey.SOW_OWN_STORE: {True, },
+    bad_opts = {ckey.SOW_STORES: {1, 2, },
                 ckey.XC_SOWN: {True, },
                 ckey.PRESCRIBED: {gi.SowPrescribed, },
                 ckey.NOCAPTMOVES: {1, 2, 3, 4, 5, 6, },   # any value > 0 is bad

@@ -70,7 +70,7 @@ class TestSower:
 
     @pytest.fixture
     def base_sower(self, game):
-        object.__setattr__(game.info, 'sow_own_store', False)
+        object.__setattr__(game.info, 'sow_stores', gi.SowStores.NEITHER)
         object.__setattr__(game.info, 'mlaps', LapSower.OFF)
         object.__setattr__(game.info, 'child_type', ChildType.NOCHILD)
         object.__setattr__(game.info, 'child_cvt', 0)
@@ -124,7 +124,7 @@ class TestSower:
         game_info = gi.GameInfo(nbr_holes=game_consts.holes,
                                 capt_on = [2],
                                 stores=True,
-                                sow_own_store=True,
+                                sow_stores=gi.SowStores.OWN,
                                 sow_direct=Direct.SPLIT,
                                 rules=mancala.Mancala.rules)
 
@@ -187,67 +187,146 @@ class TestSower:
 
     store_cases = [
         # 0: CCW,  don't pass any stores
-        (0, Direct.CCW, False, utils.build_board([1, 2, 3],
+        (gi.SowStores.OWN,
+         0, Direct.CCW, False, utils.build_board([1, 2, 3],
                                                  [2, 3, 4]),
          2, utils.build_board([1, 2, 3],
                               [0, 4, 5]), [0, 0]),
         # 1: CCW, sow past own store
-        (1, Direct.CCW, False, utils.build_board([1, 2, 3],
+        (gi.SowStores.OWN,
+         1, Direct.CCW, False, utils.build_board([1, 2, 3],
                                                  [2, 3, 4]),
          3, utils.build_board([1, 2, 4],
                               [2, 0, 5]), [1, 0]),
         # 2: CCW, sow past both stores
-        (1, Direct.CCW, False, utils.build_board([1, 2, 3],
+        (gi.SowStores.OWN,
+         1, Direct.CCW, False, utils.build_board([1, 2, 3],
                                                  [2, 6, 4]),
          0, utils.build_board([2, 3, 4],
                               [3, 0, 5]), [1, 0]),
         # 3: CCW, sow past opp store
-        (2, Direct.CCW, True, utils.build_board([1, 2, 2],
+        (gi.SowStores.OWN,
+         2, Direct.CCW, True, utils.build_board([1, 2, 2],
                                                 [2, 3, 4]),
          5, utils.build_board([2, 3, 0],
                               [2, 3, 4]), [0, 0]),
         # 4: CCW, end in own store
-        (1, Direct.CCW, True, utils.build_board([1, 2, 2],
+        (gi.SowStores.OWN,
+         1, Direct.CCW, True, utils.build_board([1, 2, 2],
                                                 [2, 3, 4]),
          WinCond.REPEAT_TURN, utils.build_board([2, 0, 2],
                                                 [2, 3, 4]), [0, 1]),
 
         # 5: CW, don't pass any stores
-        (1, Direct.CW, True, utils.build_board([1, 1, 2],
+        (gi.SowStores.OWN,
+         1, Direct.CW, True, utils.build_board([1, 1, 2],
                                                [2, 3, 4]),
          3, utils.build_board([1, 0, 3],
                               [2, 3, 4]), [0, 0]),
 
-        # 6: CW, sow past own store
-        (2, Direct.CW, True, utils.build_board([1, 2, 6],
+        # 6: CW, sow past both stores
+        (gi.SowStores.OWN,
+         2, Direct.CW, True, utils.build_board([1, 2, 6],
                                                [2, 3, 4]),
          4, utils.build_board([2, 3, 0],
                               [3, 4, 5]), [0, 1]),
         # 7: CW, sow past both stores
-        (0, Direct.CW, False, utils.build_board([1, 2, 3],
+        (gi.SowStores.OWN,
+         0, Direct.CW, False, utils.build_board([1, 2, 3],
                                                 [5, 3, 4]),
          2, utils.build_board([2, 3, 4],
                               [0, 3, 5]), [1, 0]),
         # 8: CW, sow past opp store
-        (2, Direct.CW, True, utils.build_board([1, 2, 2],
+        (gi.SowStores.OWN,
+         2, Direct.CW, True, utils.build_board([1, 2, 2],
                                                [2, 3, 4]),
          1, utils.build_board([1, 2, 0],
                               [2, 4, 5]), [0, 0]),
         # 9: CW, end in own store
-        (1, Direct.CW, False, utils.build_board([1, 2, 3],
+        (gi.SowStores.OWN,
+         1, Direct.CW, False, utils.build_board([1, 2, 3],
                                                 [2, 5, 4]),
          WinCond.REPEAT_TURN, utils.build_board([2, 3, 4],
                                                 [3, 0, 4]), [1, 0]),
+
+
+
+        # 10: CCW,  don't pass any stores
+        (gi.SowStores.OWN,
+         0, Direct.CCW, False, utils.build_board([1, 2, 3],
+                                                 [2, 3, 4]),
+         2, utils.build_board([1, 2, 3],
+                              [0, 4, 5]), [0, 0]),
+        # 11: CCW, sow past own store
+        (gi.SowStores.BOTH,
+         1, Direct.CCW, False, utils.build_board([1, 2, 3],
+                                                 [2, 3, 4]),
+         3, utils.build_board([1, 2, 4],
+                              [2, 0, 5]), [1, 0]),
+        # 12: CCW, sow past both stores
+        (gi.SowStores.BOTH,
+         1, Direct.CCW, False, utils.build_board([1, 2, 3],
+                                                 [2, 6, 4]),
+         gi.WinCond.REPEAT_TURN, utils.build_board([2, 3, 4],
+                                                   [2, 0, 5]), [1, 1]),
+        # 13: CCW, sow past opp store
+        (gi.SowStores.BOTH,
+         2, Direct.CCW, True, utils.build_board([1, 2, 2],
+                                                [2, 3, 4]),
+         5, utils.build_board([2, 3, 0],
+                              [2, 3, 4]), [0, 0]),
+        # 14: CCW, end in own store
+        (gi.SowStores.BOTH,
+         1, Direct.CCW, True, utils.build_board([1, 2, 2],
+                                                [2, 3, 4]),
+         WinCond.REPEAT_TURN, utils.build_board([2, 0, 2],
+                                                [2, 3, 4]), [0, 1]),
+
+        # 15: CW, don't pass any stores
+        (gi.SowStores.BOTH,
+         1, Direct.CW, True, utils.build_board([1, 1, 2],
+                                               [2, 3, 4]),
+         3, utils.build_board([1, 0, 3],
+                              [2, 3, 4]), [0, 0]),
+
+        # 16: CW, sow past both stores
+        (gi.SowStores.BOTH,
+         2, Direct.CW, True, utils.build_board([1, 2, 6],
+                                               [2, 3, 4]),
+         5, utils.build_board([2, 2, 0],
+                              [3, 4, 5]), [1, 1]),
+
+        # 17: CW, sow past both stores
+        (gi.SowStores.BOTH,
+         0, Direct.CW, False, utils.build_board([1, 2, 3],
+                                                [5, 3, 4]),
+         gi.WinCond.REPEAT_TURN, utils.build_board([2, 3, 4],
+                                                   [0, 3, 4]), [1, 1]),
+
+        # 18: CW, sow past opp store
+        (gi.SowStores.BOTH,
+         2, Direct.CW, True, utils.build_board([1, 2, 2],
+                                               [2, 3, 4]),
+         2, utils.build_board([1, 2, 0],
+                              [2, 3, 5]), [1, 0]),
+
+        # 19: CW, end in opp store -- different test case than OWN
+        (gi.SowStores.BOTH,
+         1, Direct.CW, False, utils.build_board([1, 2, 3],
+                                                [4, 2, 6]),
+         WinCond.REPEAT_TURN, utils.build_board([1, 2, 3],
+                                                [5, 0, 6]), [0, 1]),
     ]
 
     @pytest.mark.parametrize(
-        'start_pos, direct, turn, board, eloc, eboard, estore',
+        'sow_stores, start_pos, direct, turn, board, eloc, eboard, estore',
         store_cases)
     def test_store_sower(self, game,
+                         sow_stores,
                          start_pos, direct, turn, board, eloc, eboard, estore):
 
         # can't use fixture because sow_direct is used in the construction
-        object.__setattr__(game.info, 'sow_own_store', True)
+        object.__setattr__(game.info, 'sow_stores', sow_stores)
         object.__setattr__(game.info, 'mlaps', LapSower.OFF)
         object.__setattr__(game.info, 'child_type', ChildType.NOCHILD)
         object.__setattr__(game.info, 'child_cvt', 0)
@@ -256,12 +335,16 @@ class TestSower:
 
         game.board = board
         game.turn = turn
+        seed_count = sum(game.board)
+        print(game, '\n', start_pos, '\n')
 
         mdata = move_data.MoveData(game, start_pos)
         mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(start_pos)
         mdata.direct = direct
         store_sower.sow_seeds(mdata)
+        print(game)
 
+        assert sum(game.board) + sum(game.store) == seed_count
         assert mdata.capt_start == eloc
         assert game.board == eboard
         assert game.store == estore
@@ -986,7 +1069,7 @@ class TestGetSingle:
         game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
-                                sow_own_store=True,
+                                sow_stores=gi.SowStores.OWN,
                                 mlaps=mlaps,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
@@ -1048,7 +1131,7 @@ class TestVMlap:
         game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(sow_direct=Direct.CW,
                                 stores=True,
-                                sow_own_store=True,
+                                sow_stores=gi.SowStores.OWN,
                                 mlaps=LapSower.LAPPER,
                                 mlap_cont=5,
                                 child_type=ChildType.NORMAL,

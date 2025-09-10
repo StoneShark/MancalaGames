@@ -1768,7 +1768,7 @@ class TestTerritory:
                               ([('capt_on', [1, 2, 3])], None),
                               ([('min_move', 2),
                                 ('evens', True)], None),
-                              ([('sow_own_store', True),
+                              ([('sow_stores', gi.SowStores.OWN),
                                 ('capt_on', [5])], None),
                               ((), None),  # no capture method
                               ])

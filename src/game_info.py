@@ -339,6 +339,25 @@ class SowLapCont(enum.IntEnum):
 
 
 @enum.unique
+class StartPattern(enum.IntEnum):
+    """Defines the start patterns for the game."""
+
+    ALL_EQUAL = 0
+    GAMACHA = 1
+    ALTERNATES = 2
+    ALTS_WITH_1 = 3
+    CLIPPEDTRIPLES = 4
+    TWOEMPTY = 5
+    RANDOM = 6
+    ALTS_SPLIT = 7
+    RIGHTMOST_PLUS_ONE = 8
+    MOVE_RIGHTMOST = 9
+    MOVE_RANDOM = 10
+    NO_REPEAT_SOW_OWN = 11
+    RANDOM_ZEROS = 12
+
+
+@enum.unique
 class SowPrescribed(enum.IntEnum):
     """Define a prescribed opening."""
 
@@ -365,28 +384,18 @@ class SowRule(enum.IntEnum):
     LAP_CAPT = 8
     NO_OPP_CHILD = 9
     LAP_CAPT_OPP_GETS = 10
-    OPP_CHILD_ONLY1 = 11        # previously was 13
-    LAP_CAPT_SEEDS = 12       # previously was 14
+    OPP_CHILD_ONLY1 = 11
+    LAP_CAPT_SEEDS = 12
     NO_CHILDREN = 13
 
 
 @enum.unique
-class StartPattern(enum.IntEnum):
-    """Defines the start patterns for the game."""
+class SowStores(enum.IntEnum):
+    """Which stores to sow."""
 
-    ALL_EQUAL = 0
-    GAMACHA = 1
-    ALTERNATES = 2
-    ALTS_WITH_1 = 3
-    CLIPPEDTRIPLES = 4
-    TWOEMPTY = 5
-    RANDOM = 6
-    ALTS_SPLIT = 7
-    RIGHTMOST_PLUS_ONE = 8
-    MOVE_RIGHTMOST = 9
-    MOVE_RANDOM = 10
-    NO_REPEAT_SOW_OWN = 11
-    RANDOM_ZEROS = 12
+    NEITHER = 0
+    OWN = 1
+    BOTH = 2
 
 
 @enum.unique
@@ -458,7 +467,7 @@ class GameInfo:
     sow_start: bool = False
     move_one: bool = False
     skip_start: bool = False
-    sow_own_store: bool = False
+    sow_stores: SowStores = SowStores.NEITHER
     blocks: bool = False
     mlaps: LapSower = LapSower.OFF
     mlap_cont: SowLapCont = SowLapCont.NONE
@@ -553,7 +562,7 @@ class GameInfo:
         also use repeat turn, but that can't be tested here."""
 
         return (self.capt_rturn
-                or self.sow_own_store
+                or self.sow_stores
                 or self.xc_sown
                 or self.grandslam == GrandSlam.LEGAL_SHARE)
 

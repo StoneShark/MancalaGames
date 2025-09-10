@@ -62,7 +62,7 @@ def test_one_game(request, game_pdict):
     nbr_moves = 500
     if game.info.rounds:
         nbr_moves *= 4
-    if game.info.capt_rturn or game.info.sow_own_store:
+    if game.info.repeat_turn:
         nbr_moves *= 2
 
     for _ in range(nbr_moves):

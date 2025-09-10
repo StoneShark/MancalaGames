@@ -260,6 +260,23 @@ STRING_DICTS = {
          'Only when opp side sown': gi.SowLapCont.VISIT_OPP,
          }),
 
+    'StartPattern': lookup_dicts(
+        gi.StartPattern,
+        {'All Equal': gi.StartPattern.ALL_EQUAL,
+         'Gamacha': gi.StartPattern.GAMACHA,
+         'Alternates': gi.StartPattern.ALTERNATES,
+         'Alts with 1': gi.StartPattern.ALTS_WITH_1,
+         'Clipped Triples': gi.StartPattern.CLIPPEDTRIPLES,
+         'Two Empty': gi.StartPattern.TWOEMPTY,
+         'Alts Split Right': gi.StartPattern.ALTS_SPLIT,
+         'Equal plus one in Right': gi.StartPattern.RIGHTMOST_PLUS_ONE,
+         'No Repeat Sow Own': gi.StartPattern.NO_REPEAT_SOW_OWN,
+         'Random': gi.StartPattern.RANDOM,
+         'Random Zeros': gi.StartPattern.RANDOM_ZEROS,
+         'Random Move': gi.StartPattern.MOVE_RANDOM,
+         'Move Rightmost Hole': gi.StartPattern.MOVE_RIGHTMOST,
+         }),
+
     'SowPrescribed': lookup_dicts(
         gi.SowPrescribed,
         {'None': gi.SowPrescribed.NONE,
@@ -288,21 +305,12 @@ STRING_DICTS = {
          "Don't sow opp children unless final seed": gi.SowRule.OPP_CHILD_ONLY1,
          }),
 
-    'StartPattern': lookup_dicts(
-        gi.StartPattern,
-        {'All Equal': gi.StartPattern.ALL_EQUAL,
-         'Gamacha': gi.StartPattern.GAMACHA,
-         'Alternates': gi.StartPattern.ALTERNATES,
-         'Alts with 1': gi.StartPattern.ALTS_WITH_1,
-         'Clipped Triples': gi.StartPattern.CLIPPEDTRIPLES,
-         'Two Empty': gi.StartPattern.TWOEMPTY,
-         'Alts Split Right': gi.StartPattern.ALTS_SPLIT,
-         'Equal plus one in Right': gi.StartPattern.RIGHTMOST_PLUS_ONE,
-         'No Repeat Sow Own': gi.StartPattern.NO_REPEAT_SOW_OWN,
-         'Random': gi.StartPattern.RANDOM,
-         'Random Zeros': gi.StartPattern.RANDOM_ZEROS,
-         'Random Move': gi.StartPattern.MOVE_RANDOM,
-         'Move Rightmost Hole': gi.StartPattern.MOVE_RIGHTMOST,
+    'SowStores': lookup_dicts(
+        gi.SowStores,
+        {"Don't sow stores": gi.SowStores.NEITHER,
+         "Sow own store": gi.SowStores.OWN,
+         "Sow both stores": gi.SowStores.BOTH,
          }),
+
 
 }

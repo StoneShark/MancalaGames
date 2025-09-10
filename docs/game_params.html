@@ -110,7 +110,7 @@ is included after the parameter sections.
 <li class="helptext">
 <b class="inhead">ShareOne</b>
 <p class="helptext"> A game class that forces a share of one seed when your opponent does not have any seeds at the start of your turn. You may choose which hole the seed comes from but it must be a hole with at least two seeds. After sharing the one seed, the sharer gets a repeat turn.
-<p class="helptext"> The following options are prohibited: <a href="game_params.html#blocks">BLOCKS</a>, <a href="game_params.html#mustshare">MUSTSHARE</a>, <a href="game_params.html#no_sides">NO_SIDES</a>, or any repeat turn option (<a href="game_params.html#capt_rturn">CAPT_RTURN</a>, <a href="game_params.html#sow_own_store">SOW_OWN_STORE</a>, <a href="game_params.html#xc_sown">XC_SOWN</a> or <a href="game_params.html#grandslam">GRANDSLAM</a> of LEGAL_SHARE). The game <a href="game_params.html#goal">GOAL</a> must not be TERRITORY.
+<p class="helptext"> The following options are prohibited: <a href="game_params.html#blocks">BLOCKS</a>, <a href="game_params.html#mustshare">MUSTSHARE</a>, <a href="game_params.html#no_sides">NO_SIDES</a>, or any repeat turn option (<a href="game_params.html#capt_rturn">CAPT_RTURN</a>, SOW_OWN_STORE, <a href="game_params.html#xc_sown">XC_SOWN</a> or <a href="game_params.html#grandslam">GRANDSLAM</a> of LEGAL_SHARE). The game <a href="game_params.html#goal">GOAL</a> must not be TERRITORY.
 <li class="helptext">
 <nolink><b class="inhead">ZigZag</b>
 <p class="helptext"> A flexible game class with a unique zigzag sowing pattern. See <a href="about_games.html#ZigZag">ZigZag</a> game help for the creators of the pattern.
@@ -290,7 +290,7 @@ is included after the parameter sections.
 <li class="helptext">
 <b class="enum">MOVE_RANDOM</b>: a random move is selected and executed. After the move the turn always changes to the next player; repeat turn is not honored on this opening random move. This can be used to neutralize the advantage a game starter might have.
 <li class="helptext">
-<b class="enum">NO_REPEAT_SOW_OWN</b>: a sow pattern that assures that the starter does not have a move that will result in a repeat turn as if the game had <a href="game_params.html#sow_own_store">SOW_OWN_STORE</a> configured (it is not required).  
+<b class="enum">NO_REPEAT_SOW_OWN</b>: a sow pattern that assures that the starter does not have a move that will result in a repeat turn as if the game had SOW_OWN_STORE configured (it is not required).  
 <p class="helptext"> Both sides of the board are setup the same, so the second player will only have a repeat turn if the starter's opening move gave them one.
 <p class="helptext"> In broad strokes, an extra seed is placed in the hole whose sow would have landed in the store; this seed is taken from a hole such that sowing from it will reach one past the store. The actual computations vary based on board size and number of start seeds but the resulting start pattern will not allow a repeat turn for the starter.
 <p class="helptext"> The seed placement is not adjusted if there is no repeat turn possible with an ALL_EQUAL pattern.
@@ -305,7 +305,7 @@ is included after the parameter sections.
 <p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Dynamics
 
-<p>The first sow of the game maybe defined by a specific rule. Prescribed openings are different than start patterns because the player may choose the sow start point. <a href="game_params.html#sow_own_store">SOW_OWN_STORE</a> and <a href="game_params.html#sow_rule">SOW_RULE</a> are ignored during the prescribed openings.
+<p>The first sow of the game maybe defined by a specific rule. Prescribed openings are different than start patterns because the player may choose the sow start point. <a href="game_params.html#sow_stores">SOW_STORES</a> and <a href="game_params.html#sow_rule">SOW_RULE</a> are ignored during the prescribed openings.
 <ol start=0><li class="helptext">
 <b class="enum">NONE</b>: there is no prescribed opening move.
 <li class="helptext">
@@ -559,13 +559,6 @@ is included after the parameter sections.
 
 <p>When sowing a second or subsequent circuit of the board, skip the start hole. This will leave the start hole empty for single lap games.
 <p>In multilap games, the start hole for the current lap is skipped. Second or subsequent laps may sow into the original start hole.
-<h4 id="sow_own_store"> Sow Own Store </h4>
-<p class="pdesc">Location in Config Files: game_info : sow_own_store
-<p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
-<p class="pdesc">Default value: False
-<p class="pdesc">UI Tab: Sow
-
-<p>Sow seeds into your own store when passing it. Do not sow into your opponent's store. When the final seed is sown into the store, the sower gets another turn.
 <h4 id="move_one"> Move One Seed </h4>
 <p class="pdesc">Location in Config Files: game_info : move_one
 <p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
@@ -573,6 +566,20 @@ is included after the parameter sections.
 <p class="pdesc">UI Tab: Sow
 
 <p>Only valid when <a href="game_params.html#sow_start">SOW_START</a> is set. Changes the <a href="game_params.html#sow_start">SOW_START</a> behavior so that if there is only one seed in the hole, it is moved in the sow direction by one hole.
+<h4 id="sow_stores"> Sow Store </h4>
+<p class="pdesc">Location in Config Files: game_info : sow_stores
+<p id="SowStores" class="pdesc">Type: <a href="param_types.html#SowStores"> SowStores </a>
+<p class="pdesc">Default value: 0
+<p class="pdesc">UI Tab: Sow
+
+<p>Determines if seeds should be sown into stores. When the final seed is sown into a store, the sower gets another turn.
+<ol start=0><li class="helptext">
+<b class="enum">NEITHER</b>: do not sow into either store
+<li class="helptext">
+<b class="enum">OWN</b>: only sow into own store, but not opponents store
+<li class="helptext">
+<b class="enum">BOTH</b>: sow into both stores
+</ol>
 <h4 id="presowcapt"> Pre Sow Capture </h4>
 <p class="pdesc">Location in Config Files: game_info : presowcapt
 <p id="PreSowCapt" class="pdesc">Type: <a href="param_types.html#PreSowCapt"> PreSowCapt </a>
@@ -1130,7 +1137,7 @@ is included after the parameter sections.
 <p class="pdesc">UI Tab: Player
 
 <p>A value used to encourage or discourage repeat turns. The value is added in for the current player and subtracted off the score for the opposing playing. Use a positive value to encourage the AI player to repeat turns.
-<p>This parameter may only be used for games in which repeated turns are possible (<a href="game_params.html#sow_own_store">SOW_OWN_STORE</a>, <a href="game_params.html#capt_rturn">CAPT_RTURN</a> or <a href="game_params.html#xc_sown">XC_SOWN</a>).
+<p>This parameter may only be used for games in which repeated turns are possible (<a href="game_params.html#sow_stores">SOW_STORES</a>, <a href="game_params.html#capt_rturn">CAPT_RTURN</a> or <a href="game_params.html#xc_sown">XC_SOWN</a>).
 <p>Used only for minimax & negamax players.
 <h4 id="mx_easy_rand_a"> Easy Random Addin </h4>
 <p class="pdesc">Location in Config Files: player : scorer : mx_easy_rand_a
@@ -1210,10 +1217,10 @@ is included after the parameter sections.
     <p class="param"><a href="#rounds">rounds</a></p>
     <p class="param"><a href="#skip_start">skip_start</a></p>
     <p class="param"><a href="#sow_direct">sow_direct</a></p>
-    <p class="param"><a href="#sow_own_store">sow_own_store</a></p>
     <p class="param"><a href="#sow_param">sow_param</a></p>
     <p class="param"><a href="#sow_rule">sow_rule</a></p>
     <p class="param"><a href="#sow_start">sow_start</a></p>
+    <p class="param"><a href="#sow_stores">sow_stores</a></p>
     <p class="param"><a href="#start_pattern">start_pattern</a></p>
     <p class="param"><a href="#stores">stores</a></p>
     <p class="param"><a href="#udir_holes">udir_holes</a></p>

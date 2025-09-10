@@ -45,8 +45,8 @@ def test_ns_rules(ginfo, holes, skip):
 
     tester.test_rule(
         'ss_no_sow_own',
-        rule=lambda ginfo: ginfo.sow_own_store,
-        msg="""SameSide incompatible with SOW_OWN_STORE""",
+        rule=lambda ginfo: ginfo.sow_stores,
+        msg="""SameSide incompatible with SOW_STORES""",
         excp=NotImplementedError)
         # The test for when to sow into store requires sowing on both sides
 

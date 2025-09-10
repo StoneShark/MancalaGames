@@ -72,8 +72,8 @@ Sow,udir_holes,User Chooses Direction,game_info _,145,list[bool],[],2,0
 Sow,sdyno_lbl,Sow Dynamics,,0,label,0,3,0
 Sow,sow_start,Sow Start Hole,game_info _,141,bool,False,4,0
 Sow,skip_start,Skip Start on Cycle,game_info _,137,bool,False,5,0
-Sow,sow_own_store,Sow Own Store,game_info _,139,bool,False,6,0
-Sow,move_one,Move One Seed,game_info _,122,bool,False,7,0
+Sow,move_one,Move One Seed,game_info _,122,bool,False,6,0
+Sow,sow_stores,Sow Store,game_info _,139,SowStores,NEITHER,7,0
 Sow,presowcapt,Pre Sow Capture,game_info _,133,PreSowCapt,NONE,8,0
 Sow,sow_rule,Special Sow Rules,game_info _,140,SowRule,NONE,9,0
 Sow,sow_param,Sow Parameter,game_info _,142,int,0,10,0
@@ -85,6 +85,6 @@ Sow,child_type,Type of Children,game_info _,112,ChildType,NOCHILD,7,2
 Sow,child_cvt,Child Convert Count,game_info _,110,int,0,8,2
 Sow,child_rule,Child Restrictions,game_info _,111,ChildRule,NONE,9,2
 Sow,child_locs,Child Locations,game_info _,112,ChildLocs,ANYWHERE,10,2
+Tags,extra_tops,Additional Top Level Tags,_,300,TextDict,,0,0
 Variants,variants,Named Variants,_,250,TextDict,,0,0
 Variants,vari_params,Vari Params,_,251,TextDict,,0,2
-Tags,extra_tops,Additional Top Level Tags,_,300,TextDict,,0,0

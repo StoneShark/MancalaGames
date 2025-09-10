@@ -75,26 +75,65 @@ class SowSeedsNStore(SowMethodIf):
 
     def __init__(self, game, decorator=None):
 
-        def f_to_t_store(ploc, loc):
-            """Return True if ploc is false side of the board
+        # pylint: disable=too-complex
+
+        def f_side(loc):
+            """Return True if loc is on f side of the board."""
+            return 0 <= loc < game.cts.holes
+
+        def t_side(loc):
+            """Return True if loc is on t side of the board."""
+            return game.cts.holes <= loc < game.cts.dbl_holes
+
+        def f_to_t_store(ploc, loc, turn):
+            """Return turn if ploc is false side of the board
             (not store) and loc is on the true side of the board."""
 
-            return (ploc != gi.WinCond.REPEAT_TURN
-                    and 0 <= ploc < self.game.cts.holes
-                    and self.game.cts.holes <= loc < self.game.cts.dbl_holes)
+            if (ploc != gi.WinCond.REPEAT_TURN
+                    and f_side(ploc) and t_side(loc)):
+                return turn
+            return None
 
-        def t_to_f_store(ploc, loc):
-            """Return True if ploc is true side of the board
+        def t_to_f_store(ploc, loc, turn):
+            """Return turn if ploc is true side of the board
             (not store) and loc is on the false side of the board."""
 
-            return (ploc != gi.WinCond.REPEAT_TURN
-                    and self.game.cts.holes <= ploc < self.game.cts.dbl_holes
-                    and 0 <= loc < self.game.cts.holes)
+            if (ploc != gi.WinCond.REPEAT_TURN
+                    and t_side(ploc) and f_side(loc)):
+                return turn
+            return None
+
+        def either_ccw_store(ploc, loc, _):
+            """Return store index if we are sowing CCW past a store."""
+
+            if ploc == gi.WinCond.REPEAT_TURN:
+                return None
+            if t_side(ploc) and f_side(loc):
+                return 1
+            if f_side(ploc) and t_side(loc):
+                return 0
+            return None
+
+        def either_cw_store(ploc, loc, _):
+            """Return store index if we are sowing CW past a store."""
+
+            if ploc == gi.WinCond.REPEAT_TURN:
+                return None
+            if t_side(ploc) and f_side(loc):
+                return 0
+            if f_side(ploc) and t_side(loc):
+                return 1
+            return None
 
         super().__init__(game, decorator)
 
-        self.sow_store = {gi.Direct.CCW: [f_to_t_store, t_to_f_store],
-                          gi.Direct.CW: [t_to_f_store, f_to_t_store]}
+        if game.info.sow_stores == gi.SowStores.BOTH:
+            self.sow_store = {gi.Direct.CCW: [either_ccw_store] * 2,
+                              gi.Direct.CW: [either_cw_store] * 2}
+
+        else:
+            self.sow_store = {gi.Direct.CCW: [f_to_t_store, t_to_f_store],
+                              gi.Direct.CW: [t_to_f_store, f_to_t_store]}
 
 
     def sow_seeds(self, mdata):
@@ -111,8 +150,9 @@ class SowSeedsNStore(SowMethodIf):
 
         for _ in range(mdata.seeds):
 
-            if sow_store(ploc, loc):
-                self.game.store[turn] += 1
+            store_sow = sow_store(ploc, loc, turn)
+            if store_sow is not None:
+                self.game.store[store_sow] += 1
                 ploc = gi.WinCond.REPEAT_TURN
 
             else:
@@ -1169,8 +1209,9 @@ def _add_base_sower(game):
                     f"SowRule {game.info.sow_rule} not implemented.")
 
     if not sower:
-        if game.info.sow_own_store:
+        if game.info.sow_stores:
             sower = SowSeedsNStore(game)
+
         else:
             sower = SowSeeds(game)
 
@@ -1253,7 +1294,7 @@ def _add_lap_decos(game, lap_cont):
                                  gi.SowLapCont.OPP_SIDE):
         lap_cont = StopNotSide(game, lap_cont)
 
-    if game.info.sow_own_store:
+    if game.info.sow_stores:
         lap_cont = StopRepeatTurn(game, lap_cont)
 
     if animator.ENABLED:

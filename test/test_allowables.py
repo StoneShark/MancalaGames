@@ -1205,7 +1205,7 @@ class TestRightHalf:
 
         game_consts = gconsts.GameConsts(holes=holes, nbr_start=4)
         game_info = gi.GameInfo(stores=True,
-                                sow_own_store=True,
+                                sow_stores=gi.SowStores.OWN,
                                 evens=True,
                                 allow_rule=arule,
                                 nbr_holes=game_consts.holes,

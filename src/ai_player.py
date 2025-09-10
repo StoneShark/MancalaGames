@@ -555,7 +555,7 @@ def test_player_rules(pdict, game):
 
     tester.test_rule(
         'no_repeat_scorer',
-        rule=lambda pdict, game: (not (game.info.sow_own_store
+        rule=lambda pdict, game: (not (game.info.sow_stores
                                         or game.info.capt_rturn
                                         or game.info.xc_sown)
                                    and ckey.SCORER in pdict
@@ -563,7 +563,7 @@ def test_player_rules(pdict, game):
                                    and pdict[ckey.SCORER][ckey.MX_RTURN_A]),
         both_objs=True,
         msg="""Repeat turn scorer not supported without repeat turns
-            (SOW_OWN_STORE | CAPT_RTURN | XC_SOWN)""",
+            (SOW_STORES | CAPT_RTURN | XC_SOWN)""",
         excp=gi.UInputError)
 
     tester.test_rule(
@@ -573,7 +573,7 @@ def test_player_rules(pdict, game):
                                        and pdict[ckey.ALGORITHM] == NEGAMAXER),
         both_objs=True,
         msg="""NegaMaxer is not compatible with repeat turns
-            (SOW_OWN_STORE | CAPT_RTURN | XC_SOWN | SameSide | Ohojichi)""",
+            (SOW_STORES | CAPT_RTURN | XC_SOWN | SameSide | Ohojichi)""",
         excp=gi.UInputError)
 
 

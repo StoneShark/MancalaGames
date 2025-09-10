@@ -105,8 +105,8 @@ def test_rules(ginfo, holes, skip=None):
 
     tester.test_rule(
         'no_sow_own',
-        rule=lambda ginfo: ginfo.sow_own_store,
-        msg="""Diffusion is incompatible with sow_own_store,
+        rule=lambda ginfo: ginfo.sow_stores,
+        msg="""Diffusion is incompatible with sow_stores,
                2 seeds are automatically sown into the stores
                when indicated. There is no repeat turn""",
         excp=gi.GameInfoError)

@@ -264,7 +264,7 @@ class TestRandomMove:
         game_info = gi.GameInfo(start_pattern=gi.StartPattern.MOVE_RANDOM,
                                 evens=True,
                                 stores=True,
-                                sow_own_store=True,
+                                sow_stores=gi.SowStores.OWN,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
@@ -314,7 +314,7 @@ class TestNoRepeat:
             gi.GameInfo(start_pattern=gi.StartPattern.NO_REPEAT_SOW_OWN,
                         evens=True,
                         stores=True,
-                        sow_own_store=True,
+                        sow_stores=gi.SowStores.OWN,
                         nbr_holes=2,
                         rules=mancala.Mancala.rules)
 
@@ -330,7 +330,7 @@ class TestNoRepeat:
         game_info = gi.GameInfo(start_pattern=gi.StartPattern.NO_REPEAT_SOW_OWN,
                                 evens=True,
                                 stores=True,
-                                sow_own_store=True,
+                                sow_stores=gi.SowStores.OWN,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
