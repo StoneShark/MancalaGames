@@ -1,4 +1,5 @@
-"""
+"""End move tests.
+
 Created on Fri Sep 15 03:57:49 2023
 @author: Ann"""
 
@@ -182,7 +183,28 @@ class TestEndMove:
                     'stores': True,
                     'rounds': gi.Rounds.NO_MOVES,
                     'round_fill': gi.RoundFill.EVEN_FILL,
-                    'min_move': 2}
+                    'min_move': 2},
+
+        'co_game': {'evens': True,
+                    'stores': True,
+                    'end_cond': gi.EndGameCond.CLEARED_OWN,
+                    'unclaimed': gi.EndGameSeeds.DONT_SCORE},
+
+        'copp_game': {'evens': True,
+                    'stores': True,
+                    'end_cond': gi.EndGameCond.CLEARED_OPP,
+                    'unclaimed': gi.EndGameSeeds.DONT_SCORE},
+
+        'sl_game': {'evens': True,
+                    'stores': True,
+                    'end_cond': gi.EndGameCond.SEEDS_LIMIT,
+                    'end_param': 5},
+
+        'hl_game': {'evens': True,
+                    'stores': True,
+                    'end_cond': gi.EndGameCond.HOLE_SEED_LIMIT,
+                    'end_param': 1,
+                    'unclaimed': gi.EndGameSeeds.DONT_SCORE},
 
     }
 
@@ -587,9 +609,65 @@ class TestEndMove:
                  utils.build_board([0, 0, 0],
                                    [0, 0, 0]), [1, 11], True),
 
+                ('cl_own_not', 'co_game', False, False,
+                 utils.build_board([2, 1, 2],
+                                   [2, 2, 1]), [1, 1], False, None,
+                 utils.build_board([2, 1, 2],
+                                   [2, 2, 1]), [1, 1], None),
+
+                # no clear winner, EndGameWinner removes seeds
+                ('cl_own_t', 'co_game', False, False,
+                 utils.build_board([0, 0, 0],
+                                   [2, 2, 1]), [6, 1], True, WinCond.WIN,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [6, 1], False),
+
+                ('cl_own_f', 'co_game', False, False,
+                 utils.build_board([2, 2, 1],
+                                   [0, 0, 0]), [6, 1], False, WinCond.WIN,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [6, 1], False),
+
+                ('copp_not', 'copp_game', False, False,
+                 utils.build_board([2, 1, 2],
+                                   [2, 2, 1]), [1, 1], False, None,
+                 utils.build_board([2, 1, 2],
+                                   [2, 2, 1]), [1, 1], None),
+
+                # no clear winner, EndGameWinner removes seeds
+                ('copp_t', 'copp_game', False, False,
+                 utils.build_board([0, 0, 0],
+                                   [2, 2, 1]), [6, 1], False, WinCond.WIN,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [6, 1], False),
+
+                ('copp_f', 'copp_game', False, False,
+                 utils.build_board([2, 2, 1],
+                                   [0, 0, 0]), [6, 1], True, WinCond.WIN,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [6, 1], False),
+
+                ('hl_own_not', 'hl_game', False, False,
+                 utils.build_board([2, 1, 2],
+                                   [2, 2, 1]), [1, 1], False, None,
+                 utils.build_board([2, 1, 2],
+                                   [2, 2, 1]), [1, 1], None),
+
+                ('hl_own_t', 'hl_game', False, False,
+                 utils.build_board([0, 1, 0],
+                                   [1, 0, 1]), [8, 1], True, WinCond.WIN,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [8, 1], False),
+
+                ('sl_own_t', 'sl_game', False, False,
+                 utils.build_board([0, 2, 0],
+                                   [1, 0, 1]), [8, 1], True, WinCond.WIN,
+                 utils.build_board([0, 0, 0],
+                                   [0, 0, 0]), [10, 3], False),
+
             ]
     @pytest.mark.filterwarnings("ignore")
-    # @pytest.mark.usefixtures("logger")
+    @pytest.mark.usefixtures("logger")
     @pytest.mark.parametrize(
         'case, game, ended, repeat, board, store, turn,'
         ' eres, eboard, estore, ewinner',
@@ -603,15 +681,15 @@ class TestEndMove:
         game.board = board
         game.store = store
         game.turn = turn
-        # print(game)
-        # print(game.deco.ender)
+        print(game)
+        print(game.deco.ender)
 
         mdata = utils.make_ender_mdata(game, repeat, ended)
         mdata.end_msg = 'first part'
         game.deco.ender.game_ended(mdata)
 
-        # print('after:', game, sep='\n')
-        # print(mdata.win_cond, mdata.winner)
+        print('after:', game, sep='\n')
+        print(mdata.win_cond, mdata.winner)
 
         assert mdata.win_cond == eres
         assert game.board == eboard
@@ -776,6 +854,28 @@ class TestEndMove:
         assert game.mdata.winner == ewin
         assert game.board == eboard
         assert game.store == estore
+
+
+    def test_bad_end_cond(self):
+        """Test the EndSeedsLimit construction; a bad
+        end_cond is caught in multiple places."""
+
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(capt_on=[4],
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+
+        object.__setattr__(game.info, 'end_cond', 12)
+
+        with pytest.raises(NotImplementedError):
+            end_move._build_ender(game)
+
+        # don't know what stop_at should be
+        with pytest.raises(gi.GameInfoError):
+            end_move.EndSeedsLimit(game)
 
 
     def test_bad_win_seeds(self):

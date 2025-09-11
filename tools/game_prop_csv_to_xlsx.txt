@@ -6,17 +6,17 @@ Sub MancalaPropsUsed()
 
 ' set some extra titles
     Range("A1").Value = "Game"
-    Range("BC1").Value = "Filter1"
-    Range("BD1").Value = "Filter2"
+    Range("BE1").Value = "Filter1"
+    Range("BF1").Value = "Filter2"
 ' set column widths
     Columns("A:A").ColumnWidth = 20
-    Columns("B:BB").ColumnWidth = 3.43
+    Columns("B:BC").ColumnWidth = 3.43
     Columns("I:I").ColumnWidth = 5
-    Columns("AX:AX").ColumnWidth = 5
-    Columns("BB:BB").ColumnWidth = 15
-    Columns("BC:BD").ColumnWidth = 6
+    Columns("AZ:AZ").ColumnWidth = 5
+    Columns("BD:BD").ColumnWidth = 15
+    Columns("BE:BF").ColumnWidth = 6
 ' center these columns
-    Range("E:F,I:J,Q:R,AA:AB,AD:AF,AH:AH,AP:AP,AR:AR,AU:AU,AW:AX,AZ:AZ,BA:BA").Select
+    Range("E:F,I:J,Q:Q,T:T,AC:AD,AF:AH,AJ:AJ,AV:AV,AY:AZ,BB:BB").Select
     With Selection
         .HorizontalAlignment = xlCenter
         .VerticalAlignment = xlBottom
@@ -49,7 +49,7 @@ Sub MancalaPropsUsed()
         .Orientation = 0
     End With
 ' set auto filter
-    Columns("A:BE").Select
+    Columns("A:BF").Select
     Selection.AutoFilter
 ' set freeze panes
     Range("B2").Select

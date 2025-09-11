@@ -210,6 +210,17 @@ class Direct(enum.IntEnum):
 
 
 @enum.unique
+class EndGameCond(enum.IntEnum):
+    """Additional conditions that end the game."""
+
+    NO_ADDTL = 0
+    CLEARED_OWN = 1
+    CLEARED_OPP = 2
+    SEEDS_LIMIT = 3           # seeds in play < param
+    HOLE_SEED_LIMIT = 4           # all holes < param
+
+
+@enum.unique
 class EndGameSeeds(enum.IntEnum):
     """what to do with unclaimed seeds at the end game."""
 
@@ -445,6 +456,8 @@ class GameInfo:
 
     # **** game dynamics
     goal: Goal = Goal.MAX_SEEDS
+    end_cond: EndGameCond = EndGameCond.NO_ADDTL
+    end_param: int = 0
     mustpass: bool = False
     rounds: Rounds = Rounds.NO_ROUNDS
     round_starter: RoundStarter = RoundStarter.ALTERNATE
@@ -480,6 +493,8 @@ class GameInfo:
     presowcapt: PreSowCapt = PreSowCapt.NONE
     sow_rule: SowRule = SowRule.NONE
     sow_param: int = 0
+    # list of bi-directional holes
+    udir_holes: list[int] = dc.field(default_factory=list)
 
     # **** capture
     capt_dir: CaptDir = CaptDir.OPP_SOW
@@ -503,9 +518,6 @@ class GameInfo:
 
     # list of seed counts to capture on (after sow)
     capt_on: list[int] = dc.field(default_factory=list)
-
-    # list of bi-directional holes
-    udir_holes: list[int] = dc.field(default_factory=list)
 
     #  derived parameters created from others in post init
     udirect: bool = False

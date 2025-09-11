@@ -151,6 +151,28 @@ Capture type.
 
 - CAPT_OPP_1CCW: flag a capture if the final seed of a sow lands in your own rightmost hole or on your opponent's side of the board. No seeds are removed. Useful for causing a repeat turn and/or with pickextra.
 
+<param end_cond>
+
+Conditions that end the game. If the game is ended, UNCLAIMED defines what happens with any seeds left on the board and GOAL is used to determine the winner. 
+
+All other game ending conditions still apply, e.g., the game will end as soon as one player has more than half the seeds in a MAX_SEEDS game.
+
+- NO_ADDTL: no additional end conditions.
+
+- CLEARED_OWN: end the game when the a player clears all their own holes.
+
+- CLEARED_OPP: end the game when your opponent does not have any seeds.
+
+- SEEDS_LIMIT:  end the game when unclaimed seeds in play are end_param or fewer seeds.
+
+- HOLE_SEED_LIMIT: end the game when all holes have end_param or fewer seeds.
+
+If the game is played in rounds, this condition will end a round unless the game win conditions are met.
+
+<param end_param>
+
+Parameter for END_COND.
+
 <param mx_child_cnt_m>
 The multiplier for the child scorer. The child scorer counts the number children each player has.
 

@@ -712,23 +712,8 @@ def test_capture_rules(tester):
         excp=gi.GameInfoError)
 
 
-# %% the base ruleset
-
-def test_rules(ginfo, holes, skip=None):
-    """Build the default Mancala rules.
-    These can be deleted or modified by derived classes."""
-
-    tester = rule_tester.RuleTester(ginfo, holes, skip)
-
-    test_creation_rules(tester)
-    test_pattern_rules(tester)
-    test_eliminate_goal_rules(tester)
-    test_territory_rules(tester)
-    test_block_and_divert_rules(tester)
-    test_child_rules(tester)
-    test_no_sides_rules(tester)
-    test_sower_rules(tester)
-    test_capture_rules(tester)
+def test_basic_rules(tester):
+    """Test the basic set fo rules"""
 
     tester.test_rule('allowrule_mlen3',
         rule=lambda ginfo: (ginfo.mlength == 3
@@ -844,6 +829,14 @@ def test_rules(ginfo, holes, skip=None):
         rule=lambda ginfo: not ginfo.rounds
             and ginfo.round_starter != gi.RoundStarter.ALTERNATE,
         msg='ROUND_STARTER requires ROUNDS',
+        excp=gi.GameInfoError)
+
+    tester.test_rule('dupl_seeds_limits',
+        rule=lambda ginfo: (ginfo.rounds in (gi.Rounds.END_S_SEEDS,
+                                             gi.Rounds.END_2S_SEEDS)
+                            and ginfo.end_cond == gi.EndGameCond.SEEDS_LIMIT),
+        msg="""ROUNDS of END_S_SEEDS or END_2S_SEEDS
+            cannot be used with END_COND SEEDS_LIMIT""",
         excp=gi.GameInfoError)
 
     tester.test_rule('mx_round_limit',
@@ -1028,3 +1021,30 @@ def test_rules(ginfo, holes, skip=None):
             on number of seeds (seeds or 2x seeds)""",
         excp=gi.GameInfoError)
         # if the picker is included, the round ender is not; so they must agree
+
+    tester.test_rule('need_end_param',
+        rule=lambda ginfo: (ginfo.end_cond in (gi.EndGameCond.SEEDS_LIMIT,
+                                               gi.EndGameCond.HOLE_SEED_LIMIT)
+                            and not ginfo.end_param),
+        msg="""Selected END_COND requires positive END_PARAM""",
+        excp=gi.GameInfoError)
+
+
+# %% the base ruleset
+
+def test_rules(ginfo, holes, skip=None):
+    """Test the default Mancala rules.
+    These can be deleted or modified by derived classes."""
+
+    tester = rule_tester.RuleTester(ginfo, holes, skip)
+
+    test_creation_rules(tester)
+    test_pattern_rules(tester)
+    test_eliminate_goal_rules(tester)
+    test_territory_rules(tester)
+    test_block_and_divert_rules(tester)
+    test_child_rules(tester)
+    test_no_sides_rules(tester)
+    test_sower_rules(tester)
+    test_capture_rules(tester)
+    test_basic_rules(tester)

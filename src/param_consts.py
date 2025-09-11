@@ -170,6 +170,15 @@ STRING_DICTS = {
          'Players Alternate': gi.Direct.PLAYALTDIR,
          'Odd Seeds-CCW Even-CW': gi.Direct.EVEN_ODD_DIR}),
 
+    'EndGameCond': lookup_dicts(
+        gi.EndGameCond,
+        {'No Additional': gi.EndGameCond.NO_ADDTL,
+         'Cleared Own Holes': gi.EndGameCond.CLEARED_OWN,
+         "Cleared Opponent's Holes": gi.EndGameCond.CLEARED_OPP,
+         'End <= END_PARAM seeds in play': gi.EndGameCond.SEEDS_LIMIT,
+         'End <= END_PARAM seeds in each holes': gi.EndGameCond.HOLE_SEED_LIMIT,
+             }),
+
     'EndGameSeeds': lookup_dicts(
         gi.EndGameSeeds,
         {'Hole Owner': gi.EndGameSeeds.HOLE_OWNER,

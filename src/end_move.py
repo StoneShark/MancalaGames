@@ -1,8 +1,17 @@
 # -*- coding: utf-8 -*-
-"""This file defines the basic (non-round) ender decorator classes.
+"""Define the end_move decorators and build the end_move
+and quitter decorator chains. The end_move deco chain is
+called after each move to determine if the game has ended.
+The quitter deco chain is used when a player conceeds
+the game.
 
-Return win/end-game-condition, winner from ender.game_ended.
-self.game.turn is the player that just finished moving.
+Enders might use a claimer to move seeds off the board into stores.
+
+The decorators might update the mdata fields
+    end_msg - reason for ending the game
+    ended - set true when the game is ended
+    win_cond - describes win condition (win, tie, * round, or repeat turn)
+    winner - actual game winner
 
 NOTE:  The ender results can be confusing so the logger is left
 active when get_allowable_holes is called.
@@ -38,7 +47,7 @@ import round_tally
 from game_logger import game_log
 
 
-# %%  end turn interface
+# %%  end turn interface and concede mixin
 
 class EndTurnIf(deco_chain_if.DecoChainIf):
     """Interface for determining if the game is over."""
@@ -202,7 +211,7 @@ class ConcedeMixin:
 
 
 
-# %%
+# %%  ender decos
 
 class ClearWinner(EndTurnIf):
     """Determine if the seed counts result in a clear winner.
@@ -739,6 +748,105 @@ class EndGameWinner(EndTurnIf):
             mdata.win_cond = gi.WinCond.TIE
 
 
+class EndSeedsLimit(EndTurnIf):
+    """End the game when there are fewer than stop_at
+    seeds.
+
+    If there are fewer (<=) than the specified number of seeds
+    on the board in play, call down the decorator chain
+    with ended as True."""
+
+    def __init__(self, game, decorator=None, sclaimer=None):
+
+        super().__init__(game, decorator, sclaimer)
+
+        if game.info.rounds == gi.Rounds.END_S_SEEDS:
+            self.stop_at = game.cts.nbr_start
+
+        elif game.info.rounds == gi.Rounds.END_2S_SEEDS:
+            self.stop_at = 2 * game.cts.nbr_start
+
+        elif game.info.end_cond == gi.EndGameCond.SEEDS_LIMIT:
+            self.stop_at = self.game.info.end_param
+
+        else:
+            raise gi.GameInfoError(
+                "Don't know what stop_at should be for EndSeedsLimit.")
+
+    def __str__(self):
+        clstr = (repr(self.sclaimer) + '\n   ') if self.sclaimer else ''
+        return self.str_deco_detail(clstr + f'stop_at: {self.stop_at}')
+
+
+    def game_ended(self, mdata):
+
+        remaining = sum(self.game.board[loc]
+                        for loc in range(self.game.cts.dbl_holes)
+                        if self.game.child[loc] is None)
+
+        if remaining <= self.stop_at:
+            mdata.end_msg = f"""Seeds limit ({self.stop_at}) or fewer seeds
+                            remaining, _thing_ ended."""
+            game_log.add(fmt.fmsg(mdata.end_msg), game_log.IMPORT)
+            mdata.ended = True
+
+        self.decorator.game_ended(mdata)
+
+
+class ClearedSideEnder(EndTurnIf):
+    """Call down the deco chain with game ended if the
+    specified player's holes are empty."""
+
+    def __init__(self, game, decorator=None, sclaimer=None):
+
+        super().__init__(game, decorator, sclaimer)
+
+        if game.info.end_cond == gi.EndGameCond.CLEARED_OWN:
+            self.side_op = lambda turn: turn
+            self.side = "own"
+        else:
+            self.side_op = lambda turn: not turn
+            self.side = "opponent"
+
+
+    def __str__(self):
+        clstr = (repr(self.sclaimer) + '\n   ') if self.sclaimer else ''
+        return self.str_deco_detail(clstr + f'cleared side: {self.side}')
+
+
+    def game_ended(self, mdata):
+
+        side = self.side_op(self.game.turn)
+        if all(not self.game.board[idx]
+               for idx in self.game.cts.get_my_range(side)
+               if self.game.child[idx] is None):
+
+            player = self.game.turn_name()
+            mdata.end_msg = f"{player} cleared {self.side} holes, _thing_ ended."
+            game_log.add(fmt.fmsg(mdata.end_msg), game_log.IMPORT)
+            mdata.ended = True
+
+        self.decorator.game_ended(mdata)
+
+
+class HoleSeedsLimit(EndTurnIf):
+    """Call down the deco chain with game ended if all holes
+    have end_param or fewer seeds."""
+
+    def game_ended(self, mdata):
+
+        if all(self.game.board[idx] <= self.game.info.end_param
+               for idx in range(self.game.cts.dbl_holes)
+               if self.game.child[idx] is None):
+
+            mdata.end_msg = f"""All holes have have fewer than
+                            {self.game.info.end_param}, _thing_ ended."""
+            game_log.add(fmt.fmsg(mdata.end_msg), game_log.IMPORT)
+            mdata.ended = True
+
+        self.decorator.game_ended(mdata)
+
+
 class QuitToTie(EndTurnIf):
     """Force the game to end in a tie; don't change the board.
     Used for DEPRIVE games."""
@@ -759,7 +867,7 @@ class AnimateEndMove(EndTurnIf):
             self.decorator.game_ended(mdata)
 
 
-# %%  enders
+# %%  round enders
 
 class RoundWinner(EndTurnIf):
     """"If the game is played in rounds where seeds collected
@@ -921,46 +1029,6 @@ class RoundTallyWinner(EndTurnIf):
             mdata.win_cond = gi.WinCond.ROUND_TIE
 
 
-class RoundEndLimit(EndTurnIf):
-    """A round ender deco.  Add below one of the other
-    round end decorators.
-
-    If there are fewer than the specified number of seeds
-    on the board in play, call down the decorator chain
-    with ended = True.
-
-    EndGameWinner will collect seeds as configured
-    and when we return to the parent deco, it will decide
-    if the game or round has ended."""
-
-    def __init__(self, game, decorator=None, sclaimer=None):
-
-        super().__init__(game, decorator, sclaimer)
-
-        if game.info.rounds == gi.Rounds.END_S_SEEDS:
-            self.stop_at = game.cts.nbr_start
-        else:   #  if game.info.rounds == gi.Rounds.END_2S_SEEDS:
-            self.stop_at = 2 * game.cts.nbr_start
-
-
-    def game_ended(self, mdata):
-
-        remaining = 0
-        for loc in range(self.game.cts.dbl_holes):
-            if self.game.child[loc] is None:
-                remaining += self.game.board[loc]
-
-        if remaining <= self.stop_at:
-            mdata.end_msg = f"""Round limit ({self.stop_at}) or fewer seeds
-                            remaining, _thing_ ended."""
-            game_log.add(fmt.fmsg(mdata.end_msg), game_log.IMPORT)
-            mdata.ended = True
-            self.decorator.game_ended(mdata)
-
-        else:
-            self.decorator.game_ended(mdata)
-
-
 # %% build ender
 
 
@@ -1090,7 +1158,7 @@ def _add_round_ender(game, ender, sclaimer):
             and game.info.pickextra not in (gi.CaptExtraPick.PICKLASTSEEDS,
                                             gi.CaptExtraPick.PICK2XLASTSEEDS)):
         # only need RoundEndLimit when a picker is not doing the same work
-        ender = RoundEndLimit(game, ender)
+        ender = EndSeedsLimit(game, ender)
 
     # the claimer here decides if game or round ends; after we know it ended
     if game.info.goal in round_tally.RoundTally.GOALS:
@@ -1100,6 +1168,29 @@ def _add_round_ender(game, ender, sclaimer):
     else:
         # use claim all seeds in owned holes (might be side or owner)
         ender = RoundWinner(game, ender, claimer.ClaimOwnSeeds(game))
+
+    return ender
+
+
+def _add_game_ender(game, ender):
+    """Add an additional ender condition."""
+
+    if (game.info.end_cond == gi.EndGameCond.SEEDS_LIMIT
+            and game.info.rounds not in (gi.Rounds.END_S_SEEDS,
+                                         gi.Rounds.END_2S_SEEDS)):
+        # don't add if we have a limit based on round end
+        ender = EndSeedsLimit(game, ender)
+
+    elif game.info.end_cond in (gi.EndGameCond.CLEARED_OWN,
+                                gi.EndGameCond.CLEARED_OPP):
+        ender = ClearedSideEnder(game, ender)
+
+    elif game.info.end_cond == gi.EndGameCond.HOLE_SEED_LIMIT:
+        ender = HoleSeedsLimit(game, ender)
+
+    else:
+        raise NotImplementedError(
+                f"END_COND {game.info.end_cond} not implemented.")
 
     return ender
 
@@ -1125,6 +1216,9 @@ def _build_ender(game):
     else:
         sclaimer = claimer.ClaimSeeds(game)
     ender = ClearWinner(game, ender, sclaimer)
+
+    if game.info.end_cond:
+        ender = _add_game_ender(game, ender)
 
     if game.info.rounds:
         ender = _add_round_ender(game, ender, sclaimer)

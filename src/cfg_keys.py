@@ -26,6 +26,8 @@ CHILD_RULE = 'child_rule'
 CHILD_TYPE = 'child_type'
 CROSSCAPT = 'crosscapt'
 DIFFICULTY = 'difficulty'
+END_COND = 'end_cond'
+END_PARAM = 'end_param'
 EVENS = 'evens'
 FILENAME = 'filename'
 GAME_CLASS = 'game_class'
@@ -121,6 +123,8 @@ GINFO_PARAMS =  (ALLOW_RULE,
                  CHILD_RULE,
                  CHILD_TYPE,
                  CROSSCAPT,
+                 END_COND,
+                 END_PARAM,
                  EVENS,
                  GOAL,
                  GOAL_PARAM,

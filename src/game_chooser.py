@@ -187,6 +187,7 @@ RULES = {
     'Russ': lambda gdict: 'Russ' in gdict.get('rules', ''),
     'Valdez': lambda gdict: 'Valdez' in gdict.get('rules', ''),
     'Man World': lambda gdict: 'mancala.fandom' in gdict.get('rules', ''),
+    'Hanson': lambda gdict: 'Hanson' in gdict.get('rules', ''),
     'Davies': lambda gdict: 'Davies' in gdict.get('rules', ''),
     'Other': lambda gdict: ('Russ' not in gdict.get('rules', '')
                             and 'Valdez' not in gdict.get('rules', '')

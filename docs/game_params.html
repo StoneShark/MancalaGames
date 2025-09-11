@@ -219,35 +219,6 @@ is included after the parameter sections.
 <p><a href="game_params.html#goal">GOAL</a> of Territory: defines the number of holes needed for a win. The number of holes for each player are computed by rounding the number of seeds collected divided by the number of start seeds per hole.
 <p>Goal of Max Seeds and <a href="game_params.html#rounds">ROUNDS</a>: defines the minimum number of holes each player must have to continue the game. The player with fewer seeds must have enough seeds to fill goal_param holes each with start_seeds to continue playing.  There is no rounding of seed counts as in territory games.
 <p>RND_* Goals: number of specified parameter for win.
-<h4 id="unclaimed"> Unclaimed Seeds at End </h4>
-<p class="pdesc">Location in Config Files: game_info : unclaimed
-<p id="EndGameSeeds" class="pdesc">Type: <a href="param_types.html#EndGameSeeds"> EndGameSeeds </a>
-<p class="pdesc">Default value: 0
-<p class="pdesc">UI Tab: Dynamics
-
-<p>Defines how to score any unclaimed seeds when a game has ended. Unclaimed seeds are those not in children or stores when a game ends without a clear winner: no outcome change possible, current player cannot share, etc. 
-<p>This parameter is not used for clear, unclaimed or immobilize games. For other games, this parameter defines how the <a href="mancala_help.html#gamemenu">Concede Round and Concede Game</a> menu commands work. 
-<ol start=0><li class="helptext">
-<b class="enum">HOLE_OWNER</b>: unclaimed seeds go to the hole owner.
-<li class="helptext">
-<b class="enum">DONT_SCORE</b>: unclaimed seeds do not score (they are ignored).
-<li class="helptext">
-<b class="enum">LAST_MOVER</b>: unclaimed seeds go the player that moved last.
-<li class="helptext">
-<b class="enum">UNFED_PLAYER</b>: only valid for <a href="game_params.html#mustshare">MUSTSHARE</a> games. If the game ended without one player being able to share seeds, the seeds go to the player without seeds (the unfed player). 
-<p class="helptext"> If a Concede/End Round/Game menu command is used to end the game, the unclaimed seeds are handled with the <a href="game_params.html#quitter">QUITTER</a> configuration. 
-<li class="helptext">
-<b class="enum">DIVVIED</b>: the seeds are divided between the two players (an extra seed goes to the player with fewer seeds).
-</ol>
-<h4 id="quitter"> Quit Game Seeds </h4>
-<p class="pdesc">Location in Config Files: game_info : quitter
-<p id="EndGameSeeds" class="pdesc">Type: <a href="param_types.html#EndGameSeeds"> EndGameSeeds </a>
-<p class="pdesc">Default value: 4
-<p class="pdesc">UI Tab: Dynamics
-
-<p>Defines how to score any unclaimed seeds when a player ends the round or game using an <a href="mancala_help.html#gamemenu">End Round or End Game</a> menu command. 
-<p>This parameter is not used for clear, deprive or immobilize games.
-<p>The allowable values are the same as for <a href="game_params.html#unclaimed">UNCLAIMED</a> (EndGameSeeds) except UNFED_PLAYER is disallowed. <no_enum_error>
 <h4 id="start_pattern"> Start Pattern </h4>
 <p class="pdesc">Location in Config Files: game_info : start_pattern
 <p id="StartPattern" class="pdesc">Type: <a href="param_types.html#StartPattern"> StartPattern </a>
@@ -362,6 +333,62 @@ is included after the parameter sections.
 <li class="helptext">
 <b class="enum">RIGHT_HALF_1ST_OPE</b>: For the opening moves for each player, only allow a move from the right side of board. For subsequent moves, OPP_OR_EMPTY is applied.
 </ol>
+<h4 id="end_cond"> End Game Condition </h4>
+<p class="pdesc">Location in Config Files: game_info : end_cond
+<p id="EndGameCond" class="pdesc">Type: <a href="param_types.html#EndGameCond"> EndGameCond </a>
+<p class="pdesc">Default value: 0
+<p class="pdesc">UI Tab: Dynamics
+
+<p>Conditions that end the game. If the game is ended, <a href="game_params.html#unclaimed">UNCLAIMED</a> defines what happens with any seeds left on the board and <a href="game_params.html#goal">GOAL</a> is used to determine the winner. 
+<p>All other game ending conditions still apply, e.g., the game will end as soon as one player has more than half the seeds in a MAX_SEEDS game.
+<ol start=0><li class="helptext">
+<b class="enum">NO_ADDTL</b>: no additional end conditions.
+<li class="helptext">
+<b class="enum">CLEARED_OWN</b>: end the game when the a player clears all their own holes.
+<li class="helptext">
+<b class="enum">CLEARED_OPP</b>: end the game when your opponent does not have any seeds.
+<li class="helptext">
+<b class="enum">SEEDS_LIMIT</b>:  end the game when unclaimed seeds in play are end_param or fewer seeds.
+<li class="helptext">
+<b class="enum">HOLE_SEED_LIMIT</b>: end the game when all holes have end_param or fewer seeds.
+</ol>
+<p>If the game is played in rounds, this condition will end a round unless the game win conditions are met.
+<h4 id="end_param"> End Cond Param </h4>
+<p class="pdesc">Location in Config Files: game_info : end_param
+<p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
+<p class="pdesc">Default value: 0
+<p class="pdesc">UI Tab: Dynamics
+
+<p>Parameter for <a href="game_params.html#end_cond">END_COND</a>.
+<h4 id="unclaimed"> Unclaimed Seeds at End </h4>
+<p class="pdesc">Location in Config Files: game_info : unclaimed
+<p id="EndGameSeeds" class="pdesc">Type: <a href="param_types.html#EndGameSeeds"> EndGameSeeds </a>
+<p class="pdesc">Default value: 0
+<p class="pdesc">UI Tab: Dynamics
+
+<p>Defines how to score any unclaimed seeds when a game has ended. Unclaimed seeds are those not in children or stores when a game ends without a clear winner: no outcome change possible, current player cannot share, etc. 
+<p>This parameter is not used for clear, unclaimed or immobilize games. For other games, this parameter defines how the <a href="mancala_help.html#gamemenu">Concede Round and Concede Game</a> menu commands work. 
+<ol start=0><li class="helptext">
+<b class="enum">HOLE_OWNER</b>: unclaimed seeds go to the hole owner.
+<li class="helptext">
+<b class="enum">DONT_SCORE</b>: unclaimed seeds do not score (they are ignored).
+<li class="helptext">
+<b class="enum">LAST_MOVER</b>: unclaimed seeds go the player that moved last.
+<li class="helptext">
+<b class="enum">UNFED_PLAYER</b>: only valid for <a href="game_params.html#mustshare">MUSTSHARE</a> games. If the game ended without one player being able to share seeds, the seeds go to the player without seeds (the unfed player). 
+<p class="helptext"> If a Concede/End Round/Game menu command is used to end the game, the unclaimed seeds are handled with the <a href="game_params.html#quitter">QUITTER</a> configuration. 
+<li class="helptext">
+<b class="enum">DIVVIED</b>: the seeds are divided between the two players (an extra seed goes to the player with fewer seeds).
+</ol>
+<h4 id="quitter"> Quit Game Seeds </h4>
+<p class="pdesc">Location in Config Files: game_info : quitter
+<p id="EndGameSeeds" class="pdesc">Type: <a href="param_types.html#EndGameSeeds"> EndGameSeeds </a>
+<p class="pdesc">Default value: 4
+<p class="pdesc">UI Tab: Dynamics
+
+<p>Defines how to score any unclaimed seeds when a player ends the round or game using an <a href="mancala_help.html#gamemenu">End Round or End Game</a> menu command. 
+<p>This parameter is not used for clear, deprive or immobilize games.
+<p>The allowable values are the same as for <a href="game_params.html#unclaimed">UNCLAIMED</a> (EndGameSeeds) except UNFED_PLAYER is disallowed. <no_enum_error>
 <h4 id="stores"> Stores </h4>
 <p class="pdesc">Location in Config Files: game_info : stores
 <p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
@@ -1170,15 +1197,17 @@ is included after the parameter sections.
     <p class="param"><a href="#child_type">child_type</a></p>
     <p class="param"><a href="#crosscapt">crosscapt</a></p>
     <p class="param"><a href="#difficulty">difficulty</a></p>
+    <p class="param"><a href="#end_cond">end_cond</a></p>
+    <p class="param"><a href="#end_param">end_param</a></p>
     <p class="param"><a href="#evens">evens</a></p>
     <p class="param"><a href="#extra_tops">extra_tops</a></p>
     <p class="param"><a href="#game_class">game_class</a></p>
     <p class="param"><a href="#goal">goal</a></p>
     <p class="param"><a href="#goal_param">goal_param</a></p>
     <p class="param"><a href="#grandslam">grandslam</a></p>
-    <p class="param"><a href="#help_file">help_file</a></p>
   </div>
   <div class="column3">
+    <p class="param"><a href="#help_file">help_file</a></p>
     <p class="param"><a href="#holes">holes</a></p>
     <p class="param"><a href="#mcts_bias">mcts_bias</a></p>
     <p class="param"><a href="#mcts_nodes">mcts_nodes</a></p>
