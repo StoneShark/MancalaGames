@@ -43,6 +43,7 @@ from game_classes import GAME_CLASSES
 MAX_LINES = 150
 MAX_CHARS = 4000
 SRC_DIR = 'src'
+VAR_SEP = '::'
 
 NO_CONVERT = [ckey.NAME, ckey.ABOUT, ckey.HELP_FILE,
               ckey.UDIR_HOLES, ckey.CAPT_ON]
@@ -97,7 +98,7 @@ def qual_game_name(game_config, vname):
     """Create a qualified game name for variant."""
 
     if vname:
-        return game_config[ckey.GAME_INFO][ckey.NAME] + '::' + vname
+        return game_config[ckey.GAME_INFO][ckey.NAME] + VAR_SEP + vname
 
     return game_config[ckey.GAME_INFO][ckey.NAME]
 
@@ -105,7 +106,7 @@ def qual_game_name(game_config, vname):
 def game_name_to_parts(game_qual):
     """Break a possibly qualified game name into game and variant."""
 
-    gname_parts = game_qual.split('::')
+    gname_parts = game_qual.split(VAR_SEP)
     parts = len(gname_parts)
     if parts > 2:
         msg = 'Too many parts for game selection. Use game_name::variant_name'
@@ -701,14 +702,21 @@ class ConfigData:
         """If there is a game specific section, bubble
         those options up to the default section.
         The rest of the software only uses the default
-        section."""
+        section.
+
+        Check for a possibly version qualified name,
+        if there is no section for that, try just the base
+        game name."""
 
         if not name:
             return
 
         name = name.replace(' ', '_')
         if name not in self._config.sections():
-            return
+
+            name, _ = game_name_to_parts(name)
+            if name not in self._config.sections():
+                return
 
         for key, value in self._config[name].items():
             self._config[DEFAULT][key] = value

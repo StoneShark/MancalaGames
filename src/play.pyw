@@ -17,6 +17,9 @@ if __name__ == '__main__':
     man_config.check_disable_animator()
 
     param = man_path.get_cmd_ln_gamename()
+    if man_config.VAR_SEP in param:
+        man_config.read_params_data(need_descs=False)
+
     gamename, variant = man_config.game_name_to_parts(param)
 
     filename = man_path.find_gamefile(gamename)
