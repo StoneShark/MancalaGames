@@ -14,17 +14,17 @@ import functools as ft
 
 import pytest
 
-from context import behaviors
 from context import game_constants as gconsts
 from context import game_info as gi
+from context import game_str
 from context import mancala
 from context import mancala_ui
 
 from context import game_logger
 
 
-UP_ARROW = behaviors.UP_ARROW
-DN_ARROW = behaviors.DN_ARROW
+UP_ARROW = game_str.OWNER[True]
+DN_ARROW = game_str.OWNER[False]
 
 
 # %% constants

@@ -113,6 +113,42 @@ class QurChild(MakeChildIf):
                 and game.board[cross] == game.info.child_cvt)
 
 
+class RamChild(MakeChildIf):
+    """Make a RAM when there are sufficient seeds
+    to sow back onto own side of the board.
+    Moves are prevented from RAM, but they do not count
+    in the game tally, and they may be captured."""
+
+    def __init__(self, game, decorator=None):
+
+        super().__init__(game, decorator)
+
+        extra = 1 if game.info.sow_start else 0
+        if game.info.sow_stores == gi.SowStores.OWN:
+            extra += 1
+        elif game.info.sow_stores == gi.SowStores.BOTH:
+            extra += 2
+
+        holes = game.cts.holes
+        cnt_side = [holes + holes - idx + extra for idx in range(holes)]
+
+        if game.info.sow_direct == gi.Direct.CCW:
+            self.required = cnt_side * 2
+
+        elif game.info.sow_direct == gi.Direct.CW:
+            self.required = cnt_side[::-1] * 2
+
+        else:
+            raise NotImplementedError(
+                "RAM children only supported for CW and CCW sow directs.")
+
+
+    def test(self, mdata):
+
+        loc = mdata.capt_start
+        return self.game.board[loc] >= self.required[loc]
+
+
 # %% child wrappers
 
 
@@ -384,10 +420,13 @@ def _add_child_type(game, deco):
     elif game.info.child_type == gi.ChildType.QUR:
         deco = QurChild(game, deco)
 
+    elif game.info.child_type == gi.ChildType.RAM:
+        deco = RamChild(game, deco)
+
     elif game.info.child_type not in (gi.ChildType.NORMAL,
                                       gi.ChildType.WEG):
         raise NotImplementedError(
-            f"ChildType {game.info.child_type} not implemented.")
+            f"ChildType {game.info.child_type} not implemented (make_child).")
 
     return deco
 

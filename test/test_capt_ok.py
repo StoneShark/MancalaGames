@@ -75,7 +75,8 @@ class TestSingleClasses:
         game.board[loc] = seeds
         game.child[loc] = child
 
-        cok = capt_ok.CaptNeedSeedsNotChild(game, capt_ok.CaptTrue(game))
+        cok = capt_ok.CaptNotChild(game, capt_ok.CaptTrue(game))
+        cok = capt_ok.CaptNeedSeeds(game, cok)
 
         assert cok.capture_ok(None, loc) == eok
 
@@ -307,10 +308,14 @@ class TestCaptOk:
     def make_game(self):
 
         def _make_game (turn, seeds, child, unlocked, game_options):
+            # added child_type because it was previously included in
+            # the unconditional deco
 
             game_consts = gconsts.GameConsts(nbr_start=4, holes=2)
             game_info = gi.GameInfo(sow_stores=gi.SowStores.OWN,
                                     stores=True,
+                                    child_type=gi.ChildType.NORMAL,
+                                    child_cvt=3,
                                     **game_options,
                                     nbr_holes=game_consts.holes,
                                     rules=mancala.Mancala.rules)
@@ -339,4 +344,5 @@ class TestCaptOk:
 
         game = make_game(case.turn, case.seeds, case.child, case.unlocked,
                          GPARAMS[method])
-        assert game.deco.capt_ok.capture_ok(None, case.loc) == getattr(case, method)
+        assert game.deco.capt_basic.capture_ok(None, case.loc)  \
+                        == getattr(case, method)

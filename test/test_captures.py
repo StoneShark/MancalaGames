@@ -4,6 +4,7 @@ Created on Wed Sep 27 08:31:23 2023
 @author: Ann"""
 
 import collections
+import enum
 
 import pandas as pd
 import pytest
@@ -27,6 +28,7 @@ TEST_COVERS = ['src\\capturer.py']
 T = True
 F = False
 N = None
+R = gi.NO_CH_OWNER
 
 
 # %% read test cases
@@ -405,7 +407,7 @@ class TestCaptTable:
         mdata.seeds = 3
         # print('params', game.params_str(), sep='\n')
         print('capturer', game.deco.capturer, sep='\n')
-        # print('capt_ok', game.deco.capt_ok, sep='\n')
+        # print('capt_basic', game.deco.capt_basic, sep='\n')
         print(game)
 
         game.deco.capturer.do_captures(mdata)
@@ -941,6 +943,45 @@ class TestQur:
             assert tuple(game.board) == mdata.board
 
 
+class TestRam:
+
+    @pytest.fixture
+    def game(self):
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
+        game_info = gi.GameInfo(stores=True,
+                                child_type=gi.ChildType.RAM,
+                                evens=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game =  mancala.Mancala(game_consts, game_info)
+        return game
+
+    CASES = [([1, 2, 4, 5, 8, 7, 6, 5],
+              [N, R, R, N, N, R, N, N],
+              [1, 2, 0, 5, 8, 7, 6, 5],
+              [N, N, N, R, R, R, R, R]),
+             ]
+
+    @pytest.mark.parametrize('board, rams, eboard, erams',
+                             CASES)
+    def test_ram(self, game, board, rams, eboard, erams):
+
+        game.board = board
+        game.child = rams
+
+        mdata = move_data.MoveData(game, None)
+        mdata.direct = game.info.sow_direct
+        mdata.capt_start = 2
+        mdata.board = tuple(game.board)
+        mdata.seeds = 2
+
+        game.deco.capturer.do_captures(mdata)
+
+        assert game.board == eboard
+        assert game.child == erams
+
+
 class TestCaptureToChild:
     """Test CaptureToChild with all child types and with a picker"""
 
@@ -1280,6 +1321,7 @@ class TestPickCross:
         game_consts = gconsts.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(stores=True,
                                 pickextra=gi.CaptExtraPick.PICKCROSS,
+                                moveunlock=True,
                                 **options,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
@@ -1308,6 +1350,8 @@ class TestPickCross:
         game_consts = gconsts.GameConsts(nbr_start=3, holes=3)
         game_info = gi.GameInfo(stores=True,
                                 pickextra=gi.CaptExtraPick.PICKCROSS,
+                                child_type=gi.ChildType.NORMAL,
+                                child_cvt=3,
                                 **options,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
@@ -1472,6 +1516,8 @@ class TestPickLastSeeds:
         game_info = gi.GameInfo(stores=True,
                                 capt_on=[4],
                                 sow_rule=gi.SowRule.OWN_SOW_CAPT_ALL,
+                                child_type=gi.ChildType.NORMAL,
+                                child_cvt=3,
                                 pickextra=picker,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
@@ -1685,13 +1731,20 @@ class TestBadEnums:
 
     def test_bad_child_type(self):
 
+        class BadChild(enum.IntEnum):
+
+            BAD = 25
+
+            def child_but_not_ram(self):
+                return False
+
         game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[4],
                                 stores=True,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
-        object.__setattr__(game_info, 'child_type', 12)
+        object.__setattr__(game_info, 'child_type', BadChild.BAD)
 
         with pytest.raises(NotImplementedError):
             mancala.Mancala(game_consts, game_info)

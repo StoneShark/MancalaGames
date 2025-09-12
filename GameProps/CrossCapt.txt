@@ -64,7 +64,7 @@
       "sow_stores": [ 1, 2 ],
       "end_cond": [ 0, 1, 2 ]
    },
-   "rules": "Hanson, Sue and Jon. \"All about Mancala: It's History and How to Play\". 2003. p25.",
+   "rules": "Hanson, Sue and Jon. \"All about Mancala: It's History and How to Play\". 2003. p33.",
    "origin": "modern",
    "region": "Americas"
 }

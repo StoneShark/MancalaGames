@@ -108,6 +108,13 @@ STATE = {'start':
                              child=(N, N, F, N, N, N, N, T),
                              store=(0, 0)),
 
+        'ram_child':
+            utils.make_state(board=(0, 0, 9, 0, 0, 0, 1, 6),
+                             child=(N, N, gi.NO_CH_OWNER, N,
+                                    N, N, N, gi.NO_CH_OWNER),
+                             store=(0, 0)),
+
+
         'owners':
             utils.make_state(board=(2, 0, 2, 1, 2, 0, 2, 2),
                              owner=(T, F, T, F, T, T, F, F),
@@ -277,6 +284,19 @@ CASES = [
 
     ('children', 'childF', 'DivvySeedsChildOnly',
      [11, 0], [0, 0, 11, 0, 0, 0, 0, 0], NO_CHANGE, F),
+
+    # test RAM children seeds being ignored
+    ('children', 'ram_child', 'TakeOwnSeeds',
+     [0, 1], [0, 0, 9, 0, 0, 0, 0, 6], [0, 1], F),
+
+    ('children', 'ram_child', 'TakeOnlyChildNStores',
+     [0, 0], [0, 0, 9, 0, 0, 0, 0, 6], [0, 0], T),
+
+    ('child_lmover', 'ram_child', 'TakeAllUnclaimed',
+     [1, 0], [0, 0, 9, 0, 0, 0, 0, 6], [1, 0], F),
+
+    ('children', 'ram_child', 'DivvySeedsStores',
+     [0, 1], [0, 0, 9, 0, 0, 0, 0, 6], [0, 1], F),
 
     ]
 

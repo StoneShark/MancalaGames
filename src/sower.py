@@ -1,10 +1,19 @@
 # -*- coding: utf-8 -*-
 """Decos to preform the seed sowing step, that is, increment
 around the game board, dropping one seed into each hole.
-This file contains the basic sowing decos--anything that is
-not associated with mlap sowing.
 
 The incrementer deco is used to select the increment options.
+
+Grouped into
+    single sowers
+    presow capture sowers
+    continuer testers for mlap sowing
+    end lap operations
+    multilap sowers
+    prescribed opening sowers
+
+An interface is also provided to determine if an optional
+animation message should be displayed at the game start.
 
 Created on Fri Apr  7 15:57:47 2023
 @author: Ann"""
@@ -235,11 +244,11 @@ class SowCaptOwned(SowMethodIf):
 
     OWN_SOW_CAPT_ALL:
 
-    LAPPER: Owner's capture seeds with capt_ok, until the last seed.
+    LAPPER: Owner's capture seeds with capt_basic, until the last seed.
     The hole that the last seed is sown into may be captured from
     the  opponent's hole (let the capturer deal with it).
 
-    LAPPER_NEXT: Any seed with capt_ok is captured by the hole
+    LAPPER_NEXT: Any seed with capt_basic is captured by the hole
     owner.
 
     SOW_CAPT_ALL:
@@ -294,7 +303,7 @@ class SowCaptOwned(SowMethodIf):
 
             if (all(cfunc(scnt, loc, self.game.turn) for cfunc in self.conds)
                     and not self.game.inhibitor.stop_me_capt(self.game.turn)
-                    and self.game.deco.capt_ok.capture_ok(mdata, loc)):
+                    and self.game.deco.capt_basic.capture_ok(mdata, loc)):
 
                 captor = self.captor(loc, self.game.turn)
                 game_log.step(f'Capture from {loc} by {captor}')
@@ -433,17 +442,17 @@ class SowOppCaptsLast(SowMethodIf):
 
         incr = self.game.deco.incr.incr
         opp_side = self.game.cts.opp_side
-        capt_ok = self.game.deco.capt_ok.capture_ok
+        capt_basic = self.game.deco.capt_basic.capture_ok
 
         loc = mdata.cont_sow_loc
         opp_took = 0
         for rem_seeds in range(mdata.seeds, 0, -1):
 
             loc = incr(loc, mdata.direct, mdata.cont_sow_loc)
-            self.game.board[loc] += 1    # for capt_ok test
+            self.game.board[loc] += 1    # for capt_basic test
 
             if (opp_side(self.game.turn, loc)
-                    and (rem_seeds > 1 or not capt_ok(mdata, loc))):
+                    and (rem_seeds > 1 or not capt_basic(mdata, loc))):
                 self.game.board[loc] -= 1
                 self.game.store[not self.game.turn] += 1
                 opp_took += 1
@@ -801,13 +810,13 @@ class ContIfBasicCapt(LapContinuerIf):
     combined with other capture types.
     If did a capture, continue lapping with the next hole.
 
-    Need to use capt_ok to test for the capture, because
+    Need to use capt_basic to test for the capture, because
     the previous sowing might have already set mdata.captured
     via LAP_CAPT_OPP_GETS."""
 
     def do_another_lap(self, mdata):
 
-        if not self.game.deco.capt_ok.capture_ok(mdata, mdata.capt_start):
+        if not self.game.deco.capt_basic.capture_ok(mdata, mdata.capt_start):
             return self.decorator.do_another_lap(mdata)
 
         self.game.capture_seeds(mdata)
@@ -862,7 +871,7 @@ class StopCaptureSeeds(LapContinuerIf):
     def do_another_lap(self, mdata):
 
         if (not self.game.inhibitor.stop_me_capt(self.game.turn)
-                and self.game.deco.capt_ok.capture_ok(mdata, mdata.capt_start)):
+                and self.game.deco.capt_basic.capture_ok(mdata, mdata.capt_start)):
             game_log.add('MLap stop for capture')
             return False
         return self.decorator.do_another_lap(mdata)
@@ -870,7 +879,7 @@ class StopCaptureSeeds(LapContinuerIf):
 
 class StopCaptureSimul(LapContinuerIf):
     """A wrapper: stop based on simulated capture.
-    Use this instead of StopCaptureSeeds when capt_ok
+    Use this instead of StopCaptureSeeds when capt_basic
     or StopSingleSeeds are not enough to stop for capture."""
 
     def do_another_lap(self, mdata):
@@ -1308,7 +1317,7 @@ def _build_lap_cont(game):
 
     if game.info.mlaps == gi.LapSower.LAPPER:
 
-        if game.info.child_type:
+        if game.info.child_type.child_but_not_ram():
             lap_cont = ChildLapCont(game)
 
         elif game.info.sow_rule in (gi.SowRule.SOW_BLKD_DIV,
@@ -1319,7 +1328,7 @@ def _build_lap_cont(game):
 
         lap_cont = _add_capt_stop_lap_cont(game, lap_cont)
 
-        if game.info.child_type:
+        if game.info.child_type.child_but_not_ram():
             lap_cont = StopOnChild(game, lap_cont)
 
     elif game.info.mlaps == gi.LapSower.LAPPER_NEXT:

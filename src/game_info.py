@@ -26,6 +26,8 @@ PLAYER_NAMES = ['South', 'North']
 
 DIFF_LEVELS = 4
 
+NO_CH_OWNER = 3   # children that do not have owner's
+
 # %%  errors
 
 class GameInfoError(Exception):
@@ -176,6 +178,12 @@ class ChildType(enum.IntEnum):
     WEG = 4
     BULL = 5
     QUR = 6
+    RAM = 7
+
+    def child_but_not_ram(self):
+        """Child type is not NOCHILD or RAM."""
+
+        return self and self != self.RAM
 
 
 @enum.unique

@@ -820,6 +820,83 @@ For the center hole, the mouse button used to start the move selects the sow dir
 <p><b class="enum">Rules</b>: <a href="https://mancala.fandom.com/wiki/Cross-Wari" target="_blank">https://mancala.fandom.com/wiki/Cross-Wari</a>
 <p><b class="enum">Origin</b>: modern
 <p><b class="enum">Region</b>: Americas
+<h3 id="CrossCapt" class="game_desc">CrossCapt</h3>
+<p>Sow counter-clockwise in single lap. Sow own store. Repeat turn if last seed is sown into the player's own store.
+<p>Cross capture when seed lands in empty hole on your side of the board.
+<p>If you clear all of your own seeds, you capture all of your opponent's seeds that are still in play and the game ends.
+<p>Goal: capture the most seeds (more than half).
+<p>Variations:
+<ul><li class="helptext">
+Ending 2: End the game when your opponent does not have any seeds at the end of your own turn (<a href="game_params.html#end_cond">END_COND</a> CLEARED_OPP).
+<li class="helptext">
+Ending 3: End when one player has collected more than half of the seeds or the board is clear and each player has half the seeds (<a href="game_params.html#end_cond">END_COND</a> NO_ADDTL).
+<li class="helptext">
+<nolink>CrossCapt::Two: Use multilap sowing but only when the final seed lands in a occupied hole on your own side of the board. If your opponent does not have any seeds, you must share, if you can. Otherwise the game ends and the player with the most seeds wins.
+<li class="helptext">
+<nolink>CrossCapt::Three: Use multilap sowing but only when the final seed lands in an occupied on your opponent's side of the board. The game ends when your own holes are cleared.
+<li class="helptext">
+<nolink>CrossCapt::Four: Cross capture initiated from a single seed on your opponent's side of the board. 
+<li class="helptext">
+<nolink>CrossCapt::Five: Cross capture initiated from either side of the board. The does not end until one person has collected more than half the seeds, or the board is cleared.
+<li class="helptext">
+<nolink>CrossCapt::Five_No_Sides:  <nolink>CrossCapt::Five but plays may be made from any hole.
+<li class="helptext">
+<nolink>CrossCapt::Five_UDIR: <nolink>CrossCapt::Five but the player may choose the direction of sow on each move. As specified in the rules (Hanson) each player's first move (including any repeat turns) are sown counter-clockwise, but Mancala Games does not support changing User Directed Holes during a game.
+<li class="helptext">
+capture side of own, opposite or both.
+<li class="helptext">
+take the final seed sown into an empty hole on your own side of the board even when there is no capture (<a href="game_params.html#xcpickown">XCPICKOWN</a> ALWAYS).
+<li class="helptext">
+sow in multiple-laps (LAPPER) possibly limiting lap continueing to one side of the board.
+<li class="helptext">
+sow both stores.
+</ul>
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OPP_SIDE</p>
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#end_cond">End Game Condition</a>: CLEARED_OWN</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_stores">Sow Store</a>: OWN</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#unclaimed">Unclaimed Seeds at End</a>: LAST_MOVER</p>
+    <p class="param"><a href="game_params.html#xcpickown">Own Seed on Xcapture</a>: PICK_ON_CAPT</p>
+  </div>
+</div>
+<p><b class="enum">Rules</b>: Hanson, Sue and Jon. "All about Mancala: It's History and How to Play". 2003. p25.
+<p><b class="enum">Origin</b>: modern
+<p><b class="enum">Region</b>: Americas
+<h3 id="CrossCapt_Six" class="game_desc">CrossCapt_Six</h3>
+<p>Sow counter-clockwise in single lap. Sow own store. Repeat turn if last seed is sown into the player's own store.
+<p>Rams are made when a hole has sufficient seeds to sow the entire opposite side of the board and cycle back on to your own side. They are marked with ˃. Moves may not start from these holes and they are not counted in the game tally. These holes can be captured; when captured, they are no longer rams.
+<p>Cross capture when seed lands in empty hole.
+<p>If you clear all of your own seeds, you capture all of your opponent's seeds that are still in play and the game ends.
+<p>Goal: capture the most seeds (more than half).
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#child_type">Type of Children</a>: RAM</p>
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#end_cond">End Game Condition</a>: CLEARED_OWN</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_stores">Sow Store</a>: OWN</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#unclaimed">Unclaimed Seeds at End</a>: LAST_MOVER</p>
+    <p class="param"><a href="game_params.html#xcpickown">Own Seed on Xcapture</a>: PICK_ON_CAPT</p>
+  </div>
+</div>
+<p><b class="enum">Rules</b>: Hanson, Sue and Jon. "All about Mancala: It's History and How to Play". 2003. p40.
+<p><b class="enum">Origin</b>: modern
+<p><b class="enum">Region</b>: Americas
 <h3 id="Dabuda" class="game_desc">Dabuda</h3>
 <p>A multi-lap mancala, counter-clockwise sow. Sow must reach opp side or end in empty hole. 
 <p>Cross-capture when end in own hole with one seed. Pick own seed on capture. 
@@ -3233,42 +3310,25 @@ board size 10 holes per side
 <p><b class="enum">Region</b>: East Asia
 <h3 id="SimpleCapt" class="game_desc">SimpleCapt</h3>
 <p>Sow counter-clockwise in single lap. Sow own store. Repeat turn if last seed is sown into the player's own store.
-<p>Cross capture when seed lands in empty hole on your side of the board.
 <p>If you clear all of your own seeds, you capture all of your opponent's seeds that are still in play and the game ends.
 <p>Goal: capture the most seeds (more than half).
 <p>Variations:
 <ul><li class="helptext">
-Ending 2: End the game when your opponent does not have any seeds at the end of your own turn (<a href="game_params.html#end_cond">END_COND</a> CLEARED_OPP).
+<nolink>SimpleCapt::Two: Allow moves from any holes on the board.
 <li class="helptext">
-Ending 3: End when one player has collected more than half of the seeds or the board is clear and each player has half the seeds (<a href="game_params.html#end_cond">END_COND</a> NO_ADTL).
+<nolink>SimpleCapt::Three: Use multilap sowing but only when the final seed lands in an occupied on your own side of the board. If a seed ends in an empty hole on your opponent's side of the board, capture the seeds in their store.  The game ends when your own holes are cleared.
 <li class="helptext">
-<a href="about_games.html#SimpleCapt">SimpleCapt</a>:: Use multilap sowing but only when the final seed lands in a occupied hole on your own side of the board. If your opponent does not have any seeds, you must share, if you can. Otherwise the game ends and the player with the most seeds wins.
-<li class="helptext">
-<a href="about_games.html#SimpleCapt">SimpleCapt</a>:: Use multilap sowing but only when the final seed lands in an occupied on your opponent's side of the board. The game ends when your own holes are cleared.
-<li class="helptext">
-<a href="about_games.html#SimpleCapt">SimpleCapt</a>:: Cross capture initiated from a single seed on your opponent's side of the board. 
-<li class="helptext">
-<a href="about_games.html#SimpleCapt">SimpleCapt</a>:: Cross capture initiated from either side of the board. The does not end until one person has collected more than half the seeds, or the board is cleared.
-<li class="helptext">
-<a href="about_games.html#SimpleCapt">SimpleCapt</a>::  <a href="about_games.html#SimpleCapt">SimpleCapt</a>:: but plays may be made from any hole.
-<li class="helptext">
-<a href="about_games.html#SimpleCapt">SimpleCapt</a>:: <a href="about_games.html#SimpleCapt">SimpleCapt</a>:: but the player may choose the direction of sow on each move. As specified in the rules (Hanson) the first each player's first move (including any repeat turns) are sown counter-clockwise, but Mancala Games does not support changing User Directed hole during a game.
-<li class="helptext">
-capture side of own, opposite or both.
-<li class="helptext">
-take the final seed sown into an empty hole on your own side of the board even when there is no capture (<a href="game_params.html#xcpickown">XCPICKOWN</a> ALWAYS).
+last stone capture
 <li class="helptext">
 sow in multiple-laps (LAPPER) possibly limiting lap continueing to one side of the board.
-<li class="helptext">
-sow both stores.
 </ul>
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  6</p>
     <p class="param">Start seeds:  4</p>
     <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
-    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OPP_SIDE</p>
-    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#capt_max">Capture Max</a>: 1</p>
+    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: BOTH</p>
     <p class="param"><a href="game_params.html#end_cond">End Game Condition</a>: CLEARED_OWN</p>
   </div>
   <div class="column2">
@@ -3276,7 +3336,6 @@ sow both stores.
     <p class="param"><a href="game_params.html#sow_stores">Sow Store</a>: OWN</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
     <p class="param"><a href="game_params.html#unclaimed">Unclaimed Seeds at End</a>: LAST_MOVER</p>
-    <p class="param"><a href="game_params.html#xcpickown">Own Seed on Xcapture</a>: PICK_ON_CAPT</p>
   </div>
 </div>
 <p><b class="enum">Rules</b>: Hanson, Sue and Jon. "All about Mancala: It's History and How to Play". 2003. p25.
@@ -3821,6 +3880,8 @@ any odd number of seeds
     <p class="param"><a href="#Bule Perga">Bule Perga</a></p>
     <p class="param"><a href="#Centering">Centering</a></p>
     <p class="param"><a href="#Cow">Cow</a></p>
+    <p class="param"><a href="#CrossCapt">CrossCapt</a></p>
+    <p class="param"><a href="#CrossCapt_Six">CrossCapt_Six</a></p>
     <p class="param"><a href="#Cross-Kalah">Cross-Kalah</a></p>
     <p class="param"><a href="#Cross-Wari">Cross-Wari</a></p>
     <p class="param"><a href="#Dabuda">Dabuda</a></p>
@@ -3839,10 +3900,10 @@ any odd number of seeds
     <p class="param"><a href="#Gabata">Gabata</a></p>
     <p class="param"><a href="#Gamacha">Gamacha</a></p>
     <p class="param"><a href="#Gelech">Gelech</a></p>
-    <p class="param"><a href="#Giuthi">Giuthi</a></p>
-    <p class="param"><a href="#Goat">Goat</a></p>
   </div>
   <div class="column3">
+    <p class="param"><a href="#Giuthi">Giuthi</a></p>
+    <p class="param"><a href="#Goat">Goat</a></p>
     <p class="param"><a href="#Halusa">Halusa</a></p>
     <p class="param"><a href="#Hoyito I">Hoyito I</a></p>
     <p class="param"><a href="#Hoyito II">Hoyito II</a></p>
@@ -3884,10 +3945,10 @@ any odd number of seeds
     <p class="param"><a href="#NS_Kalah">NS_Kalah</a></p>
     <p class="param"><a href="#Nsa Isong">Nsa Isong</a></p>
     <p class="param"><a href="#NumNum">NumNum</a></p>
-    <p class="param"><a href="#Obridjie">Obridjie</a></p>
-    <p class="param"><a href="#Ohojichi">Ohojichi</a></p>
   </div>
   <div class="column3">
+    <p class="param"><a href="#Obridjie">Obridjie</a></p>
+    <p class="param"><a href="#Ohojichi">Ohojichi</a></p>
     <p class="param"><a href="#Ohvulhu">Ohvulhu</a></p>
     <p class="param"><a href="#Olinda">Olinda</a></p>
     <p class="param"><a href="#Olowuka">Olowuka</a></p>

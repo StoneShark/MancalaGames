@@ -283,7 +283,7 @@ Additional child creation requirements may be set. These are in addition to loca
 - NOT_1ST_OPP: Don't make a child in the first hole on the opponent's side with one seed. Not supported for territory games or games which employ blocks.
 
 <param child_type>
-Games with children allow players to claim holes. These child holes are an extension of the stores and seeds in them count towards a win. Making a child stops any multilap sowing, moves cannot start from children, and they cannot be captured (except for special rules associated with WEGs). Children may be created as allowed by both CHILD_LOCS and CHILD_RULE. 
+For all child_types other than RAMs: games with children allow players to claim holes. These child holes are an extension of the stores and seeds in them count towards a win. Making a child stops any multilap sowing, moves cannot start from children, and they cannot be captured (except for special rules associated with WEGs). Children may be created as allowed by both CHILD_LOCS and CHILD_RULE. 
 
 - NOCHILD: children are not used.
 
@@ -300,6 +300,8 @@ Games with children allow players to claim holes. These child holes are an exten
 - BULL: create one bull if final seed sows to CHILD_CVT, create two bulls if the final two seeds are sown to CHILD_CVT-1 and CHILD_CVT (in either order).
 
 - QUR: when a seed is sown into an empty hole and the opposite hole contains CHILD_CVT, create children in both holes: final seed location and opposite. Generally used with SOW_RULE of OWN_SIDE_ONLY.
+
+- RAM: rams are created in any hole that would cycle the board back to your own side of the board when sown. Moves may not start from rams, and seeds in rams do count in the game outcome, but they may be captured. Rams are cleared when captured.  Ram type children ignore the CHILD_CVT setting.
 
 
 <param crosscapt>

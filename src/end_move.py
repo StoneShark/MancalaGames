@@ -642,7 +642,7 @@ class NoOutcomeChange(EndTurnIf):
         be included."""
         # pylint: disable=too-many-branches
 
-        if game.info.child_type:
+        if game.info.child_type.child_but_not_ram():
             # presence of children checked at play-time
             min_needed = game.info.child_cvt
         else:
@@ -1115,7 +1115,8 @@ def _add_no_change(game, ender):
             ginfo.pickextra == gi.CaptExtraPick.PICK2XLASTSEEDS,
 
             # seeds only moved to children, no stores
-            game.info.child_type and not game.info.stores,
+            (game.info.child_type.child_but_not_ram()
+             and not game.info.stores),
 
             # if can only capture from children
             (ginfo.child_type == gi.ChildType.WEG
@@ -1211,7 +1212,7 @@ def _build_ender(game):
     ender = EndTurnNotPlayable(game, ender)
     ender = _add_no_change(game, ender)
 
-    if game.info.child_type:
+    if game.info.child_type.child_but_not_ram():
         sclaimer = claimer.ChildClaimSeeds(game)
     else:
         sclaimer = claimer.ClaimSeeds(game)
@@ -1223,7 +1224,8 @@ def _build_ender(game):
     if game.info.rounds:
         ender = _add_round_ender(game, ender, sclaimer)
 
-    if game.info.child_type and not game.info.stores:
+    if (game.info.child_type.child_but_not_ram()
+            and not game.info.stores):
         ender = ChildNoStoresEnder(game, ender)
 
     return ender

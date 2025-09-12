@@ -52,7 +52,8 @@ class TestManDeco:
         assert game.deco.sower
         assert game.deco.ender
         assert game.deco.quitter
-        assert game.deco.capt_ok
+        assert game.deco.capt_basic
+        assert game.deco.capt_check
         assert game.deco.capturer
         assert game.deco.gstr
         assert game.deco.make_child
@@ -180,30 +181,30 @@ class TestManDeco:
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
-        capt_ok_deco = game.deco.capt_ok
+        capt_basic_deco = game.deco.capt_basic
 
         # confirm expected structure of deco chain
-        assert isinstance(capt_ok_deco,
-                          capt_ok.CaptNeedSeedsNotChild), 'Test conditions changed'
-        assert isinstance(capt_ok_deco.decorator,
+        assert isinstance(capt_basic_deco,
+                          capt_ok.CaptNeedSeeds), 'Test conditions changed'
+        assert isinstance(capt_basic_deco.decorator,
                           capt_ok.CaptSideOk), 'Test conditions changed'
-        assert isinstance(capt_ok_deco.decorator.decorator,
+        assert isinstance(capt_basic_deco.decorator.decorator,
                           capt_ok.CaptOn), 'Test conditions changed'
-        assert isinstance(capt_ok_deco.decorator.decorator.decorator,
+        assert isinstance(capt_basic_deco.decorator.decorator.decorator,
                           capt_ok.CaptTrue), 'Test conditions changed'
 
-        game.deco.insert_deco('capt_ok', capt_ok.CaptOn,
+        game.deco.insert_deco('capt_basic', capt_ok.CaptOn,
                                capt_ok.CaptEvens(game))
 
-        assert isinstance(capt_ok_deco,
-                          capt_ok.CaptNeedSeedsNotChild)
-        assert isinstance(capt_ok_deco.decorator,
+        assert isinstance(capt_basic_deco,
+                          capt_ok.CaptNeedSeeds)
+        assert isinstance(capt_basic_deco.decorator,
                           capt_ok.CaptSideOk)
-        assert isinstance(capt_ok_deco.decorator.decorator,
+        assert isinstance(capt_basic_deco.decorator.decorator,
                           capt_ok.CaptEvens)
-        assert isinstance(capt_ok_deco.decorator.decorator.decorator,
+        assert isinstance(capt_basic_deco.decorator.decorator.decorator,
                           capt_ok.CaptOn)
-        assert isinstance(capt_ok_deco.decorator.decorator.decorator.decorator,
+        assert isinstance(capt_basic_deco.decorator.decorator.decorator.decorator,
                           capt_ok.CaptTrue)
 
 
@@ -221,20 +222,20 @@ class TestManDeco:
     def test_append_deco_1(self, game):
         """test usual case."""
 
-        deco = game.deco.capt_ok
+        deco = game.deco.capt_basic
         assert isinstance(deco,
-                          capt_ok.CaptNeedSeedsNotChild), 'Test conditions changed'
+                          capt_ok.CaptNeedSeeds), 'Test conditions changed'
         assert isinstance(deco.decorator,
                           capt_ok.CaptOn), 'Test conditions changed'
         assert isinstance(deco.decorator.decorator,
                           capt_ok.CaptTrue), 'Test conditions changed'
 
-        game.deco.append_deco('capt_ok',
-                              (capt_ok.CaptOn, capt_ok.CaptNeedSeedsNotChild),
+        game.deco.append_deco('capt_basic',
+                              (capt_ok.CaptOn, capt_ok.CaptNeedSeeds),
                                capt_ok.CaptEvens(game))
 
-        deco = game.deco.capt_ok
-        assert isinstance(deco, capt_ok.CaptNeedSeedsNotChild)
+        deco = game.deco.capt_basic
+        assert isinstance(deco, capt_ok.CaptNeedSeeds)
         assert isinstance(deco.decorator, capt_ok.CaptOn)
         assert isinstance(deco.decorator.decorator, capt_ok.CaptEvens)
         assert isinstance(deco.decorator.decorator.decorator,
@@ -248,21 +249,21 @@ class TestManDeco:
         the deco chain.
         Test replacing the head of the deco chain."""
 
-        deco = game.deco.capt_ok
+        deco = game.deco.capt_basic
         assert isinstance(deco,
-                          capt_ok.CaptNeedSeedsNotChild), 'Test conditions changed'
+                          capt_ok.CaptNeedSeeds), 'Test conditions changed'
         assert isinstance(deco.decorator,
                           capt_ok.CaptOn), 'Test conditions changed'
         assert isinstance(deco.decorator.decorator,
                           capt_ok.CaptTrue), 'Test conditions changed'
 
-        game.deco.append_deco('capt_ok',
+        game.deco.append_deco('capt_basic',
                               (capt_ok.CaptOn),
                               capt_ok.CaptEvens(game))
 
-        deco = game.deco.capt_ok
+        deco = game.deco.capt_basic
         assert isinstance(deco, capt_ok.CaptEvens)
-        assert isinstance(deco.decorator, capt_ok.CaptNeedSeedsNotChild)
+        assert isinstance(deco.decorator, capt_ok.CaptNeedSeeds)
         assert isinstance(deco.decorator.decorator, capt_ok.CaptOn)
         assert isinstance(deco.decorator.decorator.decorator,
                           capt_ok.CaptTrue)

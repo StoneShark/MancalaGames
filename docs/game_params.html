@@ -716,7 +716,7 @@ is included after the parameter sections.
 <p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Sow
 
-<p>Games with children allow players to claim holes. These child holes are an extension of the stores and seeds in them count towards a win. Making a child stops any multilap sowing, moves cannot start from children, and they cannot be captured (except for special rules associated with WEGs). Children may be created as allowed by both <a href="game_params.html#child_locs">CHILD_LOCS</a> and <a href="game_params.html#child_rule">CHILD_RULE</a>. 
+<p>For all child_types other than RAMs: games with children allow players to claim holes. These child holes are an extension of the stores and seeds in them count towards a win. Making a child stops any multilap sowing, moves cannot start from children, and they cannot be captured (except for special rules associated with WEGs). Children may be created as allowed by both <a href="game_params.html#child_locs">CHILD_LOCS</a> and <a href="game_params.html#child_rule">CHILD_RULE</a>. 
 <ol start=0><li class="helptext">
 <b class="enum">NOCHILD</b>: children are not used.
 <li class="helptext">
@@ -732,6 +732,8 @@ is included after the parameter sections.
 <b class="enum">BULL</b>: create one bull if final seed sows to <a href="game_params.html#child_cvt">CHILD_CVT</a>, create two bulls if the final two seeds are sown to CHILD_CVT-1 and <a href="game_params.html#child_cvt">CHILD_CVT</a> (in either order).
 <li class="helptext">
 <b class="enum">QUR</b>: when a seed is sown into an empty hole and the opposite hole contains <a href="game_params.html#child_cvt">CHILD_CVT</a>, create children in both holes: final seed location and opposite. Generally used with <a href="game_params.html#sow_rule">SOW_RULE</a> of OWN_SIDE_ONLY.
+<li class="helptext">
+<b class="enum">RAM</b>: rams are created in any hole that would cycle the board back to your own side of the board when sown. Moves may not start from rams, and seeds in rams do count in the game outcome, but they may be captured. Rams are cleared when captured.  Ram type children ignore the <a href="game_params.html#child_cvt">CHILD_CVT</a> setting.
 </ol>
 <h4 id="child_cvt"> Child Convert Count </h4>
 <p class="pdesc">Location in Config Files: game_info : child_cvt

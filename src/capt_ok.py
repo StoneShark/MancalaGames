@@ -143,17 +143,28 @@ class CaptUnlocked(CaptOkIf):
         return self.decorator.capture_ok(mdata, loc)
 
 
-class CaptNeedSeedsNotChild(CaptOkIf):
-    """If there are no seeds or loc is a designated child, can't capture.
-    Stack this one on top, so it's called first.
-    Either condition should end a sequence of captures.
-    Blocked holes will have zero seeds."""
+class CaptNotChild(CaptOkIf):
+    """If  loc is a designated child, can't capture."""
 
     def capture_ok(self, mdata,  loc):
         """Return False if capture from loc is not ok,
         otherwise delegate."""
 
-        if not self.game.board[loc] or self.game.child[loc] is not None:
+        if self.game.child[loc] is not None:
+            return False
+
+        return self.decorator.capture_ok(mdata, loc)
+
+
+class CaptNeedSeeds(CaptOkIf):
+    """If there are no seeds, can't capture.
+    Stack this one on top, so it's called first.."""
+
+    def capture_ok(self, mdata,  loc):
+        """Return False if capture from loc is not ok,
+        otherwise delegate."""
+
+        if not self.game.board[loc]:
             return False
 
         return self.decorator.capture_ok(mdata, loc)
@@ -161,8 +172,8 @@ class CaptNeedSeedsNotChild(CaptOkIf):
 
 # %%  build deco chain
 
-def deco_capt_ok(game):
-    """Build the capture ok chain based on the params."""
+def deco_capt_basic(game):
+    """Build the basic capture check chain based on the params"""
 
     capt_ok = CaptTrue(game)
 
@@ -185,6 +196,27 @@ def deco_capt_ok(game):
         # do not include this for gi.AllowRule.MOVE_ALL_HOLES_FIRST games
         capt_ok = CaptUnlocked(game, capt_ok)
 
-    capt_ok = CaptNeedSeedsNotChild(game, capt_ok)
+    if game.info.child_type.child_but_not_ram():
+        capt_ok = CaptNotChild(game, capt_ok)
+
+    capt_ok = CaptNeedSeeds(game, capt_ok)
 
     return capt_ok
+
+
+def deco_capt_check(game):
+    """The default capture check conditions under which we can
+    never capture."""
+
+    capt_check = CaptTrue(game)
+
+    if game.info.moveunlock:
+        # do not include this for gi.AllowRule.MOVE_ALL_HOLES_FIRST games
+        capt_check = CaptUnlocked(game, capt_check)
+
+    if game.info.child_type.child_but_not_ram():
+        capt_check = CaptNotChild(game, capt_check)
+
+    capt_check = CaptNeedSeeds(game, capt_check)
+
+    return capt_check

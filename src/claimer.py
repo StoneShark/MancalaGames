@@ -127,6 +127,9 @@ class TakeOwnSeeds(ClaimSeedsIf):
             elif self.game.child[loc] is False:
                 seeds[False] += self.game.board[loc]
 
+            elif self.game.child[loc] == gi.NO_CH_OWNER:
+                pass
+
             else:
                 self.game.store[self.game.owner[loc]] += self.game.board[loc]
                 self.game.board[loc] = 0
@@ -154,6 +157,9 @@ class TakeOnlyChildNStores(ClaimSeedsIf):
 
             elif self.game.child[loc] is False:
                 seeds[False] += self.game.board[loc]
+
+            elif self.game.child[loc] == gi.NO_CH_OWNER:
+                pass
 
             else:
                 self.game.board[loc] = 0
@@ -194,6 +200,9 @@ class TakeAllUnclaimed(ClaimSeedsIf):
             elif self.game.child[loc] is False:
                 seeds[False] += self.game.board[loc]
 
+            elif self.game.child[loc] == gi.NO_CH_OWNER:
+                pass
+
             else:
                 self.game.store[collector] += self.game.board[loc]
                 self.game.board[loc] = 0
@@ -224,6 +233,9 @@ class DivvySeedsStores(ClaimSeedsIf):
 
             elif self.game.child[loc] is False:
                 seeds[False] += self.game.board[loc]
+
+            elif self.game.child[loc] == gi.NO_CH_OWNER:
+                pass
 
             else:
                 unclaimed += self.game.board[loc]

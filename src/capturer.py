@@ -57,12 +57,11 @@ class CaptNone(CaptMethodIf):
 # %%  base capture decos
 
 class CaptBasic(CaptMethodIf):
-    """Capture on selected values, e.g. on basic capture
-    via capt_ok deco."""
+    """Capture on selected values, e.g. on basic capture deco."""
 
     def do_captures(self, mdata, capt_first=True):
 
-        if self.game.deco.capt_ok.capture_ok(mdata, mdata.capt_loc):
+        if self.game.deco.capt_basic.capture_ok(mdata, mdata.capt_loc):
 
             seeds = self.game.board[mdata.capt_loc]
             self.game.board[mdata.capt_loc] = 0
@@ -84,7 +83,7 @@ class CaptCross(CaptMethodIf):
 
         if (((capt_first and self.game.board[mdata.capt_loc] == 1)
                  or (not capt_first and not self.game.board[mdata.capt_loc]))
-                and self.game.deco.capt_ok.capture_ok(mdata, cross)):
+                and self.game.deco.capt_basic.capture_ok(mdata, cross)):
 
             seeds = self.game.board[cross]
             self.game.board[cross] = 0
@@ -104,12 +103,12 @@ class CaptNext(CaptMethodIf):
 
         if game.info.mlaps:
             self.seed_cond = lambda mdata, cfirst, loc, nloc: (
-                (cfirst and self.game.deco.capt_ok.capture_ok(mdata, loc))
+                (cfirst and self.game.deco.capt_basic.capture_ok(mdata, loc))
                 or (not cfirst
-                    and self.game.deco.capt_ok.capture_ok(mdata, nloc)))
+                    and self.game.deco.capt_basic.capture_ok(mdata, nloc)))
         else:
             self.seed_cond = lambda mdata, cfirst, loc, nloc: (
-                self.game.deco.capt_ok.capture_ok(mdata, nloc))
+                self.game.deco.capt_basic.capture_ok(mdata, nloc))
 
 
     def do_captures(self, mdata, capt_first=True):
@@ -141,9 +140,7 @@ class CaptTwoOut(CaptMethodIf):
     When used with LAPPER_NEXT, if the next hole for sowing is
     empty, stop lapping and capture any seeds across the gap.
 
-    capt_loc is updated for PickCross of capture location.
-
-    Don't use capt_ok because it might be setup for SOW_CAPT_ALL"""
+    capt_loc is updated for PickCross of capture location."""
 
     def __init__(self, game, decorator=None):
 
@@ -162,9 +159,7 @@ class CaptTwoOut(CaptMethodIf):
 
         if (self.seed_cond(self.game.board[loc])
                 and not self.game.board[loc_p1]
-                and self.game.board[loc_p2]
-                and self.game.child[loc_p2] is None
-                and self.game.unlocked[loc_p2]):
+                and self.game.deco.capt_check.capture_ok(mdata, loc_p2)):
 
             seeds = self.game.board[loc_p2]
             self.game.board[loc_p2] = 0
@@ -179,16 +174,14 @@ class CaptMatchOpp(CaptMethodIf):
     """If the number of seeds in the capture hole and the
     hole cross, capture them both."""
 
-    def test_match_opp(self, loc, cross):
+    def test_match_opp(self, mdata, loc, cross):
         """Determine if conditions for a match capt are
         met and not contraindicated at loc and cross"""
 
         return (self.game.board[loc]
                 and self.game.board[loc] == self.game.board[cross]
-                and self.game.child[loc] is None
-                and self.game.child[cross] is None
-                and self.game.unlocked[loc]
-                and self.game.unlocked[cross])
+                and self.game.deco.capt_check.capture_ok(mdata, loc)
+                and self.game.deco.capt_check.capture_ok(mdata, cross))
 
 
     def do_captures(self, mdata, capt_first=True):
@@ -196,7 +189,7 @@ class CaptMatchOpp(CaptMethodIf):
         loc = mdata.capt_loc
         cross = self.game.cts.cross_from_loc(mdata.capt_loc)
 
-        if self.test_match_opp(loc, cross):
+        if self.test_match_opp(mdata, loc, cross):
             seeds = self.game.board[loc]
             self.game.board[loc] = 0
             self.game.store[self.game.turn] += seeds
@@ -217,8 +210,7 @@ class CaptSingles(CaptMethodIf):
 
         for loc in range(self.game.cts.dbl_holes):
             if (self.game.board[loc] == 1
-                    and self.game.child[loc] is None
-                    and self.game.unlocked[loc]):
+                    and self.game.deco.capt_check.capture_ok(mdata, loc)):
 
                 seeds = self.game.board[loc]
                 self.game.board[loc] = 0
@@ -300,8 +292,8 @@ class CaptCrossPickOwnOnCapt(CaptMethodIf):
 
         if (capt_first
                 and mdata.captured is True
-                and self.game.child[mdata.capt_loc] is None
-                and self.game.unlocked[mdata.capt_loc]):
+                and self.game.deco.capt_check.capture_ok(mdata,
+                                                         mdata.capt_loc)):
 
             self.game.board[mdata.capt_loc] = 0
             self.game.store[self.game.turn] += 1
@@ -336,8 +328,8 @@ class CaptCrossPickOwn(CaptMethodIf):
         if (capt_first
                 and self.side_ok(self.game.turn, mdata.capt_loc)
                 and self.game.board[mdata.capt_loc] == 1
-                and self.game.child[mdata.capt_loc] is None
-                and self.game.unlocked[mdata.capt_loc]):
+                and self.game.deco.capt_check.capture_ok(mdata,
+                                                         mdata.capt_loc)):
 
             self.game.board[mdata.capt_loc] = 0
             self.game.store[self.game.turn] += 1
@@ -822,6 +814,35 @@ class MakeQur(CaptMethodIf):
         self.decorator.do_captures(mdata, capt_first)
 
 
+class MakeRam(CaptMethodIf):
+    """Check to see if any holes should be made a RAM
+    and if there was a capture unmake the RAM from
+    that location."""
+
+    def do_captures(self, mdata, capt_first=True):
+
+        with animator.one_step():
+            self.decorator.do_captures(mdata, capt_first)
+
+            capt_start = mdata.capt_start
+            for idx in range(self.game.cts.dbl_holes):
+
+                mdata.capt_start = idx
+                make_child = self.game.deco.make_child.test(mdata)
+                if make_child:
+                    if not self.game.child[mdata.capt_start]:
+                        game_log.add(f'Making Ram at {idx}')
+                        self.game.child[mdata.capt_start] = gi.NO_CH_OWNER
+                        mdata.capt_changed = True
+
+                elif self.game.child[mdata.capt_start]:
+                    game_log.add(f'Clearing Ram at {idx}')
+                    self.game.child[mdata.capt_start] = None
+                    mdata.capt_changed = True
+
+            mdata.capt_start = capt_start
+
+
 # %% pickers
 
 # all one enum so only one of these can be used
@@ -836,8 +857,7 @@ class PickFinal(CaptMethodIf):
         loc = mdata.capt_loc
         if (mdata.captured
                 and self.game.board[loc]
-                and self.game.child[loc] is None
-                and self.game.unlocked[loc]):
+                and self.game.deco.capt_check.capture_ok(mdata, loc)):
 
             self.game.store[self.game.turn] += self.game.board[loc]
             self.game.board[loc] = 0
@@ -854,8 +874,7 @@ class PickCross(CaptMethodIf):
         cross = self.game.cts.cross_from_loc(mdata.capt_loc)
         if (mdata.captured
                 and self.game.board[cross]
-                and self.game.child[cross] is None
-                and self.game.unlocked[cross]):
+                and self.game.deco.capt_check.capture_ok(mdata, cross)):
 
             self.game.store[self.game.turn] += self.game.board[cross]
             self.game.board[cross] = 0
@@ -873,7 +892,7 @@ class PickOppBasic(CaptMethodIf):
 
             msg = ''
             for loc in self.game.cts.get_opp_range(self.game.turn):
-                if self.game.deco.capt_ok.capture_ok(mdata, loc):
+                if self.game.deco.capt_basic.capture_ok(mdata, loc):
 
                     msg += f' {loc}'
                     self.game.store[self.game.turn] += self.game.board[loc]
@@ -934,8 +953,7 @@ class PickLastSeeds(CaptMethodIf):
         game = self.game
         seeds = sum(game.board[loc]
                     for loc in range(game.cts.dbl_holes)
-                    if game.child[loc] is None
-                        and game.unlocked[loc])
+                    if game.deco.capt_check.capture_ok(mdata, loc))
 
         if  0 < seeds <= self.seeds:
 
@@ -1080,9 +1098,12 @@ def _add_child_deco(game, capturer):
     elif game.info.child_type == gi.ChildType.QUR:
         capturer = MakeQur(game, capturer)
 
+    elif game.info.child_type == gi.ChildType.RAM:
+        capturer = MakeRam(game, capturer)
+
     else:
         raise NotImplementedError(
-                f"ChildType {game.info.child_type} not implemented.")
+            f"ChildType {game.info.child_type} not implemented (capturer).")
 
     return capturer
 
@@ -1185,7 +1206,7 @@ def deco_capturer(game):
     capturer = _add_capt_pick_deco(game, capturer)
     capturer = _add_grand_slam_deco(game, capturer)
 
-    if (game.info.child_type
+    if (game.info.child_type.child_but_not_ram()
             and not game.info.stores
             and game.info.any_captures):
         # if there is no capture mechanism, never need to move to children

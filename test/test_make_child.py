@@ -865,6 +865,78 @@ class TestWeg:
         assert game.deco.make_child.test(mdata) == eweg
 
 
+class TestRam:
+
+    CASES = [({'sow_direct': gi.Direct.CCW},
+              [7, 7, 2, 5, 3, 7, 2, 2],
+              [F, T, F, T, F, T, F, F]),
+
+             ({'sow_direct': gi.Direct.CW},
+              [7, 7, 2, 5, 7, 7, 7, 7],
+              [T, T, F, F, T, T, T, F]),
+
+             ({'sow_direct': gi.Direct.CCW,
+               'sow_stores':gi.SowStores.OWN},
+              [7, 7, 7, 7, 3, 7, 2, 2],
+              [F, F, T, T, F, F, F, F]),
+
+             ({'sow_direct': gi.Direct.CCW,
+               'sow_stores':gi.SowStores.BOTH},
+              [7, 7, 7, 7, 3, 7, 2, 2],
+              [F, F, F, T, F, F, F, F]),
+             ]
+
+    @pytest.mark.parametrize('options, board, echild', CASES)
+    def test_ram(self, options, board, echild):
+
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
+        game_info = gi.GameInfo(stores=True,
+                                goal=gi.Goal.MAX_SEEDS,
+                                child_type=gi.ChildType.RAM,
+                                **options,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game =  mancala.Mancala(game_consts, game_info)
+        game.board = board
+        result = [0] * 8
+
+        for loc in range(8):
+
+            mdata = move_data.MoveData(game, None)
+            mdata.direct = game.info.sow_direct
+            mdata.capt_start = loc
+            result[loc] = game.deco.make_child.test(mdata)
+
+        assert result == echild
+
+
+    def test_bad_enum(self):
+
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
+
+        with pytest.raises(NotImplementedError):
+            game_info = gi.GameInfo(stores=True,
+                                    goal=gi.Goal.MAX_SEEDS,
+                                    sow_direct=gi.Direct.SPLIT,
+                                    child_type=gi.ChildType.RAM,
+                                    child_cvt=4,
+                                    nbr_holes=game_consts.holes,
+                                    rules=mancala.Mancala.rules)
+
+        game_info = gi.GameInfo(stores=True,
+                                goal=gi.Goal.MAX_SEEDS,
+                                sow_direct=gi.Direct.CCW,
+                                child_type=gi.ChildType.RAM,
+                                child_cvt=4,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        object.__setattr__(game_info, 'sow_direct', gi.Direct.SPLIT)
+
+        with pytest.raises(NotImplementedError):
+            mancala.Mancala(game_consts, game_info)
+
+
 class TestBadEnums:
 
     def test_bad_child_type_decos(self):
@@ -913,7 +985,6 @@ class TestBadEnums:
 
         with pytest.raises(NotImplementedError):
             mancala.Mancala(game_consts, game_info)
-
 
 
 class TestAnimator:

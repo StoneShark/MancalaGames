@@ -368,7 +368,7 @@ def test_child_rules(tester):
         # need to be integrated into the lap continuer chain
 
     tester.test_rule('child_need_cvt',
-        rule=lambda ginfo: (ginfo.child_type
+        rule=lambda ginfo: (ginfo.child_type.child_but_not_ram()
                             and ginfo.child_locs
                                     != gi.ChildLocs.FIXED_ONE_RIGHT
                             and not ginfo.child_cvt),
@@ -419,6 +419,27 @@ def test_child_rules(tester):
         # code assumes 1st's are specific holes
         # complexity of 'current' 1st opposite hole is not implemented
         # for reference: sow own store does have this complexity
+
+    tester.test_rule('ram_no_blocks',
+        rule=lambda ginfo: (ginfo.child_type == gi.ChildType.RAM
+                            and ginfo.blocks),
+        msg='BLOCKS are not supported with ChildType RAM',
+        excp=NotImplementedError)
+        # would require simulating the moves
+
+    tester.test_rule('ram_basic_sow',
+        rule=lambda ginfo: (ginfo.child_type == gi.ChildType.RAM
+                            and ginfo.sow_direct not in (gi.Direct.CW,
+                                                         gi.Direct.CCW)),
+        msg='Only SOW_DIRECT CW and CCW are supported with ChildType RAM',
+        excp=NotImplementedError)
+
+    tester.test_rule('ram_stores',
+        rule=lambda ginfo: (ginfo.child_type == gi.ChildType.RAM
+                            and not ginfo.stores),
+        msg='ChildType RAM requires STORES',
+        excp=gi.GameInfoError)
+        # do not want collect captures into RAMs
 
 
 def test_no_sides_rules(tester):
@@ -667,7 +688,7 @@ def test_capture_rules(tester):
         msg="""Do not set MOVEUNLOCK with MOVE_ALL_HOLES_FIRST.
             Locks are automatically used to limit first moves but not captures""",
         excp=gi.GameInfoError)
-        # we do not want CaptUnlocked added to the capt_ok deco
+        # we do not want CaptUnlocked added to the capt_basic deco
         # which causes captures to be limited by locks
 
     tester.test_rule('moveall_no_capttype',
@@ -675,7 +696,7 @@ def test_capture_rules(tester):
                             and ginfo.capt_type == gi.CaptType.TWO_OUT),
         msg='MOVE_ALL_HOLES_FIRST is incompatible with CAPT_TYPE TWO_OUT',
         excp=gi.GameInfoError)
-        # decos do not use capt_ok, but checks the locks directly
+        # decos use capt_check and not capt_basic
 
     tester.test_rule('moveall_no_picker',
         rule=lambda ginfo: (ginfo.allow_rule == gi.AllowRule.MOVE_ALL_HOLES_FIRST

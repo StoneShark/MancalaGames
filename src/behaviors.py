@@ -11,6 +11,7 @@ import abc
 import enum
 import tkinter as tk
 
+import game_str
 import man_config
 import ui_utils
 
@@ -21,10 +22,6 @@ NO_STR = 'no'
 
 FILL_POPUP = 50
 FILL_HINTS = 65
-
-# ownership arrows
-DN_ARROW = '\u2193'
-UP_ARROW = '\u2191'
 
 
 # %% enum
@@ -191,17 +188,12 @@ class BehaviorIf(abc.ABC):
         otext = ''
         if self.btn.game_ui.tkvars.owner_arrows.get():
             if self.btn.rotate_text():
-                if self.btn.props.owner is True:
-                    otext += DN_ARROW
-                elif self.btn.props.owner is False:
-                    otext += UP_ARROW
+                otext += game_str.OWNER[not self.btn.props.owner]
 
-            elif self.btn.props.owner is True:
-                otext += UP_ARROW
-            elif self.btn.props.owner is False:
-                otext += DN_ARROW
+            else:
+                otext += game_str.OWNER[self.btn.props.owner]
 
-        return otext + ' '
+        return otext
 
 
     def refresh_nonplay(self, bstate, bg_color=None):
@@ -243,17 +235,10 @@ class BehaviorIf(abc.ABC):
         180 degrees, then flip the arrow direction so it points
         at the child owner."""
 
-        otext = ''
-        if self.btn.rotate_text():
-            if self.btn.props.ch_owner is True:
-                otext += '\u02c5 '
-            elif self.btn.props.ch_owner is False:
-                otext += '\u02c4 '
-
-        elif self.btn.props.ch_owner is True:
-            otext += '\u02c4 '
-        elif self.btn.props.ch_owner is False:
-            otext += '\u02c5 '
+        if self.btn.rotate_text() and self.btn.props.ch_owner in {True, False}:
+            otext = game_str.CHILD[not self.btn.props.ch_owner]
+        else:
+            otext = game_str.CHILD[self.btn.props.ch_owner]
 
         return otext
 

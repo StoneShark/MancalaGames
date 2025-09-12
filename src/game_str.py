@@ -18,7 +18,8 @@ LOCK = ['_', ' ']
 
 CHILD = {True: '\u02c4',
          False: '\u02c5',
-         None: ' '}
+         None: ' ',
+         gi.NO_CH_OWNER: '\u02c3'}
 
 OWNER = {True: '\u2191 ',
          False: '\u2193 ',

@@ -523,6 +523,8 @@ class SetupButtonBehavior(bhv.BehaviorIf):
         if ginfo.child_cvt:
             # only include if more children can be made (cvt not type)
             menubar.add_command(label='Child Cycle', command=self.child_cycle)
+        if ginfo.child_type == gi.ChildType.RAM:
+            menubar.add_command(label='Child Cycle', command=self.ram_child_toggle)
         if ginfo.goal == gi.Goal.TERRITORY:
             menubar.add_command(label='Owner Toggle', command=self.owner_toggle)
         if ginfo.blocks:
@@ -564,11 +566,21 @@ class SetupButtonBehavior(bhv.BehaviorIf):
 
 
     def child_cycle(self):
-        """Cycle the child throug N, F, T"""
+        """Cycle the child through N, F, T"""
 
         game = self.btn.game_ui.game
         loc = self.btn.loc
         game.child[loc] = self.cycle(game.child[loc])
+        self.btn.props.ch_owner = game.child[loc]
+        SETUPHOLD.refresh_game()
+
+
+    def ram_child_toggle(self):
+        """Toggle the child setting between RAM and not RAM"""
+
+        game = self.btn.game_ui.game
+        loc = self.btn.loc
+        game.child[loc] = None if game.child[loc] else gi.NO_CH_OWNER
         self.btn.props.ch_owner = game.child[loc]
         SETUPHOLD.refresh_game()
 
