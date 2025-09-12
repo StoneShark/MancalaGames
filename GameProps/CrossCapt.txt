@@ -1,0 +1,70 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 6,
+      "nbr_start": 4
+   },
+   "game_info": {
+      "name": "CrossCapt",
+      "about": "Sow counter-clockwise in single lap. Sow own store. Repeat turn if last seed is sown into the player's own store.\n\nCross capture when seed lands in empty hole on your side of the board.\n\nIf you clear all of your own seeds, you capture all of your opponent's seeds that are still in play and the game ends.\n\nGoal: capture the most seeds (more than half).\n\nVariations:\n\n- Ending 2: End the game when your opponent does not have any seeds at the end of your own turn (END_COND CLEARED_OPP).\n\n- Ending 3: End when one player has collected more than half of the seeds or the board is clear and each player has half the seeds (END_COND NO_ADDTL).\n\n- <nolink>CrossCapt::Two: Use multilap sowing but only when the final seed lands in a occupied hole on your own side of the board. If your opponent does not have any seeds, you must share, if you can. Otherwise the game ends and the player with the most seeds wins.\n\n- <nolink>CrossCapt::Three: Use multilap sowing but only when the final seed lands in an occupied on your opponent's side of the board. The game ends when your own holes are cleared.\n\n- <nolink>CrossCapt::Four: Cross capture initiated from a single seed on your opponent's side of the board. \n\n- <nolink>CrossCapt::Five: Cross capture initiated from either side of the board. The does not end until one person has collected more than half the seeds, or the board is cleared.\n\n- <nolink>CrossCapt::Five_No_Sides:  <nolink>CrossCapt::Five but plays may be made from any hole.\n\n- <nolink>CrossCapt::Five_UDIR: <nolink>CrossCapt::Five but the player may choose the direction of sow on each move. As specified in the rules (Hanson) each player's first move (including any repeat turns) are sown counter-clockwise, but Mancala Games does not support changing User Directed Holes during a game.\n\n- capture side of own, opposite or both.\n\n- take the final seed sown into an empty hole on your own side of the board even when there is no capture (XCPICKOWN ALWAYS).\n\n- sow in multiple-laps (LAPPER) possibly limiting lap continueing to one side of the board.\n\n- sow both stores.\n",
+      "crosscapt": true,
+      "end_cond": 1,
+      "capt_side": 1,
+      "sow_direct": 1,
+      "sow_stores": 1,
+      "stores": true,
+      "unclaimed": 2,
+      "xcpickown": 1
+   },
+   "player": {
+      "ai_params": {
+         "mm_depth": [ 1, 3, 5, 7 ]
+      },
+      "scorer": {
+         "mx_stores_m": 8,
+         "mx_empties_m": 1,
+         "mx_rturn_a": 20
+      }
+   },
+   "variants": {
+      "CrossCapt": { },
+      "Two": {
+         "mlaps": 1,
+         "mlap_cont": 3,
+         "end_cond": 2,
+         "mustshare": 2
+      },
+      "Three": {
+         "mlaps": 1,
+         "mlap_cont": 4
+      },
+      "Four": {
+         "capt_side": 2
+      },
+      "Five": {
+         "capt_side": 0,
+         "end_cond": 0
+      },
+      "Five_No_Sides": {
+         "no_sides": true,
+         "capt_side": 0,
+         "end_cond": 0
+      },
+      "Five_UDIR": {
+         "capt_side": 0,
+         "end_cond": 0,
+         "udir_holes": [ 0, 1, 2, 3, 4, 5 ]
+      }
+   },
+   "vari_params": {
+      "mlaps": [ 0, 1 ],
+      "mlap_cont": [ 0, 3, 4 ],
+      "capt_side": [ 0, 1, 2 ],
+      "xcpickown": [ 1, 2 ],
+      "sow_stores": [ 1, 2 ],
+      "end_cond": [ 0, 1, 2 ]
+   },
+   "rules": "Hanson, Sue and Jon. \"All about Mancala: It's History and How to Play\". 2003. p25.",
+   "origin": "modern",
+   "region": "Americas"
+}
