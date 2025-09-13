@@ -67,17 +67,18 @@ SIZES = {'Tiny (< 4)': lambda holes: holes < TINY,
          'Largest (>= 9)': lambda holes: holes >= LARGEST}
 
 
-GOALS = {'Max Seeds': lambda goal: goal == gi.Goal.MAX_SEEDS,
-         'Max Seeds Tally': lambda goal: goal in (gi.Goal.RND_SEED_COUNT,
-                                                  gi.Goal.RND_EXTRA_SEEDS,
-                                                  gi.Goal.RND_POINTS,
-                                                  gi.Goal.RND_WIN_COUNT_MAX),
+GOALS = {
+         'Max Seeds': lambda goal: goal in (gi.Goal.MAX_SEEDS,
+                                            gi.Goal.RND_SEED_COUNT,
+                                            gi.Goal.RND_EXTRA_SEEDS,
+                                            gi.Goal.RND_POINTS,
+                                            gi.Goal.RND_WIN_COUNT_MAX),
          'Clear Own': lambda goal: goal in (gi.Goal.CLEAR,
                                             gi.Goal.RND_WIN_COUNT_CLR),
          'Deprive Opponent': lambda goal: goal in (gi.Goal.DEPRIVE,
                                                    gi.Goal.RND_WIN_COUNT_DEP),
          'Immoblize Opp': lambda goal: goal in (gi.Goal.IMMOBILIZE,
-                                                   gi.Goal.RND_WIN_COUNT_IMB),
+                                                gi.Goal.RND_WIN_COUNT_IMB),
          'Territory': lambda goal: goal == gi.Goal.TERRITORY,
         }
 
@@ -139,32 +140,43 @@ SOWDIR = {'CW': lambda ginfo: ginfo.get(ckey.SOW_DIRECT, 1) == -1,
           'Even Odd Dir': lambda ginfo: ginfo.get(ckey.SOW_DIRECT, 1) == 3,
           }
 
-FEATS = {'No Sides': lambda ginfo: ginfo.get(ckey.NO_SIDES, 0),
-         'Start Pattern': lambda ginfo: ginfo.get(ckey.START_PATTERN, 0),
-         'Prescribed Open': lambda ginfo: ginfo.get(ckey.PRESCRIBED, 0),
-         'Move Restrictions': lambda ginfo:
-             (ginfo.get(ckey.ALLOW_RULE, 0)
-              or ginfo.get(ckey.MIN_MOVE, 0) > 1),
-         'Must Pass': lambda ginfo: ginfo.get(ckey.MUSTPASS, 0),
-         'Must Share': lambda ginfo: ginfo.get(ckey.MUSTSHARE, 0),
-         'Inhibitor': lambda ginfo:
-             (ginfo.get(ckey.NOCAPTMOVES, 0)
-              or ginfo.get(ckey.PRESCRIBED, 0) == gi.SowPrescribed.ARNGE_LIMIT
-              or ginfo.get(ckey.ROUND_FILL, 0) in (gi.RoundFill.SHORTEN,
+DYN_FEATS = {
+    'No Sides': lambda ginfo: ginfo.get(ckey.NO_SIDES, 0),
+    'Start Pattern': lambda ginfo: ginfo.get(ckey.START_PATTERN, 0),
+    'Must Pass': lambda ginfo: ginfo.get(ckey.MUSTPASS, 0),
+    'Must Share': lambda ginfo: ginfo.get(ckey.MUSTSHARE, 0),
+    'Inhibitor': lambda ginfo:
+        (ginfo.get(ckey.NOCAPTMOVES, 0)
+         or ginfo.get(ckey.PRESCRIBED, 0) == gi.SowPrescribed.ARNGE_LIMIT
+         or ginfo.get(ckey.ROUND_FILL, 0) in (gi.RoundFill.SHORTEN,
                                                    gi.RoundFill.SHORTEN_ALL)),
-         'User Sow Direct': lambda ginfo:
-             len(ginfo.get(ckey.UDIR_HOLES, [])) >= 1,
-         'Pre-sow Capture': lambda ginfo: ginfo.get(ckey.PRESOWCAPT, 0),
-         'Repeat Turn': lambda ginfo: any([ginfo.get(ckey.CAPT_RTURN, 0),
-                                           ginfo.get(ckey.SOW_STORES, 0),
-                                           ginfo.get(ckey.XC_SOWN, 0)]),
-         'Grand Slam': lambda ginfo: ginfo.get(ckey.GRANDSLAM, 0),
-         'Multiple Capt': lambda ginfo: ginfo.get(ckey.MULTICAPT, 0),
-         'Take More': lambda ginfo: ginfo.get(ckey.PICKEXTRA, 0),
-         'Rounds': lambda ginfo: ginfo.get(ckey.ROUNDS, 0),
-         'Round Tally': lambda ginfo: ginfo.get(ckey.GOAL, 0) in \
-                                         round_tally.RoundTally.GOALS,
-         }
+    'Repeat Turn': lambda ginfo: any([ginfo.get(ckey.CAPT_RTURN, 0),
+                                      ginfo.get(ckey.SOW_STORES, 0),
+                                      ginfo.get(ckey.XC_SOWN, 0)]),
+    'Rounds': lambda ginfo: ginfo.get(ckey.ROUNDS, 0),
+    'Round Tally': lambda ginfo: ginfo.get(ckey.GOAL, 0) in \
+                                    round_tally.RoundTally.GOALS,
+     }
+
+SOW_FEATS = {
+    'Prescribed Open': lambda ginfo: ginfo.get(ckey.PRESCRIBED, 0),
+    'Move Restrictions': lambda ginfo: (ginfo.get(ckey.ALLOW_RULE, 0)
+                                        or ginfo.get(ckey.MIN_MOVE, 0) > 1),
+    'User Sow Direct': lambda ginfo:
+        len(ginfo.get(ckey.UDIR_HOLES, [])) >= 1,
+    'Pre-sow Capture': lambda ginfo: ginfo.get(ckey.PRESOWCAPT, 0),
+    'Sow Stores': lambda ginfo: ginfo.get(ckey.SOW_STORES, 0),
+
+    }
+
+CAPT_FEATS = {
+    'Grand Slam': lambda ginfo: ginfo.get(ckey.GRANDSLAM, 0),
+    'Multiple Capt': lambda ginfo: ginfo.get(ckey.MULTICAPT, 0),
+    'Take More': lambda ginfo: ginfo.get(ckey.PICKEXTRA, 0),
+    'Repeat on Capt': lambda ginfo: ginfo.get(ckey.CAPT_RTURN, 0),
+
+    }
+
 
 # pylint: disable=magic-value-comparison
 GNOTES = {
@@ -587,17 +599,21 @@ FILTERS = [
     FilterDesc('Board Size', DictFilter, SIZES, ckey.HOLES, 0, fcol.count),
     FilterDesc('Lap Type', EnumFilter, gi.LapSower, ckey.MLAPS, 0, fcol.value),
 
-    FilterDesc('Sow Rule', DictFilter, SOWRS, ckey.SOW_RULE, 0, fcol.count),
     FilterDesc('Sow Direct', DictFilter, SOWDIR, ckey.GAME_INFO,
-               0, fcol.value),
+               0, fcol.count),
+    FilterDesc('Sow Rule', DictFilter, SOWRS, ckey.SOW_RULE, 0, fcol.value),
 
     FilterDesc('Child Type', EnumFilter, gi.ChildType, ckey.CHILD_TYPE,
                0, fcol.count),
+    FilterDesc('Sow Features', TriStateFilter, SOW_FEATS, ckey.GAME_INFO,
+               0, fcol.value),
 
     FilterDesc('Capture Types', DictFilter, CAPTS, ckey.GAME_INFO,
                0, fcol.count),
+    FilterDesc('Capt Features', TriStateFilter, CAPT_FEATS, ckey.GAME_INFO,
+               0, fcol.value),
 
-    FilterDesc('Features', TriStateFilter, FEATS, ckey.GAME_INFO,
+    FilterDesc('Game Dynamics', TriStateFilter, DYN_FEATS, ckey.GAME_INFO,
                0, fcol.count),
     ]
 
