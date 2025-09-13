@@ -237,11 +237,74 @@ class CaptOpposite1CCW(CaptMethodIf):
 
         if mdata.capt_start in self.capt_mark[self.game.turn]:
             mdata.captured = True
-            mdata.capt_loc = mdata.capt_start
 
 
+class PassStoreCapture(CaptMethodIf):
+    """If the last seed lands in an empty hole,
+    your opponent captures the contents of your store.
 
-# %% cross capt decos
+    Use capt_side to restrict where this might happen.
+    The side test is based on where the singleton seed
+    landed."""
+
+    def __init__(self, game, decorator=None):
+
+        super().__init__(game, decorator)
+
+        if game.info.capt_side == gi.CaptSide.OPP_SIDE:
+            self.side_ok = game.cts.opp_side
+
+        elif game.info.capt_side == gi.CaptSide.OWN_SIDE:
+            self.side_ok = game.cts.my_side
+
+        elif game.info.capt_side == gi.CaptSide.OPP_TERR:
+            self.side_ok = lambda turn, loc: game.owner[loc] == (not turn)
+
+        elif game.info.capt_side == gi.CaptSide.OWN_TERR:
+            self.side_ok = lambda turn, loc: game.owner[loc] == turn
+
+        else:
+            self.side_ok = lambda _1, _2: True
+
+
+    def do_captures(self, mdata, capt_first=True):
+
+        if (self.game.board[mdata.capt_loc] == 1
+                and self.game.store[self.game.turn]
+                and self.side_ok(self.game.turn, mdata.capt_loc)):
+
+            seeds = self.game.store[self.game.turn]
+            self.game.store[self.game.turn] = 0
+            self.game.store[not self.game.turn] += seeds
+
+            mdata.captured = True
+
+
+class PullAcrossCapture(CaptMethodIf):
+    """If the last seed lands in an empty hole,
+    pull any seeds opposite into the hole.
+
+    Use capt_side to restrict where this might happen
+    (capt_basic enforces this of cross)."""
+
+    def do_captures(self, mdata, capt_first=True):
+
+        cross = self.game.cts.cross_from_loc(mdata.capt_loc)
+
+        if (((capt_first and self.game.board[mdata.capt_loc] == 1)
+                 or (not capt_first and not self.game.board[mdata.capt_loc]))
+                and self.game.deco.capt_basic.capture_ok(mdata, cross)):
+
+            seeds = self.game.board[cross]
+            self.game.board[cross] = 0
+            self.game.board[mdata.capt_loc] += seeds
+
+            mdata.captured = True
+            mdata.capt_next = self.game.deco.incr.incr(mdata.capt_loc,
+                                                       mdata.direct)
+
+
+# %% cross capt wrappers
 
 class CaptCrossVisited(CaptMethodIf):
     """Confirm visit to opposite side to stop mlap sowing
@@ -1125,6 +1188,12 @@ def _add_capt_type_deco(game):
 
     elif game.info.capt_type == gi.CaptType.CAPT_OPP_1CCW:
         capturer = CaptOpposite1CCW(game)
+
+    elif game.info.capt_type == gi.CaptType.PASS_STORE_CAPT:
+        capturer = PassStoreCapture(game)
+
+    elif game.info.capt_type == gi.CaptType.PULL_ACROSS:
+        capturer = PullAcrossCapture(game)
 
     else:
         raise NotImplementedError(

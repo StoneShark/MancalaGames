@@ -133,6 +133,8 @@ class CaptType(enum.IntEnum):
     MATCH_OPP = 3
     SINGLETONS = 4
     CAPT_OPP_1CCW = 5
+    PASS_STORE_CAPT = 6
+    PULL_ACROSS = 7
 
 
 @enum.unique

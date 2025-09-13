@@ -922,6 +922,10 @@ is included after the parameter sections.
 <b class="enum">SINGLETONS</b>: capture all singletons.
 <li class="helptext">
 <b class="enum">CAPT_OPP_1CCW</b>: flag a capture if the final seed of a sow lands in your own rightmost hole or on your opponent's side of the board. No seeds are removed. Useful for causing a repeat turn and/or with pickextra.
+<li class="helptext">
+<b class="enum">PASS_STORE_CAPT</b>: if your last seed of a sow falls into an empty hole, your opponent passively captures the contents of your store. Use <a href="game_params.html#capt_side">CAPT_SIDE</a> to limit where this effect occurs. <a href="game_params.html#multicapt">MULTICAPT</a> is not supported.
+<li class="helptext">
+<b class="enum">PULL_ACROSS</b>: if your last seed of a sow falls into an empty hole, pull any seeds from across the board into the final holw sown. Use <a href="game_params.html#capt_side">CAPT_SIDE</a> to limit where this effect occurs. Multiple captures can be configured (<a href="game_params.html#multicapt">MULTICAPT</a>) which pulls seeds across the board when holes after the final hole sown are empty (<a href="game_params.html#capt_dir">CAPT_DIR</a> must be the same as the sow direction).
 </ol>
 <h4 id="multicapt"> Multiple Captures </h4>
 <p class="pdesc">Location in Config Files: game_info : multicapt

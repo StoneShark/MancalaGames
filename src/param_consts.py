@@ -117,7 +117,9 @@ STRING_DICTS = {
          'Two Out (across gap)': gi.CaptType.TWO_OUT,
          'Match Opposite Side': gi.CaptType.MATCH_OPP,
          'All Singletons': gi.CaptType.SINGLETONS,
-         'Capture Opp | Own Most CCW': gi.CaptType.CAPT_OPP_1CCW}),
+         'Capture Opp | Own Most CCW': gi.CaptType.CAPT_OPP_1CCW,
+         'Passive Store Capture': gi.CaptType.PASS_STORE_CAPT,
+         'Pull Across': gi.CaptType.PULL_ACROSS}),
 
     'ChildLocs': lookup_dicts(
         gi.ChildLocs,

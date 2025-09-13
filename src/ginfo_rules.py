@@ -145,6 +145,14 @@ def test_eliminate_goal_rules(tester):
             require ROUNDS to be NO_MOVES""",
             excp=gi.GameInfoError)
 
+    tester.test_rule('elseed_ec_no_clear',
+        rule=lambda ginfo: (ginfo.goal.eliminate()
+                            and ginfo.end_cond in (gi.EndGameCond.CLEARED_OWN,
+                                                   gi.EndGameCond.CLEARED_OPP)),
+        msg="""CLEAR, DEPRIVE and IMMOBILIZE games are incompatible with
+        CLEARED OWN/END end conditions""",
+        excp=gi.GameInfoError)
+
     tester.test_rule('immob_no_rturn',
         rule=lambda ginfo: (ginfo.goal in (gi.Goal.IMMOBILIZE,
                                            gi.Goal.RND_WIN_COUNT_IMB)
@@ -730,6 +738,18 @@ def test_capture_rules(tester):
         rule=lambda ginfo: (ginfo.capt_type == gi.CaptType.SINGLETONS
                             and ginfo.multicapt),
         msg='Multiple captures with capture SINGLETONS is not supported',
+        excp=gi.GameInfoError)
+
+    tester.test_rule('str_capt_single',
+        rule=lambda ginfo: (ginfo.capt_type == gi.CaptType.PASS_STORE_CAPT
+                            and ginfo.multicapt >= 1),
+        msg='Multiple captures is incompatible with PASS_STORE_CAPT',
+        excp=gi.GameInfoError)
+
+    tester.test_rule('pacross_same_dir',
+        rule=lambda ginfo: (ginfo.capt_type == gi.CaptType.PULL_ACROSS
+                            and ginfo.capt_dir != gi.CaptDir.SOW),
+        msg='PULL_ACROSS capture type requires CAPT_DIR be SOW',
         excp=gi.GameInfoError)
 
 

@@ -87,6 +87,8 @@ CONVERT_DICT = {'N': None,
                 'MOPP': gi.CaptType.MATCH_OPP,
                 'SINGLES': gi.CaptType.SINGLETONS,
                 'OPP1CCW': gi.CaptType.CAPT_OPP_1CCW,
+                'STORE': gi.CaptType.PASS_STORE_CAPT,
+                'PULL': gi.CaptType.PULL_ACROSS,
 
                 'SOW': gi.CaptDir.SOW,
                 'BOTH': gi.CaptDir.BOTH,
@@ -1078,6 +1080,65 @@ class TestCaptureToChild:
         assert game.store == list(store)
         assert game.board == list(eboard)
         assert game.child == list(echild)
+
+
+class TestTerrPassCapt:
+
+    CASES = [
+        (gi.CaptSide.OPP_TERR, True, 0, False),
+        (gi.CaptSide.OWN_TERR, True, 0, True),
+
+        (gi.CaptSide.OPP_TERR, True, 5, False),
+        (gi.CaptSide.OWN_TERR, True, 5, True),
+
+        (gi.CaptSide.OPP_TERR, False, 4, False),
+        (gi.CaptSide.OWN_TERR, False, 4, True),
+
+        (gi.CaptSide.OPP_TERR, False, 5, True),
+        (gi.CaptSide.OWN_TERR, False, 5, False),
+
+                       ]
+    @pytest.mark.parametrize('side, turn, loc, ecapt',
+                            CASES)
+    def test_terr_pass_capt(self, side, turn, loc, ecapt):
+
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=4)
+        game_info = gi.GameInfo(stores=True,
+                                goal=gi.Goal.TERRITORY,
+                                goal_param=8,
+                                capt_type=6,
+                                capt_side=side,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game =  mancala.Mancala(game_consts, game_info)
+        game.turn = turn
+        game.board = utils.build_board([3, 3, 1, 1],
+                                       [1, 0, 1, 3])
+        game.store = [5, 6]
+        game.owner = utils.build_board([T, T, T, F],
+                                       [T, F, F, F])
+
+        mdata = move_data.MoveData(game, None)
+        mdata.direct = game.info.sow_direct
+        mdata.capt_start = loc
+        mdata.board = tuple(game.board)
+        mdata.seeds = game.board[loc]
+        # print(game)
+
+        game.deco.capturer.do_captures(mdata)
+        # print(game)
+
+        assert mdata.captured == ecapt
+
+        if ecapt:
+            if turn:
+                assert game.store == [11, 0]
+            else:
+                assert game.store == [0, 11]
+        else:
+            assert game.store == [5, 6]
+
 
 
 # %% capt wrappers and non-capt table tests

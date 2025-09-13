@@ -151,6 +151,10 @@ Capture type.
 
 - CAPT_OPP_1CCW: flag a capture if the final seed of a sow lands in your own rightmost hole or on your opponent's side of the board. No seeds are removed. Useful for causing a repeat turn and/or with pickextra.
 
+- PASS_STORE_CAPT: if your last seed of a sow falls into an empty hole, your opponent passively captures the contents of your store. Use CAPT_SIDE to limit where this effect occurs. MULTICAPT is not supported.
+
+- PULL_ACROSS: if your last seed of a sow falls into an empty hole, pull any seeds from across the board into the final holw sown. Use CAPT_SIDE to limit where this effect occurs. Multiple captures can be configured (MULTICAPT) which pulls seeds across the board when holes after the final hole sown are empty (CAPT_DIR must be the same as the sow direction).
+
 <param end_cond>
 
 Conditions that end the game. If the game is ended, UNCLAIMED defines what happens with any seeds left on the board and GOAL is used to determine the winner. 
