@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Leab El-\u00e1kil",
-      "about": "Initial position is 72 seeds placed randomly. A human player may choose to swap sides before either of the first two moves of the game; the AI will not swap.\n\nSow is counter-clockwise in multiple-laps. Multilap sowing ends when the final seed ends in an empty hole or for capturing. If your opponent does not have any seeds and you have a hole with at least two seeds, you must share one seed from a hole of your choice with 2 or more seeds. This choice is made before your regular turn.\n\nMultiple captures on 2s and 4s from either row. For each hole captured, take any seeds from the hole across the board.\n\nPlayed in rounds. A round ends either when the outcome cannot change or when there are cycling seeds on the board (use the End Round menu command).\n\nThe game ends when one player has accumulated a sum of 60 seeds more than their opponent in a series of games.  After each game, a player is awarded a number of seeds equal to winner seeds - loser seeds; this sum must exceed 60 for the win.\n\nVariations:\n\n- The number of extra seeds goal may be set via Config Variants.\n\n- An all equal start pattern with 6 seeds per hole.\n",
+      "about": "Initial position is 72 seeds placed randomly. A human player may choose to swap sides before either of the first two moves of the game; the AI will not swap.\n\nSow is counter-clockwise in multiple-laps. Multilap sowing ends when the final seed ends in an empty hole or for capturing. If your opponent does not have any seeds and you have a hole with at least two seeds, you must share one seed from a hole of your choice with 2 or more seeds. This choice is made before your regular turn.\n\nMultiple captures on 2s and 4s from either row. For each hole captured, take any seeds from the hole across the board.\n\nPlayed in rounds. A round ends either when the outcome cannot change or when there are cycling seeds on the board (use the End Round menu command).\n\nThe game ends when one player has accumulated a sum of 60 seeds more than their opponent in a series of games.  After each game, a player is awarded a number of seeds equal to winner seeds - loser seeds; this sum must exceed 60 for the win.\n\nVariations:\n\n- The number of extra seeds goal may be set via Config Variants.\n\n- An all equal start pattern with 6 seeds per hole (<nolink>Leab El-\u00e1kil::Equal).\n",
       "capt_on": [ 2, 4 ],
       "goal": 6,
       "goal_param": 60,
@@ -28,7 +28,7 @@
    },
    "variants": {
       "Leab El-\u00e1kil": { },
-      "Leab_El-\u00e1kil_Equal": {
+      "Equal": {
          "nbr_start": 6,
          "start_pattern": 0
       }

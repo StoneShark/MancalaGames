@@ -6,10 +6,9 @@
    },
    "game_info": {
       "name": "SimpleCapt",
-      "about": "Sow counter-clockwise in single lap. Sow own store. Repeat turn if last seed is sown into the player's own store.\n\nIf you clear all of your own seeds, you capture all of your opponent's seeds that are still in play and the game ends.\n\nGoal: capture the most seeds (more than half).\n\nVariations:\n\n- <nolink>SimpleCapt::Two: Allow moves from any holes on the board.\n\n- <nolink>SimpleCapt::Three: Use multilap sowing but only when the final seed lands in an occupied on your own side of the board. If a seed ends in an empty hole on your opponent's side of the board, capture the seeds in their store.  The game ends when your own holes are cleared.\n\n- last stone capture\n\n- sow in multiple-laps (LAPPER) possibly limiting lap continueing to one side of the board.\n",
-      "capt_max": 1,
+      "about": "Sow counter-clockwise in single lap. Sow own store. Repeat turn if last seed is sown into the player's own store.\n\nIf you clear all of your own seeds, you capture all of your opponent's seeds that are still in play and the game ends.\n\nGoal: capture the most seeds.\n\nVariations:\n\n- <nolink>SimpleCapt::Two: Allow moves from any holes on the board.\n\n- SimpleCapt_Three is a multilap sow variant where your opponent may passively capture the contents of store when your final seed of a sow ends on their side in an empty hole!\n\n- last stone capture\n\n- sow in multiple-laps (LAPPER) possibly limiting lap continueing to one side of the board.\n",
       "end_cond": 1,
-      "capt_side": 0,
+      "capt_side": 2,
       "sow_direct": 1,
       "sow_stores": 1,
       "stores": true,
@@ -29,10 +28,6 @@
       "SimpleCapt": { },
       "Two": {
          "no_sides": true
-      },
-      "Three": {
-         "mlaps": 1,
-         "mlap_cont": 3
       }
    },
    "vari_params": {

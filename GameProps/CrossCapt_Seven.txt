@@ -1,0 +1,34 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 6,
+      "nbr_start": 4
+   },
+   "game_info": {
+      "name": "CrossCapt_Seven",
+      "about": "Sow counter-clockwise in single lap. Sow own store. Repeat turn if last seed is sown into the player's own store.\n\nWhen the final seed of a sow lands in empty hole on your side of the board, pull any seeds from your opponent's side onto your side.\n\nThe game ends under one of two conditions:\n\n- Your opponent cannot move at the start of their turn. You collect any seeds left on your own side of the board. The winner is the player with more seeds collected.\n\n- Either player collects more than half the seeds.\n\nVariations:\n\n- allow captures to continue as long as holes after the first capture are empty on your own side of the board (MULTICAPT -1: all possible captures, 2, 3 ... limit count of captures). This variant is not included in Hanson's rules.\n",
+      "capt_dir": 1,
+      "capt_type": 7,
+      "end_cond": 2,
+      "capt_side": 1,
+      "sow_direct": 1,
+      "sow_stores": 1,
+      "stores": true
+   },
+   "player": {
+      "ai_params": {
+         "mm_depth": [ 1, 3, 5, 7 ]
+      },
+      "scorer": {
+         "mx_stores_m": 8,
+         "mx_seeds_m": 2,
+         "mx_rturn_a": 20
+      }
+   },
+   "vari_params": {
+      "multicapt": "include"
+   },
+   "rules": "Hanson, Sue and Jon. \"All about Mancala: It's History and How to Play\". 2003. p41.",
+   "origin": "modern",
+   "region": "Americas"
+}

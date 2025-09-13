@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Voleur",
-      "about": "Sow counter-clockwise in a single lap, always capture the seeds from the final hole sown.\n\nGoal: collect the most seeds.\n\nVariation: capture on evens\n",
+      "about": "Sow counter-clockwise in a single lap, always capture the seeds from the final hole sown.\n\nGoal: collect the most seeds.\n\nVariation: capture on evens (<nolink>Voleur::Evens)\n",
       "capt_min": 1,
       "capt_side": 0,
       "sow_direct": 1,

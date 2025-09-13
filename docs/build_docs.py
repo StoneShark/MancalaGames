@@ -63,6 +63,8 @@ UPARAMS = {param.upper() for param in man_config.PARAMS.keys()}
 PUNCT = '().,?!;:'
 SEP_PUNCT_RE = re.compile('([' + PUNCT + ']*)([-a-zA-Z_0-9 ]+)([' + PUNCT + ']*)')
 
+QVARI_NAME_RE = re.compile('\\w+' + man_config.VAR_SEP + '\\w+')
+
 
 # %% html extras
 
@@ -435,11 +437,44 @@ def game_prop_text(game_dict):
     return ptxt
 
 
+def add_named_variants(vnames, gname, game_dict):
+    """Return a list of named variants.
+
+    If the game name with spaces subbed for _,
+    is in the variant name do not include it in the index
+    list."""
+
+    vdict = game_dict.get(ckey.VARIANTS, None)
+    if vdict:
+        no_sp_name = gname.replace(' ', '_')
+        filtered = [name for name in list(vdict.keys())[1:]
+                         if no_sp_name not in name]
+        if filtered:
+            vnames[gname] = filtered
+
+
+def build_write_game_index(games, vnames, ofile):
+
+    print(vnames)
+    games.sort(key=locale.strxfrm)
+    gindex = []
+
+    for name in games:
+
+        gindex += [f'<a href="#{name}">' + name + '</a>']
+
+        for vname in vnames.get(name, []):
+            gindex += ['&emsp;&emsp;' + vname]
+
+    write_columns(ofile, gindex, 3)
+
+
 def write_games_help(filename):
     """Collect the about texts from the game files and
     create the associated help file."""
 
     games = []
+    vnames = {}
     with open(filename, 'w', encoding='utf-8') as ofile:
 
         write_html_header(ofile, "Mancala Game Configurations", GAME_NAV)
@@ -459,17 +494,18 @@ def write_games_help(filename):
                 about_str = game_dict[ckey.GAME_INFO][ckey.ABOUT]
                 prop_text = game_prop_text(game_dict)
 
-                # delete the standard contents, extra is printed at the end
+                add_named_variants(vnames, gname, game_dict)
+
+                # delete the standard contents, extras are printed at the end
                 del game_dict[ckey.GAME_CLASS]
                 del game_dict[ckey.GAME_CONSTANTS]
                 del game_dict[ckey.GAME_INFO]
                 del game_dict[ckey.PLAYER]
                 del game_dict[ckey.FILENAME]
 
-                if ckey.VARI_PARAMS in game_dict:
-                    del game_dict[ckey.VARI_PARAMS]
-                if ckey.VARIANTS in game_dict:
-                    del game_dict[ckey.VARIANTS]
+                # delete optional tags
+                game_dict.pop(ckey.VARI_PARAMS, None)
+                game_dict.pop(ckey.VARIANTS, None)
 
             print(f'<h3 id="{gname}" class="game_desc">', gname, '</h3>',
                   sep='', file=ofile)
@@ -481,11 +517,14 @@ def write_games_help(filename):
                 text = '<b class="enum">' + key.title() + '</b>: ' + text
                 write_para(text, ofile)
 
+
         print('<br><br><br>', file=ofile)
         print('<h2 id="index">Game Index</h2>', file=ofile)
-        gindex = [f'<a href="#{gname}">' + gname + '</a>'
-                  for gname in sorted(games, key=locale.strxfrm)]
-        write_columns(ofile, gindex, 3)
+        print("""<p>Named variants are included below games that have them.
+              Some named variants that only vary a small number parameters
+              together, e.g. the size and start seeds, are not listed.""",
+              file=ofile)
+        build_write_game_index(games, vnames, ofile)
 
         write_html_footer(ofile)
 

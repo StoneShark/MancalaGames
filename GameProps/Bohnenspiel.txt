@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Bohnenspiel",
-      "about": "Single lap sow, counter-clockwise.\n\nCapture on 2s, 4s and 6s.  Multiple capture previous holes sown to 2, 4 or 6 as long as an unbroken chain.\n\nThe game ends when the current player does not have any seeds. Any remaining seeds go the last player to move.\n\nGoal: collect more than half of the seeds.\n\nVariations:\n\n- rounds to 100 points\n- remove multiple capture\n",
+      "about": "Single lap sow, counter-clockwise.\n\nCapture on 2s, 4s and 6s.  Multiple capture previous holes sown to 2, 4 or 6 as long as an unbroken chain.\n\nThe game ends when the current player does not have any seeds. Any remaining seeds go the last player to move.\n\nGoal: collect more than half of the seeds.\n\nVariations:\n\n- play in rounds to 100 points (<nolink>Bohnenspiel::Rounds)\n- remove multiple capture\n",
       "capt_on": [ 2, 4, 6 ],
       "multicapt": -1,
       "capt_side": 0,
@@ -26,7 +26,7 @@
    },
    "variants": {
       "Bohnenspiel": { },
-      "Bohnenspiel_Rounds": {
+      "Rounds": {
          "goal": 7,
          "goal_param": 100,
          "rounds": 2

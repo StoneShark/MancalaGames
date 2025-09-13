@@ -1,0 +1,39 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 6,
+      "nbr_start": 3
+   },
+   "game_info": {
+      "name": "GoEmpty_Two",
+      "about": "Sow in either direction in a single lap. Sow both stores. \n\nRepeat turn if last seed is sown into the either store. The number of seeds collected in stores do not matter (and are not shown on the game board).\n\nGoal: If you clear all of your own seeds you win.\n\nVariants:\n\n- sow in multiple laps and use 4 start seeds per hole (or the starter can win on the opening move).\n",
+      "goal": 3,
+      "sow_direct": 1,
+      "sow_stores": 2,
+      "stores": true,
+      "unclaimed": 2
+   },
+   "player": {
+      "ai_params": {
+         "mm_depth": [ 1, 3, 5, 7 ]
+      },
+      "scorer": {
+         "mx_empties_m": 8,
+         "mx_rturn_a": 20
+      }
+   },
+   "variants": {
+      "GoEmpty_Two": { },
+      "MultiLap": {
+         "nbr_start": 4,
+         "mlaps": 1
+      }
+   },
+   "vari_params": {
+      "nbr_start": [ 3, 4 ],
+      "mlaps": [ 0, 1 ]
+   },
+   "rules": "Hanson, Sue and Jon. \"All about Mancala: It's History and How to Play\". 2003. p29.",
+   "origin": "modern",
+   "region": "Americas"
+}

@@ -26,18 +26,6 @@
          "mx_easy_rand_a": 20
       }
    },
-   "variants": {
-      "Cow": { },
-      "Alemungula": {
-         "min_move": 1,
-         "mustpass": false
-      },
-      "Goat": {
-         "holes": 3,
-         "nbr_start": 3,
-         "capt_on": [ 2 ]
-      }
-   },
    "rules": "Russ, Laurence. Mancala Games. 1984. p21.",
    "origin": "traditional",
    "region": "Northern Africa"

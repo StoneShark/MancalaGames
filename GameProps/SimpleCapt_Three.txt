@@ -1,0 +1,33 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 6,
+      "nbr_start": 4
+   },
+   "game_info": {
+      "name": "SimpleCapt_Three",
+      "about": "Sow counter-clockwise in multiple laps when ending on own side of the board. Sow own store. Repeat turn if last seed is sown into the player's own store.\n\nIf the last seed of a sow ends in an empty cup on your opponent's side of the board, they capture the contents of your store.\n\nIf you clear all of your own seeds, you capture all of your opponent's seeds that are still in play and the game ends.\n\nGoal: capture the most seeds.\n",
+      "capt_type": 6,
+      "end_cond": 1,
+      "mlaps": 1,
+      "capt_side": 1,
+      "sow_direct": 1,
+      "sow_stores": 1,
+      "stores": true,
+      "unclaimed": 2,
+      "mlap_cont": 3
+   },
+   "player": {
+      "ai_params": {
+         "mm_depth": [ 1, 3, 5, 7 ]
+      },
+      "scorer": {
+         "mx_stores_m": 8,
+         "mx_empties_m": 1,
+         "mx_rturn_a": 20
+      }
+   },
+   "rules": "Hanson, Sue and Jon. \"All about Mancala: It's History and How to Play\". 2003. p25.",
+   "origin": "modern",
+   "region": "Americas"
+}

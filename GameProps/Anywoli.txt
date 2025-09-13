@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Anywoli",
-      "about": "Sow counter-clockwise in multiple laps, hole owner picks seeds from any hole sown to 4. If the last seed of a sow makes 4, the final hole is captured by the sower.\n\nIf a player does not have a move, they must pass.\n\nWhen a player captures the second last group of 4 seeds; they also take the last four seeds.\n\nGoal: capture the most seeds.\n\nVaritations:\n\n- 7 holes (Yit Nuri)\n- 13 holes and 2 seeds per hole (Yit Jani)\n",
+      "about": "Sow counter-clockwise in multiple laps, hole owner picks seeds from any hole sown to 4. If the last seed of a sow makes 4, the final hole is captured by the sower.\n\nIf a player does not have a move, they must pass.\n\nWhen a player captures the second last group of 4 seeds; they also take the last four seeds.\n\nGoal: capture the most seeds.\n\nVaritations:\n\n- 7 holes (<nolink>Anywoli::Yit_Nuri)\n- 13 holes and 2 seeds per hole (<nolink>Anywoli::Yit_Jani)\n",
       "capt_on": [ 4 ],
       "capt_rturn": 1,
       "mlaps": 1,

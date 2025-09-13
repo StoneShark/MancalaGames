@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Bosh",
-      "about": "Sow counter-clockwise via the multi-lap next-hole method. When the final seed sown (into an empty hole) is followed by an empty hole, capture any seeds in the following hole. Played in rounds where unfilled holes are out of play.\n\nVariations:\n\n- holes required to continue game (GOAL_PARAM)\n\n- 3 seeds per hole for start\n \n- not played in rounds\n",
+      "about": "Sow counter-clockwise via the multi-lap next-hole method. When the final seed sown (into an empty hole) is followed by an empty hole, capture any seeds in the following hole. Played in rounds where unfilled holes are out of play.\n\nVariations:\n\n- holes required to continue game (GOAL_PARAM)\n\n- 3 seeds per hole for start\n \n- not played in rounds (<nolink>Bosh::No_Rounds)\n",
       "blocks": true,
       "capt_dir": 1,
       "capt_type": 2,
@@ -29,7 +29,7 @@
    },
    "variants": {
       "Bosh": { },
-      "No Rounds": {
+      "No_Rounds": {
          "rounds": 0,
          "blocks": 0
       }

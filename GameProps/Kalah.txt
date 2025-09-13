@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Kalah",
-      "about": "A single lap mancala with a counter-clockwise sow direction. When sowing past the right edge of the board, sow a seed into your own store (SOW_OWN_STORE). Do not sow into your opponent's store.\n\nIf the last seed ends in an empty hole on the player's own side of the board, capture any seeds from the opposite hole (CROSSCAPT). When performing a capture, take the final single seed sown as well. Pick your own seed only when opponents seeds are captured.\n\nIf a player's sow ends in their own store, they take another turn (repeat turn).\n\nIf a player has no seeds at the start of their turn, the game is over: the opponent collects the remainder of their seeds and the winner is determined based on final seed count. This includes a prescribed repeat turn, if a player sows their last seed into their store, seeds are collected, and an outcome is determined.\n\nVariations:\n\n- Vary the number of holes and start seeds\n\n- Start game with a random placement of seeds (START_PATTERN of RANDOM). NBR_START should be the total number of seeds to be placed. Note that with a random opening, a swap sides (pie rule) may be done on either of the two opening moves (only one swap side per game). Random-Kalah is a preconfigured game played in tallied rounds to equalize results of the random opening. \n\n- Start the game with the seeds placed so that the first player cannot  get a repeat turn and the second player will only be able to get a repeat turn, if the first player made that possible (START_PATTERN of NO_REPEAT_SOW_OWN).\n\n- If all of your opponents seeds are in one hole and you capture them, your opponent gets all of your seeds for the game tally (GRANDSLAM of OPP_GET_REMAINING).\n\n- Sow holes with an even number of seeds clockwise and odd an number of seeds counter-clockwise (SOW_DIRECT of EVEN_ODD_DIR). This was first proposed by William Daniel Troyka in 2001 as Cross-Kalah.\n\n- Use always_pick for XCPICKOWN (Valdez, p10).\n\n- Require must share (MUSTSHARE) because it removes the seed hoarding strategy.\n\n- The game NS_Kalah limits sowing to each player's own side of the board with other minor changes.\n",
+      "about": "A single lap mancala with a counter-clockwise sow direction. When sowing past the right edge of the board, sow a seed into your own store (SOW_OWN_STORE). Do not sow into your opponent's store.\n\nIf the last seed ends in an empty hole on the player's own side of the board, capture any seeds from the opposite hole (CROSSCAPT). When performing a capture, take the final single seed sown as well. Pick your own seed only when opponents seeds are captured.\n\nIf a player's sow ends in their own store, they take another turn (repeat turn).\n\nIf a player has no seeds at the start of their turn, the game is over: the opponent collects the remainder of their seeds and the winner is determined based on final seed count. This includes a prescribed repeat turn, if a player sows their last seed into their store, seeds are collected, and an outcome is determined.\n\nVariations:\n\n- Vary the number of holes and start seeds.\n\n- Start game with a random placement of seeds (START_PATTERN of RANDOM). NBR_START should be the total number of seeds to be placed. Note that with a random opening, a swap sides (pie rule) may be done on either of the two opening moves (only one swap side per game). Random-Kalah is a preconfigured game played in tallied rounds to equalize results of the random opening. \n\n- Start the game with the seeds placed so that the first player cannot  get a repeat turn and the second player will only be able to get a repeat turn, if the first player made that possible (START_PATTERN of NO_REPEAT_SOW_OWN). A named variant called <nolink>Kalah::Fair_Kalah.\n\n- If all of your opponents seeds are in one hole and you capture them, your opponent gets all of your seeds for the game tally (GRANDSLAM of OPP_GET_REMAINING).\n\n- Sow holes with an even number of seeds clockwise and odd an number of seeds counter-clockwise (SOW_DIRECT of EVEN_ODD_DIR). This was first proposed by William Daniel Troyka in 2001 as Cross-Kalah.\n\n- Use always_pick for XCPICKOWN (Valdez, p10).\n\n- Require must share (MUSTSHARE) because it removes the seed hoarding strategy.\n\n- The game NS_Kalah limits sowing to each player's own side of the board with other minor changes.\n\n- See SimpleCapt, CrossCapt, and CrossCapt_Six and their named variants.\n",
       "crosscapt": true,
       "capt_side": 1,
       "sow_direct": 1,
@@ -32,23 +32,8 @@
    },
    "variants": {
       "Kalah": { },
-      "Cross-Kalah": {
-         "sow_direct": 3
-      },
-      "Fair?-Kalah": {
+      "Fair_Kalah": {
          "start_pattern": 11
-      },
-      "NS-Kalah": {
-         "game_class": "NorthSouthCycle",
-         "xcpickown": 0
-      },
-      "Random-Kalah": {
-         "nbr_start": 48,
-         "goal": 4,
-         "goal_param": 4,
-         "start_pattern": 6,
-         "round_starter": 0,
-         "rounds": 1
       }
    },
    "vari_params": {
