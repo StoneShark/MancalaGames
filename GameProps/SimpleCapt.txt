@@ -6,9 +6,8 @@
    },
    "game_info": {
       "name": "SimpleCapt",
-      "about": "Sow counter-clockwise in single lap. Sow own store. Repeat turn if last seed is sown into the player's own store.\n\nIf you clear all of your own seeds, you capture all of your opponent's seeds that are still in play and the game ends.\n\nGoal: capture the most seeds.\n\nVariations:\n\n- <nolink>SimpleCapt::Two: Allow moves from any holes on the board.\n\n- SimpleCapt_Three is a multilap sow variant where your opponent may passively capture the contents of store when your final seed of a sow ends on their side in an empty hole!\n\n- last stone capture\n\n- sow in multiple-laps (LAPPER) possibly limiting lap continueing to one side of the board.\n",
+      "about": "Sow counter-clockwise in single lap. Sow own store. Repeat turn if last seed is sown into the player's own store.\n\nIf you clear all of your own seeds, you capture all of your opponent's seeds that are still in play and the game ends.\n\nGoal: capture the most seeds.\n\nVariations:\n\n- <nolink>SimpleCapt::Anywhere: Allow moves from any holes on the board. Don't end the game until one player has won or there is a tie. \n\n- SimpleCapt_PCapt is a multilap sow variant where your opponent may passively capture the contents of store when your final seed of a sow ends on their side in an empty hole!\n\n- capture the last seed sown when it ends in an empty hole on your own side of the board (CAPT_MAX of 1 and CAPT_SIDE of OWN; SimpleCapt::LastCapt).\n\n- sow in multiple-laps (SOW_DIRECT of LAPPER) possibly limiting lap continueing to one side of the board.\n",
       "end_cond": 1,
-      "capt_side": 2,
       "sow_direct": 1,
       "sow_stores": 1,
       "stores": true,
@@ -26,14 +25,19 @@
    },
    "variants": {
       "SimpleCapt": { },
-      "Two": {
+      "Anywhere": {
+         "end_cond": 0,
          "no_sides": true
+      },
+      "LastCapt": {
+         "capt_max": 1,
+         "capt_side": 2
       }
    },
    "vari_params": {
-      "no_sides": "include",
       "mlaps": [ 0, 1 ],
-      "capt_max": [ 0, 1 ]
+      "capt_max": [ 0, 1 ],
+      "capt_side": [ 0, 2 ]
    },
    "rules": "Hanson, Sue and Jon. \"All about Mancala: It's History and How to Play\". 2003. p25.",
    "origin": "modern",

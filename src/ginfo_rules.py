@@ -200,7 +200,9 @@ def test_territory_rules(tester):
         rule=lambda ginfo: ginfo.goal == gi.Goal.TERRITORY and ginfo.no_sides,
         msg='Territory goal is incompatible with NO_SIDES',
         excp=gi.GameInfoError)
-        # could initial ownship be changed so that no_sides makes sense
+        # could initial ownship be changed so that no_sides makes sense? yes
+        # ownership is now always assigned, this could work but there
+        # other limitations preventing it from working (no_side is ignored)
 
     tester.test_rule('terr_rand_start',
         rule=lambda ginfo: (ginfo.goal == gi.Goal.TERRITORY
@@ -462,18 +464,35 @@ def test_no_sides_rules(tester):
 
         return _no_sides_and
 
-    tester.test_rule('no_sides_need_stores',
-        rule=lambda ginfo: ginfo.no_sides and not ginfo.stores,
-        msg='NO_SIDES requires STORES',
+    tester.test_rule('no_sides_need_place',
+        rule=lambda ginfo: (ginfo.no_sides and
+                            not (ginfo.stores or ginfo.child_type)),
+        msg='NO_SIDES requires STORES or CHILDREN',
         excp=gi.GameInfoError)
 
-    bad_flags = ['grandslam', 'mustpass', 'mustshare', 'capt_side',
+    bad_flags = ['grandslam', 'mustpass', 'mustshare', 'blocks',
                  'rounds', 'round_starter', 'round_fill']
     for flag in bad_flags:
         tester.test_rule(f'no_sides_bad_{flag}',
             rule=no_sides_and(flag),
             msg=f'NO_SIDES cannot be used with {flag.upper()}',
             excp=gi.GameInfoError)
+
+    # generate some warnings of things that might go bad
+
+    tester.test_rule('no_sides_no_stores_warn',
+        rule=lambda ginfo: ginfo.no_sides and not ginfo.stores,
+        msg="NO_SIDES without STORES needs to have different colors " \
+            + "configured for each player (check mancala.ini)",
+        warn=rule_tester.PRINT_MSG)
+        # there is no other way to know whose turn it is
+
+    tester.test_rule('no_sides_side_warn',
+        rule=lambda ginfo: ginfo.no_sides and ginfo.capt_side,
+        msg="CAPT_SIDES with NO_SIDES might behave unexpectedly " \
+            + "in non-north/south games",
+        warn=rule_tester.PRINT_MSG)
+        # there is no other way to know whose turn it is
 
 
 def test_sower_rules(tester):

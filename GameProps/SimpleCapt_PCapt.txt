@@ -5,8 +5,8 @@
       "nbr_start": 4
    },
    "game_info": {
-      "name": "SimpleCapt_Three",
-      "about": "Sow counter-clockwise in multiple laps when ending on own side of the board. Sow own store. Repeat turn if last seed is sown into the player's own store.\n\nIf the last seed of a sow ends in an empty cup on your opponent's side of the board, they capture the contents of your store.\n\nIf you clear all of your own seeds, you capture all of your opponent's seeds that are still in play and the game ends.\n\nGoal: capture the most seeds.\n",
+      "name": "SimpleCapt_PCapt",
+      "about": "Sow counter-clockwise in multiple laps when ending on your own side of the board. Sow own store. Repeat turn if last seed is sown into the player's own store.\n\nIf the last seed of a sow ends in an empty cup on your opponent's side of the board, they capture the contents of your store. Called a Passive Capture, because your opponent likely did nothing to effect the capture.\n\nIf you clear all of your own seeds, you capture all of your opponent's seeds that are still in play and the game ends.\n\nGoal: capture the most seeds.\n",
       "capt_type": 6,
       "end_cond": 1,
       "mlaps": 1,

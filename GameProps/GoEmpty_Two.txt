@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "GoEmpty_Two",
-      "about": "Sow in either direction in a single lap. Sow both stores. \n\nRepeat turn if last seed is sown into the either store. The number of seeds collected in stores do not matter (and are not shown on the game board).\n\nGoal: If you clear all of your own seeds you win.\n\nVariants:\n\n- sow in multiple laps and use 4 start seeds per hole (or the starter can win on the opening move).\n",
+      "about": "Sow in either direction in a single lap. Sow both stores. \n\nRepeat turn if last seed is sown into the either store. The number of seeds collected in stores does not matter (and are not shown on the game board).\n\nGoal: If you clear all of your own seeds you win.\n\nVariants:\n\n- sow in multiple laps and use 4 start seeds per hole (or the starter can win on the opening move).\n",
       "goal": 3,
       "sow_direct": 1,
       "sow_stores": 2,

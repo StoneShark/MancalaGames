@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "GoEmpty_One",
-      "about": "Sow counter-clockwise in multiple laps lap. Sow own store. Repeat turn if last seed is sown into the player's own store. The number of seeds collected in stores do not matter (so they are not shown).\n\nGoal: If you clear all of your own seeds you win.\n\nVariations:\n\n- GoEmpty_Two: Start seeds are 3 (not 4). Sow both stores; repeat turn if last seed ends in either store. The user may choose the sow direction for each move.\n",
+      "about": "Sow counter-clockwise in multiple laps lap. Sow own store. Repeat turn if last seed is sown into the player's own store. The number of seeds collected in stores does not matter (so they are not shown).\n\nGoal: If you clear all of your own seeds you win.\n\nVariations:\n\n- GoEmpty_Two: Start seeds are 3 (not 4). Sow both stores; repeat turn if last seed ends in either store. The user may choose the sow direction for each move.\n",
       "goal": 3,
       "mlaps": 1,
       "sow_direct": 1,

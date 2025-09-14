@@ -67,6 +67,19 @@ your opponent of seeds.
     The first move of each game defines the directions for each player.
     </ul>
 
+<p>Named variants are games very similar to other games that do not use
+a unique Mancala Games features. These are defined in the VARI_PARAMS
+section of the game definition files. Named variants maybe started via
+play_mancala by right clicking on the game name and hoving over the
+Play Variant submenu. Also, name variants may be started with a
+play command or short-cut by specifing game_name::variant_name:
+    <pre>
+    play.exe Weg::Weg_2_4
+    </pre>
+Named variants are included in the game description variations section
+below
+and listed in the <a href="#index">Game Index</a>.
+
 <p><i>Personal Note</i>:
 These configurations are my best understanding of the rules
 from various sources.
@@ -975,7 +988,7 @@ Valdez describes a multilap variant that has 6 holes per side, does not pick own
 <p>The game is over when either player cannot fill 4 holes.
 <p>Variations:
 <ul><li class="helptext">
-played with 6 to 10 holes per side with the number of start seeds equaling number of holes.
+played with 6 to 10 holes per side with the number of start seeds equaling number of holes (<nolink>Dakon:Dakon_n where n is holes and start seeds).
 <li class="helptext">
 passing disallowed--a player with no moves at the start of their turn loses (no <a href="game_params.html#mustpass">MUSTPASS</a>, <a href="about_games.html#Ohvulhu">Ohvulhu</a>).
 <li class="helptext">
@@ -1068,7 +1081,7 @@ allow closing of rightmost holes (<a href="game_params.html#sow_rule">SOW_RULE</
 <p>A mancala game with a unique sow pattern. Right player owns right 6 holes. Left player owns left 6 holes--AI plays this side if enabled.
 <p>Goal: clear your own holes.
 <p>Game rules: Copyright (c) January 2006 by Mark Steere. See pdf file for rules.
-<p>Variation: In DiffusionV2, players own the typical North and South sides of the board. The Owner Arrows display option might be useful to distinguish which is being played.
+<p>Variation: In <nolink>Diffusion::V2, players own the typical North and South sides of the board. The Owner Arrows display option might be useful to distinguish which variant is being played.
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  6</p>
@@ -1166,7 +1179,7 @@ Played with 6 to 10 holes.
 <li class="helptext">
 Use a <a href="game_params.html#goal">GOAL</a> of RND_SEED_COUNT where the winner is the first to collect 100 total seeds (<nolink>Edodoi::Rounds).
 <li class="helptext">
-Limit captures to holes with 3 or fewer seeds (J'Odu).
+Limit captures to holes with 3 or fewer seeds (<a href="#{J'Odu}">J'Odu</a>).
 <li class="helptext">
 Limit moves to holes reach the opposite side of the board or end in empty hole (<a href="about_games.html#Dabuda">Dabuda</a>).
 </ul>
@@ -1222,9 +1235,9 @@ start patterns: CLIPPEDTRIPLES with 3 start seeds
 <p><b class="enum">Origin</b>: traditional
 <p><b class="enum">Region</b>: Eastern Africa
 <h3 id="Enlightenment" class="game_desc">Enlightenment</h3>
-<p>Move from any hole on the board. Split sow; center hole is user chooses sow direction. You may not undo an opponents move of one seed across the sides of the board on the very next move.
+<p>Move from any hole on the board. Split sow; center hole is user chooses sow direction. You may not undo an opponent's move of one seed across the sides of the board on the very next move.
 <p>Seeds from all holes sown to 2 or 4 are removed from play.
-<p>The goal is to clear all of your own seeds.
+<p>The goal is to clear all of your own seeds. While you may move from any hole on the board each player owns either the North or South holes.
 <p>Variations:
 <ul><li class="helptext">
 any odd number of holes per side
@@ -1474,7 +1487,7 @@ Instead of a minimum move of 2, singletons may start moves if all holes are empt
 <p><b class="enum">Origin</b>: traditional
 <p><b class="enum">Region</b>: Northern Africa
 <h3 id="GoEmpty_One" class="game_desc">GoEmpty_One</h3>
-<p>Sow counter-clockwise in multiple laps lap. Sow own store. Repeat turn if last seed is sown into the player's own store. The number of seeds collected in stores do not matter (so they are not shown).
+<p>Sow counter-clockwise in multiple laps lap. Sow own store. Repeat turn if last seed is sown into the player's own store. The number of seeds collected in stores does not matter (so they are not shown).
 <p>Goal: If you clear all of your own seeds you win.
 <p>Variations:
 <ul><li class="helptext">
@@ -1500,7 +1513,7 @@ Instead of a minimum move of 2, singletons may start moves if all holes are empt
 <p><b class="enum">Region</b>: Americas
 <h3 id="GoEmpty_Two" class="game_desc">GoEmpty_Two</h3>
 <p>Sow in either direction in a single lap. Sow both stores. 
-<p>Repeat turn if last seed is sown into the either store. The number of seeds collected in stores do not matter (and are not shown on the game board).
+<p>Repeat turn if last seed is sown into the either store. The number of seeds collected in stores does not matter (and are not shown on the game board).
 <p>Goal: If you clear all of your own seeds you win.
 <p>Variants:
 <ul><li class="helptext">
@@ -2742,13 +2755,13 @@ see <a href="about_games.html#Lam Waladach">Lam Waladach</a>
 <p>Played in rounds. A round ends a player does not have a move on their turn.
 <p>Variations:
 <ul><li class="helptext">
-simultaneous opening move (not supported by Mancala Games)
+simultaneous opening move (not supported by Mancala Games).
 <li class="helptext">
-clockwise sow direction
+clockwise sow direction.
 <li class="helptext">
-6, 7, 8 or 10 holes per side with the number of start seeds equalling the number of holes per side
+6, 7, 8 or 10 holes per side with the number of start seeds equalling the number of holes per side (<nolink>Ohvulhu::Ohvulhu_n where n is holes and start seeds).
 <li class="helptext">
-pass when no move (<a href="game_params.html#mustpass">MUSTPASS</a>, <a href="about_games.html#Dakon">Dakon</a>)
+pass when no move (<a href="game_params.html#mustpass">MUSTPASS</a>, <a href="about_games.html#Dakon">Dakon</a>).
 </ul>
 <div class="cols_row">
   <div class="column2">
@@ -2888,11 +2901,11 @@ capture limit
 <p>Variations:
 <p> 
 <ul><li class="helptext">
-board size of 9
+board size of 9.
 <li class="helptext">
-played with start seeds of 2 to 5 with the capture-on value equaling the number of start seeds
+played with start seeds of 2 to 5 with the capture-on value equaling the number of start seeds (<nolink>Ot-tjin:Ot-tjin_n where n is 2, 4, 5).
 <li class="helptext">
-counter-clockwise sow direction (Mancala World suggests sowing clockwise is wrong)
+counter-clockwise sow direction (Mancala World suggests sowing clockwise is wrong).
 </ul>
 <div class="cols_row">
   <div class="column2">
@@ -3400,24 +3413,23 @@ board size 10 holes per side
 <p>Goal: capture the most seeds.
 <p>Variations:
 <ul><li class="helptext">
-<nolink>SimpleCapt::Two: Allow moves from any holes on the board.
+<nolink>SimpleCapt::Anywhere: Allow moves from any holes on the board. Don't end the game until one player has won or there is a tie. 
 <li class="helptext">
-<a href="about_games.html#SimpleCapt_Three">SimpleCapt_Three</a> is a multilap sow variant where your opponent may passively capture the contents of store when your final seed of a sow ends on their side in an empty hole!
+<a href="about_games.html#SimpleCapt_PCapt">SimpleCapt_PCapt</a> is a multilap sow variant where your opponent may passively capture the contents of store when your final seed of a sow ends on their side in an empty hole!
 <li class="helptext">
-last stone capture
+capture the last seed sown when it ends in an empty hole on your own side of the board (<a href="game_params.html#capt_max">CAPT_MAX</a> of 1 and <a href="game_params.html#capt_side">CAPT_SIDE</a> of OWN; <a href="about_games.html#SimpleCapt">SimpleCapt</a>::
 <li class="helptext">
-sow in multiple-laps (LAPPER) possibly limiting lap continueing to one side of the board.
+sow in multiple-laps (<a href="game_params.html#sow_direct">SOW_DIRECT</a> of LAPPER) possibly limiting lap continueing to one side of the board.
 </ul>
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  6</p>
     <p class="param">Start seeds:  4</p>
     <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
-    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OWN_SIDE</p>
     <p class="param"><a href="game_params.html#end_cond">End Game Condition</a>: CLEARED_OWN</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
   </div>
   <div class="column2">
-    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
     <p class="param"><a href="game_params.html#sow_stores">Sow Store</a>: OWN</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
     <p class="param"><a href="game_params.html#unclaimed">Unclaimed Seeds at End</a>: LAST_MOVER</p>
@@ -3426,9 +3438,9 @@ sow in multiple-laps (LAPPER) possibly limiting lap continueing to one side of t
 <p><b class="enum">Rules</b>: Hanson, Sue and Jon. "All about Mancala: It's History and How to Play". 2003. p25.
 <p><b class="enum">Origin</b>: modern
 <p><b class="enum">Region</b>: Americas
-<h3 id="SimpleCapt_Three" class="game_desc">SimpleCapt_Three</h3>
-<p>Sow counter-clockwise in multiple laps when ending on own side of the board. Sow own store. Repeat turn if last seed is sown into the player's own store.
-<p>If the last seed of a sow ends in an empty cup on your opponent's side of the board, they capture the contents of your store.
+<h3 id="SimpleCapt_PCapt" class="game_desc">SimpleCapt_PCapt</h3>
+<p>Sow counter-clockwise in multiple laps when ending on your own side of the board. Sow own store. Repeat turn if last seed is sown into the player's own store.
+<p>If the last seed of a sow ends in an empty cup on your opponent's side of the board, they capture the contents of your store. Called a Passive Capture, because your opponent likely did nothing to effect the capture.
 <p>If you clear all of your own seeds, you capture all of your opponent's seeds that are still in play and the game ends.
 <p>Goal: capture the most seeds.
 <div class="cols_row">
@@ -3684,7 +3696,7 @@ Tuzdiks cannot be symetrically opposite eachother. Specifically, tuzdiks may not
 <ul><li class="helptext">
 <a href="about_games.html#Toguz Xorgol">Toguz Xorgol</a> is very similar.
 <li class="helptext">
-played on smaller boards where the number of seeds per hole is the same as the number holes per side.
+played on smaller boards where the number of seeds per hole is the same as the number holes per side (<nolink>Toguz Kumalak::Toguz_Kumalak_n where n is in 5 .. 8).
 </ul>
 <div class="cols_row">
   <div class="column2">
@@ -3899,11 +3911,11 @@ any <a href="game_params.html#grandslam">GRANDSLAM</a> rule
 <p>Played in rounds with start player alternating.
 <p>Variations:
 <ul><li class="helptext">
-2x4 with 2 start seeds (a named variant)
+2x4 with 2 start seeds (<nolink>Weg::Weg_4_2)
 <li class="helptext">
-2x6 with 3 start seeds (a named variant)
+2x6 with 3 start seeds (<nolink>Weg::Weg_6_3)
 <li class="helptext">
-2x10 with 4 start seeds (a named variant)
+2x10 with 4 start seeds (<nolink>Weg::Weg_10_4)
 <li class="helptext">
 not played in rounds
 <li class="helptext">
@@ -3969,8 +3981,9 @@ any odd number of seeds
 <br><br><br>
 <h2 id="index">Game Index</h2>
 <p>Named variants are included below games that have them.
-              Some named variants that only vary a small number parameters
-              together, e.g. the size and start seeds, are not listed.
+          Some named variants that only vary a small number of parameters
+          together, e.g. the size and start seeds, are not listed.
+          Check game descriptions for <a href="#Dakon">Dakon</a>, <a href="#Ohvulhu">Ohvulhu</a>, <a href="#Ot-tjin">Ot-tjin</a>, <a href="#Toguz Kumalak">Toguz Kumalak</a>, and <a href="#Weg">Weg</a>.
 <div class="cols_row">
   <div class="column3">
     <p class="param"><a href="#Achochodi">Achochodi</a></p>
@@ -3984,8 +3997,8 @@ any odd number of seeds
     <p class="param"><a href="#Andada">Andada</a></p>
     <p class="param"><a href="#Andot">Andot</a></p>
     <p class="param"><a href="#Anywoli">Anywoli</a></p>
-    <p class="param">&emsp;&emsp;Yit_Nuri</p>
-    <p class="param">&emsp;&emsp;Yit_Jani</p>
+    <p class="param">&emsp;&ensp;Yit_Nuri</p>
+    <p class="param">&emsp;&ensp;Yit_Jani</p>
     <p class="param"><a href="#Ayoayo">Ayoayo</a></p>
     <p class="param"><a href="#Ba-awa">Ba-awa</a></p>
     <p class="param"><a href="#Bakuk">Bakuk</a></p>
@@ -3993,35 +4006,36 @@ any odd number of seeds
     <p class="param"><a href="#Bay Khom">Bay Khom</a></p>
     <p class="param"><a href="#Bechi">Bechi</a></p>
     <p class="param"><a href="#Bohnenspiel">Bohnenspiel</a></p>
-    <p class="param">&emsp;&emsp;Rounds</p>
+    <p class="param">&emsp;&ensp;Rounds</p>
     <p class="param"><a href="#Boola">Boola</a></p>
     <p class="param"><a href="#Bosh">Bosh</a></p>
-    <p class="param">&emsp;&emsp;No_Rounds</p>
+    <p class="param">&emsp;&ensp;No_Rounds</p>
     <p class="param"><a href="#Bule Perga">Bule Perga</a></p>
     <p class="param"><a href="#Centering">Centering</a></p>
     <p class="param"><a href="#Cow">Cow</a></p>
     <p class="param"><a href="#CrossCapt">CrossCapt</a></p>
-    <p class="param">&emsp;&emsp;Two</p>
-    <p class="param">&emsp;&emsp;Three</p>
-    <p class="param">&emsp;&emsp;Four</p>
-    <p class="param">&emsp;&emsp;Five</p>
-    <p class="param">&emsp;&emsp;Five_No_Sides</p>
-    <p class="param">&emsp;&emsp;Five_UDIR</p>
+    <p class="param">&emsp;&ensp;Two</p>
+    <p class="param">&emsp;&ensp;Three</p>
+    <p class="param">&emsp;&ensp;Four</p>
+    <p class="param">&emsp;&ensp;Five</p>
+    <p class="param">&emsp;&ensp;Five_No_Sides</p>
+    <p class="param">&emsp;&ensp;Five_UDIR</p>
     <p class="param"><a href="#CrossCapt_Seven">CrossCapt_Seven</a></p>
     <p class="param"><a href="#CrossCapt_Six">CrossCapt_Six</a></p>
     <p class="param"><a href="#Cross-Kalah">Cross-Kalah</a></p>
     <p class="param"><a href="#Cross-Wari">Cross-Wari</a></p>
     <p class="param"><a href="#Dabuda">Dabuda</a></p>
-    <p class="param">&emsp;&emsp;Two</p>
+    <p class="param">&emsp;&ensp;Two</p>
     <p class="param"><a href="#Dakon">Dakon</a></p>
     <p class="param"><a href="#Deka">Deka</a></p>
     <p class="param"><a href="#Dépouiller">Dépouiller</a></p>
     <p class="param"><a href="#Diffusion">Diffusion</a></p>
+    <p class="param">&emsp;&ensp;V2</p>
     <p class="param"><a href="#Djenon Abe">Djenon Abe</a></p>
     <p class="param"><a href="#Djenon Aboure">Djenon Aboure</a></p>
     <p class="param"><a href="#Embeli">Embeli</a></p>
     <p class="param"><a href="#Endodoi">Endodoi</a></p>
-    <p class="param">&emsp;&emsp;Rounds</p>
+    <p class="param">&emsp;&ensp;Rounds</p>
     <p class="param"><a href="#Enkeshui">Enkeshui</a></p>
     <p class="param"><a href="#Enlightenment">Enlightenment</a></p>
     <p class="param"><a href="#Erherhe">Erherhe</a></p>
@@ -4035,7 +4049,7 @@ any odd number of seeds
     <p class="param"><a href="#Goat">Goat</a></p>
     <p class="param"><a href="#GoEmpty_One">GoEmpty_One</a></p>
     <p class="param"><a href="#GoEmpty_Two">GoEmpty_Two</a></p>
-    <p class="param">&emsp;&emsp;MultiLap</p>
+    <p class="param">&emsp;&ensp;MultiLap</p>
     <p class="param"><a href="#Halusa">Halusa</a></p>
     <p class="param"><a href="#Hoyito I">Hoyito I</a></p>
     <p class="param"><a href="#Hoyito II">Hoyito II</a></p>
@@ -4044,23 +4058,24 @@ any odd number of seeds
     <p class="param"><a href="#Je ki n je">Je ki n je</a></p>
     <p class="param"><a href="#J'Odu">J'Odu</a></p>
     <p class="param"><a href="#Kalah">Kalah</a></p>
+    <p class="param">&emsp;&ensp;Maybe_Fair</p>
     <p class="param"><a href="#Kale">Kale</a></p>
     <p class="param"><a href="#Kâra">Kâra</a></p>
     <p class="param"><a href="#Krur">Krur</a></p>
-    <p class="param">&emsp;&emsp;Rounds</p>
+    <p class="param">&emsp;&ensp;Rounds</p>
     <p class="param"><a href="#Lagerung">Lagerung</a></p>
     <p class="param"><a href="#Lahemay Waladat">Lahemay Waladat</a></p>
     <p class="param"><a href="#Lam Waladach">Lam Waladach</a></p>
     <p class="param"><a href="#Lami">Lami</a></p>
     <p class="param"><a href="#Lamlameta">Lamlameta</a></p>
     <p class="param"><a href="#Leab El-ákil">Leab El-ákil</a></p>
-    <p class="param">&emsp;&emsp;Equal</p>
+    <p class="param">&emsp;&ensp;Equal</p>
     <p class="param"><a href="#Leb Bbut Ahbochen">Leb Bbut Ahbochen</a></p>
     <p class="param"><a href="#Leyla-Gobale">Leyla-Gobale</a></p>
-    <p class="param">&emsp;&emsp;Rounds</p>
+    <p class="param">&emsp;&ensp;Rounds</p>
     <p class="param"><a href="#long night game">long night game</a></p>
     <p class="param"><a href="#Longbeu-a-cha">Longbeu-a-cha</a></p>
-    <p class="param">&emsp;&emsp;Walak-pussa</p>
+    <p class="param">&emsp;&ensp;Walak-pussa</p>
     <p class="param"><a href="#Mandoli">Mandoli</a></p>
     <p class="param"><a href="#Mangala I">Mangala I</a></p>
     <p class="param"><a href="#Mangala II">Mangala II</a></p>
@@ -4075,7 +4090,7 @@ any odd number of seeds
     <p class="param"><a href="#Nambayi">Nambayi</a></p>
     <p class="param"><a href="#NamNam">NamNam</a></p>
     <p class="param"><a href="#Ndoto">Ndoto</a></p>
-    <p class="param">&emsp;&emsp;Bao</p>
+    <p class="param">&emsp;&ensp;Bao</p>
     <p class="param"><a href="#No Sides Child">No Sides Child</a></p>
     <p class="param"><a href="#NoCapt">NoCapt</a></p>
     <p class="param"><a href="#NoSides">NoSides</a></p>
@@ -4108,11 +4123,12 @@ any odd number of seeds
     <p class="param"><a href="#SameSide">SameSide</a></p>
     <p class="param"><a href="#Sàn Yáo">Sàn Yáo</a></p>
     <p class="param"><a href="#SimpleCapt">SimpleCapt</a></p>
-    <p class="param">&emsp;&emsp;Two</p>
-    <p class="param"><a href="#SimpleCapt_Three">SimpleCapt_Three</a></p>
+    <p class="param">&emsp;&ensp;Anywhere</p>
+    <p class="param">&emsp;&ensp;LastCapt</p>
+    <p class="param"><a href="#SimpleCapt_PCapt">SimpleCapt_PCapt</a></p>
     <p class="param"><a href="#Sokusowó">Sokusowó</a></p>
     <p class="param"><a href="#Songo">Songo</a></p>
-    <p class="param">&emsp;&emsp;Douala</p>
+    <p class="param">&emsp;&ensp;Douala</p>
     <p class="param"><a href="#SowOpDirs">SowOpDirs</a></p>
     <p class="param"><a href="#Tapata">Tapata</a></p>
     <p class="param"><a href="#Tap-Urdy">Tap-Urdy</a></p>
@@ -4125,7 +4141,7 @@ any odd number of seeds
     <p class="param"><a href="#Vai Lun Thlan">Vai Lun Thlan</a></p>
     <p class="param"><a href="#Valah">Valah</a></p>
     <p class="param"><a href="#Voleur">Voleur</a></p>
-    <p class="param">&emsp;&emsp;Evens</p>
+    <p class="param">&emsp;&ensp;Evens</p>
     <p class="param"><a href="#Wari">Wari</a></p>
     <p class="param"><a href="#Waurie">Waurie</a></p>
     <p class="param"><a href="#Weg">Weg</a></p>
