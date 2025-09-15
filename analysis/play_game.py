@@ -224,7 +224,7 @@ def play_one_game(game, fplayer, tplayer,
         move_limit = 500
         if game.info.rounds:
             move_limit *= 4
-        if game.info.capt_rturn or game.info.sow_own_store:
+        if game.info.repeat_turn:
             move_limit *= 2
 
     for _ in range(move_limit):
