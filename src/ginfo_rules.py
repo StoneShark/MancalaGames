@@ -471,7 +471,7 @@ def test_no_sides_rules(tester):
         excp=gi.GameInfoError)
 
     bad_flags = ['grandslam', 'mustpass', 'mustshare', 'blocks',
-                 'round_fill']
+                 'moveunlock', 'round_fill']
     for flag in bad_flags:
         tester.test_rule(f'no_sides_bad_{flag}',
             rule=no_sides_and(flag),
