@@ -13,6 +13,8 @@
   <a href="#tab_Dynamics">Dynamics Tab</a>
   <a href="#tab_Sow">Sow Tab</a>
   <a href="#tab_Capture">Capture Tab</a>
+  <a href="#tab_Variants">Variants Tab</a>
+  <a href="#tab_Tags">Tags Tab</a>
   <a href="#tab_Player">Player Tab</a>
   <a href="#index">Parameter Index</a>
 <h3>Other Help Files</h3>
@@ -39,6 +41,11 @@ in the sow phase of a turn including the child parameters.
 <li><a href="#tab_Capture"><b class="inhead">Capture</b></a>:
 Parameters that control where seeds are captured from and
 any special mechanisms for multiple captures.
+<li><a href="#tab_Variants"><b class="inhead">Variants</b></a>:
+Parameters that define available named variants and individually
+adjustable parameters.
+<li><a href="#tab_Tags"><b class="inhead">Tags</b></a>:
+A collection of additional top level tags in the game dictionary.
 <li><a href="#tab_Player"><b class="inhead">Player</b></a>:
 Selection of the AI player and
 parameters that control how it selects moves
@@ -1038,22 +1045,66 @@ is included after the parameter sections.
 <p id="TextDict" class="pdesc">Type: <a href="param_types.html#TextDict"> TextDict </a>
 <p class="pdesc">UI Tab: Variants
 
-<p>Provide a dictionary of named variants whose values are the parameters to set for that variant. The first name of the variant must match the game name and must have an empty dictionary.
+<p>Provide a dictionary in JSON format of named variants whose values are the parameters to set for that variant. The first name of the variant must match the game name and must have an empty dictionary.
+<p>JSON (JavaScript Object Notation) format is explained here: <a href="https://www.json.org/json-en.html." target="_blank">https://www.json.org/json-en.html.</a>
+<p>The following value would define a base game of <a href="about_games.html#Krur">Krur</a> and a named variant of <nolink>Krur::Rounds which changes the values of four parameters from the base game:
+<p><pre class="fixed">
+<p>{
+<p>   "Krur": { },
+<p>   "Rounds": {
+<p>      "rounds": 2,
+<p>      "blocks": true,
+<p>      "round_starter": 0,
+<p>      "round_fill": 1
+<p>   }
+<p>}
+<p></pre>
 <h4 id="vari_params"> Vari Params </h4>
 <p class="pdesc">Location in Config Files:  : vari_params
 <p id="TextDict" class="pdesc">Type: <a href="param_types.html#TextDict"> TextDict </a>
 <p class="pdesc">UI Tab: Variants
 
-<p>Provide a dictionary where the keys are paramters (options) and the associated values are a list valid values for each. If all values are to be allowed any non-list type can be provided; "include" or "all" are suggested.
+<p>Provide a dictionary in JSON format where the keys are paramters (options) and the associated values are a list valid values for each. If all values are to be allowed any non-list type can be provided; "include" or "all" are suggested.
+<p>JSON (JavaScript Object Notation) format is explained here: <a href="https://www.json.org/json-en.html." target="_blank">https://www.json.org/json-en.html.</a>
+<p>The following value would allow changing of three parameters: selection of board sizes 3 to 6; mustpass as true or false; and capturing in the sow direction or the opposite of the sow direction (but not sowing in both directions):
+<p><pre class="fixed">
+<p>{
+<p>   "holes": [ 3, 4, 5, 6 ],
+<p>   "mustpass": "include",
+<p>   "capt_dir": [ 0, 1 ]
+<p>}
+<p></pre>
 <h2 id="tab_Tags">Tags Tab</h2>
 <h4 id="extra_tops"> Additional Top Level Tags </h4>
 <p class="pdesc">Location in Config Files:  : extra_tops
 <p id="TextDict" class="pdesc">Type: <a href="param_types.html#TextDict"> TextDict </a>
 <p class="pdesc">UI Tab: Tags
 
-<p>The <nolink>EXTRA_TOPS parameter is only used while editing, any top level tags that are not predefined are collected into a dictionary for editing. On Save, the tags are copied back to the top level.
+<p>The <nolink>EXTRA_TOPS parameter is only used while editing, any top level tags that are not predefined are collected into a JSON dictionary for editing. On Save, the tags are copied back to the top level.
+<p>JSON (JavaScript Object Notation) format is explained here: <a href="https://www.json.org/json-en.html." target="_blank">https://www.json.org/json-en.html.</a> Strings need to be one line. A new-line \n may be used to add new lines to the string, but actual new-lines should not be in strings.
 <p>Unlike <a href="game_params.html#vari_params">VARI_PARAMS</a> and <a href="game_params.html#variants">VARIANTS</a> parameters, when there is a JSON parse error in <nolink>EXTRA_TAGS, a raw string cannot be saved. If there is a parser error and you choose to save anyway, the original tags will be preserved and any pending edits will be lost.
-<p>Extra tags may be included in a game configuration file. The source for the game rules is often included. Other common tags are references, deviations, and notes.
+<p>Extra tags may be included in a game configuration file. Generally included tags are listed below. The script play_mancala allows filtering the game list by many of these values on the About tab.
+<ul><li class="helptext">
+<b class="inhead">rules</b>: the source for the game rules is often included. 
+<li class="helptext">
+<b class="inhead">deviation</b>: descriptions where the rules are not implemented exactly as the source listed in the rules tag. If there is more than one deviation, numbered tags may be used, e.g. deviation 1, deviation 2.
+<li class="helptext">
+<b class="inhead">origin</b>: generally one of traditional, modern, or example.
+<li class="helptext">
+<b class="inhead">region</b>: generally one or more of the following: Africa, Eastern Africa, Central Africa, Northern Africa, Western Africa, Southern Africa, Asia, Central Asia, South Asia, Southeast Asia, Western Asia, East Asia, Americas, Caribbean, Europe. Use the most specific region.
+<li class="helptext">
+Other common tags are <b class="inhead">references</b> and <b class="inhead">note</b>s. The "Notes" filter in play_mancala includes games with tags including note, reference, question and lagniappe.
+</ul>
+<p>An example of extra_tags:
+<p><pre class="fixed">
+<p>{
+<p>   "rules": "Russ, Laurence. Mancala Games. 1984. p20.",
+<p>   "deviation": "SKIP_START is set; it's not clear from the stated game rules
+<p>if it should be.",
+<p>   "origin": "traditional",
+<p>   "region": "Central Africa"
+<p>}
+<p></pre>
 <h2 id="tab_Player">Player Tab</h2>
 <h4 id="algorithm"> Algorithm </h4>
 <p class="pdesc">Location in Config Files: player : algorithm

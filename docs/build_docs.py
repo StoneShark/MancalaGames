@@ -567,6 +567,8 @@ PARAM_NAV = """\
   <a href="#tab_Dynamics">Dynamics Tab</a>
   <a href="#tab_Sow">Sow Tab</a>
   <a href="#tab_Capture">Capture Tab</a>
+  <a href="#tab_Variants">Variants Tab</a>
+  <a href="#tab_Tags">Tags Tab</a>
   <a href="#tab_Player">Player Tab</a>
   <a href="#index">Parameter Index</a>
 <h3>Other Help Files</h3>
@@ -594,6 +596,11 @@ in the sow phase of a turn including the child parameters.
 <li><a href="#tab_Capture"><b class="inhead">Capture</b></a>:
 Parameters that control where seeds are captured from and
 any special mechanisms for multiple captures.
+<li><a href="#tab_Variants"><b class="inhead">Variants</b></a>:
+Parameters that define available named variants and individually
+adjustable parameters.
+<li><a href="#tab_Tags"><b class="inhead">Tags</b></a>:
+A collection of additional top level tags in the game dictionary.
 <li><a href="#tab_Player"><b class="inhead">Player</b></a>:
 Selection of the AI player and
 parameters that control how it selects moves
@@ -694,7 +701,8 @@ def write_params_help(filename):
 
                 if param.option == ckey.SOW_DIRECT:
                     write_para(param.description, ofile, -1)
-                elif param.option == ckey.GAME_CLASS:
+                elif param.option in (ckey.GAME_CLASS,
+                                      ckey.EXTRA_TOPS):
                     write_para(param.description, ofile)
                 else:
                     write_para(param.description, ofile, 0)

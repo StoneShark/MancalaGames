@@ -78,6 +78,10 @@ REMOVE_TAGS = [re.compile(r'<a[^>]+>'),
                re.compile(r'<b[^>]+>'),
                re.compile(r'</b>'),
 
+               # these tags are used and removed in editor's formatter
+               # re.compile(r'<pre[^>]+>'),
+               # re.compile(r'</pre>'),
+
                re.compile(NOLINK),
                re.compile(NO_ENUM_ERROR),
 

@@ -48,6 +48,9 @@ SKIP_TAB = 'skip'
 
 WTITLE = 'Mancala Games Editor'
 
+PRE_TAG = '<pre'
+END_PRE_TAG = '</pre'
+
 # prefix for the tk variable names
 # names must be distinct from variants popup
 PREFIX = 'edit_'
@@ -296,9 +299,18 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
 
         paragraphs = desc.split('\n')
         out_text = ''
+        in_pre = False
         for para in paragraphs:
+            if PRE_TAG in para:
+                in_pre = True
+                continue
+            if END_PRE_TAG in para:
+                in_pre = False
+                continue
+
             fpara = textwrap.fill(para, DESC_WIDTH) + '\n'
-            fpara += '\n'
+            if not in_pre:
+                fpara += '\n'
             out_text += fpara
         desc = ''.join(out_text)
 
