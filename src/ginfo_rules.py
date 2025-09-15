@@ -465,18 +465,26 @@ def test_no_sides_rules(tester):
         return _no_sides_and
 
     tester.test_rule('no_sides_need_place',
-        rule=lambda ginfo: (ginfo.no_sides and
-                            not (ginfo.stores or ginfo.child_type)),
+        rule=lambda ginfo: (ginfo.no_sides
+                            and not (ginfo.stores or ginfo.child_type)),
         msg='NO_SIDES requires STORES or CHILDREN',
         excp=gi.GameInfoError)
 
     bad_flags = ['grandslam', 'mustpass', 'mustshare', 'blocks',
-                 'rounds', 'round_starter', 'round_fill']
+                 'round_fill']
     for flag in bad_flags:
         tester.test_rule(f'no_sides_bad_{flag}',
             rule=no_sides_and(flag),
             msg=f'NO_SIDES cannot be used with {flag.upper()}',
             excp=gi.GameInfoError)
+
+    tester.test_rule('no_sides_rtally_only',
+        rule=lambda ginfo: (ginfo.no_sides
+                            and ginfo.rounds
+                            and ginfo.goal not in round_tally.RoundTally.GOALS),
+        msg="The specified goal cannot be used with NO_SIDES and ROUNDS.",
+        excp=gi.GameInfoError)
+        # rounds that hole allocations are incompatible with no_sides
 
     # generate some warnings of things that might go bad
 

@@ -410,7 +410,10 @@ is included after the parameter sections.
 <p class="pdesc">Default value: False
 <p class="pdesc">UI Tab: Dynamics
 
-<p>Moves maybe made from any hole, independent of the side of the board. Moves need to specify side, position and directions.  
+<p>Moves maybe made from any hole, independent of the side of the board. 
+<p><nolink>NO_SIDES is incompatible with <a href="game_params.html#blocks">BLOCKS</a>, <a href="game_params.html#grandslam">GRANDSLAM</a>, <a href="game_params.html#moveunlock">MOVEUNLOCK</a>, <a href="game_params.html#mustpass">MUSTPASS</a>, <a href="game_params.html#mustshare">MUSTSHARE</a>, <a href="game_params.html#blocks">BLOCKS</a>, and <a href="game_params.html#round_fill">ROUND_FILL</a>. <nolink>NO_SIDES games played in rounds must use a round tally <a href="game_params.html#goal">GOAL</a>.
+<p>Care must be taken when using <nolink>NO_SIDES without stores because the color of the holes is the only way to know whose turn it is. The colors used for holes can be controlled for each game in the mancala.ini file. A gentle warning (console print) is raised <a href="game_params.html#no_sides">NO_SIDES</a> is used without <a href="game_params.html#stores">STORES</a>.
+<p>The test for <a href="game_params.html#capt_side">CAPT_SIDE</a> might not behave as expected for games that are not north/south; that is, some games not built on the Mancala game class. Specifically, the board side ranges are used for the test, so if they are patched, the test might not be a north or south test, but still might be what you want. A gentle warning (console print) is raised.
 <h4 id="mustpass"> Must Pass </h4>
 <p class="pdesc">Location in Config Files: game_info : mustpass
 <p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
