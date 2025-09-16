@@ -852,9 +852,9 @@ Ending 3: End when one player has collected more than half of the seeds or the b
 <li class="helptext">
 <nolink>CrossCapt::Five: Cross capture initiated from either side of the board. The does not end until one person has collected more than half the seeds, or the board is cleared.
 <li class="helptext">
-<nolink>CrossCapt::Five_No_Sides:  <nolink>CrossCapt::Five but plays may be made from any hole.
+<nolink>CrossCapt::Five_No_Sides: <nolink>CrossCapt::Five but plays may be made from any hole.
 <li class="helptext">
-<nolink>CrossCapt::Five_UDIR: <nolink>CrossCapt::Five but the player may choose the direction of sow on each move. As specified in the rules (Hanson) each player's first move (including any repeat turns) are sown counter-clockwise, but Mancala Games does not support changing User Directed Holes during a game.
+<nolink>CrossCapt::Five_UDIR: <nolink>CrossCapt::Five but each player's first move (including any repeat turns) are sown counter-clockwise; the user chooses the sow direction for subsequent moves.
 <li class="helptext">
 capture side of own, opposite or both.
 <li class="helptext">
@@ -1322,6 +1322,32 @@ Another value for <a href="game_params.html#round_fill">ROUND_FILL</a>
 <p><b class="enum">Rules</b>: Russ, Laurence. Mancala Games. 1984. p24.
 <p><b class="enum">Origin</b>: traditional
 <p><b class="enum">Region</b>: Central Asia
+<h3 id="Four-Capture" class="game_desc">Four-Capture</h3>
+<p>The first move by each player is sown counter-clockwise, the player chooses the sow direction for subseuqent moves. Sow in multiple laps, but stop for capture. 
+<p>If your opponent does not have seeds you must share. If you cannot share your opponent claims your remaining seeds and the game ends.
+<p>Capture on 4s on either side of the board.
+<p>Goal: collect the most seeds.
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 4</p>
+    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: BOTH</p>
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
+    <p class="param"><a href="game_params.html#mustshare">Must Share</a>: Yes</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#prescribed">Prescribed Opening Move</a>: NO_UDIR_FIRSTS</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#udir_holes">User Chooses Direction</a>: all</p>
+    <p class="param"><a href="game_params.html#unclaimed">Unclaimed Seeds at End</a>: UNFED_PLAYER</p>
+  </div>
+</div>
+<p><b class="enum">Rules</b>: Hanson, Sue and Jon. "All about Mancala: It's History and How to Play". 2003. p73.
+<p><b class="enum">Origin</b>: modern
+<p><b class="enum">Region</b>: Americas
 <h3 id="Gabata" class="game_desc">Gabata</h3>
 <p>A territory game that uses both stores and wegs (children). 
 <p>Sow is multi-lap, counter-clockwise. The opening move is prescribed: Plus1Minus1; the starting player selects which hole the pattern starts from.
@@ -1750,7 +1776,7 @@ Require must share (<a href="game_params.html#mustshare">MUSTSHARE</a>) because 
 <li class="helptext">
 The game <a href="about_games.html#NS_Kalah">NS_Kalah</a> limits sowing to each player's own side of the board with other minor changes.
 <li class="helptext">
-See <a href="about_games.html#SimpleCapt">SimpleCapt</a>, <a href="about_games.html#CrossCapt">CrossCapt</a>, and <a href="about_games.html#CrossCapt_Six">CrossCapt_Six</a> and their named variants.
+See <a href="about_games.html#SimpleCapt">SimpleCapt</a> and <a href="about_games.html#CrossCapt">CrossCapt</a>  variants.
 </ul>
 <div class="cols_row">
   <div class="column2">
@@ -4042,6 +4068,7 @@ any odd number of seeds
   </div>
   <div class="column3">
     <p class="param"><a href="#Eson Xorgol">Eson Xorgol</a></p>
+    <p class="param"><a href="#Four-Capture">Four-Capture</a></p>
     <p class="param"><a href="#Gabata">Gabata</a></p>
     <p class="param"><a href="#Gamacha">Gamacha</a></p>
     <p class="param"><a href="#Gelech">Gelech</a></p>
@@ -4093,9 +4120,9 @@ any odd number of seeds
     <p class="param">&emsp;&ensp;Bao</p>
     <p class="param"><a href="#No Sides Child">No Sides Child</a></p>
     <p class="param"><a href="#NoCapt">NoCapt</a></p>
-    <p class="param"><a href="#NoSides">NoSides</a></p>
   </div>
   <div class="column3">
+    <p class="param"><a href="#NoSides">NoSides</a></p>
     <p class="param"><a href="#NS_Kalah">NS_Kalah</a></p>
     <p class="param"><a href="#Nsa Isong">Nsa Isong</a></p>
     <p class="param"><a href="#NumNum">NumNum</a></p>

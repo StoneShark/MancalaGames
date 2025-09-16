@@ -525,6 +525,26 @@ def test_sower_rules(tester):
         msg="""MLAP_PARAM requires CONT_MLAP""",
         excp=gi.GameInfoError)
 
+    tester.test_rule('sow_own_prescribed',
+        rule=lambda ginfo: (ginfo.sow_stores
+                            and ginfo.prescribed in
+                                (gi.SowPrescribed.BASIC_SOWER,
+                                 gi.SowPrescribed.MLAPS_SOWER,
+                                 gi.SowPrescribed.SOW1OPP,
+                                 gi.SowPrescribed.PLUS1MINUS1)
+                            ),
+        msg='SOW_STORES is ignored for the selected first prescribed sow',
+        warn=True)
+
+    tester.test_rule('nu1st_cw_ccw',
+        rule=lambda ginfo: (ginfo.prescribed == gi.SowPrescribed.NO_UDIR_FIRSTS
+                            and ginfo.sow_direct not in (gi.Direct.CCW,
+                                                         gi.Direct.CW)),
+        msg="""Prescribed sow of NO_UDIR_FIRSTS requires SOW_DIRECT
+        be CW or CCW""",
+        warn=gi.GameInfoError)
+
+
 
 def test_capture_rules(tester):
     """Most of the capture rules are added here."""
@@ -861,25 +881,6 @@ def test_basic_rules(tester):
                             and ginfo.mlaps == gi.LapSower.LAPPER_NEXT),
         msg='LAP_CAPT_OPP_GETS is not supported with LAPPER_NEXT',
         excp=NotImplementedError)
-
-    tester.test_rule('sow_own_prescribed',
-        rule=lambda ginfo: (ginfo.sow_stores
-                            and ginfo.prescribed in
-                                (gi.SowPrescribed.BASIC_SOWER,
-                                 gi.SowPrescribed.MLAPS_SOWER,
-                                 gi.SowPrescribed.SOW1OPP,
-                                 gi.SowPrescribed.PLUS1MINUS1)
-                            ),
-        msg='SOW_STORES is ignored for the selected first prescribed sow',
-        warn=True)
-
-    tester.test_rule('sow1opp_rturn',
-        rule=lambda ginfo: (ginfo.prescribed == gi.SowPrescribed.SOW1OPP
-                            and ginfo.repeat_turn),
-        msg='Prescribed sow of SOW1OPP is not support with repeat turns',
-        warn=gi.GameInfoError)
-        # SOW1OPP is used for 2 turns but the prescribed sower uses mcount
-        # repeat turns would exhaust it on the first mover
 
     tester.test_rule('sow_start_skip_incomp',
         rule=lambda ginfo: ginfo.sow_start and ginfo.skip_start,

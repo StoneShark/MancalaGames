@@ -388,6 +388,7 @@ class SowPrescribed(enum.IntEnum):
     SOW1OPP = 3
     PLUS1MINUS1 = 4
     ARNGE_LIMIT = 5   # arrange seeds or limit children and captures
+    NO_UDIR_FIRSTS = 6
 
 
 @enum.unique

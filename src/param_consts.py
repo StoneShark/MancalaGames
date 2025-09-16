@@ -296,7 +296,8 @@ STRING_DICTS = {
          'Sow Mlaps First': gi.SowPrescribed.MLAPS_SOWER,
          'Sow One Opposite': gi.SowPrescribed.SOW1OPP,
          'Plus 1, Minus 1': gi.SowPrescribed.PLUS1MINUS1,
-         'Arrange or Limit ch & capts': gi.SowPrescribed.ARNGE_LIMIT}),
+         'Arrange or Limit ch & capts': gi.SowPrescribed.ARNGE_LIMIT,
+         'Do the 1st moves w/o UDIR': gi.SowPrescribed.NO_UDIR_FIRSTS}),
 
     'SowRule': lookup_dicts(
         gi.SowRule,

@@ -1753,7 +1753,63 @@ class TestPrescribed:
         return mancala.Mancala(game_consts, game_info)
 
 
-    def test_mechanic(self, game, mocker):
+    def test_mechanic_1(self, game, mocker):
+
+
+        mpresc = mocker.patch('sower.SowPlus1Minus1Capt.do_prescribed')
+        msower = mocker.patch('sower.SowSeeds.sow_seeds')
+
+        swr = sower.SowSeeds(game)
+        swr = sower.SowPlus1Minus1Capt(game, 1, swr)
+
+        deco_str = str(swr)
+        assert 'dispose' in deco_str
+        assert 'mcount' in deco_str
+        assert 'SowSeeds' in deco_str
+        assert 'SowPlus1Minus1Capt' in deco_str
+
+        move = 1
+        mdata = move_data.MoveData(game, move)
+        mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(move)
+        mdata.direct = game.info.sow_direct
+
+        swr.sow_seeds(mdata)
+
+        mpresc.assert_called_once()
+        msower.assert_not_called()
+
+        # do_prescribed should not be called again
+        game.mcount += 1
+        swr.sow_seeds(mdata)
+
+        mpresc.assert_called_once()     # not called again
+        msower.assert_called_once()     # now called
+
+
+        # confirm new_game resets behavior
+        game.new_game()
+        mpresc.reset_mock()
+        msower.reset_mock()
+
+        move = 1
+        mdata = move_data.MoveData(game, move)
+        mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(move)
+        mdata.direct = game.info.sow_direct
+
+        swr.sow_seeds(mdata)
+
+        mpresc.assert_called_once()
+        msower.assert_not_called()
+
+        game.mcount += 1
+        swr.sow_seeds(mdata)
+
+        mpresc.assert_called_once()   # not called again
+        msower.assert_called_once()   # now called
+
+
+
+    def test_mechanic_2(self, game, mocker):
 
 
         mpresc = mocker.patch('sower.SowOneOpp.do_prescribed')
@@ -1764,6 +1820,7 @@ class TestPrescribed:
 
         deco_str = str(swr)
         assert 'dispose' in deco_str
+        assert 'movers' in deco_str
         assert 'SowOneOpp' in deco_str
         assert 'SowSeeds' in deco_str
 
@@ -1778,14 +1835,14 @@ class TestPrescribed:
         msower.assert_not_called()
 
         # do_prescribed should be called again
-        game.mcount += 1
+        game.movers += 1
         swr.sow_seeds(mdata)
 
         assert len(mpresc.mock_calls) == 2
         msower.assert_not_called()
 
         # sower should be called
-        game.mcount += 1
+        game.movers += 1
         swr.sow_seeds(mdata)
 
         assert len(mpresc.mock_calls) == 2
@@ -1807,14 +1864,14 @@ class TestPrescribed:
         msower.assert_not_called()
 
         # do_prescribed should be called again
-        game.mcount += 1
+        game.movers += 1
         swr.sow_seeds(mdata)
 
         assert len(mpresc.mock_calls) == 2
         msower.assert_not_called()
 
         # sower should be called
-        game.mcount += 1
+        game.movers += 1
         swr.sow_seeds(mdata)
 
         assert len(mpresc.mock_calls) == 2
@@ -1967,6 +2024,27 @@ class TestPrescribed:
         game_p1m1.turn = turn
         game_p1m1.move(move)
         assert game_p1m1.board == eboard
+
+
+    def test_no_udir_firsts(self):
+
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
+        game_info = gi.GameInfo(evens=True,
+                                stores=True,
+                                prescribed=SowPrescribed.NO_UDIR_FIRSTS,
+                                udir_holes=[0, 1, 2, 3],
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        game.move((0, gi.Direct.CW))
+        assert game.mdata.direct == gi.Direct.CCW
+
+        game.move((0, gi.Direct.CW))
+        assert game.mdata.direct == gi.Direct.CCW
+
+        game.move((1, gi.Direct.CW))
+        assert game.mdata.direct == gi.Direct.CW
 
 
     def test_bad_construct(self, game):
@@ -2429,6 +2507,7 @@ class TestAnimator:
                               (gi.SowPrescribed.PLUS1MINUS1, 1),
                               (gi.SowPrescribed.NONE, 0),
                               (gi.SowPrescribed.BASIC_SOWER, 0),
+                              (gi.SowPrescribed.NO_UDIR_FIRSTS, 1),
                               ])
     def test_animator_presc_message(self, mocker, presc, ecalls):
 

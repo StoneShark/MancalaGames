@@ -594,7 +594,8 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
             self.game.inhibitor.stop_me_capt(self.game.turn)
             or self.game.inhibitor.stop_me_child(self.game.turn)
             or self.game.info.prescribed in (gi.SowPrescribed.SOW1OPP,
-                                             gi.SowPrescribed.PLUS1MINUS1))
+                                             gi.SowPrescribed.PLUS1MINUS1,
+                                             gi.SowPrescribed.NO_UDIR_FIRSTS))
         self.ani_reset_state()
         if animator.active() and startup_msgs:
             self.update_idletasks()

@@ -562,7 +562,12 @@ class SCaptCrossSingles(SowMethodIf):
 
 class SowPrescribedIf(SowMethodIf):
     """A deco that does prescribed moves for one or more turns.
-    Concrete subclasses should not provide sow_seeds."""
+    Concrete subclasses should not provide sow_seeds.
+
+    If count is > 1 apply it to the movers count--repeat turns are
+    not counted as seperate moves and moves is inited to 1.
+
+    Otherwise apply to mcount--every move include repeat turns."""
 
     def __init__(self, game, count, decorator=None):
 
@@ -571,12 +576,14 @@ class SowPrescribedIf(SowMethodIf):
                 "Prescribed sowers must have follow-on decorators")
 
         super().__init__(game, decorator)
-        self.dispose = count
+        self.dispose = count if count == 1 else (count - 1)
+        self.cnt_attr = 'mcount' if count == 1 else 'movers'
 
 
     def __str__(self):
 
-        return self.str_deco_detail('dispose:  ' + str(self.dispose))
+        return self.str_deco_detail('dispose:  ' + str(self.dispose)
+                                    + '\n   cnt attr:  ' + self.cnt_attr)
 
 
     @abc.abstractmethod
@@ -587,7 +594,7 @@ class SowPrescribedIf(SowMethodIf):
     def sow_seeds(self, mdata):
         """If the decorator has expired, call the child sower."""
 
-        if self.game.mcount > self.dispose:
+        if getattr(self.game, self.cnt_attr) > self.dispose:
             self.decorator.sow_seeds(mdata)
         else:
             game_log.add(f"Prescribed sower used: {self.__class__.__name__}")
@@ -676,6 +683,16 @@ class SowPlus1Minus1Capt(SowPrescribedIf):
         self.game.board[cross] += 1
 
         mdata.capt_start = cross
+
+
+class SowNoUdirFirsts(SowPrescribedIf):
+    """For the prescribed sows, only sow in the direction
+    of the base game, no UDIR sowing."""
+
+    def do_prescribed(self, mdata):
+
+        mdata.direct = self.game.info.sow_direct
+        self.decorator.sow_seeds(mdata)
 
 
 # %%  lap continue testers
@@ -1383,6 +1400,9 @@ def _add_prescribed_sower(game, sower):
     elif game.info.prescribed == gi.SowPrescribed.ARNGE_LIMIT:
         pass    # sower deco not needed
 
+    elif game.info.prescribed == gi.SowPrescribed.NO_UDIR_FIRSTS:
+        sower = SowNoUdirFirsts(game, 2, sower)
+
     else:
         raise NotImplementedError(
                 f"SowPrescribed {game.info.prescribed} not implemented.")
@@ -1417,3 +1437,6 @@ def start_ani_msg(game):
 
     elif game.info.prescribed == gi.SowPrescribed.PLUS1MINUS1:
         animator.do_message("Prescribed Opening Plus 1 Minus 1")
+
+    elif game.info.prescribed == gi.SowPrescribed.NO_UDIR_FIRSTS:
+        animator.do_message(f"First two moves as sown {game.info.sow_direct.name}")

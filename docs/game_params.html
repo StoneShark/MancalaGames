@@ -291,11 +291,13 @@ is included after the parameter sections.
 <li class="helptext">
 <b class="enum">MLAPS_SOWER</b>: the first sow follows basic rules of multi-lap sowing (LAPPER). Other sow parameters will be enacted afterward. 
 <li class="helptext">
-<b class="enum">SOW1OPP</b>: at least one seed must be sown on the opponents side of the board which is accomplished by sowing as normal until the final seed, then any remaining holes on the player's side are skipped and the last seed is sown in the opponents first hole (based on current sow direction). This prescribed opening is used for the first two moves of a game.
+<b class="enum">SOW1OPP</b>: at least one seed must be sown on the opponents side of the board which is accomplished by sowing as normal until the final seed, then any remaining holes on the player's side are skipped and the last seed is sown in the opponents first hole (based on current sow direction). This prescribed opening is used for the first two moves of a game (including any repeat turns).
 <li class="helptext">
 <b class="enum">PLUS1MINUS1</b>: proceed from the selected hole by moving one seed from the next hole into the following hole, next skip that hole and repeat moving seed forward. After cycling the board, capture across from the opening hole. 
 <li class="helptext">
 <b class="enum">ARNGE_LIMIT</b>: the first move may be used to rearrange the seeds (opponent is same layout). If the first move is not used for rearrangement, captures and child creation are not allowed from the starter until the second player makes a child or captures.
+<li class="helptext">
+<b class="enum">NO_UDIR_FIRSTS</b>: the first move by each player (including repeat turns) is sown in <a href="game_params.html#sow_direct">SOW_DIRECT</a> direction, which must be CW or CCW, on subsequent moves the player chooses the direction.
 </ol>
 <h4 id="min_move"> Minimum Seeds for Move </h4>
 <p class="pdesc">Location in Config Files: game_info : min_move
