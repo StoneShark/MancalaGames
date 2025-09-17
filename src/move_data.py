@@ -5,6 +5,8 @@ Created on Wed Apr 23 12:19:33 2025
 @author: Ann
 """
 
+import format_msg
+
 class MoveData:
     """A place to collect premove and move data.
     This is so the decos can share data.
@@ -32,7 +34,7 @@ class MoveData:
     winner                                                             fill
 
     end_msg                                                            fill
-    fmsg                                                               fill
+    fin_msg                                                            fill
     user_end
 
     note 1: board is used to determine if a grand slam is possible
@@ -69,7 +71,7 @@ class MoveData:
         self.repeat_turn = False
 
         self.end_msg = ''
-        self.fmsg = False      # end_msg is all that needs to be said (full msg)
+        self.fin_msg = False      # end_msg is all that needs to be said
 
         self.ended = False
         self.win_cond = None
@@ -93,7 +95,7 @@ class MoveData:
         string += f"  captured={self.captured}\n"
         string += f"  repeat_turn={self.repeat_turn}\n"
         string += f"  end_msg={self.end_msg}\n"
-        string += f"  fmsg={self.fmsg}\n"
+        string += f"  fin_msg={self.fin_msg}\n"
         string += f"  ended={self.ended}\n"
         string += f"  win_cond={self.win_cond}\n"
         string += f"  winner={self.winner}\n"
@@ -159,3 +161,19 @@ class MoveData:
 
         for var, val in zip(vars(self).keys(), value):
             setattr(self, var, val)
+
+
+    def add_end_msg(self, msg, final=False):
+        """Possibly add msg to the end_msg.
+
+        If final is not falsy, ignore fin_msg.
+        If fin_msg is set and final is not truthy, do not add the msg.
+        If final is true, set fin_msg and add the message."""
+
+        if self.fin_msg and not final:
+            return
+        if final is True:
+            self.fin_msg = final
+
+        self.end_msg += format_msg.LINE_SEP if self.end_msg else ''
+        self.end_msg += msg

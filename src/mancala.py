@@ -982,7 +982,7 @@ class Mancala(ai_interface.AiGameIf):
         message = ''
         if self.mdata.end_msg:
             message = self._win_msg_subs(rtext)
-            if self.mdata.fmsg:
+            if self.mdata.fin_msg:
                 return title, message
 
         message += fmt.LINE_SEP if message else ''

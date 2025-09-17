@@ -8,6 +8,7 @@ Created on Sat Jun 14 06:18:05 2025
 import pytest
 pytestmark = pytest.mark.unittest
 
+from context import format_msg
 from context import game_constants as gconsts
 from context import game_info as gi
 from context import mancala
@@ -15,6 +16,8 @@ from context import move_data
 
 
 TEST_COVERS = ['src\\move_data.py']
+
+NL = format_msg.LINE_SEP
 
 
 class TestMoveData:
@@ -141,8 +144,44 @@ class TestMoveData:
         assert mdata.captured == 12
         assert mdata.repeat_turn == 13
         assert mdata.end_msg == 14
-        assert mdata.fmsg == 15
+        assert mdata.fin_msg == 15
         assert mdata.ended == 16
         assert mdata.win_cond == 17
         assert mdata.winner == 18
         assert mdata.user_end == 19
+
+
+    def test_add_end_msg(self, game):
+
+
+        mdata = move_data.MoveData()
+
+        single_line = "a single line"
+        mdata.add_end_msg(single_line)
+        assert mdata.end_msg == single_line
+        assert not mdata.fin_msg
+
+        next_line = "next line"
+        mdata.add_end_msg(next_line, 'extra')
+        assert mdata.end_msg == NL.join([single_line, next_line])
+        assert not mdata.fin_msg
+
+        final_line = "final line"
+        mdata.add_end_msg(final_line, True)
+        assert mdata.end_msg == NL.join([single_line, next_line, final_line])
+        assert mdata.fin_msg
+
+        mdata.add_end_msg('ignored line')
+        assert mdata.end_msg == NL.join([single_line, next_line, final_line])
+        assert mdata.fin_msg
+
+        forced_line = 'forced line'
+        mdata.add_end_msg(forced_line, 'forced')
+        assert mdata.end_msg == NL.join([single_line, next_line, final_line,
+                                         forced_line])
+        assert mdata.fin_msg is True
+
+        mdata.add_end_msg(forced_line, True)
+        assert mdata.end_msg == NL.join([single_line, next_line, final_line,
+                                         forced_line, forced_line])
+        assert mdata.fin_msg

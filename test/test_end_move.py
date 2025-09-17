@@ -2481,31 +2481,36 @@ class TestRoundTally:
         game.board = board
         game.store = store
         game.rtally.state = (rtally, rtally, rtally, rtally)
-        print(game.deco.ender)
-        print(game)
+        # print(game.deco.ender)
+        # print(game)
 
         mdata = utils.make_ender_mdata(game, False, False)
         game.deco.ender.game_ended(mdata)
-        print(mdata)
-        print(game.rtally)
+        # print(mdata)
+        # print(game.rtally)
 
         assert mdata.win_cond == econd
         assert mdata.winner == ewinner
         assert game.rtally.parameter(0) == etally[0]
         assert game.rtally.parameter(1) == etally[1]
 
+        if isinstance(mdata.end_msg, list):
+            msg = ' '.join(mdata.end_msg)
+        else:
+            msg = mdata.end_msg
+
         if not etally[1]:
             pass
 
         elif etally[1] < game.info.goal_param:
-            assert str(etally[1]) in mdata.end_msg
-            assert str(game.info.goal_param) in mdata.end_msg
-            assert 'towards' in mdata.end_msg
+            assert str(etally[1]) in msg
+            assert str(game.info.goal_param) in msg
+            assert 'towards' in msg
 
         elif etally[1] >= game.info.goal_param:
-            assert str(etally[1]) not in mdata.end_msg
-            assert str(game.info.goal_param) not in mdata.end_msg
-            assert 'towards' not in mdata.end_msg
+            assert str(etally[1]) not in msg
+            assert str(game.info.goal_param) not in msg
+            assert 'towards' not in msg
 
 
 class TestAnimator:

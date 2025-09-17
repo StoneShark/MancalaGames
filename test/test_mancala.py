@@ -1049,7 +1049,7 @@ class TestWinMessage:
 
         if msg:
             maxgame.mdata.end_msg = msg
-        maxgame.mdata.fmsg = fmsg
+        maxgame.mdata.fin_msg = fmsg
 
         # use a bad WinCond to skip win and tie cases
         _, wmess = maxgame.win_message(gi.WinCond.REPEAT_TURN)
