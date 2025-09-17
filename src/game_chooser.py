@@ -660,10 +660,10 @@ class GameFilters(ttk.Frame):
         filt_frame.grid(row=0, column=0, sticky=tk.NSEW)
 
         rule_tab = ttk.Frame(filt_frame, padding=3)
-        filt_frame.add(rule_tab, text='Rules', padding=5, sticky=tk.NSEW)
+        filt_frame.add(rule_tab, text='Rule Filters', padding=5, sticky=tk.NSEW)
 
         info_tab = ttk.Frame(filt_frame, padding=3)
-        filt_frame.add(info_tab, text='About', padding=5, sticky=tk.NSEW)
+        filt_frame.add(info_tab, text='Info Filters', padding=5, sticky=tk.NSEW)
 
         cframes = [[None] * MAX_COLUMNS, [None] * MAX_COLUMNS]
         for tidx, tab in enumerate([rule_tab, info_tab]):
