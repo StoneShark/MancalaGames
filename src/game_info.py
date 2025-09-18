@@ -335,6 +335,7 @@ class RoundFill(enum.IntEnum):
     UMOVE = 7
     UCHOWN = 8
     SHORTEN_ALL = 9
+    LOSER_ONLY = 10
 
 
 @enum.unique

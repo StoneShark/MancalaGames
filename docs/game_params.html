@@ -232,7 +232,9 @@ is included after the parameter sections.
 <p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Dynamics
 
-<p>Allows specifying non-all-equal start patterns. The following patterns are supported:
+<p>Allows specifying non-all-equal start patterns. 
+<p>For TERRITORY games played in round, <nolink>START_PATTERN is used for every round, which could yield odd openings--use caution. For round tally games, the <nolink>START_PATTERN is used for all new games and rounds. For all other games played in rounds, <nolink>START_PATTERN is only used for the opening play of a game; not for the start of each round.
+<p>The following patterns are supported:
 <ol start=0><li class="helptext">
 <b class="enum">ALL_EQUAL</b>: all holes start with the same number of seeds. The total seeds in play is nbr_start x holes x 2.
 <li class="helptext">
@@ -502,7 +504,6 @@ is included after the parameter sections.
 <p>Several round fill mechanisms use the same general approach called the Empty Hole Method. The loser of the previous round will end up with empty holes. These holes are not playable if <a href="game_params.html#blocks">BLOCKS</a> are used; otherwise, they are playable. This method is not used for RND_* <a href="game_params.html#goal">GOAL</a> games.
 <p>The seeds each player accumulated in the previous round are distributed into holes with exactly the same number in each (<a href="game_params.html#nbr_start">NBR_START</a> seeds). The winner will fill all their holes and put any remaining seeds into their own store. The loser will fill as many holes as they can with nbr_start seeds and put any remaining seeds (fewer than nbr_start) into their own store.
 <p>LEFT_FILL, RIGHT_FILL and OUTSIDE_FILL define which holes that the loser must fill. UCHOOSE allows the loser to choose which holes have seeds.
-<p><a href="game_params.html#start_pattern">START_PATTERN</a> is only supported round_fill of NOT_APPLICABLE and UCHOWN.
 <ol start=0><li class="helptext">
 <b class="enum">NOT_APPLICABLE</b>: round fill doesn't need to be specified: either the game not played in rounds (CLEAR & DEPRIVE games included) or game goal is TERRITORY without UCHOWN (see below, all holes filled).
 <li class="helptext">
@@ -523,6 +524,10 @@ is included after the parameter sections.
 <b class="enum">UCHOWN</b>: The only round fill supported for territory games and only territory games. The winner may choose which holes they control.
 <li class="helptext">
 <b class="enum">SHORTEN_ALL</b>: SHORTEN but all of the loser's seeds are put on the board thus one hole might not have 'nbr_start' seeds. The winner gets the same number of seeds put into play.
+<li class="helptext">
+<b class="enum">LOSER_ONLY</b>: Only the loser's holes are refilled based on the number of seeds captured and on their side of the board. Any blocks (if used) on their side of the board are cleared. The loser may choose which holes have seeds and which are empty and (possibly) blocked.
+<p class="helptext"> The winner's side of the board is left unchanged: seeds left as is, blocks left in place, and seeds in the store remain. If the winner's side of the board is not playable, a new game is started.
+<p class="helptext"> <a href="game_params.html#no_sides">NO_SIDES</a>, children and locks are not supported. <a href="game_params.html#unclaimed">UNCLAIMED</a> and <a href="game_params.html#quitter">QUITTER</a> must both be HOLE_OWNER. 
 </ol>
 <h4 id="blocks"> Blocks </h4>
 <p class="pdesc">Location in Config Files: game_info : blocks

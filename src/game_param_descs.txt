@@ -717,8 +717,6 @@ The seeds each player accumulated in the previous round are distributed into hol
 
 LEFT_FILL, RIGHT_FILL and OUTSIDE_FILL define which holes that the loser must fill. UCHOOSE allows the loser to choose which holes have seeds.
 
-START_PATTERN is only supported round_fill of NOT_APPLICABLE and UCHOWN.
-
 - NOT_APPLICABLE: round fill doesn't need to be specified: either the game not played in rounds (CLEAR & DEPRIVE games included) or game goal is TERRITORY without UCHOWN (see below, all holes filled).
 
 - LEFT_FILL: fill the round loser's holes from the player's left with nbr_start seeds each. 
@@ -738,6 +736,12 @@ START_PATTERN is only supported round_fill of NOT_APPLICABLE and UCHOWN.
 - UCHOWN: The only round fill supported for territory games and only territory games. The winner may choose which holes they control.
 
 - SHORTEN_ALL: SHORTEN but all of the loser's seeds are put on the board thus one hole might not have 'nbr_start' seeds. The winner gets the same number of seeds put into play.
+
+- LOSER_ONLY: Only the loser's holes are refilled based on the number of seeds captured and on their side of the board. Any blocks (if used) on their side of the board are cleared. The loser may choose which holes have seeds and which are empty and (possibly) blocked.
+
+  + The winner's side of the board is left unchanged: seeds left as is, blocks left in place, and seeds in the store remain. If the winner's side of the board is not playable, a new game is started.
+
+  + NO_SIDES, children and locks are not supported. UNCLAIMED and QUITTER must both be HOLE_OWNER. 
 
 <param round_starter>
 Defines which player starts 2nd and subsequent rounds:
@@ -884,7 +888,11 @@ When selected, the first seed is sown into (i.e., left in) the start hole.
 
 <param start_pattern>
 
-Allows specifying non-all-equal start patterns. The following patterns are supported:
+Allows specifying non-all-equal start patterns. 
+
+For TERRITORY games played in round, <nolink>START_PATTERN is used for every round, which could yield odd openings--use caution. For round tally games, the <nolink>START_PATTERN is used for all new games and rounds. For all other games played in rounds, <nolink>START_PATTERN is only used for the opening play of a game; not for the start of each round.
+
+The following patterns are supported:
 
 - ALL_EQUAL: all holes start with the same number of seeds. The total seeds in play is nbr_start x holes x 2.
 

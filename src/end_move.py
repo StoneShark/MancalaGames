@@ -942,6 +942,69 @@ class RoundWinner(EndTurnIf):
             mdata.win_cond = gi.WinCond.ROUND_TIE
 
 
+class RoundLoserFillWinner(EndTurnIf):
+    """End the game if the loser cannot fill the required
+    number of holes or the winner's side of the board is
+    not playable."""
+
+    def __init__(self, game, decorator=None, sclaimer=None):
+
+        super().__init__(game, decorator, sclaimer)
+
+        nbr_start = game.cts.nbr_start
+
+        intro = "Game, not round, ended (_loser_ has too few seeds to fill "
+        goal_param = game.info.goal_param
+
+        if goal_param > 0:
+            self.req_seeds = game.info.goal_param * nbr_start
+            self.msg = intro + f"at least {goal_param} holes)."
+
+        else:
+            self.req_seeds = nbr_start
+            self.msg = intro + "a hole)."
+
+
+    def __str__(self):
+        return self.str_deco_detail(repr(self.sclaimer) + '\n   '
+                                    + f'req_seeds: {self.req_seeds}')
+
+
+    def _winner_playable(self, mdata):
+        """Return true if the winner's side is playable."""
+
+        with self.game.save_restore_state():
+
+            self.game.turn = mdata.winner
+            return any(self.game.get_allowable_holes())
+
+
+    def game_ended(self, mdata):
+
+        ended_in = mdata.ended
+        self.decorator.game_ended(mdata)
+        if (ended_in is True
+            or not mdata.win_cond
+            or mdata.win_cond == gi.WinCond.TIE):
+            return
+
+        # loser must have sufficient seeds to fill a hole
+        seeds = self.sclaimer.claim_seeds()
+        if seeds[not mdata.winner] < self.req_seeds:
+            mdata.add_end_msg(self.msg)
+            game_log.add(self.msg, game_log.IMPORT)
+            return
+
+        # winner side must be playable
+        if not self._winner_playable(mdata):
+            msg = 'Winner side is unplayable; game, not round, ended.'
+            mdata.add_end_msg(msg)
+            game_log.add(msg, game_log.IMPORT)
+            return
+
+        mdata.win_cond = gi.WinCond.ROUND_WIN
+
+
 class RoundTallyWinner(EndTurnIf):
     """"If the game is played in rounds, let the rest of the
     chain decide the outcome, then adjust for end of game or
@@ -1073,7 +1136,10 @@ def _add_end_game_winner(game):
     if  game.info.unclaimed == gi.EndGameSeeds.UNFED_PLAYER:
         condition = game.info.quitter
 
-    if game.info.no_sides or condition == gi.EndGameSeeds.DONT_SCORE:
+    if game.info.round_fill == gi.RoundFill.LOSER_ONLY:
+        sclaimer = claimer.ClaimOwnSeeds(game)
+
+    elif game.info.no_sides or condition == gi.EndGameSeeds.DONT_SCORE:
         sclaimer = claimer.TakeOnlyChildNStores(game)
 
     elif condition == gi.EndGameSeeds.HOLE_OWNER:
@@ -1163,6 +1229,9 @@ def _add_round_ender(game, ender, sclaimer):
     if game.info.goal in round_tally.RoundTally.GOALS:
         # use the same claimer as for clear winner
         ender = RoundTallyWinner(game, ender, sclaimer)
+
+    elif game.info.round_fill == gi.RoundFill.LOSER_ONLY:
+        ender = RoundLoserFillWinner(game, ender, claimer.ClaimOwnSeeds(game))
 
     else:
         # use claim all seeds in owned holes (might be side or owner)

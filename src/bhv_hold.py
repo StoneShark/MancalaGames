@@ -111,19 +111,17 @@ HOLD = Hold()
 # %% button behaviors
 
 class RndChooseButtonBehavior(bhv.BehaviorIf):
-    """Round setup behavior. Choose which holes are blocked.
+    """Round setup behavior. Choose which holes have seeds and
+    are possibly blocked.
 
-    Moving seeds is enabled on the side with blocked holes."""
+    Moving seeds is enabled on the side with loser's holes."""
 
     @classmethod
     def ask_mode_change(cls, game_ui):
 
-        if not any(game_ui.game.blocked):
-            return False
-
         message = """A new round is begining, so you may
-                     change the blocked holes on the loser's side of the
-                     board. Do you wish to rearrange the blocks?"""
+                     change the empty holes on the loser's side of the
+                     board. Do you wish to rearrange the empty holes?"""
         ans = ui_utils.ask_popup(game_ui,
                                  'Move seeds', message,
                                  ui_utils.YESNO)
@@ -132,14 +130,11 @@ class RndChooseButtonBehavior(bhv.BehaviorIf):
 
         HOLD.hold_menu(game_ui,
                        textwrap.fill(textwrap.dedent("""\
-                           Move seeds out of holes you wish to block
-                           and into other holes."""), width=bhv.FILL_HINTS))
+                           Move seeds into desired holes."""),
+                           width=bhv.FILL_HINTS))
 
         cls.starter = game_ui.game.turn
-        loser = any(game_ui.game.blocked[l]
-                    for l in range(game_ui.game.cts.holes,
-                                   game_ui.game.cts.dbl_holes))
-        game_ui.game.turn = loser
+        game_ui.game.turn = not game_ui.game.mdata.winner
         return True
 
 
@@ -168,9 +163,10 @@ class RndChooseButtonBehavior(bhv.BehaviorIf):
 
         game = self.btn.game_ui.game
         game.board[self.btn.loc] = HOLD.nbr
-        game.blocked[self.btn.loc] = False
+        if game.info.blocks:
+            game.blocked[self.btn.loc] = False
+            self.btn.props.blocked = False
 
-        self.btn.props.blocked = False
         self.btn.props.seeds = HOLD.nbr
         self.refresh()
 
@@ -191,9 +187,10 @@ class RndChooseButtonBehavior(bhv.BehaviorIf):
 
         game = self.btn.game_ui.game
         game.board[self.btn.loc] = 0
-        game.blocked[self.btn.loc] = True
 
-        self.btn.props.blocked = True
+        if game.info.blocks:
+            game.blocked[self.btn.loc] = True
+            self.btn.props.blocked = True
         self.btn.props.seeds = 0
         self.refresh()
 

@@ -121,7 +121,9 @@ class HoleButton(tk.Canvas):
         self.rclick_id = self.right_id = self.left_id = None
         self.split_grids = left_move != right_move
         self.non_play_grid = (self.game_ui.game.info.round_fill
-                                in (gi.RoundFill.UCHOOSE, gi.RoundFill.UMOVE))
+                                in (gi.RoundFill.UCHOOSE,
+                                    gi.RoundFill.UMOVE,
+                                    gi.RoundFill.LOSER_ONLY))
         # simulate right click via touch/left click with this
         # rect when in table mode
         if self.split_grids or self.non_play_grid:

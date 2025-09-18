@@ -13,6 +13,7 @@ from context import game_info as gi
 from context import mancala
 from context import man_deco
 from context import move_data
+from context import new_game
 
 from game_info import ChildType
 from game_info import Goal
@@ -346,6 +347,56 @@ class TestNewGame:
 
         else:
             assert rgame.store == estore
+
+
+    def test_bad_round_fill(self, rgame):
+
+        object.__setattr__(rgame.info, 'round_fill', gi.RoundFill.LOSER_ONLY)
+
+        with pytest.raises(ValueError):
+            new_game.NewRound(rgame)
+
+
+    @pytest.mark.parametrize('blocks', [False, True])
+    def test_rf_loser_only(self, blocks):
+
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+                                stores=True,
+                                capt_on=[2],
+                                rounds=gi.Rounds.NO_MOVES,
+                                round_fill=gi.RoundFill.LOSER_ONLY,
+                                blocks=blocks,
+                                quitter=gi.EndGameSeeds.HOLE_OWNER,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+
+        # first call to new game was during construction with new_round=False
+        assert game.board == [2, 2, 2, 2, 2, 2]
+        assert game.store == [0, 0]
+        assert game.blocked == [F] * 6
+
+        game.starter = False
+        game.turn = False
+        game.board = [0, 0, 0, 0, 2, 2]
+        game.store = [5, 3]
+        if blocks:
+            game.blocked = [F, T, F, T, F, F]
+
+        game.mdata = move_data.MoveData(game, 2)
+        game.mdata.winner = True
+        # print('Before:', game, sep='\n')
+
+        game.new_game(new_round=True)
+        # print('After:', game, sep='\n')
+
+        assert game.board == [2, 2, 0, 0, 2, 2]
+        assert game.store == [1, 3]
+        if blocks:
+            assert game.blocked == [F, F, T, T, F, F]
+        else:
+            assert game.blocked == [F] * 6
 
 
     @pytest.mark.parametrize(

@@ -124,6 +124,11 @@ class NewRound(NewGameIf):
             self.fill_orders = [self.game.cts.false_fill,
                                 self.game.cts.true_fill]
 
+        elif self.game.info.round_fill == gi.RoundFill.LOSER_ONLY:
+            # catch this if included in a test
+            raise ValueError("Don't use NewRound ender with LOSER_ONLY"
+                             + "round fill. This is a software error!")
+
         else:
             raise NotImplementedError(
                     f"RoundFill {game.info.round_fill} not implemented.")
@@ -206,6 +211,42 @@ class NewRound(NewGameIf):
                     self.game.board[loc] = 0
                     if blocks:
                         self.game.blocked[loc] = True
+
+
+class NewRoundLoserOnly(NewGameIf):
+    """Only refill the loser side of the board.
+
+    No_sides, locks and children are not supported."""
+
+    def new_game(self, new_round=False):
+
+        if not new_round:
+            self.decorator.new_game(new_round)
+            return
+
+        set_round_starter(self.game)
+        self.game.mcount = 1
+        self.game.movers = 0
+        self.game.rturn_cnt = 0
+
+        nbr_start = self.game.cts.nbr_start
+        blocks = self.game.info.blocks
+
+        loser = not self.game.mdata.winner
+        hrange = self.game.cts.get_my_range(loser)
+        seeds = self.game.store[loser]
+        seeds += sum(self.game.board[loc] for loc in hrange)
+
+        holes, self.game.store[loser] = divmod(seeds, nbr_start)
+        for cnt, loc in enumerate(hrange):
+
+            if cnt < holes:
+                self.game.board[loc] = nbr_start
+                self.game.blocked[loc] = False
+            else:
+                self.game.board[loc] = 0
+                if blocks:
+                    self.game.blocked[loc] = True
 
 
 class TerritoryNewRound(NewGameIf):
@@ -370,6 +411,9 @@ def deco_new_game(game):
         elif game.info.round_fill in (gi.RoundFill.EVEN_FILL,
                                       gi.RoundFill.UMOVE):
             new_game = NewRoundEven(game, new_game)
+
+        elif game.info.round_fill == gi.RoundFill.LOSER_ONLY:
+            new_game = NewRoundLoserOnly(game, new_game)
 
         else:
             new_game = NewRound(game, new_game)

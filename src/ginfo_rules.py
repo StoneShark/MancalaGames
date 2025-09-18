@@ -69,23 +69,6 @@ def test_pattern_rules(tester):
             msg=pat.err_msg,
             excp=gi.GameInfoError)
 
-    tester.test_rule('pattern_bad_fills',
-        rule=lambda ginfo: (ginfo.start_pattern
-                            and ginfo.round_fill
-                                    not in (gi.RoundFill.NOT_APPLICABLE,
-                                            gi.RoundFill.UCHOWN)),
-        msg='START_PATTERN is incompatible for the selected ROUND_FILL',
-        excp=gi.GameInfoError)
-
-    tester.test_rule('pattern_bad_rgoals',
-        rule=lambda ginfo: (ginfo.start_pattern
-                            and ginfo.rounds
-                            and ginfo.goal not in
-                                    round_tally.RoundTally.GOALS
-                                    | {gi.Goal.TERRITORY}),
-        msg='START_PATTERN is incompatible for ROUNDS with selected GOAL',
-        excp=gi.GameInfoError)
-
     tester.test_rule('move_rmost_mlength',
         rule=lambda ginfo: (ginfo.start_pattern ==
                                 gi.StartPattern.MOVE_RIGHTMOST
@@ -1072,12 +1055,66 @@ def test_basic_rules(tester):
         # UDIRECT: partials hole activation not supported
         # TERRITORY: partial side ownership is not implemented
 
+    tester.test_rule('need_end_param',
+        rule=lambda ginfo: (ginfo.end_cond in (gi.EndGameCond.SEEDS_LIMIT,
+                                               gi.EndGameCond.HOLE_SEED_LIMIT)
+                            and not ginfo.end_param),
+        msg="""Selected END_COND requires positive END_PARAM""",
+        excp=gi.GameInfoError)
+
+    tester.test_rule('clear_no_share',
+        rule=lambda ginfo: (ginfo.mustshare
+                            and ginfo.end_cond in (gi.EndGameCond.CLEARED_OPP,
+                                                   gi.EndGameCond.CLEARED_OWN)),
+        msg="""MUSTSHARE incompatible with END_COND CLEARED OPP or OWN""",
+        excp=gi.GameInfoError)
+
+    tester.test_rule('clear_no_pass',
+        rule=lambda ginfo: (ginfo.mustpass
+                            and ginfo.end_cond in (gi.EndGameCond.CLEARED_OPP,
+                                                   gi.EndGameCond.CLEARED_OWN)),
+        msg="""MUSTPASS incompatible with END_COND CLEARED OPP or OWN""",
+        excp=gi.GameInfoError)
+
+
+def test_round_fill(tester):
+    """Test rules related to round fill."""
+
     tester.test_rule('short_no_blocks',
         rule=lambda ginfo: (ginfo.round_fill in (gi.RoundFill.SHORTEN,
                                                  gi.RoundFill.SHORTEN_ALL)
                             and not ginfo.blocks),
         msg='RoundFill SHORTEN without BLOCKS, yields an odd game dynamic',
         warn=True)
+
+    def round_loser_and(flag_name):
+        """Return a function that tests round_loser and the specified
+        flag, based only on a ginfo parameter."""
+
+        def _round_loser_and(ginfo):
+            return (ginfo.round_fill == gi.RoundFill.LOSER_ONLY
+                    and getattr(ginfo, flag_name))
+
+        return _round_loser_and
+
+    bad_loser_only = ['child_type', 'no_sides', 'moveunlock']
+    for opt in bad_loser_only:
+        tester.test_rule(f'rfl_bad_{opt}',
+                         rule=round_loser_and(opt),
+                         msg=f"""RoundFill LOSER_ONLY is incompatible with
+                         {opt}""",
+                         excp=gi.GameInfoError)
+        # new_game.NewRoundLoserOnly does not change any of these
+        # for the winner or loser
+
+    tester.test_rule('rfl_owner',
+        rule=lambda ginfo: (ginfo.round_fill == gi.RoundFill.LOSER_ONLY
+                            and (ginfo.unclaimed or ginfo.quitter)),
+        msg="""RoundFill LOSER_ONLY requires both UNCLAIMED and QUITTER
+             be HOLE_OWNER""",
+        excp=gi.GameInfoError)
+        # nothing else makes sense if we are not going to change the
+        # winner's side of the board
 
     tester.test_rule('pick_rend_agree',
         rule=lambda ginfo: (
@@ -1090,13 +1127,6 @@ def test_basic_rules(tester):
             on number of seeds (seeds or 2x seeds)""",
         excp=gi.GameInfoError)
         # if the picker is included, the round ender is not; so they must agree
-
-    tester.test_rule('need_end_param',
-        rule=lambda ginfo: (ginfo.end_cond in (gi.EndGameCond.SEEDS_LIMIT,
-                                               gi.EndGameCond.HOLE_SEED_LIMIT)
-                            and not ginfo.end_param),
-        msg="""Selected END_COND requires positive END_PARAM""",
-        excp=gi.GameInfoError)
 
 
 # %% the base ruleset
@@ -1114,6 +1144,7 @@ def test_rules(ginfo, holes, skip=None):
     test_block_and_divert_rules(tester)
     test_child_rules(tester)
     test_no_sides_rules(tester)
+    test_round_fill(tester)
     test_sower_rules(tester)
     test_capture_rules(tester)
     test_basic_rules(tester)

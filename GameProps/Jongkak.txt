@@ -1,0 +1,42 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 7,
+      "nbr_start": 5
+   },
+   "game_info": {
+      "name": "Jongkak",
+      "about": "Sow counter-clockwise in multiple laps including your own store.  When the final seed of a sow ends in your own empty hole, cross capture. When the final seed of a sow ends in your own store, do another move.\n\nA round ends when one player has cleared their own holes.\n\nTo start a new round only the loser fills as many holes as they can with seven seeds each, any extra seeds are put into their store. The winner starts the next round without changing their side of the board.\n\nThe game ends when one player cannot fill even one hole with seven seeds.\n\nVariations:\n\n- Five to seven start seeds per hole (NBR_START), more seeds mean longer games. If random openings are used (see below), <nolink>NBR_START is the total number of seeds.\n\n- Sow clockwise so that you do not sow your own store until you've fill all opponent's holes.\n\n- Set the end condition (END_COND, which also ends rounds) to CLEARED_OWN, CLEARED_OPP or NO_ADDTL. <nolink>NO_ADDTL will end the game when the current player does not have a valid move).\n\n- Have the round loser start the next round. This might feel more fair by giving the loser a chance to recover, but lengthens games (ROUND_STARTER).\n\n- Increase the number of holes the loser must fill to continue the game (GOAL_PARAM), shortening games.\n\n- Use the random or random with empty holes START_PATTERN. This can simulate the randomness of the missing simultaneous opening moves, though there is no capturing. With a random start pattern NBR_START must be the total number of seeds to place.\n",
+      "blocks": true,
+      "crosscapt": true,
+      "end_cond": 1,
+      "mlaps": 1,
+      "capt_side": 1,
+      "round_fill": 10,
+      "round_starter": 2,
+      "rounds": 2,
+      "sow_direct": 1,
+      "sow_stores": 1,
+      "stores": true,
+      "quitter": 0,
+      "xcpickown": 1
+   },
+   "player": {
+      "scorer": {
+         "mx_stores_m": 8
+      }
+   },
+   "vari_params": {
+      "goal_param": "include",
+      "start_pattern": [ 0, 6, 12 ],
+      "nbr_start": "include",
+      "sow_direct": [ -1, 1 ],
+      "round_starter": "include",
+      "end_cond": [ 0, 1, 2 ]
+   },
+   "rules": "Hanson, Sue and Jon. All about Mancala: It's History and How to Play. 2003. p100.",
+   "deviation 1": "The opening moves of the first round cannot be made simultaneously as Mancala Games does not support it.",
+   "deviation 2": "It is unclear from the rules what the actual end condition should be--the possiblities are available as options.",
+   "origin": "traditional",
+   "region": "Southeast Asia"
+}

@@ -253,7 +253,8 @@ STRING_DICTS = {
          'Shorten Board All': gi.RoundFill.SHORTEN_ALL,
          'Choose Blocks': gi.RoundFill.UCHOOSE,
          'Rearrange Seeds': gi.RoundFill.UMOVE,
-         'Winner Chooses Owners': gi.RoundFill.UCHOWN}),
+         'Winner Chooses Owners': gi.RoundFill.UCHOWN,
+         'Loser Only': gi.RoundFill.LOSER_ONLY}),
 
     'RoundStarter': lookup_dicts(
         gi.RoundStarter,

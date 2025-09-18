@@ -653,7 +653,8 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
         elif not self.game.is_new_round_playable():
             self._not_playable_new_round()
 
-        elif (self.info.round_fill == gi.RoundFill.UCHOOSE
+        elif (self.info.round_fill in (gi.RoundFill.UCHOOSE,
+                                       gi.RoundFill.LOSER_ONLY)
                   and self.set_game_mode(buttons.Behavior.RNDCHOOSE)):
             rval = False
 

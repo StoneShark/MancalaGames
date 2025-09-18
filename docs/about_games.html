@@ -1753,6 +1753,52 @@ skip start hole when sowing more than 12 seeds (<a href="game_params.html#skip_s
 <p><b class="enum">Rules</b>: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p38.
 <p><b class="enum">Origin</b>: traditional
 <p><b class="enum">Region</b>: Eastern Africa
+<h3 id="Jongkak" class="game_desc">Jongkak</h3>
+<p>Sow counter-clockwise in multiple laps including your own store.  When the final seed of a sow ends in your own empty hole, cross capture. When the final seed of a sow ends in your own store, do another move.
+<p>A round ends when one player has cleared their own holes.
+<p>To start a new round only the loser fills as many holes as they can with seven seeds each, any extra seeds are put into their store. The winner starts the next round without changing their side of the board.
+<p>The game ends when one player cannot fill even one hole with seven seeds.
+<p>Variations:
+<ul><li class="helptext">
+Five to seven start seeds per hole (<a href="game_params.html#nbr_start">NBR_START</a>), more seeds mean longer games. If random openings are used (see below), <nolink>NBR_START is the total number of seeds.
+<li class="helptext">
+Sow clockwise so that you do not sow your own store until you've fill all opponent's holes.
+<li class="helptext">
+Set the end condition (<a href="game_params.html#end_cond">END_COND</a>, which also ends rounds) to CLEARED_OWN, CLEARED_OPP or NO_ADDTL. <nolink>NO_ADDTL will end the game when the current player does not have a valid move).
+<li class="helptext">
+Have the round loser start the next round. This might feel more fair by giving the loser a chance to recover, but lengthens games (<a href="game_params.html#round_starter">ROUND_STARTER</a>).
+<li class="helptext">
+Increase the number of holes the loser must fill to continue the game (<a href="game_params.html#goal_param">GOAL_PARAM</a>), shortening games.
+<li class="helptext">
+Use the random or random with empty holes <a href="game_params.html#start_pattern">START_PATTERN</a>. This can simulate the randomness of the missing simultaneous opening moves, though there is no capturing. With a random start pattern <a href="game_params.html#nbr_start">NBR_START</a> must be the total number of seeds to place.
+</ul>
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  7</p>
+    <p class="param">Start seeds:  5</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#blocks">Blocks</a>: Yes</p>
+    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OPP_SIDE</p>
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#end_cond">End Game Condition</a>: CLEARED_OWN</p>
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
+    <p class="param"><a href="game_params.html#quitter">Quit Game Seeds</a>: HOLE_OWNER</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: LOSER_ONLY</p>
+    <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: WINNER</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_stores">Sow Store</a>: OWN</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#xcpickown">Own Seed on Xcapture</a>: PICK_ON_CAPT</p>
+  </div>
+</div>
+<p><b class="enum">Rules</b>: Hanson, Sue and Jon. All about Mancala: It's History and How to Play. 2003. p100.
+<p><b class="enum">Deviation 1</b>: The opening moves of the first round cannot be made simultaneously as Mancala Games does not support it.
+<p><b class="enum">Deviation 2</b>: It is unclear from the rules what the actual end condition should be--the possiblities are available as options.
+<p><b class="enum">Origin</b>: traditional
+<p><b class="enum">Region</b>: Southeast Asia
 <h3 id="Kalah" class="game_desc">Kalah</h3>
 <p>A single lap mancala with a counter-clockwise sow direction. When sowing past the right edge of the board, sow a seed into your own store (SOW_OWN_STORE). Do not sow into your opponent's store.
 <p>If the last seed ends in an empty hole on the player's own side of the board, capture any seeds from the opposite hole (<a href="game_params.html#crosscapt">CROSSCAPT</a>). When performing a capture, take the final single seed sown as well. Pick your own seed only when opponents seeds are captured.
@@ -4084,6 +4130,7 @@ any odd number of seeds
     <p class="param"><a href="#Huroy">Huroy</a></p>
     <p class="param"><a href="#Je ki n je">Je ki n je</a></p>
     <p class="param"><a href="#J'Odu">J'Odu</a></p>
+    <p class="param"><a href="#Jongkak">Jongkak</a></p>
     <p class="param"><a href="#Kalah">Kalah</a></p>
     <p class="param">&emsp;&ensp;Maybe_Fair</p>
     <p class="param"><a href="#Kale">Kale</a></p>
@@ -4119,9 +4166,9 @@ any odd number of seeds
     <p class="param"><a href="#Ndoto">Ndoto</a></p>
     <p class="param">&emsp;&ensp;Bao</p>
     <p class="param"><a href="#No Sides Child">No Sides Child</a></p>
-    <p class="param"><a href="#NoCapt">NoCapt</a></p>
   </div>
   <div class="column3">
+    <p class="param"><a href="#NoCapt">NoCapt</a></p>
     <p class="param"><a href="#NoSides">NoSides</a></p>
     <p class="param"><a href="#NS_Kalah">NS_Kalah</a></p>
     <p class="param"><a href="#Nsa Isong">Nsa Isong</a></p>

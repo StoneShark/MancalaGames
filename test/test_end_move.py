@@ -39,6 +39,7 @@ T = True
 F = False
 
 DONT_CARE = None
+UNCHANGED = 6
 REPEAT_TURN = True
 ENDED = True
 
@@ -205,6 +206,20 @@ class TestEndMove:
                     'end_cond': gi.EndGameCond.HOLE_SEED_LIMIT,
                     'end_param': 1,
                     'unclaimed': gi.EndGameSeeds.DONT_SCORE},
+
+        'rl_game': {'evens': True,
+                    'stores': True,
+                    'rounds': gi.Rounds.NO_MOVES,
+                    'round_fill': gi.RoundFill.LOSER_ONLY,
+                    'min_move': 2,
+                    'quitter': gi.EndGameSeeds.HOLE_OWNER},
+
+        'rl_gp_game': {'evens': True,
+                       'stores': True,
+                       'goal_param': 2,
+                       'rounds': gi.Rounds.NO_MOVES,
+                       'round_fill': gi.RoundFill.LOSER_ONLY,
+                       'quitter': gi.EndGameSeeds.HOLE_OWNER},
 
     }
 
@@ -665,9 +680,51 @@ class TestEndMove:
                  utils.build_board([0, 0, 0],
                                    [0, 0, 0]), [10, 3], False),
 
+
+                # round loser fill test cases
+                ('rl_not_end', 'rl_game', False, False,
+                 utils.build_board([2, 3, 3],
+                                   [2, 2, 0]), [0, 0], True, None,
+                 UNCHANGED, UNCHANGED, None),
+
+                # game is not playable (min_move = 2), loser not enough seeds
+                ('rl_win', 'rl_game', False, False,
+                 utils.build_board([0, 1, 1],
+                                   [0, 0, 0]), [1, 9], False, WinCond.WIN,
+                 UNCHANGED, UNCHANGED, True),
+
+                # game is not playable (min_move = 2)
+                ('rl_tie', 'rl_game', False, False,
+                 utils.build_board([1, 0, 0],
+                                   [0, 0, 0]), [3, 8], True, WinCond.WIN,
+                 UNCHANGED, UNCHANGED, None),
+
+                # F has seeds, T is playable, F doesn't have a move
+                # don't think the setup below can ever happen in the game
+                ('rl_rwin', 'rl_game', False, False,
+                 utils.build_board([0, 1, 2],
+                                   [0, 0, 0]), [3, 7], True, WinCond.ROUND_WIN,
+                 UNCHANGED, UNCHANGED, True),
+
+                # F has seeds, T is playable, F doesn't have a move
+                # different stores make this a TIE
+                # LOSER_ONLY round ties end the game
+                ('rl_tie2', 'rl_game', False, False,
+                 utils.build_board([0, 1, 2],
+                                   [0, 0, 0]), [6, 3], True, WinCond.TIE,
+                 UNCHANGED, UNCHANGED, None),
+
+                # F has seeds, T is playable, F doesn't have a move
+                # don't think the setup below can ever happen in the game
+                # F doesn't have enough seeds (needs 6)
+                ('rl_gp_rwin', 'rl_gp_game', False, False,
+                 utils.build_board([0, 1, 2],
+                                   [0, 0, 0]), [3, 7], True, WinCond.WIN,
+                 UNCHANGED, UNCHANGED, True),
+
             ]
     @pytest.mark.filterwarnings("ignore")
-    @pytest.mark.usefixtures("logger")
+    # @pytest.mark.usefixtures("logger")
     @pytest.mark.parametrize(
         'case, game, ended, repeat, board, store, turn,'
         ' eres, eboard, estore, ewinner',
@@ -678,22 +735,31 @@ class TestEndMove:
                         repeat, board, store, turn,
                         eres, eboard, estore, ewinner):
 
-        game.board = board
-        game.store = store
+        game.board = board.copy()
+        game.store = store.copy()
         game.turn = turn
-        print(game)
-        print(game.deco.ender)
+        # print(game)
+        # print(game.deco.ender)
+        assert str(game.deco.ender)
 
         mdata = utils.make_ender_mdata(game, repeat, ended)
         mdata.end_msg = 'first part'
         game.deco.ender.game_ended(mdata)
 
-        print('after:', game, sep='\n')
-        print(mdata.win_cond, mdata.winner)
+        # print('after:', game, sep='\n')
+        # print(mdata.win_cond, mdata.winner)
 
         assert mdata.win_cond == eres
-        assert game.board == eboard
-        assert game.store == estore
+        if eboard == UNCHANGED:
+            assert game.board == board
+        else:
+            assert game.board == eboard
+
+        if estore == UNCHANGED:
+            assert game.store == store
+        else:
+            assert game.store == estore
+
         if ewinner != DONT_CARE:
             assert mdata.winner == ewinner
         if 'pp' not in case:
