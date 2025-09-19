@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Sadeqa III",
-      "about": "Counter-clockwise, multi-lap sow.\n\nCross capture seeds on opponent's side.\n\nThe game is over when a player doesn't have a move on their turn or when one player collects more than half of the seeds. The last mover takes any seeds left on the board.\n\nGoal: collect more than half the seeds.\n",
+      "about": "<text_section>",
       "crosscapt": true,
       "mlaps": 1,
       "capt_side": 1,
@@ -27,3 +27,16 @@
    "origin": "traditional",
    "region": "Eastern Africa"
 }
+<text_section>
+<about>
+Counter-clockwise, multi-lap sow.
+
+Cross capture seeds on opponent's side.
+
+The game is over when a player doesn't have a move on their turn or
+when one player collects more than half of the seeds. The last mover
+takes any seeds left on the board.
+
+Goal: collect more than half the seeds.
+</about>
+</text_section>

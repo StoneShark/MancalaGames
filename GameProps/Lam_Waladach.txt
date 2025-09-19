@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Lam Waladach",
-      "about": "A multi-lap mancala played in rounds. The goal is to claim ownership of at least 9 holes. Each player initially owns the holes on their side of the board. Owners of holes are updated at the start of each round based on the number of seeds captured in the previous round. \n\nThe seeds of any hole sown to 4 are captured by the hole's owner (regardless of sower). Captures are on 4s on the final sown seed by the sower (regardless of hole owner). A capture results in  a repeat turn. Captures and pick 4s are allowed on the first move of the game. A player must pass if they have no moves.\n\nIf neither player has moves, the game is over. The game also ends if there are fewer than 6 seeds in play, with the seeds going to the round starter.\n",
+      "about": "<text_section>",
       "capt_on": [ 4 ],
       "capt_rturn": 1,
       "goal": 2,
@@ -35,3 +35,21 @@
    "origin": "traditional",
    "region": "Eastern Africa"
 }
+<text_section>
+<about>
+A multi-lap mancala played in rounds. The goal is to claim ownership
+of at least 9 holes. Each player initially owns the holes on their
+side of the board. Owners of holes are updated at the start of each
+round based on the number of seeds captured in the previous round.
+
+The seeds of any hole sown to 4 are captured by the hole's owner
+(regardless of sower). Captures are on 4s on the final sown seed by
+the sower (regardless of hole owner). A capture results in  a repeat
+turn. Captures and pick 4s are allowed on the first move of the game.
+A player must pass if they have no moves.
+
+If neither player has moves, the game is over. The game also ends if
+there are fewer than 6 seeds in play, with the seeds going to the
+round starter.
+</about>
+</text_section>

@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Endodoi",
-      "about": "A multi-lap mancala, sow direction is counter-clockwise. Cross-capture when end in own hole with one seed; pick own seed on capture. Games end when a player has no valid move. Goal: collect the most seeds.\n\nVariations:\n\n- Played with 6 to 10 holes.\n\n- Use a GOAL of RND_SEED_COUNT where the winner is the first to collect 100 total seeds (<nolink>Edodoi::Rounds).\n\n- Limit captures to holes with 3 or fewer seeds (<a href=\"#{J'Odu}\">J'Odu</a>).\n\n- Limit moves to holes reach the opposite side of the board or end in empty hole (Dabuda).\n",
+      "about": "<text_section>",
       "crosscapt": true,
       "mlaps": 1,
       "capt_side": 1,
@@ -43,3 +43,23 @@
    "origin": "traditional",
    "region": "Eastern Africa"
 }
+<text_section>
+<about>
+A multi-lap mancala, sow direction is counter-clockwise. Cross-capture
+when end in own hole with one seed; pick own seed on capture. Games
+end when a player has no valid move. Goal: collect the most seeds.
+
+Variations:
+
+- Played with 6 to 10 holes.
+
+- Use a GOAL of RND_SEED_COUNT where the winner is the first to
+collect 100 total seeds (<nolink>Edodoi::Rounds).
+
+- Limit captures to holes with 3 or fewer seeds (<a
+href="#{J'Odu}">J'Odu</a>).
+
+- Limit moves to holes reach the opposite side of the board or end in
+empty hole (Dabuda).
+</about>
+</text_section>

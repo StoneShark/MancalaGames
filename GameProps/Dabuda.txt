@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Dabuda",
-      "about": "A multi-lap mancala, counter-clockwise sow. Sow must reach opp side or end in empty hole. \n\nCross-capture when end in own hole with one seed. Pick own seed on capture. \n\nGoal: collect more the half of the seeds.\n\nVariations:\n\n- Played with 6 to 10 holes.\n\n- Do not pick own seed on cross capture.\n\n- Allow moves to start from any hole on your side of the board.\n\n- Valdez describes a multilap variant that has 6 holes per side, does not pick own seed on capture, and allows moves to start in any hole (<nolink>Dabuda::Two).\n",
+      "about": "<text_section>",
       "allow_rule": 1,
       "crosscapt": true,
       "mlaps": 1,
@@ -41,3 +41,26 @@
    "origin": "traditional",
    "region": "Eastern Africa"
 }
+<text_section>
+<about>
+A multi-lap mancala, counter-clockwise sow. Sow must reach opp side or
+end in empty hole.
+
+Cross-capture when end in own hole with one seed. Pick own seed on
+capture.
+
+Goal: collect more the half of the seeds.
+
+Variations:
+
+- Played with 6 to 10 holes.
+
+- Do not pick own seed on cross capture.
+
+- Allow moves to start from any hole on your side of the board.
+
+- <nolink>Dabuda::Two:  Valdez describes a multilap variant that has 
+6 holes per side, does
+not pick own seed on capture, and allows moves to start in any hole.
+</about>
+</text_section>

@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Oware",
-      "about": "A single-lap mancala, sow direction is counter-clockwise, capture on opponents side on 2s and 3s. A sow which cycles the board, will skip the hole that the move started from. If your opponent has no seeds, you must make seeds available to them (if you can).\n\nGoal: capture the most seeds.\n\nVariations:\n- change the capture on values\n- any Grand Slam rule\n- no must share\n- add must pass\n",
+      "about": "<text_section>",
       "capt_on": [ 2, 3 ],
       "grandslam": 2,
       "multicapt": -1,
@@ -38,3 +38,23 @@
    "origin": "traditional",
    "region": "Western Africa, Caribbean, Americas"
 }
+<text_section>
+<about>
+A single-lap mancala, sow direction is counter-clockwise, capture on
+opponents side on 2s and 3s. A sow which cycles the board, will skip
+the hole that the move started from. If your opponent has no seeds,
+you must make seeds available to them (if you can).
+
+Goal: capture the most seeds.
+
+Variations:
+
+- change the capture on values
+
+- any Grand Slam rule
+
+- no must share
+
+- add must pass
+</about>
+</text_section>

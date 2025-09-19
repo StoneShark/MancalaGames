@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Valah",
-      "about": "Multilap sow in counter-clockwise direction. Sow into own store; no other capture mechanism. If your sow ends in your own store, repeat your turn.\n\nA simple game to learn how multilap sowing works. The starter has a serious advantage, use the Swap Sides (e.g. Pie Rule) if the AI is taking too much advantage of that.",
+      "about": "<text_section>",
       "mlaps": 1,
       "sow_direct": 1,
       "sow_stores": 1,
@@ -25,3 +25,14 @@
    "origin": "modern",
    "region": "Americas"
 }
+<text_section>
+<about>
+Multilap sow in counter-clockwise direction. Sow into own store; no
+other capture mechanism. If your sow ends in your own store, repeat
+your turn.
+
+A simple game to learn how multilap sowing works. The starter has a
+serious advantage, use the Swap Sides (e.g. Pie Rule) if the AI is
+taking too much advantage of that.
+</about>
+</text_section>

@@ -14,6 +14,9 @@ import man_path
 import ui_utils
 
 
+NL = '\n'
+
+
 class GameDictEncoder(json.JSONEncoder):
     """A JSON Encoder that puts small dicts, lists and tuples on single lines.
 
@@ -199,31 +202,48 @@ class GameConfig:
 
 
     def _combine_tops(self):
-        """Combine the extra top levels into a dictionary."""
+        """Combine the extra top levels into a string
+        with xml-like tags for each tag. Don't bother including
+        end tags."""
 
-        extra_tops = {}
+        extra_tops = ''
         for tlevel, value in self.loaded_config.items():
             if tlevel not in ckey.TOP_LEVELS:
-                extra_tops[tlevel] = value
+                extra_tops += '<' + tlevel + '>\n'
+                extra_tops += value + NL
+                if value[-1] != NL:
+                    extra_tops += NL
 
         self.loaded_config[ckey.EXTRA_TOPS] = extra_tops
 
 
     def _uncombine_tops(self):
-        """If extra_tops is a dictionary, move the values up to
-        a top level. Otherwise preserve the original tags (was a user
-        choice. Either way, remove the EXTRA_TOPS tag."""
+        """Parse and save the extra tops, possibly putting them
+        into the text section."""
 
-        if isinstance(self.game_config[ckey.EXTRA_TOPS], dict):
-            for tlevel, value in self.game_config[ckey.EXTRA_TOPS].items():
-                self.game_config[tlevel] = value
+        text_sec = {}
+        tag = ''
+        text = ''
 
-        elif self.loaded_config:
-            for tag in self.loaded_config.keys():
-                if tag not in self.game_config:
-                    self.game_config[tag] = self.loaded_config[tag]
+        lines = self.game_config[ckey.EXTRA_TOPS].split('\n')
+        for line in lines:
 
+            re_match = man_config.XML_START_TAG.match(line)
+            if re_match:
+                new_tag = re_match.groups()[0]
+                if tag and text:
+                    self._check_save_text_sec(text_sec, tag, text.rstrip())
+
+                tag = new_tag
+                text = ''
+
+            else:
+                text += line + '\n'
+
+        if tag and text:
+            self._check_save_text_sec(text_sec, tag, text.rstrip())
         self.game_config.pop(ckey.EXTRA_TOPS, None)
+        return text_sec
 
 
     def _load_file(self):
@@ -287,18 +307,40 @@ class GameConfig:
                                               param.cspec,
                                               param.option)
 
-    def _clean_up_for_save(self):
-        """Adjust the game_config dictionary for save."""
 
-        self._uncombine_tops()
+    def _check_save_text_sec(self, text_sec, tag, text):
+        """If there are any new lines in the text,
+        move it to the test_section dict."""
+
+        if tag == ckey.ABOUT:
+            pdict = self.game_config[ckey.GAME_INFO]
+        else:
+            pdict = self.game_config
+
+        if NL in text or man_config.FORCE_TEXT_SEC in text:
+            text_sec[tag] = text.rstrip()
+            pdict[tag] = man_config.TEXT_SEC_KEY
+
+        else:
+            pdict[tag] = text
+
+
+    def _clean_up_for_save(self):
+        """Adjust the game_config dictionary for save
+        and return a dictionary of tag:strings that should go
+        into the text section.
+
+        Move appropriate values to the text section."""
+
+        text_sec = self._uncombine_tops()
 
         if not self.filename.endswith(man_path.ALL_PARAMS):
             self._del_defaults()
 
         if ckey.ABOUT in self.game_config[ckey.GAME_INFO]:
-            # remove all trailing whitespace, but add 1 newline
-            text = self.game_config[ckey.GAME_INFO][ckey.ABOUT]
-            self.game_config[ckey.GAME_INFO][ckey.ABOUT] = text.rstrip() + '\n'
+            # remove all trailing whitespace
+            text = self.game_config[ckey.GAME_INFO][ckey.ABOUT].rstrip()
+            self._check_save_text_sec(text_sec, ckey.ABOUT, text)
 
         for key in ckey.NO_EMPTY:
             if key in self.game_config and not self.game_config[key]:
@@ -308,6 +350,24 @@ class GameConfig:
         if ckey.AI_PARAMS in self.game_config[ckey.PLAYER]:
             if not self.game_config[ckey.PLAYER][ckey.AI_PARAMS]:
                 del self.game_config[ckey.PLAYER][ckey.AI_PARAMS]
+
+        return text_sec
+
+
+    @staticmethod
+    def _write_text_section(text_sec, file):
+        """Write the values for the text section out to file."""
+
+        print('', file=file)
+        print(man_config.TEXT_SEC_KEY, file=file)
+
+        for tag, value in sorted(text_sec.items(),
+                                 key=lambda pair: pair[0]):
+            print('<' + tag + '>', file=file)
+            print(value, file=file)
+            print('</' + tag + '>', file=file)
+
+        print(man_config.TEXT_SEC_END, file=file)
 
 
     def save(self, askfile=False):
@@ -336,11 +396,12 @@ class GameConfig:
 
             self._dir, self.filename = os.path.split(filename)
 
-        self._clean_up_for_save()
+        text_sec = self._clean_up_for_save()
 
         with open(self.pathname, 'w', encoding='utf-8') as file:
             json.dump(self.game_config, file, indent=3,
                       cls=GameDictEncoder)
+            self._write_text_section(text_sec, file)
 
         self.edited = False
         self._known = True

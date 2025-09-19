@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Tihbat",
-      "about": "Sow counter-clockwise.\n\nCapture on evens that are less than 9.\n\nGoal: capture more than half the seeds.\n",
+      "about": "<text_section>",
       "capt_max": 8,
       "evens": true,
       "capt_side": 0,
@@ -28,3 +28,12 @@
    "origin": "traditional",
    "region": "Northern Africa"
 }
+<text_section>
+<about>
+Sow counter-clockwise.
+
+Capture on evens that are less than 9.
+
+Goal: capture more than half the seeds.
+</about>
+</text_section>

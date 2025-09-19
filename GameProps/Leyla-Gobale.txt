@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Leyla-Gobale",
-      "about": "Sow clockwise.  Cross capture, opposite side only. Qurs are created in pairs on both sides of the board when a seed is sown into an empty hole on the player's side of the board and the opposite hole contains three seeds (no capture is made).\n\nVariations:\n\n- 6 or 12 board size\n- play with multilap sow\n- played in rounds with UMOVE style RoundFill (<nolink>Leyla-Gobale::Rounds)\n",
+      "about": "<text_section>",
       "child_cvt": 3,
       "child_rule": 2,
       "child_type": 6,
@@ -43,3 +43,19 @@
    "region": "Eastern Africa",
    "references": "https://mancala.fandom.com/wiki/Layli_Goobalay_(short_board) and https://mancala.fandom.com/wiki/Layli_Goobalay_(long_board)  Valdez (p140) describes a very similar game with CW sow and round fill is UMOVE but not reflected instead opposites have the same seed counts."
 }
+<text_section>
+<about>
+Sow clockwise.  Cross capture, opposite side only. Qurs are created in
+pairs on both sides of the board when a seed is sown into an empty
+hole on the player's side of the board and the opposite hole contains
+three seeds (no capture is made).
+
+Variations:
+
+- 6 or 12 board size
+
+- play with multilap sow
+
+- <nolink>Leyla-Gobale::Rounds: played in rounds with UMOVE style RoundFill.
+</about>
+</text_section>

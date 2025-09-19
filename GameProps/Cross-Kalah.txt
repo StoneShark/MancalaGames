@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Cross-Kalah",
-      "about": "A Kalah variant in which the sow direction direction varies by the number of seeds in the hole: If odd seeds, sow counter-clockwise. If even seeds, sow clockwise.\n\nAll other rules match Kalah.\n\nInveted by William Daniel Troyka in 2001.\n",
+      "about": "<text_section>",
       "crosscapt": true,
       "capt_side": 1,
       "sow_direct": 3,
@@ -34,3 +34,14 @@
    "origin": "modern",
    "region": "Americas"
 }
+<text_section>
+<about>
+A Kalah variant in which the sow direction direction varies by the
+number of seeds in the hole: If odd seeds, sow counter-clockwise. If
+even seeds, sow clockwise.
+
+All other rules match Kalah.
+
+Inveted by William Daniel Troyka in 2001.
+</about>
+</text_section>

@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "SameSide",
-      "about": "Sow counter-clockwise but only on your own side of the board.\n\nMultiple capture on evens but place captured seeds in opponents hole of your choice.\n\nA move has the typical draw, sow and check capture phases. If there is a capture, another user input is accepted to identify where the capture seeds should be put. The indicator for this is subtle: your store will still show your turn and your opponent's holes will be highlighted for input and shown in your color.\n\nThe game is played in tallied rounds. Win a round by clearing your own side of the board. Win the game with 3 round wins (best of 5).\n",
+      "about": "<text_section>",
       "evens": true,
       "goal": 8,
       "goal_param": 3,
@@ -30,3 +30,20 @@
    },
    "origin": "example"
 }
+<text_section>
+<about>
+Sow counter-clockwise but only on your own side of the board.
+
+Multiple capture on evens but place captured seeds in opponents hole
+of your choice.
+
+A move has the typical draw, sow and check capture phases. If there is
+a capture, another user input is accepted to identify where the
+capture seeds should be put. The indicator for this is subtle: your
+store will still show your turn and your opponent's holes will be
+highlighted for input and shown in your color.
+
+The game is played in tallied rounds. Win a round by clearing your own
+side of the board. Win the game with 3 round wins (best of 5).
+</about>
+</text_section>

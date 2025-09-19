@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Longbeu-a-cha",
-      "about": "Sow counter-clockwise via the multi-lap next-hole method (MLAPS of LAPPER_NEXT).\n\nWhen the hole from which a new lap should start is empty, capture any seeds in the hole following the empty hole. That is, captures are made when the hole after the hole in which the final seed of a lap was sown, is empty and there are seeds in the hole 'two out' from the last sown seed.\n\nCaptures continue while holes are alternately empty and occupied in the counter-clockwise direction.\n\nVariation:\n\n- <nolink>Longbeu-a-cha::Walak-pussa played on a board with 7 holes per side and 4 seeds in each hole at the start.\n",
+      "about": "<text_section>",
       "capt_dir": 1,
       "capt_type": 2,
       "mlaps": 2,
@@ -35,3 +35,23 @@
    "origin": "traditional",
    "region": "South Asia"
 }
+<text_section>
+<about>
+Sow counter-clockwise via the multi-lap next-hole method (MLAPS of
+LAPPER_NEXT).
+
+When the hole from which a new lap should start is empty, capture any
+seeds in the hole following the empty hole. That is, captures are made
+when the hole after the hole in which the final seed of a lap was
+sown, is empty and there are seeds in the hole 'two out' from the last
+sown seed.
+
+Captures continue while holes are alternately empty and occupied in
+the counter-clockwise direction.
+
+Variation:
+
+- <nolink>Longbeu-a-cha::Walak-pussa is played on a board with 7 holes
+per side and 4 seeds in each hole at the start.
+</about>
+</text_section>

@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Boola",
-      "about": "Multilap counter-clockwise sow, but only from holes that reach the opponents side of the board or reach an empty hole on your own side.\n\nCross capture on opposite side only.\n\nGoal: immobilize opponent by eliminating their seeds.\n",
+      "about": "<text_section>",
       "allow_rule": 1,
       "crosscapt": true,
       "goal": 10,
@@ -32,3 +32,13 @@
    "origin": "traditional",
    "region": "Eastern Africa"
 }
+<text_section>
+<about>
+Multilap counter-clockwise sow, but only from holes that reach the
+opponents side of the board or reach an empty hole on your own side.
+
+Cross capture on opposite side only.
+
+Goal: immobilize opponent by eliminating their seeds.
+</about>
+</text_section>

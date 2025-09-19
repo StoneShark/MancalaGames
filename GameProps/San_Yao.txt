@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "S\u00e0n Y\u00e1o",
-      "about": "Sow multilap next hole counter-clockwise.\n\nCapture two out (or across the gap) from the final seed sown. Multiple captures are done as long as there is an empty hole-filled hole pattern.\n\nPlayed in rounds. A round ends when there are no moves. Use the End Round command if seeds are cycling--though seeds go to hole owners.\n\nThe game is won when the loser cannot fill two holes.\n",
+      "about": "<text_section>",
       "capt_dir": 1,
       "capt_type": 2,
       "goal": 2,
@@ -38,3 +38,17 @@
    "origin": "traditional",
    "region": "East Asia"
 }
+<text_section>
+<about>
+Sow multilap next hole counter-clockwise.
+
+Capture two out (or across the gap) from the final seed sown. Multiple
+captures are done as long as there is an empty hole-filled hole
+pattern.
+
+Played in rounds. A round ends when there are no moves. Use the End
+Round command if seeds are cycling--though seeds go to hole owners.
+
+The game is won when the loser cannot fill two holes.
+</about>
+</text_section>

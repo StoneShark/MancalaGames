@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Bay Khom",
-      "about": "Player chooses sow direction, multiple lap from next hole after last seed of lap.\n\nCapture 2 out; if have pattern of empty then occupied the do multiple captures as long as pattern continues.\n\nGoal: capture more than half the seeds.\n\nVariation:\n\n- a different start pattern\n",
+      "about": "<text_section>",
       "capt_dir": 1,
       "capt_type": 2,
       "mlaps": 2,
@@ -33,3 +33,18 @@
    "origin": "traditional",
    "region": "Southeast Asia"
 }
+<text_section>
+<about>
+Player chooses sow direction, multiple lap from next hole after last
+seed of lap.
+
+Capture 2 out; if have pattern of empty then occupied the do multiple
+captures as long as pattern continues.
+
+Goal: capture more than half the seeds.
+
+Variation:
+
+- a different start pattern
+</about>
+</text_section>

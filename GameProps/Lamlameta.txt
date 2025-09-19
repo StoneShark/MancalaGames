@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Lamlameta",
-      "about": "Counter-clockwise sow, multi-lap sow. The first move must be from player's rightmost two holes. Subsequent moves may only be played from holes:\n\n- that do not contain 2 seeds,\n\n- unless all of the player's holes contain 2, then any hole maybe played.\n\nWhen sowing, skip opponent's holes with two seeds (except first move).\n\nNo capture on game opening move. Cross-capture from opponent's side of board but only if it contains 2 seeds; on capture pick all of opponents holes with 2 seeds.\n\nPlayed in Rounds. Each round ends when the current player has no moves. The game ends when one player can fill 4 holes at the start of the round (change with GOAL_PARAM).\n",
+      "about": "<text_section>",
       "allow_rule": 8,
       "blocks": true,
       "capt_on": [ 2 ],
@@ -39,3 +39,25 @@
    "origin": "traditional",
    "region": "Eastern Africa"
 }
+<text_section>
+<about>
+Counter-clockwise sow, multi-lap sow. The first move must be from
+player's rightmost two holes. Subsequent moves may only be played from
+holes:
+
+- that do not contain 2 seeds,
+
+- unless all of the player's holes contain 2, then any hole maybe
+played.
+
+When sowing, skip opponent's holes with two seeds (except first move).
+
+No capture on game opening move. Cross-capture from opponent's side of
+board but only if it contains 2 seeds; on capture pick all of
+opponents holes with 2 seeds.
+
+Played in Rounds. Each round ends when the current player has no
+moves. The game ends when one player can fill 4 holes at the start of
+the round (change with GOAL_PARAM).
+</about>
+</text_section>

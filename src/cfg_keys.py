@@ -95,6 +95,9 @@ EXTRA_TOPS = 'extra_tops'
 
 
 #  Top level elements that are edited via individual parameters
+#   - that is they are not collected and edited on the 'tags' tab
+#   - they will also not be put into the xml text section of
+#     game config files
 TOP_LEVELS = (GAME_CLASS,
               GAME_CONSTANTS,
               GAME_INFO,

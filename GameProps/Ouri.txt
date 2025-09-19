@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Ouri",
-      "about": "Sow counter-clockwise. You must share seeds if your opponent has none. Moves may only be made from singletons when all holes are singletons or empty.\n\nMultiple capture on 2s and 3s back along sow path on your opponents side of the board.\n\nIf a grand slam capture is done, the capturer gets a repeat turn. If they are unable to share seeds, the game ends.\n\nIf your opponent has no seeds and you cannot share, they get your remaining seeds.\n",
+      "about": "<text_section>",
       "allow_rule": 3,
       "capt_on": [ 2, 3 ],
       "grandslam": 6,
@@ -25,7 +25,38 @@
       }
    },
    "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p66.",
-   "deviation": "According to the rules, there are three end game conditions: First, an unfed player gets the remaining seeds. Second, if a player has no legal move, the unclaimed seeds go to the last mover.  Third, cycling seeds go to hole owners.\n\nWhen would the second rule apply:\n\n- If a player has seeds, they have a valid move.\n\n- If a player does not have seeds, they should have been fed; but if they couldn't be fed, they get the remaining seeds. \n\nThe second condition is not implemented.",
+   "deviation": "<text_section>",
    "origin": "traditional",
    "region": "Western Africa"
 }
+<text_section>
+<about>
+Sow counter-clockwise. You must share seeds if your opponent has none.
+Moves may only be made from singletons when all holes are singletons
+or empty.
+
+Multiple capture on 2s and 3s back along sow path on your opponents
+side of the board.
+
+If a grand slam capture is done, the capturer gets a repeat turn. If
+they are unable to share seeds, the game ends.
+
+If your opponent has no seeds and you cannot share, they get your
+remaining seeds.
+</about>
+<deviation>
+According to the rules, there are three end game conditions: First, an
+unfed player gets the remaining seeds. Second, if a player has no
+legal move, the unclaimed seeds go to the last mover.  Third, cycling
+seeds go to hole owners.
+
+When would the second rule apply:
+
+- If a player has seeds, they have a valid move.
+
+- If a player does not have seeds, they should have been fed; but if
+they couldn't be fed, they get the remaining seeds.
+
+The second condition is not implemented.
+</deviation>
+</text_section>

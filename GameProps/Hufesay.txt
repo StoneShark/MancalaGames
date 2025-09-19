@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Hufesay",
-      "about": "Multilap, counter-clockwise sow. A player must pass if they do not have a move.\n\nCross capture on opponents side of the board. Leave the seed that effected the capture.\n\nGames caught in cycles can be ended by the menu command End Game, in this case, unclaimed seeds do not score.\n\nGoal: Collect more than half of the seeds.\n",
+      "about": "<text_section>",
       "crosscapt": true,
       "mlaps": 1,
       "mustpass": true,
@@ -30,3 +30,17 @@
    "origin": "traditional",
    "region": "Eastern Africa"
 }
+<text_section>
+<about>
+Multilap, counter-clockwise sow. A player must pass if they do not
+have a move.
+
+Cross capture on opponents side of the board. Leave the seed that
+effected the capture.
+
+Games caught in cycles can be ended by the menu command End Game, in
+this case, unclaimed seeds do not score.
+
+Goal: Collect more than half of the seeds.
+</about>
+</text_section>

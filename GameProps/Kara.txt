@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "K\u00e2ra",
-      "about": "Sow counter-clockwise.\n\nIf the final seed lands on opponents side of the board or the player's own most counter-clockwise hole, capture all opponents holes with 2, 4 and 6 seeds.\n\nGoal: capture the most seeds.\n",
+      "about": "<text_section>",
       "capt_type": 5,
       "capt_on": [ 2, 4, 6 ],
       "mustpass": true,
@@ -29,3 +29,14 @@
    "origin": "traditional",
    "region": "Northern Africa"
 }
+<text_section>
+<about>
+Sow counter-clockwise.
+
+If the final seed lands on opponents side of the board or the player's
+own most counter-clockwise hole, capture all opponents holes with 2, 4
+and 6 seeds.
+
+Goal: capture the most seeds.
+</about>
+</text_section>

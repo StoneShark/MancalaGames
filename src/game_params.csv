@@ -88,6 +88,6 @@ Sow,child_type,Type of Children,game_info _,112,ChildType,NOCHILD,7,2
 Sow,child_cvt,Child Convert Count,game_info _,110,int,0,8,2
 Sow,child_rule,Child Restrictions,game_info _,111,ChildRule,NONE,9,2
 Sow,child_locs,Child Locations,game_info _,113,ChildLocs,ANYWHERE,10,2
-Tags,extra_tops,Additional Top Level Tags,_,300,TextDict,,0,0
+Tags,extra_tops,Additional Top Level Tags,_,300,multi_str,,0,0
 Variants,variants,Named Variants,_,250,TextDict,,0,0
 Variants,vari_params,Vari Params,_,251,TextDict,,0,2

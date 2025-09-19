@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Ba-awa",
-      "about": "A territory game.\n\nSow in multiple-laps counter-clockwise. Any holes sown to 4 seeds are captured by the hole owner.\n\nIf the final seed of a sow yields 4 seeds in a hole, the sower captures them. Capture may occur on either side of the board\n\nPlayed in rounds. A round ends when there are 8 seeds on the board; the round starter collects those 8 seeds. Hole ownership is reallocated each round based on the number of holes each player can fill with their collected seeds. The round starter alternates.\n\nGoal: control at least 10 of the holes.\n",
+      "about": "<text_section>",
       "capt_on": [ 4 ],
       "goal": 2,
       "goal_param": 10,
@@ -37,3 +37,21 @@
    "origin": "traditional",
    "region": "Western Africa"
 }
+<text_section>
+<about>
+A territory game.
+
+Sow in multiple-laps counter-clockwise. Any holes sown to 4 seeds are
+captured by the hole owner.
+
+If the final seed of a sow yields 4 seeds in a hole, the sower
+captures them. Capture may occur on either side of the board
+
+Played in rounds. A round ends when there are 8 seeds on the board;
+the round starter collects those 8 seeds. Hole ownership is
+reallocated each round based on the number of holes each player can
+fill with their collected seeds. The round starter alternates.
+
+Goal: control at least 10 of the holes.
+</about>
+</text_section>

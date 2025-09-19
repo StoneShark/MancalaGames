@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Qelat",
-      "about": "A single-lap mancala, start hole determines sow direction, must designate walda(s) before captures, four seeds in eligible hole designates a walda, capture on 4s.\n\nVariations:\n\n- do not sow children.\n- do not sow opponent's children.\n",
+      "about": "<text_section>",
       "capt_on": [ 4 ],
       "child_cvt": 4,
       "child_type": 1,
@@ -37,3 +37,16 @@
    "origin": "traditional",
    "region": "Eastern Africa"
 }
+<text_section>
+<about>
+A single-lap mancala, start hole determines sow direction, must
+designate walda(s) before captures, four seeds in eligible hole
+designates a walda, capture on 4s.
+
+Variations:
+
+- do not sow children.
+
+- do not sow opponent's children.
+</about>
+</text_section>

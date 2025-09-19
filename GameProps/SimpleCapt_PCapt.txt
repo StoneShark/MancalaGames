@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "SimpleCapt_PCapt",
-      "about": "Sow counter-clockwise in multiple laps when ending on your own side of the board. Sow own store. Repeat turn if last seed is sown into the player's own store.\n\nIf the last seed of a sow ends in an empty cup on your opponent's side of the board, they capture the contents of your store. Called a Passive Capture, because your opponent likely did nothing to effect the capture.\n\nIf you clear all of your own seeds, you capture all of your opponent's seeds that are still in play and the game ends.\n\nGoal: capture the most seeds.\n",
+      "about": "<text_section>",
       "capt_type": 6,
       "end_cond": 1,
       "mlaps": 1,
@@ -27,7 +27,24 @@
          "mx_rturn_a": 20
       }
    },
-   "rules": "Hanson, Sue and Jon. \"All about Mancala: It's History and How to Play\". 2003. p25.",
+   "rules": "Hanson, Sue and Jon. All about Mancala: It's History and How to Play. 2003. p25.",
    "origin": "modern",
    "region": "Americas"
 }
+<text_section>
+<about>
+Sow counter-clockwise in multiple laps when ending on your own side of
+the board. Sow own store. Repeat turn if last seed is sown into the
+player's own store.
+
+If the last seed of a sow ends in an empty cup on your opponent's side
+of the board, they capture the contents of your store. Called a
+Passive Capture, because your opponent likely did nothing to effect
+the capture.
+
+If you clear all of your own seeds, you capture all of your opponent's
+seeds that are still in play and the game ends.
+
+Goal: capture the most seeds.
+</about>
+</text_section>

@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Embeli",
-      "about": "The goal is to immobilize your opponent, that is, reduce them to only singletons or no seeds at all.\n\nSow counter-clockwise with multiple laps (LAPPER). Singletons cannot be moved.\n\nHoles are closed on opponent's side when the final seed of a lap brings the seeds in a hole to 4. Sowing then continues with those 4 seeds. Each player's rightmost hole may not be closed (their nti).\n\nIn subsequent sowing of closed holes (blocked), own holes are skipped but seeds for opponent's holes are taken out of play.\n\nThe <nolink>Embeli board is not a 2-rank board, but hole assignment yields itself to moving the middle end holes (nti) to the respective player's right side thus making it a 2 rank board.\n",
+      "about": "<text_section>",
       "blocks": true,
       "goal": 10,
       "min_move": 2,
@@ -32,3 +32,23 @@
    "origin": "traditional",
    "region": "Central Africa"
 }
+<text_section>
+<about>
+The goal is to immobilize your opponent, that is, reduce them to only
+singletons or no seeds at all.
+
+Sow counter-clockwise with multiple laps (LAPPER). Singletons cannot
+be moved.
+
+Holes are closed on opponent's side when the final seed of a lap
+brings the seeds in a hole to 4. Sowing then continues with those 4
+seeds. Each player's rightmost hole may not be closed (their nti).
+
+In subsequent sowing of closed holes (blocked), own holes are skipped
+but seeds for opponent's holes are taken out of play.
+
+The <nolink>Embeli board is not a 2-rank board, but hole assignment
+yields itself to moving the middle end holes (nti) to the respective
+player's right side thus making it a 2 rank board.
+</about>
+</text_section>

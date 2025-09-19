@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Lami",
-      "about": "Counter-clockwise sow, multi-lap sow. After the first move, subsequent moves may only be played from holes:\n\n- that do not contain 2 seeds,\n- unless all of the player's non-empty holes contain 2, then any hole maybe played.\n\nWhen sowing, skip opponent's holes with two seeds (except on the first move).\n\nAfter opening move, cross-capture from opponents side of board but only if it contains 2 seeds; on capture, pick all of opponent's holes with 2 seeds. \n\nPlayed in Rounds. A round ends when the current player has no moves. Holes for the next round are allocated based on how many seeds each player collected in the previous round. \n\nVariations:\n\n- board size\n\n- set a game goal to the number of holes the player with fewer seeds must be able to fill to continue the game\n",
+      "about": "<text_section>",
       "allow_rule": 5,
       "blocks": true,
       "capt_on": [ 2 ],
@@ -38,3 +38,32 @@
    "origin": "traditional",
    "region": "Eastern Africa"
 }
+<text_section>
+<about>
+Counter-clockwise sow, multi-lap sow. After the first move, subsequent
+moves may only be played from holes:
+
+- that do not contain 2 seeds,
+
+- unless all of the player's non-empty holes contain 2, then any hole
+maybe played.
+
+When sowing, skip opponent's holes with two seeds (except on the first
+move).
+
+After opening move, cross-capture from opponents side of board but
+only if it contains 2 seeds; on capture, pick all of opponent's holes
+with 2 seeds.
+
+Played in Rounds. A round ends when the current player has no moves.
+Holes for the next round are allocated based on how many seeds each
+player collected in the previous round.
+
+Variations:
+
+- board size
+
+- set a game goal to the number of holes the player with fewer seeds
+must be able to fill to continue the game
+</about>
+</text_section>

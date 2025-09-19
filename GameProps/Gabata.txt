@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Gabata",
-      "about": "A territory game that uses both stores and wegs (children). \n\nSow is multi-lap, counter-clockwise. The opening move is prescribed: Plus1Minus1; the starting player selects which hole the pattern starts from.\n\nWegs are made when a final seed sows a hole to 4 seeds on your opponent's territory. \n\nCaptures are on the final seed being sown into an opponent's weg. The sown seed and one more (if there is one) are captured to your store. Repeat turn on capture.\n\nOwners of holes are determined after each round based on the number of seeds captured. Win the game by owning 10 holes.\n\nVariations:\n\n- adjust the number of holes needed for a win.\n",
+      "about": "<text_section>",
       "capt_rturn": 1,
       "child_cvt": 4,
       "child_rule": 4,
@@ -35,3 +35,26 @@
    "origin": "traditional",
    "region": "Eastern Africa"
 }
+<text_section>
+<about>
+A territory game that uses both stores and wegs (children).
+
+Sow is multi-lap, counter-clockwise. The opening move is prescribed:
+Plus1Minus1; the starting player selects which hole the pattern starts
+from.
+
+Wegs are made when a final seed sows a hole to 4 seeds on your
+opponent's territory.
+
+Captures are on the final seed being sown into an opponent's weg. The
+sown seed and one more (if there is one) are captured to your store.
+Repeat turn on capture.
+
+Owners of holes are determined after each round based on the number of
+seeds captured. Win the game by owning 10 holes.
+
+Variations:
+
+- adjust the number of holes needed for a win.
+</about>
+</text_section>

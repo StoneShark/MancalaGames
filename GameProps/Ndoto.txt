@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Ndoto",
-      "about": "Sow multi-lap and counter-clockwise. Single seed sow may not start multilaps, that is, a single seeds may only be moved to empty holes.\n\nCross capture when single seeds ends in own hole, capture seeds from across the board. Leave the seed effecting the capture on your side of the board.\n\nThe game ends when one player has more than half the seeds or when the current player cannot move.\n\nGoal: collect the most seeds.\n\nVariations:\n\n- Minimum move of 2, unless all occupied holes have single seeds without a limit on where single seeds can be moved (ALLOW_RULE: SINGLE_ONLY_ALL).\n\n- Minimum move of 2, unless all occupied holes have single seeds which may only be moved to empty holes (ALLOW_RULE: SINGLE_ALL_TO_ZERO). Called <nolink>Bao by Russ p31 (<nolink>Ndoto::Bao here).\n\n- board size choice included to make game easier.\n",
+      "about": "<text_section>",
       "allow_rule": 2,
       "crosscapt": true,
       "mlaps": 1,
@@ -37,3 +37,30 @@
    "origin": "traditional",
    "region": "Eastern Africa"
 }
+<text_section>
+<about>
+Sow multi-lap and counter-clockwise. Single seed sow may not start
+multilaps, that is, a single seeds may only be moved to empty holes.
+
+Cross capture when single seeds ends in own hole, capture seeds from
+across the board. Leave the seed effecting the capture on your side of
+the board.
+
+The game ends when one player has more than half the seeds or when the
+current player cannot move.
+
+Goal: collect the most seeds.
+
+Variations:
+
+- Minimum move of 2, unless all occupied holes have single seeds
+without a limit on where single seeds can be moved (ALLOW_RULE:
+SINGLE_ONLY_ALL).
+
+- Minimum move of 2, unless all occupied holes have single seeds which
+may only be moved to empty holes (ALLOW_RULE: SINGLE_ALL_TO_ZERO).
+Called <nolink>Bao by Russ p31 (<nolink>Ndoto::Bao here).
+
+- board size choice included to make game easier.
+</about>
+</text_section>

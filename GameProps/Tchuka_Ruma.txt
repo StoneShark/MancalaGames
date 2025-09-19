@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Tchuka Ruma",
-      "about": "A puzzle game. There is no interaction between players; so a race game if played by two players. The goal is to remove all of your own seeds in one set of repeat turns (this is not enforced).\n\nSowing is only on your own side of the board in multiple laps. At the right edge of each sow one seed is removed from play (as if into the store) and sowing continues on the left side of the board. If sowing stops with one seed off the board (into the store), repeat turn.\n\nThe start condition for this game is solvable; many variants are not. Combinations that are solvable: 4 holes, 2 seeds; 5 holes, 7 seeds; and 12 holes, 3 seeds.\n\nVariations:\n\n- any size board\n- any number of start seeds\n- any start pattern\n- don't sow in multiple laps\n",
+      "about": "<text_section>",
       "goal": 3,
       "mlaps": 1,
       "sow_direct": 1,
@@ -31,7 +31,43 @@
       "mlaps": [ 0, 1 ]
    },
    "rules": "Mancala World: https://mancala.fandom.com/wiki/Tchuka_Ruma",
-   "lagniappe": "Donkers et al. report that (in general terms) games with the number of start seeds within \u00b11 of the number of holes are not solvable. They present a table of 1-12 holes versus 1-10 start seeds and the maximum number of seeds that can be collected in one move.\n\n\"Donkers, Joroen.  Uiterwijk, Jos.  Voogt, Alex de.  \"Mancala game - Topics in Mathematics and Artificial Intelligence\". Retrieved from https://www.academia.edu/",
+   "lagniappe": "<text_section>",
    "origin": "modern",
    "region": "Europe"
 }
+<text_section>
+<about>
+A puzzle game. There is no interaction between players; so a race game
+if played by two players. The goal is to remove all of your own seeds
+in one set of repeat turns (this is not enforced).
+
+Sowing is only on your own side of the board in multiple laps. At the
+right edge of each sow one seed is removed from play (as if into the
+store) and sowing continues on the left side of the board. If sowing
+stops with one seed off the board (into the store), repeat turn.
+
+The start condition for this game is solvable; many variants are not.
+Combinations that are solvable: 4 holes, 2 seeds; 5 holes, 7 seeds;
+and 12 holes, 3 seeds.
+
+Variations:
+
+- any size board
+
+- any number of start seeds
+
+- any start pattern
+
+- don't sow in multiple laps
+</about>
+<lagniappe>
+Donkers et al. report that (in general terms) games with the number of
+start seeds within ±1 of the number of holes are not solvable. They
+present a table of 1-12 holes versus 1-10 start seeds and the maximum
+number of seeds that can be collected in one move.
+
+"Donkers, Joroen.  Uiterwijk, Jos.  Voogt, Alex de.  "Mancala game -
+Topics in Mathematics and Artificial Intelligence". Retrieved from
+https://www.academia.edu/
+</lagniappe>
+</text_section>

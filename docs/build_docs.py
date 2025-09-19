@@ -21,6 +21,7 @@ import re
 
 from context import ai_player
 from context import cfg_keys as ckey
+from context import format_msg
 from context import game_classes
 from context import game_editor
 from context import game_info as gi
@@ -233,6 +234,8 @@ def write_para(text, ofile, number=False):
 
     li_tag = 'ul' if number is False else 'ol'
     start = '' if number is False else f' start={number}'
+
+    text = format_msg.build_paras(text)
 
     in_list = False
     for para in text.split('\n'):

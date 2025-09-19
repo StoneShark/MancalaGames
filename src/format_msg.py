@@ -41,3 +41,12 @@ def fmsg(message, wide=False):
     if wide:
         return WIDEFILL.fill(RECOMP.sub(' ', message))
     return TEXTFILL.fill(RECOMP.sub(' ', message))
+
+
+def build_paras(text):
+    """Build paragraphs. \n\n are paragraphs \n are not."""
+
+    text = text.replace(LINE_SEP, '@@@@')
+    text = text.replace('\n', ' ')
+    text = text.replace('@@@@', '\n')
+    return text

@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Bakuk",
-      "about": "Single lap mancala, sow counter-clockwise.\n\nCapture on 2s and 4s. Do multiple captures of immediately preceding holes also with 2 or 4 seeds (multiple capture stops before hole not with 2 or 4 seeds).\n\nGoal: capture more than half of the seeds.\n\nVariation:\n\n- board size 3 to 6 holes per side.\n\n- end the game when a player has no seeds on their turn (no mustpass).\n\n- capture in sow direction--following holes, instead of preceeding holes.\n",
+      "about": "<text_section>",
       "capt_on": [ 2, 4 ],
       "multicapt": -1,
       "mustpass": true,
@@ -33,3 +33,23 @@
    "origin": "traditional",
    "region": "Northern Africa"
 }
+<text_section>
+<about>
+Single lap mancala, sow counter-clockwise.
+
+Capture on 2s and 4s. Do multiple captures of immediately preceding
+holes also with 2 or 4 seeds (multiple capture stops before hole not
+with 2 or 4 seeds).
+
+Goal: capture more than half of the seeds.
+
+Variation:
+
+- board size 3 to 6 holes per side.
+
+- end the game when a player has no seeds on their turn (no mustpass).
+
+- capture in sow direction--following holes, instead of preceeding
+holes.
+</about>
+</text_section>

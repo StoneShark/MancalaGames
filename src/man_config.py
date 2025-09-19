@@ -45,6 +45,12 @@ MAX_CHARS = 4000
 SRC_DIR = 'src'
 VAR_SEP = '::'
 
+TEXT_SEC_KEY = '<text_section>'
+TEXT_SEC_END = '</text_section>'
+XML_START_TAG = re.compile(r'^ *<([^/>]+)> *$')
+XML_END_TAG = re.compile(r'^ *</([^>]+)> *$')
+
+
 NO_CONVERT = [ckey.NAME, ckey.ABOUT, ckey.HELP_FILE,
               ckey.UDIR_HOLES, ckey.CAPT_ON]
 
@@ -70,6 +76,7 @@ GINFO_TYPES = {fdesc.name: fdesc.type for fdesc in dc.fields(gi.GameInfo)}
 # some invented tags
 NOLINK = '<nolink>'                    # don't auto link the next word
 NO_ENUM_ERROR = '<no_enum_error>'      # don't check for inclusion of enums
+FORCE_TEXT_SEC = '<txt>'           # use to put single lines in text_section
 
 
 REMOVE_TAGS = [re.compile(r'<a[^>]+>'),
@@ -84,6 +91,7 @@ REMOVE_TAGS = [re.compile(r'<a[^>]+>'),
 
                re.compile(NOLINK),
                re.compile(NO_ENUM_ERROR),
+               re.compile(FORCE_TEXT_SEC),
 
                ]
 
@@ -145,6 +153,97 @@ def convert_from_file(where, field, value):
     return value
 
 
+def find_section_break(lines):
+    """Find and return the index of the section break,
+    otherwise return the number of lines in the file
+    (i.e. no text_section)."""
+
+    idx = 0
+    for idx, line in enumerate(lines):
+        if line.strip() == TEXT_SEC_KEY:
+            return idx
+
+    return idx + 1
+
+
+def parse_xml(xml_lines):
+    """A very basic xml parser that only hanles one level
+    under <text_section> thus ignores html tags in the text.
+
+    Build and return a dictionary of tag:text found."""
+
+    tag = None
+    text = ''
+    xml_dict = {}
+
+    for idx, line in enumerate(xml_lines):
+
+        if TEXT_SEC_KEY in line:
+            continue
+
+        if TEXT_SEC_END in line:
+            break
+
+        re_match = XML_START_TAG.match(line)
+        if re_match:
+            stag = re_match.groups()[0]
+            if tag:
+                raise ValueError(f'Missing end tag for {tag} before {stag}.')
+            text = ''
+            tag = stag
+            continue
+
+        re_match = XML_END_TAG.match(line)
+        if re_match:
+            etag = re_match.groups()[0]
+
+            if tag != etag:
+                raise ValueError(f'Mismatched XML tags {tag} and {etag}')
+
+            xml_dict[tag] = text
+            tag = None
+            continue
+
+        if not tag:
+            raise ValueError(f'Text not inside tag open/close at line {idx}.')
+
+        text += line
+
+    return xml_dict
+
+
+def check_text_section(pdict, xml_dict, key):
+    """If the value for key in pdict is references the
+    text_section, look up and replace the value.
+    If does, but isn't in the text section, raise an error."""
+
+    value = pdict[key]
+    if value == TEXT_SEC_KEY:
+
+        text = xml_dict.get(key, None)
+        if text is not None:
+            pdict[key] = text
+        else:
+            msg = f"{key} indirects to text_secion but there's no value there."
+            raise ValueError(msg)
+
+
+def check_text_overrides(game_dict, xml_lines):
+    """Check each of the possible values that may be moved
+    to the text_section: top level tags that are not the
+    standard ones and about."""
+
+    xml_dict = parse_xml(xml_lines)
+
+    check_text_section(game_dict['game_info'], xml_dict, 'about')
+    for key in game_dict.keys():
+
+        if key in ckey.TOP_LEVELS:
+            continue
+
+        check_text_section(game_dict, xml_dict, key)
+
+
 def read_game(filename):
     """Read a mancala configuration returning the
     game dictionary.  The main UI uses this to load tk widgets,
@@ -158,11 +257,16 @@ def read_game(filename):
     with open(filename, 'r', encoding='utf-8') as file:
         lines = file.readlines()
 
-    text = ''.join(lines)
-    if len(lines) > MAX_LINES or len(text) > MAX_CHARS:
+    json_end = find_section_break(lines)
+    json_text = ''.join(lines[:json_end])
+    xml_lines = lines[json_end:]
+
+    if len(lines) > MAX_LINES or len(json_text) > MAX_CHARS:
         raise gi.UInputError('Input file problem.')
 
-    game_dict = json.loads(text)
+    game_dict = json.loads(json_text)
+    if xml_lines:
+        check_text_overrides(game_dict, xml_lines)
 
     info_dict = game_dict[ckey.GAME_INFO]
     for key in info_dict.keys():
@@ -430,10 +534,6 @@ class ParamData(dict):
         text = ''
         param = ''
         for line in data:
-
-            # skip blank lines
-            if not line.strip():
-                continue
 
             pmatch = PARAM.match(line)
             if pmatch:

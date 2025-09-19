@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Obridjie",
-      "about": "Sow multi-lap counter-clockwise.  All holes sown to 4 are taken by the hole owner until the last hole.\n\nIf the last hole is sown to 4, it is captured by the sower.\n\nGoal: capture at least half of the seeds.\n",
+      "about": "<text_section>",
       "capt_on": [ 4 ],
       "mlaps": 1,
       "capt_side": 0,
@@ -32,3 +32,13 @@
    "origin": "traditional",
    "region": "Eastern Africa"
 }
+<text_section>
+<about>
+Sow multi-lap counter-clockwise.  All holes sown to 4 are taken by the
+hole owner until the last hole.
+
+If the last hole is sown to 4, it is captured by the sower.
+
+Goal: capture at least half of the seeds.
+</about>
+</text_section>

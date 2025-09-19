@@ -26,6 +26,7 @@ from tkinter import ttk
 import ai_player
 import animator
 import cfg_keys as ckey
+import format_msg
 import mancala_ui
 import man_config
 import man_path
@@ -295,7 +296,7 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
         self.prev_option = option
 
         text = man_config.PARAMS[option].text
-        desc = man_config.PARAMS[option].description
+        desc = format_msg.build_paras(man_config.PARAMS[option].description)
 
         paragraphs = desc.split('\n')
         out_text = ''
@@ -314,7 +315,7 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
             out_text += fpara
         desc = ''.join(out_text)
 
-        full_text = f'{text} ({option}):\n{desc}'
+        full_text = f'{text} ({option}):\n\n{desc}'
 
         self.desc.config(state=tk.NORMAL)
         self.desc.delete('1.0', tk.END)
@@ -487,12 +488,9 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
     def _check_jsons(self):
         """Check the Text dictionary entries to see if they can be
         parsed. If there is an error in the variation entries ask
-        the user if they want to save anyway. For the EXTRA_TOPS,
-        the user can chooser the original tag/value pairs or go
-        fix them (they will not be saved as string because it would
-        mess with too many other tools, e.g., doc generator)."""
+        the user if they want to save anyway."""
 
-        for key in (ckey.VARI_PARAMS, ckey.VARIANTS, ckey.EXTRA_TOPS):
+        for key in (ckey.VARI_PARAMS, ckey.VARIANTS):
 
             text = self.tktexts[key].get('1.0', tk.END).strip()
             if not text:
@@ -505,16 +503,11 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
 
                 message = [f"""JSON Encode Error in {key} it cannot be
                            converted to a proper dictionary:""",
-                           str(error)]
-                if key == ckey.EXTRA_TOPS:
-                    message += ["""Click Ok to preserve the original-unedited
-                                tags and values or Cancel to fix it."""]
-
-                else:
-                    message += ["""Would you like to save the values
-                                as strings?""",
-                                """It cannot be used,
-                                but will preserve your work."""]
+                           str(error),
+                           """Would you like to save the values
+                           as strings?""",
+                           """It cannot be used,
+                           but will preserve your work."""]
 
                 return  ui_utils.ask_popup(self,
                                            'JSON Encode Error', message,

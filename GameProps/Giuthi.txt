@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Giuthi",
-      "about": "A multilap mancala in which the current player chooses the sow direction for the first lap; subsequent laps alternate sow direction. Moves may only start from holes with 2 or more seeds; if a player cannot move they must pass.\n\nCross-capture from opponent's side, but only if seeds have been sown on the opposite side of the board on the current turn. On capture, pick own seed. Multiple captures may be done in the same direction that the final lap was sown.\n\nIf a player ends a turn on their side of the board in an empty hole but without having sown the opposite side, they get another move.\n\nThe round ends if neither player can move. The loser of each round can rearrange the seeds on their side of the board with the restriction that each hole must contain at least one seed and that they have a valid move. Before the round is started the same pattern will be reflected on the winner's side.\n\nThe game ends when either player does not have enough seeds to fill their side of the board with a valid move (i.e. one hole with MIN_MOVE seeds and others with at least one seed).\n\nVariations: \n\n- Played as a single game (no rounds).\n\n- A player loses if they have no moves at the start of their turn (no MUSTPASS).\n\n- Board sizes 6 to 10 holes per side with start seeds varying from 4 to 9 (smaller board, fewer start seeds). Some combinations of size and start seeds are quite unbalanced.\n\n- Instead of a minimum move of 2, singletons may start moves if all holes are empty or contain one seed (ALLOW_RULE: SINGLE_ONLY_ALL).\n",
+      "about": "<text_section>",
       "capt_dir": 1,
       "crosscapt": true,
       "min_move": 2,
@@ -41,8 +41,58 @@
       "goal_param": "include"
    },
    "rules": "Russ, Laurence. Mancala Games. 1984. p37.",
-   "deviation 1": "There is a contraction in the rules: rounds continue until one player is reduced to 4 or fewer seeds (bottom p39) but on game setup each hole must contain one seed and be playable (9 seeds) (middle p39). The game ends on fewer than 9 seeds.",
-   "deviation 2": "Choosing to shorten the board is not supported in Mancala Games. ROUND_FILL of SHORTEN is not a user choice.",
+   "deviation 1": "<text_section>",
+   "deviation 2": "<text_section>",
    "origin": "traditional",
    "region": "Eastern Africa"
 }
+<text_section>
+<about>
+A multilap mancala in which the current player chooses the sow
+direction for the first lap; subsequent laps alternate sow direction.
+Moves may only start from holes with 2 or more seeds; if a player
+cannot move they must pass.
+
+Cross-capture from opponent's side, but only if seeds have been sown
+on the opposite side of the board on the current turn. On capture,
+pick own seed. Multiple captures may be done in the same direction
+that the final lap was sown.
+
+If a player ends a turn on their side of the board in an empty hole
+but without having sown the opposite side, they get another move.
+
+The round ends if neither player can move. The loser of each round can
+rearrange the seeds on their side of the board with the restriction
+that each hole must contain at least one seed and that they have a
+valid move. Before the round is started the same pattern will be
+reflected on the winner's side.
+
+The game ends when either player does not have enough seeds to fill
+their side of the board with a valid move (i.e. one hole with MIN_MOVE
+seeds and others with at least one seed).
+
+Variations:
+
+- Played as a single game (no rounds).
+
+- A player loses if they have no moves at the start of their turn (no
+MUSTPASS).
+
+- Board sizes 6 to 10 holes per side with start seeds varying from 4
+to 9 (smaller board, fewer start seeds). Some combinations of size and
+start seeds are quite unbalanced.
+
+- Instead of a minimum move of 2, singletons may start moves if all
+holes are empty or contain one seed (ALLOW_RULE: SINGLE_ONLY_ALL).
+</about>
+<deviation 1>
+There is a contraction in the rules: rounds continue until one player 
+is reduced to 4 or fewer seeds (bottom p39) but on game setup each hole 
+must contain one seed and be playable (9 seeds) (middle p39). 
+The game ends on fewer than 9 seeds.
+</deviation 1>
+<deviation 2>
+Choosing to shorten the board is not supported in Mancala Games. 
+ROUND_FILL of SHORTEN is not a user choice.
+</deviation 2>
+</text_section>

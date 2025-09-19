@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Enlightenment",
-      "about": "Move from any hole on the board. Split sow; center hole is user chooses sow direction. You may not undo an opponent's move of one seed across the sides of the board on the very next move.\n\nSeeds from all holes sown to 2 or 4 are removed from play.\n\nThe goal is to clear all of your own seeds. While you may move from any hole on the board each player owns either the North or South holes.\n\nVariations:\n\n- any odd number of holes per side\n- any number of start seeds per hole\n- any capture on values\n",
+      "about": "<text_section>",
       "capt_on": [ 2, 4 ],
       "goal": 3,
       "no_sides": true,
@@ -35,3 +35,24 @@
    "origin": "modern",
    "region": "Americas"
 }
+<text_section>
+<about>
+Move from any hole on the board. Split sow; center hole is user
+chooses sow direction. You may not undo an opponent's move of one seed
+across the sides of the board on the very next move.
+
+Seeds from all holes sown to 2 or 4 are removed from play.
+
+The goal is to clear all of your own seeds. While you may move from
+any hole on the board each player owns either the North or South
+holes.
+
+Variations:
+
+- any odd number of holes per side
+
+- any number of start seeds per hole
+
+- any capture on values
+</about>
+</text_section>

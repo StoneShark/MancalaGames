@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Micro-Wari",
-      "about": "Sow counter-clockwise.\nCapture on 1s on opposite side.\n\nGoal: capture most seeds.\n\nInventors:  Assia Popova (Bulgarian) and Andr\u00e9 Deledicq (French) in 1977\n",
+      "about": "<text_section>",
       "capt_on": [ 1 ],
       "capt_side": 1,
       "sow_direct": 1,
@@ -25,3 +25,15 @@
    "origin": "modern",
    "region": "Europe"
 }
+<text_section>
+<about>
+Sow counter-clockwise.
+
+Capture on 1s on opposite side.
+
+Goal: capture most seeds.
+
+Inventors:  Assia Popova (Bulgarian) and André Deledicq (French) in
+1977
+</about>
+</text_section>

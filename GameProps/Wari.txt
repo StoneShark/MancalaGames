@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Wari",
-      "about": "A single-lap mancala, sow direction is counter-clockwise. A sow which cycles the board, will skip the hole from which the move started. If your opponent has no seeds, you must make seeds available to them (if you can).\n\nCaptures are on 2s and 3s from the opponent's side (final seed sown makes either 2 or 3).  As long as there is a an unbroken group of holes containing 2 or 3 seeds immediately preceding the final hole sown, these holes are also captured.\n\nThe game ends when a player has no seeds at the start of their turn (the with seeds collects their seeds for scoring) or when one player has collected more than half of the seeds. \n\nGoal: capture the most seeds.\n\nVariations:\n\n- board sizes from 5 - 12 holes per side\n- number of start seeds per hole, as many as 10\n- on draw leave one seed (SOW_START)\n- do not skip the drawn hole when cycling (SKIP_START)\n- captures on various numbers of seeds (CAPT_ON)\n- a single seed may not be used for capture (NOSINGLECAPT)\n- any GRANDSLAM rule\n",
+      "about": "<text_section>",
       "capt_on": [ 2, 3 ],
       "multicapt": -1,
       "mustshare": true,
@@ -40,3 +40,38 @@
    "origin": "traditional",
    "region": "Africa, Caribbean"
 }
+<text_section>
+<about>
+A single-lap mancala, sow direction is counter-clockwise. A sow which
+cycles the board, will skip the hole from which the move started. If
+your opponent has no seeds, you must make seeds available to them (if
+you can).
+
+Captures are on 2s and 3s from the opponent's side (final seed sown
+makes either 2 or 3).  As long as there is a an unbroken group of
+holes containing 2 or 3 seeds immediately preceding the final hole
+sown, these holes are also captured.
+
+The game ends when a player has no seeds at the start of their turn
+(the with seeds collects their seeds for scoring) or when one player
+has collected more than half of the seeds.
+
+Goal: capture the most seeds.
+
+Variations:
+
+- board sizes from 5 - 12 holes per side
+
+- number of start seeds per hole, as many as 10
+
+- on draw leave one seed (SOW_START)
+
+- do not skip the drawn hole when cycling (SKIP_START)
+
+- captures on various numbers of seeds (CAPT_ON)
+
+- a single seed may not be used for capture (NOSINGLECAPT)
+
+- any GRANDSLAM rule
+</about>
+</text_section>

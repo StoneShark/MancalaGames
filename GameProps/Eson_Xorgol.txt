@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Eson Xorgol",
-      "about": "Single-lap, clockwise-sow Mancala in which all holes are playable by both players. \n\nIf a sow ends in an occupied hole and the next hole is empty, capture the seeds in the following hole. \n\nGoal: collect the most seeds.\n",
+      "about": "<text_section>",
       "capt_dir": 1,
       "capt_type": 2,
       "no_sides": true,
@@ -29,3 +29,14 @@
    "origin": "traditional",
    "region": "Central Asia"
 }
+<text_section>
+<about>
+Single-lap, clockwise-sow Mancala in which all holes are playable by
+both players.
+
+If a sow ends in an occupied hole and the next hole is empty, capture
+the seeds in the following hole.
+
+Goal: collect the most seeds.
+</about>
+</text_section>

@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "NS_Kalah",
-      "about": "Sow counter-clockwise but only on your own side of the board and into your own store.\n\nCross-capture on single seed, leave the capturing seed.\n\nGoal: capture the most seeds.\n\nKalah but with some twists: the board size is larger, seeds are only sown on your own side of the board, the single capturing seed is not collected, and you must capture in order to gain extra seeds for the win.\n",
+      "about": "<text_section>",
       "crosscapt": true,
       "sow_direct": 1,
       "sow_stores": 1,
@@ -19,10 +19,10 @@
          "mx_rturn_a": 20
       },
       "ai_params": {
-          "mm_depth": [1, 5, 7, 9],
-          "mcts_bias": [300, 300, 200, 200],
-          "mcts_nodes": [100, 500, 1000, 1200],
-          "mcts_pouts": [1, 2, 2, 2]
+         "mm_depth": [ 1, 5, 7, 9 ],
+         "mcts_bias": [ 300, 300, 200, 200 ],
+         "mcts_nodes": [ 100, 500, 1000, 1200 ],
+         "mcts_pouts": [ 1, 2, 2, 2 ]
       }
    },
    "vari_params": {
@@ -37,3 +37,18 @@
    "origin": "modern",
    "region": "Americas"
 }
+<text_section>
+<about>
+Sow counter-clockwise but only on your own side of the board and into
+your own store.
+
+Cross-capture on single seed, leave the capturing seed.
+
+Goal: capture the most seeds.
+
+Kalah but with some twists: the board size is larger, seeds are only
+sown on your own side of the board, the single capturing seed is not
+collected, and you must capture in order to gain extra seeds for the
+win.
+</about>
+</text_section>

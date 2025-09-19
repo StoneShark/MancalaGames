@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Bule Perga",
-      "about": "Sow counter-clockwise via the multi-lap next-hole method (MLAPS of LAPPER_NEXT).\n\nWhile either player is sowing, both players capture all holes sown to 4 on their side of the board. Specifically, the non-sower may capture seeds from holes sown to 4 on their own side of the board.\n\nThe game is over when one player does not have a move on their turn.\n\nGoal: capture more than half of the seeds.\n",
+      "about": "<text_section>",
       "capt_on": [ 4 ],
       "mlaps": 2,
       "capt_side": 0,
@@ -27,3 +27,17 @@
    "origin": "traditional",
    "region": "South Asia"
 }
+<text_section>
+<about>
+Sow counter-clockwise via the multi-lap next-hole method (MLAPS of
+LAPPER_NEXT).
+
+While either player is sowing, both players capture all holes sown to
+4 on their side of the board. Specifically, the non-sower may capture
+seeds from holes sown to 4 on their own side of the board.
+
+The game is over when one player does not have a move on their turn.
+
+Goal: capture more than half of the seeds.
+</about>
+</text_section>

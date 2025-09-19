@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Sadeqa IV",
-      "about": "Sow counter-clockwise in multiple laps. The opening move must be from the starter's rightmost hole and is done automatically.\n\nCrosss capture from either side of the board (seeds are removed from play, the capturer doesn't matter).\n\nGoal: deprive your opponent of seeds.\n",
+      "about": "<text_section>",
       "crosscapt": true,
       "goal": 1,
       "mlaps": 1,
@@ -26,3 +26,14 @@
    "origin": "traditional",
    "region": "Eastern Africa"
 }
+<text_section>
+<about>
+Sow counter-clockwise in multiple laps. The opening move must be from
+the starter's rightmost hole and is done automatically.
+
+Crosss capture from either side of the board (seeds are removed from
+play, the capturer doesn't matter).
+
+Goal: deprive your opponent of seeds.
+</about>
+</text_section>

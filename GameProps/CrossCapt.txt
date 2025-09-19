@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "CrossCapt",
-      "about": "Sow counter-clockwise in single lap. Sow own store. Repeat turn if last seed is sown into the player's own store.\n\nCross capture when seed lands in empty hole on your side of the board.\n\nIf you clear all of your own seeds, you capture all of your opponent's seeds that are still in play and the game ends.\n\nGoal: capture the most seeds (more than half).\n\nVariations:\n\n- Ending 2: End the game when your opponent does not have any seeds at the end of your own turn (END_COND CLEARED_OPP).\n\n- Ending 3: End when one player has collected more than half of the seeds or the board is clear and each player has half the seeds (END_COND NO_ADDTL).\n\n- <nolink>CrossCapt::Two: Use multilap sowing but only when the final seed lands in a occupied hole on your own side of the board. If your opponent does not have any seeds, you must share, if you can. Otherwise the game ends and the player with the most seeds wins.\n\n- <nolink>CrossCapt::Three: Use multilap sowing but only when the final seed lands in an occupied on your opponent's side of the board. The game ends when your own holes are cleared.\n\n- <nolink>CrossCapt::Four: Cross capture initiated from a single seed on your opponent's side of the board. \n\n- <nolink>CrossCapt::Five: Cross capture initiated from either side of the board. The does not end until one person has collected more than half the seeds, or the board is cleared.\n\n- <nolink>CrossCapt::Five_No_Sides: <nolink>CrossCapt::Five but plays may be made from any hole.\n\n- <nolink>CrossCapt::Five_UDIR: <nolink>CrossCapt::Five but each player's first move (including any repeat turns) are sown counter-clockwise; the user chooses the sow direction for subsequent moves.\n\n- capture side of own, opposite or both.\n\n- take the final seed sown into an empty hole on your own side of the board even when there is no capture (XCPICKOWN ALWAYS).\n\n- sow in multiple-laps (LAPPER) possibly limiting lap continueing to one side of the board.\n\n- sow both stores.\n",
+      "about": "<text_section>",
       "crosscapt": true,
       "end_cond": 1,
       "capt_side": 1,
@@ -65,7 +65,62 @@
       "sow_stores": [ 1, 2 ],
       "end_cond": [ 0, 1, 2 ]
    },
-   "rules": "Hanson, Sue and Jon. \"All about Mancala: It's History and How to Play\". 2003. p33.",
+   "rules": "Hanson, Sue and Jon. All about Mancala: It's History and How to Play. 2003. p33.",
    "origin": "modern",
    "region": "Americas"
 }
+<text_section>
+<about>
+Sow counter-clockwise in single lap. Sow own store. Repeat turn if
+last seed is sown into the player's own store.
+
+Cross capture when seed lands in empty hole on your side of the board.
+
+If you clear all of your own seeds, you capture all of your opponent's
+seeds that are still in play and the game ends.
+
+Goal: capture the most seeds (more than half).
+
+Variations:
+
+- Ending 2: End the game when your opponent does not have any seeds at
+the end of your own turn (END_COND CLEARED_OPP).
+
+- Ending 3: End when one player has collected more than half of the
+seeds or the board is clear and each player has half the seeds
+(END_COND NO_ADDTL).
+
+- <nolink>CrossCapt::Two: Use multilap sowing but only when the final
+seed lands in a occupied hole on your own side of the board. If your
+opponent does not have any seeds, you must share, if you can.
+Otherwise the game ends and the player with the most seeds wins.
+
+- <nolink>CrossCapt::Three: Use multilap sowing but only when the
+final seed lands in an occupied on your opponent's side of the board.
+The game ends when your own holes are cleared.
+
+- <nolink>CrossCapt::Four: Cross capture initiated from a single seed
+on your opponent's side of the board.
+
+- <nolink>CrossCapt::Five: Cross capture initiated from either side of
+the board. The does not end until one person has collected more than
+half the seeds, or the board is cleared.
+
+- <nolink>CrossCapt::Five_No_Sides: <nolink>CrossCapt::Five but plays
+may be made from any hole.
+
+- <nolink>CrossCapt::Five_UDIR: <nolink>CrossCapt::Five but each
+player's first move (including any repeat turns) are sown counter-
+clockwise; the user chooses the sow direction for subsequent moves.
+
+- capture side of own, opposite or both.
+
+- take the final seed sown into an empty hole on your own side of the
+board even when there is no capture (XCPICKOWN ALWAYS).
+
+- sow in multiple-laps (LAPPER) possibly limiting lap continueing to
+one side of the board.
+
+- sow both stores.
+</about>
+</text_section>

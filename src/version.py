@@ -9,7 +9,7 @@ import textwrap
 VERSION = '1.9.1'
 
 # these are auto filled when the exe is built
-DATETIME = 'Tue Aug  5 09:45:56 2025'
+DATETIME = 'Fri Sep 19 11:16:03 2025'
 BRANCH = 'develop'
 
 RELEASE_TEXT = textwrap.dedent(f"""\

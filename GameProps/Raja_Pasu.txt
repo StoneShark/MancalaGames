@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Raja Pasu",
-      "about": "Sow counter-clockwise in lapper next fashion. Hole owners capture all holes sown to 4 seeds.\n\nWhen the lap sowing ends, capture any seeds across the gap from the empty hole that stopped the lap sowing.\n\nPlay in rounds. A round ends when one player does not have any moves. Unclaimed seeds go to the hole owner (that the player with seeds, gets them). The player with the most seeds is the winner of the round.\n\nSetup for each round involves filling as many holes as a player can with 7 seeds. Extra seeds are placed in the player's store. Any empty holes are out of play for the round (blocked). The winner of the previous round, starts the new round.\n\nThe game ends when one player cannot fill a single hole with 7 seeds.\n",
+      "about": "<text_section>",
       "blocks": true,
       "capt_dir": 1,
       "capt_type": 2,
@@ -28,3 +28,23 @@
    "origin": "traditional",
    "region": "South Asia"
 }
+<text_section>
+<about>
+Sow counter-clockwise in lapper next fashion. Hole owners capture all
+holes sown to 4 seeds.
+
+When the lap sowing ends, capture any seeds across the gap from the
+empty hole that stopped the lap sowing.
+
+Play in rounds. A round ends when one player does not have any moves.
+Unclaimed seeds go to the hole owner (that the player with seeds, gets
+them). The player with the most seeds is the winner of the round.
+
+Setup for each round involves filling as many holes as a player can
+with 7 seeds. Extra seeds are placed in the player's store. Any empty
+holes are out of play for the round (blocked). The winner of the
+previous round, starts the new round.
+
+The game ends when one player cannot fill a single hole with 7 seeds.
+</about>
+</text_section>

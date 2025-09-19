@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "long night game",
-      "about": "Sow in multiple laps counter-clocks. Moves may only start from holes that reach an occupied hole on the first lap.\n\nA player must pass if they do not have a move.\n\nAfter sowing, capture all singletons.\n\nThe game ends when there are no legal moves. Seeds left on the board are not counted.\n\nGoal: capture the most seeds.\n\nlong night game was invented by the Austrian Matthias Liszt in August 2006.\n",
+      "about": "<text_section>",
       "allow_rule": 11,
       "capt_type": 4,
       "mlaps": 1,
@@ -18,7 +18,7 @@
       "quitter": 1
    },
    "player": {
-      "ai_params": {},
+      "ai_params": { },
       "scorer": {
          "mx_stores_m": 16
       }
@@ -27,3 +27,21 @@
    "origin": "modern",
    "region": "Europe"
 }
+<text_section>
+<about>
+Sow in multiple laps counter-clocks. Moves may only start from holes
+that reach an occupied hole on the first lap.
+
+A player must pass if they do not have a move.
+
+After sowing, capture all singletons.
+
+The game ends when there are no legal moves. Seeds left on the board
+are not counted.
+
+Goal: capture the most seeds.
+
+long night game was invented by the Austrian Matthias Liszt in August
+2006.
+</about>
+</text_section>

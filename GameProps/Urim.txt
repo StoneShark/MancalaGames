@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Urim",
-      "about": "A single-lap mancala, sow direction is counter-clockwise, capture on opponents side on 2s, 3s and 4s.\n\nA sow which cycles the board, will skip the hole that the move started from. Holes may never be sown above 17 seeds; skip such holes while sowing. If your opponent has no seeds, you must make seeds available to them (if you can).\nIf a grand slam were to occur, the seeds are left on the board, that is, they are not captured.\nA round ends when the current player cannot move or when the outcome cannot change. A cycling round can be ended by the End Round command on the Game menu, any seeds left in play go to the owners of the hole they are in.\n\nThe game ends when one player scores 10 points: 1 point for each win and another point for a skunk, i.e. collecting 36 or more seeds for the win.  The Game Tally, available to be displayed via the Display menu, shows progress toward that goal.\n",
+      "about": "<text_section>",
       "capt_on": [ 2, 3, 4 ],
       "goal": 7,
       "goal_param": 10,
@@ -42,3 +42,27 @@
    "origin": "traditional",
    "region": "Western Africa"
 }
+<text_section>
+<about>
+A single-lap mancala, sow direction is counter-clockwise, capture on
+opponents side on 2s, 3s and 4s.
+
+A sow which cycles the board, will skip the hole that the move started
+from. Holes may never be sown above 17 seeds; skip such holes while
+sowing. If your opponent has no seeds, you must make seeds available
+to them (if you can).
+
+If a grand slam were to occur, the seeds are left on the board, that
+is, they are not captured.
+
+A round ends when the current player cannot move or when the outcome
+cannot change. A cycling round can be ended by the End Round command
+on the Game menu, any seeds left in play go to the owners of the hole
+they are in.
+
+The game ends when one player scores 10 points: 1 point for each win
+and another point for a skunk, i.e. collecting 36 or more seeds for
+the win.  The Game Tally, available to be displayed via the Display
+menu, shows progress toward that goal.
+</about>
+</text_section>

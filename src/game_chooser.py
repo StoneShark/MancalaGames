@@ -22,6 +22,7 @@ import ai_player
 import animator
 import cfg_keys as ckey
 import favorites
+import format_msg
 import game_info as gi
 import man_config
 import man_path
@@ -1004,20 +1005,19 @@ class AboutPane(ttk.Labelframe):
 
         return ptxt
 
-
     @staticmethod
     def format_para(text):
         """Format a paragraph for the description."""
 
-        paragraphs = text.split('\n')
+        text = format_msg.build_paras(text)
         out_text = []
-        for para in paragraphs:
+        for para in  text.split('\n'):
             out_text += [textwrap.fill(man_config.remove_tags(para),
                                        DESC_WIDTH)]
 
         if not out_text[-1]:
             out_text.pop()
-        return '\n'.join(out_text)
+        return '\n\n'.join(out_text)
 
 
     def describe_game(self, game_name, game_dict):

@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Djenon Abe",
-      "about": "Sow counter-clockwise in multiple laps. Multilap sowing stops for captures and on single seed. If an opponent does not have any seeds, the current player must make seeds available if they can.\n\nCapture on 2s and 4s on either side of the board.\n\nThe game ends when a player can't share seeds or when one player doesn't have a move on their turn. Any seeds left on the board are divvied between the two players.\n",
+      "about": "<text_section>",
       "capt_on": [ 2, 4 ],
       "mlaps": 1,
       "multicapt": -1,
@@ -31,3 +31,16 @@
    "origin": "traditional",
    "region": "Western Africa"
 }
+<text_section>
+<about>
+Sow counter-clockwise in multiple laps. Multilap sowing stops for
+captures and on single seed. If an opponent does not have any seeds,
+the current player must make seeds available if they can.
+
+Capture on 2s and 4s on either side of the board.
+
+The game ends when a player can't share seeds or when one player
+doesn't have a move on their turn. Any seeds left on the board are
+divvied between the two players.
+</about>
+</text_section>

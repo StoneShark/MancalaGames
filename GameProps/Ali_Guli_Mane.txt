@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Ali Guli Mane",
-      "about": "Sow counter-clockwise in multilap-next manner. Player must pass if they cannot move.\n\nCapture two out, e.g. across gap. If capture, pick any seeds across the board from the capture and move again (repeat turn). Only one repeat turn is allowed, even if there is a second capture a second repeat turn is not allowed.\n\nPlayed in rounds. Each round ends when there are no moves for either player. Any holes that the loser cannot fill with 5 seeds are out of play for the round. The round starter alternates. Unclaimed seeds at the end of a round are collected by the hole owner.\n\nThe game ends when one player cannot fill two holes for a new round.\n",
+      "about": "<text_section>",
       "blocks": true,
       "capt_dir": 1,
       "capt_type": 2,
@@ -34,3 +34,21 @@
    "origin": "traditional",
    "region": "South Asia"
 }
+<text_section>
+<about>
+Sow counter-clockwise in multilap-next manner. Player must pass if
+they cannot move.
+
+Capture two out, e.g. across gap. If capture, pick any seeds across
+the board from the capture and move again (repeat turn). Only one
+repeat turn is allowed, even if there is a second capture a second
+repeat turn is not allowed.
+
+Played in rounds. Each round ends when there are no moves for either
+player. Any holes that the loser cannot fill with 5 seeds are out of
+play for the round. The round starter alternates. Unclaimed seeds at
+the end of a round are collected by the hole owner.
+
+The game ends when one player cannot fill two holes for a new round.
+</about>
+</text_section>

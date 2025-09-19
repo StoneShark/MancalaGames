@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Bechi",
-      "about": "A single-lap mancala game.  Moves may only start from holes with two or more seeds. The start hole determines sow direction of sow (left holes: CW, right holes: CCW).  The first seed is sown in the start hole (that is, it is left in the hole).\n\nCaptures are on evens on either side of the board. Multiple captures proceed in the sow direction. Captures may not occur from locked holes and a locked hole ends a multiple capture.  Holes are unlocked when a move is started from the hole.\n\nIf a player has no valid move, they must pass.\n\nGames are played in rounds. A round ends when neither player has a valid move.\n\nTo setup the next round, seeds from each player's store are distributed 4 per hole for as many holes as can be completely filled on the player's side of the board. The player's remaining seeds are put into each player's store. Unfilled holes are out of play for the round, but may be put back into play in subsequent rounds. By default, the holes are filled inward from each side; if desired, the blocked holes can be changed by the player. The player that moved last in a round, starts the next round.\n\nA game is over when either player cannot fill a single hole, i.e. has fewer than four seeds.\n",
+      "about": "<text_section>",
       "blocks": true,
       "capt_dir": 1,
       "evens": true,
@@ -37,3 +37,33 @@
    "origin": "traditional",
    "region": "Eastern Africa"
 }
+<text_section>
+<about>
+A single-lap mancala game.  Moves may only start from holes with two
+or more seeds. The start hole determines sow direction of sow (left
+holes: CW, right holes: CCW).  The first seed is sown in the start
+hole (that is, it is left in the hole).
+
+Captures are on evens on either side of the board. Multiple captures
+proceed in the sow direction. Captures may not occur from locked holes
+and a locked hole ends a multiple capture.  Holes are unlocked when a
+move is started from the hole.
+
+If a player has no valid move, they must pass.
+
+Games are played in rounds. A round ends when neither player has a
+valid move.
+
+To setup the next round, seeds from each player's store are
+distributed 4 per hole for as many holes as can be completely filled
+on the player's side of the board. The player's remaining seeds are
+put into each player's store. Unfilled holes are out of play for the
+round, but may be put back into play in subsequent rounds. By default,
+the holes are filled inward from each side; if desired, the blocked
+holes can be changed by the player. The player that moved last in a
+round, starts the next round.
+
+A game is over when either player cannot fill a single hole, i.e. has
+fewer than four seeds.
+</about>
+</text_section>

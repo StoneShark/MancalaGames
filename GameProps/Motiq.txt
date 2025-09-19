@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Motiq",
-      "about": "Sow counter-clockwise in multiple laps. Continue lapping until the last seed falls into an empty hole or makes a hole containing 4 seeds. If the last seed of a lap makes 4 seeds, capture those seeds and continue the lap sowing with the seeds in the next hole. If there are no seeds in the next hole, the turn is over.\n\nA round ends when one player cannot move. Seeds left on the board are allocated to the player that performed the last move. For the next round, holes are allocated to each player based on how many seeds they collected in the previous round.\n\nThe game is over when one player has control of 11 holes.\n\nVariations:\n\n- Lahemay Waladat captures on 3s and handles round setup differently.\n",
+      "about": "<text_section>",
       "capt_on": [ 4 ],
       "goal": 2,
       "goal_param": 11,
@@ -36,3 +36,23 @@
    "origin": "traditional",
    "region": "Southeast Asia"
 }
+<text_section>
+<about>
+Sow counter-clockwise in multiple laps. Continue lapping until the
+last seed falls into an empty hole or makes a hole containing 4 seeds.
+If the last seed of a lap makes 4 seeds, capture those seeds and
+continue the lap sowing with the seeds in the next hole. If there are
+no seeds in the next hole, the turn is over.
+
+A round ends when one player cannot move. Seeds left on the board are
+allocated to the player that performed the last move. For the next
+round, holes are allocated to each player based on how many seeds they
+collected in the previous round.
+
+The game is over when one player has control of 11 holes.
+
+Variations:
+
+- Lahemay Waladat captures on 3s and handles round setup differently.
+</about>
+</text_section>

@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Qelat II",
-      "about": "Multilap sow, create wegs on 4s.\n\nNo additional capture mechanism is included.\n\nGoal: collect the most seeds.\n\nVariations:\n\n- Don't include stores.  This only has an impact with weg children, in that you cannot capture from your opponent's children until you have your own.\n\n- Multipla or single lap\n\n- Any child type\n\n- Any child rules that do not require a territory goal\n\n- Any child locations that are not fixed\n",
+      "about": "<text_section>",
       "child_cvt": 4,
       "child_type": 4,
       "mlaps": 1,
@@ -30,3 +30,26 @@
    "origin": "traditional",
    "region": "Eastern Africa"
 }
+<text_section>
+<about>
+Multilap sow, create wegs on 4s.
+
+No additional capture mechanism is included.
+
+Goal: collect the most seeds.
+
+Variations:
+
+- Don't include stores.  This only has an impact with weg children, in
+that you cannot capture from your opponent's children until you have
+your own.
+
+- Multipla or single lap
+
+- Any child type
+
+- Any child rules that do not require a territory goal
+
+- Any child locations that are not fixed
+</about>
+</text_section>

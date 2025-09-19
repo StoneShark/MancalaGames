@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "CrossCapt_Six",
-      "about": "Sow counter-clockwise in single lap. Sow own store. Repeat turn if last seed is sown into the player's own store.\n\nRams are made when a hole has sufficient seeds to sow the entire opposite side of the board and cycle back on to your own side. They are marked with \u02c3. Moves may not start from these holes and they are not counted in the game tally. These holes can be captured; when captured, they are no longer rams.\n\nCross capture when the final seed lands in empty hole.\n\nThe game ends under one of two conditions:\n\n- Your opponent cannot move at the start of their turn. You collect any seeds left on your own side of the board not in RAMs. The winner is the player with more seeds collected.\n\n- Either player collects more than half the seeds.",
+      "about": "<text_section>",
       "child_type": 7,
       "crosscapt": true,
       "end_cond": 2,
@@ -25,7 +25,29 @@
          "mx_rturn_a": 20
       }
    },
-   "rules": "Hanson, Sue and Jon. \"All about Mancala: It's History and How to Play\". 2003. p40.",
+   "rules": "Hanson, Sue and Jon. All about Mancala: It's History and How to Play. 2003. p40.",
    "origin": "modern",
    "region": "Americas"
 }
+<text_section>
+<about>
+Sow counter-clockwise in single lap. Sow own store. Repeat turn if
+last seed is sown into the player's own store.
+
+Rams are made when a hole has sufficient seeds to sow the entire
+opposite side of the board and cycle back on to your own side. They
+are marked with ˃. Moves may not start from these holes and they are
+not counted in the game tally. These holes can be captured; when
+captured, they are no longer rams.
+
+Cross capture when the final seed lands in empty hole.
+
+The game ends under one of two conditions:
+
+- Your opponent cannot move at the start of their turn. You collect
+any seeds left on your own side of the board not in RAMs. The winner
+is the player with more seeds collected.
+
+- Either player collects more than half the seeds.
+</about>
+</text_section>

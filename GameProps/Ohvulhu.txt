@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Ohvulhu",
-      "about": "Sow counter-clockwise in multiple laps including ones own store. Repeat turn when sow ends in own store.\n \nCross capture on final seed sown to own side of the board.\n\nPlayed in rounds. A round ends a player does not have a move on their turn.\n\nVariations:\n\n- simultaneous opening move (not supported by Mancala Games).\n\n- clockwise sow direction.\n\n- 6, 7, 8 or 10 holes per side with the number of start seeds equalling the number of holes per side (<nolink>Ohvulhu::Ohvulhu_n where n is holes and start seeds).\n\n- pass when no move (MUSTPASS, Dakon).\n",
+      "about": "<text_section>",
       "blocks": true,
       "crosscapt": true,
       "goal_param": 4,
@@ -64,3 +64,28 @@
    "origin": "traditional",
    "region": "South Asia"
 }
+<text_section>
+<about>
+Sow counter-clockwise in multiple laps including ones own store.
+Repeat turn when sow ends in own store.
+
+
+
+Cross capture on final seed sown to own side of the board.
+
+Played in rounds. A round ends a player does not have a move on their
+turn.
+
+Variations:
+
+- simultaneous opening move (not supported by Mancala Games).
+
+- clockwise sow direction.
+
+- 6, 7, 8 or 10 holes per side with the number of start seeds
+equalling the number of holes per side (<nolink>Ohvulhu::Ohvulhu_n
+where n is holes and start seeds).
+
+- Dakon requires that you pass when you do not have a move (MUSTPASS).
+</about>
+</text_section>

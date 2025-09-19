@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Dépouiller",
-      "about": "A deprive game.\n\nSow direction is single-lap CCW. Moves are permitted only from holes that reach the opponent's side of the board or end in an empty hole on your own side.\n\nIf the last seed of a sow ends in an empty hole, remove the seeds across the board from it (cross capture).  Leave the seed effecting the removal. Seeds may be removed from either side of the board. Careful play is needed, or you'll eliminate your own seeds.\n\nPlayed in tallied rounds--the setup for each round is the same but the starting player alternates. Win four rounds to win the game.\n",
+      "about": "<text_section>",
       "allow_rule": 1,
       "crosscapt": true,
       "goal": 9,
@@ -35,3 +35,20 @@
    "origin": "modern",
    "region": "Americas"
 }
+<text_section>
+<about>
+A deprive game.
+
+Sow direction is single-lap CCW. Moves are permitted only from holes
+that reach the opponent's side of the board or end in an empty hole on
+your own side.
+
+If the last seed of a sow ends in an empty hole, remove the seeds
+across the board from it (cross capture).  Leave the seed effecting
+the removal. Seeds may be removed from either side of the board.
+Careful play is needed, or you'll eliminate your own seeds.
+
+Played in tallied rounds--the setup for each round is the same but the
+starting player alternates. Win four rounds to win the game.
+</about>
+</text_section>

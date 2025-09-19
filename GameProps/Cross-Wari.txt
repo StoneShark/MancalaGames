@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Cross-Wari",
-      "about": "A single-lap mancala, sow direction is determined by the number of seeds in the hole.  Even seeds are sown clockwise. Odd seeds are sown counter-clockwise. A sow which cycles the board, will skip the hole that the move started from. If your opponent has no seeds, you must make seeds available to them (if you can).\n\nCaptures are on 2s and 3s from the opponent's side (final seed sown makes either 2 or 3).  As long as there is a an unbroken group of holes containing 2 or 3 seeds immediately preceding the final hole sown, these holes are also captured.\n\nInveted by William Daniel Troyka in 2001.\n",
+      "about": "<text_section>",
       "capt_on": [ 2, 3 ],
       "grandslam": 2,
       "multicapt": -1,
@@ -32,3 +32,19 @@
    "origin": "modern",
    "region": "Americas"
 }
+<text_section>
+<about>
+A single-lap mancala, sow direction is determined by the number of
+seeds in the hole.  Even seeds are sown clockwise. Odd seeds are sown
+counter-clockwise. A sow which cycles the board, will skip the hole
+that the move started from. If your opponent has no seeds, you must
+make seeds available to them (if you can).
+
+Captures are on 2s and 3s from the opponent's side (final seed sown
+makes either 2 or 3).  As long as there is a an unbroken group of
+holes containing 2 or 3 seeds immediately preceding the final hole
+sown, these holes are also captured.
+
+Inveted by William Daniel Troyka in 2001.
+</about>
+</text_section>
