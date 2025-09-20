@@ -944,17 +944,21 @@ def check_disable_animator():
     before any Mancala or MancalaUI is created."""
     # pylint: disable=broad-exception-caught
 
-    pathname = man_path.get_path(INI_FILENAME, no_error=True)
-    config = configparser.ConfigParser()
-
-    try:
-        config.read(pathname, encoding='utf-8')
-    except Exception:
-        return
-
     disable = False
-    if DEFAULT in config and DIS_ANIMAT in config[DEFAULT]:
-        disable = config[DEFAULT][DIS_ANIMAT].lower() in {'yes', 'true'}
+    if CONFIG:
+        disable = CONFIG[DIS_ANIMAT].lower() in {'yes', 'true'}
+
+    else:
+        pathname = man_path.get_path(INI_FILENAME, no_error=True)
+        config = configparser.ConfigParser()
+
+        try:
+            config.read(pathname, encoding='utf-8')
+        except Exception:
+            return
+
+        if DEFAULT in config and DIS_ANIMAT in config[DEFAULT]:
+            disable = config[DEFAULT][DIS_ANIMAT].lower() in {'yes', 'true'}
 
     if disable:
         animator.ENABLED = False
