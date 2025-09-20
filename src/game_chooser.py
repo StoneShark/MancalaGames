@@ -205,7 +205,8 @@ RULES = {
     'Other': lambda gdict: ('Russ' not in gdict.get('rules', '')
                             and 'Valdez' not in gdict.get('rules', '')
                             and 'mancala.fandom' not in gdict.get('rules', '')
-                            and 'Davies' not in gdict.get('rules', '')),
+                            and 'Davies' not in gdict.get('rules', '')
+                            and 'Hanson' not in gdict.get('rules', '')),
 
     }
 
@@ -1009,9 +1010,8 @@ class AboutPane(ttk.Labelframe):
     def format_para(text):
         """Format a paragraph for the description."""
 
-        text = format_msg.build_paras(text)
         out_text = []
-        for para in  text.split('\n'):
+        for para in  format_msg.build_paras(text):
             out_text += [textwrap.fill(man_config.remove_tags(para),
                                        DESC_WIDTH)]
 

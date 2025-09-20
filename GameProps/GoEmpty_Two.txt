@@ -49,7 +49,7 @@ Goal: If you clear all of your own seeds you win.
 
 Variants:
 
-- sow in multiple laps and use 4 start seeds per hole (or the starter
+- GoEmpty_Two::MultiLap - sow in multiple laps and use 4 start seeds per hole (or the starter
 can win on the opening move).
 </about>
 </text_section>

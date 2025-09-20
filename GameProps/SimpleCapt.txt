@@ -55,16 +55,16 @@ Goal: capture the most seeds.
 
 Variations:
 
-- <nolink>SimpleCapt::Anywhere: Allow moves from any holes on the
+- <nolink>SimpleCapt::Anywhere - Allow moves from any holes on the
 board. Don't end the game until one player has won or there is a tie.
 
-- SimpleCapt_PCapt is a multilap sow variant where your opponent may
-passively capture the contents of store when your final seed of a sow
-ends on their side in an empty hole!
+- <nolink>SimpleCapt::LastCapt - capture the last seed sown 
+when it ends in an empty hole on your own
+side of the board (CAPT_MAX of 1 and CAPT_SIDE of OWN).
 
-- capture the last seed sown when it ends in an empty hole on your own
-side of the board (CAPT_MAX of 1 and CAPT_SIDE of OWN;
-SimpleCapt::LastCapt).
+- SimpleCapt_PCapt is a multilap sow variant where your opponent may
+passively capture the contents of your store when your final seed of a sow
+ends on their side in an empty hole!
 
 - sow in multiple-laps (SOW_DIRECT of LAPPER) possibly limiting lap
 continueing to one side of the board.

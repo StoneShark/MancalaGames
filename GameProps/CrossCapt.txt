@@ -90,26 +90,26 @@ the end of your own turn (END_COND CLEARED_OPP).
 seeds or the board is clear and each player has half the seeds
 (END_COND NO_ADDTL).
 
-- <nolink>CrossCapt::Two: Use multilap sowing but only when the final
+- <nolink>CrossCapt::Two - Use multilap sowing but only when the final
 seed lands in a occupied hole on your own side of the board. If your
 opponent does not have any seeds, you must share, if you can.
 Otherwise the game ends and the player with the most seeds wins.
 
-- <nolink>CrossCapt::Three: Use multilap sowing but only when the
+- <nolink>CrossCapt::Three - Use multilap sowing but only when the
 final seed lands in an occupied on your opponent's side of the board.
 The game ends when your own holes are cleared.
 
-- <nolink>CrossCapt::Four: Cross capture initiated from a single seed
+- <nolink>CrossCapt::Four - Cross capture initiated from a single seed
 on your opponent's side of the board.
 
-- <nolink>CrossCapt::Five: Cross capture initiated from either side of
+- <nolink>CrossCapt::Five - Cross capture initiated from either side of
 the board. The does not end until one person has collected more than
 half the seeds, or the board is cleared.
 
-- <nolink>CrossCapt::Five_No_Sides: <nolink>CrossCapt::Five but plays
+- <nolink>CrossCapt::Five_No_Sides - <nolink>CrossCapt::Five but plays
 may be made from any hole.
 
-- <nolink>CrossCapt::Five_UDIR: <nolink>CrossCapt::Five but each
+- <nolink>CrossCapt::Five_UDIR - <nolink>CrossCapt::Five but each
 player's first move (including any repeat turns) are sown counter-
 clockwise; the user chooses the sow direction for subsequent moves.
 

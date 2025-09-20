@@ -9,6 +9,7 @@ Created on Thu May 22 22:03:35 2025
 import re
 import textwrap
 
+NL = '\n'
 LINE_SEP = '\n\n'
 
 RECOMP = re.compile('\n *')
@@ -43,10 +44,47 @@ def fmsg(message, wide=False):
     return TEXTFILL.fill(RECOMP.sub(' ', message))
 
 
-def build_paras(text):
-    """Build paragraphs. \n\n are paragraphs \n are not."""
+def build_paras(text, html=False):
+    """Build paragraphs and yield them one at a time
 
-    text = text.replace(LINE_SEP, '@@@@')
-    text = text.replace('\n', ' ')
-    text = text.replace('@@@@', '\n')
-    return text
+    \n\n are paragraphs \n are not.
+
+    <pre... and </pre... braket preformated text
+    if html is true, include the tags; if false do not."""
+
+    para = ''
+    fix_form = False
+
+    for line in text.split(NL):
+
+        if line[:4] == '<pre':
+            yield para
+            fix_form = True
+            if html:
+                para = line + NL
+            else:
+                para = ''
+
+        elif line[:5] == '</pre':
+            if html:
+                yield para + line + NL
+            else:
+                yield para + NL
+            fix_form = False
+            para = ''
+
+        elif fix_form:
+            if html:
+                line = line.replace('<', '&lt;')
+                line = line.replace('>', '&gt;')
+            para += line + NL
+
+        elif not line.rstrip():
+            yield para
+            para = ''
+
+        else:
+            para += line + ' '
+
+    if para:
+        yield para + NL

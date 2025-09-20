@@ -52,7 +52,7 @@ Goal: collect at least half the seeds in your own children.
 
 Variants:
 
-- played in rounds with blocks (<nolink>Krur::Rounds).
+- <nolink>Krur::Rounds - played in rounds with blocks.
 
 - played in rounds and loser puts last 1-3 seeds into occupied holes
 but must result in an even number of seeds, thus one extra seed might

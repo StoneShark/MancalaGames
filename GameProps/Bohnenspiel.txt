@@ -54,7 +54,7 @@ Goal: collect more than half of the seeds.
 
 Variations:
 
-- <nolink>Bohnenspiel::Rounds: play in rounds to 100 points 
+- <nolink>Bohnenspiel::Rounds - play in rounds to 100 points 
 
 - remove multiple capture
 </about>

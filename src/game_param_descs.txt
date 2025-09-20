@@ -511,9 +511,9 @@ An XML-like format is used, but do not include the closing tags.
 
 On Save, the tags are copied back to the top level. 
 White space is stripped off the right side of values, and any 
-that are still multi-line will be saved to the test_section.
+that are still multi-line will be saved to the text_section.
 Any value can be forced to be stored in the text_section by including
-<txt>.
+&lt;txt&gt;.
 
 Extra tags may be included in a game configuration file. Generally
 included tags are listed below. The script play_mancala allows
@@ -541,7 +541,6 @@ Use the most specific region.
 games with tags including note, reference, question and lagniappe.
 
 An example of extra_tags:
-
 <pre class="fixed">
 <rules>
 Russ, Laurence. Mancala Games. 1984. p33.
@@ -1648,7 +1647,6 @@ player without seeds (the unfed player).
 seed goes to the player with fewer seeds).
 
 <param quitter>
-
 Defines how to score any unclaimed seeds when a player ends the round
 or game using an <a href="mancala_help.html#gamemenu">End Round or End
 Game</a> menu command.
@@ -1659,7 +1657,6 @@ The allowable values are the same as for UNCLAIMED (EndGameSeeds)
 except UNFED_PLAYER is disallowed. <no_enum_error>
 
 <param variants>
-
 Provide a dictionary in JSON format of named variants whose values are
 the parameters to set for that variant. The first name of the variant
 must match the game name and must have an empty dictionary.
@@ -1683,7 +1680,6 @@ parameters from the base game:
 </pre>
 
 <param vari_params>
-
 Provide a dictionary in JSON format where the keys are paramters
 (options) and the associated values are a list valid values for each.
 If all values are to be allowed any non-list type can be provided;

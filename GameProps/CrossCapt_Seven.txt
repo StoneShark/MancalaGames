@@ -44,7 +44,7 @@ The game ends under one of two conditions:
 
 - Your opponent cannot move at the start of their turn. You collect
 any seeds left on your own side of the board. The winner is the player
-with more seeds collected.
+that collected more seeds.
 
 - Either player collects more than half the seeds.
 

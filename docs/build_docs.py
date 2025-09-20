@@ -31,7 +31,7 @@ from context import param_consts as pc
 
 
 GPROP_PATH = '../' + man_path.GAMEDIR + '/'
-
+NL = '\n'
 
 # %%  fix utf-8 sort order
 
@@ -235,11 +235,10 @@ def write_para(text, ofile, number=False):
     li_tag = 'ul' if number is False else 'ol'
     start = '' if number is False else f' start={number}'
 
-    text = format_msg.build_paras(text)
-
     in_list = False
-    for para in text.split('\n'):
-        if para == '':
+    for para in format_msg.build_paras(text, True):
+
+        if not para:
             continue
 
         if para[:6] == 'Note: ':
@@ -261,6 +260,9 @@ def write_para(text, ofile, number=False):
             in_list = False
             print('</', li_tag, '>', sep='', file=ofile)
             print('<p>', sub_links(para), sep='', file=ofile)
+
+        elif NL in para:
+            print( sub_links(para), sep='', file=ofile)
 
         else:
             print('<p>', sub_links(para), sep='', file=ofile)
@@ -551,7 +553,7 @@ def write_games_help(filename):
             write_columns(ofile, prop_text, 2)
             for key, text in game_dict.items():
                 text = '<b class="enum">' + key.title() + '</b>: ' + text
-                write_para(text, ofile)
+                write_para(text + '\n', ofile)
 
         build_write_game_index(games, vnames, ofile)
 

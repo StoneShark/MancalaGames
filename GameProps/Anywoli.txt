@@ -58,9 +58,9 @@ Goal: capture the most seeds.
 
 Varitations:
 
-- <nolink>Anywoli::Yit_Nuri: 7 holes
+- <nolink>Anywoli::Yit_Nuri - 7 holes
 
-- <nolink>Anywoli::Yit_Jani: 13 holes and 2 seeds per hole
+- <nolink>Anywoli::Yit_Jani - 13 holes and 2 seeds per hole
 </about>
 <references>
 <txt> https://mancala.fandom.com/wiki/Yit_Jani https://mancala.fandom.com/wiki/Yit_Nuri

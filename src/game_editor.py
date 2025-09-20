@@ -49,8 +49,7 @@ SKIP_TAB = 'skip'
 
 WTITLE = 'Mancala Games Editor'
 
-PRE_TAG = '<pre'
-END_PRE_TAG = '</pre'
+NL = '\n'
 
 # prefix for the tk variable names
 # names must be distinct from variants popup
@@ -296,24 +295,15 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
         self.prev_option = option
 
         text = man_config.PARAMS[option].text
-        desc = format_msg.build_paras(man_config.PARAMS[option].description)
+        rdesc = man_config.PARAMS[option].description
 
-        paragraphs = desc.split('\n')
-        out_text = ''
-        in_pre = False
-        for para in paragraphs:
-            if PRE_TAG in para:
-                in_pre = True
-                continue
-            if END_PRE_TAG in para:
-                in_pre = False
-                continue
+        desc = ''
+        for para in format_msg.build_paras(rdesc):
+            if NL in para:
+                desc += para
 
-            fpara = textwrap.fill(para, DESC_WIDTH) + '\n'
-            if not in_pre:
-                fpara += '\n'
-            out_text += fpara
-        desc = ''.join(out_text)
+            else:
+                desc += textwrap.fill(para, DESC_WIDTH) + '\n\n'
 
         full_text = f'{text} ({option}):\n\n{desc}'
 

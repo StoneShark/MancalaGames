@@ -69,6 +69,6 @@ Variations:
 
 - The number of extra seeds goal may be set via Config Variants.
 
-- <nolink>Leab El-ákil::Equal: An all equal start pattern with 6 seeds per hole.
+- <nolink>Leab El-ákil::Equal - An all equal start pattern with 6 seeds per hole.
 </about>
 </text_section>

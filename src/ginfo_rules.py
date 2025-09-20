@@ -778,8 +778,9 @@ def test_capture_rules(tester):
 
     tester.test_rule('pacross_same_dir',
         rule=lambda ginfo: (ginfo.capt_type == gi.CaptType.PULL_ACROSS
+                            and ginfo.multicapt
                             and ginfo.capt_dir != gi.CaptDir.SOW),
-        msg='PULL_ACROSS capture type requires CAPT_DIR be SOW',
+        msg='PULL_ACROSS with multiple capture requires CAPT_DIR be SOW',
         excp=gi.GameInfoError)
 
 

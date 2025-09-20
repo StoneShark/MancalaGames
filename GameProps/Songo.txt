@@ -58,10 +58,10 @@ holes are also captured.
 
 Variations:
 
-- <nolink>Songo::Douala: Eight start seeds. Captures on 3s added.
+- <nolink>Songo::Douala - Eight start seeds. Captures on 3s added.
 Grand Slam rule of NOT_LEGAL or NO_CAPT. (Mancala World)
 
-- <nolink>Songo Ewondo: Sowing from player's leftmost hole has
+- <nolink>Songo Ewondo - Sowing from player's leftmost hole has
 restrictions (not supported by Mancala Games). Captures on 3s added.
 No capture from opponents first hole (not supported). Multiple
 captures but only if the sow did not start with a multiple of seven

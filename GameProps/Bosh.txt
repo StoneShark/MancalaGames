@@ -55,6 +55,6 @@ Variations:
 
 - 3 seeds per hole for start
 
-- <nolink>Bosh::No_Rounds: not played in rounds 
+- <nolink>Bosh::No_Rounds - not played in rounds
 </about>
 </text_section>

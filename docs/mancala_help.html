@@ -479,11 +479,15 @@ to allow playing the game.
 and hitting a keyboard key will cycle through the games in the list that start
 with that letter.
 
-<p>The list of games shown can be filtered based on game configuration
-parameters. There are two types of filter categories: filters that divide the game list into
-non-overlapping sets and feature filters.
-A game must be selected by all filter categories to be included in the list.
-The filter types are described in seperate sections below.
+<p>The list of games shown can be filtered.
+There are two tabs of filter groups:
+<ul>
+<li>Rules Filter that do selections based on how the game is played.
+<li>Info Filter that do selections based on other information about the
+game.
+</ul>
+A game must be selected by all filter groups to be included in the game list
+(a filter group has a name at the top of it).
 
 <p>Game log entries are collected according to the Log menu settings in the Mancala UI,
 but Live Log is not supported when the Mancala UI is started from play_mancala.exe.
@@ -491,62 +495,44 @@ Logs may be saved during or at the end of each game.
 If play_mancala.py is run directly via the python command from a console
 window, Live Log is supported.
 
-<h3>Non-overlapping Filters</h3>
-<p>The non-overlapping sets filters include:
-<ul>
-<li>Game <a href="game_params.html#game_class">Class</a>
-<li>AI <a href="game_params.html#algorithm">Algorithm</a> Configured
-<li><a href="#ratings">Game Rating</a>
-<li>Board Size (<a href="game_params.html#holes">holes</a> per side)
-<li>Game <a href="game_params.html#goal">Goal</a>
-<li><a href="game_params.html#mlaps">Lap Type</a>
-<li>Special <a href="game_params.html#sow_rule">Sow Rule</a> (in groups)
-<li><a href="game_params.html#sow_direct">Sow Direction</a>
-<li><a href="game_params.html#child_type">Child Type</a>
-<li>Capture Type, groups are defined using:
-<ul>
-<li>Basic capture:
-<a href="game_params.html#capt_max">maximum</a>,
-<a href="game_params.html#capt_min">minimum</a>,
-<a href="game_params.html#capt_on">capture on values</a>, or
-<a href="game_params.html#evens">evens</a>
-without either of the next two properties
-<li><a href="game_params.html#crosscapt">Cross capture</a>
-<li>Capture Type set: <a href="game_params.html#capt_type">capt_type</a>
-is not NONE
-<li>Other (none of the groups above but they have
-<a href="game_params.html#presowcapt">pre-sow capture</a>,
-<a href="game_params.html#child_type">children</a>, or
-<a href="game_params.html#sow_own_store">sow own store</a> configured)</ul></ul>
 
-<p>Each checkbox within these filter categories
-determines if games with that property are shown.
-A game with any filled checkbox will be included in the game list.
-Choosing All will set all the options in the category
-and show all the games not filtered by another category.
-Choosing None will clear all the options in the filter category
-and the games.
+<h3>Filter Groups</h3>
+<p>
+There are two types of filter groups: simple on/off selections and tri-state selections.
+The Filter menu includes Show All which reset all filters to show all games;
+available via keyboard short cut control-shift-A.
 
-<h3>Feature Filters</H3>
-<p>Two groups of feature filters are included:
-<ul>
-<li>information about the game configuration (not the actual game mechanics)
-<li>interesting game features that do control game mechanics
-</ul>
+<p>The <b>on/off selection filter groups</b> have filled boxes at start up.
+Within each filter group any game that matches a filled box will be included
+in the game list. For example, selecting four and five stars in the Ratings
+filter group will list all games that you have rated four or five stars.
 
-<p>The features filters do not break the game list into non-overlapping sets.
-Each checkbox within these features describes a property of the game defined by
-one or more parameter settings. These checkboxes have three states,
+<p>If you clear boxes from another filter group, only games selected by both
+filter groups are included.
+For example, leaving the ratings filters,
+if you clear all but Traditional from the Origin filter group,
+only Traditional games with more that four stars will be included.
+
+<p>Values are ORed within these filter groups.
+
+<p>Choosing All will set all the options in the filter group
+and show all the games not filtered by another group.
+Choosing None will clear all the options in the filter category.
+
+<p>The <b>tri-state filter groups</b> have checkboxes that have x's in them at start up.
+These checkboxes have three states,
 clicking on the property cycles the selection:
 <ul><li>Filled: only show games with the property.
 <li>Unfilled: only show games without the property.
 <li>X: don't filter on the property, show games regardless of the setting for this
-property (somes this is called a "don't care" setting).
+property (sometimes this is called a "don't care" setting).
 </ul>
 
-<p>For the feature categories, only games that match all properties are shown.
+<p>For the tri-state filter groups, only games that match all properties are shown.
 Experiment with the features and review the parameter lists to see what
 each feature filter includes.
+
+<p>Values are ANDed within these filter groups.
 
 <p>The All button sets the properties to "don't care" (so all games will be included)
 and the None button clears all the properties (so only games with all of the
@@ -555,9 +541,14 @@ Setting all of the features to selected (filled) will clear the game list
 (no game includes all of the features, in fact, must share and must pass are
 prohibited together).
 
-<p>Feature filters are in two groups: Configuration and Features.
-Configuration options filter on properties of the game configuration file.
-Feature options filter on how a game plays.
+<p>The <b>Region Filter</b> group includes sub-regions, though,
+not all sub-regions are included
+(those not included general have none or very few games).
+These can be shown by selecting the primary region and clearing the
+listed sub-regions.
+For example, selection of Africa
+but not eastern, central, northern or western can be accomplished by
+setting the Africa box to filled and the listed sub-region boxes to not filled.
 
 <h3 id="ratings">Game Ratings</h3>
 
@@ -744,8 +735,27 @@ If your favorite game is misnamed, change the file and game names.
 for an overview of all preconfigured games.
 
 <h2 id="fileformat">Game Definition File Format</h2>
-Each game is described in a parameter file that is a JSON string.
-These are text files that can be loaded, changed and saved with the Mancala Games Editor.
+Each game is described in a plain-text parameter file
+that starts with a JSON  string define all parameters of the game.
+An optional XML-like section may follow it.
+
+<p>The XML-like section requires a top level tag pair of &lt;text_section&gt; and
+&lt;/text_section&gt; (each on their own line).
+Pairs of tags open/close XML may be included between
+these to define lengthy text values such as ABOUT and DEVIATION.
+Text values in included in the text_section should have their JSON section
+values be &lt;text_section&gt;.
+Giuthi.txt provides a good example of this usage.
+
+<p>In the text section lines separated by one new line are filled into
+paragraphs and two new lines are paragraph separators.
+Line breaks may be used wherever convenient, there is no value
+to formatting (word wrapping) individual paragraphs in this section.
+When used, the paragraphs are word wrapped for the
+particular format (HTML or Game Chooser).
+
+<p>The game configuration files can be loaded,
+changed and saved with the Mancala Games Editor.
 They may also be edited with any text editor.
 The JSON parser attempts to provide useful information about any errors found.
 <p>There are four required top level elements:
@@ -769,7 +779,6 @@ The JSON parser attempts to provide useful information about any errors found.
     </ol>
 <p>There are two optional top level elements that describe in-game selectable
 variations. These are available from the Game menu.
-These must be edited directly into the configuration file via a text editor.
 
 <p>Variants allow grouping parameter changes together, e.g., holes and start seeds
 should change together in specific ways. Vari_params allows limiting individual parameter
