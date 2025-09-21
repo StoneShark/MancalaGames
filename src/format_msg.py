@@ -54,6 +54,7 @@ def build_paras(text, html=False):
 
     <pre... and </pre... braket preformated text
     if html is true, include the tags; if false do not."""
+    # pylint:  disable=too-many-branches
 
     para = ''
     fix_form = False
