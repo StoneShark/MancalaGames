@@ -176,7 +176,7 @@ def parse_xml(xml_lines):
     text = ''
     xml_dict = {}
 
-    for idx, line in enumerate(xml_lines):
+    for idx, line in enumerate(xml_lines):  # pragma: no branch
 
         if TEXT_SEC_KEY in line:
             continue
@@ -204,7 +204,7 @@ def parse_xml(xml_lines):
             tag = None
             continue
 
-        if not tag:
+        if not tag and line.strip():
             raise ValueError(f'Text not inside tag open/close at line {idx}.')
 
         text += line

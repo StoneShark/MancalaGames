@@ -33,6 +33,10 @@ TEST_COVERS = ['src\\man_config.py']
 
 # %%
 
+def no_err(value):
+    return contextlib.nullcontext(value)
+
+
 class TestRemoveTags:
 
     CASES = [('<a alkjsdf;lskfj>', ''),
@@ -216,6 +220,122 @@ class TestBasicConstruction:
         assert game.cts.nbr_start == 2
         assert game.info.capt_on == [2]
         assert 'mm_depth' in pdict
+
+
+    @pytest.fixture
+    def config_file5(self, tmp_path):
+
+        filename = os.path.join(tmp_path,'config.txt')
+        with open(filename, 'w', encoding='utf-8') as file:
+            print("""{
+                       "game_constants": {
+                          "holes": 9,
+                          "nbr_start": 2
+                       },
+                       "game_info": {
+                           "capt_on": [2],
+                           "stores": true,
+                           "about": "<text_section>"
+                       },
+                       "player": {
+                           "mm_depth": [1, 1, 3, 5]
+                        },
+                        "rules": "<text_section>",
+                        "region": "not text section"
+                     }
+                     <text_section>
+                     <about>
+                     This is some vanilla text.
+
+                     This is a two line paragraph to be filled
+                     later.
+
+                     </about>
+                     <rules>
+                     never do this
+                     </rules>
+                     </text_section>
+                """, file=file)
+        return filename
+
+
+    def test_read_game5(self, config_file5):
+
+        gdict = man_config.read_game(config_file5)
+
+        assert 'vanilla' in gdict[ckey.GAME_INFO][ckey.ABOUT]
+        assert gdict[ckey.GAME_INFO][ckey.ABOUT].count('\n') == 5
+
+        assert 'never' in gdict['rules']
+        assert gdict['rules'].count('\n') == 1
+
+        assert 'not text' in gdict['region']
+
+
+    TEXT_CASES = {
+        'no_error': ["""<about>
+                     text
+                     </about>
+                     <rules>
+                     bad way
+                     </rules>
+                     """, no_err(None)],
+
+        'missing_value': ["""<about>
+                          some text""", pytest.raises(ValueError)],
+
+        'missing_close': ["""<about>
+                          some text
+                          <rules>""", pytest.raises(ValueError)],
+
+        'wrong_close': ["""<about>
+                          some text
+                          </rules>""", pytest.raises(ValueError)],
+
+        'extra_text': ["""<about>
+                       text
+                       </about>
+                       text not between tags
+                       <rules>
+                       bad way
+                       </rules>""", pytest.raises(ValueError)],
+
+
+    }
+
+    @pytest.mark.parametrize('text_sec, eres',
+                             TEXT_CASES.values(),
+                             ids=TEXT_CASES.keys())
+    def test_text_sec_errs(self, tmp_path, text_sec, eres):
+
+        path = os.path.join(tmp_path, 'test_game.txt')
+        with open(path, 'w', encoding='utf-8') as file:
+            print("""{
+                       "game_constants": {
+                          "holes": 9,
+                          "nbr_start": 2
+                       },
+                       "game_info": {
+                           "capt_on": [2],
+                           "stores": true,
+                           "about": "<text_section>"
+                       },
+                       "player": {
+                           "mm_depth": [1, 1, 3, 5]
+                        },
+                        "rules": "<text_section>",
+                        "region": "not text section"
+                     }
+                     <text_section>""", file=file)
+            print(f"""{text_sec}
+                      </text_section>
+                      """, file=file)
+
+        with eres as value:
+            man_config.read_game(path)
+            if value is not None:
+                assert value == eres
+
 
 
 class TestRejectFile:
@@ -477,9 +597,6 @@ class TestResetDefs:
         assert gd_copy == game_dict
 
 
-
-def no_err(value):
-    return contextlib.nullcontext(value)
 
 class TestGetGameValue:
 
@@ -1190,6 +1307,8 @@ class TestPreloadCfg:
                              ], ids=['case0', 'case1', 'case2'])
     def test_dis_animator(self, mocker, tmp_path, contents, eres):
 
+        man_config.CONFIG = None
+
         path = os.path.join(tmp_path, 'mancala.ini')
         with open(path, 'w', encoding='utf-8') as file:
             print(contents, file=file)
@@ -1202,7 +1321,20 @@ class TestPreloadCfg:
         assert animator.ENABLED == eres
 
 
+    def test_dis_ani_loaded(self, mocker):
+
+        man_config.read_ini_file()
+
+        # man_path finds the file where we just put it
+        mpath = mocker.patch.object(man_path, 'get_path')
+
+        man_config.check_disable_animator()
+        mpath.assert_not_called()
+
+
     def test_dis_ani_no_file(self, mocker, tmp_path):
+
+        man_config.CONFIG = None
 
         # man_path doesn't find the file
         mpath = mocker.patch.object(man_path, 'get_path')
