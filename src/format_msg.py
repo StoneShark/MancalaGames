@@ -12,6 +12,9 @@ import textwrap
 NL = '\n'
 LINE_SEP = '\n\n'
 
+PRE_TAG = '<pre'
+PRE_END = '</pre'
+
 RECOMP = re.compile('\n *')
 TEXTFILL = textwrap.TextWrapper(width=50)
 WIDEFILL = textwrap.TextWrapper(width=75)
@@ -57,7 +60,7 @@ def build_paras(text, html=False):
 
     for line in text.split(NL):
 
-        if line[:4] == '<pre':
+        if line[:4] == PRE_TAG:
             yield para
             fix_form = True
             if html:
@@ -65,7 +68,7 @@ def build_paras(text, html=False):
             else:
                 para = ''
 
-        elif line[:5] == '</pre':
+        elif line[:5] == PRE_END:
             if html:
                 yield para + line + NL
             else:
@@ -75,9 +78,11 @@ def build_paras(text, html=False):
 
         elif fix_form:
             if html:
-                line = line.replace('<', '&lt;')
-                line = line.replace('>', '&gt;')
-            para += line + NL
+                nline = line.replace('<', '&lt;')
+                nline = nline.replace('>', '&gt;')
+                para += nline + NL
+            else:
+                para += line + NL
 
         elif not line.rstrip():
             yield para
