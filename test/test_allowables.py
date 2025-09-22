@@ -1028,7 +1028,7 @@ class TestDontUndoMoveOne:
         quot, rem = divmod(12 - sum(board), 2)
         game.store = [quot, quot + rem]
         game.turn = turn
-        print(game)
+        # print(game)
         game.move(move)
         # print(game.mdata)
 
@@ -1039,7 +1039,7 @@ class TestDontUndoMoveOne:
                              ['include'],
                              indirect=['game'])
     def test_rturn(self, game):
-        """Force a test of capt_start == REPEAT TURN"""
+        """Force a test of capt_start in store"""
 
         game.board = [2, 2, 2, 2, 2, 2]
         game.store = [0, 0]
@@ -1049,7 +1049,8 @@ class TestDontUndoMoveOne:
         allowables = game.get_allowable_holes()
         assert allowables == [T, T, T]
 
-        game.mdata.capt_start = gi.WinCond.REPEAT_TURN
+        game.mdata.capt_start = -1
+        game.mdata.repeat_turn = True
 
         assert game.get_allowable_holes() == allowables
 

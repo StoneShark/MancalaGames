@@ -548,7 +548,8 @@ def test_capture_rules(tester):
 
     tester.test_rule('capt_no_place',
         rule=lambda ginfo: (ginfo.goal in (gi.Goal.MAX_SEEDS, gi.Goal.TERRITORY)
-                            and not (ginfo.stores or ginfo.child_type)
+                            and not (ginfo.stores
+                                     or ginfo.child_type.child_but_not_ram())
                             and any([ginfo.capt_type,
                                      ginfo.evens,
                                      ginfo.crosscapt,
@@ -619,11 +620,6 @@ def test_capture_rules(tester):
         # the capture behavior is odd because any basic capture
         # criteria are used to stop the mlap sowing, but wo basic
         # capture criteria all holes would be captured
-
-    tester.test_rule('capttype_xcross_incomp',
-        rule=lambda ginfo: ginfo.capt_type and ginfo.crosscapt,
-        msg="CAPT_TYPE and CROSSCAPT are incompatible",
-        warn=True)
 
     tester.test_rule('lcapt_no_ctype',
         rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.LAP_CAPT
@@ -770,17 +766,36 @@ def test_capture_rules(tester):
         msg='Multiple captures with capture SINGLETONS is not supported',
         excp=gi.GameInfoError)
 
-    tester.test_rule('str_capt_single',
-        rule=lambda ginfo: (ginfo.capt_type == gi.CaptType.PASS_STORE_CAPT
-                            and ginfo.multicapt >= 1),
-        msg='Multiple captures is incompatible with PASS_STORE_CAPT',
+    tester.test_rule('str_capt_stores',
+        rule=lambda ginfo: (ginfo.capt_type in (gi.CaptType.PASS_STORE_CAPT,
+                                                gi.CaptType.END_OPP_STORE_CAPT)
+                            and not ginfo.stores),
+        msg='Store capturing (selected CAPT_TYPE) requires stores',
         excp=gi.GameInfoError)
+
+    tester.test_rule('str_capt_single',
+        rule=lambda ginfo: (ginfo.capt_type in (gi.CaptType.PASS_STORE_CAPT,
+                                                gi.CaptType.END_OPP_STORE_CAPT)
+                            and ginfo.multicapt),
+        msg="""Multiple captures is incompatible with store captures
+            (selected CAPT_TYPE)""",
+        excp=gi.GameInfoError)
+        # this could potentially be supported for the basic/xcapt, but
+        # the supporting capt deco would need to be above CaptMultiple
 
     tester.test_rule('pacross_same_dir',
         rule=lambda ginfo: (ginfo.capt_type == gi.CaptType.PULL_ACROSS
                             and ginfo.multicapt
                             and ginfo.capt_dir != gi.CaptDir.SOW),
         msg='PULL_ACROSS with multiple capture requires CAPT_DIR be SOW',
+        excp=gi.GameInfoError)
+
+    tester.test_rule('end_opp_both',
+        rule=lambda ginfo: (ginfo.capt_type == gi.CaptType.END_OPP_STORE_CAPT
+                            and ginfo.sow_stores not in (gi.SowStores.BOTH_NR,
+                                                         gi.SowStores.BOTH_NR_OPP)),
+        msg="""END_OPP_STORE_CAPT requires that both stores be sown
+            and there is no repeat turn when ending in opposite store""",
         excp=gi.GameInfoError)
 
 

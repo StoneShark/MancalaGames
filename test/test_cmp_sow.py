@@ -28,6 +28,9 @@ N = None
 CCW = gi.Direct.CCW
 CW = gi.Direct.CW
 
+F_STORE = -1
+T_STORE = -2
+
 NBLCK = [F] * (2 * HOLES)
 
 NSTR = 1967  # no change in the store expected
@@ -313,7 +316,7 @@ CASES = [('basic', 'start', F, 2,
          ('mlaps_cnt', 'wchild', F, 3, # stop in child
           5, (1, 1, 1, 0, 4, 4, 4, 2, 1, 0), [1, 1], NBLCK),
          ('mlaps_cnt', 'start', F, 3, # repeat turn (end in store)
-          gi.WinCond.REPEAT_TURN,
+          F_STORE,
           (2, 2, 2, 0, 3, 2, 2, 2, 2, 2), [1, 0], NBLCK),
          ('mlaps_cnt', 'wchild', F, 4, # do mlaps, then capt
           1, (2, 2, 1, 3, 0, 4, 0, 3, 2, 1), [1, 1], NBLCK),
@@ -322,11 +325,11 @@ CASES = [('basic', 'start', F, 2,
 
           # sow own err with block/rounds
           ('s_own_rnds', '2ndround', F, 1,
-           gi.WinCond.REPEAT_TURN,
+           F_STORE,
            (2, 0, 3, 1, 4, 0, 0, 0, 0, 0), [1, 9],
            (F, F, F, F, F, T, F, F, F, F)),
           ('s_own_rnds', '2ndround2b', F, 2,
-           gi.WinCond.REPEAT_TURN,
+           F_STORE,
            (2, 4, 0, 3, 0, 0, 0, 0, 0, 0), [1, 10],
            (F, F, F, F, T, T, F, F, F, F)),
           ('s_own_rnds', '2ndround2b', F, 3,   # don't sow on own side, 1st is in store
@@ -335,7 +338,7 @@ CASES = [('basic', 'start', F, 2,
            (F, F, F, F, T, T, F, F, F, F)),
 
           ('s_own_rnds_lap', '2ndround', F, 0,
-           gi.WinCond.REPEAT_TURN,
+           F_STORE,
            (0, 5, 0, 1, 4, 0, 0, 0, 0, 0), [1, 9],
            (F, F, F, F, F, T, F, F, F, F)),
 

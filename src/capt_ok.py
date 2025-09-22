@@ -156,7 +156,7 @@ class CaptNotChild(CaptOkIf):
         return self.decorator.capture_ok(mdata, loc)
 
 
-class CaptNeedSeeds(CaptOkIf):
+class CaptNotStoreNeedSeeds(CaptOkIf):
     """If there are no seeds, can't capture.
     Stack this one on top, so it's called first.."""
 
@@ -164,10 +164,11 @@ class CaptNeedSeeds(CaptOkIf):
         """Return False if capture from loc is not ok,
         otherwise delegate."""
 
-        if not self.game.board[loc]:
+        if loc < 0 or not self.game.board[loc]:
             return False
 
         return self.decorator.capture_ok(mdata, loc)
+
 
 
 # %%  build deco chain
@@ -199,7 +200,7 @@ def deco_capt_basic(game):
     if game.info.child_type.child_but_not_ram():
         capt_ok = CaptNotChild(game, capt_ok)
 
-    capt_ok = CaptNeedSeeds(game, capt_ok)
+    capt_ok = CaptNotStoreNeedSeeds(game, capt_ok)
 
     return capt_ok
 
@@ -217,6 +218,6 @@ def deco_capt_check(game):
     if game.info.child_type.child_but_not_ram():
         capt_check = CaptNotChild(game, capt_check)
 
-    capt_check = CaptNeedSeeds(game, capt_check)
+    capt_check = CaptNotStoreNeedSeeds(game, capt_check)
 
     return capt_check

@@ -28,6 +28,13 @@ class CaptMethodIf(deco_chain_if.DecoChainIf):
         same. capt_start should not be changed. capt_loc should be
         returned as the first location captured (for the logs).
 
+        capt_start might be negative if the sow_stores is selected.
+        It should not be used to reference a board location when
+        negative. NoStoreCapt is included unless a final seed sown
+        to a store could do a capture, but all the decos above
+        EndOppStoreCapt need to enforce this. The deco's capt_basic,
+        capt_ok and make_child do this check.
+
         Update mdata:
 
         capt_changed: there was a state change (picked, child made, etc.)
@@ -243,6 +250,11 @@ class PassStoreCapture(CaptMethodIf):
     """If the last seed lands in an empty hole,
     your opponent captures the contents of your store.
 
+    If the first capture failed, call down the deco
+    chain for another type of capture (none, basic or xcapt);
+    keep in mind it will use the same capt_side restrictions.
+    This should have NoStoreCapt in the deco chain.
+
     Use capt_side to restrict where this might happen.
     The side test is based on where the singleton seed
     landed."""
@@ -279,6 +291,9 @@ class PassStoreCapture(CaptMethodIf):
 
             mdata.captured = True
 
+        else:
+            self.decorator.do_captures(mdata, capt_first)
+
 
 class PullAcrossCapture(CaptMethodIf):
     """If the last seed lands in an empty hole,
@@ -302,6 +317,29 @@ class PullAcrossCapture(CaptMethodIf):
             mdata.captured = True
             mdata.capt_next = self.game.deco.incr.incr(mdata.capt_loc,
                                                        mdata.direct)
+
+
+class EndOppStoreCapture(CaptMethodIf):
+    """If the final seed of a sow ends in opponent's store
+    capture the seeds.
+
+    If the first capture failed, call down the deco
+    chain for another type of capture (none, basic or xcapt)."""
+
+    def do_captures(self, mdata, capt_first=True):
+
+        opp_turn = not self.game.turn
+        if (mdata.capt_start == gi.STORE_INDEX[opp_turn]
+                and self.game.store[opp_turn]):
+
+            seeds = self.game.store[opp_turn]
+            self.game.store[opp_turn] = 0
+            self.game.store[self.game.turn] += seeds
+
+            mdata.captured = True
+
+        elif mdata.capt_start >= 0:
+            self.decorator.do_captures(mdata, capt_first)
 
 
 # %% cross capt wrappers
@@ -801,7 +839,7 @@ class MakeWegCapture(CaptMethodIf):
         game = self.game
         turn = self.game.turn
 
-        if game.child[loc] is (not turn):
+        if loc >= 0 and game.child[loc] is (not turn):
 
             capts = 2 if game.board[loc] >= 2 else 1
             game.board[loc] -= capts
@@ -894,12 +932,12 @@ class MakeRam(CaptMethodIf):
                 make_child = self.game.deco.make_child.test(mdata)
                 if make_child:
                     if not self.game.child[mdata.capt_start]:
-                        game_log.add(f'Making Ram at {idx}')
+                        game_log.add(f'Making Ram at {idx}', game_log.INFO)
                         self.game.child[mdata.capt_start] = gi.NO_CH_OWNER
                         mdata.capt_changed = True
 
                 elif self.game.child[mdata.capt_start]:
-                    game_log.add(f'Clearing Ram at {idx}')
+                    game_log.add(f'Clearing Ram at {idx}', game_log.INFO)
                     self.game.child[mdata.capt_start] = None
                     mdata.capt_changed = True
 
@@ -917,8 +955,10 @@ class PickFinal(CaptMethodIf):
     def do_captures(self, mdata, capt_first=True):
 
         self.decorator.do_captures(mdata, capt_first)
+
         loc = mdata.capt_loc
         if (mdata.captured
+                and loc >= 0
                 and self.game.board[loc]
                 and self.game.deco.capt_check.capture_ok(mdata, loc)):
 
@@ -934,6 +974,10 @@ class PickCross(CaptMethodIf):
     def do_captures(self, mdata, capt_first=True):
 
         self.decorator.do_captures(mdata, capt_first)
+
+        if mdata.capt_loc < 0:
+            return
+
         cross = self.game.cts.cross_from_loc(mdata.capt_loc)
         if (mdata.captured
                 and self.game.board[cross]
@@ -951,6 +995,7 @@ class PickOppBasic(CaptMethodIf):
     def do_captures(self, mdata, capt_first=True):
 
         self.decorator.do_captures(mdata, capt_first)
+
         if mdata.captured:
 
             msg = ''
@@ -1086,6 +1131,16 @@ class RepeatTurn(CaptMethodIf):
                 game_log.add('Second repeat turn prevented', game_log.INFO)
 
 
+class NoStoreCapt(CaptMethodIf):
+    """Don't allow capture from stores,
+    sow ended in store if capt_start < 0."""
+
+    def do_captures(self, mdata, capt_first=True):
+
+        if mdata.capt_start >= 0:
+            self.decorator.do_captures(mdata, capt_first)
+
+
 # %% build deco chain
 
 def _add_cross_capt_deco(game):
@@ -1171,29 +1226,32 @@ def _add_child_deco(game, capturer):
     return capturer
 
 
-def _add_capt_type_deco(game):
+def _add_capt_type_deco(game, capturer):
     """Choose a base capture type decos."""
 
     if game.info.capt_type == gi.CaptType.TWO_OUT:
-        capturer = CaptTwoOut(game)
+        capturer = CaptTwoOut(game, capturer)
 
     elif game.info.capt_type == gi.CaptType.NEXT:
-        capturer = CaptNext(game)
+        capturer = CaptNext(game, capturer)
 
     elif game.info.capt_type == gi.CaptType.MATCH_OPP:
-        capturer = CaptMatchOpp(game)
+        capturer = CaptMatchOpp(game, capturer)
 
     elif game.info.capt_type == gi.CaptType.SINGLETONS:
-        capturer = CaptSingles(game)
+        capturer = CaptSingles(game, capturer)
 
     elif game.info.capt_type == gi.CaptType.CAPT_OPP_1CCW:
-        capturer = CaptOpposite1CCW(game)
+        capturer = CaptOpposite1CCW(game, capturer)
 
     elif game.info.capt_type == gi.CaptType.PASS_STORE_CAPT:
-        capturer = PassStoreCapture(game)
+        capturer = PassStoreCapture(game, capturer)
 
     elif game.info.capt_type == gi.CaptType.PULL_ACROSS:
-        capturer = PullAcrossCapture(game)
+        capturer = PullAcrossCapture(game, capturer)
+
+    elif game.info.capt_type == gi.CaptType.END_OPP_STORE_CAPT:
+        capturer = EndOppStoreCapture(game, capturer)
 
     else:
         raise NotImplementedError(
@@ -1237,15 +1295,15 @@ def _add_base_capturer(game):
     if game.info.crosscapt:
         capturer = _add_cross_capt_deco(game)
 
-    elif game.info.capt_type:
-        capturer = _add_capt_type_deco(game)
-
     elif (game.info.evens or game.info.capt_on
           or game.info.capt_max or game.info.capt_min):
         capturer = CaptBasic(game)
 
     else:
         capturer = CaptNone(game)
+
+    if game.info.capt_type:
+        capturer = _add_capt_type_deco(game, capturer)
 
     return capturer
 
@@ -1292,5 +1350,8 @@ def deco_capturer(game):
 
     if game.info.capt_rturn:
         capturer = RepeatTurn(game, capturer)
+
+    if game.info.capt_type != gi.CaptType.END_OPP_STORE_CAPT:
+        capturer = NoStoreCapt(game, capturer)
 
     return capturer

@@ -616,13 +616,21 @@ is included after the parameter sections.
 <p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Sow
 
-<p>Determines if seeds should be sown into stores. When the final seed is sown into a store, the sower gets another turn. 
+<p>Determines if seeds should be sown into stores. The specfic option selects if there is a repeat turn or not when the final seed of a sow lands in a store. 
 <ol start=0><li class="helptext">
 <b class="enum">NEITHER</b>: do not sow into either store 
 <li class="helptext">
-<b class="enum">OWN</b>: only sow into own store, but not opponents store 
+<b class="enum">OWN</b>: only sow into own store, but not opponent's store. Sows ending in own store gets a repeat turn. 
 <li class="helptext">
-<b class="enum">BOTH</b>: sow into both stores 
+<b class="enum">BOTH</b>: sow into both stores Sow ending in wither store gets a repeat turn. 
+<li class="helptext">
+<b class="enum">OWN_NR</b>: sow own store, but not opponent's; and you do not get a repeat turn. 
+<li class="helptext">
+<b class="enum">BOTH_NR</b>: sow into both stores but neither results in a repeat turn. 
+<li class="helptext">
+<b class="enum">BOTH_NR_OWN</b>: sow into both stores but only ending in your opponent's store results in a repeat turn. 
+<li class="helptext">
+<b class="enum">BOTH_NR_OPP</b>: sow into both stores but only ending in your own store results in a repeat turn. 
 </ol>
 <h4 id="presowcapt"> Pre Sow Capture </h4>
 <p class="pdesc">Location in Config Files: game_info : presowcapt
@@ -742,7 +750,7 @@ is included after the parameter sections.
 <b class="enum">RESERVED</b>: unused value 
 <li class="helptext">
 <b class="enum">ONE_CHILD</b>: only one child allowed per player. 
-<p class="helptext"> Used to create tuzdik style children along with <a href="game_params.html#child_rule">CHILD_RULE</a> of   OPP_ONLY and <a href="game_params.html#child_locs">CHILD_LOCS</a> of NOT_SYM_OPP. 
+<p class="helptext"> Used to create tuzdik style children along with <a href="game_params.html#child_rule">CHILD_RULE</a> of OPP_ONLY and <a href="game_params.html#child_locs">CHILD_LOCS</a> of NOT_SYM_OPP. 
 <li class="helptext">
 <b class="enum">WEG</b>: Ending a sow in an opponent's weg captures the seed just sown and one more (if there is one); generally, the player gets to play again (per <a href="game_params.html#capt_rturn">CAPT_RTURN</a>). WEGs are generally used in territory games with <a href="game_params.html#child_rule">CHILD_RULE</a> of OPP_OWNER_ONLY. 
 <li class="helptext">
@@ -812,7 +820,7 @@ is included after the parameter sections.
 <p class="helptext"> T B B B T 
 <li class="helptext">
 <b class="enum">ENDS_PLUS_ONE_OPP</b>: Either player may make children in any end hole, but the next inner hole can only be made on the opposite side. 
-<p class="helptext">  Used for Walda type children: Each player may create up to 6   walda: on either end of each side of the board and the next two   outer holes on their own side of the board. Note that there are only   8 total places that walda maybe created. 
+<p class="helptext">  Used for Walda type children: Each player may create up to 6 walda: on either end of each side of the board and the next two outer holes on their own side of the board. Note that there are only 8 total places that walda maybe created. 
 <p class="helptext"> TB B N B TB 
 <p class="helptext"> TB T N T TB 
 <li class="helptext">
@@ -921,15 +929,15 @@ is included after the parameter sections.
 <b class="enum">NONE</b>: No other capture type. 
 <li class="helptext">
 <b class="enum">NEXT</b>: Capture from the hole after the final seed sown. Captures in may be in either direction (set via <a href="game_params.html#capt_dir">CAPT_DIR</a>) and multiple captures are supported. The hole tested for the basic capture criteria differs when lap sowing or not: 
-<p class="helptext"> When not lap sowing, basic capture rules are applied and capture   side is checked on the hole from which the seeds will be captured. 
-<p class="helptext"> When multiple lap sowing, the basic capture rules define when the   multilap sowing will end. When the final seed of a lap meets the   basic capture criteria, multilap sowing ends and the seeds in the   next hole (defined by <a href="game_params.html#capt_dir">CAPT_DIR</a> setting) are captured. 
+<p class="helptext"> When not lap sowing, basic capture rules are applied and capture side is checked on the hole from which the seeds will be captured. 
+<p class="helptext"> When multiple lap sowing, the basic capture rules define when the multilap sowing will end. When the final seed of a lap meets the basic capture criteria, multilap sowing ends and the seeds in the next hole (defined by <a href="game_params.html#capt_dir">CAPT_DIR</a> setting) are captured. 
 <li class="helptext">
 <b class="enum">TWO_OUT</b>: Capture two holes out from the final hole sown but only if the intervening hole is empty. This is sometimes called capturing across the gap. 
-<p class="helptext"> <a href="game_params.html#capt_dir">CAPT_DIR</a> must be SOW. Basic capture rules and capture side are   ignored (if a "capture while sowing" <a href="game_params.html#sow_rule">SOW_RULE</a> is selected, these are   applied to sowing). 
-<p class="helptext"> When not lap sowing, the final hole sown must be occupied for   capture two out (i.e. contains two or more seeds after sowing). 
-<p class="helptext"> Multilap sowing does not stop to check for two out captures on   each lap*. For LAPPER sow, captures are checked after the final seed   ends lands in an empty hole. For LAPPER_NEXT sow, captures captures   are checked when there are no seeds in the hole after the final seed   sown. 
-<p class="helptext"> *The <a href="game_params.html#sow_rule">SOW_RULE</a> LAP_CAPT is supported for TWO_OUT captures with   LAPPER sow. 
-<p class="helptext"> If multiple captures are configured, captures continue while the   pattern of empty hole followed by an occupied hole repeats. 
+<p class="helptext"> <a href="game_params.html#capt_dir">CAPT_DIR</a> must be SOW. Basic capture rules and capture side are ignored (if a "capture while sowing" <a href="game_params.html#sow_rule">SOW_RULE</a> is selected, these are applied to sowing). 
+<p class="helptext"> When not lap sowing, the final hole sown must be occupied for capture two out (i.e. contains two or more seeds after sowing). 
+<p class="helptext"> Multilap sowing does not stop to check for two out captures on each lap*. For LAPPER sow, captures are checked after the final seed ends lands in an empty hole. For LAPPER_NEXT sow, captures captures are checked when there are no seeds in the hole after the final seed sown. 
+<p class="helptext"> *The <a href="game_params.html#sow_rule">SOW_RULE</a> LAP_CAPT is supported for TWO_OUT captures with LAPPER sow. 
+<p class="helptext"> If multiple captures are configured, captures continue while the pattern of empty hole followed by an occupied hole repeats. 
 <li class="helptext">
 <b class="enum">MATCH_OPP</b>: capture when the number of seeds in the final hole sown match the opposite-side hole. Seeds from both holes are captured. Multiple captures maybe made in either direction. Multilap sowing does stop for captures. 
 <li class="helptext">
@@ -938,8 +946,12 @@ is included after the parameter sections.
 <b class="enum">CAPT_OPP_1CCW</b>: flag a capture if the final seed of a sow lands in your own rightmost hole or on your opponent's side of the board. No seeds are removed. Useful for causing a repeat turn and/or with pickextra. 
 <li class="helptext">
 <b class="enum">PASS_STORE_CAPT</b>: if your last seed of a sow falls into an empty hole, your opponent passively captures the contents of your store. Use <a href="game_params.html#capt_side">CAPT_SIDE</a> to limit where this effect occurs. <a href="game_params.html#multicapt">MULTICAPT</a> is not supported. 
+<p class="helptext"> <nolink>PASS_STORE_CAPT may be used with basic or cross capture. If the store is not captured, a basic or cross capture is attempted. 
 <li class="helptext">
 <b class="enum">PULL_ACROSS</b>: if your last seed of a sow falls into an empty hole, pull any seeds from across the board into the final holw sown. Use <a href="game_params.html#capt_side">CAPT_SIDE</a> to limit where this effect occurs. Multiple captures can be configured (<a href="game_params.html#multicapt">MULTICAPT</a>) which pulls seeds across the board when holes after the final hole sown are empty (<a href="game_params.html#capt_dir">CAPT_DIR</a> must be the same as the sow direction). 
+<li class="helptext">
+<b class="enum">END_OPP_STORE_CAPT</b>: if your last seed of a sow falls into your opponent's store and it does not result in a repeat turn, capture the seeds in their store. 
+<p class="helptext"> <nolink>END_OPP_STORE_CAPT may be used with basic or cross capture. If the store is not captured, a basic or cross capture is attempted. 
 </ol>
 <h4 id="multicapt"> Multiple Captures </h4>
 <p class="pdesc">Location in Config Files: game_info : multicapt

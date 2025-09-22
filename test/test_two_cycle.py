@@ -123,8 +123,8 @@ class TestSowStore:
         # 2: CCW, sow past both stores
         (1, CCW, False, utils.build_board([1, 2, 3],
                                           [2, 6, 0]),
-         gi.WinCond.REPEAT_TURN, utils.build_board([1, 2, 3],
-                                                   [3, 1, 2]), [2, 0]),
+         -1, utils.build_board([1, 2, 3],
+                               [3, 1, 2]), [2, 0]),
 
         # 3: CCW, sow past both stores
         (2, CCW, True, utils.build_board([2, 3, 4],
@@ -156,10 +156,11 @@ class TestSowStore:
 
         game.board = board
         game.turn = turn
-        # print(game)
+        print(game)
 
         move = (start_pos, direct)
         mdata = game.do_sow(move)
+        print(game)
 
         assert mdata.capt_loc == eloc
         assert game.board == eboard

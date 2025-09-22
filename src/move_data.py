@@ -62,7 +62,7 @@ class MoveData:
         self.cont_sow_loc = 0   # use by the sower (updated for lap sows)
         self.lap_nbr = 0
 
-        self._capt_start = 0
+        self._capt_start = 0      # if end in store -(store_idx + 1), else loc
         self.capt_loc = 0
         self.capt_next = 0      # used for multiple captures
 

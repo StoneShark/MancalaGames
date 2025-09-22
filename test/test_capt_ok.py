@@ -61,22 +61,24 @@ class TestSingleClasses:
         return MData()
 
 
-    @pytest.mark.parametrize('child, seeds, eok',
-                              [(False, 0, False),
-                               (True, 0, False),
-                               (None, 0, False),
-                               (False, 3, False),
-                               (True, 3, False),
-                               (None, 3, True),
+    @pytest.mark.parametrize('child, seeds, loc, eok',
+                              [(False, 0, 0, False),
+                               (True, 0, 0, False),
+                               (None, 0, 0, False),
+                               (False, 3, 0, False),
+                               (True, 3, 0, False),
+                               (None, 3, 0, True),
+                               (False, 0, -1, False),
+                               (True, 3, -1, False),
+                               (None, 3, -1, False),
                               ])
-    def test_needseeds_nochild(self, game, child, seeds, eok):
+    def test_needseeds_nochild(self, game, child, seeds, loc, eok):
 
-        loc = 0
         game.board[loc] = seeds
         game.child[loc] = child
 
         cok = capt_ok.CaptNotChild(game, capt_ok.CaptTrue(game))
-        cok = capt_ok.CaptNeedSeeds(game, cok)
+        cok = capt_ok.CaptNotStoreNeedSeeds(game, cok)
 
         assert cok.capture_ok(None, loc) == eok
 

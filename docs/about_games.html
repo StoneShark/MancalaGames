@@ -881,6 +881,38 @@ sow both stores.
 <p><b class="enum">Rules</b>: Hanson, Sue and Jon. All about Mancala: It's History and How to Play. 2003. p33. 
 <p><b class="enum">Origin</b>: modern 
 <p><b class="enum">Region</b>: Americas 
+<h3 id="CrossCapt_Nine" class="game_desc">CrossCapt_Nine</h3>
+<p>Sow counter-clockwise in single lap.  
+<p>Sow both stores: 
+<ul><li class="helptext">
+If last seed is sown into the player's own store, take a repeat turn. 
+<li class="helptext">
+If last seed is sown into the opponent's store, capture the seeds in their store. 
+</ul>
+<p>Cross capture when seed lands in empty hole on your side of the board.  
+<p>If you clear all of your own seeds, you capture all of your opponent's seeds that are still in play and the game ends. 
+<p>Goal: capture the most seeds (more than half). 
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OPP_SIDE</p>
+    <p class="param"><a href="game_params.html#capt_type">Capture Type</a>: END_OPP_STORE_CAPT</p>
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#end_cond">End Game Condition</a>: CLEARED_OWN</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_stores">Sow Store</a>: BOTH_NR_OPP</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#unclaimed">Unclaimed Seeds at End</a>: LAST_MOVER</p>
+    <p class="param"><a href="game_params.html#xcpickown">Own Seed on Xcapture</a>: PICK_ON_CAPT</p>
+  </div>
+</div>
+<p><b class="enum">Rules</b>: Hanson, Sue and Jon. All about Mancala: It's History and How to Play. 2003. p44. 
+<p><b class="enum">Origin</b>: modern 
+<p><b class="enum">Region</b>: Americas 
 <h3 id="CrossCapt_Seven" class="game_desc">CrossCapt_Seven</h3>
 <p>Sow counter-clockwise in single lap. Sow own store. Repeat turn if last seed is sown into the player's own store. 
 <p>When the final seed of a sow lands in empty hole on your side of the board, pull any seeds from your opponent's side onto your side. 
@@ -4094,6 +4126,7 @@ any odd number of seeds
     <p class="param">&emsp;&ensp;Five</p>
     <p class="param">&emsp;&ensp;Five_No_Sides</p>
     <p class="param">&emsp;&ensp;Five_UDIR</p>
+    <p class="param"><a href="#CrossCapt_Nine">CrossCapt_Nine</a></p>
     <p class="param"><a href="#CrossCapt_Seven">CrossCapt_Seven</a></p>
     <p class="param"><a href="#CrossCapt_Six">CrossCapt_Six</a></p>
     <p class="param"><a href="#Cross-Kalah">Cross-Kalah</a></p>
@@ -4168,9 +4201,9 @@ any odd number of seeds
     <p class="param"><a href="#Ndoto">Ndoto</a></p>
     <p class="param">&emsp;&ensp;Bao</p>
     <p class="param"><a href="#No Sides Child">No Sides Child</a></p>
+    <p class="param"><a href="#NoCapt">NoCapt</a></p>
   </div>
   <div class="column3">
-    <p class="param"><a href="#NoCapt">NoCapt</a></p>
     <p class="param"><a href="#NoSides">NoSides</a></p>
     <p class="param"><a href="#NS_Kalah">NS_Kalah</a></p>
     <p class="param"><a href="#Nsa Isong">Nsa Isong</a></p>

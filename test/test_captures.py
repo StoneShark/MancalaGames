@@ -1743,6 +1743,162 @@ class TestNotWithOne:
         assert game.deco.make_child.test(mdata) == etest
 
 
+class TestCaptStartNegative:
+    """Test cases that are required because capt_start might now be
+    negative (for sow ending in store)."""
+
+    #  sub sets of these cases are used for all tests in this class
+    CASES = [
+        # no capt
+        [[2, 0, 3, 3], [0, 0], False, 3, [2, 0, 3, 3], [0, 0], False],
+
+        # basic capt
+        [[2, 0, 2, 4], [0, 0], False, 3, [2, 0, 2, 0], [4, 0], True],
+
+        # end stores with seeds -- capt & no capt, both sides
+        [[1, 1, 0, 2], [1, 3], True, -1, [1, 1, 0, 2], [0, 4], True],
+        [[1, 1, 0, 2], [1, 3], False, -1, [1, 1, 0, 2], [1, 3], False],
+
+        [[1, 1, 0, 2], [1, 3], False, -2, [1, 1, 0, 2], [4, 0], True],
+        [[1, 1, 0, 2], [1, 3], True, -2, [1, 1, 0, 2], [1, 3], False],
+
+        ]
+
+    @pytest.mark.parametrize('board, store, turn, cstart, eboard, eturn, ecapt',
+                             CASES)
+    def test_capture(self, board, store, turn, cstart, eboard, eturn, ecapt):
+
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=2)
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+                                stores=True,
+                                evens=True,
+                                sow_stores=gi.SowStores.BOTH_NR,
+                                capt_type=gi.CaptType.END_OPP_STORE_CAPT,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        game.board = board.copy()
+        game.store = store.copy()
+        game.turn = turn
+
+        mdata = move_data.MoveData(game, None)
+        mdata.direct = gi.Direct.CCW
+        mdata.capt_start = cstart
+
+        game.deco.capturer.do_captures(mdata)
+
+        assert mdata.captured == ecapt
+        assert game.board == eboard
+        assert game.store == eturn
+
+
+    PICKERS = [gi.CaptExtraPick.PICKCROSS,
+               gi.CaptExtraPick.PICKFINAL,
+               ]
+
+    @pytest.mark.parametrize('pextra', PICKERS)
+    @pytest.mark.parametrize('board, store, turn, cstart, eboard, eturn, ecapt',
+                             [case for case in CASES if case[3] < 0])
+    def test_pickers(self, pextra,
+                     board, store, turn, cstart, eboard, eturn, ecapt):
+        """test the pickers that needed coded to protect against negative
+        capt start/loc"""
+
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=2)
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+                                stores=True,
+                                evens=True,
+                                pickextra=pextra,
+                                sow_stores=gi.SowStores.BOTH_NR,
+                                capt_type=gi.CaptType.END_OPP_STORE_CAPT,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        game.board = board.copy()
+        game.store = store.copy()
+        game.turn = turn
+        # print(game.deco.capturer)
+        # print(game)
+
+        mdata = move_data.MoveData(game, None)
+        mdata.direct = gi.Direct.CCW
+        mdata.capt_start = cstart
+
+        game.deco.capturer.do_captures(mdata)
+        # print(game)
+
+        assert mdata.captured == ecapt
+        assert game.board == eboard
+        assert game.store == eturn
+
+
+    @pytest.mark.parametrize('board, store, turn, cstart, eboard, eturn, ecapt',
+                             [case for case in CASES if case[3] < 0])
+    def test_wegs(self, board, store, turn, cstart, eboard, eturn, ecapt):
+        """test the weg capture code that protects against negative
+        capt start/loc in captures"""
+
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=2)
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+                                stores=True,
+                                evens=True,
+                                child_type=gi.ChildType.WEG,
+                                child_cvt=3,
+                                sow_stores=gi.SowStores.BOTH_NR,
+                                capt_type=gi.CaptType.END_OPP_STORE_CAPT,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        game.board = board.copy()
+        game.store = store.copy()
+        game.turn = turn
+        # print(game.deco.capturer)
+        # print(game)
+
+        mdata = move_data.MoveData(game, None)
+        mdata.direct = gi.Direct.CCW
+        mdata.capt_start = cstart
+
+        game.deco.capturer.do_captures(mdata)
+        # print(game)
+
+        assert mdata.captured == ecapt
+        assert game.board == eboard
+        assert game.store == eturn
+
+
+    @pytest.mark.parametrize('board, store, turn, cstart, eboard, eturn, ecapt',
+                             [case for case in CASES if not case[6]])
+    def test_no_store(self, board, store, turn, cstart, eboard, eturn, ecapt):
+        """Test the cases that do not capture, with NoStoreCapt
+        in the deco chain."""
+
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=2)
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+                                stores=True,
+                                evens=True,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        game.board = board.copy()
+        game.store = store.copy()
+        game.turn = turn
+        # print(game.deco.capturer)
+        # print(game)
+
+        mdata = move_data.MoveData(game, None)
+        mdata.direct = gi.Direct.CCW
+        mdata.capt_start = cstart
+
+        game.deco.capturer.do_captures(mdata)
+        # print(game)
+
+        assert mdata.captured == ecapt
+        assert game.board == eboard
+        assert game.store == eturn
+
+
+
 # %% bad enums
 
 class TestBadEnums:

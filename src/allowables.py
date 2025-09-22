@@ -181,7 +181,7 @@ class DontUndoMoveOne(AllowableIf):
             return allow
 
         capt_start = mdata.capt_start
-        if capt_start == gi.WinCond.REPEAT_TURN:
+        if capt_start < 0:    # ended in a store
             return allow
 
         aidx = self.aidx(capt_start)
@@ -238,7 +238,8 @@ class Occupied(AllowableIf):
 
             with self.game.restore_state(saved_state):
                 mdata = self.game.sim_single_sow(pos)
-                if self.game.board[mdata.capt_start] == 1:
+                if (mdata.capt_start > 0
+                        and self.game.board[mdata.capt_start] == 1):
 
                     game_log.add(f'Occupied: prevented {pos}', game_log.DETAIL)
                     allow[pos] = False

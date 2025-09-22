@@ -119,7 +119,8 @@ STRING_DICTS = {
          'All Singletons': gi.CaptType.SINGLETONS,
          'Capture Opp | Own Most CCW': gi.CaptType.CAPT_OPP_1CCW,
          'Passive Store Capture': gi.CaptType.PASS_STORE_CAPT,
-         'Pull Across': gi.CaptType.PULL_ACROSS}),
+         'Pull Across': gi.CaptType.PULL_ACROSS,
+         'Opp store w/ final seed': gi.CaptType.END_OPP_STORE_CAPT}),
 
     'ChildLocs': lookup_dicts(
         gi.ChildLocs,
@@ -322,8 +323,12 @@ STRING_DICTS = {
     'SowStores': lookup_dicts(
         gi.SowStores,
         {"Don't sow stores": gi.SowStores.NEITHER,
-         "Sow own store": gi.SowStores.OWN,
-         "Sow both stores": gi.SowStores.BOTH,
+         "Sow own store, repeat turn": gi.SowStores.OWN,
+         "Sow own store": gi.SowStores.OWN_NR,
+         "Sow both stores, repeat turn": gi.SowStores.BOTH,
+         "Sow both stores": gi.SowStores.BOTH_NR,
+         "Sow both stores, no opp repeat": gi.SowStores.BOTH_NR_OPP,
+         "Sow both stores, no own repeat": gi.SowStores.BOTH_NR_OWN,
          }),
 
 

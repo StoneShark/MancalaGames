@@ -129,6 +129,10 @@ class TestOppNotWithOne:
                               (True, 0, 2, True),
                               (True, 2, 2, True),
                               (True, 4, 2, False),    # not opp side
+
+                              # wouldn't happen w/o sow_stores,
+                              # but make_child doesn't check sow_stores
+                              (True, -1, 2, False),
                               ])
     def test_opp_child(self, turn, hole, seeds, etest):
 

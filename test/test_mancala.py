@@ -709,7 +709,8 @@ class TestDelegates:
 
         msow = mocker.patch.object(game, 'do_sow')
         mdata = move_data.MoveData(game, 5)
-        mdata.capt_start = gi.WinCond.REPEAT_TURN
+        mdata.capt_start = gi.WinCond.ENDLESS
+        mdata.repeat_turn = True
         msow.return_value = mdata
 
         mcapt = mocker.patch.object(game, 'capture_seeds')

@@ -34,6 +34,8 @@ from game_info import WinCond
 
 TEST_COVERS = ['src\\sower.py']
 
+F_STORE = -1
+T_STORE = -2
 
 # %% consts
 
@@ -161,13 +163,13 @@ class TestSower:
         # end in own store
         (2, False, utils.build_board([2, 2, 2, 2],
                                      [2, 2, 2, 2]),
-            WinCond.REPEAT_TURN, utils.build_board([2, 2, 2, 2],
-                                                   [2, 2, 0, 3]), [1, 0]),
+            F_STORE, utils.build_board([2, 2, 2, 2],
+                                       [2, 2, 0, 3]), [1, 0]),
 
         (1, True, utils.build_board([2, 2, 2, 2],
                                     [2, 2, 2, 2]),
-            WinCond.REPEAT_TURN, utils.build_board([3, 0, 2, 2],
-                                                   [2, 2, 2, 2]), [0, 1]),
+            T_STORE, utils.build_board([3, 0, 2, 2],
+                                       [2, 2, 2, 2]), [0, 1]),
     ]
 
     @pytest.mark.parametrize(
@@ -214,8 +216,8 @@ class TestSower:
         (gi.SowStores.OWN,
          1, Direct.CCW, True, utils.build_board([1, 2, 2],
                                                 [2, 3, 4]),
-         WinCond.REPEAT_TURN, utils.build_board([2, 0, 2],
-                                                [2, 3, 4]), [0, 1]),
+         T_STORE, utils.build_board([2, 0, 2],
+                                    [2, 3, 4]), [0, 1]),
 
         # 5: CW, don't pass any stores
         (gi.SowStores.OWN,
@@ -246,8 +248,8 @@ class TestSower:
         (gi.SowStores.OWN,
          1, Direct.CW, False, utils.build_board([1, 2, 3],
                                                 [2, 5, 4]),
-         WinCond.REPEAT_TURN, utils.build_board([2, 3, 4],
-                                                [3, 0, 4]), [1, 0]),
+         F_STORE, utils.build_board([2, 3, 4],
+                                    [3, 0, 4]), [1, 0]),
 
 
 
@@ -257,18 +259,20 @@ class TestSower:
                                                  [2, 3, 4]),
          2, utils.build_board([1, 2, 3],
                               [0, 4, 5]), [0, 0]),
+
         # 11: CCW, sow past own store
         (gi.SowStores.BOTH,
          1, Direct.CCW, False, utils.build_board([1, 2, 3],
                                                  [2, 3, 4]),
          3, utils.build_board([1, 2, 4],
                               [2, 0, 5]), [1, 0]),
+
         # 12: CCW, sow past both stores
         (gi.SowStores.BOTH,
          1, Direct.CCW, False, utils.build_board([1, 2, 3],
                                                  [2, 6, 4]),
-         gi.WinCond.REPEAT_TURN, utils.build_board([2, 3, 4],
-                                                   [2, 0, 5]), [1, 1]),
+         T_STORE, utils.build_board([2, 3, 4],
+                                    [2, 0, 5]), [1, 1]),
         # 13: CCW, sow past opp store
         (gi.SowStores.BOTH,
          2, Direct.CCW, True, utils.build_board([1, 2, 2],
@@ -279,8 +283,8 @@ class TestSower:
         (gi.SowStores.BOTH,
          1, Direct.CCW, True, utils.build_board([1, 2, 2],
                                                 [2, 3, 4]),
-         WinCond.REPEAT_TURN, utils.build_board([2, 0, 2],
-                                                [2, 3, 4]), [0, 1]),
+         T_STORE, utils.build_board([2, 0, 2],
+                                    [2, 3, 4]), [0, 1]),
 
         # 15: CW, don't pass any stores
         (gi.SowStores.BOTH,
@@ -296,26 +300,7 @@ class TestSower:
          5, utils.build_board([2, 2, 0],
                               [3, 4, 5]), [1, 1]),
 
-        # 17: CW, sow past both stores
-        (gi.SowStores.BOTH,
-         0, Direct.CW, False, utils.build_board([1, 2, 3],
-                                                [5, 3, 4]),
-         gi.WinCond.REPEAT_TURN, utils.build_board([2, 3, 4],
-                                                   [0, 3, 4]), [1, 1]),
 
-        # 18: CW, sow past opp store
-        (gi.SowStores.BOTH,
-         2, Direct.CW, True, utils.build_board([1, 2, 2],
-                                               [2, 3, 4]),
-         2, utils.build_board([1, 2, 0],
-                              [2, 3, 5]), [1, 0]),
-
-        # 19: CW, end in opp store -- different test case than OWN
-        (gi.SowStores.BOTH,
-         1, Direct.CW, False, utils.build_board([1, 2, 3],
-                                                [4, 2, 6]),
-         WinCond.REPEAT_TURN, utils.build_board([1, 2, 3],
-                                                [5, 0, 6]), [0, 1]),
     ]
 
     @pytest.mark.parametrize(
@@ -348,6 +333,33 @@ class TestSower:
         assert mdata.capt_start == eloc
         assert game.board == eboard
         assert game.store == estore
+
+
+    ANSWERS = [
+            # F stor  T stor      store
+            # f  t    f  t        turn
+            [[T, T], [T, T]],        #    NEITHER rturn_test not used, defaults to T
+            [[T, T], [T, T]],        #    OWN - opp store not sown, so defaults to T
+            [[T, T], [T, T]],        #    BOTH
+            [[F, F], [F, F]],        #    OWN_NR
+            [[F, F], [F, F]],        #    BOTH_NR
+            [[F, T], [T, F]],        #    BOTH_NR_OWN
+            [[T, F], [F, T]],        #    BOTH_NR_OPP
+            ]
+
+    @pytest.mark.parametrize('sow_stores', gi.SowStores,
+                             ids=[val.name for val in gi.SowStores])
+    @pytest.mark.parametrize('turn', [False, True])
+    @pytest.mark.parametrize('store', [0, 1])
+    def test_sow_store_repeats(self, game, sow_stores, turn, store):
+
+        object.__setattr__(game.info, 'sow_stores', sow_stores)
+        store_sower = sower.SowSeedsNStore(game)
+
+        expected = self.ANSWERS[sow_stores][store][turn]
+        print(sow_stores.name, turn, store, expected)
+
+        assert store_sower.rturn_test(store, turn) == expected
 
 
     skip_cases = [
@@ -384,15 +396,15 @@ class TestSower:
 
 
     @pytest.mark.parametrize('end_loc, board, eresult',
-                             [(WinCond.REPEAT_TURN, utils.build_board([1, 0, 3],
-                                                                    [0, 3, 4]),
+                             [(F_STORE, utils.build_board([1, 0, 3],
+                                                          [0, 3, 4]),
                               False),
                               (0, utils.build_board([1, 0, 3],
                                                     [1, 3, 4]), False),
                               (1, utils.build_board([1, 0, 3],
                                                     [1, 3, 4]), True),
-                              (WinCond.REPEAT_TURN, utils.build_board([1, 0, 3],
-                                                                    [0, 3, 4]),
+                              (T_STORE, utils.build_board([1, 0, 3],
+                                                          [0, 3, 4]),
                                False),
                               ])
     def test_simple_lap(self, game, end_loc, board, eresult):
@@ -408,8 +420,8 @@ class TestSower:
 
 
     @pytest.mark.parametrize('end_loc, board, eresult, cloc',
-                             [(WinCond.REPEAT_TURN, utils.build_board([1, 0, 3],
-                                                                    [0, 3, 4]),
+                             [(F_STORE, utils.build_board([1, 0, 3],
+                                                          [0, 3, 4]),
                               False, False),
                               (0, utils.build_board([1, 0, 3],
                                                     [1, 3, 4]), True, 1),
@@ -435,7 +447,7 @@ class TestSower:
 
     chi_lap_cases = [
         # 0: not on end store
-        (WinCond.REPEAT_TURN, 2,
+        (F_STORE, 2,
          utils.build_board([1, 4, 4],
                            [1, 3, 0]),
          utils.build_board([N, N, N],
@@ -514,7 +526,7 @@ class TestSower:
 
     chi_lap_not_cases = [
         # 0: not on end store
-         (WinCond.REPEAT_TURN, 2,
+         (F_STORE, 2,
           utils.build_board([1, 4, 4],
                             [1, 3, 0]),
           utils.build_board([N, N, N],
@@ -1150,7 +1162,7 @@ class TestVMlap:
         # 1: end_store
         (2, utils.build_board([1, 2, 3],
                               [2, 3, 6]),
-         WinCond.REPEAT_TURN,
+         F_STORE,
          utils.build_board([2, 3, 4],
                            [3, 4, 0]), [1, 0]),
 
@@ -1163,7 +1175,7 @@ class TestVMlap:
         # 3: visit opp -> lapping
         (2, utils.build_board([2, 2, 3],
                               [0, 3, 3]),
-         WinCond.REPEAT_TURN,
+         F_STORE,
          utils.build_board([0, 3, 4],
                            [1, 4, 0]), [1, 0]),
 

@@ -141,6 +141,7 @@ Detailed descriptions of the behavior of each value are in the
 <tr><td>5</td><td>CAPT_OPP_1CCW<td>Capture Opp | Own Most CCW</td></tr>
 <tr><td>6</td><td>PASS_STORE_CAPT<td>Passive Store Capture</td></tr>
 <tr><td>7</td><td>PULL_ACROSS<td>Pull Across</td></tr>
+<tr><td>8</td><td>END_OPP_STORE_CAPT<td>Opp store w/ final seed</td></tr>
 </table>
 <h4 id="ChildLocs">ChildLocs (<a href="game_params.html#child_locs">usage</a>)</h4>
 <table>
@@ -336,8 +337,12 @@ Detailed descriptions of the behavior of each value are in the
 <table>
 <tr><th style="width:10%">Value</th><th style="width:40%">Id</th><th style="width:40%">UI string</th></tr>
 <tr><td>0</td><td>NEITHER<td>Don't sow stores</td></tr>
-<tr><td>1</td><td>OWN<td>Sow own store</td></tr>
-<tr><td>2</td><td>BOTH<td>Sow both stores</td></tr>
+<tr><td>1</td><td>OWN<td>Sow own store, repeat turn</td></tr>
+<tr><td>2</td><td>BOTH<td>Sow both stores, repeat turn</td></tr>
+<tr><td>3</td><td>OWN_NR<td>Sow own store</td></tr>
+<tr><td>4</td><td>BOTH_NR<td>Sow both stores</td></tr>
+<tr><td>5</td><td>BOTH_NR_OWN<td>Sow both stores, no own repeat</td></tr>
+<tr><td>6</td><td>BOTH_NR_OPP<td>Sow both stores, no opp repeat</td></tr>
 </table>
 <h4 id="StartPattern">StartPattern (<a href="game_params.html#start_pattern">usage</a>)</h4>
 <table>

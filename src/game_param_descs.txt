@@ -191,35 +191,35 @@ are supported. The hole tested for the basic capture criteria differs
 when lap sowing or not:
 
   + When not lap sowing, basic capture rules are applied and capture
-  side is checked on the hole from which the seeds will be captured.
+side is checked on the hole from which the seeds will be captured.
 
   + When multiple lap sowing, the basic capture rules define when the
-  multilap sowing will end. When the final seed of a lap meets the
-  basic capture criteria, multilap sowing ends and the seeds in the
-  next hole (defined by CAPT_DIR setting) are captured.
+multilap sowing will end. When the final seed of a lap meets the
+basic capture criteria, multilap sowing ends and the seeds in the
+next hole (defined by CAPT_DIR setting) are captured.
 
 - TWO_OUT: Capture two holes out from the final hole sown but only if
 the intervening hole is empty. This is sometimes called capturing
 across the gap.
 
   + CAPT_DIR must be SOW. Basic capture rules and capture side are
-  ignored (if a "capture while sowing" SOW_RULE is selected, these are
-  applied to sowing).
+ignored (if a "capture while sowing" SOW_RULE is selected, these are
+applied to sowing).
 
   + When not lap sowing, the final hole sown must be occupied for
-  capture two out (i.e. contains two or more seeds after sowing).
+capture two out (i.e. contains two or more seeds after sowing).
 
   + Multilap sowing does not stop to check for two out captures on
-  each lap*. For LAPPER sow, captures are checked after the final seed
-  ends lands in an empty hole. For LAPPER_NEXT sow, captures captures
-  are checked when there are no seeds in the hole after the final seed
-  sown.
+each lap*. For LAPPER sow, captures are checked after the final seed
+ends lands in an empty hole. For LAPPER_NEXT sow, captures captures
+are checked when there are no seeds in the hole after the final seed
+sown.
 
   + *The SOW_RULE LAP_CAPT is supported for TWO_OUT captures with
-  LAPPER sow.
+LAPPER sow.
 
   + If multiple captures are configured, captures continue while the
-  pattern of empty hole followed by an occupied hole repeats.
+pattern of empty hole followed by an occupied hole repeats.
 
 - MATCH_OPP: capture when the number of seeds in the final hole sown
 match the opposite-side hole. Seeds from both holes are captured.
@@ -238,12 +238,22 @@ hole, your opponent passively captures the contents of your store. Use
 CAPT_SIDE to limit where this effect occurs. MULTICAPT is not
 supported.
 
+  + <nolink>PASS_STORE_CAPT may be used with basic or cross capture.
+If the store is not captured, a basic or cross capture is attempted.
+
 - PULL_ACROSS: if your last seed of a sow falls into an empty hole,
 pull any seeds from across the board into the final holw sown. Use
 CAPT_SIDE to limit where this effect occurs. Multiple captures can be
 configured (MULTICAPT) which pulls seeds across the board when holes
 after the final hole sown are empty (CAPT_DIR must be the same as the
 sow direction).
+
+- END_OPP_STORE_CAPT: if your last seed of a sow falls into your
+opponent's store and it does not result in a repeat turn, capture
+the seeds in their store.
+
+  + <nolink>END_OPP_STORE_CAPT may be used with basic or cross capture.
+If the store is not captured, a basic or cross capture is attempted.
 
 <param end_cond>
 
@@ -340,9 +350,9 @@ opposite side ends and all own side middle holes.
 but the next inner hole can only be made on the opposite side.
 
   +  Used for Walda type children: Each player may create up to 6
-  walda: on either end of each side of the board and the next two
-  outer holes on their own side of the board. Note that there are only
-  8 total places that walda maybe created.
+walda: on either end of each side of the board and the next two
+outer holes on their own side of the board. Note that there are only
+8 total places that walda maybe created.
 
   + TB B N B TB
 
@@ -437,7 +447,7 @@ child.
 - ONE_CHILD: only one child allowed per player.
 
   + Used to create tuzdik style children along with CHILD_RULE of
-  OPP_ONLY and CHILD_LOCS of NOT_SYM_OPP.
+OPP_ONLY and CHILD_LOCS of NOT_SYM_OPP.
 
 - WEG: Ending a sow in an opponent's weg captures the seed just sown
 and one more (if there is one); generally, the player gets to play
@@ -1319,14 +1329,27 @@ When PLAYALTDIR is not selected, any hole can be set as UDIR_HOLES to
 allow the user to override the sow_direct setting.
 
 <param sow_stores>
-Determines if seeds should be sown into stores. When the final seed is
-sown into a store, the sower gets another turn.
+Determines if seeds should be sown into stores. The specfic option selects
+if there is a repeat turn or not when the final seed of a sow lands in a store.
 
 - NEITHER: do not sow into either store
 
-- OWN: only sow into own store, but not opponents store
+- OWN: only sow into own store, but not opponent's store.
+Sows ending in own store gets a repeat turn.
 
 - BOTH: sow into both stores
+Sow ending in wither store gets a repeat turn.
+
+- OWN_NR: sow own store, but not opponent's;
+and you do not get a repeat turn.
+
+- BOTH_NR: sow into both stores but neither results in a repeat turn.
+
+- BOTH_NR_OWN: sow into both stores but only ending in your opponent's
+store results in a repeat turn.
+
+- BOTH_NR_OPP: sow into both stores but only ending in your own
+store results in a repeat turn.
 
 <param sow_param>
 A general parameter for sowing. Usage is based on other sow options:

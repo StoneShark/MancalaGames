@@ -132,6 +132,12 @@ class TestEnumsClasses:
         assert str(tup) == '(False, 2, None)'
 
 
+    def test_sow_stores(self):
+
+        assert gi.SowStores.BOTH.sow_both()
+        assert not gi.SowStores.OWN.sow_both()
+
+
 class TestConstruction:
 
     def test_gf_existence(self):

@@ -641,8 +641,7 @@ class Mancala(ai_interface.AiGameIf):
         with game_log.simulate():
             mdata = self.do_sow(move)
 
-            if mdata.capt_start not in (gi.WinCond.REPEAT_TURN,
-                                        gi.WinCond.ENDLESS):
+            if mdata.capt_start != gi.WinCond.ENDLESS:
                 self.capture_seeds(mdata)
 
         return mdata

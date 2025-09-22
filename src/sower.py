@@ -98,8 +98,7 @@ class SowSeedsNStore(SowMethodIf):
             """Return turn if ploc is false side of the board
             (not store) and loc is on the true side of the board."""
 
-            if (ploc != gi.WinCond.REPEAT_TURN
-                    and f_side(ploc) and t_side(loc)):
+            if (ploc >= 0 and f_side(ploc) and t_side(loc)):
                 return turn
             return None
 
@@ -107,15 +106,14 @@ class SowSeedsNStore(SowMethodIf):
             """Return turn if ploc is true side of the board
             (not store) and loc is on the false side of the board."""
 
-            if (ploc != gi.WinCond.REPEAT_TURN
-                    and t_side(ploc) and f_side(loc)):
+            if (ploc >= 0 and t_side(ploc) and f_side(loc)):
                 return turn
             return None
 
         def either_ccw_store(ploc, loc, _):
             """Return store index if we are sowing CCW past a store."""
 
-            if ploc == gi.WinCond.REPEAT_TURN:
+            if ploc < 0:
                 return None
             if t_side(ploc) and f_side(loc):
                 return 1
@@ -126,7 +124,7 @@ class SowSeedsNStore(SowMethodIf):
         def either_cw_store(ploc, loc, _):
             """Return store index if we are sowing CW past a store."""
 
-            if ploc == gi.WinCond.REPEAT_TURN:
+            if ploc < 0:
                 return None
             if t_side(ploc) and f_side(loc):
                 return 0
@@ -136,13 +134,26 @@ class SowSeedsNStore(SowMethodIf):
 
         super().__init__(game, decorator)
 
-        if game.info.sow_stores == gi.SowStores.BOTH:
+        if game.info.sow_stores.sow_both():
             self.sow_store = {gi.Direct.CCW: [either_ccw_store] * 2,
                               gi.Direct.CW: [either_cw_store] * 2}
 
         else:
             self.sow_store = {gi.Direct.CCW: [f_to_t_store, t_to_f_store],
                               gi.Direct.CW: [t_to_f_store, f_to_t_store]}
+
+        if game.info.sow_stores in (gi.SowStores.OWN_NR,
+                                    gi.SowStores.BOTH_NR):
+            self.rturn_test = lambda store, turn: False
+
+        elif game.info.sow_stores == gi.SowStores.BOTH_NR_OPP:
+            self.rturn_test = lambda store, turn: store == turn
+
+        elif game.info.sow_stores == gi.SowStores.BOTH_NR_OWN:
+            self.rturn_test = lambda store, turn: store == (not turn)
+
+        else:
+            self.rturn_test = lambda store, turn: True
 
 
     def sow_seeds(self, mdata):
@@ -162,15 +173,15 @@ class SowSeedsNStore(SowMethodIf):
             store_sow = sow_store(ploc, loc, turn)
             if store_sow is not None:
                 self.game.store[store_sow] += 1
-                ploc = gi.WinCond.REPEAT_TURN
+                ploc = -(store_sow + 1)
 
             else:
                 self.game.board[loc] += 1
                 ploc = loc
                 loc = incr(loc, mdata.direct, mdata.cont_sow_loc)
 
-        if ploc == gi.WinCond.REPEAT_TURN:
-            mdata.repeat_turn = True
+        if ploc < 0:
+            mdata.repeat_turn = self.rturn_test(store_sow, turn)
             game_log.add('Sow ended in store REPEAT TURN', game_log.INFO)
 
         mdata.capt_start = ploc
@@ -871,7 +882,8 @@ class ContWithCaptSeeds(LapContinuerIf):
             self.game.capture_seeds(mdata)
 
             if mdata.captured:
-                self.game.board[mdata.capt_start] += self.game.store[self.game.turn]
+                self.game.board[mdata.capt_start] += \
+                    self.game.store[self.game.turn]
                 self.game.store[self.game.turn] = 0
                 game_log.add('MLap continues with captured seeds.')
                 return True
@@ -1031,7 +1043,7 @@ class StopRepeatTurn(LapContinuerIf):
 
     def do_another_lap(self, mdata):
 
-        if mdata.capt_start is gi.WinCond.REPEAT_TURN:
+        if mdata.repeat_turn:
             game_log.add('MLap stop for for repeat turn')
             return False
         return self.decorator.do_another_lap(mdata)
@@ -1047,7 +1059,10 @@ class AnimateLapStart(LapContinuerIf):
         cont = self.decorator.do_another_lap(mdata)
 
         if cont:
-            animator.do_flash(self.game.turn, loc=mdata.capt_start)
+            if mdata.capt_start >= 0:
+                animator.do_flash(self.game.turn, loc=mdata.capt_start)
+            else:
+                raise NotImplementedError("Can't animate lap start from store")
 
         return cont
 

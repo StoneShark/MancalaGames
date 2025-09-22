@@ -154,7 +154,7 @@ class NorthSouthSowSeedsNStore(sower.SowSeedsNStore):
             """Return True if  we've wrapped the board in a
             counter-clockwise direction."""
 
-            if ploc != gi.WinCond.REPEAT_TURN and ploc >= loc:
+            if ploc >= 0 and ploc >= loc:
                 return turn
             return None
 
@@ -162,7 +162,7 @@ class NorthSouthSowSeedsNStore(sower.SowSeedsNStore):
             """Return True if we've wrapped the board in a
             clockwise direction."""
 
-            if ploc != gi.WinCond.REPEAT_TURN and ploc <= loc:
+            if 0 <= ploc <= loc:
                 return turn
             return None
 

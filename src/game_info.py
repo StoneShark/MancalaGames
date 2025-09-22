@@ -28,6 +28,13 @@ DIFF_LEVELS = 4
 
 NO_CH_OWNER = 3   # children that do not have owner's
 
+T_STORE = -2
+F_STORE = -1
+
+# given turn look up the index
+STORE_INDEX = [F_STORE, T_STORE]
+
+
 # %%  errors
 
 class GameInfoError(Exception):
@@ -135,6 +142,7 @@ class CaptType(enum.IntEnum):
     CAPT_OPP_1CCW = 5
     PASS_STORE_CAPT = 6
     PULL_ACROSS = 7
+    END_OPP_STORE_CAPT = 8
 
 
 @enum.unique
@@ -419,6 +427,18 @@ class SowStores(enum.IntEnum):
     NEITHER = 0
     OWN = 1
     BOTH = 2
+    OWN_NR = 3               #  no repeat turn
+    BOTH_NR = 4
+    BOTH_NR_OWN = 5
+    BOTH_NR_OPP = 6
+
+    def sow_both(self):
+        """Return true if sowing both sides."""
+
+        return self in (self.BOTH,
+                        self.BOTH_NR,
+                        self.BOTH_NR_OPP,
+                        self.BOTH_NR_OWN)
 
 
 @enum.unique

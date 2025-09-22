@@ -1,0 +1,51 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 6,
+      "nbr_start": 4
+   },
+   "game_info": {
+      "name": "CrossCapt_Nine",
+      "about": "<text_section>",
+      "capt_type": 8,
+      "crosscapt": true,
+      "end_cond": 1,
+      "capt_side": 1,
+      "sow_direct": 1,
+      "sow_stores": 6,
+      "stores": true,
+      "unclaimed": 2,
+      "xcpickown": 1
+   },
+   "player": {
+      "ai_params": {
+         "mm_depth": [ 1, 3, 5, 7 ]
+      },
+      "scorer": {
+         "mx_stores_m": 8,
+         "mx_empties_m": 1,
+         "mx_rturn_a": 20
+      }
+   },
+   "rules": "Hanson, Sue and Jon. All about Mancala: It's History and How to Play. 2003. p44.",
+   "origin": "modern",
+   "region": "Americas"
+}
+<text_section>
+<about>
+Sow counter-clockwise in single lap. 
+
+Sow both stores:
+
+- If last seed is sown into the player's own store, take a repeat turn.
+
+- If last seed is sown into the opponent's store, capture the seeds in their store.
+
+Cross capture when seed lands in empty hole on your side of the board. 
+
+If you clear all of your own seeds, you capture all of your opponent's
+seeds that are still in play and the game ends.
+
+Goal: capture the most seeds (more than half).
+</about>
+</text_section>

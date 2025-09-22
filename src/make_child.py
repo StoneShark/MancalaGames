@@ -328,6 +328,7 @@ class OwnSideChild(MakeChildIf):
 
         return False
 
+
 class OppOwnerChild(MakeChildIf):
     """Require opposite owner of the board"""
 
@@ -395,15 +396,17 @@ class Not1stOppWithOne(MakeChildIf):
         return self.decorator.test(mdata)
 
 
-class NotInhibited(MakeChildIf):
-    """Enforce the no_child inhibitor."""
+class NotInhibitedNoStore(MakeChildIf):
+    """Don't make children in stores and enforce the no_child inhibitor."""
 
     def test(self, mdata):
 
-        if self.game.inhibitor.stop_me_child(self.game.turn):
+        if (mdata.capt_start < 0
+                or self.game.inhibitor.stop_me_child(self.game.turn)):
             return False
 
         return self.decorator.test(mdata)
+
 
 
 # %% build the deco
@@ -491,6 +494,6 @@ def deco_child(game):
     deco = BaseChild(game)
     deco = _add_child_type(game, deco)
     deco = _add_child_wrappers(game, deco)
-    deco = NotInhibited(game, deco)
+    deco = NotInhibitedNoStore(game, deco)
 
     return deco
