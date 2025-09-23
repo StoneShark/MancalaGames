@@ -11,6 +11,7 @@
       "sow_direct": 1,
       "sow_stores": 2,
       "stores": true,
+      "udir_holes": [ 0, 1, 2, 3, 4, 5 ],
       "unclaimed": 2
    },
    "player": {
@@ -49,7 +50,7 @@ Goal: If you clear all of your own seeds you win.
 
 Variants:
 
-- GoEmpty_Two::MultiLap - sow in multiple laps and use 4 start seeds per hole (or the starter
+- <nolink>GoEmpty_Two::MultiLap - sow in multiple laps and use 4 start seeds per hole (or the starter
 can win on the opening move).
 </about>
 </text_section>

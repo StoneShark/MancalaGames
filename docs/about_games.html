@@ -1558,9 +1558,8 @@ A single-lap mancala with SPLIT <a href="game_params.html#sow_direct">SOW_DIRECT
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
   </div>
   <div class="column2">
-    <p class="param"><a href="game_params.html#sow_stores">Sow Store</a>: BOTH</p>
+    <p class="param"><a href="game_params.html#sow_stores">Sow Store</a>: OWN</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
-    <p class="param"><a href="game_params.html#udir_holes">User Chooses Direction</a>: all</p>
     <p class="param"><a href="game_params.html#unclaimed">Unclaimed Seeds at End</a>: LAST_MOVER</p>
   </div>
 </div>
@@ -1573,7 +1572,7 @@ A single-lap mancala with SPLIT <a href="game_params.html#sow_direct">SOW_DIRECT
 <p>Goal: If you clear all of your own seeds you win. 
 <p>Variants: 
 <ul><li class="helptext">
-<a href="about_games.html#GoEmpty_Two">GoEmpty_Two</a>:: - sow in multiple laps and use 4 start seeds per hole (or the starter can win on the opening move). 
+<nolink>GoEmpty_Two::MultiLap - sow in multiple laps and use 4 start seeds per hole (or the starter can win on the opening move). 
 </ul>
 <div class="cols_row">
   <div class="column2">
@@ -1581,10 +1580,11 @@ A single-lap mancala with SPLIT <a href="game_params.html#sow_direct">SOW_DIRECT
     <p class="param">Start seeds:  3</p>
     <p class="param"><a href="game_params.html#goal">Goal</a>: CLEAR</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_stores">Sow Store</a>: BOTH</p>
   </div>
   <div class="column2">
-    <p class="param"><a href="game_params.html#sow_stores">Sow Store</a>: BOTH</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#udir_holes">User Chooses Direction</a>: all</p>
     <p class="param"><a href="game_params.html#unclaimed">Unclaimed Seeds at End</a>: LAST_MOVER</p>
   </div>
 </div>
@@ -3542,6 +3542,28 @@ sow in multiple-laps (<a href="game_params.html#sow_direct">SOW_DIRECT</a> of LA
 <p><b class="enum">Rules</b>: Hanson, Sue and Jon. All about Mancala: It's History and How to Play. 2003. p25. 
 <p><b class="enum">Origin</b>: modern 
 <p><b class="enum">Region</b>: Americas 
+<h3 id="SimpleCapt_Eight" class="game_desc">SimpleCapt_Eight</h3>
+<p>Sow counter-clockwise in multilaps using the hole after the final seed sown to continue.  Sow own store.  Repeat turn if last seed is sown into the player's own store. 
+<p>If you clear all of your own seeds, you capture all of your opponent's seeds that are still in play and the game ends. 
+<p>Goal: capture the most seeds. 
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#end_cond">End Game Condition</a>: CLEARED_OWN</p>
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER_NEXT</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_stores">Sow Store</a>: OWN</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#unclaimed">Unclaimed Seeds at End</a>: LAST_MOVER</p>
+  </div>
+</div>
+<p><b class="enum">Rules</b>: Hanson, Sue and Jon. All about Mancala: It's History and How to Play. 2003. p25. 
+<p><b class="enum">Origin</b>: modern 
+<p><b class="enum">Region</b>: Americas 
 <h3 id="SimpleCapt_PCapt" class="game_desc">SimpleCapt_PCapt</h3>
 <p>Sow counter-clockwise in multiple laps when ending on your own side of the board. Sow own store. Repeat turn if last seed is sown into the player's own store. 
 <p>If the last seed of a sow ends in an empty cup on your opponent's side of the board, they capture the contents of your store. Called a Passive Capture, because your opponent likely did nothing to effect the capture. 
@@ -4234,6 +4256,7 @@ any odd number of seeds
     <p class="param"><a href="#SimpleCapt">SimpleCapt</a></p>
     <p class="param">&emsp;&ensp;Anywhere</p>
     <p class="param">&emsp;&ensp;LastCapt</p>
+    <p class="param"><a href="#SimpleCapt_Eight">SimpleCapt_Eight</a></p>
     <p class="param"><a href="#SimpleCapt_PCapt">SimpleCapt_PCapt</a></p>
     <p class="param"><a href="#Sokusowó">Sokusowó</a></p>
     <p class="param"><a href="#Songo">Songo</a></p>

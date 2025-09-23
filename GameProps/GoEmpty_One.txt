@@ -10,9 +10,8 @@
       "goal": 3,
       "mlaps": 1,
       "sow_direct": 1,
-      "sow_stores": 2,
+      "sow_stores": 1,
       "stores": true,
-      "udir_holes": [ 0, 1, 2, 3, 4, 5 ],
       "unclaimed": 2
    },
    "player": {
