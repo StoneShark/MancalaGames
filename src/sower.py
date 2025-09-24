@@ -48,11 +48,12 @@ class SowMethodIf(deco_chain_if.DecoChainIf):
 
     def get_single_sower(self):
         """Return the first non-lap sower in the deco chain.
-        Used to deicede if allowable test OPP_OR_EMPTY is met."""
+        Used to decide if allowable test OPP_OR_EMPTY is met."""
         return self
 
 
 # %%  base sower
+
 
 class SowSeeds(SowMethodIf):
     """Basic sower.  Handles direction, skip_start and blocks
@@ -66,6 +67,7 @@ class SowSeeds(SowMethodIf):
 
             loc = self.game.deco.incr.incr(loc,
                                            mdata.direct,
+                                           mdata.player,
                                            mdata.cont_sow_loc)
             self.game.board[loc] += 1
 
@@ -84,63 +86,7 @@ class SowSeedsNStore(SowMethodIf):
 
     def __init__(self, game, decorator=None):
 
-        # pylint: disable=too-complex
-
-        def f_side(loc):
-            """Return True if loc is on f side of the board."""
-            return 0 <= loc < game.cts.holes
-
-        def t_side(loc):
-            """Return True if loc is on t side of the board."""
-            return game.cts.holes <= loc < game.cts.dbl_holes
-
-        def f_to_t_store(ploc, loc, turn):
-            """Return turn if ploc is false side of the board
-            (not store) and loc is on the true side of the board."""
-
-            if (ploc >= 0 and f_side(ploc) and t_side(loc)):
-                return turn
-            return None
-
-        def t_to_f_store(ploc, loc, turn):
-            """Return turn if ploc is true side of the board
-            (not store) and loc is on the false side of the board."""
-
-            if (ploc >= 0 and t_side(ploc) and f_side(loc)):
-                return turn
-            return None
-
-        def either_ccw_store(ploc, loc, _):
-            """Return store index if we are sowing CCW past a store."""
-
-            if ploc < 0:
-                return None
-            if t_side(ploc) and f_side(loc):
-                return 1
-            if f_side(ploc) and t_side(loc):
-                return 0
-            return None
-
-        def either_cw_store(ploc, loc, _):
-            """Return store index if we are sowing CW past a store."""
-
-            if ploc < 0:
-                return None
-            if t_side(ploc) and f_side(loc):
-                return 0
-            if f_side(ploc) and t_side(loc):
-                return 1
-            return None
-
         super().__init__(game, decorator)
-
-        if game.info.sow_stores.sow_both():
-            self.sow_store = {gi.Direct.CCW: [either_ccw_store] * 2,
-                              gi.Direct.CW: [either_cw_store] * 2}
-
-        else:
-            self.sow_store = {gi.Direct.CCW: [f_to_t_store, t_to_f_store],
-                              gi.Direct.CW: [t_to_f_store, f_to_t_store]}
 
         if game.info.sow_stores in (gi.SowStores.OWN_NR,
                                     gi.SowStores.BOTH_NR):
@@ -163,28 +109,24 @@ class SowSeedsNStore(SowMethodIf):
 
         turn = self.game.turn
         incr = self.game.deco.incr.incr
-        sow_store = self.sow_store[mdata.direct][turn]
-
-        ploc = mdata.cont_sow_loc
-        loc = incr(ploc, mdata.direct, mdata.cont_sow_loc)
+        loc = mdata.cont_sow_loc
 
         for _ in range(mdata.seeds):
 
-            store_sow = sow_store(ploc, loc, turn)
-            if store_sow is not None:
-                self.game.store[store_sow] += 1
-                ploc = -(store_sow + 1)
+            loc = incr(loc, mdata.direct, turn, mdata.cont_sow_loc)
+
+            if loc < 0:
+                store_sown = -loc - 1
+                self.game.store[store_sown] += 1
 
             else:
                 self.game.board[loc] += 1
-                ploc = loc
-                loc = incr(loc, mdata.direct, mdata.cont_sow_loc)
 
-        if ploc < 0:
-            mdata.repeat_turn = self.rturn_test(store_sow, turn)
+        if loc < 0 and (rturn := self.rturn_test(store_sown, turn)):
+            mdata.repeat_turn = rturn
             game_log.add('Sow ended in store REPEAT TURN', game_log.INFO)
 
-        mdata.capt_start = ploc
+        mdata.capt_start = loc
 
 
 class DivertSkipBlckdSower(SowMethodIf):
@@ -309,7 +251,7 @@ class SowCaptOwned(SowMethodIf):
         loc = mdata.cont_sow_loc
         for scnt in range(mdata.seeds, 0, -1):
 
-            loc = incr(loc, mdata.direct, mdata.cont_sow_loc)
+            loc = incr(loc, mdata.direct, mdata.player, mdata.cont_sow_loc)
             self.game.board[loc] += 1
 
             if (all(cfunc(scnt, loc, self.game.turn) for cfunc in self.conds)
@@ -340,12 +282,12 @@ class SowSkipOppN(SowMethodIf):
         loc = mdata.cont_sow_loc
         for _ in range(mdata.seeds):
 
-            loc = incr(loc, mdata.direct, mdata.cont_sow_loc)
+            loc = incr(loc, mdata.direct, mdata.player, mdata.cont_sow_loc)
 
             while (self.game.cts.opp_side(self.game.turn, loc)
                    and self.game.board[loc] in self.skip_set):
 
-                loc = incr(loc, mdata.direct, mdata.cont_sow_loc)
+                loc = incr(loc, mdata.direct, mdata.player, mdata.cont_sow_loc)
 
             self.game.board[loc] += 1
 
@@ -367,9 +309,9 @@ class SowMaxN(SowMethodIf):
         loc = mdata.cont_sow_loc
         for _ in range(mdata.seeds):
 
-            loc = incr(loc, mdata.direct, mdata.cont_sow_loc)
+            loc = incr(loc, mdata.direct, mdata.player, mdata.cont_sow_loc)
             while self.game.board[loc] >= self.max_seeds:
-                loc = incr(loc, mdata.direct, mdata.cont_sow_loc)
+                loc = incr(loc, mdata.direct, mdata.player, mdata.cont_sow_loc)
 
             self.game.board[loc] += 1
 
@@ -386,9 +328,9 @@ class SowSkipChild(SowMethodIf):
         loc = mdata.cont_sow_loc
         for _ in range(mdata.seeds):
 
-            loc = incr(loc, mdata.direct, mdata.cont_sow_loc)
+            loc = incr(loc, mdata.direct, mdata.player, mdata.cont_sow_loc)
             while self.game.child[loc] is not None:
-                loc = incr(loc, mdata.direct, mdata.cont_sow_loc)
+                loc = incr(loc, mdata.direct, mdata.player, mdata.cont_sow_loc)
 
             self.game.board[loc] += 1
 
@@ -405,9 +347,9 @@ class SowSkipOppChild(SowMethodIf):
         loc = mdata.cont_sow_loc
         for _ in range(mdata.seeds):
 
-            loc = incr(loc, mdata.direct, mdata.cont_sow_loc)
+            loc = incr(loc, mdata.direct, mdata.player, mdata.cont_sow_loc)
             while self.game.child[loc] == (not self.game.turn):
-                loc = incr(loc, mdata.direct, mdata.cont_sow_loc)
+                loc = incr(loc, mdata.direct, mdata.player, mdata.cont_sow_loc)
 
             self.game.board[loc] += 1
 
@@ -424,11 +366,12 @@ class SowSkipOppChildUnlessFinal(SowMethodIf):
         loc = mdata.cont_sow_loc
         for rem_seeds in range(mdata.seeds, 0, -1):
 
-            loc = incr(loc, mdata.direct, mdata.cont_sow_loc)
+            loc = incr(loc, mdata.direct, mdata.player, mdata.cont_sow_loc)
 
             if rem_seeds > 1:
                 while self.game.child[loc] == (not self.game.turn):
-                    loc = incr(loc, mdata.direct, mdata.cont_sow_loc)
+                    loc = incr(loc, mdata.direct, mdata.player,
+                               mdata.cont_sow_loc)
 
             self.game.board[loc] += 1
 
@@ -459,7 +402,7 @@ class SowOppCaptsLast(SowMethodIf):
         opp_took = 0
         for rem_seeds in range(mdata.seeds, 0, -1):
 
-            loc = incr(loc, mdata.direct, mdata.cont_sow_loc)
+            loc = incr(loc, mdata.direct, mdata.player, mdata.cont_sow_loc)
             self.game.board[loc] += 1    # for capt_basic test
 
             if (opp_side(self.game.turn, loc)
@@ -735,7 +678,9 @@ class NextLapCont(LapContinuerIf):
     def do_another_lap(self, mdata):
         """Determine if we are done sowing."""
 
-        loc = self.game.deco.incr.incr(mdata.capt_start, mdata.direct)
+        loc = self.game.deco.incr.incr(mdata.capt_start,
+                                       mdata.direct,
+                                       mdata.player)
         if self.game.board[loc]:
             mdata.capt_start = loc
             return True
@@ -849,7 +794,8 @@ class ContIfBasicCapt(LapContinuerIf):
 
         self.game.capture_seeds(mdata)
         mdata.capt_start = self.game.deco.incr.incr(mdata.capt_start,
-                                                  mdata.direct)
+                                                    mdata.direct,
+                                                    mdata.player)
         return True
 
 

@@ -268,7 +268,9 @@ class SingleToZero(AllowableIf):
             mdata = move_data.MoveData(self.game, loc)
             mdata.sow_loc = loc
             direct = self.game.deco.get_dir.get_direction(mdata)
-            nloc = self.game.deco.incr.incr(loc, direct)
+            nloc = self.game.deco.incr.incr(loc, direct, self.game.turn)
+            if nloc < 0:
+                allow[idx] = False
 
             if (allow[idx]
                     and self.game.board[loc] == 1

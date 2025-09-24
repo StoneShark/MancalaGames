@@ -57,33 +57,33 @@ class TestNorthSouthIncr:
         object.__setattr__(game.info, ckey.SOW_DIRECT, gi.Direct.CW)
         incr = two_cycle.NorthSouthIncr(game)
 
-        assert incr.incr(0, gi.Direct.CW) == 4
-        assert incr.incr(1, gi.Direct.CW) == 0
-        assert incr.incr(2, gi.Direct.CW) == 1
-        assert incr.incr(3, gi.Direct.CW) == 2
-        assert incr.incr(4, gi.Direct.CW) == 3
+        assert incr.incr(0, gi.Direct.CW, None) == 4
+        assert incr.incr(1, gi.Direct.CW, None) == 0
+        assert incr.incr(2, gi.Direct.CW, None) == 1
+        assert incr.incr(3, gi.Direct.CW, None) == 2
+        assert incr.incr(4, gi.Direct.CW, None) == 3
 
-        assert incr.incr(5, gi.Direct.CW) == 9
-        assert incr.incr(6, gi.Direct.CW) == 5
-        assert incr.incr(7, gi.Direct.CW) == 6
-        assert incr.incr(8, gi.Direct.CW) == 7
-        assert incr.incr(9, gi.Direct.CW) == 8
+        assert incr.incr(5, gi.Direct.CW, None) == 9
+        assert incr.incr(6, gi.Direct.CW, None) == 5
+        assert incr.incr(7, gi.Direct.CW, None) == 6
+        assert incr.incr(8, gi.Direct.CW, None) == 7
+        assert incr.incr(9, gi.Direct.CW, None) == 8
 
         object.__setattr__(game.info, ckey.SOW_DIRECT, gi.Direct.CCW)
         incr = two_cycle.NorthSouthIncr(game)
 
-        assert incr.incr(0, gi.Direct.CCW) == 1
-        assert incr.incr(1, gi.Direct.CCW) == 2
-        assert incr.incr(2, gi.Direct.CCW) == 3
-        assert incr.incr(3, gi.Direct.CCW) == 4
-        assert incr.incr(4, gi.Direct.CCW) == 0
+        assert incr.incr(0, gi.Direct.CCW, None) == 1
+        assert incr.incr(1, gi.Direct.CCW, None) == 2
+        assert incr.incr(2, gi.Direct.CCW, None) == 3
+        assert incr.incr(3, gi.Direct.CCW, None) == 4
+        assert incr.incr(4, gi.Direct.CCW, None) == 0
 
 
-        assert incr.incr(5, gi.Direct.CCW) == 6
-        assert incr.incr(6, gi.Direct.CCW) == 7
-        assert incr.incr(7, gi.Direct.CCW) == 8
-        assert incr.incr(8, gi.Direct.CCW) == 9
-        assert incr.incr(9, gi.Direct.CCW) == 5
+        assert incr.incr(5, gi.Direct.CCW, None) == 6
+        assert incr.incr(6, gi.Direct.CCW, None) == 7
+        assert incr.incr(7, gi.Direct.CCW, None) == 8
+        assert incr.incr(8, gi.Direct.CCW, None) == 9
+        assert incr.incr(9, gi.Direct.CCW, None) == 5
 
 
 
@@ -156,11 +156,11 @@ class TestSowStore:
 
         game.board = board
         game.turn = turn
-        print(game)
+        # print(game)
 
         move = (start_pos, direct)
         mdata = game.do_sow(move)
-        print(game)
+        # print(game)
 
         assert mdata.capt_loc == eloc
         assert game.board == eboard
@@ -194,36 +194,36 @@ class TestEastWestIncr:
         incr = two_cycle.EastWestIncr(game)
 
         # CW, west side
-        assert incr.incr(0, gi.Direct.CW) == 11
-        assert incr.incr(1, gi.Direct.CW) == 0
-        assert incr.incr(2, gi.Direct.CW) == 1
-        assert incr.incr(9, gi.Direct.CW) == 2
-        assert incr.incr(10, gi.Direct.CW) == 9
-        assert incr.incr(11, gi.Direct.CW) == 10
+        assert incr.incr(0, gi.Direct.CW, None) == 11
+        assert incr.incr(1, gi.Direct.CW, None) == 0
+        assert incr.incr(2, gi.Direct.CW, None) == 1
+        assert incr.incr(9, gi.Direct.CW, None) == 2
+        assert incr.incr(10, gi.Direct.CW, None) == 9
+        assert incr.incr(11, gi.Direct.CW, None) == 10
 
         # CW, east side
-        assert incr.incr(3, gi.Direct.CW) == 8
-        assert incr.incr(4, gi.Direct.CW) == 3
-        assert incr.incr(5, gi.Direct.CW) == 4
-        assert incr.incr(6, gi.Direct.CW) == 5
-        assert incr.incr(7, gi.Direct.CW) == 6
-        assert incr.incr(8, gi.Direct.CW) == 7
+        assert incr.incr(3, gi.Direct.CW, None) == 8
+        assert incr.incr(4, gi.Direct.CW, None) == 3
+        assert incr.incr(5, gi.Direct.CW, None) == 4
+        assert incr.incr(6, gi.Direct.CW, None) == 5
+        assert incr.incr(7, gi.Direct.CW, None) == 6
+        assert incr.incr(8, gi.Direct.CW, None) == 7
 
         # CCW, west side
-        assert incr.incr(0, gi.Direct.CCW) == 1
-        assert incr.incr(1, gi.Direct.CCW) == 2
-        assert incr.incr(2, gi.Direct.CCW) == 9
-        assert incr.incr(9, gi.Direct.CCW) == 10
-        assert incr.incr(10, gi.Direct.CCW) == 11
-        assert incr.incr(11, gi.Direct.CCW) == 0
+        assert incr.incr(0, gi.Direct.CCW, None) == 1
+        assert incr.incr(1, gi.Direct.CCW, None) == 2
+        assert incr.incr(2, gi.Direct.CCW, None) == 9
+        assert incr.incr(9, gi.Direct.CCW, None) == 10
+        assert incr.incr(10, gi.Direct.CCW, None) == 11
+        assert incr.incr(11, gi.Direct.CCW, None) == 0
 
         # CCW, east side
-        assert incr.incr(3, gi.Direct.CCW) == 4
-        assert incr.incr(4, gi.Direct.CCW) == 5
-        assert incr.incr(5, gi.Direct.CCW) == 6
-        assert incr.incr(6, gi.Direct.CCW) == 7
-        assert incr.incr(7, gi.Direct.CCW) == 8
-        assert incr.incr(8, gi.Direct.CCW) == 3
+        assert incr.incr(3, gi.Direct.CCW, None) == 4
+        assert incr.incr(4, gi.Direct.CCW, None) == 5
+        assert incr.incr(5, gi.Direct.CCW, None) == 6
+        assert incr.incr(6, gi.Direct.CCW, None) == 7
+        assert incr.incr(7, gi.Direct.CCW, None) == 8
+        assert incr.incr(8, gi.Direct.CCW, None) == 3
 
 
 class TestEWClearEnder:

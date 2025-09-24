@@ -92,12 +92,7 @@ class ZigZagIncr(incrementer.MapIncrement):
 
         dbl_holes = game.cts.dbl_holes
         cycle = self.compute_cycle(game.cts.holes, dbl_holes)
-
-        self.ccw_map = [cycle[(cycle.index(idx) + 1) % dbl_holes]
-                         for idx in range(dbl_holes)]
-
-        self.cw_map =  [cycle[(cycle.index(idx) - 1) % dbl_holes]
-                         for idx in range(dbl_holes)]
+        self.build_maps_from_cycle(cycle)
 
 
     @staticmethod

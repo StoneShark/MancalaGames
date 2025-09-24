@@ -72,9 +72,9 @@ class BullChild(MakeChildIf):
         if game.child[loc] is not None:
             return False
 
-        prev = game.deco.incr.incr(loc, mdata.direct.opp_dir())
+        prev = game.deco.incr.incr(loc, mdata.direct.opp_dir(), mdata.player)
 
-        if game.child[prev] is None:
+        if prev >= 0 and game.child[prev] is None:
             board_set = set([game.board[prev], game.board[loc]])
             req_set = set([game.info.child_cvt - 1, game.info.child_cvt])
             if board_set == req_set:

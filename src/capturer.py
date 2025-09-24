@@ -76,7 +76,8 @@ class CaptBasic(CaptMethodIf):
 
             mdata.captured = True
             mdata.capt_next = self.game.deco.incr.incr(mdata.capt_loc,
-                                                       mdata.direct)
+                                                       mdata.direct,
+                                                       mdata.player)
 
 
 class CaptCross(CaptMethodIf):
@@ -98,7 +99,8 @@ class CaptCross(CaptMethodIf):
 
             mdata.captured = True
             mdata.capt_next = self.game.deco.incr.incr(mdata.capt_loc,
-                                                       mdata.direct)
+                                                       mdata.direct,
+                                                       mdata.player)
 
 
 class CaptNext(CaptMethodIf):
@@ -121,7 +123,7 @@ class CaptNext(CaptMethodIf):
     def do_captures(self, mdata, capt_first=True):
 
         loc = mdata.capt_loc
-        loc_next = self.game.deco.incr.incr(loc, mdata.direct)
+        loc_next = self.game.deco.incr.incr(loc, mdata.direct, mdata.player)
 
         if (self.seed_cond(mdata, capt_first, loc, loc_next)
                 and self.game.board[loc_next]):
@@ -161,8 +163,9 @@ class CaptTwoOut(CaptMethodIf):
 
         loc = mdata.capt_loc
         direct = mdata.direct
-        loc_p1 = self.game.deco.incr.incr(loc, direct)
-        loc_p2 = self.game.deco.incr.incr(loc_p1, direct)
+        turn = mdata.player
+        loc_p1 = self.game.deco.incr.incr(loc, direct, turn)
+        loc_p2 = self.game.deco.incr.incr(loc_p1, direct, turn)
 
         if (self.seed_cond(self.game.board[loc])
                 and not self.game.board[loc_p1]
@@ -207,7 +210,8 @@ class CaptMatchOpp(CaptMethodIf):
 
             mdata.captured = True
             mdata.capt_next = self.game.deco.incr.incr(mdata.capt_loc,
-                                                       mdata.direct)
+                                                       mdata.direct,
+                                                       mdata.player)
 
 
 class CaptSingles(CaptMethodIf):
@@ -316,7 +320,8 @@ class PullAcrossCapture(CaptMethodIf):
 
             mdata.captured = True
             mdata.capt_next = self.game.deco.incr.incr(mdata.capt_loc,
-                                                       mdata.direct)
+                                                       mdata.direct,
+                                                       mdata.player)
 
 
 class EndOppStoreCapture(CaptMethodIf):
@@ -554,7 +559,9 @@ class CaptBothDir(CaptMethodIf):
 
         mdata.direct = mdata.direct.opp_dir()
         self.decorator.max_capt -= 1
-        mdata.capt_loc = self.game.deco.incr.incr(mdata.capt_start, mdata.direct)
+        mdata.capt_loc = self.game.deco.incr.incr(mdata.capt_start,
+                                                  mdata.direct,
+                                                  mdata.player)
 
         self.decorator.do_captures(mdata, capt_first)
         self.decorator.max_capt += 1
@@ -881,8 +888,9 @@ class MakeBull(CaptMethodIf):
             game.child[loc] = game.turn
             mdata.capt_changed = True
 
-            prev = self.game.deco.incr.incr(loc, mdata.direct.opp_dir())
-            if game.child[prev] is None:
+            prev = self.game.deco.incr.incr(loc, mdata.direct.opp_dir(),
+                                            mdata.player)
+            if prev >= 0 and game.child[prev] is None:
 
                 board_set = set([game.board[prev], game.board[loc]])
                 req_set = set([game.info.child_cvt - 1, game.info.child_cvt])

@@ -21,7 +21,6 @@ import incrementer
 import game_info as gi
 import mancala
 import rule_tester
-import sower
 
 
 # %% North south rules
@@ -44,14 +43,6 @@ def test_ns2_rules(gclass_name, ginfo, holes, skip=None):
         msg=f'{gclass_name} incompatible with MUSTSHARE',
         excp=gi.GameInfoError)
         # can't sow opponents holes
-
-    tester.test_rule(
-        'ns2_no_sow_both',
-        rule=lambda ginfo: ginfo.sow_stores == gi.SowStores.BOTH,
-        msg=f'{gclass_name} does not support SOW_STORES BOTH',
-        excp=NotImplementedError)
-        # for NS only, need history info to know if we've sown the
-        # second store; would maybe require a whole new sower
 
     tester.test_rule(
         'ns2_no_sowrule',
@@ -113,12 +104,7 @@ def test_ew2_rules(ginfo, holes, skip=None):
         msg='EastWestCycle requires an even number of holes',
         excp=gi.GameInfoError)
 
-    if skip:
-        ew_skip = skip | {'ns2_no_sow_both'}
-    else:
-        ew_skip = {'ns2_no_sow_both'}
-
-    test_ns2_rules('EastWestCycles', ginfo, holes, ew_skip)
+    test_ns2_rules('EastWestCycles', ginfo, holes, skip)
 
 
 # %% deco additions
@@ -129,7 +115,7 @@ class NorthSouthIncr(incrementer.IncrementerIf):
     This is a replacement for the Increment (the base incr class).
     """
 
-    def incr(self, loc, direct, _=incrementer.NOSKIPSTART):
+    def incr(self, loc, direct, _1, _2=incrementer.NOSKIPSTART):
         """Do an increment."""
 
         rloc = (loc + direct) % self.game.cts.holes
@@ -140,36 +126,37 @@ class NorthSouthIncr(incrementer.IncrementerIf):
         return rloc
 
 
-class NorthSouthSowSeedsNStore(sower.SowSeedsNStore):
-    """Sow a seed into the player's own store when passing it
-    for north/south two cycle games.
-
-    Only need to replace the sow_store test functions.
-    Because the top row is indexed in reverse, this doesn't
-    depend on board side."""
+class NSIncOwnStores(incrementer.MapStoresIncr):
+    """Increment that cycles through the board and store of
+    the current player. The store is put where it would be
+    when passing it."""
 
     def __init__(self, game, decorator=None):
 
-        def ccw_store(ploc, loc, turn):
-            """Return True if  we've wrapped the board in a
-            counter-clockwise direction."""
+        super().__init__(game, decorator)
 
-            if ploc >= 0 and ploc >= loc:
-                return turn
-            return None
+        holes = game.cts.holes
+        dholes = game.cts.dbl_holes
 
-        def cw_store(ploc, loc, turn):
-            """Return True if we've wrapped the board in a
-            clockwise direction."""
+        f_cycle = list(range(holes)) + [-1]
+        t_cycle = list(range(holes, dholes)) + [-2]
+        self.build_maps_from_cycles(f_cycle, t_cycle)
 
-            if 0 <= ploc <= loc:
-                return turn
-            return None
+
+class NSIncBothStores(incrementer.MapStoresIncr):
+    """Increment that cycles through the board and both stores.
+    The store is put where they would be when passing them."""
+
+    def __init__(self, game, decorator=None):
 
         super().__init__(game, decorator)
 
-        self.sow_store = {gi.Direct.CCW: [ccw_store, ccw_store],
-                          gi.Direct.CW: [cw_store, cw_store]}
+        holes = game.cts.holes
+        dholes = game.cts.dbl_holes
+
+        f_cycle = list(range(holes)) + [-1, -2]
+        t_cycle = list(range(holes, dholes)) + [-1, -2]
+        self.build_maps_from_cycles(f_cycle, t_cycle)
 
 
 class EastWestIncr(incrementer.MapIncrement):
@@ -192,6 +179,50 @@ class EastWestIncr(incrementer.MapIncrement):
         self.cw_map = [dbl_holes - 1] + list(range(dbl_holes - 1))
         self.cw_map[half] = half_3x - 1
         self.cw_map[half_3x] = half - 1
+
+
+class EWIncOwnStores(incrementer.MapStoresIncr):
+    """Increment that cycles through the board and store of
+    the current player. The store is put where it would be
+    when passing it."""
+
+    def __init__(self, game, decorator=None):
+
+        super().__init__(game, decorator)
+
+        holes = game.cts.holes
+        dholes = game.cts.dbl_holes
+        half = holes // 2
+        h3x = half * 3
+
+        f_cycle = list(range(half, holes)) + [gi.F_STORE] \
+            + list(range(holes, h3x))
+
+        t_cycle = list(range(half)) +  list(range(h3x, dholes)) + [gi.T_STORE]
+
+        self.build_maps_from_cycles(f_cycle, t_cycle)
+
+
+class EWIncBothStores(incrementer.MapStoresIncr):
+    """Increment that cycles through the board and both stores.
+    The store is put where they would be when passing them."""
+
+    def __init__(self, game, decorator=None):
+
+        super().__init__(game, decorator)
+
+        holes = game.cts.holes
+        dholes = game.cts.dbl_holes
+        half = holes // 2
+        h3x = half * 3
+
+        f_cycle = list(range(half, holes)) + [gi.F_STORE] \
+            + list(range(holes, h3x)) + [gi.T_STORE]
+
+        t_cycle = list(range(half)) + [gi.F_STORE] \
+            + list(range(h3x, dholes)) + [gi.T_STORE]
+
+        self.build_maps_from_cycles(f_cycle, t_cycle)
 
 
 class EastWestAllowable(allowables.AllowableIf):
@@ -250,11 +281,15 @@ class NorthSouthCycle(mancala.Mancala):
 
         super().__init__(game_consts, game_info)
 
-        self.deco.replace_deco('incr', incrementer.Increment,
-                               NorthSouthIncr(self))
-        if self.info.sow_stores == gi.SowStores.OWN:
-            self.deco.replace_deco('sower', sower.SowSeedsNStore,
-                                   NorthSouthSowSeedsNStore(self))
+        if self.info.sow_stores.sow_both():
+            self.deco.replace_deco('incr', incrementer.IncBothStores,
+                                   NSIncBothStores(self))
+        elif self.info.sow_stores:
+            self.deco.replace_deco('incr', incrementer.IncOwnStores,
+                                   NSIncOwnStores(self))
+        else:
+            self.deco.replace_deco('incr', incrementer.Increment,
+                                   NorthSouthIncr(self))
 
 
 class EastWestCycle(mancala.Mancala):
@@ -277,8 +312,15 @@ class EastWestCycle(mancala.Mancala):
 
         super().__init__(game_consts, game_info)
 
-        self.deco.replace_deco('incr', incrementer.Increment,
-                               EastWestIncr(self))
+        if self.info.sow_stores.sow_both():
+            self.deco.replace_deco('incr', incrementer.IncBothStores,
+                                   EWIncBothStores(self))
+        elif self.info.sow_stores:
+            self.deco.replace_deco('incr', incrementer.IncOwnStores,
+                                   EWIncOwnStores(self))
+        else:
+            self.deco.replace_deco('incr', incrementer.Increment,
+                                   EastWestIncr(self))
 
         self.deco.replace_deco('allow', allowables.AllowableNoSidesTriples,
                                EastWestAllowable(self))

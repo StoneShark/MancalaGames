@@ -508,6 +508,11 @@ def test_sower_rules(tester):
         msg="""MLAP_PARAM requires CONT_MLAP""",
         excp=gi.GameInfoError)
 
+    tester.test_rule('sstore_srule',
+        rule=lambda ginfo: ginfo.sow_stores and ginfo.sow_rule,
+        msg="""SOW_RULE and SOW_STORES are incompatible""",
+        excp=NotImplementedError)
+
     tester.test_rule('sow_own_prescribed',
         rule=lambda ginfo: (ginfo.sow_stores
                             and ginfo.prescribed in
@@ -575,6 +580,22 @@ def test_capture_rules(tester):
         msg='Selected capture mechanisms conflict (no captures)',
         warn=True)
         # this doesn't catch all conflicts :(
+
+    tester.test_rule('ssown_no_multicapt',
+        rule=lambda ginfo: ginfo.multicapt and ginfo.sow_stores,
+        msg="""Multiple capture (MULTICAPT) is incompatible with SOW_STORES""",
+        excp=NotImplementedError)
+        # the capture uses the incrementer for multicapt and any would
+        # need to support negative numbers being returned
+
+    tester.test_rule('ssown_no_captincr',
+        rule=lambda ginfo: (ginfo.sow_stores
+                            and ginfo.capt_type in (gi.CaptType.NEXT,
+                                                    gi.CaptType.TWO_OUT)),
+        msg="""SOW_STORES is incompatible with the selected CAPT_TYPE""",
+        excp=NotImplementedError)
+        # the capture deco's use the incrementer and do not support
+        # the negative numbers being returned for the stores
 
     tester.test_rule('xcapt_multi_same',
         rule=lambda ginfo: (ginfo.crosscapt and ginfo.multicapt

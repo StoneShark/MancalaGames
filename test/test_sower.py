@@ -306,18 +306,18 @@ class TestSower:
     @pytest.mark.parametrize(
         'sow_stores, start_pos, direct, turn, board, eloc, eboard, estore',
         store_cases)
-    def test_store_sower(self, game,
-                         sow_stores,
-                         start_pos, direct, turn, board, eloc, eboard, estore):
+    def test_store_sower(self,
+                         sow_stores, start_pos, direct, turn, board,
+                         eloc, eboard, estore):
 
-        # can't use fixture because sow_direct is used in the construction
-        object.__setattr__(game.info, 'sow_stores', sow_stores)
-        object.__setattr__(game.info, 'mlaps', LapSower.OFF)
-        object.__setattr__(game.info, 'child_type', ChildType.NOCHILD)
-        object.__setattr__(game.info, 'child_cvt', 0)
-        object.__setattr__(game.info, 'sow_direct', direct)
-        store_sower = sower.deco_sower(game)
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
+        game_info = gi.GameInfo(stores=True,
+                                sow_direct=direct,
+                                sow_stores=sow_stores,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
 
+        game = mancala.Mancala(game_consts, game_info)
         game.board = board
         game.turn = turn
         seed_count = sum(game.board)
@@ -326,7 +326,7 @@ class TestSower:
         mdata = move_data.MoveData(game, start_pos)
         mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(start_pos)
         mdata.direct = direct
-        store_sower.sow_seeds(mdata)
+        game.deco.sower.sow_seeds(mdata)
         print(game)
 
         assert sum(game.board) + sum(game.store) == seed_count

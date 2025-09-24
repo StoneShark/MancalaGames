@@ -101,13 +101,13 @@ class TestIncr:
                               (5, NOSKIPSTART, 0),
                               (0, NOSKIPSTART, 1)])
     def test_start_ccw(self, start_incr, loc, start, expected):
-        assert start_incr.incr(loc, Direct.CCW, start) == expected
+        assert start_incr.incr(loc, Direct.CCW, None, start) == expected
 
 
     @pytest.mark.parametrize('loc, start, expected',
                              [(0, 5, 4), (0, 3, 5), (1, 0, 5), (2, 2, 1)])
     def test_start_cw(self, start_incr, loc, start, expected):
-        assert start_incr.incr(loc, Direct.CW, start) == expected
+        assert start_incr.incr(loc, Direct.CW, None, start) == expected
 
 
     @pytest.mark.parametrize('loc, blocks, expected',
@@ -151,7 +151,7 @@ class TestIncr:
         for bloc in blocks:
             game.blocked[bloc] = True
 
-        assert sb_incr.incr(loc, Direct.CCW, start) == expected
+        assert sb_incr.incr(loc, Direct.CCW, None, start) == expected
 
 
     @pytest.mark.parametrize('loc, blocks, start, expected',
@@ -167,7 +167,7 @@ class TestIncr:
         for bloc in blocks:
             game.blocked[bloc] = True
 
-        assert sb_incr.incr(loc, Direct.CW, start) == expected
+        assert sb_incr.incr(loc, Direct.CW, None, start) == expected
 
 
     def test_blk_start_blk(self):
@@ -193,7 +193,7 @@ class TestIncr:
         game.blocked = utils.build_board([T, T, F, F],
                                          [F, T, F, F])
 
-        assert game.deco.incr.incr(2, Direct.CW, start=0) == 5
+        assert game.deco.incr.incr(2, Direct.CW, None, start=0) == 5
 
 
     def test_map_incr(self, game):
@@ -206,5 +206,5 @@ class TestIncr:
         assert len(mapi.ccw_map) == game.cts.dbl_holes
         assert len(mapi.cw_map) == game.cts.dbl_holes
 
-        assert mapi.incr(4, Direct.CW) == 2
-        assert mapi.incr(3, Direct.CCW) == 5
+        assert mapi.incr(4, Direct.CW, None) == 2
+        assert mapi.incr(3, Direct.CCW, None) == 5
