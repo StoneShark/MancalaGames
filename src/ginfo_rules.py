@@ -508,9 +508,18 @@ def test_sower_rules(tester):
         msg="""MLAP_PARAM requires CONT_MLAP""",
         excp=gi.GameInfoError)
 
-    tester.test_rule('sstore_srule',
-        rule=lambda ginfo: ginfo.sow_stores and ginfo.sow_rule,
-        msg="""SOW_RULE and SOW_STORES are incompatible""",
+    tester.test_rule('sow_own_not_rules',
+        rule=lambda ginfo: (ginfo.sow_stores
+                            and ginfo.sow_rule not in
+                                (gi.SowRule.NONE,
+                                 gi.SowRule.NO_SOW_OPP_NS,
+                                 gi.SowRule.CHANGE_DIR_LAP,
+                                 gi.SowRule.MAX_SOW,
+                                 gi.SowRule.LAP_CAPT,
+                                 gi.SowRule.NO_OPP_CHILD,
+                                 gi.SowRule.LAP_CAPT_SEEDS,
+                                 gi.SowRule.NO_CHILDREN)),
+        msg='SOW_STORES is not supported with the selected sow rule',
         excp=NotImplementedError)
 
     tester.test_rule('sow_own_prescribed',
@@ -863,15 +872,6 @@ def test_basic_rules(tester):
         rule=lambda ginfo: ginfo.sow_stores and ginfo.nocaptmoves,
         msg='SOW_STORES cannot be used with NOCAPTMOVES',
         excp=gi.GameInfoError)
-
-    tester.test_rule('sow_own_not_rules',
-        rule=lambda ginfo: (ginfo.sow_stores
-                            and ginfo.sow_rule in
-                                (gi.SowRule.OWN_SOW_CAPT_ALL,
-                                 gi.SowRule.SOW_CAPT_ALL,
-                                 gi.SowRule.NO_SOW_OPP_NS)),
-        msg='SOW_STORES is not supported with the selected sow rule',
-        excp=NotImplementedError)
 
     tester.test_rule('no_opp_n_sparam',
         rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.NO_SOW_OPP_NS

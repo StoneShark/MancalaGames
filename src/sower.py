@@ -27,6 +27,7 @@ import copy
 import animator
 import deco_chain_if
 import game_info as gi
+import incrementer
 
 from game_logger import game_log
 
@@ -34,6 +35,77 @@ from game_logger import game_log
 # %% constants
 
 MAX_LAPS = 75
+
+
+# %%  local incrementers
+
+
+class SowIncBase(incrementer.IncrementerIf):
+    """Need to use the base incrementer. Derived classes might
+    change the incrementer so we need to look it up."""
+
+    def incr(self, loc, direct, turn, start=incrementer.NOSKIPSTART):
+        return self.game.deco.incr.incr(loc, direct, turn, start)
+
+
+class SowIncPastMax(incrementer.IncrementerIf):
+    """Skip past maxed holes using the main incrementer."""
+
+    def __init__(self, game, max_seeds, decorator=None):
+
+        super().__init__(game, decorator)
+        self.max_seeds = max_seeds
+
+    def incr(self, loc, direct, turn, start=incrementer.NOSKIPSTART):
+
+        loc = self.game.deco.incr.incr(loc, direct, turn, start)
+        while self.game.board[loc] >= self.max_seeds:
+            loc = self.game.deco.incr.incr(loc, direct, turn, start)
+
+        return loc
+
+
+class SowIncPastOppSkips(incrementer.IncrementerIf):
+    """Skip past values in skip_setusing the main incrementer."""
+
+    def __init__(self, game, skip_set, decorator=None):
+
+        super().__init__(game, decorator)
+        self.skip_set = skip_set
+
+    def incr(self, loc, direct, turn, start=incrementer.NOSKIPSTART):
+
+        loc = self.game.deco.incr.incr(loc, direct, turn, start)
+        while (self.game.cts.opp_side(turn, loc)
+               and self.game.board[loc] in self.skip_set):
+            loc = self.game.deco.incr.incr(loc, direct, turn, start)
+
+        return loc
+
+
+class SowIncPastChild(incrementer.IncrementerIf):
+    """Skip past childrenusing the main incrementer."""
+
+    def incr(self, loc, direct, turn, start=incrementer.NOSKIPSTART):
+
+        loc = self.game.deco.incr.incr(loc, direct, turn, start)
+        while self.game.child[loc] is not None:
+            loc = self.game.deco.incr.incr(loc, direct, turn, start)
+
+        return loc
+
+
+class SowIncOppPastChildren(incrementer.IncrementerIf):
+    """Skip past opposite children using the main incrementer."""
+
+    def incr(self, loc, direct, turn, start=incrementer.NOSKIPSTART):
+
+        loc = self.game.deco.incr.incr(loc, direct, turn, start)
+        while self.game.child[loc] == (not turn):
+            loc = self.game.deco.incr.incr(loc, direct, turn, start)
+
+        return loc
+
 
 
 # %%  sow interface
@@ -53,7 +125,6 @@ class SowMethodIf(deco_chain_if.DecoChainIf):
 
 
 # %%  base sower
-
 
 class SowSeeds(SowMethodIf):
     """Basic sower.  Handles direction, skip_start and blocks
@@ -76,53 +147,101 @@ class SowSeeds(SowMethodIf):
 
 # %%  more single sowers
 
-class SowSeedsNStore(SowMethodIf):
-    """Sow a seed into the player's own store when passing it.
-
-    If the sow ends in the store, set capt_start to WinCond.REPEAT_TURN.
-
-    This assumes that at least one hole is not blocked on
-    each side of the board."""
+class SowIncrSeeds(SowMethodIf):
+    """Sow methods that skip additional holes,
+    accomplished by using a custom incrementer before
+    calling the game.deco.incr (which must be done for
+    the derived classes that patch the incrementer)."""
 
     def __init__(self, game, decorator=None):
 
         super().__init__(game, decorator)
 
-        if game.info.sow_stores in (gi.SowStores.OWN_NR,
-                                    gi.SowStores.BOTH_NR):
-            self.rturn_test = lambda store, turn: False
+        self.incr = self.expand_incr(game)
+        self.sow_op = self.choose_sow_op(game)
+        self.rturn_test = self.choose_rturn_test(game)
 
-        elif game.info.sow_stores == gi.SowStores.BOTH_NR_OPP:
-            self.rturn_test = lambda store, turn: store == turn
 
-        elif game.info.sow_stores == gi.SowStores.BOTH_NR_OWN:
-            self.rturn_test = lambda store, turn: store == (not turn)
+    def __str__(self):
+
+        return self.str_deco_detail('incr:  ' + str(self.incr)
+                                    + '\n   op:  ' + str(self.sow_op))
+
+
+    def expand_incr(self, game):
+        """Select the incrementer wrapper for the SowRule."""
+
+        if game.info.sow_rule == gi.SowRule.NO_SOW_OPP_NS:
+            incr = SowIncPastOppSkips(game, {game.info.sow_param})
+
+        elif game.info.sow_rule == gi.SowRule.MAX_SOW:
+            incr = SowIncPastMax(game, game.info.sow_param)
+
+        elif game.info.sow_rule == gi.SowRule.NO_CHILDREN:
+            incr = SowIncPastChild(game)
+
+        elif game.info.sow_rule == gi.SowRule.NO_OPP_CHILD:
+            incr = SowIncOppPastChildren(game)
 
         else:
-            self.rturn_test = lambda store, turn: True
+            incr = SowIncBase(game)
+
+        return incr
+
+
+    def choose_sow_op(self, game):
+        """Choose which sow operation to use."""
+
+        return self.sow_either if game.info.sow_stores else self.sow_board
+
+
+    def choose_rturn_test(self, game):
+        """Choose the repeat turn test function."""
+
+        if game.info.sow_stores in (gi.SowStores.OWN,
+                                    gi.SowStores.BOTH):
+            rturn_test = lambda store, turn: True
+
+        elif game.info.sow_stores == gi.SowStores.BOTH_NR_OPP:
+            rturn_test = lambda store, turn: store == turn
+
+        elif game.info.sow_stores == gi.SowStores.BOTH_NR_OWN:
+            rturn_test = lambda store, turn: store == (not turn)
+
+        else:
+            rturn_test = lambda store, turn: False
+
+        return rturn_test
+
+
+    def sow_board(self, loc):
+        """Sow the loc on board."""
+
+        self.game.board[loc] += 1
+
+
+    def sow_either(self, loc):
+        """Sow either the board or the store."""
+
+        if loc < 0:
+            self.game.store[-loc -1] += 1
+
+        else:
+            self.game.board[loc] += 1
 
 
     def sow_seeds(self, mdata):
-        """Sow seeds.
-        ploc is start hole and then follows along as the
-        previously hole sown."""
+        """Sow seeds."""
 
-        turn = self.game.turn
-        incr = self.game.deco.incr.incr
+        turn = mdata.player
+        start_loc = mdata.cont_sow_loc
         loc = mdata.cont_sow_loc
 
         for _ in range(mdata.seeds):
+            loc = self.incr.incr(loc, mdata.direct, turn, start_loc)
+            self.sow_op(loc)
 
-            loc = incr(loc, mdata.direct, turn, mdata.cont_sow_loc)
-
-            if loc < 0:
-                store_sown = -loc - 1
-                self.game.store[store_sown] += 1
-
-            else:
-                self.game.board[loc] += 1
-
-        if loc < 0 and (rturn := self.rturn_test(store_sown, turn)):
+        if loc < 0 and (rturn := self.rturn_test(-loc - 1, turn)):
             mdata.repeat_turn = rturn
             game_log.add('Sow ended in store REPEAT TURN', game_log.INFO)
 
@@ -263,95 +382,6 @@ class SowCaptOwned(SowMethodIf):
                 seeds = self.game.board[loc]
                 self.game.board[loc] = 0
                 self.game.store[captor] += seeds
-
-        mdata.capt_start = loc
-
-
-class SowSkipOppN(SowMethodIf):
-    """Skip sowing holes with a specified number of seeds in them
-    on the opponents side of the board."""
-
-    def __init__(self, game, skip_set, decorator=None):
-        super().__init__(game, decorator)
-        self.skip_set = skip_set
-
-    def sow_seeds(self, mdata):
-        """Sow seeds."""
-
-        incr = self.game.deco.incr.incr
-        loc = mdata.cont_sow_loc
-        for _ in range(mdata.seeds):
-
-            loc = incr(loc, mdata.direct, mdata.player, mdata.cont_sow_loc)
-
-            while (self.game.cts.opp_side(self.game.turn, loc)
-                   and self.game.board[loc] in self.skip_set):
-
-                loc = incr(loc, mdata.direct, mdata.player, mdata.cont_sow_loc)
-
-            self.game.board[loc] += 1
-
-        mdata.capt_start = loc
-
-
-class SowMaxN(SowMethodIf):
-    """Never sow a hole to more than the specified number
-    of seeds."""
-
-    def __init__(self, game, max_seeds, decorator=None):
-        super().__init__(game, decorator)
-        self.max_seeds = max_seeds
-
-    def sow_seeds(self, mdata):
-        """Sow seeds."""
-
-        incr = self.game.deco.incr.incr
-        loc = mdata.cont_sow_loc
-        for _ in range(mdata.seeds):
-
-            loc = incr(loc, mdata.direct, mdata.player, mdata.cont_sow_loc)
-            while self.game.board[loc] >= self.max_seeds:
-                loc = incr(loc, mdata.direct, mdata.player, mdata.cont_sow_loc)
-
-            self.game.board[loc] += 1
-
-        mdata.capt_start = loc
-
-
-class SowSkipChild(SowMethodIf):
-    """Skip sowing children."""
-
-    def sow_seeds(self, mdata):
-        """Sow seeds."""
-
-        incr = self.game.deco.incr.incr
-        loc = mdata.cont_sow_loc
-        for _ in range(mdata.seeds):
-
-            loc = incr(loc, mdata.direct, mdata.player, mdata.cont_sow_loc)
-            while self.game.child[loc] is not None:
-                loc = incr(loc, mdata.direct, mdata.player, mdata.cont_sow_loc)
-
-            self.game.board[loc] += 1
-
-        mdata.capt_start = loc
-
-
-class SowSkipOppChild(SowMethodIf):
-    """Skip sowing opponents children."""
-
-    def sow_seeds(self, mdata):
-        """Sow seeds."""
-
-        incr = self.game.deco.incr.incr
-        loc = mdata.cont_sow_loc
-        for _ in range(mdata.seeds):
-
-            loc = incr(loc, mdata.direct, mdata.player, mdata.cont_sow_loc)
-            while self.game.child[loc] == (not self.game.turn):
-                loc = incr(loc, mdata.direct, mdata.player, mdata.cont_sow_loc)
-
-            self.game.board[loc] += 1
 
         mdata.capt_start = loc
 
@@ -1147,8 +1177,8 @@ def _add_blkd_divert_sower(game):
     sower = DivertSkipBlckdSower(game)
     if game.info.mlaps == gi.LapSower.OFF:
         sower = SowClosed(game,
-                               game.info.sow_rule == gi.SowRule.SOW_BLKD_DIV_NR,
-                               sower)
+                          game.info.sow_rule == gi.SowRule.SOW_BLKD_DIV_NR,
+                          sower)
     return sower
 
 
@@ -1167,20 +1197,14 @@ def _add_base_sower(game):
                                     gi.SowRule.SOW_CAPT_ALL):
             sower = SowCaptOwned(game)
 
-        elif game.info.sow_rule == gi.SowRule.NO_SOW_OPP_NS:
-            sower = SowSkipOppN(game, {game.info.sow_param})
-
-        elif game.info.sow_rule == gi.SowRule.MAX_SOW:
-            sower = SowMaxN(game, game.info.sow_param)
-
-        elif game.info.sow_rule == gi.SowRule.NO_OPP_CHILD:
-            sower = SowSkipOppChild(game)
+        elif game.info.sow_rule in (gi.SowRule.NO_SOW_OPP_NS,
+                                    gi.SowRule.MAX_SOW,
+                                    gi.SowRule.NO_OPP_CHILD,
+                                    gi.SowRule.NO_CHILDREN):
+            sower = SowIncrSeeds(game)
 
         elif game.info.sow_rule == gi.SowRule.OPP_CHILD_ONLY1:
             sower = SowSkipOppChildUnlessFinal(game)
-
-        elif game.info.sow_rule == gi.SowRule.NO_CHILDREN:
-            sower = SowSkipChild(game)
 
         elif game.info.sow_rule == gi.SowRule.LAP_CAPT_OPP_GETS:
             sower = SowSeeds(game)
@@ -1197,7 +1221,7 @@ def _add_base_sower(game):
 
     if not sower:
         if game.info.sow_stores:
-            sower = SowSeedsNStore(game)
+            sower = SowIncrSeeds(game)
 
         else:
             sower = SowSeeds(game)

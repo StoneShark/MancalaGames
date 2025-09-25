@@ -120,6 +120,14 @@ class MapStoresIncr(IncrementerIf):
         super().__init__(game, decorator)
         self.map = None
 
+    def __str__(self):
+
+        return self.str_deco_detail(
+            'cw true:   ' + str(self.map[True][gi.Direct.CW])
+            + '\n   cw false:  ' + str(self.map[False][gi.Direct.CW])
+            + '\n   ccw true:  ' + str(self.map[True][gi.Direct.CCW])
+            + '\n   ccw false: ' + str(self.map[False][gi.Direct.CCW]))
+
 
     @staticmethod
     def next_hole(cur_hole, cycle, cycle_len, step):
@@ -192,7 +200,6 @@ class IncOwnStores(MapStoresIncr):
 class IncBothStores(MapStoresIncr):
     """Increment that cycles through the board and both stores.
     The store is put where they would be when passing them."""
-
 
     def __init__(self, game, decorator=None):
 

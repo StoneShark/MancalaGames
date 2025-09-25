@@ -145,7 +145,7 @@ class TestSowStore:
                               [1, 5, 4]), [2, 0]),
         ]
 
-    # @pytest.mark.usefixtures('logger')
+    @pytest.mark.usefixtures('logger')
     @pytest.mark.parametrize(
         'start_pos, direct, turn, board, eloc, eboard, estore',
         store_cases,
@@ -156,11 +156,11 @@ class TestSowStore:
 
         game.board = board
         game.turn = turn
-        # print(game)
+        print(game)
 
         move = (start_pos, direct)
         mdata = game.do_sow(move)
-        # print(game)
+        print(game)
 
         assert mdata.capt_loc == eloc
         assert game.board == eboard

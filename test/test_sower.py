@@ -338,7 +338,7 @@ class TestSower:
     ANSWERS = [
             # F stor  T stor      store
             # f  t    f  t        turn
-            [[T, T], [T, T]],        #    NEITHER rturn_test not used, defaults to T
+            [[F, F], [F, F]],        #    NEITHER
             [[T, T], [T, T]],        #    OWN - opp store not sown, so defaults to T
             [[T, T], [T, T]],        #    BOTH
             [[F, F], [F, F]],        #    OWN_NR
@@ -354,7 +354,7 @@ class TestSower:
     def test_sow_store_repeats(self, game, sow_stores, turn, store):
 
         object.__setattr__(game.info, 'sow_stores', sow_stores)
-        store_sower = sower.SowSeedsNStore(game)
+        store_sower = sower.SowIncrSeeds(game)
 
         expected = self.ANSWERS[sow_stores][store][turn]
         print(sow_stores.name, turn, store, expected)
@@ -1087,7 +1087,7 @@ class TestGetSingle:
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
         assert isinstance(game.deco.sower.get_single_sower(),
-                          sower.SowSeedsNStore)
+                          sower.SowIncrSeeds)
 
         game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
         game_info = gi.GameInfo(evens=True,
@@ -1938,7 +1938,7 @@ class TestPrescribed:
         """the prescribed sower is SowMlapSeeds/SowSeeds,
         confirm it's called"""
 
-        mskips = mocker.patch('sower.SowSkipOppN.sow_seeds')
+        mskips = mocker.patch('sower.SowIncrSeeds.sow_seeds')
         msower = mocker.patch('sower.SowSeeds.sow_seeds')
 
         game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
@@ -1957,7 +1957,7 @@ class TestPrescribed:
         assert 'SowMlapsFirst' in deco_str
         assert deco_str.count('SowMlapSeeds') == 2
         assert 'SowSeeds' in deco_str
-        assert 'SowSkipOppN' in deco_str
+        assert 'SowIncrSeeds' in deco_str
 
         move = 1
         mdata = move_data.MoveData(game, move)
