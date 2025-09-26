@@ -516,7 +516,8 @@ class TestSower:
         mdata.capt_start = end_loc
         mdata.seeds = sown_seeds
 
-        lap_cont = sower.ChildLapCont(game)
+        lap_cont = sower.LapContinue(game)
+        lap_cont = sower.StopMakeChild(game, lap_cont)
         lap_cont = sower.StopSingleSeed(game, lap_cont)
         lap_cont = sower.StopOnChild(game, lap_cont)
         lap_cont = sower.StopRepeatTurn(game, lap_cont)
@@ -589,6 +590,7 @@ class TestSower:
         game_info = gi.GameInfo(capt_on=[2],
                                 child_type=ChildType.NORMAL,
                                 child_cvt=4,
+                                mlaps=gi.LapSower.LAPPER,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 
@@ -609,7 +611,8 @@ class TestSower:
         mdata.capt_start = end_loc
         mdata.seeds = sown_seeds
 
-        lap_cont = sower.ChildLapCont(nogame)
+        lap_cont = sower.LapContinue(nogame)
+        lap_cont = sower.StopMakeChild(nogame, lap_cont)
         lap_cont = sower.StopSingleSeed(nogame, lap_cont)
         lap_cont = sower.StopOnChild(nogame, lap_cont)
         lap_cont = sower.StopRepeatTurn(nogame, lap_cont)

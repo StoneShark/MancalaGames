@@ -881,6 +881,33 @@ sow both stores.
 <p><b class="enum">Rules</b>: Hanson, Sue and Jon. All about Mancala: It's History and How to Play. 2003. p33. 
 <p><b class="enum">Origin</b>: modern 
 <p><b class="enum">Region</b>: Americas 
+<h3 id="CrossCapt_Eight" class="game_desc">CrossCapt_Eight</h3>
+<p>Sow counter-clockwise in multilaps using the hole after the final seed sown to continue.   Sow own store.  Repeat turn if last seed is sown into the player's own store. 
+<p>If the final seed of a lap ends in an empty hole  on the player's side of the board,  capture any seeds across from it and take the final seed sown. 
+<p>If the final seed of a lap ends in a player's rightmost hole and they cannot capture the seeds across the board,  they must continue sowing with the seeds from their store. 
+<p>If a player clears all of their own seeds,  they capture all their opponent's seeds that are still in play and the game ends. 
+<p>Goal: capture the most seeds. 
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OPP_SIDE</p>
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: Yes</p>
+    <p class="param"><a href="game_params.html#end_cond">End Game Condition</a>: CLEARED_OWN</p>
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER_NEXT</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_stores">Sow Store</a>: OWN</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#unclaimed">Unclaimed Seeds at End</a>: LAST_MOVER</p>
+    <p class="param"><a href="game_params.html#xcpickown">Own Seed on Xcapture</a>: PICK_ON_CAPT</p>
+  </div>
+</div>
+<p><b class="enum">Rules</b>: Hanson, Sue and Jon. All about Mancala: It's History and How to Play. 2003. p42. 
+<p><b class="enum">Origin</b>: modern 
+<p><b class="enum">Region</b>: Americas 
 <h3 id="CrossCapt_Nine" class="game_desc">CrossCapt_Nine</h3>
 <p>Sow counter-clockwise in single lap.  
 <p>Sow both stores: 
@@ -3542,28 +3569,6 @@ sow in multiple-laps (<a href="game_params.html#sow_direct">SOW_DIRECT</a> of LA
 <p><b class="enum">Rules</b>: Hanson, Sue and Jon. All about Mancala: It's History and How to Play. 2003. p25. 
 <p><b class="enum">Origin</b>: modern 
 <p><b class="enum">Region</b>: Americas 
-<h3 id="SimpleCapt_Eight" class="game_desc">SimpleCapt_Eight</h3>
-<p>Sow counter-clockwise in multilaps using the hole after the final seed sown to continue.  Sow own store.  Repeat turn if last seed is sown into the player's own store. 
-<p>If you clear all of your own seeds, you capture all of your opponent's seeds that are still in play and the game ends. 
-<p>Goal: capture the most seeds. 
-<div class="cols_row">
-  <div class="column2">
-    <p class="param">Holes per side:  6</p>
-    <p class="param">Start seeds:  4</p>
-    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
-    <p class="param"><a href="game_params.html#end_cond">End Game Condition</a>: CLEARED_OWN</p>
-    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER_NEXT</p>
-  </div>
-  <div class="column2">
-    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
-    <p class="param"><a href="game_params.html#sow_stores">Sow Store</a>: OWN</p>
-    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
-    <p class="param"><a href="game_params.html#unclaimed">Unclaimed Seeds at End</a>: LAST_MOVER</p>
-  </div>
-</div>
-<p><b class="enum">Rules</b>: Hanson, Sue and Jon. All about Mancala: It's History and How to Play. 2003. p25. 
-<p><b class="enum">Origin</b>: modern 
-<p><b class="enum">Region</b>: Americas 
 <h3 id="SimpleCapt_PCapt" class="game_desc">SimpleCapt_PCapt</h3>
 <p>Sow counter-clockwise in multiple laps when ending on your own side of the board. Sow own store. Repeat turn if last seed is sown into the player's own store. 
 <p>If the last seed of a sow ends in an empty cup on your opponent's side of the board, they capture the contents of your store. Called a Passive Capture, because your opponent likely did nothing to effect the capture. 
@@ -4148,6 +4153,7 @@ any odd number of seeds
     <p class="param">&emsp;&ensp;Five</p>
     <p class="param">&emsp;&ensp;Five_No_Sides</p>
     <p class="param">&emsp;&ensp;Five_UDIR</p>
+    <p class="param"><a href="#CrossCapt_Eight">CrossCapt_Eight</a></p>
     <p class="param"><a href="#CrossCapt_Nine">CrossCapt_Nine</a></p>
     <p class="param"><a href="#CrossCapt_Seven">CrossCapt_Seven</a></p>
     <p class="param"><a href="#CrossCapt_Six">CrossCapt_Six</a></p>
@@ -4167,9 +4173,9 @@ any odd number of seeds
     <p class="param">&emsp;&ensp;Rounds</p>
     <p class="param"><a href="#Enkeshui">Enkeshui</a></p>
     <p class="param"><a href="#Enlightenment">Enlightenment</a></p>
-    <p class="param"><a href="#Erherhe">Erherhe</a></p>
   </div>
   <div class="column3">
+    <p class="param"><a href="#Erherhe">Erherhe</a></p>
     <p class="param"><a href="#Eson Xorgol">Eson Xorgol</a></p>
     <p class="param"><a href="#Four-Capture">Four-Capture</a></p>
     <p class="param"><a href="#Gabata">Gabata</a></p>
@@ -4223,9 +4229,9 @@ any odd number of seeds
     <p class="param"><a href="#Ndoto">Ndoto</a></p>
     <p class="param">&emsp;&ensp;Bao</p>
     <p class="param"><a href="#No Sides Child">No Sides Child</a></p>
-    <p class="param"><a href="#NoCapt">NoCapt</a></p>
   </div>
   <div class="column3">
+    <p class="param"><a href="#NoCapt">NoCapt</a></p>
     <p class="param"><a href="#NoSides">NoSides</a></p>
     <p class="param"><a href="#NS_Kalah">NS_Kalah</a></p>
     <p class="param"><a href="#Nsa Isong">Nsa Isong</a></p>
@@ -4256,7 +4262,6 @@ any odd number of seeds
     <p class="param"><a href="#SimpleCapt">SimpleCapt</a></p>
     <p class="param">&emsp;&ensp;Anywhere</p>
     <p class="param">&emsp;&ensp;LastCapt</p>
-    <p class="param"><a href="#SimpleCapt_Eight">SimpleCapt_Eight</a></p>
     <p class="param"><a href="#SimpleCapt_PCapt">SimpleCapt_PCapt</a></p>
     <p class="param"><a href="#Sokusowó">Sokusowó</a></p>
     <p class="param"><a href="#Songo">Songo</a></p>

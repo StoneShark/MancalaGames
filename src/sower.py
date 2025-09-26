@@ -706,7 +706,7 @@ class DivertBlckdLapper(LapContinuerIf):
         return not self.game.blocked[mdata.capt_start]
 
 
-class ChildLapCont(LapContinuerIf):
+class StopMakeChild(LapContinuerIf):
     """Multilap sow in the presence/creation of children:
     Stop sowing if we should make a child.
 
@@ -722,7 +722,9 @@ class ChildLapCont(LapContinuerIf):
         make_child = self.game.deco.make_child.test(mdata)
         if make_child:
             game_log.add('MLap stop to make child')
-        return not make_child
+            return False
+
+        return self.decorator.do_another_lap(mdata)
 
 
 class StopSingleSeed(LapContinuerIf):
@@ -809,14 +811,27 @@ class ContIfBasicCapt(LapContinuerIf):
 
 
 class StopOnChild(LapContinuerIf):
-    """A wrapper: stop if we've ended in a child."""
+    """A wrapper: stop if the sow would continue from a child."""
+
+    def __init__(self, game, decorator=None):
+
+        super().__init__(game, decorator)
+        if game.info.mlaps == gi.LapSower.LAPPER_NEXT:
+            self.test_loc = lambda mdata: self.game.deco.incr.incr(mdata.capt_start,
+                                                                   mdata.direct,
+                                                                   mdata.player)
+        else:
+            self.test_loc = lambda mdata: mdata.capt_start
 
     def do_another_lap(self, mdata):
 
+        test_loc = self.test_loc(mdata)
+
         if (mdata.capt_start >= 0
-                and self.game.child[mdata.capt_start] is not None):
+                and self.game.child[test_loc] is not None):
             game_log.add('MLap stop in child')
             return False
+
         return self.decorator.do_another_lap(mdata)
 
 
@@ -861,6 +876,22 @@ class StopCaptureSeeds(LapContinuerIf):
         if (not self.game.inhibitor.stop_me_capt(self.game.turn)
                 and self.game.deco.capt_basic.capture_ok(mdata, mdata.capt_start)):
             game_log.add('MLap stop for capture')
+            return False
+        return self.decorator.do_another_lap(mdata)
+
+
+class StopXCapt(LapContinuerIf):
+    """Stop if we can do a cross capture.
+    Only uses this with lapper_next (instead of StopSingleSeed)."""
+
+    def do_another_lap(self, mdata):
+
+        cross = self.game.cts.cross_from_loc(mdata.capt_loc)
+
+        if (mdata.capt_start > 0
+                and self.game.board[mdata.capt_start] == 1
+                and self.game.deco.capt_basic.capture_ok(mdata, cross)):
+            game_log.add('MLap stop for cross capture')
             return False
         return self.decorator.do_another_lap(mdata)
 
@@ -975,6 +1006,16 @@ class StopNotSide(LapContinuerIf):
             game_log.add(f"Stop when last hole is on {self.side} side.")
             return False
 
+        return self.decorator.do_another_lap(mdata)
+
+
+class StopStore(LapContinuerIf):
+    """A wrapper: stop if the sow ended in a store."""
+
+    def do_another_lap(self, mdata):
+
+        if mdata.capt_start < 0:
+            return False
         return self.decorator.do_another_lap(mdata)
 
 
@@ -1228,15 +1269,12 @@ def _add_pre_sow_capt(game, sower):
     return sower
 
 
-def _add_capt_stop_lap_cont(game, lap_cont):
-    """Add the stop on 1 and then, one of the lap capture
-    lap-continuer or a stop on capture decos.
+def _add_lapt_capt_cont(game, lap_cont):
+    """Add the lapt deco's.
 
     LAP_CONT rules without stores always include a
     StopNoOppSeeds to prevent an endless sow preventing a
     win condition."""
-
-    lap_cont = StopSingleSeed(game, lap_cont)
 
     if game.info.sow_rule in (gi.SowRule.LAP_CAPT,
                               gi.SowRule.LAP_CAPT_OPP_GETS):
@@ -1254,12 +1292,6 @@ def _add_capt_stop_lap_cont(game, lap_cont):
     elif game.info.sow_rule == gi.SowRule.LAP_CAPT_SEEDS:
         lap_cont = ContWithCaptSeeds(game, lap_cont)
 
-    elif game.info.capt_type == gi.CaptType.MATCH_OPP:
-        lap_cont = StopCaptureSimul(game, lap_cont)
-
-    elif game.info.basic_capt and not game.info.crosscapt:
-        lap_cont = StopCaptureSeeds(game, lap_cont)
-
     if (not game.info.stores
             and game.info.sow_rule in (gi.SowRule.LAP_CAPT,
                                        gi.SowRule.LAP_CAPT_OPP_GETS,
@@ -1269,7 +1301,28 @@ def _add_capt_stop_lap_cont(game, lap_cont):
     return lap_cont
 
 
-def _add_lap_decos(game, lap_cont):
+def _add_capt_stop_lap_cont(game, lap_cont):
+    """Add the stop on 1 and then, one of the lap capture
+    lap-continuer or a stop on capture decos."""
+
+    if game.info.mlaps == gi.LapSower.LAPPER_NEXT:
+        if game.info.crosscapt:
+            lap_cont = StopXCapt(game, lap_cont)
+    else:
+        lap_cont = StopSingleSeed(game, lap_cont)
+
+
+    if game.info.capt_type == gi.CaptType.MATCH_OPP:
+        lap_cont = StopCaptureSimul(game, lap_cont)
+
+    elif game.info.basic_capt and not game.info.crosscapt:
+        lap_cont = StopCaptureSeeds(game, lap_cont)
+
+
+    return lap_cont
+
+
+def _add_mlap_cont_decos(game, lap_cont):
     """Add any lap continuer wrapper decorators."""
 
     if game.info.mlap_cont == gi.SowLapCont.VISIT_OPP:
@@ -1285,11 +1338,8 @@ def _add_lap_decos(game, lap_cont):
                                  gi.SowLapCont.OPP_SIDE):
         lap_cont = StopNotSide(game, lap_cont)
 
-    if game.info.sow_stores:
-        lap_cont = StopRepeatTurn(game, lap_cont)
-
-    if animator.ENABLED:
-        lap_cont = AnimateLapStart(game, lap_cont)
+    elif game.info.mlap_cont == gi.SowLapCont.STOP_STORE:
+        lap_cont = StopStore(game, lap_cont)
 
     return lap_cont
 
@@ -1299,28 +1349,37 @@ def _build_lap_cont(game):
 
     if game.info.mlaps == gi.LapSower.LAPPER:
 
-        if game.info.child_type.child_but_not_ram():
-            lap_cont = ChildLapCont(game)
-
-        elif game.info.sow_rule in (gi.SowRule.SOW_BLKD_DIV,
-                                    gi.SowRule.SOW_BLKD_DIV_NR):
+        if game.info.sow_rule in (gi.SowRule.SOW_BLKD_DIV,
+                                  gi.SowRule.SOW_BLKD_DIV_NR):
             lap_cont = DivertBlckdLapper(game)
         else:
             lap_cont = LapContinue(game)
-
-        lap_cont = _add_capt_stop_lap_cont(game, lap_cont)
-
-        if game.info.child_type.child_but_not_ram():
-            lap_cont = StopOnChild(game, lap_cont)
 
     elif game.info.mlaps == gi.LapSower.LAPPER_NEXT:
         lap_cont = NextLapCont(game)
 
     else:
         raise NotImplementedError(
-                    f"LapSower {game.info.mlaps} not implemented.")
+            f"LapSower {game.info.mlaps} not implemented.")
 
-    lap_cont = _add_lap_decos(game, lap_cont)
+    if game.info.child_type.child_but_not_ram():
+        lap_cont = StopMakeChild(game, lap_cont)
+
+    lap_cont = _add_capt_stop_lap_cont(game, lap_cont)
+
+    if game.info.mlaps == gi.LapSower.LAPPER:
+        lap_cont = _add_lapt_capt_cont(game, lap_cont)
+
+    if game.info.child_type.child_but_not_ram():
+        lap_cont = StopOnChild(game, lap_cont)
+
+    lap_cont = _add_mlap_cont_decos(game, lap_cont)
+
+    if game.info.sow_stores and game.info.repeat_turn:
+        lap_cont = StopRepeatTurn(game, lap_cont)
+
+    if animator.ENABLED:
+        lap_cont = AnimateLapStart(game, lap_cont)
 
     return lap_cont
 

@@ -727,6 +727,8 @@ is included after the parameter sections.
 <b class="enum">OPP_SIDE</b>: continue mlaps sowing only from opposite side of the board 
 <li class="helptext">
 <b class="enum">VISIT_OPP</b>: continue mlaps sowing only if the opposite side of the board was sown on the first lap 
+<li class="helptext">
+<b class="enum">STOP_STORE</b>: do not continue mlaps if a sow ends in a store 
 </ol>
 <h4 id="mlap_param"> Lap Continue Param </h4>
 <p class="pdesc">Location in Config Files: game_info : mlap_param
@@ -991,7 +993,7 @@ is included after the parameter sections.
 <p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Capture
 
-<p>Limits where captures maybe made: 
+<p>Limits where captures maybe made.  For cross capture, these apply to the location being captured, and not the final hole sown. 
 <ol start=0><li class="helptext">
 <b class="enum">BOTH</b>: no limitations 
 <li class="helptext">

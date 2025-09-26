@@ -1,0 +1,54 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 6,
+      "nbr_start": 4
+   },
+   "game_info": {
+      "name": "CrossCapt_Eight",
+      "about": "<text_section>",
+      "crosscapt": true,
+      "end_cond": 1,
+      "mlaps": 2,
+      "capt_side": 1,
+      "sow_direct": 1,
+      "sow_stores": 1,
+      "stores": true,
+      "unclaimed": 2,
+      "xcpickown": 1
+   },
+   "player": {
+      "ai_params": {
+         "mm_depth": [ 1, 3, 5, 7 ]
+      },
+      "scorer": {
+         "mx_stores_m": 8,
+         "mx_empties_m": 1,
+         "mx_rturn_a": 20
+      }
+   },
+   "rules": "Hanson, Sue and Jon. All about Mancala: It's History and How to Play. 2003. p42.",
+   "origin": "modern",
+   "region": "Americas"
+}
+<text_section>
+<about>
+Sow counter-clockwise in multilaps using the hole after the final seed sown
+to continue.  
+Sow own store. 
+Repeat turn if last seed is sown into the player's own store.
+
+If the final seed of a lap ends in an empty hole 
+on the player's side of the board, 
+capture any seeds across from it and take the final seed sown.
+
+If the final seed of a lap ends in a player's rightmost hole
+and they cannot capture the seeds across the board, 
+they must continue sowing with the seeds from their store.
+
+If a player clears all of their own seeds, 
+they capture all their opponent's seeds that are still in play and the game ends.
+
+Goal: capture the most seeds.
+</about>
+</text_section>

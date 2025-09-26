@@ -352,14 +352,6 @@ def test_block_and_divert_rules(tester):
 def test_child_rules(tester):
     """Add rules specific to having children."""
 
-    tester.test_rule('next_ml_nochild',
-        rule=lambda ginfo: (ginfo.mlaps == gi.LapSower.LAPPER_NEXT
-                            and ginfo.child_type),
-        msg='MLAPS of LAPPER_NEXT is not supported with CHILD',
-        excp=NotImplementedError)
-        # StopOnChild would need to change and ChildLapCont would
-        # need to be integrated into the lap continuer chain
-
     tester.test_rule('child_need_cvt',
         rule=lambda ginfo: (ginfo.child_type.child_but_not_ram()
                             and ginfo.child_locs
@@ -868,6 +860,12 @@ def test_basic_rules(tester):
         msg='SOW_STORES requires STORES',
         excp=gi.GameInfoError)
 
+    tester.test_rule('',
+        rule=lambda ginfo: (ginfo.mlap_cont == gi.SowLapCont.STOP_STORE
+                            and not ginfo.sow_stores),
+        msg="""MLAP_CONT STOP_STORE requires sowing stores""",
+        excp=gi.GameInfoError)
+
     tester.test_rule('sow_own_nocapt',
         rule=lambda ginfo: ginfo.sow_stores and ginfo.nocaptmoves,
         msg='SOW_STORES cannot be used with NOCAPTMOVES',
@@ -894,7 +892,6 @@ def test_basic_rules(tester):
             with LAPPER_NEXT""",
         excp=NotImplementedError)
         # would need to carefully decide how it would work
-        # StopNoOppSeeds is not currently added to LAPPER_NEXT deco chain
 
     tester.test_rule('sow_start_skip_incomp',
         rule=lambda ginfo: ginfo.sow_start and ginfo.skip_start,

@@ -1182,6 +1182,7 @@ class TestNoEndlessSows:
         game.disallow_endless(True)
 
         assert 'NoEndlessSows' in str(game.deco.allow)
+        print (game.deco.allow.get_allowable_holes())
         assert game.deco.allow.get_allowable_holes() == eresult
 
 

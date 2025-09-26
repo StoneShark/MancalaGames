@@ -161,7 +161,9 @@ Controls repeat turn on captures. Making children is not a capture.
 moves are allowed.
 
 <param capt_side>
-Limits where captures maybe made:
+Limits where captures maybe made. 
+For cross capture, these apply to the location being captured,
+and not the final hole sown.
 
 - BOTH: no limitations
 
@@ -970,6 +972,8 @@ than or equal to mlap_param
 
 - VISIT_OPP: continue mlaps sowing only if the opposite side of the
 board was sown on the first lap
+
+- STOP_STORE: do not continue mlaps if a sow ends in a store
 
 
 <param mlap_param>
