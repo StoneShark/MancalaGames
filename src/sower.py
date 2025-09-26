@@ -66,7 +66,7 @@ class SowIncPastMax(incrementer.IncrementerIf):
 
 
 class SowIncPastOppSkips(incrementer.IncrementerIf):
-    """Skip past values in skip_setusing the main incrementer."""
+    """Skip past values in skip_set using the main incrementer."""
 
     def __init__(self, game, skip_set, decorator=None):
 
@@ -95,7 +95,7 @@ class SowIncPastChild(incrementer.IncrementerIf):
         return loc
 
 
-class SowIncOppPastChildren(incrementer.IncrementerIf):
+class SowIncPastOppChild(incrementer.IncrementerIf):
     """Skip past opposite children using the main incrementer."""
 
     def incr(self, loc, direct, turn, start=incrementer.NOSKIPSTART):
@@ -158,17 +158,16 @@ class SowIncrSeeds(SowMethodIf):
         super().__init__(game, decorator)
 
         self.incr = self.expand_incr(game)
-        self.sow_op = self.choose_sow_op(game)
         self.rturn_test = self.choose_rturn_test(game)
 
 
     def __str__(self):
 
-        return self.str_deco_detail('incr:  ' + str(self.incr)
-                                    + '\n   op:  ' + str(self.sow_op))
+        return self.str_deco_detail('incr:  ' + str(self.incr))
 
 
-    def expand_incr(self, game):
+    @staticmethod
+    def expand_incr(game):
         """Select the incrementer wrapper for the SowRule."""
 
         if game.info.sow_rule == gi.SowRule.NO_SOW_OPP_NS:
@@ -181,7 +180,7 @@ class SowIncrSeeds(SowMethodIf):
             incr = SowIncPastChild(game)
 
         elif game.info.sow_rule == gi.SowRule.NO_OPP_CHILD:
-            incr = SowIncOppPastChildren(game)
+            incr = SowIncPastOppChild(game)
 
         else:
             incr = SowIncBase(game)
@@ -189,14 +188,10 @@ class SowIncrSeeds(SowMethodIf):
         return incr
 
 
-    def choose_sow_op(self, game):
-        """Choose which sow operation to use."""
-
-        return self.sow_either if game.info.sow_stores else self.sow_board
-
-
-    def choose_rturn_test(self, game):
+    @staticmethod
+    def choose_rturn_test(game):
         """Choose the repeat turn test function."""
+        # pylint: disable=unnecessary-lambda-assignment
 
         if game.info.sow_stores in (gi.SowStores.OWN,
                                     gi.SowStores.BOTH):
@@ -214,22 +209,6 @@ class SowIncrSeeds(SowMethodIf):
         return rturn_test
 
 
-    def sow_board(self, loc):
-        """Sow the loc on board."""
-
-        self.game.board[loc] += 1
-
-
-    def sow_either(self, loc):
-        """Sow either the board or the store."""
-
-        if loc < 0:
-            self.game.store[-loc -1] += 1
-
-        else:
-            self.game.board[loc] += 1
-
-
     def sow_seeds(self, mdata):
         """Sow seeds."""
 
@@ -239,7 +218,7 @@ class SowIncrSeeds(SowMethodIf):
 
         for _ in range(mdata.seeds):
             loc = self.incr.incr(loc, mdata.direct, turn, start_loc)
-            self.sow_op(loc)
+            self.game[loc] += 1
 
         if loc < 0 and (rturn := self.rturn_test(-loc - 1, turn)):
             mdata.repeat_turn = rturn
@@ -630,16 +609,16 @@ class SowOneOpp(SowPrescribedIf):
     def do_prescribed(self, mdata):
 
         loc = mdata.cont_sow_loc
-        incrementer = self.game.deco.incr.incr
+        incer = self.game.deco.incr.incr
 
         for _ in range(mdata.seeds - 1):
 
-            loc = incrementer(loc, mdata.direct, mdata.cont_sow_loc)
+            loc = incer(loc, mdata.direct, mdata.cont_sow_loc)
             self.game.board[loc] += 1
 
-        loc = incrementer(loc, mdata.direct, mdata.cont_sow_loc)
+        loc = incer(loc, mdata.direct, mdata.cont_sow_loc)
         while not self.game.cts.opp_side(self.game.turn, loc):
-            loc = incrementer(loc, mdata.direct, mdata.cont_sow_loc)
+            loc = incer(loc, mdata.direct, mdata.cont_sow_loc)
         self.game.board[loc] += 1
 
         mdata.capt_start = loc
@@ -653,11 +632,11 @@ class SowPlus1Minus1Capt(SowPrescribedIf):
 
         loc = mdata.cont_sow_loc
         self.game.board[loc] = mdata.seeds
-        incrementer = self.game.deco.incr.incr
+        incer = self.game.deco.incr.incr
 
         add_one = False
         while True:
-            loc = incrementer(loc, mdata.direct, mdata.cont_sow_loc)
+            loc = incer(loc, mdata.direct, mdata.cont_sow_loc)
             if loc == mdata.cont_sow_loc:
                 break
             self.game.board[loc] += 1 if add_one else -1
@@ -711,7 +690,7 @@ class NextLapCont(LapContinuerIf):
         loc = self.game.deco.incr.incr(mdata.capt_start,
                                        mdata.direct,
                                        mdata.player)
-        if self.game.board[loc]:
+        if self.game[loc]:
             mdata.capt_start = loc
             return True
         return False
@@ -752,7 +731,7 @@ class StopSingleSeed(LapContinuerIf):
 
     def do_another_lap(self, mdata):
 
-        if self.game.board[mdata.capt_start] <= 1:
+        if self.game[mdata.capt_start] <= 1:
             game_log.add('MLap stop single seed')
             return False
         return self.decorator.do_another_lap(mdata)
@@ -768,7 +747,7 @@ class GapNextCapt(LapContinuerIf):
 
     def do_another_lap(self, mdata):
 
-        if self.game.board[mdata.capt_start] > 1:
+        if self.game[mdata.capt_start] > 1:
             saved_loc = mdata.capt_start
             self.game.capture_seeds(mdata)
 
@@ -789,7 +768,7 @@ class ContIfXCapt(LapContinuerIf):
 
     def do_another_lap(self, mdata):
 
-        if self.game.board[mdata.capt_start] != 1:
+        if mdata.capt_start < 0 or self.game.board[mdata.capt_start] != 1:
             return self.decorator.do_another_lap(mdata)
 
         saved = mdata.captured
@@ -834,7 +813,8 @@ class StopOnChild(LapContinuerIf):
 
     def do_another_lap(self, mdata):
 
-        if self.game.child[mdata.capt_start] is not None:
+        if (mdata.capt_start >= 0
+                and self.game.child[mdata.capt_start] is not None):
             game_log.add('MLap stop in child')
             return False
         return self.decorator.do_another_lap(mdata)
@@ -844,6 +824,9 @@ class ContWithCaptSeeds(LapContinuerIf):
     """A wrapper: check if there is a capture.
     If did a capture, continue lap with the seeds captured
     along with the seeds from the last hole sown.
+
+    The stores are not in play, so all seeds collected
+    in a store during the capture are put back into play.
 
     mdata.captured must be left set to whether a capture
     has occured during the sow. If it was previously set,
@@ -945,7 +928,7 @@ class StopNotN(LapContinuerIf):
 
     def do_another_lap(self, mdata):
 
-        if self.game.board[mdata.capt_start] != self.game.info.mlap_param:
+        if self.game[mdata.capt_start] != self.game.info.mlap_param:
             game_log.add(f"Stop mlap not {self.game.info.mlap_param} seeds")
             return False
 
@@ -958,7 +941,7 @@ class StopLessN(LapContinuerIf):
 
     def do_another_lap(self, mdata):
 
-        if self.game.board[mdata.capt_start] < self.game.info.mlap_param:
+        if self.game[mdata.capt_start] < self.game.info.mlap_param:
             game_log.add(f"Stop mlap < {self.game.info.mlap_param} seeds")
             return False
 
@@ -1005,7 +988,7 @@ class StopNoOppSeeds(LapContinuerIf):
     def do_another_lap(self, mdata):
 
         opp_range = self.game.cts.get_opp_range(self.game.turn)
-        if not any(self.game.board[loc]for loc in opp_range):
+        if not any(self.game.board[loc] for loc in opp_range):
             game_log.add('MLap stopped, opp has no seeds.')
             return False
 
@@ -1035,10 +1018,7 @@ class AnimateLapStart(LapContinuerIf):
         cont = self.decorator.do_another_lap(mdata)
 
         if cont:
-            if mdata.capt_start >= 0:
-                animator.do_flash(self.game.turn, loc=mdata.capt_start)
-            else:
-                raise NotImplementedError("Can't animate lap start from store")
+            animator.do_flash(self.game.turn, loc=mdata.capt_start)
 
         return cont
 
@@ -1138,10 +1118,10 @@ class SowMlapSeeds(MlapSowerIf):
             if self.lap_cont.do_another_lap(mdata):
                 loc = mdata.capt_start
                 mdata.cont_sow_loc = loc
-                mdata.seeds = self.game.board[loc]
+                mdata.seeds = self.game[loc]
 
                 self.end_lap_op.do_op(mdata)
-                self.game.board[loc] = 0
+                self.game[loc] = 0
                 mdata.lap_nbr += 1
 
             else:

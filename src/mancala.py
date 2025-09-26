@@ -185,6 +185,25 @@ class Mancala(ai_interface.AiGameIf):
         return self.deco.gstr.get_string()
 
 
+    def __getitem__(self, idx):
+        """Get the seeds in either the store or board based
+        on the sign of idx."""
+
+        if idx < 0:
+            return self.store[-idx - 1]
+        return self.board[idx]
+
+
+    def __setitem__(self, idx, seeds):
+        """Set the seeds in either the store or board based
+        on the sign of idx."""
+
+        if idx < 0:
+            self.store[-idx - 1] = seeds
+        else:
+            self.board[idx] = seeds
+
+
     @property
     def board(self):
         """Hide the actual board in this property. It might be

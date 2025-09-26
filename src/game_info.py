@@ -606,7 +606,10 @@ class GameInfo:
         also use repeat turn, but that can't be tested here."""
 
         return (self.capt_rturn
-                or self.sow_stores
+                or self.sow_stores in (SowStores.OWN,
+                                       SowStores.BOTH,
+                                       SowStores.BOTH_NR_OWN,
+                                       SowStores.BOTH_NR_OPP)
                 or self.xc_sown
                 or self.grandslam == GrandSlam.LEGAL_SHARE)
 

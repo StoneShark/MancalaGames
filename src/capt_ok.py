@@ -170,7 +170,6 @@ class CaptNotStoreNeedSeeds(CaptOkIf):
         return self.decorator.capture_ok(mdata, loc)
 
 
-
 # %%  build deco chain
 
 def deco_capt_basic(game):

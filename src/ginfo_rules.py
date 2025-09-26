@@ -896,12 +896,6 @@ def test_basic_rules(tester):
         # would need to carefully decide how it would work
         # StopNoOppSeeds is not currently added to LAPPER_NEXT deco chain
 
-    tester.test_rule('ogol_no_lnext',
-        rule=lambda ginfo: (ginfo.sow_rule == gi.SowRule.LAP_CAPT_OPP_GETS
-                            and ginfo.mlaps == gi.LapSower.LAPPER_NEXT),
-        msg='LAP_CAPT_OPP_GETS is not supported with LAPPER_NEXT',
-        excp=NotImplementedError)
-
     tester.test_rule('sow_start_skip_incomp',
         rule=lambda ginfo: ginfo.sow_start and ginfo.skip_start,
         msg='SOW_START and SKIP_START do not make sense together',
@@ -1097,13 +1091,6 @@ def test_basic_rules(tester):
                                                gi.EndGameCond.HOLE_SEED_LIMIT)
                             and not ginfo.end_param),
         msg="""Selected END_COND requires positive END_PARAM""",
-        excp=gi.GameInfoError)
-
-    tester.test_rule('clear_no_share',
-        rule=lambda ginfo: (ginfo.mustshare
-                            and ginfo.end_cond in (gi.EndGameCond.CLEARED_OPP,
-                                                   gi.EndGameCond.CLEARED_OWN)),
-        msg="""MUSTSHARE incompatible with END_COND CLEARED OPP or OWN""",
         excp=gi.GameInfoError)
 
     tester.test_rule('clear_no_pass',

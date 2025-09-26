@@ -391,7 +391,7 @@ class AniAction(abc.ABC):
 
 
 class Flash(AniAction):
-    """Do a flash of the specified hole. Use this 2x."""
+    """Do a flash of the specified store or hole. Use this 2x."""
 
     def __init__(self, row, pos):
 
@@ -405,7 +405,10 @@ class Flash(AniAction):
 
     def do_it(self, game_ui, ani_state):
 
-        game_ui.disp[self.row][self.pos].flash()
+        if self.pos is None:
+            game_ui.stores[self.row].flash()
+        else:
+            game_ui.disp[self.row][self.pos].flash()
 
 
 class SetStateVar(AniAction):
@@ -605,7 +608,10 @@ class Animator:
         if self.active:
             row, pos = None, None
 
-            if move is not None:
+            if loc and loc < 0:
+                row = 0 if loc == gi.T_STORE else 1
+
+            elif move is not None:
                 if isinstance(move, int):
                     row, pos = not turn, move
                 elif len(move) == 2:
@@ -615,6 +621,7 @@ class Animator:
 
             elif loc < self.game_ui.game.cts.holes:
                 row, pos = loc < self.game_ui.game.cts.holes, loc
+
             else:
                 row, pos = (loc < self.game_ui.game.cts.holes,
                             self.game_ui.game.cts.dbl_holes - loc - 1)

@@ -365,6 +365,16 @@ class StoreButton(tk.Canvas):
             self['background'] = color
 
 
+    def flash(self):
+        """Flash the store:  call 2x to return to normal."""
+
+        fore = self.itemcget(self.text_id, 'fill')
+        back = self['background']
+
+        self.itemconfig(self.text_id, fill=back)
+        self['background'] = fore
+
+
     def set_behavior(self, behavior):
         """Set the behavior of the store."""
         self.config(cursor=ui_utils.NORMAL)
