@@ -421,7 +421,7 @@ class GetSeedsPopup(GrabberDialog):
                   font=self.font,
                   ).grid(row=0, column=1, stick='nsew')
 
-        tk.Button(bframe, text='',
+        tk.Button(bframe, text='Lv1', command=self.leave_one,
                   font=self.font,
                   ).grid(row=0, column=2, stick='nsew')
 
@@ -488,6 +488,14 @@ class GetSeedsPopup(GrabberDialog):
 
         self.entry.delete('1', tk.END)
         self.entry.insert('1', '1')
+        self.ok()
+
+
+    def leave_one(self):
+        """Pick one seed and return."""
+
+        self.entry.delete('1', tk.END)
+        self.entry.insert('1', str(self.max_seeds - 1))
         self.ok()
 
 
@@ -767,10 +775,14 @@ class ReportError:
     reports them via a popup. The context can be interrogated
     after use to see if an error was suppressed."""
 
-    def __init__(self, frame):
+    def __init__(self, frame, popups=True):
 
-        self.error = False
         self.frame = frame
+        self.popups = popups
+
+        # return values
+        self.error = False
+        self.message = None
 
     def __enter__(self):
         """Required interface for a context manager."""
@@ -805,8 +817,9 @@ class ReportError:
             return False
 
         self.error = True
-        message = exc_type.__name__ + ':  ' + str(exc_value)
-        showerror(self.frame, wtitle, message)
+        self.message = exc_type.__name__ + ':  ' + str(exc_value)
+        if self.popups:
+            showerror(self.frame, wtitle, self.message)
         return True
 
 

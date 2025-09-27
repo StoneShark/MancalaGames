@@ -599,9 +599,10 @@ def test_capture_rules(tester):
         # the negative numbers being returned for the stores
 
     tester.test_rule('xcapt_multi_same',
-        rule=lambda ginfo: (ginfo.crosscapt and ginfo.multicapt
+        rule=lambda ginfo: (ginfo.crosscapt == gi.XCaptType.ONE_ZEROS
+                            and ginfo.multicapt
                             and ginfo.capt_dir != gi.CaptDir.SOW),
-        msg="""CROSSCAPT with MULTICAPT requires CAPT_DIR
+        msg="""CROSSCAPT ONE_ZEROS with MULTICAPT requires CAPT_DIR
             be SOW""",
         excp=gi.GameInfoError)
         # capturing the opp dir (as usual) wont capture because
@@ -737,6 +738,13 @@ def test_capture_rules(tester):
                             and ginfo.pickextra == gi.CaptExtraPick.PICKCROSS),
         msg="PICKEXTRA=PICKCROSS with CROSSCAPT is redundant",
         warn=True)
+
+    tester.test_rule('xcross_all_nlaps',
+        rule=lambda ginfo: (ginfo.crosscapt == gi.XCaptType.ANY
+                            and ginfo.mlaps),
+        msg="MLAPS sowing is not supported CROSSCAPT of ALL",
+        excp=NotImplementedError)
+        # the stop on capture (lap continuer) decos were not written
 
     tester.test_rule('moveall_no_locks',
         rule=lambda ginfo: (ginfo.allow_rule == gi.AllowRule.MOVE_ALL_HOLES_FIRST

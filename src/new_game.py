@@ -380,10 +380,11 @@ class SeedCountCheck(NewGameIf):
 
         store = self.game.store
         board = self.game.board
+        tseeds = self.game.cts.total_seeds
 
         assert (all(cnt >= 0 for cnt in board + store)
-                and sum(store) + sum(board) == self.game.cts.total_seeds
-                ), f"seed count error in new_game\n{store}\n{board}"
+                and sum(store) + sum(board) == tseeds
+                ), f"seed count error in new_game\n{store}\n{board}\n{tseeds}"
 
 
 # %%  build deco chain

@@ -1130,22 +1130,26 @@ class GameChooser(ttk.Frame):
         create a dictionary of game name and about text."""
 
         self.all_games = {}
+        errors = []
         for file in man_config.game_files():
 
-            build_context = ui_utils.ReportError(self)
+            build_context = ui_utils.ReportError(self, popups=False)
             with build_context:
                 game_dict = man_config.read_game(file)
                 game_name = game_dict[ckey.GAME_INFO][ckey.NAME]
 
             if build_context.error:
-                print(f"Skipping {file} due to error.")
+                errors += [f'Parse error: {build_context.message}']
                 continue
 
             if game_name in self.all_games:
-                print(f'Skipping duplicate game name {game_name} from {file}.')
+                errors += [f'Skipping duplicate game name {game_name} from {file}.']
                 continue
 
             self.all_games[game_name] = game_dict
+
+        if errors:
+            ui_utils.showerror(self, 'Game File Errors', errors)
 
         self.all_games = dict(sorted(self.all_games.items()))
         self.games = list(self.all_games.keys())

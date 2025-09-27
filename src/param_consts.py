@@ -290,6 +290,7 @@ STRING_DICTS = {
          'Random Zeros': gi.StartPattern.RANDOM_ZEROS,
          'Random Move': gi.StartPattern.MOVE_RANDOM,
          'Move Rightmost Hole': gi.StartPattern.MOVE_RIGHTMOST,
+         'Azigo': gi.StartPattern.AZIGO,
          }),
 
     'SowPrescribed': lookup_dicts(
@@ -332,5 +333,10 @@ STRING_DICTS = {
          "Sow both stores, no own repeat": gi.SowStores.BOTH_NR_OWN,
          }),
 
-
+    'XCaptType': lookup_dicts(
+        gi.XCaptType,
+        {"No X Capt": gi.XCaptType.NONE,
+         "Start across 1 then 0s": gi.XCaptType.ONE_ZEROS,
+         "X Capt Any": gi.XCaptType.ANY,
+         })
 }

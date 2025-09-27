@@ -386,6 +386,7 @@ class StartPattern(enum.IntEnum):
     MOVE_RANDOM = 10
     NO_REPEAT_SOW_OWN = 11
     RANDOM_ZEROS = 12
+    AZIGO = 13
 
 
 @enum.unique
@@ -477,6 +478,15 @@ class WinCond(enum.Enum):
         return self in (WinCond.ROUND_WIN, WinCond.ROUND_TIE)
 
 
+@enum.unique
+class XCaptType(enum.IntEnum):
+    """The type cross capture to do."""
+
+    NONE = 0
+    ONE_ZEROS = 1
+    ANY = 2
+
+
 # %%   dataclasses and classes
 
 @dc.dataclass(frozen=True, kw_only=True)
@@ -540,7 +550,7 @@ class GameInfo:
     nocaptmoves: int = 0
     capt_type: CaptType = CaptType.NONE
 
-    crosscapt: bool = False
+    crosscapt: XCaptType = XCaptType.NONE
     xc_sown: bool = False
     xcpickown: CrossCaptOwn = CrossCaptOwn.LEAVE
     pickextra: CaptExtraPick = CaptExtraPick.NONE

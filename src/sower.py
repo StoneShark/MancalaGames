@@ -1279,7 +1279,7 @@ def _add_lapt_capt_cont(game, lap_cont):
     if game.info.sow_rule in (gi.SowRule.LAP_CAPT,
                               gi.SowRule.LAP_CAPT_OPP_GETS):
 
-        if game.info.crosscapt:
+        if game.info.crosscapt == gi.XCaptType.ONE_ZEROS:
             lap_cont = ContIfXCapt(game, lap_cont)
 
         elif game.info.capt_type in (gi.CaptType.NEXT,
@@ -1306,7 +1306,7 @@ def _add_capt_stop_lap_cont(game, lap_cont):
     lap-continuer or a stop on capture decos."""
 
     if game.info.mlaps == gi.LapSower.LAPPER_NEXT:
-        if game.info.crosscapt:
+        if game.info.crosscapt == gi.XCaptType.ONE_ZEROS:
             lap_cont = StopXCapt(game, lap_cont)
     else:
         lap_cont = StopSingleSeed(game, lap_cont)

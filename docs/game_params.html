@@ -276,6 +276,8 @@ is included after the parameter sections.
 <p class="helptext"> The seed placement is not adjusted if there is no repeat turn   possible with an ALL_EQUAL pattern. 
 <li class="helptext">
 <b class="enum">RANDOM_ZEROS</b>: The seeds are randomly distributed into the holes. Holes may have 0 or >= 4 seeds.  Nbr_start is the total number of seeds in play. When this start pattern is used, the Swap Sides (pie rule) is allowed on both of the first two moves of the game. 
+<li class="helptext">
+<b class="enum">AZIGO</b>: a unique start pattern for Azigo. 
 </ol>
 <p>In the formulas above holes (n in figures) is the game constant <a href="game_params.html#holes">HOLES</a> and nbr_start is the game constant <a href="game_params.html#nbr_start">NBR_START</a>. 
 <p>When a game is played in <a href="game_params.html#rounds">ROUNDS</a>, start_pattern is only supported for round tally (RND_*) and territory <a href="game_params.html#goal">GOAL</a> games and only for <a href="game_params.html#round_fill">ROUND_FILL</a> of NOT_APPLICABLE and UCHOWN. 
@@ -892,12 +894,19 @@ is included after the parameter sections.
 <p>Either SOWRULE of OWN_SOW_CAPT_ALL or SOW_SOW_CAPT_ALL includes the basic capture mechanisms. 
 <h4 id="crosscapt"> Cross-Capture </h4>
 <p class="pdesc">Location in Config Files: game_info : crosscapt
-<p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
-<p class="pdesc">Default value: False
+<p id="XCaptType" class="pdesc">Type: <a href="param_types.html#XCaptType"> XCaptType </a>
+<p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Capture
 
-<p>If the last sown seed is put in an empty hole, seeds on the opposite side of the board are captured. The capture of those seeds can be limited by <a href="game_params.html#capt_max">CAPT_MAX</a>, <a href="game_params.html#capt_min">CAPT_MIN</a>, <a href="game_params.html#capt_on">CAPT_ON</a>, <a href="game_params.html#evens">EVENS</a>, <a href="game_params.html#moveunlock">MOVEUNLOCK</a>, OPPSIDECAPT. For example, crosscapt with evens will only capture when there are an even number of seeds in the opposite hole. 
+<p>Capture seeds across the board from the final seed sown.  The capture of those seeds can be limited by <a href="game_params.html#capt_max">CAPT_MAX</a>, <a href="game_params.html#capt_min">CAPT_MIN</a>, <a href="game_params.html#capt_on">CAPT_ON</a>, <a href="game_params.html#evens">EVENS</a>, <a href="game_params.html#moveunlock">MOVEUNLOCK</a>, and/or <a href="game_params.html#capt_side">CAPT_SIDE</a>.  For example, crosscapt with evens will only capture when there are an even number of seeds in the opposite hole. 
 <p><a href="game_params.html#sow_rule">SOW_RULE</a> of SOW_CAPT_ALL does not do this capture. 
+<ol start=0><li class="helptext">
+<b class="enum">NONE</b>: no crosscapture 
+<li class="helptext">
+<b class="enum">ONE_ZEROS</b>: If the last sown seed is put in an empty hole, seeds on the opposite side of the board are captured.  Multiple captures continue as long as the holes on your side of the board are empty. 
+<li class="helptext">
+<b class="enum">ANY</b>: The cross capture is only limited by any basic capture criteria. 
+</ol>
 <h4 id="xcpickown"> Own Seed on Xcapture </h4>
 <p class="pdesc">Location in Config Files: game_info : xcpickown
 <p id="CrossCaptOwn" class="pdesc">Type: <a href="param_types.html#CrossCaptOwn"> CrossCaptOwn </a>

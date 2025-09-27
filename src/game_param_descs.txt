@@ -472,13 +472,22 @@ the CHILD_CVT setting.
 
 
 <param crosscapt>
-If the last sown seed is put in an empty hole, seeds on the opposite
-side of the board are captured. The capture of those seeds can be
+Capture seeds across the board from the final seed sown. 
+The capture of those seeds can be
 limited by CAPT_MAX, CAPT_MIN, CAPT_ON, EVENS, MOVEUNLOCK,
-OPPSIDECAPT. For example, crosscapt with evens will only capture when
+and/or CAPT_SIDE. 
+For example, crosscapt with evens will only capture when
 there are an even number of seeds in the opposite hole.
 
 SOW_RULE of SOW_CAPT_ALL does not do this capture.
+
+- NONE: no crosscapture
+
+- ONE_ZEROS: If the last sown seed is put in an empty hole, seeds on the opposite
+side of the board are captured. 
+Multiple captures continue as long as the holes on your side of the board are empty.
+
+- ANY: The cross capture is only limited by any basic capture criteria.
 
 <param difficulty>
 The default difficulty for the game. Valid values are 0 for easiest
@@ -1611,6 +1620,8 @@ SOW_OWN_STORE configured (it is not required).
 Holes may have 0 or >= 4 seeds.  Nbr_start is the total number of
 seeds in play. When this start pattern is used, the Swap Sides (pie
 rule) is allowed on both of the first two moves of the game.
+
+- AZIGO: a unique start pattern for Azigo.
 
 In the formulas above holes (n in figures) is the game constant HOLES
 and nbr_start is the game constant NBR_START.

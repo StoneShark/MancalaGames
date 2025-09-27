@@ -556,6 +556,42 @@ class MoveRandom(StartPatternIf):
             game.turn = not game.turn
 
 
+class AzigoPattern(StartPatternIf):
+    """Azigo start pattern"""
+
+    @staticmethod
+    def size_ok(holes):
+        return 8 <= holes <= 20
+
+    @classmethod
+    @property
+    def err_msg(cls):
+        return 'Azigo requires 8 to 20 holes'
+
+
+    @staticmethod
+    def nbr_seeds(holes, nbr_start):
+        return 2 * ((holes // 2 - 3) * nbr_start + 1) + 4 * nbr_start
+
+
+    @staticmethod
+    def fill_seeds(game):
+
+        holes = game.cts.holes
+        half_holes = game.cts.half_holes
+
+        game.board = [0] * game.cts.dbl_holes
+
+        for loc in range(0, half_holes - 3):
+            game.board[loc] = game.cts.nbr_start
+            game.board[loc + holes] = game.cts.nbr_start
+
+        game.board[half_holes - 3] = 1
+        game.board[holes + half_holes - 3] = 1
+
+        game.store[0] = game.store[1] = 2 * game.cts.nbr_start
+
+
 # %% Pattern Classes variable
 
 PCLASSES = [None] * len(gi.StartPattern)
@@ -572,3 +608,4 @@ PCLASSES[gi.StartPattern.MOVE_RIGHTMOST] = MoveRightmost
 PCLASSES[gi.StartPattern.MOVE_RANDOM] = MoveRandom
 PCLASSES[gi.StartPattern.NO_REPEAT_SOW_OWN] = NoRepeatSowOwn
 PCLASSES[gi.StartPattern.RANDOM_ZEROS] = RandomEmptiesPattern
+PCLASSES[gi.StartPattern.AZIGO] = AzigoPattern
