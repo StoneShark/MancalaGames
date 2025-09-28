@@ -868,7 +868,21 @@ def test_basic_rules(tester):
         msg='SOW_STORES requires STORES',
         excp=gi.GameInfoError)
 
-    tester.test_rule('',
+    tester.test_rule('plocs_stores',
+        rule=lambda ginfo: ginfo.play_locs and not ginfo.stores,
+        msg='No stores available for PLAY_LOC',
+        excp=gi.GameInfoError)
+
+    tester.test_rule('plocs_direct',
+        rule=lambda ginfo: (ginfo.play_locs
+                            and ginfo.sow_direct not in (gi.Direct.CCW,
+                                                         gi.Direct.CW)),
+        msg="Selected PLAY_LOC requires sow direction be CW or CCW",
+        excp=gi.GameInfoError)
+        # probably could support, but then would need grids and it
+        # would be more turns for the AI player's to search
+
+    tester.test_rule('mlap_cont_store',
         rule=lambda ginfo: (ginfo.mlap_cont == gi.SowLapCont.STOP_STORE
                             and not ginfo.sow_stores),
         msg="""MLAP_CONT STOP_STORE requires sowing stores""",

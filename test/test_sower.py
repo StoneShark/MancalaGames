@@ -2537,6 +2537,7 @@ class TestAnimator:
         animator.make_animator(None)   # no game_ui, make sure it's not used
         animator.set_active(True)
 
+        mocker.patch('animator.ANIMATOR.do_flash')
         mobj = mocker.patch('animator.ANIMATOR.do_message')
 
         game = mancala.Mancala(game_consts, game_info)
@@ -2554,7 +2555,7 @@ class TestAnimator:
         use the game_ui (which was not provided).
 
         Check sow result board and number of expected new laps
-        (after the first)."""
+        plus the first."""
 
         game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
         game_info = gi.GameInfo(stores=True,
@@ -2573,9 +2574,6 @@ class TestAnimator:
         game = mancala.Mancala(game_consts, game_info)
         game.turn = False
 
-        assert isinstance(game.deco.sower, sower.SowMlapSeeds)
-        assert isinstance(game.deco.sower.lap_cont, sower.AnimateLapStart)
-
         mdata = move_data.MoveData(game, 1)
         mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(1)
         mdata.direct = game.info.sow_direct
@@ -2585,7 +2583,7 @@ class TestAnimator:
         assert game.board.copy() == [0, 1, 4, 1, 3, 3]
 
         # initial sow, then two laps
-        assert len(mobj.mock_calls) == 2
+        assert len(mobj.mock_calls) == 3
 
 
     @pytest.mark.animator
@@ -2658,9 +2656,6 @@ class TestAnimator:
         game = mancala.Mancala(game_consts, game_info)
         game.turn = False
 
-        assert isinstance(game.deco.sower, sower.SowMlapSeeds)
-        assert isinstance(game.deco.sower.lap_cont, sower.AnimateLapStart)
-
         mdata = move_data.MoveData(game, 1)
         mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(1)
         mdata.direct = game.info.sow_direct
@@ -2671,19 +2666,3 @@ class TestAnimator:
 
         # no animation of laps
         assert len(mobj.mock_calls) == 0
-
-
-    def test_no_animator(self, mocker):
-
-        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
-        game_info = gi.GameInfo(stores=True,
-                                evens=True,
-                                mlaps=gi.LapSower.LAPPER,
-                                nbr_holes=game_consts.holes,
-                                rules=mancala.Mancala.rules)
-
-        assert not animator.ENABLED
-        game = mancala.Mancala(game_consts, game_info)
-
-        assert isinstance(game.deco.sower, sower.SowMlapSeeds)
-        assert not isinstance(game.deco.sower.lap_cont, sower.AnimateLapStart)

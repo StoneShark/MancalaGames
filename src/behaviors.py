@@ -11,6 +11,7 @@ import abc
 import enum
 import tkinter as tk
 
+import game_info as gi
 import game_str
 import man_config
 import ui_utils
@@ -440,3 +441,77 @@ class NoStoreBehavior(StoreBehaviorIf):
 
     def do_right_click(self):
         """No interaction."""
+
+
+class SowFromBehavior(StoreBehaviorIf):
+    """If a move is initiated from a store and there is more
+    than one seed there, allow the user to choose the number
+    of seeds."""
+
+    def set_store(self, seeds, highlight):
+        """Set the properties of the store button."""
+
+        self.str['state'] = tk.NORMAL
+
+        if seeds:
+            self.str['text'] = str(seeds)
+        else:
+            self.str['text'] = ''
+
+        self.str.update_color(highlight)
+
+
+    def do_left_click(self):
+        """If there's more than one seed, request the number
+        of seeds to move. Do the move."""
+
+        max_seeds = self.str.game_ui.game.store[self.str.owner]
+        if not max_seeds:
+            return
+
+        seeds = 0
+        if max_seeds == 1:
+            seeds = 1
+        else:
+            seeds = ui_utils.get_nbr_seeds(self.str.game_ui, max_seeds,
+                                           font=(man_config.CONFIG['font_family'],
+                                                 man_config.CONFIG['pickup_font_size']))
+
+        if seeds:
+            self.str.game_ui.move(gi.MoveTpl(-(self.str.owner + 1), seeds))
+
+
+    def do_right_click(self):
+        """Do left click for right too."""
+
+        self.do_left_click()
+
+
+class SowAllFromBehavior(StoreBehaviorIf):
+    """Allow selection of the staore for a move."""
+
+    def set_store(self, seeds, highlight):
+        """Set the properties of the store button."""
+
+        self.str['state'] = tk.NORMAL
+
+        if seeds:
+            self.str['text'] = str(seeds)
+        else:
+            self.str['text'] = ''
+
+        self.str.update_color(highlight)
+
+
+    def do_left_click(self):
+        """Move all of the seeds out of the store."""
+
+        seeds = self.str.game_ui.game.store[self.str.owner]
+        if seeds:
+            self.str.game_ui.move(gi.MoveTpl(-(self.str.owner + 1), seeds))
+
+
+    def do_right_click(self):
+        """Do left click for right too."""
+
+        self.do_left_click()

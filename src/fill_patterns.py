@@ -559,15 +559,17 @@ class MoveRandom(StartPatternIf):
 class AzigoPattern(StartPatternIf):
     """Azigo start pattern"""
 
+    SMIN = 8
+    SMAX = 20
+
     @staticmethod
     def size_ok(holes):
-        return 8 <= holes <= 20
+        return AzigoPattern.SMIN <= holes <= AzigoPattern.SMAX
 
     @classmethod
     @property
     def err_msg(cls):
-        return 'Azigo requires 8 to 20 holes'
-
+        return f'Azigo requires {cls.SMIN} to {cls.SMAX} holes'
 
     @staticmethod
     def nbr_seeds(holes, nbr_start):

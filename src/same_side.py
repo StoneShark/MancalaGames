@@ -49,6 +49,14 @@ def test_ns_rules(ginfo, holes, skip):
         msg="""SameSide incompatible with SOW_STORES""",
         excp=NotImplementedError)
         # The test for when to sow into store requires sowing on both sides
+        # that's been fixed but stores are no used with SameSide
+
+    tester.test_rule(
+        'ss_board_only',
+        rule=lambda ginfo: ginfo.play_locs,
+        msg="SameSide may only be played from the board; bad PLAY_LOCS",
+        excp=gi.GameInfoError)
+        # store are not used even if visible
 
     tester.test_rule(
         'ss_no_sowrule',

@@ -346,6 +346,20 @@ is included after the parameter sections.
 <li class="helptext">
 <b class="enum">RIGHT_HALF_1ST_OPE</b>: For the opening moves for each player, only allow a move from the right side of board. For subsequent moves, OPP_OR_EMPTY is applied. 
 </ol>
+<h4 id="play_locs"> Play Locations </h4>
+<p class="pdesc">Location in Config Files: game_info : play_locs
+<p id="PlayLocs" class="pdesc">Type: <a href="param_types.html#PlayLocs"> PlayLocs </a>
+<p class="pdesc">Default value: 0
+<p class="pdesc">UI Tab: Dynamics
+
+<p>Locations in which moves may start: 
+<ol start=0><li class="helptext">
+<b class="enum">BOARD_ONLY</b>: moves may only be initiated from the board. 
+<li class="helptext">
+<b class="enum">BRD_OWN_STR_ALL</b>: moves may be initiated from the board and your own store.  All seeds from the store are sown. 
+<li class="helptext">
+<b class="enum">BRD_OWN_STR_CHS</b>: moves may be initiated from the board and your own store. The player may choose how many seeds to play (if there is more than one). 
+</ol>
 <h4 id="end_cond"> End Game Condition </h4>
 <p class="pdesc">Location in Config Files: game_info : end_cond
 <p id="EndGameCond" class="pdesc">Type: <a href="param_types.html#EndGameCond"> EndGameCond </a>
@@ -1332,6 +1346,7 @@ Eastern Africa
     <p class="param"><a href="#nocaptmoves">nocaptmoves</a></p>
     <p class="param"><a href="#nosinglecapt">nosinglecapt</a></p>
     <p class="param"><a href="#pickextra">pickextra</a></p>
+    <p class="param"><a href="#play_locs">play_locs</a></p>
     <p class="param"><a href="#prescribed">prescribed</a></p>
     <p class="param"><a href="#presowcapt">presowcapt</a></p>
     <p class="param"><a href="#quitter">quitter</a></p>

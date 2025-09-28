@@ -226,6 +226,14 @@ STRING_DICTS = {
          'Lap Sower (end)': gi.LapSower.LAPPER,
          'Lap Sower Next': gi.LapSower.LAPPER_NEXT}),
 
+
+    'PlayLocs': lookup_dicts(
+        gi.PlayLocs,
+        {'Board Only': gi.PlayLocs.BOARD_ONLY,
+         'Board & All Own Store': gi.PlayLocs.BRD_OWN_STR_ALL,
+         'Board & Choose Own Store': gi.PlayLocs.BRD_OWN_STR_CHS,
+         }),
+
     'PreSowCapt': lookup_dicts(
         gi.PreSowCapt,
         {'No PreSow Capture': gi.PreSowCapt.NONE,

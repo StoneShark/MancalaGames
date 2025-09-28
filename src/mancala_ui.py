@@ -139,7 +139,7 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
 
         self.game = game
         self.info = self.game.info
-        self.mode = buttons.Behavior.GAMEPLAY
+        self.mode = -1   # force an initial mode change by using invalid value
         self.player = player if player else \
                           ai_player.AiPlayer(self.game, player_dict)
         self.swap_ok = True
@@ -528,7 +528,9 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
         """Return True if the stores should be updated with a
         seed count, False otherwise."""
 
-        return self.stores and not self.info.goal.eliminate()
+        return (self.stores
+                and (not self.info.goal.eliminate()
+                     or self.info.start_pattern == gi.StartPattern.AZIGO))
 
 
     def refresh(self, *, ani_ok=False):
@@ -855,8 +857,6 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
 
         self.saved_move = move
         last_turn = self.game.turn
-        if animator.active() and move != gi.PASS_TOKEN:
-            animator.do_flash(last_turn, move=move)
 
         self.wcond = self.game.move(move)
         self.history.record(self.game.state)

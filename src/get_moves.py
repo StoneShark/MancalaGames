@@ -136,6 +136,31 @@ class AltDirMoves(MovesIf):
         return list(new_moves)
 
 
+class StoreMoveAll(MovesIf):
+    """Moves are allowed from the player's own store."""
+
+    def get_moves(self):
+
+        moves = self.decorator.get_moves()
+        if self.game.store[self.game.turn]:
+            moves += [(-(self.game.turn + 1),
+                       self.game.store[self.game.turn])]
+
+        return moves
+
+
+class StoreMoveChoose(MovesIf):
+    """Any number of seeds may be moved from the player's own store."""
+
+    def get_moves(self):
+
+        moves = self.decorator.get_moves()
+
+        for seeds in range(1, self.game.store[self.game.turn]):
+            moves += [(-(self.game.turn + 1), seeds)]
+
+        return moves
+
 
 # %% build deco chain
 
@@ -159,5 +184,10 @@ def deco_moves(game):
 
     if game.info.sow_direct == gi.Direct.PLAYALTDIR:
         moves = AltDirMoves(game, moves)
+
+    if game.info.play_locs == gi.PlayLocs.BRD_OWN_STR_ALL:
+        moves = StoreMoveAll(game, moves)
+    elif game.info.play_locs == gi.PlayLocs.BRD_OWN_STR_CHS:
+        moves = StoreMoveChoose(game, moves)
 
     return moves

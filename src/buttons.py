@@ -379,7 +379,17 @@ class StoreButton(tk.Canvas):
         """Set the behavior of the store."""
         self.config(cursor=ui_utils.NORMAL)
         self.game_ui.config(cursor=ui_utils.NORMAL)
-        self.behavior = BEHAVIOR_CLASS[behavior].store(self)
+
+        if (behavior == Behavior.GAMEPLAY
+                and self.game_ui.game.info.play_locs == gi.PlayLocs.BRD_OWN_STR_ALL):
+            self.behavior = behaviors.SowAllFromBehavior(self)
+
+        elif (behavior == Behavior.GAMEPLAY
+                and self.game_ui.game.info.play_locs == gi.PlayLocs.BRD_OWN_STR_CHS):
+            self.behavior = behaviors.SowFromBehavior(self)
+
+        else:
+            self.behavior = BEHAVIOR_CLASS[behavior].store(self)
 
 
     def set_store(self, seeds, turn):

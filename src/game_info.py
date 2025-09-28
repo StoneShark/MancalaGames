@@ -308,6 +308,16 @@ class LapSower(enum.IntEnum):
     LAPPER = 1
     LAPPER_NEXT = 2
 
+
+@enum.unique
+class PlayLocs(enum.IntEnum):
+    """Define what locations are in play."""
+
+    BOARD_ONLY = 0
+    BRD_OWN_STR_ALL = 1    # sow all seeds from store
+    BRD_OWN_STR_CHS = 2    # choose # seeds to sow from store
+
+
 @enum.unique
 class PreSowCapt(enum.IntEnum):
     """Define a type of presow capture."""
@@ -513,6 +523,7 @@ class GameInfo:
     quitter: EndGameSeeds = EndGameSeeds.DIVVIED
 
     # **** allowable moves
+    play_locs: PlayLocs = PlayLocs.BOARD_ONLY
     min_move: int = 1
     allow_rule: AllowRule = AllowRule.NONE
     mustshare: bool = False
@@ -669,6 +680,9 @@ class MoveTpl(tuple):
         return super().__new__(cls, args)
 
     def __str__(self):
+
+        if self[0] < 0:
+            return f'({self[0]}, {self[1]})'
 
         if len(self) == 3:
             if self[2]:

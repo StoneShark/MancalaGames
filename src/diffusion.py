@@ -54,6 +54,12 @@ def test_rules(ginfo, holes, skip=None):
         warn=True)
 
     tester.test_rule(
+        'board_only',
+        rule=lambda ginfo: ginfo.play_locs,
+        msg="Diffusion may only be played from the board; bad PLAY_LOCS",
+        excp=gi.GameInfoError)
+
+    tester.test_rule(
         'goal_param',
         rule=lambda ginfo: ginfo.goal_param,
         msg='GOAL_PARAM is not used with Diffusion',

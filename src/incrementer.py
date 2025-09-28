@@ -115,6 +115,9 @@ class MapStoresIncr(IncrementerIf):
     corresponding to the indecies:
         -2       -1      0 1 2 ..."""
 
+    T_IDX = 0
+    F_IDX = 1
+
     def __init__(self, game, decorator=None):
 
         super().__init__(game, decorator)
@@ -172,7 +175,6 @@ class MapStoresIncr(IncrementerIf):
             self.map[True] = self.map[False]
 
 
-
     def incr(self, loc, direct, turn, _=NOSKIPSTART):
         """Do an increment."""
 
@@ -214,6 +216,28 @@ class IncBothStores(MapStoresIncr):
                                    + [gi.T_STORE])
 
 
+class IncFromStores(MapStoresIncr):
+    """Increment that cycles only through the board,
+    but moves may be initiated from the stores so they
+    increment onto the board."""
+
+    def __init__(self, game, decorator=None):
+
+        super().__init__(game, decorator)
+
+        holes = self.game.cts.holes
+        dholes = self.game.cts.dbl_holes
+
+        self.build_maps_from_cycles(list(range(dholes)))
+
+        for turn in (False, True):
+            self.map[turn][gi.Direct.CCW][self.T_IDX] = 0
+            self.map[turn][gi.Direct.CW][self.T_IDX] = dholes - 1
+
+            self.map[turn][gi.Direct.CCW][self.F_IDX] = holes
+            self.map[turn][gi.Direct.CW][self.F_IDX] = holes - 1
+
+
 # %% decorators
 
 class IncPastStart(IncrementerIf):
@@ -253,6 +277,9 @@ def deco_incrementer(game):
 
     elif game.info.sow_stores:
         incer = IncOwnStores(game)
+
+    elif game.info.play_locs:
+        incer = IncFromStores(game)
 
     else:
         incer = Increment(game)

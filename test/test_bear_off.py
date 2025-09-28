@@ -285,6 +285,7 @@ class TestAnimator:
 
         mocker.patch('animator.one_step')
         mocker.patch('animator.ANIMATOR.change')
+        mocker.patch('animator.ANIMATOR.do_flash')
         mobj = mocker.patch('animator.ANIMATOR.do_message')
 
         game_consts = gconsts.GameConsts(nbr_start=2, holes=3)

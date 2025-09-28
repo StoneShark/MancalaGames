@@ -1075,6 +1075,18 @@ for the first specified number of moves of the game or round.
 If the selected start hole has exactly one seed, no capture may be
 made with it.
 
+<param play_locs>
+
+Locations in which moves may start:
+
+- BOARD_ONLY: moves may only be initiated from the board.
+
+- BRD_OWN_STR_ALL: moves may be initiated from the board and your own store. 
+All seeds from the store are sown.
+
+- BRD_OWN_STR_CHS: moves may be initiated from the board and your own store.
+The player may choose how many seeds to play (if there is more than one).
+
 <param pickextra>
 Rules to allow taking of more than otherwise captured or picked seeds:
 

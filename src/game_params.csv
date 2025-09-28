@@ -29,11 +29,12 @@ Dynamics,prescribed,Prescribed Opening Move,game_info _,164,SowPrescribed,NONE,4
 Dynamics,draw_lbl,Draw Parameters,,0,label,0,5,0
 Dynamics,min_move,Minimum Seeds for Move,game_info _,142,int,1,6,0
 Dynamics,allow_rule,Special Move Restrictions,game_info _,101,AllowRule,NONE,7,0
-Dynamics,end_lbl,End Game  ,,0,label,0,8,0
-Dynamics,end_cond,End Game Condition,game_info _,118,EndGameCond,NO_ADDTL,9,0
-Dynamics,end_param,End Cond Param,game_info _,119,int,0,10,0
-Dynamics,unclaimed,Unclaimed Seeds at End,game_info _,188,EndGameSeeds,HOLE_OWNER,11,0
-Dynamics,quitter,Quit Game Seeds,game_info _,189,EndGameSeeds,DIVVIED,12,0
+Dynamics,play_locs,Play Locations,game_info _,170,PlayLocs,BOARD_ONLY,8,0
+Dynamics,end_lbl,End Game  ,,0,label,0,9,0
+Dynamics,end_cond,End Game Condition,game_info _,118,EndGameCond,NO_ADDTL,10,0
+Dynamics,end_param,End Cond Param,game_info _,119,int,0,11,0
+Dynamics,unclaimed,Unclaimed Seeds at End,game_info _,188,EndGameSeeds,HOLE_OWNER,12,0
+Dynamics,quitter,Quit Game Seeds,game_info _,189,EndGameSeeds,DIVVIED,13,0
 Dynamics,stores,Stores,game_info _,186,bool,True,0,2
 Dynamics,no_sides,No Sides,game_info _,149,bool,False,1,2
 Dynamics,mdyno_lbl,Move Dynamics,,0,label,0,2,2

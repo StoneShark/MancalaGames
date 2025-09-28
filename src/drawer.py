@@ -132,6 +132,22 @@ class DrawMoveTriple(DrawerIf):
         return self.decorator.draw(loc)
 
 
+class DrawStore(DrawerIf):
+    """Support possibly drawing from the stores.
+    Store moves are tuples moves[0] is gi.?_STORE (-2, -1) value
+    and moves[1] is the number of seeds."""
+
+    def draw(self, move):
+        # pylint: disable=arguments-renamed
+
+        if isinstance(move, tuple) and move[0] < 0:
+            sloc, seeds = move
+            self.game[sloc] -= seeds
+            return sloc, seeds
+
+        return self.decorator.draw(move)
+
+
 # %% build decorator chain
 
 def deco_drawer(game):
@@ -155,5 +171,8 @@ def deco_drawer(game):
         drawer = DrawMoveTriple(game, drawer)
     else:
         drawer = DrawMovePos(game, drawer)
+
+    if game.info.play_locs:
+        drawer = DrawStore(game, drawer)
 
     return drawer

@@ -91,6 +91,7 @@ class TestSowerAnimator:
 
         mocker.patch('animator.one_step')
         mocker.patch('animator.ANIMATOR.change')
+        mocker.patch('animator.ANIMATOR.do_flash')
         mobj = mocker.patch('animator.ANIMATOR.do_message')
 
         game.turn = True

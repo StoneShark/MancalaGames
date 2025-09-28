@@ -159,6 +159,27 @@ class NSIncBothStores(incrementer.MapStoresIncr):
         self.build_maps_from_cycles(f_cycle, t_cycle)
 
 
+class NSIncFromStores(incrementer.MapStoresIncr):
+    """Increment that cycles through the board, but
+    moves may be initiated from the stores."""
+
+    def __init__(self, game, decorator=None):
+
+        super().__init__(game, decorator)
+
+        holes = game.cts.holes
+        dholes = game.cts.dbl_holes
+
+        f_cycle = list(range(holes))
+        t_cycle = list(range(holes, dholes))
+        self.build_maps_from_cycles(f_cycle, t_cycle)
+
+        self.map[True][gi.Direct.CCW][self.T_IDX] = holes
+        self.map[True][gi.Direct.CW][self.T_IDX] = dholes - 1
+        self.map[False][gi.Direct.CCW][self.F_IDX] = 0
+        self.map[False][gi.Direct.CW][self.F_IDX] = holes - 1
+
+
 class EastWestIncr(incrementer.MapIncrement):
     """Increment that keeps seeds only on your own side
     of the board: EAST/WEST
@@ -213,7 +234,7 @@ class EWIncBothStores(incrementer.MapStoresIncr):
 
         holes = game.cts.holes
         dholes = game.cts.dbl_holes
-        half = holes // 2
+        half = game.cts.half_holes
         h3x = half * 3
 
         f_cycle = list(range(half, holes)) + [gi.F_STORE] \
@@ -223,6 +244,31 @@ class EWIncBothStores(incrementer.MapStoresIncr):
             + list(range(h3x, dholes)) + [gi.T_STORE]
 
         self.build_maps_from_cycles(f_cycle, t_cycle)
+
+
+class EWIncFromStores(incrementer.MapStoresIncr):
+    """Increment that cycles only through the board,
+    but moves may be initiated from the stores so they
+    increment onto the board."""
+
+    def __init__(self, game, decorator=None):
+
+        super().__init__(game, decorator)
+
+        holes = game.cts.holes
+        dholes = game.cts.dbl_holes
+        half = game.cts.half_holes
+        h3x = half * 3
+
+        f_cycle = list(range(half, h3x))
+        t_cycle = list(range(half)) +  list(range(h3x, dholes))
+        self.build_maps_from_cycles(f_cycle, t_cycle)
+
+        self.map[True][gi.Direct.CCW][self.T_IDX] = 0
+        self.map[True][gi.Direct.CW][self.T_IDX] = dholes - 1
+
+        self.map[False][gi.Direct.CCW][self.F_IDX] = holes
+        self.map[False][gi.Direct.CW][self.F_IDX] = holes - 1
 
 
 class EastWestAllowable(allowables.AllowableIf):
@@ -287,6 +333,11 @@ class NorthSouthCycle(mancala.Mancala):
         elif self.info.sow_stores:
             self.deco.replace_deco('incr', incrementer.IncOwnStores,
                                    NSIncOwnStores(self))
+
+        elif self.info.play_locs:
+            self.deco.replace_deco('incr', incrementer.IncFromStores,
+                                   NSIncFromStores(self))
+
         else:
             self.deco.replace_deco('incr', incrementer.Increment,
                                    NorthSouthIncr(self))
@@ -315,9 +366,15 @@ class EastWestCycle(mancala.Mancala):
         if self.info.sow_stores.sow_both():
             self.deco.replace_deco('incr', incrementer.IncBothStores,
                                    EWIncBothStores(self))
+
         elif self.info.sow_stores:
             self.deco.replace_deco('incr', incrementer.IncOwnStores,
                                    EWIncOwnStores(self))
+
+        elif self.info.play_locs:
+            self.deco.replace_deco('incr', incrementer.IncFromStores,
+                                   EWIncFromStores(self))
+
         else:
             self.deco.replace_deco('incr', incrementer.Increment,
                                    EastWestIncr(self))

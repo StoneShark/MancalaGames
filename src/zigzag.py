@@ -28,6 +28,12 @@ def test_rules(ginfo, holes, skip=None):
         # and the rules will catch an error with an odd number of holes
         # and missing udir.
 
+    tester.test_rule(
+        'zz_board_only',
+        rule=lambda ginfo: ginfo.play_locs,
+        msg="""ZigZag only supports PLAY_LOCS of BOARD_ONLY""",
+        excp=gi.GameInfoError)
+
     mancala.Mancala.rules(ginfo, holes, skip=skip)
 
 

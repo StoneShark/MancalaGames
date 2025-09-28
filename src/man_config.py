@@ -616,7 +616,7 @@ class ParamData(dict):
 
             for idx in INT_IDXS:
                 if not rec[idx].isdigit():
-                    raise gi.DataError("Expected int for {opt_name} col {idx}.")
+                    raise gi.DataError(f"Expected int for {opt_name} col {idx}.")
                 rec[idx] = int(rec[idx])
 
             rec[UI_DEFAULT_IDX] = self.convert_default(rec[UI_DEFAULT_IDX])

@@ -53,6 +53,13 @@ def test_rules(ginfo, holes, skip=None):
         msg='BearOff requires that MIN_MOVE be 1',
         excp=gi.GameInfoError)
 
+    tester.test_rule(
+        'board_only',
+        rule=lambda ginfo: ginfo.play_locs,
+        msg="BearOff may only be played from the board; bad PLAY_LOCS",
+        excp=gi.GameInfoError)
+        # store are not used
+
     mancala.Mancala.rules(ginfo, holes, skip=skip)
 
 

@@ -134,6 +134,7 @@ class SowSeeds(SowMethodIf):
         """Sow seeds."""
 
         loc = mdata.cont_sow_loc
+        animator.do_flash(self.game.turn, loc=loc)
         for _ in range(mdata.seeds):
 
             loc = self.game.deco.incr.incr(loc,
@@ -215,6 +216,7 @@ class SowIncrSeeds(SowMethodIf):
         turn = mdata.player
         start_loc = mdata.cont_sow_loc
         loc = mdata.cont_sow_loc
+        animator.do_flash(self.game.turn, loc=loc)
 
         for _ in range(mdata.seeds):
             loc = self.incr.incr(loc, mdata.direct, turn, start_loc)
@@ -238,6 +240,8 @@ class DivertSkipBlckdSower(SowMethodIf):
         """Sow seeds."""
 
         loc = mdata.cont_sow_loc
+        animator.do_flash(self.game.turn, loc=loc)
+
         seeds = mdata.seeds
         while seeds > 0:
 
@@ -347,6 +351,8 @@ class SowCaptOwned(SowMethodIf):
 
         incr = self.game.deco.incr.incr
         loc = mdata.cont_sow_loc
+        animator.do_flash(self.game.turn, loc=loc)
+
         for scnt in range(mdata.seeds, 0, -1):
 
             loc = incr(loc, mdata.direct, mdata.player, mdata.cont_sow_loc)
@@ -373,6 +379,8 @@ class SowSkipOppChildUnlessFinal(SowMethodIf):
 
         incr = self.game.deco.incr.incr
         loc = mdata.cont_sow_loc
+        animator.do_flash(self.game.turn, loc=loc)
+
         for rem_seeds in range(mdata.seeds, 0, -1):
 
             loc = incr(loc, mdata.direct, mdata.player, mdata.cont_sow_loc)
@@ -408,6 +416,8 @@ class SowOppCaptsLast(SowMethodIf):
         capt_basic = self.game.deco.capt_basic.capture_ok
 
         loc = mdata.cont_sow_loc
+        animator.do_flash(self.game.turn, loc=loc)
+
         opp_took = 0
         for rem_seeds in range(mdata.seeds, 0, -1):
 
@@ -1049,21 +1059,6 @@ class StopRepeatTurn(LapContinuerIf):
         return self.decorator.do_another_lap(mdata)
 
 
-class AnimateLapStart(LapContinuerIf):
-    """A wrapper: do an animation to simulate a new lap start,
-    but don't do any other animation in the do_another_lap
-    test."""
-
-    def do_another_lap(self, mdata):
-
-        cont = self.decorator.do_another_lap(mdata)
-
-        if cont:
-            animator.do_flash(self.game.turn, loc=mdata.capt_start)
-
-        return cont
-
-
 # %% operations for each end of lap
 
 class MlapEndOpIf(abc.ABC):
@@ -1377,9 +1372,6 @@ def _build_lap_cont(game):
 
     if game.info.sow_stores and game.info.repeat_turn:
         lap_cont = StopRepeatTurn(game, lap_cont)
-
-    if animator.ENABLED:
-        lap_cont = AnimateLapStart(game, lap_cont)
 
     return lap_cont
 
