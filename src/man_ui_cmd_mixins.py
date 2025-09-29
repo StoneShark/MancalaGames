@@ -836,7 +836,7 @@ class DebugMenuMixin:
             gvals = '++'
         else:
             #  same for both minimaxer and negamaxer
-            #  TODO picked move doesn't agree with this good vals print
+            #  XXXX picked move doesn't agree with this good vals print
 
             gvals = '--' if self.player.is_max_player() else '++'
 

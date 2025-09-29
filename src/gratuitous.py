@@ -132,8 +132,8 @@ class Gratuitous(mancala.Mancala, abc.ABC):
     selection of an opponent's hole to define where the capture
     should be 'shared'.
 
-    An abc because it doesn't make sense to use this if all
-    holes are sown."""
+    An abstract class because it doesn't make sense to use
+    this if all holes are sown."""
 
     def __init__(self, game_consts, game_info):
 
