@@ -445,6 +445,40 @@ Allow making children in opposite end holes but prohibit making children in oppo
 <p><b class="enum">Rules</b>: Mohr, Merilyn Simonds. The New Games Treasury. 1993. p102. 
 <p><b class="enum">Origin</b>: traditional 
 <p><b class="enum">Region</b>: Western Africa 
+<h3 id="Azigo" class="game_desc">Azigo</h3>
+<p>Sow counter-clockwise from any hole or your store but only on your side of the board. You may choose the number of seeds to sow from your start hole. If there is one seed in the start hole move it forward,  otherwise leave one seed in the start hole. 
+<p>Capture on 1s, 3s and 5s across from the final hole sown. Do multiple captures as long as holes have 1, 3 or 5 seeds in a chain in the opposite of the sow direction. The captures are done no matter how many seeds are in the holes on your side of the board. 
+<p>Goal: be the last player to move. 
+<p>Variations: 
+<ul><li class="helptext">
+board sizes of 8 to 20 holes per side. 
+<li class="helptext">
+sow both sides of the board (<a href="game_params.html#game_class">GAME_CLASS</a> of Mancala) and capture direction (<a href="game_params.html#capt_dir">CAPT_DIR</a>) is sow direction. 
+</ul>
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  12</p>
+    <p class="param">Start seeds:  5</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: IMMOBILIZE</p>
+    <p class="param"><a href="game_params.html#game_class">Game class</a>:  NorthSouthCycle</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 1 3 5</p>
+    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OPP_SIDE</p>
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: ANY</p>
+    <p class="param"><a href="game_params.html#move_one">Move One Seed</a>: Yes</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: -1</p>
+    <p class="param"><a href="game_params.html#play_locs">Play Locations</a>: BRD_OWN_STR_CHS</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_start">Sow Start Hole</a>: Yes</p>
+    <p class="param"><a href="game_params.html#start_pattern">Start Pattern</a>: AZIGO</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p><b class="enum">Rules</b>: <a href="https://mancala.fandom.com/wiki/Azigo" target="_blank">https://mancala.fandom.com/wiki/Azigo</a> 
+<p><b class="enum">Deviation</b>: The number of store seeds are shown; but in physical play the seeds are hidden. 
+<p><b class="enum">Reference</b>: <a href="https://ludii.games/details.php?keyword=Azigo" target="_blank">https://ludii.games/details.php?keyword=Azigo</a> <a href="https://ludii.games/details.php?keyword=Okwe%20(Nigeria)" target="_blank">https://ludii.games/details.php?keyword=Okwe%20(Nigeria)</a> 
+<p><b class="enum">Note</b>: All possible moves from stores are considered by the AI player, this results in a large branching factor and makes the AI players slow. 
 <h3 id="Ba-awa" class="game_desc">Ba-awa</h3>
 <p>A territory game. 
 <p>Sow in multiple-laps counter-clockwise. Any holes sown to 4 seeds are captured by the hole owner. 
@@ -4131,6 +4165,7 @@ any odd number of seeds
     <p class="param">&emsp;&ensp;Yit_Nuri</p>
     <p class="param">&emsp;&ensp;Yit_Jani</p>
     <p class="param"><a href="#Ayoayo">Ayoayo</a></p>
+    <p class="param"><a href="#Azigo">Azigo</a></p>
     <p class="param"><a href="#Ba-awa">Ba-awa</a></p>
     <p class="param"><a href="#Bakuk">Bakuk</a></p>
     <p class="param"><a href="#Bao">Bao</a></p>
@@ -4170,9 +4205,9 @@ any odd number of seeds
     <p class="param"><a href="#Endodoi">Endodoi</a></p>
     <p class="param">&emsp;&ensp;Rounds</p>
     <p class="param"><a href="#Enkeshui">Enkeshui</a></p>
-    <p class="param"><a href="#Enlightenment">Enlightenment</a></p>
   </div>
   <div class="column3">
+    <p class="param"><a href="#Enlightenment">Enlightenment</a></p>
     <p class="param"><a href="#Erherhe">Erherhe</a></p>
     <p class="param"><a href="#Eson Xorgol">Eson Xorgol</a></p>
     <p class="param"><a href="#Four-Capture">Four-Capture</a></p>
@@ -4226,9 +4261,9 @@ any odd number of seeds
     <p class="param"><a href="#NamNam">NamNam</a></p>
     <p class="param"><a href="#Ndoto">Ndoto</a></p>
     <p class="param">&emsp;&ensp;Bao</p>
-    <p class="param"><a href="#No Sides Child">No Sides Child</a></p>
   </div>
   <div class="column3">
+    <p class="param"><a href="#No Sides Child">No Sides Child</a></p>
     <p class="param"><a href="#NoCapt">NoCapt</a></p>
     <p class="param"><a href="#NoSides">NoSides</a></p>
     <p class="param"><a href="#NS_Kalah">NS_Kalah</a></p>

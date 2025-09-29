@@ -530,6 +530,11 @@ class ImmobilizeEndGame(ConcedeMixin, EndTurnIf):
         self.conceder = ConcedeDepImm(game, None,
                                       claimer.ClaimBoardSeeds(game))
 
+        if game.info.play_locs:
+            self.moves_test = game.get_moves
+        else:
+            self.moves_test = game.get_allowable_holes
+
 
     def game_ended(self, mdata):
         """Check for end game."""
@@ -539,7 +544,7 @@ class ImmobilizeEndGame(ConcedeMixin, EndTurnIf):
             return
 
         with self.game.opp_turn():
-            mdata.ended = not any(self.game.get_allowable_holes())
+            mdata.ended = not any(self.moves_test())
 
         if mdata.ended:
 

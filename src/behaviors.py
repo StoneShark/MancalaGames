@@ -465,6 +465,9 @@ class SowFromBehavior(StoreBehaviorIf):
         """If there's more than one seed, request the number
         of seeds to move. Do the move."""
 
+        if self.str.owner != self.str.game_ui.game.turn:
+            return
+
         max_seeds = self.str.game_ui.game.store[self.str.owner]
         if not max_seeds:
             return
@@ -505,6 +508,9 @@ class SowAllFromBehavior(StoreBehaviorIf):
 
     def do_left_click(self):
         """Move all of the seeds out of the store."""
+
+        if self.str.owner != self.str.game_ui.game.turn:
+            return
 
         seeds = self.str.game_ui.game.store[self.str.owner]
         if seeds:

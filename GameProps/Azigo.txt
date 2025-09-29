@@ -1,0 +1,69 @@
+{
+   "game_class": "NorthSouthCycle",
+   "game_constants": {
+      "holes": 12,
+      "nbr_start": 5
+   },
+   "game_info": {
+      "name": "Azigo",
+      "about": "<text_section>",
+      "capt_on": [ 1, 3, 5 ],
+      "crosscapt": 2,
+      "goal": 10,
+      "move_one": true,
+      "multicapt": -1,
+      "capt_side": 1,
+      "play_locs": 2,
+      "sow_direct": 1,
+      "sow_start": true,
+      "start_pattern": 13,
+      "stores": true
+   },
+   "player": {
+      "ai_params": {
+         "mm_depth": [ 1, 3, 5, 7 ]
+      },
+      "scorer": {
+         "mx_seeds_m": 8,
+         "mx_evens_m": 1
+      }
+   },
+   "vari_params": {
+      "holes": "include",
+      "game_class": [ "Mancala", "NorthSouthCycle" ],
+      "capt_dir": [ 0, 1 ]
+   },
+   "rules": "https://mancala.fandom.com/wiki/Azigo",
+   "deviation": "The number of store seeds are shown; but in physical play the seeds are hidden.",
+   "reference": "https://ludii.games/details.php?keyword=Azigo https://ludii.games/details.php?keyword=Okwe%20(Nigeria)",
+   "note": "<text_section>"
+}
+<text_section>
+<about>
+Sow counter-clockwise from any hole or your store
+but only on your side of the board.
+You may choose the number of seeds to sow from your
+start hole.
+If there is one seed in the start hole move it forward, 
+otherwise leave one seed in the start hole.
+
+Capture on 1s, 3s and 5s across from the final hole sown.
+Do multiple captures as long as holes have 1, 3 or 5 seeds
+in a chain in the opposite of the sow direction.
+The captures are done no matter how many seeds are in the
+holes on your side of the board.
+
+Goal: be the last player to move.
+
+Variations:
+
+- board sizes of 8 to 20 holes per side.
+
+- sow both sides of the board (GAME_CLASS of Mancala) and
+capture direction (CAPT_DIR) is sow direction.
+</about>
+<note>
+All possible moves from stores are considered by the AI player,
+this results in a large branching factor and makes the AI players slow.
+</note>
+</text_section>

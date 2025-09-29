@@ -156,7 +156,7 @@ class StoreMoveChoose(MovesIf):
 
         moves = self.decorator.get_moves()
 
-        for seeds in range(1, self.game.store[self.game.turn]):
+        for seeds in range(1, self.game.store[self.game.turn] + 1):
             moves += [(-(self.game.turn + 1), seeds)]
 
         return moves
