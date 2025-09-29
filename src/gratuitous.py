@@ -1,23 +1,24 @@
 # -*- coding: utf-8 -*-
-"""SameSide a game class in which sowing for each
-player is all done on the same side of the board.
+"""Gratuitous is a game class in which 'captured' seeds
+from your own side of the board are forced upon your
+opponent. When a capture is done a second turn allows
+selection of an opponent's hole to define where the capture
+should be 'shared'.
 
-Captured seeds are place in an opponent's hole.
+Always placed with two cycle games of either
+North/South or East/West.
 
 The game goal must be CLEAR (or the round tally version).
-
-SameSide:  Top only sows the top row. Bottom only sows the bottom row.
-Ohojichi: West only west. East only east.
 
 Created on Sun Dec  1 07:10:20 2024
 @author: Ann"""
 
 # %% imports
 
+import abc
 import dataclasses as dc
 
 import cfg_keys as ckey
-import incrementer
 import game_info as gi
 import mancala
 import move_data
@@ -29,85 +30,84 @@ from game_logger import game_log
 
 # %% rules
 
-def test_ns_rules(ginfo, holes, skip):
-    """Build the rules for SameSide."""
+def test_grat_rules(ginfo, holes, skip):
+    """Build the rules for Gratuitous."""
 
     tester = rule_tester.RuleTester(ginfo, holes, skip)
 
     tester.test_rule(
-        'ss_goal_clear',
+        'grat_goal_clear',
         rule=lambda ginfo: not ginfo.goal in (gi.Goal.CLEAR,
                                               gi.Goal.RND_WIN_COUNT_CLR),
-        msg='SameSide requires CLEAR goal',
+        msg='Gratuitous requires CLEAR goal',
         excp=gi.GameInfoError)
         # CLEAR includes many base mancala rules:
         #  GS legal, children, many options prohibited
 
     tester.test_rule(
-        'ss_no_sow_own',
+        'grat_no_sow_own',
         rule=lambda ginfo: ginfo.sow_stores,
-        msg="""SameSide incompatible with SOW_STORES""",
+        msg="""Gratuitous incompatible with SOW_STORES""",
         excp=NotImplementedError)
-        # The test for when to sow into store requires sowing on both sides
-        # that's been fixed but stores are no used with SameSide
+        # stores are only used (when wanted) to show whose turn it is
 
     tester.test_rule(
-        'ss_board_only',
+        'grat_board_only',
         rule=lambda ginfo: ginfo.play_locs,
-        msg="SameSide may only be played from the board; bad PLAY_LOCS",
+        msg="Gratuitous may only be played from the board; bad PLAY_LOCS",
         excp=gi.GameInfoError)
         # store are not used even if visible
 
     tester.test_rule(
-        'ss_no_sowrule',
+        'grat_no_sowrule',
         rule=lambda ginfo: ginfo.sow_rule,
-        msg="""SameSide incompatible with SOW_RULE""",
+        msg="""Gratuitous incompatible with SOW_RULE""",
         excp=gi.GameInfoError)
 
     tester.test_rule(
-        'ss_no_mlap_cont',
+        'grat_no_mlap_cont',
         rule=lambda ginfo: ginfo.mlap_cont,
-        msg="""SameSide incompatible with MLAP_CONT""",
+        msg="""Gratuitous incompatible with MLAP_CONT""",
         excp=gi.GameInfoError)
 
     tester.test_rule(
-        'ss_no_xcapt',
+        'grat_no_xcapt',
         rule=lambda ginfo: ginfo.crosscapt,
-        msg="""SameSide incompatible with CROSSCAPT""",
+        msg="""Gratuitous incompatible with CROSSCAPT""",
         excp=gi.GameInfoError)
 
     tester.test_rule(
-        'ss_side_own',
+        'grat_side_own',
         rule=lambda ginfo: ginfo.capt_side != gi.CaptSide.OWN_SIDE,
-        msg="""SameSide requires that CAPT_SIDE be OWN_SIDE""",
+        msg="""Gratuitous requires that CAPT_SIDE be OWN_SIDE""",
         excp=gi.GameInfoError)
 
     tester.test_rule(
-        'ss_no_moveunlock',
+        'grat_no_moveunlock',
         rule=lambda ginfo: ginfo.moveunlock,
-        msg="""SameSide is incompatible with MOVEUNLOCK""",
+        msg="""Gratuitous is incompatible with MOVEUNLOCK""",
         excp=gi.GameInfoError)
 
     tester.test_rule(
-        'ss_no_capt_rturn',
+        'grat_no_capt_rturn',
         rule=lambda ginfo: ginfo.capt_rturn,
-        msg="""Do not set capt_rturn in SameSide games.
+        msg="""Do not set capt_rturn in Gratuitous games.
                Repeat turn on capt is forced to support
                selecting the opponent's hole for the
                captured seeds.""",
         excp=gi.GameInfoError)
 
     tester.test_rule(
-        'ss_no_rturn',
+        'grat_no_rturn',
         rule=lambda ginfo: ginfo.repeat_turn,
-        msg="""SameSide is incompatible with any other repeat turn option""",
+        msg="""Gratuitous is incompatible with any other repeat turn option""",
         excp=gi.GameInfoError)
-        # catch any repleat turn opts not already covered by other other rules
+        # catch any repeat turn opts not already covered by other other rules
 
     tester.test_rule(
-        'ss_no_pick',
+        'grat_no_pick',
         rule=lambda ginfo: ginfo.pickextra,
-        msg="""SameSide is incompatible with PICKEXTRA""",
+        msg="""Gratuitous is incompatible with PICKEXTRA""",
         excp=gi.GameInfoError)
 
     skip_set = skip if skip else set()
@@ -115,66 +115,25 @@ def test_ns_rules(ginfo, holes, skip):
     mancala.Mancala.rules(ginfo, holes, skip=skip_set)
 
 
-def test_ew_rules(ginfo, holes, skip=None):
-    """Build the rules for SameSide.
-    We want the more specific rules first."""
-
-    tester = rule_tester.RuleTester(ginfo, holes, skip)
-
-    tester.test_rule(
-        'oho_even',
-        both_objs=True,
-        rule=lambda _, holes: holes % 2,
-        msg='Ohojichi requires an even number of holes per side',
-        excp=gi.GameInfoError)
-
-    tester.test_rule(
-        'oho_side_both',
-        rule=lambda ginfo: ginfo.capt_side != gi.CaptSide.BOTH,
-        msg='Ohojichi requires that CAPT_SIDE be BOTH',
-        excp=gi.GameInfoError)
-
-    tester.test_rule(
-        'oho_splt_udir_all',
-        both_objs=True,
-        rule=lambda ginfo, holes: (ginfo.sow_direct == gi.Direct.SPLIT
-                                   and len(ginfo.udir_holes) != holes),
-        msg='Ohojichi requires that all holes be UDIR for SPLIT SOW',
-        excp=gi.GameInfoError)
-
-    tester.test_rule(
-        'oho_udir_all',
-        both_objs=True,
-        rule=lambda ginfo, holes: (len(ginfo.udir_holes) > 0
-                                   and len(ginfo.udir_holes) != holes),
-        msg='Ohojichi requires that all holes be UDIR or none of them',
-        excp=gi.GameInfoError)
-
-
-    skip_set = skip if skip else set()
-    skip_set |= {'ss_side_own'}
-    test_ns_rules(ginfo, holes, skip=skip_set)
-
-
-# %% SameSide game class
+# %% Gratuitous abstract class
 
 @dc.dataclass(frozen=True, kw_only=True)
-class SSGameState(mancala.GameState):
-    """Create a state for the SameSide game.
+class GratState(mancala.GameState):
+    """Create a state for the Gratuitous game.
     GameStates must be immutable! Especially for the analysis scripts."""
 
     empty_store: bool = False
 
 
-class SameSide(mancala.Mancala):
-    """Sow only on your side of the board, deposit capture in
-    opponents holes."""
+class Gratuitous(mancala.Mancala, abc.ABC):
+    """Gratuitous is a game class in which 'captured' seeds
+    from your own side of the board are forced upon your
+    opponent. When a capture is done a second turn allows
+    selection of an opponent's hole to define where the capture
+    should be 'shared'.
 
-    @classmethod
-    def rules(cls, ginfo, holes, skip=None):
-        """Test rules for the class."""
-        test_ns_rules(ginfo, holes, skip)
-
+    An abc because it doesn't make sense to use this if all
+    holes are sown."""
 
     def __init__(self, game_consts, game_info):
 
@@ -185,9 +144,6 @@ class SameSide(mancala.Mancala):
 
         super().__init__(game_consts, game_info)
 
-        self.deco.replace_deco('incr', incrementer.Increment,
-                               two_cycle.NorthSouthIncr(self))
-
         # when true the next turn must empty the store (move seeds to op hole)
         self.empty_store = False
 
@@ -195,8 +151,8 @@ class SameSide(mancala.Mancala):
     @property
     def state(self):
         """Create an SSGameState"""
-        return SSGameState(empty_store=self.empty_store,
-                           **(dc.asdict(super().state)))
+        return GratState(empty_store=self.empty_store,
+                         **(dc.asdict(super().state)))
 
 
     @state.setter
@@ -213,8 +169,8 @@ class SameSide(mancala.Mancala):
     def board_state(self):
         """Return the equivalent board state."""
 
-        return SSGameState(empty_store=self.empty_store,
-                           **(dc.asdict(super().board_state)))
+        return GratState(empty_store=self.empty_store,
+                         **(dc.asdict(super().board_state)))
 
 
     def new_game(self, new_round=False):
@@ -228,25 +184,6 @@ class SameSide(mancala.Mancala):
         cond = super().end_game(quitter=quitter, user=user, game=game)
         self.empty_store = False
         return cond
-
-
-    def get_allowable_holes(self):
-        """If EMPTY_STORE allow selection of any of opponents holes.
-        Otherwise, only allow own holes that are allowable."""
-
-        if self.empty_store:
-            holes = self.cts.holes
-            if self.turn:
-                allows = [True] * holes + [False] * holes
-            else:
-                allows = [False] * holes + [True] * holes
-
-        else:
-            allows = super().get_allowable_holes()
-            for loc in self.cts.get_opp_range(self.turn):
-                allows[loc] = False
-
-        return allows
 
 
     def capture_seeds(self, mdata):
@@ -284,34 +221,55 @@ class SameSide(mancala.Mancala):
         return super().move(move)
 
 
-# %%
+# %%  concrete classes
 
-class Ohojichi(SameSide):
-    """Sow only on your side of the board east/west,
-    deposit capture in opponents holes.
-
-    These build on calls to the mancala.Mancala methods
-    not the SameSide method, SameSide does the wrong things."""
+class NSGratuitous(Gratuitous, two_cycle.NorthSouthCycle):
+    """Pair the Gratuitous mixin-ish with North South Cycles."""
 
     @classmethod
     def rules(cls, ginfo, holes, skip=None):
-        """Test rules for Diffusion."""
-        test_ew_rules(ginfo, holes, skip)
+        """Test rules for the class."""
+
+        test_grat_rules(ginfo, holes, skip)
+        two_cycle.NorthSouthCycle.rules(ginfo, holes, skip)
+
+
+    def get_allowable_holes(self):
+        """If EMPTY_STORE allow selection of any of opponents holes.
+        Otherwise, only allow own holes that are allowable."""
+
+        if self.empty_store:
+            holes = self.cts.holes
+            if self.turn:
+                allows = [True] * holes + [False] * holes
+            else:
+                allows = [False] * holes + [True] * holes
+
+        else:
+            allows = super().get_allowable_holes()
+            for loc in self.cts.get_opp_range(self.turn):
+                allows[loc] = False
+
+        return allows
+
+
+class EWGratuitous(Gratuitous, two_cycle.EastWestCycle):
+    """Pair the Gratuitous mixin-like class with East West Cycles."""
+
+    @classmethod
+    def rules(cls, ginfo, holes, skip=None):
+        """Test rules for the class."""
+
+        test_grat_rules(ginfo, holes, skip)
+        two_cycle.EastWestCycle.rules(ginfo, holes, skip)
 
 
     def __init__(self, game_consts, game_info):
 
-        two_cycle.patch_ew_cts_ops(game_consts)
         super().__init__(game_consts, game_info)
 
-        self.deco.replace_deco('incr', two_cycle.NorthSouthIncr,
-                               two_cycle.EastWestIncr(self))
-
-        self.empty_store = False
-
-        holes = self.cts.holes
         dbl_holes = self.cts.dbl_holes
-        half = holes // 2
+        half = self.cts.half_holes
         half_x3 = half * 3
         self.false_side = [loc in range(half, half_x3)
                            for loc in range(dbl_holes)]

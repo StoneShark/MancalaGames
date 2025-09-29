@@ -2860,7 +2860,7 @@ see <a href="about_games.html#Lam Waladach">Lam Waladach</a>
 <h3 id="Ohojichi" class="game_desc">Ohojichi</h3>
 <p>Sow counter-clockwise but only on your own side of the board. The board is divided vertically into East and West players. When active, the AI plays East. 
 <p>Multiple capture on 4s and place captured seeds in opponents hole of your choice. Capture is in opposite direction from sowing. 
-<p>A move has the typical draw, sow and check capture phases. If there is a capture, another user input is accepted to identify where the capture seeds should be put. The indicator for this is subtle: your store will still show your turn and your opponent's holes will be highlighted for input and shown in your color. 
+<p>A move has the typical draw, sow and check capture phases. If there is a capture (but not a win), another user input is accepted to identify where the capture seeds should be put. 
 <p>In this game, the number of captured seeds will always be a multiple of 4. 
 <p>Goal: clear your own side (east/west) of the board. 
 <div class="cols_row">
@@ -2868,14 +2868,13 @@ see <a href="about_games.html#Lam Waladach">Lam Waladach</a>
     <p class="param">Holes per side:  6</p>
     <p class="param">Start seeds:  4</p>
     <p class="param"><a href="game_params.html#goal">Goal</a>: CLEAR</p>
-    <p class="param"><a href="game_params.html#game_class">Game class</a>:  Ohojichi</p>
+    <p class="param"><a href="game_params.html#game_class">Game class</a>:  EWGratuitous</p>
     <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 4</p>
   </div>
   <div class="column2">
-    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: BOTH</p>
+    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OWN_SIDE</p>
     <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: -1</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
-    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
   </div>
 </div>
 <p><b class="enum">Rules</b>: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p85. 
@@ -3486,25 +3485,24 @@ board size 10 holes per side
 <p><b class="enum">Region</b>: Eastern Africa 
 <h3 id="SameSide" class="game_desc">SameSide</h3>
 <p>Sow counter-clockwise but only on your own side of the board. 
-<p>Multiple capture on evens but place captured seeds in opponents hole of your choice. 
-<p>A move has the typical draw, sow and check capture phases. If there is a capture, another user input is accepted to identify where the capture seeds should be put. The indicator for this is subtle: your store will still show your turn and your opponent's holes will be highlighted for input and shown in your color. 
+<p>Multiple capture on evens but place captured seeds in opponent's hole of your choice. 
+<p>A move has the typical draw, sow and check capture phases. If there is a capture (but not a win),  another user input is accepted to identify where the capture seeds should be put. 
 <p>The game is played in tallied rounds. Win a round by clearing your own side of the board. Win the game with 3 round wins (best of 5). 
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  5</p>
     <p class="param">Start seeds:  2</p>
     <p class="param"><a href="game_params.html#goal">Goal</a>: RND_WIN_COUNT_CLR</p>
-    <p class="param"><a href="game_params.html#game_class">Game class</a>:  SameSide</p>
+    <p class="param"><a href="game_params.html#game_class">Game class</a>:  NSGratuitous</p>
     <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OWN_SIDE</p>
     <p class="param"><a href="game_params.html#evens">Capture Evens</a>: Yes</p>
-    <p class="param"><a href="game_params.html#goal_param">Goal Parameter</a>: 3</p>
   </div>
   <div class="column2">
+    <p class="param"><a href="game_params.html#goal_param">Goal Parameter</a>: 3</p>
     <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: -1</p>
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
     <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
-    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
   </div>
 </div>
 <p><b class="enum">Origin</b>: example 

@@ -90,7 +90,7 @@ is included after the parameter sections.
 <li class="helptext">
 <b class="inhead">EastWestCycle</b> 
 <p class="helptext"> A two-cycle game class in which player's control east and west   sides of the board, and seeds are sown in those cycles. 
-<p class="helptext"> Without specialized extension of this game class, it appears to   only support race type games, e.g. who can clear their holes faster.   Their is little or no player interaction supported in the Mancala   Games engine. 
+<p class="helptext">  EWGratuitous is built on this class.   Without specialized extension of this game class, it appears to   only support race type games, e.g. who can clear their holes faster.   Their is little or no player interaction supported in the Mancala   Games engine. 
 <li class="helptext">
 <b class="inhead">BearOff</b> 
 <p class="helptext"> A flexible game class that does Backgammon-like bear off board   clearing after the game reaches a state where only singletons are   left. When a sow reaches the player's end of the board, any   remaining seeds in hand are removed from play (actually moved to   their store). 
@@ -98,7 +98,7 @@ is included after the parameter sections.
 <p class="helptext"> The transition from normal sow to bear-off sowing is made on the   first move when all of the seeds on the board are singletons (i.e.,   all holes <=1 seeds). Games may ended via an outright win before   this condition is achieved. 
 <p class="helptext"> Even if a future moves starts with > 1 seeds in a hole, the normal   sow is not resumed. 
 <p class="helptext"> <a href="game_params.html#no_sides">NO_SIDES</a> is not supported and <a href="game_params.html#min_move">MIN_MOVE</a> must be 1.  There are no   other limitations unique to the BearOff game class. 
-<p class="helptext"> <a href="about_games.html#Andada">Andada</a> is a preconfigured game usinging this class. 
+<p class="helptext"> <a href="about_games.html#Andada">Andada</a> is a preconfigured game using this class. 
 <li class="helptext">
 <a href="about_games.html#Diffusion">Diffusion</a> (also a game) 
 <p class="helptext"> A game class with has a unique sow method and win condition.   Players control the east/west sides of the board. 
@@ -107,20 +107,22 @@ is included after the parameter sections.
 <b class="inhead">DiffusionV2</b> 
 <p class="helptext"> Like <nolink>Diffusion but players control the typical north/south   sides of the board. Used as a game variant in the game <a href="about_games.html#Diffusion">Diffusion</a>. 
 <li class="helptext">
-<a href="about_games.html#SameSide">SameSide</a>  (also a game) 
+<b class="inhead">NSGratuitous</b> 
 <p class="helptext"> A game class in which seeds are only sown on the player's own side   of the board. If a capture is made, the capturer chooses one of   their opponent's holes to put the seeds into. All seeds go into   exactly one hole. 
-<p class="helptext">  The game goal must be CLEAR. Sow direction is unconstrained.   Capture mechanisms must be limited to one side of the board: basic   captures, next, and two out. 
+<p class="helptext">  The game goal must be CLEAR.    Stores maybe included but they are only used to show whose turn it is.   Sow direction is unconstrained.   <a href="game_params.html#play_locs">PLAY_LOCS</a>, <a href="game_params.html#moveunlock">MOVEUNLOCK</a>, <a href="game_params.html#sow_stores">SOW_STORES</a>, <a href="game_params.html#sow_rule">SOW_RULE</a>, <a href="game_params.html#mlap_cont">MLAP_CONT</a>, <a href="game_params.html#capt_rturn">CAPT_RTURN</a>, and <a href="game_params.html#pickextra">PICKEXTRA</a> are    not supported with this game class.   Capture mechanisms must be limited to your own holes: basic   captures, next, and two out. 
+<p class="helptext"> The example game <a href="about_games.html#SameSide">SameSide</a> uses this game class. 
 <li class="helptext">
-<a href="about_games.html#Ohojichi">Ohojichi</a>  (also a game) 
-<p class="helptext"> A <nolink>SameSide game but the board is divided east/west instead   of north/south. 
-<p class="helptext"> Most parameter restrictions from <nolink>SameSide apply to   <nolink>Ohojichi. For <nolink>Ohojichi, if <a href="game_params.html#udir_holes">UDIR_HOLES</a> is used, all   holes must be UDIR; capture side must be BOTH. 
+<b class="inhead">EWGratuitous</b> 
+<p class="helptext"> Like the NSGratuitous game class but the board is divided east/west instead   of north/south. 
+<p class="helptext"> Restrictions from NSGratuitous apply to EWGratuitous. 
+<p class="helptext"> <a href="about_games.html#Ohojichi">Ohojichi</a> is a preconfigured game using this class. 
 <li class="helptext">
 <b class="inhead">ShareOne</b> 
 <p class="helptext"> A game class that forces a share of one seed when your opponent   does not have any seeds at the start of your turn. You may choose   which hole the seed comes from but it must be a hole with at least   two seeds. After sharing the one seed, the sharer gets a repeat   turn. 
 <p class="helptext"> The following options are prohibited: <a href="game_params.html#blocks">BLOCKS</a>, <a href="game_params.html#mustshare">MUSTSHARE</a>, <a href="game_params.html#no_sides">NO_SIDES</a>,   or any repeat turn option (<a href="game_params.html#capt_rturn">CAPT_RTURN</a>, SOW_OWN_STORE, <a href="game_params.html#xc_sown">XC_SOWN</a> or   <a href="game_params.html#grandslam">GRANDSLAM</a> of LEGAL_SHARE). The game <a href="game_params.html#goal">GOAL</a> must not be TERRITORY. 
 <li class="helptext">
 <nolink><b class="inhead">ZigZag</b> 
-<p class="helptext"> A flexible game class with a unique zigzag sowing pattern. See   <a href="about_games.html#ZigZag">ZigZag</a> game help for the creators of the pattern. 
+<p class="helptext"> A flexible game class with a unique zigzag sowing pattern. See   the <a href="about_games.html#ZigZag">ZigZag</a> game help for details of the pattern and it's creators. 
 <p class="helptext"> The sowing is done in a zigzag fashion: Sowing is done towards the   center line of the board. The first hole sown is one hole towards   the center and on the opposite side of the board, when the end of   the board is reached sow directly across from the last hole. The sow   pattern cycles through each hole of the board before visiting a hole   a second time. 
 <p class="helptext"> Games with min_move of 1, no user directed sow direction holes,   and an even number of holes, will not allow a player to move a   single seed that was just moved across the center of the board back   across the board. This restriction only applies to the very next   turn. 
 <p class="helptext"> <a href="game_params.html#sow_direct">SOW_DIRECT</a> must be TOCENTER. If the size of the board is odd, the   center hole must be in the User Chooses Direction list. There are no   other limitations unique to the <nolink>ZigZag game class. 

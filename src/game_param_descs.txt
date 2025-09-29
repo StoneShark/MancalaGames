@@ -621,7 +621,8 @@ The name of the Game Class. One of:
   + A two-cycle game class in which player's control east and west
   sides of the board, and seeds are sown in those cycles.
 
-  + Without specialized extension of this game class, it appears to
+  +  EWGratuitous is built on this class.
+  Without specialized extension of this game class, it appears to
   only support race type games, e.g. who can clear their holes faster.
   Their is little or no player interaction supported in the Mancala
   Games engine.
@@ -649,7 +650,7 @@ The name of the Game Class. One of:
   + NO_SIDES is not supported and MIN_MOVE must be 1.  There are no
   other limitations unique to the BearOff game class.
 
-  + Andada is a preconfigured game usinging this class.
+  + Andada is a preconfigured game using this class.
 
 - Diffusion (also a game)
 
@@ -664,25 +665,31 @@ The name of the Game Class. One of:
   + Like <nolink>Diffusion but players control the typical north/south
   sides of the board. Used as a game variant in the game Diffusion.
 
-- SameSide  (also a game)
+- <b class="inhead">NSGratuitous</b>
 
   + A game class in which seeds are only sown on the player's own side
   of the board. If a capture is made, the capturer chooses one of
   their opponent's holes to put the seeds into. All seeds go into
   exactly one hole.
 
-  +  The game goal must be CLEAR. Sow direction is unconstrained.
-  Capture mechanisms must be limited to one side of the board: basic
+  +  The game goal must be CLEAR. 
+  Stores maybe included but they are only used to show whose turn it is.
+  Sow direction is unconstrained.
+  PLAY_LOCS, MOVEUNLOCK, SOW_STORES, SOW_RULE, MLAP_CONT, CAPT_RTURN, and PICKEXTRA are 
+  not supported with this game class.
+  Capture mechanisms must be limited to your own holes: basic
   captures, next, and two out.
+  
+  + The example game SameSide uses this game class.
 
-- Ohojichi  (also a game)
+- <b class="inhead">EWGratuitous</b>
 
-  + A <nolink>SameSide game but the board is divided east/west instead
+  + Like the NSGratuitous game class but the board is divided east/west instead
   of north/south.
 
-  + Most parameter restrictions from <nolink>SameSide apply to
-  <nolink>Ohojichi. For <nolink>Ohojichi, if UDIR_HOLES is used, all
-  holes must be UDIR; capture side must be BOTH.
+  + Restrictions from NSGratuitous apply to EWGratuitous.
+  
+  + Ohojichi is a preconfigured game using this class.
 
 - <b class="inhead">ShareOne</b>
 
@@ -699,7 +706,7 @@ The name of the Game Class. One of:
 - <nolink><b class="inhead">ZigZag</b>
 
   + A flexible game class with a unique zigzag sowing pattern. See
-  ZigZag game help for the creators of the pattern.
+  the ZigZag game help for details of the pattern and it's creators.
 
   + The sowing is done in a zigzag fashion: Sowing is done towards the
   center line of the board. The first hole sown is one hole towards

@@ -12,11 +12,11 @@ import ai_interface
 import allowables
 import cfg_keys as ckey
 import game_info as gi
+import gratuitous
 import minimax
 import montecarlo_ts as mcts
 import negamax
 import rule_tester
-import same_side
 import share_one
 
 from game_logger import game_log
@@ -422,8 +422,8 @@ def negamax_no_repeat_turn(game):
 
     ginfo = game.info
     return (ginfo.repeat_turn
-            or isinstance(game, (same_side.SameSide,
-                                 same_side.Ohojichi,
+            or isinstance(game, (gratuitous.NSGratuitous,
+                                 gratuitous.EWGratuitous,
                                  share_one.ShareOne)))
 
 
@@ -573,7 +573,7 @@ def test_player_rules(pdict, game):
                                        and pdict[ckey.ALGORITHM] == NEGAMAXER),
         both_objs=True,
         msg="""NegaMaxer is not compatible with repeat turns
-            (SOW_STORES | CAPT_RTURN | XC_SOWN | SameSide | Ohojichi)""",
+            (SOW_STORES | CAPT_RTURN | XC_SOWN | Gratuitous""",
         excp=gi.UInputError)
 
 

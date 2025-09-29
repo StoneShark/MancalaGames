@@ -1,5 +1,5 @@
 {
-   "game_class": "Ohojichi",
+   "game_class": "EWGratuitous",
    "game_constants": {
       "holes": 6,
       "nbr_start": 4
@@ -10,9 +10,8 @@
       "capt_on": [ 4 ],
       "goal": 3,
       "multicapt": -1,
-      "capt_side": 0,
-      "sow_direct": 1,
-      "stores": true
+      "capt_side": 2,
+      "sow_direct": 1
    },
    "player": {
       "ai_params": {
@@ -38,10 +37,8 @@ Multiple capture on 4s and place captured seeds in opponents hole of
 your choice. Capture is in opposite direction from sowing.
 
 A move has the typical draw, sow and check capture phases. If there is
-a capture, another user input is accepted to identify where the
-capture seeds should be put. The indicator for this is subtle: your
-store will still show your turn and your opponent's holes will be
-highlighted for input and shown in your color.
+a capture (but not a win), another user input is accepted to identify where the
+capture seeds should be put.
 
 In this game, the number of captured seeds will always be a multiple
 of 4.

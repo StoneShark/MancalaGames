@@ -15,10 +15,10 @@ from context import ai_player
 from context import cfg_keys as ckey
 from context import game_constants as gconsts
 from context import game_info as gi
+from context import gratuitous
 from context import mancala
 from context import minimax
 from context import montecarlo_ts
-from context import same_side
 
 from game_info import ChildType
 from game_info import WinCond
@@ -252,11 +252,11 @@ class TestScorers:
                                 stores=True,
                                 goal=gi.Goal.CLEAR,
                                 no_sides=True,
-                                capt_side=gi.CaptSide.BOTH,
+                                capt_side=gi.CaptSide.OWN_SIDE,
                                 nbr_holes=game_consts.holes,
-                                rules=same_side.Ohojichi.rules)
+                                rules=gratuitous.EWGratuitous.rules)
 
-        game = same_side.Ohojichi(game_consts, game_info)
+        game = gratuitous.EWGratuitous(game_consts, game_info)
         game.turn = False
         return game
 

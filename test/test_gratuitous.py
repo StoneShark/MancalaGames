@@ -11,10 +11,8 @@ pytestmark = pytest.mark.unittest
 
 from context import game_constants as gconsts
 from context import game_info as gi
-from context import mancala
+from context import gratuitous
 from context import move_data
-from context import same_side
-
 
 # %%
 
@@ -33,9 +31,9 @@ class TestGameState:
     def test_state(self):
 
         with pytest.raises(TypeError):
-            same_side.SSGameState()
+            gratuitous.GratState()
 
-        state1 = same_side.SSGameState(board='a board tuple',
+        state1 = gratuitous.GratState(board='a board tuple',
                                       store=(3, 4),
                                       mcount=5,
                                       _turn=True)
@@ -45,7 +43,7 @@ class TestGameState:
         assert state1._turn == True
         assert state1.empty_store == False
 
-        state2 = same_side.SSGameState(board='a board tuple',
+        state2 = gratuitous.GratState(board='a board tuple',
                                       store=(3, 4),
                                       mcount=5,
                                       _turn=False,
@@ -55,7 +53,7 @@ class TestGameState:
 
         assert state1 != state2
 
-        state1 = same_side.SSGameState(board='a board tuple',
+        state1 = gratuitous.GratState(board='a board tuple',
                                       store=(3, 4),
                                       mcount=5,
                                       _turn=False,
@@ -77,9 +75,9 @@ class TestGameState:
                                 goal=gi.Goal.CLEAR,
                                 capt_side=gi.CaptSide.OWN_SIDE,
                                 nbr_holes=game_consts.holes,
-                                rules=same_side.SameSide.rules)
+                                rules=gratuitous.NSGratuitous.rules)
 
-        game = same_side.SameSide(game_consts, game_info)
+        game = gratuitous.NSGratuitous(game_consts, game_info)
         game.turn = False
         return game
 
@@ -113,7 +111,7 @@ class TestGameState:
         assert game.turn is False
         assert game.empty_store is False
 
-        state = same_side.SSGameState(board=(3, 1, 4, 1, 5, 9),
+        state = gratuitous.GratState(board=(3, 1, 4, 1, 5, 9),
                                       store=(3, 4),
                                       mcount=5,
                                       _turn=False,
@@ -138,9 +136,9 @@ class TestSameSide:
                                 no_sides=True,
                                 capt_side=gi.CaptSide.OWN_SIDE,
                                 nbr_holes=game_consts.holes,
-                                rules=same_side.SameSide.rules)
+                                rules=gratuitous.NSGratuitous.rules)
 
-        game = same_side.SameSide(game_consts, game_info)
+        game = gratuitous.NSGratuitous(game_consts, game_info)
         game.turn = False
         return game
 
@@ -297,8 +295,8 @@ class TestSameSide:
         assert game.turn == eturn
 
 
-class TestOhojichi:
-    """Tests unique to Ohojichi."""
+class TestEWGratuitous:
+    """Tests unique to EWGratuitous."""
 
     @pytest.fixture
     def game(self):
@@ -309,11 +307,11 @@ class TestOhojichi:
                                 stores=True,
                                 goal=gi.Goal.CLEAR,
                                 skip_start=True,
-                                capt_side=gi.CaptSide.BOTH,
+                                capt_side=gi.CaptSide.OWN_SIDE,
                                 nbr_holes=game_consts.holes,
-                                rules=same_side.Ohojichi.rules)
+                                rules=gratuitous.EWGratuitous.rules)
 
-        game = same_side.Ohojichi(game_consts, game_info)
+        game = gratuitous.EWGratuitous(game_consts, game_info)
         game.turn = False
         return game
 

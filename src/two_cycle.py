@@ -293,8 +293,7 @@ def patch_ew_cts_ops(cts):
     Separate function because there is no real advantange of
     east-west games to be built on EastWestCycle.
     Especially, if there is another game class
-    that provides more specialization
-    (eg. Diffusion -> DiffusionV2 and  Ohojochi -> SameSide)."""
+    that provides more specialization (eg. Diffusion -> DiffusionV2)."""
 
     holes = cts.holes
     dbl_holes = cts.dbl_holes
