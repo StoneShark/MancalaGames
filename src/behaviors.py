@@ -90,8 +90,9 @@ class BehaviorGlobal(abc.ABC):
         shrinking the frame.
         Clear local access to them."""
 
-        for child in self.game_ui.rframe.winfo_children()[1:]:
-            child.destroy()
+        if self.active:
+            for child in self.game_ui.rframe.winfo_children()[1:]:
+                child.destroy()
 
 
     def done(self):
@@ -105,9 +106,9 @@ class BehaviorGlobal(abc.ABC):
         """Abandoning the game mode, cleanup."""
 
         if self.active:
-            self.active = False
             self.empty()
             self.destroy_ui()
+            self.active = False
 
 
 class BehaviorIf(abc.ABC):

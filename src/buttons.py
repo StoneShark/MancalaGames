@@ -70,6 +70,27 @@ def ask_mode_change(old_behavior, new_behavior, game_ui):
     return BEHAVIOR_CLASS[new_behavior].button.ask_mode_change(game_ui)
 
 
+# %% managment of behavior globals
+
+def build_behaviors():
+    """Build the globals that support behaviors."""
+
+    bhv_hold.HOLD = bhv_hold.Hold()
+    bhv_owners.OWNERS = bhv_owners.Owners()
+    bhv_bsetup.SETUPHOLD = bhv_bsetup.SetupHold()
+
+
+def destroy_behaviors():
+    """Delete the globals that support behaviors.
+
+    These must not persist between activations of different
+    games."""
+
+    del bhv_hold.HOLD
+    del bhv_owners.OWNERS
+    del bhv_bsetup.SETUPHOLD
+
+
 def force_mode_change():
     """Do any cleanup because the mode change will be forced."""
 

@@ -44,6 +44,9 @@ import ui_utils
 from game_logger import game_log
 
 
+SETUPHOLD = None
+
+
 class PlayAltDirControl:
     """A class to  manage the player direction for
     PLAYALTDIR games.
@@ -426,9 +429,6 @@ class SetupHold(bhv_hold.Hold):
             self.out_of_play = self.game_ui.game.store[0]
             self._oop_btn['text']=f"Off board: {self.out_of_play}"
             self.game_ui.config(cursor=ui_utils.HOLD_SEEDS)
-
-
-SETUPHOLD = SetupHold()
 
 
 # %% behaviors

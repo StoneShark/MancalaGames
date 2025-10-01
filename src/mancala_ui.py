@@ -196,6 +196,8 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
         self.ani_reset_state()
         self.ani_reset_delay()
 
+        buttons.build_behaviors()
+
         self.no_endless_sows()
         self.new_game()
         self.schedule_ai()
@@ -419,10 +421,14 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
     def destroy(self):
         """Window was closed.
 
-        Cancel any pending afters, tell the error_popups to stop dumping
-        the game on errors, and reset the animator."""
+        Cancel any pending afters, destroy the behavior globals,
+        tell the error_popups to stop dumping the game on errors,
+        and reset the animator.
+
+        If a cleanup method was provided call it."""
 
         self._cancel_pending_afters()
+        buttons.destroy_behaviors()
         ui_utils.game_ui = None
         animator.reset()
 

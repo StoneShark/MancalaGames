@@ -14,6 +14,9 @@ import ui_utils
 # from game_logger import game_log
 
 
+OWNERS = None
+
+
 class Owners(bhv.BehaviorGlobal):
     """Global data to store and manage ownership counts.
 
@@ -25,7 +28,6 @@ class Owners(bhv.BehaviorGlobal):
     def __init__(self):
 
         super().__init__()
-        self.active = False
         self.deviat = [0, 0]
 
         self._top_dev = None
@@ -86,9 +88,6 @@ class Owners(bhv.BehaviorGlobal):
 
         tk.Button(frame, text='Done', command=self.done
                   ).pack(side='bottom')
-
-
-OWNERS = Owners()
 
 
 # %% behaviors

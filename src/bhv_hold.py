@@ -17,6 +17,9 @@ import ui_utils
 
 # %%  global data for movers
 
+HOLD = None
+
+
 class Hold(bhv.BehaviorGlobal):
     """Global data to store and manage the seed holding data.
 
@@ -105,8 +108,6 @@ class Hold(bhv.BehaviorGlobal):
 
         return False
 
-
-HOLD = Hold()
 
 # %% button behaviors
 
