@@ -485,10 +485,12 @@ class ShowMenuMixin:
                                  variable=self.tkvars.touch_screen,
                                  onvalue=True, offvalue=False,
                                  command=self.refresh)
+        fpactive = tk.DISABLED if self.game.info.no_sides else tk.NORMAL
         showmenu.add_checkbutton(label='Facing Players',
                                  variable=self.tkvars.facing_players,
                                  onvalue=True, offvalue=False,
-                                 command=self.show_toggle_facing)
+                                 command=self.show_toggle_facing,
+                                 state=fpactive)
         showmenu.add_checkbutton(label='Ownership Arrows',
                                  variable=self.tkvars.owner_arrows,
                                  onvalue=True, offvalue=False,
