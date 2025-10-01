@@ -154,14 +154,14 @@ class NSIncBothStores(incrementer.MapStoresIncr):
         holes = game.cts.holes
         dholes = game.cts.dbl_holes
 
-        f_cycle = list(range(holes)) + [-1, -2]
-        t_cycle = list(range(holes, dholes)) + [-1, -2]
+        f_cycle = list(range(holes)) + [gi.F_STORE, gi.T_STORE]
+        t_cycle = list(range(holes, dholes)) + [gi.T_STORE, gi.F_STORE]
         self.build_maps_from_cycles(f_cycle, t_cycle)
 
 
 class NSIncFromStores(incrementer.MapStoresIncr):
     """Increment that cycles through the board, but
-    moves may be initiated from the stores."""
+    moves may be initiated from the player's own store."""
 
     def __init__(self, game, decorator=None):
 

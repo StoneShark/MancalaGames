@@ -34,6 +34,12 @@ def test_rules(ginfo, holes, skip=None):
         msg="""ZigZag only supports PLAY_LOCS of BOARD_ONLY""",
         excp=gi.GameInfoError)
 
+    tester.test_rule(
+        'zz_no_sown',
+        rule=lambda ginfo: ginfo.sow_stores,
+        msg="""ZigZag does not support sowing stores""",
+        excp=gi.GameInfoError)
+
     mancala.Mancala.rules(ginfo, holes, skip=skip)
 
 
@@ -54,13 +60,6 @@ class ZigZagGetDir(get_direction.GetDirIf):
         super().__init__(game, decorator)
 
         half = game.cts.half_holes
-
-        # bottom = [gi.Direct.CW if idx % 2 else gi.Direct.CCW
-        #           for idx in range(half)]
-        # bottom = bottom + bottom[::-1]
-        # top = [gi.Direct.CCW if idx % 2 else gi.Direct.CW
-        #         for idx in range(half)]
-        # top = top + top[::-1]
 
         cw_odd = [gi.Direct.CW if idx % 2 else gi.Direct.CCW
                   for idx in range(half)]

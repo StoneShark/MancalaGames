@@ -163,14 +163,14 @@ class MapStoresIncr(IncrementerIf):
         """Build the maps from a cycle."""
 
 
-        self.map = {}
+        self.map = [None, None]
 
         self.map[False] = {gi.Direct.CCW: self.build_one_map(f_cycle, 1),
                            gi.Direct.CW: self.build_one_map(f_cycle, -1)}
 
         if t_cycle:
             self.map[True] = {gi.Direct.CCW: self.build_one_map(t_cycle, 1),
-                               gi.Direct.CW: self.build_one_map(t_cycle, -1)}
+                              gi.Direct.CW: self.build_one_map(t_cycle, -1)}
         else:
             self.map[True] = self.map[False]
 

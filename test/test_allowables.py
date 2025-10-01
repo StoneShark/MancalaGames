@@ -454,9 +454,15 @@ class TestSingleToEmpty:
         ids=[f'case_{cnt}' for cnt in range(len(TEST_STE_DATA))])
     def test_allowables(self, direct, board, turn, eresult):
 
+        if direct == Direct.SPLIT:
+            sow_stores = gi.SowStores.BOTH
+        else:
+            sow_stores = gi.SowStores.NEITHER
+
         game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
         game_info = gi.GameInfo(capt_on=[2],
                                 sow_direct=direct,
+                                sow_stores=sow_stores,
                                 allow_rule=AllowRule.SINGLE_TO_ZERO,
                                 stores=True,
                                 nbr_holes=game_consts.holes,

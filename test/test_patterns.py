@@ -341,3 +341,52 @@ class TestNoRepeat:
             with game.save_restore_state():
                 mdata = game.do_sow(pos)
                 assert mdata.capt_loc != gi.WinCond.REPEAT_TURN
+
+
+class TestAzigoPattern:
+
+    @pytest.mark.parametrize('holes, expv', [(5, False),
+                                             (7, False),
+                                             (8, True),
+                                             (20, True),
+                                             (21, False)])
+    def test_size_ok(self, holes, expv):
+
+        assert fp.AzigoPattern.size_ok(holes) == expv
+        assert 'Azigo requires' in fp.AzigoPattern.err_msg
+
+
+    @pytest.mark.parametrize('holes, seeds, eseeds, eboard, estore',
+                             [[ 8, 6, 38,
+                               [6, 1, 0, 0, 0, 0, 0, 0] * 2,
+                               [12, 12]],
+
+                              [12, 8, 82,
+                               [8, 8, 8, 1, 0, 0, 0, 0, 0, 0, 0, 0] * 2,
+                               [16, 16]],
+
+                              [12, 5, 52,
+                               [5, 5, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0] * 2,
+                               [10, 10]],
+
+                              [20, 5, 92,
+                               ([5] * 7 + [1] + [0] * 12) * 2,
+                               [10, 10]],
+
+                              ])
+    def test_fill_seeds(self, holes, seeds, eseeds, eboard, estore):
+
+        game_consts = gconsts.GameConsts(holes=holes, nbr_start=seeds)
+        game_info = gi.GameInfo(start_pattern=gi.StartPattern.AZIGO,
+                                evens=True,
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+        # print(game.board)
+        # print(eboard)
+
+        assert game.board == eboard
+        assert game.store == estore
+
+        assert fp.AzigoPattern.nbr_seeds(holes, seeds) == eseeds

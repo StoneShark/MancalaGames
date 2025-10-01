@@ -33,6 +33,7 @@ F_STORE = -1
 
 # given turn look up the index
 STORE_INDEX = [F_STORE, T_STORE]
+STORE_NAME = ['F_STORE', 'T_STORE']
 
 
 # %%  errors
@@ -452,6 +453,14 @@ class SowStores(enum.IntEnum):
                         self.BOTH_NR_OPP,
                         self.BOTH_NR_OWN)
 
+    def repeat_turn(self):
+        """Return true if there is a possiblity of repeat turns."""
+
+        return self in (self.OWN,
+                        self.BOTH,
+                        self.BOTH_NR_OWN,
+                        self.BOTH_NR_OPP)
+
 
 @enum.unique
 class WinCond(enum.Enum):
@@ -628,10 +637,7 @@ class GameInfo:
         also use repeat turn, but that can't be tested here."""
 
         return (self.capt_rturn
-                or self.sow_stores in (SowStores.OWN,
-                                       SowStores.BOTH,
-                                       SowStores.BOTH_NR_OWN,
-                                       SowStores.BOTH_NR_OPP)
+                or self.sow_stores.repeat_turn()
                 or self.xc_sown
                 or self.grandslam == GrandSlam.LEGAL_SHARE)
 
@@ -682,7 +688,7 @@ class MoveTpl(tuple):
     def __str__(self):
 
         if self[0] < 0:
-            return f'({self[0]}, {self[1]})'
+            return f'({STORE_NAME[-self[0] - 1]}, {self[1]})'
 
         if len(self) == 3:
             if self[2]:

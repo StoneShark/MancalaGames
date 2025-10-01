@@ -566,11 +566,7 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
 
     def _play(self, _=None):
         """Create and play the game. deactivate param ui and block
-        while the game is being played. reactivate when the game
-        is exited.
-
-        If quitting is set, wait_window returned because we are
-        quiting, so don't try to reactivate."""
+        while the game is being played."""
 
         self._test(positive=False)
         if not self.game:
@@ -594,7 +590,8 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
     def reactivate_editor(self):
         """Reactivate the editor controls."""
 
-        self._set_active(True)
+        if not self.quitting:
+            self._set_active(True)
 
 
     def _reset_edited(self):

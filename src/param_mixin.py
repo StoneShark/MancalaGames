@@ -184,7 +184,7 @@ class ParamMixin:
         return value
 
 
-    def _trim_text(self, param, raise_excp=True):
+    def _trim_text(self, param):
         """Remove trailing spaces from each line."""
 
         text = self.tktexts[param.option].get('1.0', tk.END)
@@ -488,7 +488,7 @@ class ParamMixin:
         values set and saved."""
 
         if param.vtype == pc.MSTR_TYPE:
-            value = self._trim_text(param, raise_excp)
+            value = self._trim_text(param)
 
         elif param.vtype == pc.TEXTDICT:
             value = self._str_dict(param, raise_excp)

@@ -99,47 +99,28 @@ CAPTS = {'Basic Capture': lambda ginfo: (any([ginfo.get(ckey.CAPT_MAX, 0),
                                          ginfo.get(ckey.CAPT_TYPE, 0)]),
          }
 
-SOWRS = {'None': lambda sow_rule: not sow_rule,
-         'Sow Closed': lambda sow_rule: sow_rule in (
-             gi.SowRule.SOW_BLKD_DIV,
-             gi.SowRule.SOW_BLKD_DIV_NR),
-         'Take when Sowing': lambda sow_rule: sow_rule in (
-             gi.SowRule.SOW_CAPT_ALL,
-             gi.SowRule.OWN_SOW_CAPT_ALL),
-         'Capture on Laps': lambda sow_rule: sow_rule in (
-             gi.SowRule.LAP_CAPT,
-             gi.SowRule.LAP_CAPT_OPP_GETS,
-             gi.SowRule.LAP_CAPT_SEEDS),
-         'Skip some holes': lambda sow_rule: sow_rule in (
-             gi.SowRule.NO_SOW_OPP_NS,
-             gi.SowRule.MAX_SOW,
-             gi.SowRule.NO_OPP_CHILD,
-             gi.SowRule.OPP_CHILD_ONLY1,
-             gi.SowRule.NO_CHILDREN),
-         'Other': lambda sow_rule: sow_rule not in (
-             gi.SowRule.NONE,
-             gi.SowRule.SOW_BLKD_DIV,
-             gi.SowRule.SOW_BLKD_DIV_NR,
-             gi.SowRule.SOW_CAPT_ALL,
-             gi.SowRule.OWN_SOW_CAPT_ALL,
-             gi.SowRule.LAP_CAPT,
-             gi.SowRule.LAP_CAPT_OPP_GETS,
-             gi.SowRule.LAP_CAPT_SEEDS,
-             gi.SowRule.NO_SOW_OPP_NS,
-             gi.SowRule.MAX_SOW,
-             gi.SowRule.NO_OPP_CHILD,
-             gi.SowRule.OPP_CHILD_ONLY1,
-             gi.SowRule.NO_CHILDREN),
-        }
 
-SOWDIR = {'CW': lambda ginfo: ginfo.get(ckey.SOW_DIRECT, 1) == -1,
-          'CCW': lambda ginfo: ginfo.get(ckey.SOW_DIRECT, 1) == 1,
-          'SPLIT': lambda ginfo: not ginfo.get(ckey.SOW_DIRECT, 1),
-          'Toward Center': lambda ginfo: ginfo.get(ckey.SOW_DIRECT, 1) == \
-              gi.Direct.TOCENTER,
-          'Players Alt Dir': lambda ginfo: ginfo.get(ckey.SOW_DIRECT, 1) == 2,
-          'Even Odd Dir': lambda ginfo: ginfo.get(ckey.SOW_DIRECT, 1) == 3,
-          }
+SOW_CLOSED = (gi.SowRule.SOW_BLKD_DIV,
+              gi.SowRule.SOW_BLKD_DIV_NR)
+SOW_TAKE = (gi.SowRule.SOW_CAPT_ALL,
+            gi.SowRule.OWN_SOW_CAPT_ALL)
+SOW_LAP_CAPTS = (gi.SowRule.LAP_CAPT,
+             gi.SowRule.LAP_CAPT_OPP_GETS,
+             gi.SowRule.LAP_CAPT_SEEDS)
+SOW_SKIP = (gi.SowRule.NO_SOW_OPP_NS,
+            gi.SowRule.MAX_SOW,
+            gi.SowRule.NO_OPP_CHILD,
+            gi.SowRule.OPP_CHILD_ONLY1,
+            gi.SowRule.NO_CHILDREN)
+SOW_NOT_OTHER = (gi.SowRule.NONE, ) + SOW_CLOSED + SOW_TAKE + SOW_LAP_CAPTS + SOW_SKIP
+
+SOWRS = {'None': lambda sow_rule: not sow_rule,
+         'Sow Closed': lambda sow_rule: sow_rule in SOW_CLOSED,
+         'Take when Sowing': lambda sow_rule: sow_rule in SOW_TAKE,
+         'Capture on Laps': lambda sow_rule: sow_rule in SOW_LAP_CAPTS,
+         'Skip some holes': lambda sow_rule: sow_rule in SOW_SKIP,
+         'Other': lambda sow_rule: sow_rule not in SOW_NOT_OTHER,
+        }
 
 DYN_FEATS = {
     'No Sides': lambda ginfo: ginfo.get(ckey.NO_SIDES, 0),
@@ -150,9 +131,10 @@ DYN_FEATS = {
         (ginfo.get(ckey.NOCAPTMOVES, 0)
          or ginfo.get(ckey.PRESCRIBED, 0) == gi.SowPrescribed.ARNGE_LIMIT
          or ginfo.get(ckey.ROUND_FILL, 0) in (gi.RoundFill.SHORTEN,
-                                                   gi.RoundFill.SHORTEN_ALL)),
+                                              gi.RoundFill.SHORTEN_ALL)),
     'Repeat Turn': lambda ginfo: any([ginfo.get(ckey.CAPT_RTURN, 0),
-                                      ginfo.get(ckey.SOW_STORES, 0),
+                                      ginfo.get(ckey.SOW_STORES,
+                                                gi.SowStores.NEITHER).repeat_turn(),
                                       ginfo.get(ckey.XC_SOWN, 0)]),
     'Rounds': lambda ginfo: ginfo.get(ckey.ROUNDS, 0),
     'Round Tally': lambda ginfo: ginfo.get(ckey.GOAL, 0) in \
@@ -601,7 +583,7 @@ FILTERS = [
     FilterDesc('Board Size', DictFilter, SIZES, ckey.HOLES, 0, fcol.count),
     FilterDesc('Lap Type', EnumFilter, gi.LapSower, ckey.MLAPS, 0, fcol.value),
 
-    FilterDesc('Sow Direct', DictFilter, SOWDIR, ckey.GAME_INFO,
+    FilterDesc('Sow Direct', EnumFilter, gi.Direct, ckey.SOW_DIRECT,
                0, fcol.count),
     FilterDesc('Sow Rule', DictFilter, SOWRS, ckey.SOW_RULE, 0, fcol.value),
 

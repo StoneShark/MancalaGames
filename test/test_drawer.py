@@ -133,7 +133,6 @@ class TestSowStarter:
         assert game.unlocked[eloc]
 
 
-
     @pytest.mark.parametrize('sow_start, unlock',
                               [(False, False),
                               (False, True),
@@ -200,3 +199,30 @@ class TestSowStarter:
 
         assert sower.draw((not turn, pos, None)) == (eloc, eseeds)
         assert game.board[eloc] == esowed
+
+
+
+    @pytest.mark.parametrize('move, eloc, eseeds, eboard, estore',
+                              [((gi.F_STORE, 3), -1, 3, (4, 0, 4, 4, 0, 4), (1, 4)),
+                              ((gi.T_STORE, 4), -2, 4, (4, 0, 4, 4, 0, 4), (4, 0)),
+                              (0, 0, 4, (0, 0, 4, 4, 0, 4), (4, 4)),
+                              ])
+    def test_draw_store(self, move, eloc, eseeds, eboard, estore):
+
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
+        game_info = gi.GameInfo(evens=True,
+                                play_locs=gi.PlayLocs.BRD_OWN_STR_CHS,
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        game.board = [4, 0, 4, 4, 0, 4]
+        game.store = [4, 4]
+        game.turn = False
+
+        rloc, rseeds = game.deco.drawer.draw(move)
+        assert rloc == eloc
+        assert rseeds == eseeds
+        assert game.board == list(eboard)
+        assert game.store == list(estore)

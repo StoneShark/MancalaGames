@@ -446,12 +446,16 @@ Allow making children in opposite end holes but prohibit making children in oppo
 <p><b class="enum">Origin</b>: traditional 
 <p><b class="enum">Region</b>: Western Africa 
 <h3 id="Azigo" class="game_desc">Azigo</h3>
-<p>Sow counter-clockwise from any hole or your store but only on your side of the board. You may choose the number of seeds to sow from your start hole. If there is one seed in the start hole move it forward,  otherwise leave one seed in the start hole. 
+<p>Sow counter-clockwise from any hole or your store but only on your side of the board. You may choose the number of seeds to sow from your start hole. If there is one seed in the start hole move it forward, otherwise leave one seed in the start hole. 
 <p>Capture on 1s, 3s and 5s across from the final hole sown. Do multiple captures as long as holes have 1, 3 or 5 seeds in a chain in the opposite of the sow direction. The captures are done no matter how many seeds are in the holes on your side of the board. 
 <p>Goal: be the last player to move. 
 <p>Variations: 
 <ul><li class="helptext">
 board sizes of 8 to 20 holes per side. 
+<li class="helptext">
+when sowing from the store all seeds must be sown (<a href="game_params.html#play_locs">PLAY_LOCS</a>). 
+<li class="helptext">
+remove 3s from the capture on values. 
 <li class="helptext">
 sow both sides of the board (<a href="game_params.html#game_class">GAME_CLASS</a> of Mancala) and capture direction (<a href="game_params.html#capt_dir">CAPT_DIR</a>) is sow direction. 
 </ul>
@@ -478,6 +482,8 @@ sow both sides of the board (<a href="game_params.html#game_class">GAME_CLASS</a
 <p><b class="enum">Rules</b>: <a href="https://mancala.fandom.com/wiki/Azigo" target="_blank">https://mancala.fandom.com/wiki/Azigo</a> 
 <p><b class="enum">Deviation</b>: The number of store seeds are shown; but in physical play the seeds are hidden. 
 <p><b class="enum">Reference</b>: <a href="https://ludii.games/details.php?keyword=Azigo" target="_blank">https://ludii.games/details.php?keyword=Azigo</a> <a href="https://ludii.games/details.php?keyword=Okwe%20(Nigeria)" target="_blank">https://ludii.games/details.php?keyword=Okwe%20(Nigeria)</a> 
+<p><b class="enum">Origin</b>: traditional 
+<p><b class="enum">Region</b>: Eastern Africa 
 <p><b class="enum">Note</b>: All possible moves from stores are considered by the AI player, this results in a large branching factor and makes the AI players slow. 
 <h3 id="Ba-awa" class="game_desc">Ba-awa</h3>
 <p>A territory game. 
@@ -643,7 +649,7 @@ a different start pattern
 <p>Goal: collect more than half of the seeds. 
 <p>Variations: 
 <ul><li class="helptext">
-<nolink>Bohnenspiel::Rounds - play in rounds to 100 points  
+<nolink>Bohnenspiel::Rounds - play in rounds to 100 points 
 <li class="helptext">
 remove multiple capture 
 </ul>
@@ -916,10 +922,10 @@ sow both stores.
 <p><b class="enum">Origin</b>: modern 
 <p><b class="enum">Region</b>: Americas 
 <h3 id="CrossCapt_Eight" class="game_desc">CrossCapt_Eight</h3>
-<p>Sow counter-clockwise in multilaps using the hole after the final seed sown to continue.   Sow own store.  Repeat turn if last seed is sown into the player's own store. 
-<p>If the final seed of a lap ends in an empty hole  on the player's side of the board,  capture any seeds across from it and take the final seed sown. 
-<p>If the final seed of a lap ends in a player's rightmost hole and they cannot capture the seeds across the board,  they must continue sowing with the seeds from their store. 
-<p>If a player clears all of their own seeds,  they capture all their opponent's seeds that are still in play and the game ends. 
+<p>Sow counter-clockwise in multilaps using the hole after the final seed sown to continue. Sow own store. Repeat turn if last seed is sown into the player's own store. 
+<p>If the final seed of a lap ends in an empty hole on the player's side of the board, capture any seeds across from it and take the final seed sown. 
+<p>If the final seed of a lap ends in a player's rightmost hole and they cannot capture the seeds across the board, they must continue sowing with the seeds from their store. 
+<p>If a player clears all of their own seeds, they capture all their opponent's seeds that are still in play and the game ends. 
 <p>Goal: capture the most seeds. 
 <div class="cols_row">
   <div class="column2">
@@ -943,14 +949,14 @@ sow both stores.
 <p><b class="enum">Origin</b>: modern 
 <p><b class="enum">Region</b>: Americas 
 <h3 id="CrossCapt_Nine" class="game_desc">CrossCapt_Nine</h3>
-<p>Sow counter-clockwise in single lap.  
+<p>Sow counter-clockwise in single lap. 
 <p>Sow both stores: 
 <ul><li class="helptext">
 If last seed is sown into the player's own store, take a repeat turn. 
 <li class="helptext">
 If last seed is sown into the opponent's store, capture the seeds in their store. 
 </ul>
-<p>Cross capture when seed lands in empty hole on your side of the board.  
+<p>Cross capture when seed lands in empty hole on your side of the board. 
 <p>If you clear all of your own seeds, you capture all of your opponent's seeds that are still in play and the game ends. 
 <p>Goal: capture the most seeds (more than half). 
 <div class="cols_row">
@@ -1047,7 +1053,7 @@ Do not pick own seed on cross capture.
 <li class="helptext">
 Allow moves to start from any hole on your side of the board. 
 <li class="helptext">
-<nolink>Dabuda::Two:  Valdez describes a multilap variant that has  6 holes per side, does not pick own seed on capture, and allows moves to start in any hole. 
+<nolink>Dabuda::Two:  Valdez describes a multilap variant that has 6 holes per side, does not pick own seed on capture, and allows moves to start in any hole. 
 </ul>
 <div class="cols_row">
   <div class="column2">
@@ -1576,8 +1582,8 @@ Instead of a minimum move of 2, singletons may start moves if all holes are empt
   </div>
 </div>
 <p><b class="enum">Rules</b>: Russ, Laurence. Mancala Games. 1984. p37. 
-<p><b class="enum">Deviation 1</b>: There is a contraction in the rules: rounds continue until one player  is reduced to 4 or fewer seeds (bottom p39) but on game setup each hole  must contain one seed and be playable (9 seeds) (middle p39).  The game ends on fewer than 9 seeds. 
-<p><b class="enum">Deviation 2</b>: Choosing to shorten the board is not supported in Mancala Games.  <a href="game_params.html#round_fill">ROUND_FILL</a> of SHORTEN is not a user choice. 
+<p><b class="enum">Deviation 1</b>: There is a contraction in the rules: rounds continue until one player is reduced to 4 or fewer seeds (bottom p39) but on game setup each hole must contain one seed and be playable (9 seeds) (middle p39). The game ends on fewer than 9 seeds. 
+<p><b class="enum">Deviation 2</b>: Choosing to shorten the board is not supported in Mancala Games. <a href="game_params.html#round_fill">ROUND_FILL</a> of SHORTEN is not a user choice. 
 <p><b class="enum">Origin</b>: traditional 
 <p><b class="enum">Region</b>: Eastern Africa 
 <h3 id="Goat" class="game_desc">Goat</h3>
@@ -1886,8 +1892,8 @@ Use the random or random with empty holes <a href="game_params.html#start_patter
   </div>
 </div>
 <p><b class="enum">Rules</b>: Hanson, Sue and Jon. All about Mancala: It's History and How to Play. 2003. p100. 
-<p><b class="enum">Deviation 1</b>: The opening moves of the first round cannot be made simultaneously  as Mancala Games does not support it. 
-<p><b class="enum">Deviation 2</b>: It is unclear from the rules what the actual end condition should  be--the possiblities are available as options. 
+<p><b class="enum">Deviation 1</b>: The opening moves of the first round cannot be made simultaneously as Mancala Games does not support it. 
+<p><b class="enum">Deviation 2</b>: It is unclear from the rules what the actual end condition should be--the possiblities are available as options. 
 <p><b class="enum">Origin</b>: traditional 
 <p><b class="enum">Region</b>: Southeast Asia 
 <h3 id="Kalah" class="game_desc">Kalah</h3>
@@ -1901,7 +1907,7 @@ Vary the number of holes and start seeds.
 <li class="helptext">
 Start game with a random placement of seeds (<a href="game_params.html#start_pattern">START_PATTERN</a> of RANDOM). <a href="game_params.html#nbr_start">NBR_START</a> should be the total number of seeds to be placed. Note that with a random opening, a swap sides (pie rule) may be done on either of the two opening moves (only one swap side per game). <a href="about_games.html#Random-Kalah">Random-Kalah</a> is a preconfigured game played in tallied rounds to equalize results of the random opening. 
 <li class="helptext">
-<nolink>Kalah::Maybe_Fair - Start the game with the seeds placed so  that the first player cannot get a repeat turn and the second player will only be able to get a repeat turn, if the first player made that possible (<a href="game_params.html#start_pattern">START_PATTERN</a> of NO_REPEAT_SOW_OWN). 
+<nolink>Kalah::Maybe_Fair - Start the game with the seeds placed so that the first player cannot get a repeat turn and the second player will only be able to get a repeat turn, if the first player made that possible (<a href="game_params.html#start_pattern">START_PATTERN</a> of NO_REPEAT_SOW_OWN). 
 <li class="helptext">
 If all of your opponents seeds are in one hole and you capture them, your opponent gets all of your seeds for the game tally (<a href="game_params.html#grandslam">GRANDSLAM</a> of OPP_GET_REMAINING). 
 <li class="helptext">
@@ -3436,7 +3442,7 @@ played on boards from 7 to 13 holes per side.
   </div>
 </div>
 <p><b class="enum">Rules</b>: Russ, Laurence. Mancala Games. 1984. p33. 
-<p><b class="enum">Deviation</b>: Round tally goal is used so that the round loser can start each new game.  In play without rounds, the starter always alternates. 
+<p><b class="enum">Deviation</b>: Round tally goal is used so that the round loser can start each new game. In play without rounds, the starter always alternates. 
 <p><b class="enum">Origin</b>: traditional 
 <p><b class="enum">Region</b>: Eastern Africa 
 <h3 id="Sadeqa II" class="game_desc">Sadeqa II</h3>
@@ -3520,7 +3526,7 @@ board size 10 holes per side
 <h3 id="SameSide" class="game_desc">SameSide</h3>
 <p>Sow counter-clockwise but only on your own side of the board. 
 <p>Multiple capture on evens but place captured seeds in opponent's hole of your choice. 
-<p>A move has the typical draw, sow and check capture phases. If there is a capture (but not a win),  another user input is accepted to identify where the capture seeds should be put. 
+<p>A move has the typical draw, sow and check capture phases. If there is a capture (but not a win), another user input is accepted to identify where the capture seeds should be put. 
 <p>The game is played in tallied rounds. Win a round by clearing your own side of the board. Win the game with 3 round wins (best of 5). 
 <div class="cols_row">
   <div class="column2">
@@ -3578,7 +3584,7 @@ board size 10 holes per side
 <ul><li class="helptext">
 <nolink>SimpleCapt::Anywhere - Allow moves from any holes on the board. Don't end the game until one player has won or there is a tie. 
 <li class="helptext">
-<nolink>SimpleCapt::LastCapt - capture the last seed sown  when it ends in an empty hole on your own side of the board (<a href="game_params.html#capt_max">CAPT_MAX</a> of 1 and <a href="game_params.html#capt_side">CAPT_SIDE</a> of OWN). 
+<nolink>SimpleCapt::LastCapt - capture the last seed sown when it ends in an empty hole on your own side of the board (<a href="game_params.html#capt_max">CAPT_MAX</a> of 1 and <a href="game_params.html#capt_side">CAPT_SIDE</a> of OWN). 
 <li class="helptext">
 <a href="about_games.html#SimpleCapt_PCapt">SimpleCapt_PCapt</a> is a multilap sow variant where your opponent may passively capture the contents of your store when your final seed of a sow ends on their side in an empty hole! 
 <li class="helptext">
@@ -3679,7 +3685,7 @@ sow in multiple-laps (<a href="game_params.html#sow_direct">SOW_DIRECT</a> of LA
 <p><b class="enum">References</b>: <txt> <a href="https://mancala.fandom.com/wiki/Songo_Douala" target="_blank">https://mancala.fandom.com/wiki/Songo_Douala</a> <a href="https://mancala.fandom.com/wiki/Songo_Ewondo" target="_blank">https://mancala.fandom.com/wiki/Songo_Ewondo</a> 
 <h3 id="SowOpDirs" class="game_desc">SowOpDirs</h3>
 <p>The first player picks their sow direction for the game. The second player will sow in the opposite direction for the game. 
-<p>Capture on either side on evens. Players must pass if they do not have  a valid move. 
+<p>Capture on either side on evens. Players must pass if they do not have a valid move. 
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  5</p>
@@ -3791,8 +3797,8 @@ don't sow in multiple laps
 <h3 id="Tegre" class="game_desc">Tegre</h3>
 <p>Sow counter-clockwise in multiple laps. Continue lapping until the last seed falls into an empty hole. 
 <p>The turn ends if: 
-<p>   1. If that hole is on your opponent's side of the board 
-<p>   2. If that hole is on your side of the board and the opponent's hole opposite is empty 
+<p>1. If that hole is on your opponent's side of the board 
+<p>2. If that hole is on your side of the board and the opponent's hole opposite is empty 
 <p>If there are seeds opposite that hole, capture them and then continue the lap sowing with the single seed. Instead of simply stopping multi- lap sowing for captures as many other multi-lap games, capturing continues the multi-lap sowing. 
 <p>A round ends when one player cannot move. Seeds left on the board are allocated to the player that performed the last move. To setup for the next round, each player fills as many holes on their side of the board as they can with 4 seeds each and any leftover seeds are put into their store. The unoccupied holes are available for play during the round. 
 <p>The game ends when one player cannot fill 4 holes. 
@@ -3850,9 +3856,9 @@ Only one tuzdik may be made per player.
 Must be in the right 8 holes on the opposite side of the board (right as viewed by the player making the child). 
 <li class="helptext">
 Tuzdiks cannot be symetrically opposite eachother. Specifically, tuzdiks may not be made in the same numbered holes: 
-<p class="helptext"> 9 8 7 6 5 4 3 2 1 
-<p class="helptext"> 1 2 3 4 5 6 7 8 9 
 </ul>
+<p>+ 9 8 7 6 5 4 3 2 1 
+<p>+ 1 2 3 4 5 6 7 8 9 
 <p><nolink>Toguz Kumalak (nine pebbles) is also known as Toguz Korgool (nine dung balls). This is intended to be the rules used by the World Nomad Games. 
 <p>Variations: 
 <ul><li class="helptext">
@@ -3991,7 +3997,7 @@ played on smaller boards where the number of seeds per hole is the same as the n
 <h3 id="Voleur" class="game_desc">Voleur</h3>
 <p>Sow counter-clockwise in a single lap, always capture the seeds from the final hole sown. 
 <p>Goal: collect the most seeds. 
-<p>Variation:  
+<p>Variation: 
 <ul><li class="helptext">
 <nolink>Voleur::Evens - capture on evens 
 </ul>

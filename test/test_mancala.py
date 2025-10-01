@@ -494,6 +494,48 @@ class TestConstruction:
         assert game.board == [0, 4, 0, 4, 0, 4, 0, 4]
 
 
+class TestIndex:
+
+    @pytest.fixture
+    def game(self):
+
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=6)
+        game_info = gi.GameInfo(capt_on=[2],
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        return game
+
+
+    def test_get_index(self, game):
+
+        game.board = list(range(12))
+        game.store = [20, 21]
+
+        evals = [21, 20, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+
+        for sloc in range(-2, 12):
+            assert game[sloc] == evals[sloc + 2]
+
+
+    def test_set_index(self, game):
+
+        assert game.board == [4] * 12
+        assert game.store == [0, 0]
+
+        game[gi.T_STORE] = 21
+        game[gi.F_STORE] = 20
+
+        for sloc in range(12):
+            game[sloc] = sloc
+
+        assert game.board == list(range(12))
+        assert game.store == [20, 21]
+
+
+
 class TestBasicIfs:
 
     @pytest.fixture

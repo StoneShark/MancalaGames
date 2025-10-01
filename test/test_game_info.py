@@ -131,11 +131,22 @@ class TestEnumsClasses:
         assert isinstance(tup, tuple)
         assert str(tup) == '(False, 2, None)'
 
+        tup = gi.MoveTpl(gi.T_STORE, 5)
+        assert isinstance(tup, tuple)
+        assert str(tup) == '(T_STORE, 5)'
+
+        tup = gi.MoveTpl(gi.F_STORE, 2)
+        assert isinstance(tup, tuple)
+        assert str(tup) == '(F_STORE, 2)'
+
 
     def test_sow_stores(self):
 
         assert gi.SowStores.BOTH.sow_both()
         assert not gi.SowStores.OWN.sow_both()
+
+        assert gi.SowStores.BOTH.repeat_turn()
+        assert not gi.SowStores.OWN_NR.repeat_turn()
 
 
 class TestConstruction:

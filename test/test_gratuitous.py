@@ -16,7 +16,7 @@ from context import move_data
 
 # %%
 
-TEST_COVERS = ['src\\same_side.py']
+TEST_COVERS = ['src\\gratuitous.py']
 
 # %% constants
 

@@ -82,6 +82,9 @@ CONVERT_DICT = {'N': None,
                 'KRIGHT': gi.GrandSlam.LEAVE_RIGHT,
                 'LSHARE': gi.GrandSlam.LEGAL_SHARE,
 
+                '1_0s': gi.XCaptType.ONE_ZEROS,
+                'ANY': gi.XCaptType.ANY,
+
                 'NEXT': gi.CaptType.NEXT,
                 'TWOOUT': gi.CaptType.TWO_OUT,
                 'MOPP': gi.CaptType.MATCH_OPP,
@@ -1898,12 +1901,11 @@ class TestCaptStartNegative:
         assert game.store == eturn
 
 
-
 # %% bad enums
 
 class TestBadEnums:
 
-    def test_bad_cross_capt(self):
+    def test_bad_cross_capt_1(self):
 
         game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[4],
@@ -1913,6 +1915,19 @@ class TestBadEnums:
 
         object.__setattr__(game_info, 'crosscapt', True)
         object.__setattr__(game_info, 'xcpickown', 12)
+
+        with pytest.raises(NotImplementedError):
+            mancala.Mancala(game_consts, game_info)
+
+    def test_bad_cross_capt_2(self):
+
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(capt_on=[4],
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        object.__setattr__(game_info, 'crosscapt', 12)
 
         with pytest.raises(NotImplementedError):
             mancala.Mancala(game_consts, game_info)

@@ -30,12 +30,16 @@
    },
    "vari_params": {
       "holes": "include",
+      "capt_on": "include",
+      "play_locs": [ 1, 2 ],
       "game_class": [ "Mancala", "NorthSouthCycle" ],
       "capt_dir": [ 0, 1 ]
    },
    "rules": "https://mancala.fandom.com/wiki/Azigo",
    "deviation": "The number of store seeds are shown; but in physical play the seeds are hidden.",
    "reference": "https://ludii.games/details.php?keyword=Azigo https://ludii.games/details.php?keyword=Okwe%20(Nigeria)",
+   "origin": "traditional",
+   "region": "Eastern Africa",
    "note": "<text_section>"
 }
 <text_section>
@@ -58,6 +62,10 @@ Goal: be the last player to move.
 Variations:
 
 - board sizes of 8 to 20 holes per side.
+
+- when sowing from the store all seeds must be sown (PLAY_LOCS).
+
+- remove 3s from the capture on values.
 
 - sow both sides of the board (GAME_CLASS of Mancala) and
 capture direction (CAPT_DIR) is sow direction.

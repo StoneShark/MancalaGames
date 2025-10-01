@@ -7,7 +7,7 @@
    "game_info": {
       "name": "CrossCapt_Eight",
       "about": "<text_section>",
-      "crosscapt": true,
+      "crosscapt": 1,
       "end_cond": 1,
       "mlaps": 2,
       "capt_side": 1,
@@ -34,19 +34,19 @@
 <text_section>
 <about>
 Sow counter-clockwise in multilaps using the hole after the final seed sown
-to continue.  
-Sow own store. 
+to continue.
+Sow own store.
 Repeat turn if last seed is sown into the player's own store.
 
-If the final seed of a lap ends in an empty hole 
-on the player's side of the board, 
+If the final seed of a lap ends in an empty hole
+on the player's side of the board,
 capture any seeds across from it and take the final seed sown.
 
 If the final seed of a lap ends in a player's rightmost hole
-and they cannot capture the seeds across the board, 
+and they cannot capture the seeds across the board,
 they must continue sowing with the seeds from their store.
 
-If a player clears all of their own seeds, 
+If a player clears all of their own seeds,
 they capture all their opponent's seeds that are still in play and the game ends.
 
 Goal: capture the most seeds.

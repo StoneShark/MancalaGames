@@ -30,13 +30,16 @@ N = None
 CW = gi.Direct.CW
 CCW = gi.Direct.CCW
 
+# player ids for east west games
+WEST = True
+EAST = False
 
 
-class TestNorthSouthIncr:
-    """Test for NorthSouthIncr."""
+class TestNSIncrs:
+    """Test the North South two_cycle incrementers."""
 
     @pytest.fixture
-    def game(self):
+    def nsgame(self):
 
         game_consts = gconsts.GameConsts(nbr_start=2, holes=5)
         game_info = gi.GameInfo(capt_on=[2],
@@ -48,42 +51,343 @@ class TestNorthSouthIncr:
                                 rules=two_cycle.NorthSouthCycle.rules)
 
         game = two_cycle.NorthSouthCycle(game_consts, game_info)
-        game.turn = False
         return game
 
 
-    def test_incr(self, game):
+    def test_ns_incr(self, nsgame):
 
-        object.__setattr__(game.info, ckey.SOW_DIRECT, gi.Direct.CW)
-        incr = two_cycle.NorthSouthIncr(game)
+        incr = two_cycle.NorthSouthIncr(nsgame)
 
-        assert incr.incr(0, gi.Direct.CW, None) == 4
-        assert incr.incr(1, gi.Direct.CW, None) == 0
-        assert incr.incr(2, gi.Direct.CW, None) == 1
-        assert incr.incr(3, gi.Direct.CW, None) == 2
-        assert incr.incr(4, gi.Direct.CW, None) == 3
+        assert incr.incr(0, CW, None) == 4
+        assert incr.incr(1, CW, None) == 0
+        assert incr.incr(2, CW, None) == 1
+        assert incr.incr(3, CW, None) == 2
+        assert incr.incr(4, CW, None) == 3
 
-        assert incr.incr(5, gi.Direct.CW, None) == 9
-        assert incr.incr(6, gi.Direct.CW, None) == 5
-        assert incr.incr(7, gi.Direct.CW, None) == 6
-        assert incr.incr(8, gi.Direct.CW, None) == 7
-        assert incr.incr(9, gi.Direct.CW, None) == 8
+        assert incr.incr(5, CW, None) == 9
+        assert incr.incr(6, CW, None) == 5
+        assert incr.incr(7, CW, None) == 6
+        assert incr.incr(8, CW, None) == 7
+        assert incr.incr(9, CW, None) == 8
 
-        object.__setattr__(game.info, ckey.SOW_DIRECT, gi.Direct.CCW)
-        incr = two_cycle.NorthSouthIncr(game)
+        assert incr.incr(0, CCW, None) == 1
+        assert incr.incr(1, CCW, None) == 2
+        assert incr.incr(2, CCW, None) == 3
+        assert incr.incr(3, CCW, None) == 4
+        assert incr.incr(4, CCW, None) == 0
 
-        assert incr.incr(0, gi.Direct.CCW, None) == 1
-        assert incr.incr(1, gi.Direct.CCW, None) == 2
-        assert incr.incr(2, gi.Direct.CCW, None) == 3
-        assert incr.incr(3, gi.Direct.CCW, None) == 4
-        assert incr.incr(4, gi.Direct.CCW, None) == 0
+        assert incr.incr(5, CCW, None) == 6
+        assert incr.incr(6, CCW, None) == 7
+        assert incr.incr(7, CCW, None) == 8
+        assert incr.incr(8, CCW, None) == 9
+        assert incr.incr(9, CCW, None) == 5
 
 
-        assert incr.incr(5, gi.Direct.CCW, None) == 6
-        assert incr.incr(6, gi.Direct.CCW, None) == 7
-        assert incr.incr(7, gi.Direct.CCW, None) == 8
-        assert incr.incr(8, gi.Direct.CCW, None) == 9
-        assert incr.incr(9, gi.Direct.CCW, None) == 5
+
+    def test_ns_sown_incr(self, nsgame):
+
+        incr = two_cycle.NSIncOwnStores(nsgame)
+
+        assert incr.incr(0, CW, False) == gi.F_STORE
+        assert incr.incr(1, CW, False) == 0
+        assert incr.incr(2, CW, False) == 1
+        assert incr.incr(3, CW, False) == 2
+        assert incr.incr(4, CW, False) == 3
+        assert incr.incr(gi.F_STORE, CW, False) == 4
+
+        assert incr.incr(5, CW, True) == gi.T_STORE
+        assert incr.incr(6, CW, True) == 5
+        assert incr.incr(7, CW, True) == 6
+        assert incr.incr(8, CW, True) == 7
+        assert incr.incr(9, CW, True) == 8
+        assert incr.incr(gi.T_STORE, CW, True) == 9
+
+        assert incr.incr(0, CCW, False) == 1
+        assert incr.incr(1, CCW, False) == 2
+        assert incr.incr(2, CCW, False) == 3
+        assert incr.incr(3, CCW, False) == 4
+        assert incr.incr(4, CCW, False) == gi.F_STORE
+        assert incr.incr(gi.F_STORE, CCW, False) == 0
+
+        assert incr.incr(5, CCW, True) == 6
+        assert incr.incr(6, CCW, True) == 7
+        assert incr.incr(7, CCW, True) == 8
+        assert incr.incr(8, CCW, True) == 9
+        assert incr.incr(9, CCW, True) == gi.T_STORE
+        assert incr.incr(gi.T_STORE, CCW, True) == 5
+
+
+    def test_ns_sboth_incr(self, nsgame):
+
+        incr = two_cycle.NSIncBothStores(nsgame)
+
+        assert incr.incr(gi.T_STORE, CCW, False) == 0
+        assert incr.incr(0, CCW, False) == 1
+        assert incr.incr(1, CCW, False) == 2
+        assert incr.incr(2, CCW, False) == 3
+        assert incr.incr(3, CCW, False) == 4
+        assert incr.incr(4, CCW, False) == gi.F_STORE
+        assert incr.incr(gi.F_STORE, CCW, False) == gi.T_STORE
+
+        assert incr.incr(9, CCW, True) == gi.T_STORE
+        assert incr.incr(8, CCW, True) == 9
+        assert incr.incr(7, CCW, True) == 8
+        assert incr.incr(6, CCW, True) == 7
+        assert incr.incr(5, CCW, True) == 6
+        assert incr.incr(gi.F_STORE, CCW, True) == 5
+        assert incr.incr(gi.T_STORE, CCW, True) == gi.F_STORE
+
+        assert incr.incr(gi.T_STORE, CW, False) == gi.F_STORE
+        assert incr.incr(gi.F_STORE, CW, False) == 4
+        assert incr.incr(4, CW, False) == 3
+        assert incr.incr(3, CW, False) == 2
+        assert incr.incr(2, CW, False) == 1
+        assert incr.incr(1, CW, False) == 0
+        assert incr.incr(0, CW, False) == gi.T_STORE
+
+        assert incr.incr(gi.T_STORE, CW, True) == 9
+        assert incr.incr(gi.F_STORE, CW, True) == gi.T_STORE
+        assert incr.incr(5, CW, True) == gi.F_STORE
+        assert incr.incr(6, CW, True) == 5
+        assert incr.incr(7, CW, True) == 6
+        assert incr.incr(8, CW, True) == 7
+        assert incr.incr(9, CW, True) == 8
+
+
+    def test_ns_sfrom_incr(self, nsgame):
+
+        incr = two_cycle.NSIncFromStores(nsgame)
+
+        # these first sets are the same as test_ns_incr
+        # BUT direction matters here
+        assert incr.incr(0, CW, False) == 4
+        assert incr.incr(1, CW, False) == 0
+        assert incr.incr(2, CW, False) == 1
+        assert incr.incr(3, CW, False) == 2
+        assert incr.incr(4, CW, False) == 3
+
+        assert incr.incr(5, CW, True) == 9
+        assert incr.incr(6, CW, True) == 5
+        assert incr.incr(7, CW, True) == 6
+        assert incr.incr(8, CW, True) == 7
+        assert incr.incr(9, CW, True) == 8
+
+        assert incr.incr(0, CCW, False) == 1
+        assert incr.incr(1, CCW, False) == 2
+        assert incr.incr(2, CCW, False) == 3
+        assert incr.incr(3, CCW, False) == 4
+        assert incr.incr(4, CCW, False) == 0
+
+        assert incr.incr(5, CCW, True) == 6
+        assert incr.incr(6, CCW, True) == 7
+        assert incr.incr(7, CCW, True) == 8
+        assert incr.incr(8, CCW, True) == 9
+        assert incr.incr(9, CCW, True) == 5
+
+        # these sow from the stores into the cycles above
+        assert incr.incr(gi.F_STORE, CW, False) == 4
+        assert incr.incr(gi.F_STORE, CCW, False) == 0
+        assert incr.incr(gi.T_STORE, CCW, True) == 5
+        assert incr.incr(gi.T_STORE, CW, True) == 9
+
+
+    DCASES = [
+        (gi.SowStores.NEITHER, gi.PlayLocs.BOARD_ONLY, two_cycle.NorthSouthIncr),
+        (gi.SowStores.OWN, gi.PlayLocs.BOARD_ONLY, two_cycle.NSIncOwnStores),
+        (gi.SowStores.BOTH, gi.PlayLocs.BOARD_ONLY, two_cycle.NSIncBothStores),
+
+        (gi.SowStores.NEITHER, gi.PlayLocs.BRD_OWN_STR_ALL, two_cycle.NSIncFromStores),
+        (gi.SowStores.OWN, gi.PlayLocs.BRD_OWN_STR_ALL, two_cycle.NSIncOwnStores),
+        (gi.SowStores.BOTH, gi.PlayLocs.BRD_OWN_STR_ALL, two_cycle.NSIncBothStores),
+
+        (gi.SowStores.NEITHER, gi.PlayLocs.BRD_OWN_STR_CHS, two_cycle.NSIncFromStores),
+        (gi.SowStores.OWN, gi.PlayLocs.BRD_OWN_STR_CHS, two_cycle.NSIncOwnStores),
+        (gi.SowStores.BOTH, gi.PlayLocs.BRD_OWN_STR_CHS, two_cycle.NSIncBothStores),
+        ]
+
+    @pytest.mark.parametrize('sow_stores, play_locs, incr_class',
+                             DCASES)
+    def test_ns_build(self, sow_stores, play_locs, incr_class):
+
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(capt_on=[2],
+                                stores=True,
+                                sow_stores=sow_stores,
+                                play_locs=play_locs,
+                                nbr_holes=game_consts.holes,
+                                rules=two_cycle.NorthSouthCycle.rules)
+        game = two_cycle.NorthSouthCycle(game_consts, game_info)
+
+        assert isinstance(game.deco.incr, incr_class)
+
+
+class TestEWIncrs:
+    """Test the East West two_cycle incrementers."""
+
+    @pytest.fixture
+    def ewgame(self):
+
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
+        game_info = gi.GameInfo(capt_on=[2],
+                                stores=True,
+                                goal=gi.Goal.CLEAR,
+                                skip_start=True,
+                                capt_side=gi.CaptSide.OWN_SIDE,
+                                nbr_holes=game_consts.holes,
+                                rules=two_cycle.EastWestCycle.rules)
+
+        game = two_cycle.EastWestCycle(game_consts, game_info)
+        return game
+
+
+    def test_ew_incr(self, ewgame):
+
+        incr = two_cycle.EastWestIncr(ewgame)
+
+        assert incr.incr(0, CW, WEST) == 7
+        assert incr.incr(1, CW, WEST) == 0
+        assert incr.incr(6, CW, WEST) == 1
+        assert incr.incr(7, CW, WEST) == 6
+
+        assert incr.incr(2, CW, EAST) == 5
+        assert incr.incr(3, CW, EAST) == 2
+        assert incr.incr(4, CW, EAST) == 3
+        assert incr.incr(5, CW, EAST) == 4
+
+        assert incr.incr(0, CCW, WEST) == 1
+        assert incr.incr(1, CCW, WEST) == 6
+        assert incr.incr(6, CCW, WEST) == 7
+        assert incr.incr(7, CCW, WEST) == 0
+
+        assert incr.incr(2, CCW, EAST) == 3
+        assert incr.incr(3, CCW, EAST) == 4
+        assert incr.incr(4, CCW, EAST) == 5
+        assert incr.incr(5, CCW, EAST) == 2
+
+
+    def test_ew_sown_incr(self, ewgame):
+
+        incr = two_cycle.EWIncOwnStores(ewgame)
+
+        assert incr.incr(0, CW, WEST) == gi.T_STORE
+        assert incr.incr(1, CW, WEST) == 0
+        assert incr.incr(6, CW, WEST) == 1
+        assert incr.incr(7, CW, WEST) == 6
+        assert incr.incr(gi.T_STORE, CW, WEST) == 7
+
+        assert incr.incr(2, CW, EAST) == 5
+        assert incr.incr(3, CW, EAST) == 2
+        assert incr.incr(4, CW, EAST) == gi.F_STORE
+        assert incr.incr(5, CW, EAST) == 4
+        assert incr.incr(gi.F_STORE, CW, EAST) == 3
+
+        assert incr.incr(0, CCW, WEST) == 1
+        assert incr.incr(1, CCW, WEST) == 6
+        assert incr.incr(6, CCW, WEST) == 7
+        assert incr.incr(7, CCW, WEST) == gi.T_STORE
+        assert incr.incr(gi.T_STORE, CCW, WEST) == 0
+
+        assert incr.incr(2, CCW, EAST) == 3
+        assert incr.incr(3, CCW, EAST) == gi.F_STORE
+        assert incr.incr(4, CCW, EAST) == 5
+        assert incr.incr(5, CCW, EAST) == 2
+        assert incr.incr(gi.F_STORE, CCW, EAST) == 4
+
+
+    def test_ew_sboth_incr(self, ewgame):
+
+        incr = two_cycle.EWIncBothStores(ewgame)
+
+        assert incr.incr(0, CW, WEST) == gi.T_STORE
+        assert incr.incr(gi.T_STORE, CW, WEST) == 7
+        assert incr.incr(7, CW, WEST) == 6
+        assert incr.incr(6, CW, WEST) == gi.F_STORE
+        assert incr.incr(gi.F_STORE, CW, WEST) == 1
+        assert incr.incr(1, CW, WEST) == 0
+
+        assert incr.incr(0, CCW, WEST) == 1
+        assert incr.incr(1, CCW, WEST) == gi.F_STORE
+        assert incr.incr(gi.F_STORE, CCW, WEST) == 6
+        assert incr.incr(6, CCW, WEST) == 7
+        assert incr.incr(7, CCW, WEST) == gi.T_STORE
+        assert incr.incr(gi.T_STORE, CCW, WEST) == 0
+
+        assert incr.incr(2, CW, EAST) == gi.T_STORE
+        assert incr.incr(gi.T_STORE, CW, EAST) == 5
+        assert incr.incr(5, CW, EAST) == 4
+        assert incr.incr(4, CW, EAST) == gi.F_STORE
+        assert incr.incr(gi.F_STORE, CW, EAST) == 3
+        assert incr.incr(3, CW, EAST) == 2
+
+        assert incr.incr(2, CCW, EAST) == 3
+        assert incr.incr(3, CCW, EAST) == gi.F_STORE
+        assert incr.incr(gi.F_STORE, CCW, EAST) == 4
+        assert incr.incr(4, CCW, EAST) == 5
+        assert incr.incr(5, CCW, EAST) == gi.T_STORE
+        assert incr.incr(gi.T_STORE, CCW, EAST) == 2
+
+
+    def test_ew_sfrom_incr(self, ewgame):
+
+        incr = two_cycle.EWIncFromStores(ewgame)
+
+        # these first sets are the same as test_ew_incr
+        # BUT direction matters here
+        assert incr.incr(0, CW, WEST) == 7
+        assert incr.incr(1, CW, WEST) == 0
+        assert incr.incr(6, CW, WEST) == 1
+        assert incr.incr(7, CW, WEST) == 6
+
+        assert incr.incr(2, CW, EAST) == 5
+        assert incr.incr(3, CW, EAST) == 2
+        assert incr.incr(4, CW, EAST) == 3
+        assert incr.incr(5, CW, EAST) == 4
+
+        assert incr.incr(0, CCW, WEST) == 1
+        assert incr.incr(1, CCW, WEST) == 6
+        assert incr.incr(6, CCW, WEST) == 7
+        assert incr.incr(7, CCW, WEST) == 0
+
+        assert incr.incr(2, CCW, EAST) == 3
+        assert incr.incr(3, CCW, EAST) == 4
+        assert incr.incr(4, CCW, EAST) == 5
+        assert incr.incr(5, CCW, EAST) == 2
+
+        # these sow from the stores into the cycles above
+        assert incr.incr(gi.F_STORE, CW, False) == 3
+        assert incr.incr(gi.F_STORE, CCW, False) == 4
+        assert incr.incr(gi.T_STORE, CW, True) == 7
+        assert incr.incr(gi.T_STORE, CCW, True) == 0
+
+
+    DCASES = [
+        (gi.SowStores.NEITHER, gi.PlayLocs.BOARD_ONLY, two_cycle.EastWestIncr),
+        (gi.SowStores.OWN, gi.PlayLocs.BOARD_ONLY, two_cycle.EWIncOwnStores),
+        (gi.SowStores.BOTH, gi.PlayLocs.BOARD_ONLY, two_cycle.EWIncBothStores),
+
+        (gi.SowStores.NEITHER, gi.PlayLocs.BRD_OWN_STR_ALL, two_cycle.EWIncFromStores),
+        (gi.SowStores.OWN, gi.PlayLocs.BRD_OWN_STR_ALL, two_cycle.EWIncOwnStores),
+        (gi.SowStores.BOTH, gi.PlayLocs.BRD_OWN_STR_ALL, two_cycle.EWIncBothStores),
+
+        (gi.SowStores.NEITHER, gi.PlayLocs.BRD_OWN_STR_CHS, two_cycle.EWIncFromStores),
+        (gi.SowStores.OWN, gi.PlayLocs.BRD_OWN_STR_CHS, two_cycle.EWIncOwnStores),
+        (gi.SowStores.BOTH, gi.PlayLocs.BRD_OWN_STR_CHS, two_cycle.EWIncBothStores),
+        ]
+
+    @pytest.mark.parametrize('sow_stores, play_locs, incr_class',
+                             DCASES)
+    def test_ew_build(self, sow_stores, play_locs, incr_class):
+
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
+        game_info = gi.GameInfo(capt_on=[2],
+                                stores=True,
+                                sow_stores=sow_stores,
+                                play_locs=play_locs,
+                                nbr_holes=game_consts.holes,
+                                rules=two_cycle.EastWestCycle.rules)
+        game = two_cycle.EastWestCycle(game_consts, game_info)
+
+        assert isinstance(game.deco.incr, incr_class)
 
 
 

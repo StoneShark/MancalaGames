@@ -127,6 +127,67 @@ class TestGetMove:
         assert set(game.deco.moves.get_moves()) == set(eresult)
 
 
+
+    BOARDS = {'one': [(2, 2, 2, 2, 2, 2), (4, 4)],
+              'two': [(0, 0, 1, 20, 0, 0), (1, 2)],
+              'three': [(2, 0, 0, 0, 20, 0), (0, 0)],
+              }
+
+    PL_CASES = [
+
+        [gi.PlayLocs.BRD_OWN_STR_ALL, 'one', False,
+         list(range(3)) + [(gi.F_STORE, 4)]],
+        [gi.PlayLocs.BRD_OWN_STR_ALL, 'one', True,
+         list(range(3)) + [(gi.T_STORE, 4)]],
+
+        [gi.PlayLocs.BRD_OWN_STR_ALL, 'two', False, [2] + [(gi.F_STORE, 1)]],
+        [gi.PlayLocs.BRD_OWN_STR_ALL, 'two', True, [2] + [(gi.T_STORE, 2)]],
+
+        [gi.PlayLocs.BRD_OWN_STR_ALL, 'three', False, [0]],
+        [gi.PlayLocs.BRD_OWN_STR_ALL, 'three', True, [1]],
+
+
+        [gi.PlayLocs.BRD_OWN_STR_CHS, 'one', False,
+         list(range(3)) + [(gi.F_STORE, seeds) for seeds in range(1, 5)]],
+        [gi.PlayLocs.BRD_OWN_STR_CHS, 'one', True,
+         list(range(3)) + [(gi.T_STORE, seeds) for seeds in range(1, 5)]],
+
+        [gi.PlayLocs.BRD_OWN_STR_CHS, 'two', False, [2] + [(gi.F_STORE, 1)]],
+        [gi.PlayLocs.BRD_OWN_STR_CHS, 'two', True,
+         [2] + [(gi.T_STORE, 1), (gi.T_STORE, 2)]],
+
+        [gi.PlayLocs.BRD_OWN_STR_CHS, 'three', False, [0]],
+        [gi.PlayLocs.BRD_OWN_STR_CHS, 'three', True, [1]],
+        ]
+
+    @pytest.mark.parametrize('ploc, setup, turn, eresult',
+                             PL_CASES,
+                             ids=[f'{case[0].name[-3:]}-{case[1]}-{case[2]}'
+                                  for case in PL_CASES])
+    def test_plocs_moves(self, ploc, setup, turn, eresult):
+        """
+        blocked, child, mustshare, min_move are all handled by
+        allowables, don't bother with further testing."""
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(sow_direct=gi.Direct.CW,
+                                stores=True,
+                                play_locs=ploc,
+                                capt_on=[2],
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        board, store = self.BOARDS[setup]
+        game.board = list(board)
+        game.store = list(store)
+        game.turn = turn
+
+        moves = game.deco.moves.get_moves()
+        assert len(moves) == len(eresult)
+        assert set(moves) == set(eresult)
+
+
+
 class TestNoSidesMoves:
 
     @pytest.mark.parametrize('turn', [False, True])

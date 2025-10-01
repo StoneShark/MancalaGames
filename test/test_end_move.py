@@ -1115,6 +1115,19 @@ class TestEndDepImmob:
 
         return mancala.Mancala(game_consts, game_info)
 
+    @pytest.fixture
+    def mp2game(self):
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(goal=Goal.IMMOBILIZE,
+                                play_locs=gi.PlayLocs.BRD_OWN_STR_ALL,
+                                stores=True,
+                                capt_on=[4],
+                                min_move=2,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
 
     CASES = [
         # 0: Will be true's turn, but they have no moves
@@ -1202,7 +1215,8 @@ class TestEndDepImmob:
                              [('game', True),
                               ('game', False),
                               ('rndgame', False),
-                              ('mm2game', False)])
+                              ('mm2game', False),
+                              ('mp2game', False)])
     @pytest.mark.parametrize('turn, board, eresg, eresmm2, eresg_rturn',
                              CASES,
                              ids=[f'case{idx}' for idx, _ in enumerate(CASES)])
@@ -1282,6 +1296,26 @@ class TestEndDepImmob:
         assert mdata.ended
         assert not mdata.winner
         assert mdata.win_cond == gi.WinCond.TIE
+
+
+    def test_immobile_str_moves(self, mp2game):
+        """Test the case where there is only one move for False,
+        moving from the store."""
+
+        mp2game.board = [0] * 6
+        mp2game.store = [24, 0]
+
+        # true does not have a move, false wins
+        mdata = utils.make_ender_mdata(mp2game, False, False)
+        mp2game.turn = False
+        mp2game.deco.ender.game_ended(mdata)
+        assert mdata.ended
+        assert mdata.winner == False
+
+        mdata = utils.make_ender_mdata(mp2game, False, False)
+        mp2game.turn = True
+        mp2game.deco.ender.game_ended(mdata)
+        assert not mdata.ended
 
 
 class TestEndClear:
