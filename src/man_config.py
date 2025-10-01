@@ -207,7 +207,7 @@ def parse_xml(xml_lines):
         if not tag and line.strip():
             raise ValueError(f'Text not inside tag open/close at line {idx}.')
 
-        text += line
+        text += line.strip() + '\n'
 
     return xml_dict
 

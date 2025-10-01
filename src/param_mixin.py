@@ -184,6 +184,14 @@ class ParamMixin:
         return value
 
 
+    def _trim_text(self, param, raise_excp=True):
+        """Remove trailing spaces from each line."""
+
+        text = self.tktexts[param.option].get('1.0', tk.END)
+        text = [line.strip() + '\n' for line in text.split('\n')]
+        return ''.join(text)
+
+
     def pm_make_tkvar(self, param, prefix, config_dict=None):
         """Create a tk variable for param."""
 
@@ -480,7 +488,7 @@ class ParamMixin:
         values set and saved."""
 
         if param.vtype == pc.MSTR_TYPE:
-            value = self.tktexts[param.option].get('1.0', tk.END)
+            value = self._trim_text(param, raise_excp)
 
         elif param.vtype == pc.TEXTDICT:
             value = self._str_dict(param, raise_excp)
