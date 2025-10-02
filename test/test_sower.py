@@ -829,7 +829,7 @@ class TestMlap:
         return mancala.Mancala(game_consts, game_info)
 
     @pytest.fixture
-    def game3(self):
+    def game_op(self):
         """continue lapping on 6"""
         game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(stores=True,
@@ -843,7 +843,7 @@ class TestMlap:
         return mancala.Mancala(game_consts, game_info)
 
     @pytest.fixture
-    def game4(self):
+    def game_gep(self):
         """continue lapping when greter or equal to 6"""
         game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(stores=True,
@@ -855,6 +855,21 @@ class TestMlap:
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
         return mancala.Mancala(game_consts, game_info)
+
+    @pytest.fixture
+    def game_str(self):
+        """continue lapping when greter or equal to 6"""
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
+        game_info = gi.GameInfo(stores=True,
+                                mlaps=LapSower.LAPPER,
+                                sow_direct=Direct.CCW,
+                                mlap_cont=gi.SowLapCont.STOP_STORE,
+                                mlap_param=6,
+                                capt_on=[1],
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        return mancala.Mancala(game_consts, game_info)
+
 
     MLCASES = [
         # 0: no lapping
@@ -926,41 +941,44 @@ class TestMlap:
                               [2, 0, 2])),
 
         # 8: sow two laps
-        ('game3',
+        ('game_op',
          2, utils.build_board([1, 5, 3],
                               [0, 3, 2]),
          4, utils.build_board([2, 1, 5],
                               [1, 4, 1])),
         # 9: no laps
-        ('game3',
+        ('game_op',
          2, utils.build_board([1, 4, 3],
                               [0, 3, 3]),
          5, utils.build_board([2, 5, 4],
                               [0, 3, 0])),
 
         # 10: sow laps equal 6
-        ('game4',
+        ('game_gep',
          2, utils.build_board([1, 5, 3],
                               [0, 3, 2]),
          4, utils.build_board([2, 1, 5],
                               [1, 4, 1])),
 
         # 11: sow laps greater than
-        ('game4',
+        ('game_gep',
          2, utils.build_board([0, 6, 0],
                               [0, 0, 2]),
          5, utils.build_board([2, 1, 2],
                               [1, 1, 1])),
 
         # 12: no laps
-        ('game4',
+        ('game_gep',
          2, utils.build_board([1, 4, 3],
                               [0, 3, 3]),
          5, utils.build_board([2, 5, 4],
                               [0, 3, 0])),
 
+        # ('game_str',
+        #  )
+
     ]
-    # @pytest.mark.usefixtures("logger")
+    @pytest.mark.usefixtures("logger")
     @pytest.mark.parametrize('game_fixt, start_pos, board, eloc, eboard',
                              MLCASES)
     def test_mlap_sower(self, request, game_fixt,
@@ -970,14 +988,14 @@ class TestMlap:
 
         game.board = board
         game.turn = False
-        # print(game)
-        # print(game.deco.sower)
+        print(game)
+        print(game.deco.sower)
 
         mdata = move_data.MoveData(game, start_pos)
         mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(start_pos)
         mdata.direct = game.info.sow_direct
         game.deco.sower.sow_seeds(mdata)
-        # print(mdata)
+        print(mdata)
 
         assert mdata.capt_start == eloc
         assert game.board == eboard

@@ -280,7 +280,8 @@ STRING_DICTS = {
          'Only from opposite side': gi.SowLapCont.OPP_SIDE,
          'Only from own side': gi.SowLapCont.OWN_SIDE,
          'Only when opp side sown': gi.SowLapCont.VISIT_OPP,
-         'Not from stores': gi.SowLapCont.STOP_STORE,
+         'Not when end in a store': gi.SowLapCont.STOP_STORE,
+         'Not from stores': gi.SowLapCont.NOT_FROM_STORE,
          }),
 
     'StartPattern': lookup_dicts(

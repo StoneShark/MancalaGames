@@ -15,6 +15,7 @@
       "sow_stores": 1,
       "stores": true,
       "unclaimed": 2,
+      "mlap_cont": 6,
       "xcpickown": 1
    },
    "player": {
@@ -38,13 +39,17 @@ to continue.
 Sow own store.
 Repeat turn if last seed is sown into the player's own store.
 
-If the final seed of a lap ends in an empty hole
+If the final seed of a lap ends in
+
+- an empty hole
 on the player's side of the board,
 capture any seeds across from it and take the final seed sown.
 
-If the final seed of a lap ends in a player's rightmost hole
+- a player's rightmost hole
 and they cannot capture the seeds across the board,
-they must continue sowing with the seeds from their store.
+continue sowing with the seeds from their store.
+
+- a store, end the lap sowing.
 
 If a player clears all of their own seeds,
 they capture all their opponent's seeds that are still in play and the game ends.

@@ -1020,11 +1020,26 @@ class StopNotSide(LapContinuerIf):
 
 
 class StopStore(LapContinuerIf):
-    """A wrapper: stop if the sow ended in a store."""
+    """A wrapper: two enums supported:
+    STOP_STORE: stop if the last seed lands in the store
+    NOT_FROM_STORE: stop if the lap sower would continue from
+    the store (this is only different from the above condition
+    for LAPPER_NEXT)."""
+
+    def __init__(self, game, decorator):
+
+        super().__init__(game, decorator)
+        if (game.info.mlap_cont == gi.SowLapCont.NOT_FROM_STORE
+                and game.info.mlaps == gi.LapSower.LAPPER_NEXT):
+            self.test_loc = lambda mdata: self.game.deco.incr.incr(mdata.capt_start,
+                                                                   mdata.direct,
+                                                                   mdata.player)
+        else:
+            self.test_loc = lambda mdata: mdata.capt_start
 
     def do_another_lap(self, mdata):
 
-        if mdata.capt_start < 0:
+        if self.test_loc(mdata) < 0:
             return False
         return self.decorator.do_another_lap(mdata)
 
@@ -1333,7 +1348,8 @@ def _add_mlap_cont_decos(game, lap_cont):
                                  gi.SowLapCont.OPP_SIDE):
         lap_cont = StopNotSide(game, lap_cont)
 
-    elif game.info.mlap_cont == gi.SowLapCont.STOP_STORE:
+    elif game.info.mlap_cont in (gi.SowLapCont.STOP_STORE,
+                                 gi.SowLapCont.NOT_FROM_STORE):
         lap_cont = StopStore(game, lap_cont)
 
     return lap_cont

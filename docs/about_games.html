@@ -923,8 +923,14 @@ sow both stores.
 <p><b class="enum">Region</b>: Americas 
 <h3 id="CrossCapt_Eight" class="game_desc">CrossCapt_Eight</h3>
 <p>Sow counter-clockwise in multilaps using the hole after the final seed sown to continue. Sow own store. Repeat turn if last seed is sown into the player's own store. 
-<p>If the final seed of a lap ends in an empty hole on the player's side of the board, capture any seeds across from it and take the final seed sown. 
-<p>If the final seed of a lap ends in a player's rightmost hole and they cannot capture the seeds across the board, they must continue sowing with the seeds from their store. 
+<p>If the final seed of a lap ends in 
+<ul><li class="helptext">
+an empty hole on the player's side of the board, capture any seeds across from it and take the final seed sown. 
+<li class="helptext">
+a player's rightmost hole and they cannot capture the seeds across the board, continue sowing with the seeds from their store. 
+<li class="helptext">
+a store, end the lap sowing. 
+</ul>
 <p>If a player clears all of their own seeds, they capture all their opponent's seeds that are still in play and the game ends. 
 <p>Goal: capture the most seeds. 
 <div class="cols_row">
@@ -935,9 +941,10 @@ sow both stores.
     <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OPP_SIDE</p>
     <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: ONE_ZEROS</p>
     <p class="param"><a href="game_params.html#end_cond">End Game Condition</a>: CLEARED_OWN</p>
-    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER_NEXT</p>
+    <p class="param"><a href="game_params.html#mlap_cont">Lap Continue Reason</a>: STOP_STORE</p>
   </div>
   <div class="column2">
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER_NEXT</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
     <p class="param"><a href="game_params.html#sow_stores">Sow Store</a>: OWN</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>

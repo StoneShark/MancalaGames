@@ -567,12 +567,15 @@ is included after the parameter sections.
 <ol start=0><li class="helptext">
 <b class="enum">OFF</b>: Single lap sowing. Seeds from the start hole are sown, typically, one per hole until expended. 
 <li class="helptext">
-<b class="enum">LAPPER</b>: If the first sow ends in a hole with more than one seed, pick up all the seeds and continue sowing another lap. Note that lap here does not mean a full circuit of the board, only an individual sow operation. In general, sowing laps continues in this manner until the final seed of a lap reaches an empty hole. There are games with other conditions for ending a multilap sow such as making a capture or child. 
-<p class="helptext"> Several values of <a href="game_params.html#sow_rule">SOW_RULE</a> perform an operation after each lap   sown: SOW_BLKD_DIV(_NR) closes the final hole and CHANGE_DIR_LAP   changes the direction of sowing after each lap. 
+<b class="enum">LAPPER</b>: If the first sow ends in a hole with more than one seed, pick up all the seeds and continue sowing another lap.  
+<p class="helptext">In general, sowing laps continues in this manner until the final seed of a lap reaches an empty hole.  Other conditions for ending lap sowing are listed below. 
+<p class="helptext"> Several values of <a href="game_params.html#sow_rule">SOW_RULE</a> perform an operation after each lap sown: SOW_BLKD_DIV(_NR) closes the final hole and CHANGE_DIR_LAP changes the direction of sowing after each lap. 
 <li class="helptext">
-<b class="enum">LAPPER_NEXT</b>: For lapper_next sowing, the number of seeds in the last sown hole of lap does not matter. Instead, if the hole after the last sown hole has any seeds, those seeds are used to continue sowing the next lap. Sowing continues until the hole after the lap's final seed is empty. There are games with other conditions for ending a multilap sow such as making a capture or making a child. 
-<p class="helptext"> A <a href="game_params.html#sow_rule">SOW_RULE</a> of CHANGE_DIR_LAP changes the direction of sowing after   each lap. SOW_BLKD_DIV(_NR) is not supported for LAPPER_NEXT. 
+<b class="enum">LAPPER_NEXT</b>: For lapper_next sowing, the number of seeds in the last sown hole of lap does not matter. Instead, if the hole after the last sown hole has any seeds, those seeds are used to continue sowing the next lap.  
+<p class="helptext"> Sowing continues until the hole after the lap's final seed is empty. Other conditions for ending lap sowing are listed below. 
+<p class="helptext"> A <a href="game_params.html#sow_rule">SOW_RULE</a> of CHANGE_DIR_LAP changes the direction of sowing after each lap. SOW_BLKD_DIV(_NR) is not supported for LAPPER_NEXT. 
 </ol>
+<p>Multilap sowing is stopped for: a repeat turn, making a child, a capture, or a reason specified by <a href="game_params.html#mlap_cont">MLAP_CONT</a>. 
 <p>Multilap games may get stuck in seemingly endless sowing loops. If more than 75 laps are sown, the computer will end the game using the same mechanism as the menu command <a href="mancala_help.html#gamemenu">End Game</a> based on <a href="game_params.html#goal">GOAL</a> and <a href="game_params.html#unclaimed">UNCLAIMED</a>. 
 <h4 id="sow_direct"> Sow Direction </h4>
 <p class="pdesc">Location in Config Files: game_info : sow_direct
@@ -634,7 +637,9 @@ is included after the parameter sections.
 <p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Sow
 
-<p>Determines if seeds should be sown into stores. The specfic option selects if there is a repeat turn or not when the final seed of a sow lands in a store. 
+<p>Determines if seeds should be sown into stores.  
+<p>The specfic option selects if there is a repeat turn or not when the final seed of a sow lands in a store. A repeat turn will occur instead of a possible capture. 
+<p>When used with lap sowing (<a href="game_params.html#mlaps">MLAPS</a>), a repeat turn will occur instead of continuing  the lap sowing. 
 <ol start=0><li class="helptext">
 <b class="enum">NEITHER</b>: do not sow into either store 
 <li class="helptext">
@@ -732,7 +737,7 @@ is included after the parameter sections.
 <p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Sow
 
-<p>An additional limit on continuing mlap sowing: 
+<p>An additional limit on continuing <a href="game_params.html#mlaps">MLAPS</a> sowing: 
 <ol start=0><li class="helptext">
 <b class="enum">NONE</b>: no additional reasons 
 <li class="helptext">
@@ -746,7 +751,9 @@ is included after the parameter sections.
 <li class="helptext">
 <b class="enum">VISIT_OPP</b>: continue mlaps sowing only if the opposite side of the board was sown on the first lap 
 <li class="helptext">
-<b class="enum">STOP_STORE</b>: do not continue mlaps if a sow ends in a store 
+<b class="enum">STOP_STORE</b>: do not continue mlaps if a sow ends in a store.  Only valid with <a href="game_params.html#sow_stores">SOW_STORES</a>. 
+<li class="helptext">
+<b class="enum">NOT_FROM_STORE</b>: do not continue mlap sowing if a sow would continue from a store.  This is only different from STOP_STORE when <a href="game_params.html#mlaps">MLAPS</a> is LAPPER_NEXT. Only valid with <a href="game_params.html#sow_stores">SOW_STORES</a>. 
 </ol>
 <h4 id="mlap_param"> Lap Continue Param </h4>
 <p class="pdesc">Location in Config Files: game_info : mlap_param

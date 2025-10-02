@@ -378,6 +378,7 @@ class SowLapCont(enum.IntEnum):
     OPP_SIDE = 4
     VISIT_OPP = 5
     STOP_STORE = 6
+    NOT_FROM_STORE = 7
 
 
 @enum.unique

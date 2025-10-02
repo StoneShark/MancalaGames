@@ -15,8 +15,6 @@
    },
    "player": {
       "ai_params": {
-         "mcts_bias": [ 300, 200, 200, 200 ],
-         "mcts_nodes": [ 100, 400, 600, 800 ],
          "mm_depth": [ 1, 7, 9, 11 ]
       },
       "scorer": {

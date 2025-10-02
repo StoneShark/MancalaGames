@@ -496,9 +496,19 @@ def test_sower_rules(tester):
         excp=gi.GameInfoError)
 
     tester.test_rule('mlap_param',
-        rule=lambda ginfo: ginfo.mlap_param and not ginfo.mlap_cont,
-        msg="""MLAP_PARAM requires CONT_MLAP""",
+        rule=lambda ginfo: (ginfo.mlap_cont in (gi.SowLapCont.ON_PARAM,
+                                                gi.SowLapCont.GREQ_PARAM)
+                                and not ginfo.mlap_param),
+        msg="""Selected MLAP_CONT requires MLAP_PARAM""",
         excp=gi.GameInfoError)
+
+    tester.test_rule('mlap_sown',
+        rule=lambda ginfo: (ginfo.mlap_cont in (gi.SowLapCont.STOP_STORE,
+                                                gi.SowLapCont.NOT_FROM_STORE)
+                                and not ginfo.sow_stores),
+        msg="""Selected MLAP_CONT requires SOW_STORES""",
+        excp=gi.GameInfoError)
+
 
     tester.test_rule('sow_own_not_rules',
         rule=lambda ginfo: (ginfo.sow_stores

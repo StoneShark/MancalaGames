@@ -944,26 +944,29 @@ up and sown:
 typically, one per hole until expended.
 
 - LAPPER: If the first sow ends in a hole with more than one seed,
-pick up all the seeds and continue sowing another lap. Note that lap
-here does not mean a full circuit of the board, only an individual sow
-operation. In general, sowing laps continues in this manner until the
-final seed of a lap reaches an empty hole. There are games with other
-conditions for ending a multilap sow such as making a capture or
-child.
+pick up all the seeds and continue sowing another lap. 
+
+  +In general, sowing laps continues in this manner until the
+final seed of a lap reaches an empty hole. 
+Other conditions for ending lap sowing are listed below.
 
   + Several values of SOW_RULE perform an operation after each lap
-  sown: SOW_BLKD_DIV(_NR) closes the final hole and CHANGE_DIR_LAP
-  changes the direction of sowing after each lap.
+sown: SOW_BLKD_DIV(_NR) closes the final hole and CHANGE_DIR_LAP
+changes the direction of sowing after each lap.
 
 - LAPPER_NEXT: For lapper_next sowing, the number of seeds in the last
 sown hole of lap does not matter. Instead, if the hole after the last
 sown hole has any seeds, those seeds are used to continue sowing the
-next lap. Sowing continues until the hole after the lap's final seed
-is empty. There are games with other conditions for ending a multilap
-sow such as making a capture or making a child.
+next lap. 
+
+  + Sowing continues until the hole after the lap's final seed
+is empty. Other conditions for ending lap sowing are listed below.
 
   + A SOW_RULE of CHANGE_DIR_LAP changes the direction of sowing after
-  each lap. SOW_BLKD_DIV(_NR) is not supported for LAPPER_NEXT.
+each lap. SOW_BLKD_DIV(_NR) is not supported for LAPPER_NEXT.
+
+Multilap sowing is stopped for: a repeat turn, making a child, a capture,
+or a reason specified by MLAP_CONT.
 
 Multilap games may get stuck in seemingly endless sowing loops. If
 more than 75 laps are sown, the computer will end the game using the
@@ -973,7 +976,7 @@ UNCLAIMED.
 
 <param mlap_cont>
 
-An additional limit on continuing mlap sowing:
+An additional limit on continuing MLAPS sowing:
 
 - NONE: no additional reasons
 
@@ -989,7 +992,12 @@ than or equal to mlap_param
 - VISIT_OPP: continue mlaps sowing only if the opposite side of the
 board was sown on the first lap
 
-- STOP_STORE: do not continue mlaps if a sow ends in a store
+- STOP_STORE: do not continue mlaps if a sow ends in a store. 
+Only valid with SOW_STORES.
+
+- NOT_FROM_STORE: do not continue mlap sowing if a sow would continue from a store. 
+This is only different from STOP_STORE when MLAPS is LAPPER_NEXT.
+Only valid with SOW_STORES.
 
 
 <param mlap_param>
@@ -1361,8 +1369,14 @@ When PLAYALTDIR is not selected, any hole can be set as UDIR_HOLES to
 allow the user to override the sow_direct setting.
 
 <param sow_stores>
-Determines if seeds should be sown into stores. The specfic option selects
+Determines if seeds should be sown into stores. 
+
+The specfic option selects
 if there is a repeat turn or not when the final seed of a sow lands in a store.
+A repeat turn will occur instead of a possible capture.
+
+When used with lap sowing (MLAPS), a repeat turn will occur instead of continuing 
+the lap sowing.
 
 - NEITHER: do not sow into either store
 
