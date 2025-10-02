@@ -333,7 +333,7 @@ class StoreButton(tk.Canvas):
         self.game_ui = game_ui
         self.owner = owner
         self.active = True       # don't process clicks when False
-        self.behavior = behaviors.NoStoreBehavior(self)
+        self.behavior = None   # set after graphics are built
 
         btn_size = man_config.CONFIG.get_int('button_size')
         tk.Canvas.__init__(self, pframe,
@@ -343,6 +343,8 @@ class StoreButton(tk.Canvas):
         self.text_id = self.create_text(btn_size, btn_size,
                                         text='',
                                         font=man_config.CONFIG.get_font())
+
+        self.set_behavior(Behavior.GAMEPLAY)
 
         self.bind('<Button-1>', self.left_click)
         self.bind('<Button-3>', self.right_click)

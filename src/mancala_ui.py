@@ -139,7 +139,7 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
 
         self.game = game
         self.info = self.game.info
-        self.mode = -1   # force an initial mode change by using invalid value
+        self.mode = buttons.Behavior.GAMEPLAY
         self.player = player if player else \
                           ai_player.AiPlayer(self.game, player_dict)
         self.swap_ok = True
