@@ -381,11 +381,16 @@ class MustShare(AllowableIf):
     to the opponent.
     Support allow length of holes and dbl_holes (move triples)."""
 
-    def __init__(self, game, owners, decorator=None):
+    def __init__(self, game, decorator=None):
 
         super().__init__(game, decorator)
         self.fholes, self.tholes = self.get_holes_idx()
-        self.make_move = get_maker(owners)
+        self.make_move = get_maker(game.info.mlength == 3)
+
+        if game.info.mustpass:
+            self.select = self.mustpass_filter
+        else:
+            self.select = self.always_filter
 
 
     def opp_has_seeds(self, opponent):
@@ -398,10 +403,23 @@ class MustShare(AllowableIf):
                        and self.game.child[loc] is None))
 
 
+    @staticmethod
+    def always_filter(allow, _):
+        """Always filter the moves based on sharing."""
+        return allow
+
+
+    @staticmethod
+    def mustpass_filter(allow, saved):
+        """If we've filtered all the moves, return the original."""
+        return saved if not any(allow) else allow
+
+
     def get_allowable_holes(self):
         """Return allowable moves."""
 
         allow = self.decorator.get_allowable_holes()
+        saved = allow.copy()
 
         opponent = not self.game.turn
         if self.opp_has_seeds(opponent):
@@ -423,7 +441,7 @@ class MustShare(AllowableIf):
                     game_log.add(f'MUSTSHARE: prevented {loc}', game_log.DETAIL)
                     allow[idx] = False
 
-        return allow
+        return self.select(allow, saved)
 
 
 class MustShareUdir(MustShare):
@@ -431,7 +449,7 @@ class MustShareUdir(MustShare):
 
     def __init__(self, game, decorator=None):
 
-        super().__init__(game, False, decorator)
+        super().__init__(game, decorator)
         self.fholes, self.tholes = self.get_holes_idx()
 
         self.make_move = [get_move_pair,
@@ -446,6 +464,8 @@ class MustShareUdir(MustShare):
         opponent = not self.game.turn
         if self.opp_has_seeds(opponent):
             return allow
+
+        saved = allow.copy()
 
         holes = self.tholes if self.game.turn else self.fholes
         saved_state = self.game.state
@@ -483,7 +503,7 @@ class MustShareUdir(MustShare):
                         game_log.add(f'MUSTSHARE: prevented {loc}', game_log.DETAIL)
                         allow[idx] = False
 
-        return allow
+        return self.select(allow, saved)
 
 
 class NoGrandSlam(AllowableIf):
@@ -785,7 +805,7 @@ def deco_allowable(game, no_endless=False):
         if game.info.udirect:
             allowable = MustShareUdir(game, allowable)
         else:
-            allowable = MustShare(game, game.info.mlength == 3, allowable)
+            allowable = MustShare(game, allowable)
 
     if game.info.grandslam == gi.GrandSlam.NOT_LEGAL:
         memoize = True

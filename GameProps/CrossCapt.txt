@@ -7,7 +7,7 @@
    "game_info": {
       "name": "CrossCapt",
       "about": "<text_section>",
-      "crosscapt": true,
+      "crosscapt": 1,
       "end_cond": 1,
       "capt_side": 1,
       "sow_direct": 1,
@@ -118,7 +118,7 @@ clockwise; the user chooses the sow direction for subsequent moves.
 - take the final seed sown into an empty hole on your own side of the
 board even when there is no capture (XCPICKOWN ALWAYS).
 
-- sow in multiple-laps (LAPPER) possibly limiting lap continueing to
+- sow in multiple-laps (LAPPER) possibly limiting lap continuing to
 one side of the board.
 
 - sow both stores.

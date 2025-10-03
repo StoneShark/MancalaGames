@@ -451,6 +451,7 @@ is included after the parameter sections.
 
 <p>If an opponent has no moves at the start of your turn, you must make seeds available to them, if you can. 
 <p>This condition is enforced by only activating holes in the UI which will make seeds available to the opponent. If used with <a href="game_params.html#udir_holes">UDIR_HOLES</a>, grids are used to show which direction cannot be sown. 
+<p>If both <nolink>MUSTSHARE and <a href="game_params.html#mustpass">MUSTPASS</a> are set,  if any holes will share seeds, only those holes are allowed for moves. On the other hand, if no moves share seeds, moves from all holes that meet other criteria are allowed. 
 <h4 id="grandslam"> Grand Slam </h4>
 <p class="pdesc">Location in Config Files: game_info : grandslam
 <p id="GrandSlam" class="pdesc">Type: <a href="param_types.html#GrandSlam"> GrandSlam </a>

@@ -258,7 +258,6 @@ the seeds in their store.
 If the store is not captured, a basic or cross capture is attempted.
 
 <param end_cond>
-
 Conditions that end the game. If the game is ended, UNCLAIMED defines
 what happens with any seeds left on the board and GOAL is used to
 determine the winner.
@@ -285,7 +284,6 @@ If the game is played in rounds, this condition will end a round
 unless the game win conditions are met.
 
 <param end_param>
-
 Parameter for END_COND.
 
 <param mx_child_cnt_m>
@@ -1051,6 +1049,11 @@ seeds available to them, if you can.
 This condition is enforced by only activating holes in the UI which
 will make seeds available to the opponent. If used with UDIR_HOLES,
 grids are used to show which direction cannot be sown.
+
+If both <nolink>MUSTSHARE and MUSTPASS are set, 
+if any holes will share seeds, only those holes are allowed for moves.
+On the other hand, if no moves share seeds, moves from all holes that
+meet other criteria are allowed.
 
 <param name>
 The game name which may have spaces. Used for the window title and the

@@ -1278,7 +1278,7 @@ def _build_ender(game):
     else:
         ender = EndTurnNoMoves(game, ender)
 
-    if game.info.mustshare:
+    if game.info.mustshare and not game.info.mustpass:
         ender = _add_must_share_ender(game, ender)
 
     ender = EndTurnNotPlayable(game, ender)

@@ -422,6 +422,42 @@ Allow making children in opposite end holes but prohibit making children in oppo
 <p><b class="enum">References</b>: <txt> <a href="https://mancala.fandom.com/wiki/Yit_Jani" target="_blank">https://mancala.fandom.com/wiki/Yit_Jani</a> <a href="https://mancala.fandom.com/wiki/Yit_Nuri" target="_blank">https://mancala.fandom.com/wiki/Yit_Nuri</a> 
 <p><b class="enum">Origin</b>: traditional 
 <p><b class="enum">Region</b>: Eastern Africa 
+<h3 id="Ayo" class="game_desc">Ayo</h3>
+<p>Multi-lap clockwise sow. 
+<p>If a player does not have any seeds at the start of their turn, they must pass. Their opponent must make seeds available to them as soon as they are able. If they can make seeds available, moves are only allowed from holes that do so. 
+<p>Multiple captures on 2s & 3s on opposite side, but a grand slam capture leaves the seeds in the last hole (rightmost). When only one hole has seeds, the capture is performed. 
+<p>Games end when there are two or fewer seeds on the board. Other games with cycling seeds may be ended with the End Game menu command. In either case, seeds on the board go to the hole owners. 
+<p>Goal: collect more than half the seeds. 
+<p>Variation: 
+<ul><li class="helptext">
+<a href="about_games.html#Ayo">Ayo</a>:: - played in rounds. Seeds are captured from your opponent's holes. The loser of the previous round starts each new round. Each round is played until there are two or fewer seeds on the board or the round is ended with End Round menu command. The goal parameter (Config Variant...) defines the number of holes the winner must control to win the game. 
+</ul>
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 2 3</p>
+    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OPP_SIDE</p>
+    <p class="param"><a href="game_params.html#end_cond">End Game Condition</a>: SEEDS_LIMIT</p>
+    <p class="param"><a href="game_params.html#end_param">End Cond Param</a>: 2</p>
+    <p class="param"><a href="game_params.html#grandslam">Grand Slam</a>: LEAVE_RIGHT</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
+    <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: -1</p>
+    <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
+    <p class="param"><a href="game_params.html#mustshare">Must Share</a>: Yes</p>
+    <p class="param"><a href="game_params.html#quitter">Quit Game Seeds</a>: HOLE_OWNER</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p><b class="enum">Rules</b>: Hanson, Sue and Jon. All about Mancala: It's History and How to Play. 2003. p61. 
+<p><b class="enum">Deviation 1</b>: Games are ended when there are only one or two seeds on the board. These are generally but not always cycling seeds; this may be turned off via the Config Variant... menu command. 
+<p><b class="enum">Deviation 2</b>: The rounds variant does not setup exactly as described. All holes are always filled with seeds. The rules state that any seeds left after filling holes to fours should be left in the players' stores and that the empty hole should go to the round loser. 
+<p><b class="enum">Origin</b>: traditional 
+<p><b class="enum">Region</b>: Eastern Africa 
 <h3 id="Ayoayo" class="game_desc">Ayoayo</h3>
 <p>A multi-lap mancala; sow direction counter-clockwise skipping start hole on full cycle sow; cross-capture from opponents side when a sow ends in own empty hole. If your opponent has no seeds, you must make seeds available to them (if you can). 
 <p>The game ends when one player captures more than half the seeds; when the current player cannot share seeds to an opponent without seeds; or when there is only one seed left on the board. 
@@ -4178,6 +4214,8 @@ any odd number of seeds
     <p class="param"><a href="#Anywoli">Anywoli</a></p>
     <p class="param">&emsp;&ensp;Yit_Nuri</p>
     <p class="param">&emsp;&ensp;Yit_Jani</p>
+    <p class="param"><a href="#Ayo">Ayo</a></p>
+    <p class="param">&emsp;&ensp;Rounds</p>
     <p class="param"><a href="#Ayoayo">Ayoayo</a></p>
     <p class="param"><a href="#Azigo">Azigo</a></p>
     <p class="param"><a href="#Ba-awa">Ba-awa</a></p>
@@ -4218,9 +4256,9 @@ any odd number of seeds
     <p class="param"><a href="#Embeli">Embeli</a></p>
     <p class="param"><a href="#Endodoi">Endodoi</a></p>
     <p class="param">&emsp;&ensp;Rounds</p>
-    <p class="param"><a href="#Enkeshui">Enkeshui</a></p>
   </div>
   <div class="column3">
+    <p class="param"><a href="#Enkeshui">Enkeshui</a></p>
     <p class="param"><a href="#Enlightenment">Enlightenment</a></p>
     <p class="param"><a href="#Erherhe">Erherhe</a></p>
     <p class="param"><a href="#Eson Xorgol">Eson Xorgol</a></p>
