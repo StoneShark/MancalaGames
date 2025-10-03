@@ -8,7 +8,7 @@
       "name": "Olowuka",
       "about": "<text_section>",
       "capt_on": [ 2, 3 ],
-      "grandslam": 4,
+      "grandslam": 5,
       "mlaps": 1,
       "multicapt": -1,
       "capt_side": 1,
@@ -29,6 +29,7 @@
       }
    },
    "rules": "https://mancala.fandom.com/wiki/Olowuka",
+   "deviation": "<text_section>",
    "origin": "traditional",
    "region": "Western Africa"
 }
@@ -37,7 +38,13 @@
 Multilap sow, but only if final hole contains four or more seeds.
 Counter-clockwise.
 
-Capture on 2s and 3s on opponent's side. Grand Slam is permitted but
-the leftmost hole (from sower perspective) is not captured.
+Capture on 2s and 3s on opponent's side.
+Grand Slam capture of more than one hole is permitted but
+the righmost hole (from sower perspective) is not captured.
+A single hole capture is performed.
 </about>
+<deviation>
+The grand slam capture might not be exactly how the game is played;
+it could be a fixed left hole (hole position 0) that is not captured.
+</deviation>
 </text_section>

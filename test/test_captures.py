@@ -2076,7 +2076,7 @@ class TestAnimator:
 
 
     @pytest.mark.animator
-    # @pytest.mark.usefixtures("logger")
+    @pytest.mark.usefixtures("logger")
     @pytest.mark.parametrize('gstype',
                              [gi.GrandSlam.NO_CAPT,
                               gi.GrandSlam.OPP_GETS_REMAIN,
@@ -2106,11 +2106,12 @@ class TestAnimator:
         game.store = [3, 6]
         game.turn = False
 
-        # print(game.deco.capturer)
+        print(game.deco.capturer)
+        print(game)
 
         game.move(2)
-        # print(game)
-        # print(game.mdata)
+        print(game)
+        print(game.mdata)
 
         if gstype == gi.GrandSlam.NO_CAPT:
             assert not game.mdata.captured

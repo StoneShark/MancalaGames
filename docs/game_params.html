@@ -467,9 +467,9 @@ is included after the parameter sections.
 <li class="helptext">
 <b class="enum">OPP_GETS_REMAIN</b>: if you capture all your opponent's seeds, they capture all your remaining seeds, and the game is over. The winner is determined by game goal. Seeds picked because of <a href="game_params.html#pickextra">PICKEXTRA</a> PICK*LASTSEEDS go to the current player and not the opponent. 
 <li class="helptext">
-<b class="enum">LEAVE_LEFT</b>: the capture is performed from all but the leftmost hole from the sower perspective. This might leave your opponents without seeds or might not capture any seeds. 
+<b class="enum">LEAVE_LEFT</b>: if there is only one hole with seeds it is captured. If there is more than one hole with seeds, the capture is performed  from all but the leftmost hole from the sower perspective.  
 <li class="helptext">
-<b class="enum">LEAVE_RIGHT</b>: the capture is performed from all but the rightmost hole from the sower perspective. This might leave your opponents without seeds. 
+<b class="enum">LEAVE_RIGHT</b>: if there is only one hole with seeds it is captured. If there is more than one hole with seeds, the capture is performed  from all but the rightmost hole from the sower perspective. 
 <li class="helptext">
 <b class="enum">LEGAL_SHARE</b>: the seeds are captured and the capturer must do a repeat turn. Generally, used with <a href="game_params.html#mustshare">MUSTSHARE</a> to force the capturer to try to share seeds. 
 </ol>

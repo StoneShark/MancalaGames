@@ -727,37 +727,40 @@ class GSKeep(GrandSlamCapt):
 
     def do_captures(self, mdata, capt_first=True):
 
-        if self.is_grandslam(mdata, capt_first):
+        turn = self.game.turn
+        start, end, incr = self.rparam[turn]
 
-            game_log.add('GRANDSLAM: keep', game_log.IMPORT)
+        keeper = None
+        count = 0
+        for loc in range(start, end, incr):
+            if self.game.board[loc]:
+                if keeper is None:
+                    keeper = loc
+                count += 1
 
-            animator.do_rollback()
-            animator.do_message(f"Grand Slam, Keeping {self.rtext}")
+        if not self.is_grandslam(mdata, capt_first):
+            return
 
-            self.game.state = self._saved_state
-            self._saved_state = None
-            mdata.captured = False
-            turn = self.game.turn
-            start, end, incr = self.rparam[turn]
+        if count == 1:
+            game_log.add('GRANDSLAM: capt single hole', game_log.IMPORT)
+            return
 
-            # find left- or right- most hole with seeds
-            # this loop will always find seeds because a
-            # grand slam requires that there be seeds to start
-            for loc in range(start, end, incr):   # pragma: no coverage
-                if self.game.board[loc]:
-                    break
+        # count > 1 because there were seeds to begin the capture
+        self.game.state = self._saved_state
+        self._saved_state = None
+        mdata.captured = True
 
-            # skip that hole and collect the rest of the seeds
-            for loc in range(loc + incr, end, incr):
+        game_log.add(f'GRANDSLAM: Keep {self.rtext}', game_log.IMPORT)
+        animator.do_rollback()
+        animator.do_message(f"Grand Slam, Keeping {self.rtext}")
 
-                seeds = self.game.board[loc]
-                if seeds:
-                    self.game.board[loc] = 0
-                    self.game.store[turn] += seeds
+        # skip keeper hole and collect the rest of the seeds
+        for loc in range(keeper + incr, end, incr):
 
-                    # only set if we actually capture seeds
-                    mdata.captured = True
-
+            seeds = self.game.board[loc]
+            if seeds:
+                self.game.board[loc] = 0
+                self.game.store[turn] += seeds
 
 
 class GSOppGets(GrandSlamCapt):
