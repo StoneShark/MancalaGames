@@ -2,12 +2,14 @@
    "game_class": "Mancala",
    "game_constants": {
       "holes": 6,
-      "nbr_start": 4
+      "nbr_start": 3
    },
    "game_info": {
-      "name": "Ayo",
+      "name": "J'Odu_II",
       "about": "<text_section>",
-      "capt_on": [ 2, 3 ],
+      "capt_dir": 1,
+      "capt_max": 2,
+      "crosscapt": 3,
       "end_cond": 3,
       "end_param": 2,
       "grandslam": 5,
@@ -22,12 +24,15 @@
    },
    "player": {
       "algorithm": "negamaxer",
+      "ai_params": {
+         "mm_depth": [ 1, 5, 7, 11 ]
+      },
       "scorer": {
          "mx_stores_m": 8
       }
    },
    "variants": {
-      "Ayo": { },
+      "J'Odu_II": { },
       "Rounds": {
          "goal": 2,
          "goal_param": 9,
@@ -40,7 +45,7 @@
       "end_cond": [ 0, 3 ],
       "goal_param": [ 0, 7, 8, 9, 10, 11, 12 ]
    },
-   "rules": "Hanson, Sue and Jon. All about Mancala: It's History and How to Play. 2003. p61.",
+   "rules": "Hanson, Sue and Jon. All about Mancala: It's History and How to Play. 2003. p63.",
    "deviation 1": "<text_section>",
    "deviation 2": "<text_section>",
    "origin": "traditional",
@@ -55,7 +60,9 @@ they must pass. Their opponent must make seeds available to them
 as soon as they are able. If they can make seeds available,
 moves are only allowed from holes that do so.
 
-Multiple captures on 2s & 3s on opposite side,
+Cross captures when the final seed of a sow end's in your own empty hole
+and the opposite hole has 1 or 2 seeds.
+Continue the capture chain as long as the opposite holes contain 1 or 2 seeds,
 but a grand slam capture leaves the seeds in the last hole (rightmost).
 When only one hole has seeds, the capture is performed.
 
@@ -67,7 +74,7 @@ Goal: collect more than half the seeds.
 
 Variation:
 
-- Ayo::Rounds - played in rounds.
+- J_Odu_II::Rounds - played in rounds.
 Seeds are captured from your opponent's holes.
 The loser of the previous round starts each new round.
 Each round is played until there are two or fewer seeds on the board or

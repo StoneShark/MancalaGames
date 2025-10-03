@@ -80,17 +80,61 @@ class CaptBasic(CaptMethodIf):
                                                        mdata.player)
 
 
-class CaptCrossOneZeros(CaptMethodIf):
-    """Cross capture.  If first capture, capt_loc must contain
-    one seed, otherwise no seeds."""
+class CaptCross(CaptMethodIf):
+    """Cross capture. Do cross captures. The cross capture
+    type controls what is on your own side of the board.
+    The basic capture criteria are applied to the hole
+    being tested."""
+
+    def __init__(self, game, decorator=None):
+
+        super().__init__(game, decorator)
+
+        if game.info.crosscapt == gi.XCaptType.ONE_ZEROS:
+            self.test_first = self.is_one
+            self.test_subseq = self.is_zero
+
+        elif game.info.crosscapt == gi.XCaptType.ANY:
+            self.test_first = self.is_any
+            self.test_subseq = self.is_any
+
+        elif game.info.crosscapt == gi.XCaptType.ONE_ANY:
+            self.test_first = self.is_one
+            self.test_subseq = self.is_any
+
+        else:
+            raise NotImplementedError("Unknown cross capture type.")
+
+
+    def __str__(self):
+        """A recursive func to print the whole decorator chain."""
+
+        detail = f"first: {self.test_first.__name__}" \
+                 + f"\n   subseq: {self.test_subseq.__name__}"
+        return self.str_deco_detail(detail)
+
+
+    def is_one(self, mdata):
+        """Return True if capt_loc is 1."""
+        return self.game.board[mdata.capt_loc] == 1
+
+    def is_zero(self, mdata):
+        """Return True if capt_loc is 0."""
+        return not self.game.board[mdata.capt_loc]
+
+    @staticmethod
+    def is_any(_):
+        """Return True."""
+        return True
+
 
     def do_captures(self, mdata, capt_first=True):
         """Do cross capture"""
 
         cross = self.game.cts.cross_from_loc(mdata.capt_loc)
 
-        if (((capt_first and self.game.board[mdata.capt_loc] == 1)
-                 or (not capt_first and not self.game.board[mdata.capt_loc]))
+        if (((capt_first and self.test_first(mdata))
+                 or (not capt_first and self.test_subseq(mdata)))
                 and self.game.deco.capt_basic.capture_ok(mdata, cross)):
 
             seeds = self.game.board[cross]
@@ -102,26 +146,6 @@ class CaptCrossOneZeros(CaptMethodIf):
                                                        mdata.direct,
                                                        mdata.player)
 
-
-class CaptCrossAny(CaptMethodIf):
-    """Cross capture. Do cross captures that meet the basic
-    capture criteria."""
-
-    def do_captures(self, mdata, capt_first=True):
-        """Do cross capture"""
-
-        cross = self.game.cts.cross_from_loc(mdata.capt_loc)
-
-        if self.game.deco.capt_basic.capture_ok(mdata, cross):
-
-            seeds = self.game.board[cross]
-            self.game.board[cross] = 0
-            self.game.store[self.game.turn] += seeds
-
-            mdata.captured = True
-            mdata.capt_next = self.game.deco.incr.incr(mdata.capt_loc,
-                                                       mdata.direct,
-                                                       mdata.player)
 
 class CaptNext(CaptMethodIf):
     """If there are seeds in the next hole capture them."""
@@ -1178,12 +1202,7 @@ def _add_cross_capt_deco(game):
     """Choose base the cross capture decorator.
     crosscapt and multicapt is always captsamedir"""
 
-    if game.info.crosscapt == gi.XCaptType.ONE_ZEROS:
-        capturer = CaptCrossOneZeros(game)
-    elif game.info.crosscapt == gi.XCaptType.ANY:
-        capturer = CaptCrossAny(game)
-    else:
-        raise NotImplementedError("Unknown cross capture type.")
+    capturer = CaptCross(game)
 
     if game.info.xcpickown == gi.CrossCaptOwn.LEAVE:
         pass

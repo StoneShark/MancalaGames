@@ -347,5 +347,6 @@ STRING_DICTS = {
         {"No X Capt": gi.XCaptType.NONE,
          "Start across 1 then 0s": gi.XCaptType.ONE_ZEROS,
          "X Capt Any": gi.XCaptType.ANY,
+         "Start across 1 then any": gi.XCaptType.ONE_ANY,
          })
 }

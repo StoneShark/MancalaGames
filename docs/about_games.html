@@ -933,7 +933,7 @@ capture side of own, opposite or both.
 <li class="helptext">
 take the final seed sown into an empty hole on your own side of the board even when there is no capture (<a href="game_params.html#xcpickown">XCPICKOWN</a> ALWAYS). 
 <li class="helptext">
-sow in multiple-laps (LAPPER) possibly limiting lap continueing to one side of the board. 
+sow in multiple-laps (LAPPER) possibly limiting lap continuing to one side of the board. 
 <li class="helptext">
 sow both stores. 
 </ul>
@@ -1952,7 +1952,7 @@ Start game with a random placement of seeds (<a href="game_params.html#start_pat
 <li class="helptext">
 <nolink>Kalah::Maybe_Fair - Start the game with the seeds placed so that the first player cannot get a repeat turn and the second player will only be able to get a repeat turn, if the first player made that possible (<a href="game_params.html#start_pattern">START_PATTERN</a> of NO_REPEAT_SOW_OWN). 
 <li class="helptext">
-If all of your opponents seeds are in one hole and you capture them, your opponent gets all of your seeds for the game tally (<a href="game_params.html#grandslam">GRANDSLAM</a> of OPP_GET_REMAINING). 
+If all of your opponent's seeds are in one hole and you capture them, your opponent gets all of your seeds for the game tally (<a href="game_params.html#grandslam">GRANDSLAM</a> of OPP_GET_REMAINING). 
 <li class="helptext">
 Sow holes with an even number of seeds clockwise and odd an number of seeds counter-clockwise (<a href="game_params.html#sow_direct">SOW_DIRECT</a> of EVEN_ODD_DIR). This was first proposed by William Daniel Troyka in 2001 as <a href="about_games.html#Cross-Kalah">Cross-Kalah</a>. 
 <li class="helptext">
@@ -2822,6 +2822,7 @@ Both players may move in either direction from any hole; single-lap and counter-
 <h3 id="NS_Kalah" class="game_desc">NS_Kalah</h3>
 <p>Sow counter-clockwise but only on your own side of the board and into your own store. 
 <p>Cross-capture on single seed, leave the capturing seed. 
+<p>If all of your opponent's seeds are in one hole and you capture them, your opponent gets all of your seeds for the game tally. 
 <p>Goal: capture the most seeds. 
 <p><a href="about_games.html#Kalah">Kalah</a> but with some twists: the board size is larger, seeds are only sown on your own side of the board, the single capturing seed is not collected, and you must capture in order to gain extra seeds for the win. 
 <div class="cols_row">
@@ -2833,6 +2834,7 @@ Both players may move in either direction from any hole; single-lap and counter-
     <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: ONE_ZEROS</p>
   </div>
   <div class="column2">
+    <p class="param"><a href="game_params.html#grandslam">Grand Slam</a>: OPP_GETS_REMAIN</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
     <p class="param"><a href="game_params.html#sow_stores">Sow Store</a>: OWN</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>

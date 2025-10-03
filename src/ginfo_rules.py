@@ -752,7 +752,7 @@ def test_capture_rules(tester):
     tester.test_rule('xcross_all_nlaps',
         rule=lambda ginfo: (ginfo.crosscapt == gi.XCaptType.ANY
                             and ginfo.mlaps),
-        msg="MLAPS sowing is not supported CROSSCAPT of ALL",
+        msg="MLAPS sowing is not supported CROSSCAPT of ANY",
         excp=NotImplementedError)
         # the stop on capture (lap continuer) decos were not written
 

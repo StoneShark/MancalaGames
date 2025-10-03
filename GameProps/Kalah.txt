@@ -7,7 +7,7 @@
    "game_info": {
       "name": "Kalah",
       "about": "<text_section>",
-      "crosscapt": true,
+      "crosscapt": 1,
       "capt_side": 1,
       "sow_direct": 1,
       "sow_stores": 1,
@@ -82,13 +82,13 @@ on either of the two opening moves (only one swap side per game).
 Random-Kalah is a preconfigured game played in tallied rounds to
 equalize results of the random opening.
 
-- <nolink>Kalah::Maybe_Fair - Start the game with the seeds placed so 
+- <nolink>Kalah::Maybe_Fair - Start the game with the seeds placed so
 that the first player cannot
 get a repeat turn and the second player will only be able to get a
 repeat turn, if the first player made that possible (START_PATTERN of
 NO_REPEAT_SOW_OWN).
 
-- If all of your opponents seeds are in one hole and you capture them,
+- If all of your opponent's seeds are in one hole and you capture them,
 your opponent gets all of your seeds for the game tally (GRANDSLAM of
 OPP_GET_REMAINING).
 

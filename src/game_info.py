@@ -505,6 +505,7 @@ class XCaptType(enum.IntEnum):
     NONE = 0
     ONE_ZEROS = 1
     ANY = 2
+    ONE_ANY = 3
 
 
 # %%   dataclasses and classes

@@ -8,7 +8,7 @@
       "name": "J'Odu",
       "about": "<text_section>",
       "capt_max": 3,
-      "crosscapt": true,
+      "crosscapt": 1,
       "mlaps": 1,
       "capt_side": 1,
       "sow_direct": 1,

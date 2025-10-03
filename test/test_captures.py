@@ -84,6 +84,7 @@ CONVERT_DICT = {'N': None,
 
                 '1_0s': gi.XCaptType.ONE_ZEROS,
                 'ANY': gi.XCaptType.ANY,
+                '1_ANY': gi.XCaptType.ONE_ANY,
 
                 'NEXT': gi.CaptType.NEXT,
                 'TWOOUT': gi.CaptType.TWO_OUT,
@@ -364,11 +365,11 @@ class TestCaptTable:
         mdata.capt_start = case.loc
         mdata.board = tuple(case.board)  # not quite right, but ok
         mdata.seeds = 3
-        print(game.deco.capturer)
-        print(game)
+        # print(game.deco.capturer)
+        # print(game)
 
         game.deco.capturer.do_captures(mdata)
-        print(game)
+        # print(game)
         assert sum(game.store) + sum(game.board) == game.cts.total_seeds
 
         # TODO rework the test cases to test these individually
@@ -411,12 +412,12 @@ class TestCaptTable:
         mdata.board = tuple(case.board)  # not quite right, but ok
         mdata.seeds = 3
         # print('params', game.params_str(), sep='\n')
-        print('capturer', game.deco.capturer, sep='\n')
+        # print('capturer', game.deco.capturer, sep='\n')
         # print('capt_basic', game.deco.capt_basic, sep='\n')
-        print(game)
+        # print(game)
 
         game.deco.capturer.do_captures(mdata)
-        print(game)
+        # print(game)
         assert sum(game.store) + sum(game.board) == game.cts.total_seeds
 
         assert (mdata.captured | mdata.capt_changed) == case.erval
@@ -1243,7 +1244,7 @@ class TestCaptCrossVisited:
     @pytest.fixture
     def game(self):
         game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
-        game_info = gi.GameInfo(crosscapt=True,
+        game_info = gi.GameInfo(crosscapt=gi.XCaptType.ONE_ZEROS,
                                 xc_sown=True,
                                 stores=True,
                                 multicapt=-1,
@@ -1276,6 +1277,9 @@ class TestCaptCrossVisited:
 
         game.deco.capturer.do_captures(mdata)
         assert mdata.captured == eresult
+
+        assert 'is_one' in str(game.deco.capturer)
+        assert 'is_zero' in str(game.deco.capturer)
 
 
 class TestCaptTwoOut:

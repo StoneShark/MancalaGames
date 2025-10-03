@@ -7,22 +7,23 @@
    "game_info": {
       "name": "NS_Kalah",
       "about": "<text_section>",
-      "crosscapt": true,
+      "crosscapt": 1,
+      "grandslam": 3,
       "sow_direct": 1,
       "sow_stores": 1,
       "stores": true
    },
    "player": {
-      "scorer": {
-         "mx_stores_m": 4,
-         "mx_empties_m": 2,
-         "mx_rturn_a": 20
-      },
       "ai_params": {
-         "mm_depth": [ 1, 5, 7, 9 ],
          "mcts_bias": [ 300, 300, 200, 200 ],
          "mcts_nodes": [ 100, 500, 1000, 1200 ],
-         "mcts_pouts": [ 1, 2, 2, 2 ]
+         "mcts_pouts": [ 1, 2, 2, 2 ],
+         "mm_depth": [ 1, 5, 7, 9 ]
+      },
+      "scorer": {
+         "mx_stores_m": 8,
+         "mx_empties_m": 2,
+         "mx_rturn_a": 20
       }
    },
    "vari_params": {
@@ -43,6 +44,9 @@ Sow counter-clockwise but only on your own side of the board and into
 your own store.
 
 Cross-capture on single seed, leave the capturing seed.
+
+If all of your opponent's seeds are in one hole and you capture them,
+your opponent gets all of your seeds for the game tally.
 
 Goal: capture the most seeds.
 
