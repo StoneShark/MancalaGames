@@ -1097,6 +1097,8 @@ Do not pick own seed on cross capture.
 Allow moves to start from any hole on your side of the board. 
 <li class="helptext">
 <nolink>Dabuda::Two:  Valdez describes a multilap variant that has 6 holes per side, does not pick own seed on capture, and allows moves to start in any hole. 
+<li class="helptext">
+<a href="about_games.html#Endodoi">Endodoi</a> and it's variant <nolink>Endodoi::J_Odu are very similar games without the strict limits on move start locations. 
 </ul>
 <div class="cols_row">
   <div class="column2">
@@ -1311,16 +1313,19 @@ allow closing of rightmost holes (<a href="game_params.html#sow_rule">SOW_RULE</
 <p><b class="enum">Origin</b>: traditional 
 <p><b class="enum">Region</b>: Central Africa 
 <h3 id="Endodoi" class="game_desc">Endodoi</h3>
-<p>A multi-lap mancala, sow direction is counter-clockwise. Cross-capture when end in own hole with one seed; pick own seed on capture. Games end when a player has no valid move. Goal: collect the most seeds. 
+<p>A multi-lap mancala, sow direction is counter-clockwise. 
+<p>Cross-capture when end in own hole with one seed; pick own seed on capture. 
+<p>Games end when a player has no valid move on their turn. 
+<p>Goal: collect more than half the seeds. 
 <p>Variations: 
 <ul><li class="helptext">
-Played with 6 to 10 holes. 
+Played with 6 to 10 holes and 2 to 9 seeds per hole at the start. 
 <li class="helptext">
-Use a <a href="game_params.html#goal">GOAL</a> of RND_SEED_COUNT where the winner is the first to collect 100 total seeds (<nolink>Edodoi::Rounds). 
+<nolink>Endodoi::Rounds - use a <a href="game_params.html#goal">GOAL</a> of RND_SEED_COUNT where the winner is the first to collect 100 total seeds. 
 <li class="helptext">
-Limit captures to holes with 3 or fewer seeds (<a href="#{J'Odu}">J'Odu</a>). 
+<nolink>Endodoi::J_Odu - limit captures to holes with 3 or fewer seeds (<a href="game_params.html#capt_max">CAPT_MAX</a> 3). 
 <li class="helptext">
-Limit moves to holes reach the opposite side of the board or end in empty hole (<a href="about_games.html#Dabuda">Dabuda</a>). 
+Only allow moves from holes that reach an empty hole or the opposite side of the board (<a href="about_games.html#Dabuda">Dabuda</a>). 
 </ul>
 <div class="cols_row">
   <div class="column2">
@@ -1337,9 +1342,9 @@ Limit moves to holes reach the opposite side of the board or end in empty hole (
     <p class="param"><a href="game_params.html#xcpickown">Own Seed on Xcapture</a>: PICK_ON_CAPT</p>
   </div>
 </div>
-<p><b class="enum">Rules</b>: Russ, Laurence. Mancala Games. 1984. p28. 
+<p><b class="enum">Rules</b>: Russ, Laurence. Mancala Games. 1984. <a href="about_games.html#Endodoi">Endodoi</a>: p28. <a href="about_games.html#Dabuda">Dabuda</a>: p32. J'Odu: p35. 
 <p><b class="enum">Origin</b>: traditional 
-<p><b class="enum">Region</b>: Eastern Africa 
+<p><b class="enum">Region</b>: Eastern Africa, Western Africa 
 <h3 id="Enkeshui" class="game_desc">Enkeshui</h3>
 <p>A multi-lap, counter-clockwise sow 
 <p>Bulls are made on either side of the board when sowing to 4.  Two bulls are made if the final two seeds sow holes to 3 and 4 seeds in either order. Moves may not start from bulls and seeds in bulls may not be captured. 
@@ -1835,34 +1840,6 @@ A single-lap mancala with SPLIT <a href="game_params.html#sow_direct">SOW_DIRECT
 <p><b class="enum">Origin</b>: traditional 
 <p><b class="enum">Region</b>: Western Africa 
 <h3 id="J'Odu" class="game_desc">J'Odu</h3>
-<p>Sow counter-clockwise, multi-lap sow. Cross capture opposite-side but only up to 3 seeds, picking own on capture. 
-<p>Goal: collect more than half the seeds. 
-<p>Variations: 
-<ul><li class="helptext">
-board size and start seeds 
-<li class="helptext">
-remove limit on cross captures; <a href="game_params.html#capt_max">CAPT_MAX</a> of 0 (<a href="about_games.html#Endodoi">Endodoi</a>). 
-</ul>
-<div class="cols_row">
-  <div class="column2">
-    <p class="param">Holes per side:  8</p>
-    <p class="param">Start seeds:  4</p>
-    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
-    <p class="param"><a href="game_params.html#capt_max">Capture Max</a>: 3</p>
-    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OPP_SIDE</p>
-    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: ONE_ZEROS</p>
-  </div>
-  <div class="column2">
-    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
-    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
-    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
-    <p class="param"><a href="game_params.html#xcpickown">Own Seed on Xcapture</a>: PICK_ON_CAPT</p>
-  </div>
-</div>
-<p><b class="enum">Rules</b>: Russ, Laurence. Mancala Games. 1984. p35. 
-<p><b class="enum">Origin</b>: traditional 
-<p><b class="enum">Region</b>: Western Africa 
-<h3 id="J'Odu_II" class="game_desc">J'Odu_II</h3>
 <p>Multi-lap clockwise sow. 
 <p>If a player does not have any seeds at the start of their turn, they must pass. Their opponent must make seeds available to them as soon as they are able. If they can make seeds available, moves are only allowed from holes that do so. 
 <p>Cross captures when the final seed of a sow end's in your own empty hole and the opposite hole has 1 or 2 seeds. Continue the capture chain as long as the opposite holes contain 1 or 2 seeds, but a grand slam capture leaves the seeds in the last hole (rightmost). When only one hole has seeds, the capture is performed. 
@@ -1870,7 +1847,7 @@ remove limit on cross captures; <a href="game_params.html#capt_max">CAPT_MAX</a>
 <p>Goal: collect more than half the seeds. 
 <p>Variation: 
 <ul><li class="helptext">
-J_Odu_II::Rounds - played in rounds. Seeds are captured from your opponent's holes. The loser of the previous round starts each new round. Each round is played until there are two or fewer seeds on the board or the round is ended with End Round menu command. The goal parameter (Config Variant...) defines the number of holes the winner must control to win the game. 
+J_Odu::Rounds - played in rounds. Seeds are captured from your opponent's holes. The loser of the previous round starts each new round. Each round is played until there are two or fewer seeds on the board or the round is ended with End Round menu command. The goal parameter (Config Variant...) defines the number of holes the winner must control to win the game. 
 </ul>
 <div class="cols_row">
   <div class="column2">
@@ -4295,10 +4272,11 @@ any odd number of seeds
     <p class="param"><a href="#Djenon Aboure">Djenon Aboure</a></p>
     <p class="param"><a href="#Embeli">Embeli</a></p>
     <p class="param"><a href="#Endodoi">Endodoi</a></p>
+    <p class="param">&emsp;&ensp;J_Odu</p>
     <p class="param">&emsp;&ensp;Rounds</p>
-    <p class="param"><a href="#Enkeshui">Enkeshui</a></p>
   </div>
   <div class="column3">
+    <p class="param"><a href="#Enkeshui">Enkeshui</a></p>
     <p class="param"><a href="#Enlightenment">Enlightenment</a></p>
     <p class="param"><a href="#Erherhe">Erherhe</a></p>
     <p class="param"><a href="#Eson Xorgol">Eson Xorgol</a></p>
@@ -4318,7 +4296,6 @@ any odd number of seeds
     <p class="param"><a href="#Huroy">Huroy</a></p>
     <p class="param"><a href="#Je ki n je">Je ki n je</a></p>
     <p class="param"><a href="#J'Odu">J'Odu</a></p>
-    <p class="param"><a href="#J'Odu_II">J'Odu_II</a></p>
     <p class="param">&emsp;&ensp;Rounds</p>
     <p class="param"><a href="#Jongkak">Jongkak</a></p>
     <p class="param"><a href="#Kalah">Kalah</a></p>

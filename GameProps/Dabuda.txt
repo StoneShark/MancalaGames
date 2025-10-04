@@ -62,5 +62,8 @@ Variations:
 - <nolink>Dabuda::Two:  Valdez describes a multilap variant that has 
 6 holes per side, does
 not pick own seed on capture, and allows moves to start in any hole.
+
+- Endodoi and it's variant <nolink>Endodoi::J_Odu are very similar games
+without the strict limits on move start locations.
 </about>
 </text_section>

@@ -222,7 +222,7 @@ def test_territory_rules(tester):
         rule=lambda ginfo: (ginfo.goal == gi.Goal.TERRITORY
                             and ginfo.round_fill not in (gi.RoundFill.NOT_APPLICABLE,
                                                          gi.RoundFill.UCHOWN)),
-        msg='Round Fill is ignored for Territory goal',
+        msg='Selected round fill is ignored for Territory goal',
         warn=True)
 
     tester.test_rule('uchown_terr_only',
@@ -617,6 +617,14 @@ def test_capture_rules(tester):
         excp=gi.GameInfoError)
         # capturing the opp dir (as usual) wont capture because
         # the preceeding holes were just sown, that is, not empty
+
+    tester.test_rule('xcapt_any_uncond',
+        rule=lambda ginfo: (ginfo.crosscapt == gi.XCaptType.ANY
+                            and ginfo.multicapt
+                            and not ginfo.basic_capt),
+        msg="""Unconstrained cross capture type of ANY use basic capture""",
+        excp=gi.GameInfoError)
+        # all seeds on the opposite side from the final hole will be captured
 
     tester.test_rule('capt2out_needs_samedir',
         rule=lambda ginfo: (ginfo.capt_type == gi.CaptType.TWO_OUT
