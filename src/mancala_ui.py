@@ -588,24 +588,37 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
                     btnstate)
 
 
+    def _startup_msgs(self):
+        """Return true if there should be a startup delay for
+        a start up message."""
+
+        if not animator.active() or self.game.movers:
+            # movers > 0 when exiting setup
+            return False
+
+        return (self.game.inhibitor.stop_me_capt(self.game.turn)
+                or self.game.inhibitor.stop_me_child(self.game.turn)
+                or self.game.info.prescribed in (gi.SowPrescribed.SOW1OPP,
+                                                 gi.SowPrescribed.PLUS1MINUS1,
+                                                 gi.SowPrescribed.NO_UDIR_FIRSTS))
+
+
     def start_it(self):
         """Do the last steps in starting a new game: log the start,
         reset the animator state, and check for ai's turn.
         If the animator is active and anything is inhibited,
         delay the inhibitor start message until the main
-        window is displayed."""
+        window is displayed.
+
+        Check movers count so that we do not show start up animation
+        after setup."""
+
         game_log.new()
         game_log.turn(0, 'Start Game', self.game)
         self.history.record(self.game.state)
 
-        startup_msgs = (
-            self.game.inhibitor.stop_me_capt(self.game.turn)
-            or self.game.inhibitor.stop_me_child(self.game.turn)
-            or self.game.info.prescribed in (gi.SowPrescribed.SOW1OPP,
-                                             gi.SowPrescribed.PLUS1MINUS1,
-                                             gi.SowPrescribed.NO_UDIR_FIRSTS))
         self.ani_reset_state()
-        if animator.active() and startup_msgs:
+        if self._startup_msgs():
             self.update_idletasks()
             self.after(100, self._ani_delayed_startup)
         else:
