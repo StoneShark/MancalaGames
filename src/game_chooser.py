@@ -197,10 +197,9 @@ ORIGIN = {
         'Traditional': lambda gdict: 'traditional' in gdict.get('origin', ''),
         'Modern': lambda gdict: 'modern' in gdict.get('origin', ''),
         'Example': lambda gdict: 'example' in gdict.get('origin', ''),
-        'Other': lambda gdict: ('origin' in gdict
-                                and gdict['origin'] not in
+        'Other': lambda gdict: ('origin' not in gdict
+                                or gdict['origin'] not in
                                     ['traditional', 'modern', 'example']),
-        'Not Specified': lambda gdict: 'origin' not in gdict,
         }
 
 RATINGS = {STAR * 1: lambda gname: FAVS.rating(gname) == 1,
@@ -223,12 +222,12 @@ def build_regions():
 
     world_regions = ['Africa', 'Eastern Africa', 'Central Africa',
                      'Northern Africa', 'Western Africa',
-                     'Asia', 'Central Asia', 'South Asia', 'Southeast Asia',
+                     'Asia', 'Western Asia', 'Central Asia', 'South Asia', 'Southeast Asia',
                      'Americas', 'Caribbean',
                      'Europe']
     indent = ['Eastern Africa', 'Central Africa',
               'Northern Africa', 'Western Africa',
-              'Central Asia', 'South Asia', 'Southeast Asia',
+              'Western Asia', 'Central Asia', 'South Asia', 'Southeast Asia',
               'Caribbean']
 
     def region_test_func(rname):
@@ -269,7 +268,7 @@ def build_regions():
 
         region = gdict.get('region', None)
         if region is None:
-            return False
+            return True
 
         return not any(rname in region for rname in world_regions)
 
@@ -277,7 +276,6 @@ def build_regions():
              region_test_func(rname)
              for rname in world_regions}
     rdict |= {'Other': other_region}
-    rdict |= {'Not Specified': lambda gdict: 'region' not in gdict}
 
     return rdict
 
