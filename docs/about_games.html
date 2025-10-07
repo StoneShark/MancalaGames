@@ -425,39 +425,51 @@ Allow making children in opposite end holes but prohibit making children in oppo
 <h3 id="Ayo" class="game_desc">Ayo</h3>
 <p>Multi-lap clockwise sow. 
 <p>If a player does not have any seeds at the start of their turn, they must pass. Their opponent must make seeds available to them as soon as they are able. If they can make seeds available, moves are only allowed from holes that do so. 
-<p>Multiple captures on 2s & 3s on opposite side, but a grand slam capture leaves the seeds in the last hole (rightmost). When only one hole has seeds, the capture is performed. 
-<p>Games end when there are two or fewer seeds on the board. Other games with cycling seeds may be ended with the End Game menu command. In either case, seeds on the board go to the hole owners. 
-<p>Goal: collect more than half the seeds. 
+<p>Multiple captures on 2s & 3s from opponent's holes, but a grand slam capture leaves the seeds in the last hole (mover's rightmost). When only one hole has seeds, the capture is performed. 
+<p><nolink>Ayo is a territory game played in rounds. A round ends when there are one or two seeds on the board. If there are more than 2 seeds cycling the board, the game can be ended and scored with the End Round menu command. In either case, seeds on the board go to the hole owners. 
+<p>Round setup is based on the number of seeds collected. Each player fills the holes that can with 4 seeds, extra seeds are put into their stores. This might result in one empty hole that the round loser will control. 
+<p>The round loser starts each new round. 
+<p>Goal: control 9 holes. 
 <p>Variation: 
 <ul><li class="helptext">
-<a href="about_games.html#Ayo">Ayo</a>:: - played in rounds. Seeds are captured from your opponent's holes. The loser of the previous round starts each new round. Each round is played until there are two or fewer seeds on the board or the round is ended with End Round menu command. The goal parameter (Config Variant...) defines the number of holes the winner must control to win the game. 
+holes required to win the game (<a href="game_params.html#goal_param">GOAL_PARAM</a>). 
+<li class="helptext">
+don't end the game when one or two seeds (<a href="game_params.html#end_cond">END_COND</a>). See Note. 
+<li class="helptext">
+<nolink>Ayo::No_Rounds - not played in rounds. Goal is to collect more seeds than opponent. 
+<li class="helptext">
+<a href="#J'Odu">J'Odu</a> uses the same rules but is a cross capture game with the ONE_ANY capture pattern. 
 </ul>
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  6</p>
     <p class="param">Start seeds:  4</p>
-    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: TERRITORY</p>
     <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 2 3</p>
-    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OPP_SIDE</p>
+    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OPP_TERR</p>
     <p class="param"><a href="game_params.html#end_cond">End Game Condition</a>: SEEDS_LIMIT</p>
     <p class="param"><a href="game_params.html#end_param">End Cond Param</a>: 2</p>
+    <p class="param"><a href="game_params.html#goal_param">Goal Parameter</a>: 9</p>
     <p class="param"><a href="game_params.html#grandslam">Grand Slam</a>: LEAVE_RIGHT</p>
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
   </div>
   <div class="column2">
-    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
     <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: -1</p>
     <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
     <p class="param"><a href="game_params.html#mustshare">Must Share</a>: Yes</p>
     <p class="param"><a href="game_params.html#quitter">Quit Game Seeds</a>: HOLE_OWNER</p>
+    <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: TERR_EX_EMPTY</p>
+    <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: LOSER</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
   </div>
 </div>
 <p><b class="enum">Rules</b>: Hanson, Sue and Jon. All about Mancala: It's History and How to Play. 2003. p61. 
-<p><b class="enum">Deviation 1</b>: Games are ended when there are only one or two seeds on the board. These are generally but not always cycling seeds; this may be turned off via the Config Variant... menu command. 
-<p><b class="enum">Deviation 2</b>: The rounds variant does not setup exactly as described. All holes are always filled with seeds. The rules state that any seeds left after filling holes to fours should be left in the players' stores and that the empty hole should go to the round loser. 
+<p><b class="enum">Deviation</b>: The rules do not end games at two or fewer seeds. 
 <p><b class="enum">Origin</b>: traditional 
 <p><b class="enum">Region</b>: Western Africa 
+<p><b class="enum">Note</b>: A round outcome can be changed when the final two seeds are in the next player's rightmost hole and the hole across from it and when the seeds collected by each player are with in 2 of eachother. The likelyhood of this is about 1 in 3000. A final capture is possible, changing the round outcome. 
 <h3 id="Ayoayo" class="game_desc">Ayoayo</h3>
 <p>A multi-lap mancala; sow direction counter-clockwise skipping start hole on full cycle sow; cross-capture from opponents side when a sow ends in own empty hole. If your opponent has no seeds, you must make seeds available to them (if you can). 
 <p>The game ends when one player captures more than half the seeds; when the current player cannot share seeds to an opponent without seeds; or when there is only one seed left on the board. 
@@ -1842,41 +1854,53 @@ A single-lap mancala with SPLIT <a href="game_params.html#sow_direct">SOW_DIRECT
 <h3 id="J'Odu" class="game_desc">J'Odu</h3>
 <p>Multi-lap clockwise sow. 
 <p>If a player does not have any seeds at the start of their turn, they must pass. Their opponent must make seeds available to them as soon as they are able. If they can make seeds available, moves are only allowed from holes that do so. 
-<p>Cross captures when the final seed of a sow end's in your own empty hole and the opposite hole has 1 or 2 seeds. Continue the capture chain as long as the opposite holes contain 1 or 2 seeds, but a grand slam capture leaves the seeds in the last hole (rightmost). When only one hole has seeds, the capture is performed. 
-<p>Games end when there are two or fewer seeds on the board. Other games with cycling seeds may be ended with the End Game menu command. In either case, seeds on the board go to the hole owners. 
-<p>Goal: collect more than half the seeds. 
+<p>Cross captures when the final seed of a sow end's in your own empty hole and the opposite hole has 1 or 2 seeds. Continue the capture chain as long as the opposite holes contain 1 or 2 seeds, but a grand slam capture leaves the seeds in the last hole (mover's rightmost). When only one hole has seeds, the capture is performed. 
+<p><nolink>J'Odu is a territory game played in rounds. A round ends when there are one or two seeds on the board. If there are more than 2 seeds cycling the board, the game can be ended and scored with the End Round menu command. In either case, seeds on the board go to the hole owners. 
+<p>Round setup is based on the number of seeds collected. Each player fills the holes that can with 4 seeds, extra seeds are put into their stores. This might result in one empty hole that the round loser will control. 
+<p>The round loser starts each new round. 
+<p>Goal: control 9 holes. 
 <p>Variation: 
 <ul><li class="helptext">
-J_Odu::Rounds - played in rounds. Seeds are captured from your opponent's holes. The loser of the previous round starts each new round. Each round is played until there are two or fewer seeds on the board or the round is ended with End Round menu command. The goal parameter (Config Variant...) defines the number of holes the winner must control to win the game. 
+holes required to win the game (<a href="game_params.html#goal_param">GOAL_PARAM</a>). 
+<li class="helptext">
+don't end the game when one or two seeds (<a href="game_params.html#end_cond">END_COND</a>). See Note. 
+<li class="helptext">
+<nolink>Ayo::No_Rounds - not played in rounds. Goal is to collect more seeds than opponent. 
+<li class="helptext">
+<a href="about_games.html#Ayo">Ayo</a> uses the same rules but does basic captures. 
 </ul>
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  6</p>
     <p class="param">Start seeds:  3</p>
-    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: TERRITORY</p>
     <p class="param"><a href="game_params.html#capt_dir">Capture Direction</a>: SOW</p>
     <p class="param"><a href="game_params.html#capt_max">Capture Max</a>: 2</p>
-    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OPP_SIDE</p>
+    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OPP_TERR</p>
     <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: ONE_ANY</p>
     <p class="param"><a href="game_params.html#end_cond">End Game Condition</a>: SEEDS_LIMIT</p>
     <p class="param"><a href="game_params.html#end_param">End Cond Param</a>: 2</p>
+    <p class="param"><a href="game_params.html#goal_param">Goal Parameter</a>: 9</p>
+    <p class="param"><a href="game_params.html#grandslam">Grand Slam</a>: LEAVE_RIGHT</p>
   </div>
   <div class="column2">
-    <p class="param"><a href="game_params.html#grandslam">Grand Slam</a>: LEAVE_RIGHT</p>
     <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
     <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: -1</p>
     <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
     <p class="param"><a href="game_params.html#mustshare">Must Share</a>: Yes</p>
     <p class="param"><a href="game_params.html#quitter">Quit Game Seeds</a>: HOLE_OWNER</p>
+    <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: TERR_EX_EMPTY</p>
+    <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: LOSER</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
   </div>
 </div>
 <p><b class="enum">Rules</b>: Hanson, Sue and Jon. All about Mancala: It's History and How to Play. 2003. p63. 
-<p><b class="enum">Deviation 1</b>: Games are ended when there are only one or two seeds on the board. These are generally but not always cycling seeds; this may be turned off via the Config Variant... menu command. 
-<p><b class="enum">Deviation 2</b>: The rounds variant does not setup exactly as described. All holes are always filled with seeds. The rules state that any seeds left after filling holes to fours should be left in the players' stores and that the empty hole should go to the round loser. 
+<p><b class="enum">Deviation</b>: The rules do not end games at two or fewer seeds. 
 <p><b class="enum">Origin</b>: traditional 
 <p><b class="enum">Region</b>: Western Africa 
+<p><b class="enum">Note</b>: A round outcome can be changed when the final two seeds are in the next player's rightmost hole and the hole across from it and when the seeds collected by each player are with in 2 of eachother. The likelyhood of this is about 1 in 3000. A final capture is possible, changing the round outcome. 
 <h3 id="Je ki n je" class="game_desc">Je ki n je</h3>
 <p>Multilap sow in either direction from your own holes (<a href="game_params.html#udir_holes">UDIR_HOLES</a>). Multilap sowing ends when there is a single seed in the final hole. 
 <p>When multilap sow ends on your opponent's side of the board, capture the final seed sown and the seeds in the next hole in the choosen sow direction, even if it is on your side of the board. 
@@ -2110,9 +2134,11 @@ played in rounds and loser puts last 1-3 seeds into occupied holes but must resu
 <p><b class="enum">Origin</b>: modern 
 <p><b class="enum">Region</b>: Americas 
 <h3 id="Lahemay Waladat" class="game_desc">Lahemay Waladat</h3>
-<p>Sow counter-clockwise in multiple laps. Continue lapping until the last seed falls into an empty hole or makes a hole containing 3 seeds. If the last seed of a lap makes 3 seeds, capture those seeds and continue the lap sowing with the seeds in the next hole. If there are no seeds in the next hole, the turn is over. 
-<p>A round ends when one player cannot move. Seeds left on the board are allocated to the player that performed the last move. For the next round, holes are allocated to each player based on how many seeds they collected in the previous round. 
-<p>The game is over when one player has control of 10 holes. 
+<p>Sow counter-clockwise in multiple laps. Continue lapping until the last seed falls into an empty hole or makes a hole containing 3 seeds. 
+<p>If the last seed of a lap makes 3 seeds, capture those seeds and continue the lap sowing with the seeds from the next hole. If there are no seeds in the next hole, the turn is over. 
+<p>A round ends when one player cannot move. Seeds left on the board are allocated to the player that performed the last move. 
+<p>For the next round, holes are allocated to each player based on how many seeds they collected in the previous round. If there is a contested hole where each player has two seeds to fill it, a lottery is used to choose the hole owner. 
+<p>The game is over when one player has complete control of 10 holes (a lottery outcome in their favor does not win the game). 
 <p>Variations: 
 <ul><li class="helptext">
 <a href="about_games.html#Motiq">Motiq</a> captures on 4s and handles round setup differently. 
@@ -2126,7 +2152,7 @@ played in rounds and loser puts last 1-3 seeds into occupied holes but must resu
     <p class="param"><a href="game_params.html#capt_side">Capture side</a>: BOTH</p>
     <p class="param"><a href="game_params.html#goal_param">Goal Parameter</a>: 10</p>
     <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
-    <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: UCHOWN</p>
+    <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: TERR_EX_RANDOM</p>
   </div>
   <div class="column2">
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
@@ -2137,8 +2163,7 @@ played in rounds and loser puts last 1-3 seeds into occupied holes but must resu
     <p class="param"><a href="game_params.html#unclaimed">Unclaimed Seeds at End</a>: LAST_MOVER</p>
   </div>
 </div>
-<p><b class="enum">Rules</b>: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p30. 
-<p><b class="enum">Deviations</b>: Rounding rules are applied to all territory games, no drawing of lots to choose who gets the extra hole. 
+<p><b class="enum">Rules</b>: Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p91. 
 <p><b class="enum">Note</b>: <a href="game_params.html#goal_param">GOAL_PARAM</a> set to 10 to limit game length 
 <p><b class="enum">Origin</b>: traditional 
 <p><b class="enum">Region</b>: Eastern Africa 
@@ -2667,8 +2692,10 @@ odd board sizes 5 to 15
 <p><b class="enum">Origin</b>: traditional 
 <p><b class="enum">Region</b>: Northern Africa 
 <h3 id="Motiq" class="game_desc">Motiq</h3>
-<p>Sow counter-clockwise in multiple laps. Continue lapping until the last seed falls into an empty hole or makes a hole containing 4 seeds. If the last seed of a lap makes 4 seeds, capture those seeds and continue the lap sowing with the seeds in the next hole. If there are no seeds in the next hole, the turn is over. 
-<p>A round ends when one player cannot move. Seeds left on the board are allocated to the player that performed the last move. For the next round, holes are allocated to each player based on how many seeds they collected in the previous round. 
+<p>Sow counter-clockwise in multiple laps. Continue lapping until the last seed falls into an empty hole or makes a hole containing 4 seeds. 
+<p>If the last seed of a lap makes 4 seeds, capture those seeds and continue the lap sowing with the seeds in the next hole. If there are no seeds in the next hole, the turn is over. 
+<p>A round ends when one player cannot move. Seeds left on the board are allocated to the player that performed the last move. 
+<p>For the next round, holes are allocated to each player based on how many seeds they collected in the previous round. If there is a contested hole where each player has two seeds to fill it, it goes to the player with fewer holes. 
 <p>The game is over when one player has control of 11 holes. 
 <p>Variations: 
 <ul><li class="helptext">
@@ -4232,7 +4259,7 @@ any odd number of seeds
     <p class="param">&emsp;&ensp;Yit_Nuri</p>
     <p class="param">&emsp;&ensp;Yit_Jani</p>
     <p class="param"><a href="#Ayo">Ayo</a></p>
-    <p class="param">&emsp;&ensp;Rounds</p>
+    <p class="param">&emsp;&ensp;No_Rounds</p>
     <p class="param"><a href="#Ayoayo">Ayoayo</a></p>
     <p class="param"><a href="#Azigo">Azigo</a></p>
     <p class="param"><a href="#Ba-awa">Ba-awa</a></p>
@@ -4296,7 +4323,7 @@ any odd number of seeds
     <p class="param"><a href="#Huroy">Huroy</a></p>
     <p class="param"><a href="#Je ki n je">Je ki n je</a></p>
     <p class="param"><a href="#J'Odu">J'Odu</a></p>
-    <p class="param">&emsp;&ensp;Rounds</p>
+    <p class="param">&emsp;&ensp;No_Rounds</p>
     <p class="param"><a href="#Jongkak">Jongkak</a></p>
     <p class="param"><a href="#Kalah">Kalah</a></p>
     <p class="param">&emsp;&ensp;Maybe_Fair</p>

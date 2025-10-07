@@ -37,6 +37,7 @@ class GameConsts:
     half_holes: int = dc.field(init=False, repr=False)
 
     total_seeds: int = dc.field(init=False, repr=False)
+    seed_equiv: int = dc.field(init=False, repr=False)
 
     false_range: int = dc.field(init=False, repr=False)
     true_range: int = dc.field(init=False, repr=False)
@@ -59,6 +60,7 @@ class GameConsts:
 
         object.__setattr__(self, 'total_seeds',
                            self.dbl_holes * self.nbr_start)
+        object.__setattr__(self, 'seed_equiv', self.nbr_start)
 
         object.__setattr__(self, 'false_range', range(0, self.holes))
         object.__setattr__(self, 'true_range',
@@ -84,6 +86,7 @@ class GameConsts:
         string += f'   dbl_holes={self.dbl_holes}\n'
         string += f'   half_holes={self.half_holes}\n'
         string += f'   total_seeds={self.total_seeds}\n'
+        string += f'   seed_equiv={self.seed_equiv}\n'
         string += '   false_range=' + repr(self.false_range) + '\n'
         string += '   true_range=' + repr(self.true_range) + '\n'
         string += '   false_fill=' + repr(self.false_fill) + '\n'
@@ -97,6 +100,7 @@ class GameConsts:
         parameters."""
 
         object.__setattr__(self, 'total_seeds', seeds)
+        object.__setattr__(self, 'seed_equiv', seeds // self.dbl_holes)
 
 
     def get_dict(self):

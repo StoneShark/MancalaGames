@@ -12,7 +12,7 @@
       "goal_param": 10,
       "mlaps": 1,
       "capt_side": 0,
-      "round_fill": 8,
+      "round_fill": 11,
       "round_starter": 0,
       "rounds": 2,
       "sow_direct": 1,
@@ -33,8 +33,7 @@
    "vari_params": {
       "goal_param": "include"
    },
-   "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p30.",
-   "deviations": "Rounding rules are applied to all territory games, no drawing of lots to choose who gets the extra hole.",
+   "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p91.",
    "note": "GOAL_PARAM set to 10 to limit game length",
    "origin": "traditional",
    "region": "Eastern Africa"
@@ -43,16 +42,21 @@
 <about>
 Sow counter-clockwise in multiple laps. Continue lapping until the
 last seed falls into an empty hole or makes a hole containing 3 seeds.
+
 If the last seed of a lap makes 3 seeds, capture those seeds and
-continue the lap sowing with the seeds in the next hole. If there are
+continue the lap sowing with the seeds from the next hole. If there are
 no seeds in the next hole, the turn is over.
 
 A round ends when one player cannot move. Seeds left on the board are
-allocated to the player that performed the last move. For the next
-round, holes are allocated to each player based on how many seeds they
-collected in the previous round.
+allocated to the player that performed the last move.
 
-The game is over when one player has control of 10 holes.
+For the next round, holes are allocated to each player based on
+how many seeds they collected in the previous round.
+If there is a contested hole where each player has two seeds
+to fill it, a lottery is used to choose the hole owner.
+
+The game is over when one player has complete control of 10 holes
+(a lottery outcome in their favor does not win the game).
 
 Variations:
 

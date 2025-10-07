@@ -7,6 +7,8 @@
    "game_info": {
       "name": "J'Odu",
       "about": "<text_section>",
+      "goal": 2,
+      "goal_param": 9,
       "capt_dir": 1,
       "capt_max": 2,
       "crosscapt": 3,
@@ -17,7 +19,10 @@
       "multicapt": -1,
       "mustpass": true,
       "mustshare": true,
-      "capt_side": 1,
+      "capt_side": 5,
+      "round_fill": 12,
+      "round_starter": 1,
+      "rounds": 2,
       "sow_direct": 1,
       "stores": true,
       "quitter": 0
@@ -28,17 +33,19 @@
          "mm_depth": [ 1, 5, 7, 11 ]
       },
       "scorer": {
-         "mx_stores_m": 8
+         "mx_stores_m": 8,
+         "mx_empties_m": 1
       }
    },
    "variants": {
-      "J'Odu_II": { },
-      "Rounds": {
-         "goal": 2,
-         "goal_param": 9,
-         "round_starter": 1,
-         "rounds": 2,
-         "capt_side": 5
+      "J'Odu": { },
+      "No_Rounds": {
+         "goal": 0,
+         "goal_param": 0,
+         "rounds": 0,
+         "round_fill": 0,
+         "round_starter": 0,
+         "capt_side": 1
       }
    },
    "vari_params": {
@@ -46,12 +53,19 @@
       "goal_param": [ 0, 7, 8, 9, 10, 11, 12 ]
    },
    "rules": "Hanson, Sue and Jon. All about Mancala: It's History and How to Play. 2003. p63.",
-   "deviation 1": "<text_section>",
-   "deviation 2": "<text_section>",
+   "deviation": "The rules do not end games at two or fewer seeds.",
    "origin": "traditional",
-   "region": "Western Africa"
+   "region": "Western Africa",
+   "Note": "<text_section>"
 }
 <text_section>
+<Note>
+A round outcome can be changed when the final two seeds are in the
+next player's rightmost hole and the hole across from it
+and when the seeds collected by each player are with in 2 of eachother.
+The likelyhood of this is about 1 in 3000.
+A final capture is possible, changing the round outcome.
+</Note>
 <about>
 Multi-lap clockwise sow.
 
@@ -63,35 +77,34 @@ moves are only allowed from holes that do so.
 Cross captures when the final seed of a sow end's in your own empty hole
 and the opposite hole has 1 or 2 seeds.
 Continue the capture chain as long as the opposite holes contain 1 or 2 seeds,
-but a grand slam capture leaves the seeds in the last hole (rightmost).
+but a grand slam capture leaves the seeds in the last hole (mover's rightmost).
 When only one hole has seeds, the capture is performed.
 
-Games end when there are two or fewer seeds on the board.
-Other games with cycling seeds may be ended with the End Game menu command.
+<nolink>J'Odu is a territory game played in rounds.
+A round ends when there are one or two seeds on the board.
+If there are more than 2 seeds cycling the board,
+the game can be ended and scored with the End Round menu command.
 In either case, seeds on the board go to the hole owners.
 
-Goal: collect more than half the seeds.
+Round setup is based on the number of seeds collected.
+Each player fills the holes that can with 4 seeds,
+extra seeds are put into their stores.
+This might result in one empty hole
+that the round loser will control.
+
+The round loser starts each new round.
+
+Goal: control 9 holes.
 
 Variation:
 
-- J_Odu::Rounds - played in rounds.
-Seeds are captured from your opponent's holes.
-The loser of the previous round starts each new round.
-Each round is played until there are two or fewer seeds on the board or
-the round is ended with End Round menu command.
-The goal parameter (Config Variant...) defines the number of holes the
-winner must control to win the game.
+- holes required to win the game (GOAL_PARAM).
+
+- don't end the game when one or two seeds (END_COND). See Note.
+
+- <nolink>Ayo::No_Rounds - not played in rounds.
+Goal is to collect more seeds than opponent.
+
+- Ayo uses the same rules but does basic captures.
 </about>
-<deviation 1>
-Games are ended when there are only one or two seeds on the board.
-These are generally but not always cycling seeds; this may be
-turned off via the Config Variant... menu command.
-</deviation 1>
-<deviation 2>
-The rounds variant does not setup exactly as described.
-All holes are always filled with seeds.
-The rules state that any seeds left after filling holes to
-fours should be left in the players' stores and that
-the empty hole should go to the round loser.
-</deviation 2>
 </text_section>

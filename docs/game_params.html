@@ -235,7 +235,9 @@ is included after the parameter sections.
 <p class="pdesc">UI Tab: Dynamics
 
 <p>Allows specifying non-all-equal start patterns. 
-<p>For TERRITORY games played in round, <nolink>START_PATTERN is used for every round, which could yield odd openings--use caution. For round tally games, the <nolink>START_PATTERN is used for all new games and rounds. For all other games played in rounds, <nolink>START_PATTERN is only used for the opening play of a game; not for the start of each round. 
+<p>For TERRITORY games played in rounds, <nolink>START_PATTERN is used for every round, which could yield odd combinations of  hole ownership and seed placement--use caution.  TERRITORY games require that the total number of seeds be a multiple of the number of holes. 
+<p>For round tally games, the <nolink>START_PATTERN is used  for all new games and rounds.  
+<p>For all other games played in rounds, <nolink>START_PATTERN is only used for the initial game setup; not for the start of each round.  For the second and subsequent rounds,  nbr_start seeds are placed in any holes filled but the total seeds in play are not changed from the first round. 
 <p>The following patterns are supported: 
 <ol start=0><li class="helptext">
 <b class="enum">ALL_EQUAL</b>: all holes start with the same number of seeds. The total seeds in play is nbr_start x holes x 2. 
@@ -524,7 +526,8 @@ is included after the parameter sections.
 <p>The seeds each player accumulated in the previous round are distributed into holes with exactly the same number in each (<a href="game_params.html#nbr_start">NBR_START</a> seeds). The winner will fill all their holes and put any remaining seeds into their own store. The loser will fill as many holes as they can with nbr_start seeds and put any remaining seeds (fewer than nbr_start) into their own store. 
 <p>LEFT_FILL, RIGHT_FILL and OUTSIDE_FILL define which holes that the loser must fill. UCHOOSE allows the loser to choose which holes have seeds. 
 <ol start=0><li class="helptext">
-<b class="enum">NOT_APPLICABLE</b>: round fill doesn't need to be specified: either the game not played in rounds (CLEAR & DEPRIVE games included) or game goal is TERRITORY without UCHOWN (see below, all holes filled). 
+<b class="enum">NOT_APPLICABLE</b>: round fill doesn't need to be specified. 
+<p class="helptext"> For TERRITORY games, this is the default round fill. If the players have extra seeds but cannot completely  fill a hole, the extra hole and it's seeds goes to the player with more extra seeds. If both players have half the seeds required, the hole goes to the round loser.  
 <li class="helptext">
 <b class="enum">LEFT_FILL</b>: fill the round loser's holes from the player's left with nbr_start seeds each. 
 <li class="helptext">
@@ -540,13 +543,17 @@ is included after the parameter sections.
 <li class="helptext">
 <b class="enum">UMOVE</b>: allow the loser to choose where seeds are placed. At least one seed must be placed in each hole and the game must be playable (at least one hole has <a href="game_params.html#min_move">MIN_MOVE</a> seeds), remaining seeds are placed in the store. The winner's layout is the same layout but reflected and their extra seeds are placed in their store. 
 <li class="helptext">
-<b class="enum">UCHOWN</b>: The only round fill supported for territory games and only territory games. The winner may choose which holes they control. 
+<b class="enum">UCHOWN</b>: The winner may choose which holes they control. See NOT_APPLICABLE for how the ownership counts are determined. Supported for TERRITORY goal only. 
 <li class="helptext">
 <b class="enum">SHORTEN_ALL</b>: SHORTEN but all of the loser's seeds are put on the board thus one hole might not have 'nbr_start' seeds. The winner gets the same number of seeds put into play. 
 <li class="helptext">
 <b class="enum">LOSER_ONLY</b>: Only the loser's holes are refilled based on the number of seeds captured and on their side of the board. Any blocks (if used) on their side of the board are cleared. The loser may choose which holes have seeds and which are empty and (possibly) blocked. 
 <p class="helptext"> The winner's side of the board is left unchanged: seeds left as   is, blocks left in place, and seeds in the store remain. If the   winner's side of the board is not playable, a new game is started. 
 <p class="helptext"> <a href="game_params.html#no_sides">NO_SIDES</a>, children and locks are not supported. <a href="game_params.html#unclaimed">UNCLAIMED</a> and   <a href="game_params.html#quitter">QUITTER</a> must both be HOLE_OWNER. 
+<li class="helptext">
+<b class="enum">TERR_EX_RANDOM</b>: If the players have extra seeds but cannot completely  fill a hole, the extra hole and it's seeds goes to the player with more seeds.  If both players have half the seeds required, the hole owner is selected by lottery.  This could result in the winner playing goal_param holes for the round,  but lottery win never allows one player to win the game.  Supported for TERRITORY goal only.  
+<li class="helptext">
+<b class="enum">TERR_EX_EMPTY</b>: If the players have extra seeds but cannot completely  fill a hole, the extra hole goes to the round loser but it is left empty. The extra seeds remain in the player's stores. Supported for TERRITORY goal only.  
 </ol>
 <h4 id="blocks"> Blocks </h4>
 <p class="pdesc">Location in Config Files: game_info : blocks
@@ -569,7 +576,7 @@ is included after the parameter sections.
 <b class="enum">OFF</b>: Single lap sowing. Seeds from the start hole are sown, typically, one per hole until expended. 
 <li class="helptext">
 <b class="enum">LAPPER</b>: If the first sow ends in a hole with more than one seed, pick up all the seeds and continue sowing another lap.  
-<p class="helptext">In general, sowing laps continues in this manner until the final seed of a lap reaches an empty hole.  Other conditions for ending lap sowing are listed below. 
+<p class="helptext"> In general, sowing laps continues in this manner until the final seed of a lap reaches an empty hole.  Other conditions for ending lap sowing are listed below. 
 <p class="helptext"> Several values of <a href="game_params.html#sow_rule">SOW_RULE</a> perform an operation after each lap sown: SOW_BLKD_DIV(_NR) closes the final hole and CHANGE_DIR_LAP changes the direction of sowing after each lap. 
 <li class="helptext">
 <b class="enum">LAPPER_NEXT</b>: For lapper_next sowing, the number of seeds in the last sown hole of lap does not matter. Instead, if the hole after the last sown hole has any seeds, those seeds are used to continue sowing the next lap.  

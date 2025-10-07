@@ -29,6 +29,7 @@ import mancala
 import man_config
 import man_history
 import man_ui_cmd_mixins as ui_cmds
+import new_game
 import round_tally
 import sower
 import ui_utils
@@ -600,7 +601,8 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
                 or self.game.inhibitor.stop_me_child(self.game.turn)
                 or self.game.info.prescribed in (gi.SowPrescribed.SOW1OPP,
                                                  gi.SowPrescribed.PLUS1MINUS1,
-                                                 gi.SowPrescribed.NO_UDIR_FIRSTS))
+                                                 gi.SowPrescribed.NO_UDIR_FIRSTS)
+                or self.game.deco.new_game.startup_msg)
 
 
     def start_it(self):
@@ -630,6 +632,7 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
         window is fully rendered.  Use the animator queue to
         do a final refresh and schedule the ai."""
 
+        self.game.deco.new_game.start_ani_msg()
         self.game.inhibitor.start_ani_msg()
         sower.start_ani_msg(self.game)
         animator.queue_callback(self.refresh)

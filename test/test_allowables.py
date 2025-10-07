@@ -51,34 +51,34 @@ CCW = Direct.CCW
 class TestAllowables:
 
     TEST_ALLOW_DATA = [
-        (True,  utils.build_board([2, 2, 2], [0, 0, 0]),   # 0
+        (0, True,  utils.build_board([2, 2, 2], [0, 0, 0]),
          FALSES, NONES, False, 2, [T, T, T]),
-        (True,  utils.build_board([1, 2, 3], [0, 0, 0]),   # 1
+        (1, True,  utils.build_board([1, 2, 3], [0, 0, 0]),
          FALSES, NONES, False, 2, [F, T, T]),
-        (False, utils.build_board([0, 0, 0], [1, 1, 1]),   # 2
+        (2, False, utils.build_board([0, 0, 0], [1, 1, 1]),
          FALSES, NONES, False, 1,            [T, T, T]),
-        (False, utils.build_board([0, 0, 0], [1, 2, 3]),   # 3
+        (3, False, utils.build_board([0, 0, 0], [1, 2, 3]),
           FALSES, NONES, False, 2,           [F, T, T]),
 
-        (True, utils.build_board([2, 2, 0], [1, 0, 0]),    # 4
+        (4, True, utils.build_board([2, 2, 0], [1, 0, 0]),
          FALSES, NONES, True, 1, [T, T, F]),
-        (False, utils.build_board([1, 0, 0], [2, 2, 0]),   # 5
+        (5, False, utils.build_board([1, 0, 0], [2, 2, 0]),
          FALSES, NONES, True, 1,             [T, T, F]),
-        (True, utils.build_board([8, 1, 0], [0, 0, 0]),    # 6
+        (6, True, utils.build_board([8, 1, 0], [0, 0, 0]),
          FALSES, NONES, True, 1, [T, F, F]),
-        (False, utils.build_board([0, 0, 0], [0, 1, 3]),   # 7
+        (7, False, utils.build_board([0, 0, 0], [0, 1, 3]),
          FALSES, NONES, True, 1,             [F, F, T]),
 
-        (True,                                             # 8
+        (8, True,
          utils.build_board([2, 2, 0], [1, 0, 0]),
          utils.build_board([T, F, T], [T, F, T]), NONES, True, 1,
                            [F, T, F]),
-        (True,                                             # 9
+        (9, True,
          utils.build_board([2, 2, 2], [1, 0, 0]),
          utils.build_board([T, F, F], [T, F, T]),
          utils.build_board([N, T, N], [N, F, T]), True, 1,
                            [F, F, T]),
-        (True,                                             # 10
+        (10, True,
          utils.build_board([2, 2, 0], [1, 0, 0]),
          utils.build_board([F, T, F], [T, F, T]),
          utils.build_board([N, T, N], [N, F, T]), True, 1,
@@ -86,15 +86,18 @@ class TestAllowables:
 
         # opp has seeds, skip mustshare move simul, even though
         # not all playable
-        (True, utils.build_board([2, 2, 0], [1, 0, 0]),    # 11
+        (11, True, utils.build_board([2, 2, 0], [1, 0, 0]),
           FALSES, NONES, True, 2, [T, T, F]),
+
+        (12, False, utils.build_board([0, 0, 0], [2, 1, 0]),
+         FALSES, NONES, True, 1,                 [F, F, F]),
 
         ]
 
     @pytest.mark.parametrize(
         'turn, board, blocked, child, mustshare, min_move, eresult',
-        TEST_ALLOW_DATA,
-        ids=[f'case_{cnt}' for cnt in range(len(TEST_ALLOW_DATA))])
+        [case[1:] for case in TEST_ALLOW_DATA],
+        ids=[f'case_{case[0]}' for case in TEST_ALLOW_DATA])
     def test_allowables(self, turn, board, blocked, child,
                         mustshare, min_move, eresult, request):
 
@@ -120,13 +123,13 @@ class TestAllowables:
 
     @pytest.mark.parametrize(
         'turn, board, blocked, child, mustshare, min_move, eresult',
-        TEST_ALLOW_DATA,
-        ids=[f'case_{cnt}' for cnt in range(len(TEST_ALLOW_DATA))])
+        [case[1:] for case in TEST_ALLOW_DATA],
+        ids=[f'case_{case[0]}' for case in TEST_ALLOW_DATA])
     def test_ml3_allowables(self, turn, board, blocked, child,
                             mustshare, min_move, eresult):
         """Use the same test data for move triples, but only check
         the 3 (of 6) elements from the results against the expected
-        results."""
+        results. Then check the other side is Fs"""
 
         game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[2],
@@ -264,6 +267,39 @@ class TestAllowables:
         game.store[0] = game.cts.total_seeds - sum(game.board)
 
         assert game.deco.allow.get_allowable_holes() == [F, F, T]
+
+
+    @pytest.mark.parametrize(
+        'idx, turn, board, blocked, child, mustshare, min_move, eresult',
+        [case for case in TEST_ALLOW_DATA if case[4]],
+        ids=[f'case_{case[0]}' for case in TEST_ALLOW_DATA if case[4]])
+    def test_mpass_mshare(self, idx, turn, board, blocked, child,
+                          mustshare, min_move, eresult, request):
+
+        """all but case 12 should test just like test_allowables."""
+
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(capt_on=[2],
+                                min_move=min_move,
+                                mustshare=mustshare,
+                                mustpass=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = turn
+        game.board = board.copy()
+        game.blocked = blocked.copy()
+        game.child = child.copy()
+
+        seeds = game.cts.total_seeds - sum(game.board)
+        quot, rem = divmod(seeds, 2)
+        game.store = [quot, quot + rem]
+
+        if idx == 12:
+            assert game.deco.allow.get_allowable_holes() == [T, T, F]
+        else:
+            assert game.deco.allow.get_allowable_holes() == eresult
 
 
 class TestMemoize:
@@ -1188,7 +1224,7 @@ class TestNoEndlessSows:
         game.disallow_endless(True)
 
         assert 'NoEndlessSows' in str(game.deco.allow)
-        print (game.deco.allow.get_allowable_holes())
+        # print (game.deco.allow.get_allowable_holes())
         assert game.deco.allow.get_allowable_holes() == eresult
 
 

@@ -165,6 +165,16 @@ def test_eliminate_goal_rules(tester):
 def test_territory_rules(tester):
     """Add the rules for games with a goal of territory."""
 
+    tester.test_rule('terr_only_rfill',
+        rule=lambda ginfo: (ginfo.goal != gi.Goal.TERRITORY
+                            and ginfo.round_fill in
+                                (gi.RoundFill.TERR_EX_RANDOM,
+                                 gi.RoundFill.TERR_EX_EMPTY,
+                                 gi.RoundFill.TERR_EX_RANDOM)),
+        msg='Selected round fill is only supported Territory goal',
+        excp=gi.GameInfoError)
+        # don't let other's play in our sandbox
+
     tester.test_rule('terr_goal_param',
         both_objs=True,
         rule=lambda ginfo, holes: (ginfo.goal == gi.Goal.TERRITORY
@@ -183,17 +193,14 @@ def test_territory_rules(tester):
         rule=lambda ginfo: ginfo.goal == gi.Goal.TERRITORY and ginfo.no_sides,
         msg='Territory goal is incompatible with NO_SIDES',
         excp=gi.GameInfoError)
-        # could initial ownship be changed so that no_sides makes sense? yes
-        # ownership is now always assigned, this could work but there
-        # other limitations preventing it from working (no_side is ignored)
 
-    tester.test_rule('terr_rand_start',
+    tester.test_rule('terr_alleq',
         rule=lambda ginfo: (ginfo.goal == gi.Goal.TERRITORY
-                            and ginfo.start_pattern in (gi.StartPattern.RANDOM,
-                                                        gi.StartPattern.RANDOM_ZEROS)),
-        msg='Territory games are incompatible with RANDOM start patterns',
+                            and ginfo.round_fill == gi.RoundFill.TERR_EX_EMPTY
+                            and ginfo.start_pattern != gi.StartPattern.ALL_EQUAL),
+        msg='Round fill TERR_EX_EMPTY requires the ALL_EQUAL start patterns',
         excp=gi.GameInfoError)
-        #  seeds is the total number of seeds, so the continuations tests will fail
+        #  the deco TerrEmtpyNewRound is written with this assumption
 
     tester.test_rule('terr_capt_side',
         rule=lambda ginfo: (ginfo.goal == gi.Goal.TERRITORY
@@ -220,8 +227,11 @@ def test_territory_rules(tester):
 
     tester.test_rule('terr_no_rfill',
         rule=lambda ginfo: (ginfo.goal == gi.Goal.TERRITORY
-                            and ginfo.round_fill not in (gi.RoundFill.NOT_APPLICABLE,
-                                                         gi.RoundFill.UCHOWN)),
+                            and ginfo.round_fill not in
+                                (gi.RoundFill.NOT_APPLICABLE,
+                                 gi.RoundFill.UCHOWN,
+                                 gi.RoundFill.TERR_EX_EMPTY,
+                                 gi.RoundFill.TERR_EX_RANDOM)),
         msg='Selected round fill is ignored for Territory goal',
         warn=True)
 

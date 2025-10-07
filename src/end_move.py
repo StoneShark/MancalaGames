@@ -58,11 +58,6 @@ class EndTurnIf(deco_chain_if.DecoChainIf):
         self.sclaimer = sclaimer
         self.win_seeds = self.compute_win_seeds()
 
-        # for games with rounds but not an even fill,
-        # compute the win holes based on an equalized seeds per hole
-        self.equalized = (self.game.info.start_pattern
-                          != gi.StartPattern.ALL_EQUAL)
-
 
     def __str__(self):
         """A recursive func to print the whole decorator chain."""
@@ -88,45 +83,23 @@ class EndTurnIf(deco_chain_if.DecoChainIf):
         There is no return value!"""
 
 
-    def compute_win_holes(self):
-        """Compute the number of holes that winner should own
-        based on number of seeds. Seeds have already been collected
-        from non-children.
+    def terr_win_seeds(self):
+        """Seeds required for round win in territory games.
 
-        Return: fill start side for greater_holes (winner or True, for tie)
-        and number of winner holes.
+        For TERR_EX_EMPTY fill, the winner must be able to
+        completely fill & control goal_param holes.
 
-        This is used by the new_game deco."""
+        For all others, the winner must be able to fill/control
+        goal_param holes by having enough seeds to fill the final
+        hole with more than half the number of start seeds."""
 
-        game = self.game
-        seeds = game.store.copy()
-        for loc in range(game.cts.dbl_holes):
-            if game.child[loc] is True:
-                seeds[True] += game.board[loc]
-            elif game.child[loc] is False:
-                seeds[False] += game.board[loc]
+        req_holes = self.game.info.goal_param
+        seeds = self.game.cts.seed_equiv
 
-        if seeds[True] == seeds[False]:
-            # doesn't matter where fill starts for tie
-            return True, game.cts.holes
+        if self.game.info.round_fill == gi.RoundFill.TERR_EX_EMPTY:
+            return req_holes * seeds
 
-        greater = seeds[True] > seeds[False]
-        if self.equalized:
-            alloc_count = game.cts.total_seeds / game.cts.dbl_holes
-            greater_holes = round(seeds[greater] / alloc_count)
-        else:
-            nbr_start = game.cts.nbr_start
-            greater_holes = (seeds[greater] + nbr_start // 2) // nbr_start
-
-        game_log.add(f"{greater} holes = {greater_holes}", game_log.IMPORT)
-        return greater, greater_holes
-
-
-    @staticmethod
-    def round_seeds_for_win(req_holes, nbr_start):
-        """Seeds required for round win in territory games."""
-
-        return req_holes * nbr_start - nbr_start + nbr_start // 2 + 1
+        return (req_holes - 1) * seeds + seeds // 2 + 1
 
 
     def compute_win_seeds(self):
@@ -160,8 +133,7 @@ class EndTurnIf(deco_chain_if.DecoChainIf):
             win_seeds = self.game.cts.total_seeds - 1
 
         elif game_goal == gi.Goal.TERRITORY:
-            win_seeds = EndTurnIf.round_seeds_for_win(self.game.info.goal_param,
-                                                      self.game.cts.nbr_start)
+            win_seeds = self.terr_win_seeds()
 
         # this test must be after the territory test
         elif self.game.info.rounds in (gi.Rounds.END_S_SEEDS,
@@ -897,30 +869,34 @@ class RoundWinner(EndTurnIf):
 
         nbr_start = game.cts.nbr_start
         goal_param = game.info.goal_param
-        intro = "Game, not round, ended (too few seeds to fill "
+        intro = "Game, not round, ended (too few seeds to "
 
         if game.info.goal == gi.Goal.TERRITORY:
             req_holes = game.cts.dbl_holes - goal_param + 1
-            self.req_seeds = self.round_seeds_for_win(req_holes, nbr_start)
-            self.msg = intro + f"at least {req_holes} holes)."
+            self.req_seeds = game.cts.total_seeds - self.terr_win_seeds()
+            if game.info.round_fill == gi.RoundFill.TERR_EX_EMPTY:
+                self.req_seeds += 1
+            else:
+                self.req_seeds += game.cts.seed_equiv // 2
+            self.msg = intro + f"claim at least {req_holes} holes)."
 
         elif game.info.round_fill == gi.RoundFill.UMOVE:
             # uses even_fill so must be before it (to require more seeds)
             self.req_seeds = game.cts.holes + game.info.min_move - 1
-            self.msg = intro + "a playable side)."
+            self.msg = intro + "fill a playable side)."
 
         elif game.info.round_fill == gi.RoundFill.EVEN_FILL:
             self.req_seeds = game.info.min_move
-            self.msg = intro + "a playable side)."
+            self.msg = intro + "fill a playable side)."
 
         elif game.info.goal_param > 0:
             # max seeds games do not round seed counts (like territory games)
             self.req_seeds = game.info.goal_param * nbr_start
-            self.msg = intro + f"at least {goal_param} holes)."
+            self.msg = intro + f"fill at least {goal_param} holes)."
 
         else:
             self.req_seeds = nbr_start
-            self.msg = intro + "a hole)."
+            self.msg = intro + "fill a hole)."
 
 
     def __str__(self):
@@ -1177,9 +1153,10 @@ def _add_no_change(game, ender):
             ginfo.sow_stores,
 
             # game ends when a player has no seeds and opp can't share
-            ginfo.mustshare,
+            ginfo.mustshare and not ginfo.mustpass,
 
-            # picks take care of ending game
+            # end_cond and picks take care of ending game
+            ginfo.end_cond,
             ginfo.pickextra == gi.CaptExtraPick.PICKLASTSEEDS,
             ginfo.pickextra == gi.CaptExtraPick.PICK2XLASTSEEDS,
 

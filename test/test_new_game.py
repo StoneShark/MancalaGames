@@ -8,6 +8,7 @@ pytestmark = pytest.mark.unittest
 
 import utils
 
+from context import animator
 from context import game_constants as gconsts
 from context import game_info as gi
 from context import mancala
@@ -697,6 +698,194 @@ class TestTerritory:
         assert game.owner == eowners
 
 
+    @pytest.fixture
+    def egame(self):
+        """basic game"""
+
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=3)
+        game_info = gi.GameInfo(goal=gi.Goal.TERRITORY,
+                                goal_param=8,
+                                rounds=gi.Rounds.NO_MOVES,
+                                round_fill=gi.RoundFill.TERR_EX_EMPTY,
+                                capt_on=[2],
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=lambda ginfo, holes: True)
+
+        game = mancala.Mancala(game_consts, game_info)
+        return game
+
+    E_CASES = [
+               (12, [3, 3, 3, 3, 3, 3], [0, 0],
+                    [F, F, F, F, T, T]),
+
+               (13, [3, 3, 3, 3, 0, 3], [1, 2],
+                    [F, F, F, F, T, T]),
+
+               (14, [3, 3, 3, 3, 0, 3], [2, 1],
+                    [F, F, F, F, T, T]),
+
+               (15, [3, 3, 3, 3, 3, 3], [0, 0],
+                    [F, F, F, F, F, T]),
+                ]
+
+    @pytest.mark.parametrize('fseeds, eboard, estrs, eowners', E_CASES)
+    def test_empty_territory(self, egame, fseeds, eboard, estrs, eowners):
+
+        egame.board = [0] * egame.cts.dbl_holes
+        egame.store = [fseeds, egame.cts.total_seeds - fseeds]
+
+        egame.new_game(new_round=True)
+        assert egame.board == eboard
+        assert egame.store == estrs
+        assert egame.owner == eowners
+
+        egame.new_game(new_round=False)
+        assert egame.board == [3, 3, 3, 3, 3, 3]
+        assert egame.store == [0, 0]
+        assert egame.owner == [F, F, F, T, T, T]
+
+
+class TestWinHoles:
+
+    @pytest.fixture
+    def game(self):
+        """basic game"""
+
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=2)
+        game_info = gi.GameInfo(goal=gi.Goal.TERRITORY,
+                                goal_param=8,
+                                rounds=gi.Rounds.NO_MOVES,
+                                capt_on=[2],
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=lambda ginfo, holes: True)
+
+        game = mancala.Mancala(game_consts, game_info)
+        return game
+
+    @pytest.fixture
+    def pat_game(self):
+        """fewer seeds will use self.seed_equiv,
+        start seeds doubled so same test cases can be used"""
+
+        game_consts = gconsts.GameConsts(nbr_start=6, holes=2)
+        game_info = gi.GameInfo(goal=gi.Goal.TERRITORY,
+                                goal_param=8,
+                                rounds=gi.Rounds.NO_MOVES,
+                                capt_on=[2],
+                                stores=True,
+                                start_pattern=gi.StartPattern.ALTERNATES,
+                                nbr_holes=game_consts.holes,
+                                rules=lambda ginfo, holes: True)
+
+        game = mancala.Mancala(game_consts, game_info)
+        return game
+
+    WH_CASES = [((0, 0, 0, 0), [6, 6], (N, N, N, N), True, 2),
+                ((0, 0, 0, 0), [3, 3], (N, N, N, N), True, 2),
+                ((0, 0, 0, 0), [9, 3], (N, N, N, N), False, 3),
+                ((0, 0, 0, 0), [3, 9], (N, N, N, N), True, 3),
+                ((0, 0, 0, 0), [3, 8], (N, N, N, N), True, 3),
+                ((0, 0, 0, 0), [3, 7], (N, N, N, N), True, 2),
+                ((0, 1, 1, 0), [3, 7], (N, T, F, N), True, 3),
+                ]
+
+    @pytest.mark.parametrize('game_fixt', ['game', 'pat_game'])
+    @pytest.mark.parametrize('board, store, child, fill_start, holes',
+                             WH_CASES,
+                             ids=[f'case_{cnbr}'
+                                  for cnbr in range(len(WH_CASES))])
+    def test_win_holes(self, request, game_fixt,
+                       board, store, child, fill_start, holes):
+
+        game = request.getfixturevalue(game_fixt)
+
+        game.board = board
+        game.store = store
+        game.child = child
+
+        deco = game.deco.new_game
+        # print(deco)
+        while deco and not isinstance(deco, new_game.TerritoryNewRound):
+            deco = deco.decorator
+
+        assert deco
+        assert deco.compute_win_holes() == (fill_start, holes)
+
+
+    @pytest.fixture
+    def egame(self):
+        """basic game"""
+
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=3)
+        game_info = gi.GameInfo(goal=gi.Goal.TERRITORY,
+                                goal_param=8,
+                                rounds=gi.Rounds.NO_MOVES,
+                                round_fill=gi.RoundFill.TERR_EX_EMPTY,
+                                capt_on=[2],
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=lambda ginfo, holes: True)
+
+        game = mancala.Mancala(game_consts, game_info)
+        return game
+
+    @pytest.fixture
+    def rgame(self):
+        """fewer seeds will use self.seed_equiv,
+        start seeds doubled so same test cases can be used"""
+
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
+        game_info = gi.GameInfo(goal=gi.Goal.TERRITORY,
+                                goal_param=8,
+                                rounds=gi.Rounds.NO_MOVES,
+                                round_fill=gi.RoundFill.TERR_EX_RANDOM,
+                                capt_on=[2],
+                                stores=True,
+                                nbr_holes=game_consts.holes,
+                                rules=lambda ginfo, holes: True)
+
+        game = mancala.Mancala(game_consts, game_info)
+        return game
+
+
+    RF_CASES = [
+        ('egame', 15, 5),
+        ('egame', 14, 4),
+        ('egame', 13, 4),
+        ('egame', 12, 4),
+        ('egame', 11, 3),
+
+        ('rgame', 20, 5),
+        ('rgame', 19, 5),
+        ('rgame', 18, 5),    # lottery always won by winner
+        ('rgame', 17, 4),
+        ('rgame', 16, 4),
+        ]
+
+    @pytest.mark.parametrize('gfixt, fseeds, holes',
+                             RF_CASES)
+    def test_rf_win_holes(self, request, mocker, gfixt, fseeds, holes):
+
+        mobj = mocker.patch('random.randint')
+        mobj.return_value = 1
+
+        game = request.getfixturevalue(gfixt)
+
+        game.board = [0] * game.cts.dbl_holes
+        game.store = [fseeds, game.cts.total_seeds - fseeds]
+
+        deco = game.deco.new_game
+        # print(deco)
+        while deco and not isinstance(deco, new_game.TerritoryNewRound):
+            deco = deco.decorator
+
+        assert deco
+        res = deco.compute_win_holes()
+        assert res[1] == holes
+
+
 class TestFixedChildren:
 
     @pytest.fixture
@@ -752,6 +941,43 @@ class TestFixedChildren:
             assert game.board[5]
 
 
+class TestAnimator:
+
+    @pytest.mark.animator
+    def test_animator_messages(self, mocker):
+
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=3)
+        game_info = gi.GameInfo(stores=True,
+                                evens=True,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        assert animator.ENABLED
+        animator.make_animator(None)   # no game_ui, make sure it's not used
+        animator.set_active(True)
+        mobj = mocker.patch('animator.ANIMATOR.do_message')
+
+        game = mancala.Mancala(game_consts, game_info)
+        mobj.reset_mock()
+
+        ngame1 = game.deco.new_game
+        ngame2 = game.deco.new_game.decorator
+
+        ngame1.start_ani_msg()
+        assert mobj.asssert_not_called()
+        mobj.reset_mock()
+
+        # messages are added to the 1st deco
+        ngame2.add_ani_msg("first msg")
+        assert ngame1.startup_msg
+        assert not ngame2.startup_msg
+
+        ngame2.add_ani_msg("second msg")
+        assert len(ngame1.startup_msg) == 2
+        assert not ngame2.startup_msg
+
+        ngame1.start_ani_msg()
+        assert len(mobj.mock_calls) == 2
 
 
 class TestBadEnums:

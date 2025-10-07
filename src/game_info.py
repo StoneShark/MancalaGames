@@ -355,6 +355,8 @@ class RoundFill(enum.IntEnum):
     UCHOWN = 8
     SHORTEN_ALL = 9
     LOSER_ONLY = 10
+    TERR_EX_RANDOM = 11
+    TERR_EX_EMPTY = 12
 
 
 @enum.unique
@@ -661,6 +663,25 @@ class GameInfo:
                     self.crosscapt,
                     self.capt_type,
                     self.child_type == ChildType.WEG])
+
+
+    def total_seeds_ok(self, seed_total, holes):
+        """Test the seed_total against the number of holes.
+
+        Territory decos for end_move and new_game rely on the
+        total number of seeds being a multiple of the
+        number of holes.
+
+        If the start pattern is not ALL_EQUAL, this might not
+        be the case.  nbr_start is used to determine the total
+        number of seeds for the start pattern, but it is not
+        available in the game_info rule tester.
+        Thus, this must be tested when Mancala is created."""
+
+        if self.goal == Goal.TERRITORY and seed_total % holes:
+            msg = """For Territory games, the total number of seeds
+                  must be a multiple of the number of holes."""
+            raise GameInfoError(msg)
 
 
 @dc.dataclass(kw_only=True)

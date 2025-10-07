@@ -39,7 +39,7 @@ T = True
 F = False
 
 DONT_CARE = None
-UNCHANGED = 6
+UNCHANGED = -6
 REPEAT_TURN = True
 ENDED = True
 
@@ -2040,7 +2040,7 @@ class TestTerritory:
         (utils.build_board([0, 0, 0],
                            [0, 0, 0]), [18-3, 3],  WinCond.WIN, False),
         (utils.build_board([0, 0, 0],
-                           [0, 0, 0]), [18-4, 3],  WinCond.WIN, False),
+                           [0, 0, 0]), [18-4, 4],  WinCond.WIN, False),
         (utils.build_board([0, 0, 0],
                            [0, 0, 0]), [18-5, 5],  WinCond.ROUND_WIN, False),
         (utils.build_board([0, 0, 0],
@@ -2049,20 +2049,53 @@ class TestTerritory:
                            [1, 1, 0]), [7, 9], WinCond.ROUND_TIE, None),
         ]
 
-    # @pytest.mark.usefixtures("logger")
-    @pytest.mark.parametrize('board, store, econd, ewinner', TERR_CASES)
-    def test_territory(self, rgame, board, store, econd, ewinner):
+    TEXEMPTY_ANSWERS = [UNCHANGED, UNCHANGED, UNCHANGED, WinCond.ROUND_WIN,
+                        UNCHANGED, UNCHANGED, WinCond.ROUND_WIN,
+                        UNCHANGED, UNCHANGED, UNCHANGED]
 
-        rgame.board = board
-        rgame.store = store
+    # @pytest.mark.usefixtures('logger')
+    @pytest.mark.parametrize('rfill', [gi.RoundFill.NOT_APPLICABLE,
+                                       gi.RoundFill.TERR_EX_RANDOM,
+                                       gi.RoundFill.TERR_EX_EMPTY])
+    @pytest.mark.parametrize('idx, board, store, econd, ewinner',
+                             [[idx] + list(case)
+                              for idx, case in enumerate(TERR_CASES)])
+    def test_terr_rfills(self, rfill, idx, board, store, econd, ewinner):
 
-        mdata = utils.make_ender_mdata(rgame, False, False)
-        rgame.deco.ender.game_ended(mdata)
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=3)
+        game_info = gi.GameInfo(capt_on = [1],
+                                stores=True,
+                                goal_param=5,
+                                goal=Goal.TERRITORY,
+                                round_fill=rfill,
+                                rounds=gi.Rounds.NO_MOVES,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
 
-        assert mdata.win_cond == econd
+        game = mancala.Mancala(game_consts, game_info)
+        game.turn = False
+
+        game.board = board
+        game.store = store
+
+        # print(game.deco.ender)
+        # print(game)
+
+        mdata = utils.make_ender_mdata(game, False, False)
+        game.deco.ender.game_ended(mdata)
+
+        # print(game)
+        # print(mdata)
+
+        tex_ans = self.TEXEMPTY_ANSWERS[idx]
+        if rfill == gi.RoundFill.TERR_EX_EMPTY and tex_ans != UNCHANGED:
+            assert mdata.win_cond == tex_ans
+
+        else:
+            assert mdata.win_cond == econd
         assert mdata.winner == ewinner
 
-        assert 'req_seeds' in str(rgame.deco.ender)
+        assert 'req_seeds' in str(game.deco.ender)
 
 
     @pytest.mark.parametrize('board, store, econd, ewinner', TERR_CASES)
@@ -2158,62 +2191,6 @@ class TestWinSeeds:
         # any ender will have this method, just use the chain head
         assert game.deco.ender.compute_win_seeds()
 
-
-class TestWinHoles:
-
-    @pytest.fixture
-    def game(self):
-        """basic game"""
-
-        game_consts = gconsts.GameConsts(nbr_start=3, holes=2)
-        game_info = gi.GameInfo(capt_on=[2],
-                                stores=True,
-                                nbr_holes=game_consts.holes,
-                                rules=lambda ginfo, holes: True)
-
-        game = mancala.Mancala(game_consts, game_info)
-        return game
-
-    @pytest.fixture
-    def pat_game(self):
-        """fewer seeds will use self.equalize,
-        start seeds doubled so same test cases can be used"""
-
-        game_consts = gconsts.GameConsts(nbr_start=6, holes=2)
-        game_info = gi.GameInfo(capt_on=[2],
-                                stores=True,
-                                start_pattern=gi.StartPattern.ALTERNATES,
-                                nbr_holes=game_consts.holes,
-                                rules=lambda ginfo, holes: True)
-
-        game = mancala.Mancala(game_consts, game_info)
-        return game
-
-    WH_CASES = [((0, 0, 0, 0), [6, 6], (N, N, N, N), True, 2),
-                ((0, 0, 0, 0), [3, 3], (N, N, N, N), True, 2),
-                ((0, 0, 0, 0), [9, 3], (N, N, N, N), False, 3),
-                ((0, 0, 0, 0), [3, 9], (N, N, N, N), True, 3),
-                ((0, 0, 0, 0), [3, 8], (N, N, N, N), True, 3),
-                ((0, 0, 0, 0), [3, 7], (N, N, N, N), True, 2),
-                ((0, 1, 1, 0), [3, 7], (N, T, F, N), True, 3),
-                ]
-
-    @pytest.mark.parametrize('game_fixt', ['game', 'pat_game'])
-    @pytest.mark.parametrize('board, store, child, fill_start, holes',
-                             WH_CASES,
-                             ids=[f'case_{cnbr}'
-                                  for cnbr in range(len(WH_CASES))])
-    def test_win_holes(self, request, game_fixt,
-                       board, store, child, fill_start, holes):
-
-        game = request.getfixturevalue(game_fixt)
-        assert game.deco.ender.equalized == (game_fixt == 'pat_game')
-
-        game.board = board
-        game.store = store
-        game.child = child
-
-        assert game.deco.ender.compute_win_holes() == (fill_start, holes)
 
 
 class TestConceders:

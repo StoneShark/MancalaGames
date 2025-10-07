@@ -63,6 +63,7 @@ Config = collections.namedtuple('Config',
                                 defaults=[0, 0])
 
 CONFIG_CASES = {
+    'Ayo': Config(47, 0, 13),
     'Ayoayo': Config(24),       # mustshare no NoOutcomeChange
     'Bao': Config(52, 2, 4),  # child but capt also
     'Bechi': Config(42, 0, 6),  # NoOutcomeChange dupl EndGameNotPlayable  (NOC dupl EGNP)
@@ -84,7 +85,7 @@ CONFIG_CASES = {
     'Gamacha': Config(-1),
     'Giuthi': Config(95, 0, 9),  # NOC dupl EGNP; UMOVE: 1 seed in 7 holes, 2 in 1 hole
     'Goat': Config(3*3),
-    'J_Odu': Config(8*4, 2),
+    'J_Odu': Config(35, 0, 10),
     'Kalah': Config(6*4),
 
     'Lagerung': Config(70, 0, 7*4),

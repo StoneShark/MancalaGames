@@ -948,7 +948,7 @@ typically, one per hole until expended.
 - LAPPER: If the first sow ends in a hole with more than one seed,
 pick up all the seeds and continue sowing another lap. 
 
-  +In general, sowing laps continues in this manner until the
+  + In general, sowing laps continues in this manner until the
 final seed of a lap reaches an empty hole. 
 Other conditions for ending lap sowing are listed below.
 
@@ -1220,9 +1220,13 @@ LEFT_FILL, RIGHT_FILL and OUTSIDE_FILL define which holes that the
 loser must fill. UCHOOSE allows the loser to choose which holes have
 seeds.
 
-- NOT_APPLICABLE: round fill doesn't need to be specified: either the
-game not played in rounds (CLEAR & DEPRIVE games included) or game
-goal is TERRITORY without UCHOWN (see below, all holes filled).
+- NOT_APPLICABLE: round fill doesn't need to be specified.
+
+  + For TERRITORY games, this is the default round fill.
+If the players have extra seeds but cannot completely 
+fill a hole, the extra hole and it's seeds goes to the player with
+more extra seeds. If both players have half the seeds required, the hole goes
+to the round loser. 
 
 - LEFT_FILL: fill the round loser's holes from the player's left with
 nbr_start seeds each.
@@ -1256,8 +1260,9 @@ least one hole has MIN_MOVE seeds), remaining seeds are placed in the
 store. The winner's layout is the same layout but reflected and their
 extra seeds are placed in their store.
 
-- UCHOWN: The only round fill supported for territory games and only
-territory games. The winner may choose which holes they control.
+- UCHOWN: The winner may choose which holes they control.
+See NOT_APPLICABLE for how the ownership counts are determined.
+Supported for TERRITORY goal only.
 
 - SHORTEN_ALL: SHORTEN but all of the loser's seeds are put on the
 board thus one hole might not have 'nbr_start' seeds. The winner gets
@@ -1274,6 +1279,20 @@ holes have seeds and which are empty and (possibly) blocked.
 
   + NO_SIDES, children and locks are not supported. UNCLAIMED and
   QUITTER must both be HOLE_OWNER.
+
+- TERR_EX_RANDOM: If the players have extra seeds but cannot completely 
+fill a hole, the extra hole and it's seeds goes to the player with
+more seeds. 
+If both players have half the seeds required, the hole owner is selected by lottery. 
+This could result in the winner playing goal_param holes for the round, 
+but lottery win never allows one player to win the game. 
+Supported for TERRITORY goal only. 
+
+- TERR_EX_EMPTY: If the players have extra seeds but cannot completely 
+fill a hole, the extra hole goes to the round loser but it is left empty.
+The extra seeds remain in the player's stores.
+Supported for TERRITORY goal only. 
+
 
 <param round_starter>
 Defines which player starts 2nd and subsequent rounds:
@@ -1536,12 +1555,21 @@ hole.
 
 Allows specifying non-all-equal start patterns.
 
-For TERRITORY games played in round, <nolink>START_PATTERN is used for
-every round, which could yield odd openings--use caution. For round
-tally games, the <nolink>START_PATTERN is used for all new games and
-rounds. For all other games played in rounds, <nolink>START_PATTERN is
-only used for the opening play of a game; not for the start of each
-round.
+For TERRITORY games played in rounds, <nolink>START_PATTERN is used for
+every round, which could yield odd combinations of 
+hole ownership and seed placement--use caution. 
+TERRITORY games require that the total number of
+seeds be a multiple of the number of holes.
+
+For round tally games, the <nolink>START_PATTERN is used 
+for all new games and rounds. 
+
+For all other games played in rounds, <nolink>START_PATTERN is
+only used for the initial game setup; not for the start of each
+round. 
+For the second and subsequent rounds, 
+nbr_start seeds are placed in any holes filled
+but the total seeds in play are not changed from the first round.
 
 The following patterns are supported:
 

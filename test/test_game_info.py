@@ -264,6 +264,26 @@ class TestConstruction:
 
 
 
+class TestSeedsOk:
+
+    def test_seeds_ok(self):
+
+        ginfo = gi.GameInfo(goal=gi.Goal.TERRITORY,
+                            goal_param=8,
+                            capt_on=[2],
+                            capt_rturn=True,
+                            nbr_holes=6,
+                            stores=True,
+                            rules=ginfo_rules.test_rules)
+
+        # no error raised
+        ginfo.total_seeds_ok(36, 6)
+
+        with pytest.raises(gi.GameInfoError):
+            assert ginfo.total_seeds_ok(35, 6)
+
+
+
 class TestCfgKeys:
 
     def test_cfg_keys(self):

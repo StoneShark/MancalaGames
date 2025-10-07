@@ -8,7 +8,9 @@ Created on Fri Apr  7 12:47:15 2023
 # %% imports
 
 import abc
+import random
 
+import animator
 import claimer
 import deco_chain_if
 import game_info as gi
@@ -48,6 +50,47 @@ def set_round_starter(game):
 class NewGameIf(deco_chain_if.DecoChainIf):
     """New Game Interface."""
 
+
+    def __init__(self, game, decorator=None):
+
+        super().__init__(game, decorator)
+        self.startup_msg = None
+
+
+    def add_ani_msg(self, msg):
+        """Add an animation message to the deco at the
+        start of the deco chain.
+
+        The new_game deco is run with the animator
+        off, but this and the method start_ani_msg allow
+        messages to be saved and played when the game is
+        actually started."""
+
+        first_deco = self.game.deco.new_game
+
+        if first_deco.startup_msg:
+            first_deco.startup_msg += [msg]
+        else:
+            first_deco.startup_msg = [msg]
+
+
+    def start_ani_msg(self):
+        """Generate animation events for any startup
+        messages that were saved during the execution of
+        the new_game deco.
+
+        Startup messages are only stored on the first
+        deco in the chain."""
+
+        if not self.startup_msg:
+            return
+
+        for msg in self.startup_msg:
+            animator.do_message(msg)
+
+        self.startup_msg = None
+
+
     @abc.abstractmethod
     def new_game(self, new_round=False):
         """Start a new game."""
@@ -57,6 +100,7 @@ class NewGameIf(deco_chain_if.DecoChainIf):
 
 class NewGame(NewGameIf):
     """Default new game reset all variables."""
+
 
     def new_game(self, new_round=None):
         """Reset the game to new state and alternate start player."""
@@ -251,18 +295,111 @@ class NewRoundLoserOnly(NewGameIf):
 
 class TerritoryNewRound(NewGameIf):
     """If the game is over, call chained decorator.
-    Otherwise, start a new round, compute the holes owned by false;
-    call the deco chain to init the board; and then
-    assign the owners."""
+    Otherwise, start a new round, compute the holes owned by
+    the winner; call the deco chain to init the board; and then
+    assign the owners.
+
+    Two values are kept/computed for the wrapper TerrEmptyNewGame:
+        seeds - the collected seeds
+        lfirst - the first hole filled for the lower"""
+
+    def __init__(self, game, decorator=None):
+
+        super().__init__(game, decorator)
+
+        self.half_seeds = game.cts.seed_equiv // 2
+
+        if (game.info.round_fill == gi.RoundFill.TERR_EX_RANDOM
+                and not game.cts.seed_equiv % 2):
+            self.compute_holes = self.terr_wholes_random
+
+        elif game.info.round_fill == gi.RoundFill.TERR_EX_EMPTY:
+            self.compute_holes = self.terr_wholes_empty
+
+        else:
+            self.compute_holes = self.terr_wholes_round
+
+        # working data used by TerrEmptyNewRound
+        self.seeds = 0
+        self.lfirst = 0
+
+
+    def terr_wholes_round(self, seeds, greater):
+        """The winner gets the extra hole if they can fill it
+        more than half way."""
+
+        greater_holes, rem = divmod(seeds[greater], self.game.cts.seed_equiv)
+        if rem > self.half_seeds:
+            greater_holes += 1
+
+        return greater_holes
+
+
+    def terr_wholes_empty(self, seeds, greater):
+        """The loser always gets the hole that the winner
+        could only partially fill."""
+        return seeds[greater] // self.game.cts.seed_equiv
+
+
+    def terr_wholes_random(self, seeds, greater):
+        """If there are an even number of start seeds and
+        each player has half the seeds, randomly choose who
+        gets it.
+
+        This could mean the winner is controlling goal_param
+        holes for this round, but they couldn't control it without
+        the random chance, so it was not a win."""
+
+        greater_holes, rem = divmod(seeds[greater], self.game.cts.seed_equiv)
+        if rem > self.half_seeds:
+            greater_holes += 1
+
+        elif rem == self.half_seeds:
+            extra = random.randint(0, 1)
+            greater_holes += extra
+
+            owner = 'Winner' if extra else 'Loser'
+            msg = f"{owner} won the contested hole lottery."
+            game_log.add(msg, game_log.IMPORT)
+            self.add_ani_msg(msg)
+
+        return greater_holes
+
+
+    def compute_win_holes(self):
+        """Compute the number of holes that winner should own
+        based on number of seeds. Seeds have already been collected
+        from non-children.
+
+        Return: the winner and the number of holes they should fill."""
+
+        game = self.game
+        self.seeds = game.store.copy()
+        for loc in range(game.cts.dbl_holes):
+            if game.child[loc] is True:
+                self.seeds[True] += game.board[loc]
+            elif game.child[loc] is False:
+                self.seeds[False] += game.board[loc]
+
+        if self.seeds[True] == self.seeds[False]:
+            # doesn't matter where fill starts for tie
+            return True, game.cts.holes
+
+        greater = self.seeds[True] > self.seeds[False]
+        greater_holes = self.compute_holes(self.seeds, greater)
+
+        game_log.add(f"{greater} holes = {greater_holes}", game_log.IMPORT)
+        return greater, greater_holes
+
 
     def new_game(self, new_round=False):
-        """Adjust the game outcome."""
+        """Choose hole owners."""
 
         if not new_round:
             self.decorator.new_game(new_round)
             return
 
-        winner, wholes = self.game.deco.ender.compute_win_holes()
+        winner, wholes = self.compute_win_holes()
 
         set_round_starter(self.game)
         saved_starter = self.game.starter
@@ -276,8 +413,35 @@ class TerritoryNewRound(NewGameIf):
         direct = 1
 
         for cnt in range(self.game.cts.dbl_holes):
+            if cnt == wholes:
+                self.lfirst = loc
+
             self.game.owner[loc] = winner if cnt < wholes else not winner
             loc = (loc + direct) % self.game.cts.dbl_holes
+
+
+class TerrEmptyNewRound(TerritoryNewRound):
+    """An extension of TerritoryNewRound for Territory games
+    with the TERR_EX_EMPTY fill method.
+
+    The first of the loser's holes is emptied and the
+    extra seeds are returned to each player's stores.
+
+    This can only be used for StartPattern ALL_EQUAL."""
+
+    def new_game(self, new_round=False):
+        """Adjust the seed allocation."""
+
+        if not new_round:
+            self.decorator.new_game(new_round)
+            return
+
+        super().new_game(new_round=True)
+        self.game.store = [self.seeds[0] % self.game.cts.seed_equiv,
+                           self.seeds[1] % self.game.cts.seed_equiv]
+        if self.game.store[0]:
+            self.game.board[self.lfirst] = 0
+
 
 
 class NewRoundEven(NewGameIf):
@@ -389,6 +553,39 @@ class SeedCountCheck(NewGameIf):
 
 # %%  build deco chain
 
+
+def _add_rounds_wrappers(game, new_game):
+
+    if game.info.goal == gi.Goal.TERRITORY:
+        if game.info.round_fill == gi.RoundFill.TERR_EX_EMPTY:
+            new_game = TerrEmptyNewRound(game, new_game)
+        else:
+            new_game = TerritoryNewRound(game, new_game)
+
+    elif game.info.goal in round_tally.RoundTally.GOALS:
+        new_game = NewRoundTally(game, new_game)
+
+    elif game.info.round_fill in (gi.RoundFill.EVEN_FILL,
+                                  gi.RoundFill.UMOVE):
+        new_game = NewRoundEven(game, new_game)
+
+    elif game.info.round_fill == gi.RoundFill.LOSER_ONLY:
+        new_game = NewRoundLoserOnly(game, new_game)
+
+    else:
+        new_game = NewRound(game, new_game)
+
+    # catch an error in round starter at construction time
+    if game.info.round_starter not in (gi.RoundStarter.ALTERNATE,
+                                       gi.RoundStarter.LOSER,
+                                       gi.RoundStarter.WINNER,
+                                       gi.RoundStarter.LAST_MOVER):
+        raise NotImplementedError(
+                f"RoundStarter {game.info.round_starter} not implemented.")
+
+    return new_game
+
+
 def deco_new_game(game):
     """Create the new_game chain."""
 
@@ -403,29 +600,7 @@ def deco_new_game(game):
                                   new_game)
 
     if game.info.rounds:
-        if game.info.goal == gi.Goal.TERRITORY:
-            new_game = TerritoryNewRound(game, new_game)
-
-        elif game.info.goal in round_tally.RoundTally.GOALS:
-            new_game = NewRoundTally(game, new_game)
-
-        elif game.info.round_fill in (gi.RoundFill.EVEN_FILL,
-                                      gi.RoundFill.UMOVE):
-            new_game = NewRoundEven(game, new_game)
-
-        elif game.info.round_fill == gi.RoundFill.LOSER_ONLY:
-            new_game = NewRoundLoserOnly(game, new_game)
-
-        else:
-            new_game = NewRound(game, new_game)
-
-        # catch an error in round starter at construction time
-        if game.info.round_starter not in (gi.RoundStarter.ALTERNATE,
-                                           gi.RoundStarter.LOSER,
-                                           gi.RoundStarter.WINNER,
-                                           gi.RoundStarter.LAST_MOVER):
-            raise NotImplementedError(
-                    f"RoundStarter {game.info.round_starter} not implemented.")
+        new_game = _add_rounds_wrappers(game, new_game)
 
     if __debug__:    # pragma: no coverage
         new_game = SeedCountCheck(game, new_game)

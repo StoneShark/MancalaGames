@@ -148,10 +148,11 @@ class Mancala(ai_interface.AiGameIf):
             raise TypeError('game_info not built on game_info.GameInfo.')
 
         if game_info.start_pattern:
-            game_consts.adjust_total_seeds(
-                PCLASSES[game_info.start_pattern].nbr_seeds(
-                    game_consts.holes,
-                    game_consts.nbr_start))
+            total_seeds = PCLASSES[game_info.start_pattern].nbr_seeds(
+                            game_consts.holes,
+                            game_consts.nbr_start)
+            game_info.total_seeds_ok(total_seeds, game_consts.holes)
+            game_consts.adjust_total_seeds(total_seeds)
 
         self.cts = game_consts
         self.info = game_info
