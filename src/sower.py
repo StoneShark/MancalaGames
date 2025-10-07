@@ -898,7 +898,7 @@ class StopXCapt(LapContinuerIf):
 
         cross = self.game.cts.cross_from_loc(mdata.capt_loc)
 
-        if (mdata.capt_start > 0
+        if (mdata.capt_start >= 0
                 and self.game.board[mdata.capt_start] == 1
                 and self.game.deco.capt_basic.capture_ok(mdata, cross)):
             game_log.add('MLap stop for cross capture')
@@ -1321,13 +1321,11 @@ def _add_capt_stop_lap_cont(game, lap_cont):
     else:
         lap_cont = StopSingleSeed(game, lap_cont)
 
-
     if game.info.capt_type == gi.CaptType.MATCH_OPP:
         lap_cont = StopCaptureSimul(game, lap_cont)
 
     elif game.info.basic_capt and not game.info.crosscapt:
         lap_cont = StopCaptureSeeds(game, lap_cont)
-
 
     return lap_cont
 

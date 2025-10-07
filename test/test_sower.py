@@ -34,9 +34,6 @@ from game_info import WinCond
 
 TEST_COVERS = ['src\\sower.py']
 
-F_STORE = -1
-T_STORE = -2
-
 # %% consts
 
 HOLES = 3
@@ -163,12 +160,12 @@ class TestSower:
         # end in own store
         (2, False, utils.build_board([2, 2, 2, 2],
                                      [2, 2, 2, 2]),
-            F_STORE, utils.build_board([2, 2, 2, 2],
+            gi.F_STORE, utils.build_board([2, 2, 2, 2],
                                        [2, 2, 0, 3]), [1, 0]),
 
         (1, True, utils.build_board([2, 2, 2, 2],
                                     [2, 2, 2, 2]),
-            T_STORE, utils.build_board([3, 0, 2, 2],
+            gi.T_STORE, utils.build_board([3, 0, 2, 2],
                                        [2, 2, 2, 2]), [0, 1]),
     ]
 
@@ -216,7 +213,7 @@ class TestSower:
         (gi.SowStores.OWN,
          1, Direct.CCW, True, utils.build_board([1, 2, 2],
                                                 [2, 3, 4]),
-         T_STORE, utils.build_board([2, 0, 2],
+         gi.T_STORE, utils.build_board([2, 0, 2],
                                     [2, 3, 4]), [0, 1]),
 
         # 5: CW, don't pass any stores
@@ -248,7 +245,7 @@ class TestSower:
         (gi.SowStores.OWN,
          1, Direct.CW, False, utils.build_board([1, 2, 3],
                                                 [2, 5, 4]),
-         F_STORE, utils.build_board([2, 3, 4],
+         gi.F_STORE, utils.build_board([2, 3, 4],
                                     [3, 0, 4]), [1, 0]),
 
 
@@ -271,7 +268,7 @@ class TestSower:
         (gi.SowStores.BOTH,
          1, Direct.CCW, False, utils.build_board([1, 2, 3],
                                                  [2, 6, 4]),
-         T_STORE, utils.build_board([2, 3, 4],
+         gi.T_STORE, utils.build_board([2, 3, 4],
                                     [2, 0, 5]), [1, 1]),
         # 13: CCW, sow past opp store
         (gi.SowStores.BOTH,
@@ -283,7 +280,7 @@ class TestSower:
         (gi.SowStores.BOTH,
          1, Direct.CCW, True, utils.build_board([1, 2, 2],
                                                 [2, 3, 4]),
-         T_STORE, utils.build_board([2, 0, 2],
+         gi.T_STORE, utils.build_board([2, 0, 2],
                                     [2, 3, 4]), [0, 1]),
 
         # 15: CW, don't pass any stores
@@ -394,230 +391,6 @@ class TestSower:
         assert game.board == eboard
         assert mdata.capt_start == ecloc
 
-
-    @pytest.mark.parametrize('end_loc, board, eresult',
-                             [(F_STORE, utils.build_board([1, 0, 3],
-                                                          [0, 3, 4]),
-                              False),
-                              (0, utils.build_board([1, 0, 3],
-                                                    [1, 3, 4]), False),
-                              (1, utils.build_board([1, 0, 3],
-                                                    [1, 3, 4]), True),
-                              (T_STORE, utils.build_board([1, 0, 3],
-                                                          [0, 3, 4]),
-                               False),
-                              ])
-    def test_simple_lap(self, game, end_loc, board, eresult):
-
-        game.board = board
-        mdata = move_data.MoveData(game, None)
-        mdata.capt_start = end_loc
-
-        lap_cont = sower.StopSingleSeed(game, sower.LapContinue(game))
-        lap_cont = sower.StopRepeatTurn(game, lap_cont)
-
-        assert lap_cont.do_another_lap(mdata) == eresult
-
-
-    @pytest.mark.parametrize('end_loc, board, eresult, cloc',
-                             [(F_STORE, utils.build_board([1, 0, 3],
-                                                          [0, 3, 4]),
-                              False, False),
-                              (0, utils.build_board([1, 0, 3],
-                                                    [1, 3, 4]), True, 1),
-                              (2, utils.build_board([1, 2, 3],
-                                                    [1, 3, 4]), True, 3),
-                              (0, utils.build_board([1, 0, 3],
-                                                    [1, 0, 4]), False, False),
-                              ])
-    def test_next_lap(self, game, end_loc, board, eresult, cloc):
-
-        game.board = board
-        mdata = move_data.MoveData(game, None)
-        mdata.direct = Direct.CCW
-        mdata.cont_sow_loc = 3
-        mdata.capt_start = end_loc
-
-        lap_cont = sower.NextLapCont(game)
-        lap_cont = sower.StopRepeatTurn(game, lap_cont)
-
-        assert lap_cont.do_another_lap(mdata) == eresult
-        if cloc:
-            assert mdata.capt_start == cloc
-
-    chi_lap_cases = [
-        # 0: not on end store
-        (F_STORE, 2,
-         utils.build_board([1, 4, 4],
-                           [1, 3, 0]),
-         utils.build_board([N, N, N],
-                           [N, N, N]), False),
-        # 1: not on end in child
-        (1, 2,
-         utils.build_board([1, 4, 4],
-                           [0, 3, 0]),
-         utils.build_board([N, N, N],
-                           [N, T, N]), False),
-        # 2: my side of the board
-        (1, 2,
-         utils.build_board([1, 4, 4],
-                           [0, 4, 0]),
-         utils.build_board([N, N, N],
-                           [N, N, N]), True),
-        # 3: no child on opps first hole and one seed
-        (3, 1,
-         utils.build_board([1, 4, 4],
-                           [0, 3, 0]),
-         utils.build_board([N, N, N],
-                           [N, N, N]), True),
-        # 4: not first hole with > 1 seed, make child
-        (3, 3,
-         utils.build_board([1, 4, 4],
-                           [0, 3, 4]),
-         utils.build_board([N, T, N],
-                           [N, N, N]), False),
-        # 5: not if we should make a child
-        (4, 3,
-         utils.build_board([1, 4, 4],
-                           [0, 3, 4]),
-         utils.build_board([N, N, N],
-                           [N, N, N]), False),
-        # 6: not if only one seed
-        (5, 3,
-         utils.build_board([1, 4, 4],
-                           [0, 3, 4]),
-         utils.build_board([N, N, N],
-                           [N, N, N]), False),
-        # 7: not if already a child
-        (5, 3,
-         utils.build_board([1, 4, 4],
-                           [0, 3, 4]),
-         utils.build_board([N, T, N],
-                           [N, N, N]), False),
-        # 8: seeds > 1 seed, not child, opp side
-        (4, 3,
-         utils.build_board([1, 5, 4],
-                           [0, 3, 4]),
-         utils.build_board([N, N, N],
-                           [N, N, N]), True),
-    ]
-
-
-    @pytest.mark.parametrize('end_loc, sown_seeds, board, child, eresult',
-                            chi_lap_cases)
-    def test_child_lap_with_opp(self, game, end_loc, sown_seeds,
-                                board, child, eresult):
-
-        game.turn = False
-        game.board = board
-        game.child = child
-
-        mdata = move_data.MoveData(game, None)
-        mdata.capt_start = end_loc
-        mdata.seeds = sown_seeds
-
-        lap_cont = sower.LapContinue(game)
-        lap_cont = sower.StopMakeChild(game, lap_cont)
-        lap_cont = sower.StopSingleSeed(game, lap_cont)
-        lap_cont = sower.StopOnChild(game, lap_cont)
-        lap_cont = sower.StopRepeatTurn(game, lap_cont)
-
-        assert lap_cont.do_another_lap(mdata) == eresult
-
-
-    chi_lap_not_cases = [
-        # 0: not on end store
-         (F_STORE, 2,
-          utils.build_board([1, 4, 4],
-                            [1, 3, 0]),
-          utils.build_board([N, N, N],
-                            [N, N, N]), False),
-         # 1: not on end in child
-         (1, 2,
-          utils.build_board([1, 4, 4],
-                            [0, 3, 0]),
-          utils.build_board([N, N, N],
-                            [N, T, N]), False),
-         # 2: my side of the board
-         (1, 2,
-          utils.build_board([1, 4, 4],
-                            [0, 4, 0]),
-          utils.build_board([N, N, N],
-                            [N, N, N]), False),
-         # 3: child on opps first hole and one seed
-         (3, 1,
-          utils.build_board([1, 4, 4],
-                            [0, 3, 0]),
-          utils.build_board([N, N, N],
-                            [N, N, N]), False),
-         # 4: not first hole with > 1 seed, make child
-         (3, 3,
-          utils.build_board([1, 4, 4],
-                            [0, 3, 4]),
-          utils.build_board([N, T, N],
-                            [N, N, N]), False),
-         # 5: not if we should make a child
-         (4, 3,
-          utils.build_board([1, 4, 4],
-                            [0, 3, 4]),
-          utils.build_board([N, N, N],
-                            [N, N, N]), False),
-         # 6: not if only one seed
-         (5, 3,
-          utils.build_board([1, 4, 4],
-                            [0, 3, 4]),
-          utils.build_board([N, N, N],
-                            [N, N, N]), False),
-         # 7: not if already a child
-         (5, 3,
-          utils.build_board([1, 4, 4],
-                            [0, 3, 4]),
-          utils.build_board([N, T, N],
-                            [N, N, N]), False),
-         # 8: seeds > 1 seed, not child, opp side
-         (4, 3,
-          utils.build_board([1, 5, 4],
-                            [0, 3, 4]),
-          utils.build_board([N, N, N],
-                            [N, N, N]), True),
-         ]
-
-    @pytest.fixture
-    def nogame(self):
-        """not opp for conversion."""
-
-        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
-        game_info = gi.GameInfo(capt_on=[2],
-                                child_type=ChildType.NORMAL,
-                                child_cvt=4,
-                                mlaps=gi.LapSower.LAPPER,
-                                nbr_holes=game_consts.holes,
-                                rules=mancala.Mancala.rules)
-
-        return mancala.Mancala(game_consts, game_info)
-
-
-
-    @pytest.mark.parametrize('end_loc, sown_seeds, board, child, eresult',
-                             chi_lap_not_cases)
-    def test_child_lap_not_opp(self, nogame, end_loc, sown_seeds,
-                               board, child, eresult):
-
-        nogame.turn = False
-        nogame.board = board
-        nogame.child = child
-
-        mdata = move_data.MoveData(nogame, None)
-        mdata.capt_start = end_loc
-        mdata.seeds = sown_seeds
-
-        lap_cont = sower.LapContinue(nogame)
-        lap_cont = sower.StopMakeChild(nogame, lap_cont)
-        lap_cont = sower.StopSingleSeed(nogame, lap_cont)
-        lap_cont = sower.StopOnChild(nogame, lap_cont)
-        lap_cont = sower.StopRepeatTurn(nogame, lap_cont)
-
-        assert lap_cont.do_another_lap(mdata) == eresult
 
 
 
@@ -767,226 +540,252 @@ class TestSower:
 
 class TestMlap:
 
-    @pytest.fixture
-    def game(self):
 
+    GDICTS = {}   # dict of named game configurations
+
+    def game_from_dict(self, gdict_name):
+
+        options = self.GDICTS[gdict_name]
         game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
-        game_info = gi.GameInfo(crosscapt=True,
-                                mlaps=LapSower.LAPPER,
-                                sow_direct=Direct.CW,
-                                stores=True,
-                                nbr_holes=game_consts.holes,
-                                rules=mancala.Mancala.rules)
-        return mancala.Mancala(game_consts, game_info)
-
-    @pytest.fixture
-    def nlgame(self):
-
-        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
-        game_info = gi.GameInfo(evens=True,
-                                mlaps=LapSower.LAPPER_NEXT,
-                                sow_direct=Direct.CCW,
-                                stores=True,
-                                nbr_holes=game_consts.holes,
-                                rules=mancala.Mancala.rules)
-        return mancala.Mancala(game_consts, game_info)
-
-    @pytest.fixture
-    def evgame(self):
-        """capt on even # seeds, should stop sowing to capt"""
-        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
-        game_info = gi.GameInfo(evens=True,
-                                mlaps=LapSower.LAPPER,
-                                sow_direct=Direct.CCW,
-                                stores=True,
-                                nbr_holes=game_consts.holes,
-                                rules=mancala.Mancala.rules)
-        return mancala.Mancala(game_consts, game_info)
-
-    @pytest.fixture
-    def xcevgame(self):
-        """cross capt but only even # seeds, do not stop on evens"""
-        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
-        game_info = gi.GameInfo(crosscapt=True,
-                                evens=True,
-                                mlaps=LapSower.LAPPER,
-                                sow_direct=Direct.CCW,
-                                stores=True,
-                                nbr_holes=game_consts.holes,
-                                rules=mancala.Mancala.rules)
-        return mancala.Mancala(game_consts, game_info)
-
-    @pytest.fixture
-    def moppgame(self):
-        """match opposite capture -- should stop mlapping"""
-        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
-        game_info = gi.GameInfo(stores=True,
-                                mlaps=LapSower.LAPPER,
-                                sow_direct=Direct.CCW,
-                                capt_type=gi.CaptType.MATCH_OPP,
-                                nbr_holes=game_consts.holes,
-                                rules=mancala.Mancala.rules)
-        return mancala.Mancala(game_consts, game_info)
-
-    @pytest.fixture
-    def game_op(self):
-        """continue lapping on 6"""
-        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
-        game_info = gi.GameInfo(stores=True,
-                                mlaps=LapSower.LAPPER,
-                                sow_direct=Direct.CCW,
-                                mlap_cont=gi.SowLapCont.ON_PARAM,
-                                mlap_param=6,
-                                capt_on=[1],
-                                nbr_holes=game_consts.holes,
-                                rules=mancala.Mancala.rules)
-        return mancala.Mancala(game_consts, game_info)
-
-    @pytest.fixture
-    def game_gep(self):
-        """continue lapping when greter or equal to 6"""
-        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
-        game_info = gi.GameInfo(stores=True,
-                                mlaps=LapSower.LAPPER,
-                                sow_direct=Direct.CCW,
-                                mlap_cont=gi.SowLapCont.GREQ_PARAM,
-                                mlap_param=6,
-                                capt_on=[1],
-                                nbr_holes=game_consts.holes,
-                                rules=mancala.Mancala.rules)
-        return mancala.Mancala(game_consts, game_info)
-
-    @pytest.fixture
-    def game_str(self):
-        """continue lapping when greter or equal to 6"""
-        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
-        game_info = gi.GameInfo(stores=True,
-                                mlaps=LapSower.LAPPER,
-                                sow_direct=Direct.CCW,
-                                mlap_cont=gi.SowLapCont.STOP_STORE,
-                                mlap_param=6,
-                                capt_on=[1],
+        game_info = gi.GameInfo(**options,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
         return mancala.Mancala(game_consts, game_info)
 
 
-    MLCASES = [
-        # 0: no lapping
-        ('game',
-         2, utils.build_board([1, 2, 3],
-                              [0, 3, 2]),
-         0, utils.build_board([1, 2, 3],
-                              [1, 4, 0])),
-        # 1: sow two laps
-        ('game',
-         0, utils.build_board([1, 2, 3],
-                              [2, 0, 4]),
-         1, utils.build_board([2, 0, 4],
-                              [0, 1, 5])),
-        # 2: endless
-        ('game',
-         4, utils.build_board([1, 3, 1],
-                              [0, 1, 0]),
-         WinCond.ENDLESS,
-         utils.build_board([0, 1, 0],
-                           [1, 0, 1])),
+    GDICTS['game'] = {'crosscapt': True,
+                      'mlaps': LapSower.LAPPER,
+                      'sow_direct': Direct.CW,
+                      'stores': True,}
+    MLCASES = {
+        'nolap': ['game',
+                  2, utils.build_board([1, 2, 3],
+                                       [0, 3, 2]), [0, 0],
+                  0, utils.build_board([1, 2, 3],
+                                       [1, 4, 0]), [0, 0]],
+        '2laps': ['game',
+                  0, utils.build_board([1, 2, 3],
+                                       [2, 0, 4]), [0, 0],
+                  1, utils.build_board([2, 0, 4],
+                                       [0, 1, 5]), [0, 0]],
+        'endless': ['game',
+                    4, utils.build_board([1, 3, 1],
+                                         [0, 1, 0]), [0, 0],
+                    WinCond.ENDLESS,
+                    utils.build_board([0, 1, 0],
+                                      [1, 0, 1]), [0, 0]],
+        }
 
-        # 3
-        ('nlgame',
-         4, utils.build_board([1, 2, 3],
-                              [2, 0, 4]),
-         0, utils.build_board([2, 0, 3],
-                              [3, 0, 4])),
-        # 4:  laps
-        ('nlgame',
-         1, utils.build_board([2, 2, 3],
-                              [0, 3, 2]),
-         1, utils.build_board([1, 4, 5],
-                              [0, 2, 0])),
 
-        # 5:  laps
-        ('evgame',
-         1, utils.build_board([0, 1, 0],
-                              [1, 3, 0]),
-         4, utils.build_board([0, 2, 1],
-                              [1, 0, 1])),
+    GDICTS['nlgame'] = {'evens': True,
+                        'mlaps': LapSower.LAPPER_NEXT,
+                        'sow_direct': Direct.CCW,
+                        'stores': True,}
+    MLCASES |= {
+        'ln_nolap': ['nlgame',
+                  4, utils.build_board([1, 2, 3],
+                                       [2, 0, 4]), [0, 0],
+                  0, utils.build_board([2, 0, 3],
+                                       [3, 0, 4]), [0, 0]],
+        'ln_laps': ['nlgame',
+                 1, utils.build_board([2, 2, 3],
+                                      [0, 3, 2]), [0, 0],
+                 1, utils.build_board([1, 4, 5],
+                                      [0, 2, 0]), [0, 0]],
+        }
 
-        # 6:  laps
-        ('xcevgame',
-         1, utils.build_board([0, 1, 0],
-                              [1, 3, 0]),
-         4, utils.build_board([1, 1, 2],
-                              [0, 1, 0])),
 
-        # 7:  laps, stop on single seed, capt will occur
-        ('moppgame',
-         1, utils.build_board([0, 1, 0],
-                              [1, 3, 0]),
-         4, utils.build_board([1, 1, 2],
-                              [0, 1, 0])),
+    GDICTS['evgame'] = {'evens': True,
+                        'mlaps': LapSower.LAPPER,
+                        'sow_direct': Direct.CCW,
+                        'stores': True,}
+    MLCASES |= {
+        'ev_laps': ['evgame',
+                    1, utils.build_board([0, 1, 0],
+                                         [1, 3, 0]), [0, 0],
+                    4, utils.build_board([0, 2, 1],
+                                         [1, 0, 1]), [0, 0]],
+        }
 
-        # 8:  laps, stop on one
-        ('moppgame',
-         1, utils.build_board([1, 1, 0],
-                              [0, 3, 0]),
-         0, utils.build_board([2, 0, 1],
-                              [1, 0, 1])),
 
-        # 7:  laps, stop for simul capt
-        ('moppgame',
-         1, utils.build_board([1, 0, 1],
-                              [2, 2, 1]),
-         3, utils.build_board([1, 0, 2],
-                              [2, 0, 2])),
+    GDICTS['xcevgame'] = {'crosscapt': gi.XCaptType.ONE_ZEROS,
+                          'evens': True,
+                          'mlaps': LapSower.LAPPER,
+                          'sow_direct': Direct.CCW,
+                          'stores': True,}
+    MLCASES |= {
+        'xcev': ['xcevgame',
+                 1, utils.build_board([0, 1, 0],
+                                      [1, 3, 0]), [0, 0],
+                 4, utils.build_board([1, 1, 2],
+                                      [0, 1, 0]), [0, 0]],
+        }
 
-        # 8: sow two laps
-        ('game_op',
-         2, utils.build_board([1, 5, 3],
-                              [0, 3, 2]),
-         4, utils.build_board([2, 1, 5],
-                              [1, 4, 1])),
-        # 9: no laps
-        ('game_op',
-         2, utils.build_board([1, 4, 3],
-                              [0, 3, 3]),
-         5, utils.build_board([2, 5, 4],
-                              [0, 3, 0])),
+    GDICTS['moppgame'] = {'stores': True,
+                          'mlaps': LapSower.LAPPER,
+                          'sow_direct': Direct.CCW,
+                          'capt_type': gi.CaptType.MATCH_OPP,}
+    MLCASES |= {
+        # laps, stop on single seed, capt will occur
+        'mop_1': ['moppgame',
+                  1, utils.build_board([0, 1, 0],
+                                       [1, 3, 0]), [0, 0],
+                  4, utils.build_board([1, 1, 2],
+                                       [0, 1, 0]), [0, 0]],
 
-        # 10: sow laps equal 6
-        ('game_gep',
-         2, utils.build_board([1, 5, 3],
-                              [0, 3, 2]),
-         4, utils.build_board([2, 1, 5],
-                              [1, 4, 1])),
+        # laps, stop on one
+        'mop_2': ['moppgame',
+                  1, utils.build_board([1, 1, 0],
+                                       [0, 3, 0]), [0, 0],
+                  0, utils.build_board([2, 0, 1],
+                                       [1, 0, 1]), [0, 0]],
 
-        # 11: sow laps greater than
-        ('game_gep',
-         2, utils.build_board([0, 6, 0],
-                              [0, 0, 2]),
-         5, utils.build_board([2, 1, 2],
-                              [1, 1, 1])),
+        # laps, stop for simul capt
+        'mop_3': ['moppgame',
+                  1, utils.build_board([1, 0, 1],
+                                       [2, 2, 1]), [0, 0],
+                  3, utils.build_board([1, 0, 2],
+                                       [2, 0, 2]), [0, 0]],
+        }
 
-        # 12: no laps
-        ('game_gep',
-         2, utils.build_board([1, 4, 3],
-                              [0, 3, 3]),
-         5, utils.build_board([2, 5, 4],
-                              [0, 3, 0])),
+    GDICTS['game_op'] = {'stores': True,
+                         'mlaps': LapSower.LAPPER,
+                         'sow_direct': Direct.CCW,
+                         'mlap_cont': gi.SowLapCont.ON_PARAM,
+                         'mlap_param': 6,
+                         'capt_on': [1],}
+    MLCASES |= {
+        # sow two laps
+        'op_1': ['game_op',
+                 2, utils.build_board([1, 5, 3],
+                                      [0, 3, 2]), [0, 0],
+                 4, utils.build_board([2, 1, 5],
+                                      [1, 4, 1]), [0, 0]],
+        # no laps
+        'op_2': ['game_op',
+                 2, utils.build_board([1, 4, 3],
+                                      [0, 3, 3]), [0, 0],
+                 5, utils.build_board([2, 5, 4],
+                                      [0, 3, 0]), [0, 0]],
+        }
 
-        # ('game_str',
-        #  )
 
-    ]
+    GDICTS['game_gep'] = {'stores': True,
+                          'mlaps': LapSower.LAPPER,
+                          'sow_direct': Direct.CCW,
+                          'mlap_cont': gi.SowLapCont.GREQ_PARAM,
+                          'mlap_param': 6,
+                          'capt_on': [1],}
+    MLCASES |= {
+        # sow laps equal 6
+        'gep_eq': ['game_gep',
+                   2, utils.build_board([1, 5, 3],
+                                        [0, 3, 2]), [0, 0],
+                   4, utils.build_board([2, 1, 5],
+                                        [1, 4, 1]), [0, 0]],
+
+        # sow laps greater than
+        'gep_gr': ['game_gep',
+                   2, utils.build_board([0, 6, 0],
+                                        [0, 0, 2]), [0, 0],
+                   5, utils.build_board([2, 1, 2],
+                                        [1, 1, 1]), [0, 0]],
+
+        # no laps
+        'gep_no': ['game_gep',
+                   2, utils.build_board([1, 4, 3],
+                                        [0, 3, 3]), [0, 0],
+                   5, utils.build_board([2, 5, 4],
+                                        [0, 3, 0]), [0, 0]],
+         }
+
+
+    GDICTS['game_str'] = {'stores': True,
+                          'mlaps': LapSower.LAPPER,
+                          'sow_direct': Direct.CCW,
+                          'sow_stores': gi.SowStores.OWN_NR,}
+    MLCASES |= {
+        # pick up seeds from store and sow them
+        'sown': ['game_str',
+                 1, utils.build_board([2, 0, 0],
+                                      [0, 2, 0]), [2, 0],
+                 5, utils.build_board([1, 2, 0],
+                                      [1, 1, 0]), [1, 0]],
+        }
+
+
+    GDICTS['game_str_stop'] = {'stores': True,
+                               'mlaps': LapSower.LAPPER,
+                               'sow_direct': Direct.CCW,
+                               'mlap_cont': gi.SowLapCont.STOP_STORE,
+                               'sow_stores': gi.SowStores.OWN_NR,}
+    MLCASES |= {
+        # stop sowing when end in store without repeat turn
+        'stop_str': ['game_str_stop',
+                     1, utils.build_board([2, 2, 2],
+                                          [0, 2, 0]), [1, 0],
+                     gi.F_STORE, utils.build_board([2, 2, 2],
+                                                   [0, 0, 1]), [2, 0]],
+
+        # don't end in store
+        'nostop_str': ['game_str_stop',
+                       1, utils.build_board([0, 0, 0],
+                                            [0, 3, 0]), [1, 0],
+                       3, utils.build_board([0, 0, 1],
+                                            [0, 0, 1]), [2, 0]],
+        }
+
+
+    GDICTS['game_ln_str'] = {'stores': True,
+                             'mlaps': LapSower.LAPPER_NEXT,
+                             'sow_direct': Direct.CCW,
+                             'sow_stores': gi.SowStores.OWN,}
+    MLCASES |= {
+        #   sow from store with lapper_next
+        'ln_not_from': ['game_ln_str',
+                        1, utils.build_board([0, 1, 2],
+                                             [0, 1, 0]), [2, 0],
+                        2, utils.build_board([0, 2, 3],
+                                             [0, 0, 1]), [0, 0]],
+        }
+
+    GDICTS['game_ln_str_not'] = {'stores': True,
+                                 'mlaps': LapSower.LAPPER_NEXT,
+                                 'sow_direct': Direct.CCW,
+                                 'mlap_cont': gi.SowLapCont.NOT_FROM_STORE,
+                                 'sow_stores': gi.SowStores.OWN,}
+    MLCASES |= {
+        #  don't sow from store with lapper_next
+        'ln_not_from': ['game_ln_str_not',
+                        1, utils.build_board([2, 2, 2],
+                                             [0, 1, 0]), [2, 0],
+                        2, utils.build_board([2, 2, 2],
+                                             [0, 0, 1]), [2, 0]],
+        }
+
+    GDICTS['lnxcgame'] = {'crosscapt': gi.XCaptType.ONE_ZEROS,
+                          'mlaps': LapSower.LAPPER_NEXT,
+                          'sow_direct': Direct.CCW,
+                          'stores': True,}
+    MLCASES |= {
+        'lnxc': ['lnxcgame',
+                 2, utils.build_board([0, 2, 0],
+                                      [0, 2, 1]), [0, 0],
+                 0, utils.build_board([1, 0, 1],
+                                      [1, 2, 0]), [0, 0]],
+        }
+
     @pytest.mark.usefixtures("logger")
-    @pytest.mark.parametrize('game_fixt, start_pos, board, eloc, eboard',
-                             MLCASES)
-    def test_mlap_sower(self, request, game_fixt,
-                        start_pos, board, eloc, eboard):
+    @pytest.mark.parametrize('gdict_name, start_pos, board, store, '
+                             + 'eloc, eboard, estore',
+                             MLCASES.values(),
+                             ids=MLCASES.keys())
+    def test_mlap_sower(self, gdict_name, start_pos, board, store,
+                        eloc, eboard, estore):
 
-        game = request.getfixturevalue(game_fixt)
-
+        game = self.game_from_dict(gdict_name)
         game.board = board
+        game.store = store
         game.turn = False
         print(game)
         print(game.deco.sower)
@@ -999,7 +798,7 @@ class TestMlap:
 
         assert mdata.capt_start == eloc
         assert game.board == eboard
-        assert game.store == [0, 0]
+        assert game.store == estore
 
 
     # @pytest.mark.usefixtures("logger")
@@ -1079,6 +878,305 @@ class TestMlap:
 
         assert opgame.board == eboard
         assert mdata.capt_start == eloc
+
+
+    @pytest.fixture
+    def game(self):
+
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
+        game_info = gi.GameInfo(capt_on=[2],
+                                child_type=ChildType.NORMAL,
+                                child_cvt=4,
+                                child_rule=ChildRule.OPPS_ONLY_NOT_1ST,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+
+    @pytest.mark.parametrize('end_loc, board, eresult',
+                             [(gi.F_STORE, utils.build_board([1, 0, 3],
+                                                          [0, 3, 4]),
+                              False),
+                              (0, utils.build_board([1, 0, 3],
+                                                    [1, 3, 4]), False),
+                              (1, utils.build_board([1, 0, 3],
+                                                    [1, 3, 4]), True),
+                              (gi.T_STORE, utils.build_board([1, 0, 3],
+                                                          [0, 3, 4]),
+                               False),
+                              ])
+    def test_simple_lap(self, game, end_loc, board, eresult):
+
+        game.board = board
+        mdata = move_data.MoveData(game, None)
+        mdata.capt_start = end_loc
+
+        lap_cont = sower.StopSingleSeed(game, sower.LapContinue(game))
+        lap_cont = sower.StopRepeatTurn(game, lap_cont)
+
+        assert lap_cont.do_another_lap(mdata) == eresult
+
+
+    @pytest.mark.parametrize('end_loc, board, eresult, cloc',
+                             [(gi.F_STORE, utils.build_board([1, 0, 3],
+                                                          [0, 3, 4]),
+                              False, False),
+                              (0, utils.build_board([1, 0, 3],
+                                                    [1, 3, 4]), True, 1),
+                              (2, utils.build_board([1, 2, 3],
+                                                    [1, 3, 4]), True, 3),
+                              (0, utils.build_board([1, 0, 3],
+                                                    [1, 0, 4]), False, False),
+                              ])
+    def test_next_lap(self, game, end_loc, board, eresult, cloc):
+
+        game.board = board
+        mdata = move_data.MoveData(game, None)
+        mdata.direct = Direct.CCW
+        mdata.cont_sow_loc = 3
+        mdata.capt_start = end_loc
+
+        lap_cont = sower.NextLapCont(game)
+        lap_cont = sower.StopRepeatTurn(game, lap_cont)
+
+        assert lap_cont.do_another_lap(mdata) == eresult
+        if cloc:
+            assert mdata.capt_start == cloc
+
+
+    chi_lap_cases = [
+        # 0: not on end store
+        (gi.F_STORE, 2,
+         utils.build_board([1, 4, 4],
+                           [1, 3, 0]),
+         utils.build_board([N, N, N],
+                           [N, N, N]), False),
+        # 1: not on end in child
+        (1, 2,
+         utils.build_board([1, 4, 4],
+                           [0, 3, 0]),
+         utils.build_board([N, N, N],
+                           [N, T, N]), False),
+        # 2: my side of the board
+        (1, 2,
+         utils.build_board([1, 4, 4],
+                           [0, 4, 0]),
+         utils.build_board([N, N, N],
+                           [N, N, N]), True),
+        # 3: no child on opps first hole and one seed
+        (3, 1,
+         utils.build_board([1, 4, 4],
+                           [0, 3, 0]),
+         utils.build_board([N, N, N],
+                           [N, N, N]), True),
+        # 4: not first hole with > 1 seed, make child
+        (3, 3,
+         utils.build_board([1, 4, 4],
+                           [0, 3, 4]),
+         utils.build_board([N, T, N],
+                           [N, N, N]), False),
+        # 5: not if we should make a child
+        (4, 3,
+         utils.build_board([1, 4, 4],
+                           [0, 3, 4]),
+         utils.build_board([N, N, N],
+                           [N, N, N]), False),
+        # 6: not if only one seed
+        (5, 3,
+         utils.build_board([1, 4, 4],
+                           [0, 3, 4]),
+         utils.build_board([N, N, N],
+                           [N, N, N]), False),
+        # 7: not if already a child
+        (5, 3,
+         utils.build_board([1, 4, 4],
+                           [0, 3, 4]),
+         utils.build_board([N, T, N],
+                           [N, N, N]), False),
+        # 8: seeds > 1 seed, not child, opp side
+        (4, 3,
+         utils.build_board([1, 5, 4],
+                           [0, 3, 4]),
+         utils.build_board([N, N, N],
+                           [N, N, N]), True),
+    ]
+
+
+    @pytest.mark.parametrize('end_loc, sown_seeds, board, child, eresult',
+                            chi_lap_cases)
+    def test_child_lap_with_opp(self, game, end_loc, sown_seeds,
+                                board, child, eresult):
+
+        game.turn = False
+        game.board = board
+        game.child = child
+
+        mdata = move_data.MoveData(game, None)
+        mdata.capt_start = end_loc
+        mdata.seeds = sown_seeds
+
+        lap_cont = sower.LapContinue(game)
+        lap_cont = sower.StopMakeChild(game, lap_cont)
+        lap_cont = sower.StopSingleSeed(game, lap_cont)
+        lap_cont = sower.StopOnChild(game, lap_cont)
+        lap_cont = sower.StopRepeatTurn(game, lap_cont)
+
+        assert lap_cont.do_another_lap(mdata) == eresult
+
+
+    chi_lap_not_cases = [
+        # 0: not on end store
+         (gi.F_STORE, 2,
+          utils.build_board([1, 4, 4],
+                            [1, 3, 0]),
+          utils.build_board([N, N, N],
+                            [N, N, N]), False),
+         # 1: not on end in child
+         (1, 2,
+          utils.build_board([1, 4, 4],
+                            [0, 3, 0]),
+          utils.build_board([N, N, N],
+                            [N, T, N]), False),
+         # 2: my side of the board
+         (1, 2,
+          utils.build_board([1, 4, 4],
+                            [0, 4, 0]),
+          utils.build_board([N, N, N],
+                            [N, N, N]), False),
+         # 3: child on opps first hole and one seed
+         (3, 1,
+          utils.build_board([1, 4, 4],
+                            [0, 3, 0]),
+          utils.build_board([N, N, N],
+                            [N, N, N]), False),
+         # 4: not first hole with > 1 seed, make child
+         (3, 3,
+          utils.build_board([1, 4, 4],
+                            [0, 3, 4]),
+          utils.build_board([N, T, N],
+                            [N, N, N]), False),
+         # 5: not if we should make a child
+         (4, 3,
+          utils.build_board([1, 4, 4],
+                            [0, 3, 4]),
+          utils.build_board([N, N, N],
+                            [N, N, N]), False),
+         # 6: not if only one seed
+         (5, 3,
+          utils.build_board([1, 4, 4],
+                            [0, 3, 4]),
+          utils.build_board([N, N, N],
+                            [N, N, N]), False),
+         # 7: not if already a child
+         (5, 3,
+          utils.build_board([1, 4, 4],
+                            [0, 3, 4]),
+          utils.build_board([N, T, N],
+                            [N, N, N]), False),
+         # 8: seeds > 1 seed, not child, opp side
+         (4, 3,
+          utils.build_board([1, 5, 4],
+                            [0, 3, 4]),
+          utils.build_board([N, N, N],
+                            [N, N, N]), True),
+         ]
+
+    @pytest.fixture
+    def nogame(self):
+        """not opp for conversion."""
+
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
+        game_info = gi.GameInfo(capt_on=[2],
+                                child_type=ChildType.NORMAL,
+                                child_cvt=4,
+                                mlaps=gi.LapSower.LAPPER,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+
+    @pytest.mark.parametrize('end_loc, sown_seeds, board, child, eresult',
+                             chi_lap_not_cases)
+    def test_child_lap_not_opp(self, nogame, end_loc, sown_seeds,
+                               board, child, eresult):
+
+        nogame.turn = False
+        nogame.board = board
+        nogame.child = child
+
+        mdata = move_data.MoveData(nogame, None)
+        mdata.capt_start = end_loc
+        mdata.seeds = sown_seeds
+
+        lap_cont = sower.LapContinue(nogame)
+        lap_cont = sower.StopMakeChild(nogame, lap_cont)
+        lap_cont = sower.StopSingleSeed(nogame, lap_cont)
+        lap_cont = sower.StopOnChild(nogame, lap_cont)
+        lap_cont = sower.StopRepeatTurn(nogame, lap_cont)
+
+        assert lap_cont.do_another_lap(mdata) == eresult
+
+
+    chi_lap_next_cases = [
+         # 0: no children
+         (1, 2,
+          utils.build_board([1, 0, 0],
+                            [1, 3, 1]),
+          utils.build_board([N, N, N],
+                            [N, N, N]), True),
+
+         # 1: don't sow from child
+         (1, 2,
+          utils.build_board([1, 0, 0],
+                            [1, 3, 1]),
+          utils.build_board([N, N, N],
+                            [N, N, F]), False),
+
+         # 1: stop make child
+         (1, 2,
+          utils.build_board([1, 0, 0],
+                            [1, 4, 1]),
+          utils.build_board([N, N, N],
+                            [N, N, F]), False),
+         ]
+    @pytest.fixture
+    def lngame(self):
+        """not opp for conversion."""
+
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
+        game_info = gi.GameInfo(capt_on=[2],
+                                child_type=ChildType.NORMAL,
+                                child_cvt=4,
+                                mlaps=gi.LapSower.LAPPER_NEXT,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        return mancala.Mancala(game_consts, game_info)
+
+
+    @pytest.mark.parametrize('end_loc, sown_seeds, board, child, eresult',
+                             chi_lap_next_cases)
+    def test_child_lap_next(self, lngame, end_loc, sown_seeds,
+                            board, child, eresult):
+
+        lngame.turn = False
+        lngame.board = board
+        lngame.child = child
+
+        mdata = move_data.MoveData(lngame, None)
+        mdata.capt_start = end_loc
+        mdata.seeds = sown_seeds
+        mdata.direct = gi.Direct.CCW
+
+        lap_cont = sower.LapContinue(lngame)
+        lap_cont = sower.StopMakeChild(lngame, lap_cont)
+        lap_cont = sower.StopSingleSeed(lngame, lap_cont)
+        lap_cont = sower.StopOnChild(lngame, lap_cont)
+        lap_cont = sower.StopRepeatTurn(lngame, lap_cont)
+
+        assert lap_cont.do_another_lap(mdata) == eresult
 
 
 class TestGetSingle:
@@ -1183,7 +1281,7 @@ class TestVMlap:
         # 1: end_store
         (2, utils.build_board([1, 2, 3],
                               [2, 3, 6]),
-         F_STORE,
+         gi.F_STORE,
          utils.build_board([2, 3, 4],
                            [3, 4, 0]), [1, 0]),
 
@@ -1196,7 +1294,7 @@ class TestVMlap:
         # 3: visit opp -> lapping
         (2, utils.build_board([2, 2, 3],
                               [0, 3, 3]),
-         F_STORE,
+         gi.F_STORE,
          utils.build_board([0, 3, 4],
                            [1, 4, 0]), [1, 0]),
 
