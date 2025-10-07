@@ -29,7 +29,6 @@ import mancala
 import man_config
 import man_history
 import man_ui_cmd_mixins as ui_cmds
-import new_game
 import round_tally
 import sower
 import ui_utils
@@ -437,7 +436,7 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
             self.pcleanup()
 
 
-    def rebuild(self, new_game, pdict, player):
+    def rebuild(self, newgame, pdict, player):
         """Destory and rebuild the game. This is used by the
         VariCmdsMixin--it must be here for the scope of MancalaUI.
 
@@ -454,7 +453,7 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
             self.master.destroy()
         del self.game
 
-        MancalaUI(new_game, pdict,
+        MancalaUI(newgame, pdict,
                   player=player, root_ui=self.root, pcleanup=pcleanup)
 
 
