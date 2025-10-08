@@ -262,6 +262,21 @@ class TestConstruction:
         assert ginfo.repeat_turn
         assert not ginfo.any_captures
 
+        ginfo = gi.GameInfo(sow_stores=gi.SowStores.OWN,
+                            play_locs=gi.PlayLocs.BRD_OWN_STR_ALL,
+                            nbr_holes=6,
+                            stores=True,
+                            evens=True,
+                            rules=rules)
+        assert ginfo.capt_stores
+
+        ginfo = gi.GameInfo(sow_stores=gi.SowStores.OWN,
+                            play_locs=gi.PlayLocs.BRD_OWN_STR_ALL,
+                            nbr_holes=6,
+                            stores=True,
+                            crosscapt=True,
+                            rules=rules)
+        assert not ginfo.capt_stores
 
 
 class TestSeedsOk:

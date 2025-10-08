@@ -70,8 +70,8 @@ class CaptBasic(CaptMethodIf):
 
         if self.game.deco.capt_basic.capture_ok(mdata, mdata.capt_loc):
 
-            seeds = self.game.board[mdata.capt_loc]
-            self.game.board[mdata.capt_loc] = 0
+            seeds = self.game[mdata.capt_loc]
+            self.game[mdata.capt_loc] = 0
             self.game.store[self.game.turn] += seeds
 
             mdata.captured = True
@@ -170,10 +170,10 @@ class CaptNext(CaptMethodIf):
         loc_next = self.game.deco.incr.incr(loc, mdata.direct, mdata.player)
 
         if (self.seed_cond(mdata, capt_first, loc, loc_next)
-                and self.game.board[loc_next]):
+                and self.game[loc_next]):
 
-            seeds = self.game.board[loc_next]
-            self.game.board[loc_next] = 0
+            seeds = self.game[loc_next]
+            self.game[loc_next] = 0
             self.game.store[self.game.turn] += seeds
 
             mdata.captured = True
@@ -211,12 +211,12 @@ class CaptTwoOut(CaptMethodIf):
         loc_p1 = self.game.deco.incr.incr(loc, direct, turn)
         loc_p2 = self.game.deco.incr.incr(loc_p1, direct, turn)
 
-        if (self.seed_cond(self.game.board[loc])
-                and not self.game.board[loc_p1]
+        if (self.seed_cond(self.game[loc])
+                and not self.game[loc_p1]
                 and self.game.deco.capt_check.capture_ok(mdata, loc_p2)):
 
-            seeds = self.game.board[loc_p2]
-            self.game.board[loc_p2] = 0
+            seeds = self.game[loc_p2]
+            self.game[loc_p2] = 0
             self.game.store[self.game.turn] += seeds
 
             mdata.captured = True
@@ -1350,8 +1350,7 @@ def _add_base_capturer(game):
     if game.info.crosscapt:
         capturer = _add_cross_capt_deco(game)
 
-    elif (game.info.evens or game.info.capt_on
-          or game.info.capt_max or game.info.capt_min):
+    elif game.info.basic_capt:
         capturer = CaptBasic(game)
 
     else:
@@ -1406,7 +1405,8 @@ def deco_capturer(game):
     if game.info.capt_rturn:
         capturer = RepeatTurn(game, capturer)
 
-    if game.info.capt_type != gi.CaptType.END_OPP_STORE_CAPT:
+    if (game.info.capt_type != gi.CaptType.END_OPP_STORE_CAPT
+            and not game.info.capt_stores):
         capturer = NoStoreCapt(game, capturer)
 
     return capturer

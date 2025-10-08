@@ -146,11 +146,23 @@ class EvenOddDir(GetDirIf):
         return gi.Direct.CCW if seeds % 2 else gi.Direct.CW
 
 
+class StoreDir(GetDirIf):
+    """A wrapper that get's the direction for games that
+    play from stores--it is the base game sower."""
+
+    def get_direction(self, mdata):
+
+        if isinstance(mdata.move, tuple) and mdata.move[0] < 0:
+            return self.game.info.sow_direct
+
+        return self.decorator.get_direction(mdata)
+
 
 # %%  build deco
 
-def deco_dir_getter(game):
-    """Create the dir_getter chain."""
+def _pick_udir_getter(game):
+    """Pick the udir_getter (if needed). The main code will figure
+    out where it goes in the deco chain."""
 
     udir_getter = None
     if game.info.udirect:
@@ -159,22 +171,38 @@ def deco_dir_getter(game):
         else:
             udir_getter = UdirDir(game)
 
+    return udir_getter
+
+
+def deco_dir_getter(game):
+    """Create the dir_getter chain."""
+
+    udir_getter = _pick_udir_getter(game)
+
     if len(game.info.udir_holes) == game.cts.holes:
         if game.info.sow_direct == gi.Direct.PLAYALTDIR:
-            return PlayAltDir(game, udir_getter)
+            dir_getter = PlayAltDir(game, udir_getter)
 
-        return udir_getter
+        else:
+            dir_getter = udir_getter
 
-    if game.info.sow_direct is gi.Direct.SPLIT:
-        dir_getter = SplitDir(game)
-    elif game.info.sow_direct is gi.Direct.TOCENTER:
-        dir_getter = CenterLineDir(game)
-    elif game.info.sow_direct is gi.Direct.EVEN_ODD_DIR:
-        dir_getter = EvenOddDir(game)
     else:
-        dir_getter = ConstDir(game)
+        if game.info.sow_direct is gi.Direct.SPLIT:
+            dir_getter = SplitDir(game)
 
-    if game.info.udirect:
-        dir_getter = UdirOtherDir(game, dir_getter, udir_getter)
+        elif game.info.sow_direct is gi.Direct.TOCENTER:
+            dir_getter = CenterLineDir(game)
+
+        elif game.info.sow_direct is gi.Direct.EVEN_ODD_DIR:
+            dir_getter = EvenOddDir(game)
+
+        else:
+            dir_getter = ConstDir(game)
+
+        if game.info.udirect:
+            dir_getter = UdirOtherDir(game, dir_getter, udir_getter)
+
+    if game.info.play_locs:
+        dir_getter = StoreDir(game, dir_getter)
 
     return dir_getter

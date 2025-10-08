@@ -297,3 +297,31 @@ class TestGetDirection:
 
             mdata = utils.make_get_dir_mdata(game, move, sow_loc)
             assert game.deco.get_dir.get_direction(mdata) == edir[sow_loc]
+
+
+
+    @pytest.mark.parametrize('turn', [False, True])
+    def test_store_dirs(self, turn):
+
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
+        game_info = gi.GameInfo(capt_on=[2],
+                                sow_direct=gi.Direct.CW,
+                                udir_holes = [0, 1, 2],
+                                stores=True,
+                                play_locs=gi.PlayLocs.BRD_OWN_STR_ALL,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+
+        game = mancala.Mancala(game_consts, game_info)
+        assert game.info.mlength == 2, "Test condition not as expected"
+
+        store = gi.T_STORE if turn else gi.F_STORE
+        moves = [(store, 4), (2, gi.Direct.CCW)]
+
+        for move in moves:
+
+            mdata = utils.make_get_dir_mdata(game, move, moves[0])
+            if move[0] < 0:
+                assert game.deco.get_dir.get_direction(mdata) == gi.Direct.CW
+            else:
+                assert game.deco.get_dir.get_direction(mdata) == gi.Direct.CCW

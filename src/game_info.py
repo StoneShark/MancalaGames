@@ -664,6 +664,17 @@ class GameInfo:
                     self.capt_type,
                     self.child_type == ChildType.WEG])
 
+    @property
+    def capt_stores(self):
+        """Return True if we infer that store captures might
+        happen."""
+
+        return (self.sow_stores
+                and self.play_locs
+                and any([self.basic_capt and not self.crosscapt,
+                         self.capt_type == CaptType.TWO_OUT,
+                         self.capt_type == CaptType.NEXT]))
+
 
     def total_seeds_ok(self, seed_total, holes):
         """Test the seed_total against the number of holes.

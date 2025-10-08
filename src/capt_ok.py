@@ -48,7 +48,7 @@ class CaptOn(CaptOkIf):
     def capture_ok(self, mdata,  loc):
         """Return True if capture from loc is ok"""
 
-        if not self.game.board[loc] in self.game.info.capt_on:
+        if not self.game[loc] in self.game.info.capt_on:
             return False
         return self.decorator.capture_ok(mdata, loc)
 
@@ -60,7 +60,7 @@ class CaptEvens(CaptOkIf):
         """Return False if capture from loc is not ok,
         otherwise delegate."""
 
-        if self.game.board[loc] % 2:
+        if self.game[loc] % 2:
             return False
         return self.decorator.capture_ok(mdata, loc)
 
@@ -72,7 +72,7 @@ class CaptMax(CaptOkIf):
         """Return False if capture from loc is not ok,
         otherwise delegate."""
 
-        if self.game.board[loc] > self.game.info.capt_max:
+        if self.game[loc] > self.game.info.capt_max:
             return False
         return self.decorator.capture_ok(mdata, loc)
 
@@ -84,7 +84,7 @@ class CaptMin(CaptOkIf):
         """Return False if capture from loc is not ok,
         otherwise delegate."""
 
-        if self.game.board[loc] < self.game.info.capt_min:
+        if self.game[loc] < self.game.info.capt_min:
             return False
         return self.decorator.capture_ok(mdata, loc)
 
@@ -124,7 +124,7 @@ class CaptSideOk(CaptOkIf):
         """Return False if capture from loc is not ok,
         otherwise delegate."""
 
-        if not self.side_ok(mdata, self.game.turn, loc):
+        if loc >= 0 and not self.side_ok(mdata, self.game.turn, loc):
             return False
 
         return self.decorator.capture_ok(mdata, loc)
@@ -137,7 +137,7 @@ class CaptUnlocked(CaptOkIf):
         """Return False if capture from loc is not ok,
         otherwise delegate."""
 
-        if not self.game.unlocked[loc]:
+        if loc >= 0 and not self.game.unlocked[loc]:
             return False
 
         return self.decorator.capture_ok(mdata, loc)
@@ -150,21 +150,38 @@ class CaptNotChild(CaptOkIf):
         """Return False if capture from loc is not ok,
         otherwise delegate."""
 
-        if self.game.child[loc] is not None:
+        if loc >= 0 and self.game.child[loc] is not None:
             return False
 
         return self.decorator.capture_ok(mdata, loc)
 
 
 class CaptNotStoreNeedSeeds(CaptOkIf):
-    """If there are no seeds, can't capture.
-    Stack this one on top, so it's called first.."""
+    """If we are given a store, return False--never call
+    down the deco chain with a store index.
+    If the location is on the board but there are no seeds
+    return False. Otherwise, let the deco chain decide."""
 
     def capture_ok(self, mdata,  loc):
         """Return False if capture from loc is not ok,
         otherwise delegate."""
 
         if loc < 0 or not self.game.board[loc]:
+            return False
+
+        return self.decorator.capture_ok(mdata, loc)
+
+
+class CaptNeedSeeds(CaptOkIf):
+    """If there are no seeds in the store or board
+    loc provided, return False. Otherwise, call down
+    the deco chain (even with a store index)."""
+
+    def capture_ok(self, mdata,  loc):
+        """Return False if capture from loc is not ok,
+        otherwise delegate."""
+
+        if not self.game[loc]:
             return False
 
         return self.decorator.capture_ok(mdata, loc)
@@ -199,7 +216,10 @@ def deco_capt_basic(game):
     if game.info.child_type.child_but_not_ram():
         capt_ok = CaptNotChild(game, capt_ok)
 
-    capt_ok = CaptNotStoreNeedSeeds(game, capt_ok)
+    if game.info.capt_stores:
+        capt_ok = CaptNeedSeeds(game, capt_ok)
+    else:
+        capt_ok = CaptNotStoreNeedSeeds(game, capt_ok)
 
     return capt_ok
 
@@ -217,6 +237,9 @@ def deco_capt_check(game):
     if game.info.child_type.child_but_not_ram():
         capt_check = CaptNotChild(game, capt_check)
 
-    capt_check = CaptNotStoreNeedSeeds(game, capt_check)
+    if game.info.capt_stores:
+        capt_check = CaptNeedSeeds(game, capt_check)
+    else:
+        capt_check = CaptNotStoreNeedSeeds(game, capt_check)
 
     return capt_check
