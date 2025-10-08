@@ -391,6 +391,43 @@ class EndOppStoreCapture(CaptMethodIf):
             self.decorator.do_captures(mdata, capt_first)
 
 
+class SandwichCapt(CaptMethodIf):
+    """Capture when a single seed is surrounded by holes
+    with matching seed counts when those holes are both
+    on the opposite side of the board.
+
+    If the first capture failed, call down the deco
+    chain for another type of capture (none, basic or xcapt)."""
+
+    def do_captures(self, mdata, capt_first=True):
+
+        loc = mdata.capt_start
+        if self.game.board[loc] == 1:
+
+            turn = mdata.player
+            sdir = mdata.direct
+            s1_loc = self.game.deco.incr.incr(loc, sdir, turn)
+            s2_loc = self.game.deco.incr.incr(loc, sdir.opp_dir(), turn)
+
+            if (self.game.board[s1_loc] == self.game.board[s2_loc]
+                    and self.game.cts.opp_side(turn, s1_loc)
+                    and self.game.cts.opp_side(turn, s2_loc)):
+
+                game_log.add("Sandwich Capture!", game_log.IMPORT)
+                seeds = sum([self.game.board[s1_loc],
+                             self.game.board[loc],
+                             self.game.board[s2_loc]])
+                self.game.board[s1_loc] = 0
+                self.game.board[loc] = 0
+                self.game.board[s2_loc] = 0
+                self.game.store[turn] += seeds
+
+                mdata.captured = True
+                return
+
+        self.decorator.do_captures(mdata, capt_first)
+
+
 # %% cross capt wrappers
 
 class CaptCrossVisited(CaptMethodIf):
@@ -1307,6 +1344,9 @@ def _add_capt_type_deco(game, capturer):
 
     elif game.info.capt_type == gi.CaptType.END_OPP_STORE_CAPT:
         capturer = EndOppStoreCapture(game, capturer)
+
+    elif game.info.capt_type == gi.CaptType.SANDWICH_CAPT:
+        capturer = SandwichCapt(game, capturer)
 
     else:
         raise NotImplementedError(

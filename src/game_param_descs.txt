@@ -257,6 +257,14 @@ the seeds in their store.
   + <nolink>END_OPP_STORE_CAPT may be used with basic or cross capture.
 If the store is not captured, a basic or cross capture is attempted.
 
+- SANDWICH_CAPT: if the last seed of a sow lands in an empty hole
+on your opponent's side of the board, and the two holes on either
+side are also on your opponent's side of the board and the same number
+of seeds in them, capture all three holes.
+
+  + If there is no capture, continue to check for a second configured
+capture type which must be basic or cross capture.
+
 <param end_cond>
 Conditions that end the game. If the game is ended, UNCLAIMED defines
 what happens with any seeds left on the board and GOAL is used to

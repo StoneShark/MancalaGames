@@ -60,8 +60,9 @@
       }
    },
    "vari_params": {
+      "goal_param": "include",
       "mustpass": "include",
-      "goal_param": "include"
+      "capt_type": [ 0, 9 ]
    },
    "rules": "Russ, Laurence. Mancala Games. 1984. p62.",
    "note": "GOAL_PARAM set to 4 to limit game length",
@@ -102,8 +103,8 @@ turn loses (no MUSTPASS, Ohvulhu).
 
 - a second capture mechanism in which a seed sown into an empty hole
 on the opponent's side of the board, captures the seeds on either side
-of the sown hole, but only if they have the same number of seeds (not
-supported in Mancala Games).
+of the sown hole, but only if they are both on your opponent's side
+and both have a matching number of seeds (CAPT_TYPE SANDWICH_CAPT).
 </about>
 <lagniappe>
 Donkers et al. provide an opening move sequence (opening move plus 24

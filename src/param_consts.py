@@ -120,7 +120,8 @@ STRING_DICTS = {
          'Capture Opp | Own Most CCW': gi.CaptType.CAPT_OPP_1CCW,
          'Passive Store Capture': gi.CaptType.PASS_STORE_CAPT,
          'Pull Across': gi.CaptType.PULL_ACROSS,
-         'Opp store w/ final seed': gi.CaptType.END_OPP_STORE_CAPT}),
+         'Opp store w/ final seed': gi.CaptType.END_OPP_STORE_CAPT,
+         'Opp Side Sandwich': gi.CaptType.SANDWICH_CAPT}),
 
     'ChildLocs': lookup_dicts(
         gi.ChildLocs,

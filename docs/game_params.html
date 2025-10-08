@@ -996,6 +996,9 @@ is included after the parameter sections.
 <li class="helptext">
 <b class="enum">END_OPP_STORE_CAPT</b>: if your last seed of a sow falls into your opponent's store and it does not result in a repeat turn, capture the seeds in their store. 
 <p class="helptext"> <nolink>END_OPP_STORE_CAPT may be used with basic or cross capture. If the store is not captured, a basic or cross capture is attempted. 
+<li class="helptext">
+<b class="enum">SANDWICH_CAPT</b>: if the last seed of a sow lands in an empty hole on your opponent's side of the board, and the two holes on either side are also on your opponent's side of the board and the same number of seeds in them, capture all three holes. 
+<p class="helptext"> If there is no capture, continue to check for a second configured capture type which must be basic or cross capture. 
 </ol>
 <h4 id="multicapt"> Multiple Captures </h4>
 <p class="pdesc">Location in Config Files: game_info : multicapt

@@ -144,6 +144,7 @@ class CaptType(enum.IntEnum):
     PASS_STORE_CAPT = 6
     PULL_ACROSS = 7
     END_OPP_STORE_CAPT = 8
+    SANDWICH_CAPT = 9
 
 
 @enum.unique

@@ -93,6 +93,7 @@ CONVERT_DICT = {'N': None,
                 'OPP1CCW': gi.CaptType.CAPT_OPP_1CCW,
                 'STORE': gi.CaptType.PASS_STORE_CAPT,
                 'PULL': gi.CaptType.PULL_ACROSS,
+                'SAND': gi.CaptType.SANDWICH_CAPT,
 
                 'SOW': gi.CaptDir.SOW,
                 'BOTH': gi.CaptDir.BOTH,
