@@ -8,7 +8,7 @@
       "name": "Dakon",
       "about": "<text_section>",
       "blocks": true,
-      "crosscapt": true,
+      "crosscapt": 1,
       "goal_param": 4,
       "mlaps": 1,
       "mustpass": true,
@@ -94,7 +94,7 @@ The game is over when either player cannot fill 4 holes.
 Variations:
 
 - played with 6 to 10 holes per side with the number of start seeds
-equaling number of holes (<nolink>Dakon:Dakon_n where n is holes and
+equaling number of holes (<nolink>Dakon::Dakon_n where n is holes and
 start seeds).
 
 - passing disallowed--a player with no moves at the start of their

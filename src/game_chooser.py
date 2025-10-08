@@ -1131,7 +1131,8 @@ class GameChooser(ttk.Frame):
         if errors:
             ui_utils.showerror(self, 'Game File Errors', errors)
 
-        self.all_games = dict(sorted(self.all_games.items()))
+        self.all_games = dict(sorted(self.all_games.items(),
+                                     key=lambda item: item[0].lower()))
         self.games = list(self.all_games.keys())
 
 
