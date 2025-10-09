@@ -6,7 +6,7 @@
    },
    "game_info": {
       "name": "Mancala",
-      "about": "\n",
+      "about": "",
       "allow_rule": 0,
       "blocks": false,
       "capt_dir": 0,
@@ -19,10 +19,12 @@
       "child_rule": 0,
       "child_type": 0,
       "child_locs": 0,
-      "crosscapt": false,
+      "crosscapt": 0,
       "evens": false,
       "goal": 0,
       "goal_param": 0,
+      "end_cond": 0,
+      "end_param": 0,
       "grandslam": 0,
       "help_file": "",
       "min_move": 1,
@@ -43,6 +45,7 @@
       "round_starter": 0,
       "rounds": 0,
       "skip_start": false,
+      "play_locs": 0,
       "sow_direct": 1,
       "sow_stores": 0,
       "sow_rule": 0,
@@ -80,3 +83,5 @@
       }
    }
 }
+<text_section>
+</text_section>
