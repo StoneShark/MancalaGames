@@ -24,8 +24,9 @@
          "mm_depth": [ 1, 3, 5, 7 ]
       },
       "scorer": {
-         "mx_seeds_m": 8,
-         "mx_evens_m": 1
+         "mx_stores_m": 8,
+         "mx_seeds_m": 4,
+         "mx_evens_m": 3
       }
    },
    "vari_params": {
@@ -48,7 +49,7 @@ Sow counter-clockwise from any hole or your store
 but only on your side of the board.
 You may choose the number of seeds to sow from your
 start hole.
-If there is one seed in the start hole move it forward, 
+If there is one seed in the start hole move it forward,
 otherwise leave one seed in the start hole.
 
 Capture on 1s, 3s and 5s across from the final hole sown.

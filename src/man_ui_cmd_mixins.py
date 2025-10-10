@@ -23,6 +23,7 @@ import ai_player
 import animator
 import buttons
 import cfg_keys as ckey
+import format_msg
 import game_info as gi
 import man_config
 import man_path
@@ -901,8 +902,7 @@ class HelpMenuMixin:
     def _about(self):
         """Popup the about window."""
 
-        paragraphs = [man_config.remove_tags(para)
-                      for para in self.info.about.split('\n')
-                      if para.strip()]
+        paragraphs = list(format_msg.build_paras(
+                            man_config.remove_tags(self.info.about)))
         ui_utils.QuietDialog(self, f'About {self.info.name}', paragraphs,
                              wide=True)

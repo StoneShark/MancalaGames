@@ -508,9 +508,10 @@ def test_player_rules(pdict, game):
                                    and ckey.MX_STORES in pdict[ckey.SCORER]
                                    and pdict[ckey.SCORER][ckey.MX_STORES]),
         both_objs=True,
-        msg="""Stores scorer is not supported for
-            CLEAR, DEPRIVE or IMMOBILIZE games.""",
-        excp=gi.UInputError)
+        msg="Odd to use stores scorer for CLEAR, DEPRIVE or IMMOBILIZE games",
+        warn=rule_tester.PRINT_MSG)
+        # Azigo ends/wins on imobilize but stores are in play so
+        # they must be scored
 
     tester.test_rule(
         'mlaps_access_prohibit',
