@@ -266,6 +266,7 @@ STRING_DICTS = {
          'Winner Chooses Owners': gi.RoundFill.UCHOWN,
          'Loser Only': gi.RoundFill.LOSER_ONLY,
          'Terr Extra Lottery': gi.RoundFill.TERR_EX_RANDOM,
+         'Terr Extra Loser': gi.RoundFill.TERR_EX_LOSER,
          'Terr Extra Loser/Empty': gi.RoundFill.TERR_EX_EMPTY,
          }),
 

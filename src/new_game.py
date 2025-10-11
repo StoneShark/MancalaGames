@@ -313,8 +313,9 @@ class TerritoryNewRound(NewGameIf):
                 and not game.cts.seed_equiv % 2):
             self.compute_holes = self.terr_wholes_random
 
-        elif game.info.round_fill == gi.RoundFill.TERR_EX_EMPTY:
-            self.compute_holes = self.terr_wholes_empty
+        elif game.info.round_fill in (gi.RoundFill.TERR_EX_LOSER,
+                                      gi.RoundFill.TERR_EX_EMPTY):
+            self.compute_holes = self.terr_wholes_loser
 
         else:
             self.compute_holes = self.terr_wholes_round
@@ -335,7 +336,7 @@ class TerritoryNewRound(NewGameIf):
         return greater_holes
 
 
-    def terr_wholes_empty(self, seeds, greater):
+    def terr_wholes_loser(self, seeds, greater):
         """The loser always gets the hole that the winner
         could only partially fill."""
         return seeds[greater] // self.game.cts.seed_equiv

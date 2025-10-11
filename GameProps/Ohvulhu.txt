@@ -8,7 +8,7 @@
       "name": "Ohvulhu",
       "about": "<text_section>",
       "blocks": true,
-      "crosscapt": true,
+      "crosscapt": 1,
       "goal_param": 4,
       "mlaps": 1,
       "capt_side": 1,
@@ -68,8 +68,6 @@
 <about>
 Sow counter-clockwise in multiple laps including ones own store.
 Repeat turn when sow ends in own store.
-
-
 
 Cross capture on final seed sown to own side of the board.
 

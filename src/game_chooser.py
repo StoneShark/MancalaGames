@@ -604,7 +604,7 @@ fcol.reset()
 
 FILTERS += [
 
-    FilterDesc('Ratings', DictFilter, RATINGS, ckey.NAME, 1, fcol.count),
+    FilterDesc('Favorites', DictFilter, RATINGS, ckey.NAME, 1, fcol.count),
     # DIR_DICT filter, if it will be included
 
     FilterDesc('Origin', DictFilter, ORIGIN, True, 1, fcol.count),

@@ -1296,6 +1296,10 @@ This could result in the winner playing goal_param holes for the round,
 but lottery win never allows one player to win the game. 
 Supported for TERRITORY goal only. 
 
+- TERR_EX_LOSER: If the players have extra seeds but cannot completely 
+fill a hole, the extra hole goes to the round loser.
+Supported for TERRITORY goal only. 
+
 - TERR_EX_EMPTY: If the players have extra seeds but cannot completely 
 fill a hole, the extra hole goes to the round loser but it is left empty.
 The extra seeds remain in the player's stores.

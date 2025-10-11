@@ -170,7 +170,7 @@ def test_territory_rules(tester):
                             and ginfo.round_fill in
                                 (gi.RoundFill.TERR_EX_RANDOM,
                                  gi.RoundFill.TERR_EX_EMPTY,
-                                 gi.RoundFill.TERR_EX_RANDOM)),
+                                 gi.RoundFill.TERR_EX_LOSER)),
         msg='Selected round fill is only supported Territory goal',
         excp=gi.GameInfoError)
         # don't let other's play in our sandbox
@@ -230,9 +230,22 @@ def test_territory_rules(tester):
                             and ginfo.round_fill not in
                                 (gi.RoundFill.NOT_APPLICABLE,
                                  gi.RoundFill.UCHOWN,
+                                 gi.RoundFill.TERR_EX_LOSER,
                                  gi.RoundFill.TERR_EX_EMPTY,
                                  gi.RoundFill.TERR_EX_RANDOM)),
         msg='Selected round fill is ignored for Territory goal',
+        warn=True)
+
+    tester.test_rule('terr_no_end',
+        both_objs=True,
+        rule=lambda ginfo, holes: (ginfo.goal == gi.Goal.TERRITORY
+                                   and ginfo.round_fill in
+                                       (gi.RoundFill.TERR_EX_LOSER,
+                                        gi.RoundFill.TERR_EX_EMPTY)
+                                   and ginfo.goal_param == 2 * holes),
+        msg="""For territory games with TERR_EX_LOSER or TERR_EX_EMPTY
+            round fill, GOAL_PARAM should be less than the total number
+            of holes, otherwise a win would require capturing all the seeds""",
         warn=True)
 
     tester.test_rule('uchown_terr_only',

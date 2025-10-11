@@ -438,7 +438,7 @@ don't end the game when one or two seeds (<a href="game_params.html#end_cond">EN
 <li class="helptext">
 <nolink>Ayo::No_Rounds - not played in rounds. Goal is to collect more seeds than opponent. 
 <li class="helptext">
-<a href="#J'Odu">J'Odu</a> uses the same rules but is a cross capture game with the ONE_ANY capture pattern. 
+<a href="#J'Odu">J'Odu</a> uses the same rules but is a cross capture game with the ONE_ANY cross capture pattern. 
 </ul>
 <div class="cols_row">
   <div class="column2">
@@ -1889,7 +1889,7 @@ don't end the game when one or two seeds (<a href="game_params.html#end_cond">EN
     <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
     <p class="param"><a href="game_params.html#mustshare">Must Share</a>: Yes</p>
     <p class="param"><a href="game_params.html#quitter">Quit Game Seeds</a>: HOLE_OWNER</p>
-    <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: TERR_EX_EMPTY</p>
+    <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: TERR_EX_LOSER</p>
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: LOSER</p>
     <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
@@ -3638,7 +3638,8 @@ board size 10 holes per side
 <p>Sow multilap next hole counter-clockwise. 
 <p>Capture two out (or across the gap) from the final seed sown. Multiple captures are done as long as there is an empty hole-filled hole pattern. 
 <p>Played in rounds. A round ends when there are no moves. Use the End Round command if seeds are cycling--though seeds go to hole owners. 
-<p>The game is won when the loser cannot fill two holes. 
+<p>When setting up for each new round the winner fills the holes that they can with 5 seeds each. Any extra seeds are given to the round loser. Player's control the holes they fill in the next round. The winner starts the new round. 
+<p>The game ends when the winner controls 9 holes. 
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  5</p>
@@ -3647,12 +3648,13 @@ board size 10 holes per side
     <p class="param"><a href="game_params.html#capt_dir">Capture Direction</a>: SOW</p>
     <p class="param"><a href="game_params.html#capt_side">Capture side</a>: BOTH</p>
     <p class="param"><a href="game_params.html#capt_type">Capture Type</a>: TWO_OUT</p>
-    <p class="param"><a href="game_params.html#goal_param">Goal Parameter</a>: 8</p>
+    <p class="param"><a href="game_params.html#goal_param">Goal Parameter</a>: 9</p>
     <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER_NEXT</p>
   </div>
   <div class="column2">
     <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: -1</p>
     <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
+    <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: TERR_EX_LOSER</p>
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: WINNER</p>
     <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
@@ -3660,8 +3662,7 @@ board size 10 holes per side
   </div>
 </div>
 <p><b class="enum">Rules</b>: <a href="https://mancala.fandom.com/wiki/S%C3%A0n_Y%C3%A1o" target="_blank">https://mancala.fandom.com/wiki/S%C3%A0n_Y%C3%A1o</a> 
-<p><b class="enum">Deviation</b>: Hole filling rounding rules are applied, loser must have 2 or fewer seeds. 
-<p><b class="enum">Note</b>: <a href="game_params.html#goal_param">GOAL_PARAM</a> is to 8 to limit game length. 
+<p><b class="enum">Deviation</b>: The game ends when one player has less than 6 seeds, not 5. 
 <p><b class="enum">Origin</b>: traditional 
 <p><b class="enum">Region</b>: East Asia 
 <h3 id="SimpleCapt" class="game_desc">SimpleCapt</h3>

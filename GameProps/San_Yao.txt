@@ -10,11 +10,12 @@
       "capt_dir": 1,
       "capt_type": 2,
       "goal": 2,
-      "goal_param": 8,
+      "goal_param": 9,
       "mlaps": 2,
       "multicapt": -1,
       "mustpass": true,
       "capt_side": 0,
+      "round_fill": 12,
       "round_starter": 2,
       "rounds": 2,
       "sow_direct": 1,
@@ -33,8 +34,7 @@
       "goal_param": "include"
    },
    "rules": "https://mancala.fandom.com/wiki/S%C3%A0n_Y%C3%A1o",
-   "deviation": "Hole filling rounding rules are applied, loser must have 2 or fewer seeds.",
-   "note": "GOAL_PARAM is to 8 to limit game length.",
+   "deviation": "The game ends when one player has less than 6 seeds, not 5.",
    "origin": "traditional",
    "region": "East Asia"
 }
@@ -49,6 +49,11 @@ pattern.
 Played in rounds. A round ends when there are no moves. Use the End
 Round command if seeds are cycling--though seeds go to hole owners.
 
-The game is won when the loser cannot fill two holes.
+When setting up for each new round the winner fills the holes that
+they can with 5 seeds each. Any extra seeds are given to the round
+loser. Player's control the holes they fill in the next round.
+The winner starts the new round.
+
+The game ends when the winner controls 9 holes.
 </about>
 </text_section>

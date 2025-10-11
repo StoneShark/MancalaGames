@@ -357,7 +357,8 @@ class RoundFill(enum.IntEnum):
     SHORTEN_ALL = 9
     LOSER_ONLY = 10
     TERR_EX_RANDOM = 11
-    TERR_EX_EMPTY = 12
+    TERR_EX_LOSER = 12
+    TERR_EX_EMPTY = 13
 
 
 @enum.unique

@@ -96,7 +96,8 @@ class EndTurnIf(deco_chain_if.DecoChainIf):
         req_holes = self.game.info.goal_param
         seeds = self.game.cts.seed_equiv
 
-        if self.game.info.round_fill == gi.RoundFill.TERR_EX_EMPTY:
+        if self.game.info.round_fill in (gi.RoundFill.TERR_EX_EMPTY,
+                                         gi.RoundFill.TERR_EX_LOSER):
             return req_holes * seeds
 
         return (req_holes - 1) * seeds + seeds // 2 + 1
@@ -872,9 +873,10 @@ class RoundWinner(EndTurnIf):
         intro = "Game, not round, ended (too few seeds to "
 
         if game.info.goal == gi.Goal.TERRITORY:
-            req_holes = game.cts.dbl_holes - goal_param + 1
+            req_holes = game.cts.dbl_holes - goal_param
             self.req_seeds = game.cts.total_seeds - self.terr_win_seeds()
-            if game.info.round_fill == gi.RoundFill.TERR_EX_EMPTY:
+            if game.info.round_fill in (gi.RoundFill.TERR_EX_EMPTY,
+                                        gi.RoundFill.TERR_EX_LOSER):
                 self.req_seeds += 1
             else:
                 self.req_seeds += game.cts.seed_equiv // 2

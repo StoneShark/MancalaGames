@@ -18,7 +18,7 @@
       "mustpass": true,
       "mustshare": true,
       "capt_side": 5,
-      "round_fill": 12,
+      "round_fill": 13,
       "round_starter": 1,
       "rounds": 2,
       "sow_direct": 1,
@@ -101,6 +101,6 @@ Variation:
 Goal is to collect more seeds than opponent.
 
 - <a href="#J'Odu">J'Odu</a> uses the same rules but is a
-cross capture game with the ONE_ANY capture pattern.
+cross capture game with the ONE_ANY cross capture pattern.
 </about>
 </text_section>
