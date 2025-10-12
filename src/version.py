@@ -6,11 +6,11 @@ Created on Thu Feb 13 07:34:32 2025
 
 import textwrap
 
-VERSION = '1.9.1'
+VERSION = '1.10'
 
 # these are auto filled when the exe is built
-DATETIME = 'Fri Sep 19 11:16:03 2025'
-BRANCH = 'develop'
+DATETIME = 'Sun Oct 12 06:43:32 2025'
+BRANCH = 'main'
 
 RELEASE_TEXT = textwrap.dedent(f"""\
                 Mancala Games
