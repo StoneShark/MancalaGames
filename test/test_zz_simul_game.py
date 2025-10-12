@@ -41,8 +41,9 @@ FILES = man_path.game_files()
 
 XFAIL_GAMES = {
     'Urim': "10 points can't generally be achieved within test limits.",
-    'Ohojichi': "Random play is very bad; games don't finish.",
-    'Bule Perga': "Easy for game to reach cycling state."
+    'Ohojichi': "Random play games don't generally finish.",
+    'Bule Perga': "Easy for game to reach cycling state.",
+    'Azigo': "Random play games don't generally finish.",
     }
 
 
