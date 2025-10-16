@@ -790,7 +790,7 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
         popup the winner dialog box."""
 
         if win_cond:
-            self.tally.tally_game(self.game.turn, win_cond)
+            self.tally.tally_game(self.game.mdata.winner, win_cond)
             self.param_tally()
 
             title, message = self.game.win_message(win_cond)
@@ -852,7 +852,7 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
 
         wtext = thing + ' Ended '
         if win_cond and win_cond.is_win():
-            sturn = self.game.turn_name()
+            sturn = gi.PLAYER_NAMES[not self.game.mdata.winner]
             wtext += f'\n{win_cond.name} by {sturn}'
         elif win_cond:
             wtext += ' ' + win_cond.name

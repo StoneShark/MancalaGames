@@ -23,6 +23,10 @@
          "mx_easy_rand_a": 20
       }
    },
+   "vari_params": {
+      "holes": "include",
+      "nbr_start": "include"
+   },
    "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p26.",
    "origin": "traditional",
    "region": "Eastern Africa"
@@ -30,10 +34,17 @@
 <text_section>
 <about>
 Sow counter-clockwise in multiple-laps.
+Put the first seed of each lap into your own store.
+Moves may only be made from holes with 2 or more seeds.
 
-Capture 1 seed on the start of each lap. No other capture mechanism is
-used.
+No other capture mechanism is used.
 
 Goal: capture more than half of the seeds.
+
+Variations:
+
+- change number of holes per side
+
+- change number of start seeds
 </about>
 </text_section>

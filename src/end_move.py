@@ -412,7 +412,6 @@ class ConcedeDepImm(EndTurnIf):
     def game_ended(self, mdata):
 
         seeds = self.sclaimer.claim_seeds()
-        print("concdeDemImm", seeds)
 
         if seeds[0] > seeds[1]:
             mdata.win_cond = gi.WinCond.WIN
