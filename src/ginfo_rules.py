@@ -463,9 +463,10 @@ def test_no_sides_rules(tester):
         return _no_sides_and
 
     tester.test_rule('no_sides_need_place',
-        rule=lambda ginfo: (ginfo.no_sides
+        rule=lambda ginfo: (not ginfo.goal.eliminate()
+                            and ginfo.no_sides
                             and not (ginfo.stores or ginfo.child_type)),
-        msg='NO_SIDES requires STORES or CHILDREN',
+        msg='MAX_SEEDS game with NO_SIDES requires STORES or CHILDREN',
         excp=gi.GameInfoError)
 
     bad_flags = ['grandslam', 'mustpass', 'mustshare', 'blocks',
@@ -488,10 +489,11 @@ def test_no_sides_rules(tester):
 
     tester.test_rule('no_sides_no_stores_warn',
         rule=lambda ginfo: ginfo.no_sides and not ginfo.stores,
-        msg="NO_SIDES without STORES needs to have different colors " \
-            + "configured for each player (check mancala.ini)",
+        msg="NO_SIDES without STORES should have different colors " \
+            + "configured for each player (mancala.ini cannot be checked yet)",
         warn=rule_tester.PRINT_MSG)
         # there is no other way to know whose turn it is
+        # cannot test the config file (get circular dependencies)
 
     tester.test_rule('no_sides_side_warn',
         rule=lambda ginfo: ginfo.no_sides and ginfo.capt_side,

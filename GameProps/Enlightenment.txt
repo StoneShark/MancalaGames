@@ -13,7 +13,6 @@
       "capt_side": 0,
       "sow_direct": 0,
       "sow_rule": 3,
-      "stores": true,
       "udir_holes": [ 2 ]
    },
    "player": {
