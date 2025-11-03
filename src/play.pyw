@@ -7,10 +7,35 @@ Created on Tue Jul 18 13:50:32 2023
 
 import tkinter as tk
 
+import format_msg
 import man_config
 import man_path
 import mancala_ui
 import ui_utils
+
+
+def print_about(game):
+    """Format and print the about game text."""
+
+    text = man_config.remove_tags(game.info.about)
+    formatted = format_msg.fmsg(list(format_msg.build_paras(text)),
+                                wide=True)
+    print(formatted)
+
+
+def build_game_ui(game_str):
+    """Build the game ui."""
+
+    if man_config.VAR_SEP in game_str:
+        man_config.read_params_data(need_descs=False)
+
+    gamename, variant = man_config.game_name_to_parts(game_str)
+
+    filename = man_path.find_gamefile(gamename)
+    game, pdict = man_config.make_game(filename, variant)
+    print_about(game)
+
+    return mancala_ui.MancalaUI(game, pdict)
 
 
 if __name__ == '__main__':
@@ -20,16 +45,7 @@ if __name__ == '__main__':
     param = man_path.get_cmd_ln_gamename(optional=True)
     if param:
 
-        if man_config.VAR_SEP in param:
-            man_config.read_params_data(need_descs=False)
-
-        gamename, variant = man_config.game_name_to_parts(param)
-
-        filename = man_path.find_gamefile(gamename)
-        game, pdict = man_config.make_game(filename, variant)
-        print(game.info.about)
-
-        game_ui = mancala_ui.MancalaUI(game, pdict)
+        game_ui = build_game_ui(param)
         game_ui.mainloop()
 
     else:
