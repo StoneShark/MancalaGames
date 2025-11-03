@@ -76,7 +76,7 @@ GOALS = {
                                             gi.Goal.RND_WIN_COUNT_MAX),
          'Clear Own': lambda goal: goal in (gi.Goal.CLEAR,
                                             gi.Goal.RND_WIN_COUNT_CLR),
-         'Deprive Opponent': lambda goal: goal in (gi.Goal.DEPRIVE,
+         'Deprive Opp': lambda goal: goal in (gi.Goal.DEPRIVE,
                                                    gi.Goal.RND_WIN_COUNT_DEP),
          'Immoblize Opp': lambda goal: goal in (gi.Goal.IMMOBILIZE,
                                                 gi.Goal.RND_WIN_COUNT_IMB),
@@ -116,7 +116,7 @@ SOW_NOT_OTHER = (gi.SowRule.NONE, ) + SOW_CLOSED + SOW_TAKE + SOW_LAP_CAPTS + SO
 
 SOWRS = {'None': lambda sow_rule: not sow_rule,
          'Sow Closed': lambda sow_rule: sow_rule in SOW_CLOSED,
-         'Take when Sowing': lambda sow_rule: sow_rule in SOW_TAKE,
+         'En passant Capt': lambda sow_rule: sow_rule in SOW_TAKE,
          'Capture on Laps': lambda sow_rule: sow_rule in SOW_LAP_CAPTS,
          'Skip some holes': lambda sow_rule: sow_rule in SOW_SKIP,
          'Other': lambda sow_rule: sow_rule not in SOW_NOT_OTHER,
@@ -263,7 +263,8 @@ def build_regions():
         return _region_test
 
     def other_region(gdict):
-        """True if there is a region specified but it is not in
+        """True if there is no region specified or
+        if there is a region specified but it is not in
         world_regions."""
 
         region = gdict.get('region', None)
@@ -314,9 +315,46 @@ def build_dir_filter():
 DIR_DICT = build_dir_filter()
 
 
+SIMILAR = {
+
+    '1 difference': '<=1',
+    '2 or fewer': '<=2',
+    '3 or fewer': '<=3',
+    '4 or fewer': '<=4',
+    '5 or fewer': '<=5',
+    '10 or fewer': '<=10',
+
+    '20 or more': '>=20',
+    }
+
+
 # %% GameFilters frame & classes
 
-class BaseFilter(ttk.Frame, abc.ABC):
+
+class FilterIf(abc.ABC):
+    """The interfaces required for all filters.
+    These are only used by the GameFilters object."""
+
+    @abc.abstractmethod
+    def show(self, game_dict):
+        """Return True if the game should be shown."""
+
+    @abc.abstractmethod
+    def not_filtered(self):
+        """Clear all of the filters.
+
+        Do not call update list, we only want to do this
+        once when all of the filters are cleared.
+        The Similar filter is slow to complete.
+        Any 'None/Clear' menu commands should use self.clear
+        which does do the update_list."""
+
+    @abc.abstractmethod
+    def all_filtered(self):
+        """Set all of the filters."""
+
+
+class CheckboxFilter(ttk.Frame, FilterIf):
     """A filter category.  Checkboxes are created for each
     name, value pair return from the parent's items method.
 
@@ -341,7 +379,7 @@ class BaseFilter(ttk.Frame, abc.ABC):
 
         rnbr = row.count
         ttk.Button(self, text='All',
-                   command=self.not_filtered,
+                   command=self.clear,
                    style='Filt.TButton'
                    ).grid(row=rnbr, column=0, padx=1, pady=1)
         ttk.Button(self, text='Inv',
@@ -352,13 +390,19 @@ class BaseFilter(ttk.Frame, abc.ABC):
                    command=self.all_filtered,
                    style='Filt.TButton'
                    ).grid(row=rnbr, column=2, padx=1, pady=1)
+        self.columnconfigure(tk.ALL, weight=1)
 
 
     def build_filters(self, filt_obj, row, value_keys):
         """Build the filter checkboxes and their variables.
         Seperate so that it can speciallized by derived classes.
 
-        filter_var must have set and get methods."""
+        The Directory filter is based on user input (from mancala.ini),
+        so names are limited in length.
+
+        filter_var is a dictionary of key: object for each checkbox.
+        The objects are generally tk variables but may be any
+        object that has set and get methods."""
 
         filt_var = {}
 
@@ -367,7 +411,8 @@ class BaseFilter(ttk.Frame, abc.ABC):
             key = value if value_keys else name
             filt_var[key] = tk.BooleanVar(self, value=1)
 
-            ttk.Checkbutton(self, text=name,
+            title = (name[:12] + '...') if len(name) > 15 else name
+            ttk.Checkbutton(self, text=title,
                             variable=filt_var[key],
                             command=filt_obj.update_list
                             ).grid(row=row.count, column=0,
@@ -375,12 +420,18 @@ class BaseFilter(ttk.Frame, abc.ABC):
         return filt_var
 
 
+    def clear(self):
+        """Called when clearing one filter."""
+
+        self.not_filtered()
+        self.filt_obj.update_list()
+
+
     def not_filtered(self):
         """Set all of the filter variables."""
 
         for var in self.filt_var.values():
             var.set(1)
-        self.filt_obj.update_list()
 
 
     def all_filtered(self):
@@ -433,7 +484,7 @@ class BaseFilter(ttk.Frame, abc.ABC):
         value_keys of False."""
 
 
-class VListFilter(BaseFilter):
+class VListFilter(CheckboxFilter):
     """A filter category based on a list of values."""
 
     def __init__(self, parent, filt_obj, label, val_list, param_key):
@@ -450,10 +501,8 @@ class VListFilter(BaseFilter):
 
 
     def show(self, game_dict):
-        """Determine if the game associated with value
-        should be shown.
-
-        value: the enum value to test (an int)"""
+        """Show the game if the tk variable (object) for the parameter
+        value is set."""
 
         value = self.param(game_dict)
         return self.filt_var[value].get()
@@ -469,7 +518,7 @@ class EnumFilter(VListFilter):
             yield evalue.name, evalue.value
 
 
-class DictFilter(BaseFilter):
+class DictFilter(CheckboxFilter):
     """A filter category based on a dictionary of rule_name: test"""
 
     def __init__(self, parent, filt_obj, label, filt_dict, param_key):
@@ -485,7 +534,8 @@ class DictFilter(BaseFilter):
 
 
     def show(self, game_dict):
-        """Determine if the game associated should be shown."""
+        """Show the game if any of the selected test functions
+        return True."""
 
         value = self.param(game_dict)
         return any(test_func(value)
@@ -523,10 +573,7 @@ class TriStateFilter(DictFilter):
 
 
     def show(self, game_dict):
-        """Determine if the game associated with value
-        should be shown.
-
-        value: value of the associated parameter to test"""
+        """Show the game if none of the filters exclude it."""
 
         for test_name, test_func in self.filt_dict.items():
 
@@ -553,6 +600,119 @@ class TriStateFilter(DictFilter):
             elif val is False:
                 var.set(True)
         self.filt_obj.update_list()
+
+
+class RadioFilter(ttk.Frame, FilterIf):
+    """A filter category.  Radio Buttons are created for each
+    name, value pair return from the parent's items method."""
+
+    def __init__(self, parent, filt_obj, label, filt_dict, param_key):
+
+        _ = param_key
+
+        super().__init__(parent, borderwidth=3)
+        self.filt_obj = filt_obj
+
+        row = ui_utils.Counter()
+
+        lbl = ttk.Label(self, text=label, style='Title.TLabel')
+        lbl.grid(row=row.count, column=0, columnspan=FIL_COLS, sticky='ew')
+        lbl.configure(anchor='center')  # anchor in style is ignored
+
+        self.variable = self.build_filters(filt_obj, row, filt_dict)
+
+        rnbr = row.count
+        ttk.Button(self, text='Clear',
+                   command=self.clear,
+                   style='Filt.TButton'
+                   ).grid(row=rnbr, column=0, padx=1, pady=1)
+        self.columnconfigure(tk.ALL, weight=1)
+
+
+    def build_filters(self, filt_obj, row, items):
+        """Build the filter radio buttons and one required
+        variable."""
+
+        variable = tk.StringVar(self, value='')
+
+        for name, value in items.items():
+            ttk.Radiobutton(self, text=name,
+                            variable=variable,
+                            value=value,
+                            command=filt_obj.update_list
+                            ).grid(row=row.count, column=0,
+                                   columnspan=FIL_COLS, sticky='ew')
+        return variable
+
+
+    @staticmethod
+    def count_diffs(gdict1, gdict2):
+        """Count the number of differences between the two game
+        configurations. Check the defaults for the keys in game info;
+        game class and both constansts are required."""
+
+        pdiffs = 0
+        for param in ckey.GINFO_PARAMS:
+
+            default = gi.GameInfo.get_default(param)
+            val1 = gdict1[ckey.GAME_INFO].get(param, default)
+            val2 = gdict2[ckey.GAME_INFO].get(param, default)
+            if val1 != val2:
+                pdiffs += 1
+
+        return sum([pdiffs,
+
+            1 if gdict1[ckey.GAME_CLASS] != gdict2[ckey.GAME_CLASS] else 0,
+
+            sum(1 for param in ckey.GCONST_PARAMS
+                   if (gdict1[ckey.GAME_CONSTANTS][param]
+                       != gdict2[ckey.GAME_CONSTANTS][param])),
+            ])
+
+
+    def show(self, game_dict):
+        """Determine if the game_dict should be inclued in
+        the Game List."""
+
+        if not self.filt_obj.sel_gdict:
+            self.variable.set('')
+            return True
+
+        test_str = self.variable.get()
+        if not test_str:
+            self.variable.set('')
+            return True
+
+        diffs = self.count_diffs(game_dict, self.filt_obj.sel_gdict)
+        test_val = int(test_str.lstrip('<=> '))
+
+        if '<=' in test_str:
+            return diffs <= test_val
+
+        if '>=' in test_str:
+            return diffs >= test_val
+
+        raise ValueError('Unexpected comparator in radio button value string')
+
+
+    def clear(self):
+        """Called when clearing one filter."""
+
+        self.not_filtered()
+        self.filt_obj.update_list()
+
+
+    def not_filtered(self):
+        """Clear the filters."""
+
+        self.variable.set('')
+
+
+    def all_filtered(self):
+        """Interface not supported; clear the variable value
+        so that nothing is filtered."""
+
+        self.variable.set('')
 
 
 @dc.dataclass
@@ -618,6 +778,7 @@ FILTERS += [
     FilterDesc('AI Player', VListFilter,
                list(ai_player.ALGORITHM_DICT.keys()),
                ckey.ALGORITHM, 1, fcol.count),
+    FilterDesc('Select Similar', RadioFilter, SIMILAR, None, 1, fcol.value),
 
     ]
 
@@ -637,6 +798,7 @@ class GameFilters(ttk.Frame):
         super().__init__(parent, padding=3)
         self.parent = parent
         self.pack(fill=tk.BOTH, expand=True)
+        self.sel_gdict = None
 
         filt_frame = ttk.Notebook(self)
         filt_frame.grid(row=0, column=0, sticky=tk.NSEW)
@@ -661,7 +823,8 @@ class GameFilters(ttk.Frame):
                                              fdesc.title,
                                              fdesc.value_keys,
                                              fdesc.param_key)
-            self.filters[idx].pack(side=tk.TOP, fill=tk.Y, expand=True)
+            fill = tk.BOTH if fdesc.fclass == RadioFilter else tk.Y
+            self.filters[idx].pack(side=tk.TOP, fill=fill, expand=True)
 
         filt_frame.columnconfigure(tk.ALL, weight=1)
         rule_tab.columnconfigure(tk.ALL, weight=1)
@@ -672,7 +835,6 @@ class GameFilters(ttk.Frame):
                    style='Play.TButton').grid(
                        row=0, column=1, sticky='ns')
 
-        self.columnconfigure(tk.ALL, weight=1)
 
 
     def not_filtered(self, _=None):
@@ -680,6 +842,7 @@ class GameFilters(ttk.Frame):
 
         for filt in self.filters:
             filt.not_filtered()
+        self.update_list()
 
 
     def all_filtered(self, _=None):
@@ -687,6 +850,7 @@ class GameFilters(ttk.Frame):
 
         for filt in self.filters:
             filt.all_filtered()
+        self.update_list()
 
 
     def show_game(self, game_dict):
@@ -700,6 +864,13 @@ class GameFilters(ttk.Frame):
         """Update the parent's list of filtered games."""
 
         self.parent.filter_games()
+
+
+    def selected_gdict(self, gdict):
+        """Save the selected game dictionary, so that it is
+        available to the filters."""
+
+        self.sel_gdict = gdict
 
 
 # %% SelectList Frame
@@ -1209,6 +1380,7 @@ class GameChooser(ttk.Frame):
 
         game_dict = self.all_games[game_name]
         self.about_text.describe_game(game_name, game_dict)
+        self.game_filter.selected_gdict(game_dict)
         self.selected = game_name
 
 
@@ -1245,6 +1417,7 @@ class GameChooser(ttk.Frame):
         else:
             self.about_text.clear_text()
             self.selected = ''
+            self.game_filter.selected_gdict(None)
 
 
     def set_rating(self, rating):
