@@ -625,7 +625,8 @@ class RadioFilter(ttk.Frame, FilterIf):
         ttk.Button(self, text='Clear',
                    command=self.clear,
                    style='Filt.TButton'
-                   ).grid(row=rnbr, column=0, padx=1, pady=1)
+                   ).grid(row=rnbr, column=0, padx=1, pady=1,
+                          columnspan=FIL_COLS, sticky='ew')
         self.columnconfigure(tk.ALL, weight=1)
 
 
