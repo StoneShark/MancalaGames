@@ -7,11 +7,11 @@
    "game_info": {
       "name": "J'Odu",
       "about": "<text_section>",
-      "goal": 2,
-      "goal_param": 9,
       "capt_dir": 1,
       "capt_max": 2,
       "crosscapt": 3,
+      "goal": 2,
+      "goal_param": 9,
       "end_cond": 3,
       "end_param": 2,
       "grandslam": 5,
@@ -102,7 +102,7 @@ Variation:
 
 - don't end the game when one or two seeds (END_COND). See Note.
 
-- <nolink>Ayo::No_Rounds - not played in rounds.
+- <nolink>J_Odu::No_Rounds - not played in rounds.
 Goal is to collect more seeds than opponent.
 
 - Ayo uses the same rules but does basic captures.
