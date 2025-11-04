@@ -82,8 +82,11 @@ FORCE_TEXT_SEC = '<txt>'           # use to put single lines in text_section
 REMOVE_TAGS = [re.compile(r'<a[^>]+>'),
                re.compile(r'</a>'),
                re.compile(r'(  \+ )?<img[^>]+>\n'),
-               re.compile(r'<b[^>]+>'),
+               re.compile(r'<b[^>]*>'),
                re.compile(r'</b>'),
+               re.compile(r'<ol[^>]*>'),
+               re.compile(r'</ol>'),
+               re.compile(r'<li[^>]*>'),
 
                # these tags are used and removed in editor's formatter
                # re.compile(r'<pre[^>]+>'),

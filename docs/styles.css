@@ -152,6 +152,10 @@ a:visited {
 	border: 2px solid #6060ff;
 }
 
+.fixind {
+	margin-left: 2em;
+}
+
 .center {
 	text-align: center;
 }

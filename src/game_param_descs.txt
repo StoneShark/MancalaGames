@@ -310,104 +310,105 @@ Defines the number of seeds required to make a child.
 Locations where children can be made by each player. Child locations
 are further limited by CHILD_RULE.
 
-Some pattern are specified below with 5 designators per side as:
+Some patterns are specified below with 5 designators per side as:
+<pre>
 a b c d e
-These are applied as: a is used for the first hole (left most), b the
-second, d the second last, and e the last (rightmost), c is replicated
-for all interior holes.
-
-The allowable children are designated by: T - top/north player, B -
-bottom/south player. N - neither player.
-
+</pre>
+These are applied as: 
+<pre>
+a is used for the first hole (left most),
+b the second,
+c is replicated for all interior holes,
+d the second last, and
+e the last (rightmost).
+</pre>
+The allowable children are designated by: 
+<pre>
+T - top/north player.
+B - bottom/south player.
+N - neither player.
+</pre>
 For shorter boards, the pattern is generated using assignments (a b c
 d e) as:
-
+<pre>
 board length 2: a e
-
 board length 3: a c e
-
 board length 4: a b d e
-
+</pre>
 For boards longer than 5, the middle specifier is duplicated as
 needed:
 
 board length >= 5: a b c c c ... c d e
+<p>Enumerations, values and descriptions are below:
+<ol start=0>
+<li>ANYWHERE: children may be made anywhere.
 
-- ANYWHERE: children may be made anywhere.
-
-- ENDS_ONLY: children may be made in the end holes only.
-
-  + TB N N N TB
-
-  + TB N N N TB
-
-- NO_ENDS: children may only be made on internal holes, no end holes.
-
-  + N TB TB TB N
-
-  + N TB TB TB N
-
-- INV_ENDS_PLUS_MID: children may be made by each player on the
+<li>ENDS_ONLY: children may be made in the end holes only.
+<pre class="fixind">
+TB N N N TB
+TB N N N TB
+</pre>
+<li>NO_ENDS: children may only be made on internal holes, no end holes.
+<pre class="fixind">
+N TB TB TB N
+N TB TB TB N
+</pre>
+<li>INV_ENDS_PLUS_MID: children may be made by each player on the
 opposite side ends and all own side middle holes.
-
-  + B T T T B
-
-  + T B B B T
-
-- ENDS_PLUS_ONE_OPP: Either player may make children in any end hole,
+<pre class="fixind">
+B T T T B
+T B B B T
+</pre>
+<li>ENDS_PLUS_ONE_OPP: Either player may make children in any end hole,
 but the next inner hole can only be made on the opposite side.
 
-  +  Used for Walda type children: Each player may create up to 6
+Used for Walda type children: Each player may create up to 6
 walda: on either end of each side of the board and the next two
 outer holes on their own side of the board. Note that there are only
 8 total places that walda maybe created.
-
-  + TB B N B TB
-
-  + TB T N T TB
-
-- NO_OWN_RIGHT: children may not be made in your own rightmost hole.
+<pre class="fixind">
+TB B N B TB
+TB T N T TB
+</pre>
+<li>NO_OWN_RIGHT: children may not be made in your own rightmost hole.
 Direction is from the prespective of the player making the child.
-
-  + B TB TB TB TB
-
-  + TB TB TB TB T
-
-- NO_OPP_RIGHT: children may not be made in the opposite rightmost
+<pre class="fixind">
+ B TB TB TB TB
+TB TB TB TB T
+</pre>
+<li>NO_OPP_RIGHT: children may not be made in the opposite rightmost
 hole. Direction is from the prespective of the player making the
 child.
-
-  + TB TB TB TB T
-
-  + B TB TB TB TB
-
-- NO_OPP_LEFT: children may not be made in the opposite leftmost hole.
+<pre class="fixind">
+TB TB TB TB T
+ B TB TB TB TB
+</pre>
+<li>NO_OPP_LEFT: children may not be made in the opposite leftmost hole.
 Direction is from the prespective of the player making the child.
-
-  + T TB TB TB TB
-
-  + TB TB TB TB B
-
-- NOT_SYM_OPP:  Children must not be symmetrically opposite each
+<pre class="fixind">
+T  TB TB TB TB
+TB TB TB TB B
+</pre>
+<li>NOT_SYM_OPP:  Children must not be symmetrically opposite each
 other. NO_OPP_LEFT is also applied. For example, in a 9 hole per side
 game with holes numbered as follows, children may not be in the same
 numbered holes:
-
-  + 9 8 7 6 5 4 3 2 1
-
-  + 1 2 3 4 5 6 7 8 9
-
-- NOT_FACING: Children must not directly opposite eachother.
+<pre class="fixind">
+9 8 7 6 5 4 3 2 1
+1 2 3 4 5 6 7 8 9
+</pre>
+<li>NOT_FACING: Children must not directly opposite eachother.
 NO_OPP_RIGHT is also applied.
 
-- ENDS_PLUS_ALL_OPP: Children may be made in any end hole, but only
+<li>ENDS_PLUS_ALL_OPP: Children may be made in any end hole, but only
 your opponents interior holes.
-
-  + TB B B B TB
-  + TB T T T TB
-
-- FIXED_ONE_RIGHT: At the game start, each player has a child in their
+<pre class="fixind">
+TB B B B TB
+TB T T T TB
+</pre>
+<li>FIXED_ONE_RIGHT: At the game start, each player has a child in their
 own rightmost hole. Additional children may not be created.
+</ol>
 
 <param child_rule>
 Additional child creation requirements may be set. These are in
