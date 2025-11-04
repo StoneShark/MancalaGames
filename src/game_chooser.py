@@ -42,6 +42,7 @@ STAR = '🟊'
 DESC_WIDTH = 72
 COL_WIDTH = 30
 FIL_COLS = 3
+FIL_BRDR = 5
 
 TINY = 4
 SMALL = 6
@@ -324,6 +325,7 @@ SIMILAR = {
     '5 or fewer': '<=5',
     '10 or fewer': '<=10',
 
+    '10 or more': '>=10',
     '20 or more': '>=20',
     }
 
@@ -364,7 +366,7 @@ class CheckboxFilter(ttk.Frame, FilterIf):
 
     def __init__(self, parent, filt_obj, label, param_key, value_keys):
 
-        super().__init__(parent, borderwidth=3)
+        super().__init__(parent, borderwidth=FIL_BRDR)
         self.parent = parent
         self.filt_obj = filt_obj
         self.param_key = param_key
@@ -610,7 +612,7 @@ class RadioFilter(ttk.Frame, FilterIf):
 
         _ = param_key
 
-        super().__init__(parent, borderwidth=3)
+        super().__init__(parent, borderwidth=FIL_BRDR)
         self.filt_obj = filt_obj
 
         row = ui_utils.Counter()
