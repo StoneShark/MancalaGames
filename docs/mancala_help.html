@@ -279,7 +279,7 @@ For most other games, the
 <a href="game_params.html#quitter">QUITTER</a> parameter specifies
 the handling of seeds not in chilren or stores.
 
-<p><b>Disallow Endless Sows</b>: Do not allows moves that would be endless
+<p><b>Disallow Endless Sows</b>: Prevent moves that would be endless
 sows. A sow is declared 'endless' at 75 laps.
 This command is only supported for games played in
 <a href="game_params.html#mlaps">multiple-laps</a>
@@ -361,6 +361,11 @@ The AI Player plays the top/north row; you play the bottom/south row.
 <p>The delay sets an artificial delay between moves (for UI update), but the
 actual AI move may still take some based on the difficulty setting.
 More specifically, the look ahead distance.
+<p><b>Algorithm</b>: Change the AI player algorithm.
+Only allowed when there is another valid algorithm to choose.
+Minimaxer is always allowed, but Negamaxer requires alternating turns and
+the MCTS implementation limits what games it can support.
+Note that not all games are configured to play all algorithms well.
 <p><b>No AI Delay</b>: The UI is not updated before the AI plays.
 You will not see the available moves for the AI and will not see
 updates between repeat turns.
@@ -398,6 +403,13 @@ and a right click will sow clockwise for the player closest to the menu bar.
 <p><b>Ownership Arrows</b>: Show the hole ownership arrows.
 Colors are used to identify the current players holes, but arrows can also be
 shown to show hole ownership in TERRITORY goal games.
+<p><b>Static Child Locations</b>: Show the locations where each player may make
+children.
+Any play-time factors are not considered, e.g. inhibits, number of seeds sown,
+hole owner for territory games, required seeds for converting to a child.
+Only location restrictions are considered based on
+<a href="game_params.html#child_locs">CHILD_LOCS</a> and
+<a href="game_params.html#child_rule">CHILD_RULE</a> of OPP_SIDE_ONLY or OWN_SIDE_ONLY.
 
 <h4>Animator</h4>
 
@@ -543,12 +555,25 @@ prohibited together).
 
 <p>The <b>Region Filter</b> group includes sub-regions, though,
 not all sub-regions are included
-(those not included general have none or very few games).
+(those not included generally have very few or no games).
 These can be shown by selecting the primary region and clearing the
 listed sub-regions.
 For example, selection of Africa
 but not eastern, central, northern or western can be accomplished by
 setting the Africa box to filled and the listed sub-region boxes to not filled.
+
+<p>The <b>Select Similar</b> group allows limiting the game list based on
+a currently selected game and the number of game-play paramters are that
+are different than the selected game.
+This can be used to find very similar games or very different games.
+
+<p>The select similar filter group cannot be used if their is not a
+selected game in the game list and it will be cleared if the
+selection is cleared.
+
+<p>The select similar filter group may have unexpected behavior if the
+selection is changed and
+another filter option is changed because it is reapplied given the new selection.
 
 <h3 id="ratings">Game Ratings</h3>
 

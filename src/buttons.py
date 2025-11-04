@@ -16,6 +16,7 @@ import bhv_hold
 import bhv_owners
 import bhv_bsetup
 import game_info as gi
+import game_str
 import man_config
 import ui_utils
 
@@ -132,9 +133,29 @@ class HoleButton(tk.Canvas):
         tk.Canvas.__init__(self, pframe,
                            borderwidth=4, relief='raised',
                            width=btn_size, height=btn_size)
-        self.text_id = self.create_text(btn_size//2, btn_size//2,
+
+        cfg_font = man_config.CONFIG.get_font()
+        middle = btn_size // 2
+        self.text_id = self.create_text(middle, middle,
                                         text='',
-                                        font=man_config.CONFIG.get_font())
+                                        font=cfg_font)
+
+        self.child_ids = None
+        if game_ui.game.info.child_type:
+            color =  man_config.CONFIG['child_loc_color']
+            cwidth = cfg_font.measure('X')
+            cheight = cfg_font.metrics('linespace') // 2
+            self.child_ids = [self.create_text(btn_size - cwidth,
+                                               middle - cheight,
+                                               text='',
+                                               fill=color,
+                                               font=cfg_font),
+                              self.create_text(btn_size - cwidth,
+                                               middle + cheight,
+                                               text='',
+                                               fill=color,
+                                               font=cfg_font)]
+
         self.bind('<Button-1>', self.left_click)
         self.bind('<Button-3>', self.right_click)
         self.bind('<Configure>', self._move_text)
@@ -244,7 +265,17 @@ class HoleButton(tk.Canvas):
         and resize the tablet mode and block grid rectangles
         (if they were created)."""
 
-        self.coords(self.text_id, event.width//2, event.height//2)
+        middle = event.width // 2   # aspect ratio is maintained
+        self.coords(self.text_id, middle, middle)
+
+        if self.game_ui.game.info.child_type:
+            size = event.width
+            cfg_font = man_config.CONFIG.get_font()
+            cwidth = cfg_font.measure('X')
+            cheight = cfg_font.metrics('linespace') // 2
+            self.coords(self.child_ids[0], size - cwidth, middle - cheight)
+            self.coords(self.child_ids[1], size - cwidth, middle + cheight)
+
         if self.rclick_id:
             self.coords(self.rclick_id,
                         self._get_coords(event.width, event.height - 8))
@@ -270,6 +301,21 @@ class HoleButton(tk.Canvas):
         """Set props and state of the hole."""
         self.props = props
         self.behavior.refresh(bstate)
+
+
+    def show_child_locs(self, visible):
+        """Show the statically allowable child locations.
+
+        Refresh does not change these."""
+
+        deco = self.game_ui.game.deco.make_child
+
+        for row in range(2):
+            if visible and deco.static_ok(not row, self.loc):
+                self.itemconfig(self.child_ids[row],
+                                text=game_str.CHILD_OK[not row])
+            else:
+                self.itemconfig(self.child_ids[row], text='')
 
 
     def flash(self):

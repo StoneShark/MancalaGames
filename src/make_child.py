@@ -13,8 +13,14 @@ Sower only animates when we do not stop lap sowing to make a
 child; therefore only one of the sower deco & capture deco
 will generate an animation event.
 
+A second interface is provided for the UI to determine
+where it is possible that children could be made.
+
 Created on Sat Jun 29 14:21:46 2024
 @author: Ann"""
+
+
+# %% imports
 
 import abc
 import deco_chain_if
@@ -24,6 +30,8 @@ import game_info as gi
 from game_logger import game_log
 
 
+# %% interface
+
 class MakeChildIf(deco_chain_if.DecoChainIf):
     """Interface for MakeChild classes."""
 
@@ -31,6 +39,29 @@ class MakeChildIf(deco_chain_if.DecoChainIf):
     def test(self, mdata):
         """Test to see if child should be made."""
 
+    def static_ok(self, player, loc):
+        """Determine if player (True is North, False is South) can make
+        a child at loc. If the ability to make a child can be determined
+        to be prevented return False, otherwise defer to the decorator
+        chain.
+
+        The base decorators must override with actual return values.
+
+        For other deco's, only override this method when there are
+        static or predefined limits to where children can be made.
+        Anything involving play-time properties such as number of
+        seeds sown, inhibits, locations of the other children, and
+        for territory games with own/opp holes should not be considered.
+
+        This is only used for UI display indicators on where children
+        can possibly be made. These do not change from move to move
+        or round to round. The UI refresh does not call this or
+        change indicators."""
+
+        return self.decorator.static_ok(player, loc)
+
+
+# %% base decorators
 
 class NoChildren(MakeChildIf):
     """Never make children for this game.
@@ -38,6 +69,12 @@ class NoChildren(MakeChildIf):
 
     def test(self, mdata):
         _ = mdata
+        return False
+
+    def static_ok(self, player, loc):
+        """Always False."""
+        _ = player, loc
+
         return False
 
 
@@ -52,6 +89,14 @@ class BaseChild(MakeChildIf):
         return (self.game.child[loc] is None
                 and self.game.board[loc] == self.game.info.child_cvt)
 
+    def static_ok(self, player, loc):
+        """If we get to the bottom of the deco chain,
+        there is no static reason not to make a child."""
+
+        return True
+
+
+# %%  child type decorators
 
 class BullChild(MakeChildIf):
     """One or two children can be made:
@@ -262,6 +307,19 @@ class ChildLocOk(MakeChildIf):
         return False
 
 
+    def static_ok(self, player, loc):
+        """If cannot make child, return False, otherwise
+        defer to the deco chain."""
+
+        test_loc = self.loc_trans[loc]
+        ok_players = self.pattern[test_loc]
+
+        if not (bool(ok_players) and player in ok_players):
+            return False
+
+        return self.decorator.static_ok(player, loc)
+
+
 class NotSymOpp(MakeChildIf):
     """Children must not be symmetric to eachother. For example,
     in a 9 hole per side game:
@@ -317,6 +375,15 @@ class OppSideChild(MakeChildIf):
 
         return False
 
+    def static_ok(self, player, loc):
+        """If cannot make child, return False, otherwise
+        defer to the deco chain."""
+
+        if not self.game.cts.opp_side(player, loc):
+            return False
+
+        return self.decorator.static_ok(player, loc)
+
 
 class OwnSideChild(MakeChildIf):
     """Require own side of the board"""
@@ -327,6 +394,15 @@ class OwnSideChild(MakeChildIf):
             return self.decorator.test(mdata)
 
         return False
+
+    def static_ok(self, player, loc):
+        """If cannot make child, return False, otherwise
+        defer to the deco chain."""
+
+        if not self.game.cts.my_side(player, loc):
+            return False
+
+        return self.decorator.static_ok(player, loc)
 
 
 class OppOwnerChild(MakeChildIf):

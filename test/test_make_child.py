@@ -79,6 +79,9 @@ class TestOppChild:
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
 
+        assert not game.deco.make_child.static_ok(True, 3)
+        assert game.deco.make_child.static_ok(True, 2)
+
         mdata = move_data.MoveData(game, None)
         mdata.direct = game.info.sow_direct
         mdata.board = tuple(game.board)
@@ -104,6 +107,9 @@ class TestOwnChild:
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
+
+        assert not game.deco.make_child.static_ok(False, 3)
+        assert game.deco.make_child.static_ok(False, 2)
 
         mdata = move_data.MoveData(game, None)
         mdata.direct = game.info.sow_direct
@@ -415,6 +421,13 @@ class TestChildLocs:
 
         assert game.deco.make_child.test(mdata) == echild
 
+        if echild:
+            assert game.deco.make_child.static_ok(turn, loc)
+        else:
+            # this is not always true, but is for the current test cases
+            # will fail when a reason other than location prevents a child
+            assert not game.deco.make_child.static_ok(turn, loc)
+
 
 class TestNotFacing:
 
@@ -484,6 +497,10 @@ class TestNoChildren:
         mdata.capt_start = 1
         mdata.seeds = 1
         assert game.deco.make_child.test(mdata) == False
+
+        assert not any(game.deco.make_child.static_ok(turn, loc)
+                       for turn in (False, True)
+                       for loc in range(6))
 
 
 class TestBaseChild:

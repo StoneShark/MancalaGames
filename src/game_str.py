@@ -21,6 +21,9 @@ CHILD = {True: '\u02c4',
          None: ' ',
          gi.NO_CH_OWNER: '\u02c3'}
 
+CHILD_OK = {True: '\u2bca',
+            False: '\u2bcb'}
+
 OWNER = {True: '\u2191 ',
          False: '\u2193 ',
          None: ' '}

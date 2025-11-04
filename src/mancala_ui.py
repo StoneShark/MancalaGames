@@ -66,6 +66,8 @@ class TkVars:
             man_ui.master, man_config.CONFIG.get_bool('touch_screen'))
         self.owner_arrows = tk.BooleanVar(
             man_ui.master, man_config.CONFIG.get_bool('owner_arrows'))
+        self.child_locs = tk.BooleanVar(
+            man_ui.master, man_config.CONFIG.get_bool('child_locs'))
 
         # if available, must be visible for construction
         iavail = InhibitIndicator.needed(man_ui.game.inhibitor)

@@ -473,12 +473,12 @@ class ShowMenuMixin:
                                  variable=self.tkvars.show_tally,
                                  onvalue=True, offvalue=False,
                                  command=self.show_toggle_tally)
-        iactive = tk.NORMAL if self.inhibits else tk.DISABLED
+        active = tk.NORMAL if self.inhibits else tk.DISABLED
         showmenu.add_checkbutton(label='Show Inhibitor Status',
                                  variable=self.tkvars.show_inhibit,
                                  onvalue=True, offvalue=False,
                                  command=self._toggle_inhibitor,
-                                 state=iactive)
+                                 state=active)
         showmenu.add_command(label='Min Size Window',
                              command=self.show_min_size)
         showmenu.add_separator()
@@ -486,16 +486,33 @@ class ShowMenuMixin:
                                  variable=self.tkvars.touch_screen,
                                  onvalue=True, offvalue=False,
                                  command=self.refresh)
-        fpactive = tk.DISABLED if self.game.info.no_sides else tk.NORMAL
+        active = tk.DISABLED if self.game.info.no_sides else tk.NORMAL
         showmenu.add_checkbutton(label='Facing Players',
                                  variable=self.tkvars.facing_players,
                                  onvalue=True, offvalue=False,
                                  command=self.show_toggle_facing,
-                                 state=fpactive)
+                                 state=active)
         showmenu.add_checkbutton(label='Ownership Arrows',
                                  variable=self.tkvars.owner_arrows,
                                  onvalue=True, offvalue=False,
                                  command=self._toggle_ownership)
+
+        # complicated decision so that the child markers are not
+        # misleading for TERRITORY games
+        active = tk.DISABLED
+        if (self.game.info.child_type
+                and (self.game.info.goal != gi.Goal.TERRITORY
+                     or (self.game.info.goal == gi.Goal.TERRITORY
+                         and self.game.info.child_rule
+                                     in (gi.ChildRule.NONE,
+                                         gi.ChildRule.OPP_SIDE_ONLY,
+                                         gi.ChildRule.OWN_SIDE_ONLY)))):
+            active = tk.NORMAL
+        showmenu.add_checkbutton(label='Static Child Locations',
+                                 variable=self.tkvars.child_locs,
+                                 onvalue=True, offvalue=False,
+                                 command=self._toggle_child_loc,
+                                 state=active)
 
         menubar.add_cascade(label='Display', menu=showmenu)
 
@@ -594,6 +611,16 @@ class ShowMenuMixin:
                 self.inhibits[0].hide()
                 self.inhibits[1].hide()
                 self.show_min_size()
+
+
+    def _toggle_child_loc(self):
+        """Show or hide the statically allowable child locations."""
+
+        state = self.tkvars.child_locs.get()
+
+        for button_row in self.disp:
+            for btn in button_row:
+                btn.show_child_locs(state)
 
 
 # %%  animator

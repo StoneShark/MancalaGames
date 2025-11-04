@@ -687,6 +687,9 @@ DEFAULTS = {
     'owner_arrows': 'no',
     'show_inhibit': 'yes',
 
+    'child_locs': 'no',
+    'child_loc_color': 'black',
+
     'disable_animator': 'no',
     'ani_active': 'yes',
     'ani_delay': '250',
@@ -712,7 +715,7 @@ GAME_DIRS = 'game_dirs'
 COLORS = ['system_color', 'inactive_color',
           'north_act_color', 'north_not_color',
           'south_act_color', 'south_not_color',
-          'rclick_color', 'grid_color',
+          'rclick_color', 'grid_color', 'child_loc_color',
           'choose_color', 'seed_color', 'move_color',
           'ani_background', 'inhibit_color', 'no_inhi_color']
 
