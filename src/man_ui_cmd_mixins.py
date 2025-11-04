@@ -531,7 +531,8 @@ class ShowMenuMixin:
                          and man_config.CONFIG.get_bool('show_inhibit'))
         self.tkvars.show_inhibit.set(show_inhi)
         self._toggle_inhibitor()
-        self._toggle_child_locs()
+        if self.game.info.child_type:
+            self._toggle_child_locs()
 
 
     def show_min_size(self):
