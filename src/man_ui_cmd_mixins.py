@@ -511,7 +511,7 @@ class ShowMenuMixin:
         showmenu.add_checkbutton(label='Static Child Locations',
                                  variable=self.tkvars.child_locs,
                                  onvalue=True, offvalue=False,
-                                 command=self._toggle_child_loc,
+                                 command=self._toggle_child_locs,
                                  state=active)
 
         menubar.add_cascade(label='Display', menu=showmenu)
@@ -531,6 +531,7 @@ class ShowMenuMixin:
                          and man_config.CONFIG.get_bool('show_inhibit'))
         self.tkvars.show_inhibit.set(show_inhi)
         self._toggle_inhibitor()
+        self._toggle_child_locs()
 
 
     def show_min_size(self):
@@ -613,7 +614,7 @@ class ShowMenuMixin:
                 self.show_min_size()
 
 
-    def _toggle_child_loc(self):
+    def _toggle_child_locs(self):
         """Show or hide the statically allowable child locations."""
 
         state = self.tkvars.child_locs.get()
