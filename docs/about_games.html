@@ -153,9 +153,10 @@ repeat turn on capture (<a href="game_params.html#capt_rturn">CAPT_RTURN</a>)
 only sower captures during sowing (<a href="game_params.html#sow_rule">SOW_RULE</a>: SOW_CAPT_ALL)
 <li class="helptext">
 when 8 seeds or fewer, the round starter takes them (<a href="game_params.html#pickextra">PICKEXTRA</a>:
+PICK2NLASTSEEDS)
 <li class="helptext">
 don't use round fill (<a href="game_params.html#round_fill">ROUND_FILL</a>) of Winner Chooses Owners (UCHOWN), see
-NumNum
+<a href="about_games.html#NumNum">NumNum</a>
 <li class="helptext">
 see <a href="about_games.html#Lam Waladach">Lam Waladach</a>
 </ul>
@@ -416,7 +417,7 @@ child type of weg (Russ p50)
 <li class="helptext">
 Allow making children in opposite end holes but prohibit making children
 in opposite end hole with one seed (<a href="game_params.html#child_locs">CHILD_LOCS</a> of ENDS_PLUS_ALL_OPP,
-CHILD_RULE of NOT_1ST_OPP, Mancala World)
+<a href="game_params.html#child_rule">CHILD_RULE</a> of NOT_1ST_OPP, Mancala World)
 </ul>
 <div class="cols_row">
   <div class="column2">
@@ -437,7 +438,7 @@ CHILD_RULE of NOT_1ST_OPP, Mancala World)
 <p><b class="enum">Rules</b>: Valdez, Jacob A. 50 Ways to Play Mancala. 2023.
 p134.
 <p><b class="enum">Reference</b>: Mancala World:
-https://mancala.fandom.com/wiki/Andot
+<a href="https://mancala.fandom.com/wiki/Andot" target="_blank">https://mancala.fandom.com/wiki/Andot</a>
 <p><b class="enum">Origin</b>: traditional
 <p><b class="enum">Region</b>: Northern Africa, Eastern Africa
 <h3 id="Anywoli" class="game_desc">Anywoli</h3>
@@ -475,8 +476,8 @@ last four seeds.
 <p><b class="enum">Rules</b>: <a href="https://mancala.fandom.com/wiki/Anywoli" target="_blank">https://mancala.fandom.com/wiki/Anywoli</a>
 <p><b class="enum">Deviation</b>: There is no lottery for last the four seeds.
 <p><b class="enum">References</b>: <txt>
-https://mancala.fandom.com/wiki/Yit_Jani
-https://mancala.fandom.com/wiki/Yit_Nuri
+<a href="https://mancala.fandom.com/wiki/Yit_Jani" target="_blank">https://mancala.fandom.com/wiki/Yit_Jani</a>
+<a href="https://mancala.fandom.com/wiki/Yit_Nuri" target="_blank">https://mancala.fandom.com/wiki/Yit_Nuri</a>
 <p><b class="enum">Origin</b>: traditional
 <p><b class="enum">Region</b>: Eastern Africa
 <h3 id="Ayo" class="game_desc">Ayo</h3>
@@ -593,7 +594,7 @@ when sowing from the store all seeds must be sown (<a href="game_params.html#pla
 remove 3s from the capture on values.
 <li class="helptext">
 sow both sides of the board (<a href="game_params.html#game_class">GAME_CLASS</a> of Mancala) and capture direction
-(CAPT_DIR) is sow direction.
+(<a href="game_params.html#capt_dir">CAPT_DIR</a>) is sow direction.
 </ul>
 <div class="cols_row">
   <div class="column2">
@@ -619,8 +620,8 @@ sow both sides of the board (<a href="game_params.html#game_class">GAME_CLASS</a
 <p><b class="enum">Deviation</b>: The number of store seeds are shown; but in
 physical play the seeds are hidden.
 <p><b class="enum">Reference</b>:
-https://ludii.games/details.php?keyword=Azigo
-https://ludii.games/details.php?keyword=Okwe%20(Nigeria)
+<a href="https://ludii.games/details.php?keyword=Azigo" target="_blank">https://ludii.games/details.php?keyword=Azigo</a>
+<a href="https://ludii.games/details.php?keyword=Okwe%20(Nigeria)" target="_blank">https://ludii.games/details.php?keyword=Okwe%20(Nigeria)</a>
 <p><b class="enum">Origin</b>: traditional
 <p><b class="enum">Region</b>: Eastern Africa
 <p><b class="enum">Note</b>: All possible moves from stores are considered by
@@ -1060,10 +1061,10 @@ sow clockwise.
 <p><b class="enum">Region</b>: Americas
 <h3 id="Cross-Wari" class="game_desc">Cross-Wari</h3>
 <p>A single-lap mancala, sow direction is determined by the number of seeds in
-the hole.  Even seeds are sown clockwise. Odd seeds are sown counter-
-clockwise. A sow which cycles the board, will skip the hole that the move
-started from. If your opponent has no seeds, you must make seeds available
-to them (if you can).
+the hole.  Even seeds are sown clockwise. Odd seeds are sown
+counter-clockwise. A sow which cycles the board, will skip the hole that
+the move started from. If your opponent has no seeds, you must make seeds
+available to them (if you can).
 <p>Captures are on 2s and 3s from the opponent's side (final seed sown makes
 either 2 or 3).  As long as there is a an unbroken group of holes
 containing 2 or 3 seeds immediately preceding the final hole sown, these
@@ -1103,6 +1104,7 @@ end of your own turn (<a href="game_params.html#end_cond">END_COND</a> CLEARED_O
 <li class="helptext">
 Ending 3: End when one player has collected more than half of the seeds
 or the board is clear and each player has half the seeds (<a href="game_params.html#end_cond">END_COND</a>
+NO_ADDTL).
 <li class="helptext">
 <nolink>CrossCapt::Two - Use multilap sowing but only when the final seed
 lands in a occupied hole on your own side of the board. If your opponent
@@ -1411,7 +1413,7 @@ sequence (opening move plus 24 repeat turns) in which the starter can win
 the game (not just a round), without the opponent ever playing.
 <p>"Donkers, Joroen.  Voogt, Alex de.  Uiterwijk, Jos.  Human versus Machine
 Problem-Solving: Winning Openings in <nolink>Dakon". Retrieved from
-https://www.academia.edu/
+<a href="https://www.academia.edu/" target="_blank">https://www.academia.edu/</a>
 <h3 id="Deka" class="game_desc">Deka</h3>
 <p>The goal is to leave the opponent without seeds for their turn.
 <p>Sow counter-clockwise with multiple laps (LAPPER).
@@ -1603,7 +1605,7 @@ Played with 6 to 10 holes and 2 to 9 seeds per hole at the start.
 is the first to collect 100 total seeds.
 <li class="helptext">
 <nolink>Endodoi::J_Odu - limit captures to holes with 3 or fewer seeds
-(CAPT_MAX 3).
+(<a href="game_params.html#capt_max">CAPT_MAX</a> 3).
 <li class="helptext">
 Only allow moves from holes that reach an empty hole or the opposite side
 of the board (<a href="about_games.html#Dabuda">Dabuda</a>).
@@ -1623,7 +1625,8 @@ of the board (<a href="about_games.html#Dabuda">Dabuda</a>).
     <p class="param"><a href="game_params.html#xcpickown">Own Seed on Xcapture</a>: PICK_ON_CAPT</p>
   </div>
 </div>
-<p><b class="enum">Rules</b>: Russ, Laurence. Mancala Games. 1984. <a href="about_games.html#Endodoi">Endodoi</a>: <a href="about_games.html#Dabuda">Dabuda</a>: p32. J'Odu: p35.
+<p><b class="enum">Rules</b>: Russ, Laurence. Mancala Games. 1984. <a href="about_games.html#Endodoi">Endodoi</a>:
+p28. <a href="about_games.html#Dabuda">Dabuda</a>: p32. J'Odu: p35.
 <p><b class="enum">Origin</b>: traditional
 <p><b class="enum">Region</b>: Eastern Africa, Western Africa
 <h3 id="Enkeshui" class="game_desc">Enkeshui</h3>
@@ -1928,7 +1931,7 @@ others with at least one seed).
 Played as a single game (no rounds).
 <li class="helptext">
 A player loses if they have no moves at the start of their turn (no
-MUSTPASS).
+<a href="game_params.html#mustpass">MUSTPASS</a>).
 <li class="helptext">
 Board sizes 6 to 10 holes per side with start seeds varying from 4 to 9
 (smaller board, fewer start seeds). Some combinations of size and start
@@ -1975,6 +1978,7 @@ supported in Mancala Games. <a href="game_params.html#round_fill">ROUND_FILL</a>
 <p>A single-lap mancala with SPLIT <a href="game_params.html#sow_direct">SOW_DIRECT</a>. Minimum move is 2 seeds.
 Multiple capture on opponents side on 2s. A player must pass, if they have
 no moves. A simplified version of <a href="about_games.html#Cow">Cow</a>.
+
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  3</p>
@@ -2337,7 +2341,7 @@ Have the round loser start the next round. This might feel more fair by
 giving the loser a chance to recover, but lengthens games (<a href="game_params.html#round_starter">ROUND_STARTER</a>).
 <li class="helptext">
 Increase the number of holes the loser must fill to continue the game
-(GOAL_PARAM), shortening games.
+(<a href="game_params.html#goal_param">GOAL_PARAM</a>), shortening games.
 <li class="helptext">
 Use the random or random with empty holes <a href="game_params.html#start_pattern">START_PATTERN</a>. This can
 simulate the randomness of the missing simultaneous opening moves, though
@@ -2394,7 +2398,7 @@ outcome is determined.
 Vary the number of holes and start seeds.
 <li class="helptext">
 Start game with a random placement of seeds (<a href="game_params.html#start_pattern">START_PATTERN</a> of RANDOM).
-NBR_START should be the total number of seeds to be placed. Note that with
+<a href="game_params.html#nbr_start">NBR_START</a> should be the total number of seeds to be placed. Note that with
 a random opening, a swap sides (pie rule) may be done on either of the two
 opening moves (only one swap side per game). <a href="about_games.html#Random-Kalah">Random-Kalah</a> is a
 preconfigured game played in tallied rounds to equalize results of the
@@ -2403,7 +2407,7 @@ random opening.
 <nolink>Kalah::Maybe_Fair - Start the game with the seeds placed so that
 the first player cannot get a repeat turn and the second player will only
 be able to get a repeat turn, if the first player made that possible
-(START_PATTERN of NO_REPEAT_SOW_OWN).
+(<a href="game_params.html#start_pattern">START_PATTERN</a> of NO_REPEAT_SOW_OWN).
 <li class="helptext">
 If all of your opponent's seeds are in one hole and you capture them,
 your opponent gets all of your seeds for the game tally (<a href="game_params.html#grandslam">GRANDSLAM</a> of
@@ -2838,7 +2842,7 @@ holes contain 2 or 4 seeds (in reverse of sow direction).
   </div>
 </div>
 <p><b class="enum">Rules</b>:
-https://mancala.fandom.com/wiki/Leb_Bbut_Ahbochen
+<a href="https://mancala.fandom.com/wiki/Leb_Bbut_Ahbochen" target="_blank">https://mancala.fandom.com/wiki/Leb_Bbut_Ahbochen</a>
 <p><b class="enum">Origin</b>: traditional
 <p><b class="enum">Region</b>: Northern Africa
 <h3 id="Leyla-Gobale" class="game_desc">Leyla-Gobale</h3>
@@ -2878,8 +2882,8 @@ created qur holes as there would be no impact on play.
 <p><b class="enum">Origin</b>: traditional
 <p><b class="enum">Region</b>: Eastern Africa
 <p><b class="enum">References</b>:
-https://mancala.fandom.com/wiki/Layli_Goobalay_(short_board) and
-https://mancala.fandom.com/wiki/Layli_Goobalay_(long_board)  Valdez (p140)
+<a href="https://mancala.fandom.com/wiki/Layli_Goobalay_(short_board)" target="_blank">https://mancala.fandom.com/wiki/Layli_Goobalay_(short_board)</a> and
+<a href="https://mancala.fandom.com/wiki/Layli_Goobalay_(long_board)" target="_blank">https://mancala.fandom.com/wiki/Layli_Goobalay_(long_board)</a>  Valdez (p140)
 describes a very similar game with CW sow and round fill is UMOVE but not
 reflected instead opposites have the same seed counts.
 <h3 id="long night game" class="game_desc">long night game</h3>
@@ -3063,10 +3067,10 @@ line of 2s and 4s.
 <p><b class="enum">Region</b>: Western Asia
 <h3 id="Mbangbi" class="game_desc">Mbangbi</h3>
 <p>A single-lap mancala in which each player chooses the sow direction on each
-move. Left-mouse sows clockwise and right-mouse button sows counter-
-clockwise. Moves may only be started from holes with 2 or more seeds.  If a
-player does not have a move, they must pass until they do have a move or
-the game ends.
+move. Left-mouse sows clockwise and right-mouse button sows
+counter-clockwise. Moves may only be started from holes with 2 or more
+seeds.  If a player does not have a move, they must pass until they do have
+a move or the game ends.
 <p>Captures are on 2s and 4s from the opponent's side (final seed sown makes
 either 2 or 4).  As long as there is an unbroken group of holes containing
 2 or 4 seeds immediately preceding the final hole sown, these holes are
@@ -3354,8 +3358,9 @@ current player cannot move.
 Minimum move of 2, unless all occupied holes have single seeds without a
 limit on where single seeds can be moved (<a href="game_params.html#allow_rule">ALLOW_RULE</a>: SINGLE_ONLY_ALL).
 <li class="helptext">
-<a href="about_games.html#Ndoto">Ndoto</a>:: - Minimum move of 2, unless all occupied holes have single
-seeds which may only be moved to empty holes (<a href="game_params.html#allow_rule">ALLOW_RULE</a>:
+<nolink>Ndoto::Bao - Minimum move of 2, unless all occupied holes have
+single seeds which may only be moved to empty holes (<a href="game_params.html#allow_rule">ALLOW_RULE</a>:
+SINGLE_ALL_TO_ZERO).
 <li class="helptext">
 board size choice included to make game easier.
 </ul>
@@ -3526,6 +3531,7 @@ repeat turn on capture (<a href="game_params.html#capt_rturn">CAPT_RTURN</a>)
 only sower captures during sowing (<a href="game_params.html#sow_rule">SOW_RULE</a>: SOW_CAPT_ALL)
 <li class="helptext">
 when 8 seeds or fewer, the round starter takes them (<a href="game_params.html#pickextra">PICKEXTRA</a>:
+PICK2NLASTSEEDS)
 <li class="helptext">
 use round fill (<a href="game_params.html#round_fill">ROUND_FILL</a>) of Winner Chooses Owners (UCHOWN), see <a href="about_games.html#Adi">Adi</a>
 <li class="helptext">
@@ -3666,7 +3672,8 @@ there are seeds in the hole 'two out' from the last sown seed.
 player's sow direction. If a capture leaves 4 or fewer seeds on the board,
 they are taken by the final capturer.
 <p>Played in <a href="game_params.html#rounds">ROUNDS</a>. Each round ends when the current player does not have any
-playable holes. Round setup is via the Empty Hole Method of <a href="game_params.html#round_fill">ROUND_FILL</a> the OUTSIDE_FILL approach which the user may choose to override
+playable holes. Round setup is via the Empty Hole Method of <a href="game_params.html#round_fill">ROUND_FILL</a>
+using the OUTSIDE_FILL approach which the user may choose to override
 (UCHOOSE).  After the next round setup unfilled holes are out of play. The
 players alternate starting rounds.
 <p>The game is over when either player cannot fill a single hole.
@@ -3712,8 +3719,8 @@ reliably (can be turned off via variations).
 <p><b class="enum">Origin</b>: traditional
 <p><b class="enum">Region</b>: South Asia
 <h3 id="Olowuka" class="game_desc">Olowuka</h3>
-<p>Multilap sow, but only if final hole contains four or more seeds. Counter-
-clockwise.
+<p>Multilap sow, but only if final hole contains four or more seeds.
+Counter-clockwise.
 <p>Capture on 2s and 3s on opponent's side. Grand Slam capture of more than
 one hole is permitted but the righmost hole (from sower perspective) is not
 captured. A single hole capture is performed.
@@ -3813,7 +3820,7 @@ is wrong).
 </div>
 <p><b class="enum">Rules</b>: Russ, Laurence. Mancala Games. 1984. p64.
 <p><b class="enum">Reference</b>: Mancala World:
-https://mancala.fandom.com/wiki/Aw-li_On-nam_Ot-tjin
+<a href="https://mancala.fandom.com/wiki/Aw-li_On-nam_Ot-tjin" target="_blank">https://mancala.fandom.com/wiki/Aw-li_On-nam_Ot-tjin</a>
 <p><b class="enum">Origin</b>: traditional
 <p><b class="enum">Region</b>: Southeast Asia
 <h3 id="Ouri" class="game_desc">Ouri</h3>
@@ -3911,7 +3918,8 @@ in the hole following the empty hole. That is, captures are made when the
 hole after the hole in which the final seed of a lap was sown, is empty and
 there are seeds in the hole 'two out' from the last sown seed.
 <p>Played in <a href="game_params.html#rounds">ROUNDS</a>. Each round ends when the current player does not have any
-playable holes. Round setup is via the Empty Hole Method of <a href="game_params.html#round_fill">ROUND_FILL</a> the OUTSIDE_FILL approach which the user may choose to override
+playable holes. Round setup is via the Empty Hole Method of <a href="game_params.html#round_fill">ROUND_FILL</a>
+using the OUTSIDE_FILL approach which the user may choose to override
 (UCHOOSE).  After the next round setup unfilled holes are out of play. The
 players alternate starting rounds.
 <p>The game is over when either player cannot fill a single hole.
@@ -3962,7 +3970,8 @@ hole 'two out' from the last sown seed.
 <p>If a capture is made, the seeds from hole opposite the now empty hole are
 also captured.
 <p>Played in <a href="game_params.html#rounds">ROUNDS</a>. Each round ends when the current player does not have any
-playable holes. Round setup is via the Empty Hole Method of <a href="game_params.html#round_fill">ROUND_FILL</a> the LEFT_FILL approach.  After the next round setup unfilled holes
+playable holes. Round setup is via the Empty Hole Method of <a href="game_params.html#round_fill">ROUND_FILL</a>
+using the LEFT_FILL approach.  After the next round setup unfilled holes
 are out of play. The players alternate starting each round.
 <p>The game is over when either player cannot fill a single hole.
 <p>Variations:
@@ -4030,7 +4039,7 @@ do not sow opponent's children.
 <p><b class="enum">Rules</b>: Mohr, Merilyn Simonds. The New Games Treasury.
 1993. p101.
 <p><b class="enum">Deviation</b>: Seeds are sown into waldas as described in
-https://mancala.fandom.com/wiki/Qelat_(Beni_Amir_%26_Mensa). A variation
+<a href="https://mancala.fandom.com/wiki/Qelat_(Beni_Amir_%26_Mensa)." target="_blank">https://mancala.fandom.com/wiki/Qelat_(Beni_Amir_%26_Mensa).</a> A variation
 allows not sowing children.
 <p><b class="enum">Origin</b>: traditional
 <p><b class="enum">Region</b>: Eastern Africa
@@ -4380,7 +4389,7 @@ round.
   </div>
 </div>
 <p><b class="enum">Rules</b>:
-https://mancala.fandom.com/wiki/S%C3%A0n_Y%C3%A1o
+<a href="https://mancala.fandom.com/wiki/S%C3%A0n_Y%C3%A1o" target="_blank">https://mancala.fandom.com/wiki/S%C3%A0n_Y%C3%A1o</a>
 <p><b class="enum">Deviation</b>: The game ends when one player has less than
 6 seeds, not 5.
 <p><b class="enum">Origin</b>: traditional
@@ -4525,8 +4534,8 @@ hole capture (not supported). Grand Slam rule of NO_CAPT. (Mancala World)
 <p><b class="enum">Origin</b>: traditional
 <p><b class="enum">Region</b>: Central Africa
 <p><b class="enum">References</b>: <txt>
-https://mancala.fandom.com/wiki/Songo_Douala
-https://mancala.fandom.com/wiki/Songo_Ewondo
+<a href="https://mancala.fandom.com/wiki/Songo_Douala" target="_blank">https://mancala.fandom.com/wiki/Songo_Douala</a>
+<a href="https://mancala.fandom.com/wiki/Songo_Ewondo" target="_blank">https://mancala.fandom.com/wiki/Songo_Ewondo</a>
 <h3 id="SowOpDirs" class="game_desc">SowOpDirs</h3>
 <p>The first player picks their sow direction for the game. The second player
 will sow in the opposite direction for the game.
@@ -4612,7 +4621,7 @@ see <a href="about_games.html#Sadeqa">Sadeqa</a>
 </div>
 <p><b class="enum">Rules</b>: Russ, Laurence. Mancala Games. 1984. p34.
 <p><b class="enum">Reference</b>: Ludii Portal:
-https://ludii.games/data.php?gameId=339
+<a href="https://ludii.games/data.php?gameId=339" target="_blank">https://ludii.games/data.php?gameId=339</a>
 <p><b class="enum">Origin</b>: traditional
 <p><b class="enum">Region</b>: Eastern Africa
 <h3 id="Tchuka Ruma" class="game_desc">Tchuka Ruma</h3>
@@ -4651,7 +4660,7 @@ don't sow in multiple laps
   </div>
 </div>
 <p><b class="enum">Rules</b>: Mancala World:
-https://mancala.fandom.com/wiki/Tchuka_Ruma
+<a href="https://mancala.fandom.com/wiki/Tchuka_Ruma" target="_blank">https://mancala.fandom.com/wiki/Tchuka_Ruma</a>
 <p><b class="enum">Lagniappe</b>: Donkers et al. report that (in general
 terms) games with the number of start seeds within ±1 of the number of
 holes are not solvable. They present a table of 1-12 holes versus 1-10
@@ -4659,7 +4668,7 @@ start seeds and the maximum number of seeds that can be collected in one
 move.
 <p>"Donkers, Joroen.  Uiterwijk, Jos.  Voogt, Alex de.  "Mancala game - Topics
 in Mathematics and Artificial Intelligence". Retrieved from
-https://www.academia.edu/
+<a href="https://www.academia.edu/" target="_blank">https://www.academia.edu/</a>
 <p><b class="enum">Origin</b>: modern
 <p><b class="enum">Region</b>: Europe
 <h3 id="Tegre" class="game_desc">Tegre</h3>
@@ -4771,9 +4780,9 @@ n is in 5 .. 8).
   </div>
 </div>
 <p><b class="enum">Rules</b>:
-https://www.iggamecenter.com/en/rules/toguzkumalak
-https://worldnomadgames.com/media/images/2018/04/05/27-toguz-korgool-rules-
-en.pdf <a href="https://mancala.fandom.com/wiki/Toguz_Kumalak" target="_blank">https://mancala.fandom.com/wiki/Toguz_Kumalak</a>
+<a href="https://www.iggamecenter.com/en/rules/toguzkumalak" target="_blank">https://www.iggamecenter.com/en/rules/toguzkumalak</a>
+<a href="https://worldnomadgames.com/media/images/2018/04/05/27-toguz-korgool-rules-en.pdf" target="_blank">https://worldnomadgames.com/media/images/2018/04/05/27-toguz-korgool-rules-en.pdf</a>
+<a href="https://mancala.fandom.com/wiki/Toguz_Kumalak" target="_blank">https://mancala.fandom.com/wiki/Toguz_Kumalak</a>
 <p><b class="enum">Origin</b>: traditional
 <p><b class="enum">Region</b>: Central Asia, East Asia
 <h3 id="Toguz Xorgol" class="game_desc">Toguz Xorgol</h3>
@@ -4782,9 +4791,9 @@ when sowing; unless there is only one seed, then it is moved' forward one
 hole.
 <p>Capture on evens that are greater than or equal to 4.
 <p>If the final seed of a sow brings a hole to three seeds, a tuzdek is made
-(child). A tuzdek cannot be made on rightmost hole on the opponent's side--
-this would be the last hole before sowing would continue back to your own
-side of the board. Tuzdeks cannot be directly opposite eachother.
+(child). A tuzdek cannot be made on rightmost hole on the opponent's
+side--this would be the last hole before sowing would continue back to your
+own side of the board. Tuzdeks cannot be directly opposite eachother.
 <p>Variation:
 <ul><li class="helptext">
 <a href="about_games.html#Toguz Kumalak">Toguz Kumalak</a> is very similar.
@@ -5078,9 +5087,9 @@ any odd number of seeds
   </div>
 </div>
 <p><b class="enum">Rules</b>: Richard's PBeM
-http://www.gamerz.net/pbmserv/zigzag.html
+<a href="http://www.gamerz.net/pbmserv/zigzag.html" target="_blank">http://www.gamerz.net/pbmserv/zigzag.html</a>
 <p><b class="enum">Lagniappe</b>: Mancala World,
-https://mancala.fandom.com/wiki/Zig_Zag, provides some details on
+<a href="https://mancala.fandom.com/wiki/Zig_Zag," target="_blank">https://mancala.fandom.com/wiki/Zig_Zag,</a> provides some details on
 tournaments that have included this game.
 <p><b class="enum">Origin</b>: modern
 <p><b class="enum">Region</b>: Americas

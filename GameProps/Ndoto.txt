@@ -57,7 +57,7 @@ Variations:
 without a limit on where single seeds can be moved (ALLOW_RULE:
 SINGLE_ONLY_ALL).
 
-- Ndoto::Bao - Minimum move of 2, unless all occupied holes have single seeds which
+- <nolink>Ndoto::Bao - Minimum move of 2, unless all occupied holes have single seeds which
 may only be moved to empty holes (ALLOW_RULE: SINGLE_ALL_TO_ZERO).
 
 - board size choice included to make game easier.

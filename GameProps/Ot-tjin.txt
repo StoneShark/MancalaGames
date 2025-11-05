@@ -54,7 +54,7 @@ Variations:
 - board size of 9.
 
 - played with start seeds of 2 to 5 with the capture-on value equaling
-the number of start seeds (<nolink>Ot-tjin:Ot-tjin_n where n is 2, 4,
+the number of start seeds (<nolink>Ot-tjin::Ot-tjin_n where n is 2, 4,
 5).
 
 - counter-clockwise sow direction (Mancala World suggests sowing

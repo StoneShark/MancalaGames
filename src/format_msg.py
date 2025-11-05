@@ -17,7 +17,9 @@ PRE_END = '</pre'
 
 RECOMP = re.compile('\n *')
 TEXTFILL = textwrap.TextWrapper(width=50)
-WIDEFILL = textwrap.TextWrapper(width=75)
+WIDEFILL = textwrap.TextWrapper(width=75,
+                                break_long_words=False,
+                                break_on_hyphens=False)
 
 
 def fmsg(message, wide=False):

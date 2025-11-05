@@ -141,13 +141,13 @@ def sep_punct(game_name):
     return pre, tword, post
 
 
-def sub_links(para):
+def sub_links_line(line):
     """For parameter names and games substitute in links.
 
-    The handling of multi word game names seems forced :("""
+    The handling of multi word game names seems forced."""
+    # TODO this not catch game names split across lines
 
-
-    word_list = para.split(' ')
+    word_list = line.split(' ')
     w_links = []
     skip_words = 0
 
@@ -201,6 +201,13 @@ def sub_links(para):
             w_links += [word]
 
     return ' '.join(w_links)
+
+
+def sub_links(para):
+    """Substitute links for urls, games and parameters."""
+
+    return '\n'.join(sub_links_line(line) for line in para.split('\n'))
+
 
 
 ENUM_NAME = re.compile('([A-Z0-9_]+): ')
