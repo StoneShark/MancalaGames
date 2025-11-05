@@ -635,7 +635,8 @@ class SetupButtonBehavior(bhv.BehaviorIf):
         game_ui = self.btn.game_ui
         ginfo = game_ui.game.info
 
-        if any([ginfo.child_type,
+        if any([ginfo.child_cvt,    # not child_type, can make more children
+                ginfo.child_type == gi.ChildType.RAM,
                 ginfo.goal == gi.Goal.TERRITORY,
                 ginfo.blocks,
                 ginfo.moveunlock,
