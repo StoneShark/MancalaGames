@@ -18,9 +18,7 @@ def print_about(game):
     """Format and print the about game text."""
 
     text = man_config.remove_tags(game.info.about)
-    formatted = format_msg.fmsg(list(format_msg.build_paras(text)),
-                                wide=True)
-    print(formatted)
+    print(''.join(format_msg.build_paras(text)))
 
 
 def build_game_ui(game_str):

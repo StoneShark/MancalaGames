@@ -19,6 +19,7 @@ RECOMP = re.compile('\n *')
 TEXTFILL = textwrap.TextWrapper(width=50)
 WIDEFILL = textwrap.TextWrapper(width=75)
 
+
 def fmsg(message, wide=False):
     """Format a message.
 
@@ -48,32 +49,35 @@ def fmsg(message, wide=False):
 
 
 def build_paras(text, html=False):
-    """Build paragraphs and yield them one at a time
+    """Return a list of paragraphs.
 
     \n\n are paragraphs \n are not.
 
     <pre... and </pre... braket preformated text
     if html is true, include the tags; if false do not."""
     # pylint:  disable=too-many-branches
+    # pylint:  disable=too-complex
 
     para = ''
     fix_form = False
+    line_end = NL if html else (NL + NL)
+    full_text = []
 
     for line in text.split(NL):
 
         if line[:4] == PRE_TAG:
-            yield para
+            full_text += [fmsg(para, wide=True)]
             fix_form = True
             if html:
-                para = line + NL
+                para = line + line_end
             else:
                 para = ''
 
         elif line[:5] == PRE_END:
             if html:
-                yield para + line + NL
+                full_text += [para + line + NL]
             else:
-                yield para + NL
+                full_text += [para + NL]
             fix_form = False
             para = ''
 
@@ -86,11 +90,16 @@ def build_paras(text, html=False):
                 para += line + NL
 
         elif not line.rstrip():
-            yield para
+            if html:
+                full_text += [fmsg(para, wide=True)]
+            else:
+                full_text += [fmsg(para, wide=True) + line_end]
             para = ''
 
         else:
             para += line + ' '
 
     if para:
-        yield para + NL
+        full_text += [fmsg(para, wide=True) + line_end]
+
+    return full_text

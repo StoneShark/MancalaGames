@@ -931,7 +931,7 @@ class HelpMenuMixin:
     def _about(self):
         """Popup the about window."""
 
-        paragraphs = list(format_msg.build_paras(
-                            man_config.remove_tags(self.info.about)))
-        ui_utils.QuietDialog(self, f'About {self.info.name}', paragraphs,
-                             wide=True)
+        text = ''.join(format_msg.build_paras(
+                                man_config.remove_tags(self.info.about)))
+        ui_utils.QuietDialog(self, f'About {self.info.name}', text,
+                             fixed_form=True)

@@ -47,9 +47,13 @@ VAR_SEP = '::'
 
 TEXT_SEC_KEY = '<text_section>'
 TEXT_SEC_END = '</text_section>'
-XML_START_TAG = re.compile(r'^ *<([^/>]+)> *$')
-XML_END_TAG = re.compile(r'^ *</([^>]+)> *$')
+XML_START_TAG = re.compile(r' *<([^/>]+)> *$')
+XML_END_TAG = re.compile(r' *</([^>]+)> *$')
 
+# used to skip lines that start with html tags
+# a not included because it would match <about a common variable
+# <a hr... wont match the XML_START_TAG or XML_END_TAG
+HTML_TAGS = re.compile(r' *<[/]?(pre|ol|ul|li)')
 
 NO_CONVERT = [ckey.NAME, ckey.ABOUT, ckey.HELP_FILE,
               ckey.UDIR_HOLES, ckey.CAPT_ON]
@@ -86,6 +90,8 @@ REMOVE_TAGS = [re.compile(r'<a[^>]+>'),
                re.compile(r'</b>'),
                re.compile(r'<ol[^>]*>'),
                re.compile(r'</ol>'),
+               re.compile(r'<ul[^>]*>'),
+               re.compile(r'</ul>'),
                re.compile(r'<li[^>]*>'),
 
                # these tags are used and removed in editor's formatter
@@ -187,25 +193,27 @@ def parse_xml(xml_lines):
         if TEXT_SEC_END in line:
             break
 
-        re_match = XML_START_TAG.match(line)
-        if re_match:
-            stag = re_match.groups()[0]
-            if tag:
-                raise ValueError(f'Missing end tag for {tag} before {stag}.')
-            text = ''
-            tag = stag
-            continue
+        if not HTML_TAGS.match(line):
 
-        re_match = XML_END_TAG.match(line)
-        if re_match:
-            etag = re_match.groups()[0]
+            re_match = XML_START_TAG.match(line)
+            if re_match:
+                stag = re_match.groups()[0]
+                if tag:
+                    raise ValueError(f'Missing end tag for {tag} before {stag}.')
+                text = ''
+                tag = stag
+                continue
 
-            if tag != etag:
-                raise ValueError(f'Mismatched XML tags {tag} and {etag}')
+            re_match = XML_END_TAG.match(line)
+            if re_match:
+                etag = re_match.groups()[0]
 
-            xml_dict[tag] = text
-            tag = None
-            continue
+                if tag != etag:
+                    raise ValueError(f'Mismatched XML tags {tag} and {etag}')
+
+                xml_dict[tag] = text
+                tag = None
+                continue
 
         if not tag and line.strip():
             raise ValueError(f'Text not inside tag open/close at line {idx}.')

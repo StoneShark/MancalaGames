@@ -261,9 +261,6 @@ def write_para(text, ofile, number=False):
             print('</', li_tag, '>', sep='', file=ofile)
             print('<p>', sub_links(para), sep='', file=ofile)
 
-        elif NL in para:
-            print( sub_links(para), sep='', file=ofile)
-
         else:
             print('<p>', sub_links(para), sep='', file=ofile)
 

@@ -63,18 +63,18 @@ Capture on evens.
 If the final seed of a sow brings a hole to three seeds, a tuzdik is
 made (child) with the following restrictions:
 
-- Only one tuzdik may be made per player.
+1. Only one tuzdik may be made per player.
 
-- Must be in the right 8 holes on the opposite side of the board
+2. Must be in the right 8 holes on the opposite side of the board
 (right as viewed by the player making the child).
 
-- Tuzdiks cannot be symetrically opposite eachother. Specifically,
+3. Tuzdiks cannot be symetrically opposite eachother. Specifically,
 tuzdiks may not be made in the same numbered holes:
 
-  + 9 8 7 6 5 4 3 2 1
-
-  + 1 2 3 4 5 6 7 8 9
-
+<pre>
+9 8 7 6 5 4 3 2 1
+1 2 3 4 5 6 7 8 9
+</pre>
 <nolink>Toguz Kumalak (nine pebbles) is also known as Toguz Korgool
 (nine dung balls). This is intended to be the rules used by the World
 Nomad Games.

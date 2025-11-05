@@ -311,10 +311,12 @@ Locations where children can be made by each player. Child locations
 are further limited by CHILD_RULE.
 
 Some patterns are specified below with 5 designators per side as:
+
 <pre>
 a b c d e
 </pre>
 These are applied as: 
+
 <pre>
 a is used for the first hole (left most),
 b the second,
@@ -323,6 +325,7 @@ d the second last, and
 e the last (rightmost).
 </pre>
 The allowable children are designated by: 
+
 <pre>
 T - top/north player.
 B - bottom/south player.
@@ -330,6 +333,7 @@ N - neither player.
 </pre>
 For shorter boards, the pattern is generated using assignments (a b c
 d e) as:
+
 <pre>
 board length 2: a e
 board length 3: a c e
@@ -344,17 +348,20 @@ board length >= 5: a b c c c ... c d e
 <li>ANYWHERE: children may be made anywhere.
 
 <li>ENDS_ONLY: children may be made in the end holes only.
+
 <pre class="fixind">
 TB N N N TB
 TB N N N TB
 </pre>
 <li>NO_ENDS: children may only be made on internal holes, no end holes.
+
 <pre class="fixind">
 N TB TB TB N
 N TB TB TB N
 </pre>
 <li>INV_ENDS_PLUS_MID: children may be made by each player on the
 opposite side ends and all own side middle holes.
+
 <pre class="fixind">
 B T T T B
 T B B B T
@@ -366,12 +373,14 @@ Used for Walda type children: Each player may create up to 6
 walda: on either end of each side of the board and the next two
 outer holes on their own side of the board. Note that there are only
 8 total places that walda maybe created.
+
 <pre class="fixind">
 TB B N B TB
 TB T N T TB
 </pre>
 <li>NO_OWN_RIGHT: children may not be made in your own rightmost hole.
 Direction is from the prespective of the player making the child.
+
 <pre class="fixind">
  B TB TB TB TB
 TB TB TB TB T
@@ -379,12 +388,14 @@ TB TB TB TB T
 <li>NO_OPP_RIGHT: children may not be made in the opposite rightmost
 hole. Direction is from the prespective of the player making the
 child.
+
 <pre class="fixind">
 TB TB TB TB T
  B TB TB TB TB
 </pre>
 <li>NO_OPP_LEFT: children may not be made in the opposite leftmost hole.
 Direction is from the prespective of the player making the child.
+
 <pre class="fixind">
 T  TB TB TB TB
 TB TB TB TB B
@@ -393,6 +404,7 @@ TB TB TB TB B
 other. NO_OPP_LEFT is also applied. For example, in a 9 hole per side
 game with holes numbered as follows, children may not be in the same
 numbered holes:
+
 <pre class="fixind">
 9 8 7 6 5 4 3 2 1
 1 2 3 4 5 6 7 8 9
@@ -402,6 +414,7 @@ NO_OPP_RIGHT is also applied.
 
 <li>ENDS_PLUS_ALL_OPP: Children may be made in any end hole, but only
 your opponents interior holes.
+
 <pre class="fixind">
 TB B B B TB
 TB T T T TB

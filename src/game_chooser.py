@@ -1164,14 +1164,8 @@ class AboutPane(ttk.Labelframe):
     def format_para(text):
         """Format a paragraph for the description."""
 
-        out_text = []
-        for para in  format_msg.build_paras(text):
-            out_text += [textwrap.fill(man_config.remove_tags(para),
-                                       DESC_WIDTH)]
-
-        if not out_text[-1]:
-            out_text.pop()
-        return '\n\n'.join(out_text)
+        return ''.join(format_msg.build_paras(
+                            man_config.remove_tags(text)))
 
 
     def describe_game(self, game_name, game_dict):
@@ -1184,7 +1178,6 @@ class AboutPane(ttk.Labelframe):
                 and ckey.ABOUT in game_dict[ckey.GAME_INFO]):
 
             dtext = self.format_para(game_dict[ckey.GAME_INFO][ckey.ABOUT])
-        dtext += '\n'
 
         ptext = self.game_prop_text(game_dict)
         items = len(ptext)
@@ -1195,21 +1188,18 @@ class AboutPane(ttk.Labelframe):
             col1 += 1
         for c1text, c2text in it.zip_longest(ptext[:col1], ptext[col1:],
                                              fillvalue=''):
-            dtext += f"\n{c1text:{COL_WIDTH}}    {c2text:{COL_WIDTH}}"
-
+            dtext += f"{c1text:{COL_WIDTH}}    {c2text:{COL_WIDTH}}\n"
         dtext += '\n'
+
         for key, text in game_dict.items():
             if key not in [ckey.GAME_CLASS, ckey.GAME_CONSTANTS,
                            ckey.GAME_INFO, ckey.PLAYER, ckey.FILENAME,
                            ckey.VARI_PARAMS, ckey.VARIANTS]:
 
-                dtext += '\n'
                 dtext += self.format_para(key.title() + ':  ' + text)
-                dtext += '\n'
 
         rating = FAVS.rating(game_name)
         rtext = (STAR * rating) if rating else 'None'
-        dtext += '\n'
         dtext += 'Rating:  ' + rtext
 
         self.set_text(game_name, dtext)

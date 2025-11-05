@@ -19,7 +19,6 @@ Created on Thu Mar 30 13:43:39 2023
 
 import functools as ft
 import json
-import textwrap
 import tkinter as tk
 from tkinter import ttk
 
@@ -297,14 +296,7 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
         text = man_config.PARAMS[option].text
         rdesc = man_config.PARAMS[option].description
 
-        desc = ''
-        for para in format_msg.build_paras(rdesc):
-            if NL in para:
-                desc += para
-
-            else:
-                desc += textwrap.fill(para, DESC_WIDTH) + '\n\n'
-
+        desc = ''.join(format_msg.build_paras(rdesc))
         full_text = f'{text} ({option}):\n\n{desc}'
 
         self.desc.config(state=tk.NORMAL)

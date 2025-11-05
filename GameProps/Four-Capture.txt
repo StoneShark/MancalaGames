@@ -32,7 +32,7 @@
 <text_section>
 <about>
 The first move by each player is sown counter-clockwise, the player
-chooses the sow direction for subseuqent moves. Sow in multiple laps,
+chooses the sow direction for subsequent moves. Sow in multiple laps,
 but stop for capture.
 
 If your opponent does not have seeds you must share. If you cannot

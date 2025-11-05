@@ -250,6 +250,12 @@ class TestBasicConstruction:
                      This is a two line paragraph to be filled
                      later.
 
+                     <pre>
+                     preformated
+                     multi-line text
+                     don't confuse these as variables
+                     </pre>
+
                      </about>
                      <rules>
                      never do this
@@ -264,7 +270,7 @@ class TestBasicConstruction:
         gdict = man_config.read_game(config_file5)
 
         assert 'vanilla' in gdict[ckey.GAME_INFO][ckey.ABOUT]
-        assert gdict[ckey.GAME_INFO][ckey.ABOUT].count('\n') == 5
+        assert gdict[ckey.GAME_INFO][ckey.ABOUT].count('\n') == 11
 
         assert 'never' in gdict['rules']
         assert gdict['rules'].count('\n') == 1
