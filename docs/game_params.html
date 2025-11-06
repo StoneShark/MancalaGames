@@ -495,10 +495,10 @@ sow of an <a href="game_params.html#mlaps">MLAPS</a> game to be a single sow.
 <b class="enum">MLAPS_SOWER</b>: the first sow follows basic rules of multi-lap sowing
 (LAPPER). Other sow parameters will be enacted afterward.
 <li class="helptext">
-<b class="enum">SOW1OPP</b>: at least one seed must be sown on the opponents side of the
+<b class="enum">SOW1OPP</b>: at least one seed must be sown on the opponent's side of the
 board which is accomplished by sowing as normal until the final seed, then
 any remaining holes on the player's side are skipped and the last seed is
-sown in the opponents first hole (based on current sow direction). This
+sown in the opponent's first hole (based on current sow direction). This
 prescribed opening is used for the first two moves of a game (including any
 repeat turns).
 <li class="helptext">
@@ -1297,7 +1297,7 @@ final seed was sown; the second hole does not need to meet the criteria.
 <b class="enum">OPPS_ONLY_NOT_1ST</b>: OPP_SIDE_ONLY and don't make a child in the first hole
 on the opponent's side with one seed.
 <li class="helptext">
-<b class="enum">OPP_OWNER_ONLY</b>: Only make children in your opponents holes. Valid only
+<b class="enum">OPP_OWNER_ONLY</b>: Only make children in your opponent's holes. Valid only
 for territory <a href="game_params.html#goal">GOAL</a> games.
 <li class="helptext">
 <b class="enum">OWN_OWNER_ONLY</b>: Only make children in your own holes. Valid only for
@@ -1410,7 +1410,7 @@ holes numbered as follows, children may not be in the same numbered holes:
 <p><li>NOT_FACING: Children must not directly opposite eachother. NO_OPP_RIGHT
 is also applied.
 <p><li>ENDS_PLUS_ALL_OPP: Children may be made in any end hole, but only your
-opponents interior holes.
+opponent's interior holes.
 <p><pre class="fixind">
 TB B B B TB
 TB T T T TB
@@ -1805,17 +1805,17 @@ will be saved to the text_section. Any value can be forced to be stored in
 the text_section by including &lt;txt&gt;.
 <p>Extra tags may be included in a game configuration file. Generally included
 tags are listed below. The script play_mancala allows filtering the game
-list by many of these values on the About tab.
+list by many of these values on the Info Filters tab.
 <ul><li class="helptext">
 <b class="inhead">rules</b>: the source for the game rules is often
-included.
+included.  These are the reference rules which the game was configured to.
 <li class="helptext">
 <b class="inhead">deviation</b>: descriptions where the rules are not
 implemented exactly as the source listed in the rules tag. If there is more
 than one deviation, numbered tags may be used, e.g. deviation 1, deviation
 2.
 <li class="helptext">
-<b class="inhead">origin</b>: generally one of traditional, modern, or
+<b class="inhead">origin</b>: generally one of traditional, modern or
 example.
 <li class="helptext">
 <b class="inhead">region</b>: generally one or more of the following:

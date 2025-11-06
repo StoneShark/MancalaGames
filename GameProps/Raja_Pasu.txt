@@ -36,8 +36,8 @@ holes sown to 4 seeds.
 When the lap sowing ends, capture any seeds across the gap from the
 empty hole that stopped the lap sowing.
 
-Play in rounds. A round ends when one player does not have any moves.
-Unclaimed seeds go to the hole owner (that the player with seeds, gets
+Played in rounds. A round ends when one player does not have any moves.
+Unclaimed seeds go to the hole owners (that is the player with seeds, gets
 them). The player with the most seeds is the winner of the round.
 
 Setup for each round involves filling as many holes as a player can

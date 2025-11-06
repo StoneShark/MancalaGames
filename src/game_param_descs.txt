@@ -413,7 +413,7 @@ numbered holes:
 NO_OPP_RIGHT is also applied.
 
 <li>ENDS_PLUS_ALL_OPP: Children may be made in any end hole, but only
-your opponents interior holes.
+your opponent's interior holes.
 
 <pre class="fixind">
 TB B B B TB
@@ -439,7 +439,7 @@ not need to meet the criteria.
 - OPPS_ONLY_NOT_1ST: OPP_SIDE_ONLY and don't make a child in the first
 hole on the opponent's side with one seed.
 
-- OPP_OWNER_ONLY: Only make children in your opponents holes. Valid
+- OPP_OWNER_ONLY: Only make children in your opponent's holes. Valid
 only for territory GOAL games.
 
 - OWN_OWNER_ONLY: Only make children in your own holes. Valid only for
@@ -562,17 +562,18 @@ Any value can be forced to be stored in the text_section by including
 
 Extra tags may be included in a game configuration file. Generally
 included tags are listed below. The script play_mancala allows
-filtering the game list by many of these values on the About tab.
+filtering the game list by many of these values on the Info Filters tab.
 
 - <b class="inhead">rules</b>: the source for the game rules is often
-included.
+included. 
+These are the reference rules which the game was configured to.
 
 - <b class="inhead">deviation</b>: descriptions where the rules are
 not implemented exactly as the source listed in the rules tag. If
 there is more than one deviation, numbered tags may be used, e.g.
 deviation 1, deviation 2.
 
-- <b class="inhead">origin</b>: generally one of traditional, modern,
+- <b class="inhead">origin</b>: generally one of traditional, modern
 or example.
 
 - <b class="inhead">region</b>: generally one or more of the
@@ -586,6 +587,7 @@ Use the most specific region.
 games with tags including note, reference, question and lagniappe.
 
 An example of extra_tags:
+
 <pre class="fixed">
 <rules>
 Russ, Laurence. Mancala Games. 1984. p33.
@@ -1176,10 +1178,10 @@ force the first sow of an MLAPS game to be a single sow.
 - MLAPS_SOWER: the first sow follows basic rules of multi-lap sowing
 (LAPPER). Other sow parameters will be enacted afterward.
 
-- SOW1OPP: at least one seed must be sown on the opponents side of the
+- SOW1OPP: at least one seed must be sown on the opponent's side of the
 board which is accomplished by sowing as normal until the final seed,
 then any remaining holes on the player's side are skipped and the last
-seed is sown in the opponents first hole (based on current sow
+seed is sown in the opponent's first hole (based on current sow
 direction). This prescribed opening is used for the first two moves of
 a game (including any repeat turns).
 
@@ -1799,6 +1801,7 @@ https://www.json.org/json-en.html.
 The following value would define a base game of Krur and a named
 variant of <nolink>Krur::Rounds which changes the values of four
 parameters from the base game:
+
 <pre class="fixed">
 {
    "Krur": { },
@@ -1824,6 +1827,7 @@ The following value would allow changing of three parameters:
 selection of board sizes 3 to 6; mustpass as true or false; and
 capturing in the sow direction or the opposite of the sow direction
 (but not sowing in both directions):
+
 <pre class="fixed">
 {
    "holes": [ 3, 4, 5, 6 ],
