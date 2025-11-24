@@ -1277,8 +1277,7 @@ class GameChooser(ttk.Frame):
         errors = []
         for file in man_config.game_files():
 
-            build_context = ui_utils.ReportError(self, popups=False)
-            with build_context:
+            with ui_utils.ReportError(self, popups=False) as build_context:
                 game_dict = man_config.read_game(file)
                 game_name = game_dict[ckey.GAME_INFO][ckey.NAME]
 
@@ -1441,8 +1440,7 @@ class GameChooser(ttk.Frame):
         If there were no errors, allow the game to be played
         in a modal window."""
 
-        build_context = ui_utils.ReportError(self)
-        with build_context:
+        with ui_utils.ReportError(self) as build_context:
             game_ui = self._build_game_steps(game_dict, variant)
 
         if not build_context.error:

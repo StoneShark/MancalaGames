@@ -42,8 +42,7 @@ class GameVariations:
         param_mixin.register_int_validate(self.game_ui.root)
 
         # the 'play' main script doesn't test these
-        build_context = ui_utils.ReportError(self.game_ui)
-        with build_context:
+        with ui_utils.ReportError(self.game_ui) as build_context:
             test_variation_config(self.game_config)
 
         if build_context.error:
@@ -121,8 +120,7 @@ class GameVariations:
         if not popup.do_it:
             return False
 
-        build_context = ui_utils.ReportError(self.game_ui)
-        with build_context:
+        with ui_utils.ReportError(self.game_ui) as build_context:
             ret_vals = self.rebuild_variant()
 
         if build_context.error:

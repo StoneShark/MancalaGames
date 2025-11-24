@@ -443,8 +443,7 @@ class AiCtrlMenuMixin:
         player_dict = game_config[ckey.PLAYER]
         player_dict[ckey.ALGORITHM] = self._algo.get()
 
-        build_context = ui_utils.ReportError(self)
-        with build_context:
+        with ui_utils.ReportError(self) as build_context:
             self.player = ai_player.AiPlayer(self.game, player_dict)
 
         if build_context.error:

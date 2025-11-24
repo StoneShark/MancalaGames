@@ -412,8 +412,7 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
 
         self._update_title()
 
-        build_context = ui_utils.ReportError(self)
-        with build_context:
+        with ui_utils.ReportError(self) as build_context:
             self._prepare_game()
 
         if build_context.error:

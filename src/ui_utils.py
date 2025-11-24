@@ -785,9 +785,10 @@ class ReportError:
         self.message = None
 
     def __enter__(self):
-        """Required interface for a context manager."""
+        """Return the context manager.
+        Required interface for a context manager."""
 
-        return None
+        return self
 
     def __exit__(self, exc_type, exc_value, _):
         """Return True if there was no error or if it should

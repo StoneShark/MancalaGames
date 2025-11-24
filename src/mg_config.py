@@ -253,8 +253,7 @@ class GameConfig:
         Return True if the load did not encounter an error,
         False if it did."""
 
-        build_context = ui_utils.ReportError(self._master)
-        with build_context:
+        with ui_utils.ReportError(self._master) as build_context:
             self.loaded_config = man_config.read_game(self.pathname)
 
         if build_context.error:
