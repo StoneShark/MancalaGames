@@ -429,7 +429,7 @@ class MancalaGamesEditor(param_mixin.ParamMixin, ttk.Frame):
 
     def load_game(self, gamename):
         """Load the specified game name, used when switching
-	from the chooser."""
+        from the chooser."""
 
         filename = man_path.find_gamefile(gamename)
         if not filename:

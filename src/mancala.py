@@ -22,6 +22,7 @@ import end_move
 import format_msg as fmt
 import game_constants as gconsts
 import game_info as gi
+import game_str
 import ginfo_rules
 import inhibitor
 import man_deco
@@ -32,14 +33,6 @@ import round_tally
 from fill_patterns import PCLASSES
 from game_logger import game_log
 
-
-LOCK = ['_', ' ']
-CHILD = {True: '˄',
-         False: '˅',
-         None: ' '}
-OWNER = {True: '↑ ',     # \u2191
-         False: '↓ ',    # \u2193
-         None: ' '}
 
 
 @dc.dataclass(frozen=True, kw_only=True)
@@ -86,11 +79,11 @@ class GameState(ai_interface.StateIf):
                 else:
                     string += f' {self.board[loc]:2}'
                 if self.owner:
-                    string += OWNER[self.owner[loc]]
+                    string += game_str.OWNER[self.owner[loc]]
                 if self.unlocked:
-                    string += LOCK[self.unlocked[loc]]
+                    string += game_str.LOCK[self.unlocked[loc]]
                 if self.child:
-                    string += CHILD[self.child[loc]]
+                    string += game_str.CHILD[self.child[loc]]
 
             string += '  *' if int(not self.turn) == side else '   '
             loc = (side + 1) % 2
