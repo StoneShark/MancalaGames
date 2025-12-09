@@ -724,10 +724,12 @@ The name of the Game Class. One of:
   which hole the seed comes from but it must be a hole with at least
   two seeds. After sharing the one seed, the sharer gets a repeat
   turn.
+  
+  + The following options are prohibited: BLOCKS, MUSTSHARE or NO_SIDES.
+  The game GOAL must not be TERRITORY.
 
-  + The following options are prohibited: BLOCKS, MUSTSHARE, NO_SIDES,
-  or any repeat turn option (CAPT_RTURN, SOW_OWN_STORE, XC_SOWN or
-  GRANDSLAM of LEGAL_SHARE). The game GOAL must not be TERRITORY.
+  + <a href="about_games.html#Leab El-&aacute;kil">Leab El-&aacute;kil</a> 
+  is a preconfigured game using this class.
 
 - <nolink><b class="inhead">ZigZag</b>
 

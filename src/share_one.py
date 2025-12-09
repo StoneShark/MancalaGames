@@ -56,13 +56,6 @@ def test_rules(ginfo, holes, skip):
         msg='ShareOne is incompatible with MUSTSHARE',
         excp=gi.GameInfoError)
 
-    tester.test_rule(
-        's1_no_rturn',
-        rule=lambda ginfo: ginfo.repeat_turn,
-        msg="""ShareOne is incompatible with any repeat turn--it
-            is used to perform a normal move after a share one move""",
-        excp=gi.GameInfoError)
-
     mancala.Mancala.rules(ginfo, holes, skip=skip)
 
 
