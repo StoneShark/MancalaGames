@@ -32,6 +32,7 @@ GENEDHELPS = docs\\about_games.html
 GENEDHELPS += docs\\game_params.html 
 GENEDHELPS += docs\\game_xref.html 
 GENEDHELPS += docs\\param_types.html
+GENEDHELPS += docs\\game_xref.csv
 
 # non-generated dependencies for release exe
 REL_DOCS = docs\\mancala_help.html
@@ -49,6 +50,7 @@ REL_HELPS += docs\\game_params.html
 REL_HELPS += docs\\game_xref.html
 REL_HELPS += docs\\param_types.html
 REL_HELPS += docs\\styles.css
+REL_HELPS += docs\\game_xref.csv
 REL_HELPS += docs\\Diffusion_rules.pdf
 REL_HELPS += docs\\ZigZagHelp.pdf
 

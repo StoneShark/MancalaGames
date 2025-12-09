@@ -7,7 +7,7 @@
     ai_player source file
 
 The game & properties cross reference table is
-generated in both html and csv (props_used.csv).
+generated in both html and csv (game_xref.csv).
 
 Created on Wed Nov 22 18:38:01 2023
 @author: Ann"""
@@ -1023,5 +1023,5 @@ if __name__ == '__main__':
     write_types_file('param_types.html')
 
     print("Writning games/params xref")
-    write_game_xref('props_used.csv')
-    write_xref_html('props_used.csv', 'game_xref.html')
+    write_game_xref('game_xref.csv')
+    write_xref_html('game_xref.csv', 'game_xref.html')
