@@ -16,7 +16,7 @@
       "round_starter": 0,
       "rounds": 2,
       "sow_direct": 1,
-      "sow_rule": 4,
+      "sow_rule": 14,
       "stores": true
    },
    "player": {
@@ -34,9 +34,13 @@
 }
 <text_section>
 <about>
-Sow counter-clockwise in multiple laps. Any hole sown to 4 is captured
-by the sower.  The last 4 seeds are taken along with the final
-capture.
+Sow counter-clockwise in multiple laps.
+Multilap sowing ends when there is only one seed in the final
+and for a final capture.
+
+Any hole sown to 4 is captured by the sower.
+
+The last 4 seeds are taken along with the final capture.
 
 Played in rounds. After each round players fill as many holes as they
 can with 4 seeds each. Extra seeds are placed in their store. Unfilled

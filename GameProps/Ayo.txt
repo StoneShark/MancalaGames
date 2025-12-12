@@ -7,9 +7,9 @@
    "game_info": {
       "name": "Ayo",
       "about": "<text_section>",
+      "capt_on": [ 2, 3 ],
       "goal": 2,
       "goal_param": 9,
-      "capt_on": [ 2, 3 ],
       "end_cond": 3,
       "end_param": 2,
       "grandslam": 5,
@@ -95,7 +95,7 @@ Variation:
 
 - holes required to win the game (GOAL_PARAM).
 
-- don't end the game when one or two seeds (END_COND). See Note.
+- don't end the game when one or two seeds (END_COND). See deviation.
 
 - <nolink>Ayo::No_Rounds - not played in rounds.
 Goal is to collect more seeds than opponent.

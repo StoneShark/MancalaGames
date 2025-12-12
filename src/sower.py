@@ -294,21 +294,13 @@ class SowClosed(SowMethodIf):
 
 
 class SowCaptOwned(SowMethodIf):
-    """Any holes sown to allow capture are captured by the hole's
-    owner.
+    """The en passant captures (also called passing captures).
 
-    OWN_SOW_CAPT_ALL:
+    ENPAS enum name order is
+        which holes, who gets non-final, who gets final (sower default)
 
-    LAPPER: Owner's capture seeds with capt_basic, until the last seed.
-    The hole that the last seed is sown into may be captured from
-    the  opponent's hole (let the capturer deal with it).
-
-    LAPPER_NEXT: Any seed with capt_basic is captured by the hole
-    owner.
-
-    SOW_CAPT_ALL:
-        similar to above, but only the sower captures from
-        the holes as specified by CAPT_SIDE."""
+    If the final seed goes to the owner and not the sower it must
+    be done here, otherwise let the capturer do it."""
 
     def __init__(self, game, decorator=None):
         """Create a list of conditions (as lambda functions)
@@ -320,29 +312,18 @@ class SowCaptOwned(SowMethodIf):
         super().__init__(game, decorator)
         self.conds = []
 
-        if game.info.sow_rule == gi.SowRule.OWN_SOW_CAPT_ALL:
+        if game.info.sow_rule == gi.SowRule.ENPAS_SOW_SOWER:
+            # restricted to sower's holes
+            self.conds += [lambda scnt, loc, turn: turn == game.owner[loc]]
 
+        if game.info.sow_rule in (gi.SowRule.ENPAS_ALL_OWNER_OWN,
+                                  gi.SowRule.ENPAS_ALL_OWNER_SOW):
             self.captor = lambda loc, turn: game.owner[loc]
-
-        else:  #  self.game.info.sow_rule == gi.SowRule.SOW_CAPT_ALL
-
-            # capturer is always current player
+        else:
             self.captor = lambda loc, turn: turn
 
-            if self.game.info.capt_side in (gi.CaptSide.OWN_SIDE,
-                                            gi.CaptSide.OWN_CONT,
-                                            gi.CaptSide.OWN_TERR):
-
-                self.conds += [lambda scnt, loc, turn: turn == game.owner[loc]]
-
-            elif self.game.info.capt_side in (gi.CaptSide.OPP_SIDE,
-                                              gi.CaptSide.OPP_CONT,
-                                              gi.CaptSide.OPP_TERR):
-
-                self.conds += [lambda scnt, loc, turn: turn != game.owner[loc]]
-
-        # LAPPER do not pick on the last seed, it's captured instead
-        if game.info.mlaps == gi.LapSower.LAPPER:
+        if game.info.sow_rule != gi.SowRule.ENPAS_ALL_OWNER_OWN:
+            # let the capturer do all but owner getting final capture
             self.conds += [lambda scnt, loc, turn: scnt > 1]
 
 
@@ -1224,8 +1205,10 @@ def _add_base_sower(game):
                                   gi.SowRule.SOW_BLKD_DIV_NR):
             sower = _add_blkd_divert_sower(game)
 
-        elif game.info.sow_rule in (gi.SowRule.OWN_SOW_CAPT_ALL,
-                                    gi.SowRule.SOW_CAPT_ALL):
+        elif game.info.sow_rule in (gi.SowRule.ENPAS_ALL_OWNER_OWN,
+                                    gi.SowRule.ENPAS_ALL_OWNER_SOW,
+                                    gi.SowRule.ENPAS_ALL_SOWER,
+                                    gi.SowRule.ENPAS_SOW_SOWER):
             sower = SowCaptOwned(game)
 
         elif game.info.sow_rule in (gi.SowRule.NO_SOW_OPP_NS,

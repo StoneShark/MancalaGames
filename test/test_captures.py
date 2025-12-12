@@ -1584,7 +1584,7 @@ class TestPickLastSeeds:
         game_consts = gconsts.GameConsts(nbr_start=2, holes=2)
         game_info = gi.GameInfo(stores=True,
                                 capt_on=[4],
-                                sow_rule=gi.SowRule.OWN_SOW_CAPT_ALL,
+                                sow_rule=gi.SowRule.ENPAS_ALL_OWNER_OWN,
                                 child_type=gi.ChildType.NORMAL,
                                 child_cvt=3,
                                 pickextra=picker,
@@ -2027,7 +2027,7 @@ class TestBadEnums:
         game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(stores=True,
                                 capt_on=[4],
-                                sow_rule=gi.SowRule.OWN_SOW_CAPT_ALL,
+                                sow_rule=gi.SowRule.ENPAS_ALL_OWNER_OWN,
                                 pickextra=gi.CaptExtraPick.PICK2XLASTSEEDS,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)

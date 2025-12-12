@@ -15,7 +15,7 @@
       "multicapt": -1,
       "capt_side": 0,
       "pickextra": 3,
-      "round_fill": 6,
+      "round_fill": 1,
       "round_starter": 0,
       "rounds": 2,
       "sow_direct": 2,
@@ -32,9 +32,9 @@
    },
    "vari_params": {
       "goal_param": "include",
-      "sow_rule": [ 3, 4 ],
+      "sow_rule": [ 3, 4, 14, 15 ],
       "round_starter": "include",
-      "round_fill": "include",
+      "round_fill": [ 0, 1, 2, 3, 6 ],
       "pickextra": [ 0, 3 ]
    },
    "rules": "Russ, Laurence. Mancala Games. 1984. p61.",
@@ -64,9 +64,10 @@ the player's sow direction. If a capture leaves 4 or fewer seeds on
 the board, they are taken by the final capturer.
 
 Played in ROUNDS. Each round ends when the current player does not
-have any playable holes. Round setup is via the Empty Hole Method of
-ROUND_FILL using the OUTSIDE_FILL approach which the user may choose
-to override (UCHOOSE).  After the next round setup unfilled holes are
+have any playable holes. Round setup is via the
+<a href="game_params.html#rf_ehm">Empty Hole Method</a> of
+ROUND_FILL from each player's left.
+After the next round setup unfilled holes are
 out of play. The players alternate starting rounds.
 
 The game is over when either player cannot fill a single hole.
@@ -77,11 +78,13 @@ direction set on the first turn.
 
 Variations:
 
-- SOW_RULE of SOW_CAPT_ALL instead of OWN_SOW_CAPT_ALL
+- 4 to 6 start seeds.
 
-- Other options for ROUND_STARTER and ROUND_FILL.
+- Any en passant capture type (SOW_RULE).
 
-- no PICKEXTRA (see deviation)
+- No PICKEXTRA (see deviation).
+
+- Change the number of holes that a round loser must be able to fill to continue playing (GOAL_PARAM).
 
 - See Pallam Kuzhi and Pandi.
 </about>

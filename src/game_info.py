@@ -418,15 +418,21 @@ class SowPrescribed(enum.IntEnum):
     NO_UDIR_FIRSTS = 6
 
 
+
 @enum.unique
 class SowRule(enum.IntEnum):
-    """Defines special rules for sowing."""
+    """Defines special rules for sowing.
+
+    ENPAS enum name element order define
+       which holes  (sower's only or all)
+       who gets non-final  (sower or hole owner)
+       who gets final (sower or hole owner, sower is default)"""
 
     NONE = 0
     SOW_BLKD_DIV = 1
     SOW_BLKD_DIV_NR = 2
-    OWN_SOW_CAPT_ALL = 3
-    SOW_CAPT_ALL = 4
+    ENPAS_ALL_OWNER_SOW = 3
+    ENPAS_ALL_OWNER_OWN = 4
     NO_SOW_OPP_NS = 5
     CHANGE_DIR_LAP = 6
     MAX_SOW = 7
@@ -436,6 +442,8 @@ class SowRule(enum.IntEnum):
     OPP_CHILD_ONLY1 = 11
     LAP_CAPT_SEEDS = 12
     NO_CHILDREN = 13
+    ENPAS_ALL_SOWER = 14
+    ENPAS_SOW_SOWER = 15
 
 
 @enum.unique

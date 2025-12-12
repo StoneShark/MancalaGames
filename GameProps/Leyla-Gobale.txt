@@ -10,7 +10,7 @@
       "child_cvt": 3,
       "child_rule": 2,
       "child_type": 6,
-      "crosscapt": true,
+      "crosscapt": 1,
       "capt_side": 1,
       "sow_direct": -1,
       "stores": true,
@@ -41,7 +41,7 @@
    "deviation": "Seeds are not moved between the newly created qur holes as there would be no impact on play.",
    "origin": "traditional",
    "region": "Eastern Africa",
-   "references": "https://mancala.fandom.com/wiki/Layli_Goobalay_(short_board) and https://mancala.fandom.com/wiki/Layli_Goobalay_(long_board)  Valdez (p140) describes a very similar game with CW sow and round fill is UMOVE but not reflected instead opposites have the same seed counts."
+   "reference": "<text_section>"
 }
 <text_section>
 <about>
@@ -58,4 +58,12 @@ Variations:
 
 - <nolink>Leyla-Gobale::Rounds: played in rounds with UMOVE style RoundFill.
 </about>
+<reference>
+https://mancala.fandom.com/wiki/Layli_Goobalay_(short_board)
+https://mancala.fandom.com/wiki/Layli_Goobalay_(long_board)
+
+Valdez describes Layli Goobalay as a very similar game with CCW sow and round fill is UMOVE but not reflected instead opposite holes have the same seed counts (not supported in Mancala Games).
+
+Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p140.
+</reference>
 </text_section>

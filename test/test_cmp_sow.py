@@ -100,7 +100,7 @@ GAMECONF = {'basic':
 
             'dep_capta':
                 {'goal': gi.Goal.DEPRIVE,
-                 'sow_rule': gi.SowRule.OWN_SOW_CAPT_ALL,
+                 'sow_rule': gi.SowRule.ENPAS_ALL_OWNER_SOW,
                  'mlaps': gi.LapSower.LAPPER,
                  'evens': True,
                  'stores': True},
@@ -108,7 +108,7 @@ GAMECONF = {'basic':
             'chd_capta':
                 {'child_type': gi.ChildType.NORMAL,
                  'child_cvt': 3,
-                 'sow_rule': gi.SowRule.OWN_SOW_CAPT_ALL,
+                 'sow_rule': gi.SowRule.ENPAS_ALL_OWNER_SOW,
                  'mlaps': gi.LapSower.LAPPER,
                  'capt_on': [3],
                   'stores': True},

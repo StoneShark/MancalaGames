@@ -29,13 +29,23 @@
          "mx_stores_m": 4
       }
    },
+   "variants": {
+      "Adi": { },
+      "No_Rounds": {
+         "goal": 0,
+         "goal_param": 0,
+         "rounds": 0,
+         "round_fill": 0,
+         "round_starter": 0
+      }
+   },
    "vari_params": {
       "holes": [ 6, 7, 8, 9, 10, 11, 12 ],
       "goal_param": "include",
       "mustpass": "include",
       "prescribed": [ 0, 3, 4 ],
       "capt_rturn": "include",
-      "sow_rule": [ 3, 4 ],
+      "sow_rule": [ 0, 3, 4, 14, 15 ],
       "pickextra": [ 0, 3, 4 ],
       "round_fill": [ 0, 8 ]
    },
@@ -59,23 +69,26 @@ the game is over.
 
 Variations:
 
-- common board sizes: 6, 7 or 12
+- Common board sizes: 6, 7 or 12.
 
-- change number of holes required for win (GOAL_PARAM)
+- Change number of holes required for win (GOAL_PARAM).
 
-- don't allow passing (MUSTPASS off)
+- Don't allow passing (MUSTPASS off).
 
-- PRESCRIBED opening PLUS1MINUS1
+- PRESCRIBED opening PLUS1MINUS1.
 
-- repeat turn on capture (CAPT_RTURN)
+- Repeat turn on capture (CAPT_RTURN).
 
-- only sower captures during sowing (SOW_RULE: SOW_CAPT_ALL)
+- Any en passant capture (SOW_RULE) or no en passant captures.
 
-- when 8 seeds or fewer, the round starter takes them (PICKEXTRA:
-PICK2NLASTSEEDS)
+- When 8 seeds or fewer, the round starter takes them (PICKEXTRA:
+PICK2NLASTSEEDS).
 
-- don't use round fill (ROUND_FILL) of Winner Chooses Owners (UCHOWN),
-see NumNum
+- Don't use round fill (ROUND_FILL) of Winner Chooses Owners (UCHOWN),
+see NumNum.
+
+- <nolink>Adi::No_Rounds - not played in rounds; the games ends as soon as
+one player has half the seeds.
 
 - see Lam Waladach
 </about>

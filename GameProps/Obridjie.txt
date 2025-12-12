@@ -26,7 +26,7 @@
       }
    },
    "vari_params": {
-      "sow_rule": [ 3, 4 ]
+      "sow_rule": [ 3, 4, 14, 15 ]
    },
    "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p21.",
    "origin": "traditional",
@@ -34,10 +34,10 @@
 }
 <text_section>
 <about>
-Sow multi-lap counter-clockwise.  All holes sown to 4 are taken by the
-hole owner until the last hole.
+Sow multi-lap counter-clockwise.
 
-If the last hole is sown to 4, it is captured by the sower.
+Holes sown to 4 seeds are captured by the hole owner;
+except for the final seed of a lap, then the sower captures the seeds.
 
 Goal: capture at least half of the seeds.
 </about>

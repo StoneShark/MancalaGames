@@ -1,0 +1,104 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 6,
+      "nbr_start": 4
+   },
+   "game_info": {
+      "name": "Adi_II",
+      "about": "<text_section>",
+      "capt_on": [ 4 ],
+      "goal": 2,
+      "goal_param": 12,
+      "mlaps": 1,
+      "mustpass": true,
+      "capt_side": 0,
+      "pickextra": 3,
+      "round_starter": 0,
+      "rounds": 2,
+      "sow_direct": 1,
+      "sow_rule": 15,
+      "stores": true
+   },
+   "player": {
+      "scorer": {
+         "mx_stores_m": 4
+      }
+   },
+   "variants": {
+      "Adi_II": { },
+      "No_Rounds": {
+         "goal": 0,
+         "goal_param": 0,
+         "rounds": 0
+      },
+      "Ba-awa": {
+         "goal": 0,
+         "goal_param": 0,
+         "rounds": 0,
+         "sow_rule": 4
+      },
+      "Motiq": {
+         "goal": 0,
+         "goal_param": 0,
+         "rounds": 0,
+         "holes": 7,
+         "mustpass": false,
+         "mustshare": true,
+         "capt_rturn": 1,
+         "unclaimed": 3
+      }
+   },
+   "vari_params": {
+      "holes": [ 6, 7 ],
+      "goal_param": "include",
+      "sow_rule": [ 0, 4, 15 ]
+   },
+   "rules": "Hanson, Sue and Jon. All about Mancala: It's History and How to Play. 2003. p67-74.",
+   "origin": "traditional",
+   "region": "Western Africa"
+}
+<text_section>
+<about>
+A territory game.
+
+Sow counter-clockwise in multiple laps via the next hole method.
+Multilap sowing ends when there are no seeds in the next hole or
+when the final seed of lap sows a hole to four seeds.
+
+Until the final seed of a lap, any of the sower's holes that are
+sown to four are captured by the sower. The non-sower does not capture
+any holes.
+
+Captures are on 4s on the final seed sown, regardless of hole owner.
+If this capture leaves only 4 seeds in play, they are also taken.
+
+A player must pass if they have no moves.
+Each round ends when there neither player has a move.
+
+To setup for the next round, each player fills as many holes as they
+can. The player owns the holes that they fill for the next round.
+The round starter alternates.
+
+The game ends when one player has all of the seeds; they are the winner.
+
+Variations:
+
+- Change number of holes required for win (GOAL_PARAM).
+
+- Remove the en passant capture (SOW_RULE of None).
+
+- <nolink>Adi_II::No_Rounds - not played in rounds; the games ends as soon as
+one player has half the seeds.
+
+- <nolink>Adi_II::Ba-awa has two differences from the base game.
+First, it is not played in rounds with the goal to capture the most seeds.
+Second, the hole owner always performs the capture--both en passant and final capture.
+
+- <nolink>Adi_II::Motiq - Board size is 7 holes per side (but can be set to 6).
+It is not played in rounds with the goal to capture the most seeds. Passing is not allowed.
+Repeat turn on captures.
+Player's must make seeds available to an oppenent with none;
+if a player cannot, the opponent gets the seeds on the board (unfed player), and the game is over.
+</about>
+</text_section>

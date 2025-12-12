@@ -27,17 +27,29 @@
       }
    },
    "variants": {
-      "Leab El-\u00e1kil": { },
+      "Leab El-ákil": { },
       "Equal": {
          "nbr_start": 6,
+         "start_pattern": 0
+      },
+      "No_Rounds": {
+         "goal": 0,
+         "goal_param": 0,
+         "rounds": 0,
+         "round_fill": 0,
+         "round_starter": 0,
+         "nbr_start": 4,
          "start_pattern": 0
       }
    },
    "vari_params": {
-      "goal_param": "include"
+      "goal_param": "include",
+      "capt_rturn": "include",
+      "pickextra": [ 0, 6 ]
    },
    "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p77.",
-   "deviation": "Seeds are placed randomly instead of by the starting player.",
+   "deviation": "<text_section>",
+   "note": "<text_section>",
    "origin": "traditional",
    "region": "Northern Africa"
 }
@@ -70,5 +82,21 @@ Variations:
 - The number of extra seeds goal may be set via Config Variants.
 
 - <nolink>Leab El-ákil::Equal - An all equal start pattern with 6 seeds per hole.
+
+- <nolink>Leab El-ákil::No_Rounds do not play multiple rounds, an all equal
+start pattern with 4 seeds in each hole, the goal is to collect more than
+half the seeds.
+
+- Do not take seeds across the board from captured holes (PICKEXTRA of NONE).
+
+- Repeat turn on capture (CAPT_RTURN).
 </about>
+<note>
+This game is called Mankala'h in "All About Mancala".
+Hanson, Sue and Jon. All about Mancala: It's History and How to Play. 2003. p79-81.
+</note>
+<deviation>
+Seeds are placed randomly instead of by the starting player.
+A human player may use the setup board option to adjust the seeds.
+</deviation>
 </text_section>

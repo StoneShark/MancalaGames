@@ -18,7 +18,7 @@
       "round_starter": 0,
       "rounds": 2,
       "sow_direct": 1,
-      "sow_rule": 3,
+      "sow_rule": 4,
       "stores": true
    },
    "player": {
@@ -29,11 +29,22 @@
          "mx_stores_m": 4
       }
    },
+   "variants": {
+      "Pandi": { },
+      "No_Rounds": {
+         "goal": 0,
+         "goal_param": 0,
+         "rounds": 0,
+         "round_fill": 0,
+         "round_starter": 0,
+         "blocks": false
+      }
+   },
    "vari_params": {
-      "sow_rule": [ 3, 4 ],
+      "goal_param": "include",
+      "sow_rule": [ 0, 3, 4, 14, 15 ],
       "round_starter": "include",
-      "round_fill": "include",
-      "goal_param": "include"
+      "round_fill": [ 1, 2, 3, 6 ]
    },
    "rules": "Russ, Laurence. Mancala Games. 1984. p60.",
    "origin": "traditional",
@@ -57,19 +68,25 @@ If a capture is made, the seeds from hole opposite the now empty hole
 are also captured.
 
 Played in ROUNDS. Each round ends when the current player does not
-have any playable holes. Round setup is via the Empty Hole Method of
-ROUND_FILL using the LEFT_FILL approach.  After the next round setup
-unfilled holes are out of play. The players alternate starting each
-round.
+have any playable holes. Round setup is via the
+<a href="game_params.html#rf_ehm">Empty Hole Method</a> of
+ROUND_FILL from each player's left.
+After the next round setup unfilled holes are
+out of play. The players alternate starting rounds.
 
 The game is over when either player cannot fill a single hole.
 
 Variations:
 
-- SOW_RULE of SOW_CAPT_ALL instead of OWN_SOW_CAPT_ALL.
+- Any en passant capture type (SOW_RULE) or no en passant captures.
 
 - Other options for ROUND_STARTER and ROUND_FILL.
 
-- See Olinda and Pallam Kuzhi.
+- Change the number of holes that a round loser must be able to fill to continue playing (GOAL_PARAM).
+
+- <nolink>Pandi::No_Rounds is a simpler game played with only 4 seeds per hole at the start 
+and not played in rounds.
+
+- See Olinda, Pallam Kuzhi and Pallanguli.
 </about>
 </text_section>

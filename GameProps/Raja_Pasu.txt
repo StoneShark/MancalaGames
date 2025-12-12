@@ -32,6 +32,8 @@
 <about>
 Sow counter-clockwise in lapper next fashion. Hole owners capture all
 holes sown to 4 seeds.
+Holes sown to 4 seeds except for the final seed of a lap is
+captured by the hole owner.
 
 When the lap sowing ends, capture any seeds across the gap from the
 empty hole that stopped the lap sowing.

@@ -13,11 +13,11 @@
       "capt_on": [ 4 ],
       "mlaps": 2,
       "capt_side": 0,
-      "round_fill": 6,
+      "round_fill": 1,
       "round_starter": 0,
       "rounds": 2,
       "sow_direct": 1,
-      "sow_rule": 3,
+      "sow_rule": 4,
       "stores": true
    },
    "player": {
@@ -28,12 +28,22 @@
          "mx_stores_m": 4
       }
    },
+   "variants": {
+      "Pallam Kuzhi": { },
+      "No_Rounds": {
+         "goal": 0,
+         "goal_param": 0,
+         "rounds": 0,
+         "round_fill": 0,
+         "blocks": false
+      }
+   },
    "vari_params": {
-      "nbr_start": [ 4, 6 ],
-      "sow_rule": [ 3, 4 ],
+      "nbr_start": [ 4, 5, 6 ],
+      "goal_param": "include",
+      "sow_rule": [ 0, 3, 4, 14, 15 ],
       "round_starter": "include",
-      "round_fill": "include",
-      "goal_param": "include"
+      "round_fill": [ 1, 2, 3, 6 ]
    },
    "rules": "Russ, Laurence. Mancala Games. 1984. p58.",
    "origin": "traditional",
@@ -55,21 +65,26 @@ sown, is empty and there are seeds in the hole 'two out' from the last
 sown seed.
 
 Played in ROUNDS. Each round ends when the current player does not
-have any playable holes. Round setup is via the Empty Hole Method of
-ROUND_FILL using the OUTSIDE_FILL approach which the user may choose
-to override (UCHOOSE).  After the next round setup unfilled holes are
+have any playable holes. Round setup is via the
+<a href="game_params.html#rf_ehm">Empty Hole Method</a> of
+ROUND_FILL from each player's left.
+After the next round setup unfilled holes are
 out of play. The players alternate starting rounds.
 
 The game is over when either player cannot fill a single hole.
 
 Variations:
 
-- 6 start seeds.
+- 4 to 6 start seeds.
 
-- SOW_RULE of SOW_CAPT_ALL instead of OWN_SOW_CAPT_ALL.
+- Any en passant capture (SOW_RULE) or no en passant captures.
 
 - Other options for ROUND_STARTER and ROUND_FILL.
 
-- See Olinda and Pandi.
+- Change the number of holes that a round loser must be able to fill to continue playing (GOAL_PARAM).
+
+- <nolink>Pallam_Kuzhi::No_Rounds is a simpler game played with only 4 seeds per hole at the start and not played in rounds.
+
+- See Olinda, Pallanguli and Pandi.
 </about>
 </text_section>

@@ -52,7 +52,6 @@ Variations:
 
 - allow captures to continue as long as holes after the first capture
 are empty on your own side of the board (MULTICAPT -1: all possible
-captures, 2, 3 ... limit count of captures). This variant is not
-included in Hanson's rules.
+captures, 2, 3 ... limit count of captures).
 </about>
 </text_section>

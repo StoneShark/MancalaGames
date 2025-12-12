@@ -7,16 +7,15 @@
    "game_info": {
       "name": "ZigZag",
       "about": "<text_section>",
-      "crosscapt": true,
+      "crosscapt": 1,
       "help_file": "ZigZagHelp.pdf",
       "mlaps": 1,
-      "mlap_cont": 3,
       "capt_side": 2,
       "sow_direct": 4,
-      "stores": true
+      "stores": true,
+      "mlap_cont": 3
    },
    "player": {
-      "ai_params": { },
       "scorer": {
          "mx_stores_m": 4
       }
@@ -26,7 +25,7 @@
       "nbr_start": "include"
    },
    "rules": "Richard's PBeM  http://www.gamerz.net/pbmserv/zigzag.html",
-   "lagniappe": "Mancala World, https://mancala.fandom.com/wiki/Zig_Zag, provides some details on tournaments that have included this game.",
+   "lagniappe": "<text_section>",
    "origin": "modern",
    "region": "Americas"
 }
@@ -34,8 +33,8 @@
 <about>
 A semi-multi-lap mancala.
 
-Sow in a zigzag, back-and-forth across the board, towards the center-
-line of the board. At either end, sow directly across the board.
+Sow in a zigzag, back-and-forth across the board, towards the
+center-line of the board. At either end, sow directly across the board.
 Continue in multiple laps as long as the last seed of a lap lands on
 your own side of the board. See help for details and examples.
 
@@ -56,4 +55,8 @@ Variations:
 
 - any odd number of seeds
 </about>
+<lagniappe>
+Mancala World, https://mancala.fandom.com/wiki/Zig_Zag, provides some details
+on tournaments that have included this game.
+</lagniappe>
 </text_section>

@@ -34,7 +34,7 @@
       "mustpass": "include",
       "prescribed": [ 0, 3, 4 ],
       "capt_rturn": "include",
-      "sow_rule": [ 3, 4 ],
+      "sow_rule": [ 3, 4, 14, 15 ],
       "pickextra": [ 0, 3, 4 ],
       "round_fill": [ 0, 8 ]
    },
@@ -58,24 +58,24 @@ the game is over.
 
 Variations:
 
-- common board sizes: 6, 7 or 12
+- Common board sizes: 6, 7 or 12.
 
-- change number of holes required for win (GOAL_PARAM)
+- Change number of holes required for win (GOAL_PARAM).
 
-- don't allow passing (MUSTPASS off)
+- Don't allow passing (MUSTPASS off).
 
-- PRESCRIBED opening PLUS1MINUS1
+- PRESCRIBED opening PLUS1MINUS1.
 
-- repeat turn on capture (CAPT_RTURN)
+- Repeat turn on capture (CAPT_RTURN).
 
-- only sower captures during sowing (SOW_RULE: SOW_CAPT_ALL)
+- Any en passant capture (SOW_RULE).
 
-- when 8 seeds or fewer, the round starter takes them (PICKEXTRA:
-PICK2NLASTSEEDS)
+- When 8 seeds or fewer, the round starter takes them (PICKEXTRA:
+PICK2NLASTSEEDS).
 
-- use round fill (ROUND_FILL) of Winner Chooses Owners (UCHOWN), see
-Adi
+- Use round fill (ROUND_FILL) of Winner Chooses Owners (UCHOWN), see
+Adi.
 
-- see Lam Waladach
+- See Lam Waladach.
 </about>
 </text_section>

@@ -40,11 +40,11 @@
 <about>
 A territory game.
 
-Sow in multiple-laps clockwise. Any holes sown to 4 seeds are captured
-by the hole owner.
+Sow in multiple-laps clockwise.
 
-If the final seed of a sow yields 4 seeds in a hole, the sower
-captures them. Capture may occur on either side of the board
+Holes sown to 4 seeds are captured by the hole owner;
+except for the final seed of a lap, then the sower captures the seeds.
+Capture may occur on either side of the board.
 
 Played in rounds. A round ends when there are 4 seeds on the board;
 the last capturer (also mover) captures those 4 seeds. Hole ownership

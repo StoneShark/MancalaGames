@@ -158,9 +158,10 @@ instead   of north/south.
 not have any seeds at the start of your turn. You may choose   which hole
 the seed comes from but it must be a hole with at least   two seeds. After
 sharing the one seed, the sharer gets a repeat   turn.
-<p class="helptext"> The following options are prohibited: <a href="game_params.html#blocks">BLOCKS</a>, <a href="game_params.html#mustshare">MUSTSHARE</a>, <a href="game_params.html#no_sides">NO_SIDES</a>,   or
-any repeat turn option (<a href="game_params.html#capt_rturn">CAPT_RTURN</a>, SOW_OWN_STORE, <a href="game_params.html#xc_sown">XC_SOWN</a> or   <a href="game_params.html#grandslam">GRANDSLAM</a>
-of LEGAL_SHARE). The game <a href="game_params.html#goal">GOAL</a> must not be TERRITORY.
+<p class="helptext"> The following options are prohibited: <a href="game_params.html#blocks">BLOCKS</a>, <a href="game_params.html#mustshare">MUSTSHARE</a> or <a href="game_params.html#no_sides">NO_SIDES</a>.
+The game <a href="game_params.html#goal">GOAL</a> must not be TERRITORY.
+<p class="helptext"> <a href="about_games.html#Leab El-&aacute;kil">Leab El-&aacute;kil</a>
+is a preconfigured game using this class.
 <li class="helptext">
 <nolink><b class="inhead">ZigZag</b>
 <p class="helptext"> A flexible game class with a unique zigzag sowing pattern. See   the
@@ -243,7 +244,8 @@ Generally, the required number of holes is one, but   this may be increased
 by setting goal_param.
 <p class="helptext"> In MAX_SEEDS/ROUNDS games the player only controls the holes on   their
 side of the board, while, in TERRITORY games a player may   control holes
-on either side of the board.
+on either side of the board.    <a href="game_params.html#blocks">BLOCKS</a> control if any unfilled holes are in
+play for the round or not.
 <li class="helptext">
 <b class="enum">DEPRIVE</b>: eliminate all your opponent's seeds. If a player has no seeds at
 the start of their turn, they lose. If the current player doesn't have any
@@ -284,8 +286,8 @@ board; its seeds may be captured by that player.
 <p class="helptext"> In territory games, all holes are available for play each round,
 though the <a href="game_params.html#allow_rule">ALLOW_RULE</a> or <a href="game_params.html#mustshare">MUSTSHARE</a> may limit which holes may be   played on
 any given turn.
-<p class="helptext"> In a territory game without rounds, the winner is not declared   until
-one player has enough seeds to claim goal_param holes.
+<p class="helptext"> In a territory game without rounds, an outright winner is not declared
+until one player has enough seeds to claim goal_param holes.
 <p class="helptext"> Territory games require <a href="game_params.html#stores">STORES</a> and that <a href="game_params.html#goal_param">GOAL_PARAM</a> be set to a   value
 between the number of holes and two times the number of holes.
 <p class="helptext"> Territory games are incompatible with <a href="game_params.html#no_sides">NO_SIDES</a>, <a href="game_params.html#grandslam">GRANDSLAM</a> of
@@ -709,6 +711,10 @@ what you want. A gentle warning (console print) is raised.
 continue to do so until they have allowable moves, or the game is over. The
 game is over when there is a clear winner or tie condition, or when neither
 player has an allowable move.
+<p>If both <a href="game_params.html#mustshare">MUSTSHARE</a> and <nolink>MUSTPASS are set,  if any holes will share
+seeds, only those holes are allowed for moves. On the other hand, if no
+moves share seeds, moves from all holes that meet other criteria are
+allowed.
 <h4 id="mustshare"> Must Share </h4>
 <p class="pdesc">Location in Config Files: game_info : mustshare
 <p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
@@ -716,7 +722,8 @@ player has an allowable move.
 <p class="pdesc">UI Tab: Dynamics
 
 <p>If an opponent has no moves at the start of your turn, you must make seeds
-available to them, if you can.
+available to them, if you can.  Generally, the game is ended if the player
+with seeds cannot share. The game winner is determined by other parameters.
 <p>This condition is enforced by only activating holes in the UI which will
 make seeds available to the opponent. If used with <a href="game_params.html#udir_holes">UDIR_HOLES</a>, grids are
 used to show which direction cannot be sown.
@@ -816,19 +823,36 @@ starts the new round.
 <p class="pdesc">Default value: 0
 <p class="pdesc">UI Tab: Dynamics
 
-<p>The round fill method determines which holes are filled and how many seeds
-they are filled with when setting up for a new round.
-<p>Several round fill mechanisms use the same general approach called the
-Empty Hole Method. The loser of the previous round will end up with empty
-holes. These holes are not playable if <a href="game_params.html#blocks">BLOCKS</a> are used; otherwise, they are
-playable. This method is not used for RND_* <a href="game_params.html#goal">GOAL</a> games.
+<p>The round fill method determines hole contents or ownership after each
+round.
+<p>Valid round_fill values are based on the game <a href="game_params.html#goal">GOAL</a>:
+<p><ul><li>MAX_SEEDS games:
+<p>  <ul><li>Holes left empty at the start of new rounds:  LEFT_FILL,
+RIGHT_FILL, OUTSIDE_FILL, and UCHOOSE. The Empty Hole Method of fill is
+used (see below).
+<p>  <li>Other special handling: EVEN_FILL, SHORTEN, UMOVE, SHORTEN_ALL, and
+LOOSER ONLY.
+<p></ul><li>TERRITORY Games:
+<p>  <ul><li>TERR_EX_LOSER, TERR_EX_EMPTY, TERR_EX_RANDOM describe how to
+handle the hole allocation when player's have extra seeds, e.g. not enough
+to completely fill a final hole.
+<p>  <li>UCHOWN allows the players to choose which holes the winner owns.
+<p>  <li>NOT_APPLICABLE may be used for TERRITORY games not played in rounds
+or the original default extra hole allocation.
+<p></ul><li>Round tally games (RND_* goals):  round_fill must be
+NOT_APPLICABLE as all rounds are setup the same.
+<p><li>DEPRIVE, CLEAR and IMMOBILIZE games cannot be played in rounds, thus
+round_fill should be NOT_APPLICABLE.
+<p></ul><h5 id="rf_ehm">Empty Hole Method</h5>
+<p>The loser of the previous round may end up with empty holes. These holes
+are not playable if <a href="game_params.html#blocks">BLOCKS</a> are used; otherwise, they are playable.  The
+specific holes fill are determined by the round_fill selection.
 <p>The seeds each player accumulated in the previous round are distributed
 into holes with exactly the same number in each (<a href="game_params.html#nbr_start">NBR_START</a> seeds). The
 winner will fill all their holes and put any remaining seeds into their own
 store. The loser will fill as many holes as they can with nbr_start seeds
 and put any remaining seeds (fewer than nbr_start) into their own store.
-<p>LEFT_FILL, RIGHT_FILL and OUTSIDE_FILL define which holes that the loser
-must fill. UCHOOSE allows the loser to choose which holes have seeds.
+<p><h5>Enumeration Values</h5>
 <ol start=0><li class="helptext">
 <b class="enum">NOT_APPLICABLE</b>: round fill doesn't need to be specified.
 <p class="helptext"> For TERRITORY games, this is the default round fill. If the players
@@ -1107,29 +1131,22 @@ SOW_BLKD_DIV(_NR).
 <b class="enum">SOW_BLKD_DIV_NR</b>: Behaves the same as SOW_BLKD_DIV except that each
 player's rightmost hole cannot be closed.
 <li class="helptext">
-<b class="enum">OWN_SOW_CAPT_ALL</b>: The hole OWNer captures all holes that are sown to meet
-the simple capture criteria no matter who sowed them. The simple capture
-criteria are evens, min, max and capture on. Other criteria are enforced:
-side of the board, unlocked, and not child.
+<b class="enum">ENPAS_ALL_OWNER_SOW</b>: Holes sown to meet the basic capture criteria are
+captured by the hole owners.  The capturer handles the final hole sown; if
+it meets all of the capture criteria it is captured by the sower.
+<p class="helptext"> This capture type is sometimes called En Passant or Passing Captures.
 <p class="helptext"> The capture is done by the hole owner, so the non-sower may   capture
 seeds while their opponent sows. If the game <a href="game_params.html#goal">GOAL</a> is   TERRITORY the
 capturer is the hole owner; otherwise each player   captures from their own
 side of the board no matter who is sowing.
-<p class="helptext"> If <a href="game_params.html#mlaps">MLAPS</a> is LAPPER and the final seed sown for any lap meets the
-simple capture criteria for that hole, the contents of the hole are
-captured by the sower and not the hole owner and the turn is over.   For
-CAPTTWOOUT, CAPT_NEXT and <a href="game_params.html#crosscapt">CROSSCAPT</a> captures, the sower always   does the
-final capture.
 <p class="helptext"> <a href="game_params.html#grandslam">GRANDSLAM</a> rules are not applied. <a href="game_params.html#nocaptmoves">NOCAPTMOVES</a> prevents this capture
 for the first moves.
 <li class="helptext">
-<b class="enum">SOW_CAPT_ALL</b>: Like OWN_SOW_CAPT_ALL but only the SOWer captures seeds
-from the side specified by <a href="game_params.html#capt_side">CAPT_SIDE</a>: BOTH sower captures from any hole.
-OPP sower capturer only from opponent's holes.  OWN sower captures only
-from their own holes.
-<p class="helptext"> If mlaps is LAPPER and the final seed sown for any lap meets the
-capture criteria, the contents of the hole are captured by the sower   and
-not the hole owner and the turn is over.
+<b class="enum">ENPAS_ALL_OWNER_OWN</b>: Holes sown to meet the basic capture criteria are
+captured by the hole owners, including the final hole. Note that after the
+owner collects the seeds in the final hole sown, another capture type may
+occur, e.g. capture two out.
+<p class="helptext"> This capture type is sometimes called En Passant or Passing Captures.
 <p class="helptext"> <a href="game_params.html#grandslam">GRANDSLAM</a> rules are not applied. <a href="game_params.html#nocaptmoves">NOCAPTMOVES</a> prevents this capture
 for the first number of specified moves.
 <li class="helptext">
@@ -1176,6 +1193,21 @@ capt_types unless other options are used to prevent endless sows.   Turn on
 Disallow Endless Sows via the Game menu for experimentation.
 <li class="helptext">
 <b class="enum">NO_CHILDREN</b>: do not sow any children.
+<li class="helptext">
+<b class="enum">ENPAS_ALL_SOWER</b>: Holes sown to meet the basic capture criteria are
+captured by the sower.  The capturer handles the final hole sown; if it
+meets all of the capture criteria it is captured by the sower.
+<p class="helptext"> This capture type is sometimes called En Passant or Passing Captures.
+<p class="helptext"> <a href="game_params.html#grandslam">GRANDSLAM</a> rules are not applied. <a href="game_params.html#nocaptmoves">NOCAPTMOVES</a> prevents this capture
+for the first number of specified moves.
+<li class="helptext">
+<b class="enum">ENPAS_SOW_SOWER</b>: Holes sown to meet the basic capture criteria that are
+owned by the sower are captured by the sower.  The capturer handles the
+final hole sown; if it meets all of the capture criteria it is captured by
+the sower.
+<p class="helptext"> This capture type is sometimes called En Passant or Passing Captures.
+<p class="helptext"> <a href="game_params.html#grandslam">GRANDSLAM</a> rules are not applied. <a href="game_params.html#nocaptmoves">NOCAPTMOVES</a> prevents this capture
+for the first number of specified moves.
 </ol>
 <h4 id="sow_param"> Sow Parameter </h4>
 <p class="pdesc">Location in Config Files: game_info : sow_param

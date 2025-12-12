@@ -103,7 +103,7 @@ The game ends when your own holes are cleared.
 on your opponent's side of the board.
 
 - <nolink>CrossCapt::Five - Cross capture initiated from either side of
-the board. The does not end until one person has collected more than
+the board. The game does not end until one person has collected more than
 half the seeds, or the board is cleared.
 
 - <nolink>CrossCapt::Five_No_Sides - <nolink>CrossCapt::Five but plays

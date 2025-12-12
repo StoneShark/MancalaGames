@@ -140,23 +140,26 @@ owner). The seeds of any hole sown to 4 are captured by the hole's owner
 game is over.
 <p>Variations:
 <ul><li class="helptext">
-common board sizes: 6, 7 or 12
+Common board sizes: 6, 7 or 12.
 <li class="helptext">
-change number of holes required for win (<a href="game_params.html#goal_param">GOAL_PARAM</a>)
+Change number of holes required for win (<a href="game_params.html#goal_param">GOAL_PARAM</a>).
 <li class="helptext">
-don't allow passing (<a href="game_params.html#mustpass">MUSTPASS</a> off)
+Don't allow passing (<a href="game_params.html#mustpass">MUSTPASS</a> off).
 <li class="helptext">
-<a href="game_params.html#prescribed">PRESCRIBED</a> opening PLUS1MINUS1
+<a href="game_params.html#prescribed">PRESCRIBED</a> opening PLUS1MINUS1.
 <li class="helptext">
-repeat turn on capture (<a href="game_params.html#capt_rturn">CAPT_RTURN</a>)
+Repeat turn on capture (<a href="game_params.html#capt_rturn">CAPT_RTURN</a>).
 <li class="helptext">
-only sower captures during sowing (<a href="game_params.html#sow_rule">SOW_RULE</a>: SOW_CAPT_ALL)
+Any en passant capture (<a href="game_params.html#sow_rule">SOW_RULE</a>) or no en passant captures.
 <li class="helptext">
-when 8 seeds or fewer, the round starter takes them (<a href="game_params.html#pickextra">PICKEXTRA</a>:
-PICK2NLASTSEEDS)
+When 8 seeds or fewer, the round starter takes them (<a href="game_params.html#pickextra">PICKEXTRA</a>:
+PICK2NLASTSEEDS).
 <li class="helptext">
-don't use round fill (<a href="game_params.html#round_fill">ROUND_FILL</a>) of Winner Chooses Owners (UCHOWN), see
-<a href="about_games.html#NumNum">NumNum</a>
+Don't use round fill (<a href="game_params.html#round_fill">ROUND_FILL</a>) of Winner Chooses Owners (UCHOWN), see
+<a href="about_games.html#NumNum">NumNum</a>.
+<li class="helptext">
+<nolink>Adi::No_Rounds - not played in rounds; the games ends as soon as
+one player has half the seeds.
 <li class="helptext">
 see <a href="about_games.html#Lam Waladach">Lam Waladach</a>
 </ul>
@@ -177,11 +180,70 @@ see <a href="about_games.html#Lam Waladach">Lam Waladach</a>
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: LOSER</p>
     <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
-    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: OWN_SOW_CAPT_ALL</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: ENPAS_ALL_OWNER_SOW</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
   </div>
 </div>
 <p><b class="enum">Rules</b>: Russ, Laurence. Mancala Games. 1984. p53.
+<p><b class="enum">Origin</b>: traditional
+<p><b class="enum">Region</b>: Western Africa
+<h3 id="Adi_II" class="game_desc">Adi_II</h3>
+<p>A territory game.
+<p>Sow counter-clockwise in multiple laps via the next hole method. Multilap
+sowing ends when there are no seeds in the next hole or when the final seed
+of lap sows a hole to four seeds.
+<p>Until the final seed of a lap, any of the sower's holes that are sown to
+four are captured by the sower. The non-sower does not capture any holes.
+<p>Captures are on 4s on the final seed sown, regardless of hole owner. If
+this capture leaves only 4 seeds in play, they are also taken.
+<p>A player must pass if they have no moves. Each round ends when there
+neither player has a move.
+<p>To setup for the next round, each player fills as many holes as they can.
+The player owns the holes that they fill for the next round. The round
+starter alternates.
+<p>The game ends when one player has all of the seeds; they are the winner.
+<p>Variations:
+<ul><li class="helptext">
+Change number of holes required for win (<a href="game_params.html#goal_param">GOAL_PARAM</a>).
+<li class="helptext">
+Remove the en passant capture (<a href="game_params.html#sow_rule">SOW_RULE</a> of None).
+<li class="helptext">
+<nolink>Adi_II::No_Rounds - not played in rounds; the games ends as soon
+as one player has half the seeds.
+<li class="helptext">
+<nolink>Adi_II::Ba-awa has two differences from the base game. First, it
+is not played in rounds with the goal to capture the most seeds. Second,
+the hole owner always performs the capture--both en passant and final
+capture.
+<li class="helptext">
+<nolink>Adi_II::Motiq - Board size is 7 holes per side (but can be set to
+6). It is not played in rounds with the goal to capture the most seeds.
+Passing is not allowed. Repeat turn on captures. Player's must make seeds
+available to an oppenent with none; if a player cannot, the opponent gets
+the seeds on the board (unfed player), and the game is over.
+</ul>
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  4</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: TERRITORY</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 4</p>
+    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: BOTH</p>
+    <p class="param"><a href="game_params.html#goal_param">Goal Parameter</a>: 12</p>
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
+    <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#pickextra">On Capture, Take More Rule</a>: PICKLASTSEEDS</p>
+    <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: ENPAS_SOW_SOWER</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p><b class="enum">Rules</b>: Hanson, Sue and Jon. All about Mancala: It's
+History and How to Play. 2003. p67-74.
 <p><b class="enum">Origin</b>: traditional
 <p><b class="enum">Region</b>: Western Africa
 <h3 id="Adji-boto" class="game_desc">Adji-boto</h3>
@@ -469,7 +531,7 @@ last four seeds.
     <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
     <p class="param"><a href="game_params.html#pickextra">On Capture, Take More Rule</a>: PICKLASTSEEDS</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
-    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: OWN_SOW_CAPT_ALL</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: ENPAS_ALL_OWNER_SOW</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
   </div>
 </div>
@@ -502,7 +564,7 @@ This might result in one empty hole that the round loser will control.
 <ul><li class="helptext">
 holes required to win the game (<a href="game_params.html#goal_param">GOAL_PARAM</a>).
 <li class="helptext">
-don't end the game when one or two seeds (<a href="game_params.html#end_cond">END_COND</a>). See Note.
+don't end the game when one or two seeds (<a href="game_params.html#end_cond">END_COND</a>). See deviation.
 <li class="helptext">
 <nolink>Ayo::No_Rounds - not played in rounds. Goal is to collect more
 seeds than opponent.
@@ -629,10 +691,11 @@ the AI player, this results in a large branching factor and makes the AI
 players slow.
 <h3 id="Ba-awa" class="game_desc">Ba-awa</h3>
 <p>A territory game.
-<p>Sow in multiple-laps counter-clockwise. Any holes sown to 4 seeds are
-captured by the hole owner.
+<p>Sow in multiple-laps counter-clockwise. Holes sown to 4 seeds are captured
+by the hole owner except for the final seed of a lap then the sower
+captures the seeds.
 <p>If the final seed of a sow yields 4 seeds in a hole, the sower captures
-them. Capture may occur on either side of the board
+them. Capture may occur on either side of the board.
 <p>Played in rounds. A round ends when there are 8 seeds on the board; the
 round starter collects those 8 seeds. Hole ownership is reallocated each
 round based on the number of holes each player can fill with their
@@ -654,7 +717,7 @@ collected seeds. The round starter alternates.
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
     <p class="param"><a href="game_params.html#rounds">Rounds</a>: END_2S_SEEDS</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
-    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: OWN_SOW_CAPT_ALL</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: ENPAS_ALL_OWNER_SOW</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
   </div>
 </div>
@@ -934,7 +997,7 @@ holes sown to 4 on their own side of the board.
   <div class="column2">
     <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER_NEXT</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
-    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: OWN_SOW_CAPT_ALL</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: ENPAS_ALL_OWNER_OWN</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
   </div>
 </div>
@@ -1119,8 +1182,8 @@ ends when your own holes are cleared.
 your opponent's side of the board.
 <li class="helptext">
 <nolink>CrossCapt::Five - Cross capture initiated from either side of the
-board. The does not end until one person has collected more than half the
-seeds, or the board is cleared.
+board. The game does not end until one person has collected more than half
+the seeds, or the board is cleared.
 <li class="helptext">
 <nolink>CrossCapt::Five_No_Sides - <nolink>CrossCapt::Five but plays may
 be made from any hole.
@@ -1252,8 +1315,7 @@ Either player collects more than half the seeds.
 <ul><li class="helptext">
 allow captures to continue as long as holes after the first capture are
 empty on your own side of the board (<a href="game_params.html#multicapt">MULTICAPT</a> -1: all possible captures,
-2, 3 ... limit count of captures). This variant is not included in Hanson's
-rules.
+2, 3 ... limit count of captures).
 </ul>
 <div class="cols_row">
   <div class="column2">
@@ -1691,7 +1753,7 @@ any capture on values
   <div class="column2">
     <p class="param"><a href="game_params.html#no_sides">No Sides</a>: Yes</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: SPLIT</p>
-    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: OWN_SOW_CAPT_ALL</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: ENPAS_ALL_OWNER_SOW</p>
     <p class="param"><a href="game_params.html#udir_holes">User Chooses Direction</a>: 2</p>
   </div>
 </div>
@@ -1768,11 +1830,15 @@ seeds in the following hole.
 <p><b class="enum">Region</b>: Central Asia
 <h3 id="Four-Capture" class="game_desc">Four-Capture</h3>
 <p>The first move by each player is sown counter-clockwise, the player chooses
-the sow direction for subsequent moves. Sow in multiple laps, but stop for
-capture.
+the sow direction for subsequent moves.
+<p>Sow in multiple laps until the final seed of a laps ends in an empty hole
+or makes 4 seeds on your own side of the board (capture those seeds).
+<p>Any holes on your own side of the board that are sown to 4 are moved to
+your store.
+<p>If the final seed of a lap sows an opponent's hole to 4 seeds those seeds
+are picked up and the multiplap sowing continues.
 <p>If your opponent does not have seeds you must share. If you cannot share
 your opponent claims your remaining seeds and the game ends.
-<p>Capture on 4s on either side of the board.
 <p>Goal: collect the most seeds.
 <div class="cols_row">
   <div class="column2">
@@ -1787,6 +1853,7 @@ your opponent claims your remaining seeds and the game ends.
   <div class="column2">
     <p class="param"><a href="game_params.html#prescribed">Prescribed Opening Move</a>: NO_UDIR_FIRSTS</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: ENPAS_ALL_SOWER</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
     <p class="param"><a href="game_params.html#udir_holes">User Chooses Direction</a>: all</p>
     <p class="param"><a href="game_params.html#unclaimed">Unclaimed Seeds at End</a>: UNFED_PLAYER</p>
@@ -2087,8 +2154,10 @@ p353.
 <p><b class="enum">Origin</b>: traditional
 <p><b class="enum">Region</b>: Western Asia
 <h3 id="Hoyito I" class="game_desc">Hoyito I</h3>
-<p>Sow counter-clockwise in multiple laps. Any hole sown to 4 is captured by
-the sower.  The last 4 seeds are taken along with the final capture.
+<p>Sow counter-clockwise in multiple laps. Multilap sowing ends when there is
+only one seed in the final and for a final capture.
+<p>Any hole sown to 4 is captured by the sower.
+<p>The last 4 seeds are taken along with the final capture.
 <p>Played in rounds. After each round players fill as many holes as they can
 with 4 seeds each. Extra seeds are placed in their store. Unfilled holes
 are out of play for the round.
@@ -2109,7 +2178,7 @@ are out of play for the round.
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
     <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
-    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: SOW_CAPT_ALL</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: ENPAS_ALL_SOWER</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
   </div>
 </div>
@@ -2627,13 +2696,22 @@ p91.
 least 9 holes. Each player initially owns the holes on their side of the
 board. Owners of holes are updated at the start of each round based on the
 number of seeds captured in the previous round.
-<p>The seeds of any hole sown to 4 are captured by the hole's owner
-(regardless of sower). Captures are on 4s on the final sown seed by the
-sower (regardless of hole owner). A capture results in  a repeat turn.
-Captures and pick 4s are allowed on the first move of the game. A player
-must pass if they have no moves.
+<p>Sow direction is counter-clockwise. There are no captures or en passant
+captures on the first turn.
+<p>The seeds of any hole sown (except the last seed of a lap) to 4 are
+captured by the hole's owner (regardless of sower).
+<p>Captures are on 4s on the final sown seed by the sower (regardless of hole
+owner). A capture results in  a repeat turn. Captures and pick 4s are
+allowed on the first move of the game.
+<p>A player must pass if they have no moves.
 <p>If neither player has moves, the game is over. The game also ends if there
 are fewer than 6 seeds in play, with the seeds going to the round starter.
+<p>Variations:
+<ul><li class="helptext">
+change the number of holes required for the win.
+<li class="helptext">
+turn off repeat turn on capture.
+</ul>
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  6</p>
@@ -2644,22 +2722,21 @@ are fewer than 6 seeds in play, with the seeds going to the round starter.
     <p class="param"><a href="game_params.html#capt_side">Capture side</a>: BOTH</p>
     <p class="param"><a href="game_params.html#goal_param">Goal Parameter</a>: 9</p>
     <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
+    <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
   </div>
   <div class="column2">
-    <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
+    <p class="param"><a href="game_params.html#nocaptmoves">Nbr Start Moves w/o Capture</a>: 1</p>
     <p class="param"><a href="game_params.html#pickextra">On Capture, Take More Rule</a>: PICK2XLASTSEEDS</p>
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: LOSER</p>
     <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
-    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: OWN_SOW_CAPT_ALL</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: ENPAS_ALL_OWNER_SOW</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
   </div>
 </div>
 <p><b class="enum">Rules</b>: Russ, Laurence. Mancala Games. 1984. p55.
-<p><b class="enum">Deviation</b>: Both captures and pick 4s are allowed on the
-first turn. The Mancala Game engine doesn't allow one of these, but not the
-other. The game ends when fewer than 6 seeds are in play, with the round
-starter taking these last seeds.
+<p><b class="enum">Deviation</b>: The game ends when fewer than 6 seeds are in
+play, with the round starter taking these last seeds.
 <p><b class="enum">Note</b>: Hole ownership of > 9, results in very many
 rounds and long games (<a href="game_params.html#goal_param">GOAL_PARAM</a>).
 <p><b class="enum">Origin</b>: traditional
@@ -2783,6 +2860,15 @@ The number of extra seeds goal may be set via Config Variants.
 <li class="helptext">
 <nolink>Leab El-ákil::Equal - An all equal start pattern with 6 seeds per
 hole.
+<li class="helptext">
+<nolink>Leab El-ákil::No_Rounds do not play multiple rounds, an all equal
+start pattern with 4 seeds in each hole, the goal is to collect more than
+half the seeds.
+<li class="helptext">
+Do not take seeds across the board from captured holes (<a href="game_params.html#pickextra">PICKEXTRA</a> of
+NONE).
+<li class="helptext">
+Repeat turn on capture (<a href="game_params.html#capt_rturn">CAPT_RTURN</a>).
 </ul>
 <div class="cols_row">
   <div class="column2">
@@ -2809,7 +2895,11 @@ hole.
 <p><b class="enum">Rules</b>: Valdez, Jacob A. 50 Ways to Play Mancala. 2023.
 p77.
 <p><b class="enum">Deviation</b>: Seeds are placed randomly instead of by the
-starting player.
+starting player. A human player may use the setup board option to adjust
+the seeds.
+<p><b class="enum">Note</b>: This game is called Mankala'h in "All About
+Mancala". Hanson, Sue and Jon. All about Mancala: It's History and How to
+Play. 2003. p79-81.
 <p><b class="enum">Origin</b>: traditional
 <p><b class="enum">Region</b>: Northern Africa
 <h3 id="Leb Bbut Ahbochen" class="game_desc">Leb Bbut Ahbochen</h3>
@@ -2881,11 +2971,13 @@ RoundFill.
 created qur holes as there would be no impact on play.
 <p><b class="enum">Origin</b>: traditional
 <p><b class="enum">Region</b>: Eastern Africa
-<p><b class="enum">References</b>:
-<a href="https://mancala.fandom.com/wiki/Layli_Goobalay_(short_board)" target="_blank">https://mancala.fandom.com/wiki/Layli_Goobalay_(short_board)</a> and
-<a href="https://mancala.fandom.com/wiki/Layli_Goobalay_(long_board)" target="_blank">https://mancala.fandom.com/wiki/Layli_Goobalay_(long_board)</a>  Valdez (p140)
-describes a very similar game with CW sow and round fill is UMOVE but not
-reflected instead opposites have the same seed counts.
+<p><b class="enum">Reference</b>:
+<a href="https://mancala.fandom.com/wiki/Layli_Goobalay_(short_board)" target="_blank">https://mancala.fandom.com/wiki/Layli_Goobalay_(short_board)</a>
+<a href="https://mancala.fandom.com/wiki/Layli_Goobalay_(long_board)" target="_blank">https://mancala.fandom.com/wiki/Layli_Goobalay_(long_board)</a>
+<p>Valdez describes Layli Googalay as a very similar game with CCW sow and
+round fill is UMOVE but not reflected instead opposite holes have the same
+seed counts (not supported in Mancala Games).
+<p>Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p140.
 <h3 id="long night game" class="game_desc">long night game</h3>
 <p>Sow in multiple laps counter-clocks. Moves may only start from holes that
 reach an occupied hole on the first lap.
@@ -2947,6 +3039,8 @@ side and 4 seeds in each hole at the start.
   </div>
 </div>
 <p><b class="enum">Rules</b>: Russ, Laurence. Mancala Games. 1984. p60.
+<p><b class="enum">Reference</b>: Mancala World description of Walak-pussa:
+<a href="https://mancala.fandom.com/wiki/Walak-pussa" target="_blank">https://mancala.fandom.com/wiki/Walak-pussa</a>
 <p><b class="enum">Origin</b>: traditional
 <p><b class="enum">Region</b>: South Asia
 <h3 id="Mandoli" class="game_desc">Mandoli</h3>
@@ -3036,6 +3130,48 @@ on opponents side on 2s, 4s and 6s.
 p47.
 <p><b class="enum">Origin</b>: traditional
 <p><b class="enum">Region</b>: Western Asia, Europe
+<h3 id="Mangala III" class="game_desc">Mangala III</h3>
+<p>Split sow from any of your holes with 2 or more seeds. Capture on 2s and 4s
+on either side of the board.
+<p>The game ends when one player has sufficient seeds for the win or the
+current player does not have a valid move.
+<p>When the game ends, seeds still in play go to the hole owner.
+<p>Goal: collect the more than half the total seeds.
+<p>Variations:
+<ul><li class="helptext">
+Sow in multiple laps (<a href="game_params.html#mlaps">MLAPS</a>).
+<li class="helptext">
+Multiple capture (<a href="game_params.html#multicapt">MULTICAPT</a> of -1).
+<li class="helptext">
+Repeat turn on capture (<a href="game_params.html#capt_rturn">CAPT_RTURN</a>).
+<li class="helptext">
+When capturing, take any seeds across the board from captured holes
+(<a href="game_params.html#pickextra">PICKEXTRA</a> of PICKCROSSMULT).
+</ul>
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  6</p>
+    <p class="param">Start seeds:  5</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 2 4</p>
+    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: BOTH</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 2</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: SPLIT</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+    <p class="param"><a href="game_params.html#unclaimed">Unclaimed Seeds at End</a>: DIVVIED</p>
+  </div>
+</div>
+<p><b class="enum">Rules</b>: Hanson, Sue and Jon. All about Mancala: It's
+History and How to Play. 2003. p81.
+<p><b class="enum">Deviation</b>: The introduction to the game states that the
+game ends whenever either player has zero or one seed in each hole, but
+paragraph at the end of the rules the game only ends when the current
+player does not have a valid move. The first condition is not implemented
+(Mancala Games does not support it).
+<p><b class="enum">Region</b>: Eastern Africa
+<p><b class="enum">Origin</b>: traditional
 <h3 id="Mangala IV" class="game_desc">Mangala IV</h3>
 <p>Start is random placement of 98 seeds.  A human player may choose to swap
 sides on either of the first two moves of the game; the AI will not swap.
@@ -3338,7 +3474,7 @@ seeds available to them, if you can, otherwise the game is over.
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
     <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
-    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: OWN_SOW_CAPT_ALL</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: ENPAS_ALL_OWNER_SOW</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
   </div>
 </div>
@@ -3475,10 +3611,10 @@ and you must capture in order to gain extra seeds for the win.
 <p><b class="enum">Region</b>: Americas
 <h3 id="Nsa Isong" class="game_desc">Nsa Isong</h3>
 <p>A territory game.
-<p>Sow in multiple-laps clockwise. Any holes sown to 4 seeds are captured by
-the hole owner.
-<p>If the final seed of a sow yields 4 seeds in a hole, the sower captures
-them. Capture may occur on either side of the board
+<p>Sow in multiple-laps clockwise.
+<p>Holes sown to 4 seeds are captured by the hole owner; except for the final
+seed of a lap, then the sower captures the seeds. Capture may occur on
+either side of the board.
 <p>Played in rounds. A round ends when there are 4 seeds on the board; the
 last capturer (also mover) captures those 4 seeds. Hole ownership is
 reallocated each round based on the number of holes each player can fill
@@ -3499,7 +3635,7 @@ with their collected seeds. The round starter alternates.
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
     <p class="param"><a href="game_params.html#rounds">Rounds</a>: END_S_SEEDS</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CW</p>
-    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: OWN_SOW_CAPT_ALL</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: ENPAS_ALL_OWNER_SOW</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
   </div>
 </div>
@@ -3518,24 +3654,24 @@ owner). The seeds of any hole sown to 4 are captured by the hole's owner
 game is over.
 <p>Variations:
 <ul><li class="helptext">
-common board sizes: 6, 7 or 12
+Common board sizes: 6, 7 or 12.
 <li class="helptext">
-change number of holes required for win (<a href="game_params.html#goal_param">GOAL_PARAM</a>)
+Change number of holes required for win (<a href="game_params.html#goal_param">GOAL_PARAM</a>).
 <li class="helptext">
-don't allow passing (<a href="game_params.html#mustpass">MUSTPASS</a> off)
+Don't allow passing (<a href="game_params.html#mustpass">MUSTPASS</a> off).
 <li class="helptext">
-<a href="game_params.html#prescribed">PRESCRIBED</a> opening PLUS1MINUS1
+<a href="game_params.html#prescribed">PRESCRIBED</a> opening PLUS1MINUS1.
 <li class="helptext">
-repeat turn on capture (<a href="game_params.html#capt_rturn">CAPT_RTURN</a>)
+Repeat turn on capture (<a href="game_params.html#capt_rturn">CAPT_RTURN</a>).
 <li class="helptext">
-only sower captures during sowing (<a href="game_params.html#sow_rule">SOW_RULE</a>: SOW_CAPT_ALL)
+Any en passant capture (<a href="game_params.html#sow_rule">SOW_RULE</a>) or no en passant captures.
 <li class="helptext">
-when 8 seeds or fewer, the round starter takes them (<a href="game_params.html#pickextra">PICKEXTRA</a>:
-PICK2NLASTSEEDS)
+When 8 seeds or fewer, the round starter takes them (<a href="game_params.html#pickextra">PICKEXTRA</a>:
+PICK2NLASTSEEDS).
 <li class="helptext">
-use round fill (<a href="game_params.html#round_fill">ROUND_FILL</a>) of Winner Chooses Owners (UCHOWN), see <a href="about_games.html#Adi">Adi</a>
+Use round fill (<a href="game_params.html#round_fill">ROUND_FILL</a>) of Winner Chooses Owners (UCHOWN), see <a href="about_games.html#Adi">Adi</a>.
 <li class="helptext">
-see <a href="about_games.html#Lam Waladach">Lam Waladach</a>
+See <a href="about_games.html#Lam Waladach">Lam Waladach</a>.
 </ul>
 <div class="cols_row">
   <div class="column2">
@@ -3553,7 +3689,7 @@ see <a href="about_games.html#Lam Waladach">Lam Waladach</a>
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: LOSER</p>
     <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
-    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: OWN_SOW_CAPT_ALL</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: ENPAS_ALL_OWNER_SOW</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
   </div>
 </div>
@@ -3561,9 +3697,9 @@ see <a href="about_games.html#Lam Waladach">Lam Waladach</a>
 <p><b class="enum">Origin</b>: traditional
 <p><b class="enum">Region</b>: Western Africa
 <h3 id="Obridjie" class="game_desc">Obridjie</h3>
-<p>Sow multi-lap counter-clockwise.  All holes sown to 4 are taken by the hole
-owner until the last hole.
-<p>If the last hole is sown to 4, it is captured by the sower.
+<p>Sow multi-lap counter-clockwise.
+<p>Holes sown to 4 seeds are captured by the hole owner; except for the final
+seed of a lap, then the sower captures the seeds.
 <p>Goal: capture at least half of the seeds.
 <div class="cols_row">
   <div class="column2">
@@ -3577,7 +3713,7 @@ owner until the last hole.
   <div class="column2">
     <p class="param"><a href="game_params.html#quitter">Quit Game Seeds</a>: DONT_SCORE</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
-    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: OWN_SOW_CAPT_ALL</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: ENPAS_ALL_OWNER_SOW</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
     <p class="param"><a href="game_params.html#unclaimed">Unclaimed Seeds at End</a>: DONT_SCORE</p>
   </div>
@@ -3672,21 +3808,24 @@ there are seeds in the hole 'two out' from the last sown seed.
 player's sow direction. If a capture leaves 4 or fewer seeds on the board,
 they are taken by the final capturer.
 <p>Played in <a href="game_params.html#rounds">ROUNDS</a>. Each round ends when the current player does not have any
-playable holes. Round setup is via the Empty Hole Method of <a href="game_params.html#round_fill">ROUND_FILL</a>
-using the OUTSIDE_FILL approach which the user may choose to override
-(UCHOOSE).  After the next round setup unfilled holes are out of play. The
-players alternate starting rounds.
+playable holes. Round setup is via the <a
+href="game_params.html#rf_ehm">Empty Hole Method</a> of <a href="game_params.html#round_fill">ROUND_FILL</a> from
+each player's left. After the next round setup unfilled holes are out of
+play. The players alternate starting rounds.
 <p>The game is over when either player cannot fill a single hole.
 <p>Touch Screen mode will show the right click grids, but after the first
 move, the grid and left and right mouse buttons will all sow in the
 direction set on the first turn.
 <p>Variations:
 <ul><li class="helptext">
-<a href="game_params.html#sow_rule">SOW_RULE</a> of SOW_CAPT_ALL instead of OWN_SOW_CAPT_ALL
+4 to 6 start seeds.
 <li class="helptext">
-Other options for <a href="game_params.html#round_starter">ROUND_STARTER</a> and <a href="game_params.html#round_fill">ROUND_FILL</a>.
+Any en passant capture type (<a href="game_params.html#sow_rule">SOW_RULE</a>).
 <li class="helptext">
-no <a href="game_params.html#pickextra">PICKEXTRA</a> (see deviation)
+No <a href="game_params.html#pickextra">PICKEXTRA</a> (see deviation).
+<li class="helptext">
+Change the number of holes that a round loser must be able to fill to
+continue playing (<a href="game_params.html#goal_param">GOAL_PARAM</a>).
 <li class="helptext">
 See <a href="about_games.html#Pallam Kuzhi">Pallam Kuzhi</a> and <a href="about_games.html#Pandi">Pandi</a>.
 </ul>
@@ -3705,11 +3844,11 @@ See <a href="about_games.html#Pallam Kuzhi">Pallam Kuzhi</a> and <a href="about_
   <div class="column2">
     <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: -1</p>
     <p class="param"><a href="game_params.html#pickextra">On Capture, Take More Rule</a>: PICKLASTSEEDS</p>
-    <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: UCHOOSE</p>
+    <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: LEFT_FILL</p>
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
     <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: PLAYALTDIR</p>
-    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: OWN_SOW_CAPT_ALL</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: ENPAS_ALL_OWNER_SOW</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
   </div>
 </div>
@@ -3918,20 +4057,26 @@ in the hole following the empty hole. That is, captures are made when the
 hole after the hole in which the final seed of a lap was sown, is empty and
 there are seeds in the hole 'two out' from the last sown seed.
 <p>Played in <a href="game_params.html#rounds">ROUNDS</a>. Each round ends when the current player does not have any
-playable holes. Round setup is via the Empty Hole Method of <a href="game_params.html#round_fill">ROUND_FILL</a>
-using the OUTSIDE_FILL approach which the user may choose to override
-(UCHOOSE).  After the next round setup unfilled holes are out of play. The
-players alternate starting rounds.
+playable holes. Round setup is via the <a
+href="game_params.html#rf_ehm">Empty Hole Method</a> of <a href="game_params.html#round_fill">ROUND_FILL</a> from
+each player's left. After the next round setup unfilled holes are out of
+play. The players alternate starting rounds.
 <p>The game is over when either player cannot fill a single hole.
 <p>Variations:
 <ul><li class="helptext">
-6 start seeds.
+4 to 6 start seeds.
 <li class="helptext">
-<a href="game_params.html#sow_rule">SOW_RULE</a> of SOW_CAPT_ALL instead of OWN_SOW_CAPT_ALL.
+Any en passant capture (<a href="game_params.html#sow_rule">SOW_RULE</a>) or no en passant captures.
 <li class="helptext">
 Other options for <a href="game_params.html#round_starter">ROUND_STARTER</a> and <a href="game_params.html#round_fill">ROUND_FILL</a>.
 <li class="helptext">
-See <a href="about_games.html#Olinda">Olinda</a> and <a href="about_games.html#Pandi">Pandi</a>.
+Change the number of holes that a round loser must be able to fill to
+continue playing (<a href="game_params.html#goal_param">GOAL_PARAM</a>).
+<li class="helptext">
+<nolink>Pallam_Kuzhi::No_Rounds is a simpler game played with only 4
+seeds per hole at the start and not played in rounds.
+<li class="helptext">
+See <a href="about_games.html#Olinda">Olinda</a>, <a href="about_games.html#Pallanguli">Pallanguli</a> and <a href="about_games.html#Pandi">Pandi</a>.
 </ul>
 <div class="cols_row">
   <div class="column2">
@@ -3946,15 +4091,88 @@ See <a href="about_games.html#Olinda">Olinda</a> and <a href="about_games.html#P
   </div>
   <div class="column2">
     <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER_NEXT</p>
-    <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: UCHOOSE</p>
+    <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: LEFT_FILL</p>
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
     <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
-    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: OWN_SOW_CAPT_ALL</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: ENPAS_ALL_OWNER_OWN</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
   </div>
 </div>
 <p><b class="enum">Rules</b>: Russ, Laurence. Mancala Games. 1984. p58.
+<p><b class="enum">Origin</b>: traditional
+<p><b class="enum">Region</b>: South Asia
+<h3 id="Pallanguli" class="game_desc">Pallanguli</h3>
+<p>Sow counter-clockwise via the multi-lap next-hole method (<a href="game_params.html#mlaps">MLAPS</a> of
+LAPPER_NEXT). Lap sowing continues until there are no seeds in the hole
+following the last seed of a lap.
+<p>If a player does not have any seeds at the start of their turn, they must
+pass. Their opponent must make seeds available to them as soon as they are
+able. If they can make seeds available, moves are only allowed from holes
+that do so.
+<p>For all but the final seed of lap, any hole sown to four seeds is captured
+by the hole owner. If the final seed of a multi-lap sow sows a hole to four
+seeds, they are not captured.
+<p>After the multi-lap sowing check for captures. The hole from which the next
+lap would start is empty, capture any seeds in the hole after the empty
+one, that is, the hole 'two out' or 'across the gap' from the final hole
+sown.
+<p>Played in rounds.
+<p>Each round ends when the current player does not have any playable holes.
+Round setup is via the <a href="game_params.html#rf_ehm">Empty Hole
+Method</a> of <a href="game_params.html#round_fill">ROUND_FILL</a> from each player's left. After the next round
+setup unfilled holes are out of play. The players alternate starting
+rounds.
+<p>The game is over when either player cannot fill a single hole.
+<p>Variations:
+<ul><li class="helptext">
+4 to 6 start seeds.
+<li class="helptext">
+No en passant capture (<a href="game_params.html#sow_rule">SOW_RULE</a> of None).
+<li class="helptext">
+Change the number of holes that a round loser must be able to fill to
+continue playing (<a href="game_params.html#goal_param">GOAL_PARAM</a>).
+<li class="helptext">
+<nolink>Pallamguli::No_Rounds is a simpler game played with only 4 seeds
+per hole at the start and not played in rounds.
+<li class="helptext">
+<nolink>Pallamguli::Pandi - start with 5 seeds per hole and the final
+capture (not en passant captures) also collect the seeds opposite the
+capture.
+<li class="helptext">
+<nolink>Pallamguli::Longbeu-a-cha - series captures are added--capture as
+long as there is a sequence of empty hole and filled hole.
+<li class="helptext">
+<nolink>Pallamguli::Olinda - not played in rounds, collect more than half
+the seeds to win. Start with 5 seeds per hole. The first player chooses
+their sow direction; the second player sows in the opposite direction.
+</ul>
+<div class="cols_row">
+  <div class="column2">
+    <p class="param">Holes per side:  7</p>
+    <p class="param">Start seeds:  6</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
+    <p class="param"><a href="game_params.html#blocks">Blocks</a>: Yes</p>
+    <p class="param"><a href="game_params.html#capt_dir">Capture Direction</a>: SOW</p>
+    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 4</p>
+    <p class="param"><a href="game_params.html#capt_side">Capture side</a>: BOTH</p>
+    <p class="param"><a href="game_params.html#capt_type">Capture Type</a>: TWO_OUT</p>
+    <p class="param"><a href="game_params.html#goal_param">Goal Parameter</a>: 3</p>
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER_NEXT</p>
+  </div>
+  <div class="column2">
+    <p class="param"><a href="game_params.html#mustpass">Must Pass</a>: Yes</p>
+    <p class="param"><a href="game_params.html#mustshare">Must Share</a>: Yes</p>
+    <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: RIGHT_FILL</p>
+    <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
+    <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
+    <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: ENPAS_ALL_OWNER_SOW</p>
+    <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
+  </div>
+</div>
+<p><b class="enum">Rules</b>: Hanson, Sue and Jon. All about Mancala: It's
+History and How to Play. 2003. p85-92.
 <p><b class="enum">Origin</b>: traditional
 <p><b class="enum">Region</b>: South Asia
 <h3 id="Pandi" class="game_desc">Pandi</h3>
@@ -3970,17 +4188,24 @@ hole 'two out' from the last sown seed.
 <p>If a capture is made, the seeds from hole opposite the now empty hole are
 also captured.
 <p>Played in <a href="game_params.html#rounds">ROUNDS</a>. Each round ends when the current player does not have any
-playable holes. Round setup is via the Empty Hole Method of <a href="game_params.html#round_fill">ROUND_FILL</a>
-using the LEFT_FILL approach.  After the next round setup unfilled holes
-are out of play. The players alternate starting each round.
+playable holes. Round setup is via the <a
+href="game_params.html#rf_ehm">Empty Hole Method</a> of <a href="game_params.html#round_fill">ROUND_FILL</a> from
+each player's left. After the next round setup unfilled holes are out of
+play. The players alternate starting rounds.
 <p>The game is over when either player cannot fill a single hole.
 <p>Variations:
 <ul><li class="helptext">
-<a href="game_params.html#sow_rule">SOW_RULE</a> of SOW_CAPT_ALL instead of OWN_SOW_CAPT_ALL.
+Any en passant capture type (<a href="game_params.html#sow_rule">SOW_RULE</a>) or no en passant captures.
 <li class="helptext">
 Other options for <a href="game_params.html#round_starter">ROUND_STARTER</a> and <a href="game_params.html#round_fill">ROUND_FILL</a>.
 <li class="helptext">
-See <a href="about_games.html#Olinda">Olinda</a> and <a href="about_games.html#Pallam Kuzhi">Pallam Kuzhi</a>.
+Change the number of holes that a round loser must be able to fill to
+continue playing (<a href="game_params.html#goal_param">GOAL_PARAM</a>).
+<li class="helptext">
+<nolink>Pandi::No_Rounds is a simpler game played with only 4 seeds per
+hole at the start and not played in rounds.
+<li class="helptext">
+See <a href="about_games.html#Olinda">Olinda</a>, <a href="about_games.html#Pallam Kuzhi">Pallam Kuzhi</a> and <a href="about_games.html#Pallanguli">Pallanguli</a>.
 </ul>
 <div class="cols_row">
   <div class="column2">
@@ -4000,7 +4225,7 @@ See <a href="about_games.html#Olinda">Olinda</a> and <a href="about_games.html#P
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
     <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
-    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: OWN_SOW_CAPT_ALL</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: ENPAS_ALL_OWNER_OWN</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
   </div>
 </div>
@@ -4080,7 +4305,8 @@ p138.
 <p><b class="enum">Region</b>: Eastern Africa
 <h3 id="Raja Pasu" class="game_desc">Raja Pasu</h3>
 <p>Sow counter-clockwise in lapper next fashion. Hole owners capture all holes
-sown to 4 seeds.
+sown to 4 seeds. Holes sown to 4 seeds except for the final seed of a lap
+is captured by the hole owner.
 <p>When the lap sowing ends, capture any seeds across the gap from the empty
 hole that stopped the lap sowing.
 <p>Played in rounds. A round ends when one player does not have any moves.
@@ -4107,7 +4333,7 @@ starts the new round.
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: LAST_MOVER</p>
     <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
-    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: OWN_SOW_CAPT_ALL</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: ENPAS_ALL_OWNER_SOW</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
   </div>
 </div>
@@ -4202,7 +4428,7 @@ hole.
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
     <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
-    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: OWN_SOW_CAPT_ALL</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: ENPAS_ALL_OWNER_SOW</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
   </div>
 </div>
@@ -5052,7 +5278,7 @@ p46.
 <p><b class="enum">Region</b>: Northern Africa
 <h3 id="ZigZag" class="game_desc">ZigZag</h3>
 <p>A semi-multi-lap mancala.
-<p>Sow in a zigzag, back-and-forth across the board, towards the center- line
+<p>Sow in a zigzag, back-and-forth across the board, towards the center-line
 of the board. At either end, sow directly across the board. Continue in
 multiple laps as long as the last seed of a lap lands on your own side of
 the board. See help for details and examples.
@@ -5103,6 +5329,11 @@ tournaments that have included this game.
   <div class="column3">
     <p class="param"><a href="#Achochodi">Achochodi</a></p>
     <p class="param"><a href="#Adi">Adi</a></p>
+    <p class="param">&emsp;&ensp;No_Rounds</p>
+    <p class="param"><a href="#Adi_II">Adi_II</a></p>
+    <p class="param">&emsp;&ensp;No_Rounds</p>
+    <p class="param">&emsp;&ensp;Ba-awa</p>
+    <p class="param">&emsp;&ensp;Motiq</p>
     <p class="param"><a href="#Adji Kui I">Adji Kui I</a></p>
     <p class="param"><a href="#Adji Kui II">Adji Kui II</a></p>
     <p class="param"><a href="#Adji-boto">Adji-boto</a></p>
@@ -5156,9 +5387,9 @@ tournaments that have included this game.
     <p class="param"><a href="#Embeli">Embeli</a></p>
     <p class="param"><a href="#Endodoi">Endodoi</a></p>
     <p class="param">&emsp;&ensp;J_Odu</p>
-    <p class="param">&emsp;&ensp;Rounds</p>
   </div>
   <div class="column3">
+    <p class="param">&emsp;&ensp;Rounds</p>
     <p class="param"><a href="#Enkeshui">Enkeshui</a></p>
     <p class="param"><a href="#Enlightenment">Enlightenment</a></p>
     <p class="param"><a href="#Erherhe">Erherhe</a></p>
@@ -5194,6 +5425,7 @@ tournaments that have included this game.
     <p class="param"><a href="#Lamlameta">Lamlameta</a></p>
     <p class="param"><a href="#Leab El-ákil">Leab El-ákil</a></p>
     <p class="param">&emsp;&ensp;Equal</p>
+    <p class="param">&emsp;&ensp;No_Rounds</p>
     <p class="param"><a href="#Leb Bbut Ahbochen">Leb Bbut Ahbochen</a></p>
     <p class="param"><a href="#Leyla-Gobale">Leyla-Gobale</a></p>
     <p class="param">&emsp;&ensp;Rounds</p>
@@ -5203,6 +5435,7 @@ tournaments that have included this game.
     <p class="param"><a href="#Mandoli">Mandoli</a></p>
     <p class="param"><a href="#Mangala I">Mangala I</a></p>
     <p class="param"><a href="#Mangala II">Mangala II</a></p>
+    <p class="param"><a href="#Mangala III">Mangala III</a></p>
     <p class="param"><a href="#Mangala IV">Mangala IV</a></p>
     <p class="param"><a href="#Mbangbi">Mbangbi</a></p>
     <p class="param"><a href="#Mbothe">Mbothe</a></p>
@@ -5215,9 +5448,9 @@ tournaments that have included this game.
     <p class="param"><a href="#NamNam">NamNam</a></p>
     <p class="param"><a href="#Ndoto">Ndoto</a></p>
     <p class="param">&emsp;&ensp;Bao</p>
+    <p class="param"><a href="#No Sides Child">No Sides Child</a></p>
   </div>
   <div class="column3">
-    <p class="param"><a href="#No Sides Child">No Sides Child</a></p>
     <p class="param"><a href="#NoCapt">NoCapt</a></p>
     <p class="param"><a href="#NoSides">NoSides</a></p>
     <p class="param"><a href="#NS_Kalah">NS_Kalah</a></p>
@@ -5233,7 +5466,14 @@ tournaments that have included this game.
     <p class="param"><a href="#Ouri">Ouri</a></p>
     <p class="param"><a href="#Oware">Oware</a></p>
     <p class="param"><a href="#Pallam Kuzhi">Pallam Kuzhi</a></p>
+    <p class="param">&emsp;&ensp;No_Rounds</p>
+    <p class="param"><a href="#Pallanguli">Pallanguli</a></p>
+    <p class="param">&emsp;&ensp;No_Rounds</p>
+    <p class="param">&emsp;&ensp;Pandi</p>
+    <p class="param">&emsp;&ensp;Longbeu-a-cha</p>
+    <p class="param">&emsp;&ensp;Olinda</p>
     <p class="param"><a href="#Pandi">Pandi</a></p>
+    <p class="param">&emsp;&ensp;No_Rounds</p>
     <p class="param"><a href="#Qelat">Qelat</a></p>
     <p class="param"><a href="#Qelat II">Qelat II</a></p>
     <p class="param"><a href="#Raja Pasu">Raja Pasu</a></p>

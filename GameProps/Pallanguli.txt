@@ -1,0 +1,122 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 7,
+      "nbr_start": 6
+   },
+   "game_info": {
+      "name": "Pallanguli",
+      "about": "<text_section>",
+      "blocks": true,
+      "capt_dir": 1,
+      "capt_type": 2,
+      "capt_on": [ 4 ],
+      "goal_param": 3,
+      "mlaps": 2,
+      "mustpass": true,
+      "mustshare": true,
+      "capt_side": 0,
+      "round_fill": 2,
+      "round_starter": 0,
+      "rounds": 2,
+      "sow_direct": 1,
+      "sow_rule": 3,
+      "stores": true
+   },
+   "player": {
+      "ai_params": {
+         "mm_depth": [ 1, 1, 3, 7 ]
+      },
+      "scorer": {
+         "mx_stores_m": 4
+      }
+   },
+   "variants": {
+      "Pallanguli": { },
+      "No_Rounds": {
+         "goal": 0,
+         "goal_param": 0,
+         "rounds": 0,
+         "round_fill": 0,
+         "blocks": false
+      },
+      "Pandi": {
+         "nbr_start": 5,
+         "pickextra": 1
+      },
+      "Longbeu-a-cha": {
+         "multicapt": -1
+      },
+      "Olinda": {
+         "goal": 0,
+         "goal_param": 0,
+         "rounds": 0,
+         "round_fill": 0,
+         "blocks": false,
+         "nbr_start": 5,
+         "sow_direct": 2
+      }
+   },
+   "vari_params": {
+      "nbr_start": [ 4, 5, 6 ],
+      "goal_param": "include",
+      "sow_rule": [ 0, 3 ],
+      "pickextra": [ 0, 1 ],
+      "capt_rturn": "include",
+      "multicapt": "include",
+      "round_starter": "include",
+      "round_fill": [ 1, 2, 3, 6 ]
+   },
+   "rules": "Hanson, Sue and Jon. All about Mancala: It's History and How to Play. 2003. p85-92.",
+   "origin": "traditional",
+   "region": "South Asia"
+}
+<text_section>
+<about>
+Sow counter-clockwise via the multi-lap next-hole method (MLAPS of
+LAPPER_NEXT). Lap sowing continues until there are no seeds in the hole
+following the last seed of a lap.
+
+If a player does not have any seeds at the start of their turn, they must pass.
+Their opponent must make seeds available to them as soon as they are able.
+If they can make seeds available, moves are only allowed from holes that do so.
+
+For all but the final seed of lap, any hole sown to four seeds is captured
+by the hole owner.
+If the final seed of a multi-lap sow sows a hole to four seeds, they are not captured.
+
+After the multi-lap sowing check for captures.
+The hole from which the next lap would start is empty,
+capture any seeds in the hole after the empty one, that is,
+the hole 'two out' or 'across the gap' from the final hole sown.
+
+Played in rounds.
+
+Each round ends when the current player does not
+have any playable holes. Round setup is via the
+<a href="game_params.html#rf_ehm">Empty Hole Method</a> of
+ROUND_FILL from each player's left.
+After the next round setup unfilled holes are
+out of play. The players alternate starting rounds.
+
+The game is over when either player cannot fill a single hole.
+
+Variations:
+
+- 4 to 6 start seeds.
+
+- No en passant capture (SOW_RULE of None).
+
+- Change the number of holes that a round loser must be able to fill to continue playing (GOAL_PARAM).
+
+- <nolink>Pallamguli::No_Rounds is a simpler game played with only 4 seeds per hole at the start and not played in rounds.
+
+- <nolink>Pallamguli::Pandi - start with 5 seeds per hole and the final capture (not en passant captures) also collect the seeds opposite the capture.
+
+- <nolink>Pallamguli::Longbeu-a-cha - series captures are added--capture as long as there is a sequence of empty hole and filled hole.
+
+- <nolink>Pallamguli::Olinda - not played in rounds, collect more than half the seeds to win.
+Start with 5 seeds per hole.
+The first player chooses their sow direction; the second player sows in the opposite direction.
+</about>
+</text_section>

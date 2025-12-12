@@ -40,7 +40,7 @@ from game_classes import GAME_CLASSES
 
 # %%  constants
 
-MAX_LINES = 150
+MAX_LINES = 200
 MAX_CHARS = 4000
 SRC_DIR = 'src'
 VAR_SEP = '::'
@@ -93,6 +93,8 @@ REMOVE_TAGS = [re.compile(r'<a[^>]+>'),
                re.compile(r'<ul[^>]*>'),
                re.compile(r'</ul>'),
                re.compile(r'<li[^>]*>'),
+               re.compile(r'<h5[^>]*>'),
+               re.compile(r'</h5>'),
 
                # these tags are used and removed in editor's formatter
                # re.compile(r'<pre[^>]+>'),
@@ -108,7 +110,7 @@ def remove_tags(text):
     """Remove the tags from text."""
 
     for tag in REMOVE_TAGS:
-        text, _ = tag.subn('', text, count=5)
+        text, _ = tag.subn('', text, count=10)
 
     return text
 
@@ -539,7 +541,7 @@ class ParamData(dict):
         mancala_games."""
 
         with open(man_path.get_path('game_param_descs.txt'), 'r',
-                  encoding='us-ascii') as file:
+                  encoding='utf-8') as file:
             data = file.readlines()
 
         text = ''

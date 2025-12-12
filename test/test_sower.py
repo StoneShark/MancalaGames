@@ -1211,7 +1211,7 @@ class TestGetSingle:
         game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
-                                sow_rule=SowRule.OWN_SOW_CAPT_ALL,
+                                sow_rule=SowRule.ENPAS_ALL_OWNER_OWN,
                                 mlaps=mlaps,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
@@ -1651,7 +1651,7 @@ class TestSowCaptOwned:
 
         game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(evens=True,
-                                sow_rule=SowRule.OWN_SOW_CAPT_ALL,
+                                sow_rule=SowRule.ENPAS_ALL_OWNER_OWN,
                                 sow_direct=Direct.CCW,
                                 stores=True,
                                 nbr_holes=game_consts.holes,
@@ -1690,7 +1690,7 @@ class TestSowCaptOwned:
 
         game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(evens=True,
-                                sow_rule=SowRule.OWN_SOW_CAPT_ALL,
+                                sow_rule=SowRule.ENPAS_ALL_OWNER_OWN,
                                 goal=Goal.TERRITORY,
                                 goal_param=4,
                                 stores=True,
@@ -1723,7 +1723,7 @@ class TestSowCaptOwned:
         game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
-                                sow_rule=SowRule.SOW_CAPT_ALL,
+                                sow_rule=SowRule.ENPAS_ALL_SOWER,
                                 capt_side=request.param,
                                 sow_direct=Direct.CCW,
                                 mlaps=gi.LapSower.LAPPER,
@@ -1819,7 +1819,7 @@ class TestSowCaptOwned:
         game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
-                                sow_rule=SowRule.SOW_CAPT_ALL,
+                                sow_rule=SowRule.ENPAS_ALL_SOWER,
                                 capt_side=request.param,
                                 goal=Goal.TERRITORY,
                                 goal_param=4,

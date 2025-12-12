@@ -11,7 +11,7 @@
       "mlaps": 2,
       "capt_side": 0,
       "sow_direct": 1,
-      "sow_rule": 3,
+      "sow_rule": 4,
       "stores": true
    },
    "player": {

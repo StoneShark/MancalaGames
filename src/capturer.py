@@ -1109,8 +1109,8 @@ class PickLastSeeds(CaptMethodIf):
 
     Set capt_changed if we change the board.
 
-    Can't check the mdata.captured flag because we want to support and
-    sow rules of *_SOW_CAPT_ALL which might move seeds out of play."""
+    Can't check the mdata.captured flag because we want to support any
+    sow rules of EN_PAS_* which might move seeds out of play."""
 
     def __init__(self, game, decorator=None, turn_takes=True):
 

@@ -32,6 +32,7 @@
       }
    },
    "rules": "Russ, Laurence. Mancala Games. 1984. p60.",
+   "reference": "Mancala World description of Walak-pussa: https://mancala.fandom.com/wiki/Walak-pussa",
    "origin": "traditional",
    "region": "South Asia"
 }

@@ -322,8 +322,14 @@ STRING_DICTS = {
         {"No Special Rule": gi.SowRule.NONE,
          "Close, Skip Own, Capt Opp": gi.SowRule.SOW_BLKD_DIV,
          "Close, Skip, Capt; (not right)": gi.SowRule.SOW_BLKD_DIV_NR,
-         "Owners Capture all while Sow": gi.SowRule.OWN_SOW_CAPT_ALL,
-         "Sower Captures while Sow from captside(s)": gi.SowRule.SOW_CAPT_ALL,
+         "En passant capt by owner, final sower":
+             gi.SowRule.ENPAS_ALL_OWNER_SOW,
+         "En passant capt by owner":
+             gi.SowRule.ENPAS_ALL_OWNER_OWN,
+         "En passant capt by sower, all holes":
+             gi.SowRule.ENPAS_ALL_SOWER,
+         "En passant capt by sower, own holes only":
+             gi.SowRule.ENPAS_SOW_SOWER,
          "Don't sow Opp holes w/sow_param seeds": gi.SowRule.NO_SOW_OPP_NS,
          "Change Direction each Lap": gi.SowRule.CHANGE_DIR_LAP,
          "Never sow holes above sow_param": gi.SowRule.MAX_SOW,

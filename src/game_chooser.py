@@ -103,8 +103,10 @@ CAPTS = {'Basic Capture': lambda ginfo: (any([ginfo.get(ckey.CAPT_MAX, 0),
 
 SOW_CLOSED = (gi.SowRule.SOW_BLKD_DIV,
               gi.SowRule.SOW_BLKD_DIV_NR)
-SOW_TAKE = (gi.SowRule.SOW_CAPT_ALL,
-            gi.SowRule.OWN_SOW_CAPT_ALL)
+SOW_TAKE = (gi.SowRule.ENPAS_ALL_OWNER_OWN,
+            gi.SowRule.ENPAS_ALL_OWNER_SOW,
+            gi.SowRule.ENPAS_ALL_SOWER,
+            gi.SowRule.ENPAS_SOW_SOWER)
 SOW_LAP_CAPTS = (gi.SowRule.LAP_CAPT,
              gi.SowRule.LAP_CAPT_OPP_GETS,
              gi.SowRule.LAP_CAPT_SEEDS)
@@ -177,19 +179,25 @@ GNOTES = {
     }
 
 
+def rule_check(gdict, name):
+    """Is name in rules or note tags."""
+
+    return (name in gdict.get('rules', '')
+            or name in gdict.get('reference', ''))
+
 # pylint: disable=magic-value-comparison
 RULES = {
 
-    'Russ': lambda gdict: 'Russ' in gdict.get('rules', ''),
-    'Valdez': lambda gdict: 'Valdez' in gdict.get('rules', ''),
-    'Man World': lambda gdict: 'mancala.fandom' in gdict.get('rules', ''),
-    'Hanson': lambda gdict: 'Hanson' in gdict.get('rules', ''),
-    'Davies': lambda gdict: 'Davies' in gdict.get('rules', ''),
-    'Other': lambda gdict: ('Russ' not in gdict.get('rules', '')
-                            and 'Valdez' not in gdict.get('rules', '')
-                            and 'mancala.fandom' not in gdict.get('rules', '')
-                            and 'Davies' not in gdict.get('rules', '')
-                            and 'Hanson' not in gdict.get('rules', '')),
+    'Russ': lambda gdict: rule_check(gdict, 'Russ'),
+    'Valdez': lambda gdict: rule_check(gdict, 'Valdez'),
+    'Man World': lambda gdict: rule_check(gdict, 'mancala.fandom'),
+    'Hanson': lambda gdict: rule_check(gdict, 'Hanson'),
+    'Davies': lambda gdict: rule_check(gdict, 'Davies'),
+    'Other': lambda gdict: (not rule_check(gdict, 'Russ')
+                            and not rule_check(gdict, 'Valdez')
+                            and not rule_check(gdict, 'mancala.fandom')
+                            and not rule_check(gdict, 'Davies')
+                            and not rule_check(gdict, 'Hanson')),
 
     }
 
@@ -774,7 +782,7 @@ FILTERS += [
 
     FilterDesc('Region', TriStateFilter, REGIONS, True, 1, fcol.count),
 
-    FilterDesc('Rules Source', DictFilter, RULES, True, 1, fcol.count),
+    FilterDesc('Rules or Variant', TriStateFilter, RULES, True, 1, fcol.count),
 
     FilterDesc('Configuration', TriStateFilter, GNOTES, True, 1, fcol.count),
 

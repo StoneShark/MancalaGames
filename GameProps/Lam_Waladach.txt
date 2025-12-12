@@ -13,6 +13,7 @@
       "goal_param": 9,
       "mlaps": 1,
       "mustpass": true,
+      "nocaptmoves": 1,
       "capt_side": 0,
       "pickextra": 4,
       "round_starter": 1,
@@ -27,10 +28,11 @@
       }
    },
    "vari_params": {
-      "goal_param": "include"
+      "goal_param": "include",
+      "capt_rturn": "include"
    },
    "rules": "Russ, Laurence. Mancala Games. 1984. p55.",
-   "deviation": "Both captures and pick 4s are allowed on the first turn. The Mancala Game engine doesn't allow one of these, but not the other. The game ends when fewer than 6 seeds are in play, with the round starter taking these last seeds.",
+   "deviation": "The game ends when fewer than 6 seeds are in play, with the round starter taking these last seeds.",
    "note": "Hole ownership of > 9, results in very many rounds and long games (GOAL_PARAM).",
    "origin": "traditional",
    "region": "Eastern Africa"
@@ -42,14 +44,26 @@ of at least 9 holes. Each player initially owns the holes on their
 side of the board. Owners of holes are updated at the start of each
 round based on the number of seeds captured in the previous round.
 
-The seeds of any hole sown to 4 are captured by the hole's owner
-(regardless of sower). Captures are on 4s on the final sown seed by
+Sow direction is counter-clockwise. There are no captures or en passant
+captures on the first turn.
+
+The seeds of any hole sown (except the last seed of a lap) to 4 are
+captured by the hole's owner (regardless of sower).
+
+Captures are on 4s on the final sown seed by
 the sower (regardless of hole owner). A capture results in  a repeat
 turn. Captures and pick 4s are allowed on the first move of the game.
+
 A player must pass if they have no moves.
 
 If neither player has moves, the game is over. The game also ends if
 there are fewer than 6 seeds in play, with the seeds going to the
 round starter.
+
+Variations:
+
+- change the number of holes required for the win.
+
+- turn off repeat turn on capture.
 </about>
 </text_section>

@@ -1,0 +1,67 @@
+{
+   "game_class": "Mancala",
+   "game_constants": {
+      "holes": 6,
+      "nbr_start": 5
+   },
+   "game_info": {
+      "name": "Mangala III",
+      "about": "<text_section>",
+      "capt_on": [ 2, 4 ],
+      "min_move": 2,
+      "capt_side": 0,
+      "sow_direct": 0,
+      "stores": true,
+      "unclaimed": 4
+   },
+   "player": {
+      "ai_params": {
+         "mcts_bias": [ 300, 200, 100, 100 ],
+         "mcts_nodes": [ 100, 300, 500, 800 ],
+         "mcts_pouts": [ 1, 1, 1, 1 ]
+      },
+      "scorer": {
+         "mx_stores_m": 4
+      }
+   },
+   "vari_params": {
+      "mlaps": [ 0, 1 ],
+      "capt_rturn": "include",
+      "multicapt": [ -1, 0 ],
+      "pickextra": [ 0, 6 ]
+   },
+   "rules": "Hanson, Sue and Jon. All about Mancala: It's History and How to Play. 2003. p81.",
+   "deviation": "<text_section>",
+   "region": "Eastern Africa",
+   "origin": "traditional"
+}
+<text_section>
+<about>
+Split sow from any of your holes with 2 or more seeds.
+Capture on 2s and 4s on either side of the board.
+
+The game ends when one player has sufficient seeds for the win
+or the current player does not have a valid move.
+
+When the game ends, seeds still in play go to the hole owner.
+
+Goal: collect the more than half the total seeds.
+
+Variations:
+
+- Sow in multiple laps (MLAPS).
+
+- Multiple capture (MULTICAPT of -1).
+
+- Repeat turn on capture (CAPT_RTURN).
+
+- When capturing, take any seeds across the board from captured holes
+(PICKEXTRA of PICKCROSSMULT).
+</about>
+<deviation>
+The introduction to the game states that the game ends whenever either player
+has zero or one seed in each hole, but paragraph at the end of the rules the
+game only ends when the current player does not have a valid move.
+The first condition is not implemented (Mancala Games does not support it).
+</deviation>
+</text_section>
