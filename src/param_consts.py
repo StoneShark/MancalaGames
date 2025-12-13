@@ -330,6 +330,8 @@ STRING_DICTS = {
              gi.SowRule.ENPAS_ALL_SOWER,
          "En passant capt by sower, own holes only":
              gi.SowRule.ENPAS_SOW_SOWER,
+         "En passant capt by sower, opponent's holes only":
+             gi.SowRule.ENPAS_OPP_SOWER,
          "Don't sow Opp holes w/sow_param seeds": gi.SowRule.NO_SOW_OPP_NS,
          "Change Direction each Lap": gi.SowRule.CHANGE_DIR_LAP,
          "Never sow holes above sow_param": gi.SowRule.MAX_SOW,

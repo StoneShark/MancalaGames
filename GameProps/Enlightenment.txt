@@ -12,7 +12,7 @@
       "no_sides": true,
       "capt_side": 0,
       "sow_direct": 0,
-      "sow_rule": 3,
+      "sow_rule": 4,
       "udir_holes": [ 2 ]
    },
    "player": {

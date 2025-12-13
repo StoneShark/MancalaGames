@@ -52,7 +52,7 @@
    "vari_params": {
       "holes": [ 6, 7 ],
       "goal_param": "include",
-      "sow_rule": [ 0, 4, 15 ]
+      "sow_rule": [ 0, 15 ]
    },
    "rules": "Hanson, Sue and Jon. All about Mancala: It's History and How to Play. 2003. p67-74.",
    "origin": "traditional",

@@ -15,3 +15,4 @@ context.py
 GamePropsNoRelease
 tools/run_*
 docs/props_used.xlsx
+/GameProps/favorites.csv

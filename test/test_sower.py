@@ -10,6 +10,7 @@ Created on Tue Jul 18 17:31:59 2023
 import pytest
 pytestmark = pytest.mark.unittest
 
+import enum
 import utils
 
 from context import animator
@@ -400,7 +401,7 @@ class TestSower:
         game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
         game_info = gi.GameInfo(evens=True,
                                 stores=True,
-                                sow_rule=7,
+                                sow_rule=gi.SowRule.MAX_SOW,
                                 sow_param=5,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
@@ -1327,7 +1328,7 @@ class TestVMlap:
         # 0: don't sow opp children, with children that skip own side
         [{'child_type': gi.ChildType.NORMAL,
           'child_cvt': 3,
-          'sow_rule': 9
+          'sow_rule': gi.SowRule.NO_OPP_CHILD
           },
          ["game.child = [N, N, T, T, T, T, N, N]"], True
          ],
@@ -1356,7 +1357,7 @@ class TestVMlap:
 
         # 4: sow & cross capt, no increase on opp    (not current err)
         [{'crosscapt': True,
-          'sow_rule': 8
+          'sow_rule': gi.SowRule.LAP_CAPT
           },
          ["game.board = [1, 3, 0, 1, 0, 1, 1, 1]"], True
          ],
@@ -2573,13 +2574,20 @@ class TestBadEnums:
 
     def test_bad_sow_rule(self):
 
+        class Bad(enum.IntEnum):
+
+            BAD_VAL = 25
+
+            def is_en_passant(self):
+                return False
+
         game_consts = gconsts.GameConsts(nbr_start=4, holes=3)
         game_info = gi.GameInfo(capt_on=[4],
                                 stores=True,
                                 nbr_holes=game_consts.holes,
-                                rules=mancala.Mancala.rules)
+                                rules=lambda ginfo, holes: True)
 
-        object.__setattr__(game_info, 'sow_rule', 25)
+        object.__setattr__(game_info, 'sow_rule', Bad.BAD_VAL)
 
         with pytest.raises(NotImplementedError):
             mancala.Mancala(game_consts, game_info)

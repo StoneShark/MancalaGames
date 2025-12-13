@@ -424,7 +424,7 @@ class SowRule(enum.IntEnum):
     """Defines special rules for sowing.
 
     ENPAS enum name element order define
-       which holes  (sower's only or all)
+       which holes  (all, or sower's or opponent's only)
        who gets non-final  (sower or hole owner)
        who gets final (sower or hole owner, sower is default)"""
 
@@ -444,6 +444,16 @@ class SowRule(enum.IntEnum):
     NO_CHILDREN = 13
     ENPAS_ALL_SOWER = 14
     ENPAS_SOW_SOWER = 15
+    ENPAS_OPP_SOWER = 16
+
+    def is_en_passant(self):
+        """Return true if the sow rule is an en passant sow."""
+
+        return self in (self.ENPAS_ALL_OWNER_SOW,
+                        self.ENPAS_ALL_OWNER_OWN,
+                        self.ENPAS_ALL_SOWER,
+                        self.ENPAS_SOW_SOWER,
+                        self.ENPAS_OPP_SOWER)
 
 
 @enum.unique

@@ -1753,7 +1753,7 @@ any capture on values
   <div class="column2">
     <p class="param"><a href="game_params.html#no_sides">No Sides</a>: Yes</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: SPLIT</p>
-    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: ENPAS_ALL_OWNER_SOW</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: ENPAS_ALL_OWNER_OWN</p>
     <p class="param"><a href="game_params.html#udir_holes">User Chooses Direction</a>: 2</p>
   </div>
 </div>
@@ -1832,12 +1832,10 @@ seeds in the following hole.
 <p>The first move by each player is sown counter-clockwise, the player chooses
 the sow direction for subsequent moves.
 <p>Sow in multiple laps until the final seed of a laps ends in an empty hole
-or makes 4 seeds on your own side of the board (capture those seeds).
-<p>Any holes on your own side of the board that are sown to 4 are moved to
-your store.
-<p>If the final seed of a lap sows an opponent's hole to 4 seeds those seeds
-are picked up and the multiplap sowing continues.
-<p>If your opponent does not have seeds you must share. If you cannot share
+or makes 4 seeds.
+<p>Captures are on 4s on the final seed sown, regardless of hole owner. If
+this capture leaves only 4 seeds in play, they are also taken.
+<p>If your opponent does not have seeds you must share. If you cannot share,
 your opponent claims your remaining seeds and the game ends.
 <p>Goal: collect the most seeds.
 <div class="cols_row">
@@ -1851,9 +1849,9 @@ your opponent claims your remaining seeds and the game ends.
     <p class="param"><a href="game_params.html#mustshare">Must Share</a>: Yes</p>
   </div>
   <div class="column2">
-    <p class="param"><a href="game_params.html#prescribed">Prescribed Opening Move</a>: NO_UDIR_FIRSTS</p>
+    <p class="param"><a href="game_params.html#pickextra">On Capture, Take More Rule</a>: PICKLASTSEEDS</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
-    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: ENPAS_ALL_SOWER</p>
+    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: ENPAS_SOW_SOWER</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
     <p class="param"><a href="game_params.html#udir_holes">User Chooses Direction</a>: all</p>
     <p class="param"><a href="game_params.html#unclaimed">Unclaimed Seeds at End</a>: UNFED_PLAYER</p>

@@ -741,20 +741,14 @@ def test_capture_rules(tester):
         warn=True)
 
     tester.test_rule('sca_gs_not',
-        rule=lambda ginfo: (ginfo.sow_rule in (gi.SowRule.ENPAS_ALL_OWNER_OWN,
-                                               gi.SowRule.ENPAS_ALL_OWNER_SOW,
-                                               gi.SowRule.ENPAS_ALL_SOWER,
-                                               gi.SowRule.ENPAS_SOW_SOWER)
-                                and ginfo.grandslam != gi.GrandSlam.LEGAL),
+        rule=lambda ginfo: (ginfo.sow_rule.is_en_passant()
+                            and ginfo.grandslam != gi.GrandSlam.LEGAL),
         msg='En passant captures require that GRANDLAM be LEGAL',
         excp=gi.GameInfoError)
 
     tester.test_rule('sca_basic_capt',
-        rule=lambda ginfo: (ginfo.sow_rule in (gi.SowRule.ENPAS_ALL_OWNER_OWN,
-                                               gi.SowRule.ENPAS_ALL_OWNER_SOW,
-                                               gi.SowRule.ENPAS_ALL_SOWER,
-                                               gi.SowRule.ENPAS_SOW_SOWER)
-                                and not ginfo.basic_capt),
+        rule=lambda ginfo: (ginfo.sow_rule.is_en_passant()
+                            and not ginfo.basic_capt),
         msg='En passant captures require a basic capture',
         excp=gi.GameInfoError)
 

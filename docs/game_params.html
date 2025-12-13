@@ -1132,8 +1132,8 @@ SOW_BLKD_DIV(_NR).
 player's rightmost hole cannot be closed.
 <li class="helptext">
 <b class="enum">ENPAS_ALL_OWNER_SOW</b>: Holes sown to meet the basic capture criteria are
-captured by the hole owners.  The capturer handles the final hole sown; if
-it meets all of the capture criteria it is captured by the sower.
+captured by the hole owners.  The final hole sown must meet all of the
+capture criteria to be captured by the sower.
 <p class="helptext"> This capture type is sometimes called En Passant or Passing Captures.
 <p class="helptext"> The capture is done by the hole owner, so the non-sower may   capture
 seeds while their opponent sows. If the game <a href="game_params.html#goal">GOAL</a> is   TERRITORY the
@@ -1195,16 +1195,22 @@ Disallow Endless Sows via the Game menu for experimentation.
 <b class="enum">NO_CHILDREN</b>: do not sow any children.
 <li class="helptext">
 <b class="enum">ENPAS_ALL_SOWER</b>: Holes sown to meet the basic capture criteria are
-captured by the sower.  The capturer handles the final hole sown; if it
-meets all of the capture criteria it is captured by the sower.
+captured by the sower.  The final hole sown must meet all of the capture
+criteria to be captured by the sower.
 <p class="helptext"> This capture type is sometimes called En Passant or Passing Captures.
 <p class="helptext"> <a href="game_params.html#grandslam">GRANDSLAM</a> rules are not applied. <a href="game_params.html#nocaptmoves">NOCAPTMOVES</a> prevents this capture
 for the first number of specified moves.
 <li class="helptext">
 <b class="enum">ENPAS_SOW_SOWER</b>: Holes sown to meet the basic capture criteria that are
-owned by the sower are captured by the sower.  The capturer handles the
-final hole sown; if it meets all of the capture criteria it is captured by
-the sower.
+owned by the sower are captured by the sower.  The final hole sown must
+meet all of the capture criteria to be captured by the sower.
+<p class="helptext"> This capture type is sometimes called En Passant or Passing Captures.
+<p class="helptext"> <a href="game_params.html#grandslam">GRANDSLAM</a> rules are not applied. <a href="game_params.html#nocaptmoves">NOCAPTMOVES</a> prevents this capture
+for the first number of specified moves.
+<li class="helptext">
+<b class="enum">ENPAS_OPP_SOWER</b>: Holes sown to meet the basic capture criteria that are
+owned by your opponent are captured by the sower.  The final hole sown must
+meet all of the capture criteria to be captured by the sower.
 <p class="helptext"> This capture type is sometimes called En Passant or Passing Captures.
 <p class="helptext"> <a href="game_params.html#grandslam">GRANDSLAM</a> rules are not applied. <a href="game_params.html#nocaptmoves">NOCAPTMOVES</a> prevents this capture
 for the first number of specified moves.

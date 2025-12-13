@@ -312,19 +312,39 @@ class SowCaptOwned(SowMethodIf):
         super().__init__(game, decorator)
         self.conds = []
 
+        self.cond_strs = []
+
         if game.info.sow_rule == gi.SowRule.ENPAS_SOW_SOWER:
             # restricted to sower's holes
             self.conds += [lambda scnt, loc, turn: turn == game.owner[loc]]
+            self.cond_strs += ['turn == owner']
+
+        if game.info.sow_rule == gi.SowRule.ENPAS_OPP_SOWER:
+            # restricted to opponent's holes
+            self.conds += [lambda scnt, loc, turn: turn != game.owner[loc]]
+            self.cond_strs += ['turn != owner']
 
         if game.info.sow_rule in (gi.SowRule.ENPAS_ALL_OWNER_OWN,
                                   gi.SowRule.ENPAS_ALL_OWNER_SOW):
             self.captor = lambda loc, turn: game.owner[loc]
+            self.take_str = 'owner'
         else:
             self.captor = lambda loc, turn: turn
+            self.take_str = 'turn'
 
         if game.info.sow_rule != gi.SowRule.ENPAS_ALL_OWNER_OWN:
             # let the capturer do all but owner getting final capture
             self.conds += [lambda scnt, loc, turn: scnt > 1]
+            self.cond_strs += ['seeds > 1']
+
+
+    def __str__(self):
+
+        detail = 'captor:  ' + self.take_str
+        if self.cond_strs:
+            detail += '\n   conds:  ' + ', '.join(self.cond_strs)
+
+        return self.str_deco_detail(detail)
 
 
     def sow_seeds(self, mdata):
@@ -1205,10 +1225,7 @@ def _add_base_sower(game):
                                   gi.SowRule.SOW_BLKD_DIV_NR):
             sower = _add_blkd_divert_sower(game)
 
-        elif game.info.sow_rule in (gi.SowRule.ENPAS_ALL_OWNER_OWN,
-                                    gi.SowRule.ENPAS_ALL_OWNER_SOW,
-                                    gi.SowRule.ENPAS_ALL_SOWER,
-                                    gi.SowRule.ENPAS_SOW_SOWER):
+        elif game.info.sow_rule.is_en_passant():
             sower = SowCaptOwned(game)
 
         elif game.info.sow_rule in (gi.SowRule.NO_SOW_OPP_NS,

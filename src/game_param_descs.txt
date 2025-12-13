@@ -1531,8 +1531,7 @@ player's rightmost hole cannot be closed.
 
 - ENPAS_ALL_OWNER_SOW: Holes sown to meet the basic capture criteria
 are captured by the hole owners. 
-The capturer handles the final hole sown; if it meets all of the
-capture criteria it is captured by the sower.
+The final hole sown must meet all of the capture criteria to be captured by the sower.
 
   + This capture type is sometimes called En Passant or Passing Captures.
 
@@ -1607,8 +1606,7 @@ hole.
 
 - ENPAS_ALL_SOWER: Holes sown to meet the basic capture criteria
 are captured by the sower. 
-The capturer handles the final hole sown; if it meets all of the
-capture criteria it is captured by the sower.
+The final hole sown must meet all of the capture criteria to be captured by the sower.
 
   + This capture type is sometimes called En Passant or Passing Captures.
   
@@ -1617,8 +1615,16 @@ capture criteria it is captured by the sower.
 
 - ENPAS_SOW_SOWER: Holes sown to meet the basic capture criteria
 that are owned by the sower are captured by the sower. 
-The capturer handles the final hole sown; if it meets all of the
-capture criteria it is captured by the sower.
+The final hole sown must meet all of the capture criteria to be captured by the sower.
+
+  + This capture type is sometimes called En Passant or Passing Captures.
+  
+  + GRANDSLAM rules are not applied. NOCAPTMOVES prevents this capture
+  for the first number of specified moves.
+
+- ENPAS_OPP_SOWER: Holes sown to meet the basic capture criteria
+that are owned by your opponent are captured by the sower. 
+The final hole sown must meet all of the capture criteria to be captured by the sower.
 
   + This capture type is sometimes called En Passant or Passing Captures.
   
