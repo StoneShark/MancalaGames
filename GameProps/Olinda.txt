@@ -10,19 +10,17 @@
       "blocks": true,
       "capt_dir": 1,
       "capt_type": 2,
-      "capt_on": [ 4 ],
       "mlaps": 2,
       "multicapt": -1,
       "capt_side": 0,
-      "pickextra": 3,
       "round_fill": 1,
       "round_starter": 0,
       "rounds": 2,
       "sow_direct": 2,
-      "sow_rule": 3,
       "stores": true
    },
    "player": {
+      "algorithm": "negamaxer",
       "ai_params": {
          "mm_depth": [ 1, 1, 3, 7 ]
       },
@@ -30,15 +28,7 @@
          "mx_stores_m": 4
       }
    },
-   "vari_params": {
-      "goal_param": "include",
-      "sow_rule": [ 3, 4, 14, 15 ],
-      "round_starter": "include",
-      "round_fill": [ 0, 1, 2, 3, 6 ],
-      "pickextra": [ 0, 3 ]
-   },
    "rules": "Russ, Laurence. Mancala Games. 1984. p61.",
-   "deviation": "PICKLASTSEEDS was added to end games more reliably (can be turned off via variations).",
    "origin": "traditional",
    "region": "South Asia"
 }
@@ -49,10 +39,6 @@ the game; the second player will use the opposite direction for the
 game. Sowing is done in multiple laps from the next hole (MLAPS of
 LAPPER_NEXT).
 
-While either player is sowing, both players capture all holes sown to
-4 on their side of the board. Specifically, the non-sower may capture
-seeds from holes sown to 4 on their own side of the board.
-
 When the hole from which a new lap should start is empty, capture any
 seeds in the hole following the empty hole. That is, captures are made
 when the hole after the hole in which the final seed of a lap was
@@ -60,9 +46,6 @@ sown, is empty and there are seeds in the hole 'two out' from the last
 sown seed.
 
 Captures continue while holes are alternately empty and occupied in
-the player's sow direction. If a capture leaves 4 or fewer seeds on
-the board, they are taken by the final capturer.
-
 Played in ROUNDS. Each round ends when the current player does not
 have any playable holes. Round setup is via the
 <a href="game_params.html#rf_ehm">Empty Hole Method</a> of
@@ -75,17 +58,5 @@ The game is over when either player cannot fill a single hole.
 Touch Screen mode will show the right click grids, but after the first
 move, the grid and left and right mouse buttons will all sow in the
 direction set on the first turn.
-
-Variations:
-
-- 4 to 6 start seeds.
-
-- Any en passant capture type (SOW_RULE).
-
-- No PICKEXTRA (see deviation).
-
-- Change the number of holes that a round loser must be able to fill to continue playing (GOAL_PARAM).
-
-- See Pallam Kuzhi and Pandi.
 </about>
 </text_section>

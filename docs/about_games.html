@@ -3795,17 +3795,12 @@ start seeds).
 <p>The starting player chooses the sow direction that they will use for the
 game; the second player will use the opposite direction for the game.
 Sowing is done in multiple laps from the next hole (<a href="game_params.html#mlaps">MLAPS</a> of LAPPER_NEXT).
-<p>While either player is sowing, both players capture all holes sown to 4 on
-their side of the board. Specifically, the non-sower may capture seeds from
-holes sown to 4 on their own side of the board.
 <p>When the hole from which a new lap should start is empty, capture any seeds
 in the hole following the empty hole. That is, captures are made when the
 hole after the hole in which the final seed of a lap was sown, is empty and
 there are seeds in the hole 'two out' from the last sown seed.
-<p>Captures continue while holes are alternately empty and occupied in the
-player's sow direction. If a capture leaves 4 or fewer seeds on the board,
-they are taken by the final capturer.
-<p>Played in <a href="game_params.html#rounds">ROUNDS</a>. Each round ends when the current player does not have any
+<p>Captures continue while holes are alternately empty and occupied in Played
+in <a href="game_params.html#rounds">ROUNDS</a>. Each round ends when the current player does not have any
 playable holes. Round setup is via the <a
 href="game_params.html#rf_ehm">Empty Hole Method</a> of <a href="game_params.html#round_fill">ROUND_FILL</a> from
 each player's left. After the next round setup unfilled holes are out of
@@ -3814,19 +3809,6 @@ play. The players alternate starting rounds.
 <p>Touch Screen mode will show the right click grids, but after the first
 move, the grid and left and right mouse buttons will all sow in the
 direction set on the first turn.
-<p>Variations:
-<ul><li class="helptext">
-4 to 6 start seeds.
-<li class="helptext">
-Any en passant capture type (<a href="game_params.html#sow_rule">SOW_RULE</a>).
-<li class="helptext">
-No <a href="game_params.html#pickextra">PICKEXTRA</a> (see deviation).
-<li class="helptext">
-Change the number of holes that a round loser must be able to fill to
-continue playing (<a href="game_params.html#goal_param">GOAL_PARAM</a>).
-<li class="helptext">
-See <a href="about_games.html#Pallam Kuzhi">Pallam Kuzhi</a> and <a href="about_games.html#Pandi">Pandi</a>.
-</ul>
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  7</p>
@@ -3834,25 +3816,20 @@ See <a href="about_games.html#Pallam Kuzhi">Pallam Kuzhi</a> and <a href="about_
     <p class="param"><a href="game_params.html#goal">Goal</a>: MAX_SEEDS</p>
     <p class="param"><a href="game_params.html#blocks">Blocks</a>: Yes</p>
     <p class="param"><a href="game_params.html#capt_dir">Capture Direction</a>: SOW</p>
-    <p class="param"><a href="game_params.html#capt_on">Capture On Values</a>: 4</p>
     <p class="param"><a href="game_params.html#capt_side">Capture side</a>: BOTH</p>
     <p class="param"><a href="game_params.html#capt_type">Capture Type</a>: TWO_OUT</p>
     <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER_NEXT</p>
   </div>
   <div class="column2">
     <p class="param"><a href="game_params.html#multicapt">Multiple Captures</a>: -1</p>
-    <p class="param"><a href="game_params.html#pickextra">On Capture, Take More Rule</a>: PICKLASTSEEDS</p>
     <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: LEFT_FILL</p>
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
     <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: PLAYALTDIR</p>
-    <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: ENPAS_ALL_OWNER_SOW</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
   </div>
 </div>
 <p><b class="enum">Rules</b>: Russ, Laurence. Mancala Games. 1984. p61.
-<p><b class="enum">Deviation</b>: PICKLASTSEEDS was added to end games more
-reliably (can be turned off via variations).
 <p><b class="enum">Origin</b>: traditional
 <p><b class="enum">Region</b>: South Asia
 <h3 id="Olowuka" class="game_desc">Olowuka</h3>
