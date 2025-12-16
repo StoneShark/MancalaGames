@@ -230,6 +230,9 @@ def deco_capt_check(game):
 
     capt_check = CaptTrue(game)
 
+    if game.info.capt_side and not game.info.crosscapt:
+        capt_check = CaptSideOk(game, capt_check)
+
     if game.info.moveunlock:
         # do not include this for gi.AllowRule.MOVE_ALL_HOLES_FIRST games
         capt_check = CaptUnlocked(game, capt_check)

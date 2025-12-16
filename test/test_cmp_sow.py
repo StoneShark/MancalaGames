@@ -98,6 +98,20 @@ GAMECONF = {'basic':
                  'blocks': True,
                  'udir_holes': [0, 1, 2, 3, 4]},
 
+            'ep_aos_lapnext':
+                {'goal': gi.Goal.MAX_SEEDS,
+                 'sow_rule': gi.SowRule.ENPAS_ALL_OWNER_SOW,
+                 'mlaps': gi.LapSower.LAPPER_NEXT,
+                 'capt_on': [4],
+                 'stores': True},
+
+            'ep_aoo_lapnext':
+                {'goal': gi.Goal.MAX_SEEDS,
+                 'sow_rule': gi.SowRule.ENPAS_ALL_OWNER_OWN,
+                 'mlaps': gi.LapSower.LAPPER_NEXT,
+                 'capt_on': [4],
+                 'stores': True},
+
             'dep_capta':
                 {'goal': gi.Goal.DEPRIVE,
                  'sow_rule': gi.SowRule.ENPAS_ALL_OWNER_SOW,
@@ -236,6 +250,12 @@ START = {'start':
                                _turn=False,
                                child=(N, N, N, N, N, N, N, N, N, N)),
 
+        'setup_10':
+            mancala.GameState(board=(2, 0, 0, 3, 3, 3, 3, 2, 2, 2),
+                              store=(0, 0),
+                              mcount=5,
+                              _turn=False),
+
         }
 
 CASES = [('basic', 'start', F, 2,
@@ -345,6 +365,12 @@ CASES = [('basic', 'start', F, 2,
           ('mlaps_walda', 'walda_nostop', F, 2,
            0, (1, 2, 0, 1, 1, 0, 2, 0, 1, 5), NSTR, NBLCK),
 
+          ('ep_aos_lapnext', 'setup_10', F, 3,
+           6, (2, 0, 0, 0, 0, 0, 4, 2, 2, 2), [4, 4], NBLCK),
+
+          ('ep_aoo_lapnext', 'setup_10', F, 3,
+           2, (0, 1, 1, 0, 0, 0, 0, 0, 3, 3), [4, 8], NBLCK),
+
          ]
 
 CIDS = [f'{case[0]}-{case[1]}-{case[2]}-idx{idx}' for idx, case in enumerate(CASES)]
@@ -359,7 +385,7 @@ BAD_INHIBITOR_TESTS = [
 
 # %% test_sower
 
-# @pytest.mark.usefixtures('logger')
+@pytest.mark.usefixtures('logger')
 @pytest.mark.parametrize('conf_name, state_name, turn, move,'
                          'eloc, eboard, estore, eblocks',
                          CASES, ids=CIDS)
@@ -386,10 +412,11 @@ def test_sower(conf_name, state_name, turn, move,
     assert not game.info.child_type or (game.info.child_type and start_state.child), \
         'Test error: game.info.child_type inconsistent with start_state'
 
-    # print(GAMECONF[conf_name])
-    # print(game)
-    # print('move:', move)
+    print(GAMECONF[conf_name])
+    print(game)
+    print('move:', move)
     mdata = game.do_sow(move)
+    print(game)
 
     # check the expected changes
     assert mdata.capt_loc == eloc

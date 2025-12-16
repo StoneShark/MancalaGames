@@ -293,7 +293,7 @@ class SowClosed(SowMethodIf):
             self.game.blocked[loc] = True
 
 
-class SowCaptOwned(SowMethodIf):
+class SowEnPassant(SowMethodIf):
     """The en passant captures (also called passing captures).
 
     ENPAS enum name order is
@@ -893,7 +893,7 @@ class StopCaptureSeeds(LapContinuerIf):
 
 class StopXCapt(LapContinuerIf):
     """Stop if we can do a cross capture.
-    Only uses this with lapper_next (instead of StopSingleSeed)."""
+    Only use this with lapper_next (instead of StopSingleSeed)."""
 
     def do_another_lap(self, mdata):
 
@@ -1226,7 +1226,7 @@ def _add_base_sower(game):
             sower = _add_blkd_divert_sower(game)
 
         elif game.info.sow_rule.is_en_passant():
-            sower = SowCaptOwned(game)
+            sower = SowEnPassant(game)
 
         elif game.info.sow_rule in (gi.SowRule.NO_SOW_OPP_NS,
                                     gi.SowRule.MAX_SOW,
@@ -1316,12 +1316,22 @@ def _add_capt_stop_lap_cont(game, lap_cont):
     lap-continuer or a stop on capture decos."""
 
     if game.info.mlaps == gi.LapSower.LAPPER_NEXT:
-        if game.info.crosscapt == gi.XCaptType.ONE_ZEROS:
+        if game.info.crosscapt in (gi.XCaptType.ONE_ZEROS,
+                                   gi.XCaptType.ONE_ANY):
             lap_cont = StopXCapt(game, lap_cont)
-    else:
-        lap_cont = StopSingleSeed(game, lap_cont)
 
-    if game.info.capt_type == gi.CaptType.MATCH_OPP:
+    if game.info.capt_type in (gi.CaptType.NEXT,
+                               gi.CaptType.TWO_OUT,
+                               gi.CaptType.SINGLETONS,
+                               gi.CaptType.CAPT_OPP_1CCW,
+                               gi.CaptType.PASS_STORE_CAPT,
+                               gi.CaptType.PULL_ACROSS,
+                               gi.CaptType.END_OPP_STORE_CAPT):
+        # no additional stopping criteria
+        pass
+
+    elif game.info.capt_type in (gi.CaptType.MATCH_OPP,
+                                 gi.CaptType.SANDWICH_CAPT):
         lap_cont = StopCaptureSimul(game, lap_cont)
 
     elif game.info.basic_capt and not game.info.crosscapt:
@@ -1363,6 +1373,7 @@ def _build_lap_cont(game):
             lap_cont = DivertBlckdLapper(game)
         else:
             lap_cont = LapContinue(game)
+        lap_cont = StopSingleSeed(game, lap_cont)
 
     elif game.info.mlaps == gi.LapSower.LAPPER_NEXT:
         lap_cont = NextLapCont(game)

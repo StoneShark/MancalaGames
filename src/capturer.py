@@ -7,6 +7,7 @@ Created on Fri Apr  7 08:52:03 2023
 import abc
 
 import animator
+import capt_ok
 import deco_chain_if
 import format_msg as fmt
 import game_info as gi
@@ -296,42 +297,31 @@ class CaptOpposite1CCW(CaptMethodIf):
 
 class PassStoreCapture(CaptMethodIf):
     """If the last seed lands in an empty hole,
-    your opponent captures the contents of your store.
+    as constrained by capt_side, your opponent captures
+    the contents of your store.
+
+    Build a private deco chain for the side test, because
+    we don't care if the final hole sown is locked or a child.
 
     If the first capture failed, call down the deco
     chain for another type of capture (none, basic or xcapt);
     keep in mind it will use the same capt_side restrictions.
-    This should have NoStoreCapt in the deco chain.
-
-    Use capt_side to restrict where this might happen.
-    The side test is based on where the singleton seed
-    landed."""
+    This should have NoStoreCapt in the deco chain."""
 
     def __init__(self, game, decorator=None):
 
         super().__init__(game, decorator)
 
-        if game.info.capt_side == gi.CaptSide.OPP_SIDE:
-            self.side_ok = game.cts.opp_side
-
-        elif game.info.capt_side == gi.CaptSide.OWN_SIDE:
-            self.side_ok = game.cts.my_side
-
-        elif game.info.capt_side == gi.CaptSide.OPP_TERR:
-            self.side_ok = lambda turn, loc: game.owner[loc] == (not turn)
-
-        elif game.info.capt_side == gi.CaptSide.OWN_TERR:
-            self.side_ok = lambda turn, loc: game.owner[loc] == turn
-
-        else:
-            self.side_ok = lambda _1, _2: True
+        self.side_ok = capt_ok.CaptTrue(game)
+        if game.info.capt_side:
+            self.side_ok = capt_ok.CaptSideOk(game, self.side_ok)
 
 
     def do_captures(self, mdata, capt_first=True):
 
         if (self.game.board[mdata.capt_loc] == 1
                 and self.game.store[self.game.turn]
-                and self.side_ok(self.game.turn, mdata.capt_loc)):
+                and self.side_ok.capture_ok(mdata, mdata.capt_loc)):
 
             seeds = self.game.store[self.game.turn]
             self.game.store[self.game.turn] = 0
@@ -394,7 +384,7 @@ class EndOppStoreCapture(CaptMethodIf):
 class SandwichCapt(CaptMethodIf):
     """Capture when a single seed is surrounded by holes
     with matching seed counts when those holes are both
-    on the opposite side of the board.
+    on the capt_side of the board.
 
     If the first capture failed, call down the deco
     chain for another type of capture (none, basic or xcapt)."""
@@ -402,7 +392,8 @@ class SandwichCapt(CaptMethodIf):
     def do_captures(self, mdata, capt_first=True):
 
         loc = mdata.capt_start
-        if self.game.board[loc] == 1:
+        if (self.game.board[loc] == 1
+                and self.game.deco.capt_check.capture_ok(mdata, loc)):
 
             turn = mdata.player
             sdir = mdata.direct
@@ -410,8 +401,8 @@ class SandwichCapt(CaptMethodIf):
             s2_loc = self.game.deco.incr.incr(loc, sdir.opp_dir(), turn)
 
             if (self.game.board[s1_loc] == self.game.board[s2_loc]
-                    and self.game.cts.opp_side(turn, s1_loc)
-                    and self.game.cts.opp_side(turn, s2_loc)):
+                    and self.game.deco.capt_check.capture_ok(mdata, s1_loc)
+                    and self.game.deco.capt_check.capture_ok(mdata, s2_loc)):
 
                 game_log.add("Sandwich Capture!", game_log.IMPORT)
                 seeds = sum([self.game.board[s1_loc],

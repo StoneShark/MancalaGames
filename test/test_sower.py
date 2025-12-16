@@ -46,6 +46,8 @@ N = None
 CCW = gi.Direct.CCW
 CW = gi.Direct.CW
 
+NSTR = 1967  # no change in the store expected
+
 
 # %%
 
@@ -1218,7 +1220,7 @@ class TestGetSingle:
                                 rules=mancala.Mancala.rules)
         game = mancala.Mancala(game_consts, game_info)
         assert isinstance(game.deco.sower.get_single_sower(),
-                          sower.SowCaptOwned)
+                          sower.SowEnPassant)
 
         game_consts = gconsts.GameConsts(nbr_start=4, holes=4)
         game_info = gi.GameInfo(goal=Goal.DEPRIVE,
@@ -1645,7 +1647,134 @@ class TestBlckDivertSower:
         assert 'Divert' in str(mlgame.deco.sower.lap_cont)
 
 
+class TestSowEnPassant:
+    """Specifically test the behavior of the new enums."""
+
+    ENPAS_RULES = [gi.SowRule.ENPAS_ALL_OWNER_SOW,
+                   gi.SowRule.ENPAS_ALL_OWNER_OWN,
+                   gi.SowRule.ENPAS_ALL_SOWER,
+                   gi.SowRule.ENPAS_SOW_SOWER,
+                   gi.SowRule.ENPAS_OPP_SOWER]
+
+    @pytest.mark.parametrize('sow_rule', ENPAS_RULES,
+                             ids=[enpas.name[6:] for enpas in ENPAS_RULES])
+    def test_str(self, sow_rule):
+
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
+        game_info = gi.GameInfo(**TestSowEnPassant.GAMECONF['basic'],
+                                sow_rule=sow_rule,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game =  mancala.Mancala(game_consts, game_info)
+
+        dstr = str(game.deco.sower)
+        assert 'SowEnPassant' in dstr
+
+        where = sow_rule.name[6:9]
+        who = sow_rule.name[10:15]
+        last = sow_rule.name[-3:]
+
+        match (where):
+            case 'ALL':
+                assert '==' not in dstr
+                assert '!=' not in dstr
+            case 'OPP':
+                assert 'turn != owner' in dstr
+            case 'SOW':
+                assert 'turn == owner' in dstr
+            case _:
+                assert False
+
+        match (who):
+            case 'OWNER':
+                assert 'captor:  owner' in dstr
+            case 'SOWER':
+                assert 'captor:  turn' in dstr
+            case _:
+                assert False
+
+        if last == 'OWN':
+            assert 'seeds >' not in dstr
+        else:
+            assert 'seeds >' in dstr
+
+
+    GAMECONF = {'basic':
+                    {'evens': True,
+                     'stores': True},
+
+
+                }
+
+    START = {'start':
+                 mancala.GameState(board=(2, 2, 2, 2, 2, 2, 2, 2),
+                                   store=(0, 0),
+                                   mcount=1,
+                                   _turn=False),
+
+            'all_odd':
+                mancala.GameState(board=(1, 1, 5, 1, 1, 1, 1, 1),
+                                  store=(0, 0),
+                                  mcount=1,
+                                  _turn=False),
+        }
+
+    CASES = [
+        ['basic', 'start', F, 2,
+         dict.fromkeys(ENPAS_RULES, ((2, 2, 0, 3, 3, 2, 2, 2), NSTR))],
+
+        ['basic', 'all_odd', F, 2,
+         {gi.SowRule.ENPAS_ALL_OWNER_SOW: ((1, 1, 0, 0, 0, 0, 0, 2), (2, 6)),
+          gi.SowRule.ENPAS_ALL_OWNER_OWN: ((1, 1, 0, 0, 0, 0, 0, 0), (2, 8)),
+          gi.SowRule.ENPAS_ALL_SOWER:     ((1, 1, 0, 0, 0, 0, 0, 2), (8, 0)),
+          gi.SowRule.ENPAS_SOW_SOWER:     ((1, 1, 0, 0, 2, 2, 2, 2), (2, 0)),
+          gi.SowRule.ENPAS_OPP_SOWER:     ((1, 1, 0, 2, 0, 0, 0, 2), (6, 0)),
+
+          }],
+
+        ]
+
+    CIDS = [f'{case[0]}-{case[1]}-idx{idx}' for idx, case in enumerate(CASES)]
+
+    @pytest.mark.usefixtures('logger')
+    @pytest.mark.parametrize('sow_rule', ENPAS_RULES,
+                             ids=[enpas.name[6:] for enpas in ENPAS_RULES])
+    @pytest.mark.parametrize('config, state, turn, move, exp_dict',
+                             CASES, ids=CIDS)
+    def test_sower(self, config, state, turn, move, exp_dict, sow_rule):
+
+        game_consts = gconsts.GameConsts(nbr_start=2, holes=4)
+        game_info = gi.GameInfo(**TestSowEnPassant.GAMECONF[config],
+                                sow_rule=sow_rule,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        game =  mancala.Mancala(game_consts, game_info)
+
+        start_state = TestSowEnPassant.START[state]
+        game.state = start_state
+        game.turn = turn
+        # print(game.deco.sower)
+        # print(game)
+
+        mdata = move_data.MoveData(game, move)
+        mdata.sow_loc, mdata.seeds = game.deco.drawer.draw(move)
+        mdata.direct = game.info.sow_direct
+        game.deco.sower.sow_seeds(mdata)
+        # print(game)
+
+        eboard = exp_dict[sow_rule][0]
+        estore = exp_dict[sow_rule][1]
+
+        assert game.board == list(eboard)
+        if estore == NSTR:
+            assert tuple(game.store) == start_state.store
+        else:
+            assert tuple(game.store) == estore
+
+
 class TestSowCaptOwned:
+    """these  likely duplicate the newer TestSowEnPassant tests
+    but keep them any way"""
 
     @pytest.fixture
     def game(self):

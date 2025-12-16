@@ -61,6 +61,20 @@ class TestSingleClasses:
         return MData()
 
 
+    @pytest.mark.parametrize('seeds, eok',
+                              [(3, True),
+                               (0, False),
+                              ])
+    def test_needseeds(self, game, seeds, eok):
+
+        loc = 0
+        game.board[loc] = seeds
+
+        cok = capt_ok.CaptNeedSeeds(game, capt_ok.CaptTrue(game))
+
+        assert cok.capture_ok(None, loc) == eok
+
+
     @pytest.mark.parametrize('child, seeds, loc, eok',
                               [(False, 0, 0, False),
                                (True, 0, 0, False),
@@ -296,7 +310,8 @@ GPARAMS = {'ex_no_flags': {},
            'ex_all_set': {'evens': True,
                           'moveunlock': True,
                           'capt_side': True,
-                          'capt_on': (1, 3, 4)}
+                          'capt_on': (1, 3, 4)},
+
            }
 
 TEST_METHODS = GPARAMS.keys()
@@ -348,3 +363,26 @@ class TestCaptOk:
                          GPARAMS[method])
         assert game.deco.capt_basic.capture_ok(None, case.loc)  \
                         == getattr(case, method)
+
+
+class TestPlayStore:
+
+    def test_play_store(self):
+
+            game_consts = gconsts.GameConsts(nbr_start=4, holes=2)
+            game_info = gi.GameInfo(sow_stores=gi.SowStores.OWN,
+                                    play_locs=gi.PlayLocs.BRD_OWN_STR_ALL,
+                                    evens=True,
+                                    stores=True,
+                                    nbr_holes=game_consts.holes,
+                                    rules=mancala.Mancala.rules)
+
+            game = mancala.Mancala(game_consts, game_info)
+
+            basic = str(game.deco.capt_basic.capture_ok)
+            print('basic\n', basic)
+            check = str(game.deco.capt_check.capture_ok)
+            print('check\n', check)
+
+            assert 'CaptNeedSeeds' in basic
+            assert 'CaptNeedSeeds' in check

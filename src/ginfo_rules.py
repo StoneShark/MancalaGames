@@ -677,7 +677,7 @@ def test_capture_rules(tester):
                                                         gi.CaptType.TWO_OUT,
                                                         gi.CaptType.NEXT)),
         msg="""LAP_CAPT is only supported for basic captures,
-            cross capture, capt two out, and capt next""",
+            cross capture, capt next, and capt two out""",
         excp=NotImplementedError)
         # currently only MATCH_OPP is not supported
 
@@ -740,13 +740,35 @@ def test_capture_rules(tester):
             option could prevent this.""",
         warn=True)
 
-    tester.test_rule('sca_gs_not',
+    tester.test_rule('bcapt_enpas_only',
+        rule=lambda ginfo: (ginfo.basic_capt
+                            and not ginfo.sow_rule.is_en_passant()
+                            and ginfo.capt_type in (gi.CaptType.MATCH_OPP,
+                                                    gi.CaptType.PASS_STORE_CAPT,
+                                                    gi.CaptType.SANDWICH_CAPT)),
+        msg="""Basic capture does not limit captures for the
+            selected CAPT_TYPE.
+            Basic capture may be used for en passant captures with them.""",
+        excp=gi.GameInfoError)
+
+    tester.test_rule('enpas_no_capttype',
+        rule=lambda ginfo: (ginfo.sow_rule.is_en_passant()
+                            and ginfo.capt_type in
+                                (gi.CaptType.SINGLETONS,
+                                 gi.CaptType.CAPT_OPP_1CCW,
+                                 gi.CaptType.PULL_ACROSS,
+                                 gi.CaptType.END_OPP_STORE_CAPT)),
+        msg="""En passant captures are not supported
+            for selected the CAPT_TYPE.""",
+        excp=gi.GameInfoError)
+
+    tester.test_rule('enpas_gs_not',
         rule=lambda ginfo: (ginfo.sow_rule.is_en_passant()
                             and ginfo.grandslam != gi.GrandSlam.LEGAL),
         msg='En passant captures require that GRANDLAM be LEGAL',
         excp=gi.GameInfoError)
 
-    tester.test_rule('sca_basic_capt',
+    tester.test_rule('enpas_basic_capt',
         rule=lambda ginfo: (ginfo.sow_rule.is_en_passant()
                             and not ginfo.basic_capt),
         msg='En passant captures require a basic capture',
@@ -822,10 +844,12 @@ def test_capture_rules(tester):
         msg='Capture TWO_OUT cannot be used with CAPT_SIDE other than BOTH',
         excp=gi.GameInfoError)
 
-    tester.test_rule('singles_no_mult',
-        rule=lambda ginfo: (ginfo.capt_type == gi.CaptType.SINGLETONS
-                            and ginfo.multicapt),
-        msg='Multiple captures with capture SINGLETONS is not supported',
+    tester.test_rule('ctype_no_multi',
+        rule= lambda ginfo: (ginfo.multicapt
+                             and ginfo.capt_type in (gi.CaptType.SINGLETONS,
+                                                     gi.CaptType.CAPT_OPP_1CCW,
+                                                     gi.CaptType.SANDWICH_CAPT)),
+        msg="""Selected CAPT_TYPE is incompatible with MULTICAPT""",
         excp=gi.GameInfoError)
 
     tester.test_rule('str_capt_stores',
