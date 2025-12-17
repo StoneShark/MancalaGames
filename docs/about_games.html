@@ -201,7 +201,7 @@ neither player has a move.
 <p>To setup for the next round, each player fills as many holes as they can.
 The player owns the holes that they fill for the next round. The round
 starter alternates.
-<p>The game ends when one player has all of the seeds; they are the winner.
+<p>The game ends when one player controls 10 holes (see deviation).
 <p>Variations:
 <ul><li class="helptext">
 Change number of holes required for win (<a href="game_params.html#goal_param">GOAL_PARAM</a>).
@@ -4088,18 +4088,17 @@ pass. Their opponent must make seeds available to them as soon as they are
 able. If they can make seeds available, moves are only allowed from holes
 that do so.
 <p>For all but the final seed of lap, any hole sown to four seeds is captured
-by the hole owner. If the final seed of a multi-lap sow sows a hole to four
-seeds, they are not captured.
+by the hole owner. If the final seed of a multi-lap sow, sows a hole to
+four seeds, they are not captured.
 <p>After the multi-lap sowing check for captures. The hole from which the next
 lap would start is empty, capture any seeds in the hole after the empty
 one, that is, the hole 'two out' or 'across the gap' from the final hole
 sown.
 <p>Played in rounds.
-<p>Each round ends when the current player does not have any playable holes.
-Round setup is via the <a href="game_params.html#rf_ehm">Empty Hole
-Method</a> of <a href="game_params.html#round_fill">ROUND_FILL</a> from each player's left. After the next round
-setup unfilled holes are out of play. The players alternate starting
-rounds.
+<p>A round ends when there are 6 or fewer seeds in play (see deviation). Round
+setup is via the <a href="game_params.html#rf_ehm">Empty Hole Method</a> of
+<a href="game_params.html#round_fill">ROUND_FILL</a> from each player's left. After the next round setup unfilled
+holes are out of play. The players alternate starting rounds.
 <p>The game is over when either player cannot fill a single hole.
 <p>Variations:
 <ul><li class="helptext">
@@ -4151,8 +4150,10 @@ their sow direction; the second player sows in the opposite direction.
 </div>
 <p><b class="enum">Rules</b>: Hanson, Sue and Jon. All about Mancala: It's
 History and How to Play. 2003. p85-92.
-<p><b class="enum">Deviation</b>: <a href="game_params.html#pickextra">PICKEXTRA</a> of PICKLASTSEEDS added to make
-games to end more reliably.
+<p><b class="enum">Deviation</b>: Games between inexperienced players often
+end in cycling seeds, so <a href="game_params.html#pickextra">PICKEXTRA</a> of PICKLASTSEEDS added to make games to
+end rounds more reliably. This can be reset to None via variation
+configuration.
 <p><b class="enum">Origin</b>: traditional
 <p><b class="enum">Region</b>: South Asia
 <h3 id="Pandi" class="game_desc">Pandi</h3>

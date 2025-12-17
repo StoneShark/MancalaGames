@@ -81,7 +81,7 @@ To setup for the next round, each player fills as many holes as they
 can. The player owns the holes that they fill for the next round.
 The round starter alternates.
 
-The game ends when one player has all of the seeds; they are the winner.
+The game ends when one player controls 10 holes (see deviation).
 
 Variations:
 

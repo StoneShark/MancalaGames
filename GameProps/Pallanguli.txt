@@ -62,14 +62,14 @@
       "nbr_start": [ 4, 5, 6 ],
       "goal_param": "include",
       "sow_rule": [ 0, 3 ],
-      "pickextra": [ 0, 1 ],
+      "pickextra": [ 0, 1, 3 ],
       "capt_rturn": "include",
       "multicapt": "include",
       "round_starter": "include",
       "round_fill": [ 1, 2, 3, 6 ]
    },
    "rules": "Hanson, Sue and Jon. All about Mancala: It's History and How to Play. 2003. p85-92.",
-   "deviation": "PICKEXTRA of PICKLASTSEEDS added to make games to end more reliably.",
+   "deviation": "<text_section>",
    "origin": "traditional",
    "region": "South Asia"
 }
@@ -85,7 +85,7 @@ If they can make seeds available, moves are only allowed from holes that do so.
 
 For all but the final seed of lap, any hole sown to four seeds is captured
 by the hole owner.
-If the final seed of a multi-lap sow sows a hole to four seeds, they are not captured.
+If the final seed of a multi-lap sow, sows a hole to four seeds, they are not captured.
 
 After the multi-lap sowing check for captures.
 The hole from which the next lap would start is empty,
@@ -94,8 +94,8 @@ the hole 'two out' or 'across the gap' from the final hole sown.
 
 Played in rounds.
 
-Each round ends when the current player does not
-have any playable holes. Round setup is via the
+A round ends when there are 6 or fewer seeds in play (see deviation).
+Round setup is via the
 <a href="game_params.html#rf_ehm">Empty Hole Method</a> of
 ROUND_FILL from each player's left.
 After the next round setup unfilled holes are
@@ -121,4 +121,9 @@ Variations:
 Start with 5 seeds per hole.
 The first player chooses their sow direction; the second player sows in the opposite direction.
 </about>
+<deviation>
+Games between inexperienced players often end in cycling seeds,
+so PICKEXTRA of PICKLASTSEEDS added to make games to end rounds more reliably.
+This can be reset to None via variation configuration.
+</deviation>
 </text_section>
