@@ -96,6 +96,14 @@ REMOVE_TAGS = [re.compile(r'<a[^>]+>'),
                re.compile(r'<h5[^>]*>'),
                re.compile(r'</h5>'),
 
+               # tables are completely removed, each element must
+               # be one a line by itself without separating blank lines
+               re.compile(r'<table[^>]*>\n'),
+               re.compile(r'</table>\n'),
+               re.compile(r'<tr[^>]*>\n'),
+               re.compile(r'</tr>\n'),
+               re.compile(r'<td.*/td>\n'),
+
                # these tags are used and removed in editor's formatter
                # re.compile(r'<pre[^>]+>'),
                # re.compile(r'</pre>'),

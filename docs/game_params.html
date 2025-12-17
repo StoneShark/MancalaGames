@@ -1579,6 +1579,29 @@ not sow any opposite hole, they get a repeat turn.
 <p class="pdesc">UI Tab: Capture
 
 <p>Capture type.
+<p><table border=1 cellpadding=5 cellspacing=0>  <tr>   <td>Capture
+Mechanism</td>   <td>Basic Capt Usage</td>   <td>Chain to Basic or Cross
+Capt</td>   <td>Multicapt Supported</td>   <td>Lap Capt Supported</td>
+<td>Stop Mlaps for Capture</td>  </tr>  <tr>   <td>Basic</td>   <td>enpas
+&amp; limit</td>   <td>&nbsp;</td>   <td>yes</td>   <td>yes</td>
+<td>yes</td>  </tr>  <tr>   <td>CrossCapt</td>   <td>enpas &amp; limit</td>
+<td>&nbsp;</td>   <td>yes</td>   <td>yes</td>   <td>yes</td>  </tr>  <tr>
+<td colspan=7>CAPT_TYPE</td>  </tr>  <tr>   <td>NEXT</td>   <td>enpas &amp;
+limit</td>   <td>no</td>   <td>yes</td>   <td>yes</td>   <td>no</td>  </tr>
+<tr>   <td>TWO_OUT</td>   <td>enpas</td>   <td>no</td>   <td>yes</td>
+<td>yes</td>   <td>no</td>  </tr>  <tr>   <td>MATCH_OPP</td>
+<td>enpas</td>   <td>no</td>   <td>yes</td>   <td>no</td>   <td>yes</td>
+</tr>  <tr>   <td>SINGLETONS</td>   <td>not used</td>   <td>no</td>
+<td>no</td>   <td>no</td>   <td>no</td>  </tr>  <tr>
+<td>CAPT_OPP_1CCW</td>   <td>limit</td>   <td>no</td>   <td>no</td>
+<td>no</td>   <td>no</td>  </tr>  <tr>   <td>PASS_STORE_CAPT</td>
+<td>enpas</td>   <td>if no capt</td>   <td>no</td>   <td>no</td>
+<td>no</td>  </tr>  <tr>   <td>PULL_ACROSS</td>   <td>limit</td>
+<td>no</td>   <td>yes</td>   <td>no</td>   <td>no</td>  </tr>  <tr>
+<td>END_OPP_STORE_CAPT</td>   <td>not used</td>   <td>if no capt</td>
+<td>no</td>   <td>no</td>   <td>no</td>  </tr>  <tr>
+<td>SANDWICH_CAPT</td>   <td>enpas</td>   <td>if no capt</td>   <td>no</td>
+<td>no</td>   <td>yes</td> </tr> </table>
 <ol start=0><li class="helptext">
 <b class="enum">NONE</b>: No other capture type.
 <li class="helptext">
@@ -1639,9 +1662,9 @@ store.
 <p class="helptext"> <nolink>END_OPP_STORE_CAPT may be used with basic or cross capture. If
 the store is not captured, a basic or cross capture is attempted.
 <li class="helptext">
-<b class="enum">SANDWICH_CAPT</b>: if the last seed of a sow lands in an empty hole on your
-opponent's side of the board, and the two holes on either side are also on
-your opponent's side of the board and the same number of seeds in them,
+<b class="enum">SANDWICH_CAPT</b>: if the last seed of a sow lands in an empty hole as
+constrained by <a href="game_params.html#capt_side">CAPT_SIDE</a>, and the two holes on either side, also
+constrained by <a href="game_params.html#capt_side">CAPT_SIDE</a>, and have the same number of seeds in them,
 capture all three holes.
 <p class="helptext"> If there is no capture, continue to check for a second configured
 capture type which must be basic or cross capture.
@@ -2128,9 +2151,9 @@ parameters and multipliers.
 <footer>
 <table>
     <tr>
-    <td>GPL-3.0 license</td>
-    <td></td>
-    <td style="text-align:right">&copy; 2024-2025, Ann Davies</td>
+    <td class="footer">GPL-3.0 license</td>
+    <td class="footer"></td>
+    <td class="footer" style="text-align:right">&copy; 2024-2025, Ann Davies</td>
     </tr>
 </table>
 </footer>

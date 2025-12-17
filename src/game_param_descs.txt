@@ -185,6 +185,108 @@ only).
 <param capt_type>
 Capture type.
 
+<table border=1 cellpadding=5 cellspacing=0>
+ <tr>
+  <td>Capture Mechanism</td>
+  <td>Basic Capt Usage</td>
+  <td>Chain to Basic or Cross Capt</td>
+  <td>Multicapt Supported</td>
+  <td>Lap Capt Supported</td>
+  <td>Stop Mlaps for Capture</td>
+ </tr>
+ <tr>
+  <td>Basic</td>
+  <td>enpas &amp; limit</td>
+  <td>&nbsp;</td>
+  <td>yes</td>
+  <td>yes</td>
+  <td>yes</td>
+ </tr>
+ <tr>
+  <td>CrossCapt</td>
+  <td>enpas &amp; limit</td>
+  <td>&nbsp;</td>
+  <td>yes</td>
+  <td>yes</td>
+  <td>yes</td>
+ </tr>
+ <tr>
+  <td colspan=7>CAPT_TYPE</td>
+ </tr>
+ <tr>
+  <td>NEXT</td>
+  <td>enpas &amp; limit</td>
+  <td>no</td>
+  <td>yes</td>
+  <td>yes</td>
+  <td>no</td>
+ </tr>
+ <tr>
+  <td>TWO_OUT</td>
+  <td>enpas</td>
+  <td>no</td>
+  <td>yes</td>
+  <td>yes</td>
+  <td>no</td>
+ </tr>
+ <tr>
+  <td>MATCH_OPP</td>
+  <td>enpas</td>
+  <td>no</td>
+  <td>yes</td>
+  <td>no</td>
+  <td>yes</td>
+ </tr>
+ <tr>
+  <td>SINGLETONS</td>
+  <td>not used</td>
+  <td>no</td>
+  <td>no</td>
+  <td>no</td>
+  <td>no</td>
+ </tr>
+ <tr>
+  <td>CAPT_OPP_1CCW</td>
+  <td>limit</td>
+  <td>no</td>
+  <td>no</td>
+  <td>no</td>
+  <td>no</td>
+ </tr>
+ <tr>
+  <td>PASS_STORE_CAPT</td>
+  <td>enpas</td>
+  <td>if no capt</td>
+  <td>no</td>
+  <td>no</td>
+  <td>no</td>
+ </tr>
+ <tr>
+  <td>PULL_ACROSS</td>
+  <td>limit</td>
+  <td>no</td>
+  <td>yes</td>
+  <td>no</td>
+  <td>no</td>
+ </tr>
+ <tr>
+  <td>END_OPP_STORE_CAPT</td>
+  <td>not used</td>
+  <td>if no capt</td>
+  <td>no</td>
+  <td>no</td>
+  <td>no</td>
+ </tr>
+ <tr>
+  <td>SANDWICH_CAPT</td>
+  <td>enpas</td>
+  <td>if no capt</td>
+  <td>no</td>
+  <td>no</td>
+  <td>yes</td>
+</tr>
+</table>
+
 - NONE: No other capture type.
 
 - NEXT: Capture from the hole after the final seed sown. Captures in
@@ -258,8 +360,8 @@ the seeds in their store.
 If the store is not captured, a basic or cross capture is attempted.
 
 - SANDWICH_CAPT: if the last seed of a sow lands in an empty hole
-on your opponent's side of the board, and the two holes on either
-side are also on your opponent's side of the board and the same number
+as constrained by CAPT_SIDE, and the two holes on either
+side, also constrained by CAPT_SIDE, and have the same number
 of seeds in them, capture all three holes.
 
   + If there is no capture, continue to check for a second configured
