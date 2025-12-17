@@ -447,6 +447,7 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
 
         pcleanup = self.pcleanup
         self.pcleanup = None
+        grabbed = self.grab_status()
 
         if self.root is self.master:
             self.root.destroy()
@@ -455,8 +456,10 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
             self.master.destroy()
         del self.game
 
-        MancalaUI(newgame, pdict,
-                  player=player, root_ui=self.root, pcleanup=pcleanup)
+        new_ui = MancalaUI(newgame, pdict,
+                           player=player, root_ui=self.root, pcleanup=pcleanup)
+        if grabbed:
+            new_ui.grab_set()
 
 
     def _button_state(self, allows, ai_turn, loc, aidx):
