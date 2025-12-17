@@ -911,6 +911,10 @@ class SelectList(ttk.Labelframe):
         self.game_list.bind('<Button-3>', self.right_click)
         self.game_list.bind('<Double-Button-1>', self.play_game)
 
+        # support showing a check for the selected game's rating,
+        # only used while the right click menu is up
+        self.rating_tkvar = tk.IntVar(self, 0)
+
 
     def set_title(self, count=0):
         """Put the game count into the label frame text."""
@@ -984,13 +988,16 @@ class SelectList(ttk.Labelframe):
                                                         gamename, vname))
             menubar.add_cascade(label='Play Variant', menu=varimenu)
 
+        self.rating_tkvar.set(FAVS.rating(gamename))
         ratemenu = tk.Menu(menubar)
         for rating in range(1, 6):
-            ratemenu.add_command(label=STAR * rating,
-                                 command=ft.partial(self.parent.set_rating,
+            ratemenu.add_radiobutton(label=STAR * rating,
+                                     value=rating, variable=self.rating_tkvar,
+                                     command=ft.partial(self.parent.set_rating,
                                                     rating))
-        ratemenu.add_command(label='Clear',
-                             command=ft.partial(self.parent.set_rating, 0))
+        ratemenu.add_radiobutton(label='None',
+                                 value=0, variable=self.rating_tkvar,
+                                 command=ft.partial(self.parent.set_rating, 0))
         menubar.add_cascade(label='Rate Game', menu=ratemenu)
 
         menubar.add_command(label='Edit...', command=self.parent.edit_game)
