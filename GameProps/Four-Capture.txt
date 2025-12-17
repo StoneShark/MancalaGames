@@ -11,6 +11,7 @@
       "mlaps": 1,
       "mustshare": true,
       "capt_side": 0,
+      "prescribed": 6,
       "pickextra": 3,
       "sow_direct": 1,
       "sow_rule": 15,

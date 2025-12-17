@@ -907,6 +907,8 @@ class Mancala(ai_interface.AiGameIf):
     def _win_reason_str(self, win_cond):
         """Create the win reason string based on win_cond, game goal,
         and user ended game."""
+        # pylint: disable=too-complex
+        # pylint: disable=too-many-branches
 
         reason = '.'
         win_param = self.info.goal_param

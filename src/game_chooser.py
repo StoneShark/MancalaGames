@@ -782,7 +782,7 @@ FILTERS += [
 
     FilterDesc('Region', TriStateFilter, REGIONS, True, 1, fcol.count),
 
-    FilterDesc('Rules or Variant', TriStateFilter, RULES, True, 1, fcol.count),
+    FilterDesc('Reference Rules', DictFilter, RULES, True, 1, fcol.count),
 
     FilterDesc('Configuration', TriStateFilter, GNOTES, True, 1, fcol.count),
 
