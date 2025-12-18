@@ -1812,6 +1812,12 @@ players.
 <p>If a sow ends in an occupied hole and the next hole is empty, capture the
 seeds in the following hole.
 <p>Goal: collect the most seeds.
+<p>Variations:
+<ul><li class="helptext">
+Prevent captures on the first one or two moves.
+<li class="helptext">
+Skip the start hole which causes every sow to leave an open hole.
+</ul>
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  5</p>
@@ -1849,9 +1855,10 @@ your opponent claims your remaining seeds and the game ends.
     <p class="param"><a href="game_params.html#capt_side">Capture side</a>: BOTH</p>
     <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
     <p class="param"><a href="game_params.html#mustshare">Must Share</a>: Yes</p>
+    <p class="param"><a href="game_params.html#pickextra">On Capture, Take More Rule</a>: PICKLASTSEEDS</p>
   </div>
   <div class="column2">
-    <p class="param"><a href="game_params.html#pickextra">On Capture, Take More Rule</a>: PICKLASTSEEDS</p>
+    <p class="param"><a href="game_params.html#prescribed">Prescribed Opening Move</a>: NO_UDIR_FIRSTS</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
     <p class="param"><a href="game_params.html#sow_rule">Special Sow Rules</a>: ENPAS_SOW_SOWER</p>
     <p class="param"><a href="game_params.html#stores">Stores</a>: Yes</p>
@@ -3539,8 +3546,8 @@ capture. Extra turn when last seed in store.
 <p><b class="enum">Origin</b>: example
 <h3 id="NoSides" class="game_desc">NoSides</h3>
 <p>Both players may move from any hole, single lap and counter-clockwise.
-Player's store is to their right. Capture on 2s.
-
+<p>Capture on 2s.
+<p>Goal: collect more half the seeds.
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  5</p>
@@ -3559,9 +3566,8 @@ Player's store is to their right. Capture on 2s.
 <p><b class="enum">Origin</b>: example
 <h3 id="No Sides Child" class="game_desc">No Sides Child</h3>
 <p>Both players may move in either direction from any hole; single-lap and
-counter-clockwise. Player's store is to their right. Children are created
-on 4s. Capture on 2s.
-
+counter-clockwise.
+<p>Children are created on 4s. Capture on 2s.
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  7</p>

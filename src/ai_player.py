@@ -96,6 +96,7 @@ class AiPlayer(ai_interface.AiPlayerIf):
         self._diff = 0
         self.difficulty = player_dict.get(ckey.DIFFICULTY, 1)
 
+        self.mm_score_counts = player_dict.get(ckey.MM_SCORE_COUNTS, False)
         self.scorers = []
         self.collect_scorers()
 
@@ -190,13 +191,10 @@ class AiPlayer(ai_interface.AiPlayerIf):
                      self._score_cnt_empties,
                      self._score_diff_empties)]
 
-        # use count for no_sides games that not east west
-        use_count = self.game.info.no_sides and not self.game.cts.board_side(0)
-
         for param, cnt_func, diff_func in scorers:
             if getattr(self.sc_params, param):
 
-                if use_count:
+                if self.mm_score_counts:
                     self.scorers += [cnt_func]
                 else:
                     self.scorers += [diff_func]

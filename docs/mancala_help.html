@@ -708,7 +708,7 @@ Without this exploration the player might never find the overall best path
 
 <h3 id="aiparams">Minimaxer/Negamaxer Evaluation Multipliers</h3>
 <p>The Minimaxer and Negamaxer statically evaluate
-each game state after each simulated move.
+the game state after each simulated move.
 Game properties are collected for a given game state and
 multipliers are applied to determine the state's score.
 For example, the number of empty holes each player has is
@@ -744,8 +744,10 @@ to make the AI player make mistakes.
 <a href="game_params.html#mx_seeds_m">MX_EMPTIES_M</a>, the multipliers are applied
 to game properties in slighly different
 ways based on the game configuration:
-<ul><li>In games with NO_SIDES, multipliers are applied to the total
-count of the properties.
+<ul><li>If <a href="game_params.html#mm_score_counts">MM_SCORE_COUNTS</a>
+is set, the multipliers are applied to the total count of the properties.
+This is generally used when a game is a true NO_SIDES game, i.e., games where one
+player is not responsible for any part of the board.
 <li>In games with a goal of TERRITORY, the properties are computed by hole owner.
 Then the multiplier is applied to the human - ai player parameter.
 <li>In all other games, the properties are computed by the side of the board

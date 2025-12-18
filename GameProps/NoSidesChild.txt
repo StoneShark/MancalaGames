@@ -1,32 +1,34 @@
 {
    "game_class": "Mancala",
    "game_constants": {
-      "nbr_start": 2,
-      "holes": 7
+      "holes": 7,
+      "nbr_start": 2
    },
    "game_info": {
       "name": "No Sides Child",
-      "about": "Both players may move in either direction from any hole; single-lap and counter-clockwise. Player's store is to their right. Children are created on 4s. Capture on 2s.",
-      "capt_on": [2],
-      "capt_side": 0,
+      "about": "<text_section>",
+      "capt_on": [ 2 ],
       "child_cvt": 4,
       "child_type": 1,
       "no_sides": true,
+      "capt_side": 0,
       "skip_start": true,
       "sow_direct": 1,
       "stores": true,
-      "udir_holes": [0, 1, 2, 3, 4, 5, 6]
+      "udir_holes": [ 0, 1, 2, 3, 4, 5, 6 ]
    },
    "player": {
-      "scorer": {
-         "mx_stores_m": 4,
-         "mx_easy_rand_a": 0,
-         "mx_rturn_a": 0
-      },
       "algorithm": "negamaxer",
-      "ai_params": {
-         "mm_depth": [1, 1, 3, 5]
+      "scorer": {
+         "mx_stores_m": 4
       }
    },
    "origin": "example"
 }
+<text_section>
+<about>
+Both players may move in either direction from any hole; single-lap and counter-clockwise.
+
+Children are created on 4s. Capture on 2s.
+</about>
+</text_section>

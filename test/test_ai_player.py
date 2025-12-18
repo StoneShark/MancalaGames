@@ -222,7 +222,8 @@ class TestScorers:
 
     @pytest.fixture
     def nsplayer(self, nsgame):
-        return ai_player.AiPlayer(nsgame, {})
+        return ai_player.AiPlayer(nsgame,
+                                  {'mm_score_counts': True})
 
     @pytest.fixture
     def tgame(self):

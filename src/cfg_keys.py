@@ -47,6 +47,7 @@ MLAP_PARAM = 'mlap_param'
 MLAPS = 'mlaps'
 MLENGTH = 'mlength'
 MM_DEPTH = 'mm_depth'
+MM_SCORE_COUNTS = 'mm_score_counts'
 MOVE_ONE = 'move_one'
 MOVEUNLOCK = 'moveunlock'
 MULTICAPT = 'multicapt'
@@ -182,6 +183,7 @@ PLAYER_PARAMS = (ALGORITHM,
                  MCTS_NODES,
                  MCTS_POUTS,
                  MM_DEPTH,
+                 MM_SCORE_COUNTS,
                  MX_STORES,
                  MX_ACCESS_M,
                  MX_SEEDS_M,

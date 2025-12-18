@@ -4,18 +4,6 @@ the game options are.
 
 New lines can be inserted with \n.
 
-<param mx_access_m>
-The multiplier for the access scorer. The access scorer computes how
-many of the opponent's holes can be accessed for the given game state.
-
-The access scorer is slow and therefore is prohibited from being used
-in multilap games (MLAPS); games with user choice of move direction
-(UDIR_HOLES); and games where hole owners are not predefined
-(NO_SIDES). In these game configurations, the multiplier must be zero
-to disable the access scorer.
-
-Used only for minimax & negamax players.
-
 <param ai_active>
 Automatically activate the AI player. The AI player can be manually
 deactivated, but it is selected for the starter it will start the
@@ -396,15 +384,6 @@ unless the game win conditions are met.
 <param end_param>
 Parameter for END_COND.
 
-<param mx_child_cnt_m>
-The multiplier for the child scorer. The child scorer counts the
-number children each player has.
-
-The child scorer may only be used on games with children. If the game
-does not include children, the multiplier must be zero.
-
-Used only for the minimax & negamax players.
-
 <param child_cvt>
 Defines the number of seeds required to make a child.
 
@@ -620,23 +599,6 @@ The default difficulty for the game. Valid values are 0 for easiest
 and 3 for hardest. The difficulty can be changed at play time, even
 during game play, in the Mancala UI.
 
-<param mx_easy_rand_a>
-If the game is being played on easy mode (game difficult of easy/0), a
-random value may be added to the static evaluation. This can be done
-to induce errors into the ai player's game play. A random value is
-selected between -mx_easy_rand_a and +easy_rand.
-
-The specific value for this should be selected based on the ranges of
-the parameters and multipliers.
-
-Used only for minimax & negamax players.
-
-<param mx_empties_m>
-The multiplier for the empties scorer. The empties scorer counts the
-number empty holes each player has on the board.
-
-Used only for minimax & negamax players.
-
 <param evens>
 Capture when a hole has an even number of seeds, greater than 0. When
 selected with other basic capture mechanisms, the capture mechanisms
@@ -704,13 +666,6 @@ traditional
 <region>
 Eastern Africa
 </pre>
-
-<param mx_evens_m>
-The multiplier for the even scorer. The even scorer counts the number
-of holes with an even number of seeds. This is useful to use when the
-capture mechanism is evens.
-
-Used only for minimax & negamax players.
 
 <param game_class>
 The name of the Game Class. One of:
@@ -1106,7 +1061,6 @@ href="mancala_help.html#gamemenu">End Game</a> based on GOAL and
 UNCLAIMED.
 
 <param mlap_cont>
-
 An additional limit on continuing MLAPS sowing:
 
 - NONE: no additional reasons
@@ -1130,14 +1084,24 @@ Only valid with SOW_STORES.
 This is only different from STOP_STORE when MLAPS is LAPPER_NEXT.
 Only valid with SOW_STORES.
 
-
 <param mlap_param>
-
 Parameter for the Lap Continue Reason.
 
 <param mm_depth>
 The depth that the minimaxer or negamaxer will search the game tree
 from the current node. One value for each difficulty.
+
+<param mm_score_counts>
+Use the total counts scorers versus the side/owner comparison scorers
+for MX_EVENS_M, MX_SEEDS_M and MX_EMPTIES_M.
+
+For example, with a positive multipler for mx_seeds_m, the total
+number of seeds on the board are encouranged. 
+When mm_score_counts is off, a positive multiplier for mx_seeds_m
+encourages that a player has more seeds in play than their opponent.
+
+This is suggested for games that use NO_SIDES where players are
+not responsible for holes on their side of the board or they own.
 
 <param move_one>
 Only valid when SOW_START is set. Changes the SOW_START behavior so
@@ -1195,6 +1159,77 @@ if any holes will share seeds, only those holes are allowed for moves.
 On the other hand, if no moves share seeds, moves from all holes that
 meet other criteria are allowed.
 
+<param mx_access_m>
+The multiplier for the access scorer. The access scorer computes how
+many of the opponent's holes can be accessed for the given game state.
+
+The access scorer is slow and therefore is prohibited from being used
+in multilap games (MLAPS); games with user choice of move direction
+(UDIR_HOLES); and games where hole owners are not predefined
+(NO_SIDES). In these game configurations, the multiplier must be zero
+to disable the access scorer.
+
+Used only for minimax & negamax players.
+
+<param mx_child_cnt_m>
+The multiplier for the child scorer. The child scorer counts the
+number children each player has.
+
+The child scorer may only be used on games with children. If the game
+does not include children, the multiplier must be zero.
+
+Used only for the minimax & negamax players.
+
+<param mx_easy_rand_a>
+If the game is being played on easy mode (game difficult of easy/0), a
+random value may be added to the static evaluation. This can be done
+to induce errors into the ai player's game play. A random value is
+selected between -mx_easy_rand_a and +easy_rand.
+
+The specific value for this should be selected based on the ranges of
+the parameters and multipliers.
+
+Used only for minimax & negamax players.
+
+<param mx_empties_m>
+The multiplier for the empties scorer. The empties scorer counts the
+number empty holes each player has on the board.
+
+Used only for minimax & negamax players.
+
+<param mx_evens_m>
+The multiplier for the even scorer. The even scorer counts the number
+of holes with an even number of seeds. This is useful to use when the
+capture mechanism is evens.
+
+Used only for minimax & negamax players.
+
+<param mx_rturn_a>
+A value used to encourage or discourage repeat turns. The value is
+added in for the current player and subtracted off the score for the
+opposing playing. Use a positive value to encourage the AI player to
+repeat turns.
+
+This parameter may only be used for games in which repeated turns are
+possible (SOW_STORES, CAPT_RTURN or XC_SOWN).
+
+Used only for minimax & negamax players.
+
+<param mx_seeds_m>
+The multiplier for the seeds scorer. The seeds scorer computes how
+many seeds each player has on the game board that are not in children.
+
+Used only for minimax & negamax players.
+
+<param mx_stores_m>
+The multiplier for the stores scorer. Seeds in stores and children are
+included.
+
+The stores scorer may not be used in games without STORES or CHILDREN.
+A zero multiplier disables the stores scorer.
+
+Used only for minimax & negamax players.
+
 <param name>
 The game name which may have spaces. Used for the window title and the
 filename (with spaces replaced with underscores).
@@ -1234,7 +1269,6 @@ If the selected start hole has exactly one seed, no capture may be
 made with it.
 
 <param play_locs>
-
 Locations in which moves may start:
 
 - BOARD_ONLY: moves may only be initiated from the board.
@@ -1323,17 +1357,6 @@ lap.
 
 - DRAW_1_XCAPT: When drawing 1 seed, capture any seeds on the other
 side of the board.
-
-<param mx_rturn_a>
-A value used to encourage or discourage repeat turns. The value is
-added in for the current player and subtracted off the score for the
-opposing playing. Use a positive value to encourage the AI player to
-repeat turns.
-
-This parameter may only be used for games in which repeated turns are
-possible (SOW_STORES, CAPT_RTURN or XC_SOWN).
-
-Used only for minimax & negamax players.
 
 <param round_fill>
 The round fill method determines hole contents or ownership after each round.
@@ -1508,12 +1531,6 @@ ROUND_STARTER and  the board is reset according to ROUND_FILL.
 
 BLOCKS are used in many games and set between rounds based on the seed
 placement. TERRITORY GOAL games adjust hole ownership between rounds.
-
-<param mx_seeds_m>
-The multiplier for the seeds scorer. The seeds scorer computes how
-many seeds each player has on the game board that are not in children.
-
-Used only for minimax & negamax players.
 
 <param skip_start>
 When sowing a second or subsequent circuit of the board, skip the
@@ -1887,15 +1904,6 @@ of NOT_APPLICABLE and UCHOWN.
 True when stores are present on the game board. For games with GOAL of
 DEPRIVE or CLEAR, stores can be used to show whose turn it is (seed
 counts will not be sown).
-
-<param mx_stores_m>
-The multiplier for the stores scorer. Seeds in stores and children are
-included.
-
-The stores scorer may not be used in games without STORES or CHILDREN.
-A zero multiplier disables the stores scorer.
-
-Used only for minimax & negamax players.
 
 <param udir_holes>
 A list of holes from which the user can choose the sow direction.

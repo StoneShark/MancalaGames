@@ -22,7 +22,7 @@ def test_rules(ginfo, holes, skip):
     """Rules specific to ShareOne then call mancala rules.
 
     ShareOneAllow deco was not written to support triples
-    and it is inserted before the allowables.Allowable deco;
+    and it is inserted before the allowable deco;
     thus, no_sides and territory are imcompatible.
 
     Always put seeds in leftmost hole in ShareOneSow,

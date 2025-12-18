@@ -1997,24 +1997,6 @@ multilap games (<a href="game_params.html#mlaps">MLAPS</a>); games with user cho
 these game configurations, the multiplier must be zero to disable the
 access scorer.
 <p>Used only for minimax & negamax players.
-<h4 id="mx_seeds_m"> Seeds Multiplier </h4>
-<p class="pdesc">Location in Config Files: player : scorer : mx_seeds_m
-<p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
-<p class="pdesc">Default value: 0
-<p class="pdesc">UI Tab: Player
-
-<p>The multiplier for the seeds scorer. The seeds scorer computes how many
-seeds each player has on the game board that are not in children.
-<p>Used only for minimax & negamax players.
-<h4 id="mx_empties_m"> Empties Multiplier </h4>
-<p class="pdesc">Location in Config Files: player : scorer : mx_empties_m
-<p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
-<p class="pdesc">Default value: 0
-<p class="pdesc">UI Tab: Player
-
-<p>The multiplier for the empties scorer. The empties scorer counts the number
-empty holes each player has on the board.
-<p>Used only for minimax & negamax players.
 <h4 id="mx_child_cnt_m"> Child Count Multiplier </h4>
 <p class="pdesc">Location in Config Files: player : scorer : mx_child_cnt_m
 <p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
@@ -2026,16 +2008,6 @@ children each player has.
 <p>The child scorer may only be used on games with children. If the game does
 not include children, the multiplier must be zero.
 <p>Used only for the minimax & negamax players.
-<h4 id="mx_evens_m"> Evens Multiplier </h4>
-<p class="pdesc">Location in Config Files: player : scorer : mx_evens_m
-<p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
-<p class="pdesc">Default value: 0
-<p class="pdesc">UI Tab: Player
-
-<p>The multiplier for the even scorer. The even scorer counts the number of
-holes with an even number of seeds. This is useful to use when the capture
-mechanism is evens.
-<p>Used only for minimax & negamax players.
 <h4 id="mx_rturn_a"> Repeat Turn Addin </h4>
 <p class="pdesc">Location in Config Files: player : scorer : mx_rturn_a
 <p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
@@ -2060,6 +2032,48 @@ induce errors into the ai player's game play. A random value is selected
 between -mx_easy_rand_a and +easy_rand.
 <p>The specific value for this should be selected based on the ranges of the
 parameters and multipliers.
+<p>Used only for minimax & negamax players.
+<h4 id="mm_score_counts"> Score Total Counts (vs Owner) </h4>
+<p class="pdesc">Location in Config Files: player : mm_score_counts
+<p id="bool" class="pdesc">Type: <a href="param_types.html#bool"> bool </a>
+<p class="pdesc">Default value: False
+<p class="pdesc">UI Tab: Player
+
+<p>Use the total counts scorers versus the side/owner comparison scorers for
+<a href="game_params.html#mx_evens_m">MX_EVENS_M</a>, <a href="game_params.html#mx_seeds_m">MX_SEEDS_M</a> and <a href="game_params.html#mx_empties_m">MX_EMPTIES_M</a>.
+<p>For example, with a positive multipler for mx_seeds_m, the total number of
+seeds on the board are encouranged.  When mm_score_counts is off, a
+positive multiplier for mx_seeds_m encourages that a player has more seeds
+in play than their opponent.
+<p>This is suggested for games that use <a href="game_params.html#no_sides">NO_SIDES</a> where players are not
+responsible for holes on their side of the board or they own.
+<h4 id="mx_seeds_m"> Seeds Multiplier </h4>
+<p class="pdesc">Location in Config Files: player : scorer : mx_seeds_m
+<p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
+<p class="pdesc">Default value: 0
+<p class="pdesc">UI Tab: Player
+
+<p>The multiplier for the seeds scorer. The seeds scorer computes how many
+seeds each player has on the game board that are not in children.
+<p>Used only for minimax & negamax players.
+<h4 id="mx_empties_m"> Empties Multiplier </h4>
+<p class="pdesc">Location in Config Files: player : scorer : mx_empties_m
+<p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
+<p class="pdesc">Default value: 0
+<p class="pdesc">UI Tab: Player
+
+<p>The multiplier for the empties scorer. The empties scorer counts the number
+empty holes each player has on the board.
+<p>Used only for minimax & negamax players.
+<h4 id="mx_evens_m"> Evens Multiplier </h4>
+<p class="pdesc">Location in Config Files: player : scorer : mx_evens_m
+<p id="int" class="pdesc">Type: <a href="param_types.html#int"> int </a>
+<p class="pdesc">Default value: 0
+<p class="pdesc">UI Tab: Player
+
+<p>The multiplier for the even scorer. The even scorer counts the number of
+holes with an even number of seeds. This is useful to use when the capture
+mechanism is evens.
 <p>Used only for minimax & negamax players.
 <br><br><br>
 <h2 id="index">Parameter Index</h2>
@@ -2103,6 +2117,7 @@ parameters and multipliers.
     <p class="param"><a href="#mlap_param">mlap_param</a></p>
     <p class="param"><a href="#mlaps">mlaps</a></p>
     <p class="param"><a href="#mm_depth">mm_depth</a></p>
+    <p class="param"><a href="#mm_score_counts">mm_score_counts</a></p>
     <p class="param"><a href="#move_one">move_one</a></p>
     <p class="param"><a href="#moveunlock">moveunlock</a></p>
     <p class="param"><a href="#multicapt">multicapt</a></p>
@@ -2118,9 +2133,9 @@ parameters and multipliers.
     <p class="param"><a href="#mx_stores_m">mx_stores_m</a></p>
     <p class="param"><a href="#name">name</a></p>
     <p class="param"><a href="#nbr_start">nbr_start</a></p>
-    <p class="param"><a href="#no_sides">no_sides</a></p>
   </div>
   <div class="column3">
+    <p class="param"><a href="#no_sides">no_sides</a></p>
     <p class="param"><a href="#nocaptmoves">nocaptmoves</a></p>
     <p class="param"><a href="#nosinglecapt">nosinglecapt</a></p>
     <p class="param"><a href="#pickextra">pickextra</a></p>

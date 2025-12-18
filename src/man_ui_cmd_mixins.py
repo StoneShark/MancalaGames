@@ -821,6 +821,8 @@ class DebugMenuMixin:
         debugmenu.add_separator()
         debugmenu.add_command(label='Print AI Player',
                               command=lambda: print(self.player))
+        debugmenu.add_command(label='Print AI Scorers',
+                              command=self._print_scorers)
         debugmenu.add_command(label='Eval Moves',
                               command=self._eval_moves)
         debugmenu.add_command(label='Print History',
@@ -848,6 +850,13 @@ class DebugMenuMixin:
         else:
             print(f'\n{deco.title()}:\n')
             print(getattr(self.game.deco, deco))
+
+
+    def _print_scorers(self):
+        """Print the names of the ai scorer functions."""
+
+        for scorer in self.player.scorers:
+            print(scorer.__name__)
 
 
     def _eval_moves(self):

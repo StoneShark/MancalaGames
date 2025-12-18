@@ -21,8 +21,8 @@
       },
       "scorer": {
          "mx_seeds_m": -12,
-         "mx_empties_m": 2,
-         "mx_evens_m": -4
+         "mx_empties_m": 6,
+         "mx_evens_m": -1
       }
    },
    "vari_params": {
