@@ -74,6 +74,14 @@ Cross capture on final seed sown to own side of the board.
 Played in rounds. A round ends a player does not have a move on their
 turn.
 
+Setup for a new round uses the
+<a href="game_params.html#rf_ehm">Empty Hole Method</a>
+with blocks, leaving unfilled holes out of play for the next round.
+The round starter alternates.
+
+The game is over when one player cannot control at least 4 holes
+at the start of a round.
+
 Variations:
 
 - simultaneous opening move (not supported by Mancala Games).

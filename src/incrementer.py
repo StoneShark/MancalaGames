@@ -267,6 +267,20 @@ class IncPastBlocks(IncrementerIf):
         return loc
 
 
+class IncPastBlocksNotStore(IncrementerIf):
+    """Increment past blocked cells when stores are used.
+    The stores can never be blocked."""
+
+    def incr(self, loc, direct, turn, start=NOSKIPSTART):
+        """Incerement past blocked holes"""
+
+        loc = self.decorator.incr(loc, direct, turn, start)
+        while loc >= 0 and self.game.blocked[loc]:
+            loc = self.decorator.incr(loc, direct, turn, start)
+
+        return loc
+
+
 # %%
 
 def deco_incrementer(game):
@@ -288,6 +302,9 @@ def deco_incrementer(game):
         incer = IncPastStart(game, incer)
 
     if game.info.blocks:
-        incer = IncPastBlocks(game, incer)
+        if game.info.sow_stores:
+            incer = IncPastBlocksNotStore(game, incer)
+        else:
+            incer = IncPastBlocks(game, incer)
 
     return incer

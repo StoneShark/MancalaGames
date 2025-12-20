@@ -54,6 +54,7 @@ class TestIncr:
 
         return mancala.Mancala(game_consts, game_info)
 
+
     @pytest.fixture
     def base_incr(self, game):
         object.__setattr__(game.info, 'skip_start', False)
@@ -169,6 +170,40 @@ class TestIncr:
             game.blocked[bloc] = True
 
         assert sb_incr.incr(loc, Direct.CW, None, start) == expected
+
+
+    @pytest.mark.parametrize('loc, turn, blocks, expected',
+                             [(0, F, [1], 2),
+                              (3, T, [4], 5),
+
+                              (3, F, [0, 1, 4, 5], 2),   # past opp store
+                              (3, T, [0, 1, 4, 5], -2),  # stop own store
+                              (-2, T, [0, 1, 4, 5], 2),  # from own store
+
+                              (0, T, [1, 2, 3, 4], 5),   # past opp store
+                              (0, F, [1, 2, 3, 4], -1),  # stop own store
+                              (-1, F, [1, 2, 3, 4], 5),  # from own store
+                              ])
+    def test_block_no_store(self, loc, turn, blocks, expected):
+
+        game_consts = gconsts.GameConsts(nbr_start=4, holes=HOLES)
+        game_info = gi.GameInfo(capt_on=[2],
+                                stores=True,
+                                sow_direct=gi.Direct.CCW,
+                                sow_stores=gi.SowStores.OWN,
+                                blocks=True,
+                                rounds=gi.Rounds.HALF_SEEDS,
+                                nbr_holes=game_consts.holes,
+                                rules=mancala.Mancala.rules)
+        ss_game = mancala.Mancala(game_consts, game_info)
+
+        ss_game.blocked = [False] * (HOLES * 2)
+        for bloc in blocks:
+            ss_game.blocked[bloc] = True
+        print(ss_game)
+        print(ss_game.deco.incr)
+
+        assert ss_game.deco.incr.incr(loc, Direct.CCW, turn) == expected
 
 
     def test_blk_start_blk(self):
