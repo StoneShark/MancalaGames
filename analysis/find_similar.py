@@ -8,7 +8,6 @@ Created on Thu Apr  3 10:45:03 2025
 import collections
 import csv
 import itertools as it
-import os
 
 from context import cfg_keys as ckey
 from context import game_info as gi
@@ -22,7 +21,6 @@ DIR = 'GameProps'
 PATH = '../GameProps/'
 
 TXTPART = '.txt'
-EXFILE = '_all_params.txt'
 
 TAB_IDX = 0
 OPTION_IDX = 1
@@ -68,10 +66,7 @@ class Neighbors:
         create a dictionary."""
 
         all_games = {}
-        for file in os.listdir(PATH):
-
-            if file[-4:] != TXTPART or file == EXFILE:
-                continue
+        for file in man_path.game_files():
 
             game_dict = man_config.read_game(PATH + file)
 

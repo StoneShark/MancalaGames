@@ -17,12 +17,13 @@ import exper_config
 from game_logger import game_log
 import play_game     # used indirectly in profile command, needs to be globals
 
+from context import man_path
+
 
 # %% constants
 
 PATH = '../GameProps/'
-BAD_CFG = '_all_params.txt'
-INDEX = [fname[:-4] for fname in os.listdir(PATH) if fname != BAD_CFG]
+INDEX = [fname[:-4] for fname in man_path.game_files()]
 
 
 SORT_OPTS = ['calls', 'cumulative', 'cumtime', 'file', 'filename',

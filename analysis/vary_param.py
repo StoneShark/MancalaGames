@@ -15,7 +15,6 @@ Created on Sat Oct  5 08:49:08 2024
 
 import argparse
 import logging
-import os
 import sys
 
 import ana_logger
@@ -27,7 +26,7 @@ from context import ai_player
 from context import cfg_keys as ckey
 from context import game_logger
 from context import man_config
-
+from context import man_path
 
 # %% loggers
 
@@ -40,8 +39,7 @@ game_logger.game_log.active = False
 # %%  constants
 
 PATH = '../GameProps/'
-BAD_CFG = '_all_params.txt'
-INDEX = [fname[:-4] for fname in os.listdir(PATH) if fname != BAD_CFG]
+INDEX = [fname[:-4] for fname in man_path.game_files()]
 
 PARAM_KEYS = [ckey.MX_ACCESS_M,
               ckey.MX_CHILD_CNT_M,
@@ -156,7 +154,8 @@ def parametrize():
 
 if __name__ == '__main__':
 
-    process_command_line()
-    data_dict = parametrize()
-    logger.info(data_dict)
-    ana_logger.close(logger)
+    with ana_logger.trap_close(logger):
+
+        process_command_line()
+        data_dict = parametrize()
+        logger.info(data_dict)

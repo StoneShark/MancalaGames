@@ -21,7 +21,6 @@ Created on Sun Oct 15 09:45:43 2023
 
 import argparse
 import logging
-import os
 import random
 import sys
 
@@ -32,6 +31,7 @@ from context import ai_player
 from context import cfg_keys as ckey
 from context import game_logger
 from context import man_config
+from context import man_path
 
 
 # %% loggers
@@ -45,8 +45,7 @@ game_logger.game_log.active = False
 # %%  constants
 
 PATH = '../GameProps/'
-BAD_CFG = '_all_params.txt'
-INDEX = [fname[:-4] for fname in os.listdir(PATH) if fname != BAD_CFG]
+INDEX = [fname[:-4] for fname in man_path.game_files()]
 
 
 PN_TEST_VALS =  [-16, -12, -8, -4, -2, -1, 0, 1, 2, 4, 8, 12, 16]
@@ -115,6 +114,14 @@ def define_parser():
                         default=0.12, type=float,
                         help="""Select the improvement threshold.
                         Default: %(default)s""")
+
+    parser.add_argument('--param', action='append',
+                        choices=list(PARAMS_VALS.keys()),
+                        default=list(),
+                        help="""Select the parameters to add to the
+                        optimizer. Parameters set in the config will
+                        automatically be included. Use multiple options
+                        to select multiple parameters""")
 
     parser.add_argument('--depth', action='store',
                         default=5, type=float,
@@ -284,7 +291,8 @@ def optimize():
     param_ops.set_depth(player1, cargs.depth)
     param_ops.set_depth(player2, cargs.depth)
 
-    pnames = param_ops.get_pnames(player1, pdict)
+    pnames = list(set(param_ops.get_pnames(player1, pdict)) |
+                  set(cargs.param))
     logger.info('Parameters to optimize: %s', pnames)
 
     best_params = param_ops.get_params(player1)
@@ -327,13 +335,13 @@ def optimize():
 
 if __name__ == '__main__':
 
-    process_command_line()
-    selected_params = optimize()
+    with ana_logger.trap_close(logger):
 
-    logger.info('\nStart points and best from there:')
-    for start, best, steps in starts:
-        logger.info('\n%s\n%s\n%s\n', start, best, steps)
+        process_command_line()
+        selected_params = optimize()
 
-    logger.info('\nBest Overall Params:\n%s', selected_params)
+        logger.info('\nStart points and best from there:')
+        for start, best, steps in starts:
+            logger.info('\n%s\n%s\n%s\n', start, best, steps)
 
-    ana_logger.close(logger)
+        logger.info('\nBest Overall Params:\n%s', selected_params)

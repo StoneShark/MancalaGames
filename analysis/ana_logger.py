@@ -9,6 +9,7 @@ Created on Sat Oct  5 13:51:41 2024
 @author: Ann"""
 
 import logging
+import contextlib
 
 
 def config(logger, outfile, restart=False):
@@ -44,3 +45,13 @@ def close(logger):
     for handler in handlers:
         logger.removeHandler(handler)
         handler.close()
+
+
+@contextlib.contextmanager
+def trap_close(logger):
+    """A context manager assures the logger is closed."""
+
+    try:
+        yield
+    finally:
+        close(logger)

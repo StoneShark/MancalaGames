@@ -19,21 +19,21 @@ game_players_gen, config = exper_config.get_configuration(log_options=True)
 
 game_logger.game_log.live = config.live_log
 
-for game, fplayer, tplayer, gname in game_players_gen:
+with ana_logger.trap_close(logger):
 
-    logger.info(gname)
-    logger.info('True %s', tplayer if tplayer else 'Random')
-    logger.info('False %s', fplayer if fplayer else 'Random')
+    for game, fplayer, tplayer, gname in game_players_gen:
 
-    gstats = play_game.play_games(game, fplayer, tplayer,
-                                  config.nbr_runs,
-                                  save_logs=config.save_logs,
-                                  show_log=config.live_log,
-                                  end_all=config.end_all,
-                                  move_limit=config.max_moves)
-    logger.info(gstats)
+        logger.info(gname)
+        logger.info('True %s', tplayer if tplayer else 'Random')
+        logger.info('False %s', fplayer if fplayer else 'Random')
 
-    win_pct = (gstats.wins[True] / gstats.total) * 100
-    logger.info('\n%s True win %%=%10.2f%%', gname, win_pct)
+        gstats = play_game.play_games(game, fplayer, tplayer,
+                                      config.nbr_runs,
+                                      save_logs=config.save_logs,
+                                      show_log=config.live_log,
+                                      end_all=config.end_all,
+                                      move_limit=config.max_moves)
+        logger.info(gstats)
 
-ana_logger.close(logger)
+        win_pct = (gstats.wins[True] / gstats.total) * 100
+        logger.info('\n%s True win %%=%10.2f%%', gname, win_pct)

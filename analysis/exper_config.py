@@ -31,6 +31,7 @@ import sys
 import ana_logger
 from context import ai_player
 from context import man_config
+from context import man_path
 
 
 logger = logging.getLogger(__name__)
@@ -41,9 +42,8 @@ logger = logging.getLogger(__name__)
 ALL = 'all'
 
 PATH = '../GameProps/'
-BAD_CFG = '_all_params.txt'
 
-INDEX = [fname[:-4] for fname in os.listdir(PATH) if fname != BAD_CFG]
+INDEX = [fname[:-4] for fname in man_path.game_files()]
 
 
 # %%  player config
@@ -118,6 +118,11 @@ def define_parser(log_options=False):
     parser.add_argument('--output', action='store',
                         default=None,
                         help="""Output file. Default: console output only""")
+
+    parser.add_argument('--dconfig', action='store_true',
+                        default=False,
+                        help="""Include the game configuration in the output.
+                        Default: %(default)s""")
 
     parser.add_argument('--restart', action='store_true',
                         help="""Do not append to the output file.""")
@@ -271,6 +276,8 @@ def game_n_players_gen(cargs):
     for gname in cargs.game:
 
         game, pdict = man_config.make_game(PATH + gname + '.txt')
+        if cargs.dconfig:
+            logger.info(game.params_str())
 
         tplayer = build_player(game, pdict, cargs.tplayer)
         fplayer = build_player(game, pdict, cargs.fplayer)

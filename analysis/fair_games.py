@@ -183,24 +183,44 @@ def play_them_all():
                                         move_limit=config.max_moves,
                                         end_all=config.end_all,
                                         result_func=ft.partial(score_game, gname))
-        logger.info(game_res)
+        logger.info('\n' + str(game_res))
 
         eval_game(gname, config.nbr_runs)
+        logger.info('Win Fair:    ' + str(data.loc[gname, "win_fair"]))
+        logger.info('StarterFair: ' + str(data.loc[gname, "starter_fair"]))
 
-    logger.info(data.to_string())
-    if config.output:
-        data.to_csv(config.output + '.csv')
+    if len(data) < 6:
+        header = ' ' * 13
+        for gname in data.index:
+            header += f'{gname[:12]:>13}'
+        logger.info(header)
+
+        for key in data.keys():
+            line = f'{key:13}'
+            for gname in data.index:
+                if 'pct' in key:
+                    line += f'{data.loc[gname, key]:13.3%}'
+                elif 'fair' in key:
+                    line += f'{str(data.loc[gname, key]):>13}'
+                else:
+                    line += f'{data.loc[gname, key]:13}'
+            logger.info(line)
+    else:
+        logger.info(data.to_string())
 
 
 # %%
 
 if __name__ == '__main__':
 
-    game_logger.game_log.level = game_logger.game_log.STEP
+    with ana_logger.trap_close(logger):
 
-    game_players_gen, config = exper_config.get_configuration()
+        game_logger.game_log.level = game_logger.game_log.STEP
+        game_players_gen, config = exper_config.get_configuration()
+        data = build_data_frame()
 
-    data = build_data_frame()
+        play_them_all()
 
-    play_them_all()
-    ana_logger.close(logger)
+    # output whatever is in the data frame, even if there was an exception
+    if config.output:
+        data.to_csv(config.output + '.csv')
