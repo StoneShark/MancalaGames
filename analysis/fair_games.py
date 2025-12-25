@@ -16,9 +16,7 @@ Created on Sun Jul 23 11:29:10 2023
 
 # %% imports
 
-import functools as ft
 import logging
-import math
 
 import pandas as pd
 import scipy
@@ -37,69 +35,27 @@ logger = logging.getLogger()
 
 # %% column names and types
 
-TIE_T = play_game.result_name(True, GameResult.TIE, None)
-TIE_F = play_game.result_name(False, GameResult.TIE, None)
-
-#  two sum columns
-SCORE = 'score'
-SCORE_2 = 'score_2'   # squared
-
-ST_SCORE = 'st_score'
-ST_SCORE_2 = 'st_score_2'
-
+TRUE_WIN = 't_wins'
+STRT_WIN = 'str_wins'
 NO_RESULT = 'no_result'
+ENDLESS = 'endless'
 
-INT_COLUMNS = play_game.GAME_RESULTS + \
-              [NO_RESULT, SCORE, SCORE_2, ST_SCORE, ST_SCORE_2]
-
-MEAN = 'mean'
-STDEV = 'stddev'
-
-WIN_PCT = 'win_pct'
-STR_PCT = 'str_pct'
+WIN_PCT = 't_win_pct'
+STR_PCT = 'str_w_pct'
 TIE_PCT = 'tie_pct'
-FLT_COLUMNS = [WIN_PCT, STR_PCT, TIE_PCT]
 
-# fair columns
-WIN_FAIR = 'win_fair'
-STARTER_FAIR = 'starter_fair'
+WINR_PVAL = 'win_pval'
+STRT_PVAL = 'starter_pval'
 
-BOOL_COLUMNS = [WIN_FAIR, STARTER_FAIR]
+WINR_FAIR = 'win_fair'
+STRT_FAIR = 'starter_fair'
 
+INT_COLUMNS = play_game.GAME_RESULTS + [NO_RESULT, ENDLESS, TRUE_WIN, STRT_WIN]
+FLT_COLUMNS = [WIN_PCT, STR_PCT, TIE_PCT, WINR_PVAL, STRT_PVAL]
+BOOL_COLUMNS = [WINR_FAIR, STRT_FAIR]
 
-# %%  score and collect
-
-WIN_SCORE = 4
-TIE_SCORE = 2
-
-EXPECTED_VAL = WIN_SCORE * 0.5
-
-
-def score_game(gname, starter, result, winner):
-    """Collect game results including sum and sum squared
-    for scores for winner and for starter's wins."""
-
-    col = play_game.result_name(starter, result, winner)
-    data.loc[gname, col] += 1
-
-    if result.name[:3] not in ('WIN', 'TIE'):
-        data.loc[gname, NO_RESULT] += 1
-
-    score = 0
-    if result == GameResult.WIN and winner:
-        score = WIN_SCORE
-    elif result == GameResult.TIE:
-        score = TIE_SCORE
-    data.loc[gname, SCORE] += score
-    data.loc[gname, SCORE_2] += score * score
-
-    score = 0
-    if result == GameResult.WIN and winner == starter:
-        score = WIN_SCORE
-    elif result == GameResult.TIE:
-        score = TIE_SCORE
-    data.loc[gname, ST_SCORE] += score
-    data.loc[gname, ST_SCORE_2] += score * score
+MAX_TURNS = play_game.GameResult.MAX_TURNS.name
+LOOPED = play_game.GameResult.LOOPED.name
 
 
 # %%  build data frame
@@ -121,52 +77,56 @@ def build_data_frame():
 
 # %% fairness tests
 
-def std_dev(xsum, x_sqr_sum, nbr):
-    """Use two sum formula to compute standard deviation."""
+def compute_pvalues(total, wins):
 
-    return math.sqrt((x_sqr_sum - ((xsum * xsum) / nbr)) / (nbr - 1))
-
-
-def fail_to_reject(gname, nbr_runs, tag, confidence=0.95):
-    """H0:  prob of win = 0.5   Ha: prob of win != 0.5
-
-    Failing to reject - means we didn't reject H0
-    -- not enough evidence to prove it false"""
-
-    nbr_games = nbr_runs - data.loc[gname, NO_RESULT]
-    if nbr_games <= 1:
-        return False
-
-    mean = data.loc[gname, tag] / nbr_games
-    stdev = std_dev(data.loc[gname, tag], data.loc[gname, tag + '_2'],
-                    nbr_games)
-    if abs(stdev) < 0.00001:
-        return False
-
-    test_stat = (mean - EXPECTED_VAL) / (stdev / math.sqrt(nbr_games))
-    crit_value = scipy.stats.norm.ppf(1 - (1 - confidence) / 2)
-
-    return test_stat < crit_value
+    res = scipy.stats.chisquare([wins, total - wins],
+                                [total / 2] * 2)
+    return res.pvalue
 
 
-def eval_game(gname, nbr_runs):
-    """Compute win_fair and starter_fair for one game configuration."""
+def eval_game(gname, nbr_runs, game_res):
+    """Copy the values from game_res into the data frame
+    and compute win_fair and starter_fair for one game configuration."""
 
-    data.loc[gname, WIN_FAIR] = fail_to_reject(gname, nbr_runs, SCORE)
-    data.loc[gname, STARTER_FAIR] = fail_to_reject(gname, nbr_runs, ST_SCORE)
+    # copy data and count wins
+    total_wins = 0
+    for starter in (False, True):
+        for winner in (False, True):
+            rname = play_game.result_name(starter, GameResult.WIN, winner)
+            data.loc[gname, rname] = game_res.stats[rname]
+            total_wins += game_res.stats[rname]
 
-    nbr_games = nbr_runs - data.loc[gname, NO_RESULT]
+        rname = play_game.result_name(starter, GameResult.TIE, None)
+        data.loc[gname, rname] = game_res.stats[rname]
 
-    if not nbr_games:
+    data.loc[gname, LOOPED] = game_res.stats[LOOPED]
+    data.loc[gname, MAX_TURNS] = game_res.stats[MAX_TURNS]
+
+    data.loc[gname, TRUE_WIN] = game_res.wins[True]
+    data.loc[gname, STRT_WIN] = game_res.starter_wins[0]
+
+    # do eval
+    data.loc[gname, NO_RESULT] = sum([game_res.stats[LOOPED],
+                                      game_res.stats[MAX_TURNS]])
+    data.loc[gname, ENDLESS] = game_res.endless
+
+    data.loc[gname, WINR_PVAL] = compute_pvalues(total_wins,
+                                                 data.loc[gname, TRUE_WIN])
+    data.loc[gname, STRT_PVAL] = compute_pvalues(total_wins,
+                                                 data.loc[gname, STRT_WIN])
+
+    data.loc[gname, WINR_FAIR] = data.loc[gname, WINR_PVAL] > 0.05
+    data.loc[gname, STRT_FAIR] = data.loc[gname, STRT_PVAL] > 0.05
+
+    if not total_wins:
         data.loc[gname, WIN_PCT] = 0
         data.loc[gname, STR_PCT] = 0
         data.loc[gname, TIE_PCT] = 0
         return
 
-    data.loc[gname, WIN_PCT] = data.loc[gname, SCORE] / (WIN_SCORE * nbr_games)
-    data.loc[gname, STR_PCT] = data.loc[gname, ST_SCORE] / (WIN_SCORE * nbr_games)
-    data.loc[gname, TIE_PCT] = \
-        (data.loc[gname, TIE_T] + data.loc[gname, TIE_F]) / nbr_games
+    data.loc[gname, WIN_PCT] = data.loc[gname, TRUE_WIN] / total_wins
+    data.loc[gname, STR_PCT] = data.loc[gname, STRT_WIN] / total_wins
+    data.loc[gname, TIE_PCT] = game_res.ties / nbr_runs
 
 
 # %%  play and collect
@@ -181,13 +141,12 @@ def play_them_all():
         game_res = play_game.play_games(game, fplayer, tplayer,
                                         config.nbr_runs,
                                         move_limit=config.max_moves,
-                                        end_all=config.end_all,
-                                        result_func=ft.partial(score_game, gname))
+                                        end_all=config.end_all)
         logger.info('\n' + str(game_res))
 
-        eval_game(gname, config.nbr_runs)
-        logger.info('Win Fair:    ' + str(data.loc[gname, "win_fair"]))
-        logger.info('StarterFair: ' + str(data.loc[gname, "starter_fair"]))
+        eval_game(gname, config.nbr_runs, game_res)
+        logger.info('Win Fair:    ' + str(data.loc[gname, WINR_FAIR]))
+        logger.info('StarterFair: ' + str(data.loc[gname, STRT_FAIR]))
 
     if len(data) < 6:
         header = ' ' * 13
@@ -200,6 +159,8 @@ def play_them_all():
             for gname in data.index:
                 if 'pct' in key:
                     line += f'{data.loc[gname, key]:13.3%}'
+                elif 'pval' in key:
+                    line += f'{data.loc[gname, key]:13.6}'
                 elif 'fair' in key:
                     line += f'{str(data.loc[gname, key]):>13}'
                 else:

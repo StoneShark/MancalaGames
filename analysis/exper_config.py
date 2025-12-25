@@ -103,6 +103,12 @@ def define_parser(log_options=False):
                         no LOOPED or MAX_TURNS will be reported.
                         If these were to be reported, call game.end_game.""")
 
+    parser.add_argument('--no_endless', action='store_true',
+                        help="""Do not allow endless sows.
+                        Only use this option if you know that you want it.
+                        It is very slow (every move is simulated
+                        to determine which holes are allowable).""")
+
     if log_options:
         parser.add_argument('--save_logs', action='store_true',
                             help="""Save the game logs. Only one game maybe
@@ -171,7 +177,9 @@ def process_command_line(log_options=False):
         sys.exit()
 
     # configure the root logger
-    ana_logger.config(logging.getLogger(), cargs.output, cargs.restart)
+
+    out_file = cargs.output + '.txt' if cargs.output else None
+    ana_logger.config(logging.getLogger(), out_file, cargs.restart)
 
     logger.info('Command line:')
     for var, val in vars(cargs).items():
@@ -265,19 +273,17 @@ def game_n_players_gen(cargs):
     generate the game and players."""
 
     if cargs.file:
-        game, pdict = man_config.make_game(cargs.file)
+        games = [(cargs.game[0], cargs.file)]
+    else:
+        games = [(gname, PATH + gname + '.txt') for gname in cargs.game]
 
-        tplayer = build_player(game, pdict, cargs.tplayer)
-        fplayer = build_player(game, pdict, cargs.fplayer)
+    for gname, gfile in games:
 
-        yield game, fplayer, tplayer, cargs.game[0]
-        return
-
-    for gname in cargs.game:
-
-        game, pdict = man_config.make_game(PATH + gname + '.txt')
+        game, pdict = man_config.make_game(gfile)
         if cargs.dconfig:
             logger.info(game.params_str())
+        if cargs.no_endless:
+            game.disallow_endless(True)
 
         tplayer = build_player(game, pdict, cargs.tplayer)
         fplayer = build_player(game, pdict, cargs.fplayer)

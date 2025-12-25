@@ -64,27 +64,35 @@ GAME_RESULTS = sorted(list({result_name(starter, result, winner)
                                 for winner in (False, True)
                                 for result in GameResult}))
 
-
 # %%  helper classes
 
 
 class GameStats:
-    """Collect the game results here."""
+    """Collect the game results here.
+    ENDLESS games are also in the GAME_RESULTS."""
 
     def __init__(self):
         self.stats = {name: 0 for name in GAME_RESULTS}
+        self.endless = 0
         self.total = 0
 
     def __str__(self):
         return f'Games Played: {self.total}\n' \
+               + f'Endless:    {self.endless}\n' \
                + '\n'.join([f'{key:15} {value:10}'
                             for key, value in sorted(self.stats.items(),
                                                      key=lambda p: p[0])])
 
-    def tally(self, starter, result, winner):
-        """Tally the game result."""
+    def tally(self, starter, result, winner, mdata):
+        """Tally the game result.
+        Endless is not in the game results because the game was ended
+        and is already in the stats."""
+
         self.stats[result_name(starter, result, winner)] += 1
         self.total += 1
+
+        if mdata.capt_start == gi.WinCond.ENDLESS:
+            self.endless += 1
 
     @property
     def wins(self):
@@ -93,6 +101,14 @@ class GameStats:
         return [sum(self.stats[result_name(starter, GameResult.WIN, winner)]
                     for starter in (False, True))
                 for winner in (False, True)]
+
+    @property
+    def starter_wins(self):
+        """Return a tuple of (starter wins, starter loses)."""
+        return [sum(self.stats[result_name(starter, GameResult.WIN, starter)]
+                for starter in (False, True)),
+                sum(self.stats[result_name(starter, GameResult.WIN, not starter)]
+                    for starter in (False, True))]
 
     @property
     def ties(self):
@@ -248,13 +264,13 @@ def play_one_game(game, fplayer, tplayer,
 
         if stuck.game_state_loop(game):
             if end_all:
-                cond = game.end_game()
+                cond = game.end_game(quitter=True, user=False)
                 return GameResult(cond.value), game.turn
 
             return GameResult.LOOPED, None
 
     if end_all:
-        cond = game.end_game()
+        cond = game.end_game(quitter=True, user=False)
         return GameResult(cond.value), game.turn
     return GameResult.MAX_TURNS, None
 
@@ -294,7 +310,7 @@ def play_games(game, fplayer, tplayer, nbr_runs, *,
         exceed this are tallied as MAX_TURNS
 
     result_func : function, optional
-                  prototype: result_func(starter, result, winner)
+                  prototype: result_func(starter, result, winner, mdata)
         starter: bool - player that started the game
         result: TODO
         winner: bool or None - player that won the game
@@ -338,9 +354,9 @@ def play_games(game, fplayer, tplayer, nbr_runs, *,
             game_logger.game_log.new()
             time.sleep(1)
 
-        game_results.tally(starter, result, winner)
+        game_results.tally(starter, result, winner, game.mdata)
         if result_func:
-            result_func(starter, result, winner)
+            result_func(starter, result, winner, game.mdata)
 
     return game_results
 
