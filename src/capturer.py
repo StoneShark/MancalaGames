@@ -1436,7 +1436,8 @@ def deco_capturer(game):
     if game.info.capt_rturn:
         capturer = RepeatTurn(game, capturer)
 
-    if (game.info.capt_type != gi.CaptType.END_OPP_STORE_CAPT
+    if ((game.info.sow_stores or game.info.play_locs)
+            and game.info.capt_type != gi.CaptType.END_OPP_STORE_CAPT
             and not game.info.capt_stores):
         capturer = NoStoreCapt(game, capturer)
 

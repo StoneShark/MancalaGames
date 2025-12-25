@@ -156,11 +156,32 @@ class CaptNotChild(CaptOkIf):
         return self.decorator.capture_ok(mdata, loc)
 
 
+class CaptNeedSeeds(CaptOkIf):
+    """If there are no seeds on the board return False,
+    else let the deco chain decide.
+
+    Use this when stores are not in play, i.e. incrementer
+    will never return a store index."""
+
+    def capture_ok(self, mdata,  loc):
+        """Return False if capture from loc is not ok,
+        otherwise delegate."""
+
+        if not self.game.board[loc]:
+            return False
+
+        return self.decorator.capture_ok(mdata, loc)
+
+
 class CaptNotStoreNeedSeeds(CaptOkIf):
     """If we are given a store, return False--never call
     down the deco chain with a store index.
     If the location is on the board but there are no seeds
-    return False. Otherwise, let the deco chain decide."""
+    return False. Otherwise, let the deco chain decide.
+
+    Use this when the stores are in play, i.e. the incrementer
+    might return a store index, but we should never capture
+    when loc is a store."""
 
     def capture_ok(self, mdata,  loc):
         """Return False if capture from loc is not ok,
@@ -172,10 +193,14 @@ class CaptNotStoreNeedSeeds(CaptOkIf):
         return self.decorator.capture_ok(mdata, loc)
 
 
-class CaptNeedSeeds(CaptOkIf):
+class CaptNeedSeedsAnywhere(CaptOkIf):
     """If there are no seeds in the store or board
     loc provided, return False. Otherwise, call down
-    the deco chain (even with a store index)."""
+    the deco chain (even with a store index).
+
+    Use this when the stores are in play and direct
+    captures can occur from the stores,
+    i.e., loc might be a store index) ."""
 
     def capture_ok(self, mdata,  loc):
         """Return False if capture from loc is not ok,
@@ -188,6 +213,22 @@ class CaptNeedSeeds(CaptOkIf):
 
 
 # %%  build deco chain
+
+def _add_seeds_store_deco(game, deco):
+    """Check appropriate locations for seeds or filter
+    stores if they could be sown but not captured."""
+
+    if game.info.capt_stores:
+        deco = CaptNeedSeedsAnywhere(game, deco)
+
+    elif game.info.sow_stores or game.info.play_locs:
+        deco = CaptNotStoreNeedSeeds(game, deco)
+
+    else:
+        deco = CaptNeedSeeds(game, deco)
+
+    return deco
+
 
 def deco_capt_basic(game):
     """Build the basic capture check chain based on the params"""
@@ -216,11 +257,7 @@ def deco_capt_basic(game):
     if game.info.child_type.child_but_not_ram():
         capt_ok = CaptNotChild(game, capt_ok)
 
-    if game.info.capt_stores:
-        capt_ok = CaptNeedSeeds(game, capt_ok)
-    else:
-        capt_ok = CaptNotStoreNeedSeeds(game, capt_ok)
-
+    capt_ok = _add_seeds_store_deco(game, capt_ok)
     return capt_ok
 
 
@@ -240,9 +277,5 @@ def deco_capt_check(game):
     if game.info.child_type.child_but_not_ram():
         capt_check = CaptNotChild(game, capt_check)
 
-    if game.info.capt_stores:
-        capt_check = CaptNeedSeeds(game, capt_check)
-    else:
-        capt_check = CaptNotStoreNeedSeeds(game, capt_check)
-
+    capt_check = _add_seeds_store_deco(game, capt_check)
     return capt_check

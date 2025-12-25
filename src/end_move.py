@@ -846,7 +846,7 @@ class AnimateEndMove(EndTurnIf):
 # %%  round enders
 
 class RoundWinner(EndTurnIf):
-    """"If the game is played in rounds where seeds collected
+    """If the game is played in rounds where seeds collected
     are used to setup the board for a new round, let the rest
     of the chain decide the outcome, then adjust for end of
     game or end of round.
