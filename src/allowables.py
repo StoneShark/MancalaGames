@@ -238,7 +238,7 @@ class Occupied(AllowableIf):
 
             with self.game.restore_state(saved_state):
                 mdata = self.game.sim_single_sow(pos)
-                if (mdata.capt_start > 0
+                if (mdata.capt_start >= 0
                         and self.game.board[mdata.capt_start] == 1):
 
                     game_log.add(f'Occupied: prevented {pos}', game_log.DETAIL)

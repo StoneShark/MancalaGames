@@ -173,9 +173,14 @@ GNOTES = {
                                     for key in gdict.keys()),
     'Notes': lambda gdict: (any('note' in key.lower()
                                 for key in gdict.keys())
-                            or 'lagniappe' in gdict.keys()
-                            or 'reference' in gdict.keys()
-                            or 'question' in gdict.keys()),
+                            or any('lagniappe' in key.lower()
+                                   for key in gdict.keys())
+                            or any('reference' in key.lower()
+                                   for key in gdict.keys())
+                            or any('question' in key.lower()
+                                   for key in gdict.keys())
+                            or any('comment' in key.lower()
+                                   for key in gdict.keys())),
     }
 
 
