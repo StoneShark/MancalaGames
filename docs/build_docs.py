@@ -355,14 +355,32 @@ Named variants are included in the game description variations section
 below
 and listed in the <a href="#index">Game Index</a>.
 
-<p><i>Personal Note</i>:
-These configurations are my best understanding of the rules
-from various sources.
-I cannot be certain that I have faithfully reproduced any game.
-You may know a particular set of rules by a different name.
+<h5 id="fairness">Game Analysis Comments</h5>
+<p>Comments in game descriptions about fairness
+are based on a chi-squared fitness test, with significance level 0.05.
+Unless specified otherwise,
+at least 40,000 games were played with random moves,
+but only games with a winner were used to assess
+fairness&mdash;ties, looped, and games with an excessive number of moves
+were not included.
+The expected outcome of the games
+is both North and South each win 50% of time and
+the starter and non-starter each win 50% of the time.
+
+<h5>Personal Note</h5>
+<p>A reference rule source is listed for each game.
+The descriptions and configurations below are my best
+understanding of the those rules within the framework of Mancala Games.
+Known discrepancies are described.
+That said, I cannot be certain that I have faithfully reproduced any game.
+Additionally, I might simply have an implementation error.
+If you find a discrepancy, please consider reporting an issue at
+<a href="https://github.com/StoneShark/MancalaGames/issues">
+StoneShark/MancalaGames</a>.
+
+<p>You may know a particular set of rules by a different name.
 You may have a particular "house rule" that varies from the specific
 configuration provided.
-I might simply have an implementation error.
 Please consider these files a starting point for defining your
 own favorite games.
 <p>The <a href="game_xref.html">Game / Parameter Cross Reference table</a>

@@ -2,46 +2,62 @@
    "game_class": "Mancala",
    "game_constants": {
       "holes": 4,
-      "nbr_start": 5
+      "nbr_start": 40
    },
    "game_info": {
       "name": "long night game",
       "about": "<text_section>",
       "allow_rule": 11,
       "capt_type": 4,
+      "goal": 4,
+      "goal_param": 3,
       "mlaps": 1,
       "mustpass": true,
       "capt_side": 0,
+      "round_starter": 0,
+      "rounds": 1,
       "sow_direct": 1,
+      "start_pattern": 6,
       "stores": true,
       "unclaimed": 1,
       "quitter": 1
    },
    "player": {
-      "ai_params": { },
       "scorer": {
          "mx_stores_m": 16
       }
    },
    "rules": "https://mancala.fandom.com/wiki/Long_night_game",
+   "deviation": "<text_section>",
    "origin": "modern",
    "region": "Europe"
 }
 <text_section>
 <about>
-Sow in multiple laps counter-clocks. Moves may only start from holes
-that reach an occupied hole on the first lap.
+Fourty seeds are randomly placed on the board at the start of play;
+each hole will contain at least two seeds.
+
+Sow in multiple laps counter-clockwise.
+Moves may only start from holes that reach an occupied hole
+on the first lap.
 
 A player must pass if they do not have a move.
 
-After sowing, capture all singletons.
+After sowing, capture all singletons anywhere on the board.
 
-The game ends when there are no legal moves. Seeds left on the board
-are not counted.
+A round ends when one player has more than half the seeds
+or there are no legal moves.
+Seeds left on the board are not counted.
 
-Goal: capture the most seeds.
+Played in tallied rounds--all rounds are setup the same way;
+win 3 to win the game.
+The starter alternates.
 
-long night game was invented by the Austrian Matthias Liszt in August
+
+<nolink>long night game was invented by the Austrian Matthias Liszt in August
 2006.
 </about>
+<deviation>
+<txt>Round play added to support fairness.
+</deviation>
 </text_section>

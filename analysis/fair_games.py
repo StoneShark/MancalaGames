@@ -178,6 +178,11 @@ if __name__ == '__main__':
 
         game_logger.game_log.level = game_logger.game_log.STEP
         game_players_gen, config = exper_config.get_configuration()
+
+        msg = "Debug: " + str(__debug__)
+        msg += ' <<<<<<<<<<<<<<<<<<<<<<<<<<<<' if __debug__ else ''
+        logger.info(msg)
+
         data = build_data_frame()
 
         play_them_all()

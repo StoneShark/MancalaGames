@@ -30,9 +30,11 @@
       }
    },
    "vari_params": {
-      "goal_param": "include"
+      "goal_param": "include",
+      "pickextra": [ 0, 4 ]
    },
    "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p88.",
+   "comment": "<text_section>",
    "origin": "traditional",
    "region": "Caribbean"
 }
@@ -50,4 +52,17 @@ own.
 The game ends when one player has control of 10 holes. A territory
 game.
 </about>
+<comment>
+<nolink>Adji Kui II is not exactly fair--North has a very slight advantage.
+<nolink>Adji Kui II ends when there are 8 seeds left on the board,
+the selection of UNCLAIMED describes who gets those seeds.
+None of the three allowable options are fair:
+HOLE_OWNER (game definition), LAST_MOVER, or DIVVIED.
+
+The game can be made fair by using PICKEXTRA of PICK2XLASTSEEDS--the
+round starter gets the last 8 seeds.
+This does provide the non-starter of the overall game an advantage;
+whereas in the base game the starter/non-starter evaluates fair.
+This is the ending Ba-awa uses, a very similar game.
+</comment>
 </text_section>

@@ -162,6 +162,23 @@ class FindLoops:
 # %% play the game
 
 
+def _new_game_ui_tasks(game):
+    """Do any initialization done optionally by the UI.
+    Currently this is only don't for new games not new
+    rounds.
+
+    This must not be called until we know the starter.
+
+    If ARNGE_LIMIT is used (Bao) and the starter does not
+    move seeds then they are inhibited from captures and
+    making children until their opponent does. This is
+    only done for the first move of the game not each round.
+    There is no UI here so no seeds moved, set inhibitor."""
+
+    if game.info.prescribed == gi.SowPrescribed.ARNGE_LIMIT:
+        game.inhibitor.set_on(game.turn)
+
+
 def make_one_move(game, move):
     """
     Make a move for the next player.
@@ -340,6 +357,7 @@ def play_games(game, fplayer, tplayer, nbr_runs, *,
 
         game.new_game()
         starter = game.starter = game.turn = bool(cnt < nbr_runs // 2)
+        _new_game_ui_tasks(game)
 
         result, winner = play_one_game(game, fplayer, tplayer,
                                        show_log=save_logs | show_log,

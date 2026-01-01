@@ -8,7 +8,7 @@
       "name": "Dabuda",
       "about": "<text_section>",
       "allow_rule": 1,
-      "crosscapt": true,
+      "crosscapt": 1,
       "mlaps": 1,
       "capt_side": 1,
       "sow_direct": 1,
@@ -17,8 +17,11 @@
    },
    "player": {
       "algorithm": "negamaxer",
+      "ai_params": {
+         "mm_depth": [ 1, 1, 3, 7 ]
+      },
       "scorer": {
-         "mx_stores_m": 4,
+         "mx_stores_m": 8,
          "mx_empties_m": -2,
          "mx_easy_rand_a": 20
       }
@@ -33,11 +36,13 @@
    },
    "vari_params": {
       "holes": [ 6, 7, 8, 9, 10 ],
+      "nbr_start": "include",
       "xcpickown": "include",
       "allow_rule": [ 0, 1 ]
    },
    "rules": "Russ, Laurence. Mancala Games. 1984. p32.",
    "reference": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p17.",
+   "comment": "<text_section>",
    "origin": "traditional",
    "region": "Eastern Africa"
 }
@@ -59,11 +64,19 @@ Variations:
 
 - Allow moves to start from any hole on your side of the board.
 
-- <nolink>Dabuda::Two:  Valdez describes a multilap variant that has 
+- <nolink>Dabuda::Two:  Valdez describes a multilap variant that has
 6 holes per side, does
 not pick own seed on capture, and allows moves to start in any hole.
 
 - Endodoi and it's variant <nolink>Endodoi::J_Odu are very similar games
 without the strict limits on move start locations.
 </about>
+<comment>
+<nolink>Dabuda is not a fair game when played exactly as Russ describes;
+the North player has a slight advantage no matter the starter
+and the non-starter is favored.
+Playing with 8 holes per side and 4 start seeds is fair (non-starter favored).
+Playing with 10 holes and 5 start seeds is fair (starter favored).
+<a href="#fairness">See Game Analysis.</a>
+</comment>
 </text_section>

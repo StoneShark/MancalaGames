@@ -1,7 +1,7 @@
 {
    "game_class": "NorthSouthCycle",
    "game_constants": {
-      "holes": 12,
+      "holes": 20,
       "nbr_start": 5
    },
    "game_info": {

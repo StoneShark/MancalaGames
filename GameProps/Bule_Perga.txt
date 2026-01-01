@@ -20,10 +20,16 @@
          "mm_depth": [ 1, 1, 3, 7 ]
       },
       "scorer": {
-         "mx_stores_m": 4
+         "mx_stores_m": 8
       }
    },
+   "vari_params": {
+      "pickextra": [ 0, 3, 4 ],
+      "end_cond": [ 0, 3, 4 ],
+      "end_param": "include"
+   },
    "rules": "https://mancala.fandom.com/wiki/Bule_Perga",
+   "comment": "<text_section>",
    "origin": "traditional",
    "region": "South Asia"
 }
@@ -38,6 +44,27 @@ seeds from holes sown to 4 on their own side of the board.
 
 The game is over when one player does not have a move on their turn.
 
+The final four seeds can easily end up in holes that prevent any final caputre.
+Such games can be ended with either Game menu command:
+End Game - seeds still on the board go to hole owners; or
+Quit Game - seeds still on the board are divvied between the players.
+
 Goal: capture more than half of the seeds.
 </about>
+<comment>
+The original written rules do not specify an end game condition.
+Any of the following options may be used to force a cleaner end game:
+<ol><li> PICKEXTRA of PICKLASTSEEDS;
+<li>PICKEXTRA of PICK2XLASTSEEDS;
+<li> END_COND of SEEDS_LIMIT with END_PARAM = 4;
+<li>END_COND of SEEDS_LIMIT with <nolink>END_PARAM = 8.
+</ol>How the final seeds are allocated for the last two options
+may be controlled with UNCLAIMED.
+
+All still result in a game that is fair and the starting player
+still has a significant advantage.
+For option 2, the starter wins nearly 100% of the time.
+Option 3 is the fairest in terms of starter, but they still have a near 70% chance to win.
+<a href="#fairness">See Game Analysis</a>
+</comment>
 </text_section>

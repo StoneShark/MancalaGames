@@ -9,10 +9,10 @@
       "about": "<text_section>",
       "capt_on": [ 2, 4 ],
       "multicapt": -1,
-      "mustpass": true,
       "capt_side": 0,
       "sow_direct": 1,
-      "stores": true
+      "stores": true,
+      "unclaimed": 1
    },
    "player": {
       "algorithm": "negamaxer",
@@ -24,12 +24,23 @@
          "mx_evens_m": -1
       }
    },
+   "variants": {
+      "Bakuk": { },
+      "Koumma": {
+         "sow_start": true,
+         "capt_on": [ 2, 4, 6 ]
+      }
+   },
    "vari_params": {
       "holes": [ 3, 4, 5, 6 ],
       "mustpass": "include",
+      "sow_start": "include",
+      "capt_on": "include",
       "capt_dir": [ 0, 1 ]
    },
    "rules": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p144.",
+   "note": "<text_section>",
+   "reference": "https://mancala.fandom.com/wiki/Bakuk",
    "origin": "traditional",
    "region": "Northern Africa"
 }
@@ -41,15 +52,30 @@ Capture on 2s and 4s. Do multiple captures of immediately preceding
 holes also with 2 or 4 seeds (multiple capture stops before hole not
 with 2 or 4 seeds).
 
+The game ends when the current player does not have a move.
+Seeds left on the board are not scored.
+
 Goal: capture more than half of the seeds.
 
 Variation:
 
 - board size 3 to 6 holes per side.
 
-- end the game when a player has no seeds on their turn (no mustpass).
+- leave one seed in the start hole.
+
+- capture on 2s, 4s and 6s.
+
+- players must pass if they do not have a move.
+The game ends when one player has sufficient seeds to win or neither player has a move.
 
 - capture in sow direction--following holes, instead of preceeding
 holes.
+
+- <nolink>Bakuk::Koumma - captures on 2s, 4s, and 6s and leave one seed in the start hole.
 </about>
+<note>
+The rules as Valdez describes them contradict in that players must pass if they do not have a move,
+but the game ends when one player does not have a move at the start of their turn.
+Passes are not required.
+</note>
 </text_section>
