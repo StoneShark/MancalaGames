@@ -364,7 +364,7 @@ but only games with a winner were used to assess
 fairness&mdash;ties, looped, and games with an excessive number of moves
 were not included.
 The expected outcome of the games
-is both North and South each win 50% of time and
+is both North and South each win 50% of the time and
 the starter and non-starter each win 50% of the time.
 
 <h5>Personal Note</h5>

@@ -39,7 +39,7 @@ def set_round_starter(game):
         else:
             game.turn = not game.turn
 
-    elif start_rule == gi.RoundStarter.LAST_MOVER:
+    elif start_rule == gi.RoundStarter.LAST_MOVER and game.mdata:
         game.turn = game.mdata.player
 
     game.starter = game.turn
@@ -178,6 +178,28 @@ class NewRound(NewGameIf):
                     f"RoundFill {game.info.round_fill} not implemented.")
 
 
+    def _shorten_all_fill_order(self, loser):
+        """The fill order for SHORTEN_ALL depends on the round loser.
+        Fill from the loser's left:
+            - True lost, start from east side of the board
+            - False lost, start from the west side of the board
+
+        Always fill because we don't know where the last round left
+        the ranges.
+
+        loser: the player that lost the previous round."""
+
+        holes = self.game.cts.holes
+        dbl_holes = self.game.cts.dbl_holes
+
+        if loser:
+            self.fill_orders = [range(holes - 1, -1, -1),
+                                range(holes, dbl_holes)]
+        else:
+            self.fill_orders = [range(holes),
+                                    range(dbl_holes - 1, holes - 1, -1)]
+
+
     def _compute_fills(self):
         """Detemine how many holes to fill on each side and
         adjust the store to hold the remaining seeds.
@@ -200,6 +222,8 @@ class NewRound(NewGameIf):
             fill[0] = fill[1] = min(quot, holes)
 
             if game.info.round_fill == gi.RoundFill.SHORTEN_ALL:
+                self._shorten_all_fill_order(loser)
+
                 winner = not loser
                 game.store[loser] = 0
                 extra = seeds[loser] - fill[loser] * nbr_start

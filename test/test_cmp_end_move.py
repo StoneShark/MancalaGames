@@ -584,13 +584,13 @@ END_CASES = {
         [make_state(board=(0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 0),
                     store=(13, 0),   # seeds out of play
                     turn=False),
-         gi.WinCond.ROUND_WIN, True],
+         gi.WinCond.WIN, True],
 
         # 3: False has no seeds, True captured them
         [make_state(board=(0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 0),
                     store=(13, 0),
                     turn=True),
-         gi.WinCond.ROUND_WIN, True],
+         gi.WinCond.WIN, True],
 
         ],  # end Depouiller
 

@@ -8,17 +8,13 @@
       "name": "Dépouiller",
       "about": "<text_section>",
       "allow_rule": 1,
-      "crosscapt": true,
-      "goal": 9,
-      "goal_param": 4,
-      "round_starter": 0,
-      "rounds": 2,
+      "crosscapt": 1,
+      "goal": 1,
       "sow_direct": 1
    },
    "player": {
       "algorithm": "montecarlo_ts",
       "ai_params": {
-         "mcts_bias": [ 200, 200, 300, 300 ],
          "mcts_nodes": [ 30, 800, 1200, 1600 ],
          "mcts_pouts": [ 2, 3, 3, 3 ],
          "mm_depth": [ 1, 5, 7, 11 ]
@@ -47,8 +43,5 @@ If the last seed of a sow ends in an empty hole, remove the seeds
 across the board from it (cross capture).  Leave the seed effecting
 the removal. Seeds may be removed from either side of the board.
 Careful play is needed, or you'll eliminate your own seeds.
-
-Played in tallied rounds--the setup for each round is the same but the
-starting player alternates. Win four rounds to win the game.
 </about>
 </text_section>

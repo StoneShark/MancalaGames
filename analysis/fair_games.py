@@ -63,9 +63,9 @@ LOOPED = play_game.GameResult.LOOPED.name
 def build_data_frame():
     """Build a data frame with all the desired columns."""
 
-    dframe = pd.DataFrame(index=config.game)
+    dframe = pd.DataFrame(index=config.gindex)
 
-    dlen = len(config.game)
+    dlen = len(config.gindex)
     for col in INT_COLUMNS:
         dframe[col] = [0] * dlen
     for col in FLT_COLUMNS:

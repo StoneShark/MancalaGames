@@ -89,7 +89,7 @@ but only games with a winner were used to assess
 fairness&mdash;ties, looped, and games with an excessive number of moves
 were not included.
 The expected outcome of the games
-is both North and South each win 50% of time and
+is both North and South each win 50% of the time and
 the starter and non-starter each win 50% of the time.
 
 <h5>Personal Note</h5>
@@ -820,12 +820,12 @@ player's side holes are empty. Seeds from child holes may not be captured.
 <p>Played in rounds. Each round ends when the current player does not have a
 move or there is only one seed left in play without children. The game ends
 when one player cannot fill a single hole.
-<p>At the start of each round, the loser puts four seeds in each hole from the
-left, then any remaining seeds are put into the next hole. The winner's
-side is setup exactly the same, except any extra seeds they have are put
-into their store. The board is resized to the number of holes filled. If
-the board size is reduced to 3 or less per side, no children may be
-created.
+<p>At the start of each round, the loser puts four seeds in each hole from
+their left, then any remaining seeds are put into the next hole. The
+winner's side is setup exactly the same, except any extra seeds they have
+are put into their store. The board is resized to the number of holes
+filled. If the board size is reduced to 3 or less per side, no children may
+be created.
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  7</p>
@@ -853,12 +853,6 @@ created.
   </div>
 </div>
 <p><b class="enum">Rules</b>: Russ, Laurence. Mancala Games. 1984. p43.
-<p><b class="enum">Comment</b>: <a href="about_games.html#Bao">Bao</a> as described is not fair, slightly
-favoring South. At 100,000 games played, the winner and starter chi-squared
-p-values are less than 10e-35.
-<p>Changing the <a href="game_params.html#round_fill">ROUND_FILL</a> from SHORTEN_ALL to SHORTEN does make the game fair
-(200,000 games played resulted in a winner p-value of 0.61297). <a
-href="#fairness">See Game Analysis.</a>
 <p><b class="enum">Origin</b>: traditional
 <p><b class="enum">Region</b>: Eastern Africa
 <h3 id="Bay Khom" class="game_desc">Bay Khom</h3>
@@ -1057,16 +1051,18 @@ the board are divvied between the players.
 </div>
 <p><b class="enum">Rules</b>: <a href="https://mancala.fandom.com/wiki/Bule_Perga" target="_blank">https://mancala.fandom.com/wiki/Bule_Perga</a>
 <p><b class="enum">Comment</b>: The original written rules do not specify an
-end game condition. Any of the following options may be used to force a
-cleaner end game: <ol><li> <a href="game_params.html#pickextra">PICKEXTRA</a> of PICKLASTSEEDS; <li>PICKEXTRA of
-PICK2XLASTSEEDS; <li> <a href="game_params.html#end_cond">END_COND</a> of SEEDS_LIMIT with <a href="game_params.html#end_param">END_PARAM</a> = 4;
-<li>END_COND of SEEDS_LIMIT with <nolink>END_PARAM = 8. </ol>How the final
-seeds are allocated for the last two options may be controlled with
-<a href="game_params.html#unclaimed">UNCLAIMED</a>.
+end game condition; the suggestion at Mancala World of waiting until a
+player does not have a move on their turn, results in many cycling games.
+Any of the following options may be used to force a cleaner end game:
+<ol><li> <a href="game_params.html#pickextra">PICKEXTRA</a> of PICKLASTSEEDS; <li>PICKEXTRA of PICK2XLASTSEEDS; <li>
+<a href="game_params.html#end_cond">END_COND</a> of SEEDS_LIMIT with <a href="game_params.html#end_param">END_PARAM</a> = 4; <li>END_COND of SEEDS_LIMIT
+with <nolink>END_PARAM = 8. </ol>How the final seeds are allocated for the
+last two options may be controlled with <a href="game_params.html#unclaimed">UNCLAIMED</a>.
 <p>All still result in a game that is fair and the starting player still has a
-significant advantage. For option 2, the starter wins nearly 100% of the
-time. Option 3 is the fairest in terms of starter, but they still have a
-near 70% chance to win. <a href="#fairness">See Game Analysis</a>
+significant advantage. As described, the starter has about 77% chance of
+winning. For option 2, the starter wins nearly 100% of the time. Option 3
+is the fairest in terms of starter, but they still have a near 70% chance
+to win. <a href="#fairness">See Game Analysis.</a>
 <p><b class="enum">Origin</b>: traditional
 <p><b class="enum">Region</b>: South Asia
 <h3 id="Centering" class="game_desc">Centering</h3>
@@ -1593,20 +1589,15 @@ side.
 the board from it (cross capture).  Leave the seed effecting the removal.
 Seeds may be removed from either side of the board. Careful play is needed,
 or you'll eliminate your own seeds.
-<p>Played in tallied rounds--the setup for each round is the same but the
-starting player alternates. Win four rounds to win the game.
 <div class="cols_row">
   <div class="column2">
     <p class="param">Holes per side:  5</p>
     <p class="param">Start seeds:  2</p>
-    <p class="param"><a href="game_params.html#goal">Goal</a>: RND_WIN_COUNT_DEP</p>
+    <p class="param"><a href="game_params.html#goal">Goal</a>: DEPRIVE</p>
     <p class="param"><a href="game_params.html#allow_rule">Special Move Restrictions</a>: OPP_OR_EMPTY</p>
-    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: ONE_ZEROS</p>
   </div>
   <div class="column2">
-    <p class="param"><a href="game_params.html#goal_param">Goal Parameter</a>: 4</p>
-    <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
-    <p class="param"><a href="game_params.html#rounds">Rounds</a>: NO_MOVES</p>
+    <p class="param"><a href="game_params.html#crosscapt">Cross-Capture</a>: ONE_ZEROS</p>
     <p class="param"><a href="game_params.html#sow_direct">Sow Direction</a>: CCW</p>
   </div>
 </div>

@@ -898,7 +898,11 @@ TERRITORY goal only.
 <li class="helptext">
 <b class="enum">SHORTEN_ALL</b>: SHORTEN but all of the loser's seeds are put on the board
 thus one hole might not have 'nbr_start' seeds. The winner gets the same
-number of seeds put into play.
+number of seeds put into play in the exact same order. The actual holes
+filled are from the loser's left.
+<p class="helptext"> Using SHORTEN_ALL with options other than <a href="game_params.html#round_starter">ROUND_STARTER</a> of WINNER and
+<a href="game_params.html#sow_direct">SOW_DIRECT</a> of CCW, can result in unfair games--the round starter may be
+able to capture on the opening moves.
 <li class="helptext">
 <b class="enum">LOSER_ONLY</b>: Only the loser's holes are refilled based on the number of
 seeds captured and on their side of the board. Any blocks (if used) on

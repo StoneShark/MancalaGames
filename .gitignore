@@ -10,6 +10,8 @@ logs
 MancalaGames
 *.cov
 analysis/pdicts
+analysis/data/more
+analysis/data/chi_squ
 context.py
 GamePropsNoRelease
 tools/run_*

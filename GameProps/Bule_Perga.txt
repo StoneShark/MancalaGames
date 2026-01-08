@@ -52,7 +52,9 @@ Quit Game - seeds still on the board are divvied between the players.
 Goal: capture more than half of the seeds.
 </about>
 <comment>
-The original written rules do not specify an end game condition.
+The original written rules do not specify an end game condition;
+the suggestion at Mancala World of waiting until a player does not have
+a move on their turn, results in many cycling games.
 Any of the following options may be used to force a cleaner end game:
 <ol><li> PICKEXTRA of PICKLASTSEEDS;
 <li>PICKEXTRA of PICK2XLASTSEEDS;
@@ -63,8 +65,9 @@ may be controlled with UNCLAIMED.
 
 All still result in a game that is fair and the starting player
 still has a significant advantage.
+As described, the starter has about 77% chance of winning.
 For option 2, the starter wins nearly 100% of the time.
 Option 3 is the fairest in terms of starter, but they still have a near 70% chance to win.
-<a href="#fairness">See Game Analysis</a>
+<a href="#fairness">See Game Analysis.</a>
 </comment>
 </text_section>

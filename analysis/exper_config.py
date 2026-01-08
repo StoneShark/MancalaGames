@@ -30,6 +30,7 @@ import sys
 
 import ana_logger
 from context import ai_player
+from context import cfg_keys as ckey
 from context import man_config
 from context import man_path
 
@@ -44,6 +45,16 @@ ALL = 'all'
 PATH = '../GameProps/'
 
 INDEX = [fname[:-4] for fname in man_path.game_files()]
+
+# --params is loaded into this var -- a global because it's used
+# in two places -- to create the dataframe index and to generate the games
+param_sets = None
+
+
+def short_name(gname, pname):
+    """Short names for when a params file is used."""
+
+    return gname[:5] + '_' + pname
 
 
 # %%  player config
@@ -84,6 +95,18 @@ def define_parser(log_options=False):
 
     parser.add_argument('--file', action='store',
                         help="""Select a game file run. Only 1.""")
+
+    parser.add_argument('--params', action='store',
+                        help="""Provide a file with a list of parameter-change
+                        experiments to run. A JSON file where
+                        each tag-value is an experiment-name and
+                        a parameter dictionary to override the base
+                        game definition.
+                        The file should be formatted as the named variants tag
+                        in a game definition file,
+                        but the base game is not required.
+                        If multiple games are included the same
+                        experiments are run on each game.""")
 
     parser.add_argument('--nbr_runs', action='store',
                         default=10, type=int,
@@ -145,6 +168,7 @@ def define_parser(log_options=False):
 
 def process_command_line(log_options=False):
     """Process the command line and look for some basic errors."""
+    global param_sets
 
     parser = define_parser(log_options)
     try:
@@ -176,8 +200,19 @@ def process_command_line(log_options=False):
         print("save_logs only valid for <= 1 game and <= 50 runs.")
         sys.exit()
 
-    # configure the root logger
+    # create the game index for the data frame index
+    if cargs.params:
+        man_config.read_params_data()
+        with open(cargs.params, 'r', encoding='utf-8') as file:
+            param_sets = json.load(file)
 
+        cargs.gindex = [short_name(gname, pname)
+                        for gname in cargs.game
+                        for pname in param_sets.keys()]
+    else:
+        cargs.gindex = cargs.game
+
+    # configure the root logger
     out_file = cargs.output + '.txt' if cargs.output else None
     ana_logger.config(logging.getLogger(), out_file, cargs.restart)
 
@@ -268,8 +303,39 @@ def build_player(game, pdict, arg_list):
     return player
 
 
+def next_params(cargs, gname, gfile):
+    """If any params were provided on the command line,
+    read the game dict, update per each param dict, and
+    yield a game and player dict for each.
+    If params were not provided make the game and
+    yield it.
+
+    Game names are always the names from the command line."""
+
+    if not cargs.params:
+        game, pdict = man_config.make_game(gfile)
+        object.__setattr__(game.info, ckey.NAME, gname)
+        yield game, pdict
+        return
+
+    for pname, pdict in param_sets.items():
+
+        game_dict = man_config.read_game(gfile)
+
+        for vname, value in pdict.items():
+                param = man_config.PARAMS[vname]
+                man_config.set_config_value(
+                    game_dict, param.cspec, param.option,
+                    man_config.convert_from_file('Experiment', vname, value))
+
+        game_dict[ckey.GAME_INFO][ckey.NAME] = short_name(gname, pname)
+        game = man_config.game_from_config(game_dict)
+
+        yield game, game_dict[ckey.PLAYER]
+
+
 def game_n_players_gen(cargs):
-    """for each game specified on the command line,
+    """For each game specified on the command line,
     generate the game and players."""
 
     if cargs.file:
@@ -278,17 +344,17 @@ def game_n_players_gen(cargs):
         games = [(gname, PATH + gname + '.txt') for gname in cargs.game]
 
     for gname, gfile in games:
+        for game, pdict in next_params(cargs, gname, gfile):
 
-        game, pdict = man_config.make_game(gfile)
-        if cargs.dconfig:
-            logger.info(game.params_str())
-        if cargs.no_endless:
-            game.disallow_endless(True)
+            if cargs.dconfig:
+                logger.info(game.params_str())
+            if cargs.no_endless:
+                game.disallow_endless(True)
 
-        tplayer = build_player(game, pdict, cargs.tplayer)
-        fplayer = build_player(game, pdict, cargs.fplayer)
+            tplayer = build_player(game, pdict, cargs.tplayer)
+            fplayer = build_player(game, pdict, cargs.fplayer)
 
-        yield game, fplayer, tplayer, gname
+            yield game, fplayer, tplayer, game.info.name
 
 
 def get_configuration(log_options=False):

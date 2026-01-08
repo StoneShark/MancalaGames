@@ -38,7 +38,6 @@
       }
    },
    "rules": "Russ, Laurence. Mancala Games. 1984. p43.",
-   "comment": "<text_section>",
    "origin": "traditional",
    "region": "Eastern Africa"
 }
@@ -68,18 +67,10 @@ have a move or there is only one seed left in play without children.
 The game ends when one player cannot fill a single hole.
 
 At the start of each round, the loser puts four seeds in each hole
-from the left, then any remaining seeds are put into the next hole.
+from their left, then any remaining seeds are put into the next hole.
 The winner's side is setup exactly the same, except any extra seeds
 they have are put into their store. The board is resized to the number
 of holes filled. If the board size is reduced to 3 or less per side,
 no children may be created.
 </about>
-<comment>
-Bao as described is not fair, slightly favoring South.
-At 100,000 games played, the winner and starter chi-squared p-values are less than 10e-35.
-
-Changing the ROUND_FILL from SHORTEN_ALL to SHORTEN does make the game fair
-(200,000 games played resulted in a winner p-value of 0.61297).
-<a href="#fairness">See Game Analysis.</a>
-</comment>
 </text_section>

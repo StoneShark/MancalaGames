@@ -277,12 +277,12 @@ class TestNewGame:
             RoundFill.SHORTEN_ALL:
                 [utils.build_board([False, False, True],
                                    [False, False, True]),
-                 utils.build_board([False, False, True],
-                                   [False, False, True]),
+                 utils.build_board([True, False, False],  # east fill
+                                   [True, False, False]),
                  utils.build_board([False, True, True],
                                    [False, True, True]),
-                 utils.build_board([False, True, True],
-                                   [False, True, True]),
+                 utils.build_board([True, True, False],
+                                   [True, True, False]),  # east fill
                  utils.build_board([False, False, False],
                                    [False, False, False])],
                 }
