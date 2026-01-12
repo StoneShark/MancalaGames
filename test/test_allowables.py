@@ -432,7 +432,7 @@ class TestOccupied:
 
     @pytest.mark.parametrize(
         'board, turn, eresult',
-        [([1, 2, 0, 0, 1, 0], False, [T, F, F]),
+        [([1, 0, 1, 0, 1, 0], False, [F, F, T]),
          ([3, 1, 0, 1, 0, 1], True, [T, F, F]),
 
         ([4] * 6,  True, [T, T, T]),
@@ -443,6 +443,7 @@ class TestOccupied:
         game_info = gi.GameInfo(capt_on=[2],
                                 allow_rule=AllowRule.OCCUPIED,
                                 stores=True,
+                                sow_stores=gi.SowStores.OWN_NR,
                                 nbr_holes=game_consts.holes,
                                 rules=mancala.Mancala.rules)
 

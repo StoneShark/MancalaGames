@@ -1,7 +1,7 @@
 {
    "game_class": "NorthSouthCycle",
    "game_constants": {
-      "holes": 20,
+      "holes": 14,
       "nbr_start": 5
    },
    "game_info": {
@@ -29,6 +29,12 @@
          "mx_evens_m": 3
       }
    },
+   "variants": {
+      "Azigo": { },
+      "Twenty": {
+         "holes": 20
+      }
+   },
    "vari_params": {
       "holes": "include",
       "capt_on": "include",
@@ -37,7 +43,8 @@
       "capt_dir": [ 0, 1 ]
    },
    "rules": "https://mancala.fandom.com/wiki/Azigo",
-   "deviation": "The number of store seeds are shown; but in physical play the seeds are hidden.",
+   "deviation 1": "<text_section>",
+   "deviation 2": "<text_section>",
    "reference": "https://ludii.games/details.php?keyword=Azigo https://ludii.games/details.php?keyword=Okwe%20(Nigeria)",
    "origin": "traditional",
    "region": "Eastern Africa",
@@ -62,7 +69,8 @@ Goal: be the last player to move.
 
 Variations:
 
-- board sizes of 8 to 20 holes per side.
+- board sizes of 8 to 20 holes per side. <nolink>Azigo::Twenty 
+allows direct play of a 20 hole board (as specified in the rules).
 
 - when sowing from the store all seeds must be sown (PLAY_LOCS).
 
@@ -71,6 +79,15 @@ Variations:
 - sow both sides of the board (GAME_CLASS of Mancala) and
 capture direction (CAPT_DIR) is sow direction.
 </about>
+<deviation 1>
+The rules use a board size of 20 holes per side, a smaller
+size was choosen to make games play faster.
+<nolink>Azigo::Twenty is available to directly play with the original board size.
+</deviation 1>
+<deviation 2>
+The number of store seeds are shown;
+but in physical play the seeds are hidden.
+</deviation 2>
 <note>
 All possible moves from stores are considered by the AI player,
 this results in a large branching factor and makes the AI players slow.

@@ -75,6 +75,21 @@ class TestSingleClasses:
         assert cok.capture_ok(None, loc) == eok
 
 
+    @pytest.mark.parametrize('loc, seeds, eok',
+                              [(0, 3, True),
+                               (0, 0, False),
+                               (-1, 2, True),
+                               (-1, 0, False),
+                              ])
+    def test_needseeds_anywhere(self, game, loc, seeds, eok):
+
+        game[loc] = seeds
+
+        cok = capt_ok.CaptNeedSeedsAnywhere(game, capt_ok.CaptTrue(game))
+
+        assert cok.capture_ok(None, loc) == eok
+
+
     @pytest.mark.parametrize('child, seeds, loc, eok',
                               [(False, 0, 0, False),
                                (True, 0, 0, False),

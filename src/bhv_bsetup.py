@@ -151,7 +151,7 @@ class SetupHold(bhv_hold.Hold):
             - clear to stores for other games with visible stores
             - move to leftmost for other games"""
 
-        if game_ui.game.info.goal.eliminate():
+        if not game_ui.show_seeds_in_stores():
 
             tk.Button(tframe, text="Clear Board",
                       command=self.clear_board).grid(
@@ -395,7 +395,7 @@ class SetupHold(bhv_hold.Hold):
         store = game.store
         ui_stores = self.game_ui.stores
 
-        if ui_stores and not game.info.goal.eliminate():
+        if ui_stores and not self.game_ui.show_seeds_in_stores():
 
             # stores are in game_ui.stores by row
             ui_stores[0].set_store(store[1], None)
@@ -674,8 +674,8 @@ class SetupStoreBehavior(bhv.StoreBehaviorIf):
         Seeds are always visible even if they aren't during game play"""
 
         self.str['state'] = tk.NORMAL
-        game = self.str.game_ui.game
-        if seeds and not game.info.goal.eliminate():
+        game_ui = self.str.game_ui
+        if seeds and game_ui.show_seeds_in_stores():
             self.str['text'] = str(seeds)
         else:
             self.str['text'] = ''
@@ -686,7 +686,7 @@ class SetupStoreBehavior(bhv.StoreBehaviorIf):
         """Drop all picked up seeds, but not for eliminate games."""
 
         game = self.str.game_ui.game
-        if not SETUPHOLD.nbr or game.info.goal.eliminate():
+        if not SETUPHOLD.nbr or not self.str.game_ui.show_seeds_in_stores():
             self.str.bell()
             return
 
@@ -705,7 +705,8 @@ class SetupStoreBehavior(bhv.StoreBehaviorIf):
         game = self.str.game_ui.game
 
         # no seeds to pick up or eliminate (don't care about seeds)
-        if not game.store[self.str.owner] or game.info.goal.eliminate():
+        if (not game.store[self.str.owner]
+            or not self.str.game_ui.show_seeds_in_stores()):
             self.str.bell()
             return
 

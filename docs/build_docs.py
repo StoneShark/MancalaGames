@@ -368,7 +368,7 @@ is both North and South each win 50% of the time and
 the starter and non-starter each win 50% of the time.
 
 <h5>Personal Note</h5>
-<p>A reference rule source is listed for each game.
+<p>A rule source is specified for each game.
 The descriptions and configurations below are my best
 understanding of the those rules within the framework of Mancala Games.
 Known discrepancies are described.

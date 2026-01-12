@@ -503,9 +503,23 @@ class ImmobilizeEndGame(ConcedeMixin, EndTurnIf):
                                       claimer.ClaimBoardSeeds(game))
 
         if game.info.play_locs:
-            self.moves_test = game.get_moves
+            self.no_moves = self.test_allow_store
         else:
-            self.moves_test = game.get_allowable_holes
+            self.no_moves = self.test_allows
+
+    @staticmethod
+    def test_allow_store(game):
+        """Return true if the current player has a move."""
+
+        return (not any(game.get_allowable_holes())
+                and not game.store[game.turn])
+
+
+    @staticmethod
+    def test_allows(game):
+        """Return true if the current player has a move."""
+
+        return not any(game.get_allowable_holes())
 
 
     def game_ended(self, mdata):
@@ -516,7 +530,7 @@ class ImmobilizeEndGame(ConcedeMixin, EndTurnIf):
             return
 
         with self.game.opp_turn():
-            mdata.ended = not any(self.moves_test())
+            mdata.ended = self.no_moves(self.game)
 
         if mdata.ended:
 

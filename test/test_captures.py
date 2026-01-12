@@ -1800,6 +1800,40 @@ class TestCaptStartNegative:
         assert game.store == eturn
 
 
+    @pytest.mark.parametrize('board, store, turn, cstart, eboard, eturn, ecapt',
+                             CASES)
+    def test_no_store_capture(self, board, store, turn, cstart,
+                              eboard, eturn, ecapt):
+        """Test that NoStoreCapt always prevents capture from a store."""
+
+        game_consts = gconsts.GameConsts(nbr_start=3, holes=2)
+        game_info = gi.GameInfo(nbr_holes=game_consts.holes,
+                                stores=True,
+                                evens=True,
+                                sow_stores=gi.SowStores.BOTH_NR,
+                                rules=mancala.Mancala.rules)
+        game = mancala.Mancala(game_consts, game_info)
+
+        game.board = board.copy()
+        game.store = store.copy()
+        game.turn = turn
+
+        mdata = move_data.MoveData(game, None)
+        mdata.direct = gi.Direct.CCW
+        mdata.capt_start = cstart
+
+        game.deco.capturer.do_captures(mdata)
+
+        if cstart >= 0:
+            assert mdata.captured == ecapt
+            assert game.store == eturn
+        else:
+            assert not mdata.captured
+            assert game.store == store
+
+        assert game.board == eboard
+
+
     PICKERS = [gi.CaptExtraPick.PICKCROSS,
                gi.CaptExtraPick.PICKFINAL,
                ]

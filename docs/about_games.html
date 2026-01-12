@@ -93,7 +93,7 @@ is both North and South each win 50% of the time and
 the starter and non-starter each win 50% of the time.
 
 <h5>Personal Note</h5>
-<p>A reference rule source is listed for each game.
+<p>A rule source is specified for each game.
 The descriptions and configurations below are my best
 understanding of the those rules within the framework of Mancala Games.
 Known discrepancies are described.
@@ -678,7 +678,8 @@ the holes on your side of the board.
 <p>Goal: be the last player to move.
 <p>Variations:
 <ul><li class="helptext">
-board sizes of 8 to 20 holes per side.
+board sizes of 8 to 20 holes per side. <nolink>Azigo::Twenty allows
+direct play of a 20 hole board (as specified in the rules).
 <li class="helptext">
 when sowing from the store all seeds must be sown (<a href="game_params.html#play_locs">PLAY_LOCS</a>).
 <li class="helptext">
@@ -689,7 +690,7 @@ sow both sides of the board (<a href="game_params.html#game_class">GAME_CLASS</a
 </ul>
 <div class="cols_row">
   <div class="column2">
-    <p class="param">Holes per side:  20</p>
+    <p class="param">Holes per side:  14</p>
     <p class="param">Start seeds:  5</p>
     <p class="param"><a href="game_params.html#goal">Goal</a>: IMMOBILIZE</p>
     <p class="param"><a href="game_params.html#game_class">Game class</a>:  NorthSouthCycle</p>
@@ -708,8 +709,12 @@ sow both sides of the board (<a href="game_params.html#game_class">GAME_CLASS</a
   </div>
 </div>
 <p><b class="enum">Rules</b>: <a href="https://mancala.fandom.com/wiki/Azigo" target="_blank">https://mancala.fandom.com/wiki/Azigo</a>
-<p><b class="enum">Deviation</b>: The number of store seeds are shown; but in
-physical play the seeds are hidden.
+<p><b class="enum">Deviation 1</b>: The rules use a board size of 20 holes per
+side, a smaller size was choosen to make games play faster.
+<nolink>Azigo::Twenty is available to directly play with the original board
+size.
+<p><b class="enum">Deviation 2</b>: The number of store seeds are shown; but
+in physical play the seeds are hidden.
 <p><b class="enum">Reference</b>:
 <a href="https://ludii.games/details.php?keyword=Azigo" target="_blank">https://ludii.games/details.php?keyword=Azigo</a>
 <a href="https://ludii.games/details.php?keyword=Okwe%20(Nigeria)" target="_blank">https://ludii.games/details.php?keyword=Okwe%20(Nigeria)</a>
@@ -5411,6 +5416,7 @@ tournaments that have included this game.
     <p class="param">&emsp;&ensp;No_Rounds</p>
     <p class="param"><a href="#Ayoayo">Ayoayo</a></p>
     <p class="param"><a href="#Azigo">Azigo</a></p>
+    <p class="param">&emsp;&ensp;Twenty</p>
     <p class="param"><a href="#Ba-awa">Ba-awa</a></p>
     <p class="param"><a href="#Bakuk">Bakuk</a></p>
     <p class="param">&emsp;&ensp;Koumma</p>
@@ -5449,9 +5455,9 @@ tournaments that have included this game.
     <p class="param"><a href="#Djenon Aboure">Djenon Aboure</a></p>
     <p class="param"><a href="#Embeli">Embeli</a></p>
     <p class="param"><a href="#Endodoi">Endodoi</a></p>
-    <p class="param">&emsp;&ensp;J_Odu</p>
   </div>
   <div class="column3">
+    <p class="param">&emsp;&ensp;J_Odu</p>
     <p class="param">&emsp;&ensp;Rounds</p>
     <p class="param"><a href="#Enkeshui">Enkeshui</a></p>
     <p class="param"><a href="#Enlightenment">Enlightenment</a></p>
@@ -5512,9 +5518,9 @@ tournaments that have included this game.
     <p class="param"><a href="#Ndoto">Ndoto</a></p>
     <p class="param">&emsp;&ensp;Bao</p>
     <p class="param"><a href="#No Sides Child">No Sides Child</a></p>
-    <p class="param"><a href="#NoCapt">NoCapt</a></p>
   </div>
   <div class="column3">
+    <p class="param"><a href="#NoCapt">NoCapt</a></p>
     <p class="param"><a href="#NoSides">NoSides</a></p>
     <p class="param"><a href="#NS_Kalah">NS_Kalah</a></p>
     <p class="param"><a href="#Nsa Isong">Nsa Isong</a></p>
