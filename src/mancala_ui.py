@@ -541,7 +541,7 @@ class MancalaUI(ui_cmds.GameCmdsMixin,
 
         return (self.stores
                 and (not self.info.goal.eliminate()
-                     or self.info.start_pattern == gi.StartPattern.AZIGO))
+                     or self.info.play_locs))
 
 
     def refresh(self, *, ani_ok=False):
