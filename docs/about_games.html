@@ -347,9 +347,10 @@ winner may choose which of the loser's holes they wish to own.
     <p class="param"><a href="game_params.html#capt_side">Capture side</a>: OPP_TERR</p>
     <p class="param"><a href="game_params.html#goal_param">Goal Parameter</a>: 10</p>
     <p class="param"><a href="game_params.html#min_move">Minimum Seeds for Move</a>: 2</p>
+    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
   </div>
   <div class="column2">
-    <p class="param"><a href="game_params.html#mlaps">Sow Type</a>: LAPPER</p>
+    <p class="param"><a href="game_params.html#quitter">Quit Game Seeds</a>: HOLE_OWNER</p>
     <p class="param"><a href="game_params.html#round_fill">Round Fill Method</a>: UCHOWN</p>
     <p class="param"><a href="game_params.html#round_starter">Round Starter</a>: ALTERNATE</p>
     <p class="param"><a href="game_params.html#rounds">Rounds</a>: END_2S_SEEDS</p>
@@ -359,15 +360,12 @@ winner may choose which of the loser's holes they wish to own.
 </div>
 <p><b class="enum">Rules</b>: Valdez, Jacob A. 50 Ways to Play Mancala. 2023.
 p88.
-<p><b class="enum">Comment</b>: <nolink>Adji Kui II is not exactly fair--North
-has a very slight advantage. <nolink>Adji Kui II ends when there are 8
-seeds left on the board, the selection of <a href="game_params.html#unclaimed">UNCLAIMED</a> describes who gets
-those seeds. None of the three allowable options are fair: HOLE_OWNER (game
-definition), LAST_MOVER, or DIVVIED.
-<p>The game can be made fair by using <a href="game_params.html#pickextra">PICKEXTRA</a> of PICK2XLASTSEEDS--the round
-starter gets the last 8 seeds. This does provide the non-starter of the
-overall game an advantage; whereas in the base game the starter/non-starter
-evaluates fair. This is the ending <a href="about_games.html#Ba-awa">Ba-awa</a> uses, a very similar game.
+<p><b class="enum">Comment</b>: <nolink>Adji_Kui_II does suffer from "endless"
+multi-lap sows (one multi-lap sow of than 75 laps). When an endless sow is
+detected; the game is ended with <a href="game_params.html#quitter">QUITTER</a> configuration. The quitter is
+configured as hole owner to maintain game fairness.
+<p>Moves that would result in endless sows can be disallowed with the run-time
+menu option: Game -> Disallow Endless Sows.
 <p><b class="enum">Origin</b>: traditional
 <p><b class="enum">Region</b>: Caribbean
 <h3 id="Al-manqala" class="game_desc">Al-manqala</h3>
@@ -1479,12 +1477,6 @@ without the strict limits on move start locations.
 <p><b class="enum">Rules</b>: Russ, Laurence. Mancala Games. 1984. p32.
 <p><b class="enum">Reference</b>: Valdez, Jacob A. 50 Ways to Play Mancala.
 2023. p17.
-<p><b class="enum">Comment</b>: <nolink>Dabuda is not a fair game when played
-exactly as Russ describes; the North player has a slight advantage no
-matter the starter and the non-starter is favored. Playing with 8 holes per
-side and 4 start seeds is fair (non-starter favored). Playing with 10 holes
-and 5 start seeds is fair (starter favored). <a href="#fairness">See Game
-Analysis.</a>
 <p><b class="enum">Origin</b>: traditional
 <p><b class="enum">Region</b>: Eastern Africa
 <h3 id="Dakon" class="game_desc">Dakon</h3>

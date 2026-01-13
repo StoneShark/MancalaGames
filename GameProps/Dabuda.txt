@@ -42,7 +42,6 @@
    },
    "rules": "Russ, Laurence. Mancala Games. 1984. p32.",
    "reference": "Valdez, Jacob A. 50 Ways to Play Mancala. 2023. p17.",
-   "comment": "<text_section>",
    "origin": "traditional",
    "region": "Eastern Africa"
 }
@@ -71,12 +70,4 @@ not pick own seed on capture, and allows moves to start in any hole.
 - Endodoi and it's variant <nolink>Endodoi::J_Odu are very similar games
 without the strict limits on move start locations.
 </about>
-<comment>
-<nolink>Dabuda is not a fair game when played exactly as Russ describes;
-the North player has a slight advantage no matter the starter
-and the non-starter is favored.
-Playing with 8 holes per side and 4 start seeds is fair (non-starter favored).
-Playing with 10 holes and 5 start seeds is fair (starter favored).
-<a href="#fairness">See Game Analysis.</a>
-</comment>
 </text_section>

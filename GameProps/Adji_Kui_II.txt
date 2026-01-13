@@ -17,7 +17,8 @@
       "round_starter": 0,
       "rounds": 4,
       "sow_direct": 1,
-      "stores": true
+      "stores": true,
+      "quitter": 0
    },
    "player": {
       "algorithm": "negamaxer",
@@ -53,16 +54,11 @@ The game ends when one player has control of 10 holes. A territory
 game.
 </about>
 <comment>
-<nolink>Adji Kui II is not exactly fair--North has a very slight advantage.
-<nolink>Adji Kui II ends when there are 8 seeds left on the board,
-the selection of UNCLAIMED describes who gets those seeds.
-None of the three allowable options are fair:
-HOLE_OWNER (game definition), LAST_MOVER, or DIVVIED.
+<nolink>Adji_Kui_II does suffer from "endless" multi-lap sows (one multi-lap sow of than 75 laps).
+When an endless sow is detected; the game is ended with QUITTER configuration.
+The quitter is configured as hole owner to maintain game fairness.
 
-The game can be made fair by using PICKEXTRA of PICK2XLASTSEEDS--the
-round starter gets the last 8 seeds.
-This does provide the non-starter of the overall game an advantage;
-whereas in the base game the starter/non-starter evaluates fair.
-This is the ending Ba-awa uses, a very similar game.
+Moves that would result in endless sows can be disallowed with the run-time menu option:
+Game -> Disallow Endless Sows.
 </comment>
 </text_section>

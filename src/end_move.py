@@ -1174,6 +1174,8 @@ def _add_no_change(game, ender):
             ginfo.end_cond,
             ginfo.pickextra == gi.CaptExtraPick.PICKLASTSEEDS,
             ginfo.pickextra == gi.CaptExtraPick.PICK2XLASTSEEDS,
+            ginfo.rounds == gi.Rounds.END_S_SEEDS,
+            ginfo.rounds == gi.Rounds.END_2S_SEEDS,
 
             # seeds only moved to children, no stores
             (game.info.child_type.child_but_not_ram()

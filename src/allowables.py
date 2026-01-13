@@ -208,9 +208,11 @@ class OppOrEmptyEnd(AllowableIf):
         allow = self.decorator.get_allowable_holes()
         saved_state = self.game.state
         my_rng = self.game.cts.get_my_range(self.game.turn)
+        row = not self.game.turn
 
         for pos in range(self.game.cts.holes):
-            if not allow[pos] or self.game.board[pos] > self.game.cts.holes:
+            loc = self.game.cts.xlate_pos_loc(row, pos)
+            if not allow[pos] or self.game.board[loc] > self.game.cts.holes:
                 continue
 
             with self.game.restore_state(saved_state):
