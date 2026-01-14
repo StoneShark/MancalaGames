@@ -9,7 +9,7 @@ and decide if they are fair.
 Detailed approach:
 For every config file, play a bunch of games.
 Collect game ending data.
-Compute intermediate data so mean and standard dev can be computed.
+Use chi square fitness test to make judgement.
 
 Created on Sun Jul 23 11:29:10 2023
 @author: Ann"""

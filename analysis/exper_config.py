@@ -81,37 +81,60 @@ where:
 # %% command line proc
 
 
-def define_parser(log_options=False):
+def define_parser(*, log_options=False, one_game=False, output=True):
     """Define the command line arguements."""
 
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=PLAYER_CONFIG_MSG)
 
-    parser.add_argument('--game', action='append',
-                        choices=[ALL] + INDEX,
-                        help="""Select the games to simulate. Use multiple
-                        options to select multiple games.""")
+    if one_game:
+        parser.add_argument('game', action='store',
+                            choices=INDEX,
+                            help="""Select the game to profile
+                            from the GameProps folder.""")
+    else:
+        parser.add_argument('--game', action='append',
+                            choices=[ALL] + INDEX,
+                            help="""Select the games to simulate. Use multiple
+                            options to select multiple games.""")
 
     parser.add_argument('--file', action='store',
                         help="""Select a game file run. Only 1.""")
 
-    parser.add_argument('--params', action='store',
-                        help="""Provide a file with a list of parameter-change
-                        experiments to run. A JSON file where
-                        each tag-value is an experiment-name and
-                        a parameter dictionary to override the base
-                        game definition.
-                        The file should be formatted as the named variants tag
-                        in a game definition file,
-                        but the base game is not required.
-                        If multiple games are included the same
-                        experiments are run on each game.""")
+    if one_game:
+        parser.add_argument('--params', action='store',
+                            help="""Provide a file with parameter
+                            overrides. A JSON file with one tag-value
+                            pair: an experiment-name and
+                            a parameter dictionary to override the base
+                            game definition.""")
 
-    parser.add_argument('--nbr_runs', action='store',
-                        default=10, type=int,
-                        help="""Select the number of games to simulate.
-                        Default: %(default)s""")
+    else:
+        parser.add_argument('--params', action='store',
+                            help="""Provide a file with a list of
+                            parameter-change
+                            experiments to run. A JSON file where
+                            each tag-value is an experiment-name and
+                            a parameter dictionary to override the base
+                            game definition.
+                            The file should be formatted as the named
+                            variants tag in a game definition file,
+                            but the base game is not required.
+                            If multiple games are included the same
+                            experiments are run on each game.""")
+
+    if one_game:
+        parser.add_argument('--nbr_runs', action='store',
+                            default=10, type=int,
+                            help="""Select the number of actions to perform.
+                            Default: %(default)s""")
+
+    else:
+        parser.add_argument('--nbr_runs', action='store',
+                            default=10, type=int,
+                            help="""Select the number of games to simulate.
+                            Default: %(default)s""")
 
     parser.add_argument('--max_moves', action='store',
                         default=0, type=int,
@@ -144,17 +167,18 @@ def define_parser(log_options=False):
                             Any nbr_games is allowed and games are not slowed.
                             Default: %(default)s""")
 
-    parser.add_argument('--output', action='store',
-                        default=None,
-                        help="""Output file. Default: console output only""")
-
     parser.add_argument('--dconfig', action='store_true',
                         default=False,
                         help="""Include the game configuration in the output.
                         Default: %(default)s""")
 
-    parser.add_argument('--restart', action='store_true',
-                        help="""Do not append to the output file.""")
+    if output:
+        parser.add_argument('--output', action='store',
+                            default=None,
+                            help="""Output file. Default: console output only""")
+
+        parser.add_argument('--restart', action='store_true',
+                            help="""Do not append to the output file.""")
 
     parser.add_argument('--tplayer', action='store',
                         type=str, nargs='+',
@@ -166,20 +190,17 @@ def define_parser(log_options=False):
     return parser
 
 
-def process_command_line(log_options=False):
-    """Process the command line and look for some basic errors."""
-    global param_sets
-
-    parser = define_parser(log_options)
-    try:
-        cargs = parser.parse_args()
-    except argparse.ArgumentError:
-        parser.print_help()
-        sys.exit()
+def check_args(cargs, log_options, one_game, output):
+    """Check the cargs and add any missing flags to the namespace."""
 
     if not log_options:
         cargs.save_logs = False
         cargs.live_log = False
+    if one_game:
+        cargs.game = [cargs.game]
+    if not output:
+        cargs.output = None
+        cargs.restart = False
 
     if cargs.file and cargs.game:
         print("Don't use --file and --game together.")
@@ -199,6 +220,20 @@ def process_command_line(log_options=False):
     if cargs.save_logs and (len(cargs.game) > 1 or cargs.nbr_runs > 50):
         print("save_logs only valid for <= 1 game and <= 50 runs.")
         sys.exit()
+
+
+def process_command_line(*, log_options=False, one_game=False, output=True):
+    """Process the command line and look for some basic errors."""
+    global param_sets
+
+    parser = define_parser(log_options=log_options)
+    try:
+        cargs = parser.parse_args()
+    except argparse.ArgumentError:
+        parser.print_help()
+        sys.exit()
+
+    check_args(cargs, log_options, one_game, output)
 
     # create the game index for the data frame index
     if cargs.params:
@@ -365,5 +400,5 @@ def get_configuration(log_options=False):
     The root logger is configured so that output maybe
     started here."""
 
-    cargs = process_command_line(log_options)
+    cargs = process_command_line(log_options=log_options)
     return game_n_players_gen(cargs), cargs

@@ -8,7 +8,6 @@ Created on Mon Aug  7 06:18:19 2023
 
 import argparse
 import cProfile
-import os
 import random
 import sys
 import timeit
@@ -34,7 +33,7 @@ SORT_OPTS = ['calls', 'cumulative', 'cumtime', 'file', 'filename',
 ACTIONS = {'pick_move': 'tplayer.pick_move()',
            'allows': 'game.get_allowable_holes()',
            'play_game': 'game.new_game() ; ' \
-                        'play_game.play_one_game(game, fplayer, tplayer)',
+                        'play_game.play_games(game, fplayer, tplayer, cargs.nbr_runs)',
            'random_move': 'game.move(random.choice(game.get_moves()))'
            }
 
@@ -56,27 +55,9 @@ REPORTS = PARAMS + DECOS + AICONFIG
 def define_parser():
     """Define the command line arguements."""
 
-    parser = argparse.ArgumentParser(
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog=exper_config.PLAYER_CONFIG_MSG)
-
-    parser.add_argument('--game', action='store',
-                        choices=INDEX,
-                        help="""Select the game to profile
-                        from the GameProps folder.""")
-
-    parser.add_argument('--file', action='store',
-                        help="""Select a game configuration file to profile.
-                        Use either --game or --file, not both.""")
-
-    parser.add_argument('--tplayer', action='store',
-                        type=str, nargs='+',
-                        help="""Define player t.
-                        t player is used for AI experiments. See below.""")
-
-    parser.add_argument('--fplayer', action='store',
-                        type=str, nargs='+',
-                        help="""Define player f. See below""")
+    parser = exper_config.define_parser(log_options=False,
+                                        one_game=True,
+                                        output=False)
 
     parser.add_argument('--action', action='store',
                         choices=ACTIONS.keys(),
@@ -99,12 +80,6 @@ def define_parser():
                         help="""Sort option (only applies to
                         --timer profile). Default: %(default)s""")
 
-    parser.add_argument('--nbr_runs', action='store',
-                        default=10, type=int,
-                        help="""Select the number of actions to perform
-                        (only applies to --timer timeit).
-                        Default: %(default)s""")
-
     parser.add_argument('--report', action='store',
                         default='',
                         help="""Include details about the test
@@ -114,27 +89,6 @@ def define_parser():
                             p--ai player configurations.""")
 
     return parser
-
-
-def check_game(cargs):
-    """Check the --file and --game options to assure
-    that we have one game to profile. Adjust as needed."""
-
-    if not cargs.file and not cargs.game:
-        print("No game specified. Use --file or --game.")
-        sys.exit()
-
-    if cargs.file and cargs.game:
-        print("Don't use --file and --game together.")
-        sys.exit()
-
-    if cargs.game:
-        # experimenter expects a list
-        cargs.game = [cargs.game]
-
-    if cargs.file:
-        gname, _ = os.path.splitext(os.path.basename(cargs.file))
-        cargs.game = [gname]
 
 
 def check_action(cargs):
@@ -165,7 +119,9 @@ def process_command_line():
         parser.print_help()
         sys.exit()
 
-    check_game(cargs)
+    exper_config.check_args(cargs, log_options=False,
+                            one_game=True,
+                            output=False)
     check_action(cargs)
 
     print('\nCommand line:')

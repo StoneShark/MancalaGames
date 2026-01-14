@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """Play games and collect results.
 
+This file should not refernece the experimenter's cargs name space.
+
 Created on Sun Jul 28 12:33:30 2024
 @author: Ann"""
 
