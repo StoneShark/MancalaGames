@@ -84,7 +84,7 @@ FOOTER = """\
     <tr>
     <td class="footer">GPL-3.0 license</td>
     <td class="footer"></td>
-    <td class="footer" style="text-align:right">&copy; 2024-2025, Ann Davies</td>
+    <td class="footer" style="text-align:right">&copy; 2024-2026, Ann Davies</td>
     </tr>
 </table>
 </footer>
