@@ -37,14 +37,20 @@
 <about>
 Sow in the direction of your choice.
 
-Before each sow, if any holes on your side of the board have 1s,
-capture any seeds across from them. Then sow as normal. No other
+Before each sow, if any holes on your side of the board have single seeds,
+capture any seeds across from those holes. Then sow as normal. No other
 capture is provided.
+
+The dynamics of Mancala Games requires that you pick your move,
+then the presow capture is done before the seeds are sown. 
+Therefore, if you pick a move from a hole with one seed, 
+the seeds opposite will be captured then the single seed will be sown 
+in the selected direction.
 
 Played in rounds. A round ends when either player cannot move. Any
 seeds remaining on the board go to the last player to move.
 
-Goal: win 10 games.  The Game Tally, available to be displayed via the
+Goal: win 10 games. The Game Tally, available to be displayed via the
 Display menu, shows progress toward that goal.
 
 Variant:
